@@ -2,180 +2,116 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AF43C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:10:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB2A3C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:11:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DB28D2250E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:10:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TPo3gMLT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB28D2250E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9229A2245E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:11:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9229A2245E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725980AbeKMFFW (ORCPT
+        id S1726113AbeKMFGB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 00:05:22 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:55696 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725754AbeKMFFV (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 00:05:21 -0500
-Received: by mail-it1-f193.google.com with SMTP id o19so5092140itg.5;
-        Mon, 12 Nov 2018 11:10:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jISjnKD2HKMSy79S1au1otrQ/HNH4li2KdEYDHiiHAM=;
-        b=TPo3gMLTpKpia0ef/N0b1UtsKC//kAkaZ5kKHnu59oKOXmJedISPFewWyeiqyu5V77
-         h+0Y3f/seZ67IQwIcXuvKYpRjn3nxoQ+++jzC2OJV/j3DZ8ohDb5nle5XkXeW2QRmS/T
-         wnZu1qMweF8hlb50kV4LZhhPPtReI2XDYDNnpHNuITaU4fjB3A3KE8LYzr1Yug9c3/7/
-         oZuAjPQ9ExUX3YA2eRXFq0eWi0BpYyKu6Z22Gnjc/YeffL+JRhS9Aiwv93dqTIXrxsrg
-         qnCOWrPtz+7bV8wfH7q9fi4h9qOji7AwrmwVyXKtjLIPEMLQpjy1YSh/dIlw08GUmpnj
-         TuKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jISjnKD2HKMSy79S1au1otrQ/HNH4li2KdEYDHiiHAM=;
-        b=qfXjnTOh/ByFnJlicB8cEPAdPVOMM/1UUQWMDzr8ZOLlz7Mrdmc07KLV5ZGTxRaURJ
-         UPqQj3DW6qEvD9TAE5/1Di6WrP3kXAsYbT4ShIitpoJsqBQd8bCOOtWOJRJ9kAC0XOcc
-         koMYxQThnqGGHHyy3bqXHXdtQIcVqe4j5OKVTErXXVlN3mTMeX5aH69Hcr7oFD025CQM
-         ebYbUZPyG4zUwBcLEjhGqshPziPkNhm8ivJd53Uikohi/kJqVeF8bh6Y6cm+rvefJ5Jf
-         44Nau39EbmXncsD3q4/JVL+pcVbbZa+YD8M4KBDQkbnw78a/zq6hHieyxgyFiuD5Tfa2
-         k8EQ==
-X-Gm-Message-State: AGRZ1gIBO/+OFUgt8tYP0NUVkv9/ecsxJA32Ye1zad7h92F2rphTN1Tq
-        NTTFCoRwEkz183PypYc6EOVRYwVOIPgb9QY/wLk=
-X-Google-Smtp-Source: AJdET5crGSZoUl5lLtPdpCrZ1zFtx/+m34dXf1y251pJOsPfHZNxeXLWQ5YaP59RgItU6aaoWpSKwGjzIua2FVrNlp8=
-X-Received: by 2002:a05:660c:b4c:: with SMTP id m12mr924214itl.6.1542049847558;
- Mon, 12 Nov 2018 11:10:47 -0800 (PST)
+        Tue, 13 Nov 2018 00:06:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:38004 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725754AbeKMFGB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 00:06:01 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 58A1C83F44;
+        Mon, 12 Nov 2018 19:11:27 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (ovpn-116-54.ams2.redhat.com [10.36.116.54])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 0DEB660C67;
+        Mon, 12 Nov 2018 19:11:22 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Zack Weinberg <zackw@panix.com>,
+        "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        GNU C Library <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+        <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
+        <877ehjx447.fsf@oldenburg.str.redhat.com>
+        <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+        <875zx2vhpd.fsf@oldenburg.str.redhat.com>
+        <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
+        <CAKCAbMiHC9r54h=XeW7CkBZ1Z5eHr9MPH3Rn7KTc9DjoHG=8UA@mail.gmail.com>
+        <CAKOZuev7zqq+xpjyDA2mSdy-zwyNjECCzLsBELF6_v1rwar_mA@mail.gmail.com>
+Date:   Mon, 12 Nov 2018 20:11:17 +0100
+In-Reply-To: <CAKOZuev7zqq+xpjyDA2mSdy-zwyNjECCzLsBELF6_v1rwar_mA@mail.gmail.com>
+        (Daniel Colascione's message of "Mon, 12 Nov 2018 10:28:56 -0800")
+Message-ID: <87lg5ym7qi.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
-References: <20181109211521.5ospn33pp552k2xv@xakep.localdomain>
- <18b6634b912af7b4ec01396a2b0f3b31737c9ea2.camel@linux.intel.com>
- <20181110000006.tmcfnzynelaznn7u@xakep.localdomain> <0d8782742d016565870c578848138aaedf873a7c.camel@linux.intel.com>
- <20181110011652.2wozbvfimcnhogfj@xakep.localdomain>
-In-Reply-To: <20181110011652.2wozbvfimcnhogfj@xakep.localdomain>
-From:   Alexander Duyck <alexander.duyck@gmail.com>
-Date:   Mon, 12 Nov 2018 11:10:35 -0800
-Message-ID: <CAKgT0UdDYC5RvZ1XgLTamFpBe3foPMs+SV_kSUVNDWLvxSC_1Q@mail.gmail.com>
-Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
-To:     pasha.tatashin@soleen.com,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     alexander.h.duyck@linux.intel.com,
-        Daniel Jordan <daniel.m.jordan@oracle.com>,
-        linux-mm <linux-mm@kvack.org>, sparclinux@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>, linux-nvdimm@lists.01.org,
-        David Miller <davem@davemloft.net>,
-        pavel.tatashin@microsoft.com, Michal Hocko <mhocko@suse.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        dan.j.williams@intel.com, dave.jiang@intel.com,
-        rppt@linux.vnet.ibm.com, Matthew Wilcox <willy@infradead.org>,
-        Vlastimil Babka <vbabka@suse.cz>, khalid.aziz@oracle.com,
-        ldufour@linux.vnet.ibm.com,
-        Mel Gorman <mgorman@techsingularity.net>,
-        yi.z.zhang@linux.intel.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Mon, 12 Nov 2018 19:11:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 9, 2018 at 5:17 PM Pavel Tatashin <pasha.tatashin@soleen.com> wrote:
+* Daniel Colascione:
+
+> What about off_t differences? Again, it doesn't matter. From the
+> *kernel's* point of view, there's one width of offset parameter per
+> system call per architecture. The library I'm proposing would expose
+> this parameter literally.
+
+Does this mean the application author needs to know when to split an
+off_t argument into two, and when to pass it as a single argument, and
+when to insert dummy arguments for alignment, depending on the
+architecture?
+
+>> And that means you wouldn't get as much
+>> decoupling from the C and POSIX standards -- both of which specify at
+>> least part of those semantics -- as you want, and we would still be
+>> having these arguments.  For example, it would be every bit as
+>> troublesome for liblinuxabi.so.1 to export set_robust_list as it would
+>> be for libc.so.6 to do that.
 >
-> On 18-11-09 16:46:02, Alexander Duyck wrote:
-> > On Fri, 2018-11-09 at 19:00 -0500, Pavel Tatashin wrote:
-> > > On 18-11-09 15:14:35, Alexander Duyck wrote:
-> > > > On Fri, 2018-11-09 at 16:15 -0500, Pavel Tatashin wrote:
-> > > > > On 18-11-05 13:19:25, Alexander Duyck wrote:
-> > > > > > This patchset is essentially a refactor of the page initialization logic
-> > > > > > that is meant to provide for better code reuse while providing a
-> > > > > > significant improvement in deferred page initialization performance.
-> > > > > >
-> > > > > > In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
-> > > > > > memory per node I have seen the following. In the case of regular memory
-> > > > > > initialization the deferred init time was decreased from 3.75s to 1.06s on
-> > > > > > average. For the persistent memory the initialization time dropped from
-> > > > > > 24.17s to 19.12s on average. This amounts to a 253% improvement for the
-> > > > > > deferred memory initialization performance, and a 26% improvement in the
-> > > > > > persistent memory initialization performance.
-> > > > >
-> > > > > Hi Alex,
-> > > > >
-> > > > > Please try to run your persistent memory init experiment with Daniel's
-> > > > > patches:
-> > > > >
-> > > > > https://lore.kernel.org/lkml/20181105165558.11698-1-daniel.m.jordan@oracle.com/
-> > > >
-> > > > I've taken a quick look at it. It seems like a bit of a brute force way
-> > > > to try and speed things up. I would be worried about it potentially
-> > >
-> > > There is a limit to max number of threads that ktasks start. The memory
-> > > throughput is *much* higher than what one CPU can maxout in a node, so
-> > > there is no reason to leave the other CPUs sit idle during boot when
-> > > they can help to initialize.
-> >
-> > Right, but right now that limit can still be pretty big when it is
-> > something like 25% of all the CPUs on a 288 CPU system.
->
-> It is still OK. About 9 threads per node.
->
-> That machine has 1T of memory, which means 8 nodes need to initialize 2G
-> of memory each. With 46G/s throughout it should take 0.043s Which is 10
-> times higher than what Daniel sees with 0.325s, so there is still room
-> to saturate the memory throughput.
->
-> Now, if the multi-threadding efficiency is good, it should take
-> 1.261s / 9 threads =  0.14s
+> Why? Such an exported function would cause no trouble until called,
+> and there are legitimate reasons for calling such a function. Not
+> everyone, as mentioned, wants to write a program that relies on libc.
 
-The two patch sets combined would hopefully do better then that,
-although I don't know what the clock speed is on the CPUs in use.
+For that use case, a machine-readable system call ABI specification is
+the only reasonable approach: Some people want inline system calls,
+others want dedicated routines per system call.  The calling convention
+for the dedicated functions will vary, and the way errors are handled as
+well.  Some want connect calls to be handled by socketcall if possible,
+others prefer the direct call.
 
-The system I have been testing with has 1.5TB spread over 4 nodes. So
-we have effectively 3 times as much to initialize and with the
-"numa=fake=8U" I was seeing it only take .275s to initialize the
-nodes.
+The nice thing here is that once you settled for a particular approach,
+the functions are really small and will not change, so there is no real
+need for dynamic linking.  The challenge here is to come up with a
+uniform description of the system call interface for all architectures,
+and for application programmer's sanity, make sure that the kernel adds
+generic system calls in a single version, across all architectures.
 
-> >
-> > One issue is the way the code was ends up essentially blowing out the
-> > cache over and over again. Doing things in two passes made it really
-> > expensive as you took one cache miss to initialize it, and another to
-> > free it. I think getting rid of that is one of the biggest gains with
-> > my patch set.
->
-> I am not arguing that your patches make sense, all I am saying that
-> ktasks improve time order of magnitude better on machines with large
-> amount of memory.
+> This stance in the paragraph I've quoted is another example of glibc's
+> misplaced idealism. As I've elaborated elsewhere, people use signals
+> for many purposes today. The current signals API is extremely
+> difficult to use correctly in a process in which multiple unrelated
+> components want to take advantage of signal-handling functionality.
+> Users deserve a cleaner, modern, and safe API. It's not productive
+> withhold improvements to the signal API and gate them on unrelated
+> features like process handles merely because, in the personal
+> judgement of the glibc maintainers, developers should use signals for
+> fewer things.
 
-The point I was trying to make is that it doesn't. You say it is an
-order of magnitude better but it is essentially 3.5x vs 3.8x and to
-achieve the 3.8x you are using a ton of system resources. My approach
-is meant to do more with less, while this approach will throw a
-quarter of the system at  page initialization.
+The two aren't unrelated.  If you take asynchronous signals out of the
+picture, the design becomes simpler and easier to use.
 
-An added advantage to my approach is that it speeds up things
-regardless of the number of cores used, whereas the scaling approach
-requires that there be more cores available to use. So for example on
-some of the new AMD Zen stuff I am not sure the benefit would be all
-that great since if I am not mistaken each tile is only 8 processors
-so at most you are only doubling the processing power applied to the
-initialization. In such a case it is likely that my approach would
-fare much better then this approach since I don't require additional
-cores to achieve the same results.
-
-Anyway there are tradeoffs we have to take into account.
-
-I will go over the changes you suggested after Plumbers. I just need
-to figure out if I am doing incremental changes, or if Andrew wants me
-to just resubmit the whole set. I can probably deal with these changes
-either way since most of them are pretty small.
-
-Thanks.
-
-- Alex
+Thanks,
+Florian
