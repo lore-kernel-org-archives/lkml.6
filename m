@@ -2,180 +2,208 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C778CC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:48:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CFE6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:48:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C7F7223D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:48:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7F7223D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 202D1223D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:48:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="WZHPikkn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 202D1223D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729503AbeKLVkw (ORCPT
+        id S1729538AbeKLVky (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 16:40:52 -0500
-Received: from mga11.intel.com ([192.55.52.93]:32835 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729246AbeKLVkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 16:40:52 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2018 03:47:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,495,1534834800"; 
-   d="scan'208";a="107368500"
-Received: from kuha.fi.intel.com ([10.237.72.189])
-  by fmsmga001.fm.intel.com with SMTP; 12 Nov 2018 03:47:52 -0800
-Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 12 Nov 2018 13:47:51 +0200
-Date:   Mon, 12 Nov 2018 13:47:51 +0200
-From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        linux-usb@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Roger Quadros <rogerq@ti.com>, linux-pm@vger.kernel.org,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>, linux-omap@vger.kernel.org,
-        Darren Hart <dvhart@infradead.org>,
-        platform-driver-x86@vger.kernel.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v1 2/5] extcon: Return -EPROBE_DEFER when extcon device
- is not found
-Message-ID: <20181112114751.GB1677@kuha.fi.intel.com>
-References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
- <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
+        Mon, 12 Nov 2018 16:40:54 -0500
+Received: from mail-eopbgr790054.outbound.protection.outlook.com ([40.107.79.54]:2080
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729513AbeKLVky (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 16:40:54 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NcVuLxgdCjZsKm/x5dKuRrp2dz5WUpr8+nvTfUXH6Mw=;
+ b=WZHPikknk/acWRhMtNrK1uNVD9F/ujJncYfGX4h9CftpOgyhFyMD9CmlzGNvKgOzpbleYbXV7ZGUjbK8KGdKY59nv9RRb7j2Nbv2+XpbXtijyYf/iYjgPhw8sY0BCzt5c3vdC0dgnCKRo9enup/qGpudXeYaA9OjFlSWIoCtsGQ=
+Received: from BN6PR12MB1714.namprd12.prod.outlook.com (10.175.101.11) by
+ BN6PR12MB1521.namprd12.prod.outlook.com (10.172.17.151) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Mon, 12 Nov 2018 11:47:57 +0000
+Received: from BN6PR12MB1714.namprd12.prod.outlook.com
+ ([fe80::5472:26e2:affa:2b41]) by BN6PR12MB1714.namprd12.prod.outlook.com
+ ([fe80::5472:26e2:affa:2b41%7]) with mapi id 15.20.1294.044; Mon, 12 Nov 2018
+ 11:47:57 +0000
+From:   "Koenig, Christian" <Christian.Koenig@amd.com>
+To:     Chris Wilson <chris@chris-wilson.co.uk>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= 
+        <ckoenig.leichtzumerken@gmail.com>, Eric Anholt <eric@anholt.net>,
+        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>
+CC:     Daniel Vetter <daniel.vetter@ffwll.ch>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 2/2] drm: Revert syncobj timeline changes.
+Thread-Topic: [PATCH 2/2] drm: Revert syncobj timeline changes.
+Thread-Index: AQHUd3y8jj33F8u6206Ye3csXp/f9aVGC2sAgAAMmgCAAKLAgIABN6KAgAAVRgCAA+rFgIAACTUAgAAQdIA=
+Date:   Mon, 12 Nov 2018 11:47:56 +0000
+Message-ID: <2c580da6-da64-a930-fad2-80705ac3bf5f@amd.com>
+References: <20181108160422.17743-1-eric@anholt.net>
+ <20181108160422.17743-3-eric@anholt.net>
+ <635caa27-eb0b-a4d6-5a1d-3fbe5382bd6b@amd.com>
+ <c5af6df2-d5d5-5276-3628-4bac0fd53c98@gmail.com>
+ <d9d76fbc-44ad-891d-e535-34d0e8f615de@amd.com> <87d0rex8h2.fsf@anholt.net>
+ <87y3a1sx8t.fsf@anholt.net> <199c35bc-e684-fbc4-dcef-d7105d82f0ff@gmail.com>
+ <154201973877.16646.5745251436337959698@skylake-alporthouse-com>
+In-Reply-To: <154201973877.16646.5745251436337959698@skylake-alporthouse-com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+x-originating-ip: [2a02:908:1257:4460:1ab8:55c1:a639:6740]
+x-clientproxiedby: AM5PR0701CA0004.eurprd07.prod.outlook.com
+ (2603:10a6:203:51::14) To BN6PR12MB1714.namprd12.prod.outlook.com
+ (2603:10b6:404:106::11)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Christian.Koenig@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR12MB1521;20:xGG5gcdt5cRN5X2KAk1ZdtumTzAW70red14qd2C4PfDq5ALxVlCO9EQVcijgKH3+BK28Cxa6MZAzgxQWbEY/A54Up5Pi65Q97lWItfAKOPw5BwMEqIS5tmKKYyMTnhxs6ztxr8wDU9JvuQGNUNEsArgSGRNK6FQFUtuGUw4sphy3EXpVdS/5Pq7Xh3QpkHUTyIJsXXP1qCQiZjMHFXNOGrs0jmdjEm5Lq8j0BULzFEP/wNZ9XketsY8yh36HBCoo
+x-ms-office365-filtering-correlation-id: 641bcdb1-a7fa-407f-6f2c-08d64894afdd
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390040)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR12MB1521;
+x-ms-traffictypediagnostic: BN6PR12MB1521:
+x-microsoft-antispam-prvs: <BN6PR12MB1521EC4EAC075E650FA0DD9183C10@BN6PR12MB1521.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(767451399110);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231382)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BN6PR12MB1521;BCL:0;PCL:0;RULEID:;SRVR:BN6PR12MB1521;
+x-forefront-prvs: 0854128AF0
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(376002)(366004)(346002)(396003)(39860400002)(199004)(51914003)(189003)(446003)(486006)(476003)(2616005)(11346002)(39060400002)(46003)(6512007)(52116002)(31686004)(4326008)(386003)(102836004)(6506007)(53936002)(76176011)(99286004)(105586002)(2900100001)(65806001)(14454004)(65956001)(186003)(68736007)(6436002)(71200400001)(6246003)(66574009)(71190400001)(64126003)(305945005)(2906002)(7736002)(106356001)(14444005)(256004)(65826007)(6116002)(316002)(93886005)(54906003)(110136005)(58126008)(478600001)(81166006)(72206003)(6636002)(8676002)(229853002)(36756003)(31696002)(86362001)(81156014)(4001150100001)(25786009)(97736004)(6486002)(2501003)(8936002)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR12MB1521;H:BN6PR12MB1714.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: 7S8qbWnqsJaonj8/FSCVbvzIBGAuP5cvr1/y8HdpL9oYyKthPXt2uFOExwmWvImoBUFn8a8iCQ4Mp6mTA39aBpmFy+J/y1oHHBHmlXhvq0BnLM+RREqryJrh57fcbNcLsyZ4m70/LZ460xQas+aD4hTvTbPyZ8QPiH3CPQcQAbFiWve0cnrKxVzk5TbvArw+va2739yn3r4wPJIClTinv7cb4lAolDut/hvuHWkZRHwxlixTLdYLESRi2X5y/Am/bBRo8f68o0/aaizZu17m4wwKFTV1yiMlUTrmyYnP8tqdHXIZIP/5mPRSqvSkmMewChp6LYn1Z3/+yyxA89r/VRkPa4xqAl+Jh3ALh/qond0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7ABBC64051A31F4F9A5E37511450A702@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 641bcdb1-a7fa-407f-6f2c-08d64894afdd
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Nov 2018 11:47:56.8753
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR12MB1521
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 08:10:58PM +0200, Andy Shevchenko wrote:
-> All current users of extcon_get_extcon_dev() API considers
-> an extcon device a mandatory to appear. Thus, they all convert
-> NULL pointer to -EPROBE_DEFER error code.
-> 
-> There is one more caller anticipated with the same requirements.
-> 
-> To decrease a code duplication and a burden to the callers,
-> return -EPROBE_DEFER directly from extcon_get_extcon_dev().
-> 
-> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-
-Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
-
-> ---
->  drivers/extcon/extcon-axp288.c        | 4 ++--
->  drivers/extcon/extcon.c               | 2 +-
->  drivers/power/supply/axp288_charger.c | 8 ++++----
->  drivers/usb/phy/phy-omap-otg.c        | 6 +++---
->  drivers/usb/typec/tcpm/fusb302.c      | 4 ++--
->  5 files changed, 12 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
-> index a983708b77a6..3472d3b756ed 100644
-> --- a/drivers/extcon/extcon-axp288.c
-> +++ b/drivers/extcon/extcon-axp288.c
-> @@ -360,8 +360,8 @@ static int axp288_extcon_probe(struct platform_device *pdev)
->  		name = acpi_dev_get_first_match_name("INT3496", NULL, -1);
->  		if (name) {
->  			info->id_extcon = extcon_get_extcon_dev(name);
-> -			if (!info->id_extcon)
-> -				return -EPROBE_DEFER;
-> +			if (IS_ERR(info->id_extcon))
-> +				return PTR_ERR(info->id_extcon);
->  
->  			dev_info(dev, "controlling USB role\n");
->  		} else {
-> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
-> index 5ab0498be652..2bd0f2f33f05 100644
-> --- a/drivers/extcon/extcon.c
-> +++ b/drivers/extcon/extcon.c
-> @@ -884,7 +884,7 @@ struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name)
->  		if (!strcmp(sd->name, extcon_name))
->  			goto out;
->  	}
-> -	sd = NULL;
-> +	sd = ERR_PTR(-EPROBE_DEFER);
->  out:
->  	mutex_unlock(&extcon_dev_list_lock);
->  	return sd;
-> diff --git a/drivers/power/supply/axp288_charger.c b/drivers/power/supply/axp288_charger.c
-> index 735658ee1c60..8558577fccf5 100644
-> --- a/drivers/power/supply/axp288_charger.c
-> +++ b/drivers/power/supply/axp288_charger.c
-> @@ -768,17 +768,17 @@ static int axp288_charger_probe(struct platform_device *pdev)
->  	info->regmap_irqc = axp20x->regmap_irqc;
->  
->  	info->cable.edev = extcon_get_extcon_dev(AXP288_EXTCON_DEV_NAME);
-> -	if (info->cable.edev == NULL) {
-> +	if (IS_ERR(info->cable.edev)) {
->  		dev_dbg(&pdev->dev, "%s is not ready, probe deferred\n",
->  			AXP288_EXTCON_DEV_NAME);
-> -		return -EPROBE_DEFER;
-> +		return PTR_ERR(info->cable.edev);
->  	}
->  
->  	if (acpi_dev_present(USB_HOST_EXTCON_HID, NULL, -1)) {
->  		info->otg.cable = extcon_get_extcon_dev(USB_HOST_EXTCON_NAME);
-> -		if (info->otg.cable == NULL) {
-> +		if (IS_ERR(info->otg.cable)) {
->  			dev_dbg(dev, "EXTCON_USB_HOST is not ready, probe deferred\n");
-> -			return -EPROBE_DEFER;
-> +			return PTR_ERR(info->otg.cable);
->  		}
->  		dev_info(&pdev->dev,
->  			 "Using " USB_HOST_EXTCON_HID " extcon for usb-id\n");
-> diff --git a/drivers/usb/phy/phy-omap-otg.c b/drivers/usb/phy/phy-omap-otg.c
-> index ee0863c6553e..605314ddcd3d 100644
-> --- a/drivers/usb/phy/phy-omap-otg.c
-> +++ b/drivers/usb/phy/phy-omap-otg.c
-> @@ -91,12 +91,12 @@ static int omap_otg_probe(struct platform_device *pdev)
->  	int ret;
->  	u32 rev;
->  
-> -	if (!config || !config->extcon)
-> +	if (!config)
->  		return -ENODEV;
->  
->  	extcon = extcon_get_extcon_dev(config->extcon);
-> -	if (!extcon)
-> -		return -EPROBE_DEFER;
-> +	if (IS_ERR(extcon))
-> +		return PTR_ERR(extcon);
->  
->  	otg_dev = devm_kzalloc(&pdev->dev, sizeof(*otg_dev), GFP_KERNEL);
->  	if (!otg_dev)
-> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
-> index 43b64d9309d0..6d332066202b 100644
-> --- a/drivers/usb/typec/tcpm/fusb302.c
-> +++ b/drivers/usb/typec/tcpm/fusb302.c
-> @@ -1767,8 +1767,8 @@ static int fusb302_probe(struct i2c_client *client,
->  	 */
->  	if (device_property_read_string(dev, "fcs,extcon-name", &name) == 0) {
->  		chip->extcon = extcon_get_extcon_dev(name);
-> -		if (!chip->extcon)
-> -			return -EPROBE_DEFER;
-> +		if (IS_ERR(chip->extcon))
-> +			return PTR_ERR(chip->extcon);
->  	}
->  
->  	chip->vbus = devm_regulator_get(chip->dev, "vbus");
-> -- 
-> 2.19.1
-
--- 
-heikki
+QW0gMTIuMTEuMTggdW0gMTE6NDggc2NocmllYiBDaHJpcyBXaWxzb246DQo+IFF1b3RpbmcgQ2hy
+aXN0aWFuIEvDtm5pZyAoMjAxOC0xMS0xMiAxMDoxNjowMSkNCj4+IEFtIDA5LjExLjE4IHVtIDIz
+OjI2IHNjaHJpZWIgRXJpYyBBbmhvbHQ6DQo+Pg0KPj4gICAgICBFcmljIEFuaG9sdCA8ZXJpY0Bh
+bmhvbHQubmV0PiB3cml0ZXM6DQo+Pg0KPj4NCj4+ICAgICAgICAgIFsgVW5rbm93biBzaWduYXR1
+cmUgc3RhdHVzIF0NCj4+ICAgICAgICAgIHpob3VjbTEgPHpob3VjbTFAYW1kLmNvbT4gd3JpdGVz
+Og0KPj4NCj4+DQo+PiAgICAgICAgICAgICAgT24gMjAxOOW5tDEx5pyIMDnml6UgMDA6NTIsIENo
+cmlzdGlhbiBLw7ZuaWcgd3JvdGU6DQo+Pg0KPj4gICAgICAgICAgICAgICAgICBBbSAwOC4xMS4x
+OCB1bSAxNzowNyBzY2hyaWViIEtvZW5pZywgQ2hyaXN0aWFuOg0KPj4NCj4+ICAgICAgICAgICAg
+ICAgICAgICAgIEFtIDA4LjExLjE4IHVtIDE3OjA0IHNjaHJpZWIgRXJpYyBBbmhvbHQ6DQo+Pg0K
+Pj4gICAgICAgICAgICAgICAgICAgICAgICAgIERhbmllbCBzdWdnZXN0ZWQgSSBzdWJtaXQgdGhp
+cywgc2luY2Ugd2UncmUgc3RpbGwgc2VlaW5nIHJlZ3Jlc3Npb25zDQo+PiAgICAgICAgICAgICAg
+ICAgICAgICAgICAgZnJvbSBpdC7CoCBUaGlzIGlzIGEgcmV2ZXJ0IHRvIGJlZm9yZSA0ODE5N2Jj
+NTY0YzcgKCJkcm06IGFkZCBzeW5jb2JqDQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgdGlt
+ZWxpbmUgc3VwcG9ydCB2OSIpIGFuZCBpdHMgZm9sbG93b24gZml4ZXMuDQo+Pg0KPj4gICAgICAg
+ICAgICAgICAgICAgICAgVGhpcyBpcyBhIGhhcm1sZXNzIGZhbHNlIHBvc2l0aXZlIGZyb20gbG9j
+a2RlcCwgQ2hvdW1pbmcgYW5kIEkgYXJlDQo+PiAgICAgICAgICAgICAgICAgICAgICBhbHJlYWR5
+IHdvcmtpbmcgb24gYSBmaXguDQo+Pg0KPj4gICAgICAgICAgICAgICAgICBPbiB0aGUgb3RoZXIg
+aGFuZCB3ZSBoYWQgZW5vdWdoIHRyb3VibGUgd2l0aCB0aGF0IHBhdGNoLCBzbyBpZiBpdA0KPj4g
+ICAgICAgICAgICAgICAgICByZWFsbHkgYm90aGVycyB5b3UgZmVlbCBmcmVlIHRvIGFkZCBteSBB
+Y2tlZC1ieTogQ2hyaXN0aWFuIEvDtm5pZw0KPj4gICAgICAgICAgICAgICAgICA8Y2hyaXN0aWFu
+LmtvZW5pZ0BhbWQuY29tPiBhbmQgcHVzaCBpdC4NCj4+DQo+PiAgICAgICAgICAgICAgTkFLLCBw
+bGVhc2Ugbm8sIEkgZG9uJ3QgdGhpbmsgdGhpcyBuZWVkZWQsIHRoZSBXYXJuaW5nIHRvdGFsbHkg
+aXNuJ3QNCj4+ICAgICAgICAgICAgICByZWxhdGVkIHRvIHN5bmNvYmogdGltZWxpbmUsIGJ1dCBm
+ZW5jZS1hcnJheSBpbXBsZW1lbnRhdGlvbiBmbGF3LCBqdXN0DQo+PiAgICAgICAgICAgICAgZXhw
+b3NlZCBieSBzeW5jb2JqLg0KPj4gICAgICAgICAgICAgIEluIGFkZGl0aW9uLCBDaHJpc3RpYW4g
+YWxyZWFkeSBoYXMgYSBmaXggZm9yIHRoaXMgV2FybmluZywgSSd2ZSB0ZXN0ZWQuDQo+PiAgICAg
+ICAgICAgICAgUGxlYXNlIENocmlzdGlhbiBzZW5kIHRvIHB1YmxpYyByZXZpZXcuDQo+Pg0KPj4g
+ICAgICAgICAgSSBiYWNrZWQgb3V0IG15IHJldmVydCBvZiAjMiAoIzEgc3RpbGwgbmVjZXNzYXJ5
+KSBhZnRlciBhZGRpbmcgdGhlDQo+PiAgICAgICAgICBsb2NrZGVwIHJlZ3Jlc3Npb24gZml4LCBh
+bmQgbm93IG15IENUUyBydW4gZ290IG9vbWtpbGxlZCBhZnRlciBqdXN0IGENCj4+ICAgICAgICAg
+IGZldyBob3Vycywgd2l0aCB0aGVzZSBub3RhYmxlIGxpbmVzIGluIHRoZSB1bnJlY2xhaW1hYmxl
+IHNsYWIgaW5mbyBsaXN0Og0KPj4NCj4+ICAgICAgICAgIFsgNjMxNC4zNzMwOTldIGRybV9zY2hl
+ZF9mZW5jZSAgICAgICAgNjkwOTVLQiAgICAgIDY5MDk1S0INCj4+ICAgICAgICAgIFsgNjMxNC4z
+NzM2NTNdIGttZW1sZWFrX29iamVjdCAgICAgICA0MjgyNDlLQiAgICAgNDI4Mzg0S0INCj4+ICAg
+ICAgICAgIFsgNjMxNC4zNzM3MzZdIGttYWxsb2MtMjYyMTQ0ICAgICAgICAgICAyNTZLQiAgICAg
+ICAgMjU2S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM3NDNdIGttYWxsb2MtMTMxMDcyICAgICAg
+ICAgICAxMjhLQiAgICAgICAgMTI4S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM3NTBdIGttYWxs
+b2MtNjU1MzYgICAgICAgICAgICAgNjRLQiAgICAgICAgIDY0S0INCj4+ICAgICAgICAgIFsgNjMx
+NC4zNzM3NTZdIGttYWxsb2MtMzI3NjggICAgICAgICAgIDE0NzJLQiAgICAgICAxNzI4S0INCj4+
+ICAgICAgICAgIFsgNjMxNC4zNzM3NjNdIGttYWxsb2MtMTYzODQgICAgICAgICAgICAgNjRLQiAg
+ICAgICAgIDY0S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM3NzBdIGttYWxsb2MtODE5MiAgICAg
+ICAgICAgICAyMDhLQiAgICAgICAgMjA4S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM3NzhdIGtt
+YWxsb2MtNDA5NiAgICAgICAgICAgIDI0MDhLQiAgICAgICAyNDA4S0INCj4+ICAgICAgICAgIFsg
+NjMxNC4zNzM3ODRdIGttYWxsb2MtMjA0OCAgICAgICAgICAgICAyODhLQiAgICAgICAgMzM2S0IN
+Cj4+ICAgICAgICAgIFsgNjMxNC4zNzM3OTJdIGttYWxsb2MtMTAyNCAgICAgICAgICAgIDE0NTdL
+QiAgICAgICAxNTEyS0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM4MDBdIGttYWxsb2MtNTEyICAg
+ICAgICAgICAgICA4NTRLQiAgICAgICAxMDQ4S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM4MDhd
+IGttYWxsb2MtMjU2ICAgICAgICAgICAgICAxODhLQiAgICAgICAgMjY4S0INCj4+ICAgICAgICAg
+IFsgNjMxNC4zNzM4MTddIGttYWxsb2MtMTkyICAgICAgICAgICAgNjkxNDFLQiAgICAgIDY5MTQy
+S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM4MjRdIGttYWxsb2MtNjQgICAgICAgICAgICAgNDc3
+MDNLQiAgICAgIDQ3NzA0S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM4ODZdIGttYWxsb2MtMTI4
+ICAgICAgICAgICAgNDYzOTZLQiAgICAgIDQ2Mzk2S0INCj4+ICAgICAgICAgIFsgNjMxNC4zNzM4
+OTRdIGttZW1fY2FjaGUgICAgICAgICAgICAgICAgMzFLQiAgICAgICAgIDM1S0INCj4+DQo+PiAg
+ICAgICAgICBObyByZXN1bHRzIGZyb20ga21lbWxlYWssIHRob3VnaC4NCj4+DQo+PiAgICAgIE9L
+LCBpdCBsb29rcyBsaWtlIHRoZSAjMiByZXZlcnQgcHJvYmFibHkgaXNuJ3QgcmVsYXRlZCB0byB0
+aGUgT09NIGlzc3VlLg0KPj4gICAgICBSdW5uaW5nIGEgc2luZ2xlIGpvYiBvbiBvdGhlcndpc2Ug
+dW51c2VkIERSTSwgd2F0Y2hpbmcgL3Byb2Mvc2xhYmluZm8NCj4+ICAgICAgZXZlcnkgc2Vjb25k
+IGZvciBkcm1fc2NoZWRfZmVuY2UsIEkgZ2V0Og0KPj4NCj4+ICAgICAgZHJtX3NjaGVkX2ZlbmNl
+ICAgICAgICAwICAgICAgMCAgICAxOTIgICAyMSAgICAxIDogdHVuYWJsZXMgICAzMiAgIDE2ICAg
+IDggOiBzbGFiZGF0YSAgICAgIDAgICAgICAwICAgICAgMCA6IGdsb2JhbHN0YXQgICAgICAgMCAg
+ICAgIDAgICAgIDAgICAgMCAgICAwICAgIDAgICAgMCAgICAwICAgIDAgOiBjcHVzdGF0ICAgICAg
+MCAgICAgIDAgICAgICAwICAgICAgMA0KPj4gICAgICBkcm1fc2NoZWRfZmVuY2UgICAgICAgMTYg
+ICAgIDIxICAgIDE5MiAgIDIxICAgIDEgOiB0dW5hYmxlcyAgIDMyICAgMTYgICAgOCA6IHNsYWJk
+YXRhICAgICAgMSAgICAgIDEgICAgICAwIDogZ2xvYmFsc3RhdCAgICAgIDE2ICAgICAxNiAgICAg
+MSAgICAwICAgIDAgICAgMCAgICAwICAgIDAgICAgMCA6IGNwdXN0YXQgICAgICA1ICAgICAgMSAg
+ICAgIDYgICAgICAwDQo+PiAgICAgIGRybV9zY2hlZF9mZW5jZSAgICAgICAxMyAgICAgMjEgICAg
+MTkyICAgMjEgICAgMSA6IHR1bmFibGVzICAgMzIgICAxNiAgICA4IDogc2xhYmRhdGEgICAgICAx
+ICAgICAgMSAgICAgIDAgOiBnbG9iYWxzdGF0ICAgICAgMTYgICAgIDE2ICAgICAxICAgIDAgICAg
+MCAgICAwICAgIDAgICAgMCAgICAwIDogY3B1c3RhdCAgICAgIDUgICAgICAxICAgICAgNiAgICAg
+IDANCj4+ICAgICAgZHJtX3NjaGVkX2ZlbmNlICAgICAgICA2ICAgICAyMSAgICAxOTIgICAyMSAg
+ICAxIDogdHVuYWJsZXMgICAzMiAgIDE2ICAgIDggOiBzbGFiZGF0YSAgICAgIDEgICAgICAxICAg
+ICAgMCA6IGdsb2JhbHN0YXQgICAgICAxNiAgICAgMTYgICAgIDEgICAgMCAgICAwICAgIDAgICAg
+MCAgICAwICAgIDAgOiBjcHVzdGF0ICAgICAgNSAgICAgIDEgICAgICA2ICAgICAgMA0KPj4gICAg
+ICBkcm1fc2NoZWRfZmVuY2UgICAgICAgIDQgICAgIDIxICAgIDE5MiAgIDIxICAgIDEgOiB0dW5h
+YmxlcyAgIDMyICAgMTYgICAgOCA6IHNsYWJkYXRhICAgICAgMSAgICAgIDEgICAgICAwIDogZ2xv
+YmFsc3RhdCAgICAgIDE2ICAgICAxNiAgICAgMSAgICAwICAgIDAgICAgMCAgICAwICAgIDAgICAg
+MCA6IGNwdXN0YXQgICAgICA1ICAgICAgMSAgICAgIDYgICAgICAwDQo+PiAgICAgIGRybV9zY2hl
+ZF9mZW5jZSAgICAgICAgMiAgICAgMjEgICAgMTkyICAgMjEgICAgMSA6IHR1bmFibGVzICAgMzIg
+ICAxNiAgICA4IDogc2xhYmRhdGEgICAgICAxICAgICAgMSAgICAgIDAgOiBnbG9iYWxzdGF0ICAg
+ICAgMTYgICAgIDE2ICAgICAxICAgIDAgICAgMCAgICAwICAgIDAgICAgMCAgICAwIDogY3B1c3Rh
+dCAgICAgIDUgICAgICAxICAgICAgNiAgICAgIDANCj4+ICAgICAgZHJtX3NjaGVkX2ZlbmNlICAg
+ICAgICAwICAgICAyMSAgICAxOTIgICAyMSAgICAxIDogdHVuYWJsZXMgICAzMiAgIDE2ICAgIDgg
+OiBzbGFiZGF0YSAgICAgIDAgICAgICAxICAgICAgMCA6IGdsb2JhbHN0YXQgICAgICAxNiAgICAg
+MTYgICAgIDEgICAgMCAgICAwICAgIDAgICAgMCAgICAwICAgIDAgOiBjcHVzdGF0ICAgICAgNSAg
+ICAgIDEgICAgICA2ICAgICAgMA0KPj4NCj4+ICAgICAgU28gd2UgZ2VuZXJhdGUgYSB0b24gb2Yg
+ZmVuY2VzLCBhbmQgSSBndWVzcyBmcmVlIHRoZW0gc2xvd2x5IGJlY2F1c2Ugb2YNCj4+ICAgICAg
+UkNVPyAgQW5kIHByZXN1bWFibHkga21lbWxlYWsgd2FzIHN1Y2tpbmcgdXAgbG90cyBvZiBtZW1v
+cnkgYmVjYXVzZSBvZg0KPj4gICAgICBob3cgbWFueSBvZiB0aGVzZSBvYmplY3RzIHdlcmUgbGF5
+aW5nIGFyb3VuZC4NCj4+DQo+Pg0KPj4gVGhhdCBpcyBjZXJ0YWlubHkgcG9zc2libGUuIEFub3Ro
+ZXIgcG9zc2liaWxpdHkgaXMgdGhhdCB3ZSBkb24ndCBkcm9wIHRoZQ0KPj4gcmVmZXJlbmNlIGlu
+IGRtYS1mZW5jZS1hcnJheSBlYXJseSBlbm91Z2guDQo+Pg0KPj4gRS5nLiB0aGUgZG1hLWZlbmNl
+LWFycmF5IHdpbGwga2VlcCB0aGUgcmVmZXJlbmNlIHRvIGl0cyBmZW5jZXMgdW50aWwgaXQgaXMN
+Cj4+IGRlc3Ryb3llZCwgd2hpY2ggaXMgYSBiaXQgbGF0ZSB3aGVuIHlvdSBjaGFpbiBtdWx0aXBs
+ZSBkbWEtZmVuY2UtYXJyYXkgb2JqZWN0cw0KPj4gdG9nZXRoZXIuDQo+Pg0KPj4gRGF2aWQgY2Fu
+IHlvdSB0YWtlIGEgbG9vayBhdCB0aGlzIGFuZCBwcm9wb3NlIGEgZml4PyBUaGF0IHdvdWxkIHBy
+b2JhYmx5IGJlDQo+PiBnb29kIHRvIGhhdmUgZml4ZWQgaW4gZG1hLWZlbmNlLWFycmF5IHNlcGFy
+YXRlbHkgdG8gdGhlIHRpbWVsaW5lIHdvcmsuDQo+IE5vdGUgdGhhdCBkcm1fc3luY29ial9yZXBs
+YWNlX2ZlbmNlKCkgbGVha3MgYW55IGV4aXN0aW5nIGZlbmNlIGZvcg0KPiAhdGltZWxpbmUgc3lu
+Y29ianMuIFdoaWNoIGNvdXBsZWQgd2l0aCB0aGUgbGluZWFyIHNlYXJjaCBlbmRzIHVwIHdpdGgN
+Cj4gYSBzZXZlcmUgcmVncmVzc2lvbiBpbiBib3RoIHRpbWUgYW5kIG1lbW9yeS4NCg0KT2ssIGVu
+b3VnaCBpcyBlbm91Z2guIEknbSBnb2luZyB0byByZXZlcnQgdGhpcy4NCg0KVGhhbmtzIGZvciB0
+aGUgaW5mbywNCkNocmlzdGlhbi4NCg0KPiAtQ2hyaXMNCg0K
