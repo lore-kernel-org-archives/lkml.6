@@ -2,59 +2,60 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 166DDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:11:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0815AC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB6242243E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:11:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B26892245E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:11:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WNDXj5dB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB6242243E
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JqxkEHVs"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B26892245E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730686AbeKMIG6 (ORCPT
+        id S1730713AbeKMIHA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 03:06:58 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38419 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730297AbeKMIG6 (ORCPT
+        Tue, 13 Nov 2018 03:07:00 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33589 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730668AbeKMIG7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 03:06:58 -0500
-Received: by mail-pg1-f193.google.com with SMTP id f8-v6so4668800pgq.5
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 14:11:51 -0800 (PST)
+        Tue, 13 Nov 2018 03:06:59 -0500
+Received: by mail-pf1-f194.google.com with SMTP id v68-v6so4972590pfk.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 14:11:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kJ5qY9PDhNvQvRrFMXl2pc8K9tKhezALSPu3zjgvVVI=;
-        b=WNDXj5dBhYZ8UxJ2c1aM8MQm9nn8Twf6IAIXjFeQh0bvCaay5n6DtxQ2hEdenprohZ
-         ThVMdSWV5APtLy4NI7GMc0fe+l7has9pwOGJNgWJ2EA1vU9qzfH/x4zkLWQRUWbiuuZ5
-         kYcsVw1O/7vK7lviX7Sazp0NyM7pZi540TQRY=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=26ev3qUdhHe168g6YKc/sElZ0TK98Gp0wg9uJPpctwk=;
+        b=JqxkEHVsTyd3LPmk790xjkZm0XG0U+21vtipyJf4IZknnpDADQmEE1of6Lc52lclZE
+         gAsXoqwBqlYZYUjmWelj90HnP385aq79u76oYpZfyqfTiMbWIpyYdJnrZqzLHSR6QF8f
+         Tfimo6SHWS8B+d825tz8k5QeAZgiuvmcwc86o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=kJ5qY9PDhNvQvRrFMXl2pc8K9tKhezALSPu3zjgvVVI=;
-        b=o9T+q+Bz8UCed4++dd5NCZRnlUVS8D3J1uTxa8xZ0lXZlU6zZ5o8Ejuoe13XNAgolB
-         H6F6VznEOBQByexhBzpfOyuqw8xPgco+gfWE8l7SSYqHgzgOnXd3YywsZKd+b3Le/8sR
-         1M++dujBbHGbMKsrMp4w6lXfKGvzKfP66SV3fmV19E/yD33gojTQQhJxhedBQxvatvX6
-         g3TUU7Rla2xK9ONELVwYKJzJqlDiPXjNHODZso+1Ngo6MPUeOomd2Rq4OKObcde7H6VG
-         ZPTaumSl6AgyjkyqtA2EMkqsP4/Ekgca6ljVRzUf6svyCIidEP6YeEhQJzdmiaD54XHm
-         F1Mw==
-X-Gm-Message-State: AGRZ1gJxQAqkdr0dKOCu6/+BYtMxNnTCuVmZFisKipaSdrX6fQRJJP/k
-        FIrIRqa7JI0Vdd50G/KbdFp4SQ==
-X-Google-Smtp-Source: AJdET5fmbVxWA2tBLZcenqdrOyqWUjqeZU8M9WPHGl/wN3MiMHo58BVFqNyDeXmNx3939gi2/DkQig==
-X-Received: by 2002:a62:5904:: with SMTP id n4mr2561467pfb.120.1542060711047;
-        Mon, 12 Nov 2018 14:11:51 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=26ev3qUdhHe168g6YKc/sElZ0TK98Gp0wg9uJPpctwk=;
+        b=oj5k2bIZrFRzAtwRjHabqxHXbNMwKnobp2JhOhQtyCG776jlSvFS8KzufobhIpMKzO
+         o+Ek5MG1TFbFS/v1JvyTxjwpdq92exTTZNKGlpJS2DXjV2UHV0TPDI0wXIBn4z8JsyYr
+         DF1kpgqAa9O7RVQQKXzWt5UEoYUFYp+Tc/C7cRYo/7bJ7AqcWw4YIXh8VZNzb/UDEyIN
+         GN7LAQe7iXic1WwKxzNHpUAvIO4/I74ZusFEWYl10L3reC0f6xTK4ESgvGHMyFqJcmUA
+         6gsfiYsdyPfzKo9cMOeGivKCqm0mODXoZNJQ+Mre9DVh3SKWouXtrspl+A7zZLfLNYp3
+         cyKw==
+X-Gm-Message-State: AGRZ1gITJosqb+4W7PD9k8Jbqr47p5+Kqc3rgX7UyPpyQyIe+VZ9hRv/
+        Y6Xd6iiROr6+TUOnsbAZ2qg+/A==
+X-Google-Smtp-Source: AJdET5f3IBCYS3dMBWmFCQegagEKx6gUpsRglHC+uuk8mn0nBLITce8CHLh20ro6/HVZOI/bKn6pvw==
+X-Received: by 2002:a62:db44:: with SMTP id f65-v6mr2576275pfg.94.1542060712171;
+        Mon, 12 Nov 2018 14:11:52 -0800 (PST)
 Received: from mka.mtv.corp.google.com ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id z2sm16166706pgu.4.2018.11.12.14.11.49
+        by smtp.gmail.com with ESMTPSA id z2sm16166706pgu.4.2018.11.12.14.11.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 14:11:50 -0800 (PST)
+        Mon, 12 Nov 2018 14:11:51 -0800 (PST)
 From:   Matthias Kaehlcke <mka@chromium.org>
 To:     Andy Gross <andy.gross@linaro.org>,
         David Brown <david.brown@linaro.org>,
@@ -69,10 +70,12 @@ Cc:     linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
         linux-kernel@vger.kernel.org,
         Douglas Anderson <dianders@chromium.org>,
         Matthias Kaehlcke <mka@chromium.org>
-Subject: [PATCH v6 0/2] arm64: dts: qcom: pm8998: Add die temperature channel node to the ADC
-Date:   Mon, 12 Nov 2018 14:11:24 -0800
-Message-Id: <20181112221126.27142-1-mka@chromium.org>
+Subject: [PATCH v6 1/2] dt-bindings: iio: vadc: Add unit address to ADC channel node in example
+Date:   Mon, 12 Nov 2018 14:11:25 -0800
+Message-Id: <20181112221126.27142-2-mka@chromium.org>
 X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
+In-Reply-To: <20181112221126.27142-1-mka@chromium.org>
+References: <20181112221126.27142-1-mka@chromium.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -80,18 +83,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series adds a channel for the die temperature to the QCOM SPMI
-PMIC5 ADC. It also fixes an example in the DT documentation.
+The node has a reg property, therefore its name should include a unit
+address. Also change the name from 'usb_id_nopull' to 'adc-chan', which
+is the preferred name for ADC channel nodes.
 
-Matthias Kaehlcke (2):
-  dt-bindings: iio: vadc: Add unit address to ADC channel node in
-    example
-  arm64: dts: qcom: pm8998: Add die temperature channel node to the ADC
+Include headers for constants used in the example.
 
+Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+---
+Changes in v6:
+- changed node name to adc-chan@
+- added includes for constants used in the example
+- updated commit message
+- added 'Reviewed-by: Douglas Anderson <dianders@chromium.org>' tag
+
+Changes in v5:
+- patch added to the series
+---
  .../devicetree/bindings/iio/adc/qcom,spmi-vadc.txt          | 6 +++++-
- arch/arm64/boot/dts/qcom/pm8998.dtsi                        | 5 +++++
- 2 files changed, 10 insertions(+), 1 deletion(-)
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
+diff --git a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
+index b3c86f4ac7cdb..c81993f8d8c39 100644
+--- a/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
++++ b/Documentation/devicetree/bindings/iio/adc/qcom,spmi-vadc.txt
+@@ -140,6 +140,10 @@ VADC_GND_REF and VADC_VDD_VADC.
+ 
+ Example:
+ 
++#include <dt-bindings/iio/qcom,spmi-vadc.h>
++#include <linux/irq.h>
++/* ... */
++
+ 	/* VADC node */
+ 	pmic_vadc: vadc@3100 {
+ 		compatible = "qcom,spmi-vadc";
+@@ -151,7 +155,7 @@ Example:
+ 		io-channel-ranges;
+ 
+ 		/* Channel node */
+-		usb_id_nopull {
++		adc-chan@VADC_LR_MUX10_USB_ID {
+ 			reg = <VADC_LR_MUX10_USB_ID>;
+ 			qcom,decimation = <512>;
+ 			qcom,ratiometric;
 -- 
 2.19.1.930.g4563a0d9d0-goog
 
