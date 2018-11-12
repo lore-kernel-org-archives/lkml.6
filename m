@@ -5,60 +5,60 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	SPF_PASS,URIBL_RED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A5E6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:00:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5589BC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:01:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BFF872175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:00:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E42C62175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:01:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MXoQ8og4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFF872175B
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KOWu6vUi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E42C62175B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729098AbeKLRw6 (ORCPT
+        id S1728773AbeKLRx3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 12:52:58 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42355 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728196AbeKLRw5 (ORCPT
+        Mon, 12 Nov 2018 12:53:29 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:38556 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727996AbeKLRx3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 12:52:57 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d72so254091pga.9;
-        Mon, 12 Nov 2018 00:00:54 -0800 (PST)
+        Mon, 12 Nov 2018 12:53:29 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p4-v6so3944910plo.5;
+        Mon, 12 Nov 2018 00:01:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=1WrMNdKTpLJsrFqw3n6LcIYm1w1XcLy3KjEkH2mAfoI=;
-        b=MXoQ8og47Kb9m4W7yvsFsck9G7d+kyO2d+kb6Xwhi/FIWtP7C0PXI613mPZ3eGGW7q
-         EksREfMFP+Y051ZC4QqBf8zTDvz9SXOoEbd2ixZ2OMbOnmyX+J9t/Mnhe0tF/AIbwb3a
-         HvgXgfW/vwu8z7w/vho4fn0p5HvoDJYcwGr694R5k+4zniuKGG9tPM58ou2PVjPJBKzU
-         LsMc9DBsH4QRY2v5Tq9ebkZhKB/YSHdN7mP0NpM6O+PEr01fOgznHSu+F2KHlUKVpuSt
-         YofqBLaz4kY2NHj4o7JRPC0DC1IteHONGfMe3cLogItJ0Ip5uPc/DXQt+jkabJVbxbjL
-         sRig==
+        bh=6hCgvuEcAnJ6GN/AGufyXbBU9VNIHBTSqc00IkOC25E=;
+        b=KOWu6vUiyJzAQNjvD++REOgS2XLMuYX1JmzlMII3j9xeiosKssvvRf4QfzoeLZ29uT
+         0vy4wJr6NznG/Ls9cY/CZ6ahIWn+k21e8BqdFiL9NKpMZWCB5e0zHqzvcip/KTd60Eww
+         kJ5juKAxoecH0IAITTgPx2lGLPuD6wxesACwlxPp6rZHjQORYBVp+7UMQGttSkaOA3Ud
+         8SScW1RcS/gohK2vuEhY7k9JciQp/sQ5UAyqvL/l7R1djs3pJCbXJFy+8Ox6cW1pYDiM
+         5ouACq0QUwv4CCugTPusRbt8Ece+G8UaW/xR+ILNpHDNy27T2QplxwU3x3dtFJzy3P1v
+         CRqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=1WrMNdKTpLJsrFqw3n6LcIYm1w1XcLy3KjEkH2mAfoI=;
-        b=Eor9ukdODkTQ4HUYvErOp31B1naKEt03LF2wH94RWcUZ5LZ8OQdzm/7x8ruPhuKbwN
-         D5CjeXmtSkHExlB0MyGSxz88mavAeFEt7KVUn3Wn+pC2YVz5kQ1GW3XxB14X21PlypDu
-         FhhMtceGVomqHnGvyP0UcJUZog598LZEf6lcqMa0z8Qz0+F3qywFEuOH6DPBI0dQ0Zyr
-         bwlNd4f2NC4SEOj84n5ZewwPdVGyDmJhRAwse8EsPpu7lQ0jrghtb6FnskIL2C7KKmOh
-         b2vSoC+BBih8/ddpCXWt5wehmE7adDG9H3WKqLzSicgkx7U44PgPt0M5Yx2J6Lk/ARoy
-         kS9g==
-X-Gm-Message-State: AGRZ1gKmikoCLK583lUfIuioQmBxpzS6A2wihdpTmr1uJC3hu3nbrVnK
-        RpEGgeKuoq6dTIDIx5c227A=
-X-Google-Smtp-Source: AJdET5fvCbKVePF3sHEQci+UmajjPGVa0g8ZiYRGHO2Xlf76dULFgJlL3PXSYhR/DUFKbeZfOS+kDg==
-X-Received: by 2002:a62:500c:: with SMTP id e12-v6mr19423825pfb.30.1542009653610;
-        Mon, 12 Nov 2018 00:00:53 -0800 (PST)
+        bh=6hCgvuEcAnJ6GN/AGufyXbBU9VNIHBTSqc00IkOC25E=;
+        b=qwCHwQ6VaOgiKE2r+ztMwT0/+uyIIfjRPNEIPztENqT+cb4BdlhoCI8zuv28U9ysRB
+         NG8DBH2HyZa61nyNwtg/1WVXY0h3LUojebTlET/MPYi3hfl+cQd0ZEvEN9f0jzs0mIC3
+         FEo4XGseMPjM95lPpy4gkbm4861h5nIps/ifQSm4fbnJzW+oqXTVO22f9HuH8WfUKUwF
+         bL1hlyXXOvsue/2t0RucryGErgMnjY8v2xJJTx1GbNgqX+uIpXLDh3M74SgVZ11o9CrM
+         7VzKwpAtXie1Vg58jPvkSU322Hqir2QTln0P8ZWicUDsGlHargd8eKMMWnRFAVWCBgjt
+         yGOw==
+X-Gm-Message-State: AGRZ1gLXerOP9KnBjW0lZ7UrgaRSVzWb31Cqrx8xNmJl6EbQnTeChTKL
+        A7p78KwGtCQ/t7Fs3Nq9UNE=
+X-Google-Smtp-Source: AJdET5cWcMBJCLZahYDWFuj9DAUPpLsmCQ0uHebcrNfUBnJEG4shPrJJnFqr4rJ7pDTm7CJ86wDJSA==
+X-Received: by 2002:a17:902:7595:: with SMTP id j21-v6mr17390434pll.191.1542009684588;
+        Mon, 12 Nov 2018 00:01:24 -0800 (PST)
 Received: from localhost.localdomain ([45.41.180.77])
-        by smtp.gmail.com with ESMTPSA id u2-v6sm17050816pfn.50.2018.11.12.00.00.35
+        by smtp.gmail.com with ESMTPSA id u2-v6sm17050816pfn.50.2018.11.12.00.00.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 00:00:52 -0800 (PST)
+        Mon, 12 Nov 2018 00:01:23 -0800 (PST)
 From:   Kenneth Lee <nek.in.cn@gmail.com>
 To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
         Tim Sell <timothy.sell@unisys.com>,
@@ -82,9 +82,9 @@ To:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
 Cc:     linuxarm@huawei.com, guodong.xu@linaro.org,
         zhangfei.gao@foxmail.com, haojian.zhuang@linaro.org,
         Kenneth Lee <liguozhu@hisilicon.com>
-Subject: [RFCv3 PATCH 5/6] crypto: add uacce support to Hisilicon qm
-Date:   Mon, 12 Nov 2018 15:58:06 +0800
-Message-Id: <20181112075807.9291-6-nek.in.cn@gmail.com>
+Subject: [RFCv3 PATCH 6/6] uacce: add user sample for uacce/warpdrive
+Date:   Mon, 12 Nov 2018 15:58:07 +0800
+Message-Id: <20181112075807.9291-7-nek.in.cn@gmail.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181112075807.9291-1-nek.in.cn@gmail.com>
 References: <20181112075807.9291-1-nek.in.cn@gmail.com>
@@ -95,446 +95,1048 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Kenneth Lee <liguozhu@hisilicon.com>
 
-This patch add uacce support to the Hislicon QM driver, any accelerator
-that use QM can share its queues to the user space.
+This is the sample code to demostrate how WarpDrive user application
+should be. (Uacce is the kernel component for WarpDrive.)
 
-Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
-Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
-Signed-off-by: Hao Fang <fanghao11@huawei.com>
+It contains:
+
+1. wd.[ch]: the common library to provide WrapDrive interface.
+2. wd_adaptor.[ch]: the adaptor for wd to call different user drivers
+3. drv/*: the user driver to access the hardware space
+4. test/*, the test application
+
+The Hisilicon HIP08 ZIP accelerator is used in this sample.
+
 Signed-off-by: Zaibo Xu <xuzaibo@huawei.com>
+Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
+Signed-off-by: Hao Fang <fanghao11@huawei.com>
+Signed-off-by: Zhou Wang <wangzhou1@hisilicon.com>
 ---
- drivers/crypto/hisilicon/Kconfig        |   7 +
- drivers/crypto/hisilicon/qm.c           | 227 +++++++++++++++++++++---
- drivers/crypto/hisilicon/qm.h           |  16 +-
- drivers/crypto/hisilicon/zip/zip_main.c |  27 ++-
- 4 files changed, 249 insertions(+), 28 deletions(-)
+ samples/warpdrive/AUTHORS              |   3 +
+ samples/warpdrive/ChangeLog            |   1 +
+ samples/warpdrive/Makefile.am          |   9 +
+ samples/warpdrive/NEWS                 |   1 +
+ samples/warpdrive/README               |  32 ++++
+ samples/warpdrive/autogen.sh           |   3 +
+ samples/warpdrive/cleanup.sh           |  13 ++
+ samples/warpdrive/conf.sh              |   4 +
+ samples/warpdrive/configure.ac         |  52 ++++++
+ samples/warpdrive/drv/hisi_qm_udrv.c   | 228 +++++++++++++++++++++++++
+ samples/warpdrive/drv/hisi_qm_udrv.h   |  57 +++++++
+ samples/warpdrive/drv/wd_drv.h         |  19 +++
+ samples/warpdrive/test/Makefile.am     |   7 +
+ samples/warpdrive/test/test_hisi_zip.c | 150 ++++++++++++++++
+ samples/warpdrive/wd.c                 |  96 +++++++++++
+ samples/warpdrive/wd.h                 |  97 +++++++++++
+ samples/warpdrive/wd_adapter.c         |  71 ++++++++
+ samples/warpdrive/wd_adapter.h         |  36 ++++
+ 18 files changed, 879 insertions(+)
+ create mode 100644 samples/warpdrive/AUTHORS
+ create mode 100644 samples/warpdrive/ChangeLog
+ create mode 100644 samples/warpdrive/Makefile.am
+ create mode 100644 samples/warpdrive/NEWS
+ create mode 100644 samples/warpdrive/README
+ create mode 100755 samples/warpdrive/autogen.sh
+ create mode 100755 samples/warpdrive/cleanup.sh
+ create mode 100755 samples/warpdrive/conf.sh
+ create mode 100644 samples/warpdrive/configure.ac
+ create mode 100644 samples/warpdrive/drv/hisi_qm_udrv.c
+ create mode 100644 samples/warpdrive/drv/hisi_qm_udrv.h
+ create mode 100644 samples/warpdrive/drv/wd_drv.h
+ create mode 100644 samples/warpdrive/test/Makefile.am
+ create mode 100644 samples/warpdrive/test/test_hisi_zip.c
+ create mode 100644 samples/warpdrive/wd.c
+ create mode 100644 samples/warpdrive/wd.h
+ create mode 100644 samples/warpdrive/wd_adapter.c
+ create mode 100644 samples/warpdrive/wd_adapter.h
 
-diff --git a/drivers/crypto/hisilicon/Kconfig b/drivers/crypto/hisilicon/Kconfig
-index ce9deefbf037..819e4995f361 100644
---- a/drivers/crypto/hisilicon/Kconfig
-+++ b/drivers/crypto/hisilicon/Kconfig
-@@ -16,6 +16,13 @@ config CRYPTO_DEV_HISI_QM
- 	tristate
- 	depends on ARM64 && PCI
- 
-+config CRYPTO_QM_UACCE
-+	bool "enable UACCE support for all acceleartor with Hisi QM"
-+	depends on CRYPTO_DEV_HISI_QM
-+	select UACCE
-+	help
-+	  Support UACCE interface in Hisi QM.
+diff --git a/samples/warpdrive/AUTHORS b/samples/warpdrive/AUTHORS
+new file mode 100644
+index 000000000000..bb55d2769147
+--- /dev/null
++++ b/samples/warpdrive/AUTHORS
+@@ -0,0 +1,3 @@
++Kenneth Lee <liguozhu@hisilicon.com>
++Zaibo Xu <xuzaibo@huawei.com>
++Zhou Wang <wangzhou1@hisilicon.com>
+diff --git a/samples/warpdrive/ChangeLog b/samples/warpdrive/ChangeLog
+new file mode 100644
+index 000000000000..b1b716105590
+--- /dev/null
++++ b/samples/warpdrive/ChangeLog
+@@ -0,0 +1 @@
++init
+diff --git a/samples/warpdrive/Makefile.am b/samples/warpdrive/Makefile.am
+new file mode 100644
+index 000000000000..41154a880a97
+--- /dev/null
++++ b/samples/warpdrive/Makefile.am
+@@ -0,0 +1,9 @@
++ACLOCAL_AMFLAGS = -I m4
++AUTOMAKE_OPTIONS = foreign subdir-objects
++AM_CFLAGS=-Wall -O0 -fno-strict-aliasing
 +
- config CRYPTO_DEV_HISI_ZIP
- 	tristate "Support for HISI ZIP Driver"
- 	depends on ARM64
-diff --git a/drivers/crypto/hisilicon/qm.c b/drivers/crypto/hisilicon/qm.c
-index 5b810a6f4dd5..750d8c069d92 100644
---- a/drivers/crypto/hisilicon/qm.c
-+++ b/drivers/crypto/hisilicon/qm.c
-@@ -5,6 +5,7 @@
- #include <linux/io.h>
- #include <linux/irqreturn.h>
- #include <linux/log2.h>
-+#include <linux/uacce.h>
- #include "qm.h"
- 
- #define QM_DEF_Q_NUM			128
-@@ -435,17 +436,29 @@ int hisi_qm_start_qp(struct hisi_qp *qp, unsigned long arg)
- 	qp->sqc_dma = qm->sqc_dma + qp_index * sizeof(struct sqc);
- 	qp->cqc_dma = qm->cqc_dma + qp_index * sizeof(struct cqc);
- 
--	qp->qdma.size = qm->sqe_size * QM_Q_DEPTH +
--			sizeof(struct cqe) * QM_Q_DEPTH,
--	qp->qdma.va = dma_alloc_coherent(dev, qp->qdma.size,
--					 &qp->qdma.dma,
--					 GFP_KERNEL | __GFP_ZERO);
--	dev_dbg(dev, "allocate qp dma buf(va=%p, dma=%pad, size=%lx)\n",
--		qp->qdma.va, &qp->qdma.dma, qp->qdma.size);
-+	if (qm->uacce_mode) {
-+		dev_dbg(dev, "User shared DMA Buffer used: (%lx/%x)\n",
-+			off, QM_DUS_PAGE_NR << PAGE_SHIFT);
-+		if (off > (QM_DUS_PAGE_NR << PAGE_SHIFT))
-+			return -EINVAL;
-+	} else {
++lib_LTLIBRARIES=libwd.la
++libwd_la_SOURCES=wd.c wd_adapter.c wd.h wd_adapter.h \
++		 drv/hisi_qm_udrv.c drv/hisi_qm_udrv.h
 +
-+		/*
-+		 * todo: we are using dma api here. it should be updated to
-+		 * uacce api for user and kernel mode working at the same time
-+		 */
-+		qp->qdma.size = qm->sqe_size * QM_Q_DEPTH +
-+				sizeof(struct cqe) * QM_Q_DEPTH,
-+		qp->qdma.va = dma_alloc_coherent(dev, qp->qdma.size,
-+						 &qp->qdma.dma,
-+						 GFP_KERNEL | __GFP_ZERO);
-+		dev_dbg(dev, "allocate qp dma buf(va=%p, dma=%pad, size=%lx)\n",
-+			qp->qdma.va, &qp->qdma.dma, qp->qdma.size);
-+	}
- 
- 	if (!qp->qdma.va) {
- 		dev_err(dev, "cannot get qm dma buffer\n");
--		return -ENOMEM;
-+		return qm->uacce_mode ? -EINVAL : -ENOMEM;
- 	}
- 
- 	QP_INIT_BUF(qp, sqe, qm->sqe_size * QM_Q_DEPTH);
-@@ -491,7 +504,8 @@ void hisi_qm_release_qp(struct hisi_qp *qp)
- 	bitmap_clear(qm->qp_bitmap, qid, 1);
- 	write_unlock(&qm->qps_lock);
- 
--	dma_free_coherent(dev, qdma->size, qdma->va, qdma->dma);
-+	if (!qm->uacce_mode)
-+		dma_free_coherent(dev, qdma->size, qdma->va, qdma->dma);
- 
- 	kfree(qp);
- }
-@@ -535,6 +549,149 @@ int hisi_qp_send(struct hisi_qp *qp, void *msg)
- }
- EXPORT_SYMBOL_GPL(hisi_qp_send);
- 
-+#ifdef CONFIG_CRYPTO_QM_UACCE
-+static void qm_qp_event_notifier(struct hisi_qp *qp)
++SUBDIRS=. test
+diff --git a/samples/warpdrive/NEWS b/samples/warpdrive/NEWS
+new file mode 100644
+index 000000000000..b1b716105590
+--- /dev/null
++++ b/samples/warpdrive/NEWS
+@@ -0,0 +1 @@
++init
+diff --git a/samples/warpdrive/README b/samples/warpdrive/README
+new file mode 100644
+index 000000000000..3adf66b112fc
+--- /dev/null
++++ b/samples/warpdrive/README
+@@ -0,0 +1,32 @@
++WD User Land Demonstration
++==========================
++
++This directory contains some applications and libraries to demonstrate how a
++
++WrapDrive application can be constructed.
++
++
++As a demo, we try to make it simple and clear for understanding. It is not
++
++supposed to be used in business scenario.
++
++
++The directory contains the following elements:
++
++wd.[ch]
++	A demonstration WrapDrive fundamental library which wraps the basic
++	operations to the WrapDrive-ed device.
++
++wd_adapter.[ch]
++	User driver adaptor for wd.[ch]
++
++wd_utils.[ch]
++	Some utitlities function used by WD and its drivers
++
++drv/*
++	User drivers. It helps to fulfill the semantic of wd.[ch] for
++	particular hardware
++
++test/*
++	Test applications to use the wrapdrive library
++
+diff --git a/samples/warpdrive/autogen.sh b/samples/warpdrive/autogen.sh
+new file mode 100755
+index 000000000000..58deaf49de2a
+--- /dev/null
++++ b/samples/warpdrive/autogen.sh
+@@ -0,0 +1,3 @@
++#!/bin/sh -x
++
++autoreconf -i -f -v
+diff --git a/samples/warpdrive/cleanup.sh b/samples/warpdrive/cleanup.sh
+new file mode 100755
+index 000000000000..c5f3d21e5dc1
+--- /dev/null
++++ b/samples/warpdrive/cleanup.sh
+@@ -0,0 +1,13 @@
++#!/bin/sh
++
++if [ -r Makefile ]; then
++	make distclean
++fi
++
++FILES="aclocal.m4 autom4te.cache compile config.guess config.h.in config.log \
++       config.status config.sub configure cscope.out depcomp install-sh      \
++       libsrc/Makefile libsrc/Makefile.in libtool ltmain.sh Makefile         \
++       ar-lib m4 \
++       Makefile.in missing src/Makefile src/Makefile.in test/Makefile.in"
++
++rm -vRf $FILES
+diff --git a/samples/warpdrive/conf.sh b/samples/warpdrive/conf.sh
+new file mode 100755
+index 000000000000..2af8a54c5126
+--- /dev/null
++++ b/samples/warpdrive/conf.sh
+@@ -0,0 +1,4 @@
++ac_cv_func_malloc_0_nonnull=yes ac_cv_func_realloc_0_nonnull=yes ./configure \
++	--host aarch64-linux-gnu \
++	--target aarch64-linux-gnu \
++	--program-prefix aarch64-linux-gnu-
+diff --git a/samples/warpdrive/configure.ac b/samples/warpdrive/configure.ac
+new file mode 100644
+index 000000000000..53262f3197c2
+--- /dev/null
++++ b/samples/warpdrive/configure.ac
+@@ -0,0 +1,52 @@
++AC_PREREQ([2.69])
++AC_INIT([wrapdrive], [0.1], [liguozhu@hisilicon.com])
++AC_CONFIG_SRCDIR([wd.c])
++AM_INIT_AUTOMAKE([1.10 no-define])
++
++AC_CONFIG_MACRO_DIR([m4])
++AC_CONFIG_HEADERS([config.h])
++
++# Checks for programs.
++AC_PROG_CXX
++AC_PROG_AWK
++AC_PROG_CC
++AC_PROG_CPP
++AC_PROG_INSTALL
++AC_PROG_LN_S
++AC_PROG_MAKE_SET
++AC_PROG_RANLIB
++
++AM_PROG_AR
++AC_PROG_LIBTOOL
++AM_PROG_LIBTOOL
++LT_INIT
++AM_PROG_CC_C_O
++
++AC_DEFINE([HAVE_SVA], [0], [enable SVA support])
++AC_ARG_ENABLE([sva],
++	      [ --enable-sva 	enable to support sva feature],
++	      AC_DEFINE([HAVE_SVA], [1]))
++
++# Checks for libraries.
++
++# Checks for header files.
++AC_CHECK_HEADERS([fcntl.h stdint.h stdlib.h string.h sys/ioctl.h sys/time.h unistd.h])
++
++# Checks for typedefs, structures, and compiler characteristics.
++AC_CHECK_HEADER_STDBOOL
++AC_C_INLINE
++AC_TYPE_OFF_T
++AC_TYPE_SIZE_T
++AC_TYPE_UINT16_T
++AC_TYPE_UINT32_T
++AC_TYPE_UINT64_T
++AC_TYPE_UINT8_T
++
++# Checks for library functions.
++AC_FUNC_MALLOC
++AC_FUNC_MMAP
++AC_CHECK_FUNCS([memset munmap])
++
++AC_CONFIG_FILES([Makefile
++                 test/Makefile])
++AC_OUTPUT
+diff --git a/samples/warpdrive/drv/hisi_qm_udrv.c b/samples/warpdrive/drv/hisi_qm_udrv.c
+new file mode 100644
+index 000000000000..5e623f31e2cb
+--- /dev/null
++++ b/samples/warpdrive/drv/hisi_qm_udrv.c
+@@ -0,0 +1,228 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#include <stdlib.h>
++#include <unistd.h>
++#include <stdio.h>
++#include <sys/mman.h>
++#include <assert.h>
++#include <string.h>
++#include <stdint.h>
++#include <fcntl.h>
++#include <sys/stat.h>
++#include <sys/ioctl.h>
++#include <sys/epoll.h>
++#include <sys/eventfd.h>
++
++#include "wd_drv.h"
++#include "hisi_qm_udrv.h"
++
++#define QM_SQE_SIZE		128 /* todo: get it from sysfs */
++#define QM_CQE_SIZE		16
++
++#define DOORBELL_CMD_SQ		0
++#define DOORBELL_CMD_CQ		1
++
++/* cqe shift */
++#define CQE_PHASE(cq)	(((*((__u32 *)(cq) + 3)) >> 16) & 0x1)
++#define CQE_SQ_NUM(cq)	((*((__u32 *)(cq) + 2)) >> 16)
++#define CQE_SQ_HEAD_INDEX(cq)	((*((__u32 *)(cq) + 2)) & 0xffff)
++
++struct hisi_acc_qm_sqc {
++	__u16 sqn;
++};
++
++struct hisi_qm_queue_info {
++	void *sq_base;
++	void *cq_base;
++	void *doorbell_base;
++	void *dko_base;
++	__u16 sq_tail_index;
++	__u16 sq_head_index;
++	__u16 cq_head_index;
++	__u16 sqn;
++	bool cqc_phase;
++	void *req_cache[QM_Q_DEPTH];
++	int is_sq_full;
++};
++
++int hacc_db(struct hisi_qm_queue_info *q, __u8 cmd, __u16 index, __u8 priority)
 +{
-+	uacce_wake_up(qp->uacce_q);
++	void *base = q->doorbell_base;
++	__u16 sqn = q->sqn;
++	__u64 doorbell = 0;
++
++	doorbell = (__u64)sqn | ((__u64)cmd << 16);
++	doorbell |= ((__u64)index | ((__u64)priority << 16)) << 32;
++
++	*((__u64 *)base) = doorbell;
++
++	return 0;
 +}
 +
-+static int hisi_qm_get_queue(struct uacce *uacce, unsigned long arg,
-+			     struct uacce_queue **q)
++static int hisi_qm_fill_sqe(void *msg, struct hisi_qm_queue_info *info, __u16 i)
 +{
-+	struct qm_info *qm = uacce->priv;
-+	struct hisi_qp *qp = NULL;
-+	struct uacce_queue *wd_q;
-+	u8 alg_type = 0; /* fix me here */
-+	int ret;
++	struct hisi_qm_msg *sqe = (struct hisi_qm_msg *)info->sq_base + i;
 +
-+	qp = hisi_qm_create_qp(qm, alg_type);
-+	if (IS_ERR(qp))
-+		return PTR_ERR(qp);
++	memcpy((void *)sqe, msg, sizeof(struct hisi_qm_msg));
++	assert(!info->req_cache[i]);
++	info->req_cache[i] = msg;
 +
-+	wd_q = kzalloc(sizeof(struct uacce_queue), GFP_KERNEL);
-+	if (!wd_q) {
-+		ret = -ENOMEM;
-+		goto err_with_qp;
++	return 0;
++}
++
++static int hisi_qm_recv_sqe(struct hisi_qm_msg *sqe,
++			    struct hisi_qm_queue_info *info, __u16 i)
++{
++	__u32 status = sqe->dw3 & 0xff;
++	__u32 type = sqe->dw9 & 0xff;
++
++	if (status != 0 && status != 0x0d) {
++		fprintf(stderr, "bad status (s=%d, t=%d)\n", status, type);
++		return -EIO;
 +	}
 +
-+	wd_q->priv = qp;
-+	wd_q->uacce = uacce;
-+	*q = wd_q;
-+	qp->uacce_q = wd_q;
-+	qp->event_cb = qm_qp_event_notifier;
-+	qp->pasid = arg;
++	assert(info->req_cache[i]);
++	memcpy((void *)info->req_cache[i], sqe, sizeof(struct hisi_qm_msg));
++	return 0;
++}
++
++int hisi_qm_set_queue_dio(struct wd_queue *q)
++{
++	struct hisi_qm_queue_info *info;
++	void *vaddr;
++	int ret;
++
++	alloc_obj(info);
++	if (!info)
++		return -1;
++
++	q->priv = info;
++
++	vaddr = wd_drv_mmap(q, QM_DUS_SIZE, QM_DUS_START);
++	if (vaddr <= 0) {
++		ret = (intptr_t)vaddr;
++		goto err_with_info;
++	}
++	info->sq_base = vaddr;
++	info->cq_base = vaddr + QM_SQE_SIZE * QM_Q_DEPTH;
++
++	vaddr = wd_drv_mmap(q, QM_DOORBELL_SIZE, QM_DOORBELL_START);
++	if (vaddr <= 0) {
++		ret = (intptr_t)vaddr;
++		goto err_with_dus;
++	}
++	info->doorbell_base = vaddr + QM_DOORBELL_OFFSET;
++	info->sq_tail_index = 0;
++	info->sq_head_index = 0;
++	info->cq_head_index = 0;
++	info->cqc_phase = 1;
++	info->is_sq_full = 0;
++
++	vaddr = wd_drv_mmap(q, QM_DKO_SIZE, QM_DKO_START);
++	if (vaddr <= 0) {
++		ret = (intptr_t)vaddr;
++		goto err_with_db;
++	}
++	info->dko_base = vaddr;
 +
 +	return 0;
 +
-+err_with_qp:
-+	hisi_qm_release_qp(qp);
++err_with_db:
++	munmap(info->doorbell_base - QM_DOORBELL_OFFSET, QM_DOORBELL_SIZE);
++err_with_dus:
++	munmap(info->sq_base, QM_DUS_SIZE);
++err_with_info:
++	free(info);
 +	return ret;
 +}
 +
-+static void hisi_qm_put_queue(struct uacce_queue *q)
++void hisi_qm_unset_queue_dio(struct wd_queue *q)
 +{
-+	struct hisi_qp *qp = q->priv;
++	struct hisi_qm_queue_info *info = (struct hisi_qm_queue_info *)q->priv;
 +
-+	/* need to stop hardware, but can not support in v1 */
-+	hisi_qm_release_qp(qp);
-+	kfree(q);
++	munmap(info->dko_base, QM_DKO_SIZE);
++	munmap(info->doorbell_base - QM_DOORBELL_OFFSET, QM_DOORBELL_SIZE);
++	munmap(info->sq_base, QM_DUS_SIZE);
++	free(info);
++	q->priv = NULL;
 +}
 +
-+/* map sq/cq/doorbell to user space */
-+static int hisi_qm_mmap(struct uacce_queue *q,
-+			struct vm_area_struct *vma)
++int hisi_qm_add_to_dio_q(struct wd_queue *q, void *req)
 +{
-+	struct hisi_qp *qp = (struct hisi_qp *)q->priv;
-+	struct qm_info *qm = qp->qm;
-+	size_t sz = vma->vm_end - vma->vm_start;
-+	u8 region;
++	struct hisi_qm_queue_info *info = (struct hisi_qm_queue_info *)q->priv;
++	__u16 i;
 +
-+	region = vma->vm_pgoff;
++	if (info->is_sq_full)
++		return -EBUSY;
 +
-+	switch (region) {
-+	case 0:
-+		if (sz > PAGE_SIZE)
-+			return -EINVAL;
++	i = info->sq_tail_index;
 +
-+		vma->vm_flags |= VM_IO;
-+		/*
-+		 * Warning: This is not safe as multiple queues use the same
-+		 * doorbell, v1 hardware interface problem. will fix it in v2
-+		 */
-+		return remap_pfn_range(vma, vma->vm_start,
-+				       qm->phys_base >> PAGE_SHIFT,
-+				       sz, pgprot_noncached(vma->vm_page_prot));
++	hisi_qm_fill_sqe(req, q->priv, i);
 +
-+	default:
-+		return -EINVAL;
-+	}
-+}
++	mb(); /* make sure the request is all in memory before doorbell*/
++	fprintf(stderr, "fill sqe\n");
 +
-+static int hisi_qm_start_queue(struct uacce_queue *q)
-+{
-+	int ret;
-+	struct qm_info *qm = q->uacce->priv;
-+	struct hisi_qp *qp = (struct hisi_qp *)q->priv;
++	if (i == (QM_Q_DEPTH - 1))
++		i = 0;
++	else
++		i++;
 +
-+	/* todo: we don't need to start qm here in SVA version */
-+	qm->qdma.dma = q->qfrs[UACCE_QFRT_DKO]->iova;
-+	qm->qdma.va = q->qfrs[UACCE_QFRT_DKO]->kaddr;
++	hacc_db(info, DOORBELL_CMD_SQ, i, 0);
++	fprintf(stderr, "db\n");
 +
-+	ret = hisi_qm_start(qm);
-+	if (ret)
-+		return ret;
++	info->sq_tail_index = i;
 +
-+	qp->qdma.dma = q->qfrs[UACCE_QFRT_DUS]->iova;
-+	qp->qdma.va = q->qfrs[UACCE_QFRT_DUS]->kaddr;
-+	ret = hisi_qm_start_qp(qp, qp->pasid);
-+	if (ret)
-+		hisi_qm_stop(qm);
++	if (i == info->sq_head_index)
++		info->is_sq_full = 1;
 +
 +	return 0;
 +}
 +
-+static void hisi_qm_stop_queue(struct uacce_queue *q)
++int hisi_qm_get_from_dio_q(struct wd_queue *q, void **resp)
 +{
-+	struct qm_info *qm = q->uacce->priv;
++	struct hisi_qm_queue_info *info = (struct hisi_qm_queue_info *)q->priv;
++	__u16 i = info->cq_head_index;
++	struct cqe *cq_base = info->cq_base;
++	struct hisi_qm_msg *sq_base = info->sq_base;
++	struct cqe *cqe = cq_base + i;
++	struct hisi_qm_msg *sqe;
++	int ret;
 +
-+	/* todo: we don't need to stop qm in SVA version */
-+	hisi_qm_stop(qm);
++	if (info->cqc_phase == CQE_PHASE(cqe)) {
++		sqe = sq_base + CQE_SQ_HEAD_INDEX(cqe);
++		ret = hisi_qm_recv_sqe(sqe, info, i);
++		if (ret < 0)
++			return -EIO;
++
++		if (info->is_sq_full)
++			info->is_sq_full = 0;
++	} else {
++		return -EAGAIN;
++	}
++
++	*resp = info->req_cache[i];
++	info->req_cache[i] = NULL;
++
++	if (i == (QM_Q_DEPTH - 1)) {
++		info->cqc_phase = !(info->cqc_phase);
++		i = 0;
++	} else
++		i++;
++
++	hacc_db(info, DOORBELL_CMD_CQ, i, 0);
++
++	info->cq_head_index = i;
++	info->sq_head_index = i;
++
++
++	return ret;
 +}
 +
-+/*
-+ * the device is set the UACCE_DEV_SVA, but it will be cut if SVA patch is not
-+ * available
-+ */
-+static struct uacce_ops uacce_qm_ops = {
-+	.owner = THIS_MODULE,
-+	.flags = UACCE_DEV_SVA | UACCE_DEV_KMAP_DUS,
-+	.api_ver = "hisi_qm_v1",
-+	.qf_pg_start = {QM_DOORBELL_PAGE_NR,
-+			QM_DOORBELL_PAGE_NR + QM_DKO_PAGE_NR,
-+			QM_DOORBELL_PAGE_NR + QM_DKO_PAGE_NR + QM_DUS_PAGE_NR},
++void *hisi_qm_preserve_mem(struct wd_queue *q, size_t size)
++{
++	void *mem = wd_drv_mmap(q, size, QM_SS_START);
 +
-+	.get_queue = hisi_qm_get_queue,
-+	.put_queue = hisi_qm_put_queue,
-+	.start_queue = hisi_qm_start_queue,
-+	.stop_queue = hisi_qm_stop_queue,
-+	.mmap = hisi_qm_mmap,
++	if (mem == MAP_FAILED)
++		return NULL;
++	else
++		return mem;
++}
+diff --git a/samples/warpdrive/drv/hisi_qm_udrv.h b/samples/warpdrive/drv/hisi_qm_udrv.h
+new file mode 100644
+index 000000000000..694eb4dd65de
+--- /dev/null
++++ b/samples/warpdrive/drv/hisi_qm_udrv.h
+@@ -0,0 +1,57 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef __HZIP_DRV_H__
++#define __HZIP_DRV_H__
++
++#include <linux/types.h>
++#include "../wd.h"
++#include "../../drivers/crypto/hisilicon/qm_usr_if.h"
++
++/* this is unnecessary big, the hardware should optimize it */
++struct hisi_qm_msg {
++	__u32 consumed;
++	__u32 produced;
++	__u32 comp_date_length;
++	__u32 dw3;
++	__u32 input_date_length;
++	__u32 lba_l;
++	__u32 lba_h;
++	__u32 dw7;
++	__u32 dw8;
++	__u32 dw9;
++	__u32 dw10;
++	__u32 priv_info;
++	__u32 dw12;
++	__u32 tag;
++	__u32 dest_avail_out;
++	__u32 rsvd0;
++	__u32 comp_head_addr_l;
++	__u32 comp_head_addr_h;
++	__u32 source_addr_l;
++	__u32 source_addr_h;
++	__u32 dest_addr_l;
++	__u32 dest_addr_h;
++	__u32 stream_ctx_addr_l;
++	__u32 stream_ctx_addr_h;
++	__u32 cipher_key1_addr_l;
++	__u32 cipher_key1_addr_h;
++	__u32 cipher_key2_addr_l;
++	__u32 cipher_key2_addr_h;
++	__u32 rsvd1[4];
 +};
 +
-+static int qm_register_uacce(struct qm_info *qm)
++int hisi_qm_set_queue_dio(struct wd_queue *q);
++void hisi_qm_unset_queue_dio(struct wd_queue *q);
++int hisi_qm_add_to_dio_q(struct wd_queue *q, void *req);
++int hisi_qm_get_from_dio_q(struct wd_queue *q, void **resp);
++void *hisi_qm_preserve_mem(struct wd_queue *q, size_t size);
++
++#define QM_DOORBELL_SIZE (QM_DOORBELL_PAGE_NR * PAGE_SIZE)
++#define QM_DKO_SIZE (QM_DKO_PAGE_NR * PAGE_SIZE)
++#define QM_DUS_SIZE (QM_DUS_PAGE_NR * PAGE_SIZE)
++
++#define QM_DOORBELL_START 0
++#define QM_DKO_START (QM_DOORBELL_START + QM_DOORBELL_SIZE)
++#define QM_DUS_START (QM_DKO_START + QM_DKO_SIZE)
++#define QM_SS_START (QM_DUS_START + QM_DUS_SIZE)
++
++#endif
+diff --git a/samples/warpdrive/drv/wd_drv.h b/samples/warpdrive/drv/wd_drv.h
+new file mode 100644
+index 000000000000..66fa8d889e70
+--- /dev/null
++++ b/samples/warpdrive/drv/wd_drv.h
+@@ -0,0 +1,19 @@
++#ifndef __WD_DRV_H
++#define __WD_DRV_H
++
++#include "wd.h"
++
++#ifndef PAGE_SHIFT
++#define PAGE_SHIFT	12
++#endif
++
++#ifndef PAGE_SIZE
++#define PAGE_SIZE	(1 << PAGE_SHIFT)
++#endif
++
++static inline void *wd_drv_mmap(struct wd_queue *q, size_t size, size_t off)
 +{
-+	struct pci_dev *pdev = qm->pdev;
-+	struct uacce *uacce = &qm->uacce;
-+
-+	uacce->name = dev_name(&pdev->dev);
-+	uacce->dev = &pdev->dev;
-+	uacce->is_vf = pdev->is_virtfn;
-+	uacce->priv = qm;
-+	uacce->ops = &uacce_qm_ops;
-+
-+	return uacce_register(uacce);
++	return mmap(0, size, PROT_READ | PROT_WRITE, MAP_SHARED, q->fd, off);
 +}
-+#endif
 +
- static irqreturn_t qm_irq(int irq, void *data)
- {
- 	struct qm_info *qm = data;
-@@ -635,21 +792,34 @@ int hisi_qm_init(struct qm_info *qm)
- 		}
- 	}
- 
--	qm->qdma.size = max_t(size_t, sizeof(struct eqc),
--			      sizeof(struct aeqc)) +
--			sizeof(struct eqe) * QM_Q_DEPTH +
--			sizeof(struct sqc) * qm->qp_num +
--			sizeof(struct cqc) * qm->qp_num;
--	qm->qdma.va = dma_alloc_coherent(dev, qm->qdma.size,
--					 &qm->qdma.dma,
--					 GFP_KERNEL | __GFP_ZERO);
--	dev_dbg(dev, "allocate qm dma buf(va=%p, dma=%pad, size=%lx)\n",
--		qm->qdma.va, &qm->qdma.dma, qm->qdma.size);
--	ret = qm->qdma.va ? 0 : -ENOMEM;
-+	if (qm->uacce_mode) {
-+#ifdef CONFIG_CRYPTO_QM_UACCE
-+		ret = qm_register_uacce(qm);
++#endif
+diff --git a/samples/warpdrive/test/Makefile.am b/samples/warpdrive/test/Makefile.am
+new file mode 100644
+index 000000000000..ad80e80a47d7
+--- /dev/null
++++ b/samples/warpdrive/test/Makefile.am
+@@ -0,0 +1,7 @@
++AM_CFLAGS=-Wall -O0 -fno-strict-aliasing
++
++bin_PROGRAMS=test_hisi_zip
++
++test_hisi_zip_SOURCES=test_hisi_zip.c
++
++test_hisi_zip_LDADD=../.libs/libwd.a
+diff --git a/samples/warpdrive/test/test_hisi_zip.c b/samples/warpdrive/test/test_hisi_zip.c
+new file mode 100644
+index 000000000000..5e636482d318
+--- /dev/null
++++ b/samples/warpdrive/test/test_hisi_zip.c
+@@ -0,0 +1,150 @@
++// SPDX-License-Identifier: GPL-2.0+
++#include <stdio.h>
++#include <string.h>
++#include <sys/mman.h>
++#include <sys/time.h>
++#include <unistd.h>
++#include "../wd.h"
++#include "../drv/hisi_qm_udrv.h"
++
++#if defined(MSDOS) || defined(OS2) || defined(WIN32) || defined(__CYGWIN__)
++#  include <fcntl.h>
++#  include <io.h>
++#  define SET_BINARY_MODE(file) setmode(fileno(file), O_BINARY)
 +#else
-+		dev_err(dev, "qm uacce feature is not enabled\n");
-+		ret = -EINVAL;
++#  define SET_BINARY_MODE(file)
 +#endif
 +
++#define SYS_ERR_COND(cond, msg)		\
++do {					\
++	if (cond) {			\
++		perror(msg);		\
++		exit(EXIT_FAILURE);	\
++	}				\
++} while (0)
++
++#define ZLIB 0
++#define GZIP 1
++
++int hizip_deflate(FILE *source, FILE *dest,  int type)
++{
++	struct hisi_qm_msg *msg, *recv_msg;
++	struct wd_queue q;
++	__u64 in, out;
++	void *a;
++	char *src, *dst;
++	int ret, total_len, output_num, fd;
++	size_t sz;
++
++	q.dev_path = "/dev/ua1";
++	strncpy(q.hw_type, "hisi_qm_v1", PATH_STR_SIZE);
++	ret = wd_request_queue(&q);
++	SYS_ERR_COND(ret, "wd_request_queue");
++
++	fd = fileno(source);
++	struct stat s;
++
++	if (fstat(fd, &s) < 0)
++		SYS_ERR_COND(-1, "fstat");
++	total_len = s.st_size;
++
++	SYS_ERR_COND(!total_len, "input file length zero");
++
++	SYS_ERR_COND(total_len > 16 * 1024 * 1024,
++		     "totoal_len > 16MB)!");
++
++	a = wd_reserve_memory(&q, total_len * 2);
++	SYS_ERR_COND(!a, "memory reserved!");
++
++	fprintf(stderr, "a=%lx\n", (unsigned long)a);
++	memset(a, 0, total_len * 2);
++
++	src = (char *)a;
++	dst = (char *)a + total_len;
++
++	sz = fread(src, 1, total_len, source);
++	SYS_ERR_COND(sz != total_len, "read fail");
++
++	msg = malloc(sizeof(*msg));
++	SYS_ERR_COND(!msg, "alloc msg");
++	memset((void *)msg, 0, sizeof(*msg));
++	msg->input_date_length = total_len;
++	if (type == ZLIB)
++		msg->dw9 = 2;
++	else
++		msg->dw9 = 3;
++	msg->dest_avail_out = 0x800000;
++
++	in = (__u64)src;
++	out = (__u64)dst;
++
++	msg->source_addr_l = in & 0xffffffff;
++	msg->source_addr_h = in >> 32;
++	msg->dest_addr_l = out & 0xffffffff;
++	msg->dest_addr_h = out >> 32;
++
++	ret = wd_send(&q, msg);
++	if (ret == -EBUSY) {
++		usleep(1);
++		goto recv_again;
++	}
++	SYS_ERR_COND(ret, "send");
++
++recv_again:
++	ret = wd_recv(&q, (void **)&recv_msg);
++	SYS_ERR_COND(ret == -EIO, "wd_recv");
++
++	if (ret == -EAGAIN)
++		goto recv_again;
++
++	output_num = recv_msg->produced;
++	/* add zlib compress head and write head + compressed date to a file */
++	char zip_head[2] = {0x78, 0x9c};
++
++	fwrite(zip_head, 1, 2, dest);
++	fwrite((char *)out, 1, output_num, dest);
++	fclose(dest);
++	free(msg);
++	wd_release_queue(&q);
++	return 0;
++}
++
++int main(int argc, char *argv[])
++{
++	int alg_type = 0;
++
++	/* avoid end-of-line conversions */
++	SET_BINARY_MODE(stdin);
++	SET_BINARY_MODE(stdout);
++
++	if (!argv[1]) {
++		fputs("<<use ./test_hisi_zip -h get more details>>\n", stderr);
++		goto EXIT;
++	}
++
++	if (!strcmp(argv[1], "-z"))
++		alg_type = ZLIB;
++	else if (!strcmp(argv[1], "-g")) {
++		alg_type = GZIP;
++	} else if (!strcmp(argv[1], "-h")) {
++		fputs("[version]:1.0.2\n", stderr);
++		fputs("[usage]: ./test_hisi_zip [type] <src_file> dest_file\n",
++			stderr);
++		fputs("     [type]:\n", stderr);
++		fputs("            -z  = zlib\n", stderr);
++		fputs("            -g  = gzip\n", stderr);
++		fputs("            -h  = usage\n", stderr);
++		fputs("Example:\n", stderr);
++		fputs("./test_hisi_zip -z < test.data > out.data\n", stderr);
++		goto EXIT;
 +	} else {
-+		qm->qdma.size = max_t(size_t, sizeof(struct eqc),
-+				      sizeof(struct aeqc)) +
-+				sizeof(struct eqe) * QM_Q_DEPTH +
-+				sizeof(struct sqc) * qm->qp_num +
-+				sizeof(struct cqc) * qm->qp_num;
-+		qm->qdma.va = dma_alloc_coherent(dev, qm->qdma.size,
-+						 &qm->qdma.dma,
-+						 GFP_KERNEL | __GFP_ZERO);
-+		dev_dbg(dev, "allocate qm dma buf(va=%p, dma=%pad, size=%lx)\n",
-+			qm->qdma.va, &qm->qdma.dma, qm->qdma.size);
-+		ret = qm->qdma.va ? 0 : -ENOMEM;
-+	}
- 
- 	if (ret)
- 		goto err_with_irq;
- 
-+	dev_dbg(dev, "init qm %s to %s mode\n", pdev->is_physfn ? "pf" : "vf",
-+		qm->uacce_mode ? "uacce" : "crypto");
-+
- 	return 0;
- 
- err_with_irq:
-@@ -669,7 +839,13 @@ void hisi_qm_uninit(struct qm_info *qm)
- {
- 	struct pci_dev *pdev = qm->pdev;
- 
--	dma_free_coherent(&pdev->dev, qm->qdma.size, qm->qdma.va, qm->qdma.dma);
-+	if (qm->uacce_mode) {
-+#ifdef CONFIG_CRYPTO_QM_UACCE
-+		uacce_unregister(&qm->uacce);
-+#endif
-+	} else
-+		dma_free_coherent(&pdev->dev, qm->qdma.size, qm->qdma.va,
-+				  qm->qdma.dma);
- 
- 	devm_free_irq(&pdev->dev, pci_irq_vector(pdev, 0), qm);
- 	pci_free_irq_vectors(pdev);
-@@ -690,7 +866,7 @@ int hisi_qm_start(struct qm_info *qm)
- } while (0)
- 
- 	if (!qm->qdma.va)
--		return -EINVAL;
-+		return qm->uacce_mode ? 0 : -EINVAL;
- 
- 	if (qm->pdev->is_physfn)
- 		qm->ops->vft_config(qm, qm->qp_base, qm->qp_num);
-@@ -705,6 +881,13 @@ int hisi_qm_start(struct qm_info *qm)
- 	QM_INIT_BUF(qm, eqc,
- 		    max_t(size_t, sizeof(struct eqc), sizeof(struct aeqc)));
- 
-+	if (qm->uacce_mode) {
-+		dev_dbg(&qm->pdev->dev, "kernel-only buffer used (0x%lx/0x%x)\n",
-+			off, QM_DKO_PAGE_NR << PAGE_SHIFT);
-+		if (off > (QM_DKO_PAGE_NR << PAGE_SHIFT))
-+			return -EINVAL;
++		fputs("Unknown option\n", stderr);
++		fputs("<<use ./test_comp_iommu -h get more details>>\n",
++			stderr);
++		goto EXIT;
 +	}
 +
- 	qm->eqc->base_l = lower_32_bits(qm->eqe_dma);
- 	qm->eqc->base_h = upper_32_bits(qm->eqe_dma);
- 	qm->eqc->dw3 = 2 << MB_EQC_EQE_SHIFT;
-diff --git a/drivers/crypto/hisilicon/qm.h b/drivers/crypto/hisilicon/qm.h
-index 6d124d948738..81b0b8c1f0b0 100644
---- a/drivers/crypto/hisilicon/qm.h
-+++ b/drivers/crypto/hisilicon/qm.h
-@@ -9,6 +9,10 @@
- #include <linux/slab.h>
- #include "qm_usr_if.h"
- 
-+#ifdef CONFIG_CRYPTO_QM_UACCE
-+#include <linux/uacce.h>
-+#endif
++	hizip_deflate(stdin, stdout, alg_type);
++EXIT:
++	return EXIT_SUCCESS;
++}
+diff --git a/samples/warpdrive/wd.c b/samples/warpdrive/wd.c
+new file mode 100644
+index 000000000000..559314a13e38
+--- /dev/null
++++ b/samples/warpdrive/wd.c
+@@ -0,0 +1,96 @@
++// SPDX-License-Identifier: GPL-2.0
++#include "config.h"
++#include <stdlib.h>
++#include <unistd.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/queue.h>
++#include <fcntl.h>
++#include <sys/ioctl.h>
++#include <errno.h>
++#include <sys/mman.h>
++#include <string.h>
++#include <assert.h>
++#include <dirent.h>
++#include <sys/poll.h>
++#include "wd.h"
++#include "wd_adapter.h"
 +
- /* qm user domain */
- #define QM_ARUSER_M_CFG_1		0x100088
- #define QM_ARUSER_M_CFG_ENABLE		0x100090
-@@ -146,6 +150,12 @@ struct qm_info {
- 	struct mutex mailbox_lock;
- 
- 	struct hisi_acc_qm_hw_ops *ops;
++int wd_request_queue(struct wd_queue *q)
++{
++	int ret;
 +
-+	bool uacce_mode;
++	q->fd = open(q->dev_path, O_RDWR | O_CLOEXEC);
++	if (q->fd == -1)
++		return -ENODEV;
 +
-+#ifdef CONFIG_CRYPTO_QM_UACCE
-+	struct uacce uacce;
-+#endif
- };
- #define QM_ADDR(qm, off) ((qm)->io_base + off)
- 
-@@ -186,6 +196,10 @@ struct hisi_qp {
- 
- 	struct qm_info *qm;
- 
-+#ifdef CONFIG_CRYPTO_QM_UACCE
-+	struct uacce_queue *uacce_q;
-+#endif
++	ret = drv_open(q);
++	if (ret)
++		goto err_with_fd;
 +
- 	/* for crypto sync API */
- 	struct completion completion;
- 
-@@ -197,7 +211,7 @@ struct hisi_qp {
- 
- /* QM external interface for accelerator driver.
-  * To use qm:
-- * 1. Set qm with pdev, and sqe_size set accordingly
-+ * 1. Set qm with pdev, uacce_mode, and sqe_size set accordingly
-  * 2. hisi_qm_init()
-  * 3. config the accelerator hardware
-  * 4. hisi_qm_start()
-diff --git a/drivers/crypto/hisilicon/zip/zip_main.c b/drivers/crypto/hisilicon/zip/zip_main.c
-index f4f3b6d89340..f5fcd0f4b836 100644
---- a/drivers/crypto/hisilicon/zip/zip_main.c
-+++ b/drivers/crypto/hisilicon/zip/zip_main.c
-@@ -5,6 +5,7 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/pci.h>
-+#include <linux/uacce.h>
- #include "zip.h"
- #include "zip_crypto.h"
- 
-@@ -28,6 +29,9 @@
- LIST_HEAD(hisi_zip_list);
- DEFINE_MUTEX(hisi_zip_list_lock);
- 
-+static bool uacce_mode;
-+module_param(uacce_mode, bool, 0);
++	return 0;
 +
- static const char hisi_zip_name[] = "hisi_zip";
- 
- static const struct pci_device_id hisi_zip_dev_ids[] = {
-@@ -96,6 +100,7 @@ static int hisi_zip_probe(struct pci_dev *pdev, const struct pci_device_id *id)
- 
- 	qm = &hisi_zip->qm;
- 	qm->pdev = pdev;
-+	qm->uacce_mode = uacce_mode;
- 	qm->qp_base = HZIP_PF_DEF_Q_BASE;
- 	qm->qp_num = HZIP_PF_DEF_Q_NUM;
- 	qm->sqe_size = HZIP_SQE_SIZE;
-@@ -150,10 +155,21 @@ static int __init hisi_zip_init(void)
- 		return ret;
- 	}
- 
--	ret = hisi_zip_register_to_crypto();
--	if (ret < 0) {
--		pci_unregister_driver(&hisi_zip_pci_driver);
--		return ret;
-+	/* todo:
-+	 *
-+	 * Before JPB's SVA patch is enabled, SMMU/IOMMU cannot support PASID.
-+	 * When it is accepted in the mainline kernel, we can add a
-+	 * IOMMU_DOMAIN_DAUL mode to IOMMU, then the dma and iommu API can
-+	 * work together. We then can let crypto and uacce mode works at the
-+	 * same time.
-+	 */
-+	if (!uacce_mode) {
-+		pr_debug("hisi_zip: init crypto mode\n");
-+		ret = hisi_zip_register_to_crypto();
-+		if (ret < 0) {
-+			pci_unregister_driver(&hisi_zip_pci_driver);
++err_with_fd:
++	close(q->fd);
++	return ret;
++}
++
++void wd_release_queue(struct wd_queue *q)
++{
++	drv_close(q);
++	close(q->fd);
++}
++
++int wd_send(struct wd_queue *q, void *req)
++{
++	return drv_send(q, req);
++}
++
++int wd_recv(struct wd_queue *q, void **resp)
++{
++	return drv_recv(q, resp);
++}
++
++static int wd_wait(struct wd_queue *q, __u16 ms)
++{
++	struct pollfd fds[1];
++	int ret;
++
++	fds[0].fd = q->fd;
++	fds[0].events = POLLIN;
++	ret = poll(fds, 1, ms);
++	if (ret == -1)
++		return -errno;
++
++	return 0;
++}
++
++int wd_recv_sync(struct wd_queue *q, void **resp, __u16 ms)
++{
++	int ret;
++
++	while (1) {
++		ret = wd_recv(q, resp);
++		if (ret == -EBUSY) {
++			ret = wd_wait(q, ms);
++			if (ret)
++				return ret;
++		} else
 +			return ret;
++	}
++}
++
++void wd_flush(struct wd_queue *q)
++{
++	drv_flush(q);
++}
++
++void *wd_reserve_memory(struct wd_queue *q, size_t size)
++{
++	return drv_reserve_mem(q, size);
++}
++
++int wd_share_preserved_memory(struct wd_queue *q, struct wd_queue *target_q)
++{
++	return ioctl(q->fd, UACCE_CMD_SHARE_SVAS, target_q->fd);
++}
+diff --git a/samples/warpdrive/wd.h b/samples/warpdrive/wd.h
+new file mode 100644
+index 000000000000..4c0ecfebdf14
+--- /dev/null
++++ b/samples/warpdrive/wd.h
+@@ -0,0 +1,97 @@
++// SPDX-License-Identifier: GPL-2.0
++#ifndef __WD_H
++#define __WD_H
++#include <stdlib.h>
++#include <errno.h>
++#include <stdio.h>
++#include <string.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <fcntl.h>
++#include <stdint.h>
++#include <unistd.h>
++#include <limits.h>
++#include "../../include/uapi/linux/uacce.h"
++
++#define SYS_VAL_SIZE		16
++#define PATH_STR_SIZE		256
++#define WD_NAME_SIZE		64
++
++typedef int bool;
++
++#ifndef true
++#define true 1
++#endif
++
++#ifndef false
++#define false 0
++#endif
++
++#ifndef WD_ERR
++#define WD_ERR(format, args...) fprintf(stderr, format, ##args)
++#endif
++
++#if defined(__AARCH64_CMODEL_SMALL__) && __AARCH64_CMODEL_SMALL__
++
++#define dsb(opt)	asm volatile("dsb " #opt : : : "memory")
++#define rmb()		dsb(ld)
++#define wmb()		dsb(st)
++#define mb()		dsb(sy)
++
++#else
++
++#define rmb()
++#define wmb()
++#define mb()
++#error "no platform mb, define one before compiling"
++
++#endif
++
++static inline void wd_reg_write(void *reg_addr, uint32_t value)
++{
++	*((volatile uint32_t *)reg_addr) = value;
++	wmb();
++}
++
++static inline uint32_t wd_reg_read(void *reg_addr)
++{
++	uint32_t temp;
++
++	temp = *((volatile uint32_t *)reg_addr);
++	rmb();
++
++	return temp;
++}
++
++#define WD_CAPA_PRIV_DATA_SIZE	64
++
++#define alloc_obj(objp) do { \
++	objp = malloc(sizeof(*objp)); \
++	memset(objp, 0, sizeof(*objp)); \
++} while (0)
++
++#define free_obj(objp) do { \
++	if (objp) \
++		free(objp); \
++} while (0)
++
++struct wd_queue {
++	char hw_type[PATH_STR_SIZE];
++	int hw_type_id;
++	void *priv; /* private data used by the drv layer */
++	int fd;
++	int iommu_type;
++	char *dev_path;
++};
++
++extern int wd_request_queue(struct wd_queue *q);
++extern void wd_release_queue(struct wd_queue *q);
++extern int wd_send(struct wd_queue *q, void *req);
++extern int wd_recv(struct wd_queue *q, void **resp);
++extern void wd_flush(struct wd_queue *q);
++extern int wd_recv_sync(struct wd_queue *q, void **resp, __u16 ms);
++extern void *wd_reserve_memory(struct wd_queue *q, size_t size);
++extern int wd_share_reserved_memory(struct wd_queue *q,
++				    struct wd_queue *target_q);
++
++#endif
+diff --git a/samples/warpdrive/wd_adapter.c b/samples/warpdrive/wd_adapter.c
+new file mode 100644
+index 000000000000..5af7254c37a4
+--- /dev/null
++++ b/samples/warpdrive/wd_adapter.c
+@@ -0,0 +1,71 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#include <stdio.h>
++#include <string.h>
++#include <dirent.h>
++
++
++#include "wd_adapter.h"
++#include "./drv/hisi_qm_udrv.h"
++#include "./drv/wd_drv.h"
++
++static struct wd_drv_dio_if hw_dio_tbl[] = { {
++		.hw_type = "hisi_qm_v1",
++		.ss_offset = QM_SS_START,
++		.open = hisi_qm_set_queue_dio,
++		.close = hisi_qm_unset_queue_dio,
++		.send = hisi_qm_add_to_dio_q,
++		.recv = hisi_qm_get_from_dio_q,
++	},
++	/* Add other drivers direct IO operations here */
++};
++
++/* todo: there should be some stable way to match the device and the driver */
++#define MAX_HW_TYPE (sizeof(hw_dio_tbl) / sizeof(hw_dio_tbl[0]))
++
++int drv_open(struct wd_queue *q)
++{
++	int i;
++
++	//todo: try to find another dev if the user driver is not available
++	for (i = 0; i < MAX_HW_TYPE; i++) {
++		if (!strcmp(q->hw_type,
++			hw_dio_tbl[i].hw_type)) {
++			q->hw_type_id = i;
++			return hw_dio_tbl[q->hw_type_id].open(q);
 +		}
- 	}
- 
- 	return 0;
-@@ -161,7 +177,8 @@ static int __init hisi_zip_init(void)
- 
- static void __exit hisi_zip_exit(void)
- {
--	hisi_zip_unregister_from_crypto();
-+	if (!uacce_mode)
-+		hisi_zip_unregister_from_crypto();
- 	pci_unregister_driver(&hisi_zip_pci_driver);
- }
- 
++	}
++	WD_ERR("No matching driver to use!\n");
++	errno = ENODEV;
++	return -ENODEV;
++}
++
++void drv_close(struct wd_queue *q)
++{
++	hw_dio_tbl[q->hw_type_id].close(q);
++}
++
++int drv_send(struct wd_queue *q, void *req)
++{
++	return hw_dio_tbl[q->hw_type_id].send(q, req);
++}
++
++int drv_recv(struct wd_queue *q, void **req)
++{
++	return hw_dio_tbl[q->hw_type_id].recv(q, req);
++}
++
++void drv_flush(struct wd_queue *q)
++{
++	if (hw_dio_tbl[q->hw_type_id].flush)
++		hw_dio_tbl[q->hw_type_id].flush(q);
++}
++
++void *drv_reserve_mem(struct wd_queue *q, size_t size)
++{
++	void *mem = wd_drv_mmap(q, size, hw_dio_tbl[q->hw_type_id].ss_offset);
++
++	if (mem == MAP_FAILED)
++		return NULL;
++
++	return mem;
++}
+diff --git a/samples/warpdrive/wd_adapter.h b/samples/warpdrive/wd_adapter.h
+new file mode 100644
+index 000000000000..914cba86198c
+--- /dev/null
++++ b/samples/warpdrive/wd_adapter.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* the common drv header define the unified interface for wd */
++#ifndef __WD_ADAPTER_H__
++#define __WD_ADAPTER_H__
++
++#include <stdio.h>
++#include <string.h>
++#include <stdlib.h>
++#include <stdint.h>
++#include <unistd.h>
++#include <fcntl.h>
++#include <sys/stat.h>
++#include <sys/ioctl.h>
++#include <sys/mman.h>
++
++
++#include "wd.h"
++
++struct wd_drv_dio_if {
++	char *hw_type;
++	size_t ss_offset;
++	int (*open)(struct wd_queue *q);
++	void (*close)(struct wd_queue *q);
++	int (*send)(struct wd_queue *q, void *req);
++	int (*recv)(struct wd_queue *q, void **req);
++	void (*flush)(struct wd_queue *q);
++};
++
++extern int drv_open(struct wd_queue *q);
++extern void drv_close(struct wd_queue *q);
++extern int drv_send(struct wd_queue *q, void *req);
++extern int drv_recv(struct wd_queue *q, void **req);
++extern void drv_flush(struct wd_queue *q);
++extern void *drv_reserve_mem(struct wd_queue *q, size_t size);
++
++#endif
 -- 
 2.17.1
 
