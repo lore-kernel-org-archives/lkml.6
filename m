@@ -2,461 +2,159 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3A9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:02:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F4FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:09:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66E1921780
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:02:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FnHFGOjh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66E1921780
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C66A721722
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:09:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C66A721722
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729165AbeKLRyO (ORCPT
+        id S1728381AbeKLSBa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 12:54:14 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:36159 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729124AbeKLRyN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 12:54:13 -0500
-Received: by mail-pl1-f195.google.com with SMTP id w24-v6so3952383plq.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 00:02:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=yWAg4gljNrz5fiygCPdoWrW7oKiVUtzBnr6OWGeFQa4=;
-        b=FnHFGOjhzs8MBpnk7iZVFtNm7uoU0h1qcSmyFncyL+fmBR5NpFuG/SMVv7dHh9GimO
-         xtBXNF8segDobhmYNK+0s2WhvTJAZb7LuVMTvwoarbXh8cDxjAYTnApMKhUV43dMegjn
-         KjJh7XqCoILmFE7iL4t65GWY+j0GOabzh/J2A=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=yWAg4gljNrz5fiygCPdoWrW7oKiVUtzBnr6OWGeFQa4=;
-        b=KZ1Z+414I0ddgFXcITU4ll2lV3MSgq5pZRAA3dFfZ8rJCwy8ghRjFZ9AEMIkbkIhzX
-         NfG0rrPZ3KN78lq0B7z5kznQvbFrC9utws+M2vMkRqxDVtkfn4KJuQpbLr6g/ZldLPyv
-         oukkE+DjmANg41CdeeWTNZlCl+E8MhlkIlKxK8BLQiXF/b9eE4F+n7BtkkRHDJLpporZ
-         sYPUKoFeG0Zkr7BFHEy//rOVbZC5QIUqun+t5tSfI9JIVYFerTUOLGhgeaVZ1KSAPhjY
-         OaA+parJSKvDBcmNJBW8w6EwU3MUzAsXpz6q1AJwZ8it/XqPWimgDrv0751xYlx02INS
-         4slg==
-X-Gm-Message-State: AGRZ1gI0pUo6Z1NBNQ+omm4yYfieubc1O+iYijXCzaW9IQWQoeuFuXnJ
-        aMYqS0TYHHrCV9Wn2HR7ti/uQ3WeP8E=
-X-Google-Smtp-Source: AJdET5fLjERUk+38lZQHsiQi2fi6mD+Ivg03DyarvdRA3Am6cVb49Xt+BngeRlf0N3eqGyNQgPgN1g==
-X-Received: by 2002:a17:902:7c94:: with SMTP id y20-v6mr19015205pll.218.1542009729226;
-        Mon, 12 Nov 2018 00:02:09 -0800 (PST)
-Received: from localhost.localdomain (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 134sm13590085pgb.78.2018.11.12.00.02.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 00:02:08 -0800 (PST)
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 2/3] soc: qcom: Add AOSS QMP communication driver
-Date:   Mon, 12 Nov 2018 00:05:56 -0800
-Message-Id: <20181112080557.22698-3-bjorn.andersson@linaro.org>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20181112080557.22698-1-bjorn.andersson@linaro.org>
-References: <20181112080557.22698-1-bjorn.andersson@linaro.org>
+        Mon, 12 Nov 2018 13:01:30 -0500
+Received: from asrmicro.com ([210.13.118.86]:11170 "EHLO mail2012.asrmicro.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727996AbeKLSBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 13:01:30 -0500
+Received: from mail2012.asrmicro.com (10.1.24.123) by mail2012.asrmicro.com
+ (10.1.24.123) with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 12 Nov
+ 2018 16:09:22 +0800
+Received: from mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b]) by
+ mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b%16]) with mapi id
+ 15.00.0847.030; Mon, 12 Nov 2018 16:09:22 +0800
+From:   =?utf-8?B?WmhhbmcgWmhpemhvdSjlvKDmsrvmtLIp?= 
+        <zhizhouzhang@asrmicro.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+CC:     "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "zhizhouzh@gmail.com" <zhizhouzh@gmail.com>
+Subject: RE: [PATCH] ftrace: remove KASAN poison in ftrace_ops_test()
+Thread-Topic: [PATCH] ftrace: remove KASAN poison in ftrace_ops_test()
+Thread-Index: AQHUeY2fKh/JcQ8rO0iswpmZRwo466VKT74AgAFz44A=
+Date:   Mon, 12 Nov 2018 08:09:22 +0000
+Message-ID: <a5c150395e9d4157a1a6cf95fe47bbc9@mail2012.asrmicro.com>
+References: <1541949017-3001-1-git-send-email-zhizhouzhang@asrmicro.com>
+ <20181111173211.q2gzf7h4htxbezch@salmiak>
+In-Reply-To: <20181111173211.q2gzf7h4htxbezch@salmiak>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.1.170.214]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The AOSS QMP driver is used to communicate with the AOSS for certain
-side-channel requests, that are not enabled through the RPMh interface.
-
-The communication is a very simple synchronous mechanism of messages
-being written in message RAM and a doorbell in the AOSS is rung. As the
-AOSS has processed the message length is cleared and an interrupt is
-fired by the AOSS as acknowledgment.
-
-Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
----
- drivers/soc/qcom/Kconfig          |   7 +
- drivers/soc/qcom/Makefile         |   1 +
- drivers/soc/qcom/aoss-qmp.c       | 313 ++++++++++++++++++++++++++++++
- include/linux/soc/qcom/aoss-qmp.h |  12 ++
- 4 files changed, 333 insertions(+)
- create mode 100644 drivers/soc/qcom/aoss-qmp.c
- create mode 100644 include/linux/soc/qcom/aoss-qmp.h
-
-diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
-index a51458022d21..ba08fc00d7f5 100644
---- a/drivers/soc/qcom/Kconfig
-+++ b/drivers/soc/qcom/Kconfig
-@@ -3,6 +3,13 @@
- #
- menu "Qualcomm SoC drivers"
- 
-+config QCOM_AOSS_QMP
-+	tristate "Qualcomm AOSS Messaging Driver"
-+	help
-+	  This driver provides the means for communicating with the
-+	  micro-controller in the AOSS, using QMP, to control certain resource
-+	  that are not exposed through RPMh.
-+
- config QCOM_COMMAND_DB
- 	bool "Qualcomm Command DB"
- 	depends on ARCH_QCOM || COMPILE_TEST
-diff --git a/drivers/soc/qcom/Makefile b/drivers/soc/qcom/Makefile
-index 67cb85d0373c..d0d7fdc94d9a 100644
---- a/drivers/soc/qcom/Makefile
-+++ b/drivers/soc/qcom/Makefile
-@@ -1,5 +1,6 @@
- # SPDX-License-Identifier: GPL-2.0
- CFLAGS_rpmh-rsc.o := -I$(src)
-+obj-$(CONFIG_QCOM_AOSS_QMP) +=	aoss-qmp.o
- obj-$(CONFIG_QCOM_GENI_SE) +=	qcom-geni-se.o
- obj-$(CONFIG_QCOM_COMMAND_DB) += cmd-db.o
- obj-$(CONFIG_QCOM_GLINK_SSR) +=	glink_ssr.o
-diff --git a/drivers/soc/qcom/aoss-qmp.c b/drivers/soc/qcom/aoss-qmp.c
-new file mode 100644
-index 000000000000..acc5677a06ed
---- /dev/null
-+++ b/drivers/soc/qcom/aoss-qmp.c
-@@ -0,0 +1,313 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Copyright (c) 2018, Linaro Ltd
-+ */
-+#include <linux/interrupt.h>
-+#include <linux/io.h>
-+#include <linux/mailbox_client.h>
-+#include <linux/module.h>
-+#include <linux/of_platform.h>
-+#include <linux/platform_device.h>
-+#include <linux/soc/qcom/aoss-qmp.h>
-+#include <linux/wait.h>
-+
-+#define QMP_DESC_MAGIC			0x0
-+#define QMP_DESC_VERSION		0x4
-+#define QMP_DESC_FEATURES		0x8
-+
-+#define QMP_DESC_UCORE_LINK_STATE	0xc
-+#define QMP_DESC_UCORE_LINK_STATE_ACK	0x10
-+#define QMP_DESC_UCORE_CH_STATE		0x14
-+#define QMP_DESC_UCORE_CH_STATE_ACK	0x18
-+#define QMP_DESC_UCORE_MBOX_SIZE	0x1c
-+#define QMP_DESC_UCORE_MBOX_OFFSET	0x20
-+
-+#define QMP_DESC_MCORE_LINK_STATE	0x24
-+#define QMP_DESC_MCORE_LINK_STATE_ACK	0x28
-+#define QMP_DESC_MCORE_CH_STATE		0x2c
-+#define QMP_DESC_MCORE_CH_STATE_ACK	0x30
-+#define QMP_DESC_MCORE_MBOX_SIZE	0x34
-+#define QMP_DESC_MCORE_MBOX_OFFSET	0x38
-+
-+#define QMP_STATE_UP	0x0000ffff
-+#define QMP_STATE_DOWN	0xffff0000
-+
-+#define QMP_MAGIC	0x4d41494c
-+#define QMP_VERSION	1
-+
-+/**
-+ * struct qmp - driver state for QMP implementation
-+ * @msgram: iomem referencing the message RAM used for communication
-+ * @dev: reference to QMP device
-+ * @mbox_client: mailbox client used to ring the doorbell on transmit
-+ * @mbox_chan: mailbox channel used to ring the doorbell on transmit
-+ * @offset: offset within @msgram where messages should be written
-+ * @size: maximum size of the messages to be transmitted
-+ * @event: wait_queue for synchronization with the IRQ
-+ * @tx_lock: provides syncrhonization between multiple callers of qmp_send()
-+ */
-+struct qmp {
-+	void __iomem *msgram;
-+	struct device *dev;
-+
-+	struct mbox_client mbox_client;
-+	struct mbox_chan *mbox_chan;
-+
-+	size_t offset;
-+	size_t size;
-+
-+	wait_queue_head_t event;
-+
-+	struct mutex tx_lock;
-+};
-+
-+static void qmp_kick(struct qmp *qmp)
-+{
-+	mbox_send_message(qmp->mbox_chan, NULL);
-+	mbox_client_txdone(qmp->mbox_chan, 0);
-+}
-+
-+static bool qmp_magic_valid(struct qmp *qmp)
-+{
-+	return readl(qmp->msgram + QMP_DESC_MAGIC) == QMP_MAGIC;
-+}
-+
-+static bool qmp_link_acked(struct qmp *qmp)
-+{
-+	return readl(qmp->msgram + QMP_DESC_MCORE_LINK_STATE_ACK) == QMP_STATE_UP;
-+}
-+
-+static bool qmp_mcore_channel_acked(struct qmp *qmp)
-+{
-+	return readl(qmp->msgram + QMP_DESC_MCORE_CH_STATE_ACK) == QMP_STATE_UP;
-+}
-+
-+static bool qmp_ucore_channel_up(struct qmp *qmp)
-+{
-+	return readl(qmp->msgram + QMP_DESC_UCORE_CH_STATE) == QMP_STATE_UP;
-+}
-+
-+static int qmp_open(struct qmp *qmp)
-+{
-+	int ret;
-+	u32 val;
-+
-+	ret = wait_event_timeout(qmp->event, qmp_magic_valid(qmp), HZ);
-+	if (!ret) {
-+		dev_err(qmp->dev, "QMP magic doesn't match\n");
-+		return -ETIMEDOUT;
-+	}
-+
-+	val = readl(qmp->msgram + QMP_DESC_VERSION);
-+	if (val != QMP_VERSION) {
-+		dev_err(qmp->dev, "unsupported QMP version %d\n", val);
-+		return -EINVAL;
-+	}
-+
-+	qmp->offset = readl(qmp->msgram + QMP_DESC_MCORE_MBOX_OFFSET);
-+	qmp->size = readl(qmp->msgram + QMP_DESC_MCORE_MBOX_SIZE);
-+	if (!qmp->size) {
-+		dev_err(qmp->dev, "invalid mailbox size 0x%zx\n", qmp->size);
-+		return -EINVAL;
-+	}
-+
-+	/* Ack remote core's link state */
-+	val = readl(qmp->msgram + QMP_DESC_UCORE_LINK_STATE);
-+	writel(val, qmp->msgram + QMP_DESC_UCORE_LINK_STATE_ACK);
-+
-+	/* Set local core's link state to up */
-+	writel(QMP_STATE_UP, qmp->msgram + QMP_DESC_MCORE_LINK_STATE);
-+
-+	qmp_kick(qmp);
-+
-+	ret = wait_event_timeout(qmp->event, qmp_link_acked(qmp), HZ);
-+	if (!ret) {
-+		dev_err(qmp->dev, "ucore didn't ack link\n");
-+		goto timeout_close_link;
-+	}
-+
-+	writel(QMP_STATE_UP, qmp->msgram + QMP_DESC_MCORE_CH_STATE);
-+
-+	ret = wait_event_timeout(qmp->event, qmp_ucore_channel_up(qmp), HZ);
-+	if (!ret) {
-+		dev_err(qmp->dev, "ucore didn't open channel\n");
-+		goto timeout_close_channel;
-+	}
-+
-+	/* Ack remote core's channel state */
-+	val = readl(qmp->msgram + QMP_DESC_UCORE_CH_STATE);
-+	writel(val, qmp->msgram + QMP_DESC_UCORE_CH_STATE_ACK);
-+
-+	qmp_kick(qmp);
-+
-+	ret = wait_event_timeout(qmp->event, qmp_mcore_channel_acked(qmp), HZ);
-+	if (!ret) {
-+		dev_err(qmp->dev, "ucore didn't ack channel\n");
-+		goto timeout_close_channel;
-+	}
-+
-+	return 0;
-+
-+timeout_close_channel:
-+	writel(QMP_STATE_DOWN, qmp->msgram + QMP_DESC_MCORE_CH_STATE);
-+
-+timeout_close_link:
-+	writel(QMP_STATE_DOWN, qmp->msgram + QMP_DESC_MCORE_LINK_STATE);
-+	qmp_kick(qmp);
-+
-+	return -ETIMEDOUT;
-+}
-+
-+static void qmp_close(struct qmp *qmp)
-+{
-+	writel(QMP_STATE_DOWN, qmp->msgram + QMP_DESC_MCORE_CH_STATE);
-+	writel(QMP_STATE_DOWN, qmp->msgram + QMP_DESC_MCORE_LINK_STATE);
-+	qmp_kick(qmp);
-+}
-+
-+static irqreturn_t qmp_intr(int irq, void *data)
-+{
-+	struct qmp *qmp = data;
-+
-+	wake_up_interruptible_all(&qmp->event);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static bool qmp_message_empty(struct qmp *qmp)
-+{
-+	return readl(qmp->msgram + qmp->offset) == 0;
-+}
-+
-+/**
-+ * qmp_send() - send a message to the AOSS
-+ * @qmp: qmp context
-+ * @data: message to be sent
-+ * @len: length of the message
-+ *
-+ * Transmit @data to AOSS and wait for the AOSS to acknowledge the message.
-+ * @len must be a multiple of 4 and not longer than the mailbox size. Access is
-+ * synchronized by this implementation.
-+ *
-+ * Return: 0 on success, negative errno on failure
-+ */
-+int qmp_send(struct qmp *qmp, const void *data, size_t len)
-+{
-+	int ret;
-+
-+	if (WARN_ON(len + sizeof(u32) > qmp->size)) {
-+		dev_err(qmp->dev, "message too long\n");
-+		return -EINVAL;
-+	}
-+
-+	if (WARN_ON(len % sizeof(u32))) {
-+		dev_err(qmp->dev, "message not 32-bit aligned\n");
-+		return -EINVAL;
-+	}
-+
-+	mutex_lock(&qmp->tx_lock);
-+
-+	if (!qmp_message_empty(qmp)) {
-+		dev_err(qmp->dev, "mailbox left busy\n");
-+		ret = -EINVAL;
-+		goto out_unlock;
-+	}
-+
-+	/* The message RAM only implements 32-bit accesses */
-+	__iowrite32_copy(qmp->msgram + qmp->offset + sizeof(u32),
-+			 data, len / sizeof(u32));
-+	writel(len, qmp->msgram + qmp->offset);
-+	qmp_kick(qmp);
-+
-+	ret = wait_event_interruptible_timeout(qmp->event,
-+					       qmp_message_empty(qmp), HZ);
-+	if (!ret) {
-+		dev_err(qmp->dev, "ucore did not ack channel\n");
-+		ret = -ETIMEDOUT;
-+
-+		writel(0, qmp->msgram + qmp->offset);
-+	} else {
-+		ret = 0;
-+	}
-+
-+out_unlock:
-+	mutex_unlock(&qmp->tx_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL(qmp_send);
-+
-+static int qmp_probe(struct platform_device *pdev)
-+{
-+	struct resource *res;
-+	struct qmp *qmp;
-+	int irq;
-+	int ret;
-+
-+	qmp = devm_kzalloc(&pdev->dev, sizeof(*qmp), GFP_KERNEL);
-+	if (!qmp)
-+		return -ENOMEM;
-+
-+	qmp->dev = &pdev->dev;
-+	init_waitqueue_head(&qmp->event);
-+	mutex_init(&qmp->tx_lock);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	qmp->msgram = devm_ioremap_resource(&pdev->dev, res);
-+	if (IS_ERR(qmp->msgram))
-+		return PTR_ERR(qmp->msgram);
-+
-+	qmp->mbox_client.dev = &pdev->dev;
-+	qmp->mbox_client.knows_txdone = true;
-+	qmp->mbox_chan = mbox_request_channel(&qmp->mbox_client, 0);
-+	if (IS_ERR(qmp->mbox_chan)) {
-+		dev_err(&pdev->dev, "failed to acquire ipc mailbox\n");
-+		return PTR_ERR(qmp->mbox_chan);
-+	}
-+
-+	irq = platform_get_irq(pdev, 0);
-+	ret = devm_request_irq(&pdev->dev, irq, qmp_intr, IRQF_ONESHOT,
-+			       "aoss-qmp", qmp);
-+	if (ret < 0) {
-+		dev_err(&pdev->dev, "failed to request interrupt\n");
-+		return ret;
-+	}
-+
-+	ret = qmp_open(qmp);
-+	if (ret < 0)
-+		return ret;
-+
-+	platform_set_drvdata(pdev, qmp);
-+
-+	return of_platform_populate(pdev->dev.of_node, NULL, NULL, &pdev->dev);
-+}
-+
-+static int qmp_remove(struct platform_device *pdev)
-+{
-+	struct qmp *qmp = platform_get_drvdata(pdev);
-+
-+	of_platform_depopulate(&pdev->dev);
-+
-+	qmp_close(qmp);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id qmp_dt_match[] = {
-+	{ .compatible = "qcom,sdm845-aoss-qmp", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, qmp_dt_match);
-+
-+static struct platform_driver qmp_driver = {
-+	.driver = {
-+		.name		= "aoss_qmp",
-+		.of_match_table	= qmp_dt_match,
-+	},
-+	.probe = qmp_probe,
-+	.remove	= qmp_remove,
-+};
-+module_platform_driver(qmp_driver);
-+
-+MODULE_DESCRIPTION("Qualcomm AOSS QMP driver");
-+MODULE_LICENSE("GPL v2");
-diff --git a/include/linux/soc/qcom/aoss-qmp.h b/include/linux/soc/qcom/aoss-qmp.h
-new file mode 100644
-index 000000000000..32ccaa091a9f
---- /dev/null
-+++ b/include/linux/soc/qcom/aoss-qmp.h
-@@ -0,0 +1,12 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright (c) 2018, Linaro Ltd
-+ */
-+#ifndef __AOP_QMP_H__
-+#define __AOP_QMP_H__
-+
-+struct qmp;
-+
-+int qmp_send(struct qmp *qmp, const void *data, size_t len);
-+
-+#endif
--- 
-2.18.0
-
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFyayBSdXRsYW5kIFtt
+YWlsdG86bWFyay5ydXRsYW5kQGFybS5jb21dDQo+IFNlbnQ6IE1vbmRheSwgTm92ZW1iZXIgMTIs
+IDIwMTggMTozMiBBTQ0KPiBUbzogWmhhbmcgWmhpemhvdSjlvKDmsrvmtLIpIDx6aGl6aG91emhh
+bmdAYXNybWljcm8uY29tPg0KPiBDYzogcm9zdGVkdEBnb29kbWlzLm9yZzsgbWluZ29AcmVkaGF0
+LmNvbTsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IHpoaXpob3V6aEBnbWFpbC5j
+b20NCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gZnRyYWNlOiByZW1vdmUgS0FTQU4gcG9pc29uIGlu
+IGZ0cmFjZV9vcHNfdGVzdCgpDQo+IA0KPiBPbiBTdW4sIE5vdiAxMSwgMjAxOCBhdCAxMToxMDox
+N1BNICswODAwLCBaaGl6aG91IFpoYW5nIHdyb3RlOg0KPiA+IGZ0cmFjZV9vcHNfdGVzdCgpIHBh
+c3NlZCBsb2NhbCB2YXJpYmxlIHBhcmFtZXRlciB0bw0KPiA+IGhhc2hfY29udGFpbnNfaXAoKSwg
+d2hpY2ggY291bGQgcmVzdWx0IEtBU0FOIHN0YWNrLW91dC1vZi1ib3VuZHMNCj4gd2FybmluZy4N
+Cj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFpoaXpob3UgWmhhbmcgPHpoaXpob3V6aGFuZ0Bhc3Jt
+aWNyby5jb20+DQo+ID4gLS0tDQo+ID4gIGtlcm5lbC90cmFjZS9mdHJhY2UuYyB8IDIgKysNCj4g
+PiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBh
+L2tlcm5lbC90cmFjZS9mdHJhY2UuYyBiL2tlcm5lbC90cmFjZS9mdHJhY2UuYyBpbmRleA0KPiA+
+IGY1MzZmNjAuLjZlMTFmOTAgMTAwNjQ0DQo+ID4gLS0tIGEva2VybmVsL3RyYWNlL2Z0cmFjZS5j
+DQo+ID4gKysrIGIva2VybmVsL3RyYWNlL2Z0cmFjZS5jDQo+ID4gQEAgLTE1MjIsNiArMTUyMiw4
+IEBAIGZ0cmFjZV9vcHNfdGVzdChzdHJ1Y3QgZnRyYWNlX29wcyAqb3BzLCB1bnNpZ25lZA0KPiBs
+b25nIGlwLCB2b2lkICpyZWdzKQ0KPiA+ICAJcmN1X2Fzc2lnbl9wb2ludGVyKGhhc2guZmlsdGVy
+X2hhc2gsIG9wcy0+ZnVuY19oYXNoLT5maWx0ZXJfaGFzaCk7DQo+ID4gIAlyY3VfYXNzaWduX3Bv
+aW50ZXIoaGFzaC5ub3RyYWNlX2hhc2gsIG9wcy0+ZnVuY19oYXNoLQ0KPiA+bm90cmFjZV9oYXNo
+KTsNCj4gPg0KPiA+ICsJa2FzYW5fdW5wb2lzb25fdGFza19zdGFjayhjdXJyZW50KTsNCj4gDQo+
+IFRoaXMgaXMgZXh0cmVtZWx5IGhlYXZ5LWhhbmRlZCwgYW5kIHdpbGwgbWFzayBsZWdpdGltYXRl
+IHN0YWNrLW91dC1vZi0NCj4gYm91bmRzIGVycm9ycy4NCj4gDQpZZXMuIEkgdHJpZWQgdG8gZmlu
+ZCB3YXlzIHRvIG1hcmsgdGhpcyBmdW5jdGlvbiBubyBuZWVkIHRvIHBvaXNvbiwgYnV0IGZhaWxl
+ZC4gTXkgZmlyc3QgdGhvdWdodCB3YXMganVzdCBtYWtlIHRoaXMgZnVuY3Rpb24gbm90IHBvaXNv
+biBpdHMgc3RhY2suDQoNCj4gUGFzc2luZyBhIHN0YWNrLWxvY2FsIHZhcmlhYmxlIGJ5IHJlZmVy
+ZW5jZSAqc2hvdWxkIG5vdCogcmVzdWx0IGluIEtBU0FODQo+IHdhcm5pbmdzIHVubGVzcyBLQVNB
+TiBpdHNlbGYgaXMgYnJva2VuLiBDYW4geW91IHBsZWFzZSBnaXZlIGFuIGV4YW1wbGUNCj4gcmVw
+b3J0IHdoZW4gdGhpcyBvY2N1cnM/DQo+IA0KUGxlYXNlIGV4Y3VzZSBteSBsYWNrIG9mIGtub3ds
+ZWRnZS4gRGlkIHlvdSBtZWFuIGlmIGEgZnVuY3Rpb24gcGFzc2luZyBhIHN0YWNrLWxvY2FsIHZh
+cmlhYmxlIGFzIHBhcmFtZXRlciB0byBhbm90aGVyIGZ1bmN0aW9uLCB0aGUgY29tcGlsZXIgd29u
+J3QgcG9pc29uIHRoZSBzdGFjay1sb2NhbCB2YXJpYWJsZT8NClRoZSBLQVNBTiByZXBvcnQgaXMg
+YmFzZWQgb24gNC40LjE0NSwgSSdtIG5vdCBzdXJlIGZvciB0aGUgbGF0ZXN0IGtlcm5lbDoNCg0K
+YzMgMCAoc3dhcHBlci8zKSA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT0NCmMzIDAgKHN3YXBwZXIvMykgQlVHOiBLQVNBTjog
+c3RhY2stb3V0LW9mLWJvdW5kcyBpbiBoYXNoX2NvbnRhaW5zX2lwLmlzcmEuNCsweDQ0LzB4ZDAN
+CmMzIDAgKHN3YXBwZXIvMykgUmVhZCBvZiBzaXplIDggYXQgYWRkciBmZmZmZmZjMGQyMDRiYzIw
+IGJ5IHRhc2sgc3dhcHBlci8zLzANCmMzIDAgKHN3YXBwZXIvMykgDQpjMyAwIChzd2FwcGVyLzMp
+IENQVTogMyBQSUQ6IDAgQ29tbTogc3dhcHBlci8zIE5vdCB0YWludGVkIDQuNC4xNDUrICMxNjgN
+CmMzIDAgKHN3YXBwZXIvMykgSGFyZHdhcmUgbmFtZTogQVNSIEFRVUlMQUMgRVZCIChEVCkNCmMz
+IDAgKHN3YXBwZXIvMykgQ2FsbCB0cmFjZToNCmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4
+MDkxYTUwPl0gZHVtcF9iYWNrdHJhY2UrMHgwLzB4NDE4DQpjMyAwIChzd2FwcGVyLzMpIFs8ZmZm
+ZmZmOTAwODA5MWU5MD5dIHNob3dfc3RhY2srMHgyOC8weDM4DQpjMyAwIChzd2FwcGVyLzMpIFs8
+ZmZmZmZmOTAwODYyNTNhND5dIGR1bXBfc3RhY2srMHhlOC8weDEzYw0KYzMgMCAoc3dhcHBlci8z
+KSBbPGZmZmZmZjkwMDgzMWMxNWM+XSBwcmludF9hZGRyZXNzX2Rlc2NyaXB0aW9uKzB4OGMvMHgy
+YjANCmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MzFjNjg4Pl0ga2FzYW5fcmVwb3J0KzB4
+MjEwLzB4MzMwDQpjMyAwIChzd2FwcGVyLzMpIFs8ZmZmZmZmOTAwODMxYWJhND5dIF9fYXNhbl9s
+b2FkOCsweDg0LzB4OTgNCmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MjFhNjk0Pl0gaGFz
+aF9jb250YWluc19pcC5pc3JhLjQrMHg0NC8weGQwDQpjMyAwIChzd2FwcGVyLzMpIFs8ZmZmZmZm
+OTAwODIxYTdjOD5dIGZ0cmFjZV9vcHNfdGVzdC5pc3JhLjUrMHhhOC8weGUwDQpjMyAwIChzd2Fw
+cGVyLzMpIFs8ZmZmZmZmOTAwODIyMzljYz5dIGZ0cmFjZV9vcHNfbm9fb3BzKzB4ZGMvMHgyMTgN
+CmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MGExZDBjPl0gZnRyYWNlX2dyYXBoX2NhbGwr
+MHgwLzB4MTQNCmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MDlhZmJjPl0gc2NhbGVfY3B1
+X2NhcGFjaXR5KzB4MjQvMHg3MA0KYzMgMCAoc3dhcHBlci8zKSBbPGZmZmZmZjkwMDgxM2FkYTA+
+XSBzeW5jX2VudGl0eV9sb2FkX2F2ZysweGIwLzB4NGMwDQpjMyAwIChzd2FwcGVyLzMpIFs8ZmZm
+ZmZmOTAwODEzYjFkYz5dIHJlbW92ZV9lbnRpdHlfbG9hZF9hdmcrMHgyYy8weDgwDQpjMyAwIChz
+d2FwcGVyLzMpIFs8ZmZmZmZmOTAwODEzYjI1MD5dIHRhc2tfZGVhZF9mYWlyKzB4MjAvMHgzMA0K
+YzMgMCAoc3dhcHBlci8zKSBbPGZmZmZmZjkwMDgxMTE2OWM+XSBmaW5pc2hfdGFza19zd2l0Y2gr
+MHgxZjQvMHgyYTANCmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA5MmRlYjk0Pl0gX19zY2hl
+ZHVsZSsweDRjYy8weGU4MA0KYzMgMCAoc3dhcHBlci8zKSBbPGZmZmZmZjkwMDkyZGY4MjA+XSBz
+Y2hlZHVsZSsweDcwLzB4MTEwDQpjMyAwIChzd2FwcGVyLzMpIFs8ZmZmZmZmOTAwOTJkZmJkYz5d
+IHNjaGVkdWxlX3ByZWVtcHRfZGlzYWJsZWQrMHgyNC8weDcwDQpjMyAwIChzd2FwcGVyLzMpIFs8
+ZmZmZmZmOTAwODE1MWRjOD5dIGNwdV9zdGFydHVwX2VudHJ5KzB4MTk4LzB4NTM4DQpjMyAwIChz
+d2FwcGVyLzMpIFs8ZmZmZmZmOTAwODA5OWYzOD5dIHNlY29uZGFyeV9zdGFydF9rZXJuZWwrMHgy
+NTgvMHgyZjANCmMzIDAgKHN3YXBwZXIvMykgWzwwMDAwMDAwMTAzMmU4MDNjPl0gMHgxMDMyZTgw
+M2MNCmMzIDAgKHN3YXBwZXIvMykgDQpjMyAwIChzd2FwcGVyLzMpIFRoZSBidWdneSBhZGRyZXNz
+IGJlbG9uZ3MgdG8gdGhlIHBhZ2U6DQpjMyAwIChzd2FwcGVyLzMpIHBhZ2U6ZmZmZmZmYmRjMzQ4
+MTJjMCBjb3VudDowIG1hcGNvdW50OjAgbWFwcGluZzogICAgICAgICAgKG51bGwpIGluZGV4OjB4
+MA0KYzMgMCAoc3dhcHBlci8zKSBmbGFnczogMHgwKCkNCmMzIDAgKHN3YXBwZXIvMykgcGFnZSBk
+dW1wZWQgYmVjYXVzZToga2FzYW46IGJhZCBhY2Nlc3MgZGV0ZWN0ZWQNCmMzIDAgKHN3YXBwZXIv
+MykgDQpjMyAwIChzd2FwcGVyLzMpIE1lbW9yeSBzdGF0ZSBhcm91bmQgdGhlIGJ1Z2d5IGFkZHJl
+c3M6DQpjMyAwIChzd2FwcGVyLzMpICBmZmZmZmZjMGQyMDRiYjAwOiAwMCAwMCAwMCAwMCAwMCAw
+MCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMA0KYzMgMCAoc3dhcHBlci8zKSAgZmZmZmZm
+YzBkMjA0YmI4MDogMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgZjEgZjEgZjEg
+ZjENCmMzIDAgKHN3YXBwZXIvMykgPmZmZmZmZmMwZDIwNGJjMDA6IGYxIGYxIGYxIGYxIGYzIGYz
+IGYzIGYzIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwDQpjMyAwIChzd2FwcGVyLzMpICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICBeDQpjMyAwIChzd2FwcGVyLzMpICBmZmZmZmZjMGQyMDRi
+YzgwOiAwMCAwMCAwMCAwMCAwMCAwMCBmMiBmMiAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMA0KYzMg
+MCAoc3dhcHBlci8zKSAgZmZmZmZmYzBkMjA0YmQwMDogMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAg
+MDAgMDAgMDAgMDAgMDAgMDAgMDAgMDANCmMzIDAgKHN3YXBwZXIvMykgPT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQpjMyAx
+IChpbml0KSBpbml0OiBVbnRyYWNrZWQgcGlkIDMxMDMga2lsbGVkIGJ5IHNpZ25hbCAxNA0KYzQg
+OTcyIChzeXotZXhlY3V0b3IpIGFzci13ZHQgZDQwODAwMDAud2F0Y2hkb2c6IGZlZWQgYXNyX3dk
+dChzb2Nfd2R0KS4NCmM1IDQzMSAoa3dvcmtlci91MTY6OCkgQzBfREZDOiBUaW1lIDExNzUxMDk4
+NzQ5MiAoMTI0OCAtPiAxNjAwKTsNCmM1IDQzMSAoa3dvcmtlci91MTY6OCkgQzBfREZDOiBUaW1l
+IDExNzU4MjM1ODc5OSAoMTYwMCAtPiAxMjQ4KTsNCmM1IDQzMSAoa3dvcmtlci91MTY6OCkgQzFf
+REZDOiBUaW1lIDUxMTMzNjU2MjcwICgxOTAwIC0+IDEyNDgpOw0KYzUgNDMxIChrd29ya2VyL3Ux
+Njo4KSBDMV9ERkM6IFRpbWUgNTExMzM4NjQ0NjIgKDEyNDggLT4gMTYwMCk7DQpjNSA0MzEgKGt3
+b3JrZXIvdTE2OjgpIEREUl9ERkM6IFRpbWUgMCAoMCAtPiAwKTsNCmM1IDQzMSAoa3dvcmtlci91
+MTY6OCkgRERSX0RGQzogVGltZSAwICgwIC0+IDApOw0KYzUgNDMxIChrd29ya2VyL3UxNjo4KSBD
+TEs6ICAgICAgR1BVKDMxMjAwMDAwMCwgMCk7VlBVKDgzMjAwMDAwMCwgMCk7SVNQKDMxMjAwMDAw
+MCwgMCk7DQpjNSA0MzEgKGt3b3JrZXIvdTE2OjgpIERWQzogICAgICBjbHN0MCgxMSk7IGNsc3Qx
+KDExKTsgbTIoMTEpOyBwZXJpKDEpOyBkMXAoMSk7DQpjNSA0MzEgKGt3b3JrZXIvdTE2OjgpIFRl
+bXA6ICAgICBjcHUoODIwMDApOyBncHUoNjQwMDApOyBkZHIoNjgwMDApOyBsb2NhbCg2NDAwMCk7
+IGJhdHRlcnkoMCk7IHBtaWMoMCkNCmM1IDQzMSAoa3dvcmtlci91MTY6OCkgQmF0dGVyeTogIHNv
+Yyg1NzY0OCk7IGlfYmF0dGVyeSgtOTQxNTU2KTsNCmM1IDQzMSAoa3dvcmtlci91MTY6OCkgODhw
+bTg4eC1iYXR0ZXJ5IDg4cG04OHgtYmF0dGVyeTogbD04MCUgdj0zOTU3bVYgdDA9MjVDIHQxPTBD
+IGM9LTk0MW1BIHN0PVVOS05PV04gb2N2PTANCg0KPiBXaGljaCBjb21waWxlciBhcmUgeW91IHVz
+aW5nPw0KPiANCkknbSB1c2luZyBnY2MgNy4xLjA6IGFhcmNoNjQtbGludXgtZ251LWdjYyAoR0ND
+KSA3LjEuMC4NCg0KPiBUaGFua3MsDQo+IE1hcmsuDQo+IA0KPiA+ICsNCj4gPiAgCWlmIChoYXNo
+X2NvbnRhaW5zX2lwKGlwLCAmaGFzaCkpDQo+ID4gIAkJcmV0ID0gMTsNCj4gPiAgCWVsc2UNCj4g
+PiAtLQ0KPiA+IDIuNy40DQo+ID4NCg==
