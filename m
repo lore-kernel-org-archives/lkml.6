@@ -2,207 +2,239 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 243F8C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:43:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D1CE6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:45:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFA222243E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:43:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PXJOw6CB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFA222243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 9797022504
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:45:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9797022504
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730063AbeKMDiF (ORCPT
+        id S1730155AbeKMDjg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:38:05 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:43483 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727185AbeKMDiF (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:38:05 -0500
-Received: by mail-qk1-f195.google.com with SMTP id r71so14745563qkr.10;
-        Mon, 12 Nov 2018 09:43:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=A8F3CijJUA2+Qc/Xz0eBd1Bn4aYzhA5i2RbZ6IfAcSw=;
-        b=PXJOw6CBFBR8qVxowUk8dvqH4M8g8iUyxpGToqggfuZGoKUl2FG6qLtzr8VxqA8MOI
-         uBbtlvAje/A+59nk1tQ+NarA590c7SPG00fyiC5hpQIDyyQWgQBFFrrnKlEtl3blLFZP
-         2pIYrwmPhzjciwgmyv0Ax7+cCgVguW0ke8S06cw2cxnbkmyLrhezgikjeE44QPwauo/S
-         FNKnHTZSG1i+HzFYY5cOISzyzoBND1HznUO2J5X3eCE+3INFzKNlzOArbQ+ojsSLJvOO
-         /1eewWn8h1Y6pUmC2144fwdix3KT/gplKZ14Y0nIO3T4a0pp8Fkv+eoGwplqHPjlpRP4
-         K10Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=A8F3CijJUA2+Qc/Xz0eBd1Bn4aYzhA5i2RbZ6IfAcSw=;
-        b=NyqQJdneN4Q0jSvqxd2fn/01NHPV5qBQcs/plHQ3nciR+GiRSLKV0+pBKkFmzC6Ck9
-         5bvXYyXVkc5KUZUOA0eIVVlCcvl1cXnQmjf/U7XAZ0iL61kXfHxsNWhgwqcIIUZFWDGZ
-         b0NkefLvWba3i7Md81Yt4prX7W5ymP/biHU/Drp0Snn4XpftTKqJOgA53D3ppRwPb31u
-         N3vuSwFeBuGdU3ukf8flMz6lXerFM9z1jL9c+rr/7HzOnhlRXVF064DO1AmSmp6YpYgd
-         Vy4LCwmKKCMHrgYoVlAcvamLNaLQ8c9ClEYSqIpr+1BK59rDbFemNm787v+vxc8ofmoD
-         Cscw==
-X-Gm-Message-State: AGRZ1gJ3Mw4PD0nXfaW+kdHJ/5KkRophBCi79DAp4bojmtuqhb0yr5Fq
-        y4vjxWZd09ZRVW9m99Y8oA==
-X-Google-Smtp-Source: AJdET5d1UrQ/Xf6QqMjT79bsFxg0bG7OZpuSPB3jJ3QFiXB83mJ1KPm6bvyKZICXm+pr7FRC1vFkZg==
-X-Received: by 2002:ac8:4055:: with SMTP id j21mr1798025qtl.389.1542044630376;
-        Mon, 12 Nov 2018 09:43:50 -0800 (PST)
-Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id q36-v6sm10976228qte.94.2018.11.12.09.43.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Nov 2018 09:43:50 -0800 (PST)
-Date:   Mon, 12 Nov 2018 12:43:44 -0500
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
-        bp@alien8.de, tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v11 3/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
- cmdlien from kexec
-Message-ID: <20181112174343.mvjri2okwboew2nw@gabell>
-References: <20181112094645.4879-1-fanc.fnst@cn.fujitsu.com>
- <20181112094645.4879-4-fanc.fnst@cn.fujitsu.com>
+        Mon, 12 Nov 2018 22:39:36 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:54402 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727185AbeKMDjg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 22:39:36 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 66916208A0; Mon, 12 Nov 2018 18:45:19 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CBAD4206D8;
+        Mon, 12 Nov 2018 18:45:18 +0100 (CET)
+Date:   Mon, 12 Nov 2018 18:45:18 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Miquel Raynal <miquel.raynal@bootlin.com>
+Cc:     Liang Yang <liang.yang@amlogic.com>, Rob Herring <robh@kernel.org>,
+        Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        linux-kernel@vger.kernel.org, Marek Vasut <marek.vasut@gmail.com>,
+        Jian Hu <jian.hu@amlogic.com>, linux-mtd@lists.infradead.org,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        linux-amlogic@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+Subject: Re: [PATCH v6 2/2] mtd: rawnand: meson: add support for Amlogic
+ NAND flash controller
+Message-ID: <20181112184518.6c02ac6d@bbrezillon>
+In-Reply-To: <20181112175416.247e3203@bbrezillon>
+References: <1541090542-19618-1-git-send-email-jianxin.pan@amlogic.com>
+ <1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com>
+ <20181105165321.7ea2b45f@bbrezillon>
+ <a571904e-6296-bf62-e1fe-e25bf90040bb@amlogic.com>
+ <20181106102851.61deb97a@bbrezillon>
+ <ff02373e-c97b-182d-5b43-83d1e8f6d51a@amlogic.com>
+ <20181106112206.65a70a81@bbrezillon>
+ <20181112171351.4ac3506b@xps13>
+ <20181112175416.247e3203@bbrezillon>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112094645.4879-4-fanc.fnst@cn.fujitsu.com>
-User-Agent: NeoMutt/20180716
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
+On Mon, 12 Nov 2018 17:54:16 +0100
+Boris Brezillon <boris.brezillon@bootlin.com> wrote:
 
-On Mon, Nov 12, 2018 at 05:46:43PM +0800, Chao Fan wrote:
-> Imitate setup_acpi_rsdp() for the early_param of 'acpi_rsdp'.
-> KEXEC writes the RSDP pointer to cmdline for EFI booting.
-> So if 'acpi_rsdp' found in cmdline, use it directely.
+> +Wolfram to give some inputs on the DMA issue.
 > 
-
-> Since function kstrtoull() is needed, include it in
-> arch/x86/boot/string.h. To solve the definition conflict
-> problem, set BOOT_STRING tag to expose only kstrtoull() and
-> functions used by it. Other functions in lib/kstrtox.c will
-> be covered.
-
-How about the following get_acpi_rsdp()...? It doesn't use kstrtoull().
-
-static void get_acpi_rsdp(acpi_physical_address *rsdp_addr)
-{
-#ifdef CONFIG_KEXEC
-        unsigned long addr;
-        char val[32];
-
-        if (cmdline_find_option("acpi_rsdp", val, sizeof(val)) > 0) {
-                char *e;
-
-                if (!strncmp(val, "0x", 2)) {
-                        addr = simple_strtoull(val + 2, &e, 16);
-                        if ((addr == 0) || ((val + 2) == e))
-                                return;
-                        *rsdp_addr = (acpi_physical_address)addr;
-                }
-        }
-#endif
-}
-
-Thanks,
-Masa
-
+> On Mon, 12 Nov 2018 17:13:51 +0100
+> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 > 
-> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
-> ---
->  arch/x86/boot/compressed/acpitb.c | 26 ++++++++++++++++++++++++++
->  arch/x86/boot/string.h            |  4 ++++
->  lib/kstrtox.c                     |  4 ++++
->  3 files changed, 34 insertions(+)
+> > Hello,
+> > 
+> > Boris Brezillon <boris.brezillon@bootlin.com> wrote on Tue, 6 Nov 2018
+> > 11:22:06 +0100:
+> >   
+> > > On Tue, 6 Nov 2018 18:00:37 +0800
+> > > Liang Yang <liang.yang@amlogic.com> wrote:
+> > >     
+> > > > On 2018/11/6 17:28, Boris Brezillon wrote:      
+> > > > > On Tue, 6 Nov 2018 17:08:00 +0800
+> > > > > Liang Yang <liang.yang@amlogic.com> wrote:
+> > > > >         
+> > > > >> On 2018/11/5 23:53, Boris Brezillon wrote:        
+> > > > >>> On Fri, 2 Nov 2018 00:42:21 +0800
+> > > > >>> Jianxin Pan <jianxin.pan@amlogic.com> wrote:
+> > > > >>>            
+> > > > >>>> +
+> > > > >>>> +static inline u8 meson_nfc_read_byte(struct mtd_info *mtd)
+> > > > >>>> +{
+> > > > >>>> +	struct nand_chip *nand = mtd_to_nand(mtd);
+> > > > >>>> +	struct meson_nfc *nfc = nand_get_controller_data(nand);
+> > > > >>>> +	u32 cmd;
+> > > > >>>> +
+> > > > >>>> +	cmd = nfc->param.chip_select | NFC_CMD_DRD | 0;
+> > > > >>>> +	writel(cmd, nfc->reg_base + NFC_REG_CMD);
+> > > > >>>> +
+> > > > >>>> +	meson_nfc_drain_cmd(nfc);        
+> > > > >>>
+> > > > >>> You probably don't want to drain the FIFO every time you read a byte on
+> > > > >>> the bus, and I guess the INPUT FIFO is at least as big as the CMD
+> > > > >>> FIFO, right? If that's the case, you should queue as much DRD cmd as
+> > > > >>> possible and only sync when the user explicitly requests it or when
+> > > > >>> the INPUT/READ FIFO is full.
+> > > > >>>            
+> > > > >> Register 'NFC_REG_BUF' can holds only 4 bytes, also DRD sends only one
+> > > > >> nand cycle to read one byte and covers the 1st byte every time reading.
+> > > > >> i think nfc controller is faster than nand cycle, but really it is not
+> > > > >> high efficiency when reading so many bytes once.
+> > > > >> Or use dma command here like read_page and read_page_raw.        
+> > > > > 
+> > > > > Yep, that's also an alternative, though you'll have to make sure the
+> > > > > buffer passed through the nand_op_inst is DMA-safe, and use a bounce
+> > > > > buffer when that's not the case.
+> > > > >         
+> > > > ok, i will try dma here.      
+> > > 
+> > > We should probably expose the bounce buf handling as generic helpers at
+> > > the rawnand level:
+> > > 
+> > > void *nand_op_get_dma_safe_input_buf(struct nand_op_instr *instr)
+> > > {
+> > > 	void *buf;
+> > > 
+> > > 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR))
+> > > 		return NULL;
+> > > 
+> > > 	if (virt_addr_valid(instr->data.in) &&
+> > > 	    !object_is_on_stack(instr->data.buf.in))
+> > > 		return instr->data.buf.in;
+> > > 
+> > > 	return kzalloc(instr->data.len, GFP_KERNEL);
+> > > }
+> > > 
+> > > void nand_op_put_dma_safe_input_buf(struct nand_op_instr *instr,
+> > > 				    void *buf)
+> > > {
+> > > 	if (WARN_ON(instr->type != NAND_OP_DATA_IN_INSTR) ||
+> > > 	    WARN_ON(!buf))
+> > > 		return;
+> > > 
+> > > 	if (buf == instr->data.buf.in)
+> > > 		return;
+> > > 
+> > > 	memcpy(instr->data.buf.in, buf, instr->data.len);
+> > > 	kfree(buf);
+> > > }
+> > > 
+> > > const void *nand_op_get_dma_safe_output_buf(struct nand_op_instr *instr)
+> > > {
+> > > 	void *buf;
+> > > 
+> > > 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR))
+> > > 		return NULL;
+> > > 
+> > > 	if (virt_addr_valid(instr->data.out) &&
+> > > 	    !object_is_on_stack(instr->data.buf.out))
+> > > 		return instr->data.buf.out;
+> > > 
+> > > 	return kmemdup(instr->data.buf.out, GFP_KERNEL);
+> > > }
+> > > 
+> > > void nand_op_put_dma_safe_output_buf(struct nand_op_instr *instr,
+> > > 				    void *buf)
+> > > {
+> > > 	if (WARN_ON(instr->type != NAND_OP_DATA_OUT_INSTR) ||
+> > > 	    WARN_ON(!buf))
+> > > 		return;
+> > > 
+> > > 	if (buf != instr->data.buf.out)
+> > > 		kfree(buf);
+> > > }    
+> > 
+> > Not that I am against such function, but maybe they should come with
+> > comments stating that there is no reliable way to find if a buffer is
+> > DMA-able at runtime and these are just sanity checks (ie. required, but
+> > probably not enough).  
 > 
-> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
-> index 50fa65cf824d..5cfb4efa5a19 100644
-> --- a/arch/x86/boot/compressed/acpitb.c
-> +++ b/arch/x86/boot/compressed/acpitb.c
-> @@ -8,6 +8,12 @@
->  #include <linux/numa.h>
->  #include <linux/acpi.h>
->  
-> +#define STATIC
-> +#include <linux/decompress/mm.h>
-> +
-> +#define BOOT_STRING
-> +#include "../string.h"
-> +
->  /* Search EFI table for RSDP table. */
->  static void efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
->  {
-> @@ -200,3 +206,23 @@ static void bios_get_rsdp_addr(acpi_physical_address *rsdp_addr)
->  		*rsdp_addr = (acpi_physical_address)address;
->  	}
->  }
-> +
-> +static void get_acpi_rsdp(acpi_physical_address *rsdp_addr)
-> +{
-> +#ifdef CONFIG_KEXEC
-> +	unsigned long long res;
-> +	int len = 0;
-> +	char *val;
-> +
-> +	val = malloc(19);
-> +	len = cmdline_find_option("acpi_rsdp", val, 19);
-> +
-> +	if (len == -1)
-> +		return;
-> +
-> +	if (len > 0) {
-> +		val[len] = 0;
-> +		*rsdp_addr = (acpi_physical_address)kstrtoull(val, 16, &res);
-> +	}
-> +#endif
-> +}
-> diff --git a/arch/x86/boot/string.h b/arch/x86/boot/string.h
-> index 3d78e27077f4..0ff3edb888e4 100644
-> --- a/arch/x86/boot/string.h
-> +++ b/arch/x86/boot/string.h
-> @@ -30,3 +30,7 @@ extern unsigned long long simple_strtoull(const char *cp, char **endp,
->  					  unsigned int base);
->  
->  #endif /* BOOT_STRING_H */
-> +
-> +#ifdef BOOT_STRING
-> +#include "../../../lib/kstrtox.c"
-> +#endif
-> diff --git a/lib/kstrtox.c b/lib/kstrtox.c
-> index 1006bf70bf74..3804db9eed56 100644
-> --- a/lib/kstrtox.c
-> +++ b/lib/kstrtox.c
-> @@ -126,6 +126,8 @@ int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
->  }
->  EXPORT_SYMBOL(kstrtoull);
->  
-> +#ifndef BOOT_STRING
-> +
->  /**
->   * kstrtoll - convert a string to a long long
->   * @s: The start of the string. The string must be null-terminated, and may also
-> @@ -408,3 +410,5 @@ kstrto_from_user(kstrtou16_from_user,	kstrtou16,	u16);
->  kstrto_from_user(kstrtos16_from_user,	kstrtos16,	s16);
->  kstrto_from_user(kstrtou8_from_user,	kstrtou8,	u8);
->  kstrto_from_user(kstrtos8_from_user,	kstrtos8,	s8);
-> +
-> +#endif
-> -- 
-> 2.19.1
+> It's not 100% reliable, but it should cover most cases. Note that the
+> NAND framework already uses virt_addr_valid() to decide when to use its
+> internal bounce buffer, so this should be fixed too if we want a fully
+> reliable solution.
 > 
+> > This is my understanding of Wolfram's recent talk
+> > at ELCE [1].  
 > 
+> Yes, you're right, but the NAND framework does not provide any guarantee
+> on the buf passed to ->exec_op() simply because the MTD layer does not
+> provide such a guarantee. Reworking that to match how the i2c framework
+> handles it is possible (with a flag set when the buffer is known to be
+> DMA-safe), but it requires rewriting all MTD users if we want to keep
+> decent perfs (the amount of data transfered to a flash is an order of
+> magnitude bigger than what you usually receive/send from/to an I2C
+> device). Also, I'm not even sure the DMA_SAFE flag covers all weird
+> cases like the "DMA engine embedded in the controller is not able to
+> access the whole physical memory range" one.
+
+I forgot that this problem was handled at dma_map time (a bounce
+buffer is allocated if needed, and this decision is based on
+dev->dma_mask).
+
+> So ideally we should have
+> something that checks if a pointer is DMA-safe at the device level and
+> then at the arch level.
 > 
+> A temporary solution would be to add a hook at the nand_controller
+> level:
+> 
+> 	bool (*buf_is_dma_safe)(struct nand_chip *chip, void *buf,
+> 				size_t len);
+> 
+> And then fallback to the default implementation when it's not
+> implemented:
+> 
+> static bool nand_buf_is_dma_safe(struct nand_chip *chip, void *buf,
+> 				 size_t len)
+> {
+> 	if (chip->controller->ops && chip->controller->ops->is_dma_safe)
+> 		return chip->controller->ops->is_dma_safe(chip, buf,
+> 							  len);
+> 
+> 	return virt_addr_valid(buf) && !object_is_on_stack(buf);
+> }
+> 
+> > I suppose using the CONFIG_DMA_API_DEBUG option could help
+> > more reliably to find such issues.  
+> 
+> Actually, the problem is not only about detecting offenders but being
+> able to detect when a buffer is not DMA-safe at runtime in order to
+> allocate/use a bounce buffer.
+
