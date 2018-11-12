@@ -7,172 +7,144 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7385DC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:05:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C52A8C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:06:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2AF3E223D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:05:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8DA43223D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:06:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GRXN5GyZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2AF3E223D8
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YPqVVcT1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DA43223D8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729217AbeKLU62 (ORCPT
+        id S1729325AbeKLU6s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 15:58:28 -0500
-Received: from mail-io1-f65.google.com ([209.85.166.65]:37854 "EHLO
-        mail-io1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728394AbeKLU62 (ORCPT
+        Mon, 12 Nov 2018 15:58:48 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:37658 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729248AbeKLU6s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 15:58:28 -0500
-Received: by mail-io1-f65.google.com with SMTP id c6-v6so4939741iok.4
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 03:05:42 -0800 (PST)
+        Mon, 12 Nov 2018 15:58:48 -0500
+Received: by mail-it1-f196.google.com with SMTP id j79-v6so12581719itb.2
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 03:06:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=4jtXtR41UkigQ8glqAfYCztzz/U6KcjZmXCIwgGfBGo=;
-        b=GRXN5GyZpUZwAEb0iXAmMLs6lZ71A+pZT0LvybRXVIFIJHFK7OOow14+EWCdLH4K4X
-         Di/R6N9v3I/8wI3cSyv8KtTYkowLFjMJY4VdSETU0EgLHQEzZ88Uj9NZYCTZu9m8X+Or
-         C7xVhCtAY+2EQMddmzAz9MF4CoM3VvMVQKu9s=
+        bh=vKlOBiuFbIol/qgBBWZ68+LA2QXtyJLGRQ4ZpHNWM4Y=;
+        b=YPqVVcT1egygCplqeF/iHDVXsJrK5uBHUWvwI+Wuwq/oAHrme7KMKkzyrPLbgiTJR0
+         tSpnoVuBkM7umtPZyqvN+COz1Mn9KvEbC6nY1zDNPwSyMYpWOWwtLSthK/f4C8uJiLX5
+         RrTn3uqJpMlu5G3a0IDiheGViutYdwxk03eqQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=4jtXtR41UkigQ8glqAfYCztzz/U6KcjZmXCIwgGfBGo=;
-        b=bbPUYoiNC1zm+a8HElUl+8j6gZAIHRs28bs4VePdEg4HSV2zVMhs+N59Msr78zosuk
-         CAVqcgdvVFtsNmkl0TSlwK0MXV4R+64wo8l1kUzY3XnTB4rFv8L2AFsRLdo0Bu22+Gm7
-         vOw4zDRYalQaGg8Jh/KqgvNc3cyiKQRKk9tz3IStcu/0qZZR6sVStE9m9DfwOT7H5Qzz
-         scyc/NlH5ZQiJLpNkgsNJl/tgyi4AmvSJnHCcFXu7UOyW6rm4I46xMtyL1iggsZFVlfw
-         xlNS0IMU/1YSl6kBQneMdTIa0Nw8k+mL16g8FN7SpfRamkNS1sIqP47b+qlhrBUgrg2w
-         YTyg==
-X-Gm-Message-State: AGRZ1gK1DvHvMt5aoFsG7osnEvKIAla4TbOtRTyUqld84qrzLF7VxEQ4
-        4ApBcUxRQRa5oKWGzMEh3DcqKazsDb2TgpGHa4l4mw==
-X-Google-Smtp-Source: AJdET5fqbZXfxbPNSD6WNXCSCwalA7csAW4eqLO1qU1DQ+/BlcCDrPv9znd0BGUthpat4qYXOEHJVv+RIxHS/5fk83c=
-X-Received: by 2002:a6b:2c92:: with SMTP id s140mr321414ios.218.1542020742064;
- Mon, 12 Nov 2018 03:05:42 -0800 (PST)
+        bh=vKlOBiuFbIol/qgBBWZ68+LA2QXtyJLGRQ4ZpHNWM4Y=;
+        b=U6yWBr/f1Ae/cqhb9TPZIhhMKzncDHD2lh8/dp0m+thgMRYe24DJ5SKp9t3jWpiH+x
+         ohRJOM6oVN2W9+Xe4Fk1CfOe1ne7xxnC36X67Q4VU+01MgkLmhzWQYFTAn1rGAKd3g26
+         tii4gH5gb6IX+CxinNCnBelWCLIgQHJKPGVCwjPgeUgKJzXeoTFqL8nEzE4hpCfcvgca
+         1O25hLeTdLqKCkYkLVCElKycIkKfA9UV8hZ3yW5GFAuWdxc3dPkPc/YefytLA5qn7e38
+         FcTHO2zsfoeM8mRg/DZvp1WeNg6c6irAvKRUvIPn8AIV/kTYSW1ykj/cgO8AShXsMC0Y
+         G1tQ==
+X-Gm-Message-State: AGRZ1gL5Y+dL/EZ44tvpTrohbUa0p+Edcr/AqnEOqOWDzYfqUHBbQ8NM
+        dlJMG/FwGdPCu6WSH2sddH7f9ameABioePNPjDQorg==
+X-Google-Smtp-Source: AJdET5cihoir0iVH8+cz9ioa5GhqOhFchHx1OTU6U9QR6GJKZljH+Fzfoa+EJYLIs4/FJAzPlIre/xqz+Z/WemA/gAw=
+X-Received: by 2002:a05:660c:206:: with SMTP id y6mr5911841itj.157.1542020762377;
+ Mon, 12 Nov 2018 03:06:02 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a02:38d:0:0:0:0:0 with HTTP; Mon, 12 Nov 2018 03:05:01 -0800 (PST)
-In-Reply-To: <20181029221701.51376-1-rajatja@google.com>
-References: <CAA93t1oaZ5zkv+BsGnYZg6pqKv0DzXi3j8oZHUyTyffUWHtHug@mail.gmail.com>
- <20181029221701.51376-1-rajatja@google.com>
+Received: by 2002:a02:38d:0:0:0:0:0 with HTTP; Mon, 12 Nov 2018 03:05:21 -0800 (PST)
+In-Reply-To: <1540433556-12261-1-git-send-email-zhang.chunyan@linaro.org>
+References: <1540368084-32202-1-git-send-email-zhang.chunyan@linaro.org> <1540433556-12261-1-git-send-email-zhang.chunyan@linaro.org>
 From:   Ulf Hansson <ulf.hansson@linaro.org>
-Date:   Mon, 12 Nov 2018 12:05:01 +0100
-Message-ID: <CAPDyKFpqzpxUzZe-ekfwg1Nqeg1RFB1bdbSNwrGPwtfNds4p0w@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: sdhci-pci: Try "cd" for card-detect lookup before
- using NULL
-To:     Rajat Jain <rajatja@google.com>
+Date:   Mon, 12 Nov 2018 12:05:21 +0100
+Message-ID: <CAPDyKFppgnbiGfYibi93bDMfyrC0ry=G-TcgAZ+QzXZXOAjPCQ@mail.gmail.com>
+Subject: Re: [PATCH] mmc: sdhci: Convert sdhci_allocate_bounce_buffer() to
+ return void
+To:     Chunyan Zhang <zhang.chunyan@linaro.org>
 Cc:     Adrian Hunter <adrian.hunter@intel.com>,
         "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rajat Jain <rajatxjain@gmail.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org,
-        ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
-        Andy Shevchenko <andy.shevchenko@gmail.com>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Chunyan Zhang <zhang.lyra@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 29 October 2018 at 23:17, Rajat Jain <rajatja@google.com> wrote:
-> Problem:
+On 25 October 2018 at 04:12, Chunyan Zhang <zhang.chunyan@linaro.org> wrote:
+> The function sdhci_allocate_bounce_buffer() always return zero at
+> present, so there's no need to have a return value, that will also make
+> error path easier.
 >
-> The card detect IRQ does not work with modern BIOS (that want
-> to use _DSD to provide the card detect GPIO to the driver).
->
-> Details:
->
-> The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
-> request the gpio descriptor for the "card detect" pin.
-> This pin is specified in the ACPI for the SDHC device:
->
->  * Either as a resource using _CRS. This is a method used by legacy BIOS.
->    (The driver needs to tell which resource index).
->
->  * Or as a named property ("cd-gpios"/"cd-gpio") in _DSD (which internally
->    points to an entry in _CRS). This way, the driver can lookup using a
->    string. This is what modern BIOS prefer to use.
->
-> This API finally results in a call to the following code:
->
-> struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
-> {
-> ...
->    /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
-> ...
->    if (!acpi_can_fallback_to_crs(adev, con_id))
->           return ERR_PTR(-ENOENT);
-> ...
->    /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
-> ...
-> }
->
-> Note that this means that if the ACPI has _DSD properties, the kernel
-> will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
-> will always be false for any device hat has _DSD entries).
->
-> The SDHCI driver is thus currently broken on a modern BIOS, even if
-> BIOS provides both _CRS (for index based lookup) and _DSD entries (for
-> string based lookup). Ironically, none of these will be used for the
-> lookup currently because:
->
-> * Since the con_id is NULL, acpi_find_gpio() does not find a matching
->   entry in DSDT. (The _DSDT entry has the property name = "cd-gpios")
->
-> * Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
->   returns false (because device properties have been populated from
->   _DSD), thus the _CRS is never used for the lookup.
->
-> Fix:
->
-> Try "cd" for lookup in the _DSD before falling back to using NULL so
-> as to try looking up in the _CRS.
->
-> I've tested this patch successfully with both Legacy BIOS (that
-> provide only _CRS method) as well as modern BIOS (that provide both
-> _CRS and _DSD). Also the use of "cd" appears to be fairly consistent
-> across other users of this API (other MMC host controller drivers).
->
-> Link: https://lkml.org/lkml/2018/9/25/1113
-> Signed-off-by: Rajat Jain <rajatja@google.com>
+> CC: Linus Walleij <linus.walleij@linaro.org>
+> Signed-off-by: Chunyan Zhang <zhang.chunyan@linaro.org>
 
-Applied for fixes, thanks!
-
-Should I add a stable tag to this as well?
+Applied for next, thanks!
 
 Kind regards
 Uffe
 
 > ---
-> v2: Fix the commit log to take care of Andy's comments.
+>  drivers/mmc/host/sdhci.c | 15 +++++----------
+>  1 file changed, 5 insertions(+), 10 deletions(-)
 >
->  drivers/mmc/host/sdhci-pci-core.c | 7 ++++++-
->  1 file changed, 6 insertions(+), 1 deletion(-)
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index 1b3fbd9..e94f4aa 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -3408,7 +3408,7 @@ void __sdhci_read_caps(struct sdhci_host *host, u16 *ver, u32 *caps, u32 *caps1)
+>  }
+>  EXPORT_SYMBOL_GPL(__sdhci_read_caps);
 >
-> diff --git a/drivers/mmc/host/sdhci-pci-core.c b/drivers/mmc/host/sdhci-pci-core.c
-> index 7bfd366d970d..e53333c695b3 100644
-> --- a/drivers/mmc/host/sdhci-pci-core.c
-> +++ b/drivers/mmc/host/sdhci-pci-core.c
-> @@ -1762,8 +1762,13 @@ static struct sdhci_pci_slot *sdhci_pci_probe_slot(
->                 device_init_wakeup(&pdev->dev, true);
+> -static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+> +static void sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+>  {
+>         struct mmc_host *mmc = host->mmc;
+>         unsigned int max_blocks;
+> @@ -3446,7 +3446,7 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+>                  * Exiting with zero here makes sure we proceed with
+>                  * mmc->max_segs == 1.
+>                  */
+> -               return 0;
+> +               return;
+>         }
 >
->         if (slot->cd_idx >= 0) {
-> -               ret = mmc_gpiod_request_cd(host->mmc, NULL, slot->cd_idx,
-> +               ret = mmc_gpiod_request_cd(host->mmc, "cd", slot->cd_idx,
->                                            slot->cd_override_level, 0, NULL);
-> +               if (ret && ret != -EPROBE_DEFER)
-> +                       ret = mmc_gpiod_request_cd(host->mmc, NULL,
-> +                                                  slot->cd_idx,
-> +                                                  slot->cd_override_level,
-> +                                                  0, NULL);
->                 if (ret == -EPROBE_DEFER)
->                         goto remove;
+>         host->bounce_addr = dma_map_single(mmc->parent,
+> @@ -3456,7 +3456,7 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+>         ret = dma_mapping_error(mmc->parent, host->bounce_addr);
+>         if (ret)
+>                 /* Again fall back to max_segs == 1 */
+> -               return 0;
+> +               return;
+>         host->bounce_buffer_size = bounce_size;
+>
+>         /* Lie about this since we're bouncing */
+> @@ -3466,8 +3466,6 @@ static int sdhci_allocate_bounce_buffer(struct sdhci_host *host)
+>
+>         pr_info("%s bounce up to %u segments into one, max segment size %u bytes\n",
+>                 mmc_hostname(mmc), max_blocks, bounce_size);
+> -
+> -       return 0;
+>  }
+>
+>  int sdhci_setup_host(struct sdhci_host *host)
+> @@ -3987,12 +3985,9 @@ int sdhci_setup_host(struct sdhci_host *host)
+>          */
+>         mmc->max_blk_count = (host->quirks & SDHCI_QUIRK_NO_MULTIBLOCK) ? 1 : 65535;
+>
+> -       if (mmc->max_segs == 1) {
+> +       if (mmc->max_segs == 1)
+>                 /* This may alter mmc->*_blk_* parameters */
+> -               ret = sdhci_allocate_bounce_buffer(host);
+> -               if (ret)
+> -                       return ret;
+> -       }
+> +               sdhci_allocate_bounce_buffer(host);
+>
+>         return 0;
 >
 > --
-> 2.19.1.568.g152ad8e336-goog
+> 2.7.4
 >
