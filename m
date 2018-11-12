@@ -2,140 +2,215 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B80AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:53:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43EDCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:54:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17C6A2241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:53:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="pbW0xkX4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17C6A2241E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=efficios.com
+	by mail.kernel.org (Postfix) with ESMTP id 1280D2241E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:54:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1280D2241E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729201AbeKMArH (ORCPT
+        id S1729619AbeKMAsQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 19:47:07 -0500
-Received: from mail.efficios.com ([167.114.142.138]:49734 "EHLO
-        mail.efficios.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726385AbeKMArH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 19:47:07 -0500
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id 7C88B2393CE;
-        Mon, 12 Nov 2018 09:53:30 -0500 (EST)
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10032)
-        with ESMTP id 90pQfI9TdtYy; Mon, 12 Nov 2018 09:53:29 -0500 (EST)
-Received: from localhost (ip6-localhost [IPv6:::1])
-        by mail.efficios.com (Postfix) with ESMTP id B2DFF2393B6;
-        Mon, 12 Nov 2018 09:53:29 -0500 (EST)
-DKIM-Filter: OpenDKIM Filter v2.10.3 mail.efficios.com B2DFF2393B6
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
-        s=default; t=1542034409;
-        bh=TK4/ipd3NpcmT6fmpp7d/sNrZR5j/NsFt2yFt2Uy2cs=;
-        h=Date:From:To:Message-ID:MIME-Version;
-        b=pbW0xkX4xbEnappOesXXOC3pI/2q2BeijJ/q5uqyNCdIc4+EtUPbOHEM+696Xri0b
-         TdwUZHTzK/VaF8/UiQyixJwOlZXkfJZf1PnYab94j3lNrqtmNpsOw5YsCgZZkG36vy
-         pLTqnzj38Ei9LnoqLpvjzz5R5otPKDnCqXMy74yWGhExjp4eUkZYpXBUv3rb2OpeGJ
-         qrfx8m3G5EqWdAC1LzZfzLmCydoznCn40ltqe/Cch+Knm3dEr90EIDay2DggpnHSlw
-         +M/jzWzy0m16qibB7f/dulo+4hK0UMP7QVHWZMH4Ei0G1L0CHBdRbTvN9+U9ykHIUK
-         Lu/73GYgIZwVw==
-X-Virus-Scanned: amavisd-new at efficios.com
-Received: from mail.efficios.com ([IPv6:::1])
-        by localhost (mail02.efficios.com [IPv6:::1]) (amavisd-new, port 10026)
-        with ESMTP id VC_EBszx5mtB; Mon, 12 Nov 2018 09:53:29 -0500 (EST)
-Received: from mail02.efficios.com (mail02.efficios.com [167.114.142.138])
-        by mail.efficios.com (Postfix) with ESMTP id 9171F2393AF;
-        Mon, 12 Nov 2018 09:53:29 -0500 (EST)
-Date:   Mon, 12 Nov 2018 09:53:29 -0500 (EST)
-From:   Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-To:     Masami Hiramatsu <mhiramat@kernel.org>,
-        rostedt <rostedt@goodmis.org>
-Cc:     Alexander Popov <alex.popov@linux.com>,
-        kernel-hardening <kernel-hardening@lists.openwall.com>,
-        Kees Cook <keescook@chromium.org>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        x86 <x86@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
-Message-ID: <97842534.3842.1542034409326.JavaMail.zimbra@efficios.com>
-In-Reply-To: <20181112115058.39e98750750c91eeb349cfdf@kernel.org>
-References: <1541887530-16610-1-git-send-email-alex.popov@linux.com> <20181110183011.2290fc20@gandalf.local.home> <eeb7f5ee-1e2e-d37b-cca2-e0a29826e8eb@linux.com> <20181111205351.1874bb1e@vmware.local.home> <20181112115058.39e98750750c91eeb349cfdf@kernel.org>
-Subject: Re: [PATCH 1/1] stackleak: Disable ftrace for stackleak.c
+        Mon, 12 Nov 2018 19:48:16 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:45740 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729281AbeKMAsQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 19:48:16 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id A9eteMCz43Q9; Mon, 12 Nov 2018 15:54:38 +0100 (CET)
+Received: from zn.tnic (p200300EC2BE56F00329C23FFFEA6A903.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:6f00:329c:23ff:fea6:a903])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 800521EC01F6;
+        Mon, 12 Nov 2018 15:54:38 +0100 (CET)
+Date:   Mon, 12 Nov 2018 15:54:33 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v11 1/5] x86/boot: Add efi_get_rsdp_addr() to dig out
+ RSDP from EFI table
+Message-ID: <20181112145433.GF8167@zn.tnic>
+References: <20181112094645.4879-1-fanc.fnst@cn.fujitsu.com>
+ <20181112094645.4879-2-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [167.114.142.138]
-X-Mailer: Zimbra 8.8.10_GA_3047 (ZimbraWebClient - FF52 (Linux)/8.8.10_GA_3041)
-Thread-Topic: stackleak: Disable ftrace for stackleak.c
-Thread-Index: Ubb1Z/iQugJ+BVkUy4jUosaq2/248g==
+Content-Disposition: inline
+In-Reply-To: <20181112094645.4879-2-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
------ On Nov 11, 2018, at 9:50 PM, Masami Hiramatsu mhiramat@kernel.org wrote:
+On Mon, Nov 12, 2018 at 05:46:41PM +0800, Chao Fan wrote:
+> In order to parse SRAT table and get memory information, RSDP pointer
+> should be found. In kernel, there are three methods to get RSDP:
+> EFI condition, BIOS condition and KEXEC condition. The first works
+> for EFI condition.
 
-> Hi Alexander and Steve,
+"condition"?
+
+Also, please explain shortly what all those abbreviations mean: think
+of a person reading your commit message who doesn't have any clue from
+ACPI.
+
+> Imitate ACPI code and EFI code to dig RSDP pointer from EFI tables.
+> Process: boot_param->systab->efi_config_table->RSDP.
+> Based on efi_init(), efi_config_init(), efi_config_parse_tables().
 > 
-> On Sun, 11 Nov 2018 20:53:51 -0500
-> Steven Rostedt <rostedt@goodmis.org> wrote:
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/boot/compressed/acpitb.c | 96 +++++++++++++++++++++++++++++++
+>  1 file changed, 96 insertions(+)
+>  create mode 100644 arch/x86/boot/compressed/acpitb.c
 > 
->> On Sun, 11 Nov 2018 13:19:45 +0300
->> Alexander Popov <alex.popov@linux.com> wrote:
->> 
->> > On 11.11.2018 2:30, Steven Rostedt wrote:
->> > > On Sun, 11 Nov 2018 01:05:30 +0300
->> > > Alexander Popov <alex.popov@linux.com> wrote:
->> > >   
->> > >> The stackleak_erase() function is called on the trampoline stack at the
->> > >> end of syscall. This stack is not big enough for ftrace operations,
->> > >> e.g. it can be overflowed if we enable kprobe_events for stackleak_erase().
->> > > 
->> > > Is the issue with kprobes or with function tracing? Because this stops
->> > > function tracing which I only want disabled if function tracing itself
->> > > is an issue, not for other things that may use the function tracing
->> > > infrastructure.
->> > 
->> > Hello Steven,
->> > 
->> > I believe that stackleak erasing is not compatible with function tracing itself.
->> > That's what the kernel testing robot has hit:
->> > https://www.openwall.com/lists/kernel-hardening/2018/11/09/1
->> > 
->> > I used kprobe_events just to reproduce the problem:
->> > https://www.openwall.com/lists/kernel-hardening/2018/11/09/4
->> 
->> Have you tried adding a "notrace" to stackleak_erase()?
->> 
->> Not tracing the entire file is a bit of overkill. There's no reason
->> ftrace can't trace stack_erasing_sysctl() or perhaps even
->> stackleak_track_stack() as that may be very interesting to trace.
-> 
-> I think it is not enough for stopping kprobes. If you want to stop the kprobes
-> (int3 version) on stackleak_erase(), you should use
-> NOKPROBE_SYMBOL(stackleak_erase),
-> since kprobes can work without ftrace.
+> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+> new file mode 100644
+> index 000000000000..56b54b0e0889
+> --- /dev/null
+> +++ b/arch/x86/boot/compressed/acpitb.c
+> @@ -0,0 +1,96 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +#define BOOT_CTYPE_H
+> +#include "misc.h"
+> +#include "error.h"
+> +
+> +#include <linux/efi.h>
+> +#include <asm/efi.h>
+> +#include <linux/numa.h>
+> +#include <linux/acpi.h>
+> +
+> +/* Search EFI table for RSDP table. */
+> +static void efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
 
-Just to clarify: AFAIU you guys are recommending to add _both_ a "notrace"
-annotation to stackleak_erase() _and_ a NOKPROBE_SYMBOL(stackleak_erase),
-so neither function tracing nor kprobes can hook on that function.
+This is just silly: the function returns void and has a single parameter
+which is an *output* parameter?!
 
-Thanks,
+Why isn't the signature
 
-Mathieu
+static acpi_physical_address *efi_get_rsdp_addr(void)
+
+instead?
+
+> +{
+> +#ifdef CONFIG_EFI
+> +	efi_system_table_t *systab;
+> +	bool efi_64 = false;
+
+You're setting it below already, why here too?
+
+> +	void *config_tables;
+> +	struct efi_info *e;
+> +	char *sig;
+> +	int size;
+> +	int i;
+> +
+> +	e = &boot_params->efi_info;
+> +	sig = (char *)&e->efi_loader_signature;
+> +
+> +	if (!strncmp(sig, EFI64_LOADER_SIGNATURE, 4))
+> +		efi_64 = true;
+> +	else if (!strncmp(sig, EFI32_LOADER_SIGNATURE, 4))
+> +		efi_64 = false;
+> +	else {
+> +		debug_putstr("Wrong EFI loader signature.\n");
+> +		return;
+> +	}
+> +
+> +	/* Get systab from boot params. Based on efi_init(). */
+> +#ifdef CONFIG_X86_64
+> +	systab = (efi_system_table_t *)(
+> +			e->efi_systab | ((__u64)e->efi_systab_hi<<32));
+
+No ugly line breaks with open braces trailing like that, pls - just let
+it stick out.
+
+> +#else
+> +	if (e->efi_systab_hi || e->efi_memmap_hi) {
+> +		debug_putstr("Table located above 4GB. EFI should be disabled.\n");
+
+You need to say here what really happens here:
+
+		debug_putstr("Error getting RSDP address: EFI system table located above 4GB.\n");
+
+The same below.
+
+> +		return;
+> +	}
+> +	systab = (efi_system_table_t *)e->efi_systab;
+> +#endif
+> +
+> +	if (!systab)
+> +		return;
+> +
+> +	/*
+> +	 * Get EFI tables from systab. Based on efi_config_init() and
+> +	 * efi_config_parse_tables(). Only dig out the config_table.
+> +	 */
+> +	size = efi_64 ? sizeof(efi_config_table_64_t) :
+> +			sizeof(efi_config_table_32_t);
+> +
+> +	for (i = 0; i < systab->nr_tables; i++) {
+> +		efi_guid_t guid;
+> +		unsigned long table;
+
+Put the void *config_tables declaration here.
+
+> +
+> +		config_tables = (void *)(systab->tables + size * i);
+> +		if (efi_64) {
+> +			efi_config_table_64_t *tmp_table;
+> +
+> +			tmp_table = (efi_config_table_64_t *)config_tables;
+> +			guid = tmp_table->guid;
+> +			table = tmp_table->table;
+> +#ifndef CONFIG_64BIT
+
+Above you have CONFIG_X86_64, here CONFIG_64BIT. Please use one only.
+
+Also, use IS_ENABLED() instead.
+
+> +			if (table >> 32) {
+> +				debug_putstr("Table located above 4G. EFI should be disabled.\n");
+> +				return;
+> +			}
+> +#endif
+> +		} else {
+> +			efi_config_table_32_t *tmp_table;
+> +
+> +			tmp_table = (efi_config_table_32_t *)config_tables;
+> +			guid = tmp_table->guid;
+> +			table = tmp_table->table;
+> +		}
+> +
+> +		/*
+> +		 * Get RSDP from EFI tables.
+> +		 * If ACPI20 table found, use it.
+> +		 * If ACPI20 table not found, but ACPI table found,
+> +		 * use the ACPI table.
+> +		 */
+
+That comment is the opposite of what the code does. Also, why is that
+comment needed at all? If anything, it should say *why* ACPI_TABLE_GUID
+is preferred and then the fallback to ACPI_20_TABLE_GUID is done - not
+*what* it does. That's easily visible in the code.
+
+Thx.
 
 -- 
-Mathieu Desnoyers
-EfficiOS Inc.
-http://www.efficios.com
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
