@@ -2,159 +2,75 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38F4FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:09:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BAB92C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:11:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C66A721722
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:09:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C66A721722
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
+	by mail.kernel.org (Postfix) with ESMTP id 8275A21722
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:11:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8275A21722
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728381AbeKLSBa (ORCPT
+        id S1728493AbeKLSDZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 13:01:30 -0500
-Received: from asrmicro.com ([210.13.118.86]:11170 "EHLO mail2012.asrmicro.com"
+        Mon, 12 Nov 2018 13:03:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35134 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727996AbeKLSBa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 13:01:30 -0500
-Received: from mail2012.asrmicro.com (10.1.24.123) by mail2012.asrmicro.com
- (10.1.24.123) with Microsoft SMTP Server (TLS) id 15.0.847.32; Mon, 12 Nov
- 2018 16:09:22 +0800
-Received: from mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b]) by
- mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b%16]) with mapi id
- 15.00.0847.030; Mon, 12 Nov 2018 16:09:22 +0800
-From:   =?utf-8?B?WmhhbmcgWmhpemhvdSjlvKDmsrvmtLIp?= 
-        <zhizhouzhang@asrmicro.com>
-To:     Mark Rutland <mark.rutland@arm.com>
-CC:     "rostedt@goodmis.org" <rostedt@goodmis.org>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "zhizhouzh@gmail.com" <zhizhouzh@gmail.com>
-Subject: RE: [PATCH] ftrace: remove KASAN poison in ftrace_ops_test()
-Thread-Topic: [PATCH] ftrace: remove KASAN poison in ftrace_ops_test()
-Thread-Index: AQHUeY2fKh/JcQ8rO0iswpmZRwo466VKT74AgAFz44A=
-Date:   Mon, 12 Nov 2018 08:09:22 +0000
-Message-ID: <a5c150395e9d4157a1a6cf95fe47bbc9@mail2012.asrmicro.com>
-References: <1541949017-3001-1-git-send-email-zhizhouzhang@asrmicro.com>
- <20181111173211.q2gzf7h4htxbezch@salmiak>
-In-Reply-To: <20181111173211.q2gzf7h4htxbezch@salmiak>
-Accept-Language: zh-CN, en-US
-Content-Language: zh-CN
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.1.170.214]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        id S1727000AbeKLSDY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 13:03:24 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0BF54308A974;
+        Mon, 12 Nov 2018 08:11:20 +0000 (UTC)
+Received: from oldenburg.str.redhat.com (ovpn-116-147.ams2.redhat.com [10.36.116.147])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id DE38D608F6;
+        Mon, 12 Nov 2018 08:11:15 +0000 (UTC)
+From:   Florian Weimer <fweimer@redhat.com>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        "libc-alpha\@sourceware.org" <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+        <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
+        <877ehjx447.fsf@oldenburg.str.redhat.com>
+        <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+Date:   Mon, 12 Nov 2018 09:11:10 +0100
+In-Reply-To: <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+        (Daniel Colascione's message of "Sun, 11 Nov 2018 06:22:59 -0800")
+Message-ID: <875zx2vhpd.fsf@oldenburg.str.redhat.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Mon, 12 Nov 2018 08:11:20 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFyayBSdXRsYW5kIFtt
-YWlsdG86bWFyay5ydXRsYW5kQGFybS5jb21dDQo+IFNlbnQ6IE1vbmRheSwgTm92ZW1iZXIgMTIs
-IDIwMTggMTozMiBBTQ0KPiBUbzogWmhhbmcgWmhpemhvdSjlvKDmsrvmtLIpIDx6aGl6aG91emhh
-bmdAYXNybWljcm8uY29tPg0KPiBDYzogcm9zdGVkdEBnb29kbWlzLm9yZzsgbWluZ29AcmVkaGF0
-LmNvbTsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IHpoaXpob3V6aEBnbWFpbC5j
-b20NCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gZnRyYWNlOiByZW1vdmUgS0FTQU4gcG9pc29uIGlu
-IGZ0cmFjZV9vcHNfdGVzdCgpDQo+IA0KPiBPbiBTdW4sIE5vdiAxMSwgMjAxOCBhdCAxMToxMDox
-N1BNICswODAwLCBaaGl6aG91IFpoYW5nIHdyb3RlOg0KPiA+IGZ0cmFjZV9vcHNfdGVzdCgpIHBh
-c3NlZCBsb2NhbCB2YXJpYmxlIHBhcmFtZXRlciB0bw0KPiA+IGhhc2hfY29udGFpbnNfaXAoKSwg
-d2hpY2ggY291bGQgcmVzdWx0IEtBU0FOIHN0YWNrLW91dC1vZi1ib3VuZHMNCj4gd2FybmluZy4N
-Cj4gPg0KPiA+IFNpZ25lZC1vZmYtYnk6IFpoaXpob3UgWmhhbmcgPHpoaXpob3V6aGFuZ0Bhc3Jt
-aWNyby5jb20+DQo+ID4gLS0tDQo+ID4gIGtlcm5lbC90cmFjZS9mdHJhY2UuYyB8IDIgKysNCj4g
-PiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBh
-L2tlcm5lbC90cmFjZS9mdHJhY2UuYyBiL2tlcm5lbC90cmFjZS9mdHJhY2UuYyBpbmRleA0KPiA+
-IGY1MzZmNjAuLjZlMTFmOTAgMTAwNjQ0DQo+ID4gLS0tIGEva2VybmVsL3RyYWNlL2Z0cmFjZS5j
-DQo+ID4gKysrIGIva2VybmVsL3RyYWNlL2Z0cmFjZS5jDQo+ID4gQEAgLTE1MjIsNiArMTUyMiw4
-IEBAIGZ0cmFjZV9vcHNfdGVzdChzdHJ1Y3QgZnRyYWNlX29wcyAqb3BzLCB1bnNpZ25lZA0KPiBs
-b25nIGlwLCB2b2lkICpyZWdzKQ0KPiA+ICAJcmN1X2Fzc2lnbl9wb2ludGVyKGhhc2guZmlsdGVy
-X2hhc2gsIG9wcy0+ZnVuY19oYXNoLT5maWx0ZXJfaGFzaCk7DQo+ID4gIAlyY3VfYXNzaWduX3Bv
-aW50ZXIoaGFzaC5ub3RyYWNlX2hhc2gsIG9wcy0+ZnVuY19oYXNoLQ0KPiA+bm90cmFjZV9oYXNo
-KTsNCj4gPg0KPiA+ICsJa2FzYW5fdW5wb2lzb25fdGFza19zdGFjayhjdXJyZW50KTsNCj4gDQo+
-IFRoaXMgaXMgZXh0cmVtZWx5IGhlYXZ5LWhhbmRlZCwgYW5kIHdpbGwgbWFzayBsZWdpdGltYXRl
-IHN0YWNrLW91dC1vZi0NCj4gYm91bmRzIGVycm9ycy4NCj4gDQpZZXMuIEkgdHJpZWQgdG8gZmlu
-ZCB3YXlzIHRvIG1hcmsgdGhpcyBmdW5jdGlvbiBubyBuZWVkIHRvIHBvaXNvbiwgYnV0IGZhaWxl
-ZC4gTXkgZmlyc3QgdGhvdWdodCB3YXMganVzdCBtYWtlIHRoaXMgZnVuY3Rpb24gbm90IHBvaXNv
-biBpdHMgc3RhY2suDQoNCj4gUGFzc2luZyBhIHN0YWNrLWxvY2FsIHZhcmlhYmxlIGJ5IHJlZmVy
-ZW5jZSAqc2hvdWxkIG5vdCogcmVzdWx0IGluIEtBU0FODQo+IHdhcm5pbmdzIHVubGVzcyBLQVNB
-TiBpdHNlbGYgaXMgYnJva2VuLiBDYW4geW91IHBsZWFzZSBnaXZlIGFuIGV4YW1wbGUNCj4gcmVw
-b3J0IHdoZW4gdGhpcyBvY2N1cnM/DQo+IA0KUGxlYXNlIGV4Y3VzZSBteSBsYWNrIG9mIGtub3ds
-ZWRnZS4gRGlkIHlvdSBtZWFuIGlmIGEgZnVuY3Rpb24gcGFzc2luZyBhIHN0YWNrLWxvY2FsIHZh
-cmlhYmxlIGFzIHBhcmFtZXRlciB0byBhbm90aGVyIGZ1bmN0aW9uLCB0aGUgY29tcGlsZXIgd29u
-J3QgcG9pc29uIHRoZSBzdGFjay1sb2NhbCB2YXJpYWJsZT8NClRoZSBLQVNBTiByZXBvcnQgaXMg
-YmFzZWQgb24gNC40LjE0NSwgSSdtIG5vdCBzdXJlIGZvciB0aGUgbGF0ZXN0IGtlcm5lbDoNCg0K
-YzMgMCAoc3dhcHBlci8zKSA9PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT0NCmMzIDAgKHN3YXBwZXIvMykgQlVHOiBLQVNBTjog
-c3RhY2stb3V0LW9mLWJvdW5kcyBpbiBoYXNoX2NvbnRhaW5zX2lwLmlzcmEuNCsweDQ0LzB4ZDAN
-CmMzIDAgKHN3YXBwZXIvMykgUmVhZCBvZiBzaXplIDggYXQgYWRkciBmZmZmZmZjMGQyMDRiYzIw
-IGJ5IHRhc2sgc3dhcHBlci8zLzANCmMzIDAgKHN3YXBwZXIvMykgDQpjMyAwIChzd2FwcGVyLzMp
-IENQVTogMyBQSUQ6IDAgQ29tbTogc3dhcHBlci8zIE5vdCB0YWludGVkIDQuNC4xNDUrICMxNjgN
-CmMzIDAgKHN3YXBwZXIvMykgSGFyZHdhcmUgbmFtZTogQVNSIEFRVUlMQUMgRVZCIChEVCkNCmMz
-IDAgKHN3YXBwZXIvMykgQ2FsbCB0cmFjZToNCmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4
-MDkxYTUwPl0gZHVtcF9iYWNrdHJhY2UrMHgwLzB4NDE4DQpjMyAwIChzd2FwcGVyLzMpIFs8ZmZm
-ZmZmOTAwODA5MWU5MD5dIHNob3dfc3RhY2srMHgyOC8weDM4DQpjMyAwIChzd2FwcGVyLzMpIFs8
-ZmZmZmZmOTAwODYyNTNhND5dIGR1bXBfc3RhY2srMHhlOC8weDEzYw0KYzMgMCAoc3dhcHBlci8z
-KSBbPGZmZmZmZjkwMDgzMWMxNWM+XSBwcmludF9hZGRyZXNzX2Rlc2NyaXB0aW9uKzB4OGMvMHgy
-YjANCmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MzFjNjg4Pl0ga2FzYW5fcmVwb3J0KzB4
-MjEwLzB4MzMwDQpjMyAwIChzd2FwcGVyLzMpIFs8ZmZmZmZmOTAwODMxYWJhND5dIF9fYXNhbl9s
-b2FkOCsweDg0LzB4OTgNCmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MjFhNjk0Pl0gaGFz
-aF9jb250YWluc19pcC5pc3JhLjQrMHg0NC8weGQwDQpjMyAwIChzd2FwcGVyLzMpIFs8ZmZmZmZm
-OTAwODIxYTdjOD5dIGZ0cmFjZV9vcHNfdGVzdC5pc3JhLjUrMHhhOC8weGUwDQpjMyAwIChzd2Fw
-cGVyLzMpIFs8ZmZmZmZmOTAwODIyMzljYz5dIGZ0cmFjZV9vcHNfbm9fb3BzKzB4ZGMvMHgyMTgN
-CmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MGExZDBjPl0gZnRyYWNlX2dyYXBoX2NhbGwr
-MHgwLzB4MTQNCmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MDlhZmJjPl0gc2NhbGVfY3B1
-X2NhcGFjaXR5KzB4MjQvMHg3MA0KYzMgMCAoc3dhcHBlci8zKSBbPGZmZmZmZjkwMDgxM2FkYTA+
-XSBzeW5jX2VudGl0eV9sb2FkX2F2ZysweGIwLzB4NGMwDQpjMyAwIChzd2FwcGVyLzMpIFs8ZmZm
-ZmZmOTAwODEzYjFkYz5dIHJlbW92ZV9lbnRpdHlfbG9hZF9hdmcrMHgyYy8weDgwDQpjMyAwIChz
-d2FwcGVyLzMpIFs8ZmZmZmZmOTAwODEzYjI1MD5dIHRhc2tfZGVhZF9mYWlyKzB4MjAvMHgzMA0K
-YzMgMCAoc3dhcHBlci8zKSBbPGZmZmZmZjkwMDgxMTE2OWM+XSBmaW5pc2hfdGFza19zd2l0Y2gr
-MHgxZjQvMHgyYTANCmMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA5MmRlYjk0Pl0gX19zY2hl
-ZHVsZSsweDRjYy8weGU4MA0KYzMgMCAoc3dhcHBlci8zKSBbPGZmZmZmZjkwMDkyZGY4MjA+XSBz
-Y2hlZHVsZSsweDcwLzB4MTEwDQpjMyAwIChzd2FwcGVyLzMpIFs8ZmZmZmZmOTAwOTJkZmJkYz5d
-IHNjaGVkdWxlX3ByZWVtcHRfZGlzYWJsZWQrMHgyNC8weDcwDQpjMyAwIChzd2FwcGVyLzMpIFs8
-ZmZmZmZmOTAwODE1MWRjOD5dIGNwdV9zdGFydHVwX2VudHJ5KzB4MTk4LzB4NTM4DQpjMyAwIChz
-d2FwcGVyLzMpIFs8ZmZmZmZmOTAwODA5OWYzOD5dIHNlY29uZGFyeV9zdGFydF9rZXJuZWwrMHgy
-NTgvMHgyZjANCmMzIDAgKHN3YXBwZXIvMykgWzwwMDAwMDAwMTAzMmU4MDNjPl0gMHgxMDMyZTgw
-M2MNCmMzIDAgKHN3YXBwZXIvMykgDQpjMyAwIChzd2FwcGVyLzMpIFRoZSBidWdneSBhZGRyZXNz
-IGJlbG9uZ3MgdG8gdGhlIHBhZ2U6DQpjMyAwIChzd2FwcGVyLzMpIHBhZ2U6ZmZmZmZmYmRjMzQ4
-MTJjMCBjb3VudDowIG1hcGNvdW50OjAgbWFwcGluZzogICAgICAgICAgKG51bGwpIGluZGV4OjB4
-MA0KYzMgMCAoc3dhcHBlci8zKSBmbGFnczogMHgwKCkNCmMzIDAgKHN3YXBwZXIvMykgcGFnZSBk
-dW1wZWQgYmVjYXVzZToga2FzYW46IGJhZCBhY2Nlc3MgZGV0ZWN0ZWQNCmMzIDAgKHN3YXBwZXIv
-MykgDQpjMyAwIChzd2FwcGVyLzMpIE1lbW9yeSBzdGF0ZSBhcm91bmQgdGhlIGJ1Z2d5IGFkZHJl
-c3M6DQpjMyAwIChzd2FwcGVyLzMpICBmZmZmZmZjMGQyMDRiYjAwOiAwMCAwMCAwMCAwMCAwMCAw
-MCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMA0KYzMgMCAoc3dhcHBlci8zKSAgZmZmZmZm
-YzBkMjA0YmI4MDogMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgZjEgZjEgZjEg
-ZjENCmMzIDAgKHN3YXBwZXIvMykgPmZmZmZmZmMwZDIwNGJjMDA6IGYxIGYxIGYxIGYxIGYzIGYz
-IGYzIGYzIDAwIDAwIDAwIDAwIDAwIDAwIDAwIDAwDQpjMyAwIChzd2FwcGVyLzMpICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgICAgICBeDQpjMyAwIChzd2FwcGVyLzMpICBmZmZmZmZjMGQyMDRi
-YzgwOiAwMCAwMCAwMCAwMCAwMCAwMCBmMiBmMiAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMA0KYzMg
-MCAoc3dhcHBlci8zKSAgZmZmZmZmYzBkMjA0YmQwMDogMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAg
-MDAgMDAgMDAgMDAgMDAgMDAgMDAgMDANCmMzIDAgKHN3YXBwZXIvMykgPT09PT09PT09PT09PT09
-PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09DQpjMyAx
-IChpbml0KSBpbml0OiBVbnRyYWNrZWQgcGlkIDMxMDMga2lsbGVkIGJ5IHNpZ25hbCAxNA0KYzQg
-OTcyIChzeXotZXhlY3V0b3IpIGFzci13ZHQgZDQwODAwMDAud2F0Y2hkb2c6IGZlZWQgYXNyX3dk
-dChzb2Nfd2R0KS4NCmM1IDQzMSAoa3dvcmtlci91MTY6OCkgQzBfREZDOiBUaW1lIDExNzUxMDk4
-NzQ5MiAoMTI0OCAtPiAxNjAwKTsNCmM1IDQzMSAoa3dvcmtlci91MTY6OCkgQzBfREZDOiBUaW1l
-IDExNzU4MjM1ODc5OSAoMTYwMCAtPiAxMjQ4KTsNCmM1IDQzMSAoa3dvcmtlci91MTY6OCkgQzFf
-REZDOiBUaW1lIDUxMTMzNjU2MjcwICgxOTAwIC0+IDEyNDgpOw0KYzUgNDMxIChrd29ya2VyL3Ux
-Njo4KSBDMV9ERkM6IFRpbWUgNTExMzM4NjQ0NjIgKDEyNDggLT4gMTYwMCk7DQpjNSA0MzEgKGt3
-b3JrZXIvdTE2OjgpIEREUl9ERkM6IFRpbWUgMCAoMCAtPiAwKTsNCmM1IDQzMSAoa3dvcmtlci91
-MTY6OCkgRERSX0RGQzogVGltZSAwICgwIC0+IDApOw0KYzUgNDMxIChrd29ya2VyL3UxNjo4KSBD
-TEs6ICAgICAgR1BVKDMxMjAwMDAwMCwgMCk7VlBVKDgzMjAwMDAwMCwgMCk7SVNQKDMxMjAwMDAw
-MCwgMCk7DQpjNSA0MzEgKGt3b3JrZXIvdTE2OjgpIERWQzogICAgICBjbHN0MCgxMSk7IGNsc3Qx
-KDExKTsgbTIoMTEpOyBwZXJpKDEpOyBkMXAoMSk7DQpjNSA0MzEgKGt3b3JrZXIvdTE2OjgpIFRl
-bXA6ICAgICBjcHUoODIwMDApOyBncHUoNjQwMDApOyBkZHIoNjgwMDApOyBsb2NhbCg2NDAwMCk7
-IGJhdHRlcnkoMCk7IHBtaWMoMCkNCmM1IDQzMSAoa3dvcmtlci91MTY6OCkgQmF0dGVyeTogIHNv
-Yyg1NzY0OCk7IGlfYmF0dGVyeSgtOTQxNTU2KTsNCmM1IDQzMSAoa3dvcmtlci91MTY6OCkgODhw
-bTg4eC1iYXR0ZXJ5IDg4cG04OHgtYmF0dGVyeTogbD04MCUgdj0zOTU3bVYgdDA9MjVDIHQxPTBD
-IGM9LTk0MW1BIHN0PVVOS05PV04gb2N2PTANCg0KPiBXaGljaCBjb21waWxlciBhcmUgeW91IHVz
-aW5nPw0KPiANCkknbSB1c2luZyBnY2MgNy4xLjA6IGFhcmNoNjQtbGludXgtZ251LWdjYyAoR0ND
-KSA3LjEuMC4NCg0KPiBUaGFua3MsDQo+IE1hcmsuDQo+IA0KPiA+ICsNCj4gPiAgCWlmIChoYXNo
-X2NvbnRhaW5zX2lwKGlwLCAmaGFzaCkpDQo+ID4gIAkJcmV0ID0gMTsNCj4gPiAgCWVsc2UNCj4g
-PiAtLQ0KPiA+IDIuNy40DQo+ID4NCg==
+* Daniel Colascione:
+
+> If the kernel provides a system call, libc should provide a C wrapper
+> for it, even if in the opinion of the libc maintainers, that system
+> call is flawed.
+
+It's not that simple, I think.  What about bdflush?  socketcall?
+getxpid?  osf_gettimeofday?  set_robust_list?  There are quite a few
+irregularities, and some editorial discretion appears to be unavoidable.
+
+Even if we were to provide perfectly consistent system call wrappers
+under separate names, we'd still expose different calling conventions
+for things like off_t to applications, which would make using some of
+the system calls quite difficult and surprisingly non-portable.
+
+Thanks,
+Florian
