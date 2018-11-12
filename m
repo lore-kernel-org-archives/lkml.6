@@ -2,200 +2,275 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C7A31C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:17:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6D05C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 84CFA223B0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:17:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j+IDfX7e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84CFA223B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8DC3122419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:17:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DC3122419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=windriver.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729138AbeKLUKA (ORCPT
+        id S1729209AbeKLUKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 15:10:00 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:50950 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728802AbeKLUKA (ORCPT
+        Mon, 12 Nov 2018 15:10:14 -0500
+Received: from mail1.windriver.com ([147.11.146.13]:59838 "EHLO
+        mail1.windriver.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728854AbeKLUKN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 15:10:00 -0500
-Received: by mail-wm1-f68.google.com with SMTP id 124-v6so7926998wmw.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 02:17:26 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=RaepbgZnLCmJbEVH8ufwwquGnCkm1W1fCpZdWbk4T1Q=;
-        b=j+IDfX7eU2SyX3qILnn7UYCIX9lOv9nnKsToUXAPC0QB/8x+U5pXzyU7r8gwpQRvq4
-         7yNXaYTLt/zmPNtHfsloaVcx9bqbH/gvfIp9jyLncH8GjiI5VJ2u+95lvxBxDCeQ7sCu
-         CPZufcU5llbz/GrPFtow1DE1D14veulhqkE9I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:subject:from:in-reply-to:date:cc
-         :content-transfer-encoding:message-id:references:to;
-        bh=RaepbgZnLCmJbEVH8ufwwquGnCkm1W1fCpZdWbk4T1Q=;
-        b=YmAXXRg58qsK4bU47jkmWpR+N0nTAR3vpyhcjwPp7Q3HUv4RsqIUT6U+LDi85E3nwy
-         95YtNWXwaVI2F72Rb1xlrz2CmKWRuokH7V1cKwjJZP0zUjN48R6VEgFylzQ4DwSKPHP9
-         k2lz4Y0vQ1OawS2FBh1fTSxfu/QA7Sl8BHor/0gGWT8fY+wWExyiRFtyZ9+jPituPQJD
-         pwg09Bd93wKV7mqsOsMm6FcYSbEHj+1mfspvgMjpEh/pOl2rxsnBegDETIN4k5Qb9xpa
-         OwA/52j0EqraYb2mGXa5qyUwhSVRWYe0xdO6rDoX90tDjwoSdyEucu5hy1ERDCBPTSMj
-         EpZA==
-X-Gm-Message-State: AGRZ1gJ5IpEi7NdAO1zvwi6Z0yDHOZTkhluX8JPd7Ir7WF309ZI++NK6
-        4n72kyLPTf3dRxcIj0lBT8Csnw==
-X-Google-Smtp-Source: AJdET5c2i+0KsI8VNo68XqPz1Jw2z8mM2uA9O2N+dmwX6R+IVIOkkbehr4XbYflRLzzkJjAqurKM4w==
-X-Received: by 2002:a1c:ae0a:: with SMTP id x10-v6mr7445388wme.137.1542017845774;
-        Mon, 12 Nov 2018 02:17:25 -0800 (PST)
-Received: from [192.168.43.112] ([93.68.220.21])
-        by smtp.gmail.com with ESMTPSA id q12sm1086490wmf.2.2018.11.12.02.17.23
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 02:17:25 -0800 (PST)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: [PATCH 00/12] unify the interface of the proportional-share
- policy in blkio/io
-From:   Paolo Valente <paolo.valente@linaro.org>
-In-Reply-To: <9e8adb3271680165d85994a225713391@natalenko.name>
-Date:   Mon, 12 Nov 2018 11:17:22 +0100
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Tejun Heo <tj@kernel.org>, Li Zefan <lizefan@huawei.com>,
-        Angelo Ruocco <angeloruocco90@gmail.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-block <linux-block@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Mark Brown <broonie@kernel.org>,
-        'Paolo Valente' via bfq-iosched 
-        <bfq-iosched@googlegroups.com>, cgroups@vger.kernel.org,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
-        lennart@poettering.net
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E8A20452-A73C-4A31-B5EC-48EFB9937832@linaro.org>
-References: <20181112095632.69114-1-paolo.valente@linaro.org>
- <9e8adb3271680165d85994a225713391@natalenko.name>
-To:     Oleksandr Natalenko <oleksandr@natalenko.name>
-X-Mailer: Apple Mail (2.3445.100.39)
+        Mon, 12 Nov 2018 15:10:13 -0500
+Received: from ALA-HCB.corp.ad.wrs.com ([147.11.189.41])
+        by mail1.windriver.com (8.15.2/8.15.1) with ESMTPS id wACAHL5E014418
+        (version=TLSv1 cipher=AES128-SHA bits=128 verify=FAIL);
+        Mon, 12 Nov 2018 02:17:22 -0800 (PST)
+Received: from pek-lpg-core2.corp.ad.wrs.com (128.224.153.41) by
+ ALA-HCB.corp.ad.wrs.com (147.11.189.41) with Microsoft SMTP Server id
+ 14.3.408.0; Mon, 12 Nov 2018 02:17:21 -0800
+From:   <zhe.he@windriver.com>
+To:     <catalin.marinas@arm.com>, <stable@vger.kernel.org>,
+        <bigeasy@linutronix.de>, <tglx@linutronix.de>,
+        <rostedt@goodmis.org>, <linux-mm@kvack.org>,
+        <linux-kernel@vger.kernel.org>, <linux-rt-users@vger.kernel.org>
+Subject: [PATCH] kmemleak: Turn kmemleak_lock to raw spinlock on RT
+Date:   Mon, 12 Nov 2018 18:17:15 +0800
+Message-ID: <1542017835-431346-1-git-send-email-zhe.he@windriver.com>
+X-Mailer: git-send-email 2.7.4
+MIME-Version: 1.0
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: He Zhe <zhe.he@windriver.com>
 
+kmemleak_lock, as a rwlock on RT, can possibly be held in atomic context and
+causes the follow BUG.
 
-> Il giorno 12 nov 2018, alle ore 11:00, Oleksandr Natalenko =
-<oleksandr@natalenko.name> ha scritto:
->=20
-> On 12.11.2018 10:56, Paolo Valente wrote:
->> Hi Jens, Tejun, all,
->> about nine months ago, we agreed on a solution for unifying the
->> interface of the proportional-share policy in blkio/io [1].  Angelo
->> and I finally completed it.  Let me briefly recall the problem and =
-the
->> solution.
->> The current implementation of cgroups doesn't allow two or more
->> entities, e.g., I/O schedulers, to share the same files.  So, if CFQ
->> creates its files for the proportional-share policy, such as, e.g,
->> weight files for blkio/io groups, BFQ cannot attach somehow to them.
->> Thus, to enable people to set group weights with BFQ, I resorted to
->> making BFQ create its own version of these common files, by =
-prepending
->> a bfq prefix.
->> Actually, no legacy code uses these different names, or is likely to
->> do so.  Having these two sets of names is simply a source of
->> confusion, as pointed out also, e.g., by Lennart Poettering (CCed
->> here), and acknowledged by Tejun [2].
->> In [1] we agreed on a solution that solves this problem, by actually
->> making it possible to share cgroups files.  Both writing to and
->> reading from a shared file trigger the appropriate operation for each
->> of the entities that share the file.  In particular, in case of
->> reading,
->> - if all entities produce the same output, the this common output is
->>  shown only once;
->> - if the outputs differ, then every per-entity output is shown,
->>  preceded by the name of the entity that produced that output.
->> With this solution, legacy code that, e.g., sets group weights, just
->> works, regardless of the I/O scheduler actually implementing
->> proportional share.
->> But note that this extension is not restricted to only blkio/io.  The
->> general group interface now enables files to be shared among multiple
->> entities of any kind.
->> (I have also added a patch to fix some clerical errors in bfq doc,
->> which I found while making the latter consistent with the new
->> interface.)
->> Thanks,
->> Paolo
->> [1] https://lkml.org/lkml/2018/1/4/667
->> [2] https://github.com/systemd/systemd/issues/7057
->> Angelo Ruocco (7):
->>  kernfs: add function to find kernfs_node without increasing ref
->>    counter
->>  cgroup: link cftypes of the same subsystem with the same name
->>  cgroup: add owner name to cftypes
->>  block, bfq: align min and default weights with cfq
->>  cgroup: make all functions of all cftypes be invoked
->>  block, cfq: allow cgroup files to be shared
->>  block, throttle: allow sharing cgroup statistic files
->> Paolo Valente (5):
->>  cgroup: add hook seq_show_cft with also the owning cftype as =
-parameter
->>  block, cgroup: pass cftype to functions that need to use it
->>  block, bfq: use standard file names for the proportional-share =
-policy
->>  doc, bfq-iosched: fix a few clerical errors
->>  doc, bfq-iosched: make it consistent with the new cgroup interface
->> Documentation/block/bfq-iosched.txt |  31 +++--
->> block/bfq-cgroup.c                  | 148 +++++++++++++-------
->> block/bfq-iosched.h                 |   4 +-
->> block/blk-cgroup.c                  |  22 +--
->> block/blk-throttle.c                |  24 ++--
->> block/cfq-iosched.c                 | 105 +++++++++++----
->> fs/kernfs/dir.c                     |  13 ++
->> include/linux/blk-cgroup.h          |  10 +-
->> include/linux/cgroup-defs.h         |  14 +-
->> include/linux/cgroup.h              |  13 ++
->> include/linux/kernfs.h              |   7 +
->> kernel/cgroup/cgroup.c              | 262 =
-+++++++++++++++++++++++++++++-------
->> 12 files changed, 483 insertions(+), 170 deletions(-)
->> --
->> 2.16.1
->=20
-> I thought all the legacy stuff including CFS et al. is going to be =
-removed in v4.21 completely=E2=80=A6
->=20
+BUG: scheduling while atomic: migration/15/132/0x00000002
+Modules linked in: iTCO_wdt iTCO_vendor_support intel_rapl pcc_cpufreq
+pnd2_edac intel_powerclamp coretemp crct10dif_pclmul crct10dif_common
+aesni_intel matroxfb_base aes_x86_64 matroxfb_g450 matroxfb_accel
+crypto_simd matroxfb_DAC1064 cryptd glue_helper g450_pll matroxfb_misc
+i2c_ismt i2c_i801 acpi_cpufreq
+Preemption disabled at:
+[<ffffffff8c927c11>] cpu_stopper_thread+0x71/0x100
+CPU: 15 PID: 132 Comm: migration/15 Not tainted 4.19.0-rt1-preempt-rt #1
+Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB1.X64.0015.D62.1708310404 08/31/2017
+Call Trace:
+ dump_stack+0x4f/0x6a
+ ? cpu_stopper_thread+0x71/0x100
+ __schedule_bug.cold.16+0x38/0x55
+ __schedule+0x484/0x6c0
+ schedule+0x3d/0xe0
+ rt_spin_lock_slowlock_locked+0x118/0x2a0
+ rt_spin_lock_slowlock+0x57/0x90
+ __rt_spin_lock+0x26/0x30
+ __write_rt_lock+0x23/0x1a0
+ ? intel_pmu_cpu_dying+0x67/0x70
+ rt_write_lock+0x2a/0x30
+ find_and_remove_object+0x1e/0x80
+ delete_object_full+0x10/0x20
+ kmemleak_free+0x32/0x50
+ kfree+0x104/0x1f0
+ ? x86_pmu_starting_cpu+0x30/0x30
+ intel_pmu_cpu_dying+0x67/0x70
+ x86_pmu_dying_cpu+0x1a/0x30
+ cpuhp_invoke_callback+0x92/0x700
+ take_cpu_down+0x70/0xa0
+ multi_cpu_stop+0x62/0xc0
+ ? cpu_stop_queue_work+0x130/0x130
+ cpu_stopper_thread+0x79/0x100
+ smpboot_thread_fn+0x20f/0x2d0
+ kthread+0x121/0x140
+ ? sort_range+0x30/0x30
+ ? kthread_park+0x90/0x90
+ ret_from_fork+0x35/0x40
 
-Thanks for pointing this out.
+And on v4.18 stable tree the following call trace, caused by grabbing
+kmemleak_lock again, is also observed.
 
-People with a lower kernel version than the future 4.21 just cannot
-and will not be able to use the proportional share policy on blk-mq
-(with legacy code), because of the name issue highlighted in this
-email.  If this patch series gets accepted, a backport will solve the
-problem.  In this respect, such a backport might even happen
-'automatically', as most bfq commit seem to get backported to older,
-stable kernels.
+kernel BUG at kernel/locking/rtmutex.c:1048! 
+invalid opcode: 0000 [#1] PREEMPT SMP PTI 
+CPU: 5 PID: 689 Comm: mkfs.ext4 Not tainted 4.18.16-rt9-preempt-rt #1 
+Hardware name: Intel Corp. Harcuvar/Server, BIOS HAVLCRB1.X64.0015.D62.1708310404 08/31/2017 
+RIP: 0010:rt_spin_lock_slowlock_locked+0x277/0x2a0 
+Code: e8 5e 64 61 ff e9 bc fe ff ff e8 54 64 61 ff e9 b7 fe ff ff 0f 0b e8 98 57 53 ff e9 43 fe ff ff e8 8e 57 53 ff e9 74 ff ff ff <0f> 0b 0f 0b 0f 0b 48 8b 43 10 48 85 c0 74 06 48 3b 58 38 75 0b 49 
+RSP: 0018:ffff936846d4f3b0 EFLAGS: 00010046 
+RAX: ffff8e3680361e00 RBX: ffffffff83a8b240 RCX: 0000000000000001 
+RDX: 0000000000000000 RSI: ffff8e3680361e00 RDI: ffffffff83a8b258 
+RBP: ffff936846d4f3e8 R08: ffff8e3680361e01 R09: ffffffff82adfdf0 
+R10: ffffffff827ede18 R11: 0000000000000000 R12: ffff936846d4f3f8 
+R13: ffff8e3680361e00 R14: ffff936846d4f3f8 R15: 0000000000000246 
+FS: 00007fc8b6bfd780(0000) GS:ffff8e369f340000(0000) knlGS:0000000000000000 
+CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033 
+CR2: 000055fb5659e000 CR3: 00000007fdd14000 CR4: 00000000003406e0 
+Call Trace: 
+ ? preempt_count_add+0x74/0xc0 
+ rt_spin_lock_slowlock+0x57/0x90 
+ ? __kernel_text_address+0x12/0x40 
+ ? __save_stack_trace+0x75/0x100 
+ __rt_spin_lock+0x26/0x30 
+ __write_rt_lock+0x23/0x1a0 
+ rt_write_lock+0x2a/0x30 
+ create_object+0x17d/0x2b0 
+ kmemleak_alloc+0x34/0x50 
+ kmem_cache_alloc+0x146/0x220 
+ ? mempool_alloc_slab+0x15/0x20 
+ mempool_alloc_slab+0x15/0x20 
+ mempool_alloc+0x65/0x170 
+ sg_pool_alloc+0x21/0x60 
+ __sg_alloc_table+0x101/0x160 
+ ? sg_free_table_chained+0x30/0x30 
+ sg_alloc_table_chained+0x8b/0xb0 
+ scsi_init_sgtable+0x31/0x90 
+ scsi_init_io+0x44/0x130 
+ sd_setup_write_same16_cmnd+0xef/0x150 
+ sd_init_command+0x6bf/0xaa0 
+ ? cgroup_base_stat_cputime_account_end.isra.0+0x26/0x60 
+ ? elv_rb_del+0x2a/0x40 
+ scsi_setup_cmnd+0x8e/0x140 
+ scsi_prep_fn+0x5d/0x140 
+ blk_peek_request+0xda/0x2f0 
+ scsi_request_fn+0x33/0x550 
+ ? cfq_rb_erase+0x23/0x40 
+ __blk_run_queue+0x43/0x60 
+ cfq_insert_request+0x2f3/0x5d0 
+ __elv_add_request+0x160/0x290 
+ blk_flush_plug_list+0x204/0x230 
+ schedule+0x87/0xe0 
+ __write_rt_lock+0x18b/0x1a0 
+ rt_write_lock+0x2a/0x30 
+ create_object+0x17d/0x2b0 
+ kmemleak_alloc+0x34/0x50 
+ __kmalloc_node+0x1cd/0x340 
+ alloc_request_size+0x30/0x70 
+ mempool_alloc+0x65/0x170 
+ ? ioc_lookup_icq+0x54/0x70 
+ get_request+0x4e3/0x8d0 
+ ? wait_woken+0x80/0x80 
+ blk_queue_bio+0x153/0x470 
+ generic_make_request+0x1dc/0x3f0 
+ submit_bio+0x49/0x140 
+ ? next_bio+0x38/0x40 
+ submit_bio_wait+0x59/0x90 
+ blkdev_issue_discard+0x7a/0xd0 
+ ? _raw_spin_unlock_irqrestore+0x18/0x50 
+ blk_ioctl_discard+0xc7/0x110 
+ blkdev_ioctl+0x57e/0x960 
+ ? __wake_up+0x13/0x20 
+ block_ioctl+0x3d/0x50 
+ do_vfs_ioctl+0xa8/0x610 
+ ? vfs_write+0x166/0x1b0 
+ ksys_ioctl+0x67/0x90 
+ __x64_sys_ioctl+0x1a/0x20 
+ do_syscall_64+0x4d/0xf0 
+ entry_SYSCALL_64_after_hwframe+0x44/0xa9
 
-In addition, this extension
-- extends the whole cgroups interface, in a seamless and
-  backward-compatible way, to prevent future issues like these;
-- solves a similar issue with throttle (which AFAIK won't go away
-  with 4.21).
+kmemleak is an error detecting feature. We would not expect as good performance
+as without it. As there is no raw rwlock defining helpers, we turn kmemleak_lock
+to a raw spinlock.
 
-Thanks,
-Paolo
+Signed-off-by: He Zhe <zhe.he@windriver.com>
+Cc: stable@vger.kernel.org
+Cc: catalin.marinas@arm.com
+Cc: bigeasy@linutronix.de
+Cc: tglx@linutronix.de
+Cc: rostedt@goodmis.org
+---
+ mm/kmemleak.c | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
-> --=20
->  Oleksandr Natalenko (post-factum)
+diff --git a/mm/kmemleak.c b/mm/kmemleak.c
+index 17dd883..b68a3d0 100644
+--- a/mm/kmemleak.c
++++ b/mm/kmemleak.c
+@@ -26,7 +26,7 @@
+  *
+  * The following locks and mutexes are used by kmemleak:
+  *
+- * - kmemleak_lock (rwlock): protects the object_list modifications and
++ * - kmemleak_lock (raw spinlock): protects the object_list modifications and
+  *   accesses to the object_tree_root. The object_list is the main list
+  *   holding the metadata (struct kmemleak_object) for the allocated memory
+  *   blocks. The object_tree_root is a red black tree used to look-up
+@@ -197,7 +197,7 @@ static LIST_HEAD(gray_list);
+ /* search tree for object boundaries */
+ static struct rb_root object_tree_root = RB_ROOT;
+ /* rw_lock protecting the access to object_list and object_tree_root */
+-static DEFINE_RWLOCK(kmemleak_lock);
++static DEFINE_RAW_SPINLOCK(kmemleak_lock);
+ 
+ /* allocation caches for kmemleak internal data */
+ static struct kmem_cache *object_cache;
+@@ -491,9 +491,9 @@ static struct kmemleak_object *find_and_get_object(unsigned long ptr, int alias)
+ 	struct kmemleak_object *object;
+ 
+ 	rcu_read_lock();
+-	read_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 	object = lookup_object(ptr, alias);
+-	read_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ 
+ 	/* check whether the object is still available */
+ 	if (object && !get_object(object))
+@@ -513,13 +513,13 @@ static struct kmemleak_object *find_and_remove_object(unsigned long ptr, int ali
+ 	unsigned long flags;
+ 	struct kmemleak_object *object;
+ 
+-	write_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 	object = lookup_object(ptr, alias);
+ 	if (object) {
+ 		rb_erase(&object->rb_node, &object_tree_root);
+ 		list_del_rcu(&object->object_list);
+ 	}
+-	write_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ 
+ 	return object;
+ }
+@@ -593,7 +593,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 	/* kernel backtrace */
+ 	object->trace_len = __save_stack_trace(object->trace);
+ 
+-	write_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 
+ 	min_addr = min(min_addr, ptr);
+ 	max_addr = max(max_addr, ptr + size);
+@@ -624,7 +624,7 @@ static struct kmemleak_object *create_object(unsigned long ptr, size_t size,
+ 
+ 	list_add_tail_rcu(&object->object_list, &object_list);
+ out:
+-	write_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ 	return object;
+ }
+ 
+@@ -1310,7 +1310,7 @@ static void scan_block(void *_start, void *_end,
+ 	unsigned long *end = _end - (BYTES_PER_POINTER - 1);
+ 	unsigned long flags;
+ 
+-	read_lock_irqsave(&kmemleak_lock, flags);
++	raw_spin_lock_irqsave(&kmemleak_lock, flags);
+ 	for (ptr = start; ptr < end; ptr++) {
+ 		struct kmemleak_object *object;
+ 		unsigned long pointer;
+@@ -1367,7 +1367,7 @@ static void scan_block(void *_start, void *_end,
+ 			spin_unlock(&object->lock);
+ 		}
+ 	}
+-	read_unlock_irqrestore(&kmemleak_lock, flags);
++	raw_spin_unlock_irqrestore(&kmemleak_lock, flags);
+ }
+ 
+ /*
+-- 
+2.7.4
 
