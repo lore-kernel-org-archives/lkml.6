@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B70F3C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:57:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E8B1C0044B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8092D223DD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:57:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 522A5223CB
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:57:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="N8KkHvWq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8092D223DD
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QDGg0Xfc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 522A5223CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728436AbeKLTtf (ORCPT
+        id S1728752AbeKLTti (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 14:49:35 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53820 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728268AbeKLTte (ORCPT
+        Mon, 12 Nov 2018 14:49:38 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:35802 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728518AbeKLTth (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 14:49:34 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f10-v6so7787163wme.3
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 01:57:05 -0800 (PST)
+        Mon, 12 Nov 2018 14:49:37 -0500
+Received: by mail-wm1-f67.google.com with SMTP id t15-v6so7516385wmt.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 01:57:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=gEkvf3D0ybtQ1XCiNuNOR20e0/KEmaDMFTtp87FuqbE=;
-        b=N8KkHvWqCG3FPBQKMMKSv7Pg/NLzZZA7xMvcJW6U01Wj0GNYTuJeCcya4ODW4IlfDY
-         bjeINPfviBlUjWGw0A/F1Z2j5xFDixkEn+Wq8pjVDa2f0IyCUhwOwJnWnNFIaWBeVVTq
-         d85CwbZ1TDnYV7195SRPVFTFCEtIMsDAzsBRA=
+        bh=rpZR9mJwWH7OFtYLISHMCJG8f05AVkaLjpshd/8XLBg=;
+        b=QDGg0Xfc28PGvnVlOCCcIqTsT8u+2STJ/BRHsU4TWNb0Qf39eUTzZBIPZWewRac+F9
+         r48HnFML9ikjsTAzSxVkv0tFmaCQtYLBMHy0CbrhczPcXAlEm1vn9O3ROOQfl4KxKeZt
+         qrhsIG/0OD+gZ8HfdS87YYirC8OfV4zYGI4ck=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=gEkvf3D0ybtQ1XCiNuNOR20e0/KEmaDMFTtp87FuqbE=;
-        b=lD60VaFG6xAAtb1WpH992IKiEtaxXhB9pmOzX6udt4FEG1adb7mkbaugKMn7zcczpv
-         1oj1pB95sHzEP2/W1+xhAVRSORgZonttpFhYsYFsDL7ZS9RMVpLn9YWYIWxiOH/0uxiV
-         DoN+JAeN69d9SKZf9X5KxOpuAMTXagl3tvTRPp/8Eqw2Qewfd6AHlk8idFCZ3MRrmhY+
-         x1QONpqO3vVM8K/Rx0yKIHXX9L004ffF/ghYVJHJcH9Tduq0xAWSB2GvzGkK5iMsdsMW
-         4XAMAfFxCX3W2pHwlVj9GWk3cUODet0rGQjbY1b5oX+mA82sFQaiShU6VhPc/8sCXu5L
-         Thbw==
-X-Gm-Message-State: AGRZ1gIbvnyi+8EclyIZBR4wZEEGpJCVa0WVQxe5VtSqppbxJWuDznp6
-        jsM2Xffd/ZjWFbz6hheJNzES8w==
-X-Google-Smtp-Source: AJdET5fmKdDKURgKcd0/zNKsqHAs7FIXT38LFwZ+xmQ+O0/jj39RrDDpR/i7+8aP1nLdD0FN0ceDXg==
-X-Received: by 2002:a1c:3954:: with SMTP id g81-v6mr6728831wma.139.1542016624983;
-        Mon, 12 Nov 2018 01:57:04 -0800 (PST)
+        bh=rpZR9mJwWH7OFtYLISHMCJG8f05AVkaLjpshd/8XLBg=;
+        b=FVOOjcmyClJSJtzv3ONmA4NRWaW5DDr9gNd2Tj89dbQXDL4wUS6qXUTIDMSBlBk2W2
+         rtvEOzMwwmO4yiNQa3UmzgsEN7er1PA+21PS2lBdSGypU3j4wmjGnhB0uMani69kLdo+
+         hq3UCum8bqipBlgnbX96oYDd+aKyRP3A+HlCv6fpcgMp0Qtd5jTEudpn49AXXSmCSZK5
+         2n+Zwo9Py/YFeCnoMRPGKNZVMlLjk/9muH3PuH9Rb5hgXLqlb9uv1br0B7/rflCQhKgh
+         FxZ3WKTKJ8ksfJ1b+ROgz6quuKO7G8VaDyu8d/+Tx6q6uVUYCMxFgJjF/hBp1FuVd93A
+         nc/A==
+X-Gm-Message-State: AGRZ1gJP6jLjB/GS/ikv5V+bOi8TxdYlkYdeAphz1IfK7Ve4sjjapIiF
+        GvY7l/YtFkbn6sThjRikfaUO4A==
+X-Google-Smtp-Source: AJdET5eWLeJkszgxQtsLss1OSpAsy7RqDKp6DgrqNS+c3cAOGNvX8LTc+ygXS4wYZVvjQxFVOOjuEA==
+X-Received: by 2002:a1c:2097:: with SMTP id g145-v6mr6949615wmg.57.1542016627706;
+        Mon, 12 Nov 2018 01:57:07 -0800 (PST)
 Received: from localhost.localdomain ([93.68.220.21])
-        by smtp.gmail.com with ESMTPSA id r14-v6sm21273089wro.8.2018.11.12.01.57.02
+        by smtp.gmail.com with ESMTPSA id r14-v6sm21273089wro.8.2018.11.12.01.57.05
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 01:57:04 -0800 (PST)
+        Mon, 12 Nov 2018 01:57:07 -0800 (PST)
 From:   Paolo Valente <paolo.valente@linaro.org>
 To:     Jens Axboe <axboe@kernel.dk>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
@@ -71,9 +71,9 @@ Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         oleksandr@natalenko.name, cgroups@vger.kernel.org,
         linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>,
         Paolo Valente <paolo.valente@linaro.org>
-Subject: [PATCH 01/12] kernfs: add function to find kernfs_node without increasing ref counter
-Date:   Mon, 12 Nov 2018 10:56:21 +0100
-Message-Id: <20181112095632.69114-2-paolo.valente@linaro.org>
+Subject: [PATCH 02/12] cgroup: add hook seq_show_cft with also the owning cftype as parameter
+Date:   Mon, 12 Nov 2018 10:56:22 +0100
+Message-Id: <20181112095632.69114-3-paolo.valente@linaro.org>
 X-Mailer: git-send-email 2.16.1
 In-Reply-To: <20181112095632.69114-1-paolo.valente@linaro.org>
 References: <20181112095632.69114-1-paolo.valente@linaro.org>
@@ -82,72 +82,82 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Angelo Ruocco <angeloruocco90@gmail.com>
+The current implementation of the seq_show hook in the cftype struct
+has only, as parameters, the seq_file to write to and the arguments
+passed by the command line. Thus, the only way to retrieve the cftype
+that owns an instance of such hook function is by using the accessor
+in the seq_file itself.
 
-The kernfs pseudo file system doesn't export any function to only find
-a node by name, without also getting a reference on it.
-But in some cases it is useful to just locate a kernfs node, while
-using it or not depends on some other condition.
+But in a future scenario where the same file may be shared by multiple
+cftypes, this accessor will point only to the first of the cftypes
+linked to the seq_file. It will then be impossible to access the
+cftype owning the seq_show function within the seq_show itself, unless
+such cftype is the first one.
 
-This commit adds a function to just look for a node, without getting
-a reference on it.
+This commit adds an additional seq_show_cft hook that has as a formal
+parameter also the cftype that owns the function.
 
 Signed-off-by: Angelo Ruocco <angeloruocco90@gmail.com>
 Signed-off-by: Paolo Valente <paolo.valente@linaro.org>
 ---
- fs/kernfs/dir.c        | 13 +++++++++++++
- include/linux/kernfs.h |  7 +++++++
- 2 files changed, 20 insertions(+)
+ include/linux/cgroup-defs.h |  3 ++-
+ kernel/cgroup/cgroup.c      | 15 +++++++++------
+ 2 files changed, 11 insertions(+), 7 deletions(-)
 
-diff --git a/fs/kernfs/dir.c b/fs/kernfs/dir.c
-index 4ca0b5c18192..0003c665869d 100644
---- a/fs/kernfs/dir.c
-+++ b/fs/kernfs/dir.c
-@@ -892,6 +892,19 @@ static struct kernfs_node *kernfs_walk_ns(struct kernfs_node *parent,
- 	return parent;
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 5e1694fe035b..7841db6e7fb3 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -543,8 +543,9 @@ struct cftype {
+ 	 */
+ 	s64 (*read_s64)(struct cgroup_subsys_state *css, struct cftype *cft);
+ 
+-	/* generic seq_file read interface */
++	/* generic seq_file read interfaces*/
+ 	int (*seq_show)(struct seq_file *sf, void *v);
++	int (*seq_show_cft)(struct seq_file *sf, struct cftype *cft, void *v);
+ 
+ 	/* optional ops, implement all or none */
+ 	void *(*seq_start)(struct seq_file *sf, loff_t *ppos);
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index 8b79318810ad..74012b61fe19 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -1448,7 +1448,8 @@ static umode_t cgroup_file_mode(const struct cftype *cft)
+ {
+ 	umode_t mode = 0;
+ 
+-	if (cft->read_u64 || cft->read_s64 || cft->seq_show)
++	if (cft->read_u64 || cft->read_s64 || cft->seq_show ||
++	    cft->seq_show_cft)
+ 		mode |= S_IRUGO;
+ 
+ 	if (cft->write_u64 || cft->write_s64 || cft->write) {
+@@ -3549,17 +3550,19 @@ static int cgroup_seqfile_show(struct seq_file *m, void *arg)
+ {
+ 	struct cftype *cft = seq_cft(m);
+ 	struct cgroup_subsys_state *css = seq_css(m);
++	int ret = 0;
+ 
+ 	if (cft->seq_show)
+-		return cft->seq_show(m, arg);
+-
+-	if (cft->read_u64)
++		ret = cft->seq_show(m, arg);
++	else if (cft->seq_show_cft)
++		ret = cft->seq_show_cft(m, cft, arg);
++	else if (cft->read_u64)
+ 		seq_printf(m, "%llu\n", cft->read_u64(css, cft));
+ 	else if (cft->read_s64)
+ 		seq_printf(m, "%lld\n", cft->read_s64(css, cft));
+ 	else
+-		return -EINVAL;
+-	return 0;
++		ret = -EINVAL;
++	return ret;
  }
  
-+struct kernfs_node *kernfs_find(struct kernfs_node *parent,
-+				const unsigned char *name)
-+{
-+	struct kernfs_node *kn;
-+
-+	mutex_lock(&kernfs_mutex);
-+	kn = kernfs_find_ns(parent, name, NULL);
-+	mutex_unlock(&kernfs_mutex);
-+
-+	return kn;
-+}
-+EXPORT_SYMBOL_GPL(kernfs_find);
-+
- /**
-  * kernfs_find_and_get_ns - find and get kernfs_node with the given name
-  * @parent: kernfs_node to search under
-diff --git a/include/linux/kernfs.h b/include/linux/kernfs.h
-index 5b36b1287a5a..26e69d285964 100644
---- a/include/linux/kernfs.h
-+++ b/include/linux/kernfs.h
-@@ -309,6 +309,8 @@ void pr_cont_kernfs_path(struct kernfs_node *kn);
- struct kernfs_node *kernfs_get_parent(struct kernfs_node *kn);
- struct kernfs_node *kernfs_find_and_get_ns(struct kernfs_node *parent,
- 					   const char *name, const void *ns);
-+struct kernfs_node *kernfs_find(struct kernfs_node *parent,
-+				const unsigned char *name);
- struct kernfs_node *kernfs_walk_and_get_ns(struct kernfs_node *parent,
- 					   const char *path, const void *ns);
- void kernfs_get(struct kernfs_node *kn);
-@@ -391,6 +393,11 @@ static inline struct kernfs_node *
- kernfs_find_and_get_ns(struct kernfs_node *parent, const char *name,
- 		       const void *ns)
- { return NULL; }
-+
-+static inline struct kernfs_node *
-+kernfs_find(struct kernfs_node *parent, const char *name)
-+{ return NULL; }
-+
- static inline struct kernfs_node *
- kernfs_walk_and_get_ns(struct kernfs_node *parent, const char *path,
- 		       const void *ns)
+ static struct kernfs_ops cgroup_kf_single_ops = {
 -- 
 2.16.1
 
