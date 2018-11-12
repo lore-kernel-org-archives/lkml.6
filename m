@@ -2,192 +2,230 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB657C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:35:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E7C38C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:37:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A10DC223B0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:35:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3EC12175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:37:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="RqZEQD4A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A10DC223B0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j16+oaXw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3EC12175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728530AbeKLS2B (ORCPT
+        id S1728451AbeKLS3e (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 13:28:01 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:42393 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726433AbeKLS2B (ORCPT
+        Mon, 12 Nov 2018 13:29:34 -0500
+Received: from mail-yw1-f65.google.com ([209.85.161.65]:39526 "EHLO
+        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726207AbeKLS3e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 13:28:01 -0500
-Received: by mail-oi1-f194.google.com with SMTP id x63-v6so6479258oix.9
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 00:35:52 -0800 (PST)
+        Mon, 12 Nov 2018 13:29:34 -0500
+Received: by mail-yw1-f65.google.com with SMTP id v8-v6so4060574ywh.6
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 00:37:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=gXyBZnjux6qw85Gu5V+pcDhp0sZwdQ7an3DixOIjaVw=;
-        b=RqZEQD4AqvUCSMmNYOny3L0fxL5niilcOjyjHxvPMciKv9FEUekYoOW0E5FKeXEYu4
-         6qrxsP6hlNtAtVlE1YDkIvhq22aH2TwqRZk/K+NUEvi1OQEFqYodCOyNgZe2HOGy0rxB
-         MlkqPNclrP8GLWKXm3seIrpR9zIVnW5+ei+sQ=
+        bh=gCNTp6NdhK/2OEEnMGl1WFohLigmw2SBp5SG+241Mos=;
+        b=j16+oaXwwhPLmaHLugdMyT4Z40UN04F3hnxOaUz0kYoXeqWPwIuRNnkzW6uOcT1iLD
+         tob4ShBXOyTGxwSk7xE0LWAXepCEB4wPlEeRvgsRajZtO32sTxz4gjZAchk78bQOuSqa
+         h257CSnKEfJ3Z4AZXeuABXdXzwyBwBbUqbRhg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=gXyBZnjux6qw85Gu5V+pcDhp0sZwdQ7an3DixOIjaVw=;
-        b=XIBNkYrfVVCRCDaRARW18QOAQh9WsDlRZXG/oXYnqCCPwSastvhLC07pyi1047s82Z
-         AbVFLTBiEHVJYhssA4c3lAtEZLZQUVb6e241WrxXGeG0A8d4Q21VUzpUKDgeTSE2J/rp
-         qr+OcygIOxRwn2q95UYS7vawUMhm7qPJgyjIgxje+sLDfG3uCG2d0orKeVb+yknZxlq5
-         m1KCLYSR6HbAvzCm9LEQRtz8H+O6uzpVdL3d2INlaT93d4MWhWO7iRLjx/wLKjNjqiF8
-         xGTl74vWc+vTUzO4ABS5ia4pQvXAWmr6opRZEgjcBiholaKgCmZ903mzqXOFiNvcibDw
-         CVkw==
-X-Gm-Message-State: AGRZ1gKOu6y7HTbPbLpgEtqyD9UJxRrlx5LipdkTePMLWP3TUTIKQZ7J
-        Cbz9D0oAV4l3eY5FFQd7KAgWreasnq6lbg==
-X-Google-Smtp-Source: AJdET5cU8kOHWN1QdUoBF5p7t7uuBCw5rBHZt41wvfhaO9gv3XRCNNpsV50/Tf6t/WHx4ttAKSYtsA==
-X-Received: by 2002:aca:4dd4:: with SMTP id a203-v6mr34031oib.168.1542011751836;
-        Mon, 12 Nov 2018 00:35:51 -0800 (PST)
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com. [209.85.210.45])
-        by smtp.gmail.com with ESMTPSA id n64-v6sm6012701oib.17.2018.11.12.00.35.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 00:35:50 -0800 (PST)
-Received: by mail-ot1-f45.google.com with SMTP id w25so6497811otm.13
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 00:35:50 -0800 (PST)
-X-Received: by 2002:a9d:6287:: with SMTP id x7mr32672otk.304.1542011749888;
- Mon, 12 Nov 2018 00:35:49 -0800 (PST)
+        bh=gCNTp6NdhK/2OEEnMGl1WFohLigmw2SBp5SG+241Mos=;
+        b=XwSFSqQVBMYol4utG66lXhfWcrkfdhd6DpuWyI6zG1sQr1Ma5HdMi8voctuGui/1nM
+         eouTd3nY+8s/KHtTYFSRXkvJj+W383kBPK4RqM27LZn7mV5TdgCuSNNUXI6vnxAYLKFG
+         gqok4euXU1yqL2lMe5tGB0swEDHxFxHDewqWnb//qrIkskuKIv53kvoNiaVo7IbyTh3T
+         40RlZftHV2800Y/oowIDpZHk8zLcrlOTcVqnuIMAU7/1jy0LBmrqKAe1/bUw6Jb7rwVl
+         LkpsML38yUSV3HKk3HX9SR7gZqgZF0uhTcQbvLbdP4CDaYysZ6nsQT4SnbkY0zQ0WHjM
+         VJ0Q==
+X-Gm-Message-State: AGRZ1gIdRVND9Je9WcUhFboDuMTLaD7vgzYPoCNirChNGbdqrJouV+S0
+        9yFR/+NJASEXSoKJHhr/lvx6/Da6O5Cko0QXch/SaCJf+YQ=
+X-Google-Smtp-Source: AJdET5d93UtDd6/ZzV9Ll1k8SBS8/xXaDD9MpEZp6fXJmWXXKjX9+SbPHRGNgkUFTT5mtEQxzVOyzFjkdHSqR/lDo00=
+X-Received: by 2002:a81:8d7:: with SMTP id 206-v6mr18885ywi.425.1542011844117;
+ Mon, 12 Nov 2018 00:37:24 -0800 (PST)
 MIME-Version: 1.0
-References: <1541749141-6989-1-git-send-email-mgottam@codeaurora.org>
- <CAAFQd5CwhPTmh4kF6O23Os2tihaWEez1SM=Th6BGkf_wo_LYDA@mail.gmail.com>
- <be2906d9d9c3f4618d21d4adef662d75@codeaurora.org> <CAAFQd5DE4ajq6HxHhKjYFHaqFpBXJdWNcv3Qr95B9dBP=zGsJQ@mail.gmail.com>
-In-Reply-To: <CAAFQd5DE4ajq6HxHhKjYFHaqFpBXJdWNcv3Qr95B9dBP=zGsJQ@mail.gmail.com>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Mon, 12 Nov 2018 17:35:37 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MUWieRTvrYR_UacVe-EAD1_VjTMehL7J2P=Ni8W7ELsXw@mail.gmail.com>
-Message-ID: <CAPBb6MUWieRTvrYR_UacVe-EAD1_VjTMehL7J2P=Ni8W7ELsXw@mail.gmail.com>
-Subject: Re: [PATCH v2] media: venus: add support for selection rectangles
-To:     Tomasz Figa <tfiga@chromium.org>
-Cc:     mgottam@codeaurora.org,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org
+References: <20181108194434.16568-1-anders.roxell@linaro.org> <CAK7LNATU+h3_ytHx4TSUf_breGfxLzHfsOKbGTFprNxYHh9-0g@mail.gmail.com>
+In-Reply-To: <CAK7LNATU+h3_ytHx4TSUf_breGfxLzHfsOKbGTFprNxYHh9-0g@mail.gmail.com>
+From:   Anders Roxell <anders.roxell@linaro.org>
+Date:   Mon, 12 Nov 2018 09:37:12 +0100
+Message-ID: <CADYN=9KZLwNA8B+y+c3b7+XzVz_H6PBbwZGDVmzvASKbLhKObw@mail.gmail.com>
+Subject: Re: [PATCH v2] scripts/kconfig/merge_config: don't redefine 'y' to 'm'
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     dvhart@infradead.org, Arnd Bergmann <arnd@arndb.de>,
+        linux-kbuild@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 9, 2018 at 7:31 PM Tomasz Figa <tfiga@chromium.org> wrote:
+On Sun, 11 Nov 2018 at 05:43, Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
 >
-> Hi Malathi,
+> On Fri, Nov 9, 2018 at 4:45 AM Anders Roxell <anders.roxell@linaro.org> wrote:
+> >
+> > In today's merge_config.sh the order of the config fragment files dictates
+> > the output of a config option. With this approach we will get different
+> > .config files depending on the order of the config fragment files.
+> >
+> > So doing something like:
+> > $ ./merge/kconfig/merge_config.sh selftest.config drm.config
+> >
+> > Where selftest.config defines DRM=y and drm.config defines DRM=m, the
+> > result will be "DRM=m".
+> >
+> > Rework to add a switch to get builtin '=y' precedence over modules '=m',
+> > this will result in "DRM=y". If we do something like this:
+> >
+> > $ ./merge/kconfig/merge_config.sh -y selftest.config drm.config
+> >
+> > Suggested-by: Arnd Bergmann <arnd@arndb.de>
+> > Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+> > ---
+> >  scripts/kconfig/merge_config.sh | 34 +++++++++++++++++++++++++++------
+> >  1 file changed, 28 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/scripts/kconfig/merge_config.sh b/scripts/kconfig/merge_config.sh
+> > index da66e7742282..fcd18f642fc7 100755
+> > --- a/scripts/kconfig/merge_config.sh
+> > +++ b/scripts/kconfig/merge_config.sh
+> > @@ -22,6 +22,7 @@
+> >
+> >  clean_up() {
+> >         rm -f $TMP_FILE
+> > +       rm -f $MERGE_FILE
+> >         exit
+> >  }
+> >  trap clean_up HUP INT TERM
+> > @@ -32,6 +33,7 @@ usage() {
+> >         echo "  -m    only merge the fragments, do not execute the make command"
+> >         echo "  -n    use allnoconfig instead of alldefconfig"
+> >         echo "  -r    list redundant entries when merging fragments"
+> > +       echo "  -y    make builtin have precedence over modules"
+> >         echo "  -O    dir to put generated output files.  Consider setting \$KCONFIG_CONFIG instead."
+> >         echo
+> >         echo "Used prefix: '$CONFIG_PREFIX'. You can redefine it with \$CONFIG_ environment variable."
+> > @@ -40,6 +42,8 @@ usage() {
+> >  RUNMAKE=true
+> >  ALLTARGET=alldefconfig
+> >  WARNREDUN=false
+> > +BUILTIN=false
+> > +BUILTIN_FLAG=false
 >
-> On Fri, Nov 9, 2018 at 6:20 PM <mgottam@codeaurora.org> wrote:
-> >
-> > On 2018-11-09 07:56, Tomasz Figa wrote:
-> > > Hi Malathi,
-> > >
-> > > On Fri, Nov 9, 2018 at 4:39 PM Malathi Gottam <mgottam@codeaurora.org>
-> > > wrote:
-> > >>
-> > >> Handles target type crop by setting the new active rectangle
-> > >> to hardware. The new rectangle should be within YUV size.
-> > >>
-> > >> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
-> > >> ---
-> > >>  drivers/media/platform/qcom/venus/venc.c | 26
-> > >> ++++++++++++++++++++++----
-> > >>  1 file changed, 22 insertions(+), 4 deletions(-)
-> > >>
-> > >> diff --git a/drivers/media/platform/qcom/venus/venc.c
-> > >> b/drivers/media/platform/qcom/venus/venc.c
-> > >> index ce85962..d26c129 100644
-> > >> --- a/drivers/media/platform/qcom/venus/venc.c
-> > >> +++ b/drivers/media/platform/qcom/venus/venc.c
-> > >> @@ -478,16 +478,34 @@ static int venc_g_fmt(struct file *file, void
-> > >> *fh, struct v4l2_format *f)
-> > >>  venc_s_selection(struct file *file, void *fh, struct v4l2_selection
-> > >> *s)
-> > >>  {
-> > >>         struct venus_inst *inst = to_inst(file);
-> > >> +       int ret;
-> > >> +       u32 buftype;
-
-Looks like these two variables are not used anymore?
-
-> > >>
-> > >>         if (s->type != V4L2_BUF_TYPE_VIDEO_OUTPUT)
-> > >>                 return -EINVAL;
-> > >>
-> > >>         switch (s->target) {
-> > >>         case V4L2_SEL_TGT_CROP:
-> > >> -               if (s->r.width != inst->out_width ||
-> > >> -                   s->r.height != inst->out_height ||
-> > >> -                   s->r.top != 0 || s->r.left != 0)
-> > >> -                       return -EINVAL;
-> > >> +               if (s->r.left != 0) {
-> > >> +                       s->r.width += s->r.left;
-> > >> +                       s->r.left = 0;
-> > >> +               }
-> > >> +
-> > >> +               if (s->r.top != 0) {
-> > >> +                       s->r.height += s->r.top;
-> > >> +                       s->r.top = 0;
-> > >> +               }
-> > >> +
-> > >> +               if (s->r.width > inst->width)
-> > >> +                       s->r.width = inst->width;
-> > >> +               else
-> > >> +                       inst->width = s->r.width;
-> > >> +
-> > >> +               if (s->r.height > inst->height)
-> > >> +                       s->r.height = inst->height;
-> > >> +               else
-> > >> +                       inst->height = s->r.height;
-> > >> +
-> > >
-> > > From semantic point of view, it looks fine, but where is the rectangle
-> > > actually set to the hardware?
-> > >
-> > > Best regards,
-> > > Tomasz
-> >
-> > As this set selection call occurs before the hfi session initialization,
-> > for now we are holding these values in driver.
-> >
-> > As this call is followed by VIDIOC_REQBUFS(), as a part of this
-> > we have venc_init_session
-> >
-> > static int venc_init_session(struct venus_inst *inst)
-> > {
-> >         int ret;
-> >
-> >         ret = hfi_session_init(inst, inst->fmt_cap->pixfmt);
-> >         if (ret)
-> >                 return ret;
-> >
-> >         ret = venus_helper_set_input_resolution(inst, inst->width,
-> >                                                 inst->height);
-> >         if (ret)
-> >                 goto deinit;
-> >
-> >         ret = venus_helper_set_output_resolution(inst, inst->width,
-> >                                                  inst->height,
-> >                                                  HFI_BUFFER_OUTPUT);
 >
-> Something sounds not right here. Shouldn't one of the width/height be
-> the OUPUT format and the other the selection CROP target rectangle?
+> Could you move the initialization of BUILTIN_FLAG
+> into the inner for-loop ?
+>
+>
+>
+> >  OUTPUT=.
+> >  CONFIG_PREFIX=${CONFIG_-CONFIG_}
+> >
+> > @@ -64,6 +68,11 @@ while true; do
+> >                 shift
+> >                 continue
+> >                 ;;
+> > +       "-y")
+> > +               BUILTIN=true
+> > +               shift
+> > +               continue
+> > +               ;;
+> >         "-O")
+> >                 if [ -d $2 ];then
+> >                         OUTPUT=$(echo $2 | sed 's/\/*$//')
+> > @@ -105,13 +114,15 @@ MERGE_LIST=$*
+> >  SED_CONFIG_EXP="s/^\(# \)\{0,1\}\(${CONFIG_PREFIX}[a-zA-Z0-9_]*\)[= ].*/\2/p"
+> >
+> >  TMP_FILE=$(mktemp ./.tmp.config.XXXXXXXXXX)
+> > +MERGE_FILE=$(mktemp ./.merge_tmp.config.XXXXXXXXXX)
+> >
+> >  echo "Using $INITFILE as base"
+> >  cat $INITFILE > $TMP_FILE
+> >
+> >  # Merge files, printing warnings on overridden values
+> > -for MERGE_FILE in $MERGE_LIST ; do
+> > -       echo "Merging $MERGE_FILE"
+> > +for ORIG_MERGE_FILE in $MERGE_LIST ; do
+> > +       cat $ORIG_MERGE_FILE > $MERGE_FILE
+>
+>
+> This 'cat' should be moved after the check
+> of the presence of '$ORIG_MERGE_FILE'.
+>
+>
+> > +       echo "Merging $ORIG_MERGE_FILE"
+> >         if [ ! -r "$MERGE_FILE" ]; then
+>
+> This check always returns false now.
+>
+>
+> >                 echo "The merge file '$MERGE_FILE' does not exist.  Exit." >&2
+> >                 exit 1
+> > @@ -122,15 +133,26 @@ for MERGE_FILE in $MERGE_LIST ; do
+> >                 grep -q -w $CFG $TMP_FILE || continue
+> >                 PREV_VAL=$(grep -w $CFG $TMP_FILE)
+> >                 NEW_VAL=$(grep -w $CFG $MERGE_FILE)
+>
+> Could you add 'BUILTIN_FLAG=false' here?
+>
+>
+>
+> > -               if [ "x$PREV_VAL" != "x$NEW_VAL" ] ; then
+> > -                       echo Value of $CFG is redefined by fragment $MERGE_FILE:
+> > +               if [ "$BUILTIN" = "true" ] && [ "${NEW_VAL#CONFIG_*=}" = "m" ] && [ "${PREV_VAL#CONFIG_*=}" = "y" ]; then
+> > +                       echo Previous  value: $PREV_VAL
+> > +                       echo New value:       $NEW_VAL
+> > +                       echo -y passed, will not demote y to m
+> > +                       echo
+> > +                       BUILTIN_FLAG=true
+> > +               elif [ "x$PREV_VAL" != "x$NEW_VAL" ] ; then
+> > +                       echo Value of $CFG is redefined by fragment $ORIG_MERGE_FILE:
+> >                         echo Previous  value: $PREV_VAL
+> >                         echo New value:       $NEW_VAL
+> >                         echo
+> >                 elif [ "$WARNREDUN" = "true" ]; then
+> > -                       echo Value of $CFG is redundant by fragment $MERGE_FILE:
+> > +                       echo Value of $CFG is redundant by fragment $ORIG_MERGE_FILE:
+> > +               fi
+> > +               if [ "$BUILTIN_FLAG" = "false" ]; then
+> > +                       sed -i "/$CFG[ =]/d" $TMP_FILE
+> > +               else
+> > +                       sed -i "/$CFG[ =]/d" $MERGE_FILE
+> > +                       BUILTIN_FLAG=false
+>
+>
+> Then this 'BUILTIN_FLAG=false' can go away.
 
-Yeah, I don't see where the stride of the input (from HFI perspective)
-buffer is set, so unless I missed something that would not capture the
-correct part of the buffer.
+Thank you Masahiro, will send out an update shortly where I address
+all your comments.
 
-Also doesn't Venus support non-zero left and top parameters for the
-selection rectangle?
+Cheers,
+Anders
+
+>
+> Thanks.
+>
+>
+> >                 fi
+> > -               sed -i "/$CFG[ =]/d" $TMP_FILE
+> >         done
+> >         cat $MERGE_FILE >> $TMP_FILE
+> >  done
+> > --
+> > 2.19.1
+> >
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
