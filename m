@@ -2,104 +2,133 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B04B6C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:58:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E690C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:00:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57494223CA
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 08:58:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57494223CA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 1C177223C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:00:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="M1J759hz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C177223C8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728804AbeKLSuU (ORCPT
+        id S1729069AbeKLSxC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 13:50:20 -0500
-Received: from lb3-smtp-cloud9.xs4all.net ([194.109.24.30]:46764 "EHLO
-        lb3-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726220AbeKLSuU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 13:50:20 -0500
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id M82jg0s3MSskCM82mgmv0s; Mon, 12 Nov 2018 09:58:05 +0100
-Subject: Re: [GIT PULL for v4.20-rc1] new experimental media request API
-To:     Pavel Machek <pavel@ucw.cz>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg KH <gregkh@linuxfoundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        linux-media@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-References: <20181030105328.0667ec68@coco.lan>
- <CAHk-=whQKCA18MEi7FT=10c0HVa=kxSyYBJeAQH-C2mA5gBhbg@mail.gmail.com>
- <20181031154030.3fab5a00@coco.lan> <20181111202850.GA9704@amd>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <c5ff4492-9b53-3585-16b3-ddc73c667a82@xs4all.nl>
-Date:   Mon, 12 Nov 2018 09:58:01 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Mon, 12 Nov 2018 13:53:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45680 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728400AbeKLSxB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 13:53:01 -0500
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 636B4223CB;
+        Mon, 12 Nov 2018 09:00:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542013246;
+        bh=CXFRI9xpMkAIufqjmbpESzkJVagAVVh0/xAPM2ArlXw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=M1J759hzVv9ljiCjcSCe5UehLFG4z19roNouS8lGRZVk5moY2hr5eOKBfB0Xj79qY
+         v2u+AqXlvI4/6R5e0SEUgYarNgQnk00LNSpd+wO6WuZPIfKE25Lu+aOtS4citpqF2r
+         FWGI/Cl0yzm+Is0B39VnUDb5h0G6dzPRrORyfXKg=
+Received: by mail-lj1-f176.google.com with SMTP id e5-v6so6882623lja.4;
+        Mon, 12 Nov 2018 01:00:46 -0800 (PST)
+X-Gm-Message-State: AGRZ1gLJHuU6NGs0QLZbaxWktzV1mHsjy5ImaLSXMWc9DCIS8cWl2/ld
+        N6t5ft0kqHrqKX2TMRm8lAjkrYZajU/uz/M74EU=
+X-Google-Smtp-Source: AJdET5fqUn5egnyujNHuiwlzZogSjmHoLrt/X9DZwmzoQJFmeHooyJy4T9qNKl1pUMVrgV/go4qWjfxrk1fP1Ed6CAo=
+X-Received: by 2002:a2e:85d3:: with SMTP id h19-v6mr100345ljj.82.1542013244507;
+ Mon, 12 Nov 2018 01:00:44 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181111202850.GA9704@amd>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfMMLeh7QOOP+BeMxsmNNDfdqWQgS7FIKODUCQ7Kjjrp4wq5oPuKyXM/dxq5Sq9MsD6WahuQBpHjB+Sos/sVAzbT7qI2zAQuJ1uEBPxgDDyEBAtNLDQG2
- Z97pGOpFY/cIJHuUcUihxJWAdiSaiK1KzVZFP9y3kQzYz61qLtzmlVkF7ze6CRCaVDd5VgS+eOX/sO3yZpaa0uAlVwG3bsNvuGXhv2XigrfHeaMLemZOrtSa
- gnhaJe+ZpF/263X+7GC+1t+kAbfwAIfmWuDKRBm+FQAtM6rU3FoSyQ4mxhku5792VNWNAjycQkNMC4nspIuKS9NlClRREipRrXVHyUuOS2Xks0/aK96YpJ9O
- HBvfSTlVe4S3WfgXPFAroS4c0vUWXhpUSj35bsL00GDCEHydZls=
+References: <CGME20181107171041eucas1p1a3cf91435b9071fd6e6f84101ebbcd9f@eucas1p1.samsung.com>
+ <1541610593-28542-1-git-send-email-l.luba@partner.samsung.com> <1541610593-28542-7-git-send-email-l.luba@partner.samsung.com>
+In-Reply-To: <1541610593-28542-7-git-send-email-l.luba@partner.samsung.com>
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+Date:   Mon, 12 Nov 2018 10:00:33 +0100
+X-Gmail-Original-Message-ID: <CAJKOXPcGOiVwVuaT+2RHGs0VxA2XRjOd6efsDQaGrWWCJS7vNg@mail.gmail.com>
+Message-ID: <CAJKOXPcGOiVwVuaT+2RHGs0VxA2XRjOd6efsDQaGrWWCJS7vNg@mail.gmail.com>
+Subject: Re: [PATCH v2 06/11] arm64: dts: exynos5433: add support for thermal
+ trip irq-mode
+To:     l.luba@partner.samsung.com
+Cc:     devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pm@vger.kernel.org, rui.zhang@intel.com, edubezval@gmail.com,
+        daniel.lezcano@linaro.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, corbet@lwn.net,
+        =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
+        <b.zolnierkie@samsung.com>, kgene@kernel.org,
+        "linux-samsung-soc@vger.kernel.org" 
+        <linux-samsung-soc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/11/2018 09:28 PM, Pavel Machek wrote:
-> Hi!
-> 
->> Em Wed, 31 Oct 2018 11:05:09 -0700
->> Linus Torvalds <torvalds@linux-foundation.org> escreveu:
->>
->>> On Tue, Oct 30, 2018 at 6:53 AM Mauro Carvalho Chehab
->>> <mchehab+samsung@kernel.org> wrote:
->>>>
->>>> For a new media API: the request API  
->>>
->>> Ugh. I don't know how much being in staging matters - if people start
->>> using it, they start using it.
->>>
->>> "Staging" does not mean "regressions don't matter".
->>
->> Yes, I know.
->>
->> This shouldn't affect normal cameras and generic V4L2 apps, as this
->> is for very advanced use cases. So, we hope that people won't start
->> using it for a while. 
->>
->> The main interested party on this is Google CromeOS. We're working 
->> together with them in order to do upstream first. They are well aware
->> that the API may change. So, I don't expect any complaints from their
->> side if the API would require further changes.
-> 
-> You may want to simply disable it in Kconfig... ChromeOS people can
-> enable it easily, and if it never worked in the mainline, you get some
-> wiggle room :-).
-> 								Pavel
-> 
+Thanks Lukasz for patches. I like your work!
 
-For the record: there are no known issues with the Request API. The
-only outstanding issue is with a control introduced in the staging cedrus
-driver which will have to change since the method used to refer to MPEG
-reference frames is wrong. We're working on that and should have this
-fixed soon (patches have been posted and I'm waiting for test feedback).
+I have few more comments which will probably apply for all the DTS commits.
 
-This control has nothing to do with the Request API, so I see no reason
-to put the Request API under a config option. Drivers needs to explicit
-enable support for the Request API anyway, so all existing drivers will
-return an error if userspace attempts to use this API.
+On Wed, 7 Nov 2018 at 18:10, Lukasz Luba <l.luba@partner.samsung.com> wrote:
+>
+> This patch adds support for new flag which indicates
 
-Regards,
+This patch does not add support. Support for flag was added in your
+first drivers/thermal patches in this set. This patch adds new flag.
+(and does something more, so read on)
 
-	Hans
+> that trip point triggers IRQ when temperature is met.
+> Exynos5433 supports 8 trip point which will trigger IRQ.
+
+/8 trip point/8 trip points/
+
+> Above that number other trip points should be registered
+> without 'irq-mode' flag.
+
+Please fix the line-wrap.
+
+>
+> Cc: Kukjin Kim <kgene@kernel.org>
+> Cc: Krzysztof Kozlowski <krzk@kernel.org>
+> Cc: devicetree@vger.kernel.org
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: linux-samsung-soc@vger.kernel.org
+> Signed-off-by: Lukasz Luba <l.luba@partner.samsung.com>
+> ---
+>  arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi | 105 ++++++++++++++++---------
+>  1 file changed, 70 insertions(+), 35 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+> index fe3a0b1..c4330f6 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+> @@ -17,37 +17,44 @@ thermal-zones {
+>                         atlas0_alert_0: atlas0-alert-0 {
+>                                 temperature = <65000>;  /* millicelsius */
+>                                 hysteresis = <1000>;    /* millicelsius */
+> -                               type = "active";
+> +                               type = "passive";
+
+This change is not explained in commit msg.
+
+Basically you are doing here two things (related to each other). You
+clearly define which trip points are IRQ-type and you correct the type
+of trip point. Active is incorrect. This second thing is missing in
+your commit msg and I believe it is main reason behind this patch. You
+should focus then on this reason - start from it. Subject could be
+like "Use proper passive type for thermal trip points".
+
+Without this explanation I don't see the strong reason behind that
+patch. IOW, everything was working fine before... so why adding this
+new flag? Or maybe something was not fine... and then it is real
+reason why you are sending the patch. Usually commit message should
+answer to the most important question "WHY". Now, it explains
+"WHAT"... but I can see it from the source code. However from the code
+it is not easy to guess WHY.
+
+Best regards,
+Krzysztof
