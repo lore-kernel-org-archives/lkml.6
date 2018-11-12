@@ -3,910 +3,1394 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A737FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:39:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 742DFC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:42:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51439214DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:39:49 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51439214DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id 0E11220881
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:42:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E11220881
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730371AbeKLMar (ORCPT
+        id S1730255AbeKLMdo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 07:30:47 -0500
-Received: from shell.v3.sk ([90.176.6.54]:59372 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729903AbeKLMar (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 07:30:47 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 7DF3FC6A15;
-        Mon, 12 Nov 2018 03:39:43 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id kaXPyLniKb1V; Mon, 12 Nov 2018 03:39:35 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 3C859C6A16;
-        Mon, 12 Nov 2018 03:39:35 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id HVlZglLtvBn1; Mon, 12 Nov 2018 03:39:33 +0100 (CET)
-Received: from belphegor.lan (ip-89-102-31-34.net.upcbroadband.cz [89.102.31.34])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 1106EC6A14;
-        Mon, 12 Nov 2018 03:39:33 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH 2/2] misc: hx8837: add a HiMax HX8837 display controller driver
-Date:   Mon, 12 Nov 2018 03:39:29 +0100
-Message-Id: <20181112023929.650002-2-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181112023929.650002-1-lkundrak@v3.sk>
-References: <20181112023929.650002-1-lkundrak@v3.sk>
-MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+        Mon, 12 Nov 2018 07:33:44 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:57560 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729729AbeKLMdn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 07:33:43 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5EB7480D;
+        Sun, 11 Nov 2018 18:42:41 -0800 (PST)
+Received: from p8cg001049571a15.blr.arm.com (p8cg001049571a15.blr.arm.com [10.162.0.72])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 643963F5BD;
+        Sun, 11 Nov 2018 18:42:36 -0800 (PST)
+From:   Anshuman Khandual <anshuman.khandual@arm.com>
+To:     linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Cc:     ocfs2-devel@oss.oracle.com, linux-fbdev@vger.kernel.org,
+        dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
+        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
+        iommu@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
+        dmaengine@vger.kernel.org, linux-block@vger.kernel.org,
+        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org
+Subject: [RFC] mm: Replace all open encodings for NUMA_NO_NODE
+Date:   Mon, 12 Nov 2018 08:11:55 +0530
+Message-Id: <1541990515-11670-1-git-send-email-anshuman.khandual@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-HiMax HX8837 is a display controller used on OLPC platforms. It controls
-backlight and is able to capture and freeze a frame when the LCD controll=
-er
-(and the rest of the plaform) is powered off.
+At present there are multiple places where invalid node number is encoded
+as -1. Even though implicitly understood it is always better to have macros
+in there. Replace these open encodings for an invalid node number with the
+global macro NUMA_NO_NODE. This helps remove NUMA related assumptions like
+'invalid node' from various places redirecting them to a common definition.
 
-This driver is based on the same code as drivers/staging/olpc_dcon.
-I modernized it to use managed GPIO, device-tree bindings, sysfs attribtu=
-e
-groups, essentially fixing the staging driver's TODO.
-
-Why I am not removing the staging driver now is because I've hobbled off
-some functionality too (with an intent to bring add it back eventually):
-
-* I've removed parts that talk directly to the OLPC EC to turn off/on the
-  power. A separate patch will make the EC expose a regulator interface
-  that should be used instead.
-
-* Some work is likely needed to make XO 1 and XO 1.5 work. Both platforms
-  are DT-based and could use the same bindings, but I haven't checked
-  whether the cs5535 and vx855 GPIO drivers are good enough.
-
-What is there is the backlight control and the sysfs attributes to contro=
-l
-the freeze/unfreeze..
-
-I've also renamed the driver to use the actual chip name instead of the
-original name that I found too generic. This way the staging driver can b=
-e
-used on XO 1 and XO 1.5 for the time being, while my XO 1.75 can utilize
-this one.
-
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Reviewed-by: Rob Herring <robh@kernel.org>
-
+Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
 ---
-Changes since v2:
-- s/controlls/controls/
-- Rob Herring's Reviewed-by tag
+Build tested this with multiple cross compiler options like alpha, sparc,
+arm64, x86, powerpc64le etc with their default config which might not have
+compiled tested all driver related changes. I will appreciate folks giving
+this a test in their respective build environment.
 
-Changes since v1:
-- Use interrupt bindings instead of gpio for the IRQ
-- Update the statement on XO 1/1.5 support in the commit message
+All these places for replacement were found by running the following grep
+patterns on the entire kernel code. Please let me know if this might have
+missed some instances. This might also have replaced some false positives.
+I will appreciate suggestions, inputs and review.
 
- drivers/misc/Kconfig  |  16 +
- drivers/misc/Makefile |   1 +
- drivers/misc/hx8837.c | 741 ++++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 758 insertions(+)
- create mode 100644 drivers/misc/hx8837.c
+1. git grep "nid == -1"
+2. git grep "node == -1"
+3. git grep "nid = -1"
+4. git grep "node = -1"
 
-diff --git a/drivers/misc/Kconfig b/drivers/misc/Kconfig
-index 3726eacdf65d..3eb6df0ea0a4 100644
---- a/drivers/misc/Kconfig
-+++ b/drivers/misc/Kconfig
-@@ -513,6 +513,22 @@ config MISC_RTSX
- 	tristate
- 	default MISC_RTSX_PCI || MISC_RTSX_USB
-=20
-+config HX8837_DCON
-+        tristate "HiMax HX8837 Display Controller on OLPC"
-+        depends on I2C
-+        depends on BACKLIGHT_LCD_SUPPORT
-+        select BACKLIGHT_CLASS_DEVICE
-+        help
-+          In order to support very low power operation, the OLPC XO lapt=
-op uses a
-+          secondary Display Controller, or DCON.  This secondary control=
-ler
-+          is present in the video pipeline between the primary display
-+          controller (integrate into the processor or chipset) and the L=
-CD
-+          panel.  It allows the main processor/display controller to be
-+          completely powered off while still retaining an image on the d=
-isplay.
-+          This controller is only available on OLPC platforms.
-+
-+          Unless you have an OLPC XO laptop, you will want to say N.
-+
- source "drivers/misc/c2port/Kconfig"
- source "drivers/misc/eeprom/Kconfig"
- source "drivers/misc/cb710/Kconfig"
-diff --git a/drivers/misc/Makefile b/drivers/misc/Makefile
-index af22bbc3d00c..33689ae496b4 100644
---- a/drivers/misc/Makefile
-+++ b/drivers/misc/Makefile
-@@ -58,3 +58,4 @@ obj-$(CONFIG_ASPEED_LPC_SNOOP)	+=3D aspeed-lpc-snoop.o
- obj-$(CONFIG_PCI_ENDPOINT_TEST)	+=3D pci_endpoint_test.o
- obj-$(CONFIG_OCXL)		+=3D ocxl/
- obj-$(CONFIG_MISC_RTSX)		+=3D cardreader/
-+obj-$(CONFIG_HX8837_DCON)	+=3D hx8837.o
-diff --git a/drivers/misc/hx8837.c b/drivers/misc/hx8837.c
-new file mode 100644
-index 000000000000..cff02ed54de3
---- /dev/null
-+++ b/drivers/misc/hx8837.c
-@@ -0,0 +1,741 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Mainly by David Woodhouse, somewhat modified by Jordan Crouse.
-+ * Modernized to use managed GPIO, device-tree, etc. by Lubomir Rintel.
-+ *
-+ * Copyright (C) 2006-2007  Red Hat, Inc.
-+ * Copyright (C) 2006-2007  Advanced Micro Devices, Inc.
-+ * Copyright (C) 2009       VIA Technology, Inc.
-+ * Copyright (C) 2010-2011  Andres Salomon <dilinger@queued.net>
-+ * Copyright (C) 2018       Lubomir Rintel <lkundrak@v3.sk>
-+ */
-+
-+#include <linux/module.h>
-+#include <linux/backlight.h>
-+#include <linux/console.h>
-+#include <linux/ctype.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/fb.h>
-+#include <linux/gpio/consumer.h>
-+#include <linux/i2c.h>
-+#include <linux/interrupt.h>
-+#include <linux/notifier.h>
-+#include <linux/reboot.h>
-+
-+/* DCON registers */
-+
-+#define DCON_REG_ID		 0
-+#define DCON_REG_MODE		 1
-+
-+#define MODE_PASSTHRU		BIT(0)
-+#define MODE_SLEEP		BIT(1)
-+#define MODE_SLEEP_AUTO		BIT(2)
-+#define MODE_BL_ENABLE		BIT(3)
-+#define MODE_BLANK		BIT(4)
-+#define MODE_CSWIZZLE		BIT(5)
-+#define MODE_COL_AA		BIT(6)
-+#define MODE_MONO_LUMA		BIT(7)
-+#define MODE_SCAN_INT		BIT(8)
-+#define MODE_CLOCKDIV		BIT(9)
-+#define MODE_DEBUG		BIT(14)
-+#define MODE_SELFTEST		BIT(15)
-+
-+#define DCON_REG_HRES		0x2
-+#define DCON_REG_HTOTAL		0x3
-+#define DCON_REG_HSYNC_WIDTH	0x4
-+#define DCON_REG_VRES		0x5
-+#define DCON_REG_VTOTAL		0x6
-+#define DCON_REG_VSYNC_WIDTH	0x7
-+#define DCON_REG_TIMEOUT	0x8
-+#define DCON_REG_SCAN_INT	0x9
-+#define DCON_REG_BRIGHT		0xa
-+#define DCON_REG_MEM_OPT_A	0x41
-+#define DCON_REG_MEM_OPT_B	0x42
-+
-+/* Load Delay Locked Loop (DLL) settings for clock delay */
-+#define MEM_DLL_CLOCK_DELAY	BIT(0)
-+/* Memory controller power down function */
-+#define MEM_POWER_DOWN		BIT(8)
-+/* Memory controller software reset */
-+#define MEM_SOFT_RESET		BIT(0)
-+
-+/* Status values */
-+
-+#define DCONSTAT_SCANINT	0
-+#define DCONSTAT_SCANINT_DCON	1
-+#define DCONSTAT_DISPLAYLOAD	2
-+#define DCONSTAT_MISSED		3
-+
-+/* Source values */
-+
-+#define DCON_SOURCE_DCON        0
-+#define DCON_SOURCE_CPU         1
-+
-+struct hx8837_priv {
-+	struct i2c_client *client;
-+	struct fb_info *fbinfo;
-+	struct backlight_device *bl_dev;
-+
-+	wait_queue_head_t waitq;
-+	struct work_struct switch_source;
-+	struct notifier_block reboot_nb;
-+	struct notifier_block panic_nb;
-+
-+	/* Scanline to interrupt on during resume */
-+	ushort resumeline;
-+
-+	/* Shadow register for the DCON_REG_MODE register */
-+	u8 disp_mode;
-+
-+	/* The current backlight value - this saves us some smbus traffic */
-+	u8 bl_val;
-+
-+	/* Current source, initialized at probe time */
-+	int curr_src;
-+
-+	/* Desired source */
-+	int pending_src;
-+
-+	/* Variables used during switches */
-+	bool switched;
-+	ktime_t irq_time;
-+	ktime_t load_time;
-+
-+	/* Current output type; true =3D=3D mono, false =3D=3D color */
-+	bool mono;
-+	/* This get set while controlling fb blank state from the driver */
-+	bool ignore_fb_events;
-+
-+	struct gpio_desc *stat0_gpio;
-+	struct gpio_desc *stat1_gpio;
-+	struct gpio_desc *load_gpio;
-+};
-+
-+static irqreturn_t hx8837_interrupt(int irq, void *id);
-+
-+/* I2C structures */
-+
-+static unsigned short normal_i2c[] =3D { 0x0d, I2C_CLIENT_END };
-+
-+static s32 hx8837_write(struct hx8837_priv *priv, u8 reg, u16 val)
-+{
-+	return i2c_smbus_write_word_data(priv->client, reg, val);
-+}
-+
-+static s32 hx8837_read(struct hx8837_priv *priv, u8 reg)
-+{
-+	return i2c_smbus_read_word_data(priv->client, reg);
-+}
-+
-+static void hx8837_hw_init(struct hx8837_priv *priv, int is_init)
-+{
-+	/* SDRAM setup/hold time */
-+	hx8837_write(priv, 0x3a, 0xc040);
-+	hx8837_write(priv, DCON_REG_MEM_OPT_A, 0x0000);  /* clear option bits *=
-/
-+	hx8837_write(priv, DCON_REG_MEM_OPT_A,
-+		   MEM_DLL_CLOCK_DELAY | MEM_POWER_DOWN);
-+	hx8837_write(priv, DCON_REG_MEM_OPT_B, MEM_SOFT_RESET);
-+
-+	/* Colour swizzle, AA, no passthrough, backlight */
-+	if (is_init) {
-+		priv->disp_mode =3D MODE_PASSTHRU | MODE_BL_ENABLE |
-+				MODE_CSWIZZLE | MODE_COL_AA;
-+	}
-+	hx8837_write(priv, DCON_REG_MODE, priv->disp_mode);
-+
-+	/* Set the scanline to interrupt on during resume */
-+	hx8837_write(priv, DCON_REG_SCAN_INT, priv->resumeline);
-+}
-+
-+static void hx8837_set_backlight(struct hx8837_priv *priv, u8 level)
-+{
-+	hx8837_write(priv, DCON_REG_BRIGHT, level);
-+
-+	/* Purposely turn off the backlight when we go to level 0 */
-+	if (level =3D=3D 0) {
-+		priv->disp_mode &=3D ~MODE_BL_ENABLE;
-+		hx8837_write(priv, DCON_REG_MODE, priv->disp_mode);
-+	} else if (!(priv->disp_mode & MODE_BL_ENABLE)) {
-+		priv->disp_mode |=3D MODE_BL_ENABLE;
-+		hx8837_write(priv, DCON_REG_MODE, priv->disp_mode);
-+	}
-+}
-+
-+/* Set the output type to either color or mono */
-+static int hx8837_set_mono_mode(struct hx8837_priv *priv, bool enable_mo=
-no)
-+{
-+	if (priv->mono =3D=3D enable_mono)
-+		return 0;
-+
-+	priv->mono =3D enable_mono;
-+
-+	if (enable_mono) {
-+		priv->disp_mode &=3D ~(MODE_CSWIZZLE | MODE_COL_AA);
-+		priv->disp_mode |=3D MODE_MONO_LUMA;
-+	} else {
-+		priv->disp_mode &=3D ~(MODE_MONO_LUMA);
-+		priv->disp_mode |=3D MODE_CSWIZZLE | MODE_COL_AA;
-+	}
-+
-+	hx8837_write(priv, DCON_REG_MODE, priv->disp_mode);
-+	return 0;
-+}
-+
-+/* the DCON seems to get confused if we change DCONLOAD too
-+ * frequently -- i.e., approximately faster than frame time.
-+ * normally we don't change it this fast, so in general we won't
-+ * delay here.
-+ */
-+static void hx8837_load_holdoff(struct hx8837_priv *priv)
-+{
-+	ktime_t delta_t, now;
-+
-+	while (1) {
-+		now =3D ktime_get();
-+		delta_t =3D ktime_sub(now, priv->load_time);
-+		if (ktime_to_ns(delta_t) > NSEC_PER_MSEC * 20)
-+			break;
-+		mdelay(4);
-+	}
-+}
-+
-+static bool hx8837_blank_fb(struct hx8837_priv *priv, bool blank)
-+{
-+	int err;
-+
-+	console_lock();
-+	if (!lock_fb_info(priv->fbinfo)) {
-+		console_unlock();
-+		dev_err(&priv->client->dev, "unable to lock framebuffer\n");
-+		return false;
-+	}
-+
-+	priv->ignore_fb_events =3D true;
-+	err =3D fb_blank(priv->fbinfo,
-+		       blank ? FB_BLANK_POWERDOWN : FB_BLANK_UNBLANK);
-+	priv->ignore_fb_events =3D false;
-+	unlock_fb_info(priv->fbinfo);
-+	console_unlock();
-+
-+	if (err) {
-+		dev_err(&priv->client->dev, "couldn't %sblank framebuffer\n",
-+			blank ? "" : "un");
-+		return false;
-+	}
-+	return true;
-+}
-+
-+/* Set the source of the display (CPU or DCON) */
-+static void hx8837_source_switch(struct work_struct *work)
-+{
-+	struct hx8837_priv *priv =3D container_of(work, struct hx8837_priv,
-+							switch_source);
-+	struct device *dev =3D &priv->client->dev;
-+	int source =3D priv->pending_src;
-+
-+	if (priv->curr_src =3D=3D source)
-+		return;
-+
-+	hx8837_load_holdoff(priv);
-+
-+	priv->switched =3D false;
-+
-+	switch (source) {
-+	case DCON_SOURCE_CPU:
-+		dev_info(dev, "%s to CPU\n", __func__);
-+		/* Enable the scanline interrupt bit */
-+		if (hx8837_write(priv, DCON_REG_MODE,
-+			       priv->disp_mode | MODE_SCAN_INT))
-+			dev_err(dev, "couldn't enable scanline interrupt!\n");
-+		else
-+			/* Wait up to one second for the scanline interrupt */
-+			wait_event_timeout(priv->waitq, priv->switched, HZ);
-+
-+		if (!priv->switched)
-+			dev_err(dev, "Timeout entering CPU mode; expect a screen glitch.\n");
-+
-+		/* Turn off the scanline interrupt */
-+		if (hx8837_write(priv, DCON_REG_MODE, priv->disp_mode))
-+			dev_err(dev, "couldn't disable scanline interrupt!\n");
-+
-+		/*
-+		 * Ideally we'd like to disable interrupts here so that the
-+		 * fb unblanking and DCON turn on happen at a known time value;
-+		 * however, we can't do that right now with fb_blank
-+		 * messing with semaphores.
-+		 *
-+		 * For now, we just hope..
-+		 */
-+		if (!hx8837_blank_fb(priv, false)) {
-+			dev_err(dev, "Failed to enter CPU mode\n");
-+			priv->pending_src =3D DCON_SOURCE_DCON;
-+			return;
-+		}
-+
-+		/* And turn off the DCON */
-+		gpiod_set_value(priv->load_gpio, 1);
-+		priv->load_time =3D ktime_get();
-+
-+		dev_info(dev, "The CPU has control\n");
-+		break;
-+	case DCON_SOURCE_DCON:
-+		dev_info(dev, "%s to DCON\n", __func__);
-+
-+		/* Clear DCONLOAD - this implies that the DCON is in control */
-+		gpiod_set_value(priv->load_gpio, 0);
-+		priv->load_time =3D ktime_get();
-+
-+		wait_event_timeout(priv->waitq, priv->switched, HZ / 2);
-+
-+		if (!priv->switched) {
-+			dev_err(dev, "Timeout entering DCON mode; expect a screen glitch.\n")=
-;
-+		} else {
-+			ktime_t delta_t;
-+
-+			/* sometimes the DCON doesn't follow its own rules,
-+			 * and doesn't wait for two vsync pulses before
-+			 * ack'ing the frame load with an IRQ.  the result
-+			 * is that the display shows the *previously*
-+			 * loaded frame.  we can detect this by looking at
-+			 * the time between asserting DCONLOAD and the IRQ --
-+			 * if it's less than 20msec, then the DCON couldn't
-+			 * have seen two VSYNC pulses.  in that case we
-+			 * deassert and reassert, and hope for the best.
-+			 * see http://dev.laptop.org/ticket/9664
-+			 */
-+			delta_t =3D ktime_sub(priv->irq_time, priv->load_time);
-+			if (priv->switched && ktime_to_ns(delta_t)
-+			    < NSEC_PER_MSEC * 20) {
-+				dev_err(dev, "missed loading, retrying\n");
-+				gpiod_set_value(priv->load_gpio, 1);
-+				mdelay(41);
-+				gpiod_set_value(priv->load_gpio, 0);
-+				priv->load_time =3D ktime_get();
-+				mdelay(41);
-+			}
-+		}
-+
-+		hx8837_blank_fb(priv, true);
-+		dev_info(dev, "The DCON has control\n");
-+		break;
-+	default:
-+		WARN_ON(1);
-+	}
-+
-+	priv->curr_src =3D source;
-+}
-+
-+static void hx8837_set_source(struct hx8837_priv *priv, int arg)
-+{
-+	if (priv->pending_src =3D=3D arg)
-+		return;
-+
-+	priv->pending_src =3D arg;
-+
-+	if (priv->curr_src !=3D arg)
-+		schedule_work(&priv->switch_source);
-+}
-+
-+static void hx8837_set_source_sync(struct hx8837_priv *priv, int arg)
-+{
-+	hx8837_set_source(priv, arg);
-+	flush_scheduled_work();
-+}
-+
-+static int hx8837_bl_update(struct backlight_device *dev)
-+{
-+	struct hx8837_priv *priv =3D bl_get_data(dev);
-+	u8 level =3D dev->props.brightness & 0x0F;
-+
-+	priv->bl_val =3D level;
-+
-+	if (dev->props.power !=3D FB_BLANK_UNBLANK)
-+		level =3D 0;
-+
-+	if (dev->props.state & BL_CORE_FBBLANK)
-+		level =3D 0;
-+
-+	hx8837_set_backlight(priv, level);
-+
-+	return 0;
-+}
-+
-+static int hx8837_bl_get(struct backlight_device *dev)
-+{
-+	struct hx8837_priv *priv =3D bl_get_data(dev);
-+
-+	return priv->bl_val;
-+}
-+
-+static const struct backlight_ops hx8837_bl_ops =3D {
-+	.update_status =3D hx8837_bl_update,
-+	.get_brightness =3D hx8837_bl_get,
-+};
-+
-+static struct backlight_properties hx8837_bl_props =3D {
-+	.max_brightness =3D 15,
-+	.type =3D BACKLIGHT_RAW,
-+	.power =3D FB_BLANK_UNBLANK,
-+};
-+
-+static int hx8837_reboot_notify(struct notifier_block *nb, unsigned long=
- foo,
-+								void *bar)
-+{
-+	struct hx8837_priv *priv =3D container_of(nb, struct hx8837_priv,
-+								reboot_nb);
-+
-+	/* Turn off the DCON. Entirely. */
-+	hx8837_write(priv, DCON_REG_MODE, 0x39);
-+	hx8837_write(priv, DCON_REG_MODE, 0x32);
-+	return NOTIFY_DONE;
-+}
-+
-+static int hx8837_panic_notify(struct notifier_block *nb, unsigned long =
-e,
-+								void *p)
-+{
-+	struct hx8837_priv *priv =3D container_of(nb, struct hx8837_priv,
-+								panic_nb);
-+
-+	gpiod_set_value(priv->load_gpio, 1);
-+	return NOTIFY_DONE;
-+}
-+
-+static int hx8837_detect(struct i2c_client *client, struct i2c_board_inf=
-o *info)
-+{
-+	strlcpy(info->type, "hx8837", I2C_NAME_SIZE);
-+
-+	return 0;
-+}
-+
-+static ssize_t mode_show(struct device *dev, struct device_attribute *at=
-tr,
-+								char *buf)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%4.4X\n", priv->disp_mode);
-+}
-+
-+static ssize_t freeze_show(struct device *dev, struct device_attribute *=
-attr,
-+								char *buf)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", priv->curr_src =3D=3D DCON_SOURCE_DCON ? 1 =
-: 0);
-+}
-+
-+static ssize_t monochrome_show(struct device *dev,
-+	struct device_attribute *attr, char *buf)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", priv->mono);
-+}
-+
-+static ssize_t resumeline_show(struct device *dev,
-+	struct device_attribute *attr, char *buf)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+
-+	return sprintf(buf, "%d\n", priv->resumeline);
-+}
-+
-+static ssize_t monochrome_store(struct device *dev,
-+			struct device_attribute *attr,
-+			const char *buf, size_t count)
-+{
-+	unsigned long enable_mono;
-+	int rc;
-+
-+	rc =3D kstrtoul(buf, 10, &enable_mono);
-+	if (rc)
-+		return rc;
-+
-+	hx8837_set_mono_mode(dev_get_drvdata(dev), enable_mono ? true : false);
-+
-+	return count;
-+}
-+
-+static ssize_t freeze_store(struct device *dev, struct device_attribute =
-*attr,
-+						const char *buf, size_t count)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+	unsigned long output;
-+	int ret;
-+
-+	ret =3D kstrtoul(buf, 10, &output);
-+	if (ret)
-+		return ret;
-+
-+	switch (output) {
-+	case 0:
-+		hx8837_set_source(priv, DCON_SOURCE_CPU);
-+		break;
-+	case 1:
-+		hx8837_set_source_sync(priv, DCON_SOURCE_DCON);
-+		break;
-+	case 2:  /* normally unused */
-+		hx8837_set_source(priv, DCON_SOURCE_DCON);
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return count;
-+}
-+
-+static ssize_t resumeline_store(struct device *dev,
-+			struct device_attribute *attr,
-+			const char *buf, size_t count)
-+{
-+	struct hx8837_priv *priv =3D dev_get_drvdata(dev);
-+	unsigned short rl;
-+	int rc;
-+
-+	rc =3D kstrtou16(buf, 10, &rl);
-+	if (rc)
-+		return rc;
-+
-+	priv->resumeline =3D rl;
-+	hx8837_write(dev_get_drvdata(dev), DCON_REG_SCAN_INT, priv->resumeline)=
-;
-+
-+	return count;
-+}
-+
-+
-+static DEVICE_ATTR_RO(mode);
-+static DEVICE_ATTR_RW(freeze);
-+static DEVICE_ATTR_RW(monochrome);
-+static DEVICE_ATTR_RW(resumeline);
-+
-+static struct attribute *hx8837_attrs[] =3D {
-+	&dev_attr_mode.attr,
-+	&dev_attr_freeze.attr,
-+	&dev_attr_monochrome.attr,
-+	&dev_attr_resumeline.attr,
-+	NULL,
-+};
-+ATTRIBUTE_GROUPS(hx8837);
-+
-+static int hx8837_probe(struct i2c_client *client,
-+			const struct i2c_device_id *id)
-+{
-+	struct hx8837_priv *priv;
-+	u16 ver;
-+	int rc;
-+
-+	if (num_registered_fb < 1)
-+		return -EPROBE_DEFER;
-+
-+	priv =3D devm_kzalloc(&client->dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->client =3D client;
-+	init_waitqueue_head(&priv->waitq);
-+	INIT_WORK(&priv->switch_source, hx8837_source_switch);
-+	priv->reboot_nb.notifier_call =3D hx8837_reboot_notify;
-+	priv->reboot_nb.priority =3D -1;
-+	priv->panic_nb.notifier_call =3D hx8837_panic_notify;
-+
-+	/*
-+	 * Perhaps we could add a phandle to the panel to a DT property so that
-+	 * we'll be able to guess it from the vertical resolution instead of
-+	 * hardwiring it?
-+	 */
-+	priv->resumeline =3D 898;
-+
-+	i2c_set_clientdata(client, priv);
-+
-+	priv->fbinfo =3D registered_fb[0];
-+
-+	priv->stat0_gpio =3D devm_gpiod_get_index(&client->dev, "stat", 0,
-+								GPIOD_IN);
-+	if (IS_ERR(priv->stat0_gpio)) {
-+		dev_err(&client->dev, "failed to request STAT0 GPIO\n");
-+		return PTR_ERR(priv->stat0_gpio);
-+	};
-+
-+	priv->stat1_gpio =3D devm_gpiod_get_index(&client->dev, "stat", 1,
-+								GPIOD_IN);
-+	if (IS_ERR(priv->stat1_gpio)) {
-+		dev_err(&client->dev, "failed to request STAT1 GPIO\n");
-+		return PTR_ERR(priv->stat1_gpio);
-+	};
-+
-+	priv->load_gpio =3D devm_gpiod_get(&client->dev, "load", GPIOD_IN);
-+	if (IS_ERR(priv->load_gpio)) {
-+		dev_err(&client->dev, "failed to request LOAD GPIO\n");
-+		return PTR_ERR(priv->load_gpio);
-+	};
-+
-+	ver =3D hx8837_read(priv, DCON_REG_ID);
-+	if ((ver >> 8) !=3D 0xDC) {
-+		dev_err(&client->dev, "DCON ID not 0xDCxx: 0x%04x.\n", ver);
-+		return -ENXIO;
-+	}
-+
-+	dev_info(&client->dev, "Discovered DCON version %x\n", ver & 0xFF);
-+
-+	if (ver < 0xdc02) {
-+		dev_err(&client->dev, "DCON v1 is unsupported, giving up.\n");
-+		return -ENODEV;
-+	}
-+
-+	/*
-+	 * Determine the current state by reading the GPIO bit; earlier
-+	 * stages of the boot process have established the state.
-+	 */
-+	priv->curr_src =3D gpiod_get_value(priv->load_gpio)
-+			? DCON_SOURCE_CPU : DCON_SOURCE_DCON;
-+	priv->pending_src =3D priv->curr_src;
-+
-+	/* Set the directions for the GPIO pins */
-+	gpiod_direction_input(priv->stat0_gpio);
-+	gpiod_direction_input(priv->stat1_gpio);
-+	gpiod_direction_output(priv->load_gpio,
-+		priv->curr_src =3D=3D DCON_SOURCE_CPU);
-+
-+	/* Register the interrupt handler */
-+	rc =3D devm_request_irq(&client->dev, client->irq, &hx8837_interrupt, 0=
-,
-+								"DCON", priv);
-+	if (rc) {
-+		dev_err(&client->dev, "IRQ request failed: %d\n", rc);
-+		return rc;
-+	}
-+
-+	hx8837_hw_init(priv, 1);
-+
-+	priv->bl_val =3D hx8837_read(priv, DCON_REG_BRIGHT) & 0x0F;
-+
-+	/* Add the backlight device for the DCON */
-+	hx8837_bl_props.brightness =3D priv->bl_val;
-+	priv->bl_dev =3D devm_backlight_device_register(&client->dev, "hx8837-b=
-l",
-+			&client->dev, priv, &hx8837_bl_ops, &hx8837_bl_props);
-+	if (IS_ERR(priv->bl_dev)) {
-+		dev_err(&client->dev, "cannot register backlight dev (%ld)\n",
-+			PTR_ERR(priv->bl_dev));
-+		priv->bl_dev =3D NULL;
-+	}
-+
-+	rc =3D devm_device_add_groups(&client->dev, hx8837_groups);
-+	if (rc) {
-+		dev_err(&client->dev, "failed to register sysfs groups\n");
-+		return rc;
-+	}
-+
-+	devm_register_reboot_notifier(&client->dev, &priv->reboot_nb);
-+	atomic_notifier_chain_register(&panic_notifier_list, &priv->panic_nb);
-+
-+	return 0;
-+}
-+
-+static int hx8837_remove(struct i2c_client *client)
-+{
-+	struct hx8837_priv *priv =3D i2c_get_clientdata(client);
-+
-+	atomic_notifier_chain_unregister(&panic_notifier_list,
-+					&priv->panic_nb);
-+
-+	cancel_work_sync(&priv->switch_source);
-+
-+	return 0;
-+}
-+
-+static irqreturn_t hx8837_interrupt(int irq, void *id)
-+{
-+	struct hx8837_priv *priv =3D id;
-+	struct device *dev =3D &priv->client->dev;
-+	u8 status;
-+
-+	status =3D gpiod_get_value(priv->stat0_gpio);
-+	status |=3D gpiod_get_value(priv->stat1_gpio) << 1;
-+
-+
-+	switch (status & 3) {
-+	case 3:
-+		dev_dbg(dev, "DCONLOAD_MISSED interrupt\n");
-+		break;
-+
-+	case 2:	/* switch to DCON mode */
-+	case 1: /* switch to CPU mode */
-+		priv->switched =3D true;
-+		priv->irq_time =3D ktime_get();
-+		wake_up(&priv->waitq);
-+		break;
-+
-+	case 0:
-+		/* workaround resume case:  the DCON (on 1.5) doesn't
-+		 * ever assert status 0x01 when switching to CPU mode
-+		 * during resume.  this is because DCONLOAD is de-asserted
-+		 * _immediately_ upon exiting S3, so the actual release
-+		 * of the DCON happened long before this point.
-+		 * see http://dev.laptop.org/ticket/9869
-+		 */
-+		if (priv->curr_src !=3D priv->pending_src && !priv->switched) {
-+			priv->switched =3D true;
-+			priv->irq_time =3D ktime_get();
-+			wake_up(&priv->waitq);
-+			dev_dbg(dev, "switching w/ status 0/0\n");
-+		} else {
-+			dev_dbg(dev, "scanline interrupt w/CPU\n");
-+		}
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
-+#ifdef CONFIG_PM
-+static int hx8837_suspend(struct device *dev)
-+{
-+	struct i2c_client *client =3D to_i2c_client(dev);
-+	struct hx8837_priv *priv =3D i2c_get_clientdata(client);
-+
-+	hx8837_set_source_sync(priv, DCON_SOURCE_DCON);
-+
-+	return 0;
-+}
-+
-+static int hx8837_resume(struct device *dev)
-+{
-+	struct i2c_client *client =3D to_i2c_client(dev);
-+	struct hx8837_priv *priv =3D i2c_get_clientdata(client);
-+
-+	hx8837_set_source(priv, DCON_SOURCE_CPU);
-+
-+	return 0;
-+}
-+#endif /* CONFIG_PM */
-+
-+static SIMPLE_DEV_PM_OPS(hx8837_pm_ops, hx8837_suspend, hx8837_resume);
-+
-+static const struct of_device_id hx8837_dt_ids[] =3D {
-+	{ .compatible =3D "himax,hx8837", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, hx8837_dt_ids);
-+
-+static const struct i2c_device_id hx8837_i2c_ids[] =3D {
-+	{ .name =3D "hx8837", },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, hx8837_i2c_ids);
-+
-+static struct i2c_driver hx8837_driver =3D {
-+	.driver =3D {
-+		.name =3D "hx8837",
-+		.pm =3D &hx8837_pm_ops,
-+		.of_match_table =3D hx8837_dt_ids,
-+	},
-+	.class =3D I2C_CLASS_DDC | I2C_CLASS_HWMON,
-+	.id_table =3D hx8837_i2c_ids,
-+	.probe =3D hx8837_probe,
-+	.remove =3D hx8837_remove,
-+	.detect =3D hx8837_detect,
-+	.address_list =3D normal_i2c,
-+};
-+
-+module_i2c_driver(hx8837_driver);
-+
-+MODULE_DESCRIPTION("HX8837 Display Controller Driver");
-+MODULE_LICENSE("GPL v2");
---=20
-2.19.1
+ arch/alpha/include/asm/topology.h             |  2 +-
+ arch/ia64/kernel/numa.c                       |  2 +-
+ arch/ia64/mm/discontig.c                      |  6 +++---
+ arch/ia64/sn/kernel/io_common.c               |  2 +-
+ arch/powerpc/include/asm/pci-bridge.h         |  2 +-
+ arch/powerpc/kernel/paca.c                    |  2 +-
+ arch/powerpc/kernel/pci-common.c              |  2 +-
+ arch/powerpc/mm/numa.c                        | 14 +++++++-------
+ arch/powerpc/platforms/powernv/memtrace.c     |  4 ++--
+ arch/sparc/kernel/auxio_32.c                  |  2 +-
+ arch/sparc/kernel/pci_fire.c                  |  2 +-
+ arch/sparc/kernel/pci_schizo.c                |  2 +-
+ arch/sparc/kernel/pcic.c                      |  6 +++---
+ arch/sparc/kernel/psycho_common.c             |  2 +-
+ arch/sparc/kernel/sbus.c                      |  2 +-
+ arch/sparc/mm/init_64.c                       |  6 +++---
+ arch/sparc/prom/init_32.c                     |  2 +-
+ arch/sparc/prom/init_64.c                     |  4 ++--
+ arch/sparc/prom/tree_32.c                     | 12 ++++++------
+ arch/sparc/prom/tree_64.c                     | 18 +++++++++---------
+ arch/x86/include/asm/pci.h                    |  2 +-
+ arch/x86/kernel/apic/x2apic_uv_x.c            |  6 +++---
+ arch/x86/kernel/smpboot.c                     |  2 +-
+ arch/x86/platform/olpc/olpc_dt.c              | 16 ++++++++--------
+ drivers/block/mtip32xx/mtip32xx.c             |  4 ++--
+ drivers/dma/dmaengine.c                       |  3 ++-
+ drivers/infiniband/hw/hfi1/affinity.c         |  2 +-
+ drivers/infiniband/hw/hfi1/init.c             |  2 +-
+ drivers/iommu/dmar.c                          |  4 ++--
+ drivers/iommu/intel-iommu.c                   |  2 +-
+ drivers/media/pci/ivtv/ivtvfb.c               |  2 +-
+ drivers/media/platform/vivid/vivid-osd.c      |  2 +-
+ drivers/misc/sgi-xp/xpc_uv.c                  |  2 +-
+ drivers/net/ethernet/intel/ixgbe/ixgbe_main.c |  4 ++--
+ drivers/video/fbdev/mmp/fb/mmpfb.c            |  2 +-
+ drivers/video/fbdev/pxa168fb.c                |  2 +-
+ drivers/video/fbdev/w100fb.c                  |  2 +-
+ fs/ocfs2/dlm/dlmcommon.h                      |  2 +-
+ fs/ocfs2/dlm/dlmdomain.c                      | 10 +++++-----
+ fs/ocfs2/dlm/dlmmaster.c                      |  2 +-
+ fs/ocfs2/dlm/dlmrecovery.c                    |  2 +-
+ fs/ocfs2/stack_user.c                         |  6 +++---
+ init/init_task.c                              |  2 +-
+ kernel/kthread.c                              |  2 +-
+ kernel/sched/fair.c                           | 15 ++++++++-------
+ lib/cpumask.c                                 |  2 +-
+ mm/huge_memory.c                              | 12 ++++++------
+ mm/hugetlb.c                                  |  2 +-
+ mm/ksm.c                                      |  2 +-
+ mm/memory.c                                   |  6 +++---
+ mm/memory_hotplug.c                           | 12 ++++++------
+ mm/mempolicy.c                                |  2 +-
+ mm/page_alloc.c                               |  4 ++--
+ mm/page_ext.c                                 |  2 +-
+ net/core/pktgen.c                             |  2 +-
+ net/qrtr/qrtr.c                               |  2 +-
+ tools/perf/bench/numa.c                       |  6 +++---
+ 57 files changed, 125 insertions(+), 123 deletions(-)
+
+diff --git a/arch/alpha/include/asm/topology.h b/arch/alpha/include/asm/topology.h
+index e6e13a8..f6dc89c 100644
+--- a/arch/alpha/include/asm/topology.h
++++ b/arch/alpha/include/asm/topology.h
+@@ -29,7 +29,7 @@ static const struct cpumask *cpumask_of_node(int node)
+ {
+ 	int cpu;
+ 
+-	if (node == -1)
++	if (node == NUMA_NO_NODE)
+ 		return cpu_all_mask;
+ 
+ 	cpumask_clear(&node_to_cpumask_map[node]);
+diff --git a/arch/ia64/kernel/numa.c b/arch/ia64/kernel/numa.c
+index 92c3762..1315da6 100644
+--- a/arch/ia64/kernel/numa.c
++++ b/arch/ia64/kernel/numa.c
+@@ -74,7 +74,7 @@ void __init build_cpu_to_node_map(void)
+ 		cpumask_clear(&node_to_cpu_mask[node]);
+ 
+ 	for_each_possible_early_cpu(cpu) {
+-		node = -1;
++		node = NUMA_NO_NODE;
+ 		for (i = 0; i < NR_CPUS; ++i)
+ 			if (cpu_physical_id(cpu) == node_cpuid[i].phys_id) {
+ 				node = node_cpuid[i].nid;
+diff --git a/arch/ia64/mm/discontig.c b/arch/ia64/mm/discontig.c
+index 8a96578..f9c3675 100644
+--- a/arch/ia64/mm/discontig.c
++++ b/arch/ia64/mm/discontig.c
+@@ -227,7 +227,7 @@ void __init setup_per_cpu_areas(void)
+ 	 * CPUs are put into groups according to node.  Walk cpu_map
+ 	 * and create new groups at node boundaries.
+ 	 */
+-	prev_node = -1;
++	prev_node = NUMA_NO_NODE;
+ 	ai->nr_groups = 0;
+ 	for (unit = 0; unit < nr_units; unit++) {
+ 		cpu = cpu_map[unit];
+@@ -435,7 +435,7 @@ static void __init *memory_less_node_alloc(int nid, unsigned long pernodesize)
+ {
+ 	void *ptr = NULL;
+ 	u8 best = 0xff;
+-	int bestnode = -1, node, anynode = 0;
++	int bestnode = NUMA_NO_NODE, node, anynode = 0;
+ 
+ 	for_each_online_node(node) {
+ 		if (node_isset(node, memory_less_mask))
+@@ -447,7 +447,7 @@ static void __init *memory_less_node_alloc(int nid, unsigned long pernodesize)
+ 		anynode = node;
+ 	}
+ 
+-	if (bestnode == -1)
++	if (bestnode == NUMA_NO_NODE)
+ 		bestnode = anynode;
+ 
+ 	ptr = memblock_alloc_try_nid(pernodesize, PERCPU_PAGE_SIZE,
+diff --git a/arch/ia64/sn/kernel/io_common.c b/arch/ia64/sn/kernel/io_common.c
+index 8df13d0..86b3fcb 100644
+--- a/arch/ia64/sn/kernel/io_common.c
++++ b/arch/ia64/sn/kernel/io_common.c
+@@ -344,7 +344,7 @@ sn_common_bus_fixup(struct pci_bus *bus,
+ 		printk(KERN_WARNING "on node %d but only %d nodes online."
+ 		       "Association set to undetermined.\n",
+ 		       controller->node, num_online_nodes());
+-		controller->node = -1;
++		controller->node = NUMA_NO_NODE;
+ 	}
+ }
+ 
+diff --git a/arch/powerpc/include/asm/pci-bridge.h b/arch/powerpc/include/asm/pci-bridge.h
+index 94d4490..25a9e33 100644
+--- a/arch/powerpc/include/asm/pci-bridge.h
++++ b/arch/powerpc/include/asm/pci-bridge.h
+@@ -264,7 +264,7 @@ extern int pcibios_map_io_space(struct pci_bus *bus);
+ #ifdef CONFIG_NUMA
+ #define PHB_SET_NODE(PHB, NODE)		((PHB)->node = (NODE))
+ #else
+-#define PHB_SET_NODE(PHB, NODE)		((PHB)->node = -1)
++#define PHB_SET_NODE(PHB, NODE)		((PHB)->node = NUMA_NO_NODE)
+ #endif
+ 
+ #endif	/* CONFIG_PPC64 */
+diff --git a/arch/powerpc/kernel/paca.c b/arch/powerpc/kernel/paca.c
+index 913bfca..6a0bd51 100644
+--- a/arch/powerpc/kernel/paca.c
++++ b/arch/powerpc/kernel/paca.c
+@@ -36,7 +36,7 @@ static void *__init alloc_paca_data(unsigned long size, unsigned long align,
+ 	 * which will put its paca in the right place.
+ 	 */
+ 	if (cpu == boot_cpuid) {
+-		nid = -1;
++		nid = NUMA_NO_NODE;
+ 		memblock_set_bottom_up(true);
+ 	} else {
+ 		nid = early_cpu_to_node(cpu);
+diff --git a/arch/powerpc/kernel/pci-common.c b/arch/powerpc/kernel/pci-common.c
+index 88e4f69..14c33a9 100644
+--- a/arch/powerpc/kernel/pci-common.c
++++ b/arch/powerpc/kernel/pci-common.c
+@@ -132,7 +132,7 @@ struct pci_controller *pcibios_alloc_controller(struct device_node *dev)
+ 		int nid = of_node_to_nid(dev);
+ 
+ 		if (nid < 0 || !node_online(nid))
+-			nid = -1;
++			nid = NUMA_NO_NODE;
+ 
+ 		PHB_SET_NODE(phb, nid);
+ 	}
+diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
+index 3a048e9..77808a2 100644
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -215,7 +215,7 @@ static void initialize_distance_lookup_table(int nid,
+  */
+ static int associativity_to_nid(const __be32 *associativity)
+ {
+-	int nid = -1;
++	int nid = NUMA_NO_NODE;
+ 
+ 	if (min_common_depth == -1)
+ 		goto out;
+@@ -225,7 +225,7 @@ static int associativity_to_nid(const __be32 *associativity)
+ 
+ 	/* POWER4 LPAR uses 0xffff as invalid node */
+ 	if (nid == 0xffff || nid >= MAX_NUMNODES)
+-		nid = -1;
++		nid = NUMA_NO_NODE;
+ 
+ 	if (nid > 0 &&
+ 		of_read_number(associativity, 1) >= distance_ref_points_depth) {
+@@ -244,7 +244,7 @@ static int associativity_to_nid(const __be32 *associativity)
+  */
+ static int of_node_to_nid_single(struct device_node *device)
+ {
+-	int nid = -1;
++	int nid = NUMA_NO_NODE;
+ 	const __be32 *tmp;
+ 
+ 	tmp = of_get_associativity(device);
+@@ -256,7 +256,7 @@ static int of_node_to_nid_single(struct device_node *device)
+ /* Walk the device tree upwards, looking for an associativity id */
+ int of_node_to_nid(struct device_node *device)
+ {
+-	int nid = -1;
++	int nid = NUMA_NO_NODE;
+ 
+ 	of_node_get(device);
+ 	while (device) {
+@@ -454,7 +454,7 @@ static int of_drconf_to_nid_single(struct drmem_lmb *lmb)
+  */
+ static int numa_setup_cpu(unsigned long lcpu)
+ {
+-	int nid = -1;
++	int nid = NUMA_NO_NODE;
+ 	struct device_node *cpu;
+ 
+ 	/*
+@@ -930,7 +930,7 @@ static int hot_add_drconf_scn_to_nid(unsigned long scn_addr)
+ {
+ 	struct drmem_lmb *lmb;
+ 	unsigned long lmb_size;
+-	int nid = -1;
++	int nid = NUMA_NO_NODE;
+ 
+ 	lmb_size = drmem_lmb_size();
+ 
+@@ -960,7 +960,7 @@ static int hot_add_drconf_scn_to_nid(unsigned long scn_addr)
+ static int hot_add_node_scn_to_nid(unsigned long scn_addr)
+ {
+ 	struct device_node *memory;
+-	int nid = -1;
++	int nid = NUMA_NO_NODE;
+ 
+ 	for_each_node_by_type(memory, "memory") {
+ 		unsigned long start, size;
+diff --git a/arch/powerpc/platforms/powernv/memtrace.c b/arch/powerpc/platforms/powernv/memtrace.c
+index 84d038e..1ce3bfc 100644
+--- a/arch/powerpc/platforms/powernv/memtrace.c
++++ b/arch/powerpc/platforms/powernv/memtrace.c
+@@ -223,7 +223,7 @@ static int memtrace_online(void)
+ 		ent = &memtrace_array[i];
+ 
+ 		/* We have onlined this chunk previously */
+-		if (ent->nid == -1)
++		if (ent->nid == NUMA_NO_NODE)
+ 			continue;
+ 
+ 		/* Remove from io mappings */
+@@ -257,7 +257,7 @@ static int memtrace_online(void)
+ 		 */
+ 		debugfs_remove_recursive(ent->dir);
+ 		pr_info("Added trace memory back to node %d\n", ent->nid);
+-		ent->size = ent->start = ent->nid = -1;
++		ent->size = ent->start = ent->nid = NUMA_NO_NODE;
+ 	}
+ 	if (ret)
+ 		return ret;
+diff --git a/arch/sparc/kernel/auxio_32.c b/arch/sparc/kernel/auxio_32.c
+index a32d588..39f6c59 100644
+--- a/arch/sparc/kernel/auxio_32.c
++++ b/arch/sparc/kernel/auxio_32.c
+@@ -120,7 +120,7 @@ void __init auxio_power_probe(void)
+ 	node = prom_searchsiblings(node, "obio");
+ 	node = prom_getchild(node);
+ 	node = prom_searchsiblings(node, "power");
+-	if (node == 0 || (s32)node == -1)
++	if (node == 0 || (s32)node == NUMA_NO_NODE)
+ 		return;
+ 
+ 	/* Map the power control register. */
+diff --git a/arch/sparc/kernel/pci_fire.c b/arch/sparc/kernel/pci_fire.c
+index be71ae0..474d3be 100644
+--- a/arch/sparc/kernel/pci_fire.c
++++ b/arch/sparc/kernel/pci_fire.c
+@@ -416,7 +416,7 @@ static int pci_fire_pbm_init(struct pci_pbm_info *pbm,
+ 	struct device_node *dp = op->dev.of_node;
+ 	int err;
+ 
+-	pbm->numa_node = -1;
++	pbm->numa_node = NUMA_NO_NODE;
+ 
+ 	pbm->pci_ops = &sun4u_pci_ops;
+ 	pbm->config_space_reg_bits = 12;
+diff --git a/arch/sparc/kernel/pci_schizo.c b/arch/sparc/kernel/pci_schizo.c
+index 934b97c..87bb231 100644
+--- a/arch/sparc/kernel/pci_schizo.c
++++ b/arch/sparc/kernel/pci_schizo.c
+@@ -1347,7 +1347,7 @@ static int schizo_pbm_init(struct pci_pbm_info *pbm,
+ 	pbm->next = pci_pbm_root;
+ 	pci_pbm_root = pbm;
+ 
+-	pbm->numa_node = -1;
++	pbm->numa_node = NUMA_NO_NODE;
+ 
+ 	pbm->pci_ops = &sun4u_pci_ops;
+ 	pbm->config_space_reg_bits = 8;
+diff --git a/arch/sparc/kernel/pcic.c b/arch/sparc/kernel/pcic.c
+index ee4c9a9..d5fe898 100644
+--- a/arch/sparc/kernel/pcic.c
++++ b/arch/sparc/kernel/pcic.c
+@@ -476,7 +476,7 @@ static void pcic_map_pci_device(struct linux_pcic *pcic,
+ 	unsigned long flags;
+ 	int j;
+ 
+-	if (node == 0 || node == -1) {
++	if (node == 0 || node == NUMA_NO_NODE) {
+ 		strcpy(namebuf, "???");
+ 	} else {
+ 		prom_getstring(node, "name", namebuf, 63); namebuf[63] = 0;
+@@ -535,7 +535,7 @@ pcic_fill_irq(struct linux_pcic *pcic, struct pci_dev *dev, int node)
+ 	int i, ivec;
+ 	char namebuf[64];
+ 
+-	if (node == 0 || node == -1) {
++	if (node == 0 || node == NUMA_NO_NODE) {
+ 		strcpy(namebuf, "???");
+ 	} else {
+ 		prom_getstring(node, "name", namebuf, sizeof(namebuf));
+@@ -625,7 +625,7 @@ void pcibios_fixup_bus(struct pci_bus *bus)
+ 	list_for_each_entry(dev, &bus->devices, bus_list) {
+ 		node = pdev_to_pnode(&pcic->pbm, dev);
+ 		if(node == 0)
+-			node = -1;
++			node = NUMA_NO_NODE;
+ 
+ 		/* cookies */
+ 		pcp = pci_devcookie_alloc();
+diff --git a/arch/sparc/kernel/psycho_common.c b/arch/sparc/kernel/psycho_common.c
+index 81aa91e..dcbf492 100644
+--- a/arch/sparc/kernel/psycho_common.c
++++ b/arch/sparc/kernel/psycho_common.c
+@@ -454,7 +454,7 @@ void psycho_pbm_init_common(struct pci_pbm_info *pbm, struct platform_device *op
+ 	struct device_node *dp = op->dev.of_node;
+ 
+ 	pbm->name = dp->full_name;
+-	pbm->numa_node = -1;
++	pbm->numa_node = NUMA_NO_NODE;
+ 	pbm->chip_type = chip_type;
+ 	pbm->chip_version = of_getintprop_default(dp, "version#", 0);
+ 	pbm->chip_revision = of_getintprop_default(dp, "module-revision#", 0);
+diff --git a/arch/sparc/kernel/sbus.c b/arch/sparc/kernel/sbus.c
+index c133dfc..28a4aa9 100644
+--- a/arch/sparc/kernel/sbus.c
++++ b/arch/sparc/kernel/sbus.c
+@@ -561,7 +561,7 @@ static void __init sbus_iommu_init(struct platform_device *op)
+ 
+ 	op->dev.archdata.iommu = iommu;
+ 	op->dev.archdata.stc = strbuf;
+-	op->dev.archdata.numa_node = -1;
++	op->dev.archdata.numa_node = NUMA_NO_NODE;
+ 
+ 	reg_base = regs + SYSIO_IOMMUREG_BASE;
+ 	iommu->iommu_control = reg_base + IOMMU_CONTROL;
+diff --git a/arch/sparc/mm/init_64.c b/arch/sparc/mm/init_64.c
+index 3c8aac2..cb1bed1 100644
+--- a/arch/sparc/mm/init_64.c
++++ b/arch/sparc/mm/init_64.c
+@@ -976,13 +976,13 @@ static u64 __init memblock_nid_range_sun4u(u64 start, u64 end, int *nid)
+ {
+ 	int prev_nid, new_nid;
+ 
+-	prev_nid = -1;
++	prev_nid = NUMA_NO_NODE;
+ 	for ( ; start < end; start += PAGE_SIZE) {
+ 		for (new_nid = 0; new_nid < num_node_masks; new_nid++) {
+ 			struct node_mem_mask *p = &node_masks[new_nid];
+ 
+ 			if ((start & p->mask) == p->match) {
+-				if (prev_nid == -1)
++				if (prev_nid == NUMA_NO_NODE)
+ 					prev_nid = new_nid;
+ 				break;
+ 			}
+@@ -1208,7 +1208,7 @@ int of_node_to_nid(struct device_node *dp)
+ 	md = mdesc_grab();
+ 
+ 	count = 0;
+-	nid = -1;
++	nid = NUMA_NO_NODE;
+ 	mdesc_for_each_node_by_name(md, grp, "group") {
+ 		if (!scan_arcs_for_cfg_handle(md, grp, cfg_handle)) {
+ 			nid = count;
+diff --git a/arch/sparc/prom/init_32.c b/arch/sparc/prom/init_32.c
+index d204701..4c6e540 100644
+--- a/arch/sparc/prom/init_32.c
++++ b/arch/sparc/prom/init_32.c
+@@ -58,7 +58,7 @@ void __init prom_init(struct linux_romvec *rp)
+ 	prom_nodeops = romvec->pv_nodeops;
+ 
+ 	prom_root_node = prom_getsibling(0);
+-	if ((prom_root_node == 0) || ((s32)prom_root_node == -1))
++	if ((prom_root_node == 0) || ((s32)prom_root_node == NUMA_NO_NODE))
+ 		prom_halt();
+ 
+ 	if((((unsigned long) prom_nodeops) == 0) || 
+diff --git a/arch/sparc/prom/init_64.c b/arch/sparc/prom/init_64.c
+index 103aa91..85669c0 100644
+--- a/arch/sparc/prom/init_64.c
++++ b/arch/sparc/prom/init_64.c
+@@ -36,13 +36,13 @@ void __init prom_init(void *cif_handler)
+ 	prom_cif_init(cif_handler);
+ 
+ 	prom_chosen_node = prom_finddevice(prom_chosen_path);
+-	if (!prom_chosen_node || (s32)prom_chosen_node == -1)
++	if (!prom_chosen_node || (s32)prom_chosen_node == NUMA_NO_NODE)
+ 		prom_halt();
+ 
+ 	prom_stdout = prom_getint(prom_chosen_node, "stdout");
+ 
+ 	node = prom_finddevice("/openprom");
+-	if (!node || (s32)node == -1)
++	if (!node || (s32)node == NUMA_NO_NODE)
+ 		prom_halt();
+ 
+ 	prom_getstring(node, "version", prom_version, sizeof(prom_version));
+diff --git a/arch/sparc/prom/tree_32.c b/arch/sparc/prom/tree_32.c
+index 0fed893..2d0a204 100644
+--- a/arch/sparc/prom/tree_32.c
++++ b/arch/sparc/prom/tree_32.c
+@@ -41,11 +41,11 @@ phandle prom_getchild(phandle node)
+ {
+ 	phandle cnode;
+ 
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return 0;
+ 
+ 	cnode = __prom_getchild(node);
+-	if (cnode == 0 || (s32)cnode == -1)
++	if (cnode == 0 || (s32)cnode == NUMA_NO_NODE)
+ 		return 0;
+ 
+ 	return cnode;
+@@ -73,11 +73,11 @@ phandle prom_getsibling(phandle node)
+ {
+ 	phandle sibnode;
+ 
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return 0;
+ 
+ 	sibnode = __prom_getsibling(node);
+-	if (sibnode == 0 || (s32)sibnode == -1)
++	if (sibnode == 0 || (s32)sibnode == NUMA_NO_NODE)
+ 		return 0;
+ 
+ 	return sibnode;
+@@ -220,7 +220,7 @@ static char *__prom_nextprop(phandle node, char * oprop)
+  */
+ char *prom_nextprop(phandle node, char *oprop, char *buffer)
+ {
+-	if (node == 0 || (s32)node == -1)
++	if (node == 0 || (s32)node == NUMA_NO_NODE)
+ 		return "";
+ 
+ 	return __prom_nextprop(node, oprop);
+@@ -304,7 +304,7 @@ phandle prom_inst2pkg(int inst)
+ 	node = (*romvec->pv_v2devops.v2_inst2pkg)(inst);
+ 	restore_current();
+ 	spin_unlock_irqrestore(&prom_lock, flags);
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return 0;
+ 	return node;
+ }
+diff --git a/arch/sparc/prom/tree_64.c b/arch/sparc/prom/tree_64.c
+index 989e799..2b4c515 100644
+--- a/arch/sparc/prom/tree_64.c
++++ b/arch/sparc/prom/tree_64.c
+@@ -44,10 +44,10 @@ phandle prom_getchild(phandle node)
+ {
+ 	phandle cnode;
+ 
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return 0;
+ 	cnode = __prom_getchild(node);
+-	if ((s32)cnode == -1)
++	if ((s32)cnode == NUMA_NO_NODE)
+ 		return 0;
+ 	return cnode;
+ }
+@@ -57,10 +57,10 @@ inline phandle prom_getparent(phandle node)
+ {
+ 	phandle cnode;
+ 
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return 0;
+ 	cnode = prom_node_to_node("parent", node);
+-	if ((s32)cnode == -1)
++	if ((s32)cnode == NUMA_NO_NODE)
+ 		return 0;
+ 	return cnode;
+ }
+@@ -77,10 +77,10 @@ phandle prom_getsibling(phandle node)
+ {
+ 	phandle sibnode;
+ 
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return 0;
+ 	sibnode = __prom_getsibling(node);
+-	if ((s32)sibnode == -1)
++	if ((s32)sibnode == NUMA_NO_NODE)
+ 		return 0;
+ 
+ 	return sibnode;
+@@ -241,7 +241,7 @@ char *prom_firstprop(phandle node, char *buffer)
+ 	unsigned long args[7];
+ 
+ 	*buffer = 0;
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return buffer;
+ 
+ 	args[0] = (unsigned long) prom_nextprop_name;
+@@ -267,7 +267,7 @@ char *prom_nextprop(phandle node, const char *oprop, char *buffer)
+ 	unsigned long args[7];
+ 	char buf[32];
+ 
+-	if ((s32)node == -1) {
++	if ((s32)node == NUMA_NO_NODE) {
+ 		*buffer = 0;
+ 		return buffer;
+ 	}
+@@ -370,7 +370,7 @@ inline phandle prom_inst2pkg(int inst)
+ 	p1275_cmd_direct(args);
+ 
+ 	node = (int) args[4];
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return 0;
+ 	return node;
+ }
+diff --git a/arch/x86/include/asm/pci.h b/arch/x86/include/asm/pci.h
+index 6629636..dee2a31 100644
+--- a/arch/x86/include/asm/pci.h
++++ b/arch/x86/include/asm/pci.h
+@@ -141,7 +141,7 @@ cpumask_of_pcibus(const struct pci_bus *bus)
+ 	int node;
+ 
+ 	node = __pcibus_to_node(bus);
+-	return (node == -1) ? cpu_online_mask :
++	return (node == NUMA_NO_NODE) ? cpu_online_mask :
+ 			      cpumask_of_node(node);
+ }
+ #endif
+diff --git a/arch/x86/kernel/apic/x2apic_uv_x.c b/arch/x86/kernel/apic/x2apic_uv_x.c
+index 391f358..3c3378a 100644
+--- a/arch/x86/kernel/apic/x2apic_uv_x.c
++++ b/arch/x86/kernel/apic/x2apic_uv_x.c
+@@ -1390,7 +1390,7 @@ static void __init build_socket_tables(void)
+ 	}
+ 
+ 	/* Set socket -> node values: */
+-	lnid = -1;
++	lnid = NUMA_NO_NODE;
+ 	for_each_present_cpu(cpu) {
+ 		int nid = cpu_to_node(cpu);
+ 		int apicid, sockid;
+@@ -1521,7 +1521,7 @@ static void __init uv_system_init_hub(void)
+ 			new_hub->pnode = 0xffff;
+ 
+ 		new_hub->numa_blade_id = uv_node_to_blade_id(nodeid);
+-		new_hub->memory_nid = -1;
++		new_hub->memory_nid = NUMA_NO_NODE;
+ 		new_hub->nr_possible_cpus = 0;
+ 		new_hub->nr_online_cpus = 0;
+ 	}
+@@ -1538,7 +1538,7 @@ static void __init uv_system_init_hub(void)
+ 
+ 		uv_cpu_info_per(cpu)->p_uv_hub_info = uv_hub_info_list(nodeid);
+ 		uv_cpu_info_per(cpu)->blade_cpu_id = uv_cpu_hub_info(cpu)->nr_possible_cpus++;
+-		if (uv_cpu_hub_info(cpu)->memory_nid == -1)
++		if (uv_cpu_hub_info(cpu)->memory_nid == NUMA_NO_NODE)
+ 			uv_cpu_hub_info(cpu)->memory_nid = cpu_to_node(cpu);
+ 
+ 		/* Init memoryless node: */
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index a9134d1..c1d45dc 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -841,7 +841,7 @@ wakeup_secondary_cpu_via_init(int phys_apicid, unsigned long start_eip)
+ /* reduce the number of lines printed when booting a large cpu count system */
+ static void announce_cpu(int cpu, int apicid)
+ {
+-	static int current_node = -1;
++	static int current_node = NUMA_NO_NODE;
+ 	int node = early_cpu_to_node(cpu);
+ 	static int width, node_width;
+ 
+diff --git a/arch/x86/platform/olpc/olpc_dt.c b/arch/x86/platform/olpc/olpc_dt.c
+index 24d2175..7098127 100644
+--- a/arch/x86/platform/olpc/olpc_dt.c
++++ b/arch/x86/platform/olpc/olpc_dt.c
+@@ -29,10 +29,10 @@ static phandle __init olpc_dt_getsibling(phandle node)
+ 	const void *args[] = { (void *)node };
+ 	void *res[] = { &node };
+ 
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return 0;
+ 
+-	if (olpc_ofw("peer", args, res) || (s32)node == -1)
++	if (olpc_ofw("peer", args, res) || (s32)node == NUMA_NO_NODE)
+ 		return 0;
+ 
+ 	return node;
+@@ -43,10 +43,10 @@ static phandle __init olpc_dt_getchild(phandle node)
+ 	const void *args[] = { (void *)node };
+ 	void *res[] = { &node };
+ 
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return 0;
+ 
+-	if (olpc_ofw("child", args, res) || (s32)node == -1) {
++	if (olpc_ofw("child", args, res) || (s32)node == NUMA_NO_NODE) {
+ 		pr_err("PROM: %s: fetching child failed!\n", __func__);
+ 		return 0;
+ 	}
+@@ -60,7 +60,7 @@ static int __init olpc_dt_getproplen(phandle node, const char *prop)
+ 	int len;
+ 	void *res[] = { &len };
+ 
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return -1;
+ 
+ 	if (olpc_ofw("getproplen", args, res)) {
+@@ -100,7 +100,7 @@ static int __init olpc_dt_nextprop(phandle node, char *prev, char *buf)
+ 
+ 	buf[0] = '\0';
+ 
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return -1;
+ 
+ 	if (olpc_ofw("nextprop", args, res) || success != 1)
+@@ -115,7 +115,7 @@ static int __init olpc_dt_pkg2path(phandle node, char *buf,
+ 	const void *args[] = { (void *)node, buf, (void *)buflen };
+ 	void *res[] = { len };
+ 
+-	if ((s32)node == -1)
++	if ((s32)node == NUMA_NO_NODE)
+ 		return -1;
+ 
+ 	if (olpc_ofw("package-to-path", args, res) || *len < 1)
+@@ -176,7 +176,7 @@ static phandle __init olpc_dt_finddevice(const char *path)
+ 		return 0;
+ 	}
+ 
+-	if ((s32) node == -1)
++	if ((s32) node == NUMA_NO_NODE)
+ 		return 0;
+ 
+ 	return node;
+diff --git a/drivers/block/mtip32xx/mtip32xx.c b/drivers/block/mtip32xx/mtip32xx.c
+index a7daa8a..b889452 100644
+--- a/drivers/block/mtip32xx/mtip32xx.c
++++ b/drivers/block/mtip32xx/mtip32xx.c
+@@ -4084,9 +4084,9 @@ static int get_least_used_cpu_on_node(int node)
+ /* Helper for selecting a node in round robin mode */
+ static inline int mtip_get_next_rr_node(void)
+ {
+-	static int next_node = -1;
++	static int next_node = NUMA_NO_NODE;
+ 
+-	if (next_node == -1) {
++	if (next_node == NUMA_NO_NODE) {
+ 		next_node = first_online_node;
+ 		return next_node;
+ 	}
+diff --git a/drivers/dma/dmaengine.c b/drivers/dma/dmaengine.c
+index f1a441ab..1aeefc7 100644
+--- a/drivers/dma/dmaengine.c
++++ b/drivers/dma/dmaengine.c
+@@ -386,7 +386,8 @@ EXPORT_SYMBOL(dma_issue_pending_all);
+ static bool dma_chan_is_local(struct dma_chan *chan, int cpu)
+ {
+ 	int node = dev_to_node(chan->device->dev);
+-	return node == -1 || cpumask_test_cpu(cpu, cpumask_of_node(node));
++	return node == NUMA_NO_NODE ||
++		cpumask_test_cpu(cpu, cpumask_of_node(node));
+ }
+ 
+ /**
+diff --git a/drivers/infiniband/hw/hfi1/affinity.c b/drivers/infiniband/hw/hfi1/affinity.c
+index 2baf38c..3e8acb8 100644
+--- a/drivers/infiniband/hw/hfi1/affinity.c
++++ b/drivers/infiniband/hw/hfi1/affinity.c
+@@ -777,7 +777,7 @@ void hfi1_dev_affinity_clean_up(struct hfi1_devdata *dd)
+ 	_dev_comp_vect_cpu_mask_clean_up(dd, entry);
+ unlock:
+ 	mutex_unlock(&node_affinity.lock);
+-	dd->node = -1;
++	dd->node = NUMA_NO_NODE;
+ }
+ 
+ /*
+diff --git a/drivers/infiniband/hw/hfi1/init.c b/drivers/infiniband/hw/hfi1/init.c
+index 0904490..0bf4577 100644
+--- a/drivers/infiniband/hw/hfi1/init.c
++++ b/drivers/infiniband/hw/hfi1/init.c
+@@ -1303,7 +1303,7 @@ static struct hfi1_devdata *hfi1_alloc_devdata(struct pci_dev *pdev,
+ 		dd->unit = ret;
+ 		list_add(&dd->list, &hfi1_dev_list);
+ 	}
+-	dd->node = -1;
++	dd->node = NUMA_NO_NODE;
+ 
+ 	spin_unlock_irqrestore(&hfi1_devs_lock, flags);
+ 	idr_preload_end();
+diff --git a/drivers/iommu/dmar.c b/drivers/iommu/dmar.c
+index d9c748b..86a9c19 100644
+--- a/drivers/iommu/dmar.c
++++ b/drivers/iommu/dmar.c
+@@ -477,7 +477,7 @@ static int dmar_parse_one_rhsa(struct acpi_dmar_header *header, void *arg)
+ 			int node = acpi_map_pxm_to_node(rhsa->proximity_domain);
+ 
+ 			if (!node_online(node))
+-				node = -1;
++				node = NUMA_NO_NODE;
+ 			drhd->iommu->node = node;
+ 			return 0;
+ 		}
+@@ -1062,7 +1062,7 @@ static int alloc_iommu(struct dmar_drhd_unit *drhd)
+ 	iommu->msagaw = msagaw;
+ 	iommu->segment = drhd->segment;
+ 
+-	iommu->node = -1;
++	iommu->node = NUMA_NO_NODE;
+ 
+ 	ver = readl(iommu->reg + DMAR_VER_REG);
+ 	pr_info("%s: reg_base_addr %llx ver %d:%d cap %llx ecap %llx\n",
+diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
+index f3ccf02..9f6fb13 100644
+--- a/drivers/iommu/intel-iommu.c
++++ b/drivers/iommu/intel-iommu.c
+@@ -1772,7 +1772,7 @@ static struct dmar_domain *alloc_domain(int flags)
+ 		return NULL;
+ 
+ 	memset(domain, 0, sizeof(*domain));
+-	domain->nid = -1;
++	domain->nid = NUMA_NO_NODE;
+ 	domain->flags = flags;
+ 	domain->has_iotlb_device = false;
+ 	INIT_LIST_HEAD(&domain->devices);
+diff --git a/drivers/media/pci/ivtv/ivtvfb.c b/drivers/media/pci/ivtv/ivtvfb.c
+index 3e02de0..81bd41c 100644
+--- a/drivers/media/pci/ivtv/ivtvfb.c
++++ b/drivers/media/pci/ivtv/ivtvfb.c
+@@ -1054,7 +1054,7 @@ static int ivtvfb_init_vidmode(struct ivtv *itv)
+ 
+ 	/* Generate valid fb_info */
+ 
+-	oi->ivtvfb_info.node = -1;
++	oi->ivtvfb_info.node = NUMA_NO_NODE;
+ 	oi->ivtvfb_info.flags = FBINFO_FLAG_DEFAULT;
+ 	oi->ivtvfb_info.fbops = &ivtvfb_ops;
+ 	oi->ivtvfb_info.par = itv;
+diff --git a/drivers/media/platform/vivid/vivid-osd.c b/drivers/media/platform/vivid/vivid-osd.c
+index 1a89593..56a2d41 100644
+--- a/drivers/media/platform/vivid/vivid-osd.c
++++ b/drivers/media/platform/vivid/vivid-osd.c
+@@ -309,7 +309,7 @@ static int vivid_fb_init_vidmode(struct vivid_dev *dev)
+ 
+ 	/* Generate valid fb_info */
+ 
+-	dev->fb_info.node = -1;
++	dev->fb_info.node = NUMA_NO_NODE;
+ 	dev->fb_info.flags = FBINFO_FLAG_DEFAULT;
+ 	dev->fb_info.fbops = &vivid_fb_ops;
+ 	dev->fb_info.par = dev;
+diff --git a/drivers/misc/sgi-xp/xpc_uv.c b/drivers/misc/sgi-xp/xpc_uv.c
+index 0441abe..eef36dd 100644
+--- a/drivers/misc/sgi-xp/xpc_uv.c
++++ b/drivers/misc/sgi-xp/xpc_uv.c
+@@ -61,7 +61,7 @@ static struct xpc_heartbeat_uv *xpc_heartbeat_uv;
+ 					 XPC_NOTIFY_MSG_SIZE_UV)
+ #define XPC_NOTIFY_IRQ_NAME		"xpc_notify"
+ 
+-static int xpc_mq_node = -1;
++static int xpc_mq_node = NUMA_NO_NODE;
+ 
+ static struct xpc_gru_mq_uv *xpc_activate_mq_uv;
+ static struct xpc_gru_mq_uv *xpc_notify_mq_uv;
+diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+index 113b38e..4fae85c 100644
+--- a/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
++++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+@@ -6414,7 +6414,7 @@ int ixgbe_setup_tx_resources(struct ixgbe_ring *tx_ring)
+ {
+ 	struct device *dev = tx_ring->dev;
+ 	int orig_node = dev_to_node(dev);
+-	int ring_node = -1;
++	int ring_node = NUMA_NO_NODE;
+ 	int size;
+ 
+ 	size = sizeof(struct ixgbe_tx_buffer) * tx_ring->count;
+@@ -6508,7 +6508,7 @@ int ixgbe_setup_rx_resources(struct ixgbe_adapter *adapter,
+ {
+ 	struct device *dev = rx_ring->dev;
+ 	int orig_node = dev_to_node(dev);
+-	int ring_node = -1;
++	int ring_node = NUMA_NO_NODE;
+ 	int size;
+ 
+ 	size = sizeof(struct ixgbe_rx_buffer) * rx_ring->count;
+diff --git a/drivers/video/fbdev/mmp/fb/mmpfb.c b/drivers/video/fbdev/mmp/fb/mmpfb.c
+index ee212be..298be9b 100644
+--- a/drivers/video/fbdev/mmp/fb/mmpfb.c
++++ b/drivers/video/fbdev/mmp/fb/mmpfb.c
+@@ -519,7 +519,7 @@ static int fb_info_setup(struct fb_info *info,
+ 	/* Initialise static fb parameters.*/
+ 	info->flags = FBINFO_DEFAULT | FBINFO_PARTIAL_PAN_OK |
+ 		FBINFO_HWACCEL_XPAN | FBINFO_HWACCEL_YPAN;
+-	info->node = -1;
++	info->node = NUMA_NO_NODE;
+ 	strcpy(info->fix.id, fbi->name);
+ 	info->fix.type = FB_TYPE_PACKED_PIXELS;
+ 	info->fix.type_aux = 0;
+diff --git a/drivers/video/fbdev/pxa168fb.c b/drivers/video/fbdev/pxa168fb.c
+index e31340f..7d775de 100644
+--- a/drivers/video/fbdev/pxa168fb.c
++++ b/drivers/video/fbdev/pxa168fb.c
+@@ -649,7 +649,7 @@ static int pxa168fb_probe(struct platform_device *pdev)
+ 	 */
+ 	info->flags = FBINFO_DEFAULT | FBINFO_PARTIAL_PAN_OK |
+ 		      FBINFO_HWACCEL_XPAN | FBINFO_HWACCEL_YPAN;
+-	info->node = -1;
++	info->node = NUMA_NO_NODE;
+ 	strlcpy(info->fix.id, mi->id, 16);
+ 	info->fix.type = FB_TYPE_PACKED_PIXELS;
+ 	info->fix.type_aux = 0;
+diff --git a/drivers/video/fbdev/w100fb.c b/drivers/video/fbdev/w100fb.c
+index 696106e..8b0f20c 100644
+--- a/drivers/video/fbdev/w100fb.c
++++ b/drivers/video/fbdev/w100fb.c
+@@ -703,7 +703,7 @@ int w100fb_probe(struct platform_device *pdev)
+ 	info->fbops = &w100fb_ops;
+ 	info->flags = FBINFO_DEFAULT | FBINFO_HWACCEL_COPYAREA |
+ 		FBINFO_HWACCEL_FILLRECT;
+-	info->node = -1;
++	info->node = NUMA_NO_NODE;
+ 	info->screen_base = remapped_fbuf + (W100_FB_BASE-MEM_WINDOW_BASE);
+ 	info->screen_size = REMAPPED_FB_LEN;
+ 
+diff --git a/fs/ocfs2/dlm/dlmcommon.h b/fs/ocfs2/dlm/dlmcommon.h
+index d06e27e..11111f6 100644
+--- a/fs/ocfs2/dlm/dlmcommon.h
++++ b/fs/ocfs2/dlm/dlmcommon.h
+@@ -1121,7 +1121,7 @@ static inline void dlm_node_iter_init(unsigned long *map,
+ 				      struct dlm_node_iter *iter)
+ {
+ 	memcpy(iter->node_map, map, sizeof(iter->node_map));
+-	iter->curnode = -1;
++	iter->curnode = NUMA_NO_NODE;
+ }
+ 
+ static inline int dlm_node_iter_next(struct dlm_node_iter *iter)
+diff --git a/fs/ocfs2/dlm/dlmdomain.c b/fs/ocfs2/dlm/dlmdomain.c
+index 2acd58b..381a323 100644
+--- a/fs/ocfs2/dlm/dlmdomain.c
++++ b/fs/ocfs2/dlm/dlmdomain.c
+@@ -546,7 +546,7 @@ static void dlm_mark_domain_leaving(struct dlm_ctxt *dlm)
+ 
+ static void __dlm_print_nodes(struct dlm_ctxt *dlm)
+ {
+-	int node = -1, num = 0;
++	int node = NUMA_NO_NODE, num = 0;
+ 
+ 	assert_spin_locked(&dlm->spinlock);
+ 
+@@ -613,7 +613,7 @@ static int dlm_send_one_domain_exit(struct dlm_ctxt *dlm, u32 msg_type,
+ 
+ static void dlm_begin_exit_domain(struct dlm_ctxt *dlm)
+ {
+-	int node = -1;
++	int node = NUMA_NO_NODE;
+ 
+ 	/* Support for begin exit domain was added in 1.2 */
+ 	if (dlm->dlm_locking_proto.pv_major == 1 &&
+@@ -1407,7 +1407,7 @@ static int dlm_send_join_cancels(struct dlm_ctxt *dlm,
+ 	}
+ 
+ 	status = 0;
+-	node = -1;
++	node = NUMA_NO_NODE;
+ 	while ((node = find_next_bit(node_map, O2NM_MAX_NODES,
+ 				     node + 1)) < O2NM_MAX_NODES) {
+ 		if (node == dlm->node_num)
+@@ -1547,7 +1547,7 @@ static void dlm_send_join_asserts(struct dlm_ctxt *dlm,
+ 	int status, node, live;
+ 
+ 	status = 0;
+-	node = -1;
++	node = NUMA_NO_NODE;
+ 	while ((node = find_next_bit(node_map, O2NM_MAX_NODES,
+ 				     node + 1)) < O2NM_MAX_NODES) {
+ 		if (node == dlm->node_num)
+@@ -1631,7 +1631,7 @@ static int dlm_try_to_join_domain(struct dlm_ctxt *dlm)
+ 
+ 	spin_unlock(&dlm->spinlock);
+ 
+-	node = -1;
++	node = NUMA_NO_NODE;
+ 	while ((node = find_next_bit(ctxt->live_map, O2NM_MAX_NODES,
+ 				     node + 1)) < O2NM_MAX_NODES) {
+ 		if (node == dlm->node_num)
+diff --git a/fs/ocfs2/dlm/dlmmaster.c b/fs/ocfs2/dlm/dlmmaster.c
+index 826f056..e54bbbc 100644
+--- a/fs/ocfs2/dlm/dlmmaster.c
++++ b/fs/ocfs2/dlm/dlmmaster.c
+@@ -1183,7 +1183,7 @@ static void dlm_bitmap_diff_iter_init(struct dlm_bitmap_diff_iter *iter,
+ 	unsigned long p1, p2;
+ 	int i;
+ 
+-	iter->curnode = -1;
++	iter->curnode = NUMA_NO_NODE;
+ 	iter->orig_bm = orig_bm;
+ 	iter->cur_bm = cur_bm;
+ 
+diff --git a/fs/ocfs2/dlm/dlmrecovery.c b/fs/ocfs2/dlm/dlmrecovery.c
+index 802636d5..704fa8b 100644
+--- a/fs/ocfs2/dlm/dlmrecovery.c
++++ b/fs/ocfs2/dlm/dlmrecovery.c
+@@ -2903,7 +2903,7 @@ static int dlm_send_finalize_reco_message(struct dlm_ctxt *dlm)
+ 	}
+ 	if (stage == 1) {
+ 		/* reset the node_iter back to the top and send finalize2 */
+-		iter.curnode = -1;
++		iter.curnode = NUMA_NO_NODE;
+ 		stage = 2;
+ 		goto stage2;
+ 	}
+diff --git a/fs/ocfs2/stack_user.c b/fs/ocfs2/stack_user.c
+index d2fb97b..a673efa 100644
+--- a/fs/ocfs2/stack_user.c
++++ b/fs/ocfs2/stack_user.c
+@@ -171,7 +171,7 @@ union ocfs2_control_message {
+ static struct ocfs2_stack_plugin ocfs2_user_plugin;
+ 
+ static atomic_t ocfs2_control_opened;
+-static int ocfs2_control_this_node = -1;
++static int ocfs2_control_this_node = NUMA_NO_NODE;
+ static struct ocfs2_protocol_version running_proto;
+ 
+ static LIST_HEAD(ocfs2_live_connection_list);
+@@ -589,7 +589,7 @@ static int ocfs2_control_release(struct inode *inode, struct file *file)
+ 		 * Last valid close clears the node number and resets
+ 		 * the locking protocol version
+ 		 */
+-		ocfs2_control_this_node = -1;
++		ocfs2_control_this_node = NUMA_NO_NODE;
+ 		running_proto.pv_major = 0;
+ 		running_proto.pv_minor = 0;
+ 	}
+@@ -612,7 +612,7 @@ static int ocfs2_control_open(struct inode *inode, struct file *file)
+ 	p = kzalloc(sizeof(struct ocfs2_control_private), GFP_KERNEL);
+ 	if (!p)
+ 		return -ENOMEM;
+-	p->op_this_node = -1;
++	p->op_this_node = NUMA_NO_NODE;
+ 
+ 	mutex_lock(&ocfs2_control_lock);
+ 	file->private_data = p;
+diff --git a/init/init_task.c b/init/init_task.c
+index 5aebe3b..6641836 100644
+--- a/init/init_task.c
++++ b/init/init_task.c
+@@ -154,7 +154,7 @@ struct task_struct init_task
+ 	.vtime.state	= VTIME_SYS,
+ #endif
+ #ifdef CONFIG_NUMA_BALANCING
+-	.numa_preferred_nid = -1,
++	.numa_preferred_nid = NUMA_NO_NODE,
+ 	.numa_group	= NULL,
+ 	.numa_faults	= NULL,
+ #endif
+diff --git a/kernel/kthread.c b/kernel/kthread.c
+index 087d18d..77f3d94 100644
+--- a/kernel/kthread.c
++++ b/kernel/kthread.c
+@@ -675,7 +675,7 @@ __kthread_create_worker(int cpu, unsigned int flags,
+ {
+ 	struct kthread_worker *worker;
+ 	struct task_struct *task;
+-	int node = -1;
++	int node = NUMA_NO_NODE;
+ 
+ 	worker = kzalloc(sizeof(*worker), GFP_KERNEL);
+ 	if (!worker)
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index ee271bb..d830fa7 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -1161,7 +1161,7 @@ void init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
+ 
+ 	/* New address space, reset the preferred nid */
+ 	if (!(clone_flags & CLONE_VM)) {
+-		p->numa_preferred_nid = -1;
++		p->numa_preferred_nid = NUMA_NO_NODE;
+ 		return;
+ 	}
+ 
+@@ -1181,13 +1181,13 @@ void init_numa_balancing(unsigned long clone_flags, struct task_struct *p)
+ 
+ static void account_numa_enqueue(struct rq *rq, struct task_struct *p)
+ {
+-	rq->nr_numa_running += (p->numa_preferred_nid != -1);
++	rq->nr_numa_running += (p->numa_preferred_nid != NUMA_NO_NODE);
+ 	rq->nr_preferred_running += (p->numa_preferred_nid == task_node(p));
+ }
+ 
+ static void account_numa_dequeue(struct rq *rq, struct task_struct *p)
+ {
+-	rq->nr_numa_running -= (p->numa_preferred_nid != -1);
++	rq->nr_numa_running -= (p->numa_preferred_nid != NUMA_NO_NODE);
+ 	rq->nr_preferred_running -= (p->numa_preferred_nid == task_node(p));
+ }
+ 
+@@ -1401,7 +1401,7 @@ bool should_numa_migrate_memory(struct task_struct *p, struct page * page,
+ 	 * two full passes of the "multi-stage node selection" test that is
+ 	 * executed below.
+ 	 */
+-	if ((p->numa_preferred_nid == -1 || p->numa_scan_seq <= 4) &&
++	if ((p->numa_preferred_nid == NUMA_NO_NODE || p->numa_scan_seq <= 4) &&
+ 	    (cpupid_pid_unset(last_cpupid) || cpupid_match_pid(p, last_cpupid)))
+ 		return true;
+ 
+@@ -1849,7 +1849,7 @@ static void numa_migrate_preferred(struct task_struct *p)
+ 	unsigned long interval = HZ;
+ 
+ 	/* This task has no NUMA fault statistics yet */
+-	if (unlikely(p->numa_preferred_nid == -1 || !p->numa_faults))
++	if (unlikely(p->numa_preferred_nid == NUMA_NO_NODE || !p->numa_faults))
+ 		return;
+ 
+ 	/* Periodically retry migrating the task to the preferred node */
+@@ -2096,7 +2096,7 @@ static int preferred_group_nid(struct task_struct *p, int nid)
+ 
+ static void task_numa_placement(struct task_struct *p)
+ {
+-	int seq, nid, max_nid = -1;
++	int seq, nid, max_nid = NUMA_NO_NODE;
+ 	unsigned long max_faults = 0;
+ 	unsigned long fault_types[2] = { 0, 0 };
+ 	unsigned long total_faults;
+@@ -2639,7 +2639,8 @@ static void update_scan_period(struct task_struct *p, int new_cpu)
+ 		 * the preferred node.
+ 		 */
+ 		if (dst_nid == p->numa_preferred_nid ||
+-		    (p->numa_preferred_nid != -1 && src_nid != p->numa_preferred_nid))
++		    (p->numa_preferred_nid != NUMA_NO_NODE &&
++			src_nid != p->numa_preferred_nid))
+ 			return;
+ 	}
+ 
+diff --git a/lib/cpumask.c b/lib/cpumask.c
+index 8d666ab..a089c3f 100644
+--- a/lib/cpumask.c
++++ b/lib/cpumask.c
+@@ -206,7 +206,7 @@ unsigned int cpumask_local_spread(unsigned int i, int node)
+ 	/* Wrap: we always want a cpu. */
+ 	i %= num_online_cpus();
+ 
+-	if (node == -1) {
++	if (node == NUMA_NO_NODE) {
+ 		for_each_cpu(cpu, cpu_online_mask)
+ 			if (i-- == 0)
+ 				return cpu;
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 55478ab..5ccf89e 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -1480,7 +1480,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf, pmd_t pmd)
+ 	struct anon_vma *anon_vma = NULL;
+ 	struct page *page;
+ 	unsigned long haddr = vmf->address & HPAGE_PMD_MASK;
+-	int page_nid = -1, this_nid = numa_node_id();
++	int page_nid = NUMA_NO_NODE, this_nid = numa_node_id();
+ 	int target_nid, last_cpupid = -1;
+ 	bool page_locked;
+ 	bool migrated = false;
+@@ -1526,7 +1526,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf, pmd_t pmd)
+ 	 */
+ 	page_locked = trylock_page(page);
+ 	target_nid = mpol_misplaced(page, vma, haddr);
+-	if (target_nid == -1) {
++	if (target_nid == NUMA_NO_NODE) {
+ 		/* If the page was locked, there are no parallel migrations */
+ 		if (page_locked)
+ 			goto clear_pmdnuma;
+@@ -1534,7 +1534,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf, pmd_t pmd)
+ 
+ 	/* Migration could have started since the pmd_trans_migrating check */
+ 	if (!page_locked) {
+-		page_nid = -1;
++		page_nid = NUMA_NO_NODE;
+ 		if (!get_page_unless_zero(page))
+ 			goto out_unlock;
+ 		spin_unlock(vmf->ptl);
+@@ -1556,14 +1556,14 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf, pmd_t pmd)
+ 	if (unlikely(!pmd_same(pmd, *vmf->pmd))) {
+ 		unlock_page(page);
+ 		put_page(page);
+-		page_nid = -1;
++		page_nid = NUMA_NO_NODE;
+ 		goto out_unlock;
+ 	}
+ 
+ 	/* Bail if we fail to protect against THP splits for any reason */
+ 	if (unlikely(!anon_vma)) {
+ 		put_page(page);
+-		page_nid = -1;
++		page_nid = NUMA_NO_NODE;
+ 		goto clear_pmdnuma;
+ 	}
+ 
+@@ -1625,7 +1625,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf, pmd_t pmd)
+ 	if (anon_vma)
+ 		page_unlock_anon_vma_read(anon_vma);
+ 
+-	if (page_nid != -1)
++	if (page_nid != NUMA_NO_NODE)
+ 		task_numa_fault(last_cpupid, page_nid, HPAGE_PMD_NR,
+ 				flags);
+ 
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index c007fb5..b769db7 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -887,7 +887,7 @@ static struct page *dequeue_huge_page_nodemask(struct hstate *h, gfp_t gfp_mask,
+ 	struct zonelist *zonelist;
+ 	struct zone *zone;
+ 	struct zoneref *z;
+-	int node = -1;
++	int node = NUMA_NO_NODE;
+ 
+ 	zonelist = node_zonelist(nid, gfp_mask);
+ 
+diff --git a/mm/ksm.c b/mm/ksm.c
+index 5b0894b..d5f8834 100644
+--- a/mm/ksm.c
++++ b/mm/ksm.c
+@@ -597,7 +597,7 @@ static struct stable_node *alloc_stable_node_chain(struct stable_node *dup,
+ 		chain->chain_prune_time = jiffies;
+ 		chain->rmap_hlist_len = STABLE_NODE_CHAIN;
+ #if defined (CONFIG_DEBUG_VM) && defined(CONFIG_NUMA)
+-		chain->nid = -1; /* debug */
++		chain->nid = NUMA_NO_NODE; /* debug */
+ #endif
+ 		ksm_stable_node_chains++;
+ 
+diff --git a/mm/memory.c b/mm/memory.c
+index 4ad2d29..c0e0348 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -3564,7 +3564,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ {
+ 	struct vm_area_struct *vma = vmf->vma;
+ 	struct page *page = NULL;
+-	int page_nid = -1;
++	int page_nid = NUMA_NO_NODE;
+ 	int last_cpupid;
+ 	int target_nid;
+ 	bool migrated = false;
+@@ -3631,7 +3631,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ 	target_nid = numa_migrate_prep(page, vma, vmf->address, page_nid,
+ 			&flags);
+ 	pte_unmap_unlock(vmf->pte, vmf->ptl);
+-	if (target_nid == -1) {
++	if (target_nid == NUMA_NO_NODE) {
+ 		put_page(page);
+ 		goto out;
+ 	}
+@@ -3645,7 +3645,7 @@ static vm_fault_t do_numa_page(struct vm_fault *vmf)
+ 		flags |= TNF_MIGRATE_FAIL;
+ 
+ out:
+-	if (page_nid != -1)
++	if (page_nid != NUMA_NO_NODE)
+ 		task_numa_fault(last_cpupid, page_nid, 1, flags);
+ 	return 0;
+ }
+diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+index 2b2b3cc..70e02f8 100644
+--- a/mm/memory_hotplug.c
++++ b/mm/memory_hotplug.c
+@@ -688,9 +688,9 @@ static void node_states_check_changes_online(unsigned long nr_pages,
+ {
+ 	int nid = zone_to_nid(zone);
+ 
+-	arg->status_change_nid = -1;
+-	arg->status_change_nid_normal = -1;
+-	arg->status_change_nid_high = -1;
++	arg->status_change_nid = NUMA_NO_NODE;
++	arg->status_change_nid_normal = NUMA_NO_NODE;
++	arg->status_change_nid_high = NUMA_NO_NODE;
+ 
+ 	if (!node_state(nid, N_MEMORY))
+ 		arg->status_change_nid = nid;
+@@ -1484,9 +1484,9 @@ static void node_states_check_changes_offline(unsigned long nr_pages,
+ 	unsigned long present_pages = 0;
+ 	enum zone_type zt;
+ 
+-	arg->status_change_nid = -1;
+-	arg->status_change_nid_normal = -1;
+-	arg->status_change_nid_high = -1;
++	arg->status_change_nid = NUMA_NO_NODE;
++	arg->status_change_nid_normal = NUMA_NO_NODE;
++	arg->status_change_nid_high = NUMA_NO_NODE;
+ 
+ 	/*
+ 	 * Check whether node_states[N_NORMAL_MEMORY] will be changed.
+diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+index 5837a06..e4f8248 100644
+--- a/mm/mempolicy.c
++++ b/mm/mempolicy.c
+@@ -2278,7 +2278,7 @@ int mpol_misplaced(struct page *page, struct vm_area_struct *vma, unsigned long
+ 	unsigned long pgoff;
+ 	int thiscpu = raw_smp_processor_id();
+ 	int thisnid = cpu_to_node(thiscpu);
+-	int polnid = -1;
++	int polnid = NUMA_NO_NODE;
+ 	int ret = -1;
+ 
+ 	pol = get_vma_policy(vma, addr);
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index a919ba5..9d38d9c 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -5846,7 +5846,7 @@ int __meminit __early_pfn_to_nid(unsigned long pfn,
+ 		return state->last_nid;
+ 
+ 	nid = memblock_search_pfn_nid(pfn, &start_pfn, &end_pfn);
+-	if (nid != -1) {
++	if (nid != NUMA_NO_NODE) {
+ 		state->last_start = start_pfn;
+ 		state->last_end = end_pfn;
+ 		state->last_nid = nid;
+@@ -6607,7 +6607,7 @@ unsigned long __init node_map_pfn_alignment(void)
+ {
+ 	unsigned long accl_mask = 0, last_end = 0;
+ 	unsigned long start, end, mask;
+-	int last_nid = -1;
++	int last_nid = NUMA_NO_NODE;
+ 	int i, nid;
+ 
+ 	for_each_mem_pfn_range(i, MAX_NUMNODES, &start, &end, &nid) {
+diff --git a/mm/page_ext.c b/mm/page_ext.c
+index ae44f7a..dfb0206 100644
+--- a/mm/page_ext.c
++++ b/mm/page_ext.c
+@@ -300,7 +300,7 @@ static int __meminit online_page_ext(unsigned long start_pfn,
+ 	start = SECTION_ALIGN_DOWN(start_pfn);
+ 	end = SECTION_ALIGN_UP(start_pfn + nr_pages);
+ 
+-	if (nid == -1) {
++	if (nid == NUMA_NO_NODE) {
+ 		/*
+ 		 * In this case, "nid" already exists and contains valid memory.
+ 		 * "start_pfn" passed to us is a pfn which is an arg for
+diff --git a/net/core/pktgen.c b/net/core/pktgen.c
+index 6ac9198..af3a746 100644
+--- a/net/core/pktgen.c
++++ b/net/core/pktgen.c
+@@ -3625,7 +3625,7 @@ static int pktgen_add_device(struct pktgen_thread *t, const char *ifname)
+ 	pkt_dev->svlan_cfi = 0;
+ 	pkt_dev->svlan_id = 0xffff;
+ 	pkt_dev->burst = 1;
+-	pkt_dev->node = -1;
++	pkt_dev->node = NUMA_NO_NODE;
+ 
+ 	err = pktgen_setup_dev(t->net, pkt_dev, ifname);
+ 	if (err)
+diff --git a/net/qrtr/qrtr.c b/net/qrtr/qrtr.c
+index 86e1e37..0c56ae2 100644
+--- a/net/qrtr/qrtr.c
++++ b/net/qrtr/qrtr.c
+@@ -101,7 +101,7 @@ static inline struct qrtr_sock *qrtr_sk(struct sock *sk)
+ 	return container_of(sk, struct qrtr_sock, sk);
+ }
+ 
+-static unsigned int qrtr_local_nid = -1;
++static unsigned int qrtr_local_nid = NUMA_NO_NODE;
+ 
+ /* for node ids */
+ static RADIX_TREE(qrtr_nodes, GFP_KERNEL);
+diff --git a/tools/perf/bench/numa.c b/tools/perf/bench/numa.c
+index 4419551..e0ad5f1 100644
+--- a/tools/perf/bench/numa.c
++++ b/tools/perf/bench/numa.c
+@@ -298,7 +298,7 @@ static cpu_set_t bind_to_node(int target_node)
+ 
+ 	CPU_ZERO(&mask);
+ 
+-	if (target_node == -1) {
++	if (target_node == NUMA_NO_NODE) {
+ 		for (cpu = 0; cpu < g->p.nr_cpus; cpu++)
+ 			CPU_SET(cpu, &mask);
+ 	} else {
+@@ -339,7 +339,7 @@ static void bind_to_memnode(int node)
+ 	unsigned long nodemask;
+ 	int ret;
+ 
+-	if (node == -1)
++	if (node == NUMA_NO_NODE)
+ 		return;
+ 
+ 	BUG_ON(g->p.nr_nodes > (int)sizeof(nodemask)*8);
+@@ -1363,7 +1363,7 @@ static void init_thread_data(void)
+ 		int cpu;
+ 
+ 		/* Allow all nodes by default: */
+-		td->bind_node = -1;
++		td->bind_node = NUMA_NO_NODE;
+ 
+ 		/* Allow all CPUs by default: */
+ 		CPU_ZERO(&td->bind_cpumask);
+-- 
+2.7.4
 
