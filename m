@@ -2,129 +2,164 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 613F4C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:27:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E0D1C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:39:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27A1E21527
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:27:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 40D89214DB
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:39:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20150623.gappssmtp.com header.i=@brainfault-org.20150623.gappssmtp.com header.b="QRriG82f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27A1E21527
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TwOpg9fw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D89214DB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730749AbeKLOSf (ORCPT
+        id S1728478AbeKLObF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 09:18:35 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:53819 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730558AbeKLOSf (ORCPT
+        Mon, 12 Nov 2018 09:31:05 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:54600 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727597AbeKLObF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 09:18:35 -0500
-Received: by mail-wm1-f68.google.com with SMTP id f10-v6so7041540wme.3
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 20:27:12 -0800 (PST)
+        Mon, 12 Nov 2018 09:31:05 -0500
+Received: by mail-it1-f193.google.com with SMTP id a205-v6so5242547itd.4
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 20:39:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=/sS9qOFTYQqdHnYlhyaiAgHwrmTJ+8DMJ1q1QxhUg5U=;
-        b=QRriG82frU04AGrJaiFSzp+hEk19z0jPwwCzfmI8CQRiR3V7S5SAAehM15bJTJvIJv
-         GQ+78OZAcasGnt2qonN20tjzJT8X+ZcuPoFDzrfiDmaVRJHGPFohd6NR/v4GNTAPqjrl
-         mxz0khZV3JMCnDseVM6rBRMGHpS/U7cmbiLsmKW7EoKTby6lPdhdZHsxTInhERBJ0XTS
-         g9uJl/go4UQXZB8GUJ7+62ObZUPv+6C51bSSi2D2KeOX6Co/z/mEwJKHZ9aJ6RtRLMf1
-         CShlvTDLxiqVcablIHWzmQmyb8Xfxsz3Ze9J3ZQ6e4suYsGX6UCWwHgOwWh7QncPLl7C
-         /ECQ==
+        bh=ZjTRt0DT4A2OzPKlOCPUzd9PMvVAmqa/3ubknwqW0N4=;
+        b=TwOpg9fwK0sUwHrlnuv5LGdZcq3VQXm1xP53pEKk0cEFeKcFaFHMhefspNYGWX1lg3
+         YUXUlXCq8KPxH9OHS3HgK5aKrYte9PrAIGq9y1dcF6M1zpbqFjtZEl0pDg9+fB0UJQMp
+         aW8PrTW7ZEzyd37PAZK5a9epxoBignyok6MwM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=/sS9qOFTYQqdHnYlhyaiAgHwrmTJ+8DMJ1q1QxhUg5U=;
-        b=iJkQcqgag+SeORyD2EIsk0tFRcc8HHv0LPeppbgElDhgUpEfGsIDmMgG3TjSSNZ27R
-         xnfALRQ2CgtQqXS0BZC0Ars2pE2vh32+aaFMWP/HxZAOnkntG3/yxtWF+SSGsA/+ldKt
-         q5mgmZ6svC4UxoNR0u/4ty8pZIa7qQaOp4pZ/csKFPor4qeAltrnzZtxzyVuBOaoD8GS
-         yVdYivu8wWjLOtROVbAUbH+VFJsLEQ21k9JfgQQNigmiQmdSlvX4phfUSBT+qM/wxeAg
-         Q6nys41c0rT2besHYZl36y0TDVxKPijXOv3UodGS+BPPhu+OxKtDMRvYVyTpBaWsCnxh
-         P6vw==
-X-Gm-Message-State: AGRZ1gKlfw4iNc5fe5AZSBx/fFjH8kQ9GR2BaQ4LYfrDOHLMtd9ZT10f
-        aDs+gHbgINVl70UkuO0EIXorckfHFg8ug1MB0kR7Rg==
-X-Google-Smtp-Source: AJdET5cMH0+g7JBAzS2J859iZLccU2w7wtag+dxlauCP9gsUSYyJc9YieoCOQViTKJ6WJe0mFpZg69/WzQQac7w6RRk=
-X-Received: by 2002:a1c:d785:: with SMTP id o127-v6mr445176wmg.56.1541996831267;
- Sun, 11 Nov 2018 20:27:11 -0800 (PST)
+        bh=ZjTRt0DT4A2OzPKlOCPUzd9PMvVAmqa/3ubknwqW0N4=;
+        b=QB9JNFO6ISx7DZPS/Nal9EWxH15vRLK8kgXKWh1qyae2YRLEtGCJzuL8uKnpPBbuYQ
+         Fyoso8I1jEc+VXipTuu4DQnOh/pDr24IVF2tlsow/LHM9ulPrbtMyR+oMUH6kO3zkUJY
+         VTgkgzjAnIYhSkKpz3yD+w1F04/CKZKoEL5NuMedUVtRfdspzAo9+yr/af1kCD87UK6V
+         17jpTSd6NOXoUU4cuNX8j1/nY92Bg0kQMitS2u2rZCCK4vSXl7FNyr4EHRpeRHp8qXCr
+         gPDC42ZPCpjh7BuT2hlMCijqcugYfp+mzaej6McNF56JYzjib15iXLbfsJFLBxn0hELy
+         KZ0Q==
+X-Gm-Message-State: AGRZ1gLj/e9IpwgYZa/84cUsUMi7BgGCpwHNLgwsqpR8KLwTCoRCFKgP
+        9Vm2Am88bCiRhFqCnVVe2L8CWSDZ3n5qjk9r4QCyyLzf
+X-Google-Smtp-Source: AJdET5fxIW511Fl4rO1XAVgEW2fPQGLvqxFvBhZzSq2gXO5SyDh9S31wFGcj6S2ez8kseZ/tBeRhZsjj6SUf2Fi+stc=
+X-Received: by 2002:a24:2190:: with SMTP id e138-v6mr10878636ita.71.1541997579135;
+ Sun, 11 Nov 2018 20:39:39 -0800 (PST)
 MIME-Version: 1.0
-References: <20181022114517.22748-1-anup@brainfault.org> <20181022114517.22748-2-anup@brainfault.org>
- <20181109084256.GA6508@infradead.org>
-In-Reply-To: <20181109084256.GA6508@infradead.org>
-From:   Anup Patel <anup@brainfault.org>
-Date:   Mon, 12 Nov 2018 09:57:02 +0530
-Message-ID: <CAAhSdy1dYGShvtUEdDARw_8viC5P5MdMLBQOhe56nu6TMNgGaA@mail.gmail.com>
-Subject: Re: [PATCH 1/4] irqchip: sifive-plic: Pre-compute context hart base
- and enable base
-To:     Christoph Hellwig <hch@infradead.org>
-Cc:     Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
+Received: by 2002:a6b:4f16:0:0:0:0:0 with HTTP; Sun, 11 Nov 2018 20:39:38
+ -0800 (PST)
+In-Reply-To: <20181112030722.da5cxslvlmdgttsw@treble>
+References: <cover.1541711457.git.jpoimboe@redhat.com> <3cf04e113d71c9f8e4be95fb84a510f085aa4afa.1541711457.git.jpoimboe@redhat.com>
+ <20181109133337.63487e3a@gandalf.local.home> <20181109193505.5p5iddrtgpk2cpb4@treble>
+ <20181109145746.0037da3f@gandalf.local.home> <20181109203459.wbftlkxcvfnwo2bm@treble>
+ <20181110001023.57f27312@vmware.local.home> <CAKv+Gu-y=O6=dSbCXSaMxkj7LxfL9txzJ4r8Bcf1U0G6JQNUng@mail.gmail.com>
+ <20181110080917.29af5d66@vmware.local.home> <20181112030722.da5cxslvlmdgttsw@treble>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Mon, 12 Nov 2018 05:39:38 +0100
+Message-ID: <CAKv+Gu-hs7cRjkAAzk7hUqoXWw1vQDvUGQaKnyALrPvW-TTLzA@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/3] static_call: Add static call infrastructure
+To:     Josh Poimboeuf <jpoimboe@redhat.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        "the arch/x86 maintainers" <x86@kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Atish Patra <atish.patra@wdc.com>,
-        linux-riscv@lists.infradead.org,
-        "linux-kernel@vger.kernel.org List" <linux-kernel@vger.kernel.org>
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Jason Baron <jbaron@akamai.com>, Jiri Kosina <jkosina@suse.cz>,
+        David Laight <David.Laight@aculab.com>,
+        Borislav Petkov <bp@alien8.de>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 9, 2018 at 2:12 PM Christoph Hellwig <hch@infradead.org> wrote:
+On 12 November 2018 at 04:07, Josh Poimboeuf <jpoimboe@redhat.com> wrote:
+> On Sat, Nov 10, 2018 at 08:09:17AM -0500, Steven Rostedt wrote:
+>> On Sat, 10 Nov 2018 12:58:08 +0100
+>> Ard Biesheuvel <ard.biesheuvel@linaro.org> wrote:
+>>
+>>
+>> > > The complaint is on:
+>> > >
+>> > >         DEFINE_STATIC_CALL(__tp_func_##name, __tracepoint_iter_##name);
+>> > >
+>> > > And the previous definition is on:
+>> > >
+>> > >         DECLARE_STATIC_CALL(__tp_func_##name, __tracepoint_iter_##name); \
+>> > >
+>> >
+>> > Does the DECLARE really need the __ADDRESSABLE? Its purpose is to
+>> > ensure that symbols with static linkage are not optimized away, but
+>> > since the reference is from a header file, the symbol should have
+>> > external linkage anyway.
 >
-> On Mon, Oct 22, 2018 at 05:15:14PM +0530, Anup Patel wrote:
-> > This patch does following optimizations:
-> > 1. Pre-compute hart base for each context handler
-> > 2. Pre-compute enable base for each context handler
+> Yes, DECLARE needs the __ADDRESSABLE.  In the case where DECLARE
+> is used, but DEFINE is not, GCC strips the symbol.
 >
-> Why?
 
-This is micro-optimizations. We don't need to re-compute
-hart base and hart enable base everytime.
+I assume DECLARE() is intended for use in header files, and DEFINE()
+for source files, no?
 
+Doesn't that mean that whatever symbol __ADDRESSABLE() refers to
+should have external linkage, in which case it it addressable anyway?
+Or are we talking about some LTO / --gc-sections use case here?
+
+>> I applied the following change and it compiled fine:
+>>
+>> diff --git a/include/linux/static_call.h b/include/linux/static_call.h
+>> index 90b580b95303..5f8a0f0e77be 100644
+>> --- a/include/linux/static_call.h
+>> +++ b/include/linux/static_call.h
+>> @@ -108,8 +108,6 @@ extern void arch_static_call_poison_tramp(unsigned long insn);
+>>  #define DECLARE_STATIC_CALL(key, func)                                       \
+>>       extern struct static_call_key key;                              \
+>>       extern typeof(func) STATIC_CALL_TRAMP(key);                     \
+>> -     /* Preserve the ELF symbol so objtool can access it: */         \
+>> -     __ADDRESSABLE(key)
+>>
+>>  #define DEFINE_STATIC_CALL(key, _func)                                       \
+>>       DECLARE_STATIC_CALL(key, _func);                                \
+>> @@ -117,7 +115,9 @@ extern void arch_static_call_poison_tramp(unsigned long insn);
+>>               .func = _func,                                          \
+>>               .site_mods = LIST_HEAD_INIT(key.site_mods),             \
+>>       };                                                              \
+>> -     ARCH_STATIC_CALL_TEMPORARY_TRAMP(key)
+>> +     ARCH_STATIC_CALL_TEMPORARY_TRAMP(key);                          \
+>> +     /* Preserve the ELF symbol so objtool can access it: */         \
+>> +     __ADDRESSABLE(key)
+>>
+>>  #define static_call(key, args...) STATIC_CALL_TRAMP(key)(args)
 >
-> > 3. Have enable lock for each context handler instead
-> > of global plic_toggle_lock
+> Adding __ADDRESSABLE to the DEFINE macro doesn't do any good.  By
+> definition, the key is defined in the .o file, so the symbol already
+> exists.
 >
-> Why?  Also even if you want this it should be a separate patch.
-
-Well, the PLIC register space it a bit strange.
-
-Most PLIC context specific registers are in one place
-except context IRQ enable registers which are part of
-global registers.
-
-To handle this, we had a global plic_toggle_lock which
-was taken whenever PLIC driver touched context IRQ
-enable registers. Instead of this, we can have per-context
-IRQ enable lock for more granular locking.
-
-Later when we implement IRQ set_affinity, we touch
-IRQ enable registers of each context whenever IRQ
-affinity changes. This fine grained IRQ enable locking
-helps when IRQ load-balancer is changing affinity of
-different IRQs parallely on separate cores. Again this
-is a micro-optimization.
-
+> The issue you're seeing is really an issue with the __ADDRESSABLE macro
+> not creating unique symbol names.  This should fix it:
 >
-> >  #define PRIORITY_BASE                        0
-> > -#define     PRIORITY_PER_ID          4
-> > +#define PRIORITY_PER_ID                      4
+> diff --git a/include/linux/compiler.h b/include/linux/compiler.h
+> index 06396c1cf127..4bb73fd918b5 100644
+> --- a/include/linux/compiler.h
+> +++ b/include/linux/compiler.h
+> @@ -282,7 +282,7 @@ unsigned long read_word_at_a_time(const void *addr)
+>   */
+>  #define __ADDRESSABLE(sym) \
+>         static void * __section(".discard.addressable") __used \
+> -               __PASTE(__addressable_##sym, __LINE__) = (void *)&sym;
+> +               __UNIQUE_ID(__addressable_##sym) = (void *)&sym;
 >
-> Also please drop the random whitespace changes.
+>  /**
+>   * offset_to_ptr - convert a relative memory offset to an absolute pointer
 
-Instead of dropping I will make it separate patch because
-we are replacing "\t" between #define and define_name
-with a space.
-
-Regards,
-Anup
+Not sure if it matters, but we'll end up with a lot more stuff in
+.discard.addressable this way.
