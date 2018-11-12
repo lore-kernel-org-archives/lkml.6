@@ -2,119 +2,169 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 314AFC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:51:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BD8CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:51:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3FF2223C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:51:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3FF2223C8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id D10BE223AE
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 09:51:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D10BE223AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728134AbeKLTnu (ORCPT
+        id S1728357AbeKLToV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 14:43:50 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:41921 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726597AbeKLTnu (ORCPT
+        Mon, 12 Nov 2018 14:44:21 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:41377 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1725873AbeKLToV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 14:43:50 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id 9550F806E7; Mon, 12 Nov 2018 10:51:19 +0100 (CET)
-Date:   Mon, 12 Nov 2018 10:51:21 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Chanho Min <chanho.min@lge.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <len.brown@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian@brauner.io>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Seungho Park <seungho1.park@lge.com>,
-        Inkyu Hwang <inkyu.hwang@lge.com>,
-        Donghwan Jung <donghwan.jung@lge.com>,
-        Jongsung Kim <neidhard.kim@lge.com>
-Subject: Re: [PATCH v2] exec: make de_thread() freezable
-Message-ID: <20181112095121.GA5695@amd>
-References: <1541994885-20059-1-git-send-email-chanho.min@lge.com>
+        Mon, 12 Nov 2018 14:44:21 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="47946279"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 12 Nov 2018 17:51:53 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 3120C4B6ED4F;
+        Mon, 12 Nov 2018 17:51:50 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Mon, 12 Nov 2018 17:51:55 +0800
+Date:   Mon, 12 Nov 2018 17:50:51 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <bp@alien8.de>, <tglx@linutronix.de>, <mingo@redhat.com>,
+        <hpa@zytor.com>, <keescook@chromium.org>, <bhe@redhat.com>,
+        <msys.mizuma@gmail.com>
+CC:     <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v11 3/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
+ cmdlien from kexec
+Message-ID: <20181112095051.GA7453@localhost.localdomain>
+References: <20181112094645.4879-1-fanc.fnst@cn.fujitsu.com>
+ <20181112094645.4879-4-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="vtzGhvizbBRQ85DL"
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <1541994885-20059-1-git-send-email-chanho.min@lge.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+In-Reply-To: <20181112094645.4879-4-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 3120C4B6ED4F.A9683
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Boris,
 
---vtzGhvizbBRQ85DL
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I try to include lib/kstrtox.c in arch/x86/boot/string.c and
+define the kstrtoull() function in arch/x86/boot/string.h.
+But the definition problem is hard to solve, so I include
+it in arch/x86/boot/string.c directely.
+Then use BOOT_STRING tag to cover other functions and only
+kstrtoull() is exposed.
+I am not sure whether this is OK.
 
-On Mon 2018-11-12 12:54:45, Chanho Min wrote:
-> Suspend fails due to the exec family of functions blocking the freezer.
-> The casue is that de_thread() sleeps in TASK_UNINTERRUPTIBLE waiting for
-> all sub-threads to die, and we have the deadlock if one of them is frozen.
-> This also can occur with the schedule() waiting for the group thread lead=
-er
-> to exit if it is frozen.
->=20
-> In our machine, it causes freeze timeout as bellows.
->=20
-> Freezing of tasks failed after 20.010 seconds (1 tasks refusing to freeze=
-, wq_busy=3D0):
-> setcpushares-ls D ffffffc00008ed70     0  5817   1483 0x0040000d
->  Call trace:
-> [<ffffffc00008ed70>] __switch_to+0x88/0xa0
-> [<ffffffc000d1c30c>] __schedule+0x1bc/0x720
-> [<ffffffc000d1ca90>] schedule+0x40/0xa8
-> [<ffffffc0001cd784>] flush_old_exec+0xdc/0x640
-> [<ffffffc000220360>] load_elf_binary+0x2a8/0x1090
-> [<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
-> [<ffffffc00021c584>] load_script+0x20c/0x228
-> [<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
-> [<ffffffc0001ce8e0>] do_execveat_common.isra.14+0x4f8/0x6e8
-> [<ffffffc0001cedd0>] compat_SyS_execve+0x38/0x48
-> [<ffffffc00008de30>] el0_svc_naked+0x24/0x28
->=20
-> To fix this, make de_thread() freezable. It looks safe and works fine.
->=20
-> Changes in v2:
->  - changes for the same reason in "if (!thread_group_leader(tsk))" branch.
->    (reported by Oleg)
->=20
-> Suggested-by: Oleg Nesterov <oleg@redhat.com>
-> Signed-off-by: Chanho Min <chanho.min@lge.com>
+Thanks,
+Chao Fan
 
-Acked-by: Pavel Machek <pavel@ucw.cz>
+On Mon, Nov 12, 2018 at 05:46:43PM +0800, Chao Fan wrote:
+>Imitate setup_acpi_rsdp() for the early_param of 'acpi_rsdp'.
+>KEXEC writes the RSDP pointer to cmdline for EFI booting.
+>So if 'acpi_rsdp' found in cmdline, use it directely.
+>
+>Since function kstrtoull() is needed, include it in
+>arch/x86/boot/string.h. To solve the definition conflict
+>problem, set BOOT_STRING tag to expose only kstrtoull() and
+>functions used by it. Other functions in lib/kstrtox.c will
+>be covered.
+>
+>Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+>---
+> arch/x86/boot/compressed/acpitb.c | 26 ++++++++++++++++++++++++++
+> arch/x86/boot/string.h            |  4 ++++
+> lib/kstrtox.c                     |  4 ++++
+> 3 files changed, 34 insertions(+)
+>
+>diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+>index 50fa65cf824d..5cfb4efa5a19 100644
+>--- a/arch/x86/boot/compressed/acpitb.c
+>+++ b/arch/x86/boot/compressed/acpitb.c
+>@@ -8,6 +8,12 @@
+> #include <linux/numa.h>
+> #include <linux/acpi.h>
+> 
+>+#define STATIC
+>+#include <linux/decompress/mm.h>
+>+
+>+#define BOOT_STRING
+>+#include "../string.h"
+>+
+> /* Search EFI table for RSDP table. */
+> static void efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+> {
+>@@ -200,3 +206,23 @@ static void bios_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+> 		*rsdp_addr = (acpi_physical_address)address;
+> 	}
+> }
+>+
+>+static void get_acpi_rsdp(acpi_physical_address *rsdp_addr)
+>+{
+>+#ifdef CONFIG_KEXEC
+>+	unsigned long long res;
+>+	int len = 0;
+>+	char *val;
+>+
+>+	val = malloc(19);
+>+	len = cmdline_find_option("acpi_rsdp", val, 19);
+>+
+>+	if (len == -1)
+>+		return;
+>+
+>+	if (len > 0) {
+>+		val[len] = 0;
+>+		*rsdp_addr = (acpi_physical_address)kstrtoull(val, 16, &res);
+>+	}
+>+#endif
+>+}
+>diff --git a/arch/x86/boot/string.h b/arch/x86/boot/string.h
+>index 3d78e27077f4..0ff3edb888e4 100644
+>--- a/arch/x86/boot/string.h
+>+++ b/arch/x86/boot/string.h
+>@@ -30,3 +30,7 @@ extern unsigned long long simple_strtoull(const char *cp, char **endp,
+> 					  unsigned int base);
+> 
+> #endif /* BOOT_STRING_H */
+>+
+>+#ifdef BOOT_STRING
+>+#include "../../../lib/kstrtox.c"
+>+#endif
+>diff --git a/lib/kstrtox.c b/lib/kstrtox.c
+>index 1006bf70bf74..3804db9eed56 100644
+>--- a/lib/kstrtox.c
+>+++ b/lib/kstrtox.c
+>@@ -126,6 +126,8 @@ int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
+> }
+> EXPORT_SYMBOL(kstrtoull);
+> 
+>+#ifndef BOOT_STRING
+>+
+> /**
+>  * kstrtoll - convert a string to a long long
+>  * @s: The start of the string. The string must be null-terminated, and may also
+>@@ -408,3 +410,5 @@ kstrto_from_user(kstrtou16_from_user,	kstrtou16,	u16);
+> kstrto_from_user(kstrtos16_from_user,	kstrtos16,	s16);
+> kstrto_from_user(kstrtou8_from_user,	kstrtou8,	u8);
+> kstrto_from_user(kstrtos8_from_user,	kstrtos8,	s8);
+>+
+>+#endif
+>-- 
+>2.19.1
+>
 
 
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
-
---vtzGhvizbBRQ85DL
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
-
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
-
-iEYEARECAAYFAlvpTRkACgkQMOfwapXb+vLcLwCeOd2jytn3uSdvAQWh2K8+RkKK
-UYkAnREFbYw3qGUcs0CX79xse5VLdBGU
-=L4si
------END PGP SIGNATURE-----
-
---vtzGhvizbBRQ85DL--
