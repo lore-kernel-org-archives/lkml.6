@@ -2,103 +2,329 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FCE9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 21:04:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8785FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 21:05:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE7B522506
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 21:04:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=vanguardiasur-com-ar.20150623.gappssmtp.com header.i=@vanguardiasur-com-ar.20150623.gappssmtp.com header.b="v0/tyzzn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE7B522506
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=vanguardiasur.com.ar
+	by mail.kernel.org (Postfix) with ESMTP id 3E68E224E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 21:05:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E68E224E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730506AbeKMG7Q (ORCPT
+        id S1730542AbeKMHAc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 01:59:16 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:42004 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbeKMG7Q (ORCPT
+        Tue, 13 Nov 2018 02:00:32 -0500
+Received: from smtprelay0069.hostedemail.com ([216.40.44.69]:52859 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725817AbeKMHAb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 01:59:16 -0500
-Received: by mail-pf1-f196.google.com with SMTP id 64so412698pfr.9
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 13:04:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=vanguardiasur-com-ar.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=41H+lAG5eJZVfIC2g3mWh9vIj8/xyUsXAyPBoAu6Ldw=;
-        b=v0/tyzzn+qeUo/qOi9HTQqS/TSFr5zNe4NN9vJyob+UNqqE7pIHWD4AY4eAs2pI4xL
-         zuJxtziIWCASHgnTxfp7Y8HFwSQ4JBrmit05BjYg21VVc070Gu2lFfDJfx2Uxa2HHkqm
-         xeqLE3KoUoFpiAZPi9qxyvVDu6OfRKjix2tSrIj1c0A5G063y4Ms8cKfiBx72CK1/Ys2
-         T/qyqcpES3puWUaDWgnh3SFDHN//gVLGVvXfgraisBzkRtil8Wucr7CbYKbjYqrHIKMW
-         Tsi9Zngt71LjK8w/zbRIGJI7RfND6WRNK5Ozw0lc6GNWvEI2RCts2bQ4rfA+O6onSxGG
-         MivA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=41H+lAG5eJZVfIC2g3mWh9vIj8/xyUsXAyPBoAu6Ldw=;
-        b=CJ2oLN24iGpKmz6MXfbANxOCLdIqYZG6LDTh8yAPWIhX0AqlIY4U3hgo3GmE0xwyYl
-         5rZ6ol7SwwhsX+05sLl8tNgpqIPWYe7hcUMpelIgpdLS6krUCpH9IVzCYG6EE6gNc3+y
-         PDZfeZdLdSIhvwi5aoS03kMg/rXg5Y+oubnb6lSQuCKh5qMIXaFQmSMFmKyVg04KwT/G
-         +1DYj7JVwM5jDFHO1lz20ewXU8mPjnaYcpwpsKFms42ZTsvj3ok7irz2yLLSp9Q5spvX
-         PnSfnGw8ybiFcYFupciX7N6KViT4k2bONQTeqpAw8eqODVKB29dnf8RtWoiR0a7MpeyP
-         /Zng==
-X-Gm-Message-State: AGRZ1gJDQwSIEGN6iSMlJ4O8zg/sVRXW1YXirNXblkfq8RShhowyxI1X
-        +R2LrFRvau4NvMQH4N/ps2NLD9JX5NZLBSCoKK1HLA==
-X-Google-Smtp-Source: AJdET5ct4Jz2ImvnSes6xT6/sdhtS3+MlJSzM34b6UsbqVLwwDxURFepreo7jts1H4FlA0Lagtg65/dNK5mlgRNY4BQ=
-X-Received: by 2002:a62:8647:: with SMTP id x68-v6mr2497641pfd.252.1542056658275;
- Mon, 12 Nov 2018 13:04:18 -0800 (PST)
-MIME-Version: 1.0
-References: <20181014170431.GK3461@darkstar.musicnaut.iki.fi>
- <CA+7wUszkduiKMVx5Et3Q2-2tz72CXUKE1_kndC6V1d45uEY2Aw@mail.gmail.com> <20181017195050.GA20347@darkstar.musicnaut.iki.fi>
-In-Reply-To: <20181017195050.GA20347@darkstar.musicnaut.iki.fi>
-From:   Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>
-Date:   Mon, 12 Nov 2018 18:04:06 -0300
-Message-ID: <CAAEAJfBUEj+4RnHmK9RvOv7cghQNr0xNqr5GdVTG+V88+Kzi8Q@mail.gmail.com>
-Subject: Re: Bug report: MIPS CI20/jz4740-mmc DMA and PREEMPT_NONE
-To:     aaro.koskinen@iki.fi
-Cc:     Mathieu Malaterre <malat@debian.org>,
-        Linux-MIPS <linux-mips@linux-mips.org>,
-        linux-mmc@vger.kernel.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Ezequiel Garcia <ezequiel@collabora.co.uk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+        Tue, 13 Nov 2018 02:00:31 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id D2A168368EE5;
+        Mon, 12 Nov 2018 21:05:32 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: brake53_6a72540cf570f
+X-Filterd-Recvd-Size: 11381
+Received: from XPS-9350 (unknown [172.58.27.5])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Mon, 12 Nov 2018 21:05:31 +0000 (UTC)
+Message-ID: <cd6650d08304418a25f3e51ad910cce6d15b8716.camel@perches.com>
+Subject: Re: [PATCH] xfs: Remove noinline from #define STATIC
+From:   Joe Perches <joe@perches.com>
+To:     Eric Sandeen <sandeen@sandeen.net>,
+        "Darrick J. Wong" <darrick.wong@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Cc:     linux-xfs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+In-Reply-To: <6420cf91-89c8-a876-7a0d-25ab8ba428b8@sandeen.net>
+References: <7302f4a13c1cbf62b07f636878ce25fcca84b6c4.camel@perches.com>
+         <6420cf91-89c8-a876-7a0d-25ab8ba428b8@sandeen.net>
+Content-Type: text/plain; charset="ISO-8859-1"
+Mime-Version: 1.0
+Date:   Mon, 12 Nov 2018 13:05:02 -0800
+User-Agent: Evolution 3.30.1-1build1 
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 17 Oct 2018 at 16:50, Aaro Koskinen <aaro.koskinen@iki.fi> wrote:
->
-> Hi,
->
-> On Wed, Oct 17, 2018 at 03:38:07PM +0200, Mathieu Malaterre wrote:
-> > Since CONFIG_PREEMPT has been 'y' since at least commit 0752f92934292
-> > could you confirm that the original mmc driver (kernel from imgtech
-> > people) did work ok with PREEMPT_NONE (sorry I did not do my homework)
-> > ?
->
-> Sorry, cannot confirm or test that. I have only used the mainline kernel
-> on this board, since v4.5 or so with my own custom config which has
-> been PREEMPT_NONE until now.
->
+On Mon, 2018-11-12 at 14:12 -0600, Eric Sandeen wrote:
+> On 11/10/18 7:21 PM, Joe Perches wrote:
+> > Reduce total object size quite a bit (~32KB) and presumably
+> > improve performance at the same time.
+> > 
+> > Total object size old vs new (x86-64 defconfig with xfs)
+> > 
+> >     text	   data	    bss	    dec	    hex	filename
+> > - 959351	 165573	    632	1125556	 112cb4	(TOTALS) (old)
+> > + 924683	 165669	    632	1090984	 10a5a8	(TOTALS) (new)
+> 
+> And what does it do to maximum stack excursions?
 
-Aaro,
+It seems to add a maximum of 40 bytes in xfs_reclaim_inodes_ag
+and xfs_readdir, but I didn't do more than visually scan
+checkstack output.
 
-I spent some time today investigating this issue. I think this driver
-has a broken pre-request/post-request implementation.
+Using scripts/checkstack.pl on defconfig x86-64 with xfs
+and cutting out absolute addresses
 
-Will post some patches soon.
+ diff -urN xfs_cs_old_2 xfs_cs_new_2 
+--- xfs_cs_old_2	2018-11-12 12:55:03.195282512 -0800
++++ xfs_cs_new_2	2018-11-12 12:55:09.219168923 -0800
+@@ -1,18 +1,20 @@
+ xfs_ag_init_headers [vmlinux]:	464
+ xfs_ag_init_headers [vmlinux]:	464
+-xfs_inode_ag_walk.isra.19 [vmlinux]:	416
+-xfs_inode_ag_walk.isra.19 [vmlinux]:	416
++xfs_inode_ag_walk.isra.21 [vmlinux]:	424
++xfs_inode_ag_walk.isra.21 [vmlinux]:	424
++xfs_reclaim_inodes_ag [vmlinux]:	368
++xfs_reclaim_inodes_ag [vmlinux]:	368
+ xfs_trans_committed_bulk [vmlinux]:	336
+-xfs_reclaim_inodes_ag [vmlinux]:	328
+-xfs_reclaim_inodes_ag [vmlinux]:	328
+ xfs_ioc_getfsmap.isra.23 [vmlinux]:	320
+ xfs_ioc_getfsmap.isra.23 [vmlinux]:	320
++xfs_file_ioctl [vmlinux]:		320
++xfs_file_ioctl [vmlinux]:		320
++xfs_bmapi_write [vmlinux]:		312
+ xfs_getfsmap [vmlinux]:		304
+ xfs_qm_dquot_walk.isra.11 [vmlinux]:	296
+ xfs_qm_dquot_walk.isra.11 [vmlinux]:	296
+-xfs_bmapi_write [vmlinux]:		288
+-xfs_file_ioctl [vmlinux]:		288
+-xfs_file_ioctl [vmlinux]:		288
++xfs_file_compat_ioctl [vmlinux]:	288
++xfs_file_compat_ioctl [vmlinux]:	288
+ xfs_sb_read_verify [vmlinux]:	280
+ xfs_sb_read_verify [vmlinux]:	280
+ xfs_sb_write_verify [vmlinux]:	272
+@@ -21,36 +23,38 @@
+ xfs_rmap_convert [vmlinux]:		264
+ xfs_rmap_convert_shared [vmlinux]:	256
+ xfs_rmap_convert_shared [vmlinux]:	256
+-xfs_file_compat_ioctl [vmlinux]:	256
+-xfs_file_compat_ioctl [vmlinux]:	256
+ xfs_bmap_extents_to_btree [vmlinux]:	248
+ xfs_bmap_extents_to_btree [vmlinux]:	248
++xfs_bmap_del_extent_real [vmlinux]:	240
++xfs_alloc_fix_freelist [vmlinux]:	224
++xfs_alloc_fix_freelist [vmlinux]:	224
++xfs_bmap_add_extent_unwritten_real [vmlinux]:224
+ xfs_symlink [vmlinux]:		224
+ xfs_symlink [vmlinux]:		224
+-xfs_alloc_fix_freelist [vmlinux]:	216
+-xfs_alloc_fix_freelist [vmlinux]:	216
+-xfs_bmap_local_to_extents.constprop.27 [vmlinux]:208
+-xfs_bmap_local_to_extents.constprop.27 [vmlinux]:208
+-xfs_ialloc_ag_alloc [vmlinux]:	208
+-xfs_ialloc_ag_alloc [vmlinux]:	208
+-xfs_bmap_add_extent_unwritten_real [vmlinux]:192
+-xfs_bmap_add_extent_unwritten_real [vmlinux]:192
+-xfs_bmap_add_extent_delay_real [vmlinux]:192
+-xfs_bmap_add_extent_delay_real [vmlinux]:192
+-xfs_bmap_del_extent_real [vmlinux]:	192
+-xfs_bmap_del_extent_real [vmlinux]:	192
+-xfs_bmap_btalloc [vmlinux]:		192
+-xfs_bmap_btalloc [vmlinux]:		192
++xfs_bmap_btalloc [vmlinux]:		216
++xfs_bmap_btalloc [vmlinux]:		216
++xfs_attr_rmtval_set [vmlinux]:	208
++xfs_bmap_add_extent_delay_real [vmlinux]:208
++xfs_bmap_local_to_extents.constprop.28 [vmlinux]:208
++xfs_bmap_local_to_extents.constprop.28 [vmlinux]:208
++xfs_bulkstat [vmlinux]:		208
++xfs_ialloc_ag_alloc [vmlinux]:	200
++xfs_ialloc_ag_alloc [vmlinux]:	200
+ xfs_refcountbt_alloc_block [vmlinux]:192
+ xfs_refcountbt_alloc_block [vmlinux]:192
++xfs_reflink_remap_blocks [vmlinux]:	192
++xfs_reflink_remap_blocks [vmlinux]:	192
+ __xfs_bunmapi [vmlinux]:		184
+ __xfs_bunmapi [vmlinux]:		184
+ xfs_rmap_map [vmlinux]:		184
+ xfs_rmap_map [vmlinux]:		184
++xfs_readdir [vmlinux]:		184
++xfs_readdir [vmlinux]:		184
+ xfs_attr_set [vmlinux]:		176
+ xfs_attr_set [vmlinux]:		176
+ xfs_attr3_leaf_to_shortform [vmlinux]:176
+ xfs_attr3_leaf_to_shortform [vmlinux]:176
++xfs_bmap_add_extent_hole_real [vmlinux]:176
+ xfs_attr_shortform_to_leaf [vmlinux]:168
+ xfs_attr_shortform_to_leaf [vmlinux]:168
+ xfs_btree_delrec [vmlinux]:		168
+@@ -59,89 +63,99 @@
+ xfs_rmap_unmap [vmlinux]:		168
+ xfs_rmap_map_shared [vmlinux]:	168
+ xfs_rmap_map_shared [vmlinux]:	168
+-xfs_bulkstat [vmlinux]:		168
+-xfs_bulkstat [vmlinux]:		168
+ xfs_scrub_metadata [vmlinux]:	168
+ xfs_scrub_metadata [vmlinux]:	168
+ xfs_free_extent_fix_freelist [vmlinux]:160
+ xfs_free_extent_fix_freelist [vmlinux]:160
+-xfs_bmap_add_extent_hole_real [vmlinux]:160
+-xfs_bmap_add_extent_hole_real [vmlinux]:160
++xfs_attr3_leaf_split [vmlinux]:	160
++xfs_attr3_leaf_split [vmlinux]:	160
+ xfs_bmap_insert_extents [vmlinux]:	160
+ xfs_bmap_insert_extents [vmlinux]:	160
+ xfs_bmbt_alloc_block [vmlinux]:	160
+ xfs_bmbt_alloc_block [vmlinux]:	160
+ xfs_btree_overlapped_query_range [vmlinux]:160
+ xfs_btree_overlapped_query_range [vmlinux]:160
++xfs_dialloc [vmlinux]:		160
++xfs_dialloc [vmlinux]:		160
+ __xfs_inobt_alloc_block.isra.9 [vmlinux]:160
+ __xfs_inobt_alloc_block.isra.9 [vmlinux]:160
+ xfs_ag_resv_rmapbt_alloc [vmlinux]:	160
+ xfs_ag_resv_rmapbt_alloc [vmlinux]:	160
++xfs_do_writepage [vmlinux]:		160
++xfs_do_writepage [vmlinux]:		160
+ xfs_dir2_leaf_readbuf [vmlinux]:	160
+ xfs_readlink_bmap_ilocked [vmlinux]:	160
+ xfs_readlink_bmap_ilocked [vmlinux]:	160
+ xfs_ag_resv_rmapbt_alloc [vmlinux]:	160
+ xfs_ag_resv_rmapbt_alloc [vmlinux]:	160
++xfs_da3_split [vmlinux]:		152
++xfs_da3_split [vmlinux]:		152
+ xfs_getbmap [vmlinux]:		152
+ xfs_getbmap [vmlinux]:		152
+ trace_raw_output_xfs_loggrant_class [vmlinux]:144
+ trace_raw_output_xfs_alloc_class [vmlinux]:144
+ xfs_attr_remove [vmlinux]:		144
+ xfs_attr_remove [vmlinux]:		144
+-xfs_dialloc_ag_inobt [vmlinux]:	144
+-xfs_dialloc_ag_inobt [vmlinux]:	144
++xfs_bmap_split_extent_at [vmlinux]:	144
++__xfs_btree_split.isra.45 [vmlinux]:	144
++__xfs_btree_split.isra.45 [vmlinux]:	144
++xfs_btree_insrec [vmlinux]:		144
++xfs_btree_insrec [vmlinux]:		144
++xfs_da_shrink_inode [vmlinux]:	144
++xfs_da_shrink_inode [vmlinux]:	144
++xfs_attr_list_int_ilocked [vmlinux]:	144
++xfs_attr_list_int_ilocked [vmlinux]:	144
+ xfs_swap_extent_rmap [vmlinux]:	144
+ xfs_swap_extent_rmap [vmlinux]:	144
+-xfs_readdir [vmlinux]:		144
+-xfs_readdir [vmlinux]:		144
++xfs_ioc_trim [vmlinux]:		144
++xfs_ioc_trim [vmlinux]:		144
+ xfs_inactive_symlink_rmt [vmlinux]:	144
+ xfs_inactive_symlink_rmt [vmlinux]:	144
+ xfs_attr_get [vmlinux]:		136
+ xfs_attr_get [vmlinux]:		136
++xfs_attr_rmtval_get [vmlinux]:	136
++xfs_attr_rmtval_get [vmlinux]:	136
+ xfs_bmap_add_attrfork_local [vmlinux]:136
+ xfs_bmap_add_attrfork_local [vmlinux]:136
+-__xfs_btree_split.isra.38 [vmlinux]:	136
+-__xfs_btree_split.isra.38 [vmlinux]:	136
+ xfs_btree_split [vmlinux]:		136
+ xfs_btree_split [vmlinux]:		136
+-xfs_btree_insrec [vmlinux]:		136
+-xfs_btree_insrec [vmlinux]:		136
++xfs_rmap_finish_one [vmlinux]:	136
++xfs_rmap_finish_one [vmlinux]:	136
++xfs_attr3_leaf_inactive [vmlinux]:	136
++xfs_attr3_leaf_inactive [vmlinux]:	136
+ xfs_rename [vmlinux]:		136
+ xfs_rename [vmlinux]:		136
+ xfs_attr3_leaf_unbalance [vmlinux]:	120
+ xfs_attr3_leaf_unbalance [vmlinux]:	120
+-xfs_attr_rmtval_set [vmlinux]:	120
+-xfs_attr_rmtval_set [vmlinux]:	120
+-xfs_ioc_fsgeometry_v1 [vmlinux]:	120
+-xfs_ioc_fsgeometry_v1 [vmlinux]:	120
+-xfs_ioc_fsgeometry [vmlinux]:	120
+-xfs_ioc_fsgeometry [vmlinux]:	120
++xfs_refcount_merge_extents [vmlinux]:120
++xfs_refcount_merge_extents [vmlinux]:120
+ xfs_file_iomap_begin [vmlinux]:	120
+ xfs_file_iomap_begin [vmlinux]:	120
+-xfs_compat_ioc_fsgeometry_v1 [vmlinux]:120
+-xfs_compat_ioc_fsgeometry_v1 [vmlinux]:120
++xfs_ifree [vmlinux]:			120
++xfs_ifree [vmlinux]:			120
++xfs_qm_reset_dqcounts_buf.part.15 [vmlinux]:120
++xfs_qm_reset_dqcounts_buf.part.15 [vmlinux]:120
++xfs_rtallocate_extent [vmlinux]:	120
++xfs_rtallocate_extent [vmlinux]:	120
++xfs_free_ag_extent [vmlinux]:	112
+ xfs_attr3_leaf_toosmall [vmlinux]:	112
+ xfs_attr3_leaf_toosmall [vmlinux]:	112
+-xfs_attr3_leaf_rebalance [vmlinux]:	112
+-xfs_attr3_leaf_rebalance [vmlinux]:	112
++xfs_bmap_del_extent_delay [vmlinux]:	112
++xfs_bmap_del_extent_delay [vmlinux]:	112
+ xfs_iread_extents [vmlinux]:		112
+ xfs_iread_extents [vmlinux]:		112
+-xfs_bmap_split_extent_at [vmlinux]:	112
+-xfs_bmap_split_extent_at [vmlinux]:	112
+ xfs_btree_insert [vmlinux]:		112
+ xfs_btree_query_range [vmlinux]:	112
+-xfs_da3_swap_lastblock [vmlinux]:	112
+-xfs_da3_swap_lastblock [vmlinux]:	112
+ xfs_dir2_node_addname [vmlinux]:	112
+ xfs_dir2_node_addname [vmlinux]:	112
+ xfs_dir2_node_removename [vmlinux]:	112
+ xfs_dir2_node_removename [vmlinux]:	112
+-xfs_trim_extents [vmlinux]:		112
+-xfs_trim_extents [vmlinux]:		112
++xfs_difree [vmlinux]:		112
++xfs_difree [vmlinux]:		112
+ xfs_growfs_data [vmlinux]:		112
+ xfs_growfs_data [vmlinux]:		112
+-xfs_ifree_cluster.isra.21 [vmlinux]:	112
+-xfs_ifree_cluster.isra.21 [vmlinux]:	112
++xfs_iget [vmlinux]:			112
++xfs_iget [vmlinux]:			112
+ xfs_inumbers [vmlinux]:		112
+ xfs_inumbers [vmlinux]:		112
+ xfs_reflink_end_cow [vmlinux]:	112
+@@ -149,17 +163,19 @@
+ xfs_vn_listxattr [vmlinux]:		112
+ xfs_vn_listxattr [vmlinux]:		112
+ xfsaild [vmlinux]:			112
++xfs_growfs_rt [vmlinux]:		112
++xfs_growfs_rt [vmlinux]:		112
+ trace_raw_output_xfs_dquot_class [vmlinux]:104
+ xfs_bmapi_reserve_delalloc [vmlinux]:104
+ xfs_bmapi_reserve_delalloc [vmlinux]:104
++xfs_btree_lshift [vmlinux]:		104
++xfs_btree_lshift [vmlinux]:		104
+ xfs_da_grow_inode_int [vmlinux]:	104
+ xfs_da_grow_inode_int [vmlinux]:	104
+ xfs_dir2_leaf_removename [vmlinux]:	104
+ xfs_dir2_leaf_removename [vmlinux]:	104
+ xfs_dir2_leafn_split [vmlinux]:	104
+ xfs_dir2_leafn_split [vmlinux]:	104
+-xfs_iget [vmlinux]:			104
+-xfs_iget [vmlinux]:			104
+ xfs_ioc_space [vmlinux]:		104
+ xfs_ioc_space [vmlinux]:		104
+ xfs_emerg [vmlinux]:			104
+@@ -169,15 +185,9 @@
+ xfs_warn [vmlinux]:			104
+ xfs_notice [vmlinux]:		104
+ xfs_info [vmlinux]:			104
+-xfs_reflink_remap_extent [vmlinux]:	104
+-xfs_reflink_remap_extent [vmlinux]:	104
+-xfs_reflink_dirty_extents [vmlinux]:	104
+-xfs_reflink_dirty_extents [vmlinux]:	104
+ xfs_reflink_cancel_cow_blocks [vmlinux]:104
+ xfs_reflink_cancel_cow_blocks [vmlinux]:104
+ xfs_log_quiesce [vmlinux]:		104
+ xfs_log_quiesce [vmlinux]:		104
+-xfs_rtallocate_extent_near [vmlinux]:104
+-xfs_rtallocate_extent_near [vmlinux]:104
+ xfs_set_acl [vmlinux]:		104
+ xfs_set_acl [vmlinux]:		104
 
-Thanks for the report,
---=20
-Ezequiel Garc=C3=ADa, VanguardiaSur
-www.vanguardiasur.com.ar
+
