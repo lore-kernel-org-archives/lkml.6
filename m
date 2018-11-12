@@ -2,124 +2,200 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EA33C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:27:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 255BCC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:27:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FF9B223D0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:27:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FF9B223D0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id E773E223D0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 14:27:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E773E223D0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cyphar.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729670AbeKMAUl convert rfc822-to-8bit (ORCPT
+        id S1729883AbeKMAUw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 19:20:41 -0500
-Received: from foss.arm.com ([217.140.101.70]:37280 "EHLO foss.arm.com"
+        Mon, 12 Nov 2018 19:20:52 -0500
+Received: from mx2.mailbox.org ([80.241.60.215]:56286 "EHLO mx2.mailbox.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729129AbeKMAUk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 19:20:40 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE4F280D;
-        Mon, 12 Nov 2018 06:27:10 -0800 (PST)
-Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9D6883F5BD;
-        Mon, 12 Nov 2018 06:27:09 -0800 (PST)
-Date:   Mon, 12 Nov 2018 14:27:03 +0000
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Grygorii Strashko <grygorii.strashko@ti.com>
-Cc:     Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        linux-rt-users@vger.kernel.org,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: arm64 + ARM64_64K_PAGES=y
-Message-ID: <20181112142703.0d6ceb57@donnerap.cambridge.arm.com>
-In-Reply-To: <274c9742-0aa9-b4a5-11cb-b506aeef7761@ti.com>
-References: <1ab7ee03-64fe-384a-c88f-f6d519b965db@ti.com>
-        <20181108120040.pzupzyqnsxeuv5ne@linutronix.de>
-        <99e0b883-cf9f-2ab9-5003-d4506bfa461d@ti.com>
-        <274c9742-0aa9-b4a5-11cb-b506aeef7761@ti.com>
-Organization: ARM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+        id S1729794AbeKMAUv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 19:20:51 -0500
+Received: from smtp1.mailbox.org (unknown [IPv6:2001:67c:2050:105:465:1:1:0])
+        (using TLSv1.2 with cipher ECDHE-RSA-CHACHA20-POLY1305 (256/256 bits))
+        (No client certificate requested)
+        by mx2.mailbox.org (Postfix) with ESMTPS id 88F20A120F;
+        Mon, 12 Nov 2018 15:27:18 +0100 (CET)
+X-Virus-Scanned: amavisd-new at heinlein-support.de
+Received: from smtp1.mailbox.org ([80.241.60.240])
+        by spamfilter03.heinlein-hosting.de (spamfilter03.heinlein-hosting.de [80.241.56.117]) (amavisd-new, port 10030)
+        with ESMTP id bT_JQH23xqxN; Mon, 12 Nov 2018 15:27:14 +0100 (CET)
+From:   Aleksa Sarai <cyphar@cyphar.com>
+To:     Al Viro <viro@zeniv.linux.org.uk>,
+        Jeff Layton <jlayton@kernel.org>,
+        "J. Bruce Fields" <bfields@fieldses.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        David Howells <dhowells@redhat.com>
+Cc:     Aleksa Sarai <cyphar@cyphar.com>,
+        Eric Biederman <ebiederm@xmission.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Jann Horn <jannh@google.com>,
+        Christian Brauner <christian@brauner.io>,
+        David Drysdale <drysdale@google.com>,
+        Aleksa Sarai <asarai@suse.de>,
+        containers@lists.linux-foundation.org,
+        linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org
+Subject: [PATCH v4 1/4] namei: split out nd->dfd handling to dirfd_path_init
+Date:   Tue, 13 Nov 2018 01:26:51 +1100
+Message-Id: <20181112142654.341-2-cyphar@cyphar.com>
+In-Reply-To: <20181112142654.341-1-cyphar@cyphar.com>
+References: <20181112142654.341-1-cyphar@cyphar.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 9 Nov 2018 13:15:47 -0600
-Grygorii Strashko <grygorii.strashko@ti.com> wrote:
+Previously, path_init's handling of *at(dfd, ...) was only done once,
+but with O_BENEATH (and O_THISROOT) we have to parse the initial
+nd->path at different times (before or after absolute path handling)
+depending on whether we have been asked to scope resolution within a
+root.
 
-Hi,
+Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+---
+ fs/namei.c | 103 ++++++++++++++++++++++++++++++-----------------------
+ 1 file changed, 59 insertions(+), 44 deletions(-)
 
-> On 11/8/18 12:14 PM, Grygorii Strashko wrote:
-> > 
-> > 
-> > On 11/8/18 6:00 AM, Sebastian Andrzej Siewior wrote:  
-> >> On 2018-11-06 15:34:55 [-0600], Grygorii Strashko wrote:  
-> >>> Hi All,  
-> >> Hi,
-> >>  
-> >>> Do anybody tried to use ARM64 RT with 76K pages enabled?  
-> >>
-> >> 75 would be an off by one but this :)  
-> > 
-> > Ops 8-). at least subj is correct.
-> >   
-> >>  
-> >>> My attempt shows that enabling  CONFIG_ARM64_64K_PAGES=y
-> >>> increases latencies by ~30%
+diff --git a/fs/namei.c b/fs/namei.c
+index fb913148d4d1..faefca58348d 100644
+--- a/fs/namei.c
++++ b/fs/namei.c
+@@ -2168,9 +2168,59 @@ static int link_path_walk(const char *name, struct nameidata *nd)
+ 	}
+ }
+ 
++/*
++ * Configure nd->path based on the nd->dfd. This is only used as part of
++ * path_init().
++ */
++static inline int dirfd_path_init(struct nameidata *nd)
++{
++	if (nd->dfd == AT_FDCWD) {
++		if (nd->flags & LOOKUP_RCU) {
++			struct fs_struct *fs = current->fs;
++			unsigned seq;
++
++			do {
++				seq = read_seqcount_begin(&fs->seq);
++				nd->path = fs->pwd;
++				nd->inode = nd->path.dentry->d_inode;
++				nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
++			} while (read_seqcount_retry(&fs->seq, seq));
++		} else {
++			get_fs_pwd(current->fs, &nd->path);
++			nd->inode = nd->path.dentry->d_inode;
++		}
++	} else {
++		/* Caller must check execute permissions on the starting path component */
++		struct fd f = fdget_raw(nd->dfd);
++		struct dentry *dentry;
++
++		if (!f.file)
++			return -EBADF;
++
++		dentry = f.file->f_path.dentry;
++
++		if (*nd->name->name && unlikely(!d_can_lookup(dentry))) {
++			fdput(f);
++			return -ENOTDIR;
++		}
++
++		nd->path = f.file->f_path;
++		if (nd->flags & LOOKUP_RCU) {
++			nd->inode = nd->path.dentry->d_inode;
++			nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
++		} else {
++			path_get(&nd->path);
++			nd->inode = nd->path.dentry->d_inode;
++		}
++		fdput(f);
++	}
++	return 0;
++}
++
+ /* must be paired with terminate_walk() */
+ static const char *path_init(struct nameidata *nd, unsigned flags)
+ {
++	int error;
+ 	const char *s = nd->name->name;
+ 
+ 	if (!*s)
+@@ -2204,52 +2254,17 @@ static const char *path_init(struct nameidata *nd, unsigned flags)
+ 
+ 	nd->m_seq = read_seqbegin(&mount_lock);
+ 	if (*s == '/') {
+-		set_root(nd);
+-		if (likely(!nd_jump_root(nd)))
+-			return s;
+-		return ERR_PTR(-ECHILD);
+-	} else if (nd->dfd == AT_FDCWD) {
+-		if (flags & LOOKUP_RCU) {
+-			struct fs_struct *fs = current->fs;
+-			unsigned seq;
+-
+-			do {
+-				seq = read_seqcount_begin(&fs->seq);
+-				nd->path = fs->pwd;
+-				nd->inode = nd->path.dentry->d_inode;
+-				nd->seq = __read_seqcount_begin(&nd->path.dentry->d_seq);
+-			} while (read_seqcount_retry(&fs->seq, seq));
+-		} else {
+-			get_fs_pwd(current->fs, &nd->path);
+-			nd->inode = nd->path.dentry->d_inode;
+-		}
+-		return s;
+-	} else {
+-		/* Caller must check execute permissions on the starting path component */
+-		struct fd f = fdget_raw(nd->dfd);
+-		struct dentry *dentry;
+-
+-		if (!f.file)
+-			return ERR_PTR(-EBADF);
+-
+-		dentry = f.file->f_path.dentry;
+-
+-		if (*s && unlikely(!d_can_lookup(dentry))) {
+-			fdput(f);
+-			return ERR_PTR(-ENOTDIR);
+-		}
+-
+-		nd->path = f.file->f_path;
+-		if (flags & LOOKUP_RCU) {
+-			nd->inode = nd->path.dentry->d_inode;
+-			nd->seq = read_seqcount_begin(&nd->path.dentry->d_seq);
+-		} else {
+-			path_get(&nd->path);
+-			nd->inode = nd->path.dentry->d_inode;
+-		}
+-		fdput(f);
++		if (likely(!nd->root.mnt))
++			set_root(nd);
++		error = nd_jump_root(nd);
++		if (unlikely(error))
++			s = ERR_PTR(error);
+ 		return s;
+ 	}
++	error = dirfd_path_init(nd);
++	if (unlikely(error))
++		return ERR_PTR(error);
++	return s;
+ }
+ 
+ static const char *trailing_symlink(struct nameidata *nd)
+-- 
+2.19.1
 
-That's not really surprising. Performance on systems using a bigger page
-size granules might have some trade-offs (bigger memory overhead, worse
-cache utilization), so 64K pages might not be really great for your
-particular workload. You would probably need a real performance
-analysis (using perf, for instance) to pinpoint TLB misses as your
-bottleneck.
-
-> >>> cyclictest -n -m -Sp98 -q -D2m with  =y
-> >>>
-> >>>
-> >>> T: 0 (  772) P:98 I:1000 C: 120000 Min:      7 Act:   13 Avg:
-> >>> 10 Max:      85 T: 1 (  773) P:98 I:1500 C:  79998 Min:      7
-> >>> Act:   13 Avg:   10 Max:      71 T: 2 (  774) P:98 I:2000 C:
-> >>> 59997 Min:      7 Act:   11 Avg:   11 Max:      64 T: 3 (  775)
-> >>> P:98 I:2500 C:  47996 Min:      7 Act:   14 Avg:   12 Max:      66
-> >>>
-> >>>
-> >>> cyclictest -n -m -Sp98 -q -D2m with CONFIG_ARM64_64K_PAGES=n
-> >>>
-> >>>
-> >>> T: 0 (  697) P:98 I:1000 C: 120000 Min:      7 Act:   10 Avg:
-> >>> 9 Max:      38 T: 1 (  698) P:98 I:1500 C:  79987 Min:      7
-> >>> Act:   10 Avg:   10 Max:      32 T: 2 (  699) P:98 I:2000 C:
-> >>> 59981 Min:      7 Act:   14 Avg:   11 Max:      46 T: 3 (  700)
-> >>> P:98 I:2500 C:  47977 Min:      6 Act:   11 Avg:   10 Max:
-> >>> 45  
-> >>
-> >> So this is an idle system?  
-> > 
-> > Yes (in general) - it's collected with systemd, so some daemons are
-> > active. 
-> >> The Kconfig help says "faster TLB lookup". Interesting.
-> >> Are the 16k pages in between (latency wise) by any chance?  
-> > 
-> > I'll try it.  
-> 
-> no i'll not, at least not fast. with 16k pages enabled I can't boot
-> TI 4.14 kernel
-> -  4.14.71-rt44.
-> No msg in log, just "Starting kernel ..."
-
-You need a core that actually supports 16K pages (supporting
-certain page size granules is architecturally optional).
-From the Arm Ltd. cores it's Cortex-A73, A75 or A55, possibly other
-newer ones as well. Cortex-A53, A57 and A72 do not support 16k pages.
-
-Cheers,
-Andre.
