@@ -2,120 +2,100 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B09C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:00:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A20BAC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:01:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 709C722419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:00:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709C722419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
+	by mail.kernel.org (Postfix) with ESMTP id 6869A22503
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:01:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=globallogic.com header.i=@globallogic.com header.b="Q3IQm3rP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6869A22503
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=globallogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729816AbeKMCyG (ORCPT
+        id S1729914AbeKMCzO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 21:54:06 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:42544 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727130AbeKMCyG (ORCPT
+        Mon, 12 Nov 2018 21:55:14 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:40718 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727659AbeKMCzO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 21:54:06 -0500
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-03.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gMFZ8-0004m9-Nb from joseph_myers@mentor.com ; Mon, 12 Nov 2018 08:59:58 -0800
-Received: from digraph.polyomino.org.uk (137.202.0.90) by
- SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Mon, 12 Nov 2018 16:59:55 +0000
-Received: from jsm28 (helo=localhost)
-        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
-        (envelope-from <joseph@codesourcery.com>)
-        id 1gMFZ4-0002jk-QD; Mon, 12 Nov 2018 16:59:54 +0000
-Date:   Mon, 12 Nov 2018 16:59:54 +0000
-From:   Joseph Myers <joseph@codesourcery.com>
-X-X-Sender: jsm28@digraph.polyomino.org.uk
-To:     Florian Weimer <fweimer@redhat.com>
-CC:     Willy Tarreau <w@1wt.eu>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        Daniel Colascione <dancol@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
-Subject: Re: Official Linux system wrapper library?
-In-Reply-To: <87zhufvntw.fsf@oldenburg.str.redhat.com>
-Message-ID: <alpine.DEB.2.21.1811121647310.6607@digraph.polyomino.org.uk>
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com> <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <20181111081725.GA30248@1wt.eu> <3664a508-ca74-4ff0-39a6-34543194a24e@gmail.com> <20181111111143.GB4189@1wt.eu>
- <87zhufvntw.fsf@oldenburg.str.redhat.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Mon, 12 Nov 2018 21:55:14 -0500
+Received: by mail-wr1-f68.google.com with SMTP id p4so1010965wrt.7
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 09:01:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=globallogic.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gwiH4XNPeedEWQwSD3oXt7LL0JMYqmj9B9mAwTpqeMc=;
+        b=Q3IQm3rPlBp8TVUba6mYr/QIDE+TfijiIEfa4+ZBane96TTiFIrUKDhxHMWPCDuVLv
+         l2MywuL29YxDP8oV3ts1/MzfiZBL1kf6zUAmya5ecaZtDDoLJDG+rT0QSDF5uxjhYKzj
+         nz2IBE6afxv+GpH5GZj4pOMtuAj+NYm+H4GrY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=gwiH4XNPeedEWQwSD3oXt7LL0JMYqmj9B9mAwTpqeMc=;
+        b=LIqvDJXX4GMKhc1mxuoGHc+Z4d4DY588M0HL4VGEe1GSPBqll63nkLadYHRsPkvEkE
+         KPJH2RDuZLIjyrZBpZcCayHqS0XBfyIbuLQPPx2m71I2BHFbtLiIbTE+9cKKRbTnUCEA
+         F0omc/PDJqi8bseM+y++2FAynAAl1jEqJU+zKUcXIn++xdg/Zmepfp7yRgsq3iLYLH/n
+         nomY7CkGapNL1kVkVpgLzgTP+lBh/5QOLSepmvmo3NuV3/TS3nKZcCc0zhByvfVTAQUR
+         eqtFOJFgYuPrN3Y/uDw9nUl+YMtBTECXOgQdAaKrEifgpeHO1MChc/jmGH8kLxIKo18k
+         0l3g==
+X-Gm-Message-State: AGRZ1gJHB4IsUqFt+xmbVbnNYctYx7oZ6D+TXPwLfGk7t62k+DKihja+
+        WMkZ5yPh0bp0HRl0WUce1QPbguIlqEsaVw==
+X-Google-Smtp-Source: AJdET5cB5OobM5l1tNop9qMQ0LpNiVUMrU5rxuz9gu1Sc6EPSxFaMv1OOhmFAIZ+eyAs0KpH0ZpLsw==
+X-Received: by 2002:adf:b6a8:: with SMTP id j40-v6mr1614696wre.55.1542042067032;
+        Mon, 12 Nov 2018 09:01:07 -0800 (PST)
+Received: from max-pc.synapse.com ([195.238.92.77])
+        by smtp.gmail.com with ESMTPSA id u13-v6sm11835344wrn.11.2018.11.12.09.01.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Nov 2018 09:01:06 -0800 (PST)
+From:   Maksym Kokhan <maksym.kokhan@globallogic.com>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>,
+        James Hogan <jhogan@kernel.org>
+Cc:     Andrii Bordunov <andrew.bordunov@gmail.com>,
+        linux-mips@linux-mips.org, linux-kernel@vger.kernel.org,
+        Maksym Kokhan <maksym.kokhan@globallogic.com>
+Subject: [PATCH v2 1/2] mips: delete duplicated BUILTIN_DTB and LIBFDT configs
+Date:   Mon, 12 Nov 2018 19:00:58 +0200
+Message-Id: <20181112170059.7199-1-maksym.kokhan@globallogic.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) To
- SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 11 Nov 2018, Florian Weimer wrote:
+CONFIG_BUILTIN_DTB and CONFIG_LIBFDT selection is duplicated
+in menu "Machine selection" under MIPS_MALTA.
 
-> The kernel does not know about TCB layout, so a lot of low-level
-> threading aspects are defined by userspace.
-> 
-> The kernel does not know about POSIX cancellation.  Directly calling
-> system calls breaks support for that.
+Signed-off-by: Maksym Kokhan <maksym.kokhan@globallogic.com>
+Signed-off-by: Andrii Bordunov <andrew.bordunov@gmail.com>
+---
+ arch/mips/Kconfig | 2 --
+ 1 file changed, 2 deletions(-)
 
-Indeed.  Where cancellation is involved, glibc needs to know exactly what 
-instructions might be calling a cancellable syscall and what instructions 
-are before or after the syscall (see Adhemerval's patches for bug 12683).
-
-This involves an ABI that is not just specific to a particular libc, but 
-specific to a particular libc version.  So it's inherently unsuitable to 
-put cancellable syscalls in libc_nonshared.a, as well as unsuitable to put 
-them in any kernel-provided library.
-
-The interface for setting errno may also be libc-specific, for any 
-syscalls involving setting errno.
-
-Syscalls often involve types in their interfaces such as off_t and struct 
-timespec.  libcs may have multiple different variants of those types; the 
-variants available, and the ways of selecting them, are libc-specific and 
-libc-version-specific.  So for any syscall for which the proper userspace 
-interface involves one of those types, wrappers for it are inherently 
-specific to a particular libc and libc version.  (See e.g. how preadv2 and 
-pwritev2 syscalls also have preadv64v2 and pwritev64v2 APIs in glibc, with 
-appropriate redirections hased on __USE_FILE_OFFSET64, which is in turn 
-based on _FILE_OFFSET_BITS.)
-
-There are many ABI variants that are relevant to glibc but not to the 
-kernel.  Some of these involve ABI tagging of object files to indicate 
-which ABI variant an object is built for (and those that don't have such 
-tagging ought to have it), to prevent accidental linking of objects for 
-different ABIs.  How to build objects for different userspace ABIs is not 
-something the kernel should need to know anything about; it's most 
-naturally dealt with at the level of building compiler multilibs and libc.
-
-glibc deliberately avoids depending at compile time on the existence of 
-libgcc_s.so to facilitate bootstrap builds (a stripped glibc binary built 
-with a C-only static-only inhibit_libc GCC that was built without glibc 
-should be identical to the result of a longer alternating sequence of GCC 
-and glibc builds).  I don't think any kernel-provided library would be any 
-better to depend on.
-
-What one might suggest is that when new syscalls are added, kernel 
-developers should at least obtain agreement on linux-api from libc people 
-about what the userspace interface to the syscall should be.  That means 
-the userspace-level types (such as off_t and struct timespec), and the 
-choice of error handling (returning error number or setting errno), and 
-the name of the header declaring the function, and the name of the 
-function, and how the syscall relates to thread cancellation, for example 
-- and whatever other issues may be raised.
-
+diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
+index 8272ea4c7264..fe4c28275271 100644
+--- a/arch/mips/Kconfig
++++ b/arch/mips/Kconfig
+@@ -539,8 +539,6 @@ config MIPS_MALTA
+ 	select USE_OF
+ 	select LIBFDT
+ 	select ZONE_DMA32 if 64BIT
+-	select BUILTIN_DTB
+-	select LIBFDT
+ 	help
+ 	  This enables support for the MIPS Technologies Malta evaluation
+ 	  board.
 -- 
-Joseph S. Myers
-joseph@codesourcery.com
+2.19.1
+
