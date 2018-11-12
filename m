@@ -6,50 +6,50 @@ X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 75126C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:51:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 355D7C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 459962175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:51:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 459962175B
+	by mail.kernel.org (Postfix) with ESMTP id EBD252175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:51:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD252175B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731514AbeKLPmn (ORCPT
+        id S1731599AbeKLPmt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 10:42:43 -0500
-Received: from mail-io1-f69.google.com ([209.85.166.69]:38743 "EHLO
-        mail-io1-f69.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728269AbeKLPmn (ORCPT
+        Mon, 12 Nov 2018 10:42:49 -0500
+Received: from mail-it1-f200.google.com ([209.85.166.200]:57784 "EHLO
+        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731359AbeKLPmo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 10:42:43 -0500
-Received: by mail-io1-f69.google.com with SMTP id w22-v6so9032793ioc.5
+        Mon, 12 Nov 2018 10:42:44 -0500
+Received: by mail-it1-f200.google.com with SMTP id p73-v6so11430454itb.7
         for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 21:51:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=EzVKpwb4ZKW36Y7v5QeV4348sSb4UnF4yUwmC9Zf7/A=;
-        b=dZc3hhMnURb0KfA96VVWBvXmb/lIknnXJQvMRr52uUg75b1zp9imzpZ0xvntPG3qze
-         fPtkGvwqbu1lASSC2dIhDlMpwSVTBLISwuNdLBwxbG6nRen0bgcir0IIoC+Qrzp5KBhr
-         t+qMffZ/OlObKf7LAh0235/ExtfU5ZQdthYVazjY6ErA2s4wQXiaAjJay6jTyq01BkNX
-         24vfBkOpxKxJxLW5LN/eN1SsIMiSv7z/tUg4VqApj962SYLmjTfOA1IbcxEY1EHcBDX4
-         XxEd1R2UICBL+K3X7KIdTOeN6mACr7Ka1uae4SeMqhsCJ5Xs/7ZqJ+hHrbpola63phcL
-         FM3g==
-X-Gm-Message-State: AGRZ1gK2KCnrMbZcfvS4YgL5loHa4t5sn/i+rEHVB5Oz5QKKawSpCCOp
-        bMq3UgDRf0m5f/Ds8Q5pRadw7aT4Ny1CU8pGVLXE5g9/Dve7
-X-Google-Smtp-Source: AJdET5eyzvXYEK1nxPt/5WkKbln2n+tQ/dHEIZHHyki+/ReTN+kWTkWwG5yv/+U9KybPTK1AQGurEkB0CJ/Zzhxa0x1h+LIfzvBR
+        bh=MYVM+KbGb+1eOUo2Qp6q3Q1Cqi3bxm2yWyuyfkKS7og=;
+        b=qIRcKQ44PkWa5J5k5yA7sV1ZlUlpxuQid3w+354lbk+hnfQ6IBhuGMYQ9qXzruNwVu
+         kwgRzwVoXwHgS8sBY2fMVY1ZjTX4fjdzRIF+Hcm74YGCPwYIR0k0QtO/BbcAzjPZnp9f
+         uyvKaJxtVLcRN4VF95KX1u94Inzw1PBuOv/DUJx+nQUUZ8F/MdG184/ISanXjek39tgT
+         Ffm6OWyATbzNhGuT4SlyX+DPhQhoz+Otogk2cqY4QMHtbL+a7W4XYYPIlXkQ4Rqhk8mk
+         Phgxb/g1zz/tW0J/vO1PmoYVZWh79r2h7S8G211BRwTmIpHVT1dvNdfM+Qc/HHU7vkhV
+         QYbA==
+X-Gm-Message-State: AGRZ1gIsfG7KcGnBjTYCkLFWX26pXv6VhsjnHVrYgDzZT62HdEZtp18p
+        0Ka3Vh6yeLaTlFJFddsnIPqwq0bGFjigRZ+7XueLPczoMik3
+X-Google-Smtp-Source: AJdET5fZ77MIUkLNEnPmgmzKE4g62Xg/VKGFQNjl5Oeix1mNQEbnDsoctE7vD1iHo4Euw66yHNl5T//umGIpxfexPSUV8Of09J+7
 MIME-Version: 1.0
-X-Received: by 2002:a24:d255:: with SMTP id z82-v6mr9399250itf.31.1542001862660;
+X-Received: by 2002:a6b:e00c:: with SMTP id z12-v6mr14170518iog.32.1542001862898;
  Sun, 11 Nov 2018 21:51:02 -0800 (PST)
 Date:   Sun, 11 Nov 2018 21:51:02 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000445dd9057a7149f1@google.com>
-Subject: general protection fault in rds_recv_rcvbuf_delta
-From:   syzbot <syzbot+4b4f8163c2e246df3c4c@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
-        rds-devel@oss.oracle.com, santosh.shilimkar@oracle.com,
+Message-ID: <00000000000047feb5057a714975@google.com>
+Subject: KASAN: use-after-free Read in nbp_vlan_rcu_free
+From:   syzbot <syzbot+04681da557a0e49a52e5@syzkaller.appspotmail.com>
+To:     bridge@lists.linux-foundation.org, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        nikolay@cumulusnetworks.com, roopa@cumulusnetworks.com,
         syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
@@ -61,81 +61,132 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    e255aee5b66c Merge tag 'tty-4.20-rc2' of git://git.kernel...
+HEAD commit:    e12e00e388de Merge tag 'kbuild-fixes-v4.20' of git://git.k..
 git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=124d66a3400000
+console output: https://syzkaller.appspot.com/x/log.txt?x=14cdb6f5400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=8f215f21f041a0d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=4b4f8163c2e246df3c4c
+dashboard link: https://syzkaller.appspot.com/bug?extid=04681da557a0e49a52e5
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
 Unfortunately, I don't have any reproducer for this crash yet.
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4b4f8163c2e246df3c4c@syzkaller.appspotmail.com
+Reported-by: syzbot+04681da557a0e49a52e5@syzkaller.appspotmail.com
 
-vhci_hcd: default hub control req: 0000 v0000 i0001 l50287
-kasan: CONFIG_KASAN_INLINE enabled
-kasan: GPF could be caused by NULL-ptr deref or user memory access
-general protection fault: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: 18919 Comm: syz-executor3 Not tainted 4.20.0-rc1+ #109
+device bridge_slave_1 left promiscuous mode
+bridge0: port 2(bridge_slave_1) entered disabled state
+device bridge_slave_0 left promiscuous mode
+bridge0: port 1(bridge_slave_0) entered disabled state
+==================================================================
+BUG: KASAN: use-after-free in nbp_vlan_rcu_free+0x152/0x160  
+net/bridge/br_vlan.c:200
+Read of size 8 at addr ffff8881bbc44a18 by task swapper/1/0
+
+CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.20.0-rc1+ #332
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:rds_recv_rcvbuf_delta.part.3+0x14a/0x3f0 net/rds/recv.c:103
-Code: c1 ea 03 80 3c 02 00 0f 85 6e 02 00 00 4c 8b a3 c0 04 00 00 48 b8 00  
-00 00 00 00 fc ff df 49 8d 7c 24 2c 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
-89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 00
-RSP: 0018:ffff88018b39efc0 EFLAGS: 00010007
-RAX: dffffc0000000000 RBX: ffff8801be730780 RCX: ffffc9001061b000
-RDX: 0000000000000005 RSI: ffffffff8749949b RDI: 000000000000002c
-RBP: ffff88018b39eff8 R08: ffff8801ce388300 R09: ffffed0031673ded
-R10: ffffed0031673ded R11: 0000000000000003 R12: 0000000000000000
-R13: ffff8801be730ca4 R14: 000000000002e0c0 R15: ffff8801cbe88b00
-FS:  00007fa7bf29b700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b33a27000 CR3: 00000001bf445000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 Call Trace:
-  rds_recv_rcvbuf_delta net/rds/recv.c:379 [inline]
-  rds_recv_incoming+0x8bb/0x1400 net/rds/recv.c:379
-  rds_loop_xmit+0xf3/0x2a0 net/rds/loop.c:96
-  rds_send_xmit+0x13ef/0x2bb0 net/rds/send.c:355
-  rds_sendmsg+0x290f/0x3180 net/rds/send.c:1338
+  <IRQ>
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  nbp_vlan_rcu_free+0x152/0x160 net/bridge/br_vlan.c:200
+  __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2437 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2716 [inline]
+  rcu_process_callbacks+0x100a/0x1ac0 kernel/rcu/tree.c:2697
+  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+  invoke_softirq kernel/softirq.c:373 [inline]
+  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
+  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
+  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
+  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
+  </IRQ>
+RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:57
+Code: e9 2c ff ff ff 48 89 c7 48 89 45 d8 e8 d3 43 f3 f9 48 8b 45 d8 e9 ca  
+fe ff ff 48 89 df e8 c2 43 f3 f9 eb 82 55 48 89 e5 fb f4 <5d> c3 0f 1f 84  
+00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
+RSP: 0018:ffff8881d9b27cb8 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
+RAX: dffffc0000000000 RBX: 1ffff1103b364f9b RCX: 0000000000000000
+RDX: 1ffffffff12a3f71 RSI: 0000000000000001 RDI: ffffffff8951fb88
+RBP: ffff8881d9b27cb8 R08: ffff8881d9b14340 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881d9b27d78
+R13: ffffffff8a14e1e0 R14: 0000000000000000 R15: 0000000000000001
+  arch_safe_halt arch/x86/include/asm/paravirt.h:151 [inline]
+  default_idle+0xbf/0x490 arch/x86/kernel/process.c:498
+  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
+  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
+  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
+  do_idle+0x49b/0x5c0 kernel/sched/idle.c:262
+  cpu_startup_entry+0x18/0x20 kernel/sched/idle.c:353
+  start_secondary+0x487/0x5f0 arch/x86/kernel/smpboot.c:271
+  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+
+Allocated by task 13858:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:546 [inline]
+  kzalloc include/linux/slab.h:741 [inline]
+  br_vlan_add+0x6e5/0x1340 net/bridge/br_vlan.c:650
+  br_vlan_init+0x339/0x3e0 net/bridge/br_vlan.c:1047
+  br_dev_init+0x10d/0x2a0 net/bridge/br_device.c:134
+  register_netdevice+0x332/0x11d0 net/core/dev.c:8459
+  br_dev_newlink+0x2a/0x130 net/bridge/br_netlink.c:1309
+  rtnl_newlink+0xf08/0x1da0 net/core/rtnetlink.c:3175
+  rtnetlink_rcv_msg+0x46a/0xc20 net/core/rtnetlink.c:4947
+  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2477
+  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4965
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x5a5/0x760 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
   sock_sendmsg_nosec net/socket.c:621 [inline]
   sock_sendmsg+0xd5/0x120 net/socket.c:631
-  __sys_sendto+0x3d7/0x670 net/socket.c:1788
-  __do_sys_sendto net/socket.c:1800 [inline]
-  __se_sys_sendto net/socket.c:1796 [inline]
-  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
+  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
+  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
+  __do_sys_sendmsg net/socket.c:2163 [inline]
+  __se_sys_sendmsg net/socket.c:2161 [inline]
+  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fa7bf29ac78 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
-RAX: ffffffffffffffda RBX: 0000000000000006 RCX: 0000000000457569
-RDX: 0000000000000241 RSI: 0000000020000a00 RDI: 0000000000000008
-RBP: 000000000072bf00 R08: 000000002069affb R09: 0000000000000010
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007fa7bf29b6d4
-R13: 00000000004c3c11 R14: 00000000004d5e80 R15: 00000000ffffffff
-Modules linked in:
----[ end trace ffda6d1117cbc209 ]---
-RIP: 0010:rds_recv_rcvbuf_delta.part.3+0x14a/0x3f0 net/rds/recv.c:103
-Code: c1 ea 03 80 3c 02 00 0f 85 6e 02 00 00 4c 8b a3 c0 04 00 00 48 b8 00  
-00 00 00 00 fc ff df 49 8d 7c 24 2c 48 89 fa 48 c1 ea 03 <0f> b6 14 02 48  
-89 f8 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 00
-RSP: 0018:ffff88018b39efc0 EFLAGS: 00010007
-RAX: dffffc0000000000 RBX: ffff8801be730780 RCX: ffffc9001061b000
-RDX: 0000000000000005 RSI: ffffffff8749949b RDI: 000000000000002c
-RBP: ffff88018b39eff8 R08: ffff8801ce388300 R09: ffffed0031673ded
-R10: ffffed0031673ded R11: 0000000000000003 R12: 0000000000000000
-R13: ffff8801be730ca4 R14: 000000000002e0c0 R15: ffff8801cbe88b00
-FS:  00007fa7bf29b700(0000) GS:ffff8801dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000001b33a27000 CR3: 00000001bf445000 CR4: 00000000001406f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+Freed by task 9:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3817
+  br_master_vlan_rcu_free+0xa8/0xe0 net/bridge/br_vlan.c:174
+  __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
+  rcu_do_batch kernel/rcu/tree.c:2437 [inline]
+  invoke_rcu_callbacks kernel/rcu/tree.c:2716 [inline]
+  rcu_process_callbacks+0x100a/0x1ac0 kernel/rcu/tree.c:2697
+  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+
+The buggy address belongs to the object at ffff8881bbc44a00
+  which belongs to the cache kmalloc-96 of size 96
+The buggy address is located 24 bytes inside of
+  96-byte region [ffff8881bbc44a00, ffff8881bbc44a60)
+The buggy address belongs to the page:
+page:ffffea0006ef1100 count:1 mapcount:0 mapping:ffff8881da8004c0 index:0x0
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffffea0007471a08 ffffea000757b908 ffff8881da8004c0
+raw: 0000000000000000 ffff8881bbc44000 0000000100000020 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881bbc44900: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+  ffff8881bbc44980: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+> ffff8881bbc44a00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+                             ^
+  ffff8881bbc44a80: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
+  ffff8881bbc44b00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+==================================================================
 
 
 ---
