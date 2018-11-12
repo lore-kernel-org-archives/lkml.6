@@ -1,199 +1,181 @@
 Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-5.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 355D7C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0889EC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBD252175B
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:51:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBD252175B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B5F202175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 05:52:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZF+10YmK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5F202175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731599AbeKLPmt (ORCPT
+        id S1731551AbeKLPn7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 10:42:49 -0500
-Received: from mail-it1-f200.google.com ([209.85.166.200]:57784 "EHLO
-        mail-it1-f200.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731359AbeKLPmo (ORCPT
+        Mon, 12 Nov 2018 10:43:59 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:40529 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731139AbeKLPn7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 10:42:44 -0500
-Received: by mail-it1-f200.google.com with SMTP id p73-v6so11430454itb.7
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 21:51:03 -0800 (PST)
+        Mon, 12 Nov 2018 10:43:59 -0500
+Received: by mail-wr1-f66.google.com with SMTP id w14-v6so2410057wrt.7
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 21:52:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Mu8ESHFAz7MUsS0mhqccBVt98lKOl0d4/a0SwXZ0z8s=;
+        b=ZF+10YmKlH30SYHMrCTNyouPIVmu2kEFgStMC6au6VLLLw2ZenL4UBMPw3GRSXGgT8
+         2I/ozZz0pe0PiKDFGzkR/L9ObSLVqMlxeXnGAbMSBbI7qxNtNwDXuLUpgkDv5mBYAYo5
+         E0P301d380Uitq8YPwuPD4fjICBlbzkTO+hRzvpuU3ysTN/ChF/j+gm3AIRgAteLjcvJ
+         WwRw/isRnbUY+fGeF2R0aQWJ/J7QQrkM5dw43iloSCPj+wNhzX3Uzq0uES4RQ2Km9cJK
+         ZWkhWvrU0ThzTmc17NTHDFqI8XL2MMtCCqGkCNZiYDOAMupwiV/9UqbT/IgbnSjTayEN
+         xkmQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=MYVM+KbGb+1eOUo2Qp6q3Q1Cqi3bxm2yWyuyfkKS7og=;
-        b=qIRcKQ44PkWa5J5k5yA7sV1ZlUlpxuQid3w+354lbk+hnfQ6IBhuGMYQ9qXzruNwVu
-         kwgRzwVoXwHgS8sBY2fMVY1ZjTX4fjdzRIF+Hcm74YGCPwYIR0k0QtO/BbcAzjPZnp9f
-         uyvKaJxtVLcRN4VF95KX1u94Inzw1PBuOv/DUJx+nQUUZ8F/MdG184/ISanXjek39tgT
-         Ffm6OWyATbzNhGuT4SlyX+DPhQhoz+Otogk2cqY4QMHtbL+a7W4XYYPIlXkQ4Rqhk8mk
-         Phgxb/g1zz/tW0J/vO1PmoYVZWh79r2h7S8G211BRwTmIpHVT1dvNdfM+Qc/HHU7vkhV
-         QYbA==
-X-Gm-Message-State: AGRZ1gIsfG7KcGnBjTYCkLFWX26pXv6VhsjnHVrYgDzZT62HdEZtp18p
-        0Ka3Vh6yeLaTlFJFddsnIPqwq0bGFjigRZ+7XueLPczoMik3
-X-Google-Smtp-Source: AJdET5fZ77MIUkLNEnPmgmzKE4g62Xg/VKGFQNjl5Oeix1mNQEbnDsoctE7vD1iHo4Euw66yHNl5T//umGIpxfexPSUV8Of09J+7
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Mu8ESHFAz7MUsS0mhqccBVt98lKOl0d4/a0SwXZ0z8s=;
+        b=RdGqVbLs7go+vobuOF3fDLFoxLMqCUk0HmclCMsqCWAitGHMuTHLsCCTx33+tGhRBl
+         kTscet6TNosidp1siNAi/9QGLb9YSqarKG9SuV84ljHNcRIOq2np0IUbNGqv8VGQ0roq
+         pmr16IIcK4ytO5YM9qjL8OmeGvkjbPCRApaYUMCBVAjZKogOX4l1hoAmRxk4YeqUiQ67
+         g3RWGuK+8nFEBawN7MA8eD+cBjix7njwe95Knc/uV7Cxvpy0wyT54N5HhaaqOlEXlT/8
+         zdPIAbjOd9ndcLoiui7OXtr6e95Yof/4g+oazQm0+SVcggqskLPdVjRQ8iLEg7iSA9hL
+         9rYQ==
+X-Gm-Message-State: AGRZ1gKEcYY0ifyFm+2+iPiZV0ScRo3v7ML8BEZZ6/bnEa8QZusojJ9x
+        8YaX+TWXwaDHhDgJrT6yaoQwr9zD
+X-Google-Smtp-Source: AJdET5fgMCIjjUL7MMZlcTXvZ5MHP3f0YMlrF/ZqzqwdYhNtDImxpKoAuKbWsjpNq56isc7pPpVvmQ==
+X-Received: by 2002:adf:ff10:: with SMTP id k16-v6mr16810890wrr.159.1542001936454;
+        Sun, 11 Nov 2018 21:52:16 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id 4-v6sm4330226wmd.18.2018.11.11.21.52.15
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 21:52:15 -0800 (PST)
+Date:   Mon, 12 Nov 2018 06:52:13 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Jonathan Corbet <corbet@lwn.net>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        john.stultz@linaro.org, acme@redhat.com, frederic@kernel.org,
+        Andy Lutomirski <luto@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>, daniel.lezcano@linaro.org,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [patch 0/2] Documentation/process: Add subsystem/tree handbook
+Message-ID: <20181112055213.GA124272@gmail.com>
+References: <20181107171010.421878737@linutronix.de>
+ <20181107124855.328133e7@lwn.net>
+ <CAPcyv4goT+7t1foOhEYgGTz2kRV2Oou8QOs38D13rdC-TpfX+Q@mail.gmail.com>
+ <alpine.DEB.2.21.1811072134060.1666@nanos.tec.linutronix.de>
+ <20181108074920.4c601ee3@lwn.net>
 MIME-Version: 1.0
-X-Received: by 2002:a6b:e00c:: with SMTP id z12-v6mr14170518iog.32.1542001862898;
- Sun, 11 Nov 2018 21:51:02 -0800 (PST)
-Date:   Sun, 11 Nov 2018 21:51:02 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <00000000000047feb5057a714975@google.com>
-Subject: KASAN: use-after-free Read in nbp_vlan_rcu_free
-From:   syzbot <syzbot+04681da557a0e49a52e5@syzkaller.appspotmail.com>
-To:     bridge@lists.linux-foundation.org, davem@davemloft.net,
-        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-        nikolay@cumulusnetworks.com, roopa@cumulusnetworks.com,
-        syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181108074920.4c601ee3@lwn.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
 
-syzbot found the following crash on:
+* Jonathan Corbet <corbet@lwn.net> wrote:
 
-HEAD commit:    e12e00e388de Merge tag 'kbuild-fixes-v4.20' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=14cdb6f5400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8f215f21f041a0d7
-dashboard link: https://syzkaller.appspot.com/bug?extid=04681da557a0e49a52e5
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > Even after a decade of introducing Git I still see Signed-off-by used as 
+> > an Acked-by or Reviewed-by substitutes, so I'd suggest adding this small 
+> > explanation as well:
+> > 
+> >   +   SOB chains should reflect the *real* route a patch took as it was 
+> >   +   propagated to us, with the first SOB entry signalling primary
+> >   +   authorship of a single author. Acks should be given as Acked-by 
+> >   +   lines and review approvals as Reviewed-by lines.
+> 
+> If SOB means anything like what it's supposed to mean, this *can't* be a
+> "local quirk" - we have to agree on it globally.
 
-Unfortunately, I don't have any reproducer for this crash yet.
+Yeah, I didn't intend this paragraph to be a local quirk - more like a 
+reiteration of what the global rule already is (regardless of enforcement 
+...), given the context.
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+04681da557a0e49a52e5@syzkaller.appspotmail.com
+I presume the cross section of readers of *both* the global documents and 
+the -tip documents will be even smaller than just the readers of the -tip 
+document - so some redundancy is beneficial. ;-)
 
-device bridge_slave_1 left promiscuous mode
-bridge0: port 2(bridge_slave_1) entered disabled state
-device bridge_slave_0 left promiscuous mode
-bridge0: port 1(bridge_slave_0) entered disabled state
-==================================================================
-BUG: KASAN: use-after-free in nbp_vlan_rcu_free+0x152/0x160  
-net/bridge/br_vlan.c:200
-Read of size 8 at addr ffff8881bbc44a18 by task swapper/1/0
+In that sense the 'local' rules can also be indicators about which parts 
+of the myriads of global rules the maintainers feel most strongly about, 
+and are also a list of the most common problems we see in practice. Just 
+repeating the very large set of global rules is counter-productive in 
+that fashion. Maybe we should re-phrase and re-structure it into such a 
+format, with references back to the original rules where we are just 
+reiterating global rules? That would also allow the eventual inclusion of 
+any clarification into the global rule.
 
-CPU: 1 PID: 0 Comm: swapper/1 Not tainted 4.20.0-rc1+ #332
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  <IRQ>
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  nbp_vlan_rcu_free+0x152/0x160 net/bridge/br_vlan.c:200
-  __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2437 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2716 [inline]
-  rcu_process_callbacks+0x100a/0x1ac0 kernel/rcu/tree.c:2697
-  __do_softirq+0x308/0xb7e kernel/softirq.c:292
-  invoke_softirq kernel/softirq.c:373 [inline]
-  irq_exit+0x17f/0x1c0 kernel/softirq.c:413
-  exiting_irq arch/x86/include/asm/apic.h:536 [inline]
-  smp_apic_timer_interrupt+0x1cb/0x760 arch/x86/kernel/apic/apic.c:1061
-  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:804
-  </IRQ>
-RIP: 0010:native_safe_halt+0x6/0x10 arch/x86/include/asm/irqflags.h:57
-Code: e9 2c ff ff ff 48 89 c7 48 89 45 d8 e8 d3 43 f3 f9 48 8b 45 d8 e9 ca  
-fe ff ff 48 89 df e8 c2 43 f3 f9 eb 82 55 48 89 e5 fb f4 <5d> c3 0f 1f 84  
-00 00 00 00 00 55 48 89 e5 f4 5d c3 90 90 90 90 90
-RSP: 0018:ffff8881d9b27cb8 EFLAGS: 00000286 ORIG_RAX: ffffffffffffff13
-RAX: dffffc0000000000 RBX: 1ffff1103b364f9b RCX: 0000000000000000
-RDX: 1ffffffff12a3f71 RSI: 0000000000000001 RDI: ffffffff8951fb88
-RBP: ffff8881d9b27cb8 R08: ffff8881d9b14340 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000000 R12: ffff8881d9b27d78
-R13: ffffffff8a14e1e0 R14: 0000000000000000 R15: 0000000000000001
-  arch_safe_halt arch/x86/include/asm/paravirt.h:151 [inline]
-  default_idle+0xbf/0x490 arch/x86/kernel/process.c:498
-  arch_cpu_idle+0x10/0x20 arch/x86/kernel/process.c:489
-  default_idle_call+0x6d/0x90 kernel/sched/idle.c:93
-  cpuidle_idle_call kernel/sched/idle.c:153 [inline]
-  do_idle+0x49b/0x5c0 kernel/sched/idle.c:262
-  cpu_startup_entry+0x18/0x20 kernel/sched/idle.c:353
-  start_secondary+0x487/0x5f0 arch/x86/kernel/smpboot.c:271
-  secondary_startup_64+0xa4/0xb0 arch/x86/kernel/head_64.S:243
+Another aspect is that in -tip we are pretty strict about certain 
+stylistic and not so stylistic details - this is partly a personal 
+preference of the maintainers, and partly a maintainer workload reduction 
+measure.
 
-Allocated by task 13858:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:546 [inline]
-  kzalloc include/linux/slab.h:741 [inline]
-  br_vlan_add+0x6e5/0x1340 net/bridge/br_vlan.c:650
-  br_vlan_init+0x339/0x3e0 net/bridge/br_vlan.c:1047
-  br_dev_init+0x10d/0x2a0 net/bridge/br_device.c:134
-  register_netdevice+0x332/0x11d0 net/core/dev.c:8459
-  br_dev_newlink+0x2a/0x130 net/bridge/br_netlink.c:1309
-  rtnl_newlink+0xf08/0x1da0 net/core/rtnetlink.c:3175
-  rtnetlink_rcv_msg+0x46a/0xc20 net/core/rtnetlink.c:4947
-  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2477
-  rtnetlink_rcv+0x1c/0x20 net/core/rtnetlink.c:4965
-  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
-  netlink_unicast+0x5a5/0x760 net/netlink/af_netlink.c:1336
-  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  ___sys_sendmsg+0x7fd/0x930 net/socket.c:2116
-  __sys_sendmsg+0x11d/0x280 net/socket.c:2154
-  __do_sys_sendmsg net/socket.c:2163 [inline]
-  __se_sys_sendmsg net/socket.c:2161 [inline]
-  __x64_sys_sendmsg+0x78/0xb0 net/socket.c:2161
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+But level of enforcement matters and I think other trees can legitimately 
+be more relaxed: when there's a lack of contributors then you *really* 
+don't want to be the maintainer-from-hell who wants all i's dotted and 
+all t's crossed, and you might not have the bandwidth to do it all 
+yourself ...
 
-Freed by task 9:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3817
-  br_master_vlan_rcu_free+0xa8/0xe0 net/bridge/br_vlan.c:174
-  __rcu_reclaim kernel/rcu/rcu.h:240 [inline]
-  rcu_do_batch kernel/rcu/tree.c:2437 [inline]
-  invoke_rcu_callbacks kernel/rcu/tree.c:2716 [inline]
-  rcu_process_callbacks+0x100a/0x1ac0 kernel/rcu/tree.c:2697
-  __do_softirq+0x308/0xb7e kernel/softirq.c:292
+Also I think there are and should be a lot of shades of grey when it 
+comes to accepting patches, to find the right balance between pushing 
+back on patches to improve quality and pulling in patches to move the 
+kernel forward.
 
-The buggy address belongs to the object at ffff8881bbc44a00
-  which belongs to the cache kmalloc-96 of size 96
-The buggy address is located 24 bytes inside of
-  96-byte region [ffff8881bbc44a00, ffff8881bbc44a60)
-The buggy address belongs to the page:
-page:ffffea0006ef1100 count:1 mapcount:0 mapping:ffff8881da8004c0 index:0x0
-flags: 0x2fffc0000000200(slab)
-raw: 02fffc0000000200 ffffea0007471a08 ffffea000757b908 ffff8881da8004c0
-raw: 0000000000000000 ffff8881bbc44000 0000000100000020 0000000000000000
-page dumped because: kasan: bad access detected
+> If you want to push this into the tree in something like its current 
+> form, I'm not going to resist too hard - far be it from me to say we 
+> don't want more documentation!  But allow me to complain a little.
+> 
+> Suppose I came along with my nifty new architecture, and it dragged in 
+> a whole new set of timer and interrupt subsystems that duplicated a lot 
+> of what's in the kernel now, but buried a few "local quirks" deep in 
+> the middle.  "Don't worry", I say, "we'll factor out the common stuff 
+> later once we figure out what it is; I'd rather not deal with the 
+> bikeshedding now". Correct me if I'm wrong, but I suspect I might just 
+> get a response back from you.  That's not how we normally do things.
+> 
+> This proposal takes a similar approach to the documentation.  Changelog 
+> rules, your comment rules (other than tail comments), brace rules, line 
+> breaks, etc. are common stuff; if they are not well-enough documented 
+> in the global docs, the fix should really be applied there.  If it 
+> lands in the current form, you know as well as I do that it will almost 
+> certainly stay there for years, if not indefinitely.
+>
+> IMO, the subsystem-specific documentation should be something that an
+> existing kernel developer can use to quickly learn how to avoid surprises
+> when wandering into a different subsystem.  So it should be concise and
+> strongly focused on the local customs.  If we don't start that way, I'm
+> afraid we'll never have that.  Then developers will miss the important
+> information, and we'll reinforce the image of the kernel project as a
+> collection of little fiefdoms that one wanders into at one's own risk.
+> And Documentation/ will continue to be a painful mess.
+> 
+> </soapbox>
 
-Memory state around the buggy address:
-  ffff8881bbc44900: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-  ffff8881bbc44980: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-> ffff8881bbc44a00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-                             ^
-  ffff8881bbc44a80: 00 00 00 00 00 00 00 00 00 00 00 00 fc fc fc fc
-  ffff8881bbc44b00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
-==================================================================
+Yeah, so in -tip we don't do "local customs": we genuinely believe that 
+*all* our rules where they go beyond the current development process 
+would improve the generic kernel as well. (In fact if anyone can give 
+reasons for why a particular rule is not an absolute advantage to the 
+kernel we'd reconsider changing the rule.)
 
+So your complaint is legitimate - how would you propose we handle this?
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thanks,
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
+	Ingo
