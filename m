@@ -2,107 +2,101 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36410C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2E14C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:55:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08D9D2241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:53:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08D9D2241E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 9D9CD2241E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:55:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D9CD2241E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730221AbeKMDrp (ORCPT
+        id S1729839AbeKMDts (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 22:47:45 -0500
-Received: from mga05.intel.com ([192.55.52.43]:18412 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727185AbeKMDrp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 22:47:45 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2018 09:53:28 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,496,1534834800"; 
-   d="scan'208";a="273406021"
-Received: from araj-mobl1.jf.intel.com ([10.7.201.24])
-  by orsmga005.jf.intel.com with ESMTP; 12 Nov 2018 09:53:28 -0800
-Date:   Mon, 12 Nov 2018 09:53:28 -0800
-From:   "Raj, Ashok" <ashok.raj@intel.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Jacob jun Pan <jacob.jun.pan@intel.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Lukas Wunner <lukas@wunner.de>,
-        Christian Kellner <ckellner@redhat.com>,
-        Mario.Limonciello@dell.com,
-        Anthony Wong <anthony.wong@canonical.com>,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/4] iommu/vt-d: Do not enable ATS for external devices
-Message-ID: <20181112175327.GC30341@araj-mobl1.jf.intel.com>
-References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
- <20181112160628.86620-4-mika.westerberg@linux.intel.com>
+        Mon, 12 Nov 2018 22:49:48 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:47383 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727185AbeKMDts (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 22:49:48 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id A35AAB90739D9;
+        Tue, 13 Nov 2018 01:55:28 +0800 (CST)
+Received: from [127.0.0.1] (10.202.226.41) by DGGEMS402-HUB.china.huawei.com
+ (10.3.19.202) with Microsoft SMTP Server id 14.3.408.0; Tue, 13 Nov 2018
+ 01:55:23 +0800
+Subject: Re: [PATCH] scsi: libsas: Remove pcidev reference
+To:     Joe Perches <joe@perches.com>, <jejb@linux.vnet.ibm.com>,
+        <martin.petersen@oracle.com>
+References: <1542043689-214071-1-git-send-email-john.garry@huawei.com>
+ <584e7b4fcd6f95fe0c581f6f9472852685c754d1.camel@perches.com>
+ <310504a2-f33c-183b-d00a-fa067b273dfd@huawei.com>
+CC:     <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+From:   John Garry <john.garry@huawei.com>
+Message-ID: <3b62b0ad-53ba-37c2-817c-591d94eed838@huawei.com>
+Date:   Mon, 12 Nov 2018 17:55:19 +0000
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112160628.86620-4-mika.westerberg@linux.intel.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+In-Reply-To: <310504a2-f33c-183b-d00a-fa067b273dfd@huawei.com>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.41]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 07:06:27PM +0300, Mika Westerberg wrote:
-> Currently Linux automatically enables ATS (Address Translation Service)
-> for any device that supports it (and IOMMU is turned on). ATS is used to
-> accelerate DMA access as the device can cache translations locally so
-> there is no need to do full translation on IOMMU side. However, as
-> pointed out in [1] ATS can be used to bypass IOMMU based security
-> completely by simply sending PCIe read/write transaction with AT
-> (Address Translation) field set to "translated".
-> 
-> To mitigate this modify the Intel IOMMU code so that it does not enable
-> ATS for any device that is marked as being external. In case this turns
-> out to cause performance issues we may selectively allow ATS based on
-> user decision but currently use big hammer and disable it completely to
-> be on the safe side.
-> 
-> [1] https://www.repository.cam.ac.uk/handle/1810/274352
-> 
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
+On 12/11/2018 17:49, John Garry wrote:
+> On 12/11/2018 17:32, Joe Perches wrote:
+>> On Tue, 2018-11-13 at 01:28 +0800, John Garry wrote:
+>>> Not all host drivers are PCI drivers - like hisi_sas, which supports a
+>>> platform driver - so remove reference to "pcidev".
+>>>
+>>> The debug level is also downgraded to KERN_ERR for the same message.
+>> []
+>>> diff --git a/drivers/scsi/libsas/sas_discover.c
+>>> b/drivers/scsi/libsas/sas_discover.c
+>> []
+>>> @@ -186,7 +186,7 @@ int sas_notify_lldd_dev_found(struct
+>>> domain_device *dev)
+>>>
+>>>      res = i->dft->lldd_dev_found(dev);
+>>>      if (res) {
+>>> -        printk("sas: driver on pcidev %s cannot handle "
+>>> +        pr_err("sas: driver on host %s cannot handle "
+>>>                 "device %llx, error:%d\n",
+>>
+>> As a printk without a KERN_<LEVEL> is printed at whatever
+>> CONFIG_MESSAGE_LOGLEVEL_DEFAULT is set to (default: 4 and
+>> rarely unchanged), this is effectively upgraded from a
+>> KERN_WARNING to KERN_ERR.
+>
+> ah, I thought that it was printed always.
+>
+> So maybe I'll just leave as-is.
 
-Reviewed-by: Ashok Raj <ashok.raj@intel.com>
+I forgot to mention that checkpatch complains about using printk() - 
+that's why I changed it.
 
-> ---
->  drivers/iommu/intel-iommu.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iommu/intel-iommu.c b/drivers/iommu/intel-iommu.c
-> index ada786b05a59..b79788da6971 100644
-> --- a/drivers/iommu/intel-iommu.c
-> +++ b/drivers/iommu/intel-iommu.c
-> @@ -1473,7 +1473,8 @@ static void iommu_enable_dev_iotlb(struct device_domain_info *info)
->  	if (info->pri_supported && !pci_reset_pri(pdev) && !pci_enable_pri(pdev, 32))
->  		info->pri_enabled = 1;
->  #endif
-> -	if (info->ats_supported && !pci_enable_ats(pdev, VTD_PAGE_SHIFT)) {
-> +	if (!pdev->is_external && info->ats_supported &&
-> +	    !pci_enable_ats(pdev, VTD_PAGE_SHIFT)) {
->  		info->ats_enabled = 1;
->  		domain_update_iotlb(info->domain);
->  		info->ats_qdep = pci_ats_queue_depth(pdev);
-> -- 
-> 2.19.1
-> 
+Thanks,
+John
+
+>
+>>
+>>
+>>
+>> .
+>>
+>
+>
+>
+> .
+>
+
+
