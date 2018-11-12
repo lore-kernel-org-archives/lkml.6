@@ -2,146 +2,110 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7266BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:36:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE6A4C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:37:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3918B223C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:36:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3918B223C8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 867132087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:37:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="DrXvSaqa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 867132087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729292AbeKLU3V (ORCPT
+        id S1728529AbeKLU3h (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 15:29:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44550 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726190AbeKLU3V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 15:29:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 69FFEB033;
-        Mon, 12 Nov 2018 10:36:40 +0000 (UTC)
-Date:   Mon, 12 Nov 2018 21:38:22 +1100
-From:   Aleksa Sarai <asarai@suse.de>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Aleksa Sarai <cyphar@cyphar.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        "Naveen N. Rao" <naveen.n.rao@linux.vnet.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Ingo Molnar <mingo@redhat.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@redhat.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Shuah Khan <shuah@kernel.org>,
-        Alexei Starovoitov <ast@kernel.org>,
-        Daniel Borkmann <daniel@iogearbox.net>,
-        Brendan Gregg <bgregg@netflix.com>,
-        Christian Brauner <christian@brauner.io>,
-        netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        Josh Poimboeuf <jpoimboe@redhat.com>
-Subject: Re: [PATCH v3 1/2] kretprobe: produce sane stack traces
-Message-ID: <20181112103822.ktd4fx7o4cqpfk4q@mikami>
-References: <20181102065932.bdt4pubbrkvql4mp@yavin>
- <20181102091658.1bc979a4@gandalf.local.home>
- <20181103070253.ajrqzs5xu2vf5stu@yavin>
- <20181104115913.74l4yzecisvtt2j5@yavin>
- <20181106171501.59ccabbc@gandalf.local.home>
- <20181108074612.ldy6rozdpsdps6bf@yavin>
- <20181108080448.rggfn4zawi3por23@yavin>
- <20181109161551.6b96bd7d932c71432ac65e83@kernel.org>
- <20181109150629.wpedwxsgbftkl3ab@mikami>
- <20181111003137.c9df7a077d983cde57c06ee8@kernel.org>
+        Mon, 12 Nov 2018 15:29:37 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:43002 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726190AbeKLU3h (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 15:29:37 -0500
+Received: by mail-wr1-f66.google.com with SMTP id u5-v6so3444059wrn.9
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 02:36:57 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uzcSAte6+/dvv5n+wrP2NMWEvoBdpsZkQM6zHSy+F1A=;
+        b=DrXvSaqaje14WshJsMpXads4uj/7ZB2c546OuPHXtVRnYjGcUmV9DA9i9I0M78FKCZ
+         cZDBfkA5DdTGDoQjt9lt9u/zjo9AOEs1JWeuhq/X8xz/Mx3iwsJywPFXr453phBnzGsk
+         G4y9dU2rdefe+tgNX2VWTStqaAWFbH/5E5eYI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=uzcSAte6+/dvv5n+wrP2NMWEvoBdpsZkQM6zHSy+F1A=;
+        b=WU8mnEzsuZJJSd0Oq4MfIDf1YeNrKf6v40z1nMu3HfmBKSoBR4VKS+ELjId5I4gCWs
+         Kl6B1Mt00MlbIMijN5ZpMoMyeYMYTpZL0+QgMkz6vCgGhbJWrwN2e6ISP05IlM3rmWjx
+         cqaSJ7Mqsz5PRpVmPQrdWF80+DiIcuCq1i0EAg4nHhq7L3QFCswYYQ6mprLSvmgkh6Nd
+         H38jqeZnHUsGUR6h82NKKQGvjWvn7RbNxneo+FK9P8PC1ZUsi9Qf9NgXaYk+zF4dPHxQ
+         WE4dGXOiZxFtEd4dUk9TamfNo4YX/z6t2kfw3TDooawXmzQFuRtm2SiuQHO22wK4M/cO
+         n2CQ==
+X-Gm-Message-State: AGRZ1gKlIZBFmcO4NX7kNUVQQo6SWa7XBrzbJwWAWTlVGZH5orW366Ej
+        KDwW/guFsiVxySf6S3zLKbXjCg==
+X-Google-Smtp-Source: AJdET5fDn59V/2KvQkK8E1FDIdipBn2C/qLv5GoM64xDqeZNDjX5AkMnXF4iBf86N3vCfYWEL+3pwA==
+X-Received: by 2002:adf:d1c6:: with SMTP id m6-v6mr455014wri.138.1542019016733;
+        Mon, 12 Nov 2018 02:36:56 -0800 (PST)
+Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.gmail.com with ESMTPSA id z17-v6sm13747187wrm.65.2018.11.12.02.36.55
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 12 Nov 2018 02:36:55 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     marc.zyngier@arm.com
+Cc:     sudeep.holla@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        rnayak@codeaurora.org, sboyd@kernel.org, srini@kernel.org,
+        bjorn.andersson@linaro.org, nicolas.dechesne@linaro.org,
+        ctatlor97@gmail.com, vkoul@kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [RFC PATCH v3 0/4] irqchip/gic-v3: Add support to DT based quirk for msm8996
+Date:   Mon, 12 Nov 2018 10:33:36 +0000
+Message-Id: <20181112103340.24702-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="7k6zcwip3nr62atq"
-Content-Disposition: inline
-In-Reply-To: <20181111003137.c9df7a077d983cde57c06ee8@kernel.org>
-User-Agent: NeoMutt/20180716
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Access to GICR_WAKER is restricted on msm8996 SoC in Hypervisor.
+There are many devices out there with this restriction in place
+and there has been no update to this firmware since last few years,
+making those devices totally unusable for upstream development.
 
---7k6zcwip3nr62atq
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+My previous attempts to add quick based on IIDR register value seems to be
+flawed by the fact that the value conflicted with other SoCs.
+Last Suggestion by Marc Z using compatible seems to be the only way to apply
+quirks required for msm8996 based SoCs.
 
-On 2018-11-11, Masami Hiramatsu <mhiramat@kernel.org> wrote:
-> > > > +		addr =3D kretprobe_ret_addr(current, addr, stack_addr(regs));
-> > >=20
-> > > But since kretprobe will be an event, which can kick the stackdump.
-> > > BTW, from kretprobe, regs->ip should always be the trampoline handler=
-,=20
-> > > see arch/x86/kernel/kprobes/core.c:772 :-)
-> > > So it must be fixed always.
-> >=20
-> > Right, but kretprobe_ret_addr() is returning the *original* return
-> > address (and we need to do an (addr =3D=3D kretprobe_trampoline)). The
-> > real problem is that stack_addr(regs) isn't the same as it is during
-> > kretprobe setup (but kretprobe_ret_addr() works everywhere else).
->=20
-> I think stack_addr(regs) should be same when this is called from kretprobe
-> handler context. Otherwise, yes, it is not same, but in that case, regs->=
-ip
-> is not kretprobe_trampoline too.
+Here is the patchset which add new compatible for msm8996 gicv3 and add
+support gic_enable_of_quirks() followed by the actual quirk required for msm8996.
 
-I figured it out.
+Without this quirk many qcom SoCs (atleast 3 that I know) are
+unable to boot mainline.
 
-It should be (regs->sp - 1) (just like it is inside the relevant
-unwinder function for ORC). I now have a prototype which works under the
-frame unwinder[*] -- however under ORC you can only see the top-most
-function (the unwinder doesn't see the other function calls). I'm
-playing with ORC hints with kretprobe_trampoline to try to improve
-things but it's still a bit screwy.
+Thanks,
+Srini
 
+Srinivas Kandagatla (4):
+  dt-bindings/gic-v3: Add msm8996 compatible string
+  irqchip/gic: common: add support to device tree based quirks
+  irqchip: gic-v3: Add quirk for msm8996 secured registers
+  arm64: dts: add msm8996 compatible to gicv3
 
-[*]: However, I've noticed that the stack traces between the two traces
-	 no longer match. On kprobe you get function_name+1, but on
-	 kretprobe you get function_caller+foo. Obviously it's working but
-	 the return address results in slightly different stack traces. This
-	 means that stack trace aggregation between kprobe and kretprobe
-	 won't work anymore -- at least not like it did in my original
-	 patch. So I'm really not sure where to go from here.
+ .../interrupt-controller/arm,gic-v3.txt       |  4 ++-
+ arch/arm64/boot/dts/qcom/msm8996.dtsi         |  2 +-
+ drivers/irqchip/irq-gic-common.c              | 12 +++++++++
+ drivers/irqchip/irq-gic-common.h              |  3 +++
+ drivers/irqchip/irq-gic-v3.c                  | 26 +++++++++++++++++++
+ 5 files changed, 45 insertions(+), 2 deletions(-)
 
-I can send around another patchset to illustrate the problem if you like
-(as well as show how the current unwinding code works).
+-- 
+2.19.1
 
---=20
-Aleksa Sarai
-Senior Software Engineer (Containers)
-SUSE Linux GmbH
-<https://www.cyphar.com/>
-
---7k6zcwip3nr62atq
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEXzbGxhtUYBJKdfWmnhiqJn3bjbQFAlvpWBsACgkQnhiqJn3b
-jbSy7A/+IEFpapcvq94nrWh9OjRuEOAjfNmAk1UzkaA7UdzuGQeqZXNI7My55evY
-52fDICDJTrwUz1dJwgjqz7DBgmDUnTSVzt5/5Ypc43Z2xrYVZ0ivffA+P2y5aW6t
-kXeQUhh52mMHtOsLucR/lu8OuYzZvJ8XqmOH2n93OXyX5B26KcKb7av4NT9hn4Vv
-67YgTPScGt/zxk5mPTbV8lsnqU0rMWsCPZLTlXspFzwNHsPQfGcZ9avqj6h6HU7m
-E3bxhCANzy2Wl9TbgKW0Mq7z5nbEyNSF26hpQh0dsFulHlN++lxpeZgBjtCvGgdX
-mnLVjWtE47z2fgGRpgERa4eemZXRNLMcLbcOQwBDSuIT3bh9izXu97gQaqeVtY2C
-PtnG1MG6dVmo1SzsNnmu3YZc41CGofmyc2wdssBtFnqY1rKZI73zPTgSgfNEK2V2
-FqCjI4HNfYzns/pcrE7XiRUUrZnkdfEi1NmO9xRrpRP1SzZdgryCZWO5x1QMZdW0
-ceN9JK6sh5ZHN64qoGXgsC51gwdPXgNrtZkEzuPA9nLeiZWi2GJEiMejN3ocMTvu
-miqStmedFrJrYWbgLtK/J1ypJesnOURvU38H/OKwcQf4HkDxde115mw3AP4Wq2CT
-EkJ4ataA2lfyA6IwOtprtlePn7GJl/iCD0whahftumKTWDshz7Y=
-=OSID
------END PGP SIGNATURE-----
-
---7k6zcwip3nr62atq--
