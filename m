@@ -2,207 +2,129 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F1E0C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D318C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:36:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0FDD2224E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:36:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FDD2224E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 1C0AE224E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:36:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="SGulNnAj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C0AE224E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=akamai.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726391AbeKMFap (ORCPT
+        id S1727457AbeKMFbR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 00:30:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58968 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725790AbeKMFap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 00:30:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 641F2AE4F;
-        Mon, 12 Nov 2018 19:36:04 +0000 (UTC)
-To:     Jean Delvare <jdelvare@suse.de>, David Airlie <airlied@redhat.com>
-Cc:     christian.koenig@amd.com,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Takashi Iwai <tiwai@suse.de>
-References: <20181101162707.598c1718@endymion>
- <20181108130509.3b2d42ff@endymion>
- <CAMwc25oWstf8bFfWfb=FFR8GfFhx+jM77TzqE-qfi+ev2pMvFw@mail.gmail.com>
- <1542033367.2661.33.camel@suse.de>
-From:   Thomas Zimmermann <tzimmermann@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNKFRob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmNvbT7CwJQEEwEIAD4W
- IQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznTtgIbAwUJA8JnAAULCQgHAgYVCgkICwIEFgID
- AQIeAQIXgAAKCRBoDcEdUwt6I7D7CACBK42XW+7mCiK8ioXMEy1NzGbXC51RzGea8N83oEJS
- 1KVUtQxrkDxgrW/WLSl/TfqHFsJpdEFOv1XubWbleun3uKPy0e5vZCd5UjZPkeNjnqfCYTDy
- hVVsdOuFbtWDppJyJrThLqr9AgSFmoCNNUt1SVpYEEOLNE6C32BhlnSq21VLC+YXTgO/ZHTa
- YXkq54hHj63jwrcjkBSCkXLh37kHeqnl++GHpN+3R+o3w2OpwHAlvVjdKPT27v1tVkiydsFG
- 65Vd0n3m/ft+IOrGgxQM1C20uqKvsZGB4r3OGR50ekAybO7sjEJJ1Obl4ge/6RRqcvKz4LMb
- tGs85D6tPIeFzsBNBFs50uABCADGJj+DP1fk+UWOWrf4O61HTbC4Vr9QD2K4fUUHnzg2B6zU
- R1BPXqLGG0+lzK8kfYU/F5RjmEcClsIkAaFkg4kzKP14tvY1J5+AV3yNqcdg018HNtiyrSwI
- E0Yz/qm1Ot2NMZ0DdvVBg22IMsiudQ1tx9CH9mtyTbIXgACvl3PW2o9CxiHPE/bohFhwZwh/
- kXYYAE51lhinQ3oFEeQZA3w4OTvxSEspiQR8dg8qJJb+YOAc5IKk6sJmmM7JfFMWSr22satM
- 23oQ3WvJb4RV6HTRTAIEyyZS7g2DhiytgMG60t0qdABG5KXSQW+OKlZRpuWwKWaLh3if/p/u
- 69dvpanbABEBAAHCwHwEGAEIACYWIQRyF/usjOnPY0ShaOVoDcEdUwt6IwUCWznS4AIbDAUJ
- A8JnAAAKCRBoDcEdUwt6I6X3CACJ8D+TpXBCqJE5xwog08+Dp8uBpx0T9n1wE0GQisZruACW
- NofYn8PTX9k4wmegDLwt7YQDdKxQ4+eTfZeLNQqWg6OCftH5Kx7sjWnJ09tOgniVdROzWJ7c
- VJ/i0okazncsJ+nq48UYvRGE1Swh3A4QRIyphWX4OADOBmTFl9ZYNPnh23eaC9WrNvFr7yP7
- iGjMlfEW8l6Lda//EC5VpXVNza0xeae0zFNst2R9pn+bLkihwDLWxOIyifGRxTqNxoS4I1aw
- VhxPSVztPMSpIA/sOr/N/p6JrBLn+gui2K6mP7bGb8hF+szfArYqz3T1rv1VzUWAJf5Wre5U
- iNx9uqqx
-Subject: Re: Performance regression in ast drm driver
-Message-ID: <c25b99fc-0762-ab88-7c08-f71510383e9e@suse.de>
-Date:   Mon, 12 Nov 2018 20:36:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 13 Nov 2018 00:31:17 -0500
+Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:58920 "EHLO
+        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725790AbeKMFbQ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 00:31:16 -0500
+X-Greylist: delayed 2347 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Nov 2018 00:31:16 EST
+Received: from pps.filterd (m0050093.ppops.net [127.0.0.1])
+        by m0050093.ppops.net-00190b01. (8.16.0.27/8.16.0.27) with SMTP id wACIvVgI027705;
+        Mon, 12 Nov 2018 18:57:31 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
+ subject : date : message-id : mime-version : content-transfer-encoding;
+ s=jan2016.eng; bh=fMZiJ0p13XxGxV1rWLgOdxKlJa8Dqn5g/BZhv/7maKg=;
+ b=SGulNnAjh45ESVUZwZPbNXrWV0EjD10ewvXiqBGlLLY1hKrq1SLEOCUaNTOYszdtKzMX
+ eIDRjFnqIQVzdE1WGeiQn/fAYCM+psVGIeGiUeY7CWMK4TnBkkYnSK/5jiS9YXRrXE0Q
+ Cce21j71j3UmvDq3adgin/a+w5N8x2bKKO5NsZ7C8nxVPwVQKQCI79gVb6ak5EUkdjZH
+ vh1r9HQr1AB5IH+NG2SN6gsUHqZxbXlbX8urZP8fZCZPtpOMuJgg3B17KqsMvy6l8n/D
+ uZxL7tq8X8f1XUXrh4e/bS3ejlR2RAtRJ/MZNQk8UXI4JK/CdKvycl/AprnvajdmJDDD Bg== 
+Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18])
+        by m0050093.ppops.net-00190b01. with ESMTP id 2nqax6gu5p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+        Mon, 12 Nov 2018 18:57:30 +0000
+Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
+        by prod-mail-ppoint1.akamai.com (8.16.0.21/8.16.0.21) with SMTP id wACIoLV7014651;
+        Mon, 12 Nov 2018 13:57:28 -0500
+Received: from prod-mail-relay10.akamai.com ([172.27.118.251])
+        by prod-mail-ppoint1.akamai.com with ESMTP id 2nnujej314-1;
+        Mon, 12 Nov 2018 13:57:28 -0500
+Received: from bos-lpo4l.kendall.corp.akamai.com (bos-lpo4l.kendall.corp.akamai.com [172.28.13.75])
+        by prod-mail-relay10.akamai.com (Postfix) with ESMTP id 168981FCDD;
+        Mon, 12 Nov 2018 18:57:28 +0000 (GMT)
+Received: from mzhivich by bos-lpo4l.kendall.corp.akamai.com with local (Exim 4.86_2)
+        (envelope-from <mzhivich@akamai.com>)
+        id 1gMHOq-0004TC-07; Mon, 12 Nov 2018 13:57:28 -0500
+From:   Michael Zhivich <mzhivich@akamai.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     omosnace@redhat.com, arnd@arndb.de, jason.wessel@windriver.com,
+        john.stultz@linaro.org, Michael Zhivich <mzhivich@akamai.com>
+Subject: [PATCH] Revert "clocksource: Make clocksource validation work for all clocksources"
+Date:   Mon, 12 Nov 2018 13:56:51 -0500
+Message-Id: <20181112185651.17138-1-mzhivich@akamai.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <1542033367.2661.33.camel@suse.de>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="qe8FfTZQBr9r2XWiH4uNUyamIlp6fkMZq"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=887
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1807170000 definitions=main-1811120164
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_12:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
+ suspectscore=1 phishscore=0 bulkscore=0 spamscore=0 clxscore=1011
+ lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=918 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
+ definitions=main-1811120165
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---qe8FfTZQBr9r2XWiH4uNUyamIlp6fkMZq
-Content-Type: multipart/mixed; boundary="Rn4ndp8dEZpMy3RT5hxOPCcvAIMetoyR9";
- protected-headers="v1"
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: Jean Delvare <jdelvare@suse.de>, David Airlie <airlied@redhat.com>
-Cc: christian.koenig@amd.com, dri-devel <dri-devel@lists.freedesktop.org>,
- linux-kernel <linux-kernel@vger.kernel.org>, Takashi Iwai <tiwai@suse.de>
-Message-ID: <c25b99fc-0762-ab88-7c08-f71510383e9e@suse.de>
-Subject: Re: Performance regression in ast drm driver
-References: <20181101162707.598c1718@endymion>
- <20181108130509.3b2d42ff@endymion>
- <CAMwc25oWstf8bFfWfb=FFR8GfFhx+jM77TzqE-qfi+ev2pMvFw@mail.gmail.com>
- <1542033367.2661.33.camel@suse.de>
-In-Reply-To: <1542033367.2661.33.camel@suse.de>
+Revert commit 1f45f1f33c8c ("clocksource: Make clocksource validation work
+for all clocksources") to restore correct clocksource_delta() computation
+for clocksources that wrap frequently, while retaining the check for tsc
+drifting.
 
---Rn4ndp8dEZpMy3RT5hxOPCcvAIMetoyR9
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
+Truncating result of clocksource_delta() to 0 causes incorrect behavior for
+clocksources that wrap frequently (e.g. acpi_pm which is only 24-bit wide).
+In particular, large time deltas (e.g. last = 0x000000, now = 0x800000)
+will be incorrectly computed as 0.
 
-Hi Jean
+If acpi_pm is used as the clocksource watchdog, and machine is under heavy
+load, the time period for the watchdog check may be significantly longer
+than the requested 0.5 seconds.  If the watchdog check is delayed by 2
+seconds (observed behavior), then acpi_pm time delta will be 
 
-Am 12.11.18 um 15:36 schrieb Jean Delvare:
-> Hi David,
->=20
-> On Fri, 2018-11-09 at 10:04 +1000, David Airlie wrote:
->> On Thu, Nov 8, 2018 at 10:05 PM Jean Delvare <jdelvare@suse.de> wrote:=
+	2.5 sec * 3579545 ticks/sec = 8948863 = 0x888c3f
 
->>>
->>> On Thu, 1 Nov 2018 16:27:07 +0100, Jean Delvare wrote:
->>>> Hi David,
->>>>
->>>> The following commit:
->>>>
->>>> commit 7cf321d118a825c1541b43ca45294126fd474efa
->>>> Author: Dave Airlie
->>>> Date:   Mon Oct 24 15:37:48 2016 +1000
->>>>
->>>>     drm/drivers: add support for using the arch wc mapping API.
->>>>
->>>> is causing a huge performance regression for the ast drm driver. In =
-a
->>>> text console, if I call "cat" on a large text file, it takes almost
->>>> twice as much time to be displayed and scrolled completely.
->>>>
->>>> Can you please check that the ast driver portion of that commit is b=
-oth
->>>> correct and complete?
->>>
->>> And in the meantime, what bad will happen if we just revert the ast
->>> portion of that commit?
->>
->> This seems likely to be a hw problem with PCI writes to the AST "GPU",=
+which will be treated as negative and truncated to 0.  This behavior will
+cause tsc to be incorrectly declared unstable in clocksource_watchdog(), as
+it no longer agrees with acpi_pm.
 
->> since it's just some sort of RAM + ARM on the end of a PCIE bus, we've=
+Signed-off-by: Michael Zhivich <mzhivich@akamai.com>
+---
+ kernel/time/timekeeping_internal.h | 6 +-----
+ 1 file changed, 1 insertion(+), 5 deletions(-)
 
->> definitely seen possible issues in the past with write combining
->> around some of the mga GPUs with some CPUs.
->=20
-> Takashi asked me to compare the contents of
-> /sys/kernel/debug/x86/pat_memtype_list before and after the commit
-> above. Before the commit, we have:
->=20
-> uncached-minus @ 0xfafe0000-0xfb000000
-> uncached-minus @ 0xfb000000-0xfb005000
-> write-combining @ 0xfb005000-0xfb584000
->=20
-> After the commit, we have:
->=20
-> uncached-minus @ 0xfafe0000-0xfb000000
-> uncached-minus @ 0xfb000000-0xfb005000
-> uncached-minus @ 0xfb000000-0xfb800000
-> uncached-minus @ 0xfb005000-0xfb584000
->=20
-> The corresponding lines in /proc/iomem are:
->=20
-> f0000000-fed8ffff : PCI Bus 0000:00
-> =C2=A0 faf00000-fb7fffff : PCI Bus 0000:01
-> =C2=A0=C2=A0=C2=A0=C2=A0fafe0000-faffffff : 0000:01:01.0
-> =C2=A0=C2=A0=C2=A0=C2=A0fb000000-fb7fffff : 0000:01:01.0
->=20
-> Does it help? Is the change of type expected? Is it not a problem that
-> one of the ranges is overlapping with 2 other ranges?
->=20
+diff --git a/kernel/time/timekeeping_internal.h b/kernel/time/timekeeping_internal.h
+index bcbb52db2256..21463e20d008 100644
+--- a/kernel/time/timekeeping_internal.h
++++ b/kernel/time/timekeeping_internal.h
+@@ -18,11 +18,7 @@ static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
+ {
+ 	u64 ret = (now - last) & mask;
+ 
+-	/*
+-	 * Prevent time going backwards by checking the MSB of mask in
+-	 * the result. If set, return 0.
+-	 */
+-	return ret & ~(mask >> 1) ? 0 : ret;
++	return (s64) ret > 0 ? ret : 0;
+ }
+ #else
+ static inline u64 clocksource_delta(u64 now, u64 last, u64 mask)
+-- 
+2.19.1
 
-I debugged this problem with an AST 2000. What happens is that the
-vesafb driver attaches first to the graphics device. It disables
-write-combining and falls back to uncached access; unless the kernel has
-been booted with video=3Dvesafb:mtrr:3. Then it will set-up WC correctly.=
-
-The respective code is at [1].
-
-Best regards
-Thomas
-
-[1]
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/d=
-rivers/video/fbdev/vesafb.c?h=3Dv4.20-rc2#n415
-
---=20
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Linux GmbH, Maxfeldstr. 5, D-90409 N=C3=BCrnberg
-Tel: +49-911-74053-0; Fax: +49-911-7417755;  https://www.suse.com/
-SUSE Linux GmbH, GF: Felix Imend=C3=B6rffer, Jane Smithard,
-Graham Norton, HRB 21284 (AG N=C3=BCrnberg)
-
-
---Rn4ndp8dEZpMy3RT5hxOPCcvAIMetoyR9--
-
---qe8FfTZQBr9r2XWiH4uNUyamIlp6fkMZq
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEchf7rIzpz2NEoWjlaA3BHVMLeiMFAlvp1iAACgkQaA3BHVML
-eiN49wgAk0rSqr54QvlZ0mMLaxY/ErhD8qNw7dzYD0hUUMQu7H+4VtKD70cMzGOA
-Fcsm7PqTvaLWW/aIQGDjrmws1l5KUA6ObgAM8L/0am5HM8gmuwRvxLcFNsivUV+y
-RkDhYbsZatBFUeIJJBOKoTOmT5cbyTM5in2I+2I/VfY3cCs0qBB/u3I/Ttw9kywR
-rxEkytSvv6Y+NKOR1kAI13LymMjZ4RD/m4RVEgc5YxvroHw6L/ciUGs54AUDs9hx
-rDtcJ5zagv5UefmlxxCVb3SF6BdcNU97Fx9MOIxFVszKyi6bmOvoXpjr0yl/yNCY
-bNBojj0QbPyJHznqrmCImdH9NdGkxg==
-=Zfru
------END PGP SIGNATURE-----
-
---qe8FfTZQBr9r2XWiH4uNUyamIlp6fkMZq--
