@@ -2,81 +2,180 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FC42C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:47:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C778CC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:48:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 409D72241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:47:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 409D72241E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8C7F7223D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 11:48:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C7F7223D8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729457AbeKLVkT (ORCPT
+        id S1729503AbeKLVkw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 16:40:19 -0500
-Received: from foss.arm.com ([217.140.101.70]:34300 "EHLO foss.arm.com"
+        Mon, 12 Nov 2018 16:40:52 -0500
+Received: from mga11.intel.com ([192.55.52.93]:32835 "EHLO mga11.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728302AbeKLVkT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 16:40:19 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9271E80D;
-        Mon, 12 Nov 2018 03:47:24 -0800 (PST)
-Received: from [10.163.1.201] (unknown [10.163.1.201])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E0D023F5A0;
-        Mon, 12 Nov 2018 03:47:19 -0800 (PST)
-Subject: Re: [RFC] mm: Replace all open encodings for NUMA_NO_NODE
-To:     Hans Verkuil <hverkuil@xs4all.nl>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Cc:     ocfs2-devel@oss.oracle.com, linux-fbdev@vger.kernel.org,
-        dri-devel@lists.freedesktop.org, netdev@vger.kernel.org,
-        intel-wired-lan@lists.osuosl.org, linux-media@vger.kernel.org,
-        iommu@lists.linux-foundation.org, linux-rdma@vger.kernel.org,
-        dmaengine@vger.kernel.org, linux-block@vger.kernel.org,
-        sparclinux@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-ia64@vger.kernel.org, linux-alpha@vger.kernel.org
-References: <1541990515-11670-1-git-send-email-anshuman.khandual@arm.com>
- <de754de5-cdf9-87d2-7ab2-a3630c034121@xs4all.nl>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <d947edec-8c5a-78d7-4069-687ac4ad7cb8@arm.com>
-Date:   Mon, 12 Nov 2018 17:17:19 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1729246AbeKLVkw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 16:40:52 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2018 03:47:57 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,495,1534834800"; 
+   d="scan'208";a="107368500"
+Received: from kuha.fi.intel.com ([10.237.72.189])
+  by fmsmga001.fm.intel.com with SMTP; 12 Nov 2018 03:47:52 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Mon, 12 Nov 2018 13:47:51 +0200
+Date:   Mon, 12 Nov 2018 13:47:51 +0200
+From:   Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        linux-usb@vger.kernel.org, Felipe Balbi <balbi@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Roger Quadros <rogerq@ti.com>, linux-pm@vger.kernel.org,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>, linux-omap@vger.kernel.org,
+        Darren Hart <dvhart@infradead.org>,
+        platform-driver-x86@vger.kernel.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org, Chen-Yu Tsai <wens@csie.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v1 2/5] extcon: Return -EPROBE_DEFER when extcon device
+ is not found
+Message-ID: <20181112114751.GB1677@kuha.fi.intel.com>
+References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
+ <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <de754de5-cdf9-87d2-7ab2-a3630c034121@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sat, Nov 10, 2018 at 08:10:58PM +0200, Andy Shevchenko wrote:
+> All current users of extcon_get_extcon_dev() API considers
+> an extcon device a mandatory to appear. Thus, they all convert
+> NULL pointer to -EPROBE_DEFER error code.
+> 
+> There is one more caller anticipated with the same requirements.
+> 
+> To decrease a code duplication and a burden to the callers,
+> return -EPROBE_DEFER directly from extcon_get_extcon_dev().
+> 
+> Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
 
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
-On 11/12/2018 02:13 PM, Hans Verkuil wrote:
-> On 11/12/2018 03:41 AM, Anshuman Khandual wrote:
->> At present there are multiple places where invalid node number is encoded
->> as -1. Even though implicitly understood it is always better to have macros
->> in there. Replace these open encodings for an invalid node number with the
->> global macro NUMA_NO_NODE. This helps remove NUMA related assumptions like
->> 'invalid node' from various places redirecting them to a common definition.
->>
->> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->> ---
->> Build tested this with multiple cross compiler options like alpha, sparc,
->> arm64, x86, powerpc64le etc with their default config which might not have
->> compiled tested all driver related changes. I will appreciate folks giving
->> this a test in their respective build environment.
->>
->> All these places for replacement were found by running the following grep
->> patterns on the entire kernel code. Please let me know if this might have
->> missed some instances. This might also have replaced some false positives.
->> I will appreciate suggestions, inputs and review.
-> The 'node' in the drivers/media and the drivers/video sources has nothing to
-> do with numa. It's an index for a framebuffer instead (i.e. the X in /dev/fbX).
+> ---
+>  drivers/extcon/extcon-axp288.c        | 4 ++--
+>  drivers/extcon/extcon.c               | 2 +-
+>  drivers/power/supply/axp288_charger.c | 8 ++++----
+>  drivers/usb/phy/phy-omap-otg.c        | 6 +++---
+>  drivers/usb/typec/tcpm/fusb302.c      | 4 ++--
+>  5 files changed, 12 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/extcon/extcon-axp288.c b/drivers/extcon/extcon-axp288.c
+> index a983708b77a6..3472d3b756ed 100644
+> --- a/drivers/extcon/extcon-axp288.c
+> +++ b/drivers/extcon/extcon-axp288.c
+> @@ -360,8 +360,8 @@ static int axp288_extcon_probe(struct platform_device *pdev)
+>  		name = acpi_dev_get_first_match_name("INT3496", NULL, -1);
+>  		if (name) {
+>  			info->id_extcon = extcon_get_extcon_dev(name);
+> -			if (!info->id_extcon)
+> -				return -EPROBE_DEFER;
+> +			if (IS_ERR(info->id_extcon))
+> +				return PTR_ERR(info->id_extcon);
+>  
+>  			dev_info(dev, "controlling USB role\n");
+>  		} else {
+> diff --git a/drivers/extcon/extcon.c b/drivers/extcon/extcon.c
+> index 5ab0498be652..2bd0f2f33f05 100644
+> --- a/drivers/extcon/extcon.c
+> +++ b/drivers/extcon/extcon.c
+> @@ -884,7 +884,7 @@ struct extcon_dev *extcon_get_extcon_dev(const char *extcon_name)
+>  		if (!strcmp(sd->name, extcon_name))
+>  			goto out;
+>  	}
+> -	sd = NULL;
+> +	sd = ERR_PTR(-EPROBE_DEFER);
+>  out:
+>  	mutex_unlock(&extcon_dev_list_lock);
+>  	return sd;
+> diff --git a/drivers/power/supply/axp288_charger.c b/drivers/power/supply/axp288_charger.c
+> index 735658ee1c60..8558577fccf5 100644
+> --- a/drivers/power/supply/axp288_charger.c
+> +++ b/drivers/power/supply/axp288_charger.c
+> @@ -768,17 +768,17 @@ static int axp288_charger_probe(struct platform_device *pdev)
+>  	info->regmap_irqc = axp20x->regmap_irqc;
+>  
+>  	info->cable.edev = extcon_get_extcon_dev(AXP288_EXTCON_DEV_NAME);
+> -	if (info->cable.edev == NULL) {
+> +	if (IS_ERR(info->cable.edev)) {
+>  		dev_dbg(&pdev->dev, "%s is not ready, probe deferred\n",
+>  			AXP288_EXTCON_DEV_NAME);
+> -		return -EPROBE_DEFER;
+> +		return PTR_ERR(info->cable.edev);
+>  	}
+>  
+>  	if (acpi_dev_present(USB_HOST_EXTCON_HID, NULL, -1)) {
+>  		info->otg.cable = extcon_get_extcon_dev(USB_HOST_EXTCON_NAME);
+> -		if (info->otg.cable == NULL) {
+> +		if (IS_ERR(info->otg.cable)) {
+>  			dev_dbg(dev, "EXTCON_USB_HOST is not ready, probe deferred\n");
+> -			return -EPROBE_DEFER;
+> +			return PTR_ERR(info->otg.cable);
+>  		}
+>  		dev_info(&pdev->dev,
+>  			 "Using " USB_HOST_EXTCON_HID " extcon for usb-id\n");
+> diff --git a/drivers/usb/phy/phy-omap-otg.c b/drivers/usb/phy/phy-omap-otg.c
+> index ee0863c6553e..605314ddcd3d 100644
+> --- a/drivers/usb/phy/phy-omap-otg.c
+> +++ b/drivers/usb/phy/phy-omap-otg.c
+> @@ -91,12 +91,12 @@ static int omap_otg_probe(struct platform_device *pdev)
+>  	int ret;
+>  	u32 rev;
+>  
+> -	if (!config || !config->extcon)
+> +	if (!config)
+>  		return -ENODEV;
+>  
+>  	extcon = extcon_get_extcon_dev(config->extcon);
+> -	if (!extcon)
+> -		return -EPROBE_DEFER;
+> +	if (IS_ERR(extcon))
+> +		return PTR_ERR(extcon);
+>  
+>  	otg_dev = devm_kzalloc(&pdev->dev, sizeof(*otg_dev), GFP_KERNEL);
+>  	if (!otg_dev)
+> diff --git a/drivers/usb/typec/tcpm/fusb302.c b/drivers/usb/typec/tcpm/fusb302.c
+> index 43b64d9309d0..6d332066202b 100644
+> --- a/drivers/usb/typec/tcpm/fusb302.c
+> +++ b/drivers/usb/typec/tcpm/fusb302.c
+> @@ -1767,8 +1767,8 @@ static int fusb302_probe(struct i2c_client *client,
+>  	 */
+>  	if (device_property_read_string(dev, "fcs,extcon-name", &name) == 0) {
+>  		chip->extcon = extcon_get_extcon_dev(name);
+> -		if (!chip->extcon)
+> -			return -EPROBE_DEFER;
+> +		if (IS_ERR(chip->extcon))
+> +			return PTR_ERR(chip->extcon);
+>  	}
+>  
+>  	chip->vbus = devm_regulator_get(chip->dev, "vbus");
+> -- 
+> 2.19.1
 
-Thanks for the input. Will drop the changes there.
+-- 
+heikki
