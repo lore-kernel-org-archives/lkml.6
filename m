@@ -2,135 +2,109 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9FFEC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:07:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 99395C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 90CE621582
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:07:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B40E21582
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 07:17:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=birdec.tech header.i=@birdec.tech header.b="BnNM0rjs"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 90CE621582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=birdec.tech
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HP8PO4Lg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B40E21582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732078AbeKLQ7K (ORCPT
+        id S1726317AbeKLRJP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 11:59:10 -0500
-Received: from host.euro-space.net ([87.117.239.2]:56309 "EHLO
-        host.euro-space.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729816AbeKLQ7K (ORCPT
+        Mon, 12 Nov 2018 12:09:15 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:43785 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725829AbeKLRJP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 11:59:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=birdec.tech
-        ; s=default; h=References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:
-        Sender:Reply-To:MIME-Version:Content-Type:Content-Transfer-Encoding:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-        List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=tx9b8bZN6yl+ZRYOm3qj+jX8l36IWxPic2FouiRy1dA=; b=BnNM0rjsPcrDMMpL/gDRRGVHFR
-        s3P4rY0nszykA0Emnk6taZioIzGMJoXrbWozV9mhHlJTP14HoMwv5JrcsH+9BS1RpyxoDLj6MFwnL
-        ALBOEP/vE50V3YaeOwBcXSzVSEPoSqpmax8ffZSxS1YiCDleZKhqoWKMa4iXawnwuicgh46wjXJnb
-        i47kbQ1BOm91fEe1+zdxazxjHeuNZMY6a1BmWdU/ANMne1qtj60I3oieOKhL5DTXJTUtieNO44+hZ
-        FAGZmeRmxwHCt/pL/uR7Gexqbtw9c4CAVj+W82/KSBDCBfI+db8CsT7LVB8SSaIH+PgynGmIoCbMv
-        vn/Arg1Q==;
-Received: from x4e33ae63.dyn.telefonica.de ([78.51.174.99]:51016 helo=gentoo0.localdomain)
-        by host.euro-space.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <kmarinushkin@birdec.tech>)
-        id 1gM6JT-0002vg-SQ; Mon, 12 Nov 2018 07:07:11 +0000
-From:   Kirill Marinushkin <kmarinushkin@birdec.tech>
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org,
-        Kirill Marinushkin <kmarinushkin@birdec.tech>
-Subject: [PATCH v2 3/3] ASoC: pcm3060: Rename output widgets
-Date:   Mon, 12 Nov 2018 08:08:34 +0100
-Message-Id: <20181112070834.16979-3-kmarinushkin@birdec.tech>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20181112070834.16979-1-kmarinushkin@birdec.tech>
-References: <20181105112036.GC5365@sirena.org.uk>
- <20181112070834.16979-1-kmarinushkin@birdec.tech>
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - host.euro-space.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - birdec.tech
-X-Get-Message-Sender-Via: host.euro-space.net: authenticated_id: kmarinushkin@birdec.tech
-X-Authenticated-Sender: host.euro-space.net: kmarinushkin@birdec.tech
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Mon, 12 Nov 2018 12:09:15 -0500
+Received: by mail-pf1-f193.google.com with SMTP id g7-v6so3861456pfo.10
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 23:17:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Xh2jCcjbc9FzyXMznbLS6EB6drG14LywQij89/UVNpw=;
+        b=HP8PO4LgY/ttCFDDNrtUUacOYEIIiipx5uZns/iBWx/Aqm18xc5wInQ5EoskNm3Dba
+         yTbY8mhVLcf+IUv0LNU3uIGiyhnqG7WyB2wLZp1+rSOPir9D967XQWmboCzdh506HEuU
+         muuavWrU3d+Vvq7b7VZE0Zcp6HqcWVtQpbjzI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Xh2jCcjbc9FzyXMznbLS6EB6drG14LywQij89/UVNpw=;
+        b=XaQI0osVNKajypWmfo0JQTbBDKWQD/v0ADfm8z3sHE1Vq42QXU5r+rmgeHrL+1s4kQ
+         Nmqw1eIJsa61PKXepWcVPUBxXqN5zLjWprNq+mxmUjkdg17IXRyObBt8H4hHQwovazTe
+         v8WAT+3sP4CEl9O5SwW380j+u5vhyd3lhUYv/hZYyyKa4rvZvMb5uh/JIaTyWrBD4GsB
+         6jjaCq10ihej5xUIxwr3dP8T705mSxEfdAKAsn3h7s7cpSHKgp5SOg8nUS+TnDGyeuBH
+         vn/FdEW6rCHqbvMjUlqIJvVSx8fGbxicUbmhSoJpeyyAHniKElKuu8bdSVv6WjSY4ZPU
+         qfIg==
+X-Gm-Message-State: AGRZ1gItwqQggQoDTXTb+Cs5BJc1cHZhmAp/zbJvsHPYpJtTZcLkcPhA
+        XQVmB8Rj+3H4PGTQ5evahDzU
+X-Google-Smtp-Source: AJdET5dTudN9Rp614Ez54RN22qtPpb1LYMUDiYih5AgOROUo0ZYDgNkElYbNLPy9Rmahxa3NL379JQ==
+X-Received: by 2002:a63:a30a:: with SMTP id s10mr15526522pge.234.1542007038066;
+        Sun, 11 Nov 2018 23:17:18 -0800 (PST)
+Received: from mani ([103.59.133.81])
+        by smtp.gmail.com with ESMTPSA id i189-v6sm29453177pfc.16.2018.11.11.23.17.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 23:17:17 -0800 (PST)
+Date:   Mon, 12 Nov 2018 12:47:08 +0530
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     xuwei5@hisilicon.com
+Cc:     linus.walleij@linaro.org, Rob Herring <robh+dt@kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Amit Kucheria <amit.kucheria@linaro.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 0/5] Add Pinctrl and GPIO support for HI3670 SoC
+Message-ID: <20181112071708.GA6689@mani>
+References: <20181023190655.12004-1-manivannan.sadhasivam@linaro.org>
+ <CACRpkdbMSYt5aH9fwRijtO=VG1nLAnfxTsfxGza+_Z2iGj2+-A@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACRpkdbMSYt5aH9fwRijtO=VG1nLAnfxTsfxGza+_Z2iGj2+-A@mail.gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In the initial commit [1], I added differential output of the codec as
-separate `+` and `-` widgets:
+On Wed, Oct 31, 2018 at 10:43:00AM +0100, Linus Walleij wrote:
+> On Tue, Oct 23, 2018 at 9:07 PM Manivannan Sadhasivam
+> <manivannan.sadhasivam@linaro.org> wrote:
+> 
+> > This patchset adds Pinctrl and GPIO support for HI3670 SoC from HiSilicon
+> > found in the HiKey970 developement board. Also, the remaining UARTs are
+> > enabled and GPIO line names are added based on the Schematics and the
+> > 96Boards Consumer Edition spec.
+> >
+> > Note: These patches are based on the below common clk patches pushed
+> > earlier:
+> >
+> > arm64: dts: hisilicon: Add clock nodes for Hi3670 SoC
+> > arm64: dts: hisilicon: Source SoC clock for UART6
+> 
+> All looks good to me.
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> for the series.
+>
 
-OUTL+
-OUTR+
-OUTL-
-OUTR-
+Hi Wei,
 
-Later, in the commit [2], I added a device tree property to configure the
-output as single-ended or differential. Having this property, the `+` and
-`-` separation in widgets seems for me confusing. There are no functional
-benefits in such separation, so I find reasonable to get rid of it:
+Any update on this patchset?
 
-OUTL
-OUTR
-
-The new naming is more friendly for sound cards, and is better aligned with
-other codec drivers in kernel.
-
-Renaming the output widgets now should not be a problem from the backwards-
-compatibility perspective, as the driver for PCM3060 is added into the
-mainline very recently, and did not yet appear in any releases.
-
-[1] commit 6ee47d4a8dac ("ASoC: pcm3060: Add codec driver")
-[2] commit a78c62de00d5 ("ASoC: pcm3060: Add DT property for single-ended
-    output")
-
-Signed-off-by: Kirill Marinushkin <kmarinushkin@birdec.tech>
----
- sound/soc/codecs/pcm3060.c | 12 ++++--------
- 1 file changed, 4 insertions(+), 8 deletions(-)
-
-diff --git a/sound/soc/codecs/pcm3060.c b/sound/soc/codecs/pcm3060.c
-index 5f479aa61097..1dd851a7b43b 100644
---- a/sound/soc/codecs/pcm3060.c
-+++ b/sound/soc/codecs/pcm3060.c
-@@ -198,20 +198,16 @@ static const struct snd_kcontrol_new pcm3060_dapm_controls[] = {
- };
+Thanks,
+Mani
  
- static const struct snd_soc_dapm_widget pcm3060_dapm_widgets[] = {
--	SND_SOC_DAPM_OUTPUT("OUTL+"),
--	SND_SOC_DAPM_OUTPUT("OUTR+"),
--	SND_SOC_DAPM_OUTPUT("OUTL-"),
--	SND_SOC_DAPM_OUTPUT("OUTR-"),
-+	SND_SOC_DAPM_OUTPUT("OUTL"),
-+	SND_SOC_DAPM_OUTPUT("OUTR"),
- 
- 	SND_SOC_DAPM_INPUT("INL"),
- 	SND_SOC_DAPM_INPUT("INR"),
- };
- 
- static const struct snd_soc_dapm_route pcm3060_dapm_map[] = {
--	{ "OUTL+", NULL, "Playback" },
--	{ "OUTR+", NULL, "Playback" },
--	{ "OUTL-", NULL, "Playback" },
--	{ "OUTR-", NULL, "Playback" },
-+	{ "OUTL", NULL, "Playback" },
-+	{ "OUTR", NULL, "Playback" },
- 
- 	{ "Capture", NULL, "INL" },
- 	{ "Capture", NULL, "INR" },
--- 
-2.13.6
-
+> Yours,
+> Linus Walleij
