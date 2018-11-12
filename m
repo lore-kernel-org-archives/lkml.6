@@ -2,160 +2,486 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9392C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:29:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F9A5C43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:29:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7F095223C8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:29:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ao5tRvyZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F095223C8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 68C94223C8
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:29:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68C94223C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729210AbeKLUWJ (ORCPT
+        id S1729249AbeKLUWc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 15:22:09 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:43925 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728054AbeKLUWJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 15:22:09 -0500
-Received: by mail-qk1-f195.google.com with SMTP id r71so12331812qkr.10
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 02:29:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:organization:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=jMRdyhLLMJKOEkmEMbuj8qee+hZYiQAo/NnFJD9rw/s=;
-        b=Ao5tRvyZ6k4+yECUa4/CFqKQMdD9nTt6PHUixk7cgdwMcCHvPhh5dr0S2z9MVpavhY
-         GlkGwBT+GN8hgiMIcQBzcyuYj4NYLRruVrMSWV4mcyFUSVFEreWOZDLXr3Ka+oW5WWDZ
-         qZAtVbp/NcyTbirE7rc7V+pf/hh2D+z0kr/Vg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=jMRdyhLLMJKOEkmEMbuj8qee+hZYiQAo/NnFJD9rw/s=;
-        b=VOoiQwRzJjUztUd2fnAtffqifv4NjeJMhLlyu/8eCdvQbED6a/+eUNqLvbtISoSqGq
-         /4rbtxHMdoD2Nduz/DssgYIbdLGwjbuJRBufnMVyiRgSKcIoVrwOx7dTxdfaCG4WCatp
-         bgkcAssdjzX+u2DzrXTVBDpVcvqd1qQCOv9eok3r6XsFwrnIKg76i1Yc2CMb5Xv9Sua8
-         T4V5vJdI5jHWwUsb7ZfriQdCL240W4+5a3B1jjft3K4/dd3dKL5ZliR20ZSon+WvB5lU
-         ueXetCokU1m0dF87nkQLtsaJkAUq/tNtOiAvkleDKfaVuPWS9k5GH9i53mX8F6RaplVv
-         nwjQ==
-X-Gm-Message-State: AGRZ1gJO6wSKYi/7ZzyKQfoBJgfEKceNthHWAGHt0zJO6jbYev9t9ol0
-        l0GkkzZvqY1wE74585UP6B/Xnd/O4Hftug==
-X-Google-Smtp-Source: AJdET5dHLzRxrkM0Fyu6ZeWzCoTwuI/AOq7EqB49zjvDJYM92gaewz40xTz5bEWg8MdsRcfTDBJAJw==
-X-Received: by 2002:aed:2dc5:: with SMTP id i63mr304317qtd.173.1542018571858;
-        Mon, 12 Nov 2018 02:29:31 -0800 (PST)
-Received: from [192.168.48.13] ([168.181.50.245])
-        by smtp.gmail.com with ESMTPSA id a68sm9670169qkj.63.2018.11.12.02.29.29
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 02:29:31 -0800 (PST)
-Subject: Re: [PATCH AUTOSEL 4.4 07/32] cpupower: Fix coredump on VMWare
-To:     Sasha Levin <sashal@kernel.org>, stable@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Prarit Bhargava <prarit@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        Stafford Horne <shorne@gmail.com>, gregkh@linuxfoundation.org
-References: <20181031231137.29429-1-sashal@kernel.org>
- <20181031231137.29429-7-sashal@kernel.org>
-From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
-Organization: Linaro
-Message-ID: <a5f213e5-a671-d587-5329-5b919965134e@linaro.org>
-Date:   Mon, 12 Nov 2018 08:29:27 -0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Mon, 12 Nov 2018 15:22:32 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32738 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725873AbeKLUWb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 15:22:31 -0500
+Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 5D9FF58E0ACE7;
+        Mon, 12 Nov 2018 10:29:52 +0000 (GMT)
+Received: from roberto-HP-EliteDesk-800-G2-DM-65W.huawei.com (10.204.65.153)
+ by smtpsuk.huawei.com (10.201.108.42) with Microsoft SMTP Server (TLS) id
+ 14.3.408.0; Mon, 12 Nov 2018 10:29:44 +0000
+From:   Roberto Sassu <roberto.sassu@huawei.com>
+To:     <dhowells@redhat.com>, <dwmw2@infradead.org>,
+        <herbert@gondor.apana.org.au>, <davem@davemloft.net>
+CC:     <keyrings@vger.kernel.org>, <linux-crypto@vger.kernel.org>,
+        <linux-integrity@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <silviu.vlasceanu@huawei.com>
+Subject: [RFC][PATCH 04/12] PGPLIB: Basic packet parser
+Date:   Mon, 12 Nov 2018 11:24:15 +0100
+Message-ID: <20181112102423.30415-5-roberto.sassu@huawei.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181112102423.30415-1-roberto.sassu@huawei.com>
+References: <20181112102423.30415-1-roberto.sassu@huawei.com>
 MIME-Version: 1.0
-In-Reply-To: <20181031231137.29429-7-sashal@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Originating-IP: [10.204.65.153]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/31/18 9:11 PM, Sasha Levin wrote:
-> From: Prarit Bhargava <prarit@redhat.com>
-> 
-> [ Upstream commit f69ffc5d3db8f1f03fd6d1df5930f9a1fbd787b6 ]
-> 
-> cpupower crashes on VMWare guests.  The guests have the AMD PStateDef MSR
-> (0xC0010064 + state number) set to zero.  As a result fid and did are zero
-> and the crash occurs because of a divide by zero (cof = fid/did).  This
-> can be prevented by checking the enable bit in the PStateDef MSR before
-> calculating cof.  By doing this the value of pstate[i] remains zero and
-> the value can be tested before displaying the active Pstates.
-> 
-> Check the enable bit in the PstateDef register for all supported families
-> and only print out enabled Pstates.
-> 
-> Signed-off-by: Prarit Bhargava <prarit@redhat.com>
-> Cc: Shuah Khan <shuah@kernel.org>
-> Cc: Stafford Horne <shorne@gmail.com>
-> Signed-off-by: Shuah Khan (Samsung OSG) <shuah@kernel.org>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->   tools/power/cpupower/utils/cpufreq-info.c | 2 ++
->   tools/power/cpupower/utils/helpers/amd.c  | 5 +++++
->   2 files changed, 7 insertions(+)
-> 
-> diff --git a/tools/power/cpupower/utils/cpufreq-info.c b/tools/power/cpupower/utils/cpufreq-info.c
-> index 0e6764330241..f9b064ac8d94 100644
-> --- a/tools/power/cpupower/utils/cpufreq-info.c
-> +++ b/tools/power/cpupower/utils/cpufreq-info.c
-> @@ -200,6 +200,8 @@ static int get_boost_mode(unsigned int cpu)
->   		printf(_("    Boost States: %d\n"), b_states);
->   		printf(_("    Total States: %d\n"), pstate_no);
->   		for (i = 0; i < pstate_no; i++) {
-> +			if (!pstates[i])
-> +				continue;
->   			if (i < b_states)
->   				printf(_("    Pstate-Pb%d: %luMHz (boost state)"
->   					 "\n"), i, pstates[i]);
-> diff --git a/tools/power/cpupower/utils/helpers/amd.c b/tools/power/cpupower/utils/helpers/amd.c
-> index 6437ef39aeea..82adfb33d7a5 100644
-> --- a/tools/power/cpupower/utils/helpers/amd.c
-> +++ b/tools/power/cpupower/utils/helpers/amd.c
-> @@ -103,6 +103,11 @@ int decode_pstates(unsigned int cpu, unsigned int cpu_family,
->   		}
->   		if (read_msr(cpu, MSR_AMD_PSTATE + i, &pstate.val))
->   			return -1;
-> +		if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
-> +			continue;
-> +		else if (!pstate.bits.en)
-> +			continue;
-> +
->   		pstates[i] = get_cof(cpu_family, pstate);
->   	}
->   	*no = i;
-> 
+From: David Howells <dhowells@redhat.com>
 
-Sasha,
+Provide a simple parser that extracts the packets from a PGP packet blob
+and passes the desirous ones to the given processor function:
 
-This commit is causing:
+	struct pgp_parse_context {
+		u64 types_of_interest;
+		int (*process_packet)(struct pgp_parse_context *context,
+				      enum pgp_packet_tag type,
+				      u8 headerlen,
+				      const u8 *data,
+				      size_t datalen);
+	};
 
-$ make V=1 -C tools/power/cpupower all
+	int pgp_parse_packets(const u8 *data, size_t datalen,
+			      struct pgp_parse_context *ctx);
 
-gcc -fPIC -DVERSION=\"4.4.163.99.g0d9e7b\" -DPACKAGE=\"cpupower\" 
--DPACKAGE_BUGREPORT=\"linux-pm@vger.kernel.org\" -D_GNU_SOURCE -pipe 
--DNLS -Wall -Wchar-subscripts -Wpointer-arith -Wsign-compare 
--Wno-pointer-sign -Wdeclaration-after-statement -Wshadow -O1 -g -DDEBUG 
--I./lib -I ./utils -o utils/helpers/amd.o -c utils/helpers/amd.c
-utils/helpers/amd.c: In function ‘decode_pstates’:
-utils/helpers/amd.c:106:39: error: ‘union msr_pstate’ has no member 
-named ‘fam17h_bits’
-    if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
+This is configured on with CONFIG_PGP_LIBRARY.
 
-I think it should be dropped from v4.4 and v4.9 RCs, since this is a fix 
-for a CPU that isn't supported for those 2.
+Changelog
 
-Thanks
---
-Rafael D. Tinoco
-Linaro Kernel Validation
+v0:
+- fix style issues (Roberto Sassu)
+- declare pgp_to_public_key_algo (Roberto Sassu)
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+Co-developed-by: Roberto Sassu <roberto.sassu@huawei.com>
+---
+ crypto/asymmetric_keys/Kconfig       |   6 +
+ crypto/asymmetric_keys/Makefile      |   5 +
+ crypto/asymmetric_keys/pgp_library.c | 280 +++++++++++++++++++++++++++
+ crypto/asymmetric_keys/pgp_parser.h  |  22 +++
+ include/linux/pgplib.h               |  47 +++++
+ 5 files changed, 360 insertions(+)
+ create mode 100644 crypto/asymmetric_keys/pgp_library.c
+ create mode 100644 crypto/asymmetric_keys/pgp_parser.h
+ create mode 100644 include/linux/pgplib.h
+
+diff --git a/crypto/asymmetric_keys/Kconfig b/crypto/asymmetric_keys/Kconfig
+index be70ca6c85d3..38c36c14d712 100644
+--- a/crypto/asymmetric_keys/Kconfig
++++ b/crypto/asymmetric_keys/Kconfig
+@@ -93,4 +93,10 @@ config SIGNED_PE_FILE_VERIFICATION
+ 	  This option provides support for verifying the signature(s) on a
+ 	  signed PE binary.
+ 
++config PGP_LIBRARY
++	tristate "PGP parsing library"
++	help
++	  This option enables a library that provides a number of simple
++	  utility functions for parsing PGP (RFC 4880) packet-based messages.
++
+ endif # ASYMMETRIC_KEY_TYPE
+diff --git a/crypto/asymmetric_keys/Makefile b/crypto/asymmetric_keys/Makefile
+index 28b91adba2ae..55a67ebfe8e1 100644
+--- a/crypto/asymmetric_keys/Makefile
++++ b/crypto/asymmetric_keys/Makefile
+@@ -86,3 +86,8 @@ tpm_key_parser-y := \
+ 
+ $(obj)/tpm_parser.o: $(obj)/tpm.asn1.h
+ $(obj)/tpm.asn1.o: $(obj)/tpm.asn1.c $(obj)/tpm.asn1.h
++
++#
++# PGP handling
++#
++obj-$(CONFIG_PGP_LIBRARY) += pgp_library.o
+diff --git a/crypto/asymmetric_keys/pgp_library.c b/crypto/asymmetric_keys/pgp_library.c
+new file mode 100644
+index 000000000000..0ab702ffe173
+--- /dev/null
++++ b/crypto/asymmetric_keys/pgp_library.c
+@@ -0,0 +1,280 @@
++/* PGP packet parser (RFC 4880)
++ *
++ * Copyright (C) 2011 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#define pr_fmt(fmt) "PGPL: "fmt
++#include <linux/pgplib.h>
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++
++MODULE_LICENSE("GPL");
++
++const char *const pgp_hash_algorithms[PGP_HASH__LAST] = {
++	[PGP_HASH_MD5]			= "md5",
++	[PGP_HASH_SHA1]			= "sha1",
++	[PGP_HASH_RIPE_MD_160]		= "rmd160",
++	[PGP_HASH_SHA256]		= "sha256",
++	[PGP_HASH_SHA384]		= "sha384",
++	[PGP_HASH_SHA512]		= "sha512",
++	[PGP_HASH_SHA224]		= "sha224",
++};
++EXPORT_SYMBOL_GPL(pgp_hash_algorithms);
++
++const char *pgp_to_public_key_algo[PGP_PUBKEY__LAST] = {
++	[PGP_PUBKEY_RSA_ENC_OR_SIG]	= "rsa",
++	[PGP_PUBKEY_RSA_ENC_ONLY]	= "rsa",
++	[PGP_PUBKEY_RSA_SIG_ONLY]	= "rsa",
++	[PGP_PUBKEY_ELGAMAL]		= NULL,
++	[PGP_PUBKEY_DSA]		= NULL,
++};
++EXPORT_SYMBOL_GPL(pgp_to_public_key_algo);
++
++/**
++ * pgp_parse_packet_header - Parse a PGP packet header
++ * @_data: Start of the PGP packet (updated to PGP packet data)
++ * @_datalen: Amount of data remaining in buffer (decreased)
++ * @_type: Where the packet type will be returned
++ * @_headerlen: Where the header length will be returned
++ *
++ * Parse a set of PGP packet header [RFC 4880: 4.2].
++ *
++ * Returns packet data size on success; non-zero on error.  If successful,
++ * *_data and *_datalen will have been updated and *_headerlen will be set to
++ * hold the length of the packet header.
++ */
++static ssize_t pgp_parse_packet_header(const u8 **_data, size_t *_datalen,
++				       enum pgp_packet_tag *_type,
++				       u8 *_headerlen)
++{
++	enum pgp_packet_tag type;
++	const u8 *data = *_data;
++	size_t size, datalen = *_datalen;
++
++	pr_devel("-->%s(,%zu,,)\n", __func__, datalen);
++
++	if (datalen < 2)
++		goto short_packet;
++
++	pr_devel("pkthdr %02x, %02x\n", data[0], data[1]);
++
++	type = *data++;
++	datalen--;
++	if (!(type & 0x80)) {
++		pr_debug("Packet type does not have MSB set\n");
++		return -EBADMSG;
++	}
++	type &= ~0x80;
++
++	if (type & 0x40) {
++		/* New packet length format */
++		type &= ~0x40;
++		pr_devel("new format: t=%u\n", type);
++		switch (data[0]) {
++		case 0x00 ... 0xbf:
++			/* One-byte length */
++			size = data[0];
++			data++;
++			datalen--;
++			*_headerlen = 2;
++			break;
++		case 0xc0 ... 0xdf:
++			/* Two-byte length */
++			if (datalen < 2)
++				goto short_packet;
++			size = (data[0] - 192) * 256;
++			size += data[1] + 192;
++			data += 2;
++			datalen -= 2;
++			*_headerlen = 3;
++			break;
++		case 0xff:
++			/* Five-byte length */
++			if (datalen < 5)
++				goto short_packet;
++			size =  data[1] << 24;
++			size |= data[2] << 16;
++			size |= data[3] << 8;
++			size |= data[4];
++			data += 5;
++			datalen -= 5;
++			*_headerlen = 6;
++			break;
++		default:
++			pr_debug("Partial body length packet not supported\n");
++			return -EBADMSG;
++		}
++	} else {
++		/* Old packet length format */
++		u8 length_type = type & 0x03;
++
++		type >>= 2;
++		pr_devel("old format: t=%u lt=%u\n", type, length_type);
++
++		switch (length_type) {
++		case 0:
++			/* One-byte length */
++			size = data[0];
++			data++;
++			datalen--;
++			*_headerlen = 2;
++			break;
++		case 1:
++			/* Two-byte length */
++			if (datalen < 2)
++				goto short_packet;
++			size  = data[0] << 8;
++			size |= data[1];
++			data += 2;
++			datalen -= 2;
++			*_headerlen = 3;
++			break;
++		case 2:
++			/* Four-byte length */
++			if (datalen < 4)
++				goto short_packet;
++			size  = data[0] << 24;
++			size |= data[1] << 16;
++			size |= data[2] << 8;
++			size |= data[3];
++			data += 4;
++			datalen -= 4;
++			*_headerlen = 5;
++			break;
++		default:
++			pr_debug("Indefinite length packet not supported\n");
++			return -EBADMSG;
++		}
++	}
++
++	pr_devel("datalen=%zu size=%zu", datalen, size);
++	if (datalen < size)
++		goto short_packet;
++	if ((int)size < 0)
++		goto too_big;
++
++	*_data = data;
++	*_datalen = datalen;
++	*_type = type;
++	pr_devel("Found packet type=%u size=%zd\n", type, size);
++	return size;
++
++short_packet:
++	pr_debug("Attempt to parse short packet\n");
++	return -EBADMSG;
++too_big:
++	pr_debug("Signature subpacket size >2G\n");
++	return -EMSGSIZE;
++}
++
++/**
++ * pgp_parse_packets - Parse a set of PGP packets
++ * @_data: Data to be parsed (updated)
++ * @_datalen: Amount of data (updated)
++ * @ctx: Parsing context
++ *
++ * Parse a set of PGP packets [RFC 4880: 4].
++ */
++int pgp_parse_packets(const u8 *data, size_t datalen,
++		      struct pgp_parse_context *ctx)
++{
++	enum pgp_packet_tag type;
++	ssize_t pktlen;
++	u8 headerlen;
++	int ret;
++
++	while (datalen > 2) {
++		pktlen = pgp_parse_packet_header(&data, &datalen, &type,
++						 &headerlen);
++		if (pktlen < 0)
++			return pktlen;
++
++		if ((ctx->types_of_interest >> type) & 1) {
++			ret = ctx->process_packet(ctx, type, headerlen,
++						  data, pktlen);
++			if (ret < 0)
++				return ret;
++		}
++		data += pktlen;
++		datalen -= pktlen;
++	}
++
++	if (datalen != 0) {
++		pr_debug("Excess octets in packet stream\n");
++		return -EBADMSG;
++	}
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pgp_parse_packets);
++
++/**
++ * pgp_parse_public_key - Parse the common part of a PGP pubkey packet
++ * @_data: Content of packet (updated)
++ * @_datalen: Length of packet remaining (updated)
++ * @pk: Public key data
++ *
++ * Parse the common data struct for a PGP pubkey packet [RFC 4880: 5.5.2].
++ */
++int pgp_parse_public_key(const u8 **_data, size_t *_datalen,
++			 struct pgp_parse_pubkey *pk)
++{
++	const u8 *data = *_data;
++	size_t datalen = *_datalen;
++	unsigned int tmp;
++
++	if (datalen < 12) {
++		pr_debug("Public key packet too short\n");
++		return -EBADMSG;
++	}
++
++	pk->version = *data++;
++	switch (pk->version) {
++	case PGP_KEY_VERSION_2:
++	case PGP_KEY_VERSION_3:
++	case PGP_KEY_VERSION_4:
++		break;
++	default:
++		pr_debug("Public key packet with unhandled version %d\n",
++			   pk->version);
++		return -EBADMSG;
++	}
++
++	tmp  = *data++ << 24;
++	tmp |= *data++ << 16;
++	tmp |= *data++ << 8;
++	tmp |= *data++;
++	pk->creation_time = tmp;
++	if (pk->version == PGP_KEY_VERSION_4) {
++		pk->expires_at = 0; /* Have to get it from the selfsignature */
++	} else {
++		unsigned short ndays;
++
++		ndays  = *data++ << 8;
++		ndays |= *data++;
++		if (ndays)
++			pk->expires_at = pk->creation_time + ndays * 86400UL;
++		else
++			pk->expires_at = 0;
++		datalen -= 2;
++	}
++
++	pk->pubkey_algo = *data++;
++	datalen -= 6;
++
++	pr_devel("%x,%x,%lx,%lx\n",
++		 pk->version, pk->pubkey_algo, pk->creation_time,
++		 pk->expires_at);
++
++	*_data = data;
++	*_datalen = datalen;
++	return 0;
++}
++EXPORT_SYMBOL_GPL(pgp_parse_public_key);
+diff --git a/crypto/asymmetric_keys/pgp_parser.h b/crypto/asymmetric_keys/pgp_parser.h
+new file mode 100644
+index 000000000000..5dfd68a88229
+--- /dev/null
++++ b/crypto/asymmetric_keys/pgp_parser.h
+@@ -0,0 +1,22 @@
++/* PGP crypto data parser internal definitions
++ *
++ * Copyright (C) 2011 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#include <linux/pgp.h>
++
++#define kenter(FMT, ...) \
++	pr_devel("==> %s("FMT")\n", __func__, ##__VA_ARGS__)
++#define kleave(FMT, ...) \
++	pr_devel("<== %s()"FMT"\n", __func__, ##__VA_ARGS__)
++
++/*
++ * pgp_library.c
++ */
++extern const char *pgp_to_public_key_algo[PGP_PUBKEY__LAST];
+diff --git a/include/linux/pgplib.h b/include/linux/pgplib.h
+new file mode 100644
+index 000000000000..7db21b69a6fe
+--- /dev/null
++++ b/include/linux/pgplib.h
+@@ -0,0 +1,47 @@
++/* PGP library definitions (RFC 4880)
++ *
++ * Copyright (C) 2012 Red Hat, Inc. All Rights Reserved.
++ * Written by David Howells (dhowells@redhat.com)
++ *
++ * This program is free software; you can redistribute it and/or
++ * modify it under the terms of the GNU General Public Licence
++ * as published by the Free Software Foundation; either version
++ * 2 of the Licence, or (at your option) any later version.
++ */
++
++#ifndef _LINUX_PGPLIB_H
++#define _LINUX_PGPLIB_H
++
++#if IS_ENABLED(CONFIG_PGP_LIBRARY) || IS_ENABLED(CONFIG_PGP_LIBRARY_MODULE)
++
++#include <linux/pgp.h>
++
++/*
++ * PGP library packet parser
++ */
++struct pgp_parse_context {
++	u64 types_of_interest;
++	int (*process_packet)(struct pgp_parse_context *context,
++			      enum pgp_packet_tag type,
++			      u8 headerlen,
++			      const u8 *data,
++			      size_t datalen);
++};
++
++extern int pgp_parse_packets(const u8 *data, size_t datalen,
++			     struct pgp_parse_context *ctx);
++
++struct pgp_parse_pubkey {
++	enum pgp_key_version version : 8;
++	enum pgp_pubkey_algo pubkey_algo : 8;
++	time_t		creation_time;
++	time_t		expires_at;
++};
++
++extern int pgp_parse_public_key(const u8 **_data, size_t *_datalen,
++				struct pgp_parse_pubkey *pk);
++
++
++#endif /* CONFIG_PGP_LIBRARY */
++
++#endif /* _LINUX_PGPLIB_H */
+-- 
+2.17.1
+
