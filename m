@@ -2,145 +2,146 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F58C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:00:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4282C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:01:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29121214DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:00:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 96B5B208A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 03:01:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmzyY+j+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29121214DB
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EsVqv87D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96B5B208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730300AbeKLMv5 (ORCPT
+        id S1730393AbeKLMwo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 07:51:57 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51078 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729882AbeKLMv5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 07:51:57 -0500
-Received: from devnote (NE2965lan1.rev.em-net.ne.jp [210.141.244.193])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0C1CC208A3;
-        Mon, 12 Nov 2018 03:00:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1541991652;
-        bh=VX/wc7asnQUDSmjpNuhkN4UhbmvbrnMP0iacEt1+/zw=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=PmzyY+j+JmktHnj88DeRP/MkXXd/iU31bR3fyxg7vVsd5G6qiFoUgtavIvFvT9klp
-         t+BMIcBQFPG37B9fnx19x32A5jLzBRbsQ4OKtpB/qgtLNshWm2g5dM1aT85WsvyFvN
-         rnfv/TMRjVb8Nx8gPRVtk5PmAPAvDTpccuSiP5FY=
-Date:   Mon, 12 Nov 2018 12:00:48 +0900
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-Subject: Re: [PATCH tip/core/rcu 20/41] kprobes: eplace synchronize_sched()
- with synchronize_rcu()
-Message-Id: <20181112120048.12b3fb7549f4b292fea1eefd@kernel.org>
-In-Reply-To: <20181111194410.6368-20-paulmck@linux.ibm.com>
-References: <20181111194104.GA4787@linux.ibm.com>
-        <20181111194410.6368-20-paulmck@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Mon, 12 Nov 2018 07:52:44 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:39446 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725928AbeKLMwo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 07:52:44 -0500
+Received: by mail-wr1-f66.google.com with SMTP id b13so7614506wrx.6
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 19:01:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=L3kQxmTjk6MTKkX1IlspIEH2m0wUz6jvpIqfoir3s/M=;
+        b=EsVqv87DO1yLpbZKf24AfI6aZwswyBibHj2+7AVj3zSWvH3Ysuz8NxsoxhD/8tuUeW
+         PkB9GK5yJWETg8Nww20f9qp0nw4QZGQsdvqMSOK+KRPO/eNYLjxccpbejwoREEah9BAb
+         OBfw2QyD8RdxqR8COib/vjl6skeh2uBwLq1SkHWd0LW2Xjy8AaqnkOLaYDBxRV6yXl2A
+         hwUfUB0DPGYF4g6ZNATI/07m/kEwPW1dGWcxGFYB38vx7suoO378vL0q2BTMF9kkYKKs
+         dELtp0VZWhL2PoYICbGkgBPQkeoKOLvl135UCb6PAS0rvj8gzWQ+OsO9AEg9Lj9mLThc
+         FAYw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=L3kQxmTjk6MTKkX1IlspIEH2m0wUz6jvpIqfoir3s/M=;
+        b=unLDAGIUXmlTm1rQ774vmCwLWWWkElV+1NzwQlpVMQ0K7w+218QxM75N5HLIAe9ejn
+         Ikn1LepMU1HFXbOzo8MXJbv7PY5k6o+ty/U6BYwl8ACXmrvgUTN4DxBuuphP/3isB9tE
+         BhvfFibme5qL4CP8jCMBwZhGeLDoTgnL+nvfm50KmQlpz55zc07SxmKnKRS9Mazx2M3E
+         2I62QUWRRp1K0xNC+9guGF9iTxox+Cs/tZ78LOxqbEF+QNybxjBeuka39zOg6nyGAuMb
+         xBuJ3b0n+gzONUnusCIln4G41AzpY7X0a4iju/7mdBbbtWTp4GPtbTwi6QPe/5zYBeP/
+         lh9A==
+X-Gm-Message-State: AGRZ1gI6uh9gFaWMHKx8N0IAlutcn77mPHlTwoU1xvZf2GJ/niC2XMdq
+        9tKEdpXyZmxJyWSRZP66Ohc=
+X-Google-Smtp-Source: AJdET5dGTfhXafaxyeMGnVIsWWNWFNko16IRBA/4D/NtegVWG4sjScnVlw9ZyMDj/tBU9vYWwFEe7g==
+X-Received: by 2002:adf:c90e:: with SMTP id m14-v6mr15869007wrh.6.1541991697649;
+        Sun, 11 Nov 2018 19:01:37 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id v10-v6sm24139995wrq.4.2018.11.11.19.01.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sun, 11 Nov 2018 19:01:36 -0800 (PST)
+Date:   Mon, 12 Nov 2018 04:01:34 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+        Richard Weinberger <richard@sigma-star.at>,
+        linuxppc-dev@lists.ozlabs.org,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        linux-kernel@vger.kernel.org, Paul Mackerras <paulus@samba.org>
+Subject: Re: [PATCH 2/2] x86, powerpc: remove -funit-at-a-time compiler
+ option entirely
+Message-ID: <20181112030134.GA39035@gmail.com>
+References: <1541990120-9643-1-git-send-email-yamada.masahiro@socionext.com>
+ <1541990120-9643-3-git-send-email-yamada.masahiro@socionext.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541990120-9643-3-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 11 Nov 2018 11:43:49 -0800
-"Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
 
-> Now that synchronize_rcu() waits for preempt-disable regions of code
-> as well as RCU read-side critical sections, synchronize_sched() can be
-> replaced by synchronize_rcu().  This commit therefore makes this change.
+* Masahiro Yamada <yamada.masahiro@socionext.com> wrote:
 
-Would you mean synchronize_rcu() can ensure that any interrupt handler
-(which should run under preempt-disable state) run out (even on non-preemptive
-kernel)?
-If so, I agree with these changes.
-
-Thank you,
-
+> GCC 4.6 manual says:
 > 
-> Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-> Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-> Cc: "David S. Miller" <davem@davemloft.net>
-> Cc: Masami Hiramatsu <mhiramat@kernel.org>
+> -funit-at-a-time
+>   This option is left for compatibility reasons. -funit-at-a-time has
+>   no effect, while -fno-unit-at-a-time implies -fno-toplevel-reorder
+>   and -fno-section-anchors.
+>   Enabled by default.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 > ---
->  kernel/kprobes.c | 10 +++++-----
->  1 file changed, 5 insertions(+), 5 deletions(-)
 > 
-> diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> index 90e98e233647..08e31d863191 100644
-> --- a/kernel/kprobes.c
-> +++ b/kernel/kprobes.c
-> @@ -229,7 +229,7 @@ static int collect_garbage_slots(struct kprobe_insn_cache *c)
->  	struct kprobe_insn_page *kip, *next;
->  
->  	/* Ensure no-one is interrupted on the garbages */
-> -	synchronize_sched();
-> +	synchronize_rcu();
->  
->  	list_for_each_entry_safe(kip, next, &c->pages, list) {
->  		int i;
-> @@ -1382,7 +1382,7 @@ static int register_aggr_kprobe(struct kprobe *orig_p, struct kprobe *p)
->  			if (ret) {
->  				ap->flags |= KPROBE_FLAG_DISABLED;
->  				list_del_rcu(&p->list);
-> -				synchronize_sched();
-> +				synchronize_rcu();
->  			}
->  		}
->  	}
-> @@ -1597,7 +1597,7 @@ int register_kprobe(struct kprobe *p)
->  		ret = arm_kprobe(p);
->  		if (ret) {
->  			hlist_del_rcu(&p->hlist);
-> -			synchronize_sched();
-> +			synchronize_rcu();
->  			goto out;
->  		}
->  	}
-> @@ -1776,7 +1776,7 @@ void unregister_kprobes(struct kprobe **kps, int num)
->  			kps[i]->addr = NULL;
->  	mutex_unlock(&kprobe_mutex);
->  
-> -	synchronize_sched();
-> +	synchronize_rcu();
->  	for (i = 0; i < num; i++)
->  		if (kps[i]->addr)
->  			__unregister_kprobe_bottom(kps[i]);
-> @@ -1966,7 +1966,7 @@ void unregister_kretprobes(struct kretprobe **rps, int num)
->  			rps[i]->kp.addr = NULL;
->  	mutex_unlock(&kprobe_mutex);
->  
-> -	synchronize_sched();
-> +	synchronize_rcu();
->  	for (i = 0; i < num; i++) {
->  		if (rps[i]->kp.addr) {
->  			__unregister_kprobe_bottom(&rps[i]->kp);
-> -- 
-> 2.17.1
+>  arch/powerpc/Makefile | 4 ----
+>  arch/x86/Makefile     | 4 ----
+>  arch/x86/Makefile.um  | 5 -----
+>  3 files changed, 13 deletions(-)
 > 
+> diff --git a/arch/x86/Makefile b/arch/x86/Makefile
+> index 88398fd..3508049 100644
+> --- a/arch/x86/Makefile
+> +++ b/arch/x86/Makefile
+> @@ -130,10 +130,6 @@ else
+>  
+>          KBUILD_CFLAGS += -mno-red-zone
+>          KBUILD_CFLAGS += -mcmodel=kernel
+> -
+> -        # -funit-at-a-time shrinks the kernel .text considerably
+> -        # unfortunately it makes reading oopses harder.
+> -        KBUILD_CFLAGS += $(call cc-option,-funit-at-a-time)
+>  endif
+>  
+>  ifdef CONFIG_X86_X32
+> diff --git a/arch/x86/Makefile.um b/arch/x86/Makefile.um
+> index 577976b..1db7913 100644
+> --- a/arch/x86/Makefile.um
+> +++ b/arch/x86/Makefile.um
+> @@ -26,9 +26,6 @@ cflags-y += $(call cc-option,-mpreferred-stack-boundary=2)
+>  # an unresolved reference.
+>  cflags-y += -ffreestanding
+>  
+> -# gcc 4.3.0 needs -funit-at-a-time for extern inline functions.
+> -KBUILD_CFLAGS += $(call cc-option,-funit-at-a-time)
+> -
+>  KBUILD_CFLAGS += $(cflags-y)
+>  
+>  else
+> @@ -50,6 +47,4 @@ ELF_FORMAT := elf64-x86-64
+>  LINK-$(CONFIG_LD_SCRIPT_DYN) += -Wl,-rpath,/lib64
+>  LINK-y += -m64
+>  
+> -# Do unit-at-a-time unconditionally on x86_64, following the host
+> -KBUILD_CFLAGS += $(call cc-option,-funit-at-a-time)
+>  endif
 
+Acked-by: Ingo Molnar <mingo@kernel.org>
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Thanks,
+
+	Ingo
