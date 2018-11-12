@@ -2,227 +2,107 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9FE9C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:33:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60455C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:34:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DC2F223D8
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:33:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DC2F223D8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 26297223D8
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 22:34:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 26297223D8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730706AbeKMI2f (ORCPT
+        id S1730747AbeKMI3z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 03:28:35 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53112 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728030AbeKMI2f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 03:28:35 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 25998C0587E5;
-        Mon, 12 Nov 2018 22:33:24 +0000 (UTC)
-Received: from warthog.procyon.org.uk (ovpn-120-113.rdu2.redhat.com [10.10.120.113])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 29F6160BE7;
-        Mon, 12 Nov 2018 22:33:23 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
- Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
- Kingdom.
- Registered in England and Wales under Company Registration No. 3798903
-Subject: [PATCH net] rxrpc: Fix life check
-From:   David Howells <dhowells@redhat.com>
-To:     netdev@vger.kernel.org
-Cc:     linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-        dhowells@redhat.com
-Date:   Mon, 12 Nov 2018 22:33:22 +0000
-Message-ID: <154206200235.19188.1775391172980714293.stgit@warthog.procyon.org.uk>
-User-Agent: StGit/unknown-version
+        Tue, 13 Nov 2018 03:29:55 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:52320 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728030AbeKMI3z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 03:29:55 -0500
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-03.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gMKn2-00053X-BU from joseph_myers@mentor.com ; Mon, 12 Nov 2018 14:34:40 -0800
+Received: from digraph.polyomino.org.uk (137.202.0.90) by
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Mon, 12 Nov 2018 22:34:36 +0000
+Received: from jsm28 (helo=localhost)
+        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
+        (envelope-from <joseph@codesourcery.com>)
+        id 1gMKmy-0004xj-Br; Mon, 12 Nov 2018 22:34:36 +0000
+Date:   Mon, 12 Nov 2018 22:34:36 +0000
+From:   Joseph Myers <joseph@codesourcery.com>
+X-X-Sender: jsm28@digraph.polyomino.org.uk
+To:     Florian Weimer <fweimer@redhat.com>
+CC:     Daniel Colascione <dancol@google.com>,
+        Zack Weinberg <zackw@panix.com>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        Carlos O'Donell <carlos@redhat.com>,
+        GNU C Library <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+In-Reply-To: <87lg5ym7qi.fsf@oldenburg.str.redhat.com>
+Message-ID: <alpine.DEB.2.21.1811122223350.18130@digraph.polyomino.org.uk>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com> <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <877ehjx447.fsf@oldenburg.str.redhat.com> <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+ <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com> <CAKCAbMiHC9r54h=XeW7CkBZ1Z5eHr9MPH3Rn7KTc9DjoHG=8UA@mail.gmail.com> <CAKOZuev7zqq+xpjyDA2mSdy-zwyNjECCzLsBELF6_v1rwar_mA@mail.gmail.com>
+ <87lg5ym7qi.fsf@oldenburg.str.redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Mon, 12 Nov 2018 22:33:24 +0000 (UTC)
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) To
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The life-checking function, which is used by kAFS to make sure that a call
-is still live in the event of a pending signal, only samples the received
-packet serial number counter; it doesn't actually provoke a change in the
-counter, rather relying on the server to happen to give us a packet in the
-time window.
+On Mon, 12 Nov 2018, Florian Weimer wrote:
 
-Fix this by adding a function to force a ping to be transmitted.
+> For that use case, a machine-readable system call ABI specification is
+> the only reasonable approach: Some people want inline system calls,
 
-kAFS then keeps track of whether there's been a stall, and if so, uses the
-new function to ping the server, resetting the timeout to allow the reply
-to come back.
+I also think it's much more likely to be of use to glibc than any syscall 
+library provided by the kernel.  I don't think a syscall library provided 
+by the kernel is likely to be of use for implementing glibc functions, but 
+some kind of textual ABI specification might at least be of use for 
+checking that syscall macro calls / syscalls.list entries are consistent 
+with what the kernel thinks its ABI is.  (Hopefully there would be 
+automated tests on the kernel side as well of some kind of consistency 
+between the ABI specification and the kernel.)
 
-If there's a stall, a ping and the call is *still* stalled in the same
-place after another period, then the call will be aborted.
+strace is indeed a more obvious potential consumer of such a description 
+of syscall ABIs.
 
-Fixes: bc5e3a546d55 ("rxrpc: Use MSG_WAITALL to tell sendmsg() to temporarily ignore signals")
-Fixes: f4d15fb6f99a ("rxrpc: Provide functions for allowing cleaner handling of signals")
-Signed-off-by: David Howells <dhowells@redhat.com>
----
+I'd think a syscall library would more likely be something a few 
+applications would use if they want to access a syscall that for whatever 
+reason glibc doesn't have a wrapper for yet - not something useful for 
+glibc itself to call or link against.
 
- Documentation/networking/rxrpc.txt |   17 +++++++++++------
- fs/afs/rxrpc.c                     |   11 ++++++++++-
- include/net/af_rxrpc.h             |    3 ++-
- include/trace/events/rxrpc.h       |    2 ++
- net/rxrpc/af_rxrpc.c               |   27 +++++++++++++++++++++++----
- 5 files changed, 48 insertions(+), 12 deletions(-)
+> and for application programmer's sanity, make sure that the kernel adds
+> generic system calls in a single version, across all architectures.
 
-diff --git a/Documentation/networking/rxrpc.txt b/Documentation/networking/rxrpc.txt
-index 605e00cdd6be..89f1302d593a 100644
---- a/Documentation/networking/rxrpc.txt
-+++ b/Documentation/networking/rxrpc.txt
-@@ -1056,18 +1056,23 @@ The kernel interface functions are as follows:
- 
- 	u32 rxrpc_kernel_check_life(struct socket *sock,
- 				    struct rxrpc_call *call);
-+	void rxrpc_kernel_probe_life(struct socket *sock,
-+				     struct rxrpc_call *call);
- 
--     This returns a number that is updated when ACKs are received from the peer
--     (notably including PING RESPONSE ACKs which we can elicit by sending PING
--     ACKs to see if the call still exists on the server).  The caller should
--     compare the numbers of two calls to see if the call is still alive after
--     waiting for a suitable interval.
-+     The first function returns a number that is updated when ACKs are received
-+     from the peer (notably including PING RESPONSE ACKs which we can elicit by
-+     sending PING ACKs to see if the call still exists on the server).  The
-+     caller should compare the numbers of two calls to see if the call is still
-+     alive after waiting for a suitable interval.
- 
-      This allows the caller to work out if the server is still contactable and
-      if the call is still alive on the server whilst waiting for the server to
-      process a client operation.
- 
--     This function may transmit a PING ACK.
-+     The second function causes a ping ACK to be transmitted to try to provoke
-+     the peer into responding, which would then cause the value returned by the
-+     first function to change.  Note that this must be called in TASK_RUNNING
-+     state.
- 
-  (*) Get reply timestamp.
- 
-diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
-index 59970886690f..a7b44863d502 100644
---- a/fs/afs/rxrpc.c
-+++ b/fs/afs/rxrpc.c
-@@ -576,6 +576,7 @@ static long afs_wait_for_call_to_complete(struct afs_call *call,
- {
- 	signed long rtt2, timeout;
- 	long ret;
-+	bool stalled = false;
- 	u64 rtt;
- 	u32 life, last_life;
- 
-@@ -609,12 +610,20 @@ static long afs_wait_for_call_to_complete(struct afs_call *call,
- 
- 		life = rxrpc_kernel_check_life(call->net->socket, call->rxcall);
- 		if (timeout == 0 &&
--		    life == last_life && signal_pending(current))
-+		    life == last_life && signal_pending(current)) {
-+			if (stalled)
- 				break;
-+			__set_current_state(TASK_RUNNING);
-+			rxrpc_kernel_probe_life(call->net->socket, call->rxcall);
-+			timeout = rtt2;
-+			stalled = true;
-+			continue;
-+		}
- 
- 		if (life != last_life) {
- 			timeout = rtt2;
- 			last_life = life;
-+			stalled = false;
- 		}
- 
- 		timeout = schedule_timeout(timeout);
-diff --git a/include/net/af_rxrpc.h b/include/net/af_rxrpc.h
-index de587948042a..1adefe42c0a6 100644
---- a/include/net/af_rxrpc.h
-+++ b/include/net/af_rxrpc.h
-@@ -77,7 +77,8 @@ int rxrpc_kernel_retry_call(struct socket *, struct rxrpc_call *,
- 			    struct sockaddr_rxrpc *, struct key *);
- int rxrpc_kernel_check_call(struct socket *, struct rxrpc_call *,
- 			    enum rxrpc_call_completion *, u32 *);
--u32 rxrpc_kernel_check_life(struct socket *, struct rxrpc_call *);
-+u32 rxrpc_kernel_check_life(const struct socket *, const struct rxrpc_call *);
-+void rxrpc_kernel_probe_life(struct socket *, struct rxrpc_call *);
- u32 rxrpc_kernel_get_epoch(struct socket *, struct rxrpc_call *);
- bool rxrpc_kernel_get_reply_time(struct socket *, struct rxrpc_call *,
- 				 ktime_t *);
-diff --git a/include/trace/events/rxrpc.h b/include/trace/events/rxrpc.h
-index 573d5b901fb1..5b50fe4906d2 100644
---- a/include/trace/events/rxrpc.h
-+++ b/include/trace/events/rxrpc.h
-@@ -181,6 +181,7 @@ enum rxrpc_timer_trace {
- enum rxrpc_propose_ack_trace {
- 	rxrpc_propose_ack_client_tx_end,
- 	rxrpc_propose_ack_input_data,
-+	rxrpc_propose_ack_ping_for_check_life,
- 	rxrpc_propose_ack_ping_for_keepalive,
- 	rxrpc_propose_ack_ping_for_lost_ack,
- 	rxrpc_propose_ack_ping_for_lost_reply,
-@@ -380,6 +381,7 @@ enum rxrpc_tx_point {
- #define rxrpc_propose_ack_traces \
- 	EM(rxrpc_propose_ack_client_tx_end,	"ClTxEnd") \
- 	EM(rxrpc_propose_ack_input_data,	"DataIn ") \
-+	EM(rxrpc_propose_ack_ping_for_check_life, "ChkLife") \
- 	EM(rxrpc_propose_ack_ping_for_keepalive, "KeepAlv") \
- 	EM(rxrpc_propose_ack_ping_for_lost_ack,	"LostAck") \
- 	EM(rxrpc_propose_ack_ping_for_lost_reply, "LostRpl") \
-diff --git a/net/rxrpc/af_rxrpc.c b/net/rxrpc/af_rxrpc.c
-index 64362d078da8..a2522f9d71e2 100644
---- a/net/rxrpc/af_rxrpc.c
-+++ b/net/rxrpc/af_rxrpc.c
-@@ -375,16 +375,35 @@ EXPORT_SYMBOL(rxrpc_kernel_end_call);
-  * getting ACKs from the server.  Returns a number representing the life state
-  * which can be compared to that returned by a previous call.
-  *
-- * If this is a client call, ping ACKs will be sent to the server to find out
-- * whether it's still responsive and whether the call is still alive on the
-- * server.
-+ * If the life state stalls, rxrpc_kernel_probe_life() should be called and
-+ * then 2RTT waited.
-  */
--u32 rxrpc_kernel_check_life(struct socket *sock, struct rxrpc_call *call)
-+u32 rxrpc_kernel_check_life(const struct socket *sock,
-+			    const struct rxrpc_call *call)
- {
- 	return call->acks_latest;
- }
- EXPORT_SYMBOL(rxrpc_kernel_check_life);
- 
-+/**
-+ * rxrpc_kernel_probe_life - Poke the peer to see if it's still alive
-+ * @sock: The socket the call is on
-+ * @call: The call to check
-+ *
-+ * In conjunction with rxrpc_kernel_check_life(), allow a kernel service to
-+ * find out whether a call is still alive by pinging it.  This should cause the
-+ * life state to be bumped in about 2*RTT.
-+ *
-+ * The must be called in TASK_RUNNING state on pain of might_sleep() objecting.
-+ */
-+void rxrpc_kernel_probe_life(struct socket *sock, struct rxrpc_call *call)
-+{
-+	rxrpc_propose_ACK(call, RXRPC_ACK_PING, 0, 0, true, false,
-+			  rxrpc_propose_ack_ping_for_check_life);
-+	rxrpc_send_ack_packet(call, true, NULL);
-+}
-+EXPORT_SYMBOL(rxrpc_kernel_probe_life);
-+
- /**
-  * rxrpc_kernel_get_epoch - Retrieve the epoch value from a call.
-  * @sock: The socket the call is on
+That would be strongly desirable for glibc as well - a way of ensuring 
+that the kernel rapidly fails CI tests and does not get released if new 
+syscalls are only present on some architectures (including e.g. being 
+missing from some compat syscall tables, or defined in asm/unistd.h but 
+not in the actual syscall table, or vice versa - or some way of making 
+sure such inconsistencies cannot occur by eliminating duplicate copies of 
+the syscall list information in the sources).
 
+When we have compatibility code in glibc for the absence of some syscall, 
+we can only eliminate that code when the oldest kernel version supported 
+by glibc is new enough to have the syscall on whichever glibc architecture 
+was slowest to introduce the syscall in the kernel - and that can often be 
+years after the first architectures gained support for that syscall in the 
+kernel.
+
+-- 
+Joseph S. Myers
+joseph@codesourcery.com
