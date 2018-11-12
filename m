@@ -3,300 +3,122 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4CE86C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:30:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A7A6C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D0752245E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:30:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D0752245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F95A2245E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 18:31:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F95A2245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=applied-asynchrony.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730348AbeKMEZB (ORCPT
+        id S1730369AbeKMEZZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 23:25:01 -0500
-Received: from smtprelay0053.hostedemail.com ([216.40.44.53]:39656 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727354AbeKMEY6 (ORCPT
+        Mon, 12 Nov 2018 23:25:25 -0500
+Received: from mail02.iobjects.de ([188.40.134.68]:53784 "EHLO
+        mail02.iobjects.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727354AbeKMEZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 23:24:58 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay04.hostedemail.com (Postfix) with ESMTP id BD87E180A8142;
-        Mon, 12 Nov 2018 18:30:32 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: clam75_3ea21afce1b12
-X-Filterd-Recvd-Size: 10008
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf16.hostedemail.com (Postfix) with ESMTPA;
-        Mon, 12 Nov 2018 18:30:30 +0000 (UTC)
-Message-ID: <31d224e8c4b9bcebc3657c17fa50302f7da90e64.camel@perches.com>
-Subject: Re: [PATCH] scsi: libsas: Remove pcidev reference
-From:   Joe Perches <joe@perches.com>
-To:     John Garry <john.garry@huawei.com>, jejb@linux.vnet.ibm.com,
-        martin.petersen@oracle.com
-Cc:     linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linuxarm@huawei.com
-Date:   Mon, 12 Nov 2018 10:30:29 -0800
-In-Reply-To: <3b62b0ad-53ba-37c2-817c-591d94eed838@huawei.com>
-References: <1542043689-214071-1-git-send-email-john.garry@huawei.com>
-         <584e7b4fcd6f95fe0c581f6f9472852685c754d1.camel@perches.com>
-         <310504a2-f33c-183b-d00a-fa067b273dfd@huawei.com>
-         <3b62b0ad-53ba-37c2-817c-591d94eed838@huawei.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
+        Mon, 12 Nov 2018 23:25:25 -0500
+Received: from tux.wizards.de (p3EE2F45F.dip0.t-ipconnect.de [62.226.244.95])
+        by mail02.iobjects.de (Postfix) with ESMTPSA id AFF1A4160F7C;
+        Mon, 12 Nov 2018 19:30:57 +0100 (CET)
+Received: from [192.168.100.223] (ragnarok.applied-asynchrony.com [192.168.100.223])
+        by tux.wizards.de (Postfix) with ESMTP id 45AD2EEB928;
+        Mon, 12 Nov 2018 19:30:57 +0100 (CET)
+Subject: Re: [PATCH 4.19 025/361] ACPICA: AML interpreter: add region
+ addresses in global list during initialization
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     stable@vger.kernel.org, Jean-Marc Lenoir <archlinux@jihemel.com>,
+        Erik Schmauss <erik.schmauss@intel.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>
+References: <20181111221619.915519183@linuxfoundation.org>
+ <20181111221623.163909820@linuxfoundation.org>
+From:   =?UTF-8?Q?Holger_Hoffst=c3=a4tte?= <holger@applied-asynchrony.com>
+Organization: Applied Asynchrony, Inc.
+Message-ID: <9da1c8e8-d237-11b3-8918-859a4bbdbcc4@applied-asynchrony.com>
+Date:   Mon, 12 Nov 2018 19:30:57 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181111221623.163909820@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 2018-11-12 at 17:55 +0000, John Garry wrote:
-> On 12/11/2018 17:49, John Garry wrote:
-> > On 12/11/2018 17:32, Joe Perches wrote:
-> > > On Tue, 2018-11-13 at 01:28 +0800, John Garry wrote:
-> > > > Not all host drivers are PCI drivers - like hisi_sas, which supports a
-> > > > platform driver - so remove reference to "pcidev".
-> > > > 
-> > > > The debug level is also downgraded to KERN_ERR for the same message.
-> > > []
-> > > > diff --git a/drivers/scsi/libsas/sas_discover.c
-> > > > b/drivers/scsi/libsas/sas_discover.c
-> > > []
-> > > > @@ -186,7 +186,7 @@ int sas_notify_lldd_dev_found(struct
-> > > > domain_device *dev)
-> > > > 
-> > > >      res = i->dft->lldd_dev_found(dev);
-> > > >      if (res) {
-> > > > -        printk("sas: driver on pcidev %s cannot handle "
-> > > > +        pr_err("sas: driver on host %s cannot handle "
-> > > >                 "device %llx, error:%d\n",
-> > > 
-> > > As a printk without a KERN_<LEVEL> is printed at whatever
-> > > CONFIG_MESSAGE_LOGLEVEL_DEFAULT is set to (default: 4 and
-> > > rarely unchanged), this is effectively upgraded from a
-> > > KERN_WARNING to KERN_ERR.
-> > 
-> > ah, I thought that it was printed always.
-> > 
-> > So maybe I'll just leave as-is.
+On 11/11/18 11:16 PM, Greg Kroah-Hartman wrote:
+> 4.19-stable review patch.  If anyone has any objections, please let me know.
+
+As probably expected this patch causes problems. In my case one server
+can no longer load the nct6775 hwmon module, which means the fan cannot be
+monitored, and therefore my monitoring system promptly starts spamming me with
+alerts that my fan has failed - which is of course not true.
+
+--snip--
+Nov 12 18:08:56 tux kernel: nct6775: Found NCT6776D/F or compatible chip at 0x2e:0x290
+Nov 12 18:08:56 tux kernel: ACPI Warning: SystemIO range 0x0000000000000295-0x0000000000000296 conflicts with OpRegion 0x0000000000000290-0x
+Nov 12 18:08:56 tux kernel: ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
+--snip--
+
+This is certainly caused by my old BIOS and its broken ACPI implementation,
+however since it's working perfectly fine otherwise I see no reason to replace
+it. That being said, I must be able to monitor my fan, so for now reverting
+the patch immediately "fixed" the problem for me - the fan entries appeared
+in sysfs again after successfully loading the module.
+
+Idea, workarounds or patches welcome.
+
+> ------------------
 > 
-> I forgot to mention that checkpatch complains about using printk() - 
-> that's why I changed it.
-
-I believe that always assigning a KERN_<LEVEL>
-is good thing so I am not against this change.
-
-Describing the change a bit more correctly than
-'debug level downgraded' would be useful.
-
-My preference is a patch like this which
-always prefixes "sas: " to each log message
-by adding a #define pr_fmt and converts the
-bare printks to pr_notice, and converts the
-slightly odd sas_printk macro and uses with
-a hidden KERN_NOTICE to pr_notice.
-
----
- drivers/scsi/libsas/sas_discover.c |  9 ++++-----
- drivers/scsi/libsas/sas_expander.c | 33 ++++++++++++++++-----------------
- drivers/scsi/libsas/sas_init.c     | 10 +++++-----
- drivers/scsi/libsas/sas_internal.h |  5 ++++-
- drivers/scsi/libsas/sas_phy.c      | 10 +++++-----
- drivers/scsi/libsas/sas_port.c     |  3 +--
- 6 files changed, 35 insertions(+), 35 deletions(-)
-
-diff --git a/drivers/scsi/libsas/sas_discover.c b/drivers/scsi/libsas/sas_discover.c
-index dde433aa59c2..193d7a1ebeb3 100644
---- a/drivers/scsi/libsas/sas_discover.c
-+++ b/drivers/scsi/libsas/sas_discover.c
-@@ -128,7 +128,8 @@ static int sas_get_port_device(struct asd_sas_port *port)
- 					  SAS_FANOUT_EXPANDER_DEVICE);
- 		break;
- 	default:
--		printk("ERROR: Unidentified device type %d\n", dev->dev_type);
-+		pr_notice("ERROR: Unidentified device type %d\n",
-+			  dev->dev_type);
- 		rphy = NULL;
- 		break;
- 	}
-@@ -186,10 +187,8 @@ int sas_notify_lldd_dev_found(struct domain_device *dev)
- 
- 	res = i->dft->lldd_dev_found(dev);
- 	if (res) {
--		printk("sas: driver on pcidev %s cannot handle "
--		       "device %llx, error:%d\n",
--		       dev_name(sas_ha->dev),
--		       SAS_ADDR(dev->sas_addr), res);
-+		pr_notice("driver on pcidev %s cannot handle device %llx, error:%d\n",
-+			  dev_name(sas_ha->dev), SAS_ADDR(dev->sas_addr), res);
- 	}
- 	set_bit(SAS_DEV_FOUND, &dev->state);
- 	kref_get(&dev->kref);
-diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
-index 0d1f72752ca2..922253f1b05f 100644
---- a/drivers/scsi/libsas/sas_expander.c
-+++ b/drivers/scsi/libsas/sas_expander.c
-@@ -393,7 +393,7 @@ static int sas_ex_phy_discover_helper(struct domain_device *dev, u8 *disc_req,
- 		return res;
- 	dr = &((struct smp_resp *)disc_resp)->disc;
- 	if (memcmp(dev->sas_addr, dr->attached_sas_addr, SAS_ADDR_SIZE) == 0) {
--		sas_printk("Found loopback topology, just ignore it!\n");
-+		pr_notice("Found loopback topology, just ignore it!\n");
- 		return 0;
- 	}
- 	sas_set_ex_phy(dev, single, disc_resp);
-@@ -1262,19 +1262,18 @@ static void sas_print_parent_topology_bug(struct domain_device *child,
- 	};
- 	struct domain_device *parent = child->parent;
- 
--	sas_printk("%s ex %016llx phy 0x%x <--> %s ex %016llx "
--		   "phy 0x%x has %c:%c routing link!\n",
-+	pr_notice("%s ex %016llx phy 0x%x <--> %s ex %016llx phy 0x%x has %c:%c routing link!\n",
- 
--		   ex_type[parent->dev_type],
--		   SAS_ADDR(parent->sas_addr),
--		   parent_phy->phy_id,
-+		  ex_type[parent->dev_type],
-+		  SAS_ADDR(parent->sas_addr),
-+		  parent_phy->phy_id,
- 
--		   ex_type[child->dev_type],
--		   SAS_ADDR(child->sas_addr),
--		   child_phy->phy_id,
-+		  ex_type[child->dev_type],
-+		  SAS_ADDR(child->sas_addr),
-+		  child_phy->phy_id,
- 
--		   sas_route_char(parent, parent_phy),
--		   sas_route_char(child, child_phy));
-+		  sas_route_char(parent, parent_phy),
-+		  sas_route_char(child, child_phy));
- }
- 
- static int sas_check_eeds(struct domain_device *child,
-@@ -2154,23 +2153,23 @@ void sas_smp_handler(struct bsg_job *job, struct Scsi_Host *shost,
- 	case SAS_FANOUT_EXPANDER_DEVICE:
- 		break;
- 	default:
--		printk("%s: can we send a smp request to a device?\n",
--		       __func__);
-+		pr_notice("%s: can we send a smp request to a device?\n",
-+			  __func__);
- 		goto out;
- 	}
- 
- 	dev = sas_find_dev_by_rphy(rphy);
- 	if (!dev) {
--		printk("%s: fail to find a domain_device?\n", __func__);
-+		pr_notice("%s: fail to find a domain_device?\n", __func__);
- 		goto out;
- 	}
- 
- 	/* do we need to support multiple segments? */
- 	if (job->request_payload.sg_cnt > 1 ||
- 	    job->reply_payload.sg_cnt > 1) {
--		printk("%s: multiple segments req %u, rsp %u\n",
--		       __func__, job->request_payload.payload_len,
--		       job->reply_payload.payload_len);
-+		pr_notice("%s: multiple segments req %u, rsp %u\n",
-+			  __func__, job->request_payload.payload_len,
-+			  job->reply_payload.payload_len);
- 		goto out;
- 	}
- 
-diff --git a/drivers/scsi/libsas/sas_init.c b/drivers/scsi/libsas/sas_init.c
-index ede0af78144f..221340ee8651 100644
---- a/drivers/scsi/libsas/sas_init.c
-+++ b/drivers/scsi/libsas/sas_init.c
-@@ -128,19 +128,19 @@ int sas_register_ha(struct sas_ha_struct *sas_ha)
- 
- 	error = sas_register_phys(sas_ha);
- 	if (error) {
--		printk(KERN_NOTICE "couldn't register sas phys:%d\n", error);
-+		pr_notice("couldn't register sas phys:%d\n", error);
- 		return error;
- 	}
- 
- 	error = sas_register_ports(sas_ha);
- 	if (error) {
--		printk(KERN_NOTICE "couldn't register sas ports:%d\n", error);
-+		pr_notice("couldn't register sas ports:%d\n", error);
- 		goto Undo_phys;
- 	}
- 
- 	error = sas_init_events(sas_ha);
- 	if (error) {
--		printk(KERN_NOTICE "couldn't start event thread:%d\n", error);
-+		pr_notice("couldn't start event thread:%d\n", error);
- 		goto Undo_ports;
- 	}
- 
-@@ -623,8 +623,8 @@ struct asd_sas_event *sas_alloc_event(struct asd_sas_phy *phy)
- 	if (atomic_read(&phy->event_nr) > phy->ha->event_thres) {
- 		if (i->dft->lldd_control_phy) {
- 			if (cmpxchg(&phy->in_shutdown, 0, 1) == 0) {
--				sas_printk("The phy%02d bursting events, shut it down.\n",
--					phy->id);
-+				pr_notice("The phy%02d bursting events, shut it down.\n",
-+					  phy->id);
- 				sas_notify_phy_event(phy, PHYE_SHUTDOWN);
- 			}
- 		} else {
-diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
-index 50e12d662ffe..263cb41853c2 100644
---- a/drivers/scsi/libsas/sas_internal.h
-+++ b/drivers/scsi/libsas/sas_internal.h
-@@ -32,7 +32,10 @@
- #include <scsi/libsas.h>
- #include <scsi/sas_ata.h>
- 
--#define sas_printk(fmt, ...) printk(KERN_NOTICE "sas: " fmt, ## __VA_ARGS__)
-+#ifdef pr_fmt
-+#undef pr_fmt
-+#endif
-+#define pr_fmt(fmt) "sas: " fmt
- 
- #define SAS_DPRINTK(fmt, ...) printk(KERN_DEBUG "sas: " fmt, ## __VA_ARGS__)
- 
-diff --git a/drivers/scsi/libsas/sas_phy.c b/drivers/scsi/libsas/sas_phy.c
-index bf3e1b979ca6..d628c0e6289d 100644
---- a/drivers/scsi/libsas/sas_phy.c
-+++ b/drivers/scsi/libsas/sas_phy.c
-@@ -122,11 +122,11 @@ static void sas_phye_shutdown(struct work_struct *work)
- 		phy->enabled = 0;
- 		ret = i->dft->lldd_control_phy(phy, PHY_FUNC_DISABLE, NULL);
- 		if (ret)
--			sas_printk("lldd disable phy%02d returned %d\n",
--				phy->id, ret);
--	} else
--		sas_printk("phy%02d is not enabled, cannot shutdown\n",
--			phy->id);
-+			pr_notice("lldd disable phy%02d returned %d\n",
-+				  phy->id, ret);
-+	} else {
-+		pr_notice("phy%02d is not enabled, cannot shutdown\n", phy->id);
-+	}
- }
- 
- /* ---------- Phy class registration ---------- */
-diff --git a/drivers/scsi/libsas/sas_port.c b/drivers/scsi/libsas/sas_port.c
-index fad23dd39114..f2a25cef85b7 100644
---- a/drivers/scsi/libsas/sas_port.c
-+++ b/drivers/scsi/libsas/sas_port.c
-@@ -147,8 +147,7 @@ static void sas_form_port(struct asd_sas_phy *phy)
- 	}
- 
- 	if (i >= sas_ha->num_phys) {
--		printk(KERN_NOTICE "%s: couldn't find a free port, bug?\n",
--		       __func__);
-+		pr_notice("%s: couldn't find a free port, bug?\n", __func__);
- 		spin_unlock_irqrestore(&sas_ha->phy_port_lock, flags);
- 		return;
- 	}
-
+> From: Erik Schmauss <erik.schmauss@intel.com>
+> 
+> commit 4abb951b73ff0a8a979113ef185651aa3c8da19b upstream.
+> 
+> The table load process omitted adding the operation region address
+> range to the global list. This omission is problematic because the OS
+> queries the global list to check for address range conflicts before
+> deciding which drivers to load. This commit may result in warning
+> messages that look like the following:
+> 
+> [    7.871761] ACPI Warning: system_IO range 0x00000428-0x0000042F conflicts with op_region 0x00000400-0x0000047F (\PMIO) (20180531/utaddress-213)
+> [    7.871769] ACPI: If an ACPI driver is available for this device, you should use it instead of the native driver
+> 
+> However, these messages do not signify regressions. It is a result of
+> properly adding address ranges within the global address list.
+> 
+> Link: https://bugzilla.kernel.org/show_bug.cgi?id=200011
+> Tested-by: Jean-Marc Lenoir <archlinux@jihemel.com>
+> Signed-off-by: Erik Schmauss <erik.schmauss@intel.com>
+> Cc: All applicable <stable@vger.kernel.org>
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> 
+> ---
+>   drivers/acpi/acpica/dsopcode.c |    4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> --- a/drivers/acpi/acpica/dsopcode.c
+> +++ b/drivers/acpi/acpica/dsopcode.c
+> @@ -417,6 +417,10 @@ acpi_ds_eval_region_operands(struct acpi
+>   			  ACPI_FORMAT_UINT64(obj_desc->region.address),
+>   			  obj_desc->region.length));
+>   
+> +	status = acpi_ut_add_address_range(obj_desc->region.space_id,
+> +					   obj_desc->region.address,
+> +					   obj_desc->region.length, node);
+> +
+>   	/* Now the address and length are valid for this opregion */
+>   
+>   	obj_desc->region.flags |= AOPOBJ_DATA_VALID;
+> 
+> 
+> 
 
