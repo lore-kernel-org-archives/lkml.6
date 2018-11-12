@@ -2,99 +2,144 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 876D0C0044B
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:37:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37695C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:38:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5073C2087A
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:37:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AC5322087A
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 10:38:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="W0TRRdEc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5073C2087A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YdGL8brY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC5322087A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729495AbeKLU3n (ORCPT
+        id S1729124AbeKLUb3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 15:29:43 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45841 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729391AbeKLU3l (ORCPT
+        Mon, 12 Nov 2018 15:31:29 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:36452 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727455AbeKLUb3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 15:29:41 -0500
-Received: by mail-wr1-f65.google.com with SMTP id k15-v6so8692153wre.12
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 02:37:02 -0800 (PST)
+        Mon, 12 Nov 2018 15:31:29 -0500
+Received: by mail-qk1-f194.google.com with SMTP id o125so12385689qkf.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 02:38:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jI0WqACAlT+BW1LXg2YNMxvnK2/0hl/3M5gxbeCL2ls=;
-        b=W0TRRdEcKW14hfSgcWBO8o1CwYUuZyCgxN9+4TeflcMN/YRDGiHEaYQvhi6IdB3T8V
-         OALabzdWqSG4wPHDv5OW6CrDlsxajhl3soo4pbPd7G0+8wb+x/8A/CykgZ/MKXw/yYBz
-         GRr6HAvYNPRMC8N/h7gciNHHjzjeJou3M+hT0=
+        h=subject:to:cc:references:from:organization:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=lCiHfQcwpczRrYyGJ0o6p5Z32vtQ+3ZGDvbPzXO7FNA=;
+        b=YdGL8brYaqqtVdKQJRfYi1TWPuWOWnc09l9QdtM1o2LP8mkpc1y7q/hHr0BP3oqkvL
+         IfoNk36V5q5T3ulNKR28e2W/RiF48DoKoEy/Na3qNxYh1MnYvei2gz6Ch6VMhNbrqnXB
+         FVWxEgC8bV2FHdyaWw0dLeUtA6WoNP+G6wXIM=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jI0WqACAlT+BW1LXg2YNMxvnK2/0hl/3M5gxbeCL2ls=;
-        b=UZ1Bjlb5umL1pew9oDrhpgvxobTctgbul3tTOwkL+GWINTMhuaOgxdg7ukrnMPBWeq
-         YSfaOEEDoHCgVUSlS3TYyNGlmV/TIS/Hs864PDQud78MrKjv6hkvlqjJkXrDNl/GH/WV
-         ZSGiD6dq8YCKRfPdekhN5vU4RENQDwA2D9XUPAwY6FezUoUZumzEhOtuDR9+QEyoJok0
-         wQeHfXLOQlXpmU+MDgQjuM268VxdGR4ZiLbxRI5nN8k2UXxYgtKakOZOOn4HAJp3g8jT
-         05e3tzlbJC0lQ3UiNgohh+Vbs5SX5jc1gUc1xzdWOkaEoB+1kz2pymAOugcrZgHX6pUP
-         VIeg==
-X-Gm-Message-State: AGRZ1gIT00Gzeyo74errTLb79VzYBFVwXgXuFrLUO49ZvK5lAoF8B+9m
-        SR1FskYX04Ur2mlgiwcgkxBi9g==
-X-Google-Smtp-Source: AJdET5empmpMJ7AZRIiRWLrdp/RpdJ6CIJFo3IUn2FOKdnA1UyvXujq1ZthVMW2ZczcBrltcDlFdRg==
-X-Received: by 2002:a5d:4b8b:: with SMTP id b11-v6mr481275wrt.72.1542019021985;
-        Mon, 12 Nov 2018 02:37:01 -0800 (PST)
-Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.gmail.com with ESMTPSA id z17-v6sm13747187wrm.65.2018.11.12.02.37.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 12 Nov 2018 02:37:01 -0800 (PST)
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-To:     marc.zyngier@arm.com
-Cc:     sudeep.holla@arm.com, tglx@linutronix.de, jason@lakedaemon.net,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        rnayak@codeaurora.org, sboyd@kernel.org, srini@kernel.org,
-        bjorn.andersson@linaro.org, nicolas.dechesne@linaro.org,
-        ctatlor97@gmail.com, vkoul@kernel.org,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Subject: [RFC PATCH v3 4/4] arm64: dts: add msm8996 compatible to gicv3
-Date:   Mon, 12 Nov 2018 10:33:40 +0000
-Message-Id: <20181112103340.24702-5-srinivas.kandagatla@linaro.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181112103340.24702-1-srinivas.kandagatla@linaro.org>
-References: <20181112103340.24702-1-srinivas.kandagatla@linaro.org>
+        h=x-gm-message-state:subject:to:cc:references:from:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=lCiHfQcwpczRrYyGJ0o6p5Z32vtQ+3ZGDvbPzXO7FNA=;
+        b=XGkc+Dqhfm+jGFnH1AEqliXJdx4EbkQ72pNG13/4Z8azfW0k3R50T9mxSMNv6fCeER
+         zbL7BxItKvwqnDBPKhVqgoioBWKhIrmYICUsCTUnal5yJnEogsYDNuUE0xUz7ZzMXC48
+         zltTMqd35tX3K0Pc06t3PXSNDmlaXylzwCU8gFFsXPlRlPjRFbFCHPXWoG0mulUa7A7r
+         H09PX4OMa4Yu/EUAd67iX7aqRIB2h87lPwSeeoe7qnTyTsT4pqSPXvY9N8lTGvnaiAy3
+         F04VN46NGqJt/+hGwI3rIl6zsMtEkXFmXLzI0eMQFsES4Qwv7oHW91PICHsBXKEqtZV+
+         0c0g==
+X-Gm-Message-State: AGRZ1gJ7A93sdT1TJ7qRWtishKEw/AVWyW4iIHuTUZHoajJv6EStVU6p
+        E42J4io++Eq5CfFrpebucRkHYg==
+X-Google-Smtp-Source: AJdET5d11JG+Klx/N9avmUjp+nthMl0T9TVj5BiItmZFarIe0ZlSrv5dNuiBa8sBOyq1+WcIGA806A==
+X-Received: by 2002:ac8:593:: with SMTP id a19mr313238qth.111.1542019129254;
+        Mon, 12 Nov 2018 02:38:49 -0800 (PST)
+Received: from [192.168.48.13] ([168.181.50.245])
+        by smtp.gmail.com with ESMTPSA id p31sm10916158qkh.86.2018.11.12.02.38.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Nov 2018 02:38:48 -0800 (PST)
+Subject: Re: [PATCH 4.9 000/141] 4.9.137-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Cc:     shuah@kernel.org, patches@kernelci.org,
+        lkft-triage@lists.linaro.org, ben.hutchings@codethink.co.uk,
+        stable@vger.kernel.org, akpm@linux-foundation.org,
+        torvalds@linux-foundation.org, linux@roeck-us.net,
+        Sasha Levin <sashal@kernel.org>
+References: <20181111221627.853046496@linuxfoundation.org>
+From:   Rafael David Tinoco <rafael.tinoco@linaro.org>
+Organization: Linaro
+Message-ID: <18c91c75-18c8-21a1-3051-65007bd2f30f@linaro.org>
+Date:   Mon, 12 Nov 2018 08:38:44 -0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
+In-Reply-To: <20181111221627.853046496@linuxfoundation.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Signed-off-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
----
- arch/arm64/boot/dts/qcom/msm8996.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 11/11/18 8:24 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.9.137 release.
+> There are 141 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Tue Nov 13 22:15:38 UTC 2018.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v4.x/stable-review/patch-4.9.137-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-4.9.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+> Pseudo-Shortlog of commits:
+> 
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>      Linux 4.9.137-rc1
+> 
+...
+> Prarit Bhargava <prarit@redhat.com>
+>      cpupower: Fix coredump on VMWare
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8996.dtsi b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-index 16c3fc0f4e69..e38da221f9a9 100644
---- a/arch/arm64/boot/dts/qcom/msm8996.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8996.dtsi
-@@ -902,7 +902,7 @@
- 		};
- 
- 		intc: interrupt-controller@9bc0000 {
--			compatible = "arm,gic-v3";
-+			compatible = "qcom,msm8996-gic-v3", "arm,gic-v3";
- 			#interrupt-cells = <3>;
- 			interrupt-controller;
- 			#redistributor-regions = <1>;
+Greg, maybe...
+
+commit ef8d3a128c1f1de7ffdedb2f14e846e10fd3fec3
+Author: Prarit Bhargava <prarit@redhat.com>
+Date:   Mon Oct 8 12:06:19 2018
+
+     cpupower: Fix coredump on VMWare
+
+     [ Upstream commit f69ffc5d3db8f1f03fd6d1df5930f9a1fbd787b6 ]
+
+should be dropped from v4.9 (and v4.4) since it causes:
+
+$ make V=1 -C tools/power/cpupower all
+
+gcc -fPIC -DVERSION=\"4.9.136.142.g36c7703\" -DPACKAGE=\"cpupower\" 
+-DPACKAGE_BUGREPORT=\"linux-pm@vger.kernel.org\" -D_GNU_SOURCE -pipe 
+-DNLS -Wall -Wchar-subscripts -Wpointer-arith -Wsign-compare 
+-Wno-pointer-sign -Wdeclaration-after-statement -Wshadow -O1 -g -DDEBUG 
+-I./lib -I ./utils -o utils/helpers/amd.o -c utils/helpers/amd.c
+utils/helpers/amd.c: In function ‘decode_pstates’:
+utils/helpers/amd.c:106:39: error: ‘union msr_pstate’ has no member 
+named ‘fam17h_bits’
+    if ((cpu_family == 0x17) && (!pstate.fam17h_bits.en))
+
+Due to nonexistent CPU (flag) support.
+
+Replied to Sasha on specific commits for both, v4.4 and v4.9.
+
+Thanks!
 -- 
-2.19.1
-
+Rafael D. Tinoco
+Linaro Kernel Validation
