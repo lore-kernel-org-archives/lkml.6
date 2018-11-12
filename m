@@ -2,83 +2,87 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D516BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:02:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DF28C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:09:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48289214DB
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:02:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 438BC20871
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 04:09:57 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="DT0fGchN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48289214DB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N0ZeVMqh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 438BC20871
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730598AbeKLNxc (ORCPT
+        id S1730549AbeKLOBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 08:53:32 -0500
-Received: from conuserg-10.nifty.com ([210.131.2.77]:46685 "EHLO
-        conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726801AbeKLNxc (ORCPT
+        Mon, 12 Nov 2018 09:01:14 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:40723 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726270AbeKLOBN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 08:53:32 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id wAC41xir030487;
-        Mon, 12 Nov 2018 13:01:59 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com wAC41xir030487
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1541995320;
-        bh=xF+7SkazDq4cdU6JomuI/6Nri05HwPm8HbqEPm3cCaw=;
-        h=From:To:Cc:Subject:Date:From;
-        b=DT0fGchNdfExhRr3o0bE5qNDHNfP5ZrIxfaPXnCw+4E/Lb263ApKkW5dJ0EYcthGl
-         MLEyQvpenmplzOQ5P1a+EGBu7pkO394DWugyLGonrQspKtRnFOd3uoL0f4Va6XQnw1
-         PgEosk9aAZ/nCI+sNN0ma1gYZodGY6093mVDj529Eq9UnaIbAzJy4Mml9Ez4zd+3GH
-         ILRsYl3UPO5b7C+JEnLpFjBfAj8qRDrK3NUSF4i7YSOl6FGmzT80DzIDz8N9E+TXkG
-         +/YazXF/lLISTFmCRXQMMy9FkruKZk7T0A/DCUEDOClsl4C356ostYl29FeIk9dP+S
-         XBEKJoNGWEiOw==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] kbuild: remove 'prepare' and 'scripts' dummies for external module build
-Date:   Mon, 12 Nov 2018 13:01:25 +0900
-Message-Id: <1541995285-11144-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Mon, 12 Nov 2018 09:01:13 -0500
+Received: by mail-pl1-f194.google.com with SMTP id q19-v6so3644527pll.7
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 20:09:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=U/YrlSOjfoby7Mh3Eo+o6RvHJVuLKIojmafn2+XFADM=;
+        b=N0ZeVMqh/GxvW7RY+OFORG+5CcvBR0f3CoXyYFUVt3Mmk7sKyncT43NfN5IkE/esyQ
+         uVOuGToZNwKI7GCbCgAePZuhrY5geZSFT+963W5Ssmy6ULSDYkYisTsA+mtMCHv2LDeQ
+         L8l2jvgvvUZW04X4jMQXJmnGQwJw3qROQfL5kbhCXS40f7Wr+4rqTtYgNNXjqRHv2xMu
+         RlnEUriSUAdFYLePAUJFRijeXrzdvm9PEOk98995f07dn8clela/LWKnR/9uh3FKycBr
+         ofTOGXJFk2ux41OeqOGJBOOd+WRt85bm5oH40ggj5+9S3aDGnwqc9/NqrspurRn6qFJi
+         MS1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=U/YrlSOjfoby7Mh3Eo+o6RvHJVuLKIojmafn2+XFADM=;
+        b=UMQVrcSsbwbA7wIyQuqCXmwOwTaf1dqBtnIUUwuUMyp2bqGjavkq5I++7AN2/iIy5c
+         I/60JmtHiOdMaRlPIr0KNYpCVzBZvZXPSy6l1wPuBZSKEaA2dG8VnY2TSXkKONv1tESE
+         9iXCERT740x1uv9xaBiGapd1dBejFkN3qY2gAYSIOVIoSjxj3IlTPEDKj05aKc8fxXZY
+         xUDOboSssmtnCSFgFPdo7ELuZ3U2OmJWvA6JXzmi7eGzx21ixluCTNxeW6JiBuDxdWNd
+         1BN0v64FBy8Z5jjp8xcPFmED0YOhDZaWOWNDOFm/kUmEb0PIlapk1PzgX84bsBG/qY4f
+         4qeQ==
+X-Gm-Message-State: AGRZ1gJ2MCZYuxM+Ac5dkc2t3hnk/0ZMCI36U+iezfQB+yCBixSn6vi6
+        hRB6T7bwmGYVbPufsJvqei4=
+X-Google-Smtp-Source: AJdET5f9ZwFywKSWEbvLmCmGDyrrXyl6ezjc1ckvoaBe6bnFVWikKKkDR0gWzII6h2QcZnov4xTmug==
+X-Received: by 2002:a17:902:32a4:: with SMTP id z33-v6mr18000173plb.168.1541995794071;
+        Sun, 11 Nov 2018 20:09:54 -0800 (PST)
+Received: from app09.andestech.com (59-120-53-16.HINET-IP.hinet.net. [59.120.53.16])
+        by smtp.gmail.com with ESMTPSA id i189-v6sm27536599pfc.16.2018.11.11.20.09.52
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Nov 2018 20:09:53 -0800 (PST)
+From:   Zong Li <zongbox@gmail.com>
+To:     palmer@sifive.com, aou@eecs.berkeley.edu,
+        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        zong@andestech.com
+Cc:     Zong Li <zongbox@gmail.com>
+Subject: [PATCH 0/2] Fix some issue on RV32
+Date:   Mon, 12 Nov 2018 12:07:42 +0800
+Message-Id: <cover.1541995312.git.zongbox@gmail.com>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Make is lenient enough to ignore missing rules as long as they are marked
-as PHONY. Remove dummy targets.
+This patches fix the build fail and kernel module install failed on RV32.
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+Zong Li (2):
+  RISC-V: Request stat64 on RV32
+  RISC-V: Support MODULE_SECTIONS mechanism on RV32
 
- Makefile | 3 ---
- 1 file changed, 3 deletions(-)
+ arch/riscv/Kconfig                  |  2 +-
+ arch/riscv/include/asm/module.h     | 28 +++++++++++++++-------------
+ arch/riscv/include/asm/unistd.h     |  1 +
+ arch/riscv/kernel/module-sections.c | 30 ++++++++++++++++--------------
+ 4 files changed, 33 insertions(+), 28 deletions(-)
 
-diff --git a/Makefile b/Makefile
-index 766a64e..7508243 100644
---- a/Makefile
-+++ b/Makefile
-@@ -1610,10 +1610,7 @@ help:
- 	@echo  '  clean           - remove generated files in module directory only'
- 	@echo  ''
- 
--# Dummies...
- PHONY += prepare scripts
--prepare: ;
--scripts: ;
- endif # KBUILD_EXTMOD
- 
- clean: $(clean-dirs)
 -- 
 2.7.4
 
