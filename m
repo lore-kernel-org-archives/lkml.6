@@ -2,114 +2,120 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A25E6C43610
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:59:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5B09C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:00:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6606F22512
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:59:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fGg6f+3v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6606F22512
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 709C722419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 17:00:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 709C722419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729609AbeKMCx0 (ORCPT
+        id S1729816AbeKMCyG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 21:53:26 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:51612 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727130AbeKMCxZ (ORCPT
+        Mon, 12 Nov 2018 21:54:06 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:42544 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727130AbeKMCyG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 21:53:25 -0500
-Received: by mail-it1-f194.google.com with SMTP id m34-v6so13628328iti.1;
-        Mon, 12 Nov 2018 08:59:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=g3aAcVZkUdgrmpGIMCH7ZxaR4fyo0bRUS9BsV8k83H4=;
-        b=fGg6f+3v21EyMFVZuxokk8A9DdZMEN9xY6C2TkUM2NCRFaY1IG+Iqaicp7/tIgr8yF
-         lW0swmlDqTM5vGSA41Ty3+0ZuO1T9+JgWlc89ABoHlE79nrAdj3tqQGX2a8kvOXDKrhK
-         5JCGvI1BCCbhZORxi79kESRsl7GKM13crMuy5SZ6fX24kRNrQzs9agcXPaaXbE3KEYpv
-         MBCfCxGZCZNl2vCfKMSn1jFmcj3OASdzwWqRto7erJZe7ZY8NjpOVayKGflKKAvRcxc4
-         0athJwcv/ExXX4tqANDFk7iOVK7yk35NG/WQv/r2tU1NxZSXKxbpKK1NFEPdMGLRfmpo
-         JPgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=g3aAcVZkUdgrmpGIMCH7ZxaR4fyo0bRUS9BsV8k83H4=;
-        b=nsBhCqmM/qGLDxzud6WESR0J64XI90cmfExH998cLQWH2Wlc7UsWkHZUPHg79br9rq
-         jhZQ3zHnVO/cPjZWGRCZKrH7abjqvy5GAYfQXusM9KGvVnzww+LsELorzZq7UiVGRI9B
-         OaSZJR8/C+34QG8DsO+mSSIQukZsaSORX3gaz2JqjEDRrrySbdBHl0ncDBPiTEkYeaYE
-         gNZGnFPazyAFJ27O6bU8tO2NrQiEBKsFHK8VlP/BULyGS4BVLyXoVBLcgdfUiHBXDYGD
-         AMU8oaXXnzana+qu9ki94xbN6iVHqUcJn4SpXEzvEwbsSNRyuhRTYVWkOpLWOY6O6kNP
-         sRDQ==
-X-Gm-Message-State: AGRZ1gIWBkGUIjVzzXD3FA9ppzQ2HtJ+LStmJ6Lgy6xYer2933cQZdyX
-        W2xX2kIvae6joeELg7T6LovRqcq587zzuSzJSN0=
-X-Google-Smtp-Source: AJdET5eePeQwKjYYiO9xEO2ByS2Jdz+xDr0c9R0xwPtNT4mQ2eGywat7ZltscHjm7CjiUdONaw+h15j02QRMIIVbl+c=
-X-Received: by 2002:a24:a0cb:: with SMTP id o194mr377282ite.115.1542041959430;
- Mon, 12 Nov 2018 08:59:19 -0800 (PST)
+        Mon, 12 Nov 2018 21:54:06 -0500
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-03.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gMFZ8-0004m9-Nb from joseph_myers@mentor.com ; Mon, 12 Nov 2018 08:59:58 -0800
+Received: from digraph.polyomino.org.uk (137.202.0.90) by
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Mon, 12 Nov 2018 16:59:55 +0000
+Received: from jsm28 (helo=localhost)
+        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
+        (envelope-from <joseph@codesourcery.com>)
+        id 1gMFZ4-0002jk-QD; Mon, 12 Nov 2018 16:59:54 +0000
+Date:   Mon, 12 Nov 2018 16:59:54 +0000
+From:   Joseph Myers <joseph@codesourcery.com>
+X-X-Sender: jsm28@digraph.polyomino.org.uk
+To:     Florian Weimer <fweimer@redhat.com>
+CC:     Willy Tarreau <w@1wt.eu>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        Daniel Colascione <dancol@google.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        Carlos O'Donell <carlos@redhat.com>,
+        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+In-Reply-To: <87zhufvntw.fsf@oldenburg.str.redhat.com>
+Message-ID: <alpine.DEB.2.21.1811121647310.6607@digraph.polyomino.org.uk>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com> <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <20181111081725.GA30248@1wt.eu> <3664a508-ca74-4ff0-39a6-34543194a24e@gmail.com> <20181111111143.GB4189@1wt.eu>
+ <87zhufvntw.fsf@oldenburg.str.redhat.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181112160628.86620-1-mika.westerberg@linux.intel.com> <20181112160628.86620-5-mika.westerberg@linux.intel.com>
-In-Reply-To: <20181112160628.86620-5-mika.westerberg@linux.intel.com>
-From:   Yehezkel Bernat <yehezkelshb@gmail.com>
-Date:   Mon, 12 Nov 2018 18:59:02 +0200
-Message-ID: <CA+CmpXvZJFk=kYvZybgTtqDWBVP_jSE37tdkQbyGA8U9WOrkoQ@mail.gmail.com>
-Subject: Re: [PATCH 4/4] thunderbolt: Export IOMMU based DMA protection
- support to userspace
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org, joro@8bytes.org,
-        dwmw2@infradead.org, baolu.lu@linux.intel.com, ashok.raj@intel.com,
-        bhelgaas@google.com, rjw@rjwysocki.net, jacob.jun.pan@intel.com,
-        Andreas Noever <andreas.noever@gmail.com>,
-        michael.jamet@intel.com, lukas@wunner.de,
-        Christian Kellner <ckellner@redhat.com>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) To
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 6:06 PM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
->
-> Recent systems shipping with Windows 10 version 1803 or later may
-> support a feature called Kernel DMA protection [1]. In practice this
-> means that Thunderbolt connected devices are placed behind an IOMMU
-> during the whole time it is connected (including during boot) making
-> Thunderbolt security levels redundant. Some of these systems still have
-> Thunderbolt security level set to "user" in order to support OS
-> downgrade (the older version of the OS might not support IOMMU based DMA
-> protection so connecting a device still relies on user approval then).
->
-> Export this information to userspace by introducing a new sysfs
-> attribute (iommu_dma_protection). Based on it userspace tools can make
-> more accurate decision whether or not authorize the connected device.
->
-> In addition update Thunderbolt documentation regarding IOMMU based DMA
-> protection.
->
-> [1] https://docs.microsoft.com/en-us/windows/security/information-protection/kernel-dma-protection-for-thunderbolt
->
-> Signed-off-by: Mika Westerberg <mika.westerberg@linux.intel.com>
-> ---
+On Sun, 11 Nov 2018, Florian Weimer wrote:
 
-I can't comment on the IOMMU side, but the Thunderbolt side looks good to me.
+> The kernel does not know about TCB layout, so a lot of low-level
+> threading aspects are defined by userspace.
+> 
+> The kernel does not know about POSIX cancellation.  Directly calling
+> system calls breaks support for that.
 
-Just one point:
-Have you considered the option to add this property per (TBT?) device?
-If the kernel may decide to enable/disable the IOMMU or AST per device, maybe
-it should be on this level.
-Or maybe the IOMMU decision isn't going to change (it's system-wide) and the AST
-decision will be communicated per device by a new sysfs attribute anyway, if
-needed?
+Indeed.  Where cancellation is involved, glibc needs to know exactly what 
+instructions might be calling a cancellable syscall and what instructions 
+are before or after the syscall (see Adhemerval's patches for bug 12683).
+
+This involves an ABI that is not just specific to a particular libc, but 
+specific to a particular libc version.  So it's inherently unsuitable to 
+put cancellable syscalls in libc_nonshared.a, as well as unsuitable to put 
+them in any kernel-provided library.
+
+The interface for setting errno may also be libc-specific, for any 
+syscalls involving setting errno.
+
+Syscalls often involve types in their interfaces such as off_t and struct 
+timespec.  libcs may have multiple different variants of those types; the 
+variants available, and the ways of selecting them, are libc-specific and 
+libc-version-specific.  So for any syscall for which the proper userspace 
+interface involves one of those types, wrappers for it are inherently 
+specific to a particular libc and libc version.  (See e.g. how preadv2 and 
+pwritev2 syscalls also have preadv64v2 and pwritev64v2 APIs in glibc, with 
+appropriate redirections hased on __USE_FILE_OFFSET64, which is in turn 
+based on _FILE_OFFSET_BITS.)
+
+There are many ABI variants that are relevant to glibc but not to the 
+kernel.  Some of these involve ABI tagging of object files to indicate 
+which ABI variant an object is built for (and those that don't have such 
+tagging ought to have it), to prevent accidental linking of objects for 
+different ABIs.  How to build objects for different userspace ABIs is not 
+something the kernel should need to know anything about; it's most 
+naturally dealt with at the level of building compiler multilibs and libc.
+
+glibc deliberately avoids depending at compile time on the existence of 
+libgcc_s.so to facilitate bootstrap builds (a stripped glibc binary built 
+with a C-only static-only inhibit_libc GCC that was built without glibc 
+should be identical to the result of a longer alternating sequence of GCC 
+and glibc builds).  I don't think any kernel-provided library would be any 
+better to depend on.
+
+What one might suggest is that when new syscalls are added, kernel 
+developers should at least obtain agreement on linux-api from libc people 
+about what the userspace interface to the syscall should be.  That means 
+the userspace-level types (such as off_t and struct timespec), and the 
+choice of error handling (returning error number or setting errno), and 
+the name of the header declaring the function, and the name of the 
+function, and how the syscall relates to thread cancellation, for example 
+- and whatever other issues may be raised.
+
+-- 
+Joseph S. Myers
+joseph@codesourcery.com
