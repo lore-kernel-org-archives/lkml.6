@@ -6,83 +6,93 @@ X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1B2FC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:01:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC948C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:03:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCF7E208A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:01:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCF7E208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id B5E892087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:03:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5E892087F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730190AbeKLLv6 convert rfc822-to-8bit (ORCPT
+        id S1730100AbeKLLyr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 06:51:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:41534 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729903AbeKLLv6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 06:51:58 -0500
-Received: from vmware.local.home (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 61FF32087F;
-        Mon, 12 Nov 2018 02:01:06 +0000 (UTC)
-Date:   Sun, 11 Nov 2018 21:01:05 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     Oleksandr Natalenko <oleksandr@natalenko.name>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Eric Dumazet <edumazet@google.com>,
-        Dave Jones <davej@codemonkey.org.uk>, netdev@vger.kernel.org,
-        linux-rt-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: WARN_ON() in netconsole with PREEMPT_RT
-Message-ID: <20181111210105.7f376c35@vmware.local.home>
-In-Reply-To: <a23ae3a8501d5c996d7a9dd2f27dd5fa@natalenko.name>
-References: <f9111ab09dbc264c8ff8b3b79e9f4c06@natalenko.name>
-        <a23ae3a8501d5c996d7a9dd2f27dd5fa@natalenko.name>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Mon, 12 Nov 2018 06:54:47 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:46684 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729969AbeKLLyr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 06:54:47 -0500
+Received: by mail-qk1-f195.google.com with SMTP id q1so10912671qkf.13
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 18:03:54 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=Z+7Mjs3gE6ArwESe4etnnzBM2uOgMJVX5W/+n5WkpZU=;
+        b=mCJNlO7X2D8MIOFT2of8GiiPmi82NHEOJgutwNKXSBEutUL7CvUlhQ58yHILJVZouf
+         5pjv+fBLxvFuzGbENMIvdi9625kndaaVNr1+WtIbABh3TJS3oZlG73VvZ0iCdBEytOy5
+         34f4ctf3em+zChXXnMUMgwKdjMqXfG2fXGKPYLNIEUOj5bPchSL5D6owtfSjkwXRcsWH
+         H6TqOQBVHyWon0BCGB4kTywlrWpJKjT/u4vMCx10K9Zj3mkQkOxWuEQLCOHBQFZt4arA
+         ReLL6ioJnGHokgLuC08v+tAobaFMNdkRAEa+eLzCJSMHDBhiRUOyFWZclIQJRPGWil/t
+         ckGg==
+X-Gm-Message-State: AGRZ1gJGxVnWpJmUIn5zitAcI9oNtfNRTXeW/f/v6zG/uDL+aOnh+G/d
+        /JfgJwWPHfAtELF//1M9NIFwyQ==
+X-Google-Smtp-Source: AJdET5cGhTJIg2z4Z5v1vRIKl5ZsUZwLobLi2GZAjGwWH5aT0z/0uFsxpdIGJcw12NuWBS7/T7zc3Q==
+X-Received: by 2002:ac8:955:: with SMTP id z21-v6mr17012902qth.305.1541988234162;
+        Sun, 11 Nov 2018 18:03:54 -0800 (PST)
+Received: from [10.150.73.190] (97.sub-174-227-17.myvzw.com. [174.227.17.97])
+        by smtp.gmail.com with ESMTPSA id 3sm6743879qkd.84.2018.11.11.18.03.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Nov 2018 18:03:53 -0800 (PST)
+Subject: Re: Official Linux system wrapper library?
+To:     Vlastimil Babka <vbabka@suse.cz>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Daniel Colascione <dancol@google.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Adhemerval Zanella <adhemerval.zanella@linaro.org>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+ <20181110192027.GA29892@kroah.com>
+ <6a415f31-2bce-72fa-2ff0-5cbbd572347b@suse.cz>
+From:   Carlos O'Donell <carlos@redhat.com>
+Openpgp: preference=signencrypt
+Organization: Red Hat
+Message-ID: <94ee3c86-781f-e865-8b7a-aa6ebb9a2609@redhat.com>
+Date:   Sun, 11 Nov 2018 21:03:50 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+In-Reply-To: <6a415f31-2bce-72fa-2ff0-5cbbd572347b@suse.cz>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 11 Nov 2018 21:16:00 +0100
-Oleksandr Natalenko <oleksandr@natalenko.name> wrote:
-
-
-> > This is a v4.19.1-rt3-based kernel.
-> > 
-> > The WARN_ON() is:
-> > 
-> > 362 void netpoll_send_udp(struct netpoll *np, const char *msg, int len)
-> > 363 {
-> > …
-> > 372     WARN_ON_ONCE(!irqs_disabled());
-> > …
-> > 
-> > If that matters, I have "threadirqs" passed to the kernel.
-> > 
-> > Netconsole seems to work even after this warning. Is this OK/expected?
-> > 
-> > Thanks.  
+On 11/10/18 2:58 PM, Vlastimil Babka wrote:
+> On 11/10/18 8:20 PM, Greg KH wrote:
+>> On Sat, Nov 10, 2018 at 10:52:06AM -0800, Daniel Colascione wrote:
+>>> Now that glibc is basically not adding any new system call wrappers,
+>>
+>> Why are they not doing that anymore?
 > 
-> Oh, I see that write_msg() calls netpoll_send_udp() under 
-> spin_lock_irqsave(), but in PREEMPT_RT this, AFAIK, does not disable 
-> interrupts.
+> FYI just noticed there's a topic relevant to this in LPC Toolchain MC:
 > 
-> So, the real question here is whether the interrupts should be indeed 
-> disabled. And if so, -rt should replace spin_lock_irqsave() call there 
-> with what? local_irq_save()? and get rid of the warning?
-> 
+> https://linuxplumbersconf.org/event/2/contributions/149/
 
-Why do we care if interrupts are disabled with PREEMPT_RT here?
+Yes, and Adhemerval put it there on purpose to continue the discussion
+between glibc developers and kernel developers. Florian Weimer and I have
+both provided input to that talk, so if something comes out of the talk
+and you want to talk more, please just reach out.
 
-printk() itself has a lot of issues with PREEMPT_RT that we are working
-on dealing with. Right now netconsole is actually at the end of that
-todo list.
+I hope that kernel developers interested in this topic will attend
+and discuss the various ways forward on certain interesting topics :-)
 
--- Steve
+-- 
+Cheers,
+Carlos.
