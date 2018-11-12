@@ -2,126 +2,102 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-1.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0865BC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:38:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1070FC43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:55:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C710B2243E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:38:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C710B2243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id C0374223D0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 13:55:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="edDKRQlB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0374223D0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729874AbeKLXbT (ORCPT
+        id S1729629AbeKLXtB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 18:31:19 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:47702 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729204AbeKLXbS (ORCPT
+        Mon, 12 Nov 2018 18:49:01 -0500
+Received: from conssluserg-04.nifty.com ([210.131.2.83]:23849 "EHLO
+        conssluserg-04.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729129AbeKLXtB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 18:31:18 -0500
-Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wACDaSp9119749
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 08:37:58 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nq810xu12-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 08:37:57 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <haver@linux.vnet.ibm.com>;
-        Mon, 12 Nov 2018 13:37:57 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 12 Nov 2018 13:37:55 -0000
-Received: from b01ledav002.gho.pok.ibm.com (b01ledav002.gho.pok.ibm.com [9.57.199.107])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wACDbsYo17498348
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 12 Nov 2018 13:37:54 GMT
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EF0C4125A96;
-        Mon, 12 Nov 2018 13:22:16 +0000 (GMT)
-Received: from b01ledav002.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D357012F3AE;
-        Mon, 12 Nov 2018 11:26:10 +0000 (GMT)
-Received: from ltc.linux.ibm.com (unknown [9.16.170.189])
-        by b01ledav002.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 12 Nov 2018 11:26:10 +0000 (GMT)
+        Mon, 12 Nov 2018 18:49:01 -0500
+Received: from mail-vk1-f180.google.com (mail-vk1-f180.google.com [209.85.221.180]) (authenticated)
+        by conssluserg-04.nifty.com with ESMTP id wACDtHvS029364
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 22:55:18 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-04.nifty.com wACDtHvS029364
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1542030918;
+        bh=kYBrm+H9kkpFSmTYkQyHuk0fXU2LjgMKhZRdchgAkEQ=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=edDKRQlBsRW860/hmIzmlbxYmgh9bAWeY1RflfK2gcJAZIUGDIaUZjckBxkKNr6IM
+         K6Px6Cet/xjHMlit4bYtL3GTWYK+QHNE0rUk8Xirx39j24gI2uhvjA79pdHsurfXAd
+         P/QvTiuGADRv1ijewZBMb/4jAxPM1d4ATBcKAE40G88e/XB5VAnd+j9z9/IjitrF5d
+         0FPt8HWkg+NHT42DE44uyvbJt4RHP+ango8QoiXjSKxc5HzKzcjJ2nxWAcD1OE1XE/
+         rLijqqjYLC94TtRkv6c126PQQh7k9t1MvLpavRIxeEryvCgQ5D8K3lmYpsqeoZl5CO
+         4AlE1hGxWDx0Q==
+X-Nifty-SrcIP: [209.85.221.180]
+Received: by mail-vk1-f180.google.com with SMTP id v70so1966735vkv.7
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 05:55:17 -0800 (PST)
+X-Gm-Message-State: AGRZ1gKlkycd3TlP5ghqZVgNw7yR7ylcY3qEtI1J93PPkoUVvVtcli2K
+        MgBWQv8SJSY7O5oISvy77+8v3YJtDLF6JWRsM1c=
+X-Google-Smtp-Source: AJdET5cDeQBndd+M9SQzGz1Ll7GgdShkkDggUVIRtiVnMaDl5XM9xMCWxh1rovoepiYx3mk5MQLa5SNfEnbt4cBCVes=
+X-Received: by 2002:a1f:5e47:: with SMTP id s68mr411096vkb.64.1542030916756;
+ Mon, 12 Nov 2018 05:55:16 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Date:   Mon, 12 Nov 2018 12:29:02 +0100
-From:   haver <haver@linux.vnet.ibm.com>
-To:     zhong jiang <zhongjiang@huawei.com>
-Cc:     gregkh@linuxfoundation.org, gpiccoli@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] misc: genwqe: remove duplicated include file
-In-Reply-To: <1537420031-30405-1-git-send-email-zhongjiang@huawei.com>
-References: <1537420031-30405-1-git-send-email-zhongjiang@huawei.com>
-X-Sender: haver@linux.vnet.ibm.com
-User-Agent: Roundcube Webmail/1.0.1
-X-TM-AS-GCONF: 00
-x-cbid: 18111213-2213-0000-0000-00000315FE87
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010033; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116369; UDB=6.00578947; IPR=6.00896477;
- MB=3.00024122; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-12 13:37:56
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111213-2214-0000-0000-00005C3A48B3
-Message-Id: <2fccbaf463b4adabe06937840627d844@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811120123
+References: <1541992013-18657-1-git-send-email-yamada.masahiro@socionext.com> <CAGXu5j+Otsyy3g6BotjzAR3Ek1cTd8uspCqcR7-EpqPJ5xHawA@mail.gmail.com>
+In-Reply-To: <CAGXu5j+Otsyy3g6BotjzAR3Ek1cTd8uspCqcR7-EpqPJ5xHawA@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Mon, 12 Nov 2018 22:54:41 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS8OCO8roYjS8w0_yoUmyUrEZBtnLe_D9y7qNwtGGbNUg@mail.gmail.com>
+Message-ID: <CAK7LNAS8OCO8roYjS8w0_yoUmyUrEZBtnLe_D9y7qNwtGGbNUg@mail.gmail.com>
+Subject: Re: [PATCH] x86: remove gcc-x86_*-has-stack-protector.sh checks
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>, X86 ML <x86@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Sven Joachim <svenjoac@gmx.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-09-20 07:07, zhong jiang wrote:
-> module.h has duplicated include. hence just remove
-> redundant include file.
-> 
-> Signed-off-by: zhong jiang <zhongjiang@huawei.com>
-> ---
->  drivers/misc/genwqe/card_base.c | 1 -
->  drivers/misc/genwqe/card_ddcb.c | 1 -
->  2 files changed, 2 deletions(-)
-> 
-> diff --git a/drivers/misc/genwqe/card_base.c 
-> b/drivers/misc/genwqe/card_base.c
-> index c7cd367..d137d0fa 100644
-> --- a/drivers/misc/genwqe/card_base.c
-> +++ b/drivers/misc/genwqe/card_base.c
-> @@ -24,7 +24,6 @@
->   * controlled from here.
->   */
-> 
-> -#include <linux/module.h>
->  #include <linux/types.h>
->  #include <linux/pci.h>
->  #include <linux/err.h>
-> diff --git a/drivers/misc/genwqe/card_ddcb.c 
-> b/drivers/misc/genwqe/card_ddcb.c
-> index 656449c..9a65bd9 100644
-> --- a/drivers/misc/genwqe/card_ddcb.c
-> +++ b/drivers/misc/genwqe/card_ddcb.c
-> @@ -27,7 +27,6 @@
->   */
-> 
->  #include <linux/types.h>
-> -#include <linux/module.h>
->  #include <linux/sched.h>
->  #include <linux/wait.h>
->  #include <linux/pci.h>
+On Mon, Nov 12, 2018 at 5:29 PM Kees Cook <keescook@chromium.org> wrote:
+>
+> On Sun, Nov 11, 2018 at 9:06 PM, Masahiro Yamada
+> <yamada.masahiro@socionext.com> wrote:
+> > gcc-x86_64-has-stack-protector.sh was introduced by commit 4f7fd4d7a791
+> > ("[PATCH] Add the -fstack-protector option to the CFLAGS") in 2006
+> > to work around buggy compilers.
+> >
+> > gcc-x86_32-has-stack-protector.sh was introduced by commit 60a5317ff0f4
+> > ("x86: implement x86_32 stack protector"), which did not clearly state
+> > whether compilers were still producing broken code at that time.
+> >
+> > Now, the minimum reuquired GCC version is 4.6, which was released in
+> > 2011. Probably, we can dump these old compiler checks.
+>
+> NAK. We need to keep this because we've seen recent regressions with
+> stack protection (e.g. gcc briefly used global instead of tls for the
+> canary, which silently broke the use of stack protectors). Since the
+> gcc/kernel "API" for the canary is so fragile we need to keep these
+> tests to make sure things end up where they're expected.
 
-Signed-off-by: Frank Haverkamp <haver@linux.vnet.ibm.com>
+Thanks for your feedback.
 
+I did not know this is still fragile even after ten years time.
+
+One more curious thing is, x86 is the only arch ever
+that has had this kind of script check.
+
+
+
+-- 
+Best Regards
+Masahiro Yamada
