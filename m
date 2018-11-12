@@ -2,178 +2,90 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BACCDC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:20:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2326C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04C3F208A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:20:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C3F208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id A605220862
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 02:24:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A605220862
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729838AbeKLMLL (ORCPT
+        id S1729872AbeKLMPk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 07:11:11 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45802 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729529AbeKLMLL (ORCPT
+        Mon, 12 Nov 2018 07:15:40 -0500
+Received: from mail-qk1-f171.google.com ([209.85.222.171]:46776 "EHLO
+        mail-qk1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729000AbeKLMPk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 07:11:11 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAC2EHW1079636
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 21:20:15 -0500
-Received: from e11.ny.us.ibm.com (e11.ny.us.ibm.com [129.33.205.201])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2npxq4c1k7-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 21:20:15 -0500
-Received: from localhost
-        by e11.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Mon, 12 Nov 2018 02:20:14 -0000
-Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
-        by e11.ny.us.ibm.com (146.89.104.198) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Mon, 12 Nov 2018 02:20:09 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAC2K8f829819024
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Mon, 12 Nov 2018 02:20:08 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4446FB2064;
-        Mon, 12 Nov 2018 02:20:08 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 0D19BB205F;
-        Mon, 12 Nov 2018 02:20:08 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.207.24])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Mon, 12 Nov 2018 02:20:07 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 7BA4616C5D4F; Sun, 11 Nov 2018 18:20:09 -0800 (PST)
-Date:   Sun, 11 Nov 2018 18:20:09 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Steven Rostedt <rostedt@goodmis.org>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        dhowells@redhat.com, edumazet@google.com, fweisbec@gmail.com,
-        oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 1/4] rcu: Eliminate BUG_ON() for sync.c
-Reply-To: paulmck@linux.ibm.com
-References: <20181111193156.GA3666@linux.ibm.com>
- <20181111193217.4010-1-paulmck@linux.ibm.com>
- <20181111210704.7bb9946f@vmware.local.home>
+        Mon, 12 Nov 2018 07:15:40 -0500
+Received: by mail-qk1-f171.google.com with SMTP id q1so10963883qkf.13
+        for <linux-kernel@vger.kernel.org>; Sun, 11 Nov 2018 18:24:43 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=vAAG+j4tOWw+NtYA9joKtj9X/01COWc+LXRYPIryUbk=;
+        b=rbUszM99TbIDbpUj7oRKODdXcwstXXGFW2G++4MPiF1eNi/luc2CQY4MZDDs2uAuzW
+         WssA5NAw+8cuDdbgvWnRtKZgrBhKqMTVqeoTeGAwUs3vC4sYip6fh5Rk5gUbWGE7JkQR
+         4RXFqeMF1K/syfucjNYpB9tw2CqAiprIUGz+EzUnrWrE9FbJQAfBVdK6FW+RW6OjpuRh
+         4Ef5zma2LwlkxqnvxKK1wPBq+ImNdt0HTEpRc5op4PztiIpXdXvYgfNQ9w4DJDRe62Ed
+         G+8R5GiRE4P5U5YKGU7mfq3tCQMok5AErg7XA/A2IkRzi0zOXMSrWW9LiIMqBI8shrBB
+         u/3g==
+X-Gm-Message-State: AGRZ1gJlIFuiuL2cyAgU5oj+TwGdTEyw6edgYeRE/jBIKvAfOMctKT3J
+        M/a6NUGV98YnPKVdcszDgvAjWg==
+X-Google-Smtp-Source: AJdET5cnYy6oGex0BtKgcj+AKDk2ql+hw+hOP3tCMa25vfSnqgtaMgKwLflTHGPVy2slHj5CW52cZw==
+X-Received: by 2002:a37:b842:: with SMTP id i63mr3051195qkf.69.1541989483020;
+        Sun, 11 Nov 2018 18:24:43 -0800 (PST)
+Received: from [10.150.73.190] (97.sub-174-227-17.myvzw.com. [174.227.17.97])
+        by smtp.gmail.com with ESMTPSA id m5sm4355044qtn.33.2018.11.11.18.24.41
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sun, 11 Nov 2018 18:24:42 -0800 (PST)
+Subject: Re: Official Linux system wrapper library?
+To:     Greg KH <gregkh@linuxfoundation.org>,
+        Daniel Colascione <dancol@google.com>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+ <20181110192027.GA29892@kroah.com>
+From:   Carlos O'Donell <carlos@redhat.com>
+Openpgp: preference=signencrypt
+Organization: Red Hat
+Message-ID: <cd4717c4-4950-7513-726d-2e1873aeceb5@redhat.com>
+Date:   Sun, 11 Nov 2018 21:24:40 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181111210704.7bb9946f@vmware.local.home>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18111202-2213-0000-0000-00000315E6EF
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010030; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116143; UDB=6.00578812; IPR=6.00896251;
- MB=3.00024116; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-12 02:20:13
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111202-2214-0000-0000-00005C393480
-Message-Id: <20181112022009.GC4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-12_01:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811120019
+In-Reply-To: <20181110192027.GA29892@kroah.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 09:07:04PM -0500, Steven Rostedt wrote:
-> On Sun, 11 Nov 2018 11:32:14 -0800
-> "Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
-> 
-> > The sync.c file has a number of calls to BUG_ON(), which panics the
-> > kernel, which is not a good strategy for devices (like embedded) that
-> > don't have a way to capture console output.  This commit therefore
-> > changes these BUG_ON() calls to WARN_ON_ONCE(), but does so quite naively.
-> > 
-> > Reported-by: Linus Torvalds <torvalds@linux-foundation.org>
-> > Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> > Acked-by: Oleg Nesterov <oleg@redhat.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > ---
-> >  kernel/rcu/sync.c | 13 ++++++-------
-> >  1 file changed, 6 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/kernel/rcu/sync.c b/kernel/rcu/sync.c
-> > index 3f943efcf61c..a6ba446a9693 100644
-> > --- a/kernel/rcu/sync.c
-> > +++ b/kernel/rcu/sync.c
-> > @@ -125,8 +125,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
-> >  		rsp->gp_state = GP_PENDING;
-> >  	spin_unlock_irq(&rsp->rss_lock);
-> >  
-> > -	BUG_ON(need_wait && need_sync);
-> > -
-> > +	WARN_ON_ONCE(need_wait && need_sync);
-> >  	if (need_sync) {
-> >  		gp_ops[rsp->gp_type].sync();
-> >  		rsp->gp_state = GP_PASSED;
-> > @@ -139,7 +138,7 @@ void rcu_sync_enter(struct rcu_sync *rsp)
-> >  		 * Nobody has yet been allowed the 'fast' path and thus we can
-> >  		 * avoid doing any sync(). The callback will get 'dropped'.
-> >  		 */
-> > -		BUG_ON(rsp->gp_state != GP_PASSED);
-> > +		WARN_ON_ONCE(rsp->gp_state != GP_PASSED);
-> >  	}
-> >  }
-> >  
-> > @@ -166,8 +165,8 @@ static void rcu_sync_func(struct rcu_head *rhp)
-> >  	struct rcu_sync *rsp = container_of(rhp, struct rcu_sync, cb_head);
-> >  	unsigned long flags;
-> >  
-> > -	BUG_ON(rsp->gp_state != GP_PASSED);
-> > -	BUG_ON(rsp->cb_state == CB_IDLE);
-> > +	WARN_ON_ONCE(rsp->gp_state != GP_PASSED);
-> > +	WARN_ON_ONCE(rsp->cb_state == CB_IDLE);
-> >  
-> >  	spin_lock_irqsave(&rsp->rss_lock, flags);
-> >  	if (rsp->gp_count) {
-> > @@ -225,7 +224,7 @@ void rcu_sync_dtor(struct rcu_sync *rsp)
-> >  {
-> >  	int cb_state;
-> >  
-> > -	BUG_ON(rsp->gp_count);
-> > +	WARN_ON_ONCE(rsp->gp_count);
-> >  
-> >  	spin_lock_irq(&rsp->rss_lock);
-> >  	if (rsp->cb_state == CB_REPLAY)
-> > @@ -235,6 +234,6 @@ void rcu_sync_dtor(struct rcu_sync *rsp)
-> >  
-> >  	if (cb_state != CB_IDLE) {
-> >  		gp_ops[rsp->gp_type].wait();
-> > -		BUG_ON(rsp->cb_state != CB_IDLE);
-> > +		WARN_ON_ONCE(rsp->cb_state != CB_IDLE);
-> >  	}
-> >  }
-> 
-> I take it that if any of these WARN_ON_ONCE() triggers, they wont cause
-> immediate catastrophe, and/or there's no gentle way out like you have
-> with the other patches exiting the function when one is hit.
+On 11/10/18 2:20 PM, Greg KH wrote:
+> Also, what about the basic work of making sure our uapi header files can
+> actually be used untouched by a libc?  That isn't the case these days as
+> the bionic maintainers like to keep reminding me.  That might be a good
+> thing to do _before_ trying to add new things like syscall wrappers.
+I agree completely. There are many steps in the checklist to writing
+a new syscall, heck we should probably have a checklist!
 
-Oleg was actually OK with removing them entirely:
+Socially the issue is difficult because the various communities only
+marginally share the same network of developers, care about different
+features, or the same features with different priorities.
 
-	"I added these BUG_ON's for documentation when I was prototyping
-	this code, perhaps we can simply remove them."
+That doesn't mean we shouldn't try to integrate better. As was pointed
+out, various people from the userspace and toolchain communities are
+going to LPC to do just this.
 
-And they are "cannot happen" types of things (famous last words).
-Oleg also has another approach that could rip-and-replace the current
-implementation, which would render these WARN*()s moot.
-
-							Thanx, Paul
-
+-- 
+Cheers,
+Carlos.
