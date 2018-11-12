@@ -2,119 +2,116 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-21.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47ABAC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA76FC43610
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:04:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AAEF22419
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:03:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9718822419
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:04:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="n5U0YE0K"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AAEF22419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HvJ2NpuT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9718822419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730333AbeKME5z (ORCPT
+        id S1730339AbeKME66 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 23:57:55 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:42138 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727530AbeKME5z (ORCPT
+        Mon, 12 Nov 2018 23:58:58 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52389 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727530AbeKME66 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 23:57:55 -0500
-Received: by mail-pl1-f193.google.com with SMTP id x21-v6so2044375pln.9
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 11:03:23 -0800 (PST)
+        Mon, 12 Nov 2018 23:58:58 -0500
+Received: by mail-it1-f193.google.com with SMTP id t190-v6so14244510itb.2;
+        Mon, 12 Nov 2018 11:04:26 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=F73BoH0qM9ADBHcBiXopQvKF5rs7oS9TiYg6Gnm6VE8=;
-        b=n5U0YE0KV5X+yt9XJiCTk2U2pc+3hYvhfkq8lnunAu8ulH1YrGg87MIhjiHReNBV1i
-         SKvGtiUJukrKVvY1zvAncLqQvnGEWI+LwEFfUUU6O0Ari6jamMfNsTJRvE47ea8pjaqw
-         PMTH16GXQjNST18Bky/yFIB3Tai6rtbIX5y25f2PHNyBqpzAzk5g3Nn5Mipq2CrvxxBW
-         Cf1jnbddP66EHDsUTUp3edTYuqBtcZjOk+k/G78/uw3xOmixRPt2ZUyFj5ZF9xGjE9Ra
-         zf6/+8ctNgKAPZI4fnCveo+rGnDU0aubRCL2yvnGtpz7kcPVdyKi95dy2+oBoELnd8Ed
-         tdCA==
+        bh=B6Yp/2HFX5sz8LE9JBLhwnDfKKU5uQzMgiUZJCelnbE=;
+        b=HvJ2NpuT+gwADQ4vgpbKXvBcC/HPAjY0uHCMefsziGMMu/CT6eGM+bpjSJNRRiuWT6
+         3m7SwG2nXvLBsOm324rgvMgimPt5mKyK5o/6j+IPE3SemwVUxnhZJgpsPaZpAvZ1CGJe
+         DL9V7tA0C03b4DqLjzKgd2AR9Y38wnHCMeDRoLcCfxfvH4JCyWvNO9L2pnZ7J6h3K02z
+         p3jLODWO+z2k1tnV4fDImicLPDipcEoloyHWEvq28q9Ja/CS4ySCCMuooEAnFPxJ2zQi
+         C/NNZ6p0WK4pTUjICeVcyol7Q7WU8jo6ysfdo8mlGvesnqDimcdtbP0HGyl1Ai53lup1
+         Riog==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=F73BoH0qM9ADBHcBiXopQvKF5rs7oS9TiYg6Gnm6VE8=;
-        b=FiuXlYraR6JYaEzRMHUOD2vIihuESeBI+VjDHe/NJBXp/xTMU3pCM399LZcFH3SrZV
-         fqikeeEpGk5WMCvaFqjyjFhrEVDXVnXl6X2JN2mRKsHLkgX1KfXVrWyKIzqPl3AzY5Td
-         uYUk5Rsziy83Z69gUSZXvVSGIooeBXZW+wqSmIVxuwAHAJCTC8eLZ4OYbl2+6Ij0uZdi
-         YMarKCCeJnhjUH5wsJlNadBsgz3AgZCp6sbg+58C+LguzMv7IYjXua5gK+WIEFDDRKgq
-         u91/Giyh2+CMhmX4A6dlHsVajMD5LWeYDZUolMD/OCMv1YLgZBySrnYSAIoQ/dAjuuHJ
-         o7Iw==
-X-Gm-Message-State: AGRZ1gLAeHiOnwf0J0cjViti7MCPk2EdfXbLHodkuQ9WNvmHvlaLUe4J
-        lf6lWlcK1jUzlpxehyHIVwNJJZbySzq4zbkMPYXo5Q==
-X-Google-Smtp-Source: AJdET5e4CNDXaQXU1S03LHDzBgpbuVHAM/bvtWP1Imul3RBJIrJunv87XDOcXGRt9Z9UlkV4DpudASr7swqN/ajQ/c8=
-X-Received: by 2002:a17:902:5a2:: with SMTP id f31-v6mr2005249plf.320.1542049403085;
- Mon, 12 Nov 2018 11:03:23 -0800 (PST)
+        bh=B6Yp/2HFX5sz8LE9JBLhwnDfKKU5uQzMgiUZJCelnbE=;
+        b=axnwy/5xGqteV9r1wMsvsvsbhEceHzIQ4j05+Qx8UxXl3n5aRb9jspjx7idA82Vxy4
+         llmFkCDwPeLT6eJdRlHpiPRF8sZ27pTPdLSHUdhPfNerKgEDuSHp4v4o7HN8jFJ6y3X6
+         i6nv8rmtQn6JNDuOKDchN+E6VuJsnGpFdQvDo81ewg33j2tZfS7kFuNhAv0+Ynr48IBc
+         ZoXF/q6HR9z0Zd7EyDIrdyBQyWuSgGl9KZQto0sS3HTOVabdY4ccUo/WUeJGpwTftZx5
+         BlTssj8jxSgI/1ueLC3HuKsJhKl6/jL7kuXw/kVA6borrPrRE5YEb8vXM4yXWUht4Reu
+         2MRg==
+X-Gm-Message-State: AGRZ1gK3JlYYXBuvCxYuXW8YieIoGfH3CzpK2Wj40AGfc9Cq/tGqX9U3
+        NiXTtOYR5wL8AY1ri8kQllXeOfouZ1aa4thwpQ0=
+X-Google-Smtp-Source: AJdET5e132MmL9czeIkY9npQAQQw4+MFe3Sy6bTCfDgIr0/WE+Fd9FhhMVt4NR5AV4OU8FO279kS29CvkReW1NVyWEM=
+X-Received: by 2002:a24:a0cb:: with SMTP id o194mr779422ite.115.1542049465858;
+ Mon, 12 Nov 2018 11:04:25 -0800 (PST)
 MIME-Version: 1.0
-References: <20181112042116.5271-1-joel@jms.id.au> <20181112042116.5271-3-joel@jms.id.au>
-In-Reply-To: <20181112042116.5271-3-joel@jms.id.au>
-From:   Nick Desaulniers <ndesaulniers@google.com>
-Date:   Mon, 12 Nov 2018 11:03:11 -0800
-Message-ID: <CAKwvOd=Sck9MMyq4sBe24iNbcVd=KX7enfxN=+Y7uvL-YrxHrg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] powerpc/boot: Set target when cross-compiling for clang
-To:     joel@jms.id.au
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        mpe@ellerman.id.au, Michal Marek <michal.lkml@markovi.net>,
-        dja@axtens.net,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linuxppc-dev@lists.ozlabs.org
+References: <20181112160628.86620-1-mika.westerberg@linux.intel.com> <20181112181214.xaahc5wni4vuwl6h@wunner.de>
+In-Reply-To: <20181112181214.xaahc5wni4vuwl6h@wunner.de>
+From:   Yehezkel Bernat <yehezkelshb@gmail.com>
+Date:   Mon, 12 Nov 2018 21:04:08 +0200
+Message-ID: <CA+CmpXt4cZJRoo8U=pMt7Y65oLpXwpr2oVgbxuFj8C-SU6yZnA@mail.gmail.com>
+Subject: Re: [PATCH 0/4] PCI / iommu / thunderbolt: IOMMU based DMA protection
+To:     lukas@wunner.de
+Cc:     Mika Westerberg <mika.westerberg@linux.intel.com>,
+        iommu@lists.linux-foundation.org, joro@8bytes.org,
+        dwmw2@infradead.org, baolu.lu@linux.intel.com, ashok.raj@intel.com,
+        bhelgaas@google.com, rjw@rjwysocki.net, jacob.jun.pan@intel.com,
+        Andreas Noever <andreas.noever@gmail.com>,
+        michael.jamet@intel.com, Christian Kellner <ckellner@redhat.com>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 8:21 PM Joel Stanley <joel@jms.id.au> wrote:
+On Mon, Nov 12, 2018 at 8:12 PM Lukas Wunner <lukas@wunner.de> wrote:
 >
-> Clang needs to be told which target it is building for when cross
-> compiling.
-
-Neat! This will help us for continuous integration.
-https://github.com/ClangBuiltLinux/continuous-integration
-
+> On Mon, Nov 12, 2018 at 07:06:24PM +0300, Mika Westerberg wrote:
+> > Recent systems shipping with Windows 10 version 1803 or newer may be
+> > utilizing IOMMU to prevent DMA attacks via Thunderbolt ports. This is
+> > different from the previous security level based scheme because the
+> > connected device cannot access system memory outside of the regions
+> > allocated for it by the driver.
+> >
+> > When enabled the BIOS makes sure no device can do DMA outside of RMRR
+> > (Reserved Memory Region Record) regions. This means that during OS boot,
+> > before it enables IOMMU, none of the connected devices can bypass DMA
+> > protection for instance by overwriting the data structures used by the
+> > IOMMU. The BIOS communicates support for this to the OS by setting a new
+> > bit in ACPI DMAR table [1].
+> >
+> > Because these systems utilize an IOMMU to block possible DMA attacks,
+> > typically (but not always) the Thunderbolt security level is set to "none"
+> > which means that all PCIe devices are immediately usable. This also means
+> > that Linux needs to follow Windows 10 and enable IOMMU automatically when
+> > running on such system otherwise connected devices can read/write system
+> > memory pretty much without any restrictions.
 >
-> Link: https://github.com/ClangBuiltLinux/linux/issues/259
-> Signed-off-by: Joel Stanley <joel@jms.id.au>
+> What if the system is booted from a Thunderbolt-attached disk?
+> Won't this suddenly break with these patches? That would seem like a
+> pretty significant regression.
 
-Assuming patch 1/2 gets fixed up (or is fine) and doesn't radically change:
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-
-> ---
->  arch/powerpc/boot/Makefile | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/arch/powerpc/boot/Makefile b/arch/powerpc/boot/Makefile
-> index 39354365f54a..111f97b1ccec 100644
-> --- a/arch/powerpc/boot/Makefile
-> +++ b/arch/powerpc/boot/Makefile
-> @@ -55,6 +55,11 @@ BOOTAFLAGS   := -D__ASSEMBLY__ $(BOOTCFLAGS) -traditional -nostdinc
->
->  BOOTARFLAGS    := -cr$(KBUILD_ARFLAGS)
->
-> +ifdef CONFIG_CC_IS_CLANG
-> +BOOTCFLAGS += $(CLANG_FLAGS)
-> +BOOTAFLAGS += $(CLANG_FLAGS)
-> +endif
-> +
->  ifdef CONFIG_DEBUG_INFO
->  BOOTCFLAGS     += -g
->  endif
-> --
-> 2.19.1
->
-
-
--- 
-Thanks,
-~Nick Desaulniers
+My assumption is that either it isn't supported on such platforms (at least with
+this security configuration active) so this doesn't break anything, it never
+worked there, or the BIOS configures IOMMU in a way that allows the disk to work
+until the OS will take control and configure the IOMMU according to OS
+decisions.
+In the latter case, the kernel+initrd will be loaded before IOMMU configuration
+will be changed, and then the kernel should be able to config it correctly to
+work. (Unless I really don't understand the mechanism and workflow of using
+IOMMU, which is possible.)
