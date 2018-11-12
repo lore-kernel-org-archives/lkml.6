@@ -2,211 +2,147 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82531C0044B
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:07:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA450C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:08:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4225F216FD
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:07:28 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DsW6hcGw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4225F216FD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7A7B72175B
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 06:08:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A7B72175B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731628AbeKLP7L (ORCPT
+        id S1731702AbeKLP7x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 10:59:11 -0500
-Received: from mail-vs1-f68.google.com ([209.85.217.68]:35967 "EHLO
-        mail-vs1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731226AbeKLP7L (ORCPT
+        Mon, 12 Nov 2018 10:59:53 -0500
+Received: from alexa-out-blr-01.qualcomm.com ([103.229.18.197]:17745 "EHLO
+        alexa-out-blr-01.qualcomm.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731226AbeKLP7x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 10:59:11 -0500
-Received: by mail-vs1-f68.google.com with SMTP id v205so4441946vsc.3;
-        Sun, 11 Nov 2018 22:07:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=wlWr/2WpPQt9d/A71YS5YJu5IlECyiTdpDZRmk1kR6k=;
-        b=DsW6hcGwt/M5yWYV70wTP7T6B/5nNQjZ1xd7/Lc5iDALwtS/HXFdykZT6M8V3M4T8z
-         iJhQ3QLmaTWwgSbZcGY7OGOk/EcnP3zzxeBnEpmLCec4kVZUW9wJqE9LuLu5+MzRe1na
-         1EKUY3rbejpOJwJnlH5NZMGLh30tRBPQDUUrOccAB36wreEQsR4jmP3fkgV6U0+r+km/
-         vEX90W3N1uzbR9uGPelBNXw1U/+dyNCjFswRuuIv46wa4pg3hvZ+YXmMbNECu9QhbX9A
-         3Qit7f8vkA5Jv+90jrKhaj9hYCRNAjDEclAtRctKgqSd+HzYHobRbHLVT3kVit7NO5BJ
-         8UHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=wlWr/2WpPQt9d/A71YS5YJu5IlECyiTdpDZRmk1kR6k=;
-        b=FbZKUOcYCX7szUnpwOMDto1ZFd2V4LwB9FsLwWwXrqyqNC5kugcI60ocHELhzw1NQk
-         ll57JBzdCMR/eqTgt3GJJu8vcKh8M6DRkSx0LRPq1DPOb/RSalCMe1SOJk3umac4Lojr
-         dgq6xkq6OoaI87+KR+LaNM/rFmPAAw7B0eaulTWVc0rXLN/ZQp0QNSfRwQ57fwrS8jZ4
-         FhMGJwrLvZGGJtvd+6/7ad46SFdDDhzwZ9bBul6ERBu7hjZrvR3ct0tj6h8gX7m1+Sx4
-         DTog8MnD0PgjSZL4nL9JEE7U9aU4XW7JEd/+7uA3wjLYgifvgsZQlzql5C6IgjlfE0YB
-         0Grw==
-X-Gm-Message-State: AGRZ1gJH0zeTUVwVeVaHeW/y6La0WmDx8ulN821s08MD0rjnDRGCC0re
-        KD/xsl7GfnABZWRvTdKgnDlCsfwqe0Oa0BKUyuLHBw==
-X-Google-Smtp-Source: AJdET5dlgGwz91ywKOXnYtxI6NR/QvSwEgcBXuc6mEkxVWvxyl5HHCrhVKs4jaIRyuWWuS6jvLLmudjJ6HvwRy5NSqE=
-X-Received: by 2002:a67:1505:: with SMTP id 5mr5990692vsv.20.1542002845041;
- Sun, 11 Nov 2018 22:07:25 -0800 (PST)
-MIME-Version: 1.0
-References: <1541064675-20324-1-git-send-email-sundeep.lkml@gmail.com>
-In-Reply-To: <1541064675-20324-1-git-send-email-sundeep.lkml@gmail.com>
-From:   sundeep subbaraya <sundeep.lkml@gmail.com>
-Date:   Mon, 12 Nov 2018 11:37:11 +0530
-Message-ID: <CALHRZurB1J45G-+83MwGexMJouw+9Q1LAzs15=uqdvq0VsSPaw@mail.gmail.com>
-Subject: Re: [PATCH] PCI: assign bus numbers present in EA capability for bridges
-To:     Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     sgoutham@marvell.com, Subbaraya Sundeep <sbhatta@marvell.com>
-Content-Type: text/plain; charset="UTF-8"
+        Mon, 12 Nov 2018 10:59:53 -0500
+X-IronPort-AV: E=Sophos;i="5.54,494,1534789800"; 
+   d="scan'208";a="282833"
+Received: from ironmsg01-blr.qualcomm.com ([10.86.208.130])
+  by alexa-out-blr-01.qualcomm.com with ESMTP/TLS/AES256-SHA; 12 Nov 2018 11:38:06 +0530
+X-IronPort-AV: E=McAfee;i="5900,7806,9074"; a="5747613"
+Received: from blr-ubuntu-104.ap.qualcomm.com (HELO blr-ubuntu-104.qualcomm.com) ([10.79.40.64])
+  by ironmsg01-blr.qualcomm.com with ESMTP; 12 Nov 2018 11:38:04 +0530
+Received: by blr-ubuntu-104.qualcomm.com (Postfix, from userid 346745)
+        id 92E1224B7; Mon, 12 Nov 2018 11:38:04 +0530 (IST)
+From:   Arun KS <arunks@codeaurora.org>
+Cc:     keescook@chromium.org, khlebnikov@yandex-team.ru,
+        minchan@kernel.org, getarunks@gmail.com,
+        gregkh@linuxfoundation.org, akpm@linux-foundation.org,
+        mhocko@kernel.org, vbabka@suse.cz, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, vatsa@codeaurora.org,
+        Arun KS <arunks@codeaurora.org>
+Subject: [PATCH v4 0/4] mm: convert totalram_pages, totalhigh_pages and managed pages to atomic
+Date:   Mon, 12 Nov 2018 11:37:45 +0530
+Message-Id: <1542002869-16704-1-git-send-email-arunks@codeaurora.org>
+X-Mailer: git-send-email 1.9.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+This series convert totalram_pages, totalhigh_pages and
+zone->managed_pages to atomic variables.
 
-Any comments?
+The patch was comiple tested on x86(x86_64_defconfig & i386_defconfig)
+on 4.20-rc2. And memory hotplug tested on arm64, but on an older version
+of kernel.
 
-Thanks,
-Sundeep
-On Thu, Nov 1, 2018 at 3:01 PM <sundeep.lkml@gmail.com> wrote:
->
-> From: Subbaraya Sundeep <sbhatta@marvell.com>
->
-> As per the spec, bridges with EA capability work
-> with fixed secondary and subordinate bus numbers.
-> Hence assign bus numbers to bridges from EA if the
-> capability exists.
->
-> Signed-off-by: Subbaraya Sundeep <sbhatta@marvell.com>
-> ---
->  drivers/pci/probe.c           | 58 ++++++++++++++++++++++++++++++++++++++++---
->  include/uapi/linux/pci_regs.h |  6 +++++
->  2 files changed, 60 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index b1c05b5..f41d2e6 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -1030,6 +1030,40 @@ static void pci_enable_crs(struct pci_dev *pdev)
->
->  static unsigned int pci_scan_child_bus_extend(struct pci_bus *bus,
->                                               unsigned int available_buses);
-> +/*
-> + * pci_ea_fixed_busnrs() - Read fixed Secondary and Subordinate bus
-> + * numbers from EA capability.
-> + * @dev: Bridge with EA
-> + * @secondary: updated with secondary bus number in EA
-> + * @subordinate: updated with subordinate bus number in EA
-> + *
-> + * If it is a bridge with EA capability then fixed bus numbers are
-> + * read from EA capability list and secondary, subordinate reference
-> + * variables will be updated. Otherwise secondary and subordinate reference
-> + * variables will be zeroed.
-> + */
-> +static void pci_ea_fixed_busnrs(struct pci_dev *dev, u8 *secondary,
-> +                               u8 *subordinate)
-> +{
-> +       int ea;
-> +       int offset;
-> +       u32 dw;
-> +
-> +       *secondary = *subordinate = 0;
-> +
-> +       if (dev->hdr_type != PCI_HEADER_TYPE_BRIDGE)
-> +               return;
-> +
-> +       /* find PCI EA capability in list */
-> +       ea = pci_find_capability(dev, PCI_CAP_ID_EA);
-> +       if (!ea)
-> +               return;
-> +
-> +       offset = ea + PCI_EA_FIRST_ENT;
-> +       pci_read_config_dword(dev, offset, &dw);
-> +       *secondary =  dw & PCI_EA_SEC_BUS_MASK;
-> +       *subordinate = (dw & PCI_EA_SUB_BUS_MASK) >> PCI_EA_SUB_BUS_SHIFT;
-> +}
->
->  /*
->   * pci_scan_bridge_extend() - Scan buses behind a bridge
-> @@ -1064,6 +1098,8 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
->         u16 bctl;
->         u8 primary, secondary, subordinate;
->         int broken = 0;
-> +       u8 fixed_sec, fixed_sub;
-> +       int next_busnr;
->
->         /*
->          * Make sure the bridge is powered on to be able to access config
-> @@ -1163,17 +1199,25 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
->                 /* Clear errors */
->                 pci_write_config_word(dev, PCI_STATUS, 0xffff);
->
-> +               /* read bus numbers from EA */
-> +               pci_ea_fixed_busnrs(dev, &fixed_sec, &fixed_sub);
-> +
-> +               next_busnr = max + 1;
-> +               /* Use secondary bus number in EA */
-> +               if (fixed_sec)
-> +                       next_busnr = fixed_sec;
-> +
->                 /*
->                  * Prevent assigning a bus number that already exists.
->                  * This can happen when a bridge is hot-plugged, so in this
->                  * case we only re-scan this bus.
->                  */
-> -               child = pci_find_bus(pci_domain_nr(bus), max+1);
-> +               child = pci_find_bus(pci_domain_nr(bus), next_busnr);
->                 if (!child) {
-> -                       child = pci_add_new_bus(bus, dev, max+1);
-> +                       child = pci_add_new_bus(bus, dev, next_busnr);
->                         if (!child)
->                                 goto out;
-> -                       pci_bus_insert_busn_res(child, max+1,
-> +                       pci_bus_insert_busn_res(child, next_busnr,
->                                                 bus->busn_res.end);
->                 }
->                 max++;
-> @@ -1234,7 +1278,13 @@ static int pci_scan_bridge_extend(struct pci_bus *bus, struct pci_dev *dev,
->                         max += i;
->                 }
->
-> -               /* Set subordinate bus number to its real value */
-> +               /*
-> +                * Set subordinate bus number to its real value.
-> +                * If fixed subordinate bus number exists from EA
-> +                * capability then use it.
-> +                */
-> +               if (fixed_sub)
-> +                       max = fixed_sub;
->                 pci_bus_update_busn_res_end(child, max);
->                 pci_write_config_byte(dev, PCI_SUBORDINATE_BUS, max);
->         }
-> diff --git a/include/uapi/linux/pci_regs.h b/include/uapi/linux/pci_regs.h
-> index e1e9888..c3d0904 100644
-> --- a/include/uapi/linux/pci_regs.h
-> +++ b/include/uapi/linux/pci_regs.h
-> @@ -372,6 +372,12 @@
->  #define PCI_EA_FIRST_ENT_BRIDGE        8       /* First EA Entry for Bridges */
->  #define  PCI_EA_ES             0x00000007 /* Entry Size */
->  #define  PCI_EA_BEI            0x000000f0 /* BAR Equivalent Indicator */
-> +
-> +/* EA fixed Secondary and Subordinate bus numbers for Bridge */
-> +#define PCI_EA_SEC_BUS_MASK    0xff
-> +#define PCI_EA_SUB_BUS_MASK    0xff00
-> +#define PCI_EA_SUB_BUS_SHIFT   8
-> +
->  /* 0-5 map to BARs 0-5 respectively */
->  #define   PCI_EA_BEI_BAR0              0
->  #define   PCI_EA_BEI_BAR5              5
-> --
-> 1.8.3.1
->
+totalram_pages, zone->managed_pages and totalhigh_pages updates
+are protected by managed_page_count_lock, but readers never care
+about it. Convert these variables to atomic to avoid readers
+potentially seeing a store tear.
+
+Main motivation was that managed_page_count_lock handling was
+complicating things. It was discussed in length here,
+https://lore.kernel.org/patchwork/patch/995739/#1181785
+It seemes better to remove the lock and convert variables
+to atomic. With the change, preventing poteintial store-to-read
+tearing comes as a bonus.
+
+Changes in v4:
+- Fixed kbuild test robot error.
+- Modified changelog.
+- Rebased to 4.20.-rc2
+
+Changes in v3:
+- Fixed kbuild test robot errors.
+- Modified changelogs to be more clear.
+- EXPORT_SYMBOL for _totalram_pages and _totalhigh_pages.
+
+Arun KS (4):
+  mm: reference totalram_pages and managed_pages once per function
+  mm: convert zone->managed_pages to atomic variable
+  mm: convert totalram_pages and totalhigh_pages variables to atomic
+  mm: Remove managed_page_count spinlock
+
+ arch/csky/mm/init.c                           |  4 +-
+ arch/powerpc/platforms/pseries/cmm.c          | 10 ++--
+ arch/s390/mm/init.c                           |  2 +-
+ arch/um/kernel/mem.c                          |  3 +-
+ arch/x86/kernel/cpu/microcode/core.c          |  5 +-
+ drivers/char/agp/backend.c                    |  4 +-
+ drivers/gpu/drm/amd/amdkfd/kfd_crat.c         |  2 +-
+ drivers/gpu/drm/i915/i915_gem.c               |  2 +-
+ drivers/gpu/drm/i915/selftests/i915_gem_gtt.c |  4 +-
+ drivers/hv/hv_balloon.c                       | 19 +++----
+ drivers/md/dm-bufio.c                         |  2 +-
+ drivers/md/dm-crypt.c                         |  2 +-
+ drivers/md/dm-integrity.c                     |  2 +-
+ drivers/md/dm-stats.c                         |  2 +-
+ drivers/media/platform/mtk-vpu/mtk_vpu.c      |  2 +-
+ drivers/misc/vmw_balloon.c                    |  2 +-
+ drivers/parisc/ccio-dma.c                     |  4 +-
+ drivers/parisc/sba_iommu.c                    |  4 +-
+ drivers/staging/android/ion/ion_system_heap.c |  2 +-
+ drivers/xen/xen-selfballoon.c                 |  6 +--
+ fs/ceph/super.h                               |  2 +-
+ fs/file_table.c                               |  7 +--
+ fs/fuse/inode.c                               |  2 +-
+ fs/nfs/write.c                                |  2 +-
+ fs/nfsd/nfscache.c                            |  2 +-
+ fs/ntfs/malloc.h                              |  2 +-
+ fs/proc/base.c                                |  2 +-
+ include/linux/highmem.h                       | 28 ++++++++++-
+ include/linux/mm.h                            | 27 +++++++++-
+ include/linux/mmzone.h                        | 15 +++---
+ include/linux/swap.h                          |  1 -
+ kernel/fork.c                                 |  5 +-
+ kernel/kexec_core.c                           |  5 +-
+ kernel/power/snapshot.c                       |  2 +-
+ lib/show_mem.c                                |  2 +-
+ mm/highmem.c                                  |  5 +-
+ mm/huge_memory.c                              |  2 +-
+ mm/kasan/quarantine.c                         |  2 +-
+ mm/memblock.c                                 |  6 +--
+ mm/mm_init.c                                  |  2 +-
+ mm/oom_kill.c                                 |  2 +-
+ mm/page_alloc.c                               | 72 +++++++++++++--------------
+ mm/shmem.c                                    |  7 +--
+ mm/slab.c                                     |  2 +-
+ mm/swap.c                                     |  2 +-
+ mm/util.c                                     |  2 +-
+ mm/vmalloc.c                                  |  4 +-
+ mm/vmstat.c                                   |  4 +-
+ mm/workingset.c                               |  2 +-
+ mm/zswap.c                                    |  4 +-
+ net/dccp/proto.c                              |  7 +--
+ net/decnet/dn_route.c                         |  2 +-
+ net/ipv4/tcp_metrics.c                        |  2 +-
+ net/netfilter/nf_conntrack_core.c             |  7 +--
+ net/netfilter/xt_hashlimit.c                  |  5 +-
+ net/sctp/protocol.c                           |  7 +--
+ security/integrity/ima/ima_kexec.c            |  2 +-
+ 57 files changed, 195 insertions(+), 142 deletions(-)
+
+-- 
+1.9.1
+
