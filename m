@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A69AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:17:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B22C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:17:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C539208A3
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:17:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C539208A3
+	by mail.kernel.org (Postfix) with ESMTP id 560DA2087F
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:17:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 560DA2087F
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730000AbeKLLHw (ORCPT
+        id S1730045AbeKLLH6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 06:07:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56786 "EHLO mx1.suse.de"
+        Mon, 12 Nov 2018 06:07:58 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56816 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726674AbeKLLHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 06:07:52 -0500
+        id S1726674AbeKLLH6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 06:07:58 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C7576ADE3;
-        Mon, 12 Nov 2018 01:17:08 +0000 (UTC)
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 97D43ADE3;
+        Mon, 12 Nov 2018 01:17:15 +0000 (UTC)
 From:   NeilBrown <neilb@suse.com>
 To:     Jeff Layton <jlayton@kernel.org>,
         Alexander Viro <viro@zeniv.linux.org.uk>
 Date:   Mon, 12 Nov 2018 12:14:49 +1100
-Subject: [PATCH 04/12] gfs2: properly initial file_lock used for unlock.
+Subject: [PATCH 05/12] ocfs2: properly initial file_lock used for unlock.
 Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
         Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
         Frank Filz <ffilzlnx@mindspring.com>,
         linux-kernel@vger.kernel.org
-Message-ID: <154198528902.14364.12030986149867972636.stgit@noble>
+Message-ID: <154198528906.14364.3671063027499306155.stgit@noble>
 In-Reply-To: <154198490921.14364.13726904731989686092.stgit@noble>
 References: <154198490921.14364.13726904731989686092.stgit@noble>
 User-Agent: StGit/0.17.1-dirty
@@ -54,31 +54,36 @@ list_heads in file_lock are always properly initialized.
 
 Signed-off-by: NeilBrown <neilb@suse.com>
 ---
- fs/gfs2/file.c |   10 +++++-----
+ fs/ocfs2/locks.c |   10 +++++-----
  1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/fs/gfs2/file.c b/fs/gfs2/file.c
-index 45a17b770d97..a2dea5bc0427 100644
---- a/fs/gfs2/file.c
-+++ b/fs/gfs2/file.c
-@@ -1199,13 +1199,13 @@ static int do_flock(struct file *file, int cmd, struct file_lock *fl)
- 	mutex_lock(&fp->f_fl_mutex);
- 
- 	if (gfs2_holder_initialized(fl_gh)) {
+diff --git a/fs/ocfs2/locks.c b/fs/ocfs2/locks.c
+index d56f0079b858..b11acd34001a 100644
+--- a/fs/ocfs2/locks.c
++++ b/fs/ocfs2/locks.c
+@@ -52,6 +52,7 @@ static int ocfs2_do_flock(struct file *file, struct inode *inode,
+ 	if (lockres->l_flags & OCFS2_LOCK_ATTACHED &&
+ 	    lockres->l_level > LKM_NLMODE) {
+ 		int old_level = 0;
 +		struct file_lock request;
- 		if (fl_gh->gh_state == state)
- 			goto out;
+ 
+ 		if (lockres->l_level == LKM_EXMODE)
+ 			old_level = 1;
+@@ -66,11 +67,10 @@ static int ocfs2_do_flock(struct file *file, struct inode *inode,
+ 		 * level.
+ 		 */
+ 
 -		locks_lock_file_wait(file,
--				     &(struct file_lock) {
--					     .fl_type = F_UNLCK,
--					     .fl_flags = FL_FLOCK
--				     });
+-				&(struct file_lock) {
+-					.fl_type = F_UNLCK,
+-					.fl_flags = FL_FLOCK
+-				});
 +		locks_init_lock(&request);
 +		request.fl_type = F_UNLCK;
 +		request.fl_flags = FL_FLOCK;
 +		locks_lock_file_wait(file, &request);
- 		gfs2_glock_dq(fl_gh);
- 		gfs2_holder_reinit(state, flags, fl_gh);
- 	} else {
+ 
+ 		ocfs2_file_unlock(file);
+ 	}
 
 
