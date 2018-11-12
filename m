@@ -2,140 +2,107 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45977C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 16264C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:06:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14FF722504
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:06:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14FF722504
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
+	by mail.kernel.org (Postfix) with ESMTP id E0ED22245E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 19:06:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0ED22245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725876AbeKMFAb (ORCPT
+        id S1726003AbeKMFB3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 00:00:31 -0500
-Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:55145 "EHLO
-        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725749AbeKMFAb (ORCPT
+        Tue, 13 Nov 2018 00:01:29 -0500
+Received: from Galois.linutronix.de ([146.0.238.70]:52955 "EHLO
+        Galois.linutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725749AbeKMFB3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 00:00:31 -0500
-Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
-        id EA67980577; Mon, 12 Nov 2018 20:05:52 +0100 (CET)
-Date:   Mon, 12 Nov 2018 20:05:55 +0100
-From:   Pavel Machek <pavel@ucw.cz>
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Cc:     linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, robh@kernel.org,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
- device names
-Message-ID: <20181112190554.GA13959@amd>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
- <20181111120234.GA28794@amd>
- <a640167b-3a3e-daea-b377-6e82b653c5e8@gmail.com>
- <20181111201605.GA20160@amd>
- <57b77d4e-39a0-aaf2-5952-c2c25dc58593@gmail.com>
- <20181112103513.GB5695@amd>
- <662c02ba-455b-e2bf-a5e2-ae3933161894@gmail.com>
+        Tue, 13 Nov 2018 00:01:29 -0500
+Received: from node-1w7jr9qsvbxfi9ota9omrl6fe.ipv6.telus.net ([2001:569:7bc5:1000:8103:8419:bf24:e6ca])
+        by Galois.linutronix.de with esmtpsa (TLS1.2:DHE_RSA_AES_256_CBC_SHA256:256)
+        (Exim 4.80)
+        (envelope-from <tglx@linutronix.de>)
+        id 1gMHXx-00054w-5r; Mon, 12 Nov 2018 20:06:53 +0100
+Date:   Mon, 12 Nov 2018 11:06:43 -0800 (PST)
+From:   Thomas Gleixner <tglx@linutronix.de>
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+cc:     linux-media@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Greg KH <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>
+Subject: Re: [PATCHv18 01/35] Documentation: v4l: document request API
+In-Reply-To: <20180814142047.93856-2-hverkuil@xs4all.nl>
+Message-ID: <alpine.DEB.2.21.1811121048400.14703@nanos.tec.linutronix.de>
+References: <20180814142047.93856-1-hverkuil@xs4all.nl> <20180814142047.93856-2-hverkuil@xs4all.nl>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="rwEMma7ioTxnRzrJ"
-Content-Disposition: inline
-In-Reply-To: <662c02ba-455b-e2bf-a5e2-ae3933161894@gmail.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
+X-Linutronix-Spam-Score: -1.0
+X-Linutronix-Spam-Level: -
+X-Linutronix-Spam-Status: No , -1.0 points, 5.0 required,  ALL_TRUSTED=-1,SHORTCIRCUIT=-0.0001
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Folks,
 
---rwEMma7ioTxnRzrJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Tue, 14 Aug 2018, Hans Verkuil wrote:
+> From: Alexandre Courbot <acourbot@chromium.org>
+> 
+> Document the request API for V4L2 devices, and amend the documentation
+> of system calls influenced by it.
+> 
+> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+> Signed-off-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Reviewed-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
 
-Hi!
+> @@ -0,0 +1,65 @@
+> +.. SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections
 
-> >>> My system looks like this:
-> >>>
-> >>> input16::capslock    tpacpi::bay_active    tpacpi::standby
-> >>> input16::numlock     tpacpi::dock_active   tpacpi::thinklight
-> >>> input16::scrolllock  tpacpi::dock_batt	      tpacpi::thinkvantage
-> >>> input5::capslock     tpacpi::dock_status1  tpacpi::unknown_led
-> >>> input5::numlock      tpacpi::dock_status2  tpacpi::unknown_led2
-> >>> input5::scrolllock   tpacpi:green:batt	      tpacpi::unknown_led3
+It's nice that you try to use SPDX identifiers, but this is absolutely not
+how it works.
 
-> > But it is not just for backwards compatibility. See my examples above,
-> > it is needed to tell which device the LED is asociated with, and it is
-> > absolutely required for USB devices (for example).
->=20
-> For USB devices there is already ledtrig-usbport available, which
-> provides sysfs interface for defining and reading the usb ports,
-> the status of which the LED indicates. Since the USB devices can be
-> attached/removed dynamically, it would be impossible to reflect
-> the associations in the LED class device name.
+We went great length to document how SPDX identifiers are to be used and
+checkpatch emits a warning on this patch as well.
 
-I'm not talking USB activity. I'm talking USB devices with LEDs on
-them, like for example keyboards.
+   WARNING: 'SPDX-License-Identifier: GPL-2.0 OR GFDL-1.1-or-later WITH no-invariant-sections' is not supported in LICENSES/...
 
-Please take a look at example above. input16::numlock ;
-input5::numlock . You absolutely need device part.
+It's well documented that the license text including metadata needs to be
+available in LICENSES.
 
-> > And even for "embedded" stuff like routers, we want eth0:green:link,
-> > eth0:yellow:activity and not some kind of hack.
->=20
-> eth0 is not something you can be certain of at the stage of defining DT
-> node.
+What you are doing here is just counterproductive. The SPDX work is done to
+help automated license compliance. But the SPDX id above is broken and will
+let tools fail.
 
-In the common case DT is used for, yes, you can, because whole system
-is in one box.
+Even if we add the GFDL1.1 to LICENSES, it's still broken because there is
+no such exception 'no-invariant-section' and no, we are not going to create
+it just in the kernel without having sorted that with the SPDX folks first.
 
-(And really DT does not matter. We are talking kernel <-> user
-interface here).
+Mauro, you wrote yourself in a reply to this patch:
 
-> > Ideally, colors would come from fixed list, functions would come from
-> > fixed list, and device part would come from name used elsewhere in the
-> > kernel.
-> >=20
-> > (And yes, it probably means we should have something in device tree to
-> > link LED to its device. device =3D "name" would be good start...)
->=20
-> Why would you need such link?
+  > Mental note: we'll need to push the no-invariant-sections upstream
+  > before merging this there.
 
-Because userspace needs that information?
+and then you went and applied it nevertheless without talking to anyone who
+is involved with that SPDX effort of cleaning up the kernels licensing mess.
 
-Say you have raid array, with "error" leds for each drive (your list
-already contains "hdderr"). Now userland detects problem with hdparm
-on /dev/sdi. It would like to turn on corresponding LED.
+I'm grumpy about that particularly because you are the first person who
+complains about legal implications which might affect you.
 
-How do you propose we do that?
-									Pavel
---=20
-(english) http://www.livejournal.com/~pavelmachek
-(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
-g.html
+But then you go and just ignore process and legal implications and push the
+crap into mainline.
 
---rwEMma7ioTxnRzrJ
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: Digital signature
+Please get this sorted ASAP.
 
------BEGIN PGP SIGNATURE-----
-Version: GnuPG v1
+Thanks,
 
-iEYEARECAAYFAlvpzxIACgkQMOfwapXb+vKHRwCfULNoqi7nqurfv2LaLbnmDUNJ
-QK0AoKtEbe3EnDfkz6s6KDONqzCSTxz7
-=PU0k
------END PGP SIGNATURE-----
-
---rwEMma7ioTxnRzrJ--
+	tglx
