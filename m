@@ -2,158 +2,320 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4135C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:30:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB837C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:31:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9B39224E0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:30:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6B07D224E0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:31:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P4xq1GgW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9B39224E0
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MO3hTfSF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B07D224E0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729606AbeKMBYB (ORCPT
+        id S1729734AbeKMBY5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 20:24:01 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:33448 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727659AbeKMBYB (ORCPT
+        Mon, 12 Nov 2018 20:24:57 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:55848 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726981AbeKMBY4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 20:24:01 -0500
-Received: by mail-ed1-f67.google.com with SMTP id r27so4751747eda.0;
-        Mon, 12 Nov 2018 07:30:17 -0800 (PST)
+        Mon, 12 Nov 2018 20:24:56 -0500
+Received: by mail-it1-f193.google.com with SMTP id o19so3971850itg.5;
+        Mon, 12 Nov 2018 07:31:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Qo/ro8ScpXG0uJ1MFMpXOn60TWxkFsT0+7vV3XnI0Yg=;
-        b=P4xq1GgWCks/MrGfIPeu1bysO0/lGSkMCVbguJhbHYYYyiUqwxjNvIuFHjkdDK3sDl
-         XnGr/aK/RABj/pcbfHvlyQIe25zAK2f4SyLQ71fXeB7EzCkDSHlAYv05T536ufaz2ygR
-         9nssKJw9oBW2rZSjbvkU4yTnYgAxrBevvtuIMevHpckSeq9Ek+9PsHHyxQF9IiqOqQFO
-         gzJHoBKP33Rkv2LV3YxTSuq2ogowxZ7YU6MJC+08SLncGo4cioO6OCG6jcgplgKY0NuO
-         8/9uXgpB01SGtbhnJ30KrzA/JVX0XpXShlBXXr8bcGAUg4ZwUDG9g9Yn7S6oQsiXgevf
-         Ei5w==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=DuCTL56e4n0idfZTjDNVL2ZnuX2LncdlaBEjRJg2FQM=;
+        b=MO3hTfSFYBdOfDeZBQp482vXYP7q91M7+x2TT80PCLz9iF7n8xOlHIm9Si8JuW3/Py
+         Y0UIGa01Nu/1ihgzYqdSgSsaOEHvuzf8mrRbA53nayo629+5odePYSTRmJ/1BaWT66j7
+         Ozy93fj/r80zCLp7Q/LdFBZufiIda76m+/XGw63YYzSyXSmy1lQdajc4cPKbP5nhHnYJ
+         IC9h2JbeyQDPZm0DdyBlfDNheIsJA/RjNAy3WNWVUjZAN3Bq4SMTjqb0iR8vptAMOzrQ
+         kHbkcg9Z8o8FT9sTgS3WyPWbbWUAFpBtO79F3OtngfM13BSHulMrJ5iV+jcUlVdMw86H
+         5Ftg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Qo/ro8ScpXG0uJ1MFMpXOn60TWxkFsT0+7vV3XnI0Yg=;
-        b=R1l9HAQmXb1teMuIAYgR5Tv9/9n7vrBVlHrvJDrwx+olaV9mmi6hE8BExrkN9QBGwf
-         dNdK0+HjHUMy5h8RYJlnrx+ZfqPIvVSEwTRJwvveJy3qtR8ZcJtozFykmp0kLqn1fpeh
-         uBNe69wcfieuhJqYOHquJ8m6LI6x8ZRWi+hV8r/tIVrHvfrv2WwRggVohGLA9MO6eElx
-         KcmYPUYBIrrwUwQKvkzvwK2A2PqHSJteL0hizJ8QJrQ0VnhWOMQ1ETcZEjcHbQOqf0La
-         fvOHVR2NsEKn3C5dztsiSQXB6Q0hcS1MVFstzFK0RK3ndtEsFEj5qnQSUTuD3vsMy2iP
-         pmSA==
-X-Gm-Message-State: AGRZ1gKAJejgeVgDnv+tPh4okSGUWPXl01XHATBGx3uUU0ibxJfSf5p/
-        PqWjQa8tbUfMxdSvv7dTVZY=
-X-Google-Smtp-Source: AJdET5fBxpIhYsFWANR5iLsgTYFdOLn2iRkWgdJCEDI566KMBIeRb49tuWZkAl7wKyS/n2AmUL1Gqw==
-X-Received: by 2002:a17:906:6c9:: with SMTP id v9-v6mr9567828ejb.203.1542036616224;
-        Mon, 12 Nov 2018 07:30:16 -0800 (PST)
-Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
-        by smtp.gmail.com with ESMTPSA id n12-v6sm2448492ejl.13.2018.11.12.07.30.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Nov 2018 07:30:15 -0800 (PST)
-Date:   Mon, 12 Nov 2018 16:30:14 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Jassi Brar <jassisinghbrar@gmail.com>,
-        Jiri Slaby <jslaby@suse.com>,
-        Mikko Perttunen <mperttunen@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Timo Alho <talho@nvidia.com>, Pekka Pessi <ppessi@nvidia.com>,
-        Mika Liljeberg <mliljeberg@nvidia.com>,
-        linux-tegra@vger.kernel.org, linux-serial@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 7/9] serial: Add Tegra Combined UART driver
-Message-ID: <20181112153014.GA29481@ulmo>
-References: <20181026111638.10759-1-thierry.reding@gmail.com>
- <20181026111638.10759-8-thierry.reding@gmail.com>
- <20181109170526.GB14151@kroah.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=DuCTL56e4n0idfZTjDNVL2ZnuX2LncdlaBEjRJg2FQM=;
+        b=lrO5+g8UVD5bKgMSOCqMOZ/cG4USh3rs9VbNIuHZrsxkYwU4sJfyxETm7HH5KvLe8r
+         t7g182niC/1dtTyVNe+Zjj4GW+oRrAznKvMayxf//hpBCFJgrYa8AOosqaH7KxlhgUps
+         tL+3pjSPNvMKzii3pCKAMzY3Q5x5oKoVI9S2wWP3Ror9nLDhWoLzyoSBmxAWglwijC8b
+         IjqC0s2M2EA4kGRpbnX9NYipQ14ErHl8g0MqGf+AKxV74670sXERVUl4FbBBxkGyv9Mu
+         TaerBXXkdUdvbAp1vxIeEwkCHS8XVWjOUWzxiocFAWEzlB7BlrZkmTuwsO9TR0WPAmDd
+         ewiA==
+X-Gm-Message-State: AGRZ1gKdwkdmsAgX6sfTlauH/OY0vIIiBSxpmDO9VY9zwEqC+InKPDMA
+        fqbVOOSa8heOmXHmMU+OYQ7jdC6DPG/yBtV/DoqopA==
+X-Google-Smtp-Source: AJdET5ddSwftj7R4Y+mxUlKV2QVcbKlJtW85Za/u3YWwZZvZCbDV4mOw8k8NaCz1nN5JPqI6MNcMMEdfx1NBsFN/GHI=
+X-Received: by 2002:a24:5308:: with SMTP id n8-v6mr127561itb.146.1542036671828;
+ Mon, 12 Nov 2018 07:31:11 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="fUYQa+Pmc3FrFX/N"
-Content-Disposition: inline
-In-Reply-To: <20181109170526.GB14151@kroah.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181105085820.6341-1-aaron.lu@intel.com> <CAKgT0UdvYVTA8OjgLhXo9tRUOGikrCi3zJXSrqM0ZmeHb5P2mA@mail.gmail.com>
+ <b8b1fbb7-9139-9455-69b8-8c1bed4f7c74@itcare.pl> <CAKgT0UdhcXF-ohPHPbg8onRjFabEMnbpXGmLm-27skCNzGKOgw@mail.gmail.com>
+ <bd33633b-2f6c-0034-a130-38a8468531db@itcare.pl>
+In-Reply-To: <bd33633b-2f6c-0034-a130-38a8468531db@itcare.pl>
+From:   Alexander Duyck <alexander.duyck@gmail.com>
+Date:   Mon, 12 Nov 2018 07:30:59 -0800
+Message-ID: <CAKgT0UeOBF0yPJLOTBBb3m7nTkmSDxzkCur+iGzJ++Y-jWaw9g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] mm/page_alloc: free order-0 pages through PCP in page_frag_free()
+To:     =?UTF-8?Q?Pawe=C5=82_Staszewski?= <pstaszewski@itcare.pl>
+Cc:     aaron.lu@intel.com, linux-mm <linux-mm@kvack.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Netdev <netdev@vger.kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jesper Dangaard Brouer <brouer@redhat.com>,
+        Eric Dumazet <eric.dumazet@gmail.com>,
+        Tariq Toukan <tariqt@mellanox.com>,
+        ilias.apalodimas@linaro.org, yoel@kviknet.dk,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Saeed Mahameed <saeedm@mellanox.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Vlastimil Babka <vbabka@suse.cz>, dave.hansen@linux.intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Sun, Nov 11, 2018 at 4:39 PM Pawe=C5=82 Staszewski <pstaszewski@itcare.p=
+l> wrote:
+>
+>
+> W dniu 12.11.2018 o 00:05, Alexander Duyck pisze:
+> > On Sat, Nov 10, 2018 at 3:54 PM Pawe=C5=82 Staszewski <pstaszewski@itca=
+re.pl> wrote:
+> >>
+> >>
+> >> W dniu 05.11.2018 o 16:44, Alexander Duyck pisze:
+> >>> On Mon, Nov 5, 2018 at 12:58 AM Aaron Lu <aaron.lu@intel.com> wrote:
+> >>>> page_frag_free() calls __free_pages_ok() to free the page back to
+> >>>> Buddy. This is OK for high order page, but for order-0 pages, it
+> >>>> misses the optimization opportunity of using Per-Cpu-Pages and can
+> >>>> cause zone lock contention when called frequently.
+> >>>>
+> >>>> Pawe=C5=82 Staszewski recently shared his result of 'how Linux kerne=
+l
+> >>>> handles normal traffic'[1] and from perf data, Jesper Dangaard Broue=
+r
+> >>>> found the lock contention comes from page allocator:
+> >>>>
+> >>>>     mlx5e_poll_tx_cq
+> >>>>     |
+> >>>>      --16.34%--napi_consume_skb
+> >>>>                |
+> >>>>                |--12.65%--__free_pages_ok
+> >>>>                |          |
+> >>>>                |           --11.86%--free_one_page
+> >>>>                |                     |
+> >>>>                |                     |--10.10%--queued_spin_lock_slo=
+wpath
+> >>>>                |                     |
+> >>>>                |                      --0.65%--_raw_spin_lock
+> >>>>                |
+> >>>>                |--1.55%--page_frag_free
+> >>>>                |
+> >>>>                 --1.44%--skb_release_data
+> >>>>
+> >>>> Jesper explained how it happened: mlx5 driver RX-page recycle
+> >>>> mechanism is not effective in this workload and pages have to go
+> >>>> through the page allocator. The lock contention happens during
+> >>>> mlx5 DMA TX completion cycle. And the page allocator cannot keep
+> >>>> up at these speeds.[2]
+> >>>>
+> >>>> I thought that __free_pages_ok() are mostly freeing high order
+> >>>> pages and thought this is an lock contention for high order pages
+> >>>> but Jesper explained in detail that __free_pages_ok() here are
+> >>>> actually freeing order-0 pages because mlx5 is using order-0 pages
+> >>>> to satisfy its page pool allocation request.[3]
+> >>>>
+> >>>> The free path as pointed out by Jesper is:
+> >>>> skb_free_head()
+> >>>>     -> skb_free_frag()
+> >>>>       -> skb_free_frag()
+> >>>>         -> page_frag_free()
+> >>>> And the pages being freed on this path are order-0 pages.
+> >>>>
+> >>>> Fix this by doing similar things as in __page_frag_cache_drain() -
+> >>>> send the being freed page to PCP if it's an order-0 page, or
+> >>>> directly to Buddy if it is a high order page.
+> >>>>
+> >>>> With this change, Pawe=C5=82 hasn't noticed lock contention yet in
+> >>>> his workload and Jesper has noticed a 7% performance improvement
+> >>>> using a micro benchmark and lock contention is gone.
+> >>>>
+> >>>> [1]: https://www.spinics.net/lists/netdev/msg531362.html
+> >>>> [2]: https://www.spinics.net/lists/netdev/msg531421.html
+> >>>> [3]: https://www.spinics.net/lists/netdev/msg531556.html
+> >>>> Reported-by: Pawe=C5=82 Staszewski <pstaszewski@itcare.pl>
+> >>>> Analysed-by: Jesper Dangaard Brouer <brouer@redhat.com>
+> >>>> Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+> >>>> ---
+> >>>>    mm/page_alloc.c | 10 ++++++++--
+> >>>>    1 file changed, 8 insertions(+), 2 deletions(-)
+> >>>>
+> >>>> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> >>>> index ae31839874b8..91a9a6af41a2 100644
+> >>>> --- a/mm/page_alloc.c
+> >>>> +++ b/mm/page_alloc.c
+> >>>> @@ -4555,8 +4555,14 @@ void page_frag_free(void *addr)
+> >>>>    {
+> >>>>           struct page *page =3D virt_to_head_page(addr);
+> >>>>
+> >>>> -       if (unlikely(put_page_testzero(page)))
+> >>>> -               __free_pages_ok(page, compound_order(page));
+> >>>> +       if (unlikely(put_page_testzero(page))) {
+> >>>> +               unsigned int order =3D compound_order(page);
+> >>>> +
+> >>>> +               if (order =3D=3D 0)
+> >>>> +                       free_unref_page(page);
+> >>>> +               else
+> >>>> +                       __free_pages_ok(page, order);
+> >>>> +       }
+> >>>>    }
+> >>>>    EXPORT_SYMBOL(page_frag_free);
+> >>>>
+> >>> One thing I would suggest for Pawel to try would be to reduce the Tx
+> >>> qdisc size on his transmitting interfaces, Reduce the Tx ring size,
+> >>> and possibly increase the Tx interrupt rate. Ideally we shouldn't hav=
+e
+> >>> too many packets in-flight and I suspect that is the issue that Pawel
+> >>> is seeing that is leading to the page pool allocator freeing up the
+> >>> memory. I know we like to try to batch things but the issue is
+> >>> processing too many Tx buffers in one batch leads to us eating up too
+> >>> much memory and causing evictions from the cache. Ideally the Rx and
+> >>> Tx rings and queues should be sized as small as possible while still
+> >>> allowing us to process up to our NAPI budget. Usually I run things
+> >>> with a 128 Rx / 128 Tx setup and then reduce the Tx queue length so w=
+e
+> >>> don't have more buffers stored there than we can place in the Tx ring=
+.
+> >>> Then we can avoid the extra thrash of having to pull/push memory into
+> >>> and out of the freelists. Essentially the issue here ends up being
+> >>> another form of buffer bloat.
+> >> Thanks Aleksandar - yes it can be - but in my scenario setting RX buff=
+er
+> >> <4096 producing more interface rx drops - and no_rx_buffer on network
+> >> controller that is receiving more packets
+> >> So i need to stick with 3000-4000 on RX - and yes i was trying to lowe=
+r
+> >> the TX buff on connectx4 - but that changed nothing before Aaron patch
+> >>
+> >> After Aaron patch - decreasing TX buffer influencing total bandwidth
+> >> that can be handled by the router/server
+> >> Dono why before this patch there was no difference there no matter wha=
+t
+> >> i set there there was always page_alloc/slowpath on top in perf
+> >>
+> >>
+> >> Currently testing RX4096/TX256 - this helps with bandwidth like +10%
+> >> more bandwidth with less interrupts...
+> > The problem is if you are going for less interrupts you are setting
+> > yourself up for buffer bloat. Basically you are going to use much more
+> > cache and much more memory then you actually need and if things are
+> > properly configured NAPI should take care of the interrupts anyway
+> > since under maximum load you shouldn't stop polling normally.
+>
+> Im trying to balance here - there is problem cause server is forwarding
+> all kingd of protocols packets/different size etc
+>
+> The problem is im trying to go in high interrupt rate - but
+>
+> Setting coalescence to adaptative for rx killing cpu's at 22Gbit/s RX
+> and 22Gbit with rly high interrupt rate
 
---fUYQa+Pmc3FrFX/N
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I wouldn't recommend adaptive just because the behavior would be hard
+to predict.
 
-On Fri, Nov 09, 2018 at 09:05:26AM -0800, Greg Kroah-Hartman wrote:
-> On Fri, Oct 26, 2018 at 01:16:36PM +0200, Thierry Reding wrote:
-> > From: Thierry Reding <treding@nvidia.com>
-> >=20
-> > The Tegra Combined UART (TCU) is a mailbox-based mechanism that allows
-> > multiplexing multiple "virtual UARTs" into a single hardware serial
-> > port. The TCU is the primary serial port on Tegra194 devices.
-> >=20
-> > Add a TCU driver utilizing the mailbox framework, as the used mailboxes
-> > are part of Tegra HSP blocks that are already controlled by the Tegra
-> > HSP mailbox driver.
-> >=20
-> > Based on work by  Mikko Perttunen <mperttunen@nvidia.com>.
-> >=20
-> > Signed-off-by: Thierry Reding <treding@nvidia.com>
->=20
-> Acked-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> So adding a little more latency i can turn off adaptative rx and setup
+> rx-usecs from range 16-64 - and this gives me more or less interrupts -
+> but the problem is - always same bandwidth as maximum
 
-Thanks. I just sent out v2 addressing Pekka's comments on the series.
-But I'm slightly confused now. Are you expecting anyone else to pick
-this up? There are technically no build time dependencies between any
-of these patches, so it should be fine to pick them all into the
-corresponding subsystem trees.
+What about the tx-usecs, is that a functional thing for the adapter
+you are using?
 
-Perhaps the only thing to note is that there is a runtime dependency
-=66rom this patch on patches 1 and 2 in the series. Patch 1 is required to
-make blocking a mailbox possible in interrupt context, which we need in
-the TCU driver because the TTY and console paths do end up calling the
-mbox_send_message() from interrupt context. Patch 2 is only required at
-runtime if the two mailboxes are provided by different instances of the
-HSP block (which they are for TCU on Tegra194).
+The Rx side logic should be pretty easy to figure out. Essentially you
+want to keep the Rx ring size as small as possible while at the same
+time avoiding storming the system with interrupts. I know for 10Gb/s I
+have used a value of 25us in the past. What you want to watch for is
+if you are dropping packets on the Rx side or not. Ideally you want
+enough buffers that you can capture any burst while you wait for the
+interrupt routine to catch up.
 
-Would you prefer for Jassi to pick up the TCU patch along with the
-mailbox core and driver changes so that we deal with the runtime
-dependencies that way?
+> >
+> > One issue I have seen is people delay interrupts for as long as
+> > possible which isn't really a good thing since most network
+> > controllers will use NAPI which will disable the interrupts and leave
+> > them disabled whenever the system is under heavy stress so you should
+> > be able to get the maximum performance by configuring an adapter with
+> > small ring sizes and for high interrupt rates.
+>
+> Sure this is bad to setup rx-usec for high values - cause at some point
+> this will add high latency for packet traversing both sides - and start
+> to hurt buffers
+>
+> But my problem is a little different now i have no problems with RX side
+> - cause i can setup anything like:
+>
+> coalescence from 16 to 64
+>
+> rx ring from 3000 to max 8192
+>
+> And it does not change my max bw - only produces less or more interrupts.
 
-Alternatively, if Jassi is okay with the mailbox changes, I can pick up
-all of the v2 series of the patches into stable branches for v4.21, deal
-with the dependencies there and send out pull requests for everyone to
-merge into their subsystem trees.
+Right so the issue itself isn't Rx, you aren't throttled there. We are
+probably looking at an issue of PCIe bandwidth or Tx slowing things
+down. The fact that you are still filing interrupts is a bit
+surprising though. Are the Tx and Rx interrupts linked for the device
+you are using or are they firing them seperately? Normally Rx traffic
+won't generate many interrupts under a stress test as NAPI will leave
+the interrupts disabled unless it can keep up. Anyway, my suggestion
+would be to look at tuning things for as small a ring size as
+possible.
 
-Thierry
+> So I start to change params for TX side - and for now i know that the
+> best for me is
+>
+> coalescence adaptative on
+>
+> TX buffer 128
+>
+> This helps with max BW that for now is close to 70Gbit/s RX and 70Gbit
+> TX but after this change i have increasing DROPS on TX side for vlan
+> interfaces.
 
---fUYQa+Pmc3FrFX/N
-Content-Type: application/pgp-signature; name="signature.asc"
+So this sounds like you are likely bottlenecked due to either PCIe
+bandwidth or latency. When you start putting back-pressure on the Tx
+like you have described it starts pushing packets onto the Qdisc
+layer. One thing that happens when packets are on the qdisc layer is
+that they can start to perform a bulk dequeue. The side effect of this
+is that you write multiple packets to the descriptor ring and then
+update the hardware doorbell only once for the entire group of packets
+instead of once per packet.
 
------BEGIN PGP SIGNATURE-----
+> And only 50% cpu (max was 50% for 70Gbit/s)
+>
+>
+> > It is easiest to think of it this way. Your total packet rate is equal
+> > to your interrupt rate times the number of buffers you will store in
+> > the ring. So if you have some fixed rate "X" for packets and an
+> > interrupt rate of "i" then your optimal ring size should be "X/i". So
+> > if you lower the interrupt rate you end up hurting the throughput
+> > unless you increase the buffer size. However at a certain point the
+> > buffer size starts becoming an issue. For example with UDP flows I
+> > often see massive packet drops if you tune the interrupt rate too low
+> > and then put the system under heavy stress.
+>
+> Yes - in normal life traffic - most of ddos'es are like this many pps
+> with small frames.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvpnIIACgkQ3SOs138+
-s6G9thAAmhwMCREJAWW3pWq4rGnjyHIlRwal0f3ryO2kKoJUU6pMMjIpyhyL7HDg
-UE9ytBcLqT8UtijC79Ur9pT8Zg8iocoLhK2CUlkt+swYWiKgCTYY04U7th/rsiEP
-Eqqxw8W6Ev8mmWnbtZxEnANPGye1O+QyWKNr/enMynt4oFKmXhoPopJE9X+jdDrm
-BPkTsfB+iDpurl6az6dpbkiJoTfnDH/KslT0O2B8b3glX84NPouZd9d/uX2GSD6C
-9u9AXoAtm2I13zVTHrwYXdAbJW+R3fgN52QX5ugaygrM+15dkOgomREfeRTZLQyu
-1Sgc6GEMr0Jj+cB7MnJuVrduVZBemGP6w4NGo0A6vAIG4J2rqM1XGfWXAaeN3iv2
-8aQfedqyWlmByrPw+CSwxdBQYfKPkxgEt5aCRXPv3qfock+ycHy/jUp+po3Y+0Nu
-A5Abh1x1WzUJBIL8tMd6wAh7sm5ndxRBFJjdIWXXuGKHYv1H7URD0RNooE1B+vEK
-itDzAx5ZS+JCbqkhsrTxtNqxhgalaprdEtHj2JbB1VY9w/RdoORyz9jQ49b7BENB
-flX3750cp1p364hSncwBIsAw6Z3Hk87iLZh5PcHGOHCgowU7izEEMS3gbVSfDgPc
-kWRr0GaixLog3OXxriCFU/HurHGBcQNb7YiQbuxNUMum3dRR6oQ=
-=SwJi
------END PGP SIGNATURE-----
-
---fUYQa+Pmc3FrFX/N--
+It sounds to me like XDP would probably be your best bet. With that
+you could probably get away with smaller ring sizes, higher interrupt
+rates, and get the advantage of it batching the Tx without having to
+drop packets.
