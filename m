@@ -2,99 +2,130 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 41794C04EBC
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:09:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBC21C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:12:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04C36223D0
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:09:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G5vU9eWP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C36223D0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B1BA4223D0
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 15:12:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1BA4223D0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729930AbeKMBDJ (ORCPT
+        id S1729756AbeKMBGH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 20:03:09 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:41820 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726912AbeKMBDI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 20:03:08 -0500
-Received: by mail-oi1-f194.google.com with SMTP id g188-v6so7396885oif.8;
-        Mon, 12 Nov 2018 07:09:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=XewShTb8OK7Ia+MHfRiVu1VBL0Z96GKD2pViMG0gi1Q=;
-        b=G5vU9eWPGgxV9GnYcYP4UJovDwnFeJT8WdXRROV+BapLaI36i5n/C/Ryfmh32n9VKk
-         9Yh97DoF44YWgtiFmeOspoHRYzN5jDVFZpmMnfG8bjBV7NBPbE8j8l426L12mupK5lLl
-         KaZYT68upiSuXB6rm9rDSjxvKZE4AoD18QhK1NhHXKfJlV4sKpY/b5dfucHzVta+NhFl
-         X0H0GKl+exnJl/w6P7i1w4ql7MQ49ruxPc7CISb8VJdZamB76H0dxcyjklOTZunL/r7+
-         wr0+Xmmnweksw+yJmOJks5wXJOGIF+ef4ZIR+st7OzGOIi6v+wEf+mMEae+9ZYWLo2YJ
-         2puQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=XewShTb8OK7Ia+MHfRiVu1VBL0Z96GKD2pViMG0gi1Q=;
-        b=AJUuA9WNW/BEO02SZNJ3NttCL7+3YfiIYrlUaEI4zqUH9FHdk680CnZvUX58U5coGp
-         LUtClntgF5DLE7vzz4xdRV1qmsw8vQ5AxhI9Nfrrc8U7uUlMzzG5VNDEPt3pj+uDB2+6
-         clr7gsjBIx0u5oriBbedK/RtF0eAHJ5vJO1oYstc8AfXAUzlvoX71zwFjHpMJdqxksGM
-         ruAxGI4Vtb2582KLocY7C8TRsSerCIIWYgq/cAKKc1gLP1rs/AChboFhbBEplORFrRnu
-         zCBvDPIrPmRU8HYhS4Kj+Wbe3+qzF946ewgRUsmKnqTB4xbfYhKn6XDlb6pAaCIYXivR
-         Ix7Q==
-X-Gm-Message-State: AGRZ1gIthApg1AHGvhWxq7QwvkNPcuesUhhHZQrvmw+7A3bi05oJUJ96
-        tgW2XWxRMhQc5+28mPJBWzz0YjKORxqIymC4nbg=
-X-Google-Smtp-Source: AJdET5fK0VK+RHGItRprNXN2FMhe3FsZ8CsQUETdJ1n4WxerPBmmgM+sWi1JWQWPODHB2sOs1I+OuuqT8LMDVyt3g8o=
-X-Received: by 2002:aca:308b:: with SMTP id w133-v6mr736370oiw.67.1542035368545;
- Mon, 12 Nov 2018 07:09:28 -0800 (PST)
+        Mon, 12 Nov 2018 20:06:07 -0500
+Received: from mga12.intel.com ([192.55.52.136]:21937 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726443AbeKMBGH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 20:06:07 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2018 07:12:15 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,495,1534834800"; 
+   d="scan'208";a="88679704"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.251.10.23]) ([10.251.10.23])
+  by orsmga007.jf.intel.com with ESMTP; 12 Nov 2018 07:12:14 -0800
+Subject: Re: [mm PATCH v5 7/7] mm: Use common iterator for deferred_init_pages
+ and deferred_free_pages
+To:     Pavel Tatashin <pasha.tatashin@soleen.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, davem@davemloft.net,
+        pavel.tatashin@microsoft.com, mhocko@suse.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
+        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
+        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
+        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
+References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
+ <154145280115.30046.13334106887516645119.stgit@ahduyck-desk1.jf.intel.com>
+ <20181110041338.7ttram7po7a2ssz7@xakep.localdomain>
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Message-ID: <ce8504f0-5963-7415-8e8d-7454b0e68fe5@linux.intel.com>
+Date:   Mon, 12 Nov 2018 07:12:13 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <1541871439-4882-1-git-send-email-martin@kaiser.cx> <AM0PR04MB4211FE365D78EDEB0003D74380C10@AM0PR04MB4211.eurprd04.prod.outlook.com>
-In-Reply-To: <AM0PR04MB4211FE365D78EDEB0003D74380C10@AM0PR04MB4211.eurprd04.prod.outlook.com>
-From:   Fabio Estevam <festevam@gmail.com>
-Date:   Mon, 12 Nov 2018 13:09:26 -0200
-Message-ID: <CAOMZO5DbuuVr7JVpK+DCsE4G=tksTg6CRrCGwyaNO55WDuyRzw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: imx: make sure that maps are fully initialized
-To:     Dong Aisheng <aisheng.dong@nxp.com>
-Cc:     Martin Kaiser <martin@kaiser.cx>, Shawn Guo <shawnguo@kernel.org>,
-        Stefan Agner <stefan@agner.ch>,
-        Sascha Hauer <kernel@pengutronix.de>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Leonard Crestez <leonard.crestez@nxp.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181110041338.7ttram7po7a2ssz7@xakep.localdomain>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Dong,
+On 11/9/2018 8:13 PM, Pavel Tatashin wrote:
+> On 18-11-05 13:20:01, Alexander Duyck wrote:
+>> +static unsigned long __next_pfn_valid_range(unsigned long *i,
+>> +					    unsigned long end_pfn)
+>>   {
+>> -	if (!pfn_valid_within(pfn))
+>> -		return false;
+>> -	if (!(pfn & (pageblock_nr_pages - 1)) && !pfn_valid(pfn))
+>> -		return false;
+>> -	return true;
+>> +	unsigned long pfn = *i;
+>> +	unsigned long count;
+>> +
+>> +	while (pfn < end_pfn) {
+>> +		unsigned long t = ALIGN(pfn + 1, pageblock_nr_pages);
+>> +		unsigned long pageblock_pfn = min(t, end_pfn);
+>> +
+>> +#ifndef CONFIG_HOLES_IN_ZONE
+>> +		count = pageblock_pfn - pfn;
+>> +		pfn = pageblock_pfn;
+>> +		if (!pfn_valid(pfn))
+>> +			continue;
+>> +#else
+>> +		for (count = 0; pfn < pageblock_pfn; pfn++) {
+>> +			if (pfn_valid_within(pfn)) {
+>> +				count++;
+>> +				continue;
+>> +			}
+>> +
+>> +			if (count)
+>> +				break;
+>> +		}
+>> +
+>> +		if (!count)
+>> +			continue;
+>> +#endif
+>> +		*i = pfn;
+>> +		return count;
+>> +	}
+>> +
+>> +	return 0;
+>>   }
+>>   
+>> +#define for_each_deferred_pfn_valid_range(i, start_pfn, end_pfn, pfn, count) \
+>> +	for (i = (start_pfn),						     \
+>> +	     count = __next_pfn_valid_range(&i, (end_pfn));		     \
+>> +	     count && ({ pfn = i - count; 1; });			     \
+>> +	     count = __next_pfn_valid_range(&i, (end_pfn)))
+> 
+> Can this be improved somehow? It took me a while to understand this
+> piece of code. i is actually end of block, and not an index by PFN, ({pfn = i - count; 1;}) is
+> simply hard to parse. Why can't we make __next_pfn_valid_range() to
+> return both end and a start of a block?
 
-On Mon, Nov 12, 2018 at 1:04 PM A.s. Dong <aisheng.dong@nxp.com> wrote:
+One thing I could do is flip the direction and work from the end to the 
+start. If I did that then 'i' and 'pfn' would be the same value and I 
+wouldn't have to do the subtraction. If that works for you I could 
+probably do that and it may actually be more efficient.
 
-> Thanks for reporting this issue.
-> The original code intended to save 3 common lines for both SCU and MMIO pads,
-> but it did change the code logic a bit which resulted in a regression specificly
-> for NO_PAD_CTL cases used on a few legacy boards. (NO_PAD_CTL is deprecated
-> for new boards dts).
+Otherwise I could probably pass pfn as a reference, and compute it in 
+the case where count is non-zero.
 
-Just a clarification: NO_PAD_CTL is not deprecated.
-
-It is not recommended for new dts as we should not rely on the
-bootloader pinctrl settings.
-
-> As you both had a patch, i'm not sure who i'm going to expect for a updated one,
-> so I would send it my own with both of your tags.
-
-Yes, please send a patch putting a Reported-by tag from Martin and a
-Suggested-by tag from Leonard.
-
-Thanks
+> The rest is good:
+> 
+> Reviewed-by: Pavel Tatashin <pasha.tatashin@soleen.com>
+> 
+> Thank you,
+> Pasha
+> 
