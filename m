@@ -2,482 +2,81 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.3 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5CE5C43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:45:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78746C07E85
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 743842241E
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:45:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e3rtVGEW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 743842241E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 4BDD52241E
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 16:46:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BDD52241E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729637AbeKMCjY (ORCPT
+        id S1728416AbeKMCkh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 21:39:24 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42653 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727417AbeKMCjY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 21:39:24 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l10so3038672lfh.9
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 08:45:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=OoE0KP9uwXr8WhGRaKjAtRyKFHOSXIRieGIhfY0wrAQ=;
-        b=e3rtVGEWwT/pmjdcS5onknP2ROdN58dyrvH+0SthDnvTRvEFk3hk3kwpcX91qGSpFC
-         +2W+A/LXmpq2xManCF5kvm3aog+4YkbVl26tdjQ1JoVmz8BEylzlHajh+4Wpc6YWkf5X
-         B+FURMAbkiPqFCQ5OF4ZwLyCgEwIP+zKm+VhUUqh8HDFLCLvz0OSlRf8tYR2E8RIxIKU
-         OwpgX0H6v9ELUpZbWpmmhAyUAyMguq7/2R221jdKmcZ8SEwCNZag9jORxylncwGf73o0
-         HLrfGomSjUvLIzf4QspOqlrr7lTRJl6FsyqGqJgBpBS2lTgN8UI+rb6Ji1vFYbyxeb0i
-         wK1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=OoE0KP9uwXr8WhGRaKjAtRyKFHOSXIRieGIhfY0wrAQ=;
-        b=YZsnxj05vOWX/6p/FQY3rm8snHQec3UDYBBVQ6hcyeme8fHMScRKDL+aqDoufKKlTe
-         Y3Baq3WZOAr+98QfrvkNDDmB3rc+fbYhyYS5VhI3JVVU+/Qb6V3noAVPYoXRSpuyAyZf
-         98ETEkuRGXqn53YeiOcoZNUayx3LwsyZdl36/AMqzZ2vYe5nLC0WZs05iivSSUIlT6mH
-         AYEJQ5QuOCwodPS9uCF5siIkDZmgjzZiysLAbzm8j1eI2c/wFsU59yiCtDRbwFSdI8u/
-         SPB1usWUmZr51BLZweaNCN/F6+TvPn8w74MPC31li/kwSpVlg18FiILvgbC0KNL4njwC
-         QRvA==
-X-Gm-Message-State: AGRZ1gKmzmhS6PuiDrirusJNY0mIFeXsp8dh1/jB83v2/0JaZeZ1e0Um
-        QRTjddAz+3xRi+9IUsA2mckbyNNNcqyM0KUsqg8Pig==
-X-Google-Smtp-Source: AJdET5fowKkVa9H6GqfTdaS+lQ3INtaevGv5mYjqhYqvPqBqyT0ktOjXc7sOBJAWs7hzBYrWdGS5FK9MifAyyNKMMI8=
-X-Received: by 2002:a19:978c:: with SMTP id z134mr1104171lfd.109.1542041119536;
- Mon, 12 Nov 2018 08:45:19 -0800 (PST)
+        Mon, 12 Nov 2018 21:40:37 -0500
+Received: from mout.gmx.net ([212.227.15.19]:50205 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726841AbeKMCkh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 21:40:37 -0500
+Received: from ls3530.dellerweb.de ([92.116.170.42]) by mail.gmx.com (mrgmx003
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 0MZCQ8-1g3bTc0P7s-00Kuhm; Mon, 12
+ Nov 2018 17:46:28 +0100
+Date:   Mon, 12 Nov 2018 17:46:24 +0100
+From:   Helge Deller <deller@gmx.de>
+To:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        John David Anglin <dave.anglin@bell.net>
+Subject: [GIT PULL] parisc architecture fix for kernel v4.20
+Message-ID: <20181112164624.GA29362@ls3530.dellerweb.de>
 MIME-Version: 1.0
-References: <5FBCBE569E134E4CA167B91C0A77FD610198F8FA41@EXMBX-SZMAIL022.tencent.com>
-In-Reply-To: <5FBCBE569E134E4CA167B91C0A77FD610198F8FA41@EXMBX-SZMAIL022.tencent.com>
-From:   Todd Kjos <tkjos@google.com>
-Date:   Mon, 12 Nov 2018 08:45:07 -0800
-Message-ID: <CAHRSSEwf67AkOtwsAEuqmmwSf2OV8BbqYFiGft9qXcrDQvhzHA@mail.gmail.com>
-Subject: Re: [PATCH V4] binder: ipc namespace support for android binder
-To:     chouryzhou@tencent.com, christian@brauner.io,
-        Martijn Coenen <maco@android.com>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        =?UTF-8?B?QXJ2ZSBIasO4bm5ldsOlZw==?= <arve@android.com>,
-        Todd Kjos <tkjos@android.com>, akpm@linux-foundation.org,
-        dave@stgolabs.net,
-        "open list:ANDROID DRIVERS" <devel@driverdev.osuosl.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Provags-ID: V03:K1:AqN0CnHMBEX4m3LTiES05w3TDS6aST6PmV4mq3uDUVuYiOhAcYx
+ yYTMYAs8IJXvemya/QLRTs41/HUDYdfPdlwxQE+ettt9U1EqzG6Vhrxwlx2CQ+ygTx7qrBP
+ NvZ+cCbUZdnDf3fxFtUZKobBN2NCqJjgGelCdSzHQ3xOMFU+Bxx58K+y6DEgXwvud88Uf2r
+ 6WjfIBfN6YcXCV4LjsLLQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:Qt2JqkWZQ+Y=:z80uVIm+rVHOY0+4N879jK
+ BQwQMJLjbjn7TrLvBKI91Y4UNupivyibEDDYSHnSFl58p/DFVKPOXW+M6BAAuBI3iwuZIhvvH
+ gwetdiP+CRI0o8KBHL3KfEFdyCdXI02SloNe9cS7TCoxoaBJgP3vrq4sojKdc97+PIDQq5yil
+ mGUKM0NQsmFf1Hr31jS29fW0gR4hB2OmnoUe16Kdg6jaIp46hEDvVtnWP6Hdlz6myP8qt21bF
+ xWOstiqP8RHIlVff5DEnxi+SIsmCUJdhWdPEsgnRmHVy9JNh+oT7ofTAjApptdGCmpI3fYm+N
+ 6Mi7+Bofqc7enJqSJylWbKYBbUfRDTtMxt5MOPwWegg2ME6jCSn+ksOpOxyiB1h778rjDv5fU
+ 3wU0oesog4bRZKA44vzVbIUaOzklGFA+GgFclWlMg3x1V9Ww2DfUrdgm1N8o6PTVn/aRq4SLa
+ q1kQAGzC8OjfCSM2lLJ904I/CWemAkDJmyiZd/IqADi07J30glasexLiMBDGib6cECq7nrG7w
+ Vi0qoYFEdZcoO11v3HitPyYhnbpUaS/6Iqt73+dDR4aHJyzMjpZubspsazc2nM0vDDvVy6M7S
+ AlX9OOPgpwPBvSobGULpUfMUov9gJNaoV/KVL4AksqHzfaUoe/zT53asnZu0zdGvRw8clu7H8
+ XSGu5GKtsP//gdBHxczecAfgfR7er/7QvaKVF0Ik4FOBWW+N5fg+2M57xxcMi/36v+UsF5fxu
+ Z+wgnipMhqq8/QlBI/FLxqVlYfqwOjqYKzMJ2sVOv4kmY+2d0nJ6e7r8HT86IUBOMLrx0RSSP
+ 48XfyM1gAHrQc+6LSIWJEvlfTo+Pg49ffuGFymae/drdoGEWGQ6FDF0cprNGoLxLhyXoZNjv+
+ BjGRANa+LEi1j6T57U1wFCEgmtgJQLYB1ZApVVQbQ=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+christian@brauner.io +Martijn Coenen
+Hi Linus,
 
-Christian,
+please pull one patch for the parisc architecture for 4.20-rc3 from:
 
-Does this patch work for your container use-cases? If not, please
-comment on this thread. Let's discuss at LPC this week.
+  git://git.kernel.org/pub/scm/linux/kernel/git/deller/parisc-linux.git parisc-4.20-3
 
--Todd
+Revert one patch which changed how spinlocks get released. It breaks the
+rwlock implementation in glibc.
 
-On Mon, Nov 12, 2018 at 1:38 AM chouryzhou(=E5=91=A8=E5=A8=81) <chouryzhou@=
-tencent.com> wrote:
->
-> Currently android's binder is not isolated by ipc namespace. Since binder
-> is a form of IPC and therefore should be tied to ipc namespace. With this
-> patch, we can run multiple instances of  android container on one host.
->
-> This patch move "binder_procs" and "binder_context" into ipc_namespace,
-> driver will find the context from it when opening. For debugfs, binder_pr=
-oc
-> is namespace-aware, but not for binder dead nodes, binder_stats and
-> binder_transaction_log_entry (we added ipc inum to trace it).
->
-> Signed-off-by: chouryzhou <chouryzhou@tencent.com>
-> Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
-> ---
->  drivers/android/binder.c      | 133 ++++++++++++++++++++++++++++++++----=
-------
->  include/linux/ipc_namespace.h |  15 +++++
->  ipc/namespace.c               |  10 +++-
->  3 files changed, 125 insertions(+), 33 deletions(-)
->
-> diff --git a/drivers/android/binder.c b/drivers/android/binder.c
-> index cb30a524d16d..453265505b04 100644
-> --- a/drivers/android/binder.c
-> +++ b/drivers/android/binder.c
-> @@ -67,6 +67,8 @@
->  #include <linux/sched/mm.h>
->  #include <linux/seq_file.h>
->  #include <linux/uaccess.h>
-> +#include <linux/proc_ns.h>
-> +#include <linux/ipc_namespace.h>
->  #include <linux/pid_namespace.h>
->  #include <linux/security.h>
->  #include <linux/spinlock.h>
-> @@ -80,13 +82,21 @@
->  #include "binder_alloc.h"
->  #include "binder_trace.h"
->
-> +
-> +#ifndef CONFIG_IPC_NS
-> +static struct ipc_namespace binder_ipc_ns =3D {
-> +       .ns.inum =3D PROC_IPC_INIT_INO,
-> +};
-> +
-> +#define ipcns  (&binder_ipc_ns)
-> +#else
-> +#define ipcns  (current->nsproxy->ipc_ns)
-> +#endif
-> +
->  static HLIST_HEAD(binder_deferred_list);
->  static DEFINE_MUTEX(binder_deferred_lock);
->
->  static HLIST_HEAD(binder_devices);
-> -static HLIST_HEAD(binder_procs);
-> -static DEFINE_MUTEX(binder_procs_lock);
-> -
->  static HLIST_HEAD(binder_dead_nodes);
->  static DEFINE_SPINLOCK(binder_dead_nodes_lock);
->
-> @@ -233,6 +243,7 @@ struct binder_transaction_log_entry {
->         uint32_t return_error;
->         uint32_t return_error_param;
->         const char *context_name;
-> +       unsigned int ipc_inum;
->  };
->  struct binder_transaction_log {
->         atomic_t cur;
-> @@ -263,19 +274,66 @@ static struct binder_transaction_log_entry *binder_=
-transaction_log_add(
->  }
->
->  struct binder_context {
-> +       struct hlist_node hlist;
->         struct binder_node *binder_context_mgr_node;
->         struct mutex context_mgr_node_lock;
->
->         kuid_t binder_context_mgr_uid;
-> +       int   device;
->         const char *name;
->  };
->
->  struct binder_device {
->         struct hlist_node hlist;
->         struct miscdevice miscdev;
-> -       struct binder_context context;
->  };
->
-> +void binder_exit_ns(struct ipc_namespace *ns)
-> +{
-> +       struct binder_context *context;
-> +       struct hlist_node *tmp;
-> +
-> +       mutex_destroy(&ns->binder_procs_lock);
-> +       hlist_for_each_entry_safe(context, tmp, &ns->binder_contexts, hli=
-st) {
-> +               mutex_destroy(&context->context_mgr_node_lock);
-> +               hlist_del(&context->hlist);
-> +               kfree(context);
-> +       }
-> +}
-> +
-> +int binder_init_ns(struct ipc_namespace *ns)
-> +{
-> +       int ret;
-> +       struct binder_device *device;
-> +
-> +       mutex_init(&ns->binder_procs_lock);
-> +       INIT_HLIST_HEAD(&ns->binder_procs);
-> +       INIT_HLIST_HEAD(&ns->binder_contexts);
-> +
-> +       hlist_for_each_entry(device, &binder_devices, hlist) {
-> +               struct binder_context *context;
-> +
-> +               context =3D kzalloc(sizeof(*context), GFP_KERNEL);
-> +               if (!context) {
-> +                       ret =3D -ENOMEM;
-> +                       goto err;
-> +               }
-> +
-> +               context->device =3D device->miscdev.minor;
-> +               context->name =3D device->miscdev.name;
-> +               context->binder_context_mgr_uid =3D INVALID_UID;
-> +               mutex_init(&context->context_mgr_node_lock);
-> +
-> +               hlist_add_head(&context->hlist, &ns->binder_contexts);
-> +       }
-> +
-> +       return 0;
-> +err:
-> +       binder_exit_ns(ns);
-> +       return ret;
-> +}
-> +
-> +
->  /**
->   * struct binder_work - work enqueued on a worklist
->   * @entry:             node enqueued on list
-> @@ -2728,6 +2786,7 @@ static void binder_transaction(struct binder_proc *=
-proc,
->         e->data_size =3D tr->data_size;
->         e->offsets_size =3D tr->offsets_size;
->         e->context_name =3D proc->context->name;
-> +       e->ipc_inum =3D ipcns->ns.inum;
->
->         if (reply) {
->                 binder_inner_proc_lock(proc);
-> @@ -4922,6 +4981,7 @@ static int binder_open(struct inode *nodp, struct f=
-ile *filp)
->  {
->         struct binder_proc *proc;
->         struct binder_device *binder_dev;
-> +       struct binder_context *context;
->
->         binder_debug(BINDER_DEBUG_OPEN_CLOSE, "%s: %d:%d\n", __func__,
->                      current->group_leader->pid, current->pid);
-> @@ -4937,7 +4997,15 @@ static int binder_open(struct inode *nodp, struct =
-file *filp)
->         proc->default_priority =3D task_nice(current);
->         binder_dev =3D container_of(filp->private_data, struct binder_dev=
-ice,
->                                   miscdev);
-> -       proc->context =3D &binder_dev->context;
-> +       hlist_for_each_entry(context, &ipcns->binder_contexts, hlist) {
-> +               if (context->device =3D=3D binder_dev->miscdev.minor) {
-> +                       proc->context =3D context;
-> +                       break;
-> +               }
-> +       }
-> +       if (!proc->context)
-> +               return -ENOENT;
-> +
->         binder_alloc_init(&proc->alloc);
->
->         binder_stats_created(BINDER_STAT_PROC);
-> @@ -4946,9 +5014,9 @@ static int binder_open(struct inode *nodp, struct f=
-ile *filp)
->         INIT_LIST_HEAD(&proc->waiting_threads);
->         filp->private_data =3D proc;
->
-> -       mutex_lock(&binder_procs_lock);
-> -       hlist_add_head(&proc->proc_node, &binder_procs);
-> -       mutex_unlock(&binder_procs_lock);
-> +       mutex_lock(&ipcns->binder_procs_lock);
-> +       hlist_add_head(&proc->proc_node, &ipcns->binder_procs);
-> +       mutex_unlock(&ipcns->binder_procs_lock);
->
->         if (binder_debugfs_dir_entry_proc) {
->                 char strbuf[11];
-> @@ -5082,9 +5150,9 @@ static void binder_deferred_release(struct binder_p=
-roc *proc)
->         struct rb_node *n;
->         int threads, nodes, incoming_refs, outgoing_refs, active_transact=
-ions;
->
-> -       mutex_lock(&binder_procs_lock);
-> +       mutex_lock(&ipcns->binder_procs_lock);
->         hlist_del(&proc->proc_node);
-> -       mutex_unlock(&binder_procs_lock);
-> +       mutex_unlock(&ipcns->binder_procs_lock);
->
->         mutex_lock(&context->context_mgr_node_lock);
->         if (context->binder_context_mgr_node &&
-> @@ -5623,10 +5691,10 @@ static int binder_state_show(struct seq_file *m, =
-void *unused)
->         if (last_node)
->                 binder_put_node(last_node);
->
-> -       mutex_lock(&binder_procs_lock);
-> -       hlist_for_each_entry(proc, &binder_procs, proc_node)
-> +       mutex_lock(&ipcns->binder_procs_lock);
-> +       hlist_for_each_entry(proc, &ipcns->binder_procs, proc_node)
->                 print_binder_proc(m, proc, 1);
-> -       mutex_unlock(&binder_procs_lock);
-> +       mutex_unlock(&ipcns->binder_procs_lock);
->
->         return 0;
->  }
-> @@ -5639,10 +5707,10 @@ static int binder_stats_show(struct seq_file *m, =
-void *unused)
->
->         print_binder_stats(m, "", &binder_stats);
->
-> -       mutex_lock(&binder_procs_lock);
-> -       hlist_for_each_entry(proc, &binder_procs, proc_node)
-> +       mutex_lock(&ipcns->binder_procs_lock);
-> +       hlist_for_each_entry(proc, &ipcns->binder_procs, proc_node)
->                 print_binder_proc_stats(m, proc);
-> -       mutex_unlock(&binder_procs_lock);
-> +       mutex_unlock(&ipcns->binder_procs_lock);
->
->         return 0;
->  }
-> @@ -5652,10 +5720,10 @@ static int binder_transactions_show(struct seq_fi=
-le *m, void *unused)
->         struct binder_proc *proc;
->
->         seq_puts(m, "binder transactions:\n");
-> -       mutex_lock(&binder_procs_lock);
-> -       hlist_for_each_entry(proc, &binder_procs, proc_node)
-> +       mutex_lock(&ipcns->binder_procs_lock);
-> +       hlist_for_each_entry(proc, &ipcns->binder_procs, proc_node)
->                 print_binder_proc(m, proc, 0);
-> -       mutex_unlock(&binder_procs_lock);
-> +       mutex_unlock(&ipcns->binder_procs_lock);
->
->         return 0;
->  }
-> @@ -5665,14 +5733,14 @@ static int binder_proc_show(struct seq_file *m, v=
-oid *unused)
->         struct binder_proc *itr;
->         int pid =3D (unsigned long)m->private;
->
-> -       mutex_lock(&binder_procs_lock);
-> -       hlist_for_each_entry(itr, &binder_procs, proc_node) {
-> +       mutex_lock(&ipcns->binder_procs_lock);
-> +       hlist_for_each_entry(itr, &ipcns->binder_procs, proc_node) {
->                 if (itr->pid =3D=3D pid) {
->                         seq_puts(m, "binder proc state:\n");
->                         print_binder_proc(m, itr, 1);
->                 }
->         }
-> -       mutex_unlock(&binder_procs_lock);
-> +       mutex_unlock(&ipcns->binder_procs_lock);
->
->         return 0;
->  }
-> @@ -5687,12 +5755,12 @@ static void print_binder_transaction_log_entry(st=
-ruct seq_file *m,
->          */
->         smp_rmb();
->         seq_printf(m,
-> -                  "%d: %s from %d:%d to %d:%d context %s node %d handle =
-%d size %d:%d ret %d/%d l=3D%d",
-> +                  "%d: %s from %d:%d to %d:%d ipc %d context %s node %d =
-handle %d size %d:%d ret %d/%d l=3D%d",
->                    e->debug_id, (e->call_type =3D=3D 2) ? "reply" :
->                    ((e->call_type =3D=3D 1) ? "async" : "call "), e->from=
-_proc,
-> -                  e->from_thread, e->to_proc, e->to_thread, e->context_n=
-ame,
-> -                  e->to_node, e->target_handle, e->data_size, e->offsets=
-_size,
-> -                  e->return_error, e->return_error_param,
-> +                  e->from_thread, e->to_proc, e->to_thread, e->ipc_inum,
-> +                  e->context_name, e->to_node, e->target_handle, e->data=
-_size,
-> +                  e->offsets_size, e->return_error, e->return_error_para=
-m,
->                    e->return_error_line);
->         /*
->          * read-barrier to guarantee read of debug_id_done after
-> @@ -5753,10 +5821,6 @@ static int __init init_binder_device(const char *n=
-ame)
->         binder_device->miscdev.minor =3D MISC_DYNAMIC_MINOR;
->         binder_device->miscdev.name =3D name;
->
-> -       binder_device->context.binder_context_mgr_uid =3D INVALID_UID;
-> -       binder_device->context.name =3D name;
-> -       mutex_init(&binder_device->context.context_mgr_node_lock);
-> -
->         ret =3D misc_register(&binder_device->miscdev);
->         if (ret < 0) {
->                 kfree(binder_device);
-> @@ -5831,9 +5895,16 @@ static int __init binder_init(void)
->                 if (ret)
->                         goto err_init_binder_device_failed;
->         }
-> +#ifdef CONFIG_IPC_NS
-> +       ret =3D binder_init_ns(&init_ipc_ns);
-> +#else
-> +       ret =3D binder_init_ns(&binder_ipc_ns);
-> +#endif
-> +       if (ret)
-> +               goto err_init_namespace_failed;
->
->         return ret;
-> -
-> +err_init_namespace_failed:
->  err_init_binder_device_failed:
->         hlist_for_each_entry_safe(device, tmp, &binder_devices, hlist) {
->                 misc_deregister(&device->miscdev);
-> diff --git a/include/linux/ipc_namespace.h b/include/linux/ipc_namespace.=
-h
-> index 6ab8c1bada3f..d7f850a2ded8 100644
-> --- a/include/linux/ipc_namespace.h
-> +++ b/include/linux/ipc_namespace.h
-> @@ -63,6 +63,13 @@ struct ipc_namespace {
->         unsigned int    mq_msg_default;
->         unsigned int    mq_msgsize_default;
->
-> +#ifdef CONFIG_ANDROID_BINDER_IPC
-> +       /* next fields are for binder */
-> +       struct mutex      binder_procs_lock;
-> +       struct hlist_head binder_procs;
-> +       struct hlist_head binder_contexts;
-> +#endif
-> +
->         /* user_ns which owns the ipc ns */
->         struct user_namespace *user_ns;
->         struct ucounts *ucounts;
-> @@ -118,6 +125,14 @@ extern int mq_init_ns(struct ipc_namespace *ns);
->  static inline int mq_init_ns(struct ipc_namespace *ns) { return 0; }
->  #endif
->
-> +#ifdef CONFIG_ANDROID_BINDER_IPC
-> +extern int binder_init_ns(struct ipc_namespace *ns);
-> +extern void binder_exit_ns(struct ipc_namespace *ns);
-> +#else
-> +static inline int binder_init_ns(struct ipc_namespace *ns) { return 0; }
-> +static inline void binder_exit_ns(struct ipc_namespace *ns) { }
-> +#endif
-> +
->  #if defined(CONFIG_IPC_NS)
->  extern struct ipc_namespace *copy_ipcs(unsigned long flags,
->         struct user_namespace *user_ns, struct ipc_namespace *ns);
-> diff --git a/ipc/namespace.c b/ipc/namespace.c
-> index 21607791d62c..68c6e983b002 100644
-> --- a/ipc/namespace.c
-> +++ b/ipc/namespace.c
-> @@ -57,7 +57,10 @@ static struct ipc_namespace *create_ipc_ns(struct user=
-_namespace *user_ns,
->
->         err =3D mq_init_ns(ns);
->         if (err)
-> -               goto fail_put;
-> +               goto fail_init_mq;
-> +       err =3D binder_init_ns(ns);
-> +       if (err)
-> +               goto fail_init_binder;
->
->         sem_init_ns(ns);
->         msg_init_ns(ns);
-> @@ -65,7 +68,9 @@ static struct ipc_namespace *create_ipc_ns(struct user_=
-namespace *user_ns,
->
->         return ns;
->
-> -fail_put:
-> +fail_init_binder:
-> +       mq_put_mnt(ns);
-> +fail_init_mq:
->         put_user_ns(ns->user_ns);
->         ns_free_inum(&ns->ns);
->  fail_free:
-> @@ -120,6 +125,7 @@ static void free_ipc_ns(struct ipc_namespace *ns)
->         sem_exit_ns(ns);
->         msg_exit_ns(ns);
->         shm_exit_ns(ns);
-> +       binder_exit_ns(ns);
->
->         dec_ipc_namespaces(ns->ucounts);
->         put_user_ns(ns->user_ns);
-> --
-> 2.11.0
+Thanks,
+Helge
+
+----------------------------------------------------------------
+John David Anglin (1):
+      parisc: Revert "Release spinlocks using ordered store"
+
+ arch/parisc/include/asm/spinlock.h |  4 ++--
+ arch/parisc/kernel/syscall.S       | 12 ++++++++----
+ 2 files changed, 10 insertions(+), 6 deletions(-)
