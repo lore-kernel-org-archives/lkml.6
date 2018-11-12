@@ -2,201 +2,224 @@ Return-Path: <SRS0=E8pv=NX=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91C7AC43441
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:40:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6E29C43441
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:45:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5128520862
-	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:40:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5128520862
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 609EF208A3
+	for <linux-kernel@archiver.kernel.org>; Mon, 12 Nov 2018 01:45:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 609EF208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729950AbeKLLbX (ORCPT
+        id S1729967AbeKLLgW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Mon, 12 Nov 2018 06:31:23 -0500
-Received: from mga09.intel.com ([134.134.136.24]:56061 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729529AbeKLLbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Mon, 12 Nov 2018 06:31:23 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 11 Nov 2018 17:40:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,493,1534834800"; 
-   d="scan'208";a="107417530"
-Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
-  by orsmga001.jf.intel.com with ESMTP; 11 Nov 2018 17:40:33 -0800
-Subject: Re: [RFC PATCH v2 1/2] x86/fpu: detect AVX task
-To:     Thomas Gleixner <tglx@linutronix.de>,
-        Aubrey Li <aubrey.li@intel.com>
-Cc:     mingo@redhat.com, peterz@infradead.org, hpa@zytor.com,
-        ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        arjan@linux.intel.com, linux-kernel@vger.kernel.org
-References: <1541610982-33478-1-git-send-email-aubrey.li@intel.com>
- <alpine.DEB.2.21.1811091121340.1519@nanos.tec.linutronix.de>
-From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
-Message-ID: <657a9ee9-bb27-968a-34ae-e25df6c2fff9@linux.intel.com>
-Date:   Mon, 12 Nov 2018 09:40:33 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        Mon, 12 Nov 2018 06:36:22 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:26246 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729482AbeKLLgW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Mon, 12 Nov 2018 06:36:22 -0500
+X-UUID: 07c50ab752ca4d1bac58e4e1881d1038-20181112
+X-UUID: 07c50ab752ca4d1bac58e4e1881d1038-20181112
+Received: from mtkcas09.mediatek.inc [(172.21.101.178)] by mailgw01.mediatek.com
+        (envelope-from <ryder.lee@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 171773143; Mon, 12 Nov 2018 09:45:24 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs02n1.mediatek.inc (172.21.101.77) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Mon, 12 Nov 2018 09:45:22 +0800
+Received: from mtkslt306.mediatek.inc (10.21.14.136) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Mon, 12 Nov 2018 09:45:22 +0800
+From:   Ryder Lee <ryder.lee@mediatek.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Sean Wang <sean.wang@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>
+CC:     Matthias Brugger <matthias.bgg@gmail.com>,
+        <linux-gpio@vger.kernel.org>, Weijie Gao <weijie.gao@mediatek.com>,
+        Roy Luo <cheng-hao.luo@mediatek.com>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Ryder Lee <ryder.lee@mediatek.com>
+Subject: [PATCH v1 2/2] dt-bindings: pinctrl: update bindings for MT7629 SoC
+Date:   Mon, 12 Nov 2018 09:45:06 +0800
+Message-ID: <46ee25bb5ac7a7aa0245e2b02e9a0e870ff09551.1541986223.git.ryder.lee@mediatek.com>
+X-Mailer: git-send-email 1.9.1
+In-Reply-To: <5d63d26156d2972b7e9f55c9743b66d7c6dac2ec.1541986223.git.ryder.lee@mediatek.com>
+References: <5d63d26156d2972b7e9f55c9743b66d7c6dac2ec.1541986223.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
-In-Reply-To: <alpine.DEB.2.21.1811091121340.1519@nanos.tec.linutronix.de>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/9 19:21, Thomas Gleixner wrote:
-> Aubrey,
-> 
-> On Thu, 8 Nov 2018, Aubrey Li wrote:
-> 
->> Subject: .... x86/fpu: detect AVX task
-> 
-> What is an AVX task? I know what you mean, but for the casual reader this
-> is not very informative. So something like:
-> 
->   x86/fpu: Track AVX usage of tasks
-> 
-> would be more informative and precise. The mechanism you add is tracking
-> the state and not just detecting in.
-> 
->> XSAVES and its variants use init optimization to reduce the amount of
->> data that they save to memory during context switch. Init optimization
->> uses the state component bitmap to denote if a component is in its init
->> configuration. We use this information to detect if a task contains AVX
->> instructions.
-> 
-> Please avoid 'We use..'. Changelogs should be factual and precise and not
-> be written as first-person narrative.
-> 
-> Aside of that, you very well explained how XSAVES optimization works, but
-> that's only a small part of the picture. The changelog should also contain
-> a justification why this is necessary in the first place along with more
-> missing bits and pieces. And please use paragraphs to structure the
-> changelog instead of having one big lump.
-> 
-> Something like this:
-> 
->   User space tools which do automated task placement need information about
->   AVX usage of tasks, because of <reasons>....
-> 
->   The extended control register (XCR) allows access to the XINUSE
->   state-component bitmap, which allows software to discover the state of
->   the init optimization used by XSAVEOPT and XSAVES. Set bits in the bitmap
->   denote the usage of AVX, SIMD, FPU and other components. The XSAVE
->   variants store only the state of used components to speed up the
->   operation.
-> 
->   The XGETBV instruction, if supported, allows software to read the
->   state-component bitmap and use this information to detect the usage of
->   the tracked components.
-> 
->   Add accessor functions and per task state tracking to context switch.
-> 
->   The tracking turns on the usage flag immediately, but requires 3
->   consecutive context switches with no usage to clear it. This decay is
->   required because of <reasons>....
-> 
-> You surely had all this information in your head when writing the code and
-> the changelog, so you could have spared me to dig all this out of the SDM.
+This updates bindings for MT7629 pinctrl driver.
 
-Thanks Thomas, will try to refine in the next version.
+Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+---
+Changes since v1:
+-add new function for wifi.
+-add more descriptions.
+---
+ .../devicetree/bindings/pinctrl/pinctrl-mt7622.txt | 131 +++++++++++++++++++++
+ 1 file changed, 131 insertions(+)
 
-> 
->> +/*
->> + * This function is called during context switch to update AVX component state
->> + */
->> +static inline void update_avx_state(struct avx_state *avx)
->> +{
->> +	/*
->> +	 * Check if XGETBV with ECX = 1 supported. XGETBV with ECX = 1
->> +	 * returns the logical-AND of XCR0 and XINUSE. XINUSE is a bitmap
->> +	 * by which the processor tracks the status of various components.
->> +	 */
->> +	if (!use_xgetbv1()) {
->> +		avx->state = 0;
-> 
-> avx->state should be initialized to 0 when the task starts, so why
-> does it need to be cleared when XGETBV is not supported?
+diff --git a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
+index 3b69513..7a7aca1 100644
+--- a/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
++++ b/Documentation/devicetree/bindings/pinctrl/pinctrl-mt7622.txt
+@@ -3,6 +3,7 @@
+ Required properties for the root node:
+  - compatible: Should be one of the following
+ 	       "mediatek,mt7622-pinctrl" for MT7622 SoC
++	       "mediatek,mt7629-pinctrl" for MT7629 SoC
+  - reg: offset and length of the pinctrl space
+ 
+  - gpio-controller: Marks the device node as a GPIO controller.
+@@ -324,6 +325,136 @@ group.
+ 	"uart4_2_rts_cts"		"uart"		95, 96
+ 	"watchdog"			"watchdog"	78
+ 
++
++== Valid values for pins, function and groups on MT7629 ==
++
++	Pin #:  Valid values for pins
++	-----------------------------
++	PIN 0: "TOP_5G_CLK"
++	PIN 1: "TOP_5G_DATA"
++	PIN 2: "WF0_5G_HB0"
++	PIN 3: "WF0_5G_HB1"
++	PIN 4: "WF0_5G_HB2"
++	PIN 5: "WF0_5G_HB3"
++	PIN 6: "WF0_5G_HB4"
++	PIN 7: "WF0_5G_HB5"
++	PIN 8: "WF0_5G_HB6"
++	PIN 9: "XO_REQ"
++	PIN 10: "TOP_RST_N"
++	PIN 11: "SYS_WATCHDOG"
++	PIN 12: "EPHY_LED0_N_JTDO"
++	PIN 13: "EPHY_LED1_N_JTDI"
++	PIN 14: "EPHY_LED2_N_JTMS"
++	PIN 15: "EPHY_LED3_N_JTCLK"
++	PIN 16: "EPHY_LED4_N_JTRST_N"
++	PIN 17: "WF2G_LED_N"
++	PIN 18: "WF5G_LED_N"
++	PIN 19: "I2C_SDA"
++	PIN 20: "I2C_SCL"
++	PIN 21: "GPIO_9"
++	PIN 22: "GPIO_10"
++	PIN 23: "GPIO_11"
++	PIN 24: "GPIO_12"
++	PIN 25: "UART1_TXD"
++	PIN 26: "UART1_RXD"
++	PIN 27: "UART1_CTS"
++	PIN 28: "UART1_RTS"
++	PIN 29: "UART2_TXD"
++	PIN 30: "UART2_RXD"
++	PIN 31: "UART2_CTS"
++	PIN 32: "UART2_RTS"
++	PIN 33: "MDI_TP_P1"
++	PIN 34: "MDI_TN_P1"
++	PIN 35: "MDI_RP_P1"
++	PIN 36: "MDI_RN_P1"
++	PIN 37: "MDI_RP_P2"
++	PIN 38: "MDI_RN_P2"
++	PIN 39: "MDI_TP_P2"
++	PIN 40: "MDI_TN_P2"
++	PIN 41: "MDI_TP_P3"
++	PIN 42: "MDI_TN_P3"
++	PIN 43: "MDI_RP_P3"
++	PIN 44: "MDI_RN_P3"
++	PIN 45: "MDI_RP_P4"
++	PIN 46: "MDI_RN_P4"
++	PIN 47: "MDI_TP_P4"
++	PIN 48: "MDI_TN_P4"
++	PIN 49: "SMI_MDC"
++	PIN 50: "SMI_MDIO"
++	PIN 51: "PCIE_PERESET_N"
++	PIN 52: "PWM_0"
++	PIN 53: "GPIO_0"
++	PIN 54: "GPIO_1"
++	PIN 55: "GPIO_2"
++	PIN 56: "GPIO_3"
++	PIN 57: "GPIO_4"
++	PIN 58: "GPIO_5"
++	PIN 59: "GPIO_6"
++	PIN 60: "GPIO_7"
++	PIN 61: "GPIO_8"
++	PIN 62: "SPI_CLK"
++	PIN 63: "SPI_CS"
++	PIN 64: "SPI_MOSI"
++	PIN 65: "SPI_MISO"
++	PIN 66: "SPI_WP"
++	PIN 67: "SPI_HOLD"
++	PIN 68: "UART0_TXD"
++	PIN 69: "UART0_RXD"
++	PIN 70: "TOP_2G_CLK"
++	PIN 71: "TOP_2G_DATA"
++	PIN 72: "WF0_2G_HB0"
++	PIN 73: "WF0_2G_HB1"
++	PIN 74: "WF0_2G_HB2"
++	PIN 75: "WF0_2G_HB3"
++	PIN 76: "WF0_2G_HB4"
++	PIN 77: "WF0_2G_HB5"
++	PIN 78: "WF0_2G_HB6"
++
++Valid values for function are:
++	"eth", "i2c", "led", "flash", "pcie", "pwm", "spi", "uart",
++	"watchdog", "wifi"
++
++Valid values for groups are:
++	Valid value			function	pins (in pin#)
++	----------------------------------------------------------------
++	"mdc_mdio"			"eth"		23, 24
++	"i2c_0"				"i2c"		19, 20
++	"i2c_1"				"i2c"		53, 54
++	"ephy_leds"			"led"		12, 13, 14, 15, 16,
++							17, 18
++	"ephy0_led"			"led"		12
++	"ephy1_led"			"led"		13
++	"ephy2_led"			"led"		14
++	"ephy3_led"			"led"		15
++	"ephy4_led"			"led"		16
++	"wf2g_led"			"led"		17
++	"wf5g_led"			"led"		18
++	"snfi"				"flash"		62, 63, 64, 65, 66, 67
++	"spi_nor"			"flash"		62, 63, 64, 65, 66, 67
++	"pcie_pereset"			"pcie"		51
++	"pcie_wake"			"pcie"		55
++	"pcie_clkreq"			"pcie"		56
++	"pwm_0"				"pwm"		52
++	"pwm_1"				"pwm"		61
++	"spi_0"				"spi"		21, 22, 23, 24
++	"spi_1"				"spi"		62, 63, 64, 65
++	"spi_wp"			"spi"		66
++	"spi_hold"			"spi"		67
++	"uart0_txd_rxd"			"uart"		68, 69
++	"uart1_0_txd_rxd"		"uart"		25, 26
++	"uart1_0_cts_rts"		"uart"		27, 28
++	"uart1_1_txd_rxd"		"uart"		53, 54
++	"uart1_1_cts_rts"		"uart"		55, 56
++	"uart2_0_txd_rxd"		"uart"		29, 30
++	"uart2_0_cts_rts"		"uart"		31, 32
++	"uart2_1_txd_rxd"		"uart"		57, 58
++	"uart2_1_cts_rts"		"uart"		59, 60
++	"watchdog"			"watchdog"	11
++	"wf0_2g"			"wifi"		70, 71, 72, 73, 74,
++							75, 76, 77, 78
++	"wf0_5g"			"wifi"		0, 1, 2, 3, 4, 5, 6,
++							7, 8, 9, 10
++
+ Example:
+ 
+ 	pio: pinctrl@10211000 {
+-- 
+1.9.1
 
-will fix in the next version.
-
-> 
-> Also this is the only usage site of use_xgetbv1(). So please open code it
-> here and avoid the extra inline which does not provide any extra value in
-> this case.
-
-will fix in the next version
-
-> 
->> +		return;
->> +	}
->> +	/*
->> +	 * XINUSE is dynamic to track component state because VZEROUPPER
->> +	 * happens on every function end and reset the bitmap to the
->> +	 * initial configuration.
->> +	 *
->> +	 * State decay is introduced to solve the race condition between
->> +	 * context switch and a function end. State is aggressively set
->> +	 * once it's detected but need to be cleared by decay 3 context
->> +	 * switches
-> 
-> I have no idea what _the_ race condition between context switch and a
-> function end is about. Probably most readers wont have.
-> 
-
-VZEROUPPER instruction resets the init state. If context switch happens
-to occur exactly after VZEROUPPER instruction, XINUSE bitmap is empty(all
-zeros), which indicates the task is not using AVX. That's why the state
-decay count is used here.
-
-
->> +	 */
->> +	if (xgetbv(XINUSE_STATE_BITMAP_INDEX) & XFEATURE_MASK_Hi16_ZMM) {
-> 
-> In the changelog and also in the code you say AVX (avx->state), but this
-> actually looks only for Hi16_ZMM state, which are the upper 16 AVX512
-> registers.
-> 
-> So again, this wants to be documented in the changelog along with an
-> explanation WHY this check is restricted to Hi16_ZMM state. And please
-> rename the variable accordingly. This is confusing at best.
-
-okay, I'll try to address this in the next version.
-
-
-> 
->> +		avx->state = 1;
->> +		avx->decay_count = AVX_STATE_DECAY_COUNT;
->> +	} else {
->> +		if (avx->decay_count)
->> +			avx->decay_count--;
->> +		else
->> +			avx->state = 0;
->> +	}
-> 
-> Is there a reason why you need two variables for this?
-> 
-> 	if (xgetbv(XINUSE_STATE_BITMAP_INDEX) & XFEATURE_MASK_Hi16_ZMM)
-> 		tsk->hi16zmm_usage = HI16ZMM_DECAY_COUNT;
-> 	else if (tsk->hi16zmm_usage)
-> 		tsk->hi16zmm_usage--;
-> 
-> and the function which exposes it later to user space can just check
-> whether tsk->hi16zmm_usage is 0 or not.
-> 
-> This is context switch and we really want to avoid every pointless
-> instruction we can.
-
-make sense, will try to refine in the next version.
-
-Thanks,
--Aubrey
