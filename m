@@ -4,51 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 62782C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:55:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EB82C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:55:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 022A62245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:55:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1863F223CB
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:55:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0fhTn/v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 022A62245E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+1905mr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1863F223CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732552AbeKMPvj (ORCPT
+        id S1732938AbeKMPtF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:51:39 -0500
+        Tue, 13 Nov 2018 10:49:05 -0500
 Received: from mail.kernel.org ([198.145.29.99]:35992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732925AbeKMPtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:49:05 -0500
+        id S1732881AbeKMPtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:49:04 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 94CD822523;
-        Tue, 13 Nov 2018 05:52:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BE6DB2251D;
+        Tue, 13 Nov 2018 05:52:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088357;
-        bh=y7kScuND3c5MLqunJVB6dTzJSUtqdca6q4FO86BcJkM=;
+        s=default; t=1542088356;
+        bh=mKTDncJN5Vv58uIazmiZKQ2OpBIakVsP2G19l4JQJmg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=V0fhTn/v2mFkk0seJj9JvAlDGFE5KyGLoprC9FFVSFxXfaYLM0DTtYYfBC86OYF8x
-         n/+e9XOMeW9keeteS/BYt1nBUvLSEaAzKuwW8eYI3R4Vn/s7MSSrarkNeeu4q1h7Nf
-         SMwXJUc3OkD47cskKrn0eRSgl2oqvY+pLJTyYiyw=
+        b=c+1905mrspK1EhwP+9gAgr3DoGFL3ElzXo+F7DGMxjGlJZW533tSW7zcau7teiy5O
+         vss+rvrjOk8YqaU9LKAxiIn+1RIoG3RXQ+16YdDYk6tZnt0vvdjVZhOpsZIEFVaqHd
+         BuSEM5yDBvxw01dbcMxL0LOY4YEYYurVClo8fZaU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Paul Gortmaker <paul.gortmaker@windriver.com>,
-        Peter Feuerer <peter@piie.net>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Sasha Levin <sashal@kernel.org>,
-        platform-driver-x86@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 13/17] platform/x86: acerhdf: Add BIOS entry for Gateway LT31 v1.3307
-Date:   Tue, 13 Nov 2018 00:52:19 -0500
-Message-Id: <20181113055223.79060-13-sashal@kernel.org>
+Cc:     Alan Tull <atull@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 10/17] clk: fixed-rate: fix of_node_get-put imbalance
+Date:   Tue, 13 Nov 2018 00:52:16 -0500
+Message-Id: <20181113055223.79060-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113055223.79060-1-sashal@kernel.org>
 References: <20181113055223.79060-1-sashal@kernel.org>
@@ -57,41 +51,35 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Paul Gortmaker <paul.gortmaker@windriver.com>
+From: Alan Tull <atull@kernel.org>
 
-[ Upstream commit 684238d79ad85c5e19a71bb5818e77e329912fbc ]
+[ Upstream commit 52091c256bdcad0d01e2852a63f19cd2cce6af96 ]
 
-To fix:
+When the fixed rate clock is created by devicetree,
+of_clk_add_provider is called.  Add a call to
+of_clk_del_provider in the remove function to balance
+it out.
 
-  acerhdf: unknown (unsupported) BIOS version Gateway  /LT31   /v1.3307 , please report, aborting!
-
-As can be seen in the context, the BIOS registers haven't changed in
-the previous versions, so the assumption is they won't have changed
-in this last update for this somewhat older platform either.
-
-Cc: Peter Feuerer <peter@piie.net>
-Cc: Darren Hart <dvhart@infradead.org>
-Cc: Andy Shevchenko <andy@infradead.org>
-Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Reviewed-by: Peter Feuerer <peter@piie.net>
+Signed-off-by: Alan Tull <atull@kernel.org>
+Fixes: 435779fe1336 ("clk: fixed-rate: Convert into a module platform driver")
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/platform/x86/acerhdf.c | 1 +
+ drivers/clk/clk-fixed-rate.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
-index 2acdb0d6ea89..a0533e4e52d7 100644
---- a/drivers/platform/x86/acerhdf.c
-+++ b/drivers/platform/x86/acerhdf.c
-@@ -233,6 +233,7 @@ static const struct bios_settings bios_tbl[] = {
- 	{"Gateway", "LT31",   "v1.3201",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	{"Gateway", "LT31",   "v1.3302",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	{"Gateway", "LT31",   "v1.3303t", 0x55, 0x58, {0x9e, 0x00}, 0},
-+	{"Gateway", "LT31",   "v1.3307",  0x55, 0x58, {0x9e, 0x00}, 0},
- 	/* Packard Bell */
- 	{"Packard Bell", "DOA150",  "v0.3104",  0x55, 0x58, {0x21, 0x00}, 0},
- 	{"Packard Bell", "DOA150",  "v0.3105",  0x55, 0x58, {0x20, 0x00}, 0},
+diff --git a/drivers/clk/clk-fixed-rate.c b/drivers/clk/clk-fixed-rate.c
+index b5c46b3f8764..6d6475c32ee5 100644
+--- a/drivers/clk/clk-fixed-rate.c
++++ b/drivers/clk/clk-fixed-rate.c
+@@ -200,6 +200,7 @@ static int of_fixed_clk_remove(struct platform_device *pdev)
+ {
+ 	struct clk *clk = platform_get_drvdata(pdev);
+ 
++	of_clk_del_provider(pdev->dev.of_node);
+ 	clk_unregister_fixed_rate(clk);
+ 
+ 	return 0;
 -- 
 2.17.1
 
