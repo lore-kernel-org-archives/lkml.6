@@ -2,116 +2,136 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2FFC0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:19:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B284AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:20:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0615223DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:19:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0615223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FA5822419
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:20:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA5822419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732494AbeKNDSR (ORCPT
+        id S1731779AbeKNDTf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 22:18:17 -0500
-Received: from mga17.intel.com ([192.55.52.151]:55846 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731838AbeKNDQf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 22:16:35 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 09:17:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,228,1539673200"; 
-   d="scan'208";a="90813310"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orsmga006.jf.intel.com with ESMTP; 13 Nov 2018 09:17:31 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-        id DED503C0; Tue, 13 Nov 2018 19:17:30 +0200 (EET)
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-kernel@vger.kernel.org,
-        Alessandro Zummo <a.zummo@towertech.it>,
-        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
-        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Joe Perches <joe@perches.com>,
-        Mark Salyzyn <salyzyn@android.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v3 03/20] rtc: at91rm9200: Switch to use %ptR
-Date:   Tue, 13 Nov 2018 19:17:12 +0200
-Message-Id: <20181113171729.19645-4-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181113171729.19645-1-andriy.shevchenko@linux.intel.com>
-References: <20181113171729.19645-1-andriy.shevchenko@linux.intel.com>
+        Tue, 13 Nov 2018 22:19:35 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:43839 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730954AbeKNDTf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 22:19:35 -0500
+Received: by mail-ua1-f66.google.com with SMTP id z11so4606350uaa.10
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 09:20:33 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=xoOtDUJhEZR23yxsFcrKiFZamjCs1ekULLaeeLqDvqk=;
+        b=RgcxwwkOSKSgAKjG92tqLDGXuyIQiKHWqqSmHxEHkWeApPFWBboa7y+PDWBImsB9xa
+         WaW1rrjzMn09JcSam0Ces8n44LG7FkBYF0W/W5hR165Z7MA0x8kclhSrHakXOa5BKWT8
+         bmgUiBMOVcmdDd9D7AO2spGHsehulO2Nm8A4gtmyygSjK+DaYBiYV75Ch2KKOPv8K0og
+         y+XPl3vOjkLccfxJhnQv3TJ+QwYa5oWDdX7nnt1LePlrFuCK55tKqgOHI2zfbVaFltK7
+         If11BxeVQzBTJUSlLjbmzQmgM5vfNidxOX0FLm2jbmsy1bwPPcFtoQRi+VjAd+6AmgKM
+         iCrw==
+X-Gm-Message-State: AGRZ1gK4YYhDIi8MztncSKXrZqUXKycKSj0z4NuFBoJ266NwXyxPChIq
+        MwNX9bJkL9bPbqvWeQEb+3Qdq1KU3odhOELCxqQ=
+X-Google-Smtp-Source: AJdET5dvNFRIrJ5WUAq4RlE/Qh8riymuASg5qv/C8j1/bm9rJ+6vRjmILf2aPoR+MAminWBJbcNHISsX2ejmU2ILgRA=
+X-Received: by 2002:ab0:465:: with SMTP id 92mr2804802uav.28.1542129633048;
+ Tue, 13 Nov 2018 09:20:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1542128132.12945.19.camel@gmx.us>
+In-Reply-To: <1542128132.12945.19.camel@gmx.us>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 13 Nov 2018 18:20:20 +0100
+Message-ID: <CAMuHMdXKDUSEHKzdBCM4Df00fGC3eOdjU6gcSuQXpDaiUnrmMw@mail.gmail.com>
+Subject: Re: WARNING: CPU: 26 PID: 64391 at lib/vsprintf.c:2193 set_precision+0x84/0x90
+To:     cai@gmx.us
+Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Petr Mladek <pmladek@suse.com>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        "Tobin C. Harding" <me@tobin.cc>,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use %ptR instead of open coded variant to print content of
-struct rtc_time in human readable format.
+On Tue, Nov 13, 2018 at 5:57 PM Qian Cai <cai@gmx.us> wrote:
+> Running the trinity fuzzer with a non-root user on an aarch64 server with the
+> latest mainline (rc2) generated this. Is it just a false alarm to ignore?
+>
+> [  807.847370] precision 65525 too large
+> [  807.847449] WARNING: CPU: 26 PID: 64391 at lib/vsprintf.c:2193
+> set_precision+0x84/0x90
+> [  807.860161] Modules linked in: cast6_generic cast_common lrw bridge 8021q
+> garp mrp stp llc dlci tcp_diag inet_diag af_key pptp gre l2tp_ppp l2tp_netlink
+> l2tp_core ip6_udp_tunnel udp_tunnel pppoe pppox ppp_generic slhc crypto_user
+> ib_core nfnetlink scsi_transport_iscsi atm sctp vfat fat ghash_ce sha2_ce
+> sha256_arm64 sha1_ce ses enclosure ipmi_ssif sg ipmi_si ipmi_devintf sbsa_gwdt
+> ipmi_msghandler sch_fq_codel xfs libcrc32c marvell mpt3sas mlx5_core raid_class
+> hibmc_drm drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm drm
+> ixgbe hisi_sas_v2_hw igb hisi_sas_main libsas hns_dsaf mlxfw devlink
+> hns_enet_drv mdio i2c_designware_platform i2c_algo_bit i2c_designware_core
+> ehci_platform scsi_transport_sas hns_mdio hnae dm_mirror dm_region_hash dm_log
+> dm_mod
+> [  807.927838] CPU: 26 PID: 64391 Comm: trinity-c90 Kdump: loaded Tainted:
+> G        W         4.20.0-rc2+ #16
+> [  807.937494] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50
+> 06/01/2018
+> [  807.944718] pstate: 60000005 (nZCv daif -PAN -UAO)
+> [  807.949515] pc : set_precision+0x84/0x90
+> [  807.953439] lr : set_precision+0x84/0x90
+> [  807.957362] sp : ffff801e6430f6b0
+> [  807.960677] x29: ffff801e6430f6b0 x28: ffff801e6430fb10
+> [  807.965992] x27: 0000000000000003 x26: 00000000ffffffd8
+> [  807.971307] x25: ffff801e6430fba0 x24: ffff801e6430fb48
+> [  807.976622] x23: ffff2000093ddfa0 x22: ffff801e6430f770
+> [  807.981937] x21: ffff2000090eb4a6 x20: ffff801e6430f770
+> [  807.987252] x19: 000000000000fff5 x18: 0000000000000000
+> [  807.992569] x17: 0000000000000000 x16: 0000000000000000
+> [  807.997884] x15: 0000000000000000 x14: 3878302031343220
+> [  808.003201] x13: 6265783020303939 x12: ffff04000172b49c
+> [  808.008516] x11: 1fffe4000172b49b x10: ffff04000172b49b
+> [  808.013832] x9 : 0000000000000000 x8 : 203532353536206e
+> [  808.019148] x7 : 6f69736963657270 x6 : 0000000041b58ab3
+> [  808.024463] x5 : dfff200000000000 x4 : dfff200000000000
+> [  808.029779] x3 : dfff200000000000 x2 : 65a2459128144800
+> [  808.035093] x1 : 65a2459128144800 x0 : 0000000000000000
+> [  808.040408] Call trace:
+> [  808.042861]  set_precision+0x84/0x90
+> [  808.046440]  vsnprintf+0x23c/0x858
+> [  808.049845]  __request_module+0x1a0/0x8b8
+> [  808.053860]  get_fs_type+0xb0/0x138
+> [  808.057351]  do_mount+0x2c4/0x13c0
+> [  808.060756]  ksys_mount+0xf4/0x110
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/rtc/rtc-at91rm9200.c | 15 ++++-----------
- 1 file changed, 4 insertions(+), 11 deletions(-)
+Looks like someone is calling the mount syscall with a very long filesystemtype
+parameter.
 
-diff --git a/drivers/rtc/rtc-at91rm9200.c b/drivers/rtc/rtc-at91rm9200.c
-index caa71d04e989..862b993c3142 100644
---- a/drivers/rtc/rtc-at91rm9200.c
-+++ b/drivers/rtc/rtc-at91rm9200.c
-@@ -147,9 +147,7 @@ static int at91_rtc_readtime(struct device *dev, struct rtc_time *tm)
- 	tm->tm_yday = rtc_year_days(tm->tm_mday, tm->tm_mon, tm->tm_year);
- 	tm->tm_year = tm->tm_year - 1900;
- 
--	dev_dbg(dev, "%s(): %4d-%02d-%02d %02d:%02d:%02d\n", __func__,
--		1900 + tm->tm_year, tm->tm_mon, tm->tm_mday,
--		tm->tm_hour, tm->tm_min, tm->tm_sec);
-+	dev_dbg(dev, "%s(): %ptR\n", __func__, tm);
- 
- 	return 0;
- }
-@@ -161,9 +159,7 @@ static int at91_rtc_settime(struct device *dev, struct rtc_time *tm)
- {
- 	unsigned long cr;
- 
--	dev_dbg(dev, "%s(): %4d-%02d-%02d %02d:%02d:%02d\n", __func__,
--		1900 + tm->tm_year, tm->tm_mon, tm->tm_mday,
--		tm->tm_hour, tm->tm_min, tm->tm_sec);
-+	dev_dbg(dev, "%s(): %ptR\n", __func__, tm);
- 
- 	wait_for_completion(&at91_rtc_upd_rdy);
- 
-@@ -209,8 +205,7 @@ static int at91_rtc_readalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 	alrm->enabled = (at91_rtc_read_imr() & AT91_RTC_ALARM)
- 			? 1 : 0;
- 
--	dev_dbg(dev, "%s(): %02d-%02d %02d:%02d:%02d %sabled\n", __func__,
--		tm->tm_mon, tm->tm_mday, tm->tm_hour, tm->tm_min, tm->tm_sec,
-+	dev_dbg(dev, "%s(): %ptR %sabled\n", __func__, tm,
- 		alrm->enabled ? "en" : "dis");
- 
- 	return 0;
-@@ -247,9 +242,7 @@ static int at91_rtc_setalarm(struct device *dev, struct rtc_wkalrm *alrm)
- 		at91_rtc_write_ier(AT91_RTC_ALARM);
- 	}
- 
--	dev_dbg(dev, "%s(): %4d-%02d-%02d %02d:%02d:%02d\n", __func__,
--		tm.tm_year, tm.tm_mon, tm.tm_mday, tm.tm_hour,
--		tm.tm_min, tm.tm_sec);
-+	dev_dbg(dev, "%s(): %ptR\n", __func__, &tm);
- 
- 	return 0;
- }
+    struct file_system_type *get_fs_type(const char *name)
+    {
+            struct file_system_type *fs;
+            const char *dot = strchr(name, '.');
+            int len = dot ? dot - name : strlen(name);
+
+            fs = __get_fs_type(name, len);
+            if (!fs && (request_module("fs-%.*s", len, name) == 0)) {
+
+set_precision() complains about any prevision that doesn't fit in signed
+16-bits.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.19.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
