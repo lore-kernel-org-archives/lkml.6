@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EB55C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:32:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44159C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D60A322507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:32:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 08600206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:32:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ehVya5UJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D60A322507
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NGviik8+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08600206BB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731734AbeKMT3r (ORCPT
+        id S1731766AbeKMT3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 14:29:47 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:33718 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731669AbeKMT3r (ORCPT
+        Tue, 13 Nov 2018 14:29:53 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37670 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731705AbeKMT3x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 14:29:47 -0500
-Received: by mail-pl1-f196.google.com with SMTP id w22-v6so5734453plk.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 01:32:33 -0800 (PST)
+        Tue, 13 Nov 2018 14:29:53 -0500
+Received: by mail-pl1-f195.google.com with SMTP id p6-v6so5725841pll.4
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 01:32:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=c74LMoBlYNH1kfJjR7peaPlz6opMjoaLwYHoSNp86IA=;
-        b=ehVya5UJBRHxMYUDyk1/4DRmSWljgJu5wIMsVrprcU+Rht0N/Ixy9/a5KFFX9FaDPd
-         FZIRluytttoZymX1ArpPDhelgx+bfPGeJVxIrmISLGkYDc5VWeCYdhINMLfdsfyn1TFs
-         tMKQS6KgiVywkEYYigfqdwA7RGt5pOqN7eA4g=
+        bh=j2JyFnxfc9aHSuky4bLHJBe9XPEREtznYojqN3ObI+Q=;
+        b=NGviik8+bzXbcCNkcgdfPYJXYylosVi5F8CJHbUjNMqF899uZwUrT0MMBHAc23tkSE
+         EPmDAw6zhzf9owgX76G20SpTr1RCdb3qVUAU/cnGMLYKUJht6ULX6krudWvd93Jbyazc
+         bXbNVazOmjF2IaMRoZVd2WaSQ8deJuWM4lXPc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=c74LMoBlYNH1kfJjR7peaPlz6opMjoaLwYHoSNp86IA=;
-        b=pOfSf8hsrHGSoI0d8jNVNH7GqF4cpuf1qAu5OruA8OA9qzIzInRlgFxeJQvEmkZr+B
-         hOc3wOQPlYWlZiJokYEvYb4AHfMtRDOBA/xX1P6UxF5j3Y33GcZcZ0pSHPYOUyQv26Ml
-         nTIorMeZJhr4iDrcla4y5ugMQp2aNXHF7HA2kAi/1UbSA3ldr6J5NYBwvLb3TJcx7UEf
-         4tzp73haG7z+0Mr4tJO0a2ZA2d94Ib9gOHYrq0T8nB9Ow/24jdvJlbHfUGlFvgO0tP6I
-         nsH5iMoTmZy1Iiy5VEynSvxAX6wGMnbLKUsbrFma7E036xsYC+E42raCRyQVepDtctfu
-         +qMw==
-X-Gm-Message-State: AGRZ1gKxEu3fqKN2KhbnykScqw/dWsNUdbQrAQmvPXwNXnzt/oxmsAqN
-        2fBxonfPQtBfaaVsHkXaLObNWQ==
-X-Google-Smtp-Source: AJdET5fQI/BVhTlJkoMipme24bCd0ipxw96peUlKTTIvXTnuKbkH+NY4uTrZyl7c9A+JrGqCVHRKXQ==
-X-Received: by 2002:a17:902:824:: with SMTP id 33-v6mr4420361plk.107.1542101553307;
-        Tue, 13 Nov 2018 01:32:33 -0800 (PST)
+        bh=j2JyFnxfc9aHSuky4bLHJBe9XPEREtznYojqN3ObI+Q=;
+        b=ih9DInYGUy+RB/pdPnJUMe8Mys3vudwlq38uXK2E9maglnzr+9LUbCsG83il7xbIwP
+         kHJDYOfrn6dl4AW437qS4wXlg708JmTPQfqVg0Vpp1hM4zDtZpl9CvKuvenq0TfFUbAg
+         kupaK7IWlYBgTEt2PYy5/fS1En+8oGMdDy9BKBxEZPi3qesh9J9X4YlPDnvfm3R30+i4
+         J8vlshoyId/KmJex4oBnH4kmIpL/zbdxCBdsO7TBpXwd/fveyS+ARBIQ8wqShABfpDV8
+         CWlTdPNVXUXSJKTb6IJ9GdlIsgiTgwmiWaOO69tiJK8QVYUKdo3f7MILJ1qQA5JRYO4O
+         zPsw==
+X-Gm-Message-State: AGRZ1gJv0ERwUYk+uxuCxT9D89FIvVg4aHvLuPqteD3MhZsCCAIQyvIP
+        rlQ34iKLHKnU1sbJ4WBE3noJJQ==
+X-Google-Smtp-Source: AJdET5cdCpJK2G6zWEG5Od2rvW/7j3UiC9xr7ybZDfx7JQJJxc1DZ5QWx/18iY5t9BJrFKIf+l68Xw==
+X-Received: by 2002:a17:902:2c03:: with SMTP id m3mr727866plb.6.1542101559259;
+        Tue, 13 Nov 2018 01:32:39 -0800 (PST)
 Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id u6sm19902462pgr.79.2018.11.13.01.32.27
+        by smtp.gmail.com with ESMTPSA id u6sm19902462pgr.79.2018.11.13.01.32.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 13 Nov 2018 01:32:32 -0800 (PST)
+        Tue, 13 Nov 2018 01:32:38 -0800 (PST)
 From:   Firoz Khan <firoz.khan@linaro.org>
 To:     linux-alpha@vger.kernel.org, Richard Henderson <rth@twiddle.net>,
         Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
@@ -66,9 +66,9 @@ To:     linux-alpha@vger.kernel.org, Richard Henderson <rth@twiddle.net>,
 Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
         linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
         marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v3 2/5] alpha: remove CONFIG_OSF4_COMPAT flag from syscall table
-Date:   Tue, 13 Nov 2018 15:01:50 +0530
-Message-Id: <1542101513-22010-3-git-send-email-firoz.khan@linaro.org>
+Subject: [PATCH v3 3/5] alpha: add __NR_syscalls along with NR_SYSCALLS
+Date:   Tue, 13 Nov 2018 15:01:51 +0530
+Message-Id: <1542101513-22010-4-git-send-email-firoz.khan@linaro.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542101513-22010-1-git-send-email-firoz.khan@linaro.org>
 References: <1542101513-22010-1-git-send-email-firoz.khan@linaro.org>
@@ -77,84 +77,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove CONFIG_OSF4_COMPAT config flag from system call
-table - systbls.S and to keep the same feature, add the
-flag in osf_sys.c.
+NR_SYSCALLS macro holds the number of system call exist
+in alpha architecture. We have to change the value of NR-
+_SYSCALLS, if we add or delete a system call.
 
-One of the patch in this patch series will generate the
-system call table file. In order to come up with a common
-implementation across all architecture, we need this change.
+One of the patch in this patch series has a script which
+will generate a uapi header based on syscall.tbl file.
+The syscall.tbl file contains the total number of system
+calls information. So we have two option to update NR_SY-
+CALLS value.
+
+1. Update NR_SYSCALLS in asm/unistd.h manually by count-
+   ing the no.of system calls. No need to update NR_SYS-
+   CALLS until we either add a new system call or delete
+   existing system call.
+
+2. We can keep this feature it above mentioned script,
+   that will count the number of syscalls and keep it in
+   a generated file. In this case we don't need to expli-
+   citly update NR_SYSCALLS in asm/unistd.h file.
+
+The 2nd option will be the recommended one. For that, I
+added the __NR_syscalls macro in uapi/asm/unistd.h along
+with NR_SYSCALLS asm/unistd.h. The macro __NR_syscalls
+also added for making the name convention same across all
+architecture. While __NR_syscalls isn't strictly part of
+the uapi, having it as part of the generated header to
+simplifies the implementation. We also need to enclose
+this macro with #ifdef __KERNEL__ to avoid side effects.
 
 Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- arch/alpha/kernel/osf_sys.c | 9 ++++++---
- arch/alpha/kernel/systbls.S | 5 -----
- 2 files changed, 6 insertions(+), 8 deletions(-)
+ arch/alpha/include/asm/unistd.h      | 2 +-
+ arch/alpha/include/uapi/asm/unistd.h | 4 ++++
+ 2 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/arch/alpha/kernel/osf_sys.c b/arch/alpha/kernel/osf_sys.c
-index cff52d8..4a147bf 100644
---- a/arch/alpha/kernel/osf_sys.c
-+++ b/arch/alpha/kernel/osf_sys.c
-@@ -1343,7 +1343,6 @@ struct timex32 {
- }
+diff --git a/arch/alpha/include/asm/unistd.h b/arch/alpha/include/asm/unistd.h
+index 4f0ceb3..21b706a 100644
+--- a/arch/alpha/include/asm/unistd.h
++++ b/arch/alpha/include/asm/unistd.h
+@@ -4,7 +4,7 @@
  
- #ifdef CONFIG_OSF4_COMPAT
--
- /* Clear top 32 bits of iov_len in the user's buffer for
-    compatibility with old versions of OSF/1 where iov_len
-    was defined as int. */
-@@ -1360,27 +1359,31 @@ struct timex32 {
- 	}
- 	return 0;
- }
-+#endif
+ #include <uapi/asm/unistd.h>
  
- SYSCALL_DEFINE3(osf_readv, unsigned long, fd,
- 		const struct iovec __user *, vector, unsigned long, count)
- {
-+#ifdef CONFIG_OSF4_COMPAT
- 	if (unlikely(personality(current->personality) == PER_OSF4))
- 		if (osf_fix_iov_len(vector, count))
- 			return -EFAULT;
+-#define NR_SYSCALLS			523
++#define NR_SYSCALLS	__NR_syscalls
+ 
+ #define __ARCH_WANT_NEW_STAT
+ #define __ARCH_WANT_OLD_READDIR
+diff --git a/arch/alpha/include/uapi/asm/unistd.h b/arch/alpha/include/uapi/asm/unistd.h
+index 47c65f1..ab40aa6 100644
+--- a/arch/alpha/include/uapi/asm/unistd.h
++++ b/arch/alpha/include/uapi/asm/unistd.h
+@@ -465,4 +465,8 @@
+ #define __NR_pwritev2			521
+ #define __NR_statx			522
+ 
++#ifdef __KERNEL__
++#define __NR_syscalls			523
 +#endif
 +
- 	return sys_readv(fd, vector, count);
- }
- 
- SYSCALL_DEFINE3(osf_writev, unsigned long, fd,
- 		const struct iovec __user *, vector, unsigned long, count)
- {
-+#ifdef CONFIG_OSF4_COMPAT
- 	if (unlikely(personality(current->personality) == PER_OSF4))
- 		if (osf_fix_iov_len(vector, count))
- 			return -EFAULT;
-+#endif
- 	return sys_writev(fd, vector, count);
- }
- 
--#endif
--
- SYSCALL_DEFINE2(osf_getpriority, int, which, int, who)
- {
- 	int prio = sys_getpriority(which, who);
-diff --git a/arch/alpha/kernel/systbls.S b/arch/alpha/kernel/systbls.S
-index 5b2e8ec..59ca11d 100644
---- a/arch/alpha/kernel/systbls.S
-+++ b/arch/alpha/kernel/systbls.S
-@@ -132,13 +132,8 @@ sys_call_table:
- 	.quad sys_osf_getrusage
- 	.quad sys_getsockopt
- 	.quad sys_ni_syscall
--#ifdef CONFIG_OSF4_COMPAT
- 	.quad sys_osf_readv			/* 120 */
- 	.quad sys_osf_writev
--#else
--	.quad sys_readv				/* 120 */
--	.quad sys_writev
--#endif
- 	.quad sys_osf_settimeofday
- 	.quad sys_fchown
- 	.quad sys_fchmod
+ #endif /* _UAPI_ALPHA_UNISTD_H */
 -- 
 1.9.1
 
