@@ -2,154 +2,135 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 932D1C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:13:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1FBB8C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CEA121780
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:13:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CF3D621780
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:16:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvkPzukP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CEA121780
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="HMXqcKMk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF3D621780
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726949AbeKNGN2 (ORCPT
+        id S1726740AbeKNGQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 01:13:28 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:37019 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725782AbeKNGN1 (ORCPT
+        Wed, 14 Nov 2018 01:16:17 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:34620 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725750AbeKNGQR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 01:13:27 -0500
-Received: by mail-yw1-f66.google.com with SMTP id v77-v6so6343572ywc.4;
-        Tue, 13 Nov 2018 12:13:43 -0800 (PST)
+        Wed, 14 Nov 2018 01:16:17 -0500
+Received: by mail-yb1-f194.google.com with SMTP id n140-v6so5964756yba.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 12:16:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=2ZrBBNm0u84HZ38qh08jp3zITb1XB0WpVsLPVfRiw/w=;
-        b=kvkPzukP6X+WB0lrK9Kb15QmO+Y28dYN4/HwZwFWSZiLwAiQucsf5UiCKQrssc52Eu
-         Y4anHzde6DWnJ09mBznlH0PToeqI9ZfNx0ZZSoF+fqy73xVQXw7QHAOAfCwXU5sEl6ft
-         9xj5ygEqPamdm5kgG1eOdsuGoXtmFOVuHwx3NZSrhopzkxh1k2qqS97KsfCCqWamx+iY
-         OQGHPyfq98gg5H0/YXGkiLj7kmAytyDeLGwzbem8azd4hSwzDGNP6J8JjPBE1Bujl0Xz
-         nXQWcNxNVSLN4NtVtb67CAU4OS/J9hcnzBqQdJoLu9nS2Q3ve/30hd7esALp0qMCDdxJ
-         xeZQ==
+        d=chromium.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=xDwJKA7a9/1zySW4GCEoPliPcO++fw7YIoSz99wHR8o=;
+        b=HMXqcKMkoQsOh/jYTRBtTxAj8tQ2j3wn7DxtnqZcEMVWJMxclyNpXFvvFHQktl27o7
+         pQtb4hMZs9RXsDZ/9jMhZeeFBYG+rHbc8yqMIWAhrud/DTQpWf46Duv0B5dcOuCTFLY8
+         ETuRdDRdJYMrNOFlwKHrppeppIeAJ4y9+QF98=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=2ZrBBNm0u84HZ38qh08jp3zITb1XB0WpVsLPVfRiw/w=;
-        b=b/BjhLo7NemwDf6NrAW+XRAhKuQt5PyMLDM5DelktnuSQD3EMJMiAIIz753FwcruXv
-         REBZyE1F19lcaeQFh/89n8rYV4Zc0FsLeDYt1Btkw9mwsg+idLuCCCXk3lO/jUJnofJM
-         WWohxpqm754Drz2zFVAwsAiYUpKewD3Bl6LQMg6fqetl1rVRakLtF2jy5HRiUXobXEAl
-         WmdW1qOfABGFFLdVaf75veBPInbKffbuUrLQHNprz3nUtIzbLgowwoudR5VRUojojcQW
-         wBlssKO/oBFropOVG5PX1UtU1pi1opa94P2THLJP3CtxqzE83Xz8dHZd0YquCr5Aw+cM
-         DO7g==
-X-Gm-Message-State: AGRZ1gLbhPPrtPZT6z0NCOsXEr7RH32F4WB4qN2pnoRCjleg0AaVUb7s
-        B02rLsD1R2zVH15I7STIZ1Q=
-X-Google-Smtp-Source: AJdET5ekWUR6z7RLbXon7jo80PZ30HAvFYiRgRigx+aDztQ6IhCa9gPlxOdv9bBpENl7PlAXoWNz8w==
-X-Received: by 2002:a0d:ff03:: with SMTP id p3-v6mr6523008ywf.228.1542140023216;
-        Tue, 13 Nov 2018 12:13:43 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::6:e2a7])
-        by smtp.gmail.com with ESMTPSA id f1-v6sm6935738ywb.89.2018.11.13.12.13.42
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=xDwJKA7a9/1zySW4GCEoPliPcO++fw7YIoSz99wHR8o=;
+        b=FQGKVyVjGshLFWlS22cw/f6Rku08yEAckLtgD8VvENzIeEYSHGK1uEqKwbb7EcTFxG
+         UvEveH6aDuY/XkdUFKhi9gAzLvmHr+7grYx06nGZxcwhnYFBXS3yi2Bp1RGvNZS7zoxd
+         fOud4p0rXeG/ra/WcMYQ3dI5A4WHDjhTLiiYIVye9o1uGSBJECu/h+hUuYPwEwkKkMs3
+         9r+8OHFMHpwI35Mv2rig02sRG2xWcUSvzu8aykCeLYknQ1TYtGeWUdl3d+CTk9EIioGE
+         Guy5epA7IdjNwCrSJwQERUBHt4y0zsE9P4czhorKJ98hH1gJ3H32g9WPzjwGP4vNm5As
+         zjtQ==
+X-Gm-Message-State: AGRZ1gLe5rfUqXZrICOEud/bN2fVwsfzZneqRgUd0AvxpOii9TRTi1Fe
+        1FxZVFlGC9l7XwmkkSdAELGvX45zZ0Y=
+X-Google-Smtp-Source: AJdET5e4eN6qnsm4r4EMMYMM8ZSorYP0ukhZyzCtCXZRXPupyLYMpaXnL/NgdSe26hGIzqzB2N6/lg==
+X-Received: by 2002:a25:8041:: with SMTP id a1-v6mr6446287ybn.411.1542140191499;
+        Tue, 13 Nov 2018 12:16:31 -0800 (PST)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com. [209.85.219.172])
+        by smtp.gmail.com with ESMTPSA id 200-v6sm6244113ywq.97.2018.11.13.12.16.30
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 12:13:42 -0800 (PST)
-Date:   Tue, 13 Nov 2018 12:13:39 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Waiman Long <longman@redhat.com>
-Cc:     Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH cgroup/for-4.21 1/2] cpuset: Minor cgroup2 interface updates
-Message-ID: <20181113201339.GN2509588@devbig004.ftw2.facebook.com>
+        Tue, 13 Nov 2018 12:16:30 -0800 (PST)
+Received: by mail-yb1-f172.google.com with SMTP id g192-v6so5954330ybf.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 12:16:30 -0800 (PST)
+X-Received: by 2002:a25:3588:: with SMTP id c130-v6mr6525056yba.410.1542140189975;
+ Tue, 13 Nov 2018 12:16:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Tue, 13 Nov 2018 12:16:29
+ -0800 (PST)
+In-Reply-To: <20181112160931.GA28463@redhat.com>
+References: <20181112160931.GA28463@redhat.com>
+From:   Kees Cook <keescook@chromium.org>
+Date:   Tue, 13 Nov 2018 14:16:29 -0600
+X-Gmail-Original-Message-ID: <CAGXu5jLCdWZ1qdTvo_VK0VT8AbGQ44wsKPypRPRzNVed7f1xeg@mail.gmail.com>
+Message-ID: <CAGXu5jLCdWZ1qdTvo_VK0VT8AbGQ44wsKPypRPRzNVed7f1xeg@mail.gmail.com>
+Subject: Re: [PATCH 1/2] exec: load_script: don't blindly truncate shebang string
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Ben Woodard <woodard@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Michal Hocko <mhocko@suse.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From b1e3aeb11c5e86ee0988a038c4e7682d6beaa977 Mon Sep 17 00:00:00 2001
-From: Tejun Heo <tj@kernel.org>
-Date: Tue, 13 Nov 2018 12:03:33 -0800
+On Mon, Nov 12, 2018 at 10:09 AM, Oleg Nesterov <oleg@redhat.com> wrote:
+> load_script() simply truncates bprm->buf and this is very wrong if the
+> length of shebang string exceeds BINPRM_BUF_SIZE-2. This can silently
+> truncate i_arg or (worse) we can execute the wrong binary if buf[2:126]
+> happens to be the valid executable path.
+>
+> Change load_script() to return ENOEXEC if it can't find '\n' or zero in
+> bprm->buf. Note that '\0' can come from either prepare_binprm()->memset()
+> or from kernel_read(), we do not care.
+>
+> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
 
-* Rename the partition file from "cpuset.sched.partition" to
-  "cpuset.cpus.partition".
+Acked-by: Kees Cook <keescook@chromium.org>
 
-* When writing to the partition file, drop "0" and "1" and only accept
-  "member" and "root".
+-Kees
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>
----
-Two minor cpuset interface followup patches.  Applying to
-cgroup/for-4.21.
+> ---
+>  fs/binfmt_script.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+>
+> diff --git a/fs/binfmt_script.c b/fs/binfmt_script.c
+> index 7cde3f4..d0078cb 100644
+> --- a/fs/binfmt_script.c
+> +++ b/fs/binfmt_script.c
+> @@ -42,10 +42,14 @@ static int load_script(struct linux_binprm *bprm)
+>         fput(bprm->file);
+>         bprm->file = NULL;
+>
+> -       bprm->buf[BINPRM_BUF_SIZE - 1] = '\0';
+> -       if ((cp = strchr(bprm->buf, '\n')) == NULL)
+> -               cp = bprm->buf+BINPRM_BUF_SIZE-1;
+> +       for (cp = bprm->buf+2;; cp++) {
+> +               if (cp >= bprm->buf + BINPRM_BUF_SIZE)
+> +                       return -ENOEXEC;
+> +               if (!*cp || (*cp == '\n'))
+> +                       break;
+> +       }
+>         *cp = '\0';
+> +
+>         while (cp > bprm->buf) {
+>                 cp--;
+>                 if ((*cp == ' ') || (*cp == '\t'))
+> --
+> 2.5.0
+>
+>
 
-Thanks.
 
- Documentation/admin-guide/cgroup-v2.rst | 6 +++---
- kernel/cgroup/cpuset.c                  | 8 ++++----
- 2 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
-index f83a5231bbe3..07e06136a550 100644
---- a/Documentation/admin-guide/cgroup-v2.rst
-+++ b/Documentation/admin-guide/cgroup-v2.rst
-@@ -1708,15 +1708,15 @@ Cpuset Interface Files
- 
- 	Its value will be affected by memory nodes hotplug events.
- 
--  cpuset.sched.partition
-+  cpuset.cpus.partition
- 	A read-write single value file which exists on non-root
- 	cpuset-enabled cgroups.  This flag is owned by the parent cgroup
- 	and is not delegatable.
- 
-         It accepts only the following input values when written to.
- 
--        "root" or "1"   - a paritition root
--        "member" or "0" - a non-root member of a partition
-+        "root"   - a paritition root
-+        "member" - a non-root member of a partition
- 
- 	When set to be a partition root, the current cgroup is the
- 	root of a new partition or scheduling domain that comprises
-diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
-index b897314bab53..1151e93d71b6 100644
---- a/kernel/cgroup/cpuset.c
-+++ b/kernel/cgroup/cpuset.c
-@@ -2468,11 +2468,11 @@ static ssize_t sched_partition_write(struct kernfs_open_file *of, char *buf,
- 	buf = strstrip(buf);
- 
- 	/*
--	 * Convert "root"/"1" to 1, and convert "member"/"0" to 0.
-+	 * Convert "root" to ENABLED, and convert "member" to DISABLED.
- 	 */
--	if (!strcmp(buf, "root") || !strcmp(buf, "1"))
-+	if (!strcmp(buf, "root"))
- 		val = PRS_ENABLED;
--	else if (!strcmp(buf, "member") || !strcmp(buf, "0"))
-+	else if (!strcmp(buf, "member"))
- 		val = PRS_DISABLED;
- 	else
- 		return -EINVAL;
-@@ -2631,7 +2631,7 @@ static struct cftype dfl_files[] = {
- 	},
- 
- 	{
--		.name = "sched.partition",
-+		.name = "cpus.partition",
- 		.seq_show = sched_partition_show,
- 		.write = sched_partition_write,
- 		.private = FILE_PARTITION_ROOT,
 -- 
-2.17.1
-
+Kees Cook
