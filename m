@@ -2,174 +2,109 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88166C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:08:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 474DEC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:12:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C247223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:08:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 12D5B208A3
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:12:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p8cokIbJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C247223AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h0mbiz4y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12D5B208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732487AbeKNEHw (ORCPT
+        id S1732398AbeKNELY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:07:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35062 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732124AbeKNEHw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:07:52 -0500
-Received: from devnote (unknown [64.114.255.97])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 82C01208A3;
-        Tue, 13 Nov 2018 18:08:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542132518;
-        bh=xQP50kAjy7ARw8RyNNAdepQ8FvQgeYQCTvzx9owIpuk=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=p8cokIbJeH5/IReIrE4En7S1dVYNGKIM9En8KW3rKIoMsalB9vVJ27OFm+93CjaGB
-         tuxbLjwuFqdr+BuE/DLmmBeoUAGWRQyMitiL3h+N6lj525ugBbak62NwsN4f37jRWi
-         L4Uh6959kBoRn3jRtvGqsdp7tXuZZ8wT9C8AyfLM=
-Date:   Tue, 13 Nov 2018 10:08:36 -0800
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     paulmck@linux.ibm.com
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>,
-        Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
-        "David S. Miller" <davem@davemloft.net>
-Subject: Re: [PATCH tip/core/rcu 20/41] kprobes: eplace synchronize_sched()
- with synchronize_rcu()
-Message-Id: <20181113100836.567dcbdafa13546928b62d7a@kernel.org>
-In-Reply-To: <20181112031916.GF4170@linux.ibm.com>
-References: <20181111194104.GA4787@linux.ibm.com>
-        <20181111194410.6368-20-paulmck@linux.ibm.com>
-        <20181112120048.12b3fb7549f4b292fea1eefd@kernel.org>
-        <20181112031916.GF4170@linux.ibm.com>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Tue, 13 Nov 2018 23:11:24 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:32959 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbeKNELY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 23:11:24 -0500
+Received: by mail-qk1-f196.google.com with SMTP id o89so21093506qko.0;
+        Tue, 13 Nov 2018 10:12:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=pOTKAdiEih3UxLayt9rjnzizaD0QtZJNKnfLj/zblBg=;
+        b=h0mbiz4y1DIBrhkdHXaD5WWW3GvUm14K3Jdav2b5R54F/NIVikqlbemjWOLNR/liaN
+         0Ui7nKBaN3hgPi6vAwdTHCMk0kvgeODrsx/ElpY+0SSyPYrqIDvU6EfmuAahZ+Zf+duO
+         4YGYwv64X6sG2i7Bqi93I8rDVDY+f0K1nGirkK6aVyDmq2h6ImHTMuV891Q/YTAiO9xK
+         WsdExf9JKsViP5BnQiYdfgTPoIYFH8BBjZnT3EJ0necTRF27wY+4PJ1YRWzrpuXjmdJV
+         uKpGUf076mgHR2Buega1qNI3IYvW2bK6l4MlZf6Z1bLCa6qD2GdIp6fE1foD4OV2uNTB
+         +WGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=pOTKAdiEih3UxLayt9rjnzizaD0QtZJNKnfLj/zblBg=;
+        b=YDxKm6UYePhI3RKRyhgiCeh9Z0h2DkWasDtmITfVeySfNz6RrBLnCSOoqcWBwxLHRN
+         0BoCPHQctVi1Kbor1najp8QwwXyZwauB0oUgsMA+3RuU8UOq+MmY1VhfJOkmg6dua/oV
+         uZZSc4aHxQ0dWPTAbn41LXnM9OOLZTGEWOH5TP+7xYXyajqYtP4/G6DBMCOejU4H0z0k
+         E8OeTl0XB2GLmx+tt3dNeYWo/BuOTKlit8raRRfoUpWVZrU8p3rugyOcIXNh/+NbOy8G
+         eht+NyDlknxKp1NZmjJZM6sWzzooYB1roGvJ6iyKFkK0IvOyUKIey8Bv6u98tzpiKOQY
+         4aEg==
+X-Gm-Message-State: AGRZ1gKdVowfelx17fRkNbtjxa8IUXOvdDkXS2wkVWpXmksSh9KSP4eB
+        M7vgB/EyN/4iEo/M/N4O+VbSqMimhfs4pu6trzM=
+X-Google-Smtp-Source: AJdET5fCaL0sjZDRdCWg1FweK/N1xfjlPLgHAp39a837uJcVy0j7vY8oRk2ol/dM2Ttl7QW+9rJ4troLILCAJGIMxRw=
+X-Received: by 2002:a37:c3c3:: with SMTP id r64mr5932811qkl.70.1542132729369;
+ Tue, 13 Nov 2018 10:12:09 -0800 (PST)
+MIME-Version: 1.0
+References: <20181113171729.19645-1-andriy.shevchenko@linux.intel.com>
+ <20181113171729.19645-2-andriy.shevchenko@linux.intel.com> <9037d76f47233e187276ba84cbb0f46427e2e1eb.camel@perches.com>
+In-Reply-To: <9037d76f47233e187276ba84cbb0f46427e2e1eb.camel@perches.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Tue, 13 Nov 2018 20:11:57 +0200
+Message-ID: <CAHp75Ve4xN_tMxRm0SUWW0XBmMQU4NkUt-dBwPo9w8CHLTVxGw@mail.gmail.com>
+Subject: Re: [PATCH v3 01/20] lib/vsprintf: Print time and date in human
+ readable format via %pt
+To:     Joe Perches <joe@perches.com>
+Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        "open list:REAL TIME CLOCK (RTC) SUBSYSTEM" 
+        <linux-rtc@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jon Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 11 Nov 2018 19:19:16 -0800
-"Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
+On Tue, Nov 13, 2018 at 7:37 PM Joe Perches <joe@perches.com> wrote:
+>
+> On Tue, 2018-11-13 at 19:17 +0200, Andy Shevchenko wrote:
+> > There are users which print time and date represented by content of
+> > struct rtc_time in human readable format.
+> >
+> > Instead of open coding that each time introduce %ptR[dt][rv] specifier.
+> >
+> > Note, users have to select PRINTK_PEXT_TIMEDATE option in a Kconfig.
+>
+> This bit should be removed as it's not true anymore.
 
-> On Mon, Nov 12, 2018 at 12:00:48PM +0900, Masami Hiramatsu wrote:
-> > On Sun, 11 Nov 2018 11:43:49 -0800
-> > "Paul E. McKenney" <paulmck@linux.ibm.com> wrote:
-> > 
-> > > Now that synchronize_rcu() waits for preempt-disable regions of code
-> > > as well as RCU read-side critical sections, synchronize_sched() can be
-> > > replaced by synchronize_rcu().  This commit therefore makes this change.
-> > 
-> > Would you mean synchronize_rcu() can ensure that any interrupt handler
-> > (which should run under preempt-disable state) run out (even on non-preemptive
-> > kernel)?
-> 
-> Yes, but only as of this merge window.  See this commit:
-> 
-> 3e3100989869 ("rcu: Defer reporting RCU-preempt quiescent states when disabled")
-
-OK, I also found that now those are same.
-
-45975c7d21a1 ("rcu: Define RCU-sched API in terms of RCU for Tree RCU PREEMPT builds")
-
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-
-Thank you!
-
-> 
-> Don't try this in v4.19 or earlier, but v4.20 and later is OK.  ;-)
-> 
-> 							Thanx, Paul
-> 
-> > If so, I agree with these changes.
-> > 
-> > Thank you,
-> > 
-> > > 
-> > > Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> > > Cc: "Naveen N. Rao" <naveen.n.rao@linux.ibm.com>
-> > > Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-> > > Cc: "David S. Miller" <davem@davemloft.net>
-> > > Cc: Masami Hiramatsu <mhiramat@kernel.org>
-> > > ---
-> > >  kernel/kprobes.c | 10 +++++-----
-> > >  1 file changed, 5 insertions(+), 5 deletions(-)
-> > > 
-> > > diff --git a/kernel/kprobes.c b/kernel/kprobes.c
-> > > index 90e98e233647..08e31d863191 100644
-> > > --- a/kernel/kprobes.c
-> > > +++ b/kernel/kprobes.c
-> > > @@ -229,7 +229,7 @@ static int collect_garbage_slots(struct kprobe_insn_cache *c)
-> > >  	struct kprobe_insn_page *kip, *next;
-> > >  
-> > >  	/* Ensure no-one is interrupted on the garbages */
-> > > -	synchronize_sched();
-> > > +	synchronize_rcu();
-> > >  
-> > >  	list_for_each_entry_safe(kip, next, &c->pages, list) {
-> > >  		int i;
-> > > @@ -1382,7 +1382,7 @@ static int register_aggr_kprobe(struct kprobe *orig_p, struct kprobe *p)
-> > >  			if (ret) {
-> > >  				ap->flags |= KPROBE_FLAG_DISABLED;
-> > >  				list_del_rcu(&p->list);
-> > > -				synchronize_sched();
-> > > +				synchronize_rcu();
-> > >  			}
-> > >  		}
-> > >  	}
-> > > @@ -1597,7 +1597,7 @@ int register_kprobe(struct kprobe *p)
-> > >  		ret = arm_kprobe(p);
-> > >  		if (ret) {
-> > >  			hlist_del_rcu(&p->hlist);
-> > > -			synchronize_sched();
-> > > +			synchronize_rcu();
-> > >  			goto out;
-> > >  		}
-> > >  	}
-> > > @@ -1776,7 +1776,7 @@ void unregister_kprobes(struct kprobe **kps, int num)
-> > >  			kps[i]->addr = NULL;
-> > >  	mutex_unlock(&kprobe_mutex);
-> > >  
-> > > -	synchronize_sched();
-> > > +	synchronize_rcu();
-> > >  	for (i = 0; i < num; i++)
-> > >  		if (kps[i]->addr)
-> > >  			__unregister_kprobe_bottom(kps[i]);
-> > > @@ -1966,7 +1966,7 @@ void unregister_kretprobes(struct kretprobe **rps, int num)
-> > >  			rps[i]->kp.addr = NULL;
-> > >  	mutex_unlock(&kprobe_mutex);
-> > >  
-> > > -	synchronize_sched();
-> > > +	synchronize_rcu();
-> > >  	for (i = 0; i < num; i++) {
-> > >  		if (rps[i]->kp.addr) {
-> > >  			__unregister_kprobe_bottom(&rps[i]->kp);
-> > > -- 
-> > > 2.17.1
-> > > 
-> > 
-> > 
-> > -- 
-> > Masami Hiramatsu <mhiramat@kernel.org>
-> > 
-> 
-
+Oops, right.
 
 -- 
-Masami Hiramatsu <mhiramat@kernel.org>
+With Best Regards,
+Andy Shevchenko
