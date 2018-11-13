@@ -2,99 +2,94 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BF2EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:00:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D591C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:01:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 426E52245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:00:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FmAyiLFm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 426E52245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 5CFAF2245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:01:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CFAF2245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730527AbeKMO4Y (ORCPT
+        id S1730721AbeKMO5d convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 09:56:24 -0500
-Received: from mail-ed1-f52.google.com ([209.85.208.52]:38193 "EHLO
-        mail-ed1-f52.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbeKMO4Y (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 09:56:24 -0500
-Received: by mail-ed1-f52.google.com with SMTP id a2-v6so9270656edi.5
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 21:00:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iVM/9virbVCyR5wbbOyWiUv7JjM1xwTKyje30UIq6JY=;
-        b=FmAyiLFm4GUs/ilgRLg1kPRTPiyjHkCjzjy2/ABgAZr/2mhEL8PPB7ZAYh/197oBW4
-         VdI5DqsyMsSNIhB0x7eDqORpnxqw8Xby/tbDPjuOq8aJbELRZHnklH/uT8ulJ/rp8lqo
-         z43m0Jsbdwl1a/oxUAHm3ySJjTpugzlwF98mw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iVM/9virbVCyR5wbbOyWiUv7JjM1xwTKyje30UIq6JY=;
-        b=jcC7dvJ5MQA867R5g2XDvUfKSJNDW7LaZE0ZcQwB4BsDxGzQ2Dv25aUPuHWDRIV7aW
-         9hskVueGCbsKZSmiaXyfx0bt9FLqo8SKamdnOa1mbFgKXLOmTo0RybaAd3/f4Pras6/a
-         Lg7iYm+Oix5TkSRA/D1xz2gP+j1aIUmR4g+xxVSyt9rc4PFR+TCBkN6OtShRUGxGYuty
-         advNYsjRgBBt2UZYf4LobsYxkjmBW98tnG4aySsPmjeRkHTPwMZ1nzqRicqlU6cAXfhg
-         o3T0Fk+SJR4bA5PDJga0ZAkNq4zX7Wh+CNny2fuVh0F/VCceAFPTZwzdPl+pWDsn8hDm
-         uIJw==
-X-Gm-Message-State: AGRZ1gK//NdW6e5icDZJyRVjpvCGubWMXAVCGuEzaKPx1mE1jRVydmob
-        4F7hiBS3dtzNwrwD4pgEOEJVlXz8K3ODl8RYf2sNUA==
-X-Google-Smtp-Source: AJdET5e/ASFpbPN/X9MaWifJDvWRNF0AcHbxTAqAbQuHEvXBevDNF8UzQ1UjowB5Ku8YTyB4Ml8D7Sz5GqabRKFbvFk=
-X-Received: by 2002:a50:ac19:: with SMTP id v25mr10010461edc.218.1542085202801;
- Mon, 12 Nov 2018 21:00:02 -0800 (PST)
+        Tue, 13 Nov 2018 09:57:33 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:36216 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726111AbeKMO5c (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 09:57:32 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 67D249E0CD923C0BCAC3;
+        Tue, 13 Nov 2018 13:01:10 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wAD50smi015127;
+        Tue, 13 Nov 2018 13:00:54 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018111313010683-10345562 ;
+          Tue, 13 Nov 2018 13:01:06 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     tglx@linutronix.de
+Cc:     mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        konrad.wilk@oracle.com, luto@kernel.org, thomas.lendacky@amd.com,
+        pravin.shedge4linux@gmail.com, namit@vmware.com, bp@suse.de,
+        jroedel@suse.de, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn, Yi Wang <wang.yi59@zte.com.cn>
+Subject: [PATCH] x86/process: Fix some -Wmissing-prototypes warnings
+Date:   Tue, 13 Nov 2018 13:02:40 +0800
+Message-Id: <1542085360-22396-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-References: <20181108070449.23572-1-shawn.guo@linaro.org> <20181108070449.23572-2-shawn.guo@linaro.org>
- <5bea0ed8.1c69fb81.8715.38b2@mx.google.com> <20181113034200.GD20049@tiger>
-In-Reply-To: <20181113034200.GD20049@tiger>
-From:   Shawn Guo <shawn.guo@linaro.org>
-Date:   Tue, 13 Nov 2018 12:59:38 +0800
-Message-ID: <CAAQ0ZWS-j06YM+Vs64RC_e1M9s_5bZfCWyL95SSaKVENJv7BNw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: phy: Add Qualcomm Synopsys High-Speed
- USB PHY binding
-To:     Rob Herring <robh@kernel.org>,
-        Sriharsha Allenki <sallenki@codeaurora.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-11-13 13:01:06,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-11-13 13:00:50
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-MAIL: mse01.zte.com.cn wAD50smi015127
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sriharsha,
+We get a warning when building kernel with W=1:
+arch/x86/kernel/process.c:653:13: warning: no previous prototype for ‘arch_post_acpi_subsys_init’ [-Wmissing-prototypes]
+arch/x86/kernel/process.c:717:15: warning: no previous prototype for ‘arch_randomize_brk’ [-Wmissing-prototypes]
+arch/x86/kernel/process.c:784:6: warning: no previous prototype for ‘do_arch_prctl_common’ [-Wmissing-prototypes]
 
-On Tue, Nov 13, 2018 at 11:42 AM Shawn Guo <shawn.guo@linaro.org> wrote:
-<snip>
-> > > +- qcom,init-seq:
-> > > +    Value type: <u32 array>
-> > > +    Definition: Should contain a sequence of <offset value delay> tuples to
-> > > +                program 'value' into phy register at 'offset' with 'delay'
-> > > +           in us afterwards.
-> >
-> > If we wanted this type of thing in DT, we'd have a generic binding (or
-> > forth).
->
-> Right now, this is a qualcomm usb phy specific bindings - first used in
-> qcom,usb-hs-phy.txt and I extended it a bit for my phy.  As this is not
-> a so good hardware description, I'm a little hesitated to make it
-> generic for other platforms to use in general.  What about we put off it
-> a little bit until we see more platforms need the same thing?
+Add the missing including files to fix this.
 
-Are those register write sequences really required here?  At least,
-from the test I do, it still works with this property dropped.
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+---
+ arch/x86/kernel/process.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-Shawn
+diff --git a/arch/x86/kernel/process.c b/arch/x86/kernel/process.c
+index c93fcfd..8a33d4a 100644
+--- a/arch/x86/kernel/process.c
++++ b/arch/x86/kernel/process.c
+@@ -22,6 +22,8 @@
+ #include <linux/utsname.h>
+ #include <linux/stackprotector.h>
+ #include <linux/cpuidle.h>
++#include <linux/acpi.h>
++#include <linux/elf-randomize.h>
+ #include <trace/events/power.h>
+ #include <linux/hw_breakpoint.h>
+ #include <asm/cpu.h>
+@@ -39,6 +41,7 @@
+ #include <asm/desc.h>
+ #include <asm/prctl.h>
+ #include <asm/spec-ctrl.h>
++#include <asm/proto.h>
+ 
+ /*
+  * per-CPU TSS segments. Threads are completely 'soft' on Linux,
+-- 
+1.8.3.1
+
