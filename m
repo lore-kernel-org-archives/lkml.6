@@ -2,114 +2,175 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97A4BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:41:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4AFAC169D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C50620818
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:41:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E074223C8
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:44:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="EcjWOQvW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C50620818
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1m0dV1f6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E074223C8
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728259AbeKNFlK (ORCPT
+        id S1726948AbeKNFo2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:41:10 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:43640 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725748AbeKNFlK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:41:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=WeR6j32w1x0x8U5w4643vwH8IqBXzhw+rltaKKBYBPE=; b=EcjWOQvW35391pYpZ0qIkjNXh
-        r7P64VKz7eVTFgVCmWWFRV1ohF/JpKEVXtIGo/FxmAjjWt0bdLxsnRPCSQKO61xGUpiBXEPSM5Q8u
-        BxZlrAlmO8bkxJQtocBV4/GHDzUweRwiFEV4zei1cCNCrjQydSvEDqY2O03syGYs3L5bI=;
-Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gMeYy-0002Uh-Fg; Tue, 13 Nov 2018 19:41:28 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 5F136440078; Tue, 13 Nov 2018 19:41:22 +0000 (GMT)
-Date:   Tue, 13 Nov 2018 11:41:22 -0800
-From:   Mark Brown <broonie@kernel.org>
-To:     Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Cc:     Alexander.Deucher@amd.com, Vishnuvardhanrao.Ravulapati@amd.com,
-        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        Sanju R Mehta <sanju.mehta@amd.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH 04/11] ASoC: amd: add ACP3x PCM platform driver
-Message-ID: <20181113194122.GL2089@sirena.org.uk>
-References: <1542000903-19020-1-git-send-email-Vijendar.Mukunda@amd.com>
- <1542000903-19020-5-git-send-email-Vijendar.Mukunda@amd.com>
+        Wed, 14 Nov 2018 00:44:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34212 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725794AbeKNFo1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 00:44:27 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 101E1216FD;
+        Tue, 13 Nov 2018 19:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542138291;
+        bh=p7CX0gDvZdAxNLwNYAGh6FphTMIN1RSTmFJLR5AkL90=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=1m0dV1f61NWqw3r4Bji21Bsg6CIyU1WASApLpj5OzGbNx88Oaxj/PB3HjYI8/WmQT
+         O/SYfpZssRYaF47/uQeTYnvtZyasOtsrhwebg8UlmcHpTdpFCe+AmAYXEzMYLw093P
+         kAN0s/oMIXoWjx/YyqgpkWqoD3P5WLrm2Hup/Hq0=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="gmhhrsDozM2n+uz5"
-Content-Disposition: inline
-In-Reply-To: <1542000903-19020-5-git-send-email-Vijendar.Mukunda@amd.com>
-X-Cookie: No Canadian coins.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Phil Edworthy <phil.edworthy@renesas.com>,
+        Russell King <linux@armlinux.org.uk>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <TY1PR01MB1769B2978D73DBC2EADC6B8DF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Simon Horman <horms@verge.net.au>,
+        "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>
+References: <1535724443-21150-1-git-send-email-phil.edworthy@renesas.com>
+ <1535724443-21150-2-git-send-email-phil.edworthy@renesas.com>
+ <153576994987.19113.11376893046599589648@swboyd.mtv.corp.google.com>
+ <TY1PR01MB1769CBB6FC715E94B10815BFF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+ <TY1PR01MB1769B2978D73DBC2EADC6B8DF50C0@TY1PR01MB1769.jpnprd01.prod.outlook.com>
+Message-ID: <154213829039.88331.14286655280073748584@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: RE: [PATCH v5 1/2] clk: Add of_clk_get_by_name_optional() function
+Date:   Tue, 13 Nov 2018 11:44:50 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Quoting Phil Edworthy (2018-09-03 06:21:02)
+> Hi Stephen,
+> =
 
---gmhhrsDozM2n+uz5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+> On 03 September 2018 10:33 Phil Edworthy wrote:
+> > On 01 September 2018 03:46, Stephen Boyd wrote:
+> > > Quoting Phil Edworthy (2018-08-31 07:07:22)
+> > > > diff --git a/drivers/clk/clkdev.c b/drivers/clk/clkdev.c index
+> > > > 9ab3db8..4adb99e 100644
+> > > > --- a/drivers/clk/clkdev.c
+> > > > +++ b/drivers/clk/clkdev.c
+> > > > @@ -54,30 +54,29 @@ EXPORT_SYMBOL(of_clk_get);
+> > > >
+> > > >  static struct clk *__of_clk_get_by_name(struct device_node *np,
+> > > >                                         const char *dev_id,
+> > > > -                                       const char *name)
+> > > > +                                       const char *name,
+> > > > +                                       bool optional)
+> > > >  {
+> > > >         struct clk *clk =3D ERR_PTR(-ENOENT);
+> > > > +       struct device_node *child =3D np;
+> > > > +       int index =3D 0;
+> > > >
+> > > >         /* Walk up the tree of devices looking for a clock that mat=
+ches */
+> > > >         while (np) {
+> > > > -               int index =3D 0;
+> > > >
+> > > >                 /*
+> > > >                  * For named clocks, first look up the name in the
+> > > >                  * "clock-names" property.  If it cannot be found, =
+then
+> > > > -                * index will be an error code, and of_clk_get() wi=
+ll fail.
+> > > > +                * index will be an error code.
+> > > >                  */
+> > > >                 if (name)
+> > > >                         index =3D of_property_match_string(np, "clo=
+ck-names",
+> > name);
+> > > > -               clk =3D __of_clk_get(np, index, dev_id, name);
+> > > > -               if (!IS_ERR(clk)) {
+> > > > -                       break;
+> > > > -               } else if (name && index >=3D 0) {
+> > > > -                       if (PTR_ERR(clk) !=3D -EPROBE_DEFER)
+> > > > -                               pr_err("ERROR: could not get clock =
+%pOF:%s(%i)\n",
+> > > > -                                       np, name ? name : "", index=
+);
+> > > > +               if (index >=3D 0)
+> > > > +                       clk =3D __of_clk_get(np, index, dev_id, nam=
+e);
+> > > > +               if (!IS_ERR(clk))
+> > >
+> > > Was this change necessary? It looks like we can leave it all alone an=
+d keep
+> > > passing a negative number to __of_clk_get() and have that return an e=
+rror
+> > > pointer which we then return immediately as an error. But, if the clo=
+ck is
+> > > optional and we've passed a name here, shouldn't we treat an error fr=
+om
+> > > of_property_match_string() as success too? This is all looking pretty=
+ fragile
+> > so
+> > > maybe it can be better commented and also more explicit instead of re=
+lying
+> > > on the reader to jump through all the function calls to figure out wh=
+at the
+> > > return value is in some cases.
+> > If we call __of_clk_get, with index < 0, we will not be able to differe=
+ntiate
+> > between clock provider not present and other errors with the passed dat=
+a,
+> > as it will just return -EINVAL.
+> > =
 
-On Mon, Nov 12, 2018 at 11:04:55AM +0530, Vijendar Mukunda wrote:
+> > of_property_match_string() will return -EINVAL if the "clock-names"
+> > property
+> > is missing, or -ENODATA if the specified clock name in the "clock-names"
+> > property is missing. That is why I have changed the code to conditional=
+ly
+> > call __of_clk_get, so the code will correctly treat optional clocks tha=
+t are not
+> > present.
+> When getting named optional clocks, if the node has a "clock-names" prope=
+rty,
+> but no clock matching the name we want, I think the function should stop =
+there
+> and *not* walk up the tree of devices looking for a matching clock. In th=
+is case,
+> the code determines that the optional clock is not present.
+> =
 
-> +static struct snd_pcm_ops acp3x_dma_ops = {
-> +	.open = NULL,
-> +	.close = NULL,
-> +	.ioctl = NULL,
-> +	.hw_params = NULL,
-> +	.hw_free = NULL,
-> +	.pointer = NULL,
-> +	.mmap = NULL,
-> +};
-> +
-> +struct snd_soc_dai_ops acp3x_dai_i2s_ops = {
-> +	.hw_params = NULL,
-> +	.trigger   = NULL,
-> +	.set_fmt = NULL,
-> +};
+> If there isn=E2=80=99t a "clock-names" property in the current node, the =
+function should
+> walk up the tree of devices looking for a matching optional clock. If the=
+re are no
+> parent nodes left and we haven't found a matching optional clock, we dete=
+rmine
+> that the clock isn=E2=80=99t there.
+> =
 
-Having these empty ops sets is really surprising - I see they do get
-added later on, but there's no sign that this will happen here and
-assigning NULL explicitly is generally bad.  It'd be better to just
-leave these empty here so they don't look like a bug when doing review.
+> Is that how this should work?
+> =
 
---gmhhrsDozM2n+uz5
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
+Yes that sounds right.
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvrKN4ACgkQJNaLcl1U
-h9Dhnwf/TTWRh5Jg+uDQ7fBuAKdvKhqWhYGLO3MFidokeN7ewqDQC65WTGHr08yd
-rhHtg5hHdU2ffxbyZECzXFM0GKNmSWGHjmRTPIUIu8qAGWivUuTd0D3372JMIZeq
-jD5Qs6scAC1ei8o4ijrgN9CzMuPaGroL2LKk1Gk1gm9Z+GidiwWEhnVBhcCgXpSk
-z6h4dmCgWjXUdZAxg+U0eS8dehWVASbEUggyzMJk77kr9HCYM0oYUWSILZ1Ab8cY
-hFTsFWuEKMSSGGRvnMn2BwcyBiY2fyi+ilmTJSHkOKPu9QM3DOzWTEiMKa+AjMpz
-W7C3KvHyiTo9RZgbrBPG60rAuGGDxQ==
-=pVFt
------END PGP SIGNATURE-----
-
---gmhhrsDozM2n+uz5--
