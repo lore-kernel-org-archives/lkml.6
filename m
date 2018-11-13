@@ -2,193 +2,206 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5E82C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 945ACC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 838562175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 527312175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:36:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=amacapital-net.20150623.gappssmtp.com header.i=@amacapital-net.20150623.gappssmtp.com header.b="GQLveIUh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 838562175B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amacapital.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="oLBKPdov"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 527312175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731146AbeKNEf0 (ORCPT
+        id S1731189AbeKNEfh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:35:26 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36699 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728334AbeKNEf0 (ORCPT
+        Tue, 13 Nov 2018 23:35:37 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:47026 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726862AbeKNEfg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:35:26 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s11so3078874wmh.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 10:36:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amacapital-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=srCcrn9kPDYHv5RsnDuEY83gk928+k3hynyAdn3Y8Pg=;
-        b=GQLveIUhsI/F4IwjREUDGARnt4jT80vgXXupCkzLOkuOjm8n6t41/gD5IcV6nYZP5H
-         P29zYAXGAgiZsxBT5Gijp44woWXulSEs5pGGD1vz/1HXiU9FhXpVUDbeZxW9LtzgdyQx
-         A1Dc/leRlfri2uVYNzJcbmwIE/Mw+r/x+NIvr6VLXJpXDJfsOuQq2SS6cpOEeMaTbJ2j
-         hJIEOoJAA+5xGKRGulZqzCRhU7aP1J4hA96YlftbQROIImHPnFIf7S5WAbOBC5o45awB
-         mR0vsIxuw2EYCnkqV0rLYQwib7mER/ULglOCdCj8gTnMkr9eTqtXX9nmBiGrcAZpKz3u
-         /XJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=srCcrn9kPDYHv5RsnDuEY83gk928+k3hynyAdn3Y8Pg=;
-        b=ruUJqvVVXl62MWm+E8We0c6nPmt5jqOOLAxQky9ICLX8m9zB2JHRR/IrZWHgZBj7sQ
-         asA8K5eUz907RC7myiOo74WnxeRqA0vSo3skzPObbwOJbP9s7QeVLE+jEv12HLGyxrtR
-         sxKXtP4KZNjpYVusISU+7/t2uuXiFp0uZgZ0rd1YYlVA+eLrKALlshIN1Mz8keqpim5k
-         96dpu39tiSBQRXd3nQvx/GOCKxbBkL2mbAy3eCFI0hTRCPFmXGYBAMOWghEf4YcgzJgh
-         fmnA4BwNnPtT1ejHHsEbViOtVOyaJhqvLjDnCuo0d0s+JnB/MFnEzHHrwL0pOThtAXWp
-         y2mw==
-X-Gm-Message-State: AGRZ1gLY/4wVtt3RWnvzdEPOzPb7rR27bSj/iMkFrrktBZ0s5dvzNKpd
-        uyZ9SHPDY4RgjcSHPvy6+Pf8lFZxgN6wmAascWoRuw==
-X-Google-Smtp-Source: AJdET5dDnWZD5TNYzUEvANWFD7cK3nVexWklKcLqa5BGCz6kLND1He95hc9PD9wjgi310VGjwblWHlkVqsZgsYt0mzE=
-X-Received: by 2002:a1c:2b45:: with SMTP id r66-v6mr4153457wmr.128.1542134164781;
- Tue, 13 Nov 2018 10:36:04 -0800 (PST)
-MIME-Version: 1.0
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com> <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net> <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net> <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net> <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
- <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com> <17a007eb-43ea-e4da-b066-0d8c502f5f6e@huawei.com>
-In-Reply-To: <17a007eb-43ea-e4da-b066-0d8c502f5f6e@huawei.com>
-From:   Andy Lutomirski <luto@amacapital.net>
-Date:   Tue, 13 Nov 2018 10:35:53 -0800
-Message-ID: <CALCETrVaPTbgycjzSB0fLUeGL=j1srUh-cL0qsKn6fw6UQgj7Q@mail.gmail.com>
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Igor Stoppa <igor.stoppa@huawei.com>
-Cc:     Igor Stoppa <igor.stoppa@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        Michal Hocko <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Content-Type: text/plain; charset="UTF-8"
+        Tue, 13 Nov 2018 23:35:36 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=K/UP177TqbET2ItmR+Sfh12hHwLV3k/4GXl/GiLaOpo=; b=oLBKPdovBCOO
+        sloh4g+tZkXtUZ5aAQu5mZ5HFu0h7aUvI7rBqv1Pr4EGytrfcTtyt1hHhqAiGR/C/qyKbysB3nkkL
+        zEH8y3ijZoKjYLoNPY7Jbn1UrqhXBtIn63D2vXkwOphajKaPYJtWEU18t7y8lkvwh+SkdyAIHHdVA
+        ycCeE=;
+Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gMdXa-0002QY-OQ; Tue, 13 Nov 2018 18:35:59 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id ECDDF440079; Tue, 13 Nov 2018 18:35:48 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Pavel Machek <pavel@ucw.cz>, Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        James Cameron <quozl@laptop.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Miao <eric.y.miao@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: Deal with slaves that return from transfer_one() unfinished" to the spi tree
+In-Reply-To:  <20181113102228.820214-3-lkundrak@v3.sk>
+Message-Id: <20181113183548.ECDDF440079@finisterre.ee.mobilebroadband>
+Date:   Tue, 13 Nov 2018 18:35:48 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 10:26 AM Igor Stoppa <igor.stoppa@huawei.com> wrote:
->
-> On 13/11/2018 19:16, Andy Lutomirski wrote:
->
-> > should be
-> > entirely abstracted away by an appropriate API, so neither SELinux nor
-> > IMA need to be aware that there's an mm_struct involved.
->
-> Yes, that is fine. In my proposal I was thinking about tying it to the
-> core/thread that performs the actual write.
->
-> The high level API could be something like:
->
-> wr_memcpy(void *src, void *dst, uint_t size)
->
-> >  It's also
-> > entirely possible that some architectures won't even use an mm_struct
-> > behind the scenes -- x86, for example, could have avoided it if there
-> > were a kernel equivalent of PKRU.  Sadly, there isn't.
->
-> The mm_struct - or whatever is the means to do the write on that
-> architecture - can be kept hidden from the API.
->
-> But the reason why I was proposing to have one mm_struct per writer is
-> that, iiuc, the secondary mapping is created in the secondary mm_struct
-> for each writer using it.
->
-> So the updating of IMA measurements would have, theoretically, also
-> write access to the SELinux AVC. Which I was trying to avoid.
-> And similarly any other write rare updater. Is this correct?
+The patch
 
-If you call a wr_memcpy() function with the signature you suggested,
-then you can overwrite any memory of this type.  Having a different
-mm_struct under the hood makes no difference.  As far as I'm
-concerned, for *dynamically allocated* rare-writable memory, you might
-as well allocate all the paging structures at the same time, so the
-mm_struct will always contain the mappings.  If there are serious bugs
-in wr_memcpy() that cause it to write to the wrong place, we have
-bigger problems.
+   spi: Deal with slaves that return from transfer_one() unfinished
 
-I can imagine that we'd want a *typed* wr_memcpy()-like API some day,
-but that can wait for v2.  And it still doesn't obviously need
-multiple mm_structs.
+has been applied to the spi tree at
 
->
-> >> 2) Iiuc, the purpose of the 2 pages being remapped is that the target of
-> >> the patch might spill across the page boundary, however if I deal with
-> >> the modification of generic data, I shouldn't (shouldn't I?) assume that
-> >> the data will not span across multiple pages.
-> >
-> > The reason for the particular architecture of text_poke() is to avoid
-> > memory allocation to get it working.  i think that prmem/rare_write
-> > should have each rare-writable kernel address map to a unique user
-> > address, possibly just by offsetting everything by a constant.  For
-> > rare_write, you don't actually need it to work as such until fairly
-> > late in boot, since the rare_writable data will just be writable early
-> > on.
->
-> Yes, that is true. I think it's safe to assume, from an attack pattern,
-> that as long as user space is not started, the system can be considered
-> ok. Even user-space code run from initrd should be ok, since it can be
-> bundled (and signed) as a single binary with the kernel.
->
-> Modules loaded from a regular filesystem are a bit more risky, because
-> an attack might inject a rogue key in the key-ring and use it to load
-> malicious modules.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-If a malicious module is loaded, the game is over.
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
->
-> >> If the data spans across multiple pages, in unknown amount, I suppose
-> >> that I should not keep interrupts disabled for an unknown time, as it
-> >> would hurt preemption.
-> >>
-> >> What I thought, in my initial patch-set, was to iterate over each page
-> >> that must be written to, in a loop, re-enabling interrupts in-between
-> >> iterations, to give pending interrupts a chance to be served.
-> >>
-> >> This would mean that the data being written to would not be consistent,
-> >> but it's a problem that would have to be addressed anyways, since it can
-> >> be still read by other cores, while the write is ongoing.
-> >
-> > This probably makes sense, except that enabling and disabling
-> > interrupts means you also need to restore the original mm_struct (most
-> > likely), which is slow.  I don't think there's a generic way to check
-> > whether in interrupt is pending without turning interrupts on.
->
-> The only "excuse" I have is that write_rare is opt-in and is "rare".
-> Maybe the enabling/disabling of interrupts - and the consequent switch
-> of mm_struct - could be somehow tied to the latency configuration?
->
-> If preemption is disabled, the expectations on the system latency are
-> anyway more relaxed.
->
-> But I'm not sure how it would work against I/O.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-I think it's entirely reasonable for the API to internally break up
-very large memcpys.
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 810923f3bf06c11022b7bb370dd3130a956a222e Mon Sep 17 00:00:00 2001
+From: Lubomir Rintel <lkundrak@v3.sk>
+Date: Tue, 13 Nov 2018 11:22:24 +0100
+Subject: [PATCH] spi: Deal with slaves that return from transfer_one()
+ unfinished
+
+Some drivers, such as spi-pxa2xx return from the transfer_one callback
+immediately, idicating that the transfer will be finished asynchronously.
+
+Normally, spi_transfer_one_message() synchronously waits for the
+transfer to finish with wait_for_completion_timeout(). For slaves, we
+don't want the transaction to time out as it can complete in a long time
+in future. Use wait_for_completion_interruptible() instead.
+
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ drivers/spi/spi.c | 62 +++++++++++++++++++++++++++++------------------
+ 1 file changed, 39 insertions(+), 23 deletions(-)
+
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 6ca59406b0b7..498d3b9bf3ae 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1037,6 +1037,42 @@ static int spi_map_msg(struct spi_controller *ctlr, struct spi_message *msg)
+ 	return __spi_map_msg(ctlr, msg);
+ }
+ 
++static int spi_transfer_wait(struct spi_controller *ctlr,
++			     struct spi_message *msg,
++			     struct spi_transfer *xfer)
++{
++	struct spi_statistics *statm = &ctlr->statistics;
++	struct spi_statistics *stats = &msg->spi->statistics;
++	unsigned long long ms = 1;
++
++	if (spi_controller_is_slave(ctlr)) {
++		if (wait_for_completion_interruptible(&ctlr->xfer_completion)) {
++			dev_dbg(&msg->spi->dev, "SPI transfer interrupted\n");
++			return -EINTR;
++		}
++	} else {
++		ms = 8LL * 1000LL * xfer->len;
++		do_div(ms, xfer->speed_hz);
++		ms += ms + 200; /* some tolerance */
++
++		if (ms > UINT_MAX)
++			ms = UINT_MAX;
++
++		ms = wait_for_completion_timeout(&ctlr->xfer_completion,
++						 msecs_to_jiffies(ms));
++
++		if (ms == 0) {
++			SPI_STATISTICS_INCREMENT_FIELD(statm, timedout);
++			SPI_STATISTICS_INCREMENT_FIELD(stats, timedout);
++			dev_err(&msg->spi->dev,
++				"SPI transfer timed out\n");
++			return -ETIMEDOUT;
++		}
++	}
++
++	return 0;
++}
++
+ /*
+  * spi_transfer_one_message - Default implementation of transfer_one_message()
+  *
+@@ -1050,7 +1086,6 @@ static int spi_transfer_one_message(struct spi_controller *ctlr,
+ 	struct spi_transfer *xfer;
+ 	bool keep_cs = false;
+ 	int ret = 0;
+-	unsigned long long ms = 1;
+ 	struct spi_statistics *statm = &ctlr->statistics;
+ 	struct spi_statistics *stats = &msg->spi->statistics;
+ 
+@@ -1079,28 +1114,9 @@ static int spi_transfer_one_message(struct spi_controller *ctlr,
+ 				goto out;
+ 			}
+ 
+-			if (ret > 0) {
+-				ret = 0;
+-				ms = 8LL * 1000LL * xfer->len;
+-				do_div(ms, xfer->speed_hz);
+-				ms += ms + 200; /* some tolerance */
+-
+-				if (ms > UINT_MAX)
+-					ms = UINT_MAX;
+-
+-				ms = wait_for_completion_timeout(&ctlr->xfer_completion,
+-								 msecs_to_jiffies(ms));
+-			}
+-
+-			if (ms == 0) {
+-				SPI_STATISTICS_INCREMENT_FIELD(statm,
+-							       timedout);
+-				SPI_STATISTICS_INCREMENT_FIELD(stats,
+-							       timedout);
+-				dev_err(&msg->spi->dev,
+-					"SPI transfer timed out\n");
+-				msg->status = -ETIMEDOUT;
+-			}
++			ret = spi_transfer_wait(ctlr, msg, xfer);
++			if (ret < 0)
++				msg->status = ret;
+ 		} else {
+ 			if (xfer->len)
+ 				dev_err(&msg->spi->dev,
+-- 
+2.19.1
+
