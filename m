@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29F5CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:59:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E5EEC0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:59:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E615B2245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:59:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EA0C722512
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:59:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="rn1rHhFy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E615B2245E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xO33kt1B"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA0C722512
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732351AbeKMPsD (ORCPT
+        id S1732715AbeKMPzj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:48:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34140 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:55:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34170 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730990AbeKMPsC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:48:02 -0500
+        id S1732329AbeKMPsD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:48:03 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6491E22512;
-        Tue, 13 Nov 2018 05:51:34 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5AB6722512;
+        Tue, 13 Nov 2018 05:51:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088294;
-        bh=WOx00nfPpbmH7rQ6id06H+UvjCg/F7Ej9o2+hT8xC9w=;
+        s=default; t=1542088295;
+        bh=626VPZqTF4I4yzmjBzHfGeNsx97jmzm1Rct1ccTIGVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=rn1rHhFy/1vfhkdfMzUWejvZiixQm1WPpW2ehxMHxt156DFgUnVBAqG1wJzuw95A6
-         YHA3LUboCwD7Gdzh1KT1B5HhY51A3fCPRWuqcE1j4J9YxU5wm9kXc2UttZYXlB6kAB
-         STy2aqvqmWwsxtv4l5ElJ7tc/dqYD7c2nunDYA+s=
+        b=xO33kt1BMXg144saAh0ewQ2C2FCHwTrPl5nk8zGG2WvszojmUrYqGP9pdWqlIn+48
+         idcVc+4hJJ/mpBEOWi+q5xn9/E8FEAjyvI2LUe36Q7EGypVGRKuBbVntW6XX4rE7c+
+         KaxARUnCOf3tPMhqvDY6xxeTd/j79y2qIjFgMVyE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Nathan Chancellor <natechancellor@gmail.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 29/39] arm64: percpu: Initialize ret in the default case
-Date:   Tue, 13 Nov 2018 00:50:43 -0500
-Message-Id: <20181113055053.78352-29-sashal@kernel.org>
+Cc:     Johan Hovold <johan@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.18 32/39] clk: ti: fix OF child-node lookup
+Date:   Tue, 13 Nov 2018 00:50:46 -0500
+Message-Id: <20181113055053.78352-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113055053.78352-1-sashal@kernel.org>
 References: <20181113055053.78352-1-sashal@kernel.org>
@@ -52,70 +52,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Nathan Chancellor <natechancellor@gmail.com>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit b5bb425871186303e6936fa2581521bdd1964a58 ]
+[ Upstream commit 00a461cc32ec27fa7bd9c874a7b36b0c6c542c12 ]
 
-Clang warns that if the default case is taken, ret will be
-uninitialized.
+Fix child-node lookup which by using the wrong OF helper was searching
+the whole tree depth-first, something which could end up matching an
+unrelated node.
 
-./arch/arm64/include/asm/percpu.h:196:2: warning: variable 'ret' is used
-uninitialized whenever switch default is taken
-[-Wsometimes-uninitialized]
-        default:
-        ^~~~~~~
-./arch/arm64/include/asm/percpu.h:200:9: note: uninitialized use occurs
-here
-        return ret;
-               ^~~
-./arch/arm64/include/asm/percpu.h:157:19: note: initialize the variable
-'ret' to silence this warning
-        unsigned long ret, loop;
-                         ^
-                          = 0
+Also fix the related node-reference leaks.
 
-This warning appears several times while building the erofs filesystem.
-While it's not strictly wrong, the BUILD_BUG will prevent this from
-becoming a true problem. Initialize ret to 0 in the default case right
-before the BUILD_BUG to silence all of these warnings.
-
-Reported-by: Prasad Sodagudi <psodagud@codeaurora.org>
-Signed-off-by: Nathan Chancellor <natechancellor@gmail.com>
-Reviewed-by: Nick Desaulniers <ndesaulniers@google.com>
-Signed-off-by: Dennis Zhou <dennis@kernel.org>
+Fixes: 5b385a45e001 ("clk: ti: add support for clkctrl aliases")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/include/asm/percpu.h | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/clk/ti/clk.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/arch/arm64/include/asm/percpu.h b/arch/arm64/include/asm/percpu.h
-index 9234013e759e..21a81b59a0cc 100644
---- a/arch/arm64/include/asm/percpu.h
-+++ b/arch/arm64/include/asm/percpu.h
-@@ -96,6 +96,7 @@ static inline unsigned long __percpu_##op(void *ptr,			\
- 		: [val] "Ir" (val));					\
- 		break;							\
- 	default:							\
-+		ret = 0;						\
- 		BUILD_BUG();						\
- 	}								\
- 									\
-@@ -125,6 +126,7 @@ static inline unsigned long __percpu_read(void *ptr, int size)
- 		ret = READ_ONCE(*(u64 *)ptr);
- 		break;
- 	default:
-+		ret = 0;
- 		BUILD_BUG();
- 	}
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 7d22e1af2247..27e0979b3158 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -129,7 +129,7 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
+ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
+ {
+ 	struct ti_dt_clk *c;
+-	struct device_node *node;
++	struct device_node *node, *parent;
+ 	struct clk *clk;
+ 	struct of_phandle_args clkspec;
+ 	char buf[64];
+@@ -164,8 +164,12 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
+ 			continue;
  
-@@ -194,6 +196,7 @@ static inline unsigned long __percpu_xchg(void *ptr, unsigned long val,
- 		: [val] "r" (val));
- 		break;
- 	default:
-+		ret = 0;
- 		BUILD_BUG();
- 	}
- 
+ 		node = of_find_node_by_name(NULL, buf);
+-		if (num_args)
+-			node = of_find_node_by_name(node, "clk");
++		if (num_args) {
++			parent = node;
++			node = of_get_child_by_name(parent, "clk");
++			of_node_put(parent);
++		}
++
+ 		clkspec.np = node;
+ 		clkspec.args_count = num_args;
+ 		for (i = 0; i < num_args; i++) {
+@@ -173,11 +177,12 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
+ 			if (ret) {
+ 				pr_warn("Bad tag in %s at %d: %s\n",
+ 					c->node_name, i, tags[i]);
++				of_node_put(node);
+ 				return;
+ 			}
+ 		}
+ 		clk = of_clk_get_from_provider(&clkspec);
+-
++		of_node_put(node);
+ 		if (!IS_ERR(clk)) {
+ 			c->lk.clk = clk;
+ 			clkdev_add(&c->lk);
 -- 
 2.17.1
 
