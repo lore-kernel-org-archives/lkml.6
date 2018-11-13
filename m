@@ -2,277 +2,119 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25E84C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:32:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FDEAC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:33:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4B5F206B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:32:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IJm9K5Qt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4B5F206B2
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+	by mail.kernel.org (Postfix) with ESMTP id 3E285224E0
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:33:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E285224E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730558AbeKMO3I (ORCPT
+        id S1730735AbeKMOaI convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 09:29:08 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:38121 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726103AbeKMO3H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 09:29:07 -0500
-Received: by mail-pg1-f193.google.com with SMTP id f8-v6so5072623pgq.5;
-        Mon, 12 Nov 2018 20:32:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Pvo+gboLEaeHkXi07NrmDlRl5xKGxwIwhzunymMLtCU=;
-        b=IJm9K5Qt182yHYs2WOB+uHtBxzeZ949YFu8NKZQssCFW50m/SOmxSDP+JwTGJull+q
-         TtPMjvkg+ibKCp2wIxf7ptz8S+J/KUEsBn7SUBS8N0t0k93QbUVi84BCl1fzIi8Fmvho
-         JonsotkA+gfOUeEc5caGZeXy8RDQclefn7rZU6VnApxTTt6kwp1hVMyC10nfNB3LT5Lg
-         6GfKM/utg4njK2fv1+PFO0rwTf4RaWcyjLHgYnNwD009Igc2MitlFWK+Xyipfq8sd25Y
-         7kksJK9tB6TRmCHDCKOaLsRzPK0ZD8zP/hdgz7foRV0HfMDoNiLBBoOY2ZWVKwinFms+
-         eFzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Pvo+gboLEaeHkXi07NrmDlRl5xKGxwIwhzunymMLtCU=;
-        b=Cgf2iSOQlNWzyp5BCTKNoAD9gFJfjoPxeTkYGWZ+s2GIx1wf5u+SGjRMEbCqvK2SZn
-         OtOdIJxP5kyrI+w7pYIEzmOZwZcZbiDMm2uT1UqItjoBBfxJCIq1/ifnTdbIlQ9YAga2
-         yITZMkynkcJD5uX+CCFwSZHIULpvsI6NufqCj3SyMNdqgtnsSUyq2Ka85uVDk2mQYPUC
-         dO0RXPGnfQvOERk/U5IhDt5wXSfweW8cbPUm1h/j3ZqaZvOQlNlwRcF2N+zu8ep+RqUG
-         AhIjqOHbw4AO++M5bVaEGTua89nupwpURi10G+aL4ZwYwXEx0iK4DIdOvsG/NATnsCAK
-         t09Q==
-X-Gm-Message-State: AGRZ1gIMqEjKIALvgigoLqTSJROPnsVYfLxJSgMk7H5DODKHVM/qJFAc
-        Fv3Z1/9szX2WWLfs+NnRbuQgeavSAe8=
-X-Google-Smtp-Source: AJdET5ebJOVCpNAC0CsWB9vAZ6ZAwbdu6lnViVU2mHgMygDnCBGKIBD8EdAHJB0jHkmyqEVNwn5V2Q==
-X-Received: by 2002:a63:be4d:: with SMTP id g13mr3404659pgo.378.1542083570344;
-        Mon, 12 Nov 2018 20:32:50 -0800 (PST)
-Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id x12sm17092333pgr.55.2018.11.12.20.32.49
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 20:32:49 -0800 (PST)
-Date:   Mon, 12 Nov 2018 20:32:48 -0800
-From:   Guenter Roeck <linux@roeck-us.net>
-To:     Nicolin Chen <nicoleotsuka@gmail.com>
-Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] hwmon (ina3221) Add single-shot mode support
-Message-ID: <20181113043248.GB11205@roeck-us.net>
-References: <20181113042353.1507-1-nicoleotsuka@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113042353.1507-1-nicoleotsuka@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+        Tue, 13 Nov 2018 09:30:08 -0500
+Received: from mout.gmx.net ([212.227.15.19]:43801 "EHLO mout.gmx.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726103AbeKMOaI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 09:30:08 -0500
+Received: from [192.168.1.153] ([74.104.183.64]) by mail.gmx.com (mrgmx002
+ [212.227.17.184]) with ESMTPSA (Nemesis) id 0McmS9-1g527l3nlp-00Hzz7; Tue, 13
+ Nov 2018 05:33:05 +0100
+Content-Type: text/plain;
+        charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: Re: ODEBUG: Out of memory. ODEBUG disabled
+From:   Qian Cai <cai@gmx.us>
+In-Reply-To: <trinity-0da197a3-0f6e-41a3-8ab7-a3519e158a88-1541859073829@msvc-mesg-gmx023>
+Date:   Mon, 12 Nov 2018 23:33:01 -0500
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Zhong Jiang <zhongjiang@huawei.com>,
+        linux kernel <linux-kernel@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        "Joel Fernandes (Google)" <joel@joelfernandes.org>
+Content-Transfer-Encoding: 8BIT
+Message-Id: <FE1B58AA-FC0E-4E0A-8A76-F98B70548F36@gmx.us>
+References: <trinity-be6414fb-25ba-4881-acc6-abe3b375d0d0-1541814329304@msvc-mesg-gmx021>
+ <c7b58543-ffd2-44bb-1005-e9733782bad5@redhat.com>
+ <trinity-0da197a3-0f6e-41a3-8ab7-a3519e158a88-1541859073829@msvc-mesg-gmx023>
+To:     Waiman Long <longman@redhat.com>
+X-Mailer: Apple Mail (2.3445.100.39)
+X-Provags-ID: V03:K1:4t38uTvSR6GfGvn1/YS5lk7H5V9I84X4GWYk95anX1iX9HVpT82
+ NZ6W8Kff/K+yF1vsLELRvFG0xLiEubX5tPvkrc7uFD1Smuc7Lz3n7T//GEHrki8QtgC07B2
+ u3toOeIPyMkJiClgU/pOJUXbDGB3TLewF0tQndhSQjWRdxRvQnaZmzeUnYSoo5NYaTk1U9B
+ n9zit7+McHjXMziWv3O1w==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:KPiVI0gVOBM=:OGkMtYn+/wZzXKNqZ179V+
+ tyMJPSKdwD/z+k1TTnF4lM1DFlR8yzATIuiHdbJ9aLgjfksJcNE8fcg0AQVobQqzeAzNxefHL
+ k3mjYWwJyJIq/HnKHGpRTqvaMI8sYAqCwAujXOyEXwr5dDb2VlM1mIKaNEC7AG9Q/FjBEMGMm
+ BQlyQ+TSXXyNCQ2W0BeD3oPwt95A+KVWlbRtyOooFnPKnRCQIcrpFrze99akjMLHMQ6SWeX93
+ b3mPYh0AXH+Es73rfY9P+AT9M4gjOFZBt/gSDfDX4uL52I9Ab8kplIkOaYbdUfLEWCSXQVojn
+ Xk7K6y5BWm50OV+py5Xf4H9QYNHeigTrjAnMJcrL/75k90qtOtqR33/wYdplqq3nhOJ9kY05n
+ SgNjfqjl+sVFEXsxUpEedj7cbxZCrDU+ta9JTGhjvrQM6ljRSXr7ERfYx7xmZcn3YeCbT/dGR
+ thlfciTQmsfQm+BT3z1v6Ker36WUkylXH/vjYh3wa+s6mz9rrJ8fL/Q6G85C9qDRa/Opy9dsR
+ A2rM6ew00K65Q416eB8as2FYfSd2qENJwDCQVdjHVqdJ9bVzuJD346tP3qh96hXIldc0R1fVL
+ jl56swa+Bu58tOaqLkPmQCVncc4EmpzL79JD5G/qb7bRwDEDbT5XFKg2jaB6sZXB1x8OHj1An
+ 5XO9+ZL7nB5UbB/9SyYLL7cvHQqer83WfnQH3TNtBVxDHns9i0wyAXeeE8EMEMpdxYyKU3pBt
+ pR4Xn8X+eTKHjHLdyey8gF5DiPgkFrfHn1n8745h/Jbw8/VyZEiKLd14AEspNjXDoZGEZ8r6R
+ /fVGmSGhH8ra/5R2ywhGyjVIV8yXSyoPVt0vz9oQ3DiGW9cTpaOCW9kYxQQU9EjQQ86CJ/QFR
+ Vu363JJiCho887QkJ1toYj0GSWE5eTEUXjVQtXPRAOjClbw5Sjdf26IBEmMcfF
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 08:23:53PM -0800, Nicolin Chen wrote:
-> INA3221 supports both continuous and single-shot modes. When
-> running in the continuous mode, it keeps measuring the inputs
-> and converting them to the data register even if there are no
-> users reading the data out. In this use case, this could be a
-> power waste.
-> 
-> So this patch adds a single-shot mode support so that ina3221
-> could do measurement and conversion only if users trigger it,
-> depending on the use case where it only needs to poll data in
-> a lower frequency.
-> 
-> The change also exposes "mode" and "available_modes" nodes to
-> allow users to switch between two operating modes.
-> 
-Lots and lots of complexity for little gain. Sorry, I don't see
-the point of this change.
 
-Guenter
 
-> Signed-off-by: Nicolin Chen <nicoleotsuka@gmail.com>
-> ---
->  Documentation/hwmon/ina3221 |   3 +
->  drivers/hwmon/ina3221.c     | 109 ++++++++++++++++++++++++++++++++++++
->  2 files changed, 112 insertions(+)
+> On Nov 10, 2018, at 9:11 AM, Qian Cai <cai@gmx.us> wrote:
 > 
-> diff --git a/Documentation/hwmon/ina3221 b/Documentation/hwmon/ina3221
-> index 4b82cbfb551c..b03f4ad901ee 100644
-> --- a/Documentation/hwmon/ina3221
-> +++ b/Documentation/hwmon/ina3221
-> @@ -35,3 +35,6 @@ curr[123]_max           Warning alert current(mA) setting, activates the
->                            average is above this value.
->  curr[123]_max_alarm     Warning alert current limit exceeded
->  in[456]_input           Shunt voltage(uV) for channels 1, 2, and 3 respectively
-> +available_modes         Available operating modes of the chip:
-> +                          continuous mode; single-shot mode
-> +mode                    Current operating mode of the chip
-> diff --git a/drivers/hwmon/ina3221.c b/drivers/hwmon/ina3221.c
-> index 17a57dbc0424..8f7da3f75d53 100644
-> --- a/drivers/hwmon/ina3221.c
-> +++ b/drivers/hwmon/ina3221.c
-> @@ -91,6 +91,17 @@ enum ina3221_channels {
->  	INA3221_NUM_CHANNELS
->  };
->  
-> +enum ina3221_modes {
-> +	INA3221_MODE_SINGLE_SHOT,
-> +	INA3221_MODE_CONTINUOUS,
-> +	INA3221_NUM_MODES,
-> +};
-> +
-> +static const char * const ina3221_mode_names[] = {
-> +	[INA3221_MODE_SINGLE_SHOT] = "single-shot",
-> +	[INA3221_MODE_CONTINUOUS] = "continuous",
-> +};
-> +
->  /**
->   * struct ina3221_input - channel input source specific information
->   * @label: label of channel input source
-> @@ -127,6 +138,11 @@ static inline bool ina3221_is_enabled(struct ina3221_data *ina, int channel)
->  	       (ina->reg_config & INA3221_CONFIG_CHx_EN(channel));
->  }
->  
-> +static inline bool ina3221_is_singleshot_mode(struct ina3221_data *ina)
-> +{
-> +	return !(ina->reg_config & INA3221_CONFIG_MODE_CONTINUOUS);
-> +}
-> +
->  /* Lookup table for Bus and Shunt conversion times in usec */
->  static const u16 ina3221_conv_time[] = {
->  	140, 204, 332, 588, 1100, 2116, 4156, 8244,
-> @@ -188,6 +204,11 @@ static int ina3221_read_in(struct device *dev, u32 attr, int channel, long *val)
->  		if (!ina3221_is_enabled(ina, channel))
->  			return -ENODATA;
->  
-> +		/* Write CONFIG register to trigger a single-shot measurement */
-> +		if (ina3221_is_singleshot_mode(ina))
-> +			regmap_write(ina->regmap, INA3221_CONFIG,
-> +				     ina->reg_config);
-> +
->  		ret = ina3221_wait_for_data(ina);
->  		if (ret)
->  			return ret;
-> @@ -232,6 +253,11 @@ static int ina3221_read_curr(struct device *dev, u32 attr,
->  		if (!ina3221_is_enabled(ina, channel))
->  			return -ENODATA;
->  
-> +		/* Write CONFIG register to trigger a single-shot measurement */
-> +		if (ina3221_is_singleshot_mode(ina))
-> +			regmap_write(ina->regmap, INA3221_CONFIG,
-> +				     ina->reg_config);
-> +
->  		ret = ina3221_wait_for_data(ina);
->  		if (ret)
->  			return ret;
-> @@ -532,6 +558,82 @@ static ssize_t ina3221_set_shunt(struct device *dev,
->  	return count;
->  }
->  
-> +static ssize_t available_modes_show(struct device *dev,
-> +				    struct device_attribute *attr, char *buf)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(ina3221_mode_names); i++)
-> +		snprintf(buf, PAGE_SIZE, "%s%s ", buf, ina3221_mode_names[i]);
-> +
-> +	return snprintf(buf, PAGE_SIZE, "%s\n", buf);
-> +}
-> +
-> +static ssize_t mode_show(struct device *dev,
-> +			 struct device_attribute *attr, char *buf)
-> +{
-> +	struct ina3221_data *ina = dev_get_drvdata(dev);
-> +	int mode;
-> +
-> +	if (ina->reg_config & INA3221_CONFIG_MODE_CONTINUOUS)
-> +		mode = INA3221_MODE_CONTINUOUS;
-> +	else
-> +		mode = INA3221_MODE_SINGLE_SHOT;
-> +
-> +	return snprintf(buf, PAGE_SIZE, "%s\n", ina3221_mode_names[mode]);
-> +}
-> +
-> +static ssize_t mode_store(struct device *dev,
-> +			  struct device_attribute *attr,
-> +			  const char *buf, size_t count)
-> +{
-> +	struct ina3221_data *ina = dev_get_drvdata(dev);
-> +	u16 mask = INA3221_CONFIG_MODE_CONTINUOUS;
-> +	u16 continuous;
-> +	int mode, ret;
-> +	char name[32];
-> +
-> +	mutex_lock(&ina->lock);
-> +
-> +	snprintf(name, sizeof(name), "%s", buf);
-> +	strim(name);
-> +
-> +	for (mode = 0; mode < INA3221_NUM_MODES; mode++) {
-> +		if (!strcmp(name, ina3221_mode_names[mode]))
-> +			break;
-> +	}
-> +
-> +	switch (mode) {
-> +	case INA3221_MODE_SINGLE_SHOT:
-> +		continuous = 0;
-> +		break;
-> +	case INA3221_MODE_CONTINUOUS:
-> +		continuous = INA3221_CONFIG_MODE_CONTINUOUS;
-> +		break;
-> +	default:
-> +		mutex_unlock(&ina->lock);
-> +		return -EINVAL;
-> +	}
-> +
-> +	/* Set register to configure single-shot or continuous mode */
-> +	ret = regmap_update_bits(ina->regmap, INA3221_CONFIG, mask, continuous);
-> +	if (ret) {
-> +		mutex_unlock(&ina->lock);
-> +		return ret;
-> +	}
-> +
-> +	/* Cache the latest config register value */
-> +	ret = regmap_read(ina->regmap, INA3221_CONFIG, &ina->reg_config);
-> +	if (ret) {
-> +		mutex_unlock(&ina->lock);
-> +		return ret;
-> +	}
-> +
-> +	mutex_unlock(&ina->lock);
-> +
-> +	return count;
-> +}
-> +
->  /* shunt resistance */
->  static SENSOR_DEVICE_ATTR(shunt1_resistor, S_IRUGO | S_IWUSR,
->  		ina3221_show_shunt, ina3221_set_shunt, INA3221_CHANNEL1);
-> @@ -540,10 +642,17 @@ static SENSOR_DEVICE_ATTR(shunt2_resistor, S_IRUGO | S_IWUSR,
->  static SENSOR_DEVICE_ATTR(shunt3_resistor, S_IRUGO | S_IWUSR,
->  		ina3221_show_shunt, ina3221_set_shunt, INA3221_CHANNEL3);
->  
-> +/* operating mode */
-> +static DEVICE_ATTR_RW(mode);
-> +static DEVICE_ATTR_RO(available_modes);
-> +
->  static struct attribute *ina3221_attrs[] = {
->  	&sensor_dev_attr_shunt1_resistor.dev_attr.attr,
->  	&sensor_dev_attr_shunt2_resistor.dev_attr.attr,
->  	&sensor_dev_attr_shunt3_resistor.dev_attr.attr,
-> +	/* common attributes */
-> +	&dev_attr_mode.attr,
-> +	&dev_attr_available_modes.attr,
->  	NULL,
->  };
->  ATTRIBUTE_GROUPS(ina3221);
-> -- 
-> 2.17.1
+> On 11/10/18 at 8:59 AM, Waiman Long wrote:
 > 
+>> On 11/09/2018 08:45 PM, Qian Cai wrote:
+>>>> Sent: Friday, November 09, 2018 at 5:08 PM
+>>>> From: "Waiman Long" <longman@redhat.com>
+>>>> To: "Qian Cai" <cai@gmx.us>, "Yang Shi" <yang.shi@linux.alibaba.com>
+>>>> Cc: "open list" <linux-kernel@vger.kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Arnd Bergmann" <arnd@arndb.de>, "Joel Fernandes (Google)" <joel@joelfernandes.org>, "Zhong Jiang" <zhongjiang@huawei.com>
+>>>> Subject: Re: ODEBUG: Out of memory. ODEBUG disabled
+>>>> 
+>>>> On 11/09/2018 04:51 PM, Qian Cai wrote:
+>>>>>> On Nov 9, 2018, at 4:42 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
+>>>>>> 
+>>>>>> 
+>>>>>> 
+>>>>>> On 11/9/18 1:36 PM, Qian Cai wrote:
+>>>>>>> It is a bit annoying on this aarch64 server with 64 CPUs that is
+>>>>>>> booting the latest mainline (3541833fd1f2) causes object debugging
+>>>>>>> always running out of memory.
+>>>>>> May you please paste the detail failure log?
+>>>>> I assume you mean dmesg.
+>>>>> 
+>>>>> Here is the dmesg for 64 CPUs,
+>>>>> https://paste.ubuntu.com/p/BnhvXXhn7k/
+>>>>>>> I have to boot the kernel with only 16 CPUs instead (nr_cpus=16)
+>>>>>>> to make it work. Is it expected that object debugging is not going
+>>>>>>> to work with large machines?
+>>>>>> I don't think so. I'm supposed it works well with large CPU number on x86.
+>>>>> Here is the one with nr_cpus workaround,
+>>>>> https://paste.ubuntu.com/p/qMpd2CCPSV/
+>>>> The debugobjects code have a set of 1024 statically allocated debug
+>>>> objects that can be used in early boot before the slab memory allocator
+>>>> is initialized. Apparently, the system may have used up all the
+>>>> statically allocated objects. Try double ODEBUG_POOL_SIZE to see if it
+>>>> helps.
+>>> Great, you are right. Doubling the size makes it work. Does it make sense
+>>> to have a kconfig option instead?
+>> 
+>> First, I think you need to figure out what your system needed to use up
+>> so many debug objects in early boot. If there is a legitimate reason for
+>> this behavior, we can talk about having a kconfig option to increase that.
+> Anybody else not getting ODEBUG OOM with more than 64-CPU? As
+> mentioned, restricting to 16-CPU works fine. How can I figure out why the
+> system uses so much debug objects?
+On another aarch64 server with 256-CPU, even double the size of
+ODEBUG_POOL_SIZE, i.e., 2048 will get "ODEBUG: Out of memory. ODEBUG
+disabled”.
