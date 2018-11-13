@@ -2,133 +2,166 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 435B6C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E90C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:11:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 00701224E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:10:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ajrVC0bh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00701224E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F93A22507
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:11:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F93A22507
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730513AbeKMKGS (ORCPT
+        id S1730541AbeKMKGk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 05:06:18 -0500
-Received: from mail-qk1-f182.google.com ([209.85.222.182]:38943 "EHLO
-        mail-qk1-f182.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbeKMKGR (ORCPT
+        Tue, 13 Nov 2018 05:06:40 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:42186 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbeKMKGk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 05:06:17 -0500
-Received: by mail-qk1-f182.google.com with SMTP id e4so16580213qkh.6;
-        Mon, 12 Nov 2018 16:10:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Q5Vh8BpfQhaRZB3IW7v6+hYQj9+PR8xSV25V/M1Laqc=;
-        b=ajrVC0bh2t5+i6Y5O3G0caD81BnNCrIi5lEbC0lXwWFikzYyPWdRZiZg456XwCQj8s
-         WQl2nFxo9Oh+34UKuDk22jZiuI56ZUlyzwMM2HZ0OfdU9DPr8Y+E3cjPwrWofeayvIob
-         laXWtWZ9MbzbB0lYKzDJZsrz5NO80OHeisEl31+J4rMr9HXi9Isc1Ja3nZhpRvZ4nJK+
-         lCxeQySb1Mdaw175+9k7kpQo8aglrttv6FNnkgg7BgPLU5tnzQoySLwut8iWy2jgt9ZL
-         rTxPZZnYOEUuKrxewjQWaxoXSbY/ZmSGJsTvVZKGl366fZqsi0732Ilye5s+g2Ae2DYf
-         Vl4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Q5Vh8BpfQhaRZB3IW7v6+hYQj9+PR8xSV25V/M1Laqc=;
-        b=oHo/04VWCZxVRH6Rn6nNIHy5CMqcHKYICmIT15cCYRBPEDHxJolty/FKV4f0CUYN+k
-         7P8Oe0X6KtpXTPYhzzKZZcDq59OCAH4TtRcZF7Y53E5uHWZ1PDi5K0+eBxkVPOmP7WEy
-         2iwLjgeokEQowzBf3PSM5Fc4fFIoCJkG/bdoK/Mm7Jp9+rcPwEHC3RNGKXB30eSzKaVi
-         LPprut46aYwV7lAwh4uJ3qW1P5oJT//nddat93Jsj5sZIq6uCYgHpTPzny9iWs/+OBuf
-         OX8f4Mk0CHkuvrSSG+OEbWt+wGbunrWfD+W9hQb5SqmyMyr9lR/HO3KBj8mQt7/1cZbX
-         OzJg==
-X-Gm-Message-State: AGRZ1gItKwmsBVdj6mdi5AGjk1zCRaY9IpGmCQGAiOTU6B5xV5H6HNyv
-        NmIrppz0lv0penDk1tHfeaNpFK5CZhop3ORDt1o=
-X-Google-Smtp-Source: AJdET5dpf3m/Cfik1R7V81cEr6RpNBAyjOVmCRskZhqYs0PvMmJ2sUFS8s1DhVSf7wERV2pz4CFJ6bJvep1phtO3gb0=
-X-Received: by 2002:ac8:326a:: with SMTP id y39mr2987105qta.175.1542067849106;
- Mon, 12 Nov 2018 16:10:49 -0800 (PST)
+        Tue, 13 Nov 2018 05:06:40 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id 574EA29C7D;
+        Mon, 12 Nov 2018 19:11:06 -0500 (EST)
+Date:   Tue, 13 Nov 2018 11:11:33 +1100 (AEDT)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     Thomas Gleixner <tglx@linutronix.de>
+cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen N Chivers <schivers@csc.com.au>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 13/13] m68k: mvme16x: Convert to clocksource API
+In-Reply-To: <alpine.DEB.2.21.1811121001140.14703@nanos.tec.linutronix.de>
+Message-ID: <alpine.LNX.2.21.1811130826260.356@nippy.intranet>
+References: <cover.1541995959.git.fthain@telegraphics.com.au> <2f4015ba435f6f06b874295d2a47319875474c7f.1541995959.git.fthain@telegraphics.com.au> <alpine.DEB.2.21.1811121001140.14703@nanos.tec.linutronix.de>
 MIME-Version: 1.0
-References: <20180925145622.29959-1-Jason@zx2c4.com> <20180925145622.29959-24-Jason@zx2c4.com>
- <7830522a-968e-0880-beb7-44904466cf14@labo.rs> <CAHmME9oQJ9y51Pv7U=+=5uDA_tb+U1zWZdsLcyNMhdcFZmjM8Q@mail.gmail.com>
- <e4b500e9-f24a-43c5-c2df-834dafc3aae5@labo.rs> <CAHmME9q8tp3Ch43o3D6zYTVujcjBWLVpNdzVw6RqYqHisd_suQ@mail.gmail.com>
-In-Reply-To: <CAHmME9q8tp3Ch43o3D6zYTVujcjBWLVpNdzVw6RqYqHisd_suQ@mail.gmail.com>
-From:   Dave Taht <dave.taht@gmail.com>
-Date:   Mon, 12 Nov 2018 16:10:36 -0800
-Message-ID: <CAA93jw7e61mbbLMoDwshxpWWK+oGUz71pGrsUYVX8uWM-s5Krg@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 23/23] net: WireGuard secure network tunnel
-To:     "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc:     labokml@labo.rs, linux-kernel@vger.kernel.org,
-        Linux Kernel Network Developers <netdev@vger.kernel.org>,
-        linux-crypto@vger.kernel.org,
-        "David S. Miller" <davem@davemloft.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 3:54 PM Jason A. Donenfeld <Jason@zx2c4.com> wrote:
->
-> Hey Ivan,
->
-> Sorry for not getting back to you sooner.
->
-> On Mon, Nov 5, 2018 at 8:06 AM Ivan Lab=C3=A1th <labokml@labo.rs> wrote:
-> > Any news on this?
-> >
-> > To be clear, question is not about an insignificant documentation
-> > oversight. It is about copying bits from inner packets to outer packets
->
-> The short answer is RFC6040 with DSCP fixed to 0 so as not to leak
-> anything. I've added a description of this to
-> <wireguard.com/protocol/>.
+On Mon, 12 Nov 2018, Thomas Gleixner wrote:
 
-you have a speling error (ECM). :)
+> Finn,
+> 
+> First of all, thanks for tackling this!
+> 
 
-side note:
+Happy to help. Thanks for your review.
 
-I have to say that wireguard works really well with ecn and non-ecn marked =
-flows
-against codel and fq_codel on the bottleneck router.
+> > +static u32 clk_total;
+> > +
+> > +#define PCC_TIMER_CLOCK_FREQ 1000000
+> > +#define PCC_TIMER_CYCLES     (PCC_TIMER_CLOCK_FREQ / HZ)
+> > +
+> >  static irqreturn_t mvme16x_timer_int (int irq, void *dev_id)
+> >  {
+> > +    irq_handler_t tick_handler = dev_id;
+> > +    unsigned long flags;
+> > +
+> > +    local_irq_save(flags);
+> 
+> No need for local_irq_save() here. Interrupt handlers are guaranteed to be
+> called with interrupts disabled.
+> 
 
-I'd still rather like it if wireguard focused a bit more on
-interleaving multiple flows better
-rather than on single stream benchmarks, one day.
+That's not the case on m68k, as I understand it. However, the CPU 
+interrupt level does prevent interrupt handlers from nesting.
 
-In this case, codel is managing things not fq and we could possibly
-shave a few ms of induced latency off of it in this particular test series:
+> >      *(volatile unsigned char *)0xfff4201b |= 8;
+> > +    clk_total += PCC_TIMER_CYCLES;
+> 
+> Looking at the read function below, I assume that this magic 0xfff42008 
+> register counts up to PCC_TIMER_CYCLES, which triggers the timer 
+> interrupt and then starts from 0 again. And looking at the programming 
+> manual actually confirms that assumption (COC is set in the control 
+> reg).
+> 
+> > -u32 mvme16x_gettimeoffset(void)
+> > +static u64 mvme16x_read_clk(struct clocksource *cs)
+> >  {
+> > -    return (*(volatile u32 *)0xfff42008) * 1000;
+> > +    u32 count = *(volatile u32 *)0xfff42008;
+> > +
+> > +    return clk_total + count;
+> >  }
+> 
+> There is a problem with that approach. Assume the following situation:
+> 
+> 				Counter value (HZ = 100)
+>        local_irq_disable()	
+>        ...
+>        ktime_get()		9999
+>        ....			10000 -> 0 (interrupt is triggered)
+>        ktime_get()		1
+> 
+> IOW, time goes backwards.
+> 
 
-http://tun.taht.net/~d/wireguard/rrul_-_comcast_v6.png
+Yes. It's not a new problem. I think hp300 and mvme147 have similar 
+issues.
 
-vs wireguard (doing it ivp6 over that ipv6)
+If the clocksource core is badly affected by this problem then I'll have 
+to address it.
 
-http://tun.taht.net/~d/wireguard/rrul_-_wireguard.png
+> There are two ways to solve that:
+> 
+>  1) Take the overflow bits in the timer control register into account,
+>     which makes time readout even slower because you need to do it like
+>     this:
+> 
+>     do {
+>        ovfl = read(TCR1);
+>        now = read(TCNT1);
+>     while (ovfl != read(TCR1));
+>     ....
+>   
 
-That said, I've been deploying wireguard widely in replacement of my
-old tinc network particularly on machines that were formerly cpu
-bottlenecked
-and am insanely pleased with it. what's a few extra ms of latency
-between friends?
+How about,
 
->
-> Regards,
-> Jason
+	local_irq_save(flags);
+	ovfl = read(TCR1);
+	now = read(TCNT1);
+	if (ovfl != read(TCR1))
+		now = read(TCNT1);
 
+	ticks = clk_total + now;
+	offset = (ovfl >> 4) * PCC_TIMER_CYCLES;
+	local_irq_restore(flags);
 
+	return offset + ticks;
 
---=20
+This has to be synchronized with the interrupt handler because the 
+interrupt handler must clear the overflow counter in TCR1 when it does 
+clk_total += PCC_TIMER_CYCLES;
 
-Dave T=C3=A4ht
-CTO, TekLibre, LLC
-http://www.teklibre.com
-Tel: 1-831-205-9740
+BTW, there are some synchronization bugs in this patch series that will be 
+addressed in the next submission. They have been fixed in my github repo.
+
+> 
+>  2) Use Timer2 in freerunning mode which means it will use the full 32bit
+>     and then wrap back to 0. That's fine and the clocksource core handles
+>     that.
+> 
+>     That removes the clk_total thing and just works.
+> 
+
+I really like this suggestion!
+
+But I fear it is a change that cannot be checked by inspection. If I wrote 
+it, I'd want to test it, or have someone else test it. (Stephen?)
+
+I wonder if there exists an emulator for MVME 162/166/167/172/177 machines 
+capable of booting Linux...
+
+-- 
+
+> Thanks,
+> 
+> 	tglx
+> 
