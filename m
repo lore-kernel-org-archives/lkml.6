@@ -2,167 +2,95 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C44E7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:11:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 231DFC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 631C822507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:11:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="ckM6nP7A"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 631C822507
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id DDFEF223C8
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:12:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDFEF223C8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732443AbeKMVJb (ORCPT
+        id S1732461AbeKMVJt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:09:31 -0500
-Received: from smtprelay.synopsys.com ([198.182.47.9]:60962 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726581AbeKMVJa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:09:30 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 7DAEF24E0752;
-        Tue, 13 Nov 2018 03:11:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1542107513; bh=jwNjebw3qIYugPTS0DAXFGhhk4Ii29GbNu5jHGEADGs=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=ckM6nP7A3YP3wFnfRSjgph8LVdOeZehmoZLk5DLCUq46TpYcK6w/Z5B1L9b6VRJ+Q
-         jjonlXvwJsZfttSHHKa7mYag7/3NvQM1pSpivrSTOXZlD7QpV9bRCKiZjT0ZlTaB7c
-         Voo7Bw5S45C8620gBYjbx7xRNdAdKJmNU1YEIz0pDUq/hPAGnEgdANmF+3ssxnz0J/
-         XU8xkuys+Wya8obH5DYvSpbTy6DyhajCGFchxso4xQPU9wuRaGxLnrMr7yE7w1XKdX
-         tOpl/8eWZFAowvjpcRcTtLYNqG3DT0TKvF8mBaqC6FIrzftpdR/WEY9DQ+OwUHvvf/
-         TaQet2UEJG0eQ==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 7C6185470;
-        Tue, 13 Nov 2018 03:11:48 -0800 (PST)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 13 Nov 2018 03:11:48 -0800
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 13 Nov 2018 12:11:46 +0100
-Received: from [10.0.2.15] (10.107.19.128) by DE02WEHTCB.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 13 Nov
- 2018 12:11:45 +0100
-Subject: Re: [PATCH v3 2/3] dt-bindings: i3c: Document Synopsys DesignWare I3C
- master bindings
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Vitor soares <vitor.soares@synopsys.com>
-CC:     <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <gregkh@linuxfoundation.org>,
-        <arnd@arndb.de>, <psroka@cadence.com>, <agolec@cadence.com>,
-        <adouglas@cadence.com>, <bfolta@cadence.com>, <dkos@cadence.com>,
-        <alicja@cadence.com>, <cwronka@cadence.com>, <sureshp@cadence.com>,
-        <rafalc@cadence.com>, <thomas.petazzoni@bootlin.com>, <nm@ti.com>,
-        <robh+dt@kernel.org>, <pawel.moll@arm.com>, <mark.rutland@arm.com>,
-        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <geert@linux-m68k.org>, <linus.walleij@linaro.org>,
-        <Xiang.Lin@synaptics.com>, <linux-gpio@vger.kernel.org>,
-        <nsekhar@ti.com>, <pgaj@cadence.com>, <peda@axentia.se>,
-        <mshettel@codeaurora.org>, <swboyd@chromium.org>,
-        <joao.pinto@synopsys.com>
-References: <1541697251-20392-1-git-send-email-soares@synopsys.com>
- <1541697251-20392-3-git-send-email-soares@synopsys.com>
- <20181112101703.024ba1f3@bbrezillon>
-From:   vitor <vitor.soares@synopsys.com>
-Message-ID: <db819b2d-7426-4d40-fe8a-caf62cd2912f@synopsys.com>
-Date:   Tue, 13 Nov 2018 11:11:26 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 13 Nov 2018 16:09:49 -0500
+Received: from mga11.intel.com ([192.55.52.93]:14522 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726581AbeKMVJt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 16:09:49 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 03:12:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,498,1534834800"; 
+   d="scan'208";a="95921696"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
+  by FMSMGA003.fm.intel.com with ESMTP; 13 Nov 2018 03:12:05 -0800
+Date:   Tue, 13 Nov 2018 13:12:04 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     "Winkler, Tomas" <tomas.winkler@intel.com>
+Cc:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
+        "linux-security-module@vger.kernel.org" 
+        <linux-security-module@vger.kernel.org>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 16/17] tpm: take TPM chip power gating out of
+ tpm_transmit()
+Message-ID: <20181113111204.GD10434@linux.intel.com>
+References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
+ <20181108141541.12832-17-jarkko.sakkinen@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA18602@hasmsx108.ger.corp.intel.com>
+ <20181108230700.GA8038@linux.intel.com>
+ <5B8DA87D05A7694D9FA63FD143655C1B9DA190F4@hasmsx108.ger.corp.intel.com>
 MIME-Version: 1.0
-In-Reply-To: <20181112101703.024ba1f3@bbrezillon>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.107.19.128]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5B8DA87D05A7694D9FA63FD143655C1B9DA190F4@hasmsx108.ger.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On Fri, Nov 09, 2018 at 09:37:48PM +0000, Winkler, Tomas wrote:
+> > On Thu, Nov 08, 2018 at 06:38:59PM +0000, Winkler, Tomas wrote:
+> > > > Call tpm_chip_start() and tpm_chip_stop() in
+> > > >
+> > > > * tpm_try_get_ops() and tpm_put_ops()
+> > > > * tpm_chip_register()
+> > > > * tpm2_del_space()
+> > > >
+> > > > And remove these calls from tpm_transmit(). The core reason for this
+> > > > change is that in tpm_vtpm_proxy a locality change requires a
+> > > > virtual TPM command (a command made up just for that driver).
+> > > >
+> > > I don't think you can do that,  locality has to be request for each
+> > > command, as  for example tboot can request higher locality any time.
+> > 
+> > That could be a potential problem. How tboot intervention gets prevented
+> > without this patch?
+> As it was said, need to request locality and relinquish it for each
+> command, I believe thought this is not required for client platforms
+> only for servers. 
 
-On 12/11/18 09:17, Boris Brezillon wrote:
-> On Thu,  8 Nov 2018 17:14:10 +0000
-> Vitor soares <vitor.soares@synopsys.com> wrote:
->
->> Document Synopsys DesignWare I3C master module
->>
->> Signed-off-by: Vitor soares <soares@synopsys.com>
->> ---
->> Changes in v3:
->> - Remove dummy characters
->>
->> Changes in v2:
->> - Address the changes in Documentation/devicetree/bindings/i3c/i3c.txt
->> - Add controller version on compatible string
->>
->>   .../devicetree/bindings/i3c/snps,dw-i3c-master.txt | 42 ++++++++++++++++++++++
->>   1 file changed, 42 insertions(+)
->>   create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
->>
->> diff --git a/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
->> new file mode 100644
->> index 0000000..b930c09
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
->> @@ -0,0 +1,42 @@
->> +Bindings for Synopsys DesignWare I3C master block
->> +=================================================
->> +
->> +Required properties:
->> +--------------------
->> +- compatible: shall be "snps,dw-i3c-master-1.00a"
->> +- clocks: shall reference the core_clk
-> Are you sure this IP only requires only one clock? If you're unsure,
-> you'd better have a clock-names prop.
-Yes, the controller only has this clock dependency to configure the SCL.
->
->> +- interrupts: the interrupt line connected to this I3C master
->> +- reg: Offset and length of I3C master registers
->> +
->> +Mandatory properties defined by the generic binding (see
->> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
->> +
->> +- #address-cells: shall be set to 3
->> +- #size-cells: shall be set to 0
->> +
->> +Optional properties defined by the generic binding (see
->> +Documentation/devicetree/bindings/i3c/i3c.txt for more details):
->> +
->> +- i2c-scl-hz
->> +- i3c-scl-hz
->> +
->> +I3C device connected on the bus follow the generic description (see
->> +Documentation/devicetree/bindings/i3c/i3c.txt for more details).
->> +
->> +Example:
->> +
->> +	i3c-master@2000 {
->> +		compatible = "snps,dw-i3c-master-1.00a";
->> +		#address-cells = <3>;
->> +		#size-cells = <0>;
->> +		reg = <0x02000 0x1000>;
->> +		interrupts = <0>;
->> +		clocks = <&i3cclk>;
->> +
->> +		eeprom@57{
->> +			compatible = "atmel,24c01";
->> +			reg = < 0x57 0x0 0x10>;
-> 			       ^ remove this white space.
->
->> +			pagesize = <0x8>;
->> +		};
->> +	};
->> +
+And what I'm trying to under is why so.
 
-Best regards,
+If the intervention can happen at any time that would imply that even if
+you would request and relinquish locality for a single TPM command, the
+intervention could happen in the middle. That is why I'm asking why
+without this patch things are just fine.
 
-Vitor Soares
-
+/Jarkko
