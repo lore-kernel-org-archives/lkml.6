@@ -2,136 +2,126 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B284AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:20:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12D3BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:21:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FA5822419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:20:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FA5822419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id CBB74223DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:21:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gu452UVH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBB74223DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731779AbeKNDTf (ORCPT
+        id S1731838AbeKNDUG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 22:19:35 -0500
-Received: from mail-ua1-f66.google.com ([209.85.222.66]:43839 "EHLO
-        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730954AbeKNDTf (ORCPT
+        Tue, 13 Nov 2018 22:20:06 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:44326 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730995AbeKNDUF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 22:19:35 -0500
-Received: by mail-ua1-f66.google.com with SMTP id z11so4606350uaa.10
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 09:20:33 -0800 (PST)
+        Tue, 13 Nov 2018 22:20:05 -0500
+Received: by mail-pf1-f195.google.com with SMTP id b81-v6so5887226pfe.11;
+        Tue, 13 Nov 2018 09:21:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2VRSiZOYWPA1qboblnLmMItrCvZhdOVYvjeXsmUDCdE=;
+        b=gu452UVHMzTFRNQ2EU8kDfpopyuKQq+GF/xAU2RJLTWMovn3nYmJu4Mz834AHFEZHS
+         8Pwcyqm4koCsfxBLpg8H0uGun0OUP+rp8617p/0e0LpKKs7WNWlaTfIIo3Po87zuZnaX
+         TwVhJbHX0laUtwFmEQ5VFznciEagWRGPPTurIg0ZcMSdd8AkLxOo28cY+CyExXEQNyfh
+         HDWk2GqAJUZ/WJpC4KxImGsLqpP6aiW0tCWy6E7+cU6nj0o0q5aWFMiKgG6vuMgliR6P
+         g3+hp/zO6mxaiWp/Jdzo1jhsCM+8zaOcbYvpxpiB8MAwSuLtvOYNAw/4tG0U/8AgMbUh
+         SZTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xoOtDUJhEZR23yxsFcrKiFZamjCs1ekULLaeeLqDvqk=;
-        b=RgcxwwkOSKSgAKjG92tqLDGXuyIQiKHWqqSmHxEHkWeApPFWBboa7y+PDWBImsB9xa
-         WaW1rrjzMn09JcSam0Ces8n44LG7FkBYF0W/W5hR165Z7MA0x8kclhSrHakXOa5BKWT8
-         bmgUiBMOVcmdDd9D7AO2spGHsehulO2Nm8A4gtmyygSjK+DaYBiYV75Ch2KKOPv8K0og
-         y+XPl3vOjkLccfxJhnQv3TJ+QwYa5oWDdX7nnt1LePlrFuCK55tKqgOHI2zfbVaFltK7
-         If11BxeVQzBTJUSlLjbmzQmgM5vfNidxOX0FLm2jbmsy1bwPPcFtoQRi+VjAd+6AmgKM
-         iCrw==
-X-Gm-Message-State: AGRZ1gK4YYhDIi8MztncSKXrZqUXKycKSj0z4NuFBoJ266NwXyxPChIq
-        MwNX9bJkL9bPbqvWeQEb+3Qdq1KU3odhOELCxqQ=
-X-Google-Smtp-Source: AJdET5dvNFRIrJ5WUAq4RlE/Qh8riymuASg5qv/C8j1/bm9rJ+6vRjmILf2aPoR+MAminWBJbcNHISsX2ejmU2ILgRA=
-X-Received: by 2002:ab0:465:: with SMTP id 92mr2804802uav.28.1542129633048;
- Tue, 13 Nov 2018 09:20:33 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2VRSiZOYWPA1qboblnLmMItrCvZhdOVYvjeXsmUDCdE=;
+        b=r4z6TgKfVDHE6eXABo23e0vOZCDkJYCy5U7kMLrVmaLQUrFKId9CxQ2ZQksSFPL9Q0
+         uIVucHfNbtiV8swhBoc2ovZGfyEP2nv5KVPno8jkevZJs66N7mc9b0XaYaEOx4YXfbMc
+         hx9kykUv3kklcL/XfJr3A2C/ceRKsbMDCjsJRjXeRcNvs6qxSiyK5LrrvkoNW0HJFmH2
+         Zqn9TwY4ZYfIeQAVe3Rir5A/OdWK14Zu0AeUlPKRg6F70j304P6XvIo2kd+0hIMwXjQu
+         P2bSAzgEaQ6foWPGDv9eMfVhOj4MFYv9b32JVx4S26ywUrstajEk9QfMbGvWVOQLQl/w
+         zvDw==
+X-Gm-Message-State: AGRZ1gJRvmHZ68dOYxlKpVOfvcRVVlBQVNF0BHQDWhc0yyyej+VlNSol
+        avrmsP2ndCVBJTuuBbaGwlc=
+X-Google-Smtp-Source: AJdET5fLNYWzbBpVhrmTrhZ/TdzhwuLXuNAssU0Bf9BeXZ8bgb76s7rCir7RaVPoBg9aNa3qEjsRNA==
+X-Received: by 2002:a62:1e83:: with SMTP id e125-v6mr5947503pfe.231.1542129664149;
+        Tue, 13 Nov 2018 09:21:04 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id p11-v6sm22592212pfn.53.2018.11.13.09.21.03
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 09:21:03 -0800 (PST)
+Date:   Tue, 13 Nov 2018 09:21:02 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Nicolin Chen <nicoleotsuka@gmail.com>
+Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] hwmon (ina3221) Add single-shot mode support
+Message-ID: <20181113172102.GA21714@roeck-us.net>
+References: <20181113042353.1507-1-nicoleotsuka@gmail.com>
+ <20181113043248.GB11205@roeck-us.net>
+ <20181113045823.GB26327@Asurada-Nvidia.nvidia.com>
 MIME-Version: 1.0
-References: <1542128132.12945.19.camel@gmx.us>
-In-Reply-To: <1542128132.12945.19.camel@gmx.us>
-From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 13 Nov 2018 18:20:20 +0100
-Message-ID: <CAMuHMdXKDUSEHKzdBCM4Df00fGC3eOdjU6gcSuQXpDaiUnrmMw@mail.gmail.com>
-Subject: Re: WARNING: CPU: 26 PID: 64391 at lib/vsprintf.c:2193 set_precision+0x84/0x90
-To:     cai@gmx.us
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Petr Mladek <pmladek@suse.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        "Tobin C. Harding" <me@tobin.cc>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113045823.GB26327@Asurada-Nvidia.nvidia.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 5:57 PM Qian Cai <cai@gmx.us> wrote:
-> Running the trinity fuzzer with a non-root user on an aarch64 server with the
-> latest mainline (rc2) generated this. Is it just a false alarm to ignore?
->
-> [  807.847370] precision 65525 too large
-> [  807.847449] WARNING: CPU: 26 PID: 64391 at lib/vsprintf.c:2193
-> set_precision+0x84/0x90
-> [  807.860161] Modules linked in: cast6_generic cast_common lrw bridge 8021q
-> garp mrp stp llc dlci tcp_diag inet_diag af_key pptp gre l2tp_ppp l2tp_netlink
-> l2tp_core ip6_udp_tunnel udp_tunnel pppoe pppox ppp_generic slhc crypto_user
-> ib_core nfnetlink scsi_transport_iscsi atm sctp vfat fat ghash_ce sha2_ce
-> sha256_arm64 sha1_ce ses enclosure ipmi_ssif sg ipmi_si ipmi_devintf sbsa_gwdt
-> ipmi_msghandler sch_fq_codel xfs libcrc32c marvell mpt3sas mlx5_core raid_class
-> hibmc_drm drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm drm
-> ixgbe hisi_sas_v2_hw igb hisi_sas_main libsas hns_dsaf mlxfw devlink
-> hns_enet_drv mdio i2c_designware_platform i2c_algo_bit i2c_designware_core
-> ehci_platform scsi_transport_sas hns_mdio hnae dm_mirror dm_region_hash dm_log
-> dm_mod
-> [  807.927838] CPU: 26 PID: 64391 Comm: trinity-c90 Kdump: loaded Tainted:
-> G        W         4.20.0-rc2+ #16
-> [  807.937494] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50
-> 06/01/2018
-> [  807.944718] pstate: 60000005 (nZCv daif -PAN -UAO)
-> [  807.949515] pc : set_precision+0x84/0x90
-> [  807.953439] lr : set_precision+0x84/0x90
-> [  807.957362] sp : ffff801e6430f6b0
-> [  807.960677] x29: ffff801e6430f6b0 x28: ffff801e6430fb10
-> [  807.965992] x27: 0000000000000003 x26: 00000000ffffffd8
-> [  807.971307] x25: ffff801e6430fba0 x24: ffff801e6430fb48
-> [  807.976622] x23: ffff2000093ddfa0 x22: ffff801e6430f770
-> [  807.981937] x21: ffff2000090eb4a6 x20: ffff801e6430f770
-> [  807.987252] x19: 000000000000fff5 x18: 0000000000000000
-> [  807.992569] x17: 0000000000000000 x16: 0000000000000000
-> [  807.997884] x15: 0000000000000000 x14: 3878302031343220
-> [  808.003201] x13: 6265783020303939 x12: ffff04000172b49c
-> [  808.008516] x11: 1fffe4000172b49b x10: ffff04000172b49b
-> [  808.013832] x9 : 0000000000000000 x8 : 203532353536206e
-> [  808.019148] x7 : 6f69736963657270 x6 : 0000000041b58ab3
-> [  808.024463] x5 : dfff200000000000 x4 : dfff200000000000
-> [  808.029779] x3 : dfff200000000000 x2 : 65a2459128144800
-> [  808.035093] x1 : 65a2459128144800 x0 : 0000000000000000
-> [  808.040408] Call trace:
-> [  808.042861]  set_precision+0x84/0x90
-> [  808.046440]  vsnprintf+0x23c/0x858
-> [  808.049845]  __request_module+0x1a0/0x8b8
-> [  808.053860]  get_fs_type+0xb0/0x138
-> [  808.057351]  do_mount+0x2c4/0x13c0
-> [  808.060756]  ksys_mount+0xf4/0x110
+On Mon, Nov 12, 2018 at 08:58:24PM -0800, Nicolin Chen wrote:
+> Hi Guenter,
+> 
+> On Mon, Nov 12, 2018 at 08:32:48PM -0800, Guenter Roeck wrote:
+> > On Mon, Nov 12, 2018 at 08:23:53PM -0800, Nicolin Chen wrote:
+> > > INA3221 supports both continuous and single-shot modes. When
+> > > running in the continuous mode, it keeps measuring the inputs
+> > > and converting them to the data register even if there are no
+> > > users reading the data out. In this use case, this could be a
+> > > power waste.
+> > > 
+> > > So this patch adds a single-shot mode support so that ina3221
+> > > could do measurement and conversion only if users trigger it,
+> > > depending on the use case where it only needs to poll data in
+> > > a lower frequency.
+> > > 
+> > > The change also exposes "mode" and "available_modes" nodes to
+> > > allow users to switch between two operating modes.
+> > > 
+> > Lots and lots of complexity for little gain. Sorry, I don't see
+> > the point of this change.
+> 
+> The chip is causing considerable power waste on battery-powered
+> devices so we typically use it running in the single-shot mode.
+> 
 
-Looks like someone is calling the mount syscall with a very long filesystemtype
-parameter.
+And you need to be able to do that with a sysfs attribute ?
+Are you planning to have some code switching back and forth
+between the modes ?
 
-    struct file_system_type *get_fs_type(const char *name)
-    {
-            struct file_system_type *fs;
-            const char *dot = strchr(name, '.');
-            int len = dot ? dot - name : strlen(name);
+You'll need to provide a good rationale why this needs to be
+runtime configurable.
 
-            fs = __get_fs_type(name, len);
-            if (!fs && (request_module("fs-%.*s", len, name) == 0)) {
+Guenter
 
-set_precision() complains about any prevision that doesn't fit in signed
-16-bits.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+> Although the chip now can be powered down, but we still need to
+> occasionally poll it for power measurement and critical alerts,
+> so single-shot mode is the best choice for us, considering that
+> the power-down-and-up routine would be way heavier.
+> 
+> I could understand that you don't really like it, but it's some
+> feature that we truly need. Do you have any suggestion to write
+> the code that can make it more convincing to you?
+> 
+> Thanks
+> Nicolin
