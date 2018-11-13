@@ -2,158 +2,210 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12097C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:50:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3C5BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:53:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C72C52243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:50:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FU/5tsB9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C72C52243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 8BBD22245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:53:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BBD22245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730411AbeKMMqQ (ORCPT
+        id S1730604AbeKMMtE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 07:46:16 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38103 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727496AbeKMMqQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 07:46:16 -0500
-Received: by mail-pf1-f196.google.com with SMTP id v76-v6so2438219pfa.5
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 18:50:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=oT1hUpNPL7ChT4bWwvAqa+cFPfLJQhcjlzEWpQA7db8=;
-        b=FU/5tsB9+W5hZD3tDk9a9WOByX80jjqyWxXCTIkedAO+Be10CoOCWGh31SkTE9JgM5
-         c5PsTmEIkpbqWRCE/rmx8yLa82kG7n1qu+ZYg8Wl0YMVajyvGYIROi9ec5MU3rEe0ZaO
-         4+30ArK9zM4ni08+auAU9kHcz3APitfSqem3k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=oT1hUpNPL7ChT4bWwvAqa+cFPfLJQhcjlzEWpQA7db8=;
-        b=NY22v3xIc8mx72cLdKyyf0pNPAhWbueMCO6BpqTii+L2Nc2Y8P+FL5I9HIdt27kqhV
-         oSdIK9NKxw051SIz9y+6U2wfU9iAh1J247BCRClVM8I95g+bepKt+9Y8bdAsaecnHWm4
-         UJqEE2FbPg5qlhR2Eg+2UVbBW7rsewSlpDDXOMGj7/M3hzOzOQF20OJlTCaWN7CdBkxX
-         alYb8belcCuil+ONI1Y0qloLSFQ4c42lb8xxdZ/xR+zW5kv7rVEag+e7VOUXoouRrDKM
-         1wobqZ0QlwZObK5zDWnnS8Tcwsw3HPAZ96KZpVToukImov8i/Cc0plNlp+spoYO3WFjX
-         Lahg==
-X-Gm-Message-State: AGRZ1gLD/23M5jqx05kxuVz7e9XLBS/SSy17ppHITBDdHRqF4fDq11mB
-        WJXc69CSgqz9IQy77IvqroJMPw==
-X-Google-Smtp-Source: AJdET5eSJULhXc45ukkXee2Ccr0rKYyfLZNgZi5rW76WYU06lYkG4kyLeMl9NLuBQKWTYzp7NuJWwA==
-X-Received: by 2002:a62:5210:: with SMTP id g16-v6mr3335866pfb.256.1542077415088;
-        Mon, 12 Nov 2018 18:50:15 -0800 (PST)
-Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id g15sm1084734pfj.131.2018.11.12.18.50.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Nov 2018 18:50:14 -0800 (PST)
-Date:   Mon, 12 Nov 2018 18:50:12 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Craig Tatlor <ctatlor97@gmail.com>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pinctrl: sdm660: Set tile property for pingroups
-Message-ID: <20181113025012.GD10088@minitux>
-References: <20181112202553.1410-1-ctatlor97@gmail.com>
+        Tue, 13 Nov 2018 07:49:04 -0500
+Received: from foss.arm.com ([217.140.101.70]:46318 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726341AbeKMMtE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 07:49:04 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C98D5A78;
+        Mon, 12 Nov 2018 18:53:02 -0800 (PST)
+Received: from [192.168.33.175] (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 46D9B3F5CF;
+        Mon, 12 Nov 2018 18:53:02 -0800 (PST)
+Subject: Re: [PATCH v6 2/2] sched/fair: update scale invariance of PELT
+To:     Vincent Guittot <vincent.guittot@linaro.org>, peterz@infradead.org,
+        mingo@kernel.org, linux-kernel@vger.kernel.org
+Cc:     rjw@rjwysocki.net, Morten.Rasmussen@arm.com,
+        patrick.bellasi@arm.com, pjt@google.com, bsegall@google.com,
+        thara.gopinath@linaro.org, pkondeti@codeaurora.org,
+        quentin.perret@arm.com
+References: <1541780454-9934-1-git-send-email-vincent.guittot@linaro.org>
+ <1541780454-9934-3-git-send-email-vincent.guittot@linaro.org>
+From:   Dietmar Eggemann <dietmar.eggemann@arm.com>
+Message-ID: <f7725461-bb0e-27fd-04cc-a225c97a9940@arm.com>
+Date:   Mon, 12 Nov 2018 18:53:01 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112202553.1410-1-ctatlor97@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1541780454-9934-3-git-send-email-vincent.guittot@linaro.org>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-GB
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 12 Nov 12:25 PST 2018, Craig Tatlor wrote:
+On 11/9/18 8:20 AM, Vincent Guittot wrote:
 
-> This was missed when tiles support was added in a revison and
-> causes the driver to fail to load.
-> 
-> Fixes: 9cf0c526bc58 ("pinctrl: qcom: Add sdm660 pinctrl driver")
-> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
-> ---
+[...]
 
-Sorry for not spotting this in my previous review.
+> In order to achieve this time scaling, a new clock_pelt is created per rq.
+> The increase of this clock scales with current capacity when something
+> is running on rq and synchronizes with clock_task when rq is idle. With
+> this mecanism, we ensure the same running and idle time whatever the
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+nitpick: s/mecanism/mechanism
 
-Regards,
-Bjorn
+[...]
 
->  drivers/pinctrl/qcom/pinctrl-sdm660.c | 28 ++++++++++++++-------------
->  1 file changed, 15 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm660.c b/drivers/pinctrl/qcom/pinctrl-sdm660.c
-> index 6838b38555a1..1bfb0ae6b387 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-sdm660.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-sdm660.c
-> @@ -33,7 +33,7 @@ enum {
->  	}
->  
->  
-> -#define PINGROUP(id, base, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
-> +#define PINGROUP(id, _tile, f1, f2, f3, f4, f5, f6, f7, f8, f9)	\
->  	{					        \
->  		.name = "gpio" #id,			\
->  		.pins = gpio##id##_pins,		\
-> @@ -51,11 +51,12 @@ enum {
->  			msm_mux_##f9			\
->  		},				        \
->  		.nfuncs = 10,				\
-> -		.ctl_reg = base + REG_SIZE * id,	\
-> -		.io_reg = base + 0x4 + REG_SIZE * id,		\
-> -		.intr_cfg_reg = base + 0x8 + REG_SIZE * id,		\
-> -		.intr_status_reg = base + 0xc + REG_SIZE * id,	\
-> -		.intr_target_reg = base + 0x8 + REG_SIZE * id,	\
-> +		.ctl_reg = REG_SIZE * id,		\
-> +		.io_reg = 0x4 + REG_SIZE * id,		\
-> +		.intr_cfg_reg = 0x8 + REG_SIZE * id,	\
-> +		.intr_status_reg = 0xc + REG_SIZE * id,	\
-> +		.intr_target_reg = 0x8 + REG_SIZE * id,	\
-> +		.tile = _tile,			\
->  		.mux_bit = 2,			\
->  		.pull_bit = 0,			\
->  		.drv_bit = 6,			\
-> @@ -82,6 +83,7 @@ enum {
->  		.intr_cfg_reg = 0,			\
->  		.intr_status_reg = 0,			\
->  		.intr_target_reg = 0,			\
-> +		.tile = NORTH,				\
->  		.mux_bit = -1,				\
->  		.pull_bit = pull,			\
->  		.drv_bit = drv,				\
-> @@ -1397,13 +1399,13 @@ static const struct msm_pingroup sdm660_groups[] = {
->  	PINGROUP(111, SOUTH, _, _, _, _, _, _, _, _, _),
->  	PINGROUP(112, SOUTH, _, _, _, _, _, _, _, _, _),
->  	PINGROUP(113, SOUTH, _, _, _, _, _, _, _, _, _),
-> -	SDC_QDSD_PINGROUP(sdc1_clk, 0x99a000, 13, 6),
-> -	SDC_QDSD_PINGROUP(sdc1_cmd, 0x99a000, 11, 3),
-> -	SDC_QDSD_PINGROUP(sdc1_data, 0x99a000, 9, 0),
-> -	SDC_QDSD_PINGROUP(sdc2_clk, 0x99b000, 14, 6),
-> -	SDC_QDSD_PINGROUP(sdc2_cmd, 0x99b000, 11, 3),
-> -	SDC_QDSD_PINGROUP(sdc2_data, 0x99b000, 9, 0),
-> -	SDC_QDSD_PINGROUP(sdc1_rclk, 0x99a000, 15, 0),
-> +	SDC_QDSD_PINGROUP(sdc1_clk, 0x9a000, 13, 6),
-> +	SDC_QDSD_PINGROUP(sdc1_cmd, 0x9a000, 11, 3),
-> +	SDC_QDSD_PINGROUP(sdc1_data, 0x9a000, 9, 0),
-> +	SDC_QDSD_PINGROUP(sdc2_clk, 0x9b000, 14, 6),
-> +	SDC_QDSD_PINGROUP(sdc2_cmd, 0x9b000, 11, 3),
-> +	SDC_QDSD_PINGROUP(sdc2_data, 0x9b000, 9, 0),
-> +	SDC_QDSD_PINGROUP(sdc1_rclk, 0x9a000, 15, 0),
->  };
->  
->  static const struct msm_pinctrl_soc_data sdm660_pinctrl = {
-> -- 
-> 2.19.1
-> 
+> The responsivness of PELT is improved when CPU is not running at max
+
+nitpick: s/responsivness/responsiveness
+
+> capacity with this new algorithm. I have put below some examples of
+> duration to reach some typical load values according to the capacity of the
+> CPU with current implementation and with this patch. These values has been
+> computed based on the geometric serie and the half period value:
+
+nitpick: s/serie/series
+
+[...]
+
+> +/*
+> + * The clock_pelt scales the time to reflect the effective amount of
+> + * computation done during the running delta time but then sync back to
+> + * clock_task when rq is idle.
+> + *
+> + *
+> + * absolute time   | 1| 2| 3| 4| 5| 6| 7| 8| 9|10|11|12|13|14|15|16
+> + * @ max capacity  ------******---------------******---------------
+> + * @ half capacity ------************---------************---------
+> + * clock pelt      | 1| 2|    3|    4| 7| 8| 9|   10|   11|14|15|16
+> + *
+> + */
+> +static inline void update_rq_clock_pelt(struct rq *rq, s64 delta)
+> +{
+> +	if (unlikely(is_idle_task(rq->curr))) {
+> +		/* The rq is idle, we can sync to clock_task */
+> +		rq->clock_pelt  = rq_clock_task(rq);
+> +		return;
+
+I think the term (time) stretching was used to to describe what's 
+happening to the clock_pelt values at lower capacity and to this re-sync 
+with the clock task. But IMHO, one has to be called stretching and the 
+other compressing so it makes sense. I think it's a question of definition.
+
+> +	}
+> +
+> +	/*
+> +	 * When a rq runs at a lower compute capacity, it will need
+> +	 * more time to do the same amount of work than at max
+> +	 * capacity: either because it takes more time to compute the
+> +	 * same amount of work or because taking more time means
+> +	 * sharing more often the CPU between entities.
+
+I wonder if since clock_pelt is related to the sched_avg(s) of the rq 
+isn't the only reason the first one "It takes more time to do the same 
+amount of work"? IMHO, the sharing of sched entities shouldn't be 
+visible here.
+
+> +	 * In order to be invariant, we scale the delta to reflect how
+> +	 * much work has been really done.
+> +	 * Running at lower capacity also means running longer to do
+> +	 * the same amount of work and this results in stealing some
+
+This is already mentioned above.
+
+> +	 * idle time that will disturb the load signal compared to
+> +	 * max capacity; This stolen idle time will be automaticcally
+
+nitpick: s/automaticcally/automatically
+
+> +	 * reflected when the rq will be idle and the clock will be
+> +	 * synced with rq_clock_task.
+> +	 */
+> +
+> +	/*
+> +	 * scale the elapsed time to reflect the real amount of
+> +	 * computation
+> +	 */
+> +	delta = cap_scale(delta, arch_scale_cpu_capacity(NULL, cpu_of(rq)));
+> +	delta = cap_scale(delta, arch_scale_freq_capacity(cpu_of(rq)));
+> +
+> +	rq->clock_pelt += delta;
+> +}
+> +
+> +/*
+> + * When rq becomes idle, we have to check if it has lost some idle time
+> + * because it was fully busy. A rq is fully used when the /Sum util_sum
+> + * is greater or equal to:
+> + * (LOAD_AVG_MAX - 1024 + rq->cfs.avg.period_contrib) << SCHED_CAPACITY_SHIFT;
+> + * For optimization and computing rounding purpose, we don't take into account
+> + * the position in the current window (period_contrib) and we use the maximum
+> + * util_avg value minus 1
+> + */
+
+In v4 you were using:
+
+u32 divider = (LOAD_AVG_MAX - 1024 + rq->cfs.avg.period_contrib) << 
+SCHED_CAPACITY_SHIFT;
+
+and switched in v5 to:
+
+u32 divider = ((LOAD_AVG_MAX - 1024) << SCHED_CAPACITY_SHIFT) - 
+LOAD_AVG_MAX;
+
+The period_contrib of rq->cfs.avg, rq->avg_rt and rq->avg_dl are not 
+necessarily aligned but for overload you sum up the util_sum values for 
+cfs, rt and dl. Was this also a reason why you now assume max util_avg - 
+1 ?
+
+> +static inline void update_idle_rq_clock_pelt(struct rq *rq)
+> +{
+> +	u32 divider = ((LOAD_AVG_MAX - 1024) << SCHED_CAPACITY_SHIFT) - LOAD_AVG_MAX;
+
+util_avg = util_sum / divider   ,maximum util_avg = 1024
+
+1024 = util_sum / (LOAD_AVG_MAX - 1024)   w/ period_contrib = 0
+
+util_sum >= (LOAD_AVG_MAX - 1024) * 1024
+
+util_sum >= (LOAD_AVG_MAX - 1024) << SCHED_CAPACITY_SHIFT;
+
+So you want to use 1024 - 1 = 1023 instead. Wouldn't you have to 
+subtract (LOAD_AVG_MAX - 1024) from (LOAD_AVG_MAX - 1024) << 
+SCHED_CAPACITY_SHIFT in this case?
+
+util_sum >= (LOAD_AVG_MAX - 1024) << SCHED_CAPACITY_SHIFT - 
+(LOAD_AVG_MAX - 1024)
+
+> +	u32 overload = rq->cfs.avg.util_sum;
+> +	overload += rq->avg_rt.util_sum;
+> +	overload += rq->avg_dl.util_sum;
+> +
+> +	/*
+> +	 * Reflecting some stolen time makes sense only if the idle
+> +	 * phase would be present at max capacity. As soon as the
+> +	 * utilization of a rq has reached the maximum value, it is
+> +	 * considered as an always runnnig rq without idle time to
+
+nitpick: s/runnnig/runnig
+
+> +	 * steal. This potential idle time is considered as lost in
+> +	 * this case. We keep track of this lost idle time compare to
+> +	 * rq's clock_task.
+> +	 */
+> +	if ((overload >= divider))
+> +		rq->lost_idle_time += rq_clock_task(rq) - rq->clock_pelt;
+
+Shouldn't overload still be called util_sum? Overload (or overutilized 
+is IMHO the state when util_sum >= divider.
+
+[...]
+
