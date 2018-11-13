@@ -2,104 +2,121 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 084A4C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:15:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D09EC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:16:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CADF72082A
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:15:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CADF72082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id E22852082A
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:16:11 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="OL0ba4W7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E22852082A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731784AbeKNJPf (ORCPT
+        id S1731814AbeKNJQj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 04:15:35 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52570 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbeKNJPf (ORCPT
+        Wed, 14 Nov 2018 04:16:39 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:36860 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbeKNJQi (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 04:15:35 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F2F3A92;
-        Tue, 13 Nov 2018 23:15:05 +0000 (UTC)
-Date:   Tue, 13 Nov 2018 15:15:03 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Kyungtae Kim <kt0755@gmail.com>, pavel.tatashin@microsoft.com,
-        vbabka@suse.cz, osalvador@suse.de, rppt@linux.vnet.ibm.com,
-        aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
-        alexander.h.duyck@linux.intel.com, mgorman@techsingularity.net,
-        lifeasageek@gmail.com, threeearcat@gmail.com,
-        syzkaller@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Subject: Re: UBSAN: Undefined behaviour in mm/page_alloc.c
-Message-Id: <20181113151503.fd370e28cb9df5a0933e9b04@linux-foundation.org>
-In-Reply-To: <20181113094305.GM15120@dhcp22.suse.cz>
-References: <CAEAjamseRRHu+TaTkd1TwpLNm8mtDGP=2K0WKLF0wH-3iLcW_w@mail.gmail.com>
-        <20181109084353.GA5321@dhcp22.suse.cz>
-        <20181113094305.GM15120@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 14 Nov 2018 04:16:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=5VfuggXMmDOtXMJwdTIOGpp5vVtx2OtZZvrZvCjNQzQ=; b=OL0ba4W70EcSJKsu3oNbRIT0q
+        cJhwCDRtwuuYi85l6wSp0LPquD7m5umyEvXDnwApFjbekJRbgfOgRZk5zsuK6fMyTJwjBScg9/kkc
+        jsxTa4AK/Y0yGMpGsmPzxq1crPRZPbydyieP4MO+Wv5E33NOOM1h0KoCUCRv6RtPKgiCU=;
+Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gMhuK-0002kF-0O; Tue, 13 Nov 2018 23:15:44 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id EAA31440078; Tue, 13 Nov 2018 23:15:37 +0000 (GMT)
+Date:   Tue, 13 Nov 2018 15:15:37 -0800
+From:   Mark Brown <broonie@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     Theodore Ts'o <tytso@mit.edu>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        X86 ML <x86@kernel.org>,
+        Paul McKenney <paulmck@linux.vnet.ibm.com>,
+        John Stultz <john.stultz@linaro.org>, acme@redhat.com,
+        frederic@kernel.org, Andy Lutomirski <luto@kernel.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Will Deacon <will.deacon@arm.com>
+Subject: Re: [patch 0/2] Documentation/process: Add subsystem/tree handbook
+Message-ID: <20181113231537.GR2089@sirena.org.uk>
+References: <20181107171010.421878737@linutronix.de>
+ <20181107124855.328133e7@lwn.net>
+ <CAPcyv4goT+7t1foOhEYgGTz2kRV2Oou8QOs38D13rdC-TpfX+Q@mail.gmail.com>
+ <alpine.DEB.2.21.1811072134060.1666@nanos.tec.linutronix.de>
+ <20181108074920.4c601ee3@lwn.net>
+ <20181108150517.GV9761@hirez.programming.kicks-ass.net>
+ <20181108162133.GC1080@thunk.org>
+ <20181108163223.GH6675@sirena.org.uk>
+ <CAPcyv4h1ABBz7OaZB5d--fjtwvfrM=TZs7XFCG54PYRm_Fr8WQ@mail.gmail.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="nHJAUhyIZkPvF01C"
+Content-Disposition: inline
+In-Reply-To: <CAPcyv4h1ABBz7OaZB5d--fjtwvfrM=TZs7XFCG54PYRm_Fr8WQ@mail.gmail.com>
+X-Cookie: No Canadian coins.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Nov 2018 10:43:05 +0100 Michal Hocko <mhocko@kernel.org> wrote:
 
-> Konstantin has noticed that kvmalloc might trigger the following warning
-> [Thu Nov  1 08:43:56 2018] WARNING: CPU: 0 PID: 6676 at mm/vmstat.c:986 __fragmentation_index+0x54/0x60
-> [...]
-> [Thu Nov  1 08:43:56 2018] Call Trace:
-> [Thu Nov  1 08:43:56 2018]  fragmentation_index+0x76/0x90
-> [Thu Nov  1 08:43:56 2018]  compaction_suitable+0x4f/0xf0
-> [Thu Nov  1 08:43:56 2018]  shrink_node+0x295/0x310
-> [Thu Nov  1 08:43:56 2018]  node_reclaim+0x205/0x250
-> [Thu Nov  1 08:43:56 2018]  get_page_from_freelist+0x649/0xad0
-> [Thu Nov  1 08:43:56 2018]  ? get_page_from_freelist+0x2d4/0xad0
-> [Thu Nov  1 08:43:56 2018]  ? release_sock+0x19/0x90
-> [Thu Nov  1 08:43:56 2018]  ? do_ipv6_setsockopt.isra.5+0x10da/0x1290
-> [Thu Nov  1 08:43:56 2018]  __alloc_pages_nodemask+0x12a/0x2a0
-> [Thu Nov  1 08:43:56 2018]  kmalloc_large_node+0x47/0x90
-> [Thu Nov  1 08:43:56 2018]  __kmalloc_node+0x22b/0x2e0
-> [Thu Nov  1 08:43:56 2018]  kvmalloc_node+0x3e/0x70
-> [Thu Nov  1 08:43:56 2018]  xt_alloc_table_info+0x3a/0x80 [x_tables]
-> [Thu Nov  1 08:43:56 2018]  do_ip6t_set_ctl+0xcd/0x1c0 [ip6_tables]
-> [Thu Nov  1 08:43:56 2018]  nf_setsockopt+0x44/0x60
-> [Thu Nov  1 08:43:56 2018]  SyS_setsockopt+0x6f/0xc0
-> [Thu Nov  1 08:43:56 2018]  do_syscall_64+0x67/0x120
-> [Thu Nov  1 08:43:56 2018]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
->
-> ...
-> 
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -4364,6 +4353,15 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
->  	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
->  	struct alloc_context ac = { };
->  
-> +	/*
-> +	 * There are several places where we assume that the order value is sane
-> +	 * so bail out early if the request is out of bound.
-> +	 */
-> +	if (unlikely(order >= MAX_ORDER)) {
-> +		WARN_ON_ONCE(!(gfp_mask & __GFP_NOWARN));
-> +		return NULL;
-> +	}
-> +
+--nHJAUhyIZkPvF01C
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-I know "everybody enables CONFIG_DEBUG_VM", but given this is fastpath,
-we could help those who choose not to enable it by using
+On Thu, Nov 08, 2018 at 09:32:18AM -0800, Dan Williams wrote:
+> On Thu, Nov 8, 2018 at 8:32 AM Mark Brown <broonie@kernel.org> wrote:
 
-#ifdef CONFIG_DEBUG_VM
-	if (WARN_ON_ONCE(order >= MAX_ORDER && !(gfp_mask & __GFP_NOWARN)))
-		return NULL;
-#endif
+> > I'm not 100% sure that people will pick up that the topic is about a
+> > handbook for working with maintainers rather than a handbook for being a
+> > maintainer from that title...
 
-(Again curses 91241681c62 ("include/linux/mmdebug.h: make VM_WARN* non-rvals"))
+> The intent is a handbook for being a maintainer. However, in the
+> process of describing how a given sub-system is maintained one also
+> needs to describe the local rules. So contributors should be able to
+> glean what matters to a sub-system from a description of how that
+> sub-system is maintained. In other words the direct audience is
+> maintainers, but it also hopefully makes the process more transparent
+> for contributors.
+
+To me that sounds like a document aimed at contributors rather than
+maintainers.
+
+--nHJAUhyIZkPvF01C
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvrWxgACgkQJNaLcl1U
+h9CVtQf+NJ3R8Z+2crtzJgNCWc01DnKrsAnPPJRHqdmeaCysVTFPRaoQvGjc+4A7
+LqKdRa2tMvEChUEAdWYfvRyVsf/ueqKPIcd96XniOA9OVhbww+JDR444zTcULEEX
+M6V09WDsqLC4eJoFO8uVtg7T91Ni/A6olPtUiozjXBfV5bnQ3J6gOqsv8IQXRqbd
+XZEX4SqolgOiMcozVdg84OXEioq0cVvD7x9T5kHd27uccXtZauxBwItdqZb+ZQTr
+U8yKFQLZbIfSMnLwMtgoGDugAsNm45056k4mMZMAlX4H8OmSZv1RZoQzkj46bWYO
+YzTbPI8KgJZRXsa6bvpd0oGMdhFZEA==
+=A0xH
+-----END PGP SIGNATURE-----
+
+--nHJAUhyIZkPvF01C--
