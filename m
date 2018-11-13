@@ -2,74 +2,82 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A661C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:39:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9601DC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:42:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 92B88223DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:39:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92B88223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=openvz.org
+	by mail.kernel.org (Postfix) with ESMTP id CC1CC20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:42:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC1CC20685
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wanadoo.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732035AbeKNDiH (ORCPT
+        id S1731806AbeKNDlj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 22:38:07 -0500
-Received: from relay.sw.ru ([185.231.240.75]:45584 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730730AbeKNDiH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 22:38:07 -0500
-Received: from [172.16.24.44] (helo=iris.sw.ru)
-        by relay.sw.ru with esmtp (Exim 4.90_1)
-        (envelope-from <den@openvz.org>)
-        id 1gMceP-0005a0-48; Tue, 13 Nov 2018 20:38:57 +0300
-From:   "Denis V. Lunev" <den@openvz.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     "Denis V. Lunev" <den@openvz.org>,
-        Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>,
-        Konstantin Khorenko <khorenko@virtuozzo.com>,
-        cluster-devel@redhat.com
-Subject: [PATCH 1/1] dlm: fix possible call to kfree() for non-initialized pointer
-Date:   Tue, 13 Nov 2018 20:39:50 +0300
-Message-Id: <20181113173950.7165-1-den@openvz.org>
+        Tue, 13 Nov 2018 22:41:39 -0500
+Received: from out03.smtpout.orange.fr ([193.252.22.212]:48203 "EHLO
+        out.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730730AbeKNDlj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 22:41:39 -0500
+Received: from localhost.localdomain ([77.136.39.130])
+        by mwinf5d12 with ME
+        id zViT1y00S2oVPad03ViUZc; Tue, 13 Nov 2018 18:42:29 +0100
+X-ME-Helo: localhost.localdomain
+X-ME-Auth: Y2hyaXN0b3BoZS5qYWlsbGV0QHdhbmFkb28uZnI=
+X-ME-Date: Tue, 13 Nov 2018 18:42:29 +0100
+X-ME-IP: 77.136.39.130
+From:   Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+To:     hauke@hauke-m.de, davem@davemloft.net
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org,
+        Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: [PATCH] net: lantiq: Fix returned value in case of error in 'xrx200_probe()'
+Date:   Tue, 13 Nov 2018 18:42:24 +0100
+Message-Id: <20181113174224.7884-1-christophe.jaillet@wanadoo.fr>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Technically dlm_config_nodes() could return error and keep nodes
-uninitialized. After that on the fail path of we'll call kfree()
-for that uninitialized value.
+Return 'err' in the error handling path instead of 0.
+Return explicitly 0 in the normal path, instead of 'err', which is known
+to be 0 at this point.
 
-The patch is simple - we should just initialize nodes with NULL.
-
-Signed-off-by: Denis V. Lunev <den@openvz.org>
-CC: Christine Caulfield <ccaulfie@redhat.com>
-CC: David Teigland <teigland@redhat.com>
-CC: Konstantin Khorenko <khorenko@virtuozzo.com>
-CC: cluster-devel@redhat.com
+Fixes: fe1a56420cf2 ("net: lantiq: Add Lantiq / Intel VRX200 Ethernet driver")
+Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
 ---
- fs/dlm/member.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/net/ethernet/lantiq_xrx200.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-diff --git a/fs/dlm/member.c b/fs/dlm/member.c
-index 3fda3832cf6a..2ce33088f8bb 100644
---- a/fs/dlm/member.c
-+++ b/fs/dlm/member.c
-@@ -671,7 +671,7 @@ int dlm_ls_stop(struct dlm_ls *ls)
- int dlm_ls_start(struct dlm_ls *ls)
- {
- 	struct dlm_recover *rv, *rv_old;
--	struct dlm_config_node *nodes;
-+	struct dlm_config_node *nodes = NULL;
- 	int error, count;
+diff --git a/drivers/net/ethernet/lantiq_xrx200.c b/drivers/net/ethernet/lantiq_xrx200.c
+index 8c5ba4b81fb7..2d4d10a017e5 100644
+--- a/drivers/net/ethernet/lantiq_xrx200.c
++++ b/drivers/net/ethernet/lantiq_xrx200.c
+@@ -512,7 +512,8 @@ static int xrx200_probe(struct platform_device *pdev)
+ 	err = register_netdev(net_dev);
+ 	if (err)
+ 		goto err_unprepare_clk;
+-	return err;
++
++	return 0;
  
- 	rv = kzalloc(sizeof(*rv), GFP_NOFS);
+ err_unprepare_clk:
+ 	clk_disable_unprepare(priv->clk);
+@@ -520,7 +521,7 @@ static int xrx200_probe(struct platform_device *pdev)
+ err_uninit_dma:
+ 	xrx200_hw_cleanup(priv);
+ 
+-	return 0;
++	return err;
+ }
+ 
+ static int xrx200_remove(struct platform_device *pdev)
 -- 
 2.17.1
 
