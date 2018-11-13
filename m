@@ -2,117 +2,168 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92C4FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:13:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B145C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:16:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D79622507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:13:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38B3A223D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:16:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YttAFmvh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D79622507
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="QQXN1x0p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38B3A223D0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732479AbeKMVL1 (ORCPT
+        id S1732447AbeKMVO3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:11:27 -0500
-Received: from mail-io1-f66.google.com ([209.85.166.66]:43114 "EHLO
-        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726581AbeKMVL0 (ORCPT
+        Tue, 13 Nov 2018 16:14:29 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:40378 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732391AbeKMVO3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:11:26 -0500
-Received: by mail-io1-f66.google.com with SMTP id t81-v6so8569929iod.10;
-        Tue, 13 Nov 2018 03:13:48 -0800 (PST)
+        Tue, 13 Nov 2018 16:14:29 -0500
+Received: by mail-pl1-f193.google.com with SMTP id b22-v6so400550pls.7
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 03:16:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7X9I+sSEW/L31dgqKLbg9fJS+e2MQS48lc0SXoFlrZs=;
-        b=YttAFmvhDwEhPhlBgprFwtEPieO9LQ1g9PBEPfLWcI2/d0Cv5aI9486gk5tEpSLOwY
-         i42paPIb7HRGhgx7eeAyRHZlvxaBIWcB8Or2LmXQQTzlD++aYAJMbPxxfJUJNgTkblVK
-         aDtLmto4wSm/Gqqq7ugKc4X1drerFnfZFCZU7aB0o4F0brBtqsaDoF2j0Wp6KiFEVjwJ
-         FF8iksUKLPemzNzSh+XHa8UNY4VCm/nCtHIKOUCAAq+7HD7F+KPGS3tLfYzrjsM7xiQI
-         qlYP4BH1uuHwW8kzjR6x9LmCwb/CXvfSAPN7COh/lafS9PepJGgYXT18mAYoguBahmKM
-         ZZFQ==
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VJB0n3gQwy6xHbCkGXRBikQwutdPB9G3sVatWmPhcwE=;
+        b=QQXN1x0pHxd0DKDX86dDy+3J2kBLwJdiihOqfqb52iuFl/iAjSqVNuK1/f86qdltat
+         zP4LXnKL2RF/xIB/u1Pewx1tAVMNJ2wCjBpvjP+YbSEWPg6Dt0T0Ky8s3GX8e1H0JCZ4
+         QqUK99sF4LID8nq9iwz9I3JA5VVSnj+hb/ZD8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7X9I+sSEW/L31dgqKLbg9fJS+e2MQS48lc0SXoFlrZs=;
-        b=tgdMymJ942Itzq9cESHvQnZCRTmGdUkJ/OubW1wNCyBrpsFWyLhDk57blAW2oeq9dI
-         3H2I68qqmW8m9dNzzwRgQoA0JVhKJT7tcQhro79goVx2yYhZjznNnjFCeZ7HzCEkQ8dL
-         Kd290oXDn7K5/05+cMgELj3TZoa5xeBDIE5zysQmYpqv1YHxqJCtbwu6fITlpOoNV65x
-         wPLn/NaCglM8FwA/pxmeF37AM55lXfMJBG/huAmLTQ4QZhCqsOhI1pkI+/uxPBBsWa8D
-         QB0BZLRSdtawqchaHfj8tCnOt2V26iSKn8JW4AEXOdthPGyAgM3QgmDuM9jdTSfjwkjh
-         I0Iw==
-X-Gm-Message-State: AGRZ1gKd1n9VWdpypSU3V+K/E5XTWt/Y3VyAjQhTY2Ir6O1Eq8DpCdXl
-        QzytWWNwLD1a5rqWNxtVD1lM5ZX8Ka9WS+GBm8A=
-X-Google-Smtp-Source: AJdET5dBkyqTJBkmH+Bk2CKKFeldBlLIf1OKdEIR/Z28tpwknsKHgu77Qxb2oT80aG+1+WNoP7Dg4Hk+L6/sKK32fLE=
-X-Received: by 2002:a6b:d117:: with SMTP id l23-v6mr3636812iob.146.1542107628357;
- Tue, 13 Nov 2018 03:13:48 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=VJB0n3gQwy6xHbCkGXRBikQwutdPB9G3sVatWmPhcwE=;
+        b=hmPN0INC0jsr0Cj1RuUkVoKFWVi3VNH0gfE6tYXO5saEOzS/40sT4qL8DGndSefCL+
+         raSzcuSTZne7xxYDhaSbyC4i7fe+LkHb+NoukDoOOBOViG7uYD9HGSzff01qGjycZ0eg
+         b6wxgQTJK5G8T513gChn0835cDYNQR0kw03njqd2MxuWkrbYuVM5GZsQrbUdVc7AT88l
+         g3ILXpu1LHkny95YzhTVTQ4W6E4o1dhlsfTWOct3HEPaIj4hXyfThha80SVkGHGOqrQf
+         z31THcbSBCNJcSiBtL7ehMlGbwtnE9AXsXZ51SHpONpesU8naiggUW5zRQQPqgiz0wbK
+         Nwpw==
+X-Gm-Message-State: AGRZ1gJJYC889pOs3Pgze+ap1kbFBjn6IWKfqVy6xf/RS/4EQnkxMvDi
+        fDh0E1D+LZoSKLNleqQGIJG0nw==
+X-Google-Smtp-Source: AJdET5fU+wulaC0lWBLUxvpvq0Do/hWbaa70sc3XBpxP0z+4W49I93CADkHUiM0c2YCH2wRRdTDMqg==
+X-Received: by 2002:a17:902:9681:: with SMTP id n1-v6mr4655542plp.126.1542107810372;
+        Tue, 13 Nov 2018 03:16:50 -0800 (PST)
+Received: from localhost.localdomain ([2401:4900:3670:3f11:bc71:2ef7:4a39:e260])
+        by smtp.gmail.com with ESMTPSA id 27-v6sm28531377pfm.36.2018.11.13.03.16.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 03:16:49 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-amarula@amarulasolutions.com
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v4 00/26] drm/sun4i: Allwinner A64 MIPI-DSI support 
+Date:   Tue, 13 Nov 2018 16:46:07 +0530
+Message-Id: <20181113111633.20189-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 MIME-Version: 1.0
-References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
- <20181112160628.86620-5-mika.westerberg@linux.intel.com> <CA+CmpXvZJFk=kYvZybgTtqDWBVP_jSE37tdkQbyGA8U9WOrkoQ@mail.gmail.com>
- <20181113105558.GR2500@lahna.fi.intel.com>
-In-Reply-To: <20181113105558.GR2500@lahna.fi.intel.com>
-From:   Yehezkel Bernat <yehezkelshb@gmail.com>
-Date:   Tue, 13 Nov 2018 13:13:31 +0200
-Message-ID: <CA+CmpXtre+A-sNT0XBWfdkuq9xJ+j34EGZ0nEpahJCSe3Kvg9A@mail.gmail.com>
-Subject: Re: [PATCH 4/4] thunderbolt: Export IOMMU based DMA protection
- support to userspace
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     iommu@lists.linux-foundation.org, joro@8bytes.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        baolu.lu@linux.intel.com, ashok.raj@intel.com,
-        Bjorn Helgaas <bhelgaas@google.com>, rjw@rjwysocki.net,
-        jacob.jun.pan@intel.com, Andreas Noever <andreas.noever@gmail.com>,
-        michael.jamet@intel.com, lukas@wunner.de,
-        Christian Kellner <ckellner@redhat.com>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 12:56 PM Mika Westerberg
-<mika.westerberg@linux.intel.com> wrote:
->
-> > Just one point:
-> > Have you considered the option to add this property per (TBT?) device?
->
-> No. ;-)
->
-> You mean that one device uses security levels and another IOMMU? I don't
-> think it is possible without having some sort of table in the IOMMU
-> driver telling which devices it needs identity map and which not. Also
-> not sure what would be the benefit?
+This series fixed the issues related to work DSI on 2-lane panel
+which is reported on previous version[1].
 
-For performance, of course. If some devices are considered safe (maybe a list
-communicated by platform firmware), the kernel may decide to configure them to
-passthrough the IOMMU (I think I remember there is such an option, but maybe I'm
-wrong.)
+This supposed to be a clean series, where it support Allwinner A64 MIPI-DSI
+support for 4-lane, 2-lane DSI panels.
 
+This series fixed all previous series comments along with checkpatch
+warnings/error.
 
-> > If the kernel may decide to enable/disable the IOMMU or AST per device, maybe
-> > it should be on this level.
-> > Or maybe the IOMMU decision isn't going to change (it's system-wide) and the AST
-> > decision will be communicated per device by a new sysfs attribute anyway, if
-> > needed?
->
-> Not sure what you mean by "AST"? The IOMMU decision is pretty much
-> system-wide.
+Changes for v4:
+- droppoed untested CCU_FEATURE_FIXED_POSTDIV check code in
+  nkm min, max rate patches
+- create two patches for "Add Allwinner A64 MIPI DSI support"
+  one for has_mod_clk quirk and other one for A64 support
+- use existing driver code construct for hblk computation
+- dropped "Increase hfp packet overhead" patch [2], though BSP added
+  this but we have no issues as of now.
+  (no issues on panel side w/o this change)
+- create separate function for vblk computation 
+- enable vcc-dsi regulator in dsi_runtime_resume
+- collect Rob, Acked-by
+- update MAINTAINERS file for panel drivers
+- cleanup commit messages
+- fixed checkpatch warnings/errors
 
-Sorry, I meant ATS, Address Translation Service, mentioned in patch 3 in this
-series, and possibly be enabled for some devices for performance, as mentioned
-there.
-So if needed, this will be another attribute, and definitely
-per-device, isn't it?
+[2] https://patchwork.kernel.org/patch/10657541/
+[1] https://patchwork.kernel.org/patch/10657619/
+
+Jagan Teki (26):
+  clk: sunxi-ng: a64: Fix gate bit of DSI DPHY
+  clk: sunxi-ng: Add check for minimal rate to NKM PLLs
+  clk: sunxi-ng: Add check for maximum rate to NKM PLLs
+  drm/sun4i: sun6i_mipi_dsi: Add has_mod_clk quirk
+  drm/sun4i: sun6i_mipi_dsi: Add Allwinner A64 MIPI DSI support
+  dt-bindings: sun6i-dsi: Add compatible for A64 MIPI DSI
+  drm/sun4i: sun6i_mipi_dsi: Add DSI Generic short write 2 param
+    transfer
+  drm/sun4i: sun6i_mipi_dsi: Fix VBP size calculation
+  drm/sun4i: sun6i_mipi_dsi: Fix TCON DRQ set bits
+  drm/sun4i: sun6i_mipi_dsi: Refactor vertical video start delay
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hbp timing value
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hblk timing calculation
+  drm/sun4i: sun6i_mipi_dsi: Add DSI hblk packet overhead
+  drm/sun4i: sun6i_mipi_dsi: Fix DSI hfp timing value
+  drm/sun4i: sun6i_mipi_dsi: Set proper vblk timing calculation
+  drm/sun4i: sun6i_mipi_dsi: Add support for VCC-DSI voltage regulator
+  dt-bindings: sun6i-dsi: Add VCC-DSI supply property
+  dt-bindings: panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB
+    bridge
+  drm/panel: Add Bananapi S070WV20-CT16 ICN6211 MIPI-DSI to RGB bridge
+  dt-bindings: panel: Add Techstar TS8550B MIPI-DSI panel
+  drm/panel: Add Techstar TS8550B MIPI-DSI LCD panel
+  clk: sunxi-ng: a64: Add min and max rate for PLL_MIPI
+  dt-bindings: sun6i-dsi: Add compatible for A64 DPHY
+  arm64: dts: allwinner: a64: Add DSI pipeline
+  [DO NOT MERGE] arm64: dts: allwinner: bananapi-m64: Bananapi S070WV20-CT16 DSI panel
+  arm64: dts: allwinner: a64-amarula-relic: Enable Techstar TS8550B
+    MIPI-DSI panel
+
+ .../display/panel/bananapi,s070wv20-ct16.txt  |  31 +-
+ .../display/panel/techstar,ts8550b.txt        |  22 ++
+ .../bindings/display/sunxi/sun6i-dsi.txt      |   5 +
+ MAINTAINERS                                   |  12 +
+ .../allwinner/sun50i-a64-amarula-relic.dts    |  46 +++
+ .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  42 +++
+ arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi |  45 +++
+ drivers/clk/sunxi-ng/ccu-sun50i-a64.c         |   4 +-
+ drivers/clk/sunxi-ng/ccu_nkm.c                |   6 +
+ drivers/clk/sunxi-ng/ccu_nkm.h                |   2 +
+ drivers/gpu/drm/panel/Kconfig                 |  18 +
+ drivers/gpu/drm/panel/Makefile                |   2 +
+ .../panel/panel-bananapi-s070wv20-icn6211.c   | 298 ++++++++++++++++
+ .../gpu/drm/panel/panel-techstar-ts8550b.c    | 324 ++++++++++++++++++
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c        | 125 +++++--
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.h        |   8 +
+ 16 files changed, 961 insertions(+), 29 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/techstar,ts8550b.txt
+ create mode 100644 drivers/gpu/drm/panel/panel-bananapi-s070wv20-icn6211.c
+ create mode 100644 drivers/gpu/drm/panel/panel-techstar-ts8550b.c
+
+-- 
+2.18.0.321.gffc6fa0e3
+
