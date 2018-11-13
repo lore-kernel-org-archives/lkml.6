@@ -2,155 +2,211 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EE9DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:02:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8E94C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:02:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58E9922419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:02:32 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="WDK4EXYC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58E9922419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+	by mail.kernel.org (Postfix) with ESMTP id A906D2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:02:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A906D2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388091AbeKNAAr (ORCPT
+        id S2388152AbeKNAAx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 19:00:47 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:41404 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388071AbeKNAAq (ORCPT
+        Tue, 13 Nov 2018 19:00:53 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:59955 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388107AbeKNAAw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 19:00:46 -0500
-Received: by mail-wr1-f67.google.com with SMTP id v18-v6so13443494wrt.8
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 06:02:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=hh5b2k/7h0Wkn2rLn6NIi7mvwMbeZ/cPsG4EAD277Kg=;
-        b=WDK4EXYCVbg5UVTt1LLa9JA2tefJbGBaRGYu4BQMHUTVwo9nrZI/x2Pg9f2m6SfJqi
-         gXZZE1ZXbYo4CxQKosHQtqkTQO5nZIzNSHtUS0IFQC18X7RvFcQjkpQW2uJ0GLMCwuUj
-         AJ+BFW67RMtcYQUKm8llOhqDviNNsM5NY87UcplZWCENknMzcJt76olth3ghcb7bmcOv
-         ot/W6azDogQYZHpmIqsZirtRURlBAZbUN2rYh9tH5KqFQ4F8nhcM+vlrnxP35T5IH5Yh
-         h8Tvd8sXrlMymXWdCXXHobgUx8FJ6iUUW9fNUiDB8dpmMsTl78IBPpVY3AZU6M54XEEs
-         O3/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=hh5b2k/7h0Wkn2rLn6NIi7mvwMbeZ/cPsG4EAD277Kg=;
-        b=OxDApZtC3Cgx5QjpXtlofBPqmB35BawxOw/rcbgf287jgM31ljdSuKCQ5WdqtIbTYt
-         dDTGXBnSL4pwH+HO/JlrHj882fA3JMTMgwbnlwVz1iIC3aXEnQFyvIgePpi9V0/9qq8w
-         R4oskv4QALc5SfMeMhggLAJnLG391xwNYftdeh3lYIzh6nAzIaeeBtZVVPsWJHJoU/zY
-         m/C+AhzDVmo46GZ/pu16SWQW28PBbCB3RB5U+ZOec485sT7JwG6QZIqcQEmnlPiMPsOs
-         h+33lUycWraTYhDplgB6FpJNo8aQSLe3qfvPbfsfX2nc7F56xsPKCBzC1/hD6H7Ao60K
-         yfBg==
-X-Gm-Message-State: AGRZ1gKwuA6HBjtCOq6PNvwr1GK9VIppnVIboPp1w5xF0zdf9mVSX/ia
-        ZkydBU97CVZ+wrkRAoh6po4LKg==
-X-Google-Smtp-Source: AJdET5cMvvcmsFaY7r8GYj7Me90MKajqiYiB22Zb0Nu3oX9oxsFP2cXbd1d6owPbeGt/U3pul0Qp/Q==
-X-Received: by 2002:adf:e543:: with SMTP id z3-v6mr2568196wrm.238.1542117748660;
-        Tue, 13 Nov 2018 06:02:28 -0800 (PST)
-Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id m69-v6sm16604122wmb.8.2018.11.13.06.02.26
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 06:02:28 -0800 (PST)
-From:   Bartosz Golaszewski <brgl@bgdev.pl>
-To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
-        Russell King <linux@armlinux.org.uk>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Richard Weinberger <richard@nod.at>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        Wolfram Sang <wsa@the-dreams.de>
-Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-i2c@vger.kernel.org, linux-mtd@lists.infradead.org,
-        netdev@vger.kernel.org, linux-omap@vger.kernel.org,
-        devicetree@vger.kernel.org,
-        Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 19/25] ARM: davinci: dm646x-evm: use device properties for at24 eeprom
-Date:   Tue, 13 Nov 2018 15:01:27 +0100
-Message-Id: <20181113140133.17385-20-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181113140133.17385-1-brgl@bgdev.pl>
-References: <20181113140133.17385-1-brgl@bgdev.pl>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 13 Nov 2018 19:00:52 -0500
+Received: from lupine.hi.pengutronix.de ([2001:67c:670:100:3ad5:47ff:feaf:1a17] helo=lupine)
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <p.zabel@pengutronix.de>)
+        id 1gMZGw-0007Hu-7q; Tue, 13 Nov 2018 15:02:30 +0100
+Message-ID: <1542117748.4774.9.camel@pengutronix.de>
+Subject: Re: [PATCHv3 2/3] reset: socfpga: add an early reset driver for
+ SoCFPGA
+From:   Philipp Zabel <p.zabel@pengutronix.de>
+To:     Dinh Nguyen <dinguyen@kernel.org>
+Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Dinh Nguyen <dinh.nguyen@intel.com>
+Date:   Tue, 13 Nov 2018 15:02:28 +0100
+In-Reply-To: <20181105200549.17159-2-dinguyen@kernel.org>
+References: <20181105200549.17159-1-dinguyen@kernel.org>
+         <20181105200549.17159-2-dinguyen@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:3ad5:47ff:feaf:1a17
+X-SA-Exim-Mail-From: p.zabel@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
+Hi Dinh,
 
-We want to work towards phasing out the at24_platform_data structure.
-There are few users and its contents can be represented using generic
-device properties. Using device properties only will allow us to
-significantly simplify the at24 configuration code.
+On Mon, 2018-11-05 at 14:05 -0600, Dinh Nguyen wrote:
+> From: Dinh Nguyen <dinh.nguyen@intel.com>
+> 
+> Create a separate reset driver that uses the reset operations in
+> reset-simple. The reset driver for the SoCFPGA platform needs to
+> register early in order to be able bring online timers that needed
+> early in the kernel bootup.
+> 
+> We do not need this early reset driver for Stratix10, because on
+> arm64, Linux does not need the timers are that in reset. Linux is
+> able to run just fine with the internal armv8 timer. Thus, we use
+> a new binding "altr,stratix10-rst-mgr" for the Stratix10 platform.
+> The Stratix10 platform will continue to use the reset-simple platform
+> driver, while the 32-bit platforms(Cyclone5/Arria5/Arria10) will use
+> the early reset driver.
+> 
+> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
+> ---
+> v3: use "altr,stratix10-rst-mgr" for Stratix10
+>     remove "altr,modrst-offset" from reset-simple
+> v2: Do not build separate reset driver for STRATIX10
+>     fix warning: symbol 'socfpga_reset_init' was not declared. Should it be
+>     static?
+> ---
+>  arch/arm/mach-socfpga/socfpga.c |  4 ++
+>  drivers/reset/Kconfig           |  9 +++-
+>  drivers/reset/Makefile          |  1 +
+>  drivers/reset/reset-simple.c    | 12 +----
+>  drivers/reset/reset-socfpga.c   | 88 +++++++++++++++++++++++++++++++++
+>  5 files changed, 103 insertions(+), 11 deletions(-)
+>  create mode 100644 drivers/reset/reset-socfpga.c
+> 
+> diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
+> index dde14f7bf2c3..cc64576c102b 100644
+> --- a/arch/arm/mach-socfpga/socfpga.c
+> +++ b/arch/arm/mach-socfpga/socfpga.c
+> @@ -32,6 +32,8 @@ void __iomem *rst_manager_base_addr;
+>  void __iomem *sdr_ctl_base_addr;
+>  unsigned long socfpga_cpu1start_addr;
+>  
+> +extern void __init socfpga_reset_init(void);
+> +
+>  void __init socfpga_sysmgr_init(void)
+>  {
+>  	struct device_node *np;
+> @@ -64,6 +66,7 @@ static void __init socfpga_init_irq(void)
+>  
+>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+>  		socfpga_init_ocram_ecc();
+> +	socfpga_reset_init();
+>  }
+>  
+>  static void __init socfpga_arria10_init_irq(void)
+> @@ -74,6 +77,7 @@ static void __init socfpga_arria10_init_irq(void)
+>  		socfpga_init_arria10_l2_ecc();
+>  	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+>  		socfpga_init_arria10_ocram_ecc();
+> +	socfpga_reset_init();
+>  }
+>  
+>  static void socfpga_cyclone5_restart(enum reboot_mode mode, const char *cmd)
+> diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+> index c21da9fe51ec..5d7a3ba445aa 100644
+> --- a/drivers/reset/Kconfig
+> +++ b/drivers/reset/Kconfig
+> @@ -109,7 +109,7 @@ config RESET_QCOM_PDC
+>  
+>  config RESET_SIMPLE
+>  	bool "Simple Reset Controller Driver" if COMPILE_TEST
+> -	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
+> +	default ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
+>  	help
+>  	  This enables a simple reset controller driver for reset lines that
+>  	  that can be asserted and deasserted by toggling bits in a contiguous,
+> @@ -128,6 +128,13 @@ config RESET_STM32MP157
+>  	help
+>  	  This enables the RCC reset controller driver for STM32 MPUs.
+>  
+> +config RESET_SOCFPGA
+> +	bool "SoCFPGA Reset Driver" if COMPILE_TEST && !ARCH_SOCFPGA
+> +	default ARCH_SOCFPGA && !ARCH_STRATIX10
 
-Remove the at24_platform_data structure and replace it with an array
-of property entries. Drop the byte_len/size property, as the model name
-already implies the EEPROM's size.
+I don't understand the "&& !ARCH_STRATIX10" part.
+Isn't ARCH_SOCFPGA disabled anyway when ARCH_STRATIX10 is enabled?
 
-Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
----
- arch/arm/mach-davinci/board-dm646x-evm.c | 13 +++++--------
- 1 file changed, 5 insertions(+), 8 deletions(-)
+> +	select RESET_SIMPLE
+> +	help
+> +	  This enables the reset driver for SoCFPGA.
+> +
+>  config RESET_SUNXI
+>  	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
+>  	default ARCH_SUNXI
+> diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+> index d08e8b90046a..b14de32eb610 100644
+> --- a/drivers/reset/Makefile
+> +++ b/drivers/reset/Makefile
+> @@ -19,6 +19,7 @@ obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
+>  obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
+>  obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+>  obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
+> +obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
+>  obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+>  obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+>  obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+> diff --git a/drivers/reset/reset-simple.c b/drivers/reset/reset-simple.c
+> index a91107fc9e27..f2e7a8c1be65 100644
+> --- a/drivers/reset/reset-simple.c
+> +++ b/drivers/reset/reset-simple.c
+> @@ -109,7 +109,7 @@ struct reset_simple_devdata {
+>  #define SOCFPGA_NR_BANKS	8
+>  
+>  static const struct reset_simple_devdata reset_simple_socfpga = {
+> -	.reg_offset = 0x10,
+> +	.reg_offset = 0x20,
+>  	.nr_resets = SOCFPGA_NR_BANKS * 32,
+>  	.status_active_low = true,
+>  };
+> @@ -120,7 +120,7 @@ static const struct reset_simple_devdata reset_simple_active_low = {
+>  };
+>  
+>  static const struct of_device_id reset_simple_dt_ids[] = {
+> -	{ .compatible = "altr,rst-mgr", .data = &reset_simple_socfpga },
+> +	{ .compatible = "altr,stratix10-rst-mgr","altr,rst-mgr", .data = &reset_simple_socfpga },
 
-diff --git a/arch/arm/mach-davinci/board-dm646x-evm.c b/arch/arm/mach-davinci/board-dm646x-evm.c
-index 8d5be6dd2019..02b57face113 100644
---- a/arch/arm/mach-davinci/board-dm646x-evm.c
-+++ b/arch/arm/mach-davinci/board-dm646x-evm.c
-@@ -22,7 +22,7 @@
- #include <linux/gpio.h>
- #include <linux/platform_device.h>
- #include <linux/i2c.h>
--#include <linux/platform_data/at24.h>
-+#include <linux/property.h>
- #include <linux/platform_data/pcf857x.h>
- #include <linux/platform_data/ti-aemif.h>
- 
-@@ -364,12 +364,9 @@ static struct nvmem_cell_lookup dm646x_evm_nvmem_cell_lookup = {
- 	.con_id		= "mac-address",
- };
- 
--static struct at24_platform_data eeprom_info = {
--	.byte_len       = (256*1024) / 8,
--	.page_size      = 64,
--	.flags          = AT24_FLAG_ADDR16,
--	.setup          = davinci_get_mac_addr,
--	.context	= (void *)0x7f00,
-+static const struct property_entry eeprom_properties[] = {
-+	PROPERTY_ENTRY_U32("pagesize", 64),
-+	{ }
- };
- #endif
- 
-@@ -440,7 +437,7 @@ static void evm_init_cpld(void)
- static struct i2c_board_info __initdata i2c_info[] =  {
- 	{
- 		I2C_BOARD_INFO("24c256", 0x50),
--		.platform_data  = &eeprom_info,
-+		.properties  = eeprom_properties,
- 	},
- 	{
- 		I2C_BOARD_INFO("pcf8574a", 0x38),
--- 
-2.19.1
+checkpatch.pl complains about missing whitespace and a long line here.
 
+>  	{ .compatible = "st,stm32-rcc", },
+>  	{ .compatible = "allwinner,sun6i-a31-clock-reset",
+>  		.data = &reset_simple_active_low },
+> @@ -166,14 +166,6 @@ static int reset_simple_probe(struct platform_device *pdev)
+>  		data->status_active_low = devdata->status_active_low;
+>  	}
+>  
+> -	if (of_device_is_compatible(dev->of_node, "altr,rst-mgr") &&
+> -	    of_property_read_u32(dev->of_node, "altr,modrst-offset",
+> -				 &reg_offset)) {
+> -		dev_warn(dev,
+> -			 "missing altr,modrst-offset property, assuming 0x%x!\n",
+> -			 reg_offset);
+> -	}
+> -
+>  	data->membase += reg_offset;
+>  
+>  	return devm_reset_controller_register(dev, &data->rcdev);
+> diff --git a/drivers/reset/reset-socfpga.c b/drivers/reset/reset-socfpga.c
+> new file mode 100644
+> index 000000000000..b92769861d2b
+> --- /dev/null
+> +++ b/drivers/reset/reset-socfpga.c
+> @@ -0,0 +1,88 @@
+> +// SPDX-License-Identifier:	GPL-2.0
+
+I think checkpatch.pl complains about the tab here.
+
+regards
+Philipp
