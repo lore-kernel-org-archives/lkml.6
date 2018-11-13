@@ -2,180 +2,102 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3C28C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:13:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CB2BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:16:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6966A20868
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:13:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CUFo6c97"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6966A20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id D3C2A20868
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:16:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3C2A20868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731452AbeKMTLA (ORCPT
+        id S1731484AbeKMTNz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 14:11:00 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:45332 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730995AbeKMTLA (ORCPT
+        Tue, 13 Nov 2018 14:13:55 -0500
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:12058 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1730986AbeKMTNz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 14:11:00 -0500
-Received: by mail-yb1-f196.google.com with SMTP id 131-v6so5047996ybe.12
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 01:13:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iqRkbmYN7wOIBF2KE2au5qoj4yPsquRfQ8bNmAnNYQU=;
-        b=CUFo6c9792sW9w0K5KjGZ4YgAu2ApQdlFqYPEnWnLKSA9c0dpsh8WzyCvwEMHxR76q
-         TAI4SV4AmimvcCPgwE33OnPnRUWpMjBJXXj0ka337XxggflPOWYGIyiPezsIvrvfEiV6
-         kCrc72HDcVzSc4LcFchL4+0W0BO36Ih7djXSU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iqRkbmYN7wOIBF2KE2au5qoj4yPsquRfQ8bNmAnNYQU=;
-        b=RnJ0gVj8KIV1kjna4wF8qYxHXWN9byXj7dRIToAksUWH1aC6nk1ruoqedi/StjFtbE
-         n+mo35WF7FkN51TBoYNTfBec6X6jJYOaGskv6nMhWo8sCM6V0OZ8gCbxpKnhy8f+qPa4
-         auuIep282G5bStN4OoDNNoGcrDWYyWie8iQK4nI+rdobgDpxU7lJBb9ikhDP/TJddNhb
-         aM0z+H3ROji/UakkQJOE3XmfBxmImB3obv5ReyfMXm42XrrZYy9tyVrR1VBK1CGv9dJE
-         VEXXQkzQn5Ao6RU2Md1smewZgcmrgeubhUCh3XrmoOb8Rr/bv9tn5ws1Nj0CYOzluVA+
-         s8kA==
-X-Gm-Message-State: AGRZ1gJKw5OtTxqJ9hQbQdKA2QHjmwqPV+ep7P4tyHywNn0ZLgQBi53M
-        0HxMsbPqxjJUHDyvb1F6j1qobDhQfd0=
-X-Google-Smtp-Source: AJdET5f8G+R5f08MS+53Y0FrWqtf69tN/q7xsAhs/2/sGqYuaLiB9uWggrRHChqbj941wgmfxXul9Q==
-X-Received: by 2002:a25:cbd5:: with SMTP id b204-v6mr4390232ybg.64.1542100429313;
-        Tue, 13 Nov 2018 01:13:49 -0800 (PST)
-Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com. [209.85.219.178])
-        by smtp.gmail.com with ESMTPSA id l84-v6sm6664673ywc.88.2018.11.13.01.13.48
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 01:13:48 -0800 (PST)
-Received: by mail-yb1-f178.google.com with SMTP id n140-v6so5096419yba.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 01:13:48 -0800 (PST)
-X-Received: by 2002:a25:6101:: with SMTP id v1-v6mr4097983ybb.293.1542100427634;
- Tue, 13 Nov 2018 01:13:47 -0800 (PST)
+        Tue, 13 Nov 2018 14:13:55 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAD9E3LM007102;
+        Tue, 13 Nov 2018 10:16:17 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx07-00178001.pphosted.com with ESMTP id 2nnnp28aw3-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 13 Nov 2018 10:16:17 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 03CF13D;
+        Tue, 13 Nov 2018 09:16:16 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id BC9762626;
+        Tue, 13 Nov 2018 09:16:16 +0000 (GMT)
+Received: from SFHDAG3NODE1.st.com (10.75.127.7) by SFHDAG5NODE2.st.com
+ (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 13 Nov
+ 2018 10:16:16 +0100
+Received: from SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86]) by
+ SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86%20]) with mapi id
+ 15.00.1347.000; Tue, 13 Nov 2018 10:16:16 +0100
+From:   Bich HEMON <bich.hemon@st.com>
+To:     Olof Johansson <olof@lixom.net>
+CC:     Russell King <linux@armlinux.org.uk>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Gerald BAEZA <gerald.baeza@st.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ludovic BARRE <ludovic.barre@st.com>
+Subject: Re: [PATCH] ARM: stm32: debug: add low-level debug support
+Thread-Topic: [PATCH] ARM: stm32: debug: add low-level debug support
+Thread-Index: AQHTBvhu7ZuVgRQin0SIqpXfFjas8qVPSqoAgAD5r4A=
+Date:   Tue, 13 Nov 2018 09:16:16 +0000
+Message-ID: <f244c67b-de86-b0e7-7283-7b27f9591cf9@st.com>
+References: <1501174209-27550-1-git-send-email-bich.hemon@st.com>
+ <1501174209-27550-2-git-send-email-bich.hemon@st.com>
+ <20181112182236.s7cs6dol4dmxkp7u@localhost>
+In-Reply-To: <20181112182236.s7cs6dol4dmxkp7u@localhost>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.48]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <19F57A189CB64146BDC81474E6B41D83@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <1539071530-1441-1-git-send-email-mgottam@codeaurora.org>
- <CAAFQd5BcFr11Hpngpn6hNL91OibAxUv25yh2qMohgfxsKusACw@mail.gmail.com>
- <8fe1d205-c5e7-01a0-9569-d3268911cddd@linaro.org> <38dfc098517b3ddb5d96195f2e27429d@codeaurora.org>
- <86714c89-20ec-07c8-2569-65e78e8d584d@linaro.org>
-In-Reply-To: <86714c89-20ec-07c8-2569-65e78e8d584d@linaro.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Tue, 13 Nov 2018 18:13:36 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DXWUCB7HvsLyVYU+h=2j6y1v3kcsTtHfNZYjfbHEgWGw@mail.gmail.com>
-Message-ID: <CAAFQd5DXWUCB7HvsLyVYU+h=2j6y1v3kcsTtHfNZYjfbHEgWGw@mail.gmail.com>
-Subject: Re: [PATCH] media: venus: amend buffer size for bitstream plane
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     mgottam@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 5:12 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Hi Malathi,
->
-> On 11/13/18 9:28 AM, mgottam@codeaurora.org wrote:
-> > On 2018-11-12 18:04, Stanimir Varbanov wrote:
-> >> Hi Tomasz,
-> >>
-> >> On 10/23/2018 05:50 AM, Tomasz Figa wrote:
-> >>> Hi Malathi,
-> >>>
-> >>> On Tue, Oct 9, 2018 at 4:58 PM Malathi Gottam
-> >>> <mgottam@codeaurora.org> wrote:
-> >>>>
-> >>>> For lower resolutions, incase of encoder, the compressed
-> >>>> frame size is more than half of the corresponding input
-> >>>> YUV. Keep the size as same as YUV considering worst case.
-> >>>>
-> >>>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
-> >>>> ---
-> >>>>  drivers/media/platform/qcom/venus/helpers.c | 2 +-
-> >>>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/drivers/media/platform/qcom/venus/helpers.c
-> >>>> b/drivers/media/platform/qcom/venus/helpers.c
-> >>>> index 2679adb..05c5423 100644
-> >>>> --- a/drivers/media/platform/qcom/venus/helpers.c
-> >>>> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> >>>> @@ -649,7 +649,7 @@ u32 venus_helper_get_framesz(u32 v4l2_fmt, u32
-> >>>> width, u32 height)
-> >>>>         }
-> >>>>
-> >>>>         if (compressed) {
-> >>>> -               sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2 / 2;
-> >>>> +               sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2;
-> >>>>                 return ALIGN(sz, SZ_4K);
-> >>>>         }
-> >>>
-> >>> Note that the driver should not enforce one particular buffer size for
-> >>> bitstream buffers unless it's a workaround for broken firmware or
-> >>> hardware. The userspace should be able to select the desired size.
-> >>
-> >> Good point! Yes, we have to extend set_fmt to allow bigger sizeimage for
-> >> the compressed buffers (not only for encoder).
-> >
-> > So Stan you meant to say that we should allow s_fmt to accept client
-> > specified size?
->
-> yes but I do expect:
->
-> new_sizeimage = max(user_sizeimage, venus_helper_get_framesz)
->
-> and also user_sizeimage should be sanitized.
->
-> > If so should we set the inst->input_buf_size here in venc_s_fmt?
-> >
-> > @@ -333,10 +333,10 @@static const struct venus_format *
-> > venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
-> >
-> >         pixmp->num_planes = fmt->num_planes;
-> >         pixmp->flags = 0;
-> > -
-> > -       pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
-> > -                                                    pixmp->width,
-> > -                                                    pixmp->height);
-> > +       if (!pfmt[0].sizeimage)
-> > +               pfmt[0].sizeimage =
-> > venus_helper_get_framesz(pixmp->pixelformat,
-> > +                                                            pixmp->width,
-> > +
-> > pixmp->height);
->
-> yes, but please make
->
-> pfmt[0].sizeimage = max(pfmt[0].sizeimage, venus_helper_get_framesz)
->
-> and IMO this should be only for CAPTURE queue i.e. inst->output_buf_size
->
-> I'm still not sure do we need it for OUTPUT encoder queue.
->
-
-This would be indeed only for the queues that operate on a coded
-bitstream, i.e. both encoder CAPTURE and decoder OUTPUT.
-
-For image formats, sizeimage should be calculated by the driver based
-on the bytesperline and height. (Bytesperline may be fixed, if the
-hardware doesn't support flexible strides, but if it does, it's
-strongly recommended to use the bytesperline coming from the
-application as the stride +/- any necessary sanity checks.)
-
-Best regards,
-Tomasz
+DQpPbiAxMS8xMi8xOCA3OjIyIFBNLCBPbG9mIEpvaGFuc3NvbiB3cm90ZToNCj4gT24gVGh1LCBK
+dWwgMjcsIDIwMTcgYXQgMDQ6NTA6MjBQTSArMDAwMCwgQmljaCBIRU1PTiB3cm90ZToNCj4+IEZy
+b206IEdlcmFsZCBCYWV6YSA8Z2VyYWxkLmJhZXphQHN0LmNvbT4NCj4+DQo+PiBUaGlzIGFkZHMg
+bG93LWxldmVsIGRlYnVnIHN1cHBvcnQgb24gVVNBUlQxIGZvciBTVE0zMkY0DQo+PiBhbmQgU1RN
+MzJGNy4NCj4+IENvbXBpbGVkIHZpYSAnQ09ORklHX0RFQlVHX0xMJyBhbmQgJ0NPTkZJR19FQVJM
+WV9QUklOVEsnLg0KPj4gRW5hYmxlZCB2aWEgJ2Vhcmx5cHJpbnRrJyBpbiBib290YXJncy4NCj4+
+DQo+PiBTaWduZWQtb2ZmLWJ5OiBHZXJhbGQgQmFlemEgPGdlcmFsZC5iYWV6YUBzdC5jb20+DQo+
+PiBTaWduZWQtb2ZmLWJ5OiBCaWNoIEhlbW9uIDxiaWNoLmhlbW9uQHN0LmNvbT4NCj4gDQo+IEhp
+LA0KPiANCj4gVGhpcyBoYWQgZmFsbGVuIGJldHdlZW4gdGhlIGNoYWlycyBpdCBzZWVtcy4gSSBo
+YXZlIGFwcGxpZWQgaXQgdG8gYXJtLXNvYw0KPiBuZXh0L3NvYyBub3csIGZvciA0LjIxIG1lcmdl
+IHdpbmRvdy4NCj4gDQo+IEl0IGVuZGVkIHVwIGJlaW5nIHBhdGNoZWQgdXAgbWFudWFsbHkgdG8g
+Y29uc29saWRhdGUgdGhlIHZlcnNpb24gaW4NCj4gUnVzc2VsbCdzIHBhdGNoIHRyYWNrZXIgd2l0
+aCB0aGlzIHBvc3RlZCB2ZXJzaW9uLCBhbmQgSSB0d2Vha2VkIHdoaXRlc3BhY2UNCj4gYSBiaXQu
+IExldCBtZSBrbm93IGlmIEkgbWlzc2VkIHNvbWV0aGluZy4NCj4gDQo+IA0KPiBUaGFua3MsDQo+
+IA0KPiAtT2xvZg0KPiANCg0KSGkgT2xvZiwNCg0KUGxlYXNlIG5vdGUgdGhhdCB0aGlzIHBhdGNo
+IGhhcyB0byBiZSBhYmFuZG9uZWQgYXMgTHVkb3ZpYyBCQVJSRSBwdXNoZWQgDQphIG5ldyB2ZXJz
+aW9uIG9mIHRoaXMgY2hhbmdlOg0KaHR0cHM6Ly9wYXRjaHdvcmsuY29kZWF1cm9yYS5vcmcvcGF0
+Y2gvNDAwNTYzLw0KDQpZb3UgY2FuIGZpbmQgaXQgaW4gUnVzc2VsbCdzIHRyYWNrZXIgaGVyZToN
+Cmh0dHA6Ly93d3cuYXJtLmxpbnV4Lm9yZy51ay9kZXZlbG9wZXIvcGF0Y2hlcy92aWV3cGF0Y2gu
+cGhwP2lkPTg4MDMvMQ0KDQpCZXN0IHJlZ2FyZHMsDQoNCkJpY2g=
