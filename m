@@ -2,96 +2,97 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E71DDC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CDABC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:57:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC5E62243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:56:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D587D2243E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:57:11 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iXVSsNlF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC5E62243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WeNsbqJw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D587D2243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730398AbeKMLw3 (ORCPT
+        id S1730718AbeKMLxA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 06:52:29 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33568 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725991AbeKMLw3 (ORCPT
+        Tue, 13 Nov 2018 06:53:00 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:38489 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbeKMLxA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 06:52:29 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=xyhICmvadfrnShpHejrsXRbuDAeIhRd9ectqbLmueZA=; b=iXVSsNlFsAiI3I4EY907z5TGd
-        aOIvOLQbdGrhToOPGeoryVn3DnrPvG/oqNqfIZK8Dx30KeC6Dr29RXFhGXj1aGDmZMYrRr7sKhiEO
-        I74K7SDSKHUxA8XwkgAz0LW8vDQa5ZGJi6EYatt9h9w+nXW789bALNxTNYGyKjBgGN5ynOWxen9BS
-        cEsesZJw0KP0jpqizcK48bJwAFBlybbApjIPVBAg9+BlnWLhCX9DxSUaev0aQhsovEAyf3ci2/4wn
-        7bSt/VoeK6Qju5dgIQ+ZiGZJG2N3oJeA5pWQjAq2MMzPey+ytgwkaWRNFwMWB2tvGx4TMrHgBieBl
-        RLxZ/Dzvg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gMNwJ-0003Sl-Ch; Tue, 13 Nov 2018 01:56:27 +0000
-Date:   Mon, 12 Nov 2018 17:56:27 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Paolo Valente <paolo.valente@linaro.org>,
-        Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
-        Li Zefan <lizefan@huawei.com>,
-        Angelo Ruocco <angeloruocco90@gmail.com>,
-        Dennis Zhou <dennis@kernel.org>,
-        Josef Bacik <josef@toxicpanda.com>,
-        Liu Bo <bo.liu@linux.alibaba.com>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Johannes Weiner <hannes@cmpxchg.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        ulf.hansson@linaro.org, linus.walleij@linaro.org,
-        broonie@kernel.org, bfq-iosched@googlegroups.com,
-        oleksandr@natalenko.name, cgroups@vger.kernel.org,
-        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH 01/12] kernfs: add function to find kernfs_node without
- increasing ref counter
-Message-ID: <20181113015627.GI21824@bombadil.infradead.org>
-References: <20181112095632.69114-1-paolo.valente@linaro.org>
- <20181112095632.69114-2-paolo.valente@linaro.org>
- <20181112122840.GA1429@kroah.com>
+        Tue, 13 Nov 2018 06:53:00 -0500
+Received: by mail-pf1-f196.google.com with SMTP id v76-v6so2376153pfa.5;
+        Mon, 12 Nov 2018 17:57:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Qb73POOrgaB5UhySf5s6xuPHbNlZZvvCBcBNTBUwKDI=;
+        b=WeNsbqJwIJYkKDJPK1+1OORgDxQKmY1e64SCiCUN78emZACxYqJ+LvDWUmZj+I3ldO
+         0oarU4GyhvNgkKWKUe3v+Nf+az+OcdkMcMfe0zbSNX8sTxbJ6i1b8dBx++nWc86roSx8
+         W8SMcxiFpMh25CSh9TXS2gBif/Rn8HHa5JetgTtLUVASJAA5NzD/NH3tEzeMfuDeMmKN
+         cr/lNHjDon5+5SP/1K1TpV/1f940mWh80N/JTpgDE/Qzm9Jj5pJujemSot45XYIY1mym
+         TvZ8z0vHFKXO5fpO68UC1dk44raMxqPTMzRDRsibYKVmkQwU37fedIsaKFIbNNwjLW+F
+         N2Yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Qb73POOrgaB5UhySf5s6xuPHbNlZZvvCBcBNTBUwKDI=;
+        b=KMCIlagDfI4h7dmiC417EqIMmw8elJi+KIciWOQp0VEiUPDq7meEEf2i9sCOx13SV0
+         QdUPr1qd2WEoc0fPtcQiWp5GNCUl1KbWl1NWl2HrmnSD80OIe8DvaSJK2nL/R+Ek0BUR
+         Z1gWE05bE0mQUCpnRKIphddyrATVlz0d1gpNlxUPMqGM5hjGZuMRVVmMQe3ol5MKt12P
+         sr9Tbx432mclzRcm1s412pCVFUFpwNh3eokkbjMgfjmeecSIRlZ1DWp5NwbC7DUfKqKs
+         F+xm1/gFRAmjcUPLQcXsRgee2gKA5ERx3LrVWDYkLdP+SJkx3DMFSNucvseBjFfMW1Hf
+         8y5Q==
+X-Gm-Message-State: AGRZ1gL64ubV93QZ888+d48gkB6wh9DL9cgCDB+V7HWqX2/nqEYDhcAp
+        mkOBBf7s9oiOFvfkAIlN6uv3xdUwqH0=
+X-Google-Smtp-Source: AJdET5fcuZrD1nEDq0HmPqUkzyqTCByUdLAiUWCdq86yVUYMtY7FIrEOudl3rPYN5MHmbxA9yQITRw==
+X-Received: by 2002:a62:c20b:: with SMTP id l11-v6mr3260826pfg.251.1542074229451;
+        Mon, 12 Nov 2018 17:57:09 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id 79sm17571967pge.66.2018.11.12.17.57.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Nov 2018 17:57:08 -0800 (PST)
+Date:   Mon, 12 Nov 2018 17:57:07 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Ben Hutchings <ben@decadent.org.uk>
+Cc:     linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        torvalds@linux-foundation.org, akpm@linux-foundation.org
+Subject: Re: [PATCH 3.16 000/366] 3.16.61-rc1 review
+Message-ID: <20181113015707.GA5984@roeck-us.net>
+References: <lsq.1541965744.387173642@decadent.org.uk>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181112122840.GA1429@kroah.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <lsq.1541965744.387173642@decadent.org.uk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 04:28:40AM -0800, Greg Kroah-Hartman wrote:
-> On Mon, Nov 12, 2018 at 10:56:21AM +0100, Paolo Valente wrote:
-> > From: Angelo Ruocco <angeloruocco90@gmail.com>
-> > 
-> > The kernfs pseudo file system doesn't export any function to only find
-> > a node by name, without also getting a reference on it.
-> > But in some cases it is useful to just locate a kernfs node, while
-> > using it or not depends on some other condition.
-> > 
-> > This commit adds a function to just look for a node, without getting
-> > a reference on it.
+On Sun, Nov 11, 2018 at 07:49:04PM +0000, Ben Hutchings wrote:
+> This is the start of the stable review cycle for the 3.16.61 release.
+> There are 366 patches in this series, which will be posted as responses
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> Eeek, that sounds really bad.  So you save off a pointer to something,
-> and have no idea if that pointer now really is valid or not?  It can
-> instantly disappear right afterwards.
+> Responses should be made by Fri Nov 16 18:00:00 UTC 2018.
+> Anything received after that time might be too late.
 > 
-> This feels wrong, what is the problem of having a properly reference
-> counted object passed back to you that you have to create a dangerous
-> function like this?
+Build results:
+	total: 140 pass: 139 fail: 1
+Failed builds: 
+	i386:tools/perf
+Qemu test results:
+	total: 217 pass: 217 fail: 0
 
-I agree with Greg, this function is dangerous.  What's wrong with using
-find_get and then doing a put once you successfully take it over, or
-fail to take it over?
+Details are available at https://kerneltests.org/builders/.
+
+Guenter
