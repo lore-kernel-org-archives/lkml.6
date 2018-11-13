@@ -2,143 +2,126 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 353B0C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:53:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E13EC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:56:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9CFC421582
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:53:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CFC421582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 47179214F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:56:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OKJExGFX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47179214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388128AbeKNBwV (ORCPT
+        id S2387979AbeKNBzP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:52:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34020 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731439AbeKNBwV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:52:21 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 6342CB12F;
-        Tue, 13 Nov 2018 15:53:39 +0000 (UTC)
-Subject: Re: [PATCH] drivers/scsi/fnic/fnic_trace.c: Use vzalloc
-To:     John Garry <john.garry@huawei.com>,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
-        satishkh@cisco.com, sebaddel@cisco.com, kartilak@cisco.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc:     jrdr.linux@gmail.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com
-References: <5beae8ff.1c69fb81.bd59a.b7fa@mx.google.com>
- <a34379dd-f6f0-b439-b6de-f2db142f1823@huawei.com>
-From:   Johannes Thumshirn <jthumshirn@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <13d3418f-49d1-d683-48a6-cedbc073d86f@suse.de>
-Date:   Tue, 13 Nov 2018 16:53:39 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 13 Nov 2018 20:55:15 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:34261 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387693AbeKNBzP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 20:55:15 -0500
+Received: by mail-pg1-f196.google.com with SMTP id 17so5624818pgg.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 07:56:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=HZwdiLk1Ogd6EQgRPw19evHZbWF2zlePnZN3SSzewlw=;
+        b=OKJExGFXW20zeFSihqjTfXrcHXioDgZ7gQO8TGtlkPJDJn0CiO2TSPudUVYgcA8SZU
+         vQzeSL3kdtAMVrRiJpPCE+r8LJ4Yt5oTXZh5DftAD6grgpMG8ecw2+7rf57uZnhFVD9v
+         WDwg4EyWKAOTmIQ1sjioCofG+BSQCBfO2/ZP9kuwgJCfwKMEGYaupAYS9Ja1HPqqQSG/
+         qYHs2IEa5AEJ2KhEUnhyoHlN9sFui5OcK2evWJ8Dbie6eBPfDrye5YNpDXBwna7zvuBU
+         Clqvl+9kx8UJJPV0UAuBnhnuDNrJ6ymwU0xYk65y7cycyMW0WCh+P65zMv4mGlXFf1MV
+         YE8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=HZwdiLk1Ogd6EQgRPw19evHZbWF2zlePnZN3SSzewlw=;
+        b=AyfTNQKZPkYFM74Zwj49Fk0HiW4b8AbIpSPyFo+OoS8NfAy9ex0kCDhIeAcp9KOsaO
+         /UsJXMY7aQJzMdj3ib8IsQ/c/npcAV1XAEi5wLHNDhFlUPbebINB+dsN4snWtN9ntaLy
+         8t15isI3BCdS8pDBOXuZ5DclK/pdXqMIU6Wrc3xbU0oiI/pFW5layGQuZ1jPaNpmGrZk
+         +pyhGP/WDnmWtfWzEIzCP8oizTQKmMFil75GQAj+PRlvs/T+BdUJAyPljoie22d7vr/I
+         jzWdDVs5SJxDP2u6SOV68w8yDiEUwBhgIQm5XjdRR77mUQh1dbpyeBNaOTmnc6lV6XT9
+         Clcw==
+X-Gm-Message-State: AGRZ1gIsFfFmfHxnRJh5/TWHOiQAXMBpTb2SREu767ZRVW18Yj576XU5
+        GmP1D4W5f70kLXksCDTu8kAmpg==
+X-Google-Smtp-Source: AJdET5dQ+Ethvyd1I0gnTW6ZrlL6zU+zL9N1nu7xS5hQjIbJaOM4tl3gPUOsU5MA2X+OKOWz27yPeg==
+X-Received: by 2002:a62:7d10:: with SMTP id y16-v6mr5619214pfc.245.1542124593435;
+        Tue, 13 Nov 2018 07:56:33 -0800 (PST)
+Received: from gnomeregan.cam.corp.google.com ([2620:15c:6:14:ad22:1cbb:d8fa:7d55])
+        by smtp.gmail.com with ESMTPSA id d8-v6sm23918471pfj.106.2018.11.13.07.56.31
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Nov 2018 07:56:32 -0800 (PST)
+Date:   Tue, 13 Nov 2018 10:56:28 -0500
+From:   Barret Rhoden <brho@google.com>
+To:     Pankaj Gupta <pagupta@redhat.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, yu c zhang <yu.c.zhang@intel.com>,
+        yi z zhang <yi.z.zhang@intel.com>
+Subject: Re: [PATCH 2/2] kvm: Use huge pages for DAX-backed files
+Message-ID: <20181113105628.37449f52@gnomeregan.cam.corp.google.com>
+In-Reply-To: <286665658.33247363.1542103353780.JavaMail.zimbra@redhat.com>
+References: <20181109203921.178363-1-brho@google.com>
+        <20181109203921.178363-3-brho@google.com>
+        <043a592d-6592-3053-15a0-68cc54a26deb@redhat.com>
+        <286665658.33247363.1542103353780.JavaMail.zimbra@redhat.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <a34379dd-f6f0-b439-b6de-f2db142f1823@huawei.com>
-Content-Type: text/plain; charset=windows-1252
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/11/2018 16:44, John Garry wrote:
-> On 13/11/2018 15:08, Sabyasachi Gupta wrote:
->> Replaced vmalloc + memset with vzalloc
->>
->> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
->> ---
->>  drivers/scsi/fnic/fnic_trace.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/scsi/fnic/fnic_trace.c
->> b/drivers/scsi/fnic/fnic_trace.c
->> index 8271785..129ab27 100644
->> --- a/drivers/scsi/fnic/fnic_trace.c
->> +++ b/drivers/scsi/fnic/fnic_trace.c
->> @@ -468,14 +468,14 @@ int fnic_trace_buf_init(void)
->>      fnic_max_trace_entries = (trace_max_pages * PAGE_SIZE)/
->>                        FNIC_ENTRY_SIZE_BYTES;
->>
->> -    fnic_trace_buf_p = (unsigned long)vmalloc((trace_max_pages *
->> PAGE_SIZE));
->> +    fnic_trace_buf_p = (unsigned long)vzalloc((trace_max_pages *
->> +                                PAGE_SIZE));
-> 
-> If you remove the extra brackets in vzalloc() argument then you may not
-> spill onto the next line.
+On 2018-11-13 at 05:02 Pankaj Gupta <pagupta@redhat.com> wrote:
+> As this patch is dependent on PageReserved patch(which is in progress), just 
+> wondering if we are able to test the code path for hugepage with DAX.
 
-And remove the unnecessary cast. vzalloc() (just like vmalloc()) returns
-a void*, so no reason to cast it.
+For testing, I used the following patch.  It's not 100%, since it
+intercepts at kvm_is_reserved_pfn(), and not PageReserved() directly.
+The only difference is with kvm_set_pfn_dirty() I think.
 
--- 
-Johannes Thumshirn                                        SUSE Labs
-jthumshirn@suse.de                                +49 911 74053 689
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: Felix Imendörffer, Jane Smithard, Graham Norton
-HRB 21284 (AG Nürnberg)
-Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
+I also have a nasty module that would dump the EPT's and the host page
+table's mappings so I could confirm that the huge pages are being mapped
+correctly.
+
+-----------------------
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 2679e476b6c3..1b394a0752a0 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -148,6 +148,10 @@ __weak int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+ 
+ bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
+ {
++	// XXX hack
++	if (is_zone_device_page(pfn_to_page(pfn)))
++		return false;
++
+ 	if (pfn_valid(pfn))
+ 		return PageReserved(pfn_to_page(pfn));
+ 
+-----------------------
+
+Thanks,
+
+Barret
+
