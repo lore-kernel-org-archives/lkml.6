@@ -7,100 +7,161 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA66FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:02:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9069BC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:02:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93D37206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:02:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5809F206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:02:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BG18++r5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93D37206BB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vxojw30r"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5809F206BB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731541AbeKMP7N (ORCPT
+        id S1731828AbeKMPrV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:59:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33038 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:47:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32994 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731684AbeKMPrW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:47:22 -0500
+        id S1731801AbeKMPrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:47:20 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 913732251D;
-        Tue, 13 Nov 2018 05:50:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1730E2251C;
+        Tue, 13 Nov 2018 05:50:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088254;
-        bh=qaZO47W0igsDSqRJBIAHYu4atpIPeKrqOsaUyOCM4Qw=;
+        s=default; t=1542088253;
+        bh=2/QX0btORBDgnTEIH7KoPpLIqiZPGQBd0g8YV15QEcc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BG18++r5ORxudZuh+kYGJtUG8XPOsgq5M3SXcAlD1ezd/RHpFNwyZDCiY6iGjGlta
-         Ue+zeAZgEfnQz8W+KKMiOnymau+TkWsvOv4USbx1q8YOPakp4jxAsBF2YEp3Qe/2JI
-         Dm23PRcxixfjV7vyuzGpzXAbRROuyJ4gNDH2ll6s=
+        b=Vxojw30rfT2xVucovt21hAQcox63gLY1aoinmLA7ktOju+6jjiwAjQMMXnz6rQAk5
+         eh/nnY8yN55vbvHGaXiuqbJQnd8YOsJxhoMoki9e64iibKvKyae4/n0bcUdOAIJJn+
+         j1G6IdZSW8xdXGB6nEGGA+IHIFKcJVxRDYckzuo8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Colin Ian King <colin.king@canonical.com>,
-        Steve French <stfrench@microsoft.com>,
-        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 02/39] cifs: don't dereference smb_file_target before null check
-Date:   Tue, 13 Nov 2018 00:50:16 -0500
-Message-Id: <20181113055053.78352-2-sashal@kernel.org>
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.19 44/44] mm: don't warn about large allocations for slab
+Date:   Tue, 13 Nov 2018 00:49:50 -0500
+Message-Id: <20181113054950.77898-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113055053.78352-1-sashal@kernel.org>
-References: <20181113055053.78352-1-sashal@kernel.org>
+In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
+References: <20181113054950.77898-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+From: Dmitry Vyukov <dvyukov@google.com>
 
-[ Upstream commit 8c6c9bed8773375b1d54ccca2911ec892c59db5d ]
+[ Upstream commit 61448479a9f2c954cde0cfe778cb6bec5d0a748d ]
 
-There is a null check on dst_file->private data which suggests
-it can be potentially null. However, before this check, pointer
-smb_file_target is derived from dst_file->private and dereferenced
-in the call to tlink_tcon, hence there is a potential null pointer
-deference.
+Slub does not call kmalloc_slab() for sizes > KMALLOC_MAX_CACHE_SIZE,
+instead it falls back to kmalloc_large().
 
-Fix this by assigning smb_file_target and target_tcon after the
-null pointer sanity checks.
+For slab KMALLOC_MAX_CACHE_SIZE == KMALLOC_MAX_SIZE and it calls
+kmalloc_slab() for all allocations relying on NULL return value for
+over-sized allocations.
 
-Detected by CoverityScan, CID#1475302 ("Dereference before null check")
+This inconsistency leads to unwanted warnings from kmalloc_slab() for
+over-sized allocations for slab.  Returning NULL for failed allocations is
+the expected behavior.
 
-Fixes: 04b38d601239 ("vfs: pull btrfs clone API to vfs layer")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
-Signed-off-by: Steve French <stfrench@microsoft.com>
+Make slub and slab code consistent by checking size >
+KMALLOC_MAX_CACHE_SIZE in slab before calling kmalloc_slab().
+
+While we are here also fix the check in kmalloc_slab().  We should check
+against KMALLOC_MAX_CACHE_SIZE rather than KMALLOC_MAX_SIZE.  It all kinda
+worked because for slab the constants are the same, and slub always checks
+the size against KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().  But if we
+get there with size > KMALLOC_MAX_CACHE_SIZE anyhow bad things will
+happen.  For example, in case of a newly introduced bug in slub code.
+
+Also move the check in kmalloc_slab() from function entry to the size >
+192 case.  This partially compensates for the additional check in slab
+code and makes slub code a bit faster (at least theoretically).
+
+Also drop __GFP_NOWARN in the warning check.  This warning means a bug in
+slab code itself, user-passed flags have nothing to do with it.
+
+Nothing of this affects slob.
+
+Link: http://lkml.kernel.org/r/20180927171502.226522-1-dvyukov@gmail.com
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
+Reported-by: syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com
+Reported-by: syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com
+Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
+Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
+Acked-by: Christoph Lameter <cl@linux.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/cifs/cifsfs.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ mm/slab.c        |  4 ++++
+ mm/slab_common.c | 12 ++++++------
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
-index 69ec5427769c..9c194593270b 100644
---- a/fs/cifs/cifsfs.c
-+++ b/fs/cifs/cifsfs.c
-@@ -984,8 +984,8 @@ static int cifs_clone_file_range(struct file *src_file, loff_t off,
- 	struct inode *src_inode = file_inode(src_file);
- 	struct inode *target_inode = file_inode(dst_file);
- 	struct cifsFileInfo *smb_file_src = src_file->private_data;
--	struct cifsFileInfo *smb_file_target = dst_file->private_data;
--	struct cifs_tcon *target_tcon = tlink_tcon(smb_file_target->tlink);
-+	struct cifsFileInfo *smb_file_target;
-+	struct cifs_tcon *target_tcon;
- 	unsigned int xid;
- 	int rc;
+diff --git a/mm/slab.c b/mm/slab.c
+index aa76a70e087e..d73c7a4820a4 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -3675,6 +3675,8 @@ __do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller)
+ 	struct kmem_cache *cachep;
+ 	void *ret;
  
-@@ -999,6 +999,9 @@ static int cifs_clone_file_range(struct file *src_file, loff_t off,
- 		goto out;
- 	}
++	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
++		return NULL;
+ 	cachep = kmalloc_slab(size, flags);
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+@@ -3710,6 +3712,8 @@ static __always_inline void *__do_kmalloc(size_t size, gfp_t flags,
+ 	struct kmem_cache *cachep;
+ 	void *ret;
  
-+	smb_file_target = dst_file->private_data;
-+	target_tcon = tlink_tcon(smb_file_target->tlink);
-+
- 	/*
- 	 * Note: cifs case is easier than btrfs since server responsible for
- 	 * checks for proper open modes and file type and if it wants
++	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
++		return NULL;
+ 	cachep = kmalloc_slab(size, flags);
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index fea3376f9816..3a7ac4f15194 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -1027,18 +1027,18 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
+ {
+ 	unsigned int index;
+ 
+-	if (unlikely(size > KMALLOC_MAX_SIZE)) {
+-		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
+-		return NULL;
+-	}
+-
+ 	if (size <= 192) {
+ 		if (!size)
+ 			return ZERO_SIZE_PTR;
+ 
+ 		index = size_index[size_index_elem(size)];
+-	} else
++	} else {
++		if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
++			WARN_ON(1);
++			return NULL;
++		}
+ 		index = fls(size - 1);
++	}
+ 
+ #ifdef CONFIG_ZONE_DMA
+ 	if (unlikely((flags & GFP_DMA)))
 -- 
 2.17.1
 
