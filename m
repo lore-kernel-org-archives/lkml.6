@@ -2,173 +2,132 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4ACC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 524ADC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:33:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB8142245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:27:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vj01yCAO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB8142245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 199CB2245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:33:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 199CB2245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ah.jp.nec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730236AbeKMLWu (ORCPT
+        id S1730314AbeKML3V convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 06:22:50 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:33266 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727333AbeKMLWu (ORCPT
+        Tue, 13 Nov 2018 06:29:21 -0500
+Received: from tyo161.gate.nec.co.jp ([114.179.232.161]:55948 "EHLO
+        tyo161.gate.nec.co.jp" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbeKML3V (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 06:22:50 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v1-v6so9353367ljd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 17:27:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+qXi9m1EulATWmGfYBw5Cjhb1utlEj6BLCwIhwhrK84=;
-        b=vj01yCAOJWvCj1PGB9oyRIKsrx2ypCtblitEkKp5VYxbUHe+gXi9UbVgna0qBi3d5T
-         oe9/O9eBjx6scLHQE3Mip2NG7v/e9O0wv2ns1tvSJOAyplHLGIc89oE67Cqcu+lvVvJS
-         e6uzVajhO9z46mv4W8Z6Crdw+ECsALdqkM7CaWJRFljZi23zdn9yylVKepx5uoUdXQpZ
-         psUJTVQCvPnf0L3YnKqaR2GuxxvZ9l/MaLJK8xkoljJI9UtJQAvclV3pI5QgZ8Ret/a4
-         0C7FQDORk8KCm7SjuW4sNvQ1vzT54THjt+cF6Hx0ubuZhHOt17pOL3tfizghVdAM5JhY
-         ffjw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+qXi9m1EulATWmGfYBw5Cjhb1utlEj6BLCwIhwhrK84=;
-        b=rNRYwPqDXemn0sMSGA8IyRsaaRBE7t/jtB6wVjW4/6ZQsGsmUx2seE6PM82nLt3rYM
-         W2CR4O/NZnIVI+ph3C36FlZdogIOEh0tTT+UrAvlcbnORvkAgoghU4eDK/8EzLu8dLyF
-         3I8oxgzMT6tULY519ZY2gRIMG7fftr3/V/GBgkYVxp1F8PMV1wRK4IkZqPMRBYf9+38+
-         QyBIS8ayXdoP038LgbUX+kD3TRGhUR7gmOp/I97ErFufjUjBXbAYpnjh1RaOm8rlWBWF
-         3ufrpFE+ap8Qzq4GkvxLyFNIM8Qxkem4iqBQ59exiUEiQgdauy0n9XtXXz1cRuwqKGdz
-         KKew==
-X-Gm-Message-State: AGRZ1gLLeYrKU9fv2pUQTZOOmnbKv9ioFVoUSzNOh4vsXKQASgHau78x
-        E2Q5hJgno4mOTmrB0+wv7+jozRPtI7Bgs7LDhdt8PQ==
-X-Google-Smtp-Source: AJdET5dbojofevMCYWbQyWO2La8eP6QDTQbewX8zQyU/Yv3MTppKvAxQ+IRxr7lkHOVasKlG+K+qNv4XImxlNr4QHvM=
-X-Received: by 2002:a2e:8099:: with SMTP id i25-v6mr2137334ljg.174.1542072424269;
- Mon, 12 Nov 2018 17:27:04 -0800 (PST)
+        Tue, 13 Nov 2018 06:29:21 -0500
+Received: from mailgate02.nec.co.jp ([114.179.233.122])
+        by tyo161.gate.nec.co.jp (8.15.1/8.15.1) with ESMTPS id wAD1XIrD009934
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 13 Nov 2018 10:33:18 +0900
+Received: from mailsv02.nec.co.jp (mailgate-v.nec.co.jp [10.204.236.94])
+        by mailgate02.nec.co.jp (8.15.1/8.15.1) with ESMTP id wAD1XIA9012740;
+        Tue, 13 Nov 2018 10:33:18 +0900
+Received: from mail02.kamome.nec.co.jp (mail02.kamome.nec.co.jp [10.25.43.5])
+        by mailsv02.nec.co.jp (8.15.1/8.15.1) with ESMTP id wAD1URDa020044;
+        Tue, 13 Nov 2018 10:33:18 +0900
+Received: from bpxc99gp.gisp.nec.co.jp ([10.38.151.152] [10.38.151.152]) by mail01b.kamome.nec.co.jp with ESMTP id BT-MMP-5449202; Tue, 13 Nov 2018 10:32:16 +0900
+Received: from BPXM23GP.gisp.nec.co.jp ([10.38.151.215]) by
+ BPXC24GP.gisp.nec.co.jp ([10.38.151.152]) with mapi id 14.03.0319.002; Tue,
+ 13 Nov 2018 10:32:15 +0900
+From:   Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+To:     "linux-mm@kvack.org" <linux-mm@kvack.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+CC:     Michal Hocko <mhocko@kernel.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mike Kravetz <mike.kravetz@oracle.com>,
+        "xishi.qiuxishi@alibaba-inc.com" <xishi.qiuxishi@alibaba-inc.com>,
+        "Laurent Dufour" <ldufour@linux.vnet.ibm.com>
+Subject: Re: [RFC][PATCH v1 10/11] mm: clear PageHWPoison in memory hotremove
+Thread-Topic: [RFC][PATCH v1 10/11] mm: clear PageHWPoison in memory
+ hotremove
+Thread-Index: AQHUevC1WE7Ov12NQki9D02l1L5ksg==
+Date:   Tue, 13 Nov 2018 01:32:15 +0000
+Message-ID: <20181113013214.GA14528@hori1.linux.bs1.fc.nec.co.jp>
+References: <1541746035-13408-1-git-send-email-n-horiguchi@ah.jp.nec.com>
+ <1541746035-13408-11-git-send-email-n-horiguchi@ah.jp.nec.com>
+In-Reply-To: <1541746035-13408-11-git-send-email-n-horiguchi@ah.jp.nec.com>
+Accept-Language: en-US, ja-JP
+Content-Language: ja-JP
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.51.8.80]
+Content-Type: text/plain; charset="iso-2022-jp"
+Content-ID: <DA34DA41D102784C949AFD4B4E0EBFD8@gisp.nec.co.jp>
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-References: <CAA93t1oaZ5zkv+BsGnYZg6pqKv0DzXi3j8oZHUyTyffUWHtHug@mail.gmail.com>
- <20181029221701.51376-1-rajatja@google.com> <CAPDyKFpqzpxUzZe-ekfwg1Nqeg1RFB1bdbSNwrGPwtfNds4p0w@mail.gmail.com>
- <CAHp75VezX-agNFp2wEHorH7U9NmZgpX-PfXdBbGDETnJY2AFGA@mail.gmail.com>
-In-Reply-To: <CAHp75VezX-agNFp2wEHorH7U9NmZgpX-PfXdBbGDETnJY2AFGA@mail.gmail.com>
-From:   Rajat Jain <rajatja@google.com>
-Date:   Mon, 12 Nov 2018 17:26:27 -0800
-Message-ID: <CACK8Z6F0xrC340SHmnZHEb2jYizna_ZCeK_NGGeg_7iRb7wUsw@mail.gmail.com>
-Subject: Re: [PATCH v2] mmc: sdhci-pci: Try "cd" for card-detect lookup before
- using NULL
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Ulf Hansson <ulf.hansson@linaro.org>,
-        "Hunter, Adrian" <adrian.hunter@intel.com>,
-        linux-mmc@vger.kernel.org,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Rajat Jain <rajatxjain@gmail.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Mika Westerberg <mika.westerberg@linux.intel.com>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Dmitry Torokhov <dtor@google.com>, linux-gpio@vger.kernel.org,
-        linux-acpi@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-MML: disable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 3:26 AM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
->
-> On Mon, Nov 12, 2018 at 1:05 PM Ulf Hansson <ulf.hansson@linaro.org> wrote:
-> >
-> > On 29 October 2018 at 23:17, Rajat Jain <rajatja@google.com> wrote:
-> > > Problem:
-> > >
-> > > The card detect IRQ does not work with modern BIOS (that want
-> > > to use _DSD to provide the card detect GPIO to the driver).
-> > >
-> > > Details:
-> > >
-> > > The mmc core provides the mmc_gpiod_request_cd() API to let host drivers
-> > > request the gpio descriptor for the "card detect" pin.
-> > > This pin is specified in the ACPI for the SDHC device:
-> > >
-> > >  * Either as a resource using _CRS. This is a method used by legacy BIOS.
-> > >    (The driver needs to tell which resource index).
-> > >
-> > >  * Or as a named property ("cd-gpios"/"cd-gpio") in _DSD (which internally
-> > >    points to an entry in _CRS). This way, the driver can lookup using a
-> > >    string. This is what modern BIOS prefer to use.
-> > >
-> > > This API finally results in a call to the following code:
-> > >
-> > > struct gpio_desc *acpi_find_gpio(..., const char *con_id,...)
-> > > {
-> > > ...
-> > >    /* Lookup gpio (using "<con_id>-gpio") in the _DSD */
-> > > ...
-> > >    if (!acpi_can_fallback_to_crs(adev, con_id))
-> > >           return ERR_PTR(-ENOENT);
-> > > ...
-> > >    /* Falling back to _CRS is allowed, Lookup gpio in the _CRS */
-> > > ...
-> > > }
-> > >
-> > > Note that this means that if the ACPI has _DSD properties, the kernel
-> > > will never use _CRS for the lookup (Because acpi_can_fallback_to_crs()
-> > > will always be false for any device hat has _DSD entries).
-> > >
-> > > The SDHCI driver is thus currently broken on a modern BIOS, even if
-> > > BIOS provides both _CRS (for index based lookup) and _DSD entries (for
-> > > string based lookup). Ironically, none of these will be used for the
-> > > lookup currently because:
-> > >
-> > > * Since the con_id is NULL, acpi_find_gpio() does not find a matching
-> > >   entry in DSDT. (The _DSDT entry has the property name = "cd-gpios")
-> > >
-> > > * Because ACPI contains DSDT entries, thus acpi_can_fallback_to_crs()
-> > >   returns false (because device properties have been populated from
-> > >   _DSD), thus the _CRS is never used for the lookup.
-> > >
-> > > Fix:
-> > >
-> > > Try "cd" for lookup in the _DSD before falling back to using NULL so
-> > > as to try looking up in the _CRS.
-> > >
-> > > I've tested this patch successfully with both Legacy BIOS (that
-> > > provide only _CRS method) as well as modern BIOS (that provide both
-> > > _CRS and _DSD). Also the use of "cd" appears to be fairly consistent
-> > > across other users of this API (other MMC host controller drivers).
-> > >
-> > > Link: https://lkml.org/lkml/2018/9/25/1113
-> > > Signed-off-by: Rajat Jain <rajatja@google.com>
-> >
-> > Applied for fixes, thanks!
-> >
-> > Should I add a stable tag to this as well?
->
-> If you go with that it might make sense to have Fixes tag against
->
-> commit f10e4bf6632b5be11cea875b66ba959833a69258
-> Author: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-> Date:   Tue May 23 20:03:19 2017 +0300
->
->    gpio: acpi: Even more tighten up ACPI GPIO lookups
->
+On Fri, Nov 09, 2018 at 03:47:14PM +0900, Naoya Horiguchi wrote:
+> One hopeful usecase of memory hotplug is to replace half-broken DIMMs
+> with new ones, so it makes sense to clear hwpoison info at the time of
+> memory hotremove.
+> 
+> I hope that this patch covers the topic discussed in
+> https://lkml.org/lkml/2018/1/17/1228
+> 
+> Signed-off-by: Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>
+> ---
+>  mm/page_alloc.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git v4.19-mmotm-2018-10-30-16-08/mm/page_alloc.c v4.19-mmotm-2018-10-30-16-08_patched/mm/page_alloc.c
+> index 970d6ff..27826b3 100644
+> --- v4.19-mmotm-2018-10-30-16-08/mm/page_alloc.c
+> +++ v4.19-mmotm-2018-10-30-16-08_patched/mm/page_alloc.c
+> @@ -8139,8 +8139,9 @@ __offline_isolated_pages(unsigned long start_pfn, unsigned long end_pfn)
+>  		 * The HWPoisoned page may be not in buddy system, and
+>  		 * page_count() is not 0.
+>  		 */
+> -		if (unlikely(!PageBuddy(page) && PageHWPoison(page))) {
+> +		if (unlikely(!PageBuddy(page) && TestClearPageHWPoison(page))) {
+>  			pfn++;
+> +			num_poisoned_pages_dec();
+>  			SetPageReserved(page);
+>  			continue;
+>  		}
 
-I agree.
+Kbuild test robot shows that this patch causes build errors on
+!CONFIG_MEMORY_FAILURE, which should be fixed by the following changes.
 
 Thanks,
-
-Rajat
-
-
-> --
-> With Best Regards,
-> Andy Shevchenko
+Naoya Horiguchi
+---
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 6c496dab246d..559092915fe6 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -2785,6 +2785,10 @@ static inline void num_poisoned_pages_dec(void)
+ {
+ 	atomic_long_dec(&num_poisoned_pages);
+ }
++#else
++static inline void num_poisoned_pages_dec(void)
++{
++}
+ #endif
+ 
+ #if defined(CONFIG_TRANSPARENT_HUGEPAGE) || defined(CONFIG_HUGETLBFS)
+diff --git a/include/linux/page-flags.h b/include/linux/page-flags.h
+index ab0bde073050..1461384aa1a3 100644
+--- a/include/linux/page-flags.h
++++ b/include/linux/page-flags.h
+@@ -385,6 +385,7 @@ extern bool set_hwpoison_free_buddy_page(struct page *page);
+ extern bool clear_hwpoison_free_buddy_page(struct page *page);
+ #else
+ PAGEFLAG_FALSE(HWPoison)
++TESTCLEARFLAG_FALSE(HWPoison)
+ static inline bool set_hwpoison_free_buddy_page(struct page *page)
+ {
+ 	return false;
