@@ -2,144 +2,99 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E351C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:55:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F9AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:57:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E69BB223C8
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:55:34 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lfqqu0cL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E69BB223C8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C3821223C8
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:57:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3821223C8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730883AbeKNFzM (ORCPT
+        id S1727993AbeKNF4i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:55:12 -0500
-Received: from mail-ed1-f66.google.com ([209.85.208.66]:40100 "EHLO
-        mail-ed1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbeKNFzM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:55:12 -0500
-Received: by mail-ed1-f66.google.com with SMTP id d3so11009530edx.7;
-        Tue, 13 Nov 2018 11:55:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=rwoFuAldS9odiU9TIbYEW6zjfFSPr2jCKBI0wPMos2U=;
-        b=lfqqu0cL8xM1CDznoZElh2H9EDWgqRpO1UqA8oOBlwzQF/hyUJ90IvaefAxNwmU/qA
-         z+uBAMVFRAbry/0wVxgqmxbm/A+R6cAENkfvfkeQjssYI9qsKeckzMZt0cjnysKX2vMS
-         Jnmqhku/7E+tf18H3GQbqVHhaPPrEhkirvAcM6nG1hQf/PhwOSjMXP/PYwYExKcSqzqY
-         cmn+SMdYZktLJ5mhpjT56/MfD384MhRaEWmdxTb7QUiR4GYEAAXScr6llTP1HMIKU/i6
-         lmdau/j+zbpWJpsyhKfasmG+nyicWnFCvcRI85zd8eA7fGaeS3HfAH6u5RawFWAUISTW
-         V7ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=rwoFuAldS9odiU9TIbYEW6zjfFSPr2jCKBI0wPMos2U=;
-        b=aY46gIi/vqmn7zxgMoRNnql8/tlvCuxr1mXJPnJYswn8j0I2DZBSkOyCRT4sVRpzTm
-         rCcTc+dMAUGvqoFtipaI2gmjY7TsB3YlqthXtmxJH1b3kZdwMKXqbgLg8Kb+kJ+owWJ+
-         981K5OoC+L1ZjQ0yHTJmI03zRCUbWwCER+ZwpYHhVKtg/yYUkdXZX6RXahS+H9ESOi6S
-         VeeomCcfq7Uq6oE34OkJrSevNl9pjQ+D00KngPiBCIYLARFFVE/PZdSIXKIAJAvibr+7
-         8KOZwa0MNwboIGT49MxtSfpq0+ev9+l/KTKvuyweQoGPJz/zx6ApJIRQPmc9YBSZsEsy
-         6kUg==
-X-Gm-Message-State: AGRZ1gI3rZoNelZI0blEMWHXBFyU5ElsqtPs8+b+AknwijxTMyRam0Wk
-        dbk1QdJAD05RUD/Do6KMFEo=
-X-Google-Smtp-Source: AJdET5fDLPnnwnodKmnoeVj2lJ2gwmXBU7LuPnOWc0IJU9Pxahdx0KsvLLLFb1rqs6HED3d0ycs17Q==
-X-Received: by 2002:aa7:da45:: with SMTP id w5-v6mr17285879eds.54.1542138931599;
-        Tue, 13 Nov 2018 11:55:31 -0800 (PST)
-Received: from [192.168.1.18] (dma68.neoplus.adsl.tpnet.pl. [83.24.56.68])
-        by smtp.gmail.com with ESMTPSA id a4-v6sm3090016eje.16.2018.11.13.11.55.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 11:55:30 -0800 (PST)
-Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
- device names
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Pavel Machek <pavel@ucw.cz>
-Cc:     linux-leds@vger.kernel.org,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>, dmurphy@ti.com,
-        oleg@kaa.org.ua, Sakari Ailus <sakari.ailus@linux.intel.com>,
-        simon@lineageos.org, xiaotong.lu@spreadtrum.com
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
- <20181111120234.GA28794@amd>
- <CACRpkdYJNWC3RZXjCu+3EfRbPy6OyLLw-FivpFoe1p3ckHTCmg@mail.gmail.com>
-From:   Jacek Anaszewski <jacek.anaszewski@gmail.com>
-Message-ID: <90914660-6add-a4d9-0dfe-7b82a7664bd8@gmail.com>
-Date:   Tue, 13 Nov 2018 20:55:24 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 14 Nov 2018 00:56:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47034 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725748AbeKNF4i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 00:56:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 28580AFB0;
+        Tue, 13 Nov 2018 19:56:57 +0000 (UTC)
+Date:   Tue, 13 Nov 2018 20:56:54 +0100 (CET)
+From:   Jiri Kosina <jikos@kernel.org>
+To:     Michal Hocko <mhocko@kernel.org>
+cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Borislav Petkov <bp@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] l1tf: drop the swap storage limit restriction when
+ l1tf=off
+In-Reply-To: <20181113184910.26697-1-mhocko@kernel.org>
+Message-ID: <nycvar.YFH.7.76.1811132054521.19754@cbobk.fhfr.pm>
+References: <20181113184910.26697-1-mhocko@kernel.org>
+User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <CACRpkdYJNWC3RZXjCu+3EfRbPy6OyLLw-FivpFoe1p3ckHTCmg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/2018 10:23 PM, Linus Walleij wrote:
-> On Sun, Nov 11, 2018 at 1:03 PM Pavel Machek <pavel@ucw.cz> wrote:
+On Tue, 13 Nov 2018, Michal Hocko wrote:
+
+> From: Michal Hocko <mhocko@suse.com>
 > 
->>> -"devicename:colour:function"
->>> +"colour:function"
->>
->> I don't think we want to do it in all cases.
->>
->> So, on my cellphone seeing lp5523:green:led is indeed not useful.
->>
->> But on notebook with usb keyboard attached, you need to keep the
->> devicename to be able to distinguish capslock on internal keyboard and
->> capslock on first USB keyboard and capslock on second USB keyboard.
+> Swap storage is restricted to max_swapfile_size (~16TB on x86_64)
+> whenever the system is deemed affected by L1TF vulnerability. Even
+> though the limit is quite high for most deployments it seems to be
+> too restrictive for deployments which are willing to live with the
+> mitigation disabled.
 > 
-> I agree with Pavel.
+> We have a customer to deploy 8x 6,4TB PCIe/NVMe SSD swap devices
+> which is clearly out of the limit.
 > 
-> I ran into this when connecting two identical keyboards to the
-> same machine. The driver worked fine up until it tries
-> to create two sysfs entries with the same name for capslock.
-> BOOM!
-
-What kernel version did you use? LED core has had a protection
-against name clash since the commit:
-
-commit a96aa64cb5723d941de879a9cd1fea025d6acb1b
-Author: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Date:   Mon Mar 30 10:45:59 2015 -0700
-
-    leds/led-class: Handle LEDs with the same name
-
-    The current code expected that every LED had an unique name. This is a
-    legit expectation when the device tree can no be modified or extended.
-    But with device tree overlays this requirement can be easily broken.
-
-    This patch finds out if the name is already in use and adds the suffix
-    _1, _2... if not.
-
-    Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-    Reported-by: Geert Uytterhoeven <geert@linux-m68k.org>
-    Signed-off-by: Bryan Wu <cooloney@gmail.com>
-
-
-> In this case I suggest "serialnumber:color:capslock" and
-> similar.
+> Drop the swap restriction when l1tf=off is specified. It also doesn't
+> make much sense to warn about too much memory for the l1tf mitigation
+> when it is forcefully disabled by the administrator.
 > 
-> The important point is the string must be unique for each
-> plugged device.
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 2 ++
+>  Documentation/admin-guide/l1tf.rst              | 5 ++++-
+>  arch/x86/kernel/cpu/bugs.c                      | 3 ++-
+>  arch/x86/mm/init.c                              | 2 +-
+>  4 files changed, 9 insertions(+), 3 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 81d1d5a74728..a54f2bd39e77 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2095,6 +2095,8 @@
+>  			off
+>  				Disables hypervisor mitigations and doesn't
+>  				emit any warnings.
+> +				It also drops the swap size and available
+> +				RAM limit restriction.
+
+Minor nit: I think this should explicitly mention that those two things 
+are related to bare metal mitigation, to avoid any confusion (as otherwise 
+the l1tf cmdline parameter is purely about hypervisor mitigations).
+
+With that
+
+	Acked-by: Jiri Kosina <jkosina@suse.cz>
+
+Thanks,
 
 -- 
-Best regards,
-Jacek Anaszewski
+Jiri Kosina
+SUSE Labs
+
