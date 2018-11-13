@@ -2,121 +2,138 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E893C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:16:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3A83C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F0512243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:16:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CK+ChHM0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F0512243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id B180E2245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B180E2245E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728208AbeKNGQZ (ORCPT
+        id S1726995AbeKNGZ0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 01:16:25 -0500
-Received: from mail-yw1-f65.google.com ([209.85.161.65]:42215 "EHLO
-        mail-yw1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725750AbeKNGQZ (ORCPT
+        Wed, 14 Nov 2018 01:25:26 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:21360 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725813AbeKNGZZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 01:16:25 -0500
-Received: by mail-yw1-f65.google.com with SMTP id l2-v6so6311185ywb.9;
-        Tue, 13 Nov 2018 12:16:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=fOLxB5SbrWg2mxlzqt0Xgj9bBC+U68lAJfHs13rndqs=;
-        b=CK+ChHM0Q0vmnMKLQKfuuWFwMLHPDJ+GoPJHfXdh1y+WS2hwDnxt38baL7D6e9KYHA
-         Wqjte8qOt3bQVade1JoZtdv4JlUCG3xHoXpuFmvQEP69U2uegaTVum17RLHOVIT14OsP
-         5l9SZW0GaM0EMBjn6lKHrQSsS8axklAAEpTdciUWxji4xddpCDPt/dvoe8XPUXNBdZAu
-         Fioan6CcAi/AUunOAQHRHS0y5pI5FZvgAALeFPg1nBT7xxHkA8CNx1YBN70DgWevlxwQ
-         IMrl+FkibG1htRJknIvmmWNcMt9QLKlq3W3VIPupQmmH7lg1lvK63NVmiKHFBcIB+9tM
-         pVWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=fOLxB5SbrWg2mxlzqt0Xgj9bBC+U68lAJfHs13rndqs=;
-        b=TaqGepVtGgdMYsjuF9DmZKmZj7a9rt28S6AncFinmClVMfsYmftIRJysCRcyGZxjsY
-         BmE+o/OyaSILeisccmmVT1wN3/qw6FPveLfdFF1Qiyl8dxQ9kzk0bPeAHmMiLiGls7fm
-         pyrZ/NaAyTdAboPrBco9F23fHHGt3yuJFxU0NOfI/Tyufn+vOF+ndwVMH99KuA7D71wo
-         J+CN3qddKaoMh5tdKbOVUpQH2wy30AWxyPpBOqRFwziQgY/VKE/piRV2XGRoO4OTvUTp
-         WdSvYFCIfmEfBendnxmov+HKRon8/UK9qZZWcfwx+HiFb8b4J1bSEWhhbggfK+fWficT
-         mr/Q==
-X-Gm-Message-State: AGRZ1gKtdd/31WZAjTvEKUnWa7oXN62BpnKuE42o+tpwGgON/JvOdkdJ
-        Z/A+1Wz/jDtGEIQjeDhMtcw=
-X-Google-Smtp-Source: AJdET5fLUWbh8gOlPJ+VDfbiXYLZK071wiPxe2MynRxHQIV236RnKM06hwBn85P4TZ6HTfu9ODxD5Q==
-X-Received: by 2002:a81:5ec6:: with SMTP id s189-v6mr6449332ywb.126.1542140200014;
-        Tue, 13 Nov 2018 12:16:40 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::6:e2a7])
-        by smtp.gmail.com with ESMTPSA id p7-v6sm5274748ywd.75.2018.11.13.12.16.38
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 12:16:39 -0800 (PST)
-Date:   Tue, 13 Nov 2018 12:16:37 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     Peter Zijlstra <peterz@infradead.org>,
-        Waiman Long <longman@redhat.com>
-Cc:     Li Zefan <lizefan@huawei.com>,
-        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH cgroup/for-4.21 2/2] cgroup: Add .__DEBUG__. prefix to debug
- file names
-Message-ID: <20181113201637.GO2509588@devbig004.ftw2.facebook.com>
-References: <20181113201339.GN2509588@devbig004.ftw2.facebook.com>
+        Wed, 14 Nov 2018 01:25:25 -0500
+Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 13 Nov 2018 12:25:11 -0800
+Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 94FCEB1A5C;
+        Tue, 13 Nov 2018 15:25:38 -0500 (EST)
+From:   Nadav Amit <namit@vmware.com>
+To:     Ingo Molnar <mingo@redhat.com>
+CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Peter Zijlstra <peterz@infradead.org>, <linux_dti@icloud.com>,
+        <linux-integrity@vger.kernel.org>,
+        <linux-security-module@vger.kernel.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Kees Cook <keescook@chromium.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Nadav Amit <namit@vmware.com>
+Subject: [PATCH v5 03/10] x86/mm: temporary mm struct
+Date:   Tue, 13 Nov 2018 05:07:23 -0800
+Message-ID: <20181113130730.44844-4-namit@vmware.com>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181113130730.44844-1-namit@vmware.com>
+References: <20181113130730.44844-1-namit@vmware.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113201339.GN2509588@devbig004.ftw2.facebook.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
+ designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From c1bbd933e5fae83f96acd3f748bb01a0300b315d Mon Sep 17 00:00:00 2001
-From: Tejun Heo <tj@kernel.org>
-Date: Tue, 13 Nov 2018 12:06:41 -0800
+From: Andy Lutomirski <luto@kernel.org>
 
-Clearly mark the debug files and hide them by default by prefixing
-".__DEBUG__.".
+Sometimes we want to set a temporary page-table entries (PTEs) in one of
+the cores, without allowing other cores to use - even speculatively -
+these mappings. There are two benefits for doing so:
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Waiman Long <longman@redhat.com>
+(1) Security: if sensitive PTEs are set, temporary mm prevents their use
+in other cores. This hardens the security as it prevents exploding a
+dangling pointer to overwrite sensitive data using the sensitive PTE.
+
+(2) Avoiding TLB shootdowns: the PTEs do not need to be flushed in
+remote page-tables.
+
+To do so a temporary mm_struct can be used. Mappings which are private
+for this mm can be set in the userspace part of the address-space.
+During the whole time in which the temporary mm is loaded, interrupts
+must be disabled.
+
+The first use-case for temporary PTEs, which will follow, is for poking
+the kernel text.
+
+[ Commit message was written by Nadav ]
+
+Cc: Kees Cook <keescook@chromium.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Dave Hansen <dave.hansen@intel.com>
+Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
+Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Signed-off-by: Andy Lutomirski <luto@kernel.org>
+Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- kernel/cgroup/cgroup.c | 11 +++++++----
- 1 file changed, 7 insertions(+), 4 deletions(-)
+ arch/x86/include/asm/mmu_context.h | 32 ++++++++++++++++++++++++++++++
+ 1 file changed, 32 insertions(+)
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index ed7f0bfe6429..e06994fd4e34 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -1400,12 +1400,15 @@ static char *cgroup_file_name(struct cgroup *cgrp, const struct cftype *cft,
- 	struct cgroup_subsys *ss = cft->ss;
- 
- 	if (cft->ss && !(cft->flags & CFTYPE_NO_PREFIX) &&
--	    !(cgrp->root->flags & CGRP_ROOT_NOPREFIX))
--		snprintf(buf, CGROUP_FILE_NAME_MAX, "%s.%s",
--			 cgroup_on_dfl(cgrp) ? ss->name : ss->legacy_name,
-+	    !(cgrp->root->flags & CGRP_ROOT_NOPREFIX)) {
-+		const char *dbg = (cft->flags & CFTYPE_DEBUG) ? ".__DEBUG__." : "";
-+
-+		snprintf(buf, CGROUP_FILE_NAME_MAX, "%s%s.%s",
-+			 dbg, cgroup_on_dfl(cgrp) ? ss->name : ss->legacy_name,
- 			 cft->name);
--	else
-+	} else {
- 		strscpy(buf, cft->name, CGROUP_FILE_NAME_MAX);
-+	}
- 	return buf;
+diff --git a/arch/x86/include/asm/mmu_context.h b/arch/x86/include/asm/mmu_context.h
+index 0ca50611e8ce..0141b7fa6d01 100644
+--- a/arch/x86/include/asm/mmu_context.h
++++ b/arch/x86/include/asm/mmu_context.h
+@@ -338,4 +338,36 @@ static inline unsigned long __get_current_cr3_fast(void)
+ 	return cr3;
  }
  
++typedef struct {
++	struct mm_struct *prev;
++} temporary_mm_state_t;
++
++/*
++ * Using a temporary mm allows to set temporary mappings that are not accessible
++ * by other cores. Such mappings are needed to perform sensitive memory writes
++ * that override the kernel memory protections (e.g., W^X), without exposing the
++ * temporary page-table mappings that are required for these write operations to
++ * other cores.
++ *
++ * Context: The temporary mm needs to be used exclusively by a single core. To
++ *          harden security IRQs must be disabled while the temporary mm is
++ *          loaded, thereby preventing interrupt handler bugs from override the
++ *          kernel memory protection.
++ */
++static inline temporary_mm_state_t use_temporary_mm(struct mm_struct *mm)
++{
++	temporary_mm_state_t state;
++
++	lockdep_assert_irqs_disabled();
++	state.prev = this_cpu_read(cpu_tlbstate.loaded_mm);
++	switch_mm_irqs_off(NULL, mm, current);
++	return state;
++}
++
++static inline void unuse_temporary_mm(temporary_mm_state_t prev)
++{
++	lockdep_assert_irqs_disabled();
++	switch_mm_irqs_off(NULL, prev.prev, current);
++}
++
+ #endif /* _ASM_X86_MMU_CONTEXT_H */
 -- 
 2.17.1
 
