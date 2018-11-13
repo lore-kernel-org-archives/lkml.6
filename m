@@ -2,71 +2,111 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B71FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:22:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6AF7C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DE6A22419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:22:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE6A22419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 71D1821780
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:22:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lfOdmSlH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71D1821780
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731697AbeKNDVb (ORCPT
+        id S1731867AbeKNDV5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 22:21:31 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:50236 "EHLO mail.skyhub.de"
+        Tue, 13 Nov 2018 22:21:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52130 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731280AbeKNDVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 22:21:31 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id BJ6oYTbo_FsZ; Tue, 13 Nov 2018 18:22:28 +0100 (CET)
-Received: from zn.tnic (p200300EC2BE56F00D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:6f00:d571:4500:c00e:26fd])
+        id S1731146AbeKNDV4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 22:21:56 -0500
+Received: from localhost (unknown [104.132.0.74])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4FB6F1EC0319;
-        Tue, 13 Nov 2018 18:22:28 +0100 (CET)
-Date:   Tue, 13 Nov 2018 18:22:21 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Masayoshi Mizuma <msys.mizuma@gmail.com>
-Cc:     Chao Fan <fanc.fnst@cn.fujitsu.com>, linux-kernel@vger.kernel.org,
-        x86@kernel.org, linux-efi@vger.kernel.org,
-        linux-acpi@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        hpa@zytor.com, keescook@chromium.org, bhe@redhat.com,
-        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v11 3/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
- cmdlien from kexec
-Message-ID: <20181113172221.GJ10502@zn.tnic>
-References: <20181112094645.4879-1-fanc.fnst@cn.fujitsu.com>
- <20181112094645.4879-4-fanc.fnst@cn.fujitsu.com>
- <20181112174343.mvjri2okwboew2nw@gabell>
- <20181113021218.GD7453@localhost.localdomain>
- <20181113161111.6jwm36fpxk5xjtn5@gabell>
+        by mail.kernel.org (Postfix) with ESMTPSA id 56ED721780;
+        Tue, 13 Nov 2018 17:22:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542129774;
+        bh=vZhvqOak6WTAXHko8GeYMgawCiBuRApYB8oH8AFHFO0=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=lfOdmSlHVFcQctGrJoL5gsBs9WrW+SXwMVZCsZFZ/zZsPlGPkxwLbRJC3jakXaS6G
+         M0+D4RB7ssDqRKe9g9VV10zIwojbx8Yg+WJJwtT502fVGpXXaYaZskqkOQufs8A24J
+         eQwvF0tyCT75mbuyTbleOG3GT0o5OStjWgjO7A4M=
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181113161111.6jwm36fpxk5xjtn5@gabell>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
+To:     Michael Turquette <mturquette@baylibre.com>,
+        Taniya Das <tdas@codeaurora.org>, Vinod Koul <vkoul@kernel.org>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <c3bf03cd-ef87-a005-8536-d8739f53f2a5@codeaurora.org>
+Cc:     Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181109095054.13924-1-vkoul@kernel.org>
+ <c3bf03cd-ef87-a005-8536-d8739f53f2a5@codeaurora.org>
+Message-ID: <154212977367.88331.1550842985008389721@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH] clk: qcom: gcc: Fix board clock node name
+Date:   Tue, 13 Nov 2018 09:22:53 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 11:11:11AM -0500, Masayoshi Mizuma wrote:
-> I know checkpatch.pl says an warning about simple_strtoull(),
-> however, I believe the warning is for simple_strtoull() defined
-> in lib/vsprintf.c.
+Quoting Taniya Das (2018-11-10 18:12:28)
+> Hello Vinod,
+> =
 
-simple_strtoull is deprecated for various reasons. I'll take a look at
-Chao's patch soon.
+> On 11/9/2018 3:20 PM, Vinod Koul wrote:
+> > Device tree node name are not supposed to have "_" in them so fix the
+> > node name use of xo_board to xo-board
+> > =
 
--- 
-Regards/Gruss,
-    Boris.
+> > Fixes: 652f1813c113 ("clk: qcom: gcc: Add global clock controller drive=
+r for QCS404")
+> > Signed-off-by: Vinod Koul <vkoul@kernel.org>
+> > ---
+> > =
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> > Steve: RobH pointed this on DTS patches, would be great if you can pick=
+ this
+> > as a fix
+> > =
+
+> >   drivers/clk/qcom/gcc-qcs404.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > =
+
+> > diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs40=
+4.c
+> > index e4ca6a45f313..ef1b267cb058 100644
+> > --- a/drivers/clk/qcom/gcc-qcs404.c
+> > +++ b/drivers/clk/qcom/gcc-qcs404.c
+> > @@ -265,7 +265,7 @@ static struct clk_fixed_factor cxo =3D {
+> >       .div =3D 1,
+> >       .hw.init =3D &(struct clk_init_data){
+> >               .name =3D "cxo",
+> > -             .parent_names =3D (const char *[]){ "xo_board" },
+> > +             .parent_names =3D (const char *[]){ "xo-board" },
+> >               .num_parents =3D 1,
+> >               .ops =3D &clk_fixed_factor_ops,
+> >       },
+> > =
+
+> =
+
+> This fixed clock needs to be removed, once the RPM<->SMD clocks are =
+
+> added. Why not have this clock part of the device Tree?
+> =
+
+
+If the clk needs to be removed at some point, then putting it into DT
+instead of leaving it in the driver is the wrong direction to take. We
+don't want to have to change DT as often as we change driver code.
+
