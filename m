@@ -2,127 +2,261 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36E3DC0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:27:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF734C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:28:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0363322419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:27:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0363322419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7FC5D22419
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:28:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC5D22419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732688AbeKMVYs (ORCPT
+        id S1732545AbeKMV0A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:24:48 -0500
-Received: from mga12.intel.com ([192.55.52.136]:2750 "EHLO mga12.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732455AbeKMVYs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:24:48 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 03:27:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
-   d="scan'208";a="85455127"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga007.fm.intel.com with SMTP; 13 Nov 2018 03:27:01 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 13 Nov 2018 13:27:00 +0200
-Date:   Tue, 13 Nov 2018 13:27:00 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Lukas Wunner <lukas@wunner.de>, iommu@lists.linux-foundation.org,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Jacob jun Pan <jacob.jun.pan@intel.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Christian Kellner <ckellner@redhat.com>,
-        Mario.Limonciello@dell.com,
-        Anthony Wong <anthony.wong@canonical.com>,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
-Message-ID: <20181113112700.GT2500@lahna.fi.intel.com>
-References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
- <20181112160628.86620-2-mika.westerberg@linux.intel.com>
- <20181112180203.lx72gjfplb6xlur7@wunner.de>
- <20181113105636.GB11202@e107981-ln.cambridge.arm.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113105636.GB11202@e107981-ln.cambridge.arm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 13 Nov 2018 16:26:00 -0500
+Received: from bastet.se.axis.com ([195.60.68.11]:34556 "EHLO
+        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732037AbeKMVZ7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 16:25:59 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by bastet.se.axis.com (Postfix) with ESMTP id B71ED18485;
+        Tue, 13 Nov 2018 12:28:14 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
+Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
+        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id CLUekswJ9N-s; Tue, 13 Nov 2018 12:28:13 +0100 (CET)
+Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
+        by bastet.se.axis.com (Postfix) with ESMTPS id 8D7AB18482;
+        Tue, 13 Nov 2018 12:28:13 +0100 (CET)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 791631A064;
+        Tue, 13 Nov 2018 12:28:13 +0100 (CET)
+Received: from boulder02.se.axis.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 63D461A062;
+        Tue, 13 Nov 2018 12:28:13 +0100 (CET)
+Received: from thoth.se.axis.com (unknown [10.0.2.173])
+        by boulder02.se.axis.com (Postfix) with ESMTP;
+        Tue, 13 Nov 2018 12:28:13 +0100 (CET)
+Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
+        by thoth.se.axis.com (Postfix) with ESMTP id 56FCB2F48;
+        Tue, 13 Nov 2018 12:28:13 +0100 (CET)
+Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
+        id 5278180AA6; Tue, 13 Nov 2018 12:28:13 +0100 (CET)
+From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
+To:     linux@armlinux.org.uk, jeyu@kernel.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Vincent Whitchurch <rabinv@axis.com>
+Subject: [PATCH v3] ARM: module: Fix function kallsyms on Thumb-2
+Date:   Tue, 13 Nov 2018 12:27:45 +0100
+Message-Id: <20181113112745.15945-1-vincent.whitchurch@axis.com>
+X-Mailer: git-send-email 2.11.0
+X-TM-AS-GCONF: 00
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 10:56:36AM +0000, Lorenzo Pieralisi wrote:
-> On Mon, Nov 12, 2018 at 07:02:03PM +0100, Lukas Wunner wrote:
-> > On Mon, Nov 12, 2018 at 07:06:25PM +0300, Mika Westerberg wrote:
-> > > --- a/drivers/pci/probe.c
-> > > +++ b/drivers/pci/probe.c
-> > > @@ -1378,6 +1378,27 @@ static void set_pcie_thunderbolt(struct pci_dev *dev)
-> > >  	}
-> > >  }
-> > >  
-> > > +static void set_pcie_external(struct pci_dev *dev)
-> > > +{
-> > > +	struct pci_dev *parent;
-> > > +
-> > > +	/*
-> > > +	 * Walk up the device hierarchy and check for any upstream
-> > > +	 * bridge that has is_external_facing set to true. This means
-> > > +	 * the hierarchy is below PCIe port that is exposed externally
-> > > +	 * (such as Thunderbolt).
-> > > +	 */
-> > > +	parent = pci_upstream_bridge(dev);
-> > > +	while (parent) {
-> > > +		if (parent->is_external) {
-> > > +			dev->is_external = true;
-> > > +			break;
-> > > +		}
-> > > +
-> > > +		parent = pci_upstream_bridge(parent);
-> > > +	}
-> > > +}
-> > > +
-> > 
-> > This looks pretty much like a duplication of the is_thunderbolt bit
-> > in struct pci_dev and the pci_is_thunderbolt_attached() helper.
-> > 
-> > Why constrain the functionality to ports with the _DSD property
-> > instead of making it available for *any* Thunderbolt port?
-> 
-> I assume it is because this is just not needed for Thuderbolt ports but
-> rather for all PCIe devices that are "external" (whatever that is
-> supposed to mean), ie it is valid also for PCIe slots.
+Thumb-2 functions have the lowest bit set in the symbol value in the
+symtab.  When kallsyms are generated for the vmlinux, the kallsyms are
+generated from the output of nm, and nm clears the lowest bit.
 
-Yes, that was the idea. We could have other "external" devices that are
-not using Thunderbolt as the interconnect.
+ $ arm-linux-gnueabihf-readelf -a vmlinux | grep show_interrupts
+  95947: 8015dc89   686 FUNC    GLOBAL DEFAULT    2 show_interrupts
+ $ arm-linux-gnueabihf-nm vmlinux | grep show_interrupts
+ 8015dc88 T show_interrupts
+ $ cat /proc/kallsyms | grep show_interrupts
+ 8015dc88 T show_interrupts
 
-We could do so that we automatically set "is_external" for devices with
-"is_thunderbolt" so it should cover those as well.
+However, for modules, the kallsyms uses the values in the symbol table
+without modification, so for functions in modules, the lowest bit is set
+in kallsyms.
 
-> To be frank the concept (and Microsoft _DSD bindings) seems a bit vague
-> and not thoroughly defined and I would question its detection at
-> PCI/ACPI core level, I would hope this can be clarified at ACPI
-> specification level, at least.
+ $ arm-linux-gnueabihf-readelf -a drivers/net/tun.ko | grep tun_get_socket
+    268: 000000e1    44 FUNC    GLOBAL DEFAULT    2 tun_get_socket
+ $ arm-linux-gnueabihf-nm drivers/net/tun.ko | grep tun_get_socket
+ 000000e0 T tun_get_socket
+ $ cat /proc/kallsyms | grep tun_get_socket
+ 7fcd30e1 t tun_get_socket  [tun]
 
-I guess that is the way they envision to use _DSD. Instead of having
-single UUID that covers all properties (like what we have with device
-properties) they have one UUID per property "class". I certainly hope we
-don't need to keep extending prp_guids[] array each time they invent
-another "class" of properties.
+Because of this, the offset of the crashing instruction shown in oopses
+is incorrect when the crash is in a module.  For example, given a
+tun_get_socket which starts like this,
+
+ 000000e0 <tun_get_socket>:
+       e0:       b500            push    {lr}
+       e2:       f7ff fffe       bl      0 <__gnu_mcount_nc>
+       e6:       4b08            ldr     r3, [pc, #32]
+       e8:       6942            ldr     r2, [r0, #20]
+       ea:       429a            cmp     r2, r3
+       ec:       d002            beq.n   f4 <tun_get_socket+0x14>
+
+a crash when tun_get_socket is called with NULL results in:
+
+ PC is at tun_get_socket+0x7/0x2c [tun]
+ pc : [<7fcdb0e8>]
+
+which can result in the incorrect line being reported by gdb if this
+symbol+offset is used there.  If the crash is on the first instruction
+of a function, the "PC is at" line would also report the symbol name of
+the preceding function.
+
+To solve this, introduce a weak module_kallsyms_symbol_value() function
+which arches can override to fix up these symbol values, and implement
+this for Thumb-2.  We need to move elf_type() to st_other so that the
+original value of st_info is preserved.
+
+After the fix:
+
+ $ cat /proc/kallsyms | grep tun_get_socket
+ 7fcd30e0 t tun_get_socket  [tun]
+
+ PC is at tun_get_socket+0x8/0x2c [tun]
+ pc : [<7fcdb0e8>]
+
+Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
+---
+v3: Do not overwrite st_value
+v2: Fix build warning with !MODULES
+
+ arch/arm/kernel/module.c     | 10 ++++++++++
+ include/linux/moduleloader.h |  2 ++
+ kernel/module.c              | 34 +++++++++++++++++++++-------------
+ 3 files changed, 33 insertions(+), 13 deletions(-)
+
+diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
+index 3ff571c2c71c..89ab84a83600 100644
+--- a/arch/arm/kernel/module.c
++++ b/arch/arm/kernel/module.c
+@@ -336,6 +336,16 @@ static const Elf_Shdr *find_mod_section(const Elf32_Ehdr *hdr,
+ extern void fixup_pv_table(const void *, unsigned long);
+ extern void fixup_smp(const void *, unsigned long);
+ 
++#ifdef CONFIG_THUMB2_KERNEL
++unsigned long module_kallsyms_symbol_value(Elf_Sym *sym)
++{
++	if (ELF_ST_TYPE(sym->st_info) == STT_FUNC)
++		return sym->st_value & ~1;
++
++	return sym->st_value;
++}
++#endif
++
+ int module_finalize(const Elf32_Ehdr *hdr, const Elf_Shdr *sechdrs,
+ 		    struct module *mod)
+ {
+diff --git a/include/linux/moduleloader.h b/include/linux/moduleloader.h
+index 31013c2effd3..6395409b01a4 100644
+--- a/include/linux/moduleloader.h
++++ b/include/linux/moduleloader.h
+@@ -86,6 +86,8 @@ void module_arch_cleanup(struct module *mod);
+ /* Any cleanup before freeing mod->module_init */
+ void module_arch_freeing_init(struct module *mod);
+ 
++unsigned long module_kallsyms_symbol_value(Elf_Sym *sym);
++
+ #ifdef CONFIG_KASAN
+ #include <linux/kasan.h>
+ #define MODULE_ALIGN (PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
+diff --git a/kernel/module.c b/kernel/module.c
+index 49a405891587..5a588cfbb8f8 100644
+--- a/kernel/module.c
++++ b/kernel/module.c
+@@ -2682,7 +2682,7 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
+ 
+ 	/* Set types up while we still have access to sections. */
+ 	for (i = 0; i < mod->kallsyms->num_symtab; i++)
+-		mod->kallsyms->symtab[i].st_info
++		mod->kallsyms->symtab[i].st_other
+ 			= elf_type(&mod->kallsyms->symtab[i], info);
+ 
+ 	/* Now populate the cut down core kallsyms for after init. */
+@@ -3916,6 +3916,11 @@ static const char *symname(struct mod_kallsyms *kallsyms, unsigned int symnum)
+ 	return kallsyms->strtab + kallsyms->symtab[symnum].st_name;
+ }
+ 
++unsigned long __weak module_kallsyms_symbol_value(Elf_Sym *sym)
++{
++	return sym->st_value;
++}
++
+ static const char *get_ksymbol(struct module *mod,
+ 			       unsigned long addr,
+ 			       unsigned long *size,
+@@ -3934,6 +3939,9 @@ static const char *get_ksymbol(struct module *mod,
+ 	/* Scan for closest preceding symbol, and next symbol. (ELF
+ 	   starts real symbols at 1). */
+ 	for (i = 1; i < kallsyms->num_symtab; i++) {
++		unsigned long thisval = module_kallsyms_symbol_value(&kallsyms->symtab[i]);
++		unsigned long bestval = module_kallsyms_symbol_value(&kallsyms->symtab[best]);
++
+ 		if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
+ 			continue;
+ 
+@@ -3943,21 +3951,21 @@ static const char *get_ksymbol(struct module *mod,
+ 		    || is_arm_mapping_symbol(symname(kallsyms, i)))
+ 			continue;
+ 
+-		if (kallsyms->symtab[i].st_value <= addr
+-		    && kallsyms->symtab[i].st_value > kallsyms->symtab[best].st_value)
++		if (thisval <= addr
++		    && thisval > bestval)
+ 			best = i;
+-		if (kallsyms->symtab[i].st_value > addr
+-		    && kallsyms->symtab[i].st_value < nextval)
+-			nextval = kallsyms->symtab[i].st_value;
++		if (thisval > addr
++		    && thisval < nextval)
++			nextval = thisval;
+ 	}
+ 
+ 	if (!best)
+ 		return NULL;
+ 
+ 	if (size)
+-		*size = nextval - kallsyms->symtab[best].st_value;
++		*size = nextval - module_kallsyms_symbol_value(&kallsyms->symtab[best]);
+ 	if (offset)
+-		*offset = addr - kallsyms->symtab[best].st_value;
++		*offset = addr - module_kallsyms_symbol_value(&kallsyms->symtab[best]);
+ 	return symname(kallsyms, best);
+ }
+ 
+@@ -4060,8 +4068,8 @@ int module_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
+ 			continue;
+ 		kallsyms = rcu_dereference_sched(mod->kallsyms);
+ 		if (symnum < kallsyms->num_symtab) {
+-			*value = kallsyms->symtab[symnum].st_value;
+-			*type = kallsyms->symtab[symnum].st_info;
++			*value = module_kallsyms_symbol_value(&kallsyms->symtab[symnum]);
++			*type = kallsyms->symtab[symnum].st_other;
+ 			strlcpy(name, symname(kallsyms, symnum), KSYM_NAME_LEN);
+ 			strlcpy(module_name, mod->name, MODULE_NAME_LEN);
+ 			*exported = is_exported(name, *value, mod);
+@@ -4082,7 +4090,7 @@ static unsigned long mod_find_symname(struct module *mod, const char *name)
+ 	for (i = 0; i < kallsyms->num_symtab; i++)
+ 		if (strcmp(name, symname(kallsyms, i)) == 0 &&
+ 		    kallsyms->symtab[i].st_shndx != SHN_UNDEF)
+-			return kallsyms->symtab[i].st_value;
++			return module_kallsyms_symbol_value(&kallsyms->symtab[i]);
+ 	return 0;
+ }
+ 
+@@ -4131,8 +4139,8 @@ int module_kallsyms_on_each_symbol(int (*fn)(void *, const char *,
+ 			if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
+ 				continue;
+ 
+-			ret = fn(data, symname(kallsyms, i),
+-				 mod, kallsyms->symtab[i].st_value);
++			ret = fn(data, symname(kallsyms, i), mod,
++				 module_kallsyms_symbol_value(&kallsyms->symtab[i]));
+ 			if (ret != 0)
+ 				return ret;
+ 		}
+-- 
+2.11.0
+
