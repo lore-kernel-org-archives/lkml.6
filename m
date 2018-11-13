@@ -2,358 +2,105 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A27EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:13:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72ACFC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:14:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 092D32089F
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:13:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 371D42082A
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:14:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="S5zUzR3Y"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092D32089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YS8KyDd/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 371D42082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731760AbeKNJNk (ORCPT
+        id S1731698AbeKNJPZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 04:13:40 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:43100 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeKNJNj (ORCPT
+        Wed, 14 Nov 2018 04:15:25 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:45785 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbeKNJPY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 04:13:39 -0500
-Received: from [172.30.51.137] (unknown [64.114.255.97])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A0EA15A1;
-        Wed, 14 Nov 2018 00:13:04 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1542150787;
-        bh=In4v5Vb8h71g1WJAa5UpHl5KiqR7hAcohIdyt2KI5VI=;
-        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=S5zUzR3Yt8jdOqunkRotIiiGZNsbsWU3vhY6LLY6EUbVlNlTjaUnjIo4E+iobAkzK
-         p8Vclgie37pgnWP1dNz1bEJcmYlHU8InJE/sCCOk5dfhbVVIytwgj02CPivdeLzw0A
-         NWit0SbAnBJE6mZqzGvV0gpFvNH7vmfJ5zgATmEY=
-Reply-To: kieran.bingham@ideasonboard.com
-Subject: Re: [PATCH v4 1/4] dt-bindings: media: i2c: Add bindings for Maxim
- Integrated MAX9286
-To:     Luca Ceresoli <luca@lucaceresoli.net>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, sakari.ailus@iki.fi
-Cc:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-kernel@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
- <20181102154723.23662-2-kieran.bingham@ideasonboard.com>
- <b3ef6780-a1a7-e86c-0dba-916d9398c1ef@lucaceresoli.net>
-From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
- 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
- sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
-Organization: Ideas on Board
-Message-ID: <66239f2a-0159-8120-6dbb-8af0ce8b132a@ideasonboard.com>
-Date:   Tue, 13 Nov 2018 15:12:55 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 14 Nov 2018 04:15:24 -0500
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id wADNEUPf022942;
+        Wed, 14 Nov 2018 08:14:31 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wADNEUPf022942
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1542150871;
+        bh=egkPrPm7fr2RnhQfGC47q1IDiOoK95w9GCgiJdQsYV4=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=YS8KyDd/vFyAMLIfdcLHnHR8lxJAiuh0LH0iU2uff5BIJLoxQ8c0geH7SQrefi+Ek
+         qZfZq51RtPfe80HtnSdcmGenORAH9c2vZLGZJ+Dv07YlBRJ8ITzz9xuxDkKDGU40vA
+         fq/+9SpYjgpTrskBCTqRvoTLw/kSKfvG4qtKLMJ6ye9QQONs1Lv2XOndGsZzSE94wS
+         ISCRx7HUFKQ8qSrLHQUCXR38khUKmpCPJvYveStwFkOXTRWSP8fyV1ttlR+/EIyeuC
+         /c1xIlKyBJohKB7Na8Qoj4Qnsy1KMSIV09Vr3U+z6ib044oFai9OU6QQY5y18SSlyJ
+         24843lE2dFTgQ==
+X-Nifty-SrcIP: [209.85.222.42]
+Received: by mail-ua1-f42.google.com with SMTP id e16so3797451uam.12;
+        Tue, 13 Nov 2018 15:14:31 -0800 (PST)
+X-Gm-Message-State: AGRZ1gJqIeNana0CzeEVUxbXl6H0ItdVd7u9e5YK98FGJ8PUjodsk0me
+        FDBDRwu9/G72T+GwHTN/ZZhL3vTiDl/A4Jm33lA=
+X-Google-Smtp-Source: AJdET5fmG9wP7IFnOD6PCoJ4vzdJoz4K7+2BW6m0pZw6kZGDvlW2ACpkDNb627LEB83DXF7pp2z2P6NrQIeJmMMdpDA=
+X-Received: by 2002:ab0:6705:: with SMTP id q5mr3484772uam.89.1542150870271;
+ Tue, 13 Nov 2018 15:14:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <b3ef6780-a1a7-e86c-0dba-916d9398c1ef@lucaceresoli.net>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-GB
-Content-Transfer-Encoding: 8bit
+References: <1541995285-11144-1-git-send-email-yamada.masahiro@socionext.com>
+In-Reply-To: <1541995285-11144-1-git-send-email-yamada.masahiro@socionext.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Wed, 14 Nov 2018 08:13:54 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASevj4QQ5-J4QRbwS-vGkvb8VBrvzXVZDUhbHoA=auMxA@mail.gmail.com>
+Message-ID: <CAK7LNASevj4QQ5-J4QRbwS-vGkvb8VBrvzXVZDUhbHoA=auMxA@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: remove 'prepare' and 'scripts' dummies for
+ external module build
+To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
+Cc:     Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luca,
+On Mon, Nov 12, 2018 at 1:02 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> Make is lenient enough to ignore missing rules as long as they are marked
+> as PHONY. Remove dummy targets.
+>
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
 
-On 13/11/2018 14:42, Luca Ceresoli wrote:
-> Hi Kieran, All,
-> 
-> sorry for joining this late... See below my considerations.
-
-I'd say you're on time - not late,
-
-Thanks for joining :)
-
-> 
-> On 02/11/18 16:47, Kieran Bingham wrote:
->> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->>
->> The MAX9286 deserializes video data received on up to 4 Gigabit
->> Multimedia Serial Links (GMSL) and outputs them on a CSI-2 port using up
->> to 4 data lanes.
->>
->> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
->> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
->> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
->>
->> ---
->> v3:
->>  - Update binding descriptions
->>
->> v4:
->>  - Define the use of a CSI2 D-PHY
->>  - Rename pwdn-gpios to enable-gpios (with inverted polarity)
->>  - Remove clock-lanes mapping support
->>  - rewrap text blocks
->>  - Fix typos
->> ---
->>  .../bindings/media/i2c/maxim,max9286.txt      | 182 ++++++++++++++++++
->>  1 file changed, 182 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
->>
->> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
->> new file mode 100644
->> index 000000000000..672f6a4d417d
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
->> @@ -0,0 +1,182 @@
->> +Maxim Integrated Quad GMSL Deserializer
->> +---------------------------------------
->> +
->> +The MAX9286 deserializer receives video data on up to 4 Gigabit Multimedia
->> +Serial Links (GMSL) and outputs them on a CSI-2 D-PHY port using up to 4 data
->> +lanes.
->> +
->> +In addition to video data, the GMSL links carry a bidirectional control channel
->> +that encapsulates I2C messages. The MAX9286 forwards all I2C traffic not
->> +addressed to itself to the other side of the links, where a GMSL serializer
->> +will output it on a local I2C bus. In the other direction all I2C traffic
->> +received over GMSL by the MAX9286 is output on the local I2C bus.
->> +
->> +Required Properties:
->> +
->> +- compatible: Shall be "maxim,max9286"
->> +- reg: I2C device address
->> +
->> +Optional Properties:
->> +
->> +- poc-supply: Regulator providing Power over Coax to the cameras
->> +- enable-gpios: GPIO connected to the #PWDN pin with inverted polarity
->> +
->> +Required endpoint nodes:
->> +-----------------------
->> +
->> +The connections to the MAX9286 GMSL and its endpoint nodes are modeled using
->> +the OF graph bindings in accordance with the video interface bindings defined
->> +in Documentation/devicetree/bindings/media/video-interfaces.txt.
->> +
->> +The following table lists the port number corresponding to each device port.
->> +
->> +        Port            Description
->> +        ----------------------------------------
->> +        Port 0          GMSL Input 0
->> +        Port 1          GMSL Input 1
->> +        Port 2          GMSL Input 2
->> +        Port 3          GMSL Input 3
->> +        Port 4          CSI-2 Output
->> +
->> +Optional Endpoint Properties for GMSL Input Ports (Port [0-3]):
->> +
->> +- remote-endpoint: phandle to the remote GMSL source endpoint subnode in the
->> +  remote node port.
->> +
->> +Required Endpoint Properties for CSI-2 Output Port (Port 4):
->> +
->> +- remote-endpoint: phandle to the remote CSI-2 sink endpoint node.
->> +- data-lanes: array of physical CSI-2 data lane indexes.
->> +
->> +Required i2c-mux nodes:
->> +----------------------
->> +
->> +Each GMSL link is modeled as a child bus of an i2c bus multiplexer/switch, in
->> +accordance with bindings described in
->> +Documentation/devicetree/bindings/i2c/i2c-mux.txt. The serializer device on the
->> +remote end of the GMSL link shall be modelled as a child node of the
->> +corresponding I2C bus.
->> +
->> +Required i2c child bus properties:
->> +- all properties described as required i2c child bus nodes properties in
->> +  Documentation/devicetree/bindings/i2c/i2c-mux.txt.
->> +
->> +Example:
->> +-------
->> +
->> +	gmsl-deserializer@2c {
->> +		compatible = "maxim,max9286";Not at all late - Just on time 
->> +		reg = <0x2c>;
->> +		poc-supply = <&camera_poc_12v>;
->> +		enable-gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
->> +
->> +		#address-cells = <1>;
->> +		#size-cells = <0>;
->> +
->> +		ports {
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +
->> +			port@0 {
->> +				reg = <0>;
->> +				max9286_in0: endpoint {
->> +					remote-endpoint = <&rdacm20_out0>;
->> +				};
->> +			};
->> +
->> +			port@1 {
->> +				reg = <1>;
->> +				max9286_in1: endpoint {
->> +					remote-endpoint = <&rdacm20_out1>;
->> +				};
->> +			};
->> +
->> +			port@2 {
->> +				reg = <2>;
->> +				max9286_in2: endpoint {
->> +					remote-endpoint = <&rdacm20_out2>;
->> +				};
->> +			};
->> +
->> +			port@3 {
->> +				reg = <3>;
->> +				max9286_in3: endpoint {
->> +					remote-endpoint = <&rdacm20_out3>;
->> +				};
->> +			};
->> +
->> +			port@4 {
->> +				reg = <4>;
->> +				max9286_out: endpoint {
->> +					data-lanes = <1 2 3 4>;
->> +					remote-endpoint = <&csi40_in>;
->> +				};
->> +			};
->> +		};
->> +
->> +		i2c@0 {
->> +			#address-cells = <1>;
->> +			#size-cells = <0>;
->> +			reg = <0>;
->> +
->> +			camera@51 {
->> +				compatible = "imi,rdacm20";
->> +				reg = <0x51 0x61>;
-> 
-> I find this kind of address mapping is the weak point in this patchset.
-> 
-> The ser-deser chipset splits the world in "local" and "remote" side. The
-> camera node belongs to the remote side, but the 0x51 and 0x61 addresses
-> belong to the local side.
-
-Well, in our use case - in fact the camera has a set of fixed addresses
-(0x30,0x40,0x50) for each camera - and these are the addresses we are
-requesting the camera to be updated to. Once the camera is communicated
-with - the first step is to reprogram the device to respond to the
-addresses specified here.
+Applied to linux-kbuild.
 
 
-> Think about supporting N different main boards
-> and M remote boards. 0x51 might be available on some main boards but not
-> all. IMO under the camera@51 (even the i2c@0) node there should be only
-> remote hardware description. To support the N*M possible combinations,
-> there should be:
+>
+>  Makefile | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/Makefile b/Makefile
+> index 766a64e..7508243 100644
+> --- a/Makefile
+> +++ b/Makefile
+> @@ -1610,10 +1610,7 @@ help:
+>         @echo  '  clean           - remove generated files in module directory only'
+>         @echo  ''
+>
+> -# Dummies...
+>  PHONY += prepare scripts
+> -prepare: ;
+> -scripts: ;
+>  endif # KBUILD_EXTMOD
+>
+>  clean: $(clean-dirs)
+> --
+> 2.7.4
+>
 
-Of course - well in fact all of our I2C addresses across our two max9286
-instances, and 8 camera devices share the same bus 'address space'.
-
-It's crucial to provide this address on a per board level, which is why
-it is specified in the DT.
-
-I wonder if perhaps it was a mistake to include the camera description
-in this part of the example, as it's not related to the max9286
-specifically.
-
-Rob has already suggested moving these to a lower 'i2c-node' level which
-I like the sound of, and might make this separation more clear.
-
-
->  * a DT for the main board mentioning only addresses for the
->    local i2c bus, down to the i2c@0 with address-cells, size-cells and
->    reg properties
->  * a DT overlay for each remote board, mentioning the remote i2c
->    chips with their physical addresses, but no local addresses
-> 
-> The only way I could devise to be generic is to bind each physical
-> remote address to a local address at runtime.
-> 
-> Also, to be implemented reliably, an address translation feature is
-> required on the local (de)ser chip.
-> 
-> So the question is: can the max9286 chip do i2c address translation?
-> 
-
-Yes, The max9286 (deser) can do i2c address translation - but so too can
-the max9271 (serialiser)
-
-We do our address translation on the camera (serialiser) side.
-
-The cameras *all* boot with the same i2c address (and thus all conflict)
- - We disable all links
- - We enable /one/ link
- - We initialise and reprogram the address of that camera to the address
-   specified in the camera node. - Then we move to the next camera.
-
-The reality is we 'just need' a spare address on the I2C bus - but as
-yet - there is no mechanism in I2C core to request a spare address.
-
-Thus it is the responsibility of the DT node to ensure there is no conflict.
-
-For an example, here is our DT overlay file for our max9286 expansion board:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git/commit/?h=gmsl/v5&id=6f2ec549e128b3ca36e9cae59256723cc39df2b1
-
-
-> Thanks,
-> 
 
 -- 
-Regards
---
-Kieran
+Best Regards
+Masahiro Yamada
