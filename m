@@ -2,144 +2,97 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F422C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:53:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 777DBC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:54:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DE6B22360
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:53:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="guNkVK77"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DE6B22360
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3EE7822360
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:54:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3EE7822360
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731350AbeKNCwt (ORCPT
+        id S1731418AbeKNCxG convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 21:52:49 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:40498 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726517AbeKNCwt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 21:52:49 -0500
-Received: by mail-lj1-f194.google.com with SMTP id t22-v6so11441964lji.7;
-        Tue, 13 Nov 2018 08:53:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=NLNmQ6NE3SZvOamUITtsEFvtXjYkNVX43biqslafXKc=;
-        b=guNkVK776GyeE0BHU4knvPcshf5CvwIFnQcq6+ES3E1wDnhR6s9Qa7chrhZuCqTdKe
-         kWpU223ydLbfdHLNPlXnbmMnzmQWCbepU1+XhaI3Aj2W5eIrH6P4qGBO3GVBCzqPGI7Y
-         M5GAdWyIXwWLvLwZgvZfRpCo1ZA9YfIDOj4vw3431TJb4GStMvhHahoZufT0UJV9L6cr
-         7hTk08Ox8PbtvmTjVU4RqmcmD0D/okGsdpb6GFvtIEdi2TOELKdD36iY8IdFSTO7d5wa
-         rANBQqmr/J48+u5a0srieksFVDT3PGalXOdaVGNvkp/dFTJGi6t3rR6rc0lh+RjWRHMa
-         d11g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=NLNmQ6NE3SZvOamUITtsEFvtXjYkNVX43biqslafXKc=;
-        b=tx5U2RxVHJJb0P1AYoc9+mIAZnX89ubrG7mcDjDC2V3E4epJetSMQR9fTmV+GpDgdl
-         XWxcZ//cXPpwg4Vc/DoiVro2Gg+rrM55irQgShX+pHeoamvHjC4SBXTyjgIBVPDplC56
-         PsLdSoCZq97nbWn4zJDD6iENx1yJCCkt6ehmN9I4uirNko/ijxae4MVlpfFdvIQWs2us
-         7AU0ycOMikcO0ewoUy0bm2ZI2CQFTPFXXpbkHRt35MSvBzRuZZ+ute7FWzLUaBcTKNOd
-         w/DSgIbox8NQKNN6KY9SitCFStDjWvpe8UezP+lhBYqmNigqHGFcgtjYV2xC3hHJ+jlN
-         2K6Q==
-X-Gm-Message-State: AGRZ1gLpZd+A3uVRYYSwh4w/CgU/gk1hxCWL5hAiGW49ou1+xAH9WoXE
-        5KGQHeK1fKwLSOqXfbgmCjVlTtOM
-X-Google-Smtp-Source: AJdET5e9pzHkxwnBcWH6+tSWWB5sTr3YZZZFSuIPEUxSZIYkRKe3B9FYIaVrD0bNieRzg0KY1/urDA==
-X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr3926632lji.133.1542128031770;
-        Tue, 13 Nov 2018 08:53:51 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-76-171-181.pppoe.mtu-net.ru. [91.76.171.181])
-        by smtp.googlemail.com with ESMTPSA id l7-v6sm3393683ljh.5.2018.11.13.08.53.50
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 08:53:50 -0800 (PST)
-Subject: Re: [PATCH] media: staging: tegra-vde: print long unsigned using %lu
- format specifier
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Colin King <colin.king@canonical.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181108110224.1916-1-colin.king@canonical.com>
- <0b3bf728-7b7e-7250-40eb-0827f8fe955b@xs4all.nl>
-From:   Dmitry Osipenko <digetx@gmail.com>
-Message-ID: <67306f07-f270-3395-48c4-f6d4954e0d04@gmail.com>
-Date:   Tue, 13 Nov 2018 19:52:59 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <0b3bf728-7b7e-7250-40eb-0827f8fe955b@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
+        Tue, 13 Nov 2018 21:53:06 -0500
+Received: from mga12.intel.com ([192.55.52.136]:30164 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726517AbeKNCxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 21:53:06 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 08:54:11 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,228,1539673200"; 
+   d="scan'208";a="107922207"
+Received: from orsmsx105.amr.corp.intel.com ([10.22.225.132])
+  by orsmga001.jf.intel.com with ESMTP; 13 Nov 2018 08:54:11 -0800
+Received: from orsmsx104.amr.corp.intel.com ([169.254.4.124]) by
+ ORSMSX105.amr.corp.intel.com ([169.254.2.237]) with mapi id 14.03.0415.000;
+ Tue, 13 Nov 2018 08:54:11 -0800
+From:   "Bowers, AndrewX" <andrewx.bowers@intel.com>
+To:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "intel-wired-lan@lists.osuosl.org" <intel-wired-lan@lists.osuosl.org>
+Subject: RE: [Intel-wired-lan] [PATCH tip/core/rcu 13/41]
+ ethernet/intel/ixgbe: Replace synchronize_sched() with synchronize_rcu()
+Thread-Topic: [Intel-wired-lan] [PATCH tip/core/rcu 13/41]
+ ethernet/intel/ixgbe: Replace synchronize_sched() with synchronize_rcu()
+Thread-Index: AQHUeqH0Z8b0Yl1eCEigYKTs6wgVp6VN7YUw
+Date:   Tue, 13 Nov 2018 16:54:10 +0000
+Message-ID: <26D9FDECA4FBDD4AADA65D8E2FC68A4A1D32A057@ORSMSX104.amr.corp.intel.com>
+References: <20181111194104.GA4787@linux.ibm.com>
+ <20181111194410.6368-13-paulmck@linux.ibm.com>
+In-Reply-To: <20181111194410.6368-13-paulmck@linux.ibm.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiM2Q0NzhmYTYtZTgxNC00OWZmLTkwYjktZWE0YzBjNGI0N2JlIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiQnFzOW1GcHJJYlcyUWZ2aDB1K1VxWFkwcTJEYzR5czI5YkJEVFh1TjM4UVhTaU5lUkdtUkpyeVFadHR4XC9YOHAifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
+MIME-Version: 1.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 09.11.2018 17:32, Hans Verkuil wrote:
-> On 11/08/18 12:02, Colin King wrote:
->> From: Colin Ian King <colin.king@canonical.com>
->>
->> The frame.flags & FLAG_B_FRAME is promoted to a long unsigned because
->> of the use of the BIT() macro when defining FLAG_B_FRAME and causing a
->> build warning. Fix this by using the %lu format specifer.
->>
->> Cleans up warning:
->> drivers/staging/media/tegra-vde/tegra-vde.c:267:5: warning: format
->> specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
->>
->> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->> ---
->>  drivers/staging/media/tegra-vde/tegra-vde.c | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
->> index 6f06061a40d9..66cf14212c14 100644
->> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
->> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
->> @@ -262,7 +262,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
->>  			value |= frame->frame_num;
->>  
->>  			dev_dbg(vde->miscdev.parent,
->> -				"\tFrame %d: frame_num = %d B_frame = %d\n",
->> +				"\tFrame %d: frame_num = %d B_frame = %lu\n",
->>  				i + 1, frame->frame_num,
->>  				(frame->flags & FLAG_B_FRAME));
->>  		} else {
->>
+> -----Original Message-----
+> From: Intel-wired-lan [mailto:intel-wired-lan-bounces@osuosl.org] On
+> Behalf Of Paul E. McKenney
+> Sent: Sunday, November 11, 2018 11:44 AM
+> To: linux-kernel@vger.kernel.org
+> Cc: tglx@linutronix.de; David S. Miller <davem@davemloft.net>;
+> peterz@infradead.org; fweisbec@gmail.com; jiangshanlai@gmail.com;
+> josh@joshtriplett.org; rostedt@goodmis.org; oleg@redhat.com;
+> dhowells@redhat.com; edumazet@google.com;
+> mathieu.desnoyers@efficios.com; dipankar@in.ibm.com;
+> joel@joelfernandes.org; intel-wired-lan@lists.osuosl.org; akpm@linux-
+> foundation.org; Paul E. McKenney <paulmck@linux.ibm.com>;
+> mingo@kernel.org
+> Subject: [Intel-wired-lan] [PATCH tip/core/rcu 13/41] ethernet/intel/ixgbe:
+> Replace synchronize_sched() with synchronize_rcu()
 > 
-> Compiling for i686 gives:
+> Now that synchronize_rcu() waits for preempt-disable regions of code as
+> well as RCU read-side critical sections, synchronize_sched() can be replaced
+> by synchronize_rcu().  This commit therefore makes this change.
 > 
-> In file included from /home/hans/work/build/media-git/include/linux/printk.h:336,
->                  from /home/hans/work/build/media-git/include/linux/kernel.h:14,
->                  from /home/hans/work/build/media-git/include/linux/clk.h:16,
->                  from /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:12:
-> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c: In function 'tegra_vde_setup_iram_tables':
-> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:265:5: warning: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'u32' {aka 'unsigned int'} [-Wformat=]
->      "\tFrame %d: frame_num = %d B_frame = %lu\n",
->      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> /home/hans/work/build/media-git/include/linux/dynamic_debug.h:135:39: note: in definition of macro 'dynamic_dev_dbg'
->    __dynamic_dev_dbg(&descriptor, dev, fmt, \
->                                        ^~~
-> /home/hans/work/build/media-git/include/linux/device.h:1463:23: note: in expansion of macro 'dev_fmt'
->   dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
->                        ^~~~~~~
-> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:264:4: note: in expansion of macro 'dev_dbg'
->     dev_dbg(vde->miscdev.parent,
->     ^~~~~~~
-> 
-> Should it be %zu?
+> Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
+> Cc: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+> Cc: "David S. Miller" <davem@davemloft.net>
+> Cc: <intel-wired-lan@lists.osuosl.org>
+> ---
+>  drivers/net/ethernet/intel/ixgbe/ixgbe_main.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
 
-Same on ARM32. Yes, it should be either %zu or "!!(frame->flags & FLAG_B_FRAME)".
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+
+
