@@ -2,103 +2,121 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F71C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8343C169D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5B89721582
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BBE3223C8
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j73wiH89"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B89721582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="HTWv29RI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BBE3223C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728714AbeKNFfG (ORCPT
+        id S1730421AbeKNFfN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:35:06 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43420 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727974AbeKNFfE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:35:04 -0500
-Received: by mail-wr1-f67.google.com with SMTP id y3-v6so14622450wrh.10
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 11:35:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=UtKKgibYbN9+8xoPeGbKs+nomifQiQH74EyGSmoPWEA=;
-        b=j73wiH89Hf+CkkdEwbRdt90Ypw/HGSwRxrpXEki+5lSuqj4Y41+6I/EMMACprq2DrK
-         yGjE5pjE9xcuGXFXIcKGGE/4YTR1/jb7RXdtPN2s/yVejulkzw/BUeL6Zm058mNqGh79
-         PGcZsxwztZ0e/7EP5xnwhr/4Oa6Js34+H8CPK4gby10Qxdduf2XUJkRx3tuX3fNfP3fi
-         z/GqgQ/zk03DQ47961u+OK/J5GRJunF0K4sYEwf3dUkUc7+ZaSVU0E509WcjcnKst4sl
-         nJh8xpCYNfUFdT/ZLtnT7GstUKpScMLVvtfOC0inx0/vIy1/VEBRewFvhCeFaYJJhL+K
-         ahZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=UtKKgibYbN9+8xoPeGbKs+nomifQiQH74EyGSmoPWEA=;
-        b=f6ed1ZmSbYaHM0xlw+UZ4/TqtaHhHoRJGo5Unuz3fXMtAVpmlsAJ0RI5aoeOuHhlup
-         nQuEQzXkZ/F0AbASQoczmGkQiAHGaCuzqvIZt4e8FWKSiKVejlHLeQqeeS14IHYxL2p6
-         LRzThLgxmc8OFAbDleYaq941F0sak+eGPuzRklPZV8y50qrAgKVgeaRElrhWBZQE1Y3d
-         dh4EpIYDm9PWPpzb9PZBXY3EmQh+l9mXI37VnLpU21VK/vHyuQuABrKFmbvBvfMMdcgy
-         ui0fP7MUBSZeWTUrnQ+8HhGy5T4S4Zk95/o9r65KvdyHe6ZAYOUD8VI0kUcE2Zc2L4zz
-         61cg==
-X-Gm-Message-State: AGRZ1gKdHDvNzS7Datx+pg5Zv7boJEc2Ia/Us9j6eI9r4tuPPGET2XwK
-        9tKRTvOUl/mrQB2FAkhlfPc=
-X-Google-Smtp-Source: AJdET5fmVSRtVngu+1RmJuUZhjRlrZm8apGLtPnVlK+U/Raev0isT1MY5/4lnqCaxCBGjAwwr2c0fg==
-X-Received: by 2002:adf:8919:: with SMTP id s25-v6mr5952645wrs.44.1542137729672;
-        Tue, 13 Nov 2018 11:35:29 -0800 (PST)
-Received: from localhost ([95.239.98.134])
-        by smtp.gmail.com with ESMTPSA id c14-v6sm14510237wmh.44.2018.11.13.11.35.28
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 11:35:28 -0800 (PST)
-From:   Cristian Sicilia <sicilia.cristian@gmail.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Nathan Chancellor <natechancellor@gmail.com>,
-        Colin Ian King <colin.king@canonical.com>
-Cc:     Cristian Sicilia <sicilia.cristian@gmail.com>,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 2/2] staging: rtlwifi: Add new line to stay in 80 characters
-Date:   Tue, 13 Nov 2018 20:34:39 +0100
-Message-Id: <1542137679-31726-3-git-send-email-sicilia.cristian@gmail.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542137679-31726-1-git-send-email-sicilia.cristian@gmail.com>
-References: <1542064736-27655-1-git-send-email-sicilia.cristian@gmail.com>
- <1542137679-31726-1-git-send-email-sicilia.cristian@gmail.com>
+        Wed, 14 Nov 2018 00:35:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32954 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726291AbeKNFfM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 00:35:12 -0500
+Received: from localhost (unknown [64.114.255.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id BAB7921582;
+        Tue, 13 Nov 2018 19:35:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542137738;
+        bh=IdQcfyuvdm+re6Cg0ueAy5cNXPj5ZQVuW0IBiT0DzBc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=HTWv29RID+GfRKNj/L/QDgwP4Af7T59ZxO2+iJZTCbsp8+PVNYmnlEmpKsQ+VxntY
+         8WtRdw7JzUB6mH4FOvAfSPay/tZeggDYYQEBYxmbIwnGCaqquT5oC+sQx127rpywA1
+         NyWHM46k5n3NXz1B1LAn1OTfiulTA3OeK2QAHWjo=
+Date:   Tue, 13 Nov 2018 11:35:38 -0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Paolo Valente <paolo.valente@linaro.org>
+Cc:     Jens Axboe <axboe@kernel.dk>, Tejun Heo <tj@kernel.org>,
+        Li Zefan <lizefan@huawei.com>,
+        Angelo Ruocco <angeloruocco90@gmail.com>,
+        Dennis Zhou <dennis@kernel.org>,
+        Josef Bacik <josef@toxicpanda.com>,
+        Liu Bo <bo.liu@linux.alibaba.com>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        linux-block <linux-block@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Mark Brown <broonie@kernel.org>, bfq-iosched@googlegroups.com,
+        oleksandr@natalenko.name, cgroups@vger.kernel.org,
+        linux-doc@vger.kernel.org, Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH 01/12] kernfs: add function to find kernfs_node without
+ increasing ref counter
+Message-ID: <20181113193538.GA5096@kroah.com>
+References: <20181112095632.69114-1-paolo.valente@linaro.org>
+ <20181112095632.69114-2-paolo.valente@linaro.org>
+ <20181112122840.GA1429@kroah.com>
+ <07A5F685-9D7D-42A7-9A10-73C658F47435@linaro.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <07A5F685-9D7D-42A7-9A10-73C658F47435@linaro.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The parameter is sent to next line to stay in 80
-characters
+On Tue, Nov 13, 2018 at 06:53:59PM +0100, Paolo Valente wrote:
+> 
+> 
+> > Il giorno 12 nov 2018, alle ore 13:28, Greg Kroah-Hartman <gregkh@linuxfoundation.org> ha scritto:
+> > 
+> > On Mon, Nov 12, 2018 at 10:56:21AM +0100, Paolo Valente wrote:
+> >> From: Angelo Ruocco <angeloruocco90@gmail.com>
+> >> 
+> >> The kernfs pseudo file system doesn't export any function to only find
+> >> a node by name, without also getting a reference on it.
+> >> But in some cases it is useful to just locate a kernfs node, while
+> >> using it or not depends on some other condition.
+> >> 
+> >> This commit adds a function to just look for a node, without getting
+> >> a reference on it.
+> > 
+> > Eeek, that sounds really bad.  So you save off a pointer to something,
+> > and have no idea if that pointer now really is valid or not?  It can
+> > instantly disappear right afterwards.
+> > 
+> 
+> Hi Greg,
+> that function is invoked only in functions executed with cgroup_mutex
+> held.  This guarantees that nothing disappears or becomes
+> inconsistent.  That's why we decided to go for this optimization,
+> instead of doing useless gets&puts pairs.  Still, I'm not expert
+> enough to state whether it is impossible that, once we have defined
+> that function, it may then get used in some unsafe way.
 
-Signed-off-by: Cristian Sicilia <sicilia.cristian@gmail.com>
----
- drivers/staging/rtlwifi/core.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+I can guarantee once you define that function, it will be used in an
+unsafe way :(
 
-diff --git a/drivers/staging/rtlwifi/core.c b/drivers/staging/rtlwifi/core.c
-index ca37f75..a990281 100644
---- a/drivers/staging/rtlwifi/core.c
-+++ b/drivers/staging/rtlwifi/core.c
-@@ -1882,7 +1882,8 @@ bool rtl_hal_pwrseqcmdparsing(struct rtl_priv *rtlpriv, u8 cut_version,
- 				return true;
- 			default:
- 				WARN_ONCE(true,
--					  "rtlwifi: %s(): Unknown CMD!!\n", __func__);
-+					  "rtlwifi: %s(): Unknown CMD!!\n",
-+					  __func__);
- 				break;
- 			}
- 		}
--- 
-2.7.4
+So just don't create it, use the put calls, it's fast and should never
+be a performance issue.
 
+> So, I seem to see two options:
+> 1) Add a comment on the function, saying that cgroup_mutex must be
+>    held while invoking it (I guess you won't like this one).
+
+Nope, do not create it.
+
+> 2) Do not define such a new function, and, in the other patches, use
+>    the already-available find_and_get.
+
+Yes, please do that.
+
+thanks,
+
+greg k-h
