@@ -7,125 +7,106 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B50ECC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:56:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D4F5C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB0C223CB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:56:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 105812245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:56:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="05XtQrD+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB0C223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ddx1QR2f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 105812245E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732990AbeKMPw3 (ORCPT
+        id S1733105AbeKMPwm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:52:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35816 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:52:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35632 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731541AbeKMPs6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:48:58 -0500
+        id S1732815AbeKMPsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:48:51 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 30D312245E;
-        Tue, 13 Nov 2018 05:52:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5B86322510;
+        Tue, 13 Nov 2018 05:52:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088350;
-        bh=hzcItAcedX+yThxQ9ISycLrOD1SKkH1U4A2xr9DjgFQ=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=05XtQrD+PIWhE/oT3xn392xpcqm8TBVHDT36ML/7GCp7gzbEvO8eF2NxoBc5aFPyv
-         APs4FXcoxEsOmmjPmd9vifDj7MWgvJXX02dcQAY45IIBREwERYRC0wfZI9M6J6chLU
-         1v4fno3HcOuNuDVkMBVfHS6r/c9Cxuezqf7zRyKo=
+        s=default; t=1542088343;
+        bh=G5kz9ytqXQIjUOab/w7MR95eO0uXmGlpn2C/Hs7ByGE=;
+        h=From:To:Cc:Subject:Date:From;
+        b=ddx1QR2f2Ed88vILjfIKaFxT3K97Id22LbaUxBXUucPp4SsOJqIdi/biFtuR5Czhg
+         nz+OClqW6m/3wnMTud1X2GPWpyMcLr8khxKNI6LABO/f8aM0hzMDzUSughfc0PjHUM
+         IYD5Z5lpsB0fQlt9ehYjwGmn6QpM2MtWrGilKFvU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jann Horn <jannh@google.com>, Jeff Mahoney <jeffm@suse.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
+        Tigran Aivazian <aivazian.tigran@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 04/17] reiserfs: propagate errors from fill_with_dentries() properly
-Date:   Tue, 13 Nov 2018 00:52:10 -0500
-Message-Id: <20181113055223.79060-4-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 01/17] bfs: add sanity check at bfs_fill_super()
+Date:   Tue, 13 Nov 2018 00:52:07 -0500
+Message-Id: <20181113055223.79060-1-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113055223.79060-1-sashal@kernel.org>
-References: <20181113055223.79060-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
 
-[ Upstream commit b10298d56c9623f9b173f19959732d3184b35f4f ]
+[ Upstream commit 9f2df09a33aa2c76ce6385d382693f98d7f2f07e ]
 
-fill_with_dentries() failed to propagate errors up to
-reiserfs_for_each_xattr() properly.  Plumb them through.
+syzbot is reporting too large memory allocation at bfs_fill_super() [1].
+Since file system image is corrupted such that bfs_sb->s_start == 0,
+bfs_fill_super() is trying to allocate 8MB of continuous memory. Fix
+this by adding a sanity check on bfs_sb->s_start, __GFP_NOWARN and
+printf().
 
-Note that reiserfs_for_each_xattr() is only used by
-reiserfs_delete_xattrs() and reiserfs_chown_xattrs().  The result of
-reiserfs_delete_xattrs() is discarded anyway, the only difference there is
-whether a warning is printed to dmesg.  The result of
-reiserfs_chown_xattrs() does matter because it can block chowning of the
-file to which the xattrs belong; but either way, the resulting state can
-have misaligned ownership, so my patch doesn't improve things greatly.
+[1] https://syzkaller.appspot.com/bug?id=16a87c236b951351374a84c8a32f40edbc034e96
 
-Credit for making me look at this code goes to Al Viro, who pointed out
-that the ->actor calling convention is suboptimal and should be changed.
-
-Link: http://lkml.kernel.org/r/20180802163335.83312-1-jannh@google.com
-Signed-off-by: Jann Horn <jannh@google.com>
+Link: http://lkml.kernel.org/r/1525862104-3407-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
+Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+Reported-by: syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>
 Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jeff Mahoney <jeffm@suse.com>
-Cc: Eric Biggers <ebiggers@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
+Cc: Tigran Aivazian <aivazian.tigran@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/reiserfs/xattr.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/bfs/inode.c | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
 
-diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 06a9fae202a7..9e313fc7fdc7 100644
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -184,6 +184,7 @@ struct reiserfs_dentry_buf {
- 	struct dir_context ctx;
- 	struct dentry *xadir;
- 	int count;
-+	int err;
- 	struct dentry *dentries[8];
- };
+diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
+index 1e5c896f6b79..0acb83efedea 100644
+--- a/fs/bfs/inode.c
++++ b/fs/bfs/inode.c
+@@ -350,7 +350,8 @@ static int bfs_fill_super(struct super_block *s, void *data, int silent)
  
-@@ -206,6 +207,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
+ 	s->s_magic = BFS_MAGIC;
  
- 	dentry = lookup_one_len(name, dbuf->xadir, namelen);
- 	if (IS_ERR(dentry)) {
-+		dbuf->err = PTR_ERR(dentry);
- 		return PTR_ERR(dentry);
- 	} else if (d_really_is_negative(dentry)) {
- 		/* A directory entry exists, but no file? */
-@@ -214,6 +216,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
- 			       "not found for file %pd.\n",
- 			       dentry, dbuf->xadir);
- 		dput(dentry);
-+		dbuf->err = -EIO;
- 		return -EIO;
+-	if (le32_to_cpu(bfs_sb->s_start) > le32_to_cpu(bfs_sb->s_end)) {
++	if (le32_to_cpu(bfs_sb->s_start) > le32_to_cpu(bfs_sb->s_end) ||
++	    le32_to_cpu(bfs_sb->s_start) < BFS_BSIZE) {
+ 		printf("Superblock is corrupted\n");
+ 		goto out1;
  	}
+@@ -359,9 +360,11 @@ static int bfs_fill_super(struct super_block *s, void *data, int silent)
+ 					sizeof(struct bfs_inode)
+ 					+ BFS_ROOT_INO - 1;
+ 	imap_len = (info->si_lasti / 8) + 1;
+-	info->si_imap = kzalloc(imap_len, GFP_KERNEL);
+-	if (!info->si_imap)
++	info->si_imap = kzalloc(imap_len, GFP_KERNEL | __GFP_NOWARN);
++	if (!info->si_imap) {
++		printf("Cannot allocate %u bytes\n", imap_len);
+ 		goto out1;
++	}
+ 	for (i = 0; i < BFS_ROOT_INO; i++)
+ 		set_bit(i, info->si_imap);
  
-@@ -261,6 +264,10 @@ static int reiserfs_for_each_xattr(struct inode *inode,
- 		err = reiserfs_readdir_inode(d_inode(dir), &buf.ctx);
- 		if (err)
- 			break;
-+		if (buf.err) {
-+			err = buf.err;
-+			break;
-+		}
- 		if (!buf.count)
- 			break;
- 		for (i = 0; !err && i < buf.count && buf.dentries[i]; i++) {
 -- 
 2.17.1
 
