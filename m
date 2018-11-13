@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03B8DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:02:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1EC6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:02:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB137223CB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:02:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 789D0223CB
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:02:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G5S+cPMg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB137223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TvsfiCHN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 789D0223CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732069AbeKMPrg (ORCPT
+        id S1731925AbeKMPrZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:47:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33364 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:47:25 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33106 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732013AbeKMPrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:47:35 -0500
+        id S1731851AbeKMPrY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:47:24 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 25BC32251B;
-        Tue, 13 Nov 2018 05:51:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E96C32251C;
+        Tue, 13 Nov 2018 05:50:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088268;
-        bh=I/b+1EECsJ10o+fGjFm5Zoq4NWZySZcibOwXXXjXJ9Y=;
+        s=default; t=1542088257;
+        bh=kZJk8KKkOauxqg+TWbC34UDWKPQkg+YfNvw813Q4f7o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=G5S+cPMgbMY1ndY4Q5q8nwhVLb6/MEC90J5g3vEBXwfIozRqb1UKWB1nzQeO4hvRM
-         dDV2JpUPp/wGepOxILndkXv4Fnx9nth+FjMq46kMJh2Ywt8wGoET0PcW4Cb7i09rVX
-         bVfbkfC92Axxy29v76csYt++xBTYKhY7FW8fkVm0=
+        b=TvsfiCHNn0K/cXKFYzIPr+oIe3iFgNoOz+m7kEr+ESYMeDslrCs5CVTv+9yLP2FjZ
+         MlpbScvvVj/DZ9eQdQ4XpQ04GQ1YEAr0AmW+kiCFcbYbmRuDVolthZ9X9crcrTP8a9
+         hakRcbOK1/1DYLnUfXa/Inr1C/LiXasIO871MQL0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Radoslaw Tyl <radoslawx.tyl@intel.com>,
-        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 10/39] ixgbe: fix MAC anti-spoofing filter after VFLR
-Date:   Tue, 13 Nov 2018 00:50:24 -0500
-Message-Id: <20181113055053.78352-10-sashal@kernel.org>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 04/39] arm64: kprobe: make page to RO mode when allocate it
+Date:   Tue, 13 Nov 2018 00:50:18 -0500
+Message-Id: <20181113055053.78352-4-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113055053.78352-1-sashal@kernel.org>
 References: <20181113055053.78352-1-sashal@kernel.org>
@@ -53,42 +53,123 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Radoslaw Tyl <radoslawx.tyl@intel.com>
+From: Anders Roxell <anders.roxell@linaro.org>
 
-[ Upstream commit 6702185c1ffec3421181b5e24491e3fac920cb61 ]
+[ Upstream commit 966866892cf89d606544bca22d584ba2ef9ec208 ]
 
-This change resolves a driver bug where the driver is logging a
-message that says "Spoofed packets detected". This can occur on the PF
-(host) when a VF has VLAN+MACVLAN enabled and is re-started with a
-different MAC address.
+Commit 1404d6f13e47 ("arm64: dump: Add checking for writable and exectuable pages")
+has successfully identified code that leaves a page with W+X
+permissions.
 
-MAC and VLAN anti-spoofing filters are to be enabled together.
+[    3.245140] arm64/mm: Found insecure W+X mapping at address (____ptrval____)/0xffff000000d90000
+[    3.245771] WARNING: CPU: 0 PID: 1 at ../arch/arm64/mm/dump.c:232 note_page+0x410/0x420
+[    3.246141] Modules linked in:
+[    3.246653] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc5-next-20180928-00001-ge70ae259b853-dirty #62
+[    3.247008] Hardware name: linux,dummy-virt (DT)
+[    3.247347] pstate: 80000005 (Nzcv daif -PAN -UAO)
+[    3.247623] pc : note_page+0x410/0x420
+[    3.247898] lr : note_page+0x410/0x420
+[    3.248071] sp : ffff00000804bcd0
+[    3.248254] x29: ffff00000804bcd0 x28: ffff000009274000
+[    3.248578] x27: ffff00000921a000 x26: ffff80007dfff000
+[    3.248845] x25: ffff0000093f5000 x24: ffff000009526f6a
+[    3.249109] x23: 0000000000000004 x22: ffff000000d91000
+[    3.249396] x21: ffff000000d90000 x20: 0000000000000000
+[    3.249661] x19: ffff00000804bde8 x18: 0000000000000400
+[    3.249924] x17: 0000000000000000 x16: 0000000000000000
+[    3.250271] x15: ffffffffffffffff x14: 295f5f5f5f6c6176
+[    3.250594] x13: 7274705f5f5f5f28 x12: 2073736572646461
+[    3.250941] x11: 20746120676e6970 x10: 70616d20582b5720
+[    3.251252] x9 : 6572756365736e69 x8 : 3039643030303030
+[    3.251519] x7 : 306666666678302f x6 : ffff0000095467b2
+[    3.251802] x5 : 0000000000000000 x4 : 0000000000000000
+[    3.252060] x3 : 0000000000000000 x2 : ffffffffffffffff
+[    3.252323] x1 : 4d151327adc50b00 x0 : 0000000000000000
+[    3.252664] Call trace:
+[    3.252953]  note_page+0x410/0x420
+[    3.253186]  walk_pgd+0x12c/0x238
+[    3.253417]  ptdump_check_wx+0x68/0xf8
+[    3.253637]  mark_rodata_ro+0x68/0x98
+[    3.253847]  kernel_init+0x38/0x160
+[    3.254103]  ret_from_fork+0x10/0x18
 
-Signed-off-by: Radoslaw Tyl <radoslawx.tyl@intel.com>
-Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
-Acked-by: Piotr Skajewski <piotrx.skajewski@intel.com>
-Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+kprobes allocates a writable executable page with module_alloc() in
+order to store executable code.
+Reworked to that when allocate a page it sets mode RO. Inspired by
+commit 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()").
+
+Suggested-by: Arnd Bergmann <arnd@arndb.de>
+Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Acked-by: Will Deacon <will.deacon@arm.com>
+Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
+Reviewed-by: Laura Abbott <labbott@redhat.com>
+Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
+[catalin.marinas@arm.com: removed unnecessary casts]
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ arch/arm64/kernel/probes/kprobes.c | 27 ++++++++++++++++++++-------
+ 1 file changed, 20 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c b/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
-index 2bc4fe475f28..23363bc92718 100644
---- a/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
-+++ b/drivers/net/ethernet/intel/ixgbe/ixgbe_sriov.c
-@@ -716,8 +716,10 @@ static inline void ixgbe_vf_reset_event(struct ixgbe_adapter *adapter, u32 vf)
- 			ixgbe_set_vmvir(adapter, vfinfo->pf_vlan,
- 					adapter->default_up, vf);
+diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
+index 22a5921562c7..0417c929d21a 100644
+--- a/arch/arm64/kernel/probes/kprobes.c
++++ b/arch/arm64/kernel/probes/kprobes.c
+@@ -23,7 +23,9 @@
+ #include <linux/slab.h>
+ #include <linux/stop_machine.h>
+ #include <linux/sched/debug.h>
++#include <linux/set_memory.h>
+ #include <linux/stringify.h>
++#include <linux/vmalloc.h>
+ #include <asm/traps.h>
+ #include <asm/ptrace.h>
+ #include <asm/cacheflush.h>
+@@ -42,10 +44,21 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
+ static void __kprobes
+ post_kprobe_handler(struct kprobe_ctlblk *, struct pt_regs *);
  
--		if (vfinfo->spoofchk_enabled)
-+		if (vfinfo->spoofchk_enabled) {
- 			hw->mac.ops.set_vlan_anti_spoofing(hw, true, vf);
-+			hw->mac.ops.set_mac_anti_spoofing(hw, true, vf);
-+		}
- 	}
++static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
++{
++	void *addrs[1];
++	u32 insns[1];
++
++	addrs[0] = addr;
++	insns[0] = opcode;
++
++	return aarch64_insn_patch_text(addrs, insns, 1);
++}
++
+ static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
+ {
+ 	/* prepare insn slot */
+-	p->ainsn.api.insn[0] = cpu_to_le32(p->opcode);
++	patch_text(p->ainsn.api.insn, p->opcode);
  
- 	/* reset multicast table array for vf */
+ 	flush_icache_range((uintptr_t) (p->ainsn.api.insn),
+ 			   (uintptr_t) (p->ainsn.api.insn) +
+@@ -118,15 +131,15 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
+ 	return 0;
+ }
+ 
+-static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
++void *alloc_insn_page(void)
+ {
+-	void *addrs[1];
+-	u32 insns[1];
++	void *page;
+ 
+-	addrs[0] = (void *)addr;
+-	insns[0] = (u32)opcode;
++	page = vmalloc_exec(PAGE_SIZE);
++	if (page)
++		set_memory_ro((unsigned long)page, 1);
+ 
+-	return aarch64_insn_patch_text(addrs, insns, 1);
++	return page;
+ }
+ 
+ /* arm kprobe: install breakpoint in text */
 -- 
 2.17.1
 
