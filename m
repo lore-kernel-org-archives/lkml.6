@@ -2,116 +2,114 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0316C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:40:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3230C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:43:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B16172245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:40:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B16172245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 841072245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:43:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NcKJI7c0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 841072245E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732362AbeKMUi2 (ORCPT
+        id S1732269AbeKMUkx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 15:38:28 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:42592 "EHLO mx1.redhat.com"
+        Tue, 13 Nov 2018 15:40:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:42718 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732104AbeKMUi2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 15:38:28 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1732104AbeKMUkx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 15:40:53 -0500
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8668CC02735A;
-        Tue, 13 Nov 2018 10:40:57 +0000 (UTC)
-Received: from krava (ovpn-204-161.brq.redhat.com [10.40.204.161])
-        by smtp.corp.redhat.com (Postfix) with SMTP id C3F425C669;
-        Tue, 13 Nov 2018 10:40:55 +0000 (UTC)
-Date:   Tue, 13 Nov 2018 11:40:54 +0100
-From:   Jiri Olsa <jolsa@redhat.com>
-To:     David Miller <davem@davemloft.net>
-Cc:     acme@kernel.org, linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        jolsa@kernel.org
-Subject: Re: [PATCH RFC] hist lookups
-Message-ID: <20181113104054.GJ30042@krava>
-References: <20181111194132.GA3769@krava>
- <20181111.150801.1421291572221954626.davem@davemloft.net>
- <20181111232627.GC30042@krava>
- <20181111.153259.2003083478035551655.davem@davemloft.net>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181111.153259.2003083478035551655.davem@davemloft.net>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Tue, 13 Nov 2018 10:40:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9969B22419;
+        Tue, 13 Nov 2018 10:43:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542105801;
+        bh=syzH+GoLCOO7VABA4SDXGqQQBuf8EmxRqfaEMhz1CHs=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=NcKJI7c0Jm9PHHQ2o/a1/Xm7t2m6a1R+OMEoxu+zAT6Dt9rk5YvpIHV3X8glrNugC
+         G0U3oP2BIccuEQZpKswzkRmTatwp8XfS7yaOY5RYoe99dKuQdDhBQ4EG1SqqPEmIzR
+         NUDKpDYu4WVo4HRiu1Vjwm4j+ms8p50Jy520iG18=
+Message-ID: <d95861372835a647d1ed09a9eaed20b8172062a5.camel@kernel.org>
+Subject: Re: [PATCH 00/12 v5] locks: avoid thundering-herd wake-ups
+From:   Jeff Layton <jlayton@kernel.org>
+To:     NeilBrown <neilb@suse.com>,
+        Alexander Viro <viro@zeniv.linux.org.uk>
+Cc:     "J. Bruce Fields" <bfields@fieldses.org>,
+        Martin Wilck <mwilck@suse.de>, linux-fsdevel@vger.kernel.org,
+        Frank Filz <ffilzlnx@mindspring.com>,
+        linux-kernel@vger.kernel.org
+Date:   Tue, 13 Nov 2018 05:43:19 -0500
+In-Reply-To: <154198490921.14364.13726904731989686092.stgit@noble>
+References: <154198490921.14364.13726904731989686092.stgit@noble>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 03:32:59PM -0800, David Miller wrote:
-> From: Jiri Olsa <jolsa@redhat.com>
-> Date: Mon, 12 Nov 2018 00:26:27 +0100
+On Mon, 2018-11-12 at 12:14 +1100, NeilBrown wrote:
+> Changes:
+>  - field names improved as requested by Bruce.
+>    "fl_blocked_requests" is a list of blocked requests,
+>    linked through fl_block_member
+>  - the introductory text has been moved to a commit comment
+>    as suggested by Bruce
+>  - documentation added to locks.c as suggested by Bruce - I made
+>    a few little changes
+>  - flock_make_lock() now properly initialized a lock - using
+>    the code from Jeff
+>  - code actually compiles for ocfs2 and gfs2
 > 
-> > On Sun, Nov 11, 2018 at 03:08:01PM -0800, David Miller wrote:
-> >> From: Jiri Olsa <jolsa@redhat.com>
-> >> Date: Sun, 11 Nov 2018 20:41:32 +0100
-> >> 
-> >> > On Thu, Nov 08, 2018 at 05:07:21PM -0800, David Miller wrote:
-> >> >> From: Jiri Olsa <jolsa@redhat.com>
-> >> >> Date: Thu, 8 Nov 2018 08:13:03 +0100
-> >> >> 
-> >> >> > we could separated fork/mmaps to separate dummy event map, or just
-> >> >> > parse them out in the read thread and create special queue for them
-> >> >> > and drop just samples in case we are behind
-> >> >> 
-> >> >> What you say at the end here is basically what I am proposing.
-> >> >> 
-> >> >> Perf dequeues events from mmap ring as fast as possible.
-> >> >> 
-> >> >> Perf has two internal queues, high priority and low priority.
-> >> >> 
-> >> >> High priority events are never dropped.
-> >> >> 
-> >> >> Low priority events are dropped on overload, oldest first.
-> >> > 
-> >> > I added the dropping logic, it's simple so far..
-> >> 
-> >> So for me perf top gets into a state where the samples counter stops
-> >> incrementing, but the event counter does keep moving (which is the
-> >> histogram code decaying histogram entries from the display thread).
-> >> 
-> >> Which means the event processing has basically stopped.
-> >> 
-> >> The event threads are not stuck in a loop, because they respond to
-> >> the "q" keypress and we can exit.
-> > 
-> > is the drop count showing something?
+> Thanks,
+> NeilBrown
 > 
-> It does soon after starting up, then it drops to zero.
+> 
+> ---
+> 
+> NeilBrown (12):
+>       fs/locks: rename some lists and pointers.
+>       fs/locks: split out __locks_wake_up_blocks().
+>       NFS: use locks_copy_lock() to copy locks.
+>       gfs2: properly initial file_lock used for unlock.
+>       ocfs2: properly initial file_lock used for unlock.
+>       locks: use properly initialized file_lock when unlocking.
+>       fs/locks: allow a lock request to block other requests.
+>       fs/locks: always delete_block after waiting.
+>       fs/locks: change all *_conflict() functions to return bool.
+>       fs/locks: create a tree of dependent requests.
+>       locks: merge posix_unblock_lock() and locks_delete_block()
+>       VFS: locks: remove unnecessary white space.
+> 
+> 
+>  fs/cifs/file.c                  |    4 
+>  fs/gfs2/file.c                  |   10 +
+>  fs/lockd/svclock.c              |    2 
+>  fs/locks.c                      |  319 ++++++++++++++++++++++++---------------
+>  fs/nfs/nfs4proc.c               |    6 -
+>  fs/nfsd/nfs4state.c             |    6 -
+>  fs/ocfs2/locks.c                |   10 +
+>  include/linux/fs.h              |   13 +-
+>  include/trace/events/filelock.h |   16 +-
+>  9 files changed, 230 insertions(+), 156 deletions(-)
+> 
+> --
+> Signature
+> 
 
-ok I see it on ~200 cpu server now.. we actuly spawn the
-UI message box in the reader thread and wait for user to
-press a key with some timeout.. which is not good ;-)
+Thanks Neil,
 
-I removed that and add it to bottom line notification line
-instead and now under heave load I can see lines updates
-together with events being lost/drop
+I'll pull this into locks-next. I also went ahead and fixed up the
+comment that Bruce pointed out.
+-- 
+Jeff Layton <jlayton@kernel.org>
 
-I also changed the lost/drop counts format to:
-  lost: current/total
-
-where current is the count within the refresh period
-and total is overall counts
-
-I pushed/rebased what I have to perf/fixes branch again
-
-please note I had to change our compile changes, because
-they wouldn't compile on x86, but I can't verify on sparc,
-so you might see some compile fails again
-
-jirka
