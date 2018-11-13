@@ -2,151 +2,220 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BEBC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:13:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04318C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 70BBD2243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:13:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AE1ED223DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:15:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jT+pzMCi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70BBD2243E
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LviLNsQA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE1ED223DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731742AbeKNDMf (ORCPT
+        id S1731327AbeKNDOu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 22:12:35 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:37865 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731126AbeKNDMf (ORCPT
+        Tue, 13 Nov 2018 22:14:50 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40165 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730813AbeKNDOu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 22:12:35 -0500
-Received: by mail-lf1-f67.google.com with SMTP id p17so9403597lfh.4;
-        Tue, 13 Nov 2018 09:13:34 -0800 (PST)
+        Tue, 13 Nov 2018 22:14:50 -0500
+Received: by mail-wm1-f67.google.com with SMTP id q26so2157870wmf.5
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 09:15:49 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=subject:from:to:cc:references:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=k2JeBfFhoU+gX6GHsYw6B5VuNeSX4B6xxkbtBWYkl6Y=;
-        b=jT+pzMCi+irxRLn5eAK8i94wOPRszu9H8TaQUuY+3bHsG+LEbw5bLQuY+PQu+0P1b0
-         8pGSoaxzt+gftXK/CFcMqKRWg+K6Hady+gVCUMWCe8utH3xzIjbXSW8lOLxyCsTeYyZc
-         aS1XyrM4sW/hgFle3us8+eAK1MjDdTh+h5yNdC/piqAZxJXAZDuPaVCOqLvBXjapfI7c
-         gGkAIkK0DEpZ8YCLjcWraWLFg3/NNglHoh4q21FZ1Vk6oBF2hQKseSKb/X//4F3COdM4
-         g7CFAtq3smyRJ5lmrKWsruSRyUkbFkvD5UlbStwRDTkiHi3IhWX2z2AhnXfOlhW3Gi28
-         X9jQ==
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=EFeLViPlWIv3TR0VsHeNzQH70D2rbNWOkId0Zk8OVps=;
+        b=LviLNsQAKG83i1IqdnPxhXEZynE8/s5A1FzO6TtGAQVgXRMoerSTRsJ+3PjAHMkFs8
+         Kz0ezbx3BVLvctVTB1HqvhBfJRDNeIH/q1UqdZ+Gi0Wj8LB/+WVlQtmopqXniwRUfkDC
+         8psKGvnRw6VShjY/+v+13gEB0bSAQJGXbLs/VgIgQdVabP7tHLn8a0tCxyxhzVh5pXGl
+         TjsEqEkFY7+ShHaP1NnEOMLZwsXtOGKZOvDlcv2pmTV3OK2urOO48+a6ITvib/fyvVPO
+         cy8oCy1a3E8GLY1R/1R7yXReVpUddo8ojzGQt0SZPMVx9Pv9CBTC9Oaus89q6RqoX17y
+         kHgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=k2JeBfFhoU+gX6GHsYw6B5VuNeSX4B6xxkbtBWYkl6Y=;
-        b=HfXwby3Qf+kQRuNnsiqf1hI3ZiS8FrRlP0D1/k4uz3Uqg9tu8DG4aZVozOUgO5ILLy
-         baM9sCY63XYWqwjV2IqZ+ic9xLtmYrcumJ0L+b2X2xkNUgUTEIVA23brbF/txxDbEpN9
-         U9kraZ2EKh3DVGya1DnmnIp9TxV3dMHaZONs5LPJUX4BZ2w6eBKPhP1BX/AoA/pPx4OT
-         abAhvbn0Blq7NPRifaweWw4bPaVfWUOVXl+dhJdrAqlyPjX9OqdZ/zJf5AtOsJu6Mfj2
-         wolulyMNzHSeqmVxe52An9ksyUnB68YIMQU5RKrt91+2sE4d3KuFKBfqr2RgbPy/Z03L
-         M1Bw==
-X-Gm-Message-State: AGRZ1gJmM4ZOGcXdvIEdc9qSS/y0G8bAgO4RvRbAp7SEyOp6/TdmIPZw
-        WxIoQRlLo2E3I2vJe3HykcOOHBfo
-X-Google-Smtp-Source: AJdET5f+VOuoLDQppbXYLHHPecN/YOc5SKQEBERnQ9FWwwKMK2DZduUnDuLYbS1xhbpRqoRJudKbNQ==
-X-Received: by 2002:a19:be16:: with SMTP id o22mr3362294lff.22.1542129213243;
-        Tue, 13 Nov 2018 09:13:33 -0800 (PST)
-Received: from [192.168.2.145] (ppp91-76-171-181.pppoe.mtu-net.ru. [91.76.171.181])
-        by smtp.googlemail.com with ESMTPSA id y1-v6sm3468834ljh.39.2018.11.13.09.13.31
+        bh=EFeLViPlWIv3TR0VsHeNzQH70D2rbNWOkId0Zk8OVps=;
+        b=SSe4W6+rY+A289o+8nuAPoZ86lt4lD9zVNoCNHA7T1jP7xb1phxN54Qd9ts0DiUpky
+         6+t5T9GojFVjk/QsBGhu9jc5vEcwDbc2kvWEgxTX42+KIGeWwK0peAoB6VUsFc5BjP/v
+         MjPQozXFLhc5bcTBfPxbEPObqHjcjsDMxVL/VR8JoUygSEWgZyknmQrt9kij8C0bzZfL
+         8a90DHU66MeB74ZVNN4SSBlH0C6PQvLIeHvjNDXbYo24JQJZjMRtLwypeOV2Yel0MCa7
+         LDayjAH9mqeetEvwd4iwYErGCMASFEU0oHeFkQKNoizuvl8wyT37LCwdxQQkCZenM/DI
+         7vvw==
+X-Gm-Message-State: AGRZ1gKzJmhH/XC4dPjDZum4KVkuDJGVQYWrjfWbxJoBEI1NtJWNAqPZ
+        Su6fNt6fHPHkG6AMqtG2hrM=
+X-Google-Smtp-Source: AJdET5cmgeLcOKXF8JesbOAVRqFBBD9t1lyFMa0toRv6MyURtgVHTtm9GRI0V13OW3jMdqBbaaMKhQ==
+X-Received: by 2002:a1c:1792:: with SMTP id 140-v6mr3935895wmx.117.1542129348912;
+        Tue, 13 Nov 2018 09:15:48 -0800 (PST)
+Received: from localhost.localdomain (ip1f12fd1d.dynamic.kabel-deutschland.de. [31.18.253.29])
+        by smtp.gmail.com with ESMTPSA id f18-v6sm14780769wre.57.2018.11.13.09.15.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 09:13:32 -0800 (PST)
-Subject: Re: [PATCH] media: staging: tegra-vde: print long unsigned using %lu
- format specifier
-From:   Dmitry Osipenko <digetx@gmail.com>
-To:     Hans Verkuil <hverkuil@xs4all.nl>,
-        Colin King <colin.king@canonical.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Jonathan Hunter <jonathanh@nvidia.com>,
-        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
-        devel@driverdev.osuosl.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181108110224.1916-1-colin.king@canonical.com>
- <0b3bf728-7b7e-7250-40eb-0827f8fe955b@xs4all.nl>
- <67306f07-f270-3395-48c4-f6d4954e0d04@gmail.com>
-Message-ID: <84273284-1da5-daf8-491a-3374e2bf7b41@gmail.com>
-Date:   Tue, 13 Nov 2018 20:12:41 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 13 Nov 2018 09:15:48 -0800 (PST)
+From:   Michael Straube <straube.linux@gmail.com>
+To:     gregkh@linuxfoundation.org
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+        Michael Straube <straube.linux@gmail.com>
+Subject: [PATCH] staging: pi433: remove GPL boiler plate text
+Date:   Tue, 13 Nov 2018 18:13:40 +0100
+Message-Id: <20181113171340.7442-1-straube.linux@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <67306f07-f270-3395-48c4-f6d4954e0d04@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13.11.2018 19:52, Dmitry Osipenko wrote:
-> On 09.11.2018 17:32, Hans Verkuil wrote:
->> On 11/08/18 12:02, Colin King wrote:
->>> From: Colin Ian King <colin.king@canonical.com>
->>>
->>> The frame.flags & FLAG_B_FRAME is promoted to a long unsigned because
->>> of the use of the BIT() macro when defining FLAG_B_FRAME and causing a
->>> build warning. Fix this by using the %lu format specifer.
->>>
->>> Cleans up warning:
->>> drivers/staging/media/tegra-vde/tegra-vde.c:267:5: warning: format
->>> specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
->>>
->>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
->>> ---
->>>  drivers/staging/media/tegra-vde/tegra-vde.c | 2 +-
->>>  1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
->>> index 6f06061a40d9..66cf14212c14 100644
->>> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
->>> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
->>> @@ -262,7 +262,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
->>>  			value |= frame->frame_num;
->>>  
->>>  			dev_dbg(vde->miscdev.parent,
->>> -				"\tFrame %d: frame_num = %d B_frame = %d\n",
->>> +				"\tFrame %d: frame_num = %d B_frame = %lu\n",
->>>  				i + 1, frame->frame_num,
->>>  				(frame->flags & FLAG_B_FRAME));
->>>  		} else {
->>>
->>
->> Compiling for i686 gives:
->>
->> In file included from /home/hans/work/build/media-git/include/linux/printk.h:336,
->>                  from /home/hans/work/build/media-git/include/linux/kernel.h:14,
->>                  from /home/hans/work/build/media-git/include/linux/clk.h:16,
->>                  from /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:12:
->> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c: In function 'tegra_vde_setup_iram_tables':
->> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:265:5: warning: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'u32' {aka 'unsigned int'} [-Wformat=]
->>      "\tFrame %d: frame_num = %d B_frame = %lu\n",
->>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->> /home/hans/work/build/media-git/include/linux/dynamic_debug.h:135:39: note: in definition of macro 'dynamic_dev_dbg'
->>    __dynamic_dev_dbg(&descriptor, dev, fmt, \
->>                                        ^~~
->> /home/hans/work/build/media-git/include/linux/device.h:1463:23: note: in expansion of macro 'dev_fmt'
->>   dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
->>                        ^~~~~~~
->> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:264:4: note: in expansion of macro 'dev_dbg'
->>     dev_dbg(vde->miscdev.parent,
->>     ^~~~~~~
->>
->> Should it be %zu?
-> 
-> Same on ARM32. Yes, it should be either %zu or "!!(frame->flags & FLAG_B_FRAME)".
-> 
+The SPDX identifier is a legally binding shorthand,
+which can be used instead of the full boiler plate text.
 
-Actually this not a problem with a more recent -next. My bad, sorry for the noise. 
+All source and header files have SPDX identifiers.
+Remove the GPL boiler plate text to reduce file size.
 
-Probably I should try again with a "trace points" patch that removes those debug messages.
+Signed-off-by: Michael Straube <straube.linux@gmail.com>
+---
+ drivers/staging/pi433/pi433_if.c       | 10 ----------
+ drivers/staging/pi433/pi433_if.h       | 10 ----------
+ drivers/staging/pi433/rf69.c           | 10 ----------
+ drivers/staging/pi433/rf69.h           | 10 ----------
+ drivers/staging/pi433/rf69_enum.h      | 10 ----------
+ drivers/staging/pi433/rf69_registers.h | 10 ----------
+ 6 files changed, 60 deletions(-)
+
+diff --git a/drivers/staging/pi433/pi433_if.c b/drivers/staging/pi433/pi433_if.c
+index c85a805a1243..786478671190 100644
+--- a/drivers/staging/pi433/pi433_if.c
++++ b/drivers/staging/pi433/pi433_if.c
+@@ -14,16 +14,6 @@
+  *
+  * Copyright (C) 2016 Wolf-Entwicklungen
+  *	Marcus Wolf <linux@wolf-entwicklungen.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #undef DEBUG
+diff --git a/drivers/staging/pi433/pi433_if.h b/drivers/staging/pi433/pi433_if.h
+index 2d4fa77c793e..9feb95c431cb 100644
+--- a/drivers/staging/pi433/pi433_if.h
++++ b/drivers/staging/pi433/pi433_if.h
+@@ -15,16 +15,6 @@
+  * HopeRf with a similar interace - e. g. RFM69HCW, RFM12, RFM95, ...
+  * Copyright (C) 2016 Wolf-Entwicklungen
+  *	Marcus Wolf <linux@wolf-entwicklungen.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef PI433_H
+diff --git a/drivers/staging/pi433/rf69.c b/drivers/staging/pi433/rf69.c
+index 4fa6c0237e59..e19b9ce794a8 100644
+--- a/drivers/staging/pi433/rf69.c
++++ b/drivers/staging/pi433/rf69.c
+@@ -4,16 +4,6 @@
+  *
+  * Copyright (C) 2016 Wolf-Entwicklungen
+  *	Marcus Wolf <linux@wolf-entwicklungen.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ /* enable prosa debug info */
+diff --git a/drivers/staging/pi433/rf69.h b/drivers/staging/pi433/rf69.h
+index 319b86c14234..d43a8d87d5d3 100644
+--- a/drivers/staging/pi433/rf69.h
++++ b/drivers/staging/pi433/rf69.h
+@@ -4,16 +4,6 @@
+  *
+  * Copyright (C) 2016 Wolf-Entwicklungen
+  *	Marcus Wolf <linux@wolf-entwicklungen.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ #ifndef RF69_H
+ #define RF69_H
+diff --git a/drivers/staging/pi433/rf69_enum.h b/drivers/staging/pi433/rf69_enum.h
+index de3b7e32dad7..3ee1952245c2 100644
+--- a/drivers/staging/pi433/rf69_enum.h
++++ b/drivers/staging/pi433/rf69_enum.h
+@@ -4,16 +4,6 @@
+  *
+  * Copyright (C) 2016 Wolf-Entwicklungen
+  *	Marcus Wolf <linux@wolf-entwicklungen.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ #ifndef RF69_ENUM_H
+diff --git a/drivers/staging/pi433/rf69_registers.h b/drivers/staging/pi433/rf69_registers.h
+index ea19c1ca7509..f925a83c3247 100644
+--- a/drivers/staging/pi433/rf69_registers.h
++++ b/drivers/staging/pi433/rf69_registers.h
+@@ -4,16 +4,6 @@
+  *
+  * Copyright (C) 2016 Wolf-Entwicklungen
+  *	Marcus Wolf <linux@wolf-entwicklungen.de>
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License as published by
+- * the Free Software Foundation; either version 2 of the License, or
+- * (at your option) any later version.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+  */
+ 
+ /*******************************************/
+-- 
+2.19.1
+
