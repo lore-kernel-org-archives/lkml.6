@@ -2,97 +2,87 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DCF8C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:47:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E961C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:51:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1183922360
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:47:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1183922360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+	by mail.kernel.org (Postfix) with ESMTP id 4F6D5214F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:51:59 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZXjkE/5c"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6D5214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731756AbeKMTot (ORCPT
+        id S1731791AbeKMTtP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 14:44:49 -0500
-Received: from lithops.sigma-star.at ([195.201.40.130]:51162 "EHLO
-        lithops.sigma-star.at" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731399AbeKMTot (ORCPT
+        Tue, 13 Nov 2018 14:49:15 -0500
+Received: from mail-wr1-f46.google.com ([209.85.221.46]:32843 "EHLO
+        mail-wr1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731625AbeKMTtP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 14:44:49 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 4F00F606C474;
-        Tue, 13 Nov 2018 10:47:29 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id BR7WZ334hGnj; Tue, 13 Nov 2018 10:47:28 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by lithops.sigma-star.at (Postfix) with ESMTP id 666ED606D487;
-        Tue, 13 Nov 2018 10:47:28 +0100 (CET)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-        by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id rlrJzKEpNQCi; Tue, 13 Nov 2018 10:47:28 +0100 (CET)
-Received: from blindfold.localnet (unknown [82.150.214.1])
-        by lithops.sigma-star.at (Postfix) with ESMTPSA id 86CC2606D481;
-        Tue, 13 Nov 2018 10:47:27 +0100 (CET)
-From:   Richard Weinberger <richard@nod.at>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Ingo Molnar <mingo@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
-        linuxppc-dev@lists.ozlabs.org,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        "H. Peter Anvin" <hpa@zytor.com>, Borislav Petkov <bp@alien8.de>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] um: remove -fno-unit-at-a-time workaround for pre-4.0 GCC
-Date:   Tue, 13 Nov 2018 10:47:27 +0100
-Message-ID: <2624257.jg98z2FPBI@blindfold>
-In-Reply-To: <1541990120-9643-2-git-send-email-yamada.masahiro@socionext.com>
-References: <1541990120-9643-1-git-send-email-yamada.masahiro@socionext.com> <1541990120-9643-2-git-send-email-yamada.masahiro@socionext.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+        Tue, 13 Nov 2018 14:49:15 -0500
+Received: by mail-wr1-f46.google.com with SMTP id u9-v6so12542987wrr.0
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 01:51:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=j3IWhqTdCei0mMsvFYCXlQcZEgy5UWilcxCSoGPiDas=;
+        b=ZXjkE/5cyyG9DtNGqtvwvsNjSv96aDnSN/OVXnHtwIGFbBDsvVCA1F6QC3LhMcdZd6
+         2aZ0TXGK0uDxEJkhWh5yBX69xAR8LAw2YhWxJBAypBWgbzR9Ftu9h7DjpVNFIMD+T8/e
+         rmttRAQYe9CZww7DTLesOuUyTz3y87mWxkr5Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=j3IWhqTdCei0mMsvFYCXlQcZEgy5UWilcxCSoGPiDas=;
+        b=EAIGSrYsReB5QU6J56aGiclEAg7z0S/fHrgqoo0MNffDSKkIb6iTlr5DPlGn/33B2A
+         6EgBgj103zI/DjfvWYWpoCLnfCOY7MbQJT3pGMsL9S6tjcyq9Zl9R+ldT3kxHY5EM9NL
+         KMnA5QOIlghlfbO2kKo08XVQY3WAwJMIMjbp0PsEcayqkFf3yfVk3ZEpuiEeII4efZMw
+         2VxWcpKWdbENvuucjcfWdcRZRcxd/twzButN1GpiJG0Q4xfQNjeBjOfoSFY/iISZRP++
+         rk4OVdIF7acL8uSpmY76ro0iIcAG5XYKlnjBaN9Bf25+naBiqUsY6KRZiAc0AY0KK6NI
+         ptOA==
+X-Gm-Message-State: AGRZ1gK2+9SbR0cY7Xq0tYcimoKFnV/+Y7PLWraai1urnpUMh0PgErBm
+        gCZiyq5yHn8ENqO4gIZ5AJ3IHw==
+X-Google-Smtp-Source: AJdET5cwcdAgVV7Jhq5zTxRLS+FVbTzhwXoOKwqZIUZJj+niOpbsv7ulUfIa1ryCFzGsuv1SxRxRBw==
+X-Received: by 2002:a05:6000:d2:: with SMTP id q18mr4146853wrx.302.1542102715450;
+        Tue, 13 Nov 2018 01:51:55 -0800 (PST)
+Received: from lmecxl0911.lme.st.com ([2a04:cec0:1088:2b4c:8cab:bca7:b2f2:d2bb])
+        by smtp.gmail.com with ESMTPSA id d4sm6044279wrp.89.2018.11.13.01.51.53
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 13 Nov 2018 01:51:54 -0800 (PST)
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     linus.walleij@linaro.org, robh+dt@kernel.org,
+        alexandre.torgue@st.com
+Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH 0/3] make pin-controller use hwspinlock
+Date:   Tue, 13 Nov 2018 10:51:39 +0100
+Message-Id: <20181113095142.32015-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Montag, 12. November 2018, 03:35:19 CET schrieb Masahiro Yamada:
-> Commit cafa0010cd51 ("Raise the minimum required gcc version to 4.6")
-> bumped the minimum GCC version to 4.6 for all architectures.
-> 
-> '$(call cc-option,-fno-unit-at-a-time)' is now dead code since
-> '$(cc-version) -lt 0400' is always false.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  arch/x86/Makefile.um | 8 ++------
->  1 file changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/arch/x86/Makefile.um b/arch/x86/Makefile.um
-> index 91085a0..577976b 100644
-> --- a/arch/x86/Makefile.um
-> +++ b/arch/x86/Makefile.um
-> @@ -26,12 +26,8 @@ cflags-y += $(call cc-option,-mpreferred-stack-boundary=2)
->  # an unresolved reference.
->  cflags-y += -ffreestanding
->  
-> -# Disable unit-at-a-time mode on pre-gcc-4.0 compilers, it makes gcc use
-> -# a lot more stack due to the lack of sharing of stacklots.  Also, gcc
-> -# 4.3.0 needs -funit-at-a-time for extern inline functions.
-> -KBUILD_CFLAGS += $(shell if [ $(cc-version) -lt 0400 ] ; then \
-> -			echo $(call cc-option,-fno-unit-at-a-time); \
-> -			else echo $(call cc-option,-funit-at-a-time); fi ;)
-> +# gcc 4.3.0 needs -funit-at-a-time for extern inline functions.
-> +KBUILD_CFLAGS += $(call cc-option,-funit-at-a-time)
+This series allow to protect pin controller configuration registers
+with a hwspinlock to avoid conflicting accesses between processors.
 
-Acked-by: Richard Weinberger <richard@nod.at>
+Benjamin Gaignard (3):
+  dt-bindings: pinctrl: stm32: Document hwlocks properties
+  pinctrl: stm32: protect configuration registers with a hwspinlock
+  ARM: dts: stm32: Add hwlock for pinctrl
 
-Thanks,
-//richard
+ .../bindings/pinctrl/st,stm32-pinctrl.txt          |  1 +
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi          |  1 +
+ drivers/pinctrl/stm32/pinctrl-stm32.c              | 71 +++++++++++++++++++++-
+ 3 files changed, 72 insertions(+), 1 deletion(-)
 
-
+-- 
+2.15.0
 
