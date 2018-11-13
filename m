@@ -2,177 +2,99 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4821C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:39:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55A00C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:40:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2C35206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:39:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2C35206BA
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0F5E9206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:40:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="FWhzKSW2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F5E9206BA
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731428AbeKMSgM (ORCPT
+        id S1731458AbeKMShL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 13:36:12 -0500
-Received: from mga17.intel.com ([192.55.52.151]:39423 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730736AbeKMSgL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 13:36:11 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 00:39:06 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,498,1534834800"; 
-   d="scan'208";a="107814761"
-Received: from sidorovd-mobl.ccr.corp.intel.com (HELO kekkonen.fi.intel.com) ([10.252.53.165])
-  by orsmga001.jf.intel.com with ESMTP; 13 Nov 2018 00:39:02 -0800
-Received: by kekkonen.fi.intel.com (Postfix, from userid 1000)
-        id 2F51821DB6; Tue, 13 Nov 2018 10:38:56 +0200 (EET)
-Date:   Tue, 13 Nov 2018 10:38:55 +0200
-From:   Sakari Ailus <sakari.ailus@linux.intel.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH 1/5] dt-bindings: media: Add Allwinner A10 CSI binding
-Message-ID: <20181113083855.s5jxrb32ru3myu3t@kekkonen.localdomain>
-References: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
- <60494dd4245ab01473d074dc5cd46198a2181614.1542097288.git-series.maxime.ripard@bootlin.com>
+        Tue, 13 Nov 2018 13:37:11 -0500
+Received: from hqemgate16.nvidia.com ([216.228.121.65]:10707 "EHLO
+        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730800AbeKMShK (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 13:37:10 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bea8def0001>; Tue, 13 Nov 2018 00:40:15 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 13 Nov 2018 00:40:06 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 13 Nov 2018 00:40:06 -0800
+Received: from [10.21.132.148] (10.124.1.5) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 13 Nov
+ 2018 08:40:04 +0000
+Subject: Re: [PATCH 4.14 000/222] 4.14.81-stable review
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     <torvalds@linux-foundation.org>, <akpm@linux-foundation.org>,
+        <linux@roeck-us.net>, <shuah@kernel.org>, <patches@kernelci.org>,
+        <ben.hutchings@codethink.co.uk>, <lkft-triage@lists.linaro.org>,
+        <stable@vger.kernel.org>, linux-tegra <linux-tegra@vger.kernel.org>
+References: <20181111221647.665769131@linuxfoundation.org>
+From:   Jon Hunter <jonathanh@nvidia.com>
+Message-ID: <306f3631-7b82-6827-021f-e345c2191332@nvidia.com>
+Date:   Tue, 13 Nov 2018 08:40:02 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <60494dd4245ab01473d074dc5cd46198a2181614.1542097288.git-series.maxime.ripard@bootlin.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181111221647.665769131@linuxfoundation.org>
+X-Originating-IP: [10.124.1.5]
+X-ClientProxiedBy: HQMAIL105.nvidia.com (172.20.187.12) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1542098415; bh=L6HOrrma71QDiuPXLOhTa8Nw4du0X4siKRnIEZ4js5o=;
+        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=FWhzKSW2kU+5e1m0uw6byNZm0LSEKHomWw6o9voN1Qo9pE+ivgIJBJlNJQWRKLVIv
+         5Ge4ltOC0y2nUqsTzuV9ts6u3csGOc27HtIFlrUIrDh5UYPSOgYnxIk+ZkLJuBdDLO
+         ESSuxQgSK9ld85W4vGA/DNtH9WYQNBxClRnVl89TLTLpd9+yynrnbDol/Q6GaY6+a1
+         yYoeirIr+TQPVAp3H5xDse+ihtIHrPFYW84tzWPcWb+ayMzIf3aRUrJhQaAZ+3M+Gx
+         ivLLFtdE2AeHQY/RDquBeI4KVk7uGTHpIVaKNgkVK2vFHhSq2pD6Fd5P2ZPDn3XAb0
+         nTgSsoLsabWYg==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
 
-On Tue, Nov 13, 2018 at 09:24:13AM +0100, Maxime Ripard wrote:
-> The Allwinner A10 CMOS Sensor Interface is a camera capture interface also
-> used in later (A10s, A13, A20, R8 and GR8) SoCs.
+On 11/11/2018 22:21, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 4.14.81 release.
+> There are 222 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 > 
-> On some SoCs, like the A10, there's multiple instances of that controller,
-> with one instance supporting more channels and having an ISP.
-> 
-> Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> ---
->  Documentation/devicetree/bindings/media/sun4i-csi.txt | 71 ++++++++++++-
->  1 file changed, 71 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/sun4i-csi.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/sun4i-csi.txt b/Documentation/devicetree/bindings/media/sun4i-csi.txt
-> new file mode 100644
-> index 000000000000..3d96bcbef9d9
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/sun4i-csi.txt
-> @@ -0,0 +1,71 @@
-> +Allwinner A10 CMOS Sensor Interface
-> +-------------------------------------
-> +
-> +The Allwinner A10 SoC features two camera capture interfaces, one
-> +featuring an ISP and the other without. Later SoCs built upon that
-> +design and used similar SoCs.
-> +
-> +Required properties:
-> +  - compatible: value must be one of:
-> +    * allwinner,sun4i-a10-csi
-> +    * allwinner,sun5i-a13-csi, allwinner,sun4i-a10-csi
-> +    * allwinner,sun7i-a20-csi, allwinner,sun4i-a10-csi
-> +  - reg: base address and size of the memory-mapped region.
-> +  - interrupts: interrupt associated to this IP
-> +  - clocks: phandles to the clocks feeding the CSI
-> +    * ahb: the CSI interface clock
-> +    * mod: the CSI module clock
-> +    * ram: the CSI DRAM clock
-> +  - clock-names: the clock names mentioned above
-> +  - resets: phandles to the reset line driving the CSI
-> +
-> +Optional properties:
-> +  - allwinner,csi-channels: Number of channels available in the CSI
-> +                            controller. If not present, the default
-> +                            will be 1.
-> +  - allwinner,has-isp: Whether the CSI controller has an ISP
-> +                       associated to it or not
+> Responses should be made by Tue Nov 13 22:15:32 UTC 2018.
+> Anything received after that time might be too late.
+All tests are passing for Tegra ...
 
-Is the ISP a part of the same device? It sounds like that this is actually
-a different device if it contains an ISP as well, and that should be
-apparent from the compatible string. What do you think?
+Test results for stable-v4.14:
+    8 builds:	8 pass, 0 fail
+    16 boots:	16 pass, 0 fail
+    14 tests:	14 pass, 0 fail
 
-> +
-> +If allwinner,has-isp is set, an additional "isp" clock is needed,
-> +being a phandle to the clock driving the ISP.
-> +
-> +The CSI node should contain one 'port' child node with one child
-> +'endpoint' node, according to the bindings defined in
-> +Documentation/devicetree/bindings/media/video-interfaces.txt. The
-> +endpoint's bus type must be parallel or BT656.
-> +
-> +Endpoint node properties for CSI
-> +---------------------------------
-> +
-> +- remote-endpoint	: (required) a phandle to the bus receiver's endpoint
-> +			   node
+Linux version:	4.14.81-rc1-g8ea9437
+Boards tested:	tegra124-jetson-tk1, tegra20-ventana,
+                tegra210-p2371-2180, tegra30-cardhu-a04
 
-Rob's opinion has been (AFAIU) that this is not needed as it's already a
-part of the graph bindings. Unless you want to say that it's required, that
-is --- the graph bindings document it as optional.
-
-> +- bus-width:		: (required) must be 8
-
-If this is the only value the hardware supports, I don't see why you should
-specify it here.
-
-> +- pclk-sample		: (optional) (default: sample on falling edge)
-> +- hsync-active		: (only required for parallel)
-> +- vsync-active		: (only required for parallel)
-> +
-> +Example:
-> +
-> +csi0: csi@1c09000 {
-> +	compatible = "allwinner,sun7i-a20-csi",
-> +		     "allwinner,sun4i-a10-csi";
-> +	reg = <0x01c09000 0x1000>;
-> +	interrupts = <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
-> +	clocks = <&ccu CLK_AHB_CSI0>, <&ccu CLK_CSI0>,
-> +		 <&ccu CLK_CSI_SCLK>, <&ccu CLK_DRAM_CSI0>;
-> +	clock-names = "ahb", "mod", "isp", "ram";
-> +	resets = <&ccu RST_CSI0>;
-> +	allwinner,csi-channels = <4>;
-> +	allwinner,has-isp;
-> +	
-> +	port {
-> +		csi_from_ov5640: endpoint {
-> +                        remote-endpoint = <&ov5640_to_csi>;
-> +                        bus-width = <8>;
-> +                        data-shift = <2>;
-
-data-shift needs to be documented above if it's relevant for the device.
-
-> +                        hsync-active = <1>; /* Active high */
-> +                        vsync-active = <0>; /* Active low */
-> +                        pclk-sample = <1>;  /* Rising */
-> +                };
-> +	};
-> +};
+Cheers
+Jon
 
 -- 
-Kind regards,
-
-Sakari Ailus
-sakari.ailus@linux.intel.com
+nvpublic
