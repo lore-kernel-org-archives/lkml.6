@@ -6,48 +6,60 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A8BDC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:58:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73048C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C903223CB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:58:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A334223CB
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:59:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="hagp5elB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C903223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LIBr5SiN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A334223CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732782AbeKMPzI (ORCPT
+        id S1732368AbeKMPsD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:55:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34536 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:48:03 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731087AbeKMPsS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:48:18 -0500
+        id S1730921AbeKMPsB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:48:01 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0AA4D22510;
-        Tue, 13 Nov 2018 05:51:50 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 250402251A;
+        Tue, 13 Nov 2018 05:51:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088310;
-        bh=Lpm7SHpu7WLq7xIwdN24+tKRdX4Rqfv+5SIwBwozd4g=;
+        s=default; t=1542088293;
+        bh=JcY+WzrPSuTjHDbRuycHhS06+jiQBmPF77l8I+aRBTg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=hagp5elBRNonOsJVyZAlAzUnNHNGCgcvywZn4gEFF24NSfDgeKru3jbC8/la1b888
-         058SDH8NXHGDslcHDIoXHFQ/iHLh6ezctN6DNC3sT4DT3g0eM1Wars4V/94VZU+5F3
-         mfT4n54aQ2jm99bJoSsvfDj0ihnmftdsMg2/pvLI=
+        b=LIBr5SiND0MXDqNwfLb/wYWukX7vcHIsH9tGpcjWctXCXKN6HcUkkqJJDXjTuLKZ3
+         gH19b7j5HO6gDomvgBCc8bnmlGj0grK+vF4CsaeaLD/sP71scRVvDpLiM/tjJ4h1te
+         IktIARynw7L7cvdOC6w+9lvr3KUEX+AkEcqppN/E=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Pekka Enberg <penberg@kernel.org>,
+Cc:     Feng Tang <feng.tang@intel.com>, Borislav Petkov <bp@suse.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        "Stuart R . Anderson" <stuart.r.anderson@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
         David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.18 39/39] mm: don't warn about large allocations for slab
-Date:   Tue, 13 Nov 2018 00:50:53 -0500
-Message-Id: <20181113055053.78352-39-sashal@kernel.org>
+        Frederic Weisbecker <frederic@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        H Peter Anvin <hpa@linux.intel.com>,
+        Ingo Molnar <mingo@kernel.org>, Jiri Kosina <jkosina@suse.cz>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Kai-Heng Feng <kai.heng.feng@canonical.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Thymo van Beers <thymovanbeers@gmail.com>,
+        alan@linux.intel.com, linux-doc@vger.kernel.org,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 27/39] x86/earlyprintk: Add a force option for pciserial device
+Date:   Tue, 13 Nov 2018 00:50:41 -0500
+Message-Id: <20181113055053.78352-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113055053.78352-1-sashal@kernel.org>
 References: <20181113055053.78352-1-sashal@kernel.org>
@@ -56,111 +68,149 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Feng Tang <feng.tang@intel.com>
 
-[ Upstream commit 61448479a9f2c954cde0cfe778cb6bec5d0a748d ]
+[ Upstream commit d2266bbfa9e3e32e3b642965088ca461bd24a94f ]
 
-Slub does not call kmalloc_slab() for sizes > KMALLOC_MAX_CACHE_SIZE,
-instead it falls back to kmalloc_large().
+The "pciserial" earlyprintk variant helps much on many modern x86
+platforms, but unfortunately there are still some platforms with PCI
+UART devices which have the wrong PCI class code. In that case, the
+current class code check does not allow for them to be used for logging.
 
-For slab KMALLOC_MAX_CACHE_SIZE == KMALLOC_MAX_SIZE and it calls
-kmalloc_slab() for all allocations relying on NULL return value for
-over-sized allocations.
+Add a sub-option "force" which overrides the class code check and thus
+the use of such device can be enforced.
 
-This inconsistency leads to unwanted warnings from kmalloc_slab() for
-over-sized allocations for slab.  Returning NULL for failed allocations is
-the expected behavior.
+ [ bp: massage formulations. ]
 
-Make slub and slab code consistent by checking size >
-KMALLOC_MAX_CACHE_SIZE in slab before calling kmalloc_slab().
-
-While we are here also fix the check in kmalloc_slab().  We should check
-against KMALLOC_MAX_CACHE_SIZE rather than KMALLOC_MAX_SIZE.  It all kinda
-worked because for slab the constants are the same, and slub always checks
-the size against KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().  But if we
-get there with size > KMALLOC_MAX_CACHE_SIZE anyhow bad things will
-happen.  For example, in case of a newly introduced bug in slub code.
-
-Also move the check in kmalloc_slab() from function entry to the size >
-192 case.  This partially compensates for the additional check in slab
-code and makes slub code a bit faster (at least theoretically).
-
-Also drop __GFP_NOWARN in the warning check.  This warning means a bug in
-slab code itself, user-passed flags have nothing to do with it.
-
-Nothing of this affects slob.
-
-Link: http://lkml.kernel.org/r/20180927171502.226522-1-dvyukov@gmail.com
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
-Reported-by: syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com
-Reported-by: syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com
-Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
-Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
-Acked-by: Christoph Lameter <cl@linux.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Pekka Enberg <penberg@kernel.org>
+Suggested-by: Borislav Petkov <bp@alien8.de>
+Signed-off-by: Feng Tang <feng.tang@intel.com>
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Cc: "Stuart R . Anderson" <stuart.r.anderson@intel.com>
+Cc: Bjorn Helgaas <bhelgaas@google.com>
 Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Feng Tang <feng.tang@intel.com>
+Cc: Frederic Weisbecker <frederic@kernel.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: H Peter Anvin <hpa@linux.intel.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Jiri Kosina <jkosina@suse.cz>
+Cc: Jonathan Corbet <corbet@lwn.net>
+Cc: Kai-Heng Feng <kai.heng.feng@canonical.com>
+Cc: Kate Stewart <kstewart@linuxfoundation.org>
+Cc: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Philippe Ombredanne <pombredanne@nexb.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Thymo van Beers <thymovanbeers@gmail.com>
+Cc: alan@linux.intel.com
+Cc: linux-doc@vger.kernel.org
+Link: http://lkml.kernel.org/r/20181002164921.25833-1-feng.tang@intel.com
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/slab.c        |  4 ++++
- mm/slab_common.c | 12 ++++++------
- 2 files changed, 10 insertions(+), 6 deletions(-)
+ .../admin-guide/kernel-parameters.txt         |  6 +++-
+ arch/x86/kernel/early_printk.c                | 29 ++++++++++++-------
+ 2 files changed, 24 insertions(+), 11 deletions(-)
 
-diff --git a/mm/slab.c b/mm/slab.c
-index aa76a70e087e..d73c7a4820a4 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -3675,6 +3675,8 @@ __do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller)
- 	struct kmem_cache *cachep;
- 	void *ret;
+diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+index 1370b424a453..7af11d3d5fe3 100644
+--- a/Documentation/admin-guide/kernel-parameters.txt
++++ b/Documentation/admin-guide/kernel-parameters.txt
+@@ -1035,7 +1035,7 @@
+ 			earlyprintk=serial[,0x...[,baudrate]]
+ 			earlyprintk=ttySn[,baudrate]
+ 			earlyprintk=dbgp[debugController#]
+-			earlyprintk=pciserial,bus:device.function[,baudrate]
++			earlyprintk=pciserial[,force],bus:device.function[,baudrate]
+ 			earlyprintk=xdbc[xhciController#]
  
-+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
-+		return NULL;
- 	cachep = kmalloc_slab(size, flags);
- 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
- 		return cachep;
-@@ -3710,6 +3712,8 @@ static __always_inline void *__do_kmalloc(size_t size, gfp_t flags,
- 	struct kmem_cache *cachep;
- 	void *ret;
+ 			earlyprintk is useful when the kernel crashes before
+@@ -1067,6 +1067,10 @@
  
-+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
-+		return NULL;
- 	cachep = kmalloc_slab(size, flags);
- 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
- 		return cachep;
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 2296caf87bfb..8a0fba22c910 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1027,18 +1027,18 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
+ 			The sclp output can only be used on s390.
+ 
++			The optional "force" to "pciserial" enables use of a
++			PCI device even when its classcode is not of the
++			UART class.
++
+ 	edac_report=	[HW,EDAC] Control how to report EDAC event
+ 			Format: {"on" | "off" | "force"}
+ 			on: enable EDAC to report H/W event. May be overridden
+diff --git a/arch/x86/kernel/early_printk.c b/arch/x86/kernel/early_printk.c
+index 5e801c8c8ce7..374a52fa5296 100644
+--- a/arch/x86/kernel/early_printk.c
++++ b/arch/x86/kernel/early_printk.c
+@@ -213,8 +213,9 @@ static unsigned int mem32_serial_in(unsigned long addr, int offset)
+  * early_pci_serial_init()
+  *
+  * This function is invoked when the early_printk param starts with "pciserial"
+- * The rest of the param should be ",B:D.F,baud" where B, D & F describe the
+- * location of a PCI device that must be a UART device.
++ * The rest of the param should be "[force],B:D.F,baud", where B, D & F describe
++ * the location of a PCI device that must be a UART device. "force" is optional
++ * and overrides the use of an UART device with a wrong PCI class code.
+  */
+ static __init void early_pci_serial_init(char *s)
  {
- 	unsigned int index;
+@@ -224,17 +225,23 @@ static __init void early_pci_serial_init(char *s)
+ 	u32 classcode, bar0;
+ 	u16 cmdreg;
+ 	char *e;
++	int force = 0;
  
--	if (unlikely(size > KMALLOC_MAX_SIZE)) {
--		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
--		return NULL;
--	}
 -
- 	if (size <= 192) {
- 		if (!size)
- 			return ZERO_SIZE_PTR;
+-	/*
+-	 * First, part the param to get the BDF values
+-	 */
+ 	if (*s == ',')
+ 		++s;
  
- 		index = size_index[size_index_elem(size)];
--	} else
-+	} else {
-+		if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
-+			WARN_ON(1);
-+			return NULL;
-+		}
- 		index = fls(size - 1);
+ 	if (*s == 0)
+ 		return;
+ 
++	/* Force the use of an UART device with wrong class code */
++	if (!strncmp(s, "force,", 6)) {
++		force = 1;
++		s += 6;
++	}
++
++	/*
++	 * Part the param to get the BDF values
++	 */
+ 	bus = (u8)simple_strtoul(s, &e, 16);
+ 	s = e;
+ 	if (*s != ':')
+@@ -253,7 +260,7 @@ static __init void early_pci_serial_init(char *s)
+ 		s++;
+ 
+ 	/*
+-	 * Second, find the device from the BDF
++	 * Find the device from the BDF
+ 	 */
+ 	cmdreg = read_pci_config(bus, slot, func, PCI_COMMAND);
+ 	classcode = read_pci_config(bus, slot, func, PCI_CLASS_REVISION);
+@@ -264,8 +271,10 @@ static __init void early_pci_serial_init(char *s)
+ 	 */
+ 	if (((classcode >> 16 != PCI_CLASS_COMMUNICATION_MODEM) &&
+ 	     (classcode >> 16 != PCI_CLASS_COMMUNICATION_SERIAL)) ||
+-	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */
+-		return;
++	   (((classcode >> 8) & 0xff) != 0x02)) /* 16550 I/F at BAR0 */ {
++		if (!force)
++			return;
 +	}
  
- #ifdef CONFIG_ZONE_DMA
- 	if (unlikely((flags & GFP_DMA)))
+ 	/*
+ 	 * Determine if it is IO or memory mapped
+@@ -289,7 +298,7 @@ static __init void early_pci_serial_init(char *s)
+ 	}
+ 
+ 	/*
+-	 * Lastly, initialize the hardware
++	 * Initialize the hardware
+ 	 */
+ 	if (*s) {
+ 		if (strcmp(s, "nocfg") == 0)
 -- 
 2.17.1
 
