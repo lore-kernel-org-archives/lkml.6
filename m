@@ -2,100 +2,101 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E3EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:02:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D777DC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:03:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BB622206B2
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:02:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="g9VdCkkf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB622206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 9DE5B206B2
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:03:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DE5B206B2
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727019AbeKNFCX (ORCPT
+        id S1727682AbeKNFCk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:02:23 -0500
-Received: from hqemgate16.nvidia.com ([216.228.121.65]:9269 "EHLO
-        hqemgate16.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725750AbeKNFCW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:02:22 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate16.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5beb1fe90000>; Tue, 13 Nov 2018 11:03:05 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 13 Nov 2018 11:02:56 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 13 Nov 2018 11:02:56 -0800
-Received: from [10.26.11.248] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 13 Nov
- 2018 19:02:55 +0000
-Subject: Re: [PATCH] soc/tegra: remove duplicated function declaration
-To:     Bo Yan <byan@nvidia.com>, <thierry.reding@gmail.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <1542131465-22773-1-git-send-email-byan@nvidia.com>
-From:   Jon Hunter <jonathanh@nvidia.com>
-Message-ID: <c57a2c48-d247-04f4-2e68-0fecca5b6260@nvidia.com>
-Date:   Tue, 13 Nov 2018 19:02:53 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 14 Nov 2018 00:02:40 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32762 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725748AbeKNFCk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 00:02:40 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 8617393963916;
+        Tue, 13 Nov 2018 19:03:10 +0000 (GMT)
+Received: from [10.202.210.149] (10.202.210.149) by smtpsuk.huawei.com
+ (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 13 Nov
+ 2018 19:03:10 +0000
+Subject: Re: [PATCH 10/17] prmem: documentation
+To:     Andy Lutomirski <luto@kernel.org>
+CC:     Nadav Amit <nadav.amit@gmail.com>,
+        Igor Stoppa <igor.stoppa@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        "Michal Hocko" <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
+ <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com>
+ <386C0CB1-C4B1-43E2-A754-DA8DBE4FB3CB@gmail.com>
+ <CALCETrWWcfLK4W3mn0bavzejmMBVKMX29aAUA3+VPQ8m9vmfhw@mail.gmail.com>
+ <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com>
+ <2e52e103-15d0-0c26-275f-894dfd07e8ec@huawei.com>
+ <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com>
+From:   Igor Stoppa <igor.stoppa@huawei.com>
+Message-ID: <4e573601-dd5e-1fdf-da3a-df438e5b967d@huawei.com>
+Date:   Tue, 13 Nov 2018 21:03:07 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <1542131465-22773-1-git-send-email-byan@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL106.nvidia.com (172.18.146.12) To
- HQMAIL101.nvidia.com (172.20.187.10)
+In-Reply-To: <CALCETrV0sPgf4ZgG1joF_5hM-ycPsWM9DWGO=diQ_LQKin4VuA@mail.gmail.com>
 Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542135785; bh=LMK4PEY8r0LYNaG0cV6wA0f0aqs33LQXuNpLXO6C88o=;
-        h=X-PGP-Universal:Subject:To:CC:References:From:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=g9VdCkkfB+Bb3GSyIuDlVn5BaT6Y7ci/zfwVck4erdhiFrD2Hcyoqd08ZkTsf10M5
-         h8XzyEWj8A1/H/hdGctVUX8geOBy975hwSDxLbtyiNzWwhChoz5iA25kXzuqTICoMv
-         k4AOU5ATTWXvHwc7yGf4kBtbg3JipNlxLipICabCfLGneKPm30JEFDPajNB6cGkqUq
-         qys4d+NBzdhbsC2ZLj9F72idzqoPE2YITPohTZvgBvyq3Yb6OLQQiT2kGXNHC+KkF9
-         SzNzihgffTV97ESeghnVXnVAn/fibAzW0H6Bh8uTKFKHbahnLUYroiUJ8s9WJ+vKEY
-         LuIXTj9Q6m3zQ==
+X-Originating-IP: [10.202.210.149]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 13/11/2018 20:36, Andy Lutomirski wrote:
+> On Tue, Nov 13, 2018 at 10:33 AM Igor Stoppa <igor.stoppa@huawei.com> wrote:
 
-On 13/11/2018 17:51, Bo Yan wrote:
-> The function tegra_read_chipid is declared twice in fuse.h. Remove
-> the redundant declaration.
+[...]
+
+>> Unless the secondary mapping is also available to other cores, through
+>> the shared mm_struct ?
+>>
 > 
-> Signed-off-by: Bo Yan <byan@nvidia.com>
-> ---
->  include/soc/tegra/fuse.h | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-> index 9b6ea0c..8fb2f8a 100644
-> --- a/include/soc/tegra/fuse.h
-> +++ b/include/soc/tegra/fuse.h
-> @@ -60,7 +60,6 @@ struct tegra_sku_info {
->  
->  u32 tegra_read_straps(void);
->  u32 tegra_read_ram_code(void);
-> -u32 tegra_read_chipid(void);
->  int tegra_fuse_readl(unsigned long offset, u32 *value);
->  
->  extern struct tegra_sku_info tegra_sku_info;
+> I don't think this matters much.  The other cores will only be able to
+> use that mapping when they're doing a rare write.
 
-Acked-by: Jon Hunter <jonathanh@nvidia.com>
+Which has now been promoted to target for attacks :-)
 
-Cheers
-Jon
+--
+igor
 
--- 
-nvpublic
