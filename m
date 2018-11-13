@@ -2,92 +2,73 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E62E2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:56:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F237C169D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:56:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B927F22360
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:56:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B927F22360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id F1E9222360
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:56:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1E9222360
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731483AbeKNCy5 (ORCPT
+        id S1731556AbeKNCzQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 21:54:57 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:34201 "EHLO mail.bootlin.com"
+        Tue, 13 Nov 2018 21:55:16 -0500
+Received: from mga12.intel.com ([192.55.52.136]:30379 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731259AbeKNCy4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 21:54:56 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6AEAA20746; Tue, 13 Nov 2018 17:55:59 +0100 (CET)
-Received: from windsurf (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 084B420743;
-        Tue, 13 Nov 2018 17:55:59 +0100 (CET)
-Date:   Tue, 13 Nov 2018 17:55:58 +0100
-From:   Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-To:     Hans Verkuil <hansverk@cisco.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Hans Verkuil <hverkuil@xs4all.nl>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH 0/5] media: Allwinner A10 CSI support
-Message-ID: <20181113175558.3bfa3e8d@windsurf>
-In-Reply-To: <cb504ffc-b74c-d6e3-7bde-6c5840c87997@cisco.com>
-References: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
-        <df54f2e6-e207-92de-767a-e356345a1a56@xs4all.nl>
-        <20181113135259.onutfjtoi25afnfe@flea>
-        <f07a0460-cdba-c1a5-acfd-66a39f447a5a@cisco.com>
-        <20181113155227.62jjs3mpomwgr7xd@flea>
-        <cb504ffc-b74c-d6e3-7bde-6c5840c87997@cisco.com>
-Organization: Bootlin (formerly Free Electrons)
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        id S1731259AbeKNCzQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 21:55:16 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga006.jf.intel.com ([10.7.209.51])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 08:56:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,228,1539673200"; 
+   d="scan'208";a="90806709"
+Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
+  by orsmga006.jf.intel.com with ESMTP; 13 Nov 2018 08:56:17 -0800
+Date:   Tue, 13 Nov 2018 18:56:15 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Roberto Sassu <roberto.sassu@huawei.com>
+Cc:     Peter Huewe <peterhuewe@gmx.de>, zohar@linux.ibm.com,
+        linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com
+Subject: Re: [PATCH v4 4/6] tpm: modify tpm_pcr_read() definition to pass a
+ TPM hash algorithm
+Message-ID: <20181113165615.GB4752@linux.intel.com>
+References: <20181106150159.1136-1-roberto.sassu@huawei.com>
+ <20181106150159.1136-5-roberto.sassu@huawei.com>
+ <20181108140454.GE8922@linux.intel.com>
+ <7a43680a-a216-a191-62a3-c2fb4e72d699@huawei.com>
+ <20181108151504.GD14072@linux.intel.com>
+ <289C0413-4FFB-4831-B82A-D0C3A965053D@gmx.de>
+ <20181108190835.GF20608@linux.intel.com>
+ <20181113123449.GA22356@linux.intel.com>
+ <0bbfd76f-67eb-52be-4475-7f8b57d198a1@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <0bbfd76f-67eb-52be-4475-7f8b57d198a1@huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
-
-On Tue, 13 Nov 2018 17:00:25 +0100, Hans Verkuil wrote:
-
-> Weird, if I build directly from that tarball, then v4l2-compliance should say:
+On Tue, Nov 13, 2018 at 01:39:26PM +0100, Roberto Sassu wrote:
+> > AFAIK the kernel development process does not disallow to use direct
+> > git protocol for maintainer branches. Please, correct me if I'm
+> > mistaken.
 > 
-> v4l2-compliance SHA: not available, 64 bits
-> 
-> So that's what I expect to see from buildroot as well.
+> I solved the issue by creating a mirror of your repository with gitlab.
 
-Indeed, that's strange, I see that the v4l2-compliance Makefile does:
+Ok, great!
 
-version.h:
-        @if git -C $(srcdir) rev-parse HEAD >/dev/null 2>&1; then \
-                echo -n "#define SHA " >$@ ; \
-                git -C $(srcdir) rev-parse HEAD >>$@ ; \
-        else \
-                touch $@ ; \
-        fi
-
-which correctly uses $(srcdir), so it shouldn't go "up" the libv4l
-build folder and pick up the latest Buildroot commit SHA1. I'll have a
-quick look.
-
-Best regards,
-
-Thomas
--- 
-Thomas Petazzoni, CTO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+/Jarkko
