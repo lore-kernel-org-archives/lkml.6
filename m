@@ -7,49 +7,48 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81AD7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27A5EC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C84F22511
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E4B762251E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ynvul6Qg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C84F22511
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XDsfCc2Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E4B762251E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732820AbeKMPsu (ORCPT
+        id S1732838AbeKMPsv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:48:50 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35550 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:48:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35580 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731660AbeKMPsu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:48:50 -0500
+        id S1732788AbeKMPsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:48:51 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 192D622507;
+        by mail.kernel.org (Postfix) with ESMTPSA id 790552251D;
         Tue, 13 Nov 2018 05:52:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542088342;
-        bh=9dH0lsyD10h8yVXMzJ7Xjtl0we3Me20hRIgdPeiXvpM=;
+        bh=g4oRi6iD6jYnZXzqC9XJfHAoZ363ncG3WwRFG+WbXic=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ynvul6QgrEZCrINCz9RtbJqrtbf4rBEz0X/1qkxmW6l8IOXBjEacvF81AanMN9TK+
-         HrS0OzjE+VkYmg/b8ZVPFgq6FFoZ3zVOr2NWzEpbTPWlZ3sej0MwMWGpZu+3ja2/l8
-         UAmBcK7C0nNLz7VTVj8KyPnZKg+yW72IGiupEMRY=
+        b=XDsfCc2ZNmxw7TtGqMCssYA0xyyGlF3io9ukb5dYHvkl2W1v/KTNRuyTUUg5Km6hI
+         WuDKeMjwXnQVZZ9oHcaG/wD85scaq9ktUdogQzilGUvLzvkZQ8iHrsmUsLYzVQwAuf
+         69mUtuLEig7x+tY3BK08RLSpYJTFNJb+U7SxFxig=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
+Cc:     Dmitry Vyukov <dvyukov@google.com>,
+        Pekka Enberg <penberg@kernel.org>,
+        David Rientjes <rientjes@google.com>,
+        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.14 25/26] mm: don't miss the last page because of round-off error
-Date:   Tue, 13 Nov 2018 00:51:49 -0500
-Message-Id: <20181113055150.78773-25-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 26/26] mm: don't warn about large allocations for slab
+Date:   Tue, 13 Nov 2018 00:51:50 -0500
+Message-Id: <20181113055150.78773-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113055150.78773-1-sashal@kernel.org>
 References: <20181113055150.78773-1-sashal@kernel.org>
@@ -58,83 +57,111 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
+From: Dmitry Vyukov <dvyukov@google.com>
 
-[ Upstream commit 68600f623d69da428c6163275f97ca126e1a8ec5 ]
+[ Upstream commit 61448479a9f2c954cde0cfe778cb6bec5d0a748d ]
 
-I've noticed, that dying memory cgroups are often pinned in memory by a
-single pagecache page.  Even under moderate memory pressure they sometimes
-stayed in such state for a long time.  That looked strange.
+Slub does not call kmalloc_slab() for sizes > KMALLOC_MAX_CACHE_SIZE,
+instead it falls back to kmalloc_large().
 
-My investigation showed that the problem is caused by applying the LRU
-pressure balancing math:
+For slab KMALLOC_MAX_CACHE_SIZE == KMALLOC_MAX_SIZE and it calls
+kmalloc_slab() for all allocations relying on NULL return value for
+over-sized allocations.
 
-  scan = div64_u64(scan * fraction[lru], denominator),
+This inconsistency leads to unwanted warnings from kmalloc_slab() for
+over-sized allocations for slab.  Returning NULL for failed allocations is
+the expected behavior.
 
-where
+Make slub and slab code consistent by checking size >
+KMALLOC_MAX_CACHE_SIZE in slab before calling kmalloc_slab().
 
-  denominator = fraction[anon] + fraction[file] + 1.
+While we are here also fix the check in kmalloc_slab().  We should check
+against KMALLOC_MAX_CACHE_SIZE rather than KMALLOC_MAX_SIZE.  It all kinda
+worked because for slab the constants are the same, and slub always checks
+the size against KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().  But if we
+get there with size > KMALLOC_MAX_CACHE_SIZE anyhow bad things will
+happen.  For example, in case of a newly introduced bug in slub code.
 
-Because fraction[lru] is always less than denominator, if the initial scan
-size is 1, the result is always 0.
+Also move the check in kmalloc_slab() from function entry to the size >
+192 case.  This partially compensates for the additional check in slab
+code and makes slub code a bit faster (at least theoretically).
 
-This means the last page is not scanned and has
-no chances to be reclaimed.
+Also drop __GFP_NOWARN in the warning check.  This warning means a bug in
+slab code itself, user-passed flags have nothing to do with it.
 
-Fix this by rounding up the result of the division.
+Nothing of this affects slob.
 
-In practice this change significantly improves the speed of dying cgroups
-reclaim.
-
-[guro@fb.com: prevent double calculation of DIV64_U64_ROUND_UP() arguments]
-  Link: http://lkml.kernel.org/r/20180829213311.GA13501@castle
-Link: http://lkml.kernel.org/r/20180827162621.30187-3-guro@fb.com
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Konstantin Khlebnikov <koct9i@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
+Link: http://lkml.kernel.org/r/20180927171502.226522-1-dvyukov@gmail.com
+Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
+Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
+Reported-by: syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com
+Reported-by: syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com
+Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
+Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
+Acked-by: Christoph Lameter <cl@linux.com>
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Cc: Pekka Enberg <penberg@kernel.org>
+Cc: David Rientjes <rientjes@google.com>
+Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/math64.h | 3 +++
- mm/vmscan.c            | 6 ++++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ mm/slab.c        |  4 ++++
+ mm/slab_common.c | 12 ++++++------
+ 2 files changed, 10 insertions(+), 6 deletions(-)
 
-diff --git a/include/linux/math64.h b/include/linux/math64.h
-index 082de345b73c..3a7a14062668 100644
---- a/include/linux/math64.h
-+++ b/include/linux/math64.h
-@@ -254,4 +254,7 @@ static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 divisor)
- }
- #endif /* mul_u64_u32_div */
+diff --git a/mm/slab.c b/mm/slab.c
+index 198c1e2c5358..68ab88e2920e 100644
+--- a/mm/slab.c
++++ b/mm/slab.c
+@@ -3670,6 +3670,8 @@ __do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller)
+ 	struct kmem_cache *cachep;
+ 	void *ret;
  
-+#define DIV64_U64_ROUND_UP(ll, d)	\
-+	({ u64 _tmp = (d); div64_u64((ll) + _tmp - 1, _tmp); })
-+
- #endif /* _LINUX_MATH64_H */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index be56e2e1931e..9734e62654fa 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2367,9 +2367,11 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 			/*
- 			 * Scan types proportional to swappiness and
- 			 * their relative recent reclaim efficiency.
-+			 * Make sure we don't miss the last page
-+			 * because of a round-off error.
- 			 */
--			scan = div64_u64(scan * fraction[file],
--					 denominator);
-+			scan = DIV64_U64_ROUND_UP(scan * fraction[file],
-+						  denominator);
- 			break;
- 		case SCAN_FILE:
- 		case SCAN_ANON:
++	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
++		return NULL;
+ 	cachep = kmalloc_slab(size, flags);
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+@@ -3705,6 +3707,8 @@ static __always_inline void *__do_kmalloc(size_t size, gfp_t flags,
+ 	struct kmem_cache *cachep;
+ 	void *ret;
+ 
++	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
++		return NULL;
+ 	cachep = kmalloc_slab(size, flags);
+ 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
+ 		return cachep;
+diff --git a/mm/slab_common.c b/mm/slab_common.c
+index 91d271b90600..f6764cf162b8 100644
+--- a/mm/slab_common.c
++++ b/mm/slab_common.c
+@@ -971,18 +971,18 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
+ {
+ 	int index;
+ 
+-	if (unlikely(size > KMALLOC_MAX_SIZE)) {
+-		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
+-		return NULL;
+-	}
+-
+ 	if (size <= 192) {
+ 		if (!size)
+ 			return ZERO_SIZE_PTR;
+ 
+ 		index = size_index[size_index_elem(size)];
+-	} else
++	} else {
++		if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
++			WARN_ON(1);
++			return NULL;
++		}
+ 		index = fls(size - 1);
++	}
+ 
+ #ifdef CONFIG_ZONE_DMA
+ 	if (unlikely((flags & GFP_DMA)))
 -- 
 2.17.1
 
