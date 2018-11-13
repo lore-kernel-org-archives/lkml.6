@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82285C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:49:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4A1C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4262622512
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:49:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 36DC62250F
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vwZ9/Xvo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4262622512
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCN8d7ys"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36DC62250F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730884AbeKMPqV (ORCPT
+        id S1730942AbeKMPqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:46:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59886 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:46:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:59910 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727475AbeKMPqU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:46:20 -0500
+        id S1730805AbeKMPqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:46:21 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1E28C2250F;
+        by mail.kernel.org (Postfix) with ESMTPSA id B105622507;
         Tue, 13 Nov 2018 05:49:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542088193;
-        bh=r2uAgtl/FPWvBkzUCbhQ0Wz2OgqudjzPYkzWiYxK12c=;
+        bh=XT3u7JQ5fxdfizeCMv6duT7LCiHvaRUtEVjHvZbgKps=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vwZ9/XvohsNUjq4dDLkpWVaAdwxR/qZkoUeO7j8vSU0TerV3QvgvxVjj2Z2I1046p
-         ytOhzwYD2YRRM/61UOi68pDUyhAUiEsJrnit9DsyMI+FtaNpVwoKTP/8LRURcvsNAr
-         ZYH9lDlVOrcVoY0ikFUG6Osmklr447XiBD+/itpQ=
+        b=WCN8d7ysqR1LsM6y+l4wS5VIQW0EziAacaaWKEqVKxPVU+HBpL8V8q+ElsH/MpMhX
+         qv/BrmWkA44zvjT+WYaDKfoIvUx8qVVlAENIPqiHm2TEkh8gKS+7BkAdxoYnHmJymm
+         7wuvWnv4s2ND5gY5uTyj2V8tCkvWQJB87RT49JJ0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 04/44] arm64: kprobe: make page to RO mode when allocate it
-Date:   Tue, 13 Nov 2018 00:49:10 -0500
-Message-Id: <20181113054950.77898-4-sashal@kernel.org>
+Cc:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 06/44] block: brd: associate with queue until adding disk
+Date:   Tue, 13 Nov 2018 00:49:12 -0500
+Message-Id: <20181113054950.77898-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
 References: <20181113054950.77898-1-sashal@kernel.org>
@@ -53,123 +52,105 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Anders Roxell <anders.roxell@linaro.org>
+From: Ming Lei <ming.lei@redhat.com>
 
-[ Upstream commit 966866892cf89d606544bca22d584ba2ef9ec208 ]
+[ Upstream commit 153fcd5f6d93b8e1e4040b1337f564a10f8d93af ]
 
-Commit 1404d6f13e47 ("arm64: dump: Add checking for writable and exectuable pages")
-has successfully identified code that leaves a page with W+X
-permissions.
+brd_free() may be called in failure path on one brd instance which
+disk isn't added yet, so release handler of gendisk may free the
+associated request_queue early and causes the following use-after-free[1].
 
-[    3.245140] arm64/mm: Found insecure W+X mapping at address (____ptrval____)/0xffff000000d90000
-[    3.245771] WARNING: CPU: 0 PID: 1 at ../arch/arm64/mm/dump.c:232 note_page+0x410/0x420
-[    3.246141] Modules linked in:
-[    3.246653] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc5-next-20180928-00001-ge70ae259b853-dirty #62
-[    3.247008] Hardware name: linux,dummy-virt (DT)
-[    3.247347] pstate: 80000005 (Nzcv daif -PAN -UAO)
-[    3.247623] pc : note_page+0x410/0x420
-[    3.247898] lr : note_page+0x410/0x420
-[    3.248071] sp : ffff00000804bcd0
-[    3.248254] x29: ffff00000804bcd0 x28: ffff000009274000
-[    3.248578] x27: ffff00000921a000 x26: ffff80007dfff000
-[    3.248845] x25: ffff0000093f5000 x24: ffff000009526f6a
-[    3.249109] x23: 0000000000000004 x22: ffff000000d91000
-[    3.249396] x21: ffff000000d90000 x20: 0000000000000000
-[    3.249661] x19: ffff00000804bde8 x18: 0000000000000400
-[    3.249924] x17: 0000000000000000 x16: 0000000000000000
-[    3.250271] x15: ffffffffffffffff x14: 295f5f5f5f6c6176
-[    3.250594] x13: 7274705f5f5f5f28 x12: 2073736572646461
-[    3.250941] x11: 20746120676e6970 x10: 70616d20582b5720
-[    3.251252] x9 : 6572756365736e69 x8 : 3039643030303030
-[    3.251519] x7 : 306666666678302f x6 : ffff0000095467b2
-[    3.251802] x5 : 0000000000000000 x4 : 0000000000000000
-[    3.252060] x3 : 0000000000000000 x2 : ffffffffffffffff
-[    3.252323] x1 : 4d151327adc50b00 x0 : 0000000000000000
-[    3.252664] Call trace:
-[    3.252953]  note_page+0x410/0x420
-[    3.253186]  walk_pgd+0x12c/0x238
-[    3.253417]  ptdump_check_wx+0x68/0xf8
-[    3.253637]  mark_rodata_ro+0x68/0x98
-[    3.253847]  kernel_init+0x38/0x160
-[    3.254103]  ret_from_fork+0x10/0x18
+This patch fixes this issue by associating gendisk with request_queue
+just before adding disk.
 
-kprobes allocates a writable executable page with module_alloc() in
-order to store executable code.
-Reworked to that when allocate a page it sets mode RO. Inspired by
-commit 63fef14fc98a ("kprobes/x86: Make insn buffer always ROX and use text_poke()").
+[1] KASAN: use-after-free Read in del_timer_syncNon-volatile memory driver v1.3
+Linux agpgart interface v0.103
+[drm] Initialized vgem 1.0.0 20120112 for virtual device on minor 0
+usbcore: registered new interface driver udl
+==================================================================
+BUG: KASAN: use-after-free in __lock_acquire+0x36d9/0x4c20
+kernel/locking/lockdep.c:3218
+Read of size 8 at addr ffff8801d1b6b540 by task swapper/0/1
 
-Suggested-by: Arnd Bergmann <arnd@arndb.de>
-Suggested-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Acked-by: Will Deacon <will.deacon@arm.com>
-Acked-by: Masami Hiramatsu <mhiramat@kernel.org>
-Reviewed-by: Laura Abbott <labbott@redhat.com>
-Signed-off-by: Anders Roxell <anders.roxell@linaro.org>
-[catalin.marinas@arm.com: removed unnecessary casts]
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0+ #88
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  __lock_acquire+0x36d9/0x4c20 kernel/locking/lockdep.c:3218
+  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+  del_timer_sync+0xb7/0x270 kernel/time/timer.c:1283
+  blk_cleanup_queue+0x413/0x710 block/blk-core.c:809
+  brd_free+0x5d/0x71 drivers/block/brd.c:422
+  brd_init+0x2eb/0x393 drivers/block/brd.c:518
+  do_one_initcall+0x145/0x957 init/main.c:890
+  do_initcall_level init/main.c:958 [inline]
+  do_initcalls init/main.c:966 [inline]
+  do_basic_setup init/main.c:984 [inline]
+  kernel_init_freeable+0x5c6/0x6b9 init/main.c:1148
+  kernel_init+0x11/0x1ae init/main.c:1068
+  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
+
+Reported-by: syzbot+3701447012fe951dabb2@syzkaller.appspotmail.com
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/kernel/probes/kprobes.c | 27 ++++++++++++++++++++-------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ drivers/block/brd.c | 16 +++++++++++-----
+ 1 file changed, 11 insertions(+), 5 deletions(-)
 
-diff --git a/arch/arm64/kernel/probes/kprobes.c b/arch/arm64/kernel/probes/kprobes.c
-index e78c3ef04d95..b5a367d4bba6 100644
---- a/arch/arm64/kernel/probes/kprobes.c
-+++ b/arch/arm64/kernel/probes/kprobes.c
-@@ -23,7 +23,9 @@
- #include <linux/slab.h>
- #include <linux/stop_machine.h>
- #include <linux/sched/debug.h>
-+#include <linux/set_memory.h>
- #include <linux/stringify.h>
-+#include <linux/vmalloc.h>
- #include <asm/traps.h>
- #include <asm/ptrace.h>
- #include <asm/cacheflush.h>
-@@ -42,10 +44,21 @@ DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
- static void __kprobes
- post_kprobe_handler(struct kprobe_ctlblk *, struct pt_regs *);
+diff --git a/drivers/block/brd.c b/drivers/block/brd.c
+index df8103dd40ac..c18586fccb6f 100644
+--- a/drivers/block/brd.c
++++ b/drivers/block/brd.c
+@@ -396,15 +396,14 @@ static struct brd_device *brd_alloc(int i)
+ 	disk->first_minor	= i * max_part;
+ 	disk->fops		= &brd_fops;
+ 	disk->private_data	= brd;
+-	disk->queue		= brd->brd_queue;
+ 	disk->flags		= GENHD_FL_EXT_DEVT;
+ 	sprintf(disk->disk_name, "ram%d", i);
+ 	set_capacity(disk, rd_size * 2);
+-	disk->queue->backing_dev_info->capabilities |= BDI_CAP_SYNCHRONOUS_IO;
++	brd->brd_queue->backing_dev_info->capabilities |= BDI_CAP_SYNCHRONOUS_IO;
  
-+static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-+{
-+	void *addrs[1];
-+	u32 insns[1];
-+
-+	addrs[0] = addr;
-+	insns[0] = opcode;
-+
-+	return aarch64_insn_patch_text(addrs, insns, 1);
-+}
-+
- static void __kprobes arch_prepare_ss_slot(struct kprobe *p)
- {
- 	/* prepare insn slot */
--	p->ainsn.api.insn[0] = cpu_to_le32(p->opcode);
-+	patch_text(p->ainsn.api.insn, p->opcode);
+ 	/* Tell the block layer that this is not a rotational device */
+-	blk_queue_flag_set(QUEUE_FLAG_NONROT, disk->queue);
+-	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, disk->queue);
++	blk_queue_flag_set(QUEUE_FLAG_NONROT, brd->brd_queue);
++	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, brd->brd_queue);
  
- 	flush_icache_range((uintptr_t) (p->ainsn.api.insn),
- 			   (uintptr_t) (p->ainsn.api.insn) +
-@@ -118,15 +131,15 @@ int __kprobes arch_prepare_kprobe(struct kprobe *p)
- 	return 0;
- }
+ 	return brd;
  
--static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-+void *alloc_insn_page(void)
- {
--	void *addrs[1];
--	u32 insns[1];
-+	void *page;
+@@ -436,6 +435,7 @@ static struct brd_device *brd_init_one(int i, bool *new)
  
--	addrs[0] = (void *)addr;
--	insns[0] = (u32)opcode;
-+	page = vmalloc_exec(PAGE_SIZE);
-+	if (page)
-+		set_memory_ro((unsigned long)page, 1);
+ 	brd = brd_alloc(i);
+ 	if (brd) {
++		brd->brd_disk->queue = brd->brd_queue;
+ 		add_disk(brd->brd_disk);
+ 		list_add_tail(&brd->brd_list, &brd_devices);
+ 	}
+@@ -503,8 +503,14 @@ static int __init brd_init(void)
  
--	return aarch64_insn_patch_text(addrs, insns, 1);
-+	return page;
- }
+ 	/* point of no return */
  
- /* arm kprobe: install breakpoint in text */
+-	list_for_each_entry(brd, &brd_devices, brd_list)
++	list_for_each_entry(brd, &brd_devices, brd_list) {
++		/*
++		 * associate with queue just before adding disk for
++		 * avoiding to mess up failure path
++		 */
++		brd->brd_disk->queue = brd->brd_queue;
+ 		add_disk(brd->brd_disk);
++	}
+ 
+ 	blk_register_region(MKDEV(RAMDISK_MAJOR, 0), 1UL << MINORBITS,
+ 				  THIS_MODULE, brd_probe, NULL, NULL);
 -- 
 2.17.1
 
