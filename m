@@ -2,96 +2,143 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D50FC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BA82C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:07:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAA29208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:03:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="kZL5kBQx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAA29208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8C59B2243E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:05:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C59B2243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732283AbeKNECp (ORCPT
+        id S1732421AbeKNEEy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:02:45 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48296 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732091AbeKNECp (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:02:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=soiV/L8zGf9njTPHnYA7qbWKZB4CgnQMvZEoXtPQcNI=; b=kZL5kBQxBs+8jSJsDuCUJvXbm
-        wgAHhcVF7P0HjUqa2VfB4jCiz2HcFgEUkREF955E8oN7eGfMmPAGbwxho51E7QI4dY4238T9qkBcc
-        biawdXewhNP+oP9LWQtB8NR9j9iJrW7/PfLACT7s/MvP4ZgP5P+fowQugZGS4DRrjKHOI=;
-Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gMd24-0002Mn-OK; Tue, 13 Nov 2018 18:03:24 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 85331440078; Tue, 13 Nov 2018 18:03:18 +0000 (GMT)
-Date:   Tue, 13 Nov 2018 10:03:18 -0800
-From:   Mark Brown <broonie@kernel.org>
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Eric Anholt <eric@anholt.net>, Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>, linux-kernel@vger.kernel.org,
-        alsa-devel@alsa-project.org, Florian Kauer <florian.kauer@koalo.de>
-Subject: Re: [PATCH 17/17] ASoc: bcm2835-i2s: Switch to SPDX identifier
-Message-ID: <20181113180318.GE2089@sirena.org.uk>
-References: <1541869351-8499-1-git-send-email-stefan.wahren@i2se.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="a+b56+3nqLzpiR9O"
-Content-Disposition: inline
-In-Reply-To: <1541869351-8499-1-git-send-email-stefan.wahren@i2se.com>
-X-Cookie: No Canadian coins.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 13 Nov 2018 23:04:54 -0500
+Received: from mga07.intel.com ([134.134.136.100]:30019 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726862AbeKNEEy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 23:04:54 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga005.fm.intel.com ([10.253.24.32])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 10:05:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,229,1539673200"; 
+   d="scan'208";a="279519309"
+Received: from marshy.an.intel.com ([10.122.105.159])
+  by fmsmga005.fm.intel.com with ESMTP; 13 Nov 2018 10:05:40 -0800
+From:   richard.gong@linux.intel.com
+To:     gregkh@linuxfoundation.org, catalin.marinas@arm.com,
+        will.deacon@arm.com, dinguyen@kernel.org, robh+dt@kernel.org,
+        mark.rutland@arm.com, atull@kernel.org, mdf@kernel.org,
+        arnd@arndb.de, corbet@lwn.net
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-fpga@vger.kernel.org,
+        linux-doc@vger.kernel.org, todd.riffel@intel.com,
+        richard.gong@linux.intel.com, richard.gong@intel.com
+Subject: [PATCHv11 1/8] dt-bindings, firmware: add Intel Stratix10 service layer binding
+Date:   Tue, 13 Nov 2018 12:13:59 -0600
+Message-Id: <1542132846-24168-2-git-send-email-richard.gong@linux.intel.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542132846-24168-1-git-send-email-richard.gong@linux.intel.com>
+References: <1542132846-24168-1-git-send-email-richard.gong@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Richard Gong <richard.gong@intel.com>
 
---a+b56+3nqLzpiR9O
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Add a device tree binding for the Intel Stratix10 service layer driver
 
-On Sat, Nov 10, 2018 at 06:02:31PM +0100, Stefan Wahren wrote:
+Signed-off-by: Richard Gong <richard.gong@intel.com>
+Signed-off-by: Alan Tull <atull@kernel.org>
+Reviewed-by: Rob Herring <robh@kernel.org>
+Acked-by: Moritz Fischer <mdf@kernel.org>
+---
+v2: change to put service layer driver node under the firmware node
+    change compatible to "intel, stratix10-svc"
+v3: no change
+v4: add Rob's Reviewed-by
+v5: no change
+v6: add Moritz's Acked-by
+v7: no change
+v8: no change
+v9: no chnage
+v10: no change
+v11: no change
+---
+ .../bindings/firmware/intel,stratix10-svc.txt      | 57 ++++++++++++++++++++++
+ 1 file changed, 57 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
 
-> @@ -1,3 +1,4 @@
-> +// SPDX-License-Identifier: GPL-2.0
->  /*
->   * ALSA SoC I2S Audio Layer for Broadcom BCM2835 SoC
->   *
+diff --git a/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt b/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+new file mode 100644
+index 0000000..1fa6606
+--- /dev/null
++++ b/Documentation/devicetree/bindings/firmware/intel,stratix10-svc.txt
+@@ -0,0 +1,57 @@
++Intel Service Layer Driver for Stratix10 SoC
++============================================
++Intel Stratix10 SoC is composed of a 64 bit quad-core ARM Cortex A53 hard
++processor system (HPS) and Secure Device Manager (SDM). When the FPGA is
++configured from HPS, there needs to be a way for HPS to notify SDM the
++location and size of the configuration data. Then SDM will get the
++configuration data from that location and perform the FPGA configuration.
++
++To meet the whole system security needs and support virtual machine requesting
++communication with SDM, only the secure world of software (EL3, Exception
++Layer 3) can interface with SDM. All software entities running on other
++exception layers must channel through the EL3 software whenever it needs
++service from SDM.
++
++Intel Stratix10 service layer driver, running at privileged exception level
++(EL1, Exception Layer 1), interfaces with the service providers and provides
++the services for FPGA configuration, QSPI, Crypto and warm reset. Service layer
++driver also manages secure monitor call (SMC) to communicate with secure monitor
++code running in EL3.
++
++Required properties:
++-------------------
++The svc node has the following mandatory properties, must be located under
++the firmware node.
++
++- compatible: "intel,stratix10-svc"
++- method: smc or hvc
++        smc - Secure Monitor Call
++        hvc - Hypervisor Call
++- memory-region:
++	phandle to the reserved memory node. See
++	Documentation/devicetree/bindings/reserved-memory/reserved-memory.txt
++	for details
++
++Example:
++-------
++
++	reserved-memory {
++                #address-cells = <2>;
++                #size-cells = <2>;
++                ranges;
++
++                service_reserved: svcbuffer@0 {
++                        compatible = "shared-dma-pool";
++                        reg = <0x0 0x0 0x0 0x1000000>;
++                        alignment = <0x1000>;
++                        no-map;
++                };
++        };
++
++	firmware {
++		svc {
++			compatible = "intel,stratix10-svc";
++			method = "smc";
++			memory-region = <&service_reserved>;
++		};
++	};
+-- 
+2.7.4
 
-Please convert the entire comment to a C++ one so this looks more
-intentional.
-
---a+b56+3nqLzpiR9O
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvrEeUACgkQJNaLcl1U
-h9ACjwf/WDuKVcSi2mNxYSryYZ+0wU8RdjLV5swZM/PlA+7dQ/ufaaH47xCTVMXE
-6+j36aLoXcJT+Z78C7CQjn6RNm1+T7I+k71Jqnu4C8eWHvxPs2TTBE4+8uVUpDGb
-JSBGC1r0UblndJYL2r0/ksZOHraoy96XvDCeoefOFstw2m2YizFvrEJNut3zEv2u
-7CdABvi/sSMtRj3lPfAkcxh2ZDfp97WwDicZsulrEWNfkZXnhUs/GSnVdJCK5OWX
-t8KQUjNRZHEYJS+zptUjIr64krJXnvI4/BavI0PtHMC/LfUO39FkWWJ9NGdwoXH0
-HTttU8MclkINtXsaNXnKA+01392+ag==
-=lQyP
------END PGP SIGNATURE-----
-
---a+b56+3nqLzpiR9O--
