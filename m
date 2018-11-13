@@ -7,161 +7,125 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79A36C0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EABEFC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 409FB223CB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B0128223CB
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="w/I/KyFZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 409FB223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1QSJERvp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0128223CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733177AbeKMPtW (ORCPT
+        id S1733194AbeKMPtX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:49:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36564 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:49:23 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733143AbeKMPtU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:49:20 -0500
+        id S1733149AbeKMPtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:49:22 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0564422520;
-        Tue, 13 Nov 2018 05:52:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DAB92251F;
+        Tue, 13 Nov 2018 05:52:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088372;
-        bh=4yz+H6yCMY6hvEdFnbqCuw5Yp9MXp7hlNfxn1OGqh5o=;
+        s=default; t=1542088374;
+        bh=WZqKwaCP1VHwotKtbTrRL3NyUA2P/guY5Sn7rOTRrso=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=w/I/KyFZ8jzAaIwAX/48sS9mp2LZjgp7CBUgNTUNpFjIKhcJJpqmExMxds8JoHLNI
-         gdxZ7dovNgdK7edsDVfRjE0wNRVC2S7v685cwq6qGDyZikHl6Ua8w6zYyVQf+Q6z1V
-         HPQ4DQLyKLvrBu4xLfhiyg4tJy2SbHPOh0W5zJDw=
+        b=1QSJERvpnvktbzXjxDRr24XmkJUQWD0LwhO4xU2LIudBUuFpAz91+/wKsf893rXZ4
+         lsm+Z7YrqKknFeNsR+BUKLWMyxS7r0Qgei4yLyCqJbm7F4DyPzHAaihOCJDfDWRyRd
+         PFBRBo+ZaKXP9oGpe33HMoZLHU/tWfuNAfLcj//c=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+Cc:     Jann Horn <jannh@google.com>, Jeff Mahoney <jeffm@suse.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.4 11/11] mm: don't warn about large allocations for slab
-Date:   Tue, 13 Nov 2018 00:52:42 -0500
-Message-Id: <20181113055242.79261-11-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 2/9] reiserfs: propagate errors from fill_with_dentries() properly
+Date:   Tue, 13 Nov 2018 00:52:45 -0500
+Message-Id: <20181113055252.79406-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113055242.79261-1-sashal@kernel.org>
-References: <20181113055242.79261-1-sashal@kernel.org>
+In-Reply-To: <20181113055252.79406-1-sashal@kernel.org>
+References: <20181113055252.79406-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit 61448479a9f2c954cde0cfe778cb6bec5d0a748d ]
+[ Upstream commit b10298d56c9623f9b173f19959732d3184b35f4f ]
 
-Slub does not call kmalloc_slab() for sizes > KMALLOC_MAX_CACHE_SIZE,
-instead it falls back to kmalloc_large().
+fill_with_dentries() failed to propagate errors up to
+reiserfs_for_each_xattr() properly.  Plumb them through.
 
-For slab KMALLOC_MAX_CACHE_SIZE == KMALLOC_MAX_SIZE and it calls
-kmalloc_slab() for all allocations relying on NULL return value for
-over-sized allocations.
+Note that reiserfs_for_each_xattr() is only used by
+reiserfs_delete_xattrs() and reiserfs_chown_xattrs().  The result of
+reiserfs_delete_xattrs() is discarded anyway, the only difference there is
+whether a warning is printed to dmesg.  The result of
+reiserfs_chown_xattrs() does matter because it can block chowning of the
+file to which the xattrs belong; but either way, the resulting state can
+have misaligned ownership, so my patch doesn't improve things greatly.
 
-This inconsistency leads to unwanted warnings from kmalloc_slab() for
-over-sized allocations for slab.  Returning NULL for failed allocations is
-the expected behavior.
+Credit for making me look at this code goes to Al Viro, who pointed out
+that the ->actor calling convention is suboptimal and should be changed.
 
-Make slub and slab code consistent by checking size >
-KMALLOC_MAX_CACHE_SIZE in slab before calling kmalloc_slab().
-
-While we are here also fix the check in kmalloc_slab().  We should check
-against KMALLOC_MAX_CACHE_SIZE rather than KMALLOC_MAX_SIZE.  It all kinda
-worked because for slab the constants are the same, and slub always checks
-the size against KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().  But if we
-get there with size > KMALLOC_MAX_CACHE_SIZE anyhow bad things will
-happen.  For example, in case of a newly introduced bug in slub code.
-
-Also move the check in kmalloc_slab() from function entry to the size >
-192 case.  This partially compensates for the additional check in slab
-code and makes slub code a bit faster (at least theoretically).
-
-Also drop __GFP_NOWARN in the warning check.  This warning means a bug in
-slab code itself, user-passed flags have nothing to do with it.
-
-Nothing of this affects slob.
-
-Link: http://lkml.kernel.org/r/20180927171502.226522-1-dvyukov@gmail.com
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
-Reported-by: syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com
-Reported-by: syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com
-Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
-Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
-Acked-by: Christoph Lameter <cl@linux.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+Link: http://lkml.kernel.org/r/20180802163335.83312-1-jannh@google.com
+Signed-off-by: Jann Horn <jannh@google.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jeff Mahoney <jeffm@suse.com>
+Cc: Eric Biggers <ebiggers@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/slab.c        |  4 ++++
- mm/slab_common.c | 12 ++++++------
- 2 files changed, 10 insertions(+), 6 deletions(-)
+ fs/reiserfs/xattr.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/mm/slab.c b/mm/slab.c
-index fa49c01225a7..49a64b8c3606 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -3488,6 +3488,8 @@ __do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller)
- {
- 	struct kmem_cache *cachep;
+diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+index 59b29acb6419..0ec755043174 100644
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -184,6 +184,7 @@ struct reiserfs_dentry_buf {
+ 	struct dir_context ctx;
+ 	struct dentry *xadir;
+ 	int count;
++	int err;
+ 	struct dentry *dentries[8];
+ };
  
-+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
-+		return NULL;
- 	cachep = kmalloc_slab(size, flags);
- 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
- 		return cachep;
-@@ -3520,6 +3522,8 @@ static __always_inline void *__do_kmalloc(size_t size, gfp_t flags,
- 	struct kmem_cache *cachep;
- 	void *ret;
+@@ -205,6 +206,7 @@ fill_with_dentries(void *buf, const char *name, int namelen, loff_t offset,
  
-+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
-+		return NULL;
- 	cachep = kmalloc_slab(size, flags);
- 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
- 		return cachep;
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index 01e7246de8df..2e7c960d6a06 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -852,18 +852,18 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
- {
- 	int index;
+ 	dentry = lookup_one_len(name, dbuf->xadir, namelen);
+ 	if (IS_ERR(dentry)) {
++		dbuf->err = PTR_ERR(dentry);
+ 		return PTR_ERR(dentry);
+ 	} else if (!dentry->d_inode) {
+ 		/* A directory entry exists, but no file? */
+@@ -213,6 +215,7 @@ fill_with_dentries(void *buf, const char *name, int namelen, loff_t offset,
+ 			       "not found for file %s.\n",
+ 			       dentry->d_name.name, dbuf->xadir->d_name.name);
+ 		dput(dentry);
++		dbuf->err = -EIO;
+ 		return -EIO;
+ 	}
  
--	if (unlikely(size > KMALLOC_MAX_SIZE)) {
--		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
--		return NULL;
--	}
--
- 	if (size <= 192) {
- 		if (!size)
- 			return ZERO_SIZE_PTR;
- 
- 		index = size_index[size_index_elem(size)];
--	} else
-+	} else {
-+		if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
-+			WARN_ON(1);
-+			return NULL;
+@@ -260,6 +263,10 @@ static int reiserfs_for_each_xattr(struct inode *inode,
+ 		err = reiserfs_readdir_inode(dir->d_inode, &buf.ctx);
+ 		if (err)
+ 			break;
++		if (buf.err) {
++			err = buf.err;
++			break;
 +		}
- 		index = fls(size - 1);
-+	}
- 
- #ifdef CONFIG_ZONE_DMA
- 	if (unlikely((flags & GFP_DMA)))
+ 		if (!buf.count)
+ 			break;
+ 		for (i = 0; !err && i < buf.count && buf.dentries[i]; i++) {
 -- 
 2.17.1
 
