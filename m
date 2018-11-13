@@ -7,58 +7,58 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95B37C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECB6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:03:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52BE82080D
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:02:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06CBB22507
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:03:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="PJL8eMa9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52BE82080D
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20150623.gappssmtp.com header.i=@bgdev-pl.20150623.gappssmtp.com header.b="Sxu9i8eO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06CBB22507
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388223AbeKNABK (ORCPT
+        id S2388236AbeKNAB3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 19:01:10 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:35474 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388107AbeKNAAz (ORCPT
+        Tue, 13 Nov 2018 19:01:29 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:33891 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388110AbeKNAAw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 19:00:55 -0500
-Received: by mail-wm1-f65.google.com with SMTP id t15-v6so11578044wmt.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 06:02:36 -0800 (PST)
+        Tue, 13 Nov 2018 19:00:52 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j26-v6so13441243wre.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 06:02:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=bgdev-pl.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=syCNYOhWI2Fa3CkPeYThsu7drj9CGAM/9EZeMe/84fg=;
-        b=PJL8eMa9+jAOQEZNJcbJMuSBrsGHEjmzI10SPdojyC87xlN5V9crDDWQ+lH3v/VzOM
-         1BgbUtHLRcXfw/YhVhc1RMPR1tHbbr2h2C490+AKByKBjNr5cdg0KaSMeQ2FXZ3djCDX
-         WT6Ys3rYvkQbowoqMbQhCP6WyvgYuMh3LVETsVbCH14uid6zYbfsgiJgv/1Gdx3TjQco
-         dEjOKY9M6u1ZSaJ7RFTHKm9BhVsHRDywikCx2ORM+ukOBDPEiUcYp9J8RjeXrLgxxrv6
-         WHI8fixQ+evqM5Ip9WfK8/u4WR2v+o8N/UryB/bOM8UPhppphIXf4VLR9ztQb3dMp4Q+
-         VXDg==
+        bh=+MhstBAWAWTvjV+7n2ZSuyCNluyXHXlSjobSaNP/M+U=;
+        b=Sxu9i8eOfulldiOW2s6lrLD0kGLvUFXrjFvDiI91iV+FcVDZ5z1S8rnXXIv8CdlXM9
+         lx7GA9Lhz3RYE6o9IGN/Kx8eGTjTuaYpGeOJsqMuCGp2gRZIewhkzjKa3vUKlzEitboM
+         U+nS7lvfka2Ql9lEEC2drCGonOpS8H4cJQEwb+/D5BMDeAfn9+R6j8LTsc2S/Piswvgg
+         yldLYLgtyrfeZ4lf2mn0e8i/83PyeWv/54eYj7SOEyEcr5phSmlrKTD6B34cAJarXcl8
+         ACip3WuKeY4hnsSFwv/ZviaJ+Wsf0bnnIXrJUsgg7XO2ZomEIWERn0lxZxGRsNynSAfv
+         3gvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=syCNYOhWI2Fa3CkPeYThsu7drj9CGAM/9EZeMe/84fg=;
-        b=XE8ERi9GYL8B+T8hRMpOk+b+DCtS/Ff/N1jvocIPNB8qB9RwxYxKrVm2+bKzOk4MDH
-         iuLO6h9Oux3YHhQzcOG/yXqEf49iMIkQbVFPmFRSmzG5ZCMECMMA1nq7pD5w+IAgvV+k
-         79iiC2fTXQVfZtmV1soG4m80yaP5VZaHgGpG8YVE5kWEXYXo2hTwD6Va9+hI9ZY8VGgM
-         uJ10IcvjLUU6/7+dl1xBZuOdwMANJ+/M4GVtePeAAWukc+VGeKdhC9ydEq3d1FzYU9n9
-         uzpwpavrdIXY64Uyc1mOJ3MpzQUfD9EkphJqflA83lJxT5Vik8AXmq7tR0JYVojnUodN
-         mtQA==
-X-Gm-Message-State: AGRZ1gJTCf8lUOZFHFw8RjdLSnplquUqnpwWuBQM6I1RIBmbc9nryNd7
-        AfZdWM+OuIDtzcLHmT4nnUUvPw==
-X-Google-Smtp-Source: AJdET5ePKezX6JsMVmB21bIh2rzVp1xhzc1G5EZ2Oj5DB2QjqGjdRdYo3Cs8BUYnOEw6tUiFG4ab/A==
-X-Received: by 2002:a1c:5f85:: with SMTP id t127-v6mr3313396wmb.44.1542117756310;
-        Tue, 13 Nov 2018 06:02:36 -0800 (PST)
+        bh=+MhstBAWAWTvjV+7n2ZSuyCNluyXHXlSjobSaNP/M+U=;
+        b=h/YNSk7FaQCD+36N7eLX+LPDoQ5j8+xM6NOSfnSP3Hout2H26CTy1yG0AseWQEaBGT
+         1M2/gM85Kk0m6VEB0RKbHxFvPPsHA1aNVOLdTs66AJBy7TdWxrzgNU8p6KbzbDO5OGRk
+         41XTyj9IJW5cHRZSczpHiJpcE18a17NYakm7YHvn/Gjg34UyRX0RiC/2Edvj/V5VOOMM
+         iZIp4Jsmx9HOPRUYSZk9z1k7ateFJbvwJOO4o9j52AOGG5PLvwH1DXp8fsAfWVwLifc8
+         IaZDJSajOhfZp063D3cdY637V6NCCpwsQ9XZuQbacVyjWf6so0/jqvvMakG44eY4gQWX
+         nqQw==
+X-Gm-Message-State: AGRZ1gKTwOjzRlXwIgpWWOAhq4O9wx6Tdwbwh+nQ3xWrAOi8L093luil
+        xx5oRn2TmXn45ei7uD4Dd02QYQ==
+X-Google-Smtp-Source: AJdET5cYRF0z03J3+LXc6zQEY2KOalWWGv3duPIopAzahTAXJAf6RsHxNQP+5fXdh/tbkc05Ilp98g==
+X-Received: by 2002:adf:be0f:: with SMTP id n15mr2375313wrh.267.1542117754451;
+        Tue, 13 Nov 2018 06:02:34 -0800 (PST)
 Received: from debian-brgl.home ([2a01:cb1d:af:5b00:6d6c:8493:1ab5:dad7])
-        by smtp.gmail.com with ESMTPSA id m69-v6sm16604122wmb.8.2018.11.13.06.02.34
+        by smtp.gmail.com with ESMTPSA id m69-v6sm16604122wmb.8.2018.11.13.06.02.32
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 06:02:35 -0800 (PST)
+        Tue, 13 Nov 2018 06:02:33 -0800 (PST)
 From:   Bartosz Golaszewski <brgl@bgdev.pl>
 To:     Sekhar Nori <nsekhar@ti.com>, Kevin Hilman <khilman@kernel.org>,
         Russell King <linux@armlinux.org.uk>,
@@ -83,9 +83,9 @@ Cc:     linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         netdev@vger.kernel.org, linux-omap@vger.kernel.org,
         devicetree@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>
-Subject: [PATCH v2 23/25] ARM: davinci: mityomapl138: use nvmem notifiers
-Date:   Tue, 13 Nov 2018 15:01:31 +0100
-Message-Id: <20181113140133.17385-24-brgl@bgdev.pl>
+Subject: [PATCH v2 22/25] ARM: davinci: remove dead code related to MAC address reading
+Date:   Tue, 13 Nov 2018 15:01:30 +0100
+Message-Id: <20181113140133.17385-23-brgl@bgdev.pl>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181113140133.17385-1-brgl@bgdev.pl>
 References: <20181113140133.17385-1-brgl@bgdev.pl>
@@ -98,76 +98,50 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 
-Stop using the at24_platform_data setup callback in favor of nvmem
-notifiers.
+There are no more users of davinci_get_mac_addr(). Remove it.
 
 Signed-off-by: Bartosz Golaszewski <bgolaszewski@baylibre.com>
 ---
- arch/arm/mach-davinci/board-mityomapl138.c | 18 +++++++++++++++---
- 1 file changed, 15 insertions(+), 3 deletions(-)
+ arch/arm/mach-davinci/common.c | 15 ---------------
+ include/linux/davinci_emac.h   |  1 -
+ 2 files changed, 16 deletions(-)
 
-diff --git a/arch/arm/mach-davinci/board-mityomapl138.c b/arch/arm/mach-davinci/board-mityomapl138.c
-index 3286dc2457a5..ac1a1699d185 100644
---- a/arch/arm/mach-davinci/board-mityomapl138.c
-+++ b/arch/arm/mach-davinci/board-mityomapl138.c
-@@ -15,6 +15,8 @@
- #include <linux/console.h>
- #include <linux/platform_device.h>
- #include <linux/mtd/partitions.h>
-+#include <linux/notifier.h>
-+#include <linux/nvmem-consumer.h>
- #include <linux/nvmem-provider.h>
- #include <linux/regulator/machine.h>
- #include <linux/i2c.h>
-@@ -117,10 +119,15 @@ static void mityomapl138_cpufreq_init(const char *partnum)
- static void mityomapl138_cpufreq_init(const char *partnum) { }
- #endif
+diff --git a/arch/arm/mach-davinci/common.c b/arch/arm/mach-davinci/common.c
+index e1d0f0d841ff..0c638fe15dcb 100644
+--- a/arch/arm/mach-davinci/common.c
++++ b/arch/arm/mach-davinci/common.c
+@@ -26,21 +26,6 @@ EXPORT_SYMBOL(davinci_soc_info);
+ void __iomem *davinci_intc_base;
+ int davinci_intc_type;
  
--static void read_factory_config(struct nvmem_device *nvmem, void *context)
-+static int read_factory_config(struct notifier_block *nb,
-+			       unsigned long event, void *data)
+-void davinci_get_mac_addr(struct nvmem_device *nvmem, void *context)
+-{
+-	char *mac_addr = davinci_soc_info.emac_pdata->mac_addr;
+-	off_t offset = (off_t)context;
+-
+-	if (!IS_BUILTIN(CONFIG_NVMEM)) {
+-		pr_warn("Cannot read MAC addr from EEPROM without CONFIG_NVMEM\n");
+-		return;
+-	}
+-
+-	/* Read MAC addr from EEPROM */
+-	if (nvmem_device_read(nvmem, offset, ETH_ALEN, mac_addr) == ETH_ALEN)
+-		pr_info("Read MAC addr from EEPROM: %pM\n", mac_addr);
+-}
+-
+ static int __init davinci_init_id(struct davinci_soc_info *soc_info)
  {
- 	int ret;
- 	const char *partnum = NULL;
-+	struct nvmem_device *nvmem = data;
-+
-+	if (strcmp(nvmem_dev_name(nvmem), "1-00500") != 0)
-+		return NOTIFY_DONE;
- 
- 	if (!IS_BUILTIN(CONFIG_NVMEM)) {
- 		pr_warn("Factory Config not available without CONFIG_NVMEM\n");
-@@ -152,8 +159,14 @@ static void read_factory_config(struct nvmem_device *nvmem, void *context)
- bad_config:
- 	/* default maximum speed is valid for all platforms */
- 	mityomapl138_cpufreq_init(partnum);
-+
-+	return NOTIFY_STOP;
- }
- 
-+static struct notifier_block mityomapl138_nvmem_notifier = {
-+	.notifier_call = read_factory_config,
-+};
-+
- /*
-  * We don't define a cell for factory config as it will be accessed from the
-  * board file using the nvmem notifier chain.
-@@ -183,8 +196,6 @@ static struct at24_platform_data mityomapl138_fd_chip = {
- 	.byte_len	= 256,
- 	.page_size	= 8,
- 	.flags		= AT24_FLAG_READONLY | AT24_FLAG_IRUGO,
--	.setup		= read_factory_config,
--	.context	= NULL,
+ 	int			i;
+diff --git a/include/linux/davinci_emac.h b/include/linux/davinci_emac.h
+index 05b97144d342..28e6cf1356da 100644
+--- a/include/linux/davinci_emac.h
++++ b/include/linux/davinci_emac.h
+@@ -46,5 +46,4 @@ enum {
+ 	EMAC_VERSION_2,	/* DM646x */
  };
  
- static struct davinci_i2c_platform_data mityomap_i2c_0_pdata = {
-@@ -561,6 +572,7 @@ static void __init mityomapl138_init(void)
- 
- 	davinci_serial_init(da8xx_serial_device);
- 
-+	nvmem_register_notifier(&mityomapl138_nvmem_notifier);
- 	nvmem_add_cell_table(&mityomapl138_nvmem_cell_table);
- 	nvmem_add_cell_lookups(&mityomapl138_nvmem_cell_lookup, 1);
- 
+-void davinci_get_mac_addr(struct nvmem_device *nvmem, void *context);
+ #endif
 -- 
 2.19.1
 
