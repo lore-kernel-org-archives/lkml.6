@@ -2,109 +2,173 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05620C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:01:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C594BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:02:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8945223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:01:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="djsuOlkR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8945223AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id 92887223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:02:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 92887223AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731876AbeKMT7L (ORCPT
+        id S1731929AbeKMT74 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 14:59:11 -0500
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:54504 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731399AbeKMT7L (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 14:59:11 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id CA94B10C0E7D;
-        Tue, 13 Nov 2018 02:01:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1542103310; bh=7shZdoJkjBbh/9l8Swdk9QYudYjDZx/aG1gOLF7tVfA=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=djsuOlkRhlFeCr16gcBfqVgDXRVbyQkZVGWaFZiETWOe6uWB2fR8F/qc53Aja88u0
-         G2rZM9yGi7PTygqFI41Y4u/8/jbryIVmmKZ3owXQ0ZBpzGq/OluVitvrudOTGcAmce
-         YCvjdwhnjWasjcvrGlUi7uBonc5+06PEBbPxp8b09LRAhsmgPlaEJExJ03Wy+xdxzu
-         mj198mp9RsjL9p3H0gF4zI5TLEZtIjAAqVznVOzBEq5qXcDlOe0GXtPEwDyR+gF4y3
-         dATmPVVKsqB9YeEM7UXUnDxSY/wVyhijYlSDVe0vfCShNqyGdR/zWXtjJKqnYIMVnu
-         id/PDZSckVxSQ==
-Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 7C9EF5A3B;
-        Tue, 13 Nov 2018 02:01:50 -0800 (PST)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 13 Nov 2018 02:00:54 -0800
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 13 Nov 2018 11:00:52 +0100
-Received: from [10.107.25.130] (10.107.25.130) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.80) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 13 Nov 2018 11:00:52 +0100
-Subject: Re: [V3, 3/4] Documentation: dt-bindings: media: Document bindings
- for DW MIPI CSI-2 Host
-To:     Rob Herring <robh@kernel.org>,
-        Luis Oliveira <luis.oliveira@synopsys.com>
-CC:     <linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <joao.pinto@synopsys.com>, <festevam@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        "Keiichi Watanabe" <keiichiw@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        <devicetree@vger.kernel.org>
-References: <1539953556-35762-1-git-send-email-lolivei@synopsys.com>
- <1539953556-35762-4-git-send-email-lolivei@synopsys.com>
- <20181024174158.GB2902@bogus>
-From:   Luis de Oliveira <luis.oliveira@synopsys.com>
-Message-ID: <7b0355cb-e000-619d-48ab-08cf6424fd8d@synopsys.com>
-Date:   Tue, 13 Nov 2018 10:00:50 +0000
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 13 Nov 2018 14:59:56 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33260 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731399AbeKMT7z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 14:59:55 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id CA51730041C2;
+        Tue, 13 Nov 2018 10:02:34 +0000 (UTC)
+Received: from colo-mx.corp.redhat.com (colo-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A6BC7546E0;
+        Tue, 13 Nov 2018 10:02:34 +0000 (UTC)
+Received: from zmail21.collab.prod.int.phx2.redhat.com (zmail21.collab.prod.int.phx2.redhat.com [10.5.83.24])
+        by colo-mx.corp.redhat.com (Postfix) with ESMTP id 55A07181A133;
+        Tue, 13 Nov 2018 10:02:34 +0000 (UTC)
+Date:   Tue, 13 Nov 2018 05:02:33 -0500 (EST)
+From:   Pankaj Gupta <pagupta@redhat.com>
+To:     Barret Rhoden <brho@google.com>
+Cc:     Dan Williams <dan.j.williams@intel.com>,
+        David Hildenbrand <david@redhat.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Radim =?utf-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, yu c zhang <yu.c.zhang@intel.com>,
+        yi z zhang <yi.z.zhang@intel.com>
+Message-ID: <286665658.33247363.1542103353780.JavaMail.zimbra@redhat.com>
+In-Reply-To: <043a592d-6592-3053-15a0-68cc54a26deb@redhat.com>
+References: <20181109203921.178363-1-brho@google.com> <20181109203921.178363-3-brho@google.com> <043a592d-6592-3053-15a0-68cc54a26deb@redhat.com>
+Subject: Re: [PATCH 2/2] kvm: Use huge pages for DAX-backed files
 MIME-Version: 1.0
-In-Reply-To: <20181024174158.GB2902@bogus>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.107.25.130]
+X-Originating-IP: [10.67.116.71, 10.4.195.7]
+Thread-Topic: Use huge pages for DAX-backed files
+Thread-Index: XzKD+IYl7+LQIXEseoTV2cViPjNFzw==
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Tue, 13 Nov 2018 10:02:35 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-
-On 24-Oct-18 18:41, Rob Herring wrote:
-> On Fri, Oct 19, 2018 at 02:52:25PM +0200, Luis Oliveira wrote:
->> Add bindings for Synopsys DesignWare MIPI CSI-2 host.
 > 
-> Also, drop "Documentation: " from the subject. All bindings are 
-> documentation and the preferred prefix is 'dt-bindings: <binding dir>: '.
+> On 09.11.18 21:39, Barret Rhoden wrote:
+> > This change allows KVM to map DAX-backed files made of huge pages with
+> > huge mappings in the EPT/TDP.
+> > 
+> > DAX pages are not PageTransCompound.  The existing check is trying to
+> > determine if the mapping for the pfn is a huge mapping or not.  For
+> > non-DAX maps, e.g. hugetlbfs, that means checking PageTransCompound.
+> > For DAX, we can check the page table itself.
+> > 
+> > Note that KVM already faulted in the page (or huge page) in the host's
+> > page table, and we hold the KVM mmu spinlock (grabbed before checking
+> > the mmu seq).
 > 
->>
+> I wonder if the KVM mmu spinlock is enough for walking (not KVM
+> exclusive) host page tables. Can you elaborate?
 
-Ok, thank you again.
+As this patch is dependent on PageReserved patch(which is in progress), just 
+wondering if we are able to test the code path for hugepage with DAX.
 
->> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
->> ---
->> Changelog
->> v2-V3
->> - removed IPI settings
->>
->>  .../devicetree/bindings/media/snps,dw-csi-plat.txt | 52 ++++++++++++++++++++++
->>  1 file changed, 52 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/media/snps,dw-csi-plat.txt
+Thanks,
+Pankaj 
+ 
+> 
+> > 
+> > Signed-off-by: Barret Rhoden <brho@google.com>
+> > ---
+> >  arch/x86/kvm/mmu.c | 34 ++++++++++++++++++++++++++++++++--
+> >  1 file changed, 32 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> > index cf5f572f2305..2df8c459dc6a 100644
+> > --- a/arch/x86/kvm/mmu.c
+> > +++ b/arch/x86/kvm/mmu.c
+> > @@ -3152,6 +3152,36 @@ static int kvm_handle_bad_page(struct kvm_vcpu
+> > *vcpu, gfn_t gfn, kvm_pfn_t pfn)
+> >  	return -EFAULT;
+> >  }
+> >  
+> > +static bool pfn_is_huge_mapped(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn)
+> > +{
+> > +	struct page *page = pfn_to_page(pfn);
+> > +	unsigned long hva, map_shift;
+> > +
+> > +	if (!is_zone_device_page(page))
+> > +		return PageTransCompoundMap(page);
+> > +
+> > +	/*
+> > +	 * DAX pages do not use compound pages.  The page should have already
+> > +	 * been mapped into the host-side page table during try_async_pf(), so
+> > +	 * we can check the page tables directly.
+> > +	 */
+> > +	hva = gfn_to_hva(kvm, gfn);
+> > +	if (kvm_is_error_hva(hva))
+> > +		return false;
+> > +
+> > +	/*
+> > +	 * Our caller grabbed the KVM mmu_lock with a successful
+> > +	 * mmu_notifier_retry, so we're safe to walk the page table.
+> > +	 */
+> > +	map_shift = dev_pagemap_mapping_shift(hva, current->mm);
+> 
+> You could get rid of that local variable map_shift.
+> 
+> > +	switch (map_shift) {
+> > +	case PMD_SHIFT:
+> > +	case PUD_SIZE:
+> > +		return true;
+> > +	}
+> > +	return false;
+> > +}
+> > +
+> >  static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+> >  					gfn_t *gfnp, kvm_pfn_t *pfnp,
+> >  					int *levelp)
+> > @@ -3168,7 +3198,7 @@ static void transparent_hugepage_adjust(struct
+> > kvm_vcpu *vcpu,
+> >  	 */
+> >  	if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
+> >  	    level == PT_PAGE_TABLE_LEVEL &&
+> > -	    PageTransCompoundMap(pfn_to_page(pfn)) &&
+> > +	    pfn_is_huge_mapped(vcpu->kvm, gfn, pfn) &&
+> >  	    !mmu_gfn_lpage_is_disallowed(vcpu, gfn, PT_DIRECTORY_LEVEL)) {
+> >  		unsigned long mask;
+> >  		/*
+> > @@ -5678,7 +5708,7 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm
+> > *kvm,
+> >  		 */
+> >  		if (sp->role.direct &&
+> >  			!kvm_is_reserved_pfn(pfn) &&
+> > -			PageTransCompoundMap(pfn_to_page(pfn))) {
+> > +			pfn_is_huge_mapped(kvm, sp->gfn, pfn)) {
+> >  			pte_list_remove(rmap_head, sptep);
+> >  			need_tlb_flush = 1;
+> >  			goto restart;
+> > 
+> 
+> This looks surprisingly simple to me :)
+> 
+> --
+> 
+> Thanks,
+> 
+> David / dhildenb
+> 
