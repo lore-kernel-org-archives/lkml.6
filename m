@@ -2,389 +2,119 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06038C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:42:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18385C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:43:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0E622175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:42:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0E622175B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D47F0223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:43:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XP9jrKkJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D47F0223AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387681AbeKNAlT (ORCPT
+        id S2387716AbeKNAlm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 19:41:19 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36094 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387599AbeKNAlT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 19:41:19 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 88EC215552;
-        Tue, 13 Nov 2018 14:42:52 +0000 (UTC)
-Received: from [10.36.116.180] (ovpn-116-180.ams2.redhat.com [10.36.116.180])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 718085C1A1;
-        Tue, 13 Nov 2018 14:42:51 +0000 (UTC)
-Subject: Re: [PATCH] vfio/pci: Parallelize device open and release
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        christian.ehrhardt@canonical.com
-References: <154180134334.31154.16289123769826098135.stgit@gimli.home>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <48822457-863a-77fc-01b9-f9eca7190435@redhat.com>
-Date:   Tue, 13 Nov 2018 15:42:49 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 13 Nov 2018 19:41:42 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:51552 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732401AbeKNAlm (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 19:41:42 -0500
+Received: by mail-it1-f193.google.com with SMTP id m34-v6so18501887iti.1;
+        Tue, 13 Nov 2018 06:43:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=RV4rqa3fvX2pFeaOjQTSbx+QYwt27qebk0roPH5fBLA=;
+        b=XP9jrKkJExoPBGkUSCClFsXZlBniO/+vA2A+YMPBkQ+s5pP+DtHzVZ7i60Zr2zveqq
+         ZEaPcNCDTeXSNT6FkEy6fsbVey4bYqdfifkhldVHcEqrsARBNazDxUgHsI2GovGMTMnp
+         JtlcxAuIPcb8u7k8mNB/x+De4PaQnclAIKNl5PGJ1bJTXRQf9K2sQVoQ49Se6h35+m+x
+         DPmQ/TRVemtlLtbR7Tu05+MOKwRPQuiq+E5o+sEr/6B97xZItK40fbg4Jm83Vc4Qcbpr
+         wmFP8xbux54qhyLAa2xJWY7CN/hfhV6MyYZukDb1lsyfPBtpLXcFryfBj8PmxQ2PAuR0
+         9tuQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=RV4rqa3fvX2pFeaOjQTSbx+QYwt27qebk0roPH5fBLA=;
+        b=YZCKFFrwyt5iOZc9Rql639fT5rfwAUaFOt+iqsKwdUKa131QGnUbuz2MQhctqHl1nJ
+         Ov82Jw/vLrrooue3K5W7MdUGTWt6fvFnZ7kppJy8jrBuaB8P6DEp7BRdyH/man/D5nhF
+         HT6V6GvByOPp0k2YC03tfVj8477qXTRbZKuoqEymVWxW14I9wPRHEF3yPCkbq6or1uW3
+         IV6/1jpQzJGSrmZ2uzsFuI/2P+amxVKcTNuQ638j8zr65999kjDJSySsI3/qpleF5Gbj
+         HsLAEc6cKdVxwRJ7FwkJInAWbQ2BQiIVRpEtP9dhWfsnMEAZTaRv8x4ubziS46lBf6mJ
+         i7jQ==
+X-Gm-Message-State: AGRZ1gIQEkinonZbl8P9GqZV+Ff+HyIVUvuK0dvfIVImTnfDOG6f5+os
+        dABQGitSySOtq8NggV0L1vmG7bpgvqL2aQCu4fM=
+X-Google-Smtp-Source: AJdET5eHM0rc/kZtBUY98kEgnk+gTjAdfM83l7aCNMItL7CT3/FHzemmQtNBnHtcNnZji26XTq3Fj/Fi3F/1H7LgC/s=
+X-Received: by 2002:a24:a0cb:: with SMTP id o194mr3486527ite.115.1542120194996;
+ Tue, 13 Nov 2018 06:43:14 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <154180134334.31154.16289123769826098135.stgit@gimli.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Tue, 13 Nov 2018 14:42:52 +0000 (UTC)
+References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
+ <20181112160628.86620-5-mika.westerberg@linux.intel.com> <CA+CmpXvZJFk=kYvZybgTtqDWBVP_jSE37tdkQbyGA8U9WOrkoQ@mail.gmail.com>
+ <20181113105558.GR2500@lahna.fi.intel.com> <CA+CmpXtre+A-sNT0XBWfdkuq9xJ+j34EGZ0nEpahJCSe3Kvg9A@mail.gmail.com>
+ <20181113114020.GV2500@lahna.fi.intel.com>
+In-Reply-To: <20181113114020.GV2500@lahna.fi.intel.com>
+From:   Yehezkel Bernat <yehezkelshb@gmail.com>
+Date:   Tue, 13 Nov 2018 16:42:58 +0200
+Message-ID: <CA+CmpXt1cfqjz94=WsggKpNCUw3761-cewa_HTa0ETcYK7o+Hw@mail.gmail.com>
+Subject: Re: [PATCH 4/4] thunderbolt: Export IOMMU based DMA protection
+ support to userspace
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org, joro@8bytes.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        baolu.lu@linux.intel.com, ashok.raj@intel.com,
+        Bjorn Helgaas <bhelgaas@google.com>, rjw@rjwysocki.net,
+        jacob.jun.pan@intel.com, Andreas Noever <andreas.noever@gmail.com>,
+        michael.jamet@intel.com, lukas@wunner.de,
+        Christian Kellner <ckellner@redhat.com>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On Tue, Nov 13, 2018 at 1:40 PM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> On Tue, Nov 13, 2018 at 01:13:31PM +0200, Yehezkel Bernat wrote:
+> > On Tue, Nov 13, 2018 at 12:56 PM Mika Westerberg
+> > <mika.westerberg@linux.intel.com> wrote:
+> > >
+> > > > Just one point:
+> > > > Have you considered the option to add this property per (TBT?) device?
+> > >
+> > > No. ;-)
+> > >
+> > > You mean that one device uses security levels and another IOMMU? I don't
+> > > think it is possible without having some sort of table in the IOMMU
+> > > driver telling which devices it needs identity map and which not. Also
+> > > not sure what would be the benefit?
+> >
+> > For performance, of course. If some devices are considered safe (maybe a list
+> > communicated by platform firmware), the kernel may decide to configure them to
+> > passthrough the IOMMU (I think I remember there is such an option, but maybe I'm
+> > wrong.)
+>
+> At least I'm not aware of such an option. Windows for example enables
+> IOMMU for everything and I think macOS does the same. In Linux (with
+> these patches) we put all internal devices already passthrough mode so
+> things like internal graphics should not be affected. eGPUs are
+> different thing, though.
 
-On 11/9/18 11:09 PM, Alex Williamson wrote:
-> In commit 61d792562b53 ("vfio-pci: Use mutex around open, release, and
-> remove") a mutex was added to freeze the refcnt for a device so that
-> we can handle errors and perform bus resets on final close.  However,
-> bus resets can be rather slow and a global mutex here is undesirable.
-> A per-device mutex provides the best granularity, but then our chances
-> of triggering a bus/slot reset with multiple affected devices is slim
-> when devices are released in parallel.
-Sorry I don't get the above sentence.
-  Instead create a reflck object
-> shared among all devices under the same bus or slot, allowing devices
-> on independent buses to be released in parallel while serializing per
-> bus/slot.>
-> Reported-by: Christian Ehrhardt <christian.ehrhardt@canonical.com>
-> Tested-by: Christian Ehrhardt <christian.ehrhardt@canonical.com>
-> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
-> ---
->  drivers/vfio/pci/vfio_pci.c         |  157 ++++++++++++++++++++++++++++++-----
->  drivers/vfio/pci/vfio_pci_private.h |    6 +
->  2 files changed, 139 insertions(+), 24 deletions(-)
-> 
-> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
-> index 50cdedfca9fe..d443fb7a4e75 100644
-> --- a/drivers/vfio/pci/vfio_pci.c
-> +++ b/drivers/vfio/pci/vfio_pci.c
-> @@ -56,8 +56,6 @@ module_param(disable_idle_d3, bool, S_IRUGO | S_IWUSR);
->  MODULE_PARM_DESC(disable_idle_d3,
->  		 "Disable using the PCI D3 low power state for idle, unused devices");
->  
-> -static DEFINE_MUTEX(driver_lock);
-> -
->  static inline bool vfio_vga_disabled(void)
->  {
->  #ifdef CONFIG_VFIO_PCI_VGA
-> @@ -393,14 +391,14 @@ static void vfio_pci_release(void *device_data)
->  {
->  	struct vfio_pci_device *vdev = device_data;
->  
-> -	mutex_lock(&driver_lock);
-> +	mutex_lock(&vdev->reflck->lock);
->  
->  	if (!(--vdev->refcnt)) {
->  		vfio_spapr_pci_eeh_release(vdev->pdev);
->  		vfio_pci_disable(vdev);
->  	}
->  
-> -	mutex_unlock(&driver_lock);
-> +	mutex_unlock(&vdev->reflck->lock);
->  
->  	module_put(THIS_MODULE);
->  }
-> @@ -413,7 +411,7 @@ static int vfio_pci_open(void *device_data)
->  	if (!try_module_get(THIS_MODULE))
->  		return -ENODEV;
->  
-> -	mutex_lock(&driver_lock);
-> +	mutex_lock(&vdev->reflck->lock);
->  
->  	if (!vdev->refcnt) {
->  		ret = vfio_pci_enable(vdev);
-> @@ -424,7 +422,7 @@ static int vfio_pci_open(void *device_data)
->  	}
->  	vdev->refcnt++;
->  error:
-> -	mutex_unlock(&driver_lock);
-> +	mutex_unlock(&vdev->reflck->lock);
->  	if (ret)
->  		module_put(THIS_MODULE);
->  	return ret;
-> @@ -1187,6 +1185,9 @@ static const struct vfio_device_ops vfio_pci_ops = {
->  	.request	= vfio_pci_request,
->  };
->  
-> +static int vfio_pci_reflck_attach(struct vfio_pci_device *vdev);
-> +static void vfio_pci_reflck_put(struct vfio_pci_reflck *reflck);
-> +
->  static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  {
->  	struct vfio_pci_device *vdev;
-> @@ -1233,6 +1234,14 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->  		return ret;
->  	}
->  
-> +	ret = vfio_pci_reflck_attach(vdev);
-> +	if (ret) {
-> +		vfio_del_group_dev(&pdev->dev);
-> +		vfio_iommu_group_put(group, &pdev->dev);
-> +		kfree(vdev);
-> +		return ret;
-> +	}
-> +
->  	if (vfio_pci_is_vga(pdev)) {
->  		vga_client_register(pdev, vdev, NULL, vfio_pci_set_vga_decode);
->  		vga_set_legacy_decoding(pdev,
-> @@ -1264,6 +1273,8 @@ static void vfio_pci_remove(struct pci_dev *pdev)
->  	if (!vdev)
->  		return;
->  
-> +	vfio_pci_reflck_put(vdev->reflck);
-> +
->  	vfio_iommu_group_put(pdev->dev.iommu_group, &pdev->dev);
->  	kfree(vdev->region);
->  	mutex_destroy(&vdev->ioeventfds_lock);
-> @@ -1320,16 +1331,97 @@ static struct pci_driver vfio_pci_driver = {
->  	.err_handler	= &vfio_err_handlers,
->  };
->  
-> +static DEFINE_MUTEX(reflck_lock);
-> +
-> +static struct vfio_pci_reflck *vfio_pci_reflck_alloc(void)
-> +{
-> +	struct vfio_pci_reflck *reflck;
-> +
-> +	reflck = kzalloc(sizeof(*reflck), GFP_KERNEL);
-> +	if (!reflck)
-> +		return ERR_PTR(-ENOMEM);
-> +
-> +	kref_init(&reflck->kref);
-> +	mutex_init(&reflck->lock);
-> +
-> +	return reflck;
-> +}
-> +
-> +static void vfio_pci_reflck_get(struct vfio_pci_reflck *reflck)
-> +{
-> +	kref_get(&reflck->kref);
-> +}
-> +
-> +static int vfio_pci_reflck_find(struct pci_dev *pdev, void *data)
-> +{
-> +	struct vfio_pci_reflck **preflck = data;
-> +	struct vfio_device *device;
-> +	struct vfio_pci_device *vdev;
-> +
-> +	device = vfio_device_get_from_dev(&pdev->dev);
-> +	if (!device)
-> +		return 0;
-> +
-> +	if (pci_dev_driver(pdev) != &vfio_pci_driver) {
-> +		vfio_device_put(device);
-> +		return 0;
-> +	}
-> +
-> +	vdev = vfio_device_data(device);
-> +
-> +	if (vdev->reflck) {
-> +		vfio_pci_reflck_get(vdev->reflck);
-> +		*preflck = vdev->reflck;
-> +		vfio_device_put(device);
-> +		return 1;
-> +	}
-> +
-> +	vfio_device_put(device);
-> +	return 0;
-> +}
-> +
-> +static int vfio_pci_reflck_attach(struct vfio_pci_device *vdev)
-> +{
-> +	bool slot = !pci_probe_reset_slot(vdev->pdev->slot);
-> +
-> +	mutex_lock(&reflck_lock);
-> +
-> +	if (pci_is_root_bus(vdev->pdev->bus) ||
-> +	    vfio_pci_for_each_slot_or_bus(vdev->pdev, vfio_pci_reflck_find,
-> +					  &vdev->reflck, slot) <= 0)
-!vfio_pci_for_each_slot_or_bus(vdev->pdev, vfio_pci_reflck_find,
-					  &vdev->reflck, slot)?
-I don't think we can have negative returned value.
-> +		vdev->reflck = vfio_pci_reflck_alloc();
-> +
-> +	mutex_unlock(&reflck_lock);
-> +
-> +	return IS_ERR(vdev->reflck) ? PTR_ERR(vdev->reflck) : 0;
-> +}
-> +
-> +static void vfio_pci_reflck_release(struct kref *kref)
-> +{
-> +	struct vfio_pci_reflck *reflck = container_of(kref,
-> +						      struct vfio_pci_reflck,
-> +						      kref);
-> +
-> +	kfree(reflck);
-> +	mutex_unlock(&reflck_lock);
-> +}
-> +
-> +static void vfio_pci_reflck_put(struct vfio_pci_reflck *reflck)
-> +{
-> +	kref_put_mutex(&reflck->kref, vfio_pci_reflck_release, &reflck_lock);
-> +}
-> +
->  struct vfio_devices {
->  	struct vfio_device **devices;
->  	int cur_index;
->  	int max_index;
->  };
->  
-> -static int vfio_pci_get_devs(struct pci_dev *pdev, void *data)
-> +static int vfio_pci_get_unused_devs(struct pci_dev *pdev, void *data)
->  {
->  	struct vfio_devices *devs = data;
->  	struct vfio_device *device;
-> +	struct vfio_pci_device *vdev;
->  
->  	if (devs->cur_index == devs->max_index)
->  		return -ENOSPC;
-> @@ -1343,16 +1435,25 @@ static int vfio_pci_get_devs(struct pci_dev *pdev, void *data)
->  		return -EBUSY;
->  	}
->  
-> +	vdev = vfio_device_data(device);
-> +
-> +	/* Only collect unused devices */
-abort if the slot/bus features a used device?
-> +	if (vdev->refcnt) {
-> +		vfio_device_put(device);
-> +		return -EBUSY;
-> +	}
-> +
->  	devs->devices[devs->cur_index++] = device;
->  	return 0;
->  }
->  
->  /*
-> - * Attempt to do a bus/slot reset if there are devices affected by a reset for
-> - * this device that are needs_reset and all of the affected devices are unused
-> - * (!refcnt). Callers are required to hold driver_lock when calling this to
-> - * prevent device opens and concurrent bus reset attempts.  We prevent device
-> - * unbinds by acquiring and holding a reference to the vfio_device.
-> + * Attempt to do a bus/slot reset if there are devices affected by a reset
-> + * for this device that are "needs_reset" and all of the affected devices
-> + * are unused (!refcnt).
+So your point here is "currently we do the IOMMU decisions system-wide; we can
+always add a per-device attribute if needed"?
+Fair enough.
 
-This comment still sounds a bit cryptic to me. Assuming I got the point,
-may I suggest something like:
-
-If one of the device of the slot/bus needs a reset (but cannot be reset
-at function level) and all the devices of the slot/bus are unused
-(!refcount), we attempt to do a bus/slot reset.
-
-  Callers are required to hold vdev->reflck->lock
-> + * to prevent concurrent device opens, which is expected to protect all
-> + * affected devices.  A vfio_device reference is also acquired for each
-> + * affected device to prevent unbinds.
->   *
->   * NB: vfio-core considers a group to be viable even if some devices are
->   * bound to drivers like pci-stub or pcieport.  Here we require all devices
-> @@ -1363,7 +1464,7 @@ static void vfio_pci_try_bus_reset(struct vfio_pci_device *vdev)
->  {
->  	struct vfio_devices devs = { .cur_index = 0 };
->  	int i = 0, ret = -EINVAL;
-> -	bool needs_reset = false, slot = false;
-> +	bool slot = false;
->  	struct vfio_pci_device *tmp;
->  
->  	if (!pci_probe_reset_slot(vdev->pdev->slot))
-> @@ -1381,28 +1482,36 @@ static void vfio_pci_try_bus_reset(struct vfio_pci_device *vdev)
->  		return;
->  
->  	if (vfio_pci_for_each_slot_or_bus(vdev->pdev,
-> -					  vfio_pci_get_devs, &devs, slot))
-> +					  vfio_pci_get_unused_devs,
-> +					  &devs, slot))
->  		goto put_devs;
->  
-> +	/* Does at least one need a reset? */
->  	for (i = 0; i < devs.cur_index; i++) {
->  		tmp = vfio_device_data(devs.devices[i]);
-> -		if (tmp->needs_reset)
-> -			needs_reset = true;
-> -		if (tmp->refcnt)
-> -			goto put_devs;
-> +		if (tmp->needs_reset) {
-> +			ret = pci_reset_bus(vdev->pdev);
-> +			break;
-> +		}
->  	}
->  
-> -	if (needs_reset)
-> -		ret = pci_reset_bus(vdev->pdev);
-> -
->  put_devs:
->  	for (i = 0; i < devs.cur_index; i++) {
->  		tmp = vfio_device_data(devs.devices[i]);
-> -		if (!ret)
-> +
-> +		/*
-> +		 * If reset was successful, affected devices no longer need
-> +		 * a reset and we should return all the collateral devices
-> +		 * to low power.  If not successful, we either didn't reset
-> +		 * the bus or timed out waiting for it, so let's not touch
-> +		 * the power state.
-> +		 */
-> +		if (!ret) {
->  			tmp->needs_reset = false;
->  
-> -		if (!tmp->refcnt && !disable_idle_d3)
-> -			pci_set_power_state(tmp->pdev, PCI_D3hot);
-> +			if (tmp != vdev && !disable_idle_d3)
-> +				pci_set_power_state(tmp->pdev, PCI_D3hot);
-> +		}
->  
->  		vfio_device_put(devs.devices[i]);
->  	}
-> diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
-> index cde3b5d3441a..aa2355e67340 100644
-> --- a/drivers/vfio/pci/vfio_pci_private.h
-> +++ b/drivers/vfio/pci/vfio_pci_private.h
-> @@ -76,6 +76,11 @@ struct vfio_pci_dummy_resource {
->  	struct list_head	res_next;
->  };
->  
-> +struct vfio_pci_reflck {
-> +	struct kref		kref;
-> +	struct mutex		lock;
-> +};
-> +
->  struct vfio_pci_device {
->  	struct pci_dev		*pdev;
->  	void __iomem		*barmap[PCI_STD_RESOURCE_END + 1];
-> @@ -104,6 +109,7 @@ struct vfio_pci_device {
->  	bool			needs_reset;
->  	bool			nointx;
->  	struct pci_saved_state	*pci_saved_state;
-> +	struct vfio_pci_reflck	*reflck;
->  	int			refcnt;
->  	int			ioeventfds_nr;
->  	struct eventfd_ctx	*err_trigger;
-> 
-Reviewed-by: Eric Auger <eric.auger@redhat.com>
-
-Thanks
-
-Eric
-
+So for this patch,
+Reviewed-by: Yehezkel Bernat <YehezkelShB@gmail.com>
