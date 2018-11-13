@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3DD6C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:18:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6C9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:18:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABB7020685
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:18:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 41E6222510
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:18:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="H+CM64Jc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABB7020685
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="p3/0IBrO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41E6222510
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732754AbeKMVPi (ORCPT
+        id S1732784AbeKMVPo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:15:38 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38943 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732735AbeKMVPh (ORCPT
+        Tue, 13 Nov 2018 16:15:44 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:41841 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732465AbeKMVPo (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:15:37 -0500
-Received: by mail-pl1-f196.google.com with SMTP id b5-v6so5849764pla.6
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 03:17:59 -0800 (PST)
+        Tue, 13 Nov 2018 16:15:44 -0500
+Received: by mail-pf1-f194.google.com with SMTP id e22-v6so5876313pfn.8
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 03:18:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=D5aorguBzgFaeno0vSryYlUmgZEQ0xASVydW10sQ7HQ=;
-        b=H+CM64Jczyd+LORW/lL12eYfpWN3JDdI+Re9wVJiPhMeYsRaKt9+QRsF7kTrxS/xI4
-         Th7f+sxHCY6s4wWc5R6skD0IHvzCfHZz2/AJUqhHvfBrGRCvG8GeU8pDGC5CeKI4+FK/
-         elWmXUAt/MBX1MXhKzIA5d+R689b7HD0cIm+0=
+        bh=WXeHiI0jTSc5wEU3J9SBtYcSgw6GuTxHUVUlo5pmyKk=;
+        b=p3/0IBrO812eKj1R1+fv7pTnJ5BlZsDSp3Xty76yodWhSf0zNNIQV+aDpour9/S3v7
+         9Qh6ZwMkJik2siXMG4cUAylUmhjTkhqyLeY672rnkpg+oAW1yGakWzKkXNFgHothM/1x
+         wqrFxa411CYZ3o9kpg8/G5QUQU66tWjK+kBHU=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=D5aorguBzgFaeno0vSryYlUmgZEQ0xASVydW10sQ7HQ=;
-        b=MD7RJ8bH/vwq7ahGD7uWei7hWnX1MTB+CdKb+7IFDiJN3yFBUzBu7MPxq8DXp/wV0m
-         231RSGOJCA0B4A4TNF/wMwc+unOq+bCKWl/ff8yUN7hYN7hy+pwY1AQ40qvL+BBlQ8u1
-         d6BlAjSr1+RFeYESbMf6C1xkjh6gYm1QPgqzRihg+o3kUILI7d5P+0oUo3GBeDRYgrH0
-         GvmVcgPesnUIG/8+WB9ZOHItHfZk2YVpL6BaonzNZREXKpoiZsTV53iTS0vQo74R7IPI
-         Fie78K77NMoBX13XT3u+N2AL2c+ikWJi5sTxhWToWd1NPRo/nkzBm8y6xfUh/+epfIzo
-         Ew4w==
-X-Gm-Message-State: AGRZ1gJKCFr+FZ8O9M3Sn2GXIGm1omuwgC72eiR7MtHib7XRseA7W7Qc
-        t82H8F7+/A/NIgCPO1eNz172FA==
-X-Google-Smtp-Source: AJdET5cTIzMDc08V05Z41yDOHL/XXmlckpZgqo3tzgOPa68Qrl2AJa6EG1UTbt02avvjpgvJgQxQ2g==
-X-Received: by 2002:a17:902:8a88:: with SMTP id p8-v6mr4582115plo.94.1542107879320;
-        Tue, 13 Nov 2018 03:17:59 -0800 (PST)
+        bh=WXeHiI0jTSc5wEU3J9SBtYcSgw6GuTxHUVUlo5pmyKk=;
+        b=NLDpqh3VECKwRnq9EiPuUzdNSCIKftgVYgpHXtR+5/CrhS3DFF8hSPCs13VGFhUsXk
+         JwuII7MZrddozpoENCbQ2IxuYoLDYhtJNaW37AHtOpbbYuHftU6vX8JtxiNc3lfJwWD9
+         EpqVHy/d6zsu1LFJN3aT+2tZMReQmEPGeh6S8QHViJWiVGlMCIMIzv/eI4dD9vYMvyEP
+         g2D0+yg05J289GqlzMTKmUxQ2TOImAeMohxoEkitoOd2ZocRhZm7mdXH/OuC1OgiwkMb
+         DLGS1s/xlzsgI5BnPYClBHX65vO/JfdsMcJThVuEen/e98tZBSBQyIC74GWrqnW0ETfB
+         JSjA==
+X-Gm-Message-State: AGRZ1gIU/0hYuWYoetXQC8NEaNm/0G3kXcpd4RB4VYpTAwzG2vKlQFqL
+        o0OUfMuvbNWxSMbT5AEUzznlEQ==
+X-Google-Smtp-Source: AJdET5c5J5NcWM8pvY3YVB3gvLvx89Fw9LaZuo1pOtIkrkPRqUrf2SwgVQFH5WMzc/bki2dUopOW+w==
+X-Received: by 2002:a63:a16:: with SMTP id 22mr4382852pgk.318.1542107885602;
+        Tue, 13 Nov 2018 03:18:05 -0800 (PST)
 Received: from localhost.localdomain ([2401:4900:3670:3f11:bc71:2ef7:4a39:e260])
-        by smtp.gmail.com with ESMTPSA id 27-v6sm28531377pfm.36.2018.11.13.03.17.53
+        by smtp.gmail.com with ESMTPSA id 27-v6sm28531377pfm.36.2018.11.13.03.17.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 03:17:58 -0800 (PST)
+        Tue, 13 Nov 2018 03:18:05 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
@@ -74,9 +74,9 @@ To:     Maxime Ripard <maxime.ripard@bootlin.com>,
         linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
         linux-amarula@amarulasolutions.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v4 11/26] drm/sun4i: sun6i_mipi_dsi: Fix DSI hbp timing value
-Date:   Tue, 13 Nov 2018 16:46:18 +0530
-Message-Id: <20181113111633.20189-12-jagan@amarulasolutions.com>
+Subject: [PATCH v4 12/26] drm/sun4i: sun6i_mipi_dsi: Fix DSI hblk timing calculation
+Date:   Tue, 13 Nov 2018 16:46:19 +0530
+Message-Id: <20181113111633.20189-13-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181113111633.20189-1-jagan@amarulasolutions.com>
 References: <20181113111633.20189-1-jagan@amarulasolutions.com>
@@ -87,26 +87,24 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Current driver is calculating hbp maximum value by subtracting
-hsync_start with hdisplay which is front porch value, but the
-hbp refers to back porch.
+hblk is adding line with all porch timing values, or timings
+values from htotal without sync time.
 
-Back porch value is calculating by subtracting htotal with
-hsync_end as per drm_mode timings, and BSP code from BPI-M64-bsp
-is eventually following the same.
+Current driver is subtracting htotal with hsa, but the hsa
+is bounded with packet overhead. For real hblk calculation
+needed by subtracting htotal with back and front porch values
+and BSP code BPI-M64-bsp is eventually following the same.
 
-BPI-M64-bsp is computing hbp as
-(in drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-dsi_hbp = (hbp-hspw)*dsi_pixel_bits[format]/8 - (4+2);
-=> (panel->lcd_hbp - timmings->hor_sync_time)
-=> (timmings->hor_back_porch + timmings->hor_sync_time -
-    timmings->hor_sync_time)
-=> timmings->hor_back_porch
-=> mode->htotal - mode->hsync_end
+BPI-M64-bsp is computing hbp as (from linux-sunxi/
+drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
 
-So, update the MIPI-DSI hbp value accordingly.
+dsi_hblk = (ht-hspw)*dsi_pixel_bits[format]/8-(4+4+2);
+=> (timmings->hor_total_time - timmings->hor_sync_time)
+=> (mode->htotal - (mode->hsync_end - mode->hsync_start))
 
-Tested on 2-lane, 4-lane DSI LCD panels.
+So, update the DSI hblk timing accordingly.
+
+Tested on 2-lane, 4-lane MIPI-DSI LCD panels.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
@@ -114,18 +112,18 @@ Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index f6e3df8d2490..de0992052a90 100644
+index de0992052a90..cd657ac4bdae 100644
 --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -482,7 +482,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+@@ -495,7 +495,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+ 	/*
+ 	 * hblk seems to be the line + porches length.
  	 */
- #define HBP_PACKET_OVERHEAD	6
- 	hbp = max((unsigned int)HBP_PACKET_OVERHEAD,
--		  (mode->hsync_start - mode->hdisplay) * Bpp - HBP_PACKET_OVERHEAD);
-+		  (mode->htotal - mode->hsync_end) * Bpp - HBP_PACKET_OVERHEAD);
+-	hblk = mode->htotal * Bpp - hsa;
++	hblk = (mode->htotal - (mode->hsync_end - mode->hsync_start)) * Bpp;
  
  	/*
- 	 * The frontporch is set using a blanking packet (4 bytes +
+ 	 * And I'm not entirely sure what vblk is about. The driver in
 -- 
 2.18.0.321.gffc6fa0e3
 
