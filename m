@@ -2,158 +2,411 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC194C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:41:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31FD5C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:45:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8C55422507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:41:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C07E72245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:45:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="Jw71Hk8G"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8C55422507
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YHmb+hUm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C07E72245E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730708AbeKMKhZ (ORCPT
+        id S1727842AbeKMKkj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 05:37:25 -0500
-Received: from mail-lj1-f171.google.com ([209.85.208.171]:32997 "EHLO
-        mail-lj1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbeKMKhZ (ORCPT
+        Tue, 13 Nov 2018 05:40:39 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:39671 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725991AbeKMKkj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 05:37:25 -0500
-Received: by mail-lj1-f171.google.com with SMTP id v1-v6so9285450ljd.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 16:41:48 -0800 (PST)
+        Tue, 13 Nov 2018 05:40:39 -0500
+Received: by mail-it1-f193.google.com with SMTP id m15so15980207itl.4
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 16:45:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=9Aj4E05fPYhNhof22T7aNqrZ3zByL17ffY1VZScu+rY=;
-        b=Jw71Hk8GfoQHDduTP5LDmtoSczWthGU2ed35OkUt8DbIcJOSEhEoaXvJVlO/Tjgyri
-         tekNDZMWRfypAgkxxkzjDrkd0LpCESdsxct7srzX0AOF59TH3RjxkvjYaOa3Sur7RNHD
-         9Y40qeU5DBhCsIQhi8OooYUF2bwfUkNCcIcIVEtJPcwqtqnnBHfGLd2j+Zvw86aNVY5u
-         oGv4U+vMS8MPya7VRmowNPuhpP6VnnC3IKRZXpy1shfsPBe8Qif22zBxPllfzzZksDGX
-         vbuOzMvLAowWTsnEBC1Zhi3c5beKZIclNzyuZX7LRX1aWNSivpNI2N746z9qHnj4HJNE
-         wSnA==
+        d=gmail.com; s=20161025;
+        h=message-id:subject:from:to:cc:date:user-agent:mime-version
+         :content-transfer-encoding;
+        bh=lsN7K09eBcolXWrjoWMNHjo6S/lfsBRLf77sWuTNzl4=;
+        b=YHmb+hUm/0HdH7GK0I5LzrW3y78+n+OMgsJDKbiDJ/R4k1G+uEya7qpUx9eoaJwpku
+         hRgn4Zau8liOQIGH/4Xlc7fFCaXDGWXCiNyIOOucfzdAR7jSBcUVWg9oBh8YbTxQHN38
+         xnv+YrCHNTK/5iSLNM/U0dLPPEdzSyALe/Z+u8UJBkFwx0IR4QN7XWz/3klWdgJ2cRnr
+         7iUbB0uFU/oVVftAB9ytjN6B88vlsSnHbDF2qNFH9wMn+MjcPTXGq1PWRNO7rv/wu71y
+         CZgna/oP7cUZu1K2cfpphtnK/2i0ChqRKifyoL74gsU3ABaGFAfKD7j/0j8axcLfKXXN
+         lPPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=9Aj4E05fPYhNhof22T7aNqrZ3zByL17ffY1VZScu+rY=;
-        b=GcLvwKqrrymkTO0sstf2yzXJk9LI6/m2LQYPy0E8KePoqfkSgBl2IdGAVruPUWL2Qf
-         HqwPPbCKebEqF0yYy+bK9U+b/086EoNIgl/Qi9UvpSKmc3eeEcKdOvN0bL5behoJHAy4
-         ruU52tcseJ6n+MfOIvwKrhLk9i7wmQjzUNbEL0ss5m7mAaEq8IVGR/6ILcNn+oR0/eCZ
-         /uRzuNYEAgyAiV6Bd8SYrOPSqKojnuIldSkNZS5eCCiYvwPNARWAMOV146S1JAi8lEvP
-         dftQ4JI6mroelkZMWAmYvC1W2R/ER3eI+KSn18e09b/NWp+60DCwQc4AADHPk+a0aapB
-         guLA==
-X-Gm-Message-State: AGRZ1gKVg1w2BY18ZGX5991CbsEIeKKygqFaRBDHh5O1t1CAQNs+EnFZ
-        0tjYiUowrKTRjjbm1ShoEqYfuwJlpYD9Mq2tnmOY
-X-Google-Smtp-Source: AJdET5f+a40THgCXRBkaIg5XBOEe4cehsC6jrxWPtKo59IiqFBqE3DGTNghial/0ZCjCeDCmSyWVjNaywUP9wO8MKOI=
-X-Received: by 2002:a2e:97d7:: with SMTP id m23-v6mr2124376ljj.18.1542069707733;
- Mon, 12 Nov 2018 16:41:47 -0800 (PST)
-MIME-Version: 1.0
-References: <53491A18-DD21-4E34-BC2F-AB449C7844E8@gmx.us>
-In-Reply-To: <53491A18-DD21-4E34-BC2F-AB449C7844E8@gmx.us>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Mon, 12 Nov 2018 19:41:36 -0500
-Message-ID: <CAHC9VhTiCPwQ51ciexRCp4M5rN2C=pTm=anRaMgTsZ9coX96Zw@mail.gmail.com>
-Subject: Re: BUG: KASAN: slab-out-of-bounds in selinux_sctp_bind_connect+0x60/0x150
-To:     cai@gmx.us
-Cc:     linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:user-agent
+         :mime-version:content-transfer-encoding;
+        bh=lsN7K09eBcolXWrjoWMNHjo6S/lfsBRLf77sWuTNzl4=;
+        b=hFoEGIMZ22xo0cocxSMaLmX0F2BbR6zOR1+uybkqibSff0Ewqw8vC4JzPZ295OENSn
+         LHAhejMIt70hyY1ooFJn0HdjD7TUzptpZKb4h32eOF8DFQMGs6g752g9OQ6WK5WMi6qX
+         L/7TNR4mYJF1sg/gMDCUq1mRxma3OkT+S2hc49YajkVJsX9uJVofX7BYyc0gTSITflJ5
+         qQVpT/DyD+wrFiGOrlPZtie3wBqpDBi0aAQiKvUo0WHAgqPkzRPCH9+fQrQQyurUy+uu
+         e4KZe/thrnOD38t2Rw91vREteFfCH9tDY/EIwxAl4PZimqDSCkE5lDONJPjy5/juVwRf
+         Hj8w==
+X-Gm-Message-State: AGRZ1gKg3mQUe38pWRDv3+r+p0qv4SJomnlWgZm8072/pYDfu77clfhV
+        PcyGQ5Wq/YkubgcwNp+oljbDe5MudqWJyA==
+X-Google-Smtp-Source: AJdET5dwfDKJ8grxoEbHpvo9vc2WIOtDvIdRrVocz+1ueXsCzOpQ9R8n+VeXPMTZfJA9f+fGJ7rj2w==
+X-Received: by 2002:a24:1d8e:: with SMTP id 136-v6mr1704664itj.62.1542069901991;
+        Mon, 12 Nov 2018 16:45:01 -0800 (PST)
+Received: from wireless134-172.wireless.wmich.edu ([35.46.107.84])
+        by smtp.gmail.com with ESMTPSA id b196-v6sm6542998itc.11.2018.11.12.16.45.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 16:45:01 -0800 (PST)
+Message-ID: <46bb5564b6bd6cad78c01b4d8026c7c72a870b15.camel@gmail.com>
+Subject: [PATCH v2] staging: vc04_services: bcm2835-audio: Fixed warnings,
+ checks
+From:   Arnold Chand <arnold.chand@gmail.com>
+To:     "eric@anholt.net" <eric@anholt.net>
+Cc:     "stefan.wahren@i2se.com" <stefan.wahren@i2se.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Mon, 12 Nov 2018 19:45:00 -0500
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 2:39 PM Qian Cai <cai@gmx.us> wrote:
->
-> Running the trinity fuzzer on the latest mainline (rc2) generates this,
->
-> [15029.879626] BUG: KASAN: slab-out-of-bounds in selinux_sctp_bind_connect+0x60/0x150
-> [15029.887275] Read of size 2 at addr ffff801ec53c5080 by task trinity-main/18081
-> [15029.887294]
-> [15029.887304] CPU: 28 PID: 18081 Comm: trinity-main Tainted: G        W  OE     4.20.0-rc2+ #15
-> [15029.887311] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
-> [15000.084786] [15029.887320] Call trace:
-> [15029.915511]  dump_backtrace+0x0/0x2c8
-> [15029.920046]  show_stack+0x24/0x30
-> [15029.923367]  dump_stack+0x118/0x19c
-> [15029.927539]  print_address_description+0x68/0x2a0
-> [15029.932245]  kasan_report+0x1b4/0x348
-> [15029.938760]  __asan_load2+0x7c/0xa0
-> [15029.945098]  selinux_sctp_bind_connect+0x60/0x150
->
-> [15029.950571]  security_sctp_bind_connect+0x58/0x90
-> [15029.955493]  __sctp_setsockopt_connectx+0x68/0x128 [sctp]
-> [15029.960943]  sctp_setsockopt+0x764/0x2928 [sctp]
-> [15029.965564]  sock_common_setsockopt+0x6c/0x80
-> [15029.969923]  __arm64_sys_setsockopt+0x13c/0x1f0
-> [15029.974456]  el0_svc_handler+0xd4/0x198
-> [15029.978293]  el0_svc+0x8/0xc
-> [15029.981174]
-> [15029.982667] Allocated by task 18081:
-> [15029.986245]  kasan_kmalloc.part.1+0x40/0x108
-> [15029.990517]  kasan_kmalloc+0xb4/0xc8
-> [15029.994094]  __kmalloc_node+0x1c4/0x638
-> [15029.997933]  kvmalloc_node+0x98/0xa8
-> [15030.001511]  vmemdup_user+0x34/0x128
-> [15030.005137]  __sctp_setsockopt_connectx+0x44/0x128 [sctp]
-> [15030.010586]  sctp_setsockopt+0x764/0x2928 [sctp]
-> [15030.015205]  sock_common_setsockopt+0x6c/0x80
-> [15030.019564]  __arm64_sys_setsockopt+0x13c/0x1f0
-> [15030.024096]  el0_svc_handler+0xd4/0x198
-> [15030.027933]  el0_svc+0x8/0xc
-> [15030.030814]
-> [15030.032306] Freed by task 3025:
-> [15030.035451]  __kasan_slab_free+0x114/0x228
-> [15030.039548]  kasan_slab_free+0x10/0x18
-> [15030.043299]  kfree+0x114/0x408
-> [15030.046357]  selinux_sk_free_security+0x38/0x48
-> [15030.050888]  security_sk_free+0x3c/0x58
-> [15030.054727]  __sk_destruct+0x3e8/0x570
-> [15030.058478]  sk_destruct+0x4c/0x58
-> [15030.061881]  __sk_free+0x68/0x138
-> [15030.065197]  sk_free+0x3c/0x48
-> [15030.068255]  unix_release_sock+0x4a8/0x550
-> [15030.072353]  unix_release+0x34/0x50
-> [15030.075843]  __sock_release+0x74/0x110
-> [15030.079593]  sock_close+0x24/0x38
-> [15030.082913]  __fput+0x1b8/0x368
-> [15030.086055]  ____fput+0x20/0x30
-> [15030.089199]  task_work_run+0x14c/0x1a8
-> [15030.092951]  do_notify_resume+0x1e4/0x200
-> [15030.096961]  work_pending+0x8/0x14
+Corrected warnings and checks provided by scripts/checkpatch.pl which
+includes: alignment of parenthesis, lines over 80 characters and mutex
+definition without comment.
 
-Any chance you have a reproducer for this?  Or at the very least a
-line number inside selinux_sctp_bind_connect()?
+Signed-off-by: Arnold Chand <arnold.chand@gmail.com>
+---
+ .../vc04_services/bcm2835-audio/bcm2835-ctl.c | 18 +++---
+ .../vc04_services/bcm2835-audio/bcm2835-pcm.c | 25 ++++----
+ .../bcm2835-audio/bcm2835-vchiq.c             | 59 ++++++++++---------
+ .../vc04_services/bcm2835-audio/bcm2835.h     |  4 +-
+ 4 files changed, 56 insertions(+), 50 deletions(-)
 
-> [15030.101856] The buggy address belongs to the object at ffff801ec53c5080
-> [15030.101856]  which belongs to the cache kmalloc-128 of size 128
-> [15030.114376] The buggy address is located 0 bytes inside of
-> [15030.114376]  128-byte region [ffff801ec53c5080, ffff801ec53c5100)
-> [15030.125939] The buggy address belongs to the page:
-> [15030.130732] page:ffff7fe007b14f00 count:1 mapcount:0 mapping:ffff8016c0010480 index:0x0
-> [15030.138738] flags: 0x5fffff0000000200(slab)
-> [15030.142926] raw: 5fffff0000000200 ffff7fe007980608 ffff801ec000fd60 ffff8016c0010480
-> [15030.150671] raw: 0000000000000000 0000000000660066 00000001ffffffff 0000000000000000
-> [15030.158413] page dumped because: kasan: bad access detected
-> [15030.163984]
-> [15030.165476] Memory state around the buggy address:
-> [15030.170269]  ffff801ec53c4f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15030.177491]  ffff801ec53c5000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15030.184714] >ffff801ec53c5080: 01 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15030.191934]                    ^
-> [15030.195164]  ffff801ec53c5100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15030.202386]  ffff801ec53c5180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15030.209607] ==================================================================
-> [15030.216828] Disabling lock debugging due to kernel taint
-
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
+index a6ec72a5f0be..04df4e7a1d24 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-ctl.c
+@@ -68,7 +68,7 @@ static int snd_bcm2835_ctl_get(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_ctl_put(struct snd_kcontrol *kcontrol,
+-				struct snd_ctl_elem_value *ucontrol)
++			       struct snd_ctl_elem_value *ucontrol)
+ {
+ 	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
+ 	int val, *valp;
+@@ -101,7 +101,8 @@ static const struct snd_kcontrol_new snd_bcm2835_ctl[] = {
+ 	{
+ 		.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+ 		.name = "PCM Playback Volume",
+-		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE | SNDRV_CTL_ELEM_ACCESS_TLV_READ,
++		.access = SNDRV_CTL_ELEM_ACCESS_READWRITE |
++			  SNDRV_CTL_ELEM_ACCESS_TLV_READ,
+ 		.private_value = PCM_PLAYBACK_VOLUME,
+ 		.info = snd_bcm2835_ctl_info,
+ 		.get = snd_bcm2835_ctl_get,
+@@ -129,7 +130,7 @@ static const struct snd_kcontrol_new snd_bcm2835_ctl[] = {
+ };
+ 
+ static int snd_bcm2835_spdif_default_info(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_info *uinfo)
++					  struct snd_ctl_elem_info *uinfo)
+ {
+ 	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
+ 	uinfo->count = 1;
+@@ -137,7 +138,7 @@ static int snd_bcm2835_spdif_default_info(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_spdif_default_get(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_value *ucontrol)
++					 struct snd_ctl_elem_value *ucontrol)
+ {
+ 	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
+ 	int i;
+@@ -153,7 +154,7 @@ static int snd_bcm2835_spdif_default_get(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_spdif_default_put(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_value *ucontrol)
++					 struct snd_ctl_elem_value *ucontrol)
+ {
+ 	struct bcm2835_chip *chip = snd_kcontrol_chip(kcontrol);
+ 	unsigned int val = 0;
+@@ -162,7 +163,8 @@ static int snd_bcm2835_spdif_default_put(struct snd_kcontrol *kcontrol,
+ 	mutex_lock(&chip->audio_mutex);
+ 
+ 	for (i = 0; i < 4; i++)
+-		val |= (unsigned int)ucontrol->value.iec958.status[i] << (i * 8);
++		val |= (unsigned int)ucontrol->value.iec958.status[i] <<
++		       (i * 8);
+ 
+ 	change = val != chip->spdif_status;
+ 	chip->spdif_status = val;
+@@ -172,7 +174,7 @@ static int snd_bcm2835_spdif_default_put(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_spdif_mask_info(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_info *uinfo)
++				       struct snd_ctl_elem_info *uinfo)
+ {
+ 	uinfo->type = SNDRV_CTL_ELEM_TYPE_IEC958;
+ 	uinfo->count = 1;
+@@ -180,7 +182,7 @@ static int snd_bcm2835_spdif_mask_info(struct snd_kcontrol *kcontrol,
+ }
+ 
+ static int snd_bcm2835_spdif_mask_get(struct snd_kcontrol *kcontrol,
+-	struct snd_ctl_elem_value *ucontrol)
++				      struct snd_ctl_elem_value *ucontrol)
+ {
+ 	/*
+ 	 * bcm2835 supports only consumer mode and sets all other format flags
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
+index e66da11af5cf..68766e57f6e2 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-pcm.c
+@@ -81,17 +81,17 @@ void bcm2835_playback_fifo(struct bcm2835_alsa_stream *alsa_stream,
+ }
+ 
+ /* open callback */
+-static int snd_bcm2835_playback_open_generic(
+-	struct snd_pcm_substream *substream, int spdif)
++static int snd_bcm2835_playback_open_generic(struct snd_pcm_substream *substrm,
++					     int spdif)
+ {
+-	struct bcm2835_chip *chip = snd_pcm_substream_chip(substream);
+-	struct snd_pcm_runtime *runtime = substream->runtime;
++	struct bcm2835_chip *chip = snd_pcm_substream_chip(substrm);
++	struct snd_pcm_runtime *runtime = substrm->runtime;
+ 	struct bcm2835_alsa_stream *alsa_stream;
+ 	int idx;
+ 	int err;
+ 
+ 	mutex_lock(&chip->audio_mutex);
+-	idx = substream->number;
++	idx = substrm->number;
+ 
+ 	if (spdif && chip->opened) {
+ 		err = -EBUSY;
+@@ -116,7 +116,7 @@ static int snd_bcm2835_playback_open_generic(
+ 
+ 	/* Initialise alsa_stream */
+ 	alsa_stream->chip = chip;
+-	alsa_stream->substream = substream;
++	alsa_stream->substream = substrm;
+ 	alsa_stream->idx = idx;
+ 
+ 	err = bcm2835_audio_open(alsa_stream);
+@@ -197,7 +197,7 @@ static int snd_bcm2835_playback_close(struct snd_pcm_substream *substream)
+ 
+ /* hw_params callback */
+ static int snd_bcm2835_pcm_hw_params(struct snd_pcm_substream *substream,
+-	struct snd_pcm_hw_params *params)
++				     struct snd_pcm_hw_params *params)
+ {
+ 	return snd_pcm_lib_malloc_pages(substream, params_buffer_bytes(params));
+ }
+@@ -232,7 +232,8 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
+ 	if (err < 0)
+ 		return err;
+ 
+-	memset(&alsa_stream->pcm_indirect, 0, sizeof(alsa_stream->pcm_indirect));
++	memset(&alsa_stream->pcm_indirect, 0,
++	       sizeof(alsa_stream->pcm_indirect));
+ 
+ 	alsa_stream->pcm_indirect.hw_buffer_size =
+ 		alsa_stream->pcm_indirect.sw_buffer_size =
+@@ -248,11 +249,11 @@ static int snd_bcm2835_pcm_prepare(struct snd_pcm_substream *substream)
+ }
+ 
+ static void snd_bcm2835_pcm_transfer(struct snd_pcm_substream *substream,
+-	struct snd_pcm_indirect *rec, size_t bytes)
++				     struct snd_pcm_indirect *rec, size_t bytes)
+ {
+ 	struct snd_pcm_runtime *runtime = substream->runtime;
+ 	struct bcm2835_alsa_stream *alsa_stream = runtime->private_data;
+-	void *src = (void *) (substream->runtime->dma_area + rec->sw_data);
++	void *src = (void *)(substream->runtime->dma_area + rec->sw_data);
+ 
+ 	bcm2835_audio_write(alsa_stream, bytes, src);
+ }
+@@ -349,7 +350,9 @@ int snd_bcm2835_new_pcm(struct bcm2835_chip *chip, const char *name,
+ 			&snd_bcm2835_playback_ops);
+ 
+ 	snd_pcm_lib_preallocate_pages_for_all(pcm, SNDRV_DMA_TYPE_DEV,
+-		chip->card->dev, 128 * 1024, 128 * 1024);
++					      chip->card->dev,
++					      128 * 1024,
++					      128 * 1024);
+ 
+ 	if (spdif)
+ 		chip->pcm_spdif = pcm;
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+index 781754f36da7..5e3a30831ed7 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835-vchiq.c
+@@ -11,7 +11,7 @@ struct bcm2835_audio_instance {
+ 	struct device *dev;
+ 	VCHI_SERVICE_HANDLE_T vchi_handle;
+ 	struct completion msg_avail_comp;
+-	struct mutex vchi_mutex;
++	struct mutex vchi_mutex; /* generic mutex for VCHIQ driver */
+ 	struct bcm2835_alsa_stream *alsa_stream;
+ 	int result;
+ 	unsigned int max_packet;
+@@ -34,35 +34,35 @@ static void bcm2835_audio_unlock(struct bcm2835_audio_instance *instance)
+ 	mutex_unlock(&instance->vchi_mutex);
+ }
+ 
+-static int bcm2835_audio_send_msg_locked(struct bcm2835_audio_instance *instance,
++static int bcm2835_audio_send_msg_locked(struct bcm2835_audio_instance *inst,
+ 					 struct vc_audio_msg *m, bool wait)
+ {
+ 	int status;
+ 
+ 	if (wait) {
+-		instance->result = -1;
+-		init_completion(&instance->msg_avail_comp);
++		inst->result = -1;
++		init_completion(&inst->msg_avail_comp);
+ 	}
+ 
+-	status = vchi_queue_kernel_message(instance->vchi_handle,
++	status = vchi_queue_kernel_message(inst->vchi_handle,
+ 					   m, sizeof(*m));
+ 	if (status) {
+-		dev_err(instance->dev,
++		dev_err(inst->dev,
+ 			"vchi message queue failed: %d, msg=%d\n",
+ 			status, m->type);
+ 		return -EIO;
+ 	}
+ 
+ 	if (wait) {
+-		if (!wait_for_completion_timeout(&instance->msg_avail_comp,
++		if (!wait_for_completion_timeout(&inst->msg_avail_comp,
+ 						 msecs_to_jiffies(10 * 1000))) {
+-			dev_err(instance->dev,
++			dev_err(inst->dev,
+ 				"vchi message timeout, msg=%d\n", m->type);
+ 			return -ETIMEDOUT;
+-		} else if (instance->result) {
+-			dev_err(instance->dev,
++		} else if (inst->result) {
++			dev_err(inst->dev,
+ 				"vchi message response error:%d, msg=%d\n",
+-				instance->result, m->type);
++				inst->result, m->type);
+ 			return -EIO;
+ 		}
+ 	}
+@@ -128,7 +128,8 @@ vc_vchi_audio_init(VCHI_INSTANCE_T vchi_instance,
+ 		   struct bcm2835_audio_instance *instance)
+ {
+ 	SERVICE_CREATION_T params = {
+-		.version		= VCHI_VERSION_EX(VC_AUDIOSERV_VER, VC_AUDIOSERV_MIN_VER),
++		.version		= VCHI_VERSION_EX(VC_AUDIOSERV_VER,
++							  VC_AUDIOSERV_MIN_VER),
+ 		.service_id		= VC_AUDIO_SERVER_NAME,
+ 		.callback		= audio_vchi_callback,
+ 		.callback_param		= instance,
+@@ -324,51 +325,51 @@ int bcm2835_audio_close(struct bcm2835_alsa_stream *alsa_stream)
+ int bcm2835_audio_write(struct bcm2835_alsa_stream *alsa_stream,
+ 			unsigned int size, void *src)
+ {
+-	struct bcm2835_audio_instance *instance = alsa_stream->instance;
++	struct bcm2835_audio_instance *inst = alsa_stream->instance;
+ 	struct vc_audio_msg m = {
+ 		.type = VC_AUDIO_MSG_TYPE_WRITE,
+ 		.u.write.count = size,
+-		.u.write.max_packet = instance->max_packet,
++		.u.write.max_packet = inst->max_packet,
+ 		.u.write.cookie1 = BCM2835_AUDIO_WRITE_COOKIE1,
+ 		.u.write.cookie2 = BCM2835_AUDIO_WRITE_COOKIE2,
+ 	};
+ 	unsigned int count;
+-	int err, status;
++	int err, sts; /* error and status code */
+ 
+ 	if (!size)
+ 		return 0;
+ 
+-	bcm2835_audio_lock(instance);
+-	err = bcm2835_audio_send_msg_locked(instance, &m, false);
++	bcm2835_audio_lock(inst);
++	err = bcm2835_audio_send_msg_locked(inst, &m, false);
+ 	if (err < 0)
+ 		goto unlock;
+ 
+ 	count = size;
+-	if (!instance->max_packet) {
++	if (!inst->max_packet) {
+ 		/* Send the message to the videocore */
+-		status = vchi_bulk_queue_transmit(instance->vchi_handle,
+-						  src, count,
+-						  VCHI_FLAGS_BLOCK_UNTIL_DATA_READ,
+-						  NULL);
++		sts = vchi_bulk_queue_transmit(inst->vchi_handle, src,
++					       count,
++					       VCHI_FLAGS_BLOCK_UNTIL_DATA_READ,
++					       NULL);
+ 	} else {
+ 		while (count > 0) {
+-			int bytes = min(instance->max_packet, count);
++			int bytes = min(inst->max_packet, count);
+ 
+-			status = vchi_queue_kernel_message(instance->vchi_handle,
+-							   src, bytes);
++			sts = vchi_queue_kernel_message(inst->vchi_handle,
++							src, bytes);
+ 			src += bytes;
+ 			count -= bytes;
+ 		}
+ 	}
+ 
+-	if (status) {
+-		dev_err(instance->dev,
++	if (sts) {
++		dev_err(inst->dev,
+ 			"failed on %d bytes transfer (status=%d)\n",
+-			size, status);
++			size, sts);
+ 		err = -EIO;
+ 	}
+ 
+  unlock:
+-	bcm2835_audio_unlock(instance);
++	bcm2835_audio_unlock(inst);
+ 	return err;
+ }
+diff --git a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
+index 34a0125ce646..e71e73c6273c 100644
+--- a/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
++++ b/drivers/staging/vc04_services/bcm2835-audio/bcm2835.h
+@@ -61,7 +61,7 @@ struct bcm2835_chip {
+ 
+ 	unsigned int opened;
+ 	unsigned int spdif_status;
+-	struct mutex audio_mutex;
++	struct mutex audio_mutex; /* generic mutex for VCHIQ audio driver */
+ 
+ 	struct bcm2835_vchi_ctx *vchi_ctx;
+ };
+@@ -107,6 +107,6 @@ int bcm2835_audio_write(struct bcm2835_alsa_stream *alsa_stream,
+ 			void *src);
+ void bcm2835_playback_fifo(struct bcm2835_alsa_stream *alsa_stream,
+ 			   unsigned int size);
+-unsigned int bcm2835_audio_retrieve_buffers(struct bcm2835_alsa_stream *alsa_stream);
++unsigned int bcm2835_audio_retrieve_buffers(struct bcm2835_alsa_stream *stream);
+ 
+ #endif /* __SOUND_ARM_BCM2835_H */
 -- 
-paul moore
-www.paul-moore.com
+2.19.1
+
+
