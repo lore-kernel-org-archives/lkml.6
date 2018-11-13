@@ -1,113 +1,99 @@
 Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: *
-X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Level: 
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C101C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A849DC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:24:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F360D2243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:17:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOA4XTig"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F360D2243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 76C58223D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:24:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76C58223D0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731177AbeKMROE (ORCPT
+        id S1730550AbeKMRVl convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 12:14:04 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:37798 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbeKMROE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 12:14:04 -0500
-Received: by mail-wm1-f66.google.com with SMTP id p2-v6so10298581wmc.2;
-        Mon, 12 Nov 2018 23:17:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KjpTyhKii+Hn5/AOUl7Xd+8XHWn0qJXU4g7MOUx5pEk=;
-        b=HOA4XTigUc2KgDhhQIUwTxxzCe6zft9gqptb19utqgcF+5lsZiBkVTJ3O6HThk4Hit
-         w+RIqKHYOrv6tt/UUP+Y2u21pMHTfTJs4KaZy82sjTr7hin+TNl12pYhdvFbJ27Xw6P8
-         9yCNp09vOWGmellRT3ETQOIptAYxA/PxgvXto8k20DcW9cRQAwjuxdS+vd7i9WwF06jw
-         nKR2yjmE3vZjiBAOAKHvqD24WKlvbyJinNV7Vf7v2WTE+4sBZx5Y6VgcsvMrQ28zMdTi
-         s0k7HOGYZ01S3hI/pQ5ZeCf0zWry8KzW+ZlXiDQ8Dqh3AwBnIrSv7Vi9Fu3g8CqsYbIa
-         1A/A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KjpTyhKii+Hn5/AOUl7Xd+8XHWn0qJXU4g7MOUx5pEk=;
-        b=Ojm0JOljMFNNrbBWilKuPFtb8Rq+ByWQq0C1kHkQv2/S69/JXpxvhGrcpqNQuCRD6W
-         1uRxcXnEaRIPJV+zlMGm7n+bSikFRnR9znj5dkxUElzAzBd9lIyg+09cGuSQD8LZAknu
-         TeFCCQWM+2zZ9agm6NNphi6SfMqm/+2Rgc/mWoIl4F6q85XiLik30ZF5lyx5/PFyhE2J
-         SnYcmiUdCsFw3Zm9KvcV7poiuv6cAJTi2nAK0d5trAieQJ8+CezfVtPXdvsfxbRbCjPh
-         MhT7+5IL/T8gtRNg8QEvyDz85EWd/ORWUObcml7iExk9lMt6YwiCSUE9fSDsthsteV1c
-         aEGA==
-X-Gm-Message-State: AGRZ1gI5J1F5mC9qK6YbcfPG2ykXDPG59D6h7QVyf9GvE9fUQgD1V5Ai
-        rp3gsQasdrqzjxMxtfjt4SIDewkp
-X-Google-Smtp-Source: AJdET5dz/+bPZJ13jXlv/a+OWDzqTFN62lSm+J8lB1ZlCIKGRd6Py5vbAN/kOAr/OxSZFF0NjbggjQ==
-X-Received: by 2002:a7b:cb86:: with SMTP id m6-v6mr2117821wmi.77.1542093436440;
-        Mon, 12 Nov 2018 23:17:16 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id y83-v6sm8342337wmg.13.2018.11.12.23.17.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 12 Nov 2018 23:17:15 -0800 (PST)
-Date:   Tue, 13 Nov 2018 08:17:12 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Bjorn Helgaas <helgaas@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Borislav Petkov <bp@alien8.de>
-Subject: Re: [GIT PULL] PCI changes for v4.20
-Message-ID: <20181113071712.GA2353@gmail.com>
-References: <20181023173934.GA14918@bhelgaas-glaptop.roam.corp.google.com>
+        Tue, 13 Nov 2018 12:21:41 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:59508 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726454AbeKMRVl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 12:21:41 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id 5960D3D712ED0488290D;
+        Tue, 13 Nov 2018 15:24:50 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wAD7OeVm043841;
+        Tue, 13 Nov 2018 15:24:40 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018111315245436-10380498 ;
+          Tue, 13 Nov 2018 15:24:54 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     tglx@linutronix.de
+Cc:     mingo@redhat.com, bp@alien8.de, hpa@zytor.com, x86@kernel.org,
+        keescook@chromium.org, luto@amacapital.net, wad@chromium.org,
+        konrad.wilk@oracle.com, wang.yi59@zte.com.cn, dhowells@redhat.com,
+        linux-kernel@vger.kernel.org, riel@redhat.com,
+        viro@ZenIV.linux.org.uk, zhong.weidong@zte.com.cn
+Subject: [PATCH] fork: Fix two -Wmissing-prototypes warnings
+Date:   Tue, 13 Nov 2018 15:26:28 +0800
+Message-Id: <1542093988-42041-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181023173934.GA14918@bhelgaas-glaptop.roam.corp.google.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-11-13 15:24:54,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-11-13 15:24:36
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-MAIL: mse01.zte.com.cn wAD7OeVm043841
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We get two warning when building kernel with W=1:
+kernel/fork.c:167:13: warning: no previous prototype for ‘arch_release_thread_stack’ [-Wmissing-prototypes]
+kernel/fork.c:779:13: warning: no previous prototype for ‘fork_init’ [-Wmissing-prototypes]
 
-* Bjorn Helgaas <helgaas@kernel.org> wrote:
+Add the missing declaration in head file to fix this.
 
-> PCI changes:
-> 
->   - Pay attention to device-specific _PXM node values (Jonathan Cameron)
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
+---
+ arch/x86/include/asm/thread_info.h | 1 +
+ include/linux/sched/task.h         | 2 ++
+ 2 files changed, 3 insertions(+)
 
-There's a new boot regression, my AMD ThreadRipper system (MSI X399 SLI 
-PLUS (MS-7B09)) hangs during early bootup, and I have bisected it down to 
-this commit:
+diff --git a/arch/x86/include/asm/thread_info.h b/arch/x86/include/asm/thread_info.h
+index 2ff2a30..8621036 100644
+--- a/arch/x86/include/asm/thread_info.h
++++ b/arch/x86/include/asm/thread_info.h
+@@ -237,6 +237,7 @@ static inline int arch_within_stack_frames(const void * const stack,
+ extern void arch_task_cache_init(void);
+ extern int arch_dup_task_struct(struct task_struct *dst, struct task_struct *src);
+ extern void arch_release_task_struct(struct task_struct *tsk);
++extern void arch_release_thread_stack(unsigned long *stack);
+ extern void arch_setup_new_exec(void);
+ #define arch_setup_new_exec arch_setup_new_exec
+ #endif	/* !__ASSEMBLY__ */
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index 108ede9..44c6f15 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -39,6 +39,8 @@
+ 
+ extern void proc_caches_init(void);
+ 
++extern void fork_init(void);
++
+ extern void release_task(struct task_struct * p);
+ 
+ #ifdef CONFIG_HAVE_COPY_THREAD_TLS
+-- 
+1.8.3.1
 
-  bad7dcd94f39: ACPI/PCI: Pay attention to device-specific _PXM node values
-
-Reverting it solves the hang.
-
-Unfortunately there's no console output when it hangs, even with 
-earlyprintk. It just hangs after the "loading initrd" line.
-
-Config is an Ubuntu-ish config with PROVE_LOCKING=y and a few other debug 
-options.
-
-All my other testsystems boot fine with similar configs, so it's probably 
-something specific to this system.
-
-Thanks,
-
-	Ingo
