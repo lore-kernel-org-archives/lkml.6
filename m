@@ -2,148 +2,126 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDBDC0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:28:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC71AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:32:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6CA5922419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:28:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA5922419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id ABACB22419
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:32:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="NLP44bM4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABACB22419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387521AbeKMX0V convert rfc822-to-8bit (ORCPT
+        id S2387488AbeKMXaa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:26:21 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32754 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732728AbeKMX0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:26:21 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id A78109683A999;
-        Tue, 13 Nov 2018 13:28:10 +0000 (GMT)
-Received: from FRAEMA706-CHM.china.huawei.com (10.206.14.55) by
- LHREML713-CAH.china.huawei.com (10.201.108.36) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 13 Nov 2018 13:28:11 +0000
-Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.76]) by
- FRAEMA706-CHM.china.huawei.com ([169.254.6.151]) with mapi id 14.03.0415.000;
- Tue, 13 Nov 2018 14:28:04 +0100
-From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To:     "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
-        Linuxarm <linuxarm@huawei.com>, Lukas Wunner <lukas@wunner.de>
-Subject: RE: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
-Thread-Topic: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
-Thread-Index: AdR7RP5EYT33x2cVTRiE4AudJSgcHP///SQA///uY1CAABsPAP//6WQQ
-Date:   Tue, 13 Nov 2018 13:28:04 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA8387DF51F@FRAEML521-MBX.china.huawei.com>
-References: <5FC3163CFD30C246ABAA99954A238FA8387DD344@FRAEML521-MBX.china.huawei.com>
- <20181113122522.GA2500@lahna.fi.intel.com>
- <5FC3163CFD30C246ABAA99954A238FA8387DF43F@FRAEML521-MBX.china.huawei.com>
- <20181113125910.GB2500@lahna.fi.intel.com>
-In-Reply-To: <20181113125910.GB2500@lahna.fi.intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 13 Nov 2018 18:30:30 -0500
+Received: from hqemgate14.nvidia.com ([216.228.121.143]:19266 "EHLO
+        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733229AbeKMXaa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 18:30:30 -0500
+Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
+        id <B5bead2520000>; Tue, 13 Nov 2018 05:32:03 -0800
+Received: from hqmail.nvidia.com ([172.20.161.6])
+  by hqpgpgate101.nvidia.com (PGP Universal service);
+  Tue, 13 Nov 2018 05:32:21 -0800
+X-PGP-Universal: processed;
+        by hqpgpgate101.nvidia.com on Tue, 13 Nov 2018 05:32:21 -0800
+Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
+ (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 13 Nov
+ 2018 13:32:19 +0000
+Subject: Re: [REGRESSION] brcmfmac: NULL pointer deference starting
+ next-20181107
+From:   Jon Hunter <jonathanh@nvidia.com>
+To:     Hans de Goede <hdegoede@redhat.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        linux-tegra <linux-tegra@vger.kernel.org>,
+        <linux-wireless@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+References: <dbc5e8f9-6f14-77d2-be2a-f0738e13b773@nvidia.com>
+ <9f72ac4f-a83a-7af7-3c26-b1ced6d98653@broadcom.com>
+ <9e0a7997-4c14-a3a1-c935-d674270533aa@redhat.com>
+ <000bfd39-10cf-661c-9512-0410782168dc@nvidia.com>
+Message-ID: <82736fa6-f3cc-f45f-a4b0-dba485531f7d@nvidia.com>
+Date:   Tue, 13 Nov 2018 13:32:17 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+In-Reply-To: <000bfd39-10cf-661c-9512-0410782168dc@nvidia.com>
+X-Originating-IP: [172.20.13.39]
+X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
+ HQMAIL101.nvidia.com (172.20.187.10)
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
+        t=1542115923; bh=uzW6qNZMyOVaJvpbCPUyx0mm8CkHxaQamcfM/dEk0bM=;
+        h=X-PGP-Universal:Subject:From:To:References:Message-ID:Date:
+         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
+         X-ClientProxiedBy:Content-Type:Content-Language:
+         Content-Transfer-Encoding;
+        b=NLP44bM4reiwF6Exi0M7k2IOXuVmduQSp5HJ9zXhan05RJI0zsi+/kb/DlTqaFGaM
+         81R/7ZRuhjHXT38q2H8Nk1dLc2Q98qmlnQayXfNI8TfuAk4oW7oUi1PxE3C1tSnm97
+         32DSCRa9Rr9c2G2m5cTHWoT2GtBVX82k48Rr9VO+RgOiYho6NNZ7y1XSfya7POkr8C
+         s3YtnnVORGNgZkPvDQGSdak/oKUY3V7NGOz/YJDoofcLd6SbsGR8EqONCzosz+gyzx
+         ZDte1quCJckDKdjqS4iPpMWe5Z2+uhxsaZhUewFbhUiae2ClBcLrn7h+BB9I7TLJoa
+         /IRc+4LYAbJww==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
-> -----Original Message-----
-> From: mika.westerberg@linux.intel.com
-> [mailto:mika.westerberg@linux.intel.com]
-> Sent: 13 November 2018 12:59
-> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-> Cc: linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org; Wangzhou (B)
-> <wangzhou1@hisilicon.com>; Linuxarm <linuxarm@huawei.com>; Lukas
-> Wunner <lukas@wunner.de>
-> Subject: Re: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
-> 
-> On Tue, Nov 13, 2018 at 12:36:20PM +0000, Shameerali Kolothum Thodi wrote:
-> > > @@ -156,9 +156,9 @@ static void pcie_do_write_cmd(struct controller
-> > > *ctrl,
-> > > u16 cmd,
-> > >  	slot_ctrl |= (cmd & mask);
-> > >  	ctrl->cmd_busy = 1;
-> > >  	smp_mb();
-> > > +	ctrl->slot_ctrl = slot_ctrl;
-> >
-> > Actually I tried this one, but it doesn't help in this case as the
-> > initial
-> > pcie_capability_read_word() returns the slot_ctrl without
-> > PCI_EXP_SLTCTL_HPIE bit set.  It looks to me
-> > pcie_enable_notification() function enables this,
-> >
-> > 	if (!pciehp_poll_mode)
-> > 		cmd |= PCI_EXP_SLTCTL_HPIE | PCI_EXP_SLTCTL_CCIE;
-> >
-> > I don't know this is as per the spec or not as the initial cap read
-> > doesn't seems to have the PCI_EXP_SLTCTL_HPIE bit set.
-> 
-> If I read the code right cmd value should end up in ctrl->slot_ctrl properly from
-> pcie_enable_notification().
+On 13/11/2018 13:21, Jon Hunter wrote:
 
-Right. As I mentioned in my previous mail, I missed the fact that you are updating
-the ctrl->slot_ctrl with cmd value while in my test I did my update with the value
-returned by pcie_capability_read_word().
- 
-> However, I think we are missing check for PCI_EXP_SLTCTL_CCIE in
-> pciehp_isr().
+...
 
-Ok.
- 
-> Here's an updated patch, can you try and see if it makes any difference?
+>> IMHO the best fix here would be to modify efivar_entry_size(),
+>> adding:
+>>
+>> =C2=A0=C2=A0=C2=A0=C2=A0if (!ops)
+>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENOENT;
+>>
+>> Which makes it return the same error as when we do have efivar
+>> support but the requested variable is not found.
+>=20
+> So the above did not work. I see a patch from Arend and I will give this
+> a try.
 
-I just tried this and it works. Thanks.
+FWIW, this did work ...
 
-See few comments below.
+diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
+index 9336ffdf6e2c..8181e548f32b 100644
+--- a/drivers/firmware/efi/vars.c
++++ b/drivers/firmware/efi/vars.c
+@@ -829,9 +829,14 @@ struct efivar_entry *efivar_entry_find(efi_char16_t
+*name, efi_guid_t guid,
+  */
+ int efivar_entry_size(struct efivar_entry *entry, unsigned long *size)
+ {
+-       const struct efivar_operations *ops =3D __efivars->ops;
++       const struct efivar_operations *ops;
+        efi_status_t status;
 
-> diff --git a/drivers/pci/hotplug/pciehp_hpc.c
-> b/drivers/pci/hotplug/pciehp_hpc.c
-> index 7dd443aea5a5..da2cbe892444 100644
-> --- a/drivers/pci/hotplug/pciehp_hpc.c
-> +++ b/drivers/pci/hotplug/pciehp_hpc.c
-> @@ -156,9 +156,9 @@ static void pcie_do_write_cmd(struct controller *ctrl,
-> u16 cmd,
->  	slot_ctrl |= (cmd & mask);
->  	ctrl->cmd_busy = 1;
->  	smp_mb();
-> +	ctrl->slot_ctrl = slot_ctrl;
++       if (!__efivars || !__efivars->ops)
++               return -ENOENT;
++
++       ops =3D __efivars->ops;
++
+        *size =3D 0;
 
-Does it make more sense if we can move this before smp_mb()?. Also I am not
-sure updating the  ctrl->slot_ctrl before actually the hardware is programmed
-with that value will result in any other race conditions? TBH, I am not that familiar
-with this code and I leave that to you :)
+        if (down_interruptible(&efivars_lock))
 
-Thanks,
-Shameer
+I will let you know about Arend's patch as well.
 
->  	pcie_capability_write_word(pdev, PCI_EXP_SLTCTL, slot_ctrl);
->  	ctrl->cmd_started = jiffies;
-> -	ctrl->slot_ctrl = slot_ctrl;
-> 
->  	/*
->  	 * Controllers with the Intel CF118 and similar errata advertise @@ -
-> 522,7 +522,7 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
->  	 * in the Slot Control register (PCIe r4.0, sec 6.7.3.4).
->  	 */
->  	if (pdev->current_state == PCI_D3cold ||
-> -	    (!(ctrl->slot_ctrl & PCI_EXP_SLTCTL_HPIE) && !pciehp_poll_mode))
-> +	    (!(ctrl->slot_ctrl & (PCI_EXP_SLTCTL_HPIE | PCI_EXP_SLTCTL_CCIE))
-> +&& !pciehp_poll_mode))
->  		return IRQ_NONE;
-> 
->  	/*
+Jon
+
+--=20
+nvpublic
