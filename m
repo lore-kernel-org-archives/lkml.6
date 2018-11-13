@@ -2,229 +2,1010 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2FB2CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:43:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09098C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:48:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD653224E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:43:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD653224E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 9CDAA21780
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:48:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="ABQJcbpd";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="dkk/GGpO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CDAA21780
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730831AbeKNEnM (ORCPT
+        id S1727475AbeKNErd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:43:12 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:53556 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726517AbeKNEnL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:43:11 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 1IpCPw9TDn4i; Tue, 13 Nov 2018 19:43:48 +0100 (CET)
-Received: from zn.tnic (p200300EC2BE56F00D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:6f00:d571:4500:c00e:26fd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 15BD31EC00EB;
-        Tue, 13 Nov 2018 19:43:48 +0100 (CET)
-Date:   Tue, 13 Nov 2018 19:43:37 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v5 05/27] Documentation/x86: Add CET description
-Message-ID: <20181113184337.GM10502@zn.tnic>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
- <20181011151523.27101-6-yu-cheng.yu@intel.com>
+        Tue, 13 Nov 2018 23:47:33 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:48460 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726517AbeKNErd (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 23:47:33 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wADIlWAg023637;
+        Tue, 13 Nov 2018 10:48:01 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=Lel8MKI8xhKqjJtieJLMC7F6nlut3cYi69ZtXKkHRPo=;
+ b=ABQJcbpdogckOJ/O0gqyaSh7D0zlnZSb0bXS4jM0IyVYZ/ItCmXs3FGtbpSwq0MAX8St
+ SYHsmFOJh1CsWD/BkaFYEIsa3MB+0tEMpQHLXXqEjq198hw0YLL0t4BjaHKRAr6glPsV
+ JVzEIrob6ZB1M1pypg6RkVDm+4bj5OYSVRE= 
+Received: from maileast.thefacebook.com ([199.201.65.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2nr27s8exq-5
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 13 Nov 2018 10:48:01 -0800
+Received: from frc-hub05.TheFacebook.com (2620:10d:c021:18::175) by
+ frc-hub05.TheFacebook.com (2620:10d:c021:18::175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Tue, 13 Nov 2018 10:47:58 -0800
+Received: from NAM05-BY2-obe.outbound.protection.outlook.com (192.168.183.28)
+ by o365-in.thefacebook.com (192.168.177.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Tue, 13 Nov 2018 10:47:58 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Lel8MKI8xhKqjJtieJLMC7F6nlut3cYi69ZtXKkHRPo=;
+ b=dkk/GGpO8BYnmHPJm9cf1cx0fT6ERDqligpqwOw2E4rEdXv6sleF9otnayWgQOBVGWqey41IY6+Sppa2DsdVntLmWJyfFrJRM4prnyPAP6bpoTA8b5w43KdlScnQS4KmoGQaFyU55j2/X5SUFpddFqgP6XEeIeQrcQM6GhJqqU8=
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com (10.163.64.141) by
+ BY2PR15MB0456.namprd15.prod.outlook.com (10.163.110.142) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.21; Tue, 13 Nov 2018 18:47:55 +0000
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::8e8:753:f746:ed14]) by BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::8e8:753:f746:ed14%2]) with mapi id 15.20.1294.045; Tue, 13 Nov 2018
+ 18:47:55 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Tejun Heo <tj@kernel.org>
+CC:     Roman Gushchin <guroan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v2 3/6] cgroup: cgroup v2 freezer
+Thread-Topic: [PATCH v2 3/6] cgroup: cgroup v2 freezer
+Thread-Index: AQHUetwXxFde3wHnZUKDpNhUsGNNTqVM9cOAgAEXRoA=
+Date:   Tue, 13 Nov 2018 18:47:55 +0000
+Message-ID: <20181113184751.GB21629@tower.DHCP.thefacebook.com>
+References: <20181112230422.5911-1-guro@fb.com>
+ <20181112230422.5911-5-guro@fb.com>
+ <20181113020817.GE2509588@devbig004.ftw2.facebook.com>
+In-Reply-To: <20181113020817.GE2509588@devbig004.ftw2.facebook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR1601CA0001.namprd16.prod.outlook.com
+ (2603:10b6:300:da::11) To BY2PR15MB0167.namprd15.prod.outlook.com
+ (2a01:111:e400:58e0::13)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::6:e7cf]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR15MB0456;20:VeLpdAEfdDRDoPf+86dJFfi/ahahL7+XvpzabDvQ2rAnTGcgIydIF0ymYwUvWFJnRmWraK+zuSSW8NMr4GNA+1clRbpLhKYxcU7x4UYzT2sfN3TK0PQGbP9Z4HkXgxbSfoikzRct8RGQ02NOZMdxDRAAGu0baA9GPqif0Ob+res=
+x-ms-office365-filtering-correlation-id: 77603c52-933c-4ce0-3f19-08d6499885a9
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390060)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0456;
+x-ms-traffictypediagnostic: BY2PR15MB0456:
+x-microsoft-antispam-prvs: <BY2PR15MB045667F51C1221971F009CA0BEC20@BY2PR15MB0456.namprd15.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(3002001)(93006095)(93001095)(3231406)(11241501184)(944501410)(52105112)(10201501046)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123564045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BY2PR15MB0456;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0456;
+x-forefront-prvs: 085551F5A8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(396003)(376002)(346002)(366004)(39860400002)(199004)(189003)(43544003)(501624003)(39060400002)(6916009)(106356001)(105586002)(316002)(54906003)(7736002)(6512007)(9686003)(6306002)(53946003)(478600001)(81156014)(53936002)(6246003)(68736007)(5660300001)(386003)(6506007)(102836004)(33896004)(76176011)(345774005)(8936002)(99286004)(8676002)(305945005)(229853002)(52116002)(6436002)(81166006)(6116002)(1076002)(14454004)(2906002)(25786009)(186003)(4326008)(6486002)(4744004)(71200400001)(71190400001)(486006)(86362001)(256004)(476003)(2900100001)(14444005)(446003)(46003)(5024004)(97736004)(11346002)(575784001)(33656002)(42262002)(559001)(579004);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0456;H:BY2PR15MB0167.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Gj5leVBYGCMQZpuYeALS3zLTYJ408TUmADMByXd2o1w18WUdExSDRSnC2TwRNSHwPmTuhD5HXIPjZyDU43d6RzgK5FZdbpifRiO9yuVyuPUbAG9sOP0n4imC2EuJ3o8fP7fxQq4aImTY/V2RVHfDSbyaZBFCcurm9e2+dCmoc3bmtoiGx/jgpNvgGHiFlSNNBACLwSWzWUyd5K+u62vAtfLP/hf11OIj1bUjBuIHN6eh73gjsHpXrc7CSgFvCpoXm3S73trn76WcgXFmEga94QmXOucNDRG/mbpRa79xPlaoXfWf+FRDgr02RPAPaRJW3jRxJLegTOiVEIbrZf3XlQ/d0tXybePM+2JV+QsVB94=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <7BD574971B796A4B9810A6D5276B8C7A@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181011151523.27101-6-yu-cheng.yu@intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 77603c52-933c-4ce0-3f19-08d6499885a9
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2018 18:47:55.1547
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0456
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_11:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Oct 11, 2018 at 08:15:01AM -0700, Yu-cheng Yu wrote:
-> Explain how CET works and the no_cet_shstk/no_cet_ibt kernel
-> parameters.
-> 
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
-> ---
->  .../admin-guide/kernel-parameters.txt         |   6 +
->  Documentation/index.rst                       |   1 +
->  Documentation/x86/index.rst                   |  11 +
->  Documentation/x86/intel_cet.rst               | 266 ++++++++++++++++++
->  4 files changed, 284 insertions(+)
->  create mode 100644 Documentation/x86/index.rst
->  create mode 100644 Documentation/x86/intel_cet.rst
+On Mon, Nov 12, 2018 at 06:08:17PM -0800, Tejun Heo wrote:
+> (cc'ing Linus, Andrew, Ingo for the addition of a new task state)
+>=20
+> Hello,
+>=20
+> On Mon, Nov 12, 2018 at 03:04:19PM -0800, Roman Gushchin wrote:
+> > Cgroup v1 implements the freezer controller, which provides an ability
+> > to stop the workload in a cgroup and temporarily free up some
+> > resources (cpu, io, network bandwidth and, potentially, memory)
+> > for some other tasks. Cgroup v2 lacks this functionality.
+> >=20
+> > This patch implements freezer for cgroup v2. However the functionality
+> > is similar, the interface is different to cgroup v1: it follows
+> > cgroup v2 interface principles.
+> >=20
+> > Key differences are:
+> > 1) There is no separate controller: the functionality is always
+> > available and is represented by cgroup.freeze and cgroup.events
+> > cgroup control files.
+> > 2) The desired state is defined by the cgroup.freeze control file.
+> > Any hierarchical configuration is allowed.
+> > 3) The interface is asynchronous. The actual state is available
+> > using cgroup.events control file ("frozen" field). There are no
+> > dedicated transitional states.
+> > 4) It's allowed to make any changes with the cgroup hierarchy
+> > (create new cgroups, remove old cgroups, move tasks between cgroups)
+> > no matter if some cgroups are frozen.
+> > 5) Tasks in a frozen cgroup can be killed.
+>=20
+> I think it'd be worthwhile to explain that tasks are now frozen in a
+> state which is essentially equivalent to the job control stop state
+> but which can only be controlled by the freezer and its interactions
+> with ptrace.
 
-So this patch should probably come first in the series so that a reader
-can know what to expect...
+Agreed.
 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 92eb1f42240d..3854423f7c86 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2764,6 +2764,12 @@
->  			noexec=on: enable non-executable mappings (default)
->  			noexec=off: disable non-executable mappings
->  
-> +	no_cet_ibt	[X86-64] Disable indirect branch tracking for user-mode
-> +			applications
-> +
-> +	no_cet_shstk	[X86-64] Disable shadow stack support for user-mode
-> +			applications
-> +
->  	nosmap		[X86]
->  			Disable SMAP (Supervisor Mode Access Prevention)
->  			even if it is supported by processor.
-> diff --git a/Documentation/index.rst b/Documentation/index.rst
-> index 5db7e87c7cb1..1cdc139adb40 100644
-> --- a/Documentation/index.rst
-> +++ b/Documentation/index.rst
+>=20
+> Oleg, I'd really appreciate if you can review the signal delivery /
+> ptrace parts of the patch.
+>=20
+> > diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+> > index 22254c1fe1c5..600165d0f5a2 100644
+> > --- a/include/linux/cgroup-defs.h
+> > +++ b/include/linux/cgroup-defs.h
+> > @@ -63,6 +63,12 @@ enum {
+> >  	 * specified at mount time and thus is implemented here.
+> >  	 */
+> >  	CGRP_CPUSET_CLONE_CHILDREN,
+> > +
+> > +	/* Control group has to be frozen. */
+> > +	CGRP_FREEZE,
+> > +
+> > +	/* Cgroup is frozen. */
+> > +	CGRP_FROZEN,
+> >  };
+> > =20
+> >  /* cgroup_root->flags */
+> > @@ -314,6 +320,27 @@ struct cgroup_rstat_cpu {
+> >  	struct cgroup *updated_next;		/* NULL iff not on the list */
+> >  };
+> > =20
+> > +struct cgroup_freezer_state {
+> > +	/* Should the cgroup actually be frozen?
+> > +	 * (protected by cgroup_mutex)
+> > +	 */
+> > +	int e_freeze;
+> > +
+> > +	/* Fields below are protected by css_set_lock */
+> > +
+> > +	/* Number of frozen descendant cgroups */
+> > +	int nr_frozen_descendants;
+> > +
+> > +	/* Number of tasks to freeze */
+> > +	int nr_tasks_to_freeze;
+> > +
+> > +	/* Number of frozen tasks */
+> > +	int nr_frozen_tasks;
+> > +
+> > +	/* Used for delayed notifications */
+> > +	struct work_struct notify_work;
+> > +};
+> > +
+> >  struct cgroup {
+> >  	/* self css with NULL ->ss, points back to this cgroup */
+> >  	struct cgroup_subsys_state self;
+> > @@ -442,6 +469,12 @@ struct cgroup {
+> >  	/* If there is block congestion on this cgroup. */
+> >  	atomic_t congestion_count;
+> > =20
+> > +	/* Should the cgroup and its descendants be frozen. */
+> > +	bool freeze;
+>=20
+> Why not have this in freezer too?
 
-Please integrate scripts/checkpatch.pl into your patch creation
-workflow. Some of the warnings/errors *actually* make sense:
+I thought that this variable is just the state of the cgroup.freeze knob,
+where the freezer field contains the internal state of the freezer, and
+can in theory be allocated dynamically.
 
-WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-#76: FILE: Documentation/x86/index.rst:1:
-+=======================
+Not a strong preference, I can move it there too, if you prefer to.
 
-WARNING: Missing or malformed SPDX-License-Identifier tag in line 1
-#93: FILE: Documentation/x86/intel_cet.rst:1:
-+=========================================
+>=20
+> > +	/* Used to store internal freezer state */
+> > +	struct cgroup_freezer_state freezer;
+> > +
+> >  	/* ids of the ancestors at each level including self */
+> >  	int ancestor_ids[];
+> >  };
+> > diff --git a/include/linux/cgroup.h b/include/linux/cgroup.h
+> > index 32c553556bbd..8f7e82b05bf8 100644
+> > --- a/include/linux/cgroup.h
+> > +++ b/include/linux/cgroup.h
+> > @@ -871,4 +871,46 @@ static inline void put_cgroup_ns(struct cgroup_nam=
+espace *ns)
+> >  		free_cgroup_ns(ns);
+> >  }
+> > =20
+> > +#ifdef CONFIG_CGROUPS
+> > +
+> > +static inline bool cgroup_frozen(struct task_struct *task)
+> > +{
+> > +	bool ret;
+> > +
+> > +	rcu_read_lock();
+> > +	ret =3D test_bit(CGRP_FREEZE, &task_dfl_cgroup(task)->flags);
+> > +	rcu_read_unlock();
+> > +
+> > +	return ret;
+> > +}
+> > +
+> > +static inline bool cgroup_task_in_freezer(struct task_struct *task)
+> > +{
+> > +	return task->frozen;
+> > +}
+>=20
+> I think the above are pretty confusing.  CGRP_FREEZE is frozen and
+> task->frozen is cgroup_task_in_freezer()?  Can't they be e.g.
+> cgroup_task_freeze() (or freezing, which probably is clearer) and
+> cgroup_task_frozen()?
 
-> @@ -104,6 +104,7 @@ implementation.
->     :maxdepth: 2
->  
->     sh/index
-> +   x86/index
->  
->  Filesystem Documentation
->  ------------------------
-> diff --git a/Documentation/x86/index.rst b/Documentation/x86/index.rst
-> new file mode 100644
-> index 000000000000..9c34d8cbc8f0
-> --- /dev/null
-> +++ b/Documentation/x86/index.rst
-> @@ -0,0 +1,11 @@
-> +=======================
-> +X86 Documentation
-> +=======================
-> +
-> +Control Flow Enforcement
-> +========================
-> +
-> +.. toctree::
-> +   :maxdepth: 1
-> +
-> +   intel_cet
-> diff --git a/Documentation/x86/intel_cet.rst b/Documentation/x86/intel_cet.rst
-> new file mode 100644
-> index 000000000000..946f4802a51f
-> --- /dev/null
-> +++ b/Documentation/x86/intel_cet.rst
-> @@ -0,0 +1,266 @@
-> +=========================================
-> +Control Flow Enforcement Technology (CET)
-> +=========================================
-> +
-> +[1] Overview
-> +============
-> +
-> +Control Flow Enforcement Technology (CET) provides protection against
-> +return/jump-oriented programming (ROP) attacks.  It can be implemented
-> +to protect both the kernel and applications.  In the first phase,
-> +only the user-mode protection is implemented on the 64-bit kernel.
+Yeah, looks good to me, will rename.
 
-s/the//			         is implemented in 64-bit mode.
+>=20
+> > +void cgroup_freezer_enter(void);
+> > +void cgroup_freezer_leave(void);
+>=20
+> So, if we use freeze, freezing, frozen instead, the aboves can be
+> cgroup_frozen_enter() and cgroup_frozen_leave() (or begin/end).
 
-> +However, 32-bit applications are supported under the compatibility
-> +mode.
+Idk, maybe cgroup_enter_frozen()/cgroup_leave_frozen() ?
 
-Drop "However":
+>=20
+> > +void cgroup_freeze(struct cgroup *cgrp, bool freeze);
+> > +void cgroup_notify_frozen_fn(struct work_struct *work);
+>=20
+> This doesn't need to be exported outside of cgroup proper, right?
+>=20
+> > +void cgroup_notify_frozen(struct cgroup *cgrp, bool frozen);
+> > +void cgroup_queue_notify_frozen(struct cgroup *cgrp);
+> > +void cgroup_freezer_migrate_task(struct task_struct *task, struct cgro=
+up *src,
+> > +				 struct cgroup *dst);
+>=20
+> Ditto.  Do these need to be exposed outside freezer or cgroup proper?
 
-"32-bit applications are, of course, supported in compatibility mode."
+Yeah, makes sense, will remove.
 
-> +
-> +CET includes shadow stack (SHSTK) and indirect branch tracking (IBT).
+>=20
+> > +
+> > +#else /* !CONFIG_CGROUPS */
+> > +
+> > +static inline bool cgroup_task_in_freezer(struct task_struct *task)
+> > +{
+> > +	return false;
+> > +}
+> > +static inline void cgroup_freezer_enter(void) { }
+> > +static inline void cgroup_freezer_leave(void) { }
+> > +static inline bool cgroup_frozen(struct task_struct *task)
+> > +{
+> > +	return false;
+> > +}
+> > +
+> > +#endif /* !CONFIG_CGROUPS */
+> > +
+> >  #endif /* _LINUX_CGROUP_H */
+> > diff --git a/include/linux/sched.h b/include/linux/sched.h
+> > index 977cb57d7bc9..8ef5d3174e50 100644
+> > --- a/include/linux/sched.h
+> > +++ b/include/linux/sched.h
+> > @@ -83,7 +83,8 @@ struct task_group;
+> >  #define TASK_WAKING			0x0200
+> >  #define TASK_NOLOAD			0x0400
+> >  #define TASK_NEW			0x0800
+> > -#define TASK_STATE_MAX			0x1000
+> > +#define TASK_FROZEN			0x1000
+> > +#define TASK_STATE_MAX			0x2000
+>=20
+> We should also cc linux-api@vger.kernel.org as this is visible from
+> userland, I think.
 
-"CET introduces two a shadow stack and an indirect branch tracking mechanism."
+Ok.
 
-> +The SHSTK is a secondary stack allocated from memory.  The processor
+>=20
+> >  /* Convenience macros for the sake of set_current_state: */
+> >  #define TASK_KILLABLE			(TASK_WAKEKILL | TASK_UNINTERRUPTIBLE)
+> > @@ -733,6 +734,8 @@ struct task_struct {
+> >  #ifdef CONFIG_CGROUPS
+> >  	/* disallow userland-initiated cgroup migration */
+> >  	unsigned			no_cgroup_migration:1;
+> > +	/* task is in the cgroup freezer loop */
+>=20
+> The above comment isn't strictly true, right?
 
-s/The//
+Why so?
 
-> +automatically pushes/pops a secure copy to the SHSTK every return
-> +address and,
+It actually means that the task is looping somewhere in the signal delivery=
+ loop
+after entering cgroup_freezer_enter() and before cgroup_freezer_leave().
 
-that reads funny - pls reorganize. Also, what is a "secure copy"?
+Maybe simple "task is frozen by the cgroup freezer"?
 
-You mean a copy of every return address which software cannot access?
+>=20
+> > +	unsigned			frozen:1;
+> >  #endif
+> >  #ifdef CONFIG_BLK_CGROUP
+> >  	/* to be used once the psi infrastructure lands upstream. */
+> > diff --git a/include/linux/sched/jobctl.h b/include/linux/sched/jobctl.=
+h
+> > index 98228bd48aee..6c49455dcfe6 100644
+> > --- a/include/linux/sched/jobctl.h
+> > +++ b/include/linux/sched/jobctl.h
+> > @@ -18,6 +18,7 @@ struct task_struct;
+> >  #define JOBCTL_TRAP_NOTIFY_BIT	20	/* trap for NOTIFY */
+> >  #define JOBCTL_TRAPPING_BIT	21	/* switching to TRACED */
+> >  #define JOBCTL_LISTENING_BIT	22	/* ptracer is listening for events */
+> > +#define JOBCTL_TRAP_FREEZE_BIT	23	/* trap for cgroup freezer */
+> > =20
+> >  #define JOBCTL_STOP_DEQUEUED	(1UL << JOBCTL_STOP_DEQUEUED_BIT)
+> >  #define JOBCTL_STOP_PENDING	(1UL << JOBCTL_STOP_PENDING_BIT)
+> > @@ -26,8 +27,10 @@ struct task_struct;
+> >  #define JOBCTL_TRAP_NOTIFY	(1UL << JOBCTL_TRAP_NOTIFY_BIT)
+> >  #define JOBCTL_TRAPPING		(1UL << JOBCTL_TRAPPING_BIT)
+> >  #define JOBCTL_LISTENING	(1UL << JOBCTL_LISTENING_BIT)
+> > +#define JOBCTL_TRAP_FREEZE	(1UL << JOBCTL_TRAP_FREEZE_BIT)
+> > =20
+> > -#define JOBCTL_TRAP_MASK	(JOBCTL_TRAP_STOP | JOBCTL_TRAP_NOTIFY)
+> > +#define JOBCTL_TRAP_MASK	(JOBCTL_TRAP_STOP | JOBCTL_TRAP_NOTIFY | \
+> > +				 JOBCTL_TRAP_FREEZE)
+> >  #define JOBCTL_PENDING_MASK	(JOBCTL_STOP_PENDING | JOBCTL_TRAP_MASK)
+> > =20
+> >  extern bool task_set_jobctl_pending(struct task_struct *task, unsigned=
+ long mask);
+> > diff --git a/kernel/cgroup/Makefile b/kernel/cgroup/Makefile
+> > index 8d5689ca94b9..5d7a76bfbbb7 100644
+> > --- a/kernel/cgroup/Makefile
+> > +++ b/kernel/cgroup/Makefile
+> > @@ -1,5 +1,5 @@
+> >  # SPDX-License-Identifier: GPL-2.0
+> > -obj-y :=3D cgroup.o rstat.o namespace.o cgroup-v1.o
+> > +obj-y :=3D cgroup.o rstat.o namespace.o cgroup-v1.o freezer.o
+> > =20
+> >  obj-$(CONFIG_CGROUP_FREEZER) +=3D legacy_freezer.o
+> >  obj-$(CONFIG_CGROUP_PIDS) +=3D pids.o
+> > diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+> > index ef3442555b32..4cffaae075af 100644
+> > --- a/kernel/cgroup/cgroup.c
+> > +++ b/kernel/cgroup/cgroup.c
+> > @@ -2358,6 +2358,10 @@ static int cgroup_migrate_execute(struct cgroup_=
+mgctx *mgctx)
+> >  			css_set_move_task(task, from_cset, to_cset, true);
+> >  			put_css_set_locked(from_cset);
+> >  			from_cset->nr_tasks--;
+> > +
+> > +			cgroup_freezer_migrate_task(task,
+> > +						    from_cset->dfl_cgrp,
+> > +						    to_cset->dfl_cgrp);
+> >  		}
+> >  	}
+> >  	spin_unlock_irq(&css_set_lock);
+> > @@ -3401,8 +3405,11 @@ static ssize_t cgroup_max_depth_write(struct ker=
+nfs_open_file *of,
+> > =20
+> >  static int cgroup_events_show(struct seq_file *seq, void *v)
+> >  {
+> > -	seq_printf(seq, "populated %d\n",
+> > -		   cgroup_is_populated(seq_css(seq)->cgroup));
+> > +	struct cgroup *cgrp =3D seq_css(seq)->cgroup;
+> > +
+> > +	seq_printf(seq, "populated %d\n", cgroup_is_populated(cgrp));
+> > +	seq_printf(seq, "frozen %d\n", test_bit(CGRP_FROZEN, &cgrp->flags));
+> > +
+> >  	return 0;
+> >  }
+> > =20
+> > @@ -3449,6 +3456,40 @@ static int cpu_stat_show(struct seq_file *seq, v=
+oid *v)
+> >  	return ret;
+> >  }
+> > =20
+> > +static int cgroup_freeze_show(struct seq_file *seq, void *v)
+> > +{
+> > +	struct cgroup *cgrp =3D seq_css(seq)->cgroup;
+> > +
+> > +	seq_printf(seq, "%d\n", cgrp->freeze);
+> > +
+> > +	return 0;
+> > +}
+> > +
+> > +static ssize_t cgroup_freeze_write(struct kernfs_open_file *of,
+> > +				   char *buf, size_t nbytes, loff_t off)
+> > +{
+> > +	struct cgroup *cgrp;
+> > +	ssize_t ret;
+> > +	int freeze;
+> > +
+> > +	ret =3D kstrtoint(strstrip(buf), 0, &freeze);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	if (freeze < 0 || freeze > 1)
+> > +		return -ERANGE;
+> > +
+> > +	cgrp =3D cgroup_kn_lock_live(of->kn, false);
+> > +	if (!cgrp)
+> > +		return -ENOENT;
+> > +
+> > +	cgroup_freeze(cgrp, freeze);
+> > +
+> > +	cgroup_kn_unlock(of->kn);
+> > +
+> > +	return nbytes;
+> > +}
+> > +
+> >  static int cgroup_file_open(struct kernfs_open_file *of)
+> >  {
+> >  	struct cftype *cft =3D of->kn->priv;
+> > @@ -4574,6 +4615,12 @@ static struct cftype cgroup_base_files[] =3D {
+> >  		.name =3D "cgroup.stat",
+> >  		.seq_show =3D cgroup_stat_show,
+> >  	},
+> > +	{
+> > +		.name =3D "cgroup.freeze",
+> > +		.flags =3D CFTYPE_NOT_ON_ROOT,
+> > +		.seq_show =3D cgroup_freeze_show,
+> > +		.write =3D cgroup_freeze_write,
+> > +	},
+> >  	{
+> >  		.name =3D "cpu.stat",
+> >  		.flags =3D CFTYPE_NOT_ON_ROOT,
+> > @@ -4899,11 +4946,20 @@ static struct cgroup *cgroup_create(struct cgro=
+up *parent)
+> >  	if (ret)
+> >  		goto out_idr_free;
+> > =20
+> > +	INIT_WORK(&cgrp->freezer.notify_work, cgroup_notify_frozen_fn);
+> > +	cgrp->freezer.e_freeze =3D parent->freezer.e_freeze;
+> > +	if (cgrp->freezer.e_freeze)
+> > +		set_bit(CGRP_FROZEN, &cgrp->flags);
+> > +
+> >  	for (tcgrp =3D cgrp; tcgrp; tcgrp =3D cgroup_parent(tcgrp)) {
+> >  		cgrp->ancestor_ids[tcgrp->level] =3D tcgrp->id;
+> > =20
+> > -		if (tcgrp !=3D cgrp)
+> > +		if (tcgrp !=3D cgrp) {
+> >  			tcgrp->nr_descendants++;
+> > +
+> > +			if (cgrp->freezer.e_freeze)
+> > +				tcgrp->freezer.nr_frozen_descendants++;
+> > +		}
+> >  	}
+> > =20
+> >  	if (notify_on_release(parent))
+> > @@ -5190,6 +5246,8 @@ static int cgroup_destroy_locked(struct cgroup *c=
+grp)
+> >  	for (tcgrp =3D cgroup_parent(cgrp); tcgrp; tcgrp =3D cgroup_parent(tc=
+grp)) {
+> >  		tcgrp->nr_descendants--;
+> >  		tcgrp->nr_dying_descendants++;
+> > +		if (cgrp->freezer.e_freeze)
+> > +			tcgrp->freezer.nr_frozen_descendants--;
+> >  	}
+> > =20
+> >  	cgroup1_check_for_release(parent);
+> > @@ -5642,6 +5700,23 @@ void cgroup_post_fork(struct task_struct *child)
+> >  			cset->nr_tasks++;
+> >  			css_set_move_task(child, NULL, cset, false);
+> >  		}
+> > +
+> > +		if (unlikely(cgroup_frozen(child) &&
+> > +			     (child->flags & ~PF_KTHREAD))) {
+>=20
+> I don't think we need explicit PF_KTHREAD test here.  We don't allow
+> kthreads in non-root cgroups anyway and if we wanna change that there
+> are a bunch of other things which need updating anyway.
 
-> by comparing the secure copy to the program stack copy,
-> +verifies function returns are as intended. 
+Don't we? I think we do. I've proposed a patch to fix this some time ago
+(https://lkml.org/lkml/2017/10/12/556), but was NAKed by Peter.
 
-			 ... have not been corrupted/modified."
+>=20
+> > +			struct cgroup *cgrp;
+> > +			unsigned long flags;
+> > +
+> > +			if (lock_task_sighand(child, &flags)) {
+> > +				cgrp =3D cset->dfl_cgrp;
+> > +				cgrp->freezer.nr_tasks_to_freeze++;
+> > +				WARN_ON_ONCE(cgrp->freezer.nr_tasks_to_freeze <
+> > +					     cgrp->freezer.nr_frozen_tasks);
+> > +				child->jobctl |=3D JOBCTL_TRAP_FREEZE;
+> > +				signal_wake_up(child, false);
+> > +				unlock_task_sighand(child, &flags);
+> > +			}
+> > +		}
+> > +
+> >  		spin_unlock_irq(&css_set_lock);
+> >  	}
+> > =20
+> > @@ -5690,6 +5765,24 @@ void cgroup_exit(struct task_struct *tsk)
+> >  		spin_lock_irq(&css_set_lock);
+> >  		css_set_move_task(tsk, cset, NULL, false);
+> >  		cset->nr_tasks--;
+> > +
+> > +		if (unlikely(cgroup_frozen(tsk) &&
+> > +			     (tsk->flags & ~PF_KTHREAD))) {
+>=20
+> Ditto.
+>=20
+> > +			struct cgroup *frozen_cgrp =3D cset->dfl_cgrp;
+> > +
+> > +			frozen_cgrp->freezer.nr_tasks_to_freeze--;
+> > +
+> > +			WARN_ON(tsk->frozen);
+>=20
+> Why not WARN_ON_ONCE here too?
 
-> The IBT verifies all
-> +indirect CALL/JMP targets are intended and marked by the compiler with
-> +'ENDBR' op codes.
+My bad, will fix.
 
-"opcode" - one word. And before you use "ENDBR" you need to explain it
-above what it is.
+>=20
+> > +			WARN_ON_ONCE(frozen_cgrp->freezer.nr_tasks_to_freeze <
+> > +				     0);
+> > +			WARN_ON_ONCE(frozen_cgrp->freezer.nr_tasks_to_freeze <
+> > +				     frozen_cgrp->freezer.nr_frozen_tasks);
+> > +
+> > +			if (frozen_cgrp->freezer.nr_frozen_tasks =3D=3D
+> > +			    frozen_cgrp->freezer.nr_tasks_to_freeze)
+> > +				cgroup_queue_notify_frozen(frozen_cgrp);
+> > +		}
+> > +
+> >  		spin_unlock_irq(&css_set_lock);
+> >  	} else {
+> >  		get_css_set(cset);
+> > diff --git a/kernel/cgroup/freezer.c b/kernel/cgroup/freezer.c
+> > new file mode 100644
+> > index 000000000000..b81e215e2cce
+> > --- /dev/null
+> > +++ b/kernel/cgroup/freezer.c
+> > @@ -0,0 +1,247 @@
+> > +//SPDX-License-Identifier: GPL-2.0
+> > +#include <linux/cgroup.h>
+> > +#include <linux/sched.h>
+> > +#include <linux/sched/task.h>
+> > +#include <linux/sched/signal.h>
+> > +
+> > +#include "cgroup-internal.h"
+> > +
+> > +void cgroup_notify_frozen(struct cgroup *cgrp, bool frozen)
+> > +{
+> > +	int delta =3D 1;
+> > +
+> > +	lockdep_assert_held(&cgroup_mutex);
+> > +
+> > +	/*
+> > +	 * Did we race with fork() or exit()? Np, everything is still frozen.
+> > +	 */
+> > +	if (frozen =3D=3D test_bit(CGRP_FROZEN, &cgrp->flags))
+> > +		return;
+> > +
+> > +	if (frozen)
+> > +		set_bit(CGRP_FROZEN, &cgrp->flags);
+> > +	else
+> > +		clear_bit(CGRP_FROZEN, &cgrp->flags);
+>=20
+> I'm not sure this is wrong but it feels a bit weird to tie the actual
+> state transition to notification.  Wouldn't it be more
+> straight-forward if CGRP_FROZEN bit is purely determined by whether
+> the tasks are frozen or not and the notification just checks that
+> against the last notified state and generate a notification if they're
+> different?
 
-/me reads further... encounters ENDBR's definition...
+So, maybe cgroup_notify_frozen() is not the best name, maybe
+cgroup_propagate_frozen() better reflects what's happening here.
+We need to recalc the state of ancestor cgroups, and we have to do it
+with cgroup_mutex held, this is why we do it from the delayed work
+context (on hot paths).
 
-ah, ok, so you should say something like
+The first pat of the function can be probably separated and called
+immediately. Is this what you're suggesting?
 
-"... and marked by the compiler with the ENDBR opcode (see below)."
+>=20
+> > +	cgroup_file_notify(&cgrp->events_file);
+> > +
+> > +	while ((cgrp =3D cgroup_parent(cgrp))) {
+> > +		if (frozen) {
+> > +			cgrp->freezer.nr_frozen_descendants +=3D delta;
+> > +			if (!test_bit(CGRP_FROZEN, &cgrp->flags) &&
+> > +			    test_bit(CGRP_FREEZE, &cgrp->flags) &&
+> > +			    cgrp->freezer.nr_frozen_descendants =3D=3D
+> > +			    cgrp->nr_descendants) {
+> > +				set_bit(CGRP_FROZEN, &cgrp->flags);
+> > +				cgroup_file_notify(&cgrp->events_file);
+> > +				delta++;
+> > +			}
+> > +		} else {
+> > +			cgrp->freezer.nr_frozen_descendants -=3D delta;
+> > +			if (test_bit(CGRP_FROZEN, &cgrp->flags)) {
+> > +				clear_bit(CGRP_FROZEN, &cgrp->flags);
+> > +				cgroup_file_notify(&cgrp->events_file);
+> > +				delta++;
+> > +			}
+> > +		}
+> > +	}
+> > +}
+>=20
+> So that all these state transitions are synchronous with the actual
+> freezing events and we can just queue per-cgroup work items all the
+> way to the top if the new state is different from the last one
+> cgroup-by-cgroup?
 
-> +
-> +There are two kernel configuration options:
-> +
-> +    INTEL_X86_SHADOW_STACK_USER, and
-> +    INTEL_X86_BRANCH_TRACKING_USER.
-> +
-> +To build a CET-enabled kernel, Binutils v2.31 and GCC v8.1 or later
-> +are required.  To build a CET-enabled application, GLIBC v2.28 or
-> +later is also required.
-> +
-> +There are two command-line options for disabling CET features:
-> +
-> +    no_cet_shstk - disables SHSTK, and
-> +    no_cet_ibt - disables IBT.
-> +
-> +At run time, /proc/cpuinfo shows the availability of SHSTK and IBT.
+Hm, Idk. Why it's better?
 
--- 
-Regards/Gruss,
-    Boris.
+>=20
+> > +void cgroup_notify_frozen_fn(struct work_struct *work)
+> > +{
+> > +	struct cgroup *cgrp =3D container_of(work, struct cgroup,
+> > +					   freezer.notify_work);
+> > +
+> > +	mutex_lock(&cgroup_mutex);
+> > +	cgroup_notify_frozen(cgrp, true);
+> > +	mutex_unlock(&cgroup_mutex);
+> > +
+> > +	css_put(&cgrp->self);
+> > +}
+> > +
+> > +void cgroup_queue_notify_frozen(struct cgroup *cgrp)
+> > +{
+> > +	if (work_pending(&cgrp->freezer.notify_work))
+> > +		return;
+> > +
+> > +	css_get(&cgrp->self);
+> > +	schedule_work(&cgrp->freezer.notify_work);
+> > +}
+> > +
+> > +void cgroup_freezer_enter(void)
+> > +{
+> > +	long state =3D current->state;
+> > +	struct cgroup *cgrp;
+> > +
+> > +	if (!current->frozen) {
+>=20
+> I think this needs a lot more comments explaining what's going on.
+> It's really subtle that this is where the frozen state is becoming
+> sticky until the task breaks out of the signal delivery path.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Agreed.
+
+>=20
+> > +		spin_lock_irq(&css_set_lock);
+> > +		current->frozen =3D true;
+> > +		cgrp =3D task_dfl_cgroup(current);
+> > +		cgrp->freezer.nr_frozen_tasks++;
+> > +
+> > +		WARN_ON_ONCE(cgrp->freezer.nr_tasks_to_freeze <
+> > +			     cgrp->freezer.nr_frozen_tasks);
+> > +
+> > +		if (cgrp->freezer.nr_tasks_to_freeze =3D=3D
+> > +		    cgrp->freezer.nr_frozen_tasks)
+> > +			cgroup_queue_notify_frozen(cgrp);
+> > +		spin_unlock_irq(&css_set_lock);
+> > +	}
+> > +
+> > +	/* refrigerator */
+> > +	set_current_state(TASK_WAKEKILL | TASK_INTERRUPTIBLE | TASK_FROZEN);
+> > +	clear_thread_flag(TIF_SIGPENDING);
+>=20
+> The toggling of TIF_SIGPENDING needs explanation too.
+>=20
+> > +	schedule();
+> > +	recalc_sigpending();
+> > +
+> > +	set_current_state(state);
+> > +}
+> > +
+> > +void cgroup_freezer_leave(void)
+> > +{
+> > +	struct cgroup *cgrp;
+> > +
+> > +	spin_lock_irq(&css_set_lock);
+> > +	cgrp =3D task_dfl_cgroup(current);
+> > +	cgrp->freezer.nr_frozen_tasks--;
+> > +	WARN_ON_ONCE(cgrp->freezer.nr_frozen_tasks < 0);
+> > +	current->frozen =3D false;
+> > +	spin_unlock_irq(&css_set_lock);
+> > +}
+> > +
+> > +static void cgroup_do_freeze(struct cgroup *cgrp, bool freeze)
+> > +{
+> > +	struct css_task_iter it;
+> > +	struct task_struct *task;
+> > +	unsigned long flags;
+> > +
+> > +	lockdep_assert_held(&cgroup_mutex);
+> > +
+> > +	spin_lock_irq(&css_set_lock);
+> > +	if (freeze) {
+> > +		cgrp->freezer.nr_tasks_to_freeze =3D __cgroup_task_count(cgrp);
+> > +		set_bit(CGRP_FREEZE, &cgrp->flags);
+> > +	} else {
+> > +		clear_bit(CGRP_FREEZE, &cgrp->flags);
+> > +		cgroup_notify_frozen(cgrp, false);
+> > +	}
+> > +	spin_unlock_irq(&css_set_lock);
+> > +
+> > +	css_task_iter_start(&cgrp->self, 0, &it);
+> > +	while ((task =3D css_task_iter_next(&it))) {
+> > +		if (task->flags & PF_KTHREAD)
+> > +			continue;
+>=20
+> WARN_ON_ONCE?
+
+Unfortunately, no. See comments above.
+
+>=20
+> > +		if (!lock_task_sighand(task, &flags))
+> > +			continue;
+>=20
+> So, this gotta be a dying task.  A comment wouldn't hurt.
+
+Agree.
+
+>=20
+> > +		if (freeze) {
+> > +			task->jobctl |=3D JOBCTL_TRAP_FREEZE;
+> > +			signal_wake_up(task, false);
+> > +		} else {
+> > +			task->jobctl &=3D ~JOBCTL_TRAP_FREEZE;
+> > +			wake_up_process(task);
+>=20
+> Again, a comment explaining why one's signal_wake_up() and the other's
+> wake_up_process() would be great.
+>=20
+> > +		}
+> > +
+> > +		unlock_task_sighand(task, &flags);
+> > +	}
+> > +	css_task_iter_end(&it);
+> > +
+> > +	if (freeze && cgrp->nr_descendants =3D=3D
+> > +	    cgrp->freezer.nr_frozen_descendants) {
+> > +		spin_lock_irq(&css_set_lock);
+> > +		WARN_ON_ONCE(cgrp->freezer.nr_tasks_to_freeze <
+> > +			     cgrp->freezer.nr_frozen_tasks);
+> > +		if (cgrp->freezer.nr_tasks_to_freeze =3D=3D
+> > +		    cgrp->freezer.nr_frozen_tasks)
+> > +			cgroup_notify_frozen(cgrp, true);
+> > +		spin_unlock_irq(&css_set_lock);
+>=20
+> I think notification handling would be easier if we separate out state
+> transitions and notifications.
+
+Hm, really? I mean the notification part is really simple: every time
+we do the state transition (set or clear CGRP_FROZEN flag), we call
+cgroup_file_notify(). That's it.
+
+I can wrap it to a helper function though, might be looking better.
+E.g. cgroup_set/clear_frozen(), which will toggle the bit and call
+cgroup_file_notify() if necessary.
+
+>=20
+> > +	}
+> > +}
+> > +
+> > +void cgroup_freezer_migrate_task(struct task_struct *task,
+> > +				 struct cgroup *src, struct cgroup *dst)
+> > +{
+> > +	unsigned long flags;
+> > +
+> > +	lockdep_assert_held(&css_set_lock);
+> > +
+> > +	if (task->flags & PF_KTHREAD)
+> > +		return;
+> > +
+> > +	if (test_bit(CGRP_FREEZE, &src->flags) || task->frozen)
+> > +		src->freezer.nr_tasks_to_freeze--;
+> > +	if (test_bit(CGRP_FREEZE, &dst->flags) || task->frozen)
+> > +		dst->freezer.nr_tasks_to_freeze++;
+> > +
+> > +	if (task->frozen) {
+> > +		src->freezer.nr_frozen_tasks--;
+> > +		dst->freezer.nr_frozen_tasks++;
+> > +	}
+> > +
+> > +	if (test_bit(CGRP_FREEZE, &src->flags) =3D=3D
+> > +	    test_bit(CGRP_FREEZE, &dst->flags))
+> > +		return;
+> > +
+> > +	if (lock_task_sighand(task, &flags)) {
+> > +		if (test_bit(CGRP_FREEZE, &dst->flags))
+> > +			task->jobctl |=3D JOBCTL_TRAP_FREEZE;
+> > +		else
+> > +			task->jobctl &=3D ~JOBCTL_TRAP_FREEZE;
+>=20
+> How are these flags synchronized?
+
+Using the css_set_lock.
+
+>=20
+> > +		signal_wake_up(task, false);
+>=20
+> Here, we're using signal_wake_up() for both transitions unlike the
+> earlier spot.
+
+Yeah, let me check it out.
+
+>=20
+> > +		unlock_task_sighand(task, &flags);
+> > +	}
+> > +}
+> > +
+> > +void cgroup_freeze(struct cgroup *cgrp, bool freeze)
+> > +{
+> > +	struct cgroup_subsys_state *css;
+> > +	struct cgroup *dsct;
+> > +	bool applied =3D false;
+> > +
+> > +	lockdep_assert_held(&cgroup_mutex);
+> > +
+> > +	/*
+> > +	 * Nothing changed? Just exit.
+> > +	 */
+> > +	if (cgrp->freeze =3D=3D freeze)
+> > +		return;
+> > +
+> > +	cgrp->freeze =3D freeze;
+> > +
+> > +	/*
+> > +	 * Propagate changes downwards the cgroup tree.
+> > +	 */
+> > +	css_for_each_descendant_pre(css, &cgrp->self) {
+> > +		dsct =3D css->cgroup;
+> > +
+> > +		if (cgroup_is_dead(dsct))
+> > +			continue;
+> > +
+> > +		if (freeze) {
+> > +			dsct->freezer.e_freeze++;
+> > +			/*
+> > +			 * Already frozen because of ancestor's settings?
+> > +			 */
+> > +			if (dsct->freezer.e_freeze > 1)
+> > +				continue;
+> > +		} else {
+> > +			dsct->freezer.e_freeze--;
+> > +			/*
+> > +			 * Still frozen because of ancestor's settings?
+> > +			 */
+> > +			if (dsct->freezer.e_freeze > 0)
+> > +				continue;
+> > +
+> > +			WARN_ON_ONCE(dsct->freezer.e_freeze < 0);
+> > +		}
+> > +
+> > +		/*
+> > +		 * Do change actual state: freeze or unfreeze.
+> > +		 */
+> > +		cgroup_do_freeze(dsct, freeze);
+> > +		applied =3D true;
+> > +	}
+> > +
+> > +	if (!applied)
+> > +		cgroup_file_notify(&cgrp->events_file);
+> > +}
+> > diff --git a/kernel/ptrace.c b/kernel/ptrace.c
+> > index 21fec73d45d4..5e484e2480e5 100644
+> > --- a/kernel/ptrace.c
+> > +++ b/kernel/ptrace.c
+> > @@ -400,6 +400,12 @@ static int ptrace_attach(struct task_struct *task,=
+ long request,
+> > =20
+> >  	spin_lock(&task->sighand->siglock);
+> > =20
+> > +	/*
+> > +	 * Kick the process to get it out of the refrigerator.
+> > +	 */
+> > +	if (cgroup_frozen(task))
+> > +		wake_up_process(task);
+> > +
+> >  	/*
+> >  	 * If the task is already STOPPED, set JOBCTL_TRAP_STOP and
+> >  	 * TRAPPING, and kick it so that it transits to TRACED.  TRAPPING
+> > diff --git a/kernel/signal.c b/kernel/signal.c
+> > index 5843c541fda9..6d7f0654f60d 100644
+> > --- a/kernel/signal.c
+> > +++ b/kernel/signal.c
+> > @@ -326,6 +326,11 @@ void task_clear_jobctl_pending(struct task_struct =
+*task, unsigned long mask)
+> >  	if (mask & JOBCTL_STOP_PENDING)
+> >  		mask |=3D JOBCTL_STOP_CONSUME | JOBCTL_STOP_DEQUEUED;
+> > =20
+> > +	/*
+> > +	 * JOBCTL_TRAP_FREEZE is set and cleared from cgroup side,
+> > +	 * don't touch it here.
+> > +	 */
+> > +	mask &=3D ~JOBCTL_TRAP_FREEZE;
+>=20
+> It's a bit weird to toggle the bit from here.  Can't we do this from
+> the callers?
+
+Probably, not. But we might exclude JOBCTL_TRAP_FREEZE from the
+JOBCTL_PENDING_MASK, and it will be enough.
+
+>=20
+> >  	task->jobctl &=3D ~mask;
+> > =20
+> >  	if (!(task->jobctl & JOBCTL_PENDING_MASK))
+> > @@ -2252,7 +2257,7 @@ static bool do_signal_stop(int signr)
+> >  }
+> > =20
+> >  /**
+> > - * do_jobctl_trap - take care of ptrace jobctl traps
+> > + * do_jobctl_trap - take care of ptrace and cgroup freezer jobctl trap=
+s
+> >   *
+> >   * When PT_SEIZED, it's used for both group stop and explicit
+> >   * SEIZE/INTERRUPT traps.  Both generate PTRACE_EVENT_STOP trap with
+> > @@ -2268,20 +2273,35 @@ static bool do_signal_stop(int signr)
+> >   */
+> >  static void do_jobctl_trap(void)
+> >  {
+> > +	struct sighand_struct *sighand =3D current->sighand;
+> >  	struct signal_struct *signal =3D current->signal;
+> >  	int signr =3D current->jobctl & JOBCTL_STOP_SIGMASK;
+> > =20
+> > -	if (current->ptrace & PT_SEIZED) {
+> > -		if (!signal->group_stop_count &&
+> > -		    !(signal->flags & SIGNAL_STOP_STOPPED))
+> > -			signr =3D SIGTRAP;
+> > -		WARN_ON_ONCE(!signr);
+> > -		ptrace_do_notify(signr, signr | (PTRACE_EVENT_STOP << 8),
+> > -				 CLD_STOPPED);
+> > -	} else {
+> > -		WARN_ON_ONCE(!signr);
+> > -		ptrace_stop(signr, CLD_STOPPED, 0, NULL);
+> > -		current->exit_code =3D 0;
+> > +	if (current->jobctl & (JOBCTL_TRAP_STOP | JOBCTL_TRAP_NOTIFY)) {
+> > +		if (current->ptrace & PT_SEIZED) {
+> > +			if (!signal->group_stop_count &&
+> > +			    !(signal->flags & SIGNAL_STOP_STOPPED))
+> > +				signr =3D SIGTRAP;
+> > +			WARN_ON_ONCE(!signr);
+> > +			ptrace_do_notify(signr,
+> > +					 signr | (PTRACE_EVENT_STOP << 8),
+> > +					 CLD_STOPPED);
+> > +		} else {
+> > +			WARN_ON_ONCE(!signr);
+> > +			ptrace_stop(signr, CLD_STOPPED, 0, NULL);
+> > +			current->exit_code =3D 0;
+> > +		}
+> > +	} else if (current->jobctl & JOBCTL_TRAP_FREEZE) {
+> > +		/*
+> > +		 * Enter the freezer, unless the task is about to exit.
+> > +		 */
+> > +		if (fatal_signal_pending(current)) {
+> > +			current->jobctl &=3D ~JOBCTL_TRAP_FREEZE;
+> > +		} else {
+> > +			spin_unlock_irq(&sighand->siglock);
+> > +			cgroup_freezer_enter();
+> > +			spin_lock_irq(&sighand->siglock);
+> > +		}
+>=20
+> We'll need a healthy amount of explanation in terms of how freezer
+> interacts with jobctl stop and ptrace.
+
+Sure, will add lot more comments, once we'll agree on the actual implementa=
+tion
+in the thread with Oleg.
+
+Thank you for the code review!
