@@ -2,92 +2,85 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07CBDC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68561C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:22:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C42AA22511
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:20:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42AA22511
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 1C4622245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:22:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C4622245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732172AbeKMURb (ORCPT
+        id S1732140AbeKMUTc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 15:17:31 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:60184 "EHLO mail.skyhub.de"
+        Tue, 13 Nov 2018 15:19:32 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:44024 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732090AbeKMURb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 15:17:31 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id cV3JelEndFhk; Tue, 13 Nov 2018 11:20:04 +0100 (CET)
-Received: from zn.tnic (p200300EC2BE56F00D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:6f00:d571:4500:c00e:26fd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9E6F81EC00CD;
-        Tue, 13 Nov 2018 11:20:04 +0100 (CET)
-Date:   Tue, 13 Nov 2018 11:20:04 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Ingo Molnar <mingo@kernel.org>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Tom Lendacky <thomas.lendacky@amd.com>
-Subject: Re: [GIT PULL] PCI changes for v4.20
-Message-ID: <20181113102004.GC10502@zn.tnic>
-References: <20181023173934.GA14918@bhelgaas-glaptop.roam.corp.google.com>
- <20181113071712.GA2353@gmail.com>
+        id S1726765AbeKMUTc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 15:19:32 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 1E2A720714; Tue, 13 Nov 2018 11:22:05 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
+        by mail.bootlin.com (Postfix) with ESMTPSA id E5DD22039F;
+        Tue, 13 Nov 2018 11:22:04 +0100 (CET)
+Date:   Tue, 13 Nov 2018 11:22:04 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Eric Anholt <eric@anholt.net>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Daniel Vetter <daniel.vetter@ffwll.ch>
+Subject: Re: [PATCH 1/4] drm/v3d: Fix whitespace inconsistency in the
+ header.
+Message-ID: <20181113112204.128164d0@bbrezillon>
+In-Reply-To: <20181108161654.19888-2-eric@anholt.net>
+References: <20181108161654.19888-1-eric@anholt.net>
+        <20181108161654.19888-2-eric@anholt.net>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181113071712.GA2353@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 08:17:12AM +0100, Ingo Molnar wrote:
-> 
-> * Bjorn Helgaas <helgaas@kernel.org> wrote:
-> 
-> > PCI changes:
-> > 
-> >   - Pay attention to device-specific _PXM node values (Jonathan Cameron)
-> 
-> There's a new boot regression, my AMD ThreadRipper system (MSI X399 SLI 
-> PLUS (MS-7B09)) hangs during early bootup, and I have bisected it down to 
-> this commit:
-> 
->   bad7dcd94f39: ACPI/PCI: Pay attention to device-specific _PXM node values
-> 
-> Reverting it solves the hang.
-> 
-> Unfortunately there's no console output when it hangs, even with 
-> earlyprintk. It just hangs after the "loading initrd" line.
-> 
-> Config is an Ubuntu-ish config with PROVE_LOCKING=y and a few other debug 
-> options.
-> 
-> All my other testsystems boot fine with similar configs, so it's probably 
-> something specific to this system.
+On Thu,  8 Nov 2018 08:16:51 -0800
+Eric Anholt <eric@anholt.net> wrote:
 
-Lemme add Tom, he might have an idea.
+Maybe you could add a short description here to avoid having an empty
+commit message.
 
--- 
-Regards/Gruss,
-    Boris.
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+
+> ---
+>  include/uapi/drm/v3d_drm.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/include/uapi/drm/v3d_drm.h b/include/uapi/drm/v3d_drm.h
+> index f446656d00b1..b1e5de076b0f 100644
+> --- a/include/uapi/drm/v3d_drm.h
+> +++ b/include/uapi/drm/v3d_drm.h
+> @@ -66,7 +66,7 @@ struct drm_v3d_submit_cl {
+>  	 */
+>  	__u32 bcl_start;
+>  
+> -	 /** End address of the BCL (first byte after the BCL) */
+> +	/** End address of the BCL (first byte after the BCL) */
+>  	__u32 bcl_end;
+>  
+>  	/* Offset of the render command list.
+> @@ -82,7 +82,7 @@ struct drm_v3d_submit_cl {
+>  	 */
+>  	__u32 rcl_start;
+>  
+> -	 /** End address of the RCL (first byte after the RCL) */
+> +	/** End address of the RCL (first byte after the RCL) */
+>  	__u32 rcl_end;
+>  
+>  	/** An optional sync object to wait on before starting the BCL. */
+
