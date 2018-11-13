@@ -2,216 +2,201 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A61C3C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:34:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 100B9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:36:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50434206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:34:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VGG0E5dY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50434206BB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AA0F6206BB
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:36:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA0F6206BB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731588AbeKMTbP (ORCPT
+        id S1731612AbeKMTdd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 14:31:15 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:33170 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731333AbeKMTbP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 14:31:15 -0500
-Received: by mail-lf1-f65.google.com with SMTP id i26so8306979lfc.0;
-        Tue, 13 Nov 2018 01:33:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=v48c32vS+8yMGg1eds0LXv2NplURzp9sBDfgs2nbq2E=;
-        b=VGG0E5dYfNe4kvXNBn7AKSrXivBA054j1SuIxEABiNsgFwkGS+P6pJpkap+AADgqAu
-         uSCSlkBTSwP/q7zzwt/pi0FZWBCkeP2uaq1TbAYNs5uCtyKh21kS3/w9lWj3jP6Q/s1s
-         DRRnh7VJz8IVESfYtccfx75RjKCrUYYyR2t3bPzrDGnYARyUebFp9iLigTtnmtdJUyX/
-         hQGRm5mIr4KkiGxS6Rd0IuVDyj8uFEna4TFQ94mnMJBB7AdyIrAUaIQKAaJfmstjqUfU
-         ArDIg+EX0UZU8Ytr4NULEVwjkNiZ6WDQ5rQBLe+IiTatTLEEGwJSozg8BVDS/SNRWm9M
-         JqAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=v48c32vS+8yMGg1eds0LXv2NplURzp9sBDfgs2nbq2E=;
-        b=V9fR+2GM0ZnbwyQWXtoYdIIhKRG+5ii0xjpT5w2GLGXulfTduBnc/36ySXuL5BgZIw
-         x/I9O6wHesnlbeIwcRhUZZI104UrI3iWdldwLgky9VZzW9JUMIWa644xRN9bitrZtql/
-         Vpz/fQ85OMrhY4Kajn2c6XSWJKeMSwAIRwLVWe/OeNcEtmpG2v09khoOaWOk64VP9M9z
-         QjavH/bnaBhiPoC+MdfieJPxvpN8nH+aPSZFhrV7hyULqzZHVPq2lf5S+I7+QSeR1E62
-         DcCq9eWZnlcJRZ+vrl7hSGUBvCuIHaOUohdKELEZrOeafyhcoJrR8gxxGWDSp7UP696N
-         fX3g==
-X-Gm-Message-State: AGRZ1gLtBtcNAUEwxxg69qfgo3kWATQ8kt1IU8PtWGPIOyp+lUgqPiww
-        1dQ3TZ+QYfvfTg5EFU4u32I=
-X-Google-Smtp-Source: AJdET5erOKvIlqIVDw9qRiBQ13ibs7CE8YW4X0B+oJ7SPeu2pHl0bvaP3HwtOFcaK5lTlxa9EgAbgg==
-X-Received: by 2002:ac2:42c5:: with SMTP id n5mr2436787lfl.115.1542101638216;
-        Tue, 13 Nov 2018 01:33:58 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id q30sm3474314lfi.94.2018.11.13.01.33.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 01:33:57 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gMV4z-0001bE-C0; Tue, 13 Nov 2018 10:33:53 +0100
-Date:   Tue, 13 Nov 2018 10:33:53 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Johan Hovold <johan@kernel.org>, linux-usb@vger.kernel.org,
-        pados@pados.hu, Loic Poulain <loic.poulain@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/2] USB: serial: gpio line-name fix and FT232R CBUS gpio
- support
-Message-ID: <20181113093353.GK13311@localhost>
-References: <20180930122703.7115-1-johan@kernel.org>
- <CACRpkdaG-S-6LfCKgxz4jdbD=kRO7q7k_8FAHqsSNBPdC07iDA@mail.gmail.com>
- <20181005134014.GH3774@localhost>
- <CACRpkdbxShE3XEXNaKoFKWgAUVGUHU8rf0KaYV44coucu4=cRA@mail.gmail.com>
+        Tue, 13 Nov 2018 14:33:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:41638 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727154AbeKMTdc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 14:33:32 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4791076207;
+        Tue, 13 Nov 2018 09:36:17 +0000 (UTC)
+Received: from [10.36.118.33] (unknown [10.36.118.33])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id F0ACE19744;
+        Tue, 13 Nov 2018 09:36:13 +0000 (UTC)
+Subject: Re: [PATCH 2/2] kvm: Use huge pages for DAX-backed files
+To:     Barret Rhoden <brho@google.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Dave Jiang <dave.jiang@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>,
+        Vishal Verma <vishal.l.verma@intel.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>
+Cc:     linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        kvm@vger.kernel.org, yu.c.zhang@intel.com, yi.z.zhang@intel.com
+References: <20181109203921.178363-1-brho@google.com>
+ <20181109203921.178363-3-brho@google.com>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <043a592d-6592-3053-15a0-68cc54a26deb@redhat.com>
+Date:   Tue, 13 Nov 2018 10:36:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbxShE3XEXNaKoFKWgAUVGUHU8rf0KaYV44coucu4=cRA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181109203921.178363-3-brho@google.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 13 Nov 2018 09:36:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
-
-Sorry about the late reply, this one got buried in the mailbox during
-conference travels.
-
-On Wed, Oct 10, 2018 at 11:36:28AM +0200, Linus Walleij wrote:
-> On Fri, Oct 5, 2018 at 3:40 PM Johan Hovold <johan@kernel.org> wrote:
-> > On Mon, Oct 01, 2018 at 11:43:55AM +0200, Linus Walleij wrote:
+On 09.11.18 21:39, Barret Rhoden wrote:
+> This change allows KVM to map DAX-backed files made of huge pages with
+> huge mappings in the EPT/TDP.
 > 
-> > > The idea is to make it possible for userspace to look up a GPIO
-> > > on a chip by name, so if the gpiochip has a unique name,
-> > > and the line name is unique on that chip it should be good
-> > > enough.
-> >
-> > I haven't really had time do dig into this again, but is this also an
-> > issue with the chardev interface?
-> >
-> > I thought this was one of the things
-> > you wanted to get right with the new interface, so hopefully that's
-> > already taken care of.
+> DAX pages are not PageTransCompound.  The existing check is trying to
+> determine if the mapping for the pfn is a huge mapping or not.  For
+> non-DAX maps, e.g. hugetlbfs, that means checking PageTransCompound.
+> For DAX, we can check the page table itself.
 > 
-> It is always possible to use /dev/gpiochipN and offet M on
-> that gpiochip to pick a unique line. That is a unique offset
-> on a unique chip. The gpiochip also has a "label" which may
-> be something user-readable such as part numer, but the unique
-> string is its name such as "gpiochip0".
+> Note that KVM already faulted in the page (or huge page) in the host's
+> page table, and we hold the KVM mmu spinlock (grabbed before checking
+> the mmu seq).
 
-Right.
+I wonder if the KVM mmu spinlock is enough for walking (not KVM
+exclusive) host page tables. Can you elaborate?
 
-> For symbolic look-up though, like a file has to have a unique
-> path, the name of the line should be unique.
-
-Sure, but there's no way to guarantee that (consider pluggable devices)
-unless you encode the topology in the name.
-
-> It is allowed to have unnamed lines though, so it is only a
-> hint. While I would like all drivers to uniquely name their
-> lines in DT or ACPI, or using the .names array in the gpio_chip
-> struct, it cannot be enforced because of legacy support,
-> so many old systems had no names specified, and
-> the DT and ACPI properties to name lines were introduced
-> after the chardev actually.
-
-Oh, that's right.
-
-> All I enforce is that if names are added, they should be
-> unique.
-
-Which effectively means you cannot have a driver provide default line
-names, as that would cause conflicts if there are ever more than one
-such device in a system (be it i2c or pluggable USB).
-
-> What we *could* do is conjure a unique name per line if
-> the hardware description doesn't provice one... like
-> "line0", "line1", "line2"... "lineN" on the chip.
 > 
-> Should we add a patch like that? The only side effect
-> I can see if that maybe the footprint increase is not so
-> nice.
+> Signed-off-by: Barret Rhoden <brho@google.com>
+> ---
+>  arch/x86/kvm/mmu.c | 34 ++++++++++++++++++++++++++++++++--
+>  1 file changed, 32 insertions(+), 2 deletions(-)
 > 
-> I had it in mind but it slipped of my radar. It would make
-> all lines always have unique names.
+> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
+> index cf5f572f2305..2df8c459dc6a 100644
+> --- a/arch/x86/kvm/mmu.c
+> +++ b/arch/x86/kvm/mmu.c
+> @@ -3152,6 +3152,36 @@ static int kvm_handle_bad_page(struct kvm_vcpu *vcpu, gfn_t gfn, kvm_pfn_t pfn)
+>  	return -EFAULT;
+>  }
+>  
+> +static bool pfn_is_huge_mapped(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn)
+> +{
+> +	struct page *page = pfn_to_page(pfn);
+> +	unsigned long hva, map_shift;
+> +
+> +	if (!is_zone_device_page(page))
+> +		return PageTransCompoundMap(page);
+> +
+> +	/*
+> +	 * DAX pages do not use compound pages.  The page should have already
+> +	 * been mapped into the host-side page table during try_async_pf(), so
+> +	 * we can check the page tables directly.
+> +	 */
+> +	hva = gfn_to_hva(kvm, gfn);
+> +	if (kvm_is_error_hva(hva))
+> +		return false;
+> +
+> +	/*
+> +	 * Our caller grabbed the KVM mmu_lock with a successful
+> +	 * mmu_notifier_retry, so we're safe to walk the page table.
+> +	 */
+> +	map_shift = dev_pagemap_mapping_shift(hva, current->mm);
 
-No, I don't think that's needed or desirable.
+You could get rid of that local variable map_shift.
 
-But take the concrete use case at hand; a gpio controller connected over
-USB. These FTDI devices exposes four gpios on a set of pins that differ
-from model to model. On some devices these lines are available on a set
-of pins named CBUS0..CBUS3, on others a different set of pins such as
-ACBUS5, ACBUS6, ACBUS8 and ACBUS9 are used.
-
-Exporting which line is exposed on which pin obviously has some worth,
-but this is currently not possible due to the requirement that line
-names must be unique.
-
-Having an interface that allows you to look up say ACBUS6 given a
-particular gpiochip would also be useful to have (user space knows which
-USB device it is interested in so finding the gpiochip is straight
-forward).
-
-Perhaps the chardev interface could return a set of matched gpiochips if
-a particular line name is found on several chips for user space to
-iterate over.
-
-Essentially what I'm going for is to have the line names only be
-required to be unique per chip, and let user space deal with any
-collisions.
-
-The flat line name space really only works for something like DT, and
-then only if you actually have access to the DTS (I'm assuming there's
-no uniqueness requirement in the binding docs?).
-
-But you could still run into trouble if an i2c driver provides default
-names, or if you use anything pluggable.
-
-> > If the flat name space is only an issue with the legacy interface we
-> > might get away with simply not using the line names in sysfs when a new
-> > chip flag is set (unless we can resue .can_sleep, but there seems to be
-> > some i2c devices already using line names).
+> +	switch (map_shift) {
+> +	case PMD_SHIFT:
+> +	case PUD_SIZE:
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+>  static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+>  					gfn_t *gfnp, kvm_pfn_t *pfnp,
+>  					int *levelp)
+> @@ -3168,7 +3198,7 @@ static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
+>  	 */
+>  	if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
+>  	    level == PT_PAGE_TABLE_LEVEL &&
+> -	    PageTransCompoundMap(pfn_to_page(pfn)) &&
+> +	    pfn_is_huge_mapped(vcpu->kvm, gfn, pfn) &&
+>  	    !mmu_gfn_lpage_is_disallowed(vcpu, gfn, PT_DIRECTORY_LEVEL)) {
+>  		unsigned long mask;
+>  		/*
+> @@ -5678,7 +5708,7 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm *kvm,
+>  		 */
+>  		if (sp->role.direct &&
+>  			!kvm_is_reserved_pfn(pfn) &&
+> -			PageTransCompoundMap(pfn_to_page(pfn))) {
+> +			pfn_is_huge_mapped(kvm, sp->gfn, pfn)) {
+>  			pte_list_remove(rmap_head, sptep);
+>  			need_tlb_flush = 1;
+>  			goto restart;
 > 
-> Hm. So you mean it is bad that the exporting GPIOs in the old
-> sysfs brings out the line name in sysfs if the line is named.
 
-Right, this specifically prevents using line names with pluggable
-devices.
+This looks surprisingly simple to me :)
 
-> I just want the sysfs to die, but yeah what you say makes
-> sense. I don't know if it's such a big issue, my focus has been
-> on making the chardev more appetizing and the sysfs
-> uncomfortably oldschool amongst users. This would make it
-> even more uncomfortable.
-> 
-> But I don't know if the old sysfs users actually use the line
-> names much?
-
-The problem is that the line names are used in sysfs as device names
-(file names) instead of "gpioN" whenever a line name has been specified.
-So on systems with line names defined, we would definitely risk
-regressions if we simply stopped exporting gpios using those names.
-
-Doing so for a subset of devices (e.g. i2c, or anything connected over a
-slow bus) may still be considered though. That would also deal with the
-USB case.
-
-But again, I'm not sure if we'd run into other problems with the chardev
-interface (e.g. what happens if I lookup "CBUS3" and there are more than
-one match?).
+-- 
 
 Thanks,
-Johan
+
+David / dhildenb
