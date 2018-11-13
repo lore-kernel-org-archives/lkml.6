@@ -2,205 +2,121 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12EAAC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 03:42:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7B9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 03:57:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B91F9224E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 03:42:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AHT99+zy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B91F9224E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 2E962223DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 03:57:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E962223DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730507AbeKMNin (ORCPT
+        id S1728738AbeKMNx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 08:38:43 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:45899 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728758AbeKMNin (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 08:38:43 -0500
-Received: by mail-pf1-f195.google.com with SMTP id g62so2061936pfd.12
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 19:42:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aTW55oK/6WvnaYCm0utX2I0vJ4k+Xwu6muZDCSviJP4=;
-        b=AHT99+zyUjxrwH5aaPapWLEXqr1ubAD/ed00Zhvb9fWKQQoRzF79Rq+sYUA0cuPu4x
-         oGOoCd3JKSCGXKhuvB4IJHjfDklpYAmKbL8p8AUtXb3e3Aw2szQSY9hZS7SZZzG0rBUH
-         sQ+mkAeWgoixLegeKkLT0AJb/F/iFo8ow+Bfo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aTW55oK/6WvnaYCm0utX2I0vJ4k+Xwu6muZDCSviJP4=;
-        b=Ew16WfCows6gY4mTYqOTMs/63DlWNw/wG1QNfriI11rtt926VwItOF5nIrmXnJ6TB2
-         4ZBY4pt8h4jc0wDU7nSfzG/ZdpTsjzu3IGcVkf/9JHAQveh+51fY+6bN6B26/V98BPD4
-         WhRTSvQ1CWJK9YoNJXEsFS1pRQwoHp4FSxvW5+qd2idmpi1WEScMeG/Ipfw1IR0CoOKE
-         hrsV/ntJf3EdS9U3Hhc0ss7fd4Yfz6a39LhlXVRAdssrOrhMlJZsi3syMEp7OsdV5HSK
-         y9OE2blBoiTFANd8/2jdnht8CSRll914JUFs9EjvKpT2uwKrB7ETgO4byXODoct3ECHv
-         N1KQ==
-X-Gm-Message-State: AGRZ1gLG6/dl4Ne7ekPQMq3tX5VV1hz//ThZp77x7SCyk6BBNOmjclTp
-        bsxJ4+Mxm4HeGlsBzQE+qPUHZA==
-X-Google-Smtp-Source: AJdET5cv2JiJEG8iFlafpqjDzc+qlRsy8pZEIlM/4sZvYsUYaa1cXxCm4WZiQKOIvREzBpCEVBXJ8w==
-X-Received: by 2002:a63:1258:: with SMTP id 24mr3212461pgs.114.1542080553012;
-        Mon, 12 Nov 2018 19:42:33 -0800 (PST)
-Received: from tiger (61-216-91-114.HINET-IP.hinet.net. [61.216.91.114])
-        by smtp.gmail.com with ESMTPSA id l63-v6sm16078781pfb.75.2018.11.12.19.42.27
-        (version=TLS1_2 cipher=AES128-SHA bits=128/128);
-        Mon, 12 Nov 2018 19:42:31 -0800 (PST)
-Date:   Tue, 13 Nov 2018 11:42:08 +0800
-From:   Shawn Guo <shawn.guo@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Kishon Vijay Abraham I <kishon@ti.com>,
-        Sriharsha Allenki <sallenki@codeaurora.org>,
-        Anu Ramanathan <anur@codeaurora.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Vinod Koul <vkoul@kernel.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: phy: Add Qualcomm Synopsys High-Speed
- USB PHY binding
-Message-ID: <20181113034200.GD20049@tiger>
-References: <20181108070449.23572-1-shawn.guo@linaro.org>
- <20181108070449.23572-2-shawn.guo@linaro.org>
- <5bea0ed8.1c69fb81.8715.38b2@mx.google.com>
+        Tue, 13 Nov 2018 08:53:59 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15091 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726103AbeKMNx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 08:53:59 -0500
+Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id C1D82A6DFD28C;
+        Tue, 13 Nov 2018 11:57:44 +0800 (CST)
+Received: from huawei.com (10.113.189.234) by DGGEMS407-HUB.china.huawei.com
+ (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Tue, 13 Nov 2018
+ 11:57:38 +0800
+From:   Yunlong Song <yunlong.song@huawei.com>
+To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
+        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
+CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
+        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
+        <linux-f2fs-devel@lists.sourceforge.net>,
+        <linux-kernel@vger.kernel.org>
+Subject: [PATCH v3] f2fs: only flush the single temp bio cache which owns the target page
+Date:   Tue, 13 Nov 2018 11:57:32 +0800
+Message-ID: <1542081452-66059-1-git-send-email-yunlong.song@huawei.com>
+X-Mailer: git-send-email 1.8.5.2
+In-Reply-To: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
+References: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <5bea0ed8.1c69fb81.8715.38b2@mx.google.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain
+X-Originating-IP: [10.113.189.234]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Previously, when f2fs finds which temp bio cache owns the target page,
+it will flush all the three temp bio caches, but we only need to flush
+one single bio cache indeed, which can help to keep bio merged.
 
-On Mon, Nov 12, 2018 at 01:24:51PM -0600, Rob Herring wrote:
-> On Thu, Nov 08, 2018 at 03:04:48PM +0800, Shawn Guo wrote:
-> > From: Sriharsha Allenki <sallenki@codeaurora.org>
-> > 
-> > It adds bindings for Synopsys 28nm femto phy controller that supports
-> > LS/FS/HS usb connectivity on Qualcomm chipsets.
-> > 
-> > Signed-off-by: Sriharsha Allenki <sallenki@codeaurora.org>
-> > Signed-off-by: Anu Ramanathan <anur@codeaurora.org>
-> > Signed-off-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-> > Signed-off-by: Shawn Guo <shawn.guo@linaro.org>
-> > ---
-> >  .../phy/qcom,snps-28nm-usb-hs-phy.txt         | 101 ++++++++++++++++++
-> >  1 file changed, 101 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/phy/qcom,snps-28nm-usb-hs-phy.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/phy/qcom,snps-28nm-usb-hs-phy.txt b/Documentation/devicetree/bindings/phy/qcom,snps-28nm-usb-hs-phy.txt
-> > new file mode 100644
-> > index 000000000000..75e7a09dd558
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/phy/qcom,snps-28nm-usb-hs-phy.txt
-> > @@ -0,0 +1,101 @@
-> > +Qualcomm Synopsys 28nm Femto phy controller
-> > +===========================================
-> > +
-> > +Synopsys 28nm femto phy controller supports LS/FS/HS usb connectivity on
-> > +Qualcomm chipsets.
-> > +
-> > +Required properties:
-> > +
-> > +- compatible:
-> > +    Value type: <string>
-> > +    Definition: Should contain "qcom,usb-snps-hsphy".
-> 
-> SoC specific compatible?
+Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
+---
+ fs/f2fs/data.c | 37 ++++++++++---------------------------
+ 1 file changed, 10 insertions(+), 27 deletions(-)
 
-Agreed.  A SoC prefixed compatible would be more specific and scalable
-for handling different programming model of the same IP.  I will use
-"qcom,qcs404-usb-hsphy" in v3.
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 6e0ffb1..cd8f670 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -372,29 +372,6 @@ static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
+ 	return false;
+ }
+ 
+-static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
+-						struct page *page, nid_t ino,
+-						enum page_type type)
+-{
+-	enum page_type btype = PAGE_TYPE_OF_BIO(type);
+-	enum temp_type temp;
+-	struct f2fs_bio_info *io;
+-	bool ret = false;
+-
+-	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
+-		io = sbi->write_io[btype] + temp;
+-
+-		down_read(&io->io_rwsem);
+-		ret = __has_merged_page(io, inode, page, ino);
+-		up_read(&io->io_rwsem);
+-
+-		/* TODO: use HOT temp only for meta pages now. */
+-		if (ret || btype == META)
+-			break;
+-	}
+-	return ret;
+-}
+-
+ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
+ 				enum page_type type, enum temp_type temp)
+ {
+@@ -420,13 +397,19 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
+ 				nid_t ino, enum page_type type, bool force)
+ {
+ 	enum temp_type temp;
+-
+-	if (!force && !has_merged_page(sbi, inode, page, ino, type))
+-		return;
++	bool ret = true;
+ 
+ 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
++		if (!force)	{
++			enum page_type btype = PAGE_TYPE_OF_BIO(type);
++			struct f2fs_bio_info *io = sbi->write_io[btype] + temp;
+ 
+-		__f2fs_submit_merged_write(sbi, type, temp);
++			down_read(&io->io_rwsem);
++			ret = __has_merged_page(io, inode, page, ino);
++			up_read(&io->io_rwsem);
++		}
++		if (ret)
++			__f2fs_submit_merged_write(sbi, type, temp);
+ 
+ 		/* TODO: use HOT temp only for meta pages now. */
+ 		if (type >= META)
+-- 
+1.8.5.2
 
-> 
-> > +
-> > +- reg:
-> > +    Value type: <prop-encoded-array>
-> > +    Definition: USB PHY base address and length of the register map.
-> > +
-> > +- #phy-cells:
-> > +    Value type: <u32>
-> > +    Definition: Should be 0.
-> > +
-> > +- clocks:
-> > +    Value type: <prop-encoded-array>
-> > +    Definition: See clock-bindings.txt section "consumers". List of
-> > +		three clock specifiers for reference, phy core and
-> > +		sleep clocks.
-> > +
-> > +- clock-names:
-> > +    Value type: <string>
-> > +    Definition: Names of the clocks in 1-1 correspondence with the "clocks"
-> > +		property. Must contain "ref", "phy" and "sleep".
-> > +
-> > +- resets:
-> > +    Value type: <prop-encoded-array>
-> > +    Definition: See reset.txt section "consumers". PHY reset specifiers
-> > +		for phy core and POR resets.
-> > +
-> > +- reset-names:
-> > +    Value type: <string>
-> > +    Definition: Names of the resets in 1-1 correspondence with the "resets"
-> > +		property. Must contain "phy" and "por".
-> > +
-> > +- vdd-supply:
-> > +    Value type: <phandle>
-> > +    Definition: phandle to the regulator VDD supply node.
-> > +
-> > +- vdda1p8-supply:
-> > +    Value type: <phandle>
-> > +    Definition: phandle to the regulator 1.8V supply node.
-> > +
-> > +- vdda3p3-supply:
-> > +    Value type: <phandle>
-> > +    Definition: phandle to the regulator 3.3V supply node.
-> > +
-> > +- qcom,vdd-voltage-level:
-> > +    Value type: <prop-array>
-> > +    Definition: This is a list of three integer values <no min max> where
-> > +		each value corresponding to voltage corner in uV.
-> > +
-> > +Optional properties:
-> > +
-> > +- extcon:
-> > +    Value type: <prop-encoded-array>
-> > +    Definition: Should contain the vbus extcon.
-> 
-> Don't use extcon for new bindings. Use usb-connector binding.
-
-Okay, I just did a bit of research and found that 'extcon' is becoming
-a deprecated DT property recently and we should OF graph bindings to
-specify the connector.  Will do in v3.
-
-> 
-> > +
-> > +- qcom,init-seq:
-> > +    Value type: <u32 array>
-> > +    Definition: Should contain a sequence of <offset value delay> tuples to
-> > +                program 'value' into phy register at 'offset' with 'delay'
-> > +		in us afterwards.
-> 
-> If we wanted this type of thing in DT, we'd have a generic binding (or 
-> forth).
-
-Right now, this is a qualcomm usb phy specific bindings - first used in
-qcom,usb-hs-phy.txt and I extended it a bit for my phy.  As this is not
-a so good hardware description, I'm a little hesitated to make it
-generic for other platforms to use in general.  What about we put off it
-a little bit until we see more platforms need the same thing?
-
-Shawn
-
-> This should probably be split between SoC specific settings in 
-> the driver and board properties in DT.
