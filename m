@@ -6,50 +6,49 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 581E5C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 360FAC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16B6622510
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EF77C2251E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2dFCam6N"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16B6622510
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MPUDu9ip"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF77C2251E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731773AbeKMPrP (ORCPT
+        id S1731849AbeKMPrV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:47:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32856 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:47:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32974 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731684AbeKMPrP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:47:15 -0500
+        id S1731684AbeKMPrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:47:20 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8778F22526;
-        Tue, 13 Nov 2018 05:50:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A3F8C2250F;
+        Tue, 13 Nov 2018 05:50:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088247;
-        bh=EZSKRIU6MFcjpKmoMayFTIflHESg+IBP15cK+xtexns=;
+        s=default; t=1542088252;
+        bh=goa8PjvyKggqGIrvQvtX0YWGuJPLnQBHobPpvTN8qtA=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2dFCam6N6Bumd7AZUYMd+/wJk2thYRr3y8m5x0PUlR8IB0pc9X5QfZIEmgOImaBDw
-         waxBPnIs6htBqsH7SbPOXvKVhjNZEkUBMZ19gkccEKuuVIvPKvvGsmwKpt2UXY3wVJ
-         Hi/2e5b1pKu05mUtdEiwcW133JBO5z0yJWDbnZOU=
+        b=MPUDu9ipWUDGcqM5xOooaHx2o/FNYLisuucti5Ej8xEONAW2T3wCZlRbxeUFML1KO
+         kEYAsp7cmR/ERUDAOIKK8pk8ijp8mczN2dEPAsEzRd4sqxr9dNzl2LVXMxmOvUk3po
+         U9pg9Ngho0KU/G7fJk87pHeASu76F79UoujtsCxI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jann Horn <jannh@google.com>, Davidlohr Bueso <dave@stgolabs.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Christoph Lameter <clameter@sgi.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
+Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
+        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
+        Rik van Riel <riel@surriel.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.19 41/44] mm/vmstat.c: assert that vmstat_text is in sync with stat_items_size
-Date:   Tue, 13 Nov 2018 00:49:47 -0500
-Message-Id: <20181113054950.77898-41-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 43/44] mm: don't miss the last page because of round-off error
+Date:   Tue, 13 Nov 2018 00:49:49 -0500
+Message-Id: <20181113054950.77898-43-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
 References: <20181113054950.77898-1-sashal@kernel.org>
@@ -58,46 +57,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Roman Gushchin <guro@fb.com>
 
-[ Upstream commit f0ecf25a093fc0589f0a6bc4c1ea068bbb67d220 ]
+[ Upstream commit 68600f623d69da428c6163275f97ca126e1a8ec5 ]
 
-Having two gigantic arrays that must manually be kept in sync, including
-ifdefs, isn't exactly robust.  To make it easier to catch such issues in
-the future, add a BUILD_BUG_ON().
+I've noticed, that dying memory cgroups are often pinned in memory by a
+single pagecache page.  Even under moderate memory pressure they sometimes
+stayed in such state for a long time.  That looked strange.
 
-Link: http://lkml.kernel.org/r/20181001143138.95119-3-jannh@google.com
-Signed-off-by: Jann Horn <jannh@google.com>
-Reviewed-by: Kees Cook <keescook@chromium.org>
+My investigation showed that the problem is caused by applying the LRU
+pressure balancing math:
+
+  scan = div64_u64(scan * fraction[lru], denominator),
+
+where
+
+  denominator = fraction[anon] + fraction[file] + 1.
+
+Because fraction[lru] is always less than denominator, if the initial scan
+size is 1, the result is always 0.
+
+This means the last page is not scanned and has
+no chances to be reclaimed.
+
+Fix this by rounding up the result of the division.
+
+In practice this change significantly improves the speed of dying cgroups
+reclaim.
+
+[guro@fb.com: prevent double calculation of DIV64_U64_ROUND_UP() arguments]
+  Link: http://lkml.kernel.org/r/20180829213311.GA13501@castle
+Link: http://lkml.kernel.org/r/20180827162621.30187-3-guro@fb.com
+Signed-off-by: Roman Gushchin <guro@fb.com>
 Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Acked-by: Roman Gushchin <guro@fb.com>
-Acked-by: Michal Hocko <mhocko@suse.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Oleg Nesterov <oleg@redhat.com>
-Cc: Christoph Lameter <clameter@sgi.com>
-Cc: Kemi Wang <kemi.wang@intel.com>
-Cc: Andy Lutomirski <luto@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Michal Hocko <mhocko@kernel.org>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Konstantin Khlebnikov <koct9i@gmail.com>
+Cc: Matthew Wilcox <willy@infradead.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/vmstat.c | 2 ++
- 1 file changed, 2 insertions(+)
+ include/linux/math64.h | 3 +++
+ mm/vmscan.c            | 6 ++++--
+ 2 files changed, 7 insertions(+), 2 deletions(-)
 
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 7878da76abf2..b678c607e490 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -1663,6 +1663,8 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
- 	stat_items_size += sizeof(struct vm_event_state);
- #endif
+diff --git a/include/linux/math64.h b/include/linux/math64.h
+index 837f2f2d1d34..bb2c84afb80c 100644
+--- a/include/linux/math64.h
++++ b/include/linux/math64.h
+@@ -281,4 +281,7 @@ static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 divisor)
+ }
+ #endif /* mul_u64_u32_div */
  
-+	BUILD_BUG_ON(stat_items_size !=
-+		     ARRAY_SIZE(vmstat_text) * sizeof(unsigned long));
- 	v = kmalloc(stat_items_size, GFP_KERNEL);
- 	m->private = v;
- 	if (!v)
++#define DIV64_U64_ROUND_UP(ll, d)	\
++	({ u64 _tmp = (d); div64_u64((ll) + _tmp - 1, _tmp); })
++
+ #endif /* _LINUX_MATH64_H */
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index c5ef7240cbcb..961401c46334 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -2456,9 +2456,11 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
+ 			/*
+ 			 * Scan types proportional to swappiness and
+ 			 * their relative recent reclaim efficiency.
++			 * Make sure we don't miss the last page
++			 * because of a round-off error.
+ 			 */
+-			scan = div64_u64(scan * fraction[file],
+-					 denominator);
++			scan = DIV64_U64_ROUND_UP(scan * fraction[file],
++						  denominator);
+ 			break;
+ 		case SCAN_FILE:
+ 		case SCAN_ANON:
 -- 
 2.17.1
 
