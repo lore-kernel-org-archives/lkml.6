@@ -2,89 +2,116 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2C1C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BA149C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:32:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11BFF2175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:32:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="dGmLxfl9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11BFF2175B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 881832175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:32:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 881832175B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387562AbeKMXax (ORCPT
+        id S2387580AbeKMXbD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:30:53 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:39436 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733229AbeKMXax (ORCPT
+        Tue, 13 Nov 2018 18:31:03 -0500
+Received: from mail-out.m-online.net ([212.18.0.10]:34891 "EHLO
+        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733229AbeKMXbD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:30:53 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=sRyBSVNzLwzHrFetxFMjdbVTz4W6h9t5a0Cz5J+ZU44=; b=dGmLxfl9fwJbG1TsiXKQPvZKg
-        7TGNa1PvCapR+J5Cjlbk91mh69fLKrAocJ6O9M6hD41dYfdGcGw4fUQc9OQ5CSoMcedNRs+LVR4Hx
-        OOH806kAf3FU606VhFNhlOPvtC2JgYKVx5YGp1OMHTWJQSYMPl/sxA8mDoQPj175/x08NBaq/BpBA
-        eoWcihQgCqoFYAOTZWi3ooeYwKUS2Wzp4DhrX3Fh3WUVFuOnyYrve6tFQc2n0hr9mhPzWFU7tdeDh
-        /WdRyzgCekp1je+KpoB+GP3ZFX74I0YH2bf1vMAGp0t31QCiwZjVFafNuXhVr9VqUYB3diie/Pt2n
-        1Eqh/2WPg==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gMYo7-0002I0-P3; Tue, 13 Nov 2018 13:32:43 +0000
-Date:   Tue, 13 Nov 2018 05:32:43 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Wei Yang <richard.weiyang@gmail.com>
-Cc:     akpm@linux-foundation.org, mgorman@techsingularity.net,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] vmscan: return NODE_RECLAIM_NOSCAN in node_reclaim()
- when CONFIG_NUMA is n
-Message-ID: <20181113133243.GW21824@bombadil.infradead.org>
-References: <20181113041750.20784-1-richard.weiyang@gmail.com>
- <20181113080436.22078-1-richard.weiyang@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113080436.22078-1-richard.weiyang@gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Tue, 13 Nov 2018 18:31:03 -0500
+Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
+        by mail-out.m-online.net (Postfix) with ESMTP id 42vT8N35nsz1qvnN;
+        Tue, 13 Nov 2018 14:32:52 +0100 (CET)
+Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
+        by mail.m-online.net (Postfix) with ESMTP id 42vT8N2BkCz1qr2s;
+        Tue, 13 Nov 2018 14:32:52 +0100 (CET)
+X-Virus-Scanned: amavisd-new at mnet-online.de
+Received: from mail.mnet-online.de ([192.168.8.182])
+        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
+        with ESMTP id elDuKfltx3Sp; Tue, 13 Nov 2018 14:32:49 +0100 (CET)
+X-Auth-Info: R5iPonscUAsV0w8jyJl6d1dlR8rRr6/t/FayjhwBg8E=
+Received: from xpert.denx.de (unknown [62.91.23.180])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.mnet-online.de (Postfix) with ESMTPSA;
+        Tue, 13 Nov 2018 14:32:49 +0100 (CET)
+From:   Parthiban Nallathambi <pn@denx.de>
+To:     afaerber@suse.de, manivannan.sadhasivam@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, wsa@the-dreams.de
+Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
+        Parthiban Nallathambi <pn@denx.de>
+Subject: [PATCH] arm64: dts: actions: s700: Add I2C controller nodes
+Date:   Tue, 13 Nov 2018 14:32:35 +0100
+Message-Id: <20181113133235.37754-1-pn@denx.de>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 04:04:36PM +0800, Wei Yang wrote:
-> This patch fix the return value by adjusting to NODE_RECLAIM_NOSCAN. Since
-> node_reclaim() is only called in page_alloc.c, move it to mm/internal.h.
+Add I2C controller nodes for Actions Semiconductor S700 SoC.
 
-linux/swap.h is included in quite a few places in the kernel, but let's
-see what's really used from it outside mm/
+Signed-off-by: Parthiban Nallathambi <pn@denx.de>
+---
+ arch/arm64/boot/dts/actions/s700.dtsi | 40 +++++++++++++++++++++++++++
+ 1 file changed, 40 insertions(+)
 
-SWAP_FLAG* -- only used in mm/swapfile.c.  Move to swapfile.c?
-current_is_kswapd() -- used by some drivers.
-MAX_SWAPFILES* -- used by arch code.
-union swap_header -- used by mtdswap.
-struct reclaim_state -- used by fs/inode.c.
-struct swap_extent -- embedded in swap_info_struct, which is used widely.
-struct swap_cluster_info -- ditto
-struct vma_swap_readahead -- only used in swap_state.c.  Move it there?
-nr_free_pages() -- used in fs/ and kernel/power/swap.c
-totalram_pages -- used widely
-totalreserve_pages -- used widely
-vm_swappiness -- used by sysctl
-vm_total_pages -- only used in mm -- move to mm/internal.h?
-node_reclaim_mode -- used by sysctl
-kswapd_run -- only used in mm
-kswapd_stop -- ditto
-swap_address_space -- only used in mm
-swapper_spaces -- likewise
-SWAP_ADDRESS_SPACE* --likewise
+diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
+index 192c7b39c8c1..573c844d7afe 100644
+--- a/arch/arm64/boot/dts/actions/s700.dtsi
++++ b/arch/arm64/boot/dts/actions/s700.dtsi
+@@ -174,6 +174,46 @@
+ 			#clock-cells = <1>;
+ 		};
+ 
++		i2c0: i2c@e0170000 {
++			compatible = "actions,s900-i2c";
++			reg = <0 0xe0170000 0 0x1000>;
++			clocks = <&cmu CLK_I2C0>;
++			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c1: i2c@e0174000 {
++			compatible = "actions,s900-i2c";
++			reg = <0 0xe0174000 0 0x1000>;
++			clocks = <&cmu CLK_I2C1>;
++			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c2: i2c@e0178000 {
++			compatible = "actions,s900-i2c";
++			reg = <0 0xe0178000 0 0x1000>;
++			clocks = <&cmu CLK_I2C2>;
++			interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
++		i2c3: i2c@e017c000 {
++			compatible = "actions,s900-i2c";
++			reg = <0 0xe017c000 0 0x1000>;
++			clocks = <&cmu CLK_I2C3>;
++			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
++			#address-cells = <1>;
++			#size-cells = <0>;
++			status = "disabled";
++		};
++
+ 		sps: power-controller@e01b0100 {
+ 			compatible = "actions,s700-sps";
+ 			reg = <0x0 0xe01b0100 0x0 0x100>;
+-- 
+2.17.2
 
-I haven't covered all of the file, but there's definitely opportunity
-for some followup patches to shrink linux/swap.h.
