@@ -2,942 +2,261 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FF0BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:58:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FCEC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 228DF223C8
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:58:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 228DF223C8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=packi.ch
+	by mail.kernel.org (Postfix) with ESMTP id EB91E223C8
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:01:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kI3MNm/I"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB91E223C8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730986AbeKNF6c (ORCPT
+        id S1727562AbeKNGAv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:58:32 -0500
-Received: from mail.binarylogic.ch ([88.198.23.72]:47908 "EHLO
-        mail.binarylogic.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725748AbeKNF6b (ORCPT
+        Wed, 14 Nov 2018 01:00:51 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:46423 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725748AbeKNGAv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:58:31 -0500
-Received: from fortknox.localdomain (unknown [192.168.122.1])
-        by mail.binarylogic.ch (Postfix) with ESMTP id DA6C7DF700;
-        Tue, 13 Nov 2018 20:58:47 +0100 (CET)
-From:   =?UTF-8?q?Patrick=20St=C3=A4hlin?= <me@packi.ch>
-To:     linux-riscv@lists.infradead.org
-Cc:     linux-kernel@vger.kernel.org,
-        =?UTF-8?q?Patrick=20St=C3=A4hlin?= <me@packi.ch>,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alan Kao <alankao@andestech.com>, Zong Li <zong@andestech.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        zhong jiang <zhongjiang@huawei.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jim Wilson <jimw@sifive.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: [RFC/RFT 2/2] RISC-V: kprobes/kretprobe support
-Date:   Tue, 13 Nov 2018 20:58:04 +0100
-Message-Id: <20181113195804.22825-3-me@packi.ch>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113195804.22825-1-me@packi.ch>
-References: <20181113195804.22825-1-me@packi.ch>
+        Wed, 14 Nov 2018 01:00:51 -0500
+Received: by mail-wr1-f65.google.com with SMTP id l9so1843603wrt.13;
+        Tue, 13 Nov 2018 12:01:08 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=fpKMFqZReRewlnd5zFr0aACUY+IUpTnBOuxsZRzQDNM=;
+        b=kI3MNm/IYwFel0c1Td7u9wFftrl7/rMfcyvxDviGfcW4y9oyiIEYyVoNESzW6OMRXc
+         2pwpn49C+7cutBRJ8roWksCQOrI4QTWoPOIHyOg4PWseEB5dheq+eA2oQWsqwMrzFGDT
+         eT6gKoMVlpZUX0Sp2I8U4gAAA+fAk1bYiYe4i5aBkwvp+QI9bW4ErgRbMH+KdZ1ZxTRm
+         XsMrgm9zqSkrdFqDuY3ix3P2QZNQn98jEMjslA2jL9zjQ+zV+LC81HU2tG7A4rXqAMEI
+         Jj683xCTnX4HDHzG+QnWC6bBzqYUF2MMyhwbYDf14Z8nw5+g6rTvpLknJ905bfAYHV4U
+         FMCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=fpKMFqZReRewlnd5zFr0aACUY+IUpTnBOuxsZRzQDNM=;
+        b=WlxF6zM+m+RpjtJISqqv3Lzy9eV11c6dvJ98rPNyJlU8XXdPmM5KbTetzrS/iL6tp1
+         UPtGVbT1B/B1I6o4ZAvbwzbtpXgdMDbu0H/x2oczreVWtokT+rl9km7o8YZtXp/1cHgo
+         JBj1C4t29YjcCFdBjyIVq5zDuUKIUm9j3tDoCouwYRzV+hit9rEi5GLpZ0XtkwiRrrzm
+         Dj6ES+1h9fVp4NRBxINMkoURauVEQAR7cTWSEQlEYaH2SQEvF4rktW+gcvYTFyf5o9O1
+         QHIkimQv/IA5v5FScpEpNYCN74RqW/CkvkFNxJzPvZDiQLvJNLtSs6/dCMtvMims9fXK
+         2ybw==
+X-Gm-Message-State: AGRZ1gKPp1OEs+XOcFm1twDWCo5cqBN3/Uvpsc9fie/TMhG391iBpu+A
+        J2jdag2CTuOl6YATCoB/aPJ5VgXyoznOyGVZ7Ks=
+X-Google-Smtp-Source: AJdET5eWXaiaZ2IvJP8eeohRlX7gxnPhxv/HhZRuk5rj6Y1mRLSCPCwD5XrYcGoDV5B/KUGPrAuk7ugk4G47GPm9+sA=
+X-Received: by 2002:a5d:64c2:: with SMTP id y2-v6mr6594165wrv.209.1542139267792;
+ Tue, 13 Nov 2018 12:01:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181113055252.79406-1-sashal@kernel.org> <CAK+_RLnZiy13paU3tRggDpanLv=h+ZCcyXtOz_2UzWfy4tsu2w@mail.gmail.com>
+ <CAK+_RLmkDfmxQcNMk7_eoC+=PQ=T9nPc=FVSiHbJADouypcEBQ@mail.gmail.com>
+In-Reply-To: <CAK+_RLmkDfmxQcNMk7_eoC+=PQ=T9nPc=FVSiHbJADouypcEBQ@mail.gmail.com>
+From:   Tigran Aivazian <aivazian.tigran@gmail.com>
+Date:   Tue, 13 Nov 2018 20:00:56 +0000
+Message-ID: <CAK+_RLmg=7Dz8umJYXr7at42Kw27H47prqmzLEGF-F5B2bviqw@mail.gmail.com>
+Subject: Re: [PATCH AUTOSEL 3.18 1/9] bfs: add sanity check at bfs_fill_super()
+To:     sashal@kernel.org
+Cc:     stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+        willy@infradead.org, Andrew Morton <akpm@linux-foundation.org>,
+        torvalds@linux-foundation.org
+Content-Type: multipart/mixed; boundary="00000000000040cac0057a9147a5"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First implementation, adapted from arm64. The C.ADDISP16 instruction
-gets simulated and the kprobes-handler called by inserting a C.EBREAK
-instruction.
+--00000000000040cac0057a9147a5
+Content-Type: text/plain; charset="UTF-8"
 
-C.ADDISP16 was chosen as it sets-up the stack frame for functions.
-Some work has been done to support probes on non-compressed
-instructions but there is no support yet for decoding those.
+On Tue, 13 Nov 2018 at 19:40, Tigran Aivazian <aivazian.tigran@gmail.com> wrote:
+>
+> On Tue, 13 Nov 2018 at 08:31, Tigran Aivazian <aivazian.tigran@gmail.com> wrote:
+> > Andrew, if you would like me to make the same patch against 4.19.1 as
+> > well, please let me know.
+>
+> I decided to just go ahead and backport it to 4.19.1 anyway (see
+> attached). Tested thoroughly under 4.19.1.
 
-The way forward should be to uncompress the instructions for simulation
-to reduce the number of instructions used to decode the immediate
-values on probe hit.
+I just missed the 4.19.2 release by a few minutes.
+And just as well, because the 4.19.1 patch contained a double of a
+(trivial) chunk (change to comment in include/uapi/linux/bfs_fs.h) in
+which "gmail.com" was misspelled as "veritas.com" :)
 
-Signed-off-by: Patrick Stählin <me@packi.ch>
----
- arch/riscv/Kconfig                            |   5 +-
- arch/riscv/include/asm/kprobes.h              |  30 ++
- arch/riscv/include/asm/probes.h               |  26 ++
- arch/riscv/kernel/Makefile                    |   1 +
- arch/riscv/kernel/probes/Makefile             |   3 +
- arch/riscv/kernel/probes/decode-insn.c        |  38 ++
- arch/riscv/kernel/probes/decode-insn.h        |  23 +
- arch/riscv/kernel/probes/kprobes.c            | 401 ++++++++++++++++++
- arch/riscv/kernel/probes/kprobes_trampoline.S |  91 ++++
- arch/riscv/kernel/probes/simulate-insn.c      |  33 ++
- arch/riscv/kernel/probes/simulate-insn.h      |   8 +
- arch/riscv/kernel/traps.c                     |  13 +-
- arch/riscv/mm/fault.c                         |  28 +-
- 13 files changed, 694 insertions(+), 6 deletions(-)
- create mode 100644 arch/riscv/include/asm/probes.h
- create mode 100644 arch/riscv/kernel/probes/Makefile
- create mode 100644 arch/riscv/kernel/probes/decode-insn.c
- create mode 100644 arch/riscv/kernel/probes/decode-insn.h
- create mode 100644 arch/riscv/kernel/probes/kprobes.c
- create mode 100644 arch/riscv/kernel/probes/kprobes_trampoline.S
- create mode 100644 arch/riscv/kernel/probes/simulate-insn.c
- create mode 100644 arch/riscv/kernel/probes/simulate-insn.h
+So, the final patch against 4.19.2 is attached.
 
-diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
-index b157ac82d486..11ef4030e8f2 100644
---- a/arch/riscv/Kconfig
-+++ b/arch/riscv/Kconfig
-@@ -44,6 +44,8 @@ config RISCV
- 	select GENERIC_IRQ_MULTI_HANDLER
- 	select ARCH_HAS_PTE_SPECIAL
- 	select HAVE_REGS_AND_STACK_ACCESS_API
-+	select HAVE_KPROBES
-+	select HAVE_KRETPROBES
- 
- config MMU
- 	def_bool y
-@@ -89,9 +91,6 @@ config PGTABLE_LEVELS
- 	default 3 if 64BIT
- 	default 2
- 
--config HAVE_KPROBES
--	def_bool n
--
- menu "Platform type"
- 
- choice
-diff --git a/arch/riscv/include/asm/kprobes.h b/arch/riscv/include/asm/kprobes.h
-index c7eb010d1528..657adcd35a3d 100644
---- a/arch/riscv/include/asm/kprobes.h
-+++ b/arch/riscv/include/asm/kprobes.h
-@@ -19,4 +19,34 @@
- 
- #include <asm-generic/kprobes.h>
- 
-+#ifdef CONFIG_KPROBES
-+#include <linux/types.h>
-+#include <linux/ptrace.h>
-+#include <linux/percpu.h>
-+
-+#define flush_insn_slot(p)		do { } while (0)
-+#define kretprobe_blacklist_size	0
-+
-+#include <asm/probes.h>
-+
-+struct prev_kprobe {
-+	struct kprobe *kp;
-+	unsigned int status;
-+};
-+
-+/* per-cpu kprobe control block */
-+struct kprobe_ctlblk {
-+	unsigned int kprobe_status;
-+	struct prev_kprobe prev_kprobe;
-+};
-+
-+void arch_remove_kprobe(struct kprobe *p);
-+int kprobe_fault_handler(struct pt_regs *regs, unsigned int cause);
-+int kprobe_exceptions_notify(struct notifier_block *self,
-+			     unsigned long val, void *data);
-+int kprobe_breakpoint_handler(struct pt_regs *regs);
-+void kretprobe_trampoline(void);
-+void __kprobes *trampoline_probe_handler(struct pt_regs *regs);
-+
-+#endif /* CONFIG_KPROBES */
- #endif /* _RISCV_KPROBES_H */
-diff --git a/arch/riscv/include/asm/probes.h b/arch/riscv/include/asm/probes.h
-new file mode 100644
-index 000000000000..64cf12567539
---- /dev/null
-+++ b/arch/riscv/include/asm/probes.h
-@@ -0,0 +1,26 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Based on arch/arm64/include/asm/probes.h
-+ *
-+ * Copyright (C) 2013 Linaro Limited
-+ */
-+#ifndef _RISCV_PROBES_H
-+#define _RISCV_PROBES_H
-+
-+typedef u32 probe_opcode_t;
-+typedef void (probes_handler_t) (u32 opcode, long addr, struct pt_regs *);
-+
-+/* architecture specific copy of original instruction */
-+struct arch_probe_insn {
-+	probes_handler_t *handler;
-+	/* restore address after simulation */
-+	unsigned long restore;
-+};
-+#ifdef CONFIG_KPROBES
-+typedef u32 kprobe_opcode_t;
-+struct arch_specific_insn {
-+	struct arch_probe_insn api;
-+};
-+#endif
-+
-+#endif /* _RISCV_PROBES_H */
-diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
-index f13f7f276639..5360a445b9d3 100644
---- a/arch/riscv/kernel/Makefile
-+++ b/arch/riscv/kernel/Makefile
-@@ -28,6 +28,7 @@ obj-y	+= stacktrace.o
- obj-y	+= vdso.o
- obj-y	+= cacheinfo.o
- obj-y	+= vdso/
-+obj-y	+= probes/
- 
- CFLAGS_setup.o := -mcmodel=medany
- 
-diff --git a/arch/riscv/kernel/probes/Makefile b/arch/riscv/kernel/probes/Makefile
-new file mode 100644
-index 000000000000..144d1c1743fb
---- /dev/null
-+++ b/arch/riscv/kernel/probes/Makefile
-@@ -0,0 +1,3 @@
-+# SPDX-License-Identifier: GPL-2.0
-+obj-$(CONFIG_KPROBES)		+= kprobes.o kprobes_trampoline.o \
-+				   decode-insn.o simulate-insn.o
-diff --git a/arch/riscv/kernel/probes/decode-insn.c b/arch/riscv/kernel/probes/decode-insn.c
-new file mode 100644
-index 000000000000..2d8f46f4c2e7
---- /dev/null
-+++ b/arch/riscv/kernel/probes/decode-insn.c
-@@ -0,0 +1,38 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+
-+#include <linux/kernel.h>
-+#include <linux/kprobes.h>
-+#include <linux/module.h>
-+#include <linux/kallsyms.h>
-+#include <asm/sections.h>
-+
-+#include "decode-insn.h"
-+#include "simulate-insn.h"
-+
-+#define C_ADDISP16_MASK 0x6F83
-+#define C_ADDISP16_VAL  0x6101
-+
-+/* Return:
-+ *   INSN_REJECTED     If instruction is one not allowed to kprobe,
-+ *   INSN_GOOD_NO_SLOT If instruction is supported but doesn't use its slot.
-+ */
-+enum probe_insn __kprobes
-+riscv_probe_decode_insn(kprobe_opcode_t *addr, struct arch_probe_insn *api)
-+{
-+	probe_opcode_t insn = le32_to_cpu(*addr);
-+
-+	if (!is_compressed_insn(insn)) {
-+		pr_warn("Can't handle non-compressed instruction %x\n", insn);
-+		return INSN_REJECTED;
-+	}
-+
-+	/* c.addisp16 imm */
-+	if ((insn & C_ADDISP16_MASK) == C_ADDISP16_VAL) {
-+		api->handler = simulate_caddisp16;
-+	} else {
-+		pr_warn("Rejected unknown instruction %x\n", insn);
-+		return INSN_REJECTED;
-+	}
-+
-+	return INSN_GOOD_NO_SLOT;
-+}
-diff --git a/arch/riscv/kernel/probes/decode-insn.h b/arch/riscv/kernel/probes/decode-insn.h
-new file mode 100644
-index 000000000000..0053ed6a308a
---- /dev/null
-+++ b/arch/riscv/kernel/probes/decode-insn.h
-@@ -0,0 +1,23 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+#ifndef _RISCV_KERNEL_KPROBES_DECODE_INSN_H
-+#define _RISCV_KERNEL_KPROBES_DECODE_INSN_H
-+
-+#include <asm/sections.h>
-+#include <asm/kprobes.h>
-+
-+enum probe_insn {
-+	INSN_REJECTED,
-+	INSN_GOOD_NO_SLOT,
-+};
-+
-+/*
-+ * Compressed instruction format:
-+ * xxxxxxxxxxxxxxaa where aa != 11
-+ */
-+#define is_compressed_insn(insn) ((insn & 0x3) != 0x3)
-+
-+#ifdef CONFIG_KPROBES
-+enum probe_insn __kprobes
-+riscv_probe_decode_insn(kprobe_opcode_t *addr, struct arch_probe_insn *asi);
-+#endif
-+#endif /* _RISCV_KERNEL_KPROBES_DECODE_INSN_H */
-diff --git a/arch/riscv/kernel/probes/kprobes.c b/arch/riscv/kernel/probes/kprobes.c
-new file mode 100644
-index 000000000000..3c7b5cf72ee1
---- /dev/null
-+++ b/arch/riscv/kernel/probes/kprobes.c
-@@ -0,0 +1,401 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+
-+/*
-+ * Kprobes support for RISC-V
-+ *
-+ * Author: Patrick Stählin <me@packi.ch>
-+ */
-+#include <linux/kprobes.h>
-+#include <linux/extable.h>
-+#include <linux/slab.h>
-+#include <asm/ptrace.h>
-+#include <linux/uaccess.h>
-+#include <asm/sections.h>
-+
-+#include "decode-insn.h"
-+
-+DEFINE_PER_CPU(struct kprobe *, current_kprobe) = NULL;
-+DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
-+
-+static void __kprobes
-+post_kprobe_handler(struct kprobe_ctlblk *, struct pt_regs *);
-+
-+static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-+{
-+	if (is_compressed_insn(opcode))
-+		*(u16 *)addr = cpu_to_le16(opcode);
-+	else
-+		*addr = cpu_to_le32(opcode);
-+
-+	return 0;
-+}
-+
-+static void __kprobes arch_prepare_simulate(struct kprobe *p)
-+{
-+	unsigned long offset = is_compressed_insn(p->opcode) ? 2 : 4;
-+
-+	p->ainsn.api.restore = (unsigned long)p->addr + offset;
-+}
-+
-+static void __kprobes arch_simulate_insn(struct kprobe *p, struct pt_regs *regs)
-+{
-+	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
-+
-+	if (p->ainsn.api.handler)
-+		p->ainsn.api.handler((u32)p->opcode, (long)p->addr, regs);
-+
-+	/* single instruction simulated, now go for post processing */
-+	post_kprobe_handler(kcb, regs);
-+}
-+
-+int __kprobes arch_prepare_kprobe(struct kprobe *p)
-+{
-+	unsigned long probe_addr = (unsigned long)p->addr;
-+	extern char __start_rodata[];
-+	extern char __end_rodata[];
-+
-+	if (probe_addr & 0x1) {
-+		pr_warn("Address not aligned.\n");
-+		return -EINVAL;
-+	}
-+
-+	/* copy instruction */
-+	p->opcode = le32_to_cpu(*p->addr);
-+
-+	if (probe_addr >= (unsigned long) __start_rodata &&
-+	    probe_addr <= (unsigned long) __end_rodata) {
-+		return -EINVAL;
-+	}
-+
-+	/* decode instruction */
-+	switch (riscv_probe_decode_insn(p->addr, &p->ainsn.api)) {
-+	case INSN_REJECTED:	/* insn not supported */
-+		return -EINVAL;
-+
-+	case INSN_GOOD_NO_SLOT:	/* insn needs simulation */
-+		break;
-+	}
-+
-+	arch_prepare_simulate(p);
-+
-+	return 0;
-+}
-+
-+#define C_EBREAK_OPCODE 0x9002
-+
-+/* arm kprobe: install breakpoint in text */
-+void __kprobes arch_arm_kprobe(struct kprobe *p)
-+{
-+	patch_text(p->addr, C_EBREAK_OPCODE);
-+}
-+
-+/* disarm kprobe: remove breakpoint from text */
-+void __kprobes arch_disarm_kprobe(struct kprobe *p)
-+{
-+	patch_text(p->addr, p->opcode);
-+}
-+
-+void __kprobes arch_remove_kprobe(struct kprobe *p)
-+{
-+}
-+
-+static void __kprobes save_previous_kprobe(struct kprobe_ctlblk *kcb)
-+{
-+	kcb->prev_kprobe.kp = kprobe_running();
-+	kcb->prev_kprobe.status = kcb->kprobe_status;
-+}
-+
-+static void __kprobes restore_previous_kprobe(struct kprobe_ctlblk *kcb)
-+{
-+	__this_cpu_write(current_kprobe, kcb->prev_kprobe.kp);
-+	kcb->kprobe_status = kcb->prev_kprobe.status;
-+}
-+
-+static void __kprobes set_current_kprobe(struct kprobe *p)
-+{
-+	__this_cpu_write(current_kprobe, p);
-+}
-+
-+static void __kprobes simulate(struct kprobe *p,
-+			       struct pt_regs *regs,
-+			       struct kprobe_ctlblk *kcb, int reenter)
-+{
-+	if (reenter) {
-+		save_previous_kprobe(kcb);
-+		set_current_kprobe(p);
-+		kcb->kprobe_status = KPROBE_REENTER;
-+	} else {
-+		kcb->kprobe_status = KPROBE_HIT_SS;
-+	}
-+
-+	arch_simulate_insn(p, regs);
-+}
-+
-+static int __kprobes reenter_kprobe(struct kprobe *p,
-+				    struct pt_regs *regs,
-+				    struct kprobe_ctlblk *kcb)
-+{
-+	switch (kcb->kprobe_status) {
-+	case KPROBE_HIT_SSDONE:
-+	case KPROBE_HIT_ACTIVE:
-+		kprobes_inc_nmissed_count(p);
-+		simulate(p, regs, kcb, 1);
-+		break;
-+	case KPROBE_HIT_SS:
-+	case KPROBE_REENTER:
-+		pr_warn("Unrecoverable kprobe detected.\n");
-+		dump_kprobe(p);
-+		BUG();
-+		break;
-+	default:
-+		WARN_ON(1);
-+		return 0;
-+	}
-+
-+	return 1;
-+}
-+
-+static void __kprobes
-+post_kprobe_handler(struct kprobe_ctlblk *kcb, struct pt_regs *regs)
-+{
-+	struct kprobe *cur = kprobe_running();
-+
-+	if (!cur)
-+		return;
-+
-+	/* return addr restore if non-branching insn */
-+	if (cur->ainsn.api.restore != 0)
-+		instruction_pointer_set(regs, cur->ainsn.api.restore);
-+
-+	/* restore back original saved kprobe variables and continue */
-+	if (kcb->kprobe_status == KPROBE_REENTER) {
-+		restore_previous_kprobe(kcb);
-+		return;
-+	}
-+	/* call post handler */
-+	kcb->kprobe_status = KPROBE_HIT_SSDONE;
-+	if (cur->post_handler)	{
-+		/* post_handler can hit breakpoint and single step
-+		 * again, so we enable D-flag for recursive exception.
-+		 */
-+		cur->post_handler(cur, regs, 0);
-+	}
-+
-+	reset_current_kprobe();
-+}
-+
-+int __kprobes kprobe_fault_handler(struct pt_regs *regs, unsigned int cause)
-+{
-+	struct kprobe *cur = kprobe_running();
-+	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
-+
-+	switch (kcb->kprobe_status) {
-+	case KPROBE_HIT_SS:
-+	case KPROBE_REENTER:
-+		/*
-+		 * We are here because the instruction being single
-+		 * stepped caused a page fault. We reset the current
-+		 * kprobe and the ip points back to the probe address
-+		 * and allow the page fault handler to continue as a
-+		 * normal page fault.
-+		 */
-+		instruction_pointer_set(regs, (unsigned long) cur->addr);
-+		if (!instruction_pointer(regs))
-+			BUG();
-+
-+		if (kcb->kprobe_status == KPROBE_REENTER)
-+			restore_previous_kprobe(kcb);
-+		else
-+			reset_current_kprobe();
-+
-+		break;
-+	case KPROBE_HIT_ACTIVE:
-+	case KPROBE_HIT_SSDONE:
-+		/*
-+		 * We increment the nmissed count for accounting,
-+		 * we can also use npre/npostfault count for accounting
-+		 * these specific fault cases.
-+		 */
-+		kprobes_inc_nmissed_count(cur);
-+
-+		/*
-+		 * We come here because instructions in the pre/post
-+		 * handler caused the page_fault, this could happen
-+		 * if handler tries to access user space by
-+		 * copy_from_user(), get_user() etc. Let the
-+		 * user-specified handler try to fix it first.
-+		 */
-+		if (cur->fault_handler && cur->fault_handler(cur, regs, cause))
-+			return 1;
-+
-+		/*
-+		 * In case the user-specified fault handler returned
-+		 * zero, try to fix up.
-+		 */
-+		if (fixup_exception(regs))
-+			return 1;
-+	}
-+	return 0;
-+}
-+
-+static void __kprobes kprobe_handler(struct pt_regs *regs)
-+{
-+	struct kprobe *p, *cur_kprobe;
-+	struct kprobe_ctlblk *kcb;
-+	unsigned long addr = instruction_pointer(regs);
-+
-+	kcb = get_kprobe_ctlblk();
-+	cur_kprobe = kprobe_running();
-+
-+	p = get_kprobe((kprobe_opcode_t *) addr);
-+
-+	if (p) {
-+		if (cur_kprobe) {
-+			if (reenter_kprobe(p, regs, kcb))
-+				return;
-+		} else {
-+			/* Probe hit */
-+			set_current_kprobe(p);
-+			kcb->kprobe_status = KPROBE_HIT_ACTIVE;
-+
-+			/*
-+			 * If we have no pre-handler or it returned 0, we
-+			 * continue with normal processing.  If we have a
-+			 * pre-handler and it returned non-zero, it will
-+			 * modify the execution path and no need to single
-+			 * stepping. Let's just reset current kprobe and exit.
-+			 *
-+			 * pre_handler can hit a breakpoint and can step thru
-+			 * before return, keep PSTATE D-flag enabled until
-+			 * pre_handler return back.
-+			 */
-+			if (!p->pre_handler || !p->pre_handler(p, regs))
-+				simulate(p, regs, kcb, 0);
-+			else
-+				reset_current_kprobe();
-+		}
-+	}
-+	/*
-+	 * The breakpoint instruction was removed right
-+	 * after we hit it.  Another cpu has removed
-+	 * either a probepoint or a debugger breakpoint
-+	 * at this address.  In either case, no further
-+	 * handling of this interrupt is appropriate.
-+	 * Return back to original instruction, and continue.
-+	 */
-+}
-+
-+int __kprobes
-+kprobe_breakpoint_handler(struct pt_regs *regs)
-+{
-+	kprobe_handler(regs);
-+	return 1;
-+}
-+
-+bool arch_within_kprobe_blacklist(unsigned long addr)
-+{
-+	if ((addr >= (unsigned long)__kprobes_text_start &&
-+	    addr < (unsigned long)__kprobes_text_end) ||
-+	    (addr >= (unsigned long)__entry_text_start &&
-+	    addr < (unsigned long)__entry_text_end) ||
-+	    !!search_exception_tables(addr))
-+		return true;
-+
-+	return false;
-+}
-+
-+void __kprobes __used *trampoline_probe_handler(struct pt_regs *regs)
-+{
-+	struct kretprobe_instance *ri = NULL;
-+	struct hlist_head *head, empty_rp;
-+	struct hlist_node *tmp;
-+	unsigned long flags, orig_ret_address = 0;
-+	unsigned long trampoline_address =
-+		(unsigned long)&kretprobe_trampoline;
-+	kprobe_opcode_t *correct_ret_addr = NULL;
-+
-+	INIT_HLIST_HEAD(&empty_rp);
-+	kretprobe_hash_lock(current, &head, &flags);
-+
-+	/*
-+	 * It is possible to have multiple instances associated with a given
-+	 * task either because multiple functions in the call path have
-+	 * return probes installed on them, and/or more than one
-+	 * return probe was registered for a target function.
-+	 *
-+	 * We can handle this because:
-+	 *     - instances are always pushed into the head of the list
-+	 *     - when multiple return probes are registered for the same
-+	 *	 function, the (chronologically) first instance's ret_addr
-+	 *	 will be the real return address, and all the rest will
-+	 *	 point to kretprobe_trampoline.
-+	 */
-+	hlist_for_each_entry_safe(ri, tmp, head, hlist) {
-+		if (ri->task != current)
-+			/* another task is sharing our hash bucket */
-+			continue;
-+
-+		orig_ret_address = (unsigned long)ri->ret_addr;
-+
-+		if (orig_ret_address != trampoline_address)
-+			/*
-+			 * This is the real return address. Any other
-+			 * instances associated with this task are for
-+			 * other calls deeper on the call stack
-+			 */
-+			break;
-+	}
-+
-+	kretprobe_assert(ri, orig_ret_address, trampoline_address);
-+
-+	correct_ret_addr = ri->ret_addr;
-+	hlist_for_each_entry_safe(ri, tmp, head, hlist) {
-+		if (ri->task != current)
-+			/* another task is sharing our hash bucket */
-+			continue;
-+
-+		orig_ret_address = (unsigned long)ri->ret_addr;
-+		if (ri->rp && ri->rp->handler) {
-+			__this_cpu_write(current_kprobe, &ri->rp->kp);
-+			get_kprobe_ctlblk()->kprobe_status = KPROBE_HIT_ACTIVE;
-+			ri->ret_addr = correct_ret_addr;
-+			ri->rp->handler(ri, regs);
-+			__this_cpu_write(current_kprobe, NULL);
-+		}
-+
-+		recycle_rp_inst(ri, &empty_rp);
-+
-+		if (orig_ret_address != trampoline_address)
-+			/*
-+			 * This is the real return address. Any other
-+			 * instances associated with this task are for
-+			 * other calls deeper on the call stack
-+			 */
-+			break;
-+	}
-+
-+	kretprobe_hash_unlock(current, &flags);
-+
-+	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
-+		hlist_del(&ri->hlist);
-+		kfree(ri);
-+	}
-+	return (void *)orig_ret_address;
-+}
-+
-+void __kprobes arch_prepare_kretprobe(struct kretprobe_instance *ri,
-+				      struct pt_regs *regs)
-+{
-+	ri->ret_addr = (kprobe_opcode_t *)regs->ra;
-+	regs->ra = (long)&kretprobe_trampoline;
-+}
-+
-+int __kprobes arch_trampoline_kprobe(struct kprobe *p)
-+{
-+	return 0;
-+}
-+
-+int __init arch_init_kprobes(void)
-+{
-+	return 0;
-+}
-diff --git a/arch/riscv/kernel/probes/kprobes_trampoline.S b/arch/riscv/kernel/probes/kprobes_trampoline.S
-new file mode 100644
-index 000000000000..c7ceda9556a3
---- /dev/null
-+++ b/arch/riscv/kernel/probes/kprobes_trampoline.S
-@@ -0,0 +1,91 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+
-+#include <linux/linkage.h>
-+
-+#include <asm/asm.h>
-+#include <asm/asm-offsets.h>
-+
-+	.text
-+	.altmacro
-+
-+	.macro save_all_base_regs
-+	REG_S x1,  PT_RA(sp)
-+	REG_S x3,  PT_GP(sp)
-+	REG_S x4,  PT_TP(sp)
-+	REG_S x5,  PT_T0(sp)
-+	REG_S x6,  PT_T1(sp)
-+	REG_S x7,  PT_T2(sp)
-+	REG_S x8,  PT_S0(sp)
-+	REG_S x9,  PT_S1(sp)
-+	REG_S x10, PT_A0(sp)
-+	REG_S x11, PT_A1(sp)
-+	REG_S x12, PT_A2(sp)
-+	REG_S x13, PT_A3(sp)
-+	REG_S x14, PT_A4(sp)
-+	REG_S x15, PT_A5(sp)
-+	REG_S x16, PT_A6(sp)
-+	REG_S x17, PT_A7(sp)
-+	REG_S x18, PT_S2(sp)
-+	REG_S x19, PT_S3(sp)
-+	REG_S x20, PT_S4(sp)
-+	REG_S x21, PT_S5(sp)
-+	REG_S x22, PT_S6(sp)
-+	REG_S x23, PT_S7(sp)
-+	REG_S x24, PT_S8(sp)
-+	REG_S x25, PT_S9(sp)
-+	REG_S x26, PT_S10(sp)
-+	REG_S x27, PT_S11(sp)
-+	REG_S x28, PT_T3(sp)
-+	REG_S x29, PT_T4(sp)
-+	REG_S x30, PT_T5(sp)
-+	REG_S x31, PT_T6(sp)
-+	.endm
-+
-+	.macro restore_all_base_regs
-+	REG_L x3,  PT_GP(sp)
-+	REG_L x4,  PT_TP(sp)
-+	REG_L x5,  PT_T0(sp)
-+	REG_L x6,  PT_T1(sp)
-+	REG_L x7,  PT_T2(sp)
-+	REG_L x8,  PT_S0(sp)
-+	REG_L x9,  PT_S1(sp)
-+	REG_L x10, PT_A0(sp)
-+	REG_L x11, PT_A1(sp)
-+	REG_L x12, PT_A2(sp)
-+	REG_L x13, PT_A3(sp)
-+	REG_L x14, PT_A4(sp)
-+	REG_L x15, PT_A5(sp)
-+	REG_L x16, PT_A6(sp)
-+	REG_L x17, PT_A7(sp)
-+	REG_L x18, PT_S2(sp)
-+	REG_L x19, PT_S3(sp)
-+	REG_L x20, PT_S4(sp)
-+	REG_L x21, PT_S5(sp)
-+	REG_L x22, PT_S6(sp)
-+	REG_L x23, PT_S7(sp)
-+	REG_L x24, PT_S8(sp)
-+	REG_L x25, PT_S9(sp)
-+	REG_L x26, PT_S10(sp)
-+	REG_L x27, PT_S11(sp)
-+	REG_L x28, PT_T3(sp)
-+	REG_L x29, PT_T4(sp)
-+	REG_L x30, PT_T5(sp)
-+	REG_L x31, PT_T6(sp)
-+	.endm
-+
-+ENTRY(kretprobe_trampoline)
-+	addi sp, sp, -(PT_SIZE_ON_STACK)
-+	save_all_base_regs
-+
-+	move a0, sp /* pt_regs */
-+
-+	call trampoline_probe_handler
-+
-+	/* use the result as the return-address */
-+	move ra, a0
-+
-+	restore_all_base_regs
-+	addi sp, sp, PT_SIZE_ON_STACK
-+
-+	ret
-+ENDPROC(kretprobe_trampoline)
-diff --git a/arch/riscv/kernel/probes/simulate-insn.c b/arch/riscv/kernel/probes/simulate-insn.c
-new file mode 100644
-index 000000000000..5734d9bae22f
---- /dev/null
-+++ b/arch/riscv/kernel/probes/simulate-insn.c
-@@ -0,0 +1,33 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+
-+#include <linux/bitops.h>
-+#include <linux/kernel.h>
-+#include <linux/kprobes.h>
-+
-+#include "simulate-insn.h"
-+
-+#define bit_at(value, bit)		((value) & (1 << (bit)))
-+#define move_bit_at(value, bit, to)	((bit_at(value, bit) >> bit) << to)
-+
-+void __kprobes
-+simulate_caddisp16(u32 opcode, long addr, struct pt_regs *regs)
-+{
-+	s16 imm;
-+
-+	/*
-+	 * Immediate value layout in c.addisp16:
-+	 * xxx9 xxxx x468 75xx
-+	 * 1  1    8    4    0
-+	 * 5  2
-+	 */
-+	imm = sign_extend32(
-+		move_bit_at(opcode, 12, 9) |
-+		move_bit_at(opcode, 6, 4) |
-+		move_bit_at(opcode, 5, 6) |
-+		move_bit_at(opcode, 4, 8) |
-+		move_bit_at(opcode, 3, 7) |
-+		move_bit_at(opcode, 2, 5),
-+		9);
-+
-+	regs->sp += imm;
-+}
-diff --git a/arch/riscv/kernel/probes/simulate-insn.h b/arch/riscv/kernel/probes/simulate-insn.h
-new file mode 100644
-index 000000000000..dc2c06c30167
---- /dev/null
-+++ b/arch/riscv/kernel/probes/simulate-insn.h
-@@ -0,0 +1,8 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+
-+#ifndef _RISCV_KERNEL_KPROBES_SIMULATE_INSN_H
-+#define _RISCV_KERNEL_KPROBES_SIMULATE_INSN_H
-+
-+void simulate_caddisp16(u32 opcode, long addr, struct pt_regs *regs);
-+
-+#endif /* _RISCV_KERNEL_KPROBES_SIMULATE_INSN_H */
-diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
-index 24a9333dda2c..d7113178d401 100644
---- a/arch/riscv/kernel/traps.c
-+++ b/arch/riscv/kernel/traps.c
-@@ -18,6 +18,7 @@
- #include <linux/sched/signal.h>
- #include <linux/signal.h>
- #include <linux/kdebug.h>
-+#include <linux/kprobes.h>
- #include <linux/uaccess.h>
- #include <linux/mm.h>
- #include <linux/module.h>
-@@ -120,8 +121,14 @@ DO_ERROR_INFO(do_trap_ecall_m,
- 
- asmlinkage void do_trap_break(struct pt_regs *regs)
- {
-+	bool handler_found = false;
-+
-+#ifdef CONFIG_KPROBES
-+	if (kprobe_breakpoint_handler(regs))
-+		handler_found = 1;
-+#endif
- #ifdef CONFIG_GENERIC_BUG
--	if (!user_mode(regs)) {
-+	if (!handler_found && !user_mode(regs)) {
- 		enum bug_trap_type type;
- 
- 		type = report_bug(regs->sepc, regs);
-@@ -137,7 +144,9 @@ asmlinkage void do_trap_break(struct pt_regs *regs)
- 	}
- #endif /* CONFIG_GENERIC_BUG */
- 
--	force_sig_fault(SIGTRAP, TRAP_BRKPT, (void __user *)(regs->sepc), current);
-+	if (!handler_found)
-+		force_sig_fault(SIGTRAP, TRAP_BRKPT,
-+			(void __user *)(regs->sepc), current);
- }
- 
- #ifdef CONFIG_GENERIC_BUG
-diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
-index 88401d5125bc..eff816e33479 100644
---- a/arch/riscv/mm/fault.c
-+++ b/arch/riscv/mm/fault.c
-@@ -22,6 +22,7 @@
- 
- #include <linux/mm.h>
- #include <linux/kernel.h>
-+#include <linux/kprobes.h>
- #include <linux/interrupt.h>
- #include <linux/perf_event.h>
- #include <linux/signal.h>
-@@ -30,11 +31,33 @@
- #include <asm/pgalloc.h>
- #include <asm/ptrace.h>
- 
-+#ifdef CONFIG_KPROBES
-+static inline int notify_page_fault(struct pt_regs *regs, unsigned int cause)
-+{
-+	int ret = 0;
-+
-+	/* kprobe_running() needs smp_processor_id() */
-+	if (!user_mode(regs)) {
-+		preempt_disable();
-+		if (kprobe_running() && kprobe_fault_handler(regs, cause))
-+			ret = 1;
-+		preempt_enable();
-+	}
-+
-+	return ret;
-+}
-+#else
-+static inline int notify_page_fault(struct pt_regs *regs, unsigned int cause)
-+{
-+	return 0;
-+}
-+#endif
-+
- /*
-  * This routine handles page faults.  It determines the address and the
-  * problem, and then passes it off to one of the appropriate routines.
-  */
--asmlinkage void do_page_fault(struct pt_regs *regs)
-+asmlinkage void __kprobes do_page_fault(struct pt_regs *regs)
- {
- 	struct task_struct *tsk;
- 	struct vm_area_struct *vma;
-@@ -47,6 +70,9 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
- 	cause = regs->scause;
- 	addr = regs->sbadaddr;
- 
-+	if (notify_page_fault(regs, cause))
-+		return;
-+
- 	tsk = current;
- 	mm = tsk->mm;
- 
--- 
-2.17.1
+--00000000000040cac0057a9147a5
+Content-Type: text/x-patch; charset="US-ASCII"; name="bfs-4.19.2.patch"
+Content-Disposition: attachment; filename="bfs-4.19.2.patch"
+Content-Transfer-Encoding: base64
+Content-ID: <f_jog5rjae0>
+X-Attachment-Id: f_jog5rjae0
 
+RnJvbTogVGlncmFuIEFpdmF6aWFuIDxhaXZhemlhbi50aWdyYW5AZ21haWwuY29tPgpTdWJqZWN0
+OiBiZnM6IGV4dHJhIHNhbml0eSBjaGVja2luZyBhbmQgc3RhdGljIGlub2RlIGJpdG1hcAoKU3Ry
+ZW5ndGhlbiB2YWxpZGF0aW9uIG9mIEJGUyBzdXBlcmJsb2NrIGFnYWluc3QgY29ycnVwdGlvbi4K
+TWFrZSBpbi1jb3JlIGlub2RlIGJpdG1hcCBzdGF0aWMgcGFydCBvZiBzdXBlcmJsb2NrIGluZm8g
+c3RydWN0dXJlLgpQcmludCBhIHdhcm5pbmcgd2hlbiBtb3VudGluZyBhIEJGUyBmaWxlc3lzdGVt
+IGNyZWF0ZWQgd2l0aCAiLU4gNTEyIgpvcHRpb24gYXMgb25seSA1MTAgZmlsZXMgY2FuIGJlIGNy
+ZWF0ZWQgaW4gdGhlIHJvb3QgZGlyZWN0b3J5LgpNYWtlIHRoZSBrZXJuZWwgbWVzc2FnZXMgbW9y
+ZSB1bmlmb3JtLiBVcGRhdGUgdGhlICdwcmVmaXgnIHBhc3NlZCB0bwpiZnNfZHVtcF9pbWFwKCkg
+dG8gbWF0Y2ggdGhlIGN1cnJlbnQgbmFtaW5nIG9mIG9wZXJhdGlvbnMuCldoaXRlIHNwYWNlIGFu
+ZCBjb21tZW50cyBjbGVhbnVwLgoKU2lnbmVkLW9mZi1ieTogVGlncmFuIEFpdmF6aWFuIDxhaXZh
+emlhbi50aWdyYW5AZ21haWwuY29tPgpSZXBvcnRlZC1ieTogVGV0c3VvIEhhbmRhIDxwZW5ndWlu
+LWtlcm5lbEBpLWxvdmUuc2FrdXJhLm5lLmpwPgotLS0KCiBmcy9iZnMvYmZzLmggICAgICAgICAg
+ICAgICAgfCAgIDExICsrKysrKy0KIGZzL2Jmcy9kaXIuYyAgICAgICAgICAgICAgICB8ICAgIDQg
+Ky0KIGZzL2Jmcy9maWxlLmMgICAgICAgICAgICAgICB8ICAgIDIgLQogZnMvYmZzL2lub2RlLmMg
+ICAgICAgICAgICAgIHwgICA2NiArKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLQogaW5jbHVkZS91YXBpL2xpbnV4L2Jmc19mcy5oIHwgICAgMiAtCiA1IGZpbGVzIGNo
+YW5nZWQsIDQzIGluc2VydGlvbnMoKyksIDQyIGRlbGV0aW9ucygtKQoKLS0tIGluY2x1ZGUvdWFw
+aS9saW51eC9iZnNfZnMuaC4wCTIwMTgtMTEtMTMgMTk6MTk6NTUuOTQxMjY3MzQyICswMDAwCisr
+KyBpbmNsdWRlL3VhcGkvbGludXgvYmZzX2ZzLmgJMjAxOC0xMS0xMyAxOToyMDoyNC4xMDExODIz
+NTcgKzAwMDAKQEAgLTEsNyArMSw3IEBACiAvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BM
+LTIuMCBXSVRIIExpbnV4LXN5c2NhbGwtbm90ZSAqLwogLyoKICAqCWluY2x1ZGUvbGludXgvYmZz
+X2ZzLmggLSBCRlMgZGF0YSBzdHJ1Y3R1cmVzIG9uIGRpc2suCi0gKglDb3B5cmlnaHQgKEMpIDE5
+OTkgVGlncmFuIEFpdmF6aWFuIDx0aWdyYW5AdmVyaXRhcy5jb20+CisgKglDb3B5cmlnaHQgKEMp
+IDE5OTktMjAxOCBUaWdyYW4gQWl2YXppYW4gPGFpdmF6aWFuLnRpZ3JhbkBnbWFpbC5jb20+CiAg
+Ki8KIAogI2lmbmRlZiBfTElOVVhfQkZTX0ZTX0gKLS0tIGZzL2Jmcy9iZnMuaC4wCTIwMTgtMTEt
+MTMgMTk6MjA6NDAuMTUxMTYxMDQ0ICswMDAwCisrKyBmcy9iZnMvYmZzLmgJMjAxOC0xMS0xMyAx
+OToyMTozMi45Mjk3NDA2NTYgKzAwMDAKQEAgLTEsMTMgKzEsMjAgQEAKIC8qIFNQRFgtTGljZW5z
+ZS1JZGVudGlmaWVyOiBHUEwtMi4wICovCiAvKgogICoJZnMvYmZzL2Jmcy5oCi0gKglDb3B5cmln
+aHQgKEMpIDE5OTkgVGlncmFuIEFpdmF6aWFuIDx0aWdyYW5AdmVyaXRhcy5jb20+CisgKglDb3B5
+cmlnaHQgKEMpIDE5OTktMjAxOCBUaWdyYW4gQWl2YXppYW4gPGFpdmF6aWFuLnRpZ3JhbkBnbWFp
+bC5jb20+CiAgKi8KICNpZm5kZWYgX0ZTX0JGU19CRlNfSAogI2RlZmluZSBfRlNfQkZTX0JGU19I
+CiAKICNpbmNsdWRlIDxsaW51eC9iZnNfZnMuaD4KIAorLyogSW4gdGhlb3J5IEJGUyBzdXBwb3J0
+cyB1cCB0byA1MTIgaW5vZGVzLCBudW1iZXJlZCBmcm9tIDIgKGZvciAvKSB1cCB0byA1MTMgaW5j
+bHVzaXZlLgorICAgSW4gYWN0dWFsIGZhY3QsIGF0dGVtcHRpbmcgdG8gY3JlYXRlIHRoZSA1MTJ0
+aCBpbm9kZSAoaS5lLiBpbm9kZSBOby4gNTEzIG9yIGZpbGUgTm8uIDUxMSkKKyAgIHdpbGwgZmFp
+bCB3aXRoIEVOT1NQQyBpbiBiZnNfYWRkX2VudHJ5KCk6IHRoZSByb290IGRpcmVjdG9yeSBjYW5u
+b3QgY29udGFpbiBzbyBtYW55IGVudHJpZXMsIGNvdW50aW5nICcuLicuCisgICBTbywgbWtmcy5i
+ZnMoOCkgc2hvdWxkIHJlYWxseSBsaW1pdCBpdHMgLU4gb3B0aW9uIHRvIDUxMSBhbmQgbm90IDUx
+Mi4gRm9yIG5vdywgd2UganVzdCBwcmludCBhIHdhcm5pbmcKKyAgIGlmIGEgZmlsZXN5c3RlbSBp
+cyBtb3VudGVkIHdpdGggc3VjaCAiaW1wb3NzaWJsZSB0byBmaWxsIHVwIiBudW1iZXIgb2YgaW5v
+ZGVzICovCisjZGVmaW5lIEJGU19NQVhfTEFTVEkJNTEzCisKIC8qCiAgKiBCRlMgZmlsZSBzeXN0
+ZW0gaW4tY29yZSBzdXBlcmJsb2NrIGluZm8KICAqLwpAQCAtMTcsNyArMjQsNyBAQAogCXVuc2ln
+bmVkIGxvbmcgc2lfZnJlZWk7CiAJdW5zaWduZWQgbG9uZyBzaV9sZl9lYmxrOwogCXVuc2lnbmVk
+IGxvbmcgc2lfbGFzdGk7Ci0JdW5zaWduZWQgbG9uZyAqc2lfaW1hcDsKKwlERUNMQVJFX0JJVE1B
+UChzaV9pbWFwLCBCRlNfTUFYX0xBU1RJKzEpOwogCXN0cnVjdCBtdXRleCBiZnNfbG9jazsKIH07
+CiAKLS0tIGZzL2Jmcy9kaXIuYy4wCTIwMTgtMTEtMTMgMTk6Mjk6MzIuMzYxMjU5MjcyICswMDAw
+CisrKyBmcy9iZnMvZGlyLmMJMjAxOC0xMS0xMyAxOTozMDowMS4zODA2ODM4NTggKzAwMDAKQEAg
+LTIsOCArMiw4IEBACiAvKgogICoJZnMvYmZzL2Rpci5jCiAgKglCRlMgZGlyZWN0b3J5IG9wZXJh
+dGlvbnMuCi0gKglDb3B5cmlnaHQgKEMpIDE5OTksMjAwMCAgVGlncmFuIEFpdmF6aWFuIDx0aWdy
+YW5AdmVyaXRhcy5jb20+Ci0gKiAgICAgIE1hZGUgZW5kaWFubmVzcy1jbGVhbiBieSBBbmRyZXcg
+U3RyaWJibGVoaWxsIDxhZHNAd29tcG9tLm9yZz4gMjAwNQorICoJQ29weXJpZ2h0IChDKSAxOTk5
+LTIwMTggVGlncmFuIEFpdmF6aWFuIDxhaXZhemlhbi50aWdyYW5AZ21haWwuY29tPgorICogIE1h
+ZGUgZW5kaWFubmVzcy1jbGVhbiBieSBBbmRyZXcgU3RyaWJibGVoaWxsIDxhZHNAd29tcG9tLm9y
+Zz4gMjAwNQogICovCiAKICNpbmNsdWRlIDxsaW51eC90aW1lLmg+Ci0tLSBmcy9iZnMvZmlsZS5j
+LjAJMjAxOC0xMS0xMyAxOTozMDoxMS43NjA0ODk5NTcgKzAwMDAKKysrIGZzL2Jmcy9maWxlLmMJ
+MjAxOC0xMS0xMyAxOTozMDoyNy4wMjAyMTQ4NDUgKzAwMDAKQEAgLTIsNyArMiw3IEBACiAvKgog
+ICoJZnMvYmZzL2ZpbGUuYwogICoJQkZTIGZpbGUgb3BlcmF0aW9ucy4KLSAqCUNvcHlyaWdodCAo
+QykgMTk5OSwyMDAwIFRpZ3JhbiBBaXZhemlhbiA8dGlncmFuQHZlcml0YXMuY29tPgorICoJQ29w
+eXJpZ2h0IChDKSAxOTk5LTIwMTggVGlncmFuIEFpdmF6aWFuIDxhaXZhemlhbi50aWdyYW5AZ21h
+aWwuY29tPgogICoKICAqCU1ha2UgdGhlIGZpbGUgYmxvY2sgYWxsb2NhdGlvbiBhbGdvcml0aG0g
+dW5kZXJzdGFuZCB0aGUgc2l6ZQogICoJb2YgdGhlIHVuZGVybHlpbmcgYmxvY2sgZGV2aWNlLgot
+LS0gZnMvYmZzL2lub2RlLmMuMAkyMDE4LTExLTEzIDE5OjIxOjQ2LjA4OTU3OTcyNiArMDAwMAor
+KysgZnMvYmZzL2lub2RlLmMJMjAxOC0xMS0xMyAxOToyOToyMi41MjE0NjcxMDQgKzAwMDAKQEAg
+LTEsMTAgKzEsOSBAQAogLyoKICAqCWZzL2Jmcy9pbm9kZS5jCiAgKglCRlMgc3VwZXJibG9jayBh
+bmQgaW5vZGUgb3BlcmF0aW9ucy4KLSAqCUNvcHlyaWdodCAoQykgMTk5OS0yMDA2IFRpZ3JhbiBB
+aXZhemlhbiA8YWl2YXppYW4udGlncmFuQGdtYWlsLmNvbT4KKyAqCUNvcHlyaWdodCAoQykgMTk5
+OS0yMDE4IFRpZ3JhbiBBaXZhemlhbiA8YWl2YXppYW4udGlncmFuQGdtYWlsLmNvbT4KICAqCUZy
+b20gZnMvbWluaXgsIENvcHlyaWdodCAoQykgMTk5MSwgMTk5MiBMaW51cyBUb3J2YWxkcy4KLSAq
+Ci0gKiAgICAgIE1hZGUgZW5kaWFubmVzcy1jbGVhbiBieSBBbmRyZXcgU3RyaWJibGVoaWxsIDxh
+ZHNAd29tcG9tLm9yZz4sIDIwMDUuCisgKglNYWRlIGVuZGlhbm5lc3MtY2xlYW4gYnkgQW5kcmV3
+IFN0cmliYmxlaGlsbCA8YWRzQHdvbXBvbS5vcmc+LCAyMDA1LgogICovCiAKICNpbmNsdWRlIDxs
+aW51eC9tb2R1bGUuaD4KQEAgLTExOCwxMiArMTE3LDEyIEBACiB7CiAJc3RydWN0IGJmc19zYl9p
+bmZvICppbmZvID0gQkZTX1NCKGlub2RlLT5pX3NiKTsKIAl1bnNpZ25lZCBpbnQgaW5vID0gKHUx
+Nilpbm9kZS0+aV9pbm87Ci0gICAgICAgIHVuc2lnbmVkIGxvbmcgaV9zYmxvY2s7CisJdW5zaWdu
+ZWQgbG9uZyBpX3NibG9jazsKIAlzdHJ1Y3QgYmZzX2lub2RlICpkaTsKIAlzdHJ1Y3QgYnVmZmVy
+X2hlYWQgKmJoOwogCWludCBlcnIgPSAwOwogCi0gICAgICAgIGRwcmludGYoImlubz0lMDh4XG4i
+LCBpbm8pOworCWRwcmludGYoImlubz0lMDh4XG4iLCBpbm8pOwogCiAJZGkgPSBmaW5kX2lub2Rl
+KGlub2RlLT5pX3NiLCBpbm8sICZiaCk7CiAJaWYgKElTX0VSUihkaSkpCkBAIC0xNDQsNyArMTQz
+LDcgQEAKIAlkaS0+aV9hdGltZSA9IGNwdV90b19sZTMyKGlub2RlLT5pX2F0aW1lLnR2X3NlYyk7
+CiAJZGktPmlfbXRpbWUgPSBjcHVfdG9fbGUzMihpbm9kZS0+aV9tdGltZS50dl9zZWMpOwogCWRp
+LT5pX2N0aW1lID0gY3B1X3RvX2xlMzIoaW5vZGUtPmlfY3RpbWUudHZfc2VjKTsKLSAgICAgICAg
+aV9zYmxvY2sgPSBCRlNfSShpbm9kZSktPmlfc2Jsb2NrOworCWlfc2Jsb2NrID0gQkZTX0koaW5v
+ZGUpLT5pX3NibG9jazsKIAlkaS0+aV9zYmxvY2sgPSBjcHVfdG9fbGUzMihpX3NibG9jayk7CiAJ
+ZGktPmlfZWJsb2NrID0gY3B1X3RvX2xlMzIoQkZTX0koaW5vZGUpLT5pX2VibG9jayk7CiAJZGkt
+PmlfZW9mZnNldCA9IGNwdV90b19sZTMyKGlfc2Jsb2NrICogQkZTX0JTSVpFICsgaW5vZGUtPmlf
+c2l6ZSAtIDEpOwpAQCAtMTg4LDEzICsxODcsMTMgQEAKIAltYXJrX2J1ZmZlcl9kaXJ0eShiaCk7
+CiAJYnJlbHNlKGJoKTsKIAotICAgICAgICBpZiAoYmktPmlfZHNrX2lubykgeworCWlmIChiaS0+
+aV9kc2tfaW5vKSB7CiAJCWlmIChiaS0+aV9zYmxvY2spCiAJCQlpbmZvLT5zaV9mcmVlYiArPSBi
+aS0+aV9lYmxvY2sgKyAxIC0gYmktPmlfc2Jsb2NrOwogCQlpbmZvLT5zaV9mcmVlaSsrOwogCQlj
+bGVhcl9iaXQoaW5vLCBpbmZvLT5zaV9pbWFwKTsKLQkJYmZzX2R1bXBfaW1hcCgiZGVsZXRlX2lu
+b2RlIiwgcyk7Ci0gICAgICAgIH0KKwkJYmZzX2R1bXBfaW1hcCgiZXZpY3RfaW5vZGUiLCBzKTsK
+Kwl9CiAKIAkvKgogCSAqIElmIHRoaXMgd2FzIHRoZSBsYXN0IGZpbGUsIG1ha2UgdGhlIHByZXZp
+b3VzIGJsb2NrCkBAIC0yMTQsNyArMjEzLDYgQEAKIAkJcmV0dXJuOwogCiAJbXV0ZXhfZGVzdHJv
+eSgmaW5mby0+YmZzX2xvY2spOwotCWtmcmVlKGluZm8tPnNpX2ltYXApOwogCWtmcmVlKGluZm8p
+OwogCXMtPnNfZnNfaW5mbyA9IE5VTEw7CiB9CkBAIC0zMTEsOCArMzA5LDcgQEAKIAkJZWxzZQog
+CQkJc3RyY2F0KHRtcGJ1ZiwgIjAiKTsKIAl9Ci0JcHJpbnRmKCJCRlMtZnM6ICVzOiBsYXN0aT0l
+MDhseCA8JXM+XG4iLAotCQkJCXByZWZpeCwgQkZTX1NCKHMpLT5zaV9sYXN0aSwgdG1wYnVmKTsK
+KwlwcmludGYoIiVzOiBsYXN0aT0lMDhseCA8JXM+XG4iLCBwcmVmaXgsIEJGU19TQihzKS0+c2lf
+bGFzdGksIHRtcGJ1Zik7CiAJZnJlZV9wYWdlKCh1bnNpZ25lZCBsb25nKXRtcGJ1Zik7CiAjZW5k
+aWYKIH0KQEAgLTMyMiw3ICszMTksNyBAQAogCXN0cnVjdCBidWZmZXJfaGVhZCAqYmgsICpzYmg7
+CiAJc3RydWN0IGJmc19zdXBlcl9ibG9jayAqYmZzX3NiOwogCXN0cnVjdCBpbm9kZSAqaW5vZGU7
+Ci0JdW5zaWduZWQgaSwgaW1hcF9sZW47CisJdW5zaWduZWQgaTsKIAlzdHJ1Y3QgYmZzX3NiX2lu
+Zm8gKmluZm87CiAJaW50IHJldCA9IC1FSU5WQUw7CiAJdW5zaWduZWQgbG9uZyBpX3NibG9jaywg
+aV9lYmxvY2ssIGlfZW9mZiwgc19zaXplOwpAQCAtMzQxLDggKzMzOCw3IEBACiAJYmZzX3NiID0g
+KHN0cnVjdCBiZnNfc3VwZXJfYmxvY2sgKilzYmgtPmJfZGF0YTsKIAlpZiAobGUzMl90b19jcHUo
+YmZzX3NiLT5zX21hZ2ljKSAhPSBCRlNfTUFHSUMpIHsKIAkJaWYgKCFzaWxlbnQpCi0JCQlwcmlu
+dGYoIk5vIEJGUyBmaWxlc3lzdGVtIG9uICVzIChtYWdpYz0lMDh4KVxuIiwgCi0JCQkJcy0+c19p
+ZCwgIGxlMzJfdG9fY3B1KGJmc19zYi0+c19tYWdpYykpOworCQkJcHJpbnRmKCJObyBCRlMgZmls
+ZXN5c3RlbSBvbiAlcyAobWFnaWM9JTA4eClcbiIsIHMtPnNfaWQsICBsZTMyX3RvX2NwdShiZnNf
+c2ItPnNfbWFnaWMpKTsKIAkJZ290byBvdXQxOwogCX0KIAlpZiAoQkZTX1VOQ0xFQU4oYmZzX3Ni
+LCBzKSAmJiAhc2lsZW50KQpAQCAtMzUwLDE4ICszNDYsMTkgQEAKIAogCXMtPnNfbWFnaWMgPSBC
+RlNfTUFHSUM7CiAKLQlpZiAobGUzMl90b19jcHUoYmZzX3NiLT5zX3N0YXJ0KSA+IGxlMzJfdG9f
+Y3B1KGJmc19zYi0+c19lbmQpKSB7Ci0JCXByaW50ZigiU3VwZXJibG9jayBpcyBjb3JydXB0ZWRc
+biIpOworCWlmIChsZTMyX3RvX2NwdShiZnNfc2ItPnNfc3RhcnQpID4gbGUzMl90b19jcHUoYmZz
+X3NiLT5zX2VuZCkgfHwKKwkgICAgbGUzMl90b19jcHUoYmZzX3NiLT5zX3N0YXJ0KSA8IHNpemVv
+ZihzdHJ1Y3QgYmZzX3N1cGVyX2Jsb2NrKSArIHNpemVvZihzdHJ1Y3QgYmZzX2RpcmVudCkpIHsK
+KwkJcHJpbnRmKCJTdXBlcmJsb2NrIGlzIGNvcnJ1cHRlZCBvbiAlc1xuIiwgcy0+c19pZCk7CiAJ
+CWdvdG8gb3V0MTsKIAl9CiAKLQlpbmZvLT5zaV9sYXN0aSA9IChsZTMyX3RvX2NwdShiZnNfc2It
+PnNfc3RhcnQpIC0gQkZTX0JTSVpFKSAvCi0JCQkJCXNpemVvZihzdHJ1Y3QgYmZzX2lub2RlKQot
+CQkJCQkrIEJGU19ST09UX0lOTyAtIDE7Ci0JaW1hcF9sZW4gPSAoaW5mby0+c2lfbGFzdGkgLyA4
+KSArIDE7Ci0JaW5mby0+c2lfaW1hcCA9IGt6YWxsb2MoaW1hcF9sZW4sIEdGUF9LRVJORUwpOwot
+CWlmICghaW5mby0+c2lfaW1hcCkKKwlpbmZvLT5zaV9sYXN0aSA9IChsZTMyX3RvX2NwdShiZnNf
+c2ItPnNfc3RhcnQpIC0gQkZTX0JTSVpFKSAvIHNpemVvZihzdHJ1Y3QgYmZzX2lub2RlKSArIEJG
+U19ST09UX0lOTyAtIDE7CisJaWYgKGluZm8tPnNpX2xhc3RpID09IEJGU19NQVhfTEFTVEkpCisJ
+CXByaW50ZigiV0FSTklORzogZmlsZXN5c3RlbSAlcyB3YXMgY3JlYXRlZCB3aXRoIDUxMiBpbm9k
+ZXMsIHRoZSByZWFsIG1heGltdW0gaXMgNTExLCBtb3VudGluZyBhbnl3YXlcbiIsIHMtPnNfaWQp
+OworCWVsc2UgaWYgKGluZm8tPnNpX2xhc3RpID4gQkZTX01BWF9MQVNUSSkgeworCQlwcmludGYo
+IkltcG9zc2libGUgbGFzdCBpbm9kZSBudW1iZXIgJWx1ID4gJWQgb24gJXNcbiIsIGluZm8tPnNp
+X2xhc3RpLCBCRlNfTUFYX0xBU1RJLCBzLT5zX2lkKTsKIAkJZ290byBvdXQxOworICAgIH0KIAlm
+b3IgKGkgPSAwOyBpIDwgQkZTX1JPT1RfSU5POyBpKyspCiAJCXNldF9iaXQoaSwgaW5mby0+c2lf
+aW1hcCk7CiAKQEAgLTM2OSwyNiArMzY2LDI1IEBACiAJaW5vZGUgPSBiZnNfaWdldChzLCBCRlNf
+Uk9PVF9JTk8pOwogCWlmIChJU19FUlIoaW5vZGUpKSB7CiAJCXJldCA9IFBUUl9FUlIoaW5vZGUp
+OwotCQlnb3RvIG91dDI7CisJCWdvdG8gb3V0MTsKIAl9CiAJcy0+c19yb290ID0gZF9tYWtlX3Jv
+b3QoaW5vZGUpOwogCWlmICghcy0+c19yb290KSB7CiAJCXJldCA9IC1FTk9NRU07Ci0JCWdvdG8g
+b3V0MjsKKwkJZ290byBvdXQxOwogCX0KIAogCWluZm8tPnNpX2Jsb2NrcyA9IChsZTMyX3RvX2Nw
+dShiZnNfc2ItPnNfZW5kKSArIDEpID4+IEJGU19CU0laRV9CSVRTOwotCWluZm8tPnNpX2ZyZWVi
+ID0gKGxlMzJfdG9fY3B1KGJmc19zYi0+c19lbmQpICsgMQotCQkJLSBsZTMyX3RvX2NwdShiZnNf
+c2ItPnNfc3RhcnQpKSA+PiBCRlNfQlNJWkVfQklUUzsKKwlpbmZvLT5zaV9mcmVlYiA9IChsZTMy
+X3RvX2NwdShiZnNfc2ItPnNfZW5kKSArIDEgLSBsZTMyX3RvX2NwdShiZnNfc2ItPnNfc3RhcnQp
+KSA+PiBCRlNfQlNJWkVfQklUUzsKIAlpbmZvLT5zaV9mcmVlaSA9IDA7CiAJaW5mby0+c2lfbGZf
+ZWJsayA9IDA7CiAKIAkvKiBjYW4gd2UgcmVhZCB0aGUgbGFzdCBibG9jaz8gKi8KIAliaCA9IHNi
+X2JyZWFkKHMsIGluZm8tPnNpX2Jsb2NrcyAtIDEpOwogCWlmICghYmgpIHsKLQkJcHJpbnRmKCJM
+YXN0IGJsb2NrIG5vdCBhdmFpbGFibGU6ICVsdVxuIiwgaW5mby0+c2lfYmxvY2tzIC0gMSk7CisJ
+CXByaW50ZigiTGFzdCBibG9jayBub3QgYXZhaWxhYmxlIG9uICVzOiAlbHVcbiIsIHMtPnNfaWQs
+IGluZm8tPnNpX2Jsb2NrcyAtIDEpOwogCQlyZXQgPSAtRUlPOwotCQlnb3RvIG91dDM7CisJCWdv
+dG8gb3V0MjsKIAl9CiAJYnJlbHNlKGJoKTsKIApAQCAtNDIyLDExICs0MTgsMTEgQEAKIAkJCShp
+X2VvZmYgIT0gbGUzMl90b19jcHUoLTEpICYmIGlfZW9mZiA+IHNfc2l6ZSkgfHwKIAkJCWlfc2Js
+b2NrICogQkZTX0JTSVpFID4gaV9lb2ZmKSB7CiAKLQkJCXByaW50ZigiSW5vZGUgMHglMDh4IGNv
+cnJ1cHRlZFxuIiwgaSk7CisJCQlwcmludGYoIklub2RlIDB4JTA4eCBjb3JydXB0ZWQgb24gJXNc
+biIsIGksIHMtPnNfaWQpOwogCiAJCQlicmVsc2UoYmgpOwogCQkJcmV0ID0gLUVJTzsKLQkJCWdv
+dG8gb3V0MzsKKwkJCWdvdG8gb3V0MjsKIAkJfQogCiAJCWlmICghZGktPmlfaW5vKSB7CkBAIC00
+NDIsMTQgKzQzOCwxMiBAQAogCX0KIAlicmVsc2UoYmgpOwogCWJyZWxzZShzYmgpOwotCWJmc19k
+dW1wX2ltYXAoInJlYWRfc3VwZXIiLCBzKTsKKwliZnNfZHVtcF9pbWFwKCJmaWxsX3N1cGVyIiwg
+cyk7CiAJcmV0dXJuIDA7CiAKLW91dDM6CitvdXQyOgogCWRwdXQocy0+c19yb290KTsKIAlzLT5z
+X3Jvb3QgPSBOVUxMOwotb3V0MjoKLQlrZnJlZShpbmZvLT5zaV9pbWFwKTsKIG91dDE6CiAJYnJl
+bHNlKHNiaCk7CiBvdXQ6CkBAIC00NzksNyArNDczLDcgQEAKIAlpbnQgZXJyID0gaW5pdF9pbm9k
+ZWNhY2hlKCk7CiAJaWYgKGVycikKIAkJZ290byBvdXQxOwotICAgICAgICBlcnIgPSByZWdpc3Rl
+cl9maWxlc3lzdGVtKCZiZnNfZnNfdHlwZSk7CisJZXJyID0gcmVnaXN0ZXJfZmlsZXN5c3RlbSgm
+YmZzX2ZzX3R5cGUpOwogCWlmIChlcnIpCiAJCWdvdG8gb3V0OwogCXJldHVybiAwOwo=
+--00000000000040cac0057a9147a5--
