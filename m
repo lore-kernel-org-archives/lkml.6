@@ -2,191 +2,122 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140FCC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:19:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C56DC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:20:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CA64022507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:19:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5E1BB20685
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:20:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="Dv16mTKb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA64022507
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="SW85G0v1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E1BB20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733009AbeKMVRM (ORCPT
+        id S1732514AbeKMVSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:17:12 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46611 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732418AbeKMVRM (ORCPT
+        Tue, 13 Nov 2018 16:18:18 -0500
+Received: from us01smtprelay-2.synopsys.com ([198.182.60.111]:57036 "EHLO
+        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732390AbeKMVSR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:17:12 -0500
-Received: by mail-pf1-f194.google.com with SMTP id s9-v6so5868171pfm.13
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 03:19:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=SYvsDZFatZNo8KTo2brjgveRTySLcBTtFJwHL/yY9k0=;
-        b=Dv16mTKbMxtpErNDUmEh+zfhaf3fKwqMnSIW9RBbJh6fKgooYqRs/noey6KlP+ujEu
-         Zjr0YO40cstJc0BEZlVbBMgp4ARAr38G0s8mCeYN+LL8odW40qCxKLRpX/fRzin26oOM
-         QbxIw32B7AfZdDcNC1+L5IUiTrUtSreh99huQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=SYvsDZFatZNo8KTo2brjgveRTySLcBTtFJwHL/yY9k0=;
-        b=Si0qzgtfly8ojyZMjEz1VMk8qBvU16K947ON7uPTTLEwtsuCJXafSI37R1oW5PeIFw
-         tMlS+9P3Oh4stY3scGk53z0O9iyRzjieQRy2acfj0EdUFXBIGiS6pLgvH9EiqkahHJBG
-         MEd858MWGyACbkfz/ol0nVM1J2DtWdVysfX4oMliF6RQ1BBxhhlrv5od4BGAOBVVSBRx
-         bAzpbYPs9HJztyTkrCo/FqgvUD1GmgIeFHObJtzCvyEt1ydQwPctWNgW+WgiAVJCWOD+
-         ++dNKxjM54DH/oPxICpRL4PwVVBpQgKk1FgzV56XAkaxg66lJ046eb3YH8tYeMMA/bDh
-         OHyQ==
-X-Gm-Message-State: AGRZ1gKEdjtjbPca2HlOIJfnWG8LHAdfiGaRUzepi1xT/zaerQjOAENO
-        CeztXqKiNlSNsJCC4gSz84Yj6A==
-X-Google-Smtp-Source: AJdET5dhef3zHWl6a/7x7lhsAttAAaHHpP3FIb9XZmOXPQBl1Ydz+eFHawtisZ7Dno7t6QaYZeKkng==
-X-Received: by 2002:a63:af18:: with SMTP id w24mr4397635pge.385.1542107973054;
-        Tue, 13 Nov 2018 03:19:33 -0800 (PST)
-Received: from localhost.localdomain ([2401:4900:3670:3f11:bc71:2ef7:4a39:e260])
-        by smtp.gmail.com with ESMTPSA id 27-v6sm28531377pfm.36.2018.11.13.03.19.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 03:19:32 -0800 (PST)
-From:   Jagan Teki <jagan@amarulasolutions.com>
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-amarula@amarulasolutions.com
-Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v4 26/26] arm64: dts: allwinner: a64-amarula-relic: Enable Techstar TS8550B MIPI-DSI panel
-Date:   Tue, 13 Nov 2018 16:46:33 +0530
-Message-Id: <20181113111633.20189-27-jagan@amarulasolutions.com>
-X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
-In-Reply-To: <20181113111633.20189-1-jagan@amarulasolutions.com>
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+        Tue, 13 Nov 2018 16:18:17 -0500
+Received: from mailhost.synopsys.com (mailhost2.synopsys.com [10.13.184.66])
+        by smtprelay.synopsys.com (Postfix) with ESMTP id 336C710C06BA;
+        Tue, 13 Nov 2018 03:20:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
+        t=1542108038; bh=xDbYxh2zFyP44iZnShJMwgoJko8io8nNt+lMpDnQ9RI=;
+        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
+        b=SW85G0v1UmImz2/3nCtayGJJYds3gI6LlpLWMfTiM9Bl5n+gtvAQ7g+o7I6kmiiGY
+         SSh20bLhkKu7SBEZmHGROfH65tD/cPOsRpZHwOIhPZcpMF5F4zfFvv4pNwFxCpNPwZ
+         x2hJor8NiMux4z5vuiWgHFjaVLGH7s4BI8r879drRr+yStCN4V9KWkpIvqgNcg6WPy
+         QL5dBHo4dJWhk9/MVWkRwAV57ng+80FUE7A9CdKo4YqNPPxAraktX+SieZmyFNC3KO
+         IYg8Qpr09UBMVRdakAA4xpVtc6dKeyq4qhGwAYlWOK2Es1M30rENiJIQ+o2n8WDqPc
+         etS5XcDX0teOA==
+Received: from us01wehtc1.internal.synopsys.com (us01wehtc1-vip.internal.synopsys.com [10.12.239.236])
+        by mailhost.synopsys.com (Postfix) with ESMTP id 9C5833E18;
+        Tue, 13 Nov 2018 03:20:35 -0800 (PST)
+Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
+ us01wehtc1.internal.synopsys.com (10.12.239.235) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 13 Nov 2018 03:20:32 -0800
+Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
+ DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 13 Nov 2018 12:20:29 +0100
+Received: from [10.0.2.15] (10.107.19.128) by DE02WEHTCB.internal.synopsys.com
+ (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 13 Nov
+ 2018 12:20:29 +0100
+Subject: Re: [PATCH v3 2/3] dt-bindings: i3c: Document Synopsys DesignWare I3C
+ master bindings
+To:     Rob Herring <robh@kernel.org>,
+        Vitor soares <vitor.soares@synopsys.com>
+CC:     <boris.brezillon@bootlin.com>, <wsa@the-dreams.de>,
+        <linux-i2c@vger.kernel.org>, <corbet@lwn.net>,
+        <linux-doc@vger.kernel.org>, <gregkh@linuxfoundation.org>,
+        <arnd@arndb.de>, <psroka@cadence.com>, <agolec@cadence.com>,
+        <adouglas@cadence.com>, <bfolta@cadence.com>, <dkos@cadence.com>,
+        <alicja@cadence.com>, <cwronka@cadence.com>, <sureshp@cadence.com>,
+        <rafalc@cadence.com>, <thomas.petazzoni@bootlin.com>, <nm@ti.com>,
+        <pawel.moll@arm.com>, <mark.rutland@arm.com>,
+        <ijc+devicetree@hellion.org.uk>, <galak@codeaurora.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <geert@linux-m68k.org>, <linus.walleij@linaro.org>,
+        <Xiang.Lin@synaptics.com>, <linux-gpio@vger.kernel.org>,
+        <nsekhar@ti.com>, <pgaj@cadence.com>, <peda@axentia.se>,
+        <mshettel@codeaurora.org>, <swboyd@chromium.org>,
+        <joao.pinto@synopsys.com>
+References: <1541697251-20392-1-git-send-email-soares@synopsys.com>
+ <1541697251-20392-3-git-send-email-soares@synopsys.com>
+ <20181113020957.GA31668@bogus>
+From:   vitor <vitor.soares@synopsys.com>
+Message-ID: <ec1059fa-420e-ee18-1831-170904c0ccd0@synopsys.com>
+Date:   Tue, 13 Nov 2018 11:20:15 +0000
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181113020957.GA31668@bogus>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Originating-IP: [10.107.19.128]
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Amarula A64-Relic board by default bound with Techstar TS8550B
-MIPI-DSI panel, add support for it.
+Hi Rob,
 
-DSI panel connected via board DSI port with,
-- DC1SW as AVDD supply
-- DCDC2 as DVDD supply
-- DCDC1 as VCC-DSI supply
-- PD24 gpio for reset pin
-- PD23 gpio for backlight enable pin
+On 13/11/18 02:09, Rob Herring wrote:
+> On Thu, Nov 08, 2018 at 05:14:10PM +0000, Vitor soares wrote:
+>> Document Synopsys DesignWare I3C master module
+>>
+>> Signed-off-by: Vitor soares <soares@synopsys.com>
+> Please make your author and S-o-b emails match.
 
-Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
----
- .../allwinner/sun50i-a64-amarula-relic.dts    | 46 +++++++++++++++++++
- 1 file changed, 46 insertions(+)
+This is an alias and both email will work. Anyway I agree that should be 
+the same that appear in the mailing list and I will change it.
 
-diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-index 6cb2b7f0c817..ecc0d8094815 100644
---- a/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-+++ b/arch/arm64/boot/dts/allwinner/sun50i-a64-amarula-relic.dts
-@@ -9,6 +9,7 @@
- #include "sun50i-a64.dtsi"
- 
- #include <dt-bindings/gpio/gpio.h>
-+#include <dt-bindings/pwm/pwm.h>
- 
- / {
- 	model = "Amarula A64-Relic";
-@@ -18,6 +19,14 @@
- 		serial0 = &uart0;
- 	};
- 
-+	backlight: backlight {
-+		compatible = "pwm-backlight";
-+		pwms = <&pwm 0 50000 PWM_POLARITY_INVERTED>;
-+		brightness-levels = <1 2 4 8 16 32 64 128 512>;
-+		default-brightness-level = <2>;
-+		enable-gpios = <&pio 3 23 GPIO_ACTIVE_HIGH>; /* LCD-BL-EN: PD23 */
-+	};
-+
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-@@ -30,6 +39,28 @@
- 	};
- };
- 
-+&de {
-+	status = "okay";
-+};
-+
-+&dphy {
-+	status = "okay";
-+};
-+
-+&dsi {
-+	vcc-dsi-supply = <&reg_dldo1>;
-+	status = "okay";
-+
-+	panel@0 {
-+		compatible = "techstar,ts8550b";
-+		reg = <0>;
-+		avdd-supply = <&reg_dc1sw>;
-+		dvdd-supply = <&reg_dldo2>;
-+		reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
-+		backlight = <&backlight>;
-+	};
-+};
-+
- &ehci0 {
- 	status = "okay";
- };
-@@ -72,6 +103,12 @@
- 	status = "okay";
- };
- 
-+&pwm {
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&pwm_pin>;
-+	status = "okay";
-+};
-+
- &r_rsb {
- 	status = "okay";
- 
-@@ -107,6 +144,15 @@
- 	regulator-name = "vcc-pll-avcc";
- };
- 
-+&reg_dc1sw {
-+	/*
-+	 * This regulator also indirectly drives the PD pingroup GPIOs,
-+	 * which also controls the power LED.
-+	 */
-+	regulator-always-on;
-+	regulator-name = "vcc-phy";
-+};
-+
- &reg_dcdc1 {
- 	regulator-always-on;
- 	regulator-min-microvolt = <3300000>;
--- 
-2.18.0.321.gffc6fa0e3
+>> ---
+>> Changes in v3:
+>> - Remove dummy characters
+>>
+>> Changes in v2:
+>> - Address the changes in Documentation/devicetree/bindings/i3c/i3c.txt
+>> - Add controller version on compatible string
+>>
+>>   .../devicetree/bindings/i3c/snps,dw-i3c-master.txt | 42 ++++++++++++++++++++++
+>>   1 file changed, 42 insertions(+)
+>>   create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
+> Otherwise,
+>
+> Reviewed-by: Rob Herring <robh@kernel.org>
+
+Thanks for review.
+
+
+Best regards,
+
+Vitor Soares
 
