@@ -2,126 +2,111 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0647AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B1DF4C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:11:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C18942175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:11:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZBtiMNns"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C18942175B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 7ED342175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:11:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7ED342175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388126AbeKNCKE (ORCPT
+        id S2388172AbeKNCKL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 21:10:04 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:37899 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387709AbeKNCKE (ORCPT
+        Tue, 13 Nov 2018 21:10:11 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:20819 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2388130AbeKNCKL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 21:10:04 -0500
-Received: by mail-qk1-f194.google.com with SMTP id d19so20296440qkg.5;
-        Tue, 13 Nov 2018 08:11:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=T2t5vzOSqDOk91wFmuQdsNFjj6Roz7TaDtVU5YSptrM=;
-        b=ZBtiMNnsOEyD2HuMTsZ2vtwbyKRa79C3bgV2Ce12uGfe6LytoZ2iObCrULK1XJdFhN
-         jqr79fZ4+PDyTlYjzwQTgouGr96/BphtEnyQTHl6z+YH3ALOyrcwdFQ+3ijJt1FUEu5u
-         7QGt1EtcL2D5/181yAznDwWrjEEAcU8mu401kEGsrm940iilmkPH3tJvvdJxxpaap7BW
-         YUd8MamVWB3rP6Go6yOxtiHmaYL7zkRh46abQ8MoB6XMlbipBk40OaO+JjcFqvFFMcHm
-         4My6+RT650ym7X7dgZbAN+5vR+0Nl0acPaZXIlb0A3FgR9mMAAlFcFaFGit9+Vucu2MI
-         NY1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T2t5vzOSqDOk91wFmuQdsNFjj6Roz7TaDtVU5YSptrM=;
-        b=gAB0kIT8GBr8hDzx1UbapfNMAaX3TmxDM0X4Q3CLVzuglXBcFuM9TIAITmZZE7SAwM
-         4zIUAJLfhiT95YIHDTPNWdCgvDBkIAH99BsANylfI5ZeL0POqCCYrbi38b+Rmsl2D4Zc
-         RLuIK3q7ZkZRBDLpvS1vRglmCAiXvpSR3QlOlJx3PtQKCKHiS8mNS1AbQDEJ7HEn7POA
-         cg1M9xoN9S3TZTRbnQi8+CSHVo3MEh/ZjHll8AYaTU5nfwFmU+6lFLaJhKrm6fhXNRCj
-         p0vunYxqNFn6vFSaFga2V865kDD0G+DjH5Oxg/3r322SiRc966n4FcHCJIT4YkfxcL6r
-         TtIA==
-X-Gm-Message-State: AGRZ1gKD0TXeWyl5WM/A36GJk9cgav7NdbolPKdjmCdVs/sf1ClnCkG+
-        J2zMzMn+vYLI7BXizDroYw==
-X-Google-Smtp-Source: AJdET5cPLQrdg6e33KLKtoPHBc1KR3GQy+WDF98LxJ1FlHw0+ZjpkTFu6k1ovAo9f53jIUIv/HSFyg==
-X-Received: by 2002:ac8:7153:: with SMTP id h19mr5274501qtp.92.1542125479049;
-        Tue, 13 Nov 2018 08:11:19 -0800 (PST)
-Received: from gabell (nat-pool-bos-t.redhat.com. [66.187.233.206])
-        by smtp.gmail.com with ESMTPSA id j89sm11525815qkh.34.2018.11.13.08.11.17
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 08:11:18 -0800 (PST)
-Date:   Tue, 13 Nov 2018 11:11:11 -0500
-From:   Masayoshi Mizuma <msys.mizuma@gmail.com>
-To:     Chao Fan <fanc.fnst@cn.fujitsu.com>, bp@alien8.de
-Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
-        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
-        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        keescook@chromium.org, bhe@redhat.com, indou.takao@jp.fujitsu.com,
-        caoj.fnst@cn.fujitsu.com
-Subject: Re: [PATCH v11 3/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
- cmdlien from kexec
-Message-ID: <20181113161111.6jwm36fpxk5xjtn5@gabell>
-References: <20181112094645.4879-1-fanc.fnst@cn.fujitsu.com>
- <20181112094645.4879-4-fanc.fnst@cn.fujitsu.com>
- <20181112174343.mvjri2okwboew2nw@gabell>
- <20181113021218.GD7453@localhost.localdomain>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113021218.GD7453@localhost.localdomain>
-User-Agent: NeoMutt/20180716
+        Tue, 13 Nov 2018 21:10:11 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wADG9Alo101948
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 11:11:25 -0500
+Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nr1u708d5-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 11:11:25 -0500
+Received: from localhost
+        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <jejb@linux.vnet.ibm.com>;
+        Tue, 13 Nov 2018 16:11:24 -0000
+Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
+        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 13 Nov 2018 16:11:18 -0000
+Received: from b03ledav004.gho.boulder.ibm.com (b03ledav004.gho.boulder.ibm.com [9.17.130.235])
+        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wADGBHWK17498188
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 13 Nov 2018 16:11:17 GMT
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id B9AA678060;
+        Tue, 13 Nov 2018 16:11:17 +0000 (GMT)
+Received: from b03ledav004.gho.boulder.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6B3137805C;
+        Tue, 13 Nov 2018 16:11:15 +0000 (GMT)
+Received: from [192.168.45.84] (unknown [9.85.169.48])
+        by b03ledav004.gho.boulder.ibm.com (Postfix) with ESMTP;
+        Tue, 13 Nov 2018 16:11:15 +0000 (GMT)
+Subject: Re: [PATCH] drivers/scsi/fnic/fnic_trace.c: Use vzalloc
+From:   James Bottomley <jejb@linux.vnet.ibm.com>
+To:     Johannes Thumshirn <jthumshirn@suse.de>,
+        John Garry <john.garry@huawei.com>,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        satishkh@cisco.com, sebaddel@cisco.com, kartilak@cisco.com,
+        martin.petersen@oracle.com
+Cc:     jrdr.linux@gmail.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com
+Date:   Tue, 13 Nov 2018 08:11:13 -0800
+In-Reply-To: <13d3418f-49d1-d683-48a6-cedbc073d86f@suse.de>
+References: <5beae8ff.1c69fb81.bd59a.b7fa@mx.google.com>
+         <a34379dd-f6f0-b439-b6de-f2db142f1823@huawei.com>
+         <13d3418f-49d1-d683-48a6-cedbc073d86f@suse.de>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.26.6 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+x-cbid: 18111316-0020-0000-0000-00000E895FE0
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010042; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01116900; UDB=6.00579265; IPR=6.00897009;
+ MB=3.00024144; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-13 16:11:22
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111316-0021-0000-0000-000063B3CCD9
+Message-Id: <1542125473.3042.6.camel@linux.vnet.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=810 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811130147
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao and Boris,
-
-On Tue, Nov 13, 2018 at 10:12:18AM +0800, Chao Fan wrote:
-> On Mon, Nov 12, 2018 at 12:43:44PM -0500, Masayoshi Mizuma wrote:
-> >How about the following get_acpi_rsdp()...? It doesn't use kstrtoull().
-> >
-> >static void get_acpi_rsdp(acpi_physical_address *rsdp_addr)
-> >{
-> >#ifdef CONFIG_KEXEC
-> >        unsigned long addr;
-> >        char val[32];
-> >
-> >        if (cmdline_find_option("acpi_rsdp", val, sizeof(val)) > 0) {
-> >                char *e;
-> >
-> >                if (!strncmp(val, "0x", 2)) {
-> >                        addr = simple_strtoull(val + 2, &e, 16);
-> >                        if ((addr == 0) || ((val + 2) == e))
-> >                                return;
-> >                        *rsdp_addr = (acpi_physical_address)addr;
-> >                }
-> >        }
-> >#endif
-> >}
+On Tue, 2018-11-13 at 16:53 +0100, Johannes Thumshirn wrote:
+> On 13/11/2018 16:44, John Garry wrote:
+> > On 13/11/2018 15:08, Sabyasachi Gupta wrote:
+[...]
+> > > -    fnic_trace_buf_p = (unsigned long)vmalloc((trace_max_pages *
+> > > PAGE_SIZE));
+> > > +    fnic_trace_buf_p = (unsigned long)vzalloc((trace_max_pages *
+> > > +                                PAGE_SIZE));
+> > 
+> > If you remove the extra brackets in vzalloc() argument then you may
+> > not spill onto the next line.
 > 
-> Thanks for the suggestion.
-> I used this function. In the old version, Boris said simple_strtoull()
-> is the old function and told me use the new kstrtoull().
+> And remove the unnecessary cast. vzalloc() (just like vmalloc())
+> returns a void*, so no reason to cast it.
 
-I think it's not very good idea to use kstrtoull() in
-arch/x86/boot/compressed/* because some tricks are needed to
-use the function, looks like Chao is trying...
-It is the simple way here to use simple_strtoull() defined
-in arch/x86/boot/boot.h, I think.
+This is incorrect advice: there's no need to cast it to other *pointer*
+types, but if you cast it to a non-pointer type (which this is doing)
+the compiler will complain if there is no explicit cast.
 
-I know checkpatch.pl says an warning about simple_strtoull(),
-however, I believe the warning is for simple_strtoull() defined
-in lib/vsprintf.c.
+James
 
-Thanks,
-Masa
