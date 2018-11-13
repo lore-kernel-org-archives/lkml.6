@@ -2,256 +2,77 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E5AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:43:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05AE9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:44:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C6E6E223C8
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:43:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E6E223C8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id 9BFB922360
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:44:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BFB922360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731324AbeKNIn3 (ORCPT
+        id S1731401AbeKNIoV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 03:43:29 -0500
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:53082 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeKNIn3 (ORCPT
+        Wed, 14 Nov 2018 03:44:21 -0500
+Received: from eddie.linux-mips.org ([148.251.95.138]:38758 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbeKNIoV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 03:43:29 -0500
-Received: from [5.157.104.112] (port=36764 helo=[192.168.77.57])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1gMhOY-005luB-Mt; Tue, 13 Nov 2018 23:42:54 +0100
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Subject: Re: [PATCH v4 1/4] dt-bindings: media: i2c: Add bindings for Maxim
- Integrated MAX9286
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, sakari.ailus@iki.fi
-Cc:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        linux-kernel@vger.kernel.org,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>
-References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
- <20181102154723.23662-2-kieran.bingham@ideasonboard.com>
-Message-ID: <b3ef6780-a1a7-e86c-0dba-916d9398c1ef@lucaceresoli.net>
-Date:   Tue, 13 Nov 2018 23:42:56 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 14 Nov 2018 03:44:21 -0500
+Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
+        with ESMTP id S23993030AbeKMWmRWRA0x (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 23:42:17 +0100
+Date:   Tue, 13 Nov 2018 22:42:17 +0000 (GMT)
+From:   "Maciej W. Rozycki" <macro@linux-mips.org>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>
+cc:     Christoph Hellwig <hch@lst.de>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/3] MIPS: SiByte: Handle PCI DMA with 64-bit memory
+ addressing
+Message-ID: <alpine.LFD.2.21.1811131653160.9637@eddie.linux-mips.org>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-In-Reply-To: <20181102154723.23662-2-kieran.bingham@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran, All,
+Hi,
 
-sorry for joining this late... See below my considerations.
+ This mini patch series enables correct support for DMA in the presence of 
+memory outside the 32-bit address range with the Broadcom SiByte SOCs and 
+the relevant development boards.
 
-On 02/11/18 16:47, Kieran Bingham wrote:
-> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> 
-> The MAX9286 deserializes video data received on up to 4 Gigabit
-> Multimedia Serial Links (GMSL) and outputs them on a CSI-2 port using up
-> to 4 data lanes.
-> 
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> ---
-> v3:
->  - Update binding descriptions
-> 
-> v4:
->  - Define the use of a CSI2 D-PHY
->  - Rename pwdn-gpios to enable-gpios (with inverted polarity)
->  - Remove clock-lanes mapping support
->  - rewrap text blocks
->  - Fix typos
-> ---
->  .../bindings/media/i2c/maxim,max9286.txt      | 182 ++++++++++++++++++
->  1 file changed, 182 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
-> new file mode 100644
-> index 000000000000..672f6a4d417d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
-> @@ -0,0 +1,182 @@
-> +Maxim Integrated Quad GMSL Deserializer
-> +---------------------------------------
-> +
-> +The MAX9286 deserializer receives video data on up to 4 Gigabit Multimedia
-> +Serial Links (GMSL) and outputs them on a CSI-2 D-PHY port using up to 4 data
-> +lanes.
-> +
-> +In addition to video data, the GMSL links carry a bidirectional control channel
-> +that encapsulates I2C messages. The MAX9286 forwards all I2C traffic not
-> +addressed to itself to the other side of the links, where a GMSL serializer
-> +will output it on a local I2C bus. In the other direction all I2C traffic
-> +received over GMSL by the MAX9286 is output on the local I2C bus.
-> +
-> +Required Properties:
-> +
-> +- compatible: Shall be "maxim,max9286"
-> +- reg: I2C device address
-> +
-> +Optional Properties:
-> +
-> +- poc-supply: Regulator providing Power over Coax to the cameras
-> +- enable-gpios: GPIO connected to the #PWDN pin with inverted polarity
-> +
-> +Required endpoint nodes:
-> +-----------------------
-> +
-> +The connections to the MAX9286 GMSL and its endpoint nodes are modeled using
-> +the OF graph bindings in accordance with the video interface bindings defined
-> +in Documentation/devicetree/bindings/media/video-interfaces.txt.
-> +
-> +The following table lists the port number corresponding to each device port.
-> +
-> +        Port            Description
-> +        ----------------------------------------
-> +        Port 0          GMSL Input 0
-> +        Port 1          GMSL Input 1
-> +        Port 2          GMSL Input 2
-> +        Port 3          GMSL Input 3
-> +        Port 4          CSI-2 Output
-> +
-> +Optional Endpoint Properties for GMSL Input Ports (Port [0-3]):
-> +
-> +- remote-endpoint: phandle to the remote GMSL source endpoint subnode in the
-> +  remote node port.
-> +
-> +Required Endpoint Properties for CSI-2 Output Port (Port 4):
-> +
-> +- remote-endpoint: phandle to the remote CSI-2 sink endpoint node.
-> +- data-lanes: array of physical CSI-2 data lane indexes.
-> +
-> +Required i2c-mux nodes:
-> +----------------------
-> +
-> +Each GMSL link is modeled as a child bus of an i2c bus multiplexer/switch, in
-> +accordance with bindings described in
-> +Documentation/devicetree/bindings/i2c/i2c-mux.txt. The serializer device on the
-> +remote end of the GMSL link shall be modelled as a child node of the
-> +corresponding I2C bus.
-> +
-> +Required i2c child bus properties:
-> +- all properties described as required i2c child bus nodes properties in
-> +  Documentation/devicetree/bindings/i2c/i2c-mux.txt.
-> +
-> +Example:
-> +-------
-> +
-> +	gmsl-deserializer@2c {
-> +		compatible = "maxim,max9286";
-> +		reg = <0x2c>;
-> +		poc-supply = <&camera_poc_12v>;
-> +		enable-gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
-> +
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		ports {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +
-> +			port@0 {
-> +				reg = <0>;
-> +				max9286_in0: endpoint {
-> +					remote-endpoint = <&rdacm20_out0>;
-> +				};
-> +			};
-> +
-> +			port@1 {
-> +				reg = <1>;
-> +				max9286_in1: endpoint {
-> +					remote-endpoint = <&rdacm20_out1>;
-> +				};
-> +			};
-> +
-> +			port@2 {
-> +				reg = <2>;
-> +				max9286_in2: endpoint {
-> +					remote-endpoint = <&rdacm20_out2>;
-> +				};
-> +			};
-> +
-> +			port@3 {
-> +				reg = <3>;
-> +				max9286_in3: endpoint {
-> +					remote-endpoint = <&rdacm20_out3>;
-> +				};
-> +			};
-> +
-> +			port@4 {
-> +				reg = <4>;
-> +				max9286_out: endpoint {
-> +					data-lanes = <1 2 3 4>;
-> +					remote-endpoint = <&csi40_in>;
-> +				};
-> +			};
-> +		};
-> +
-> +		i2c@0 {
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			reg = <0>;
-> +
-> +			camera@51 {
-> +				compatible = "imi,rdacm20";
-> +				reg = <0x51 0x61>;
+ There is a quirk in the BCM1250, BCM1125 and BCM1125H SOCs in that their 
+onchip 32-bit PCI host bridge does not support DAC, however the HT link 
+(where available) does support 40-bit addressing as per the HT spec.  
+Therefore the first patch sets the bus mask accordingly, and then the 
+second patch enables swiotlb.  See individual change descriptions for 
+additional details; there's also a further discussion alongside.
 
-I find this kind of address mapping is the weak point in this patchset.
+ This has been verified with a Broadcom SWARM board equipped with 3200MiB 
+of RAM (2176MiB of which the address decoder in the SOC maps above 4GiB), 
+a pair of DEFPA FDDI adapters and an XHCI USB adapter.  There were also 
+some other PCI and PCIe devices present in the system, though not actively 
+used beyond being probed at boot, and none has shown any symptoms of 
+breakage.
 
-The ser-deser chipset splits the world in "local" and "remote" side. The
-camera node belongs to the remote side, but the 0x51 and 0x61 addresses
-belong to the local side. Think about supporting N different main boards
-and M remote boards. 0x51 might be available on some main boards but not
-all. IMO under the camera@51 (even the i2c@0) node there should be only
-remote hardware description. To support the N*M possible combinations,
-there should be:
+ I have come across commit 9d7a224b463e ("dma-direct: always allow dma 
+mask <= physiscal memory size") and realised we do need ZONE_DMA32 for 
+LittleSur.  Hence this v3, adding a third (second in the series) change 
+for LittleSur.
 
- * a DT for the main board mentioning only addresses for the
-   local i2c bus, down to the i2c@0 with address-cells, size-cells and
-   reg properties
- * a DT overlay for each remote board, mentioning the remote i2c
-   chips with their physical addresses, but no local addresses
+ Also hopefully I'll have sorted out issues with threading in my MUA with 
+this series update.
 
-The only way I could devise to be generic is to bind each physical
-remote address to a local address at runtime.
+ Please apply.
 
-Also, to be implemented reliably, an address translation feature is
-required on the local (de)ser chip.
+  Maciej
 
-So the question is: can the max9286 chip do i2c address translation?
-
-Thanks,
--- 
-Luca
