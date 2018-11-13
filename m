@@ -2,248 +2,127 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22BC2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:57:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03582C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:58:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C4847223CB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:57:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BE4AB223CB
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:58:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="rquGYmxF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C4847223CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/a1t/Z/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE4AB223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732559AbeKMPyI (ORCPT
+        id S1732529AbeKMPsW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:54:08 -0500
-Received: from mail-eopbgr790043.outbound.protection.outlook.com ([40.107.79.43]:11086
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731429AbeKMPyI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:54:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=TVkhYtfrzTImKGuubns432ItGHsCKyI6tgPBtus3avs=;
- b=rquGYmxFLpt+cv1/RBw2O9L6c00wPdZvb+xHjicbE1lDZPSM0CsTuCItAjr1KslgI5e8yFw8baOdCSXPsyla7n+S8rEAy6EBBLFzgT/pgfyMbvRN/6k9bTFM55O1QXR62zOabiRtXBzeCR8Qiwy+MdlSdRFFk67Y4w/sE45SEf4=
-Received: from MWHPR12CA0068.namprd12.prod.outlook.com (2603:10b6:300:103::30)
- by DM3PR12MB0746.namprd12.prod.outlook.com (2a01:111:e400:5984::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.23; Tue, 13 Nov
- 2018 05:57:35 +0000
-Received: from DM3NAM03FT064.eop-NAM03.prod.protection.outlook.com
- (2a01:111:f400:7e49::208) by MWHPR12CA0068.outlook.office365.com
- (2603:10b6:300:103::30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1294.21 via Frontend
- Transport; Tue, 13 Nov 2018 05:57:35 +0000
-Authentication-Results: spf=none (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; gmail.com; dkim=none (message not signed)
- header.d=none;gmail.com; dmarc=permerror action=none header.from=amd.com;
-Received-SPF: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
- DM3NAM03FT064.mail.protection.outlook.com (10.152.83.1) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1339.10 via Frontend Transport; Tue, 13 Nov 2018 05:57:34 +0000
-Received: from [10.237.74.158] (10.34.1.3) by SATLEXCHOV01.amd.com
- (10.181.40.71) with Microsoft SMTP Server (TLS) id 14.3.389.1; Mon, 12 Nov
- 2018 23:57:33 -0600
-Subject: Re: [PATCH 2/2] drm: Revert syncobj timeline changes.
-To:     Chris Wilson <chris@chris-wilson.co.uk>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        =?UTF-8?Q?Christian_K=c3=b6nig?= <ckoenig.leichtzumerken@gmail.com>,
-        Eric Anholt <eric@anholt.net>, <christian.koenig@amd.com>
-CC:     Daniel Vetter <daniel.vetter@ffwll.ch>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20181108160422.17743-1-eric@anholt.net>
- <20181108160422.17743-3-eric@anholt.net>
- <635caa27-eb0b-a4d6-5a1d-3fbe5382bd6b@amd.com>
- <c5af6df2-d5d5-5276-3628-4bac0fd53c98@gmail.com>
- <d9d76fbc-44ad-891d-e535-34d0e8f615de@amd.com> <87d0rex8h2.fsf@anholt.net>
- <87y3a1sx8t.fsf@anholt.net> <199c35bc-e684-fbc4-dcef-d7105d82f0ff@gmail.com>
- <154201973877.16646.5745251436337959698@skylake-alporthouse-com>
-From:   zhoucm1 <zhoucm1@amd.com>
-Message-ID: <cd0f89e7-1018-e4c3-3a81-4e796c384c1d@amd.com>
-Date:   Tue, 13 Nov 2018 13:57:27 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <154201973877.16646.5745251436337959698@skylake-alporthouse-com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-Originating-IP: [10.34.1.3]
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(346002)(136003)(39860400002)(2980300002)(428003)(189003)(199004)(14444005)(316002)(68736007)(64126003)(67846002)(50466002)(8936002)(16576012)(2906002)(97736004)(2501003)(81166006)(81156014)(8676002)(26005)(77096007)(31686004)(6666004)(6636002)(110136005)(66574009)(356004)(58126008)(72206003)(4001150100001)(54906003)(65826007)(7736002)(305945005)(5660300001)(16526019)(229853002)(104016004)(2870700001)(4326008)(106466001)(39060400002)(6246003)(36756003)(336012)(446003)(6116002)(11346002)(2616005)(426003)(3846002)(126002)(476003)(47776003)(86152003)(53936002)(93886005)(186003)(105586002)(478600001)(23676004)(76176011)(2486003)(31696002)(65956001)(65806001)(486006);DIR:OUT;SFP:1101;SCL:1;SRVR:DM3PR12MB0746;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;DM3NAM03FT064;1:8TJdPrQ7U3derF24Qct8kOOFRUDQQPHMFoSSt+U5OdkfJjw6kw5A+ygbdI8wGNjtMF8up0quHDjXpaEJmz1hMZGsxgiLfcf/wr1m+1lQG9mHbr7XHaG7u9gYBwctjLbW
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 00974e66-a2a4-4454-d1ee-08d6492ce8b7
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390060)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:DM3PR12MB0746;
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0746;3:syJk65WxUKB4rUKXRqeL11whDMbMX5zkWJj2eKFX9SBxXcm2rf2Rmw9f1SdP6LlLgVmVLvHFeJDu7TncRQQdek1LHQNrkgd+rhs+W1q7Vin0Ws2YwfXlM5PjHg9JB1sudW4gykz14z8yeEY7Ol1ASRmVZbzh7o+EAn6agB55Cb6ttnI7NhQSLe4QrLTXVSrXZ3PfZ/TFbd04LaZHS8MFVBG+iSG1pK4gqrwqYaqyNlebCYnwiGJ6YGVrC3DbVjyWG7BIIlcSlyafkd2w2snrUYm/x2Jv2WF0TNWybnWD6HzqsUTLaFXo2naUNzkKmu/2Uusw58RFzWq8F50EZNy0yb7YRxZT0Y/2ECH17qfrPr4=;25:Fs8qQnTPfcWEuTVArPT2n1z6cikApUmi9mDrAo2PmOKmgJbOQcjKknoXQOmEI5/9XLFZ3GZOLf8qiECnxRc+yMFbzYeo4Xd4XavvuXGkDDnjrsTLRqEmjyiO4oMgwvONUz8ik84H38a6in10nsuqYwO2wdFYlKd7JCmHdLXUCrGtjalEIJjpsj0UJoiy3h2ag7AYyOthQfaho7d6ni3BjlIhI89cTENz48JgYIXGDA6xdtFj73LJD/+xEOuXRf6L9E8IjbxfswIPY2ASRbinqq0EDoALXSBtFbC0TViquJuRUexen9jnz11KB5lQ3KFtWdkYkkycc6gv5lkQLiKdxx/iKzzLOBPAjKPzFe9OaPg=
-X-MS-TrafficTypeDiagnostic: DM3PR12MB0746:
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0746;31:aE6cgVeg0ICg6kPlSkczaTGol14kQHVqbq6r2GCeTYWmjeoE9+gAGnjGiqLlQX4L68ItaeI3vtUtq0Nuj9SKVtA+Bmn7rKZZrEE3K1kqFCGdQRELleglJZTkGb4y0djNH64cf4le9vRZ/FRJ55/1AHqeeghxOCECagyobGuuMSXOhhRucKI6S2RaW2VE0v8z5hffAnPC9AlMPn0IUOwIL2PfWptZTIfhajqa6j/GjQw=;20:khJUgA12nt7+R7tel+x5hE5IbfbGzxraY5sgJfEhb5EAIJsCrRG218z6hnL+dRdTGmFBbWn8+vropbiKLrAnIhelWHd0HSTs9XiQ+5e+rsgTjMbHk+4qSnePrH9yun0o/MvtiUf42kNu+HTq1yjv5jw4J6PQZ7AyhtH5Qsg+VeTtbxDiJT4uJgcaqWjA648Sjjh4pEUg92lIWrJezuLrYJCcHTka2nfA7ocGrNz/V5yi/7Gx3AH1HuTgM1zZIF/yFFKubsWpBymgkILosHGSCP0XMNwmY6d8Vrwu9647XXzdRmpADDvrO/efZU76qI7EAprr0zkj5hkDKmDtMOZjOp6Gl0xA5CMvaOYnxXApkiwnip22MeWXTAlwH6ngf9GrQ9qLv5uh3AQw3lZUgdqfWZV/b2s88W5GnHpIXBveIIxdho5ijyRoqX9Y84erAdAi+UZLspbQXNnpUmvlUnqYLee6yfrOSKT0NoMk4trrjKjkOWmttNf3Wvtq2/o80KP5
-X-Microsoft-Antispam-PRVS: <DM3PR12MB07469F38BA6EDCCA58285074B4C20@DM3PR12MB0746.namprd12.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(10201501046)(3231406)(944501410)(52105112)(93006095)(93003095)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DM3PR12MB0746;BCL:0;PCL:0;RULEID:;SRVR:DM3PR12MB0746;
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0746;4:mB29DDalLdDeGXJHZ1NyoJuJsUB+GrW1RK9vaiRi7kVHYDanGbhjGLBsqYkUBbC2BexZcmhXscrW86Zu4nN3XvbA+TH4ia+k7hIZM3cm067P7nytPbSvIC7VIlruebE1QU6+9TNqqNFBikndXqH6Eyu4rYmS5W6viiUy09HDLM7F0LgxeZUkzw6i2Zlqe3S22tXxoC8SvJLUt377UiexjSiSVWDxMHuDblSAPPpHawiT3XHUn3wNbSClJrFV/vACV1sMLpZ+UCvSQxJEQjOOTPCEXfKs6Yd9fIRXiM4xUkVWdPZtgksQd1j9B6DYrnHL
-X-Forefront-PRVS: 085551F5A8
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtETTNQUjEyTUIwNzQ2OzIzOlprNjQvV0g3Ni9JUjErWlR5RUNQOG9Vc2dr?=
- =?utf-8?B?bmJjS3RCZVduSmp6dGd5aElSa25EaGFGYWI3U00xclVjU0JWSXYvNndWM1lB?=
- =?utf-8?B?YlNndWxOaTFkaDB4MlNHMTZjVytqWkprcllNUVVxYjJIY3Y0cFlzZ3lIdUYy?=
- =?utf-8?B?M0JPSitOeUlkUGlCdWtPUXRxVXhzR1VEVStuajNrczgzODNhRkt1MjVUbXhL?=
- =?utf-8?B?MlJFb3JTaytFMWtLb295em05SjRiVGJnZzJEVEJjYVFXQUxUbXFaaVVQek0y?=
- =?utf-8?B?ZllmcU5PUE0zTktLNWgva2JhcEFGS3JyQzlZYndBQmtiQ1ZMcFpsd2YyQmJT?=
- =?utf-8?B?MG0ybGtlaDdDYzJRQkxrRkpMaTJWSEV6S25YbVJoYnc2S3lxR1F4SnZNT2tK?=
- =?utf-8?B?Y1hyWU9hTHllUVVUaU1IbmEyMXJSc0NxU1Nzc1dqOGwvNWxvSzJwWG05Yjd0?=
- =?utf-8?B?cHpybG0wVHI4YzIzcm9WdkwxQ3lQbWRUQlhiak45dzdvd2RVdnl3cW1kVXU2?=
- =?utf-8?B?ZzlWQndiTE9FMi9QaGloNElKZmxmclAyZ3FqWk4rYmFxUlZTaERtMHFUV0Q5?=
- =?utf-8?B?MVNFM01nUmxxSS9oTE5OTmRuOVVVZzJNcVpxempodVd5dWZUdFFiemFMRVI1?=
- =?utf-8?B?bnhmd3hwMzRzMy9FMWdUUjZTVVB6c2MwdkJKYnpEeEJCbFdyR0oyMmpBS0Rm?=
- =?utf-8?B?LytYc3hpK0pDQ2ZIZjkrYjhKa0dpZGpZRzNad3lvQkNZREhhOEwydy8xaFBG?=
- =?utf-8?B?L2VLdzFHdE5qTUc4OVhsT055RjNjcXNOU3ZmY3BUSVJaVzJ1bWYvMFArbGdl?=
- =?utf-8?B?QXkzVHdVR0U3NmVmMjlFZHhYeHJEQjJEL3RKNlVObGV2MG5NSG9GazRlSEZn?=
- =?utf-8?B?S3hKQmFUOXZVSzdHZ3VkaHhpcmkzOWlsNUJDZFNqQUlkcVBUVVAxeWM1VXdY?=
- =?utf-8?B?cysySVJ4M1Q3eWFMRlB0SmUvZ2RvY3Y0bkxJdVZLT3Z1Mk1CZ1drMElqQkR5?=
- =?utf-8?B?c1JrWjJtZHdRcGc0UVVDZ1ZPQXVObExUbTd6dXpydU9YYXhkREl6QUtkMDBv?=
- =?utf-8?B?TG5KbHNkV3FOL0lzcGtHZkNHRGFJN1dNTlhKU2pvenE3WUhQOFJRdURQSjc1?=
- =?utf-8?B?UzZYUlFPZXBtcGp1NSs0bTVabG1oOFdvL2RLSTExZUpuT0szbWl5clBzWDdj?=
- =?utf-8?B?OU85YUN2Z0N2a01DMDdvQ0hxYW0rWEl3UzJQdmUyZFNmZEVqWDRpbWhXT1Yy?=
- =?utf-8?B?LzNBTmNZM3hoQWQxeVFhYXdmZnk3Q000S2xVdkZVODJWRlJVckhJWStrWTdr?=
- =?utf-8?B?ZmxIM1BwYjM1cndQeE5yR1U5WTRCQVZaYVBWQ2ZtdXhFSTJ6VlVuMjVpSzRz?=
- =?utf-8?B?SENJbVJId3JhNktoWG9TK0tKcklsc0RXVUtzVmtkdm1SY0hXalRqazF4K1FM?=
- =?utf-8?B?ektvdlRPMkxzSnY3WEpHbHZQYlNBUWxYWnUyVjFyU0tEeUJ6eE5uOWpPQzlH?=
- =?utf-8?B?RUxGRVZFZ09QNk1SbHFYWkp2c3lrTjdhaTMxRHZBYzNDSmlhKzlLTUJORk5p?=
- =?utf-8?B?S1VSbUJVaTNia1dobkdFcGcycHBIeC9iZHdlMXZSaHFiaGhvTkpvWERXTjBU?=
- =?utf-8?B?K3lrcUgzSTdUMEh3Wk5DME05N1R1b0YyNlJIcnJzeUFoM2tTQ0paRGVtVzNN?=
- =?utf-8?B?aWY4NnZEUktPUTEwSmp0TEhzQW9pc1BkUGEwWEVGNUlGYzNNVXRoM1ByZlFs?=
- =?utf-8?B?WmNZcEFFSDR3cUQwL1crRmpKcGdRSlgrMlptS0dVellpb3R6Mmw2QjJpOFJl?=
- =?utf-8?B?SWxpaUV3OEp1YVZsUHRkTEdlMG9xSXRVRGJqRzlxb01LTXVNYVl5TVZwY1ZQ?=
- =?utf-8?B?cGFFdVpMQ0pEK1N2YVdCTUU4aHgwTWQ5eWFEWFJaR2dJTmNMOU91L2F3OUJE?=
- =?utf-8?B?dGFDL3RDRy96L29XR2ZEelp4YXZBcTFBS29vV1NqMU85dmUzYkhzVGQ0T1Jq?=
- =?utf-8?B?cVdwTlZ2bFlQT29iamVNcXVZS2k3SlBvZVlZSEtjSVJVWmN3VlRoYlRxZUJE?=
- =?utf-8?B?cDkvdmd1a0FWNHhVRktmTkdsZWhHaUpSUDJSRFdZV3VjYlYwUSs5V0k0ekF2?=
- =?utf-8?Q?RliHG5d3tSRmoqf8FT5q7Z8=3D?=
-X-Microsoft-Antispam-Message-Info: ylwWfklbLo7iZXzdpzKluohNZf5Kh9sAKKmQBs0LnxkMOpiYDGT70Xc3hHfV97KM9GaZ/Vg85d7IYjWW2U4cUxPhuL06B/A3zU4uZ00O9uwBS7GmbmQeuJN4KFRKB+/1TggPkPAkG8zyA2ZuEUI82ErYIw/NJ8QJaBGavRNEL6xokf30K4oQkF7Id4YG1sNITDAJAIATG491vZHKDD3nEguVgd/ak7RkmYbALwlCyO4NA7GudCx+SUnp+wS7T//Pvw6b1rQkzx3vXj5NLQ4v5nbFHD0WgOedTUmIuRAXncxZuREf+983u3ckE3WDSMmLMBK9Uiq680/fIEeipVFC5VVswp78zYJTCHneA1CAyjY=
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0746;6:OREB5bZp0SeBKosSucxDpJcCi9CYfpXo75xDirh0HTg0bvIf0P2bGqzIRjzVvRVt0gJFNDe7JUFiSrT7gthTG67uKHFQYXFYDb1niI6/O1z3RSYtn4TQpeJPY3+5nqwcvH3GeIQzVC2sXJgGPI9hyaYzk5OEqamyXAzt4gC2Q8xq02y7nTAUTlKRlx2DCNTZY5sLZcenFfzVHd06ZcWs/IuyoPmD5b309oTgnsp1wUp3P9SpqMv55S9WS9U+2Mml9xof5WN72bMjWn9BXI74oqXHsZ/nu2sOv+8VR6MXHcbFBP+hMFnvGAfKCu8ws/IcNsBqFtISly38MKceNbbMFSRNKeZLRaMK7OvZT2id3/b8ZmML2m7gZt434B7/qaroIjNS5U3HqIFxffddP53+ctyL2Yq7ir4ueZUI4tvsC9MYKPuLX7Kc0XvoKAPlfiEENRmermMivgthVcOf4KNJ1Q==;5:CbR34VqqRDGBjkYVhFYFhr3xuRGpV5pHStRSMrd3q32dQ3ksRduxkzb5CHebHxHlQj1ji4iKMtZamQIQ9hBlyp5S9mg0BdaHQ+/0gmFOPaEGMQImt5BrCbfmA2rvi7Fww4idWWD/IRwKMgRcRH8PRApNvW3CL3Ifr7Xix18x5dc=;7:Ymx/YLyuVu73wxLV4ItSc6QspYqNDhaj05IbbWDyawpu9PpTWAj9aGCLxmh+zxQL6X61jAaWClEb7dPagtz/6CPWxKpZPXOWHb0imGwIO04IXd9fbLA46NSmGnNNIt/vEtfpr9+nUZZxNfXcXT9h7Q==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR12MB0746;20:OrTXgcNTihmjg1THQXqKbDC851MjKOR4itjlsLCgr9SGqosfjoREnoluOqJOrbWLyvW60iQZl+U5fFPctbHEsQClbT8/eFxFZefHJvA5kND9M+O4zeaSfZfKYLsw1lUAqlB27tbDMwl4YJqCU5e7n4fCfMU7j+W1nLmZLntBeiBN5sgrj71bYyCGfGUmHVkoaLYq6aIRe135orS3e+ZnXVxHCYsTPo6iIcEtUcYOyC05gqTblMR3t+0P97BGVF0O
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2018 05:57:34.7972
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 00974e66-a2a4-4454-d1ee-08d6492ce8b7
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR12MB0746
+        Tue, 13 Nov 2018 10:48:22 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34650 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732511AbeKMPsV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:48:21 -0500
+Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6138A22512;
+        Tue, 13 Nov 2018 05:51:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542088313;
+        bh=uQFqOHWKSuYYje5DbwjKzPyChGggrFC+GUUAgjnYUrw=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=n/a1t/Z/zqArLx7HcIqNMCUMq7mMOz2AdIX7EOrUxpYlIlm+bIj6F3/i3+T1Gs9H6
+         gF+RurNCzaq9xM6Oa0mcU6glV6A+y0nZuSFrn1KSjycocj+GK5hOK0gAzM39gF25Cg
+         oadTivptBKb1hgUEp34mmXnF6TGt5Qr49jqC3Y3M=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
+        Sasha Levin <sashal@kernel.org>, linux-nvme@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.14 05/26] nvme-pci: fix conflicting p2p resource adds
+Date:   Tue, 13 Nov 2018 00:51:29 -0500
+Message-Id: <20181113055150.78773-5-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181113055150.78773-1-sashal@kernel.org>
+References: <20181113055150.78773-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+From: Keith Busch <keith.busch@intel.com>
 
+[ Upstream commit 9fe5c59ff6a1e5e26a39b75489a1420e7eaaf0b1 ]
 
-On 2018年11月12日 18:48, Chris Wilson wrote:
-> Quoting Christian König (2018-11-12 10:16:01)
->> Am 09.11.18 um 23:26 schrieb Eric Anholt:
->>
->>      Eric Anholt <eric@anholt.net> writes:
->>
->>
->>          [ Unknown signature status ]
->>          zhoucm1 <zhoucm1@amd.com> writes:
->>
->>
->>              On 2018年11月09日 00:52, Christian König wrote:
->>
->>                  Am 08.11.18 um 17:07 schrieb Koenig, Christian:
->>
->>                      Am 08.11.18 um 17:04 schrieb Eric Anholt:
->>
->>                          Daniel suggested I submit this, since we're still seeing regressions
->>                          from it.  This is a revert to before 48197bc564c7 ("drm: add syncobj
->>                          timeline support v9") and its followon fixes.
->>
->>                      This is a harmless false positive from lockdep, Chouming and I are
->>                      already working on a fix.
->>
->>                  On the other hand we had enough trouble with that patch, so if it
->>                  really bothers you feel free to add my Acked-by: Christian König
->>                  <christian.koenig@amd.com> and push it.
->>
->>              NAK, please no, I don't think this needed, the Warning totally isn't
->>              related to syncobj timeline, but fence-array implementation flaw, just
->>              exposed by syncobj.
->>              In addition, Christian already has a fix for this Warning, I've tested.
->>              Please Christian send to public review.
->>
->>          I backed out my revert of #2 (#1 still necessary) after adding the
->>          lockdep regression fix, and now my CTS run got oomkilled after just a
->>          few hours, with these notable lines in the unreclaimable slab info list:
->>
->>          [ 6314.373099] drm_sched_fence        69095KB      69095KB
->>          [ 6314.373653] kmemleak_object       428249KB     428384KB
->>          [ 6314.373736] kmalloc-262144           256KB        256KB
->>          [ 6314.373743] kmalloc-131072           128KB        128KB
->>          [ 6314.373750] kmalloc-65536             64KB         64KB
->>          [ 6314.373756] kmalloc-32768           1472KB       1728KB
->>          [ 6314.373763] kmalloc-16384             64KB         64KB
->>          [ 6314.373770] kmalloc-8192             208KB        208KB
->>          [ 6314.373778] kmalloc-4096            2408KB       2408KB
->>          [ 6314.373784] kmalloc-2048             288KB        336KB
->>          [ 6314.373792] kmalloc-1024            1457KB       1512KB
->>          [ 6314.373800] kmalloc-512              854KB       1048KB
->>          [ 6314.373808] kmalloc-256              188KB        268KB
->>          [ 6314.373817] kmalloc-192            69141KB      69142KB
->>          [ 6314.373824] kmalloc-64             47703KB      47704KB
->>          [ 6314.373886] kmalloc-128            46396KB      46396KB
->>          [ 6314.373894] kmem_cache                31KB         35KB
->>
->>          No results from kmemleak, though.
->>
->>      OK, it looks like the #2 revert probably isn't related to the OOM issue.
->>      Running a single job on otherwise unused DRM, watching /proc/slabinfo
->>      every second for drm_sched_fence, I get:
->>
->>      drm_sched_fence        0      0    192   21    1 : tunables   32   16    8 : slabdata      0      0      0 : globalstat       0      0     0    0    0    0    0    0    0 : cpustat      0      0      0      0
->>      drm_sched_fence       16     21    192   21    1 : tunables   32   16    8 : slabdata      1      1      0 : globalstat      16     16     1    0    0    0    0    0    0 : cpustat      5      1      6      0
->>      drm_sched_fence       13     21    192   21    1 : tunables   32   16    8 : slabdata      1      1      0 : globalstat      16     16     1    0    0    0    0    0    0 : cpustat      5      1      6      0
->>      drm_sched_fence        6     21    192   21    1 : tunables   32   16    8 : slabdata      1      1      0 : globalstat      16     16     1    0    0    0    0    0    0 : cpustat      5      1      6      0
->>      drm_sched_fence        4     21    192   21    1 : tunables   32   16    8 : slabdata      1      1      0 : globalstat      16     16     1    0    0    0    0    0    0 : cpustat      5      1      6      0
->>      drm_sched_fence        2     21    192   21    1 : tunables   32   16    8 : slabdata      1      1      0 : globalstat      16     16     1    0    0    0    0    0    0 : cpustat      5      1      6      0
->>      drm_sched_fence        0     21    192   21    1 : tunables   32   16    8 : slabdata      0      1      0 : globalstat      16     16     1    0    0    0    0    0    0 : cpustat      5      1      6      0
->>
->>      So we generate a ton of fences, and I guess free them slowly because of
->>      RCU?  And presumably kmemleak was sucking up lots of memory because of
->>      how many of these objects were laying around.
->>
->>
->> That is certainly possible. Another possibility is that we don't drop the
->> reference in dma-fence-array early enough.
->>
->> E.g. the dma-fence-array will keep the reference to its fences until it is
->> destroyed, which is a bit late when you chain multiple dma-fence-array objects
->> together.
->>
->> David can you take a look at this and propose a fix? That would probably be
->> good to have fixed in dma-fence-array separately to the timeline work.
-> Note that drm_syncobj_replace_fence() leaks any existing fence for
-> !timeline syncobjs.
-Hi Chris,
+The nvme pci driver had been adding its CMB resource to the P2P DMA
+subsystem everytime on on a controller reset. This results in the
+following warning:
 
-Hui! Isn't existing fence collected as garbage?
+    ------------[ cut here ]------------
+    nvme 0000:00:03.0: Conflicting mapping in same section
+    WARNING: CPU: 7 PID: 81 at kernel/memremap.c:155 devm_memremap_pages+0xa6/0x380
+    ...
+    Call Trace:
+     pci_p2pdma_add_resource+0x153/0x370
+     nvme_reset_work+0x28c/0x17b1 [nvme]
+     ? add_timer+0x107/0x1e0
+     ? dequeue_entity+0x81/0x660
+     ? dequeue_entity+0x3b0/0x660
+     ? pick_next_task_fair+0xaf/0x610
+     ? __switch_to+0xbc/0x410
+     process_one_work+0x1cf/0x350
+     worker_thread+0x215/0x3d0
+     ? process_one_work+0x350/0x350
+     kthread+0x107/0x120
+     ? kthread_park+0x80/0x80
+     ret_from_fork+0x1f/0x30
+    ---[ end trace f7ea76ac6ee72727 ]---
+    nvme nvme0: failed to register the CMB
 
-Could you point where/how leaks existing fence?
+This patch fixes this by registering the CMB with P2P only once.
 
-Thanks,
-David
-> Which coupled with the linear search ends up with
-> a severe regression in both time and memory.
-> -Chris
+Signed-off-by: Keith Busch <keith.busch@intel.com>
+Reviewed-by: Logan Gunthorpe <logang@deltatee.com>
+Signed-off-by: Christoph Hellwig <hch@lst.de>
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/nvme/host/pci.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index afb99876fa9e..9eb0a2acd41f 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -1546,6 +1546,9 @@ static void __iomem *nvme_map_cmb(struct nvme_dev *dev)
+ 	void __iomem *cmb;
+ 	int bar;
+ 
++	if (dev->cmb_size)
++		return;
++
+ 	dev->cmbsz = readl(dev->bar + NVME_REG_CMBSZ);
+ 	if (!(NVME_CMB_SZ(dev->cmbsz)))
+ 		return NULL;
+@@ -2032,7 +2035,6 @@ static void nvme_pci_disable(struct nvme_dev *dev)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev->dev);
+ 
+-	nvme_release_cmb(dev);
+ 	pci_free_irq_vectors(pdev);
+ 
+ 	if (pci_is_enabled(pdev)) {
+@@ -2432,6 +2434,7 @@ static void nvme_remove(struct pci_dev *pdev)
+ 	nvme_stop_ctrl(&dev->ctrl);
+ 	nvme_remove_namespaces(&dev->ctrl);
+ 	nvme_dev_disable(dev, true);
++	nvme_release_cmb(dev);
+ 	nvme_free_host_mem(dev);
+ 	nvme_dev_remove_admin(dev);
+ 	nvme_free_queues(dev, 0);
+-- 
+2.17.1
 
