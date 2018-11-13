@@ -2,128 +2,104 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-15.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4DE22C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:32:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FFCC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:35:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CEC522510
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:32:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="A30Hi0kK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CEC522510
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C8B9B223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:35:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B9B223AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728943AbeKNHcu (ORCPT
+        id S1729564AbeKNHfp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 02:32:50 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:39979 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbeKNHcu (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 02:32:50 -0500
-Received: by mail-wr1-f66.google.com with SMTP id p4so5793072wrt.7
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 13:32:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=eHaN7VjjdTB8ZEamMalE2bKr4KlN2yfkJbiZkT0IUEM=;
-        b=A30Hi0kKmLsjuPbnllfhnHEhgl5M34sqYKmcO5N76bZ60asoWQxHv7msRwwP0Ez2HH
-         aWclK+fR8jZnbAfEUrOB4e2SQDkU/lMYCkOjK0H7F5b+ZdtL7NVz/T5tYOK1jnbluziT
-         EDT6DBGwHYVHGzXB+8/sgzcnywjWfWegx2aa8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=eHaN7VjjdTB8ZEamMalE2bKr4KlN2yfkJbiZkT0IUEM=;
-        b=LiW3BA25fLNAifg7YN0UGWyxHqFIYXReIRP2sD2Ul3ktndD4qW19D0aIW1dFUWkCXg
-         1BWxuDg2PK04HKy0eT808ggKY+gtFoumT0IocKTrfNsdIQwTlBatZGhR2MgwOtxD1edF
-         8q3zlzzkqXK3Q2w6xG+EqfZU16DAPa4xQgvqg1a5uAF/0Y0LpzIirvTP+5WwoYOhR8KF
-         itg9cJvgeWDZAohsuHjwaNqTl5Ocy0dHAey1md51sG5Wt0eEoy3Vq0S43PEeFiddSc3B
-         XUuf3Df/zqvie5Rg2rFQ414VjfTto5XXGMoL27eYqxkHdT+hWH09WHOYaRx4U0akg5bo
-         S+Fg==
-X-Gm-Message-State: AGRZ1gKgbNQ0WzQWznh0NpjM5ELSv11hXNokxuVwMfEv9G7xn1MqHdkL
-        m2vfAIbjx6JgA0wLx4EO9pzE8A==
-X-Google-Smtp-Source: AJdET5fvPHBXVWi/wZUTMfqgJeBBSfFpbbKXBHTaIOf70svYuQY8O90qeTNwgK4q8MHMMTb9iD8qnQ==
-X-Received: by 2002:adf:f748:: with SMTP id z8-v6mr6709931wrp.237.1542144766005;
-        Tue, 13 Nov 2018 13:32:46 -0800 (PST)
-Received: from wychelm.lan (cpc141214-aztw34-2-0-cust773.18-1.cable.virginm.net. [86.9.19.6])
-        by smtp.gmail.com with ESMTPSA id e10-v6sm18909123wmg.23.2018.11.13.13.32.44
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 13:32:45 -0800 (PST)
-Date:   Tue, 13 Nov 2018 21:32:42 +0000
-From:   Daniel Thompson <daniel.thompson@linaro.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        linux-kernel@vger.kernel.org,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Prarit Bhargava <prarit@redhat.com>,
-        Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [GIT PULL] kgdb changes for v4.20-rc3
-Message-ID: <20181113213242.GA18288@wychelm.lan>
+        Wed, 14 Nov 2018 02:35:45 -0500
+Received: from mga14.intel.com ([192.55.52.115]:34582 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725783AbeKNHfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 02:35:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 13:35:42 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,229,1539673200"; 
+   d="scan'208";a="89049931"
+Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
+  by orsmga007.jf.intel.com with ESMTP; 13 Nov 2018 13:35:41 -0800
+Received: from orsmsx113.amr.corp.intel.com (10.22.240.9) by
+ ORSMSX107.amr.corp.intel.com (10.22.240.5) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Tue, 13 Nov 2018 13:35:41 -0800
+Received: from orsmsx105.amr.corp.intel.com ([169.254.2.237]) by
+ ORSMSX113.amr.corp.intel.com ([169.254.9.125]) with mapi id 14.03.0415.000;
+ Tue, 13 Nov 2018 13:35:41 -0800
+From:   "Yu, Fenghua" <fenghua.yu@intel.com>
+To:     Borislav Petkov <bp@alien8.de>, "Moger, Babu" <Babu.Moger@amd.com>
+CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "Shen, Xiaochen" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: RE: [PATCH v7 01/13] arch/x86: Start renaming the rdt files to more
+ generic names
+Thread-Topic: [PATCH v7 01/13] arch/x86: Start renaming the rdt files to
+ more generic names
+Thread-Index: AQHUeG4jLHZyQ+Dwi0aJlEIkm8Brh6VM7DAAgAFUIeA=
+Date:   Tue, 13 Nov 2018 21:35:40 +0000
+Message-ID: <3E5A0FA7E9CA944F9D5414FEC6C71220985A6632@ORSMSX105.amr.corp.intel.com>
+References: <20181109205153.14811-1-babu.moger@amd.com>
+ <20181109205153.14811-2-babu.moger@amd.com> <20181112171638.GH8167@zn.tnic>
+In-Reply-To: <20181112171638.GH8167@zn.tnic>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzBkNTRmYzEtOTgzMy00MDY4LTliMmYtYjNmYjlkNzlkYWFhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiclwvR0h1bXdyYkVKcktPbDB4MnRrM1N2MU5mUmxQdk5GRGhsNEN1UWllclJmNFVIK1dqTTJhUGZzamdEcWhjY1EifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.138]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus
-
-Normally pull requests for kgdb come from Jason Wessel but he's seems to
-have been struggling for time this dev cycle so I've stepped in. That
-I've put this together at (somewhat past) the last minute goes some way
-to explaining why I've included some -Wimplicit-fallthrough fixes here.
-
-
-The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
-
-  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
-
-are available in the Git repository at:
-
-  https://git.linaro.org/people/daniel.thompson/linux.git tags/kgdb-fixes-4.20-rc3
-
-for you to fetch changes up to 646558ff1643467d3b941b47f519867cbca462c3:
-
-  kdb: kdb_support: mark expected switch fall-throughs (2018-11-13 20:38:50 +0000)
-
-----------------------------------------------------------------
-kgdb fixes for 4.20-rc3
-
-The most important changes here are two fixes for kdb regressions causes by
-the hashing of %p pointers together with a fix for a potential overflow in
-kdb tab completion handling (and warning fix).
-
-Also included are a set of changes in preparation to (eventually) enable
--Wimplicit-fallthrough.
-
-Signed-off-by: Daniel Thompson <daniel.thompson@linaro.org>
-
-----------------------------------------------------------------
-Christophe Leroy (2):
-      kdb: use correct pointer when 'btc' calls 'btt'
-      kdb: print real address of pointers instead of hashed addresses
-
-Gustavo A. R. Silva (3):
-      kdb: kdb_main: refactor code in kdb_md_line
-      kdb: kdb_keyboard: mark expected switch fall-throughs
-      kdb: kdb_support: mark expected switch fall-throughs
-
-Prarit Bhargava (1):
-      kdb: Use strscpy with destination buffer size
-
- kernel/debug/kdb/kdb_bt.c       |  4 ++--
- kernel/debug/kdb/kdb_io.c       | 15 +++++++++------
- kernel/debug/kdb/kdb_keyboard.c |  4 ++--
- kernel/debug/kdb/kdb_main.c     | 35 ++++++++++-------------------------
- kernel/debug/kdb/kdb_private.h  |  2 +-
- kernel/debug/kdb/kdb_support.c  | 28 ++++++++++++++--------------
- 6 files changed, 38 insertions(+), 50 deletions(-)
+PiBGcm9tOiBCb3Jpc2xhdiBQZXRrb3YgW21haWx0bzpicEBhbGllbjguZGVdDQo+ICBTdWJqZWN0
+OiBbUEFUQ0ggdjcgMDEvMTNdIGFyY2gveDg2OiBTdGFydCByZW5hbWluZyB0aGUgcmR0IGZpbGVz
+IHRvIG1vcmUNCj4gZ2VuZXJpYyBuYW1lcw0KPiANCj4gSSBndWVzcyB0aGUgc3ViamVjdCBwcmVm
+aXggZm9yIGFsbCB0aG9zZSBzaG91bGQgYmUgImFyY2gvcmVzY3RybDoiIG9yIHNvIG5vdy4NCg0K
+SXMgIng4Ni9yZXNjdHJsIiBhIGJldHRlciBzdWJqZWN0IHByZWZpeD8NCg0KVGhhbmtzLg0KDQot
+RmVuZ2h1YQ0K
