@@ -7,125 +7,97 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EABEFC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1845DC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:53:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0128223CB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C8BA622520
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1QSJERvp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0128223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mHrVU2wS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8BA622520
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733194AbeKMPtX (ORCPT
+        id S1733214AbeKMPtY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:49:23 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36674 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:49:24 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36708 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733149AbeKMPtW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:49:22 -0500
+        id S1733182AbeKMPtX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:49:23 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6DAB92251F;
-        Tue, 13 Nov 2018 05:52:54 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E4FD822525;
+        Tue, 13 Nov 2018 05:52:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088374;
-        bh=WZqKwaCP1VHwotKtbTrRL3NyUA2P/guY5Sn7rOTRrso=;
+        s=default; t=1542088376;
+        bh=yyPooav/5YMIwjliDVDwtbyhMNBSJNjl/ieLCBBtkbo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1QSJERvpnvktbzXjxDRr24XmkJUQWD0LwhO4xU2LIudBUuFpAz91+/wKsf893rXZ4
-         lsm+Z7YrqKknFeNsR+BUKLWMyxS7r0Qgei4yLyCqJbm7F4DyPzHAaihOCJDfDWRyRd
-         PFBRBo+ZaKXP9oGpe33HMoZLHU/tWfuNAfLcj//c=
+        b=mHrVU2wSGqErYYsn9ijJbBXie0qBmyERh/xUmnsXPLdfspBtkNToQy8fHsh4J8r+v
+         U0SrDllxJyrh1cfiQGvJs1Wsb7m+Qic5OGTDcuTT9bSqKjmltxj5JGme7Uk2h008we
+         tq2xSPWAaojTtm10gWGe5BvnN7oY2gNh/9s51QF4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jann Horn <jannh@google.com>, Jeff Mahoney <jeffm@suse.com>,
-        Eric Biggers <ebiggers@google.com>,
-        Al Viro <viro@zeniv.linux.org.uk>,
+Cc:     =?UTF-8?q?Ernesto=20A=2E=20Fern=C3=A1ndez?= 
+        <ernesto.mnd.fernandez@gmail.com>,
+        Christoph Hellwig <hch@infradead.org>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 3.18 2/9] reiserfs: propagate errors from fill_with_dentries() properly
-Date:   Tue, 13 Nov 2018 00:52:45 -0500
-Message-Id: <20181113055252.79406-2-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
+Subject: [PATCH AUTOSEL 3.18 3/9] hfs: prevent btree data loss on root split
+Date:   Tue, 13 Nov 2018 00:52:46 -0500
+Message-Id: <20181113055252.79406-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113055252.79406-1-sashal@kernel.org>
 References: <20181113055252.79406-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jann Horn <jannh@google.com>
+From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 
-[ Upstream commit b10298d56c9623f9b173f19959732d3184b35f4f ]
+[ Upstream commit d057c036672f33d43a5f7344acbb08cf3a8a0c09 ]
 
-fill_with_dentries() failed to propagate errors up to
-reiserfs_for_each_xattr() properly.  Plumb them through.
+This bug is triggered whenever hfs_brec_update_parent() needs to split
+the root node.  The height of the btree is not increased, which leaves
+the new node orphaned and its records lost.  It is not possible for this
+to happen on a valid hfs filesystem because the index nodes have fixed
+length keys.
 
-Note that reiserfs_for_each_xattr() is only used by
-reiserfs_delete_xattrs() and reiserfs_chown_xattrs().  The result of
-reiserfs_delete_xattrs() is discarded anyway, the only difference there is
-whether a warning is printed to dmesg.  The result of
-reiserfs_chown_xattrs() does matter because it can block chowning of the
-file to which the xattrs belong; but either way, the resulting state can
-have misaligned ownership, so my patch doesn't improve things greatly.
+For reasons I ignore, the hfs module does have support for a number of
+hfsplus features.  A corrupt btree header may report variable length
+keys and trigger this bug, so it's better to fix it.
 
-Credit for making me look at this code goes to Al Viro, who pointed out
-that the ->actor calling convention is suboptimal and should be changed.
-
-Link: http://lkml.kernel.org/r/20180802163335.83312-1-jannh@google.com
-Signed-off-by: Jann Horn <jannh@google.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Jeff Mahoney <jeffm@suse.com>
-Cc: Eric Biggers <ebiggers@google.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>
+Link: http://lkml.kernel.org/r/9750b1415685c4adca10766895f6d5ef12babdb0.1535682463.git.ernesto.mnd.fernandez@gmail.com
+Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/reiserfs/xattr.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ fs/hfs/brec.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
-index 59b29acb6419..0ec755043174 100644
---- a/fs/reiserfs/xattr.c
-+++ b/fs/reiserfs/xattr.c
-@@ -184,6 +184,7 @@ struct reiserfs_dentry_buf {
- 	struct dir_context ctx;
- 	struct dentry *xadir;
- 	int count;
-+	int err;
- 	struct dentry *dentries[8];
- };
+diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
+index 2a6f3c67cb3f..2e713673df42 100644
+--- a/fs/hfs/brec.c
++++ b/fs/hfs/brec.c
+@@ -424,6 +424,10 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
+ 	if (new_node) {
+ 		__be32 cnid;
  
-@@ -205,6 +206,7 @@ fill_with_dentries(void *buf, const char *name, int namelen, loff_t offset,
- 
- 	dentry = lookup_one_len(name, dbuf->xadir, namelen);
- 	if (IS_ERR(dentry)) {
-+		dbuf->err = PTR_ERR(dentry);
- 		return PTR_ERR(dentry);
- 	} else if (!dentry->d_inode) {
- 		/* A directory entry exists, but no file? */
-@@ -213,6 +215,7 @@ fill_with_dentries(void *buf, const char *name, int namelen, loff_t offset,
- 			       "not found for file %s.\n",
- 			       dentry->d_name.name, dbuf->xadir->d_name.name);
- 		dput(dentry);
-+		dbuf->err = -EIO;
- 		return -EIO;
- 	}
- 
-@@ -260,6 +263,10 @@ static int reiserfs_for_each_xattr(struct inode *inode,
- 		err = reiserfs_readdir_inode(dir->d_inode, &buf.ctx);
- 		if (err)
- 			break;
-+		if (buf.err) {
-+			err = buf.err;
-+			break;
++		if (!new_node->parent) {
++			hfs_btree_inc_height(tree);
++			new_node->parent = tree->root;
 +		}
- 		if (!buf.count)
- 			break;
- 		for (i = 0; !err && i < buf.count && buf.dentries[i]; i++) {
+ 		fd->bnode = hfs_bnode_find(tree, new_node->parent);
+ 		/* create index key and entry */
+ 		hfs_bnode_read_key(new_node, fd->search_key, 14);
 -- 
 2.17.1
 
