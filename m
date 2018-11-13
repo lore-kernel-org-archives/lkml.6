@@ -4,42 +4,42 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A908C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:22:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50AA6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:24:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0366522419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:22:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DCA3422419
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:24:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="iwF2q8Sh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0366522419
+	dkim=pass (1024-bit key) header.d=analog.onmicrosoft.com header.i=@analog.onmicrosoft.com header.b="p8CNGYQO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCA3422419
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=analog.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732574AbeKMVUU (ORCPT
+        id S1732550AbeKMVWU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:20:20 -0500
-Received: from mail-eopbgr810088.outbound.protection.outlook.com ([40.107.81.88]:65472
-        "EHLO NAM01-BY2-obe.outbound.protection.outlook.com"
+        Tue, 13 Nov 2018 16:22:20 -0500
+Received: from mail-eopbgr770087.outbound.protection.outlook.com ([40.107.77.87]:54080
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732037AbeKMVUU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:20:20 -0500
+        id S1732526AbeKMVWT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 16:22:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=analog.onmicrosoft.com; s=selector1-analog-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+by0J3QQ2vBgMzyvhH8JaYC1C3oY0BuiQuFTYqCQ2A0=;
- b=iwF2q8ShLeTUkuOlOD5DSRSpsJ6VxOWA6WJkrBn2QEvpijqzjCJccxoyaVIokQYdGaBiN2CW5sPO1ioNpaq3YsITkjP7RApbZ9xQIBV2jCe4+/OyFom0ElQZbqHxv9nWmueK4xkbyOBuvs3Q4E/W7xodp4E6C6owQBxWodzDkE8=
-Received: from BN3PR03CA0113.namprd03.prod.outlook.com (2603:10b6:400:4::31)
- by BLUPR03MB549.namprd03.prod.outlook.com (2a01:111:e400:880::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.21; Tue, 13 Nov
- 2018 11:22:31 +0000
-Received: from BL2FFO11FD012.protection.gbl (2a01:111:f400:7c09::125) by
- BN3PR03CA0113.outlook.office365.com (2603:10b6:400:4::31) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1294.21 via Frontend Transport; Tue, 13 Nov 2018 11:22:31 +0000
+ bh=MGfXMLmuRFTzISduQPKrL+3LfsU/IdNovmJGmFU++fI=;
+ b=p8CNGYQOSQUHuv5EfWiKtLfjVXqVkIG3SuMZEwLuU1S2x7y8WZkhfsw5GzmugodGzB7DrfItiXxUcnCjGfPJS5MQjJO6+g+9DOKNhhnllHYBrpcuz/IRf1Ekbu3aR7ltsTfY+DpOUh2ygeDeZg+KF2kI+7kc74feWbwHhH7dUwk=
+Received: from BN3PR03CA0091.namprd03.prod.outlook.com
+ (2a01:111:e400:7a4d::51) by BN6PR03MB3123.namprd03.prod.outlook.com
+ (2603:10b6:405:3c::28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.27; Tue, 13 Nov
+ 2018 11:21:41 +0000
+Received: from BN1AFFO11FD021.protection.gbl (2a01:111:f400:7c10::122) by
+ BN3PR03CA0091.outlook.office365.com (2a01:111:e400:7a4d::51) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1339.21 via Frontend Transport; Tue, 13 Nov 2018 11:21:41 +0000
 Authentication-Results: spf=pass (sender IP is 137.71.25.55)
  smtp.mailfrom=analog.com; gmx.de; dkim=none (message not signed)
  header.d=none;gmx.de; dmarc=bestguesspass action=none header.from=analog.com;
@@ -47,204 +47,877 @@ Received-SPF: Pass (protection.outlook.com: domain of analog.com designates
  137.71.25.55 as permitted sender) receiver=protection.outlook.com;
  client-ip=137.71.25.55; helo=nwd2mta1.analog.com;
 Received: from nwd2mta1.analog.com (137.71.25.55) by
- BL2FFO11FD012.mail.protection.outlook.com (10.173.161.18) with Microsoft SMTP
+ BN1AFFO11FD021.mail.protection.outlook.com (10.58.52.81) with Microsoft SMTP
  Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.12
- via Frontend Transport; Tue, 13 Nov 2018 11:22:31 +0000
+ via Frontend Transport; Tue, 13 Nov 2018 11:21:41 +0000
 Received: from NWD2HUBCAS7.ad.analog.com (nwd2hubcas7.ad.analog.com [10.64.69.107])
-        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id wADBMVZP025860
+        by nwd2mta1.analog.com (8.13.8/8.13.8) with ESMTP id wADBLeKU025653
         (version=TLSv1/SSLv3 cipher=AES256-SHA bits=256 verify=FAIL);
-        Tue, 13 Nov 2018 03:22:31 -0800
+        Tue, 13 Nov 2018 03:21:40 -0800
 Received: from linux.ad.analog.com (10.50.1.118) by NWD2HUBCAS7.ad.analog.com
  (10.64.69.107) with Microsoft SMTP Server id 14.3.301.0; Tue, 13 Nov 2018
- 06:22:30 -0500
+ 06:21:40 -0500
 From:   Stefan Popa <stefan.popa@analog.com>
-To:     <jic23@kernel.org>, <robh+dt@kernel.org>
-CC:     <mark.rutland@arm.com>, <knaack.h@gmx.de>, <lars@metafoo.de>,
-        <pmeerw@pmeerw.net>, <Michael.Hennerich@analog.com>,
-        <gregkh@linuxfoundation.org>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stefan.popa@analog.com>
-Subject: [PATCH v5 4/4] dt-bindings: iio: adc: Add docs for ad7124
-Date:   Tue, 13 Nov 2018 13:22:18 +0200
-Message-ID: <1542108138-3711-1-git-send-email-stefan.popa@analog.com>
+To:     <jic23@kernel.org>
+CC:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
+        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
+        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-iio@vger.kernel.org>, <stefan.popa@analog.com>
+Subject: [PATCH v5 3/4] iio: adc: Add ad7124 support
+Date:   Tue, 13 Nov 2018 13:21:32 +0200
+Message-ID: <1542108092-3593-1-git-send-email-stefan.popa@analog.com>
 X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 X-ADIRoutedOnPrem: True
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(39860400002)(136003)(396003)(346002)(2980300002)(438002)(199004)(189003)(7696005)(7416002)(6306002)(8676002)(356004)(50466002)(6666004)(336012)(23676004)(106002)(72206003)(316002)(966005)(7636002)(508600001)(246002)(305945005)(110136005)(8936002)(44832011)(50226002)(426003)(54906003)(5660300001)(476003)(126002)(486006)(107886003)(1720100001)(2616005)(5820100001)(47776003)(4326008)(2906002)(36756003)(77096007)(106466001)(186003)(2870700001)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR03MB549;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BL2FFO11FD012;1:g0OPtwI4D0Tp9ZxoiJaQuqWsTf3Cnq9EiHM7YiPCTIvJNQ9DeZGQ7zKbO07xlZAZ1+QY5THfgRqXSVHuHKZ1VqfgOUK8EbVy38L0gcYnV3q0c1k5KAHYXcm2wpJjOSVS
+X-Forefront-Antispam-Report: CIP:137.71.25.55;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(346002)(396003)(376002)(39860400002)(2980300002)(438002)(37524003)(199004)(189003)(6916009)(575784001)(7696005)(51416003)(50226002)(6306002)(7636002)(107886003)(106466001)(336012)(5660300001)(486006)(77096007)(2351001)(44832011)(426003)(305945005)(2616005)(126002)(186003)(476003)(26005)(1720100001)(54906003)(246002)(16586007)(4326008)(2906002)(106002)(316002)(356004)(6666004)(4744004)(966005)(8676002)(50466002)(48376002)(47776003)(36756003)(8936002)(14444005)(508600001)(72206003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR03MB3123;H:nwd2mta1.analog.com;FPR:;SPF:Pass;LANG:en;PTR:nwd2mail10.analog.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BN1AFFO11FD021;1:RxHkry6RM0EJpVvvbUQx850v9vC7KvrSHgLtkPrhL3WfzEij/vY70fMt7TW/48hl3odun+9B2onKH4h7Q0vu8+IQw9trm5kyHFFqztqphKqb6nATbLogJ34gyz7aEjdj
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: ca344582-9302-4c83-314d-08d6495a4d6a
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390060)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BLUPR03MB549;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB549;3:dM46fLUB1d/g1JLRE3MMs0MkJVLzF0bE191VlROEO8m2kPbkXV0axSeMKW7c7b/ZKuQQCeEnsz+R+aKl3eqS+GxnH9pRCWSGQHH6kRaIll35ltr/mCJE1sCYjHHjHYiVOa9Ggiad3lAUcuLd8HiRpGrko0FwcCUjDZ3BXa00Y5P9YBc5Ts6ZbZA9/fCTuMqqVUw4v28y6Y1oSd7UDsjiNxsB1yRk+khDlCUC3jn36QHNN4lywVYipHVhdoD46UdThSVhw4CO3Bkjdlszi9NtwsLf6WutvVRh/2BvWLp0Ra67d0FDL183pDBTP3LTxGHFUr+AcIZx9nuHQidwcvdO0gUR53mxGQgxug54kk4V0+0=;25:stZqyEwowzNhKPSy/F+Sd8Ah6awBqg3QlCghP/x57CtmAD+uFHpRCLDmvtyTa25V6Jnr9CC7Bvn6WdKy4CAkriA/PDQyB0HkKL/AGFi1lnL04hyf1c7DvYkrBI2J3af3Sk4r2sJJNk/3cCLn0NfljPMDXNJsefLr7ZIn38wrAZfjWJqCCIx1AgZ9WPqgPWe6cmDNdARSiUwinbdf+Hg0wgTtlXNGEnf9dCibvFmnLYIuUefGzHlJ9HV/TpyewWX9qw1j7esJYwH1be863jkJCqFnSDEowl7of9N2cdv7OwzYgKcQYX7FMOQOZh4h6DXCFpBo0cUXPcrTYENqs7IhnG9CgSM3gVnNjjWHhafpHGI=
-X-MS-TrafficTypeDiagnostic: BLUPR03MB549:
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB549;31:vNcONJ9/p9iSdM1A3l0AYKtVGCbAeg4oQaPbIT5xIIooAlzFziRAF/yduKgwdCjsTvGnSXDSvUOn46/hEow153X22VKoD6as2YNhgMRPrIQmnZzwBi0o5nz075bL1CYDek+rcZlvbQKusijq26W7qjBpG1mPUR2gk2lPK/hf/BCryszF4noLDw00JWw7o+WTHV07CVTVkjEI/z964ADMO6flkPGKw4smpD023QzGePE=;20:a57TeWmOo2EWywL08O8OW40nfBDujLuk2i+jhAxYJ/PfPWso4yy/sEQXv1RIepRyXU3/G2aSRG3WLCXGRax6H69+wdtUbrvzA1zvqg6VoezLR5xVj9G1eAjPcwbjsIxnZtbT+cYisXIwamo91LK5ucaw8YpGrGtXEHY3+Vr2zfsKhiGutOKBh6doi1Hgq2t/UThXFfSVrfsaKF+XVF6FvcjdOjOC5Slb7cLooqaotgAGbef+mhopS+NWbdIUEanGOfinrW1d4ZTNwUnS+tq27f692ekGiUB3RerfyKm6PfRqhuRGm7p1srYk+51+IIFwFAUy/qrTOMDp+49M0ghf8DSfYH8HT4QhzQUEbEGIoIdYPKIEBJMd+O412/jblUx7rdsGaW4f3J3yG4SToLOCwVApF5Bl4Eea0kMC0IiyQLelALHyC9eV4A3b9gAdB6D4BNloL4En41YKuUoz0QJILzj1O5rMxvxWLOomo0db1HYcyNuMjfeCKu3Lj6BG932O
-X-Microsoft-Antispam-PRVS: <BLUPR03MB54958FB7AA14CD5BA987A609DC20@BLUPR03MB549.namprd03.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(232431446821674)(9452136761055)(170811661138872)(95692535739014);
+X-MS-Office365-Filtering-Correlation-Id: f5a3f2bc-b914-42c0-ef75-08d6495a2f8a
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390060)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BN6PR03MB3123;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB3123;3:6zjUHZ7CLVZ0KWMeqOYLtXQYDdeQKnOd8FBTxxW5Cz2L073pxpTIqSbvFlm4gLa5opm2px9x/bB46jn+FKGftRa4M3DyxU/ZMCJYA3PfzB3SHkGM7sBLjxw9kj++Uwx7RIlvK/00ZZcabYnNI8p5pzkb1oqbtLg020QhmEUZbMkOct+s87wjJwD2JaZfkR9ESJ3bP5G+XqAsIY+dKvgXS3dip+yOlqqV3Wuo+FxgMJJrJ8vwb0wK42MaOZJzM2hI7kSB9JQnrcYoVF+CXI6wwjtpTqCtQlDLTdEha8umStLNLNKALB/jmVC9ZTlYww5jY42E7smMInizsN/jjbKiQSf4Fz1btwB9pUnaRy+kFPc=;25:u5f571L4ADhorG9hHsxQpGI0g/GUDz00axIKJjpJ135aqQ9rHjdc60IPOpLN+SPPJ1xcVPIwCi/hrB/6w5ZrmHLvcedx5dZtSxzC4wEEQGh5AVCyx/68cE8OAZ9f+H8rGoMNyECoukDskvJk/ZveCUfWgp1dPYdd/aGoMVukCvcuU9JUZPXL9kR+GWWoC7UHlTWySKkByC9vOzWyxMTRhsoTch0phzrGwmKsOAO/IhE3N//c17wJ6LLwh/L0bcHw/B5bkuam8jsVbPM+zD1EjAaQF6jwpojVar874MUT/cuWKXmstKC0L09m2hoaxCezuMnyFPMuh91GZ1JT9mKfXA==
+X-MS-TrafficTypeDiagnostic: BN6PR03MB3123:
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB3123;31:fFxPgCSm+dKmGboMlAE+rV8who6QxeS8ZeDH754a8T5LcGpeveh0Frx97fx71ycfcS7th1qTtI4HU7H708tDvfnOVbpkKrPfFbN8Lafm4BaRQKxXSxFxdMVsXc8qrDtJnnuYShKJ1VaCxMf6HmBwX0jfJeFlom9UPnx7/a3Ertz5VGAoReZAN+DD2enxXEY49XKcX9sQ103NkuVxn/rpiI+cuhnaA/zfHK+pb3XgUg4=;20:MV7qDC97H4cDnUPgud5VcoLkw0FExNUyD8lfZxBB+DBul0tOFWXAB5QNrTlTh54t51BE7EzAkdBJB158zwfIibbwvFL9H+EgbaSwyXrKODnRkI6w/8au8T8CnS6pbsBvrxhvsrgflT7HXn9TVa9hDInwsCfwxAb7nXUa/Sc2wUO2t5cz18uSn68AaPAeVjcVpvDIEEQLYxnVMFmr77cTzPwdC5HBtlEPJrXaz+oNCoE2eFRT6OQH5+j5lxG8smJz+t9pQSdlV1sJzzdSPUnlHze1AfVqZYBQTEFaotc0M9RKJsOKuiv28bwILlaVQoaskzmnkoM03mhVAc48mHkJy4YRQ3G5UrHBVbaxYhkaTzEdu0ym2gX4LKMSzwiikZ3TSFX9CBYn0HsLsotyJksUHVlVzcJCvULZJRKSegpWzh8Qb6F8knme8h4DY4f76Vnnc61yFdHdVOReu8KQFlLQlInbsgwjRL6WARCcBcsTAf8AoXq7SKMtNLJxuu6LliLq
+X-Microsoft-Antispam-PRVS: <BN6PR03MB3123F5C6A8BC689C04C4BCD29DC20@BN6PR03MB3123.namprd03.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(270121546159015)(232431446821674)(9452136761055)(170811661138872)(95692535739014);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3231382)(944501410)(4982022)(52105112)(3002001)(10201501046)(93006095)(93004095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BLUPR03MB549;BCL:0;PCL:0;RULEID:;SRVR:BLUPR03MB549;
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB549;4:YYdPgmKgpiZh8u71DRW29oIq16sKddob0417MeFO/oqCyPAhx9jG4txoi0IaLpxOzk/hq8lF2QQXNBSMLfFzV7n9nkTnUUgUrERaw7pfoWAjOcHxb4F4GLLV3Hwlcn7jVmytj/UWzI9GaNYhW1GHxIhfvUWXWPhTgY8/FtHraCata3dan2J2eEFBJqbGrxfqCK4ik3VLJobAcwxCiYytv7H2xazDbVODHe4CK/9byp7WwEt00r0zcm6D3WPlOACoTuiLsnbrX+fmXxXoDAwXLKUY/gxHMLPI3gdGIIrWjCNa8sl8ecYYAIJ4QUi5s5SJxPrOIUeUiw9mORLS6qz2oWMkzivAgaXIHuhsy3NacK2LHSQG6ztmgiq+x4KvS+2t4WAedn1dDPrYUKbhxNLa/cHTC1StT9BXp5zlbt1t0E4=
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93004095)(3231406)(944501410)(4982022)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BN6PR03MB3123;BCL:0;PCL:0;RULEID:;SRVR:BN6PR03MB3123;
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB3123;4:vQC9CkV7HuKdQdNN+8e9KC1Jmu9UoHon+ARzgZq9mk0uCx7GWpVElJdyVh7xvSDZJhfBXCxsNF/79z3HFIWsKiBPDpmkm3aAzMFFkwkvmpiexlUjiu6CVPzu7YNNwzUHYZQtZBHw1MyqI25BQ1KUq3igYqs8ftiPcis4yp/63MSNCc8MrAyZo2p6m/KxEbGLEex0xC1K19V3sWY+StTyFeE59kUPbyZcV+rJad2UKnju5WkZ3JWPARzVJ5thjSn6C/Rx5fKkZ8LyuH0n8RLw0F0ptKh5s/iOTksiD4dA88ugF/f9CJsqS4VxHLe45NYklfXtHjQ2yx7Z7IPujaIJyKDgBHGQu1E3l2Rs0kg/pcPSA21+QdwjZt2cDABiTEIC21VsQB/IEoPpgr5nV5Ba6cXKarj6+w41eb7oGjU29xrWv10s9H9KtWHD30wyo285Jdvk95Alee7A9qpOu2bXAg==
 X-Forefront-PRVS: 085551F5A8
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtCTFVQUjAzTUI1NDk7MjM6eVpMWmVzUzllczhhelR6MXJWbkZNYlVZQTlw?=
- =?utf-8?B?aHlBMlhHZ1BudXkvRUNiTjdqKzVRSjFWQ3ZDaVhJVXNMNFJ5OU5sK3ZWaWZC?=
- =?utf-8?B?clNpU1lzSUt6cVJEZUhpRVFhODJVREVTSnlyYWtHb29pWE5xU050LzZvTjVV?=
- =?utf-8?B?eERtZGg0Nm82aEZwTXZCaWhnOEZZZjlPL0hZOTVONmhCdDBsV2dueWVwWGpp?=
- =?utf-8?B?b2YrdTZ6U25iNFNVTnpFUHAxVk9qemIvVVJOZHZHV1BxeGhtQTVhNkNKWlIy?=
- =?utf-8?B?ekc0MmFSTlcxSkVjWEVWbnJSZ1VtRHdXU3g0SkdyU21KZWE4SDRwanU3dXkz?=
- =?utf-8?B?cWdkdCtLK3ZVV0JBRlc1TDc0azZFM2tpSXVnd3B2VmRGS01uTndCM1BGTjhF?=
- =?utf-8?B?OVp5cWI5aGR3UGM1QlF0cXJteEhlSXQrajcrNGZkNlRpZklsMnltMnN6UjJX?=
- =?utf-8?B?RVkzZUsyV25XY0doRkltZytjYnRaRitLTlBmb2dLTDdPeE1yOEpwUFN0Skgw?=
- =?utf-8?B?S3ZMTDVJNlM0V2pETEcvSXZpWWQrSnMyYTlncmpKSWJqTEFxWGF3NFcyQ3dY?=
- =?utf-8?B?WkY4eE1jdnpKRzlmUXl3T0cvT1JOVHZ4ZVpsN2RCNU8vcEhPK2w5QndWaWpF?=
- =?utf-8?B?NWJUS016dERBRFh1NEJIb1k4cmsyZ2hCSVZSOHRiakJJN0IrVUQ4TktxeGNs?=
- =?utf-8?B?MHRNVktqWVpoYkxqK1RrK0ZXK0ZGMUp6ZGRSNG5ybDVHdXpEMk14Vzg2OEFD?=
- =?utf-8?B?QWlGVmFXYXFvallib0dXZ2tVclFBNU5KL0dkbjRxY0NqdXhnbG5OYm0rWW9M?=
- =?utf-8?B?NVErNEEzOEt6d2R2MndFOUM5ZldjQ1hKVkw2U2JRSzRxM0c0NXVOMlNWSTBa?=
- =?utf-8?B?WDZrSk9PSjZzK21Ibm1La1ZUSGVRbWtobENWT2ROMEpmbjlLbUVQRytWY1JR?=
- =?utf-8?B?RnlVbldCaUxXZHBRL0tPUWwrVG1mcStCN0hwOThMU0lPbjVxUDhvR3IvS2ZD?=
- =?utf-8?B?NnJYOHdkRVZISlN0YUFrZFdZOXN6VWRVbGxkaVdIUjdKRmlxMld4OFN1WGw5?=
- =?utf-8?B?UWRkbmRpd1g5c1dtS2JPR2FhbFlEaXR2OUEzVjIzY0RMKytGK01RU1hrOXFo?=
- =?utf-8?B?bE5TK3lxK3JqOFgzeFUvV0VhbjY4OFhiUlFTK2E2bnB1MEgzelNLc1REblVh?=
- =?utf-8?B?eUlwdWwyUHArTEVKMmNEVGVObURYWW0vQnRkUDRacVFZMytlRU1ZZ2x2MjIz?=
- =?utf-8?B?UTV4VGg1ZWx4dlpXZzN6MkdFTFlVTVNBRlFBdUJiTWNDa21iZnhob2VHMC8y?=
- =?utf-8?B?RzdtbEpBaW52bEQvSitQWXhRZWgzNDZURlFyU0M4TU92VmRCRUJZbXRraS9Y?=
- =?utf-8?B?azMySmVpV0dHYm5IcHdWaXFrNkZsaGtsTzJyL0VMeldVYzQyMDE4dEM5djBU?=
- =?utf-8?B?MnAvVHlSbFcwNXdSa1lWNndwZnhvd0tvNHh5STRzR1ZETXQrUFlQRVRlMmcy?=
- =?utf-8?B?K0RBPT0=?=
-X-Microsoft-Antispam-Message-Info: p5JHJs0O4h0fmSd5GOtSjNDc9pEjAaDnESZ7wrCjzsJDXcrH55bgM86PxGHfjgbmJhw4VLqV+5fMMzkT9EAHLTHIxJYdu3RFNBAmwNI+w7RrTpa2CE3uLQS595ZRygXS3cI/yfh5imEVUX+Jkt0ZkrgvrEkFoI6kf5iOopLJCh4Z61Ah1YwmM6IRpUPVoyGHuxTzhaI5b++JXpab6FTXchPzko4JoLYv6QTSqMIwvsfehDv7J1lkgmwphZqV72CUId/e1mzSTJNKh7pkLlrC+GYrJosQgIdO5AAjzAC1gJWZkdfdOClQtnAaGBzBzJ3bWtrC1Gkmo75BWhM5m6ffW6NrWrMFTkgYOj5zxkQVgxU=
-X-Microsoft-Exchange-Diagnostics: 1;BLUPR03MB549;6:X2MLuHmYiHOiN9Lm14jTLmCiKXnnxzLctdCGR6F+mhu5pY3ferMt+VSYF845Pih0FrfpIZISsSB8V2yCGEzY2WuzcrzmEJ9VwwJgJHsCNxs3CKV/KHtpCAPFAWLOE9ITvahGw/B3tABKB/a0ybkAGs9dfIq6psn5tWxS+R5uDl46j8+N+/aHQ83ozYIbeSt/K+sSUiFFYlwKoT/sAPAsp7t1mQKTRL5WWd8z6sOEhtjqJ0GNDOvMpxdOWGgkUEmDbbYFnsHw/Crsah0Fcpub0AmAnEsb1z40jiN8/YRpGPNRfPo5U6ZOFZjpN+7v/2rR5GA10LFwr1ILDmDkhIIvGuIm+1oRiYCbknTv9Qq+H6pk2RA0KvPYOQL4yXaJAXidknPVdbCGPBiZ+L5rwfdDfcvaAVv5PG4m283nQVb/kji2U3vxA+bT7kW78EaEBwVT8WJ0o6JAQnVKicmOLr+FOg==;5:78MKHHuW5cHG1VaXN4hF+CV5h1yBs+LRtSjizFosl5YTorns86GGU6AFFtvsiBy0gjnh+5u1JIMYJFdbkp7aCCPO4cyCnWhxI98qfdupTFHQ4Fts9T1b9VvSo5s7z2QNBnYPF24ZEnIShCEm6L7Nq4+UjBGR9fzXmVY6sajy6hE=;7:SWVIQhsjz+Vxdv5gnW8kjx6My9v0jkXIaPjPLZ0jBZnEUI0bAE9hOHPajwHrmpUXqXr4JyI2txppy6Dsyft0tRrqF0mrTK1a+SHQ7cHJoeLNRYEl6sreylPp/XFAt/y9I+LJAEECOTkORt1QV8UFhQ==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BN6PR03MB3123;23:QIqHt1TMMTnlRK0QxbZU+iEk3vsSe5g9aiIxPgDeA?=
+ =?us-ascii?Q?Q9d3iwSDfzk7X3rGlwv6NezE3yomj7PLw0EQQMG39szAMifFFZWqvQBGfdRe?=
+ =?us-ascii?Q?t7epDY2Q2sgtgIqc6bGlXWdG1/AB8kv3vsA4ZYtJpqM5hWZ5F+PXxnkXwsvX?=
+ =?us-ascii?Q?fArmNsbZDyePcKPnQiLt+Khqrb3F5rxX1Fg5Km7CmIXs6xH8MVp13ooHke+D?=
+ =?us-ascii?Q?RygS5CqnbC+DJKHj9/7ny3tdRTmhh8Hlg4tyMlGDcqABBMl+Z4ofI9zeV+WP?=
+ =?us-ascii?Q?nkBLJKQb2QEHu9c0RzrBWwDsOA/ehKHwnbCOXLbM53OedGQxAUI8Z4qy4Lx9?=
+ =?us-ascii?Q?pcUF01r/pUZnVMIDODyccnoQi5v56OiZ0iQzcXcKlTrp25QKjJxglPj4Unxi?=
+ =?us-ascii?Q?tYOxy4jwpSn4gYTg4STOPOcUCZGXpSMn/GPc0rJFZx1BQv0BG/Yo2ggR2Rcz?=
+ =?us-ascii?Q?h9dmbrHSsbn2ykji5CHSTEB6gtjvlOaKCrc7+w4O5hGq649Rr0IcvLMpZ/1M?=
+ =?us-ascii?Q?oo34Iuc/WQVSdsEWsL6QFsKXB3tWHLknmoKHEv+9Fr8vNh8tUshuNzR0iaWN?=
+ =?us-ascii?Q?kOQfQoenyPCl9DHuaGrp0sxKaWhvygM7NcBFqPzRGYifzfaPytUaeHvZYEFW?=
+ =?us-ascii?Q?t8xQDl6bS/0VEowFmGATiMzgk0EXN+3p1/YhZOJbwaOpSf2NzXmbTSnqOpEo?=
+ =?us-ascii?Q?JuM9Hf9aVoUFhbIfhT2fo+ctWttpoeCCCVI7ZhUy+zsqcEOr8VgRqFsoQg9S?=
+ =?us-ascii?Q?U3j1lbdG2YSYPXfqy+Ck6mJjeZ7DhhFPYuS840on06296Pk6d+D9Y9KL39dY?=
+ =?us-ascii?Q?b0NI8dCQXzEZu//Mhd3PJolAxUnISZW3sXpHwlKyULeh71p13ZMuQiMF1BWS?=
+ =?us-ascii?Q?E/H+JGt/KQ5Lx5KoHcMnPAlSyHhRJpEkhoRnsSTcxpl56pss1fBxpq5K2KDX?=
+ =?us-ascii?Q?NK0Emrp4mdwri8lH2eRXUP+ig9C0ou3jFiLhfwxBJuldcg3abdYWi7zd+nG1?=
+ =?us-ascii?Q?jq0yhFBgytoqHIoy8lMbGFubEEL+04soCENAhnz0HMvQp7agegcbZPefXm0t?=
+ =?us-ascii?Q?5k9JgNYbjj/ceMfcWJL0uccrnNDratkr50KfEPseT/u0T/sofldIdblQm53N?=
+ =?us-ascii?Q?FTIlTEhWl+zEePY6v7m7PhCU/IoCpTeoVDl3vgP8g2H7U3DO76ESA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: pjBUx7BsYBo/rj/fAL8uPbPbmkT5z5lpTHITIjcWEjlh5fKHTP4+ge9V87gHpKY12sjcss1/AYLS2QCzl07OYyXvFP3gApV+i+ArFIBbaGR8P04wHE/FpFWdW/2SJKa3bSDocUs0YXDMSG4JzGKm8Id+PShfMjkkTegucZ9k23K612qtVPozzKCCuy4nlYCUqPwix7Hrwv5upD2xyz+dnO8IHD4En/qVfDm88WWnq7w/xDRVRh5/TwPvjwEEZcA46QGD4wBNTiNmqMRsSlhS53ZbcW0ZdgEzc6Ri51fVqewXx5+s2kBZBCYNOdnmKr2M11TrEZbBpVk1NXSm/xK7xqc1foyQ894f/7VJ6soQVaA=
+X-Microsoft-Exchange-Diagnostics: 1;BN6PR03MB3123;6:Q39udWI9rfaXq/IfGPss193FcAq/N16Rr/52oYFcFV7BXNgQgw1GgdvR9XxwrrGdNvfZNV0/uwBRD/WNJMCevTZwdUMjLPHEKDiLBkuX5fnNS9SrR+MyBLUXrhlFUsUJoJcwnCxg8UM/G1eM8LR3cUO3F004EjUzeGd36PkvI9gIrFqyeK6ZfifJIKEhQ51O+JQ1aLe5zryddQnLO2sSraaFTeCJN7/EisCX3e5Tu53vKTcLo8IPJUyWoIPhWRbFcgyGzhCYS/LdlSIFxVnRM4TpRMNjaEoOskhAlgCPL0mCr4ZTyqipsf8geK4rJeTXXQXxo1wysWKkqabJq7quRnDask3Res7erVHaqDGnhvVOMCmVXTlkQNUUNK2wFOO3sGM6hZD2E4v4dhlohTrfV5NZiGinRWo2TdNmkN/EnyfaE2Wn+vNXix0ppuz9JQ05qu+wvdJeRnAqYQfXwhJV9Q==;5:IHhQN9o0TWN97k4alXAoop1chQP/+OZP5J+5w/nRctPErxLKEFjTpfuZKMi2kDUep8aU0z483Aq3ZK7CkpeDpwfuypp2Hpb7X5NHMmsxJsNSB0g3SQk+XXrP8r/5voDMo1t2rt23mfwClNvPPqQ6WhONfPuxij9kvDMaS7xJaic=;7:v1Vg8EYFV0NJmG7I+TBplReyjiFIyK1RcmT/5lbHG0KbSC7BzrQilb91ZbT0d70BOvyabeqG+m2NMB88LBKEcl4FJWOcmAqw+UyR2KodAMGRf+jnX0CnoGr3BJ+wWCqteJ1p6iLh7IH5no7CJPNbhw==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: analog.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2018 11:22:31.3099
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Nov 2018 11:21:41.1616
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: ca344582-9302-4c83-314d-08d6495a4d6a
+X-MS-Exchange-CrossTenant-Network-Message-Id: f5a3f2bc-b914-42c0-ef75-08d6495a2f8a
 X-MS-Exchange-CrossTenant-Id: eaa689b4-8f87-40e0-9c6f-7228de4d754a
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=eaa689b4-8f87-40e0-9c6f-7228de4d754a;Ip=[137.71.25.55];Helo=[nwd2mta1.analog.com]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR03MB549
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR03MB3123
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for Analog Devices AD7124 4-channels and 8-channels ADC.
+The ad7124-4 and ad7124-8 are a family of 4 and 8 channel sigma-delta ADCs
+with 24-bit precision and reference.
+
+Three power modes are available which in turn affect the output data rate:
+ * Full power: 9.38 SPS to 19,200 SPS
+ * Mid power: 2.34 SPS to 4800 SPS
+ * Low power: 1.17 SPS to 2400 SPS
+
+The ad7124-4 can be configured to have four differential inputs, while
+ad7124-8 can have 8. Moreover, ad7124 also supports per channel
+configuration. Each configuration consists of gain, reference source,
+output data rate and bipolar/unipolar configuration.
+
+Datasheets:
+Link: http://www.analog.com/media/en/technical-documentation/data-sheets/AD7124-4.pdf
+Link: http://www.analog.com/media/en/technical-documentation/data-sheets/ad7124-8.pdf
 
 Signed-off-by: Stefan Popa <stefan.popa@analog.com>
 ---
 Changes in v2:
 	- Nothing changed.
 Changes in v3:
-	- Removed the "adi,channels" property.
-	- Used the "reg" property to get the channel number and "adi,diff-channels"
+	- Removed channel, address, scan_index and shift fields from
+	  ad7124_channel_template.
+	- Added a sanity check for val2 in ad7124_write_raw().
+	- Used the "reg" property to get the channel address and "adi,diff-channels"
 	  for the differential pins. The "adi,channel-number" property was removed.
-	- adi,bipolar is of boolean type.
+	- When calling regulator_get_optional, the probe is given up in case of error,
+	  but continues in case of -ENODEV.
+	- clk_disable_unprepare() is called before ad_sd_cleanup_buffer_and_trigger
+	  in ad7124_remove().
 Changes in v4:
+	- Added the .shift and .endianness fields as part of the ad7124_channel_template.
+	- Made the gain configurable from the user space.
+	- Removed the odr_hz and gain properties from the DT.
 	- Used the bipolar and diff-channels properties defined in the new adc.txt doc.
+	- Misc style fixes.
 Changes in v5:
-	- Removed the gain and odr properties from the example.
+	- Fixed the way the offset is determined.
+	- Dropped the hardware gain.
+	- Added a scale_available attribute.
+	- The scale can be set from user space.
+	- In ad7124_read_raw(), the gain in applied to *val2.
+  
+ MAINTAINERS              |   7 +
+ drivers/iio/adc/Kconfig  |  11 +
+ drivers/iio/adc/Makefile |   1 +
+ drivers/iio/adc/ad7124.c | 686 +++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 705 insertions(+)
+ create mode 100644 drivers/iio/adc/ad7124.c
 
- .../devicetree/bindings/iio/adc/adi,ad7124.txt     | 75 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 76 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
-
-diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
-new file mode 100644
-index 0000000..416273d
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
-@@ -0,0 +1,75 @@
-+Analog Devices AD7124 ADC device driver
-+
-+Required properties for the AD7124:
-+	- compatible: Must be one of "adi,ad7124-4" or "adi,ad7124-8"
-+	- reg: SPI chip select number for the device
-+	- spi-max-frequency: Max SPI frequency to use
-+		see: Documentation/devicetree/bindings/spi/spi-bus.txt
-+	- clocks: phandle to the master clock (mclk)
-+		see: Documentation/devicetree/bindings/clock/clock-bindings.txt
-+	- clock-names: Must be "mclk".
-+	- interrupts: IRQ line for the ADC
-+		see: Documentation/devicetree/bindings/interrupt-controller/interrupts.txt
-+
-+	  Required properties:
-+		* #address-cells: Must be 1.
-+		* #size-cells: Must be 0.
-+
-+	  Subnode(s) represent the external channels which are connected to the ADC.
-+	  Each subnode represents one channel and has the following properties:
-+		Required properties:
-+			* reg: The channel number. It can have up to 4 channels on ad7124-4
-+			  and 8 channels on ad7124-8, numbered from 0 to 15.
-+			* diff-channels: see: Documentation/devicetree/bindings/iio/adc/adc.txt
-+
-+		Optional properties:
-+			* bipolar: see: Documentation/devicetree/bindings/iio/adc/adc.txt
-+			* adi,reference-select: Select the reference source to use when
-+			  converting on the the specific channel. Valid values are:
-+			  0: REFIN1(+)/REFIN1(−).
-+			  1: REFIN2(+)/REFIN2(−).
-+			  3: AVDD
-+			  If this field is left empty, internal reference is selected.
-+
-+Optional properties:
-+	- refin1-supply: refin1 supply can be used as reference for conversion.
-+	- refin2-supply: refin2 supply can be used as reference for conversion.
-+	- avdd-supply: avdd supply can be used as reference for conversion.
-+
-+Example:
-+	adc@0 {
-+		compatible = "adi,ad7124-4";
-+		reg = <0>;
-+		spi-max-frequency = <5000000>;
-+		interrupts = <25 2>;
-+		interrupt-parent = <&gpio>;
-+		refin1-supply = <&adc_vref>;
-+		clocks = <&ad7124_mclk>;
-+		clock-names = "mclk";
-+
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+
-+		channel@0 {
-+			reg = <0>;
-+			diff-channels = <0 1>;
-+			adi,reference-select = <0>;
-+		};
-+
-+		channel@1 {
-+			reg = <1>;
-+			bipolar;
-+			diff-channels = <2 3>;
-+			adi,reference-select = <0>;
-+		};
-+
-+		channel@2 {
-+			reg = <2>;
-+			diff-channels = <4 5>;
-+		};
-+
-+		channel@3 {
-+			reg = <3>;
-+			diff-channels = <6 7>;
-+		};
-+	};
 diff --git a/MAINTAINERS b/MAINTAINERS
-index 3a1bfcb..f2fa508 100644
+index f642044..3a1bfcb 100644
 --- a/MAINTAINERS
 +++ b/MAINTAINERS
-@@ -845,6 +845,7 @@ L:	linux-iio@vger.kernel.org
- W:	http://ez.analog.com/community/linux-device-drivers
- S:	Supported
- F:	drivers/iio/adc/ad7124.c
-+F:	Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
+@@ -839,6 +839,13 @@ S:	Supported
+ F:	drivers/iio/dac/ad5758.c
+ F:	Documentation/devicetree/bindings/iio/dac/ad5758.txt
  
++ANALOG DEVICES INC AD7124 DRIVER
++M:	Stefan Popa <stefan.popa@analog.com>
++L:	linux-iio@vger.kernel.org
++W:	http://ez.analog.com/community/linux-device-drivers
++S:	Supported
++F:	drivers/iio/adc/ad7124.c
++
  ANALOG DEVICES INC AD9389B DRIVER
  M:	Hans Verkuil <hans.verkuil@cisco.com>
+ L:	linux-media@vger.kernel.org
+diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
+index a52fea8..148a10f 100644
+--- a/drivers/iio/adc/Kconfig
++++ b/drivers/iio/adc/Kconfig
+@@ -10,6 +10,17 @@ config AD_SIGMA_DELTA
+ 	select IIO_BUFFER
+ 	select IIO_TRIGGERED_BUFFER
+ 
++config AD7124
++	tristate "Analog Devices AD7124 and similar sigma-delta ADCs driver"
++	depends on SPI_MASTER
++	select AD_SIGMA_DELTA
++	help
++	  Say yes here to build support for Analog Devices AD7124-4 and AD7124-8
++	  SPI analog to digital converters (ADC).
++
++	  To compile this driver as a module, choose M here: the module will be
++	  called ad7124.
++
+ config AD7266
+ 	tristate "Analog Devices AD7265/AD7266 ADC driver"
+ 	depends on SPI_MASTER
+diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
+index a6e6a0b..76168b2 100644
+--- a/drivers/iio/adc/Makefile
++++ b/drivers/iio/adc/Makefile
+@@ -5,6 +5,7 @@
+ 
+ # When adding new entries keep the list in alphabetical order
+ obj-$(CONFIG_AD_SIGMA_DELTA) += ad_sigma_delta.o
++obj-$(CONFIG_AD7124) += ad7124.o
+ obj-$(CONFIG_AD7266) += ad7266.o
+ obj-$(CONFIG_AD7291) += ad7291.o
+ obj-$(CONFIG_AD7298) += ad7298.o
+diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
+new file mode 100644
+index 0000000..187675e
+--- /dev/null
++++ b/drivers/iio/adc/ad7124.c
+@@ -0,0 +1,686 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * AD7124 SPI ADC driver
++ *
++ * Copyright 2018 Analog Devices Inc.
++ */
++#include <linux/bitfield.h>
++#include <linux/clk.h>
++#include <linux/delay.h>
++#include <linux/device.h>
++#include <linux/err.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/regulator/consumer.h>
++#include <linux/spi/spi.h>
++
++#include <linux/iio/iio.h>
++#include <linux/iio/adc/ad_sigma_delta.h>
++#include <linux/iio/sysfs.h>
++
++/* AD7124 registers */
++#define AD7124_COMMS			0x00
++#define AD7124_STATUS			0x00
++#define AD7124_ADC_CONTROL		0x01
++#define AD7124_DATA			0x02
++#define AD7124_IO_CONTROL_1		0x03
++#define AD7124_IO_CONTROL_2		0x04
++#define AD7124_ID			0x05
++#define AD7124_ERROR			0x06
++#define AD7124_ERROR_EN		0x07
++#define AD7124_MCLK_COUNT		0x08
++#define AD7124_CHANNEL(x)		(0x09 + (x))
++#define AD7124_CONFIG(x)		(0x19 + (x))
++#define AD7124_FILTER(x)		(0x21 + (x))
++#define AD7124_OFFSET(x)		(0x29 + (x))
++#define AD7124_GAIN(x)			(0x31 + (x))
++
++/* AD7124_STATUS */
++#define AD7124_STATUS_POR_FLAG_MSK	BIT(4)
++
++/* AD7124_ADC_CONTROL */
++#define AD7124_ADC_CTRL_PWR_MSK	GENMASK(7, 6)
++#define AD7124_ADC_CTRL_PWR(x)		FIELD_PREP(AD7124_ADC_CTRL_PWR_MSK, x)
++#define AD7124_ADC_CTRL_MODE_MSK	GENMASK(5, 2)
++#define AD7124_ADC_CTRL_MODE(x)	FIELD_PREP(AD7124_ADC_CTRL_MODE_MSK, x)
++
++/* AD7124_CHANNEL_X */
++#define AD7124_CHANNEL_EN_MSK		BIT(15)
++#define AD7124_CHANNEL_EN(x)		FIELD_PREP(AD7124_CHANNEL_EN_MSK, x)
++#define AD7124_CHANNEL_SETUP_MSK	GENMASK(14, 12)
++#define AD7124_CHANNEL_SETUP(x)	FIELD_PREP(AD7124_CHANNEL_SETUP_MSK, x)
++#define AD7124_CHANNEL_AINP_MSK	GENMASK(9, 5)
++#define AD7124_CHANNEL_AINP(x)		FIELD_PREP(AD7124_CHANNEL_AINP_MSK, x)
++#define AD7124_CHANNEL_AINM_MSK	GENMASK(4, 0)
++#define AD7124_CHANNEL_AINM(x)		FIELD_PREP(AD7124_CHANNEL_AINM_MSK, x)
++
++/* AD7124_CONFIG_X */
++#define AD7124_CONFIG_BIPOLAR_MSK	BIT(11)
++#define AD7124_CONFIG_BIPOLAR(x)	FIELD_PREP(AD7124_CONFIG_BIPOLAR_MSK, x)
++#define AD7124_CONFIG_REF_SEL_MSK	GENMASK(4, 3)
++#define AD7124_CONFIG_REF_SEL(x)	FIELD_PREP(AD7124_CONFIG_REF_SEL_MSK, x)
++#define AD7124_CONFIG_PGA_MSK		GENMASK(2, 0)
++#define AD7124_CONFIG_PGA(x)		FIELD_PREP(AD7124_CONFIG_PGA_MSK, x)
++
++/* AD7124_FILTER_X */
++#define AD7124_FILTER_FS_MSK		GENMASK(10, 0)
++#define AD7124_FILTER_FS(x)		FIELD_PREP(AD7124_FILTER_FS_MSK, x)
++
++enum ad7124_ids {
++	ID_AD7124_4,
++	ID_AD7124_8,
++};
++
++enum ad7124_ref_sel {
++	AD7124_REFIN1,
++	AD7124_REFIN2,
++	AD7124_INT_REF,
++	AD7124_AVDD_REF,
++};
++
++enum ad7124_power_mode {
++	AD7124_LOW_POWER,
++	AD7124_MID_POWER,
++	AD7124_FULL_POWER,
++};
++
++static const unsigned int ad7124_gain[8] = {
++	1, 2, 4, 8, 16, 32, 64, 128
++};
++
++static const int ad7124_master_clk_freq_hz[3] = {
++	[AD7124_LOW_POWER] = 76800,
++	[AD7124_MID_POWER] = 153600,
++	[AD7124_FULL_POWER] = 614400,
++};
++
++static const char * const ad7124_ref_names[] = {
++	[AD7124_REFIN1] = "refin1",
++	[AD7124_REFIN2] = "refin2",
++	[AD7124_INT_REF] = "int",
++	[AD7124_AVDD_REF] = "avdd",
++};
++
++struct ad7124_chip_info {
++	unsigned int num_inputs;
++};
++
++struct ad7124_channel_config {
++	enum ad7124_ref_sel refsel;
++	bool bipolar;
++	unsigned int ain;
++	unsigned int vref_mv;
++	unsigned int pga_bits;
++	unsigned int odr;
++};
++
++struct ad7124_state {
++	const struct ad7124_chip_info *chip_info;
++	struct ad_sigma_delta sd;
++	struct ad7124_channel_config channel_config[4];
++	struct regulator *vref[4];
++	struct clk *mclk;
++	unsigned int adc_control;
++	unsigned int num_channels;
++};
++
++static const struct iio_chan_spec ad7124_channel_template = {
++	.type = IIO_VOLTAGE,
++	.indexed = 1,
++	.differential = 1,
++	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
++		BIT(IIO_CHAN_INFO_SCALE) |
++		BIT(IIO_CHAN_INFO_OFFSET) |
++		BIT(IIO_CHAN_INFO_SAMP_FREQ),
++	.scan_type = {
++		.sign = 'u',
++		.realbits = 24,
++		.storagebits = 32,
++		.shift = 8,
++		.endianness = IIO_BE,
++	},
++};
++
++static struct ad7124_chip_info ad7124_chip_info_tbl[] = {
++	[ID_AD7124_4] = {
++		.num_inputs = 8,
++	},
++	[ID_AD7124_8] = {
++		.num_inputs = 16,
++	},
++};
++
++static int ad7124_find_closest_match(const int *array,
++				     unsigned int size, int val)
++{
++	int i, idx;
++	unsigned int diff_new, diff_old;
++
++	diff_old = U32_MAX;
++	idx = 0;
++
++	for (i = 0; i < size; i++) {
++		diff_new = abs(val - array[i]);
++		if (diff_new < diff_old) {
++			diff_old = diff_new;
++			idx = i;
++		}
++	}
++
++	return idx;
++}
++
++static int ad7124_spi_write_mask(struct ad7124_state *st,
++				 unsigned int addr,
++				 unsigned long mask,
++				 unsigned int val,
++				 unsigned int bytes)
++{
++	unsigned int readval;
++	int ret;
++
++	ret = ad_sd_read_reg(&st->sd, addr, bytes, &readval);
++	if (ret < 0)
++		return ret;
++
++	readval &= ~mask;
++	readval |= val;
++
++	return ad_sd_write_reg(&st->sd, addr, bytes, readval);
++}
++
++static int ad7124_set_mode(struct ad_sigma_delta *sd,
++			   enum ad_sigma_delta_mode mode)
++{
++	struct ad7124_state *st = container_of(sd, struct ad7124_state, sd);
++
++	st->adc_control &= ~AD7124_ADC_CTRL_MODE_MSK;
++	st->adc_control |= AD7124_ADC_CTRL_MODE(mode);
++
++	return ad_sd_write_reg(&st->sd, AD7124_ADC_CONTROL, 2, st->adc_control);
++}
++
++static int ad7124_set_channel(struct ad_sigma_delta *sd, unsigned int channel)
++{
++	struct ad7124_state *st = container_of(sd, struct ad7124_state, sd);
++	unsigned int val;
++
++	val = st->channel_config[channel].ain | AD7124_CHANNEL_EN(1) |
++	      AD7124_CHANNEL_SETUP(channel);
++
++	return ad_sd_write_reg(&st->sd, AD7124_CHANNEL(channel), 2, val);
++}
++
++static const struct ad_sigma_delta_info ad7124_sigma_delta_info = {
++	.set_channel = ad7124_set_channel,
++	.set_mode = ad7124_set_mode,
++	.has_registers = true,
++	.addr_shift = 0,
++	.read_mask = BIT(6),
++	.data_reg = AD7124_DATA,
++};
++
++static int ad7124_set_channel_odr(struct ad7124_state *st,
++				  unsigned int channel,
++				  unsigned int odr)
++{
++	unsigned int fclk, odr_sel_bits;
++	int ret;
++
++	fclk = clk_get_rate(st->mclk);
++	/*
++	 * FS[10:0] = fCLK / (fADC x 32) where:
++	 * fADC is the output data rate
++	 * fCLK is the master clock frequency
++	 * FS[10:0] are the bits in the filter register
++	 * FS[10:0] can have a value from 1 to 2047
++	 */
++	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * 32);
++	if (odr_sel_bits < 1)
++		odr_sel_bits = 1;
++	else if (odr_sel_bits > 2047)
++		odr_sel_bits = 2047;
++
++	ret = ad7124_spi_write_mask(st, AD7124_FILTER(channel),
++				    AD7124_FILTER_FS_MSK,
++				    AD7124_FILTER_FS(odr_sel_bits), 3);
++	if (ret < 0)
++		return ret;
++	/* fADC = fCLK / (FS[10:0] x 32) */
++	st->channel_config[channel].odr =
++		DIV_ROUND_CLOSEST(fclk, odr_sel_bits * 32);
++
++	return 0;
++}
++
++static int ad7124_set_channel_gain(struct ad7124_state *st,
++				   unsigned int channel,
++				   unsigned int gain)
++{
++	unsigned int res;
++	int ret;
++
++	res = ad7124_find_closest_match(ad7124_gain,
++					ARRAY_SIZE(ad7124_gain), gain);
++	ret = ad7124_spi_write_mask(st, AD7124_CONFIG(channel),
++				    AD7124_CONFIG_PGA_MSK,
++				    AD7124_CONFIG_PGA(res), 2);
++	if (ret < 0)
++		return ret;
++
++	st->channel_config[channel].pga_bits = res;
++
++	return 0;
++}
++
++static int ad7124_read_raw(struct iio_dev *indio_dev,
++			   struct iio_chan_spec const *chan,
++			   int *val, int *val2, long info)
++{
++	struct ad7124_state *st = iio_priv(indio_dev);
++	int idx, ret;
++
++	switch (info) {
++	case IIO_CHAN_INFO_RAW:
++		ret = ad_sigma_delta_single_conversion(indio_dev, chan, val);
++		if (ret < 0)
++			return ret;
++
++		/* After the conversion is performed, disable the channel */
++		ret = ad_sd_write_reg(&st->sd,
++				      AD7124_CHANNEL(chan->address), 2,
++				      st->channel_config[chan->address].ain |
++				      AD7124_CHANNEL_EN(0));
++		if (ret < 0)
++			return ret;
++
++		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_SCALE:
++		idx = st->channel_config[chan->address].pga_bits;
++		*val = st->channel_config[chan->address].vref_mv;
++		if (st->channel_config[chan->address].bipolar)
++			*val2 = chan->scan_type.realbits - 1 + idx;
++		else
++			*val2 = chan->scan_type.realbits + idx;
++
++		return IIO_VAL_FRACTIONAL_LOG2;
++	case IIO_CHAN_INFO_OFFSET:
++		if (st->channel_config[chan->address].bipolar)
++			*val = -(1 << (chan->scan_type.realbits - 1));
++		else
++			*val = 0;
++
++		return IIO_VAL_INT;
++	case IIO_CHAN_INFO_SAMP_FREQ:
++		*val = st->channel_config[chan->address].odr;
++
++		return IIO_VAL_INT;
++	default:
++		return -EINVAL;
++	}
++}
++
++static int ad7124_write_raw(struct iio_dev *indio_dev,
++			    struct iio_chan_spec const *chan,
++			    int val, int val2, long info)
++{
++	struct ad7124_state *st = iio_priv(indio_dev);
++	unsigned int res, gain, full_scale, vref;
++
++	switch (info) {
++	case IIO_CHAN_INFO_SAMP_FREQ:
++		if (val2 != 0)
++			return -EINVAL;
++
++		return ad7124_set_channel_odr(st, chan->address, val);
++	case IIO_CHAN_INFO_SCALE:
++		if (val != 0)
++			return -EINVAL;
++
++		if (st->channel_config[chan->address].bipolar)
++			full_scale = 1 << (chan->scan_type.realbits - 1);
++		else
++			full_scale = 1 << chan->scan_type.realbits;
++
++		vref = st->channel_config[chan->address].vref_mv * 1000000LL;
++		res = DIV_ROUND_CLOSEST(vref, full_scale);
++		gain = DIV_ROUND_CLOSEST(res, val2);
++
++		return ad7124_set_channel_gain(st, chan->address, gain);
++	default:
++		return -EINVAL;
++	}
++}
++
++static IIO_CONST_ATTR(in_voltage_scale_available,
++	"0.000001164 0.000002328 0.000004656 0.000009313 0.000018626 0.000037252 0.000074505 0.000149011 0.000298023");
++
++static struct attribute *ad7124_attributes[] = {
++	&iio_const_attr_in_voltage_scale_available.dev_attr.attr,
++	NULL,
++};
++
++static const struct attribute_group ad7124_attrs_group = {
++	.attrs = ad7124_attributes,
++};
++
++static const struct iio_info ad7124_info = {
++	.read_raw = ad7124_read_raw,
++	.write_raw = ad7124_write_raw,
++	.validate_trigger = ad_sd_validate_trigger,
++	.attrs = &ad7124_attrs_group,
++};
++
++static int ad7124_soft_reset(struct ad7124_state *st)
++{
++	unsigned int readval, timeout;
++	int ret;
++
++	ret = ad_sd_reset(&st->sd, 64);
++	if (ret < 0)
++		return ret;
++
++	timeout = 100;
++	do {
++		ret = ad_sd_read_reg(&st->sd, AD7124_STATUS, 1, &readval);
++		if (ret < 0)
++			return ret;
++
++		if (!(readval & AD7124_STATUS_POR_FLAG_MSK))
++			return 0;
++
++		/* The AD7124 requires typically 2ms to power up and settle */
++		usleep_range(100, 2000);
++	} while (--timeout);
++
++	dev_err(&st->sd.spi->dev, "Soft reset failed\n");
++
++	return -EIO;
++}
++
++static int ad7124_init_channel_vref(struct ad7124_state *st,
++				    unsigned int channel_number)
++{
++	unsigned int refsel = st->channel_config[channel_number].refsel;
++
++	switch (refsel) {
++	case AD7124_REFIN1:
++	case AD7124_REFIN2:
++	case AD7124_AVDD_REF:
++		if (IS_ERR(st->vref[refsel])) {
++			dev_err(&st->sd.spi->dev,
++				"Error, trying to use external voltage reference without a %s regulator.\n",
++				ad7124_ref_names[refsel]);
++				return PTR_ERR(st->vref[refsel]);
++		}
++		st->channel_config[channel_number].vref_mv =
++			regulator_get_voltage(st->vref[refsel]);
++		/* Conversion from uV to mV */
++		st->channel_config[channel_number].vref_mv /= 1000;
++		break;
++	case AD7124_INT_REF:
++		st->channel_config[channel_number].vref_mv = 2500;
++		break;
++	default:
++		dev_err(&st->sd.spi->dev, "Invalid reference %d\n", refsel);
++		return -EINVAL;
++	}
++
++	return 0;
++}
++
++static int ad7124_of_parse_channel_config(struct iio_dev *indio_dev,
++					  struct device_node *np)
++{
++	struct ad7124_state *st = iio_priv(indio_dev);
++	struct device_node *child;
++	struct iio_chan_spec *chan;
++	unsigned int ain[2], channel = 0, tmp;
++	int ret;
++
++	st->num_channels = of_get_available_child_count(np);
++	if (!st->num_channels) {
++		dev_err(indio_dev->dev.parent, "no channel children\n");
++		return -ENODEV;
++	}
++
++	chan = devm_kcalloc(indio_dev->dev.parent, st->num_channels,
++			    sizeof(*chan), GFP_KERNEL);
++	if (!chan)
++		return -ENOMEM;
++
++	indio_dev->channels = chan;
++	indio_dev->num_channels = st->num_channels;
++
++	for_each_available_child_of_node(np, child) {
++		ret = of_property_read_u32(child, "reg", &channel);
++		if (ret)
++			goto err;
++
++		ret = of_property_read_u32_array(child, "diff-channels",
++						 ain, 2);
++		if (ret)
++			goto err;
++
++		if (ain[0] >= st->chip_info->num_inputs ||
++		    ain[1] >= st->chip_info->num_inputs) {
++			dev_err(indio_dev->dev.parent,
++				"Input pin number out of range.\n");
++			ret = -EINVAL;
++			goto err;
++		}
++		st->channel_config[channel].ain = AD7124_CHANNEL_AINP(ain[0]) |
++						  AD7124_CHANNEL_AINM(ain[1]);
++		st->channel_config[channel].bipolar =
++			of_property_read_bool(child, "bipolar");
++
++		ret = of_property_read_u32(child, "adi,reference-select", &tmp);
++		if (ret)
++			st->channel_config[channel].refsel = AD7124_INT_REF;
++		else
++			st->channel_config[channel].refsel = tmp;
++
++		*chan = ad7124_channel_template;
++		chan->address = channel;
++		chan->scan_index = channel;
++		chan->channel = ain[0];
++		chan->channel2 = ain[1];
++
++		chan++;
++	}
++
++	return 0;
++err:
++	of_node_put(child);
++
++	return ret;
++}
++
++static int ad7124_setup(struct ad7124_state *st)
++{
++	unsigned int val, fclk, power_mode;
++	int i, ret;
++
++	fclk = clk_get_rate(st->mclk);
++	if (!fclk)
++		return -EINVAL;
++
++	/* The power mode changes the master clock frequency */
++	power_mode = ad7124_find_closest_match(ad7124_master_clk_freq_hz,
++					ARRAY_SIZE(ad7124_master_clk_freq_hz),
++					fclk);
++	if (fclk != ad7124_master_clk_freq_hz[power_mode]) {
++		ret = clk_set_rate(st->mclk, fclk);
++		if (ret)
++			return ret;
++	}
++
++	/* Set the power mode */
++	st->adc_control &= ~AD7124_ADC_CTRL_PWR_MSK;
++	st->adc_control |= AD7124_ADC_CTRL_PWR(power_mode);
++	ret = ad_sd_write_reg(&st->sd, AD7124_ADC_CONTROL, 2, st->adc_control);
++	if (ret < 0)
++		return ret;
++
++	for (i = 0; i < st->num_channels; i++) {
++		val = st->channel_config[i].ain | AD7124_CHANNEL_SETUP(i);
++		ret = ad_sd_write_reg(&st->sd, AD7124_CHANNEL(i), 2, val);
++		if (ret < 0)
++			return ret;
++
++		ret = ad7124_init_channel_vref(st, i);
++		if (ret < 0)
++			return ret;
++
++		val = AD7124_CONFIG_BIPOLAR(st->channel_config[i].bipolar) |
++		      AD7124_CONFIG_REF_SEL(st->channel_config[i].refsel);
++		ret = ad_sd_write_reg(&st->sd, AD7124_CONFIG(i), 2, val);
++		if (ret < 0)
++			return ret;
++		/*
++		 * 9.38 SPS is the minimum output data rate supported
++		 * regardless of the selected power mode. Round it up to 10 and
++		 * set all the enabled channels to this default value.
++		 */
++		ret = ad7124_set_channel_odr(st, i, 10);
++		if (ret < 0)
++			return ret;
++	}
++
++	return ret;
++}
++
++static int ad7124_probe(struct spi_device *spi)
++{
++	const struct spi_device_id *id;
++	struct ad7124_state *st;
++	struct iio_dev *indio_dev;
++	int i, ret;
++
++	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
++	if (!indio_dev)
++		return -ENOMEM;
++
++	st = iio_priv(indio_dev);
++
++	id = spi_get_device_id(spi);
++	st->chip_info = &ad7124_chip_info_tbl[id->driver_data];
++
++	ad_sd_init(&st->sd, indio_dev, spi, &ad7124_sigma_delta_info);
++
++	spi_set_drvdata(spi, indio_dev);
++
++	indio_dev->dev.parent = &spi->dev;
++	indio_dev->name = spi_get_device_id(spi)->name;
++	indio_dev->modes = INDIO_DIRECT_MODE;
++	indio_dev->info = &ad7124_info;
++
++	ret = ad7124_of_parse_channel_config(indio_dev, spi->dev.of_node);
++	if (ret < 0)
++		return ret;
++
++	for (i = 0; i < ARRAY_SIZE(st->vref); i++) {
++		if (i == AD7124_INT_REF)
++			continue;
++
++		st->vref[i] = devm_regulator_get_optional(&spi->dev,
++						ad7124_ref_names[i]);
++		if (PTR_ERR(st->vref[i]) == -ENODEV)
++			continue;
++		else if (IS_ERR(st->vref[i]))
++			return PTR_ERR(st->vref[i]);
++
++		ret = regulator_enable(st->vref[i]);
++		if (ret)
++			return ret;
++	}
++
++	st->mclk = devm_clk_get(&spi->dev, "mclk");
++	if (IS_ERR(st->mclk)) {
++		ret = PTR_ERR(st->mclk);
++		goto error_regulator_disable;
++	}
++
++	ret = clk_prepare_enable(st->mclk);
++	if (ret < 0)
++		goto error_regulator_disable;
++
++	ret = ad7124_soft_reset(st);
++	if (ret < 0)
++		goto error_clk_disable_unprepare;
++
++	ret = ad7124_setup(st);
++	if (ret < 0)
++		goto error_clk_disable_unprepare;
++
++	ret = ad_sd_setup_buffer_and_trigger(indio_dev);
++	if (ret < 0)
++		goto error_clk_disable_unprepare;
++
++	ret = iio_device_register(indio_dev);
++	if (ret < 0) {
++		dev_err(&spi->dev, "Failed to register iio device\n");
++		goto error_remove_trigger;
++	}
++
++	return 0;
++
++error_remove_trigger:
++	ad_sd_cleanup_buffer_and_trigger(indio_dev);
++error_clk_disable_unprepare:
++	clk_disable_unprepare(st->mclk);
++error_regulator_disable:
++	for (i = ARRAY_SIZE(st->vref) - 1; i >= 0; i--) {
++		if (!IS_ERR_OR_NULL(st->vref[i]))
++			regulator_disable(st->vref[i]);
++	}
++
++	return ret;
++}
++
++static int ad7124_remove(struct spi_device *spi)
++{
++	struct iio_dev *indio_dev = spi_get_drvdata(spi);
++	struct ad7124_state *st = iio_priv(indio_dev);
++	int i;
++
++	iio_device_unregister(indio_dev);
++	ad_sd_cleanup_buffer_and_trigger(indio_dev);
++	clk_disable_unprepare(st->mclk);
++
++	for (i = ARRAY_SIZE(st->vref) - 1; i >= 0; i--) {
++		if (!IS_ERR_OR_NULL(st->vref[i]))
++			regulator_disable(st->vref[i]);
++	}
++
++	return 0;
++}
++
++static const struct spi_device_id ad7124_id_table[] = {
++	{ "ad7124-4", ID_AD7124_4 },
++	{ "ad7124-8", ID_AD7124_8 },
++	{}
++};
++MODULE_DEVICE_TABLE(spi, ad7124_id_table);
++
++static const struct of_device_id ad7124_of_match[] = {
++	{ .compatible = "adi,ad7124-4" },
++	{ .compatible = "adi,ad7124-8" },
++	{ },
++};
++MODULE_DEVICE_TABLE(of, ad7124_of_match);
++
++static struct spi_driver ad71124_driver = {
++	.driver = {
++		.name = "ad7124",
++		.of_match_table = ad7124_of_match,
++	},
++	.probe = ad7124_probe,
++	.remove	= ad7124_remove,
++	.id_table = ad7124_id_table,
++};
++module_spi_driver(ad71124_driver);
++
++MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
++MODULE_DESCRIPTION("Analog Devices AD7124 SPI driver");
++MODULE_LICENSE("GPL");
 -- 
 2.7.4
 
