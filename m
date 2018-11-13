@@ -6,152 +6,89 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 142EDC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:15:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43587C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:16:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D96122251B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:15:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D96122251B
+	by mail.kernel.org (Postfix) with ESMTP id 0FC362251B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:16:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0FC362251B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387916AbeKNBO1 (ORCPT
+        id S2387947AbeKNBOc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:14:27 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43114 "EHLO mx1.redhat.com"
+        Tue, 13 Nov 2018 20:14:32 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43168 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387822AbeKNBO1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:14:27 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        id S1731502AbeKNBOc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 20:14:32 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id EDAF763144;
-        Tue, 13 Nov 2018 15:15:52 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 44FDE4E916;
+        Tue, 13 Nov 2018 15:15:58 +0000 (UTC)
 Received: from localhost (ovpn-8-23.pek2.redhat.com [10.72.8.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id C42145D961;
-        Tue, 13 Nov 2018 15:15:48 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 4658F6090D;
+        Tue, 13 Nov 2018 15:15:54 +0000 (UTC)
 From:   Ming Lei <ming.lei@redhat.com>
 To:     Jens Axboe <axboe@kernel.dk>
 Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
         Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>
-Subject: [PATCH V9 04/19] block: use bio_for_each_bvec() to map sg
-Date:   Tue, 13 Nov 2018 23:14:50 +0800
-Message-Id: <20181113151505.15498-5-ming.lei@redhat.com>
+Subject: [PATCH V9 05/19] block: introduce bvec_last_segment()
+Date:   Tue, 13 Nov 2018 23:14:51 +0800
+Message-Id: <20181113151505.15498-6-ming.lei@redhat.com>
 In-Reply-To: <20181113151505.15498-1-ming.lei@redhat.com>
 References: <20181113151505.15498-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 13 Nov 2018 15:15:53 +0000 (UTC)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 13 Nov 2018 15:15:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-It is more efficient to use bio_for_each_bvec() to map sg, meantime
-we have to consider splitting multipage bvec as done in blk_bio_segment_split().
+BTRFS and guard_bio_eod() need to get the last singlepage segment
+from one multipage bvec, so introduce this helper to make them happy.
 
 Cc: Christoph Hellwig <hch@lst.de>
 Signed-off-by: Ming Lei <ming.lei@redhat.com>
 ---
- block/blk-merge.c | 72 +++++++++++++++++++++++++++++++++++++++----------------
- 1 file changed, 52 insertions(+), 20 deletions(-)
+ include/linux/bvec.h | 25 +++++++++++++++++++++++++
+ 1 file changed, 25 insertions(+)
 
-diff --git a/block/blk-merge.c b/block/blk-merge.c
-index 6f7deb94a23f..cb9f49bcfd36 100644
---- a/block/blk-merge.c
-+++ b/block/blk-merge.c
-@@ -473,6 +473,56 @@ static int blk_phys_contig_segment(struct request_queue *q, struct bio *bio,
- 	return biovec_phys_mergeable(q, &end_bv, &nxt_bv);
+diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+index 3d61352cd8cf..01616a0b6220 100644
+--- a/include/linux/bvec.h
++++ b/include/linux/bvec.h
+@@ -216,4 +216,29 @@ static inline bool mp_bvec_iter_advance(const struct bio_vec *bv,
+ 	.bi_bvec_done	= 0,						\
  }
  
-+static struct scatterlist *blk_next_sg(struct scatterlist **sg,
-+		struct scatterlist *sglist)
++/*
++ * Get the last singlepage segment from the multipage bvec and store it
++ * in @seg
++ */
++static inline void bvec_last_segment(const struct bio_vec *bvec,
++		struct bio_vec *seg)
 +{
-+	if (!*sg)
-+		return sglist;
-+	else {
-+		/*
-+		 * If the driver previously mapped a shorter
-+		 * list, we could see a termination bit
-+		 * prematurely unless it fully inits the sg
-+		 * table on each mapping. We KNOW that there
-+		 * must be more entries here or the driver
-+		 * would be buggy, so force clear the
-+		 * termination bit to avoid doing a full
-+		 * sg_init_table() in drivers for each command.
-+		 */
-+		sg_unmark_end(*sg);
-+		return sg_next(*sg);
++	unsigned total = bvec->bv_offset + bvec->bv_len;
++	unsigned last_page = total / PAGE_SIZE;
++
++	if (last_page * PAGE_SIZE == total)
++		last_page--;
++
++	seg->bv_page = nth_page(bvec->bv_page, last_page);
++
++	/* the whole segment is inside the last page */
++	if (bvec->bv_offset >= last_page * PAGE_SIZE) {
++		seg->bv_offset = bvec->bv_offset % PAGE_SIZE;
++		seg->bv_len = bvec->bv_len;
++	} else {
++		seg->bv_offset = 0;
++		seg->bv_len = total - last_page * PAGE_SIZE;
 +	}
 +}
 +
-+static unsigned blk_bvec_map_sg(struct request_queue *q,
-+		struct bio_vec *bvec, struct scatterlist *sglist,
-+		struct scatterlist **sg)
-+{
-+	unsigned nbytes = bvec->bv_len;
-+	unsigned nsegs = 0, total = 0;
-+
-+	while (nbytes > 0) {
-+		unsigned seg_size;
-+		struct page *pg;
-+		unsigned offset, idx;
-+
-+		*sg = blk_next_sg(sg, sglist);
-+
-+		seg_size = min(nbytes, queue_max_segment_size(q));
-+		offset = (total + bvec->bv_offset) % PAGE_SIZE;
-+		idx = (total + bvec->bv_offset) / PAGE_SIZE;
-+		pg = nth_page(bvec->bv_page, idx);
-+
-+		sg_set_page(*sg, pg, seg_size, offset);
-+
-+		total += seg_size;
-+		nbytes -= seg_size;
-+		nsegs++;
-+	}
-+
-+	return nsegs;
-+}
-+
- static inline void
- __blk_segment_map_sg(struct request_queue *q, struct bio_vec *bvec,
- 		     struct scatterlist *sglist, struct bio_vec *bvprv,
-@@ -490,25 +540,7 @@ __blk_segment_map_sg(struct request_queue *q, struct bio_vec *bvec,
- 		(*sg)->length += nbytes;
- 	} else {
- new_segment:
--		if (!*sg)
--			*sg = sglist;
--		else {
--			/*
--			 * If the driver previously mapped a shorter
--			 * list, we could see a termination bit
--			 * prematurely unless it fully inits the sg
--			 * table on each mapping. We KNOW that there
--			 * must be more entries here or the driver
--			 * would be buggy, so force clear the
--			 * termination bit to avoid doing a full
--			 * sg_init_table() in drivers for each command.
--			 */
--			sg_unmark_end(*sg);
--			*sg = sg_next(*sg);
--		}
--
--		sg_set_page(*sg, bvec->bv_page, nbytes, bvec->bv_offset);
--		(*nsegs)++;
-+		(*nsegs) += blk_bvec_map_sg(q, bvec, sglist, sg);
- 	}
- 	*bvprv = *bvec;
- }
-@@ -530,7 +562,7 @@ static int __blk_bios_map_sg(struct request_queue *q, struct bio *bio,
- 	int cluster = blk_queue_cluster(q), nsegs = 0;
- 
- 	for_each_bio(bio)
--		bio_for_each_segment(bvec, bio, iter)
-+		bio_for_each_bvec(bvec, bio, iter)
- 			__blk_segment_map_sg(q, &bvec, sglist, &bvprv, sg,
- 					     &nsegs, &cluster);
- 
+ #endif /* __LINUX_BVEC_ITER_H */
 -- 
 2.9.5
 
