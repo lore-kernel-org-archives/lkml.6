@@ -2,139 +2,129 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A75FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:35:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A197C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:35:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBDF7223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:35:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D37D5223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:35:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Y2s9Tvm0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBDF7223AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="NhCgOAB1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D37D5223AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730890AbeKNEed (ORCPT
+        id S1731040AbeKNEei (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:34:33 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:38135 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726695AbeKNEec (ORCPT
+        Tue, 13 Nov 2018 23:34:38 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:45270 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbeKNEei (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:34:32 -0500
-Received: by mail-qk1-f196.google.com with SMTP id d19so21222622qkg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 10:35:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:content-transfer-encoding:in-reply-to
-         :user-agent;
-        bh=eazBKST81Ay2gNO89uE6O7K62RWYfPOh3Pfs5q7yXnA=;
-        b=Y2s9Tvm06f72HsRaC5V0w9zIaEaaQnU7P/aG+JNojzz58xUt3T1o0PXROouB5rowSJ
-         EAwJFYV8rHzW9GOcZW3vKOznH4TtgzjtWuU/LQdWRWupGVqTHd7GgYFi02UwOGRDBlh+
-         nHYy/Q28N60gl+7t2WS/6S1wgui/e1T+i9tlok4S08BBq1OJ78JNH7kypwaZLiu7F9NR
-         Z0nklKSpdTbQXJkffbEutK5IBxHnFFRToyS8sIvriKFhAo2Kp0HboYUuNUCymy3zFvQ4
-         xSlO6ERpCUQOf3un2WBK6OV1qmVPuJcx5J2X0Vlg3n1gvZgyNg8P+D75m05hGrLtL2C+
-         iuKQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:content-transfer-encoding
-         :in-reply-to:user-agent;
-        bh=eazBKST81Ay2gNO89uE6O7K62RWYfPOh3Pfs5q7yXnA=;
-        b=mleSq7IXNnXVEMHChygZSjeYkJhKdah9VVFeQ3gKic1ZZ0tSA3yKeKIiD+8ijo8LTx
-         FjAUC7iUh8PdPwZbCzU6mQ/LWi1dmxxn+wfcz9EsWF2r0bIkc7o/HgYxLyBlgQnvNwKZ
-         8VWuNtiz8LpuAszAz+HYX9FBx3bSvOXw6keUol1a508u23y8G+FeDZxNrHGdxp6E2M2k
-         VX0BZfH7lSFKPrcstY2W9kOVWSpj9pfAEHUjDlGmOfvpLHr9AVKTqtlT9tNnFAo+srKR
-         1Ag+4WjtwE4XapF3QiJqvfWnUnJeX0dCzlnZTq8STcEinR2/JFsjzrLDK+mQjqmgUlrW
-         f//A==
-X-Gm-Message-State: AGRZ1gII0lbZKcGeylDzDcgN+rKUKwmIMqj7OCl1p3x7qNHsMZZ7voMT
-        ItPwCu5COG1mQCg1arpuYZ/bJw==
-X-Google-Smtp-Source: AJdET5e9qsjG6HFfRiBQd5mX8tep68g3EuK19Kz/eOWEtNLZ2og77wjLyZOtetRUizQsv6pDvXa+7w==
-X-Received: by 2002:a37:9281:: with SMTP id u123mr6286155qkd.0.1542134113269;
-        Tue, 13 Nov 2018 10:35:13 -0800 (PST)
-Received: from soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net ([40.117.208.181])
-        by smtp.gmail.com with ESMTPSA id o49sm12657879qtf.60.2018.11.13.10.35.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 10:35:11 -0800 (PST)
-Date:   Tue, 13 Nov 2018 18:35:10 +0000
-From:   Pavel Tatashin <pasha.tatashin@soleen.com>
-To:     Timofey Titovets <timofey.titovets@synesis.ru>
-Cc:     oleksandr@natalenko.name, Jann Horn <jannh@google.com>,
-        linux-doc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
-Subject: Re: [PATCH V3] KSM: allow dedup all tasks memory
-Message-ID: <20181113183510.5y2hzruoi23e7o2t@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
-References: <CAG48ez0ZprqUYGZFxcrY6U3Dnwt77q1NJXzzpsn1XNkRuXVppw@mail.gmail.com>
- <d43da6ad1a3c164aa03e0f22f065591a@natalenko.name>
- <20181113175930.3g65rlhbaimstq7g@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
- <CAGqmi74gpvJv8=B-3pVSMrDssu-aYMxW9xM7mt1WNQjGLjMZqA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGqmi74gpvJv8=B-3pVSMrDssu-aYMxW9xM7mt1WNQjGLjMZqA@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+        Tue, 13 Nov 2018 23:34:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=FpT+HyxAYzXPjTHnPtxmwh6zy5t97EmNxQOkq+Uqbfs=; b=NhCgOAB1GF6G
+        n2zPpGIa/tiAAizmNQComacmjSERXrtRF3ftwoFc0oraEVHGefy5AFjm98Pd7nku94K2wqn266zYb
+        t0zSDxh7rdHWAHWWZCVFZ5nFPLE13j8ayKBSQglvD4VGWKZQ/G8VZ0zwnnpKiTffNR+YFiGPGUnvK
+        QiGxs=;
+Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gMdWc-0002Ph-MA; Tue, 13 Nov 2018 18:34:59 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id EF1D144007A; Tue, 13 Nov 2018 18:34:56 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Pavel Machek <pavel@ucw.cz>, Mark Brown <broonie@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        James Cameron <quozl@laptop.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Miao <eric.y.miao@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-spi@vger.kernel.org
+Subject: Applied "spi: pxa2xx: dt-bindings: Add ready GPIO signal" to the spi tree
+In-Reply-To:  <20181113102228.820214-5-lkundrak@v3.sk>
+Message-Id: <20181113183456.EF1D144007A@finisterre.ee.mobilebroadband>
+Date:   Tue, 13 Nov 2018 18:34:56 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 18-11-13 21:17:42, Timofey Titovets wrote:
-> вт, 13 нояб. 2018 г. в 20:59, Pavel Tatashin <pasha.tatashin@soleen.com>:
-> >
-> > On 18-11-13 15:23:50, Oleksandr Natalenko wrote:
-> > > Hi.
-> > >
-> > > > Yep. However, so far, it requires an application to explicitly opt in
-> > > > to this behavior, so it's not all that bad. Your patch would remove
-> > > > the requirement for application opt-in, which, in my opinion, makes
-> > > > this way worse and reduces the number of applications for which this
-> > > > is acceptable.
-> > >
-> > > The default is to maintain the old behaviour, so unless the explicit
-> > > decision is made by the administrator, no extra risk is imposed.
-> >
-> > The new interface would be more tolerable if it honored MADV_UNMERGEABLE:
-> >
-> > KSM default on: merge everything except when MADV_UNMERGEABLE is
-> > excplicitly set.
-> >
-> > KSM default off: merge only when MADV_MERGEABLE is set.
-> >
-> > The proposed change won't honor MADV_UNMERGEABLE, meaning that
-> > application programmers won't have a way to prevent sensitive data to be
-> > every merged. So, I think, we should keep allow an explicit opt-out
-> > option for applications.
-> >
-> 
-> We just did not have VM/Madvise flag for that currently.
-> Same as THP.
-> Because all logic written with assumption, what we have exactly 2 states.
-> Allow/Disallow (More like not allow).
-> 
-> And if we try to add, that must be something like:
-> MADV_FORBID_* to disallow something completely.
+The patch
 
-No need to add new user flag MADV_FORBID, we should keep MADV_MERGEABLE
-and MADV_UNMERGEABLE, but make them work so when MADV_UNMERGEABLE is
-set, memory is indeed becomes always unmergeable regardless of ksm mode
-of operation.
+   spi: pxa2xx: dt-bindings: Add ready GPIO signal
 
-To do the above in ksm_madvise(), a new state should be added, for example
-instead of: 
+has been applied to the spi tree at
 
-case MADV_UNMERGEABLE:
-	*vm_flags &= ~VM_MERGEABLE;
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
-A new flag should be used:
-	*vm_flags |= VM_UNMERGEABLE;
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-I think, without honoring MADV_UNMERGEABLE correctly, this patch won't
-be accepted.
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-Pasha
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 8ae13d0b0d4bb4af99bec8c50152f0c8f5cbcc06 Mon Sep 17 00:00:00 2001
+From: Lubomir Rintel <lkundrak@v3.sk>
+Date: Tue, 13 Nov 2018 11:22:26 +0100
+Subject: [PATCH] spi: pxa2xx: dt-bindings: Add ready GPIO signal
+
+This this is used to let the SPI master know that our FIFO is filled and
+we're ready to service a transfer. Only useful in slave mode.
+
+A signal like this is used by an embedded controller on a OLPC XO 1.75
+machine, that happens to be a SPI master.
+
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+Acked-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ Documentation/devicetree/bindings/spi/spi-pxa2xx.txt | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt b/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt
+index 89b2832283e3..e30e0c2a4bce 100644
+--- a/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt
++++ b/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt
+@@ -12,6 +12,8 @@ Optional properties:
+ - cs-gpios: list of GPIO chip selects. See the SPI bus bindings,
+   Documentation/devicetree/bindings/spi/spi-bus.txt
+ - spi-slave: Empty property indicating the SPI controller is used in slave mode.
++- ready-gpios: GPIO used to signal a SPI master that the FIFO is filled
++  and we're ready to service a transfer. Only useful in slave mode.
+ 
+ Child nodes represent devices on the SPI bus
+   See ../spi/spi-bus.txt
+-- 
+2.19.1
+
