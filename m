@@ -2,100 +2,92 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64176C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:07:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1869C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:08:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D1122243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:07:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D1122243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id B2D8A2243E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:08:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2D8A2243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733243AbeKMXFG (ORCPT
+        id S1733306AbeKMXGX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:05:06 -0500
-Received: from mga18.intel.com ([134.134.136.126]:42560 "EHLO mga18.intel.com"
+        Tue, 13 Nov 2018 18:06:23 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:51580 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732728AbeKMXFG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:05:06 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 05:06:50 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
-   d="scan'208";a="107867831"
-Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
-  by orsmga001.jf.intel.com with ESMTP; 13 Nov 2018 05:06:48 -0800
-Subject: Re: [RFC PATCH v2 1/2] x86/fpu: detect AVX task
-To:     David Laight <David.Laight@ACULAB.COM>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Aubrey Li <aubrey.li@intel.com>
-Cc:     "mingo@redhat.com" <mingo@redhat.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <1541610982-33478-1-git-send-email-aubrey.li@intel.com>
- <alpine.DEB.2.21.1811091121340.1519@nanos.tec.linutronix.de>
- <657a9ee9-bb27-968a-34ae-e25df6c2fff9@linux.intel.com>
- <25dd33ee964f4de5ae33a1575e1bf47f@AcuMS.aculab.com>
-From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
-Message-ID: <2229f120-cb11-8f8e-f27d-eabc94457cd5@linux.intel.com>
-Date:   Tue, 13 Nov 2018 21:06:47 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        id S1732728AbeKMXGX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 18:06:23 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CB84D22512; Tue, 13 Nov 2018 14:08:17 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 1B9E0224E1;
+        Tue, 13 Nov 2018 14:07:36 +0100 (CET)
+Date:   Tue, 13 Nov 2018 14:07:36 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v6 4/4] arm64: defconfig: Enable PWM_SUN4I
+Message-ID: <20181113130736.hckezxs6daen3e7d@flea>
+References: <20181113121535.24137-1-jagan@amarulasolutions.com>
+ <20181113121535.24137-4-jagan@amarulasolutions.com>
 MIME-Version: 1.0
-In-Reply-To: <25dd33ee964f4de5ae33a1575e1bf47f@AcuMS.aculab.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="ipbellgz27pocypc"
+Content-Disposition: inline
+In-Reply-To: <20181113121535.24137-4-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/13 18:25, David Laight wrote:
-> From: Li, Aubrey
->> Sent: 12 November 2018 01:41
-> ...
->> VZEROUPPER instruction resets the init state. If context switch happens
->> to occur exactly after VZEROUPPER instruction, XINUSE bitmap is empty(all
->> zeros), which indicates the task is not using AVX. That's why the state
->> decay count is used here.
-> 
-> Isn't there an obvious optimisation to execute VZEROALL during system call
-> entry?
 
-I'm not aware of this in the kernel, maybe you are talking about some 
-optimization in glibc?
+--ipbellgz27pocypc
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> If that is done does any of this actually work?
+On Tue, Nov 13, 2018 at 05:45:35PM +0530, Jagan Teki wrote:
+> Allwinner PWM support need for ARM64 Allwinner SoC's
+> which used pwms, builds it as module.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
-The bitmap is checked during context switch, not system call entry.
+Applied all 4 patches, thanks!
+Maxime
 
-Also, the flag is turned on immediately once it's detected, but requires 3
-*consecutive* context switches with no usage to clear. So it could filter
-most jitter patterns out.
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-I measured tensorflow(with AVX512), linpack(with AVX512) and a micro
-benchmark, this works properly.
+--ipbellgz27pocypc
+Content-Type: application/pgp-signature; name="signature.asc"
 
-If you have a AVX512 workload, I'd like to know if this works for it.
+-----BEGIN PGP SIGNATURE-----
 
-Thanks,
--Aubrey
-> 
-> 	David
->  
-> 
-> -
-> Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-> Registration No: 1397386 (Wales)
-> 
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+rMmAAKCRDj7w1vZxhR
+xeU1AP4n4DJ/KQZ5FJqyC0E8T48yCyvxE3nJORad+vXY1lwT2QD/TY/TO76gQNys
+ttfN/d8yc+PRLVlkWMkH1W1yP3WnggU=
+=BjAf
+-----END PGP SIGNATURE-----
 
+--ipbellgz27pocypc--
