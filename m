@@ -2,183 +2,221 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C38ABC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75207C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C601223D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:15:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FCD0223D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:15:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="o8RHWX2e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C601223D0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NF2c8DuA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FCD0223D0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727706AbeKNFPL (ORCPT
+        id S1728068AbeKNFPP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:15:11 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:55902 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725748AbeKNFPL (ORCPT
+        Wed, 14 Nov 2018 00:15:15 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46247 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725748AbeKNFPO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:15:11 -0500
-Received: by mail-it1-f193.google.com with SMTP id o19so10864210itg.5
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 11:15:41 -0800 (PST)
+        Wed, 14 Nov 2018 00:15:14 -0500
+Received: by mail-qk1-f194.google.com with SMTP id q1so21467130qkf.13;
+        Tue, 13 Nov 2018 11:15:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Dh+rjCM32ehGaFSxkcnS1rCN5Fcj+0J/RO/nokDH0wc=;
-        b=o8RHWX2eJDuujK6wBnGT094q6678wNqe2YyKwFi994ozGAq4sKD3X6B7gHUtgFTqgz
-         wbEV05VfUXu0UQRs3aFHjgL7DFRSHZZOzZzg1NEAK7c9zQSjyhO11BUeTJ2Kzx2vl+Z/
-         nZa2dgf0OGk06otj9ZZVAr6sLgBPsII7A2jLtjQg6mHf4JEgwL5vbBzikUJYWwl73Mda
-         pDCABEFWGPylmA4TZpWkvvJhwPbQV3GlkUhNtlMXkcb9dHC7HiQadxJ6n1w8MQufS9Yv
-         F1TOpoluwXHfX9YUKEVQoGMaUY3WkEdIhbulCFPVgoluQBzuKeSR64VvSYFJKgfHym1+
-         nUMA==
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eyXKSAXrFcy6Gbu9uPgpFrVw8htCHZwhRAvOnXKlGxo=;
+        b=NF2c8DuAFMhsUJo4vRyAtcKqhdtevrIoq7zi49LyZsdhsPttWtPZ7yM1WIHiZ1GIUm
+         p3LcwyMMiaaVAsqD1+82mvnWgaM0K0IBlqjtFTHQ6ZkGPxWvkFo+fWuTdUSftLSlNR2W
+         EcFRpsm5XRwPdBUYSefvTH6RWmG/q+bNvIQlQ3uETbMRaLh/RA6GfjPBTQ/j0VF5zge9
+         dEPXLQKuzi1BuRSt/QwLSTvdolVpzbQInw4sLAIMir1tfMOvCBHx92TiyPDbGOTHG/lU
+         SjrwCnpA9EzH/VJ/5vViJAQtxjOuQvCqcArwIpk4kwZXgQQ2tTBE9OlOIFnPRZEPSLJF
+         dX1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Dh+rjCM32ehGaFSxkcnS1rCN5Fcj+0J/RO/nokDH0wc=;
-        b=rQG/1wqLMjIaAPodtFW3DdwO6FUfsVeoX094gufPaA90illFQ23xiAkF46tCUeDVkw
-         7BMN6U7jrr891lm/5Btf2qhAG6cAY8rKoneytxFH83w9B/RDt+HJ92DpFjh8wKM5UwYq
-         EPV/GSKsWj7RDSLAqZhqYJ6+ApeOQZzEW1hJMg1bWmZgqcmE1RpXwGQmtsZhIPaSJSsc
-         EAatZ1I5knD5rjxxk0OUGT017Rn8XH5g7VzeOLTmzEAKNgYVBxa9WG41lLfL8OXzsCW2
-         n8i/89T6GRZqBGd/6F0jgoLaLiTm6Vxe/AUuuKbtS6Ado+bRW8UsdLyUxMABrlyau3Xs
-         JTrQ==
-X-Gm-Message-State: AGRZ1gJivmr5YZ+oiXip/bxvKsUKj/aMN/BV47VwbDrnU1I1qmYOXHCy
-        ggvAT2jff1lGMzRNYc3PBrn/DXcP/j8cGBUuDD0=
-X-Google-Smtp-Source: AJdET5dZCt8sZQRNkhr4frdBeK1in497l6fcrfOE6Q8URCaB38jt/j+XQR+AXF179tTYiH5wBUeggFlfFj6RrEK21sc=
-X-Received: by 2002:a02:a0c9:: with SMTP id i9-v6mr6019537jah.116.1542136541251;
- Tue, 13 Nov 2018 11:15:41 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eyXKSAXrFcy6Gbu9uPgpFrVw8htCHZwhRAvOnXKlGxo=;
+        b=aDpUVU0vwcZxNvmCNTLF2yiplpZvg1OkXjFDOwd4Io9e0Qs3LkAaR8m7SMa+wYbBh5
+         EoUGsTzdcH9rspmTz8PAV9AyU3Lmb3Z2asuzK4RBgTKzrhnFWIN55MApTudwLON8ZJNV
+         i197bgg6QcNHJXjHqdvF4zVjJpaeSSFH+I90qcpjxYfwXgKXn7nv162fjNCEZeIDhYmm
+         tgmQELzpnE/Yyzklxb70EqvlVgPN6dxTnzyaGY6U9FJlEYd2IgYElbAJvT3PCvHYgmKt
+         tB0xLsqR0PvAzHHeRbgIqxzTovZG20yGRPU1HqpRTQZUzaC7xjqce2/lMsc7CuKXn6/I
+         uCbA==
+X-Gm-Message-State: AGRZ1gLtIZIvtKI/w4haw13LBClgIayd5iKcbeZjpRUYnrNE0GlXQENh
+        YI/DrQ41B/pV3/ItRY9dRKkr7eYs
+X-Google-Smtp-Source: AJdET5f3EIUllGTQ+RohG9l5sCS+oaWiOb9IQmi6/TPFbbhdh4Q4vBkV8j2OevNHBpXWeRXsYlFLoA==
+X-Received: by 2002:aed:2151:: with SMTP id 75mr6442961qtc.24.1542136545023;
+        Tue, 13 Nov 2018 11:15:45 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::6:e2a7])
+        by smtp.gmail.com with ESMTPSA id l30sm3749116qte.44.2018.11.13.11.15.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 11:15:44 -0800 (PST)
+Date:   Tue, 13 Nov 2018 11:15:41 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Roman Gushchin <guro@fb.com>
+Cc:     Roman Gushchin <guroan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v2 3/6] cgroup: cgroup v2 freezer
+Message-ID: <20181113191541.GM2509588@devbig004.ftw2.facebook.com>
+References: <20181112230422.5911-1-guro@fb.com>
+ <20181112230422.5911-5-guro@fb.com>
+ <20181113020817.GE2509588@devbig004.ftw2.facebook.com>
+ <20181113184751.GB21629@tower.DHCP.thefacebook.com>
 MIME-Version: 1.0
-References: <CA+ASDXN40pvbZKvsO3Cb8256AQJ3fyQh5TWdT+GDk_ncq11nMw@mail.gmail.com>
- <CAK7LNAR5etb-oJDaxNZbH9-FmC3+hC3A_cwnbuWPQx0maHaDng@mail.gmail.com>
- <20181109183436.GA45531@google.com> <20181110.085826.230851261@genki.is>
- <m24lcpjjss.fsf@linux-m68k.org> <20181110.201050.925673938@genki.is>
- <CAJ1xhMXDFAdiWMV6ODcJM8bfjs-ddyv8utf6N+Yh7+-Ne-KaHw@mail.gmail.com>
- <20181111.174140.002789201@genki.is> <CAJ1xhMUA4GUzeDANqR1WafELmEpE+-V569t7e0xCotTG2Lvbyw@mail.gmail.com>
- <CAJ1xhMWw8Mi2dubTFNOxhoP6hk+__Qjo-0+9sQbpqP5K-n4mVw@mail.gmail.com>
- <20181113000938.GA16783@google.com> <CAJ1xhMVFt6bYgwY+N5VoFXNpm5kS1j_HV8-ZS8SkavNgZx1HOg@mail.gmail.com>
- <CA+ASDXPcYp_joFeyGQ7TXFBSK-7i6bNFzaA1z=YYSDEjyMABdg@mail.gmail.com>
-In-Reply-To: <CA+ASDXPcYp_joFeyGQ7TXFBSK-7i6bNFzaA1z=YYSDEjyMABdg@mail.gmail.com>
-From:   Alexander Kapshuk <alexander.kapshuk@gmail.com>
-Date:   Tue, 13 Nov 2018 21:15:26 +0200
-Message-ID: <CAJ1xhMW-zStA0yrxn6nWGE2CAhjky9-obOCz6=dqf-M0vr4OPQ@mail.gmail.com>
-Subject: Re: [PATCH] scripts/setlocalversion: Improve -dirty check with
- git-status --no-optional-locks
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     sky@genki.is, schwab@linux-m68k.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>, lists@nerdbynature.de,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113184751.GB21629@tower.DHCP.thefacebook.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 8:32 PM Brian Norris <briannorris@chromium.org> wrote:
->
-> Hi Alexander,
->
-> On Tue, Nov 13, 2018 at 12:36 AM Alexander Kapshuk
-> <alexander.kapshuk@gmail.com> wrote:
-> >
-> > On Tue, Nov 13, 2018 at 2:09 AM Brian Norris <briannorris@chromium.org> wrote:
-> > >
-> > > On Mon, Nov 12, 2018 at 10:42:26AM +0200, Alexander Kapshuk wrote:
-> > > > An even simpler approach would be:
-> > > >
-> > > > {
-> > > >         git --no-optional-locks status -uno --porcelain 2>/dev/null ||
-> > > >         git diff-index --name-only HEAD
-> > > > } | grep -qv scripts/package &&
-> > > >         printf '%s' -dirty
-> > > >
-> > > > Sample run:
-> > > > cmd
-> > > > sh: cmd: command not found
-> > > >
-> > > > {
-> > > >         cmd 2>/dev/null ||
-> > > >         date
-> > > > } | grep -q 2018 &&
-> > > >         printf '%s' ok
-> > > > ok
-> > >
-> > > You lose accuracy here, because now you're skipping any line that
-> > > contains 'scripts/package', which would include, e.g., paths like
-> > >
-> > >   tools/some/other-scripts/package
-> > >
-> > > Maybe if the grep expression were more like this?
-> > >
-> > >   grep -qv '^\(.. \)\?scripts/package'
-> > >
-> > > I think it'd be safe enough to ignore paths that start with two
-> > > characters and a space, like:
-> > >
-> > > xy scripts/package
-> > > x/ scripts/package
-> > >
-> > > Brian
-> >
-> > Thanks for your input.
-> > I've found the following grep command, that uses extended regular
-> > expressions, to work as required:
->
-> Is there any good reason you switched to extended? It looks like my
-> (basic regex) grep was equivalent.
->
-> > {
-> >         echo hello
-> >         echo scripts/package
-> >         echo '.. scripts/package'
-> >         echo tools/some/other-scripts/package
-> > } | grep -Ev '^(.. )?scripts/package'
-> >
-> > [Output]
-> > hello
-> > tools/some/other-scripts/package
-> >
-> > If the participants of this email exchange consider the proposed
-> > implementation as fitting the bill,
-> >
-> > {
-> >         git --no-optional-locks status -uno --porcelain 2>/dev/null ||
-> >         git diff-index --name-only HEAD
-> > } | grep -Eqv '^(.. )?scripts/package' &&
-> >         printf '%s' -dirty
-> >
-> > Was the original committer of the patch proposed here,
-> > https://lkml.org/lkml/2018/11/10/55, going to take it in, and resend it
-> > as v2 of the patch, or did you want me to submit the patch instead?
-> > I would be happy with either way.
->
-> I can submit it. I expect Masahiro-san would prefer a proper v2 patch
-> for review, given how much would change from my v1.
->
-> And this time, I'll actually test it with a non-dirty tree! (Of
-> course, my tree is naturally dirty when developing the patch, but I
-> missed testing post-commit...)
->
-> Brian
+Hello, Roman.
 
-Hi Brian,
+On Tue, Nov 13, 2018 at 06:47:55PM +0000, Roman Gushchin wrote:
+> > > +	/* Should the cgroup and its descendants be frozen. */
+> > > +	bool freeze;
+> > 
+> > Why not have this in freezer too?
+> 
+> I thought that this variable is just the state of the cgroup.freeze knob,
+> where the freezer field contains the internal state of the freezer, and
+> can in theory be allocated dynamically.
+> 
+> Not a strong preference, I can move it there too, if you prefer to.
 
-Thanks for taking my proposed patch in and submitting it.
+Yeah, let's just put it together.
 
-I went with the ERE because, in my opinion, the pattern looks
-'cleaner' without having the metacharacters like '()?' escaped.
-EREs are POSIX-compatible, so should be supported by any POSIX-compliant shell.
+> > > +void cgroup_freezer_enter(void);
+> > > +void cgroup_freezer_leave(void);
+> > 
+> > So, if we use freeze, freezing, frozen instead, the aboves can be
+> > cgroup_frozen_enter() and cgroup_frozen_leave() (or begin/end).
+> 
+> Idk, maybe cgroup_enter_frozen()/cgroup_leave_frozen() ?
 
-Your non-ERE version does generate the same output as my ERE one. So
-it just boils down to one's personal preference.
+Sure.
+
+> > > +	/* task is in the cgroup freezer loop */
+> > 
+> > The above comment isn't strictly true, right?
+> 
+> Why so?
+> 
+> It actually means that the task is looping somewhere in the signal delivery loop
+> after entering cgroup_freezer_enter() and before cgroup_freezer_leave().
+> 
+> Maybe simple "task is frozen by the cgroup freezer"?
+
+Yeah, sounds good.
+
+> > > @@ -5642,6 +5700,23 @@ void cgroup_post_fork(struct task_struct *child)
+> > >  			cset->nr_tasks++;
+> > >  			css_set_move_task(child, NULL, cset, false);
+> > >  		}
+> > > +
+> > > +		if (unlikely(cgroup_frozen(child) &&
+> > > +			     (child->flags & ~PF_KTHREAD))) {
+> > 
+> > I don't think we need explicit PF_KTHREAD test here.  We don't allow
+> > kthreads in non-root cgroups anyway and if we wanna change that there
+> > are a bunch of other things which need updating anyway.
+> 
+> Don't we? I think we do. I've proposed a patch to fix this some time ago
+> (https://lkml.org/lkml/2017/10/12/556), but was NAKed by Peter.
+
+Ah, right, I thought that went in.  Oh well, let's keep the test then.
+
+> > > +	/*
+> > > +	 * Did we race with fork() or exit()? Np, everything is still frozen.
+> > > +	 */
+> > > +	if (frozen == test_bit(CGRP_FROZEN, &cgrp->flags))
+> > > +		return;
+> > > +
+> > > +	if (frozen)
+> > > +		set_bit(CGRP_FROZEN, &cgrp->flags);
+> > > +	else
+> > > +		clear_bit(CGRP_FROZEN, &cgrp->flags);
+> > 
+> > I'm not sure this is wrong but it feels a bit weird to tie the actual
+> > state transition to notification.  Wouldn't it be more
+> > straight-forward if CGRP_FROZEN bit is purely determined by whether
+> > the tasks are frozen or not and the notification just checks that
+> > against the last notified state and generate a notification if they're
+> > different?
+> 
+> So, maybe cgroup_notify_frozen() is not the best name, maybe
+> cgroup_propagate_frozen() better reflects what's happening here.
+> We need to recalc the state of ancestor cgroups, and we have to do it
+> with cgroup_mutex held, this is why we do it from the delayed work
+> context (on hot paths).
+
+Can't we protect that state with css_set_lock too?  That's what task
+states are protected by and the cgroup state is a mere aggregation of
+task states.
+
+> The first pat of the function can be probably separated and called
+> immediately. Is this what you're suggesting?
+
+Pretty much.  I think separating out state transitions and
+notifications would make it more straightforward.
+
+> > So that all these state transitions are synchronous with the actual
+> > freezing events and we can just queue per-cgroup work items all the
+> > way to the top if the new state is different from the last one
+> > cgroup-by-cgroup?
+> 
+> Hm, Idk. Why it's better?
+
+So, the pieces are - 1. task states, 2. cgroup states and
+3. notifications.  The current code ties together #2 and #3 together
+which is weird because #2 is a mere aggregation of #1.  Also, that
+way, notifications become a lot more robust because whether to
+generate a notification or not can be solely determined from #2
+flipping.  ie. sth like the following
+
+	change_task_frozen_state()
+	{
+		update counters
+		if (cgroup state needs to change) {
+			change cgroup state;
+			queue notification work;
+			repeat for the parent;
+		}
+	}
+
+where notification work always notifies should work and trivially
+satisfies the requirement (there should be at least one notification
+since the last state transition) without any further work.  Wouldn't
+this be easier and more robust?  The current code depends on
+annotating each possible transition event, which is kinda fragile.
+
+> > > +	if (lock_task_sighand(task, &flags)) {
+> > > +		if (test_bit(CGRP_FREEZE, &dst->flags))
+> > > +			task->jobctl |= JOBCTL_TRAP_FREEZE;
+> > > +		else
+> > > +			task->jobctl &= ~JOBCTL_TRAP_FREEZE;
+> > 
+> > How are these flags synchronized?
+> 
+> Using the css_set_lock.
+
+But other JOBCTL_TRAP bits aren't synchronized by css_set_lock, right?
 
 Thanks.
+
+-- 
+tejun
