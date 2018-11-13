@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_06_12,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54275C18DF5
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E08C2C4161B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 225B32245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 225B32245E
+	by mail.kernel.org (Postfix) with ESMTP id AF0152245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:25:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF0152245E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731073AbeKNGZ3 (ORCPT
+        id S1731229AbeKNGZb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 01:25:29 -0500
-Received: from ex13-edg-ou-002.vmware.com ([208.91.0.190]:45045 "EHLO
-        EX13-EDG-OU-002.vmware.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728686AbeKNGZ2 (ORCPT
+        Wed, 14 Nov 2018 01:25:31 -0500
+Received: from ex13-edg-ou-001.vmware.com ([208.91.0.189]:21360 "EHLO
+        EX13-EDG-OU-001.vmware.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1731024AbeKNGZa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 01:25:28 -0500
+        Wed, 14 Nov 2018 01:25:30 -0500
 Received: from sc9-mailhost2.vmware.com (10.113.161.72) by
- EX13-EDG-OU-002.vmware.com (10.113.208.156) with Microsoft SMTP Server id
- 15.0.1156.6; Tue, 13 Nov 2018 12:25:16 -0800
+ EX13-EDG-OU-001.vmware.com (10.113.208.155) with Microsoft SMTP Server id
+ 15.0.1156.6; Tue, 13 Nov 2018 12:25:12 -0800
 Received: from sc2-haas01-esx0118.eng.vmware.com (sc2-haas01-esx0118.eng.vmware.com [10.172.44.118])
-        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id 9C7EBB1A4D;
+        by sc9-mailhost2.vmware.com (Postfix) with ESMTP id D9225B1A56;
         Tue, 13 Nov 2018 15:25:38 -0500 (EST)
 From:   Nadav Amit <namit@vmware.com>
 To:     Ingo Molnar <mingo@redhat.com>
@@ -42,100 +42,105 @@ CC:     <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
         Nadav Amit <namit@vmware.com>,
         Andy Lutomirski <luto@kernel.org>,
         Kees Cook <keescook@chromium.org>,
-        Dave Hansen <dave.hansen@intel.com>
-Subject: [PATCH v5 04/10] fork: provide a function for copying init_mm
-Date:   Tue, 13 Nov 2018 05:07:24 -0800
-Message-ID: <20181113130730.44844-5-namit@vmware.com>
+        Dave Hansen <dave.hansen@intel.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>
+Subject: [PATCH v5 09/10] x86/jump-label: remove support for custom poker
+Date:   Tue, 13 Nov 2018 05:07:29 -0800
+Message-ID: <20181113130730.44844-10-namit@vmware.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113130730.44844-1-namit@vmware.com>
 References: <20181113130730.44844-1-namit@vmware.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-Received-SPF: None (EX13-EDG-OU-002.vmware.com: namit@vmware.com does not
+Received-SPF: None (EX13-EDG-OU-001.vmware.com: namit@vmware.com does not
  designate permitted sender hosts)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Provide a function for copying init_mm. This function will be later used
-for setting a temporary mm.
+There are only two types of poking: early and breakpoint based. The use
+of a function pointer to perform poking complicates the code and is
+probably inefficient due to the use of indirect branches.
 
 Cc: Andy Lutomirski <luto@kernel.org>
 Cc: Kees Cook <keescook@chromium.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Dave Hansen <dave.hansen@intel.com>
-Reviewed-by: Masami Hiramatsu <mhiramat@kernel.org>
-Tested-by: Masami Hiramatsu <mhiramat@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>
 Signed-off-by: Nadav Amit <namit@vmware.com>
 ---
- include/linux/sched/task.h |  1 +
- kernel/fork.c              | 24 ++++++++++++++++++------
- 2 files changed, 19 insertions(+), 6 deletions(-)
+ arch/x86/kernel/jump_label.c | 24 ++++++++----------------
+ 1 file changed, 8 insertions(+), 16 deletions(-)
 
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index 108ede99e533..ac0a675678f5 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -74,6 +74,7 @@ extern void exit_itimers(struct signal_struct *);
- extern long _do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *, unsigned long);
- extern long do_fork(unsigned long, unsigned long, unsigned long, int __user *, int __user *);
- struct task_struct *fork_idle(int);
-+struct mm_struct *copy_init_mm(void);
- extern pid_t kernel_thread(int (*fn)(void *), void *arg, unsigned long flags);
- extern long kernel_wait4(pid_t, int __user *, int, struct rusage *);
+diff --git a/arch/x86/kernel/jump_label.c b/arch/x86/kernel/jump_label.c
+index ed5fe274a7d8..994c13e2867d 100644
+--- a/arch/x86/kernel/jump_label.c
++++ b/arch/x86/kernel/jump_label.c
+@@ -39,7 +39,6 @@ static void bug_at(unsigned char *ip, int line)
  
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 07cddff89c7b..01d3f5b39363 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -1297,13 +1297,20 @@ void mm_release(struct task_struct *tsk, struct mm_struct *mm)
- 		complete_vfork_done(tsk);
- }
- 
--/*
-- * Allocate a new mm structure and copy contents from the
-- * mm structure of the passed in task structure.
-+/**
-+ * dup_mm() - duplicates an existing mm structure
-+ * @tsk: the task_struct with which the new mm will be associated.
-+ * @oldmm: the mm to duplicate.
-+ *
-+ * Allocates a new mm structure and copy contents from the provided
-+ * @oldmm structure.
-+ *
-+ * Return: the duplicated mm or NULL on failure.
-  */
--static struct mm_struct *dup_mm(struct task_struct *tsk)
-+static struct mm_struct *dup_mm(struct task_struct *tsk,
-+				struct mm_struct *oldmm)
+ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 					 enum jump_label_type type,
+-					 void *(*poker)(void *, const void *, size_t),
+ 					 int init)
  {
--	struct mm_struct *mm, *oldmm = current->mm;
-+	struct mm_struct *mm;
- 	int err;
+ 	union jump_code_union jmp;
+@@ -52,14 +51,6 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 	jmp.offset = jump_entry_target(entry) -
+ 		     (jump_entry_code(entry) + JUMP_LABEL_NOP_SIZE);
  
- 	mm = allocate_mm();
-@@ -1370,7 +1377,7 @@ static int copy_mm(unsigned long clone_flags, struct task_struct *tsk)
+-	/*
+-	 * As long as we're UP and not yet marked RO, we can use
+-	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
+-	 * SYSTEM_SCHEDULING before going either.
+-	 */
+-	if (system_state == SYSTEM_BOOTING)
+-		poker = text_poke_early;
+-
+ 	if (type == JUMP_LABEL_JMP) {
+ 		if (init) {
+ 			expect = default_nop; line = __LINE__;
+@@ -82,16 +73,17 @@ static void __ref __jump_label_transform(struct jump_entry *entry,
+ 		bug_at((void *)jump_entry_code(entry), line);
+ 
+ 	/*
+-	 * Make text_poke_bp() a default fallback poker.
++	 * As long as we're UP and not yet marked RO, we can use
++	 * text_poke_early; SYSTEM_BOOTING guarantees both, as we switch to
++	 * SYSTEM_SCHEDULING before going either.
+ 	 *
+ 	 * At the time the change is being done, just ignore whether we
+ 	 * are doing nop -> jump or jump -> nop transition, and assume
+ 	 * always nop being the 'currently valid' instruction
+-	 *
+ 	 */
+-	if (poker) {
+-		(*poker)((void *)jump_entry_code(entry), code,
+-			 JUMP_LABEL_NOP_SIZE);
++	if (init || system_state == SYSTEM_BOOTING) {
++		text_poke_early((void *)jump_entry_code(entry), code,
++				JUMP_LABEL_NOP_SIZE);
+ 		return;
  	}
  
- 	retval = -ENOMEM;
--	mm = dup_mm(tsk);
-+	mm = dup_mm(tsk, current->mm);
- 	if (!mm)
- 		goto fail_nomem;
- 
-@@ -2176,6 +2183,11 @@ struct task_struct *fork_idle(int cpu)
- 	return task;
+@@ -103,7 +95,7 @@ void arch_jump_label_transform(struct jump_entry *entry,
+ 			       enum jump_label_type type)
+ {
+ 	mutex_lock(&text_mutex);
+-	__jump_label_transform(entry, type, NULL, 0);
++	__jump_label_transform(entry, type, 0);
+ 	mutex_unlock(&text_mutex);
  }
  
-+struct mm_struct *copy_init_mm(void)
-+{
-+	return dup_mm(NULL, &init_mm);
-+}
-+
- /*
-  *  Ok, this is the main fork-routine.
-  *
+@@ -133,7 +125,7 @@ __init_or_module void arch_jump_label_transform_static(struct jump_entry *entry,
+ 			jlstate = JL_STATE_NO_UPDATE;
+ 	}
+ 	if (jlstate == JL_STATE_UPDATE)
+-		__jump_label_transform(entry, type, text_poke_early, 1);
++		__jump_label_transform(entry, type, 1);
+ }
+ 
+ #endif
 -- 
 2.17.1
 
