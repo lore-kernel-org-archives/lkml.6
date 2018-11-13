@@ -2,115 +2,145 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A5596C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22D5C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:19:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7653820811
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:17:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7653820811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 900622245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:19:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aOUFgIiC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 900622245E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732122AbeKMUOr (ORCPT
+        id S1732089AbeKMURW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 15:14:47 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56570 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732077AbeKMUOr (ORCPT
+        Tue, 13 Nov 2018 15:17:22 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:36750 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731910AbeKMURV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 15:14:47 -0500
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wADAE0jm010750;
-        Tue, 13 Nov 2018 11:16:58 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2nnq3j8u2x-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Tue, 13 Nov 2018 11:16:58 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AEBAD34;
-        Tue, 13 Nov 2018 10:16:57 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 84C78287B;
-        Tue, 13 Nov 2018 10:16:57 +0000 (GMT)
-Received: from SFHDAG3NODE1.st.com (10.75.127.7) by SFHDAG3NODE1.st.com
- (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 13 Nov
- 2018 11:16:57 +0100
-Received: from SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86]) by
- SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86%20]) with mapi id
- 15.00.1347.000; Tue, 13 Nov 2018 11:16:57 +0100
-From:   Bich HEMON <bich.hemon@st.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-CC:     Olof Johansson <olof@lixom.net>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Gerald BAEZA <gerald.baeza@st.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Ludovic BARRE <ludovic.barre@st.com>
-Subject: Re: [PATCH] ARM: stm32: debug: add low-level debug support
-Thread-Topic: [PATCH] ARM: stm32: debug: add low-level debug support
-Thread-Index: AQHTBvhu7ZuVgRQin0SIqpXfFjas8qVPSqoAgAD5r4CAAAJGgIAADqwA
-Date:   Tue, 13 Nov 2018 10:16:57 +0000
-Message-ID: <94666165-f206-5472-c848-499ba52cd354@st.com>
-References: <1501174209-27550-1-git-send-email-bich.hemon@st.com>
- <1501174209-27550-2-git-send-email-bich.hemon@st.com>
- <20181112182236.s7cs6dol4dmxkp7u@localhost>
- <f244c67b-de86-b0e7-7283-7b27f9591cf9@st.com>
- <20181113092422.GJ30658@n2100.armlinux.org.uk>
-In-Reply-To: <20181113092422.GJ30658@n2100.armlinux.org.uk>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.51]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <78FF2043ABE26D488A8FA0D6C4317C1C@st.com>
-Content-Transfer-Encoding: base64
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_07:,,
- signatures=0
+        Tue, 13 Nov 2018 15:17:21 -0500
+Received: by mail-pl1-f195.google.com with SMTP id w24-v6so5792810plq.3
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 02:19:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=Kc95EnGn+cj3smKpIGHS2dmfSXbmuMZVNB7X3W2m89c=;
+        b=aOUFgIiCiyA4ojFKzIeq8IuxmVjbpZYJuNvoymgCG1WPzdGw51nBx6khB2Z3H3KE0n
+         6HvsI0p1LM1ki2GquUWZvaTPYZ622qF8O3vAGYkWTbxjZYul2Ef9aXOgdHO256b+iQ2W
+         Le6G+KTue3NHGgaOMB0JsOzRmHhipzEP9Dixg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Kc95EnGn+cj3smKpIGHS2dmfSXbmuMZVNB7X3W2m89c=;
+        b=NdtVBj95fFrDcFtPPe2gI0ZcnXIOFx2ibm8C7v47s91xo7LbgZmTo1OjPABWDWsUhn
+         Xa+dXLyluwqMPJa4b/Cu2tCbfCypF8j/BfKTpfXbUcPsZfpYoVsCXA6fGworh3QdN1CK
+         os02axkodJus3vGSNLlh59Y6rDRbG3vTP/LINTgdxrEGKlY8MImzMHO0bPrk08bsfKvU
+         wK23wXsx9q6a0BlmsynNgynsG/IPVF6ymKmuReMc6CQfIN/PkFLw3f+0qLnbcnndDSOi
+         z+y1KJZjg18Br+GDcwD95gYdSesQrPfYxJis+AMeS9vRK66fO32zLXLyB0J6KIGJ2O7B
+         PfEQ==
+X-Gm-Message-State: AGRZ1gLEF8iKNZHbjg0lAfanxA4KKZMBYrPfDgdgRpBqJ9lF+iPMc2GU
+        u5fNkPIDVPwwEL2AXfkyhjIdNw==
+X-Google-Smtp-Source: AJdET5coDsB+bGzm1oggGjL6pYrJrYcro2yqDMf3kp3vfDEFwzegVOXfe3rDMQCuRpztGB/1+sSjtQ==
+X-Received: by 2002:a17:902:8a8e:: with SMTP id p14-v6mr4430642plo.133.1542104396370;
+        Tue, 13 Nov 2018 02:19:56 -0800 (PST)
+Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id f10-v6sm13363364pfa.188.2018.11.13.02.19.49
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 13 Nov 2018 02:19:55 -0800 (PST)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>,
+        linux-xtensa@linux-xtensa.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH v2 0/3] xtensa: system call table generation support
+Date:   Tue, 13 Nov 2018 15:49:27 +0530
+Message-Id: <1542104370-22831-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDExLzEzLzE4IDEwOjI0IEFNLCBSdXNzZWxsIEtpbmcgLSBBUk0gTGludXggd3JvdGU6
-DQo+IE9uIFR1ZSwgTm92IDEzLCAyMDE4IGF0IDA5OjE2OjE2QU0gKzAwMDAsIEJpY2ggSEVNT04g
-d3JvdGU6DQo+Pg0KPj4gT24gMTEvMTIvMTggNzoyMiBQTSwgT2xvZiBKb2hhbnNzb24gd3JvdGU6
-DQo+Pj4gT24gVGh1LCBKdWwgMjcsIDIwMTcgYXQgMDQ6NTA6MjBQTSArMDAwMCwgQmljaCBIRU1P
-TiB3cm90ZToNCj4+Pj4gRnJvbTogR2VyYWxkIEJhZXphIDxnZXJhbGQuYmFlemFAc3QuY29tPg0K
-Pj4+Pg0KPj4+PiBUaGlzIGFkZHMgbG93LWxldmVsIGRlYnVnIHN1cHBvcnQgb24gVVNBUlQxIGZv
-ciBTVE0zMkY0DQo+Pj4+IGFuZCBTVE0zMkY3Lg0KPj4+PiBDb21waWxlZCB2aWEgJ0NPTkZJR19E
-RUJVR19MTCcgYW5kICdDT05GSUdfRUFSTFlfUFJJTlRLJy4NCj4+Pj4gRW5hYmxlZCB2aWEgJ2Vh
-cmx5cHJpbnRrJyBpbiBib290YXJncy4NCj4+Pj4NCj4+Pj4gU2lnbmVkLW9mZi1ieTogR2VyYWxk
-IEJhZXphIDxnZXJhbGQuYmFlemFAc3QuY29tPg0KPj4+PiBTaWduZWQtb2ZmLWJ5OiBCaWNoIEhl
-bW9uIDxiaWNoLmhlbW9uQHN0LmNvbT4NCj4+Pg0KPj4+IEhpLA0KPj4+DQo+Pj4gVGhpcyBoYWQg
-ZmFsbGVuIGJldHdlZW4gdGhlIGNoYWlycyBpdCBzZWVtcy4gSSBoYXZlIGFwcGxpZWQgaXQgdG8g
-YXJtLXNvYw0KPj4+IG5leHQvc29jIG5vdywgZm9yIDQuMjEgbWVyZ2Ugd2luZG93Lg0KPj4+DQo+
-Pj4gSXQgZW5kZWQgdXAgYmVpbmcgcGF0Y2hlZCB1cCBtYW51YWxseSB0byBjb25zb2xpZGF0ZSB0
-aGUgdmVyc2lvbiBpbg0KPj4+IFJ1c3NlbGwncyBwYXRjaCB0cmFja2VyIHdpdGggdGhpcyBwb3N0
-ZWQgdmVyc2lvbiwgYW5kIEkgdHdlYWtlZCB3aGl0ZXNwYWNlDQo+Pj4gYSBiaXQuIExldCBtZSBr
-bm93IGlmIEkgbWlzc2VkIHNvbWV0aGluZy4NCj4+Pg0KPj4+DQo+Pj4gVGhhbmtzLA0KPj4+DQo+
-Pj4gLU9sb2YNCj4+Pg0KPj4NCj4+IEhpIE9sb2YsDQo+Pg0KPj4gUGxlYXNlIG5vdGUgdGhhdCB0
-aGlzIHBhdGNoIGhhcyB0byBiZSBhYmFuZG9uZWQgYXMgTHVkb3ZpYyBCQVJSRSBwdXNoZWQNCj4+
-IGEgbmV3IHZlcnNpb24gb2YgdGhpcyBjaGFuZ2U6DQo+PiBodHRwczovL3BhdGNod29yay5jb2Rl
-YXVyb3JhLm9yZy9wYXRjaC80MDA1NjMvDQo+Pg0KPj4gWW91IGNhbiBmaW5kIGl0IGluIFJ1c3Nl
-bGwncyB0cmFja2VyIGhlcmU6DQo+PiBodHRwOi8vd3d3LmFybS5saW51eC5vcmcudWsvZGV2ZWxv
-cGVyL3BhdGNoZXMvdmlld3BhdGNoLnBocD9pZD04ODAzLzENCj4gDQo+IEFuZCBJJ20gbm90IGdv
-aW5nIHRvIG1lcmdlIHRoYXQgYmVjYXVzZToNCj4gDQo+IDEpIGl0J3Mgbm90IGZvciBtZSB0byBt
-ZXJnZSAtIGl0IGRvZXNuJ3QgZ28gdGhyb3VnaCBteSB0cmVlLCBidXQgdGhyb3VnaA0KPiAgICAg
-YXJtLXNvYywgd2hpY2ggT2xvZiBhbmQgQXJuZCBtYW5hZ2UuDQo+IDIpIGl0J3Mgbm90IGJlZW4g
-b24gdGhlIG1haWxpbmcgbGlzdCBhcyBwZXIgbm9ybWFsIHN1Ym1pc3Npb24gcHJvY2Vzcy4NCj4g
-DQo+IFNvcnJ5Lg0KPiANCg0KT2ssIHRoYW5rIHlvdSBmb3IgdGhlIGZlZWRiYWNrLg0KDQpTbyBP
-bG9mLCBjYW4geW91IHBsZWFzZSBpZ25vcmUgbXkgcHJldmlvdXMgZW1haWwgYW5kIG1lcmdlIG15
-IHBhdGNoIGFzIA0KeW91IHByb3Bvc2VkIGl0IGZvciA0LjIxLiBMdWRvdmljJ3MgcGF0Y2ggd2ls
-bCBiZSBhYmFuZG9uZWQgaW5zdGVhZC4NCg0KVGhhbmtzLA0KDQpCaWNo
+The purpose of this patch series is, we can easily
+add/modify/delete system call table support by cha-
+nging entry in syscall.tbl file instead of manually
+changing many files. The other goal is to unify the 
+system call table generation support implementation 
+across all the architectures. 
+
+The system call tables are in different format in 
+all architecture. It will be difficult to manually
+add, modify or delete the system calls in the resp-
+ective files manually. To make it easy by keeping a 
+script and which'll generate uapi header file and 
+syscall table file.
+
+syscall.tbl contains the list of available system 
+calls along with system call number and correspond-
+ing entry point. Add a new system call in this arch-
+itecture will be possible by adding new entry in the
+syscall.tbl file.
+
+Adding a new table entry consisting of:
+        - System call number.
+        - ABI.
+        - System call name.
+        - Entry point name.
+
+ARM, s390 and x86 architecuture does exist the sim-
+ilar support. I leverage their implementation to come
+up with a generic solution.
+
+I have done the same support for work for alpha, ia64,
+m68k, microblaze, mips, parisc, powerpc, sh and sparc.
+Below mentioned git repository contains more details 
+about the workflow.
+
+https://github.com/frzkhn/system_call_table_generator/
+
+Finally, this is the ground work to solve the Y2038
+issue. We need to add two dozen of system calls to solve
+Y2038 issue. So this patch series will help to add new 
+system calls easily by adding new entry in the syscall.tbl.
+
+changes since v1:
+ - changed from generic-y to generated-y in Kbuild.
+ - removed the patch "0001-xtensa-move-SYS_XTENSA_-
+   macros-to-non-uapi-header.patch".
+
+Firoz Khan (3):
+  xtensa: add __NR_syscalls along with __NR_syscall_count
+  xtensa: add system call table generation support
+  xtensa: generate uapi header and syscall table header files
+
+ arch/xtensa/Makefile                      |   3 +
+ arch/xtensa/include/asm/Kbuild            |   1 +
+ arch/xtensa/include/asm/unistd.h          |   2 +
+ arch/xtensa/include/uapi/asm/Kbuild       |   1 +
+ arch/xtensa/include/uapi/asm/unistd.h     | 781 +-----------------------------
+ arch/xtensa/kernel/syscall.c              |   5 +-
+ arch/xtensa/kernel/syscalls/Makefile      |  38 ++
+ arch/xtensa/kernel/syscalls/syscall.tbl   | 374 ++++++++++++++
+ arch/xtensa/kernel/syscalls/syscallhdr.sh |  36 ++
+ arch/xtensa/kernel/syscalls/syscalltbl.sh |  32 ++
+ 10 files changed, 492 insertions(+), 781 deletions(-)
+ create mode 100644 arch/xtensa/kernel/syscalls/Makefile
+ create mode 100644 arch/xtensa/kernel/syscalls/syscall.tbl
+ create mode 100644 arch/xtensa/kernel/syscalls/syscallhdr.sh
+ create mode 100644 arch/xtensa/kernel/syscalls/syscalltbl.sh
+
+-- 
+1.9.1
+
