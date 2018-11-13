@@ -6,318 +6,186 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BF9C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:14:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 702C1C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:15:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 437532245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:14:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437532245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FF152243E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:15:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FF152243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=glider.be
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387474AbeKMXMw (ORCPT
+        id S2387502AbeKMXN1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:12:52 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:38807 "EHLO
-        relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732728AbeKMXMv (ORCPT
+        Tue, 13 Nov 2018 18:13:27 -0500
+Received: from albert.telenet-ops.be ([195.130.137.90]:57126 "EHLO
+        albert.telenet-ops.be" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732728AbeKMXN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:12:51 -0500
-Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie5.idc.renesas.com with ESMTP; 13 Nov 2018 22:09:42 +0900
-Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 7FC05B6BE9;
-        Tue, 13 Nov 2018 22:09:42 +0900 (JST)
-X-IronPort-AV: E=Sophos;i="5.54,499,1534777200"; 
-   d="scan'208";a="297422177"
-Received: from unknown (HELO vbox.ree.adwin.renesas.com) ([10.226.37.67])
-  by relmlii2.idc.renesas.com with ESMTP; 13 Nov 2018 22:09:40 +0900
-From:   Phil Edworthy <phil.edworthy@renesas.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Tue, 13 Nov 2018 18:13:27 -0500
+Received: from ramsan.of.borg ([84.194.111.163])
+        by albert.telenet-ops.be with bizsmtp
+        id zRFK1y00L3XaVaC06RFKyX; Tue, 13 Nov 2018 14:15:19 +0100
+Received: from rox.of.borg ([192.168.97.57])
+        by ramsan.of.borg with esmtp (Exim 4.86_2)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gMYXH-00066m-Mm; Tue, 13 Nov 2018 14:15:19 +0100
+Received: from geert by rox.of.borg with local (Exim 4.90_1)
+        (envelope-from <geert@linux-m68k.org>)
+        id 1gMYXH-0004l3-LD; Tue, 13 Nov 2018 14:15:19 +0100
+From:   Geert Uytterhoeven <geert+renesas@glider.be>
+To:     Eric Auger <eric.auger@redhat.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>, kvm@vger.kernel.org,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>
-Subject: [PATCH v3 2/2] irqchip: Add support for Renesas RZ/N1 GPIO interrupt multiplexer
-Date:   Tue, 13 Nov 2018 13:09:10 +0000
-Message-Id: <20181113130910.22130-3-phil.edworthy@renesas.com>
+        Geert Uytterhoeven <geert+renesas@glider.be>
+Subject: [PATCH v5] vfio: platform: Add generic reset controller support
+Date:   Tue, 13 Nov 2018 14:15:08 +0100
+Message-Id: <20181113131508.18246-1-geert+renesas@glider.be>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113130910.22130-1-phil.edworthy@renesas.com>
-References: <20181113130910.22130-1-phil.edworthy@renesas.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
-configured to have 32 interrupt outputs, so we have a total of 96 GPIO
-interrupts. All of these are passed to the GPIO IRQ Muxer, which selects
-8 of the GPIO interrupts to pass onto the GIC. The interrupt signals
-aren't latched, so there is nothing to do in this driver when an interrupt
-is received, other than tell the corresponding GPIO block.
+Vfio-platform requires dedicated reset support, provided either by ACPI,
+or, on DT platforms, by a device-specific reset driver matching against
+the device's compatible value.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
+On many SoCs, devices are connected to an SoC-internal reset controller.
+If the reset hierarchy is described in DT using "resets" properties, or
+in lookup tables in platform code, and devices have exactly one
+dedicated reset each, such devices can be reset in a generic way through
+the reset controller subsystem.  Hence add support for this, avoiding
+the need to write device-specific reset drivers for each single device
+on affected SoCs.
+
+Devices that do require a more complex reset procedure can still provide
+a device-specific reset driver, as that takes precedence.
+
+Note that this functionality depends on CONFIG_RESET_CONTROLLER=y, and
+becomes a no-op (as in: "No reset function found for device") if reset
+controller support is disabled.
+
+Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
+Reviewed-by: Simon Horman <horms+renesas@verge.net.au>
 ---
+This depends on "[PATCH] reset: Add reset_control_get_count()"
+(https://lore.kernel.org/lkml/20181113124744.7769-1-geert+renesas@glider.be/).
+
+v5:
+  - Use reset_control_get_exclusive() instead of rejected
+    reset_control_get_dedicated(), as exclusive already implies a
+    dedicated reset line,
+  - Ensure the device has exactly one reset,
+
+v4:
+  - Add Reviewed-by,
+  - Use new RFC reset_control_get_dedicated() instead of
+    of_reset_control_get_exclusive(), to (a) make it more generic, and
+    (b) make sure the reset returned is really a dedicated reset, and
+    does not affect other devices,
+
 v3:
- - Use 'interrupt-map' DT property to map the interrupts, this is very similar
-   to PCIe MSI. The only difference is that we need to get hold of the interrupt
-   specifier for the interupts coming into the irqmux.
- - Do not use a chained interrupt controller.
-v2:
- - Use interrupt-map to allow the GPIO controller info to be specified
-   as part of the irq.
- - Renamed struct and funcs from 'girq' to a more comprehenisble 'irqmux'.
----
- drivers/irqchip/Kconfig        |   9 ++
- drivers/irqchip/Makefile       |   1 +
- drivers/irqchip/rzn1-irq-mux.c | 205 +++++++++++++++++++++++++++++++++
- 3 files changed, 215 insertions(+)
- create mode 100644 drivers/irqchip/rzn1-irq-mux.c
+  - Add Reviewed-by,
+  - Merge similar checks in vfio_platform_has_reset(),
 
-diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
-index 96451b581452..53c54bba1dd8 100644
---- a/drivers/irqchip/Kconfig
-+++ b/drivers/irqchip/Kconfig
-@@ -204,6 +204,15 @@ config RENESAS_IRQC
- 	select GENERIC_IRQ_CHIP
- 	select IRQ_DOMAIN
+v2:
+  - Don't store error values in vdev->reset_control,
+  - Use of_reset_control_get_exclusive() instead of
+    __of_reset_control_get(),
+  - Improve description.
+---
+ drivers/vfio/platform/vfio_platform_common.c  | 29 +++++++++++++++++--
+ drivers/vfio/platform/vfio_platform_private.h |  1 +
+ 2 files changed, 28 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/vfio/platform/vfio_platform_common.c b/drivers/vfio/platform/vfio_platform_common.c
+index c0cd824be2b767be..ce2aad8e0a8159f9 100644
+--- a/drivers/vfio/platform/vfio_platform_common.c
++++ b/drivers/vfio/platform/vfio_platform_common.c
+@@ -18,6 +18,7 @@
+ #include <linux/module.h>
+ #include <linux/mutex.h>
+ #include <linux/pm_runtime.h>
++#include <linux/reset.h>
+ #include <linux/slab.h>
+ #include <linux/types.h>
+ #include <linux/uaccess.h>
+@@ -113,11 +114,14 @@ static bool vfio_platform_has_reset(struct vfio_platform_device *vdev)
+ 	if (VFIO_PLATFORM_IS_ACPI(vdev))
+ 		return vfio_platform_acpi_has_reset(vdev);
  
-+config RENESAS_RZN1_IRQ_MUX
-+	bool "Renesas RZ/N1 GPIO IRQ multiplexer support"
-+	depends on ARCH_RZN1
-+	select IRQ_DOMAIN
-+	help
-+	  Say yes here to add support for the GPIO IRQ multiplexer embedded
-+	  in Renesas RZ/N1 SoC devices. The GPIO IRQ Muxer selects which of
-+	  the interrupts coming from the GPIO controllers are used.
+-	return vdev->of_reset ? true : false;
++	return vdev->of_reset || vdev->reset_control;
+ }
+ 
+ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+ {
++	struct reset_control *rstc;
++	int count;
 +
- config ST_IRQCHIP
- 	bool
- 	select REGMAP
-diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
-index b822199445ff..b090f84dd42e 100644
---- a/drivers/irqchip/Makefile
-+++ b/drivers/irqchip/Makefile
-@@ -45,6 +45,7 @@ obj-$(CONFIG_SIRF_IRQ)			+= irq-sirfsoc.o
- obj-$(CONFIG_JCORE_AIC)			+= irq-jcore-aic.o
- obj-$(CONFIG_RENESAS_INTC_IRQPIN)	+= irq-renesas-intc-irqpin.o
- obj-$(CONFIG_RENESAS_IRQC)		+= irq-renesas-irqc.o
-+obj-$(CONFIG_RENESAS_RZN1_IRQ_MUX)	+= rzn1-irq-mux.o
- obj-$(CONFIG_VERSATILE_FPGA_IRQ)	+= irq-versatile-fpga.o
- obj-$(CONFIG_ARCH_NSPIRE)		+= irq-zevio.o
- obj-$(CONFIG_ARCH_VT8500)		+= irq-vt8500.o
-diff --git a/drivers/irqchip/rzn1-irq-mux.c b/drivers/irqchip/rzn1-irq-mux.c
-new file mode 100644
-index 000000000000..ee7810b9b3f3
---- /dev/null
-+++ b/drivers/irqchip/rzn1-irq-mux.c
-@@ -0,0 +1,205 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * RZ/N1 GPIO Interrupt Multiplexer
-+ *
-+ * Copyright (C) 2018 Renesas Electronics Europe Limited
-+ *
-+ * On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each configured
-+ * to have 32 interrupt outputs, so we have a total of 96 GPIO interrupts.
-+ * All of these are passed to the GPIO IRQ Muxer, which selects 8 of the GPIO
-+ * interrupts to pass onto the GIC.
-+ */
+ 	if (VFIO_PLATFORM_IS_ACPI(vdev))
+ 		return vfio_platform_acpi_has_reset(vdev) ? 0 : -ENOENT;
+ 
+@@ -128,8 +132,24 @@ static int vfio_platform_get_reset(struct vfio_platform_device *vdev)
+ 		vdev->of_reset = vfio_platform_lookup_reset(vdev->compat,
+ 							&vdev->reset_module);
+ 	}
++	if (vdev->of_reset)
++		return 0;
 +
-+#include <linux/interrupt.h>
-+#include <linux/irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+#include <linux/of_irq.h>
-+#include <linux/of_platform.h>
++	/* Generic reset handling needs a single, dedicated reset line */
++	count = reset_control_get_count(vdev->device);
++	if (count < 0)
++		return count;
 +
-+#define MAX_NR_INPUT_IRQS	96
-+#define MAX_NR_OUTPUT_IRQS	8
-+
-+/*
-+ * "interrupt-map" consists of 1 interrupt cell, 0 address cells, phandle to
-+ * interrupt parent, and parent interrupt specifier (3 cells for GIC), giving
-+ * a total of 5 cells.
-+ */
-+#define IMAP_LENGTH		5
-+
-+struct irqmux_priv;
-+struct irqmux_one {
-+	unsigned int irq;
-+	unsigned int src_hwirq;
-+	struct irqmux_priv *priv;
-+};
-+
-+struct irqmux_priv {
-+	struct device *dev;
-+	struct irq_domain *irq_domain;
-+	unsigned int nr_irqs;
-+	struct irqmux_one mux[MAX_NR_OUTPUT_IRQS];
-+};
-+
-+static irqreturn_t irqmux_handler(int irq, void *data)
-+{
-+	struct irqmux_one *mux = data;
-+	struct irqmux_priv *priv = mux->priv;
-+	unsigned int virq;
-+
-+	virq = irq_find_mapping(priv->irq_domain, mux->src_hwirq);
-+
-+	generic_handle_irq(virq);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static int irqmux_domain_map(struct irq_domain *h, unsigned int irq,
-+			     irq_hw_number_t hwirq)
-+{
-+	irq_set_chip_data(irq, h->host_data);
-+	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops irqmux_domain_ops = {
-+	.map = irqmux_domain_map,
-+};
-+
-+static int irqmux_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct device_node *np = dev->of_node;
-+	struct resource *res;
-+	u32 __iomem *regs;
-+	struct irqmux_priv *priv;
-+	unsigned int i;
-+	int nr_irqs;
-+	int ret;
-+	const __be32 *imap;
-+	int imaplen;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	priv->dev = dev;
-+	platform_set_drvdata(pdev, priv);
-+
-+	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-+	regs = devm_ioremap_resource(dev, res);
-+	if (IS_ERR(regs))
-+		return PTR_ERR(regs);
-+
-+	nr_irqs = of_irq_count(np);
-+	if (nr_irqs < 0)
-+		return nr_irqs;
-+
-+	if (nr_irqs > MAX_NR_OUTPUT_IRQS) {
-+		dev_err(dev, "too many output interrupts\n");
-+		return -ENOENT;
++	if (count != 1)
++		return -EINVAL;
+ 
+-	return vdev->of_reset ? 0 : -ENOENT;
++	rstc = reset_control_get_exclusive(vdev->device, NULL);
++	if (!IS_ERR(rstc)) {
++		vdev->reset_control = rstc;
++		return 0;
 +	}
 +
-+	priv->nr_irqs = nr_irqs;
++	return PTR_ERR(rstc);
+ }
+ 
+ static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
+@@ -139,6 +159,8 @@ static void vfio_platform_put_reset(struct vfio_platform_device *vdev)
+ 
+ 	if (vdev->of_reset)
+ 		module_put(vdev->reset_module);
 +
-+	/* Look for the interrupt-map */
-+	imap = of_get_property(np, "interrupt-map", &imaplen);
-+	if (!imap)
-+		return -ENOENT;
-+	imaplen /= IMAP_LENGTH * sizeof(__be32);
-+
-+	/* Sometimes not all muxs are used */
-+	if (imaplen < priv->nr_irqs)
-+		priv->nr_irqs = imaplen;
-+
-+	/* Create IRQ domain for the interrupts coming from the GPIO blocks */
-+	priv->irq_domain = irq_domain_add_linear(np, MAX_NR_INPUT_IRQS,
-+						 &irqmux_domain_ops, priv);
-+	if (!priv->irq_domain)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < MAX_NR_INPUT_IRQS; i++)
-+		irq_create_mapping(priv->irq_domain, i);
-+
-+	for (i = 0; i < priv->nr_irqs; i++) {
-+		struct irqmux_one *mux = &priv->mux[i];
-+
-+		ret = irq_of_parse_and_map(np, i);
-+		if (ret < 0) {
-+			ret = -ENOENT;
-+			goto err;
-+		}
-+
-+		mux->irq = ret;
-+		mux->priv = priv;
-+
-+		/*
-+		 * We need the first cell of the interrupt-map to configure
-+		 * the hardware.
-+		 */
-+		mux->src_hwirq = be32_to_cpu(*imap);
-+		imap += IMAP_LENGTH;
-+
-+		dev_info(dev, "%u: %u mapped irq %u\n", i,  mux->src_hwirq,
-+			 mux->irq);
-+
-+		ret = devm_request_irq(dev, mux->irq, irqmux_handler,
-+				       IRQF_SHARED | IRQF_NO_THREAD,
-+				       "irqmux", mux);
-+		if (ret < 0) {
-+			dev_err(dev, "failed to request IRQ: %d\n", ret);
-+			goto err;
-+		}
-+
-+		/* Set up the hardware to pass the interrupt through */
-+		writel(mux->src_hwirq, &regs[i]);
-+	}
-+
-+	dev_info(dev, "probed, %d gpio interrupts\n", priv->nr_irqs);
-+
-+	return 0;
-+
-+err:
-+	while (i--)
-+		irq_dispose_mapping(priv->mux[i].irq);
-+	irq_domain_remove(priv->irq_domain);
-+
-+	return ret;
-+}
-+
-+static int irqmux_remove(struct platform_device *pdev)
-+{
-+	struct irqmux_priv *priv = platform_get_drvdata(pdev);
-+	unsigned int i;
-+
-+	for (i = 0; i < priv->nr_irqs; i++)
-+		irq_dispose_mapping(priv->mux[i].irq);
-+	irq_domain_remove(priv->irq_domain);
-+
-+	return 0;
-+}
-+
-+static const struct of_device_id irqmux_match[] = {
-+	{ .compatible = "renesas,rzn1-gpioirqmux", },
-+	{ /* sentinel */ },
-+};
-+
-+MODULE_DEVICE_TABLE(of, irqmux_match);
-+
-+static struct platform_driver irqmux_driver = {
-+	.driver = {
-+		.name = "gpio_irq_mux",
-+		.owner = THIS_MODULE,
-+		.of_match_table = irqmux_match,
-+	},
-+	.probe = irqmux_probe,
-+	.remove = irqmux_remove,
-+};
-+
-+module_platform_driver(irqmux_driver);
-+
-+MODULE_DESCRIPTION("Renesas RZ/N1 GPIO IRQ Multiplexer Driver");
-+MODULE_AUTHOR("Phil Edworthy <phil.edworthy@renesas.com>");
-+MODULE_LICENSE("GPL v2");
++	reset_control_put(vdev->reset_control);
+ }
+ 
+ static int vfio_platform_regions_init(struct vfio_platform_device *vdev)
+@@ -218,6 +240,9 @@ static int vfio_platform_call_reset(struct vfio_platform_device *vdev,
+ 	} else if (vdev->of_reset) {
+ 		dev_info(vdev->device, "reset\n");
+ 		return vdev->of_reset(vdev);
++	} else if (vdev->reset_control) {
++		dev_info(vdev->device, "reset\n");
++		return reset_control_reset(vdev->reset_control);
+ 	}
+ 
+ 	dev_warn(vdev->device, "no reset function found!\n");
+diff --git a/drivers/vfio/platform/vfio_platform_private.h b/drivers/vfio/platform/vfio_platform_private.h
+index 85ffe5d9d1abd94e..a56e80ae5986540b 100644
+--- a/drivers/vfio/platform/vfio_platform_private.h
++++ b/drivers/vfio/platform/vfio_platform_private.h
+@@ -60,6 +60,7 @@ struct vfio_platform_device {
+ 	const char			*compat;
+ 	const char			*acpihid;
+ 	struct module			*reset_module;
++	struct reset_control		*reset_control;
+ 	struct device			*device;
+ 
+ 	/*
 -- 
 2.17.1
 
