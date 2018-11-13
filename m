@@ -2,157 +2,139 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E8B9C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:34:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A75FC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:35:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08F092175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:34:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BBDF7223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:35:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="f5p4gVw1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08F092175B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="Y2s9Tvm0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBDF7223AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730817AbeKNEeC (ORCPT
+        id S1730890AbeKNEed (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:34:02 -0500
-Received: from mail-eopbgr790087.outbound.protection.outlook.com ([40.107.79.87]:33952
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726659AbeKNEeC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:34:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ILvJZwrwVKJamubga5nLFJ/huflWX2MUVbgqT6tpBG0=;
- b=f5p4gVw1cAnf2sJmfYwo5xZRmE2w3RdUJvgLLH7HJFzltRH2Fan0/8GGw92hg9pwjyLjnRBGi1pim7uiKIWsBdmI6P9q0xYrKsnnvGYnSEEb0VbgnsFi2b9/1e4vHxjSQdvLjLn82Z1vdwRSq2J4149hGf1TYtdDDYfo1rayZPc=
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
- BYAPR05MB4534.namprd05.prod.outlook.com (52.135.203.149) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.10; Tue, 13 Nov 2018 18:34:39 +0000
-Received: from BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d]) by BYAPR05MB4776.namprd05.prod.outlook.com
- ([fe80::a1b8:a948:4c8c:747d%4]) with mapi id 15.20.1339.021; Tue, 13 Nov 2018
- 18:34:39 +0000
-From:   Nadav Amit <namit@vmware.com>
-To:     Ingo Molnar <mingo@kernel.org>
-CC:     Ingo Molnar <mingo@redhat.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Logan Gunthorpe <logang@deltatee.com>
-Subject: Re: [PATCH 1/2] Makefile: Fix distcc compilation with x86 macros
-Thread-Topic: [PATCH 1/2] Makefile: Fix distcc compilation with x86 macros
-Thread-Index: AQHUetXZ1x6cjbBfk0ugZnU2RuWk66VNksAAgABrugCAAArpgA==
-Date:   Tue, 13 Nov 2018 18:34:39 +0000
-Message-ID: <48577A3F-0F76-4CCA-A959-965344D7259F@vmware.com>
-References: <20181112150215.508-1-namit@vmware.com>
- <20181112150215.508-2-namit@vmware.com> <20181113113000.GB4788@gmail.com>
- <40E4E1B4-EF5F-43A1-B42C-C4CF6349FC62@vmware.com>
-In-Reply-To: <40E4E1B4-EF5F-43A1-B42C-C4CF6349FC62@vmware.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=namit@vmware.com; 
-x-originating-ip: [208.91.2.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BYAPR05MB4534;20:566wO5U/78wJXQjngtg2KtnR+GrgkiXMizuMKok3iLe5Zb/c9QoSLLd10wHqOf350cAiBr3LR+GeTC5zFUyJfPI2G9ywkeHs+V6CJwUgH2R6RBug/swwpzoldUHqgRcHHRqa1V9tpwuxqHZdOE4wqgRuIR33p5uX76y6o0mJPzY=
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: 60703090-edf0-44a3-cf3e-08d64996abca
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390060)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4534;
-x-ms-traffictypediagnostic: BYAPR05MB4534:
-x-microsoft-antispam-prvs: <BYAPR05MB453452EC384C1431B5576D48D0C20@BYAPR05MB4534.namprd05.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231382)(944501410)(52105112)(10201501046)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4534;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4534;
-x-forefront-prvs: 085551F5A8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(376002)(136003)(366004)(396003)(39860400002)(199004)(189003)(82746002)(68736007)(36756003)(4326008)(53936002)(6486002)(6512007)(6436002)(6246003)(229853002)(8936002)(106356001)(316002)(81156014)(105586002)(256004)(2616005)(486006)(83716004)(446003)(476003)(54906003)(11346002)(81166006)(71200400001)(71190400001)(8676002)(93886005)(26005)(66066001)(7416002)(2906002)(99286004)(97736004)(5660300001)(3846002)(186003)(7736002)(6916009)(305945005)(6506007)(2900100001)(76176011)(53546011)(102836004)(6116002)(478600001)(14454004)(33656002)(25786009)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4534;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: vmware.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 2NaU3PqgJ0QE4ZKh4joQshgj70jF31lRxxWOzhj6clmzNUr03Kf5BGVz5J0lSwKRG+TTTlFgPSDaUsdZQve5ZO1ScI9nVdvO0tApijQt5uAkGwjpjLPyl1u13xZ2+p2r93cuy69cMX5asNUvxF0Nke8vaQYDte2fGBQVJ7FazgoIr9FLtZne4MI8s8cM9wLNKxmxX4NOV/nh/+6N0kYt71kPVsIClPmKFtTOj4fAnm2aJjnykH7PQwdl+awrEfIXLzPheM8YmUI5gKq0NHPmCfmRXOpR64dayRQJ88xYPEMnmXwjXoJKb32khIl76zzVAPqzNSjlLwnUfGPh4bb63GEDFLDhDdwWnNpgGE8XjJg=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <40926D1688691E4786CEC86ED85F4D8B@namprd05.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Tue, 13 Nov 2018 23:34:33 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:38135 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726695AbeKNEec (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 23:34:32 -0500
+Received: by mail-qk1-f196.google.com with SMTP id d19so21222622qkg.5
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 10:35:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=eazBKST81Ay2gNO89uE6O7K62RWYfPOh3Pfs5q7yXnA=;
+        b=Y2s9Tvm06f72HsRaC5V0w9zIaEaaQnU7P/aG+JNojzz58xUt3T1o0PXROouB5rowSJ
+         EAwJFYV8rHzW9GOcZW3vKOznH4TtgzjtWuU/LQdWRWupGVqTHd7GgYFi02UwOGRDBlh+
+         nHYy/Q28N60gl+7t2WS/6S1wgui/e1T+i9tlok4S08BBq1OJ78JNH7kypwaZLiu7F9NR
+         Z0nklKSpdTbQXJkffbEutK5IBxHnFFRToyS8sIvriKFhAo2Kp0HboYUuNUCymy3zFvQ4
+         xSlO6ERpCUQOf3un2WBK6OV1qmVPuJcx5J2X0Vlg3n1gvZgyNg8P+D75m05hGrLtL2C+
+         iuKQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=eazBKST81Ay2gNO89uE6O7K62RWYfPOh3Pfs5q7yXnA=;
+        b=mleSq7IXNnXVEMHChygZSjeYkJhKdah9VVFeQ3gKic1ZZ0tSA3yKeKIiD+8ijo8LTx
+         FjAUC7iUh8PdPwZbCzU6mQ/LWi1dmxxn+wfcz9EsWF2r0bIkc7o/HgYxLyBlgQnvNwKZ
+         8VWuNtiz8LpuAszAz+HYX9FBx3bSvOXw6keUol1a508u23y8G+FeDZxNrHGdxp6E2M2k
+         VX0BZfH7lSFKPrcstY2W9kOVWSpj9pfAEHUjDlGmOfvpLHr9AVKTqtlT9tNnFAo+srKR
+         1Ag+4WjtwE4XapF3QiJqvfWnUnJeX0dCzlnZTq8STcEinR2/JFsjzrLDK+mQjqmgUlrW
+         f//A==
+X-Gm-Message-State: AGRZ1gII0lbZKcGeylDzDcgN+rKUKwmIMqj7OCl1p3x7qNHsMZZ7voMT
+        ItPwCu5COG1mQCg1arpuYZ/bJw==
+X-Google-Smtp-Source: AJdET5e9qsjG6HFfRiBQd5mX8tep68g3EuK19Kz/eOWEtNLZ2og77wjLyZOtetRUizQsv6pDvXa+7w==
+X-Received: by 2002:a37:9281:: with SMTP id u123mr6286155qkd.0.1542134113269;
+        Tue, 13 Nov 2018 10:35:13 -0800 (PST)
+Received: from soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net ([40.117.208.181])
+        by smtp.gmail.com with ESMTPSA id o49sm12657879qtf.60.2018.11.13.10.35.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Nov 2018 10:35:11 -0800 (PST)
+Date:   Tue, 13 Nov 2018 18:35:10 +0000
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     Timofey Titovets <timofey.titovets@synesis.ru>
+Cc:     oleksandr@natalenko.name, Jann Horn <jannh@google.com>,
+        linux-doc@vger.kernel.org,
+        Linux Kernel <linux-kernel@vger.kernel.org>,
+        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
+Subject: Re: [PATCH V3] KSM: allow dedup all tasks memory
+Message-ID: <20181113183510.5y2hzruoi23e7o2t@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
+References: <CAG48ez0ZprqUYGZFxcrY6U3Dnwt77q1NJXzzpsn1XNkRuXVppw@mail.gmail.com>
+ <d43da6ad1a3c164aa03e0f22f065591a@natalenko.name>
+ <20181113175930.3g65rlhbaimstq7g@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
+ <CAGqmi74gpvJv8=B-3pVSMrDssu-aYMxW9xM7mt1WNQjGLjMZqA@mail.gmail.com>
 MIME-Version: 1.0
-X-OriginatorOrg: vmware.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 60703090-edf0-44a3-cf3e-08d64996abca
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2018 18:34:39.4058
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4534
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGqmi74gpvJv8=B-3pVSMrDssu-aYMxW9xM7mt1WNQjGLjMZqA@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTmFkYXYgQW1pdA0KU2VudDogTm92ZW1iZXIgMTMsIDIwMTggYXQgNTo1NTozNCBQTSBH
-TVQNCj4gVG86IEluZ28gTW9sbmFyIDxtaW5nb0BrZXJuZWwub3JnPg0KPiBDYzogSW5nbyBNb2xu
-YXIgPG1pbmdvQHJlZGhhdC5jb20+LCBNYXNhaGlybyBZYW1hZGEgPHlhbWFkYS5tYXNhaGlyb0Bz
-b2Npb25leHQuY29tPiwgTWljaGFsIE1hcmVrIDxtaWNoYWwubGttbEBtYXJrb3ZpLm5ldD4sIFRo
-b21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPiwgQm9yaXNsYXYgUGV0a292IDxicEBh
-bGllbjguZGU+LCBILiBQZXRlciBBbnZpbiA8aHBhQHp5dG9yLmNvbT4sIFg4NiBNTCA8eDg2QGtl
-cm5lbC5vcmc+LCBMaW51eCBLYnVpbGQgbWFpbGluZyBsaXN0IDxsaW51eC1rYnVpbGRAdmdlci5r
-ZXJuZWwub3JnPiwgTEtNTCA8bGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZz4sIExvZ2FuIEd1
-bnRob3JwZSA8bG9nYW5nQGRlbHRhdGVlLmNvbT4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCAxLzJd
-IE1ha2VmaWxlOiBGaXggZGlzdGNjIGNvbXBpbGF0aW9uIHdpdGggeDg2IG1hY3Jvcw0KPiANCj4g
-DQo+IEZyb206IEluZ28gTW9sbmFyDQo+IFNlbnQ6IE5vdmVtYmVyIDEzLCAyMDE4IGF0IDExOjMw
-OjAwIEFNIEdNVA0KPj4gVG86IE5hZGF2IEFtaXQgPG5hbWl0QHZtd2FyZS5jb20+DQo+PiBDYzog
-SW5nbyBNb2xuYXIgPG1pbmdvQHJlZGhhdC5jb20+LCBNYXNhaGlybyBZYW1hZGEgPHlhbWFkYS5t
-YXNhaGlyb0Bzb2Npb25leHQuY29tPiwgTWljaGFsIE1hcmVrIDxtaWNoYWwubGttbEBtYXJrb3Zp
-Lm5ldD4sIFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPiwgQm9yaXNsYXYgUGV0
-a292IDxicEBhbGllbjguZGU+LCBILiBQZXRlciBBbnZpbiA8aHBhQHp5dG9yLmNvbT4sIHg4NkBr
-ZXJuZWwub3JnLCBsaW51eC1rYnVpbGRAdmdlci5rZXJuZWwub3JnLCBsaW51eC1rZXJuZWxAdmdl
-ci5rZXJuZWwub3JnDQo+PiBTdWJqZWN0OiBSZTogW1BBVENIIDEvMl0gTWFrZWZpbGU6IEZpeCBk
-aXN0Y2MgY29tcGlsYXRpb24gd2l0aCB4ODYgbWFjcm9zDQo+PiANCj4+IA0KPj4gDQo+PiAqIE5h
-ZGF2IEFtaXQgPG5hbWl0QHZtd2FyZS5jb20+IHdyb3RlOg0KPj4gDQo+Pj4gSW50cm9kdWNpbmcg
-dGhlIHVzZSBvZiBhc20gbWFjcm9zIGluIGMtY29kZSBicm9rZSBkaXN0Y2MsIHNpbmNlIGl0IG9u
-bHkNCj4+PiBzZW5kcyB0aGUgcHJlcHJvY2Vzc2VkIHNvdXJjZSBmaWxlLiBUaGUgc29sdXRpb24g
-aXMgdG8gYnJlYWsgdGhlDQo+Pj4gY29tcGlsYXRpb24gaW50byB0d28gc2VwYXJhdGUgcGhhc2Vz
-IG9mIGNvbXBpbGF0aW9uIGFuZCBhc3NlbWJseSwgYW5kDQo+Pj4gYmV0d2VlbiB0aGUgdHdvIGNv
-bmNhdGFuYXRlIHRoZSBhc3NlbWJseSBtYWNyb3MgYW5kIHRoZSBjb21waWxlZCAoeWV0DQo+PiAN
-Cj4+IHMvY29uY2F0ZW5hdGUNCj4+IA0KPj4+IG5vdCBhc3NlbWJsZWQpIHNvdXJjZSBmaWxlLiBT
-aW5jZSB0aGlzIGlzIGxlc3MgZWZmaWNpZW50LCB0aGlzDQo+Pj4gY29tcGlsYXRpb24gbW9kZSBp
-cyBvbmx5IHVzZWQgd2hlbiBtYWtlIGlzIGNhbGxlZCB3aXRoIHRoZSAiRElTVENDPXkiDQo+Pj4g
-cGFyYW1ldGVyLg0KPj4+IA0KPj4+IE5vdGUgdGhhdCB0aGUgYXNzZW1ibHkgc3RhZ2Ugc2hvdWxk
-IGFsc28gYmUgZGlzdHJpYnV0ZWQsIGlmIGRpc3RjYyBpcw0KPj4+IGNvbmZpZ3VyZWQgdXNpbmcg
-IkNGTEFHUz0tREVOQUJMRV9SRU1PVEVfQVNTRU1CTEUiLg0KPj4gDQo+PiBJdCdzIGEgYml0IHNh
-ZCB0aGF0IHdlIHJlZ3Jlc3NlZCBkaXN0Y2MgcGVyZm9ybWFuY2Ug4oCmDQo+IA0KPiBJIGRvbuKA
-mXQga25vdyB3aGF0IHRoZSBhY3R1YWwgaW1wYWN0IGlzLCBidXQgTG9nYW4sIHdobyByZXBvcnRl
-ZCB0aGUgYnVnIHNheXMNCj4gdGhlcmUgaXMgYW4gYWx0ZXJuYXRpdmUgc29sdXRpb24gZm9yIHdo
-ZW4gZGlzdGNjLXB1bXAgaXMgdXNlZCAod2hpY2gNCj4gcHJlc3VtYWJseSB3b3VsZCBoYXZlIH56
-ZXJvIHBlcmZvcm1hbmNlIGRlZ3JhZGF0aW9uKS4gZGlzdGNjIGlzIHJlYWxseQ0KPiBmcmFnaWxl
-IElNSE8gLSBpdOKAmXMgZW5vdWdoIHRoYXQgaXQgZmluZHMgd2hhdCBsb29rcyBsaWtlIHR3byBz
-b3VyY2UgZmlsZXMgaW4NCj4gdGhlIGNvbXBpbGVyIGNvbW1hbmQgYXJndW1lbnRzIGZvciBpdCB0
-byBmYWxsIGJhY2sgdG8gbG9jYWwgY29tcGlsYXRpb24uDQo+IA0KPiBbIEluIHRoaXMgcmVnYXJk
-LCB0aGUgZGlzdGNjLXB1bXAgc29sdXRpb24gd291bGQgKm5vdCogd29yayBpZiBkaXN0Y2MgaXMN
-Cj4gYnVpbHQgd2l0aCBzdXBwb3J0IGZvciBkaXN0cmlidXRlZCBhc3NlbWJseSwgc2luY2UgaXQg
-d2lsbCBjb25zaWRlciB0aGUgLnMNCj4gZmlsZSBhcyBhIHNlY29uZCBzb3VyY2UgZmlsZS4gXQ0K
-PiANCj4+PiArIyBJZiBkaXN0Y2MgaXMgdXNlZCwgdGhlbiB3aGVuIGFuIGFzc2VtYmx5IG1hY3Jv
-IGZpbGVzIGlzIG5lZWRlZCwgdGhlDQo+Pj4gKyMgY29tcGlsYXRpb24gc3RhZ2UgYW5kIHRoZSBh
-c3NlbWJseSBzdGFnZSBuZWVkIHRvIGJlIHNlcGFyYXRlZC4gUHJvdmlkaW5nDQo+Pj4gKyMgIkRJ
-U1RDQz15IiBvcHRpb24gZW5hYmxlcyB0aGUgc2VwYXJhdGUgY29tcGlsYXRpb24gYW5kIGFzc2Vt
-Ymx5Lg0KPj4gDQo+PiBMZXQncyBmaXggdGhlIHZhcmlvdXMgdHlwb3M6DQo+PiANCj4+PiArIyBJ
-ZiBkaXN0Y2MgaXMgdXNlZCwgYW5kIHdoZW4gYXNzZW1ibHkgbWFjcm8gZmlsZXMgYXJlIG5lZWRl
-ZCwgdGhlDQo+Pj4gKyMgY29tcGlsYXRpb24gc3RhZ2UgYW5kIHRoZSBhc3NlbWJseSBzdGFnZSBu
-ZWVkcyB0byBiZSBzZXBhcmF0ZWQuIA0KPj4+ICsjIFByb3ZpZGluZyB0aGUgIkRJU1RDQz15IiBv
-cHRpb24gZW5hYmxlcyBzZXBhcmF0ZSBjb21waWxhdGlvbiBhbmQgDQo+Pj4gKyMgYXNzZW1ibHku
-DQo+IA0KPiBUaGF04oCZcyBncmFtbWFyLCBub3QgdHlwb3MgOy0pDQo+IA0KPiBTb3JyeSBmb3Ig
-dGhhdCAtIEkgd2lsbCBmaXggaXQgYW4gc2VuZCB2MiAoYXMgd2VsbCBhcyB0aGUgd2hpdGVzcGFj
-ZSBub2lzZSkuDQoNCkp1c3Qgb25lIHF1ZXN0aW9uIGJlZm9yZSBJIHNlbmQgdjIsIHNpbmNlIEkg
-aGF2ZSBzZWNvbmQgdGhvdWdodHMuIERvZXMgaXQNCm1ha2Ugc2Vuc2UgdG8gcmVxdWlyZSB0aGUg
-4oCcRElTVEND4oCdIG1ha2UgcGFyYW1ldGVyLCBvciBzaG91bGQgaXQgYmUgc2V0IGluDQp0aGUg
-S2NvbmZpZz8gSXQgY2FuIGJlIGRldGVjdGVkIGF1dG9tYXRpY2FsbHksIHRoZSBzYW1lIHdheSBn
-Y2MvY2xhbmcgYXJlDQpkZXRlY3RlZCBvciBtYW51YWxseSB0aHJvdWdoIGEgY29uZmlnIG9wdGlv
-bi4NCg0K
+On 18-11-13 21:17:42, Timofey Titovets wrote:
+> вт, 13 нояб. 2018 г. в 20:59, Pavel Tatashin <pasha.tatashin@soleen.com>:
+> >
+> > On 18-11-13 15:23:50, Oleksandr Natalenko wrote:
+> > > Hi.
+> > >
+> > > > Yep. However, so far, it requires an application to explicitly opt in
+> > > > to this behavior, so it's not all that bad. Your patch would remove
+> > > > the requirement for application opt-in, which, in my opinion, makes
+> > > > this way worse and reduces the number of applications for which this
+> > > > is acceptable.
+> > >
+> > > The default is to maintain the old behaviour, so unless the explicit
+> > > decision is made by the administrator, no extra risk is imposed.
+> >
+> > The new interface would be more tolerable if it honored MADV_UNMERGEABLE:
+> >
+> > KSM default on: merge everything except when MADV_UNMERGEABLE is
+> > excplicitly set.
+> >
+> > KSM default off: merge only when MADV_MERGEABLE is set.
+> >
+> > The proposed change won't honor MADV_UNMERGEABLE, meaning that
+> > application programmers won't have a way to prevent sensitive data to be
+> > every merged. So, I think, we should keep allow an explicit opt-out
+> > option for applications.
+> >
+> 
+> We just did not have VM/Madvise flag for that currently.
+> Same as THP.
+> Because all logic written with assumption, what we have exactly 2 states.
+> Allow/Disallow (More like not allow).
+> 
+> And if we try to add, that must be something like:
+> MADV_FORBID_* to disallow something completely.
+
+No need to add new user flag MADV_FORBID, we should keep MADV_MERGEABLE
+and MADV_UNMERGEABLE, but make them work so when MADV_UNMERGEABLE is
+set, memory is indeed becomes always unmergeable regardless of ksm mode
+of operation.
+
+To do the above in ksm_madvise(), a new state should be added, for example
+instead of: 
+
+case MADV_UNMERGEABLE:
+	*vm_flags &= ~VM_MERGEABLE;
+
+A new flag should be used:
+	*vm_flags |= VM_UNMERGEABLE;
+
+I think, without honoring MADV_UNMERGEABLE correctly, this patch won't
+be accepted.
+
+Pasha
