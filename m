@@ -7,215 +7,125 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BEAC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DAB9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 73DDF2251F
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E910922510
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qX4G7JJq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 73DDF2251F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GniJ4nFK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E910922510
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733015AbeKMPtL (ORCPT
+        id S1733031AbeKMPtN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:49:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36192 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:49:13 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732935AbeKMPtJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:49:09 -0500
+        id S1732935AbeKMPtL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:49:11 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3EEC42251D;
-        Tue, 13 Nov 2018 05:52:41 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 442862251D;
+        Tue, 13 Nov 2018 05:52:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088361;
-        bh=P/0AuPw3ZpCOOANV96befJtEvWk9R1zto4pWPIT1cfg=;
+        s=default; t=1542088364;
+        bh=hc+yqm5Aej2W24jRKe+OxYn+OVfV/rVNeUMK0NXBYGc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qX4G7JJqPnDds1PRqeqTqx7l3MD2ulbnFvqk+tRQARfDfreWN5sjOOeP99xGlpnue
-         Lq/JXEEqARMidFDkceTdqDa5ZRX4u2sBb45M+GnYaPBOi8BP4XZuh3+ZYverSBHius
-         zp0BjoDd3tSmHiyBMGzf1p03lfBrFakzTm7YzTns=
+        b=GniJ4nFKZDI3gfZy4VAWE67jJgw60RC/79eNqsv1fc3iM+RQZRBCxdalY0pwlkDex
+         6qAU3WlnS1nljlhibcvlU1chn4LmwSmFlrBijKXQBu1BIlw+3QSsovbkTyPri8UgIO
+         /IEA87aNmP7W9gcyAI16XYegt59xQYNZQ11WY62M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
+Cc:     Jann Horn <jannh@google.com>, Jeff Mahoney <jeffm@suse.com>,
+        Eric Biggers <ebiggers@google.com>,
+        Al Viro <viro@zeniv.linux.org.uk>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.9 16/17] userfaultfd: allow get_mempolicy(MPOL_F_NODE|MPOL_F_ADDR) to trigger userfaults
-Date:   Tue, 13 Nov 2018 00:52:22 -0500
-Message-Id: <20181113055223.79060-16-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, reiserfs-devel@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 02/11] reiserfs: propagate errors from fill_with_dentries() properly
+Date:   Tue, 13 Nov 2018 00:52:33 -0500
+Message-Id: <20181113055242.79261-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113055223.79060-1-sashal@kernel.org>
-References: <20181113055223.79060-1-sashal@kernel.org>
+In-Reply-To: <20181113055242.79261-1-sashal@kernel.org>
+References: <20181113055242.79261-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Arcangeli <aarcange@redhat.com>
+From: Jann Horn <jannh@google.com>
 
-[ Upstream commit 3b9aadf7278d16d7bed4d5d808501065f70898d8 ]
+[ Upstream commit b10298d56c9623f9b173f19959732d3184b35f4f ]
 
-get_mempolicy(MPOL_F_NODE|MPOL_F_ADDR) called a get_user_pages that would
-not be waiting for userfaults before failing and it would hit on a SIGBUS
-instead.  Using get_user_pages_locked/unlocked instead will allow
-get_mempolicy to allow userfaults to resolve the fault and fill the hole,
-before grabbing the node id of the page.
+fill_with_dentries() failed to propagate errors up to
+reiserfs_for_each_xattr() properly.  Plumb them through.
 
-If the user calls get_mempolicy() with MPOL_F_ADDR | MPOL_F_NODE for an
-address inside an area managed by uffd and there is no page at that
-address, the page allocation from within get_mempolicy() will fail
-because get_user_pages() does not allow for page fault retry required
-for uffd; the user will get SIGBUS.
+Note that reiserfs_for_each_xattr() is only used by
+reiserfs_delete_xattrs() and reiserfs_chown_xattrs().  The result of
+reiserfs_delete_xattrs() is discarded anyway, the only difference there is
+whether a warning is printed to dmesg.  The result of
+reiserfs_chown_xattrs() does matter because it can block chowning of the
+file to which the xattrs belong; but either way, the resulting state can
+have misaligned ownership, so my patch doesn't improve things greatly.
 
-With this patch, the page fault will be resolved by the uffd and the
-get_mempolicy() will continue normally.
+Credit for making me look at this code goes to Al Viro, who pointed out
+that the ->actor calling convention is suboptimal and should be changed.
 
-Background:
-
-Via code review, previously the syscall would have returned -EFAULT
-(vm_fault_to_errno), now it will block and wait for an userfault (if
-it's waken before the fault is resolved it'll still -EFAULT).
-
-This way get_mempolicy will give a chance to an "unaware" app to be
-compliant with userfaults.
-
-The reason this visible change is that becoming "userfault compliant"
-cannot regress anything: all other syscalls including read(2)/write(2)
-had to become "userfault compliant" long time ago (that's one of the
-things userfaultfd can do that PROT_NONE and trapping segfaults can't).
-
-So this is just one more syscall that become "userfault compliant" like
-all other major ones already were.
-
-This has been happening on virtio-bridge dpdk process which just called
-get_mempolicy on the guest space post live migration, but before the
-memory had a chance to be migrated to destination.
-
-I didn't run an strace to be able to show the -EFAULT going away, but
-I've the confirmation of the below debug aid information (only visible
-with CONFIG_DEBUG_VM=y) going away with the patch:
-
-    [20116.371461] FAULT_FLAG_ALLOW_RETRY missing 0
-    [20116.371464] CPU: 1 PID: 13381 Comm: vhost-events Not tainted 4.17.12-200.fc28.x86_64 #1
-    [20116.371465] Hardware name: LENOVO 20FAS2BN0A/20FAS2BN0A, BIOS N1CET54W (1.22 ) 02/10/2017
-    [20116.371466] Call Trace:
-    [20116.371473]  dump_stack+0x5c/0x80
-    [20116.371476]  handle_userfault.cold.37+0x1b/0x22
-    [20116.371479]  ? remove_wait_queue+0x20/0x60
-    [20116.371481]  ? poll_freewait+0x45/0xa0
-    [20116.371483]  ? do_sys_poll+0x31c/0x520
-    [20116.371485]  ? radix_tree_lookup_slot+0x1e/0x50
-    [20116.371488]  shmem_getpage_gfp+0xce7/0xe50
-    [20116.371491]  ? page_add_file_rmap+0x1a/0x2c0
-    [20116.371493]  shmem_fault+0x78/0x1e0
-    [20116.371495]  ? filemap_map_pages+0x3a1/0x450
-    [20116.371498]  __do_fault+0x1f/0xc0
-    [20116.371500]  __handle_mm_fault+0xe2e/0x12f0
-    [20116.371502]  handle_mm_fault+0xda/0x200
-    [20116.371504]  __get_user_pages+0x238/0x790
-    [20116.371506]  get_user_pages+0x3e/0x50
-    [20116.371510]  kernel_get_mempolicy+0x40b/0x700
-    [20116.371512]  ? vfs_write+0x170/0x1a0
-    [20116.371515]  __x64_sys_get_mempolicy+0x21/0x30
-    [20116.371517]  do_syscall_64+0x5b/0x160
-    [20116.371520]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-The above harmless debug message (not a kernel crash, just a
-dump_stack()) is shown with CONFIG_DEBUG_VM=y to more quickly identify
-and improve kernel spots that may have to become "userfaultfd
-compliant" like this one (without having to run an strace and search
-for syscall misbehavior).  Spots like the above are more closer to a
-kernel bug for the non-cooperative usages that Mike focuses on, than
-for for dpdk qemu-cooperative usages that reproduced it, but it's still
-nicer to get this fixed for dpdk too.
-
-The part of the patch that caused me to think is only the
-implementation issue of mpol_get, but it looks like it should work safe
-no matter the kind of mempolicy structure that is (the default static
-policy also starts at 1 so it'll go to 2 and back to 1 without crashing
-everything at 0).
-
-[rppt@linux.vnet.ibm.com: changelog addition]
-  http://lkml.kernel.org/r/20180904073718.GA26916@rapoport-lnx
-Link: http://lkml.kernel.org/r/20180831214848.23676-1-aarcange@redhat.com
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Reported-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-Tested-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
-Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
+Link: http://lkml.kernel.org/r/20180802163335.83312-1-jannh@google.com
+Signed-off-by: Jann Horn <jannh@google.com>
+Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
+Cc: Jeff Mahoney <jeffm@suse.com>
+Cc: Eric Biggers <ebiggers@google.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/mempolicy.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ fs/reiserfs/xattr.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index 69c4a0c92ebb..625122adefe0 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -845,16 +845,19 @@ static void get_policy_nodemask(struct mempolicy *p, nodemask_t *nodes)
+diff --git a/fs/reiserfs/xattr.c b/fs/reiserfs/xattr.c
+index 8b32fdaad468..d424b3d4bf3b 100644
+--- a/fs/reiserfs/xattr.c
++++ b/fs/reiserfs/xattr.c
+@@ -184,6 +184,7 @@ struct reiserfs_dentry_buf {
+ 	struct dir_context ctx;
+ 	struct dentry *xadir;
+ 	int count;
++	int err;
+ 	struct dentry *dentries[8];
+ };
+ 
+@@ -206,6 +207,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
+ 
+ 	dentry = lookup_one_len(name, dbuf->xadir, namelen);
+ 	if (IS_ERR(dentry)) {
++		dbuf->err = PTR_ERR(dentry);
+ 		return PTR_ERR(dentry);
+ 	} else if (d_really_is_negative(dentry)) {
+ 		/* A directory entry exists, but no file? */
+@@ -214,6 +216,7 @@ fill_with_dentries(struct dir_context *ctx, const char *name, int namelen,
+ 			       "not found for file %pd.\n",
+ 			       dentry, dbuf->xadir);
+ 		dput(dentry);
++		dbuf->err = -EIO;
+ 		return -EIO;
  	}
- }
  
--static int lookup_node(unsigned long addr)
-+static int lookup_node(struct mm_struct *mm, unsigned long addr)
- {
- 	struct page *p;
- 	int err;
- 
--	err = get_user_pages(addr & PAGE_MASK, 1, 0, &p, NULL);
-+	int locked = 1;
-+	err = get_user_pages_locked(addr & PAGE_MASK, 1, 0, &p, &locked);
- 	if (err >= 0) {
- 		err = page_to_nid(p);
- 		put_page(p);
- 	}
-+	if (locked)
-+		up_read(&mm->mmap_sem);
- 	return err;
- }
- 
-@@ -865,7 +868,7 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
- 	int err;
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma = NULL;
--	struct mempolicy *pol = current->mempolicy;
-+	struct mempolicy *pol = current->mempolicy, *pol_refcount = NULL;
- 
- 	if (flags &
- 		~(unsigned long)(MPOL_F_NODE|MPOL_F_ADDR|MPOL_F_MEMS_ALLOWED))
-@@ -905,7 +908,16 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
- 
- 	if (flags & MPOL_F_NODE) {
- 		if (flags & MPOL_F_ADDR) {
--			err = lookup_node(addr);
-+			/*
-+			 * Take a refcount on the mpol, lookup_node()
-+			 * wil drop the mmap_sem, so after calling
-+			 * lookup_node() only "pol" remains valid, "vma"
-+			 * is stale.
-+			 */
-+			pol_refcount = pol;
-+			vma = NULL;
-+			mpol_get(pol);
-+			err = lookup_node(mm, addr);
- 			if (err < 0)
- 				goto out;
- 			*policy = err;
-@@ -940,7 +952,9 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
-  out:
- 	mpol_cond_put(pol);
- 	if (vma)
--		up_read(&current->mm->mmap_sem);
-+		up_read(&mm->mmap_sem);
-+	if (pol_refcount)
-+		mpol_put(pol_refcount);
- 	return err;
- }
- 
+@@ -261,6 +264,10 @@ static int reiserfs_for_each_xattr(struct inode *inode,
+ 		err = reiserfs_readdir_inode(d_inode(dir), &buf.ctx);
+ 		if (err)
+ 			break;
++		if (buf.err) {
++			err = buf.err;
++			break;
++		}
+ 		if (!buf.count)
+ 			break;
+ 		for (i = 0; !err && i < buf.count && buf.dentries[i]; i++) {
 -- 
 2.17.1
 
