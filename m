@@ -2,144 +2,142 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08C7CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:29:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EED25C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:29:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7C4822419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:29:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7C4822419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BADF722419
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:29:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BADF722419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731872AbeKND2W (ORCPT
+        id S1731927AbeKND22 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 22:28:22 -0500
-Received: from foss.arm.com ([217.140.101.70]:59982 "EHLO foss.arm.com"
+        Tue, 13 Nov 2018 22:28:28 -0500
+Received: from mga01.intel.com ([192.55.52.88]:55262 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730730AbeKND2V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 22:28:21 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 19A82A78;
-        Tue, 13 Nov 2018 09:29:18 -0800 (PST)
-Received: from blommer (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B18573F5CF;
-        Tue, 13 Nov 2018 09:29:17 -0800 (PST)
-Date:   Tue, 13 Nov 2018 17:29:08 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Zhang =?utf-8?B?WmhpemhvdSjlvKDmsrvmtLIp?= 
-        <zhizhouzhang@asrmicro.com>
-Cc:     "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-        "will.deacon@arm.com" <will.deacon@arm.com>,
-        "mpatocka@redhat.com" <mpatocka@redhat.com>,
-        "alex.popov@linux.com" <alex.popov@linux.com>,
-        "labbott@redhat.com" <labbott@redhat.com>,
-        "panand@redhat.com" <panand@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "zhizhouzh@gmail.com" <zhizhouzh@gmail.com>
-Subject: Re: [PATCH] arm64: disable KASAN for save_trace()
-Message-ID: <20181113172857.f5e34gkv4ib7ejkr@blommer>
-References: <1541938036-29498-1-git-send-email-zhizhouzhang@asrmicro.com>
- <20181111172333.ov25gdmlsmhc6ysp@salmiak>
- <28fb310518294fbebf82ce22e4620cd3@mail2012.asrmicro.com>
+        id S1730995AbeKND21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 22:28:27 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 09:29:24 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,228,1539673200"; 
+   d="scan'208";a="104051732"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by fmsmga002.fm.intel.com with ESMTP; 13 Nov 2018 09:29:21 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andriy.shevchenko@linux.intel.com>)
+        id 1gMcV6-0001dc-Ho; Tue, 13 Nov 2018 19:29:20 +0200
+Date:   Tue, 13 Nov 2018 19:29:20 +0200
+From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To:     Qian Cai <cai@gmx.us>
+Cc:     linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
+        "Tobin C. Harding" <me@tobin.cc>,
+        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Subject: Re: WARNING: CPU: 26 PID: 64391 at lib/vsprintf.c:2193
+ set_precision+0x84/0x90
+Message-ID: <20181113172920.GI10650@smile.fi.intel.com>
+References: <1542128132.12945.19.camel@gmx.us>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <28fb310518294fbebf82ce22e4620cd3@mail2012.asrmicro.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <1542128132.12945.19.camel@gmx.us>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 07:38:07AM +0000, Zhang Zhizhou(å¼ æ²»æ´²) wrote:
+On Tue, Nov 13, 2018 at 11:55:32AM -0500, Qian Cai wrote:
+
++Cc Rasmus
+
+> Running the trinity fuzzer with a non-root user on an aarch64 server with the
+> latest mainline (rc2) generated this. Is it just a false alarm to ignore?
 > 
-> 
-> > -----Original Message-----
-> > From: Mark Rutland [mailto:mark.rutland@arm.com]
-> > Sent: Monday, November 12, 2018 1:24 AM
-> > To: Zhang Zhizhou(å¼ æ²»æ´²) <zhizhouzhang@asrmicro.com>
-> > Cc: catalin.marinas@arm.com; will.deacon@arm.com;
-> > mpatocka@redhat.com; alex.popov@linux.com; labbott@redhat.com;
-> > panand@redhat.com; linux-kernel@vger.kernel.org; linux-arm-
-> > kernel@lists.infradead.org; zhizhouzh@gmail.com
-> > Subject: Re: [PATCH] arm64: disable KASAN for save_trace()
-> > 
-> > On Sun, Nov 11, 2018 at 08:07:16PM +0800, Zhizhou Zhang wrote:
-> > > save_trace() which is called from walk_stackframe() always try to
-> > > read/write caller's stack. This results KASAN stack-out-of-bounds
-> > > warning. So mute it.
-> > 
-> > The save_trace() function should never perform an out-of-bounds access on
-> > the caller's stack, so this is papering over a bug elsewhere.
-> > 
-> > Can you please given an example report from KASAN?
-> > 
-> I'm sorry, I don't have a device with the newest kernel on hand. So my test
-> is based on 4.4.145. The stack is shown below:
+> [  807.847370] precision 65525 too large
 
-Just to check, which toolchain are you using? 
+It seems like someone uses -EAGAIN as a parameter to printf().
 
-... and which KASAN options do you have enabled?
+Or rather this line
 
-> 
-> c4 0 (swapper/4) ==================================================================
-> c4 0 (swapper/4) BUG: KASAN: stack-out-of-bounds in save_trace+0x98/0x130
-> c4 0 (swapper/4) Write of size 8 at addr ffffffc09b04fbe0 by task swapper/4/0
+  if (!fs && (request_module("fs-%.*s", len, name) == 0)) {
+	  ...
+  }
 
-Can you please use scripts/faddr2line to determine where in save_trace this is?
+Care to print the len and name parameters before this line?
 
-AFAICT the only 8-byte store we do is where we update trace->entries[].
 
-> c4 0 (swapper/4) 
-> c4 0 (swapper/4) CPU: 4 PID: 0 Comm: swapper/4 Not tainted 4.4.145+ #2
-> c4 0 (swapper/4) Hardware name: ASR AQUILAC EVB (DT)
-> c4 0 (swapper/4) Call trace:
-> c4 0 (swapper/4) [<ffffff9008091a50>] dump_backtrace+0x0/0x418
-> c4 0 (swapper/4) [<ffffff9008091e90>] show_stack+0x28/0x38
-> c4 0 (swapper/4) [<ffffff90086252a4>] dump_stack+0xe8/0x13c
-> c4 0 (swapper/4) [<ffffff900831c164>] print_address_description+0x8c/0x2b0
-> c4 0 (swapper/4) [<ffffff900831c690>] kasan_report+0x210/0x330
-> c4 0 (swapper/4) [<ffffff900831ac44>] __asan_store8+0x84/0x98
-> c4 0 (swapper/4) [<ffffff9008090cd0>] save_trace+0x98/0x130
-> c4 0 (swapper/4) [<ffffff9008091174>] walk_stackframe+0x4c/0x68
-> c4 0 (swapper/4) [<ffffff90080912cc>] save_stack_trace_tsk+0x13c/0x1f8
-> c4 0 (swapper/4) [<ffffff90080913b0>] save_stack_trace+0x28/0x38
-> c4 0 (swapper/4) [<ffffff900831b978>] kasan_slab_free+0x88/0x1a0
-> c4 0 (swapper/4) [<ffffff9008317bfc>] kmem_cache_free+0xac/0x3f8
-> c4 0 (swapper/4) [<ffffff90080b76f0>] __put_task_struct+0xa8/0x1f0
-> c4 0 (swapper/4) [<ffffff90081116c4>] finish_task_switch+0x21c/0x2a0
-> c4 0 (swapper/4) [<ffffff90092dc50c>] __schedule+0x4cc/0xe80
-> c4 0 (swapper/4) [<ffffff90092dd198>] schedule+0x70/0x110
-> c4 0 (swapper/4) [<ffffff90092dd554>] schedule_preempt_disabled+0x24/0x70
-> c4 0 (swapper/4) [<ffffff9008151dc0>] cpu_startup_entry+0x198/0x538
-> c4 0 (swapper/4) [<ffffff9008099f38>] secondary_start_kernel+0x258/0x2f0
-> c4 0 (swapper/4) [<00000001032e603c>] 0x1032e603c
-> c4 0 (swapper/4) 
-> c4 0 (swapper/4) The buggy address belongs to the page:
-> c4 0 (swapper/4) page:ffffffbdc26c13c0 count:0 mapcount:0 mapping:          (null)5.091297] c4 0 (swapper/4) 
-> c4 0 (swapper/4) Memory state around the buggy address:
-> c4 0 (swapper/4)  ffffffc09b04fa80: 00 00 f2 f2 f2 f2 f2 f2 00 00 00 00 f3 f3 f3 f3
-> c4 0 (swapper/4)  ffffffc09b04fb00: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> c4 0 (swapper/4) >ffffffc09b04fb80: 00 00 00 00 00 00 00 00 00 00 00
->       swapper/4)  ffffffc09b04fc00: 00 00 00 00 f3 f3 f3 f3 00 00 00 00 00 00 00 00
-> c4 0 (swapper/4)  ffffffc09b04fc80: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
-> c4 0 (swapper/4) ==================================================================
-> 
-> Maybe this issue has been fixed in the latest kernel, I have no idea about
-> that. Though some function has been changed, but I found the calling flow
-> doesn't change a lot in the latest kernel. Could you help me to figure out
-> what's wrong with it?
+> [  807.847449] WARNING: CPU: 26 PID: 64391 at lib/vsprintf.c:2193
+> set_precision+0x84/0x90
+> [  807.860161] Modules linked in: cast6_generic cast_common lrw bridge 8021q
+> garp mrp stp llc dlci tcp_diag inet_diag af_key pptp gre l2tp_ppp l2tp_netlink
+> l2tp_core ip6_udp_tunnel udp_tunnel pppoe pppox ppp_generic slhc crypto_user
+> ib_core nfnetlink scsi_transport_iscsi atm sctp vfat fat ghash_ce sha2_ce
+> sha256_arm64 sha1_ce ses enclosure ipmi_ssif sg ipmi_si ipmi_devintf sbsa_gwdt
+> ipmi_msghandler sch_fq_codel xfs libcrc32c marvell mpt3sas mlx5_core raid_class
+> hibmc_drm drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm drm
+> ixgbe hisi_sas_v2_hw igb hisi_sas_main libsas hns_dsaf mlxfw devlink
+> hns_enet_drv mdio i2c_designware_platform i2c_algo_bit i2c_designware_core
+> ehci_platform scsi_transport_sas hns_mdio hnae dm_mirror dm_region_hash dm_log
+> dm_mod
+> [  807.927838] CPU: 26 PID: 64391 Comm: trinity-c90 Kdump: loaded Tainted:
+> G        W         4.20.0-rc2+ #16
+> [  807.937494] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50
+> 06/01/2018
+> [  807.944718] pstate: 60000005 (nZCv daif -PAN -UAO)
+> [  807.949515] pc : set_precision+0x84/0x90
+> [  807.953439] lr : set_precision+0x84/0x90
+> [  807.957362] sp : ffff801e6430f6b0
+> [  807.960677] x29: ffff801e6430f6b0 x28: ffff801e6430fb10 
+> [  807.965992] x27: 0000000000000003 x26: 00000000ffffffd8 
+> [  807.971307] x25: ffff801e6430fba0 x24: ffff801e6430fb48 
+> [  807.976622] x23: ffff2000093ddfa0 x22: ffff801e6430f770 
+> [  807.981937] x21: ffff2000090eb4a6 x20: ffff801e6430f770 
+> [  807.987252] x19: 000000000000fff5 x18: 0000000000000000 
+> [  807.992569] x17: 0000000000000000 x16: 0000000000000000 
+> [  807.997884] x15: 0000000000000000 x14: 3878302031343220 
+> [  808.003201] x13: 6265783020303939 x12: ffff04000172b49c 
+> [  808.008516] x11: 1fffe4000172b49b x10: ffff04000172b49b 
+> [  808.013832] x9 : 0000000000000000 x8 : 203532353536206e 
+> [  808.019148] x7 : 6f69736963657270 x6 : 0000000041b58ab3 
+> [  808.024463] x5 : dfff200000000000 x4 : dfff200000000000 
+> [  808.029779] x3 : dfff200000000000 x2 : 65a2459128144800 
+> [  808.035093] x1 : 65a2459128144800 x0 : 0000000000000000 
+> [  808.040408] Call trace:
+> [  808.042861]  set_precision+0x84/0x90
+> [  808.046440]  vsnprintf+0x23c/0x858
+> [  808.049845]  __request_module+0x1a0/0x8b8
+> [  808.053860]  get_fs_type+0xb0/0x138
+> [  808.057351]  do_mount+0x2c4/0x13c0
+> [  808.060756]  ksys_mount+0xf4/0x110
+> [  808.064160]  __arm64_sys_mount+0x70/0x88
+> [  808.068087]  el0_svc_handler+0xd4/0x198
+> [  808.071928]  el0_svc+0x8/0xc
+> [  808.074810] irq event stamp: 347872
+> [  808.078305] hardirqs last  enabled at (347871): [<ffff2000082080e8>]
+> vprintk_emit+0x2b0/0x5c0
+> [  808.086833] hardirqs last disabled at (347872): [<ffff200008081490>]
+> do_debug_exception+0xd8/0x190
+> [  808.095795] softirqs last  enabled at (347844): [<ffff200008082210>]
+> __do_softirq+0x7c8/0x9c8
+> [  808.104325] softirqs last disabled at (347837): [<ffff20000812dbe4>]
+> irq_exit+0x25c/0x2f0
+> [  808.112502] ---[ end trace 598902d30712b79e ]---
 
-I can't immedialte spot what's going on here.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-How are you reproducing this issue?
 
-Thanks,
-Mark.
