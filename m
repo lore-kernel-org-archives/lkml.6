@@ -2,283 +2,118 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E8F54C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACBFFC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:43:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A652E2086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:41:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A652E2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 721B72086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:43:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NPmtN43P"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 721B72086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387941AbeKNBjo (ORCPT
+        id S2387876AbeKNBmc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:39:44 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:56152 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1731502AbeKNBjo (ORCPT
+        Tue, 13 Nov 2018 20:42:32 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:39974 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731439AbeKNBmc (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:39:44 -0500
-Received: from pps.filterd (m0098394.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wADFe3Ao046516
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 10:41:05 -0500
-Received: from e36.co.us.ibm.com (e36.co.us.ibm.com [32.97.110.154])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nr0epujwd-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 10:41:05 -0500
-Received: from localhost
-        by e36.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <akrowiak@linux.ibm.com>;
-        Tue, 13 Nov 2018 15:41:04 -0000
-Received: from b03cxnp08026.gho.boulder.ibm.com (9.17.130.18)
-        by e36.co.us.ibm.com (192.168.1.136) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Tue, 13 Nov 2018 15:41:01 -0000
-Received: from b03ledav006.gho.boulder.ibm.com (b03ledav006.gho.boulder.ibm.com [9.17.130.237])
-        by b03cxnp08026.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wADFetBV26411162
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Nov 2018 15:40:55 GMT
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id B4FCAC6057;
-        Tue, 13 Nov 2018 15:40:55 +0000 (GMT)
-Received: from b03ledav006.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id AAC85C6059;
-        Tue, 13 Nov 2018 15:40:54 +0000 (GMT)
-Received: from [9.60.75.235] (unknown [9.60.75.235])
-        by b03ledav006.gho.boulder.ibm.com (Postfix) with ESMTP;
-        Tue, 13 Nov 2018 15:40:54 +0000 (GMT)
-Subject: Re: [PATCH v1 4/7] vfio: ap: AP Queue Interrupt Control VFIO ioctl
- calls
-To:     pmorel@linux.ibm.com, borntraeger@de.ibm.com
-Cc:     alex.williamson@redhat.com, cohuck@redhat.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        kvm@vger.kernel.org, frankja@linux.ibm.com, pasic@linux.ibm.com,
-        david@redhat.com, schwidefsky@de.ibm.com,
-        heiko.carstens@de.ibm.com, freude@linux.ibm.com, mimu@linux.ibm.com
-References: <1541009577-29656-1-git-send-email-pmorel@linux.ibm.com>
- <1541009577-29656-5-git-send-email-pmorel@linux.ibm.com>
- <7e4cbc97-8c77-b393-efdd-6fd8550c15f1@linux.ibm.com>
- <be66fe05-f728-25b8-a786-4e7bf39965d1@linux.ibm.com>
-From:   Tony Krowiak <akrowiak@linux.ibm.com>
-Date:   Tue, 13 Nov 2018 10:40:54 -0500
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 13 Nov 2018 20:42:32 -0500
+Received: by mail-yb1-f196.google.com with SMTP id g9-v6so5541476ybh.7;
+        Tue, 13 Nov 2018 07:43:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=bFMh3QKUJlc38kknui2bNuEA1AJIdxyJQX4fmBz4djQ=;
+        b=NPmtN43PH6DhKus0hlh51X8Z/k3gg9A1AjLV0L7u7rOOSqLiKlFpbp+/163RD0emVN
+         sjFvpcrQNY64FGZTkaH66iM9J+zpxHR36H17h0b2gO0QikfB2AmJbhvXGmcfZrWb2eoh
+         rLNtOW0CFVjte8f4CAGQR9zKSP3XiKoafsWc8BtRDZbtaw4V3Pzu45bT2kQyGu3+kWju
+         ph6LAcs1hlmbQAsIhXa/yk5puVWaVMUiWdb0SwwcBM3bA+59+6qFDut7OpSs3JuPPy57
+         sg4r8A0H9yDzk50zhh0JaSGF/V2SV9pJufcP66AAg4gCXdw19KkxnB0UnAslrcDoGPjr
+         p4qw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=bFMh3QKUJlc38kknui2bNuEA1AJIdxyJQX4fmBz4djQ=;
+        b=MOU6J/fSphfNxlDGJgQuuRsxm7yGFtc1oHgj5GMyIHM/5JQWKMbCdvcJyzH9kkI2/F
+         j+AzsK53D3sNUV3851OpV8J2eQBo7cuCil4CieBtEezi71QeCkgcLmNfrBOPXFZ1agC2
+         8Nyo4/FJ9JIVKL8sj5oWBqcpfBgUq1Qh4xwMbLJPe6WzMGkAzKD5paVr6BQimNBt1x+q
+         i1DeCqwV6sstmWDdK8E4e3jIh9LKwOUnXSpcjbM+OGDFRUyrzU0AjClzAi+oFCPJw1Sk
+         EiO9tM+cGH1gqDD57mS+imw8qJNgp9eyUYaq0ziEFe75XSJ+PcJwgfMsI5ytM+a2e+ha
+         iaqA==
+X-Gm-Message-State: AGRZ1gJY45tb3i62cU2xmOEAMIKNo81HSGabHlzycdwarQOQvbrROzB1
+        tK951BfnUbW2zMfm9FxJPFGGGTkg
+X-Google-Smtp-Source: AJdET5eKfPuApZdM36EPitecNwoK3vCGif4cgpb+k9aUoUGgesnmT4Qs3veIkkH0xS8BkMZLj7Tukg==
+X-Received: by 2002:a25:d64d:: with SMTP id n74-v6mr5311766ybg.204.1542123832993;
+        Tue, 13 Nov 2018 07:43:52 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::6:e2a7])
+        by smtp.gmail.com with ESMTPSA id i189-v6sm4810742ywb.23.2018.11.13.07.43.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 07:43:52 -0800 (PST)
+Date:   Tue, 13 Nov 2018 07:43:49 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Oleg Nesterov <oleg@redhat.com>
+Cc:     Roman Gushchin <guroan@gmail.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH v2 3/6] cgroup: cgroup v2 freezer
+Message-ID: <20181113154349.GF2509588@devbig004.ftw2.facebook.com>
+References: <20181112230422.5911-1-guro@fb.com>
+ <20181112230422.5911-5-guro@fb.com>
+ <20181113153700.GB30990@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <be66fe05-f728-25b8-a786-4e7bf39965d1@linux.ibm.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-x-cbid: 18111315-0020-0000-0000-00000E895D21
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010042; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01116890; UDB=6.00579260; IPR=6.00896998;
- MB=3.00024143; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-13 15:41:03
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111315-0021-0000-0000-000063B3BB9B
-Message-Id: <c8da4848-e653-88a3-b1fd-d67d277d9f1e@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_09:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1807170000 definitions=main-1811130142
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113153700.GB30990@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/7/18 5:31 PM, Pierre Morel wrote:
-> On 06/11/2018 21:21, Tony Krowiak wrote:
->> On 10/31/18 2:12 PM, Pierre Morel wrote:
->>> This is the implementation of the VFIO ioctl calls to handle
->>> the AQIC interception and use GISA to handle interrupts.
->>>
->>> Signed-off-by: Pierre Morel <pmorel@linux.ibm.com>
->>> ---
->>>   drivers/s390/crypto/vfio_ap_ops.c | 95 +++++++++++++++++++++++++++++++
->>>   1 file changed, 95 insertions(+)
->>>
->>> diff --git a/drivers/s390/crypto/vfio_ap_ops.c 
->>> b/drivers/s390/crypto/vfio_ap_ops.c
->>> index 272ef427dcc0..f68102163bf4 100644
->>> --- a/drivers/s390/crypto/vfio_ap_ops.c
->>> +++ b/drivers/s390/crypto/vfio_ap_ops.c
->>> @@ -895,12 +895,107 @@ static int 
->>> vfio_ap_mdev_get_device_info(unsigned long arg)
->>>       return copy_to_user((void __user *)arg, &info, minsz);
->>>   }
->>> +static int ap_ioctl_setirq(struct ap_matrix_mdev *matrix_mdev,
->>
->> In keeping with the other function names in this file, how about
->> naming this function vfio_ap_mdev_setirq???
-> 
-> OK, agreed.
-> 
->>
->>> +               struct vfio_ap_aqic *parm)
->>> +{
->>> +    struct aqic_gisa aqic_gisa = reg2aqic(0);
->>> +    struct kvm_s390_gisa *gisa = matrix_mdev->kvm->arch.gisa;
->>> +    struct ap_status ap_status = reg2status(0);
->>> +    unsigned long p;
->>> +    int ret = -1;
->>> +    int apqn;
->>> +    uint32_t gd;
->>> +
->>> +    apqn = (int)(parm->cmd & 0xffff);
->>> +
->>> +    gd = matrix_mdev->kvm->vcpus[0]->arch.sie_block->gd;
->>> +    if (gd & 0x01)
->>> +        aqic_gisa.f = 1;
->>> +    aqic_gisa.gisc = matrix_mdev->gisc;
->>
->> Can't you get this value from parm? I don't see any relationship
->> between the mdev device and gisc, why store it there?
-> 
-> The idea is that we may want to report this value to the admin or as 
-> debug information, so I wanted to keep track of it.
+Hello, Oleg.
 
-It can be added if/when that is implemented. As of now, it is not needed.
+On Tue, Nov 13, 2018 at 04:37:01PM +0100, Oleg Nesterov wrote:
+> On 11/12, Roman Gushchin wrote:
+> >
+> > This patch implements freezer for cgroup v2. However the functionality
+> > is similar, the interface is different to cgroup v1: it follows
+> > cgroup v2 interface principles.
+> 
+> Oh, it seems that I actually need to apply this patch to (try to) understand
+> the details ;) Will try tomorrow.
 
-> 
->>
->>> +    aqic_gisa.isc = GAL_ISC;
->>> +    aqic_gisa.ir = 1;
->>> +    aqic_gisa.gisao = gisa->next_alert >> 4;
->>> +
->>> +    p = (unsigned long) page_address(matrix_mdev->map->page);
->>> +    p += (matrix_mdev->map->guest_addr & 0x0fff);
->>> +
->>> +    ret = ap_host_aqic((uint64_t)apqn, aqic2reg(aqic_gisa), p);
->>> +    parm->status = ret;
->>> +
->>> +    ap_status = reg2status(ret);
->>> +    return (ap_status.rc) ? -EIO : 0;
->>> +}
->>> +
->>> +static int ap_ioctl_clrirq(struct ap_matrix_mdev *matrix_mdev,
->>> +               struct vfio_ap_aqic *parm)
->>
->> In keeping with the other function names in this file, how about
->> naming this function vfio_ap_mdev_clrirq, or better yet,
->> vfio_ap_mdev_clear_irq???
-> 
-> agreed too.
-> 
->>
->>> +{
->>> +    struct aqic_gisa aqic_gisa = reg2aqic(0);
->>> +    struct ap_status ap_status = reg2status(0) > +    int apqn;
->>> +    int retval;
->>> +    uint32_t gd;
->>> +
->>> +    apqn = (int)(parm->cmd & 0xffff);
->>> +
->>> +    gd = matrix_mdev->kvm->vcpus[0]->arch.sie_block->gd;
->>> +    if (gd & 0x01)
->>> +        aqic_gisa.f = 1;
->>> +    aqic_gisa.ir = 0;
->>> +
->>> +    retval = ap_host_aqic((uint64_t)apqn, aqic2reg(aqic_gisa), 0);
->>> +    parm->status = retval;
->>> +
->>> +    ap_status = reg2status(retval);
->>> +    return (ap_status.rc) ? -EIO : 0;
->>> +}
->>> +
->>>   static ssize_t vfio_ap_mdev_ioctl(struct mdev_device *mdev,
->>>                       unsigned int cmd, unsigned long arg)
->>>   {
->>>       int ret;
->>> +    struct ap_matrix_mdev *matrix_mdev = mdev_get_drvdata(mdev);
->>> +    struct s390_io_adapter *adapter;
->>> +    struct vfio_ap_aqic parm;
->>> +    struct s390_map_info *map;
->>> +    int apqn, found = 0;
->>>       switch (cmd) {
->>> +    case VFIO_AP_SET_IRQ:
->>> +        if (copy_from_user(&parm, (void __user *)arg, sizeof(parm)))
->>> +            return -EFAULT;
->>> +        apqn = (int)(parm.cmd & 0xffff);
->>> +        parm.status &= 0x00000000ffffffffUL;
->>> +        matrix_mdev->gisc = parm.status & 0x07;
->>
->> It seems that the only reason for the 'gisc' field in matrix_mdev
->> is to pass the value to the ap_ioctl_setirq() function. Since the
->> gisc has nothing to do with the mdev device and the 'parm' is being
->> passed to ap_ioctl_setirq(), why not just eliminate the
->> matrix_mdev->gisc field and get it from the 'parm' parameter in
->> ap_ioctl_setirq()?
-> 
-> OK, seems better.
-> 
->>
->>> +        /* find the adapter */ap_ioctl_setirq()
->>> +        adapter = matrix_mdev->kvm->arch.adapters[parm.adapter_id];
->>> +        if (!adapter)
->>> +            return -ENOENT;
->>> +        down_write(&adapter->maps_lock);
->>> +        list_for_each_entry(map, &adapter->maps, list) {
->>> +            if (map->guest_addr == parm.nib) {
->>> +                found = 1;
->>> +                break;
->>> +            }
->>> +        }
->>> +        up_write(&adapter->maps_lock);
->>> +
->>> +        if (!found)
->>> +            return -EINVAL;
->>> +
->>> +        matrix_mdev->map = map;
->>
->> See my comment above about matrix_mdev->gisc. Can't we just get rid
->> of the matrix_mdev->map field and pass the map into the
->> ap_ioctl_setirq() function?
-> 
-> or calculate it from parm... as we give parm as argument to this function
+Yeah, it's a bit of a head spin like everything in signal delivery /
+ptrace paths.
 
-Better yet.
+...
+> OK, please forget for now, but perhaps it would be more clean to add
+> JOBCTL_TRAP_FREEZE to the JOBCTL_PENDING_MASK check in recalc_sigpending()
+> and change get_signal to check JOBCTL_TRAP_MASK | JOBCTL_TRAP_FREEZE; and
+> I am not even sure cgroup_freezer_enter() should live in do_jobctl_trap().
 
-> 
->>
->>> +        ret = ap_ioctl_setirq(matrix_mdev, &parm);
->>> +        parm.status &= 0x00000000ffffffffUL;
->>> +        if (copy_to_user((void __user *)arg, &parm, sizeof(parm)))
->>> +            return -EFAULT;
->>> +
->>> +        break;
->>
->> IMHO, the case statements should only determine which ioctl is being
->> invoked and call the appropriate function to handle it. All of the above
->> code could be in an intermediate function called from this case
->> statement, thus reducing the case to calling the intermediate function.
-> 
-> OK, I can do so, however I would like to let the __user access here.
+I'm sure you're aware of the context but just to refresh - one thing
+which was really broken about cgroup1 freezer was that it piggybacked
+on hibernation freezer and put frozen tasks in a state which is
+undefined when seen from userspace - they're just stuck in D sleep
+somewhere in the kernel.  That's fine when the whole system is not
+gonna be running, but not when only a subportion is being frozen.
 
-I can live with that although I prefer the one liner here.
+So, the primary goal of cgroup2 freezer is putting the tasks in an
+equivalent state as jobctl stop.  It's a jobctl stop but controlled by
+cgroup frozen state, meaning that they can be killed, PTRACE_SEIZE'd
+and INTERRUPT'ed (PTRACE_ATTACH doesn't work as signal delivery should
+be blocked but that's fine) and so on.
 
-> 
->>
->>> +    case VFIO_AP_CLEAR_IRQ:
->>> +        if (copy_from_user(&parm, (void __user *)arg, sizeof(parm)))
->>> +            return -EFAULT;
->>> +        ret = ap_ioctl_clrirq(matrix_mdev, &parm);
->>> +        if (copy_to_user((void __user *)arg, &parm, sizeof(parm)))
->>> +            return -EFAULT;
->>> +        break;
->>>       case VFIO_DEVICE_GET_INFO:
->>>           ret = vfio_ap_mdev_get_device_info(arg);
->>>           break;
->>>
->>
-> 
-> Thanks
-> Pierre
-> 
+Thanks.
 
+-- 
+tejun
