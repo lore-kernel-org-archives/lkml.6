@@ -2,138 +2,112 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A965C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:10:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6955C169D4
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:11:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C32F320811
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:10:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="qGgYqiz1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C32F320811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 87C10223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:11:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87C10223AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=angband.pl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731669AbeKNJLQ (ORCPT
+        id S1731721AbeKNJLh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 04:11:16 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:56142 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeKNJLQ (ORCPT
+        Wed, 14 Nov 2018 04:11:37 -0500
+Received: from tartarus.angband.pl ([54.37.238.230]:60788 "EHLO
+        tartarus.angband.pl" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbeKNJLg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 04:11:16 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
-        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
-        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=AvFhduuovMio+6bQLoCW3ujoJpG1xlDvpRiy88WRqoM=; b=qGgYqiz1tE0w
-        d8Mcl3vHeifc2/lrlzAqvV9K6rBVHyyv85Yyx2giCf5IGllTMGuM56ayut/37bRVW6YGQf6i0RGai
-        FMy1ooGbNirmSIIo/27HRYf4tRwUpsjcoGRlGYtJjG/7N2Vbt7CN6rHx1A30PdeigZmLlfHFMqDvy
-        VWPwE=;
-Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gMhpR-0002jZ-Gk; Tue, 13 Nov 2018 23:10:41 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 527E4440078; Tue, 13 Nov 2018 23:10:35 +0000 (GMT)
-From:   Mark Brown <broonie@kernel.org>
-To:     Rohit kumar <rohitkr@codeaurora.org>
-Cc:     Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-        Mark Brown <broonie@kernel.org>, plai@codeaurora.org,
-        bgoswami@codeaurora.org, lgirdwood@gmail.com, broonie@kernel.org,
-        perex@perex.cz, tiwai@suse.com, alsa-devel@alsa-project.org,
-        linux-kernel@vger.kernel.org, rohkumar@qti.qualcomm.com,
-        srinivas.kandagatla@linaro.org, alsa-devel@alsa-project.org
-Subject: Applied "ASoC: qcom: Set dai_link id to each dai_link" to the asoc tree
-In-Reply-To:  <1541684500-32728-1-git-send-email-rohitkr@codeaurora.org>
-Message-Id: <20181113231035.527E4440078@finisterre.ee.mobilebroadband>
-Date:   Tue, 13 Nov 2018 23:10:35 +0000 (GMT)
+        Wed, 14 Nov 2018 04:11:36 -0500
+Received: from kilobyte by tartarus.angband.pl with local (Exim 4.89)
+        (envelope-from <kilobyte@angband.pl>)
+        id 1gMhpT-0003un-CZ; Wed, 14 Nov 2018 00:10:43 +0100
+Date:   Wed, 14 Nov 2018 00:10:43 +0100
+From:   Adam Borowski <kilobyte@angband.pl>
+To:     Paul Burton <paul.burton@mips.com>
+Cc:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Nick Terrell <terrelln@fb.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        "linux-m68k@lists.linux-m68k.org" <linux-m68k@lists.linux-m68k.org>,
+        Ralf Baechle <ralf@linux-mips.org>,
+        James Hogan <jhogan@kernel.org>,
+        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
+        Jonas Bonn <jonas@southpole.se>,
+        Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>,
+        Stafford Horne <shorne@gmail.com>,
+        "openrisc@lists.librecores.org" <openrisc@lists.librecores.org>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        "linux-parisc@vger.kernel.org" <linux-parisc@vger.kernel.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        "linux-s390@vger.kernel.org" <linux-s390@vger.kernel.org>,
+        Yoshinori Sato <ysato@users.sourceforge.jp>,
+        Rich Felker <dalias@libc.org>,
+        "linux-sh@vger.kernel.org" <linux-sh@vger.kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "x86@kernel.org" <x86@kernel.org>, Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>,
+        "linux-xtensa@linux-xtensa.org" <linux-xtensa@linux-xtensa.org>
+Subject: Re: [PATCH 05/17] mips: Remove support for BZIP2 and LZMA compressed
+ kernel
+Message-ID: <20181113231043.cv3qpjivxsefxpny@angband.pl>
+References: <20181109185953.xwyelyqnygbskkxk@angband.pl>
+ <20181109190304.8573-1-kilobyte@angband.pl>
+ <20181109190304.8573-5-kilobyte@angband.pl>
+ <20181113224545.pamrezqxy2ay62k7@pburton-laptop>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181113224545.pamrezqxy2ay62k7@pburton-laptop>
+X-Junkbait: aaron@angband.pl, zzyx@angband.pl
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: kilobyte@angband.pl
+X-SA-Exim-Scanned: No (on tartarus.angband.pl); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The patch
+On Tue, Nov 13, 2018 at 10:45:54PM +0000, Paul Burton wrote:
+> On Fri, Nov 09, 2018 at 08:02:52PM +0100, Adam Borowski wrote:
+> > @@ -122,7 +104,6 @@ $(obj)/vmlinux.its.S: $(addprefix $(srctree)/arch/mips/$(PLATFORM)/,$(ITS_INPUTS
+> >  
+> >  targets += vmlinux.its
+> >  targets += vmlinux.gz.its
+> > -targets += vmlinux.bz2.its
+> >  targets += vmlinux.lzmo.its
+> >  targets += vmlinux.lzo.its
+> 
+> It looks to me like this "vmlinux.lzmo.its" was a typo & ought to have
+> been vmlinux.lzma.its, and thus ought to be removed.
 
-   ASoC: qcom: Set dai_link id to each dai_link
+Good catch!
 
-has been applied to the asoc tree at
+The whole series was bz2 only at first, grepping for lzma missed this.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git 
+> Apart from that I'm fine with this in general:
+> 
+>     Acked-by: Paul Burton <paul.burton@mips.com>
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.  
+Thanks.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
-From 67fd1437d11620de8768b22fe20942e752ed52e9 Mon Sep 17 00:00:00 2001
-From: Rohit kumar <rohitkr@codeaurora.org>
-Date: Thu, 8 Nov 2018 19:11:40 +0530
-Subject: [PATCH] ASoC: qcom: Set dai_link id to each dai_link
-
-Frontend dai_link id is used for closing ADM sessions.
-During concurrent usecase when one session is closed,
-it closes other ADM session associated with other usecase
-too. Dai_link->id should always point to Frontend dai id.
-Set cpu_dai id as dai_link id to fix the issue.
-
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
-Acked-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Signed-off-by: Mark Brown <broonie@kernel.org>
----
- sound/soc/qcom/common.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
-
-diff --git a/sound/soc/qcom/common.c b/sound/soc/qcom/common.c
-index eb1b9da05dd4..4715527054e5 100644
---- a/sound/soc/qcom/common.c
-+++ b/sound/soc/qcom/common.c
-@@ -13,6 +13,7 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
- 	struct device_node *cpu = NULL;
- 	struct device *dev = card->dev;
- 	struct snd_soc_dai_link *link;
-+	struct of_phandle_args args;
- 	int ret, num_links;
- 
- 	ret = snd_soc_of_parse_card_name(card, "model");
-@@ -47,12 +48,14 @@ int qcom_snd_parse_of(struct snd_soc_card *card)
- 			goto err;
- 		}
- 
--		link->cpu_of_node = of_parse_phandle(cpu, "sound-dai", 0);
--		if (!link->cpu_of_node) {
-+		ret = of_parse_phandle_with_args(cpu, "sound-dai",
-+					"#sound-dai-cells", 0, &args);
-+		if (ret) {
- 			dev_err(card->dev, "error getting cpu phandle\n");
--			ret = -EINVAL;
- 			goto err;
- 		}
-+		link->cpu_of_node = args.np;
-+		link->id = args.args[0];
- 
- 		ret = snd_soc_of_get_dai_name(cpu, &link->cpu_dai_name);
- 		if (ret) {
+Meow!
 -- 
-2.19.1
-
+⢀⣴⠾⠻⢶⣦⠀
+⣾⠁⢰⠒⠀⣿⡁ “This is gonna be as easy as cheating on an ethics exam!”
+⢿⡄⠘⠷⠚⠋⠀     -Cerise Brightmoon
+⠈⠳⣄⠀⠀⠀⠀
