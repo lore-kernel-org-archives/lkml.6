@@ -2,94 +2,181 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D334C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:51:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58F0FC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DF53208A3
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:51:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="JGo1lcNx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DF53208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D52A223C8
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:51:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D52A223C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732057AbeKNDui (ORCPT
+        id S1732166AbeKNDvF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 22:50:38 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:13893 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731537AbeKNDui (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 22:50:38 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5beb0f0f0000>; Tue, 13 Nov 2018 09:51:11 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 13 Nov 2018 09:51:29 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 13 Nov 2018 09:51:29 -0800
-Received: from HQMAIL111.nvidia.com (172.20.187.18) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 13 Nov
- 2018 17:51:28 +0000
-Received: from HQMAIL108.nvidia.com (172.18.146.13) by HQMAIL111.nvidia.com
- (172.20.187.18) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 13 Nov
- 2018 17:51:28 +0000
-Received: from hqnvemgw02.nvidia.com (172.16.227.111) by HQMAIL108.nvidia.com
- (172.18.146.13) with Microsoft SMTP Server (TLS) id 15.0.1395.4 via Frontend
- Transport; Tue, 13 Nov 2018 17:51:28 +0000
-Received: from byan-linux.NVIDIA.COM (Not Verified[172.17.136.14]) by hqnvemgw02.nvidia.com with Trustwave SEG (v7,5,8,10121)
-        id <B5beb0f1f0005>; Tue, 13 Nov 2018 09:51:27 -0800
-From:   Bo Yan <byan@nvidia.com>
-To:     <thierry.reding@gmail.com>, <jonathanh@nvidia.com>
-CC:     <linux-tegra@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Bo Yan <byan@nvidia.com>
-Subject: [PATCH] soc/tegra: remove duplicated function declaration
-Date:   Tue, 13 Nov 2018 09:51:05 -0800
-Message-ID: <1542131465-22773-1-git-send-email-byan@nvidia.com>
-X-Mailer: git-send-email 2.7.4
-X-NVConfidentiality: public
+        Tue, 13 Nov 2018 22:51:05 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:51336 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731537AbeKNDvF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 22:51:05 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id QuGm4pXO3Lbq; Tue, 13 Nov 2018 18:51:55 +0100 (CET)
+Received: from zn.tnic (p200300EC2BE56F00D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:6f00:d571:4500:c00e:26fd])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 4F0671EC00EB;
+        Tue, 13 Nov 2018 18:51:55 +0100 (CET)
+Date:   Tue, 13 Nov 2018 18:51:50 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Chao Fan <fanc.fnst@cn.fujitsu.com>
+Cc:     linux-kernel@vger.kernel.org, x86@kernel.org,
+        linux-efi@vger.kernel.org, linux-acpi@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        keescook@chromium.org, bhe@redhat.com, msys.mizuma@gmail.com,
+        indou.takao@jp.fujitsu.com, caoj.fnst@cn.fujitsu.com
+Subject: Re: [PATCH v11 3/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
+ cmdlien from kexec
+Message-ID: <20181113175150.GK10502@zn.tnic>
+References: <20181112094645.4879-1-fanc.fnst@cn.fujitsu.com>
+ <20181112094645.4879-4-fanc.fnst@cn.fujitsu.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542131471; bh=psuTxNDLVvtw4bUJnsfjTCMvum1Cg6Yllr/r1uKyITQ=;
-        h=X-PGP-Universal:From:To:CC:Subject:Date:Message-ID:X-Mailer:
-         X-NVConfidentiality:MIME-Version:Content-Type;
-        b=JGo1lcNxnrRK1mlFHW2acW80zEAjGwRpWj3mT5WrjXOaolG/XVDtizR8xHjsAEw1F
-         m3JuqFb0IucQFqm8bUrSeb5vJm5dCs1N7fJLtXm7rjJuIRTmak/bCxaQmE/igJ2loX
-         BG8LhtYGKxtKo6tijdcqVFojhGWVgU640XxF5qgU8k0djkRNh2kMZu1b0tzKj+fpm4
-         z3j45n3f8p+y1rG7TYteMgh0TBT/gHo8Hwl964rl0rUerLQP0+Cb5lNMiQ6AiDnbOI
-         UHdXyEk2HAGhvO7mL4Bgw0vUHpvbfd4ldja4uSGYC6ptpuwkTRzqDmZhD2wqlIe8dL
-         0cqtSpRey8PBg==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181112094645.4879-4-fanc.fnst@cn.fujitsu.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The function tegra_read_chipid is declared twice in fuse.h. Remove
-the redundant declaration.
+On Mon, Nov 12, 2018 at 05:46:43PM +0800, Chao Fan wrote:
+> Imitate setup_acpi_rsdp() for the early_param of 'acpi_rsdp'.
+> KEXEC writes the RSDP pointer to cmdline for EFI booting.
+> So if 'acpi_rsdp' found in cmdline, use it directely.
+> 
+> Since function kstrtoull() is needed, include it in
+> arch/x86/boot/string.h. To solve the definition conflict
+> problem, set BOOT_STRING tag to expose only kstrtoull() and
+> functions used by it. Other functions in lib/kstrtox.c will
+> be covered.
+> 
+> Signed-off-by: Chao Fan <fanc.fnst@cn.fujitsu.com>
+> ---
+>  arch/x86/boot/compressed/acpitb.c | 26 ++++++++++++++++++++++++++
+>  arch/x86/boot/string.h            |  4 ++++
+>  lib/kstrtox.c                     |  4 ++++
+>  3 files changed, 34 insertions(+)
+> 
+> diff --git a/arch/x86/boot/compressed/acpitb.c b/arch/x86/boot/compressed/acpitb.c
+> index 50fa65cf824d..5cfb4efa5a19 100644
+> --- a/arch/x86/boot/compressed/acpitb.c
+> +++ b/arch/x86/boot/compressed/acpitb.c
+> @@ -8,6 +8,12 @@
+>  #include <linux/numa.h>
+>  #include <linux/acpi.h>
+>  
+> +#define STATIC
+> +#include <linux/decompress/mm.h>
+> +
+> +#define BOOT_STRING
+> +#include "../string.h"
+> +
+>  /* Search EFI table for RSDP table. */
+>  static void efi_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+>  {
+> @@ -200,3 +206,23 @@ static void bios_get_rsdp_addr(acpi_physical_address *rsdp_addr)
+>  		*rsdp_addr = (acpi_physical_address)address;
+>  	}
+>  }
+> +
+> +static void get_acpi_rsdp(acpi_physical_address *rsdp_addr)
+> +{
+> +#ifdef CONFIG_KEXEC
 
-Signed-off-by: Bo Yan <byan@nvidia.com>
----
- include/soc/tegra/fuse.h | 1 -
- 1 file changed, 1 deletion(-)
+Ok, why is that CONFIG_KEXEC dependency needed now too?
 
-diff --git a/include/soc/tegra/fuse.h b/include/soc/tegra/fuse.h
-index 9b6ea0c..8fb2f8a 100644
---- a/include/soc/tegra/fuse.h
-+++ b/include/soc/tegra/fuse.h
-@@ -60,7 +60,6 @@ struct tegra_sku_info {
- 
- u32 tegra_read_straps(void);
- u32 tegra_read_ram_code(void);
--u32 tegra_read_chipid(void);
- int tegra_fuse_readl(unsigned long offset, u32 *value);
- 
- extern struct tegra_sku_info tegra_sku_info;
+Ok, let's recap: so far, for your use case you need:
+
+CONFIG_MEMORY_HOTREMOVE
+CONFIG_RANDOMIZE_BASE
+and now
+CONFIG_KEXEC
+
+So, you can clean up all that ifdeffery by defining a new config item
+CONFIG_EARLY_PARSE_RSDP or so which depends on all those three items and
+then you can do
+
+vmlinux-objs-$(CONFIG_EARLY_PARSE_RSDP) += $(obj)/acpitb.o
+
+and get rid of the most of the ifdeffery.
+
+Yes?
+
+> +	unsigned long long res;
+> +	int len = 0;
+> +	char *val;
+> +
+> +	val = malloc(19);
+> +	len = cmdline_find_option("acpi_rsdp", val, 19);
+> +
+
+^ Superfluous newline.
+
+> +	if (len == -1)
+> +		return;
+
+That check is not needed since you do > 0 below.
+
+> +
+> +	if (len > 0) {
+> +		val[len] = 0;
+> +		*rsdp_addr = (acpi_physical_address)kstrtoull(val, 16, &res);
+> +	}
+> +#endif
+> +}
+> diff --git a/arch/x86/boot/string.h b/arch/x86/boot/string.h
+> index 3d78e27077f4..0ff3edb888e4 100644
+> --- a/arch/x86/boot/string.h
+> +++ b/arch/x86/boot/string.h
+> @@ -30,3 +30,7 @@ extern unsigned long long simple_strtoull(const char *cp, char **endp,
+>  					  unsigned int base);
+>  
+>  #endif /* BOOT_STRING_H */
+> +
+> +#ifdef BOOT_STRING
+> +#include "../../../lib/kstrtox.c"
+> +#endif
+> diff --git a/lib/kstrtox.c b/lib/kstrtox.c
+> index 1006bf70bf74..3804db9eed56 100644
+> --- a/lib/kstrtox.c
+> +++ b/lib/kstrtox.c
+> @@ -126,6 +126,8 @@ int kstrtoull(const char *s, unsigned int base, unsigned long long *res)
+>  }
+>  EXPORT_SYMBOL(kstrtoull);
+
+This needs a comment to explain what is that guard used for.
+
+> +#ifndef BOOT_STRING
+> +
+>  /**
+>   * kstrtoll - convert a string to a long long
+>   * @s: The start of the string. The string must be null-terminated, and may also
+> @@ -408,3 +410,5 @@ kstrto_from_user(kstrtou16_from_user,	kstrtou16,	u16);
+>  kstrto_from_user(kstrtos16_from_user,	kstrtos16,	s16);
+>  kstrto_from_user(kstrtou8_from_user,	kstrtou8,	u8);
+>  kstrto_from_user(kstrtos8_from_user,	kstrtos8,	s8);
+> +
+> +#endif
+
+#endif /* BOOT_STRING */
+
 -- 
-2.7.4
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
