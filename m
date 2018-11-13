@@ -1,127 +1,113 @@
 Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 673CDC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C101C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:17:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E31B22243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:17:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E31B22243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fkie.fraunhofer.de
+	by mail.kernel.org (Postfix) with ESMTP id F360D2243E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:17:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HOA4XTig"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F360D2243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731128AbeKMRNr (ORCPT
+        id S1731177AbeKMROE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 12:13:47 -0500
-Received: from mailguard.fkie.fraunhofer.de ([128.7.3.5]:40501 "EHLO
-        a.mx.fkie.fraunhofer.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726173AbeKMRNq (ORCPT
+        Tue, 13 Nov 2018 12:14:04 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37798 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726173AbeKMROE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 12:13:46 -0500
-X-Greylist: delayed 910 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Nov 2018 12:13:45 EST
-Received: from rufsun5.fkie.fraunhofer.de ([128.7.2.5] helo=mailhost.fkie.fraunhofer.de)
-        by a.mx.fkie.fraunhofer.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.84_2)
-        (envelope-from <henning.rogge@fkie.fraunhofer.de>)
-        id 1gMShp-0004yA-AO
-        for linux-kernel@vger.kernel.org; Tue, 13 Nov 2018 08:01:49 +0100
-Received: from srv-mail-02.fkie.fraunhofer.de ([128.7.11.17] helo=srv-mail-02.gaia.fkie.fraunhofer.de)
-        by mailhost.fkie.fraunhofer.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_CBC_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <henning.rogge@fkie.fraunhofer.de>)
-        id 1gMShq-0004x8-RK
-        for linux-kernel@vger.kernel.org; Tue, 13 Nov 2018 08:01:50 +0100
-Received: from [10.71.67.24] (128.7.89.212) by
- srv-mail-02.gaia.fkie.fraunhofer.de (128.7.11.17) with Microsoft SMTP Server
- (TLS) id 15.0.1156.6; Tue, 13 Nov 2018 08:01:49 +0100
-To:     <linux-kernel@vger.kernel.org>
-From:   Henning Rogge <henning.rogge@fkie.fraunhofer.de>
-Message-ID: <d5459b78-490e-9aa7-6f0c-2fe4475575bc@fkie.fraunhofer.de>
-Date:   Tue, 13 Nov 2018 08:01:47 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Tue, 13 Nov 2018 12:14:04 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p2-v6so10298581wmc.2;
+        Mon, 12 Nov 2018 23:17:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=KjpTyhKii+Hn5/AOUl7Xd+8XHWn0qJXU4g7MOUx5pEk=;
+        b=HOA4XTigUc2KgDhhQIUwTxxzCe6zft9gqptb19utqgcF+5lsZiBkVTJ3O6HThk4Hit
+         w+RIqKHYOrv6tt/UUP+Y2u21pMHTfTJs4KaZy82sjTr7hin+TNl12pYhdvFbJ27Xw6P8
+         9yCNp09vOWGmellRT3ETQOIptAYxA/PxgvXto8k20DcW9cRQAwjuxdS+vd7i9WwF06jw
+         nKR2yjmE3vZjiBAOAKHvqD24WKlvbyJinNV7Vf7v2WTE+4sBZx5Y6VgcsvMrQ28zMdTi
+         s0k7HOGYZ01S3hI/pQ5ZeCf0zWry8KzW+ZlXiDQ8Dqh3AwBnIrSv7Vi9Fu3g8CqsYbIa
+         1A/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=KjpTyhKii+Hn5/AOUl7Xd+8XHWn0qJXU4g7MOUx5pEk=;
+        b=Ojm0JOljMFNNrbBWilKuPFtb8Rq+ByWQq0C1kHkQv2/S69/JXpxvhGrcpqNQuCRD6W
+         1uRxcXnEaRIPJV+zlMGm7n+bSikFRnR9znj5dkxUElzAzBd9lIyg+09cGuSQD8LZAknu
+         TeFCCQWM+2zZ9agm6NNphi6SfMqm/+2Rgc/mWoIl4F6q85XiLik30ZF5lyx5/PFyhE2J
+         SnYcmiUdCsFw3Zm9KvcV7poiuv6cAJTi2nAK0d5trAieQJ8+CezfVtPXdvsfxbRbCjPh
+         MhT7+5IL/T8gtRNg8QEvyDz85EWd/ORWUObcml7iExk9lMt6YwiCSUE9fSDsthsteV1c
+         aEGA==
+X-Gm-Message-State: AGRZ1gI5J1F5mC9qK6YbcfPG2ykXDPG59D6h7QVyf9GvE9fUQgD1V5Ai
+        rp3gsQasdrqzjxMxtfjt4SIDewkp
+X-Google-Smtp-Source: AJdET5dz/+bPZJ13jXlv/a+OWDzqTFN62lSm+J8lB1ZlCIKGRd6Py5vbAN/kOAr/OxSZFF0NjbggjQ==
+X-Received: by 2002:a7b:cb86:: with SMTP id m6-v6mr2117821wmi.77.1542093436440;
+        Mon, 12 Nov 2018 23:17:16 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id y83-v6sm8342337wmg.13.2018.11.12.23.17.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 23:17:15 -0800 (PST)
+Date:   Tue, 13 Nov 2018 08:17:12 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Bart Van Assche <bvanassche@acm.org>,
+        Jens Axboe <axboe@kernel.dk>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Borislav Petkov <bp@alien8.de>
+Subject: Re: [GIT PULL] PCI changes for v4.20
+Message-ID: <20181113071712.GA2353@gmail.com>
+References: <20181023173934.GA14918@bhelgaas-glaptop.roam.corp.google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Originating-IP: [128.7.89.212]
-X-ClientProxiedBy: srv-mail-01.gaia.fkie.fraunhofer.de (128.7.11.16) To
- srv-mail-02.gaia.fkie.fraunhofer.de (128.7.11.17)
-X-Spam_score: -1.0
-X-Spam_score_int: -9
-X-Spam_bar: -
-X-Spam_report: Spam detection software, running on the system "mailguard.fkie.fraunhofer.de",
- has NOT identified this incoming email as spam.  The original
- message has been attached to this so you can view it or label
- similar future email.  If you have any questions, see
- the administrator of that system for details.
- Content preview:  Hi, I am working on a self-written routing agent (https://github.com/OLSR/OONF)
-    and am stuck on a problem with netlink that I cannot explain with an userspace
-    error. I am using a netlink socket for setting routes (RTM_NEWROUTE/RTM_DELROUTE),
-    querying the kernel for the current routes in the database (via a RTM_GETROUTE
-    dump) and for getting multicast messages for ongoing routing changes. [...]
- Content analysis details:   (-1.0 points, 5.0 required)
-  pts rule name              description
- ---- ---------------------- --------------------------------------------------
- -0.0 SHORTCIRCUIT           Not all rules were run, due to a shortcircuited rule
- -1.0 ALL_TRUSTED            Passed through trusted hosts only via SMTP
-Subject: [rtnetlink] Potential bug in Linux (rt)netlink code (repost from
- linux-netdev)?
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181023173934.GA14918@bhelgaas-glaptop.roam.corp.google.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
 
-I am working on a self-written routing agent 
-(https://github.com/OLSR/OONF) and am stuck on a problem with netlink 
-that I cannot explain with an userspace error.
+* Bjorn Helgaas <helgaas@kernel.org> wrote:
 
-I am using a netlink socket for setting routes 
-(RTM_NEWROUTE/RTM_DELROUTE), querying the kernel for the current routes 
-in the database (via a RTM_GETROUTE dump) and for getting multicast 
-messages for ongoing routing changes.
+> PCI changes:
+> 
+>   - Pay attention to device-specific _PXM node values (Jonathan Cameron)
 
-After a few netlink messages I get to the point where the kernel just 
-does not responst to a RTM_NEWROUTE. No error, no answer, despite the 
-NLM_F_ACK flag set)... but sometime when (during shutdown of the routing 
-agent) the program sends another route command (most times a 
-RTM_DELROUTE) I get a single netlink packet with a "successful" response 
-for both the "missing" RTM_NEWROUTE and one for the new RTM DELROUTE 
-sequence number.
+There's a new boot regression, my AMD ThreadRipper system (MSI X399 SLI 
+PLUS (MS-7B09)) hangs during early bootup, and I have bisected it down to 
+this commit:
 
-I am testing two routing agents, each of them in a systemd-nspawn based 
-container connected over a bridge on the host system on a current Debian 
-Testing (kernel 4.18.0-1-amd64).
+  bad7dcd94f39: ACPI/PCI: Pay attention to device-specific _PXM node values
 
-I am directly using the netlink sockets, without any other userspace 
-library in between.
+Reverting it solves the hang.
 
-I have checked the hexdumps of a couple of netlink messages (including 
-the ones just before the bug happens) by hand and they seem to be okay.
+Unfortunately there's no console output when it hangs, even with 
+earlyprintk. It just hangs after the "loading initrd" line.
 
-When I tried to add a "netlink listener" socket for futher debugging (ip 
-link add nlmon0 type nlmon) the problem vanished until I removed the 
-listener socket again.
+Config is an Ubuntu-ish config with PROVE_LOCKING=y and a few other debug 
+options.
 
-Any ideas how to debug this problem? Unfortunately I have no short 
-example program to trigger the bug... I have rarely seen the problem for 
-years (once every couple of months), but until a few days ago I never 
-managed to reproduce it.
+All my other testsystems boot fine with similar configs, so it's probably 
+something specific to this system.
 
-I have asked on linux-netdev but got no reply expect for a question 
-about rate-limitation.
+Thanks,
 
-Henning Rogge
--- 
-Diplom-Informatiker Henning Rogge , Fraunhofer-Institut für
-Kommunikation, Informationsverarbeitung und Ergonomie FKIE
-Kommunikationssysteme (KOM)
-Zanderstrasse 5, 53177 Bonn, Germany
-Telefon +49 228 50212-469
-mailto:henning.rogge@fkie.fraunhofer.de http://www.fkie.fraunhofer.de
+	Ingo
