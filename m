@@ -2,35 +2,35 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9A02C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:04:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72FF9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:04:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 787672175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:04:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787672175B
+	by mail.kernel.org (Postfix) with ESMTP id 465F4216FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:04:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 465F4216FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388044AbeKNCCt (ORCPT
+        id S2388186AbeKNCCv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 21:02:49 -0500
-Received: from mga01.intel.com ([192.55.52.88]:43530 "EHLO mga01.intel.com"
+        Tue, 13 Nov 2018 21:02:51 -0500
+Received: from mga01.intel.com ([192.55.52.88]:43536 "EHLO mga01.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731439AbeKNCCt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 21:02:49 -0500
+        id S2388102AbeKNCCu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 21:02:50 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 08:03:53 -0800
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 08:03:56 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
-   d="scan'208";a="280745431"
+   d="scan'208";a="280745436"
 Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by fmsmga006.fm.intel.com with ESMTP; 13 Nov 2018 08:03:52 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 13 Nov 2018 08:03:55 -0800
 From:   thor.thayer@linux.intel.com
 To:     lee.jones@linaro.org, dinguyen@kernel.org, linux@armlinux.org.uk,
         catalin.marinas@arm.com, will.deacon@arm.com,
@@ -41,10 +41,12 @@ Cc:     davem@davemloft.net, mcoquelin.stm32@gmail.com,
         bjorn.andersson@linaro.org, olof@lixom.net,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         netdev@vger.kernel.org, Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [RESEND 0/4] Add SOCFPGA System Manager
-Date:   Tue, 13 Nov 2018 10:06:10 -0600
-Message-Id: <1542125174-8204-1-git-send-email-thor.thayer@linux.intel.com>
+Subject: [RESEND 2/4] ARM: socfpga_defconfig: Enable CONFIG_MTD_ALTERA_SYSMGR
+Date:   Tue, 13 Nov 2018 10:06:12 -0600
+Message-Id: <1542125174-8204-3-git-send-email-thor.thayer@linux.intel.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542125174-8204-1-git-send-email-thor.thayer@linux.intel.com>
+References: <1542125174-8204-1-git-send-email-thor.thayer@linux.intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -52,36 +54,25 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Thor Thayer <thor.thayer@linux.intel.com>
 
-Add MFD driver for ARM64 SOCFPGA System Manager to steer
-System Manager calls appropriately.
-The SOCFPGA System Manager includes registers from several
-SOC peripherals.
+Add System Manager driver by default for SOCFPGA ARM32 platforms.
 
-On ARM32, syscon handles this aggregated register grouping.
-Redirect System Manager calls to syscon for ARM32 SOCFPGA
-systems.
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+---
+ arch/arm/configs/socfpga_defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-The ARM64 System Manager can only be accessed from priority
-level EL3 so this new MFD driver handles the calls to EL3.
-
-Thor Thayer (4):
-  mfd: altera-sysmgr: Add SOCFPGA System Manager abstraction
-  ARM: socfpga_defconfig: Enable CONFIG_MTD_ALTERA_SYSMGR
-  arm64: defconfig: Enable CONFIG_MTD_ALTERA_SYSMGR
-  net: stmmac: socfpga: Convert to shared System Manager driver
-
- MAINTAINERS                                        |   6 +
- arch/arm/configs/socfpga_defconfig                 |   1 +
- arch/arm64/configs/defconfig                       |   1 +
- drivers/mfd/Kconfig                                |   9 +
- drivers/mfd/Makefile                               |   1 +
- drivers/mfd/altera-sysmgr.c                        | 311 +++++++++++++++++++++
- .../net/ethernet/stmicro/stmmac/dwmac-socfpga.c    |   4 +-
- include/linux/mfd/altera-sysmgr.h                  | 113 ++++++++
- 8 files changed, 445 insertions(+), 1 deletion(-)
- create mode 100644 drivers/mfd/altera-sysmgr.c
- create mode 100644 include/linux/mfd/altera-sysmgr.h
-
+diff --git a/arch/arm/configs/socfpga_defconfig b/arch/arm/configs/socfpga_defconfig
+index 371fca4e1ab7..c510a32f9f0d 100644
+--- a/arch/arm/configs/socfpga_defconfig
++++ b/arch/arm/configs/socfpga_defconfig
+@@ -109,6 +109,7 @@ CONFIG_SENSORS_LTC2978_REGULATOR=y
+ CONFIG_WATCHDOG=y
+ CONFIG_DW_WATCHDOG=y
+ CONFIG_MFD_ALTERA_A10SR=y
++CONFIG_MFD_ALTERA_SYSMGR=y
+ CONFIG_MFD_STMPE=y
+ CONFIG_REGULATOR=y
+ CONFIG_REGULATOR_FIXED_VOLTAGE=y
 -- 
 2.7.4
 
