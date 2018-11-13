@@ -2,128 +2,114 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B06BCC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:55:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09F55C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:57:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7C652206BA
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:55:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C652206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=freebsd.org
+	by mail.kernel.org (Postfix) with ESMTP id C72C9206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:57:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C72C9206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.De
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387558AbeKMXxQ (ORCPT
+        id S2387435AbeKMXzS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:53:16 -0500
-Received: from mx2.freebsd.org ([8.8.178.116]:20963 "EHLO mx2.freebsd.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733235AbeKMXxQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:53:16 -0500
-X-Greylist: delayed 405 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Nov 2018 18:53:15 EST
-Received: from mx1.freebsd.org (mx1.freebsd.org [96.47.72.80])
-        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-        (Client CN "mx1.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx2.freebsd.org (Postfix) with ESMTPS id 857CC7F135;
-        Tue, 13 Nov 2018 13:48:17 +0000 (UTC)
-        (envelope-from manu@freebsd.org)
-Received: from smtp.freebsd.org (smtp.freebsd.org [96.47.72.83])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (Client CN "smtp.freebsd.org", Issuer "Let's Encrypt Authority X3" (verified OK))
-        by mx1.freebsd.org (Postfix) with ESMTPS id C295B84C75;
-        Tue, 13 Nov 2018 13:48:15 +0000 (UTC)
-        (envelope-from manu@freebsd.org)
-Received: from skull.home.blih.net (ip-9.net-89-3-105.rev.numericable.fr [89.3.105.9])
+        Tue, 13 Nov 2018 18:55:18 -0500
+Received: from skedge03.snt-world.com ([91.208.41.68]:47816 "EHLO
+        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732996AbeKMXzR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 18:55:17 -0500
+Received: from sntmail12r.snt-is.com (unknown [10.203.32.182])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (Client did not present a certificate)
-        (Authenticated sender: manu)
-        by smtp.freebsd.org (Postfix) with ESMTPSA id A59D02203B;
-        Tue, 13 Nov 2018 13:48:14 +0000 (UTC)
-        (envelope-from manu@freebsd.org)
-From:   Emmanuel Vadot <manu@freebsd.org>
-To:     jason@lakedaemon.net, andrew@lunn.ch, gregory.clement@bootlin.com,
-        sebastian.hesselbarth@gmail.com, robh+dt@kernel.org,
-        mark.rutland@arm.com
-Cc:     linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Emmanuel Vadot <manu@freebsd.org>
-Subject: [PATCH] arm64: dts: marvell: armada_8k: reserve memory for ATF
-Date:   Tue, 13 Nov 2018 14:48:07 +0100
-Message-Id: <20181113134807.53292-1-manu@freebsd.org>
-X-Mailer: git-send-email 2.19.0
+        (No client certificate requested)
+        by skedge03.snt-world.com (Postfix) with ESMTPS id 1EB52501CFBA;
+        Tue, 13 Nov 2018 14:56:54 +0100 (CET)
+Received: from sntmail11s.snt-is.com (10.203.32.181) by sntmail12r.snt-is.com
+ (10.203.32.182) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Tue, 13 Nov
+ 2018 14:56:53 +0100
+Received: from sntmail11s.snt-is.com ([fe80::b972:ad22:ada5:7c6a]) by
+ sntmail11s.snt-is.com ([fe80::b972:ad22:ada5:7c6a%4]) with mapi id
+ 15.01.1466.003; Tue, 13 Nov 2018 14:56:53 +0100
+From:   Schrempf Frieder <frieder.schrempf@kontron.De>
+To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>
+CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        David Wolfe <david.wolfe@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+        "Han Xu" <han.xu@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "Frieder Schrempf" <frieder.schrempf@exceet.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 01/10] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Topic: [PATCH v4 01/10] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Index: AQHUdqhYSMF1H5PFG0CzH9jp+FBhraVNVheAgABdS4A=
+Date:   Tue, 13 Nov 2018 13:56:53 +0000
+Message-ID: <134abbb1-57fb-0450-3087-8d28609c36b3@kontron.de>
+References: <1541601809-16950-1-git-send-email-frieder.schrempf@kontron.de>
+ <1541601809-16950-2-git-send-email-frieder.schrempf@kontron.de>
+ <VI1PR04MB57269B88E1A064F6429D410999C20@VI1PR04MB5726.eurprd04.prod.outlook.com>
+In-Reply-To: <VI1PR04MB57269B88E1A064F6429D410999C20@VI1PR04MB5726.eurprd04.prod.outlook.com>
+Accept-Language: de-DE, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [172.25.9.43]
+x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <907125CF1118794283A47AA55D5C04EE@snt-world.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: C295B84C75
-X-Spamd-Result: default: False [-101.82 / 200.00];
-         ARC_NA(0.00)[];
-         RCVD_VIA_SMTP_AUTH(0.00)[];
-         ALLOW_DOMAIN_WHITELIST(-100.00)[freebsd.org];
-         NEURAL_HAM_MEDIUM(-1.00)[-1.000,0];
-         FROM_HAS_DN(0.00)[];
-         TO_DN_SOME(0.00)[];
-         TO_MATCH_ENVRCPT_ALL(0.00)[];
-         FREEMAIL_ENVRCPT(0.00)[gmail.com];
-         TAGGED_RCPT(0.00)[dt];
-         MIME_GOOD(-0.10)[text/plain];
-         BROKEN_CONTENT_TYPE(1.50)[];
-         R_SPF_SOFTFAIL(0.00)[~all];
-         R_MISSING_CHARSET(2.50)[];
-         NEURAL_HAM_LONG(-1.00)[-1.000,0];
-         DMARC_NA(0.00)[freebsd.org];
-         MX_GOOD(-0.01)[cached: mx66.freebsd.org];
-         NEURAL_HAM_SHORT(-1.00)[-1.000,0];
-         MID_CONTAINS_FROM(1.00)[];
-         RCPT_COUNT_SEVEN(0.00)[10];
-         FROM_EQ_ENVFROM(0.00)[];
-         R_DKIM_NA(0.00)[];
-         IP_SCORE(-3.71)[ip: (-9.74), ipnet: 96.47.64.0/20(-4.83), asn: 11403(-3.91), country: US(-0.09)];
-         ASN(0.00)[asn:11403, ipnet:96.47.64.0/20, country:US];
-         RCVD_COUNT_TWO(0.00)[2];
-         RCVD_TLS_ALL(0.00)[]
-X-Rspamd-Server: mx1.freebsd.org
+X-SnT-MailScanner-Information: Please contact the ISP for more information
+X-SnT-MailScanner-ID: 1EB52501CFBA.AA2BB
+X-SnT-MailScanner: Found to be clean
+X-SnT-MailScanner-SpamCheck: 
+X-SnT-MailScanner-From: frieder.schrempf@kontron.de
+X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
+        computersforpeace@gmail.com, david.wolfe@nxp.com,
+        dwmw2@infradead.org, fabio.estevam@nxp.com,
+        frieder.schrempf@exceet.de, han.xu@nxp.com,
+        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
+        miquel.raynal@bootlin.com, prabhakar.kushwaha@nxp.com,
+        richard@nod.at, shawnguo@kernel.org, yogeshnarayan.gaur@nxp.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like 4436a371 for 37xx, reserve the PSCI area memory region so kernels
-can call the code there.
-Region address is taken from the ATF code [1] and is 2MiB aligned.
-
-[1] plat/marvell/a8k/common/include/platform_def.h
-
-Signed-off-by: Emmanuel Vadot <manu@freebsd.org>
----
- arch/arm64/boot/dts/marvell/armada-ap806.dtsi | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-index 073610ac0a53..d8a79bb69de1 100644
---- a/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-+++ b/arch/arm64/boot/dts/marvell/armada-ap806.dtsi
-@@ -23,6 +23,21 @@
- 		spi0 = &spi0;
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+
-+		/*
-+		 * The PSCI firmware region depicted below is the default one
-+		 * and should be updated by the bootloader.
-+		 */
-+		psci-area@4000000 {
-+			reg = <0 0x4000000 0 0x200000>;
-+			no-map;
-+		};
-+	};
-+
- 	psci {
- 		compatible = "arm,psci-0.2";
- 		method = "smc";
--- 
-2.19.0
-
+SGkgWW9nZXNoLA0KDQpPbiAxMy4xMS4xOCAwOToyMiwgWW9nZXNoIE5hcmF5YW4gR2F1ciB3cm90
+ZToNClsuLi5dDQo+PiArDQo+PiArc3RhdGljIHZvaWQgZnNsX3FzcGlfcmVhZF9haGIoc3RydWN0
+IGZzbF9xc3BpICpxLCBjb25zdCBzdHJ1Y3QNCj4+ICtzcGlfbWVtX29wICpvcCkgew0KPj4gKwkv
+Kg0KPj4gKwkgKiBXZSB3YW50IHRvIGF2b2lkIG5lZWRpbmcgdG8gaW52YWxpZGF0ZSB0aGUgY2Fj
+aGUgYnkgaXNzdWVpbmcNCj4+ICsJICogYSByZXNldCB0byB0aGUgQUhCIGFuZCBTZXJpYWwgRmxh
+c2ggZG9tYWluLCBhcyB0aGlzIG5lZWRzDQo+PiArCSAqIHRpbWUuIFNvIHdlIGNoYW5nZSB0aGUg
+YWRkcmVzcyBvbiBlYWNoIHJlYWQgdG8gdHJpZ2dlciBhbg0KPj4gKwkgKiBhY3R1YWwgcmVhZCBv
+cGVyYXRpb24gb24gdGhlIGZsYXNoLiBUaGUgYWN0dWFsIGFkZHJlc3MgZm9yDQo+PiArCSAqIHRo
+ZSBmbGFzaCBtZW1vcnkgaXMgc2V0IGJ5IHByb2dyYW1taW5nIHRoZSBMVVQuDQo+PiArCSAqLw0K
+PiBBcyBkaXNjdXNzZWQgcHJldmlvdXNseSwgcGxlYXNlIGdvIGF3YXkgd2l0aCB0aGlzIGhhY2sg
+YW5kIHVzZSBBSEIgYnVzIGludmFsaWRhdGlvbiBtZXRob2Qgd2l0aCBzbWFsbGVyIHRpbWVvdXQg
+dmFsdWUuDQo+IA0KPiBJIHdvdWxkIHN0YXJ0IGRvaW5nIHZhbGlkYXRpb24gb2YgdGhpcyBwYXRj
+aCBzZXJpZXMgZnJvbSBuZXh0IHZlcnNpb24gb253YXJkLiBBcyB5b3UgaGF2ZSBtZW50aW9uZWQg
+aW4gb3RoZXIgbWFpbCBkaXNjdXNzaW9uIGFib3V0IGlzc3VlIGluIHRoZSBicmVhayBjb25kaXRp
+b24gZm9yIGZ1bmN0aW9uICBmc2xfcXNwaV9yZWFkbF9wb2xsX3RvdXQoKS4NCg0KVGhhbmsgeW91
+IGZvciB5b3VyIGNvbW1lbnRzLiBJIGp1c3Qgc2VudCB2NSB3aXRoIHNvbWUgZml4ZXMsIGluY2x1
+ZGluZyANCmZpeGVkIGZzbF9xc3BpX3JlYWRsX3BvbGxfdG91dCgpLg0KDQpJIGFsc28gcmVtb3Zl
+ZCB0aGUgaGFjayBhYm92ZSBhbmQgSSdtIHByb3Blcmx5IHJlc2V0dGluZyB0aGUgQUhCIGRvbWFp
+biANCm5vdy4gSSdtIHVzaW5nIGEgMXVzIGRlbGF5IGp1c3QgbGlrZSBpbiB0aGUgb2xkIGRyaXZl
+ci4gSW4gbXkgdGVzdHMgdGhlIA0KcGVyZm9ybWFuY2UgaW1wYWN0IHdhcyB2ZXJ5IHNtYWxsICh+
+MiUpIGFuZCBpdCBkaWRuJ3QgZ2V0IGJldHRlciB3aGVuIA0KdXNpbmcgbmRlbGF5Lg0KDQpUaGFu
+a3MsDQpGcmllZGVy
