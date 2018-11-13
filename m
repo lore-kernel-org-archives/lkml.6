@@ -2,121 +2,111 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB490C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:35:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28852C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:37:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBC06223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:35:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBC06223AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id D95DB223CB
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:37:13 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=cisco.com header.i=@cisco.com header.b="NIFaIYNc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D95DB223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=cisco.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387653AbeKMXdk (ORCPT
+        id S2387546AbeKMXfV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:33:40 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:52799 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387453AbeKMXdk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:33:40 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 6F110207BB; Tue, 13 Nov 2018 14:35:28 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 37833206A7;
-        Tue, 13 Nov 2018 14:35:18 +0100 (CET)
-Date:   Tue, 13 Nov 2018 14:35:18 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Yong Deng <yong.deng@magewell.com>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
+        Tue, 13 Nov 2018 18:35:21 -0500
+Received: from aer-iport-2.cisco.com ([173.38.203.52]:48052 "EHLO
+        aer-iport-2.cisco.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732728AbeKMXfV (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 18:35:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=cisco.com; i=@cisco.com; l=690; q=dns/txt; s=iport;
+  t=1542116231; x=1543325831;
+  h=subject:to:cc:references:from:message-id:date:
+   mime-version:in-reply-to:content-transfer-encoding;
+  bh=7L4JnNhNef97sMIBe/Xt8VukAeB+gj04mVrAGsvI9Jw=;
+  b=NIFaIYNcVyjnbbEerSWUCDsu6kaaHkhMvxO/Z7MImww359sWyDh5fV9I
+   +f3NA01q3XstsjRhtW84Kt/QVtQHaE9pK4EIivJiBsUwH3n4U4d4UX6li
+   5MnmuXjrfzvRoDNkZ+tz4fsZaqwafYXigD6lPhS0a68sd1NwOVH2E4use
+   Y=;
+X-IronPort-AV: E=Sophos;i="5.54,499,1534809600"; 
+   d="scan'208";a="8014524"
+Received: from aer-iport-nat.cisco.com (HELO aer-core-4.cisco.com) ([173.38.203.22])
+  by aer-iport-2.cisco.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 13:37:09 +0000
+Received: from [10.47.79.81] ([10.47.79.81])
+        (authenticated bits=0)
+        by aer-core-4.cisco.com (8.15.2/8.15.2) with ESMTPSA id wADDb8FA032563
+        (version=TLSv1.2 cipher=DHE-RSA-AES256-SHA bits=256 verify=NO);
+        Tue, 13 Nov 2018 13:37:09 GMT
+Subject: Re: [PATCH 3/5] media: sunxi: Add A10 CSI driver
+To:     Fabio Estevam <festevam@gmail.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
         Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v12 0/2] Initial Allwinner V3s CSI Support
-Message-ID: <20181113133518.6nnh4m37s6awfw6d@flea>
-References: <1540886988-27696-1-git-send-email-yong.deng@magewell.com>
+        linux-media <linux-media@vger.kernel.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+References: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
+ <c53e1cdc3b139382b00ee06bf3980d3fd1742ec0.1542097288.git-series.maxime.ripard@bootlin.com>
+ <CAOMZO5CjFt1dyu8KOK+jKd88x8hwGNy9aJ-sGgooS9970TGTVQ@mail.gmail.com>
+From:   Hans Verkuil <hansverk@cisco.com>
+Message-ID: <9a9616d2-a189-bd0e-e2e6-f84bdcb1dfd1@cisco.com>
+Date:   Tue, 13 Nov 2018 14:37:08 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="aa6ku2d2rt2bopyg"
-Content-Disposition: inline
-In-Reply-To: <1540886988-27696-1-git-send-email-yong.deng@magewell.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CAOMZO5CjFt1dyu8KOK+jKd88x8hwGNy9aJ-sGgooS9970TGTVQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Authenticated-User: hansverk
+X-Outbound-SMTP-Client: 10.47.79.81, [10.47.79.81]
+X-Outbound-Node: aer-core-4.cisco.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/13/18 13:48, Fabio Estevam wrote:
+> On Tue, Nov 13, 2018 at 6:25 AM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> 
+>> --- /dev/null
+>> +++ b/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.c
+>> @@ -0,0 +1,275 @@
+>> +// SPDX-License-Identifier: GPL-2.0-or-later
+> 
+> According to Documentation/process/license-rules.rst this should be:
+> 
+> +// SPDX-License-Identifier: GPL-2.0+
+> 
+> Same applies to other places in this patch.
+> 
 
---aa6ku2d2rt2bopyg
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Actually, LICENSES/preferred/GPL-2.0 has GPL-2.0-or-later
+as a valid license:
 
-Hi Yong,
+Valid-License-Identifier: GPL-2.0-or-later
 
-On Tue, Oct 30, 2018 at 04:09:48PM +0800, Yong Deng wrote:
-> I can't make v4l2-compliance always happy.
-> The V3s CSI support many pixformats. But they are not always available.
-> It's dependent on the input bus format (MEDIA_BUS_FMT_*).=20
-> Example:
-> V4L2_PIX_FMT_SBGGR8: MEDIA_BUS_FMT_SBGGR8_1X8
-> V4L2_PIX_FMT_YUYV: MEDIA_BUS_FMT_YUYV8_2X8
-> But I can't get the subdev's format code before starting stream as the
-> subdev may change it. So I can't know which pixformats are available.
-> So I exports all the pixformats supported by SoC.
-> The result is the app (v4l2-compliance) is likely to fail on streamon.
->=20
-> This patchset add initial support for Allwinner V3s CSI.
->=20
-> Allwinner V3s SoC features a CSI module with parallel interface.
->=20
-> This patchset implement a v4l2 framework driver and add a binding=20
-> documentation for it.=20
+Personally I very much prefer GPL-2.0-or-later since I think it is
+much clearer.
 
-I've tested this version today, and I needed this patch to make it
-work on top of v4.20:
-http://code.bulix.org/9o8fw5-503690?raw
+Regards,
 
-Once that patch applied, my tests were working as expected.
-
-If that make sense, could you resubmit a new version with these merged
-so that we can try to target 4.21?
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---aa6ku2d2rt2bopyg
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+rTFgAKCRDj7w1vZxhR
-xYo2AQCjVo2DMx05jzJV1L//qtVnrQ6uzy9rgeGLzFkU83S2LwD+M/yMUjwAJhl1
-suMk4OlZFxntxFuQqwNLoQJMmuBicQI=
-=Vno6
------END PGP SIGNATURE-----
-
---aa6ku2d2rt2bopyg--
+	Hans
