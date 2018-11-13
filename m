@@ -2,141 +2,145 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70408C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:01:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 735D6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:01:12 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 41AC02245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:01:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 41AC02245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 38B01223CB
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:01:12 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fT8ABgGg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38B01223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732619AbeKMP5h (ORCPT
+        id S1732386AbeKMP5k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:57:37 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:45826 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731956AbeKMP5f (ORCPT
+        Tue, 13 Nov 2018 10:57:40 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:32897 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731956AbeKMP5j (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:57:35 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAD60WcJ067958;
-        Tue, 13 Nov 2018 00:00:32 -0600
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAD60W9G124217
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Nov 2018 00:00:32 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 13
- Nov 2018 00:00:31 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 13 Nov 2018 00:00:32 -0600
-Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAD60Lu9017811;
-        Tue, 13 Nov 2018 00:00:29 -0600
-From:   Vignesh R <vigneshr@ti.com>
-To:     Tero Kristo <t-kristo@ti.com>, Rob Herring <robh+dt@kernel.org>
-CC:     Nishanth Menon <nm@ti.com>, Mark Rutland <mark.rutland@arm.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, Vignesh R <vigneshr@ti.com>,
-        <linux-omap@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tony Lindgren <tony@atomide.com>
-Subject: [PATCH v2 2/4] arm64: dts: ti: k3-am65: Add pinctrl regions
-Date:   Tue, 13 Nov 2018 11:31:09 +0530
-Message-ID: <20181113060111.16374-3-vigneshr@ti.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181113060111.16374-1-vigneshr@ti.com>
-References: <20181113060111.16374-1-vigneshr@ti.com>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 7BIT
-Content-Type:   text/plain; charset=US-ASCII
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Tue, 13 Nov 2018 10:57:39 -0500
+Received: by mail-pg1-f194.google.com with SMTP id z11so2543802pgu.0
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 22:01:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=L1MmGLhowMkEp3+3jZ4blj4L16FJ2J4LnmdalTZsoAw=;
+        b=fT8ABgGgnE7dc7JKEqhztZc57y5uVfURFWAgXdtKvn3kHm/QTqSOgaPiY+jX5RHSou
+         83V6izCtnmWGfl35c8G2GNSwS7cBSIxG61ELQXM8cyBzILyx7RBNvGsB7iHDMjviFVRo
+         KGmPzP3dTfIl2tNV/NPv0VyFljbae95zQJWCU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=L1MmGLhowMkEp3+3jZ4blj4L16FJ2J4LnmdalTZsoAw=;
+        b=pgfn8mWTN5yQDCMT59cJ5HpIx9RbzDsM7h+f+4vEHK+Pw7uzzX9p1hSFLwwAtOkLiS
+         rVOjKlvMBJ68jxH7InMj+rhVGQ9ESIsLCIVrPrTgsKQ0lrbdbEr1WBDAd2CXCtgYzCDr
+         xQ4S2+lX0T/FG3LRRDUVS1TJjfc6zNDV8QSLl8Jt/wz6sHfWwzv6ine4mqoK8CnBjjV5
+         Hu63KuMoyTp56Z9nZgg8uzGwNzT8JnH6qc7LG65/ylmhu9/xgzyYpt0tqr/t1m0TJhfA
+         LBJVcX8rGiNhS1QfvJSbZVQ30hbivH+rDaxfO9R3PwCdSt2tlR9rpgD/kCCPFYFeOAn8
+         lysA==
+X-Gm-Message-State: AGRZ1gKflBUnOsBilXWmYYlUobivWMzNuKLH9DyFkPMmdsewR+ax1qYQ
+        /DD6ZIAtmBxWqUv5paw2uIhvCA==
+X-Google-Smtp-Source: AJdET5clTOK/jXpHhxOV0mx8GqH3VeEEhDI9nn4QBhUDz8uuZt1vKieHTgCku2HC2CupyduO5VjlCA==
+X-Received: by 2002:a63:193:: with SMTP id 141mr3580631pgb.136.1542088869009;
+        Mon, 12 Nov 2018 22:01:09 -0800 (PST)
+Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id r6-v6sm19150204pfk.157.2018.11.12.22.01.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Mon, 12 Nov 2018 22:01:08 -0800 (PST)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-m68k@lists.linux-m68k.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH v5 1/3] m68k: add __NR_syscalls along with NR_syscalls
+Date:   Tue, 13 Nov 2018 11:30:27 +0530
+Message-Id: <1542088829-19790-2-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542088829-19790-1-git-send-email-firoz.khan@linaro.org>
+References: <1542088829-19790-1-git-send-email-firoz.khan@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tero Kristo <t-kristo@ti.com>
+NR_syscalls macro holds the number of system call
+exist in m68k architecture. We have to change the
+value of NR_syscalls, if we add or delete a system
+call.
 
-Add pinctrl regions for the main and wkup mmr.
+One of the patch in this patch series has a script
+which will generate a uapi header based on syscall-
+.tbl file. The syscall.tbl file contains the total
+number of system calls information. So we have two
+option to update NR_syscalls value.
 
-The range for main pinctrl region contains a gap
-at offset 0x2e4, and because of this, the pinctrl
-range is split into two sections.
+1. Update NR_syscalls in asm/unistd.h manually by
+   counting the no.of system calls. No need to up-
+   date NR_syscalls until we either add a new sys-
+   tem call or delete existing system call.
 
-Signed-off-by: Tero Kristo <t-kristo@ti.com>
-Signed-off-by: Vignesh R <vigneshr@ti.com>
+2. We can keep this feature it above mentioned sc-
+   ript, that will count the number of syscalls and
+   keep it in a generated file. In this case we
+   don't need to explicitly update NR_syscalls in
+   asm/unistd.h file.
+
+The 2nd option will be the recommended one. For that,
+I added the __NR_syscalls macro in uapi/asm/unistd.h
+along with NR_syscalls asm/unistd.h. The macro __NR-
+_syscalls also added for making the name convention
+same across all architecture. While __NR_syscalls
+isn't strictly part of the uapi, having it as part
+of the generated header to simplifies the implement-
+ation. We also need to enclose this macro with #ifdef
+__KERNEL__ to avoid side effects.
+
+Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
 ---
- arch/arm64/boot/dts/ti/k3-am65-main.dtsi   | 16 ++++++++++++++++
- arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi |  8 ++++++++
- arch/arm64/boot/dts/ti/k3-am65.dtsi        |  1 +
- 3 files changed, 25 insertions(+)
+ arch/m68k/include/asm/unistd.h      | 3 +--
+ arch/m68k/include/uapi/asm/unistd.h | 4 ++++
+ 2 files changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-index adcd6341e40c..f7c2a60d5c80 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
-@@ -69,4 +69,20 @@
- 		clock-frequency = <48000000>;
- 		current-speed = <115200>;
- 	};
-+
-+	main_pmx0: pinmux@11c000 {
-+		compatible = "pinctrl-single";
-+		reg = <0x0 0x11c000 0x0 0x2e4>;
-+		#pinctrl-cells = <1>;
-+		pinctrl-single,register-width = <32>;
-+		pinctrl-single,function-mask = <0xffffffff>;
-+	};
-+
-+	main_pmx1: pinmux@11c2e8 {
-+		compatible = "pinctrl-single";
-+		reg = <0x0 0x11c2e8 0x0 0x24>;
-+		#pinctrl-cells = <1>;
-+		pinctrl-single,register-width = <32>;
-+		pinctrl-single,function-mask = <0xffffffff>;
-+	};
- };
-diff --git a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-index 8d7b47f9dfbf..19b46f40789b 100644
---- a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
-@@ -34,6 +34,14 @@
- 		};
- 	};
+diff --git a/arch/m68k/include/asm/unistd.h b/arch/m68k/include/asm/unistd.h
+index e680031..49d5de1 100644
+--- a/arch/m68k/include/asm/unistd.h
++++ b/arch/m68k/include/asm/unistd.h
+@@ -4,8 +4,7 @@
  
-+	wkup_pmx0: pinmux@4301c000 {
-+		compatible = "pinctrl-single";
-+		reg = <0x4301c000 0x118>;
-+		#pinctrl-cells = <1>;
-+		pinctrl-single,register-width = <32>;
-+		pinctrl-single,function-mask = <0xffffffff>;
-+	};
-+
- 	wkup_uart0: serial@42300000 {
- 		compatible = "ti,am654-uart";
- 		reg = <0x42300000 0x100>;
-diff --git a/arch/arm64/boot/dts/ti/k3-am65.dtsi b/arch/arm64/boot/dts/ti/k3-am65.dtsi
-index 3d4bf369d030..6fdfc7815811 100644
---- a/arch/arm64/boot/dts/ti/k3-am65.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-am65.dtsi
-@@ -8,6 +8,7 @@
- #include <dt-bindings/gpio/gpio.h>
- #include <dt-bindings/interrupt-controller/irq.h>
- #include <dt-bindings/interrupt-controller/arm-gic.h>
-+#include <dt-bindings/pinctrl/k3.h>
+ #include <uapi/asm/unistd.h>
  
- / {
- 	model = "Texas Instruments K3 AM654 SoC";
+-
+-#define NR_syscalls		380
++#define NR_syscalls	__NR_syscalls
+ 
+ #define __ARCH_WANT_NEW_STAT
+ #define __ARCH_WANT_OLD_READDIR
+diff --git a/arch/m68k/include/uapi/asm/unistd.h b/arch/m68k/include/uapi/asm/unistd.h
+index de3054f..ba4176aa 100644
+--- a/arch/m68k/include/uapi/asm/unistd.h
++++ b/arch/m68k/include/uapi/asm/unistd.h
+@@ -387,4 +387,8 @@
+ #define __NR_pwritev2		378
+ #define __NR_statx		379
+ 
++#ifdef __KERNEL__
++#define __NR_syscalls		380
++#endif
++
+ #endif /* _UAPI_ASM_M68K_UNISTD_H_ */
 -- 
-2.19.1
+1.9.1
 
