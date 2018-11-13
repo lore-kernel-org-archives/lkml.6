@@ -2,258 +2,289 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB4AFC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:11:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 32C37C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:16:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9ED5D2243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:11:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC0342243E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:16:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jlOnn+Rn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9ED5D2243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="uaLStJSO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC0342243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731022AbeKMRHr (ORCPT
+        id S1731074AbeKMRNS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 12:07:47 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:34299 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726937AbeKMRHr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 12:07:47 -0500
-Received: by mail-lf1-f65.google.com with SMTP id p6so8026121lfc.1;
-        Mon, 12 Nov 2018 23:10:59 -0800 (PST)
+        Tue, 13 Nov 2018 12:13:18 -0500
+Received: from mail-eopbgr820044.outbound.protection.outlook.com ([40.107.82.44]:46967
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726173AbeKMRNS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 12:13:18 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=uG9vVulv7Y+Ew03vbkeEuhCX4388GvySL5VA84LKykk=;
-        b=jlOnn+Rnw2ifNKFgffC7phlUC8pw4bsoYgW8SzuxV/V856NHTtWVvmDYQ0qqMyfOGv
-         j9v1+R5OhqKkwvqwzePQM2k/qK9Y7H4ecuYqoouT2UHRwTiqn/WQMfw0ooe2udM9Ud64
-         Lgud15W8rWREFyx0U5RTVT+q3YQF7QdqrtPkugPFuC3je/qBnYHeVeEpzTJVyHybqitA
-         fK1HFyKJC/KWzij1vBEvSReL3hWqxIpyY2b5E5LkpUvnZt/efRJxVdw2a6ThIMYvRp2f
-         Qw06AOAEOChNYDoCdVu2zg+RI3/XfalvARJlWUuy3r+m8aoJgiH4T4SSUQ4KJTzWFGZo
-         Otzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=uG9vVulv7Y+Ew03vbkeEuhCX4388GvySL5VA84LKykk=;
-        b=gmxUv5JKmkA9u+GbzpwQ7RN76oJv3PsPP5Snkuv8a+1XII4HYAZSi/xwDPDBwRixn1
-         O+56Ziu8PhxrFXrTencg4lfwDMM/Mai1+awsA83Sf/+qkInTJkVILut72gkxaJNLQ4ct
-         QlzSz2lW+hR+pzK4xta041yX/F/5pWK5S9gCbEQukJk21NpFEr4akq48vwzo60IKlWYQ
-         UXTPdQk1uvTIpZl8jTXzqLzlF7fy4XvfaxMA/8WBrrh9SeCusakNpqBClOuwFEsUNnjK
-         32ebEdtRGw/A8gYhAVYHx+/dUoQf/pl6wfgAFl64D1TdQ9Mv41r03tj0yQyaY6QGTeMo
-         edoQ==
-X-Gm-Message-State: AGRZ1gKtmmQ+X/uZuYXG5ojz3tOX9x4CNptVmkJP+8/i97CPkh9QpppZ
-        YRY1+agLawZSo3uH/Yc6ZW8=
-X-Google-Smtp-Source: AJdET5e9YdJaqAIZgj3YvLqCj9L0HI1aj/3WFNlSkc3QVwSbbmj2SCdOCC8HlXCDLUGm5882YVsYGA==
-X-Received: by 2002:a19:4d8d:: with SMTP id a135mr2449880lfb.80.1542093058191;
-        Mon, 12 Nov 2018 23:10:58 -0800 (PST)
-Received: from ?IPv6:2001:14ba:8017:3300:1cd6:b9c5:b6c4:9046? (dtynxhyy86688nq2fwbdy-3.rev.dnainternet.fi. [2001:14ba:8017:3300:1cd6:b9c5:b6c4:9046])
-        by smtp.googlemail.com with ESMTPSA id m14-v6sm3298086lji.29.2018.11.12.23.10.56
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 23:10:57 -0800 (PST)
-Subject: Re: [PATCH 04/24] dt-bindings: leds: Add function and color
- properties
-To:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        linux-leds@vger.kernel.org
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        pavel@ucw.cz, robh@kernel.org,
-        Baolin Wang <baolin.wang@linaro.org>,
-        Daniel Mack <daniel@zonque.org>, Dan Murphy <dmurphy@ti.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Oleh Kravchenko <oleg@kaa.org.ua>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Simon Shields <simon@lineageos.org>,
-        Xiaotong Lu <xiaotong.lu@spreadtrum.com>
-References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
- <1541542052-10081-5-git-send-email-jacek.anaszewski@gmail.com>
- <bdd18dc6-0dee-5957-81d4-39254c7ad74d@gmail.com>
- <be4e75ed-746e-ed55-0bbe-0fd710bd4162@gmail.com>
- <12fb34ec-7175-1ac4-a96e-e1d5d424c9eb@gmail.com>
- <d1ef315d-1216-7e63-f24f-5c6fee8793be@gmail.com>
-From:   =?UTF-8?B?VmVzYSBKw6TDpHNrZWzDpGluZW4=?= <dachaac@gmail.com>
-Message-ID: <95bcc400-da1a-1334-1f4f-f628eca926b3@gmail.com>
-Date:   Tue, 13 Nov 2018 09:10:56 +0200
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:52.0)
- Gecko/20100101 Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <d1ef315d-1216-7e63-f24f-5c6fee8793be@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+ d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=5UIpsQKrOcpoGinVSYEKYbSbhF19w5vEh4TaZo7+mMY=;
+ b=uaLStJSOD4OMS4+uKuSA0fiioX/u3BRJ2LumbAEa15Mq2IOix84RfFzj8YJvkdcILGnni4rUqQ+1fRvSqHlh7hO1xi5V2TH/E9NSp8XM/MuAu8+i5LXJMQU7Dlgueznm81I98BXgjW8IOvoqOnqOGhQFtPb50f5junBeptIQi6o=
+Received: from DM5PR02MB2233.namprd02.prod.outlook.com (10.168.173.147) by
+ DM5PR02MB2812.namprd02.prod.outlook.com (10.175.86.15) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Tue, 13 Nov 2018 07:16:28 +0000
+Received: from DM5PR02MB2233.namprd02.prod.outlook.com
+ ([fe80::d16b:1d19:d06e:50dc]) by DM5PR02MB2233.namprd02.prod.outlook.com
+ ([fe80::d16b:1d19:d06e:50dc%2]) with mapi id 15.20.1294.045; Tue, 13 Nov 2018
+ 07:16:26 +0000
+From:   Jiaying Liang <jliang@xilinx.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>,
+        Michal Simek <michals@xilinx.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+Subject: RE: [PATCH v5 2/2] dt-bindings: mailbox: Add Xilinx IPI Mailbox
+Thread-Topic: [PATCH v5 2/2] dt-bindings: mailbox: Add Xilinx IPI Mailbox
+Thread-Index: AQHUdVgcP3DYeMM1mUmtiv85ca0+nKVMdyKAgADe2eA=
+Date:   Tue, 13 Nov 2018 07:16:26 +0000
+Message-ID: <DM5PR02MB22334437172F9379477A115CB0C20@DM5PR02MB2233.namprd02.prod.outlook.com>
+References: <1541457421-14820-1-git-send-email-wendy.liang@xilinx.com>
+ <1541457421-14820-3-git-send-email-wendy.liang@xilinx.com>
+ <5bea0eb3.1c69fb81.20e73.a4f9@mx.google.com>
+In-Reply-To: <5bea0eb3.1c69fb81.20e73.a4f9@mx.google.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=jliang@xilinx.com; 
+x-originating-ip: [149.199.62.133]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR02MB2812;6:UwmiV4ZWnw7EBlrbWHcQWOQ0Srb0r4or3JEpBvqXAN5+FnHJUYQ5nnN/h8KV3EomG8iLvdxhJreyWQ9POI6VFxiSnENxInvF+WDgtdF7Qgl2eBu64/mHCd5sIQWv9ry1rRlzghQEGrNMA9CaMW1gvFIh8v20OZ2uS2QFxMj2apOG2xeuMAmENMPsi3LLkqdqEipJ0i95gFpFW8hcxcChZ1c6o+kemQW1Yyw773Ed4KcTn8gHrDyWY2HBSjS4eKZw94AeRdCSvAhdxamTa2lw5ZsIwe1dAdbi935fFfi+guPaSTLCSERI5bvay5mN3I+s6IkF2ZLxZZ1T5RABUkqqtC40KY3y587p3lnl3s/ttNntvbXpiT/hlnQpHOovG/Xcw7k+AAMuhjCIZ+7uci8e1n2byPSwmOCx+YfHHlSWXsabZ3LbPAJoiCvMc27T3h+ZOTlnvC709RbZ0sNSDd1zbQ==;5:twE3y1WxvFDeOFdraKtLB0zY+tLE/vYix6khzX8yCpq8BVFwleW3Sj6ZB+yEx/V/JDjmzM+WYvgYe8D2fDFPWIhWmqJJntmdSiknVlWjnF9wdvLvBjWbniE5Y0VGi0qX25fIYzrIuYgr2ddjMxNbfIcivR6sHgweQ00u320ITkE=;7:ufNzOpFzugo6XZpx1upGkVWZfeh8sG91aCqOKWUPywE3f0p9bG700vKrcVEbEs53pP4x+8WePD4n2gNunhPnD04CkuZxc04s0H5t8YmUsiqNQH6VnYWKRft8NGtkkKSTFF37q6so3g1BahlazOkJww==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
+x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(366004)(136003)(39860400002)(13464003)(199004)(189003)(6116002)(99286004)(11346002)(74316002)(8936002)(106356001)(6436002)(476003)(14444005)(446003)(53936002)(105586002)(3846002)(186003)(53546011)(316002)(486006)(6506007)(102836004)(71200400001)(71190400001)(54906003)(25786009)(7696005)(26005)(76176011)(2906002)(229853002)(305945005)(14454004)(86362001)(97736004)(39060400002)(2900100001)(55016002)(4326008)(8676002)(9686003)(81166006)(81156014)(5660300001)(68736007)(256004)(7736002)(6246003)(478600001)(33656002)(15650500001)(66066001)(6916009);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR02MB2812;H:DM5PR02MB2233.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-ms-office365-filtering-correlation-id: 27674d62-8406-4588-6f28-08d64937ecef
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390060)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR02MB2812;
+x-ms-traffictypediagnostic: DM5PR02MB2812:
+x-microsoft-antispam-prvs: <DM5PR02MB2812B1F2A8DBF0A5FC3F2BFBB0C20@DM5PR02MB2812.namprd02.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(85827821059158)(180628864354917)(9452136761055)(258649278758335)(192813158149592);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3002001)(3231406)(944501410)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DM5PR02MB2812;BCL:0;PCL:0;RULEID:;SRVR:DM5PR02MB2812;
+x-forefront-prvs: 085551F5A8
+received-spf: None (protection.outlook.com: xilinx.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: higTHW+w56ueyLHJdbRJdBxsUZkNqFpYgGzZJyZR32oh/fbX3ToF4zRHYSJNdd8IwMkp54ps/D1jSMMs8vo/yzGpW30a3Nut8Xlk5weALqHAcYx5pNqVIMHObafBZ/XY9b+lRshT8xM8JTApkSyKQIGo58IsrwhAbPL65dcm+ceupFhWPhne5VMaP2F9IjP/2KKJF441kxCG6D+/VVsmq6sF7e3eafcTD53UBJEfEIlCghZHl/rr8bMSVNUatjeNm3IolxzZ3bz9vRPs41CHsCGIbz6nqq75Oz3piC+HTVmttnuQFla3ZSShNq9G6tVQZO8UqXY5WzQ75KKSuFvcZUNVdYYzOEv8RpC/L9MFaj8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: xilinx.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 27674d62-8406-4588-6f28-08d64937ecef
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2018 07:16:26.5397
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR02MB2812
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jacek,
 
-On 12/11/2018 18.02, Jacek Anaszewski wrote:
->>> Support for RGB LEDs, or other variations of LED synchronization
->>> have been approached several times, but without satisfying result
->>> so far.
->>>
->>> Generally the problem boils down to the issue of how triggers
->>> should handle multiple synchronized LED class devices in a backwards
->>> compatible way with monochrome LEDs.
->>>
->>> At some point the HSV [0] approach was proposed, but there was a problem
->>> with getting uniform colors across devices. Especially white.
->>> Certainly a calibration mechanism would be required.
->>>
->>> [0] https://lkml.org/lkml/2017/8/30/423
->>
->> We do not usually use PWM controlled leds so our calibration has been HW
->> engineer tuning the resistors for the leds to get acceptable color for
->> different colors variations.
->>
->> If one wants to have fixed colors for such device then one could use
->> this similar method to define them or/and free form interface to enter
->> RGB values there. Thou with PWM RGB leds you probably want to have more
->> animation there which probably would require some additional support code.
->>
->> One way to do atomic PWM RGB color change with sysfs could be:
->>
->> echo "21 223 242" > color
->>
->> or
->>
->> echo "21 223 242" > rgb
->>
->> or:
->>
->> echo "r:21 g:232 b:242" > color (or something similar)
->>
->> and if there is know registered name then just write it to "color" which
->> would pick registered color rgb values to led instances rgb value.
->>
->> Now for PWM RGB led one could use "brightness" and "rgb" value to
->> calculate actual color with some color space formula (like hsv in [0]).
->>
->> Doing white with RGB LED is a bit hard so usually you want to get RGBW
->> LED (or RGBAW LED) if "real" white is something that is needed. This
->> could then be "rgbw" entry and "color" to pick from fixed set.
->>
->> These presets in device tree for "color" could be considered one way of
->> doing calibration for particular hardware.
->>
->> So in device tree for RGB PWM led it could be like:
->>
->> color-orange {
->>      rgb = <249 197 9>
->> }
->>
->> color-warm-white {
->>      rgb = <255 253 249>
->> }
->>
->> How would that sound like?
-> 
-> Thank you for the description of your approach.
-> 
-> Predefined DT color definitions make an interesting option. Nonetheless,
-> your design assumes that for RGB LEDs max_brightness would have to be
-> always 1.
-> 
-> While it would solve the issue, it wouldn't allow to benefit from
-> the whole potential of RGB LEDs - think of having adjustable "color
-> brightness" (like in HSV color model).
 
-What I tried to describe above was that these could also work with HSV 
-model also with larger brigtness values too.
+> -----Original Message-----
+> From: Rob Herring [mailto:robh@kernel.org]
+> Sent: Monday, November 12, 2018 9:56 AM
+> To: Jiaying Liang <jliang@xilinx.com>
+> Cc: jassisinghbrar@gmail.com; Michal Simek <michals@xilinx.com>;
+> mark.rutland@arm.com; linux-kernel@vger.kernel.org; linux-arm-
+> kernel@lists.infradead.org; devicetree@vger.kernel.org
+> Subject: Re: [PATCH v5 2/2] dt-bindings: mailbox: Add Xilinx IPI Mailbox
+>=20
+> On Mon, Nov 05, 2018 at 02:37:01PM -0800, Wendy Liang wrote:
+> > Xilinx ZynqMP IPI(Inter Processor Interrupt) is a hardware block in
+> > ZynqMP SoC used for the communication between various processor
+> > systems.
+> >
+> > Signed-off-by: Wendy Liang <wendy.liang@xilinx.com>
+> > ---
+> >  .../bindings/mailbox/xlnx,zynqmp-ipi-mailbox.txt   | 128
+> +++++++++++++++++++++
+> >  1 file changed, 128 insertions(+)
+> >  create mode 100644
+> > Documentation/devicetree/bindings/mailbox/xlnx,zynqmp-ipi-mailbox.txt
+> >
+> > diff --git
+> > a/Documentation/devicetree/bindings/mailbox/xlnx,zynqmp-ipi-mailbox.tx
+> > t
+> > b/Documentation/devicetree/bindings/mailbox/xlnx,zynqmp-ipi-
+> mailbox.tx
+> > t
+> > new file mode 100644
+> > index 0000000..18fd7b4
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/mailbox/xlnx,zynqmp-ipi-
+> mailbo
+> > +++ x.txt
+> > @@ -0,0 +1,128 @@
+> > +Xilinx IPI Mailbox Controller
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > +
+> > +The Xilinx IPI(Inter Processor Interrupt) mailbox controller is to
+> > +manage messaging between two Xilinx Zynq UltraScale+ MPSoC IPI
+> > +agents. Each IPI agent owns registers used for notification and buffer=
+s for
+> message.
+> > +
+> > +               +-------------------------------------+
+> > +               | Xilinx ZynqMP IPI Controller        |
+> > +               +-------------------------------------+
+> > +    +--------------------------------------------------+
+> > +ATF                    |                     |
+> > +                       |                     |
+> > +                       |                     |
+> > +    +--------------------------+             |
+> > +                       |                     |
+> > +                       |                     |
+> > +    +--------------------------------------------------+
+> > +            +------------------------------------------+
+> > +            |  +----------------+   +----------------+ |
+> > +Hardware    |  |  IPI Agent     |   |  IPI Buffers   | |
+> > +            |  |  Registers     |   |                | |
+> > +            |  |                |   |                | |
+> > +            |  +----------------+   +----------------+ |
+> > +            |                                          |
+> > +            | Xilinx IPI Agent Block                   |
+> > +            +------------------------------------------+
+> > +
+> > +
+> > +Controller Device Node:
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> > +Required properties:
+> > +--------------------
+> > +IPI agent node:
+> > +- compatible:		Shall be: "xlnx,zynqmp-ipi-mailbox"
+> > +- interrupt-parent:	Phandle for the interrupt controller
+> > +- interrupts:		Interrupt information corresponding to the
+> > +			interrupt-names property.
+> > +- xlnx,ipi-id:		local Xilinx IPI agent ID
+> > +- #address-cells:	number of address cells of internal IPI mailbox node=
+s
+> > +- #size-cells:		number of size cells of internal IPI mailbox nodes
+> > +
+> > +Internal IPI mailbox node:
+> > +- reg:			IPI buffers address ranges
+> > +- reg-names:		Names of the reg resources. It should have:
+> > +			* local_request_region
+> > +			  - IPI request msg buffer written by local and read
+> > +			    by remote
+> > +			* local_response_region
+> > +			  - IPI response msg buffer written by local and read
+> > +			    by remote
+> > +			* remote_request_region
+> > +			  - IPI request msg buffer written by remote and read
+> > +			    by local
+> > +			* remote_response_region
+> > +			  - IPI response msg buffer written by remote and
+> read
+> > +			    by local
+> > +- #mbox-cells:		Shall be 1. It contains:
+> > +			* tx(0) or rx(1) channel
+> > +- xlnx,ipi-id:		remote Xilinx IPI agent ID of which the mailbox is
+> > +			connected to.
+> > +
+> > +Optional properties:
+> > +--------------------
+> > +- method:              The method of accessing the IPI agent registers=
+.
+> > +                       Permitted values are: "smc" and "hvc". Default =
+is
+> > +                       "smc".
+> > +
+> > +Client Device Node:
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> > +Required properties:
+> > +--------------------
+> > +- mboxes:		Standard property to specify a mailbox
+> > +			(See ./mailbox.txt)
+> > +- mbox-names:		List of identifier  strings for each mailbox
+> > +			channel.
+> > +
+> > +Example:
+> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+> > +	zynqmp_ipi {
+> > +		compatible =3D "xlnx,zynqmp-ipi-mailbox";
+> > +		interrupt-parent =3D <&gic>;
+> > +		interrupts =3D <0 29 4>;
+> > +		xlnx,ipi-id =3D <0>;
+> > +		#address-cells =3D <1>;
+> > +		#size-cells =3D <1>;
+>=20
+> Both the parent and children are mailbox providers?
+[Wendy] children are mailbox providers.
+As the mailbox providers shared the same interrupt
+And the same local IPI agent ID, and thus, use
+This parent/child structure
+>=20
+> > +
+> > +		/* APU<->RPU0 IPI mailbox controller */
+> > +		ipi_mailbox_rpu0: mailbox@ff90400 {
+> > +			compatible =3D "xlnx,zynqmp-ipi-mailbox";
+>=20
+> You can't have the same compatible in the parent and here.
+[Wendy] Will remove the compatible in the child node.
 
-Let's say we do following sequence to change from off state to user 
-configured intensity value:
+>=20
+> > +			reg =3D <0xff990400 0x20>,
+> > +			      <0xff990420 0x20>,
+> > +			      <0xff990080 0x20>,
+> > +			      <0xff9900a0 0x20>;
+> > +			reg-names =3D "local_request_region",
+> > +				    "local_response_region",
+> > +				    "remote_request_region",
+> > +				    "remote_response_region";
+> > +			#mbox-cells =3D <1>;
+> > +			xlnx,ipi-id =3D <1>;
+> > +		};
+> > +		/* APU<->RPU1 IPI mailbox controller */
+> > +		ipi_mailbox_rpu1: mailbox@ff990440 {
+> > +			compatible =3D "xlnx,zynqmp-ipi-mailbox";
+> > +			reg =3D <0xff990440 0x20>,
+> > +			      <0xff990460 0x20>,
+> > +			      <0xff990280 0x20>,
+> > +			      <0xff9902a0 0x20>;
+> > +			reg-names =3D "local_request_region",
+> > +				    "local_response_region",
+> > +				    "remote_request_region",
+> > +				    "remote_response_region";
+> > +			#mbox-cells =3D <1>;
+> > +			xlnx,ipi-id =3D <2>;
+> > +		};
+> > +	};
+> > +	rpu0 {
+> > +		...
+> > +		mboxes =3D <&ipi_mailbox_rpu0 0>,
+> > +			 <&ipi_mailbox_rpu0 1>;
+> > +		mbox-names =3D "tx", "rx";
+> > +	};
+> > +	rpu1 {
+> > +		...
+> > +		mboxes =3D <&ipi_mailbox_rpu1 0>,
+> > +			 <&ipi_mailbox_rpu1 1>;
+> > +		mbox-names =3D "tx", "rx";
+> > +	};
+> > --
+> > 2.7.4
+> >
 
-# Turn off leds
-echo 0 > brightness
-
-# Select requested color
-echo "orange" > color
-
-# Use configured LED intensity from user configuration
-echo 84 > brightness
-
-Driver would now use rgb value <249 197 9> and brightness <84> to 
-calculate (with HSV solution) real PWM values for the led component 
-colors. With led controller this is probably easier to get linear 
-feedback but for generic PWM controller you may want to utilize PWM 
-curve feature like defined for backlight driver.
-
-When thinking this I instantly see my self with thinking PS4's 
-sliding/pulsing color animation for orange/blue/white. And controlling 
-this animation steps manually from user space probably is not the best 
-idea so like with blinking you would need more accurately timed action 
-within kernel I suppose (or hardware with the support).
-
-With that idea forward:
-
-# Turning animation sequencer off causes instant changes for values
-echo "off" > animation-sequencer
-
-# User 1 second for animation (no effect yet as sequencer is off)
-echo 1000 > animation-time-ms (or so)
-
-# Turn off leds (instance change)
-echo 0 > brightness
-
-# Select requested color (instant change)
-echo "orange" > color
-
-# Change to linear animation sequencer
-echo "linear" > animation-sequencer
-
-# Now everything from this point is subject to animation sequencer
-# Sequencer remember active state and next state (as seen in sysfs)
-
-# Use configured LED intensity from user configuration (no effect yet)
-echo 84 > brightness
-
-# Trigger transition sequence
-echo load > animation-sequencer
-
-# This would cause 1 second animation from black to orange with user 
-intensivity of 84
-
-# Wait for transition to complete and some extra
-sleep 4
-
-# Change color to blue with animation
-echo "blue" > color
-echo load > animation-sequencer
-
-# This would cause driver to change from orange to blue in current 
-intensivity level during 1 second period
-
-# -- end --
-
-Now that went a bit ahead of time but I believe it demonstrates the 
-potential for this approach with combined with HSL functionality for future.
-
-> How abut allowing for providing an array of color intensity/brightness
-> levels per each color? In the simplest case there could be a single
-> level per color, but it should be possible to provide up to 255 levels.
-
-I believe that brightness and color should be separate topics.
-
-We have in our devices option in user interface to configure intesivity 
-for backlight and in one device also intensivity for status led (this is 
-the only PWM led we have :)). (I believe this might be currently 
-implemented without actual led driver and directly use PWM interface)
-
-Even in when reduced intensivity we want the color to be set to 
-specified value even thou it would not be as bright as full intensivity 
-would be.
-
-What do you think?
-
-Thanks,
-Vesa Jääskeläinen
