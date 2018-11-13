@@ -8,66 +8,68 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0578AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:20:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F049BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:20:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C1F120854
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:20:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ABB0C20854
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:20:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UdvklMMS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1F120854
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AUnf0lFD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABB0C20854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726963AbeKNET0 (ORCPT
+        id S1727847AbeKNEUC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:19:26 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:40138 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726459AbeKNETZ (ORCPT
+        Tue, 13 Nov 2018 23:20:02 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:34539 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727006AbeKNEUC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:19:25 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d3so10761032edx.7;
-        Tue, 13 Nov 2018 10:20:08 -0800 (PST)
+        Tue, 13 Nov 2018 23:20:02 -0500
+Received: by mail-ed1-f68.google.com with SMTP id w19-v6so11381615eds.1;
+        Tue, 13 Nov 2018 10:20:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=r/vg+ZMPkcTiL6a4x5hGstC/N4Asetq2HyHOv6vvEx4=;
-        b=UdvklMMSsA5AAhvJRKzZRIDjyEFAab1y5n6vsiYZOjstLEzLrJNCpZ2+7/SCnPtaaY
-         P6Vy6oRC/f52nGEFCt3KTPxr2IOtu6YnMoUiASjIrJPA/oHNx7gMyiXrA9JCqvuhQClR
-         44nSUamWEejjXPviMYHq1k6utNyburC5eu8xLlH6OcO7ORZrtXQqBHl0mm3pyJTQyoYZ
-         GZRJqpLKlr7CBJ9Wl3B95XHMOXLF4v/rL1zbPow9L+QwYUSD13Pu/nWZTBmDMzJq6dKM
-         9QHQEPyuHQuXR6gf0aaqBHuJes9L6SM52FGadAnRiBGjfXn9xD2wlQggN6bsiqZ3a1ky
-         +W3g==
+        bh=AXzG/vW7D/avGKVapEQWlz8g54MMa0p7jBTyH67KZtk=;
+        b=AUnf0lFDjgWXyE5rd/MkaR4CmpVEZNqmLXmbODB2haTC10f4cWzoIMUhLVt9h2r2Kg
+         3BR6b4SNE6P/NrrZQ/XcVKF0a+VhF7r4vpjaXrM36piQThwNRaqp4pUX1JPR9zNH5TsQ
+         rj2UYI8pUXVgIzENWiMQoQvRyqTkCaA7sptuyfu026BZYvbGCX2JAjtfsX3FW/fqyGhm
+         Ng8O4bSAZm2ce1+XacJLMsUTL2EhsX4DB1JjMHvPynCsjnXrEjvtD6Hjx+ag2q/qHuoI
+         WZBywxnmInhJot54b+71Z9E+0hj2WKhT38Wz2XD7DDzX0tINFJ59ClzAHf/ts7MWXbku
+         tyxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
          :content-transfer-encoding;
-        bh=r/vg+ZMPkcTiL6a4x5hGstC/N4Asetq2HyHOv6vvEx4=;
-        b=HI/TPlegmAcize+Sp90qLoU3we8Gjb0rQApx76oBjJ55ayRUtM7224N0TmiBaXB98n
-         +gWDAqjIvrEo7aAywNVYkn2HOvXXQZZ1Ed1+1fCWV1mfl8btHZD//VISeXLX2l4e6q5M
-         kBYRARBWkYaNJcQquVvFjxdZXMX2bULkGLCtPTwlmhNumAJstBGwdogiV6AbSe8+27PC
-         3ZM3n1Yjwhpwflo3aiirB6i/oYIXnAFGT27Btd+HAOgXyIu8IrHAIsQdLZA2kYRwMax4
-         hZzZAObEDwkDykZbXyrv4JED5C6/HmxiAXHLzybRgVaF3ooUarmhm45gsK6k3dzR5IIu
-         pPCg==
-X-Gm-Message-State: AGRZ1gKuEV932dG33Hb3ho1vXAl9tDFWJKFbuVcY3mHkxIkjjna7NcRx
-        WHTYDnwJqQaUkKNutGn8rFLQkghHlCd0+w==
-X-Google-Smtp-Source: AJdET5dEPz+i0qi8ttDzY+PsDWS+uR1qnBsFFt2Inkl2D8uQTYkAyQvF1QhDVHr5ZzgOspmn+sec7A==
-X-Received: by 2002:aa7:dd16:: with SMTP id i22mr1558822edv.182.1542133207759;
-        Tue, 13 Nov 2018 10:20:07 -0800 (PST)
+        bh=AXzG/vW7D/avGKVapEQWlz8g54MMa0p7jBTyH67KZtk=;
+        b=Fv09dta1ijt79dWwn/KnLREJ9nhwD6mLw66S360cao2EcReKZFLF7izpv3EWPhJ0EK
+         u3CVh/A971kaZa1wdTytMxZh26A7qIfUGDGg6T18lKk5EzfAmNqnHSQKI4apbPa6NDnl
+         CEmq5T/7yzIdwygAJ88Ri2livWLdOzyEcNcs9COFnawiMt1pQubeOSJYmu8c1VrMkM9T
+         KiGvvLCuidsA4qcUr/onjI7/U3DONNGnO2v5ENvWYqU5LAp37ByhAsB/dbyMq5H2+IiZ
+         O5p//1PBFHJr2gsdf1Ort0Mm5UZLLs4IZSl9i3gHcH2WWasISt+VKD9s3MPEJ+Ebm418
+         v3Tg==
+X-Gm-Message-State: AGRZ1gI6jksNJmV1tKXS0U5EfoEwMQakTWuUtiSimZ/oLpMjTbkPDJuD
+        146jKdcvLUNR4QJwDMMF7aFIchuXR9EvTw==
+X-Google-Smtp-Source: AJdET5eOgFCAczrTv6HbTmZ407mEBa0JCl1LGX6GqESGaCwaPj74zTQA1zvD/FYc89KHb2pDpflpvg==
+X-Received: by 2002:a17:906:e2c9:: with SMTP id gr9-v6mr13495224ejb.108.1542133243319;
+        Tue, 13 Nov 2018 10:20:43 -0800 (PST)
 Received: from TitovetsT.synesis.local ([86.57.155.118])
-        by smtp.gmail.com with ESMTPSA id b37-v6sm5475633eda.92.2018.11.13.10.20.06
+        by smtp.gmail.com with ESMTPSA id n34-v6sm5702699edc.34.2018.11.13.10.20.42
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 10:20:07 -0800 (PST)
+        Tue, 13 Nov 2018 10:20:42 -0800 (PST)
 From:   Timofey Titovets <nefelim4ag@gmail.com>
 To:     linux-kernel@vger.kernel.org
 Cc:     Timofey Titovets <nefelim4ag@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        Matthew Wilcox <willy@infradead.org>,
+        Oleksandr Natalenko <oleksandr@natalenko.name>,
+        Pavel Tatashin <pasha.tatashin@soleen.com>, linux-mm@kvack.org,
         linux-doc@vger.kernel.org
-Subject: [PATCH V3] KSM: allow dedup all tasks memory
-Date:   Tue, 13 Nov 2018 21:20:00 +0300
-Message-Id: <20181113182000.20055-1-nefelim4ag@gmail.com>
+Subject: [PATCH V4] KSM: allow dedup all tasks memory
+Date:   Tue, 13 Nov 2018 21:20:36 +0300
+Message-Id: <20181113182036.21524-1-nefelim4ag@gmail.com>
 X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
@@ -146,19 +148,24 @@ Changes:
     * Reformat patch description
     * Rename mode normal to madvise
     * Add some memory numbers
-    * Fix checkpatch.pl warnings
     * Separate ksm vma seeker to another kthread
     * Fix: "BUG: scheduling while atomic: ksmd"
       by move seeker to another thread
+  v3 -> v4:
+    * Fix again "BUG: scheduling while atomic"
+      by get()/put() task API
+    * Remove unused variable "error"
 
 Signed-off-by: Timofey Titovets <nefelim4ag@gmail.com>
 CC: Matthew Wilcox <willy@infradead.org>
+CC: Oleksandr Natalenko <oleksandr@natalenko.name>
+CC: Pavel Tatashin <pasha.tatashin@soleen.com>
 CC: linux-mm@kvack.org
 CC: linux-doc@vger.kernel.org
 ---
  Documentation/admin-guide/mm/ksm.rst |  15 ++
- mm/ksm.c                             | 215 +++++++++++++++++++++++----
- 2 files changed, 198 insertions(+), 32 deletions(-)
+ mm/ksm.c                             | 217 +++++++++++++++++++++++----
+ 2 files changed, 200 insertions(+), 32 deletions(-)
 
 diff --git a/Documentation/admin-guide/mm/ksm.rst b/Documentation/admin-guide/mm/ksm.rst
 index 9303786632d1..7cffd47f9b38 100644
@@ -187,7 +194,7 @@ index 9303786632d1..7cffd47f9b38 100644
          specifies whether empty pages (i.e. allocated pages that only
          contain zeroes) should be treated specially.  When set to 1,
 diff --git a/mm/ksm.c b/mm/ksm.c
-index 5b0894b45ee5..1a03b28b6288 100644
+index 5b0894b45ee5..f087eefda8b2 100644
 --- a/mm/ksm.c
 +++ b/mm/ksm.c
 @@ -273,6 +273,9 @@ static unsigned int ksm_thread_pages_to_scan = 100;
@@ -225,7 +232,7 @@ index 5b0894b45ee5..1a03b28b6288 100644
  static int __init ksm_slab_init(void)
  {
  	rmap_item_cache = KSM_KMEM_CACHE(rmap_item, 0);
-@@ -2389,6 +2402,106 @@ static int ksmd_should_run(void)
+@@ -2389,6 +2402,108 @@ static int ksmd_should_run(void)
  	return (ksm_run & KSM_RUN_MERGE) && !list_empty(&ksm_mm_head.mm_list);
  }
  
@@ -267,7 +274,6 @@ index 5b0894b45ee5..1a03b28b6288 100644
 +{
 +	struct vm_area_struct *vma;
 +	struct mm_struct *mm;
-+	int error;
 +
 +	mm = get_task_mm(task);
 +	if (!mm)
@@ -275,7 +281,7 @@ index 5b0894b45ee5..1a03b28b6288 100644
 +	down_write(&mm->mmap_sem);
 +	vma = mm->mmap;
 +	while (vma) {
-+		error = ksm_enter(vma->vm_mm, &vma->vm_flags);
++		ksm_enter(vma->vm_mm, &vma->vm_flags);
 +		vma = vma->vm_next;
 +	}
 +	up_write(&mm->mmap_sem);
@@ -319,9 +325,12 @@ index 5b0894b45ee5..1a03b28b6288 100644
 +				break;
 +		}
 +
++		get_task_struct(task);
++		read_unlock(&tasklist_lock);
++
 +		last_pid = task_pid_nr(task);
 +		ksm_import_task_vma(task);
-+		read_unlock(&tasklist_lock);
++		put_task_struct(task);
 +
 +		schedule_timeout_interruptible(
 +			msecs_to_jiffies(ksm_thread_seeker_sleep_millisecs));
@@ -332,7 +341,7 @@ index 5b0894b45ee5..1a03b28b6288 100644
  static int ksm_scan_thread(void *nothing)
  {
  	set_freezable();
-@@ -2422,33 +2535,9 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
+@@ -2422,33 +2537,9 @@ int ksm_madvise(struct vm_area_struct *vma, unsigned long start,
  
  	switch (advice) {
  	case MADV_MERGEABLE:
@@ -369,7 +378,7 @@ index 5b0894b45ee5..1a03b28b6288 100644
  		break;
  
  	case MADV_UNMERGEABLE:
-@@ -2829,6 +2918,29 @@ static ssize_t sleep_millisecs_store(struct kobject *kobj,
+@@ -2829,6 +2920,29 @@ static ssize_t sleep_millisecs_store(struct kobject *kobj,
  }
  KSM_ATTR(sleep_millisecs);
  
@@ -399,7 +408,7 @@ index 5b0894b45ee5..1a03b28b6288 100644
  static ssize_t pages_to_scan_show(struct kobject *kobj,
  				  struct kobj_attribute *attr, char *buf)
  {
-@@ -2852,6 +2964,34 @@ static ssize_t pages_to_scan_store(struct kobject *kobj,
+@@ -2852,6 +2966,34 @@ static ssize_t pages_to_scan_store(struct kobject *kobj,
  }
  KSM_ATTR(pages_to_scan);
  
@@ -434,7 +443,7 @@ index 5b0894b45ee5..1a03b28b6288 100644
  static ssize_t run_show(struct kobject *kobj, struct kobj_attribute *attr,
  			char *buf)
  {
-@@ -3108,7 +3248,9 @@ KSM_ATTR_RO(full_scans);
+@@ -3108,7 +3250,9 @@ KSM_ATTR_RO(full_scans);
  
  static struct attribute *ksm_attrs[] = {
  	&sleep_millisecs_attr.attr,
@@ -444,7 +453,7 @@ index 5b0894b45ee5..1a03b28b6288 100644
  	&run_attr.attr,
  	&pages_shared_attr.attr,
  	&pages_sharing_attr.attr,
-@@ -3134,7 +3276,7 @@ static const struct attribute_group ksm_attr_group = {
+@@ -3134,7 +3278,7 @@ static const struct attribute_group ksm_attr_group = {
  
  static int __init ksm_init(void)
  {
@@ -453,7 +462,7 @@ index 5b0894b45ee5..1a03b28b6288 100644
  	int err;
  
  	/* The correct value depends on page size and endianness */
-@@ -3146,10 +3288,18 @@ static int __init ksm_init(void)
+@@ -3146,10 +3290,18 @@ static int __init ksm_init(void)
  	if (err)
  		goto out;
  
@@ -475,7 +484,7 @@ index 5b0894b45ee5..1a03b28b6288 100644
  		goto out_free;
  	}
  
-@@ -3157,7 +3307,8 @@ static int __init ksm_init(void)
+@@ -3157,7 +3309,8 @@ static int __init ksm_init(void)
  	err = sysfs_create_group(mm_kobj, &ksm_attr_group);
  	if (err) {
  		pr_err("ksm: register sysfs failed\n");
