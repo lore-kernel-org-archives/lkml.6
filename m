@@ -2,147 +2,218 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE523C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:07:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A647C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:13:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A05C02243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:07:01 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AEC1E2245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:13:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jw7cO068"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A05C02243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="ugXIbP5W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEC1E2245E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726736AbeKNGGl (ORCPT
+        id S1726418AbeKNGNZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 01:06:41 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:43573 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725748AbeKNGGl (ORCPT
+        Wed, 14 Nov 2018 01:13:25 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:36918 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725759AbeKNGNZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 01:06:41 -0500
-Received: by mail-yw1-f67.google.com with SMTP id l200so731833ywe.10
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 12:06:59 -0800 (PST)
+        Wed, 14 Nov 2018 01:13:25 -0500
+Received: by mail-lj1-f196.google.com with SMTP id e5-v6so12042624lja.4
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 12:13:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=RTO61L+kG+makdsrA5/OtWEuhnz9rHNDoeryJiudz+Y=;
-        b=jw7cO068mMbkhhWPLC3B7OriZJ/mCixGjxxlviueNCDTtQKLpaRTtiUG7MOycMjfSy
-         wKz2v6c0Ma99lfHcGktJvUFyWwmnIZa/2iCo+d3t4wQH9CRNoIjB3YF+FTZLkrWMIv7T
-         8azHKF92eQo8PE7C6zrRAqCen5HsVtfQcjod8=
+        bh=LogaoyTjQxSnmsZ5j+NCDvI6jNsEMX5NCDfmlt14Ais=;
+        b=ugXIbP5WyV00i6rXc9mSkSd0g+1J/xX7V3wE0qQwLiVkfVeXQeqltcIeRH1C/n11ym
+         JvaUPPATPwRSrnpPoBGrXTsOFVPMiDDXN7QCP3xO6fTIPB8DuSEqFtbZD/jJuJI5J3Tm
+         icnBLT2O6HKAlj9X92G/3SZaEnUQcxhYImor1JmgOlC71vLaWhzy4yIG9ryGbf8cN4zg
+         l18APWtT9UO8KlbIHA3a2GhmluHa7pcFWYOVWbMGqipKZlFbhhR8VRX1gRfTStYzrwMa
+         6oyeqVFrMM/szhCXSEFxkbBw2sDm5Ca0f/iKGhy/ItAMWJb8YEYVmgcmslmcqZKUAoyW
+         WmrA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=RTO61L+kG+makdsrA5/OtWEuhnz9rHNDoeryJiudz+Y=;
-        b=i9GrCZwfWxQLB1GH6UvdfOghWcl4hver6UZH0Mrvlo/FXAm5pnsrLGL+MkR6E+VMRC
-         wSvf2QM/z1cyesH7en43crRSYbxe8kUKRtSjMaYyUNLOm9Yr9pUFjzYGaF1HRldpto+v
-         wppUj/Qp4e3aUu8OUNmsXOzALUxA5cZofz6/WX1ThzBGnP/zDWAMz9OuCe7IeJHQuxj7
-         a71Di0yC+N0zmRWuNUDIfVmrMAkto+rXj7AkBAgJgSrdt7FwOXHiHEAcHGn1rcwQ+QS6
-         q7QXTgNPDlSjMyvgY3Oaz7vgFZ9FIQdBdwgjp7xI0jRmUjiuR+F5IUaQ8d+YQTi5R+Yn
-         QDzg==
-X-Gm-Message-State: AGRZ1gLuHNg5q/8WK+hchRQSFaftYXP5VL+kUK0tZcrPnChV1EQUat48
-        +jscVv8JgVzJfhFPt20nPDPTTxNprK0=
-X-Google-Smtp-Source: AJdET5dtaxokcinS/hGZ3aWMY7DDAdfXhLpbUgMNUS9uVUEQXg5MtVHNCB4cQA1f2/s0Xo33rdM46A==
-X-Received: by 2002:a81:5946:: with SMTP id n67-v6mr6247781ywb.351.1542139618359;
-        Tue, 13 Nov 2018 12:06:58 -0800 (PST)
-Received: from mail-yw1-f53.google.com (mail-yw1-f53.google.com. [209.85.161.53])
-        by smtp.gmail.com with ESMTPSA id l6-v6sm715585ywm.51.2018.11.13.12.06.55
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 12:06:56 -0800 (PST)
-Received: by mail-yw1-f53.google.com with SMTP id h32so230255ywk.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 12:06:55 -0800 (PST)
-X-Received: by 2002:a0d:e984:: with SMTP id s126-v6mr6232284ywe.47.1542139614653;
- Tue, 13 Nov 2018 12:06:54 -0800 (PST)
+        bh=LogaoyTjQxSnmsZ5j+NCDvI6jNsEMX5NCDfmlt14Ais=;
+        b=gMF0k7p7B0W9HaxKQOBySjHe6hpqP4/JctK3YgiAOKD/exT06BNiux/+Po29T53l4l
+         0WqB097RRc0F7j7WszUV3E14toe8xNDOa+Guc5inm4otR0L1VwlYVKBOPT33VJcMeszI
+         Mo80jCgho3Z5VKtjZoq0Vy7fgtd2Mb7FazH/PzpAojx2kwVCdzkZR+5RZrEQ+LweJ0Ga
+         HBCMQcFwJTM0tZiz9wuDCnUmfkyP/5PVOzt3BRIWQoTfDrHtI7hZ91nkE92kd3Y/h9MD
+         iVDO3mBJzJ7nMn2kd3wPsWI8AZ49I+oC+SfWH0/MkmyopAO4zNHKe9ecbztu/Igeaa/1
+         APsQ==
+X-Gm-Message-State: AGRZ1gKIHl3YEqzLMG+LDpN8Z8M03DSupGUfbDLMGUe62qemaSt2ckU8
+        MPWmrTC8PC8rTh1JqFidS7f/5WVgPQCAMRk3KiCm
+X-Google-Smtp-Source: AJdET5eKk1tWnlaPWQICwXLU3DT151bi6WfuF2r0qtzGF03MoKsqkpI6CnqAMmxOoMZrf4XPFXutmXkQXm2k56f+rPQ=
+X-Received: by 2002:a2e:8099:: with SMTP id i25-v6mr4304924ljg.174.1542140019776;
+ Tue, 13 Nov 2018 12:13:39 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Tue, 13 Nov 2018 12:06:53
- -0800 (PST)
-In-Reply-To: <1542056928-10917-1-git-send-email-alex.popov@linux.com>
-References: <1542056928-10917-1-git-send-email-alex.popov@linux.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 13 Nov 2018 14:06:53 -0600
-X-Gmail-Original-Message-ID: <CAGXu5jK-sQ4tAs0k-SST0NCoW8RgTmq9KHo97eGdN+57at5qQg@mail.gmail.com>
-Message-ID: <CAGXu5jK-sQ4tAs0k-SST0NCoW8RgTmq9KHo97eGdN+57at5qQg@mail.gmail.com>
-Subject: Re: [PATCH 1/1] stackleak: Disable function tracing and kprobes for stackleak_erase()
-To:     Alexander Popov <alex.popov@linux.com>
-Cc:     Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        Jann Horn <jannh@google.com>, Ingo Molnar <mingo@kernel.org>,
-        Andy Lutomirski <luto@kernel.org>,
-        Joerg Roedel <joro@8bytes.org>, Borislav Petkov <bp@alien8.de>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Peter Zijlstra <peterz@infradead.org>, Jan Kara <jack@suse.cz>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        X86 ML <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>
+References: <53491A18-DD21-4E34-BC2F-AB449C7844E8@gmx.us> <20181113151608.30424-1-omosnace@redhat.com>
+ <1542136842.12945.21.camel@gmx.us>
+In-Reply-To: <1542136842.12945.21.camel@gmx.us>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 13 Nov 2018 15:13:28 -0500
+Message-ID: <CAHC9VhT=9mtRgoudbaxESpHM4+f7Go_oW_H7ek3Fs0pTLbLz3g@mail.gmail.com>
+Subject: Re: [PATCH] selinux: check length properly in SCTP bind hook
+To:     cai@gmx.us
+Cc:     omosnace@redhat.com, selinux@vger.kernel.org,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        richard_c_haines@btinternet.com
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 3:08 PM, Alexander Popov <alex.popov@linux.com> wrote:
-> The stackleak_erase() function is called on the trampoline stack at the end
-> of syscall. This stack is not big enough for ftrace and kprobes operations,
-> e.g. it can be exhausted if we use kprobe_events for stackleak_erase().
->
-> So let's disable function tracing and kprobes for stackleak_erase().
->
-> Reported-by: kernel test robot <lkp@intel.com>
-> Signed-off-by: Alexander Popov <alex.popov@linux.com>
+On Tue, Nov 13, 2018 at 2:20 PM Qian Cai <cai@gmx.us> wrote:
+> On Tue, 2018-11-13 at 16:16 +0100, Ondrej Mosnacek wrote:
+> > selinux_sctp_bind_connect() must verify if the address buffer has
+> > sufficient length before accessing the 'sa_family' field. See
+> > __sctp_connect() for a similar check.
+> >
+> > The length of the whole address ('len') is already checked in the
+> > callees.
+> >
+> > Reported-by: Qian Cai <cai@gmx.us>
+> > Fixes: d452930fd3b9 ("selinux: Add SCTP support")
+> > Cc: <stable@vger.kernel.org> # 4.17+
+> > Cc: Richard Haines <richard_c_haines@btinternet.com>
+> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> Tested-by: Qian Cai <cai@gmx.us>
 
-Thanks! I'll get this into my tree.
+Thanks guys.  I'm in the process of building a test kernel right now,
+assuming everything else passes (I can't see why this change would
+cause a problem) I'll send this up to Linus.
 
--Kees
-
-> ---
->  kernel/stackleak.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->
-> diff --git a/kernel/stackleak.c b/kernel/stackleak.c
-> index e428929..08cb57e 100644
-> --- a/kernel/stackleak.c
-> +++ b/kernel/stackleak.c
-> @@ -11,6 +11,7 @@
->   */
->
->  #include <linux/stackleak.h>
-> +#include <linux/kprobes.h>
->
->  #ifdef CONFIG_STACKLEAK_RUNTIME_DISABLE
->  #include <linux/jump_label.h>
-> @@ -47,7 +48,7 @@ int stack_erasing_sysctl(struct ctl_table *table, int write,
->  #define skip_erasing() false
->  #endif /* CONFIG_STACKLEAK_RUNTIME_DISABLE */
->
-> -asmlinkage void stackleak_erase(void)
-> +asmlinkage void notrace stackleak_erase(void)
->  {
->         /* It would be nice not to have 'kstack_ptr' and 'boundary' on stack */
->         unsigned long kstack_ptr = current->lowest_stack;
-> @@ -101,6 +102,7 @@ asmlinkage void stackleak_erase(void)
->         /* Reset the 'lowest_stack' value for the next syscall */
->         current->lowest_stack = current_top_of_stack() - THREAD_SIZE/64;
->  }
-> +NOKPROBE_SYMBOL(stackleak_erase);
->
->  void __used stackleak_track_stack(void)
->  {
-> --
-> 2.7.4
->
+> > ---
+> > Hi,
+> >
+> > On Mon, Nov 12, 2018 at 8:39 PM Qian Cai <cai@gmx.us> wrote:
+> > > Running the trinity fuzzer on the latest mainline (rc2) generates this,
+> > >
+> > > [15029.879626] BUG: KASAN: slab-out-of-bounds in
+> > > selinux_sctp_bind_connect+0x60/0x150
+> > > [15029.887275] Read of size 2 at addr ffff801ec53c5080 by task trinity-
+> > > main/18081
+> > > [15029.887294]
+> > > [15029.887304] CPU: 28 PID: 18081 Comm: trinity-main Tainted:
+> > > G        W  OE     4.20.0-rc2+ #15
+> > > [15029.887311] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50
+> > > 06/01/2018
+> > > [15000.084786] [15029.887320] Call trace:
+> > > [15029.915511]  dump_backtrace+0x0/0x2c8
+> > > [15029.920046]  show_stack+0x24/0x30
+> > > [15029.923367]  dump_stack+0x118/0x19c
+> > > [15029.927539]  print_address_description+0x68/0x2a0
+> > > [15029.932245]  kasan_report+0x1b4/0x348
+> > > [15029.938760]  __asan_load2+0x7c/0xa0
+> > > [15029.945098]  selinux_sctp_bind_connect+0x60/0x150
+> > >
+> > > [15029.950571]  security_sctp_bind_connect+0x58/0x90
+> > > [15029.955493]  __sctp_setsockopt_connectx+0x68/0x128 [sctp]
+> > > [15029.960943]  sctp_setsockopt+0x764/0x2928 [sctp]
+> > > [15029.965564]  sock_common_setsockopt+0x6c/0x80
+> > > [15029.969923]  __arm64_sys_setsockopt+0x13c/0x1f0
+> > > [15029.974456]  el0_svc_handler+0xd4/0x198
+> > > [15029.978293]  el0_svc+0x8/0xc
+> > > [15029.981174]
+> > > [15029.982667] Allocated by task 18081:
+> > > [15029.986245]  kasan_kmalloc.part.1+0x40/0x108
+> > > [15029.990517]  kasan_kmalloc+0xb4/0xc8
+> > > [15029.994094]  __kmalloc_node+0x1c4/0x638
+> > > [15029.997933]  kvmalloc_node+0x98/0xa8
+> > > [15030.001511]  vmemdup_user+0x34/0x128
+> > > [15030.005137]  __sctp_setsockopt_connectx+0x44/0x128 [sctp]
+> > > [15030.010586]  sctp_setsockopt+0x764/0x2928 [sctp]
+> > > [15030.015205]  sock_common_setsockopt+0x6c/0x80
+> > > [15030.019564]  __arm64_sys_setsockopt+0x13c/0x1f0
+> > > [15030.024096]  el0_svc_handler+0xd4/0x198
+> > > [15030.027933]  el0_svc+0x8/0xc
+> > > [15030.030814]
+> > > [15030.032306] Freed by task 3025:
+> > > [15030.035451]  __kasan_slab_free+0x114/0x228
+> > > [15030.039548]  kasan_slab_free+0x10/0x18
+> > > [15030.043299]  kfree+0x114/0x408
+> > > [15030.046357]  selinux_sk_free_security+0x38/0x48
+> > > [15030.050888]  security_sk_free+0x3c/0x58
+> > > [15030.054727]  __sk_destruct+0x3e8/0x570
+> > > [15030.058478]  sk_destruct+0x4c/0x58
+> > > [15030.061881]  __sk_free+0x68/0x138
+> > > [15030.065197]  sk_free+0x3c/0x48
+> > > [15030.068255]  unix_release_sock+0x4a8/0x550
+> > > [15030.072353]  unix_release+0x34/0x50
+> > > [15030.075843]  __sock_release+0x74/0x110
+> > > [15030.079593]  sock_close+0x24/0x38
+> > > [15030.082913]  __fput+0x1b8/0x368
+> > > [15030.086055]  ____fput+0x20/0x30
+> > > [15030.089199]  task_work_run+0x14c/0x1a8
+> > > [15030.092951]  do_notify_resume+0x1e4/0x200
+> > > [15030.096961]  work_pending+0x8/0x14
+> > > [15030.100363]
+> > > [15030.101856] The buggy address belongs to the object at ffff801ec53c5080
+> > > [15030.101856]  which belongs to the cache kmalloc-128 of size 128
+> > > [15030.114376] The buggy address is located 0 bytes inside of
+> > > [15030.114376]  128-byte region [ffff801ec53c5080, ffff801ec53c5100)
+> > > [15030.125939] The buggy address belongs to the page:
+> > > [15030.130732] page:ffff7fe007b14f00 count:1 mapcount:0
+> > > mapping:ffff8016c0010480 index:0x0
+> > > [15030.138738] flags: 0x5fffff0000000200(slab)
+> > > [15030.142926] raw: 5fffff0000000200 ffff7fe007980608 ffff801ec000fd60
+> > > ffff8016c0010480
+> > > [15030.150671] raw: 0000000000000000 0000000000660066 00000001ffffffff
+> > > 0000000000000000
+> > > [15030.158413] page dumped because: kasan: bad access detected
+> > > [15030.163984]
+> > > [15030.165476] Memory state around the buggy address:
+> > > [15030.170269]  ffff801ec53c4f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > > fc fc
+> > > [15030.177491]  ffff801ec53c5000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > > fc fc
+> > > [15030.184714] >ffff801ec53c5080: 01 fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > > fc fc
+> > > [15030.191934]                    ^
+> > > [15030.195164]  ffff801ec53c5100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > > fc fc
+> > > [15030.202386]  ffff801ec53c5180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > > fc fc
+> > > [15030.209607]
+> > > ==================================================================
+> > > [15030.216828] Disabling lock debugging due to kernel taint
+> >
+> > I think I found the cause - Qian, can you test this patch if it fixes
+> > the problem?
+> >
+> >  security/selinux/hooks.c | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >
+> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> > index 7ce683259357..a67459eb62d5 100644
+> > --- a/security/selinux/hooks.c
+> > +++ b/security/selinux/hooks.c
+> > @@ -5318,6 +5318,9 @@ static int selinux_sctp_bind_connect(struct sock *sk,
+> > int optname,
+> >       addr_buf = address;
+> >
+> >       while (walk_size < addrlen) {
+> > +             if (walk_size + sizeof(sa_family_t) > addrlen)
+> > +                     return -EINVAL;
+> > +
+> >               addr = addr_buf;
+> >               switch (addr->sa_family) {
+> >               case AF_UNSPEC:
 
 
 
 -- 
-Kees Cook
+paul moore
+www.paul-moore.com
