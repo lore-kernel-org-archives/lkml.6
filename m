@@ -2,188 +2,256 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 891F8C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:40:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12E5AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:43:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3DB83223C8
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:40:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synesis-ru.20150623.gappssmtp.com header.i=@synesis-ru.20150623.gappssmtp.com header.b="rPurDtgT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DB83223C8
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synesis.ru
+	by mail.kernel.org (Postfix) with ESMTP id C6E6E223C8
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:43:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E6E223C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731375AbeKNIlH (ORCPT
+        id S1731324AbeKNIn3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 03:41:07 -0500
-Received: from mail-ot1-f67.google.com ([209.85.210.67]:33272 "EHLO
-        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeKNIlG (ORCPT
+        Wed, 14 Nov 2018 03:43:29 -0500
+Received: from srv-hp10-72.netsons.net ([94.141.22.72]:53082 "EHLO
+        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbeKNIn3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 03:41:06 -0500
-Received: by mail-ot1-f67.google.com with SMTP id i20so6509799otl.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 14:40:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=synesis-ru.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=59XTU/1FusSKXFkvEPaYaji3QWEZkqsgHRvl+nXWhwc=;
-        b=rPurDtgTQX8CLRIOfmvUNufqcwKFxrI0CsmuiyryyvVktaP6yNYacQq7jpva4f6yTH
-         1c5MRfRYRBbX91DlfJpAB/MToJOG08KHkchMXCQTmCMt5xZCZbdfybtbwxvREDX1zqF3
-         dvUyFBg2nBEohmZxEqpw9WEH70d3wffWak34kSks6IZAtBJpY6+opyb3u7ALByqqtWi4
-         cKFGPZkSkDFWirnzgY8YqPD7iqnyIxZ56KckJ6kif3/FTCHMcOY4UT/ndCkPVggXpw+C
-         0MtQ4ce2v2LvYbD/f3hYBR4XvpcVrR7wo04hWWtD+y7ndPAoAMRAZPLZy0m6Nf3cOMfR
-         iNxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=59XTU/1FusSKXFkvEPaYaji3QWEZkqsgHRvl+nXWhwc=;
-        b=pKxdUmR1iw+6dbgx+2NWcE2BHXDRv56bzKmwOKq1Un7+S6+Aypa9xgr0GYaMjYFf3Q
-         BP5A/M4+i2lUoWngf2YtGH5jxNfHUgUODsSwwGehNbqT6wKQzX6n3ZH/0PMjdU7nt9im
-         yKx4kGQriZc211FwhGD4CoUCGu4HQPFO7bIMFxNkXpC33wppSssuK7xIbLopDQ5ev8ay
-         oh+CFF0lYHWyV0TsOTLYjScXkv1YzYunVPJZkXZSKGjm5/hqFPPn4yBBTkvQKK0AFfdt
-         aZIwK4Rc9gKKhqYNaO+bZlhDYlyV7yIRbIDPQKgRB4OgUN5gazKZyaJ68wbNoZy8WDAK
-         gQLQ==
-X-Gm-Message-State: AGRZ1gLS91N5o0pZFzaxdEfppDjiDpAxfmfDC5qzdJkpENBWxUxVCTsh
-        C+7Uc3XrR/ZAs57NZ/ftI4R1eg==
-X-Google-Smtp-Source: AJdET5cEhTuucKIDyxEKICduLwdXWkMqXRWHJomHqc/KHu91LGhA2JQinJ3FO7+rO9E59PRHKEtCLw==
-X-Received: by 2002:a9d:7653:: with SMTP id o19mr4209626otl.12.1542148848223;
-        Tue, 13 Nov 2018 14:40:48 -0800 (PST)
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com. [209.85.210.45])
-        by smtp.gmail.com with ESMTPSA id s184-v6sm3774070oib.23.2018.11.13.14.40.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 14:40:47 -0800 (PST)
-Received: by mail-ot1-f45.google.com with SMTP id t5so13004303otk.1;
-        Tue, 13 Nov 2018 14:40:47 -0800 (PST)
-X-Received: by 2002:a9d:3208:: with SMTP id t8mr4209224otc.312.1542148846775;
- Tue, 13 Nov 2018 14:40:46 -0800 (PST)
+        Wed, 14 Nov 2018 03:43:29 -0500
+Received: from [5.157.104.112] (port=36764 helo=[192.168.77.57])
+        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <luca@lucaceresoli.net>)
+        id 1gMhOY-005luB-Mt; Tue, 13 Nov 2018 23:42:54 +0100
+From:   Luca Ceresoli <luca@lucaceresoli.net>
+Subject: Re: [PATCH v4 1/4] dt-bindings: media: i2c: Add bindings for Maxim
+ Integrated MAX9286
+To:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, sakari.ailus@iki.fi
+Cc:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-kernel@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
+ <20181102154723.23662-2-kieran.bingham@ideasonboard.com>
+Message-ID: <b3ef6780-a1a7-e86c-0dba-916d9398c1ef@lucaceresoli.net>
+Date:   Tue, 13 Nov 2018 23:42:56 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <CAG48ez0ZprqUYGZFxcrY6U3Dnwt77q1NJXzzpsn1XNkRuXVppw@mail.gmail.com>
- <d43da6ad1a3c164aa03e0f22f065591a@natalenko.name> <20181113175930.3g65rlhbaimstq7g@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
- <CAGqmi74gpvJv8=B-3pVSMrDssu-aYMxW9xM7mt1WNQjGLjMZqA@mail.gmail.com>
- <20181113183510.5y2hzruoi23e7o2t@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
- <CAGqmi763e4sZj1NHAk2fAjtPtb-kAZfcPq=KTH8B3sE-oDVvGw@mail.gmail.com> <20181113191653.btbzobquxtwt47z4@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
-In-Reply-To: <20181113191653.btbzobquxtwt47z4@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
-From:   Timofey Titovets <timofey.titovets@synesis.ru>
-Date:   Wed, 14 Nov 2018 01:40:10 +0300
-X-Gmail-Original-Message-ID: <CAGqmi77JMyxU9L4bZHPv4Nt=tyQsEZDQcMVMRfQ7de_LjZg+-Q@mail.gmail.com>
-Message-ID: <CAGqmi77JMyxU9L4bZHPv4Nt=tyQsEZDQcMVMRfQ7de_LjZg+-Q@mail.gmail.com>
-Subject: Re: [PATCH V3] KSM: allow dedup all tasks memory
-To:     Pavel Tatashin <pasha.tatashin@soleen.com>
-Cc:     Oleksandr Natalenko <oleksandr@natalenko.name>,
-        Jann Horn <jannh@google.com>, linux-doc@vger.kernel.org,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        linux-mm@kvack.org, Matthew Wilcox <willy@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20181102154723.23662-2-kieran.bingham@ideasonboard.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - lucaceresoli.net
+X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=B2=D1=82, 13 =D0=BD=D0=BE=D1=8F=D0=B1. 2018 =D0=B3. =D0=B2 22:17, Pavel=
- Tatashin <pasha.tatashin@soleen.com>:
->
-> On 18-11-13 21:54:13, Timofey Titovets wrote:
-> > =D0=B2=D1=82, 13 =D0=BD=D0=BE=D1=8F=D0=B1. 2018 =D0=B3. =D0=B2 21:35, P=
-avel Tatashin <pasha.tatashin@soleen.com>:
-> > >
-> > > On 18-11-13 21:17:42, Timofey Titovets wrote:
-> > > > =D0=B2=D1=82, 13 =D0=BD=D0=BE=D1=8F=D0=B1. 2018 =D0=B3. =D0=B2 20:5=
-9, Pavel Tatashin <pasha.tatashin@soleen.com>:
-> > > > >
-> > > > > On 18-11-13 15:23:50, Oleksandr Natalenko wrote:
-> > > > > > Hi.
-> > > > > >
-> > > > > > > Yep. However, so far, it requires an application to explicitl=
-y opt in
-> > > > > > > to this behavior, so it's not all that bad. Your patch would =
-remove
-> > > > > > > the requirement for application opt-in, which, in my opinion,=
- makes
-> > > > > > > this way worse and reduces the number of applications for whi=
-ch this
-> > > > > > > is acceptable.
-> > > > > >
-> > > > > > The default is to maintain the old behaviour, so unless the exp=
-licit
-> > > > > > decision is made by the administrator, no extra risk is imposed=
-.
-> > > > >
-> > > > > The new interface would be more tolerable if it honored MADV_UNME=
-RGEABLE:
-> > > > >
-> > > > > KSM default on: merge everything except when MADV_UNMERGEABLE is
-> > > > > excplicitly set.
-> > > > >
-> > > > > KSM default off: merge only when MADV_MERGEABLE is set.
-> > > > >
-> > > > > The proposed change won't honor MADV_UNMERGEABLE, meaning that
-> > > > > application programmers won't have a way to prevent sensitive dat=
-a to be
-> > > > > every merged. So, I think, we should keep allow an explicit opt-o=
-ut
-> > > > > option for applications.
-> > > > >
-> > > >
-> > > > We just did not have VM/Madvise flag for that currently.
-> > > > Same as THP.
-> > > > Because all logic written with assumption, what we have exactly 2 s=
-tates.
-> > > > Allow/Disallow (More like not allow).
-> > > >
-> > > > And if we try to add, that must be something like:
-> > > > MADV_FORBID_* to disallow something completely.
-> > >
-> > > No need to add new user flag MADV_FORBID, we should keep MADV_MERGEAB=
-LE
-> > > and MADV_UNMERGEABLE, but make them work so when MADV_UNMERGEABLE is
-> > > set, memory is indeed becomes always unmergeable regardless of ksm mo=
-de
-> > > of operation.
-> > >
-> > > To do the above in ksm_madvise(), a new state should be added, for ex=
-ample
-> > > instead of:
-> > >
-> > > case MADV_UNMERGEABLE:
-> > >         *vm_flags &=3D ~VM_MERGEABLE;
-> > >
-> > > A new flag should be used:
-> > >         *vm_flags |=3D VM_UNMERGEABLE;
-> > >
-> > > I think, without honoring MADV_UNMERGEABLE correctly, this patch won'=
-t
-> > > be accepted.
-> > >
-> > > Pasha
-> > >
-> >
-> > That must work, but we out of bit space in vm_flags [1].
-> > i.e. first 32 bits already defined, and other only accessible only on
-> > 64-bit machines.
->
-> So, grow vm_flags_t to 64-bit, or enable this feature on 64-bit only.
+Hi Kieran, All,
 
-With all due respect to you, for that type of things we need
-mm maintainer opinion.
+sorry for joining this late... See below my considerations.
 
-I just don't want get situation, where after touch of other subsystems,
-maintainer will just refuse that work by some reason.
+On 02/11/18 16:47, Kieran Bingham wrote:
+> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> 
+> The MAX9286 deserializes video data received on up to 4 Gigabit
+> Multimedia Serial Links (GMSL) and outputs them on a CSI-2 port using up
+> to 4 data lanes.
+> 
+> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+> 
+> ---
+> v3:
+>  - Update binding descriptions
+> 
+> v4:
+>  - Define the use of a CSI2 D-PHY
+>  - Rename pwdn-gpios to enable-gpios (with inverted polarity)
+>  - Remove clock-lanes mapping support
+>  - rewrap text blocks
+>  - Fix typos
+> ---
+>  .../bindings/media/i2c/maxim,max9286.txt      | 182 ++++++++++++++++++
+>  1 file changed, 182 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+> new file mode 100644
+> index 000000000000..672f6a4d417d
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+> @@ -0,0 +1,182 @@
+> +Maxim Integrated Quad GMSL Deserializer
+> +---------------------------------------
+> +
+> +The MAX9286 deserializer receives video data on up to 4 Gigabit Multimedia
+> +Serial Links (GMSL) and outputs them on a CSI-2 D-PHY port using up to 4 data
+> +lanes.
+> +
+> +In addition to video data, the GMSL links carry a bidirectional control channel
+> +that encapsulates I2C messages. The MAX9286 forwards all I2C traffic not
+> +addressed to itself to the other side of the links, where a GMSL serializer
+> +will output it on a local I2C bus. In the other direction all I2C traffic
+> +received over GMSL by the MAX9286 is output on the local I2C bus.
+> +
+> +Required Properties:
+> +
+> +- compatible: Shall be "maxim,max9286"
+> +- reg: I2C device address
+> +
+> +Optional Properties:
+> +
+> +- poc-supply: Regulator providing Power over Coax to the cameras
+> +- enable-gpios: GPIO connected to the #PWDN pin with inverted polarity
+> +
+> +Required endpoint nodes:
+> +-----------------------
+> +
+> +The connections to the MAX9286 GMSL and its endpoint nodes are modeled using
+> +the OF graph bindings in accordance with the video interface bindings defined
+> +in Documentation/devicetree/bindings/media/video-interfaces.txt.
+> +
+> +The following table lists the port number corresponding to each device port.
+> +
+> +        Port            Description
+> +        ----------------------------------------
+> +        Port 0          GMSL Input 0
+> +        Port 1          GMSL Input 1
+> +        Port 2          GMSL Input 2
+> +        Port 3          GMSL Input 3
+> +        Port 4          CSI-2 Output
+> +
+> +Optional Endpoint Properties for GMSL Input Ports (Port [0-3]):
+> +
+> +- remote-endpoint: phandle to the remote GMSL source endpoint subnode in the
+> +  remote node port.
+> +
+> +Required Endpoint Properties for CSI-2 Output Port (Port 4):
+> +
+> +- remote-endpoint: phandle to the remote CSI-2 sink endpoint node.
+> +- data-lanes: array of physical CSI-2 data lane indexes.
+> +
+> +Required i2c-mux nodes:
+> +----------------------
+> +
+> +Each GMSL link is modeled as a child bus of an i2c bus multiplexer/switch, in
+> +accordance with bindings described in
+> +Documentation/devicetree/bindings/i2c/i2c-mux.txt. The serializer device on the
+> +remote end of the GMSL link shall be modelled as a child node of the
+> +corresponding I2C bus.
+> +
+> +Required i2c child bus properties:
+> +- all properties described as required i2c child bus nodes properties in
+> +  Documentation/devicetree/bindings/i2c/i2c-mux.txt.
+> +
+> +Example:
+> +-------
+> +
+> +	gmsl-deserializer@2c {
+> +		compatible = "maxim,max9286";
+> +		reg = <0x2c>;
+> +		poc-supply = <&camera_poc_12v>;
+> +		enable-gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
+> +
+> +		#address-cells = <1>;
+> +		#size-cells = <0>;
+> +
+> +		ports {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +
+> +			port@0 {
+> +				reg = <0>;
+> +				max9286_in0: endpoint {
+> +					remote-endpoint = <&rdacm20_out0>;
+> +				};
+> +			};
+> +
+> +			port@1 {
+> +				reg = <1>;
+> +				max9286_in1: endpoint {
+> +					remote-endpoint = <&rdacm20_out1>;
+> +				};
+> +			};
+> +
+> +			port@2 {
+> +				reg = <2>;
+> +				max9286_in2: endpoint {
+> +					remote-endpoint = <&rdacm20_out2>;
+> +				};
+> +			};
+> +
+> +			port@3 {
+> +				reg = <3>;
+> +				max9286_in3: endpoint {
+> +					remote-endpoint = <&rdacm20_out3>;
+> +				};
+> +			};
+> +
+> +			port@4 {
+> +				reg = <4>;
+> +				max9286_out: endpoint {
+> +					data-lanes = <1 2 3 4>;
+> +					remote-endpoint = <&csi40_in>;
+> +				};
+> +			};
+> +		};
+> +
+> +		i2c@0 {
+> +			#address-cells = <1>;
+> +			#size-cells = <0>;
+> +			reg = <0>;
+> +
+> +			camera@51 {
+> +				compatible = "imi,rdacm20";
+> +				reg = <0x51 0x61>;
 
-i.e. writing patches for upstream (from my point of view),
-is more art of communication and making resulte code acceptable by communit=
-y.
-Because any code which written correctly from engineering point of view,
-can be easy refused, just because someone not found it useful.
+I find this kind of address mapping is the weak point in this patchset.
 
-Thanks.
+The ser-deser chipset splits the world in "local" and "remote" side. The
+camera node belongs to the remote side, but the 0x51 and 0x61 addresses
+belong to the local side. Think about supporting N different main boards
+and M remote boards. 0x51 might be available on some main boards but not
+all. IMO under the camera@51 (even the i2c@0) node there should be only
+remote hardware description. To support the N*M possible combinations,
+there should be:
 
-> >
-> > 1. https://elixir.bootlin.com/linux/latest/source/include/linux/mm.h#L2=
-19
+ * a DT for the main board mentioning only addresses for the
+   local i2c bus, down to the i2c@0 with address-cells, size-cells and
+   reg properties
+ * a DT overlay for each remote board, mentioning the remote i2c
+   chips with their physical addresses, but no local addresses
+
+The only way I could devise to be generic is to bind each physical
+remote address to a local address at runtime.
+
+Also, to be implemented reliably, an address translation feature is
+required on the local (de)ser chip.
+
+So the question is: can the max9286 chip do i2c address translation?
+
+Thanks,
+-- 
+Luca
