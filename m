@@ -2,77 +2,152 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64D8FC0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36379C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:37:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D33D22507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:36:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D33D22507
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id E9C8D22507
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:37:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUKttH1D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E9C8D22507
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732281AbeKMUdx (ORCPT
+        id S1732346AbeKMUey (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 15:33:53 -0500
-Received: from mga11.intel.com ([192.55.52.93]:11734 "EHLO mga11.intel.com"
+        Tue, 13 Nov 2018 15:34:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:41030 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731276AbeKMUdx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 15:33:53 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 02:36:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,498,1534834800"; 
-   d="scan'208";a="90729178"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga006.jf.intel.com with SMTP; 13 Nov 2018 02:36:17 -0800
-Received: by lahna (sSMTP sendmail emulation); Tue, 13 Nov 2018 12:36:16 +0200
-Date:   Tue, 13 Nov 2018 12:36:16 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Mario.Limonciello@dell.com
-Cc:     iommu@lists.linux-foundation.org, joro@8bytes.org,
-        dwmw2@infradead.org, baolu.lu@linux.intel.com, ashok.raj@intel.com,
-        bhelgaas@google.com, rjw@rjwysocki.net, jacob.jun.pan@intel.com,
-        andreas.noever@gmail.com, michael.jamet@intel.com,
-        YehezkelShB@gmail.com, lukas@wunner.de, ckellner@redhat.com,
-        anthony.wong@canonical.com, linux-acpi@vger.kernel.org,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] thunderbolt: Export IOMMU based DMA protection
- support to userspace
-Message-ID: <20181113103616.GQ2500@lahna.fi.intel.com>
-References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
- <20181112160628.86620-5-mika.westerberg@linux.intel.com>
- <d4d2488e85174cff9ab8c641336d5919@ausx13mpc120.AMER.DELL.COM>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d4d2488e85174cff9ab8c641336d5919@ausx13mpc120.AMER.DELL.COM>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1731276AbeKMUey (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 15:34:54 -0500
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 824D1223DD;
+        Tue, 13 Nov 2018 10:37:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542105443;
+        bh=FiWPtmICUYV4V52TKpdFUpTP79PetnRr4NGfp4fCL2U=;
+        h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+        b=oUKttH1Dxn0oqLv6UwlrBFHgBFJlFS/vdij7MqocK9wTdy/uea8gxvVdZ/Q9lf4yP
+         oAlYngOXiUSS7bMJhMyddJFho1ApdNHYX+AzIyoGjWgh7mwF4Z0fMurB0bCa9Yed/j
+         PXQbdgOiJEgf81h6bLJupylDMtFLUIIMw+HNwpHI=
+Message-ID: <9d9ad7f2781bf15af4bd6ccc9feee35c7cd17979.camel@kernel.org>
+Subject: Re: KASAN: use-after-free Read in locks_delete_block
+From:   Jeff Layton <jlayton@kernel.org>
+To:     syzbot <syzbot+a4a3d526b4157113ec6a@syzkaller.appspotmail.com>,
+        bfields@fieldses.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Cc:     Neil Brown <neilb@suse.de>
+Date:   Tue, 13 Nov 2018 05:37:19 -0500
+In-Reply-To: <000000000000222b58057a7d9f39@google.com>
+References: <000000000000222b58057a7d9f39@google.com>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 04:22:25PM +0000, Mario.Limonciello@dell.com wrote:
-> > +DMA protection utilizing IOMMU
-> > +------------------------------
-> > +Recent systems shipping with Windows 10 version 1803 or later may support a
-> > +feature called `Kernel DMA Protection for Thunderbolt 3`_.  This means that
+On Mon, 2018-11-12 at 12:34 -0800, syzbot wrote:
+> Hello,
 > 
-> Keep in mind there will be systems that ship with Linux that enable this feature too ;)
+> syzbot found the following crash on:
+> 
+> HEAD commit:    442b8cea2477 Add linux-next specific files for 20181109
+> git tree:       linux-next
+> console output: https://syzkaller.appspot.com/x/log.txt?x=115dbad5400000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=2f72bdb11df9fbe8
+> dashboard link: https://syzkaller.appspot.com/bug?extid=a4a3d526b4157113ec6a
+> compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> 
+> Unfortunately, I don't have any reproducer for this crash yet.
+> 
+> IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> Reported-by: syzbot+a4a3d526b4157113ec6a@syzkaller.appspotmail.com
+> 
+> device loop0 blocksize: 4096
+> __find_get_block_slow() failed. block=1, b_blocknr=8
+> b_state=0x00000029, b_size=512
+> device loop0 blocksize: 4096
+> ==================================================================
+> BUG: KASAN: use-after-free in __list_del_entry_valid+0xf1/0x100  
+> lib/list_debug.c:51
+> Read of size 8 at addr ffff88017eb47b70 by task syz-executor3/13461
+> 
+> CPU: 0 PID: 13461 Comm: syz-executor3 Not tainted 4.20.0-rc1-next-20181109+  
+> #110
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> Google 01/01/2011
+> Call Trace:
+>   __dump_stack lib/dump_stack.c:77 [inline]
+>   dump_stack+0x244/0x39d lib/dump_stack.c:113
+>   print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+>   kasan_report_error mm/kasan/report.c:354 [inline]
+>   kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+>   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+>   __list_del_entry_valid+0xf1/0x100 lib/list_debug.c:51
+>   __list_del_entry include/linux/list.h:117 [inline]
+>   list_del_init include/linux/list.h:159 [inline]
+>   __locks_delete_block fs/locks.c:683 [inline]
+>   locks_delete_block+0xce/0x3d0 fs/locks.c:716
+>   locks_mandatory_area+0x48b/0x6a0 fs/locks.c:1398
+>   rw_verify_area+0x2f2/0x360 fs/read_write.c:386
+>   vfs_write+0x149/0x560 fs/read_write.c:544
+>   ksys_write+0x101/0x260 fs/read_write.c:598
+>   __do_sys_write fs/read_write.c:610 [inline]
+>   __se_sys_write fs/read_write.c:607 [inline]
+>   __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+>   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> RIP: 0033:0x457569
+> Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+> ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007ff2e8194c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+> RDX: 0000000000000010 RSI: 0000000020000180 RDI: 0000000000000006
+> RBP: 000000000072c0e0 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff2e81956d4
+> R13: 00000000004c571f R14: 00000000004d9360 R15: 00000000ffffffff
+> 
+> The buggy address belongs to the page:
+> page:ffffea0005fad1c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+> flags: 0x2fffc0000000000()
+> raw: 02fffc0000000000 0000000000000000 ffffea0005fad1c8 0000000000000000
+> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+> page dumped because: kasan: bad access detected
+> 
+> Memory state around the buggy address:
+>   ffff88017eb47a00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>   ffff88017eb47a80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > ffff88017eb47b00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> 
+>                                                               ^
+>   ffff88017eb47b80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+>   ffff88017eb47c00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> ==================================================================
+> 
 
-Yes, you are absolutely right. I sometimes forgot that fact ;-)
+Ouch, crash down in the mandatory locking code. This is with Neil's set
+from last week. I haven't merged the series he sent the other day yet,
+but they don't seem to be different in this regard.
 
-> It might be better to make it time frame and platform  firmware oriented as it's
-> entirely possible for an OEM to have a field firmware upgrade that may enable this
-> functionality from the platform and allow an end user to upgrade to a sufficiently
-> protected kernel or Windows OS to take advantage of it.
+Looks like the fl_blocked list might have had an entry on it that was
+freed without being removed? locks_mandatory_area declares a file_lock
+on the stack, but it seems to be initialized properly.
 
-I agree. I will update this in the next version.
+The one weird thing is that locks_mandatory_area sets FL_ACCESS and
+FL_SLEEP, but I don't see anything wrong with that right offhand.
+
+Neil, any thoughts?
+-- 
+Jeff Layton <jlayton@kernel.org>
+
