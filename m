@@ -2,129 +2,282 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF878C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6D71C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:55:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5FBF5223C8
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:49:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 54084223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:55:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDl9T6F8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5FBF5223C8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="f9bO4IC7";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="PUzHRzTo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54084223AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726784AbeKNGtt (ORCPT
+        id S1727290AbeKNGzT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 01:49:49 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:42567 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725748AbeKNGts (ORCPT
+        Wed, 14 Nov 2018 01:55:19 -0500
+Received: from mx0a-00082601.pphosted.com ([67.231.145.42]:57202 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725782AbeKNGzT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 01:49:48 -0500
-Received: by mail-pg1-f194.google.com with SMTP id d72so2810925pga.9
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 12:49:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=L+a+PpzR+nfG0aAKhuAuU4VCxpLWpasx0RwxjXMeCXM=;
-        b=CDl9T6F8JsxmWV/KIrVRjPAF16+fNC8FVATaEzA7iusuHJy+SAvVsmm/xw+6ssmGCY
-         0yH1GBiLm+RGCaA/KLhO6Jqod3OP769f5PvMWnLzI9Ln/6aE/sTdBl7AmsaH4pkTgPg1
-         0/DsbryHTflPFbk7qzwaTHwp3l/ngJWz8qdthRKwNwqp0zpQhar4NMskcnIMWJ9j917q
-         Vs+xvBV164lnJj0eqj5lTnpuWyA7S1/v71Fud92LVBSIblKAPso9G2Dcn1o/TorDFEjA
-         4PEPnoOhR8/NeTwIN7xt/y5utp/rZ43EipUTZYDJdRaq4Xj457JV7YyInUnaS82apgvR
-         wgBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=L+a+PpzR+nfG0aAKhuAuU4VCxpLWpasx0RwxjXMeCXM=;
-        b=e7KEJtJsJGdWmUG6dTtL+8lOHR01Ek0AMXExTnJIa68Fwo5qqvUkLv7+gmXBFV8Umf
-         hQxrFK1JKXpp1rO7Xqh9twkolRJOY6gh4tUxd44LCmbdTQtGj63veTWTpxw0lYPtLVc7
-         1QRc4KhCFYcxMNFLo6EMdbcZQqZYyPbmq0Y7IlCkQDA4ohfCcNaRsSbuQO/oWB4jZHlH
-         7/UlP8eme6wLpeZ5Q8CYSzo2ekErgoSNV9nBw3sYWzRCcf3JuOBap1w2OJgp/9wguNgq
-         hto4RpumE3dI+R/eer4DMijz4sQOqrz7fG79S8tK9O+GRt+KJmUwE6IH8OkbPu0ayBYq
-         Mxsw==
-X-Gm-Message-State: AGRZ1gLA80oD11iU1J2DE1rJuJ/3tj40B/63jIxKDdlXPc5g+R9TLLmH
-        G2RLUN69n/xzkxm0M0nUvEI=
-X-Google-Smtp-Source: AJdET5fNuBmfg1sAVH3kjyHxunmQ0YzIK4z6uhGf/BRZB9OF2p7SF4gT1k52G6r3XhQPHjNWVC8cUQ==
-X-Received: by 2002:a62:f5da:: with SMTP id b87mr6784924pfm.253.1542142195307;
-        Tue, 13 Nov 2018 12:49:55 -0800 (PST)
-Received: from localhost (g148.61-193-223.ppp.wakwak.ne.jp. [61.193.223.148])
-        by smtp.gmail.com with ESMTPSA id q8-v6sm31801171pfa.18.2018.11.13.12.49.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 12:49:54 -0800 (PST)
-Date:   Wed, 14 Nov 2018 05:49:53 +0900
-From:   Stafford Horne <shorne@gmail.com>
-To:     Changbin Du <changbin.du@gmail.com>
-Cc:     jonas@southpole.se, stefan.kristiansson@saunalahti.fi,
-        openrisc@lists.librecores.org, linux-kernel@vger.kernel.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>
-Subject: Re: [PATCH] openrisc: make function cache_loop() inline
-Message-ID: <20181113204953.GF2718@lianli.shorne-pla.net>
-References: <20181112155544.7230-1-changbin.du@gmail.com>
+        Wed, 14 Nov 2018 01:55:19 -0500
+Received: from pps.filterd (m0148461.ppops.net [127.0.0.1])
+        by mx0a-00082601.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wADKqR8u002538;
+        Tue, 13 Nov 2018 12:55:19 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=Vsd1EuUzi0RlRc17NuFaaHAjgP7x7uVz9kVv8XCWFK8=;
+ b=f9bO4IC7IMjhZv1iJ5B2w4CbFw7xa3cIjgkssdqEw+zcO2Mo5lyAGPNgCwtn+8INbPNH
+ aU+3bf72o433/WJK+tj6QB9ZMhcrE3eZKaRnggjos2s1KrCx7u6m8GeDSWv3X1c3ksts
+ 7v6ls6T3ERJgz5SkIUtxBwP1YTeRhq7p4kA= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by mx0a-00082601.pphosted.com with ESMTP id 2nr5rbr21m-9
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Tue, 13 Nov 2018 12:55:19 -0800
+Received: from prn-hub03.TheFacebook.com (2620:10d:c081:35::127) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Tue, 13 Nov 2018 12:55:15 -0800
+Received: from NAM01-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.27) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Tue, 13 Nov 2018 12:55:15 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Vsd1EuUzi0RlRc17NuFaaHAjgP7x7uVz9kVv8XCWFK8=;
+ b=PUzHRzTol3fxnLC02M1NmmS4dndTQRs0Xv0dIagXZjbeoOKasYPMrKAcAcMNRT2tI6RBfkichD6qPLi5erDrWDPzdkEZ+YrMsouqeECeakcfLc0nBYYcGiKCf616GtUMl0VZoH79fgTn74XIzVhM2f4f9bo7igdOB6Knv3NHJDE=
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com (10.163.64.141) by
+ BY2PR15MB0885.namprd15.prod.outlook.com (10.164.171.143) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.20; Tue, 13 Nov 2018 20:55:11 +0000
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::8e8:753:f746:ed14]) by BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::8e8:753:f746:ed14%2]) with mapi id 15.20.1294.045; Tue, 13 Nov 2018
+ 20:55:11 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Tejun Heo <tj@kernel.org>
+CC:     Roman Gushchin <guroan@gmail.com>, Oleg Nesterov <oleg@redhat.com>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        "Andrew Morton" <akpm@linux-foundation.org>,
+        Ingo Molnar <mingo@redhat.com>
+Subject: Re: [PATCH v2 3/6] cgroup: cgroup v2 freezer
+Thread-Topic: [PATCH v2 3/6] cgroup: cgroup v2 freezer
+Thread-Index: AQHUetwXxFde3wHnZUKDpNhUsGNNTqVM9cOAgACRKoCAAI3jgIAAG8kA
+Date:   Tue, 13 Nov 2018 20:55:11 +0000
+Message-ID: <20181113205507.GB15590@tower.DHCP.thefacebook.com>
+References: <20181112230422.5911-1-guro@fb.com>
+ <20181112230422.5911-5-guro@fb.com>
+ <20181113020817.GE2509588@devbig004.ftw2.facebook.com>
+ <20181113184751.GB21629@tower.DHCP.thefacebook.com>
+ <20181113191541.GM2509588@devbig004.ftw2.facebook.com>
+In-Reply-To: <20181113191541.GM2509588@devbig004.ftw2.facebook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR1401CA0007.namprd14.prod.outlook.com
+ (2603:10b6:301:4b::17) To BY2PR15MB0167.namprd15.prod.outlook.com
+ (2a01:111:e400:58e0::13)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:200::6:e7cf]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR15MB0885;20:T+w6AZW4vCeYY4N5zj1iYR6rVcFgN95JlmPcTlDiLUMI3kmTKu4fl1BL+O4ydsby2VgqlrSLKuZ+6TPKyY1dcSu0+7s1tx9nhKbM0/3Shm7uyIM7E5eFivBZzArVnsc0mXtlmdac6SMQQbCz8JXU0zhlMJ/c+Cwing6qoQ/cXmo=
+x-ms-office365-filtering-correlation-id: b2fca386-2d96-49b7-893e-08d649aa4d38
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390060)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0885;
+x-ms-traffictypediagnostic: BY2PR15MB0885:
+x-microsoft-antispam-prvs: <BY2PR15MB0885C41EAF4DBD411F32A4C5BEC20@BY2PR15MB0885.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(3002001)(10201501046)(3231410)(11241501184)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BY2PR15MB0885;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0885;
+x-forefront-prvs: 085551F5A8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(136003)(39860400002)(346002)(366004)(199004)(189003)(93886005)(5660300001)(2900100001)(97736004)(1076002)(6306002)(6436002)(14444005)(256004)(86362001)(305945005)(9686003)(6512007)(14454004)(229853002)(99286004)(7736002)(6486002)(68736007)(6916009)(11346002)(446003)(106356001)(33896004)(54906003)(33656002)(186003)(8936002)(6246003)(39060400002)(386003)(6506007)(4326008)(2906002)(76176011)(81156014)(81166006)(105586002)(478600001)(8676002)(6116002)(486006)(25786009)(476003)(71200400001)(53936002)(71190400001)(102836004)(316002)(46003)(52116002)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0885;H:BY2PR15MB0167.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: P593JvteMy3DQSxzHftNqIUYUb+ZMqmFqAgIksDXSZPh+EcyjAjK4SqMPWCiUCEUNRNcX7pmSlf86u4zvn2fmmoNW5eMHX/qMDgZPPrOCtTns2H8FBswc6gvq5LILawuS7UXj93T12qVCb7IvU5PCPiCKWXUG30tIgIpo2SESyxnpbeXMMUGM5m5sLa5vWRl3jCVwFhaORGlgXPzrgLXOSeh2VI/bl5THyJI4pKvqE0w0pAG1F7J3SaLHj/j0xz6D0QveOMFnXyxsB3s970y592mLt/yXaY9xw7G1QrJ69TKWzmr2VDpfVa/nfTvXO2UB7PVY2seyNJATQYNqiKSfi2lD2iPigPvuPGlU3K8xXY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <F7E7478C86CFCE448A3934CD6B7AF5D6@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112155544.7230-1-changbin.du@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2fca386-2d96-49b7-893e-08d649aa4d38
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2018 20:55:11.3297
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0885
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_14:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 11:55:44PM +0800, Changbin Du wrote:
-> The third operand of mtspr instruction must be a constraint. To guarantee
-> this condition, function cache_loop() which uses macro mtspr() must be
-> inlined. So let's force it as 'inline'. This is to fix compiling error with
-> new option CONFIG_NO_AUTO_INLINE.
+On Tue, Nov 13, 2018 at 11:15:41AM -0800, Tejun Heo wrote:
+> Hello, Roman.
+>=20
+> On Tue, Nov 13, 2018 at 06:47:55PM +0000, Roman Gushchin wrote:
+> > > > +	/* Should the cgroup and its descendants be frozen. */
+> > > > +	bool freeze;
+> > >=20
+> > > Why not have this in freezer too?
+> >=20
+> > I thought that this variable is just the state of the cgroup.freeze kno=
+b,
+> > where the freezer field contains the internal state of the freezer, and
+> > can in theory be allocated dynamically.
+> >=20
+> > Not a strong preference, I can move it there too, if you prefer to.
+>=20
+> Yeah, let's just put it together.
+>=20
+> > > > +void cgroup_freezer_enter(void);
+> > > > +void cgroup_freezer_leave(void);
+> > >=20
+> > > So, if we use freeze, freezing, frozen instead, the aboves can be
+> > > cgroup_frozen_enter() and cgroup_frozen_leave() (or begin/end).
+> >=20
+> > Idk, maybe cgroup_enter_frozen()/cgroup_leave_frozen() ?
+>=20
+> Sure.
+>=20
+> > > > +	/* task is in the cgroup freezer loop */
+> > >=20
+> > > The above comment isn't strictly true, right?
+> >=20
+> > Why so?
+> >=20
+> > It actually means that the task is looping somewhere in the signal deli=
+very loop
+> > after entering cgroup_freezer_enter() and before cgroup_freezer_leave()=
+.
+> >=20
+> > Maybe simple "task is frozen by the cgroup freezer"?
+>=20
+> Yeah, sounds good.
+>=20
+> > > > @@ -5642,6 +5700,23 @@ void cgroup_post_fork(struct task_struct *ch=
+ild)
+> > > >  			cset->nr_tasks++;
+> > > >  			css_set_move_task(child, NULL, cset, false);
+> > > >  		}
+> > > > +
+> > > > +		if (unlikely(cgroup_frozen(child) &&
+> > > > +			     (child->flags & ~PF_KTHREAD))) {
+> > >=20
+> > > I don't think we need explicit PF_KTHREAD test here.  We don't allow
+> > > kthreads in non-root cgroups anyway and if we wanna change that there
+> > > are a bunch of other things which need updating anyway.
+> >=20
+> > Don't we? I think we do. I've proposed a patch to fix this some time ag=
+o
+> > (https://lkml.org/lkml/2017/10/12/556), but was NAKed by Peter.
+>=20
+> Ah, right, I thought that went in.  Oh well, let's keep the test then.
+>=20
+> > > > +	/*
+> > > > +	 * Did we race with fork() or exit()? Np, everything is still fro=
+zen.
+> > > > +	 */
+> > > > +	if (frozen =3D=3D test_bit(CGRP_FROZEN, &cgrp->flags))
+> > > > +		return;
+> > > > +
+> > > > +	if (frozen)
+> > > > +		set_bit(CGRP_FROZEN, &cgrp->flags);
+> > > > +	else
+> > > > +		clear_bit(CGRP_FROZEN, &cgrp->flags);
+> > >=20
+> > > I'm not sure this is wrong but it feels a bit weird to tie the actual
+> > > state transition to notification.  Wouldn't it be more
+> > > straight-forward if CGRP_FROZEN bit is purely determined by whether
+> > > the tasks are frozen or not and the notification just checks that
+> > > against the last notified state and generate a notification if they'r=
+e
+> > > different?
+> >=20
+> > So, maybe cgroup_notify_frozen() is not the best name, maybe
+> > cgroup_propagate_frozen() better reflects what's happening here.
+> > We need to recalc the state of ancestor cgroups, and we have to do it
+> > with cgroup_mutex held, this is why we do it from the delayed work
+> > context (on hot paths).
+>=20
+> Can't we protect that state with css_set_lock too?  That's what task
+> states are protected by and the cgroup state is a mere aggregation of
+> task states.
 
-Thanks for looking at this.
+See below.
 
-Do you mean, must be a 'constant'?
+>=20
+> > The first pat of the function can be probably separated and called
+> > immediately. Is this what you're suggesting?
+>=20
+> Pretty much.  I think separating out state transitions and
+> notifications would make it more straightforward.
+>=20
+> > > So that all these state transitions are synchronous with the actual
+> > > freezing events and we can just queue per-cgroup work items all the
+> > > way to the top if the new state is different from the last one
+> > > cgroup-by-cgroup?
+> >=20
+> > Hm, Idk. Why it's better?
+>=20
+> So, the pieces are - 1. task states, 2. cgroup states and
+> 3. notifications.  The current code ties together #2 and #3 together
+> which is weird because #2 is a mere aggregation of #1.  Also, that
+> way, notifications become a lot more robust because whether to
+> generate a notification or not can be solely determined from #2
+> flipping.  ie. sth like the following
+>=20
+> 	change_task_frozen_state()
+> 	{
+> 		update counters
+> 		if (cgroup state needs to change) {
+> 			change cgroup state;
+> 			queue notification work;
+> 			repeat for the parent;
+> 		}
+> 	}
+>=20
+> where notification work always notifies should work and trivially
+> satisfies the requirement (there should be at least one notification
+> since the last state transition) without any further work.  Wouldn't
+> this be easier and more robust?  The current code depends on
+> annotating each possible transition event, which is kinda fragile.
 
-I think this fix is fine for now.  Can you add it to your 'kernel hacking: GCC
-optimization for better debug experience' series?
+Ok, it looks like I can additionally synchronize descendant counters
+using css_set_lock, and then eliminate the whole thing with delayed
+transitions/notifications.
 
-> In file included from arch/openrisc/mm/cache.c:17:0:
-> arch/openrisc/mm/cache.c: In function 'cache_loop':
-> arch/openrisc/include/asm/spr.h:20:27: warning: asm operand 0 probably doesn't match constraints
->                               ^
-> arch/openrisc/mm/cache.c:29:3: note: in expansion of macro 'mtspr'
->       mtspr(reg, line);
->       ^~~~~
-> arch/openrisc/include/asm/spr.h:20:27: error: impossible constraint in 'asm'
-> 
-> Signed-off-by: Changbin Du <changbin.du@gmail.com>
-> Reported-by: kbuild test robot <lkp@intel.com>
-> Cc: Stafford Horne <shorne@gmail.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Will do in v3.
 
-Acked-by: Stafford Horne <shorne@gmail.com>
+>=20
+> > > > +	if (lock_task_sighand(task, &flags)) {
+> > > > +		if (test_bit(CGRP_FREEZE, &dst->flags))
+> > > > +			task->jobctl |=3D JOBCTL_TRAP_FREEZE;
+> > > > +		else
+> > > > +			task->jobctl &=3D ~JOBCTL_TRAP_FREEZE;
+> > >=20
+> > > How are these flags synchronized?
+> >=20
+> > Using the css_set_lock.
+>=20
+> But other JOBCTL_TRAP bits aren't synchronized by css_set_lock, right?
 
-> ---
->  arch/openrisc/mm/cache.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/openrisc/mm/cache.c b/arch/openrisc/mm/cache.c
-> index b747bf1fc1b6..4a4b2b6e006b 100644
-> --- a/arch/openrisc/mm/cache.c
-> +++ b/arch/openrisc/mm/cache.c
-> @@ -20,7 +20,7 @@
->  #include <asm/cacheflush.h>
->  #include <asm/tlbflush.h>
->  
-> -static void cache_loop(struct page *page, const unsigned int reg)
-> +static inline void cache_loop(struct page *page, const unsigned int reg)
->  {
->  	unsigned long paddr = page_to_pfn(page) << PAGE_SHIFT;
->  	unsigned long line = paddr & ~(L1_CACHE_BYTES - 1);
-> -- 
-> 2.17.1
-> 
+
+But if we don't touch this bit anywhere else, should be fine, right?
+
+Thanks!
