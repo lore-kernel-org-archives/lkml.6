@@ -2,109 +2,69 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 083E4C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4E73C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:57:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFA50223DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:56:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFA50223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id A6F9A223DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:57:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6F9A223DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732775AbeKMVyL (ORCPT
+        id S1732798AbeKMVy5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:54:11 -0500
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:35241 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726934AbeKMVyL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:54:11 -0500
-Received: from [IPv6:2001:420:44c1:2579:cc8b:c08b:b11b:69b9] ([IPv6:2001:420:44c1:2579:cc8b:c08b:b11b:69b9])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id MXIogpYNQRKKoMXIrgIG8V; Tue, 13 Nov 2018 12:56:21 +0100
-Subject: Re: [PATCH] media: videobuf2-core: Fix error handling when fileio is
- deallocated
-To:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Myungho Jung <mhjungk@gmail.com>, pawel@osciak.com,
-        kyungmin.park@samsung.com, mchehab@kernel.org
-Cc:     linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <CGME20181112005053epcas4p1c674759797b4a930cfcce3abc7edd9ad@epcas4p1.samsung.com>
- <20181112004951.GA3948@myunghoj-Precision-5530>
- <9402424d-6e0c-b628-c6c2-8f87b5276a36@samsung.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <636c6ed7-25ef-fd51-4555-3aeb28e96f89@xs4all.nl>
-Date:   Tue, 13 Nov 2018 12:56:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Tue, 13 Nov 2018 16:54:57 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:36108 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726934AbeKMVy5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 16:54:57 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id qCjqF0_-Rw6y; Tue, 13 Nov 2018 12:57:08 +0100 (CET)
+Received: from zn.tnic (p200300EC2BE56F00D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:6f00:d571:4500:c00e:26fd])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 6A79B1EC00CD;
+        Tue, 13 Nov 2018 12:57:08 +0100 (CET)
+Date:   Tue, 13 Nov 2018 12:57:08 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     wang.yi59@zte.com.cn
+Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
+        x86@kernel.org, linux-kernel@vger.kernel.org,
+        zhong.weidong@zte.com.cn
+Subject: Re: [PATCH] x86/irq: Fix -Wmissing-prototypes warning for init_IRQ()
+Message-ID: <20181113115708.GE10502@zn.tnic>
+References: <20181113101701.GB10502@zn.tnic>
+ <201811131931442413258@zte.com.cn>
 MIME-Version: 1.0
-In-Reply-To: <9402424d-6e0c-b628-c6c2-8f87b5276a36@samsung.com>
 Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfMGbsIzdaBLUSPh+IQe4kaKPqKkZ/6RSQ3hMGP5fNDzhxWzIiFuWXF2HQZG6xcM/0RLDo1nio+UKR9EJktGMiCM1uzkPXp7pU+VcM9fxDlcsRKlm01R7
- hx0R7LoBoVwP8L8vQNmuZFmkH0X3o22Mkuz7EAuudlU2uPYy4eg3SXz3/el8JyeDcvx38FeAT+f5lUUYnauUk2Me66M1kEFMdIZWUtYMU/Ksqi/guYyO2vvf
- uQCLPj3gR496QY3J9t9i9B+CVGyNukv+OsluewyFFMdZN/VlSdzN2FttdiIT7jr0ZVVdbP2/MAvMmDccbsua1xE64T71L78Di/762AM0iTtyyEA/Y8AKesef
- g3Z5TbaYlf11HVN8Fr0oaxc6cSLia8Zc0iaIP/FIw48rWZZVLuXCQFySL03tM88jdMWWMcqzQRy6ExUijXnaBca3jsw88Q7DHCDOlwIE9UM0ll1SSV4ktzXS
- Yn8NnNCBSsHdBLNa
+Content-Disposition: inline
+In-Reply-To: <201811131931442413258@zte.com.cn>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/13/18 11:27, Marek Szyprowski wrote:
-> Hi Myungho,
-> 
-> On 2018-11-12 01:49, Myungho Jung wrote:
->> The mutex that is held from vb2_fop_read() can be unlocked while waiting
->> for a buffer if the queue is streaming and blocking. Meanwhile, fileio
->> can be released. So, it should return an error if the fileio address is
->> changed.
->>
->> Signed-off-by: Myungho Jung <mhjungk@gmail.com>
->> Reported-by: syzbot+4180ff9ca6810b06c1e9@syzkaller.appspotmail.com
-> 
-> Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+On Tue, Nov 13, 2018 at 07:31:44PM +0800, wang.yi59@zte.com.cn wrote:
+> I thought this can keep patches dependent and can be reverted easily if one
+> of them has something wrong.
 
-Sorry:
+Same thing with per-directory or subsystem - just less granulary.
 
-Nacked-by: Hans Verkuil <hans.verkuil@cisco.com>
+> Thanks for your suggestion, I will do as you advised. :-)
 
-This addresses the symptom, not the underlying cause.
+Yeah, this was just an idea. Let's see how it really works out.
 
-I have a patch that fixes the actual cause that I plan to post soon
-after I review it a bit more.
+Thx.
 
-Regards,
+-- 
+Regards/Gruss,
+    Boris.
 
-	Hans
-
-> 
-> Thanks for analyzing the code and fixing this issue!
-> 
->> ---
->>  drivers/media/common/videobuf2/videobuf2-core.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->>
->> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
->> index 975ff5669f72..bff94752eb27 100644
->> --- a/drivers/media/common/videobuf2/videobuf2-core.c
->> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
->> @@ -2564,6 +2564,10 @@ static size_t __vb2_perform_fileio(struct vb2_queue *q, char __user *data, size_
->>  		dprintk(5, "vb2_dqbuf result: %d\n", ret);
->>  		if (ret)
->>  			return ret;
->> +		if (fileio != q->fileio) {
->> +			dprintk(3, "fileio deallocated\n");
->> +			return -EFAULT;
->> +		}
->>  		fileio->dq_count += 1;
->>  
->>  		fileio->cur_index = index;
-> 
-> Best regards
-> 
-
+Good mailing practices for 400: avoid top-posting and trim the reply.
