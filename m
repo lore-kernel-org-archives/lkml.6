@@ -2,135 +2,114 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 74814C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:39:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95E71C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:40:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C22A2243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:39:52 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qb1BkDrQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C22A2243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 640D42243E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:40:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640D42243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732603AbeKMVhf (ORCPT
+        id S1732742AbeKMViM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:37:35 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:34638 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732475AbeKMVhe (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:37:34 -0500
-Received: by mail-wr1-f67.google.com with SMTP id j26-v6so12927608wre.1;
-        Tue, 13 Nov 2018 03:39:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X2CpLFe2KTL73T2p5ompiXP62kr9nKvYl/O1I/wllgc=;
-        b=Qb1BkDrQguKkgZcN89Nhvr2GtoQPd9+SxkbneaitgxFRHpOk9P0KqgsFmpLngvVq3R
-         0op6Xgt5YRivpN1No7zDBhf2ysUByHHvWmCDeTSz9Ck24DpBVt/X0OEGkh1VgnYRbZlg
-         xNLxnnlMR1wDfcy8uKhhcFyk/IiPXgHcWqzkPryOQEtWJ/xLiuWYq2q2SPVCp4op1tFk
-         6L7azWmke5e3wtAD9y7UrLx4sHpCotFcpxXV2LC05t/U84GuaoD3WlTi08Yr26fTsyhF
-         mIl1xkQ0RqwL9bxgqKKWfjfe2web8vVH7p+S50g3RvWTRP/96bUcwLogbNCGQwWjlk5C
-         1bEA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X2CpLFe2KTL73T2p5ompiXP62kr9nKvYl/O1I/wllgc=;
-        b=ebtMMC/794zzZbJ51B3GsHdgGA2mnhrpHVcExXXsC3jk0LWj2fO8Wod1FQguwZj8uX
-         +1b/HbuCXVXVavqHfW/s8MOwfHKsCkW7c3FZvQk3/xWmoZPl4DV2KTLCsMcuTB6O1+4w
-         x1u2TB+nWrORqhctKFu7iZIHvt49NHEUpnaare32SMiiE/xAEWLS1G0VzAtTrpv9eUvW
-         OxGMuoKbR2qgNdEUlXrgPFYfNKpiezAEJW2ti8vUjQMxRgGQ1GzWdxRg407UqAtIAT2g
-         4FcW/pEpTertA19wtW9/mqp2B4DRi5J+AD+vga5rAxR+IrDbGa3+gBmDFQ/jwS6AtPab
-         QOOA==
-X-Gm-Message-State: AGRZ1gJoUapFtX+F2zvPgXyap24TkeXtUFBGrxJY2eBGqkxAWHya3iut
-        HcaMOgTr/rx66tGh/IKW94bN5XNRVn+AG/vqgtLi1FBtCSw=
-X-Google-Smtp-Source: AJdET5doI8olLiOq8ERHEq0Hffj9Xy3ziIBfhX8yBLa7shs9ZJ4+vYnT9B/ouklXcAdJ28YshqJg5yGJX+JbVmOLnbY=
-X-Received: by 2002:a5d:4b05:: with SMTP id v5-v6mr4540203wrq.5.1542109188889;
- Tue, 13 Nov 2018 03:39:48 -0800 (PST)
+        Tue, 13 Nov 2018 16:38:12 -0500
+Received: from mga07.intel.com ([134.134.136.100]:62267 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732524AbeKMViL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 16:38:11 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 03:40:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
+   d="scan'208";a="249314799"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga004.jf.intel.com with SMTP; 13 Nov 2018 03:40:21 -0800
+Received: by lahna (sSMTP sendmail emulation); Tue, 13 Nov 2018 13:40:20 +0200
+Date:   Tue, 13 Nov 2018 13:40:20 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Yehezkel Bernat <yehezkelshb@gmail.com>
+Cc:     iommu@lists.linux-foundation.org, joro@8bytes.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        baolu.lu@linux.intel.com, ashok.raj@intel.com,
+        Bjorn Helgaas <bhelgaas@google.com>, rjw@rjwysocki.net,
+        jacob.jun.pan@intel.com, Andreas Noever <andreas.noever@gmail.com>,
+        michael.jamet@intel.com, lukas@wunner.de,
+        Christian Kellner <ckellner@redhat.com>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 4/4] thunderbolt: Export IOMMU based DMA protection
+ support to userspace
+Message-ID: <20181113114020.GV2500@lahna.fi.intel.com>
+References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
+ <20181112160628.86620-5-mika.westerberg@linux.intel.com>
+ <CA+CmpXvZJFk=kYvZybgTtqDWBVP_jSE37tdkQbyGA8U9WOrkoQ@mail.gmail.com>
+ <20181113105558.GR2500@lahna.fi.intel.com>
+ <CA+CmpXtre+A-sNT0XBWfdkuq9xJ+j34EGZ0nEpahJCSe3Kvg9A@mail.gmail.com>
 MIME-Version: 1.0
-References: <20181109162610.18981-1-ming.lei@redhat.com> <20181109162610.18981-14-ming.lei@redhat.com>
-In-Reply-To: <20181109162610.18981-14-ming.lei@redhat.com>
-From:   Ming Lei <tom.leiming@gmail.com>
-Date:   Tue, 13 Nov 2018 19:39:36 +0800
-Message-ID: <CACVXFVM9kdz5+eyTuCf=5MuZdQxCMVW1tx6s0GLqugoeBF8jOA@mail.gmail.com>
-Subject: Re: [PATCH V8 13/18] block: enable multipage bvecs
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>,
-        linux-block <linux-block@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Christoph Hellwig <hch@lst.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CA+CmpXtre+A-sNT0XBWfdkuq9xJ+j34EGZ0nEpahJCSe3Kvg9A@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 12:29 AM Ming Lei <ming.lei@redhat.com> wrote:
->
-> This patch pulls the trigger for multi-page bvecs.
->
-> Now any request queue which supports queue cluster will see multi-page
-> bvecs.
->
-> Cc: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  block/bio.c | 23 +++++++++++++++++------
->  1 file changed, 17 insertions(+), 6 deletions(-)
->
-> diff --git a/block/bio.c b/block/bio.c
-> index 6486722d4d4b..b2ce42e89076 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-> @@ -767,12 +767,23 @@ bool __bio_try_merge_page(struct bio *bio, struct page *page,
->
->         if (bio->bi_vcnt > 0) {
->                 struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
-> -
-> -               if (page == bv->bv_page && off == bv->bv_offset + bv->bv_len) {
-> -                       bv->bv_len += len;
-> -                       bio->bi_iter.bi_size += len;
-> -                       return true;
-> -               }
-> +               struct request_queue *q = NULL;
-> +
-> +               if (page == bv->bv_page && off == bv->bv_offset + bv->bv_len)
-> +                       goto merge;
-> +
-> +               if (bio->bi_disk)
-> +                       q = bio->bi_disk->queue;
-> +
-> +               /* disable multi-page bvec too if cluster isn't enabled */
-> +               if (!q || !blk_queue_cluster(q) ||
-> +                   (page_to_phys(bv->bv_page) + bv->bv_offset + bv->bv_len !=
-> +                    page_to_phys(page) + off))
-> +                       return false;
-> + merge:
-> +               bv->bv_len += len;
-> +               bio->bi_iter.bi_size += len;
-> +               return true;
->         }
->         return false;
->  }
+On Tue, Nov 13, 2018 at 01:13:31PM +0200, Yehezkel Bernat wrote:
+> On Tue, Nov 13, 2018 at 12:56 PM Mika Westerberg
+> <mika.westerberg@linux.intel.com> wrote:
+> >
+> > > Just one point:
+> > > Have you considered the option to add this property per (TBT?) device?
+> >
+> > No. ;-)
+> >
+> > You mean that one device uses security levels and another IOMMU? I don't
+> > think it is possible without having some sort of table in the IOMMU
+> > driver telling which devices it needs identity map and which not. Also
+> > not sure what would be the benefit?
+> 
+> For performance, of course. If some devices are considered safe (maybe a list
+> communicated by platform firmware), the kernel may decide to configure them to
+> passthrough the IOMMU (I think I remember there is such an option, but maybe I'm
+> wrong.)
 
-This patch caused regression on iomap & xfs for sub-pagesize io vec, which
-has been addressed in the following patch:
+At least I'm not aware of such an option. Windows for example enables
+IOMMU for everything and I think macOS does the same. In Linux (with
+these patches) we put all internal devices already passthrough mode so
+things like internal graphics should not be affected. eGPUs are
+different thing, though.
 
-https://github.com/ming1/linux/commit/46ea6acb175fbc68f98f645f14d77b1b4178e593
+> > > If the kernel may decide to enable/disable the IOMMU or AST per device, maybe
+> > > it should be on this level.
+> > > Or maybe the IOMMU decision isn't going to change (it's system-wide) and the AST
+> > > decision will be communicated per device by a new sysfs attribute anyway, if
+> > > needed?
+> >
+> > Not sure what you mean by "AST"? The IOMMU decision is pretty much
+> > system-wide.
+> 
+> Sorry, I meant ATS, Address Translation Service, mentioned in patch 3 in this
+> series, and possibly be enabled for some devices for performance, as mentioned
+> there.
 
-Because iomap needs to know if the merged page is one freshly new page, however
-__bio_try_merge_page() won't tell us if that is true.
+Thanks for clarifying :)
 
-I will post out V9 once the new change passes my tests.
+> So if needed, this will be another attribute, and definitely
+> per-device, isn't it?
 
-Thanks,
-Ming Lei
+Yes, we may want to add a way enable ATS for external devices (perhaps
+global option or per-device attribute) if it turns out to cause
+performance issues. However, I think it can be done later if needed. I
+have not seen a single device actually supporting ATS (with the
+exception of the "hacked" one in the linked thesis of patch 3/4 ;-))
