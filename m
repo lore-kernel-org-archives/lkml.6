@@ -2,124 +2,82 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 885C9C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:45:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07011C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:51:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 42B51208E7
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:45:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 42B51208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C78082250F
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:51:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C78082250F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732710AbeKMVnl convert rfc822-to-8bit (ORCPT
+        id S1732749AbeKMVss (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:43:41 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32749 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726424AbeKMVnk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:43:40 -0500
-Received: from lhreml705-cah.china.huawei.com (unknown [172.18.7.107])
-        by Forcepoint Email with ESMTP id EB29D63BE6899;
-        Tue, 13 Nov 2018 11:45:50 +0000 (GMT)
-Received: from FRAEML702-CAH.china.huawei.com (10.206.14.33) by
- lhreml705-cah.china.huawei.com (10.201.108.46) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Tue, 13 Nov 2018 11:45:52 +0000
-Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.76]) by
- fraeml702-cah.china.huawei.com ([10.206.14.33]) with mapi id 14.03.0415.000;
- Tue, 13 Nov 2018 12:45:42 +0100
-From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To:     "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
-CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
-        Linuxarm <linuxarm@huawei.com>
-Subject: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
-Thread-Topic: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
-Thread-Index: AdR7RP5EYT33x2cVTRiE4AudJSgcHA==
-Date:   Tue, 13 Nov 2018 11:45:42 +0000
-Message-ID: <5FC3163CFD30C246ABAA99954A238FA8387DD344@FRAEML521-MBX.china.huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.202.227.237]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 13 Nov 2018 16:48:48 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:43757 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726659AbeKMVss (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 16:48:48 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gMXDd-0003cR-Q8; Tue, 13 Nov 2018 11:50:57 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Yisen Zhuang <yisen.zhuang@huawei.com>,
+        Salil Mehta <salil.mehta@huawei.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Peng Li <lipeng321@huawei.com>, netdev@vger.kernel.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][net-next] net: hns3: fix spelling mistake "failded" -> "failed"
+Date:   Tue, 13 Nov 2018 11:50:57 +0000
+Message-Id: <20181113115057.13237-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mika,
+From: Colin Ian King <colin.king@canonical.com>
 
-Since the commit commit 720d6a671a6e("PCI: pciehp: Do not handle events
-if interrupts are masked"), the hotplug support on Qemu Guest(4.120-rc1)
-with a vfio passthrough device seems to be broken. This is on an ARM64 platform.
+Trivial fix, the spelling of "failded" is incorrect in dev_err and
+dev_warn messages. Fix this.
 
-I am booting a Guest with below command line options with the intention of
-hot add a ixgbevf dev later,
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-./qemu-system-aarch64 -machine virt,kernel_irqchip=on,gic-version=3 -cpu host \
- -kernel Image_4.20-rc1 \
- -initrd rootfs-iperf.cpio \
- -device ioh3420,id=rp1 \
- -net none \
- -m 4096 \
- -nographic -D -d -enable-kvm \
- -append "console=ttyAMA0 root=/dev/vda -m 4096 rw pciehp.pciehp_debug=1
-  pcie_ports=native searlycon=pl011,0x9000000"
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 43bfc730a62d..1b97a1bdbd2f 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -2440,7 +2440,7 @@ int hclge_set_all_vf_rst(struct hclge_dev *hdev, bool reset)
+ 		ret = hclge_set_vf_rst(hdev, vport->vport_id, reset);
+ 		if (ret) {
+ 			dev_err(&hdev->pdev->dev,
+-				"set vf(%d) rst failded %d!\n",
++				"set vf(%d) rst failed %d!\n",
+ 				vport->vport_id, ret);
+ 			return ret;
+ 		}
+@@ -2455,7 +2455,7 @@ int hclge_set_all_vf_rst(struct hclge_dev *hdev, bool reset)
+ 		ret = hclge_inform_reset_assert_to_vf(vport);
+ 		if (ret)
+ 			dev_warn(&hdev->pdev->dev,
+-				 "inform reset to vf(%d) failded %d!\n",
++				 "inform reset to vf(%d) failed %d!\n",
+ 				 vport->vport_id, ret);
+ 	}
+ 
+-- 
+2.19.1
 
-But receives this on boot,
-
-[    1.327852] pciehp 0000:00:01.0:pcie004: Timeout 
-on hotplug command 0x03f1 (issued 1016 msec ago)
-[    1.335842] pciehp 0000:00:01.0:pcie004: Timeout on hotplug command
-0x03f1 (issued 1024 msec ago)
-[    3.847843] pciehp 0000:00:01.0:pcie004: Failed to check link status
-[    3.855843] pciehp 0000:00:01.0:pcie004: Timeout on hotplug command
-0x02f1 (issued 2520 msec ago)
-[    4.879846] pciehp 0000:00:01.0:pcie004: Timeout on hotplug command
-0x06f1 (issued 1024 msec ago)
-[    5.911840] pciehp 0000:00:01.0:pcie004: Timeout on hotplug command
-0x06f1 (issued 2056 msec ago)
-[    6.927844] pciehp 0000:00:01.0:pcie004: Timeout on hotplug command
-0x07f1 (issued 1016 msec ago)
-[    7.951843] pciehp 0000:00:01.0:pcie004: Timeout on hotplug command
-0x0771 (issued 1024 msec ago)
-
-Trying to hot add using "device_addvfio-pci,host=0000:01:10.1,id=net0,bus=rp1"
-doesn't work either. And if I boot the guest with an assigned device
-(-device vfio-pci,host=0000:01:10.1,id=net0,bus=rp1), I can see the dev listed in
-the Guest but then hot remove doesn't work.
-
-This all works on 4.19 and bisect points to the above mentioned commit, where an
-additional check is added in pciehp_isr(),
-
--	 * Interrupts only occur in D3hot or shallower (PCIe r4.0, sec 6.7.3.4).
-+	 * Interrupts only occur in D3hot or shallower and only if enabled
-+	 * in the Slot Control register (PCIe r4.0, sec 6.7.3.4).
- 	 */
--	if (pdev->current_state == PCI_D3cold)
-+	if (pdev->current_state == PCI_D3cold ||
-+	    (!(ctrl->slot_ctrl & PCI_EXP_SLTCTL_HPIE) && !pciehp_poll_mode))
- 		return IRQ_NONE;
-
-I think this doesn't work for the first time, where the cmd with PCI_EXP_SLTCTL_HPIE bit set
-is written,
-pciehp_probe()
-  pcie_init_notification()
-    pcie_enable_notification()
-       pcie_do_write_cmd()
-
-to begin with, ctrl->slot_ctrl = 0 in pciehp_isr() as this is only set once the write
-is returned.
-
-Or else I am missing something here. Please take a look and let me know.
-
-Thanks,
-Shameer
