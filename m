@@ -2,246 +2,123 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CD6F2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:49:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 87B11C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89BBB22360
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:49:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89BBB22360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lucaceresoli.net
+	by mail.kernel.org (Postfix) with ESMTP id 485C62175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:52:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="p+xnuU+L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 485C62175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731422AbeKNIuS convert rfc822-to-8bit (ORCPT
+        id S1731381AbeKNIwm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 03:50:18 -0500
-Received: from srv-hp10-72.netsons.net ([94.141.22.72]:53637 "EHLO
-        srv-hp10-72.netsons.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726022AbeKNIuS (ORCPT
+        Wed, 14 Nov 2018 03:52:42 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:53388 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbeKNIwm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 03:50:18 -0500
-Received: from [5.157.104.112] (port=36772 helo=[192.168.77.57])
-        by srv-hp10.netsons.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <luca@lucaceresoli.net>)
-        id 1gMhVH-005nwa-Ea; Tue, 13 Nov 2018 23:49:51 +0100
-From:   Luca Ceresoli <luca@lucaceresoli.net>
-Subject: Re: [PATCH v4 3/4] media: i2c: Add MAX9286 driver
-To:     Kieran Bingham <kieran.bingham@ideasonboard.com>,
-        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
-        devicetree@vger.kernel.org, sakari.ailus@iki.fi
-Cc:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
-        Jacopo Mondi <jacopo@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Wed, 14 Nov 2018 03:52:42 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=blM6dkEHlP4dNSD/ctuqvlpn5iLOpAwViUFOFLKrXrA=; b=p+xnuU+LZNQPzLTmmNomz1X6n
+        Rxr/8Mmw/bbXux9BTex/zKVD+jFzFa1ESjdyZiKJWeOycHZ6P9RPdC/7VWTJzCzMEf6/8bRW9b+gz
+        c440XMIhw8gbrRiaxfsZ/7t+c3hv0TULsZYkQ2/wVPG3ORmc11xisvYXUWx8nX96bFn9U=;
+Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gMhX3-0002is-Lj; Tue, 13 Nov 2018 22:51:42 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 8471F440078; Tue, 13 Nov 2018 22:51:35 +0000 (GMT)
+Date:   Tue, 13 Nov 2018 14:51:35 -0800
+From:   Mark Brown <broonie@kernel.org>
+To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        =?UTF-8?Q?Niklas_S=c3=b6derlund?= 
-        <niklas.soderlund+renesas@ragnatech.se>
-References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
- <20181102154723.23662-4-kieran.bingham@ideasonboard.com>
-Message-ID: <5238fa80-7678-97a8-47ee-6a26970d862d@lucaceresoli.net>
-Date:   Tue, 13 Nov 2018 23:49:53 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Adrien Charruel <adrien.charruel@devialet.com>
+Subject: Re: [PATCH 1/2] ASoC: ak4118: Add support for AK4118 S/PDIF
+ transceiver
+Message-ID: <20181113225135.GQ2089@sirena.org.uk>
+References: <20181108124934.32381-1-peron.clem@gmail.com>
 MIME-Version: 1.0
-In-Reply-To: <20181102154723.23662-4-kieran.bingham@ideasonboard.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8BIT
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - srv-hp10.netsons.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - lucaceresoli.net
-X-Get-Message-Sender-Via: srv-hp10.netsons.net: authenticated_id: luca+lucaceresoli.net/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: srv-hp10.netsons.net: luca@lucaceresoli.net
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="p6hDAtPN9q+ZnUca"
+Content-Disposition: inline
+In-Reply-To: <20181108124934.32381-1-peron.clem@gmail.com>
+X-Cookie: No Canadian coins.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Kieran, All,
 
-below a few minor questions, and a big one at the bottom.
+--p6hDAtPN9q+ZnUca
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 02/11/18 16:47, Kieran Bingham wrote:
-> From: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> 
-> The MAX9286 is a 4-channel GMSL deserializer with coax or STP input and
-> CSI-2 output. The device supports multicamera streaming applications,
-> and features the ability to synchronise the attached cameras.
-> 
-> CSI-2 output can be configured with 1 to 4 lanes, and a control channel
-> is supported over I2C, which implements an I2C mux to facilitate
-> communications with connected cameras across the reverse control
-> channel.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
-> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
-> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-> Signed-off-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+On Thu, Nov 08, 2018 at 01:49:33PM +0100, Cl=E9ment P=E9ron wrote:
 
-[...]
+This looks mostly good, a few small things below but nothing too major:
 
-> +struct max9286_device {
-> +	struct i2c_client *client;
-> +	struct v4l2_subdev sd;
-> +	struct media_pad pads[MAX9286_N_PADS];
-> +	struct regulator *regulator;
-> +	bool poc_enabled;
-> +	int streaming;
-> +
-> +	struct i2c_mux_core *mux;
-> +	unsigned int mux_channel;
-> +
-> +	struct v4l2_ctrl_handler ctrls;
-> +
-> +	struct v4l2_mbus_framefmt fmt[MAX9286_N_SINKS];
+> --- /dev/null
+> +++ b/sound/soc/codecs/ak4118.c
+> @@ -0,0 +1,449 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * ak4118.c  --  Asahi Kasei ALSA Soc Audio driver
+> + *
 
-5 pads, 4 formats. Why does the source node have no fmt?
+Please make the entire comment a C++ one so this looks more intentional.
 
-> +static int max9286_init(struct device *dev, void *data)
-> +{
-> +	struct max9286_device *max9286;
-> +	struct i2c_client *client;
-> +	struct device_node *ep;
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	/* Skip non-max9286 devices. */
-> +	if (!dev->of_node || !of_match_node(max9286_dt_ids, dev->of_node))
-> +		return 0;
-> +
-> +	client = to_i2c_client(dev);
-> +	max9286 = i2c_get_clientdata(client);
-> +
-> +	/* Enable the bus power. */
-> +	ret = regulator_enable(max9286->regulator);
+> +static const char * const ak4118_iec958_fs_texts[] =3D {
+> +	"44100",
+> +	"Reserved",
+
+If you use a _VALUE_ENUM_SINGLE you can hide the reserved/invalid values
+=66rom userspace which is easier to use.
+
+> +	ret =3D request_threaded_irq(gpiod_to_irq(ak4118->irq), NULL,
+> +				   ak4118_irq_handler, IRQF_TRIGGER_RISING |
+> +				   IRQF_ONESHOT, "ak4118-irq", ak4118);
 > +	if (ret < 0) {
-> +		dev_err(&client->dev, "Unable to turn PoC on\n");
+> +		dev_err(component->dev, "Fail to request_irq: %d\n", ret);
 > +		return ret;
 > +	}
-> +
-> +	max9286->poc_enabled = true;
-> +
-> +	ret = max9286_setup(max9286);
-> +	if (ret) {
-> +		dev_err(dev, "Unable to setup max9286\n");
-> +		goto err_regulator;
-> +	}
-> +
-> +	v4l2_i2c_subdev_init(&max9286->sd, client, &max9286_subdev_ops);
-> +	max9286->sd.internal_ops = &max9286_subdev_internal_ops;
-> +	max9286->sd.flags = V4L2_SUBDEV_FL_HAS_DEVNODE;
-                          ^
 
-This way you're clearing the V4L2_SUBDEV_FL_IS_I2C set by
-v4l2_i2c_subdev_init(), even though using devicetree I think this won't
-matter in the current kernel code. However I think "max9286->sd.flags |=
-..." is more correct here, and it's also what most other drivers do.
+You should request resources in the device level probe, there's no point
+in requesting and releasing the interrupt like this.
 
-> +	v4l2_ctrl_handler_init(&max9286->ctrls, 1);
-> +	/*
-> +	 * FIXME: Compute the real pixel rate. The 50 MP/s value comes from the
-> +	 * hardcoded frequency in the BSP CSI-2 receiver driver.
-> +	 */
-> +	v4l2_ctrl_new_std(&max9286->ctrls, NULL, V4L2_CID_PIXEL_RATE,
-> +			  50000000, 50000000, 1, 50000000);
-> +	max9286->sd.ctrl_handler = &max9286->ctrls;
-> +	ret = max9286->ctrls.error;
-> +	if (ret)
-> +		goto err_regulator;
-> +
-> +	max9286->sd.entity.function = MEDIA_ENT_F_PROC_VIDEO_PIXEL_FORMATTER;
+--p6hDAtPN9q+ZnUca
+Content-Type: application/pgp-signature; name="signature.asc"
 
-According to the docs MEDIA_ENT_F_VID_IF_BRIDGE appears more fitting.
+-----BEGIN PGP SIGNATURE-----
 
-> +static int max9286_probe(struct i2c_client *client,
-> +			 const struct i2c_device_id *did)
-> +{
-> +	struct max9286_device *dev;
-> +	unsigned int i;
-> +	int ret;
-> +
-> +	dev = kzalloc(sizeof(*dev), GFP_KERNEL);
-> +	if (!dev)
-> +		return -ENOMEM;
-> +
-> +	dev->client = client;
-> +	i2c_set_clientdata(client, dev);
-> +
-> +	for (i = 0; i < MAX9286_N_SINKS; i++)
-> +		max9286_init_format(&dev->fmt[i]);
-> +
-> +	ret = max9286_parse_dt(dev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	dev->regulator = regulator_get(&client->dev, "poc");
-> +	if (IS_ERR(dev->regulator)) {
-> +		if (PTR_ERR(dev->regulator) != -EPROBE_DEFER)
-> +			dev_err(&client->dev,
-> +				"Unable to get PoC regulator (%ld)\n",
-> +				PTR_ERR(dev->regulator));
-> +		ret = PTR_ERR(dev->regulator);
-> +		goto err_free;
-> +	}
-> +
-> +	/*
-> +	 * We can have multiple MAX9286 instances on the same physical I2C
-> +	 * bus, and I2C children behind ports of separate MAX9286 instances
-> +	 * having the same I2C address. As the MAX9286 starts by default with
-> +	 * all ports enabled, we need to disable all ports on all MAX9286
-> +	 * instances before proceeding to further initialize the devices and
-> +	 * instantiate children.
-> +	 *
-> +	 * Start by just disabling all channels on the current device. Then,
-> +	 * if all other MAX9286 on the parent bus have been probed, proceed
-> +	 * to initialize them all, including the current one.
-> +	 */
-> +	max9286_i2c_mux_close(dev);
-> +
-> +	/*
-> +	 * The MAX9286 initialises with auto-acknowledge enabled by default.
-> +	 * This means that if multiple MAX9286 devices are connected to an I2C
-> +	 * bus, another MAX9286 could ack I2C transfers meant for a device on
-> +	 * the other side of the GMSL links for this MAX9286 (such as a
-> +	 * MAX9271). To prevent that disable auto-acknowledge early on; it
-> +	 * will be enabled later as needed.
-> +	 */
-> +	max9286_configure_i2c(dev, false);
-> +
-> +	ret = device_for_each_child(client->dev.parent, &client->dev,
-> +				    max9286_is_bound);
-> +	if (ret)
-> +		return 0;
-> +
-> +	dev_dbg(&client->dev,
-> +		"All max9286 probed: start initialization sequence\n");
-> +	ret = device_for_each_child(client->dev.parent, NULL,
-> +				    max9286_init);
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvrVXYACgkQJNaLcl1U
+h9DB7wf/W1LooFgqTJgJoHvp4HpuSNxrpd12Sm2ZvqCgQcHcO4XW8JbRSm4gWq14
+X9bLYqyv9bqA4ZQYDYsXPwiyC/ogftVkIejGVoijWJixtZQEfwMT3e1yFw3AASpD
+p6/3pBml35uKWenFY1hsQB7pYvuh9chBs4L3paUeNhHWW+LXX/uQzbyrkvH9I/3j
+7lV935pkIOpzCKBu9DhNRVaom6XjR22w9iBvJiDoOeZtGgSu7WbBWevrfzfUrg8j
+wOIVZSlNPA15OBle3Zn+AozwJE1AUuw67vVvL5w1V/5WNNoxpvPtvjZ0sVmL8hSU
+KhHpkDUpZyb6F7tQIRe2If8WwYA/zg==
+=OxYf
+-----END PGP SIGNATURE-----
 
-I can't manage to like this initialization sequence, sorry. If at all
-possible, each max9286 should initialize itself independently from each
-other, like any normal driver.
-
-First, it requires that each chip on the remote side can configure its
-own slave address. Not all chips do.
-
-Second, using a static i2c address map does not scale well and limits
-hotplugging, as I discussed in my reply to patch 1/4. The problem should
-be solvable cleanly if the MAX9286 supports address translation like the
-TI chips.
-
-Thanks,
--- 
-Luca
-
+--p6hDAtPN9q+ZnUca--
