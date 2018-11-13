@@ -7,215 +7,100 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE49C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F1D3C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A5A822510
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4D05322512
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cWYczi3h"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A5A822510
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="f9vzizpO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D05322512
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732806AbeKMPss (ORCPT
+        id S1732853AbeKMPsv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:48:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35488 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:48:51 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35644 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732788AbeKMPsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:48:47 -0500
+        id S1731660AbeKMPsv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:48:51 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1399B22526;
-        Tue, 13 Nov 2018 05:52:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id AD09222520;
+        Tue, 13 Nov 2018 05:52:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088339;
-        bh=4BLeI+QKojb6hOzqP8825G8fRG2v3A7srOzewaBl+bI=;
+        s=default; t=1542088343;
+        bh=raKXOlBYyY1dhZ8zfDWcewKkrc8fEfv94VEKNDSzoeU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cWYczi3hs8saY+X9W0JIsZAxqvODl1+vp7Bxw2UE7SUHlcOGqTsCGBUV7cGglUQIf
-         H0p2RyeK5bdnevsuSvXaDEMjA3ATnHdmUnrFxuCKjIqHyXR7oECK3Fqj8wFLdM0ABx
-         iJi+douQZocQzEJ1X7KpX9kBAID0Qd3kRhkr8nK8=
+        b=f9vzizpOuDi8+H9TYgapK1mj9pRWAIBdx/VllMl2MP1k9VAY1hgvwLAUiTlxetq+i
+         tZbPp+NJgXrpsED1TDt62qGf2xSflL2VztTJFSYaCPYZC5lr328yKvmRzP1dRJjO+D
+         6qbbvOal4KJQm3TV1fksabzzZqMWG86bBuf/pd/8=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.14 24/26] userfaultfd: allow get_mempolicy(MPOL_F_NODE|MPOL_F_ADDR) to trigger userfaults
-Date:   Tue, 13 Nov 2018 00:51:48 -0500
-Message-Id: <20181113055150.78773-24-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 02/17] cifs: don't dereference smb_file_target before null check
+Date:   Tue, 13 Nov 2018 00:52:08 -0500
+Message-Id: <20181113055223.79060-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113055150.78773-1-sashal@kernel.org>
-References: <20181113055150.78773-1-sashal@kernel.org>
+In-Reply-To: <20181113055223.79060-1-sashal@kernel.org>
+References: <20181113055223.79060-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrea Arcangeli <aarcange@redhat.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 3b9aadf7278d16d7bed4d5d808501065f70898d8 ]
+[ Upstream commit 8c6c9bed8773375b1d54ccca2911ec892c59db5d ]
 
-get_mempolicy(MPOL_F_NODE|MPOL_F_ADDR) called a get_user_pages that would
-not be waiting for userfaults before failing and it would hit on a SIGBUS
-instead.  Using get_user_pages_locked/unlocked instead will allow
-get_mempolicy to allow userfaults to resolve the fault and fill the hole,
-before grabbing the node id of the page.
+There is a null check on dst_file->private data which suggests
+it can be potentially null. However, before this check, pointer
+smb_file_target is derived from dst_file->private and dereferenced
+in the call to tlink_tcon, hence there is a potential null pointer
+deference.
 
-If the user calls get_mempolicy() with MPOL_F_ADDR | MPOL_F_NODE for an
-address inside an area managed by uffd and there is no page at that
-address, the page allocation from within get_mempolicy() will fail
-because get_user_pages() does not allow for page fault retry required
-for uffd; the user will get SIGBUS.
+Fix this by assigning smb_file_target and target_tcon after the
+null pointer sanity checks.
 
-With this patch, the page fault will be resolved by the uffd and the
-get_mempolicy() will continue normally.
+Detected by CoverityScan, CID#1475302 ("Dereference before null check")
 
-Background:
-
-Via code review, previously the syscall would have returned -EFAULT
-(vm_fault_to_errno), now it will block and wait for an userfault (if
-it's waken before the fault is resolved it'll still -EFAULT).
-
-This way get_mempolicy will give a chance to an "unaware" app to be
-compliant with userfaults.
-
-The reason this visible change is that becoming "userfault compliant"
-cannot regress anything: all other syscalls including read(2)/write(2)
-had to become "userfault compliant" long time ago (that's one of the
-things userfaultfd can do that PROT_NONE and trapping segfaults can't).
-
-So this is just one more syscall that become "userfault compliant" like
-all other major ones already were.
-
-This has been happening on virtio-bridge dpdk process which just called
-get_mempolicy on the guest space post live migration, but before the
-memory had a chance to be migrated to destination.
-
-I didn't run an strace to be able to show the -EFAULT going away, but
-I've the confirmation of the below debug aid information (only visible
-with CONFIG_DEBUG_VM=y) going away with the patch:
-
-    [20116.371461] FAULT_FLAG_ALLOW_RETRY missing 0
-    [20116.371464] CPU: 1 PID: 13381 Comm: vhost-events Not tainted 4.17.12-200.fc28.x86_64 #1
-    [20116.371465] Hardware name: LENOVO 20FAS2BN0A/20FAS2BN0A, BIOS N1CET54W (1.22 ) 02/10/2017
-    [20116.371466] Call Trace:
-    [20116.371473]  dump_stack+0x5c/0x80
-    [20116.371476]  handle_userfault.cold.37+0x1b/0x22
-    [20116.371479]  ? remove_wait_queue+0x20/0x60
-    [20116.371481]  ? poll_freewait+0x45/0xa0
-    [20116.371483]  ? do_sys_poll+0x31c/0x520
-    [20116.371485]  ? radix_tree_lookup_slot+0x1e/0x50
-    [20116.371488]  shmem_getpage_gfp+0xce7/0xe50
-    [20116.371491]  ? page_add_file_rmap+0x1a/0x2c0
-    [20116.371493]  shmem_fault+0x78/0x1e0
-    [20116.371495]  ? filemap_map_pages+0x3a1/0x450
-    [20116.371498]  __do_fault+0x1f/0xc0
-    [20116.371500]  __handle_mm_fault+0xe2e/0x12f0
-    [20116.371502]  handle_mm_fault+0xda/0x200
-    [20116.371504]  __get_user_pages+0x238/0x790
-    [20116.371506]  get_user_pages+0x3e/0x50
-    [20116.371510]  kernel_get_mempolicy+0x40b/0x700
-    [20116.371512]  ? vfs_write+0x170/0x1a0
-    [20116.371515]  __x64_sys_get_mempolicy+0x21/0x30
-    [20116.371517]  do_syscall_64+0x5b/0x160
-    [20116.371520]  entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-The above harmless debug message (not a kernel crash, just a
-dump_stack()) is shown with CONFIG_DEBUG_VM=y to more quickly identify
-and improve kernel spots that may have to become "userfaultfd
-compliant" like this one (without having to run an strace and search
-for syscall misbehavior).  Spots like the above are more closer to a
-kernel bug for the non-cooperative usages that Mike focuses on, than
-for for dpdk qemu-cooperative usages that reproduced it, but it's still
-nicer to get this fixed for dpdk too.
-
-The part of the patch that caused me to think is only the
-implementation issue of mpol_get, but it looks like it should work safe
-no matter the kind of mempolicy structure that is (the default static
-policy also starts at 1 so it'll go to 2 and back to 1 without crashing
-everything at 0).
-
-[rppt@linux.vnet.ibm.com: changelog addition]
-  http://lkml.kernel.org/r/20180904073718.GA26916@rapoport-lnx
-Link: http://lkml.kernel.org/r/20180831214848.23676-1-aarcange@redhat.com
-Signed-off-by: Andrea Arcangeli <aarcange@redhat.com>
-Reported-by: Maxime Coquelin <maxime.coquelin@redhat.com>
-Tested-by: Dr. David Alan Gilbert <dgilbert@redhat.com>
-Reviewed-by: Mike Rapoport <rppt@linux.vnet.ibm.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 04b38d601239 ("vfs: pull btrfs clone API to vfs layer")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/mempolicy.c | 24 +++++++++++++++++++-----
- 1 file changed, 19 insertions(+), 5 deletions(-)
+ fs/cifs/cifsfs.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/mm/mempolicy.c b/mm/mempolicy.c
-index ecbda7f5d494..c19864283a8e 100644
---- a/mm/mempolicy.c
-+++ b/mm/mempolicy.c
-@@ -821,16 +821,19 @@ static void get_policy_nodemask(struct mempolicy *p, nodemask_t *nodes)
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index 87658f63b374..be84d49f2406 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -927,8 +927,8 @@ static int cifs_clone_file_range(struct file *src_file, loff_t off,
+ 	struct inode *src_inode = file_inode(src_file);
+ 	struct inode *target_inode = file_inode(dst_file);
+ 	struct cifsFileInfo *smb_file_src = src_file->private_data;
+-	struct cifsFileInfo *smb_file_target = dst_file->private_data;
+-	struct cifs_tcon *target_tcon = tlink_tcon(smb_file_target->tlink);
++	struct cifsFileInfo *smb_file_target;
++	struct cifs_tcon *target_tcon;
+ 	unsigned int xid;
+ 	int rc;
+ 
+@@ -942,6 +942,9 @@ static int cifs_clone_file_range(struct file *src_file, loff_t off,
+ 		goto out;
  	}
- }
  
--static int lookup_node(unsigned long addr)
-+static int lookup_node(struct mm_struct *mm, unsigned long addr)
- {
- 	struct page *p;
- 	int err;
- 
--	err = get_user_pages(addr & PAGE_MASK, 1, 0, &p, NULL);
-+	int locked = 1;
-+	err = get_user_pages_locked(addr & PAGE_MASK, 1, 0, &p, &locked);
- 	if (err >= 0) {
- 		err = page_to_nid(p);
- 		put_page(p);
- 	}
-+	if (locked)
-+		up_read(&mm->mmap_sem);
- 	return err;
- }
- 
-@@ -841,7 +844,7 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
- 	int err;
- 	struct mm_struct *mm = current->mm;
- 	struct vm_area_struct *vma = NULL;
--	struct mempolicy *pol = current->mempolicy;
-+	struct mempolicy *pol = current->mempolicy, *pol_refcount = NULL;
- 
- 	if (flags &
- 		~(unsigned long)(MPOL_F_NODE|MPOL_F_ADDR|MPOL_F_MEMS_ALLOWED))
-@@ -881,7 +884,16 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
- 
- 	if (flags & MPOL_F_NODE) {
- 		if (flags & MPOL_F_ADDR) {
--			err = lookup_node(addr);
-+			/*
-+			 * Take a refcount on the mpol, lookup_node()
-+			 * wil drop the mmap_sem, so after calling
-+			 * lookup_node() only "pol" remains valid, "vma"
-+			 * is stale.
-+			 */
-+			pol_refcount = pol;
-+			vma = NULL;
-+			mpol_get(pol);
-+			err = lookup_node(mm, addr);
- 			if (err < 0)
- 				goto out;
- 			*policy = err;
-@@ -916,7 +928,9 @@ static long do_get_mempolicy(int *policy, nodemask_t *nmask,
-  out:
- 	mpol_cond_put(pol);
- 	if (vma)
--		up_read(&current->mm->mmap_sem);
-+		up_read(&mm->mmap_sem);
-+	if (pol_refcount)
-+		mpol_put(pol_refcount);
- 	return err;
- }
- 
++	smb_file_target = dst_file->private_data;
++	target_tcon = tlink_tcon(smb_file_target->tlink);
++
+ 	/*
+ 	 * Note: cifs case is easier than btrfs since server responsible for
+ 	 * checks for proper open modes and file type and if it wants
 -- 
 2.17.1
 
