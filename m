@@ -2,97 +2,172 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E35C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66AF6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:52:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4DEA922507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:52:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XNTHJBvJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEA922507
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 3806B214F1
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:52:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3806B214F1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731920AbeKMTtV (ORCPT
+        id S1731993AbeKMTt4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 14:49:21 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:37801 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731876AbeKMTtU (ORCPT
+        Tue, 13 Nov 2018 14:49:56 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:50757 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731624AbeKMTt4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 14:49:20 -0500
-Received: by mail-wm1-f65.google.com with SMTP id p2-v6so10716401wmc.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 01:52:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=5FLtnV+wQIcNUrNrHkM6Ut8LWj8aU2ocfMFyomIotT4=;
-        b=XNTHJBvJR7vTHxamm+10/rQwlHl+lCQChVUq7XhhWIZv5VzofJ4v/Cks61vFvzAkrj
-         JSnAgBerb+2dkykxd55Hxq5zoGPFwUmOMwQQ7+4SC2hITG+0NhusC6s9voQ+eDYnRx6e
-         WKnc8zCO9PBIlhIW4//6y/+DLO/aSdzDtrTS4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=5FLtnV+wQIcNUrNrHkM6Ut8LWj8aU2ocfMFyomIotT4=;
-        b=q3wlBhVs/6W648d4vpAuQxB5pTaQe1LOJOlXX2+VUN7DRzaLREHAMerUATU2u0wYJh
-         Oe6U16CocK0npUuPlqpTR//erFjPxs9N9AaG6va60Vc6cDNtI4OkBhmISMcUv2kUy9qy
-         xYccZi8Zprl/0ddTmO7NdQ6qSys4Rj3hdcxrCu9c28Z7gc5iVntAJRlmgxEGvM5/UbzB
-         nXpTaOyKBCrC1huvSplw8umzxaWfJWL4yOeJjh88r+HY6nE/zlCZRLaSseVGxb2FpIwc
-         88T5tPzainbtitggMYKzxS3Lr54oAHGTXOU6YHt/o8syG17FNaZbDu5uDnlt8hu2XRbL
-         oc+g==
-X-Gm-Message-State: AGRZ1gJJA2PDufbxrR9LQq/vSGOItH6+P0GTsF3G+xedH5N1Pns80V9a
-        Ay4UMwJ0dIwtNYePKAJ4ozWtPA==
-X-Google-Smtp-Source: AJdET5dPUhi4uro2/QGE51QkU/Nhi0ZKMAwzYNQoncmtj/ls/wRWoQGP8AITcZQxR5AVgZh6MluVYQ==
-X-Received: by 2002:a1c:7ec9:: with SMTP id z192-v6mr2782098wmc.43.1542102721132;
-        Tue, 13 Nov 2018 01:52:01 -0800 (PST)
-Received: from lmecxl0911.lme.st.com ([2a04:cec0:1088:2b4c:8cab:bca7:b2f2:d2bb])
-        by smtp.gmail.com with ESMTPSA id d4sm6044279wrp.89.2018.11.13.01.51.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 13 Nov 2018 01:52:00 -0800 (PST)
-From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
-X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
-To:     linus.walleij@linaro.org, robh+dt@kernel.org,
-        alexandre.torgue@st.com
-Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH 3/3] ARM: dts: stm32: Add hwlock for pinctrl
-Date:   Tue, 13 Nov 2018 10:51:42 +0100
-Message-Id: <20181113095142.32015-4-benjamin.gaignard@st.com>
-X-Mailer: git-send-email 2.15.0
-In-Reply-To: <20181113095142.32015-1-benjamin.gaignard@st.com>
-References: <20181113095142.32015-1-benjamin.gaignard@st.com>
+        Tue, 13 Nov 2018 14:49:56 -0500
+Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
+        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gMVMj-0007Vp-Vh; Tue, 13 Nov 2018 10:52:13 +0100
+Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
+        (envelope-from <ukl@pengutronix.de>)
+        id 1gMVMg-0002fM-Q5; Tue, 13 Nov 2018 10:52:10 +0100
+Date:   Tue, 13 Nov 2018 10:52:10 +0100
+From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>
+To:     Ryder Lee <ryder.lee@mediatek.com>
+Cc:     Thierry Reding <thierry.reding@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, linux-pwm@vger.kernel.org,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        Roy Luo <cheng-hao.luo@mediatek.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org,
+        John Crispin <john@phrozen.org>, kernel@pengutronix.de,
+        linux-clk@vger.kernel.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [resend PATCH 1/3] pwm: mediatek: drop flag 'has_clks'
+Message-ID: <20181113095210.mh3iy5tcsu6w6tem@pengutronix.de>
+References: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542074855.git.ryder.lee@mediatek.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542074855.git.ryder.lee@mediatek.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
+X-SA-Exim-Mail-From: ukl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Define a hwspinlock to be used by pin-controller
+Hello,
 
-Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
----
- arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 1 +
- 1 file changed, 1 insertion(+)
+On Tue, Nov 13, 2018 at 10:08:22AM +0800, Ryder Lee wrote:
+> The flag 'has_clks' and related checks are superfluous as the CCF
+> subsystem does this for you.
 
-diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-index c4851271e810..2886e5a6ac27 100644
---- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-@@ -14,6 +14,7 @@
- 			ranges = <0 0x50002000 0xa400>;
- 			interrupt-parent = <&exti>;
- 			st,syscfg = <&exti 0x60 0xff>;
-+			hwlocks = <&hsem 0>;
- 			pins-are-numbered;
- 
- 			gpioa: gpio@50002000 {
+I'd write instead:
+
+	Handle optional clocks by using NULL as clk instead of a
+	separate bool field in the device's platform data.
+
+There is a semantic difference this patch introduces (i.e. if on mt2712
+there are no provided clocks, the driver now successfully binds while
+before it failed with -ENOENT. And for mt7628 it's the other way round). 
+IMHO this should be noted in the commit log, too. Otherwise it sounds as
+if this patch was just an optimisation without side effects.
+
+> ---
+>  drivers/pwm/pwm-mediatek.c | 20 +++++---------------
+>  1 file changed, 5 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+> index eb6674c..9400c41 100644
+> --- a/drivers/pwm/pwm-mediatek.c
+> +++ b/drivers/pwm/pwm-mediatek.c
+> @@ -57,7 +57,6 @@ enum {
+>  struct mtk_pwm_platform_data {
+>  	unsigned int num_pwms;
+>  	bool pwm45_fixup;
+> -	bool has_clks;
+>  };
+>  
+>  /**
+> @@ -87,9 +86,6 @@ static int mtk_pwm_clk_enable(struct pwm_chip *chip, struct pwm_device *pwm)
+>  	struct mtk_pwm_chip *pc = to_mtk_pwm_chip(chip);
+>  	int ret;
+>  
+> -	if (!pc->soc->has_clks)
+> -		return 0;
+> -
+>  	ret = clk_prepare_enable(pc->clks[MTK_CLK_TOP]);
+>  	if (ret < 0)
+>  		return ret;
+> @@ -116,9 +112,6 @@ static void mtk_pwm_clk_disable(struct pwm_chip *chip, struct pwm_device *pwm)
+>  {
+>  	struct mtk_pwm_chip *pc = to_mtk_pwm_chip(chip);
+>  
+> -	if (!pc->soc->has_clks)
+> -		return;
+> -
+>  	clk_disable_unprepare(pc->clks[MTK_CLK_PWM1 + pwm->hwpwm]);
+>  	clk_disable_unprepare(pc->clks[MTK_CLK_MAIN]);
+>  	clk_disable_unprepare(pc->clks[MTK_CLK_TOP]);
+> @@ -246,12 +239,13 @@ static int mtk_pwm_probe(struct platform_device *pdev)
+>  	if (IS_ERR(pc->regs))
+>  		return PTR_ERR(pc->regs);
+>  
+> -	for (i = 0; i < data->num_pwms + 2 && pc->soc->has_clks; i++) {
+> +	for (i = 0; i < data->num_pwms + 2; i++) {
+>  		pc->clks[i] = devm_clk_get(&pdev->dev, mtk_pwm_clk_name[i]);
+>  		if (IS_ERR(pc->clks[i])) {
+> -			dev_err(&pdev->dev, "clock: %s fail: %ld\n",
+> -				mtk_pwm_clk_name[i], PTR_ERR(pc->clks[i]));
+> -			return PTR_ERR(pc->clks[i]);
+> +			if (PTR_ERR(pc->clks[i]) == -EPROBE_DEFER)
+> +				return -EPROBE_DEFER;
+> +
+> +			pc->clks[i] = NULL;
+
+I'd prefer the following instead:
+
+	pc->clks[i] = devm_clk_get(&pdev->dev, mtk_pwm_clk_name[i]);
+	if (IS_ERR(pc->clks[i])) {
+		if (PTR_ERR(pc->clks[i]) == -ENODEV) {
+			pc->clks[i] = NULL;
+		} else {
+			if (PTR_ERR(pc->clks[i]) == -EPROBE_DEFER)
+				dev_err(...);
+			return PTR_ERR(pc->clks[i]);
+		}
+
+This way you only handle "There is no such clock" and are not ignoring
+say an IO error.
+
+I wonder if it would make sense to introduce functions like:
+
+	struct clk *clk_get_optional(struct device *dev, const char *id)
+
+that return NULL instead of ERR_PTR(-ENODEV).
+
+Then the above would simplify to:
+
+	pc->clks[i] = devm_clk_get_optional(&pdev->dev, mtk_pwm_clk_name[i]);
+	if (IS_ERR(pc->clks[i]) {
+		if (PTR_ERR(pc->clks[i]) == -EPROBE_DEFER)
+			dev_err(...);
+		return PTR_ERR(pc->clks[i]);
+	}
+
+(added the clk people to Cc for this question).
+
+Best regards
+Uwe
+
 -- 
-2.15.0
-
+Pengutronix e.K.                           | Uwe Kleine-König            |
+Industrial Linux Solutions                 | http://www.pengutronix.de/  |
