@@ -3,49 +3,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FA92C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:14:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 82BF9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:14:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 376FE2243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:14:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 376FE2243E
+	by mail.kernel.org (Postfix) with ESMTP id 437532245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:14:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 437532245E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=renesas.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387448AbeKMXMj (ORCPT
+        id S2387474AbeKMXMw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:12:39 -0500
-Received: from relmlor1.renesas.com ([210.160.252.171]:37381 "EHLO
+        Tue, 13 Nov 2018 18:12:52 -0500
+Received: from relmlor1.renesas.com ([210.160.252.171]:38807 "EHLO
         relmlie5.idc.renesas.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1732728AbeKMXMj (ORCPT
+        by vger.kernel.org with ESMTP id S1732728AbeKMXMv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:12:39 -0500
-X-Greylist: delayed 304 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Nov 2018 18:12:38 EST
+        Tue, 13 Nov 2018 18:12:51 -0500
 Received: from unknown (HELO relmlir4.idc.renesas.com) ([10.200.68.154])
-  by relmlie5.idc.renesas.com with ESMTP; 13 Nov 2018 22:09:29 +0900
+  by relmlie5.idc.renesas.com with ESMTP; 13 Nov 2018 22:09:42 +0900
 Received: from relmlii2.idc.renesas.com (relmlii2.idc.renesas.com [10.200.68.66])
-        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 86026B6BC7;
-        Tue, 13 Nov 2018 22:09:29 +0900 (JST)
+        by relmlir4.idc.renesas.com (Postfix) with ESMTP id 7FC05B6BE9;
+        Tue, 13 Nov 2018 22:09:42 +0900 (JST)
 X-IronPort-AV: E=Sophos;i="5.54,499,1534777200"; 
-   d="scan'208";a="297422162"
+   d="scan'208";a="297422177"
 Received: from unknown (HELO vbox.ree.adwin.renesas.com) ([10.226.37.67])
-  by relmlii2.idc.renesas.com with ESMTP; 13 Nov 2018 22:09:26 +0900
+  by relmlii2.idc.renesas.com with ESMTP; 13 Nov 2018 22:09:40 +0900
 From:   Phil Edworthy <phil.edworthy@renesas.com>
 To:     Marc Zyngier <marc.zyngier@arm.com>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
+        Jason Cooper <jason@lakedaemon.net>
 Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
         linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Phil Edworthy <phil.edworthy@renesas.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v3 1/2] dt-bindings/interrupt-controller: rzn1: Add RZ/N1 gpio irq mux binding
-Date:   Tue, 13 Nov 2018 13:09:09 +0000
-Message-Id: <20181113130910.22130-2-phil.edworthy@renesas.com>
+        Phil Edworthy <phil.edworthy@renesas.com>
+Subject: [PATCH v3 2/2] irqchip: Add support for Renesas RZ/N1 GPIO interrupt multiplexer
+Date:   Tue, 13 Nov 2018 13:09:10 +0000
+Message-Id: <20181113130910.22130-3-phil.edworthy@renesas.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113130910.22130-1-phil.edworthy@renesas.com>
 References: <20181113130910.22130-1-phil.edworthy@renesas.com>
@@ -54,102 +50,274 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add device binding documentation for the Renesas RZ/N1 GPIO interrupt
-multiplexer.
+On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each
+configured to have 32 interrupt outputs, so we have a total of 96 GPIO
+interrupts. All of these are passed to the GPIO IRQ Muxer, which selects
+8 of the GPIO interrupts to pass onto the GIC. The interrupt signals
+aren't latched, so there is nothing to do in this driver when an interrupt
+is received, other than tell the corresponding GPIO block.
 
 Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
 ---
 v3:
- - Use 'interrupt-map' DT property correctly.
+ - Use 'interrupt-map' DT property to map the interrupts, this is very similar
+   to PCIe MSI. The only difference is that we need to get hold of the interrupt
+   specifier for the interupts coming into the irqmux.
+ - Do not use a chained interrupt controller.
 v2:
  - Use interrupt-map to allow the GPIO controller info to be specified
    as part of the irq.
- - Don't show status in binding examples.
- - Don't show the soc/board split in binding doc.
+ - Renamed struct and funcs from 'girq' to a more comprehenisble 'irqmux'.
 ---
- .../interrupt-controller/renesas,rzn1-mux.txt | 73 +++++++++++++++++++
- 1 file changed, 73 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+ drivers/irqchip/Kconfig        |   9 ++
+ drivers/irqchip/Makefile       |   1 +
+ drivers/irqchip/rzn1-irq-mux.c | 205 +++++++++++++++++++++++++++++++++
+ 3 files changed, 215 insertions(+)
+ create mode 100644 drivers/irqchip/rzn1-irq-mux.c
 
-diff --git a/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
+diff --git a/drivers/irqchip/Kconfig b/drivers/irqchip/Kconfig
+index 96451b581452..53c54bba1dd8 100644
+--- a/drivers/irqchip/Kconfig
++++ b/drivers/irqchip/Kconfig
+@@ -204,6 +204,15 @@ config RENESAS_IRQC
+ 	select GENERIC_IRQ_CHIP
+ 	select IRQ_DOMAIN
+ 
++config RENESAS_RZN1_IRQ_MUX
++	bool "Renesas RZ/N1 GPIO IRQ multiplexer support"
++	depends on ARCH_RZN1
++	select IRQ_DOMAIN
++	help
++	  Say yes here to add support for the GPIO IRQ multiplexer embedded
++	  in Renesas RZ/N1 SoC devices. The GPIO IRQ Muxer selects which of
++	  the interrupts coming from the GPIO controllers are used.
++
+ config ST_IRQCHIP
+ 	bool
+ 	select REGMAP
+diff --git a/drivers/irqchip/Makefile b/drivers/irqchip/Makefile
+index b822199445ff..b090f84dd42e 100644
+--- a/drivers/irqchip/Makefile
++++ b/drivers/irqchip/Makefile
+@@ -45,6 +45,7 @@ obj-$(CONFIG_SIRF_IRQ)			+= irq-sirfsoc.o
+ obj-$(CONFIG_JCORE_AIC)			+= irq-jcore-aic.o
+ obj-$(CONFIG_RENESAS_INTC_IRQPIN)	+= irq-renesas-intc-irqpin.o
+ obj-$(CONFIG_RENESAS_IRQC)		+= irq-renesas-irqc.o
++obj-$(CONFIG_RENESAS_RZN1_IRQ_MUX)	+= rzn1-irq-mux.o
+ obj-$(CONFIG_VERSATILE_FPGA_IRQ)	+= irq-versatile-fpga.o
+ obj-$(CONFIG_ARCH_NSPIRE)		+= irq-zevio.o
+ obj-$(CONFIG_ARCH_VT8500)		+= irq-vt8500.o
+diff --git a/drivers/irqchip/rzn1-irq-mux.c b/drivers/irqchip/rzn1-irq-mux.c
 new file mode 100644
-index 000000000000..6515880e25cc
+index 000000000000..ee7810b9b3f3
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/interrupt-controller/renesas,rzn1-mux.txt
-@@ -0,0 +1,73 @@
-+* Renesas RZ/N1 GPIO Interrupt Multiplexer
++++ b/drivers/irqchip/rzn1-irq-mux.c
+@@ -0,0 +1,205 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * RZ/N1 GPIO Interrupt Multiplexer
++ *
++ * Copyright (C) 2018 Renesas Electronics Europe Limited
++ *
++ * On RZ/N1 devices, there are 3 Synopsys DesignWare GPIO blocks each configured
++ * to have 32 interrupt outputs, so we have a total of 96 GPIO interrupts.
++ * All of these are passed to the GPIO IRQ Muxer, which selects 8 of the GPIO
++ * interrupts to pass onto the GIC.
++ */
 +
-+On Renesas RZ/N1 devices, there are several GPIO Controllers each with a number
-+of interrupt outputs. All of the interrupts from the GPIO Controllers are passed
-+to the GPIO Interrupt Multiplexer, which selects a sub-set of the interrupts to
-+pass onto the system interrupt controller.
++#include <linux/interrupt.h>
++#include <linux/irq.h>
++#include <linux/irqdomain.h>
++#include <linux/kernel.h>
++#include <linux/module.h>
++#include <linux/of_irq.h>
++#include <linux/of_platform.h>
 +
-+A single node in the device tree is used to describe the GPIO IRQ Muxer.
++#define MAX_NR_INPUT_IRQS	96
++#define MAX_NR_OUTPUT_IRQS	8
 +
-+Required properties:
-+- compatible: SoC-specific compatible string "renesas,<soc-specific>-gpioirqmux"
-+  followed by "renesas,rzn1-gpioirqmux" as fallback. The SoC-specific compatible
-+  strings must be one of:
-+	"renesas,r9a06g032-gpioirqmux" for RZ/N1D
-+	"renesas,r9a06g033-gpioirqmux" for RZ/N1S
-+- reg: Base address and size of GPIO IRQ Muxer registers.
-+- interrupts: List of output interrupts.
-+- #interrupt-cells: Numder of cells in the input interrupt specifier, must be 1.
-+- #address-cells: Must be 0.
-+- interrupt-map-mask: must be 127.
-+- interrupt-map: Standard property detailing the maps between input irqs and the
-+  corresponding output irq. This consist of a list of:
-+	<input-irq-spec phandle-to-interrupt-controller output-irq-spec>
-+  The input-irq-spec is from 0 to 95, corresponding to the outputs of the GPIO
-+  Controllers.
++/*
++ * "interrupt-map" consists of 1 interrupt cell, 0 address cells, phandle to
++ * interrupt parent, and parent interrupt specifier (3 cells for GIC), giving
++ * a total of 5 cells.
++ */
++#define IMAP_LENGTH		5
 +
-+Example:
++struct irqmux_priv;
++struct irqmux_one {
++	unsigned int irq;
++	unsigned int src_hwirq;
++	struct irqmux_priv *priv;
++};
 +
-+	The following is an example for the RZ/N1D SoC.
++struct irqmux_priv {
++	struct device *dev;
++	struct irq_domain *irq_domain;
++	unsigned int nr_irqs;
++	struct irqmux_one mux[MAX_NR_OUTPUT_IRQS];
++};
 +
-+	gpioirqmux: gpioirqmux@51000480 {
-+		compatible = "renesas,r9a06g032-gpioirqmux",
-+				"renesas,rzn1-gpioirqmux";
-+		reg = <0x51000480 0x20>;
-+		interrupts =
-+			<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+			<GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
++static irqreturn_t irqmux_handler(int irq, void *data)
++{
++	struct irqmux_one *mux = data;
++	struct irqmux_priv *priv = mux->priv;
++	unsigned int virq;
 +
-+		#interrupt-cells = <1>;
-+		#address-cells = <0>;
-+		interrupt-map-mask = <127>;
-+		interrupt-map =
-+			/* gpio2a 24, pin 146: ETH Port 1 IRQ */
-+			<88 &gic GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+			/* gpio2a 26, pin 148: TouchSCRN_IRQ */
-+			<90 &gic GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>;
-+	};
++	virq = irq_find_mapping(priv->irq_domain, mux->src_hwirq);
 +
-+	gpio2: gpio@5000d000 {
-+		compatible = "snps,dw-apb-gpio";
-+		reg = <0x5000d000 0x80>;
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		clock-names = "bus";
-+		clocks = <&sysctrl R9A06G032_HCLK_GPIO2>;
++	generic_handle_irq(virq);
 +
-+		gpio2a: gpio-controller@0 {
-+			compatible = "snps,dw-apb-gpio-port";
-+			bank-name = "gpio2a";
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			snps,nr-gpios = <32>;
-+			reg = <0>;
++	return IRQ_HANDLED;
++}
 +
-+			interrupt-controller;
-+			interrupt-parent = <&gpioirqmux>;
-+			interrupts =  < 64 65 66 67 68 69 70 71
-+					72 73 74 75 76 77 78 79
-+					80 81 82 83 84 85 86 87
-+					88 89 90 91 92 93 94 95 >;
-+			#interrupt-cells = <2>;
-+		};
-+	};
++static int irqmux_domain_map(struct irq_domain *h, unsigned int irq,
++			     irq_hw_number_t hwirq)
++{
++	irq_set_chip_data(irq, h->host_data);
++	irq_set_chip_and_handler(irq, &dummy_irq_chip, handle_simple_irq);
++
++	return 0;
++}
++
++static const struct irq_domain_ops irqmux_domain_ops = {
++	.map = irqmux_domain_map,
++};
++
++static int irqmux_probe(struct platform_device *pdev)
++{
++	struct device *dev = &pdev->dev;
++	struct device_node *np = dev->of_node;
++	struct resource *res;
++	u32 __iomem *regs;
++	struct irqmux_priv *priv;
++	unsigned int i;
++	int nr_irqs;
++	int ret;
++	const __be32 *imap;
++	int imaplen;
++
++	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
++	if (!priv)
++		return -ENOMEM;
++
++	priv->dev = dev;
++	platform_set_drvdata(pdev, priv);
++
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	regs = devm_ioremap_resource(dev, res);
++	if (IS_ERR(regs))
++		return PTR_ERR(regs);
++
++	nr_irqs = of_irq_count(np);
++	if (nr_irqs < 0)
++		return nr_irqs;
++
++	if (nr_irqs > MAX_NR_OUTPUT_IRQS) {
++		dev_err(dev, "too many output interrupts\n");
++		return -ENOENT;
++	}
++
++	priv->nr_irqs = nr_irqs;
++
++	/* Look for the interrupt-map */
++	imap = of_get_property(np, "interrupt-map", &imaplen);
++	if (!imap)
++		return -ENOENT;
++	imaplen /= IMAP_LENGTH * sizeof(__be32);
++
++	/* Sometimes not all muxs are used */
++	if (imaplen < priv->nr_irqs)
++		priv->nr_irqs = imaplen;
++
++	/* Create IRQ domain for the interrupts coming from the GPIO blocks */
++	priv->irq_domain = irq_domain_add_linear(np, MAX_NR_INPUT_IRQS,
++						 &irqmux_domain_ops, priv);
++	if (!priv->irq_domain)
++		return -ENOMEM;
++
++	for (i = 0; i < MAX_NR_INPUT_IRQS; i++)
++		irq_create_mapping(priv->irq_domain, i);
++
++	for (i = 0; i < priv->nr_irqs; i++) {
++		struct irqmux_one *mux = &priv->mux[i];
++
++		ret = irq_of_parse_and_map(np, i);
++		if (ret < 0) {
++			ret = -ENOENT;
++			goto err;
++		}
++
++		mux->irq = ret;
++		mux->priv = priv;
++
++		/*
++		 * We need the first cell of the interrupt-map to configure
++		 * the hardware.
++		 */
++		mux->src_hwirq = be32_to_cpu(*imap);
++		imap += IMAP_LENGTH;
++
++		dev_info(dev, "%u: %u mapped irq %u\n", i,  mux->src_hwirq,
++			 mux->irq);
++
++		ret = devm_request_irq(dev, mux->irq, irqmux_handler,
++				       IRQF_SHARED | IRQF_NO_THREAD,
++				       "irqmux", mux);
++		if (ret < 0) {
++			dev_err(dev, "failed to request IRQ: %d\n", ret);
++			goto err;
++		}
++
++		/* Set up the hardware to pass the interrupt through */
++		writel(mux->src_hwirq, &regs[i]);
++	}
++
++	dev_info(dev, "probed, %d gpio interrupts\n", priv->nr_irqs);
++
++	return 0;
++
++err:
++	while (i--)
++		irq_dispose_mapping(priv->mux[i].irq);
++	irq_domain_remove(priv->irq_domain);
++
++	return ret;
++}
++
++static int irqmux_remove(struct platform_device *pdev)
++{
++	struct irqmux_priv *priv = platform_get_drvdata(pdev);
++	unsigned int i;
++
++	for (i = 0; i < priv->nr_irqs; i++)
++		irq_dispose_mapping(priv->mux[i].irq);
++	irq_domain_remove(priv->irq_domain);
++
++	return 0;
++}
++
++static const struct of_device_id irqmux_match[] = {
++	{ .compatible = "renesas,rzn1-gpioirqmux", },
++	{ /* sentinel */ },
++};
++
++MODULE_DEVICE_TABLE(of, irqmux_match);
++
++static struct platform_driver irqmux_driver = {
++	.driver = {
++		.name = "gpio_irq_mux",
++		.owner = THIS_MODULE,
++		.of_match_table = irqmux_match,
++	},
++	.probe = irqmux_probe,
++	.remove = irqmux_remove,
++};
++
++module_platform_driver(irqmux_driver);
++
++MODULE_DESCRIPTION("Renesas RZ/N1 GPIO IRQ Multiplexer Driver");
++MODULE_AUTHOR("Phil Edworthy <phil.edworthy@renesas.com>");
++MODULE_LICENSE("GPL v2");
 -- 
 2.17.1
 
