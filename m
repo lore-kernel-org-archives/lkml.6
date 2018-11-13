@@ -2,218 +2,154 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A647C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:13:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 932D1C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:13:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEC1E2245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:13:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3CEA121780
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:13:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="ugXIbP5W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEC1E2245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kvkPzukP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CEA121780
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726418AbeKNGNZ (ORCPT
+        id S1726949AbeKNGN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 01:13:25 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:36918 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725759AbeKNGNZ (ORCPT
+        Wed, 14 Nov 2018 01:13:28 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:37019 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725782AbeKNGN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 01:13:25 -0500
-Received: by mail-lj1-f196.google.com with SMTP id e5-v6so12042624lja.4
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 12:13:40 -0800 (PST)
+        Wed, 14 Nov 2018 01:13:27 -0500
+Received: by mail-yw1-f66.google.com with SMTP id v77-v6so6343572ywc.4;
+        Tue, 13 Nov 2018 12:13:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=LogaoyTjQxSnmsZ5j+NCDvI6jNsEMX5NCDfmlt14Ais=;
-        b=ugXIbP5WyV00i6rXc9mSkSd0g+1J/xX7V3wE0qQwLiVkfVeXQeqltcIeRH1C/n11ym
-         JvaUPPATPwRSrnpPoBGrXTsOFVPMiDDXN7QCP3xO6fTIPB8DuSEqFtbZD/jJuJI5J3Tm
-         icnBLT2O6HKAlj9X92G/3SZaEnUQcxhYImor1JmgOlC71vLaWhzy4yIG9ryGbf8cN4zg
-         l18APWtT9UO8KlbIHA3a2GhmluHa7pcFWYOVWbMGqipKZlFbhhR8VRX1gRfTStYzrwMa
-         6oyeqVFrMM/szhCXSEFxkbBw2sDm5Ca0f/iKGhy/ItAMWJb8YEYVmgcmslmcqZKUAoyW
-         WmrA==
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=2ZrBBNm0u84HZ38qh08jp3zITb1XB0WpVsLPVfRiw/w=;
+        b=kvkPzukP6X+WB0lrK9Kb15QmO+Y28dYN4/HwZwFWSZiLwAiQucsf5UiCKQrssc52Eu
+         Y4anHzde6DWnJ09mBznlH0PToeqI9ZfNx0ZZSoF+fqy73xVQXw7QHAOAfCwXU5sEl6ft
+         9xj5ygEqPamdm5kgG1eOdsuGoXtmFOVuHwx3NZSrhopzkxh1k2qqS97KsfCCqWamx+iY
+         OQGHPyfq98gg5H0/YXGkiLj7kmAytyDeLGwzbem8azd4hSwzDGNP6J8JjPBE1Bujl0Xz
+         nXQWcNxNVSLN4NtVtb67CAU4OS/J9hcnzBqQdJoLu9nS2Q3ve/30hd7esALp0qMCDdxJ
+         xeZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=LogaoyTjQxSnmsZ5j+NCDvI6jNsEMX5NCDfmlt14Ais=;
-        b=gMF0k7p7B0W9HaxKQOBySjHe6hpqP4/JctK3YgiAOKD/exT06BNiux/+Po29T53l4l
-         0WqB097RRc0F7j7WszUV3E14toe8xNDOa+Guc5inm4otR0L1VwlYVKBOPT33VJcMeszI
-         Mo80jCgho3Z5VKtjZoq0Vy7fgtd2Mb7FazH/PzpAojx2kwVCdzkZR+5RZrEQ+LweJ0Ga
-         HBCMQcFwJTM0tZiz9wuDCnUmfkyP/5PVOzt3BRIWQoTfDrHtI7hZ91nkE92kd3Y/h9MD
-         iVDO3mBJzJ7nMn2kd3wPsWI8AZ49I+oC+SfWH0/MkmyopAO4zNHKe9ecbztu/Igeaa/1
-         APsQ==
-X-Gm-Message-State: AGRZ1gKIHl3YEqzLMG+LDpN8Z8M03DSupGUfbDLMGUe62qemaSt2ckU8
-        MPWmrTC8PC8rTh1JqFidS7f/5WVgPQCAMRk3KiCm
-X-Google-Smtp-Source: AJdET5eKk1tWnlaPWQICwXLU3DT151bi6WfuF2r0qtzGF03MoKsqkpI6CnqAMmxOoMZrf4XPFXutmXkQXm2k56f+rPQ=
-X-Received: by 2002:a2e:8099:: with SMTP id i25-v6mr4304924ljg.174.1542140019776;
- Tue, 13 Nov 2018 12:13:39 -0800 (PST)
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=2ZrBBNm0u84HZ38qh08jp3zITb1XB0WpVsLPVfRiw/w=;
+        b=b/BjhLo7NemwDf6NrAW+XRAhKuQt5PyMLDM5DelktnuSQD3EMJMiAIIz753FwcruXv
+         REBZyE1F19lcaeQFh/89n8rYV4Zc0FsLeDYt1Btkw9mwsg+idLuCCCXk3lO/jUJnofJM
+         WWohxpqm754Drz2zFVAwsAiYUpKewD3Bl6LQMg6fqetl1rVRakLtF2jy5HRiUXobXEAl
+         WmdW1qOfABGFFLdVaf75veBPInbKffbuUrLQHNprz3nUtIzbLgowwoudR5VRUojojcQW
+         wBlssKO/oBFropOVG5PX1UtU1pi1opa94P2THLJP3CtxqzE83Xz8dHZd0YquCr5Aw+cM
+         DO7g==
+X-Gm-Message-State: AGRZ1gLbhPPrtPZT6z0NCOsXEr7RH32F4WB4qN2pnoRCjleg0AaVUb7s
+        B02rLsD1R2zVH15I7STIZ1Q=
+X-Google-Smtp-Source: AJdET5ekWUR6z7RLbXon7jo80PZ30HAvFYiRgRigx+aDztQ6IhCa9gPlxOdv9bBpENl7PlAXoWNz8w==
+X-Received: by 2002:a0d:ff03:: with SMTP id p3-v6mr6523008ywf.228.1542140023216;
+        Tue, 13 Nov 2018 12:13:43 -0800 (PST)
+Received: from localhost ([2620:10d:c091:200::6:e2a7])
+        by smtp.gmail.com with ESMTPSA id f1-v6sm6935738ywb.89.2018.11.13.12.13.42
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 12:13:42 -0800 (PST)
+Date:   Tue, 13 Nov 2018 12:13:39 -0800
+From:   Tejun Heo <tj@kernel.org>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Waiman Long <longman@redhat.com>
+Cc:     Li Zefan <lizefan@huawei.com>,
+        Johannes Weiner <hannes@cmpxchg.org>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH cgroup/for-4.21 1/2] cpuset: Minor cgroup2 interface updates
+Message-ID: <20181113201339.GN2509588@devbig004.ftw2.facebook.com>
 MIME-Version: 1.0
-References: <53491A18-DD21-4E34-BC2F-AB449C7844E8@gmx.us> <20181113151608.30424-1-omosnace@redhat.com>
- <1542136842.12945.21.camel@gmx.us>
-In-Reply-To: <1542136842.12945.21.camel@gmx.us>
-From:   Paul Moore <paul@paul-moore.com>
-Date:   Tue, 13 Nov 2018 15:13:28 -0500
-Message-ID: <CAHC9VhT=9mtRgoudbaxESpHM4+f7Go_oW_H7ek3Fs0pTLbLz3g@mail.gmail.com>
-Subject: Re: [PATCH] selinux: check length properly in SCTP bind hook
-To:     cai@gmx.us
-Cc:     omosnace@redhat.com, selinux@vger.kernel.org,
-        Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-        richard_c_haines@btinternet.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 2:20 PM Qian Cai <cai@gmx.us> wrote:
-> On Tue, 2018-11-13 at 16:16 +0100, Ondrej Mosnacek wrote:
-> > selinux_sctp_bind_connect() must verify if the address buffer has
-> > sufficient length before accessing the 'sa_family' field. See
-> > __sctp_connect() for a similar check.
-> >
-> > The length of the whole address ('len') is already checked in the
-> > callees.
-> >
-> > Reported-by: Qian Cai <cai@gmx.us>
-> > Fixes: d452930fd3b9 ("selinux: Add SCTP support")
-> > Cc: <stable@vger.kernel.org> # 4.17+
-> > Cc: Richard Haines <richard_c_haines@btinternet.com>
-> > Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
-> Tested-by: Qian Cai <cai@gmx.us>
+From b1e3aeb11c5e86ee0988a038c4e7682d6beaa977 Mon Sep 17 00:00:00 2001
+From: Tejun Heo <tj@kernel.org>
+Date: Tue, 13 Nov 2018 12:03:33 -0800
 
-Thanks guys.  I'm in the process of building a test kernel right now,
-assuming everything else passes (I can't see why this change would
-cause a problem) I'll send this up to Linus.
+* Rename the partition file from "cpuset.sched.partition" to
+  "cpuset.cpus.partition".
 
-> > ---
-> > Hi,
-> >
-> > On Mon, Nov 12, 2018 at 8:39 PM Qian Cai <cai@gmx.us> wrote:
-> > > Running the trinity fuzzer on the latest mainline (rc2) generates this,
-> > >
-> > > [15029.879626] BUG: KASAN: slab-out-of-bounds in
-> > > selinux_sctp_bind_connect+0x60/0x150
-> > > [15029.887275] Read of size 2 at addr ffff801ec53c5080 by task trinity-
-> > > main/18081
-> > > [15029.887294]
-> > > [15029.887304] CPU: 28 PID: 18081 Comm: trinity-main Tainted:
-> > > G        W  OE     4.20.0-rc2+ #15
-> > > [15029.887311] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50
-> > > 06/01/2018
-> > > [15000.084786] [15029.887320] Call trace:
-> > > [15029.915511]  dump_backtrace+0x0/0x2c8
-> > > [15029.920046]  show_stack+0x24/0x30
-> > > [15029.923367]  dump_stack+0x118/0x19c
-> > > [15029.927539]  print_address_description+0x68/0x2a0
-> > > [15029.932245]  kasan_report+0x1b4/0x348
-> > > [15029.938760]  __asan_load2+0x7c/0xa0
-> > > [15029.945098]  selinux_sctp_bind_connect+0x60/0x150
-> > >
-> > > [15029.950571]  security_sctp_bind_connect+0x58/0x90
-> > > [15029.955493]  __sctp_setsockopt_connectx+0x68/0x128 [sctp]
-> > > [15029.960943]  sctp_setsockopt+0x764/0x2928 [sctp]
-> > > [15029.965564]  sock_common_setsockopt+0x6c/0x80
-> > > [15029.969923]  __arm64_sys_setsockopt+0x13c/0x1f0
-> > > [15029.974456]  el0_svc_handler+0xd4/0x198
-> > > [15029.978293]  el0_svc+0x8/0xc
-> > > [15029.981174]
-> > > [15029.982667] Allocated by task 18081:
-> > > [15029.986245]  kasan_kmalloc.part.1+0x40/0x108
-> > > [15029.990517]  kasan_kmalloc+0xb4/0xc8
-> > > [15029.994094]  __kmalloc_node+0x1c4/0x638
-> > > [15029.997933]  kvmalloc_node+0x98/0xa8
-> > > [15030.001511]  vmemdup_user+0x34/0x128
-> > > [15030.005137]  __sctp_setsockopt_connectx+0x44/0x128 [sctp]
-> > > [15030.010586]  sctp_setsockopt+0x764/0x2928 [sctp]
-> > > [15030.015205]  sock_common_setsockopt+0x6c/0x80
-> > > [15030.019564]  __arm64_sys_setsockopt+0x13c/0x1f0
-> > > [15030.024096]  el0_svc_handler+0xd4/0x198
-> > > [15030.027933]  el0_svc+0x8/0xc
-> > > [15030.030814]
-> > > [15030.032306] Freed by task 3025:
-> > > [15030.035451]  __kasan_slab_free+0x114/0x228
-> > > [15030.039548]  kasan_slab_free+0x10/0x18
-> > > [15030.043299]  kfree+0x114/0x408
-> > > [15030.046357]  selinux_sk_free_security+0x38/0x48
-> > > [15030.050888]  security_sk_free+0x3c/0x58
-> > > [15030.054727]  __sk_destruct+0x3e8/0x570
-> > > [15030.058478]  sk_destruct+0x4c/0x58
-> > > [15030.061881]  __sk_free+0x68/0x138
-> > > [15030.065197]  sk_free+0x3c/0x48
-> > > [15030.068255]  unix_release_sock+0x4a8/0x550
-> > > [15030.072353]  unix_release+0x34/0x50
-> > > [15030.075843]  __sock_release+0x74/0x110
-> > > [15030.079593]  sock_close+0x24/0x38
-> > > [15030.082913]  __fput+0x1b8/0x368
-> > > [15030.086055]  ____fput+0x20/0x30
-> > > [15030.089199]  task_work_run+0x14c/0x1a8
-> > > [15030.092951]  do_notify_resume+0x1e4/0x200
-> > > [15030.096961]  work_pending+0x8/0x14
-> > > [15030.100363]
-> > > [15030.101856] The buggy address belongs to the object at ffff801ec53c5080
-> > > [15030.101856]  which belongs to the cache kmalloc-128 of size 128
-> > > [15030.114376] The buggy address is located 0 bytes inside of
-> > > [15030.114376]  128-byte region [ffff801ec53c5080, ffff801ec53c5100)
-> > > [15030.125939] The buggy address belongs to the page:
-> > > [15030.130732] page:ffff7fe007b14f00 count:1 mapcount:0
-> > > mapping:ffff8016c0010480 index:0x0
-> > > [15030.138738] flags: 0x5fffff0000000200(slab)
-> > > [15030.142926] raw: 5fffff0000000200 ffff7fe007980608 ffff801ec000fd60
-> > > ffff8016c0010480
-> > > [15030.150671] raw: 0000000000000000 0000000000660066 00000001ffffffff
-> > > 0000000000000000
-> > > [15030.158413] page dumped because: kasan: bad access detected
-> > > [15030.163984]
-> > > [15030.165476] Memory state around the buggy address:
-> > > [15030.170269]  ffff801ec53c4f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > > fc fc
-> > > [15030.177491]  ffff801ec53c5000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > > fc fc
-> > > [15030.184714] >ffff801ec53c5080: 01 fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > > fc fc
-> > > [15030.191934]                    ^
-> > > [15030.195164]  ffff801ec53c5100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > > fc fc
-> > > [15030.202386]  ffff801ec53c5180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> > > fc fc
-> > > [15030.209607]
-> > > ==================================================================
-> > > [15030.216828] Disabling lock debugging due to kernel taint
-> >
-> > I think I found the cause - Qian, can you test this patch if it fixes
-> > the problem?
-> >
-> >  security/selinux/hooks.c | 3 +++
-> >  1 file changed, 3 insertions(+)
-> >
-> > diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-> > index 7ce683259357..a67459eb62d5 100644
-> > --- a/security/selinux/hooks.c
-> > +++ b/security/selinux/hooks.c
-> > @@ -5318,6 +5318,9 @@ static int selinux_sctp_bind_connect(struct sock *sk,
-> > int optname,
-> >       addr_buf = address;
-> >
-> >       while (walk_size < addrlen) {
-> > +             if (walk_size + sizeof(sa_family_t) > addrlen)
-> > +                     return -EINVAL;
-> > +
-> >               addr = addr_buf;
-> >               switch (addr->sa_family) {
-> >               case AF_UNSPEC:
+* When writing to the partition file, drop "0" and "1" and only accept
+  "member" and "root".
 
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Waiman Long <longman@redhat.com>
+---
+Two minor cpuset interface followup patches.  Applying to
+cgroup/for-4.21.
 
+Thanks.
 
+ Documentation/admin-guide/cgroup-v2.rst | 6 +++---
+ kernel/cgroup/cpuset.c                  | 8 ++++----
+ 2 files changed, 7 insertions(+), 7 deletions(-)
+
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index f83a5231bbe3..07e06136a550 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1708,15 +1708,15 @@ Cpuset Interface Files
+ 
+ 	Its value will be affected by memory nodes hotplug events.
+ 
+-  cpuset.sched.partition
++  cpuset.cpus.partition
+ 	A read-write single value file which exists on non-root
+ 	cpuset-enabled cgroups.  This flag is owned by the parent cgroup
+ 	and is not delegatable.
+ 
+         It accepts only the following input values when written to.
+ 
+-        "root" or "1"   - a paritition root
+-        "member" or "0" - a non-root member of a partition
++        "root"   - a paritition root
++        "member" - a non-root member of a partition
+ 
+ 	When set to be a partition root, the current cgroup is the
+ 	root of a new partition or scheduling domain that comprises
+diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+index b897314bab53..1151e93d71b6 100644
+--- a/kernel/cgroup/cpuset.c
++++ b/kernel/cgroup/cpuset.c
+@@ -2468,11 +2468,11 @@ static ssize_t sched_partition_write(struct kernfs_open_file *of, char *buf,
+ 	buf = strstrip(buf);
+ 
+ 	/*
+-	 * Convert "root"/"1" to 1, and convert "member"/"0" to 0.
++	 * Convert "root" to ENABLED, and convert "member" to DISABLED.
+ 	 */
+-	if (!strcmp(buf, "root") || !strcmp(buf, "1"))
++	if (!strcmp(buf, "root"))
+ 		val = PRS_ENABLED;
+-	else if (!strcmp(buf, "member") || !strcmp(buf, "0"))
++	else if (!strcmp(buf, "member"))
+ 		val = PRS_DISABLED;
+ 	else
+ 		return -EINVAL;
+@@ -2631,7 +2631,7 @@ static struct cftype dfl_files[] = {
+ 	},
+ 
+ 	{
+-		.name = "sched.partition",
++		.name = "cpus.partition",
+ 		.seq_show = sched_partition_show,
+ 		.write = sched_partition_write,
+ 		.private = FILE_PARTITION_ROOT,
 -- 
-paul moore
-www.paul-moore.com
+2.17.1
+
