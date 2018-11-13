@@ -2,163 +2,130 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F55EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:29:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC9FDC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:30:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16C3D2175B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:29:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16C3D2175B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id B2A182175B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:30:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ekcDmAoz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2A182175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728255AbeKNJaR (ORCPT
+        id S1731705AbeKNJbN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 04:30:17 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:52920 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbeKNJaR (ORCPT
+        Wed, 14 Nov 2018 04:31:13 -0500
+Received: from mail-ua1-f68.google.com ([209.85.222.68]:41247 "EHLO
+        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728210AbeKNJbM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 04:30:17 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id B77F9410;
-        Tue, 13 Nov 2018 23:29:42 +0000 (UTC)
-Date:   Tue, 13 Nov 2018 15:29:41 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Kyungtae Kim <kt0755@gmail.com>, pavel.tatashin@microsoft.com,
-        vbabka@suse.cz, osalvador@suse.de, rppt@linux.vnet.ibm.com,
-        aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
-        alexander.h.duyck@linux.intel.com, mgorman@techsingularity.net,
-        lifeasageek@gmail.com, threeearcat@gmail.com,
-        syzkaller@googlegroups.com, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-Subject: Re: UBSAN: Undefined behaviour in mm/page_alloc.c
-Message-Id: <20181113152941.cc328e48d5c0c2f366f5db83@linux-foundation.org>
-In-Reply-To: <20181113094305.GM15120@dhcp22.suse.cz>
-References: <CAEAjamseRRHu+TaTkd1TwpLNm8mtDGP=2K0WKLF0wH-3iLcW_w@mail.gmail.com>
-        <20181109084353.GA5321@dhcp22.suse.cz>
-        <20181113094305.GM15120@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Wed, 14 Nov 2018 04:31:12 -0500
+Received: by mail-ua1-f68.google.com with SMTP id z24so5024813ual.8
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 15:30:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=vSl08CpHqyNl9HgnaeTlJH+PYcieMmMfFHyS+B+vW3A=;
+        b=ekcDmAozpGbnYjyPtbfmYi9u9No814D1bCxSFqLNV7nXmpZqksi9+Jz7WED1ung+wZ
+         2g/fYfXpNPtjemZhoB+l+upk2K5Btdw38zvu2CWh4LLsr2LWHx1zHVhOPrFTauk6ygX1
+         YaYaqbzMrnN/7ZmD8D2RC4/Vh4CzKOrda07dE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vSl08CpHqyNl9HgnaeTlJH+PYcieMmMfFHyS+B+vW3A=;
+        b=cUIqAg8DHTnc8ciTgs0aqEmBKW++eTW/9WdhWx0mXkxRuB9sWeYE4blPEwhqyR0Z2D
+         tNC7CG4DxOxGZXkd6IjlSonKEctK/Jci3yJ/MtKji22Kn0CCLq0PK1sXXqZCUZ04iTEh
+         v/RUbQkw87chxQPMmedTtpzHYqqtlwAH54oZmaxXpHG+36fQ4b2af4hIE2Kzdmd6OIrZ
+         qfQbTNZIYyRcnSlV64tjohTXIsnP4GliS06VrfTpNQiG3OApUtP2cSy85AyIaIuz/MD5
+         XRt1+RM3+gs7mxqwFvhU8OQ9ca5XGjGTfSQsWPwr/UJW3o7IMzmKInRk4LCA7J0a9m+K
+         mg6g==
+X-Gm-Message-State: AGRZ1gKlmOt6gubiRyUMbr3Oj7Olho376NoJwrv/rkx4HmH3JP2DziwY
+        HhrJU39Ytiha3co18MV5SAkIinPTGD0=
+X-Google-Smtp-Source: AJdET5fgG4hD7HojYMuOzIXEQxpybJltfJWc2TfOyLkb6cm7D6KjPK27Ypc4fYZ1mKtCYgyxGiRZ4w==
+X-Received: by 2002:ab0:2314:: with SMTP id a20mr3367019uao.130.1542151837710;
+        Tue, 13 Nov 2018 15:30:37 -0800 (PST)
+Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
+        by smtp.gmail.com with ESMTPSA id j25sm2300190uag.8.2018.11.13.15.30.36
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 15:30:36 -0800 (PST)
+Received: by mail-vs1-f54.google.com with SMTP id g68so8410963vsd.11
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 15:30:36 -0800 (PST)
+X-Received: by 2002:a67:7993:: with SMTP id u141mr3413984vsc.119.1542151836080;
+ Tue, 13 Nov 2018 15:30:36 -0800 (PST)
+MIME-Version: 1.0
+References: <153655347149.19910.4781444209586693527.stgit@Rincon.localdomain>
+In-Reply-To: <153655347149.19910.4781444209586693527.stgit@Rincon.localdomain>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Tue, 13 Nov 2018 15:30:23 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=Vau3KL=hqbu-jx19VvGZ5FZug+C-sxxdw2hiAtCXgBtg@mail.gmail.com>
+Message-ID: <CAD=FV=Vau3KL=hqbu-jx19VvGZ5FZug+C-sxxdw2hiAtCXgBtg@mail.gmail.com>
+Subject: Re: [PATCH v2] usb: dwc2: host: use hrtimer for NAK retries
+To:     Terin Stock <terin@terinstock.com>
+Cc:     linux-usb@vger.kernel.org, Julius Werner <jwerner@chromium.org>,
+        Dmitry Torokhov <dtor@chromium.org>,
+        Minas Harutyunyan <hminas@synopsys.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        LKML <linux-kernel@vger.kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Nov 2018 10:43:05 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+Hi,
 
-> From: Michal Hocko <mhocko@suse.com>
-> Date: Fri, 9 Nov 2018 09:35:29 +0100
-> Subject: [PATCH] mm, page_alloc: check for max order in hot path
-> 
-> Konstantin has noticed that kvmalloc might trigger the following warning
-> [Thu Nov  1 08:43:56 2018] WARNING: CPU: 0 PID: 6676 at mm/vmstat.c:986 __fragmentation_index+0x54/0x60
+On Sun, Sep 9, 2018 at 9:24 PM Terin Stock <terin@terinstock.com> wrote:
+>
+> Modify the wait delay utilize the high resolution timer API to allow for
+> more precisely scheduled callbacks.
+>
+> A previous commit added a 1ms retry delay after multiple consecutive
+> NAKed transactions using jiffies. On systems with a low timer interrupt
+> frequency, this delay may be significantly longer than specified,
+> resulting in misbehavior with some USB devices.
+>
+> This scenario was reached on a Raspberry Pi 3B with a Macally FDD-USB
+> floppy drive (identified as 0424:0fdc Standard Microsystems Corp.
+> Floppy, based on the USB97CFDC USB FDC). With the relay delay, the drive
+> would be unable to mount a disk, replying with NAKs until the device was
+> reset.
+>
+> Using ktime, the delta between starting the timer (in dwc2_hcd_qh_add)
+> and the callback function can be determined. With the original delay
+> implementation, this value was consistently approximately 12ms. (output
+> in us).
+>
+>     <idle>-0     [000] ..s.  1600.559974: dwc2_wait_timer_fn: wait_timer delta: 11976
+>     <idle>-0     [000] ..s.  1600.571974: dwc2_wait_timer_fn: wait_timer delta: 11977
+>     <idle>-0     [000] ..s.  1600.583974: dwc2_wait_timer_fn: wait_timer delta: 11976
+>     <idle>-0     [000] ..s.  1600.595974: dwc2_wait_timer_fn: wait_timer delta: 11977
+>
+> After converting the relay delay to using a higher resolution timer, the
+> delay was much closer to 1ms.
+>
+>     <idle>-0     [000] d.h.  1956.553017: dwc2_wait_timer_fn: wait_timer delta: 1002
+>     <idle>-0     [000] d.h.  1956.554114: dwc2_wait_timer_fn: wait_timer delta: 1002
+>     <idle>-0     [000] d.h.  1957.542660: dwc2_wait_timer_fn: wait_timer delta: 1004
+>     <idle>-0     [000] d.h.  1957.543701: dwc2_wait_timer_fn: wait_timer delta: 1002
+>
+> The floppy drive operates properly with delays up to approximately 5ms,
+> and sends NAKs for any delays that are longer.
+>
+> Fixes: 38d2b5fb75c1 ("usb: dwc2: host: Don't retry NAKed transactions right away")
+> Signed-off-by: Terin Stock <terin@terinstock.com>
+> ---
+>  drivers/usb/dwc2/hcd.h       |    2 +-
+>  drivers/usb/dwc2/hcd_queue.c |   19 ++++++++++++-------
+>  2 files changed, 13 insertions(+), 8 deletions(-)
 
-um, wait...
-
-> [...]
-> [Thu Nov  1 08:43:56 2018] Call Trace:
-> [Thu Nov  1 08:43:56 2018]  fragmentation_index+0x76/0x90
-> [Thu Nov  1 08:43:56 2018]  compaction_suitable+0x4f/0xf0
-> [Thu Nov  1 08:43:56 2018]  shrink_node+0x295/0x310
-> [Thu Nov  1 08:43:56 2018]  node_reclaim+0x205/0x250
-> [Thu Nov  1 08:43:56 2018]  get_page_from_freelist+0x649/0xad0
-> [Thu Nov  1 08:43:56 2018]  ? get_page_from_freelist+0x2d4/0xad0
-> [Thu Nov  1 08:43:56 2018]  ? release_sock+0x19/0x90
-> [Thu Nov  1 08:43:56 2018]  ? do_ipv6_setsockopt.isra.5+0x10da/0x1290
-> [Thu Nov  1 08:43:56 2018]  __alloc_pages_nodemask+0x12a/0x2a0
-> [Thu Nov  1 08:43:56 2018]  kmalloc_large_node+0x47/0x90
-> [Thu Nov  1 08:43:56 2018]  __kmalloc_node+0x22b/0x2e0
-> [Thu Nov  1 08:43:56 2018]  kvmalloc_node+0x3e/0x70
-> [Thu Nov  1 08:43:56 2018]  xt_alloc_table_info+0x3a/0x80 [x_tables]
-> [Thu Nov  1 08:43:56 2018]  do_ip6t_set_ctl+0xcd/0x1c0 [ip6_tables]
-> [Thu Nov  1 08:43:56 2018]  nf_setsockopt+0x44/0x60
-> [Thu Nov  1 08:43:56 2018]  SyS_setsockopt+0x6f/0xc0
-> [Thu Nov  1 08:43:56 2018]  do_syscall_64+0x67/0x120
-> [Thu Nov  1 08:43:56 2018]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
-
-If kvalloc_node() is going to call kmalloc() without checking for a
-huge allocation request then surely it should set __GFP_NOWARN.  And it
-shouldn't bother at all if size > KMALLOC_MAX_SIZE, surely?  So
-something like
-
---- a/mm/util.c~a
-+++ a/mm/util.c
-@@ -393,11 +393,16 @@ void *kvmalloc_node(size_t size, gfp_t f
- 	void *ret;
- 
- 	/*
--	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page tables)
--	 * so the given set of flags has to be compatible.
-+	 * vmalloc uses GFP_KERNEL for some internal allocations (e.g page
-+	 * tables) so the given set of flags has to be compatible.
- 	 */
--	if ((flags & GFP_KERNEL) != GFP_KERNEL)
-+	if ((flags & GFP_KERNEL) != GFP_KERNEL) {
-+		if (size > KMALLOC_MAX_SIZE)
-+			return NULL;
-+		if (size > PAGE_SIZE)
-+			flags |= __GFP_NOWARN;
- 		return kmalloc_node(size, flags, node);
-+	}
- 
- 	/*
- 	 * We want to attempt a large physically contiguous block first because
-
-
-> the problem is that we only check for an out of bound order in the slow
-> path and the node reclaim might happen from the fast path already. This
-> is fixable by making sure that kvmalloc doesn't ever use kmalloc for
-> requests that are larger than KMALLOC_MAX_SIZE but this also shows that
-> the code is rather fragile. A recent UBSAN report just underlines that
-> by the following report
-> 
->  UBSAN: Undefined behaviour in mm/page_alloc.c:3117:19
->  shift exponent 51 is too large for 32-bit type 'int'
->  CPU: 0 PID: 6520 Comm: syz-executor1 Not tainted 4.19.0-rc2 #1
->  Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs 01/01/2011
->  Call Trace:
->   __dump_stack lib/dump_stack.c:77 [inline]
->   dump_stack+0xd2/0x148 lib/dump_stack.c:113
->   ubsan_epilogue+0x12/0x94 lib/ubsan.c:159
->   __ubsan_handle_shift_out_of_bounds+0x2b6/0x30b lib/ubsan.c:425
->   __zone_watermark_ok+0x2c7/0x400 mm/page_alloc.c:3117
->   zone_watermark_fast mm/page_alloc.c:3216 [inline]
->   get_page_from_freelist+0xc49/0x44c0 mm/page_alloc.c:3300
->   __alloc_pages_nodemask+0x21e/0x640 mm/page_alloc.c:4370
->   alloc_pages_current+0xcc/0x210 mm/mempolicy.c:2093
->   alloc_pages include/linux/gfp.h:509 [inline]
->   __get_free_pages+0x12/0x60 mm/page_alloc.c:4414
->   dma_mem_alloc+0x36/0x50 arch/x86/include/asm/floppy.h:156
->   raw_cmd_copyin drivers/block/floppy.c:3159 [inline]
->   raw_cmd_ioctl drivers/block/floppy.c:3206 [inline]
->   fd_locked_ioctl+0xa00/0x2c10 drivers/block/floppy.c:3544
->   fd_ioctl+0x40/0x60 drivers/block/floppy.c:3571
->   __blkdev_driver_ioctl block/ioctl.c:303 [inline]
->   blkdev_ioctl+0xb3c/0x1a30 block/ioctl.c:601
->   block_ioctl+0x105/0x150 fs/block_dev.c:1883
->   vfs_ioctl fs/ioctl.c:46 [inline]
->   do_vfs_ioctl+0x1c0/0x1150 fs/ioctl.c:687
->   ksys_ioctl+0x9e/0xb0 fs/ioctl.c:702
->   __do_sys_ioctl fs/ioctl.c:709 [inline]
->   __se_sys_ioctl fs/ioctl.c:707 [inline]
->   __x64_sys_ioctl+0x7e/0xc0 fs/ioctl.c:707
->   do_syscall_64+0xc4/0x510 arch/x86/entry/common.c:290
->   entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-And we could fix this in the floppy driver.
-
-> Note that this is not a kvmalloc path. It is just that the fast path
-> really depends on having sanitzed order as well. Therefore move the
-> order check to the fast path.
-
-But do we really need to do this?  Are there any other known potential
-callsites?
-
+Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Cc: stable@vger.kernel.org
