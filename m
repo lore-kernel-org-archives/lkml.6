@@ -2,99 +2,121 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4014C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:48:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C525FC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:48:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94B632086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:48:10 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="rqcMvKVC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94B632086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 944372086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:48:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 944372086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387967AbeKNBqs (ORCPT
+        id S2388003AbeKNBrH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:46:48 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:36820 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726856AbeKNBqr (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:46:47 -0500
-Received: by mail-qk1-f195.google.com with SMTP id o125so20157897qkf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 07:48:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=LkMD2atEKCt1a++krARyhfiDLUess4x4VSkmuoPwz1c=;
-        b=rqcMvKVCiLUCQpG62lc/LIKftMMSQTMgeItGXK8MJm/ewM5QuY3lc/4jEOKHftjhKR
-         Xc0QwxKkN2h/JbStH4bbgAwzbQDJHz2ugtn6UwvIe71KbalGIb+Uti8Mfv/x3FVh5b4+
-         0/pm4kc5blyCdmVB/kAYpZ0b8amUtDI00cWusUs6B37sLl4DQlILG7nk/8rAIbNhRNcp
-         sRVf5g+qa1uS7FlHgEHFevxdwd/4X/MCpR2Kq51FnFnY6hXHNuJamzQr0SW71MG9o9AX
-         ugVxAv5HoRbxehKPRFkUvlh9ttTaMoF0bB3FeCCnbcRQYTAcwkgjptajJfIGwL+aE2+E
-         wgKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=LkMD2atEKCt1a++krARyhfiDLUess4x4VSkmuoPwz1c=;
-        b=EabqAzK1zNHrfbfF2zOaBes6xABwnJsZUxKSHoVNF/YP+wjhIfM6HSwrYEJUbdHPU/
-         K2shZHXYWHD5AWUEfqQDn+Cjt4Q1gBSnWF4wV8n01eq6UlBxTWcCkOk6R40uO4HUiiWn
-         uFhLs2o6kDTGfWVS08HPSOjGPgonn8HCQqVDv6RNuVCaviyr2EirTlMFSX8m0IktRwDO
-         DSQ7K0V6F1bKXU9yb68cU/i6Y9znJD2OOKnq6EMV1gaEebrEBRrWIvuTy0fgXfrWrZ26
-         YKAczYcQxwMOfTyFAmaibdy1rPPb7JEHtjq/p0sWxrGegXCV3oBJ8UAKz+ZxeOaBw6rb
-         bBxA==
-X-Gm-Message-State: AGRZ1gLauLW6Wh0WElj1yWMyfmYIBQc8UKfIjiuCRJnHxsa0Zughfd9x
-        iHm3cx7BHrEcgbNoK1J2FEAAlMXe
-X-Google-Smtp-Source: AJdET5fFuzWem7QQfwGmnnQ7Z+rdaNgiADZCLa0NV5CsiwOMUijuoXnpNy5/aPYmIqd/p7Yqn/Ph1w==
-X-Received: by 2002:a0c:95b5:: with SMTP id s50mr5767235qvs.64.1542124087898;
-        Tue, 13 Nov 2018 07:48:07 -0800 (PST)
-Received: from localhost ([2620:10d:c091:200::6:e2a7])
-        by smtp.gmail.com with ESMTPSA id w201sm12713172qkw.11.2018.11.13.07.48.06
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 07:48:06 -0800 (PST)
-Date:   Tue, 13 Nov 2018 07:48:03 -0800
-From:   Tejun Heo <tj@kernel.org>
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org
-Subject: Re: [PATCH tip/core/rcu 25/41] workqueue: Replace call_rcu_sched()
- with call_rcu()
-Message-ID: <20181113154803.GG2509588@devbig004.ftw2.facebook.com>
-References: <20181111194104.GA4787@linux.ibm.com>
- <20181111194410.6368-25-paulmck@linux.ibm.com>
+        Tue, 13 Nov 2018 20:47:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:49634 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727719AbeKNBrG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 20:47:06 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D41C87623A;
+        Tue, 13 Nov 2018 15:48:27 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 75ACB1019635;
+        Tue, 13 Nov 2018 15:48:26 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 13 Nov 2018 16:48:27 +0100 (CET)
+Date:   Tue, 13 Nov 2018 16:48:25 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Roman Gushchin <guroan@gmail.com>
+Cc:     Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH v2 3/6] cgroup: cgroup v2 freezer
+Message-ID: <20181113154825.GC30990@redhat.com>
+References: <20181112230422.5911-1-guro@fb.com>
+ <20181112230422.5911-5-guro@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181111194410.6368-25-paulmck@linux.ibm.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+In-Reply-To: <20181112230422.5911-5-guro@fb.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Tue, 13 Nov 2018 15:48:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 11:43:54AM -0800, Paul E. McKenney wrote:
-> Now that call_rcu()'s callback is not invoked until after all
-> preempt-disable regions of code have completed (in addition to explicitly
-> marked RCU read-side critical sections), call_rcu() can be used in place
-> of call_rcu_sched().  This commit therefore makes that change.
-> 
-> Signed-off-by: Paul E. McKenney <paulmck@linux.ibm.com>
-> Cc: Tejun Heo <tj@kernel.org>
-> Cc: Lai Jiangshan <jiangshanlai@gmail.com>
+On 11/12, Roman Gushchin wrote:
+>
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -83,7 +83,8 @@ struct task_group;
+>  #define TASK_WAKING			0x0200
+>  #define TASK_NOLOAD			0x0400
+>  #define TASK_NEW			0x0800
+> -#define TASK_STATE_MAX			0x1000
+> +#define TASK_FROZEN			0x1000
+> +#define TASK_STATE_MAX			0x2000
 
-Acked-by: Tejun Heo <tj@kernel.org>
+Just noticed the new task state... Why? Can't we avoid it?
 
-Thanks.
+...
 
--- 
-tejun
+> +void cgroup_freezer_enter(void)
+> +{
+> +	long state = current->state;
+
+Why? it must be TASK_RUNNING?
+
+If not set_current_state() at the end is simply wrong... Yes, __refrigerator()
+does this, but at least it has a reason although it is wrong too.
+
+> +	struct cgroup *cgrp;
+> +
+> +	if (!current->frozen) {
+> +		spin_lock_irq(&css_set_lock);
+> +		current->frozen = true;
+> +		cgrp = task_dfl_cgroup(current);
+> +		cgrp->freezer.nr_frozen_tasks++;
+> +
+> +		WARN_ON_ONCE(cgrp->freezer.nr_tasks_to_freeze <
+> +			     cgrp->freezer.nr_frozen_tasks);
+> +
+> +		if (cgrp->freezer.nr_tasks_to_freeze ==
+> +		    cgrp->freezer.nr_frozen_tasks)
+> +			cgroup_queue_notify_frozen(cgrp);
+> +		spin_unlock_irq(&css_set_lock);
+> +	}
+> +
+> +	/* refrigerator */
+> +	set_current_state(TASK_WAKEKILL | TASK_INTERRUPTIBLE | TASK_FROZEN);
+
+Why not __set_current_state() ?
+
+If ->state include TASK_INTERRUPTIBLE, why do we need TASK_WAKEKILL?
+
+And again, why TASK_FROZEN?
+
+> +	clear_thread_flag(TIF_SIGPENDING);
+> +	schedule();
+> +	recalc_sigpending();
+
+I simply can't understand these 3 lines above but I bet this is not correct ;)
+
+if nothing else recalc_sigpending() without ->siglock is wrong, it can race
+with signal_wakeup/etc.
+
+> +	set_current_state(state);
+
+see above...
+
+Oleg.
+
