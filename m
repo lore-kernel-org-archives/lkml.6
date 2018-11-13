@@ -2,104 +2,104 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CFADBC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:02:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF8FAC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:02:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85C0F2245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:02:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85C0F2245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+	by mail.kernel.org (Postfix) with ESMTP id 77AFB2084C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:02:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="uCbCeWPr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77AFB2084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730752AbeKMO61 (ORCPT
+        id S1730810AbeKMO7C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 09:58:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45148 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 09:59:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45436 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbeKMO60 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 09:58:26 -0500
-Received: from vmware.local.home (unknown [64.114.255.114])
+        id S1726111AbeKMO7B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 09:59:01 -0500
+Received: from localhost (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 2B1112245E;
-        Tue, 13 Nov 2018 05:02:06 +0000 (UTC)
-Date:   Tue, 13 Nov 2018 00:02:04 -0500
-From:   Steven Rostedt <rostedt@goodmis.org>
-To:     tech-board-discuss@lists.linux-foundation.org,
-        ksummit-discuss@lists.linuxfoundation.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Linux Foundation Technical Advisory Board  Elections
-Message-ID: <20181113000204.57942989@vmware.local.home>
-X-Mailer: Claws Mail 3.15.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        by mail.kernel.org (Postfix) with ESMTPSA id F224920817;
+        Tue, 13 Nov 2018 05:02:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542085361;
+        bh=kfgSEg80hSw6L+6zKKxwF+SG2m0X6DrimMnxrBJP9K8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=uCbCeWPrUbMg2INXAk36+TLO0/VxfMj8lv9cwwnV1gIdVGuv/gRDeL9NwaVoctlI3
+         mBmqZyTyBlh3jRxkSYWKlkPGhR4ofrEDekQKLN/iBVIbwbpfXXzMu257pGB6nxkJYq
+         H+QGRvlSsb0yRISggPyOg9tGi3g2ZHRkLUsIE1O0=
+Date:   Mon, 12 Nov 2018 23:02:40 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Alex_Gagniuc@Dellteam.com
+Cc:     oohall@gmail.com, gregkh@linuxfoundation.org,
+        keith.busch@intel.com, mr.nuke.me@gmail.com,
+        linux-pci@vger.kernel.org, Austin.Bolen@dell.com,
+        Shyam.Iyer@dell.com, linux-kernel@vger.kernel.org,
+        jonathan.derrick@intel.com, lukas@wunner.de, ruscur@russell.cc,
+        sbobroff@linux.ibm.com, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+Message-ID: <20181113050240.GA182139@google.com>
+References: <20181107234257.GC41183@google.com>
+ <20181108200855.GE41183@google.com>
+ <20181108220117.GA11466@kroah.com>
+ <20181108223258.GD2932@localhost.localdomain>
+ <20181108224255.GA20619@kroah.com>
+ <20d68e586fff4dcca5616d5056f6fc21@ausx13mps321.AMER.DELL.COM>
+ <20181108225109.GA3023@kroah.com>
+ <16bf9d14bc5f4a90b2b88dd2eb165186@ausx13mps321.AMER.DELL.COM>
+ <5da8d8aa9f3818af649b1ac547bc4e6062626ddf.camel@gmail.com>
+ <df85813c9860463d85f6c302dfe07b12@ausx13mps321.AMER.DELL.COM>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <df85813c9860463d85f6c302dfe07b12@ausx13mps321.AMER.DELL.COM>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello everyone,
+[+cc Jon, for related VMD firmware-first error enable issue]
 
-The Linux Foundation Technical Advisory Board (TAB) serves as the 
-interface between the kernel development community and the Linux 
-Foundation. The TAB advises the Foundation on kernel-related matters, 
-helps member companies learn to work with the community, and works to 
-resolve community-related problems before they get out of hand.  We're 
-also working with kernel maintainers to help refine the new code of 
-conduct, and serving as the initial point of contact for code of conduct 
-issues.
+On Mon, Nov 12, 2018 at 08:05:41PM +0000, Alex_Gagniuc@Dellteam.com wrote:
+> On 11/11/2018 11:50 PM, Oliver O'Halloran wrote:
+> > On Thu, 2018-11-08 at 23:06 +0000, Alex_Gagniuc@Dellteam.com wrote:
 
-The board has ten members, one of whom sits on the Linux Foundation 
-board of directors.
+> >> But it's not the firmware that crashes. It's linux as a result of a
+> >> fatal error message from the firmware. And we can't fix that because FFS
+> >> handling requires that the system reboots [1].
+> > 
+> > Do we know the exact circumsances that result in firmware requesting a
+> > reboot? If it happen on any PCIe error I don't see what we can do to
+> > prevent that beyond masking UEs entirely (are we even allowed to do
+> > that on FFS systems?).
+> 
+> Pull a drive out at an angle, push two drives in at the same time, pull 
+> out a drive really slow. If an error is even reported to the OS depends 
+> on PD state, and proprietary mechanisms and logic in the HW and FW. OS 
+> is not supposed to mask errors (touch AER bits) on FFS.
 
-The election to select five TAB members will be held at the 2018 Kernel 
-Summit in Vancouver, Canada.  The elections will take place at the 
-conference center on Tuesday November 13th, at 5:30pm.
+PD?
 
-The election will be open to all attendees of all of the Linux 
-Foundation events taking place that week in Vancouver.
+Do you think Linux observes the rule about not touching AER bits on
+FFS?  I'm not sure it does.  I'm not even sure what section of the
+spec is relevant.
 
-The current list of nominees are:  (In order of submission)
+The whole issue of firmware-first, the mechanism by which firmware
+gets control, the System Error enables in Root Port Root Control
+registers, etc., is very murky to me.  Jon has a sort of similar issue
+with VMD where he needs to leave System Errors enabled instead of
+disabling them as we currently do.
 
- Chris Mason *
- Olof Johansson *
- Shuah Khan
- Rik van Riel *
- Kees Cook
- Laura Abbott
- Dan Williams *
- Pavel Machek
- Laurent Pinchart
- Mauro Carvalho Chehab
+Bjorn
 
-Those with a "*" next to their names are the current incumbents. There
-are only four because H. Peter Anvin decided not to run for re-election.
-
-Instead of speeches, this year we asked candidates to include 
-statements about why they would like to participate in the TAB.  These 
-will be combined into a slideshow running during the election, and 
-available via a public google doc at this location:
-
-https://goo.gl/rPEc2v
-
-Current TAB members that are not up for election this year:
-
- Jon Corbet
- Greg Kroah-Hartman
- Steven Rostedt
- Ted Tso
- Tim Bird
-
-As always, please let us know if you have questions.
-
--- Steve
-
-
-[1] TAB members sit for a term of two years, and half of the board is up
-for election every year. Five of the seats are up for election now.
-The other five are halfway through their term and will be up for
-election next year.
+[1] https://lore.kernel.org/linux-pci/20181029210651.GB13681@bhelgaas-glaptop.roam.corp.google.com
