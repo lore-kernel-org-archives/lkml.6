@@ -2,105 +2,104 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 72ACFC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:14:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 084A4C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:15:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 371D42082A
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:14:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="YS8KyDd/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 371D42082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id CADF72082A
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:15:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CADF72082A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731698AbeKNJPZ (ORCPT
+        id S1731784AbeKNJPf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 04:15:25 -0500
-Received: from conssluserg-05.nifty.com ([210.131.2.90]:45785 "EHLO
-        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726531AbeKNJPY (ORCPT
+        Wed, 14 Nov 2018 04:15:35 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:52570 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726531AbeKNJPf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 04:15:24 -0500
-Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42]) (authenticated)
-        by conssluserg-05.nifty.com with ESMTP id wADNEUPf022942;
-        Wed, 14 Nov 2018 08:14:31 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wADNEUPf022942
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542150871;
-        bh=egkPrPm7fr2RnhQfGC47q1IDiOoK95w9GCgiJdQsYV4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=YS8KyDd/vFyAMLIfdcLHnHR8lxJAiuh0LH0iU2uff5BIJLoxQ8c0geH7SQrefi+Ek
-         qZfZq51RtPfe80HtnSdcmGenORAH9c2vZLGZJ+Dv07YlBRJ8ITzz9xuxDkKDGU40vA
-         fq/+9SpYjgpTrskBCTqRvoTLw/kSKfvG4qtKLMJ6ye9QQONs1Lv2XOndGsZzSE94wS
-         ISCRx7HUFKQ8qSrLHQUCXR38khUKmpCPJvYveStwFkOXTRWSP8fyV1ttlR+/EIyeuC
-         /c1xIlKyBJohKB7Na8Qoj4Qnsy1KMSIV09Vr3U+z6ib044oFai9OU6QQY5y18SSlyJ
-         24843lE2dFTgQ==
-X-Nifty-SrcIP: [209.85.222.42]
-Received: by mail-ua1-f42.google.com with SMTP id e16so3797451uam.12;
-        Tue, 13 Nov 2018 15:14:31 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJqIeNana0CzeEVUxbXl6H0ItdVd7u9e5YK98FGJ8PUjodsk0me
-        FDBDRwu9/G72T+GwHTN/ZZhL3vTiDl/A4Jm33lA=
-X-Google-Smtp-Source: AJdET5fmG9wP7IFnOD6PCoJ4vzdJoz4K7+2BW6m0pZw6kZGDvlW2ACpkDNb627LEB83DXF7pp2z2P6NrQIeJmMMdpDA=
-X-Received: by 2002:ab0:6705:: with SMTP id q5mr3484772uam.89.1542150870271;
- Tue, 13 Nov 2018 15:14:30 -0800 (PST)
-MIME-Version: 1.0
-References: <1541995285-11144-1-git-send-email-yamada.masahiro@socionext.com>
-In-Reply-To: <1541995285-11144-1-git-send-email-yamada.masahiro@socionext.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Wed, 14 Nov 2018 08:13:54 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASevj4QQ5-J4QRbwS-vGkvb8VBrvzXVZDUhbHoA=auMxA@mail.gmail.com>
-Message-ID: <CAK7LNASevj4QQ5-J4QRbwS-vGkvb8VBrvzXVZDUhbHoA=auMxA@mail.gmail.com>
-Subject: Re: [PATCH] kbuild: remove 'prepare' and 'scripts' dummies for
- external module build
-To:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>
-Cc:     Michal Marek <michal.lkml@markovi.net>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 14 Nov 2018 04:15:35 -0500
+Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 0F2F3A92;
+        Tue, 13 Nov 2018 23:15:05 +0000 (UTC)
+Date:   Tue, 13 Nov 2018 15:15:03 -0800
+From:   Andrew Morton <akpm@linux-foundation.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Kyungtae Kim <kt0755@gmail.com>, pavel.tatashin@microsoft.com,
+        vbabka@suse.cz, osalvador@suse.de, rppt@linux.vnet.ibm.com,
+        aaron.lu@intel.com, iamjoonsoo.kim@lge.com,
+        alexander.h.duyck@linux.intel.com, mgorman@techsingularity.net,
+        lifeasageek@gmail.com, threeearcat@gmail.com,
+        syzkaller@googlegroups.com, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org,
+        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
+Subject: Re: UBSAN: Undefined behaviour in mm/page_alloc.c
+Message-Id: <20181113151503.fd370e28cb9df5a0933e9b04@linux-foundation.org>
+In-Reply-To: <20181113094305.GM15120@dhcp22.suse.cz>
+References: <CAEAjamseRRHu+TaTkd1TwpLNm8mtDGP=2K0WKLF0wH-3iLcW_w@mail.gmail.com>
+        <20181109084353.GA5321@dhcp22.suse.cz>
+        <20181113094305.GM15120@dhcp22.suse.cz>
+X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 1:02 PM Masahiro Yamada
-<yamada.masahiro@socionext.com> wrote:
->
-> Make is lenient enough to ignore missing rules as long as they are marked
-> as PHONY. Remove dummy targets.
->
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
+On Tue, 13 Nov 2018 10:43:05 +0100 Michal Hocko <mhocko@kernel.org> wrote:
 
-Applied to linux-kbuild.
+> Konstantin has noticed that kvmalloc might trigger the following warning
+> [Thu Nov  1 08:43:56 2018] WARNING: CPU: 0 PID: 6676 at mm/vmstat.c:986 __fragmentation_index+0x54/0x60
+> [...]
+> [Thu Nov  1 08:43:56 2018] Call Trace:
+> [Thu Nov  1 08:43:56 2018]  fragmentation_index+0x76/0x90
+> [Thu Nov  1 08:43:56 2018]  compaction_suitable+0x4f/0xf0
+> [Thu Nov  1 08:43:56 2018]  shrink_node+0x295/0x310
+> [Thu Nov  1 08:43:56 2018]  node_reclaim+0x205/0x250
+> [Thu Nov  1 08:43:56 2018]  get_page_from_freelist+0x649/0xad0
+> [Thu Nov  1 08:43:56 2018]  ? get_page_from_freelist+0x2d4/0xad0
+> [Thu Nov  1 08:43:56 2018]  ? release_sock+0x19/0x90
+> [Thu Nov  1 08:43:56 2018]  ? do_ipv6_setsockopt.isra.5+0x10da/0x1290
+> [Thu Nov  1 08:43:56 2018]  __alloc_pages_nodemask+0x12a/0x2a0
+> [Thu Nov  1 08:43:56 2018]  kmalloc_large_node+0x47/0x90
+> [Thu Nov  1 08:43:56 2018]  __kmalloc_node+0x22b/0x2e0
+> [Thu Nov  1 08:43:56 2018]  kvmalloc_node+0x3e/0x70
+> [Thu Nov  1 08:43:56 2018]  xt_alloc_table_info+0x3a/0x80 [x_tables]
+> [Thu Nov  1 08:43:56 2018]  do_ip6t_set_ctl+0xcd/0x1c0 [ip6_tables]
+> [Thu Nov  1 08:43:56 2018]  nf_setsockopt+0x44/0x60
+> [Thu Nov  1 08:43:56 2018]  SyS_setsockopt+0x6f/0xc0
+> [Thu Nov  1 08:43:56 2018]  do_syscall_64+0x67/0x120
+> [Thu Nov  1 08:43:56 2018]  entry_SYSCALL_64_after_hwframe+0x3d/0xa2
+>
+> ...
+> 
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -4364,6 +4353,15 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
+>  	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
+>  	struct alloc_context ac = { };
+>  
+> +	/*
+> +	 * There are several places where we assume that the order value is sane
+> +	 * so bail out early if the request is out of bound.
+> +	 */
+> +	if (unlikely(order >= MAX_ORDER)) {
+> +		WARN_ON_ONCE(!(gfp_mask & __GFP_NOWARN));
+> +		return NULL;
+> +	}
+> +
 
+I know "everybody enables CONFIG_DEBUG_VM", but given this is fastpath,
+we could help those who choose not to enable it by using
 
->
->  Makefile | 3 ---
->  1 file changed, 3 deletions(-)
->
-> diff --git a/Makefile b/Makefile
-> index 766a64e..7508243 100644
-> --- a/Makefile
-> +++ b/Makefile
-> @@ -1610,10 +1610,7 @@ help:
->         @echo  '  clean           - remove generated files in module directory only'
->         @echo  ''
->
-> -# Dummies...
->  PHONY += prepare scripts
-> -prepare: ;
-> -scripts: ;
->  endif # KBUILD_EXTMOD
->
->  clean: $(clean-dirs)
-> --
-> 2.7.4
->
+#ifdef CONFIG_DEBUG_VM
+	if (WARN_ON_ONCE(order >= MAX_ORDER && !(gfp_mask & __GFP_NOWARN)))
+		return NULL;
+#endif
 
-
--- 
-Best Regards
-Masahiro Yamada
+(Again curses 91241681c62 ("include/linux/mmdebug.h: make VM_WARN* non-rvals"))
