@@ -2,126 +2,166 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC71AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:32:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DE01C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:32:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABACB22419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:32:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8923122419
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:32:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nvidia.com header.i=@nvidia.com header.b="NLP44bM4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABACB22419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nvidia.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="D5Z84ra7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8923122419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387488AbeKMXaa (ORCPT
+        id S2387524AbeKMXag (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:30:30 -0500
-Received: from hqemgate14.nvidia.com ([216.228.121.143]:19266 "EHLO
-        hqemgate14.nvidia.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733229AbeKMXaa (ORCPT
+        Tue, 13 Nov 2018 18:30:36 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:44660 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733229AbeKMXaf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:30:30 -0500
-Received: from hqpgpgate101.nvidia.com (Not Verified[216.228.121.13]) by hqemgate14.nvidia.com (using TLS: TLSv1.2, DES-CBC3-SHA)
-        id <B5bead2520000>; Tue, 13 Nov 2018 05:32:03 -0800
-Received: from hqmail.nvidia.com ([172.20.161.6])
-  by hqpgpgate101.nvidia.com (PGP Universal service);
-  Tue, 13 Nov 2018 05:32:21 -0800
-X-PGP-Universal: processed;
-        by hqpgpgate101.nvidia.com on Tue, 13 Nov 2018 05:32:21 -0800
-Received: from [10.21.132.148] (172.20.13.39) by HQMAIL101.nvidia.com
- (172.20.187.10) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Tue, 13 Nov
- 2018 13:32:19 +0000
-Subject: Re: [REGRESSION] brcmfmac: NULL pointer deference starting
- next-20181107
-From:   Jon Hunter <jonathanh@nvidia.com>
-To:     Hans de Goede <hdegoede@redhat.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        linux-tegra <linux-tegra@vger.kernel.org>,
-        <linux-wireless@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
-References: <dbc5e8f9-6f14-77d2-be2a-f0738e13b773@nvidia.com>
- <9f72ac4f-a83a-7af7-3c26-b1ced6d98653@broadcom.com>
- <9e0a7997-4c14-a3a1-c935-d674270533aa@redhat.com>
- <000bfd39-10cf-661c-9512-0410782168dc@nvidia.com>
-Message-ID: <82736fa6-f3cc-f45f-a4b0-dba485531f7d@nvidia.com>
-Date:   Tue, 13 Nov 2018 13:32:17 +0000
+        Tue, 13 Nov 2018 18:30:35 -0500
+Received: by mail-wr1-f68.google.com with SMTP id j17-v6so13303889wrq.11
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 05:32:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:from:to:cc:references:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=nYewF1NJy29VOlAlEcBiWJOtSLrcPCQ4IvhXrvAJfFo=;
+        b=D5Z84ra7cudXR72FIL9RdnuimQlp+b547+8OrCT5FgMEpyKqJuIne6jDj+GZxaEPYl
+         qYGouK8yFdftZcVHR5qEM1s0jxmG5TJvHgN5sSXe4VnWFMTd8y5X/tMWJKyRF+KS73JY
+         2B2o9U2bXBDc1vvf5lJb3HHNBfIii12PmSlkg7Aon26JynVPvYyn1p6bqyEAc7CKacEo
+         emg6HK+vFEvZQrO0SZN2ubcj2KSQ/gqI/6kE/NEp3HpIs3hFpkohafmguqSBiUo9639p
+         JnI07BP3CsJ6aCZlc4MWpNKIzSaZGOSuMeNiBTes7A45lcyU76X5f7JycHb9vGid/xky
+         YnyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:from:to:cc:references:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=nYewF1NJy29VOlAlEcBiWJOtSLrcPCQ4IvhXrvAJfFo=;
+        b=DljId9kdVmQsdCQbDRhmo/V0spqZzFiqrKxlEk/Sa3cCZEUWLXYAk7kBNfpZ1qqLaP
+         TvQn+3Wmw/nkolQIgFiX0kkOOPkAxOQwJsGwwuKZ0fAwDiXrhWysovKbsTncjpDbA2CE
+         VVRcW3kMvuFzBXYu3FpoKxdd/hofJnX/jT50KlQECCZtK16Ov54Rj2b7ZRncK7Ml/cTT
+         JIV29/Eawta7lry5atFdbzhrqs2MPpD0rPeBEw+hLUX3gzvNVp5JnimsatqCNBG5BCbR
+         S1ZrBX7rBNtS3ciZVhKvgb+Ol35iTkkXImvkTefEaCrRw9wGcm3RuitaGeUR/82Vdybe
+         61BQ==
+X-Gm-Message-State: AGRZ1gI92AH9TGbWK+zCMwFHtThX0DLErDMLc185S73NsuCYJLROkvWh
+        l0njqXuAUl81Nxpw2zhQVQJSe2laDfI=
+X-Google-Smtp-Source: AJdET5fv1ft9oCM15zLYHnTvfmih311hfw2iXaMY97PIvYYU7mHAlNau/LIIUpqkJWVNZpH9Qo/+0g==
+X-Received: by 2002:a5d:4708:: with SMTP id y8-v6mr5388321wrq.16.1542115944439;
+        Tue, 13 Nov 2018 05:32:24 -0800 (PST)
+Received: from [10.1.2.12] ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id d4sm6822407wrp.89.2018.11.13.05.32.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 05:32:23 -0800 (PST)
+Subject: Re: [PATCH] drm/meson: venc: dmt mode must use encp
+From:   Neil Armstrong <narmstrong@baylibre.com>
+To:     Jorge Ramirez-Ortiz <jramirez@baylibre.com>, airlied@linux.ie,
+        carlo@caione.org, khilman@baylibre.com
+Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1542048069-22603-1-git-send-email-jramirez@baylibre.com>
+ <9f20e9d1-2e15-c087-db52-674300d7581d@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <ffe5e73a-c685-0a51-5038-1ede0e249b38@baylibre.com>
+Date:   Tue, 13 Nov 2018 14:32:22 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <000bfd39-10cf-661c-9512-0410782168dc@nvidia.com>
-X-Originating-IP: [172.20.13.39]
-X-ClientProxiedBy: HQMAIL107.nvidia.com (172.20.187.13) To
- HQMAIL101.nvidia.com (172.20.187.10)
-Content-Type: text/plain; charset="utf-8"
+In-Reply-To: <9f20e9d1-2e15-c087-db52-674300d7581d@baylibre.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: quoted-printable
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nvidia.com; s=n1;
-        t=1542115923; bh=uzW6qNZMyOVaJvpbCPUyx0mm8CkHxaQamcfM/dEk0bM=;
-        h=X-PGP-Universal:Subject:From:To:References:Message-ID:Date:
-         User-Agent:MIME-Version:In-Reply-To:X-Originating-IP:
-         X-ClientProxiedBy:Content-Type:Content-Language:
-         Content-Transfer-Encoding;
-        b=NLP44bM4reiwF6Exi0M7k2IOXuVmduQSp5HJ9zXhan05RJI0zsi+/kb/DlTqaFGaM
-         81R/7ZRuhjHXT38q2H8Nk1dLc2Q98qmlnQayXfNI8TfuAk4oW7oUi1PxE3C1tSnm97
-         32DSCRa9Rr9c2G2m5cTHWoT2GtBVX82k48Rr9VO+RgOiYho6NNZ7y1XSfya7POkr8C
-         s3YtnnVORGNgZkPvDQGSdak/oKUY3V7NGOz/YJDoofcLd6SbsGR8EqONCzosz+gyzx
-         ZDte1quCJckDKdjqS4iPpMWe5Z2+uhxsaZhUewFbhUiae2ClBcLrn7h+BB9I7TLJoa
-         /IRc+4LYAbJww==
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On 13/11/2018 13:21, Jon Hunter wrote:
-
-...
-
->> IMHO the best fix here would be to modify efivar_entry_size(),
->> adding:
+On 13/11/2018 09:35, Neil Armstrong wrote:
+> On 12/11/2018 19:41, Jorge Ramirez-Ortiz wrote:
+>> From: Jorge Ramirez-Ortiz <jorge.ramirez.ortiz@gmail.com>
 >>
->> =C2=A0=C2=A0=C2=A0=C2=A0if (!ops)
->> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return -ENOENT;
+>> The video mode for DMT is only populated to support encp.
 >>
->> Which makes it return the same error as when we do have efivar
->> support but the requested variable is not found.
->=20
-> So the above did not work. I see a patch from Arend and I will give this
-> a try.
+>> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez.ortiz@gmail.com>
+>> ---
+>>  drivers/gpu/drm/meson/meson_venc.c | 15 ++++++++-------
+>>  1 file changed, 8 insertions(+), 7 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
+>> index 514245e..acbbad3 100644
+>> --- a/drivers/gpu/drm/meson/meson_venc.c
+>> +++ b/drivers/gpu/drm/meson/meson_venc.c
+>> @@ -854,6 +854,13 @@ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
+>>  	unsigned int sof_lines;
+>>  	unsigned int vsync_lines;
+>>  
+>> +	/* Use VENCI for 480i and 576i and double HDMI pixels */
+>> +	if (mode->flags & DRM_MODE_FLAG_DBLCLK) {
+>> +		hdmi_repeat = true;
+>> +		use_enci = true;
+>> +		venc_hdmi_latency = 1;
+>> +	}
+>> +
+>>  	if (meson_venc_hdmi_supported_vic(vic)) {
+>>  		vmode = meson_venc_hdmi_get_vic_vmode(vic);
+>>  		if (!vmode) {
+>> @@ -865,13 +872,7 @@ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
+>>  	} else {
+>>  		meson_venc_hdmi_get_dmt_vmode(mode, &vmode_dmt);
+>>  		vmode = &vmode_dmt;
+>> -	}
+>> -
+>> -	/* Use VENCI for 480i and 576i and double HDMI pixels */
+>> -	if (mode->flags & DRM_MODE_FLAG_DBLCLK) {
+>> -		hdmi_repeat = true;
+>> -		use_enci = true;
+>> -		venc_hdmi_latency = 1;
+>> +		use_enci = false;
+>>  	}
+>>  
+>>  	/* Repeat VENC pixels for 480/576i/p, 720p50/60 and 1080p50/60 */
+>>
+> 
+> Thanks !
+> 
+> Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+> 
+> I'll apply to drm-misc-fixes !
+> 
+> Neil
+> 
 
-FWIW, this did work ...
-
-diff --git a/drivers/firmware/efi/vars.c b/drivers/firmware/efi/vars.c
-index 9336ffdf6e2c..8181e548f32b 100644
---- a/drivers/firmware/efi/vars.c
-+++ b/drivers/firmware/efi/vars.c
-@@ -829,9 +829,14 @@ struct efivar_entry *efivar_entry_find(efi_char16_t
-*name, efi_guid_t guid,
-  */
- int efivar_entry_size(struct efivar_entry *entry, unsigned long *size)
- {
--       const struct efivar_operations *ops =3D __efivars->ops;
-+       const struct efivar_operations *ops;
-        efi_status_t status;
-
-+       if (!__efivars || !__efivars->ops)
-+               return -ENOENT;
-+
-+       ops =3D __efivars->ops;
-+
-        *size =3D 0;
-
-        if (down_interruptible(&efivars_lock))
-
-I will let you know about Arend's patch as well.
-
-Jon
-
---=20
-nvpublic
+Applied.
