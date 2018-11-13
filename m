@@ -2,142 +2,161 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 37789C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:33:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0616C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:33:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE84F223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:33:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B679C223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:33:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="BDrAbEgV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE84F223AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="0tLoKvDX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B679C223AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387615AbeKMXbW (ORCPT
+        id S2387630AbeKMXbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:31:22 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:36534 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1733229AbeKMXbV (ORCPT
+        Tue, 13 Nov 2018 18:31:42 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:40699 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733229AbeKMXbm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:31:21 -0500
-Received: by mail-wm1-f67.google.com with SMTP id s11so2089365wmh.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 05:33:12 -0800 (PST)
+        Tue, 13 Nov 2018 18:31:42 -0500
+Received: by mail-lf1-f68.google.com with SMTP id v5so8813692lfe.7
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 05:33:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=DZ5Zn44hLQbDGpGv/YP7g5l2jJoCH2YAJyu/PLBrnNM=;
-        b=BDrAbEgVvAkxiJsaY01H52VEWdWs9TWYrKAQwGanDEE+QDzOEHXCXrpCuvJGHC3NrM
-         XUJ+jMim43pny6t72PcYwMpoN0JDDbEsK/8lOvNXPQN0UksGj+RENG55OyL6hlf42m0C
-         yFB70lfL2upX94AuZYM7BLa0s54rcWGFxyVuOc2Ur/h47GnhlkEdF2WDJk+Mrs491+8Y
-         43XmDmVoF765ADA+66WD4lVnyyUvA9qS5sATKGvjnurPdSLWjusDFt8VnByalX3xXiCs
-         AphQcE39BG0tQY249xKtfeZZ/eFMhm+ovQsr4YgiHeUC9DlzYmxXsUZYI7UjFjCraiYk
-         3BOQ==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=2+jfIEparKCQuV8hDmpHEkq5Krl/4zl4141C46iqxqw=;
+        b=0tLoKvDXuy+w1YgEJBJc5VY95G6/piD9EM45DskUvnWKbmRHMYl0FdDfnY/GgWo/pl
+         fnPO5hqSOxzqECeJegAizhJWm7Qtu5+XRzlEV2Y9Sklw4yuRsZ/9TtiebgmyyJpZeTl/
+         N1PQBMlqckA9neCKlLtj67XPaoQ7do5paJduvJW+eQa2rTAV6eWIi1cNyMwFaDTRue/C
+         9qVmncPNBH79ClLbvofHQ3SY3IfgBr2lHQPxMdkLAGLDwAKopxHanh7B4A7C5i06p1pc
+         xj0Q2vlBYDRCiP3Mu0P8MUgyp4n1w/JjIuci+Gm8CutnRIqIy8G2IdteVQpM+bY8Ponx
+         vPdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=DZ5Zn44hLQbDGpGv/YP7g5l2jJoCH2YAJyu/PLBrnNM=;
-        b=MGv9wVK7o9gZXdTtTVB6kaauzeSIQuZ+XRSZlj62FcwsWdUNVjHM8as9+Nqzn3KCeD
-         5K9NmC/l4vTrmzHiU+cfdW2Pdg17yn0r3cxxY3rmhpkqAvbpJPmY6xB1XYbySIZEIVDf
-         TvhnHyO3GdCAIJbC+emQEV1gFbZvRiW8dbohVZVYmf3e8Yhkzm/+Q1lJahfyaaejmFMi
-         XOkYQn1tRIgHksSdAzXz0HceaAlauGpPy2+NfILPU3MUmh47y+fTzf++QjxPWiyKsC6t
-         3d7LmVxk97uu3EKwi3DNE+CC0K1JLHdJCLOeTy8IoLH12XI34NU0IbBI24lglXLgAbCj
-         7LlA==
-X-Gm-Message-State: AGRZ1gI4HG4BeyVtzwG2gPEt8lwU2GYLf7qrWdeQrTY1Pr8uGnoyXNNy
-        YvTfYCZp+4Ze8uxltYEWvRfzRGUundE=
-X-Google-Smtp-Source: AJdET5fhYwKYMKnwvqDg7wYz1xihcJNH7Eqlgl9ndDpnOw6TPe+ZQzz379e3Ber2AXrNnsEEOLyK/Q==
-X-Received: by 2002:a7b:cd97:: with SMTP id y23mr2020842wmj.129.1542115991321;
-        Tue, 13 Nov 2018 05:33:11 -0800 (PST)
-Received: from [10.1.2.12] ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id 197-v6sm13878702wmh.44.2018.11.13.05.33.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 05:33:10 -0800 (PST)
-Subject: Re: [PATCH 0/3] drm/meson: Add support for Overlay and OSD Plane
- scaling
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1541497202-20570-1-git-send-email-narmstrong@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <66e1a959-3809-8ee1-9eab-d4409b340a85@baylibre.com>
-Date:   Tue, 13 Nov 2018 14:33:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=2+jfIEparKCQuV8hDmpHEkq5Krl/4zl4141C46iqxqw=;
+        b=CW6WmrGLet/rR94a8V46Otkffhu2WaNrxbqgzXtbVYHJAnNLIM695YWIVT3M+ekFX/
+         RxZR3u0M4RvQbkI/EeVvg9vudKcWqFRA6pb9x21/gAs+SKlONqCkaArrct0zRZFHUmXo
+         LrdalkeUBE58fNsUg6i9RSMCn5uyoEKmLdbuieQMhCSgI5hcLIks1LJ+t2KDhLg8tqXD
+         5x0LY2dBr2v28pj4HMP49vv+uCAiXrTMYQc4Ics5dJdomfksgmFELOIOxEEgSgU9ICEB
+         IxpYWlzIA7jOikO+34Fp1aPBYt6Ypny1sOGzhDk1/zfy0f9yc92FDMRIv62Ivzaf/g80
+         TlCA==
+X-Gm-Message-State: AGRZ1gK87OOti0mw5yvaD4UmT9n7FDKee5NOLz1XX3Hxw6CzJm1S6kjN
+        bqBCEsplyibJMqdUOehVBccuNm8Ty/31sPgPMPea
+X-Google-Smtp-Source: AJdET5d7W7xCy75M4Skbx2MXP3A79VVwpF8kK0wW+7FmSNGYFSthVpo2x/rWETS1POaPLWeSiiuMXw7sAUSKZQ4UdKI=
+X-Received: by 2002:a19:e601:: with SMTP id d1mr3110260lfh.71.1542116010482;
+ Tue, 13 Nov 2018 05:33:30 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1541497202-20570-1-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <53491A18-DD21-4E34-BC2F-AB449C7844E8@gmx.us> <CAHC9VhTiCPwQ51ciexRCp4M5rN2C=pTm=anRaMgTsZ9coX96Zw@mail.gmail.com>
+ <7DE35AF4-20E1-4402-9B5A-4D8AACE15D56@gmx.us> <CAHC9VhRODL9JYjJ3QpExMaztA3PFv_Z1t=Q=4K8QMtJh7ntVuw@mail.gmail.com>
+ <989F5A08-F283-4BB7-B3D9-67E25EE05F69@gmx.us>
+In-Reply-To: <989F5A08-F283-4BB7-B3D9-67E25EE05F69@gmx.us>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 13 Nov 2018 08:33:18 -0500
+Message-ID: <CAHC9VhS6UuYa_z_T04DddoGS3WhTnv4G3b_DdoEeipcJgqjziw@mail.gmail.com>
+Subject: Re: BUG: KASAN: slab-out-of-bounds in selinux_sctp_bind_connect+0x60/0x150
+To:     cai@gmx.us
+Cc:     linux-kernel@vger.kernel.org, selinux@vger.kernel.org,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 06/11/2018 10:39, Neil Armstrong wrote:
-> This serie adds support for :
-> - Overlay Plane blended with the primary plane, we can describe as "behind"
-> - Primary Plane up-scaling up to 5x factor to support the OSD plane being
->   upscaled from 1920x1080 when the display mode is set as 3840x2160.
-> 
-> These patches depends on the "drm/meson: Allow using optional canvas provider"
-> patchset from Maxime Jourdan at [1]
-> 
-> [1] https://patchwork.kernel.org/project/linux-amlogic/list/?series=38355
-> 
-> Neil Armstrong (3):
->   drm/meson: Support Overlay plane for video rendering
->   drm/meson: move OSD scaler management into plane atomic update
->   drm/meson: Add primary plane scaling
-> 
->  drivers/gpu/drm/meson/Makefile          |   2 +-
->  drivers/gpu/drm/meson/meson_canvas.c    |   7 +-
->  drivers/gpu/drm/meson/meson_canvas.h    |  11 +-
->  drivers/gpu/drm/meson/meson_crtc.c      | 251 +++++++++++++-
->  drivers/gpu/drm/meson/meson_drv.c       |  29 +-
->  drivers/gpu/drm/meson/meson_drv.h       |  62 ++++
->  drivers/gpu/drm/meson/meson_overlay.c   | 586 ++++++++++++++++++++++++++++++++
->  drivers/gpu/drm/meson/meson_overlay.h   |  14 +
->  drivers/gpu/drm/meson/meson_plane.c     | 177 ++++++++--
->  drivers/gpu/drm/meson/meson_registers.h |   3 +
->  drivers/gpu/drm/meson/meson_viu.c       |  15 +
->  drivers/gpu/drm/meson/meson_vpp.c       |  90 +++--
->  12 files changed, 1156 insertions(+), 91 deletions(-)
->  create mode 100644 drivers/gpu/drm/meson/meson_overlay.c
->  create mode 100644 drivers/gpu/drm/meson/meson_overlay.h
-> 
+On Mon, Nov 12, 2018 at 10:11 PM Qian Cai <cai@gmx.us> wrote:
+> > On Nov 12, 2018, at 10:09 PM, Paul Moore <paul@paul-moore.com> wrote:
+> >
+> > On Mon, Nov 12, 2018 at 7:59 PM Qian Cai <cai@gmx.us> wrote:
+> >>> On Nov 12, 2018, at 7:41 PM, Paul Moore <paul@paul-moore.com> wrote:
+> >>> On Mon, Nov 12, 2018 at 2:39 PM Qian Cai <cai@gmx.us> wrote:
+> >>>>
+> >>>> Running the trinity fuzzer on the latest mainline (rc2) generates this,
+> >>>>
+> >>>> [15029.879626] BUG: KASAN: slab-out-of-bounds in selinux_sctp_bind_connect+0x60/0x150
+> >>>> [15029.887275] Read of size 2 at addr ffff801ec53c5080 by task trinity-main/18081
+> >>>> [15029.887294]
+> >>>> [15029.887304] CPU: 28 PID: 18081 Comm: trinity-main Tainted: G        W  OE     4.20.0-rc2+ #15
+> >>>> [15029.887311] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
+> >>>> [15000.084786] [15029.887320] Call trace:
+> >>>> [15029.915511]  dump_backtrace+0x0/0x2c8
+> >>>> [15029.920046]  show_stack+0x24/0x30
+> >>>> [15029.923367]  dump_stack+0x118/0x19c
+> >>>> [15029.927539]  print_address_description+0x68/0x2a0
+> >>>> [15029.932245]  kasan_report+0x1b4/0x348
+> >>>> [15029.938760]  __asan_load2+0x7c/0xa0
+> >>>> [15029.945098]  selinux_sctp_bind_connect+0x60/0x150
+> >>>>
+> >>>> [15029.950571]  security_sctp_bind_connect+0x58/0x90
+> >>>> [15029.955493]  __sctp_setsockopt_connectx+0x68/0x128 [sctp]
+> >>>> [15029.960943]  sctp_setsockopt+0x764/0x2928 [sctp]
+> >>>> [15029.965564]  sock_common_setsockopt+0x6c/0x80
+> >>>> [15029.969923]  __arm64_sys_setsockopt+0x13c/0x1f0
+> >>>> [15029.974456]  el0_svc_handler+0xd4/0x198
+> >>>> [15029.978293]  el0_svc+0x8/0xc
+> >>>> [15029.981174]
+> >>>> [15029.982667] Allocated by task 18081:
+> >>>> [15029.986245]  kasan_kmalloc.part.1+0x40/0x108
+> >>>> [15029.990517]  kasan_kmalloc+0xb4/0xc8
+> >>>> [15029.994094]  __kmalloc_node+0x1c4/0x638
+> >>>> [15029.997933]  kvmalloc_node+0x98/0xa8
+> >>>> [15030.001511]  vmemdup_user+0x34/0x128
+> >>>> [15030.005137]  __sctp_setsockopt_connectx+0x44/0x128 [sctp]
+> >>>> [15030.010586]  sctp_setsockopt+0x764/0x2928 [sctp]
+> >>>> [15030.015205]  sock_common_setsockopt+0x6c/0x80
+> >>>> [15030.019564]  __arm64_sys_setsockopt+0x13c/0x1f0
+> >>>> [15030.024096]  el0_svc_handler+0xd4/0x198
+> >>>> [15030.027933]  el0_svc+0x8/0xc
+> >>>> [15030.030814]
+> >>>> [15030.032306] Freed by task 3025:
+> >>>> [15030.035451]  __kasan_slab_free+0x114/0x228
+> >>>> [15030.039548]  kasan_slab_free+0x10/0x18
+> >>>> [15030.043299]  kfree+0x114/0x408
+> >>>> [15030.046357]  selinux_sk_free_security+0x38/0x48
+> >>>> [15030.050888]  security_sk_free+0x3c/0x58
+> >>>> [15030.054727]  __sk_destruct+0x3e8/0x570
+> >>>> [15030.058478]  sk_destruct+0x4c/0x58
+> >>>> [15030.061881]  __sk_free+0x68/0x138
+> >>>> [15030.065197]  sk_free+0x3c/0x48
+> >>>> [15030.068255]  unix_release_sock+0x4a8/0x550
+> >>>> [15030.072353]  unix_release+0x34/0x50
+> >>>> [15030.075843]  __sock_release+0x74/0x110
+> >>>> [15030.079593]  sock_close+0x24/0x38
+> >>>> [15030.082913]  __fput+0x1b8/0x368
+> >>>> [15030.086055]  ____fput+0x20/0x30
+> >>>> [15030.089199]  task_work_run+0x14c/0x1a8
+> >>>> [15030.092951]  do_notify_resume+0x1e4/0x200
+> >>>> [15030.096961]  work_pending+0x8/0x14
+> >>>
+> >>> Any chance you have a reproducer for this?  Or at the very least a
+> >>> line number inside selinux_sctp_bind_connect()?
+> >>>
+> >> Yes, running trinity as non-root will trigger it all the time on this
+> >> aarch64 server so far.
+> >
+> > Is it just aarch64, or are you seeing it on other arches as well?
+>
+> I only have an aarch64 server to test so far.
 
-Applied
+Did you see similar problems with 4.20-rc1?
+
+> >> $ trinity
+> >>
+> >> https://github.com/kernelslacker/trinity.git
+> >>
+> >> If you have a debug patch I am happy to try that as well if you
+> >> need to gather more information.
+
+-- 
+paul moore
+www.paul-moore.com
