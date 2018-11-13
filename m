@@ -7,111 +7,80 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1880BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2368C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C95CF22521
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6BF5022524
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGTxpUUD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C95CF22521
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C15DC3hr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF5022524
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733070AbeKMPtQ (ORCPT
+        id S1733125AbeKMPtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:49:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36368 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:49:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36464 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732935AbeKMPtP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:49:15 -0500
+        id S1733072AbeKMPtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:49:17 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 817472251E;
-        Tue, 13 Nov 2018 05:52:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 81E5F2251F;
+        Tue, 13 Nov 2018 05:52:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088367;
-        bh=X7Yg/5GxyWLymmEiEZv2G/hs42UCd4CSAmlWJxJR2/0=;
+        s=default; t=1542088369;
+        bh=DLPe9Dy06+31l9Qrtr4FZwSQyGyZG538zVS3pIPqCS8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qGTxpUUDJpKESse0Ip8uDEs4oFByzgqfT0JwvfQ5UHWlZogOvSeIs5yV7YhlvRQhp
-         m48jyFN8YeFlkDfq90et17AE99We1f0eiOTq2RHEgQugl6tB1lcocxIB92M1vwur3A
-         0rZcx8chw3rB6e1VRIRBRzphndjOOh9gXRfFMY68=
+        b=C15DC3hrruizEAQh9T7y2KIuge/+lfUFZ/usQJXB5NpU4D8xw8MUfqUObjcbuNGdS
+         tmUIJd3eqtGr+XwM9UduPIe0k70hznXa4wEIYWtDhJ7myv6dVZC4cIvgNebAGTDwvx
+         b3zhyWUXtQLDFfT4R95G+moFWhbA6HVxwhE2vX5o=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Ernesto=20A=2E=20Fern=C3=A1ndez?= 
-        <ernesto.mnd.fernandez@gmail.com>,
-        Christoph Hellwig <hch@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 04/11] hfsplus: prevent btree data loss on root split
-Date:   Tue, 13 Nov 2018 00:52:35 -0500
-Message-Id: <20181113055242.79261-4-sashal@kernel.org>
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        Sylwester Nawrocki <snawrocki@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 07/11] clk: samsung: exynos5420: Enable PERIS clocks for suspend
+Date:   Tue, 13 Nov 2018 00:52:38 -0500
+Message-Id: <20181113055242.79261-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113055242.79261-1-sashal@kernel.org>
 References: <20181113055242.79261-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
+From: Marek Szyprowski <m.szyprowski@samsung.com>
 
-[ Upstream commit 0a3021d4f5295aa073c7bf5c5e4de60a2e292578 ]
+[ Upstream commit b33228029d842269e17bba591609e83ed422005d ]
 
-Creating, renaming or deleting a file may cause catalog corruption and
-data loss.  This bug is randomly triggered by xfstests generic/027, but
-here is a faster reproducer:
+Ensure that clocks for core SoC modules (including TZPC0..9 modules)
+are enabled for suspend/resume cycle. This fixes suspend/resume
+support on Exynos5422-based Odroid XU3/XU4 boards.
 
-  truncate -s 50M fs.iso
-  mkfs.hfsplus fs.iso
-  mount fs.iso /mnt
-  i=100
-  while [ $i -le 150 ]; do
-    touch /mnt/$i &>/dev/null
-    ((++i))
-  done
-  i=100
-  while [ $i -le 150 ]; do
-    mv /mnt/$i /mnt/$(perl -e "print $i x82") &>/dev/null
-    ((++i))
-  done
-  umount /mnt
-  fsck.hfsplus -n fs.iso
-
-The bug is triggered whenever hfs_brec_update_parent() needs to split the
-root node.  The height of the btree is not increased, which leaves the new
-node orphaned and its records lost.
-
-Link: http://lkml.kernel.org/r/26d882184fc43043a810114258f45277752186c7.1535682461.git.ernesto.mnd.fernandez@gmail.com
-Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Suggested-by: Joonyoung Shim <jy0922.shim@samsung.com>
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Signed-off-by: Sylwester Nawrocki <snawrocki@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfsplus/brec.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ drivers/clk/samsung/clk-exynos5420.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
-index 754fdf8c6356..1002a0c08319 100644
---- a/fs/hfsplus/brec.c
-+++ b/fs/hfsplus/brec.c
-@@ -427,6 +427,10 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
- 	if (new_node) {
- 		__be32 cnid;
+diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
+index 389af3c15ec4..bde71b07f15e 100644
+--- a/drivers/clk/samsung/clk-exynos5420.c
++++ b/drivers/clk/samsung/clk-exynos5420.c
+@@ -273,6 +273,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
+ 	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
+ 	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
+ 	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
++	{ .offset = GATE_IP_PERIS,		.value = 0xffffffff, },
+ };
  
-+		if (!new_node->parent) {
-+			hfs_btree_inc_height(tree);
-+			new_node->parent = tree->root;
-+		}
- 		fd->bnode = hfs_bnode_find(tree, new_node->parent);
- 		/* create index key and entry */
- 		hfs_bnode_read_key(new_node, fd->search_key, 14);
+ static int exynos5420_clk_suspend(void)
 -- 
 2.17.1
 
