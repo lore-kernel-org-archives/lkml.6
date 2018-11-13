@@ -7,36 +7,36 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 524BEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0D01C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DB81223CB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7DA0D2251F
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OO08qf3f"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DB81223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="B4FKuxfL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DA0D2251F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732880AbeKMPtA (ORCPT
+        id S1732901AbeKMPtC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:49:00 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35836 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:49:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35918 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730934AbeKMPs7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:48:59 -0500
+        id S1732881AbeKMPtB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:49:01 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A12E122512;
-        Tue, 13 Nov 2018 05:52:31 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B5C3322507;
+        Tue, 13 Nov 2018 05:52:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088351;
-        bh=yyPooav/5YMIwjliDVDwtbyhMNBSJNjl/ieLCBBtkbo=;
+        s=default; t=1542088353;
+        bh=X7Yg/5GxyWLymmEiEZv2G/hs42UCd4CSAmlWJxJR2/0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OO08qf3f2+j2iCwbYjfd9VdZYreelkD4rSmDaSJO9VQoVPWWbZiVDhL1EQaI3Trkj
-         gEf66IhJV3oKjnbFJCfB2DAjPBWbKYoGfHQaj9xwTL/QUQjeXnnyn/GqZrs2ldrd48
-         8l3Y6oA9cIWFoLdVu+U8aa8dkqLHD+oxjfmE2m8E=
+        b=B4FKuxfLvXHFxi7mSwEkUkI7TyAQcdSPm9Tx+oQvJhaHGCCdReWfvThd2WHb8Wpym
+         cJEHXyPccKCW07V/haOh7VnkDBXtX2QHZgrODkxIxb88eSpf6ScO42eU0IiUN+KVEC
+         BinWAn2xiSfYFcSn422PXoXoIYGgOMgMHgAjKhNs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     =?UTF-8?q?Ernesto=20A=2E=20Fern=C3=A1ndez?= 
@@ -45,9 +45,9 @@ Cc:     =?UTF-8?q?Ernesto=20A=2E=20Fern=C3=A1ndez?=
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
         Sasha Levin <sashal@kernel.org>, linux-fsdevel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 05/17] hfs: prevent btree data loss on root split
-Date:   Tue, 13 Nov 2018 00:52:11 -0500
-Message-Id: <20181113055223.79060-5-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.9 06/17] hfsplus: prevent btree data loss on root split
+Date:   Tue, 13 Nov 2018 00:52:12 -0500
+Message-Id: <20181113055223.79060-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113055223.79060-1-sashal@kernel.org>
 References: <20181113055223.79060-1-sashal@kernel.org>
@@ -61,33 +61,47 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 
-[ Upstream commit d057c036672f33d43a5f7344acbb08cf3a8a0c09 ]
+[ Upstream commit 0a3021d4f5295aa073c7bf5c5e4de60a2e292578 ]
 
-This bug is triggered whenever hfs_brec_update_parent() needs to split
-the root node.  The height of the btree is not increased, which leaves
-the new node orphaned and its records lost.  It is not possible for this
-to happen on a valid hfs filesystem because the index nodes have fixed
-length keys.
+Creating, renaming or deleting a file may cause catalog corruption and
+data loss.  This bug is randomly triggered by xfstests generic/027, but
+here is a faster reproducer:
 
-For reasons I ignore, the hfs module does have support for a number of
-hfsplus features.  A corrupt btree header may report variable length
-keys and trigger this bug, so it's better to fix it.
+  truncate -s 50M fs.iso
+  mkfs.hfsplus fs.iso
+  mount fs.iso /mnt
+  i=100
+  while [ $i -le 150 ]; do
+    touch /mnt/$i &>/dev/null
+    ((++i))
+  done
+  i=100
+  while [ $i -le 150 ]; do
+    mv /mnt/$i /mnt/$(perl -e "print $i x82") &>/dev/null
+    ((++i))
+  done
+  umount /mnt
+  fsck.hfsplus -n fs.iso
 
-Link: http://lkml.kernel.org/r/9750b1415685c4adca10766895f6d5ef12babdb0.1535682463.git.ernesto.mnd.fernandez@gmail.com
+The bug is triggered whenever hfs_brec_update_parent() needs to split the
+root node.  The height of the btree is not increased, which leaves the new
+node orphaned and its records lost.
+
+Link: http://lkml.kernel.org/r/26d882184fc43043a810114258f45277752186c7.1535682461.git.ernesto.mnd.fernandez@gmail.com
 Signed-off-by: Ernesto A. Fernández <ernesto.mnd.fernandez@gmail.com>
 Cc: Christoph Hellwig <hch@infradead.org>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/hfs/brec.c | 4 ++++
+ fs/hfsplus/brec.c | 4 ++++
  1 file changed, 4 insertions(+)
 
-diff --git a/fs/hfs/brec.c b/fs/hfs/brec.c
-index 2a6f3c67cb3f..2e713673df42 100644
---- a/fs/hfs/brec.c
-+++ b/fs/hfs/brec.c
-@@ -424,6 +424,10 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
+diff --git a/fs/hfsplus/brec.c b/fs/hfsplus/brec.c
+index 754fdf8c6356..1002a0c08319 100644
+--- a/fs/hfsplus/brec.c
++++ b/fs/hfsplus/brec.c
+@@ -427,6 +427,10 @@ static int hfs_brec_update_parent(struct hfs_find_data *fd)
  	if (new_node) {
  		__be32 cnid;
  
