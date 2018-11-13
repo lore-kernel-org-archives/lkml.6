@@ -7,48 +7,47 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9069BC43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:02:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B226C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:03:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5809F206BB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:02:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C657E2082A
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:03:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vxojw30r"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5809F206BB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJ/BqPST"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C657E2082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731828AbeKMPrV (ORCPT
+        id S1731749AbeKMPrP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:47:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:32994 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:47:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:32798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731801AbeKMPrU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:47:20 -0500
+        id S1731518AbeKMPrO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:47:14 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1730E2251C;
-        Tue, 13 Nov 2018 05:50:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E07DC22510;
+        Tue, 13 Nov 2018 05:50:45 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088253;
-        bh=2/QX0btORBDgnTEIH7KoPpLIqiZPGQBd0g8YV15QEcc=;
+        s=default; t=1542088246;
+        bh=yJj7yxwCd9gAJEYNBBa6SsMFc1+V44MjmokWsyOmifw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Vxojw30rfT2xVucovt21hAQcox63gLY1aoinmLA7ktOju+6jjiwAjQMMXnz6rQAk5
-         eh/nnY8yN55vbvHGaXiuqbJQnd8YOsJxhoMoki9e64iibKvKyae4/n0bcUdOAIJJn+
-         j1G6IdZSW8xdXGB6nEGGA+IHIFKcJVxRDYckzuo8=
+        b=oJ/BqPSTiVKImYZKS8eXSi0Hrkn0lKHFA+WpCLOYwSLgXFbUCiGsA5+AqWwBqZHlo
+         8U+BKfZXko9Enx/fLikn1jQ/7RfuJb+/VoXrULkjnL4L9xyZ6H5duG7s9847hhXfYJ
+         BieMUCDK4wBDhyADD31Wl/2mRFfSFjksHyKnVWV4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dmitry Vyukov <dvyukov@google.com>,
-        Pekka Enberg <penberg@kernel.org>,
-        David Rientjes <rientjes@google.com>,
-        Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+Cc:     Roman Gushchin <guro@fb.com>,
+        Vladimir Davydov <vdavydov.dev@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
         Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.19 44/44] mm: don't warn about large allocations for slab
-Date:   Tue, 13 Nov 2018 00:49:50 -0500
-Message-Id: <20181113054950.77898-44-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-doc@vger.kernel.org,
+        cgroups@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.19 40/44] mm: don't raise MEMCG_OOM event due to failed high-order allocation
+Date:   Tue, 13 Nov 2018 00:49:46 -0500
+Message-Id: <20181113054950.77898-40-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
 References: <20181113054950.77898-1-sashal@kernel.org>
@@ -57,111 +56,102 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Vyukov <dvyukov@google.com>
+From: Roman Gushchin <guro@fb.com>
 
-[ Upstream commit 61448479a9f2c954cde0cfe778cb6bec5d0a748d ]
+[ Upstream commit 7a1adfddaf0d11a39fdcaf6e82a88e9c0586e08b ]
 
-Slub does not call kmalloc_slab() for sizes > KMALLOC_MAX_CACHE_SIZE,
-instead it falls back to kmalloc_large().
+It was reported that on some of our machines containers were restarted
+with OOM symptoms without an obvious reason.  Despite there were almost no
+memory pressure and plenty of page cache, MEMCG_OOM event was raised
+occasionally, causing the container management software to think, that OOM
+has happened.  However, no tasks have been killed.
 
-For slab KMALLOC_MAX_CACHE_SIZE == KMALLOC_MAX_SIZE and it calls
-kmalloc_slab() for all allocations relying on NULL return value for
-over-sized allocations.
+The following investigation showed that the problem is caused by a failing
+attempt to charge a high-order page.  In such case, the OOM killer is
+never invoked.  As shown below, it can happen under conditions, which are
+very far from a real OOM: e.g.  there is plenty of clean page cache and no
+memory pressure.
 
-This inconsistency leads to unwanted warnings from kmalloc_slab() for
-over-sized allocations for slab.  Returning NULL for failed allocations is
-the expected behavior.
+There is no sense in raising an OOM event in this case, as it might
+confuse a user and lead to wrong and excessive actions (e.g.  restart the
+workload, as in my case).
 
-Make slub and slab code consistent by checking size >
-KMALLOC_MAX_CACHE_SIZE in slab before calling kmalloc_slab().
+Let's look at the charging path in try_charge().  If the memory usage is
+about memory.max, which is absolutely natural for most memory cgroups, we
+try to reclaim some pages.  Even if we were able to reclaim enough memory
+for the allocation, the following check can fail due to a race with
+another concurrent allocation:
 
-While we are here also fix the check in kmalloc_slab().  We should check
-against KMALLOC_MAX_CACHE_SIZE rather than KMALLOC_MAX_SIZE.  It all kinda
-worked because for slab the constants are the same, and slub always checks
-the size against KMALLOC_MAX_CACHE_SIZE before kmalloc_slab().  But if we
-get there with size > KMALLOC_MAX_CACHE_SIZE anyhow bad things will
-happen.  For example, in case of a newly introduced bug in slub code.
+    if (mem_cgroup_margin(mem_over_limit) >= nr_pages)
+        goto retry;
 
-Also move the check in kmalloc_slab() from function entry to the size >
-192 case.  This partially compensates for the additional check in slab
-code and makes slub code a bit faster (at least theoretically).
+For regular pages the following condition will save us from triggering
+the OOM:
 
-Also drop __GFP_NOWARN in the warning check.  This warning means a bug in
-slab code itself, user-passed flags have nothing to do with it.
+   if (nr_reclaimed && nr_pages <= (1 << PAGE_ALLOC_COSTLY_ORDER))
+       goto retry;
 
-Nothing of this affects slob.
+But for high-order allocation this condition will intentionally fail.  The
+reason behind is that we'll likely fall to regular pages anyway, so it's
+ok and even preferred to return ENOMEM.
 
-Link: http://lkml.kernel.org/r/20180927171502.226522-1-dvyukov@gmail.com
-Signed-off-by: Dmitry Vyukov <dvyukov@google.com>
-Reported-by: syzbot+87829a10073277282ad1@syzkaller.appspotmail.com
-Reported-by: syzbot+ef4e8fc3a06e9019bb40@syzkaller.appspotmail.com
-Reported-by: syzbot+6e438f4036df52cbb863@syzkaller.appspotmail.com
-Reported-by: syzbot+8574471d8734457d98aa@syzkaller.appspotmail.com
-Reported-by: syzbot+af1504df0807a083dbd9@syzkaller.appspotmail.com
-Acked-by: Christoph Lameter <cl@linux.com>
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Cc: Pekka Enberg <penberg@kernel.org>
-Cc: David Rientjes <rientjes@google.com>
-Cc: Joonsoo Kim <iamjoonsoo.kim@lge.com>
+In this case the idea of raising MEMCG_OOM looks dubious.
+
+Fix this by moving MEMCG_OOM raising to mem_cgroup_oom() after allocation
+order check, so that the event won't be raised for high order allocations.
+This change doesn't affect regular pages allocation and charging.
+
+Link: http://lkml.kernel.org/r/20181004214050.7417-1-guro@fb.com
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Acked-by: David Rientjes <rientjes@google.com>
+Acked-by: Michal Hocko <mhocko@kernel.org>
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Cc: Vladimir Davydov <vdavydov.dev@gmail.com>
 Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
 Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/slab.c        |  4 ++++
- mm/slab_common.c | 12 ++++++------
- 2 files changed, 10 insertions(+), 6 deletions(-)
+ Documentation/admin-guide/cgroup-v2.rst | 4 ++++
+ mm/memcontrol.c                         | 4 ++--
+ 2 files changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/mm/slab.c b/mm/slab.c
-index aa76a70e087e..d73c7a4820a4 100644
---- a/mm/slab.c
-+++ b/mm/slab.c
-@@ -3675,6 +3675,8 @@ __do_kmalloc_node(size_t size, gfp_t flags, int node, unsigned long caller)
- 	struct kmem_cache *cachep;
- 	void *ret;
+diff --git a/Documentation/admin-guide/cgroup-v2.rst b/Documentation/admin-guide/cgroup-v2.rst
+index 184193bcb262..5d9939388a78 100644
+--- a/Documentation/admin-guide/cgroup-v2.rst
++++ b/Documentation/admin-guide/cgroup-v2.rst
+@@ -1127,6 +1127,10 @@ PAGE_SIZE multiple when read back.
+ 		disk readahead.  For now OOM in memory cgroup kills
+ 		tasks iff shortage has happened inside page fault.
  
-+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
-+		return NULL;
- 	cachep = kmalloc_slab(size, flags);
- 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
- 		return cachep;
-@@ -3710,6 +3712,8 @@ static __always_inline void *__do_kmalloc(size_t size, gfp_t flags,
- 	struct kmem_cache *cachep;
- 	void *ret;
++		This event is not raised if the OOM killer is not
++		considered as an option, e.g. for failed high-order
++		allocations.
++
+ 	  oom_kill
+ 		The number of processes belonging to this cgroup
+ 		killed by any kind of OOM killer.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index e79cb59552d9..07c7af6f5e59 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -1669,6 +1669,8 @@ static enum oom_status mem_cgroup_oom(struct mem_cgroup *memcg, gfp_t mask, int
+ 	if (order > PAGE_ALLOC_COSTLY_ORDER)
+ 		return OOM_SKIPPED;
  
-+	if (unlikely(size > KMALLOC_MAX_CACHE_SIZE))
-+		return NULL;
- 	cachep = kmalloc_slab(size, flags);
- 	if (unlikely(ZERO_OR_NULL_PTR(cachep)))
- 		return cachep;
-diff --git a/mm/slab_common.c b/mm/slab_common.c
-index fea3376f9816..3a7ac4f15194 100644
---- a/mm/slab_common.c
-+++ b/mm/slab_common.c
-@@ -1027,18 +1027,18 @@ struct kmem_cache *kmalloc_slab(size_t size, gfp_t flags)
- {
- 	unsigned int index;
++	memcg_memory_event(memcg, MEMCG_OOM);
++
+ 	/*
+ 	 * We are in the middle of the charge context here, so we
+ 	 * don't want to block when potentially sitting on a callstack
+@@ -2250,8 +2252,6 @@ static int try_charge(struct mem_cgroup *memcg, gfp_t gfp_mask,
+ 	if (fatal_signal_pending(current))
+ 		goto force;
  
--	if (unlikely(size > KMALLOC_MAX_SIZE)) {
--		WARN_ON_ONCE(!(flags & __GFP_NOWARN));
--		return NULL;
--	}
+-	memcg_memory_event(mem_over_limit, MEMCG_OOM);
 -
- 	if (size <= 192) {
- 		if (!size)
- 			return ZERO_SIZE_PTR;
- 
- 		index = size_index[size_index_elem(size)];
--	} else
-+	} else {
-+		if (unlikely(size > KMALLOC_MAX_CACHE_SIZE)) {
-+			WARN_ON(1);
-+			return NULL;
-+		}
- 		index = fls(size - 1);
-+	}
- 
- #ifdef CONFIG_ZONE_DMA
- 	if (unlikely((flags & GFP_DMA)))
+ 	/*
+ 	 * keep retrying as long as the memcg oom killer is able to make
+ 	 * a forward progress or bypass the charge if the oom killer
 -- 
 2.17.1
 
