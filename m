@@ -2,168 +2,121 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EFD2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:07:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73F4AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:10:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 53D82223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:07:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 53D82223AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 18345223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:10:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18345223AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ucw.cz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731117AbeKNIHv (ORCPT
+        id S1730971AbeKNIK3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 03:07:51 -0500
-Received: from foss.arm.com ([217.140.101.70]:35274 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726022AbeKNIHv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 03:07:51 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 3541880D;
-        Tue, 13 Nov 2018 14:07:40 -0800 (PST)
-Received: from blommer (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EC6873F718;
-        Tue, 13 Nov 2018 14:07:38 -0800 (PST)
-Date:   Tue, 13 Nov 2018 22:07:29 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Subject: Re: [PATCH v10 12/22] kasan, arm64: fix up fault handling logic
-Message-ID: <20181113220728.2h3kz67b2bz36wty@blommer>
-References: <cover.1541525354.git.andreyknvl@google.com>
- <4891a504adf61c0daf1e83642b6f7519328dfd5f.1541525354.git.andreyknvl@google.com>
- <20181108122228.xqwhpkjritrvqneq@lakrids.cambridge.arm.com>
- <CAAeHK+xPkbg_9P9oCkS-iB8S81vTxD3p5SbyWHy-vrp2ybkKmg@mail.gmail.com>
+        Wed, 14 Nov 2018 03:10:29 -0500
+Received: from atrey.karlin.mff.cuni.cz ([195.113.26.193]:34467 "EHLO
+        atrey.karlin.mff.cuni.cz" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbeKNIK2 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 03:10:28 -0500
+Received: by atrey.karlin.mff.cuni.cz (Postfix, from userid 512)
+        id 4921280734; Tue, 13 Nov 2018 23:10:13 +0100 (CET)
+Date:   Tue, 13 Nov 2018 23:10:14 +0100
+From:   Pavel Machek <pavel@ucw.cz>
+To:     Greg KH <gregkh@linuxfoundation.org>
+Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        linux-kernel@vger.kernel.org, linux-nvdimm@lists.01.org,
+        tj@kernel.org, akpm@linux-foundation.org, linux-pm@vger.kernel.org,
+        jiangshanlai@gmail.com, rafael@kernel.org, len.brown@intel.com,
+        zwisler@kernel.org, dan.j.williams@intel.com, dave.jiang@intel.com,
+        bvanassche@acm.org
+Subject: Re: [driver-core PATCH v6 2/9] async: Add support for queueing on
+ specific NUMA node
+Message-ID: <20181113221014.GB2235@amd>
+References: <154170028986.12967.2108024712555179678.stgit@ahduyck-desk1.jf.intel.com>
+ <154170041079.12967.13132220574997822111.stgit@ahduyck-desk1.jf.intel.com>
+ <20181111193208.GB8332@kroah.com>
+ <20181111195903.GA9726@amd>
+ <20181111203304.GA16871@kroah.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="aVD9QWMuhilNxW9f"
 Content-Disposition: inline
-In-Reply-To: <CAAeHK+xPkbg_9P9oCkS-iB8S81vTxD3p5SbyWHy-vrp2ybkKmg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181111203304.GA16871@kroah.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 04:01:27PM +0100, Andrey Konovalov wrote:
-> On Thu, Nov 8, 2018 at 1:22 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > On Tue, Nov 06, 2018 at 06:30:27PM +0100, Andrey Konovalov wrote:
-> >> show_pte in arm64 fault handling relies on the fact that the top byte of
-> >> a kernel pointer is 0xff, which isn't always the case with tag-based
-> >> KASAN.
-> >
-> > That's for the TTBR1 check, right?
-> >
-> > i.e. for the following to work:
-> >
-> >         if (addr >= VA_START)
-> >
-> > ... we need the tag bits to be an extension of bit 55...
-> >
-> >>
-> >> This patch resets the top byte in show_pte.
-> >>
-> >> Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> >> Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
-> >> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> >> ---
-> >>  arch/arm64/mm/fault.c | 3 +++
-> >>  1 file changed, 3 insertions(+)
-> >>
-> >> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> >> index 7d9571f4ae3d..d9a84d6f3343 100644
-> >> --- a/arch/arm64/mm/fault.c
-> >> +++ b/arch/arm64/mm/fault.c
-> >> @@ -32,6 +32,7 @@
-> >>  #include <linux/perf_event.h>
-> >>  #include <linux/preempt.h>
-> >>  #include <linux/hugetlb.h>
-> >> +#include <linux/kasan.h>
-> >>
-> >>  #include <asm/bug.h>
-> >>  #include <asm/cmpxchg.h>
-> >> @@ -141,6 +142,8 @@ void show_pte(unsigned long addr)
-> >>       pgd_t *pgdp;
-> >>       pgd_t pgd;
-> >>
-> >> +     addr = (unsigned long)kasan_reset_tag((void *)addr);
-> >
-> > ... but this ORs in (0xffUL << 56), which is not correct for addresses
-> > which aren't TTBR1 addresses to begin with, where bit 55 is clear, and
-> > throws away useful information.
-> >
-> > We could use untagged_addr() here, but that wouldn't be right for
-> > kernels which don't use TBI1, and we'd erroneously report addresses
-> > under the TTBR1 range as being in the TTBR1 range.
-> >
-> > I also see that the entry assembly for el{1,0}_{da,ia} clears the tag
-> > for EL0 addresses.
-> >
-> > So we could have:
-> >
-> > static inline bool is_ttbr0_addr(unsigned long addr)
-> > {
-> >         /* entry assembly clears tags for TTBR0 addrs */
-> >         return addr < TASK_SIZE_64;
-> > }
-> >
-> > static inline bool is_ttbr1_addr(unsigned long addr)
-> > {
-> >         /* TTBR1 addresses may have a tag if HWKASAN is in use */
-> >         return arch_kasan_reset_tag(addr) >= VA_START;
-> > }
-> >
-> > ... and use those in the conditionals, leaving the addr as-is for
-> > reporting purposes.
-> 
-> Actually it looks like 276e9327 ("arm64: entry: improve data abort
-> handling of tagged pointers") already takes care of both user and
-> kernel fault addresses and correctly removes tags from them. So I
-> think we need to drop this patch.
 
-The clear_address_tag macro added in that commit only removes tags from TTBR0
-addresses, so that's not sufficient if the kernel is used tagged addresses
-(which will be in the TTBR1 range).
+--aVD9QWMuhilNxW9f
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks,
-Mark.
-That commit only removes tags from TTBR0 addresses, 
+Hi!
+
+> > > > Signed-off-by: Alexander Duyck <alexander.h.duyck@linux.intel.com>
+> > > > ---
+> > >=20
+> > > No one else from Intel has reviewed/verified this code at all?
+> > >=20
+> > > Please take advantages of the resources you have that most people do
+> > > not, get reviewes from your coworkers please before you send this out
+> > > again, as they can give you valuable help before the community has to
+> > > review the code...
+> >=20
+> > We always said to companies we want to see code as soon as
+> > possible. You don't have to review their code, but discouraging the
+> > posting seems wrong.
+>=20
+> I have a long history of Intel using me for their basic "find the
+> obvious bugs" review process for new driver subsystems and core changes.
+> When I see new major patches show up from an Intel developer without
+> _any_ other review from anyone else, directed at me, I get suspicious it
+> is happening again.
+>=20
+> If you note, Intel is the _only_ company I say this to their developers
+> because of this problem combined with the fact that they have a whole
+> load of developers that they should be running things by first.
+>=20
+> And yes, to answer Dan's point, we do want to do review in public.  But
+> this is v6 of a core patchset and there has been NO review from anyone
+> else at Intel on this.  So if that review was going to happen, one would
+> have thought it would have by now, instead of relying on me to do it.
+>=20
+> And yes, I am grumpy, but I am grumpy because of the history here.  I am
+> not trying to discourage anything, only to take ADVANTAGE of resources
+> that almost no other company provides.
+>=20
+> Hope this helps explain my statement here.
+
+Thanks for explanation. I did not have same bad experience with Intel,
+so I did not understand what was going on.
+
+Best regards,
+
+									Pavel
+--=20
+(english) http://www.livejournal.com/~pavelmachek
+(cesky, pictures) http://atrey.karlin.mff.cuni.cz/~pavel/picture/horses/blo=
+g.html
+
+--aVD9QWMuhilNxW9f
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: Digital signature
+
+-----BEGIN PGP SIGNATURE-----
+Version: GnuPG v1
+
+iEYEARECAAYFAlvrS8YACgkQMOfwapXb+vKXDACfRF940tdVtPFWr2eNlsV9g5xo
+fPQAnAiV3u4EVf2YtSl7wU1bP7fIeP/X
+=PK1K
+-----END PGP SIGNATURE-----
+
+--aVD9QWMuhilNxW9f--
