@@ -2,261 +2,127 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF734C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:28:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F00DC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:29:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FC5D22419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:28:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FC5D22419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
+	by mail.kernel.org (Postfix) with ESMTP id 4ED3722419
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:29:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="rmy97wDN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4ED3722419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732545AbeKMV0A (ORCPT
+        id S1732614AbeKMV1D (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:26:00 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:34556 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732037AbeKMVZ7 (ORCPT
+        Tue, 13 Nov 2018 16:27:03 -0500
+Received: from esa1.microchip.iphmx.com ([68.232.147.91]:47164 "EHLO
+        esa1.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732037AbeKMV1C (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:25:59 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id B71ED18485;
-        Tue, 13 Nov 2018 12:28:14 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id CLUekswJ9N-s; Tue, 13 Nov 2018 12:28:13 +0100 (CET)
-Received: from boulder02.se.axis.com (boulder02.se.axis.com [10.0.8.16])
-        by bastet.se.axis.com (Postfix) with ESMTPS id 8D7AB18482;
-        Tue, 13 Nov 2018 12:28:13 +0100 (CET)
-Received: from boulder02.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 791631A064;
-        Tue, 13 Nov 2018 12:28:13 +0100 (CET)
-Received: from boulder02.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 63D461A062;
-        Tue, 13 Nov 2018 12:28:13 +0100 (CET)
-Received: from thoth.se.axis.com (unknown [10.0.2.173])
-        by boulder02.se.axis.com (Postfix) with ESMTP;
-        Tue, 13 Nov 2018 12:28:13 +0100 (CET)
-Received: from lnxartpec.se.axis.com (lnxartpec.se.axis.com [10.88.4.9])
-        by thoth.se.axis.com (Postfix) with ESMTP id 56FCB2F48;
-        Tue, 13 Nov 2018 12:28:13 +0100 (CET)
-Received: by lnxartpec.se.axis.com (Postfix, from userid 10564)
-        id 5278180AA6; Tue, 13 Nov 2018 12:28:13 +0100 (CET)
-From:   Vincent Whitchurch <vincent.whitchurch@axis.com>
-To:     linux@armlinux.org.uk, jeyu@kernel.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Vincent Whitchurch <rabinv@axis.com>
-Subject: [PATCH v3] ARM: module: Fix function kallsyms on Thumb-2
-Date:   Tue, 13 Nov 2018 12:27:45 +0100
-Message-Id: <20181113112745.15945-1-vincent.whitchurch@axis.com>
-X-Mailer: git-send-email 2.11.0
-X-TM-AS-GCONF: 00
+        Tue, 13 Nov 2018 16:27:02 -0500
+X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
+   d="scan'208";a="24030069"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Nov 2018 04:29:20 -0700
+Received: from NAM04-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.105) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Tue, 13 Nov 2018 04:29:20 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=daBDnN3ug48e/038GDMDyJG0vx4jS2TsNAxFsVEhaiQ=;
+ b=rmy97wDNQLLXAP+Wd404tvfIvhy+AY7Pye0ZpDmsyRB0A1ikyzTG3sM14DQlSYfx77wDYxq7RWADqtue2wm+e/loN9Bq6yrXfwmz3zGuHnoh9cCZmiBW+BJNfecAuW0AZB1vVBUCHzoqmo0FgjU6stRzFmjYF+/s94+2ciXDr3w=
+Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
+ BN6PR1101MB2353.namprd11.prod.outlook.com (10.173.200.151) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.21; Tue, 13 Nov 2018 11:29:16 +0000
+Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
+ ([fe80::c873:c197:d9d6:3bf6]) by BN6PR1101MB2243.namprd11.prod.outlook.com
+ ([fe80::c873:c197:d9d6:3bf6%6]) with mapi id 15.20.1294.045; Tue, 13 Nov 2018
+ 11:29:15 +0000
+From:   <Andrei.Stefanescu@microchip.com>
+To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
+        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>,
+        <Nicolas.Ferre@microchip.com>
+CC:     <Cristian.Birsan@microchip.com>, <Claudiu.Beznea@microchip.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <Andrei.Stefanescu@microchip.com>
+Subject: [PATCH 0/3] add support for MCP16502 PMIC
+Thread-Topic: [PATCH 0/3] add support for MCP16502 PMIC
+Thread-Index: AQHUe0QbkWE+TnSH1Eeh4ok4lo55tQ==
+Date:   Tue, 13 Nov 2018 11:29:15 +0000
+Message-ID: <1542108563-10108-1-git-send-email-andrei.stefanescu@microchip.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0701CA0067.eurprd07.prod.outlook.com
+ (2603:10a6:800:5f::29) To BN6PR1101MB2243.namprd11.prod.outlook.com
+ (2603:10b6:405:52::19)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Andrei.Stefanescu@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2353;6:TF+P4VGeIEP3dx2rnNunMWFILNC35nW4QhOmYHec7x/w6bhIIkhGx64XDceSTIV5KUlJMAEZTYZR0I4dkjgWvfAM7+6mGLK3FSIWmS1Bn9Df6ZVmKJquZabQL1bBK9kJCLtHm4opNEk8l9axus/LzSVBouorHKW+Jm4nz6tQ+d4bwdrPStGpEWavfst9t6aELHS14Mpms42PI0WI1TLk1Dy/vUbUt5baQAP5pUTBDpXF49q+r1BPcjfd/tse/R+FbLHGN5tnlZOgblRSbCP/x1+YtUE3OytH8Tbv9xXx5dlHTkQc07+JGajTynTsfLTEUF1p+zwKh4G3gOjjdr7lK4mNJR207+CZNgpGVza1oYS7uWn8FgUgirYYfzn0qUUk11i08NAGTvhHmTFgG2hw2fs2WhiovfsTNt20F5HipP+m/EsoBTSA1zO+xNN9Lv8cRIgvKMDnGFRDAdVM3+UWFw==;5:c1tnmC5ZiRqABpxPEUwpZsJzQzaLT0rh6zs9cTHcwlf+XX7vRr6JqfH4BMw1B+LWiGzNc+iZiZyVACgzGx9gVcjJgRNdV3C7bBZD40fnlJZayzS96TUkzgpeE4OThriBBRpTQ69qHoohMy5eY4soaj70DV+TRAB+LeRrwU8BfkU=;7:xy2UOyJXmNQGWeQWIIWunW9S0tf9QkJ3vYJN90CyUPqU1UXMX43B9BrzZWS9mtMrIR9I0hjAlwrSfX82W1TM7tcsv6QfUFr2zamhBIfptEyU+GEcYMnn/q0jyWWyYreI/wZ7KzCJb2+aDS2spk4h/w==
+x-ms-office365-filtering-correlation-id: ff279ad0-1f2e-4a16-18d1-08d6495b3e0a
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390060)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2353;
+x-ms-traffictypediagnostic: BN6PR1101MB2353:
+x-microsoft-antispam-prvs: <BN6PR1101MB2353304D09F7BAB800934BDCEDC20@BN6PR1101MB2353.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2353;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2353;
+x-forefront-prvs: 085551F5A8
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(366004)(136003)(396003)(199004)(189003)(36756003)(72206003)(305945005)(110136005)(54906003)(107886003)(14454004)(53936002)(8676002)(478600001)(7736002)(102836004)(106356001)(26005)(316002)(105586002)(6506007)(39060400002)(4326008)(86362001)(386003)(25786009)(97736004)(6436002)(2616005)(476003)(486006)(6486002)(2900100001)(68736007)(71190400001)(71200400001)(256004)(2906002)(66066001)(6116002)(8936002)(3846002)(6636002)(5660300001)(81156014)(81166006)(52116002)(99286004)(2501003)(6512007)(186003);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2353;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: qb0jMyaGYbRNJ6deSPN130wmUKqo+FiIyfDrCKifF0EqLxqnVWo4d6hgKg6VKAi0naXMLirU0y3SKc6HZtP4XnwVYTbR+cJSU0Pqb7qiAsyqpDjBDctBD8HusrPvDnKcMBloW8g23uBso603AbmgORQVylBnEIX4EpUnjkJ+mjGjjXsvtcWRUTp2nW3aWuySSZsC8bqwZdZfgTLNbuGfZe4W7RWSY0F2umATyf7Pfuv0hJhKxS1+C0GvWtMGcM2A9mAsxUA2u0ZKYtr7fGSewUtQmC07c/bmGYwHLZdOBrcNl4sH+gbEV3BK3r3rnhkAuh26WmjgSDoz0uD/yk7t+acH2bi4ZE+HnHcFJ/CIa4w=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: ff279ad0-1f2e-4a16-18d1-08d6495b3e0a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2018 11:29:15.7829
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2353
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thumb-2 functions have the lowest bit set in the symbol value in the
-symtab.  When kallsyms are generated for the vmlinux, the kallsyms are
-generated from the output of nm, and nm clears the lowest bit.
+MCP16502 is a Power Management IC from Microchip.
+It has 4 Buck outputs and 2 LDOs. The buck regulators
+can be used in two modes: normal(FPWM) and low-power(Auto PFM).
 
- $ arm-linux-gnueabihf-readelf -a vmlinux | grep show_interrupts
-  95947: 8015dc89   686 FUNC    GLOBAL DEFAULT    2 show_interrupts
- $ arm-linux-gnueabihf-nm vmlinux | grep show_interrupts
- 8015dc88 T show_interrupts
- $ cat /proc/kallsyms | grep show_interrupts
- 8015dc88 T show_interrupts
+This patch series adds support for the MCP16502 PMIC.
 
-However, for modules, the kallsyms uses the values in the symbol table
-without modification, so for functions in modules, the lowest bit is set
-in kallsyms.
+Andrei Stefanescu (3):
+  regulator: dt-bindings: add MCP16502 regulator bindings
+  MAINTAINERS: add maintainer for MCP16502 PMIC driver
+  regulator: mcp16502: add regulator driver for MCP16502
 
- $ arm-linux-gnueabihf-readelf -a drivers/net/tun.ko | grep tun_get_socket
-    268: 000000e1    44 FUNC    GLOBAL DEFAULT    2 tun_get_socket
- $ arm-linux-gnueabihf-nm drivers/net/tun.ko | grep tun_get_socket
- 000000e0 T tun_get_socket
- $ cat /proc/kallsyms | grep tun_get_socket
- 7fcd30e1 t tun_get_socket  [tun]
+ .../bindings/regulator/mcp16502-regulator.txt      | 107 +++++
+ MAINTAINERS                                        |   7 +
+ drivers/regulator/Kconfig                          |   9 +
+ drivers/regulator/Makefile                         |   1 +
+ drivers/regulator/mcp16502.c                       | 524 +++++++++++++++++=
+++++
+ 5 files changed, 648 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/regulator/mcp16502-re=
+gulator.txt
+ create mode 100644 drivers/regulator/mcp16502.c
 
-Because of this, the offset of the crashing instruction shown in oopses
-is incorrect when the crash is in a module.  For example, given a
-tun_get_socket which starts like this,
-
- 000000e0 <tun_get_socket>:
-       e0:       b500            push    {lr}
-       e2:       f7ff fffe       bl      0 <__gnu_mcount_nc>
-       e6:       4b08            ldr     r3, [pc, #32]
-       e8:       6942            ldr     r2, [r0, #20]
-       ea:       429a            cmp     r2, r3
-       ec:       d002            beq.n   f4 <tun_get_socket+0x14>
-
-a crash when tun_get_socket is called with NULL results in:
-
- PC is at tun_get_socket+0x7/0x2c [tun]
- pc : [<7fcdb0e8>]
-
-which can result in the incorrect line being reported by gdb if this
-symbol+offset is used there.  If the crash is on the first instruction
-of a function, the "PC is at" line would also report the symbol name of
-the preceding function.
-
-To solve this, introduce a weak module_kallsyms_symbol_value() function
-which arches can override to fix up these symbol values, and implement
-this for Thumb-2.  We need to move elf_type() to st_other so that the
-original value of st_info is preserved.
-
-After the fix:
-
- $ cat /proc/kallsyms | grep tun_get_socket
- 7fcd30e0 t tun_get_socket  [tun]
-
- PC is at tun_get_socket+0x8/0x2c [tun]
- pc : [<7fcdb0e8>]
-
-Signed-off-by: Vincent Whitchurch <vincent.whitchurch@axis.com>
----
-v3: Do not overwrite st_value
-v2: Fix build warning with !MODULES
-
- arch/arm/kernel/module.c     | 10 ++++++++++
- include/linux/moduleloader.h |  2 ++
- kernel/module.c              | 34 +++++++++++++++++++++-------------
- 3 files changed, 33 insertions(+), 13 deletions(-)
-
-diff --git a/arch/arm/kernel/module.c b/arch/arm/kernel/module.c
-index 3ff571c2c71c..89ab84a83600 100644
---- a/arch/arm/kernel/module.c
-+++ b/arch/arm/kernel/module.c
-@@ -336,6 +336,16 @@ static const Elf_Shdr *find_mod_section(const Elf32_Ehdr *hdr,
- extern void fixup_pv_table(const void *, unsigned long);
- extern void fixup_smp(const void *, unsigned long);
- 
-+#ifdef CONFIG_THUMB2_KERNEL
-+unsigned long module_kallsyms_symbol_value(Elf_Sym *sym)
-+{
-+	if (ELF_ST_TYPE(sym->st_info) == STT_FUNC)
-+		return sym->st_value & ~1;
-+
-+	return sym->st_value;
-+}
-+#endif
-+
- int module_finalize(const Elf32_Ehdr *hdr, const Elf_Shdr *sechdrs,
- 		    struct module *mod)
- {
-diff --git a/include/linux/moduleloader.h b/include/linux/moduleloader.h
-index 31013c2effd3..6395409b01a4 100644
---- a/include/linux/moduleloader.h
-+++ b/include/linux/moduleloader.h
-@@ -86,6 +86,8 @@ void module_arch_cleanup(struct module *mod);
- /* Any cleanup before freeing mod->module_init */
- void module_arch_freeing_init(struct module *mod);
- 
-+unsigned long module_kallsyms_symbol_value(Elf_Sym *sym);
-+
- #ifdef CONFIG_KASAN
- #include <linux/kasan.h>
- #define MODULE_ALIGN (PAGE_SIZE << KASAN_SHADOW_SCALE_SHIFT)
-diff --git a/kernel/module.c b/kernel/module.c
-index 49a405891587..5a588cfbb8f8 100644
---- a/kernel/module.c
-+++ b/kernel/module.c
-@@ -2682,7 +2682,7 @@ static void add_kallsyms(struct module *mod, const struct load_info *info)
- 
- 	/* Set types up while we still have access to sections. */
- 	for (i = 0; i < mod->kallsyms->num_symtab; i++)
--		mod->kallsyms->symtab[i].st_info
-+		mod->kallsyms->symtab[i].st_other
- 			= elf_type(&mod->kallsyms->symtab[i], info);
- 
- 	/* Now populate the cut down core kallsyms for after init. */
-@@ -3916,6 +3916,11 @@ static const char *symname(struct mod_kallsyms *kallsyms, unsigned int symnum)
- 	return kallsyms->strtab + kallsyms->symtab[symnum].st_name;
- }
- 
-+unsigned long __weak module_kallsyms_symbol_value(Elf_Sym *sym)
-+{
-+	return sym->st_value;
-+}
-+
- static const char *get_ksymbol(struct module *mod,
- 			       unsigned long addr,
- 			       unsigned long *size,
-@@ -3934,6 +3939,9 @@ static const char *get_ksymbol(struct module *mod,
- 	/* Scan for closest preceding symbol, and next symbol. (ELF
- 	   starts real symbols at 1). */
- 	for (i = 1; i < kallsyms->num_symtab; i++) {
-+		unsigned long thisval = module_kallsyms_symbol_value(&kallsyms->symtab[i]);
-+		unsigned long bestval = module_kallsyms_symbol_value(&kallsyms->symtab[best]);
-+
- 		if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
- 			continue;
- 
-@@ -3943,21 +3951,21 @@ static const char *get_ksymbol(struct module *mod,
- 		    || is_arm_mapping_symbol(symname(kallsyms, i)))
- 			continue;
- 
--		if (kallsyms->symtab[i].st_value <= addr
--		    && kallsyms->symtab[i].st_value > kallsyms->symtab[best].st_value)
-+		if (thisval <= addr
-+		    && thisval > bestval)
- 			best = i;
--		if (kallsyms->symtab[i].st_value > addr
--		    && kallsyms->symtab[i].st_value < nextval)
--			nextval = kallsyms->symtab[i].st_value;
-+		if (thisval > addr
-+		    && thisval < nextval)
-+			nextval = thisval;
- 	}
- 
- 	if (!best)
- 		return NULL;
- 
- 	if (size)
--		*size = nextval - kallsyms->symtab[best].st_value;
-+		*size = nextval - module_kallsyms_symbol_value(&kallsyms->symtab[best]);
- 	if (offset)
--		*offset = addr - kallsyms->symtab[best].st_value;
-+		*offset = addr - module_kallsyms_symbol_value(&kallsyms->symtab[best]);
- 	return symname(kallsyms, best);
- }
- 
-@@ -4060,8 +4068,8 @@ int module_get_kallsym(unsigned int symnum, unsigned long *value, char *type,
- 			continue;
- 		kallsyms = rcu_dereference_sched(mod->kallsyms);
- 		if (symnum < kallsyms->num_symtab) {
--			*value = kallsyms->symtab[symnum].st_value;
--			*type = kallsyms->symtab[symnum].st_info;
-+			*value = module_kallsyms_symbol_value(&kallsyms->symtab[symnum]);
-+			*type = kallsyms->symtab[symnum].st_other;
- 			strlcpy(name, symname(kallsyms, symnum), KSYM_NAME_LEN);
- 			strlcpy(module_name, mod->name, MODULE_NAME_LEN);
- 			*exported = is_exported(name, *value, mod);
-@@ -4082,7 +4090,7 @@ static unsigned long mod_find_symname(struct module *mod, const char *name)
- 	for (i = 0; i < kallsyms->num_symtab; i++)
- 		if (strcmp(name, symname(kallsyms, i)) == 0 &&
- 		    kallsyms->symtab[i].st_shndx != SHN_UNDEF)
--			return kallsyms->symtab[i].st_value;
-+			return module_kallsyms_symbol_value(&kallsyms->symtab[i]);
- 	return 0;
- }
- 
-@@ -4131,8 +4139,8 @@ int module_kallsyms_on_each_symbol(int (*fn)(void *, const char *,
- 			if (kallsyms->symtab[i].st_shndx == SHN_UNDEF)
- 				continue;
- 
--			ret = fn(data, symname(kallsyms, i),
--				 mod, kallsyms->symtab[i].st_value);
-+			ret = fn(data, symname(kallsyms, i), mod,
-+				 module_kallsyms_symbol_value(&kallsyms->symtab[i]));
- 			if (ret != 0)
- 				return ret;
- 		}
--- 
-2.11.0
+--=20
+2.7.4
 
