@@ -2,143 +2,158 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C67DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:32:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ADBFC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:32:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6138D2250E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:32:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D765422419
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:32:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="XTjQzpe1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6138D2250E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="H/MV6fiB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D765422419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731652AbeKMT30 (ORCPT
+        id S1731668AbeKMT3g (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 14:29:26 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:39450 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731271AbeKMT30 (ORCPT
+        Tue, 13 Nov 2018 14:29:36 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:37641 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731271AbeKMT3f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 14:29:26 -0500
-Received: by mail-ot1-f65.google.com with SMTP id g27so10700674oth.6
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 01:32:12 -0800 (PST)
+        Tue, 13 Nov 2018 14:29:35 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p6-v6so5725435pll.4
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 01:32:22 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=KcuopUe8+golCkSVu4l0ldOgD6hHzm9csnMSHD/yrNs=;
-        b=XTjQzpe1LLyxOvaodojWLesEEgtS/JYJHBkKfIM1MUvZOAqBtRlKrKvql6YG8D7ZDC
-         QHnIcwnPvJBu+qlKwcdyCOrNLbjbIqP5IO5FTCsskli7PCPMvw2lBvLes7xppRC4P1Mp
-         YjZIZgpWLEnldnoPOR0RLzg/E76IkPbfFCEJE=
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=fSR/dgGGAx64INZQhuJJoz0fYjyw+R3P/dJMarV8PZs=;
+        b=H/MV6fiBX7ArMsF9B5XAAx2+AuQC7fTMA6ePnj9hWQkaXgUk3K89AgPfF67x+IEdpL
+         0F8s3RKDvJScUuCgv4SCn2Rj6c3yn6wn9U/hCjFBxNrkn7XVjusYVypEtedzkoHl5bez
+         gJ6ZFyDF5IPMDhpffF5lAtfLRkMkZQhUk36/Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=KcuopUe8+golCkSVu4l0ldOgD6hHzm9csnMSHD/yrNs=;
-        b=VQiua6enEl2Ak8iL3Zn6aAegvJqpQ90wNwqZTMzEMIi4qcxBDPY2d2AkNlrbu6Irgi
-         RwdCokfEMvfvXdb2s97j6gh4KDSfkH5zmqNnjMklalaalurhug/O5OBT87u85v7ADCzf
-         xwWEekL9hyDpe+lwbsuETB0gMlgItgA9kf+OVHUF7PBWyUBc0T5fH1AskNeDnULGV/ge
-         8CCW3vX4M7wZQFaYY1ZuuYyEj6MFG4vZ/o9/BZIUopgA3oq0YEYBm83FE83vVWu2ouoA
-         tMtyFgfhr1wZ5TNrmiLLhGXxeeUvZMVbWTu92Dx8qSyMJMR6mPcnUYX7Fo/4+owHi0T+
-         prCg==
-X-Gm-Message-State: AGRZ1gJh9g+iQPllJNcqhKyZdahaWZwCT5bbCq/qgA9qs+dmwT8c56KK
-        xmBQw1EakxJvonyerCiG2kzbNPAc5U2GUg==
-X-Google-Smtp-Source: AJdET5clfwSDaixKBx/f52d4UM+DsXU+bL4j+bPqQdhvyL+ybY3r2kEmf4CDgiEQMAhHylDMMMk2Uw==
-X-Received: by 2002:a9d:76c8:: with SMTP id p8mr2489161otl.113.1542101531614;
-        Tue, 13 Nov 2018 01:32:11 -0800 (PST)
-Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com. [209.85.210.43])
-        by smtp.gmail.com with ESMTPSA id z16sm6796659otc.22.2018.11.13.01.32.10
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 01:32:10 -0800 (PST)
-Received: by mail-ot1-f43.google.com with SMTP id z33so10685354otz.11
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 01:32:10 -0800 (PST)
-X-Received: by 2002:a9d:1715:: with SMTP id i21mr2552850ota.149.1542101530126;
- Tue, 13 Nov 2018 01:32:10 -0800 (PST)
-MIME-Version: 1.0
-References: <1538222432-25894-1-git-send-email-sgorle@codeaurora.org>
- <1538222432-25894-6-git-send-email-sgorle@codeaurora.org> <a331a717-199d-6d6c-c88d-54f911b942d4@linaro.org>
- <CAPBb6MVio_kYK-P+eASFMzdxbvBMWwQC7-ZjPxP3aaqpMsnEdA@mail.gmail.com> <3097b9b9-e065-e42f-5b19-849313df38c2@linaro.org>
-In-Reply-To: <3097b9b9-e065-e42f-5b19-849313df38c2@linaro.org>
-From:   Alexandre Courbot <acourbot@chromium.org>
-Date:   Tue, 13 Nov 2018 18:31:58 +0900
-X-Gmail-Original-Message-ID: <CAPBb6MWS9aDMTVwG3cdSq-p=tU-1qhTSj5seXFwDBFROpDrhRw@mail.gmail.com>
-Message-ID: <CAPBb6MWS9aDMTVwG3cdSq-p=tU-1qhTSj5seXFwDBFROpDrhRw@mail.gmail.com>
-Subject: Re: [PATCH v1 5/5] media: venus: update number of bytes used field
- properly for EOS frames
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     sgorle@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        linux-arm-msm@vger.kernel.org, vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=fSR/dgGGAx64INZQhuJJoz0fYjyw+R3P/dJMarV8PZs=;
+        b=YWLWQsBGfF23NbQRjEDV5Dwpk0/78e49VJh7UTEY0HivrVqp1XOA1/U91gUDeQzy7B
+         z1dzwJxDSwSgnBNhMK2ODsNn+zlnn11EU4S9Z8sk4ekPpY5SFXnkkhg3Bv5ATjADIx6h
+         fx11WbX6976DcqCdyAqJN8/SEH5jDP2Y9eTtzeuEBaFo0ZUB9uSRydPxZmCADGvTju0y
+         LjDlgs4u5FcOyzHwsnIJBodE2Glrb3oVpqaNT+ccNF9pAnnDfbYtwyR0s1J0xAvYgJ31
+         9/av+i1a0xgi/mgzAI9r4ZnCbniM2n50+tyXu0GYkNycCkJPkDJyNq33KjolpvuWNsXF
+         r3JA==
+X-Gm-Message-State: AGRZ1gLEmha9goeamnPwCo7ldhIuaAsks1EBRCdDWQuRO/sItVCX2EDq
+        ydVHJw1WnYEjU+E7IFckS7m5wA==
+X-Google-Smtp-Source: AJdET5eF7t8+8OAbO8iFfEgCKtghCh++5aempIPawzU5L2FB9ZHUEtobKZjATJ9BjFQxMCMVBfNdZA==
+X-Received: by 2002:a17:902:6a4:: with SMTP id 33-v6mr4417208plh.268.1542101541723;
+        Tue, 13 Nov 2018 01:32:21 -0800 (PST)
+Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id u6sm19902462pgr.79.2018.11.13.01.32.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 13 Nov 2018 01:32:20 -0800 (PST)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     linux-alpha@vger.kernel.org, Richard Henderson <rth@twiddle.net>,
+        Ivan Kokshaysky <ink@jurassic.park.msu.ru>,
+        Matt Turner <mattst88@gmail.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH v3 0/5] alpha: system call table generation support
+Date:   Tue, 13 Nov 2018 15:01:48 +0530
+Message-Id: <1542101513-22010-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 9:20 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Hi Alex,
->
-> On 11/12/18 10:12 AM, Alexandre Courbot wrote:
-> > Hi Stan,
-> >
-> > On Thu, Nov 8, 2018 at 7:16 PM Stanimir Varbanov
-> > <stanimir.varbanov@linaro.org> wrote:
-> >>
-> >> Hi,
-> >>
-> >> On 9/29/18 3:00 PM, Srinu Gorle wrote:
-> >>> - In video decoder session, update number of bytes used for
-> >>>   yuv buffers appropriately for EOS buffers.
-> >>>
-> >>> Signed-off-by: Srinu Gorle <sgorle@codeaurora.org>
-> >>> ---
-> >>>  drivers/media/platform/qcom/venus/vdec.c | 2 +-
-> >>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> NACK, that was already discussed see:
-> >>
-> >> https://patchwork.kernel.org/patch/10630411/
-> >
-> > I believe you are referring to this discussion?
-> >
-> > https://lkml.org/lkml/2018/10/2/302
-> >
-> > In this case, with https://patchwork.kernel.org/patch/10630411/
-> > applied, I am seeing the troublesome case of having the last (empty)
-> > buffer being returned with a payload of obs_sz, which I believe is
-> > incorrect. The present patch seems to restore the correct behavior.
->
-> Sorry, I thought that this solution was suggested (and tested on Venus
-> v4) by you, right?
+The purpose of this patch series is, we can easily
+add/modify/delete system call table support by cha-
+nging entry in syscall.tbl file instead of manually
+changing many files. The other goal is to unify the
+system call table generation support implementation
+across all the architectures.
 
-That's correct. >_< Looks like I overlooked this case.
+The system call tables are in different format in
+all architecture. It will be difficult to manually
+add, modify or delete the system calls in the resp-
+ective files manually. To make it easy by keeping a
+script and which'll generate uapi header file and
+syscall table file.
 
->
-> >
-> > An alternative would be to set the payload as follows:
-> >
-> > vb2_set_plane_payload(vb, 0, bytesused);
-> >
-> > This works for SDM845, but IIRC we weren't sure that this would
-> > display the correct behavior with all firmware versions?
->
-> OK if you are still seeing issues I think we can switch to
-> vb2_set_plane_payload(vb, 0, bytesused); for all buffers? I.e. not only
-> for buffers with flag V4L2_BUF_FLAG_LAST set.
+syscall.tbl contains the list of available system
+calls along with system call number and correspond-
+ing entry point. Add a new system call in this arch-
+itecture will be possible by adding new entry in the
+syscall.tbl file.
 
-That's the fix I am currently using in my source tree and it indeed
-seems to be ok. I also agree it is better than special-casing EOS
-buffers. I have sent a patch for this.
+Adding a new table entry consisting of:
+        - System call number.
+        - ABI.
+        - System call name.
+        - Entry point name.
 
-Thanks and sorry for the confusion.
+ARM, s390 and x86 architecuture does exist the sim-
+ilar support. I leverage their implementation to
+come up with a generic solution.
+
+I have done the same support for work for ia64, m68k, 
+microblaze, mips, parisc, powerpc, sh, sparc and xtensa.
+Below mentioned git repository contains more details
+about the workflow.
+
+https://github.com/frzkhn/system_call_table_generator/
+
+Finally, this is the ground work to solve the Y2038
+issue. We need to add two dozen of system calls to
+solve Y2038 issue. So this patch series will help to
+add new system calls easily by adding new entry in
+the syscall.tbl.
+
+changes since v2:
+ - changed from generic-y to generated-y in Kbuild.
+ - made changes in syscall.tbl for removing entry - 
+   alpha_ni_syscall.
+
+changes since v1:
+ - optimized/updated the syscall table generation
+   scripts.
+ - fixed all mixed indentation issues in syscall.tbl.
+ - added "comments" in syscall.tbl.
+ - enclosed __NR_sycalls macro with __KERNEL__.
+ - added missing new line.
+
+Firoz Khan (5):
+  alpha: move __IGNORE* entries to non uapi header
+  alpha: remove CONFIG_OSF4_COMPAT flag from syscall table
+  alpha: add __NR_syscalls along with NR_SYSCALLS
+  alpha: add system call table generation support
+  alpha: generate uapi header and syscall table header files
+
+ arch/alpha/Makefile                      |   3 +
+ arch/alpha/include/asm/Kbuild            |   2 +-
+ arch/alpha/include/asm/unistd.h          |  23 +-
+ arch/alpha/include/uapi/asm/Kbuild       |   1 +
+ arch/alpha/include/uapi/asm/unistd.h     | 484 +--------------------------
+ arch/alpha/kernel/osf_sys.c              |   9 +-
+ arch/alpha/kernel/syscalls/Makefile      |  38 +++
+ arch/alpha/kernel/syscalls/syscall.tbl   | 453 ++++++++++++++++++++++++++
+ arch/alpha/kernel/syscalls/syscallhdr.sh |  36 ++
+ arch/alpha/kernel/syscalls/syscalltbl.sh |  32 ++
+ arch/alpha/kernel/systbls.S              | 542 +------------------------------
+ 11 files changed, 596 insertions(+), 1027 deletions(-)
+ create mode 100644 arch/alpha/kernel/syscalls/Makefile
+ create mode 100644 arch/alpha/kernel/syscalls/syscall.tbl
+ create mode 100644 arch/alpha/kernel/syscalls/syscallhdr.sh
+ create mode 100644 arch/alpha/kernel/syscalls/syscalltbl.sh
+
+-- 
+1.9.1
+
