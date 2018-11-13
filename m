@@ -2,139 +2,140 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2066C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00E22C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:39:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9747C20896
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:39:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B814B2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:39:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GanTvwju"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9747C20896
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="qsQPpXPj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B814B2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387743AbeKNBhj (ORCPT
+        id S2387845AbeKNBht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:37:39 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:47744 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726932AbeKNBhj (ORCPT
+        Tue, 13 Nov 2018 20:37:49 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45432 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726932AbeKNBht (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:37:39 -0500
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181113153900euoutp0182c35984e8cabb4c47aef6ed8c08bb3f~muTCHJzaR1163911639euoutp01D;
-        Tue, 13 Nov 2018 15:39:00 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181113153900euoutp0182c35984e8cabb4c47aef6ed8c08bb3f~muTCHJzaR1163911639euoutp01D
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542123540;
-        bh=TQ8VtZmvIHLdVstCwUNJPazAP1X+yjIsSYbTQCqoQ7A=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=GanTvwjuZZxUDorMUofvXHUOMUkgUiFlsq2hwmHoo3hBLODBuD0Xf9onh8f36g1Tr
-         Qrx5QdvHUFkyt9ZzT9oR7uvrF1N7Rj08NzUmB7R3XJStYtTk3AS+Z83NCNGDuiOoN5
-         Ete6oYbyxviTmEzGAfAwouBhDDATT0vdzMvfgH7g=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181113153900eucas1p2e44118562a5b3f8143389fbac1358914~muTBt5jJO1887018870eucas1p2X;
-        Tue, 13 Nov 2018 15:39:00 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges2new.samsung.com (EUCPMTA) with SMTP id BB.94.04294.310FAEB5; Tue, 13
-        Nov 2018 15:38:59 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181113153859eucas1p1dfc17519a7e960096d2888e47ab18dd8~muTBAx8EI1617116171eucas1p1G;
-        Tue, 13 Nov 2018 15:38:59 +0000 (GMT)
-X-AuditID: cbfec7f4-835ff700000010c6-89-5beaf0136c66
-Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id E7.DA.04128.210FAEB5; Tue, 13
-        Nov 2018 15:38:58 +0000 (GMT)
-Received: from AMDC2765.digital.local ([106.116.147.25]) by
-        eusync1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
-        (built May  5 2014)) with ESMTPA id <0PI50040T24VKX20@eusync1.samsung.com>;
-        Tue, 13 Nov 2018 15:38:58 +0000 (GMT)
-From:   Marek Szyprowski <m.szyprowski@samsung.com>
-To:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Subject: [PATCH] extcon: max8997: Fix lack of path setting in USB device
- mode
-Date:   Tue, 13 Nov 2018 16:38:47 +0100
-Message-id: <20181113153847.14732-1-m.szyprowski@samsung.com>
-X-Mailer: git-send-email 2.17.1
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7djP87rCH15FG1zer2exccZ6VovrX56z
-        Wpw/v4Hd4vKuOWwWM87vY7JYe+Quu8XtxhVsDuwem1Z1snn0bVnF6PF5k1wAcxSXTUpqTmZZ
-        apG+XQJXxrfOBUwFS7krLh/exdbAuIizi5GTQ0LAROLmmcuMXYxcHEICKxgl5jy6wArhfGaU
-        +D55DTNM1ezHD6GqljFK3HnVxA6SEBJoYJK49tcaxGYTMJToetvFBmKLCDhL3P7wjQXEZhZ4
-        yCix5aoCiC0s4C/x7loL2FAWAVWJDauWsILYvAK2EgvuXWWDWCYvsXrDAajFN1kljhzig7Bd
-        JGb/XsQCYQtLvDq+hR3ClpG4PLmbBeQ4CYFmRon2GbPYIZweRomtc3ZATbWWOHz8IivERXwS
-        k7ZNB9rAARTnlehoE4Io8ZDY2biHCeKxWImNRz8yTWCUWMDIsIpRPLW0ODc9tdgoL7Vcrzgx
-        t7g0L10vOT93EyMwpk7/O/5lB+OuP0mHGAU4GJV4eB/ceBUtxJpYVlyZe4hRgoNZSYRX4RlQ
-        iDclsbIqtSg/vqg0J7X4EKM0B4uSOG81w4NoIYH0xJLU7NTUgtQimCwTB6dUA2OFmseq4JhZ
-        Irujaj56S248uu9DVDzf0wTZDpsHNtvXvWZdzhb2oDxCv+WMZGe4dtJRR9Psf9d7ZxYV/OS8
-        07HkeZJmvnkZx+tc1/6mWp91jKUCx5X26FUWNLdGnzptc/Pwta0MbdEGwg5BC2pDu4ylA6+d
-        kej/Jvzp55HpvvOT3mbuFo8OVWIpzkg01GIuKk4EAKLMt46lAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGJMWRmVeSWpSXmKPExsVy+t/xy7pCH15FG6xYZWOxccZ6VovrX56z
-        Wpw/v4Hd4vKuOWwWM87vY7JYe+Quu8XtxhVsDuwem1Z1snn0bVnF6PF5k1wAcxSXTUpqTmZZ
-        apG+XQJXxrfOBUwFS7krLh/exdbAuIizi5GTQ0LARGL244eMXYxcHEICSxgleh/+YoNwmpgk
-        lr46zQZSxSZgKNH1tgvMFhFwlrj94RsLSBGzwENGiVdbjjCCJIQFfCW2rFgLZrMIqEpsWLWE
-        FcTmFbCVWHDvKhvEOnmJ1RsOME9g5FrAyLCKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMj0Pfb
-        jv3csoOx613wIUYBDkYlHt4HN15FC7EmlhVX5h5ilOBgVhLhVXgGFOJNSaysSi3Kjy8qzUkt
-        PsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cDIyPs6X3ZeXt3Kf9G7OjPEzbN0jSq1
-        ynIv1qjknXBNz4ny4+q9k5wiEFnhUeL+IuSA07VFLwuvimkx9D8/b+f2KvPDLefIZVrqqe5f
-        ze4/kxJkmSHG8mf1g3gPrh6WF523iydtFawKW/LgPo+T9fWsdUYvE589kTKfXP5+bv8ZrTOu
-        80PKK5VYijMSDbWYi4oTAel4BOX5AQAA
-X-CMS-MailID: 20181113153859eucas1p1dfc17519a7e960096d2888e47ab18dd8
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181113153859eucas1p1dfc17519a7e960096d2888e47ab18dd8
-References: <CGME20181113153859eucas1p1dfc17519a7e960096d2888e47ab18dd8@eucas1p1.samsung.com>
+        Tue, 13 Nov 2018 20:37:49 -0500
+Received: by mail-io1-f68.google.com with SMTP id w7so1528958iom.12;
+        Tue, 13 Nov 2018 07:39:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jSIJ+oKbA1WotNsQCWWl1qO+2qp88o+N6SAZHL37ang=;
+        b=qsQPpXPjUXnbRphMNbROnbtE9gQi4UUn228kO/kkx0bY+irAtFmilzjHummMoTs6oj
+         DSDRonAziEwiO7Det4zBfHqG8AsE2pX4ZaAO0MV6qaQjImLCARdu1ExV0JzDdRRh59oU
+         usb0OX7ZQ5Wq9X/mPImhd58inZXEYEShngUIpYkevV4v95AYwG8khZRohPKiBPd2eD7D
+         ZbVZLE8AsAyOrUbrauDwrrgA8is9kOHggI1AFZ2jJ4IVzLx7LqT/zyAssS96eR8xDOSU
+         /y1m+/4tY+ovfkS39NCD0aLTJFldJncGypNJnfoEyzhHQm3rI/IXdj2uCOJEcwF28s7Y
+         TBOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jSIJ+oKbA1WotNsQCWWl1qO+2qp88o+N6SAZHL37ang=;
+        b=as+Nz06lMrqieT7kUQNXukMNf4GzIEfvMF6tGVgRFlNFprURdVqrSHsLnwwnULQ8Ps
+         VfPg/EEtaNVmRNKTxPSqXxR3hCCG6uO6yIHytzj0ml5ht4tZg2ogqjR9KJ67kSOJ4vsE
+         6XwnmT0M/vQ/jmDRnZ+b3sye2PLmvYYnVF9PU+mppjpMsCkMBDutSKwJZGzL7Tu5KWtV
+         Za+HCfY2Z6G0UG4X1qZfr323I54O/kimwP9dEF7pCn0xhhO/A1sPkDRh49dw65Al+IA0
+         RPNQbjczJ2zY72AaHVGWz8Z81vH3X54p7EE/RfIHZuy8jOJslcm8VFckg2005QjWmWyn
+         hJRQ==
+X-Gm-Message-State: AGRZ1gIdgypPTU735dTTlhWwFScPEdtHCYYzEONyqMoQb5/Xd4QBr++Z
+        IKKn+nuno/jLrDty/oY6BvatnY/jCn6jKxqZ0Ws=
+X-Google-Smtp-Source: AJdET5cPF4hn5erMbhrxRplgJ0U/+CxA+U/9a/+PDCd9eWraM44pGaKcFABuoj366kqxVRnCGQroxW9DCXw6OmtWg9U=
+X-Received: by 2002:a6b:d117:: with SMTP id l23-v6mr4401302iob.146.1542123550491;
+ Tue, 13 Nov 2018 07:39:10 -0800 (PST)
+MIME-Version: 1.0
+References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
+ <20181112160628.86620-5-mika.westerberg@linux.intel.com> <CA+CmpXvZJFk=kYvZybgTtqDWBVP_jSE37tdkQbyGA8U9WOrkoQ@mail.gmail.com>
+ <20181113105558.GR2500@lahna.fi.intel.com> <CA+CmpXtre+A-sNT0XBWfdkuq9xJ+j34EGZ0nEpahJCSe3Kvg9A@mail.gmail.com>
+ <20181113114020.GV2500@lahna.fi.intel.com> <CA+CmpXt1cfqjz94=WsggKpNCUw3761-cewa_HTa0ETcYK7o+Hw@mail.gmail.com>
+ <20181113152038.GD2500@lahna.fi.intel.com>
+In-Reply-To: <20181113152038.GD2500@lahna.fi.intel.com>
+From:   Yehezkel Bernat <yehezkelshb@gmail.com>
+Date:   Tue, 13 Nov 2018 17:38:53 +0200
+Message-ID: <CA+CmpXteN1PJEHMV8rvfeBXK6Eb4z6BgZwa8Ojavi1y9pKN-jA@mail.gmail.com>
+Subject: Re: [PATCH 4/4] thunderbolt: Export IOMMU based DMA protection
+ support to userspace
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     iommu@lists.linux-foundation.org, joro@8bytes.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        baolu.lu@linux.intel.com, ashok.raj@intel.com,
+        Bjorn Helgaas <bhelgaas@google.com>, rjw@rjwysocki.net,
+        jacob.jun.pan@intel.com, Andreas Noever <andreas.noever@gmail.com>,
+        michael.jamet@intel.com, lukas@wunner.de,
+        Christian Kellner <ckellner@redhat.com>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-MAX8997 driver disables automatic path selection from MicroUSB connector
-and manually sets path to either UART or USB lines. However the code for
-setting USB path worked only for USB host mode (when ID pin is set
-to ground). When standard USB cable (USB device mode) is connected, path
-registers are not touched. This means that once the non-USB accessory is
-connected to MAX8997-operated micro USB port, the path is no longer set
-to USB and USB device mode doesn't work. This patch fixes it by setting
-USB path both for USB and USB host modes.
+On Tue, Nov 13, 2018 at 5:20 PM Mika Westerberg
+<mika.westerberg@linux.intel.com> wrote:
+>
+> On Tue, Nov 13, 2018 at 04:42:58PM +0200, Yehezkel Bernat wrote:
+> > On Tue, Nov 13, 2018 at 1:40 PM Mika Westerberg
+> > <mika.westerberg@linux.intel.com> wrote:
+> > >
+> > > On Tue, Nov 13, 2018 at 01:13:31PM +0200, Yehezkel Bernat wrote:
+> > > > On Tue, Nov 13, 2018 at 12:56 PM Mika Westerberg
+> > > > <mika.westerberg@linux.intel.com> wrote:
+> > > > >
+> > > > > > Just one point:
+> > > > > > Have you considered the option to add this property per (TBT?) device?
+> > > > >
+> > > > > No. ;-)
+> > > > >
+> > > > > You mean that one device uses security levels and another IOMMU? I don't
+> > > > > think it is possible without having some sort of table in the IOMMU
+> > > > > driver telling which devices it needs identity map and which not. Also
+> > > > > not sure what would be the benefit?
+> > > >
+> > > > For performance, of course. If some devices are considered safe (maybe a list
+> > > > communicated by platform firmware), the kernel may decide to configure them to
+> > > > passthrough the IOMMU (I think I remember there is such an option, but maybe I'm
+> > > > wrong.)
+> > >
+> > > At least I'm not aware of such an option. Windows for example enables
+> > > IOMMU for everything and I think macOS does the same. In Linux (with
+> > > these patches) we put all internal devices already passthrough mode so
+> > > things like internal graphics should not be affected. eGPUs are
+> > > different thing, though.
+> >
+> > So your point here is "currently we do the IOMMU decisions system-wide; we can
+> > always add a per-device attribute if needed"?
+>
+> Well, let me elaborate a bit :) I think it is possible to put certain
+> devices into IOMMU passthrough mode even if they are "external" but I'm
+> not that familiar with the guts of Intel IOMMU (Baolu or Ashok are the
+> experts). Assuming it is possible we could have a table or similar in
+> the kernel that can be used to identify devices that are allowed to be
+> in passthrough mode.
+>
+> I'm not sure if it can be per-device sysfs attribute because at the time
+> the PCIe device is enumerated it is already put to its IOMMU group.
 
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
----
- drivers/extcon/extcon-max8997.c | 10 ++++------
- 1 file changed, 4 insertions(+), 6 deletions(-)
+Good point. But I thought about per-TBT-device decision. If the platform is
+configured for IOMMU+"user" security level, while approving the device the user
+may want to set also in which IOMMU group to put all the PCIe devices connected
+to it. The same goes if kernel is supposed to auto-approve such devices based on
+an internal table. The point is that we can think on a configuration where the
+devices aren't tunneled yet and the decision about IOMMU can still be changed.
 
-diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
-index 632192d027bf..172e116ac1ce 100644
---- a/drivers/extcon/extcon-max8997.c
-+++ b/drivers/extcon/extcon-max8997.c
-@@ -311,12 +311,10 @@ static int max8997_muic_handle_usb(struct max8997_muic_info *info,
- {
- 	int ret = 0;
- 
--	if (usb_type == MAX8997_USB_HOST) {
--		ret = max8997_muic_set_path(info, info->path_usb, attached);
--		if (ret < 0) {
--			dev_err(info->dev, "failed to update muic register\n");
--			return ret;
--		}
-+	ret = max8997_muic_set_path(info, info->path_usb, attached);
-+	if (ret < 0) {
-+		dev_err(info->dev, "failed to update muic register\n");
-+		return ret;
- 	}
- 
- 	switch (usb_type) {
--- 
-2.17.1
-
+As you mentioned this isn't the common configuration anyway, so it probably
+doesn't worth all this hassle.
