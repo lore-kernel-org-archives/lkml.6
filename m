@@ -2,154 +2,285 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66D26C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:49:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 644DFC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:51:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11D4E21780
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:49:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11D4E21780
+	by mail.kernel.org (Postfix) with ESMTP id 1757021780
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:51:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LWi+S4CW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1757021780
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730830AbeKNEsn (ORCPT
+        id S1728819AbeKNEug (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:48:43 -0500
-Received: from mail-wr1-f68.google.com ([209.85.221.68]:39676 "EHLO
-        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726612AbeKNEsn (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:48:43 -0500
-Received: by mail-wr1-f68.google.com with SMTP id b13so14480681wrx.6
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 10:49:19 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=axpG6rzE7l/3qR0YkiVIhOuz2ldr2WJwHJpqxgxardQ=;
-        b=E8YI01exCW7KhAPauOjaLbdT47P0mo/viI6BDQb7YThc35kuYBM43n+pEdIoErCPTy
-         iEFlan6REeljWnfiDFhRBvOFEHIz3UhE8H9efIhnT7NYk1HcFki2s00sKRgeOuPYla4H
-         Dp55AtptHDYYwvxR/9M93Tefn7u9UzTGOc0JmViNwxfpLBVbQflAXxCEwORlwZnaQkrN
-         o45sxfQ1BvyAuZrzawk4OZ+TcPhP22qG1nsSI7fIvBesK3bAz33buNhbu7XjsZiv9D3T
-         bJV18KEq64Cku+DbO3ncNv9I0mrKa23vYJuUT+OfaTcKbWBMLUd9gTVgEUNAKjduTSZQ
-         /07w==
-X-Gm-Message-State: AGRZ1gImYAELx2ZuH11ldlBKoyVZaD68N0l0Dk2boVzqYYRZlT/QCKOM
-        coJVFyu8Dkbv2Ykg5b8EMSM=
-X-Google-Smtp-Source: AJdET5ePO/C8G4VSiB7eoZf+D29DIDFhYy6NYq1ehm+ziUerBQag6Hmjw6CgM+EVFNewFvAGjJawdA==
-X-Received: by 2002:adf:fe05:: with SMTP id n5-v6mr6028406wrr.116.1542134958874;
-        Tue, 13 Nov 2018 10:49:18 -0800 (PST)
-Received: from tiehlicka.suse.cz (ip-37-188-247-207.eurotel.cz. [37.188.247.207])
-        by smtp.gmail.com with ESMTPSA id y138sm7228308wmc.16.2018.11.13.10.49.16
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 10:49:17 -0800 (PST)
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Thomas Gleixner <tglx@linutronix.de>
-Cc:     Jiri Kosina <jkosina@suse.cz>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Andi Kleen <ak@linux.intel.com>, Borislav Petkov <bp@suse.de>,
-        LKML <linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: [PATCH] l1tf: drop the swap storage limit restriction when l1tf=off
-Date:   Tue, 13 Nov 2018 19:49:10 +0100
-Message-Id: <20181113184910.26697-1-mhocko@kernel.org>
-X-Mailer: git-send-email 2.19.1
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Tue, 13 Nov 2018 23:50:36 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47246 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726659AbeKNEug (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 23:50:36 -0500
+Received: from localhost.localdomain (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4CC1721780;
+        Tue, 13 Nov 2018 18:51:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542135071;
+        bh=DULKW9dMY4sHRKiQgDFnDcTDDr1kp0+/nDIcRryivT0=;
+        h=From:To:Cc:Subject:Date:From;
+        b=LWi+S4CWondd/DgRVJkk6SjEl4uxetYJPhaa5/CRMvisdOtW/LYmNzliBNFZFtrR0
+         6Hq94xZRS2mhibu6l5n0aY5HlabwWz0KufmzPcoHnvN/Mp0B8VGGSRBsyGj6V8A4EP
+         5LDs4rufdevu8iXBFH1yv0Y+pfhxuUYsnL07Hm6I=
+From:   Dinh Nguyen <dinguyen@kernel.org>
+To:     p.zabel@pengutronix.de
+Cc:     dinguyen@kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCHv4] reset: socfpga: add an early reset driver for SoCFPGA
+Date:   Tue, 13 Nov 2018 12:50:48 -0600
+Message-Id: <20181113185048.8538-1-dinguyen@kernel.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Michal Hocko <mhocko@suse.com>
+Create a separate reset driver that uses the reset operations in
+reset-simple. The reset driver for the SoCFPGA platform needs to
+register early in order to be able bring online timers that needed
+early in the kernel bootup.
 
-Swap storage is restricted to max_swapfile_size (~16TB on x86_64)
-whenever the system is deemed affected by L1TF vulnerability. Even
-though the limit is quite high for most deployments it seems to be
-too restrictive for deployments which are willing to live with the
-mitigation disabled.
+We do not need this early reset driver for Stratix10, because on
+arm64, Linux does not need the timers are that in reset. Linux is
+able to run just fine with the internal armv8 timer. Thus, we use
+a new binding "altr,stratix10-rst-mgr" for the Stratix10 platform.
+The Stratix10 platform will continue to use the reset-simple platform
+driver, while the 32-bit platforms(Cyclone5/Arria5/Arria10) will use
+the early reset driver.
 
-We have a customer to deploy 8x 6,4TB PCIe/NVMe SSD swap devices
-which is clearly out of the limit.
-
-Drop the swap restriction when l1tf=off is specified. It also doesn't
-make much sense to warn about too much memory for the l1tf mitigation
-when it is forcefully disabled by the administrator.
-
-Signed-off-by: Michal Hocko <mhocko@suse.com>
+Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
 ---
- Documentation/admin-guide/kernel-parameters.txt | 2 ++
- Documentation/admin-guide/l1tf.rst              | 5 ++++-
- arch/x86/kernel/cpu/bugs.c                      | 3 ++-
- arch/x86/mm/init.c                              | 2 +-
- 4 files changed, 9 insertions(+), 3 deletions(-)
+v4: remove !ARCH_STRATIX10 condition in Kconfig
+    clean up checkpatch.pl errors
+v3: use "altr,stratix10-rst-mgr" for Stratix10
+    remove "altr,modrst-offset" from reset-simple
+v2: Do not build separate reset driver for STRATIX10
+    fix warning: symbol 'socfpga_reset_init' was not declared. Should it be
+    static?
+---
+ arch/arm/mach-socfpga/socfpga.c |  4 ++
+ drivers/reset/Kconfig           | 10 +++-
+ drivers/reset/Makefile          |  1 +
+ drivers/reset/reset-simple.c    | 13 ++---
+ drivers/reset/reset-socfpga.c   | 88 +++++++++++++++++++++++++++++++++
+ 5 files changed, 105 insertions(+), 11 deletions(-)
+ create mode 100644 drivers/reset/reset-socfpga.c
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 81d1d5a74728..a54f2bd39e77 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2095,6 +2095,8 @@
- 			off
- 				Disables hypervisor mitigations and doesn't
- 				emit any warnings.
-+				It also drops the swap size and available
-+				RAM limit restriction.
+diff --git a/arch/arm/mach-socfpga/socfpga.c b/arch/arm/mach-socfpga/socfpga.c
+index dde14f7bf2c3..cc64576c102b 100644
+--- a/arch/arm/mach-socfpga/socfpga.c
++++ b/arch/arm/mach-socfpga/socfpga.c
+@@ -32,6 +32,8 @@ void __iomem *rst_manager_base_addr;
+ void __iomem *sdr_ctl_base_addr;
+ unsigned long socfpga_cpu1start_addr;
  
- 			Default is 'flush'.
- 
-diff --git a/Documentation/admin-guide/l1tf.rst b/Documentation/admin-guide/l1tf.rst
-index b85dd80510b0..b00464a9c09c 100644
---- a/Documentation/admin-guide/l1tf.rst
-+++ b/Documentation/admin-guide/l1tf.rst
-@@ -405,6 +405,8 @@ The kernel command line allows to control the L1TF mitigations at boot
- 
-   off		Disables hypervisor mitigations and doesn't emit any
- 		warnings.
-+		It also drops the swap size and available RAM limit restrictions.
++extern void __init socfpga_reset_init(void);
 +
-   ============  =============================================================
+ void __init socfpga_sysmgr_init(void)
+ {
+ 	struct device_node *np;
+@@ -64,6 +66,7 @@ static void __init socfpga_init_irq(void)
  
- The default is 'flush'. For details about L1D flushing see :ref:`l1d_flush`.
-@@ -576,7 +578,8 @@ Default mitigations
-   The kernel default mitigations for vulnerable processors are:
+ 	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+ 		socfpga_init_ocram_ecc();
++	socfpga_reset_init();
+ }
  
-   - PTE inversion to protect against malicious user space. This is done
--    unconditionally and cannot be controlled.
-+    unconditionally and cannot be controlled. The swap storage is limited
-+    to ~16TB.
+ static void __init socfpga_arria10_init_irq(void)
+@@ -74,6 +77,7 @@ static void __init socfpga_arria10_init_irq(void)
+ 		socfpga_init_arria10_l2_ecc();
+ 	if (IS_ENABLED(CONFIG_EDAC_ALTERA_OCRAM))
+ 		socfpga_init_arria10_ocram_ecc();
++	socfpga_reset_init();
+ }
  
-   - L1D conditional flushing on VMENTER when EPT is enabled for
-     a guest.
-diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index c37e66e493bf..761100cd3eab 100644
---- a/arch/x86/kernel/cpu/bugs.c
-+++ b/arch/x86/kernel/cpu/bugs.c
-@@ -779,7 +779,8 @@ static void __init l1tf_select_mitigation(void)
- #endif
+ static void socfpga_cyclone5_restart(enum reboot_mode mode, const char *cmd)
+diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
+index c21da9fe51ec..7ee64988faac 100644
+--- a/drivers/reset/Kconfig
++++ b/drivers/reset/Kconfig
+@@ -109,7 +109,7 @@ config RESET_QCOM_PDC
  
- 	half_pa = (u64)l1tf_pfn_limit() << PAGE_SHIFT;
--	if (e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
-+	if (l1tf_mitigation != L1TF_MITIGATION_OFF &&
-+			e820__mapped_any(half_pa, ULLONG_MAX - half_pa, E820_TYPE_RAM)) {
- 		pr_warn("System has more than MAX_PA/2 memory. L1TF mitigation not effective.\n");
- 		pr_info("You may make it effective by booting the kernel with mem=%llu parameter.\n",
- 				half_pa);
-diff --git a/arch/x86/mm/init.c b/arch/x86/mm/init.c
-index ef99f3892e1f..427a955a2cf2 100644
---- a/arch/x86/mm/init.c
-+++ b/arch/x86/mm/init.c
-@@ -931,7 +931,7 @@ unsigned long max_swapfile_size(void)
+ config RESET_SIMPLE
+ 	bool "Simple Reset Controller Driver" if COMPILE_TEST
+-	default ARCH_SOCFPGA || ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
++	default ARCH_STM32 || ARCH_STRATIX10 || ARCH_SUNXI || ARCH_ZX || ARCH_ASPEED
+ 	help
+ 	  This enables a simple reset controller driver for reset lines that
+ 	  that can be asserted and deasserted by toggling bits in a contiguous,
+@@ -128,6 +128,14 @@ config RESET_STM32MP157
+ 	help
+ 	  This enables the RCC reset controller driver for STM32 MPUs.
  
- 	pages = generic_max_swapfile_size();
++config RESET_SOCFPGA
++	bool "SoCFPGA Reset Driver" if COMPILE_TEST && !ARCH_SOCFPGA
++	default ARCH_SOCFPGA
++	select RESET_SIMPLE
++	help
++	  This enables the reset driver for the SoCFPGA ARMv7 platforms. This
++	  driver gets initialized early during platform init calls.
++
+ config RESET_SUNXI
+ 	bool "Allwinner SoCs Reset Driver" if COMPILE_TEST && !ARCH_SUNXI
+ 	default ARCH_SUNXI
+diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
+index d08e8b90046a..b14de32eb610 100644
+--- a/drivers/reset/Makefile
++++ b/drivers/reset/Makefile
+@@ -19,6 +19,7 @@ obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
+ obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
+ obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
+ obj-$(CONFIG_RESET_STM32MP157) += reset-stm32mp1.o
++obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
+ obj-$(CONFIG_RESET_SUNXI) += reset-sunxi.o
+ obj-$(CONFIG_RESET_TI_SCI) += reset-ti-sci.o
+ obj-$(CONFIG_RESET_TI_SYSCON) += reset-ti-syscon.o
+diff --git a/drivers/reset/reset-simple.c b/drivers/reset/reset-simple.c
+index a91107fc9e27..9b59564ced66 100644
+--- a/drivers/reset/reset-simple.c
++++ b/drivers/reset/reset-simple.c
+@@ -109,7 +109,7 @@ struct reset_simple_devdata {
+ #define SOCFPGA_NR_BANKS	8
  
--	if (boot_cpu_has_bug(X86_BUG_L1TF)) {
-+	if (boot_cpu_has_bug(X86_BUG_L1TF) && l1tf_mitigation != L1TF_MITIGATION_OFF) {
- 		/* Limit the swap file size to MAX_PA/2 for L1TF workaround */
- 		unsigned long long l1tf_limit = l1tf_pfn_limit();
- 		/*
+ static const struct reset_simple_devdata reset_simple_socfpga = {
+-	.reg_offset = 0x10,
++	.reg_offset = 0x20,
+ 	.nr_resets = SOCFPGA_NR_BANKS * 32,
+ 	.status_active_low = true,
+ };
+@@ -120,7 +120,8 @@ static const struct reset_simple_devdata reset_simple_active_low = {
+ };
+ 
+ static const struct of_device_id reset_simple_dt_ids[] = {
+-	{ .compatible = "altr,rst-mgr", .data = &reset_simple_socfpga },
++	{ .compatible = "altr,stratix10-rst-mgr", "altr,rst-mgr",
++		.data = &reset_simple_socfpga },
+ 	{ .compatible = "st,stm32-rcc", },
+ 	{ .compatible = "allwinner,sun6i-a31-clock-reset",
+ 		.data = &reset_simple_active_low },
+@@ -166,14 +167,6 @@ static int reset_simple_probe(struct platform_device *pdev)
+ 		data->status_active_low = devdata->status_active_low;
+ 	}
+ 
+-	if (of_device_is_compatible(dev->of_node, "altr,rst-mgr") &&
+-	    of_property_read_u32(dev->of_node, "altr,modrst-offset",
+-				 &reg_offset)) {
+-		dev_warn(dev,
+-			 "missing altr,modrst-offset property, assuming 0x%x!\n",
+-			 reg_offset);
+-	}
+-
+ 	data->membase += reg_offset;
+ 
+ 	return devm_reset_controller_register(dev, &data->rcdev);
+diff --git a/drivers/reset/reset-socfpga.c b/drivers/reset/reset-socfpga.c
+new file mode 100644
+index 000000000000..318cfc51c441
+--- /dev/null
++++ b/drivers/reset/reset-socfpga.c
+@@ -0,0 +1,88 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Copyright (C) 2018, Intel Corporation
++ * Copied from reset-sunxi.c
++ */
++
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/init.h>
++#include <linux/of.h>
++#include <linux/of_address.h>
++#include <linux/platform_device.h>
++#include <linux/reset-controller.h>
++#include <linux/slab.h>
++#include <linux/spinlock.h>
++#include <linux/types.h>
++
++#include "reset-simple.h"
++
++#define SOCFPGA_NR_BANKS	8
++void __init socfpga_reset_init(void);
++
++static int a10_reset_init(struct device_node *np)
++{
++	struct reset_simple_data *data;
++	struct resource res;
++	resource_size_t size;
++	int ret;
++	u32 reg_offset = 0x10;
++
++	data = kzalloc(sizeof(*data), GFP_KERNEL);
++	if (!data)
++		return -ENOMEM;
++
++	ret = of_address_to_resource(np, 0, &res);
++	if (ret)
++		goto err_alloc;
++
++	size = resource_size(&res);
++	if (!request_mem_region(res.start, size, np->name)) {
++		ret = -EBUSY;
++		goto err_alloc;
++	}
++
++	data->membase = ioremap(res.start, size);
++	if (!data->membase) {
++		ret = -ENOMEM;
++		goto err_alloc;
++	}
++
++	if (of_property_read_u32(np, "altr,modrst-offset", &reg_offset))
++		pr_warn("missing altr,modrst-offset property, assuming 0x10\n");
++	data->membase += reg_offset;
++
++	spin_lock_init(&data->lock);
++
++	data->rcdev.owner = THIS_MODULE;
++	data->rcdev.nr_resets = SOCFPGA_NR_BANKS * 32;
++	data->rcdev.ops = &reset_simple_ops;
++	data->rcdev.of_node = np;
++	data->status_active_low = true;
++
++	return reset_controller_register(&data->rcdev);
++
++err_alloc:
++	kfree(data);
++	return ret;
++};
++
++/*
++ * These are the reset controller we need to initialize early on in
++ * our system, before we can even think of using a regular device
++ * driver for it.
++ * The controllers that we can register through the regular device
++ * model are handled by the simple reset driver directly.
++ */
++static const struct of_device_id socfpga_early_reset_dt_ids[] __initconst = {
++	{ .compatible = "altr,rst-mgr", },
++	{ /* sentinel */ },
++};
++
++void __init socfpga_reset_init(void)
++{
++	struct device_node *np;
++
++	for_each_matching_node(np, socfpga_early_reset_dt_ids)
++		a10_reset_init(np);
++}
 -- 
-2.19.1
+2.17.1
 
