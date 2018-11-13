@@ -2,267 +2,358 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-12.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7399C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:12:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A27EC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 564082089F
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:12:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 092D32089F
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 23:13:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="K5o1tmJh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 564082089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="S5zUzR3Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 092D32089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731755AbeKNJMm (ORCPT
+        id S1731760AbeKNJNk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 04:12:42 -0500
-Received: from mail-yw1-f68.google.com ([209.85.161.68]:46936 "EHLO
-        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbeKNJMm (ORCPT
+        Wed, 14 Nov 2018 04:13:40 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:43100 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726022AbeKNJNj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 04:12:42 -0500
-Received: by mail-yw1-f68.google.com with SMTP id t13so2342834ywe.13
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 15:12:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=oNRmVuVrKG20e9jr6EoIZ/cSw2DsSCbLw8t8ZyDKGyw=;
-        b=K5o1tmJhleQ4W6S89xWNEW4uyymHrsh87lDxf723VMQkCCvTPH5UDzSIdDaWSnUfVs
-         r2wSDr5ms8XpzOB89oRLu/GTdsnkb5d9CrmhDPyMqpMk7N8fSONCfnryW3boHQtsPSDh
-         kypkzfCTsnFkN4Ql407ckeWUOVT0Hy4QvGkKY=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=oNRmVuVrKG20e9jr6EoIZ/cSw2DsSCbLw8t8ZyDKGyw=;
-        b=gPylAOMvXmcnWcfFBbJ1CFH9dE2SsOPsQZAJ0DQ91ZMQCZKh1nXiMXZDXA+AIEXRcF
-         u9IqoDiMqYmP5TZv4XGcYgRAajWvBAsXT46zK3m4YIN98YQ9PmpjlRRc2JaFgZsoJzfy
-         IodretMVJ5oXC69neb4UtlHbNFCeP+ZrmCv89Mc0Y8ZdsnsdhTFiXsOadFjQGRwb5dIW
-         89qNnZix+tswLOk6pp1b+0Kt49HcYLyJisSQb4qujcTDya1GhZ9iDIyDLsttM2YiGd5B
-         mi9BEOEig1xCzdM42BL7VX40sAxNG3aICTPcDAqez9fIobhfTf1p3mcUVFNFW9CJi7Vt
-         jPjQ==
-X-Gm-Message-State: AGRZ1gI/3lsMnRsTvUumlqU0Fp6qKnDj4Aggxi3I17atXKTrU+JmtSBt
-        +Z4vEU7q/BAp41yBmjCQlrV3q6+gm10=
-X-Google-Smtp-Source: AJdET5fsCQ0m2shrT0ul6lPqPM/Tv4DXEjqx4aY3rrtOkV70sO2EnWF8PNdefNDdqbcfuZsOMfP7zQ==
-X-Received: by 2002:a0d:ec91:: with SMTP id v139-v6mr2624040ywe.384.1542150733343;
-        Tue, 13 Nov 2018 15:12:13 -0800 (PST)
-Received: from mail-yw1-f46.google.com (mail-yw1-f46.google.com. [209.85.161.46])
-        by smtp.gmail.com with ESMTPSA id x189-v6sm4135052ywd.76.2018.11.13.15.12.12
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 15:12:12 -0800 (PST)
-Received: by mail-yw1-f46.google.com with SMTP id x2so98739ywc.9
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 15:12:12 -0800 (PST)
-X-Received: by 2002:a0d:cd84:: with SMTP id p126-v6mr7116312ywd.288.1542150731799;
- Tue, 13 Nov 2018 15:12:11 -0800 (PST)
+        Wed, 14 Nov 2018 04:13:39 -0500
+Received: from [172.30.51.137] (unknown [64.114.255.97])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id A0EA15A1;
+        Wed, 14 Nov 2018 00:13:04 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1542150787;
+        bh=In4v5Vb8h71g1WJAa5UpHl5KiqR7hAcohIdyt2KI5VI=;
+        h=Reply-To:Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=S5zUzR3Yt8jdOqunkRotIiiGZNsbsWU3vhY6LLY6EUbVlNlTjaUnjIo4E+iobAkzK
+         p8Vclgie37pgnWP1dNz1bEJcmYlHU8InJE/sCCOk5dfhbVVIytwgj02CPivdeLzw0A
+         NWit0SbAnBJE6mZqzGvV0gpFvNH7vmfJ5zgATmEY=
+Reply-To: kieran.bingham@ideasonboard.com
+Subject: Re: [PATCH v4 1/4] dt-bindings: media: i2c: Add bindings for Maxim
+ Integrated MAX9286
+To:     Luca Ceresoli <luca@lucaceresoli.net>,
+        linux-renesas-soc@vger.kernel.org, linux-media@vger.kernel.org,
+        devicetree@vger.kernel.org, sakari.ailus@iki.fi
+Cc:     =?UTF-8?Q?Niklas_S=c3=b6derlund?= <niklas.soderlund@ragnatech.se>,
+        Jacopo Mondi <jacopo@jmondi.org>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        linux-kernel@vger.kernel.org,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>
+References: <20181102154723.23662-1-kieran.bingham@ideasonboard.com>
+ <20181102154723.23662-2-kieran.bingham@ideasonboard.com>
+ <b3ef6780-a1a7-e86c-0dba-916d9398c1ef@lucaceresoli.net>
+From:   Kieran Bingham <kieran.bingham@ideasonboard.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=kieran.bingham@ideasonboard.com; keydata=
+ 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
+ sbsRB8KNNvVXBOVNwko86rQqF9drZuw=
+Organization: Ideas on Board
+Message-ID: <66239f2a-0159-8120-6dbb-8af0ce8b132a@ideasonboard.com>
+Date:   Tue, 13 Nov 2018 15:12:55 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Tue, 13 Nov 2018 15:12:11
- -0800 (PST)
-In-Reply-To: <20181112160910.GA28440@redhat.com>
-References: <20181112160910.GA28440@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Tue, 13 Nov 2018 17:12:11 -0600
-X-Gmail-Original-Message-ID: <CAGXu5jKzwmTV-45cxLPwif9Uc1SyFjyhe+VjG3vK=VTtAbWTgw@mail.gmail.com>
-Message-ID: <CAGXu5jKzwmTV-45cxLPwif9Uc1SyFjyhe+VjG3vK=VTtAbWTgw@mail.gmail.com>
-Subject: Re: [PATCH] exec: separate MM_ANONPAGES and RLIMIT_STACK accounting
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Ben Woodard <woodard@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Michal Hocko <mhocko@suse.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b3ef6780-a1a7-e86c-0dba-916d9398c1ef@lucaceresoli.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-GB
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 10:09 AM, Oleg Nesterov <oleg@redhat.com> wrote:
-> get_arg_page() checks bprm->rlim_stack.rlim_cur and re-calculates the
-> "extra" size for argv/envp pointers every time, this is a bit ugly and
-> even not strictly correct: acct_arg_size() must not account this size.
->
-> Remove all the rlimit code in get_arg_page(). Instead, add bprm->argmin
-> calculated once at the start of __do_execve_file() and change copy_strings
-> to check bprm->p >= bprm->argmin.
->
-> The patch adds the new helper, prepare_arg_pages() which initializes
-> bprm->argc/envc and bprm->argmin.
->
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+Hi Luca,
 
-Acked-by: Kees Cook <keescook@chromium.org>
+On 13/11/2018 14:42, Luca Ceresoli wrote:
+> Hi Kieran, All,
+> 
+> sorry for joining this late... See below my considerations.
 
-Thanks for nailing this all down. :)
+I'd say you're on time - not late,
 
--Kees
+Thanks for joining :)
 
-> ---
->  fs/exec.c               | 103 +++++++++++++++++++++++-------------------------
->  include/linux/binfmts.h |   1 +
->  2 files changed, 51 insertions(+), 53 deletions(-)
->
-> diff --git a/fs/exec.c b/fs/exec.c
-> index fc281b7..61a5460 100644
-> --- a/fs/exec.c
-> +++ b/fs/exec.c
-> @@ -218,55 +218,10 @@ static struct page *get_arg_page(struct linux_binprm *bprm, unsigned long pos,
->         if (ret <= 0)
->                 return NULL;
->
-> -       if (write) {
-> -               unsigned long size = bprm->vma->vm_end - bprm->vma->vm_start;
-> -               unsigned long ptr_size, limit;
-> -
-> -               /*
-> -                * Since the stack will hold pointers to the strings, we
-> -                * must account for them as well.
-> -                *
-> -                * The size calculation is the entire vma while each arg page is
-> -                * built, so each time we get here it's calculating how far it
-> -                * is currently (rather than each call being just the newly
-> -                * added size from the arg page).  As a result, we need to
-> -                * always add the entire size of the pointers, so that on the
-> -                * last call to get_arg_page() we'll actually have the entire
-> -                * correct size.
-> -                */
-> -               ptr_size = (bprm->argc + bprm->envc) * sizeof(void *);
-> -               if (ptr_size > ULONG_MAX - size)
-> -                       goto fail;
-> -               size += ptr_size;
-> -
-> -               acct_arg_size(bprm, size / PAGE_SIZE);
-> -
-> -               /*
-> -                * We've historically supported up to 32 pages (ARG_MAX)
-> -                * of argument strings even with small stacks
-> -                */
-> -               if (size <= ARG_MAX)
-> -                       return page;
-> -
-> -               /*
-> -                * Limit to 1/4 of the max stack size or 3/4 of _STK_LIM
-> -                * (whichever is smaller) for the argv+env strings.
-> -                * This ensures that:
-> -                *  - the remaining binfmt code will not run out of stack space,
-> -                *  - the program will have a reasonable amount of stack left
-> -                *    to work from.
-> -                */
-> -               limit = _STK_LIM / 4 * 3;
-> -               limit = min(limit, bprm->rlim_stack.rlim_cur / 4);
-> -               if (size > limit)
-> -                       goto fail;
-> -       }
-> +       if (write)
-> +               acct_arg_size(bprm, vma_pages(bprm->vma));
->
->         return page;
-> -
-> -fail:
-> -       put_page(page);
-> -       return NULL;
->  }
->
->  static void put_arg_page(struct page *page)
-> @@ -492,6 +447,50 @@ static int count(struct user_arg_ptr argv, int max)
->         return i;
->  }
->
-> +static int prepare_arg_pages(struct linux_binprm *bprm,
-> +                       struct user_arg_ptr argv, struct user_arg_ptr envp)
-> +{
-> +       unsigned long limit, ptr_size;
-> +
-> +       bprm->argc = count(argv, MAX_ARG_STRINGS);
-> +       if (bprm->argc < 0)
-> +               return bprm->argc;
-> +
-> +       bprm->envc = count(envp, MAX_ARG_STRINGS);
-> +       if (bprm->envc < 0)
-> +               return bprm->envc;
-> +
-> +       /*
-> +        * Limit to 1/4 of the max stack size or 3/4 of _STK_LIM
-> +        * (whichever is smaller) for the argv+env strings.
-> +        * This ensures that:
-> +        *  - the remaining binfmt code will not run out of stack space,
-> +        *  - the program will have a reasonable amount of stack left
-> +        *    to work from.
-> +        */
-> +       limit = _STK_LIM / 4 * 3;
-> +       limit = min(limit, bprm->rlim_stack.rlim_cur / 4);
-> +       /*
-> +        * We've historically supported up to 32 pages (ARG_MAX)
-> +        * of argument strings even with small stacks
-> +        */
-> +       limit = max(limit, (unsigned long)ARG_MAX);
-> +       /*
-> +        * We must account for the size of all the argv and envp pointers to
-> +        * the argv and envp strings, since they will also take up space in
-> +        * the stack. They aren't stored until much later when we can't
-> +        * signal to the parent that the child has run out of stack space.
-> +        * Instead, calculate it here so it's possible to fail gracefully.
-> +        */
-> +       ptr_size = (bprm->argc + bprm->envc) * sizeof(void *);
-> +       if (limit <= ptr_size)
-> +               return -E2BIG;
-> +       limit -= ptr_size;
-> +
-> +       bprm->argmin = bprm->p - limit;
-> +       return 0;
-> +}
-> +
->  /*
->   * 'copy_strings()' copies argument/environment strings from the old
->   * processes's memory to the new process's stack.  The call to get_user_pages()
-> @@ -527,6 +526,8 @@ static int copy_strings(int argc, struct user_arg_ptr argv,
->                 pos = bprm->p;
->                 str += len;
->                 bprm->p -= len;
-> +               if (bprm->p < bprm->argmin)
-> +                       goto out;
->
->                 while (len > 0) {
->                         int offset, bytes_to_copy;
-> @@ -1789,12 +1790,8 @@ static int __do_execve_file(int fd, struct filename *filename,
->         if (retval)
->                 goto out_unmark;
->
-> -       bprm->argc = count(argv, MAX_ARG_STRINGS);
-> -       if ((retval = bprm->argc) < 0)
-> -               goto out;
-> -
-> -       bprm->envc = count(envp, MAX_ARG_STRINGS);
-> -       if ((retval = bprm->envc) < 0)
-> +       retval = prepare_arg_pages(bprm, argv, envp);
-> +       if (retval < 0)
->                 goto out;
->
->         retval = prepare_binprm(bprm);
-> diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
-> index e9f5fe6..03200a8 100644
-> --- a/include/linux/binfmts.h
-> +++ b/include/linux/binfmts.h
-> @@ -25,6 +25,7 @@ struct linux_binprm {
->  #endif
->         struct mm_struct *mm;
->         unsigned long p; /* current top of mem */
-> +       unsigned long argmin; /* rlimit marker for copy_strings() */
->         unsigned int
->                 /*
->                  * True after the bprm_set_creds hook has been called once
-> --
-> 2.5.0
->
->
+> 
+> On 02/11/18 16:47, Kieran Bingham wrote:
+>> From: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>>
+>> The MAX9286 deserializes video data received on up to 4 Gigabit
+>> Multimedia Serial Links (GMSL) and outputs them on a CSI-2 port using up
+>> to 4 data lanes.
+>>
+>> Signed-off-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
+>> Signed-off-by: Jacopo Mondi <jacopo+renesas@jmondi.org>
+>> Signed-off-by: Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>
+>>
+>> ---
+>> v3:
+>>  - Update binding descriptions
+>>
+>> v4:
+>>  - Define the use of a CSI2 D-PHY
+>>  - Rename pwdn-gpios to enable-gpios (with inverted polarity)
+>>  - Remove clock-lanes mapping support
+>>  - rewrap text blocks
+>>  - Fix typos
+>> ---
+>>  .../bindings/media/i2c/maxim,max9286.txt      | 182 ++++++++++++++++++
+>>  1 file changed, 182 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+>> new file mode 100644
+>> index 000000000000..672f6a4d417d
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max9286.txt
+>> @@ -0,0 +1,182 @@
+>> +Maxim Integrated Quad GMSL Deserializer
+>> +---------------------------------------
+>> +
+>> +The MAX9286 deserializer receives video data on up to 4 Gigabit Multimedia
+>> +Serial Links (GMSL) and outputs them on a CSI-2 D-PHY port using up to 4 data
+>> +lanes.
+>> +
+>> +In addition to video data, the GMSL links carry a bidirectional control channel
+>> +that encapsulates I2C messages. The MAX9286 forwards all I2C traffic not
+>> +addressed to itself to the other side of the links, where a GMSL serializer
+>> +will output it on a local I2C bus. In the other direction all I2C traffic
+>> +received over GMSL by the MAX9286 is output on the local I2C bus.
+>> +
+>> +Required Properties:
+>> +
+>> +- compatible: Shall be "maxim,max9286"
+>> +- reg: I2C device address
+>> +
+>> +Optional Properties:
+>> +
+>> +- poc-supply: Regulator providing Power over Coax to the cameras
+>> +- enable-gpios: GPIO connected to the #PWDN pin with inverted polarity
+>> +
+>> +Required endpoint nodes:
+>> +-----------------------
+>> +
+>> +The connections to the MAX9286 GMSL and its endpoint nodes are modeled using
+>> +the OF graph bindings in accordance with the video interface bindings defined
+>> +in Documentation/devicetree/bindings/media/video-interfaces.txt.
+>> +
+>> +The following table lists the port number corresponding to each device port.
+>> +
+>> +        Port            Description
+>> +        ----------------------------------------
+>> +        Port 0          GMSL Input 0
+>> +        Port 1          GMSL Input 1
+>> +        Port 2          GMSL Input 2
+>> +        Port 3          GMSL Input 3
+>> +        Port 4          CSI-2 Output
+>> +
+>> +Optional Endpoint Properties for GMSL Input Ports (Port [0-3]):
+>> +
+>> +- remote-endpoint: phandle to the remote GMSL source endpoint subnode in the
+>> +  remote node port.
+>> +
+>> +Required Endpoint Properties for CSI-2 Output Port (Port 4):
+>> +
+>> +- remote-endpoint: phandle to the remote CSI-2 sink endpoint node.
+>> +- data-lanes: array of physical CSI-2 data lane indexes.
+>> +
+>> +Required i2c-mux nodes:
+>> +----------------------
+>> +
+>> +Each GMSL link is modeled as a child bus of an i2c bus multiplexer/switch, in
+>> +accordance with bindings described in
+>> +Documentation/devicetree/bindings/i2c/i2c-mux.txt. The serializer device on the
+>> +remote end of the GMSL link shall be modelled as a child node of the
+>> +corresponding I2C bus.
+>> +
+>> +Required i2c child bus properties:
+>> +- all properties described as required i2c child bus nodes properties in
+>> +  Documentation/devicetree/bindings/i2c/i2c-mux.txt.
+>> +
+>> +Example:
+>> +-------
+>> +
+>> +	gmsl-deserializer@2c {
+>> +		compatible = "maxim,max9286";Not at all late - Just on time 
+>> +		reg = <0x2c>;
+>> +		poc-supply = <&camera_poc_12v>;
+>> +		enable-gpios = <&gpio 13 GPIO_ACTIVE_LOW>;
+>> +
+>> +		#address-cells = <1>;
+>> +		#size-cells = <0>;
+>> +
+>> +		ports {
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +
+>> +			port@0 {
+>> +				reg = <0>;
+>> +				max9286_in0: endpoint {
+>> +					remote-endpoint = <&rdacm20_out0>;
+>> +				};
+>> +			};
+>> +
+>> +			port@1 {
+>> +				reg = <1>;
+>> +				max9286_in1: endpoint {
+>> +					remote-endpoint = <&rdacm20_out1>;
+>> +				};
+>> +			};
+>> +
+>> +			port@2 {
+>> +				reg = <2>;
+>> +				max9286_in2: endpoint {
+>> +					remote-endpoint = <&rdacm20_out2>;
+>> +				};
+>> +			};
+>> +
+>> +			port@3 {
+>> +				reg = <3>;
+>> +				max9286_in3: endpoint {
+>> +					remote-endpoint = <&rdacm20_out3>;
+>> +				};
+>> +			};
+>> +
+>> +			port@4 {
+>> +				reg = <4>;
+>> +				max9286_out: endpoint {
+>> +					data-lanes = <1 2 3 4>;
+>> +					remote-endpoint = <&csi40_in>;
+>> +				};
+>> +			};
+>> +		};
+>> +
+>> +		i2c@0 {
+>> +			#address-cells = <1>;
+>> +			#size-cells = <0>;
+>> +			reg = <0>;
+>> +
+>> +			camera@51 {
+>> +				compatible = "imi,rdacm20";
+>> +				reg = <0x51 0x61>;
+> 
+> I find this kind of address mapping is the weak point in this patchset.
+> 
+> The ser-deser chipset splits the world in "local" and "remote" side. The
+> camera node belongs to the remote side, but the 0x51 and 0x61 addresses
+> belong to the local side.
+
+Well, in our use case - in fact the camera has a set of fixed addresses
+(0x30,0x40,0x50) for each camera - and these are the addresses we are
+requesting the camera to be updated to. Once the camera is communicated
+with - the first step is to reprogram the device to respond to the
+addresses specified here.
 
 
+> Think about supporting N different main boards
+> and M remote boards. 0x51 might be available on some main boards but not
+> all. IMO under the camera@51 (even the i2c@0) node there should be only
+> remote hardware description. To support the N*M possible combinations,
+> there should be:
+
+Of course - well in fact all of our I2C addresses across our two max9286
+instances, and 8 camera devices share the same bus 'address space'.
+
+It's crucial to provide this address on a per board level, which is why
+it is specified in the DT.
+
+I wonder if perhaps it was a mistake to include the camera description
+in this part of the example, as it's not related to the max9286
+specifically.
+
+Rob has already suggested moving these to a lower 'i2c-node' level which
+I like the sound of, and might make this separation more clear.
+
+
+>  * a DT for the main board mentioning only addresses for the
+>    local i2c bus, down to the i2c@0 with address-cells, size-cells and
+>    reg properties
+>  * a DT overlay for each remote board, mentioning the remote i2c
+>    chips with their physical addresses, but no local addresses
+> 
+> The only way I could devise to be generic is to bind each physical
+> remote address to a local address at runtime.
+> 
+> Also, to be implemented reliably, an address translation feature is
+> required on the local (de)ser chip.
+> 
+> So the question is: can the max9286 chip do i2c address translation?
+> 
+
+Yes, The max9286 (deser) can do i2c address translation - but so too can
+the max9271 (serialiser)
+
+We do our address translation on the camera (serialiser) side.
+
+The cameras *all* boot with the same i2c address (and thus all conflict)
+ - We disable all links
+ - We enable /one/ link
+ - We initialise and reprogram the address of that camera to the address
+   specified in the camera node. - Then we move to the next camera.
+
+The reality is we 'just need' a spare address on the I2C bus - but as
+yet - there is no mechanism in I2C core to request a spare address.
+
+Thus it is the responsibility of the DT node to ensure there is no conflict.
+
+For an example, here is our DT overlay file for our max9286 expansion board:
+
+https://git.kernel.org/pub/scm/linux/kernel/git/kbingham/rcar.git/commit/?h=gmsl/v5&id=6f2ec549e128b3ca36e9cae59256723cc39df2b1
+
+
+> Thanks,
+> 
 
 -- 
-Kees Cook
+Regards
+--
+Kieran
