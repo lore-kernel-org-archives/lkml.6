@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 199ECC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:03:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E779C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:03:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D578D2245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:03:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C19CC2082A
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:03:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nr9ocG7C"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D578D2245E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UyaFP8D+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C19CC2082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731597AbeKMPrG (ORCPT
+        id S1731574AbeKMPrF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:47:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60860 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:47:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60874 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731518AbeKMPrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:47:04 -0500
+        id S1731441AbeKMPrF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:47:05 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB7A422510;
-        Tue, 13 Nov 2018 05:50:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 447EC22513;
+        Tue, 13 Nov 2018 05:50:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542088237;
-        bh=XwB+T1is2BIC6LkbniEMIhJadiGYRkh2O9lYmKPM4CY=;
+        bh=626VPZqTF4I4yzmjBzHfGeNsx97jmzm1Rct1ccTIGVU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=nr9ocG7C5euqipd/uNbaH4LUZvZ9Uba1KMRn/mKrQa4ZWb9HdI704mYIDmaIjNtUo
-         cQkn1Bkc4DKQJYOHhgX8bXk+KIjbovY7RqR1C5Vpdek3tSjvy/X1sKKOqgLtTjgOfJ
-         VZnEQWo36/4K/qpTKWGjU7PbaNzgf/fRl4mjy2+U=
+        b=UyaFP8D+U8k0yiIX8lfYbLs1Q+GQMX4fr5Qz5e46NUsjX/v7RMchQMSyfCh3PX9eA
+         0sDy2OKRfR3U1WMOszT3Y7J6wzWpmZ9Mkvqh0ZNJKvNmf+ZgMyLYDadmGxJiXVHjKp
+         a0be7O/32mZxRSlYwBzJmi4X4TuTaZkegvwvIqZU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Icenowy Zheng <icenowy@aosc.io>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 35/44] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to MMC module clocks
-Date:   Tue, 13 Nov 2018 00:49:41 -0500
-Message-Id: <20181113054950.77898-35-sashal@kernel.org>
+Cc:     Johan Hovold <johan@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, linux-omap@vger.kernel.org,
+        linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 36/44] clk: ti: fix OF child-node lookup
+Date:   Tue, 13 Nov 2018 00:49:42 -0500
+Message-Id: <20181113054950.77898-36-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
 References: <20181113054950.77898-1-sashal@kernel.org>
@@ -53,83 +53,67 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Icenowy Zheng <icenowy@aosc.io>
+From: Johan Hovold <johan@kernel.org>
 
-[ Upstream commit c2ff8383cc33c2d9c169e4daf1e37a434c3bb420 ]
+[ Upstream commit 00a461cc32ec27fa7bd9c874a7b36b0c6c542c12 ]
 
-On the H6, the MMC module clocks are fixed in the new timing mode,
-i.e. they do not have a bit to select the mode. These clocks have
-a 2x divider somewhere between the clock and the MMC module.
+Fix child-node lookup which by using the wrong OF helper was searching
+the whole tree depth-first, something which could end up matching an
+unrelated node.
 
-To be consistent with other SoCs supporting the new timing mode,
-we model the 2x divider as a fixed post-divider on the MMC module
-clocks.
+Also fix the related node-reference leaks.
 
-This patch adds the post-dividers to the MMC clocks, following the
-approach on A64.
-
-Fixes: 524353ea480b ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
-Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Fixes: 5b385a45e001 ("clk: ti: add support for clkctrl aliases")
+Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Tero Kristo <t-kristo@ti.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 43 +++++++++++++++-------------
- 1 file changed, 23 insertions(+), 20 deletions(-)
+ drivers/clk/ti/clk.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-index bdbfe78fe133..3d60f7978506 100644
---- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-+++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
-@@ -408,26 +408,29 @@ static SUNXI_CCU_GATE(bus_nand_clk, "bus-nand", "ahb3", 0x82c, BIT(0), 0);
+diff --git a/drivers/clk/ti/clk.c b/drivers/clk/ti/clk.c
+index 7d22e1af2247..27e0979b3158 100644
+--- a/drivers/clk/ti/clk.c
++++ b/drivers/clk/ti/clk.c
+@@ -129,7 +129,7 @@ int ti_clk_setup_ll_ops(struct ti_clk_ll_ops *ops)
+ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
+ {
+ 	struct ti_dt_clk *c;
+-	struct device_node *node;
++	struct device_node *node, *parent;
+ 	struct clk *clk;
+ 	struct of_phandle_args clkspec;
+ 	char buf[64];
+@@ -164,8 +164,12 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
+ 			continue;
  
- static const char * const mmc_parents[] = { "osc24M", "pll-periph0-2x",
- 					    "pll-periph1-2x" };
--static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc_parents, 0x830,
--					0, 4,	/* M */
--					8, 2,	/* N */
--					24, 3,	/* mux */
--					BIT(31),/* gate */
--					0);
--
--static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mmc_parents, 0x834,
--					0, 4,	/* M */
--					8, 2,	/* N */
--					24, 3,	/* mux */
--					BIT(31),/* gate */
--					0);
--
--static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mmc_parents, 0x838,
--					0, 4,	/* M */
--					8, 2,	/* N */
--					24, 3,	/* mux */
--					BIT(31),/* gate */
--					0);
-+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc0_clk, "mmc0", mmc_parents, 0x830,
-+					  0, 4,		/* M */
-+					  8, 2,		/* N */
-+					  24, 3,	/* mux */
-+					  BIT(31),	/* gate */
-+					  2,		/* post-div */
-+					  0);
+ 		node = of_find_node_by_name(NULL, buf);
+-		if (num_args)
+-			node = of_find_node_by_name(node, "clk");
++		if (num_args) {
++			parent = node;
++			node = of_get_child_by_name(parent, "clk");
++			of_node_put(parent);
++		}
 +
-+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1", mmc_parents, 0x834,
-+					  0, 4,		/* M */
-+					  8, 2,		/* N */
-+					  24, 3,	/* mux */
-+					  BIT(31),	/* gate */
-+					  2,		/* post-div */
-+					  0);
-+
-+static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc2_clk, "mmc2", mmc_parents, 0x838,
-+					  0, 4,		/* M */
-+					  8, 2,		/* N */
-+					  24, 3,	/* mux */
-+					  BIT(31),	/* gate */
-+					  2,		/* post-div */
-+					  0);
- 
- static SUNXI_CCU_GATE(bus_mmc0_clk, "bus-mmc0", "ahb3", 0x84c, BIT(0), 0);
- static SUNXI_CCU_GATE(bus_mmc1_clk, "bus-mmc1", "ahb3", 0x84c, BIT(1), 0);
+ 		clkspec.np = node;
+ 		clkspec.args_count = num_args;
+ 		for (i = 0; i < num_args; i++) {
+@@ -173,11 +177,12 @@ void __init ti_dt_clocks_register(struct ti_dt_clk oclks[])
+ 			if (ret) {
+ 				pr_warn("Bad tag in %s at %d: %s\n",
+ 					c->node_name, i, tags[i]);
++				of_node_put(node);
+ 				return;
+ 			}
+ 		}
+ 		clk = of_clk_get_from_provider(&clkspec);
+-
++		of_node_put(node);
+ 		if (!IS_ERR(clk)) {
+ 			c->lk.clk = clk;
+ 			clkdev_add(&c->lk);
 -- 
 2.17.1
 
