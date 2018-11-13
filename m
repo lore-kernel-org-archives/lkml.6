@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 54E7AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:23:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83B3AC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:23:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2311C20684
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:23:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2311C20684
+	by mail.kernel.org (Postfix) with ESMTP id 51BBA2245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:23:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51BBA2245E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732317AbeKMUUa (ORCPT
+        id S1732337AbeKMUUc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 15:20:30 -0500
-Received: from shell.v3.sk ([90.176.6.54]:38266 "EHLO shell.v3.sk"
+        Tue, 13 Nov 2018 15:20:32 -0500
+Received: from shell.v3.sk ([90.176.6.54]:38278 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732176AbeKMUU3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 15:20:29 -0500
+        id S1732030AbeKMUUb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 15:20:31 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 5778CC6B2B;
-        Tue, 13 Nov 2018 11:22:58 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id D0BB9C6B30;
+        Tue, 13 Nov 2018 11:23:01 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id Acdg_hKNJEBN; Tue, 13 Nov 2018 11:22:47 +0100 (CET)
+        with ESMTP id H8x7nBaP2HEV; Tue, 13 Nov 2018 11:22:46 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id D28B7C6B20;
+        by zimbra.v3.sk (Postfix) with ESMTP id 159DFC677C;
         Tue, 13 Nov 2018 11:22:45 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id a9zPvshygPKE; Tue, 13 Nov 2018 11:22:42 +0100 (CET)
+        with ESMTP id V23aKxyqXD7u; Tue, 13 Nov 2018 11:22:41 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id B8AA9C6B22;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 28E5BC6B1F;
         Tue, 13 Nov 2018 11:22:41 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Mark Brown <broonie@kernel.org>,
@@ -50,9 +50,9 @@ Cc:     James Cameron <quozl@laptop.org>, Rob Herring <robh+dt@kernel.org>,
         linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v3 4/6] spi: pxa2xx: dt-bindings: Add ready GPIO signal
-Date:   Tue, 13 Nov 2018 11:22:26 +0100
-Message-Id: <20181113102228.820214-5-lkundrak@v3.sk>
+Subject: [PATCH v3 2/6] spi: Deal with slaves that return from transfer_one() unfinished
+Date:   Tue, 13 Nov 2018 11:22:24 +0100
+Message-Id: <20181113102228.820214-3-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181113102228.820214-1-lkundrak@v3.sk>
 References: <20181113102228.820214-1-lkundrak@v3.sk>
@@ -63,38 +63,116 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This this is used to let the SPI master know that our FIFO is filled and
-we're ready to service a transfer. Only useful in slave mode.
+Some drivers, such as spi-pxa2xx return from the transfer_one callback
+immediately, idicating that the transfer will be finished asynchronously.
 
-A signal like this is used by an embedded controller on a OLPC XO 1.75
-machine, that happens to be a SPI master.
+Normally, spi_transfer_one_message() synchronously waits for the
+transfer to finish with wait_for_completion_timeout(). For slaves, we
+don't want the transaction to time out as it can complete in a long time
+in future. Use wait_for_completion_interruptible() instead.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
 Acked-by: Pavel Machek <pavel@ucw.cz>
 
 ---
-Changes since v2:
-- s/ready-gpio/ready-gpios/
-- Updated the subject line to conform with subsystem customs
+Changed since v2:
+- Corrected the spi_transfer_wait() return value handling to avoid early
+  bail out without the necessary cleanup (thanks Geert Uytterhoeven)
 
- Documentation/devicetree/bindings/spi/spi-pxa2xx.txt | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/spi/spi.c | 62 +++++++++++++++++++++++++++++------------------
+ 1 file changed, 39 insertions(+), 23 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt b/Docum=
-entation/devicetree/bindings/spi/spi-pxa2xx.txt
-index 89b2832283e3..e30e0c2a4bce 100644
---- a/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt
-+++ b/Documentation/devicetree/bindings/spi/spi-pxa2xx.txt
-@@ -12,6 +12,8 @@ Optional properties:
- - cs-gpios: list of GPIO chip selects. See the SPI bus bindings,
-   Documentation/devicetree/bindings/spi/spi-bus.txt
- - spi-slave: Empty property indicating the SPI controller is used in sla=
-ve mode.
-+- ready-gpios: GPIO used to signal a SPI master that the FIFO is filled
-+  and we're ready to service a transfer. Only useful in slave mode.
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 6ca59406b0b7..498d3b9bf3ae 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1037,6 +1037,42 @@ static int spi_map_msg(struct spi_controller *ctlr=
+, struct spi_message *msg)
+ 	return __spi_map_msg(ctlr, msg);
+ }
 =20
- Child nodes represent devices on the SPI bus
-   See ../spi/spi-bus.txt
++static int spi_transfer_wait(struct spi_controller *ctlr,
++			     struct spi_message *msg,
++			     struct spi_transfer *xfer)
++{
++	struct spi_statistics *statm =3D &ctlr->statistics;
++	struct spi_statistics *stats =3D &msg->spi->statistics;
++	unsigned long long ms =3D 1;
++
++	if (spi_controller_is_slave(ctlr)) {
++		if (wait_for_completion_interruptible(&ctlr->xfer_completion)) {
++			dev_dbg(&msg->spi->dev, "SPI transfer interrupted\n");
++			return -EINTR;
++		}
++	} else {
++		ms =3D 8LL * 1000LL * xfer->len;
++		do_div(ms, xfer->speed_hz);
++		ms +=3D ms + 200; /* some tolerance */
++
++		if (ms > UINT_MAX)
++			ms =3D UINT_MAX;
++
++		ms =3D wait_for_completion_timeout(&ctlr->xfer_completion,
++						 msecs_to_jiffies(ms));
++
++		if (ms =3D=3D 0) {
++			SPI_STATISTICS_INCREMENT_FIELD(statm, timedout);
++			SPI_STATISTICS_INCREMENT_FIELD(stats, timedout);
++			dev_err(&msg->spi->dev,
++				"SPI transfer timed out\n");
++			return -ETIMEDOUT;
++		}
++	}
++
++	return 0;
++}
++
+ /*
+  * spi_transfer_one_message - Default implementation of transfer_one_mes=
+sage()
+  *
+@@ -1050,7 +1086,6 @@ static int spi_transfer_one_message(struct spi_cont=
+roller *ctlr,
+ 	struct spi_transfer *xfer;
+ 	bool keep_cs =3D false;
+ 	int ret =3D 0;
+-	unsigned long long ms =3D 1;
+ 	struct spi_statistics *statm =3D &ctlr->statistics;
+ 	struct spi_statistics *stats =3D &msg->spi->statistics;
+=20
+@@ -1079,28 +1114,9 @@ static int spi_transfer_one_message(struct spi_con=
+troller *ctlr,
+ 				goto out;
+ 			}
+=20
+-			if (ret > 0) {
+-				ret =3D 0;
+-				ms =3D 8LL * 1000LL * xfer->len;
+-				do_div(ms, xfer->speed_hz);
+-				ms +=3D ms + 200; /* some tolerance */
+-
+-				if (ms > UINT_MAX)
+-					ms =3D UINT_MAX;
+-
+-				ms =3D wait_for_completion_timeout(&ctlr->xfer_completion,
+-								 msecs_to_jiffies(ms));
+-			}
+-
+-			if (ms =3D=3D 0) {
+-				SPI_STATISTICS_INCREMENT_FIELD(statm,
+-							       timedout);
+-				SPI_STATISTICS_INCREMENT_FIELD(stats,
+-							       timedout);
+-				dev_err(&msg->spi->dev,
+-					"SPI transfer timed out\n");
+-				msg->status =3D -ETIMEDOUT;
+-			}
++			ret =3D spi_transfer_wait(ctlr, msg, xfer);
++			if (ret < 0)
++				msg->status =3D ret;
+ 		} else {
+ 			if (xfer->len)
+ 				dev_err(&msg->spi->dev,
 --=20
 2.19.1
 
