@@ -2,78 +2,80 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5CA35C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:33:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 10165C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:35:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 31799223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:33:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 31799223AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id CD60E223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:35:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD60E223AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732134AbeKNDcL (ORCPT
+        id S1731901AbeKNDeu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 22:32:11 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60114 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730730AbeKNDcL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 22:32:11 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 02133EBD;
-        Tue, 13 Nov 2018 09:33:07 -0800 (PST)
-Received: from e107533-lin (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B83813F5CF;
-        Tue, 13 Nov 2018 09:33:06 -0800 (PST)
-Date:   Tue, 13 Nov 2018 17:33:00 +0000
-From:   Sudeep Holla <sudeep.holla@arm.com>
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     marc.w.gonzalez@free.fr, arm-soc <arm@kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH v2 2/9] arm64: defconfig: Drop ARM_BIG_LITTLE_CPUFREQ
-Message-ID: <20181113173300.GA8432@e107533-lin>
-References: <898e79a6-092c-d013-d2bb-f6260e761379@free.fr>
- <03f41ca8-68c6-f075-cb1e-c7f630a3b128@free.fr>
- <20181108093617.GB8433@e107155-lin>
- <CAK8P3a1129B-u60sjHCvLuE8i6OCJRDSe-JFy3S-JJWFGbHCPQ@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAK8P3a1129B-u60sjHCvLuE8i6OCJRDSe-JFy3S-JJWFGbHCPQ@mail.gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        Tue, 13 Nov 2018 22:34:50 -0500
+Received: from smtprelay0052.hostedemail.com ([216.40.44.52]:39731 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731496AbeKNDeu (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 22:34:50 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay04.hostedemail.com (Postfix) with ESMTP id 9F955180A813E;
+        Tue, 13 Nov 2018 17:35:44 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: shoes47_4eca592695219
+X-Filterd-Recvd-Size: 2030
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf11.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 13 Nov 2018 17:35:41 +0000 (UTC)
+Message-ID: <9037d76f47233e187276ba84cbb0f46427e2e1eb.camel@perches.com>
+Subject: Re: [PATCH v3 01/20] lib/vsprintf: Print time and date in human
+ readable format via %pt
+From:   Joe Perches <joe@perches.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org,
+        Alessandro Zummo <a.zummo@towertech.it>,
+        Alexandre Belloni <alexandre.belloni@free-electrons.com>,
+        linux-rtc@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Mark Salyzyn <salyzyn@android.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>
+Cc:     Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        Guan Xuetao <gxt@mprc.pku.edu.cn>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jason Wessel <jason.wessel@windriver.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Thierry Reding <thierry.reding@gmail.com>
+Date:   Tue, 13 Nov 2018 09:35:39 -0800
+In-Reply-To: <20181113171729.19645-2-andriy.shevchenko@linux.intel.com>
+References: <20181113171729.19645-1-andriy.shevchenko@linux.intel.com>
+         <20181113171729.19645-2-andriy.shevchenko@linux.intel.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 09:57:27AM +0100, Arnd Bergmann wrote:
-> On Thu, Nov 8, 2018 at 10:36 AM Sudeep Holla <sudeep.holla@arm.com> wrote:
-> >
-> > On Wed, Nov 07, 2018 at 11:39:42PM +0100, Marc Gonzalez wrote:
-> > > Commit a7314405d83c ("drop ARM_BIG_LITTLE_CPUFREQ support for ARM64")
-> > > dropped ARM_BIG_LITTLE_CPUFREQ support for ARM64.
-> > >
-> >
-> > Looks good,
-> >
-> > Acked-by: Sudeep Holla <sudeep.holla@arm.com>
-> >
-> > But I left it intentionally to avoid churn assuming it will go away when
-> > ARM SoC team runs savedefconfig and sync the defconfig.
->
-> I would never do that, instead I want patches like the one that Marc sent
-> in order to make sure we don't accidentally drop anything that is still
-> required, e.g. when an option got renamed or gained a dependency.
->
-Thanks for the clarification. I must have misunderstood what's done in
-Commit c432c0880596 ("arm64: defconfig: renormalize based on recent additions")
-I assume it was just the reordering rather than addition/removal of entries.
-It's not so clear from the log message.
+On Tue, 2018-11-13 at 19:17 +0200, Andy Shevchenko wrote:
+> There are users which print time and date represented by content of
+> struct rtc_time in human readable format.
+> 
+> Instead of open coding that each time introduce %ptR[dt][rv] specifier.
+> 
+> Note, users have to select PRINTK_PEXT_TIMEDATE option in a Kconfig.
 
---
-Regards,
-Sudeep
+This bit should be removed as it's not true anymore.
+
+
