@@ -2,119 +2,87 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 65E64C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:47:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BC70C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:48:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 29867223D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:47:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD9FA223D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:48:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDYU1TXE"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29867223D0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ePyRxlVJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD9FA223D0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387991AbeKNAqP (ORCPT
+        id S2388001AbeKNAqo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 19:46:15 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34540 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387892AbeKNAqP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 19:46:15 -0500
-Received: from localhost (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3BD8223C8;
-        Tue, 13 Nov 2018 14:47:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542120466;
-        bh=G/SQTqC0KrL2++i5H59g/QIk1eK7oFtlXMI/deBiCFI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CDYU1TXEyhpSm8ow2r10wDZjMs5xaa0ct5oVE5LyR6/FuquJ3U9eWsanRRFrRi5+z
-         6ezXFFJjKso2GdfuC7bQGVIXh01/380hS6CFtLYkY9oeU3HIEpKMquV0xBOcXp/hOO
-         sQ9yy1LX/2lHaI/bj/8QAHCJrx7R5COvLV44DC/Q=
-Date:   Tue, 13 Nov 2018 08:47:46 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Ingo Molnar <mingo@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [GIT PULL] PCI changes for v4.20
-Message-ID: <20181113144746.GA69034@google.com>
-References: <20181023173934.GA14918@bhelgaas-glaptop.roam.corp.google.com>
- <20181113071712.GA2353@gmail.com>
- <20181113102004.GC10502@zn.tnic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113102004.GC10502@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Tue, 13 Nov 2018 19:46:44 -0500
+Received: from mail-wm1-f49.google.com ([209.85.128.49]:52531 "EHLO
+        mail-wm1-f49.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387402AbeKNAqo (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 19:46:44 -0500
+Received: by mail-wm1-f49.google.com with SMTP id r11-v6so12183419wmb.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 06:48:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=bbY+0AzP+H3yzuk4q47b0ANkXIlf0xE24RY6DaCQYtA=;
+        b=ePyRxlVJITMqp7STi/63B7AW3+0PebDSQeNxXmfy1FFYJg8PH5cBCkNpmG/tRJQiyn
+         8F8v/PjaxQWOlMwC8aXa6fcRJhHqh5un5fBWM/j4NN89ASdZu4MZlU1Ft/dXeB2YMwdL
+         ztNl+cEFTiok9rFF+zz1s05ZHHzvXxIFfZr0I=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=bbY+0AzP+H3yzuk4q47b0ANkXIlf0xE24RY6DaCQYtA=;
+        b=jBAwAZkZZUkgbZIdn8rqSZiuuYfea1dAfv0w70zlB9GPFNINMH1VoZaktAEvdVeHdq
+         LwTQQRLNC7Mni1Ahu0feSAUcLaskRCmyXsEhU86MaUJSrf5yQYeAUFinoIkLuAAxqDuc
+         ObU6cXMhK19b5UT0X/HeSEt0yXYqkHkfBNdI5Mvin+itJNuGqjNrp4ycb1qLqmme6RhK
+         ZUf7VaixEXpoZ8BZvTVneusrP2N08Dn3XvhgDMTTmZzrZ4mnas37C0vdNscmt4Ee9vQA
+         30AdXnqAKyKfSNEEpltvTHS0oJqLDMS117QUasUe4kbuXW5HD2Ax1x2ecl7XArjZx4bH
+         e5KQ==
+X-Gm-Message-State: AGRZ1gJUbHu3iJGSHp6545TbD02rZYW7RJVkXzQ5Hoe4GZuj49YiQI1O
+        HslCsYHHsfmll2/lsnZDlX71rg==
+X-Google-Smtp-Source: AJdET5eKnAdE58e9AXE8q/u2CG6E/c/NWy78fh2QoRQwb15FLvuvFx5vyWHYJn9es0QOJ9xDn/k2gQ==
+X-Received: by 2002:a1c:b4c1:: with SMTP id d184-v6mr3574811wmf.143.1542120493849;
+        Tue, 13 Nov 2018 06:48:13 -0800 (PST)
+Received: from lmecxl0911.lme.st.com ([2a04:cec0:1088:2b4c:8cab:bca7:b2f2:d2bb])
+        by smtp.gmail.com with ESMTPSA id s16sm3292020wrt.77.2018.11.13.06.48.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 13 Nov 2018 06:48:13 -0800 (PST)
+From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
+X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
+To:     tglx@linutronix.de, jason@lakedaemon.net, marc.zyngier@arm.com,
+        robh+dt@kernel.org, mark.rutland@arm.com, alexandre.torgue@st.com
+Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+Subject: [PATCH 0/3] Make STM32 interrupt controller use hwspinlock
+Date:   Tue, 13 Nov 2018 15:48:02 +0100
+Message-Id: <20181113144805.1054-1-benjamin.gaignard@st.com>
+X-Mailer: git-send-email 2.15.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-[+cc Martin, Rafael, Len, linux-acpi]
+This series allow to protect STM32 interrupt controller configuration registers
+with a hwspinlock to avoid conflicting accesses between processors. 
 
-On Tue, Nov 13, 2018 at 11:20:04AM +0100, Borislav Petkov wrote:
-> On Tue, Nov 13, 2018 at 08:17:12AM +0100, Ingo Molnar wrote:
-> > 
-> > * Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > 
-> > > PCI changes:
-> > > 
-> > >   - Pay attention to device-specific _PXM node values (Jonathan Cameron)
-> > 
-> > There's a new boot regression, my AMD ThreadRipper system (MSI X399 SLI 
-> > PLUS (MS-7B09)) hangs during early bootup, and I have bisected it down to 
-> > this commit:
-> > 
-> >   bad7dcd94f39: ACPI/PCI: Pay attention to device-specific _PXM node values
-> > 
-> > Reverting it solves the hang.
-> > 
-> > Unfortunately there's no console output when it hangs, even with 
-> > earlyprintk. It just hangs after the "loading initrd" line.
-> > 
-> > Config is an Ubuntu-ish config with PROVE_LOCKING=y and a few other debug 
-> > options.
-> > 
-> > All my other testsystems boot fine with similar configs, so it's probably 
-> > something specific to this system.
+Benjamin Gaignard (3):
+  dt-bindings: interrupt-controller: stm32: Document hwlock properties
+  irqchip: stm32: protect configuration registers with hwspinlock
+  ARM: dts: stm32: Add hwlock for irqchip on stm32mp157
 
-Martin reported the same thing [1] (unfortunately the archive didn't
-capture Martin's original emails, I think because they were multi-part
-messages with attachments).
+ .../interrupt-controller/st,stm32-exti.txt         |  4 +++
+ arch/arm/boot/dts/stm32mp157c.dtsi                 |  1 +
+ drivers/irqchip/irq-stm32-exti.c                   | 36 ++++++++++++++++++----
+ 3 files changed, 35 insertions(+), 6 deletions(-)
 
-Looks like Martin might have a similar system:
+-- 
+2.15.0
 
-  DMI: To Be Filled By O.E.M. To Be Filled By O.E.M./X399 Taichi, BIOS P3.30 08/14/2018
-  smpboot: CPU0: AMD Ryzen Threadripper 2950X 16-Core Processor (family: 0x17, model: 0x8, stepping: 0x2)
-
-Given how painful this is to debug, I queued up a revert on my
-for-linus branch until we figure out what sanity checks are needed to
-make the original patch safe.
-
-I would expect proximity information to be basically just a hint for
-optimization, not a functional requirement, so it would be really
-interesting to figure out why this causes such a catastrophic failure.
-Maybe there's a way to improve that path as well so it would be more
-robust or at least more debuggable.
-
-Bjorn
-
-[1] https://lore.kernel.org/linux-pci/20180912152140.3676-2-Jonathan.Cameron@huawei.com
