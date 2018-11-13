@@ -7,106 +7,91 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD6AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:54:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62782C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:55:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60A43223CB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:54:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 022A62245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:55:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2+3I0VV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60A43223CB
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="V0fhTn/v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 022A62245E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732319AbeKMPvU (ORCPT
+        id S1732552AbeKMPvj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:51:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36248 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:51:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35992 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732984AbeKMPtK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:49:10 -0500
+        id S1732925AbeKMPtF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:49:05 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 71E3922520;
-        Tue, 13 Nov 2018 05:52:42 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 94CD822523;
+        Tue, 13 Nov 2018 05:52:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088362;
-        bh=56A8krQHwbMz6KAVU2yrmv9RNoPa+3q0S6q9V9MhQNc=;
-        h=From:To:Cc:Subject:Date:From;
-        b=h2+3I0VVCZPIaYdm5koQ14P8ynVvO+rVhANztrW8WRp8sPKJGkJuuRRfkRL7RBu2C
-         mQIuVxmCaIY973ie14+UUwsmxKoRyytiWbzmMriNuVmZD0UuHf7MI9AAZY+Tv25jnB
-         t7+UDhNVVerbyCULdH5wYV3eGFV0X1G1R7JemMj8=
+        s=default; t=1542088357;
+        bh=y7kScuND3c5MLqunJVB6dTzJSUtqdca6q4FO86BcJkM=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=V0fhTn/v2mFkk0seJj9JvAlDGFE5KyGLoprC9FFVSFxXfaYLM0DTtYYfBC86OYF8x
+         n/+e9XOMeW9keeteS/BYt1nBUvLSEaAzKuwW8eYI3R4Vn/s7MSSrarkNeeu4q1h7Nf
+         SMwXJUc3OkD47cskKrn0eRSgl2oqvY+pLJTyYiyw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>,
-        Tigran Aivazian <aivazian.tigran@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.4 01/11] bfs: add sanity check at bfs_fill_super()
-Date:   Tue, 13 Nov 2018 00:52:32 -0500
-Message-Id: <20181113055242.79261-1-sashal@kernel.org>
+Cc:     Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Peter Feuerer <peter@piie.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 13/17] platform/x86: acerhdf: Add BIOS entry for Gateway LT31 v1.3307
+Date:   Tue, 13 Nov 2018 00:52:19 -0500
+Message-Id: <20181113055223.79060-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181113055223.79060-1-sashal@kernel.org>
+References: <20181113055223.79060-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-[ Upstream commit 9f2df09a33aa2c76ce6385d382693f98d7f2f07e ]
+[ Upstream commit 684238d79ad85c5e19a71bb5818e77e329912fbc ]
 
-syzbot is reporting too large memory allocation at bfs_fill_super() [1].
-Since file system image is corrupted such that bfs_sb->s_start == 0,
-bfs_fill_super() is trying to allocate 8MB of continuous memory. Fix
-this by adding a sanity check on bfs_sb->s_start, __GFP_NOWARN and
-printf().
+To fix:
 
-[1] https://syzkaller.appspot.com/bug?id=16a87c236b951351374a84c8a32f40edbc034e96
+  acerhdf: unknown (unsupported) BIOS version Gateway  /LT31   /v1.3307 , please report, aborting!
 
-Link: http://lkml.kernel.org/r/1525862104-3407-1-git-send-email-penguin-kernel@I-love.SAKURA.ne.jp
-Signed-off-by: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-Reported-by: syzbot <syzbot+71c6b5d68e91149fc8a4@syzkaller.appspotmail.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Tigran Aivazian <aivazian.tigran@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+As can be seen in the context, the BIOS registers haven't changed in
+the previous versions, so the assumption is they won't have changed
+in this last update for this somewhat older platform either.
+
+Cc: Peter Feuerer <peter@piie.net>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Andy Shevchenko <andy@infradead.org>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Peter Feuerer <peter@piie.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/bfs/inode.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ drivers/platform/x86/acerhdf.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/bfs/inode.c b/fs/bfs/inode.c
-index fdcb4d69f430..4714c55c1ae5 100644
---- a/fs/bfs/inode.c
-+++ b/fs/bfs/inode.c
-@@ -350,7 +350,8 @@ static int bfs_fill_super(struct super_block *s, void *data, int silent)
- 
- 	s->s_magic = BFS_MAGIC;
- 
--	if (le32_to_cpu(bfs_sb->s_start) > le32_to_cpu(bfs_sb->s_end)) {
-+	if (le32_to_cpu(bfs_sb->s_start) > le32_to_cpu(bfs_sb->s_end) ||
-+	    le32_to_cpu(bfs_sb->s_start) < BFS_BSIZE) {
- 		printf("Superblock is corrupted\n");
- 		goto out1;
- 	}
-@@ -359,9 +360,11 @@ static int bfs_fill_super(struct super_block *s, void *data, int silent)
- 					sizeof(struct bfs_inode)
- 					+ BFS_ROOT_INO - 1;
- 	imap_len = (info->si_lasti / 8) + 1;
--	info->si_imap = kzalloc(imap_len, GFP_KERNEL);
--	if (!info->si_imap)
-+	info->si_imap = kzalloc(imap_len, GFP_KERNEL | __GFP_NOWARN);
-+	if (!info->si_imap) {
-+		printf("Cannot allocate %u bytes\n", imap_len);
- 		goto out1;
-+	}
- 	for (i = 0; i < BFS_ROOT_INO; i++)
- 		set_bit(i, info->si_imap);
- 
+diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
+index 2acdb0d6ea89..a0533e4e52d7 100644
+--- a/drivers/platform/x86/acerhdf.c
++++ b/drivers/platform/x86/acerhdf.c
+@@ -233,6 +233,7 @@ static const struct bios_settings bios_tbl[] = {
+ 	{"Gateway", "LT31",   "v1.3201",  0x55, 0x58, {0x9e, 0x00}, 0},
+ 	{"Gateway", "LT31",   "v1.3302",  0x55, 0x58, {0x9e, 0x00}, 0},
+ 	{"Gateway", "LT31",   "v1.3303t", 0x55, 0x58, {0x9e, 0x00}, 0},
++	{"Gateway", "LT31",   "v1.3307",  0x55, 0x58, {0x9e, 0x00}, 0},
+ 	/* Packard Bell */
+ 	{"Packard Bell", "DOA150",  "v0.3104",  0x55, 0x58, {0x21, 0x00}, 0},
+ 	{"Packard Bell", "DOA150",  "v0.3105",  0x55, 0x58, {0x20, 0x00}, 0},
 -- 
 2.17.1
 
