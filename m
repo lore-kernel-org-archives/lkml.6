@@ -2,110 +2,115 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CC239C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:17:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5596C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:17:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9853820811
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:17:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9853820811
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 7653820811
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:17:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7653820811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732065AbeKMUO2 (ORCPT
+        id S1732122AbeKMUOr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 15:14:28 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:59906 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731708AbeKMUO2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 15:14:28 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id c-rJV_2d9e5V; Tue, 13 Nov 2018 11:17:01 +0100 (CET)
-Received: from zn.tnic (p200300EC2BE56F00D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2be5:6f00:d571:4500:c00e:26fd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 960C01EC00CD;
-        Tue, 13 Nov 2018 11:17:01 +0100 (CET)
-Date:   Tue, 13 Nov 2018 11:17:01 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Yi Wang <wang.yi59@zte.com.cn>
-Cc:     tglx@linutronix.de, mingo@redhat.com, hpa@zytor.com,
-        x86@kernel.org, linux-kernel@vger.kernel.org,
-        zhong.weidong@zte.com.cn, bp@suse.de
-Subject: Re: [PATCH] x86/irq: Fix -Wmissing-prototypes warning for init_IRQ()
-Message-ID: <20181113101701.GB10502@zn.tnic>
-References: <1542074189-3208-1-git-send-email-wang.yi59@zte.com.cn>
+        Tue, 13 Nov 2018 15:14:47 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:56570 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1732077AbeKMUOr (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 15:14:47 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wADAE0jm010750;
+        Tue, 13 Nov 2018 11:16:58 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2nnq3j8u2x-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 13 Nov 2018 11:16:58 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id AEBAD34;
+        Tue, 13 Nov 2018 10:16:57 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node1.st.com [10.75.127.7])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 84C78287B;
+        Tue, 13 Nov 2018 10:16:57 +0000 (GMT)
+Received: from SFHDAG3NODE1.st.com (10.75.127.7) by SFHDAG3NODE1.st.com
+ (10.75.127.7) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 13 Nov
+ 2018 11:16:57 +0100
+Received: from SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86]) by
+ SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86%20]) with mapi id
+ 15.00.1347.000; Tue, 13 Nov 2018 11:16:57 +0100
+From:   Bich HEMON <bich.hemon@st.com>
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>
+CC:     Olof Johansson <olof@lixom.net>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre TORGUE <alexandre.torgue@st.com>,
+        Gerald BAEZA <gerald.baeza@st.com>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Ludovic BARRE <ludovic.barre@st.com>
+Subject: Re: [PATCH] ARM: stm32: debug: add low-level debug support
+Thread-Topic: [PATCH] ARM: stm32: debug: add low-level debug support
+Thread-Index: AQHTBvhu7ZuVgRQin0SIqpXfFjas8qVPSqoAgAD5r4CAAAJGgIAADqwA
+Date:   Tue, 13 Nov 2018 10:16:57 +0000
+Message-ID: <94666165-f206-5472-c848-499ba52cd354@st.com>
+References: <1501174209-27550-1-git-send-email-bich.hemon@st.com>
+ <1501174209-27550-2-git-send-email-bich.hemon@st.com>
+ <20181112182236.s7cs6dol4dmxkp7u@localhost>
+ <f244c67b-de86-b0e7-7283-7b27f9591cf9@st.com>
+ <20181113092422.GJ30658@n2100.armlinux.org.uk>
+In-Reply-To: <20181113092422.GJ30658@n2100.armlinux.org.uk>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.51]
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <78FF2043ABE26D488A8FA0D6C4317C1C@st.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1542074189-3208-1-git-send-email-wang.yi59@zte.com.cn>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_07:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 09:56:29AM +0800, Yi Wang wrote:
-> We get a warning when building kernel with W=1:
-> arch/x86/kernel/irqinit.c:79:13: warning: no previous prototype for ‘init_IRQ’ [-Wmissing-prototypes]
->  void __init init_IRQ(void)
->              ^
-> 
-> Add the missing declaration in head file to fix this.
-> 
-> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
-> ---
->  arch/x86/include/asm/irq.h | 2 ++
->  1 file changed, 2 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/irq.h b/arch/x86/include/asm/irq.h
-> index 2395bb7..399a9c5 100644
-> --- a/arch/x86/include/asm/irq.h
-> +++ b/arch/x86/include/asm/irq.h
-> @@ -41,6 +41,8 @@ static inline int irq_canonicalize(int irq)
->  
->  extern void init_ISA_irqs(void);
->  
-> +extern void __init init_IRQ(void);
-> +
->  #ifdef CONFIG_X86_LOCAL_APIC
->  void arch_trigger_cpumask_backtrace(const struct cpumask *mask,
->  				    bool exclude_self);
-> -- 
-
-I'm not sure we should do one patch per warning - that's too granulary.
-What I did earlier was this:
-
-make allmodconfig
-make W=1 arch/x86/kernel/apic/
-
-and then looked at all those -Wmissing-prototypes warnings.
-
-Once I've fixed them, I commit the result as a
-
-  x86/apic: Fix -Wmissing-prototypes warnings
-
-and this way it is more or less per subsystem or folder or whatever,
-which still keeps the amount of patches sane for further handling.
-
-Now, I did some fixes here so I'd suggest you do all your patches ontop
-of tip/master after merging this branch into it:
-
-https://git.kernel.org/pub/scm/linux/kernel/git/bp/bp.git/log/?h=tip-ras-core
-
-I'll push it into tip the next days.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+DQoNCk9uIDExLzEzLzE4IDEwOjI0IEFNLCBSdXNzZWxsIEtpbmcgLSBBUk0gTGludXggd3JvdGU6
+DQo+IE9uIFR1ZSwgTm92IDEzLCAyMDE4IGF0IDA5OjE2OjE2QU0gKzAwMDAsIEJpY2ggSEVNT04g
+d3JvdGU6DQo+Pg0KPj4gT24gMTEvMTIvMTggNzoyMiBQTSwgT2xvZiBKb2hhbnNzb24gd3JvdGU6
+DQo+Pj4gT24gVGh1LCBKdWwgMjcsIDIwMTcgYXQgMDQ6NTA6MjBQTSArMDAwMCwgQmljaCBIRU1P
+TiB3cm90ZToNCj4+Pj4gRnJvbTogR2VyYWxkIEJhZXphIDxnZXJhbGQuYmFlemFAc3QuY29tPg0K
+Pj4+Pg0KPj4+PiBUaGlzIGFkZHMgbG93LWxldmVsIGRlYnVnIHN1cHBvcnQgb24gVVNBUlQxIGZv
+ciBTVE0zMkY0DQo+Pj4+IGFuZCBTVE0zMkY3Lg0KPj4+PiBDb21waWxlZCB2aWEgJ0NPTkZJR19E
+RUJVR19MTCcgYW5kICdDT05GSUdfRUFSTFlfUFJJTlRLJy4NCj4+Pj4gRW5hYmxlZCB2aWEgJ2Vh
+cmx5cHJpbnRrJyBpbiBib290YXJncy4NCj4+Pj4NCj4+Pj4gU2lnbmVkLW9mZi1ieTogR2VyYWxk
+IEJhZXphIDxnZXJhbGQuYmFlemFAc3QuY29tPg0KPj4+PiBTaWduZWQtb2ZmLWJ5OiBCaWNoIEhl
+bW9uIDxiaWNoLmhlbW9uQHN0LmNvbT4NCj4+Pg0KPj4+IEhpLA0KPj4+DQo+Pj4gVGhpcyBoYWQg
+ZmFsbGVuIGJldHdlZW4gdGhlIGNoYWlycyBpdCBzZWVtcy4gSSBoYXZlIGFwcGxpZWQgaXQgdG8g
+YXJtLXNvYw0KPj4+IG5leHQvc29jIG5vdywgZm9yIDQuMjEgbWVyZ2Ugd2luZG93Lg0KPj4+DQo+
+Pj4gSXQgZW5kZWQgdXAgYmVpbmcgcGF0Y2hlZCB1cCBtYW51YWxseSB0byBjb25zb2xpZGF0ZSB0
+aGUgdmVyc2lvbiBpbg0KPj4+IFJ1c3NlbGwncyBwYXRjaCB0cmFja2VyIHdpdGggdGhpcyBwb3N0
+ZWQgdmVyc2lvbiwgYW5kIEkgdHdlYWtlZCB3aGl0ZXNwYWNlDQo+Pj4gYSBiaXQuIExldCBtZSBr
+bm93IGlmIEkgbWlzc2VkIHNvbWV0aGluZy4NCj4+Pg0KPj4+DQo+Pj4gVGhhbmtzLA0KPj4+DQo+
+Pj4gLU9sb2YNCj4+Pg0KPj4NCj4+IEhpIE9sb2YsDQo+Pg0KPj4gUGxlYXNlIG5vdGUgdGhhdCB0
+aGlzIHBhdGNoIGhhcyB0byBiZSBhYmFuZG9uZWQgYXMgTHVkb3ZpYyBCQVJSRSBwdXNoZWQNCj4+
+IGEgbmV3IHZlcnNpb24gb2YgdGhpcyBjaGFuZ2U6DQo+PiBodHRwczovL3BhdGNod29yay5jb2Rl
+YXVyb3JhLm9yZy9wYXRjaC80MDA1NjMvDQo+Pg0KPj4gWW91IGNhbiBmaW5kIGl0IGluIFJ1c3Nl
+bGwncyB0cmFja2VyIGhlcmU6DQo+PiBodHRwOi8vd3d3LmFybS5saW51eC5vcmcudWsvZGV2ZWxv
+cGVyL3BhdGNoZXMvdmlld3BhdGNoLnBocD9pZD04ODAzLzENCj4gDQo+IEFuZCBJJ20gbm90IGdv
+aW5nIHRvIG1lcmdlIHRoYXQgYmVjYXVzZToNCj4gDQo+IDEpIGl0J3Mgbm90IGZvciBtZSB0byBt
+ZXJnZSAtIGl0IGRvZXNuJ3QgZ28gdGhyb3VnaCBteSB0cmVlLCBidXQgdGhyb3VnaA0KPiAgICAg
+YXJtLXNvYywgd2hpY2ggT2xvZiBhbmQgQXJuZCBtYW5hZ2UuDQo+IDIpIGl0J3Mgbm90IGJlZW4g
+b24gdGhlIG1haWxpbmcgbGlzdCBhcyBwZXIgbm9ybWFsIHN1Ym1pc3Npb24gcHJvY2Vzcy4NCj4g
+DQo+IFNvcnJ5Lg0KPiANCg0KT2ssIHRoYW5rIHlvdSBmb3IgdGhlIGZlZWRiYWNrLg0KDQpTbyBP
+bG9mLCBjYW4geW91IHBsZWFzZSBpZ25vcmUgbXkgcHJldmlvdXMgZW1haWwgYW5kIG1lcmdlIG15
+IHBhdGNoIGFzIA0KeW91IHByb3Bvc2VkIGl0IGZvciA0LjIxLiBMdWRvdmljJ3MgcGF0Y2ggd2ls
+bCBiZSBhYmFuZG9uZWQgaW5zdGVhZC4NCg0KVGhhbmtzLA0KDQpCaWNo
