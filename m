@@ -2,153 +2,107 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7894C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:59:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48425C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:59:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A49D2245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:59:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synesis-ru.20150623.gappssmtp.com header.i=@synesis-ru.20150623.gappssmtp.com header.b="bLVPwgiO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A49D2245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=synesis.ru
+	by mail.kernel.org (Postfix) with ESMTP id 15D7A22360
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:59:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D7A22360
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733167AbeKMW5C (ORCPT
+        id S1733220AbeKMW5R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 17:57:02 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37780 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732986AbeKMW5B (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 17:57:01 -0500
-Received: by mail-oi1-f194.google.com with SMTP id y23so1059774oia.4
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 04:59:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=synesis-ru.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=B40sURHNTLb8+tSXCx26itaj23HZO710UGG5DEoOj08=;
-        b=bLVPwgiO53EG+aleK7QFI/5sTZp9lz0ORpJ9ny7Icn0z0mEIiYmH44vUAMJlaxwSla
-         wobNtOeOHMfSE4h5YUhapo6OKKPuFJYWJuXQD6+i4/qKchDe4ShfvECy2DwfkB5h3jKM
-         A29zhdXrnHhPkqXM171n4LkNngrVqKKFAwMSE260gUhvQTW/vepuAJ4K7GJWN8VaAIJA
-         w1XedZCHqSL+yoWnKMnAcv9KA0VO6UdlWzMGvF0tWZX3JJilSSofkF+HgFOvXbWNmyX/
-         vr0yplXwBfuYIVyjfmKAOF5Fs2bWV9JDk0echJ+irjRZojdBGpCwtP9vuOdqcH8ceQPt
-         1BDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=B40sURHNTLb8+tSXCx26itaj23HZO710UGG5DEoOj08=;
-        b=A3f4Ugj+pOUC/YTHJ1bBlLYov1LMihXFHWDp31SfUQjZRCz1mFZr+9rp3YVtvlFUf5
-         Ase+XGR6B67Fu/felrqisZ3fXmaHM9F1UBdcCzoZO2zij8iku/aqdCBO2OlvZA2dfhmW
-         SEsRZz+3NPXFjzYjxU69FLRErABqJM+Xaug+PcmTqaxVG4dgcAu38pjtE3OWmX0uKKNQ
-         iZdJbZ7L+6sEaaymDAsUd+GIt9KckC8jW1puejqUPvnnZMMyHYE5C8F/3ltEs67Z95Oc
-         /1jiydOMOJB0CTmUXrXlmx0szG+54U3nB2pJIDkI3Uqbk1DwedX6Kg7KuIwkgo+BAVy0
-         JMhg==
-X-Gm-Message-State: AGRZ1gIuWNdTIVhOHcS31BiiQ9h6Ovrhbh0tvze9ah7E+3PqT+RPU1HV
-        YDA6oH+admjZ/kP18lnGwMdUt9dvYd0dKaBb
-X-Google-Smtp-Source: AJdET5cthyQJ/pA78A64r+z77wT218oEQ+pAWxIsFnn/g+oL7ih8TOWivZtVUAqqBaXgFCbdSLwBNQ==
-X-Received: by 2002:aca:d694:: with SMTP id n142-v6mr2760097oig.32.1542113939152;
-        Tue, 13 Nov 2018 04:58:59 -0800 (PST)
-Received: from mail-oi1-f173.google.com (mail-oi1-f173.google.com. [209.85.167.173])
-        by smtp.gmail.com with ESMTPSA id e42sm22037270oth.36.2018.11.13.04.58.57
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 04:58:57 -0800 (PST)
-Received: by mail-oi1-f173.google.com with SMTP id c206so4628053oib.0;
-        Tue, 13 Nov 2018 04:58:57 -0800 (PST)
-X-Received: by 2002:aca:f40d:: with SMTP id s13-v6mr3069528oih.102.1542113937120;
- Tue, 13 Nov 2018 04:58:57 -0800 (PST)
+        Tue, 13 Nov 2018 17:57:17 -0500
+Received: from mga14.intel.com ([192.55.52.115]:50887 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732875AbeKMW5Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 17:57:16 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 04:59:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
+   d="scan'208";a="99870839"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga003.jf.intel.com with SMTP; 13 Nov 2018 04:59:12 -0800
+Received: by lahna (sSMTP sendmail emulation); Tue, 13 Nov 2018 14:59:10 +0200
+Date:   Tue, 13 Nov 2018 14:59:10 +0200
+From:   "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
+To:     Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+Cc:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        Linuxarm <linuxarm@huawei.com>, Lukas Wunner <lukas@wunner.de>
+Subject: Re: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
+Message-ID: <20181113125910.GB2500@lahna.fi.intel.com>
+References: <5FC3163CFD30C246ABAA99954A238FA8387DD344@FRAEML521-MBX.china.huawei.com>
+ <20181113122522.GA2500@lahna.fi.intel.com>
+ <5FC3163CFD30C246ABAA99954A238FA8387DF43F@FRAEML521-MBX.china.huawei.com>
 MIME-Version: 1.0
-References: <20181112231344.7161-1-timofey.titovets@synesis.ru> <CAG48ez0VRmRQckOjQhOeaf6bLYkfi45ksdnzuCKPwBYTM+As1g@mail.gmail.com>
-In-Reply-To: <CAG48ez0VRmRQckOjQhOeaf6bLYkfi45ksdnzuCKPwBYTM+As1g@mail.gmail.com>
-From:   Timofey Titovets <timofey.titovets@synesis.ru>
-Date:   Tue, 13 Nov 2018 15:58:20 +0300
-X-Gmail-Original-Message-ID: <CAGqmi75MShkwHTiSLPiOoQuYORmYTBJVqMKXm7pKhoNg9PT3yw@mail.gmail.com>
-Message-ID: <CAGqmi75MShkwHTiSLPiOoQuYORmYTBJVqMKXm7pKhoNg9PT3yw@mail.gmail.com>
-Subject: Re: [PATCH V3] KSM: allow dedup all tasks memory
-To:     jannh@google.com
-Cc:     Linux Kernel <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5FC3163CFD30C246ABAA99954A238FA8387DF43F@FRAEML521-MBX.china.huawei.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-=D0=B2=D1=82, 13 =D0=BD=D0=BE=D1=8F=D0=B1. 2018 =D0=B3. =D0=B2 14:57, Jann =
-Horn <jannh@google.com>:
->
-> On Tue, Nov 13, 2018 at 12:40 PM Timofey Titovets
-> <timofey.titovets@synesis.ru> wrote:
-> > ksm by default working only on memory that added by
-> > madvise().
-> >
-> > And only way get that work on other applications:
-> >   * Use LD_PRELOAD and libraries
-> >   * Patch kernel
-> >
-> > Lets use kernel task list and add logic to import VMAs from tasks.
-> >
-> > That behaviour controlled by new attributes:
-> >   * mode:
-> >     I try mimic hugepages attribute, so mode have two states:
-> >       * madvise      - old default behaviour
-> >       * always [new] - allow ksm to get tasks vma and
-> >                        try working on that.
->
-> Please don't. And if you really have to for some reason, put some big
-> warnings on this, advising people that it's a security risk.
->
-> KSM is one of the favorite punching bags of side-channel and hardware
-> security researchers:
->
-> As a gigantic, problematic side channel:
-> http://staff.aist.go.jp/k.suzaki/EuroSec2011-suzaki.pdf
-> https://www.usenix.org/system/files/conference/woot15/woot15-paper-barres=
-i.pdf
-> https://access.redhat.com/blogs/766093/posts/1976303
-> https://gruss.cc/files/dedup.pdf
->
-> In particular https://gruss.cc/files/dedup.pdf ("Practical Memory
-> Deduplication Attacks in Sandboxed JavaScript") shows that KSM makes
-> it possible to use malicious JavaScript to determine whether a given
-> page of memory exists elsewhere on your system.
->
-> And also as a way to target rowhammer-based faults:
-> https://www.usenix.org/system/files/conference/usenixsecurity16/sec16_pap=
-er_razavi.pdf
-> https://thisissecurity.stormshield.com/2017/10/19/attacking-co-hosted-vm-=
-hacker-hammer-two-memory-modules/
+On Tue, Nov 13, 2018 at 12:36:20PM +0000, Shameerali Kolothum Thodi wrote:
+> > @@ -156,9 +156,9 @@ static void pcie_do_write_cmd(struct controller *ctrl,
+> > u16 cmd,
+> >  	slot_ctrl |= (cmd & mask);
+> >  	ctrl->cmd_busy = 1;
+> >  	smp_mb();
+> > +	ctrl->slot_ctrl = slot_ctrl;
+> 
+> Actually I tried this one, but it doesn't help in this case as the initial 
+> pcie_capability_read_word() returns the slot_ctrl without PCI_EXP_SLTCTL_HPIE
+> bit set.  It looks to me  pcie_enable_notification() function enables this,
+> 
+> 	if (!pciehp_poll_mode)
+> 		cmd |= PCI_EXP_SLTCTL_HPIE | PCI_EXP_SLTCTL_CCIE;
+> 
+> I don't know this is as per the spec or not as the initial cap read doesn't seems to
+> have the PCI_EXP_SLTCTL_HPIE bit set.
 
-I'm very sorry, i'm not a security specialist.
-But if i understood correctly, ksm have that security issues _without_
-my patch set.
-Even more, not only KSM have that type of issue, any memory
-deduplication have that problems.
-Any guy who care about security must decide on it self. Which things
-him use and how he will
-defend from others.
-Even more on it self he must learn tools, what he use and make some
-decision right?
+If I read the code right cmd value should end up in ctrl->slot_ctrl
+properly from pcie_enable_notification().
 
-So, if you really care about that problem in general, or only on KSM side,
-that your initiative and your duty to warn people about that.
+However, I think we are missing check for PCI_EXP_SLTCTL_CCIE in
+pciehp_isr().
 
-KSM already exists for 10+ years. You know about security implication
-of use memory deduplication.
-That your duty to send a patches to documentation, and add appropriate warn=
-ings.
+Here's an updated patch, can you try and see if it makes any difference?
 
-Sorry for my passive aggressive,
-i don't try hurt someone, or humiliate.
-
-That's just my IMHO and i'm just to restricted in my english knowledge,
-to write that more gentle.
-
-Thanks!
+diff --git a/drivers/pci/hotplug/pciehp_hpc.c b/drivers/pci/hotplug/pciehp_hpc.c
+index 7dd443aea5a5..da2cbe892444 100644
+--- a/drivers/pci/hotplug/pciehp_hpc.c
++++ b/drivers/pci/hotplug/pciehp_hpc.c
+@@ -156,9 +156,9 @@ static void pcie_do_write_cmd(struct controller *ctrl, u16 cmd,
+ 	slot_ctrl |= (cmd & mask);
+ 	ctrl->cmd_busy = 1;
+ 	smp_mb();
++	ctrl->slot_ctrl = slot_ctrl;
+ 	pcie_capability_write_word(pdev, PCI_EXP_SLTCTL, slot_ctrl);
+ 	ctrl->cmd_started = jiffies;
+-	ctrl->slot_ctrl = slot_ctrl;
+ 
+ 	/*
+ 	 * Controllers with the Intel CF118 and similar errata advertise
+@@ -522,7 +522,7 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
+ 	 * in the Slot Control register (PCIe r4.0, sec 6.7.3.4).
+ 	 */
+ 	if (pdev->current_state == PCI_D3cold ||
+-	    (!(ctrl->slot_ctrl & PCI_EXP_SLTCTL_HPIE) && !pciehp_poll_mode))
++	    (!(ctrl->slot_ctrl & (PCI_EXP_SLTCTL_HPIE | PCI_EXP_SLTCTL_CCIE)) && !pciehp_poll_mode))
+ 		return IRQ_NONE;
+ 
+ 	/*
