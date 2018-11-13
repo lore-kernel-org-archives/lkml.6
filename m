@@ -7,60 +7,60 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 140D0C07E85
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:03:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C6250C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:03:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8AFF22507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:03:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8776A2243E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:03:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="XuGcgN50"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8AFF22507
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="dHDtII3S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8776A2243E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730825AbeKML7g (ORCPT
+        id S1730842AbeKML7j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 06:59:36 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:35135 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730805AbeKML7g (ORCPT
+        Tue, 13 Nov 2018 06:59:39 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:36175 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730805AbeKML7i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 06:59:36 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 32-v6so4918337pgu.2
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 18:03:44 -0800 (PST)
+        Tue, 13 Nov 2018 06:59:38 -0500
+Received: by mail-pf1-f193.google.com with SMTP id d13-v6so5217467pfo.3
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 18:03:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=subject:date:message-id:in-reply-to:references:cc:from:to;
-        bh=JM+S/eFsNskgo7atW/iBIZzDQR4tvlY1/M1nNBefE3A=;
-        b=XuGcgN502rs9GsiYN10cXgrgKSex88J3/+pPISvc+m2TdFHfUDOnNFsNs6ZBGtV5qL
-         Jj+0p0S1FE8+mMwy0k4BGzRJLNVOOJlEhMSVzRlhWNCaSGK4smyRQnUPoE7TOMT0UnIr
-         1AwlGVZfM5qGDJ1jKKrAzTdaNhcvjf4TqrAFg0ScnkT5CjUBihY1i1D4eHc3FCYzjicL
-         nGZKQnRH5kLKqz9tOnVTsI7o4QZSHHfSglDhfCzVdRIqPACRLORn1tvhJQlF34l/t+Ag
-         c5jb7J0r1BHpXWgZzsrO0iL1cQc/Q4SWgDDdPMGXrnyVBcTLMpPV2aL+Qt+WchCqmG/E
-         471w==
+        bh=KwRK/8QusrPt9E60VsZ+F/UZc9LhXH3dVrppBh4GkT0=;
+        b=dHDtII3SPhynR8V8WQ6RhY4iIrwmmAHy+ZinjdkXtAm6sTkEaaNuEfub+dqf8SZI3B
+         dTR9Mi7Ofc/EDidTtGRZGq2FOn2yrZ5AjhcKGCXlipf7oXVnGNVQ5D9IZlZ8qkS29ZDZ
+         vLBb1DTN8fTFH2mUvlsCLTryVkC5RaACkNLhkGdoesX76++l56Rec0ivX5NQwfxlFEEF
+         XFylgfi91mBrEPDtddjEdg9ZGYDi8/twxrOKKwpUlSs3OyQLPqnEL1kymjS/P5AK6LGK
+         uSPu7xhD6XsiKqEDE2xJmtLfJsmnY0Eqvolu66Rsj3rVTchSqEFlVYLHuRSEju2ldVkY
+         Idjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:subject:date:message-id:in-reply-to:references
          :cc:from:to;
-        bh=JM+S/eFsNskgo7atW/iBIZzDQR4tvlY1/M1nNBefE3A=;
-        b=QtVTzLlAPMbdM8fcJ7c7xE/DEQ9yPqNyA0hMjeXKvycy2yftYnhMNoXVMtG0YBGKLQ
-         FWtGJ4Mu7BWktQBA3k2iSCNXQ4PJ8nanUyrEQPJWq0lhs+4GWCJVNUrIpX/ylA7KIlTq
-         C98XaV5+Gis4kY4LKtBdEWW4Iamf1B+BShdYkKH+T7koPkquGTvAOdh4tiHa+IwwOXTn
-         G/0TAC1MJXLjK9wnBXaAr4i4AKZAtfXZ4y0zJYAnSLa3poyJB6gMQ5txPcyjxBlhV5Jx
-         oTuDyOBWBe5rJ/0Kr3gA1qV8hV3Ii87J/+VjXKOPB7xDeMA6GSVd+OFWbJf0xI4ZVbey
-         sgSg==
-X-Gm-Message-State: AGRZ1gK3nTE3RARFpmK9JrxRPlk4w7xny3ujphRU3up5UFylq0TBdk2U
-        0GOmEtCS2d/3QHl2YUt1BFUgRQ==
-X-Google-Smtp-Source: AJdET5e5F9BMkGMJpsPyH9pjxG2eOrIWxjz1Z71qqgOUywCdnDfywSML5a9VGIZ5Wm3QckGBAzfIlA==
-X-Received: by 2002:a63:31d0:: with SMTP id x199mr2982886pgx.10.1542074624095;
-        Mon, 12 Nov 2018 18:03:44 -0800 (PST)
-Received: from localhost ([216.9.110.4])
-        by smtp.gmail.com with ESMTPSA id d65-v6sm24529216pfc.144.2018.11.12.18.03.43
+        bh=KwRK/8QusrPt9E60VsZ+F/UZc9LhXH3dVrppBh4GkT0=;
+        b=gJywTJLSjAWVT1LUZMuki6ai5DdEkFHQe3FTUf5V5Wdi7QLKXSdSqY361oLgoBKkLb
+         jD6+v+ZqDSL6/bi3nVame7qQ8zsJrgOZ2rde7WMYSfUM3UAdiHJM6d8rJILIEn7eWWnd
+         CUr6CKRfTC1EpWvZnBBkrsfs3gw92FbjjGle9nEd6cwIc4+2ht23V+uPN6LfugV8Yvfh
+         qytGJ97V609eqeLqft/jNCHtzDwzC1xAADACOch6i9HrgxtFnBd3nMC7ue6Lx9k84A7D
+         pdx4h64AnMLBHKOpbQcB7V3QRrE+SXBgWynCQal1pL4oPdOhunkKdt7xcF9PWLkm9mfj
+         sOng==
+X-Gm-Message-State: AGRZ1gJM7oCB/VQOBFlqBJVIkrmMg6ifKKzxLcG/h3pZgfqUK7u+IPP5
+        RuM8dCjWOnODNV+0O81BC+irMg==
+X-Google-Smtp-Source: AJdET5eNU9kgcQE7rm+1rijBilcpE7dY75n5yG5XoGYN5pAdXkENPvN/pzgS0E8cPu4WG9WX/bx8Aw==
+X-Received: by 2002:a63:8043:: with SMTP id j64mr3036868pgd.405.1542074626048;
+        Mon, 12 Nov 2018 18:03:46 -0800 (PST)
+Received: from localhost ([216.9.110.1])
+        by smtp.gmail.com with ESMTPSA id f10-v6sm11693569pfa.188.2018.11.12.18.03.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 12 Nov 2018 18:03:43 -0800 (PST)
-Subject: [PATCH 4/7] doc: Indicate that xtensa supports sg-chain
-Date:   Mon, 12 Nov 2018 18:01:10 -0800
-Message-Id: <20181113020113.29640-5-palmer@sifive.com>
+        Mon, 12 Nov 2018 18:03:45 -0800 (PST)
+Subject: [PATCH 5/7] doc: Indicate that arm64 support queued-spinlocks
+Date:   Mon, 12 Nov 2018 18:01:11 -0800
+Message-Id: <20181113020113.29640-6-palmer@sifive.com>
 X-Mailer: git-send-email 2.18.1
 In-Reply-To: <20181113020113.29640-1-palmer@sifive.com>
 References: <20181113020113.29640-1-palmer@sifive.com>
@@ -85,20 +85,22 @@ This was suggested by features-refresh.sh
 
 Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
 ---
- Documentation/features/io/sg-chain/arch-support.txt | 2 +-
+ .../features/locking/queued-spinlocks/arch-support.txt          | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/features/io/sg-chain/arch-support.txt b/Documentation/features/io/sg-chain/arch-support.txt
-index eac96f99174f..3c85efb8bc8d 100644
---- a/Documentation/features/io/sg-chain/arch-support.txt
-+++ b/Documentation/features/io/sg-chain/arch-support.txt
-@@ -30,5 +30,5 @@
-     |          um: | TODO |
-     |   unicore32: | TODO |
-     |         x86: |  ok  |
--    |      xtensa: | TODO |
-+    |      xtensa: |  ok  |
-     -----------------------
+diff --git a/Documentation/features/locking/queued-spinlocks/arch-support.txt b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+index e3080b82aefd..743aa6691715 100644
+--- a/Documentation/features/locking/queued-spinlocks/arch-support.txt
++++ b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+@@ -9,7 +9,7 @@
+     |       alpha: | TODO |
+     |         arc: | TODO |
+     |         arm: | TODO |
+-    |       arm64: | TODO |
++    |       arm64: |  ok  |
+     |         c6x: | TODO |
+     |        csky: | TODO |
+     |       h8300: | TODO |
 -- 
 2.18.1
 
