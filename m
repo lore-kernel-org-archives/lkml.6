@@ -2,168 +2,136 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 646A2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 178F5C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:01:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F43E223DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 18:58:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F43E223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id D9DD421780
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:01:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9DD421780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727166AbeKNE6H (ORCPT
+        id S1726296AbeKNFBO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 23:58:07 -0500
-Received: from mout.gmx.net ([212.227.17.21]:50261 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726659AbeKNE6H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 23:58:07 -0500
-Received: from dhcp-41-57.bos.redhat.com ([66.187.233.206]) by mail.gmx.com
- (mrgmx102 [212.227.17.174]) with ESMTPSA (Nemesis) id
- 0MW9TR-1fyFOQ3Ioj-00XIha; Tue, 13 Nov 2018 19:58:24 +0100
-Message-ID: <1542135498.12945.20.camel@gmx.us>
-Subject: Re: WARNING: CPU: 26 PID: 64391 at lib/vsprintf.c:2193
- set_precision+0x84/0x90
-From:   Qian Cai <cai@gmx.us>
-To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc:     linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-        "Tobin C. Harding" <me@tobin.cc>,
-        "Steven Rostedt (VMware)" <rostedt@goodmis.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Date:   Tue, 13 Nov 2018 13:58:18 -0500
-In-Reply-To: <20181113172920.GI10650@smile.fi.intel.com>
-References: <1542128132.12945.19.camel@gmx.us>
-         <20181113172920.GI10650@smile.fi.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Provags-ID: V03:K1:mywaXFOPIHwE6hx3FkrW3BAMGpwzeOHyYxsMeY5VoAvx6FwiCQv
- X4rWtMVfsaAsdc1tCT392P9JTpWp4FX2yS9UuGa1biMiyrL9/3cS0zreJf9PSsO0q5Ee4Rl
- dcKcCucsb5xaA7jlSn/pkXIQgRGX8/+qjz6D6CtzAIgzNhSAJBmaEDVDE4pVHEyaQihVTwv
- fM37ndKsK0000bUz7DfMw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:6efSR0Jb0Lk=:KyGlL5z7CQqOsTJaZku0TS
- dJVm/DWRXGju/xU9CdxUOgOee+w73uQyApePQos90d9k/WmT17xYmJ7Fopv4z33JHQb/SzD+m
- t3+xCO6ctt03PoZ97Om5p7Wl3ZPAHO1bNS4mbXhZmHG771DgsJ2y1v2GrNjAdIpaLy3ByzYGn
- uDG1UtBdz6wIS6mR/mA4L9qIkV7eZle6qkZMIyJgbjMl5Yqs4ArcGjksW7U5LPmnSFH0T/xaM
- E1uCg05e2ziIRaUdXl1VqTa9zkb3CBWTs4oqlvLj0ZYfe5HZakMBC3qGPgHFC1M4uEo2ZgvQH
- 4lxry3nXQZ6i1FpwHB/x9yWVSB26b6OClYRw6EF210VyMbHtsPkL5HmHpAETAAN5Ko2nEwFQF
- N5hOFwqP5BeVuou8xFN1Xvip80kede/5FcHRf5BXTdKmuif2U0Rn/0RycKlb9j6wMDTDNxbBp
- +E2dZTmPuhPEV8J1Bonle/rWn/L6d4jloYOVgWDfQL/QdUW4hHoOrNMMLBxIWgzmpOCmvyT07
- qF7P7EbA+3DGqcaYpjd0xP3h7JcFBPuH24Ab94Df9JE8gDs30mcJdoG+4hlRmgla33GjY73MY
- El/+7wpRR8kMggwYgHVxuIf2BvSU6oQs1kxmVt/TcxCFf/egDhua6ZCHmY1cvHfwgpGoKPTrx
- /6WD6Q8lrTzDhigGfDsvZ40J8Su8l6IXk99kbh4m3XLv4toaKueh9oDxAe5wK2Qno2n9an3RL
- 3VldripTIoPM1qWclfF+AvNtjDVP2GiIaSHSL/37TueovtWnSpl9MyO1osi7dnZaAxgzbq/Wp
- EW3WjikTCtsTLV3G7AxAmWAw3GExdVN3iiMZl6PVtblxa9CfXsQOSQYjhabnuO4XutkcJkVCz
- f2/txTf54L42Lu+SmF+8wsXmj048GPFKYzYe4NWOAAv1zeSOkebInm9yXd3o+d
+        Wed, 14 Nov 2018 00:01:14 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32761 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725750AbeKNFBN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 00:01:13 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id 57BEFFD570C7F;
+        Tue, 13 Nov 2018 19:01:44 +0000 (GMT)
+Received: from [10.202.210.149] (10.202.210.149) by smtpsuk.huawei.com
+ (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 13 Nov
+ 2018 19:01:45 +0000
+Subject: Re: [PATCH 10/17] prmem: documentation
+To:     Andy Lutomirski <luto@amacapital.net>
+CC:     Igor Stoppa <igor.stoppa@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Nadav Amit <nadav.amit@gmail.com>,
+        Mimi Zohar <zohar@linux.vnet.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>,
+        Dave Chinner <david@fromorbit.com>,
+        James Morris <jmorris@namei.org>,
+        "Michal Hocko" <mhocko@kernel.org>,
+        Kernel Hardening <kernel-hardening@lists.openwall.com>,
+        linux-integrity <linux-integrity@vger.kernel.org>,
+        LSM List <linux-security-module@vger.kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Jonathan Corbet <corbet@lwn.net>,
+        Laura Abbott <labbott@redhat.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        "Thomas Gleixner" <tglx@linutronix.de>
+References: <20181023213504.28905-1-igor.stoppa@huawei.com>
+ <20181023213504.28905-11-igor.stoppa@huawei.com>
+ <20181026092609.GB3159@worktop.c.hoisthospitality.com>
+ <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
+ <20181028183126.GB744@hirez.programming.kicks-ass.net>
+ <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
+ <20181030152641.GE8177@hirez.programming.kicks-ass.net>
+ <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
+ <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
+ <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
+ <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com>
+ <17a007eb-43ea-e4da-b066-0d8c502f5f6e@huawei.com>
+ <CALCETrVaPTbgycjzSB0fLUeGL=j1srUh-cL0qsKn6fw6UQgj7Q@mail.gmail.com>
+From:   Igor Stoppa <igor.stoppa@huawei.com>
+Message-ID: <12b6232f-ac3d-c74c-5f9e-d84905c39f0a@huawei.com>
+Date:   Tue, 13 Nov 2018 21:01:43 +0200
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
+MIME-Version: 1.0
+In-Reply-To: <CALCETrVaPTbgycjzSB0fLUeGL=j1srUh-cL0qsKn6fw6UQgj7Q@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.210.149]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-13 at 19:29 +0200, Andy Shevchenko wrote:
-> On Tue, Nov 13, 2018 at 11:55:32AM -0500, Qian Cai wrote:
-> 
-> +Cc Rasmus
-> 
-> > Running the trinity fuzzer with a non-root user on an aarch64 server with
-> > the
-> > latest mainline (rc2) generated this. Is it just a false alarm to ignore?
-> > 
-> > [  807.847370] precision 65525 too large
-> 
-> It seems like someone uses -EAGAIN as a parameter to printf().
-> 
-> Or rather this line
-> 
->   if (!fs && (request_module("fs-%.*s", len, name) == 0)) {
-> 	  ...
->   }
-> 
-> Care to print the len and name parameters before this line?
-len = 60612; name =
-%d%d%d%d%d%d%s%s%s%d%s%d%d%d%s%s%s%s%s%d%s%d%s%s%s%d%s%d%d%s%s%d%s%s%d%d%s%s%s%s
-%s%d%s%d%d%s%s%s%d%d%d%d%d%s%s%s%s%d%s%s%s%s%d%d%d%d%d%d%d%s%s%s%s%d%s%d%s%d%s%d
-%s%s%d%s%d%s%s%s%s%d%s%d%s%s%d%d%s%s%d%s%d%s%s%d%s%d%d%s%s%s%s%d%s%s%s%s%d%d%s%s
-%s%d%s%d%s%s%d%d%d%d%d%s%s%s%s%s%s%s%d%d%d%s%d%s%d%d%s%d%d%d%s%s%d%d%d%s%s%d%s%d
-%s%s%s%d%d%d%s%d%s%s%d%s%d%s%s%d%s%d%d%s%d%s%s%d%s%s%s%s%s%d%s%d%d%d%s%d%d%d%d%s
-%d%s%d%d%d%s%s%s%s%s%d%s%s%s%s%d%d%d%s%d%s%d%d%s%d%s%s%d%d%d%s%d%s%d%d%s%s%s%d%s
-%s%d%d%d%d%d%d%d%d%d%d%s%d%s%d%s%d%d%s%d%d%s%d%s%s%s%d%d%d%d%s%s%d%d%s%d%d%d%s%d
-%d%s%d%d%d%d%s%s%d%s%s%d%d%d%s%s%s%s%s%s%s%s%s%d%s%d%d%s%d%s%s%d%s%s%s%s%d%d%d%d
-%s%d%s%s%d%d%d%s%d%d%d%s%s%s%s%d%d%d%s%d%s%d%s%d%d%d%d%d%d%d%d%d%d%s%s%d%d%d%s%d
-%d%d%s%s%s%s%s%s%s%d%d%d%d%s%s%d%s%s%d%s%s%s%s%d%d%s%d%d%s%d%d%s%d%d%d%s%s%s%s%d
-%s%s%d%s%d%s%d%s%d%d%d%d%s%d%d%d%s%d%d%d%d%s%s%d%s%s%d%d%d%s%d%s%d%d%d%d%d%d%s%d
-%s%s%d%d%s%d%d%d%s%s%d%s%d%s%d%s%d%d%s%d%s%s%s%s%s%d%s%s%d%d%d%s%s%d%d%s%s%d%s%d
-%s%d%s%s%s%
-[  833.044728] ------------[ cut here ]------------
-[  833.137184] precision 60612 too large
-> 
-> 
-> > [  807.847449] WARNING: CPU: 26 PID: 64391 at lib/vsprintf.c:2193
-> > set_precision+0x84/0x90
-> > [  807.860161] Modules linked in: cast6_generic cast_common lrw bridge 8021q
-> > garp mrp stp llc dlci tcp_diag inet_diag af_key pptp gre l2tp_ppp
-> > l2tp_netlink
-> > l2tp_core ip6_udp_tunnel udp_tunnel pppoe pppox ppp_generic slhc crypto_user
-> > ib_core nfnetlink scsi_transport_iscsi atm sctp vfat fat ghash_ce sha2_ce
-> > sha256_arm64 sha1_ce ses enclosure ipmi_ssif sg ipmi_si ipmi_devintf
-> > sbsa_gwdt
-> > ipmi_msghandler sch_fq_codel xfs libcrc32c marvell mpt3sas mlx5_core
-> > raid_class
-> > hibmc_drm drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm
-> > drm
-> > ixgbe hisi_sas_v2_hw igb hisi_sas_main libsas hns_dsaf mlxfw devlink
-> > hns_enet_drv mdio i2c_designware_platform i2c_algo_bit i2c_designware_core
-> > ehci_platform scsi_transport_sas hns_mdio hnae dm_mirror dm_region_hash
-> > dm_log
-> > dm_mod
-> > [  807.927838] CPU: 26 PID: 64391 Comm: trinity-c90 Kdump: loaded Tainted:
-> > G        W         4.20.0-rc2+ #16
-> > [  807.937494] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50
-> > 06/01/2018
-> > [  807.944718] pstate: 60000005 (nZCv daif -PAN -UAO)
-> > [  807.949515] pc : set_precision+0x84/0x90
-> > [  807.953439] lr : set_precision+0x84/0x90
-> > [  807.957362] sp : ffff801e6430f6b0
-> > [  807.960677] x29: ffff801e6430f6b0 x28: ffff801e6430fb10 
-> > [  807.965992] x27: 0000000000000003 x26: 00000000ffffffd8 
-> > [  807.971307] x25: ffff801e6430fba0 x24: ffff801e6430fb48 
-> > [  807.976622] x23: ffff2000093ddfa0 x22: ffff801e6430f770 
-> > [  807.981937] x21: ffff2000090eb4a6 x20: ffff801e6430f770 
-> > [  807.987252] x19: 000000000000fff5 x18: 0000000000000000 
-> > [  807.992569] x17: 0000000000000000 x16: 0000000000000000 
-> > [  807.997884] x15: 0000000000000000 x14: 3878302031343220 
-> > [  808.003201] x13: 6265783020303939 x12: ffff04000172b49c 
-> > [  808.008516] x11: 1fffe4000172b49b x10: ffff04000172b49b 
-> > [  808.013832] x9 : 0000000000000000 x8 : 203532353536206e 
-> > [  808.019148] x7 : 6f69736963657270 x6 : 0000000041b58ab3 
-> > [  808.024463] x5 : dfff200000000000 x4 : dfff200000000000 
-> > [  808.029779] x3 : dfff200000000000 x2 : 65a2459128144800 
-> > [  808.035093] x1 : 65a2459128144800 x0 : 0000000000000000 
-> > [  808.040408] Call trace:
-> > [  808.042861]  set_precision+0x84/0x90
-> > [  808.046440]  vsnprintf+0x23c/0x858
-> > [  808.049845]  __request_module+0x1a0/0x8b8
-> > [  808.053860]  get_fs_type+0xb0/0x138
-> > [  808.057351]  do_mount+0x2c4/0x13c0
-> > [  808.060756]  ksys_mount+0xf4/0x110
-> > [  808.064160]  __arm64_sys_mount+0x70/0x88
-> > [  808.068087]  el0_svc_handler+0xd4/0x198
-> > [  808.071928]  el0_svc+0x8/0xc
-> > [  808.074810] irq event stamp: 347872
-> > [  808.078305] hardirqs last  enabled at (347871): [<ffff2000082080e8>]
-> > vprintk_emit+0x2b0/0x5c0
-> > [  808.086833] hardirqs last disabled at (347872): [<ffff200008081490>]
-> > do_debug_exception+0xd8/0x190
-> > [  808.095795] softirqs last  enabled at (347844): [<ffff200008082210>]
-> > __do_softirq+0x7c8/0x9c8
-> > [  808.104325] softirqs last disabled at (347837): [<ffff20000812dbe4>]
-> > irq_exit+0x25c/0x2f0
-> > [  808.112502] ---[ end trace 598902d30712b79e ]---
-> 
-> 
+
+
+On 13/11/2018 20:35, Andy Lutomirski wrote:
+> On Tue, Nov 13, 2018 at 10:26 AM Igor Stoppa <igor.stoppa@huawei.com> wrote:
+
+[...]
+
+>> The high level API could be something like:
+>>
+>> wr_memcpy(void *src, void *dst, uint_t size)
+
+[...]
+
+> If you call a wr_memcpy() function with the signature you suggested,
+> then you can overwrite any memory of this type.  Having a different
+> mm_struct under the hood makes no difference.  As far as I'm
+> concerned, for *dynamically allocated* rare-writable memory, you might
+> as well allocate all the paging structures at the same time, so the
+> mm_struct will always contain the mappings.  If there are serious bugs
+> in wr_memcpy() that cause it to write to the wrong place, we have
+> bigger problems.
+
+Beside bugs, I'm also thinking about possible vulnerability.
+It might be overthinking, though.
+
+I do not think it's possible to really protect against control flow
+attacks, unless there is some support from the HW and/or the compiler.
+
+What is left, are data-based attacks. In this case, it would be an
+attacker using one existing wr_ invocation with doctored parameters.
+
+However, there is always the objection that it would be possible to come
+up with a "writing kit" for plowing through the page tables and
+unprotect anything that might be of value.
+
+Ideally, that should be the only type of data-based attack left.
+
+In practice, it might just be an excess of paranoia from my side.
+
+> I can imagine that we'd want a *typed* wr_memcpy()-like API some day,
+> but that can wait for v2.  And it still doesn't obviously need
+> multiple mm_structs.
+
+I left that out, for now, but yes, typing would play some role here.
+
+[...]
+
+> I think it's entirely reasonable for the API to internally break up
+> very large memcpys.
+
+The criteria for deciding if/how to break it down is not clear to me,
+though. The single page was easy, but might be (probably is) too much.
+
+--
+igor
