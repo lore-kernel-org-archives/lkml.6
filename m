@@ -1,703 +1,141 @@
 Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
-X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Level: *
+X-Spam-Status: No, score=1.7 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 291D3C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:29:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E68BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:30:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B5C6322419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:29:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 64EEF22419
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:30:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="lhx6aCZ2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5C6322419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Po+tcOA2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64EEF22419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732791AbeKMV11 (ORCPT
+        id S1732808AbeKMV1r (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:27:27 -0500
-Received: from esa2.microchip.iphmx.com ([68.232.149.84]:39202 "EHLO
-        esa2.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732728AbeKMV11 (ORCPT
+        Tue, 13 Nov 2018 16:27:47 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:41028 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732474AbeKMV1r (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:27:27 -0500
-X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
-   d="scan'208";a="23058150"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa2.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 13 Nov 2018 04:29:44 -0700
-Received: from NAM04-CO1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Tue, 13 Nov 2018 04:29:44 -0700
+        Tue, 13 Nov 2018 16:27:47 -0500
+Received: by mail-wr1-f65.google.com with SMTP id v18-v6so12894106wrt.8;
+        Tue, 13 Nov 2018 03:30:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+SVEoYffscXZnewoSI3x7QhkUQbU+/LieFDdqVnz3Oo=;
- b=lhx6aCZ2n6Rv9cv9pEK+sseUwl/xFq6tO0vTmJxYGz8ibofPxRSMPc1LKGdA0Xuc1g0OZhb+J2ZIfnPL7XJ2KlhrbdeDGQ0eKwyWq4v7gxnlkM5aN5tdOV+Xw2aHKjgRDiFPbwdkpLI5VwGsFxDLyOdMomaBp/YX8Lfl6kxaPd8=
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com (10.174.113.19) by
- BN6PR1101MB2244.namprd11.prod.outlook.com (10.174.113.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Tue, 13 Nov 2018 11:29:41 +0000
-Received: from BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::c873:c197:d9d6:3bf6]) by BN6PR1101MB2243.namprd11.prod.outlook.com
- ([fe80::c873:c197:d9d6:3bf6%6]) with mapi id 15.20.1294.045; Tue, 13 Nov 2018
- 11:29:41 +0000
-From:   <Andrei.Stefanescu@microchip.com>
-To:     <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh+dt@kernel.org>,
-        <mark.rutland@arm.com>, <gregkh@linuxfoundation.org>,
-        <Nicolas.Ferre@microchip.com>
-CC:     <Cristian.Birsan@microchip.com>, <Claudiu.Beznea@microchip.com>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <Andrei.Stefanescu@microchip.com>
-Subject: [PATCH 3/3] regulator: mcp16502: add regulator driver for MCP16502
-Thread-Topic: [PATCH 3/3] regulator: mcp16502: add regulator driver for
- MCP16502
-Thread-Index: AQHUe0QrcREzl+A6dEyfXafqi5Kdhg==
-Date:   Tue, 13 Nov 2018 11:29:41 +0000
-Message-ID: <1542108563-10108-4-git-send-email-andrei.stefanescu@microchip.com>
-References: <1542108563-10108-1-git-send-email-andrei.stefanescu@microchip.com>
-In-Reply-To: <1542108563-10108-1-git-send-email-andrei.stefanescu@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0701CA0067.eurprd07.prod.outlook.com
- (2603:10a6:800:5f::29) To BN6PR1101MB2243.namprd11.prod.outlook.com
- (2603:10b6:405:52::19)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Andrei.Stefanescu@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR1101MB2244;6:0o5cPuNuq+K35jDukYQwYIl4Vvc1yWlY087lSdyQYNamzNf011BTUktcoWnd+ABnI5jZjAGGerlG4/+alJdOZD9Z/wspPn7TQfog/bBREzOx+ppKt9lGzYYepmGz5Lx8L+h8IFYHD/m8fXu/7N5izsl80DEEWrnknPlRU6lJl6IWjGhMGKo3AllkYOVWjKOxNUYbIGppp5C4t4jxAcv61BaLNHdUvHG2DWB/eSkV84F3cqYzHMik0kObhvENP2gC1plu3vrBlucEob+BYG7rIMeeq0RCVSdR75IdyNYrRGsLtqvf3B52TLHm/KHvLGHhGQwRJRR47i1lEc+wWQsOBQFrzeBakL8qHpvcQaUVRlwFPn6c+V9RCfZZZrGKBsAsqDFR94cefYDRDwyvT042/XI7WoaqEm6hqx37SMV7U2HpL6IDYUHukP3n261/KWJr3LDY2Z8foMlAMISZnFFo8g==;5:QdVx+UIXzj4yjIi2OdKBWinJhzTsPDgpLBSzAIrFD7x3VNvfbug0pkcxKbTtIpTgorlj3IFJGarAB7W0iGBhYxhH9t0AjaYMgRcTJUIsMhKhen0WBtgC1FSP8cbN/UF3gAVM+mlLzA16EdAlxxT9217iB8SKWh4jvzJOCTJXT6o=;7:A1b8nx91QAhBTyBiVo0QcFFcbVic1zyhzlDG2eb/5dcAQ3fWXFRwphAmYKVqHaYLYRKoo1428nigdHcORsqHIW0oemcYe1+ywQVHxx5XBdiy65InCA7RNplbdTmhUHPtNQ+fJmGhEFfr+ppT7KJXGg==
-x-ms-office365-filtering-correlation-id: 964f99ed-93ad-45eb-ffde-08d6495b4d87
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390060)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR1101MB2244;
-x-ms-traffictypediagnostic: BN6PR1101MB2244:
-x-microsoft-antispam-prvs: <BN6PR1101MB2244D01A69C6C00B1B5FCF79EDC20@BN6PR1101MB2244.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231382)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:BN6PR1101MB2244;BCL:0;PCL:0;RULEID:;SRVR:BN6PR1101MB2244;
-x-forefront-prvs: 085551F5A8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(366004)(136003)(346002)(39860400002)(396003)(45074003)(189003)(199004)(105586002)(52116002)(54906003)(110136005)(386003)(316002)(6512007)(6506007)(53946003)(7736002)(8936002)(102836004)(2906002)(76176011)(99286004)(53936002)(81156014)(305945005)(26005)(8676002)(25786009)(106356001)(81166006)(36756003)(186003)(5660300001)(478600001)(6486002)(6116002)(72206003)(14444005)(256004)(68736007)(66066001)(14454004)(97736004)(6436002)(2900100001)(2501003)(446003)(575784001)(486006)(86362001)(4326008)(2616005)(476003)(71190400001)(6636002)(107886003)(4744004)(71200400001)(11346002)(3846002)(39060400002)(309714004);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR1101MB2244;H:BN6PR1101MB2243.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: m/ZQngxQ1DX6JJzYiZeHh1cp+FHN0XbOz5P06z6dLL8bY5uzQPZVNXFmGtx75Zq3AzCt/AiTvbPmO3JwftWKWNZUdSDU+gZUb88jDtL0EGDLRkEeND8eVlRu1VI40VQzcCTK5IRMSkMN65sTavmx9DF/Cbh56ilVIlbMeBvENLXHM95ogJgSZ7RPRduF7Rg5Tz3PELZkYX8iF4xSinDbc1YiXmX/lr51OSIKDM5VQkfolJwzOEtp3CHMyxcupf0H2lIdRDnS9hSL5IXA/Av78+jQ2ggTs5tSNWorNlUvtDxD9kZo2BMLCJ8id0czA6HbwJ6srPag/MDdJLmq4dtgvwMLxOTtB+OzszYxp6aA9/c=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rTW73qYJ/aWKFFWnPXk/DDJ1tgIipnHj3ggkUcdZ2rA=;
+        b=Po+tcOA2cLqTULPONZ/OTouM6rNmG4Kf82pr6UG0/Vm83SYLU06gDX3lXB4QoadI4/
+         khWwbnyWcMN+bRM0G38zAMgbggYelymgvSL48Kz9auEOA/di7jhDBl/HJWB4RG4tnP9w
+         8w0SXzMnl1DG0Etrc/+3x+JzXZfIQKNsny0DFtoFSlcNIwADMR9qYY11kB5gc7vnmBgN
+         pJ0TAP+EpXtAhJRR7nMdaKmHGZmcIrPrWc0Goyc5aqNRAzMHLcKozqx55+K6ivoOrDo9
+         iecZpSrhtVI4ithjONyv5h+L1izUqOtLG8e3klhUn/PbxRHE2wOnALl9jNEMZL6ha1e6
+         35oA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rTW73qYJ/aWKFFWnPXk/DDJ1tgIipnHj3ggkUcdZ2rA=;
+        b=PytXzdAtMM5xAgivVwEEgkvg0ERM9iZh8LrpLdmFyMEwKbXU+HJN4MgM3O4b+ZXfOP
+         tASYG2Ueag4QYLNXZ8MNvp/fzJJ6vjE6aPpJCC7lYG/I0Y29lmJGIZwnqMM/hfimDpYg
+         g7FqdI68xwpqtEB4/hPn6QQ++Ibkw4MnKEiNvabXUCG4/+a5P4r9UrZMC+OTHIL4Kpyk
+         So4N/sLf4KvAaV8oXPsR0hRIjUw1r/oiUfrGV4dPGlAY31IggI8KOJp8S67Ut/rwmJYT
+         c3iPB5OXBmps4PCHLuVibry1RWy4uBqDR7c0ex3I1eZEHOmg+H6kk3lCwkKpUGilIP8I
+         AuMg==
+X-Gm-Message-State: AGRZ1gI6fl2cAQ+hGW4dUmMXl/LKpQsn7pmCFJ2+3PAS/e8FpARZwVYS
+        x25gACqWViKPvNsqmQ6CTwo=
+X-Google-Smtp-Source: AJdET5d674uU83sqC0kCHDImbUwpGRbhzVLYgOwCKCYDpWk7HIwL+G3qlq3WN3MijIeTkMcXC6M/+A==
+X-Received: by 2002:adf:83a4:: with SMTP id 33-v6mr4541422wre.13.1542108603083;
+        Tue, 13 Nov 2018 03:30:03 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id z3-v6sm10173300wma.6.2018.11.13.03.30.01
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Nov 2018 03:30:02 -0800 (PST)
+Date:   Tue, 13 Nov 2018 12:30:00 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Nadav Amit <namit@vmware.com>
+Cc:     Ingo Molnar <mingo@redhat.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+        linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] Makefile: Fix distcc compilation with x86 macros
+Message-ID: <20181113113000.GB4788@gmail.com>
+References: <20181112150215.508-1-namit@vmware.com>
+ <20181112150215.508-2-namit@vmware.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 964f99ed-93ad-45eb-ffde-08d6495b4d87
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2018 11:29:41.4917
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR1101MB2244
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112150215.508-2-namit@vmware.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds a regulator driver for the MCP16502 PMIC.
-This drivers supports basic operations through the
-regulator interface such as:
-- setting/reading voltage
-- setting/reading operating mode
-- reading current status
-- transitioning to/from suspend-to-ram and standby
-  power states
 
-Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
----
- drivers/regulator/Kconfig    |   9 +
- drivers/regulator/Makefile   |   1 +
- drivers/regulator/mcp16502.c | 524 +++++++++++++++++++++++++++++++++++++++=
-++++
- 3 files changed, 534 insertions(+)
- create mode 100644 drivers/regulator/mcp16502.c
+* Nadav Amit <namit@vmware.com> wrote:
 
-diff --git a/drivers/regulator/Kconfig b/drivers/regulator/Kconfig
-index 926cee0..719d9d6 100644
---- a/drivers/regulator/Kconfig
-+++ b/drivers/regulator/Kconfig
-@@ -567,6 +567,15 @@ config REGULATOR_MC13892
- 	  Say y here to support the regulators found on the Freescale MC13892
- 	  PMIC.
-=20
-+config REGULATOR_MCP16502
-+	tristate "Microchip MCP16502 PMIC"
-+	depends on I2C && OF
-+	help
-+	  Say y here to support the MCP16502 PMIC. This driver supports
-+	  basic operations (get/set voltage, get/set operating mode)
-+	  through the regulator interface. In addition it enables
-+	  suspend-to-ram/standby transition.
-+
- config REGULATOR_MT6311
- 	tristate "MediaTek MT6311 PMIC"
- 	depends on I2C
-diff --git a/drivers/regulator/Makefile b/drivers/regulator/Makefile
-index 72488ef..b12e1c9 100644
---- a/drivers/regulator/Makefile
-+++ b/drivers/regulator/Makefile
-@@ -74,6 +74,7 @@ obj-$(CONFIG_REGULATOR_MAX77802) +=3D max77802-regulator.=
-o
- obj-$(CONFIG_REGULATOR_MC13783) +=3D mc13783-regulator.o
- obj-$(CONFIG_REGULATOR_MC13892) +=3D mc13892-regulator.o
- obj-$(CONFIG_REGULATOR_MC13XXX_CORE) +=3D  mc13xxx-regulator-core.o
-+obj-$(CONFIG_REGULATOR_MCP16502) +=3D mcp16502.o
- obj-$(CONFIG_REGULATOR_MT6311) +=3D mt6311-regulator.o
- obj-$(CONFIG_REGULATOR_MT6323)	+=3D mt6323-regulator.o
- obj-$(CONFIG_REGULATOR_MT6380)	+=3D mt6380-regulator.o
-diff --git a/drivers/regulator/mcp16502.c b/drivers/regulator/mcp16502.c
-new file mode 100644
-index 0000000..29c72d3
---- /dev/null
-+++ b/drivers/regulator/mcp16502.c
-@@ -0,0 +1,524 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * MCP16502 PMIC driver
-+ *
-+ * Copyright (C) 2018 Microchip Technology Inc. and its subsidiaries
-+ *
-+ * Author: Andrei Stefanescu <andrei.stefanescu@microchip.com>
-+ *
-+ * Inspired from tps65086-regulator.c
-+ */
-+
-+#include  <linux/gpio.h>
-+#include  <linux/i2c.h>
-+#include  <linux/init.h>
-+#include  <linux/kernel.h>
-+#include  <linux/module.h>
-+#include  <linux/of.h>
-+#include  <linux/regmap.h>
-+#include  <linux/regulator/driver.h>
-+
-+#define VDD_LOW_SEL 0x0D
-+#define VDD_HIGH_SEL 0x3F
-+
-+#define MCP16502_VOL_SEL_MASK 0x3F
-+#define MCP16502_EN_MASK BIT(7)
-+#define MCP16502_MODE_MASK BIT(6)
-+
-+/*
-+ *
-+ * The PMIC has four sets of registers corresponding to four power modes:
-+ * Performance, Active, Low-power, Hibernate.
-+ *
-+ * Registers:
-+ * Each regulator has a register for each power mode. To access a register
-+ * for a specific regulator and mode BASE_* and OFFSET_* need to be added.
-+ *
-+ * Operating modes:
-+ * In order for the PMIC to transition to operating modes it has to be
-+ * controlled via GPIO lines called LPM and HPM.
-+ *
-+ * The registers are fully configurable such that you can put all regulato=
-rs in
-+ * a low-power state while the PMIC is in Active mode. They are supposed t=
-o be
-+ * configured at startup and then simply transition to/from a global low-p=
-ower
-+ * state by setting the GPIO lpm pin high/low.
-+ *
-+ * This driver keeps the PMIC in Active mode, Low-power state is set for t=
-he
-+ * regulators by enabling/disabling operating mode (FPWM or Auto PFM).
-+ *
-+ * The PMIC's Low-power and Hibernate modes are used during standby/suspen=
-d.
-+ * To enter standby/suspend the PMIC will go to Low-power mode. From there=
-, it
-+ * will transition to Hibernate when the PWRHLD line is set to low by the =
-MPU.
-+ */
-+
-+/*
-+ * This macro is useful for iterating over all regulators and accessing th=
-eir
-+ * registers in a generic way or accessing a regulator device by its id.
-+ */
-+#define BASE(i) (((i) + 1) << 4)
-+
-+#define OFFSET_MODE_A 0
-+#define OFFSET_MODE_HIB 2
-+
-+#define MCP16502_MODE_ACTIVE REGULATOR_MODE_NORMAL
-+#define MCP16502_MODE_HIB REGULATOR_MODE_STANDBY
-+
-+#define MCP16502_MODE_AUTO_PFM 0
-+#define MCP16502_MODE_FPWM BIT(6)
-+
-+#define MIN_REG 0x0
-+#define MAX_REG 0x65
-+
-+static unsigned int mcp16502_of_map_mode(unsigned int mode)
-+{
-+	if (mode =3D=3D REGULATOR_MODE_NORMAL || mode =3D=3D REGULATOR_MODE_IDLE)
-+		return mode;
-+
-+	return REGULATOR_MODE_INVALID;
-+}
-+
-+#define MCP16502_REGULATOR(_name, _id, _ranges, _ops)			\
-+	[_id] =3D {							\
-+		.name			=3D _name,			\
-+		.regulators_node	=3D of_match_ptr("regulators"),	\
-+		.id			=3D _id,				\
-+		.ops			=3D &(_ops),			\
-+		.type			=3D REGULATOR_VOLTAGE,		\
-+		.owner			=3D THIS_MODULE,			\
-+		.linear_ranges		=3D _ranges,			\
-+		.n_linear_ranges	=3D ARRAY_SIZE(_ranges),		\
-+		.of_match		=3D of_match_ptr(_name),		\
-+		.of_map_mode		=3D mcp16502_of_map_mode,		\
-+	}
-+
-+enum {
-+	BUCK1 =3D 0,
-+	BUCK2,
-+	BUCK3,
-+	BUCK4,
-+	LDO1,
-+	LDO2,
-+	NUM_REGULATORS
-+};
-+
-+/*
-+ * struct mcp16502 - PMIC representation
-+ * @rdev: the regulators belonging to this chip
-+ * @rmap: regmap to be used for I2C communication
-+ * @lpm: LPM GPIO descriptor
-+ */
-+struct mcp16502 {
-+	struct regulator_dev *rdev[NUM_REGULATORS];
-+	struct regmap *rmap;
-+	struct gpio_desc *lpm;
-+};
-+
-+/*
-+ * mcp16502_update_regulator - regmap_update_bits called for registers
-+ *			       Active or Low-power depending on hibernate
-+ *			       parameter
-+ * @hibernate - use the registers for hibernate mode
-+ *
-+ */
-+static int mcp16502_update_regulator(struct regulator_dev *rdev,
-+				     bool hibernate,
-+				     unsigned int mask, unsigned int val)
-+{
-+	struct mcp16502 *mcp =3D rdev_get_drvdata(rdev);
-+	unsigned int reg =3D BASE(rdev_get_id(rdev));
-+
-+	reg +=3D (hibernate) ? OFFSET_MODE_HIB : OFFSET_MODE_A;
-+
-+	return regmap_update_bits(mcp->rmap, reg, mask, val);
-+}
-+
-+/*
-+ * mcp16502_read_regulator - read from Active or Low-power registers depen=
-ding
-+ *			     on the hibernate parameter
-+ *
-+ * @hibernate - use the registers for hibernate mode
-+ *
-+ */
-+static int mcp16502_read(struct regulator_dev *rdev, bool hibernate,
-+			 unsigned int mask)
-+{
-+	struct mcp16502 *mcp =3D rdev_get_drvdata(rdev);
-+	unsigned int reg =3D BASE(rdev_get_id(rdev));
-+	int ret, val;
-+
-+	reg +=3D (hibernate) ? OFFSET_MODE_HIB : OFFSET_MODE_A;
-+
-+	ret =3D regmap_read(mcp->rmap, reg, &val);
-+	if (ret)
-+		return ret;
-+
-+	return val & mask;
-+}
-+
-+/*
-+ * mcp16502_gpio_set_mode - set the GPIO corresponding value
-+ *
-+ * Used to prepare transitioning into hibernate or resuming from it.
-+ */
-+static void mcp16502_gpio_set_mode(struct mcp16502 *mcp, int mode)
-+{
-+	int lpm =3D (mode =3D=3D MCP16502_MODE_HIB);
-+
-+	gpiod_set_value(mcp->lpm, lpm);
-+}
-+
-+/*
-+ * mcp16502_get_mode - return the current operating mode of a regulator
-+ *
-+ * Note: all functions that are not part of entering/exiting standby/suspe=
-nd
-+ *	 use the Active mode registers.
-+ *
-+ * Note: this is different from the PMIC's operatig mode, it is the
-+ *	 MODE bit from the regulator's register.
-+ */
-+static unsigned int mcp16502_get_mode(struct regulator_dev *rdev)
-+{
-+	int val;
-+
-+	val =3D mcp16502_read(rdev, false, MCP16502_MODE_MASK);
-+	if (val < 0)
-+		return val;
-+
-+	if (val =3D=3D MCP16502_MODE_FPWM)
-+		return REGULATOR_MODE_NORMAL;
-+	else if (val =3D=3D MCP16502_MODE_AUTO_PFM)
-+		return REGULATOR_MODE_IDLE;
-+
-+	return REGULATOR_MODE_INVALID;
-+}
-+
-+/*
-+ * mcp16502_is_enabled - regulator_ops is_enabled
-+ */
-+static int mcp16502_is_enabled(struct regulator_dev *rdev)
-+{
-+	int val;
-+
-+	val =3D mcp16502_read(rdev, false, MCP16502_EN_MASK);
-+	if (val < 0)
-+		return val;
-+
-+	return !!val;
-+}
-+
-+/*
-+ * mcp16502_disable - regulator_ops disable
-+ */
-+static int mcp16502_disable(struct regulator_dev *rdev)
-+{
-+	return mcp16502_update_regulator(rdev, false, MCP16502_EN_MASK, 0);
-+}
-+
-+/*
-+ * _mcp16502_set_mode - helper for set_mode and set_suspend_mode
-+ */
-+static int _mcp16502_set_mode(struct regulator_dev *rdev, bool hibernate,
-+			      unsigned int mode)
-+{
-+	int val;
-+
-+	if (mode !=3D REGULATOR_MODE_NORMAL && mode !=3D REGULATOR_MODE_IDLE)
-+		return -EINVAL;
-+
-+	val =3D (mode =3D=3D REGULATOR_MODE_NORMAL) ? MCP16502_MODE_FPWM :
-+						MCP16502_MODE_AUTO_PFM;
-+
-+	return mcp16502_update_regulator(rdev, hibernate, MCP16502_MODE_MASK,
-+					 val);
-+}
-+
-+/*
-+ * mcp16502_set_mode - regulator_ops set_mode
-+ */
-+static int mcp16502_set_mode(struct regulator_dev *rdev, unsigned int mode=
-)
-+{
-+	return _mcp16502_set_mode(rdev, false, mode);
-+}
-+
-+/*
-+ * mcp16502_enable - regulator_ops enable
-+ */
-+static int mcp16502_enable(struct regulator_dev *rdev)
-+{
-+	return mcp16502_update_regulator(rdev, false, MCP16502_EN_MASK,
-+					 MCP16502_EN_MASK);
-+}
-+
-+/*
-+ * mcp16502_get_voltage_sel - regulator_ops get_voltage_sel
-+ */
-+static int mcp16502_get_voltage_sel(struct regulator_dev *rdev)
-+{
-+	return mcp16502_read(rdev, false, MCP16502_VOL_SEL_MASK);
-+}
-+
-+/*
-+ * mcp16502_set_voltage_sel - regulator_ops set_voltage_sel
-+ */
-+static int mcp16502_set_voltage_sel(struct regulator_dev *rdev,
-+				    unsigned int selector)
-+{
-+	return mcp16502_update_regulator(rdev, false, MCP16502_VOL_SEL_MASK,
-+					 selector);
-+}
-+
-+/*
-+ * mcp16502_get_status - regulator_ops get_status
-+ */
-+static int mcp16502_get_status(struct regulator_dev *rdev)
-+{
-+	int mode =3D mcp16502_get_mode(rdev);
-+
-+	if (!mcp16502_is_enabled(rdev))
-+		return REGULATOR_STATUS_OFF;
-+	else if (mode =3D=3D REGULATOR_MODE_NORMAL)
-+		return REGULATOR_STATUS_NORMAL;
-+	else if (mode =3D=3D REGULATOR_MODE_IDLE)
-+		return REGULATOR_STATUS_IDLE;
-+
-+	return REGULATOR_STATUS_UNDEFINED;
-+}
-+
-+/*
-+ * mcp16502_set_suspend_voltage - regulator_ops set_suspend_voltage
-+ */
-+int mcp16502_set_suspend_voltage(struct regulator_dev *rdev, int uV)
-+{
-+	int sel =3D regulator_map_voltage_linear_range(rdev, uV, uV);
-+
-+	if (sel < 0)
-+		return sel;
-+
-+	return mcp16502_update_regulator(rdev, true, MCP16502_VOL_SEL_MASK,
-+					 sel);
-+}
-+
-+/*
-+ * mcp16502_set_suspend_mode - regulator_ops set_suspend_mode
-+ */
-+int mcp16502_set_suspend_mode(struct regulator_dev *rdev, unsigned int mod=
-e)
-+{
-+	return _mcp16502_set_mode(rdev, true, mode);
-+}
-+
-+/*
-+ * mcp16502_set_suspend_enable - regulator_ops set_suspend_enable
-+ */
-+static int mcp16502_set_suspend_enable(struct regulator_dev *rdev)
-+{
-+	return mcp16502_update_regulator(rdev, true, MCP16502_EN_MASK,
-+					 MCP16502_EN_MASK);
-+}
-+
-+/*
-+ * mcp16502_set_suspend_disable - regulator_ops set_suspend_disable
-+ */
-+static int mcp16502_set_suspend_disable(struct regulator_dev *rdev)
-+{
-+	return mcp16502_update_regulator(rdev, true, MCP16502_EN_MASK, 0);
-+}
-+
-+static const struct regulator_ops mcp16502_buck_ops =3D {
-+	.list_voltage			=3D regulator_list_voltage_linear_range,
-+	.map_voltage			=3D regulator_map_voltage_linear_range,
-+	.get_voltage_sel		=3D mcp16502_get_voltage_sel,
-+	.set_voltage_sel		=3D mcp16502_set_voltage_sel,
-+	.enable				=3D mcp16502_enable,
-+	.disable			=3D mcp16502_disable,
-+	.is_enabled			=3D mcp16502_is_enabled,
-+	.set_mode			=3D mcp16502_set_mode,
-+	.get_mode			=3D mcp16502_get_mode,
-+	.get_status			=3D mcp16502_get_status,
-+	.set_suspend_voltage		=3D mcp16502_set_suspend_voltage,
-+	.set_suspend_mode		=3D mcp16502_set_suspend_mode,
-+	.set_suspend_enable		=3D mcp16502_set_suspend_enable,
-+	.set_suspend_disable		=3D mcp16502_set_suspend_disable,
-+};
-+
-+/*
-+ * LDOs cannot change operating modes.
-+ */
-+static const struct regulator_ops mcp16502_ldo_ops =3D {
-+	.list_voltage			=3D regulator_list_voltage_linear_range,
-+	.map_voltage			=3D regulator_map_voltage_linear_range,
-+	.get_voltage_sel		=3D mcp16502_get_voltage_sel,
-+	.set_voltage_sel		=3D mcp16502_set_voltage_sel,
-+	.enable				=3D mcp16502_enable,
-+	.disable			=3D mcp16502_disable,
-+	.is_enabled			=3D mcp16502_is_enabled,
-+	.get_status			=3D mcp16502_get_status,
-+	.set_suspend_voltage		=3D mcp16502_set_suspend_voltage,
-+	.set_suspend_enable		=3D mcp16502_set_suspend_enable,
-+	.set_suspend_disable		=3D mcp16502_set_suspend_disable,
-+};
-+
-+static const struct of_device_id mcp16502_ids[] =3D {
-+	{ .compatible =3D "microchip,mcp16502", },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, mcp16502_ids);
-+
-+static const struct regulator_linear_range b1l12_ranges[] =3D {
-+	REGULATOR_LINEAR_RANGE(1200000, VDD_LOW_SEL, VDD_HIGH_SEL, 50000),
-+};
-+
-+static const struct regulator_linear_range b234_ranges[] =3D {
-+	REGULATOR_LINEAR_RANGE(600000, VDD_LOW_SEL, VDD_HIGH_SEL, 25000),
-+};
-+
-+static const struct regulator_desc mcp16502_desc[] =3D {
-+	/* MCP16502_REGULATOR(_name, _id, ranges, regulator_ops) */
-+	MCP16502_REGULATOR("VDD_IO", BUCK1, b1l12_ranges, mcp16502_buck_ops),
-+	MCP16502_REGULATOR("VDD_DDR", BUCK2, b234_ranges, mcp16502_buck_ops),
-+	MCP16502_REGULATOR("VDD_CORE", BUCK3, b234_ranges, mcp16502_buck_ops),
-+	MCP16502_REGULATOR("VDD_OTHER", BUCK4, b234_ranges, mcp16502_buck_ops),
-+	MCP16502_REGULATOR("LDO1", LDO1, b1l12_ranges, mcp16502_ldo_ops),
-+	MCP16502_REGULATOR("LDO2", LDO2, b1l12_ranges, mcp16502_ldo_ops)
-+};
-+
-+static const struct regmap_range mcp16502_ranges[] =3D {
-+	regmap_reg_range(MIN_REG, MAX_REG)
-+};
-+
-+static const struct regmap_access_table mcp16502_yes_reg_table =3D {
-+	.yes_ranges =3D mcp16502_ranges,
-+	.n_yes_ranges =3D ARRAY_SIZE(mcp16502_ranges),
-+};
-+
-+static const struct regmap_config mcp16502_regmap_config =3D {
-+	.reg_bits	=3D 8,
-+	.val_bits	=3D 8,
-+	.max_register	=3D MAX_REG,
-+	.cache_type	=3D REGCACHE_NONE,
-+	.rd_table	=3D &mcp16502_yes_reg_table,
-+	.wr_table	=3D &mcp16502_yes_reg_table,
-+};
-+
-+/*
-+ * set_up_regulators - initialize all regulators
-+ */
-+static int setup_regulators(struct mcp16502 *mcp, struct device *dev,
-+			    struct regulator_config config)
-+{
-+	int i;
-+
-+	for (i =3D 0; i < NUM_REGULATORS; i++) {
-+		mcp->rdev[i] =3D devm_regulator_register(dev,
-+						       &mcp16502_desc[i],
-+						       &config);
-+		if (IS_ERR(mcp->rdev[i])) {
-+			dev_err(dev,
-+				"failed to register %s regulator %ld\n",
-+				mcp16502_desc[i].name, PTR_ERR(mcp->rdev[i]));
-+			return PTR_ERR(mcp->rdev[i]);
-+		}
-+	}
-+
-+	return 0;
-+}
-+
-+static int mcp16502_probe(struct i2c_client *client,
-+			  const struct i2c_device_id *id)
-+{
-+	struct regulator_config config =3D { };
-+	struct device *dev;
-+	struct mcp16502 *mcp;
-+	int ret =3D 0;
-+
-+	dev =3D &client->dev;
-+	config.dev =3D dev;
-+
-+	mcp =3D devm_kzalloc(dev, sizeof(*mcp), GFP_KERNEL);
-+	if (!mcp)
-+		return -ENOMEM;
-+
-+	mcp->rmap =3D devm_regmap_init_i2c(client, &mcp16502_regmap_config);
-+	if (IS_ERR(mcp->rmap)) {
-+		ret =3D PTR_ERR(mcp->rmap);
-+		dev_err(dev, "regmap init failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	i2c_set_clientdata(client, mcp);
-+	config.regmap =3D mcp->rmap;
-+	config.driver_data =3D mcp;
-+
-+	mcp->lpm =3D devm_gpiod_get(dev, "lpm", GPIOD_OUT_LOW);
-+	if (IS_ERR(mcp->lpm)) {
-+		dev_err(dev, "failed to get lpm pin: %ld\n", PTR_ERR(mcp->lpm));
-+		return PTR_ERR(mcp->lpm);
-+	}
-+
-+	ret =3D setup_regulators(mcp, dev, config);
-+	if (ret !=3D 0)
-+		return ret;
-+
-+	mcp16502_gpio_set_mode(mcp, MCP16502_MODE_ACTIVE);
-+
-+	return 0;
-+}
-+
-+#ifdef CONFIG_PM_SLEEP
-+static int mcp16502_suspend(struct device *dev)
-+{
-+	struct i2c_client *client =3D to_i2c_client(dev);
-+	struct mcp16502 *mcp =3D i2c_get_clientdata(client);
-+
-+	mcp16502_gpio_set_mode(mcp, MCP16502_MODE_HIB);
-+
-+	return 0;
-+}
-+
-+static int mcp16502_resume(struct device *dev)
-+{
-+	struct i2c_client *client =3D to_i2c_client(dev);
-+	struct mcp16502 *mcp =3D i2c_get_clientdata(client);
-+
-+	mcp16502_gpio_set_mode(mcp, MCP16502_MODE_ACTIVE);
-+
-+	return 0;
-+}
-+#endif
-+
-+static const struct dev_pm_ops mcp16502_pm_ops =3D {
-+	SET_SYSTEM_SLEEP_PM_OPS(mcp16502_suspend, mcp16502_resume)
-+};
-+
-+static const struct i2c_device_id mcp16502_i2c_id[] =3D {
-+	{ "mcp16502", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(i2c, mcp16502_i2c_id);
-+
-+static struct i2c_driver mcp16502_drv =3D {
-+	.probe		=3D mcp16502_probe,
-+	.driver		=3D {
-+		.name	=3D "mcp16502-regulator",
-+		.owner		=3D THIS_MODULE,
-+		.of_match_table	=3D of_match_ptr(mcp16502_ids),
-+		.pm =3D &mcp16502_pm_ops,
-+	},
-+	.id_table	=3D mcp16502_i2c_id,
-+};
-+
-+static int __init mcp16502_init(void)
-+{
-+	return i2c_add_driver(&mcp16502_drv);
-+}
-+
-+static void __exit mcp16502_exit(void)
-+{
-+}
-+
-+module_init(mcp16502_init);
-+module_exit(mcp16502_exit);
-+
-+MODULE_VERSION("1.0");
-+MODULE_LICENSE("GPL v2");
-+MODULE_DESCRIPTION("MCP16502 PMIC driver");
-+MODULE_AUTHOR("Andrei Stefanescu andrei.stefanescu@microchip.com");
---=20
-2.7.4
+> Introducing the use of asm macros in c-code broke distcc, since it only
+> sends the preprocessed source file. The solution is to break the
+> compilation into two separate phases of compilation and assembly, and
+> between the two concatanate the assembly macros and the compiled (yet
 
+s/concatenate
+
+> not assembled) source file. Since this is less efficient, this
+> compilation mode is only used when make is called with the "DISTCC=y"
+> parameter.
+> 
+> Note that the assembly stage should also be distributed, if distcc is
+> configured using "CFLAGS=-DENABLE_REMOTE_ASSEMBLE".
+
+It's a bit sad that we regressed distcc performance ...
+
+> +# If distcc is used, then when an assembly macro files is needed, the
+> +# compilation stage and the assembly stage need to be separated. Providing
+> +# "DISTCC=y" option enables the separate compilation and assembly.
+
+Let's fix the various typos:
+
+  > +# If distcc is used, and when assembly macro files are needed, the
+  > +# compilation stage and the assembly stage needs to be separated. 
+  > +# Providing the "DISTCC=y" option enables separate compilation and 
+  > +# assembly.
+
+
+
+> +cmd_cc_o_c_direct = $(CC) $(c_flags) -c -o $(1) $<
+> +
+> +ifeq ($(DISTCC),y)
+> +a_flags_no_debug = $(filter-out $(AFLAGS_DEBUG_INFO), $(a_flags))
+> +c_flags_no_macros = $(filter-out $(ASM_MACRO_FLAGS), $(c_flags))
+> +
+> +cmd_cc_o_c_two_steps =							\
+> +	$(CC) $(c_flags_no_macros) $(DISABLE_LTO) -fverbose-asm -S	\
+> +		-o $(@D)/.$(@F:.o=.s) $< ;				\
+> +	cat $(ASM_MACRO_FILE) $(@D)/.$(@F:.o=.s) >			\
+> +		$(@D)/.tmp_$(@F:.o=.s);					\
+> +	$(CC) $(a_flags_no_debug) -c -o $(1) $(@D)/.tmp_$(@F:.o=.s) ; 	\
+> +	rm -f $(@D)/.$(@F:.o=.s) $(@D)/.tmp_$(@F:.o=.s)			\
+> +
+> +cmd_cc_o_c_helper =    							\
+> +	$(if $(findstring $(ASM_MACRO_FLAGS),$(c_flags)),		\
+> +		$(call cmd_cc_o_c_two_steps, $(1)),			\
+> +		$(call cmd_cc_o_c_direct, $(1)))
+
+There are various stray <space>+<tab> whitespace noise errors in the 
+chunks above.
+
+Thanks,
+
+	Ingo
