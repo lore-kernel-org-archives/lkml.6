@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93D62C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 199ECC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:03:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51CB22082A
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:03:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D578D2245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:03:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pcMu1bBm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51CB22082A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="nr9ocG7C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D578D2245E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731621AbeKMPrG (ORCPT
+        id S1731597AbeKMPrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 13 Nov 2018 10:47:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60854 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:60860 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731494AbeKMPrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1731518AbeKMPrE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Nov 2018 10:47:04 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CED82251A;
+        by mail.kernel.org (Postfix) with ESMTPSA id EB7A422510;
         Tue, 13 Nov 2018 05:50:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088236;
-        bh=JgLUFx3ylOemm59F46hYncXUeMQRpxOgucjc8lzNxoo=;
+        s=default; t=1542088237;
+        bh=XwB+T1is2BIC6LkbniEMIhJadiGYRkh2O9lYmKPM4CY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pcMu1bBmTQfLv+3m55zfrOq6yaFxh3+UtUbCLK0SJtdaFzi2+sobhrRauIdF3p0Lk
-         yX/BRhFt+CJWkrUSAa7uGpkVfIxnVMT6MgmpDrQy2kgopsVnl2Ne6Z32ZuNzNt/qU/
-         RI4v3OEODUyCFIBXoxJLTG4nCGOxU+wsNXQvGpyA=
+        b=nr9ocG7C5euqipd/uNbaH4LUZvZ9Uba1KMRn/mKrQa4ZWb9HdI704mYIDmaIjNtUo
+         cQkn1Bkc4DKQJYOHhgX8bXk+KIjbovY7RqR1C5Vpdek3tSjvy/X1sKKOqgLtTjgOfJ
+         VZnEQWo36/4K/qpTKWGjU7PbaNzgf/fRl4mjy2+U=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Phil Edworthy <phil.edworthy@renesas.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 34/44] clk: renesas: r9a06g032: Fix UART34567 clock rate
-Date:   Tue, 13 Nov 2018 00:49:40 -0500
-Message-Id: <20181113054950.77898-34-sashal@kernel.org>
+Cc:     Icenowy Zheng <icenowy@aosc.io>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 35/44] clk: sunxi-ng: sun50i: h6: Add 2x fixed post-divider to MMC module clocks
+Date:   Tue, 13 Nov 2018 00:49:41 -0500
+Message-Id: <20181113054950.77898-35-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
 References: <20181113054950.77898-1-sashal@kernel.org>
@@ -54,50 +53,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Phil Edworthy <phil.edworthy@renesas.com>
+From: Icenowy Zheng <icenowy@aosc.io>
 
-[ Upstream commit ee02950d53eee0d4c7f1c08a35272b77d24b9459 ]
+[ Upstream commit c2ff8383cc33c2d9c169e4daf1e37a434c3bb420 ]
 
-The clock for UARTs 0 through 2 is UART012, the clock for UARTs 3 through
-7 is UART34567.
-For UART012, we stop the clock driver from changing the clock rate. This
-is because the Synopsys UART driver simply sets the reference clock to 16x
-the baud rate, but doesn't check if the actual rate is within the required
-tolerance. The RZ/N1 clock divider can't provide this (we have to rely on
-the UART's internal divider to set the correct clock rate), so you end up
-with a clock rate that is way off what you wanted.
+On the H6, the MMC module clocks are fixed in the new timing mode,
+i.e. they do not have a bit to select the mode. These clocks have
+a 2x divider somewhere between the clock and the MMC module.
 
-In addition, since the clock is shared between multiple UARTs, you don't
-want the driver trying to change the clock rate as it may affect the other
-UARTs (which may not have been configured yet, so you don't know what baud
-rate they will use). Normally, the clock rate is set early on before Linux
-to some very high rate that supports all of the clock rates you want.
+To be consistent with other SoCs supporting the new timing mode,
+we model the 2x divider as a fixed post-divider on the MMC module
+clocks.
 
-This change stops the UART34567 clock rate from changing for the same
-reasons.
+This patch adds the post-dividers to the MMC clocks, following the
+approach on A64.
 
-Signed-off-by: Phil Edworthy <phil.edworthy@renesas.com>
-Fixes: 4c3d88526eba2143 ("clk: renesas: Renesas R9A06G032 clock driver")
-Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: 524353ea480b ("clk: sunxi-ng: add support for the Allwinner H6 CCU")
+Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/renesas/r9a06g032-clocks.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/clk/sunxi-ng/ccu-sun50i-h6.c | 43 +++++++++++++++-------------
+ 1 file changed, 23 insertions(+), 20 deletions(-)
 
-diff --git a/drivers/clk/renesas/r9a06g032-clocks.c b/drivers/clk/renesas/r9a06g032-clocks.c
-index a0b6ecdc63dd..6d2b56891559 100644
---- a/drivers/clk/renesas/r9a06g032-clocks.c
-+++ b/drivers/clk/renesas/r9a06g032-clocks.c
-@@ -539,7 +539,8 @@ r9a06g032_div_round_rate(struct clk_hw *hw,
- 	 * several uarts attached to this divider, and changing this impacts
- 	 * everyone.
- 	 */
--	if (clk->index == R9A06G032_DIV_UART) {
-+	if (clk->index == R9A06G032_DIV_UART ||
-+	    clk->index == R9A06G032_DIV_P2_PG) {
- 		pr_devel("%s div uart hack!\n", __func__);
- 		return clk_get_rate(hw->clk);
- 	}
+diff --git a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+index bdbfe78fe133..3d60f7978506 100644
+--- a/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
++++ b/drivers/clk/sunxi-ng/ccu-sun50i-h6.c
+@@ -408,26 +408,29 @@ static SUNXI_CCU_GATE(bus_nand_clk, "bus-nand", "ahb3", 0x82c, BIT(0), 0);
+ 
+ static const char * const mmc_parents[] = { "osc24M", "pll-periph0-2x",
+ 					    "pll-periph1-2x" };
+-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc0_clk, "mmc0", mmc_parents, 0x830,
+-					0, 4,	/* M */
+-					8, 2,	/* N */
+-					24, 3,	/* mux */
+-					BIT(31),/* gate */
+-					0);
+-
+-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc1_clk, "mmc1", mmc_parents, 0x834,
+-					0, 4,	/* M */
+-					8, 2,	/* N */
+-					24, 3,	/* mux */
+-					BIT(31),/* gate */
+-					0);
+-
+-static SUNXI_CCU_MP_WITH_MUX_GATE(mmc2_clk, "mmc2", mmc_parents, 0x838,
+-					0, 4,	/* M */
+-					8, 2,	/* N */
+-					24, 3,	/* mux */
+-					BIT(31),/* gate */
+-					0);
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc0_clk, "mmc0", mmc_parents, 0x830,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc1_clk, "mmc1", mmc_parents, 0x834,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
++
++static SUNXI_CCU_MP_WITH_MUX_GATE_POSTDIV(mmc2_clk, "mmc2", mmc_parents, 0x838,
++					  0, 4,		/* M */
++					  8, 2,		/* N */
++					  24, 3,	/* mux */
++					  BIT(31),	/* gate */
++					  2,		/* post-div */
++					  0);
+ 
+ static SUNXI_CCU_GATE(bus_mmc0_clk, "bus-mmc0", "ahb3", 0x84c, BIT(0), 0);
+ static SUNXI_CCU_GATE(bus_mmc1_clk, "bus-mmc1", "ahb3", 0x84c, BIT(1), 0);
 -- 
 2.17.1
 
