@@ -4,53 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 66024C0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 356EFC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 23E402251B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E005E22510
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:30 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mnsDi7Gt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23E402251B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OU7LH29g"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E005E22510
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731220AbeKMPqw (ORCPT
+        id S1731283AbeKMPqz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:46:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60450 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:46:55 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60536 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727357AbeKMPqv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:46:51 -0500
+        id S1731239AbeKMPqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:46:54 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D000A22510;
-        Tue, 13 Nov 2018 05:50:23 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1BD182251A;
+        Tue, 13 Nov 2018 05:50:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088224;
-        bh=7mQEjIV2IFnljtef90NPlS5B4LarDbNuW7HZDt0nVlo=;
+        s=default; t=1542088227;
+        bh=C9aVLNU462j8eTdtQUHD6X5OOfhZMbCEKLvpenRm8fU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=mnsDi7GtpgGTmrhDTQX6T5j9Gx5DDt1Ijgq1ajOci6g/oA7TWUw5eQat9zoOidIvN
-         Fn0YTimNycRl2qjhef9/LOb0LSsD2ff8eIjltsB2UIU2bB/3fqhfAfUdP9SligkKYr
-         iWlzP4KGeP87nr0cK0sTExR0RahAbohG2T+Likx8=
+        b=OU7LH29gHIdypIP4qS4BpKtyhyClgSQN55/R3Y2n9dSjdNOk6LO5SVnqgg5f6TUoi
+         9Q7xE+PvC3H9+cMcE8H9ydyrwEUtIEuq2P3lQ6W5GeayGvUPWnOnoW+FnexE/wdsVJ
+         YN9guFTuwgdjc+bvcHcWbNsuEORWUwJsfrIDVqaM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dan Carpenter <dan.carpenter@oracle.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Keith Busch <keith.busch@intel.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Kees Cook <keescook@chromium.org>,
-        YueHaibing <yuehaibing@huawei.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.19 18/44] mm/gup_benchmark.c: prevent integer overflow in ioctl
-Date:   Tue, 13 Nov 2018 00:49:24 -0500
-Message-Id: <20181113054950.77898-18-sashal@kernel.org>
+Cc:     Richard Weinberger <richard@nod.at>,
+        Sasha Levin <sashal@kernel.org>, linux-um@lists.infradead.org
+Subject: [PATCH AUTOSEL 4.19 20/44] um: Give start_idle_thread() a return code
+Date:   Tue, 13 Nov 2018 00:49:26 -0500
+Message-Id: <20181113054950.77898-20-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
 References: <20181113054950.77898-1-sashal@kernel.org>
@@ -59,45 +51,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dan Carpenter <dan.carpenter@oracle.com>
+From: Richard Weinberger <richard@nod.at>
 
-[ Upstream commit 4b408c74ee5a0b74fc9265c2fe39b0e7dec7c056 ]
+[ Upstream commit 7ff1e34bbdc15acab823b1ee4240e94623d50ee8 ]
 
-The concern here is that "gup->size" is a u64 and "nr_pages" is unsigned
-long.  On 32 bit systems we could trick the kernel into allocating fewer
-pages than expected.
+Fixes:
+arch/um/os-Linux/skas/process.c:613:1: warning: control reaches end of
+non-void function [-Wreturn-type]
 
-Link: http://lkml.kernel.org/r/20181025061546.hnhkv33diogf2uis@kili.mountain
-Fixes: 64c349f4ae78 ("mm: add infrastructure for get_user_pages_fast() benchmarking")
-Signed-off-by: Dan Carpenter <dan.carpenter@oracle.com>
-Acked-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Keith Busch <keith.busch@intel.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>
-Cc: Kees Cook <keescook@chromium.org>
-Cc: YueHaibing <yuehaibing@huawei.com>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+longjmp() never returns but gcc still warns that the end of the function
+can be reached.
+Add a return code and debug aid to detect this impossible case.
+
+Signed-off-by: Richard Weinberger <richard@nod.at>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- mm/gup_benchmark.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/um/os-Linux/skas/process.c | 5 +++++
+ 1 file changed, 5 insertions(+)
 
-diff --git a/mm/gup_benchmark.c b/mm/gup_benchmark.c
-index 7405c9d89d65..7e6f2d2dafb5 100644
---- a/mm/gup_benchmark.c
-+++ b/mm/gup_benchmark.c
-@@ -23,6 +23,9 @@ static int __gup_benchmark_ioctl(unsigned int cmd,
- 	int nr;
- 	struct page **pages;
- 
-+	if (gup->size > ULONG_MAX)
-+		return -EINVAL;
+diff --git a/arch/um/os-Linux/skas/process.c b/arch/um/os-Linux/skas/process.c
+index c94c3bd70ccd..df4a985716eb 100644
+--- a/arch/um/os-Linux/skas/process.c
++++ b/arch/um/os-Linux/skas/process.c
+@@ -610,6 +610,11 @@ int start_idle_thread(void *stack, jmp_buf *switch_buf)
+ 		fatal_sigsegv();
+ 	}
+ 	longjmp(*switch_buf, 1);
 +
- 	nr_pages = gup->size / PAGE_SIZE;
- 	pages = kvcalloc(nr_pages, sizeof(void *), GFP_KERNEL);
- 	if (!pages)
++	/* unreachable */
++	printk(UM_KERN_ERR "impossible long jump!");
++	fatal_sigsegv();
++	return 0;
+ }
+ 
+ void initial_thread_cb_skas(void (*proc)(void *), void *arg)
 -- 
 2.17.1
 
