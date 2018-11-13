@@ -2,123 +2,153 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=0.3 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=no autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4979C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:33:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 180CBC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:33:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7384C223DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:33:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 85F12223DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:33:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gZAJHGI9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7384C223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=natalenko.name header.i=@natalenko.name header.b="Bp5kEgTf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85F12223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=natalenko.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730940AbeKNCcW (ORCPT
+        id S1731130AbeKNCcl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 21:32:22 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:34891 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727428AbeKNCcW (ORCPT
+        Tue, 13 Nov 2018 21:32:41 -0500
+Received: from vulcan.natalenko.name ([104.207.131.136]:14356 "EHLO
+        vulcan.natalenko.name" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727428AbeKNCcl (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 21:32:22 -0500
-Received: by mail-oi1-f196.google.com with SMTP id v198-v6so10863809oif.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 08:33:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Y9PmHMPf7gQ17MgltaMVtKD3rSJypy3LXU9Ftt1uWiI=;
-        b=gZAJHGI9cD7smiV4bMg5aKE7vaNPNbe6xVkRX+oGE639czSo0QKeJvxqgXu0g672OW
-         cuH1Groq3vu7EaysBG2D8U5uv6eYxk/zpIdr5+WEuY0i5Y17ZwkKouyn6q840Ov4Ui1Q
-         ftA56rLlEMfGCKnJfL0iV0CrlR5S/POBPjQU8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Y9PmHMPf7gQ17MgltaMVtKD3rSJypy3LXU9Ftt1uWiI=;
-        b=UGiw44cDZ2bcmAhFu4OI4e8Znp5znHPRvbZcWmtglMvj7+WkJbVQAU5Owsv6z2ZPyv
-         u5h6LkcEzvxvURDegtCxyP1gRpyOOXqJC29I8Amn8IIk8w7BuXP1fiehAmsISZ5J64nB
-         dbhmducAGhFMQFzjlidTkEQdNmHhbJCPN44qkW0LuWctLIbH6Gri9u/qQAkKlv4sEGiD
-         Lqryrb7ectKI9ZBGHCMkEsUPfYju/5qTy7fR4nqj1015yF/MLoxSdTCvmkYxqqKJyYWr
-         3WPKW8jYPOFG7u4h5IhEQex+d/gewlKpj8a917B8nunpT2+cXG21FVFLIa3uXcrUqZj0
-         WEmQ==
-X-Gm-Message-State: AGRZ1gLQcxdAXYP4sI7FB6lhFO0v5cl8JPxKwxuy7I27FRrPjHleNeTV
-        apU1xbMm/6jXb7dv3qkgTUxbug==
-X-Google-Smtp-Source: AJdET5evSR9tz3s9TsQpctTpUvLOiPA4mxpJYYMFcHE3dElkZ7L4NEYFfO5H8qXV9bioVHEwfoWvGA==
-X-Received: by 2002:aca:d984:: with SMTP id q126-v6mr3527223oig.216.1542126811703;
-        Tue, 13 Nov 2018 08:33:31 -0800 (PST)
-Received: from [172.22.22.26] (c-71-195-29-92.hsd1.mn.comcast.net. [71.195.29.92])
-        by smtp.googlemail.com with ESMTPSA id h7sm8063698otb.45.2018.11.13.08.33.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 08:33:31 -0800 (PST)
-Subject: Re: [RFC PATCH 02/12] soc: qcom: ipa: DMA helpers
-To:     Arnd Bergmann <arnd@arndb.de>
-Cc:     David Miller <davem@davemloft.net>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Ilias Apalodimas <ilias.apalodimas@linaro.org>,
-        Networking <netdev@vger.kernel.org>,
-        DTML <devicetree@vger.kernel.org>, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        syadagir@codeaurora.org, mjavid@codeaurora.org,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-References: <20181107003250.5832-1-elder@linaro.org>
- <20181107003250.5832-3-elder@linaro.org>
- <CAK8P3a3Hur9Kn=QLrn7XDn-Kpgfta1xTxvuwcBze4n2v7fsULw@mail.gmail.com>
-From:   Alex Elder <elder@linaro.org>
-Message-ID: <7eaef6a8-9d12-31bb-43fb-e710ad171c0f@linaro.org>
-Date:   Tue, 13 Nov 2018 10:33:29 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 13 Nov 2018 21:32:41 -0500
+Received: from mail.natalenko.name (vulcan.natalenko.name [IPv6:fe80::5400:ff:fe0c:dfa0])
+        (using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+        (No client certificate requested)
+        by vulcan.natalenko.name (Postfix) with ESMTPSA id 4D51846A934;
+        Tue, 13 Nov 2018 17:33:49 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=dkim-20170712; t=1542126829;
+        h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references;
+        bh=mpOrte2CQPkKT6ryItVw/jcNlCUyZj+iSXrIF+TGVP0=;
+        b=Bp5kEgTflHiQsYgfkm0Y4yCo4B7l4FXa4lZk6+oMmz2nYAd/nVnTLAnB7irR1ENaLEUwi9
+        CDpUw5ZIbAhOxIraGKWj7M0OpwtUxsQN/alHzUO0U0mEJf2vUA3lvxqwNN+78630l3eZHo
+        UyHFDAFbP+EshTEFnCKwZcMTJLDfu98=
 MIME-Version: 1.0
-In-Reply-To: <CAK8P3a3Hur9Kn=QLrn7XDn-Kpgfta1xTxvuwcBze4n2v7fsULw@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Date:   Tue, 13 Nov 2018 17:33:49 +0100
+From:   Oleksandr Natalenko <oleksandr@natalenko.name>
+To:     timofey.titovets@synesis.ru
+Cc:     linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mm@kvack.org, nefelim4ag@gmail.com, willy@infradead.org
+Subject: Re: [PATCH V3] KSM: allow dedup all tasks memory
+In-Reply-To:  <<20181112231344.7161-1-timofey.titovets@synesis.ru>>
+Message-ID: <d45addefdf05b84af96fb494d52b4ec4@natalenko.name>
+X-Sender: oleksandr@natalenko.name
+User-Agent: Roundcube Webmail/1.3.8
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=natalenko.name;
+        s=arc-20170712; t=1542126829;
+        h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:
+         content-transfer-encoding:content-transfer-encoding:
+         in-reply-to:in-reply-to:references;
+        bh=mpOrte2CQPkKT6ryItVw/jcNlCUyZj+iSXrIF+TGVP0=;
+        b=0rcgSRFeNFgl513vH3xlIqH2QYx6iQyEkYnE2TDDAtsYInSotFNtUCOXB7GA3mN7AUlvPk
+        kuvgA88SAl/yK5lPVeWbIj5+B0DKu7w3XNd0bwKVkl3pPRaDzuiie39whYmIDljpJm6344
+        3DEr4lB1ZR7M+FKysFHWVb4wN3mbSF0=
+ARC-Seal: i=1; s=arc-20170712; d=natalenko.name; t=1542126829; a=rsa-sha256;
+        cv=none;
+        b=Eqkx9SVfZV/EMbeNUYBbz6WHUH7wIT4f6mpgkjwAkeCyZKB2pMjSTCmSeqoXbyqh1qcT8OV/JV6ADQyB6EU5MhzST6OKJZRQGXeLBnoa/SIJNL8flMWxA+MT8F5H5FN+Py9aVHuo4TMbmWmDM7pH2V3YU/kHzh+xhHUYcEvgXuU=
+ARC-Authentication-Results: i=1;
+        vulcan.natalenko.name;
+        auth=pass smtp.auth=oleksandr@natalenko.name smtp.mailfrom=oleksandr@natalenko.name
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/7/18 6:17 AM, Arnd Bergmann wrote:
-> On Wed, Nov 7, 2018 at 1:33 AM Alex Elder <elder@linaro.org> wrote:
->>
->> This patch includes code implementing the IPA DMA module, which
->> defines a structure to represent a DMA allocation for the IPA device.
->> It's used throughout the IPA code.
->>
->> Signed-off-by: Alex Elder <elder@linaro.org>
-> 
-> I looked through all the users of this and couldn't fine one that actually
-> benefits from it. I'd say better drop this patch entirely and open-code
-> the contents in the callers. That will help readability since the dma
-> API is well understood by many people.
+So,
 
-Originally this was done to make it more obvious that all DMA allocations
-were done with the same device pointer.  Previously there were several
-separate devices, and it wasn't very obvious that only one was used (and
-required).  Now that we're past that it's not difficult to do as you suggest.
+> …snip…
+> +static int ksm_seeker_thread(void *nothing)
+> +{
+> +	pid_t last_pid = 1;
+> +	pid_t curr_pid;
+> +	struct task_struct *task;
+> +
+> +	set_freezable();
+> +	set_user_nice(current, 5);
+> +
+> +	while (!kthread_should_stop()) {
+> +		wait_while_offlining();
+> +
+> +		try_to_freeze();
+> +
+> +		if (!ksm_mode_always()) {
+> +			wait_event_freezable(ksm_seeker_thread_wait,
+> +				ksm_mode_always() || kthread_should_stop());
+> +			continue;
+> +		}
+> +
+> +		/*
+> +		 * import one task's vma per run
+> +		 */
+> +		read_lock(&tasklist_lock);
+> +
+> +		/* Try always get next task */
+> +		for_each_process(task) {
+> +			curr_pid = task_pid_nr(task);
+> +			if (curr_pid == last_pid) {
+> +				task = next_task(task);
+> +				break;
+> +			}
+> +
+> +			if (curr_pid > last_pid)
+> +				break;
+> +		}
+> +
+> +		last_pid = task_pid_nr(task);
+> +		ksm_import_task_vma(task);
 
-I have now done that, and in the process identified a few more ways to
-improve/simplify the code.  The net result is that more lines of code
-were removed than were present in "ipa_dma.[ch]".  I see that as a
-win (aside from your point below).
+This seems to be a bad idea. ksm_import_task_vma() may sleep with 
+tasklist_lock being held. Thus, IIUC, you'll get this:
 
-> Generally speaking, try not to wrap Linux interfaces into driver specific
-> helper functions.
+[ 1754.410322] BUG: scheduling while atomic: ksmd_seeker/50/0x00000002
+…
+[ 1754.410444] Call Trace:
+[ 1754.410455]  dump_stack+0x5c/0x80
+[ 1754.410460]  __schedule_bug.cold.19+0x38/0x51
+[ 1754.410464]  __schedule+0x11dc/0x2080
+[ 1754.410483]  schedule+0x32/0xb0
+[ 1754.410487]  rwsem_down_write_failed+0x15d/0x240
+[ 1754.410496]  call_rwsem_down_write_failed+0x13/0x20
+[ 1754.410499]  down_write+0x20/0x30
+[ 1754.410502]  ksm_import_task_vma+0x22/0x70
+[ 1754.410505]  ksm_seeker_thread+0x134/0x1c0
+[ 1754.410512]  kthread+0x113/0x130
+[ 1754.410518]  ret_from_fork+0x35/0x40
 
-Agreed.  Thanks a lot for your review.
+I think you may want to get a reference to task_struct before releasing 
+tasklist_lock, and then put it after ksm_import_task_vma() does its job.
 
-					-Alex
+> +		read_unlock(&tasklist_lock);
+> +
+> +		schedule_timeout_interruptible(
+> +			msecs_to_jiffies(ksm_thread_seeker_sleep_millisecs));
+> +	}
+> +	return 0;
+> +}
+> …snip…
 
-> 
->       Arnd
-> 
-
+-- 
+   Oleksandr Natalenko (post-factum)
