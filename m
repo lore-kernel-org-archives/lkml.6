@@ -2,143 +2,139 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D84BFC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:37:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F2066C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:39:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FDDC20868
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:37:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FDDC20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 9747C20896
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:39:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="GanTvwju"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9747C20896
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387533AbeKNBfl (ORCPT
+        id S2387743AbeKNBhj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:35:41 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34582 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726932AbeKNBfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:35:40 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 919352D7E2;
-        Tue, 13 Nov 2018 15:37:03 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
-        by smtp.corp.redhat.com (Postfix) with SMTP id 360D75E1CF;
-        Tue, 13 Nov 2018 15:37:02 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-        oleg@redhat.com; Tue, 13 Nov 2018 16:37:03 +0100 (CET)
-Date:   Tue, 13 Nov 2018 16:37:01 +0100
-From:   Oleg Nesterov <oleg@redhat.com>
-To:     Roman Gushchin <guroan@gmail.com>
-Cc:     Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Roman Gushchin <guro@fb.com>
-Subject: Re: [PATCH v2 3/6] cgroup: cgroup v2 freezer
-Message-ID: <20181113153700.GB30990@redhat.com>
-References: <20181112230422.5911-1-guro@fb.com>
- <20181112230422.5911-5-guro@fb.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112230422.5911-5-guro@fb.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 13 Nov 2018 15:37:03 +0000 (UTC)
+        Tue, 13 Nov 2018 20:37:39 -0500
+Received: from mailout1.w1.samsung.com ([210.118.77.11]:47744 "EHLO
+        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726932AbeKNBhj (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 20:37:39 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181113153900euoutp0182c35984e8cabb4c47aef6ed8c08bb3f~muTCHJzaR1163911639euoutp01D;
+        Tue, 13 Nov 2018 15:39:00 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181113153900euoutp0182c35984e8cabb4c47aef6ed8c08bb3f~muTCHJzaR1163911639euoutp01D
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1542123540;
+        bh=TQ8VtZmvIHLdVstCwUNJPazAP1X+yjIsSYbTQCqoQ7A=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=GanTvwjuZZxUDorMUofvXHUOMUkgUiFlsq2hwmHoo3hBLODBuD0Xf9onh8f36g1Tr
+         Qrx5QdvHUFkyt9ZzT9oR7uvrF1N7Rj08NzUmB7R3XJStYtTk3AS+Z83NCNGDuiOoN5
+         Ete6oYbyxviTmEzGAfAwouBhDDATT0vdzMvfgH7g=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
+        20181113153900eucas1p2e44118562a5b3f8143389fbac1358914~muTBt5jJO1887018870eucas1p2X;
+        Tue, 13 Nov 2018 15:39:00 +0000 (GMT)
+Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id BB.94.04294.310FAEB5; Tue, 13
+        Nov 2018 15:38:59 +0000 (GMT)
+Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181113153859eucas1p1dfc17519a7e960096d2888e47ab18dd8~muTBAx8EI1617116171eucas1p1G;
+        Tue, 13 Nov 2018 15:38:59 +0000 (GMT)
+X-AuditID: cbfec7f4-835ff700000010c6-89-5beaf0136c66
+Received: from eusync1.samsung.com ( [203.254.199.211]) by
+        eusmgms2.samsung.com (EUCPMTA) with SMTP id E7.DA.04128.210FAEB5; Tue, 13
+        Nov 2018 15:38:58 +0000 (GMT)
+Received: from AMDC2765.digital.local ([106.116.147.25]) by
+        eusync1.samsung.com (Oracle Communications Messaging Server 7.0.5.31.0 64bit
+        (built May  5 2014)) with ESMTPA id <0PI50040T24VKX20@eusync1.samsung.com>;
+        Tue, 13 Nov 2018 15:38:58 +0000 (GMT)
+From:   Marek Szyprowski <m.szyprowski@samsung.com>
+To:     linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org
+Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
+        MyungJoo Ham <myungjoo.ham@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Subject: [PATCH] extcon: max8997: Fix lack of path setting in USB device
+ mode
+Date:   Tue, 13 Nov 2018 16:38:47 +0100
+Message-id: <20181113153847.14732-1-m.szyprowski@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprEIsWRmVeSWpSXmKPExsWy7djP87rCH15FG1zer2exccZ6VovrX56z
+        Wpw/v4Hd4vKuOWwWM87vY7JYe+Quu8XtxhVsDuwem1Z1snn0bVnF6PF5k1wAcxSXTUpqTmZZ
+        apG+XQJXxrfOBUwFS7krLh/exdbAuIizi5GTQ0LAROLmmcuMXYxcHEICKxgl5jy6wArhfGaU
+        +D55DTNM1ezHD6GqljFK3HnVxA6SEBJoYJK49tcaxGYTMJToetvFBmKLCDhL3P7wjQXEZhZ4
+        yCix5aoCiC0s4C/x7loL2FAWAVWJDauWsILYvAK2EgvuXWWDWCYvsXrDAajFN1kljhzig7Bd
+        JGb/XsQCYQtLvDq+hR3ClpG4PLmbBeQ4CYFmRon2GbPYIZweRomtc3ZATbWWOHz8IivERXwS
+        k7ZNB9rAARTnlehoE4Io8ZDY2biHCeKxWImNRz8yTWCUWMDIsIpRPLW0ODc9tdgoL7Vcrzgx
+        t7g0L10vOT93EyMwpk7/O/5lB+OuP0mHGAU4GJV4eB/ceBUtxJpYVlyZe4hRgoNZSYRX4RlQ
+        iDclsbIqtSg/vqg0J7X4EKM0B4uSOG81w4NoIYH0xJLU7NTUgtQimCwTB6dUA2OFmseq4JhZ
+        Irujaj56S248uu9DVDzf0wTZDpsHNtvXvWZdzhb2oDxCv+WMZGe4dtJRR9Psf9d7ZxYV/OS8
+        07HkeZJmvnkZx+tc1/6mWp91jKUCx5X26FUWNLdGnzptc/Pwta0MbdEGwg5BC2pDu4ylA6+d
+        kej/Jvzp55HpvvOT3mbuFo8OVWIpzkg01GIuKk4EAKLMt46lAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGJMWRmVeSWpSXmKPExsVy+t/xy7pCH15FG6xYZWOxccZ6VovrX56z
+        Wpw/v4Hd4vKuOWwWM87vY7JYe+Quu8XtxhVsDuwem1Z1snn0bVnF6PF5k1wAcxSXTUpqTmZZ
+        apG+XQJXxrfOBUwFS7krLh/exdbAuIizi5GTQ0LARGL244eMXYxcHEICSxgleh/+YoNwmpgk
+        lr46zQZSxSZgKNH1tgvMFhFwlrj94RsLSBGzwENGiVdbjjCCJIQFfCW2rFgLZrMIqEpsWLWE
+        FcTmFbCVWHDvKhvEOnmJ1RsOME9g5FrAyLCKUSS1tDg3PbfYSK84Mbe4NC9dLzk/dxMj0Pfb
+        jv3csoOx613wIUYBDkYlHt4HN15FC7EmlhVX5h5ilOBgVhLhVXgGFOJNSaysSi3Kjy8qzUkt
+        PsQozcGiJM573qAySkggPbEkNTs1tSC1CCbLxMEp1cDIyPs6X3ZeXt3Kf9G7OjPEzbN0jSq1
+        ynIv1qjknXBNz4ny4+q9k5wiEFnhUeL+IuSA07VFLwuvimkx9D8/b+f2KvPDLefIZVrqqe5f
+        ze4/kxJkmSHG8mf1g3gPrh6WF523iydtFawKW/LgPo+T9fWsdUYvE589kTKfXP5+bv8ZrTOu
+        80PKK5VYijMSDbWYi4oTAel4BOX5AQAA
+X-CMS-MailID: 20181113153859eucas1p1dfc17519a7e960096d2888e47ab18dd8
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181113153859eucas1p1dfc17519a7e960096d2888e47ab18dd8
+References: <CGME20181113153859eucas1p1dfc17519a7e960096d2888e47ab18dd8@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12, Roman Gushchin wrote:
->
-> This patch implements freezer for cgroup v2. However the functionality
-> is similar, the interface is different to cgroup v1: it follows
-> cgroup v2 interface principles.
+MAX8997 driver disables automatic path selection from MicroUSB connector
+and manually sets path to either UART or USB lines. However the code for
+setting USB path worked only for USB host mode (when ID pin is set
+to ground). When standard USB cable (USB device mode) is connected, path
+registers are not touched. This means that once the non-USB accessory is
+connected to MAX8997-operated micro USB port, the path is no longer set
+to USB and USB device mode doesn't work. This patch fixes it by setting
+USB path both for USB and USB host modes.
 
-Oh, it seems that I actually need to apply this patch to (try to) understand
-the details ;) Will try tomorrow.
+Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
+---
+ drivers/extcon/extcon-max8997.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
-> --- a/include/linux/sched/jobctl.h
-> +++ b/include/linux/sched/jobctl.h
-> @@ -18,6 +18,7 @@ struct task_struct;
->  #define JOBCTL_TRAP_NOTIFY_BIT	20	/* trap for NOTIFY */
->  #define JOBCTL_TRAPPING_BIT	21	/* switching to TRACED */
->  #define JOBCTL_LISTENING_BIT	22	/* ptracer is listening for events */
-> +#define JOBCTL_TRAP_FREEZE_BIT	23	/* trap for cgroup freezer */
->
->  #define JOBCTL_STOP_DEQUEUED	(1UL << JOBCTL_STOP_DEQUEUED_BIT)
->  #define JOBCTL_STOP_PENDING	(1UL << JOBCTL_STOP_PENDING_BIT)
-> @@ -26,8 +27,10 @@ struct task_struct;
->  #define JOBCTL_TRAP_NOTIFY	(1UL << JOBCTL_TRAP_NOTIFY_BIT)
->  #define JOBCTL_TRAPPING		(1UL << JOBCTL_TRAPPING_BIT)
->  #define JOBCTL_LISTENING	(1UL << JOBCTL_LISTENING_BIT)
-> +#define JOBCTL_TRAP_FREEZE	(1UL << JOBCTL_TRAP_FREEZE_BIT)
->
-> -#define JOBCTL_TRAP_MASK	(JOBCTL_TRAP_STOP | JOBCTL_TRAP_NOTIFY)
-> +#define JOBCTL_TRAP_MASK	(JOBCTL_TRAP_STOP | JOBCTL_TRAP_NOTIFY | \
-> +				 JOBCTL_TRAP_FREEZE)
-
-Again, I didn't actually read the patch yet, but my gut feeling tells me
-we shouldn't change JOBCTL_TRAP_MASK... and the fact you had to change
-task_clear_jobctl_pending() to filter out JOBCTL_TRAP_FREEZE bit may be
-proves this.
-
-This
-
-	if (current->jobctl & (JOBCTL_TRAP_STOP | JOBCTL_TRAP_NOTIFY))
-	...
-	else if (current->jobctl & JOBCTL_TRAP_FREEZE)
-
-code in do_jobctl_trap() doesn't look nice too.
-
-OK, please forget for now, but perhaps it would be more clean to add
-JOBCTL_TRAP_FREEZE to the JOBCTL_PENDING_MASK check in recalc_sigpending()
-and change get_signal to check JOBCTL_TRAP_MASK | JOBCTL_TRAP_FREEZE; and
-I am not even sure cgroup_freezer_enter() should live in do_jobctl_trap().
-
-> @@ -5642,6 +5700,23 @@ void cgroup_post_fork(struct task_struct *child)
->  			cset->nr_tasks++;
->  			css_set_move_task(child, NULL, cset, false);
->  		}
-> +
-> +		if (unlikely(cgroup_frozen(child) &&
-> +			     (child->flags & ~PF_KTHREAD))) {
-> +			struct cgroup *cgrp;
-> +			unsigned long flags;
-> +
-> +			if (lock_task_sighand(child, &flags)) {
-
-You can just do spin_lock_irq(siglock). The new child can't go away
-until wake_up_new_task(), otherwise any usage of "child" including
-lock_task_sighand() was not safe.
-
-> +				cgrp = cset->dfl_cgrp;
-> +				cgrp->freezer.nr_tasks_to_freeze++;
-> +				WARN_ON_ONCE(cgrp->freezer.nr_tasks_to_freeze <
-> +					     cgrp->freezer.nr_frozen_tasks);
-> +				child->jobctl |= JOBCTL_TRAP_FREEZE;
-> +				signal_wake_up(child, false);
-
-signal_wake_up() is pointless.
-
-wake_up_process() has no effect, set_tsk_thread_flag(TIF_SIGPENDING) is
-not needed because schedule_tail() does calculate_sigpending() which should
-notice JOBCTL_TRAP_FREEZE.
-
-> +	} else if (current->jobctl & JOBCTL_TRAP_FREEZE) {
-> +		/*
-> +		 * Enter the freezer, unless the task is about to exit.
-> +		 */
-> +		if (fatal_signal_pending(current)) {
-> +			current->jobctl &= ~JOBCTL_TRAP_FREEZE;
-
-And again, please note that we need this because task_clear_jobctl_pending()
-drops JOBCTL_TRAP_FREEZE. It shouldn't, I think...
-
-Oleg.
+diff --git a/drivers/extcon/extcon-max8997.c b/drivers/extcon/extcon-max8997.c
+index 632192d027bf..172e116ac1ce 100644
+--- a/drivers/extcon/extcon-max8997.c
++++ b/drivers/extcon/extcon-max8997.c
+@@ -311,12 +311,10 @@ static int max8997_muic_handle_usb(struct max8997_muic_info *info,
+ {
+ 	int ret = 0;
+ 
+-	if (usb_type == MAX8997_USB_HOST) {
+-		ret = max8997_muic_set_path(info, info->path_usb, attached);
+-		if (ret < 0) {
+-			dev_err(info->dev, "failed to update muic register\n");
+-			return ret;
+-		}
++	ret = max8997_muic_set_path(info, info->path_usb, attached);
++	if (ret < 0) {
++		dev_err(info->dev, "failed to update muic register\n");
++		return ret;
+ 	}
+ 
+ 	switch (usb_type) {
+-- 
+2.17.1
 
