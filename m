@@ -7,134 +7,100 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A04E1C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CBAEC0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62B982251E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:51:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D622F22511
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:51:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C3dMtBpS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62B982251E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jgjrxBv9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D622F22511
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732476AbeKMPsS (ORCPT
+        id S1732510AbeKMPsU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:48:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34504 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:48:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34606 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732459AbeKMPsR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:48:17 -0500
+        id S1732472AbeKMPsT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:48:19 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DF0A22507;
-        Tue, 13 Nov 2018 05:51:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 540A722521;
+        Tue, 13 Nov 2018 05:51:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088309;
-        bh=rPql8XgGWs45tSjiEdAy+Tg+skKBsCFaPro/SvFYm54=;
+        s=default; t=1542088311;
+        bh=KIq0agkofycnTeUH1BtNPsId2qWd8cbFlCewcHK8oyg=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C3dMtBpSIPiaWB3Qnqbo7KbBztGUQP09I+OxlxH/DDonlUzWJxKMTMvNZAUUDbhIZ
-         O1oeCsJgiYEfimHQPb1I1Oj0imIAZobu3n+hqLSBE+wpM2+gfF9DIN1voYBMcijq7s
-         yWF1TaCFAx9Wb5L8/5r4COnnYIRSDOzJeTUZ87Lc=
+        b=jgjrxBv9WEw666qT9gd3gKfWFs5Hp5Uer7/1eJQS7nKVyiQ57OGjxgVZlj8EXDoYX
+         CroM/u8S1gRtb+k/ncL+5xbp03fkM8oHTdIulffEHmLihr0lbHiQWinWIJoE8mksct
+         IBHWPKPJ6Ljfik9sR4D/0aATEVENGoUzCXLncCEI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Roman Gushchin <guro@fb.com>, Johannes Weiner <hannes@cmpxchg.org>,
-        Michal Hocko <mhocko@kernel.org>, Tejun Heo <tj@kernel.org>,
-        Rik van Riel <riel@surriel.com>,
-        Konstantin Khlebnikov <koct9i@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Sasha Levin <sashal@kernel.org>, linux-mm@kvack.org
-Subject: [PATCH AUTOSEL 4.18 38/39] mm: don't miss the last page because of round-off error
-Date:   Tue, 13 Nov 2018 00:50:52 -0500
-Message-Id: <20181113055053.78352-38-sashal@kernel.org>
+Cc:     Colin Ian King <colin.king@canonical.com>,
+        Steve French <stfrench@microsoft.com>,
+        Sasha Levin <sashal@kernel.org>, linux-cifs@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 02/26] cifs: don't dereference smb_file_target before null check
+Date:   Tue, 13 Nov 2018 00:51:26 -0500
+Message-Id: <20181113055150.78773-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181113055053.78352-1-sashal@kernel.org>
-References: <20181113055053.78352-1-sashal@kernel.org>
+In-Reply-To: <20181113055150.78773-1-sashal@kernel.org>
+References: <20181113055150.78773-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Roman Gushchin <guro@fb.com>
+From: Colin Ian King <colin.king@canonical.com>
 
-[ Upstream commit 68600f623d69da428c6163275f97ca126e1a8ec5 ]
+[ Upstream commit 8c6c9bed8773375b1d54ccca2911ec892c59db5d ]
 
-I've noticed, that dying memory cgroups are often pinned in memory by a
-single pagecache page.  Even under moderate memory pressure they sometimes
-stayed in such state for a long time.  That looked strange.
+There is a null check on dst_file->private data which suggests
+it can be potentially null. However, before this check, pointer
+smb_file_target is derived from dst_file->private and dereferenced
+in the call to tlink_tcon, hence there is a potential null pointer
+deference.
 
-My investigation showed that the problem is caused by applying the LRU
-pressure balancing math:
+Fix this by assigning smb_file_target and target_tcon after the
+null pointer sanity checks.
 
-  scan = div64_u64(scan * fraction[lru], denominator),
+Detected by CoverityScan, CID#1475302 ("Dereference before null check")
 
-where
-
-  denominator = fraction[anon] + fraction[file] + 1.
-
-Because fraction[lru] is always less than denominator, if the initial scan
-size is 1, the result is always 0.
-
-This means the last page is not scanned and has
-no chances to be reclaimed.
-
-Fix this by rounding up the result of the division.
-
-In practice this change significantly improves the speed of dying cgroups
-reclaim.
-
-[guro@fb.com: prevent double calculation of DIV64_U64_ROUND_UP() arguments]
-  Link: http://lkml.kernel.org/r/20180829213311.GA13501@castle
-Link: http://lkml.kernel.org/r/20180827162621.30187-3-guro@fb.com
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Reviewed-by: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>
-Cc: Michal Hocko <mhocko@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Konstantin Khlebnikov <koct9i@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
+Fixes: 04b38d601239 ("vfs: pull btrfs clone API to vfs layer")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+Signed-off-by: Steve French <stfrench@microsoft.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/math64.h | 3 +++
- mm/vmscan.c            | 6 ++++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
+ fs/cifs/cifsfs.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/math64.h b/include/linux/math64.h
-index 837f2f2d1d34..bb2c84afb80c 100644
---- a/include/linux/math64.h
-+++ b/include/linux/math64.h
-@@ -281,4 +281,7 @@ static inline u64 mul_u64_u32_div(u64 a, u32 mul, u32 divisor)
- }
- #endif /* mul_u64_u32_div */
+diff --git a/fs/cifs/cifsfs.c b/fs/cifs/cifsfs.c
+index 44a7b2dea688..c5fd5abf7206 100644
+--- a/fs/cifs/cifsfs.c
++++ b/fs/cifs/cifsfs.c
+@@ -933,8 +933,8 @@ static int cifs_clone_file_range(struct file *src_file, loff_t off,
+ 	struct inode *src_inode = file_inode(src_file);
+ 	struct inode *target_inode = file_inode(dst_file);
+ 	struct cifsFileInfo *smb_file_src = src_file->private_data;
+-	struct cifsFileInfo *smb_file_target = dst_file->private_data;
+-	struct cifs_tcon *target_tcon = tlink_tcon(smb_file_target->tlink);
++	struct cifsFileInfo *smb_file_target;
++	struct cifs_tcon *target_tcon;
+ 	unsigned int xid;
+ 	int rc;
  
-+#define DIV64_U64_ROUND_UP(ll, d)	\
-+	({ u64 _tmp = (d); div64_u64((ll) + _tmp - 1, _tmp); })
+@@ -948,6 +948,9 @@ static int cifs_clone_file_range(struct file *src_file, loff_t off,
+ 		goto out;
+ 	}
+ 
++	smb_file_target = dst_file->private_data;
++	target_tcon = tlink_tcon(smb_file_target->tlink);
 +
- #endif /* _LINUX_MATH64_H */
-diff --git a/mm/vmscan.c b/mm/vmscan.c
-index 03822f86f288..7b94e33823b5 100644
---- a/mm/vmscan.c
-+++ b/mm/vmscan.c
-@@ -2287,9 +2287,11 @@ static void get_scan_count(struct lruvec *lruvec, struct mem_cgroup *memcg,
- 			/*
- 			 * Scan types proportional to swappiness and
- 			 * their relative recent reclaim efficiency.
-+			 * Make sure we don't miss the last page
-+			 * because of a round-off error.
- 			 */
--			scan = div64_u64(scan * fraction[file],
--					 denominator);
-+			scan = DIV64_U64_ROUND_UP(scan * fraction[file],
-+						  denominator);
- 			break;
- 		case SCAN_FILE:
- 		case SCAN_ANON:
+ 	/*
+ 	 * Note: cifs case is easier than btrfs since server responsible for
+ 	 * checks for proper open modes and file type and if it wants
 -- 
 2.17.1
 
