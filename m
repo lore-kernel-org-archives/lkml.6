@@ -3,51 +3,51 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDC6C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:29:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CB634C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:31:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F6FF22507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:29:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6FF22507
+	by mail.kernel.org (Postfix) with ESMTP id 9927C2087A
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:31:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9927C2087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732343AbeKMU1H (ORCPT
+        id S1732251AbeKMU2p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 15:27:07 -0500
-Received: from mail-vs1-f67.google.com ([209.85.217.67]:33821 "EHLO
-        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731276AbeKMU1G (ORCPT
+        Tue, 13 Nov 2018 15:28:45 -0500
+Received: from mail-vk1-f193.google.com ([209.85.221.193]:36964 "EHLO
+        mail-vk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726765AbeKMU2o (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 15:27:06 -0500
-Received: by mail-vs1-f67.google.com with SMTP id y27so6960633vsi.1;
-        Tue, 13 Nov 2018 02:29:38 -0800 (PST)
+        Tue, 13 Nov 2018 15:28:44 -0500
+Received: by mail-vk1-f193.google.com with SMTP id 197so2664404vkf.4;
+        Tue, 13 Nov 2018 02:31:15 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=CquzHrxqU1PmcSG+K5U+nSegT+7crl7xbuOzYfsLOEY=;
-        b=K8xHEk/5gRxGUiVELkkqVaMzJZjEwmfAx1X3FBNN2yLxZymdzcE5F/zAOdbSWn7Djz
-         eRutPAVGTpzBxevj2lmfdmOHtarFWHrTKm4KxkE9oae4/EP208nam86TGGEghRsiriwt
-         t/8GO+ezDNRQ2D9FG72RKly40Kad+FLdOJOd0hAt1re1FrCQ2QTutfR7V6g6OA/lTXfc
-         QxPovy6JgI2L17pPhve1iU5lz7y9/yX+SX8Px7Pwx0Hsz+lXlfnBiRP7jyOrk+PXjHFX
-         jgb67hntLJWjnl9UHRPn0YAbttjiNx+8KR+6DtGnsKl2AeCUUFTUos2OxIDVRlKzS361
-         O2bQ==
-X-Gm-Message-State: AGRZ1gLwbv7TSRgXUW8f1rBl/FXHHrAXXNDzcHj2Kl6iDdWotx5qIVHI
-        YMSgsgeutYn5vrQUfHpVacJZvu4JK4MQY5ZqPQc=
-X-Google-Smtp-Source: AJdET5cvep1TbzMZ/xinMPJ2WQ9GWB7OwnxC4FrX3axKPV3tusxrzxppjyF2FAPW2+2gGMfXWzxNiqpPOWPDT2hATWk=
-X-Received: by 2002:a67:d119:: with SMTP id u25mr1911376vsi.63.1542104977758;
- Tue, 13 Nov 2018 02:29:37 -0800 (PST)
+        bh=0zkVe9uvbhfWW5o+HIUL+OR20y8rSwYl5R26yIGa56Y=;
+        b=RamHoPh06/8mrErl52MJgFqyk06c+jKIEeR0Ws2RJJyoWF3rqJxtt68Hy3jdHvTv4i
+         Tn4BMU/raldswNFWKo5avPtJGUeuRQfb4b2VmImmsM50yYbLFMS9j3c7cRz+fb1F0CbI
+         9f6GN6BBOkQC1ahPiY23GK1oSwQ4E2s/L2glo9FipP3DvK6DpbFYHadWA5Pa6V5ciyx/
+         JOj/3yATzpD2h0WSvrwpNWizWvrHP8U8Vnf5ydtzv4UMCYQV40HDwCriAFknAvPaHW88
+         8itChMQaDXmMbQZThIyIzeXagtZW3uo/fRxX6DsT4VAVTQK+NHHBlcGyM9m1OA3Xc9jx
+         1FDg==
+X-Gm-Message-State: AGRZ1gIy2NMUC760xNXz6w6LAARB22Yf4OnuUnCNcA+vSFDujiduWNbd
+        +Y6SK3wWZ/+k0Oix8RcABG4jL67UPErQciDb/KelZFZe
+X-Google-Smtp-Source: AJdET5d6+HvEtsunUA4LzMfMnJSqcG9trb5Bw1+aJSr4Ib4G+tgN+gP95pGfIyRsrfKUO9SWCLGkEBAZ9NzxbNv5vAs=
+X-Received: by 2002:a1f:2ed7:: with SMTP id u206mr1959297vku.72.1542105074798;
+ Tue, 13 Nov 2018 02:31:14 -0800 (PST)
 MIME-Version: 1.0
-References: <20181113102228.820214-1-lkundrak@v3.sk> <20181113102228.820214-5-lkundrak@v3.sk>
-In-Reply-To: <20181113102228.820214-5-lkundrak@v3.sk>
+References: <20181113102228.820214-1-lkundrak@v3.sk> <20181113102228.820214-6-lkundrak@v3.sk>
+In-Reply-To: <20181113102228.820214-6-lkundrak@v3.sk>
 From:   Geert Uytterhoeven <geert@linux-m68k.org>
-Date:   Tue, 13 Nov 2018 11:29:25 +0100
-Message-ID: <CAMuHMdU2hJ_htC19jpno_khGombxn-KK+kdQjVMOuJrZWVXV5A@mail.gmail.com>
-Subject: Re: [PATCH v3 4/6] spi: pxa2xx: dt-bindings: Add ready GPIO signal
+Date:   Tue, 13 Nov 2018 11:31:02 +0100
+Message-ID: <CAMuHMdV-WvoFN_JOj46fA5st2o3CrX7VK0qQ2rSo+cgFoMD5+A@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] spi: pxa2xx: Add ready signal
 To:     Lubomir Rintel <lkundrak@v3.sk>
 Cc:     Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>, quozl@laptop.org,
@@ -69,14 +69,12 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Nov 13, 2018 at 11:23 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
-> This this is used to let the SPI master know that our FIFO is filled and
-> we're ready to service a transfer. Only useful in slave mode.
->
-> A signal like this is used by an embedded controller on a OLPC XO 1.75
-> machine, that happens to be a SPI master.
+> Strobe a GPIO line when the slave TX FIFO is filled. This is how the
+> Embedded Controller on an OLPC XO-1.75 machine, that happens to be a SPI
+> master, learns that it can initiate a transaction.
 >
 > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+> Tested-by: Pavel Machek <pavel@ucw.cz>
 
 Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
