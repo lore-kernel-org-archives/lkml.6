@@ -6,40 +6,40 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BA8E6C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:30:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F004C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:30:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BFEE223D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:30:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BFEE223D0
+	by mail.kernel.org (Postfix) with ESMTP id 4016C223D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:30:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4016C223D0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731149AbeKNC27 (ORCPT
+        id S1731265AbeKNC3B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 21:28:59 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:40840 "EHLO inva021.nxp.com"
+        Tue, 13 Nov 2018 21:29:01 -0500
+Received: from inva020.nxp.com ([92.121.34.13]:46884 "EHLO inva020.nxp.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726682AbeKNC26 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 21:28:58 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 8875D20024F;
-        Tue, 13 Nov 2018 17:30:07 +0100 (CET)
+        id S1731044AbeKNC3A (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 21:29:00 -0500
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B2A2A1A021D;
+        Tue, 13 Nov 2018 17:30:09 +0100 (CET)
 Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7C6F6200110;
-        Tue, 13 Nov 2018 17:30:07 +0100 (CET)
+        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A6AA11A0032;
+        Tue, 13 Nov 2018 17:30:09 +0100 (CET)
 Received: from fsr-fed2164-101.ea.freescale.net (fsr-fed2164-101.ea.freescale.net [10.171.82.91])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 15DC5205F8;
-        Tue, 13 Nov 2018 17:30:07 +0100 (CET)
+        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 4B9B8205E2;
+        Tue, 13 Nov 2018 17:30:09 +0100 (CET)
 From:   Madalin Bucur <madalin.bucur@nxp.com>
 To:     davem@davemloft.net, netdev@vger.kernel.org
 Cc:     leoyang.li@nxp.com, roy.pledge@nxp.com,
         linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         Madalin Bucur <madalin.bucur@nxp.com>
-Subject: [PATCH v2 1/2] soc/qman: add return value to interrupt coalesce changing APIs
-Date:   Tue, 13 Nov 2018 18:29:50 +0200
-Message-Id: <1542126591-5114-2-git-send-email-madalin.bucur@nxp.com>
+Subject: [PATCH v2 2/2] dpaa_eth: add ethtool coalesce control
+Date:   Tue, 13 Nov 2018 18:29:51 +0200
+Message-Id: <1542126591-5114-3-git-send-email-madalin.bucur@nxp.com>
 X-Mailer: git-send-email 2.1.0
 In-Reply-To: <1542126591-5114-1-git-send-email-madalin.bucur@nxp.com>
 References: <1542126591-5114-1-git-send-email-madalin.bucur@nxp.com>
@@ -50,115 +50,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Check that the values received by the portal interrupt coalesce
-change APIs are in range.
+Allow ethtool control of the DPAA QMan portal interrupt coalescing
+settings.
 
 Signed-off-by: Madalin Bucur <madalin.bucur@nxp.com>
-Signed-off-by: Roy Pledge <roy.pledge@nxp.com>
 ---
- drivers/soc/fsl/qbman/qman.c | 33 ++++++++++++++++++++++++++-------
- include/soc/fsl/qman.h       |  8 ++++++--
- 2 files changed, 32 insertions(+), 9 deletions(-)
+ drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c | 49 ++++++++++++++++++++++
+ 1 file changed, 49 insertions(+)
 
-diff --git a/drivers/soc/fsl/qbman/qman.c b/drivers/soc/fsl/qbman/qman.c
-index 5ce24718c2fd..5b9de224193c 100644
---- a/drivers/soc/fsl/qbman/qman.c
-+++ b/drivers/soc/fsl/qbman/qman.c
-@@ -36,6 +36,8 @@
- #define MAX_IRQNAME	16	/* big enough for "QMan portal %d" */
- #define QMAN_POLL_LIMIT 32
- #define QMAN_PIRQ_DQRR_ITHRESH 12
-+#define QMAN_DQRR_IT_MAX 15
-+#define QMAN_ITP_MAX 0xFFF
- #define QMAN_PIRQ_MR_ITHRESH 4
- #define QMAN_PIRQ_IPERIOD 100
- 
-@@ -727,9 +729,15 @@ static inline void qm_dqrr_vdqcr_set(struct qm_portal *portal, u32 vdqcr)
- 	qm_out(portal, QM_REG_DQRR_VDQCR, vdqcr);
+diff --git a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+index 13d6e2272ece..4df366b05976 100644
+--- a/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
++++ b/drivers/net/ethernet/freescale/dpaa/dpaa_ethtool.c
+@@ -529,6 +529,53 @@ static int dpaa_get_ts_info(struct net_device *net_dev,
+ 	return 0;
  }
  
--static inline void qm_dqrr_set_ithresh(struct qm_portal *portal, u8 ithresh)
-+static inline int qm_dqrr_set_ithresh(struct qm_portal *portal, u8 ithresh)
- {
++static int dpaa_get_coalesce(struct net_device *dev,
++			     struct ethtool_coalesce *c)
++{
++	struct qman_portal *portal;
++	u32 period;
++	u8 thresh;
 +
-+	if (ithresh > QMAN_DQRR_IT_MAX)
-+		return -EINVAL;
++	portal = qman_get_affine_portal(smp_processor_id());
++	qman_portal_get_iperiod(portal, &period);
++	qman_dqrr_get_ithresh(portal, &thresh);
 +
- 	qm_out(portal, QM_REG_DQRR_ITR, ithresh);
++	c->rx_coalesce_usecs = period;
++	c->rx_max_coalesced_frames = thresh;
++	c->use_adaptive_rx_coalesce = false;
 +
 +	return 0;
- }
- 
- /* --- MR API --- */
-@@ -1012,13 +1020,20 @@ static inline void put_affine_portal(void)
- 
- static struct workqueue_struct *qm_portal_wq;
- 
--void qman_dqrr_set_ithresh(struct qman_portal *portal, u8 ithresh)
-+int qman_dqrr_set_ithresh(struct qman_portal *portal, u8 ithresh)
- {
++}
++
++static int dpaa_set_coalesce(struct net_device *dev,
++			     struct ethtool_coalesce *c)
++{
++	const cpumask_t *cpus = qman_affine_cpus();
++	struct qman_portal *portal;
++	u32 period;
++	u8 thresh;
++	int cpu;
 +	int res;
 +
- 	if (!portal)
--		return;
++	if (c->use_adaptive_rx_coalesce)
 +		return -EINVAL;
 +
-+	res = qm_dqrr_set_ithresh(&portal->p, ithresh);
-+	if (res)
-+		return res;
- 
--	qm_dqrr_set_ithresh(&portal->p, ithresh);
- 	portal->p.dqrr.ithresh = ithresh;
++	period = c->rx_coalesce_usecs;
++	thresh = c->rx_max_coalesced_frames;
++
++	for_each_cpu(cpu, cpus) {
++		portal = qman_get_affine_portal(cpu);
++		res = qman_portal_set_iperiod(portal, period);
++		if (res)
++			return res;
++		res = qman_dqrr_set_ithresh(portal, thresh);
++		if (res)
++			return res;
++	}
 +
 +	return 0;
- }
- EXPORT_SYMBOL(qman_dqrr_set_ithresh);
- 
-@@ -1036,10 +1051,14 @@ void qman_portal_get_iperiod(struct qman_portal *portal, u32 *iperiod)
- }
- EXPORT_SYMBOL(qman_portal_get_iperiod);
- 
--void qman_portal_set_iperiod(struct qman_portal *portal, u32 iperiod)
-+int qman_portal_set_iperiod(struct qman_portal *portal, u32 iperiod)
- {
--	if (portal)
--		qm_out(&portal->p, QM_REG_ITPR, iperiod);
-+	if (!portal || iperiod > QMAN_ITP_MAX)
-+		return -EINVAL;
++}
 +
-+	qm_out(&portal->p, QM_REG_ITPR, iperiod);
-+
-+	return 0;
- }
- EXPORT_SYMBOL(qman_portal_set_iperiod);
- 
-diff --git a/include/soc/fsl/qman.h b/include/soc/fsl/qman.h
-index 56877660d5ba..5cc7af06c1ba 100644
---- a/include/soc/fsl/qman.h
-+++ b/include/soc/fsl/qman.h
-@@ -1205,8 +1205,10 @@ void qman_dqrr_get_ithresh(struct qman_portal *portal, u8 *ithresh);
-  * qman_dqrr_set_ithresh - Set coalesce interrupt threshold
-  * @portal: portal to set the new value on
-  * @ithresh: new threshold value
-+ *
-+ * Returns 0 on success, or a negative error code.
-  */
--void qman_dqrr_set_ithresh(struct qman_portal *portal, u8 ithresh);
-+int qman_dqrr_set_ithresh(struct qman_portal *portal, u8 ithresh);
- 
- /**
-  * qman_dqrr_get_iperiod - Get coalesce interrupt period
-@@ -1219,7 +1221,9 @@ void qman_portal_get_iperiod(struct qman_portal *portal, u32 *iperiod);
-  * qman_dqrr_set_iperiod - Set coalesce interrupt period
-  * @portal: portal to set the new value on
-  * @ithresh: new period value
-+ *
-+ * Returns 0 on success, or a negative error code.
-  */
--void qman_portal_set_iperiod(struct qman_portal *portal, u32 iperiod);
-+int qman_portal_set_iperiod(struct qman_portal *portal, u32 iperiod);
- 
- #endif	/* __FSL_QMAN_H */
+ const struct ethtool_ops dpaa_ethtool_ops = {
+ 	.get_drvinfo = dpaa_get_drvinfo,
+ 	.get_msglevel = dpaa_get_msglevel,
+@@ -545,4 +592,6 @@ const struct ethtool_ops dpaa_ethtool_ops = {
+ 	.get_rxnfc = dpaa_get_rxnfc,
+ 	.set_rxnfc = dpaa_set_rxnfc,
+ 	.get_ts_info = dpaa_get_ts_info,
++	.get_coalesce = dpaa_get_coalesce,
++	.set_coalesce = dpaa_set_coalesce,
+ };
 -- 
 2.1.0
 
