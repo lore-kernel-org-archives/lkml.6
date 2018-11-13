@@ -2,88 +2,91 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B4EDC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:29:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CDDC6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:29:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01C8E2087A
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:29:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01C8E2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9F6FF22507
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:29:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F6FF22507
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732326AbeKMU07 (ORCPT
+        id S1732343AbeKMU1H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 15:26:59 -0500
-Received: from mx2.suse.de ([195.135.220.15]:58488 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1731276AbeKMU07 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 15:26:59 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C85B6B6CE;
-        Tue, 13 Nov 2018 10:29:29 +0000 (UTC)
-Date:   Tue, 13 Nov 2018 11:29:29 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Oleg Nesterov <oleg@redhat.com>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Ben Woodard <woodard@redhat.com>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/2] exec: increase BINPRM_BUF_SIZE to 256
-Message-ID: <20181113102929.GO15120@dhcp22.suse.cz>
-References: <20181112160931.GA28463@redhat.com>
- <20181112160956.GA28472@redhat.com>
+        Tue, 13 Nov 2018 15:27:07 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:33821 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731276AbeKMU1G (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 15:27:06 -0500
+Received: by mail-vs1-f67.google.com with SMTP id y27so6960633vsi.1;
+        Tue, 13 Nov 2018 02:29:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=CquzHrxqU1PmcSG+K5U+nSegT+7crl7xbuOzYfsLOEY=;
+        b=K8xHEk/5gRxGUiVELkkqVaMzJZjEwmfAx1X3FBNN2yLxZymdzcE5F/zAOdbSWn7Djz
+         eRutPAVGTpzBxevj2lmfdmOHtarFWHrTKm4KxkE9oae4/EP208nam86TGGEghRsiriwt
+         t/8GO+ezDNRQ2D9FG72RKly40Kad+FLdOJOd0hAt1re1FrCQ2QTutfR7V6g6OA/lTXfc
+         QxPovy6JgI2L17pPhve1iU5lz7y9/yX+SX8Px7Pwx0Hsz+lXlfnBiRP7jyOrk+PXjHFX
+         jgb67hntLJWjnl9UHRPn0YAbttjiNx+8KR+6DtGnsKl2AeCUUFTUos2OxIDVRlKzS361
+         O2bQ==
+X-Gm-Message-State: AGRZ1gLwbv7TSRgXUW8f1rBl/FXHHrAXXNDzcHj2Kl6iDdWotx5qIVHI
+        YMSgsgeutYn5vrQUfHpVacJZvu4JK4MQY5ZqPQc=
+X-Google-Smtp-Source: AJdET5cvep1TbzMZ/xinMPJ2WQ9GWB7OwnxC4FrX3axKPV3tusxrzxppjyF2FAPW2+2gGMfXWzxNiqpPOWPDT2hATWk=
+X-Received: by 2002:a67:d119:: with SMTP id u25mr1911376vsi.63.1542104977758;
+ Tue, 13 Nov 2018 02:29:37 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112160956.GA28472@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181113102228.820214-1-lkundrak@v3.sk> <20181113102228.820214-5-lkundrak@v3.sk>
+In-Reply-To: <20181113102228.820214-5-lkundrak@v3.sk>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 13 Nov 2018 11:29:25 +0100
+Message-ID: <CAMuHMdU2hJ_htC19jpno_khGombxn-KK+kdQjVMOuJrZWVXV5A@mail.gmail.com>
+Subject: Re: [PATCH v3 4/6] spi: pxa2xx: dt-bindings: Add ready GPIO signal
+To:     Lubomir Rintel <lkundrak@v3.sk>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>, quozl@laptop.org,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Miao <eric.y.miao@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-spi <linux-spi@vger.kernel.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 12-11-18 17:09:56, Oleg Nesterov wrote:
-> Large enterprise clients often times run applications out of networked
-> file systems where the IT mandated layout of project volumes can end up
-> leading to paths that are longer than 128 characters. Bumping this up to
-> the next order of two solves this problem in all but the most egregious
-> case while still fitting into a 512b slab.
-> 
-> Reported-by: Ben Woodard <woodard@redhat.com>
-> Signed-off-by: Oleg Nesterov <oleg@redhat.com>
+On Tue, Nov 13, 2018 at 11:23 AM Lubomir Rintel <lkundrak@v3.sk> wrote:
+> This this is used to let the SPI master know that our FIFO is filled and
+> we're ready to service a transfer. Only useful in slave mode.
+>
+> A signal like this is used by an embedded controller on a OLPC XO 1.75
+> machine, that happens to be a SPI master.
+>
+> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+> Acked-by: Pavel Machek <pavel@ucw.cz>
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Increasing it to a larger value wouldn't hurt but I wouldn't bind it to
-the page size because the layout might change and result in higher order
-request.
+Gr{oetje,eeting}s,
 
-> ---
->  include/uapi/linux/binfmts.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/uapi/linux/binfmts.h b/include/uapi/linux/binfmts.h
-> index 4abad03..689025d 100644
-> --- a/include/uapi/linux/binfmts.h
-> +++ b/include/uapi/linux/binfmts.h
-> @@ -16,6 +16,6 @@ struct pt_regs;
->  #define MAX_ARG_STRINGS 0x7FFFFFFF
->  
->  /* sizeof(linux_binprm->buf) */
-> -#define BINPRM_BUF_SIZE 128
-> +#define BINPRM_BUF_SIZE 256
->  
->  #endif /* _UAPI_LINUX_BINFMTS_H */
-> -- 
-> 2.5.0
-> 
-> 
+                        Geert
 
 -- 
-Michal Hocko
-SUSE Labs
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
