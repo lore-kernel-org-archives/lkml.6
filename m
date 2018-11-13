@@ -2,134 +2,173 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48A82C0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:19:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7620C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:22:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F9B0223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:19:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="DYicuv+V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F9B0223AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 8504A2086A
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:22:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8504A2086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731664AbeKNARV (ORCPT
+        id S1731473AbeKNAUa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 19:17:21 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:33122 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730998AbeKNARU (ORCPT
+        Tue, 13 Nov 2018 19:20:30 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:47801 "EHLO
+        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731109AbeKNAUa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 19:17:20 -0500
-Received: by mail-wr1-f65.google.com with SMTP id u9-v6so13524159wrr.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 06:18:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=Mt9FQZVJ6HnWeTqICvrIigfq2A0j27qZBQUdAOOxtlQ=;
-        b=DYicuv+Vu5ace7sdpxHRVZCeI81dOL3MGGzITCc8TQzGYVxj1YgQzf6llei4qqnjgu
-         xSxeZkJgivWJMAwf4J+UqdQCMtcJSYUaTcNJXZmc5dTbi0381u/1070wLxBe0n02u6rJ
-         n23YaxtZ8tlr7JZAFiwW6rJ0PZM0+R6hFrlU/vvZB8MnhbVN0aa6TIzDobcFjQInXDlC
-         beXmTWkejjcITCt0oE5DgyeRDnPcvIfxmP4h4Pqc/5yWAZ4p032itOOYkdGckTtJVc7y
-         RJc80WsgEZ+s7da95BRL4G6se4Gvf22VgwsI3LsJPUZ0jDtaNyATq8MNqNEAwd3QLFWf
-         UAVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=Mt9FQZVJ6HnWeTqICvrIigfq2A0j27qZBQUdAOOxtlQ=;
-        b=TiC7BRDC3DmsFZC8ZEIQc5AfhDwW0MKqfjjK0+1obTTZBi1sA7SIbp9aHRL7mgRXah
-         1bsTp9NqLRzGSwaOPRYfrht6/r3HVW7CVeYssBRgBHCFbXKBON0tHxr1BNF4mLaEJTq+
-         b7bah3i73BpXWhIoc6Jaav5bqy2/+jRwtSrQDiwzGfoAzoLS1K69dzu9V+pmwT+awGMH
-         V/694wk49CIi2+2g4fHGGyF7rmdH5TpBKnTs5fX+KIwNxXFX4b5u0opZZHhqEndXquIW
-         HyRGlTKoJ80znfGrxHg+GZsDJwLPxXjx6Y2sASgHCMxcdjWZVpJbYIyMyKqT8cWw/3Tb
-         I0Mg==
-X-Gm-Message-State: AGRZ1gKaBWRAy4FVegZyzqEGdqTj6ooXyracmxPmfwOn5/PT2oxXMuL7
-        94vBKHyCcAizWdboeZs3c/ptlg==
-X-Google-Smtp-Source: AJdET5c3pltttjShzyk4bSplyIXAeF7dbLrktiQ3qjB0XQnfWW4WDTwwI8cVCVkBd7jEvB9selLEMQ==
-X-Received: by 2002:adf:f712:: with SMTP id r18-v6mr5836258wrp.166.1542118737973;
-        Tue, 13 Nov 2018 06:18:57 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id m9-v6sm23592393wrn.36.2018.11.13.06.18.56
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 06:18:57 -0800 (PST)
-Message-ID: <f7679f4c93aca9a11b9078611b6c4952e83c9a9e.camel@baylibre.com>
-Subject: Re: [PATCH v2 0/4] clk: meson: Add video clocks path
-From:   jbrunet@baylibre.com
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Date:   Tue, 13 Nov 2018 15:18:55 +0100
-In-Reply-To: <1541516257-16157-1-git-send-email-narmstrong@baylibre.com>
-References: <1541516257-16157-1-git-send-email-narmstrong@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Tue, 13 Nov 2018 19:20:30 -0500
+Received: from terminus.zytor.com (localhost [127.0.0.1])
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wADELvNs4170736
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
+        Tue, 13 Nov 2018 06:21:57 -0800
+Received: (from tipbot@localhost)
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wADELt0O4170733;
+        Tue, 13 Nov 2018 06:21:55 -0800
+Date:   Tue, 13 Nov 2018 06:21:55 -0800
+X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
+From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
+Message-ID: <tip-83a204daa40315a38204493f60768910c8604e9c@git.kernel.org>
+Cc:     hpa@zytor.com, wang.yi59@zte.com.cn, bp@suse.de, mingo@kernel.org,
+        matz@suse.de, linux-kernel@vger.kernel.org, tglx@linutronix.de
+Reply-To: tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, matz@suse.de, bp@suse.de, hpa@zytor.com,
+          wang.yi59@zte.com.cn
+In-Reply-To: <alpine.DEB.2.21.1811081633160.1549@nanos.tec.linutronix.de>
+References: <alpine.DEB.2.21.1811081633160.1549@nanos.tec.linutronix.de>
+To:     linux-tip-commits@vger.kernel.org
+Subject: [tip:x86/cleanups] x86/mce: Fix -Wmissing-prototypes warnings
+Git-Commit-ID: 83a204daa40315a38204493f60768910c8604e9c
+X-Mailer: tip-git-log-daemon
+Robot-ID: <tip-bot.git.kernel.org>
+Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
+ these emails
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Disposition: inline
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 2018-11-06 at 15:57 +0100, Neil Armstrong wrote:
-> This patchset is an attempt to handle the Amlogic Meson GX Video clock
-> in the Common Clock Framework in order to move the video pipeline and
-> HDMI controller clock management out of the Meson DRM Driver.
-> 
-> In order :
-> - Add support the VID_PLL fully programmable divider used right after the
->   HDMI PLL clock source.
-> - Fix the GXL HDMI PLL DCO
-> - Add the video clock bindings covering all the video graphics pipeline
->   and the HDMI controller.
-> - Add the clocks entries used in the video clock path
-> 
-> The vid_pll programmable divider is introduced in its R/O form right now,
-> but will be extended to be R/W in a next iteration.
-> 
-> All dividers are flagged with CLK_GET_RATE_NOCACHE, and all gates are
-> flagged
-> with CLK_IGNORE_UNUSED since they are currently directly handled by the
-> Meson DRM Driver.
-> 
-> Once the DRM Driver is fully migrated to using the Common Clock Framework
-> to handle the video clock tree, the CLK_GET_RATE_NOCACHE and
-> CLK_IGNORE_UNUSED
-> will be dropped.
-> 
-> Changes since v1 at [1]:
->  - Fixed comments from Martin
->  - Fixed GXL HDMI PLL DCO
->  - Added the missing HDMI controller clock
->  - Moved bindings to a separate patch
->  - Updated the commit logs
-> 
-> [1] 
-> https://lkml.kernel.org/r/1532079581-978-1-git-send-email-narmstrong@baylibre.com
-> 
-> Neil Armstrong (4):
->   clk: meson: Add vid_pll divider driver
->   clk: meson-gxbb: Fix HDMI PLL for GXL SoCs
->   dt-bindings: clk: meson-gxbb: Add Video clock bindings
->   clk: meson-gxbb: Add video clocks
-> 
->  drivers/clk/meson/Makefile            |   2 +-
->  drivers/clk/meson/clkc.h              |   6 +
->  drivers/clk/meson/gxbb.c              | 773
-> +++++++++++++++++++++++++++++++++-
->  drivers/clk/meson/gxbb.h              |  26 +-
->  drivers/clk/meson/vid-pll-div.c       |  91 ++++
->  include/dt-bindings/clock/gxbb-clkc.h |  18 +
->  6 files changed, 911 insertions(+), 5 deletions(-)
->  create mode 100644 drivers/clk/meson/vid-pll-div.c
-> 
+Commit-ID:  83a204daa40315a38204493f60768910c8604e9c
+Gitweb:     https://git.kernel.org/tip/83a204daa40315a38204493f60768910c8604e9c
+Author:     Borislav Petkov <bp@suse.de>
+AuthorDate: Fri, 9 Nov 2018 23:13:13 +0100
+Committer:  Borislav Petkov <bp@suse.de>
+CommitDate: Tue, 13 Nov 2018 14:55:08 +0100
 
-Looks sane enough ;)
+x86/mce: Fix -Wmissing-prototypes warnings
 
-Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+Add the proper includes and make smca_get_name() static.
 
+Fix an actual bug too which the warning triggered:
+
+  arch/x86/kernel/cpu/mcheck/therm_throt.c:395:39: error: conflicting \
+  types for ‘smp_thermal_interrupt’
+   asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
+                                         ^~~~~~~~~~~~~~~~~~~~~
+  In file included from arch/x86/kernel/cpu/mcheck/therm_throt.c:29:
+  ./arch/x86/include/asm/traps.h:107:17: note: previous declaration of \
+	  ‘smp_thermal_interrupt’ was here
+   asmlinkage void smp_thermal_interrupt(void);
+
+Signed-off-by: Borislav Petkov <bp@suse.de>
+Cc: Yi Wang <wang.yi59@zte.com.cn>
+Cc: Michael Matz <matz@suse.de>
+Cc: x86@kernel.org
+Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1811081633160.1549@nanos.tec.linutronix.de
+---
+ arch/x86/include/asm/traps.h             | 6 +++---
+ arch/x86/kernel/cpu/mcheck/mce_amd.c     | 5 +++--
+ arch/x86/kernel/cpu/mcheck/therm_throt.c | 1 +
+ arch/x86/kernel/cpu/mcheck/threshold.c   | 3 ++-
+ 4 files changed, 9 insertions(+), 6 deletions(-)
+
+diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
+index 3de69330e6c5..afbc87206886 100644
+--- a/arch/x86/include/asm/traps.h
++++ b/arch/x86/include/asm/traps.h
+@@ -104,9 +104,9 @@ extern int panic_on_unrecovered_nmi;
+ 
+ void math_emulate(struct math_emu_info *);
+ #ifndef CONFIG_X86_32
+-asmlinkage void smp_thermal_interrupt(void);
+-asmlinkage void smp_threshold_interrupt(void);
+-asmlinkage void smp_deferred_error_interrupt(void);
++asmlinkage void smp_thermal_interrupt(struct pt_regs *regs);
++asmlinkage void smp_threshold_interrupt(struct pt_regs *regs);
++asmlinkage void smp_deferred_error_interrupt(struct pt_regs *regs);
+ #endif
+ 
+ extern void ist_enter(struct pt_regs *regs);
+diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+index dd33c357548f..9c8e2daa48cd 100644
+--- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
++++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
+@@ -23,6 +23,7 @@
+ #include <linux/string.h>
+ 
+ #include <asm/amd_nb.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/msr.h>
+@@ -99,7 +100,7 @@ static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
+ 	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
+ };
+ 
+-const char *smca_get_name(enum smca_bank_types t)
++static const char *smca_get_name(enum smca_bank_types t)
+ {
+ 	if (t >= N_SMCA_BANK_TYPES)
+ 		return NULL;
+@@ -825,7 +826,7 @@ static void __log_error(unsigned int bank, u64 status, u64 addr, u64 misc)
+ 	mce_log(&m);
+ }
+ 
+-asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(void)
++asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(struct pt_regs *regs)
+ {
+ 	entering_irq();
+ 	trace_deferred_error_apic_entry(DEFERRED_ERROR_VECTOR);
+diff --git a/arch/x86/kernel/cpu/mcheck/therm_throt.c b/arch/x86/kernel/cpu/mcheck/therm_throt.c
+index 2da67b70ba98..95a7cfa6de15 100644
+--- a/arch/x86/kernel/cpu/mcheck/therm_throt.c
++++ b/arch/x86/kernel/cpu/mcheck/therm_throt.c
+@@ -25,6 +25,7 @@
+ #include <linux/cpu.h>
+ 
+ #include <asm/processor.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/msr.h>
+diff --git a/arch/x86/kernel/cpu/mcheck/threshold.c b/arch/x86/kernel/cpu/mcheck/threshold.c
+index 2b584b319eff..c21e0a1efd0f 100644
+--- a/arch/x86/kernel/cpu/mcheck/threshold.c
++++ b/arch/x86/kernel/cpu/mcheck/threshold.c
+@@ -6,6 +6,7 @@
+ #include <linux/kernel.h>
+ 
+ #include <asm/irq_vectors.h>
++#include <asm/traps.h>
+ #include <asm/apic.h>
+ #include <asm/mce.h>
+ #include <asm/trace/irq_vectors.h>
+@@ -18,7 +19,7 @@ static void default_threshold_interrupt(void)
+ 
+ void (*mce_threshold_vector)(void) = default_threshold_interrupt;
+ 
+-asmlinkage __visible void __irq_entry smp_threshold_interrupt(void)
++asmlinkage __visible void __irq_entry smp_threshold_interrupt(struct pt_regs *regs)
+ {
+ 	entering_irq();
+ 	trace_threshold_apic_entry(THRESHOLD_APIC_VECTOR);
