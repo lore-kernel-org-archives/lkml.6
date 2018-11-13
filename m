@@ -6,130 +6,139 @@ X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F42CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:29:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D84BFC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:37:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF9620815
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:29:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF9620815
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8FDDC20868
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:37:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FDDC20868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387935AbeKNB21 (ORCPT
+        id S2387533AbeKNBfl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:28:27 -0500
-Received: from foss.arm.com ([217.140.101.70]:58378 "EHLO foss.arm.com"
+        Tue, 13 Nov 2018 20:35:41 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34582 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728818AbeKNB21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:28:27 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EB7C1A78;
-        Tue, 13 Nov 2018 07:29:50 -0800 (PST)
-Received: from darkstar (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 60B5B3F5BD;
-        Tue, 13 Nov 2018 07:29:50 -0800 (PST)
-Date:   Tue, 13 Nov 2018 07:29:48 -0800
-From:   Patrick Bellasi <patrick.bellasi@arm.com>
-To:     Peter Zijlstra <peterz@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
-        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Paul Turner <pjt@google.com>,
-        Quentin Perret <quentin.perret@arm.com>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Morten Rasmussen <morten.rasmussen@arm.com>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Todd Kjos <tkjos@google.com>,
-        Joel Fernandes <joelaf@google.com>,
-        Steve Muckle <smuckle@google.com>,
-        Suren Baghdasaryan <surenb@google.com>
-Subject: Re: [PATCH v5 07/15] sched/core: uclamp: add clamp group bucketing
- support
-Message-ID: <20181113152948.GC7681@darkstar>
-References: <20181029183311.29175-1-patrick.bellasi@arm.com>
- <20181029183311.29175-9-patrick.bellasi@arm.com>
- <20181112000910.GC3038@worktop>
+        id S1726932AbeKNBfk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 20:35:40 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 919352D7E2;
+        Tue, 13 Nov 2018 15:37:03 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 360D75E1CF;
+        Tue, 13 Nov 2018 15:37:02 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Tue, 13 Nov 2018 16:37:03 +0100 (CET)
+Date:   Tue, 13 Nov 2018 16:37:01 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Roman Gushchin <guroan@gmail.com>
+Cc:     Tejun Heo <tj@kernel.org>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Roman Gushchin <guro@fb.com>
+Subject: Re: [PATCH v2 3/6] cgroup: cgroup v2 freezer
+Message-ID: <20181113153700.GB30990@redhat.com>
+References: <20181112230422.5911-1-guro@fb.com>
+ <20181112230422.5911-5-guro@fb.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181112000910.GC3038@worktop>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181112230422.5911-5-guro@fb.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 13 Nov 2018 15:37:03 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12-Nov 01:09, Peter Zijlstra wrote:
-> On Mon, Oct 29, 2018 at 06:33:02PM +0000, Patrick Bellasi wrote:
-> > The number of clamp groups configured at compile time defines the range
-> > of utilization clamp values tracked by each CPU clamp group.
-> > For example, with the default configuration:
-> >    CONFIG_UCLAMP_GROUPS_COUNT 5
-> > we will have 5 clamp groups tracking 20% utilization each. In this case,
-> > a task with util_min=25% will have group_id=1.
-> 
-> OK I suppose; but should we not do a wholesale s/group/bucket/ at this
-> point?
+On 11/12, Roman Gushchin wrote:
+>
+> This patch implements freezer for cgroup v2. However the functionality
+> is similar, the interface is different to cgroup v1: it follows
+> cgroup v2 interface principles.
 
-Yes, if bucketization is acceptable, we should probably rename.
+Oh, it seems that I actually need to apply this patch to (try to) understand
+the details ;) Will try tomorrow.
 
-Question is: are you ok for a renaming in this patch. or you better
-prefer I use that naming since the beginning ?
+> --- a/include/linux/sched/jobctl.h
+> +++ b/include/linux/sched/jobctl.h
+> @@ -18,6 +18,7 @@ struct task_struct;
+>  #define JOBCTL_TRAP_NOTIFY_BIT	20	/* trap for NOTIFY */
+>  #define JOBCTL_TRAPPING_BIT	21	/* switching to TRACED */
+>  #define JOBCTL_LISTENING_BIT	22	/* ptracer is listening for events */
+> +#define JOBCTL_TRAP_FREEZE_BIT	23	/* trap for cgroup freezer */
+>
+>  #define JOBCTL_STOP_DEQUEUED	(1UL << JOBCTL_STOP_DEQUEUED_BIT)
+>  #define JOBCTL_STOP_PENDING	(1UL << JOBCTL_STOP_PENDING_BIT)
+> @@ -26,8 +27,10 @@ struct task_struct;
+>  #define JOBCTL_TRAP_NOTIFY	(1UL << JOBCTL_TRAP_NOTIFY_BIT)
+>  #define JOBCTL_TRAPPING		(1UL << JOBCTL_TRAPPING_BIT)
+>  #define JOBCTL_LISTENING	(1UL << JOBCTL_LISTENING_BIT)
+> +#define JOBCTL_TRAP_FREEZE	(1UL << JOBCTL_TRAP_FREEZE_BIT)
+>
+> -#define JOBCTL_TRAP_MASK	(JOBCTL_TRAP_STOP | JOBCTL_TRAP_NOTIFY)
+> +#define JOBCTL_TRAP_MASK	(JOBCTL_TRAP_STOP | JOBCTL_TRAP_NOTIFY | \
+> +				 JOBCTL_TRAP_FREEZE)
 
-If we wanna use "bucket" since the beginning, then we should also
-probably squash the entire patch into the previous ones and drop this
-one.
+Again, I didn't actually read the patch yet, but my gut feeling tells me
+we shouldn't change JOBCTL_TRAP_MASK... and the fact you had to change
+task_clear_jobctl_pending() to filter out JOBCTL_TRAP_FREEZE bit may be
+proves this.
 
-I personally prefer to keep this concept into a separate patch, but at
-the same time I don't very like the idea of a massive renaming in this
-patch.
+This
 
-> 
-> We should probably raise the minimum number of buckets from 1 though :-)
+	if (current->jobctl & (JOBCTL_TRAP_STOP | JOBCTL_TRAP_NOTIFY))
+	...
+	else if (current->jobctl & JOBCTL_TRAP_FREEZE)
 
-Mmm... the default is already set to what fits into a single cache
-line... perhaps we can use that as a minimum too ?
+code in do_jobctl_trap() doesn't look nice too.
 
-But. technically we can (partially) track different clamp values also
-with just one bucket... (explanation in the following comment).
+OK, please forget for now, but perhaps it would be more clean to add
+JOBCTL_TRAP_FREEZE to the JOBCTL_PENDING_MASK check in recalc_sigpending()
+and change get_signal to check JOBCTL_TRAP_MASK | JOBCTL_TRAP_FREEZE; and
+I am not even sure cgroup_freezer_enter() should live in do_jobctl_trap().
 
-> > +/*
-> > + * uclamp_group_value: get the "group value" for a given "clamp value"
-> > + * @value: the utiliation "clamp value" to translate
-> > + *
-> > + * The number of clamp group, which is defined at compile time, allows to
-> > + * track a finite number of different clamp values. Thus clamp values are
-> > + * grouped into bins each one representing a different "group value".
-> > + * This method returns the "group value" corresponding to the specified
-> > + * "clamp value".
-> > + */
-> > +static inline unsigned int uclamp_group_value(unsigned int clamp_value)
-> > +{
-> > +#define UCLAMP_GROUP_DELTA (SCHED_CAPACITY_SCALE / CONFIG_UCLAMP_GROUPS_COUNT)
-> > +#define UCLAMP_GROUP_UPPER (UCLAMP_GROUP_DELTA * CONFIG_UCLAMP_GROUPS_COUNT)
-> > +
-> > +	if (clamp_value >= UCLAMP_GROUP_UPPER)
-> > +		return SCHED_CAPACITY_SCALE;
-> > +
-> > +	return UCLAMP_GROUP_DELTA * (clamp_value / UCLAMP_GROUP_DELTA);
-> > +}
-> 
-> Can't we further simplify; I mean, at this point all we really need to
-> know is the rq's highest group_id that is in use. We don't need to
-> actually track the value anymore.
+> @@ -5642,6 +5700,23 @@ void cgroup_post_fork(struct task_struct *child)
+>  			cset->nr_tasks++;
+>  			css_set_move_task(child, NULL, cset, false);
+>  		}
+> +
+> +		if (unlikely(cgroup_frozen(child) &&
+> +			     (child->flags & ~PF_KTHREAD))) {
+> +			struct cgroup *cgrp;
+> +			unsigned long flags;
+> +
+> +			if (lock_task_sighand(child, &flags)) {
 
-This will force to track each clamp value with the exact bucket value.
+You can just do spin_lock_irq(siglock). The new child can't go away
+until wake_up_new_task(), otherwise any usage of "child" including
+lock_task_sighand() was not safe.
 
-Instead, by tracking the actual clamp value within a bucket, we have
-the chance to updte the bucket value to the actual (max) clamp value
-of the RUNNABLE tasks in that bucket.
+> +				cgrp = cset->dfl_cgrp;
+> +				cgrp->freezer.nr_tasks_to_freeze++;
+> +				WARN_ON_ONCE(cgrp->freezer.nr_tasks_to_freeze <
+> +					     cgrp->freezer.nr_frozen_tasks);
+> +				child->jobctl |= JOBCTL_TRAP_FREEZE;
+> +				signal_wake_up(child, false);
 
-In a properly configured system, this allows to track exact clamp
-values with a minimum number of buckets.
+signal_wake_up() is pointless.
 
--- 
-#include <best/regards.h>
+wake_up_process() has no effect, set_tsk_thread_flag(TIF_SIGPENDING) is
+not needed because schedule_tail() does calculate_sigpending() which should
+notice JOBCTL_TRAP_FREEZE.
 
-Patrick Bellasi
+> +	} else if (current->jobctl & JOBCTL_TRAP_FREEZE) {
+> +		/*
+> +		 * Enter the freezer, unless the task is about to exit.
+> +		 */
+> +		if (fatal_signal_pending(current)) {
+> +			current->jobctl &= ~JOBCTL_TRAP_FREEZE;
+
+And again, please note that we need this because task_clear_jobctl_pending()
+drops JOBCTL_TRAP_FREEZE. It shouldn't, I think...
+
+Oleg.
+
