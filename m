@@ -2,184 +2,298 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A511AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:20:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A716C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:25:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20F2322507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:20:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A98F223D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:25:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="m8Ruv+QU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20F2322507
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="cHD46iSB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A98F223D0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730379AbeKMMP6 (ORCPT
+        id S1730407AbeKMMVR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 07:15:58 -0500
-Received: from conssluserg-02.nifty.com ([210.131.2.81]:39035 "EHLO
-        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726198AbeKMMP6 (ORCPT
+        Tue, 13 Nov 2018 07:21:17 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:43398 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726198AbeKMMVR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 07:15:58 -0500
-Received: from mail-ua1-f47.google.com (mail-ua1-f47.google.com [209.85.222.47]) (authenticated)
-        by conssluserg-02.nifty.com with ESMTP id wAD2Jqll012992;
-        Tue, 13 Nov 2018 11:19:53 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wAD2Jqll012992
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542075593;
-        bh=40R36dISED+31cwp8IQEcXjDEXGOcXWQ2k/rwop9oI8=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=m8Ruv+QUG50HTG2JfnQQSM+LJUuiWYhxbIfersLqOFYRZc3/Mq8LfhlaoLAJ2UtFi
-         FpjkqpmmMyfFykI05I56bngjxzX6QdGosvpSmeWwnTYWAdp9BoqegmuOOiEkrys+5m
-         3muAIQb1RPwJaDYAzZT0ldi1BAGycVDo6PWBsHulp6xOH47AZ60uTduDVQdeJMRtPj
-         JsTA4pqpE9/tquY19spo4UTdPKPZm/SJgLohqN8EoKsWBTB9pHOA5FsS5gLXunwBWK
-         zAhiZ4RIyd6QeTWr6TjXPZd8NLRHDFFiqt/g9x8Ro+IZvmwL9pAK4vhHPvQ6p7sFhI
-         3g1OnvhFLCVwQ==
-X-Nifty-SrcIP: [209.85.222.47]
-Received: by mail-ua1-f47.google.com with SMTP id e16so2573039uam.12;
-        Mon, 12 Nov 2018 18:19:53 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJGw6wM6YH2MRrgH1gka5l6V0IXWhD9vOaT6YgNBqJhwKyXuIK1
-        Ev3Ec1UiFOLRxiLM9vq8OOmOwZmiTf3fLH6X4dw=
-X-Google-Smtp-Source: AJdET5f4yGMin6SMjoszbZUM6rUU7oERQXbXFzrQoCJxF0sBhetdDLpeTuecxE14kGF3E3kjfmNTKTgYEX+X0ljmSos=
-X-Received: by 2002:ab0:6705:: with SMTP id q5mr1549002uam.89.1542075591890;
- Mon, 12 Nov 2018 18:19:51 -0800 (PST)
+        Tue, 13 Nov 2018 07:21:17 -0500
+Received: by mail-qk1-f194.google.com with SMTP id r71so16992169qkr.10
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 18:25:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=sGbjQ45SR5Zz3RYHZTzMhzUFOnujEjW1LZdpuBi8JKs=;
+        b=cHD46iSBbvlsMEzpqkO1/2dw4h84Nn3kmLRShblCmaIRBnNItVzVn0MmY1agKoN68N
+         7sGPx/cHvPabJ4X0WY1wjeX7n3jzmj0FZApU/yVJzuTZhy6AHlPmRoq19fBXeCSo3CD5
+         CnK3U3IanDOXUN7GJq/j/1XTmFwEvS+gUDZPK2CGPz+ds7NKp/JW/kX1nC9PikWu9n1U
+         yZhFT2ydk6+CvwOoEY9MvNP6tVRagSMzBv3tH3lfoujfDxlhExWwAjXEsCM87Ie8V9tH
+         PZzwp9OZgxm7kp7UCp+w+sA8FlInz9FSsMXgTOw7q8SqB1CT00ZlBzW4Idt/o5ixXs3U
+         0zkA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=sGbjQ45SR5Zz3RYHZTzMhzUFOnujEjW1LZdpuBi8JKs=;
+        b=ldajztYv22B3pJ2ZI7UYgXJTzQ5qW7wFXUw+K7G4CKX++OhdWcdOuMvawoyz4dL4mI
+         AITtD3k3kKWWwal9jUCwzH7U8ORma6P6QHi3R+ZYEVLRmO4nmYlZlC7YnhdFAy7MbjT4
+         iHnY5nQe/R8nLdQsFM3Wfot0cFcFJUUKzlErufzs+Kdbye0VQGOtjDJk1Xfk7XqcTNgt
+         GGRKcbrQWgZoUCRBKRZ4cUxZ/JnzwuDNXWuWgWv/zHHqmCEFygHxx4L76FzxXrH1jBS4
+         ujo9+zDjPcieGQ/t/4s95oqvClTUrs+hdzikcXW8C9hGtqi6sGU/sMmHVe2F3JV1XHN+
+         s1NA==
+X-Gm-Message-State: AGRZ1gJjfPO0LRPVHNdc3Fv7/Y8ifqtvtRRnJYjpcbMaqChyYvbuBBZ0
+        szLyNLLJa7fgjmu3NB6ckE3T4Q==
+X-Google-Smtp-Source: AJdET5d5EVOtCMpvvf2CVIDrkAInUEnH03uNE8s7SB6k0yqjCow3wOPFBEPlg3woYpzDpYtd6ZOF6g==
+X-Received: by 2002:a37:2950:: with SMTP id p77mr3229762qkh.275.1542075919805;
+        Mon, 12 Nov 2018 18:25:19 -0800 (PST)
+Received: from soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net ([40.117.208.181])
+        by smtp.gmail.com with ESMTPSA id r47sm12997789qtc.77.2018.11.12.18.25.18
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 18:25:18 -0800 (PST)
+Date:   Tue, 13 Nov 2018 02:25:16 +0000
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     Timofey Titovets <timofey.titovets@synesis.ru>
+Cc:     linux-kernel@vger.kernel.org,
+        Timofey Titovets <nefelim4ag@gmail.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH V3] KSM: allow dedup all tasks memory
+Message-ID: <20181113022516.45u6b536vtdjgvrf@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
+References: <20181112231344.7161-1-timofey.titovets@synesis.ru>
 MIME-Version: 1.0
-References: <20181020131911.22443-1-paul.walmsley@sifive.com> <20181020131911.22443-3-paul.walmsley@sifive.com>
-In-Reply-To: <20181020131911.22443-3-paul.walmsley@sifive.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Tue, 13 Nov 2018 11:19:15 +0900
-X-Gmail-Original-Message-ID: <CAK7LNARC2+BLFay_-CtaJXKCu3M0NZzxbeff1XandeH58BbUcg@mail.gmail.com>
-Message-ID: <CAK7LNARC2+BLFay_-CtaJXKCu3M0NZzxbeff1XandeH58BbUcg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] modpost: skip ELF local symbols by default during
- section mismatch check
-To:     paul.walmsley@sifive.com
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>, jimw@sifive.com,
-        Michal Marek <michal.lkml@markovi.net>,
-        Paul Walmsley <paul@pwsan.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181112231344.7161-1-timofey.titovets@synesis.ru>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Paul,
-
-
-On Sat, Oct 20, 2018 at 10:21 PM Paul Walmsley <paul.walmsley@sifive.com> wrote:
->
-> During development of a serial console driver with a RISC-V toolchain,
-> the following modpost warning appeared:
->
-> ----
-> WARNING: vmlinux.o(.data+0x19b10): Section mismatch in reference from the variable .LANCHOR1 to the function .init.text:sifive_serial_console_setup()
-> The variable .LANCHOR1 references
-> the function __init sifive_serial_console_setup()
-> If the reference is valid then annotate the
-> variable with __init* or __refdata (see linux/init.h) or name the variable:
-> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
-> ----
-
-Could you provide me a little more information to reproduce it?
-
-I tried your dev/paulw/serial-v4.19-rc7,
-but I could not get that warning.
-
-I used risc64-linux-gcc (GCC 7.3, 8.1) from kernel.org
-
-
-
-
-
-> ".LANCHOR1" is an ELF local symbol, automatically created by gcc's section
-> anchor generation code:
->
-> https://gcc.gnu.org/onlinedocs/gccint/Anchored-Addresses.html
->
-> https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/varasm.c;h=cd9591a45617464946dcf9a126dde277d9de9804;hb=9fb89fa845c1b2e0a18d85ada0b077c84508ab78#l7473
->
-> This was verified by compiling the kernel with -fno-section-anchors.
-> The serial driver code idiom triggering the warning is standard serial
-> driver practice, and one that has a specific whitelist inclusion in
-> modpost.c.
->
-> I'm neither a modpost nor an ELF expert, but naively, it doesn't seem
-> useful for modpost to report section mismatch warnings caused by ELF
-> local symbols by default.  Local symbols have compiler-generated
-> names, and thus bypass modpost's whitelisting algorithm, which relies
-> on the presence of a non-autogenerated symbol name.  This increases
-> the likelihood that false positive warnings will be generated (as in
-> the above case).
->
-> Thus, disable section mismatch reporting on ELF local symbols by
-> default.  The rationale here is similar to that of commit
-> 2e3a10a1551d6ceea005e6a62ca58183b8976217 ("ARM: avoid ARM binutils
-> leaking ELF local symbols") and of similar code already present in
-> modpost.c:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/mod/modpost.c?h=v4.19-rc4&id=7876320f88802b22d4e2daf7eb027dd14175a0f8#n1256
->
-> Since it might be useful for some static analysis runs to detect
-> whether any new symbols have been added that result in any section
-> mismatches, even from ELF local symbols, this change can be disabled
-> (along with other tests that can often generate false positives) by
-> passing the '-P' switch on the modpost command line.
->
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Jim Wilson <jimw@sifive.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: linux-kbuild@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
+On 18-11-13 02:13:44, Timofey Titovets wrote:
+> From: Timofey Titovets <nefelim4ag@gmail.com>
+> 
+> ksm by default working only on memory that added by
+> madvise().
+> 
+> And only way get that work on other applications:
+>   * Use LD_PRELOAD and libraries
+>   * Patch kernel
+> 
+> Lets use kernel task list and add logic to import VMAs from tasks.
+> 
+> That behaviour controlled by new attributes:
+>   * mode:
+>     I try mimic hugepages attribute, so mode have two states:
+>       * madvise      - old default behaviour
+>       * always [new] - allow ksm to get tasks vma and
+>                        try working on that.
+>   * seeker_sleep_millisecs:
+>     Add pauses between imports tasks VMA
+> 
+> For rate limiting proporses and tasklist locking time,
+> ksm seeker thread only import VMAs from one task per loop.
+> 
+> Some numbers from different not madvised workloads.
+> Formulas:
+>   Percentage ratio = (pages_sharing - pages_shared)/pages_unshared
+>   Memory saved = (pages_sharing - pages_shared)*4/1024 MiB
+>   Memory used = free -h
+> 
+>   * Name: My working laptop
+>     Description: Many different chrome/electron apps + KDE
+>     Ratio: 5%
+>     Saved: ~100  MiB
+>     Used:  ~2000 MiB
+> 
+>   * Name: K8s test VM
+>     Description: Some small random running docker images
+>     Ratio: 40%
+>     Saved: ~160 MiB
+>     Used:  ~920 MiB
+> 
+>   * Name: Ceph test VM
+>     Description: Ceph Mon/OSD, some containers
+>     Ratio: 20%
+>     Saved: ~60 MiB
+>     Used:  ~600 MiB
+> 
+>   * Name: BareMetal K8s backend server
+>     Description: Different server apps in containers C, Java, GO & etc
+>     Ratio: 72%
+>     Saved: ~5800 MiB
+>     Used:  ~35.7 GiB
+> 
+>   * Name: BareMetal K8s processing server
+>     Description: Many instance of one CPU intensive application
+>     Ratio: 55%
+>     Saved: ~2600 MiB
+>     Used:  ~28.0 GiB
+> 
+>   * Name: BareMetal Ceph node
+>     Description: Only OSD storage daemons running
+>     Raio: 2%
+>     Saved: ~190 MiB
+>     Used:  ~11.7 GiB
+> 
+> Changes:
+>   v1 -> v2:
+>     * Rebase on v4.19.1 (must also apply on 4.20-rc2+)
+>   v2 -> v3:
+>     * Reformat patch description
+>     * Rename mode normal to madvise
+>     * Add some memory numbers
+>     * Fix checkpatch.pl warnings
+>     * Separate ksm vma seeker to another kthread
+>     * Fix: "BUG: scheduling while atomic: ksmd"
+>       by move seeker to another thread
+> 
+> Signed-off-by: Timofey Titovets <nefelim4ag@gmail.com>
+> CC: Matthew Wilcox <willy@infradead.org>
+> CC: linux-mm@kvack.org
+> CC: linux-doc@vger.kernel.org
 > ---
->  scripts/mod/modpost.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
->
-> diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-> index 38fc1bd47926..2b8c960ece66 100644
-> --- a/scripts/mod/modpost.c
-> +++ b/scripts/mod/modpost.c
-> @@ -1255,6 +1255,17 @@ static inline int is_arm_mapping_symbol(const char *str)
->                && (str[2] == '\0' || str[2] == '.');
->  }
->
-> +/*
-> + * If a symbol name follows the convention for ELF-local symbols (i.e., the
-> + * name begins with a ".L"), return true; otherwise false.  This is used to
-> + * skip section mismatch reporting on ELF-local symbols, due to the risk of
-> + * false positives.
-> + */
-> +static inline int is_local_symbol(const char *str)
+>  Documentation/admin-guide/mm/ksm.rst |  15 ++
+>  mm/ksm.c                             | 215 +++++++++++++++++++++++----
+>  2 files changed, 198 insertions(+), 32 deletions(-)
+> 
+> diff --git a/Documentation/admin-guide/mm/ksm.rst b/Documentation/admin-guide/mm/ksm.rst
+> index 9303786632d1..7cffd47f9b38 100644
+> --- a/Documentation/admin-guide/mm/ksm.rst
+> +++ b/Documentation/admin-guide/mm/ksm.rst
+> @@ -116,6 +116,21 @@ run
+>          Default: 0 (must be changed to 1 to activate KSM, except if
+>          CONFIG_SYSFS is disabled)
+>  
+> +mode
+> +        * set always to allow ksm deduplicate memory of every process
+> +        * set madvise to use only madvised memory
+> +
+> +        Default: madvise (dedupulicate only madvised memory as in
+> +        earlier releases)
+> +
+> +seeker_sleep_millisecs
+> +        how many milliseconds ksmd task seeker should sleep try another
+> +        task.
+> +        e.g. ``echo 1000 > /sys/kernel/mm/ksm/seeker_sleep_millisecs``
+> +
+> +        Default: 1000 (chosen for rate limit purposes)
+> +
+> +
+>  use_zero_pages
+>          specifies whether empty pages (i.e. allocated pages that only
+>          contain zeroes) should be treated specially.  When set to 1,
+> diff --git a/mm/ksm.c b/mm/ksm.c
+> index 5b0894b45ee5..1a03b28b6288 100644
+> --- a/mm/ksm.c
+> +++ b/mm/ksm.c
+> @@ -273,6 +273,9 @@ static unsigned int ksm_thread_pages_to_scan = 100;
+>  /* Milliseconds ksmd should sleep between batches */
+>  static unsigned int ksm_thread_sleep_millisecs = 20;
+>  
+> +/* Milliseconds ksmd seeker should sleep between runs */
+> +static unsigned int ksm_thread_seeker_sleep_millisecs = 1000;
+> +
+>  /* Checksum of an empty (zeroed) page */
+>  static unsigned int zero_checksum __read_mostly;
+>  
+> @@ -295,7 +298,12 @@ static int ksm_nr_node_ids = 1;
+>  static unsigned long ksm_run = KSM_RUN_STOP;
+>  static void wait_while_offlining(void);
+>  
+> +#define KSM_MODE_MADVISE 0
+> +#define KSM_MODE_ALWAYS	1
+> +static unsigned long ksm_mode = KSM_MODE_MADVISE;
+> +
+>  static DECLARE_WAIT_QUEUE_HEAD(ksm_thread_wait);
+> +static DECLARE_WAIT_QUEUE_HEAD(ksm_seeker_thread_wait);
+>  static DEFINE_MUTEX(ksm_thread_mutex);
+>  static DEFINE_SPINLOCK(ksm_mmlist_lock);
+>  
+> @@ -303,6 +311,11 @@ static DEFINE_SPINLOCK(ksm_mmlist_lock);
+>  		sizeof(struct __struct), __alignof__(struct __struct),\
+>  		(__flags), NULL)
+>  
+> +static inline int ksm_mode_always(void)
 > +{
-> +       return str[0] == '.' && str[1] == 'L';
+> +	return (ksm_mode == KSM_MODE_ALWAYS);
 > +}
 > +
->  /*
->   * If there's no name there, ignore it; likewise, ignore it if it's
->   * one of the magic symbols emitted used by current ARM tools.
-> @@ -1537,6 +1548,9 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
->         if (strstarts(fromsym, "reference___initcall"))
->                 return;
->
-> +       if (!accept_falsepos_risk && is_local_symbol(fromsym))
-> +               return;
+>  static int __init ksm_slab_init(void)
+>  {
+>  	rmap_item_cache = KSM_KMEM_CACHE(rmap_item, 0);
+> @@ -2389,6 +2402,106 @@ static int ksmd_should_run(void)
+>  	return (ksm_run & KSM_RUN_MERGE) && !list_empty(&ksm_mm_head.mm_list);
+>  }
+>  
 > +
->         tosec = sec_name(elf, get_secindex(elf, sym));
->         to = find_elf_symbol(elf, r->r_addend, sym);
->         tosym = sym_name(elf, to);
-> --
-> 2.19.1
->
+> +static int ksm_enter(struct mm_struct *mm, unsigned long *vm_flags)
+> +{
+> +	int err;
+> +
+> +	if (*vm_flags & (VM_MERGEABLE | VM_SHARED  | VM_MAYSHARE   |
+> +			 VM_PFNMAP    | VM_IO      | VM_DONTEXPAND |
+> +			 VM_HUGETLB | VM_MIXEDMAP))
+> +		return 0;
+> +
+> +#ifdef VM_SAO
+> +	if (*vm_flags & VM_SAO)
+> +		return 0;
+> +#endif
+> +#ifdef VM_SPARC_ADI
+> +	if (*vm_flags & VM_SPARC_ADI)
+> +		return 0;
+> +#endif
+> +	if (!test_bit(MMF_VM_MERGEABLE, &mm->flags)) {
+> +		err = __ksm_enter(mm);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	*vm_flags |= VM_MERGEABLE;
+> +
+> +	return 0;
+> +}
+> +
+> +/*
+> + * Register all vmas for all processes in the system with KSM.
+> + * Note that every call to ksm_, for a given vma, after the first
+> + * does nothing but set flags.
+> + */
+> +void ksm_import_task_vma(struct task_struct *task)
+> +{
+> +	struct vm_area_struct *vma;
+> +	struct mm_struct *mm;
+> +	int error;
+> +
+> +	mm = get_task_mm(task);
+> +	if (!mm)
+> +		return;
+> +	down_write(&mm->mmap_sem);
+> +	vma = mm->mmap;
+> +	while (vma) {
+> +		error = ksm_enter(vma->vm_mm, &vma->vm_flags);
+> +		vma = vma->vm_next;
+> +	}
+> +	up_write(&mm->mmap_sem);
+> +	mmput(mm);
+> +}
+> +
+> +static int ksm_seeker_thread(void *nothing)
 
+Is it really necessary to have an extra thread in ksm just to add vma's
+for scanning? Can we do it right from the scanner thread? Also, may be
+it is better to add vma's at their creation time when KSM_MODE_ALWAYS is
+enabled?
 
--- 
-Best Regards
-Masahiro Yamada
+Thank you,
+Pasha
