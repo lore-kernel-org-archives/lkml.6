@@ -2,267 +2,2083 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_RED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20B0FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:22:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 07AC6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:24:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBE4A22507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:22:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBE4A22507
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CB22522507
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:24:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwOBbJMJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB22522507
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730760AbeKMKSN (ORCPT
+        id S1730624AbeKMKTd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 05:18:13 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39626 "EHLO mx1.redhat.com"
+        Tue, 13 Nov 2018 05:19:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50298 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727250AbeKMKSM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 05:18:12 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        id S1726111AbeKMKTd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 05:19:33 -0500
+Received: from localhost (unknown [64.114.255.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 245A84E90D;
-        Tue, 13 Nov 2018 00:22:41 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-17.pek2.redhat.com [10.72.8.17])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 896865D739;
-        Tue, 13 Nov 2018 00:22:31 +0000 (UTC)
-Date:   Tue, 13 Nov 2018 08:22:27 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Ming Lei <tom.leiming@gmail.com>, Jens Axboe <axboe@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hannes Reinecke <hare@suse.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org
-Subject: Re: kobject lifetime issues in blk-mq
-Message-ID: <20181113002226.GA4455@ming.t460p>
-References: <20181109203518.GA7130@roeck-us.net>
- <20181112092051.GA391@ming.t460p>
- <20181112094406.GB391@ming.t460p>
- <20181112164848.GA1790@roeck-us.net>
- <20181112200236.GA4415@kroah.com>
+        by mail.kernel.org (Postfix) with ESMTPSA id 12B0E22419;
+        Tue, 13 Nov 2018 00:23:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542068636;
+        bh=hnSUaRPk3KpyMIvx0CJhCrBTUCrFlLnXpnogdxhFWDg=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=XwOBbJMJl5wtJ+s//HkBEPIZIArslmkyVRBhJAhKkVaWUkoFvoo9bLhFu9dBwD9iY
+         Eww+Wbj5wiwOa1736ihXTgPA5ULS+z7KTWGoEk/R88NaDDdr8u4zl2VPqFVHuvDDJh
+         7PN+sgD1LAJNVx8ts70FsQDTrf+2oHmc994BS2RU=
+Date:   Tue, 13 Nov 2018 02:23:54 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Kenneth Lee <nek.in.cn@gmail.com>
+Cc:     Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Tim Sell <timothy.sell@unisys.com>,
+        Sanyog Kale <sanyog.r.kale@intel.com>,
+        Randy Dunlap <rdunlap@infradead.org>,
+        Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
+        <u.kleine-koenig@pengutronix.de>, Vinod Koul <vkoul@kernel.org>,
+        David Kershner <david.kershner@unisys.com>,
+        Sagar Dharia <sdharia@codeaurora.org>,
+        Gavin Schenk <g.schenk@eckelmann.de>,
+        Jens Axboe <axboe@kernel.dk>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Cyrille Pitchen <cyrille.pitchen@free-electrons.com>,
+        Johan Hovold <johan@kernel.org>,
+        Zhou Wang <wangzhou1@hisilicon.com>,
+        Hao Fang <fanghao11@huawei.com>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Zaibo Xu <xuzaibo@huawei.com>, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org,
+        linux-accelerators@lists.ozlabs.org, linuxarm@huawei.com,
+        guodong.xu@linaro.org, zhangfei.gao@foxmail.com,
+        haojian.zhuang@linaro.org, Kenneth Lee <liguozhu@hisilicon.com>,
+        Doug Ledford <dledford@redhat.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        "David S. Miller" <davem@davemloft.net>,
+        RDMA mailing list <linux-rdma@vger.kernel.org>,
+        linux-netdev <netdev@vger.kernel.org>
+Subject: Re: [RFCv3 PATCH 1/6] uacce: Add documents for WarpDrive/uacce
+Message-ID: <20181113002354.GO3695@mtr-leonro.mtl.com>
+References: <20181112075807.9291-1-nek.in.cn@gmail.com>
+ <20181112075807.9291-2-nek.in.cn@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="qSHHer9gQ0dtepKr"
 Content-Disposition: inline
-In-Reply-To: <20181112200236.GA4415@kroah.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 13 Nov 2018 00:22:41 +0000 (UTC)
+In-Reply-To: <20181112075807.9291-2-nek.in.cn@gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 12:02:36PM -0800, Greg Kroah-Hartman wrote:
-> On Mon, Nov 12, 2018 at 08:48:48AM -0800, Guenter Roeck wrote:
-> > On Mon, Nov 12, 2018 at 05:44:07PM +0800, Ming Lei wrote:
-> > > On Mon, Nov 12, 2018 at 05:20:51PM +0800, Ming Lei wrote:
-> > > > On Fri, Nov 09, 2018 at 12:35:18PM -0800, Guenter Roeck wrote:
-> > > > > Hi,
-> > > > > 
-> > > > > Images with CONFIG_DEBUG_KOBJECT=y, CONFIG_DEBUG_KOBJECT_RELEASE=y
-> > > > > enabled report kobject lifetime issues when booting an image in qemu
-> > > > > using virtio-scsi-pci.
-> > > > > 
-> > > > > Bisect points to two different commits, depending on the kernel
-> > > > > configuration.
-> > > > > 
-> > > > > 1st configuration: defconfig plus:
-> > > > > 
-> > > > > CONFIG_VIRTIO_BLK=y
-> > > > > CONFIG_SCSI_LOWLEVEL=y
-> > > > > CONFIG_SCSI_VIRTIO=y
-> > > > > CONFIG_VIRTIO_PCI=y
-> > > > > CONFIG_VIRTIO_MMIO=y
-> > > > > CONFIG_DEBUG_OBJECTS=y
-> > > > > CONFIG_DEBUG_OBJECTS_FREE=y
-> > > > > CONFIG_DEBUG_OBJECTS_TIMERS=y
-> > > > > CONFIG_DEBUG_KOBJECT=y
-> > > > > CONFIG_DEBUG_KOBJECT_RELEASE=y
-> > > > > 
-> > > > > Bisecting this configuration points to commit b5b6e8c8d3b4 ("scsi:
-> > > > > virtio_scsi: fix IO hang caused by automatic irq vector affinity")
-> > > > > as the culprit. This commit enforces the use of blk-mq for virtio_scsi;
-> > > > > the bisect log is therefore a bit misleading.
-> > > > > 
-> > > > > 2nd configuration: As above, plus:
-> > > > > CONFIG_SCSI_MQ_DEFAULT=y
-> > > > > 
-> > > > > With this configuration, bisect points to commit 7ea5fe31c12d
-> > > > > ("blk-mq: make lifetime consitent between q/ctx and its kobject").
-> > > > > 
-> > > > > The qemu command line used to reproduce the problem is as follows.
-> > > > > The qemu version does not seem to matter (I tested with qemu versions
-> > > > > 2.5, 2.11, and 3.0).
-> > > > > 
-> > > > > qemu-system-x86_64 \
-> > > > > 	-kernel arch/x86/boot/bzImage \
-> > > > > 	-device virtio-scsi-pci,id=scsi \
-> > > > > 	-device scsi-hd,bus=scsi.0,drive=d0 \
-> > > > > 	-drive file=./wheezy.img,format=raw,if=none,id=d0 \
-> > > > > 	-snapshot \
-> > > > > 	-m 2G -smp 4 -enable-kvm \
-> > > > > 	-net user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net nic \
-> > > > > 	-nographic -monitor none \
-> > > > > 	-no-reboot \
-> > > > > 	-append "console=ttyS0 root=/dev/sda earlyprintk=serial panic_on_warn=1 panic=-1"
-> > > > > 
-> > > > > Root file system:
-> > > > > 	https://storage.googleapis.com/syzkaller/wheezy.img
-> > > > > or:
-> > > > > 	https://github.com/groeck/linux-build-test/blob/master/rootfs/x86_64/rootfs.ext2.gz
-> > > > > 
-> > > > > It seems that any root file system can be used to reproduce the problem.
-> > > > > Also, the problem is not limited to virtio-scsi-pci. I also tried
-> > > > > am53c974, lsi53c810, and lsi53c895a (after enabling the respective
-> > > > > drivers), with the same result.
-> > > > > 
-> > > > > Overall, this suggests that the problem is related to blk-mq and was
-> > > > > indeed introduced with commit 7ea5fe31c12d.
-> > > > > 
-> > > > > For reference, I attached an actual crash log as well as a set of bisect
-> > > > > logs below.
-> > > > > 
-> > > > > Unfortunately, my understanding of blk-mq is not good enough to find the
-> > > > > underlying problem and suggest a fix. Please let me know if there is
-> > > > > anything else I can do to help fixing the problem.
-> > > > > 
-> > > > > Note that the problem was originally reported by syzbot running a test
-> > > > > on chromeos-4.14. It may well be that the problem has already been
-> > > > > reported and is being worked on. If so, please apologize the noise.
-> > > > > 
-> > > > > Thanks,
-> > > > > Guenter
-> > > > > 
-> > > > > ---
-> > > > > [    8.700038] ------------[ cut here ]------------
-> > > > > [    8.700376] ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x10
-> > > > > [    8.701032] WARNING: CPU: 0 PID: 0 at lib/debugobjects.c:329 debug_print_object+0x6a/0x80
-> > > > > [    8.701032] Kernel panic - not syncing: panic_on_warn set ...
-> > > > > [    8.701032] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0-rc1 #30
-> > > > > [    8.701032] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
-> > > > > [    8.701032] Call Trace:
-> > > > > [    8.701032]  <IRQ>
-> > > > > [    8.701032]  dump_stack+0x46/0x5b
-> > > > > [    8.701032]  panic+0xf3/0x246
-> > > > > [    8.701032]  ? debug_print_object+0x6a/0x80
-> > > > > [    8.701032]  __warn+0xeb/0xf0
-> > > > > [    8.701032]  ? debug_print_object+0x6a/0x80
-> > > > > [    8.701032]  ? debug_print_object+0x6a/0x80
-> > > > > [    8.701032]  report_bug+0xb1/0x120
-> > > > > [    8.701032]  fixup_bug.part.10+0x13/0x30
-> > > > > [    8.701032]  do_error_trap+0x8f/0xb0
-> > > > > [    8.701032]  do_invalid_op+0x31/0x40
-> > > > > [    8.701032]  ? debug_print_object+0x6a/0x80
-> > > > > [    8.701032]  invalid_op+0x14/0x20
-> > > > > [    8.701032] RIP: 0010:debug_print_object+0x6a/0x80
-> > > > > [    8.701032] Code: 8b 43 10 83 c2 01 8b 4b 14 89 15 c1 e2 78 01 4c 8b 45 00 4c
-> > > > > 89 e6 48 c7 c7 f0 ca 41 a6 48 8b 14 c5 a0 f7 24 a6 e8 06 8e cc ff <0f> 0b 5b 83
-> > > > > 05 70 47 1a 01 01 5d 41 5c c3 83 05 65 47 1a 01 01 c3
-> > > > > [    8.701032] RSP: 0018:ffff89b9fda03e48 EFLAGS: 00010082
-> > > > > [    8.701032] RAX: 0000000000000000 RBX: ffff89b9fd49d0c8 RCX: ffffffffa6646e18
-> > > > > [    8.701032] RDX: 0000000000000001 RSI: 0000000000000082 RDI: ffffffffa6cc596c
-> > > > > [    8.701032] RBP: ffffffffa664a5c0 R08: 79616c6564203a74 R09: 5f6b726f775f6465
-> > > > > [    8.701032] R10: ffff89b9fda03f10 R11: 3178302f3078302b R12: ffffffffa6403e22
-> > > > > [    8.701032] R13: 0000000000000001 R14: ffffffffa6d4d458 R15: ffff89b9fc4c8780
-> > > > > [    8.701032]  ? debug_print_object+0x6a/0x80
-> > > > > [    8.701032]  debug_check_no_obj_freed+0x1b8/0x1ea
-> > > > > [    8.701032]  ? rcu_process_callbacks+0x2a7/0x750
-> > > > > [    8.701032]  kmem_cache_free+0x6e/0x1a0
-> > > > > [    8.701032]  ? __blk_release_queue+0x150/0x150
-> > > > > [    8.701032]  rcu_process_callbacks+0x2a7/0x750
-> > > > > [    8.701032]  __do_softirq+0xf2/0x2c7
-> > > > > [    8.701032]  irq_exit+0xb7/0xc0
-> > > > > [    8.701032]  smp_apic_timer_interrupt+0x67/0x130
-> > > > > [    8.701032]  apic_timer_interrupt+0xf/0x20
-> > > > > [    8.701032]  </IRQ>
-> > > > > [    8.701032] RIP: 0010:default_idle+0x12/0x140
-> > > > > [    8.701032] Code: fe ff ff c6 43 08 00 fb eb b0 31 c0 eb b4 e8 65 c8 60 ff 90
-> > > > > 90 90 90 90 41 54 55 53 65 8b 2d 15 c4 3b 5a 66 66 66 66 90 fb f4 <65> 8b 2d 07
-> > > > > c4 3b 5a 66 66 66 66 90 5b 5d 41 5c c3 65 8b 05 f6 c3
-> > > > > [    8.701032] RSP: 0018:ffffffffa6603e98 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
-> > > > > [    8.701032] RAX: ffffffffa5c52d10 RBX: 0000000000000000 RCX: 0000000000000000
-> > > > > [    8.701032] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000020605092a
-> > > > > [    8.701032] RBP: 0000000000000000 R08: ffffffffcff7766a R09: ffff89b9fda20b00
-> > > > > [    8.701032] R10: 0000000000000000 R11: 0000000000002400 R12: ffffffffa6611740
-> > > > > [    8.701032] R13: 0000000000000000 R14: 0000000000000000 R15: ffffffffa6611740
-> > > > > [    8.701032]  ? __sched_text_end+0x5/0x5
-> > > > > [    8.701032]  do_idle+0x19c/0x230
-> > > > > [    8.701032]  cpu_startup_entry+0x14/0x20
-> > > > > [    8.701032]  start_kernel+0x491/0x4b1
-> > > > > [    8.701032]  secondary_startup_64+0xa4/0xb0
-> > > > > [    8.701032] Kernel Offset: 0x24200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
-> > > > > 
-> > > > 
-> > > > That is simply caused by enabling DEBUG_KOBJECT_RELEASE itself, which
-> > > > tries to do kboject_release() after delaying a while.
-> > > > 
-> > > > Wrt. this issue, q->mq_kobj is embedded in 'request_queue' whose
-> > > > instance is freed in release handler of q->kobj. So when one instance
-> > > > of 'request_queue' is freed, DEBUG_KOBJECT_RELEASE still expects that
-> > > > the q->mq_kobj is active.
-> > > > 
-> > > > The release handler of q->mq_kobj is NOP actually, so in reality it won't
-> > > > be one issue at all.
-> > > 
-> > > Given we have removed legacy IO path completely, it should be fine to
-> > > remove q->mq_kobj and simply put everything under the kobj of queue,
-> > > especially any attributes under mq aren't marked as stable ABI.
-> > 
-> > That might be possible going forward, but that does not appear to be
-> > a feasible solution for stable releases. I am not sure though if the
-> > "stable ABI" argument is valid. Almost all sysfs attributes are not
-> > marked stable. If there are applications using it, removing the atttributes
-> > would still break userspace.
-> 
-> Yeah, don't move attributes around for no good reason, you will make
-> userspace grumpy :)
 
-There are very less attributes left under /sys/block/$DEV/mq.
+--qSHHer9gQ0dtepKr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-> 
-> > Since the release function of mq_kobj is NOP (for reference, I assume
-> > we are talking about blk_mq_sysfs_release), can it just be NULL ?
-> 
-> Someone tried to work around the internal kernel warning that comes
-> about when you set a release function to NULL.  As per the in-kernel
-> documentation, I now get to make fun of that author by saying "do you
-> think I added those checks and message just for no good reason?  Don't
-> try to be smarter than the driver core by providing an empty release
-> function to make the kernel be quiet.  That's NOT what the kernel is
-> trying to tell you here at all."
-> 
-> So fix this, that is the correct thing to do.  Memory is freed in a
-> release function, to not do so is almost always a sign of a design bug.
+On Mon, Nov 12, 2018 at 03:58:02PM +0800, Kenneth Lee wrote:
+> From: Kenneth Lee <liguozhu@hisilicon.com>
+>
+> WarpDrive is a general accelerator framework for the user application to
+> access the hardware without going through the kernel in data path.
+>
+> The kernel component to provide kernel facility to driver for expose the
+> user interface is called uacce. It a short name for
+> "Unified/User-space-access-intended Accelerator Framework".
+>
+> This patch add document to explain how it works.
 
-The root cause is that both q->kobj and q->mq_kobj are bound to lifetime
-of same 'request_queue' instance.
++ RDMA and netdev folks
 
-We may allocate q->mq_kobj dynamically to fix this issue.
+Sorry, to be late in the game, I don't see other patches, but from
+the description below it seems like you are reinventing RDMA verbs
+model. I have hard time to see the differences in the proposed
+framework to already implemented in drivers/infiniband/* for the kernel
+space and for the https://github.com/linux-rdma/rdma-core/ for the user
+space parts.
 
-And now all drivers are converted to mq, and it is really necessary to keep
-'q->mq_kobj'
+Hard NAK from RDMA side.
 
-> 
-> > That it is an empty function seems to be just as good or bad as having
-> > no function at all. An empty function just avoids the "broken" debug
-> > message. That message is still better than rendering DEBUG_KOBJECT_RELEASE
-> > useless.
-> > 
-> > Copying GregKH for input.
-> 
-> Thanks, this code is broken and needs to be fixed.
+Thanks
 
-I will post a patch to address the 'issue'.
+>
+> Signed-off-by: Kenneth Lee <liguozhu@hisilicon.com>
+> ---
+>  Documentation/warpdrive/warpdrive.rst       | 260 +++++++
+>  Documentation/warpdrive/wd-arch.svg         | 764 ++++++++++++++++++++
+>  Documentation/warpdrive/wd.svg              | 526 ++++++++++++++
+>  Documentation/warpdrive/wd_q_addr_space.svg | 359 +++++++++
+>  4 files changed, 1909 insertions(+)
+>  create mode 100644 Documentation/warpdrive/warpdrive.rst
+>  create mode 100644 Documentation/warpdrive/wd-arch.svg
+>  create mode 100644 Documentation/warpdrive/wd.svg
+>  create mode 100644 Documentation/warpdrive/wd_q_addr_space.svg
+>
+> diff --git a/Documentation/warpdrive/warpdrive.rst b/Documentation/warpdrive/warpdrive.rst
+> new file mode 100644
+> index 000000000000..ef84d3a2d462
+> --- /dev/null
+> +++ b/Documentation/warpdrive/warpdrive.rst
+> @@ -0,0 +1,260 @@
+> +Introduction of WarpDrive
+> +=========================
+> +
+> +*WarpDrive* is a general accelerator framework for the user application to
+> +access the hardware without going through the kernel in data path.
+> +
+> +It can be used as the quick channel for accelerators, network adaptors or
+> +other hardware for application in user space.
+> +
+> +This may make some implementation simpler.  E.g.  you can reuse most of the
+> +*netdev* driver in kernel and just share some ring buffer to the user space
+> +driver for *DPDK* [4] or *ODP* [5]. Or you can combine the RSA accelerator with
+> +the *netdev* in the user space as a https reversed proxy, etc.
+> +
+> +*WarpDrive* takes the hardware accelerator as a heterogeneous processor which
+> +can share particular load from the CPU:
+> +
+> +.. image:: wd.svg
+> +        :alt: WarpDrive Concept
+> +
+> +The virtual concept, queue, is used to manage the requests sent to the
+> +accelerator. The application send requests to the queue by writing to some
+> +particular address, while the hardware takes the requests directly from the
+> +address and send feedback accordingly.
+> +
+> +The format of the queue may differ from hardware to hardware. But the
+> +application need not to make any system call for the communication.
+> +
+> +*WarpDrive* tries to create a shared virtual address space for all involved
+> +accelerators. Within this space, the requests sent to queue can refer to any
+> +virtual address, which will be valid to the application and all involved
+> +accelerators.
+> +
+> +The name *WarpDrive* is simply a cool and general name meaning the framework
+> +makes the application faster. It includes general user library, kernel
+> +management module and drivers for the hardware. In kernel, the management
+> +module is called *uacce*, meaning "Unified/User-space-access-intended
+> +Accelerator Framework".
+> +
+> +
+> +How does it work
+> +================
+> +
+> +*WarpDrive* uses *mmap* and *IOMMU* to play the trick.
+> +
+> +*Uacce* creates a chrdev for the device registered to it. A "queue" will be
+> +created when the chrdev is opened. The application access the queue by mmap
+> +different address region of the queue file.
+> +
+> +The following figure demonstrated the queue file address space:
+> +
+> +.. image:: wd_q_addr_space.svg
+> +        :alt: WarpDrive Queue Address Space
+> +
+> +The first region of the space, device region, is used for the application to
+> +write request or read answer to or from the hardware.
+> +
+> +Normally, there can be three types of device regions mmio and memory regions.
+> +It is recommended to use common memory for request/answer descriptors and use
+> +the mmio space for device notification, such as doorbell. But of course, this
+> +is all up to the interface designer.
+> +
+> +There can be two types of device memory regions, kernel-only and user-shared.
+> +This will be explained in the "kernel APIs" section.
+> +
+> +The Static Share Virtual Memory region is necessary only when the device IOMMU
+> +does not support "Share Virtual Memory". This will be explained after the
+> +*IOMMU* idea.
+> +
+> +
+> +Architecture
+> +------------
+> +
+> +The full *WarpDrive* architecture is represented in the following class
+> +diagram:
+> +
+> +.. image:: wd-arch.svg
+> +        :alt: WarpDrive Architecture
+> +
+> +
+> +The user API
+> +------------
+> +
+> +We adopt a polling style interface in the user space: ::
+> +
+> +        int wd_request_queue(struct wd_queue *q);
+> +        void wd_release_queue(struct wd_queue *q);
+> +
+> +        int wd_send(struct wd_queue *q, void *req);
+> +        int wd_recv(struct wd_queue *q, void **req);
+> +        int wd_recv_sync(struct wd_queue *q, void **req);
+> +        void wd_flush(struct wd_queue *q);
+> +
+> +wd_recv_sync() is a wrapper to its non-sync version. It will trapped into
+> +kernel and waits until the queue become available.
+> +
+> +If the queue do not support SVA/SVM. The following helper function
+> +can be used to create Static Virtual Share Memory: ::
+> +
+> +        void *wd_preserve_share_memory(struct wd_queue *q, size_t size);
+> +
+> +The user API is not mandatory. It is simply a suggestion and hint what the
+> +kernel interface is supposed to support.
+> +
+> +
+> +The user driver
+> +---------------
+> +
+> +The queue file mmap space will need a user driver to wrap the communication
+> +protocol. *UACCE* provides some attributes in sysfs for the user driver to
+> +match the right accelerator accordingly.
+> +
+> +The *UACCE* device attribute is under the following directory:
+> +
+> +/sys/class/uacce/<dev-name>/params
+> +
+> +The following attributes is supported:
+> +
+> +nr_queue_remained (ro)
+> +        number of queue remained
+> +
+> +api_version (ro)
+> +        a string to identify the queue mmap space format and its version
+> +
+> +device_attr (ro)
+> +        attributes of the device, see UACCE_DEV_xxx flag defined in uacce.h
+> +
+> +numa_node (ro)
+> +        id of numa node
+> +
+> +priority (rw)
+> +        Priority or the device, bigger is higher
+> +
+> +(This is not yet implemented in RFC version)
+> +
+> +
+> +The kernel API
+> +--------------
+> +
+> +The *uacce* kernel API is defined in uacce.h. If the hardware support SVM/SVA,
+> +The driver need only the following API functions: ::
+> +
+> +        int uacce_register(uacce);
+> +        void uacce_unregister(uacce);
+> +        void uacce_wake_up(q);
+> +
+> +*uacce_wake_up* is used to notify the process who epoll() on the queue file.
+> +
+> +According to the IOMMU capability, *uacce* categories the devices as follow:
+> +
+> +UACCE_DEV_NOIOMMU
+> +        The device has no IOMMU. The user process cannot use VA on the hardware
+> +        This mode is not recommended.
+> +
+> +UACCE_DEV_SVA (UACCE_DEV_PASID | UACCE_DEV_FAULT_FROM_DEV)
+> +        The device has IOMMU which can share the same page table with user
+> +        process
+> +
+> +UACCE_DEV_SHARE_DOMAIN
+> +        The device has IOMMU which has no multiple page table and device page
+> +        fault support
+> +
+> +If the device works in mode other than UACCE_DEV_NOIOMMU, *uacce* will set its
+> +IOMMU to IOMMU_DOMAIN_UNMANAGED. So the driver must not use any kernel
+> +DMA API but the following ones from *uacce* instead: ::
+> +
+> +        uacce_dma_map(q, va, size, prot);
+> +        uacce_dma_unmap(q, va, size, prot);
+> +
+> +*uacce_dma_map/unmap* is valid only for UACCE_DEV_SVA device. It creates a
+> +particular PASID and page table for the kernel in the IOMMU (Not yet
+> +implemented in the RFC)
+> +
+> +For the UACCE_DEV_SHARE_DOMAIN device, uacce_dma_map/unmap is not valid.
+> +*Uacce* call back start_queue only when the DUS and DKO region is mmapped. The
+> +accelerator driver must use those dma buffer, via uacce_queue->qfrs[], on
+> +start_queue call back. The size of the queue file region is defined by
+> +uacce->ops->qf_pg_start[].
+> +
+> +We have to do it this way because most of current IOMMU cannot support the
+> +kernel and user virtual address at the same time. So we have to let them both
+> +share the same user virtual address space.
+> +
+> +If the device have to support kernel and user at the same time, both kernel
+> +and the user should use these DMA API. This is not convenient. A better
+> +solution is to change the future DMA/IOMMU design to let them separate the
+> +address space between the user and kernel space. But it is not going to be in
+> +a short time.
+> +
+> +
+> +Multiple processes support
+> +==========================
+> +
+> +In the latest mainline kernel (4.19) when this document is written, the IOMMU
+> +subsystem do not support multiple process page tables yet.
+> +
+> +Most IOMMU hardware implementation support multi-process with the concept
+> +of PASID. But they may use different name, e.g. it is call sub-stream-id in
+> +SMMU of ARM. With PASID or similar design, multi page table can be added to
+> +the IOMMU and referred by its PASID.
+> +
+> +*JPB* has a patchset to enable this[1]_. We have tested it with our hardware
+> +(which is known as *D06*). It works well. *WarpDrive* rely on them to support
+> +UACCE_DEV_SVA. If it is not enabled, *WarpDrive* can still work. But it
+> +support only one process, the device will be set to UACCE_DEV_SHARE_DOMAIN
+> +even it is set to UACCE_DEV_SVA initially.
+> +
+> +Static Share Virtual Memory is mainly used by UACCE_DEV_SHARE_DOMAIN device.
+> +
+> +
+> +Legacy Mode Support
+> +===================
+> +For the hardware without IOMMU, WarpDrive can still work, the only problem is
+> +VA cannot be used in the device. The driver should adopt another strategy for
+> +the shared memory. It is only for testing, and not recommended.
+> +
+> +
+> +The Folk Scenario
+> +=================
+> +For a process with allocated queues and shared memory, what happen if it forks
+> +a child?
+> +
+> +The fd of the queue will be duplicated on folk, so the child can send request
+> +to the same queue as its parent. But the requests which is sent from processes
+> +except for the one who open the queue will be blocked.
+> +
+> +It is recommended to add O_CLOEXEC to the queue file.
+> +
+> +The queue mmap space has a VM_DONTCOPY in its VMA. So the child will lost all
+> +those VMAs.
+> +
+> +This is why *WarpDrive* does not adopt the mode used in *VFIO* and *InfiniBand*.
+> +Both solutions can set any user pointer for hardware sharing. But they cannot
+> +support fork when the dma is in process. Or the "Copy-On-Write" procedure will
+> +make the parent process lost its physical pages.
+> +
+> +
+> +The Sample Code
+> +===============
+> +There is a sample user land implementation with a simple driver for Hisilicon
+> +Hi1620 ZIP Accelerator.
+> +
+> +To test, do the following in samples/warpdrive (for the case of PC host): ::
+> +        ./autogen.sh
+> +        ./conf.sh       # or simply ./configure if you build on target system
+> +        make
+> +
+> +Then you can get test_hisi_zip in the test subdirectory. Copy it to the target
+> +system and make sure the hisi_zip driver is enabled (the major and minor of
+> +the uacce chrdev can be gotten from the dmesg or sysfs), and run: ::
+> +        mknod /dev/ua1 c <major> <minior>
+> +        test/test_hisi_zip -z < data > data.zip
+> +        test/test_hisi_zip -g < data > data.gzip
+> +
+> +
+> +References
+> +==========
+> +.. [1] https://patchwork.kernel.org/patch/10394851/
+> +
+> +.. vim: tw=78
+> diff --git a/Documentation/warpdrive/wd-arch.svg b/Documentation/warpdrive/wd-arch.svg
+> new file mode 100644
+> index 000000000000..e59934188443
+> --- /dev/null
+> +++ b/Documentation/warpdrive/wd-arch.svg
+> @@ -0,0 +1,764 @@
+> +<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+> +<!-- Created with Inkscape (http://www.inkscape.org/) -->
+> +
+> +<svg
+> +   xmlns:dc="http://purl.org/dc/elements/1.1/"
+> +   xmlns:cc="http://creativecommons.org/ns#"
+> +   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+> +   xmlns:svg="http://www.w3.org/2000/svg"
+> +   xmlns="http://www.w3.org/2000/svg"
+> +   xmlns:xlink="http://www.w3.org/1999/xlink"
+> +   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+> +   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+> +   width="210mm"
+> +   height="193mm"
+> +   viewBox="0 0 744.09449 683.85823"
+> +   id="svg2"
+> +   version="1.1"
+> +   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+> +   sodipodi:docname="wd-arch.svg">
+> +  <defs
+> +     id="defs4">
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       id="linearGradient6830">
+> +      <stop
+> +         style="stop-color:#000000;stop-opacity:1;"
+> +         offset="0"
+> +         id="stop6832" />
+> +      <stop
+> +         style="stop-color:#000000;stop-opacity:0;"
+> +         offset="1"
+> +         id="stop6834" />
+> +    </linearGradient>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="translate(-89.949614,405.94594)" />
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       id="linearGradient5026">
+> +      <stop
+> +         style="stop-color:#f2f2f2;stop-opacity:1;"
+> +         offset="0"
+> +         id="stop5028" />
+> +      <stop
+> +         style="stop-color:#f2f2f2;stop-opacity:0;"
+> +         offset="1"
+> +         id="stop5030" />
+> +    </linearGradient>
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter4169-3"
+> +       x="-0.031597666"
+> +       width="1.0631953"
+> +       y="-0.099812768"
+> +       height="1.1996255">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="1.3307599"
+> +         id="feGaussianBlur4171-6" />
+> +    </filter>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032-1"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="translate(175.77842,400.29111)" />
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter4169-3-0"
+> +       x="-0.031597666"
+> +       width="1.0631953"
+> +       y="-0.099812768"
+> +       height="1.1996255">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="1.3307599"
+> +         id="feGaussianBlur4171-6-9" />
+> +    </filter>
+> +    <marker
+> +       markerWidth="18.960653"
+> +       markerHeight="11.194658"
+> +       refX="9.4803267"
+> +       refY="5.5973287"
+> +       orient="auto"
+> +       id="marker4613">
+> +      <rect
+> +         y="-5.1589785"
+> +         x="5.8504119"
+> +         height="10.317957"
+> +         width="10.317957"
+> +         id="rect4212"
+> +         style="fill:#ffffff;stroke:#000000;stroke-width:0.69143367;stroke-miterlimit:4;stroke-dasharray:none"
+> +         transform="matrix(0.86111274,0.50841405,-0.86111274,0.50841405,0,0)">
+> +        <title
+> +           id="title4262">generation</title>
+> +      </rect>
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032-3-9"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="matrix(1.2452511,0,0,0.98513016,-190.95632,540.33156)" />
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter4169-3-5-8"
+> +       x="-0.031597666"
+> +       width="1.0631953"
+> +       y="-0.099812768"
+> +       height="1.1996255">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="1.3307599"
+> +         id="feGaussianBlur4171-6-3-9" />
+> +    </filter>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2-1">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9-9"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032-3-9-7"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="matrix(1.3742742,0,0,0.97786398,-234.52617,654.63367)" />
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter4169-3-5-8-5"
+> +       x="-0.031597666"
+> +       width="1.0631953"
+> +       y="-0.099812768"
+> +       height="1.1996255">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="1.3307599"
+> +         id="feGaussianBlur4171-6-3-9-0" />
+> +    </filter>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2-6">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9-1"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032-3-9-4"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="matrix(1.3742912,0,0,2.0035845,-468.34428,342.56603)" />
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter4169-3-5-8-54"
+> +       x="-0.031597666"
+> +       width="1.0631953"
+> +       y="-0.099812768"
+> +       height="1.1996255">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="1.3307599"
+> +         id="feGaussianBlur4171-6-3-9-7" />
+> +    </filter>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2-1-8">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9-9-6"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2-1-8-8">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9-9-6-9"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-0">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-93"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-0-2">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-93-6"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter5382"
+> +       x="-0.089695387"
+> +       width="1.1793908"
+> +       y="-0.10052069"
+> +       height="1.2010413">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="0.86758925"
+> +         id="feGaussianBlur5384" />
+> +    </filter>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient6830"
+> +       id="linearGradient6836"
+> +       x1="362.73923"
+> +       y1="700.04059"
+> +       x2="340.4751"
+> +       y2="678.25488"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="translate(-23.771026,-135.76835)" />
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2-6-2">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9-1-9"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032-3-9-7-3"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="matrix(1.3742742,0,0,0.97786395,-57.357186,649.55786)" />
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter4169-3-5-8-5-0"
+> +       x="-0.031597666"
+> +       width="1.0631953"
+> +       y="-0.099812768"
+> +       height="1.1996255">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="1.3307599"
+> +         id="feGaussianBlur4171-6-3-9-0-2" />
+> +    </filter>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2-1-1">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9-9-0"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +  </defs>
+> +  <sodipodi:namedview
+> +     id="base"
+> +     pagecolor="#ffffff"
+> +     bordercolor="#666666"
+> +     borderopacity="1.0"
+> +     inkscape:pageopacity="0.0"
+> +     inkscape:pageshadow="2"
+> +     inkscape:zoom="0.98994949"
+> +     inkscape:cx="222.32868"
+> +     inkscape:cy="370.44492"
+> +     inkscape:document-units="px"
+> +     inkscape:current-layer="layer1"
+> +     showgrid="false"
+> +     inkscape:window-width="1916"
+> +     inkscape:window-height="1033"
+> +     inkscape:window-x="0"
+> +     inkscape:window-y="22"
+> +     inkscape:window-maximized="0"
+> +     fit-margin-right="0.3"
+> +     inkscape:snap-global="false" />
+> +  <metadata
+> +     id="metadata7">
+> +    <rdf:RDF>
+> +      <cc:Work
+> +         rdf:about="">
+> +        <dc:format>image/svg+xml</dc:format>
+> +        <dc:type
+> +           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+> +        <dc:title />
+> +      </cc:Work>
+> +    </rdf:RDF>
+> +  </metadata>
+> +  <g
+> +     inkscape:label="Layer 1"
+> +     inkscape:groupmode="layer"
+> +     id="layer1"
+> +     transform="translate(0,-368.50374)">
+> +    <rect
+> +       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3)"
+> +       id="rect4136-3-6"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="283.01144"
+> +       y="588.80896" />
+> +    <rect
+> +       style="fill:url(#linearGradient5032);fill-opacity:1;stroke:#000000;stroke-width:0.6465112"
+> +       id="rect4136-2"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="281.63498"
+> +       y="586.75739" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="294.21747"
+> +       y="612.50073"
+> +       id="text4138-6"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1"
+> +         x="294.21747"
+> +         y="612.50073"
+> +         style="font-size:15px;line-height:1.25">WarpDrive</tspan></text>
+> +    <rect
+> +       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-0)"
+> +       id="rect4136-3-6-3"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="548.7395"
+> +       y="583.15417" />
+> +    <rect
+> +       style="fill:url(#linearGradient5032-1);fill-opacity:1;stroke:#000000;stroke-width:0.6465112"
+> +       id="rect4136-2-60"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="547.36304"
+> +       y="581.1026" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="557.83484"
+> +       y="602.32745"
+> +       id="text4138-6-6"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-2"
+> +         x="557.83484"
+> +         y="602.32745"
+> +         style="font-size:15px;line-height:1.25">user_driver</tspan></text>
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4613)"
+> +       d="m 547.36304,600.78954 -156.58203,0.0691"
+> +       id="path4855"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <rect
+> +       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5-8)"
+> +       id="rect4136-3-6-5-7"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="128.74678"
+> +       y="80.648842"
+> +       transform="matrix(1.2452511,0,0,0.98513016,113.15182,641.02594)" />
+> +    <rect
+> +       style="fill:url(#linearGradient5032-3-9);fill-opacity:1;stroke:#000000;stroke-width:0.71606314"
+> +       id="rect4136-2-6-3"
+> +       width="125.86729"
+> +       height="31.522341"
+> +       x="271.75983"
+> +       y="718.45435" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="309.13705"
+> +       y="745.55371"
+> +       id="text4138-6-2-6"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9-1"
+> +         x="309.13705"
+> +         y="745.55371"
+> +         style="font-size:15px;line-height:1.25">uacce</tspan></text>
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-2)"
+> +       d="m 329.57309,619.72453 5.0373,97.14447"
+> +       id="path4661-3"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-2-1)"
+> +       d="m 342.57219,830.63108 -5.67699,-79.2841"
+> +       id="path4661-3-4"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <rect
+> +       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5-8-5)"
+> +       id="rect4136-3-6-5-7-3"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="128.74678"
+> +       y="80.648842"
+> +       transform="matrix(1.3742742,0,0,0.97786398,101.09126,754.58534)" />
+> +    <rect
+> +       style="fill:url(#linearGradient5032-3-9-7);fill-opacity:1;stroke:#000000;stroke-width:0.74946606"
+> +       id="rect4136-2-6-3-6"
+> +       width="138.90866"
+> +       height="31.289837"
+> +       x="276.13297"
+> +       y="831.44263" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="295.67819"
+> +       y="852.98224"
+> +       id="text4138-6-2-6-1"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9-1-0"
+> +         x="295.67819"
+> +         y="852.98224"
+> +         style="font-size:15px;line-height:1.25">Device Driver</tspan></text>
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-2-6)"
+> +       d="m 623.05084,615.00104 0.51369,333.80219"
+> +       id="path4661-3-5"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="392.63568"
+> +       y="660.83667"
+> +       id="text4138-6-2-6-1-6-2-5"><tspan
+> +         sodipodi:role="line"
+> +         x="392.63568"
+> +         y="660.83667"
+> +         id="tspan4305"
+> +         style="font-size:15px;line-height:1.25">&lt;&lt;anom_file&gt;&gt;</tspan><tspan
+> +         sodipodi:role="line"
+> +         x="392.63568"
+> +         y="679.58667"
+> +         style="font-size:15px;line-height:1.25"
+> +         id="tspan1139">Queue FD</tspan></text>
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="389.92969"
+> +       y="587.44836"
+> +       id="text4138-6-2-6-1-6-2-56"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9-1-0-3-0-9"
+> +         x="389.92969"
+> +         y="587.44836"
+> +         style="font-size:15px;line-height:1.25">1</tspan></text>
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="528.64813"
+> +       y="600.08429"
+> +       id="text4138-6-2-6-1-6-3"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9-1-0-3-7"
+> +         x="528.64813"
+> +         y="600.08429"
+> +         style="font-size:15px;line-height:1.25">*</tspan></text>
+> +    <rect
+> +       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5-8-54)"
+> +       id="rect4136-3-6-5-7-4"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="128.74678"
+> +       y="80.648842"
+> +       transform="matrix(1.3745874,0,0,1.8929066,-132.7754,556.04505)" />
+> +    <rect
+> +       style="fill:url(#linearGradient5032-3-9-4);fill-opacity:1;stroke:#000000;stroke-width:1.07280123"
+> +       id="rect4136-2-6-3-4"
+> +       width="138.91039"
+> +       height="64.111"
+> +       x="42.321312"
+> +       y="704.8371" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="110.30745"
+> +       y="722.94025"
+> +       id="text4138-6-2-6-3"><tspan
+> +         sodipodi:role="line"
+> +         x="111.99202"
+> +         y="722.94025"
+> +         id="tspan4366"
+> +         style="font-size:15px;line-height:1.25;text-align:center;text-anchor:middle">other standard </tspan><tspan
+> +         sodipodi:role="line"
+> +         x="110.30745"
+> +         y="741.69025"
+> +         id="tspan4368"
+> +         style="font-size:15px;line-height:1.25;text-align:center;text-anchor:middle">framework</tspan><tspan
+> +         sodipodi:role="line"
+> +         x="110.30745"
+> +         y="760.44025"
+> +         style="font-size:15px;line-height:1.25;text-align:center;text-anchor:middle"
+> +         id="tspan6840">(crypto/nic/others)</tspan></text>
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-2-1-8)"
+> +       d="M 276.29661,849.04109 134.04449,771.90853"
+> +       id="path4661-3-4-8"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="313.70813"
+> +       y="730.06366"
+> +       id="text4138-6-2-6-36"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9-1-7"
+> +         x="313.70813"
+> +         y="730.06366"
+> +         style="font-size:10px;line-height:1.25">&lt;&lt;lkm&gt;&gt;</tspan></text>
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="259.53165"
+> +       y="797.8056"
+> +       id="text4138-6-2-6-1-6-2-5-7-5"><tspan
+> +         sodipodi:role="line"
+> +         x="259.53165"
+> +         y="797.8056"
+> +         style="font-size:15px;line-height:1.25;text-align:start;text-anchor:start"
+> +         id="tspan2357">uacce register api</tspan></text>
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="29.145819"
+> +       y="833.44244"
+> +       id="text4138-6-2-6-1-6-2-5-7-5-2"><tspan
+> +         sodipodi:role="line"
+> +         x="29.145819"
+> +         y="833.44244"
+> +         id="tspan4301"
+> +         style="font-size:15px;line-height:1.25">register to other subsystem</tspan></text>
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="301.20813"
+> +       y="597.29437"
+> +       id="text4138-6-2-6-36-1"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9-1-7-2"
+> +         x="301.20813"
+> +         y="597.29437"
+> +         style="font-size:10px;line-height:1.25">&lt;&lt;user_lib&gt;&gt;</tspan></text>
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="615.9505"
+> +       y="739.44012"
+> +       id="text4138-6-2-6-1-6-2-5-3"><tspan
+> +         sodipodi:role="line"
+> +         x="615.9505"
+> +         y="739.44012"
+> +         id="tspan4274-7"
+> +         style="font-size:15px;line-height:1.25">mmapped memory r/w interface</tspan></text>
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="371.01291"
+> +       y="529.23682"
+> +       id="text4138-6-2-6-1-6-2-5-36"><tspan
+> +         sodipodi:role="line"
+> +         x="371.01291"
+> +         y="529.23682"
+> +         id="tspan4305-3"
+> +         style="font-size:15px;line-height:1.25">wd user api</tspan></text>
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       d="m 328.19325,585.87943 0,-23.57142"
+> +       id="path4348"
+> +       inkscape:connector-curvature="0" />
+> +    <ellipse
+> +       style="opacity:1;fill:#ffffff;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0"
+> +       id="path4350"
+> +       cx="328.01468"
+> +       cy="551.95081"
+> +       rx="11.607142"
+> +       ry="10.357142" />
+> +    <path
+> +       style="opacity:0.444;fill:url(#linearGradient6836);fill-opacity:1;fill-rule:evenodd;stroke:none;stroke-width:1;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;filter:url(#filter5382)"
+> +       id="path4350-2"
+> +       sodipodi:type="arc"
+> +       sodipodi:cx="329.44327"
+> +       sodipodi:cy="553.37933"
+> +       sodipodi:rx="11.607142"
+> +       sodipodi:ry="10.357142"
+> +       sodipodi:start="0"
+> +       sodipodi:end="6.2509098"
+> +       d="m 341.05041,553.37933 a 11.607142,10.357142 0 0 1 -11.51349,10.35681 11.607142,10.357142 0 0 1 -11.69928,-10.18967 11.607142,10.357142 0 0 1 11.32469,-10.52124 11.607142,10.357142 0 0 1 11.88204,10.01988"
+> +       sodipodi:open="true" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="619.67596"
+> +       y="978.22363"
+> +       id="text4138-6-2-6-1-6-2-5-36-3"><tspan
+> +         sodipodi:role="line"
+> +         x="619.67596"
+> +         y="978.22363"
+> +         id="tspan4305-3-67"
+> +         style="font-size:15px;line-height:1.25">Device(Hardware)</tspan></text>
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-2-6-2)"
+> +       d="m 347.51164,865.4527 193.91929,99.10053"
+> +       id="path4661-3-5-1"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <rect
+> +       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5-8-5-0)"
+> +       id="rect4136-3-6-5-7-3-1"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="128.74678"
+> +       y="80.648842"
+> +       transform="matrix(1.3742742,0,0,0.97786395,278.26025,749.50952)" />
+> +    <rect
+> +       style="fill:url(#linearGradient5032-3-9-7-3);fill-opacity:1;stroke:#000000;stroke-width:0.74946606"
+> +       id="rect4136-2-6-3-6-0"
+> +       width="138.90868"
+> +       height="31.289839"
+> +       x="453.30197"
+> +       y="826.36682" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="493.68158"
+> +       y="847.90643"
+> +       id="text4138-6-2-6-1-5"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9-1-0-1"
+> +         x="493.68158"
+> +         y="847.90643"
+> +         style="font-size:15px;line-height:1.25;stroke-width:1px">IOMMU</tspan></text>
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-2-1-1)"
+> +       d="m 389.49372,755.46667 111.75324,68.4507"
+> +       id="path4661-3-4-85"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:sans-serif;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="427.70282"
+> +       y="776.91418"
+> +       id="text4138-6-2-6-1-6-2-5-7-5-0"><tspan
+> +         sodipodi:role="line"
+> +         x="427.70282"
+> +         y="776.91418"
+> +         style="font-size:15px;line-height:1.25;text-align:start;text-anchor:start;stroke-width:1px"
+> +         id="tspan2357-6">manage the driver iommu state</tspan></text>
+> +  </g>
+> +</svg>
+> diff --git a/Documentation/warpdrive/wd.svg b/Documentation/warpdrive/wd.svg
+> new file mode 100644
+> index 000000000000..87ab92ebfbc6
+> --- /dev/null
+> +++ b/Documentation/warpdrive/wd.svg
+> @@ -0,0 +1,526 @@
+> +<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+> +<!-- Created with Inkscape (http://www.inkscape.org/) -->
+> +
+> +<svg
+> +   xmlns:dc="http://purl.org/dc/elements/1.1/"
+> +   xmlns:cc="http://creativecommons.org/ns#"
+> +   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+> +   xmlns:svg="http://www.w3.org/2000/svg"
+> +   xmlns="http://www.w3.org/2000/svg"
+> +   xmlns:xlink="http://www.w3.org/1999/xlink"
+> +   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+> +   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+> +   width="210mm"
+> +   height="116mm"
+> +   viewBox="0 0 744.09449 411.02338"
+> +   id="svg2"
+> +   version="1.1"
+> +   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+> +   sodipodi:docname="wd.svg">
+> +  <defs
+> +     id="defs4">
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       id="linearGradient5026">
+> +      <stop
+> +         style="stop-color:#f2f2f2;stop-opacity:1;"
+> +         offset="0"
+> +         id="stop5028" />
+> +      <stop
+> +         style="stop-color:#f2f2f2;stop-opacity:0;"
+> +         offset="1"
+> +         id="stop5030" />
+> +    </linearGradient>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032-3"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="matrix(2.7384117,0,0,0.91666329,-952.8283,571.10143)" />
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter4169-3-5"
+> +       x="-0.031597666"
+> +       width="1.0631953"
+> +       y="-0.099812768"
+> +       height="1.1996255">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="1.3307599"
+> +         id="feGaussianBlur4171-6-3" />
+> +    </filter>
+> +    <marker
+> +       markerWidth="18.960653"
+> +       markerHeight="11.194658"
+> +       refX="9.4803267"
+> +       refY="5.5973287"
+> +       orient="auto"
+> +       id="marker4613">
+> +      <rect
+> +         y="-5.1589785"
+> +         x="5.8504119"
+> +         height="10.317957"
+> +         width="10.317957"
+> +         id="rect4212"
+> +         style="fill:#ffffff;stroke:#000000;stroke-width:0.69143367;stroke-miterlimit:4;stroke-dasharray:none"
+> +         transform="matrix(0.86111274,0.50841405,-0.86111274,0.50841405,0,0)">
+> +        <title
+> +           id="title4262">generation</title>
+> +      </rect>
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032-3-9"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="matrix(1.2452511,0,0,0.98513016,-190.95632,540.33156)" />
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2-1">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9-9"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2-6">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9-1"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2-1-8">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9-9-6"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2-1-8-8">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9-9-6-9"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-0">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-93"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-0-2">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-93-6"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-2-6-2">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-9-1-9"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032-3-8"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="matrix(1.0104674,0,0,1.0052679,-218.642,661.15448)" />
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter4169-3-5-8"
+> +       x="-0.031597666"
+> +       width="1.0631953"
+> +       y="-0.099812768"
+> +       height="1.1996255">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="1.3307599"
+> +         id="feGaussianBlur4171-6-3-9" />
+> +    </filter>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032-3-8-2"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="matrix(2.1450559,0,0,1.0052679,-521.97704,740.76422)" />
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter4169-3-5-8-5"
+> +       x="-0.031597666"
+> +       width="1.0631953"
+> +       y="-0.099812768"
+> +       height="1.1996255">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="1.3307599"
+> +         id="feGaussianBlur4171-6-3-9-1" />
+> +    </filter>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032-3-8-0"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="matrix(1.0104674,0,0,1.0052679,83.456748,660.20747)" />
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter4169-3-5-8-6"
+> +       x="-0.031597666"
+> +       width="1.0631953"
+> +       y="-0.099812768"
+> +       height="1.1996255">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="1.3307599"
+> +         id="feGaussianBlur4171-6-3-9-2" />
+> +    </filter>
+> +    <linearGradient
+> +       inkscape:collect="always"
+> +       xlink:href="#linearGradient5026"
+> +       id="linearGradient5032-3-84"
+> +       x1="353"
+> +       y1="211.3622"
+> +       x2="565.5"
+> +       y2="174.8622"
+> +       gradientUnits="userSpaceOnUse"
+> +       gradientTransform="matrix(1.9884948,0,0,0.94903536,-318.42665,564.37696)" />
+> +    <filter
+> +       inkscape:collect="always"
+> +       style="color-interpolation-filters:sRGB"
+> +       id="filter4169-3-5-4"
+> +       x="-0.031597666"
+> +       width="1.0631953"
+> +       y="-0.099812768"
+> +       height="1.1996255">
+> +      <feGaussianBlur
+> +         inkscape:collect="always"
+> +         stdDeviation="1.3307599"
+> +         id="feGaussianBlur4171-6-3-0" />
+> +    </filter>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-0-0">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-93-8"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +    <marker
+> +       markerWidth="11.227358"
+> +       markerHeight="12.355258"
+> +       refX="10"
+> +       refY="6.177629"
+> +       orient="auto"
+> +       id="marker4825-6-3">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path4757-1-1"
+> +         d="M 0.42024733,0.42806444 10.231357,6.3500844 0.24347733,11.918544"
+> +         style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
+> +    </marker>
+> +  </defs>
+> +  <sodipodi:namedview
+> +     id="base"
+> +     pagecolor="#ffffff"
+> +     bordercolor="#666666"
+> +     borderopacity="1.0"
+> +     inkscape:pageopacity="0.0"
+> +     inkscape:pageshadow="2"
+> +     inkscape:zoom="0.98994949"
+> +     inkscape:cx="457.47339"
+> +     inkscape:cy="250.14781"
+> +     inkscape:document-units="px"
+> +     inkscape:current-layer="layer1"
+> +     showgrid="false"
+> +     inkscape:window-width="1916"
+> +     inkscape:window-height="1033"
+> +     inkscape:window-x="0"
+> +     inkscape:window-y="22"
+> +     inkscape:window-maximized="0"
+> +     fit-margin-right="0.3" />
+> +  <metadata
+> +     id="metadata7">
+> +    <rdf:RDF>
+> +      <cc:Work
+> +         rdf:about="">
+> +        <dc:format>image/svg+xml</dc:format>
+> +        <dc:type
+> +           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+> +        <dc:title></dc:title>
+> +      </cc:Work>
+> +    </rdf:RDF>
+> +  </metadata>
+> +  <g
+> +     inkscape:label="Layer 1"
+> +     inkscape:groupmode="layer"
+> +     id="layer1"
+> +     transform="translate(0,-641.33861)">
+> +    <rect
+> +       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5)"
+> +       id="rect4136-3-6-5"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="128.74678"
+> +       y="80.648842"
+> +       transform="matrix(2.7384116,0,0,0.91666328,-284.06895,664.79751)" />
+> +    <rect
+> +       style="fill:url(#linearGradient5032-3);fill-opacity:1;stroke:#000000;stroke-width:1.02430749"
+> +       id="rect4136-2-6"
+> +       width="276.79272"
+> +       height="29.331528"
+> +       x="64.723419"
+> +       y="736.84473" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="78.223282"
+> +       y="756.79803"
+> +       id="text4138-6-2"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9"
+> +         x="78.223282"
+> +         y="756.79803"
+> +         style="font-size:15px;line-height:1.25">user application (running by the CPU</tspan></text>
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6)"
+> +       d="m 217.67507,876.6738 113.40331,45.0758"
+> +       id="path4661"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-0)"
+> +       d="m 208.10197,767.69811 0.29362,76.03656"
+> +       id="path4661-6"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <rect
+> +       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5-8)"
+> +       id="rect4136-3-6-5-3"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="128.74678"
+> +       y="80.648842"
+> +       transform="matrix(1.0104673,0,0,1.0052679,28.128628,763.90722)" />
+> +    <rect
+> +       style="fill:url(#linearGradient5032-3-8);fill-opacity:1;stroke:#000000;stroke-width:0.65159565"
+> +       id="rect4136-2-6-6"
+> +       width="102.13586"
+> +       height="32.16671"
+> +       x="156.83217"
+> +       y="842.91852" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="188.58519"
+> +       y="864.47125"
+> +       id="text4138-6-2-8"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9-0"
+> +         x="188.58519"
+> +         y="864.47125"
+> +         style="font-size:15px;line-height:1.25;stroke-width:1px">MMU</tspan></text>
+> +    <rect
+> +       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5-8-5)"
+> +       id="rect4136-3-6-5-3-1"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="128.74678"
+> +       y="80.648842"
+> +       transform="matrix(2.1450556,0,0,1.0052679,1.87637,843.51696)" />
+> +    <rect
+> +       style="fill:url(#linearGradient5032-3-8-2);fill-opacity:1;stroke:#000000;stroke-width:0.94937181"
+> +       id="rect4136-2-6-6-0"
+> +       width="216.8176"
+> +       height="32.16671"
+> +       x="275.09283"
+> +       y="922.5282" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="347.81482"
+> +       y="943.23291"
+> +       id="text4138-6-2-8-8"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9-0-5"
+> +         x="347.81482"
+> +         y="943.23291"
+> +         style="font-size:15px;line-height:1.25;stroke-width:1px">Memory</tspan></text>
+> +    <rect
+> +       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5-8-6)"
+> +       id="rect4136-3-6-5-3-5"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="128.74678"
+> +       y="80.648842"
+> +       transform="matrix(1.0104673,0,0,1.0052679,330.22737,762.9602)" />
+> +    <rect
+> +       style="fill:url(#linearGradient5032-3-8-0);fill-opacity:1;stroke:#000000;stroke-width:0.65159565"
+> +       id="rect4136-2-6-6-8"
+> +       width="102.13586"
+> +       height="32.16671"
+> +       x="458.93091"
+> +       y="841.9715" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="490.68393"
+> +       y="863.52423"
+> +       id="text4138-6-2-8-6"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9-0-2"
+> +         x="490.68393"
+> +         y="863.52423"
+> +         style="font-size:15px;line-height:1.25;stroke-width:1px">IOMMU</tspan></text>
+> +    <rect
+> +       style="fill:#000000;stroke:#000000;stroke-width:0.6465112;filter:url(#filter4169-3-5-4)"
+> +       id="rect4136-3-6-5-6"
+> +       width="101.07784"
+> +       height="31.998148"
+> +       x="128.74678"
+> +       y="80.648842"
+> +       transform="matrix(1.9884947,0,0,0.94903537,167.19229,661.38193)" />
+> +    <rect
+> +       style="fill:url(#linearGradient5032-3-84);fill-opacity:1;stroke:#000000;stroke-width:0.88813609"
+> +       id="rect4136-2-6-2"
+> +       width="200.99274"
+> +       height="30.367374"
+> +       x="420.4675"
+> +       y="735.97351" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:12px;line-height:0%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="441.95297"
+> +       y="755.9068"
+> +       id="text4138-6-2-9"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan4140-1-9-9"
+> +         x="441.95297"
+> +         y="755.9068"
+> +         style="font-size:15px;line-height:1.25;stroke-width:1px">Hardware Accelerator</tspan></text>
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-0-0)"
+> +       d="m 508.2914,766.55885 0.29362,76.03656"
+> +       id="path4661-6-1"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker4825-6-3)"
+> +       d="M 499.70201,876.47297 361.38296,920.80258"
+> +       id="path4661-1"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +  </g>
+> +</svg>
+> diff --git a/Documentation/warpdrive/wd_q_addr_space.svg b/Documentation/warpdrive/wd_q_addr_space.svg
+> new file mode 100644
+> index 000000000000..5e6cf8e89908
+> --- /dev/null
+> +++ b/Documentation/warpdrive/wd_q_addr_space.svg
+> @@ -0,0 +1,359 @@
+> +<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+> +<!-- Created with Inkscape (http://www.inkscape.org/) -->
+> +
+> +<svg
+> +   xmlns:dc="http://purl.org/dc/elements/1.1/"
+> +   xmlns:cc="http://creativecommons.org/ns#"
+> +   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+> +   xmlns:svg="http://www.w3.org/2000/svg"
+> +   xmlns="http://www.w3.org/2000/svg"
+> +   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+> +   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+> +   width="210mm"
+> +   height="124mm"
+> +   viewBox="0 0 210 124"
+> +   version="1.1"
+> +   id="svg8"
+> +   inkscape:version="0.92.3 (2405546, 2018-03-11)"
+> +   sodipodi:docname="wd_q_addr_space.svg">
+> +  <defs
+> +     id="defs2">
+> +    <marker
+> +       inkscape:stockid="Arrow1Mend"
+> +       orient="auto"
+> +       refY="0"
+> +       refX="0"
+> +       id="marker5428"
+> +       style="overflow:visible"
+> +       inkscape:isstock="true">
+> +      <path
+> +         id="path5426"
+> +         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+> +         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+> +         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+> +         inkscape:connector-curvature="0" />
+> +    </marker>
+> +    <marker
+> +       inkscape:isstock="true"
+> +       style="overflow:visible"
+> +       id="marker2922"
+> +       refX="0"
+> +       refY="0"
+> +       orient="auto"
+> +       inkscape:stockid="Arrow1Mend"
+> +       inkscape:collect="always">
+> +      <path
+> +         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+> +         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+> +         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+> +         id="path2920"
+> +         inkscape:connector-curvature="0" />
+> +    </marker>
+> +    <marker
+> +       inkscape:stockid="Arrow1Mstart"
+> +       orient="auto"
+> +       refY="0"
+> +       refX="0"
+> +       id="Arrow1Mstart"
+> +       style="overflow:visible"
+> +       inkscape:isstock="true">
+> +      <path
+> +         id="path840"
+> +         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+> +         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+> +         transform="matrix(0.4,0,0,0.4,4,0)"
+> +         inkscape:connector-curvature="0" />
+> +    </marker>
+> +    <marker
+> +       inkscape:stockid="Arrow1Mend"
+> +       orient="auto"
+> +       refY="0"
+> +       refX="0"
+> +       id="Arrow1Mend"
+> +       style="overflow:visible"
+> +       inkscape:isstock="true"
+> +       inkscape:collect="always">
+> +      <path
+> +         id="path843"
+> +         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+> +         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+> +         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+> +         inkscape:connector-curvature="0" />
+> +    </marker>
+> +    <marker
+> +       inkscape:stockid="Arrow1Mstart"
+> +       orient="auto"
+> +       refY="0"
+> +       refX="0"
+> +       id="Arrow1Mstart-5"
+> +       style="overflow:visible"
+> +       inkscape:isstock="true">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path840-1"
+> +         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+> +         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+> +         transform="matrix(0.4,0,0,0.4,4,0)" />
+> +    </marker>
+> +    <marker
+> +       inkscape:stockid="Arrow1Mend"
+> +       orient="auto"
+> +       refY="0"
+> +       refX="0"
+> +       id="Arrow1Mend-1"
+> +       style="overflow:visible"
+> +       inkscape:isstock="true">
+> +      <path
+> +         inkscape:connector-curvature="0"
+> +         id="path843-0"
+> +         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+> +         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+> +         transform="matrix(-0.4,0,0,-0.4,-4,0)" />
+> +    </marker>
+> +    <marker
+> +       inkscape:isstock="true"
+> +       style="overflow:visible"
+> +       id="marker2922-2"
+> +       refX="0"
+> +       refY="0"
+> +       orient="auto"
+> +       inkscape:stockid="Arrow1Mend"
+> +       inkscape:collect="always">
+> +      <path
+> +         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+> +         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+> +         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+> +         id="path2920-9"
+> +         inkscape:connector-curvature="0" />
+> +    </marker>
+> +    <marker
+> +       inkscape:isstock="true"
+> +       style="overflow:visible"
+> +       id="marker2922-27"
+> +       refX="0"
+> +       refY="0"
+> +       orient="auto"
+> +       inkscape:stockid="Arrow1Mend"
+> +       inkscape:collect="always">
+> +      <path
+> +         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+> +         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+> +         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+> +         id="path2920-0"
+> +         inkscape:connector-curvature="0" />
+> +    </marker>
+> +    <marker
+> +       inkscape:isstock="true"
+> +       style="overflow:visible"
+> +       id="marker2922-27-8"
+> +       refX="0"
+> +       refY="0"
+> +       orient="auto"
+> +       inkscape:stockid="Arrow1Mend"
+> +       inkscape:collect="always">
+> +      <path
+> +         transform="matrix(-0.4,0,0,-0.4,-4,0)"
+> +         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1.00000003pt;stroke-opacity:1"
+> +         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+> +         id="path2920-0-0"
+> +         inkscape:connector-curvature="0" />
+> +    </marker>
+> +  </defs>
+> +  <sodipodi:namedview
+> +     id="base"
+> +     pagecolor="#ffffff"
+> +     bordercolor="#666666"
+> +     borderopacity="1.0"
+> +     inkscape:pageopacity="0.0"
+> +     inkscape:pageshadow="2"
+> +     inkscape:zoom="1.4"
+> +     inkscape:cx="401.66654"
+> +     inkscape:cy="218.12255"
+> +     inkscape:document-units="mm"
+> +     inkscape:current-layer="layer1"
+> +     showgrid="false"
+> +     inkscape:window-width="1916"
+> +     inkscape:window-height="1033"
+> +     inkscape:window-x="0"
+> +     inkscape:window-y="22"
+> +     inkscape:window-maximized="0" />
+> +  <metadata
+> +     id="metadata5">
+> +    <rdf:RDF>
+> +      <cc:Work
+> +         rdf:about="">
+> +        <dc:format>image/svg+xml</dc:format>
+> +        <dc:type
+> +           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+> +        <dc:title />
+> +      </cc:Work>
+> +    </rdf:RDF>
+> +  </metadata>
+> +  <g
+> +     inkscape:label="Layer 1"
+> +     inkscape:groupmode="layer"
+> +     id="layer1"
+> +     transform="translate(0,-173)">
+> +    <rect
+> +       style="opacity:0.82999998;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.82745098"
+> +       id="rect815"
+> +       width="21.262758"
+> +       height="40.350552"
+> +       x="55.509361"
+> +       y="195.00098"
+> +       ry="0" />
+> +    <rect
+> +       style="opacity:0.82999998;fill:none;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.4;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:0.82745098"
+> +       id="rect815-1"
+> +       width="21.24276"
+> +       height="43.732346"
+> +       x="55.519352"
+> +       y="235.26543"
+> +       ry="0" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:2.9765625px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="50.549229"
+> +       y="190.6078"
+> +       id="text1118"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan1116"
+> +         x="50.549229"
+> +         y="190.6078"
+> +         style="stroke-width:0.26458332px">queue file address space</tspan></text>
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       d="M 76.818568,194.95453 H 97.229281"
+> +       id="path1126"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       d="M 76.818568,235.20899 H 96.095361"
+> +       id="path1126-8"
+> +       inkscape:connector-curvature="0" />
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       d="m 76.762111,278.99778 h 19.27678"
+> +       id="path1126-0"
+> +       inkscape:connector-curvature="0" />
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       d="m 55.519355,265.20165 v 19.27678"
+> +       id="path1126-2"
+> +       inkscape:connector-curvature="0" />
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       d="m 76.762111,265.20165 v 19.27678"
+> +       id="path1126-2-1"
+> +       inkscape:connector-curvature="0" />
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart);marker-end:url(#Arrow1Mend)"
+> +       d="m 87.590896,194.76554 0,39.87648"
+> +       id="path1126-2-1-0"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-start:url(#Arrow1Mstart-5);marker-end:url(#Arrow1Mend-1)"
+> +       d="m 82.48822,235.77596 v 42.90029"
+> +       id="path1126-2-1-0-8"
+> +       inkscape:connector-curvature="0"
+> +       sodipodi:nodetypes="cc" />
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker2922)"
+> +       d="M 44.123633,195.3325 H 55.651907"
+> +       id="path2912"
+> +       inkscape:connector-curvature="0" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:2.9765625px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="32.217381"
+> +       y="196.27745"
+> +       id="text2968"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan2966"
+> +         x="32.217381"
+> +         y="196.27745"
+> +         style="stroke-width:0.26458332px">offset 0</tspan></text>
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:2.9765625px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="91.199554"
+> +       y="216.03946"
+> +       id="text1118-5"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan1116-0"
+> +         x="91.199554"
+> +         y="216.03946"
+> +         style="stroke-width:0.26458332px">device region (mapped to device mmio or shared kernel driver memory)</tspan></text>
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:2.9765625px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="86.188072"
+> +       y="244.50081"
+> +       id="text1118-5-6"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan1116-0-4"
+> +         x="86.188072"
+> +         y="244.50081"
+> +         style="stroke-width:0.26458332px">static share virtual memory region (for device without share virtual memory)</tspan></text>
+> +    <flowRoot
+> +       xml:space="preserve"
+> +       id="flowRoot5699"
+> +       style="font-style:normal;font-weight:normal;font-size:11.25px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><flowRegion
+> +         id="flowRegion5701"><rect
+> +           id="rect5703"
+> +           width="5182.8569"
+> +           height="385.71429"
+> +           x="34.285713"
+> +           y="71.09111" /></flowRegion><flowPara
+> +         id="flowPara5705" /></flowRoot>    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker2922-2)"
+> +       d="M 43.679028,206.85268 H 55.207302"
+> +       id="path2912-1"
+> +       inkscape:connector-curvature="0" />
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker2922-27)"
+> +       d="M 44.057004,224.23959 H 55.585278"
+> +       id="path2912-9"
+> +       inkscape:connector-curvature="0" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:2.9765625px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="24.139778"
+> +       y="202.40636"
+> +       id="text1118-5-3"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan1116-0-6"
+> +         x="24.139778"
+> +         y="202.40636"
+> +         style="stroke-width:0.26458332px">device mmio region</tspan></text>
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:2.9765625px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="17.010948"
+> +       y="216.73672"
+> +       id="text1118-5-3-3"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan1116-0-6-6"
+> +         x="17.010948"
+> +         y="216.73672"
+> +         style="stroke-width:0.26458332px">device kernel only  region</tspan></text>
+> +    <path
+> +       style="fill:none;fill-rule:evenodd;stroke:#000000;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1;marker-end:url(#marker2922-27-8)"
+> +       d="M 43.981087,235.35153 H 55.509361"
+> +       id="path2912-9-2"
+> +       inkscape:connector-curvature="0" />
+> +    <text
+> +       xml:space="preserve"
+> +       style="font-style:normal;font-weight:normal;font-size:2.9765625px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.26458332px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+> +       x="17.575975"
+> +       y="230.53285"
+> +       id="text1118-5-3-3-0"><tspan
+> +         sodipodi:role="line"
+> +         id="tspan1116-0-6-6-5"
+> +         x="17.575975"
+> +         y="230.53285"
+> +         style="stroke-width:0.26458332px">device user share  region</tspan></text>
+> +  </g>
+> +</svg>
+> --
+> 2.17.1
+>
 
-Thanks,
-Ming
+--qSHHer9gQ0dtepKr
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJb6hmaAAoJEORje4g2clinZ2QP/1UaHpXcScUbLYdc5Esc21La
+rS+vAMZ2Z2Rz21+oy6ovkVu+5JJDMQbl5IWQZt664x6tsiW6TTzTJh7M7baam2+g
+ywh52o3qD6z9RHW9W5/D7y1w9biLD4JJ5CKVC4SRryKDweuuwX4ULtRItnTExoIw
+vnSN/wpKjkfizMPEdsEROpowdet325FSTNo77HNpEedEnt65yiV0PQpg+8YA8ZtM
+yyhlQMjAtUdbMRnrraz/AHEdJkIyshOoYrdda8o43m81j29Nhyt+YcVtiOqqXsWm
+x1pqIQFQqxKUPXysWpEoqcCmpC+9L39MYO4lyhf9WYdJBK/rrR0GgeqsOy7nwfAm
+RipIxsj0lvU+sUVm7Vnhw6cW08E85a72MwqRCSlqarPUQxlnil4hwP/hysV1cpCs
+o5wmF0K+vE/YnZKQkNzaoWf/o7pidf+8dPXOWJA94nQl0DZPvqOz+/5iG7wSSBeg
+gF+CZaTqHPfZJiJb+oJHSBhZJDAi8rQBQySeZpaf1h94U7yRZ2LucDLOps0Qub5O
+poVSq7mJ0f0ktV4Trg4RVkp1NWhPcpVSEiDMVqnnOjntF4+Y1eBIebEziVHvlTlm
+YGcFu9CuU4pFVySWg8skCI5NU39fe3I2DFnQy5trZWC+6G0olRN0zpM1GYn+Zknl
+RvNqZ+mGnfcsXjmppOWS
+=JJvw
+-----END PGP SIGNATURE-----
+
+--qSHHer9gQ0dtepKr--
