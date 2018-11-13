@@ -6,43 +6,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 356EFC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D6C2EC0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E005E22510
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 80BF722511
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OU7LH29g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E005E22510
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lUELW753"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80BF722511
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731283AbeKMPqz (ORCPT
+        id S1731252AbeKMPqy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:46:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60536 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731239AbeKMPqy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Nov 2018 10:46:54 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60502 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727357AbeKMPqx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:46:53 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BD182251A;
-        Tue, 13 Nov 2018 05:50:27 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 837E822511;
+        Tue, 13 Nov 2018 05:50:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088227;
-        bh=C9aVLNU462j8eTdtQUHD6X5OOfhZMbCEKLvpenRm8fU=;
+        s=default; t=1542088225;
+        bh=+a7Qa2HpEchv+tp6mkChiCk/B3o0lcew68WfAG2hB2Y=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OU7LH29gHIdypIP4qS4BpKtyhyClgSQN55/R3Y2n9dSjdNOk6LO5SVnqgg5f6TUoi
-         9Q7xE+PvC3H9+cMcE8H9ydyrwEUtIEuq2P3lQ6W5GeayGvUPWnOnoW+FnexE/wdsVJ
-         YN9guFTuwgdjc+bvcHcWbNsuEORWUwJsfrIDVqaM=
+        b=lUELW753BtU+Jsi9s0xjaRwh57TPQvibS4eBV9yg2P6ygi3FZAz1ofXnmTCuwUA7M
+         rM1ID+Av8HXvEus8lAvALTXjiki7bkItEgSQr40rudq70fbh/4nKZKmIRgMuwNU5h2
+         4gsDg1MV9B1/MZPbU+ILZUug4Fsw37wq65QnQHhs=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Richard Weinberger <richard@nod.at>,
-        Sasha Levin <sashal@kernel.org>, linux-um@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.19 20/44] um: Give start_idle_thread() a return code
-Date:   Tue, 13 Nov 2018 00:49:26 -0500
-Message-Id: <20181113054950.77898-20-sashal@kernel.org>
+Cc:     Milian Wolff <milian.wolff@kdab.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 19/44] perf unwind: Take pgoff into account when reporting elf to libdwfl
+Date:   Tue, 13 Nov 2018 00:49:25 -0500
+Message-Id: <20181113054950.77898-19-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
 References: <20181113054950.77898-1-sashal@kernel.org>
@@ -51,40 +52,197 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Richard Weinberger <richard@nod.at>
+From: Milian Wolff <milian.wolff@kdab.com>
 
-[ Upstream commit 7ff1e34bbdc15acab823b1ee4240e94623d50ee8 ]
+[ Upstream commit 1fe627da30331024f453faef04d500079b901107 ]
 
-Fixes:
-arch/um/os-Linux/skas/process.c:613:1: warning: control reaches end of
-non-void function [-Wreturn-type]
+libdwfl parses an ELF file itself and creates mappings for the
+individual sections. perf on the other hand sees raw mmap events which
+represent individual sections. When we encounter an address pointing
+into a mapping with pgoff != 0, we must take that into account and
+report the file at the non-offset base address.
 
-longjmp() never returns but gcc still warns that the end of the function
-can be reached.
-Add a return code and debug aid to detect this impossible case.
+This fixes unwinding with libdwfl in some cases. E.g. for a file like:
 
-Signed-off-by: Richard Weinberger <richard@nod.at>
+```
+
+using namespace std;
+
+mutex g_mutex;
+
+double worker()
+{
+    lock_guard<mutex> guard(g_mutex);
+    uniform_real_distribution<double> uniform(-1E5, 1E5);
+    default_random_engine engine;
+    double s = 0;
+    for (int i = 0; i < 1000; ++i) {
+        s += norm(complex<double>(uniform(engine), uniform(engine)));
+    }
+    cout << s << endl;
+    return s;
+}
+
+int main()
+{
+    vector<std::future<double>> results;
+    for (int i = 0; i < 10000; ++i) {
+        results.push_back(async(launch::async, worker));
+    }
+    return 0;
+}
+```
+
+Compile it with `g++ -g -O2 -lpthread cpp-locking.cpp  -o cpp-locking`,
+then record it with `perf record --call-graph dwarf -e
+sched:sched_switch`.
+
+When you analyze it with `perf script` and libunwind, you should see:
+
+```
+cpp-locking 20038 [005] 54830.236589: sched:sched_switch: prev_comm=cpp-locking prev_pid=20038 prev_prio=120 prev_state=T ==> next_comm=swapper/5 next_pid=0 next_prio=120
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1670208 schedule+0x28 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb16737cc rwsem_down_read_failed+0xec (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1665e04 call_rwsem_down_read_failed+0x14 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1672a03 down_read+0x13 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb106bd85 __do_page_fault+0x445 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb18015f5 page_fault+0x45 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+            7f38e4252591 new_heap+0x101 (/usr/lib/libc-2.28.so)
+            7f38e4252d0b arena_get2.part.4+0x2fb (/usr/lib/libc-2.28.so)
+            7f38e4255b1c tcache_init.part.6+0xec (/usr/lib/libc-2.28.so)
+            7f38e42569e5 __GI___libc_malloc+0x115 (inlined)
+            7f38e4241790 __GI__IO_file_doallocate+0x90 (inlined)
+            7f38e424fbbf __GI__IO_doallocbuf+0x4f (inlined)
+            7f38e424ee47 __GI__IO_file_overflow+0x197 (inlined)
+            7f38e424df36 _IO_new_file_xsputn+0x116 (inlined)
+            7f38e4242bfb __GI__IO_fwrite+0xdb (inlined)
+            7f38e463fa6d std::basic_streambuf<char, std::char_traits<char> >::sputn(char const*, long)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> >::_M_put(char const*, long)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::__write<char>(std::ostreambuf_iterator<char, std::char_traits<char> >, char const*, int)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::_M_insert_float<double>(std::ostreambuf_iterator<c>
+            7f38e464bd70 std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::put(std::ostreambuf_iterator<char, std::char_traits<char> >, std::ios_base&, char, double) const+0x90 (inl>
+            7f38e464bd70 std::ostream& std::ostream::_M_insert<double>(double)+0x90 (/usr/lib/libstdc++.so.6.0.25)
+            563b9cb502f7 std::ostream::operator<<(double)+0xb7 (inlined)
+            563b9cb502f7 worker()+0xb7 (/ssd/milian/projects/kdab/rnd/hotspot/build/tests/test-clients/cpp-locking/cpp-locking)
+            563b9cb506fb double std::__invoke_impl<double, double (*)()>(std::__invoke_other, double (*&&)())+0x2b (inlined)
+            563b9cb506fb std::__invoke_result<double (*)()>::type std::__invoke<double (*)()>(double (*&&)())+0x2b (inlined)
+            563b9cb506fb decltype (__invoke((_S_declval<0ul>)())) std::thread::_Invoker<std::tuple<double (*)()> >::_M_invoke<0ul>(std::_Index_tuple<0ul>)+0x2b (inlined)
+            563b9cb506fb std::thread::_Invoker<std::tuple<double (*)()> >::operator()()+0x2b (inlined)
+            563b9cb506fb std::__future_base::_Task_setter<std::unique_ptr<std::__future_base::_Result<double>, std::__future_base::_Result_base::_Deleter>, std::thread::_Invoker<std::tuple<double (*)()> >, dou>
+            563b9cb506fb std::_Function_handler<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> (), std::__future_base::_Task_setter<std::unique_ptr<std::__future_>
+            563b9cb507e8 std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>::operator()() const+0x28 (inlined)
+            563b9cb507e8 std::__future_base::_State_baseV2::_M_do_set(std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>*, bool*)+0x28 (/ssd/milian/>
+            7f38e46d24fe __pthread_once_slow+0xbe (/usr/lib/libpthread-2.28.so)
+            563b9cb51149 __gthread_once+0xe9 (inlined)
+            563b9cb51149 void std::call_once<void (std::__future_base::_State_baseV2::*)(std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>*, bool*)>
+            563b9cb51149 std::__future_base::_State_baseV2::_M_set_result(std::function<std::unique_ptr<std::__future_base::_Result_base, std::__future_base::_Result_base::_Deleter> ()>, bool)+0xe9 (inlined)
+            563b9cb51149 std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<double (*)()> >&&)::{lambda()#1}::op>
+            563b9cb51149 void std::__invoke_impl<void, std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<double>
+            563b9cb51149 std::__invoke_result<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<double (*)()> >>
+            563b9cb51149 decltype (__invoke((_S_declval<0ul>)())) std::thread::_Invoker<std::tuple<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_>
+            563b9cb51149 std::thread::_Invoker<std::tuple<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread::_Invoker<std::tuple<dou>
+            563b9cb51149 std::thread::_State_impl<std::thread::_Invoker<std::tuple<std::__future_base::_Async_state_impl<std::thread::_Invoker<std::tuple<double (*)()> >, double>::_Async_state_impl(std::thread>
+            7f38e45f0062 execute_native_thread_routine+0x12 (/usr/lib/libstdc++.so.6.0.25)
+            7f38e46caa9c start_thread+0xfc (/usr/lib/libpthread-2.28.so)
+            7f38e42ccb22 __GI___clone+0x42 (inlined)
+```
+
+Before this patch, using libdwfl, you would see:
+
+```
+cpp-locking 20038 [005] 54830.236589: sched:sched_switch: prev_comm=cpp-locking prev_pid=20038 prev_prio=120 prev_state=T ==> next_comm=swapper/5 next_pid=0 next_prio=120
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1670208 schedule+0x28 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb16737cc rwsem_down_read_failed+0xec (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1665e04 call_rwsem_down_read_failed+0x14 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1672a03 down_read+0x13 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb106bd85 __do_page_fault+0x445 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb18015f5 page_fault+0x45 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+            7f38e4252591 new_heap+0x101 (/usr/lib/libc-2.28.so)
+        a041161e77950c5c [unknown] ([unknown])
+```
+
+With this patch applied, we get a bit further in unwinding:
+
+```
+cpp-locking 20038 [005] 54830.236589: sched:sched_switch: prev_comm=cpp-locking prev_pid=20038 prev_prio=120 prev_state=T ==> next_comm=swapper/5 next_pid=0 next_prio=120
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb166fec5 __sched_text_start+0x545 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1670208 schedule+0x28 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb16737cc rwsem_down_read_failed+0xec (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1665e04 call_rwsem_down_read_failed+0x14 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb1672a03 down_read+0x13 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb106bd85 __do_page_fault+0x445 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+        ffffffffb18015f5 page_fault+0x45 (/lib/modules/4.14.78-1-lts/build/vmlinux)
+            7f38e4252591 new_heap+0x101 (/usr/lib/libc-2.28.so)
+            7f38e4252d0b arena_get2.part.4+0x2fb (/usr/lib/libc-2.28.so)
+            7f38e4255b1c tcache_init.part.6+0xec (/usr/lib/libc-2.28.so)
+            7f38e42569e5 __GI___libc_malloc+0x115 (inlined)
+            7f38e4241790 __GI__IO_file_doallocate+0x90 (inlined)
+            7f38e424fbbf __GI__IO_doallocbuf+0x4f (inlined)
+            7f38e424ee47 __GI__IO_file_overflow+0x197 (inlined)
+            7f38e424df36 _IO_new_file_xsputn+0x116 (inlined)
+            7f38e4242bfb __GI__IO_fwrite+0xdb (inlined)
+            7f38e463fa6d std::basic_streambuf<char, std::char_traits<char> >::sputn(char const*, long)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> >::_M_put(char const*, long)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::__write<char>(std::ostreambuf_iterator<char, std::char_traits<char> >, char const*, int)+0x1cd (inlined)
+            7f38e463fa6d std::ostreambuf_iterator<char, std::char_traits<char> > std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::_M_insert_float<double>(std::ostreambuf_iterator<c>
+            7f38e464bd70 std::num_put<char, std::ostreambuf_iterator<char, std::char_traits<char> > >::put(std::ostreambuf_iterator<char, std::char_traits<char> >, std::ios_base&, char, double) const+0x90 (inl>
+            7f38e464bd70 std::ostream& std::ostream::_M_insert<double>(double)+0x90 (/usr/lib/libstdc++.so.6.0.25)
+            563b9cb502f7 std::ostream::operator<<(double)+0xb7 (inlined)
+            563b9cb502f7 worker()+0xb7 (/ssd/milian/projects/kdab/rnd/hotspot/build/tests/test-clients/cpp-locking/cpp-locking)
+        6eab825c1ee3e4ff [unknown] ([unknown])
+```
+
+Note that the backtrace is still stopping too early, when compared to
+the nice results obtained via libunwind. It's unclear so far what the
+reason for that is.
+
+Committer note:
+
+Further comment by Milian on the thread started on the Link: tag below:
+
+ ---
+The remaining issue is due to a bug in elfutils:
+
+https://sourceware.org/ml/elfutils-devel/2018-q4/msg00089.html
+
+With both patches applied, libunwind and elfutils produce the same output for
+the above scenario.
+ ---
+
+Signed-off-by: Milian Wolff <milian.wolff@kdab.com>
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+Link: http://lkml.kernel.org/r/20181029141644.3907-1-milian.wolff@kdab.com
+Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/um/os-Linux/skas/process.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ tools/perf/util/unwind-libdw.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/um/os-Linux/skas/process.c b/arch/um/os-Linux/skas/process.c
-index c94c3bd70ccd..df4a985716eb 100644
---- a/arch/um/os-Linux/skas/process.c
-+++ b/arch/um/os-Linux/skas/process.c
-@@ -610,6 +610,11 @@ int start_idle_thread(void *stack, jmp_buf *switch_buf)
- 		fatal_sigsegv();
- 	}
- 	longjmp(*switch_buf, 1);
-+
-+	/* unreachable */
-+	printk(UM_KERN_ERR "impossible long jump!");
-+	fatal_sigsegv();
-+	return 0;
- }
+diff --git a/tools/perf/util/unwind-libdw.c b/tools/perf/util/unwind-libdw.c
+index 6f318b15950e..5eff9bfc5758 100644
+--- a/tools/perf/util/unwind-libdw.c
++++ b/tools/perf/util/unwind-libdw.c
+@@ -45,13 +45,13 @@ static int __report_module(struct addr_location *al, u64 ip,
+ 		Dwarf_Addr s;
  
- void initial_thread_cb_skas(void (*proc)(void *), void *arg)
+ 		dwfl_module_info(mod, NULL, &s, NULL, NULL, NULL, NULL, NULL);
+-		if (s != al->map->start)
++		if (s != al->map->start - al->map->pgoff)
+ 			mod = 0;
+ 	}
+ 
+ 	if (!mod)
+ 		mod = dwfl_report_elf(ui->dwfl, dso->short_name,
+-				      (dso->symsrc_filename ? dso->symsrc_filename : dso->long_name), -1, al->map->start,
++				      (dso->symsrc_filename ? dso->symsrc_filename : dso->long_name), -1, al->map->start - al->map->pgoff,
+ 				      false);
+ 
+ 	return mod && dwfl_addrmodule(ui->dwfl, ip) == mod ? 0 : -1;
 -- 
 2.17.1
 
