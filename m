@@ -2,165 +2,125 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5501C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:15:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76991C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:16:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 72B6022360
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:15:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="veWJFzSi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 72B6022360
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FA4C223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 16:16:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FA4C223AE
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727122AbeKNCOA (ORCPT
+        id S1729324AbeKNCPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 21:14:00 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:51580 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726517AbeKNCOA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 21:14:00 -0500
-Received: by mail-it1-f194.google.com with SMTP id m34-v6so19039577iti.1;
-        Tue, 13 Nov 2018 08:15:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=S8QvpyH6vUJ9Ri9ju8TQWAdaKiouWlPS/lDPTbT+PcM=;
-        b=veWJFzSi7zzDYP0N5gGrgN7RHJVNkh5OOr1GAGdadeBo4Plj9spouhqgI5C7QZ2QQ1
-         h1FyL33F7EVxmTffcbFOL9ena0HckX60qJmU6EOSWwXeKh23GSjzFtpDYG7B5BmFv+dU
-         hr/sx7PT/plkwOoiR+XGEi4YCvcr9jushw34XuhC/3qYSP5W3JIdKlc0SQ0XYhnB1ai0
-         yjBYVpNvoNFgR3Q1Hu8JyYS0vNp1Jt1VjWVmN//2PDpckk4zZVctpjLM4z4rLG6Gs5A1
-         v+beOO1a10kQFYCU5CO5pzwymoBJYvv+bPoYSTODXotiNIQfcqIEz/oQQ3YnqvEaKuGt
-         +oow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=S8QvpyH6vUJ9Ri9ju8TQWAdaKiouWlPS/lDPTbT+PcM=;
-        b=ZJdEN1GpeNoG/PVsU+Vimfqye0hKM1aAMCJPhTYITQ//grj12USdvXqLzED9Mr+HBs
-         SrQgZfRpWh9hamfpCM7TmrEfr2bNOmTGvI8Bq5CrP949PDqTX3VFaj9NcMAHQVg4t9q6
-         IKtG/3r4PMt8eUyLkgjoJxwr9M/bH81SKRy1v3tisD5PeX66KD7tAxaLGeIlfAnBSwm4
-         fGPB2pEubxfiKPNfFxUxD0L/oH5DrmDMGg3VqSGN3EFME9MLELyAJT04m/NN7c/k4J4k
-         cQnass4E78GpaRogVjpnFuAIEw4imxIvKhZ8SAhYBj/pgsH80XP4vkMHDWpKGeKmb3kb
-         Hu1Q==
-X-Gm-Message-State: AGRZ1gJGuSPDsIiEr6VOFt3X+PRXX8fLtX2bki7vScfYbFAS4ZUHAk7r
-        zhPsvoR75I0SJcl+aDd3AKI=
-X-Google-Smtp-Source: AJdET5fKTBjO1eTziipn6RtGKaHtAE7d59Ga1pWalOmv7ec6P3Xq+l82/TB9thK6h8MQA4SGPvPGQA==
-X-Received: by 2002:a24:fd09:: with SMTP id m9mr4170118ith.81.1542125714330;
-        Tue, 13 Nov 2018 08:15:14 -0800 (PST)
-Received: from svens-asus.arcx.com ([184.94.50.30])
-        by smtp.gmail.com with ESMTPSA id q16sm2316495iog.62.2018.11.13.08.15.13
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 08:15:13 -0800 (PST)
-From:   thesven73@gmail.com
-X-Google-Original-From: TheSven73@googlemail.com
-To:     svendev@arcx.com, siva.kallam@broadcom.com, prashant@broadcom.com,
-        mchan@broadcom.com
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, arnd@arndb.de
-Subject: [PATCH v1] tg3: optionally get mac address from devicetree
-Date:   Tue, 13 Nov 2018 11:15:08 -0500
-Message-Id: <20181113161508.7427-1-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
+        Tue, 13 Nov 2018 21:15:14 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38790 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726517AbeKNCPO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 21:15:14 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id EF873B614;
+        Tue, 13 Nov 2018 16:16:26 +0000 (UTC)
+Subject: Re: [PATCH] drivers/scsi/fnic/fnic_trace.c: Use vzalloc
+To:     James Bottomley <jejb@linux.vnet.ibm.com>,
+        John Garry <john.garry@huawei.com>,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>,
+        satishkh@cisco.com, sebaddel@cisco.com, kartilak@cisco.com,
+        martin.petersen@oracle.com
+Cc:     jrdr.linux@gmail.com, linux-scsi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com
+References: <5beae8ff.1c69fb81.bd59a.b7fa@mx.google.com>
+ <a34379dd-f6f0-b439-b6de-f2db142f1823@huawei.com>
+ <13d3418f-49d1-d683-48a6-cedbc073d86f@suse.de>
+ <1542125473.3042.6.camel@linux.vnet.ibm.com>
+From:   Johannes Thumshirn <jthumshirn@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=jthumshirn@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <c58db296-87ec-5aaf-f6ce-1115d5d2a2c1@suse.de>
+Date:   Tue, 13 Nov 2018 17:16:26 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <1542125473.3042.6.camel@linux.vnet.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the tg3 has a device node, and that node contains a valid
-mac address property, use that as the tg3's mac address.
+On 13/11/2018 17:11, James Bottomley wrote:
+> This is incorrect advice: there's no need to cast it to other *pointer*
+> types, but if you cast it to a non-pointer type (which this is doing)
+> the compiler will complain if there is no explicit cast.
 
-This behaviour was previously only present on SPARC, using a
-conditional compile (#ifdef CONFIG_SPARC), presumably because
-at the time, devicetree nodes for pci devices only worked on
-SPARC. However, this has recently been made universal, see
-commit 98d9f30c820d ("pci/of: Match PCI devices to OF nodes dynamically")
+Right, sorry for that and thanks for spotting it James.
 
-Devicetree example:
-(see Documentation/devicetree/bindings/pci/pci.txt)
-
-&pcie {
-	host@0 {
-		#address-cells = <3>;
-		#size-cells = <2>;
-		reg = <0 0 0 0 0>;
-		bcm5778: bcm5778@0 {
-			reg = <0 0 0 0 0>;
-			mac-address = [CA 11 AB 1E 10 01];
-		};
-	};
-};
-
-Signed-off-by: Sven Van Asbroeck <svendev@arcx.com>
----
- drivers/net/ethernet/broadcom/tg3.c | 29 +++++++++++++----------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
-
-diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-index 89295306f161..b60381a70454 100644
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -55,6 +55,7 @@
- #include <linux/hwmon.h>
- #include <linux/hwmon-sysfs.h>
- #include <linux/crc32poly.h>
-+#include <linux/of_net.h>
- 
- #include <net/checksum.h>
- #include <net/ip.h>
-@@ -16959,23 +16960,21 @@ static int tg3_get_invariants(struct tg3 *tp, const struct pci_device_id *ent)
- 	return err;
- }
- 
--#ifdef CONFIG_SPARC
--static int tg3_get_macaddr_sparc(struct tg3 *tp)
-+static int tg3_of_get_macaddr(struct tg3 *tp)
- {
--	struct net_device *dev = tp->dev;
--	struct pci_dev *pdev = tp->pdev;
--	struct device_node *dp = pci_device_to_OF_node(pdev);
--	const unsigned char *addr;
--	int len;
-+	struct device_node *np = pci_device_to_OF_node(tp->pdev);
-+	const void *mac;
- 
--	addr = of_get_property(dp, "local-mac-address", &len);
--	if (addr && len == ETH_ALEN) {
--		memcpy(dev->dev_addr, addr, ETH_ALEN);
--		return 0;
--	}
--	return -ENODEV;
-+	if (!np)
-+		return -ENODEV;
-+	mac = of_get_mac_address(np);
-+	if (!mac || !is_valid_ether_addr(mac))
-+		return -EINVAL;
-+	memcpy(tp->dev->dev_addr, mac, ETH_ALEN);
-+	return 0;
- }
- 
-+#ifdef CONFIG_SPARC
- static int tg3_get_default_macaddr_sparc(struct tg3 *tp)
- {
- 	struct net_device *dev = tp->dev;
-@@ -16992,10 +16991,8 @@ static int tg3_get_device_address(struct tg3 *tp)
- 	int addr_ok = 0;
- 	int err;
- 
--#ifdef CONFIG_SPARC
--	if (!tg3_get_macaddr_sparc(tp))
-+	if (!tg3_of_get_macaddr(tp))
- 		return 0;
--#endif
- 
- 	if (tg3_flag(tp, IS_SSB_CORE)) {
- 		err = ssb_gige_get_macaddr(tp->pdev, &dev->dev_addr[0]);
+Byte,
+	Johannes
 -- 
-2.17.1
-
+Johannes Thumshirn                                        SUSE Labs
+jthumshirn@suse.de                                +49 911 74053 689
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: Felix Imendörffer, Jane Smithard, Graham Norton
+HRB 21284 (AG Nürnberg)
+Key fingerprint = EC38 9CAB C2C4 F25D 8600 D0D0 0393 969D 2D76 0850
