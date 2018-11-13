@@ -2,88 +2,119 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB921C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:56:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F94CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:59:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 93707224E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:56:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93707224E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 3D3DF22513
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 14:59:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gw70dGXo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D3DF22513
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387897AbeKNAyz (ORCPT
+        id S1731360AbeKNA5y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 19:54:55 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:43731 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728718AbeKNAyz (ORCPT
+        Tue, 13 Nov 2018 19:57:54 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:41866 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728718AbeKNA5x (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 19:54:55 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by dkim.mimecast.com with ESMTP id uk-mta-56-9XoIgnlFNqi7TxvZ2EK5IA-1;
- Tue, 13 Nov 2018 14:56:21 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) by
- AcuMS.aculab.com (fd9f:af1c:a25b:0:43c:695e:880f:8750) with Microsoft SMTP
- Server (TLS) id 15.0.1347.2; Tue, 13 Nov 2018 14:56:27 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Tue, 13 Nov 2018 14:56:27 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     "'Li, Aubrey'" <aubrey.li@linux.intel.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Aubrey Li <aubrey.li@intel.com>
-CC:     "mingo@redhat.com" <mingo@redhat.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "hpa@zytor.com" <hpa@zytor.com>,
-        "ak@linux.intel.com" <ak@linux.intel.com>,
-        "tim.c.chen@linux.intel.com" <tim.c.chen@linux.intel.com>,
-        "arjan@linux.intel.com" <arjan@linux.intel.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [RFC PATCH v2 1/2] x86/fpu: detect AVX task
-Thread-Topic: [RFC PATCH v2 1/2] x86/fpu: detect AVX task
-Thread-Index: AQHUeii707Eilrmaj0KnTIFQLJW0yKVNgTLwgAAt84CAAB0EEA==
-Date:   Tue, 13 Nov 2018 14:56:27 +0000
-Message-ID: <8adbc254854244b383147b4a25353cb7@AcuMS.aculab.com>
-References: <1541610982-33478-1-git-send-email-aubrey.li@intel.com>
- <alpine.DEB.2.21.1811091121340.1519@nanos.tec.linutronix.de>
- <657a9ee9-bb27-968a-34ae-e25df6c2fff9@linux.intel.com>
- <25dd33ee964f4de5ae33a1575e1bf47f@AcuMS.aculab.com>
- <2229f120-cb11-8f8e-f27d-eabc94457cd5@linux.intel.com>
-In-Reply-To: <2229f120-cb11-8f8e-f27d-eabc94457cd5@linux.intel.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Tue, 13 Nov 2018 19:57:53 -0500
+Received: by mail-yw1-f66.google.com with SMTP id c126-v6so5866186ywd.8;
+        Tue, 13 Nov 2018 06:59:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=AeGC0ZPWGLv8jVLfgprlpkfxTGPkh2MoYONkBrp8rZY=;
+        b=Gw70dGXoeRl46mCQiQuX3RgucFC0zi4/gQJQOK7dVewABV5scvtySycuszODqUgw+B
+         A6HDtsub1QBnzi9JNFH3qTJYwBzAOCHhb6cx9eVOXToCoMjvWbXl1rBkww6F2NxYrXp0
+         GjwJZUfg05NMy8zeqX/RFHTNsVMHQUDM39upfeM+ragV9JVzBVHSegWMjLCGtY7KOQVy
+         1eeTK/f7oWyI7b51EZqx5e1dlJ8c1tWF0nhS2KP28oWMX+lMHNTXoF1eyqHVmod9jc5S
+         R/r7XuNm/Hpo1Mcv7r3H8MnLFMlgHJMawto72YoB6lfASg9BUaFlODL4X+xXDSrxd+F6
+         QTdQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=AeGC0ZPWGLv8jVLfgprlpkfxTGPkh2MoYONkBrp8rZY=;
+        b=scZlAoP+MET0abIFxA8tLHNm7k3mA3V3xc563XxtgEM6JSXfQMJmMvu6F7tvEYZTae
+         D0a0AS/TkLDTi+h2Ws85EAyb8DItSf+HmpLRry5yEUE2N4fMdTfXyPq09FMb7KqW8D6I
+         bKWEWkQ91HF1CSltyyvmlbtd/zEI0VsTBMcKL3bSl9hkFxk0A3UBHhJdWjH3vbByQPXD
+         hUaCeFOaZAbxBSxT4bIu9Gdv7ck2HUf/DUb7jkMyb+kVy0Nt7jJPOmoU29ssmzxAy8I0
+         PwaTR22WXfqjEsNCLoxq8QJ3Q2ROHt/22ELWJZlxlFDANCR8KtWVJJ3oWCHYtDAy5BFV
+         fecw==
+X-Gm-Message-State: AGRZ1gLWGEWJdX73x6/CLAuljq0CcBUpuRSqqo1CLU4DL63gYs+0dIFa
+        HJOnxgs2dXTIKItVxkMt/Z0O1wo9F4gacfb3JHw=
+X-Google-Smtp-Source: AJdET5esVg/6d7XH+I4yGHzjcQegGIxwM/dHg9zjxZSog9XcwXOiOWwojhs8JHMdQy9YAEaWkNDVJJmL8K0N7TMHxJE=
+X-Received: by 2002:a0d:e810:: with SMTP id r16-v6mr5160126ywe.36.1542121161057;
+ Tue, 13 Nov 2018 06:59:21 -0800 (PST)
 MIME-Version: 1.0
-X-MC-Unique: 9XoIgnlFNqi7TxvZ2EK5IA-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: base64
+References: <1541093567-29205-1-git-send-email-martin@kaiser.cx>
+ <20181104144614.GJ26016@tiger> <20181105091230.z2ooz7olbdpopxyd@viti.kaiser.cx>
+ <20181113144209.GB4557@dragon>
+In-Reply-To: <20181113144209.GB4557@dragon>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Tue, 13 Nov 2018 15:59:09 +0100
+Message-ID: <CAJiuCcc1dh9CYO1QcTUOfUPZdjZng80GX=0PiX+cQQ-m4=vq_g@mail.gmail.com>
+Subject: Re: [PATCH] ARM: dts: i.MX25: add the clocks for the EPIT blocks
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     martin@kaiser.cx, Sascha Hauer <s.hauer@pengutronix.de>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-RnJvbTogTGksIEF1YnJleQ0KPiBTZW50OiAxMyBOb3ZlbWJlciAyMDE4IDEzOjA3DQouLi4NCj4g
-PiBJc24ndCB0aGVyZSBhbiBvYnZpb3VzIG9wdGltaXNhdGlvbiB0byBleGVjdXRlIFZaRVJPQUxM
-IGR1cmluZyBzeXN0ZW0gY2FsbA0KPiA+IGVudHJ5Pw0KPiANCj4gSSdtIG5vdCBhd2FyZSBvZiB0
-aGlzIGluIHRoZSBrZXJuZWwsIG1heWJlIHlvdSBhcmUgdGFsa2luZyBhYm91dCBzb21lDQo+IG9w
-dGltaXphdGlvbiBpbiBnbGliYz8NCg0KSSd2ZSBub3Qgc2VlbiBpdCBhbnl3aGVyZSBlaXRoZXIu
-DQoNCklJUkMgYWxsIHRoZSB4bW0gYW5kIHltbSByZWdpc3RlcnMgYXJlICdjYWxsZXIgc2F2ZWQn
-Lg0KU2luY2Ugc3lzdGVtIGNhbGxzIGFsbCBsb29rIGxpa2UgZnVuY3Rpb24gY2FsbHMgdGhlIGNv
-bXBpbGVyDQpoYXMgdG8gYXNzdW1lIHRoYXQgdGhlIHJlZ2lzdGVycyBjYW4gYmUgbW9kaWZpZWQu
-DQpUaGlzIG1lYW5zIHRoYXQgaXQgaXMgc2FmZSBmb3IgdGhlIHN5c3RlbSBjYWxsIGNvZGUgdG8g
-Y2hhbmdlIHRoZW0uDQpJdCBtdXN0bid0IGxlYWsga2VybmVsIHZhbHVlcyBvdXQgdG8gdXNlcnNw
-YWNlLCBidXQgaXQgY2FuIHplcm8gdGhlbS4NCg0KU28gYWRkaW5nIFZaRVJPQUxMIG9uIHN5c3Rl
-bSBjYWxsIGVudHJ5IHdvdWxkIHNhdmUgdGhlIEZQIHNhdmUgY29kZSBoYXZpbmcNCnRvIHNhdmUg
-YW5kIHJlc3RvcmUgYW55IG9mIHRoZSB4bW0veW1tIHJlZ2lzdGVycy4NCklJUkMgdGhlIGhhcmR3
-YXJlIGp1c3Qgc2F2ZXMgYSBmbGFnIGluZGljYXRpbmcgdGhhdCB0aGV5IGFyZSBhbGwgemVyby4N
-Cg0KQWxsIHRoZSByZWdpc3RlcnMgZG8gbmVlZCBzYXZpbmcgaWYgdGhlIGtlcm5lbCBpcyBlbnRl
-cmVkIGJ5IGFuDQppbnRlcnJ1cHQgb3IgZmF1bHQuDQoNCglEYXZpZA0KDQotDQpSZWdpc3RlcmVk
-IEFkZHJlc3MgTGFrZXNpZGUsIEJyYW1sZXkgUm9hZCwgTW91bnQgRmFybSwgTWlsdG9uIEtleW5l
-cywgTUsxIDFQVCwgVUsNClJlZ2lzdHJhdGlvbiBObzogMTM5NzM4NiAoV2FsZXMpDQo=
+Hi Shawn,
 
+On Tue, 13 Nov 2018 at 15:42, Shawn Guo <shawnguo@kernel.org> wrote:
+>
+> On Mon, Nov 05, 2018 at 10:12:30AM +0100, Martin Kaiser wrote:
+> > Hi,
+> >
+> > Thus wrote Shawn Guo (shawnguo@kernel.org):
+> >
+> > > On Thu, Nov 01, 2018 at 06:32:47PM +0100, Martin Kaiser wrote:
+> > > > The i.MX25 contains two EPIT (Enhanced Periodic Interrupt Timer)
+> > > > function blocks. Add their ipg and per clocks to the device tree.
+> >
+> > > > Signed-off-by: Martin Kaiser <martin@kaiser.cx>
+Acked-by: Cl=C3=A9ment P=C3=A9ron <peron.clem@gmail.com>
+> >
+> > > Are these EPIT devices actually used in upstream kernel, or just
+> > > somewhere else?
+> >
+> > Until I saw Vladimir's mail this morning, I wasn't aware of any mainlin=
+e
+> > driver that's using the EPIT devices. I found that the clocks are
+> > missing when I tried to use EPIT with a company-internal driver that's
+> > not suitable for mainline integration.
+> >
+> > Still, I think that merging this patch does no harm. If the EPIT device=
+s
+> > are present in the DT, we should add all resources they're using.
+>
+> Agreed.  I will be happy to apply the patch if I can get an ACK from
+> Cl=C3=A9ment saying this works with his driver in upstreaming.
+
+I have paused the dev of this driver for now, but this is fine for me.
+
+Regards,
+Clement
+
+>
+> Shawn
