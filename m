@@ -4,441 +4,264 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D1A5C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:23:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F1FBC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:26:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D24A9223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:23:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D24A9223AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id C77D3223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:26:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C77D3223AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727188AbeKNHXE (ORCPT
+        id S1727867AbeKNH0L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 02:23:04 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39176 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725750AbeKNHXD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 02:23:03 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1345E2D81A;
-        Tue, 13 Nov 2018 21:23:03 +0000 (UTC)
-Received: from [10.36.116.180] (ovpn-116-180.ams2.redhat.com [10.36.116.180])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9D54260851;
-        Tue, 13 Nov 2018 21:22:59 +0000 (UTC)
-Subject: Re: [PATCH] vfio/pci: Parallelize device open and release
-To:     Alex Williamson <alex.williamson@redhat.com>
-Cc:     kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        christian.ehrhardt@canonical.com
-References: <154180134334.31154.16289123769826098135.stgit@gimli.home>
- <48822457-863a-77fc-01b9-f9eca7190435@redhat.com>
- <20181113093439.3162b977@x1.home>
-From:   Auger Eric <eric.auger@redhat.com>
-Message-ID: <39df7602-b876-901f-3938-f1eccafa6a49@redhat.com>
-Date:   Tue, 13 Nov 2018 22:22:58 +0100
+        Wed, 14 Nov 2018 02:26:11 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:33344 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725813AbeKNH0L (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 02:26:11 -0500
+Received: from pps.filterd (m0098421.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wADLIbGs130852
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 16:26:09 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nr3nmq0b8-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 16:26:09 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <stefanb@linux.ibm.com>;
+        Tue, 13 Nov 2018 21:26:08 -0000
+Received: from b01cxnp23034.gho.pok.ibm.com (9.57.198.29)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Tue, 13 Nov 2018 21:26:04 -0000
+Received: from b01ledav004.gho.pok.ibm.com (b01ledav004.gho.pok.ibm.com [9.57.199.109])
+        by b01cxnp23034.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wADLQ35q24182864
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 13 Nov 2018 21:26:03 GMT
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 846B111206B;
+        Tue, 13 Nov 2018 21:26:03 +0000 (GMT)
+Received: from b01ledav004.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 66CEB112065;
+        Tue, 13 Nov 2018 21:26:03 +0000 (GMT)
+Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
+        by b01ledav004.gho.pok.ibm.com (Postfix) with ESMTP;
+        Tue, 13 Nov 2018 21:26:03 +0000 (GMT)
+Subject: Re: [PATCH v7 16/17] tpm: take TPM chip power gating out of
+ tpm_transmit()
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181113183620.27447-1-jarkko.sakkinen@linux.intel.com>
+ <20181113183620.27447-17-jarkko.sakkinen@linux.intel.com>
+From:   Stefan Berger <stefanb@linux.ibm.com>
+Date:   Tue, 13 Nov 2018 16:26:03 -0500
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+ Thunderbird/60.0
 MIME-Version: 1.0
-In-Reply-To: <20181113093439.3162b977@x1.home>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+In-Reply-To: <20181113183620.27447-17-jarkko.sakkinen@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Tue, 13 Nov 2018 21:23:03 +0000 (UTC)
+Content-Language: en-MW
+X-TM-AS-GCONF: 00
+x-cbid: 18111321-0072-0000-0000-000003C83E61
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010043; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01117005; UDB=6.00577118; IPR=6.00897113;
+ MB=3.00024147; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-13 21:26:07
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111321-0073-0000-0000-00004A190D0D
+Message-Id: <ee6b0c58-bc76-aa98-6e23-74d14ec7e2bc@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_14:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1807170000 definitions=main-1811130192
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Alex,
+On 11/13/18 1:36 PM, Jarkko Sakkinen wrote:
+> Call tpm_chip_start() and tpm_chip_stop() in
+>
+> * tpm_try_get_ops() and tpm_put_ops()
+> * tpm_chip_register()
+> * tpm2_del_space()
+>
+> And remove these calls from tpm_transmit(). The core reason for this
+> change is that in tpm_vtpm_proxy a locality change requires a virtual
+> TPM command (a command made up just for that driver).
+>
+> The consequence of this is that this commit removes the remaining nested
+> calls.
+>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>   drivers/char/tpm/tpm-chip.c       | 19 ++++++-------------
+>   drivers/char/tpm/tpm-interface.c  |  4 ----
+>   drivers/char/tpm/tpm.h            |  9 ---------
+>   drivers/char/tpm/tpm2-space.c     |  5 ++++-
+>   drivers/char/tpm/tpm_vtpm_proxy.c |  3 +--
+>   5 files changed, 11 insertions(+), 29 deletions(-)
+>
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 65f1561eba81..87570182f75e 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -41,9 +41,6 @@ static int tpm_request_locality(struct tpm_chip *chip, unsigned int flags)
+>   {
+>   	int rc;
+>
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+>   	if (!chip->ops->request_locality)
+>   		return 0;
+>
+> @@ -59,9 +56,6 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
+>   {
+>   	int rc;
+>
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return;
+> -
+>   	if (!chip->ops->relinquish_locality)
+>   		return;
+>
+> @@ -74,9 +68,6 @@ static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned int flags)
+>
+>   static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
+>   {
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+>   	if (!chip->ops->cmd_ready)
+>   		return 0;
+>
+> @@ -85,9 +76,6 @@ static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
+>
+>   static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
+>   {
+> -	if (flags & TPM_TRANSMIT_NESTED)
+> -		return 0;
+> -
+>   	if (!chip->ops->go_idle)
+>   		return 0;
+>
+> @@ -169,7 +157,7 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+>   		goto out_lock;
+>
+>   	mutex_lock(&chip->tpm_mutex);
+> -	return 0;
+> +	return tpm_chip_start(chip, 0);
 
-On 11/13/18 5:34 PM, Alex Williamson wrote:
-> On Tue, 13 Nov 2018 15:42:49 +0100
-> Auger Eric <eric.auger@redhat.com> wrote:
-> 
->> Hi Alex,
->>
->> On 11/9/18 11:09 PM, Alex Williamson wrote:
->>> In commit 61d792562b53 ("vfio-pci: Use mutex around open, release, and
->>> remove") a mutex was added to freeze the refcnt for a device so that
->>> we can handle errors and perform bus resets on final close.  However,
->>> bus resets can be rather slow and a global mutex here is undesirable.
->>> A per-device mutex provides the best granularity, but then our chances
->>> of triggering a bus/slot reset with multiple affected devices is slim
->>> when devices are released in parallel.  
->> Sorry I don't get the above sentence.
-> 
-> There's a locking granularity question here, where currently we're
-> locking at a global level.  If I want to reduce that granularity, it
-> seems the obvious question is what minimum granularity can we achieve.
-> A per-device lock it technically that minimum for the purposes of
-> serializing the device around open/release, but then concurrent
-> releases don't necessarily provide us the opportunity to perform a bus
-> reset affecting multiple devices since all the devices are racing each
-> other.  Therefore I conclude that a bus/slot locking granularity
-> provides us the best compromise of granularity vs functionality.
 
-Hum. My understanding was that you need to make sure the refcnt of the
-set of devices attached to the bus/slot must be frozen when making the
-decision to reset the bus/slot, hence the lock at bus/slot level. Need
-to digest more.
-> 
->>   Instead create a reflck object
->>> shared among all devices under the same bus or slot, allowing devices
->>> on independent buses to be released in parallel while serializing per  
->>> bus/slot.>  
->>> Reported-by: Christian Ehrhardt <christian.ehrhardt@canonical.com>
->>> Tested-by: Christian Ehrhardt <christian.ehrhardt@canonical.com>
->>> Signed-off-by: Alex Williamson <alex.williamson@redhat.com>
->>> ---
->>>  drivers/vfio/pci/vfio_pci.c         |  157 ++++++++++++++++++++++++++++++-----
->>>  drivers/vfio/pci/vfio_pci_private.h |    6 +
->>>  2 files changed, 139 insertions(+), 24 deletions(-)
->>>
->>> diff --git a/drivers/vfio/pci/vfio_pci.c b/drivers/vfio/pci/vfio_pci.c
->>> index 50cdedfca9fe..d443fb7a4e75 100644
->>> --- a/drivers/vfio/pci/vfio_pci.c
->>> +++ b/drivers/vfio/pci/vfio_pci.c
->>> @@ -56,8 +56,6 @@ module_param(disable_idle_d3, bool, S_IRUGO | S_IWUSR);
->>>  MODULE_PARM_DESC(disable_idle_d3,
->>>  		 "Disable using the PCI D3 low power state for idle, unused devices");
->>>  
->>> -static DEFINE_MUTEX(driver_lock);
->>> -
->>>  static inline bool vfio_vga_disabled(void)
->>>  {
->>>  #ifdef CONFIG_VFIO_PCI_VGA
->>> @@ -393,14 +391,14 @@ static void vfio_pci_release(void *device_data)
->>>  {
->>>  	struct vfio_pci_device *vdev = device_data;
->>>  
->>> -	mutex_lock(&driver_lock);
->>> +	mutex_lock(&vdev->reflck->lock);
->>>  
->>>  	if (!(--vdev->refcnt)) {
->>>  		vfio_spapr_pci_eeh_release(vdev->pdev);
->>>  		vfio_pci_disable(vdev);
->>>  	}
->>>  
->>> -	mutex_unlock(&driver_lock);
->>> +	mutex_unlock(&vdev->reflck->lock);
->>>  
->>>  	module_put(THIS_MODULE);
->>>  }
->>> @@ -413,7 +411,7 @@ static int vfio_pci_open(void *device_data)
->>>  	if (!try_module_get(THIS_MODULE))
->>>  		return -ENODEV;
->>>  
->>> -	mutex_lock(&driver_lock);
->>> +	mutex_lock(&vdev->reflck->lock);
->>>  
->>>  	if (!vdev->refcnt) {
->>>  		ret = vfio_pci_enable(vdev);
->>> @@ -424,7 +422,7 @@ static int vfio_pci_open(void *device_data)
->>>  	}
->>>  	vdev->refcnt++;
->>>  error:
->>> -	mutex_unlock(&driver_lock);
->>> +	mutex_unlock(&vdev->reflck->lock);
->>>  	if (ret)
->>>  		module_put(THIS_MODULE);
->>>  	return ret;
->>> @@ -1187,6 +1185,9 @@ static const struct vfio_device_ops vfio_pci_ops = {
->>>  	.request	= vfio_pci_request,
->>>  };
->>>  
->>> +static int vfio_pci_reflck_attach(struct vfio_pci_device *vdev);
->>> +static void vfio_pci_reflck_put(struct vfio_pci_reflck *reflck);
->>> +
->>>  static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>>  {
->>>  	struct vfio_pci_device *vdev;
->>> @@ -1233,6 +1234,14 @@ static int vfio_pci_probe(struct pci_dev *pdev, const struct pci_device_id *id)
->>>  		return ret;
->>>  	}
->>>  
->>> +	ret = vfio_pci_reflck_attach(vdev);
->>> +	if (ret) {
->>> +		vfio_del_group_dev(&pdev->dev);
->>> +		vfio_iommu_group_put(group, &pdev->dev);
->>> +		kfree(vdev);
->>> +		return ret;
->>> +	}
->>> +
->>>  	if (vfio_pci_is_vga(pdev)) {
->>>  		vga_client_register(pdev, vdev, NULL, vfio_pci_set_vga_decode);
->>>  		vga_set_legacy_decoding(pdev,
->>> @@ -1264,6 +1273,8 @@ static void vfio_pci_remove(struct pci_dev *pdev)
->>>  	if (!vdev)
->>>  		return;
->>>  
->>> +	vfio_pci_reflck_put(vdev->reflck);
->>> +
->>>  	vfio_iommu_group_put(pdev->dev.iommu_group, &pdev->dev);
->>>  	kfree(vdev->region);
->>>  	mutex_destroy(&vdev->ioeventfds_lock);
->>> @@ -1320,16 +1331,97 @@ static struct pci_driver vfio_pci_driver = {
->>>  	.err_handler	= &vfio_err_handlers,
->>>  };
->>>  
->>> +static DEFINE_MUTEX(reflck_lock);
->>> +
->>> +static struct vfio_pci_reflck *vfio_pci_reflck_alloc(void)
->>> +{
->>> +	struct vfio_pci_reflck *reflck;
->>> +
->>> +	reflck = kzalloc(sizeof(*reflck), GFP_KERNEL);
->>> +	if (!reflck)
->>> +		return ERR_PTR(-ENOMEM);
->>> +
->>> +	kref_init(&reflck->kref);
->>> +	mutex_init(&reflck->lock);
->>> +
->>> +	return reflck;
->>> +}
->>> +
->>> +static void vfio_pci_reflck_get(struct vfio_pci_reflck *reflck)
->>> +{
->>> +	kref_get(&reflck->kref);
->>> +}
->>> +
->>> +static int vfio_pci_reflck_find(struct pci_dev *pdev, void *data)
->>> +{
->>> +	struct vfio_pci_reflck **preflck = data;
->>> +	struct vfio_device *device;
->>> +	struct vfio_pci_device *vdev;
->>> +
->>> +	device = vfio_device_get_from_dev(&pdev->dev);
->>> +	if (!device)
->>> +		return 0;
->>> +
->>> +	if (pci_dev_driver(pdev) != &vfio_pci_driver) {
->>> +		vfio_device_put(device);
->>> +		return 0;
->>> +	}
->>> +
->>> +	vdev = vfio_device_data(device);
->>> +
->>> +	if (vdev->reflck) {
->>> +		vfio_pci_reflck_get(vdev->reflck);
->>> +		*preflck = vdev->reflck;
->>> +		vfio_device_put(device);
->>> +		return 1;
->>> +	}
->>> +
->>> +	vfio_device_put(device);
->>> +	return 0;
->>> +}
->>> +
->>> +static int vfio_pci_reflck_attach(struct vfio_pci_device *vdev)
->>> +{
->>> +	bool slot = !pci_probe_reset_slot(vdev->pdev->slot);
->>> +
->>> +	mutex_lock(&reflck_lock);
->>> +
->>> +	if (pci_is_root_bus(vdev->pdev->bus) ||
->>> +	    vfio_pci_for_each_slot_or_bus(vdev->pdev, vfio_pci_reflck_find,
->>> +					  &vdev->reflck, slot) <= 0)  
->> !vfio_pci_for_each_slot_or_bus(vdev->pdev, vfio_pci_reflck_find,
->> 					  &vdev->reflck, slot)?
->> I don't think we can have negative returned value.
-> 
-> Correct, our callback function does not return a negative, but it's
-> certainly within the framework of this callback to do so.  I thought it
-> was more consistent with the framework to handle that case so we don't
-> overlook it in the future should the callback function change.
-fair enough
-> 
->>> +		vdev->reflck = vfio_pci_reflck_alloc();
->>> +
->>> +	mutex_unlock(&reflck_lock);
->>> +
->>> +	return IS_ERR(vdev->reflck) ? PTR_ERR(vdev->reflck) : 0;
->>> +}
->>> +
->>> +static void vfio_pci_reflck_release(struct kref *kref)
->>> +{
->>> +	struct vfio_pci_reflck *reflck = container_of(kref,
->>> +						      struct vfio_pci_reflck,
->>> +						      kref);
->>> +
->>> +	kfree(reflck);
->>> +	mutex_unlock(&reflck_lock);
->>> +}
->>> +
->>> +static void vfio_pci_reflck_put(struct vfio_pci_reflck *reflck)
->>> +{
->>> +	kref_put_mutex(&reflck->kref, vfio_pci_reflck_release, &reflck_lock);
->>> +}
->>> +
->>>  struct vfio_devices {
->>>  	struct vfio_device **devices;
->>>  	int cur_index;
->>>  	int max_index;
->>>  };
->>>  
->>> -static int vfio_pci_get_devs(struct pci_dev *pdev, void *data)
->>> +static int vfio_pci_get_unused_devs(struct pci_dev *pdev, void *data)
->>>  {
->>>  	struct vfio_devices *devs = data;
->>>  	struct vfio_device *device;
->>> +	struct vfio_pci_device *vdev;
->>>  
->>>  	if (devs->cur_index == devs->max_index)
->>>  		return -ENOSPC;
->>> @@ -1343,16 +1435,25 @@ static int vfio_pci_get_devs(struct pci_dev *pdev, void *data)
->>>  		return -EBUSY;
->>>  	}
->>>  
->>> +	vdev = vfio_device_data(device);
->>> +
->>> +	/* Only collect unused devices */  
->> abort if the slot/bus features a used device?
-> 
-> Correct.  Is this a suggestion for a wording change?
-yes it was. My 1st impression when reading the code was that we
-collected unused devices and we actually performed an actual action on
-them but we simply vfio_device_put() them in that case. So it is more an
-abort and cleanup thing right? But that's just a nit and a way for me to
-make sure my understanding is correct ;-)
-> 
->>> +	if (vdev->refcnt) {
->>> +		vfio_device_put(device);
->>> +		return -EBUSY;
->>> +	}
->>> +
->>>  	devs->devices[devs->cur_index++] = device;
->>>  	return 0;
->>>  }
->>>  
->>>  /*
->>> - * Attempt to do a bus/slot reset if there are devices affected by a reset for
->>> - * this device that are needs_reset and all of the affected devices are unused
->>> - * (!refcnt). Callers are required to hold driver_lock when calling this to
->>> - * prevent device opens and concurrent bus reset attempts.  We prevent device
->>> - * unbinds by acquiring and holding a reference to the vfio_device.
->>> + * Attempt to do a bus/slot reset if there are devices affected by a reset
->>> + * for this device that are "needs_reset" and all of the affected devices
->>> + * are unused (!refcnt).  
->>
->> This comment still sounds a bit cryptic to me. Assuming I got the point,
->> may I suggest something like:
->>
->> If one of the device of the slot/bus needs a reset (but cannot be reset
->> at function level) and all the devices of the slot/bus are unused
->> (!refcount), we attempt to do a bus/slot reset.
-> 
-> I don't disagree that the original wording is somewhat convoluted, but
-> I don't see that this is a tremendous improvement.  How about:
-> 
->   If a bus or slot reset is available for the provided device and:
->     - All of the devices affected by that bus or slot reset are unused
->       (!refcnt)
->     - At least one of the affected devices is marked dirty via
->       needs_reset (such as by lack of FLR support)
->   Then attempt to perform that bus or slot reset.
-looks fine to me.
+If this call fails, you have to clean up. Callers will not do it.
 
-Thanks
 
-Eric
-> 
->>   Callers are required to hold vdev->reflck->lock
->>> + * to prevent concurrent device opens, which is expected to protect all
->>> + * affected devices.  A vfio_device reference is also acquired for each
->>> + * affected device to prevent unbinds.
->>>   *
->>>   * NB: vfio-core considers a group to be viable even if some devices are
->>>   * bound to drivers like pci-stub or pcieport.  Here we require all devices
->>> @@ -1363,7 +1464,7 @@ static void vfio_pci_try_bus_reset(struct vfio_pci_device *vdev)
->>>  {
->>>  	struct vfio_devices devs = { .cur_index = 0 };
->>>  	int i = 0, ret = -EINVAL;
->>> -	bool needs_reset = false, slot = false;
->>> +	bool slot = false;
->>>  	struct vfio_pci_device *tmp;
->>>  
->>>  	if (!pci_probe_reset_slot(vdev->pdev->slot))
->>> @@ -1381,28 +1482,36 @@ static void vfio_pci_try_bus_reset(struct vfio_pci_device *vdev)
->>>  		return;
->>>  
->>>  	if (vfio_pci_for_each_slot_or_bus(vdev->pdev,
->>> -					  vfio_pci_get_devs, &devs, slot))
->>> +					  vfio_pci_get_unused_devs,
->>> +					  &devs, slot))
->>>  		goto put_devs;
->>>  
->>> +	/* Does at least one need a reset? */
->>>  	for (i = 0; i < devs.cur_index; i++) {
->>>  		tmp = vfio_device_data(devs.devices[i]);
->>> -		if (tmp->needs_reset)
->>> -			needs_reset = true;
->>> -		if (tmp->refcnt)
->>> -			goto put_devs;
->>> +		if (tmp->needs_reset) {
->>> +			ret = pci_reset_bus(vdev->pdev);
->>> +			break;
->>> +		}
->>>  	}
->>>  
->>> -	if (needs_reset)
->>> -		ret = pci_reset_bus(vdev->pdev);
->>> -
->>>  put_devs:
->>>  	for (i = 0; i < devs.cur_index; i++) {
->>>  		tmp = vfio_device_data(devs.devices[i]);
->>> -		if (!ret)
->>> +
->>> +		/*
->>> +		 * If reset was successful, affected devices no longer need
->>> +		 * a reset and we should return all the collateral devices
->>> +		 * to low power.  If not successful, we either didn't reset
->>> +		 * the bus or timed out waiting for it, so let's not touch
->>> +		 * the power state.
->>> +		 */
->>> +		if (!ret) {
->>>  			tmp->needs_reset = false;
->>>  
->>> -		if (!tmp->refcnt && !disable_idle_d3)
->>> -			pci_set_power_state(tmp->pdev, PCI_D3hot);
->>> +			if (tmp != vdev && !disable_idle_d3)
->>> +				pci_set_power_state(tmp->pdev, PCI_D3hot);
->>> +		}
->>>  
->>>  		vfio_device_put(devs.devices[i]);
->>>  	}
->>> diff --git a/drivers/vfio/pci/vfio_pci_private.h b/drivers/vfio/pci/vfio_pci_private.h
->>> index cde3b5d3441a..aa2355e67340 100644
->>> --- a/drivers/vfio/pci/vfio_pci_private.h
->>> +++ b/drivers/vfio/pci/vfio_pci_private.h
->>> @@ -76,6 +76,11 @@ struct vfio_pci_dummy_resource {
->>>  	struct list_head	res_next;
->>>  };
->>>  
->>> +struct vfio_pci_reflck {
->>> +	struct kref		kref;
->>> +	struct mutex		lock;
->>> +};
->>> +
->>>  struct vfio_pci_device {
->>>  	struct pci_dev		*pdev;
->>>  	void __iomem		*barmap[PCI_STD_RESOURCE_END + 1];
->>> @@ -104,6 +109,7 @@ struct vfio_pci_device {
->>>  	bool			needs_reset;
->>>  	bool			nointx;
->>>  	struct pci_saved_state	*pci_saved_state;
->>> +	struct vfio_pci_reflck	*reflck;
->>>  	int			refcnt;
->>>  	int			ioeventfds_nr;
->>>  	struct eventfd_ctx	*err_trigger;
->>>   
->> Reviewed-by: Eric Auger <eric.auger@redhat.com>
-> 
-> Thanks!
-> 
-> Alex
-> 
+>   out_lock:
+>   	up_read(&chip->ops_sem);
+>   	put_device(&chip->dev);
+> @@ -186,6 +174,7 @@ EXPORT_SYMBOL_GPL(tpm_try_get_ops);
+>    */
+>   void tpm_put_ops(struct tpm_chip *chip)
+>   {
+> +	tpm_chip_stop(chip, 0);
+>   	mutex_unlock(&chip->tpm_mutex);
+>   	up_read(&chip->ops_sem);
+>   	put_device(&chip->dev);
+> @@ -563,7 +552,11 @@ int tpm_chip_register(struct tpm_chip *chip)
+>   {
+>   	int rc;
+>
+> +	rc = tpm_chip_start(chip, 0);
+> +	if (rc)
+> +		return rc;
+>   	rc = tpm_auto_startup(chip);
+> +	tpm_chip_stop(chip, 0);
+>   	if (rc)
+>   		return rc;
+>
+> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
+> index 888c9923fca1..5c04c0d9aaba 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -168,11 +168,7 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>   	memcpy(save, buf, save_size);
+>
+>   	for (;;) {
+> -		ret = tpm_chip_start(chip, flags);
+> -		if (ret)
+> -			return ret;
+>   		ret = tpm_try_transmit(chip, buf, bufsiz, flags);
+> -		tpm_chip_stop(chip, flags);
+>
+>   		rc = be32_to_cpu(header->return_code);
+>   		if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
+> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> index c42a75710b70..f9d56dfd0d20 100644
+> --- a/drivers/char/tpm/tpm.h
+> +++ b/drivers/char/tpm/tpm.h
+> @@ -485,15 +485,6 @@ extern const struct file_operations tpm_fops;
+>   extern const struct file_operations tpmrm_fops;
+>   extern struct idr dev_nums_idr;
+>
+> -/**
+> - * enum tpm_transmit_flags - flags for tpm_transmit()
+> - *
+> - * %TPM_TRANSMIT_NESTED:	discard setup steps (power management, locality)
+> - */
+> -enum tpm_transmit_flags {
+> -	TPM_TRANSMIT_NESTED      = BIT(0),
+> -};
+> -
+>   ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf, size_t bufsiz,
+>   		     unsigned int flags);
+>   ssize_t tpm_transmit_cmd(struct tpm_chip *chip, struct tpm_buf *buf,
+> diff --git a/drivers/char/tpm/tpm2-space.c b/drivers/char/tpm/tpm2-space.c
+> index ced1dc91ba6f..d913715d30aa 100644
+> --- a/drivers/char/tpm/tpm2-space.c
+> +++ b/drivers/char/tpm/tpm2-space.c
+> @@ -60,7 +60,10 @@ int tpm2_init_space(struct tpm_space *space)
+>   void tpm2_del_space(struct tpm_chip *chip, struct tpm_space *space)
+>   {
+>   	mutex_lock(&chip->tpm_mutex);
+> -	tpm2_flush_sessions(chip, space);
+> +	if (!tpm_chip_start(chip, 0)) {
+> +		tpm2_flush_sessions(chip, space);
+> +		tpm_chip_stop(chip, 0);
+> +	}
+>   	mutex_unlock(&chip->tpm_mutex);
+>   	kfree(space->context_buf);
+>   	kfree(space->session_buf);
+> diff --git a/drivers/char/tpm/tpm_vtpm_proxy.c b/drivers/char/tpm/tpm_vtpm_proxy.c
+> index e8a1da2810a9..a4bb60e163cc 100644
+> --- a/drivers/char/tpm/tpm_vtpm_proxy.c
+> +++ b/drivers/char/tpm/tpm_vtpm_proxy.c
+> @@ -417,8 +417,7 @@ static int vtpm_proxy_request_locality(struct tpm_chip *chip, int locality)
+>
+>   	proxy_dev->state |= STATE_DRIVER_COMMAND;
+>
+> -	rc = tpm_transmit_cmd(chip, &buf, 0, TPM_TRANSMIT_NESTED,
+> -			      "attempting to set locality");
+> +	rc = tpm_transmit_cmd(chip, &buf, 0, 0, "attempting to set locality");
+>
+>   	proxy_dev->state &= ~STATE_DRIVER_COMMAND;
+>
+
