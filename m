@@ -2,100 +2,115 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 13F64C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:56:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25463C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:58:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CEE192245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:56:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CEE192245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=deltatee.com
+	by mail.kernel.org (Postfix) with ESMTP id D34072245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:58:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aJ182oO5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D34072245E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728830AbeKMOw5 (ORCPT
+        id S1729556AbeKMOyx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 09:52:57 -0500
-Received: from ale.deltatee.com ([207.54.116.67]:59672 "EHLO ale.deltatee.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbeKMOw5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 09:52:57 -0500
-Received: from [64.114.255.114] (helo=[192.168.36.130])
-        by ale.deltatee.com with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
-        (Exim 4.89)
-        (envelope-from <logang@deltatee.com>)
-        id 1gMQkK-00072u-Vf; Mon, 12 Nov 2018 21:56:18 -0700
-To:     Nadav Amit <namit@vmware.com>, "hpa@zytor.com" <hpa@zytor.com>,
-        Ingo Molnar <mingo@redhat.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, X86 ML <x86@kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Stephen Bates <sbates@raithlin.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>
-References: <20181003213100.189959-1-namit@vmware.com>
- <20181003213100.189959-3-namit@vmware.com>
- <89262174-6f15-6116-e67f-436f7c1bfe99@deltatee.com>
- <6651971B-E3AB-4CDD-868C-2338593F7D83@vmware.com>
- <d0812681-4a8f-8cc4-24ce-d02002ee34d2@deltatee.com>
- <DC1EA50F-FAC3-4750-BCF7-0622D1FB4756@vmware.com>
- <a3902c4c-64b1-9c49-02fb-d5e4c9b04314@deltatee.com>
- <192946CF-8543-4CF5-B2A3-93674FCD07E2@vmware.com>
- <7bc80811-8ab3-d26a-6fb3-b7aeebcfce43@deltatee.com>
- <85B77A64-5FF3-4B82-8A07-E045E259C985@zytor.com>
- <3B824A03-AB76-4B34-B1CA-F27C0F1B0575@vmware.com>
- <2c022676-9299-bb5f-023b-5c114cd79f81@deltatee.com>
- <080748A5-2588-47C9-BC2A-E643630FB9A7@vmware.com>
- <3ae6dd1f-9b59-8552-f438-c40b08771226@deltatee.com>
- <C0187502-9FC0-4FE2-BCD3-81B8B992F3A2@vmware.com>
- <88901B62-7D98-45A2-8881-352A31802933@vmware.com>
-From:   Logan Gunthorpe <logang@deltatee.com>
-Message-ID: <258e793a-a7a6-526d-6be5-edba1c701a24@deltatee.com>
-Date:   Mon, 12 Nov 2018 21:56:09 -0700
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Tue, 13 Nov 2018 09:54:53 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:40546 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726111AbeKMOyx (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 09:54:53 -0500
+Received: by mail-pl1-f195.google.com with SMTP id q19-v6so5378623pll.7;
+        Mon, 12 Nov 2018 20:58:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Am7+qzdg5/vZ5GLfUE82Rv78i7926txhIMRKGYCFq5k=;
+        b=aJ182oO540zPdYKjeM1IGiw5IRCbM+mg6k2ejNw7ymoFgH21O/WUIGLhiXveEf0eAv
+         b9XE7yeQPZlfEj0wAly+iUaDqfTKGlpTiUZquoii18QJH9olAFN4J6RG7V6LJQ4RUmuI
+         XMrpzF1NvKqwUdAzIUAWoNB6GfvW9uNXS/i8aDxk1vQ6LGkUFLMemvF2iDH+wurz3TmD
+         XWqBn3XD6ipsnfJgiTLmgP3ue38AYZFiMXsPr1kDzgDy2MPACO/y1i6hP5GSie0uuA2I
+         ddgCT3BqnCQkHwaDL47CKfFFeeGc4S22gak5bukIHNfeNLTD6TITqeByxU/dfFa1C9eB
+         n28w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Am7+qzdg5/vZ5GLfUE82Rv78i7926txhIMRKGYCFq5k=;
+        b=bNBBl9ZM7k9VLE+6yIw3X6nq1/cTg0xkA9l1oSIJsiqhkOFW2MnCIFO+dzkcR/HP1q
+         6AO0s27O8R/hsJPrLM/7c9RUQdZx+YGoi3QisndevdP6fbBsEC60rhAi4ab7Su2U6hkH
+         rQ44nogSKKGCmuiECc7DzBbiYygy7rLCE0Xi/CETN+RRo7vSCdmV75oPHNUmha7wwVEZ
+         /pt/Wp6iWB7rqXutjTsiWC79gYuYwUwMf2/7zl9EJs0uNrl50isQiX9sOWO7UEdLKkvq
+         yWV7B/rz4OsVnYdNv2dATwE0V1auJwWrpY9fE/vkIzJtSLF43H4xcuzj37n7fghItmVc
+         Lctw==
+X-Gm-Message-State: AGRZ1gJzNR9/zW2ZKtR40avHh/jpNAlXl2dxsTtFor6oN7gaeDhyW4Rj
+        v40dgwgcDR5nq+MuIO6C//s=
+X-Google-Smtp-Source: AJdET5dwOcDZ937GopzYOS7hOQjNnvl3pPw4HZVrNrn80NzuVNwCk3pxT49jP1Q7AT4Snc6OokwUSQ==
+X-Received: by 2002:a17:902:d806:: with SMTP id a6mr1790214plz.172.1542085112210;
+        Mon, 12 Nov 2018 20:58:32 -0800 (PST)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id k70-v6sm21327499pfc.76.2018.11.12.20.58.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 20:58:31 -0800 (PST)
+Date:   Mon, 12 Nov 2018 20:58:24 -0800
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] hwmon (ina3221) Add single-shot mode support
+Message-ID: <20181113045823.GB26327@Asurada-Nvidia.nvidia.com>
+References: <20181113042353.1507-1-nicoleotsuka@gmail.com>
+ <20181113043248.GB11205@roeck-us.net>
 MIME-Version: 1.0
-In-Reply-To: <88901B62-7D98-45A2-8881-352A31802933@vmware.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 64.114.255.114
-X-SA-Exim-Rcpt-To: mhiramat@kernel.org, sbates@raithlin.com, linux-kbuild@vger.kernel.org, tglx@linutronix.de, michal.lkml@markovi.net, sam@ravnborg.org, x86@kernel.org, linux-kernel@vger.kernel.org, mingo@redhat.com, hpa@zytor.com, namit@vmware.com
-X-SA-Exim-Mail-From: logang@deltatee.com
-Subject: Re: [PATCH v9 02/10] Makefile: Prepare for using macros for inline
- asm
-X-SA-Exim-Version: 4.2.1 (built Tue, 02 Aug 2016 21:08:31 +0000)
-X-SA-Exim-Scanned: Yes (on ale.deltatee.com)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113043248.GB11205@roeck-us.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Guenter,
 
+On Mon, Nov 12, 2018 at 08:32:48PM -0800, Guenter Roeck wrote:
+> On Mon, Nov 12, 2018 at 08:23:53PM -0800, Nicolin Chen wrote:
+> > INA3221 supports both continuous and single-shot modes. When
+> > running in the continuous mode, it keeps measuring the inputs
+> > and converting them to the data register even if there are no
+> > users reading the data out. In this use case, this could be a
+> > power waste.
+> > 
+> > So this patch adds a single-shot mode support so that ina3221
+> > could do measurement and conversion only if users trigger it,
+> > depending on the use case where it only needs to poll data in
+> > a lower frequency.
+> > 
+> > The change also exposes "mode" and "available_modes" nodes to
+> > allow users to switch between two operating modes.
+> > 
+> Lots and lots of complexity for little gain. Sorry, I don't see
+> the point of this change.
 
-On 10/11/18 03:04 PM, Nadav Amit wrote:
-> Err.. I hate makefiles and distcc doesn’t make life easier. For instance, if
-> it sees two source files on the command-line, it freaks out and compiles it
-> locally. It also has an option to distribute assembly, but it is not enabled
-> by default.
-> 
-> Anyhow, can you try the following patch?
+The chip is causing considerable power waste on battery-powered
+devices so we typically use it running in the single-shot mode.
 
-Very nice, great work! It works as expected. I tested with both distcc
-and icecc and both work well with DISTCC=y.
+Although the chip now can be powered down, but we still need to
+occasionally poll it for power measurement and critical alerts,
+so single-shot mode is the best choice for us, considering that
+the power-down-and-up routine would be way heavier.
 
-Also worth noting, is that distcc has a patch to work without DISTCC=y
-in pump mode (though pump mode doesn't work super great with the kernel
-as some of the include processing takes a long time). When I have some
-free time, I may also try to patch icecc to work with it, as in my
-experience, it performs better.
+I could understand that you don't really like it, but it's some
+feature that we truly need. Do you have any suggestion to write
+the code that can make it more convincing to you?
 
-Regardless, I think your patch would be very valuable to be in upstream
-so there's at least some way to use the existing versions of distcc and
-icecc.
-
-Thanks!
-
-Logan
+Thanks
+Nicolin
