@@ -2,92 +2,109 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5EB69C0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:50:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C206C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:56:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BFDB22419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:50:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BFDB22419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2A905216FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:56:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="ux6NW9Sh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A905216FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732306AbeKMUsY (ORCPT
+        id S1732327AbeKMUxe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 15:48:24 -0500
-Received: from mga05.intel.com ([192.55.52.43]:31254 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732148AbeKMUsY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 15:48:24 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 02:50:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,498,1534834800"; 
-   d="scan'208";a="105837169"
-Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
-  by fmsmga004.fm.intel.com with ESMTP; 13 Nov 2018 02:50:47 -0800
-Date:   Tue, 13 Nov 2018 12:50:45 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Michael =?iso-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-Cc:     James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jgg@ziepe.ca, arnd@arndb.de,
-        linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-Message-ID: <20181113105045.GC10434@linux.intel.com>
-References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
- <1541960689.3190.4.camel@HansenPartnership.com>
- <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
- <1541962653.3190.7.camel@HansenPartnership.com>
- <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
- <1541968191.3190.12.camel@HansenPartnership.com>
- <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
- <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
+        Tue, 13 Nov 2018 15:53:34 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:41911 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726581AbeKMUxe (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 15:53:34 -0500
+Received: by mail-wr1-f67.google.com with SMTP id v18-v6so12766413wrt.8
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 02:55:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wt7pkL3la0ggYXUL0EKhSbI+tOA4s03vVHS9+1Kq4sc=;
+        b=ux6NW9ShhTMAlzNi7lIpe327lxvhDDrySoRcEVsUGo/AjBDtTMNqzb+fKKLzdaMKIN
+         EYuMspC8L3J/fE+srr+RWGopBDsCcfUkSrCFcDf+oEfCUkUFE0CGgIlC/T8bWyY6FdFS
+         hYljbmOqJ36M3Y/rdkDBPWBxMvNptQWRYVANrH/xOXh+NWo0REjDuZkpHaACAyp2okN6
+         EtegoVwldn/xcWYR4IE46lUKB8kAeDI2g4NJwlHRLSWw9YXuJQERCzqBVGkAkA9iV9WW
+         abdpCmUow+SGBML2TUDdj5ZFAH0T9huWq5KSfd+PRAVwnqdblnDvzsh84HoVLoAOogbR
+         M7Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Wt7pkL3la0ggYXUL0EKhSbI+tOA4s03vVHS9+1Kq4sc=;
+        b=NLM1g8b9zg02/DD/yiUK7osQNKkuxpeJEBHwfGcBmZeNeEIpB9+2/Mwemp+4RFezjS
+         WhLaca6mxZbEwrjI62FeOJnSNGQCYrCUs00u0YaLbBJKxb5Sp9D332ENbNUy3Ysc0DF0
+         tjsRNcn858zuU/Qsxulw2uwbQZfnGqhjtEiHBABuwARk9bVhnPgDJUIW/i5PUMuwv2BW
+         T2f55f7JOAIm2doKZgXtSRn5MBPYL0tGSJtKsw8xsEEEsGrV+LoFmjmjUmz5olcLfiHh
+         ZWPi/hAvw7t2X10qZ0ujym/npEEZsFuFVmFiEvnJ4q4d5u5vyldiAwENxJE7uSUZ9RLd
+         OetQ==
+X-Gm-Message-State: AGRZ1gL8wit0Q38nghlaoHZV2fjPz22ymFGYvklLmRqEToX9i1XMrXSz
+        CVCpXojoa1TEwdpbVWf0q4ZppQ==
+X-Google-Smtp-Source: AJdET5dcFot088JbpfI+LtMUQon8sNzCV50XCdhWM+2SM9Me5OeYvSjrR8qP1WHEErDBe4mQYyML5Q==
+X-Received: by 2002:adf:83e3:: with SMTP id 90-v6mr4541797wre.278.1542106558646;
+        Tue, 13 Nov 2018 02:55:58 -0800 (PST)
+Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id v9-v6sm20671096wrm.6.2018.11.13.02.55.56
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Nov 2018 02:55:57 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Linus Walleij <linus.walleij@linaro.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, linux-gpio@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] pinctrl: meson: fix pull enable register calculation
+Date:   Tue, 13 Nov 2018 11:55:36 +0100
+Message-Id: <20181113105536.6459-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 10:11:33PM +0100, Michael Niewöhner wrote:
-> Very strange... When I pull the power cord, then replug and boot, I get these
-> dmesg messages:
-> [    0.000000] efi:  ACPI
-> 2.0=0x9ea78000  ACPI=0x9ea78000  SMBIOS=0x9f5e5000  SMBIOS
-> 3.0=0x9f5e4000  MPS=0xfca00  ESRT=0x9c06e918  MEMATTR=0x99cb9018  TPMEventLog=0x
-> 98d0c018 
-> [    0.001794] ACPI: TPM2 0x000000009EAB1F70 000034 (v03 LENOVO TC-
-> S06   00001260 AMI  00000000)
-> [    3.096587] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-> [    3.105684] tpm tpm0: A TPM error (2314) occurred attempting the self test
-> 
-> After a reboot I get those "ima: ..." message again. Pulling the plug seems to
-> reset anything (the TPM).
-> 
-> The PTT TPM 2.0 shows exactly the same behaviour.
+We just changed the code so we apply bias disable on the correct
+register but forgot to align the register calculation. The result
+is that we apply the change on the correct register, but possibly
+at the incorrect offset/bit
 
-The error in question is TPM_RC_TESTING i.e. TPM is still processing
-selftests in the background.
+This went undetected because offsets tends to be the same between
+REG_PULL and REG_PULLEN for a given pin the EE controller. This
+is not true for the AO controller.
 
-It is clearly a regression but unfortanely it is harmless and unrelated
-i.e. tpm2_do_selftest() should not print an error message because it
-is legit behavior.
+Fixes: e39f9dd8206a ("pinctrl: meson: fix pinconf bias disable")
+Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+---
+ drivers/pinctrl/meson/pinctrl-meson.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-The function actually masks the whole error:
+diff --git a/drivers/pinctrl/meson/pinctrl-meson.c b/drivers/pinctrl/meson/pinctrl-meson.c
+index 53d449076dee..ea87d739f534 100644
+--- a/drivers/pinctrl/meson/pinctrl-meson.c
++++ b/drivers/pinctrl/meson/pinctrl-meson.c
+@@ -191,7 +191,8 @@ static int meson_pinconf_set(struct pinctrl_dev *pcdev, unsigned int pin,
+ 		case PIN_CONFIG_BIAS_DISABLE:
+ 			dev_dbg(pc->dev, "pin %u: disable bias\n", pin);
+ 
+-			meson_calc_reg_and_bit(bank, pin, REG_PULL, &reg, &bit);
++			meson_calc_reg_and_bit(bank, pin, REG_PULLEN, &reg,
++					       &bit);
+ 			ret = regmap_update_bits(pc->reg_pullen, reg,
+ 						 BIT(bit), 0);
+ 			if (ret)
+-- 
+2.19.1
 
-	if (rc == TPM2_RC_TESTING)
-		rc = TPM2_RC_SUCCESS;
-
-/Jarkko
