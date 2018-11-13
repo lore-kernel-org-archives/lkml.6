@@ -2,102 +2,199 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A0A2C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:50:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86AD6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:51:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 514802086B
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:50:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E28C2086B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:51:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HfCfIWBH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 514802086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="hdtMBWKg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E28C2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733258AbeKNBtg (ORCPT
+        id S2388087AbeKNBuU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:49:36 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:41533 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731721AbeKNBtg (ORCPT
+        Tue, 13 Nov 2018 20:50:20 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:45977 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733221AbeKNBuU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:49:36 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 70so5868585pgh.8
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 07:50:57 -0800 (PST)
+        Tue, 13 Nov 2018 20:50:20 -0500
+Received: by mail-lj1-f194.google.com with SMTP id s5-v6so11240021ljd.12
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 07:51:39 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=lIFJYXCCYbIE9QdI6j4zxGOHMCkI5//En2xA/fsGVfE=;
-        b=HfCfIWBHVP9ZHgf7dtz+iirn8OFYl64MoTUn9FR3y1ATIY6kCxGOt09lWk3h1dXVme
-         FOL0CwR/Q2Gh2gX4hVG5aC/kb0R/SgXP1Y78e0HPF+SFKfOLj5VsetB5BrpIMjVJqH//
-         f1FJ01DJdtlZCO/gGd1r72Juv+uhl/y+ewo7+S2txm1Ric59px3GXc0aFODxpo2D3bqs
-         v0J53lYV9RMfZ/ZFryOiQ9bvAah6f9yjc3qXx9/pf/gXOVFXqy+HVcsDZPKXNoHuCBoD
-         mjj7jQyFrO7YTnOlsDNQWal+soLFt5746hoKha/Uz1ww9WuHBC6rd3Wred6lIGNCbJIC
-         G1cQ==
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=EeOjsxer/t+u6U9535ZmkgDjwKry8li8NItS5UMmoC4=;
+        b=hdtMBWKgdN4xoKoN5B3QwX9G3knKDoco/BXLqQGAYDIvZy95DRTs5Q/adclX2iZr8m
+         PI9Gl2VspzH4IJIZw9/Rru3y3NFpRQwUAfjcKXp5QwtWASeervDs3O8wc7+YrI4KIMAG
+         /Mje9f2VsAM61/AmkW6mtNl2iQP1itI98tX3nCuubwwLFZH4+FToGRCiEhhPirEa0Bmf
+         c3rzoIOrNFLWSamgF5yM7j633aAYSu0AFoONaEeB63XAb7N844pakVEov2X+9Z5Va/bE
+         ZffQ8jHYmORUBE1vDwa7IqIokX8tabFwEa2FQoe7K+BMhZxCUPFLoOYTV2oun0iprofl
+         kyFQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=lIFJYXCCYbIE9QdI6j4zxGOHMCkI5//En2xA/fsGVfE=;
-        b=S3qSUfNJQoOruSuOhAJB0F2vZBfsfD2wz1Qjw4oabE0o06F7C+zaJ4nCvpzQrOuvGW
-         kBX4xWp2g02Xl76nLe+WejtllhwyZPfp4Jh5id20Xub91psB7+6JcdVAaee3DQGPjVO6
-         GrbcNc2Oc4U1rSa3h7z6786aBxcBFAnTcMd2n/UplwiYau6EL0SvCZW9NWZCZ8Eh4xH8
-         xlROkX4oyOsv4n82EeMlazqJ+y3UWaZ2YNqIZsvmJKGTlhBuchIBI1BYxruC4DV2Owd3
-         87SG3LH0qHLNAWEq9QEgNoe3i33I4a32Hihqjj+SZp3LrksUW5Ir7V4OddLgDJNH8sDc
-         5mUA==
-X-Gm-Message-State: AGRZ1gKChjXl2zbtnLp8aaPBqpWyQZjXcQxS4tm/iQpJNjA/Mp1c02IS
-        QRNCbi8L9I4bybQ4f2x5u8hO/w==
-X-Google-Smtp-Source: AJdET5cDEoHy823TmzyjN0HSLmwqbNP3tbAemAJ6/Of/F12TbGrWJIZZlaqMEq0BhGPGNEEjd0SJkA==
-X-Received: by 2002:a62:4587:: with SMTP id n7mr5624902pfi.118.1542124256758;
-        Tue, 13 Nov 2018 07:50:56 -0800 (PST)
-Received: from gnomeregan.cam.corp.google.com ([2620:15c:6:14:ad22:1cbb:d8fa:7d55])
-        by smtp.gmail.com with ESMTPSA id k75-v6sm55824011pfb.119.2018.11.13.07.50.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 07:50:56 -0800 (PST)
-Date:   Tue, 13 Nov 2018 10:50:51 -0500
-From:   Barret Rhoden <brho@google.com>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, yu.c.zhang@intel.com, yi.z.zhang@intel.com
-Subject: Re: [PATCH 2/2] kvm: Use huge pages for DAX-backed files
-Message-ID: <20181113105051.2ffaf468@gnomeregan.cam.corp.google.com>
-In-Reply-To: <043a592d-6592-3053-15a0-68cc54a26deb@redhat.com>
-References: <20181109203921.178363-1-brho@google.com>
-        <20181109203921.178363-3-brho@google.com>
-        <043a592d-6592-3053-15a0-68cc54a26deb@redhat.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=EeOjsxer/t+u6U9535ZmkgDjwKry8li8NItS5UMmoC4=;
+        b=UqqmcPBnA9o60crFHt+8RB/0p+Ns3ZVg88Xew1JXoVo760ZaVcBEuyW11go2prnQ7l
+         bvVhmACkzka+Q1BQBXKpFaxRD1I3GO3xwbMPTAdFgVzBFM/SQzyCykareWd8DFXUqKlF
+         jM+f7XdxFb9t+5S3L29ch/ZEStvyj41Dsj7QczRuginE3XqHTLV0r7x4BJK3sEaRLWPI
+         9ev03Wlf9YMBYcDEGABv6wLqvZvcoyOM07Qko620xVH7XVdvA+Q3NSiDTpDrLtGJZCos
+         yKeNyC5GlNGji+dpc2y7rYRDR07r42DwtgJAVFslc7M6sMv686Db/rqwpy7+mq2fstzs
+         gXfw==
+X-Gm-Message-State: AGRZ1gJ6nvSModWYRaqbPDtq8E5ZLv3X4RCBh88UZNeCEx/rZetznpOl
+        ABO2PF2yhnCPa2KS2KQ3nQvaMSOXxv1Spx9hS3G7
+X-Google-Smtp-Source: AJdET5d1GVWJNz4ahu6uJs2W5HbyRInByE6MUSRCgfq33n0LpxUizb1uL0YOLd/8rv9EyVVugmMGcQNlm4GhF1Opkis=
+X-Received: by 2002:a2e:8605:: with SMTP id a5-v6mr3409256lji.145.1542124298117;
+ Tue, 13 Nov 2018 07:51:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <53491A18-DD21-4E34-BC2F-AB449C7844E8@gmx.us> <20181113151608.30424-1-omosnace@redhat.com>
+In-Reply-To: <20181113151608.30424-1-omosnace@redhat.com>
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Tue, 13 Nov 2018 10:51:27 -0500
+Message-ID: <CAHC9VhR=10FaoGSLHdE+Sj9iwdT3Re2vutmgnqGO+m5Ug9sL_Q@mail.gmail.com>
+Subject: Re: [PATCH] selinux: check length properly in SCTP bind hook
+To:     omosnace@redhat.com
+Cc:     selinux@vger.kernel.org, cai@gmx.us,
+        Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+        richard_c_haines@btinternet.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-13 at 10:36 David Hildenbrand <david@redhat.com> wrote:
-> > Note that KVM already faulted in the page (or huge page) in the host's
-> > page table, and we hold the KVM mmu spinlock (grabbed before checking
-> > the mmu seq).  
-> 
-> I wonder if the KVM mmu spinlock is enough for walking (not KVM
-> exclusive) host page tables. Can you elaborate?
+On Tue, Nov 13, 2018 at 10:18 AM Ondrej Mosnacek <omosnace@redhat.com> wrote:
+>
+> selinux_sctp_bind_connect() must verify if the address buffer has
+> sufficient length before accessing the 'sa_family' field. See
+> __sctp_connect() for a similar check.
+>
+> The length of the whole address ('len') is already checked in the
+> callees.
+>
+> Reported-by: Qian Cai <cai@gmx.us>
+> Fixes: d452930fd3b9 ("selinux: Add SCTP support")
+> Cc: <stable@vger.kernel.org> # 4.17+
+> Cc: Richard Haines <richard_c_haines@btinternet.com>
+> Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
+> ---
+> Hi,
+>
+> On Mon, Nov 12, 2018 at 8:39 PM Qian Cai <cai@gmx.us> wrote:
+> > Running the trinity fuzzer on the latest mainline (rc2) generates this,
+> >
+> > [15029.879626] BUG: KASAN: slab-out-of-bounds in selinux_sctp_bind_connect+0x60/0x150
+> > [15029.887275] Read of size 2 at addr ffff801ec53c5080 by task trinity-main/18081
+> > [15029.887294]
+> > [15029.887304] CPU: 28 PID: 18081 Comm: trinity-main Tainted: G        W  OE     4.20.0-rc2+ #15
+> > [15029.887311] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
+> > [15000.084786] [15029.887320] Call trace:
+> > [15029.915511]  dump_backtrace+0x0/0x2c8
+> > [15029.920046]  show_stack+0x24/0x30
+> > [15029.923367]  dump_stack+0x118/0x19c
+> > [15029.927539]  print_address_description+0x68/0x2a0
+> > [15029.932245]  kasan_report+0x1b4/0x348
+> > [15029.938760]  __asan_load2+0x7c/0xa0
+> > [15029.945098]  selinux_sctp_bind_connect+0x60/0x150
+> >
+> > [15029.950571]  security_sctp_bind_connect+0x58/0x90
+> > [15029.955493]  __sctp_setsockopt_connectx+0x68/0x128 [sctp]
+> > [15029.960943]  sctp_setsockopt+0x764/0x2928 [sctp]
+> > [15029.965564]  sock_common_setsockopt+0x6c/0x80
+> > [15029.969923]  __arm64_sys_setsockopt+0x13c/0x1f0
+> > [15029.974456]  el0_svc_handler+0xd4/0x198
+> > [15029.978293]  el0_svc+0x8/0xc
+> > [15029.981174]
+> > [15029.982667] Allocated by task 18081:
+> > [15029.986245]  kasan_kmalloc.part.1+0x40/0x108
+> > [15029.990517]  kasan_kmalloc+0xb4/0xc8
+> > [15029.994094]  __kmalloc_node+0x1c4/0x638
+> > [15029.997933]  kvmalloc_node+0x98/0xa8
+> > [15030.001511]  vmemdup_user+0x34/0x128
+> > [15030.005137]  __sctp_setsockopt_connectx+0x44/0x128 [sctp]
+> > [15030.010586]  sctp_setsockopt+0x764/0x2928 [sctp]
+> > [15030.015205]  sock_common_setsockopt+0x6c/0x80
+> > [15030.019564]  __arm64_sys_setsockopt+0x13c/0x1f0
+> > [15030.024096]  el0_svc_handler+0xd4/0x198
+> > [15030.027933]  el0_svc+0x8/0xc
+> > [15030.030814]
+> > [15030.032306] Freed by task 3025:
+> > [15030.035451]  __kasan_slab_free+0x114/0x228
+> > [15030.039548]  kasan_slab_free+0x10/0x18
+> > [15030.043299]  kfree+0x114/0x408
+> > [15030.046357]  selinux_sk_free_security+0x38/0x48
+> > [15030.050888]  security_sk_free+0x3c/0x58
+> > [15030.054727]  __sk_destruct+0x3e8/0x570
+> > [15030.058478]  sk_destruct+0x4c/0x58
+> > [15030.061881]  __sk_free+0x68/0x138
+> > [15030.065197]  sk_free+0x3c/0x48
+> > [15030.068255]  unix_release_sock+0x4a8/0x550
+> > [15030.072353]  unix_release+0x34/0x50
+> > [15030.075843]  __sock_release+0x74/0x110
+> > [15030.079593]  sock_close+0x24/0x38
+> > [15030.082913]  __fput+0x1b8/0x368
+> > [15030.086055]  ____fput+0x20/0x30
+> > [15030.089199]  task_work_run+0x14c/0x1a8
+> > [15030.092951]  do_notify_resume+0x1e4/0x200
+> > [15030.096961]  work_pending+0x8/0x14
+> > [15030.100363]
+> > [15030.101856] The buggy address belongs to the object at ffff801ec53c5080
+> > [15030.101856]  which belongs to the cache kmalloc-128 of size 128
+> > [15030.114376] The buggy address is located 0 bytes inside of
+> > [15030.114376]  128-byte region [ffff801ec53c5080, ffff801ec53c5100)
+> > [15030.125939] The buggy address belongs to the page:
+> > [15030.130732] page:ffff7fe007b14f00 count:1 mapcount:0 mapping:ffff8016c0010480 index:0x0
+> > [15030.138738] flags: 0x5fffff0000000200(slab)
+> > [15030.142926] raw: 5fffff0000000200 ffff7fe007980608 ffff801ec000fd60 ffff8016c0010480
+> > [15030.150671] raw: 0000000000000000 0000000000660066 00000001ffffffff 0000000000000000
+> > [15030.158413] page dumped because: kasan: bad access detected
+> > [15030.163984]
+> > [15030.165476] Memory state around the buggy address:
+> > [15030.170269]  ffff801ec53c4f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > [15030.177491]  ffff801ec53c5000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > [15030.184714] >ffff801ec53c5080: 01 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > [15030.191934]                    ^
+> > [15030.195164]  ffff801ec53c5100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > [15030.202386]  ffff801ec53c5180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> > [15030.209607] ==================================================================
+> > [15030.216828] Disabling lock debugging due to kernel taint
+>
+> I think I found the cause - Qian, can you test this patch if it fixes
+> the problem?
+>
+>  security/selinux/hooks.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+> index 7ce683259357..a67459eb62d5 100644
+> --- a/security/selinux/hooks.c
+> +++ b/security/selinux/hooks.c
+> @@ -5318,6 +5318,9 @@ static int selinux_sctp_bind_connect(struct sock *sk, int optname,
+>         addr_buf = address;
+>
+>         while (walk_size < addrlen) {
+> +               if (walk_size + sizeof(sa_family_t) > addrlen)
+> +                       return -EINVAL;
+> +
+>                 addr = addr_buf;
+>                 switch (addr->sa_family) {
+>                 case AF_UNSPEC:
 
-I'll update the commit message with the info from Paolo's email (about
-kvm_mmu_notifier_invalidate_range_end()).
+Good catch, I think you're right about this.  I'll give Qian a bit to
+see if he can verify this, but as of right now I'm going to plan on
+merging this into selinux/stable-4.20.
 
-Thanks,
-
-Barret
+-- 
+paul moore
+www.paul-moore.com
