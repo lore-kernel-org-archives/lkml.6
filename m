@@ -2,81 +2,101 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C3B7BC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:08:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 850FFC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:10:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9245F2245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:08:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9245F2245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 541E72245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 02:10:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 541E72245E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730786AbeKMME0 (ORCPT
+        id S1730568AbeKMMFx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 07:04:26 -0500
-Received: from mailgw02.mediatek.com ([210.61.82.184]:7151 "EHLO
-        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1730519AbeKMMEY (ORCPT
+        Tue, 13 Nov 2018 07:05:53 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:46242 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726341AbeKMMFw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 07:04:24 -0500
-X-UUID: 3557c3707ba84ac98423e2a42250f077-20181113
-X-UUID: 3557c3707ba84ac98423e2a42250f077-20181113
-Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1231601469; Tue, 13 Nov 2018 10:08:26 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs08n1.mediatek.inc (172.21.101.55) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Tue, 13 Nov 2018 10:08:25 +0800
-Received: from mtkslt306.mediatek.inc (10.21.14.136) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Tue, 13 Nov 2018 10:08:25 +0800
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     Thierry Reding <thierry.reding@gmail.com>
-CC:     Rob Herring <robh+dt@kernel.org>, <linux-pwm@vger.kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        Roy Luo <cheng-hao.luo@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>,
-        Ryder Lee <ryder.lee@mediatek.com>
-Subject: [resend PATCH 3/3] dt-bindings: pwm: update bindings for MT7629 SoC
-Date:   Tue, 13 Nov 2018 10:08:24 +0800
-Message-ID: <630234ce3f13d93650c820be8f1724b84dd3c0ba.1542074855.git.ryder.lee@mediatek.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542074855.git.ryder.lee@mediatek.com>
-References: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542074855.git.ryder.lee@mediatek.com>
+        Tue, 13 Nov 2018 07:05:52 -0500
+Received: by mail-pg1-f196.google.com with SMTP id w7so4903479pgp.13;
+        Mon, 12 Nov 2018 18:09:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=hcxcKf8u2ED2HanzmrIBYTF6D782+dAj9cWNYAb+79s=;
+        b=PCpQRQq+hViI0iJhzzggSJqMtH1kC82CbyWdx8mXDDIesrBJ2O5xSSbvXFnsVyhniw
+         fuSd9GFFs3YIGqVmjUiamVJYzxqMRi2x9fKZ5/cHvxWkBSd7ut2FMGNTYaziY68mLM31
+         34bS/0j3uQHb6qY8opXDv/H0L+HasNAZiWaRON082VhvjWUbUXpETKDlJwAiCA4hq9fW
+         6C1meH5ybJ1bjsryk6pxLr8VRotSFExcP8xQ/cE1mQHvgHJ78nWs3dTWErrzLajmPJOy
+         WepU1SYu6PbVtfNoTexUEhNzmmupvq/IcuplG2R40j7xjTNQcQvjXsk//CIL/oLWd9IL
+         pIuQ==
+X-Gm-Message-State: AGRZ1gI77FZNTph8VGpGfouTdZMnoegNYxhh4txWJnJjd5LjYRKun6M8
+        0pIE1ZCbokck57Que7cctPGBacvx5sN1
+X-Google-Smtp-Source: AJdET5f4TUjrVfDTwSPx8uN8XLH6AfYdazsQs4OHdvEW5huhk9H8U4xmMv2SI0S2Ai5gpV//1BG6Sg==
+X-Received: by 2002:a63:ee0e:: with SMTP id e14mr2965301pgi.8.1542074998859;
+        Mon, 12 Nov 2018 18:09:58 -0800 (PST)
+Received: from localhost ([64.114.255.114])
+        by smtp.gmail.com with ESMTPSA id l3sm17613689pga.92.2018.11.12.18.09.57
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 18:09:58 -0800 (PST)
+Date:   Mon, 12 Nov 2018 20:09:57 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Vitor soares <vitor.soares@synopsys.com>
+Cc:     boris.brezillon@bootlin.com, wsa@the-dreams.de,
+        linux-i2c@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org, gregkh@linuxfoundation.org,
+        arnd@arndb.de, psroka@cadence.com, agolec@cadence.com,
+        adouglas@cadence.com, bfolta@cadence.com, dkos@cadence.com,
+        alicja@cadence.com, cwronka@cadence.com, sureshp@cadence.com,
+        rafalc@cadence.com, thomas.petazzoni@bootlin.com, nm@ti.com,
+        pawel.moll@arm.com, mark.rutland@arm.com,
+        ijc+devicetree@hellion.org.uk, galak@codeaurora.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        geert@linux-m68k.org, linus.walleij@linaro.org,
+        Xiang.Lin@synaptics.com, linux-gpio@vger.kernel.org,
+        nsekhar@ti.com, pgaj@cadence.com, peda@axentia.se,
+        mshettel@codeaurora.org, swboyd@chromium.org,
+        joao.pinto@synopsys.com
+Subject: Re: [PATCH v3 2/3] dt-bindings: i3c: Document Synopsys DesignWare
+ I3C master bindings
+Message-ID: <20181113020957.GA31668@bogus>
+References: <1541697251-20392-1-git-send-email-soares@synopsys.com>
+ <1541697251-20392-3-git-send-email-soares@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541697251-20392-3-git-send-email-soares@synopsys.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This updates bindings for MT7629 pwm controller.
+On Thu, Nov 08, 2018 at 05:14:10PM +0000, Vitor soares wrote:
+> Document Synopsys DesignWare I3C master module
+> 
+> Signed-off-by: Vitor soares <soares@synopsys.com>
 
-Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
----
- Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 1 +
- 1 file changed, 1 insertion(+)
+Please make your author and S-o-b emails match.
 
-diff --git a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-index 991728c..4a2885b 100644
---- a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-+++ b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
-@@ -6,6 +6,7 @@ Required properties:
-    - "mediatek,mt7622-pwm": found on mt7622 SoC.
-    - "mediatek,mt7623-pwm": found on mt7623 SoC.
-    - "mediatek,mt7628-pwm": found on mt7628 SoC.
-+   - "mediatek,mt7629-pwm": found on mt7629 SoC.
-  - reg: physical base address and length of the controller's registers.
-  - #pwm-cells: must be 2. See pwm.txt in this directory for a description of
-    the cell format.
--- 
-1.9.1
+> ---
+> Changes in v3:
+> - Remove dummy characters
+> 
+> Changes in v2:
+> - Address the changes in Documentation/devicetree/bindings/i3c/i3c.txt
+> - Add controller version on compatible string
+> 
+>  .../devicetree/bindings/i3c/snps,dw-i3c-master.txt | 42 ++++++++++++++++++++++
+>  1 file changed, 42 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/i3c/snps,dw-i3c-master.txt
 
+Otherwise,
+
+Reviewed-by: Rob Herring <robh@kernel.org>
