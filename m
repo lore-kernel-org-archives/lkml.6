@@ -2,261 +2,146 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51FCEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C0DE3C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:03:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB91E223C8
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:01:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7A65622419
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 20:03:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kI3MNm/I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB91E223C8
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="IVOceuqL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A65622419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727562AbeKNGAv (ORCPT
+        id S1728522AbeKNGC7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 01:00:51 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:46423 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725748AbeKNGAv (ORCPT
+        Wed, 14 Nov 2018 01:02:59 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51978 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725748AbeKNGC7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 01:00:51 -0500
-Received: by mail-wr1-f65.google.com with SMTP id l9so1843603wrt.13;
-        Tue, 13 Nov 2018 12:01:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=fpKMFqZReRewlnd5zFr0aACUY+IUpTnBOuxsZRzQDNM=;
-        b=kI3MNm/IYwFel0c1Td7u9wFftrl7/rMfcyvxDviGfcW4y9oyiIEYyVoNESzW6OMRXc
-         2pwpn49C+7cutBRJ8roWksCQOrI4QTWoPOIHyOg4PWseEB5dheq+eA2oQWsqwMrzFGDT
-         eT6gKoMVlpZUX0Sp2I8U4gAAA+fAk1bYiYe4i5aBkwvp+QI9bW4ErgRbMH+KdZ1ZxTRm
-         XsMrgm9zqSkrdFqDuY3ix3P2QZNQn98jEMjslA2jL9zjQ+zV+LC81HU2tG7A4rXqAMEI
-         Jj683xCTnX4HDHzG+QnWC6bBzqYUF2MMyhwbYDf14Z8nw5+g6rTvpLknJ905bfAYHV4U
-         FMCA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=fpKMFqZReRewlnd5zFr0aACUY+IUpTnBOuxsZRzQDNM=;
-        b=WlxF6zM+m+RpjtJISqqv3Lzy9eV11c6dvJ98rPNyJlU8XXdPmM5KbTetzrS/iL6tp1
-         UPtGVbT1B/B1I6o4ZAvbwzbtpXgdMDbu0H/x2oczreVWtokT+rl9km7o8YZtXp/1cHgo
-         JBj1C4t29YjcCFdBjyIVq5zDuUKIUm9j3tDoCouwYRzV+hit9rEi5GLpZ0XtkwiRrrzm
-         Dj6ES+1h9fVp4NRBxINMkoURauVEQAR7cTWSEQlEYaH2SQEvF4rktW+gcvYTFyf5o9O1
-         QHIkimQv/IA5v5FScpEpNYCN74RqW/CkvkFNxJzPvZDiQLvJNLtSs6/dCMtvMims9fXK
-         2ybw==
-X-Gm-Message-State: AGRZ1gKPp1OEs+XOcFm1twDWCo5cqBN3/Uvpsc9fie/TMhG391iBpu+A
-        J2jdag2CTuOl6YATCoB/aPJ5VgXyoznOyGVZ7Ks=
-X-Google-Smtp-Source: AJdET5eWXaiaZ2IvJP8eeohRlX7gxnPhxv/HhZRuk5rj6Y1mRLSCPCwD5XrYcGoDV5B/KUGPrAuk7ugk4G47GPm9+sA=
-X-Received: by 2002:a5d:64c2:: with SMTP id y2-v6mr6594165wrv.209.1542139267792;
- Tue, 13 Nov 2018 12:01:07 -0800 (PST)
-MIME-Version: 1.0
-References: <20181113055252.79406-1-sashal@kernel.org> <CAK+_RLnZiy13paU3tRggDpanLv=h+ZCcyXtOz_2UzWfy4tsu2w@mail.gmail.com>
- <CAK+_RLmkDfmxQcNMk7_eoC+=PQ=T9nPc=FVSiHbJADouypcEBQ@mail.gmail.com>
-In-Reply-To: <CAK+_RLmkDfmxQcNMk7_eoC+=PQ=T9nPc=FVSiHbJADouypcEBQ@mail.gmail.com>
-From:   Tigran Aivazian <aivazian.tigran@gmail.com>
-Date:   Tue, 13 Nov 2018 20:00:56 +0000
-Message-ID: <CAK+_RLmg=7Dz8umJYXr7at42Kw27H47prqmzLEGF-F5B2bviqw@mail.gmail.com>
-Subject: Re: [PATCH AUTOSEL 3.18 1/9] bfs: add sanity check at bfs_fill_super()
-To:     sashal@kernel.org
-Cc:     stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-        willy@infradead.org, Andrew Morton <akpm@linux-foundation.org>,
-        torvalds@linux-foundation.org
-Content-Type: multipart/mixed; boundary="00000000000040cac0057a9147a5"
+        Wed, 14 Nov 2018 01:02:59 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
+        Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
+        List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
+        List-Archive; bh=ZPRVKomUw/KSJdt677jswRl8eNvaUHHtC+TYEia/J7g=; b=IVOceuqLarPd
+        uMSjHBOD0xQORejB1atOBqmh8n2n4izrMB/pgDqfgYI7JRoOG08q6RLEDHe6FYVc0FO+g2E8KZ0Op
+        3gOzfaez25dFFMU46GpoubrdbYZgszPu+IetqSavemR9Q3k6sxUissK8V66clg6t+mdXZam6/VH40
+        Ph5to=;
+Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gMetx-0002XU-TT; Tue, 13 Nov 2018 20:03:10 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 3B117440079; Tue, 13 Nov 2018 20:02:55 +0000 (GMT)
+From:   Mark Brown <broonie@kernel.org>
+To:     Tomer Maimon <tmaimon77@gmail.com>
+Cc:     Mark Brown <broonie@kernel.org>, broonie@kernel.org,
+        robh+dt@kernel.org, mark.rutland@arm.com, yuenn@google.com,
+        venture@google.com, brendanhiggins@google.com,
+        avifishman70@gmail.com, joel@jms.id.au, linux-spi@vger.kernel.org,
+        openbmc@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-spi@vger.kernel.org
+Subject: Applied "dt-binding: spi: add NPCM PSPI controller documentation" to the spi tree
+In-Reply-To:  <20181112164232.435629-2-tmaimon77@gmail.com>
+Message-Id: <20181113200255.3B117440079@finisterre.ee.mobilebroadband>
+Date:   Tue, 13 Nov 2018 20:02:55 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---00000000000040cac0057a9147a5
-Content-Type: text/plain; charset="UTF-8"
+The patch
 
-On Tue, 13 Nov 2018 at 19:40, Tigran Aivazian <aivazian.tigran@gmail.com> wrote:
->
-> On Tue, 13 Nov 2018 at 08:31, Tigran Aivazian <aivazian.tigran@gmail.com> wrote:
-> > Andrew, if you would like me to make the same patch against 4.19.1 as
-> > well, please let me know.
->
-> I decided to just go ahead and backport it to 4.19.1 anyway (see
-> attached). Tested thoroughly under 4.19.1.
+   dt-binding: spi: add NPCM PSPI controller documentation
 
-I just missed the 4.19.2 release by a few minutes.
-And just as well, because the 4.19.1 patch contained a double of a
-(trivial) chunk (change to comment in include/uapi/linux/bfs_fs.h) in
-which "gmail.com" was misspelled as "veritas.com" :)
+has been applied to the spi tree at
 
-So, the final patch against 4.19.2 is attached.
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/spi.git 
 
---00000000000040cac0057a9147a5
-Content-Type: text/x-patch; charset="US-ASCII"; name="bfs-4.19.2.patch"
-Content-Disposition: attachment; filename="bfs-4.19.2.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_jog5rjae0>
-X-Attachment-Id: f_jog5rjae0
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.  
 
-RnJvbTogVGlncmFuIEFpdmF6aWFuIDxhaXZhemlhbi50aWdyYW5AZ21haWwuY29tPgpTdWJqZWN0
-OiBiZnM6IGV4dHJhIHNhbml0eSBjaGVja2luZyBhbmQgc3RhdGljIGlub2RlIGJpdG1hcAoKU3Ry
-ZW5ndGhlbiB2YWxpZGF0aW9uIG9mIEJGUyBzdXBlcmJsb2NrIGFnYWluc3QgY29ycnVwdGlvbi4K
-TWFrZSBpbi1jb3JlIGlub2RlIGJpdG1hcCBzdGF0aWMgcGFydCBvZiBzdXBlcmJsb2NrIGluZm8g
-c3RydWN0dXJlLgpQcmludCBhIHdhcm5pbmcgd2hlbiBtb3VudGluZyBhIEJGUyBmaWxlc3lzdGVt
-IGNyZWF0ZWQgd2l0aCAiLU4gNTEyIgpvcHRpb24gYXMgb25seSA1MTAgZmlsZXMgY2FuIGJlIGNy
-ZWF0ZWQgaW4gdGhlIHJvb3QgZGlyZWN0b3J5LgpNYWtlIHRoZSBrZXJuZWwgbWVzc2FnZXMgbW9y
-ZSB1bmlmb3JtLiBVcGRhdGUgdGhlICdwcmVmaXgnIHBhc3NlZCB0bwpiZnNfZHVtcF9pbWFwKCkg
-dG8gbWF0Y2ggdGhlIGN1cnJlbnQgbmFtaW5nIG9mIG9wZXJhdGlvbnMuCldoaXRlIHNwYWNlIGFu
-ZCBjb21tZW50cyBjbGVhbnVwLgoKU2lnbmVkLW9mZi1ieTogVGlncmFuIEFpdmF6aWFuIDxhaXZh
-emlhbi50aWdyYW5AZ21haWwuY29tPgpSZXBvcnRlZC1ieTogVGV0c3VvIEhhbmRhIDxwZW5ndWlu
-LWtlcm5lbEBpLWxvdmUuc2FrdXJhLm5lLmpwPgotLS0KCiBmcy9iZnMvYmZzLmggICAgICAgICAg
-ICAgICAgfCAgIDExICsrKysrKy0KIGZzL2Jmcy9kaXIuYyAgICAgICAgICAgICAgICB8ICAgIDQg
-Ky0KIGZzL2Jmcy9maWxlLmMgICAgICAgICAgICAgICB8ICAgIDIgLQogZnMvYmZzL2lub2RlLmMg
-ICAgICAgICAgICAgIHwgICA2NiArKysrKysrKysrKysrKysrKysrKy0tLS0tLS0tLS0tLS0tLS0t
-LS0tLS0tLQogaW5jbHVkZS91YXBpL2xpbnV4L2Jmc19mcy5oIHwgICAgMiAtCiA1IGZpbGVzIGNo
-YW5nZWQsIDQzIGluc2VydGlvbnMoKyksIDQyIGRlbGV0aW9ucygtKQoKLS0tIGluY2x1ZGUvdWFw
-aS9saW51eC9iZnNfZnMuaC4wCTIwMTgtMTEtMTMgMTk6MTk6NTUuOTQxMjY3MzQyICswMDAwCisr
-KyBpbmNsdWRlL3VhcGkvbGludXgvYmZzX2ZzLmgJMjAxOC0xMS0xMyAxOToyMDoyNC4xMDExODIz
-NTcgKzAwMDAKQEAgLTEsNyArMSw3IEBACiAvKiBTUERYLUxpY2Vuc2UtSWRlbnRpZmllcjogR1BM
-LTIuMCBXSVRIIExpbnV4LXN5c2NhbGwtbm90ZSAqLwogLyoKICAqCWluY2x1ZGUvbGludXgvYmZz
-X2ZzLmggLSBCRlMgZGF0YSBzdHJ1Y3R1cmVzIG9uIGRpc2suCi0gKglDb3B5cmlnaHQgKEMpIDE5
-OTkgVGlncmFuIEFpdmF6aWFuIDx0aWdyYW5AdmVyaXRhcy5jb20+CisgKglDb3B5cmlnaHQgKEMp
-IDE5OTktMjAxOCBUaWdyYW4gQWl2YXppYW4gPGFpdmF6aWFuLnRpZ3JhbkBnbWFpbC5jb20+CiAg
-Ki8KIAogI2lmbmRlZiBfTElOVVhfQkZTX0ZTX0gKLS0tIGZzL2Jmcy9iZnMuaC4wCTIwMTgtMTEt
-MTMgMTk6MjA6NDAuMTUxMTYxMDQ0ICswMDAwCisrKyBmcy9iZnMvYmZzLmgJMjAxOC0xMS0xMyAx
-OToyMTozMi45Mjk3NDA2NTYgKzAwMDAKQEAgLTEsMTMgKzEsMjAgQEAKIC8qIFNQRFgtTGljZW5z
-ZS1JZGVudGlmaWVyOiBHUEwtMi4wICovCiAvKgogICoJZnMvYmZzL2Jmcy5oCi0gKglDb3B5cmln
-aHQgKEMpIDE5OTkgVGlncmFuIEFpdmF6aWFuIDx0aWdyYW5AdmVyaXRhcy5jb20+CisgKglDb3B5
-cmlnaHQgKEMpIDE5OTktMjAxOCBUaWdyYW4gQWl2YXppYW4gPGFpdmF6aWFuLnRpZ3JhbkBnbWFp
-bC5jb20+CiAgKi8KICNpZm5kZWYgX0ZTX0JGU19CRlNfSAogI2RlZmluZSBfRlNfQkZTX0JGU19I
-CiAKICNpbmNsdWRlIDxsaW51eC9iZnNfZnMuaD4KIAorLyogSW4gdGhlb3J5IEJGUyBzdXBwb3J0
-cyB1cCB0byA1MTIgaW5vZGVzLCBudW1iZXJlZCBmcm9tIDIgKGZvciAvKSB1cCB0byA1MTMgaW5j
-bHVzaXZlLgorICAgSW4gYWN0dWFsIGZhY3QsIGF0dGVtcHRpbmcgdG8gY3JlYXRlIHRoZSA1MTJ0
-aCBpbm9kZSAoaS5lLiBpbm9kZSBOby4gNTEzIG9yIGZpbGUgTm8uIDUxMSkKKyAgIHdpbGwgZmFp
-bCB3aXRoIEVOT1NQQyBpbiBiZnNfYWRkX2VudHJ5KCk6IHRoZSByb290IGRpcmVjdG9yeSBjYW5u
-b3QgY29udGFpbiBzbyBtYW55IGVudHJpZXMsIGNvdW50aW5nICcuLicuCisgICBTbywgbWtmcy5i
-ZnMoOCkgc2hvdWxkIHJlYWxseSBsaW1pdCBpdHMgLU4gb3B0aW9uIHRvIDUxMSBhbmQgbm90IDUx
-Mi4gRm9yIG5vdywgd2UganVzdCBwcmludCBhIHdhcm5pbmcKKyAgIGlmIGEgZmlsZXN5c3RlbSBp
-cyBtb3VudGVkIHdpdGggc3VjaCAiaW1wb3NzaWJsZSB0byBmaWxsIHVwIiBudW1iZXIgb2YgaW5v
-ZGVzICovCisjZGVmaW5lIEJGU19NQVhfTEFTVEkJNTEzCisKIC8qCiAgKiBCRlMgZmlsZSBzeXN0
-ZW0gaW4tY29yZSBzdXBlcmJsb2NrIGluZm8KICAqLwpAQCAtMTcsNyArMjQsNyBAQAogCXVuc2ln
-bmVkIGxvbmcgc2lfZnJlZWk7CiAJdW5zaWduZWQgbG9uZyBzaV9sZl9lYmxrOwogCXVuc2lnbmVk
-IGxvbmcgc2lfbGFzdGk7Ci0JdW5zaWduZWQgbG9uZyAqc2lfaW1hcDsKKwlERUNMQVJFX0JJVE1B
-UChzaV9pbWFwLCBCRlNfTUFYX0xBU1RJKzEpOwogCXN0cnVjdCBtdXRleCBiZnNfbG9jazsKIH07
-CiAKLS0tIGZzL2Jmcy9kaXIuYy4wCTIwMTgtMTEtMTMgMTk6Mjk6MzIuMzYxMjU5MjcyICswMDAw
-CisrKyBmcy9iZnMvZGlyLmMJMjAxOC0xMS0xMyAxOTozMDowMS4zODA2ODM4NTggKzAwMDAKQEAg
-LTIsOCArMiw4IEBACiAvKgogICoJZnMvYmZzL2Rpci5jCiAgKglCRlMgZGlyZWN0b3J5IG9wZXJh
-dGlvbnMuCi0gKglDb3B5cmlnaHQgKEMpIDE5OTksMjAwMCAgVGlncmFuIEFpdmF6aWFuIDx0aWdy
-YW5AdmVyaXRhcy5jb20+Ci0gKiAgICAgIE1hZGUgZW5kaWFubmVzcy1jbGVhbiBieSBBbmRyZXcg
-U3RyaWJibGVoaWxsIDxhZHNAd29tcG9tLm9yZz4gMjAwNQorICoJQ29weXJpZ2h0IChDKSAxOTk5
-LTIwMTggVGlncmFuIEFpdmF6aWFuIDxhaXZhemlhbi50aWdyYW5AZ21haWwuY29tPgorICogIE1h
-ZGUgZW5kaWFubmVzcy1jbGVhbiBieSBBbmRyZXcgU3RyaWJibGVoaWxsIDxhZHNAd29tcG9tLm9y
-Zz4gMjAwNQogICovCiAKICNpbmNsdWRlIDxsaW51eC90aW1lLmg+Ci0tLSBmcy9iZnMvZmlsZS5j
-LjAJMjAxOC0xMS0xMyAxOTozMDoxMS43NjA0ODk5NTcgKzAwMDAKKysrIGZzL2Jmcy9maWxlLmMJ
-MjAxOC0xMS0xMyAxOTozMDoyNy4wMjAyMTQ4NDUgKzAwMDAKQEAgLTIsNyArMiw3IEBACiAvKgog
-ICoJZnMvYmZzL2ZpbGUuYwogICoJQkZTIGZpbGUgb3BlcmF0aW9ucy4KLSAqCUNvcHlyaWdodCAo
-QykgMTk5OSwyMDAwIFRpZ3JhbiBBaXZhemlhbiA8dGlncmFuQHZlcml0YXMuY29tPgorICoJQ29w
-eXJpZ2h0IChDKSAxOTk5LTIwMTggVGlncmFuIEFpdmF6aWFuIDxhaXZhemlhbi50aWdyYW5AZ21h
-aWwuY29tPgogICoKICAqCU1ha2UgdGhlIGZpbGUgYmxvY2sgYWxsb2NhdGlvbiBhbGdvcml0aG0g
-dW5kZXJzdGFuZCB0aGUgc2l6ZQogICoJb2YgdGhlIHVuZGVybHlpbmcgYmxvY2sgZGV2aWNlLgot
-LS0gZnMvYmZzL2lub2RlLmMuMAkyMDE4LTExLTEzIDE5OjIxOjQ2LjA4OTU3OTcyNiArMDAwMAor
-KysgZnMvYmZzL2lub2RlLmMJMjAxOC0xMS0xMyAxOToyOToyMi41MjE0NjcxMDQgKzAwMDAKQEAg
-LTEsMTAgKzEsOSBAQAogLyoKICAqCWZzL2Jmcy9pbm9kZS5jCiAgKglCRlMgc3VwZXJibG9jayBh
-bmQgaW5vZGUgb3BlcmF0aW9ucy4KLSAqCUNvcHlyaWdodCAoQykgMTk5OS0yMDA2IFRpZ3JhbiBB
-aXZhemlhbiA8YWl2YXppYW4udGlncmFuQGdtYWlsLmNvbT4KKyAqCUNvcHlyaWdodCAoQykgMTk5
-OS0yMDE4IFRpZ3JhbiBBaXZhemlhbiA8YWl2YXppYW4udGlncmFuQGdtYWlsLmNvbT4KICAqCUZy
-b20gZnMvbWluaXgsIENvcHlyaWdodCAoQykgMTk5MSwgMTk5MiBMaW51cyBUb3J2YWxkcy4KLSAq
-Ci0gKiAgICAgIE1hZGUgZW5kaWFubmVzcy1jbGVhbiBieSBBbmRyZXcgU3RyaWJibGVoaWxsIDxh
-ZHNAd29tcG9tLm9yZz4sIDIwMDUuCisgKglNYWRlIGVuZGlhbm5lc3MtY2xlYW4gYnkgQW5kcmV3
-IFN0cmliYmxlaGlsbCA8YWRzQHdvbXBvbS5vcmc+LCAyMDA1LgogICovCiAKICNpbmNsdWRlIDxs
-aW51eC9tb2R1bGUuaD4KQEAgLTExOCwxMiArMTE3LDEyIEBACiB7CiAJc3RydWN0IGJmc19zYl9p
-bmZvICppbmZvID0gQkZTX1NCKGlub2RlLT5pX3NiKTsKIAl1bnNpZ25lZCBpbnQgaW5vID0gKHUx
-Nilpbm9kZS0+aV9pbm87Ci0gICAgICAgIHVuc2lnbmVkIGxvbmcgaV9zYmxvY2s7CisJdW5zaWdu
-ZWQgbG9uZyBpX3NibG9jazsKIAlzdHJ1Y3QgYmZzX2lub2RlICpkaTsKIAlzdHJ1Y3QgYnVmZmVy
-X2hlYWQgKmJoOwogCWludCBlcnIgPSAwOwogCi0gICAgICAgIGRwcmludGYoImlubz0lMDh4XG4i
-LCBpbm8pOworCWRwcmludGYoImlubz0lMDh4XG4iLCBpbm8pOwogCiAJZGkgPSBmaW5kX2lub2Rl
-KGlub2RlLT5pX3NiLCBpbm8sICZiaCk7CiAJaWYgKElTX0VSUihkaSkpCkBAIC0xNDQsNyArMTQz
-LDcgQEAKIAlkaS0+aV9hdGltZSA9IGNwdV90b19sZTMyKGlub2RlLT5pX2F0aW1lLnR2X3NlYyk7
-CiAJZGktPmlfbXRpbWUgPSBjcHVfdG9fbGUzMihpbm9kZS0+aV9tdGltZS50dl9zZWMpOwogCWRp
-LT5pX2N0aW1lID0gY3B1X3RvX2xlMzIoaW5vZGUtPmlfY3RpbWUudHZfc2VjKTsKLSAgICAgICAg
-aV9zYmxvY2sgPSBCRlNfSShpbm9kZSktPmlfc2Jsb2NrOworCWlfc2Jsb2NrID0gQkZTX0koaW5v
-ZGUpLT5pX3NibG9jazsKIAlkaS0+aV9zYmxvY2sgPSBjcHVfdG9fbGUzMihpX3NibG9jayk7CiAJ
-ZGktPmlfZWJsb2NrID0gY3B1X3RvX2xlMzIoQkZTX0koaW5vZGUpLT5pX2VibG9jayk7CiAJZGkt
-PmlfZW9mZnNldCA9IGNwdV90b19sZTMyKGlfc2Jsb2NrICogQkZTX0JTSVpFICsgaW5vZGUtPmlf
-c2l6ZSAtIDEpOwpAQCAtMTg4LDEzICsxODcsMTMgQEAKIAltYXJrX2J1ZmZlcl9kaXJ0eShiaCk7
-CiAJYnJlbHNlKGJoKTsKIAotICAgICAgICBpZiAoYmktPmlfZHNrX2lubykgeworCWlmIChiaS0+
-aV9kc2tfaW5vKSB7CiAJCWlmIChiaS0+aV9zYmxvY2spCiAJCQlpbmZvLT5zaV9mcmVlYiArPSBi
-aS0+aV9lYmxvY2sgKyAxIC0gYmktPmlfc2Jsb2NrOwogCQlpbmZvLT5zaV9mcmVlaSsrOwogCQlj
-bGVhcl9iaXQoaW5vLCBpbmZvLT5zaV9pbWFwKTsKLQkJYmZzX2R1bXBfaW1hcCgiZGVsZXRlX2lu
-b2RlIiwgcyk7Ci0gICAgICAgIH0KKwkJYmZzX2R1bXBfaW1hcCgiZXZpY3RfaW5vZGUiLCBzKTsK
-Kwl9CiAKIAkvKgogCSAqIElmIHRoaXMgd2FzIHRoZSBsYXN0IGZpbGUsIG1ha2UgdGhlIHByZXZp
-b3VzIGJsb2NrCkBAIC0yMTQsNyArMjEzLDYgQEAKIAkJcmV0dXJuOwogCiAJbXV0ZXhfZGVzdHJv
-eSgmaW5mby0+YmZzX2xvY2spOwotCWtmcmVlKGluZm8tPnNpX2ltYXApOwogCWtmcmVlKGluZm8p
-OwogCXMtPnNfZnNfaW5mbyA9IE5VTEw7CiB9CkBAIC0zMTEsOCArMzA5LDcgQEAKIAkJZWxzZQog
-CQkJc3RyY2F0KHRtcGJ1ZiwgIjAiKTsKIAl9Ci0JcHJpbnRmKCJCRlMtZnM6ICVzOiBsYXN0aT0l
-MDhseCA8JXM+XG4iLAotCQkJCXByZWZpeCwgQkZTX1NCKHMpLT5zaV9sYXN0aSwgdG1wYnVmKTsK
-KwlwcmludGYoIiVzOiBsYXN0aT0lMDhseCA8JXM+XG4iLCBwcmVmaXgsIEJGU19TQihzKS0+c2lf
-bGFzdGksIHRtcGJ1Zik7CiAJZnJlZV9wYWdlKCh1bnNpZ25lZCBsb25nKXRtcGJ1Zik7CiAjZW5k
-aWYKIH0KQEAgLTMyMiw3ICszMTksNyBAQAogCXN0cnVjdCBidWZmZXJfaGVhZCAqYmgsICpzYmg7
-CiAJc3RydWN0IGJmc19zdXBlcl9ibG9jayAqYmZzX3NiOwogCXN0cnVjdCBpbm9kZSAqaW5vZGU7
-Ci0JdW5zaWduZWQgaSwgaW1hcF9sZW47CisJdW5zaWduZWQgaTsKIAlzdHJ1Y3QgYmZzX3NiX2lu
-Zm8gKmluZm87CiAJaW50IHJldCA9IC1FSU5WQUw7CiAJdW5zaWduZWQgbG9uZyBpX3NibG9jaywg
-aV9lYmxvY2ssIGlfZW9mZiwgc19zaXplOwpAQCAtMzQxLDggKzMzOCw3IEBACiAJYmZzX3NiID0g
-KHN0cnVjdCBiZnNfc3VwZXJfYmxvY2sgKilzYmgtPmJfZGF0YTsKIAlpZiAobGUzMl90b19jcHUo
-YmZzX3NiLT5zX21hZ2ljKSAhPSBCRlNfTUFHSUMpIHsKIAkJaWYgKCFzaWxlbnQpCi0JCQlwcmlu
-dGYoIk5vIEJGUyBmaWxlc3lzdGVtIG9uICVzIChtYWdpYz0lMDh4KVxuIiwgCi0JCQkJcy0+c19p
-ZCwgIGxlMzJfdG9fY3B1KGJmc19zYi0+c19tYWdpYykpOworCQkJcHJpbnRmKCJObyBCRlMgZmls
-ZXN5c3RlbSBvbiAlcyAobWFnaWM9JTA4eClcbiIsIHMtPnNfaWQsICBsZTMyX3RvX2NwdShiZnNf
-c2ItPnNfbWFnaWMpKTsKIAkJZ290byBvdXQxOwogCX0KIAlpZiAoQkZTX1VOQ0xFQU4oYmZzX3Ni
-LCBzKSAmJiAhc2lsZW50KQpAQCAtMzUwLDE4ICszNDYsMTkgQEAKIAogCXMtPnNfbWFnaWMgPSBC
-RlNfTUFHSUM7CiAKLQlpZiAobGUzMl90b19jcHUoYmZzX3NiLT5zX3N0YXJ0KSA+IGxlMzJfdG9f
-Y3B1KGJmc19zYi0+c19lbmQpKSB7Ci0JCXByaW50ZigiU3VwZXJibG9jayBpcyBjb3JydXB0ZWRc
-biIpOworCWlmIChsZTMyX3RvX2NwdShiZnNfc2ItPnNfc3RhcnQpID4gbGUzMl90b19jcHUoYmZz
-X3NiLT5zX2VuZCkgfHwKKwkgICAgbGUzMl90b19jcHUoYmZzX3NiLT5zX3N0YXJ0KSA8IHNpemVv
-ZihzdHJ1Y3QgYmZzX3N1cGVyX2Jsb2NrKSArIHNpemVvZihzdHJ1Y3QgYmZzX2RpcmVudCkpIHsK
-KwkJcHJpbnRmKCJTdXBlcmJsb2NrIGlzIGNvcnJ1cHRlZCBvbiAlc1xuIiwgcy0+c19pZCk7CiAJ
-CWdvdG8gb3V0MTsKIAl9CiAKLQlpbmZvLT5zaV9sYXN0aSA9IChsZTMyX3RvX2NwdShiZnNfc2It
-PnNfc3RhcnQpIC0gQkZTX0JTSVpFKSAvCi0JCQkJCXNpemVvZihzdHJ1Y3QgYmZzX2lub2RlKQot
-CQkJCQkrIEJGU19ST09UX0lOTyAtIDE7Ci0JaW1hcF9sZW4gPSAoaW5mby0+c2lfbGFzdGkgLyA4
-KSArIDE7Ci0JaW5mby0+c2lfaW1hcCA9IGt6YWxsb2MoaW1hcF9sZW4sIEdGUF9LRVJORUwpOwot
-CWlmICghaW5mby0+c2lfaW1hcCkKKwlpbmZvLT5zaV9sYXN0aSA9IChsZTMyX3RvX2NwdShiZnNf
-c2ItPnNfc3RhcnQpIC0gQkZTX0JTSVpFKSAvIHNpemVvZihzdHJ1Y3QgYmZzX2lub2RlKSArIEJG
-U19ST09UX0lOTyAtIDE7CisJaWYgKGluZm8tPnNpX2xhc3RpID09IEJGU19NQVhfTEFTVEkpCisJ
-CXByaW50ZigiV0FSTklORzogZmlsZXN5c3RlbSAlcyB3YXMgY3JlYXRlZCB3aXRoIDUxMiBpbm9k
-ZXMsIHRoZSByZWFsIG1heGltdW0gaXMgNTExLCBtb3VudGluZyBhbnl3YXlcbiIsIHMtPnNfaWQp
-OworCWVsc2UgaWYgKGluZm8tPnNpX2xhc3RpID4gQkZTX01BWF9MQVNUSSkgeworCQlwcmludGYo
-IkltcG9zc2libGUgbGFzdCBpbm9kZSBudW1iZXIgJWx1ID4gJWQgb24gJXNcbiIsIGluZm8tPnNp
-X2xhc3RpLCBCRlNfTUFYX0xBU1RJLCBzLT5zX2lkKTsKIAkJZ290byBvdXQxOworICAgIH0KIAlm
-b3IgKGkgPSAwOyBpIDwgQkZTX1JPT1RfSU5POyBpKyspCiAJCXNldF9iaXQoaSwgaW5mby0+c2lf
-aW1hcCk7CiAKQEAgLTM2OSwyNiArMzY2LDI1IEBACiAJaW5vZGUgPSBiZnNfaWdldChzLCBCRlNf
-Uk9PVF9JTk8pOwogCWlmIChJU19FUlIoaW5vZGUpKSB7CiAJCXJldCA9IFBUUl9FUlIoaW5vZGUp
-OwotCQlnb3RvIG91dDI7CisJCWdvdG8gb3V0MTsKIAl9CiAJcy0+c19yb290ID0gZF9tYWtlX3Jv
-b3QoaW5vZGUpOwogCWlmICghcy0+c19yb290KSB7CiAJCXJldCA9IC1FTk9NRU07Ci0JCWdvdG8g
-b3V0MjsKKwkJZ290byBvdXQxOwogCX0KIAogCWluZm8tPnNpX2Jsb2NrcyA9IChsZTMyX3RvX2Nw
-dShiZnNfc2ItPnNfZW5kKSArIDEpID4+IEJGU19CU0laRV9CSVRTOwotCWluZm8tPnNpX2ZyZWVi
-ID0gKGxlMzJfdG9fY3B1KGJmc19zYi0+c19lbmQpICsgMQotCQkJLSBsZTMyX3RvX2NwdShiZnNf
-c2ItPnNfc3RhcnQpKSA+PiBCRlNfQlNJWkVfQklUUzsKKwlpbmZvLT5zaV9mcmVlYiA9IChsZTMy
-X3RvX2NwdShiZnNfc2ItPnNfZW5kKSArIDEgLSBsZTMyX3RvX2NwdShiZnNfc2ItPnNfc3RhcnQp
-KSA+PiBCRlNfQlNJWkVfQklUUzsKIAlpbmZvLT5zaV9mcmVlaSA9IDA7CiAJaW5mby0+c2lfbGZf
-ZWJsayA9IDA7CiAKIAkvKiBjYW4gd2UgcmVhZCB0aGUgbGFzdCBibG9jaz8gKi8KIAliaCA9IHNi
-X2JyZWFkKHMsIGluZm8tPnNpX2Jsb2NrcyAtIDEpOwogCWlmICghYmgpIHsKLQkJcHJpbnRmKCJM
-YXN0IGJsb2NrIG5vdCBhdmFpbGFibGU6ICVsdVxuIiwgaW5mby0+c2lfYmxvY2tzIC0gMSk7CisJ
-CXByaW50ZigiTGFzdCBibG9jayBub3QgYXZhaWxhYmxlIG9uICVzOiAlbHVcbiIsIHMtPnNfaWQs
-IGluZm8tPnNpX2Jsb2NrcyAtIDEpOwogCQlyZXQgPSAtRUlPOwotCQlnb3RvIG91dDM7CisJCWdv
-dG8gb3V0MjsKIAl9CiAJYnJlbHNlKGJoKTsKIApAQCAtNDIyLDExICs0MTgsMTEgQEAKIAkJCShp
-X2VvZmYgIT0gbGUzMl90b19jcHUoLTEpICYmIGlfZW9mZiA+IHNfc2l6ZSkgfHwKIAkJCWlfc2Js
-b2NrICogQkZTX0JTSVpFID4gaV9lb2ZmKSB7CiAKLQkJCXByaW50ZigiSW5vZGUgMHglMDh4IGNv
-cnJ1cHRlZFxuIiwgaSk7CisJCQlwcmludGYoIklub2RlIDB4JTA4eCBjb3JydXB0ZWQgb24gJXNc
-biIsIGksIHMtPnNfaWQpOwogCiAJCQlicmVsc2UoYmgpOwogCQkJcmV0ID0gLUVJTzsKLQkJCWdv
-dG8gb3V0MzsKKwkJCWdvdG8gb3V0MjsKIAkJfQogCiAJCWlmICghZGktPmlfaW5vKSB7CkBAIC00
-NDIsMTQgKzQzOCwxMiBAQAogCX0KIAlicmVsc2UoYmgpOwogCWJyZWxzZShzYmgpOwotCWJmc19k
-dW1wX2ltYXAoInJlYWRfc3VwZXIiLCBzKTsKKwliZnNfZHVtcF9pbWFwKCJmaWxsX3N1cGVyIiwg
-cyk7CiAJcmV0dXJuIDA7CiAKLW91dDM6CitvdXQyOgogCWRwdXQocy0+c19yb290KTsKIAlzLT5z
-X3Jvb3QgPSBOVUxMOwotb3V0MjoKLQlrZnJlZShpbmZvLT5zaV9pbWFwKTsKIG91dDE6CiAJYnJl
-bHNlKHNiaCk7CiBvdXQ6CkBAIC00NzksNyArNDczLDcgQEAKIAlpbnQgZXJyID0gaW5pdF9pbm9k
-ZWNhY2hlKCk7CiAJaWYgKGVycikKIAkJZ290byBvdXQxOwotICAgICAgICBlcnIgPSByZWdpc3Rl
-cl9maWxlc3lzdGVtKCZiZnNfZnNfdHlwZSk7CisJZXJyID0gcmVnaXN0ZXJfZmlsZXN5c3RlbSgm
-YmZzX2ZzX3R5cGUpOwogCWlmIChlcnIpCiAJCWdvdG8gb3V0OwogCXJldHVybiAwOwo=
---00000000000040cac0057a9147a5--
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
+From 4ad26864df53b265976c4a3ae61b1e6cad92fe40 Mon Sep 17 00:00:00 2001
+From: Tomer Maimon <tmaimon77@gmail.com>
+Date: Mon, 12 Nov 2018 18:42:31 +0200
+Subject: [PATCH] dt-binding: spi: add NPCM PSPI controller documentation
+
+Added device tree binding documentation for Nuvoton BMC
+NPCM Peripheral SPI controller.
+
+Signed-off-by: Tomer Maimon <tmaimon77@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ .../bindings/spi/nuvoton,npcm-pspi.txt        | 35 +++++++++++++++++++
+ 1 file changed, 35 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt
+
+diff --git a/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt b/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt
+new file mode 100644
+index 000000000000..99606b22e5c2
+--- /dev/null
++++ b/Documentation/devicetree/bindings/spi/nuvoton,npcm-pspi.txt
+@@ -0,0 +1,35 @@
++Nuvoton NPCM Peripheral Serial Peripheral Interface(PSPI) controller driver
++
++Nuvoton NPCM7xx SOC support two PSPI channels.
++
++Required properties:
++ - compatible : "nuvoton,npcm750-pspi" for NPCM7XX BMC
++ - #address-cells : should be 1. see spi-bus.txt
++ - #size-cells : should be 0. see spi-bus.txt
++ - specifies physical base address and size of the register.
++ - interrupts : contain PSPI interrupt.
++ - clocks : phandle of PSPI reference clock.
++ - clock-names: Should be "clk_apb5".
++ - pinctrl-names : a pinctrl state named "default" must be defined.
++ - pinctrl-0 : phandle referencing pin configuration of the device.
++ - cs-gpios: Specifies the gpio pins to be used for chipselects.
++            See: Documentation/devicetree/bindings/spi/spi-bus.txt
++
++Optional properties:
++- clock-frequency : Input clock frequency to the PSPI block in Hz.
++		    Default is 25000000 Hz.
++
++Example:
++
++spi0: spi@f0200000 {
++	compatible = "nuvoton,npcm750-pspi";
++	reg = <0xf0200000 0x1000>;
++	pinctrl-names = "default";
++	pinctrl-0 = <&pspi1_pins>;
++	#address-cells = <1>;
++	#size-cells = <0>;
++	interrupts = <GIC_SPI 31 IRQ_TYPE_LEVEL_HIGH>;
++	clocks = <&clk NPCM7XX_CLK_APB5>;
++	clock-names = "clk_apb5";
++	cs-gpios = <&gpio6 11 GPIO_ACTIVE_LOW>;
++};
+-- 
+2.19.1
+
