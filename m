@@ -2,934 +2,282 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF8D5C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 212E1C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:01:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6F42C223CB
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:01:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Q9oOentU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6F42C223CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id DDB3E22507
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:01:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDB3E22507
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732532AbeKMP5w (ORCPT
+        id S1732667AbeKMP54 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:57:52 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:32911 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731959AbeKMP5u (ORCPT
+        Tue, 13 Nov 2018 10:57:56 -0500
+Received: from fllv0015.ext.ti.com ([198.47.19.141]:35066 "EHLO
+        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732339AbeKMP5z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:57:50 -0500
-Received: by mail-pg1-f193.google.com with SMTP id z11so2544015pgu.0
-        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 22:01:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=tkekAlzU0/ZXeGVkEaOfhtxq6gAOvVsYqROWM66MqH8=;
-        b=Q9oOentUD2vumWkAJ4MQYHr0yGqJRq5Wci3A7yfeKMG8Dg8qsQuE8EC6CwC4HRGVA1
-         20sy30wXMctVpkMze77S2RMu36QwN0iT/eQfnWWKzN8h+Ze2FiQaG4D0zuGBIWQl3dwi
-         oXMYLZt/Tl8f1d2lQ9+mZjr8N2wVVakP7/P5w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=tkekAlzU0/ZXeGVkEaOfhtxq6gAOvVsYqROWM66MqH8=;
-        b=P/La7vp+LHQRyx2OodlS1d3W3dEqi9SuKfyXBPa+FznKj+01BbLyRz/l6DiIBFQMac
-         jAVIxJWc2AnFGqB4vjgOOGjd4/Xkdh+sf9x8UCauPSvT03aaU5RaMP2G0w47FddpXmxU
-         Sdxg+zRO8g6Qxun9qc1/6R3IFfgpk9UrSqX+zfY246jpU1R2IxdNAQvpRsk6OohNQUoU
-         jTztrz6bk1rORyKXd7TXLg9bP40QL8jQYmj9rctaxKAbKm2Vp8iyYpIfH5O+lzXgkI3r
-         bIKt6YcslvspReeNbDe+b7WMb+lg3F0jKQne8e2oLweLYDsNIVMWoHf/aiwEjIhlAhYb
-         4t3A==
-X-Gm-Message-State: AGRZ1gKD6vGczPoFcKjp1iX8RTLvQquJS90lZiYiGL+u6N4nrq3LAwGS
-        eijzR4Xg6CQ4nPuaRfvucuaA4MoJTEc=
-X-Google-Smtp-Source: AJdET5cr3Wyxhzjd2OL9EttK78AxSIUi3yq3eBm5H2DWfsOgxxJhWJhvZY645Bg2DHAQt1PcYFG2pA==
-X-Received: by 2002:a63:6cc:: with SMTP id 195mr3611330pgg.52.1542088879203;
-        Mon, 12 Nov 2018 22:01:19 -0800 (PST)
-Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id r6-v6sm19150204pfk.157.2018.11.12.22.01.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Mon, 12 Nov 2018 22:01:18 -0800 (PST)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-m68k@lists.linux-m68k.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v5 3/3] m68k: generate uapi header and syscall table header files
-Date:   Tue, 13 Nov 2018 11:30:29 +0530
-Message-Id: <1542088829-19790-4-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542088829-19790-1-git-send-email-firoz.khan@linaro.org>
-References: <1542088829-19790-1-git-send-email-firoz.khan@linaro.org>
+        Tue, 13 Nov 2018 10:57:55 -0500
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAD60daP002412;
+        Tue, 13 Nov 2018 00:00:39 -0600
+Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
+        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAD60dwW038036
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Tue, 13 Nov 2018 00:00:39 -0600
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 13
+ Nov 2018 00:00:39 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Tue, 13 Nov 2018 00:00:39 -0600
+Received: from a0132425.india.ti.com (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAD60LuB017811;
+        Tue, 13 Nov 2018 00:00:36 -0600
+From:   Vignesh R <vigneshr@ti.com>
+To:     Tero Kristo <t-kristo@ti.com>, Rob Herring <robh+dt@kernel.org>
+CC:     Nishanth Menon <nm@ti.com>, Mark Rutland <mark.rutland@arm.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <devicetree@vger.kernel.org>, Vignesh R <vigneshr@ti.com>,
+        <linux-omap@vger.kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tony Lindgren <tony@atomide.com>
+Subject: [PATCH v2 4/4] arm64: dts: ti: k3-am654-base-board: Add I2C nodes
+Date:   Tue, 13 Nov 2018 11:31:11 +0530
+Message-ID: <20181113060111.16374-5-vigneshr@ti.com>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181113060111.16374-1-vigneshr@ti.com>
+References: <20181113060111.16374-1-vigneshr@ti.com>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 7BIT
+Content-Type:   text/plain; charset=US-ASCII
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-System call table generation script must be run to gener-
-ate unistd_32.h and syscall_table.h files. This patch will
-have changes which will invokes the script.
+Add DT entries for I2C instances present in AM654 SoC.
 
-This patch will generate unistd_32.h and syscall_table.h
-files by the syscall table generation script invoked by
-m68k/Makefile and the generated files against the removed
-files must be identical.
-
-The generated uapi header file will be included in uapi/-
-asm/unistd.h and generated system call table header file
-will be included by kernel/syscalltable.S file.
-
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
 ---
- arch/m68k/Makefile                  |   3 +
- arch/m68k/include/asm/Kbuild        |   1 +
- arch/m68k/include/uapi/asm/Kbuild   |   1 +
- arch/m68k/include/uapi/asm/unistd.h | 389 +-----------------------------------
- arch/m68k/kernel/syscalltable.S     | 387 +----------------------------------
- 5 files changed, 11 insertions(+), 770 deletions(-)
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi      | 44 ++++++++++++
+ arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi       | 11 +++
+ arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi    | 11 +++
+ arch/arm64/boot/dts/ti/k3-am65.dtsi           |  6 ++
+ .../arm64/boot/dts/ti/k3-am654-base-board.dts | 70 +++++++++++++++++++
+ 5 files changed, 142 insertions(+)
 
-diff --git a/arch/m68k/Makefile b/arch/m68k/Makefile
-index 997c9f2..f00ca53 100644
---- a/arch/m68k/Makefile
-+++ b/arch/m68k/Makefile
-@@ -154,5 +154,8 @@ endif
- archclean:
- 	rm -f vmlinux.gz vmlinux.bz2
- 
-+archheaders:
-+	$(Q)$(MAKE) $(build)=arch/m68k/kernel/syscalls all
+diff --git a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+index f7c2a60d5c80..916434839603 100644
+--- a/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65-main.dtsi
+@@ -85,4 +85,48 @@
+ 		pinctrl-single,register-width = <32>;
+ 		pinctrl-single,function-mask = <0xffffffff>;
+ 	};
 +
- install:
- 	sh $(srctree)/arch/m68k/install.sh $(KERNELRELEASE) vmlinux.gz System.map "$(INSTALL_PATH)"
-diff --git a/arch/m68k/include/asm/Kbuild b/arch/m68k/include/asm/Kbuild
-index a4b8d33..9f1dd26 100644
---- a/arch/m68k/include/asm/Kbuild
-+++ b/arch/m68k/include/asm/Kbuild
-@@ -1,3 +1,4 @@
-+generated-y += syscall_table.h
- generic-y += barrier.h
- generic-y += compat.h
- generic-y += device.h
-diff --git a/arch/m68k/include/uapi/asm/Kbuild b/arch/m68k/include/uapi/asm/Kbuild
-index c2e26a4..b645291 100644
---- a/arch/m68k/include/uapi/asm/Kbuild
-+++ b/arch/m68k/include/uapi/asm/Kbuild
-@@ -1,6 +1,7 @@
- # UAPI Header export list
- include include/uapi/asm-generic/Kbuild.asm
++	main_i2c0: i2c@2000000 {
++		compatible = "ti,am654-i2c", "ti,omap4-i2c";
++		reg = <0x0 0x2000000 0x0 0x100>;
++		interrupts = <GIC_SPI 200 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clock-names = "fck";
++		clocks = <&k3_clks 110 1>;
++		power-domains = <&k3_pds 110>;
++	};
++
++	main_i2c1: i2c@2010000 {
++		compatible = "ti,am654-i2c", "ti,omap4-i2c";
++		reg = <0x0 0x2010000 0x0 0x100>;
++		interrupts = <GIC_SPI 201 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clock-names = "fck";
++		clocks = <&k3_clks 111 1>;
++		power-domains = <&k3_pds 111>;
++	};
++
++	main_i2c2: i2c@2020000 {
++		compatible = "ti,am654-i2c", "ti,omap4-i2c";
++		reg = <0x0 0x2020000 0x0 0x100>;
++		interrupts = <GIC_SPI 202 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clock-names = "fck";
++		clocks = <&k3_clks 112 1>;
++		power-domains = <&k3_pds 112>;
++	};
++
++	main_i2c3: i2c@2030000 {
++		compatible = "ti,am654-i2c", "ti,omap4-i2c";
++		reg = <0x0 0x2030000 0x0 0x100>;
++		interrupts = <GIC_SPI 203 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clock-names = "fck";
++		clocks = <&k3_clks 113 1>;
++		power-domains = <&k3_pds 113>;
++	};
+ };
+diff --git a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+index 8c611d16df44..1fd027748e1f 100644
+--- a/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi
+@@ -15,4 +15,15 @@
+ 			clock-frequency = <96000000>;
+ 			current-speed = <115200>;
+ 	};
++
++	mcu_i2c0: i2c@40b00000 {
++		compatible = "ti,am654-i2c", "ti,omap4-i2c";
++		reg = <0x0 0x40b00000 0x0 0x100>;
++		interrupts = <GIC_SPI 564 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clock-names = "fck";
++		clocks = <&k3_clks 114 1>;
++		power-domains = <&k3_pds 114>;
++	};
+ };
+diff --git a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
+index 19b46f40789b..9e8467ce7ad8 100644
+--- a/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi
+@@ -51,4 +51,15 @@
+ 		clock-frequency = <48000000>;
+ 		current-speed = <115200>;
+ 	};
++
++	wkup_i2c0: i2c@42120000 {
++		compatible = "ti,am654-i2c", "ti,omap4-i2c";
++		reg = <0x42120000 0x100>;
++		interrupts = <GIC_SPI 696 IRQ_TYPE_LEVEL_HIGH>;
++		#address-cells = <1>;
++		#size-cells = <0>;
++		clock-names = "fck";
++		clocks = <&k3_clks 115 1>;
++		power-domains = <&k3_pds 115>;
++	};
+ };
+diff --git a/arch/arm64/boot/dts/ti/k3-am65.dtsi b/arch/arm64/boot/dts/ti/k3-am65.dtsi
+index 6fdfc7815811..50f4be2047a9 100644
+--- a/arch/arm64/boot/dts/ti/k3-am65.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am65.dtsi
+@@ -23,6 +23,12 @@
+ 		serial2 = &main_uart0;
+ 		serial3 = &main_uart1;
+ 		serial4 = &main_uart2;
++		i2c0 = &wkup_i2c0;
++		i2c1 = &mcu_i2c0;
++		i2c2 = &main_i2c0;
++		i2c3 = &main_i2c1;
++		i2c4 = &main_i2c2;
++		i2c5 = &main_i2c3;
+ 	};
  
-+generated-y += unistd_32.h
- generic-y += auxvec.h
- generic-y += bitsperlong.h
- generic-y += bpf_perf_event.h
-diff --git a/arch/m68k/include/uapi/asm/unistd.h b/arch/m68k/include/uapi/asm/unistd.h
-index ba4176aa..cdbd090 100644
---- a/arch/m68k/include/uapi/asm/unistd.h
-+++ b/arch/m68k/include/uapi/asm/unistd.h
-@@ -2,393 +2,6 @@
- #ifndef _UAPI_ASM_M68K_UNISTD_H_
- #define _UAPI_ASM_M68K_UNISTD_H_
+ 	chosen { };
+diff --git a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+index cbf9d3dfeaa3..bd5a0069191d 100644
+--- a/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
++++ b/arch/arm64/boot/dts/ti/k3-am654-base-board.dts
+@@ -35,6 +35,15 @@
+ 	};
+ };
  
--/*
-- * This file contains the system call numbers.
-- */
--
--#define __NR_restart_syscall	  0
--#define __NR_exit		  1
--#define __NR_fork		  2
--#define __NR_read		  3
--#define __NR_write		  4
--#define __NR_open		  5
--#define __NR_close		  6
--#define __NR_waitpid		  7
--#define __NR_creat		  8
--#define __NR_link		  9
--#define __NR_unlink		 10
--#define __NR_execve		 11
--#define __NR_chdir		 12
--#define __NR_time		 13
--#define __NR_mknod		 14
--#define __NR_chmod		 15
--#define __NR_chown		 16
--/*#define __NR_break		 17*/
--#define __NR_oldstat		 18
--#define __NR_lseek		 19
--#define __NR_getpid		 20
--#define __NR_mount		 21
--#define __NR_umount		 22
--#define __NR_setuid		 23
--#define __NR_getuid		 24
--#define __NR_stime		 25
--#define __NR_ptrace		 26
--#define __NR_alarm		 27
--#define __NR_oldfstat		 28
--#define __NR_pause		 29
--#define __NR_utime		 30
--/*#define __NR_stty		 31*/
--/*#define __NR_gtty		 32*/
--#define __NR_access		 33
--#define __NR_nice		 34
--/*#define __NR_ftime		 35*/
--#define __NR_sync		 36
--#define __NR_kill		 37
--#define __NR_rename		 38
--#define __NR_mkdir		 39
--#define __NR_rmdir		 40
--#define __NR_dup		 41
--#define __NR_pipe		 42
--#define __NR_times		 43
--/*#define __NR_prof		 44*/
--#define __NR_brk		 45
--#define __NR_setgid		 46
--#define __NR_getgid		 47
--#define __NR_signal		 48
--#define __NR_geteuid		 49
--#define __NR_getegid		 50
--#define __NR_acct		 51
--#define __NR_umount2		 52
--/*#define __NR_lock		 53*/
--#define __NR_ioctl		 54
--#define __NR_fcntl		 55
--/*#define __NR_mpx		 56*/
--#define __NR_setpgid		 57
--/*#define __NR_ulimit		 58*/
--/*#define __NR_oldolduname	 59*/
--#define __NR_umask		 60
--#define __NR_chroot		 61
--#define __NR_ustat		 62
--#define __NR_dup2		 63
--#define __NR_getppid		 64
--#define __NR_getpgrp		 65
--#define __NR_setsid		 66
--#define __NR_sigaction		 67
--#define __NR_sgetmask		 68
--#define __NR_ssetmask		 69
--#define __NR_setreuid		 70
--#define __NR_setregid		 71
--#define __NR_sigsuspend		 72
--#define __NR_sigpending		 73
--#define __NR_sethostname	 74
--#define __NR_setrlimit		 75
--#define __NR_getrlimit		 76
--#define __NR_getrusage		 77
--#define __NR_gettimeofday	 78
--#define __NR_settimeofday	 79
--#define __NR_getgroups		 80
--#define __NR_setgroups		 81
--#define __NR_select		 82
--#define __NR_symlink		 83
--#define __NR_oldlstat		 84
--#define __NR_readlink		 85
--#define __NR_uselib		 86
--#define __NR_swapon		 87
--#define __NR_reboot		 88
--#define __NR_readdir		 89
--#define __NR_mmap		 90
--#define __NR_munmap		 91
--#define __NR_truncate		 92
--#define __NR_ftruncate		 93
--#define __NR_fchmod		 94
--#define __NR_fchown		 95
--#define __NR_getpriority	 96
--#define __NR_setpriority	 97
--/*#define __NR_profil		 98*/
--#define __NR_statfs		 99
--#define __NR_fstatfs		100
--/*#define __NR_ioperm		101*/
--#define __NR_socketcall		102
--#define __NR_syslog		103
--#define __NR_setitimer		104
--#define __NR_getitimer		105
--#define __NR_stat		106
--#define __NR_lstat		107
--#define __NR_fstat		108
--/*#define __NR_olduname		109*/
--/*#define __NR_iopl		110*/ /* not supported */
--#define __NR_vhangup		111
--/*#define __NR_idle		112*/ /* Obsolete */
--/*#define __NR_vm86		113*/ /* not supported */
--#define __NR_wait4		114
--#define __NR_swapoff		115
--#define __NR_sysinfo		116
--#define __NR_ipc		117
--#define __NR_fsync		118
--#define __NR_sigreturn		119
--#define __NR_clone		120
--#define __NR_setdomainname	121
--#define __NR_uname		122
--#define __NR_cacheflush		123
--#define __NR_adjtimex		124
--#define __NR_mprotect		125
--#define __NR_sigprocmask	126
--#define __NR_create_module	127
--#define __NR_init_module	128
--#define __NR_delete_module	129
--#define __NR_get_kernel_syms	130
--#define __NR_quotactl		131
--#define __NR_getpgid		132
--#define __NR_fchdir		133
--#define __NR_bdflush		134
--#define __NR_sysfs		135
--#define __NR_personality	136
--/*#define __NR_afs_syscall	137*/ /* Syscall for Andrew File System */
--#define __NR_setfsuid		138
--#define __NR_setfsgid		139
--#define __NR__llseek		140
--#define __NR_getdents		141
--#define __NR__newselect		142
--#define __NR_flock		143
--#define __NR_msync		144
--#define __NR_readv		145
--#define __NR_writev		146
--#define __NR_getsid		147
--#define __NR_fdatasync		148
--#define __NR__sysctl		149
--#define __NR_mlock		150
--#define __NR_munlock		151
--#define __NR_mlockall		152
--#define __NR_munlockall		153
--#define __NR_sched_setparam		154
--#define __NR_sched_getparam		155
--#define __NR_sched_setscheduler		156
--#define __NR_sched_getscheduler		157
--#define __NR_sched_yield		158
--#define __NR_sched_get_priority_max	159
--#define __NR_sched_get_priority_min	160
--#define __NR_sched_rr_get_interval	161
--#define __NR_nanosleep		162
--#define __NR_mremap		163
--#define __NR_setresuid		164
--#define __NR_getresuid		165
--#define __NR_getpagesize	166
--#define __NR_query_module	167
--#define __NR_poll		168
--#define __NR_nfsservctl		169
--#define __NR_setresgid		170
--#define __NR_getresgid		171
--#define __NR_prctl		172
--#define __NR_rt_sigreturn	173
--#define __NR_rt_sigaction	174
--#define __NR_rt_sigprocmask	175
--#define __NR_rt_sigpending	176
--#define __NR_rt_sigtimedwait	177
--#define __NR_rt_sigqueueinfo	178
--#define __NR_rt_sigsuspend	179
--#define __NR_pread64		180
--#define __NR_pwrite64		181
--#define __NR_lchown		182
--#define __NR_getcwd		183
--#define __NR_capget		184
--#define __NR_capset		185
--#define __NR_sigaltstack	186
--#define __NR_sendfile		187
--#define __NR_getpmsg		188	/* some people actually want streams */
--#define __NR_putpmsg		189	/* some people actually want streams */
--#define __NR_vfork		190
--#define __NR_ugetrlimit		191
--#define __NR_mmap2		192
--#define __NR_truncate64		193
--#define __NR_ftruncate64	194
--#define __NR_stat64		195
--#define __NR_lstat64		196
--#define __NR_fstat64		197
--#define __NR_chown32		198
--#define __NR_getuid32		199
--#define __NR_getgid32		200
--#define __NR_geteuid32		201
--#define __NR_getegid32		202
--#define __NR_setreuid32		203
--#define __NR_setregid32		204
--#define __NR_getgroups32	205
--#define __NR_setgroups32	206
--#define __NR_fchown32		207
--#define __NR_setresuid32	208
--#define __NR_getresuid32	209
--#define __NR_setresgid32	210
--#define __NR_getresgid32	211
--#define __NR_lchown32		212
--#define __NR_setuid32		213
--#define __NR_setgid32		214
--#define __NR_setfsuid32		215
--#define __NR_setfsgid32		216
--#define __NR_pivot_root		217
--/* 218*/
--/* 219*/
--#define __NR_getdents64		220
--#define __NR_gettid		221
--#define __NR_tkill		222
--#define __NR_setxattr		223
--#define __NR_lsetxattr		224
--#define __NR_fsetxattr		225
--#define __NR_getxattr		226
--#define __NR_lgetxattr		227
--#define __NR_fgetxattr		228
--#define __NR_listxattr		229
--#define __NR_llistxattr		230
--#define __NR_flistxattr		231
--#define __NR_removexattr	232
--#define __NR_lremovexattr	233
--#define __NR_fremovexattr	234
--#define __NR_futex		235
--#define __NR_sendfile64		236
--#define __NR_mincore		237
--#define __NR_madvise		238
--#define __NR_fcntl64		239
--#define __NR_readahead		240
--#define __NR_io_setup		241
--#define __NR_io_destroy		242
--#define __NR_io_getevents	243
--#define __NR_io_submit		244
--#define __NR_io_cancel		245
--#define __NR_fadvise64		246
--#define __NR_exit_group		247
--#define __NR_lookup_dcookie	248
--#define __NR_epoll_create	249
--#define __NR_epoll_ctl		250
--#define __NR_epoll_wait		251
--#define __NR_remap_file_pages	252
--#define __NR_set_tid_address	253
--#define __NR_timer_create	254
--#define __NR_timer_settime	255
--#define __NR_timer_gettime	256
--#define __NR_timer_getoverrun	257
--#define __NR_timer_delete	258
--#define __NR_clock_settime	259
--#define __NR_clock_gettime	260
--#define __NR_clock_getres	261
--#define __NR_clock_nanosleep	262
--#define __NR_statfs64		263
--#define __NR_fstatfs64		264
--#define __NR_tgkill		265
--#define __NR_utimes		266
--#define __NR_fadvise64_64	267
--#define __NR_mbind		268
--#define __NR_get_mempolicy	269
--#define __NR_set_mempolicy	270
--#define __NR_mq_open		271
--#define __NR_mq_unlink		272
--#define __NR_mq_timedsend	273
--#define __NR_mq_timedreceive	274
--#define __NR_mq_notify		275
--#define __NR_mq_getsetattr	276
--#define __NR_waitid		277
--/*#define __NR_vserver		278*/
--#define __NR_add_key		279
--#define __NR_request_key	280
--#define __NR_keyctl		281
--#define __NR_ioprio_set		282
--#define __NR_ioprio_get		283
--#define __NR_inotify_init	284
--#define __NR_inotify_add_watch	285
--#define __NR_inotify_rm_watch	286
--#define __NR_migrate_pages	287
--#define __NR_openat		288
--#define __NR_mkdirat		289
--#define __NR_mknodat		290
--#define __NR_fchownat		291
--#define __NR_futimesat		292
--#define __NR_fstatat64		293
--#define __NR_unlinkat		294
--#define __NR_renameat		295
--#define __NR_linkat		296
--#define __NR_symlinkat		297
--#define __NR_readlinkat		298
--#define __NR_fchmodat		299
--#define __NR_faccessat		300
--#define __NR_pselect6		301
--#define __NR_ppoll		302
--#define __NR_unshare		303
--#define __NR_set_robust_list	304
--#define __NR_get_robust_list	305
--#define __NR_splice		306
--#define __NR_sync_file_range	307
--#define __NR_tee		308
--#define __NR_vmsplice		309
--#define __NR_move_pages		310
--#define __NR_sched_setaffinity	311
--#define __NR_sched_getaffinity	312
--#define __NR_kexec_load		313
--#define __NR_getcpu		314
--#define __NR_epoll_pwait	315
--#define __NR_utimensat		316
--#define __NR_signalfd		317
--#define __NR_timerfd_create	318
--#define __NR_eventfd		319
--#define __NR_fallocate		320
--#define __NR_timerfd_settime	321
--#define __NR_timerfd_gettime	322
--#define __NR_signalfd4		323
--#define __NR_eventfd2		324
--#define __NR_epoll_create1	325
--#define __NR_dup3		326
--#define __NR_pipe2		327
--#define __NR_inotify_init1	328
--#define __NR_preadv		329
--#define __NR_pwritev		330
--#define __NR_rt_tgsigqueueinfo	331
--#define __NR_perf_event_open	332
--#define __NR_get_thread_area	333
--#define __NR_set_thread_area	334
--#define __NR_atomic_cmpxchg_32	335
--#define __NR_atomic_barrier	336
--#define __NR_fanotify_init	337
--#define __NR_fanotify_mark	338
--#define __NR_prlimit64		339
--#define __NR_name_to_handle_at	340
--#define __NR_open_by_handle_at	341
--#define __NR_clock_adjtime	342
--#define __NR_syncfs		343
--#define __NR_setns		344
--#define __NR_process_vm_readv	345
--#define __NR_process_vm_writev	346
--#define __NR_kcmp		347
--#define __NR_finit_module	348
--#define __NR_sched_setattr	349
--#define __NR_sched_getattr	350
--#define __NR_renameat2		351
--#define __NR_getrandom		352
--#define __NR_memfd_create	353
--#define __NR_bpf		354
--#define __NR_execveat		355
--#define __NR_socket		356
--#define __NR_socketpair		357
--#define __NR_bind		358
--#define __NR_connect		359
--#define __NR_listen		360
--#define __NR_accept4		361
--#define __NR_getsockopt		362
--#define __NR_setsockopt		363
--#define __NR_getsockname	364
--#define __NR_getpeername	365
--#define __NR_sendto		366
--#define __NR_sendmsg		367
--#define __NR_recvfrom		368
--#define __NR_recvmsg		369
--#define __NR_shutdown		370
--#define __NR_recvmmsg		371
--#define __NR_sendmmsg		372
--#define __NR_userfaultfd	373
--#define __NR_membarrier		374
--#define __NR_mlock2		375
--#define __NR_copy_file_range	376
--#define __NR_preadv2		377
--#define __NR_pwritev2		378
--#define __NR_statx		379
--
--#ifdef __KERNEL__
--#define __NR_syscalls		380
--#endif
-+#include <asm/unistd_32.h>
++&wkup_pmx0 {
++	wkup_i2c0_pins_default: wkup-i2c0-pins-default {
++		pinctrl-single,pins = <
++			AM65X_WKUP_IOPAD(0x00e0, PIN_INPUT, 0) /* (AC7) WKUP_I2C0_SCL */
++			AM65X_WKUP_IOPAD(0x00e4, PIN_INPUT, 0) /* (AD6) WKUP_I2C0_SDA */
++		>;
++	};
++};
++
+ &main_pmx0 {
+ 	main_uart0_pins_default: main-uart0-pins-default {
+ 		pinctrl-single,pins = <
+@@ -44,6 +53,29 @@
+ 			AM65X_IOPAD(0x01f0, PIN_OUTPUT, 0)	/* (AD11) UART0_RTSn */
+ 		>;
+ 	};
++
++	main_i2c2_pins_default: main-i2c2-pins-default {
++		pinctrl-single,pins = <
++			AM65X_IOPAD(0x0074, PIN_INPUT, 5) /* (T27) GPMC0_CSn3.I2C2_SCL */
++			AM65X_IOPAD(0x0070, PIN_INPUT, 5) /* (R25) GPMC0_CSn2.I2C2_SDA */
++		>;
++	};
++};
++
++&main_pmx1 {
++	main_i2c0_pins_default: main-i2c0-pins-default {
++		pinctrl-single,pins = <
++			AM65X_IOPAD(0x0000, PIN_INPUT, 0) /* (D20) I2C0_SCL */
++			AM65X_IOPAD(0x0004, PIN_INPUT, 0) /* (C21) I2C0_SDA */
++		>;
++	};
++
++	main_i2c1_pins_default: main-i2c1-pins-default {
++		pinctrl-single,pins = <
++			AM65X_IOPAD(0x0008, PIN_INPUT, 0) /* (B21) I2C1_SCL */
++			AM65X_IOPAD(0x000c, PIN_INPUT, 0) /* (E21) I2C1_SDA */
++		>;
++	};
+ };
  
- #endif /* _UAPI_ASM_M68K_UNISTD_H_ */
-diff --git a/arch/m68k/kernel/syscalltable.S b/arch/m68k/kernel/syscalltable.S
-index 2c8402e..d329cc7 100644
---- a/arch/m68k/kernel/syscalltable.S
-+++ b/arch/m68k/kernel/syscalltable.S
-@@ -15,389 +15,12 @@
- #include <linux/linkage.h>
- 
- #ifndef CONFIG_MMU
--#define sys_mmap2		sys_mmap_pgoff
-+#define sys_mmap2	sys_mmap_pgoff
- #endif
- 
--.section .rodata
-+#define __SYSCALL(nr, entry, nargs) .long entry
-+	.section .rodata
- ALIGN
- ENTRY(sys_call_table)
--	.long sys_restart_syscall	/* 0 - old "setup()" system call, used for restarting */
--	.long sys_exit
--	.long __sys_fork
--	.long sys_read
--	.long sys_write
--	.long sys_open			/* 5 */
--	.long sys_close
--	.long sys_waitpid
--	.long sys_creat
--	.long sys_link
--	.long sys_unlink		/* 10 */
--	.long sys_execve
--	.long sys_chdir
--	.long sys_time
--	.long sys_mknod
--	.long sys_chmod			/* 15 */
--	.long sys_chown16
--	.long sys_ni_syscall		/* old break syscall holder */
--	.long sys_stat
--	.long sys_lseek
--	.long sys_getpid		/* 20 */
--	.long sys_mount
--	.long sys_oldumount
--	.long sys_setuid16
--	.long sys_getuid16
--	.long sys_stime			/* 25 */
--	.long sys_ptrace
--	.long sys_alarm
--	.long sys_fstat
--	.long sys_pause
--	.long sys_utime			/* 30 */
--	.long sys_ni_syscall		/* old stty syscall holder */
--	.long sys_ni_syscall		/* old gtty syscall holder */
--	.long sys_access
--	.long sys_nice
--	.long sys_ni_syscall		/* 35 - old ftime syscall holder */
--	.long sys_sync
--	.long sys_kill
--	.long sys_rename
--	.long sys_mkdir
--	.long sys_rmdir			/* 40 */
--	.long sys_dup
--	.long sys_pipe
--	.long sys_times
--	.long sys_ni_syscall		/* old prof syscall holder */
--	.long sys_brk			/* 45 */
--	.long sys_setgid16
--	.long sys_getgid16
--	.long sys_signal
--	.long sys_geteuid16
--	.long sys_getegid16		/* 50 */
--	.long sys_acct
--	.long sys_umount		/* recycled never used phys() */
--	.long sys_ni_syscall		/* old lock syscall holder */
--	.long sys_ioctl
--	.long sys_fcntl			/* 55 */
--	.long sys_ni_syscall		/* old mpx syscall holder */
--	.long sys_setpgid
--	.long sys_ni_syscall		/* old ulimit syscall holder */
--	.long sys_ni_syscall
--	.long sys_umask			/* 60 */
--	.long sys_chroot
--	.long sys_ustat
--	.long sys_dup2
--	.long sys_getppid
--	.long sys_getpgrp		/* 65 */
--	.long sys_setsid
--	.long sys_sigaction
--	.long sys_sgetmask
--	.long sys_ssetmask
--	.long sys_setreuid16		/* 70 */
--	.long sys_setregid16
--	.long sys_sigsuspend
--	.long sys_sigpending
--	.long sys_sethostname
--	.long sys_setrlimit		/* 75 */
--	.long sys_old_getrlimit
--	.long sys_getrusage
--	.long sys_gettimeofday
--	.long sys_settimeofday
--	.long sys_getgroups16		/* 80 */
--	.long sys_setgroups16
--	.long sys_old_select
--	.long sys_symlink
--	.long sys_lstat
--	.long sys_readlink		/* 85 */
--	.long sys_uselib
--	.long sys_swapon
--	.long sys_reboot
--	.long sys_old_readdir
--	.long sys_old_mmap		/* 90 */
--	.long sys_munmap
--	.long sys_truncate
--	.long sys_ftruncate
--	.long sys_fchmod
--	.long sys_fchown16		/* 95 */
--	.long sys_getpriority
--	.long sys_setpriority
--	.long sys_ni_syscall		/* old profil syscall holder */
--	.long sys_statfs
--	.long sys_fstatfs		/* 100 */
--	.long sys_ni_syscall		/* ioperm for i386 */
--	.long sys_socketcall
--	.long sys_syslog
--	.long sys_setitimer
--	.long sys_getitimer		/* 105 */
--	.long sys_newstat
--	.long sys_newlstat
--	.long sys_newfstat
--	.long sys_ni_syscall
--	.long sys_ni_syscall		/* 110 - iopl for i386 */
--	.long sys_vhangup
--	.long sys_ni_syscall		/* obsolete idle() syscall */
--	.long sys_ni_syscall		/* vm86old for i386 */
--	.long sys_wait4
--	.long sys_swapoff		/* 115 */
--	.long sys_sysinfo
--	.long sys_ipc
--	.long sys_fsync
--	.long sys_sigreturn
--	.long __sys_clone		/* 120 */
--	.long sys_setdomainname
--	.long sys_newuname
--	.long sys_cacheflush		/* modify_ldt for i386 */
--	.long sys_adjtimex
--	.long sys_mprotect		/* 125 */
--	.long sys_sigprocmask
--	.long sys_ni_syscall		/* old "create_module" */
--	.long sys_init_module
--	.long sys_delete_module
--	.long sys_ni_syscall		/* 130 - old "get_kernel_syms" */
--	.long sys_quotactl
--	.long sys_getpgid
--	.long sys_fchdir
--	.long sys_bdflush
--	.long sys_sysfs			/* 135 */
--	.long sys_personality
--	.long sys_ni_syscall		/* for afs_syscall */
--	.long sys_setfsuid16
--	.long sys_setfsgid16
--	.long sys_llseek		/* 140 */
--	.long sys_getdents
--	.long sys_select
--	.long sys_flock
--	.long sys_msync
--	.long sys_readv			/* 145 */
--	.long sys_writev
--	.long sys_getsid
--	.long sys_fdatasync
--	.long sys_sysctl
--	.long sys_mlock			/* 150 */
--	.long sys_munlock
--	.long sys_mlockall
--	.long sys_munlockall
--	.long sys_sched_setparam
--	.long sys_sched_getparam	/* 155 */
--	.long sys_sched_setscheduler
--	.long sys_sched_getscheduler
--	.long sys_sched_yield
--	.long sys_sched_get_priority_max
--	.long sys_sched_get_priority_min  /* 160 */
--	.long sys_sched_rr_get_interval
--	.long sys_nanosleep
--	.long sys_mremap
--	.long sys_setresuid16
--	.long sys_getresuid16		/* 165 */
--	.long sys_getpagesize
--	.long sys_ni_syscall		/* old "query_module" */
--	.long sys_poll
--	.long sys_ni_syscall		/* old nfsservctl */
--	.long sys_setresgid16		/* 170 */
--	.long sys_getresgid16
--	.long sys_prctl
--	.long sys_rt_sigreturn
--	.long sys_rt_sigaction
--	.long sys_rt_sigprocmask	/* 175 */
--	.long sys_rt_sigpending
--	.long sys_rt_sigtimedwait
--	.long sys_rt_sigqueueinfo
--	.long sys_rt_sigsuspend
--	.long sys_pread64		/* 180 */
--	.long sys_pwrite64
--	.long sys_lchown16
--	.long sys_getcwd
--	.long sys_capget
--	.long sys_capset		/* 185 */
--	.long sys_sigaltstack
--	.long sys_sendfile
--	.long sys_ni_syscall		/* streams1 */
--	.long sys_ni_syscall		/* streams2 */
--	.long __sys_vfork		/* 190 */
--	.long sys_getrlimit
--	.long sys_mmap2
--	.long sys_truncate64
--	.long sys_ftruncate64
--	.long sys_stat64		/* 195 */
--	.long sys_lstat64
--	.long sys_fstat64
--	.long sys_chown
--	.long sys_getuid
--	.long sys_getgid		/* 200 */
--	.long sys_geteuid
--	.long sys_getegid
--	.long sys_setreuid
--	.long sys_setregid
--	.long sys_getgroups		/* 205 */
--	.long sys_setgroups
--	.long sys_fchown
--	.long sys_setresuid
--	.long sys_getresuid
--	.long sys_setresgid		/* 210 */
--	.long sys_getresgid
--	.long sys_lchown
--	.long sys_setuid
--	.long sys_setgid
--	.long sys_setfsuid		/* 215 */
--	.long sys_setfsgid
--	.long sys_pivot_root
--	.long sys_ni_syscall
--	.long sys_ni_syscall
--	.long sys_getdents64		/* 220 */
--	.long sys_gettid
--	.long sys_tkill
--	.long sys_setxattr
--	.long sys_lsetxattr
--	.long sys_fsetxattr		/* 225 */
--	.long sys_getxattr
--	.long sys_lgetxattr
--	.long sys_fgetxattr
--	.long sys_listxattr
--	.long sys_llistxattr		/* 230 */
--	.long sys_flistxattr
--	.long sys_removexattr
--	.long sys_lremovexattr
--	.long sys_fremovexattr
--	.long sys_futex			/* 235 */
--	.long sys_sendfile64
--	.long sys_mincore
--	.long sys_madvise
--	.long sys_fcntl64
--	.long sys_readahead		/* 240 */
--	.long sys_io_setup
--	.long sys_io_destroy
--	.long sys_io_getevents
--	.long sys_io_submit
--	.long sys_io_cancel		/* 245 */
--	.long sys_fadvise64
--	.long sys_exit_group
--	.long sys_lookup_dcookie
--	.long sys_epoll_create
--	.long sys_epoll_ctl		/* 250 */
--	.long sys_epoll_wait
--	.long sys_remap_file_pages
--	.long sys_set_tid_address
--	.long sys_timer_create
--	.long sys_timer_settime		/* 255 */
--	.long sys_timer_gettime
--	.long sys_timer_getoverrun
--	.long sys_timer_delete
--	.long sys_clock_settime
--	.long sys_clock_gettime		/* 260 */
--	.long sys_clock_getres
--	.long sys_clock_nanosleep
--	.long sys_statfs64
--	.long sys_fstatfs64
--	.long sys_tgkill		/* 265 */
--	.long sys_utimes
--	.long sys_fadvise64_64
--	.long sys_mbind
--	.long sys_get_mempolicy
--	.long sys_set_mempolicy		/* 270 */
--	.long sys_mq_open
--	.long sys_mq_unlink
--	.long sys_mq_timedsend
--	.long sys_mq_timedreceive
--	.long sys_mq_notify		/* 275 */
--	.long sys_mq_getsetattr
--	.long sys_waitid
--	.long sys_ni_syscall		/* for sys_vserver */
--	.long sys_add_key
--	.long sys_request_key		/* 280 */
--	.long sys_keyctl
--	.long sys_ioprio_set
--	.long sys_ioprio_get
--	.long sys_inotify_init
--	.long sys_inotify_add_watch	/* 285 */
--	.long sys_inotify_rm_watch
--	.long sys_migrate_pages
--	.long sys_openat
--	.long sys_mkdirat
--	.long sys_mknodat		/* 290 */
--	.long sys_fchownat
--	.long sys_futimesat
--	.long sys_fstatat64
--	.long sys_unlinkat
--	.long sys_renameat		/* 295 */
--	.long sys_linkat
--	.long sys_symlinkat
--	.long sys_readlinkat
--	.long sys_fchmodat
--	.long sys_faccessat		/* 300 */
--	.long sys_pselect6
--	.long sys_ppoll
--	.long sys_unshare
--	.long sys_set_robust_list
--	.long sys_get_robust_list	/* 305 */
--	.long sys_splice
--	.long sys_sync_file_range
--	.long sys_tee
--	.long sys_vmsplice
--	.long sys_move_pages		/* 310 */
--	.long sys_sched_setaffinity
--	.long sys_sched_getaffinity
--	.long sys_kexec_load
--	.long sys_getcpu
--	.long sys_epoll_pwait		/* 315 */
--	.long sys_utimensat
--	.long sys_signalfd
--	.long sys_timerfd_create
--	.long sys_eventfd
--	.long sys_fallocate		/* 320 */
--	.long sys_timerfd_settime
--	.long sys_timerfd_gettime
--	.long sys_signalfd4
--	.long sys_eventfd2
--	.long sys_epoll_create1		/* 325 */
--	.long sys_dup3
--	.long sys_pipe2
--	.long sys_inotify_init1
--	.long sys_preadv
--	.long sys_pwritev		/* 330 */
--	.long sys_rt_tgsigqueueinfo
--	.long sys_perf_event_open
--	.long sys_get_thread_area
--	.long sys_set_thread_area
--	.long sys_atomic_cmpxchg_32	/* 335 */
--	.long sys_atomic_barrier
--	.long sys_fanotify_init
--	.long sys_fanotify_mark
--	.long sys_prlimit64
--	.long sys_name_to_handle_at	/* 340 */
--	.long sys_open_by_handle_at
--	.long sys_clock_adjtime
--	.long sys_syncfs
--	.long sys_setns
--	.long sys_process_vm_readv	/* 345 */
--	.long sys_process_vm_writev
--	.long sys_kcmp
--	.long sys_finit_module
--	.long sys_sched_setattr
--	.long sys_sched_getattr		/* 350 */
--	.long sys_renameat2
--	.long sys_getrandom
--	.long sys_memfd_create
--	.long sys_bpf
--	.long sys_execveat		/* 355 */
--	.long sys_socket
--	.long sys_socketpair
--	.long sys_bind
--	.long sys_connect
--	.long sys_listen		/* 360 */
--	.long sys_accept4
--	.long sys_getsockopt
--	.long sys_setsockopt
--	.long sys_getsockname
--	.long sys_getpeername		/* 365 */
--	.long sys_sendto
--	.long sys_sendmsg
--	.long sys_recvfrom
--	.long sys_recvmsg
--	.long sys_shutdown		/* 370 */
--	.long sys_recvmmsg
--	.long sys_sendmmsg
--	.long sys_userfaultfd
--	.long sys_membarrier
--	.long sys_mlock2		/* 375 */
--	.long sys_copy_file_range
--	.long sys_preadv2
--	.long sys_pwritev2
--	.long sys_statx
-+#include <asm/syscall_table.h>
-+#undef __SYSCALL
+ &wkup_uart0 {
+@@ -55,3 +87,41 @@
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&main_uart0_pins_default>;
+ };
++
++&wkup_i2c0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&wkup_i2c0_pins_default>;
++	clock-frequency = <400000>;
++
++	pca9554: gpio@39 {
++		compatible = "nxp,pca9554";
++		reg = <0x39>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++};
++
++&main_i2c0 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&main_i2c0_pins_default>;
++	clock-frequency = <400000>;
++
++	pca9555: gpio@21 {
++		compatible = "nxp,pca9555";
++		reg = <0x21>;
++		gpio-controller;
++		#gpio-cells = <2>;
++	};
++};
++
++&main_i2c1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&main_i2c1_pins_default>;
++	clock-frequency = <400000>;
++};
++
++&main_i2c2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&main_i2c2_pins_default>;
++	clock-frequency = <400000>;
++};
 -- 
-1.9.1
+2.19.1
 
