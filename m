@@ -2,121 +2,105 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C7B9C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 03:57:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EC1BC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E962223DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 03:57:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E962223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 8DD1A223DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:05:34 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aussec.com header.i=@aussec.com header.b="ADEZrDQy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DD1A223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=aussec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728738AbeKMNx7 (ORCPT
+        id S1730287AbeKMOBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 08:53:59 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15091 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726103AbeKMNx7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 08:53:59 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id C1D82A6DFD28C;
-        Tue, 13 Nov 2018 11:57:44 +0800 (CST)
-Received: from huawei.com (10.113.189.234) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Tue, 13 Nov 2018
- 11:57:38 +0800
-From:   Yunlong Song <yunlong.song@huawei.com>
-To:     <jaegeuk@kernel.org>, <chao@kernel.org>, <yuchao0@huawei.com>,
-        <yunlong.song@icloud.com>, <yunlong.song@huawei.com>
-CC:     <miaoxie@huawei.com>, <bintian.wang@huawei.com>,
-        <shengyong1@huawei.com>, <heyunlei@huawei.com>,
-        <linux-f2fs-devel@lists.sourceforge.net>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3] f2fs: only flush the single temp bio cache which owns the target page
-Date:   Tue, 13 Nov 2018 11:57:32 +0800
-Message-ID: <1542081452-66059-1-git-send-email-yunlong.song@huawei.com>
-X-Mailer: git-send-email 1.8.5.2
-In-Reply-To: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
-References: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.113.189.234]
-X-CFilter-Loop: Reflected
+        Tue, 13 Nov 2018 09:01:45 -0500
+Received: from csm1.csm-office.com.au ([165.228.118.109]:40420 "EHLO
+        sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726103AbeKMOBp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 09:01:45 -0500
+X-Greylist: delayed 1358 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Nov 2018 09:01:44 EST
+X-Virus-Scanned: amavisd-new at aussec.com
+Received: from localhost.localdomain (dhcp-3-227.csm-office.com.au [172.16.3.227])
+        (authenticated bits=0)
+        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTPSA id wAD3gTrg014074
+        (version=TLSv1.2 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO);
+        Tue, 13 Nov 2018 14:42:49 +1100
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aussec.com; s=2016;
+        t=1542080569; bh=Rb6NzlLIjAvqAGc57nfnpDpikHSq5TKfk3FQyNUwjns=;
+        h=From:To:Cc:Subject:Date;
+        b=ADEZrDQyEu1ue0rp3atJzEve5UKMabxGU/mBzvsonrXE6YtyJZtjWZ5j4nfCZ+j3r
+         7F9DU4HSMoEp3JTlxaSNfef6WO7eIhujlzmnzJ2Q7A62QfpuvYmknDO1m0hKULM3No
+         ZS6xSN+mTopry1ib0U8ilb1noubWRQ8Ow3lWUR+/LKftfsZhonF8eShWEvCjP6dlT/
+         AE9wjtvIv5w2E7ohpp0xJk55yfwt+Rl8vrQvZflu5E7t/MCtMAZVXjGskhedhJTJtX
+         fwdhCEuPUuutsQw8m8rdX04WC5vNcGua/RkoOpsnsU4XVHa1k6xy7v58/8gydRFCos
+         cB3EL+CazgAwA==
+From:   Tom Burkart <tom@aussec.com>
+To:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Cc:     Tom Burkart <tom@aussec.com>
+Subject: [PATCH v6 0/4] PPS: pps-gpio PPS ECHO implementation
+Date:   Tue, 13 Nov 2018 14:40:03 +1100
+Message-Id: <20181113034007.3878-1-tom@aussec.com>
+X-Mailer: git-send-email 2.12.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Previously, when f2fs finds which temp bio cache owns the target page,
-it will flush all the three temp bio caches, but we only need to flush
-one single bio cache indeed, which can help to keep bio merged.
+Hi all,
+please find attached the PPS-GPIO PPS ECHO implementation patch. The
+driver claims to have echo functionality in the sysfs interface but this
+functionality is not present.  This patch provides this functionality.
 
-Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
----
- fs/f2fs/data.c | 37 ++++++++++---------------------------
- 1 file changed, 10 insertions(+), 27 deletions(-)
+Parts 1 and 2 of the patch change the original driver from the number
+based GPIO API to the descriptor based API.  This does break the backward
+compatibility of all devicetree descriptions for this driver as the
+descriptor based API appends either "-gpios" or "-gpio" to all names
+passed to it and then tries to find a match in the devicetree.
 
-diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-index 6e0ffb1..cd8f670 100644
---- a/fs/f2fs/data.c
-+++ b/fs/f2fs/data.c
-@@ -372,29 +372,6 @@ static bool __has_merged_page(struct f2fs_bio_info *io, struct inode *inode,
- 	return false;
- }
- 
--static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
--						struct page *page, nid_t ino,
--						enum page_type type)
--{
--	enum page_type btype = PAGE_TYPE_OF_BIO(type);
--	enum temp_type temp;
--	struct f2fs_bio_info *io;
--	bool ret = false;
--
--	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
--		io = sbi->write_io[btype] + temp;
--
--		down_read(&io->io_rwsem);
--		ret = __has_merged_page(io, inode, page, ino);
--		up_read(&io->io_rwsem);
--
--		/* TODO: use HOT temp only for meta pages now. */
--		if (ret || btype == META)
--			break;
--	}
--	return ret;
--}
--
- static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
- 				enum page_type type, enum temp_type temp)
- {
-@@ -420,13 +397,19 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
- 				nid_t ino, enum page_type type, bool force)
- {
- 	enum temp_type temp;
--
--	if (!force && !has_merged_page(sbi, inode, page, ino, type))
--		return;
-+	bool ret = true;
- 
- 	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
-+		if (!force)	{
-+			enum page_type btype = PAGE_TYPE_OF_BIO(type);
-+			struct f2fs_bio_info *io = sbi->write_io[btype] + temp;
- 
--		__f2fs_submit_merged_write(sbi, type, temp);
-+			down_read(&io->io_rwsem);
-+			ret = __has_merged_page(io, inode, page, ino);
-+			up_read(&io->io_rwsem);
-+		}
-+		if (ret)
-+			__f2fs_submit_merged_write(sbi, type, temp);
- 
- 		/* TODO: use HOT temp only for meta pages now. */
- 		if (type >= META)
+Parts 3 and 4 then add the PPS ECHO functionality.  This is enabled if a
+"echo-gpios" entry is found in the devicetree.
+
+Changes in v4:
+There is a bugfix in part 2 that was returning an uninitialised variable
+and juggling some code that speeds up the probe by not running code when
+not using PPS ECHO.
+
+Changes in v5:
+Meet all requirements of checkpatch
+
+Changes in v6:
+Cosmetic changes to code layout
+
+On the linuxpps mailing list it was suggested to use a hrtimer for
+resetting the GPIO ECHO active state to the inactive state.
+Please also comment on whether a hrtimer is necessary/desirable for the
+purpose of resetting the echo pin active state.  I am happy to implement
+it if there is a need.
+
+Please install, test and comment as it is now a quite major change to
+the driver.
+Please do send suggestions for improvement.
+
+Tom Burkart
+
+Tom Burkart (4):
+  dt-bindings: pps: descriptor-based gpio, capture-clear addition
+  pps: descriptor-based gpio, capture-clear addition
+  dt-bindings: pps: pps-gpio PPS ECHO implementation
+  pps: pps-gpio pps-echo implementation
+
+ Documentation/devicetree/bindings/pps/pps-gpio.txt |  15 ++-
+ drivers/pps/clients/pps-gpio.c                     | 133 +++++++++++++++++----
+ include/linux/pps-gpio.h                           |   5 +-
+ 3 files changed, 126 insertions(+), 27 deletions(-)
+
 -- 
-1.8.5.2
+2.12.3
 
