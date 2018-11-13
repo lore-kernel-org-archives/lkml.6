@@ -2,199 +2,181 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 748E3C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A30C9C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A3EE22510
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:17:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A3EE22510
+	by mail.kernel.org (Postfix) with ESMTP id 6AEA922510
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:18:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEA922510
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388318AbeKNBQB (ORCPT
+        id S1732778AbeKNBRN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:16:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:43898 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731422AbeKNBQA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:16:00 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 495E53A26C;
-        Tue, 13 Nov 2018 15:17:25 +0000 (UTC)
-Received: from localhost (ovpn-8-23.pek2.redhat.com [10.72.8.23])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 7B66C6015E;
-        Tue, 13 Nov 2018 15:17:23 +0000 (UTC)
-From:   Ming Lei <ming.lei@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>,
-        Mike Snitzer <snitzer@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>
-Subject: [PATCH V9 19/19] block: kill BLK_MQ_F_SG_MERGE
-Date:   Tue, 13 Nov 2018 23:15:05 +0800
-Message-Id: <20181113151505.15498-20-ming.lei@redhat.com>
-In-Reply-To: <20181113151505.15498-1-ming.lei@redhat.com>
-References: <20181113151505.15498-1-ming.lei@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Tue, 13 Nov 2018 15:17:25 +0000 (UTC)
+        Tue, 13 Nov 2018 20:17:13 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:34566 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731324AbeKNBRN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 20:17:13 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j26-v6so13741610wre.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 07:18:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=TVio5aW1p9jCZScS1P7hnnowI7+E2mp8Lej3u8aWiDc=;
+        b=SQZlXH8NZpHnhg9fupY8kfzyfIb56gyFFP43OPoEKOeGrU3lIrQFUprRSFjq0BpZ2P
+         dMMminrALeUbR9NqyjLcq2PNy5dhGhC2R98IK2bIgJd7o4QymD3B/HRdV4kMAcgJ4t0u
+         TwwrC3Z7d0qM5kVf56fkRlFqO/WVHHdUeUnP76vb/Bxxf4HS+O/uW7EKey+GIW1a7hd1
+         68tjsRXkUVLFYWFDgwRrM9ga0gwvCC+7PQ34ojwB8SlLPy1HpWui3h34HfTqljCiYrfH
+         7PsJWZvOyKz4kZ81b2Req3yM6uHtS3hoT3+5NWVRHgf+JvSJRC2Dr7HZmsPf0SG4nUBQ
+         /+Ug==
+X-Gm-Message-State: AGRZ1gJvUHykvPcMrrRfpIeQW/DPNYilWrVQ0cewgiQ2iZuURjWbYfl7
+        jQmNg88WEpROuOTRrx7o1mwJoA==
+X-Google-Smtp-Source: AJdET5fEHBD5xiUcJl32FTC7Eh3RwjPyD7gwYJf0S4pM9WN6EqyOikKt3ZvHyT5BqlrDcmLhhz9meQ==
+X-Received: by 2002:a5d:4406:: with SMTP id z6-v6mr5521253wrq.294.1542122317263;
+        Tue, 13 Nov 2018 07:18:37 -0800 (PST)
+Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
+        by smtp.gmail.com with ESMTPSA id u8-v6sm15725493wrr.33.2018.11.13.07.18.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Nov 2018 07:18:36 -0800 (PST)
+From:   Ondrej Mosnacek <omosnace@redhat.com>
+To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
+Cc:     Qian Cai <cai@gmx.us>, Stephen Smalley <sds@tycho.nsa.gov>,
+        Eric Paris <eparis@parisplace.org>,
+        linux-kernel@vger.kernel.org,
+        Ondrej Mosnacek <omosnace@redhat.com>, stable@vger.kernel.org,
+        Richard Haines <richard_c_haines@btinternet.com>
+Subject: [PATCH] selinux: check length properly in SCTP bind hook
+Date:   Tue, 13 Nov 2018 16:16:08 +0100
+Message-Id: <20181113151608.30424-1-omosnace@redhat.com>
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <53491A18-DD21-4E34-BC2F-AB449C7844E8@gmx.us>
+References: <53491A18-DD21-4E34-BC2F-AB449C7844E8@gmx.us>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-QUEUE_FLAG_NO_SG_MERGE has been killed, so kill BLK_MQ_F_SG_MERGE too.
+selinux_sctp_bind_connect() must verify if the address buffer has
+sufficient length before accessing the 'sa_family' field. See
+__sctp_connect() for a similar check.
 
-Cc: Christoph Hellwig <hch@lst.de>
-Cc: Mike Snitzer <snitzer@redhat.com>
-Cc: Kent Overstreet <kent.overstreet@gmail.com>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
+The length of the whole address ('len') is already checked in the
+callees.
+
+Reported-by: Qian Cai <cai@gmx.us>
+Fixes: d452930fd3b9 ("selinux: Add SCTP support")
+Cc: <stable@vger.kernel.org> # 4.17+
+Cc: Richard Haines <richard_c_haines@btinternet.com>
+Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
 ---
- block/blk-mq-debugfs.c       | 1 -
- drivers/block/loop.c         | 2 +-
- drivers/block/nbd.c          | 2 +-
- drivers/block/rbd.c          | 2 +-
- drivers/block/skd_main.c     | 1 -
- drivers/block/xen-blkfront.c | 2 +-
- drivers/md/dm-rq.c           | 2 +-
- drivers/mmc/core/queue.c     | 3 +--
- drivers/scsi/scsi_lib.c      | 2 +-
- include/linux/blk-mq.h       | 1 -
- 10 files changed, 7 insertions(+), 11 deletions(-)
+Hi,
 
-diff --git a/block/blk-mq-debugfs.c b/block/blk-mq-debugfs.c
-index e188b1090759..e1c12358391a 100644
---- a/block/blk-mq-debugfs.c
-+++ b/block/blk-mq-debugfs.c
-@@ -250,7 +250,6 @@ static const char *const alloc_policy_name[] = {
- static const char *const hctx_flag_name[] = {
- 	HCTX_FLAG_NAME(SHOULD_MERGE),
- 	HCTX_FLAG_NAME(TAG_SHARED),
--	HCTX_FLAG_NAME(SG_MERGE),
- 	HCTX_FLAG_NAME(BLOCKING),
- 	HCTX_FLAG_NAME(NO_SCHED),
- };
-diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-index a3fd418ec637..d509902a8046 100644
---- a/drivers/block/loop.c
-+++ b/drivers/block/loop.c
-@@ -1907,7 +1907,7 @@ static int loop_add(struct loop_device **l, int i)
- 	lo->tag_set.queue_depth = 128;
- 	lo->tag_set.numa_node = NUMA_NO_NODE;
- 	lo->tag_set.cmd_size = sizeof(struct loop_cmd);
--	lo->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	lo->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	lo->tag_set.driver_data = lo;
+On Mon, Nov 12, 2018 at 8:39 PM Qian Cai <cai@gmx.us> wrote:
+> Running the trinity fuzzer on the latest mainline (rc2) generates this,
+> 
+> [15029.879626] BUG: KASAN: slab-out-of-bounds in selinux_sctp_bind_connect+0x60/0x150
+> [15029.887275] Read of size 2 at addr ffff801ec53c5080 by task trinity-main/18081
+> [15029.887294] 
+> [15029.887304] CPU: 28 PID: 18081 Comm: trinity-main Tainted: G        W  OE     4.20.0-rc2+ #15
+> [15029.887311] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
+> [15000.084786] [15029.887320] Call trace:
+> [15029.915511]  dump_backtrace+0x0/0x2c8
+> [15029.920046]  show_stack+0x24/0x30
+> [15029.923367]  dump_stack+0x118/0x19c
+> [15029.927539]  print_address_description+0x68/0x2a0
+> [15029.932245]  kasan_report+0x1b4/0x348
+> [15029.938760]  __asan_load2+0x7c/0xa0
+> [15029.945098]  selinux_sctp_bind_connect+0x60/0x150
+> 
+> [15029.950571]  security_sctp_bind_connect+0x58/0x90
+> [15029.955493]  __sctp_setsockopt_connectx+0x68/0x128 [sctp]
+> [15029.960943]  sctp_setsockopt+0x764/0x2928 [sctp]
+> [15029.965564]  sock_common_setsockopt+0x6c/0x80
+> [15029.969923]  __arm64_sys_setsockopt+0x13c/0x1f0
+> [15029.974456]  el0_svc_handler+0xd4/0x198
+> [15029.978293]  el0_svc+0x8/0xc
+> [15029.981174] 
+> [15029.982667] Allocated by task 18081:
+> [15029.986245]  kasan_kmalloc.part.1+0x40/0x108
+> [15029.990517]  kasan_kmalloc+0xb4/0xc8
+> [15029.994094]  __kmalloc_node+0x1c4/0x638
+> [15029.997933]  kvmalloc_node+0x98/0xa8
+> [15030.001511]  vmemdup_user+0x34/0x128
+> [15030.005137]  __sctp_setsockopt_connectx+0x44/0x128 [sctp]
+> [15030.010586]  sctp_setsockopt+0x764/0x2928 [sctp]
+> [15030.015205]  sock_common_setsockopt+0x6c/0x80
+> [15030.019564]  __arm64_sys_setsockopt+0x13c/0x1f0
+> [15030.024096]  el0_svc_handler+0xd4/0x198
+> [15030.027933]  el0_svc+0x8/0xc
+> [15030.030814] 
+> [15030.032306] Freed by task 3025:
+> [15030.035451]  __kasan_slab_free+0x114/0x228
+> [15030.039548]  kasan_slab_free+0x10/0x18
+> [15030.043299]  kfree+0x114/0x408
+> [15030.046357]  selinux_sk_free_security+0x38/0x48
+> [15030.050888]  security_sk_free+0x3c/0x58
+> [15030.054727]  __sk_destruct+0x3e8/0x570
+> [15030.058478]  sk_destruct+0x4c/0x58
+> [15030.061881]  __sk_free+0x68/0x138
+> [15030.065197]  sk_free+0x3c/0x48
+> [15030.068255]  unix_release_sock+0x4a8/0x550
+> [15030.072353]  unix_release+0x34/0x50
+> [15030.075843]  __sock_release+0x74/0x110
+> [15030.079593]  sock_close+0x24/0x38
+> [15030.082913]  __fput+0x1b8/0x368
+> [15030.086055]  ____fput+0x20/0x30
+> [15030.089199]  task_work_run+0x14c/0x1a8
+> [15030.092951]  do_notify_resume+0x1e4/0x200
+> [15030.096961]  work_pending+0x8/0x14
+> [15030.100363] 
+> [15030.101856] The buggy address belongs to the object at ffff801ec53c5080
+> [15030.101856]  which belongs to the cache kmalloc-128 of size 128
+> [15030.114376] The buggy address is located 0 bytes inside of
+> [15030.114376]  128-byte region [ffff801ec53c5080, ffff801ec53c5100)
+> [15030.125939] The buggy address belongs to the page:
+> [15030.130732] page:ffff7fe007b14f00 count:1 mapcount:0 mapping:ffff8016c0010480 index:0x0
+> [15030.138738] flags: 0x5fffff0000000200(slab)
+> [15030.142926] raw: 5fffff0000000200 ffff7fe007980608 ffff801ec000fd60 ffff8016c0010480
+> [15030.150671] raw: 0000000000000000 0000000000660066 00000001ffffffff 0000000000000000
+> [15030.158413] page dumped because: kasan: bad access detected
+> [15030.163984] 
+> [15030.165476] Memory state around the buggy address:
+> [15030.170269]  ffff801ec53c4f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> [15030.177491]  ffff801ec53c5000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> [15030.184714] >ffff801ec53c5080: 01 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> [15030.191934]                    ^
+> [15030.195164]  ffff801ec53c5100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> [15030.202386]  ffff801ec53c5180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+> [15030.209607] ==================================================================
+> [15030.216828] Disabling lock debugging due to kernel taint
+
+I think I found the cause - Qian, can you test this patch if it fixes
+the problem?
+
+ security/selinux/hooks.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
+index 7ce683259357..a67459eb62d5 100644
+--- a/security/selinux/hooks.c
++++ b/security/selinux/hooks.c
+@@ -5318,6 +5318,9 @@ static int selinux_sctp_bind_connect(struct sock *sk, int optname,
+ 	addr_buf = address;
  
- 	err = blk_mq_alloc_tag_set(&lo->tag_set);
-diff --git a/drivers/block/nbd.c b/drivers/block/nbd.c
-index 08696f5f00bb..999c94de78e5 100644
---- a/drivers/block/nbd.c
-+++ b/drivers/block/nbd.c
-@@ -1570,7 +1570,7 @@ static int nbd_dev_add(int index)
- 	nbd->tag_set.numa_node = NUMA_NO_NODE;
- 	nbd->tag_set.cmd_size = sizeof(struct nbd_cmd);
- 	nbd->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
--		BLK_MQ_F_SG_MERGE | BLK_MQ_F_BLOCKING;
-+		BLK_MQ_F_BLOCKING;
- 	nbd->tag_set.driver_data = nbd;
- 
- 	err = blk_mq_alloc_tag_set(&nbd->tag_set);
-diff --git a/drivers/block/rbd.c b/drivers/block/rbd.c
-index 8e5140bbf241..3dfd300b5283 100644
---- a/drivers/block/rbd.c
-+++ b/drivers/block/rbd.c
-@@ -3988,7 +3988,7 @@ static int rbd_init_disk(struct rbd_device *rbd_dev)
- 	rbd_dev->tag_set.ops = &rbd_mq_ops;
- 	rbd_dev->tag_set.queue_depth = rbd_dev->opts->queue_depth;
- 	rbd_dev->tag_set.numa_node = NUMA_NO_NODE;
--	rbd_dev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	rbd_dev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	rbd_dev->tag_set.nr_hw_queues = 1;
- 	rbd_dev->tag_set.cmd_size = sizeof(struct work_struct);
- 
-diff --git a/drivers/block/skd_main.c b/drivers/block/skd_main.c
-index a10d5736d8f7..a7040f9a1b1b 100644
---- a/drivers/block/skd_main.c
-+++ b/drivers/block/skd_main.c
-@@ -2843,7 +2843,6 @@ static int skd_cons_disk(struct skd_device *skdev)
- 		skdev->sgs_per_request * sizeof(struct scatterlist);
- 	skdev->tag_set.numa_node = NUMA_NO_NODE;
- 	skdev->tag_set.flags = BLK_MQ_F_SHOULD_MERGE |
--		BLK_MQ_F_SG_MERGE |
- 		BLK_ALLOC_POLICY_TO_MQ_FLAG(BLK_TAG_ALLOC_FIFO);
- 	skdev->tag_set.driver_data = skdev;
- 	rc = blk_mq_alloc_tag_set(&skdev->tag_set);
-diff --git a/drivers/block/xen-blkfront.c b/drivers/block/xen-blkfront.c
-index 56452cabce5b..297412bf23e1 100644
---- a/drivers/block/xen-blkfront.c
-+++ b/drivers/block/xen-blkfront.c
-@@ -977,7 +977,7 @@ static int xlvbd_init_blk_queue(struct gendisk *gd, u16 sector_size,
- 	} else
- 		info->tag_set.queue_depth = BLK_RING_SIZE(info);
- 	info->tag_set.numa_node = NUMA_NO_NODE;
--	info->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	info->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	info->tag_set.cmd_size = sizeof(struct blkif_req);
- 	info->tag_set.driver_data = info;
- 
-diff --git a/drivers/md/dm-rq.c b/drivers/md/dm-rq.c
-index 7cd36e4d1310..140ada0b99fc 100644
---- a/drivers/md/dm-rq.c
-+++ b/drivers/md/dm-rq.c
-@@ -536,7 +536,7 @@ int dm_mq_init_request_queue(struct mapped_device *md, struct dm_table *t)
- 	md->tag_set->ops = &dm_mq_ops;
- 	md->tag_set->queue_depth = dm_get_blk_mq_queue_depth();
- 	md->tag_set->numa_node = md->numa_node_id;
--	md->tag_set->flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	md->tag_set->flags = BLK_MQ_F_SHOULD_MERGE;
- 	md->tag_set->nr_hw_queues = dm_get_blk_mq_nr_hw_queues();
- 	md->tag_set->driver_data = md;
- 
-diff --git a/drivers/mmc/core/queue.c b/drivers/mmc/core/queue.c
-index 6edffeed9953..6a0e9f6b6412 100644
---- a/drivers/mmc/core/queue.c
-+++ b/drivers/mmc/core/queue.c
-@@ -387,8 +387,7 @@ static int mmc_mq_init_queue(struct mmc_queue *mq, int q_depth,
- 	mq->tag_set.ops = mq_ops;
- 	mq->tag_set.queue_depth = q_depth;
- 	mq->tag_set.numa_node = NUMA_NO_NODE;
--	mq->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE |
--			    BLK_MQ_F_BLOCKING;
-+	mq->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_BLOCKING;
- 	mq->tag_set.nr_hw_queues = 1;
- 	mq->tag_set.cmd_size = sizeof(struct mmc_queue_req);
- 	mq->tag_set.driver_data = mq;
-diff --git a/drivers/scsi/scsi_lib.c b/drivers/scsi/scsi_lib.c
-index 5d83a162d03b..c7b0e4ff5e6d 100644
---- a/drivers/scsi/scsi_lib.c
-+++ b/drivers/scsi/scsi_lib.c
-@@ -1883,7 +1883,7 @@ int scsi_mq_setup_tags(struct Scsi_Host *shost)
- 	shost->tag_set.queue_depth = shost->can_queue;
- 	shost->tag_set.cmd_size = cmd_size;
- 	shost->tag_set.numa_node = NUMA_NO_NODE;
--	shost->tag_set.flags = BLK_MQ_F_SHOULD_MERGE | BLK_MQ_F_SG_MERGE;
-+	shost->tag_set.flags = BLK_MQ_F_SHOULD_MERGE;
- 	shost->tag_set.flags |=
- 		BLK_ALLOC_POLICY_TO_MQ_FLAG(shost->hostt->tag_alloc_policy);
- 	shost->tag_set.driver_data = shost;
-diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
-index 929e8abc5535..ca7389d7e04f 100644
---- a/include/linux/blk-mq.h
-+++ b/include/linux/blk-mq.h
-@@ -211,7 +211,6 @@ struct blk_mq_ops {
- enum {
- 	BLK_MQ_F_SHOULD_MERGE	= 1 << 0,
- 	BLK_MQ_F_TAG_SHARED	= 1 << 1,
--	BLK_MQ_F_SG_MERGE	= 1 << 2,
- 	BLK_MQ_F_BLOCKING	= 1 << 5,
- 	BLK_MQ_F_NO_SCHED	= 1 << 6,
- 	BLK_MQ_F_ALLOC_POLICY_START_BIT = 8,
+ 	while (walk_size < addrlen) {
++		if (walk_size + sizeof(sa_family_t) > addrlen)
++			return -EINVAL;
++
+ 		addr = addr_buf;
+ 		switch (addr->sa_family) {
+ 		case AF_UNSPEC:
 -- 
-2.9.5
+2.17.2
 
