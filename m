@@ -2,81 +2,109 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98028C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:38:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F544C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:39:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58CCA20818
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:38:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58CCA20818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A6A120818
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:39:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A6A120818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727297AbeKNFhw (ORCPT
+        id S1727975AbeKNFik (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:37:52 -0500
-Received: from mail-ed1-f45.google.com ([209.85.208.45]:42718 "EHLO
-        mail-ed1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbeKNFhv (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:37:51 -0500
-Received: by mail-ed1-f45.google.com with SMTP id j6so6557631edp.9;
-        Tue, 13 Nov 2018 11:38:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=0n/qxSoON2phZgYFSKD6jSe7+TthZ1bA59lqeWhxMeM=;
-        b=JBSto4QBXUwzDKlKKkxUEIaMr55fEkKYPIY7g9w46zMkH0HjF7SNYqxGmABHfn8UyT
-         vMX/TNFeKiRbc5KQTedvmBfO+IcuWwUKNb9I5096dr/7Lucx4LI1WFMe2w7uPuuzF0vc
-         RDMr/avMnMGM2anwhXJmYhRxXi6WYlECQh8h9+70a3qB2JCSntema6NKUGhsF0LBZFFq
-         b4WJYSG9eJt+GAmIOE2/ad3jh07V8YlxInkIDdrn4QsQTlOkTmBSUd5Hy8vVuqmEK4Gp
-         el4aQMmEeosBSXfBanEBb9o/D4vQ1bCNnvWamBZS11EdiBuoSgsled5thwzUwighRRJl
-         FWrg==
-X-Gm-Message-State: AGRZ1gI4bu8IWx4si2nZJoCocPKD4aavYnoRvUTu3HohQuCxwnRbjQAf
-        Eu3ID9sUZsnZmJ2VJ/cyZIg=
-X-Google-Smtp-Source: AJdET5dUW6RxnoZJ9sGiyT/xCt5b0YMxthNNjct9ka1JnTBM5WPM+wNhut1D/OHQTwp4Cd+cw78/Sg==
-X-Received: by 2002:a50:cb85:: with SMTP id k5-v6mr17731572edi.171.1542137895761;
-        Tue, 13 Nov 2018 11:38:15 -0800 (PST)
-Received: from kozik-lap ([178.38.103.27])
-        by smtp.googlemail.com with ESMTPSA id l19-v6sm6099263edc.3.2018.11.13.11.38.14
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 11:38:15 -0800 (PST)
-Date:   Tue, 13 Nov 2018 20:38:13 +0100
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-To:     Anand Moon <linux.amoon@gmail.com>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Kukjin Kim <kgene@kernel.org>,
-        Jaehoon Chung <jh80.chung@samsung.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-Subject: Re: [PATCHv5 3/6] ARM: dts: exynos: update maximum frequency for
- sdcard to 200MHz
-Message-ID: <20181113193813.GD2418@kozik-lap>
-References: <20180927140738.1006-1-linux.amoon@gmail.com>
- <20180927140738.1006-4-linux.amoon@gmail.com>
+        Wed, 14 Nov 2018 00:38:40 -0500
+Received: from foss.arm.com ([217.140.101.70]:33946 "EHLO foss.arm.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725748AbeKNFij (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 00:38:39 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 44A05EBD;
+        Tue, 13 Nov 2018 11:39:05 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 761E23F5BD;
+        Tue, 13 Nov 2018 11:39:03 -0800 (PST)
+Date:   Tue, 13 Nov 2018 19:39:01 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Daniel Colascione <dancol@google.com>
+Cc:     Florian Weimer <fweimer@redhat.com>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        Carlos O'Donell <carlos@redhat.com>,
+        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+Message-ID: <20181113193859.GJ3505@e103592.cambridge.arm.com>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+ <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
+ <877ehjx447.fsf@oldenburg.str.redhat.com>
+ <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+ <875zx2vhpd.fsf@oldenburg.str.redhat.com>
+ <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20180927140738.1006-4-linux.amoon@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Sep 27, 2018 at 02:07:35PM +0000, Anand Moon wrote:
-> set the max-frequency to 200MHz for optimal performace.
+On Mon, Nov 12, 2018 at 05:19:14AM -0800, Daniel Colascione wrote:
+
+[...]
+
+> We can learn something from how Windows does things. On that system,
+> what we think of as "libc" is actually two parts. (More, actually, but
+> I'm simplifying.) At the lowest level, you have the semi-documented
+> ntdll.dll, which contains raw system call wrappers and arcane
+> kernel-userland glue. On top of ntdll live the "real" libc
+> (msvcrt.dll, kernel32.dll, etc.) that provide conventional
+> application-level glue. The tight integration between ntdll.dll and
+> the kernel allows Windows to do very impressive things. (For example,
+> on x86_64, Windows has no 32-bit ABI as far as the kernel is
+> concerned! You can still run 32-bit programs though, and that works
+> via ntdll.dll essentially shimming every system call and switching the
+> processor between long and compatibility mode as needed.) Normally,
+> you'd use the higher-level capabilities, but if you need something in
+> ntdll (e.g., if you're Cygwin) nothing stops your calling into the
+> lower-level system facilities directly. ntdll is tightly bound to the
+> kernel; the higher-level libc, not so.
 > 
+> We should adopt a similar approach. Shipping a lower-level
+> "liblinux.so" tightly bound to the kernel would not only let the
+> kernel bypass glibc's "editorial discretion" in exposing new
+> facilities to userspace, but would also allow for tighter user-kernel
+> integration that one can achieve with a simplistic syscall(2)-style
+> escape hatch. (For example, for a long time now, I've wanted to go
+> beyond POSIX and improve the system's signal handling API, and this
+> improvement requires userspace cooperation.) The vdso is probably too
+> small and simplistic to serve in this role; I'd want a real library.
 
-Thanks, applied.
+Can you expand on your reasoning here?
 
-Best regards,
-Krzysztof
+Playing devil's advocate:
 
+If the library is just exposing the syscall interface, I don't see
+why it _couldn't_ fit into the vdso (or something vdso-like).
+
+If a separate library, I'd be concerned that it would accumulate
+value-add bloat over time, and the kernel ABI may start to creep since
+most software wouldn't invoke the kernel directly any more.  Even if
+it's maintained in the kernel tree, its existence as an apparently
+standalone component may encourage forking, leading to a potential
+compatibility mess.
+
+The vdso approach would mean we can guarantee that the library is
+available and up to date at runtime, and may make it easier to keep
+what's in it down to sane essentials.
+
+Cheers
+---Dave
