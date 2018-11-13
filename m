@@ -2,156 +2,134 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AD07C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:40:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F02CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:42:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BE29223D0
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:40:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BE29223D0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 3E9C4223D0
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 06:42:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E9C4223D0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731050AbeKMQg4 (ORCPT
+        id S1730945AbeKMQjW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 11:36:56 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15093 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1730921AbeKMQg4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 11:36:56 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id CDC2EC305991F;
-        Tue, 13 Nov 2018 14:40:13 +0800 (CST)
-Received: from [127.0.0.1] (10.177.29.68) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Tue, 13 Nov 2018
- 14:40:12 +0800
-Message-ID: <5BEA71CB.3090003@huawei.com>
-Date:   Tue, 13 Nov 2018 14:40:11 +0800
-From:   zhong jiang <zhongjiang@huawei.com>
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:12.0) Gecko/20120428 Thunderbird/12.0.1
+        Tue, 13 Nov 2018 11:39:22 -0500
+Received: from mga12.intel.com ([192.55.52.136]:35422 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726173AbeKMQjV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 11:39:21 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 12 Nov 2018 22:42:41 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.54,498,1534834800"; 
+   d="scan'208";a="107786729"
+Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
+  by orsmga001.jf.intel.com with ESMTP; 12 Nov 2018 22:42:39 -0800
+Subject: Re: [RFC PATCH v2 1/2] x86/fpu: detect AVX task
+To:     Dave Hansen <dave.hansen@intel.com>,
+        Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
+Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        arjan@linux.intel.com, linux-kernel@vger.kernel.org
+References: <1541610982-33478-1-git-send-email-aubrey.li@intel.com>
+ <c6b674a9-4995-f391-772a-b256516daeab@intel.com>
+ <ef034248-156f-7a66-e4f1-a717ce8705ee@linux.intel.com>
+ <b11a5599-fda4-8747-8878-e743b8a501e0@intel.com>
+From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
+Message-ID: <9bcd88eb-9433-debf-b831-29e064e87522@linux.intel.com>
+Date:   Tue, 13 Nov 2018 14:42:38 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.1.1
 MIME-Version: 1.0
-To:     Dave Wysochanski <dwysocha@redhat.com>
-CC:     Benjamin Coddington <bcodding@redhat.com>,
-        <herbert@gondor.apana.org.au>, <trond.myklebust@hammerspace.com>,
-        <bfields@redhat.com>, <linux-crypto@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, <linux-nfs@vger.kernel.org>
-Subject: Re: [Qestion] Lots of memory leaks when mounting and unmounting nfs
- client to server continuously.
-References: <5BD85266.6000301@huawei.com>  <1DEE371C-69EB-4D92-8F78-535AA5203007@redhat.com>  <5BD86392.7070200@huawei.com> <1541620162.4051.5.camel@redhat.com>
-In-Reply-To: <1541620162.4051.5.camel@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <b11a5599-fda4-8747-8878-e743b8a501e0@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.29.68]
-X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/8 3:49, Dave Wysochanski wrote:
-> On Tue, 2018-10-30 at 21:58 +0800, zhong jiang wrote:
->> On 2018/10/30 21:06, Benjamin Coddington wrote:
->>> Hi zhong jiang,
+On 2018/11/12 23:46, Dave Hansen wrote:
+> On 11/11/18 9:38 PM, Li, Aubrey wrote:
+>
+>>> Do we want this, or do we want something more time-based?
 >>>
->>> Try asking in linux-nfs.. but I'll also note that 3.10-stable may
->>> be missing a number of fixes to leaks in the NFS GSS code.
+>> This counter is introduced here to solve the race of context switch and
+>> VZEROUPPER. 3 context switches mean the same thread is on-off CPU 3 times.
+>> Due to scheduling latency, 3 jiffies could only happen AVX task on-off just
+>> 1 time. So IMHO the context switches number is better here.
+> 
+> Imagine we have a HZ=1000 system where AVX_STATE_DECAY_COUNT=3.  That
+> means that a task can be marked as a non-AVX-512-user after not using it
+> for ~3 ms.  But, with HZ=250, that's ~12ms.
+
+From the other side, if we set a 4ms decay, when HZ=1000, context switch count
+is 4, that means, we have 4 times of chance to maintain the AVX state, that is,
+we are able to filter 4 times init state reset out. But if HZ = 250, the context
+switch is 1, we only have 1 time of chance to filter init state reset out.
+> 
+> Also, don't forget that we have context switches from the timer
+> interrupt, but also from normal old operations that sleep.
+> 
+> Let's say our AVX-512 app was doing:
+> 
+> 	while (foo) {
+> 		do_avx_512();
+> 		read(pipe, buf, len);
+> 		read(pipe, buf, len);
+> 		read(pipe, buf, len);
+> 	}
+> 
+> And all three pipe reads context-switched the task.  That loop could
+> finish in way under 3HZ, but still end up in do_avx_512() each time with
+> fpu...avx->state=0.
+
+Yeah, we are trying to address a prediction according to the historical pattern,
+so you always can make a pattern to beat the prediction pattern. But in practice,
+I measured tensorflow with AVX512 enabled, linpack with AVX512, and a micro 
+benchmark, the current 3 context switches decay works well enough.
+
+> 
+> BTW, I don't have a great solution for this.  I was just pointing out
+> one of the pitfalls from using context switch counts so strictly.
+
+I really don't think time-based is better than the count in this case. 
+
+>>>> +/*
+>>>>   * Highest level per task FPU state data structure that
+>>>>   * contains the FPU register state plus various FPU
+>>>>   * state fields:
+>>>> @@ -303,6 +312,14 @@ struct fpu {
+>>>>  	unsigned char			initialized;
+>>>>  
+>>>>  	/*
+>>>> +	 * @avx_state:
+>>>> +	 *
+>>>> +	 * This data structure indicates whether this context
+>>>> +	 * contains AVX states
+>>>> +	 */
 >>>
->>> I can see a more than a few fixes to memory leaks with:
->>> git log --grep=leak --oneline net/sunrpc/auth_gss/
->>>
->> Thanks for your reply.  I has tested some of them in the upsteam as
->> you have said.  but It fails to solve the issue completely.
->> hence, I turn to the relevant experts whether they have happened to
->> the issue or  can give some suggestion or not.
->>
->> Thanks,
->> zhong jiang
->>> Ben
->>>
->>> On 30 Oct 2018, at 8:45, zhong jiang wrote:
->>>
->>>> Hi,   Herbert
->>>>
->>>> Recently,  I  hit  a memory leak issue when  mounting and
->>>> unmounting nfs with  the way of  krb5.
->>>> The issue happens to the linux-3.10-stable.
->>>>
->>>> I find that slab-1024 and slab-512 will take up most of the
->>>> memory.  And it can not be freed.
->>>> Meanwhile, it result in rpcsec_gss_krb5 can be unregistered as
->>>> well.
->>>>
->>>>
-> Are you running the latest 3.10-stable?
->
-> This sounds very familiar to something I encountered a while ago and it
-> was a sunrpc cache related problem.  The patch that fixed it for me is
-> in 3.10.106 though.
->
-> Can you check if this cache is growing indefinitely?
-> /proc/net/rpc/auth.rpcsec.context
->
-> If it is large, try to flush explicitly with:
-> date +%s  > /proc/net/rpc/auth.rpcsec.context/flush
->
-> If all that checks out, you may need the below upstream fix, but it
-> went into v3.10.106 as
-> 6a4a5fd svcrpc: don't leak contexts on PROC_DESTROY
->
-> commit 6a4a5fd4c7bc6a06ca26ad7327d046d8d3c0932a
-> Author: J. Bruce Fields <bfields@redhat.com>
-> Date:   Mon Jan 9 17:15:18 2017 -0500
->
->     svcrpc: don't leak contexts on PROC_DESTROY
->     
->     commit 78794d1890708cf94e3961261e52dcec2cc34722 upstream.
->     
->     Context expiry times are in units of seconds since boot, not unix time.
->     
->     The use of get_seconds() here therefore sets the expiry time decades in
->     the future.  This prevents timely freeing of contexts destroyed by
->     client RPC_GSS_PROC_DESTROY requests.  We'd still free them eventually
->     (when the module is unloaded or the container shut down), but a lot of
->     contexts could pile up before then.
->     
->     Fixes: c5b29f885afe "sunrpc: use seconds since boot in expiry cache"
->     Reported-by: Andy Adamson <andros@netapp.com>
->     Signed-off-by: J. Bruce Fields <bfields@redhat.com>
->     Signed-off-by: Willy Tarreau <w@1wt.eu>
->
-> diff --git a/net/sunrpc/auth_gss/svcauth_gss.c b/net/sunrpc/auth_gss/svcauth_gss.c
-> index 62663a0..e625efe 100644
-> --- a/net/sunrpc/auth_gss/svcauth_gss.c
-> +++ b/net/sunrpc/auth_gss/svcauth_gss.c
-> @@ -1518,7 +1518,7 @@ static void destroy_use_gss_proxy_proc_entry(struct net *net) {}
->         case RPC_GSS_PROC_DESTROY:
->                 if (gss_write_verf(rqstp, rsci->mechctx, gc->gc_seq))
->                         goto auth_err;
-> -               rsci->h.expiry_time = get_seconds();
-> +               rsci->h.expiry_time = seconds_since_boot();
->                 set_bit(CACHE_NEGATIVE, &rsci->h.flags);
->                 if (resv->iov_len + 4 > PAGE_SIZE)
->                         goto drop;
->
-> .
->
-Hi, Dave
+>>> Yeah, that's precisely what fpu->state.xsave.xfeatures does. :)
+>>> I see, will refine in the next version
+> 
+> One other thought about the new 'avx_state':
+> 
+> fxregs_state (which is a part of the XSAVE state) has some padding and
+> 'sw_reserved' areas.  You *might* be able to steal some space there.
+> Not that this is a huge space eater, but why waste the space if we don't
+> have to?
+> 
 
-Thank you for kindly help and reply. and sorry for late reply.
-
-Because I just test the patch. It will not work thoroughly.
-
-but I unite the following three patches from upstream, the issue will not occur.
-
-0070ed3 Fix 16-byte memory leak in gssp_accept_sec_context_upcall
-78794d1 svcrpc: don't leak contexts on PROC_DESTROY
-a1d1e9b svcrpc: fix memory leak in gssp_accept_sec_context_upcall
-
-I think we should backport the relevant patches to stable-3.10.
+IMHO, I prefer not adding any extra thing into a data structure associated
+with a hardware table. Let me try to work out a new version to see if it can
+satisfy you.
 
 Thanks,
-zhong jiang
+-Aubrey
 
