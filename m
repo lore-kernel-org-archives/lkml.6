@@ -2,105 +2,142 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67AFFC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:45:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44F05C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:50:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2D5CE22507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:45:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D5CE22507
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id E78D8223DD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 04:50:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U0J72tEo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E78D8223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730468AbeKMOlw convert rfc822-to-8bit (ORCPT
+        id S1728537AbeKMOrG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 09:41:52 -0500
-Received: from mout.gmx.net ([212.227.15.18]:49803 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726111AbeKMOlv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 09:41:51 -0500
-Received: from [192.168.1.153] ([74.104.183.64]) by mail.gmx.com (mrgmx002
- [212.227.17.184]) with ESMTPSA (Nemesis) id 0MTTKZ-1fwoXc1d7X-00SPVx; Tue, 13
- Nov 2018 05:45:31 +0100
-From:   Qian Cai <cai@gmx.us>
-Content-Type: text/plain;
-        charset=us-ascii
-Content-Transfer-Encoding: 8BIT
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Kernel panic - not syncing: corrupted stack end detected inside
- scheduler
-Message-Id: <721E7B42-2D55-4866-9C1A-3E8D64F33F9C@gmx.us>
-Date:   Mon, 12 Nov 2018 23:45:29 -0500
-Cc:     linux-mm@kvack.org
-To:     linux kernel <linux-kernel@vger.kernel.org>
-X-Mailer: Apple Mail (2.3445.100.39)
-X-Provags-ID: V03:K1:yqiCHGE6Xbdz7cOLhx9fXdx5TcLys+HxJKgp5FnT2YU7gRmFP7N
- SMqz3CaGydtxjwDNpPyXI7u4MCNofjkQZMJrxYpIs0ntOVKE0rhzRgvAjhBcLwH7jcs3DzG
- GzejQRpAkCrCGtABMQXtzHgeLHGCArpzmGNvcXROB/AkRwnzhZQ+bF8zotrBqUAlw4egu2I
- bVVDFjiWnYUIxBJM/v+6g==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:zbTAHMPU8bg=:gvpodrPnOXFa/qmz3zBbcJ
- 4n1Azea9XIIyborXkcWvKITfXRWvdOm+YXLbv2RXKPO+GQnT87Zms0PrX2jaMA8R8n5EBSNfo
- 6E7Mc5zxB0+vJudF2IkiD5A8AtUpQSjlWMpeJEgTvTQIi8KhFdP0DOWEoyZZ02BVnFkvALrfV
- A1x4Dupcgyml8W0/aBSnf2lki+z04SjYysUJcWvyvUrmfScIgB0tNHYsnVSQyVNh+Asy5UXWP
- 2JqM/V4seqMMF8Bk8pFTGlxZH2vbNQX565iC95yFrKNciPVU6M7k5+5Ai25vDLMoX0G1KVQAL
- PuS1z4BJhDvIKroZRGjdCKh4vHmXmWyyvl7ajBQGxz9XNRN/eqWdjv0CH6g+ogPCd9qRP38gg
- eOFj5zRK+V87ytIRLuIB1knLlYePFqXuTXbX7OO4eea1r4blUS5ddqkhsLJmub3TjkgKIdHUH
- BotbevMCTmpbSRPEcidnrVShpe64SXCOwQaHK8wDjTJgSOGtYwurSfGdcW9YObHpgoG5r03gr
- 5SmNbR3dkqMwyWslSyOv+nU+BTMx3SbdrPSfX3iVm0StKoqRJGdlVG1VT1/Uh/7Y0p3I8mjWz
- D05I7U1h2y6e6VYhlnFU4+nD88oT0jsyeCmTX0y/a9+xEyd3mZWwsAT50KTyoEB/igV7UH7M6
- CPjdUXS7WGqpE3nVj629HqFNDIsZZi44ciF3Uq/rpYh9wOa0u8iqyv1DAysrRGH7CC37/0t3E
- IZZbnaty27/aMB+0IDiUfv3NR727pkpDKHVHppOF+HjCmstnDPxt5erPuFHRKsywQBaoZRptI
- LRbqogZMlZZtJxmmHi10NUxfAuyFH2pXm0+40QOrRXZukFhFMu7t58BRSYdz44wUAjE3Oga+B
- AqOK6AQbFbgaOEbPIEVFr8HPGm2KF4O7JdUBGL9BmE/NqN8Oj5Ia8u4D6XOPbK
+        Tue, 13 Nov 2018 09:47:06 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:47018 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726111AbeKMOrG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 09:47:06 -0500
+Received: by mail-pf1-f193.google.com with SMTP id s9-v6so5391483pfm.13
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 20:50:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:references:cc:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding;
+        bh=PSIu/HQdLaK6hL7Oz9vhaTNC72Qhz570Bbuuow7ytEM=;
+        b=U0J72tEobGtHY9ta4NUT73hZCQqukEqWWt73AQlP6VxF9ppZBPVKmC8//bS0A5yajl
+         +lhEgQO2aV5ABRbUqVivMnrqdaoPbSmneDFy4fUVYv3/8jthqJGjTsl/t1J5jJaJl0cn
+         kdpOuywat/Aaoe7bUNdbtSSxXsuzdfAxVIuqPD48gipd3OjYBz0zzdn159yKNv1b6EBv
+         8IFefEsIDRH8YD7snxMDfOPA69pg1upWwLHN3L2ueSAZHOd5oCoXfGOjLG0IzQwSzE2v
+         7mBsi86aGFR8i4dJlee0cUvyQhJ3viqi0tqjZuebEwFlaRTHTyL60BMeH0tOf+NFuHjB
+         AwFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:references:cc:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding;
+        bh=PSIu/HQdLaK6hL7Oz9vhaTNC72Qhz570Bbuuow7ytEM=;
+        b=cpY9AFBAGZJxjWJwaNF29ZebIcmFVpAaQRtnyWeuJM1JTo677rIzJPZu4HGN9Zv/d9
+         1FYYetkPEVHvRBWUnKUZemszuGHPzvTajbpwEhht2c0AImep5azQ3bJmK5LXSZ20s9rJ
+         oUMCwjjuCwj1vpmJXrb4y6PxXwxm2hPWmlgkTEBfZyLB6vmfn5oIcuiDgUKRY5WMsE7Q
+         B+o/dacMJVuG3/ZzjhBBtPAcjII3OEV6124LojzI3MxvhG7O1VLIifA3VZMCzi8d95AA
+         MXnmYqq2PG4vLyy/fiUHYVGOpowFb+okeOsMZwkF5Ccg1KqnYIs1dsCbLqccYJ+5mp9M
+         fpug==
+X-Gm-Message-State: AGRZ1gL+I4eLDnZlggbiNTVGP1jIiRAquvqz9npz/vYUbgSt/02lcBKD
+        gYTsxf6oEhznubB82Dbakt8P/CwsCKg=
+X-Google-Smtp-Source: AJdET5eQdtepRoyhl7WnK0xtQu/X99izNdrHzXfU/rziMWCoPrD5f9E0fL1NExXtvUsr/q13e8FzcA==
+X-Received: by 2002:a63:be4d:: with SMTP id g13mr3440268pgo.378.1542084646374;
+        Mon, 12 Nov 2018 20:50:46 -0800 (PST)
+Received: from [192.168.1.101] (122-58-176-92-adsl.sparkbb.co.nz. [122.58.176.92])
+        by smtp.gmail.com with ESMTPSA id r1-v6sm14040611pfb.69.2018.11.12.20.50.40
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 12 Nov 2018 20:50:45 -0800 (PST)
+Subject: Re: [RFC PATCH 06/13] m68k: Drop ARCH_USES_GETTIMEOFFSET
+To:     Finn Thain <fthain@telegraphics.com.au>
+References: <cover.1541995959.git.fthain@telegraphics.com.au>
+ <74edaee07800f91eb416ab3e72c4670b8ef4bd4e.1541995959.git.fthain@telegraphics.com.au>
+ <CAMuHMdXdo+L-Ta04zUsL62RSt1HOvmPJs7HFu_zEnc38R0FPjA@mail.gmail.com>
+ <alpine.LNX.2.21.1811122002530.351@nippy.intranet>
+ <fb617c67-089b-c4c0-2f47-28db41ffca6c@gmail.com>
+ <alpine.LNX.2.21.1811131413210.362@nippy.intranet>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen N Chivers <schivers@csc.com.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Philip Blundell <philb@gnu.org>,
+        Joshua Thompson <funaho@jurai.org>
+From:   Michael Schmitz <schmitzmic@gmail.com>
+Message-ID: <b824e485-796c-cbb6-9e50-504b03accd5d@gmail.com>
+Date:   Tue, 13 Nov 2018 17:50:37 +1300
+User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
+ Icedove/45.4.0
+MIME-Version: 1.0
+In-Reply-To: <alpine.LNX.2.21.1811131413210.362@nippy.intranet>
+Content-Type: text/plain; charset=windows-1252; format=flowed
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Running LTP oom01 [1] test triggered kernel panic on an aarch64 server with the latest mainline (rc2).
+Hi Finn,
 
-[1] https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/mem/oom/oom01.c
+Am 13.11.2018 um 16:14 schrieb Finn Thain:
+> On Tue, 13 Nov 2018, Michael Schmitz wrote:
+>
+>> Hi Finn,
+>>
+>> Am 12.11.2018 um 22:06 schrieb Finn Thain:
+>>> On Mon, 12 Nov 2018, Geert Uytterhoeven wrote:
+>>>
+>>>> Hi Finn,
+>>>>
+>>>> Thanks for your patch!
+>>>>
+>>>> On Mon, Nov 12, 2018 at 5:46 AM Finn Thain <fthain@telegraphics.com.au>
+>>>> wrote:
+>>>>> The functions that implement arch_gettimeoffset are re-used by
+>>>>> new clocksource drivers in subsequent patches.
+>>>>
+>>>> Disabling this first affects functionality during bisection, right?
+>>>>
+>>>
+>>> It means that all platforms have to use the 'jiffies' clocksource.
+>>
+>> So all that happens is timer granularity drops to 10ms, then gets restored by
+>> the later patches?
+>>
+>
+> Yes, that was the plan, but I can't confirm that it worked out as I don't
+> have any physical 68k hardware in front of me right now. If you can
+> confirm this on your Atari Falcon, that would be great.
 
-[ 3433.338741] Kernel panic - not syncing: corrupted stack end detected inside scheduler
-[ 3433.347644] CPU: 49 PID: 2189 Comm: in:imjournal Kdump: loaded Tainted: G        W         4.20.0-rc2+ #15
-[ 3433.357298] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
-[ 3433.364523] Call trace:
-[ 3433.366993]  dump_backtrace+0x0/0x2c8
-[ 3433.370659]  show_stack+0x24/0x30
-[ 3433.373980]  dump_stack+0x118/0x19c
-[ 3433.377473]  panic+0x1b8/0x31c
-[ 3433.380530]  schedule+0x0/0x240
-[ 3433.383672]  schedule+0xdc/0x240
-[ 3433.386905]  io_schedule+0x24/0x48
-[ 3433.390313]  get_request+0x3b0/0xb68
-[ 3433.393891]  blk_queue_bio+0x3a4/0xcd8
-[ 3433.397642]  generic_make_request+0x440/0x7d8
-[ 3433.402000]  submit_bio+0xbc/0x300
-[ 3433.405409]  __swap_writepage+0xa54/0xd00
-[ 3433.409420]  swap_writepage+0x44/0xb0
-[ 3433.413086]  pageout.isra.12+0x580/0xd80
-[ 3433.417011]  shrink_page_list+0x2480/0x36f0
-[ 3433.421196]  shrink_inactive_list+0x388/0xb98
-[ 3433.425555]  shrink_node_memcg+0x344/0x9c0
-[ 3433.429653]  shrink_node+0x200/0x940
-[ 3433.433231]  do_try_to_free_pages+0x234/0x7d0
-[ 3433.437589]  try_to_free_pages+0x228/0x6b0
-[ 3433.441689]  __alloc_pages_nodemask+0xcbc/0x2028
-[ 3433.446309]  alloc_pages_vma+0x1a4/0x208
-[ 3433.450235]  __read_swap_cache_async+0x4fc/0x858
-[ 3433.454855]  read_swap_cache_async+0xa4/0x100
-[ 3433.459214]  swap_cluster_readahead+0x598/0x650
-[ 3433.463746]  shmem_swapin+0xd4/0x150
-[ 3433.467324]  shmem_getpage_gfp+0xf50/0x1c48
-[ 3433.471509]  shmem_fault+0x140/0x340
-[ 3433.475086]  __do_fault+0xd0/0x440
-[ 3433.478490]  do_fault+0x54c/0xf48
-[ 3433.481807]  __handle_mm_fault+0x4c0/0x928
-[ 3433.485905]  handle_mm_fault+0x30c/0x4b8
-[ 3433.489832]  do_page_fault+0x294/0x658
-[ 3433.493584]  do_translation_fault+0x98/0xa8
-[ 3433.497769]  do_mem_abort+0x64/0xf0
-[ 3433.501258]  el0_da+0x24/0x28
+Will do.
+
+> (It appears that a QEMU-emulated Mac does not benefit from having a
+> clocksource that's more accurate than the 'jiffies' clocksource, in spite
+> of "clocksource: Switched to clocksource via1".)
+
+With the current code, kernel log timestamps have 10 ms resolution on 
+Atari. Time resolution of times reported by initcall_debug is roughly 40 
+us. I'd expect that changes with falling back to jiffies only. Might be 
+worth a try on QEMU Mac.
+
+Cheers,
+
+	Michael
+
+> The latest patches can be found at
+> https://github.com/fthain/linux/commits/mac68k-queue/
+>
