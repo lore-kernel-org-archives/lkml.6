@@ -2,202 +2,96 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38456C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ACAA3C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E835D21582
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:17 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E835D21582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 7070021582
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kjFeZT2C"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7070021582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727221AbeKNFet (ORCPT
+        id S1728227AbeKNFfA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:34:49 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32763 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725748AbeKNFet (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:34:49 -0500
-Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
-        by Forcepoint Email with ESMTP id 66C53B53EFEEA;
-        Tue, 13 Nov 2018 19:35:12 +0000 (GMT)
-Received: from [10.202.210.149] (10.202.210.149) by smtpsuk.huawei.com
- (10.201.108.36) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 13 Nov
- 2018 19:35:12 +0000
-Subject: Re: [PATCH 10/17] prmem: documentation
-To:     Andy Lutomirski <luto@kernel.org>
-CC:     Nadav Amit <nadav.amit@gmail.com>,
-        Igor Stoppa <igor.stoppa@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Mimi Zohar <zohar@linux.vnet.ibm.com>,
-        Matthew Wilcox <willy@infradead.org>,
-        Dave Chinner <david@fromorbit.com>,
-        James Morris <jmorris@namei.org>,
-        "Michal Hocko" <mhocko@kernel.org>,
-        Kernel Hardening <kernel-hardening@lists.openwall.com>,
-        linux-integrity <linux-integrity@vger.kernel.org>,
-        LSM List <linux-security-module@vger.kernel.org>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Laura Abbott <labbott@redhat.com>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        "Thomas Gleixner" <tglx@linutronix.de>
-References: <20181023213504.28905-1-igor.stoppa@huawei.com>
- <20181023213504.28905-11-igor.stoppa@huawei.com>
- <20181026092609.GB3159@worktop.c.hoisthospitality.com>
- <CAGXu5jKCs01jvtvpEFS7R8qCR-5iRqK11kJxLJY99NicGWc4aQ@mail.gmail.com>
- <20181028183126.GB744@hirez.programming.kicks-ass.net>
- <40cd77ce-f234-3213-f3cb-0c3137c5e201@gmail.com>
- <20181030152641.GE8177@hirez.programming.kicks-ass.net>
- <CAGXu5jJftJ+Hq+jrZGHX5CTDLWOog7kGsd_Ne=yMvrRs__skSg@mail.gmail.com>
- <0A7AFB50-9ADE-4E12-B541-EC7839223B65@amacapital.net>
- <6f60afc9-0fed-7f95-a11a-9a2eef33094c@gmail.com>
- <CALCETrXNckT9W288VXx-6inO5qYn-6dUPocKGcBT0GCO3xi3ZQ@mail.gmail.com>
- <386C0CB1-C4B1-43E2-A754-DA8DBE4FB3CB@gmail.com>
- <CALCETrWWcfLK4W3mn0bavzejmMBVKMX29aAUA3+VPQ8m9vmfhw@mail.gmail.com>
- <9373ccf0-f51b-4bfa-2b16-e03ebf3c670d@huawei.com>
- <CALCETrXfBePNs_bs1OroLn9Kdi91FktZ0==N7JK7e=CX=uUisg@mail.gmail.com>
-From:   Igor Stoppa <igor.stoppa@huawei.com>
-Message-ID: <e7de7c38-1312-0bea-26a2-055f335aa0ad@huawei.com>
-Date:   Tue, 13 Nov 2018 21:35:11 +0200
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.6.0
-MIME-Version: 1.0
-In-Reply-To: <CALCETrXfBePNs_bs1OroLn9Kdi91FktZ0==N7JK7e=CX=uUisg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.210.149]
-X-CFilter-Loop: Reflected
+        Wed, 14 Nov 2018 00:35:00 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:37237 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725748AbeKNFfA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 00:35:00 -0500
+Received: by mail-wr1-f67.google.com with SMTP id j10so430798wru.4
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 11:35:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=4VXjzxcwwXlCyyFjtTx3GqLr9Oz4i3d3cX1C2QRDmhk=;
+        b=kjFeZT2Ca6TOV+UHjupHaJ8o2b2OKhzympDtUoTh8gv+Ut7JAaXrMXtjSQma2jniA8
+         tJxm0xnBrjjO5mtv4AE5lJSibVnzoFw/d6Wfatct5hmNZlblQVAW+V8gXVgIJiTlwlhH
+         x7NjkEdwJDvGpK4dNShCnGqvdwp0YDEvh6LNeS2uHHMW/oXHKKlCnqspU8fTUitCdljw
+         57apoFdNhb5adRJEk5WLO15D0DswhzH6x0UVTAVZ/UPfebK2O1sz0VmKv6ir/+wvNPlg
+         UFb7XBJ6XpvGdV75vxu0SZTA69kAr8x6qzyymvB6NPvHM0xH5jSKqBuFsQs0nD+oLEd2
+         +Z3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=4VXjzxcwwXlCyyFjtTx3GqLr9Oz4i3d3cX1C2QRDmhk=;
+        b=QFzsU7QtDUZcgYPZ5TcS0XRvkBjdwfm7S0Fj1VUQDMH1L3EmUYc6+BVuQV/WFmOEsH
+         u8jz4Iq70z9RL3Hx0QP8zQ4Rg+Z7tSimGW7r0NNZjpZolFlDSCYlvQwQNxtNfHiA3BUs
+         CcdclIbo+b63ZKK5TPLjCArXXQ+AoI5Vczh56mdQvmgg+JXJcr0eDpi8dWEBnkqpGMSP
+         B5w8AR3H3gwnE42R0QWXlksTHB7CQjqcBAxdfljjql3eMUG7XNFkYoJA1WLA8Bnda8sO
+         4LVExixZa2VSZJSWXMQmtnkIJqCskCoV4Zk/4m2mcrAi7zf2DEHH4drYcNPqv8DwQpDy
+         3+8Q==
+X-Gm-Message-State: AGRZ1gKpJDP3JjZJ9nCcqS70iy8FJBa089izipoXBVCHu6xzu7jurzO1
+        5La6symmLaqq+YjUyRgXbqc=
+X-Google-Smtp-Source: AJdET5fa4QEGis8oVxXMf7oULvsD7IvgmV3jePTVtJWj8tD3I+GeNSfDZa5dneVETNC1HSxDvNHIRw==
+X-Received: by 2002:adf:f04d:: with SMTP id t13-v6mr1432510wro.170.1542137725441;
+        Tue, 13 Nov 2018 11:35:25 -0800 (PST)
+Received: from localhost ([95.239.98.134])
+        by smtp.gmail.com with ESMTPSA id o15sm1199484wrp.12.2018.11.13.11.35.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 11:35:24 -0800 (PST)
+From:   Cristian Sicilia <sicilia.cristian@gmail.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Nathan Chancellor <natechancellor@gmail.com>,
+        Colin Ian King <colin.king@canonical.com>
+Cc:     Cristian Sicilia <sicilia.cristian@gmail.com>,
+        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] Aligh parenthesis and split lines
+Date:   Tue, 13 Nov 2018 20:34:37 +0100
+Message-Id: <1542137679-31726-1-git-send-email-sicilia.cristian@gmail.com>
+X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542064736-27655-1-git-send-email-sicilia.cristian@gmail.com>
+References: <1542064736-27655-1-git-send-email-sicilia.cristian@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/11/2018 20:48, Andy Lutomirski wrote:
-> On Tue, Nov 13, 2018 at 10:31 AM Igor Stoppa <igor.stoppa@huawei.com> wrote:
->>
->> On 13/11/2018 19:47, Andy Lutomirski wrote:
->>
->>> For general rare-writish stuff, I don't think we want IRQs running
->>> with them mapped anywhere for write.  For AVC and IMA, I'm less sure.
->>
->> Why would these be less sensitive?
-> 
-> I'm not really saying they're less sensitive so much as that the
-> considerations are different.  I think the original rare-write code is
-> based on ideas from grsecurity, and it was intended to protect static
-> data like structs full of function pointers.   Those targets have some
-> different properties:
-> 
->  - Static targets are at addresses that are much more guessable, so
-> they're easier targets for most attacks.  (Not spraying attacks like
-> the ones you're interested in, though.)
-> 
->  - Static targets are higher value.  No offense to IMA or AVC, but
-> outright execution of shellcode, hijacking of control flow, or compete
-> disablement of core security features is higher impact than bypassing
-> SELinux or IMA.  Why would you bother corrupting the AVC if you could
-> instead just set enforcing=0?  (I suppose that corrupting the AVC is
-> less likely to be noticed by monitoring tools.)
-> 
->  - Static targets are small.  This means that the interrupt latency
-> would be negligible, especially in comparison to the latency of
-> replacing the entire SELinux policy object.
+In the first patch I added some space to align previous
+parenthesis.
+In the second patch split a line to stay in 80 characters.
 
-Your analysis is correct.
-In my case, having already taken care of those, I was going *also* after
-the next target in line.
-Admittedly, flipping a bit located at a fixed offset is way easier than
-spraying dynamically allocated data structured.
+Cristian Sicilia (2):
+  staging: rtlwifi: Add spaces to match open parenthesis
+  staging: rtlwifi: Add new line to stay in 80 characters
 
-However, once the bit is not easily writable, the only options are to
-either find another way to flip it (unprotect it or subvert something
-that can write it) or to identify another target that is still writable.
+ drivers/staging/rtlwifi/core.c | 3 ++-
+ drivers/staging/rtlwifi/ps.c   | 4 ++--
+ 2 files changed, 4 insertions(+), 3 deletions(-)
 
-AVC and policyDB fit the latter description.
+-- 
 
-> Anyway, I'm not all that familiar with SELinux under the hood, but I'm
-> wondering if a different approach to thinks like the policy database
-> might be appropriate.  When the policy is changed, rather than
-> allocating rare-write memory and writing to it, what if we instead
-> allocated normal memory, wrote to it, write-protected it, and then
-> used the rare-write infrastructure to do a much smaller write to
-> replace the pointer?
+This two patch was sent in two different mail, now are
+in a single patchset.
 
-Actually, that's exactly what I did.
+2.7.4
 
-I did not want to overload this discussion, but since you brought it up,
-I'm not sure write rare is enough.
-
-* write_rare is for stuff that sometimes changes all the time, ex: AVC
-
-* dynamic read only is for stuff that at some point should not be
-modified anymore, but could still be destroyed. Ex: policyDB
-
-I think it would be good to differentiate, at runtime, between the two,
-to minimize the chance that a write_rare function is used against some
-read_only data.
-
-Releasing dynamically allocated protected memory is also a big topic.
-In some cases it's allocated and released continuously, like in the AVC.
-Maybe it can be optimized, or maybe it can be turned into an object
-cache of protected object.
-
-But for releasing, it would be good, I think, to have a mechanism for
-freeing all the memory in one loop, like having a pool containing all
-the memory that was allocated for a specific use (ex: policyDB)
-
-> Admittedly, this creates a window where another core could corrupt the
-> data as it's being written.  That may not matter so much if an
-> attacker can't force a policy update.  Alternatively, the update code
-> could re-verify the policy after write-protecting it, or there could
-> be a fancy API to allocate some temporarily-writable memory (by
-> creating a whole new mm_struct, mapping the memory writable just in
-> that mm_struct, and activating it) so that only the actual policy
-> loader could touch the memory.  But I'm mostly speculating here, since
-> I'm not familiar with the code in question.
-
-They are all corner cases ... possible but unlikely.
-Another, maybe more critical, one is that the policyDB is not available
-at boot.
-There is a window of opportunity, before it's loaded. But it could be
-mitigated by loading a barebone set of rules, either from initrd or even
-as "firmware".
-
-> Anyway, I tend to think that the right way to approach mainlining all
-> this is to first get the basic rare write support for static data into
-> place and then to build on that.  I think it's great that you're
-> pushing this effort, but doing this for SELinux and IMA is a bigger
-> project than doing it for static data, and it might make sense to do
-> it in bite-sized pieces.
-> 
-> Does any of this make sense?
-
-Yes, sure.
-
-I *have* to do SELinux, but I do not necessarily have to wait for the
-final version to be merged upstream. And anyways Android is on a
-different kernel.
-
-However, I think both SELinux and IMA have a value in being sufficiently
-complex cases to be used for validating the design as it evolves.
-
-Each of them has static data that could be the first target for
-protection, in a smaller patch.
-
-Lists of write rare data are probably the next big thing, in terms of
-defining the API.
-
-But I could start with introducing __wr_after_init.
-
---
-igor
