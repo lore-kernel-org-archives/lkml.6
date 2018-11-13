@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F77AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:23:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8272EC43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:23:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D40A2245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:23:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D40A2245E
+	by mail.kernel.org (Postfix) with ESMTP id 508EB20684
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 10:23:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 508EB20684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732387AbeKMUUh (ORCPT
+        id S1732410AbeKMUUi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 15:20:37 -0500
-Received: from shell.v3.sk ([90.176.6.54]:38301 "EHLO shell.v3.sk"
+        Tue, 13 Nov 2018 15:20:38 -0500
+Received: from shell.v3.sk ([90.176.6.54]:38312 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732176AbeKMUUh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 15:20:37 -0500
+        id S1732362AbeKMUUi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 15:20:38 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 9CD04C6B20;
-        Tue, 13 Nov 2018 11:23:07 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 884F9C6B32;
+        Tue, 13 Nov 2018 11:23:08 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id e9yinJyvnevU; Tue, 13 Nov 2018 11:22:55 +0100 (CET)
+        with ESMTP id BFl_KRM1NhgE; Tue, 13 Nov 2018 11:22:55 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 43AD9C6B1F;
-        Tue, 13 Nov 2018 11:22:48 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id AFD9DC6AF3;
+        Tue, 13 Nov 2018 11:22:47 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id 10wfXwgnolqz; Tue, 13 Nov 2018 11:22:44 +0100 (CET)
+        with ESMTP id Kr3S2njupcVL; Tue, 13 Nov 2018 11:22:44 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 5CACFC6B30;
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 0D7F4C6B2B;
         Tue, 13 Nov 2018 11:22:42 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Mark Brown <broonie@kernel.org>,
@@ -50,9 +50,9 @@ Cc:     James Cameron <quozl@laptop.org>, Rob Herring <robh+dt@kernel.org>,
         linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH v3 6/6] spi: pxa2xx: Deal with the leftover garbage in TXFIFO
-Date:   Tue, 13 Nov 2018 11:22:28 +0100
-Message-Id: <20181113102228.820214-7-lkundrak@v3.sk>
+Subject: [PATCH v3 5/6] spi: pxa2xx: Add ready signal
+Date:   Tue, 13 Nov 2018 11:22:27 +0100
+Message-Id: <20181113102228.820214-6-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181113102228.820214-1-lkundrak@v3.sk>
 References: <20181113102228.820214-1-lkundrak@v3.sk>
@@ -63,69 +63,81 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There doesn't seem to be a way to empty TXFIFO on MMP2. The datasheet is
-super-secret and the method described in Armada 16x manual won't work:
-
-  "The TXFIFO and RXFIFO are cleared to 0b0 when the SSPx port is reset o=
-r
-  disabled (by writing a 0b0 to the <Synchronous Serial Port Enable> fiel=
-d
-  in the SSP Control Register 0)."
-
-  # devmem 0xd4037008           # read SSSR
-  0x0000F204
-  # devmem 0xd4037000 32 0x07   # SSE off in SSCR0
-  # devmem 0xd4037000 32 0x87   # SSE on
-  # devmem 0xd4037008
-  0x0000F204
-         ^ TXFIFO level is still 2. Sigh.
-
-The OLPC 1.75 boot firmware leaves two bytes in the TXFIFO. Those are
-basically throwaway bytes used in response to the messages from the EC.
-The OLPC kernel copes with this by power-cycling the hardware. Perhaps
-the firmware should do this instead.
-
-Other than that, there's not much we can do other than complain loudly
-until the garbage gets drained and discard the actual data... For the
-OLPC EC this will work just fine and pushing more data to TXFIFO would
-break further transactions.
+Strobe a GPIO line when the slave TX FIFO is filled. This is how the
+Embedded Controller on an OLPC XO-1.75 machine, that happens to be a SPI
+master, learns that it can initiate a transaction.
 
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
+Tested-by: Pavel Machek <pavel@ucw.cz>
 
 ---
-Changes since v1:
-- Fixed a commit message typo (spotted by James Cameron)
+Changes since v2
+- Avoid an useless delay if there's no ready GPIO
+- Remove useless (int)PTR_ERR(...) casts from pxa2xx_spi_probe()
+  (thanks to Geert Uytterhoeven)
 
- drivers/spi/spi-pxa2xx.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+ drivers/spi/spi-pxa2xx.c | 16 +++++++++++++++-
+ drivers/spi/spi-pxa2xx.h |  3 +++
+ 2 files changed, 18 insertions(+), 1 deletion(-)
 
 diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index 7e5aab0af501..29e6025f104c 100644
+index 54ae77f1227c..7e5aab0af501 100644
 --- a/drivers/spi/spi-pxa2xx.c
 +++ b/drivers/spi/spi-pxa2xx.c
-@@ -1078,6 +1078,20 @@ static int pxa2xx_spi_transfer_one(struct spi_cont=
+@@ -1081,6 +1081,11 @@ static int pxa2xx_spi_transfer_one(struct spi_cont=
 roller *master,
- 			pxa2xx_spi_write(drv_data, SSTO, chip->timeout);
- 	}
-=20
-+	if (drv_data->ssp_type =3D=3D MMP2_SSP) {
-+		u8 tx_level =3D (pxa2xx_spi_read(drv_data, SSSR)
-+					& SSSR_TFL_MASK) >> 8;
-+
-+		if (tx_level) {
-+			/* On MMP2, flipping SSE doesn't to empty TXFIFO. */
-+			dev_warn(&spi->dev, "%d bytes of garbage in TXFIFO!\n",
-+								tx_level);
-+			if (tx_level > transfer->len)
-+				tx_level =3D transfer->len;
-+			drv_data->tx +=3D tx_level;
-+		}
-+	}
-+
  	if (spi_controller_is_slave(master)) {
  		while (drv_data->write(drv_data))
  			;
++		if (drv_data->gpiod_ready) {
++			gpiod_set_value(drv_data->gpiod_ready, 1);
++			udelay(1);
++			gpiod_set_value(drv_data->gpiod_ready, 0);
++		}
+ 	}
+=20
+ 	/*
+@@ -1778,7 +1783,7 @@ static int pxa2xx_spi_probe(struct platform_device =
+*pdev)
+ 				if (PTR_ERR(gpiod) =3D=3D -ENOENT)
+ 					continue;
+=20
+-				status =3D (int)PTR_ERR(gpiod);
++				status =3D PTR_ERR(gpiod);
+ 				goto out_error_clock_enabled;
+ 			} else {
+ 				drv_data->cs_gpiods[i] =3D gpiod;
+@@ -1786,6 +1791,15 @@ static int pxa2xx_spi_probe(struct platform_device=
+ *pdev)
+ 		}
+ 	}
+=20
++	if (platform_info->is_slave) {
++		drv_data->gpiod_ready =3D devm_gpiod_get_optional(dev,
++						"ready", GPIOD_OUT_LOW);
++		if (IS_ERR(drv_data->gpiod_ready)) {
++			status =3D PTR_ERR(drv_data->gpiod_ready);
++			goto out_error_clock_enabled;
++		}
++	}
++
+ 	pm_runtime_set_autosuspend_delay(&pdev->dev, 50);
+ 	pm_runtime_use_autosuspend(&pdev->dev);
+ 	pm_runtime_set_active(&pdev->dev);
+diff --git a/drivers/spi/spi-pxa2xx.h b/drivers/spi/spi-pxa2xx.h
+index 513c53aaeab2..4e324da66ef7 100644
+--- a/drivers/spi/spi-pxa2xx.h
++++ b/drivers/spi/spi-pxa2xx.h
+@@ -64,6 +64,9 @@ struct driver_data {
+=20
+ 	/* GPIOs for chip selects */
+ 	struct gpio_desc **cs_gpiods;
++
++	/* Optional slave FIFO ready signal */
++	struct gpio_desc *gpiod_ready;
+ };
+=20
+ struct chip_data {
 --=20
 2.19.1
 
