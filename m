@@ -7,44 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC3ABC169D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D82FBC28CF8
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A6CEC2250F
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F6B922507
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="p1m/eU2L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A6CEC2250F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kq5lfuiH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F6B922507
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730976AbeKMPq2 (ORCPT
+        id S1731036AbeKMPqf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:46:28 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59996 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:46:35 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60094 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730805AbeKMPq1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:46:27 -0500
+        id S1727357AbeKMPqe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:46:34 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A1F5022507;
-        Tue, 13 Nov 2018 05:49:59 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 976772250F;
+        Tue, 13 Nov 2018 05:50:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088199;
-        bh=e6NAqXsSFmUieOmNF7EkB6mFpyFGniEe5F3xsqqrf+I=;
+        s=default; t=1542088206;
+        bh=OSqQDjCyr8VHPno/ZYnDH9ISfZGCQcowfFcFa2+S+vs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=p1m/eU2L9K0dYrTihJf4c1c0Y87LtMpNXpiLii6Ccuf1LGMLb8wX2N1ECq34FPO5+
-         6ks4/Ra16T3OiCi5LqrIaafJbzZhR/4sK/M3ErNHxxCBt5FbBZDVL2KYKZalxRURBH
-         esGKP8jURTiaVd3GgXkSfirAtRDl6ItZzeLhHnEo=
+        b=kq5lfuiHlsCUww9roDBiCal1HoY4aDDlRH2jwBZlIkzNBZiB1unm5nB+RJ6H337F/
+         DnD5pgvFKHOBp4s2/c+1lyplWILiTP9suJIFrl3GqbxcNrJQqxc1bFZ5Y0ZFZ/RtNo
+         WqA+nz2jdTWmQBhdTgaYuTvIskAXEWDNrqJxZraI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Huazhong Tan <tanhuazhong@huawei.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 08/44] net: hns3: bugfix for rtnl_lock's range in the hclgevf_reset()
-Date:   Tue, 13 Nov 2018 00:49:14 -0500
-Message-Id: <20181113054950.77898-8-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 10/44] net: hns3: bugfix for handling mailbox while the command queue reinitialized
+Date:   Tue, 13 Nov 2018 00:49:16 -0500
+Message-Id: <20181113054950.77898-10-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
 References: <20181113054950.77898-1-sashal@kernel.org>
@@ -55,50 +55,42 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Huazhong Tan <tanhuazhong@huawei.com>
 
-[ Upstream commit 29118ab962d5476fdc65fae312ac38db68092d78 ]
+[ Upstream commit 3c88ed1d798da355859ca083d3884a16ce0841f2 ]
 
-Since hclgevf_reset_wait() is used to wait for the hardware to complete
-the reset, it is not necessary to hold the rtnl_lock during
-hclgevf_reset_wait(). So this patch releases the lock for the duration
-of hclgevf_reset_wait().
+In a multi-core machine, the mailbox service and reset service
+will be executed at the same time. The reset service will re-initialize
+the command queue, before that, the mailbox handler can only get some
+invalid messages.
 
-Fixes: 6988eb2a9b77 ("net: hns3: Add support to reset the enet/ring mgmt layer")
+The HCLGE_STATE_CMD_DISABLE flag means that the command queue is not
+available and needs to be reinitialized. Therefore, when the mailbox
+handler recognizes this flag, it should not process the command.
+
+Fixes: dde1a86e93ca ("net: hns3: Add mailbox support to PF driver")
 Signed-off-by: Huazhong Tan <tanhuazhong@huawei.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-index 9c0091f2addf..57958273945c 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-@@ -1062,6 +1062,8 @@ static int hclgevf_reset(struct hclgevf_dev *hdev)
- 	/* bring down the nic to stop any ongoing TX/RX */
- 	hclgevf_notify_client(hdev, HNAE3_DOWN_CLIENT);
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
+index f34851c91eb3..e08e82020402 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_mbx.c
+@@ -458,6 +458,12 @@ void hclge_mbx_handler(struct hclge_dev *hdev)
  
-+	rtnl_unlock();
+ 	/* handle all the mailbox requests in the queue */
+ 	while (!hclge_cmd_crq_empty(&hdev->hw)) {
++		if (test_bit(HCLGE_STATE_CMD_DISABLE, &hdev->state)) {
++			dev_warn(&hdev->pdev->dev,
++				 "command queue needs re-initializing\n");
++			return;
++		}
 +
- 	/* check if VF could successfully fetch the hardware reset completion
- 	 * status from the hardware
- 	 */
-@@ -1073,12 +1075,15 @@ static int hclgevf_reset(struct hclgevf_dev *hdev)
- 			ret);
+ 		desc = &crq->desc[crq->next_to_use];
+ 		req = (struct hclge_mbx_vf_to_pf_cmd *)desc->data;
  
- 		dev_warn(&hdev->pdev->dev, "VF reset failed, disabling VF!\n");
-+		rtnl_lock();
- 		hclgevf_notify_client(hdev, HNAE3_UNINIT_CLIENT);
- 
- 		rtnl_unlock();
- 		return ret;
- 	}
- 
-+	rtnl_lock();
-+
- 	/* now, re-initialize the nic client and ae device*/
- 	ret = hclgevf_reset_stack(hdev);
- 	if (ret)
 -- 
 2.17.1
 
