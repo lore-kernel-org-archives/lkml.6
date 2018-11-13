@@ -2,220 +2,201 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 24BDAC169D4
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:48:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 05542C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:48:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C5B6D216FD
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:48:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="12sEyb0d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C5B6D216FD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	by mail.kernel.org (Postfix) with ESMTP id B9576216FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:48:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9576216FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=esmil.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728399AbeKNFrj (ORCPT
+        id S1728769AbeKNFsc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:47:39 -0500
-Received: from mail-eopbgr740045.outbound.protection.outlook.com ([40.107.74.45]:27552
-        "EHLO NAM01-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725965AbeKNFrj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:47:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bFJOKOdTRNmcx4Pfff5C7BoDQZOwbPF6j1+/TiC03Hs=;
- b=12sEyb0d67J6416frCddrZTWj4PpzLWrHQoofsw2hb7x4MtK5nY6fI5glWIzwKf2RJCDv1RM7HEcNiXz+s1HH1T5Rg/FTiyxqYbaz9CvRVVWs1TW7nXpRFRPGap+6w6Nrgh5rI0bYC2s0YerTQdi7Nwxvy9AatLdad0FwptOtDE=
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com (10.162.3.15) by
- SN1PR12MB2351.namprd12.prod.outlook.com (52.132.194.32) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.32; Tue, 13 Nov 2018 19:47:59 +0000
-Received: from SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::54ff:b1c7:a4b9:28f1]) by SN1PR12MB0175.namprd12.prod.outlook.com
- ([fe80::54ff:b1c7:a4b9:28f1%3]) with mapi id 15.20.1294.045; Tue, 13 Nov 2018
- 19:47:59 +0000
-From:   "Lendacky, Thomas" <Thomas.Lendacky@amd.com>
-To:     Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
-        Bjorn Helgaas <helgaas@kernel.org>
-CC:     Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Bart Van Assche <bvanassche@acm.org>,
-        Jens Axboe <axboe@kernel.dk>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [GIT PULL] PCI changes for v4.20
-Thread-Topic: [GIT PULL] PCI changes for v4.20
-Thread-Index: AQHUavdlFGMh646FBEGB1msSKmfQHqVNa9wAgAAzFwD//+R3gIAAujIA
-Date:   Tue, 13 Nov 2018 19:47:58 +0000
-Message-ID: <f27cb1b2-d468-8a07-49f8-475cf0842592@amd.com>
-References: <20181023173934.GA14918@bhelgaas-glaptop.roam.corp.google.com>
- <20181113071712.GA2353@gmail.com> <20181113102004.GC10502@zn.tnic>
- <c963b647-6428-c89b-37ab-9b9587e56de0@amd.com>
-In-Reply-To: <c963b647-6428-c89b-37ab-9b9587e56de0@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0201CA0055.namprd02.prod.outlook.com
- (2603:10b6:803:20::17) To SN1PR12MB0175.namprd12.prod.outlook.com
- (2a01:111:e400:5143::15)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Thomas.Lendacky@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.77.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN1PR12MB2351;20:YntWowaeDaUH9cyQ2biv+v/ZL9Kp4jAlJBtQGyT2Yxh8+mLKTIkJTlBJgxA633jbhCYCzEUM331LB2ZTu/cPerRxyhaiu6iPO2VwugrvGSGwwPuEkc/W4eR88iSZ15/tF2nhsVXgFAQy3USwAsllDvWFXMe076K636s+BkL7DTQ3ZspMU3A92jzGbwYPwoMewEU7gReNvPr/yfeoJy7DMz+2XV7KVuWIaXR7TGZvo5BiOlahTDDfIZxCBZcekKAp
-x-ms-office365-filtering-correlation-id: dd0997cb-adbe-4aa7-c619-08d649a0e9bb
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390060)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN1PR12MB2351;
-x-ms-traffictypediagnostic: SN1PR12MB2351:
-x-microsoft-antispam-prvs: <SN1PR12MB235131CAE9FFBE26DA57F178ECC20@SN1PR12MB2351.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(788757137089);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231409)(944501410)(52105112)(10201501046)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(20161123564045)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN1PR12MB2351;BCL:0;PCL:0;RULEID:;SRVR:SN1PR12MB2351;
-x-forefront-prvs: 085551F5A8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(366004)(396003)(346002)(136003)(376002)(199004)(189003)(36756003)(68736007)(14454004)(76176011)(81166006)(186003)(256004)(81156014)(66066001)(8936002)(8676002)(5660300001)(25786009)(72206003)(52116002)(229853002)(26005)(106356001)(93886005)(53546011)(386003)(6506007)(102836004)(31686004)(105586002)(4326008)(3846002)(2616005)(6116002)(31696002)(476003)(45080400002)(11346002)(446003)(7416002)(316002)(2900100001)(99286004)(110136005)(54906003)(2906002)(486006)(478600001)(7736002)(71200400001)(71190400001)(97736004)(6436002)(6246003)(86362001)(305945005)(6512007)(6486002)(53936002);DIR:OUT;SFP:1101;SCL:1;SRVR:SN1PR12MB2351;H:SN1PR12MB0175.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: FkvYq2RvdUM6+5sFClErCzHLRtFMU9Fzr0uCR2EWY7/YX3fwuGguwC1cGo3JqpicomDuV0T/AUjYagY+x8nU2Nu6wR+Jg7z/WDuxXG/MsZpf/I/TbjuPvcbSfMHZwqBqCyOVI3iBoSxWEFPTy3YyOLJIkVSLIVdmQ8OnTbc/dcmELAC1jSAT6RZabOASRkA0sKJ7keBqKA4v6KZLcPe/0SVI76Bg50C7ut9pueokYjEq/tp4Wrc9LyRX4b5wL+2rr8xfq4X+fWKRqv1NEy/Se2UAHsXd554aNadI0YpBXQ1ThtN7rYH557gtXM1SaqHEV+8uBFUVEC3820b22nBTA1yA1GqaUTyb2MT0/3pnWuA=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <950963C26E4EB54492DF8568705DDD5A@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        Wed, 14 Nov 2018 00:48:32 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:32967 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725748AbeKNFsc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 00:48:32 -0500
+Received: by mail-pf1-f194.google.com with SMTP id v68-v6so6603778pfk.0;
+        Tue, 13 Nov 2018 11:48:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=FTYl1YEZsWlo48zpcSGeS0opwdJMNJLCJODJ4Tvr1/E=;
+        b=loFJKwtbX2Avl68NLXPkdHg7E0obeNnLD/zp9G+FEWIq5xlxgNtFE+SMakzyH2Pxmz
+         3y+ayaFXWy8eKiUn3DrdRvQPxSGyJMuEK3QnZk6hc89Xnz4B/4ZXASFxs0XmgceBasCr
+         +ogC0VTsASfnG4+LEwf17G27lc9BtM5gC5ciwEosFJg4JxDFI+q5SJvpNAfkpyEUyeJ6
+         b8x2yu3xVKAYFyKowzB0Lj4SaRQNOoGhe10RUmZa0LhDiK8Js71Ysx+EqHe/GBYA/aGj
+         PKkT/aG5tMm5C7JO5wgas0HdjJe1utXY4RtIx5oKahvyf7DAXejTIfjayyKy9E2y2E8C
+         zItA==
+X-Gm-Message-State: AGRZ1gJUMcWwiSt5YCciCYqO1LmV1fnNWdhdk4CcTlyMazIfruz939aA
+        HaP+8nn0nDKs1SGvh5c2AINEhtTjVSSsuOoOO6M=
+X-Google-Smtp-Source: AJdET5fv0h02rVrg3ksvYPdjXrHayvNi6L92+6zAvOEynNaI9fIqUqaIHqPc5ebAXyWjZR3YSE35fw+qMsK3F4ft6Y0=
+X-Received: by 2002:a62:de06:: with SMTP id h6-v6mr6554715pfg.36.1542138534634;
+ Tue, 13 Nov 2018 11:48:54 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: dd0997cb-adbe-4aa7-c619-08d649a0e9bb
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2018 19:47:59.1061
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN1PR12MB2351
+References: <20181112142736.15009-1-kernel@esmil.dk> <20181113183527.GG2089@sirena.org.uk>
+In-Reply-To: <20181113183527.GG2089@sirena.org.uk>
+From:   Emil Renner Berthing <kernel@esmil.dk>
+Date:   Tue, 13 Nov 2018 20:48:43 +0100
+Message-ID: <CANBLGcxF-WgsBVFHf4jGRR+Ox2vz=ewzhwGP1CZX-R5HpDAVBg@mail.gmail.com>
+Subject: Re: [RFC PATCH] spi: add driver for the SiFive SPI controller
+To:     Mark Brown <broonie@kernel.org>
+Cc:     linux-spi@vger.kernel.org, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Palmer Dabbelt <palmer@sifive.com>, devicetree@vger.kernel.org,
+        linux-riscv@lists.infradead.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTEvMTMvMjAxOCAwODo0MSBBTSwgTGVuZGFja3ksIFRob21hcyB3cm90ZToNCj4gT24gMTEv
-MTMvMjAxOCAwNDoyMCBBTSwgQm9yaXNsYXYgUGV0a292IHdyb3RlOg0KPj4gT24gVHVlLCBOb3Yg
-MTMsIDIwMTggYXQgMDg6MTc6MTJBTSArMDEwMCwgSW5nbyBNb2xuYXIgd3JvdGU6DQo+Pj4NCj4+
-PiAqIEJqb3JuIEhlbGdhYXMgPGhlbGdhYXNAa2VybmVsLm9yZz4gd3JvdGU6DQo+Pj4NCj4+Pj4g
-UENJIGNoYW5nZXM6DQo+Pj4+DQo+Pj4+ICAgLSBQYXkgYXR0ZW50aW9uIHRvIGRldmljZS1zcGVj
-aWZpYyBfUFhNIG5vZGUgdmFsdWVzIChKb25hdGhhbiBDYW1lcm9uKQ0KPj4+DQo+Pj4gVGhlcmUn
-cyBhIG5ldyBib290IHJlZ3Jlc3Npb24sIG15IEFNRCBUaHJlYWRSaXBwZXIgc3lzdGVtIChNU0kg
-WDM5OSBTTEkgDQo+Pj4gUExVUyAoTVMtN0IwOSkpIGhhbmdzIGR1cmluZyBlYXJseSBib290dXAs
-IGFuZCBJIGhhdmUgYmlzZWN0ZWQgaXQgZG93biB0byANCj4+PiB0aGlzIGNvbW1pdDoNCj4+Pg0K
-Pj4+ICAgYmFkN2RjZDk0ZjM5OiBBQ1BJL1BDSTogUGF5IGF0dGVudGlvbiB0byBkZXZpY2Utc3Bl
-Y2lmaWMgX1BYTSBub2RlIHZhbHVlcw0KPj4+DQo+Pj4gUmV2ZXJ0aW5nIGl0IHNvbHZlcyB0aGUg
-aGFuZy4NCj4+Pg0KPj4+IFVuZm9ydHVuYXRlbHkgdGhlcmUncyBubyBjb25zb2xlIG91dHB1dCB3
-aGVuIGl0IGhhbmdzLCBldmVuIHdpdGggDQo+Pj4gZWFybHlwcmludGsuIEl0IGp1c3QgaGFuZ3Mg
-YWZ0ZXIgdGhlICJsb2FkaW5nIGluaXRyZCIgbGluZS4NCj4+Pg0KPj4+IENvbmZpZyBpcyBhbiBV
-YnVudHUtaXNoIGNvbmZpZyB3aXRoIFBST1ZFX0xPQ0tJTkc9eSBhbmQgYSBmZXcgb3RoZXIgZGVi
-dWcgDQo+Pj4gb3B0aW9ucy4NCj4+Pg0KPj4+IEFsbCBteSBvdGhlciB0ZXN0c3lzdGVtcyBib290
-IGZpbmUgd2l0aCBzaW1pbGFyIGNvbmZpZ3MsIHNvIGl0J3MgcHJvYmFibHkgDQo+Pj4gc29tZXRo
-aW5nIHNwZWNpZmljIHRvIHRoaXMgc3lzdGVtLg0KPj4NCj4+IExlbW1lIGFkZCBUb20sIGhlIG1p
-Z2h0IGhhdmUgYW4gaWRlYS4NCj4gDQo+IEknbSBub3Qgc2VlaW5nIGFueSBpc3N1ZXMgb24gbXkg
-RVBZQyBzeXN0ZW0uICBMZXQgbWUgc2VlIGlmIEkgY2FuIGxvY2F0ZSBhDQo+IFRocmVhZHJpcHBl
-ciBzeXN0ZW0gdG8gdGVzdCBvbi4NCg0KQmFzZWQgdXBvbiB0aGUgbGluayB0aGF0IEJqb3JuIHJl
-ZmVyZW5jZWQgaW4gYW5vdGhlciBlbWFpbCwgSSB3YXMgYWJsZSB0bw0KcmUtY3JlYXRlIHRoZSBw
-cm9ibGVtIGJ5IGhhdmluZyBteSBFUFlDIHN5c3RlbSByZXR1cm4gZWFybHkgZnJvbQ0KYWNwaV9u
-dW1hX2luaXQoKSB3aXRoIGEgLUVOT0VOVCAoc2tpcHBpbmcgdGhlIFNSQVQgdGFibGUpLiBUaGlz
-IHJlc3VsdGVkDQppbiB0aGUgZm9sbG93aW5nIEdQRjoNCg0KWyAgIDExLjE1Nzg0MF0gZ2VuZXJh
-bCBwcm90ZWN0aW9uIGZhdWx0OiAwMDAwIFsjMV0gU01QIE5PUFRJDQpbICAgMTEuMTU4Nzg1XSBD
-UFU6IDMgUElEOiAxIENvbW06IHN3YXBwZXIvMCBOb3QgdGFpbnRlZCA0LjIwLjAtcmMyLXpwLWxp
-bnV4ICMzDQpbICAgMTEuMTU4Nzg1XSBIYXJkd2FyZSBuYW1lOiAqKioqKioNClsgICAxMS4xNTg3
-ODVdIFJJUDogMDAxMDpnZXRfcGFydGlhbF9ub2RlLmlzcmEuNzYrMHgzMy8weDJiMA0KWyAgIDEx
-LjE1ODc4NV0gQ29kZTogODkgZTUgNDEgNTcgNDEgNTYgNDEgNTUgNDEgNTQgNTMgNDggODMgZTQg
-ZjAgNDggODMgYzQgODAgNDggODUgZjYgNDggODkgN2MgMjQgMzAgNDggODkgNTQgMjQgMTAgODkg
-NGMgMjQgMGMgMGYgODQgZDUgMDAgMDAgMDAgPDQ4PiA4MyA3ZSAwOCAwMCAwZiA4NCBjYSAwMCAw
-MCAwMCA0OCA4OSBmNyA0OCA4OSA3NCAyNCAzOCBlOCA5NSA1ZQ0KWyAgIDExLjE1ODc4NV0gUlNQ
-OiAwMDE4OmZmZmZjOTAwMDAxMDc4YjAgRUZMQUdTOiAwMDAxMDAwMg0KWyAgIDExLjE1ODc4NV0g
-UkFYOiAwMDAwMDAwMDAwMDAwMDAwIFJCWDogMDAwMDAwMDAwMDAwMDIwMiBSQ1g6IDAwMDAwMDAw
-MDA2MDgwYzANClsgICAxMS4xNTg3ODVdIFJEWDogZmZmZjg4OWZmZGFlNzE1MCBSU0k6IDRjN2E1
-ODQ4NzMzNTljZjIgUkRJOiBmZmZmODg4MTA3YzA3MDAwDQpbICAgMTEuMTU4Nzg1XSBSQlA6IGZm
-ZmZjOTAwMDAxMDc5NTggUjA4OiBmZmZmODg4MTA3YzA3MDAwIFIwOTogMDAwMDAwMDAwMDAwMDAw
-MQ0KWyAgIDExLjE1ODc4NV0gUjEwOiAwMDAwMDAwMDAwNjA4MGMwIFIxMTogMDAwMDAwMDAwMDAw
-MDAwMiBSMTI6IGZmZmY4ODlmZmRhZTcxNDANClsgICAxMS4xNTg3ODVdIFIxMzogZmZmZjg4ODEw
-N2MwNzAwMCBSMTQ6IGZmZmY4ODgxMDdjMDcwMDAgUjE1OiAwMDAwMDAwMDAwMDAwMDAyDQpbICAg
-MTEuMTU4Nzg1XSBGUzogIDAwMDAwMDAwMDAwMDAwMDAoMDAwMCkgR1M6ZmZmZjg4OWZmZGFjMDAw
-MCgwMDAwKSBrbmxHUzowMDAwMDAwMDAwMDAwMDAwDQpbICAgMTEuMTU4Nzg1XSBDUzogIDAwMTAg
-RFM6IDAwMDAgRVM6IDAwMDAgQ1IwOiAwMDAwMDAwMDgwMDUwMDMzDQpbICAgMTEuMTU4Nzg1XSBD
-UjI6IDAwMDAwMDAwMDAwMDAwMDAgQ1IzOiAwMDAwODAxNGJjMjBhMDAwIENSNDogMDAwMDAwMDAw
-MDM0MDZlMA0KWyAgIDExLjE1ODc4NV0gQ2FsbCBUcmFjZToNClsgICAxMS4xNTg3ODVdICA/IGFj
-cGlfb3NfcmVsZWFzZV9vYmplY3QrMHhhLzB4MTANClsgICAxMS4xNTg3ODVdICA/IGFjcGlfZHNf
-cmVzdWx0X3BvcCsweGY4LzB4MTBjDQpbICAgMTEuMTU4Nzg1XSAgPyBhY3BpX2RzX2NyZWF0ZV9v
-cGVyYW5kKzB4MjI3LzB4MjRlDQpbICAgMTEuMTU4Nzg1XSAgX19fc2xhYl9hbGxvYysweDEwMC8w
-eDU0MA0KWyAgIDExLjE1ODc4NV0gID8gYWNwaV9kc19jcmVhdGVfb3BlcmFuZHMrMHg3Mi8weGQ3
-DQpbICAgMTEuMTU4Nzg1XSAgPyBhbGxvY19kZXNjKzB4MzUvMHgyMTANClsgICAxMS4xNTg3ODVd
-ICA/IGFjcGlfbnNfY2hlY2tfb2JqZWN0X3R5cGUrMHgxMjMvMHgxYzANClsgICAxMS4xNTg3ODVd
-ICA/IGFsbG9jX2Rlc2MrMHgzNS8weDIxMA0KWyAgIDExLjE1ODc4NV0gIF9fc2xhYl9hbGxvYysw
-eDFjLzB4MzMNClsgICAxMS4xNTg3ODVdICBrbWVtX2NhY2hlX2FsbG9jX25vZGVfdHJhY2UrMHhh
-Yy8weDIxMA0KWyAgIDExLjE1ODc4NV0gIGFsbG9jX2Rlc2MrMHgzNS8weDIxMA0KWyAgIDExLjE1
-ODc4NV0gIF9faXJxX2FsbG9jX2Rlc2NzKzB4MWM0LzB4MjMwDQpbICAgMTEuMTU4Nzg1XSAgX19p
-cnFfZG9tYWluX2FsbG9jX2lycXMrMHg1NC8weDJlMA0KWyAgIDExLjE1ODc4NV0gIG1wX21hcF9w
-aW5fdG9faXJxKzB4MmNmLzB4MzMwDQpbICAgMTEuMTU4Nzg1XSAgYWNwaV9yZWdpc3Rlcl9nc2lf
-aW9hcGljKzB4NzgvMHgxNzANClsgICAxMS4xNTg3ODVdICA/IG1taW9fcmVzb3VyY2VfZW5hYmxl
-ZC5wYXJ0LjArMHg2MC8weDYwDQpbICAgMTEuMTU4Nzg1XSAgYWNwaV9wY2lfaXJxX2VuYWJsZSsw
-eGNkLzB4MjgwDQpbICAgMTEuMTU4Nzg1XSAgPyBtbWlvX3Jlc291cmNlX2VuYWJsZWQucGFydC4w
-KzB4NjAvMHg2MA0KWyAgIDExLjE1ODc4NV0gID8gbW1pb19yZXNvdXJjZV9lbmFibGVkLnBhcnQu
-MCsweDYwLzB4NjANClsgICAxMS4xNTg3ODVdICBkb19wY2lfZW5hYmxlX2RldmljZSsweDViLzB4
-MTAwDQpbICAgMTEuMTU4Nzg1XSAgPyBwY2lfYnVzX3JlYWRfY29uZmlnX3dvcmQrMHg1Ni8weDcw
-DQpbICAgMTEuMTU4Nzg1XSAgcGNpX2VuYWJsZV9kZXZpY2VfZmxhZ3MrMHhlMC8weDEzMA0KWyAg
-IDExLjE1ODc4NV0gIHBjaV9lbmFibGVfYnJpZGdlKzB4NTIvMHg5MA0KWyAgIDExLjE1ODc4NV0g
-IHBjaV9lbmFibGVfZGV2aWNlX2ZsYWdzKzB4OGMvMHgxMzANClsgICAxMS4xNTg3ODVdICBxdWly
-a191c2JfZWFybHlfaGFuZG9mZisweDYzLzB4NmIwDQpbICAgMTEuMTU4Nzg1XSAgPyBidXNfZmlu
-ZF9kZXZpY2UrMHg4Ny8weGQwDQpbICAgMTEuMTU4Nzg1XSAgPyBtbWlvX3Jlc291cmNlX2VuYWJs
-ZWQucGFydC4wKzB4NjAvMHg2MA0KWyAgIDExLjE1ODc4NV0gIHBjaV9maXh1cF9kZXZpY2UrMHhl
-OC8weDFhMA0KWyAgIDExLjE1ODc4NV0gIHBjaV9hcHBseV9maW5hbF9xdWlya3MrMHg2OC8weDEy
-Nw0KWyAgIDExLjE1ODc4NV0gID8gcGNpX3Byb2NfaW5pdCsweDY4LzB4NjgNClsgICAxMS4xNTg3
-ODVdICBkb19vbmVfaW5pdGNhbGwrMHg0Yi8weDFjYg0KWyAgIDExLjE1ODc4NV0gID8gaW5pdF9z
-ZXR1cCsweDFiLzB4MjgNClsgICAxMS4xNTg3ODVdICBrZXJuZWxfaW5pdF9mcmVlYWJsZSsweDFi
-ZS8weDI2Yg0KWyAgIDExLjE1ODc4NV0gID8gbG9nbGV2ZWwrMHg1Yi8weDViDQpbICAgMTEuMTU4
-Nzg1XSAgPyByZXN0X2luaXQrMHhiMC8weGIwDQpbICAgMTEuMTU4Nzg1XSAga2VybmVsX2luaXQr
-MHhhLzB4MTEwDQpbICAgMTEuMTU4Nzg1XSAgcmV0X2Zyb21fZm9yaysweDIyLzB4NDANClsgICAx
-MS4xNTg3ODVdIE1vZHVsZXMgbGlua2VkIGluOg0KWyAgIDExLjE1ODc4NV0gLS0tWyBlbmQgdHJh
-Y2UgYmExYzgwYTE0Njc0MGM4YiBdLS0tDQpbICAgMTEuMTU4Nzg1XSBSSVA6IDAwMTA6Z2V0X3Bh
-cnRpYWxfbm9kZS5pc3JhLjc2KzB4MzMvMHgyYjANClsgICAxMS4xNTg3ODVdIENvZGU6IDg5IGU1
-IDQxIDU3IDQxIDU2IDQxIDU1IDQxIDU0IDUzIDQ4IDgzIGU0IGYwIDQ4IDgzIGM0IDgwIDQ4IDg1
-IGY2IDQ4IDg5IDdjIDI0IDMwIDQ4IDg5IDU0IDI0IDEwIDg5IDRjIDI0IDBjIDBmIDg0IGQ1IDAw
-IDAwIDAwIDw0OD4gODMgN2UgMDggMDAgMGYgODQgY2EgMDAgMDAgMDAgNDggODkgZjcgNDggODkg
-NzQgMjQgMzggZTggOTUgNWUNClsgICAxMS4xNTg3ODVdIFJTUDogMDAxODpmZmZmYzkwMDAwMTA3
-OGIwIEVGTEFHUzogMDAwMTAwMDINClsgICAxMS4xNTg3ODVdIFJBWDogMDAwMDAwMDAwMDAwMDAw
-MCBSQlg6IDAwMDAwMDAwMDAwMDAyMDIgUkNYOiAwMDAwMDAwMDAwNjA4MGMwDQpbICAgMTEuMTU4
-Nzg1XSBSRFg6IGZmZmY4ODlmZmRhZTcxNTAgUlNJOiA0YzdhNTg0ODczMzU5Y2YyIFJESTogZmZm
-Zjg4ODEwN2MwNzAwMA0KWyAgIDExLjE1ODc4NV0gUkJQOiBmZmZmYzkwMDAwMTA3OTU4IFIwODog
-ZmZmZjg4ODEwN2MwNzAwMCBSMDk6IDAwMDAwMDAwMDAwMDAwMDENClsgICAxMS4xNTg3ODVdIFIx
-MDogMDAwMDAwMDAwMDYwODBjMCBSMTE6IDAwMDAwMDAwMDAwMDAwMDIgUjEyOiBmZmZmODg5ZmZk
-YWU3MTQwDQpbICAgMTEuMTU4Nzg1XSBSMTM6IGZmZmY4ODgxMDdjMDcwMDAgUjE0OiBmZmZmODg4
-MTA3YzA3MDAwIFIxNTogMDAwMDAwMDAwMDAwMDAwMg0KWyAgIDExLjE1ODc4NV0gRlM6ICAwMDAw
-MDAwMDAwMDAwMDAwKDAwMDApIEdTOmZmZmY4ODlmZmRhYzAwMDAoMDAwMCkga25sR1M6MDAwMDAw
-MDAwMDAwMDAwMA0KWyAgIDExLjE1ODc4NV0gQ1M6ICAwMDEwIERTOiAwMDAwIEVTOiAwMDAwIENS
-MDogMDAwMDAwMDA4MDA1MDAzMw0KWyAgIDExLjE1ODc4NV0gQ1IyOiAwMDAwMDAwMDAwMDAwMDAw
-IENSMzogMDAwMDgwMTRiYzIwYTAwMCBDUjQ6IDAwMDAwMDAwMDAzNDA2ZTANClsgICAxMS4xNTg3
-ODVdIEtlcm5lbCBwYW5pYyAtIG5vdCBzeW5jaW5nOiBGYXRhbCBleGNlcHRpb24NClsgICAxMS4x
-NTg3ODVdIC0tLVsgZW5kIEtlcm5lbCBwYW5pYyAtIG5vdCBzeW5jaW5nOiBGYXRhbCBleGNlcHRp
-b24gXS0tLQ0KDQpJbiBhY3BpX2dldF9ub2RlKCksIGlmIEkgcmVwbGFjZSAicmV0dXJuIGFjcGlf
-bWFwX3B4bV90b19ub2RlKHB4bSk7IiB3aXRoDQoicmV0dXJuIGFjcGlfbWFwX3B4bV90b19vbmxp
-bmVfbm9kZShweG0pOyIgdGhlbiB0aGUgc3lzdGVtIHN1Y2Nlc3NmdWxseQ0KYm9vdHMuICBJJ20g
-anVzdCBub3Qgc3VyZSBpZiB0aGF0IHNob3VsZCBiZSB0aGUgcHJvcGVyIGFwcHJvYWNoIG9yIGlm
-DQpOVU1BX05PX05PREUgc2hvdWxkIGJlIHJldHVybmVkIGlmIHRoZSBfUFhNIHZhbHVlIGlzIG91
-dHNpZGUgdGhlIGRlZmluZWQNCmVudHJpZXMuIA0KDQpJIHdhcyBhbHNvIGFibGUgdG8gdHJpZ2dl
-ciB0aGlzIEdQRiBieSByZXR1cm5pbmcgYSBib2d1cyBfUFhNIHZhbHVlIG9uIHRoZQ0KRVBZQyBz
-eXN0ZW0gdGhhdCBoYWQgYSB2YWxpZCBTUkFUIHRhYmxlLiAgU28gaXQgZGVmaW5pdGVseSB3b3Vs
-ZCBiZSB3b3J0aA0KdmFsaWRhdGluZyB0aGUgUFhNIHZhbHVlIGJlZm9yZSByZXR1cm5pbmcgaXQu
-DQoNClRoYW5rcywNClRvbQ0KDQo+IA0KPiBJdCBzZWVtcyB2ZXJ5IHN0cmFuZ2UgdGhhdCB0aGUg
-Y29tbWl0IGluIHF1ZXN0aW9uIHdvdWxkIGNhdXNlIGEgaGFuZyBzbw0KPiBlYXJseS4gRG8geW91
-IGhhdmUgYSBzZXJpYWwgY29uc29sZSBob29rZWQgdXAgZm9yIHRoZSBlYXJseXByaW50az8gSXMg
-dGhlDQo+IHNlcmlhbCBwb3J0IHNldCB1cCBpbiBsZWdhY3kgbW9kZSAoZS5nLiAweDNmOCBhcyBv
-cHBvc2VkIHRvIGJlaW5nIGFuIE1NSU8NCj4gZGV2aWNlIHRoYXQgd291bGQgcmVxdWlyZSBhIGRy
-aXZlcik/DQo+IA0KPiBDYW4geW91IGR1bXAgdGhlIEFDUEkgdGFibGVzIC8gcnVuIHRoZW0gdGhy
-b3VnaCBpYXNsIHRvIHNlZSB3aGF0IHRoZSBfUFhNDQo+IHZhbHVlcyBhcmUgaW4gdGhlIERTRFQg
-dGFibGU/DQo+IA0KPiBUaGFua3MsDQo+IFRvbQ0KPiANCj4+DQo=
+Hi Mark,
+On Tue, 13 Nov 2018 at 19:35, Mark Brown <broonie@kernel.org> wrote:
+> On Mon, Nov 12, 2018 at 03:27:36PM +0100, Emil Renner Berthing wrote:
+>
+> > I know the discussions about the sifive devicetree compatible
+> > strings haven't come to a conclusion, so I'm sending this as
+> > an RFC to get some feedback on the rest of the code.
+>
+> I've not seen any of these discussions or earlier versions of this
+> driver so I've no idea what's going on here :(
+
+No, sorry. This has been discussed on linux-riscv for other drivers
+like the uart. See my last answer.
+
+> > +Optional properties:
+> > +- sifive,fifo-depth          : Depth of hardware queues; defaults to 8
+> > +- sifive,max-bits-per-word   : Maximum bits per word; defaults to 8
+> > +
+>
+> If the hardware isn't fixed yet making these enumerable from the
+> hardware would be good...
+
+Agreed, but unfortunately this is already in the FU540-C000 chip on
+the HiFive Unleashed board sold by SiFive.
+
+> > @@ -0,0 +1,442 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * SiFive SPI controller driver (master mode only)
+> > + *
+>
+> Please make the entire comment a C++ one to make this look more
+> intentinal.
+
+Will do.
+
+> > +/* for consistency we need this symbol */
+> > +#ifdef REG_FMT
+> > +#undef REG_FMT
+> > +#endif
+>
+> We do?  For consistency with what?
+
+Below all the register offsets are defined as
+REG_<register name>. This is is a pattern I
+copied from other drivers, but here we have a
+register called "fmt" - hence REG_FMT.
+If you have a better pattern that doesn't clash
+with REG_FMT please let me know.
+
+> > +static void sifive_spi_init(struct sifive_spi *spi)
+> > +{
+>
+> > +     /* Set CS/SCK Delays and Inactive Time to defaults */
+> > +
+> > +     /* Exit specialized memory-mapped SPI flash mode */
+>
+> ...or not?
+
+Right. Will add that or just delete the comment.
+
+> > +     /* Set frame format */
+> > +     cr = FMT_LEN(t->bits_per_word);
+> > +     switch (mode) {
+> > +     case SPI_NBITS_QUAD:
+> > +             cr |= FMT_PROTO_QUAD;
+> > +             break;
+>
+> Some namespacing on the driver #defines would be a bit safer against the
+> possibility of collision with future changes in headers.
+
+Right.
+
+> > +static void sifive_spi_wait(struct sifive_spi *spi, u32 bit, int poll)
+> > +{
+> > +     if (poll) {
+> > +             u32 cr;
+> > +             do cr = sifive_spi_read(spi, REG_IP);
+> > +             while (!(cr & bit));
+>
+> Please add some braces, indentation or something to make it more clear
+> that the read is part of a do/while loop - right now it's not
+> immediately obvious that this is correct.
+
+Good point. Will do.
+
+> > +static int sifive_spi_transfer_one(struct spi_master *master,
+> > +             struct spi_device *device, struct spi_transfer *t)
+> > +{
+> > +     struct sifive_spi *spi = spi_master_get_devdata(master);
+> > +     int poll = sifive_spi_prep_transfer(spi, device, t);
+> > +
+> > +     sifive_spi_execute(spi, t, poll);
+> > +
+>
+> Why not just inline the execute function here?  It's the only caller
+> AFAICT.
+
+Yeah, it is. Will do.
+
+> > +static void sifive_spi_set_cs(struct spi_device *device, bool is_high)
+> > +{
+> > +     struct sifive_spi *spi = spi_master_get_devdata(device->master);
+> > +
+> > +     /* Reverse polarity is handled by SCMR/CPOL. Not inverted CS. */
+> > +     if (device->mode & SPI_CS_HIGH)
+> > +             is_high = !is_high;
+>
+> spi_set_cs() will handle CS_HIGH for you.
+>
+> > +     master->bits_per_word_mask = SPI_BPW_MASK(8);
+>
+> I thought the device supported other bits per word values?
+
+It does, but the driver doesn't yet. When bits per word is < 8
+we need to shift the bits in each byte to be "left-aligned"
+(unless SPI_LSB_FIRST is set).
+
+> > +     /* If mmc_spi sees a dma_mask, it starts using dma mapped buffers.
+> > +      * Probably it should rely on the SPI core auto mapping instead.
+> > +      */
+> > +     pdev->dev.dma_mask = NULL;
+>
+> If this is a problem please fix it in the MMC core, don't bodge it like
+> this.
+
+Gotcha. Will remove this.
+
+> > +static const struct of_device_id sifive_spi_of_match[] = {
+> > +     { .compatible = "sifive,spi0", },
+> > +     {}
+> > +};
+> > +MODULE_DEVICE_TABLE(of, sifive_spi_of_match);
+>
+> spi0 is a *weird* compatible name.
+
+Exactly. Hence the discussion about the compatible strings.
+Once this discussion comes to a conclusion I'll update this.
+
+Thank you for the review!
+/Emil
