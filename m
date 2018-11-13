@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F4A1C0044C
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A4BE5C18DF5
 	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 36DC62250F
+	by mail.kernel.org (Postfix) with ESMTP id 6D25A22513
 	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:50:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="WCN8d7ys"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 36DC62250F
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="JoUTYRVE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D25A22513
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730942AbeKMPqW (ORCPT
+        id S1730920AbeKMPqW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 13 Nov 2018 10:46:22 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59910 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:59920 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730805AbeKMPqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1730813AbeKMPqV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Nov 2018 10:46:21 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B105622507;
-        Tue, 13 Nov 2018 05:49:53 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 14D9022510;
+        Tue, 13 Nov 2018 05:49:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088193;
-        bh=XT3u7JQ5fxdfizeCMv6duT7LCiHvaRUtEVjHvZbgKps=;
+        s=default; t=1542088194;
+        bh=YVEvl6hki7F34vqK7BWBKlzJlSaO7EmXHzKS/ds807U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=WCN8d7ysqR1LsM6y+l4wS5VIQW0EziAacaaWKEqVKxPVU+HBpL8V8q+ElsH/MpMhX
-         qv/BrmWkA44zvjT+WYaDKfoIvUx8qVVlAENIPqiHm2TEkh8gKS+7BkAdxoYnHmJymm
-         7wuvWnv4s2ND5gY5uTyj2V8tCkvWQJB87RT49JJ0=
+        b=JoUTYRVE9piG5sKM6gnA93zzQB8AQtPFmUPf5mBpAlX0VPQ7QgmSchTpMU2JlWRYq
+         he+UcSwkWTJ16AkmioFa4scId4SrFvFBziHd3ZC8Dk0JPLEC4rxPkULxQDb0RZYwX9
+         enPz6zRr5sYVH05IjQnRcdiEZqS7+s7fIRrs0DuE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        Sasha Levin <sashal@kernel.org>, linux-block@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 06/44] block: brd: associate with queue until adding disk
-Date:   Tue, 13 Nov 2018 00:49:12 -0500
-Message-Id: <20181113054950.77898-6-sashal@kernel.org>
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Edward Cree <ecree@solarflare.com>,
+        Alexei Starovoitov <ast@kernel.org>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.19 07/44] bpf: fix partial copy of map_ptr when dst is scalar
+Date:   Tue, 13 Nov 2018 00:49:13 -0500
+Message-Id: <20181113054950.77898-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113054950.77898-1-sashal@kernel.org>
 References: <20181113054950.77898-1-sashal@kernel.org>
@@ -52,105 +54,92 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ming Lei <ming.lei@redhat.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit 153fcd5f6d93b8e1e4040b1337f564a10f8d93af ]
+[ Upstream commit 0962590e553331db2cc0aef2dc35c57f6300dbbe ]
 
-brd_free() may be called in failure path on one brd instance which
-disk isn't added yet, so release handler of gendisk may free the
-associated request_queue early and causes the following use-after-free[1].
+ALU operations on pointers such as scalar_reg += map_value_ptr are
+handled in adjust_ptr_min_max_vals(). Problem is however that map_ptr
+and range in the register state share a union, so transferring state
+through dst_reg->range = ptr_reg->range is just buggy as any new
+map_ptr in the dst_reg is then truncated (or null) for subsequent
+checks. Fix this by adding a raw member and use it for copying state
+over to dst_reg.
 
-This patch fixes this issue by associating gendisk with request_queue
-just before adding disk.
-
-[1] KASAN: use-after-free Read in del_timer_syncNon-volatile memory driver v1.3
-Linux agpgart interface v0.103
-[drm] Initialized vgem 1.0.0 20120112 for virtual device on minor 0
-usbcore: registered new interface driver udl
-==================================================================
-BUG: KASAN: use-after-free in __lock_acquire+0x36d9/0x4c20
-kernel/locking/lockdep.c:3218
-Read of size 8 at addr ffff8801d1b6b540 by task swapper/0/1
-
-CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.19.0+ #88
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  __lock_acquire+0x36d9/0x4c20 kernel/locking/lockdep.c:3218
-  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
-  del_timer_sync+0xb7/0x270 kernel/time/timer.c:1283
-  blk_cleanup_queue+0x413/0x710 block/blk-core.c:809
-  brd_free+0x5d/0x71 drivers/block/brd.c:422
-  brd_init+0x2eb/0x393 drivers/block/brd.c:518
-  do_one_initcall+0x145/0x957 init/main.c:890
-  do_initcall_level init/main.c:958 [inline]
-  do_initcalls init/main.c:966 [inline]
-  do_basic_setup init/main.c:984 [inline]
-  kernel_init_freeable+0x5c6/0x6b9 init/main.c:1148
-  kernel_init+0x11/0x1ae init/main.c:1068
-  ret_from_fork+0x3a/0x50 arch/x86/entry/entry_64.S:350
-
-Reported-by: syzbot+3701447012fe951dabb2@syzkaller.appspotmail.com
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Fixes: f1174f77b50c ("bpf/verifier: rework value tracking")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Edward Cree <ecree@solarflare.com>
+Acked-by: Alexei Starovoitov <ast@kernel.org>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/block/brd.c | 16 +++++++++++-----
- 1 file changed, 11 insertions(+), 5 deletions(-)
+ include/linux/bpf_verifier.h |  3 +++
+ kernel/bpf/verifier.c        | 10 ++++++----
+ 2 files changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/block/brd.c b/drivers/block/brd.c
-index df8103dd40ac..c18586fccb6f 100644
---- a/drivers/block/brd.c
-+++ b/drivers/block/brd.c
-@@ -396,15 +396,14 @@ static struct brd_device *brd_alloc(int i)
- 	disk->first_minor	= i * max_part;
- 	disk->fops		= &brd_fops;
- 	disk->private_data	= brd;
--	disk->queue		= brd->brd_queue;
- 	disk->flags		= GENHD_FL_EXT_DEVT;
- 	sprintf(disk->disk_name, "ram%d", i);
- 	set_capacity(disk, rd_size * 2);
--	disk->queue->backing_dev_info->capabilities |= BDI_CAP_SYNCHRONOUS_IO;
-+	brd->brd_queue->backing_dev_info->capabilities |= BDI_CAP_SYNCHRONOUS_IO;
- 
- 	/* Tell the block layer that this is not a rotational device */
--	blk_queue_flag_set(QUEUE_FLAG_NONROT, disk->queue);
--	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, disk->queue);
-+	blk_queue_flag_set(QUEUE_FLAG_NONROT, brd->brd_queue);
-+	blk_queue_flag_clear(QUEUE_FLAG_ADD_RANDOM, brd->brd_queue);
- 
- 	return brd;
- 
-@@ -436,6 +435,7 @@ static struct brd_device *brd_init_one(int i, bool *new)
- 
- 	brd = brd_alloc(i);
- 	if (brd) {
-+		brd->brd_disk->queue = brd->brd_queue;
- 		add_disk(brd->brd_disk);
- 		list_add_tail(&brd->brd_list, &brd_devices);
- 	}
-@@ -503,8 +503,14 @@ static int __init brd_init(void)
- 
- 	/* point of no return */
- 
--	list_for_each_entry(brd, &brd_devices, brd_list)
-+	list_for_each_entry(brd, &brd_devices, brd_list) {
-+		/*
-+		 * associate with queue just before adding disk for
-+		 * avoiding to mess up failure path
-+		 */
-+		brd->brd_disk->queue = brd->brd_queue;
- 		add_disk(brd->brd_disk);
-+	}
- 
- 	blk_register_region(MKDEV(RAMDISK_MAJOR, 0), 1UL << MINORBITS,
- 				  THIS_MODULE, brd_probe, NULL, NULL);
+diff --git a/include/linux/bpf_verifier.h b/include/linux/bpf_verifier.h
+index 38b04f559ad3..1fd6fa822d2c 100644
+--- a/include/linux/bpf_verifier.h
++++ b/include/linux/bpf_verifier.h
+@@ -50,6 +50,9 @@ struct bpf_reg_state {
+ 		 *   PTR_TO_MAP_VALUE_OR_NULL
+ 		 */
+ 		struct bpf_map *map_ptr;
++
++		/* Max size from any of the above. */
++		unsigned long raw;
+ 	};
+ 	/* Fixed part of pointer offset, pointer types only */
+ 	s32 off;
+diff --git a/kernel/bpf/verifier.c b/kernel/bpf/verifier.c
+index 465952a8e465..b046564cc18d 100644
+--- a/kernel/bpf/verifier.c
++++ b/kernel/bpf/verifier.c
+@@ -2762,7 +2762,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			dst_reg->umax_value = umax_ptr;
+ 			dst_reg->var_off = ptr_reg->var_off;
+ 			dst_reg->off = ptr_reg->off + smin_val;
+-			dst_reg->range = ptr_reg->range;
++			dst_reg->raw = ptr_reg->raw;
+ 			break;
+ 		}
+ 		/* A new variable offset is created.  Note that off_reg->off
+@@ -2792,10 +2792,11 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 		}
+ 		dst_reg->var_off = tnum_add(ptr_reg->var_off, off_reg->var_off);
+ 		dst_reg->off = ptr_reg->off;
++		dst_reg->raw = ptr_reg->raw;
+ 		if (reg_is_pkt_pointer(ptr_reg)) {
+ 			dst_reg->id = ++env->id_gen;
+ 			/* something was added to pkt_ptr, set range to zero */
+-			dst_reg->range = 0;
++			dst_reg->raw = 0;
+ 		}
+ 		break;
+ 	case BPF_SUB:
+@@ -2824,7 +2825,7 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 			dst_reg->var_off = ptr_reg->var_off;
+ 			dst_reg->id = ptr_reg->id;
+ 			dst_reg->off = ptr_reg->off - smin_val;
+-			dst_reg->range = ptr_reg->range;
++			dst_reg->raw = ptr_reg->raw;
+ 			break;
+ 		}
+ 		/* A new variable offset is created.  If the subtrahend is known
+@@ -2850,11 +2851,12 @@ static int adjust_ptr_min_max_vals(struct bpf_verifier_env *env,
+ 		}
+ 		dst_reg->var_off = tnum_sub(ptr_reg->var_off, off_reg->var_off);
+ 		dst_reg->off = ptr_reg->off;
++		dst_reg->raw = ptr_reg->raw;
+ 		if (reg_is_pkt_pointer(ptr_reg)) {
+ 			dst_reg->id = ++env->id_gen;
+ 			/* something was added to pkt_ptr, set range to zero */
+ 			if (smin_val < 0)
+-				dst_reg->range = 0;
++				dst_reg->raw = 0;
+ 		}
+ 		break;
+ 	case BPF_AND:
 -- 
 2.17.1
 
