@@ -2,126 +2,149 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E13EC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8092C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:58:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 47179214F1
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:56:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OKJExGFX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 47179214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	by mail.kernel.org (Postfix) with ESMTP id 7BED1216FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:58:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7BED1216FD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387979AbeKNBzP (ORCPT
+        id S2388036AbeKNB4l convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:55:15 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34261 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387693AbeKNBzP (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:55:15 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 17so5624818pgg.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 07:56:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=HZwdiLk1Ogd6EQgRPw19evHZbWF2zlePnZN3SSzewlw=;
-        b=OKJExGFXW20zeFSihqjTfXrcHXioDgZ7gQO8TGtlkPJDJn0CiO2TSPudUVYgcA8SZU
-         vQzeSL3kdtAMVrRiJpPCE+r8LJ4Yt5oTXZh5DftAD6grgpMG8ecw2+7rf57uZnhFVD9v
-         WDwg4EyWKAOTmIQ1sjioCofG+BSQCBfO2/ZP9kuwgJCfwKMEGYaupAYS9Ja1HPqqQSG/
-         qYHs2IEa5AEJ2KhEUnhyoHlN9sFui5OcK2evWJ8Dbie6eBPfDrye5YNpDXBwna7zvuBU
-         Clqvl+9kx8UJJPV0UAuBnhnuDNrJ6ymwU0xYk65y7cycyMW0WCh+P65zMv4mGlXFf1MV
-         YE8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=HZwdiLk1Ogd6EQgRPw19evHZbWF2zlePnZN3SSzewlw=;
-        b=AyfTNQKZPkYFM74Zwj49Fk0HiW4b8AbIpSPyFo+OoS8NfAy9ex0kCDhIeAcp9KOsaO
-         /UsJXMY7aQJzMdj3ib8IsQ/c/npcAV1XAEi5wLHNDhFlUPbebINB+dsN4snWtN9ntaLy
-         8t15isI3BCdS8pDBOXuZ5DclK/pdXqMIU6Wrc3xbU0oiI/pFW5layGQuZ1jPaNpmGrZk
-         +pyhGP/WDnmWtfWzEIzCP8oizTQKmMFil75GQAj+PRlvs/T+BdUJAyPljoie22d7vr/I
-         jzWdDVs5SJxDP2u6SOV68w8yDiEUwBhgIQm5XjdRR77mUQh1dbpyeBNaOTmnc6lV6XT9
-         Clcw==
-X-Gm-Message-State: AGRZ1gIsFfFmfHxnRJh5/TWHOiQAXMBpTb2SREu767ZRVW18Yj576XU5
-        GmP1D4W5f70kLXksCDTu8kAmpg==
-X-Google-Smtp-Source: AJdET5dQ+Ethvyd1I0gnTW6ZrlL6zU+zL9N1nu7xS5hQjIbJaOM4tl3gPUOsU5MA2X+OKOWz27yPeg==
-X-Received: by 2002:a62:7d10:: with SMTP id y16-v6mr5619214pfc.245.1542124593435;
-        Tue, 13 Nov 2018 07:56:33 -0800 (PST)
-Received: from gnomeregan.cam.corp.google.com ([2620:15c:6:14:ad22:1cbb:d8fa:7d55])
-        by smtp.gmail.com with ESMTPSA id d8-v6sm23918471pfj.106.2018.11.13.07.56.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 07:56:32 -0800 (PST)
-Date:   Tue, 13 Nov 2018 10:56:28 -0500
-From:   Barret Rhoden <brho@google.com>
-To:     Pankaj Gupta <pagupta@redhat.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Radim =?UTF-8?B?S3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, yu c zhang <yu.c.zhang@intel.com>,
-        yi z zhang <yi.z.zhang@intel.com>
-Subject: Re: [PATCH 2/2] kvm: Use huge pages for DAX-backed files
-Message-ID: <20181113105628.37449f52@gnomeregan.cam.corp.google.com>
-In-Reply-To: <286665658.33247363.1542103353780.JavaMail.zimbra@redhat.com>
-References: <20181109203921.178363-1-brho@google.com>
-        <20181109203921.178363-3-brho@google.com>
-        <043a592d-6592-3053-15a0-68cc54a26deb@redhat.com>
-        <286665658.33247363.1542103353780.JavaMail.zimbra@redhat.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
+        Tue, 13 Nov 2018 20:56:41 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32757 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731811AbeKNB4l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 20:56:41 -0500
+Received: from LHREML710-CAH.china.huawei.com (unknown [172.18.7.107])
+        by Forcepoint Email with ESMTP id 9CB011FFFE0DB;
+        Tue, 13 Nov 2018 15:57:56 +0000 (GMT)
+Received: from FRAEMA702-CHM.china.huawei.com (10.206.14.51) by
+ LHREML710-CAH.china.huawei.com (10.201.108.33) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 13 Nov 2018 15:57:58 +0000
+Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.76]) by
+ FRAEMA702-CHM.china.huawei.com ([169.254.2.148]) with mapi id 14.03.0415.000;
+ Tue, 13 Nov 2018 16:57:48 +0100
+From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To:     "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        Linuxarm <linuxarm@huawei.com>, Lukas Wunner <lukas@wunner.de>
+Subject: RE: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
+Thread-Topic: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
+Thread-Index: AdR7RP5EYT33x2cVTRiE4AudJSgcHP///SQA///uY1CAABsPAP//6WQQgAA6joD//+e+AA==
+Date:   Tue, 13 Nov 2018 15:57:47 +0000
+Message-ID: <5FC3163CFD30C246ABAA99954A238FA8387DF7B5@FRAEML521-MBX.china.huawei.com>
+References: <5FC3163CFD30C246ABAA99954A238FA8387DD344@FRAEML521-MBX.china.huawei.com>
+ <20181113122522.GA2500@lahna.fi.intel.com>
+ <5FC3163CFD30C246ABAA99954A238FA8387DF43F@FRAEML521-MBX.china.huawei.com>
+ <20181113125910.GB2500@lahna.fi.intel.com>
+ <5FC3163CFD30C246ABAA99954A238FA8387DF51F@FRAEML521-MBX.china.huawei.com>
+ <20181113150749.GC2500@lahna.fi.intel.com>
+In-Reply-To: <20181113150749.GC2500@lahna.fi.intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.202.227.237]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018-11-13 at 05:02 Pankaj Gupta <pagupta@redhat.com> wrote:
-> As this patch is dependent on PageReserved patch(which is in progress), just 
-> wondering if we are able to test the code path for hugepage with DAX.
 
-For testing, I used the following patch.  It's not 100%, since it
-intercepts at kvm_is_reserved_pfn(), and not PageReserved() directly.
-The only difference is with kvm_set_pfn_dirty() I think.
 
-I also have a nasty module that would dump the EPT's and the host page
-table's mappings so I could confirm that the huge pages are being mapped
-correctly.
+> -----Original Message-----
+> From: mika.westerberg@linux.intel.com
+> [mailto:mika.westerberg@linux.intel.com]
+> Sent: 13 November 2018 15:08
+> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+> Cc: linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org; Wangzhou (B)
+> <wangzhou1@hisilicon.com>; Linuxarm <linuxarm@huawei.com>; Lukas
+> Wunner <lukas@wunner.de>
+> Subject: Re: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
 
------------------------
-diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
-index 2679e476b6c3..1b394a0752a0 100644
---- a/virt/kvm/kvm_main.c
-+++ b/virt/kvm/kvm_main.c
-@@ -148,6 +148,10 @@ __weak int kvm_arch_mmu_notifier_invalidate_range(struct kvm *kvm,
+[...]
  
- bool kvm_is_reserved_pfn(kvm_pfn_t pfn)
- {
-+	// XXX hack
-+	if (is_zone_device_page(pfn_to_page(pfn)))
-+		return false;
-+
- 	if (pfn_valid(pfn))
- 		return PageReserved(pfn_to_page(pfn));
- 
------------------------
+> > Right. As I mentioned in my previous mail, I missed the fact that you are
+> updating
+> > the ctrl->slot_ctrl with cmd value while in my test I did my update with the
+> value
+> > returned by pcie_capability_read_word().
+> 
+> OK, I see.
+> 
+> > > However, I think we are missing check for PCI_EXP_SLTCTL_CCIE in
+> > > pciehp_isr().
+> >
+> > Ok.
+> >
+> > > Here's an updated patch, can you try and see if it makes any difference?
+> >
+> > I just tried this and it works. Thanks.
+> 
+> Can you still check that the previous one (without _CCIE check) works?
+
+Yes, it works for me without _CCIE.
+
+> > See few comments below.
+> >
+> > > diff --git a/drivers/pci/hotplug/pciehp_hpc.c
+> > > b/drivers/pci/hotplug/pciehp_hpc.c
+> > > index 7dd443aea5a5..da2cbe892444 100644
+> > > --- a/drivers/pci/hotplug/pciehp_hpc.c
+> > > +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> > > @@ -156,9 +156,9 @@ static void pcie_do_write_cmd(struct controller
+> *ctrl,
+> > > u16 cmd,
+> > >  	slot_ctrl |= (cmd & mask);
+> > >  	ctrl->cmd_busy = 1;
+> > >  	smp_mb();
+> > > +	ctrl->slot_ctrl = slot_ctrl;
+> >
+> > Does it make more sense if we can move this before smp_mb()?. Also I am
+> not
+> > sure updating the  ctrl->slot_ctrl before actually the hardware is
+> programmed
+> > with that value will result in any other race conditions? TBH, I am not that
+> familiar
+> > with this code and I leave that to you :)
+> 
+> Both are good questions :)
+> 
+> For the moving ctrl->slot_ctrl before pcie_capability_write_word(), I
+> think we should be fine and this is actually more correct because if we
+> are unmasking interrupts they may trigger immediately making
+> pciehp_isr() find wrong values in ctrl->slot_ctrl (as can be seen in the
+> issue you reported).
+
+Ok. I was more concerned about an unsolicited event triggering the _isr
+while we are modifying the ctrl->slot_ctrl. But that's ok I think as the _isr
+reads the hw status anyway. 
+
+> The smb_mb() thing is not that clear (at least to me) because it is used
+> in two places in the driver and both seem to be making write to
+> ctrl->cmd_busy visible to other CPUs but I don't see where we deal with
+> the read part.
+> 
+> I may be missing something, though.
+
+I think the read part is in wait_event_timeout() which evaluates the condition.
+The wake_up is called from the pciehp_isr().  Since the flag is being updated
+in both process level and interrupt handler context, smp_mb() is used. I think
+the same now applies to  ctrl->slot_ctrl now as this being used in process
+context and interrupt context as well.
 
 Thanks,
-
-Barret
-
+Shameer
