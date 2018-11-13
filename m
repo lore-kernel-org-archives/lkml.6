@@ -2,120 +2,148 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6868FC0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:27:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CDBDC0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:28:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ADDF2245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:27:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ADDF2245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 6CA5922419
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 13:28:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CA5922419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387506AbeKMXZS (ORCPT
+        id S2387521AbeKMX0V convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 18:25:18 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:52372 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733232AbeKMXZS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 18:25:18 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D3407207BB; Tue, 13 Nov 2018 14:27:07 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id A00C8206A7;
-        Tue, 13 Nov 2018 14:26:57 +0100 (CET)
-Date:   Tue, 13 Nov 2018 14:26:58 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel@lists.freedesktop.org,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v4 03/26] clk: sunxi-ng: Add check for maximum rate to
- NKM PLLs
-Message-ID: <20181113132658.niwy6bqdqzaeqpv2@flea>
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-4-jagan@amarulasolutions.com>
+        Tue, 13 Nov 2018 18:26:21 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32754 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1732728AbeKMX0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 18:26:21 -0500
+Received: from LHREML713-CAH.china.huawei.com (unknown [172.18.7.106])
+        by Forcepoint Email with ESMTP id A78109683A999;
+        Tue, 13 Nov 2018 13:28:10 +0000 (GMT)
+Received: from FRAEMA706-CHM.china.huawei.com (10.206.14.55) by
+ LHREML713-CAH.china.huawei.com (10.201.108.36) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Tue, 13 Nov 2018 13:28:11 +0000
+Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.76]) by
+ FRAEMA706-CHM.china.huawei.com ([169.254.6.151]) with mapi id 14.03.0415.000;
+ Tue, 13 Nov 2018 14:28:04 +0100
+From:   Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To:     "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
+CC:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        Linuxarm <linuxarm@huawei.com>, Lukas Wunner <lukas@wunner.de>
+Subject: RE: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
+Thread-Topic: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
+Thread-Index: AdR7RP5EYT33x2cVTRiE4AudJSgcHP///SQA///uY1CAABsPAP//6WQQ
+Date:   Tue, 13 Nov 2018 13:28:04 +0000
+Message-ID: <5FC3163CFD30C246ABAA99954A238FA8387DF51F@FRAEML521-MBX.china.huawei.com>
+References: <5FC3163CFD30C246ABAA99954A238FA8387DD344@FRAEML521-MBX.china.huawei.com>
+ <20181113122522.GA2500@lahna.fi.intel.com>
+ <5FC3163CFD30C246ABAA99954A238FA8387DF43F@FRAEML521-MBX.china.huawei.com>
+ <20181113125910.GB2500@lahna.fi.intel.com>
+In-Reply-To: <20181113125910.GB2500@lahna.fi.intel.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.202.227.237]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="qkzagaz2qwa76467"
-Content-Disposition: inline
-In-Reply-To: <20181113111633.20189-4-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---qkzagaz2qwa76467
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> -----Original Message-----
+> From: mika.westerberg@linux.intel.com
+> [mailto:mika.westerberg@linux.intel.com]
+> Sent: 13 November 2018 12:59
+> To: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+> Cc: linux-pci@vger.kernel.org; linux-kernel@vger.kernel.org; Wangzhou (B)
+> <wangzhou1@hisilicon.com>; Linuxarm <linuxarm@huawei.com>; Lukas
+> Wunner <lukas@wunner.de>
+> Subject: Re: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
+> 
+> On Tue, Nov 13, 2018 at 12:36:20PM +0000, Shameerali Kolothum Thodi wrote:
+> > > @@ -156,9 +156,9 @@ static void pcie_do_write_cmd(struct controller
+> > > *ctrl,
+> > > u16 cmd,
+> > >  	slot_ctrl |= (cmd & mask);
+> > >  	ctrl->cmd_busy = 1;
+> > >  	smp_mb();
+> > > +	ctrl->slot_ctrl = slot_ctrl;
+> >
+> > Actually I tried this one, but it doesn't help in this case as the
+> > initial
+> > pcie_capability_read_word() returns the slot_ctrl without
+> > PCI_EXP_SLTCTL_HPIE bit set.  It looks to me
+> > pcie_enable_notification() function enables this,
+> >
+> > 	if (!pciehp_poll_mode)
+> > 		cmd |= PCI_EXP_SLTCTL_HPIE | PCI_EXP_SLTCTL_CCIE;
+> >
+> > I don't know this is as per the spec or not as the initial cap read
+> > doesn't seems to have the PCI_EXP_SLTCTL_HPIE bit set.
+> 
+> If I read the code right cmd value should end up in ctrl->slot_ctrl properly from
+> pcie_enable_notification().
 
-On Tue, Nov 13, 2018 at 04:46:10PM +0530, Jagan Teki wrote:
-> Some NKM PLLs, frequency can be set above PLL working range.
->=20
-> Add a constraint for maximum supported rate. This way, drivers can
-> specify which is maximum allowed rate for PLL.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> Acked-by: Stephen Boyd <sboyd@kernel.org>
+Right. As I mentioned in my previous mail, I missed the fact that you are updating
+the ctrl->slot_ctrl with cmd value while in my test I did my update with the value
+returned by pcie_capability_read_word().
+ 
+> However, I think we are missing check for PCI_EXP_SLTCTL_CCIE in
+> pciehp_isr().
 
-As Vasily reported on a previous version, this should be squashed with
-the patch 2.
+Ok.
+ 
+> Here's an updated patch, can you try and see if it makes any difference?
 
-> ---
->  drivers/clk/sunxi-ng/ccu_nkm.c | 3 +++
->  drivers/clk/sunxi-ng/ccu_nkm.h | 1 +
->  2 files changed, 4 insertions(+)
->=20
-> diff --git a/drivers/clk/sunxi-ng/ccu_nkm.c b/drivers/clk/sunxi-ng/ccu_nk=
-m.c
-> index 6b5ad990f802..b8b66cdd30bf 100644
-> --- a/drivers/clk/sunxi-ng/ccu_nkm.c
-> +++ b/drivers/clk/sunxi-ng/ccu_nkm.c
-> @@ -128,6 +128,9 @@ static unsigned long ccu_nkm_round_rate(struct ccu_mu=
-x_internal *mux,
->  	if (rate < nkm->min_rate)
->  		return nkm->min_rate;
-> =20
-> +	if (nkm->max_rate && rate > nkm->max_rate)
-> +		return nkm->max_rate;
-> +
+I just tried this and it works. Thanks.
 
-I would expect the test to be the same for the minimum and maximum cases.
+See few comments below.
 
-Maxime
+> diff --git a/drivers/pci/hotplug/pciehp_hpc.c
+> b/drivers/pci/hotplug/pciehp_hpc.c
+> index 7dd443aea5a5..da2cbe892444 100644
+> --- a/drivers/pci/hotplug/pciehp_hpc.c
+> +++ b/drivers/pci/hotplug/pciehp_hpc.c
+> @@ -156,9 +156,9 @@ static void pcie_do_write_cmd(struct controller *ctrl,
+> u16 cmd,
+>  	slot_ctrl |= (cmd & mask);
+>  	ctrl->cmd_busy = 1;
+>  	smp_mb();
+> +	ctrl->slot_ctrl = slot_ctrl;
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Does it make more sense if we can move this before smp_mb()?. Also I am not
+sure updating the  ctrl->slot_ctrl before actually the hardware is programmed
+with that value will result in any other race conditions? TBH, I am not that familiar
+with this code and I leave that to you :)
 
---qkzagaz2qwa76467
-Content-Type: application/pgp-signature; name="signature.asc"
+Thanks,
+Shameer
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+rRIQAKCRDj7w1vZxhR
-xUtiAP0Qzz9KTR8SbP2fs3KcowHxL8xYV+GOUNZ9/VA8BWSVxAD+KRBkAWya7D4N
-adBknlFW6CNpkDt3SyJa46/5Dwt0WgU=
-=E1t8
------END PGP SIGNATURE-----
-
---qkzagaz2qwa76467--
+>  	pcie_capability_write_word(pdev, PCI_EXP_SLTCTL, slot_ctrl);
+>  	ctrl->cmd_started = jiffies;
+> -	ctrl->slot_ctrl = slot_ctrl;
+> 
+>  	/*
+>  	 * Controllers with the Intel CF118 and similar errata advertise @@ -
+> 522,7 +522,7 @@ static irqreturn_t pciehp_isr(int irq, void *dev_id)
+>  	 * in the Slot Control register (PCIe r4.0, sec 6.7.3.4).
+>  	 */
+>  	if (pdev->current_state == PCI_D3cold ||
+> -	    (!(ctrl->slot_ctrl & PCI_EXP_SLTCTL_HPIE) && !pciehp_poll_mode))
+> +	    (!(ctrl->slot_ctrl & (PCI_EXP_SLTCTL_HPIE | PCI_EXP_SLTCTL_CCIE))
+> +&& !pciehp_poll_mode))
+>  		return IRQ_NONE;
+> 
+>  	/*
