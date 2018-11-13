@@ -2,332 +2,728 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D5F1C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA02C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D9A492250E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:24:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8A59B22507
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:25:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CIXe/hKF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9A492250E
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e2rG79z0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A59B22507
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732620AbeKMVWb (ORCPT
+        id S1732659AbeKMVW4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:22:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:53236 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732402AbeKMVWa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:22:30 -0500
-Received: from localhost (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6D44022419;
-        Tue, 13 Nov 2018 11:24:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542108289;
-        bh=G053dpENDY3PVcVKnJsfkfwaE6JeNMXJv8MG3AQr0Lo=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=CIXe/hKFoUkHk8ML/EFhBioryg7GyKTvL+AqsuGHyBPrsvrQEPPzwyiRMiGgMYyMC
-         RpX4Njkh5vkpQ2Y6u8kheYi/gbWLGPP/csxEPad3GdENLrbhnsLmuw1dATCrecj8SR
-         mhhSFkm40+20pEy2iP1TimFSJ0MjJyQNDWABC04g=
-Date:   Tue, 13 Nov 2018 13:24:46 +0200
-From:   Leon Romanovsky <leon@kernel.org>
-To:     Salil Mehta <salil.mehta@huawei.com>
-Cc:     davem@davemloft.net, yisen.zhuang@huawei.com, lipeng321@huawei.com,
-        mehta.salil@opnsrc.net, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org,
-        linuxarm@huawei.com
-Subject: Re: [PATCH net-next 1/5] net: hns3: Enable HW GRO for Rev B(=0x21)
- HNS3 hardware
-Message-ID: <20181113112446.GC3759@mtr-leonro.mtl.com>
-References: <20181113101307.6020-1-salil.mehta@huawei.com>
- <20181113101307.6020-2-salil.mehta@huawei.com>
+        Tue, 13 Nov 2018 16:22:56 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36295 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732402AbeKMVW4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 16:22:56 -0500
+Received: by mail-wm1-f68.google.com with SMTP id s11so1699722wmh.1;
+        Tue, 13 Nov 2018 03:25:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=c2G0DzFCdYbb/N80ZtMvLy5kGBcGvdpkTApPhqB2Bms=;
+        b=e2rG79z0WVI5Awrph7WymBZS/KsZ+VBocUExQn7nuAb7Tfayn3ZvsHkHStzdFuUPMk
+         ri/yWWsid795pRe0rFeDXUiIGRjLWM97gfEtnv72IU4S9GPytWCSYddLDbG53kYkCp4C
+         TdtzVJqeBpopEFt/Uk0df8xYAiqy7s8cnA/HGvtJWa4djJcAncICnj1DmVqL+rRdlJu/
+         pAs0MKU5l2M2zGqjxu2Ba5S0++i/Dd4hsngqWD8mw2AmEWjgIudp92vsn2pszn95yXh7
+         rh3d/vpu3vRcJG/say9tMPXfhGrOQTb47uyTH65S5DNXBPSjDxYtwUBnxkUgAA/KXEJn
+         De9g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=c2G0DzFCdYbb/N80ZtMvLy5kGBcGvdpkTApPhqB2Bms=;
+        b=KGibd8Cd73BZ6veOMCHxPb0byL0j3Y6/FP6pkxrcGH8E3xxJDVMDK9wn1U70TigJuU
+         6cAy9rfMhTm2qNzvcKQK/iALAdMTemGtwmaILDBohgybCwxPDwBEULI37H/oKtOC2AZe
+         /o23bgyFOlKWNhHLglP/mfHyXBFHcOc43PD9jiThNpVg9PLweBoBpkYxx/IN7syfAQh8
+         51JYmk6ecr/DAsL1erteMfABxwGRGjHXcJbWhz+5+1gt/FasJqSrihIT2+lO5D3jPQ9a
+         sgrdEz5W0CqVGjc6iPycAenqL+4QetsIymBAYks738yQ3OlB/o3lxdMGCqg47h6Yt16l
+         pZDw==
+X-Gm-Message-State: AGRZ1gILeI3E9DY+2RbqcRaxHa/4Ml4iZgvy/SAPOIn/FdEzq/MkWMoG
+        mKX2ZRr3lp2YdseXUxMfxN4=
+X-Google-Smtp-Source: AJdET5e+i7tkiwAqOnlQFHthKIGBB2KWowlVpBV3PrJICHIg0szUNxotd/k5MD1GVbjprHGDWXw1KQ==
+X-Received: by 2002:a1c:f14:: with SMTP id 20-v6mr2812868wmp.126.1542108311397;
+        Tue, 13 Nov 2018 03:25:11 -0800 (PST)
+Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
+        by smtp.gmail.com with ESMTPSA id x65-v6sm9942872wmg.9.2018.11.13.03.25.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Nov 2018 03:25:10 -0800 (PST)
+Date:   Tue, 13 Nov 2018 12:25:07 +0100
+From:   Ingo Molnar <mingo@kernel.org>
+To:     Palmer Dabbelt <palmer@sifive.com>,
+        Jonathan Corbet <corbet@lwn.net>
+Cc:     linux-kernel@vger.kernel.org, corbet@lwn.net,
+        aou@eecs.berkeley.edu, ren_guo@c-sky.com,
+        andrea.parri@amarulasolutions.com, Arnd Bergmann <arnd@arndb.de>,
+        jhogan@kernel.org, dhowells@redhat.com, jcmvbkbc@gmail.com,
+        keescook@chromium.org, yamada.masahiro@socionext.com,
+        mathieu.desnoyers@efficios.com, rmk+kernel@armlinux.org.uk,
+        Will Deacon <will.deacon@arm.com>, jglisse@redhat.com,
+        linux-doc@vger.kernel.org, linux-riscv@lists.infradead.org,
+        david.abdurachmanov@gmail.com
+Subject: [PATCH] Documentation/features: Refresh the features list to
+ v4.20-rc2
+Message-ID: <20181113112507.GA14028@gmail.com>
+References: <20181113020113.29640-1-palmer@sifive.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-        protocol="application/pgp-signature"; boundary="17pEHd4RhPHOinZp"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181113101307.6020-2-salil.mehta@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181113020113.29640-1-palmer@sifive.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---17pEHd4RhPHOinZp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+* Palmer Dabbelt <palmer@sifive.com> wrote:
 
-On Tue, Nov 13, 2018 at 10:13:03AM +0000, Salil Mehta wrote:
-> From: Peng Li <lipeng321@huawei.com>
->
-> HNS3 hardware Revision B(=0x21) supports Hardware GRO feature. This
-> patch enables this feature in the HNS3 PF/VF driver.
->
-> Signed-off-by: Peng Li <lipeng321@huawei.com>
-> Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
-> ---
->  drivers/net/ethernet/hisilicon/hns3/hnae3.h   |  4 ++
->  .../net/ethernet/hisilicon/hns3/hns3_enet.c   |  4 +-
->  .../hisilicon/hns3/hns3pf/hclge_cmd.h         |  7 ++++
->  .../hisilicon/hns3/hns3pf/hclge_main.c        | 36 ++++++++++++++++++
->  .../hisilicon/hns3/hns3vf/hclgevf_cmd.h       |  8 ++++
->  .../hisilicon/hns3/hns3vf/hclgevf_main.c      | 37 +++++++++++++++++++
->  6 files changed, 95 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-> index f69d39f17bdd..21d934b7a2a3 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
-> @@ -52,6 +52,7 @@
->  #define HNAE3_UNIC_CLIENT_INITED_B		0x4
->  #define HNAE3_ROCE_CLIENT_INITED_B		0x5
->  #define HNAE3_DEV_SUPPORT_FD_B			0x6
-> +#define HNAE3_DEV_SUPPORT_GRO_B			0x7
->
->  #define HNAE3_DEV_SUPPORT_ROCE_DCB_BITS (BIT(HNAE3_DEV_SUPPORT_DCB_B) |\
->  		BIT(HNAE3_DEV_SUPPORT_ROCE_B))
-> @@ -65,6 +66,9 @@
->  #define hnae3_dev_fd_supported(hdev) \
->  	hnae3_get_bit((hdev)->ae_dev->flag, HNAE3_DEV_SUPPORT_FD_B)
->
-> +#define hnae3_dev_gro_supported(hdev) \
-> +	hnae3_get_bit((hdev)->ae_dev->flag, HNAE3_DEV_SUPPORT_GRO_B)
-> +
->  #define ring_ptr_move_fw(ring, p) \
->  	((ring)->p = ((ring)->p + 1) % (ring)->desc_num)
->  #define ring_ptr_move_bw(ring, p) \
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-> index 8d07ec668d5d..a510ddfd45a5 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-> @@ -1714,8 +1714,10 @@ static void hns3_disable_sriov(struct pci_dev *pdev)
->  static void hns3_get_dev_capability(struct pci_dev *pdev,
->  				    struct hnae3_ae_dev *ae_dev)
->  {
-> -	if (pdev->revision >= 0x21)
-> +	if (pdev->revision >= 0x21) {
->  		hnae3_set_bit(ae_dev->flag, HNAE3_DEV_SUPPORT_FD_B, 1);
-> +		hnae3_set_bit(ae_dev->flag, HNAE3_DEV_SUPPORT_GRO_B, 1);
-> +	}
->  }
->
->  /* hns3_probe - Device initialization routine
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-> index 872cd4bdd70d..aef044d08b11 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_cmd.h
-> @@ -152,6 +152,7 @@ enum hclge_opcode_type {
->
->  	/* TSO command */
->  	HCLGE_OPC_TSO_GENERIC_CONFIG	= 0x0C01,
-> +	HCLGE_OPC_GRO_GENERIC_CONFIG    = 0x0C10,
->
->  	/* RSS commands */
->  	HCLGE_OPC_RSS_GENERIC_CONFIG	= 0x0D01,
-> @@ -758,6 +759,12 @@ struct hclge_cfg_tso_status_cmd {
->  	u8 rsv[20];
->  };
->
-> +#define HCLGE_GRO_EN_B		0
-> +struct hclge_cfg_gro_status_cmd {
-> +	__le16 gro_en;
-> +	u8 rsv[22];
-> +};
-> +
->  #define HCLGE_TSO_MSS_MIN	256
->  #define HCLGE_TSO_MSS_MAX	9668
->
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-> index 43bfc730a62d..d02712446d50 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
-> @@ -921,6 +921,28 @@ static int hclge_config_tso(struct hclge_dev *hdev, int tso_mss_min,
->  	return hclge_cmd_send(&hdev->hw, &desc, 1);
->  }
->
-> +static int hclge_config_gro(struct hclge_dev *hdev, bool en)
-> +{
-> +	struct hclge_cfg_gro_status_cmd *req;
-> +	struct hclge_desc desc;
-> +	int ret;
-> +
-> +	if (!hnae3_dev_gro_supported(hdev))
-> +		return 0;
-> +
-> +	hclge_cmd_setup_basic_desc(&desc, HCLGE_OPC_GRO_GENERIC_CONFIG, false);
-> +	req = (struct hclge_cfg_gro_status_cmd *)desc.data;
-> +
-> +	req->gro_en = cpu_to_le16(en ? 1 : 0);
-> +
-> +	ret = hclge_cmd_send(&hdev->hw, &desc, 1);
-> +	if (ret)
-> +		dev_err(&hdev->pdev->dev,
-> +			"GRO hardware config cmd failed, ret = %d\n", ret);
-> +
-> +	return ret;
-> +}
-> +
->  static int hclge_alloc_tqps(struct hclge_dev *hdev)
->  {
->  	struct hclge_tqp *tqp;
-> @@ -7090,6 +7112,13 @@ static int hclge_init_ae_dev(struct hnae3_ae_dev *ae_dev)
->  		goto err_mdiobus_unreg;
->  	}
->
-> +	ret = hclge_config_gro(hdev, true);
-> +	if (ret) {
-> +		dev_err(&pdev->dev,
-> +			"Failed to enable GRO in hardware, ret =%d\n", ret);
+> I didn't even know this existed until David submitted a patch set that
+> included updates to the documentation as a result of some features he
+> added to RISC-V.  It looks like there may be a handful of other people
+> who don't know this exists either, so I figured I'd just mail out a
+> patch set containing all the updates split out as well as I can.
+> 
+> This smells like something that sholud be automatic, so if I'm jumping
+> the gun here then feel free to drop this.  If nobody says anything then
+> I guess I'll submit this as a separate PR to Linus from my personal
+> tree, as it's not really a RISC-V thing but it seems like it's worth
+> having docs that match the code where it's trivial -- I assume that's
+> what this does, I didn't actually read anything but the diff because I
+> never trust documentation to be up to date...
+> 
+> I feel compelled to say something like "maybe this should be part of
+> checkpatch?", but I'm definately not looking to learn perl :)
 
-You already printed an error in the hclge_config_gro().
+I don't think it should be automated or part of checkpatch, but I 
+(obviously) agree with the changes, except that I think it should be a 
+single patch (combined patch attached below).
 
-> +		goto err_mdiobus_unreg;
-> +	}
-> +
->  	ret = hclge_init_vlan_config(hdev);
->  	if (ret) {
->  		dev_err(&pdev->dev, "VLAN init fail, ret =%d\n", ret);
-> @@ -7221,6 +7250,13 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
->  		return ret;
->  	}
->
-> +	ret = hclge_config_gro(hdev, true);
-> +	if (ret) {
-> +		dev_err(&pdev->dev,
-> +			"Failed to enable GRO in hardware, ret =%d\n", ret);
+Thanks,
 
-Ditto
+	Ingo
 
-> +		return ret;
-> +	}
-> +
->  	ret = hclge_init_vlan_config(hdev);
->  	if (ret) {
->  		dev_err(&pdev->dev, "VLAN init fail, ret =%d\n", ret);
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.h b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.h
-> index 090541de0c7d..47030b42341f 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.h
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_cmd.h
-> @@ -87,6 +87,8 @@ enum hclgevf_opcode_type {
->  	HCLGEVF_OPC_QUERY_TX_STATUS	= 0x0B03,
->  	HCLGEVF_OPC_QUERY_RX_STATUS	= 0x0B13,
->  	HCLGEVF_OPC_CFG_COM_TQP_QUEUE	= 0x0B20,
-> +	/* GRO command */
-> +	HCLGEVF_OPC_GRO_GENERIC_CONFIG  = 0x0C10,
->  	/* RSS cmd */
->  	HCLGEVF_OPC_RSS_GENERIC_CONFIG	= 0x0D01,
->  	HCLGEVF_OPC_RSS_INPUT_TUPLE     = 0x0D02,
-> @@ -149,6 +151,12 @@ struct hclgevf_query_res_cmd {
->  	__le16 rsv[7];
->  };
->
-> +#define HCLGEVF_GRO_EN_B               0
-> +struct hclgevf_cfg_gro_status_cmd {
-> +	__le16 gro_en;
-> +	u8 rsv[22];
-> +};
-> +
->  #define HCLGEVF_RSS_DEFAULT_OUTPORT_B	4
->  #define HCLGEVF_RSS_HASH_KEY_OFFSET_B	4
->  #define HCLGEVF_RSS_HASH_KEY_NUM	16
-> diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-> index 6b4d1477055f..3f256414fbe4 100644
-> --- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-> +++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
-> @@ -1655,6 +1655,29 @@ static int hclgevf_init_roce_base_info(struct hclgevf_dev *hdev)
->  	return 0;
->  }
->
-> +static int hclgevf_config_gro(struct hclgevf_dev *hdev, bool en)
-> +{
-> +	struct hclgevf_cfg_gro_status_cmd *req;
-> +	struct hclgevf_desc desc;
-> +	int ret;
-> +
-> +	if (!hnae3_dev_gro_supported(hdev))
-> +		return 0;
-> +
-> +	hclgevf_cmd_setup_basic_desc(&desc, HCLGEVF_OPC_GRO_GENERIC_CONFIG,
-> +				     false);
-> +	req = (struct hclgevf_cfg_gro_status_cmd *)desc.data;
-> +
-> +	req->gro_en = cpu_to_le16(en ? 1 : 0);
-> +
-> +	ret = hclgevf_cmd_send(&hdev->hw, &desc, 1);
-> +	if (ret)
-> +		dev_err(&hdev->pdev->dev,
-> +			"VF GRO hardware config cmd failed, ret = %d.\n", ret);
-> +
-> +	return ret;
-> +}
-> +
->  static int hclgevf_rss_init_hw(struct hclgevf_dev *hdev)
->  {
->  	struct hclgevf_rss_cfg *rss_cfg = &hdev->rss_cfg;
-> @@ -2122,6 +2145,13 @@ static int hclgevf_reset_hdev(struct hclgevf_dev *hdev)
->  		return ret;
->  	}
->
-> +	ret = hclgevf_config_gro(hdev, true);
-> +	if (ret) {
-> +		dev_err(&pdev->dev,
-> +			"failed to enable VF GRO in hardware, ret =%d\n", ret);
-> +		return ret;
+Subject: Documentation/features: Refresh the features list to v4.20-rc2
+From: Palmer Dabbelt <palmer@sifive.com>
 
-Ditto
+Run Documentation/features/scripts/feature-refresh.sh to refresh the 
+kernel features support matrix list:
 
-> +	}
-> +
->  	ret = hclgevf_init_vlan_config(hdev);
->  	if (ret) {
->  		dev_err(&hdev->pdev->dev,
-> @@ -2199,6 +2229,13 @@ static int hclgevf_init_hdev(struct hclgevf_dev *hdev)
->  		goto err_config;
->  	}
->
-> +	ret = hclgevf_config_gro(hdev, true);
-> +	if (ret) {
-> +		dev_err(&pdev->dev,
-> +			"Failed to enable VF GRO in hardware, ret =%d\n", ret);
+ - The new 'csky' architecture was added
+ - s390    now supports KASAN
+ - powerpc now supports stackprotector
+ - xtensa  now supports sg-chain
+ - arm64   now supports queued-spinlocks
+ - parisc  now supports kprobes-events
+ - RISC-V  now supports pte_special
 
-Ditto
+[ mingo: combined the patches and the changelogs. ]
 
-> +		goto err_config;
-> +	}
-> +
->  	/* Initialize RSS for this VF */
->  	ret = hclgevf_rss_init_hw(hdev);
->  	if (ret) {
-> --
-> 2.17.1
->
->
+Signed-off-by: Palmer Dabbelt <palmer@sifive.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+---
 
---17pEHd4RhPHOinZp
-Content-Type: application/pgp-signature; name="signature.asc"
+ Documentation/features/core/cBPF-JIT/arch-support.txt              | 1 +
+ Documentation/features/core/eBPF-JIT/arch-support.txt              | 1 +
+ Documentation/features/core/generic-idle-thread/arch-support.txt   | 1 +
+ Documentation/features/core/jump-labels/arch-support.txt           | 1 +
+ Documentation/features/core/tracehook/arch-support.txt             | 1 +
+ Documentation/features/debug/KASAN/arch-support.txt                | 3 ++-
+ Documentation/features/debug/gcov-profile-all/arch-support.txt     | 1 +
+ Documentation/features/debug/kgdb/arch-support.txt                 | 1 +
+ Documentation/features/debug/kprobes-on-ftrace/arch-support.txt    | 1 +
+ Documentation/features/debug/kprobes/arch-support.txt              | 1 +
+ Documentation/features/debug/kretprobes/arch-support.txt           | 1 +
+ Documentation/features/debug/optprobes/arch-support.txt            | 1 +
+ Documentation/features/debug/stackprotector/arch-support.txt       | 3 ++-
+ Documentation/features/debug/uprobes/arch-support.txt              | 1 +
+ Documentation/features/debug/user-ret-profiler/arch-support.txt    | 1 +
+ Documentation/features/io/dma-contiguous/arch-support.txt          | 1 +
+ Documentation/features/io/sg-chain/arch-support.txt                | 3 ++-
+ Documentation/features/locking/cmpxchg-local/arch-support.txt      | 1 +
+ Documentation/features/locking/lockdep/arch-support.txt            | 1 +
+ Documentation/features/locking/queued-rwlocks/arch-support.txt     | 1 +
+ Documentation/features/locking/queued-spinlocks/arch-support.txt   | 3 ++-
+ Documentation/features/locking/rwsem-optimized/arch-support.txt    | 1 +
+ Documentation/features/perf/kprobes-event/arch-support.txt         | 3 ++-
+ Documentation/features/perf/perf-regs/arch-support.txt             | 1 +
+ Documentation/features/perf/perf-stackdump/arch-support.txt        | 1 +
+ Documentation/features/sched/membarrier-sync-core/arch-support.txt | 1 +
+ Documentation/features/sched/numa-balancing/arch-support.txt       | 1 +
+ Documentation/features/seccomp/seccomp-filter/arch-support.txt     | 1 +
+ Documentation/features/time/arch-tick-broadcast/arch-support.txt   | 1 +
+ Documentation/features/time/clockevents/arch-support.txt           | 1 +
+ Documentation/features/time/context-tracking/arch-support.txt      | 1 +
+ Documentation/features/time/irq-time-acct/arch-support.txt         | 1 +
+ Documentation/features/time/modern-timekeeping/arch-support.txt    | 1 +
+ Documentation/features/time/virt-cpuacct/arch-support.txt          | 1 +
+ Documentation/features/vm/ELF-ASLR/arch-support.txt                | 1 +
+ Documentation/features/vm/PG_uncached/arch-support.txt             | 1 +
+ Documentation/features/vm/THP/arch-support.txt                     | 1 +
+ Documentation/features/vm/TLB/arch-support.txt                     | 1 +
+ Documentation/features/vm/huge-vmap/arch-support.txt               | 1 +
+ Documentation/features/vm/ioremap_prot/arch-support.txt            | 1 +
+ Documentation/features/vm/numa-memblock/arch-support.txt           | 1 +
+ Documentation/features/vm/pte_special/arch-support.txt             | 3 ++-
+ 42 files changed, 48 insertions(+), 6 deletions(-)
 
------BEGIN PGP SIGNATURE-----
-
-iQIcBAEBAgAGBQJb6rR+AAoJEORje4g2clin8qMP/j0M4EiGaXYBv86qdQK2NxlM
-ZP1ankaYUAbPxQTaGu2dGkW398U3eCbD0aTKSl7HF2WvOOeF0tnL4WZe5sFCDFfk
-usiO9gqh/KdHHBJa3RFBTsN/2O2Dh6GJQ6fuCbxyIjHMCIW05OFIEeKYBCt2RiLe
-ANhM1s2e8tQe6kPm0aDuUDYIr9Qg/W0Q2gC5hf4N1Res7JkCd6f5tsVWIiziwtVD
-y2Nu7GA46hDWYeIBjYb21/UEaOaY3yQFM8I4gTnsj8JUXB/zx5yRDso12kE6AjH/
-L95DSvtmXsNmFPadCNMLbpPk2mlMwd2GpbjKig8Yu8flkAWbNzzHB2AoFoYo7WmH
-hQDgVPYqzZS7HONY2yNBpMIMxGuvPTShMtxFJEeKjZv60TIAHp0s7J39ldMl0S/4
-J/SpEcuG/rNNN8vnLKr5FamTWlRaH6mCxBNCxVktc62RSqFbn5+Qcj9OAshoB2rZ
-DAAMAoAMDqApiftKk0rFnTgYrEDS3kuBwyh+f3c4h30nJmL3Er8umUiBXd8lGGDn
-1Uvxw2fyWjWDmzn1vWUtC5OMSlxacNgDoAdyPjvXsZSb2oEm/rOtqXduahtVBlR7
-prTMZeSStKHYYMkDKgW+aOe4TR6z/TchJCPj5nBpDl8sJ7dha+RB3mGLukqfxZ2e
-zVq0RLJUVtt3UzIapVC2
-=DCNk
------END PGP SIGNATURE-----
-
---17pEHd4RhPHOinZp--
+diff --git a/Documentation/features/core/cBPF-JIT/arch-support.txt b/Documentation/features/core/cBPF-JIT/arch-support.txt
+index 90459cdde314..8620c38d4db0 100644
+--- a/Documentation/features/core/cBPF-JIT/arch-support.txt
++++ b/Documentation/features/core/cBPF-JIT/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: | TODO |
+     |       arm64: | TODO |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/core/eBPF-JIT/arch-support.txt b/Documentation/features/core/eBPF-JIT/arch-support.txt
+index c90a0382fe66..9ae6e8d0d10d 100644
+--- a/Documentation/features/core/eBPF-JIT/arch-support.txt
++++ b/Documentation/features/core/eBPF-JIT/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/core/generic-idle-thread/arch-support.txt b/Documentation/features/core/generic-idle-thread/arch-support.txt
+index 0ef6acdb991c..365df2c2ff0b 100644
+--- a/Documentation/features/core/generic-idle-thread/arch-support.txt
++++ b/Documentation/features/core/generic-idle-thread/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: |  ok  |
+     |       h8300: | TODO |
+     |     hexagon: |  ok  |
+     |        ia64: |  ok  |
+diff --git a/Documentation/features/core/jump-labels/arch-support.txt b/Documentation/features/core/jump-labels/arch-support.txt
+index 27cbd63abfd2..c29146c5741e 100644
+--- a/Documentation/features/core/jump-labels/arch-support.txt
++++ b/Documentation/features/core/jump-labels/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/core/tracehook/arch-support.txt b/Documentation/features/core/tracehook/arch-support.txt
+index f44c274e40ed..d344b99aae1e 100644
+--- a/Documentation/features/core/tracehook/arch-support.txt
++++ b/Documentation/features/core/tracehook/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: |  ok  |
++    |        csky: |  ok  |
+     |       h8300: | TODO |
+     |     hexagon: |  ok  |
+     |        ia64: |  ok  |
+diff --git a/Documentation/features/debug/KASAN/arch-support.txt b/Documentation/features/debug/KASAN/arch-support.txt
+index 282ecc8ea1da..c68adfc1db0e 100644
+--- a/Documentation/features/debug/KASAN/arch-support.txt
++++ b/Documentation/features/debug/KASAN/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: | TODO |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+@@ -23,7 +24,7 @@
+     |      parisc: | TODO |
+     |     powerpc: | TODO |
+     |       riscv: | TODO |
+-    |        s390: | TODO |
++    |        s390: |  ok  |
+     |          sh: | TODO |
+     |       sparc: | TODO |
+     |          um: | TODO |
+diff --git a/Documentation/features/debug/gcov-profile-all/arch-support.txt b/Documentation/features/debug/gcov-profile-all/arch-support.txt
+index 01b2b3004e0a..059d58a549c7 100644
+--- a/Documentation/features/debug/gcov-profile-all/arch-support.txt
++++ b/Documentation/features/debug/gcov-profile-all/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/debug/kgdb/arch-support.txt b/Documentation/features/debug/kgdb/arch-support.txt
+index 3b4dff22329f..3e6b8f07d5d0 100644
+--- a/Documentation/features/debug/kgdb/arch-support.txt
++++ b/Documentation/features/debug/kgdb/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: |  ok  |
+     |     hexagon: |  ok  |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
+index 7e963d0ae646..68f266944d5f 100644
+--- a/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
++++ b/Documentation/features/debug/kprobes-on-ftrace/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: | TODO |
+     |       arm64: | TODO |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/debug/kprobes/arch-support.txt b/Documentation/features/debug/kprobes/arch-support.txt
+index 4ada027faf16..f4e45bd58fea 100644
+--- a/Documentation/features/debug/kprobes/arch-support.txt
++++ b/Documentation/features/debug/kprobes/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: |  ok  |
+diff --git a/Documentation/features/debug/kretprobes/arch-support.txt b/Documentation/features/debug/kretprobes/arch-support.txt
+index 044e13fcca5d..1d5651ef11f8 100644
+--- a/Documentation/features/debug/kretprobes/arch-support.txt
++++ b/Documentation/features/debug/kretprobes/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: |  ok  |
+diff --git a/Documentation/features/debug/optprobes/arch-support.txt b/Documentation/features/debug/optprobes/arch-support.txt
+index dce7669c918f..fb297a88f62c 100644
+--- a/Documentation/features/debug/optprobes/arch-support.txt
++++ b/Documentation/features/debug/optprobes/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: | TODO |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/debug/stackprotector/arch-support.txt b/Documentation/features/debug/stackprotector/arch-support.txt
+index 954ac1c95553..32bbdfc64c32 100644
+--- a/Documentation/features/debug/stackprotector/arch-support.txt
++++ b/Documentation/features/debug/stackprotector/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+@@ -21,7 +22,7 @@
+     |       nios2: | TODO |
+     |    openrisc: | TODO |
+     |      parisc: | TODO |
+-    |     powerpc: | TODO |
++    |     powerpc: |  ok  |
+     |       riscv: | TODO |
+     |        s390: | TODO |
+     |          sh: |  ok  |
+diff --git a/Documentation/features/debug/uprobes/arch-support.txt b/Documentation/features/debug/uprobes/arch-support.txt
+index 1a3f9d3229bf..1c577d0cfc7f 100644
+--- a/Documentation/features/debug/uprobes/arch-support.txt
++++ b/Documentation/features/debug/uprobes/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/debug/user-ret-profiler/arch-support.txt b/Documentation/features/debug/user-ret-profiler/arch-support.txt
+index 1d78d1069a5f..6bfa36b0e017 100644
+--- a/Documentation/features/debug/user-ret-profiler/arch-support.txt
++++ b/Documentation/features/debug/user-ret-profiler/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: | TODO |
+     |       arm64: | TODO |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/io/dma-contiguous/arch-support.txt b/Documentation/features/io/dma-contiguous/arch-support.txt
+index 30c072d2b67c..eb28b5c97ca6 100644
+--- a/Documentation/features/io/dma-contiguous/arch-support.txt
++++ b/Documentation/features/io/dma-contiguous/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: |  ok  |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/io/sg-chain/arch-support.txt b/Documentation/features/io/sg-chain/arch-support.txt
+index 6554f0372c3f..3c85efb8bc8d 100644
+--- a/Documentation/features/io/sg-chain/arch-support.txt
++++ b/Documentation/features/io/sg-chain/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: |  ok  |
+@@ -29,5 +30,5 @@
+     |          um: | TODO |
+     |   unicore32: | TODO |
+     |         x86: |  ok  |
+-    |      xtensa: | TODO |
++    |      xtensa: |  ok  |
+     -----------------------
+diff --git a/Documentation/features/locking/cmpxchg-local/arch-support.txt b/Documentation/features/locking/cmpxchg-local/arch-support.txt
+index 51704a2dc8d1..242ff5a6586e 100644
+--- a/Documentation/features/locking/cmpxchg-local/arch-support.txt
++++ b/Documentation/features/locking/cmpxchg-local/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: | TODO |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/locking/lockdep/arch-support.txt b/Documentation/features/locking/lockdep/arch-support.txt
+index bd39c5edd460..941fd5b1094d 100644
+--- a/Documentation/features/locking/lockdep/arch-support.txt
++++ b/Documentation/features/locking/lockdep/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: |  ok  |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/locking/queued-rwlocks/arch-support.txt b/Documentation/features/locking/queued-rwlocks/arch-support.txt
+index da7aff3bee0b..c683da198f31 100644
+--- a/Documentation/features/locking/queued-rwlocks/arch-support.txt
++++ b/Documentation/features/locking/queued-rwlocks/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: | TODO |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: |  ok  |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/locking/queued-spinlocks/arch-support.txt b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+index 478e9101322c..743aa6691715 100644
+--- a/Documentation/features/locking/queued-spinlocks/arch-support.txt
++++ b/Documentation/features/locking/queued-spinlocks/arch-support.txt
+@@ -9,8 +9,9 @@
+     |       alpha: | TODO |
+     |         arc: | TODO |
+     |         arm: | TODO |
+-    |       arm64: | TODO |
++    |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/locking/rwsem-optimized/arch-support.txt b/Documentation/features/locking/rwsem-optimized/arch-support.txt
+index e54b1f1a8091..7521d7500fbe 100644
+--- a/Documentation/features/locking/rwsem-optimized/arch-support.txt
++++ b/Documentation/features/locking/rwsem-optimized/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: |  ok  |
+diff --git a/Documentation/features/perf/kprobes-event/arch-support.txt b/Documentation/features/perf/kprobes-event/arch-support.txt
+index 7331402d1887..86ae33c70475 100644
+--- a/Documentation/features/perf/kprobes-event/arch-support.txt
++++ b/Documentation/features/perf/kprobes-event/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: |  ok  |
+     |        ia64: | TODO |
+@@ -20,7 +21,7 @@
+     |       nds32: |  ok  |
+     |       nios2: | TODO |
+     |    openrisc: | TODO |
+-    |      parisc: | TODO |
++    |      parisc: |  ok  |
+     |     powerpc: |  ok  |
+     |       riscv: | TODO |
+     |        s390: |  ok  |
+diff --git a/Documentation/features/perf/perf-regs/arch-support.txt b/Documentation/features/perf/perf-regs/arch-support.txt
+index 53feeee6cdad..687d049d9cee 100644
+--- a/Documentation/features/perf/perf-regs/arch-support.txt
++++ b/Documentation/features/perf/perf-regs/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/perf/perf-stackdump/arch-support.txt b/Documentation/features/perf/perf-stackdump/arch-support.txt
+index 16164348e0ea..90996e3d18a8 100644
+--- a/Documentation/features/perf/perf-stackdump/arch-support.txt
++++ b/Documentation/features/perf/perf-stackdump/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/sched/membarrier-sync-core/arch-support.txt b/Documentation/features/sched/membarrier-sync-core/arch-support.txt
+index c7858dd1ea8f..8a521a622966 100644
+--- a/Documentation/features/sched/membarrier-sync-core/arch-support.txt
++++ b/Documentation/features/sched/membarrier-sync-core/arch-support.txt
+@@ -34,6 +34,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/sched/numa-balancing/arch-support.txt b/Documentation/features/sched/numa-balancing/arch-support.txt
+index c68bb2c2cb62..305601da4c05 100644
+--- a/Documentation/features/sched/numa-balancing/arch-support.txt
++++ b/Documentation/features/sched/numa-balancing/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ..  |
+     |       arm64: |  ok  |
+     |         c6x: |  ..  |
++    |        csky: | TODO |
+     |       h8300: |  ..  |
+     |     hexagon: |  ..  |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/seccomp/seccomp-filter/arch-support.txt b/Documentation/features/seccomp/seccomp-filter/arch-support.txt
+index d4271b493b41..4fe6c3c3be5c 100644
+--- a/Documentation/features/seccomp/seccomp-filter/arch-support.txt
++++ b/Documentation/features/seccomp/seccomp-filter/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/time/arch-tick-broadcast/arch-support.txt b/Documentation/features/time/arch-tick-broadcast/arch-support.txt
+index 83d9e68462bb..593536f7925b 100644
+--- a/Documentation/features/time/arch-tick-broadcast/arch-support.txt
++++ b/Documentation/features/time/arch-tick-broadcast/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/time/clockevents/arch-support.txt b/Documentation/features/time/clockevents/arch-support.txt
+index 3d4908fce6da..7a27157da408 100644
+--- a/Documentation/features/time/clockevents/arch-support.txt
++++ b/Documentation/features/time/clockevents/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: |  ok  |
++    |        csky: |  ok  |
+     |       h8300: |  ok  |
+     |     hexagon: |  ok  |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/time/context-tracking/arch-support.txt b/Documentation/features/time/context-tracking/arch-support.txt
+index c29974afffaa..048bfb6d3872 100644
+--- a/Documentation/features/time/context-tracking/arch-support.txt
++++ b/Documentation/features/time/context-tracking/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/time/irq-time-acct/arch-support.txt b/Documentation/features/time/irq-time-acct/arch-support.txt
+index 8d73c463ec27..a14bbad8e948 100644
+--- a/Documentation/features/time/irq-time-acct/arch-support.txt
++++ b/Documentation/features/time/irq-time-acct/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: |  ..  |
+diff --git a/Documentation/features/time/modern-timekeeping/arch-support.txt b/Documentation/features/time/modern-timekeeping/arch-support.txt
+index e7c6ea6b8fb3..2855dfe2464d 100644
+--- a/Documentation/features/time/modern-timekeeping/arch-support.txt
++++ b/Documentation/features/time/modern-timekeeping/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: | TODO |
+     |       arm64: |  ok  |
+     |         c6x: |  ok  |
++    |        csky: |  ok  |
+     |       h8300: |  ok  |
+     |     hexagon: |  ok  |
+     |        ia64: |  ok  |
+diff --git a/Documentation/features/time/virt-cpuacct/arch-support.txt b/Documentation/features/time/virt-cpuacct/arch-support.txt
+index 4646457461cf..fb0d0cab9cab 100644
+--- a/Documentation/features/time/virt-cpuacct/arch-support.txt
++++ b/Documentation/features/time/virt-cpuacct/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: |  ok  |
+diff --git a/Documentation/features/vm/ELF-ASLR/arch-support.txt b/Documentation/features/vm/ELF-ASLR/arch-support.txt
+index 1f71d090ff2c..adc25878d217 100644
+--- a/Documentation/features/vm/ELF-ASLR/arch-support.txt
++++ b/Documentation/features/vm/ELF-ASLR/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/vm/PG_uncached/arch-support.txt b/Documentation/features/vm/PG_uncached/arch-support.txt
+index fbd5aa463b0a..f05588f9e4b4 100644
+--- a/Documentation/features/vm/PG_uncached/arch-support.txt
++++ b/Documentation/features/vm/PG_uncached/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: | TODO |
+     |       arm64: | TODO |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: |  ok  |
+diff --git a/Documentation/features/vm/THP/arch-support.txt b/Documentation/features/vm/THP/arch-support.txt
+index 5d7ecc378f29..cf0393711cbe 100644
+--- a/Documentation/features/vm/THP/arch-support.txt
++++ b/Documentation/features/vm/THP/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: |  ..  |
++    |        csky: | TODO |
+     |       h8300: |  ..  |
+     |     hexagon: |  ..  |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/vm/TLB/arch-support.txt b/Documentation/features/vm/TLB/arch-support.txt
+index f7af9678eb66..2bdd3b6cee3c 100644
+--- a/Documentation/features/vm/TLB/arch-support.txt
++++ b/Documentation/features/vm/TLB/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: | TODO |
+     |       arm64: | TODO |
+     |         c6x: |  ..  |
++    |        csky: | TODO |
+     |       h8300: |  ..  |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/vm/huge-vmap/arch-support.txt b/Documentation/features/vm/huge-vmap/arch-support.txt
+index d0713ccc7117..019131c5acce 100644
+--- a/Documentation/features/vm/huge-vmap/arch-support.txt
++++ b/Documentation/features/vm/huge-vmap/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: | TODO |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/vm/ioremap_prot/arch-support.txt b/Documentation/features/vm/ioremap_prot/arch-support.txt
+index 8527601a3739..c6f3e4d68152 100644
+--- a/Documentation/features/vm/ioremap_prot/arch-support.txt
++++ b/Documentation/features/vm/ioremap_prot/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: | TODO |
+     |       arm64: | TODO |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+diff --git a/Documentation/features/vm/numa-memblock/arch-support.txt b/Documentation/features/vm/numa-memblock/arch-support.txt
+index 1a988052cd24..e51cb9f7d166 100644
+--- a/Documentation/features/vm/numa-memblock/arch-support.txt
++++ b/Documentation/features/vm/numa-memblock/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ..  |
+     |       arm64: |  ok  |
+     |         c6x: |  ..  |
++    |        csky: | TODO |
+     |       h8300: |  ..  |
+     |     hexagon: |  ..  |
+     |        ia64: |  ok  |
+diff --git a/Documentation/features/vm/pte_special/arch-support.txt b/Documentation/features/vm/pte_special/arch-support.txt
+index a8378424bc98..3d492a34c8ee 100644
+--- a/Documentation/features/vm/pte_special/arch-support.txt
++++ b/Documentation/features/vm/pte_special/arch-support.txt
+@@ -11,6 +11,7 @@
+     |         arm: |  ok  |
+     |       arm64: |  ok  |
+     |         c6x: | TODO |
++    |        csky: | TODO |
+     |       h8300: | TODO |
+     |     hexagon: | TODO |
+     |        ia64: | TODO |
+@@ -22,7 +23,7 @@
+     |    openrisc: | TODO |
+     |      parisc: | TODO |
+     |     powerpc: |  ok  |
+-    |       riscv: | TODO |
++    |       riscv: |  ok  |
+     |        s390: |  ok  |
+     |          sh: |  ok  |
+     |       sparc: |  ok  |
