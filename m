@@ -6,42 +6,42 @@ X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 238CFC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:46:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8011C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:46:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CE3AB224E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:46:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 929EB216FD
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:46:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="agGYFybV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE3AB224E0
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="JrJrJajD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 929EB216FD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731107AbeKNFpx (ORCPT
+        id S1731154AbeKNFp6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:45:53 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51614 "EHLO
+        Wed, 14 Nov 2018 00:45:58 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:51706 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726610AbeKNFpx (ORCPT
+        with ESMTP id S1726610AbeKNFp6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:45:53 -0500
+        Wed, 14 Nov 2018 00:45:58 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Date:Message-Id:In-Reply-To:
         Subject:Cc:To:From:Sender:Reply-To:MIME-Version:Content-Type:
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=trMIJ1FMsjfBcJvXYYdYD+dH5THaajvdGfBlqDNUXPk=; b=agGYFybVKOx3
-        Oejqzj+gCpCGWVAM5A7laQ+1QxZrdbWPEp23YhS29VKxfkp0I3H4YQDmLqenzqYMYN8s9QGRV6c4e
-        hoMRwHKZa8MglANV6iVzUnxAriAFaEpAChVCKqPVWE7rjK0l8ThtjWRsBBspLIUx2hAVKgqQKpj7H
-        xbjV4=;
+        List-Archive; bh=TfGoADF889AZT5XHjNWu9NweJaY9hDWGazLYKv7XaWo=; b=JrJrJajDSIHh
+        q4kG7BruorlA1XJR5+QVp5gVzXTBf0htxLA5vB1AznQ2Gg/oq3swl7h1J0GeZWI99pe9YduGW2CQ5
+        luExT3/xjKTVUTtOTAYyIHN0th1kS49ORuFcjp8F9ite5YSdDdX61hv3VTptmA3xE1NicssJ6n4+7
+        c7gGg=;
 Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gMedY-0002W5-8l; Tue, 13 Nov 2018 19:46:12 +0000
+        id 1gMedb-0002WA-A4; Tue, 13 Nov 2018 19:46:15 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id AC5F4440078; Tue, 13 Nov 2018 19:46:06 +0000 (GMT)
+        id 8A8C4440078; Tue, 13 Nov 2018 19:46:13 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Vijendar Mukunda <Vijendar.Mukunda@amd.com>
 Cc:     Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
@@ -49,19 +49,20 @@ Cc:     Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
         <Vishnuvardhanrao.Ravulapati@amd.com>,
         Vijendar Mukunda <vijendar.mukunda@amd.com>,
         Mark Brown <broonie@kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER, MANAGEM..." 
+        "moderated list:SOUND - SOC LAYER / DYNAMIC, AUDIO POWER MANAGEM..." 
         <alsa-devel@alsa-project.org>,
         Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
         open list <linux-kernel@vger.kernel.org>,
         Takashi Iwai <tiwai@suse.com>,
         Liam Girdwood <lgirdwood@gmail.com>,
+        Sanju R Mehta <sanju.mehta@amd.com>,
         Vishnuvardhanrao.Ravulapati@amd.com,
         Mark Brown <broonie@kernel.org>, Alexander.Deucher@amd.com,
         alsa-devel@alsa-project.org
-Subject: Applied "ASoC: amd: Interrupt handler changes for ACP3x DMA driver" to the asoc tree
-In-Reply-To:  <1542000903-19020-6-git-send-email-Vijendar.Mukunda@amd.com>
-Message-Id: <20181113194606.AC5F4440078@finisterre.ee.mobilebroadband>
-Date:   Tue, 13 Nov 2018 19:46:06 +0000 (GMT)
+Subject: Applied "ASoC: amd: add ACP3x PCM platform driver" to the asoc tree
+In-Reply-To:  <1542000903-19020-5-git-send-email-Vijendar.Mukunda@amd.com>
+Message-Id: <20181113194613.8A8C4440078@finisterre.ee.mobilebroadband>
+Date:   Tue, 13 Nov 2018 19:46:13 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -69,7 +70,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   ASoC: amd: Interrupt handler changes for ACP3x DMA driver
+   ASoC: amd: add ACP3x PCM platform driver
 
 has been applied to the asoc tree at
 
@@ -94,101 +95,312 @@ to this mail.
 Thanks,
 Mark
 
-From 32feac95f646aebaafdaf12a610898b6e5db54ae Mon Sep 17 00:00:00 2001
+From ac289c7ec0bc9cf426036a8adbe36f72be53d0ae Mon Sep 17 00:00:00 2001
 From: Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Date: Mon, 12 Nov 2018 11:04:56 +0530
-Subject: [PATCH] ASoC: amd: Interrupt handler changes for ACP3x DMA driver
+Date: Mon, 12 Nov 2018 11:04:55 +0530
+Subject: [PATCH] ASoC: amd: add ACP3x PCM platform driver
 
-Whenever audio data equal to the I2S FIFO watermark level are
-produced/consumed, interrupt is generated.
-Acknowledge the interrupt.
+PCM platform driver binds to the platform device created by ACP3x PCI
+device. PCM driver registers ALSA DMA and CPU DAI components with ASoC
+framework.
 
 Signed-off-by: Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>
 Tested-by: Ravulapati Vishnu vardhan Rao <Vishnuvardhanrao.Ravulapati@amd.com>
 Signed-off-by: Vijendar Mukunda <vijendar.mukunda@amd.com>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- sound/soc/amd/raven/acp3x-pcm-dma.c | 46 +++++++++++++++++++++++++++++
- 1 file changed, 46 insertions(+)
+ sound/soc/amd/raven/acp3x-pcm-dma.c | 263 ++++++++++++++++++++++++++++
+ sound/soc/amd/raven/acp3x.h         |   7 +
+ 2 files changed, 270 insertions(+)
+ create mode 100644 sound/soc/amd/raven/acp3x-pcm-dma.c
 
 diff --git a/sound/soc/amd/raven/acp3x-pcm-dma.c b/sound/soc/amd/raven/acp3x-pcm-dma.c
-index 3e806f74c6f7..94f915afd1b3 100644
---- a/sound/soc/amd/raven/acp3x-pcm-dma.c
+new file mode 100644
+index 000000000000..3e806f74c6f7
+--- /dev/null
 +++ b/sound/soc/amd/raven/acp3x-pcm-dma.c
-@@ -27,6 +27,7 @@
- #define DRV_NAME "acp3x-i2s-audio"
- 
- struct i2s_dev_data {
-+	unsigned int i2s_irq;
- 	void __iomem *acp3x_base;
- 	struct snd_pcm_substream *play_stream;
- 	struct snd_pcm_substream *capture_stream;
-@@ -132,6 +133,38 @@ static int acp3x_deinit(void __iomem *acp3x_base)
- 	return 0;
- }
- 
-+static irqreturn_t i2s_irq_handler(int irq, void *dev_id)
+@@ -0,0 +1,263 @@
++/*
++ * AMD ALSA SoC PCM Driver
++ *
++ * Copyright 2016 Advanced Micro Devices, Inc.
++ *
++ * This program is free software; you can redistribute it and/or modify it
++ * under the terms and conditions of the GNU General Public License,
++ * version 2, as published by the Free Software Foundation.
++ *
++ * This program is distributed in the hope it will be useful, but WITHOUT
++ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
++ * FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
++ * more details.
++ */
++
++#include <linux/platform_device.h>
++#include <linux/module.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <sound/pcm.h>
++#include <sound/pcm_params.h>
++#include <sound/soc.h>
++#include <sound/soc-dai.h>
++
++#include "acp3x.h"
++
++#define DRV_NAME "acp3x-i2s-audio"
++
++struct i2s_dev_data {
++	void __iomem *acp3x_base;
++	struct snd_pcm_substream *play_stream;
++	struct snd_pcm_substream *capture_stream;
++};
++
++static int acp3x_power_on(void __iomem *acp3x_base, bool on)
 +{
-+	u16 play_flag, cap_flag;
-+	u32 val;
-+	struct i2s_dev_data *rv_i2s_data = dev_id;
++	u16 val, mask;
++	u32 timeout;
 +
-+	if (!rv_i2s_data)
-+		return IRQ_NONE;
-+
-+	play_flag = 0;
-+	cap_flag = 0;
-+	val = rv_readl(rv_i2s_data->acp3x_base + mmACP_EXTERNAL_INTR_STAT);
-+	if ((val & BIT(BT_TX_THRESHOLD)) && rv_i2s_data->play_stream) {
-+		rv_writel(BIT(BT_TX_THRESHOLD), rv_i2s_data->acp3x_base +
-+			  mmACP_EXTERNAL_INTR_STAT);
-+		snd_pcm_period_elapsed(rv_i2s_data->play_stream);
-+		play_flag = 1;
++	if (on == true) {
++		val = 1;
++		mask = ACP3x_POWER_ON;
++	} else {
++		val = 0;
++		mask = ACP3x_POWER_OFF;
 +	}
 +
-+	if ((val & BIT(BT_RX_THRESHOLD)) && rv_i2s_data->capture_stream) {
-+		rv_writel(BIT(BT_RX_THRESHOLD), rv_i2s_data->acp3x_base +
-+			  mmACP_EXTERNAL_INTR_STAT);
-+		snd_pcm_period_elapsed(rv_i2s_data->capture_stream);
-+		cap_flag = 1;
++	rv_writel(val, acp3x_base + mmACP_PGFSM_CONTROL);
++	timeout = 0;
++	while (true) {
++		val = rv_readl(acp3x_base + mmACP_PGFSM_STATUS);
++		if ((val & ACP3x_POWER_OFF_IN_PROGRESS) == mask)
++			break;
++		if (timeout > 100) {
++			pr_err("ACP3x power state change failure\n");
++			return -ENODEV;
++		}
++		timeout++;
++		cpu_relax();
 +	}
-+
-+	if (play_flag | cap_flag)
-+		return IRQ_HANDLED;
-+	else
-+		return IRQ_NONE;
++	return 0;
 +}
 +
- static struct snd_pcm_ops acp3x_dma_ops = {
- 	.open = NULL,
- 	.close = NULL,
-@@ -205,6 +238,13 @@ static int acp3x_audio_probe(struct platform_device *pdev)
- 	adata->acp3x_base = devm_ioremap(&pdev->dev, res->start,
- 					 resource_size(res));
- 
-+	res = platform_get_resource(pdev, IORESOURCE_IRQ, 0);
-+	if (!res) {
-+		dev_err(&pdev->dev, "IORESOURCE_IRQ FAILED\n");
-+		return -ENODEV;
++static int acp3x_reset(void __iomem *acp3x_base)
++{
++	u32 val, timeout;
++
++	rv_writel(1, acp3x_base + mmACP_SOFT_RESET);
++	timeout = 0;
++	while (true) {
++		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
++		if ((val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK) ||
++		     timeout > 100) {
++			if (val & ACP3x_SOFT_RESET__SoftResetAudDone_MASK)
++				break;
++			return -ENODEV;
++		}
++		timeout++;
++		cpu_relax();
 +	}
 +
-+	adata->i2s_irq = res->start;
- 	adata->play_stream = NULL;
- 	adata->capture_stream = NULL;
- 
-@@ -220,6 +260,12 @@ static int acp3x_audio_probe(struct platform_device *pdev)
- 		dev_err(&pdev->dev, "Fail to register acp i2s dai\n");
- 		goto dev_err;
- 	}
-+	status = devm_request_irq(&pdev->dev, adata->i2s_irq, i2s_irq_handler,
-+				  irqflags, "ACP3x_I2S_IRQ", adata);
++	rv_writel(0, acp3x_base + mmACP_SOFT_RESET);
++	timeout = 0;
++	while (true) {
++		val = rv_readl(acp3x_base + mmACP_SOFT_RESET);
++		if (!val || timeout > 100) {
++			if (!val)
++				break;
++			return -ENODEV;
++		}
++		timeout++;
++		cpu_relax();
++	}
++	return 0;
++}
++
++static int acp3x_init(void __iomem *acp3x_base)
++{
++	int ret;
++
++	/* power on */
++	ret = acp3x_power_on(acp3x_base, true);
++	if (ret) {
++		pr_err("ACP3x power on failed\n");
++		return ret;
++	}
++	/* Reset */
++	ret = acp3x_reset(acp3x_base);
++	if (ret) {
++		pr_err("ACP3x reset failed\n");
++		return ret;
++	}
++	return 0;
++}
++
++static int acp3x_deinit(void __iomem *acp3x_base)
++{
++	int ret;
++
++	/* Reset */
++	ret = acp3x_reset(acp3x_base);
++	if (ret) {
++		pr_err("ACP3x reset failed\n");
++		return ret;
++	}
++	/* power off */
++	ret = acp3x_power_on(acp3x_base, false);
++	if (ret) {
++		pr_err("ACP3x power off failed\n");
++		return ret;
++	}
++	return 0;
++}
++
++static struct snd_pcm_ops acp3x_dma_ops = {
++	.open = NULL,
++	.close = NULL,
++	.ioctl = NULL,
++	.hw_params = NULL,
++	.hw_free = NULL,
++	.pointer = NULL,
++	.mmap = NULL,
++};
++
++struct snd_soc_dai_ops acp3x_dai_i2s_ops = {
++	.hw_params = NULL,
++	.trigger   = NULL,
++	.set_fmt = NULL,
++};
++
++static struct snd_soc_dai_driver acp3x_i2s_dai_driver = {
++	.playback = {
++		.rates = SNDRV_PCM_RATE_8000_96000,
++		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S8 |
++					SNDRV_PCM_FMTBIT_U8 |
++					SNDRV_PCM_FMTBIT_S24_LE |
++					SNDRV_PCM_FMTBIT_S32_LE,
++		.channels_min = 2,
++		.channels_max = 8,
++
++		.rate_min = 8000,
++		.rate_max = 96000,
++	},
++	.capture = {
++		.rates = SNDRV_PCM_RATE_8000_48000,
++		.formats = SNDRV_PCM_FMTBIT_S16_LE | SNDRV_PCM_FMTBIT_S8 |
++					SNDRV_PCM_FMTBIT_U8 |
++					SNDRV_PCM_FMTBIT_S24_LE |
++					SNDRV_PCM_FMTBIT_S32_LE,
++		.channels_min = 2,
++		.channels_max = 2,
++		.rate_min = 8000,
++		.rate_max = 48000,
++	},
++	.ops = &acp3x_dai_i2s_ops,
++};
++
++static const struct snd_soc_component_driver acp3x_i2s_component = {
++	.name           = DRV_NAME,
++	.ops		= &acp3x_dma_ops,
++	.pcm_new	= acp3x_dma_new,
++};
++
++static int acp3x_audio_probe(struct platform_device *pdev)
++{
++	int status;
++	struct resource *res;
++	struct i2s_dev_data *adata;
++	unsigned int irqflags;
++
++	if (!pdev->dev.platform_data) {
++		dev_err(&pdev->dev, "platform_data not retrieved\n");
++		return -ENODEV;
++	}
++	irqflags = *((unsigned int *)(pdev->dev.platform_data));
++
++	adata = devm_kzalloc(&pdev->dev, sizeof(struct i2s_dev_data),
++			     GFP_KERNEL);
++	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
++	if (!res) {
++		dev_err(&pdev->dev, "IORESOURCE_IRQ FAILED\n");
++			return -ENODEV;
++	}
++
++	adata->acp3x_base = devm_ioremap(&pdev->dev, res->start,
++					 resource_size(res));
++
++	adata->play_stream = NULL;
++	adata->capture_stream = NULL;
++
++	dev_set_drvdata(&pdev->dev, adata);
++	/* Initialize ACP */
++	status = acp3x_init(adata->acp3x_base);
++	if (status)
++		return -ENODEV;
++	status = devm_snd_soc_register_component(&pdev->dev,
++						 &acp3x_i2s_component,
++						 &acp3x_i2s_dai_driver, 1);
 +	if (status) {
-+		dev_err(&pdev->dev, "ACP3x I2S IRQ request failed\n");
++		dev_err(&pdev->dev, "Fail to register acp i2s dai\n");
 +		goto dev_err;
 +	}
++
++	return 0;
++dev_err:
++	status = acp3x_deinit(adata->acp3x_base);
++	if (status)
++		dev_err(&pdev->dev, "ACP de-init failed\n");
++	else
++		dev_info(&pdev->dev, "ACP de-initialized\n");
++	/*ignore device status and return driver probe error*/
++	return -ENODEV;
++}
++
++static int acp3x_audio_remove(struct platform_device *pdev)
++{
++	int ret;
++	struct i2s_dev_data *adata = dev_get_drvdata(&pdev->dev);
++
++	ret = acp3x_deinit(adata->acp3x_base);
++	if (ret)
++		dev_err(&pdev->dev, "ACP de-init failed\n");
++	else
++		dev_info(&pdev->dev, "ACP de-initialized\n");
++
++	return 0;
++}
++
++static struct platform_driver acp3x_dma_driver = {
++	.probe = acp3x_audio_probe,
++	.remove = acp3x_audio_remove,
++	.driver = {
++		.name = "acp3x_rv_i2s",
++	},
++};
++
++module_platform_driver(acp3x_dma_driver);
++
++MODULE_AUTHOR("Maruthi.Bayyavarapu@amd.com");
++MODULE_AUTHOR("Vijendar.Mukunda@amd.com");
++MODULE_DESCRIPTION("AMD ACP 3.x PCM Driver");
++MODULE_LICENSE("GPL v2");
++MODULE_ALIAS("platform:" DRV_NAME);
+diff --git a/sound/soc/amd/raven/acp3x.h b/sound/soc/amd/raven/acp3x.h
+index 83b1ed8f6060..f3d3e5128afc 100644
+--- a/sound/soc/amd/raven/acp3x.h
++++ b/sound/soc/amd/raven/acp3x.h
+@@ -5,6 +5,13 @@
+ #define	ACP3x_REG_START	0x1240000
+ #define	ACP3x_REG_END	0x1250200
+ #define I2S_MODE	0x04
++#define	BT_TX_THRESHOLD 26
++#define	BT_RX_THRESHOLD 25
++#define ACP3x_POWER_ON 0x00
++#define ACP3x_POWER_ON_IN_PROGRESS 0x01
++#define ACP3x_POWER_OFF 0x02
++#define ACP3x_POWER_OFF_IN_PROGRESS 0x03
++#define ACP3x_SOFT_RESET__SoftResetAudDone_MASK	0x00010001
  
- 	return 0;
- dev_err:
+ static inline u32 rv_readl(void __iomem *base_addr)
+ {
 -- 
 2.19.1
 
