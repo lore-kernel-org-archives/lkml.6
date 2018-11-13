@@ -2,130 +2,117 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CA45CC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:12:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2C0BC0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:15:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F2F022360
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:12:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2F022360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=denx.de
+	by mail.kernel.org (Postfix) with ESMTP id 75E5122360
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:15:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="lnXEP2gP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E5122360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732813AbeKMWKc (ORCPT
+        id S1732904AbeKMWNp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 17:10:32 -0500
-Received: from mail-out.m-online.net ([212.18.0.9]:45265 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732565AbeKMWKb (ORCPT
+        Tue, 13 Nov 2018 17:13:45 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42459 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732565AbeKMWNp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 17:10:31 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42vRMn3dnYz1qxQJ;
-        Tue, 13 Nov 2018 13:12:37 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42vRMn1qmCz1qqkb;
-        Tue, 13 Nov 2018 13:12:37 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id huRONACpOkaa; Tue, 13 Nov 2018 13:12:35 +0100 (CET)
-X-Auth-Info: R6XyVSsqWD7gnt4bau0atOGbviHh6AlYBmU1XBBADI0=
-Received: from localhost.localdomain (85-222-111-42.dynamic.chello.pl [85.222.111.42])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 13 Nov 2018 13:12:35 +0100 (CET)
-From:   Lukasz Majewski <lukma@denx.de>
-To:     Shawn Guo <shawnguo@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     Sascha Hauer <s.hauer@pengutronix.de>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Stefan Agner <stefan@agner.ch>,
-        Fabio Estevam <festevam@gmail.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lukasz Majewski <lukma@denx.de>
-Subject: [PATCH] ARM: dts: Provide support for reading ID code from MVB device (BK4)
-Date:   Tue, 13 Nov 2018 13:12:13 +0100
-Message-Id: <20181113121213.14296-1-lukma@denx.de>
-X-Mailer: git-send-email 2.11.0
+        Tue, 13 Nov 2018 17:13:45 -0500
+Received: by mail-pl1-f196.google.com with SMTP id x21-v6so3207137pln.9
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 04:15:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=S3DG26x2ZzBe5sEydH2iew8fE0iU1Xab92LGdzXFxh8=;
+        b=lnXEP2gPlf5x7Ayqp7+PcrjUV3IuWTgquiLNWfMlkeLYytIe7a/ZFj13sepwHTCI6d
+         ajuIXvNfCjzhhDAZ0Tz3oFyCyrvx4hlUxADkFqjpZABKp3juw11NbDqCaDObP0Exs8QU
+         d41nlaT2jfLphXjP1Rry2aeWe7QzNZcuPpCXA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=S3DG26x2ZzBe5sEydH2iew8fE0iU1Xab92LGdzXFxh8=;
+        b=SNtMhilObcWkpxBG0SYXYEp4cczrx+45eAf+E/7+ophgQBRQquc3IjZRSQFfoOuY3x
+         Qeu8doUzNAzjgrSvkA0clCAOrzKjn7Gi2ogHa19tLrScI/Fb6eWh1mh2QJC+Z3CHMVIB
+         1L0vGSw8szTI0iL+BzM6QQT63tKovgeSK85Ffc9qB5AlmZz8ncKvqgL9LS1+6miTPGRI
+         FYCQP2jxq1RgbCiO11kNySBdB9FsZwm6HSxo+nTN5/m39iCAPvGKMfHfBwn6bPG8FL1x
+         ryWE3FtShbo/LLHcos4nyLNId15ZIfRX2AR/16lyBRLrfNZzzPvlwb0rp6R54JGy/kaI
+         ELNQ==
+X-Gm-Message-State: AGRZ1gLHg56lK66YdSuPBImuI78TKmrCKbAZBjyJh4ADFaZiKUnFO8YX
+        gwD+FBiOu7so/kafNZ6zjZA2CQ==
+X-Google-Smtp-Source: AJdET5d6Jeix63qVc1m1vM2Vm+VgMztjxybqE61XkEhpipUpd3rh+6NfKzaZPOPRLd7quDrlw9qKeQ==
+X-Received: by 2002:a17:902:4623:: with SMTP id o32-v6mr4849659pld.187.1542111352633;
+        Tue, 13 Nov 2018 04:15:52 -0800 (PST)
+Received: from localhost.localdomain ([2401:4900:3670:3f11:bc71:2ef7:4a39:e260])
+        by smtp.gmail.com with ESMTPSA id g65sm14312614pfa.63.2018.11.13.04.15.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 04:15:52 -0800 (PST)
+From:   Jagan Teki <jagan@amarulasolutions.com>
+To:     Maxime Ripard <maxime.ripard@free-electrons.com>,
+        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-amarula@amarulasolutions.com
+Cc:     Jagan Teki <jagan@amarulasolutions.com>
+Subject: [PATCH v6 1/4] clk: sunxi-ng: Enable DE2_CCU for SUN8I and SUN50I
+Date:   Tue, 13 Nov 2018 17:45:32 +0530
+Message-Id: <20181113121535.24137-1-jagan@amarulasolutions.com>
+X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The procedure to read this ID value is as follows:
+Allwinner SoC like SUN8I and SUN50I has DE2 CCU so enable them
+as default.
 
-rmmod spi_fsl_dspi
-insmod spi-gpio.ko
-
-echo 504 > /sys/class/gpio/export
-cat /sys/class/gpio/gpio504/value
-...
-echo 511 > /sys/class/gpio/export
-cat /sys/class/gpio/gpio511/value
-
-rmmod spi-gpio.ko
-insmod spi_fsl_dspi
-
-Signed-off-by: Lukasz Majewski <lukma@denx.de>
+Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- arch/arm/boot/dts/vf610-bk4.dts | 31 +++++++++++++++++++++++++++++++
- 1 file changed, 31 insertions(+)
+Changes for v6:
+- droped "depends on" since the CCU select based on MACH defined. 
+Changes for v5:
+- remove DRM dependency
+Changes for v4, v3:
+- none
+Changes for v2:
+- Enable for MACH_SUN8I
 
-diff --git a/arch/arm/boot/dts/vf610-bk4.dts b/arch/arm/boot/dts/vf610-bk4.dts
-index cab95714c058..f01c735807ae 100644
---- a/arch/arm/boot/dts/vf610-bk4.dts
-+++ b/arch/arm/boot/dts/vf610-bk4.dts
-@@ -59,6 +59,29 @@
- 		regulator-min-microvolt = <3300000>;
- 		regulator-max-microvolt = <3300000>;
- 	};
-+
-+	spi_gpio {
-+		compatible = "spi-gpio";
-+		pinctrl-0 = <&pinctrl_gpio_spi>;
-+		pinctrl-names = "default";
-+		#address-cells = <1>;
-+		#size-cells = <0>;
-+		/* PTD12 ->RPIO[91] */
-+		sck-gpios  = <&gpio2 27 GPIO_ACTIVE_LOW>;
-+		/* PTD10 ->RPIO[89] */
-+		miso-gpios = <&gpio2 25 GPIO_ACTIVE_HIGH>;
-+		num-chipselects = <0>;
-+
-+		72xx165@0 {
-+			compatible = "pisosr-gpio";
-+			reg = <0>;
-+			gpio-controller;
-+			#gpio-cells = <2>;
-+			/* PTB18 -> RGPIO[40] */
-+			load-gpios  = <&gpio1 8 GPIO_ACTIVE_LOW>;
-+			spi-max-frequency = <100000>;
-+		};
-+	};
- };
+ drivers/clk/sunxi-ng/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/clk/sunxi-ng/Kconfig b/drivers/clk/sunxi-ng/Kconfig
+index 826674d090fd..abbd518833b5 100644
+--- a/drivers/clk/sunxi-ng/Kconfig
++++ b/drivers/clk/sunxi-ng/Kconfig
+@@ -63,6 +63,7 @@ config SUN8I_V3S_CCU
  
- &adc0 {
-@@ -430,6 +453,14 @@
- 		>;
- 	};
+ config SUN8I_DE2_CCU
+ 	bool "Support for the Allwinner SoCs DE2 CCU"
++	default MACH_SUN8I || (ARM64 && ARCH_SUNXI)
  
-+	pinctrl_gpio_spi: pinctrl-gpio-spi {
-+		fsl,pins = <
-+			VF610_PAD_PTB18__GPIO_40        0x1183
-+			VF610_PAD_PTD10__GPIO_89        0x1183
-+			VF610_PAD_PTD12__GPIO_91        0x1183
-+		>;
-+	};
-+
- 	pinctrl_i2c2: i2c2grp {
- 		fsl,pins = <
- 			VF610_PAD_PTA22__I2C2_SCL               0x34df
+ config SUN8I_R40_CCU
+ 	bool "Support for the Allwinner R40 CCU"
 -- 
-2.11.0
+2.18.0.321.gffc6fa0e3
 
