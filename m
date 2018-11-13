@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B2368C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B65B2C0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BF5022524
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 748232251F
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:52:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="C15DC3hr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BF5022524
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Lmvf3Ud7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 748232251F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733125AbeKMPtS (ORCPT
+        id S1733142AbeKMPtS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 13 Nov 2018 10:49:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36464 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:36474 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733072AbeKMPtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1733075AbeKMPtR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Nov 2018 10:49:17 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 81E5F2251F;
+        by mail.kernel.org (Postfix) with ESMTPSA id C6FCB22522;
         Tue, 13 Nov 2018 05:52:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542088369;
-        bh=DLPe9Dy06+31l9Qrtr4FZwSQyGyZG538zVS3pIPqCS8=;
+        bh=Ii4KyRoZmTjcWt6GiOgFfjxIlVjjyWpz++sqEoaJhUI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=C15DC3hrruizEAQh9T7y2KIuge/+lfUFZ/usQJXB5NpU4D8xw8MUfqUObjcbuNGdS
-         tmUIJd3eqtGr+XwM9UduPIe0k70hznXa4wEIYWtDhJ7myv6dVZC4cIvgNebAGTDwvx
-         b3zhyWUXtQLDFfT4R95G+moFWhbA6HVxwhE2vX5o=
+        b=Lmvf3Ud7UW4i0Vfk+5c0rKIFwJHz/k2EbjekKvaiwjSVQKcklH9qHQQ1I/PCLFNAP
+         rP5O59U3Te90reQQFY7s5Ez/u2JdkRytjChb/XhZjRP38Z1mDJCzAFThDztSoAB/o6
+         mR38/7MCRpe6o1OU+LLhjP3UJit72QCip+/Hb1wM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Marek Szyprowski <m.szyprowski@samsung.com>,
-        Sylwester Nawrocki <snawrocki@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 07/11] clk: samsung: exynos5420: Enable PERIS clocks for suspend
-Date:   Tue, 13 Nov 2018 00:52:38 -0500
-Message-Id: <20181113055242.79261-7-sashal@kernel.org>
+Cc:     Paul Gortmaker <paul.gortmaker@windriver.com>,
+        Peter Feuerer <peter@piie.net>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+        Sasha Levin <sashal@kernel.org>,
+        platform-driver-x86@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 08/11] platform/x86: acerhdf: Add BIOS entry for Gateway LT31 v1.3307
+Date:   Tue, 13 Nov 2018 00:52:39 -0500
+Message-Id: <20181113055242.79261-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113055242.79261-1-sashal@kernel.org>
 References: <20181113055242.79261-1-sashal@kernel.org>
@@ -53,34 +57,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Marek Szyprowski <m.szyprowski@samsung.com>
+From: Paul Gortmaker <paul.gortmaker@windriver.com>
 
-[ Upstream commit b33228029d842269e17bba591609e83ed422005d ]
+[ Upstream commit 684238d79ad85c5e19a71bb5818e77e329912fbc ]
 
-Ensure that clocks for core SoC modules (including TZPC0..9 modules)
-are enabled for suspend/resume cycle. This fixes suspend/resume
-support on Exynos5422-based Odroid XU3/XU4 boards.
+To fix:
 
-Suggested-by: Joonyoung Shim <jy0922.shim@samsung.com>
-Signed-off-by: Marek Szyprowski <m.szyprowski@samsung.com>
-Signed-off-by: Sylwester Nawrocki <snawrocki@kernel.org>
+  acerhdf: unknown (unsupported) BIOS version Gateway  /LT31   /v1.3307 , please report, aborting!
+
+As can be seen in the context, the BIOS registers haven't changed in
+the previous versions, so the assumption is they won't have changed
+in this last update for this somewhat older platform either.
+
+Cc: Peter Feuerer <peter@piie.net>
+Cc: Darren Hart <dvhart@infradead.org>
+Cc: Andy Shevchenko <andy@infradead.org>
+Signed-off-by: Paul Gortmaker <paul.gortmaker@windriver.com>
+Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Reviewed-by: Peter Feuerer <peter@piie.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/samsung/clk-exynos5420.c | 1 +
+ drivers/platform/x86/acerhdf.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/drivers/clk/samsung/clk-exynos5420.c b/drivers/clk/samsung/clk-exynos5420.c
-index 389af3c15ec4..bde71b07f15e 100644
---- a/drivers/clk/samsung/clk-exynos5420.c
-+++ b/drivers/clk/samsung/clk-exynos5420.c
-@@ -273,6 +273,7 @@ static const struct samsung_clk_reg_dump exynos5420_set_clksrc[] = {
- 	{ .offset = GATE_BUS_TOP,		.value = 0xffffffff, },
- 	{ .offset = GATE_BUS_DISP1,		.value = 0xffffffff, },
- 	{ .offset = GATE_IP_PERIC,		.value = 0xffffffff, },
-+	{ .offset = GATE_IP_PERIS,		.value = 0xffffffff, },
- };
- 
- static int exynos5420_clk_suspend(void)
+diff --git a/drivers/platform/x86/acerhdf.c b/drivers/platform/x86/acerhdf.c
+index 460fa6708bfc..3c4b107aba78 100644
+--- a/drivers/platform/x86/acerhdf.c
++++ b/drivers/platform/x86/acerhdf.c
+@@ -233,6 +233,7 @@ static const struct bios_settings bios_tbl[] = {
+ 	{"Gateway", "LT31",   "v1.3201",  0x55, 0x58, {0x9e, 0x00}, 0},
+ 	{"Gateway", "LT31",   "v1.3302",  0x55, 0x58, {0x9e, 0x00}, 0},
+ 	{"Gateway", "LT31",   "v1.3303t", 0x55, 0x58, {0x9e, 0x00}, 0},
++	{"Gateway", "LT31",   "v1.3307",  0x55, 0x58, {0x9e, 0x00}, 0},
+ 	/* Packard Bell */
+ 	{"Packard Bell", "DOA150",  "v0.3104",  0x55, 0x58, {0x21, 0x00}, 0},
+ 	{"Packard Bell", "DOA150",  "v0.3105",  0x55, 0x58, {0x20, 0x00}, 0},
 -- 
 2.17.1
 
