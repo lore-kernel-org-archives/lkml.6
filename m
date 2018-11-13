@@ -2,151 +2,97 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D82DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:36:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E0AFC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:37:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6149E2245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:36:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCSpQ/1m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6149E2245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id C94B8206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:37:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C94B8206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aspeedtech.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731292AbeKMSdj (ORCPT
+        id S1731414AbeKMSef (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 13:33:39 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:52102 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730736AbeKMSdj (ORCPT
+        Tue, 13 Nov 2018 13:34:35 -0500
+Received: from twspam01.aspeedtech.com ([211.20.114.71]:19519 "EHLO
+        twspam01.aspeedtech.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730736AbeKMSef (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 13:33:39 -0500
-Received: by mail-it1-f196.google.com with SMTP id m34-v6so16893085iti.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 00:36:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7XWeqlo+6lwHoVaCLUge+Tebs94xhxS3Zq6e11aLK7U=;
-        b=eCSpQ/1mLuWyKTCjy2uBcgud6vismnEyRTCrv2xi5jErbTwCEs3l0m5bLsjvxndex3
-         XIX2aKP21RPzZHBfGPdbHBfAwRdmh0wtdjkRRiwUMs96kFjQunMz1WtSa5/yJ2cghg0Z
-         78Fo9Bsamwc5PY8mCnInEgCjRT74bnEEKDGeBkaX85FGCfhwgx9mWUrs+xgEHzwJ6npp
-         omY9Q91hMCfIoGu7snbEJmhTKNb6xQBvYcStnru1pNTUUzZQ+yVe3wmn7e7apfWhw/nZ
-         NBPQKPrKGohR8IuhuNiLNsGyxUT+zLEwf/0jaNJ60teSUQL8b/86eMy7ko1CVlmuE9M5
-         zVSQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7XWeqlo+6lwHoVaCLUge+Tebs94xhxS3Zq6e11aLK7U=;
-        b=D+5lFbC5ehfsUqg5zhw7gv+TaYJecjPin5763MffON6CnTFBdYhFfvAmjjoRNvk4q4
-         rjgp1jczkd5nNjDzGREbLxap6E3AkZjtx3TnVm+rd5cpOzi8Pvo8fXIYYdxo6Lo4B45q
-         f+uahuoTRiiaoOJ5ULMGAVvzAhzVD81P7bR6J4eYp3/RG21fwAflINZkyj42+sxBkhIT
-         3G2/du9JjspEkYnnJs01jhQsPTZXBETXa550wV3OxQBl1oNFy0pS6iYqxU6Kw0Hu4Wgk
-         wsIsi0bJ2Vakapkf76AIZ030xRro6wVq698k0Mej6vQNzy7jrHUZazUw4HkAVz3GW+mj
-         3+QQ==
-X-Gm-Message-State: AGRZ1gJ6I1uEh1KMCotWgsrInElNu1dOLQOiE63UIGG4UGXCgt3bs4m2
-        9B+mR2w4gdQGHqaJwQTkXwT15B0qQZR905APvuL7lbF/cA4=
-X-Google-Smtp-Source: AJdET5dWCBGf8ZKedODaDgUJR+5eV+6KUrp2EPb3et2CMDZM2G1rKMxMlAtuqQR8P+BgjNmHd9b6f6yr9wvpSK1jBnQ=
-X-Received: by 2002:a02:a0c9:: with SMTP id i9-v6mr3906372jah.116.1542098195925;
- Tue, 13 Nov 2018 00:36:35 -0800 (PST)
+        Tue, 13 Nov 2018 13:34:35 -0500
+X-Greylist: delayed 1107 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Nov 2018 13:34:33 EST
+Received: from twspam01.aspeedtech.com (localhost [127.0.0.2] (may be forged))
+        by twspam01.aspeedtech.com with ESMTP id wAD8ETvg035339
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 16:14:29 +0800 (GMT-8)
+        (envelope-from yc_chen@aspeedtech.com)
+Received: from mail.aspeedtech.com (twmbx02.aspeed.com [192.168.0.24])
+        by twspam01.aspeedtech.com with ESMTP id wAD8E7j7035294;
+        Tue, 13 Nov 2018 16:14:07 +0800 (GMT-8)
+        (envelope-from yc_chen@aspeedtech.com)
+Received: from TWMBX01.aspeed.com (192.168.0.23) by TWMBX02.aspeed.com
+ (192.168.0.24) with Microsoft SMTP Server (TLS) id 15.0.620.29; Tue, 13 Nov
+ 2018 16:18:50 +0800
+Received: from TWMBX01.aspeed.com (192.168.0.23) by TWMBX01.aspeed.com
+ (192.168.0.23) with Microsoft SMTP Server (TLS) id 15.0.620.29; Tue, 13 Nov
+ 2018 16:19:47 +0800
+Received: from TWMBX01.aspeed.com ([fe80::157a:4af5:bbf4:5dbb]) by
+ TWMBX01.aspeed.com ([fe80::157a:4af5:bbf4:5dbb%12]) with mapi id
+ 15.00.0620.020; Tue, 13 Nov 2018 16:19:46 +0800
+From:   YC Chen <yc_chen@aspeedtech.com>
+To:     Jean Delvare <jdelvare@suse.de>, Dave Airlie <airlied@redhat.com>
+CC:     =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?= <christian.koenig@amd.com>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        YC Chen <yc_chen@aspeedtech.com>
+Subject: RE: Performance regression in ast drm driver
+Thread-Topic: Performance regression in ast drm driver
+Thread-Index: AQHUcsWCAPEYZ+nEyEW+4+fd/pHG06VFSu+AgAghUUA=
+Date:   Tue, 13 Nov 2018 08:19:46 +0000
+Message-ID: <985f3dff65744a1899cb012cbb3d4156@TWMBX01.aspeed.com>
+References: <20181101162707.598c1718@endymion>
+ <20181108130509.3b2d42ff@endymion>
+In-Reply-To: <20181108130509.3b2d42ff@endymion>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [192.168.0.54]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <CA+ASDXN40pvbZKvsO3Cb8256AQJ3fyQh5TWdT+GDk_ncq11nMw@mail.gmail.com>
- <CAK7LNAR5etb-oJDaxNZbH9-FmC3+hC3A_cwnbuWPQx0maHaDng@mail.gmail.com>
- <20181109183436.GA45531@google.com> <20181110.085826.230851261@genki.is>
- <m24lcpjjss.fsf@linux-m68k.org> <20181110.201050.925673938@genki.is>
- <CAJ1xhMXDFAdiWMV6ODcJM8bfjs-ddyv8utf6N+Yh7+-Ne-KaHw@mail.gmail.com>
- <20181111.174140.002789201@genki.is> <CAJ1xhMUA4GUzeDANqR1WafELmEpE+-V569t7e0xCotTG2Lvbyw@mail.gmail.com>
- <CAJ1xhMWw8Mi2dubTFNOxhoP6hk+__Qjo-0+9sQbpqP5K-n4mVw@mail.gmail.com> <20181113000938.GA16783@google.com>
-In-Reply-To: <20181113000938.GA16783@google.com>
-From:   Alexander Kapshuk <alexander.kapshuk@gmail.com>
-Date:   Tue, 13 Nov 2018 10:35:59 +0200
-Message-ID: <CAJ1xhMVFt6bYgwY+N5VoFXNpm5kS1j_HV8-ZS8SkavNgZx1HOg@mail.gmail.com>
-Subject: Re: [PATCH] scripts/setlocalversion: Improve -dirty check with
- git-status --no-optional-locks
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     sky@genki.is, schwab@linux-m68k.org,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Douglas Anderson <dianders@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>, lists@nerdbynature.de,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-DNSRBL: 
+X-MAIL: twspam01.aspeedtech.com wAD8E7j7035294
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 2:09 AM Brian Norris <briannorris@chromium.org> wrote:
->
-> On Mon, Nov 12, 2018 at 10:42:26AM +0200, Alexander Kapshuk wrote:
-> > An even simpler approach would be:
-> >
-> > {
-> >         git --no-optional-locks status -uno --porcelain 2>/dev/null ||
-> >         git diff-index --name-only HEAD
-> > } | grep -qv scripts/package &&
-> >         printf '%s' -dirty
-> >
-> > Sample run:
-> > cmd
-> > sh: cmd: command not found
-> >
-> > {
-> >         cmd 2>/dev/null ||
-> >         date
-> > } | grep -q 2018 &&
-> >         printf '%s' ok
-> > ok
->
-> You lose accuracy here, because now you're skipping any line that
-> contains 'scripts/package', which would include, e.g., paths like
->
->   tools/some/other-scripts/package
->
-> Maybe if the grep expression were more like this?
->
->   grep -qv '^\(.. \)\?scripts/package'
->
-> I think it'd be safe enough to ignore paths that start with two
-> characters and a space, like:
->
-> xy scripts/package
-> x/ scripts/package
->
-> Brian
-
-Thanks for your input.
-I've found the following grep command, that uses extended regular
-expressions, to work as required:
-
-{
-        echo hello
-        echo scripts/package
-        echo '.. scripts/package'
-        echo tools/some/other-scripts/package
-} | grep -Ev '^(.. )?scripts/package'
-
-[Output]
-hello
-tools/some/other-scripts/package
-
-If the participants of this email exchange consider the proposed
-implementation as fitting the bill,
-
-{
-        git --no-optional-locks status -uno --porcelain 2>/dev/null ||
-        git diff-index --name-only HEAD
-} | grep -Eqv '^(.. )?scripts/package' &&
-        printf '%s' -dirty
-
-Was the original committer of the patch proposed here,
-https://lkml.org/lkml/2018/11/10/55, going to take it in, and resend it
-as v2 of the patch, or did you want me to submit the patch instead?
-I would be happy with either way.
-
-Thanks.
+U2lyLA0KV2UgZm91bmQgdGhlIHBlcmZvcm1hbmNlIHdpbGwgYmUgYmFkIG9uIGRlc2t0b3AgZW52
+aXJvbm1lbnQgd2l0aCBPcGVuU1VTRTE1IFVFRkkgaW5zdGFsbGF0aW9uIGlmIHJlbW92ZSAiYXJj
+aF9pb19yZXNlcnZlX21lbXR5cGVfd2MiLg0KDQpSZWdhcmRzLA0KDQpZLkMuIENoZW4NCg0KLS0t
+LS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCkZyb206IGRyaS1kZXZlbCBbbWFpbHRvOmRyaS1kZXZl
+bC1ib3VuY2VzQGxpc3RzLmZyZWVkZXNrdG9wLm9yZ10gT24gQmVoYWxmIE9mIEplYW4gRGVsdmFy
+ZQ0KU2VudDogVGh1cnNkYXksIE5vdmVtYmVyIDA4LCAyMDE4IDg6MDUgUE0NClRvOiBEYXZlIEFp
+cmxpZSA8YWlybGllZEByZWRoYXQuY29tPg0KQ2M6IENocmlzdGlhbiBLw7ZuaWcgPGNocmlzdGlh
+bi5rb2VuaWdAYW1kLmNvbT47IGRyaS1kZXZlbEBsaXN0cy5mcmVlZGVza3RvcC5vcmc7IGxpbnV4
+LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmcNClN1YmplY3Q6IFJlOiBQZXJmb3JtYW5jZSByZWdyZXNz
+aW9uIGluIGFzdCBkcm0gZHJpdmVyDQoNCk9uIFRodSwgMSBOb3YgMjAxOCAxNjoyNzowNyArMDEw
+MCwgSmVhbiBEZWx2YXJlIHdyb3RlOg0KPiBIaSBEYXZpZCwNCj4gDQo+IFRoZSBmb2xsb3dpbmcg
+Y29tbWl0Og0KPiANCj4gY29tbWl0IDdjZjMyMWQxMThhODI1YzE1NDFiNDNjYTQ1Mjk0MTI2ZmQ0
+NzRlZmENCj4gQXV0aG9yOiBEYXZlIEFpcmxpZQ0KPiBEYXRlOiAgIE1vbiBPY3QgMjQgMTU6Mzc6
+NDggMjAxNiArMTAwMA0KPiANCj4gICAgIGRybS9kcml2ZXJzOiBhZGQgc3VwcG9ydCBmb3IgdXNp
+bmcgdGhlIGFyY2ggd2MgbWFwcGluZyBBUEkuDQo+IA0KPiBpcyBjYXVzaW5nIGEgaHVnZSBwZXJm
+b3JtYW5jZSByZWdyZXNzaW9uIGZvciB0aGUgYXN0IGRybSBkcml2ZXIuIEluIGEgDQo+IHRleHQg
+Y29uc29sZSwgaWYgSSBjYWxsICJjYXQiIG9uIGEgbGFyZ2UgdGV4dCBmaWxlLCBpdCB0YWtlcyBh
+bG1vc3QgDQo+IHR3aWNlIGFzIG11Y2ggdGltZSB0byBiZSBkaXNwbGF5ZWQgYW5kIHNjcm9sbGVk
+IGNvbXBsZXRlbHkuDQo+IA0KPiBDYW4geW91IHBsZWFzZSBjaGVjayB0aGF0IHRoZSBhc3QgZHJp
+dmVyIHBvcnRpb24gb2YgdGhhdCBjb21taXQgaXMgDQo+IGJvdGggY29ycmVjdCBhbmQgY29tcGxl
+dGU/DQoNCkFuZCBpbiB0aGUgbWVhbnRpbWUsIHdoYXQgYmFkIHdpbGwgaGFwcGVuIGlmIHdlIGp1
+c3QgcmV2ZXJ0IHRoZSBhc3QgcG9ydGlvbiBvZiB0aGF0IGNvbW1pdD8NCg0KVGhhbmtzLA0KLS0N
+CkplYW4gRGVsdmFyZQ0KU1VTRSBMMyBTdXBwb3J0DQpfX19fX19fX19fX19fX19fX19fX19fX19f
+X19fX19fX19fX19fX19fX19fX19fXw0KZHJpLWRldmVsIG1haWxpbmcgbGlzdA0KZHJpLWRldmVs
+QGxpc3RzLmZyZWVkZXNrdG9wLm9yZw0KaHR0cHM6Ly9saXN0cy5mcmVlZGVza3RvcC5vcmcvbWFp
+bG1hbi9saXN0aW5mby9kcmktZGV2ZWwNCg==
