@@ -2,446 +2,353 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD0ADC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:35:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E7EAC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:40:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 66BAD2243E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:35:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B977E2245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 07:40:44 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="DqnkRInD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66BAD2243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HP2Fd/pf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B977E2245E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731227AbeKMRcg (ORCPT
+        id S1731158AbeKMRhd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 12:32:36 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:51414 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730323AbeKMRcf (ORCPT
+        Tue, 13 Nov 2018 12:37:33 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:39101 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730323AbeKMRhd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 12:32:35 -0500
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAD7ZCbd106948;
-        Tue, 13 Nov 2018 01:35:12 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542094512;
-        bh=UiBQYZvNdLE+UycoyCvHQEuitdYoEmiuaT+9PKTzGPQ=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=DqnkRInD6+N6OkQ/u7mhGFvJ9EJq0Aw+j3CabviKRgy0q35WKMJwVSO0aWmpmqfgN
-         wOqKoy/Iet9Q9Baitxz26f9KaiQhW+ql09ZHUsgyY5YRUhWJABJcgw+fNBu9j4uQaL
-         dJi7FmRAfWGbhEaTD+ys8/l9jzzHfWkXvVvDhcF4=
-Received: from DLEE109.ent.ti.com (dlee109.ent.ti.com [157.170.170.41])
-        by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAD7ZCqV002904
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Tue, 13 Nov 2018 01:35:12 -0600
-Received: from DLEE110.ent.ti.com (157.170.170.21) by DLEE109.ent.ti.com
- (157.170.170.41) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Tue, 13
- Nov 2018 01:35:12 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE110.ent.ti.com
- (157.170.170.21) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Tue, 13 Nov 2018 01:35:12 -0600
-Received: from [172.24.190.117] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAD7Z8oE022338;
-        Tue, 13 Nov 2018 01:35:08 -0600
-Subject: Re: [RFC PATCH v3 10/13] soc: ti: Add MSI domain support for K3
- Interrupt Aggregator
-To:     Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>
-CC:     Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-References: <20181106084105.32483-1-lokeshvutla@ti.com>
- <20181106084105.32483-11-lokeshvutla@ti.com>
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-Message-ID: <2fa1ab94-b577-539b-1070-258e39add9f1@ti.com>
-Date:   Tue, 13 Nov 2018 13:05:01 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Tue, 13 Nov 2018 12:37:33 -0500
+Received: by mail-wm1-f67.google.com with SMTP id u13-v6so10394317wmc.4
+        for <linux-kernel@vger.kernel.org>; Mon, 12 Nov 2018 23:40:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=mLyLbynYHdze57769VpfTwWdtQAo9a2dz78hbGQDjIg=;
+        b=HP2Fd/pfKylvMsOWOKnys2/GW4LtT4BNdrIMwDIcPskbGHc/q5iAXJ4EMld706AL43
+         1ZRexUwieGdeP3wW2kR02L1EoMXY17k14hz4obsQ4Nph5naQiEFI87PjL1xSz0KTTqpG
+         AfxBWQYfzVWYXGxwMA2cMIn2+KXIDrYq6mmP4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=mLyLbynYHdze57769VpfTwWdtQAo9a2dz78hbGQDjIg=;
+        b=YSbfbKlIl5NCJwKPSp/aFYadkfuY5F6Ll7rpk8IqoPey/MMymcwvDIwEjHH28VFngH
+         MDdzbJFTgDITM2fHdHmOOhp1iNHwToJpcvU1N1taK2h7q0dU34qDAUzI1Q7urx0opepR
+         D9R9u3XFD8TrbmYJYU/4uHWS6HewjZPr5ERNPsnWhrpenD48Msr8Ud014bNoArRjA6XX
+         E6VKBquyaIqrkcvDuZ4/jzyNdBTtyFr4xFcLWQQHUuiCZ/WB4fM0ex5ff9IweBQ4C9Dm
+         Ozmi3OTl/uvHbH6PAcjN3U/ChOr6ACqvwepb+K+fnb+ZrTctdvMEyXTeXxIAAifDpiwi
+         hIOg==
+X-Gm-Message-State: AGRZ1gIJmurDqiX/kSjzNp21nUIFa1hWlrO2c9KqSZGor5nQ7AykKI1z
+        okHu7nBQptESpY2q0hLAba73Bw==
+X-Google-Smtp-Source: AJdET5dmAWwTncPPrYrIuk60RDq4eleqLfi6V8D94ND+/gPhsmL3NMDCLzAF7iO5sbBHlS6Mq0Sb7A==
+X-Received: by 2002:a1c:c545:: with SMTP id v66mr1601878wmf.132.1542094839752;
+        Mon, 12 Nov 2018 23:40:39 -0800 (PST)
+Received: from dell ([2.31.167.205])
+        by smtp.gmail.com with ESMTPSA id u14-v6sm22007442wrs.27.2018.11.12.23.40.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 12 Nov 2018 23:40:39 -0800 (PST)
+Date:   Tue, 13 Nov 2018 07:40:37 +0000
+From:   Lee Jones <lee.jones@linaro.org>
+To:     Pascal PAILLET-LME <p.paillet@st.com>
+Cc:     "dmitry.torokhov@gmail.com" <dmitry.torokhov@gmail.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "lgirdwood@gmail.com" <lgirdwood@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "linux@roeck-us.net" <linux@roeck-us.net>,
+        "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "benjamin.gaignard@linaro.org" <benjamin.gaignard@linaro.org>,
+        "eballetbo@gmail.com" <eballetbo@gmail.com>,
+        "axel.lin@ingics.com" <axel.lin@ingics.com>
+Subject: Re: [PATCH v5 2/8] mfd: stpmic1: add stpmic1 driver
+Message-ID: <20181113074037.GC29388@dell>
+References: <1540830122-2577-1-git-send-email-p.paillet@st.com>
+ <1540830122-2577-3-git-send-email-p.paillet@st.com>
 MIME-Version: 1.0
-In-Reply-To: <20181106084105.32483-11-lokeshvutla@ti.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1540830122-2577-3-git-send-email-p.paillet@st.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Marc,
+On Mon, 29 Oct 2018, Pascal PAILLET-LME wrote:
 
-On 06/11/18 2:11 PM, Lokesh Vutla wrote:
-> With the system coprocessor managing the range allocation of the
-> inputs to Interrupt Aggregator, it is difficult to represent
-> the device IRQs from DT.
+> stpmic1 is a pmic from STMicroelectronics. The STPMIC1 integrates 10
+
+"STPMIC1 is a PMIC"
+
+> regulators, 3 power switches, a watchdog and an input for a power on key.
 > 
-> The suggestion is to use MSI in such cases where devices wants
-> to allocate and group interrupts dynamically.
-> 
-> Create a MSI domain bus layer that allocates and frees MSIs for
-> a device.
-> 
-> APIs that are implemented are as follows:
-> - inta_msi_create_irq_domain() that creates a MSI domain
-> - inta_msi_domain_alloc_group_irqs() that creates MSIs for the
->    specified device and source indexes. All these are expected to
->    be grouped by the parent interrupt controller to MSI domain.
-> - inta_msi_domain_free_group_irqs() frees the grouped irqs.
-> 
-> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
-
-
-	This is the initial implementation of MSI layer for the Interrupt Aggregator 
-driver.
-In case if you have forgotten how the INTA is integrated with TISCI, below is 
-the explanation:
-
-Device Index-x               Device Index-y
-          |                                     |
-          |                                     |
-                           ....
-            \                                  /
-             \                               /
-              \  (global events)  /
-          +---------------------------+
-           |                                   |
-           |              INTA              |
-           |                                   |
-          +---------------------------+
-                         |   (vint)
-                         |
-                        \|/
-          +---------------------------+
-           |                                   |
-           |             INTR              |
-           |                                   |
-          +---------------------------+
-                         |
-                         |
-                        \|/ (gic irq)
-          +---------------------------+
-           |                                   |
-           |             GIC                |
-           |                                   |
-          +---------------------------+
-
-
-Now in the above diagram, Device indexes, global events, vints, gic irqs are 
-managed dynamically in the available ranges for the current host. When a message 
-is sent to
-system co-processor with the parameters(dev_id, dev_index, global_event, vint, 
-gic_irq), it will:
-- Program the device index to global event.
-- Program the global event to vint in INTA (Grouping allowed if needed)
-- Program the vint to gic irq in INTR
-
-All the above configuration is done by sending a single message to system 
-co-processor using TISCI protocol.
-
-Coming to software configuration:
-- gic irq range is managed by INTR driver as there can be devices other than 
-INTA attached to INTR.
-- Global event range and vint range is managed by INTA driver.
-
-Now that device indexes are also managed dynamically by their respective 
-drivers, MSIs are being used for allocation of Linux interrupts. This series 
-tries to implement this allocation sequence using MSIs. I am mainly concerned 
-about the prepare and the unprepare part. Parent interrupts to INTA are 
-allocated and released using this prepare and unprepare callbacks. This might be 
-wrong but I couldn't find a right place for it. Also, compose and write_msi_msg 
-are no ops in this case as msi_msg addr and data are not used.
-
-Please take a look at this RFC series and provide your feedback.
-
-Thanks and regards,
-Lokesh
-
-
-
+> Signed-off-by: Pascal Paillet <p.paillet@st.com>
 > ---
-> - May be the same functionaly can be included in platform msi. But I would
->    like to get a feedback on the approach.
+> changes in v5:
+> * use macro to define regmap register ranges
+> * use REGMAP_IRQ_REG marco to define interrupts
+> * remove st properties
 > 
-> Changes since v1:
-> - New patch
+>  drivers/mfd/Kconfig         |  13 +++
+>  drivers/mfd/Makefile        |   1 +
+>  drivers/mfd/stpmic1.c       | 215 ++++++++++++++++++++++++++++++++++++++++++++
+>  include/linux/mfd/stpmic1.h | 212 +++++++++++++++++++++++++++++++++++++++++++
+>  4 files changed, 444 insertions(+)
+>  create mode 100644 drivers/mfd/stpmic1.c
+>  create mode 100644 include/linux/mfd/stpmic1.h
 > 
->   drivers/soc/ti/Kconfig             |   6 ++
->   drivers/soc/ti/Makefile            |   1 +
->   drivers/soc/ti/k3_inta_msi.c       | 163 +++++++++++++++++++++++++++++
->   include/linux/irqdomain.h          |   1 +
->   include/linux/msi.h                |   6 ++
->   include/linux/soc/ti/k3_inta_msi.h |  21 ++++
->   6 files changed, 198 insertions(+)
->   create mode 100644 drivers/soc/ti/k3_inta_msi.c
->   create mode 100644 include/linux/soc/ti/k3_inta_msi.h
-> 
-> diff --git a/drivers/soc/ti/Kconfig b/drivers/soc/ti/Kconfig
-> index be4570baad96..7640490c2a6a 100644
-> --- a/drivers/soc/ti/Kconfig
-> +++ b/drivers/soc/ti/Kconfig
-> @@ -73,4 +73,10 @@ config TI_SCI_PM_DOMAINS
->   	  called ti_sci_pm_domains. Note this is needed early in boot before
->   	  rootfs may be available.
->   
-> +config K3_INTA_MSI_DOMAIN
-> +	bool
-> +	select GENERIC_MSI_IRQ_DOMAIN
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 11841f4..07e39a6 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -1855,6 +1855,22 @@ config MFD_STM32_TIMERS
+>  	  for PWM and IIO Timer. This driver allow to share the
+>  	  registers between the others drivers.
+>  
+> +config MFD_STPMIC1
+> +	tristate "Support for STPMIC1 PMIC"
+> +	depends on (I2C=y && OF)
+> +	select REGMAP_I2C
+> +	select REGMAP_IRQ
+> +	select MFD_CORE
 > +	help
-> +	  Driver to enable Interrupt Aggregator specific MSI Domain.
+> +	  Support for ST Microelectronics STPMIC1 PMIC. STPMIC1 has power on
+> +	  key, watchdog and regulator functionalities which are supported via
+> +	  the relevant subsystems.  This driver provides core support for the
+> +	  STPMIC1, in order to use the actual functionaltiy of the device other
+
+s/,/./
+
+> +	  drivers must be enabled.
 > +
->   endif # SOC_TI
-> diff --git a/drivers/soc/ti/Makefile b/drivers/soc/ti/Makefile
-> index a22edc0b258a..152b195273ee 100644
-> --- a/drivers/soc/ti/Makefile
-> +++ b/drivers/soc/ti/Makefile
-> @@ -8,3 +8,4 @@ obj-$(CONFIG_KEYSTONE_NAVIGATOR_DMA)	+= knav_dma.o
->   obj-$(CONFIG_AMX3_PM)			+= pm33xx.o
->   obj-$(CONFIG_WKUP_M3_IPC)		+= wkup_m3_ipc.o
->   obj-$(CONFIG_TI_SCI_PM_DOMAINS)		+= ti_sci_pm_domains.o
-> +obj-$(CONFIG_K3_INTA_MSI_DOMAIN)	+= k3_inta_msi.o
-> diff --git a/drivers/soc/ti/k3_inta_msi.c b/drivers/soc/ti/k3_inta_msi.c
+> +	  To compile this driver as a module, choose M here: the
+> +	  module will be called stpmic1.
+> +
+>  menu "Multimedia Capabilities Port drivers"
+>  	depends on ARCH_SA1100
+>  
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 5856a94..76fff14 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -232,6 +232,7 @@ obj-$(CONFIG_INTEL_SOC_PMIC_CHTDC_TI)	+= intel_soc_pmic_chtdc_ti.o
+>  obj-$(CONFIG_MFD_MT6397)	+= mt6397-core.o
+>  
+>  obj-$(CONFIG_MFD_ALTERA_A10SR)	+= altera-a10sr.o
+> +obj-$(CONFIG_MFD_STPMIC1)	+= stpmic1.o
+>  obj-$(CONFIG_MFD_SUN4I_GPADC)	+= sun4i-gpadc.o
+>  
+>  obj-$(CONFIG_MFD_STM32_LPTIMER)	+= stm32-lptimer.o
+> diff --git a/drivers/mfd/stpmic1.c b/drivers/mfd/stpmic1.c
 > new file mode 100644
-> index 000000000000..0236d836d7f6
+> index 0000000..2f4fd5e
 > --- /dev/null
-> +++ b/drivers/soc/ti/k3_inta_msi.c
-> @@ -0,0 +1,163 @@
+> +++ b/drivers/mfd/stpmic1.c
+> @@ -0,0 +1,215 @@
 > +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Texas Instruments' K3 Interrupt Aggregator driver MSI support
-> + *
-> + * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-> + *	Lokesh Vutla <lokeshvutla@ti.com>
-> + */
+> +// Copyright (C) STMicroelectronics 2018
+> +// Author: Pascal Paillet <p.paillet@st.com>
 > +
-> +#include <linux/of_device.h>
-> +#include <linux/of_address.h>
+> +#include <linux/i2c.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mfd/core.h>
+> +#include <linux/mfd/stpmic1.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
 > +#include <linux/of_irq.h>
-> +#include <linux/irq.h>
-> +#include <linux/irqdomain.h>
-> +#include <linux/msi.h>
-> +#include <linux/soc/ti/k3_inta_msi.h>
+> +#include <linux/of_platform.h>
+> +#include <linux/pm_wakeirq.h>
+> +#include <linux/regmap.h>
 > +
-> +#ifdef GENERIC_MSI_DOMAIN_OPS
+> +#include <dt-bindings/mfd/st,stpmic1.h>
 > +
-> +#define TI_SCI_DEV_ID_MASK	0xffff
-> +#define TI_SCI_DEV_ID_SHIFT	16
-> +#define TI_SCI_IRQ_ID_MASK	0xffff
-> +#define TI_SCI_IRQ_ID_SHIFT	0
+> +#define STPMIC1_MAIN_IRQ 0
 > +
-> +#define TO_HWIRQ(id, index)	(((id & TI_SCI_DEV_ID_MASK) << \
-> +				 TI_SCI_DEV_ID_SHIFT) | \
-> +				(index & TI_SCI_IRQ_ID_MASK))
-> +static void inta_msi_set_desc(msi_alloc_info_t *arg, struct msi_desc *desc)
-> +{
-> +	arg->desc = desc;
-> +	arg->hwirq = TO_HWIRQ(desc->inta.dev_id, desc->inta.msi_index);
-> +}
-> +#else
-> +#define inta_msi_set_desc NULL
-> +#endif
-> +
-> +static void inta_msi_update_dom_ops(struct msi_domain_info *info)
-> +{
-> +	struct msi_domain_ops *ops = info->ops;
-> +
-> +	BUG_ON(!ops);
-> +
-> +	if (ops->set_desc == NULL)
-> +		ops->set_desc = inta_msi_set_desc;
-> +}
-> +
-> +static void inta_msi_update_chip_ops(struct msi_domain_info *info)
-> +{
-> +	struct irq_chip *chip = info->chip;
-> +
-> +	BUG_ON(!chip);
-> +	if (!chip->irq_mask)
-> +		chip->irq_mask = irq_chip_mask_parent;
-> +	if (!chip->irq_unmask)
-> +		chip->irq_unmask = irq_chip_unmask_parent;
-> +	if (!chip->irq_eoi)
-> +		chip->irq_eoi = irq_chip_eoi_parent;
-> +	if (!chip->irq_set_affinity)
-> +		chip->irq_set_affinity = msi_domain_set_affinity;
-> +}
-> +
-> +struct irq_domain *inta_msi_create_irq_domain(struct fwnode_handle *fwnode,
-> +					      struct msi_domain_info *info,
-> +					      struct irq_domain *parent)
-> +{
-> +	struct irq_domain *domain;
-> +
-> +	if (info->flags & MSI_FLAG_USE_DEF_DOM_OPS)
-> +		inta_msi_update_dom_ops(info);
-> +	if (info->flags & MSI_FLAG_USE_DEF_CHIP_OPS)
-> +		inta_msi_update_chip_ops(info);
-> +
-> +	domain = msi_create_irq_domain(fwnode, info, parent);
-> +	if (domain)
-> +		irq_domain_update_bus_token(domain, DOMAIN_BUS_K3_INTA_MSI);
-> +
-> +	return domain;
-> +}
-> +EXPORT_SYMBOL_GPL(inta_msi_create_irq_domain);
-> +
-> +static struct msi_desc *inta_msi_alloc_desc(struct device *dev, u32 dev_id,
-> +					    u32 index)
-> +{
-> +	struct msi_desc *msi_desc;
-> +
-> +	msi_desc = alloc_msi_entry(dev, 1, NULL);
-> +	if (!msi_desc) {
-> +		dev_err(dev, "Failed to allocate msi entry\n");
-> +		return ERR_PTR(-ENOMEM);
-> +	}
-> +
-> +	msi_desc->inta.msi_index = index;
-> +	msi_desc->inta.dev_id = dev_id;
-> +	INIT_LIST_HEAD(&msi_desc->list);
-> +	list_add_tail(&msi_desc->list, dev_to_msi_list(dev));
-> +
-> +	return msi_desc;
-> +}
-> +
-> +void inta_msi_domain_free_group_irqs(struct device *dev, u32 *arr_index,
-> +				     int nr_irqs)
-> +{
-> +	struct irq_domain *msi_domain;
-> +	struct msi_desc *desc, *tmp;
-> +	unsigned int i, virq = 0;
-> +
-> +	msi_domain = dev_get_msi_domain(dev);
-> +
-> +	list_for_each_entry_safe(desc, tmp, dev_to_msi_list(dev), list) {
-> +		for (i = 0; i < nr_irqs; i++) {
-> +			if (desc->inta.msi_index == arr_index[i]) {
-> +				msi_domain_free_irq(desc);
-> +				/* HACK to get parent IRQ. Any elegant solution? */
-> +				if (!virq)
-> +					virq = desc->msg.data;
-> +				list_del(&desc->list);
-> +				free_msi_entry(desc);
-> +			}
-> +		}
-> +	}
-> +
-> +	msi_domain_unprepare_irqs(msi_domain, nr_irqs, (void *)&virq);
-> +}
-> +EXPORT_SYMBOL_GPL(inta_msi_domain_free_group_irqs);
-> +
-> +int inta_msi_domain_alloc_group_irqs(struct device *dev, u32 dev_id,
-> +				     int nr_irqs, u32 *arr_index)
-> +{
-> +	struct irq_domain *msi_domain;
-> +	struct msi_desc *msi_desc;
-> +	msi_alloc_info_t arg;
-> +	int ret, i;
-> +
-> +	msi_domain = dev_get_msi_domain(dev);
-> +	if (!msi_domain)
-> +		return -EINVAL;
-> +
-> +	if (nr_irqs < 1)
-> +		return -EINVAL;
-> +
-> +	ret = msi_domain_prepare_irqs(msi_domain, dev, nr_irqs, &arg);
-> +	if (ret)
-> +		return ret;
-> +
-> +	for (i = 0; i < nr_irqs; i++) {
-> +		msi_desc = inta_msi_alloc_desc(dev, dev_id, arr_index[i]);
-> +		if (IS_ERR(msi_desc)) {
-> +			ret = PTR_ERR(msi_desc);
-> +			goto cleanup;
-> +		}
-> +
-> +		ret = msi_domain_alloc_irq(msi_domain, dev, msi_desc, &arg);
-> +		if (ret) {
-> +			dev_err(dev, "Failed to allocate IRQs\n");
-> +			goto cleanup;
-> +		}
-> +	}
-> +	return 0;
-> +
-> +cleanup:
-> +	inta_msi_domain_free_group_irqs(dev, arr_index, i);
-> +	return ret;
-> +}
-> +EXPORT_SYMBOL_GPL(inta_msi_domain_alloc_group_irqs);
-> diff --git a/include/linux/irqdomain.h b/include/linux/irqdomain.h
-> index 068aa46f0d55..47bb695e1067 100644
-> --- a/include/linux/irqdomain.h
-> +++ b/include/linux/irqdomain.h
-> @@ -81,6 +81,7 @@ enum irq_domain_bus_token {
->   	DOMAIN_BUS_NEXUS,
->   	DOMAIN_BUS_IPI,
->   	DOMAIN_BUS_FSL_MC_MSI,
-> +	DOMAIN_BUS_K3_INTA_MSI,
->   };
->   
->   /**
-> diff --git a/include/linux/msi.h b/include/linux/msi.h
-> index 1e37aa569a3c..acc2873bb197 100644
-> --- a/include/linux/msi.h
-> +++ b/include/linux/msi.h
-> @@ -47,6 +47,11 @@ struct fsl_mc_msi_desc {
->   	u16				msi_index;
->   };
->   
-> +struct inta_msi_desc {
-> +	u16	dev_id;
-> +	u16	msi_index;
+> +static const struct regmap_range stpmic1_readable_ranges[] = {
+> +	regmap_reg_range(TURN_ON_SR, VERSION_SR),
+> +	regmap_reg_range(SWOFF_PWRCTRL_CR, LDO6_STDBY_CR),
+> +	regmap_reg_range(BST_SW_CR, BST_SW_CR),
+> +	regmap_reg_range(INT_PENDING_R1, INT_PENDING_R4),
+> +	regmap_reg_range(INT_CLEAR_R1, INT_CLEAR_R4),
+> +	regmap_reg_range(INT_MASK_R1, INT_MASK_R4),
+> +	regmap_reg_range(INT_SET_MASK_R1, INT_SET_MASK_R4),
+> +	regmap_reg_range(INT_CLEAR_MASK_R1, INT_CLEAR_MASK_R4),
+> +	regmap_reg_range(INT_SRC_R1, INT_SRC_R1),
 > +};
 > +
->   /**
->    * struct msi_desc - Descriptor structure for MSI based interrupts
->    * @list:	List head for management
-> @@ -106,6 +111,7 @@ struct msi_desc {
->   		 */
->   		struct platform_msi_desc platform;
->   		struct fsl_mc_msi_desc fsl_mc;
-> +		struct inta_msi_desc inta;
->   	};
->   };
->   
-> diff --git a/include/linux/soc/ti/k3_inta_msi.h b/include/linux/soc/ti/k3_inta_msi.h
-> new file mode 100644
-> index 000000000000..42c6202f044d
-> --- /dev/null
-> +++ b/include/linux/soc/ti/k3_inta_msi.h
-> @@ -0,0 +1,21 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * Texas Instruments' K3 INTA MSI helper
-> + *
-> + * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-> + *	Lokesh Vutla <lokeshvutla@ti.com>
-> + */
+> +static const struct regmap_range stpmic1_writeable_ranges[] = {
+> +	regmap_reg_range(SWOFF_PWRCTRL_CR, LDO6_STDBY_CR),
+> +	regmap_reg_range(BST_SW_CR, BST_SW_CR),
+> +	regmap_reg_range(INT_CLEAR_R1, INT_CLEAR_R4),
+> +	regmap_reg_range(INT_SET_MASK_R1, INT_SET_MASK_R4),
+> +	regmap_reg_range(INT_CLEAR_MASK_R1, INT_CLEAR_MASK_R4),
+> +};
 > +
-> +#ifndef __INCLUDE_LINUX_K3_INTA_MSI_H
-> +#define __INCLUDE_LINUX_K3_INTA_MSI_H
+> +static const struct regmap_range stpmic1_volatile_ranges[] = {
+> +	regmap_reg_range(TURN_ON_SR, VERSION_SR),
+> +	regmap_reg_range(WCHDG_CR, WCHDG_CR),
+> +	regmap_reg_range(INT_PENDING_R1, INT_PENDING_R4),
+> +	regmap_reg_range(INT_SRC_R1, INT_SRC_R4),
+> +};
+
+Nice!
+
+> +static const struct regmap_access_table stpmic1_readable_table = {
+> +	.yes_ranges = stpmic1_readable_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(stpmic1_readable_ranges),
+> +};
 > +
-> +#include <linux/msi.h>
+> +static const struct regmap_access_table stpmic1_writeable_table = {
+> +	.yes_ranges = stpmic1_writeable_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(stpmic1_writeable_ranges),
+> +};
 > +
-> +struct irq_domain *inta_msi_create_irq_domain(struct fwnode_handle *fwnode,
-> +					      struct msi_domain_info *info,
-> +					      struct irq_domain *parent);
-> +int inta_msi_domain_alloc_group_irqs(struct device *dev, u32 dev_id,
-> +				     int nr_irqs, u32 *arr_index);
-> +void inta_msi_domain_free_group_irqs(struct device *dev, u32 *arr_index,
-> +				     int nr_irqs);
-> +#endif /* __INCLUDE_LINUX_IRQCHIP_TI_SCI_INTA_H */
-> 
+> +static const struct regmap_access_table stpmic1_volatile_table = {
+> +	.yes_ranges = stpmic1_volatile_ranges,
+> +	.n_yes_ranges = ARRAY_SIZE(stpmic1_volatile_ranges),
+> +};
+> +
+> +const struct regmap_config stpmic1_regmap_config = {
+> +	.reg_bits = 8,
+> +	.val_bits = 8,
+> +	.cache_type = REGCACHE_RBTREE,
+> +	.max_register = PMIC_MAX_REGISTER_ADDRESS,
+> +	.rd_table = &stpmic1_readable_table,
+> +	.wr_table = &stpmic1_writeable_table,
+> +	.volatile_table = &stpmic1_volatile_table,
+> +};
+> +
+> +static const struct regmap_irq stpmic1_irqs[] = {
+> +	REGMAP_IRQ_REG(IT_PONKEY_F, 0, 0x01),
+> +	REGMAP_IRQ_REG(IT_PONKEY_R, 0, 0x02),
+> +	REGMAP_IRQ_REG(IT_WAKEUP_F, 0, 0x04),
+> +	REGMAP_IRQ_REG(IT_WAKEUP_R, 0, 0x08),
+> +	REGMAP_IRQ_REG(IT_VBUS_OTG_F, 0, 0x10),
+> +	REGMAP_IRQ_REG(IT_VBUS_OTG_R, 0, 0x20),
+> +	REGMAP_IRQ_REG(IT_SWOUT_F, 0, 0x40),
+> +	REGMAP_IRQ_REG(IT_SWOUT_R, 0, 0x80),
+> +
+> +	REGMAP_IRQ_REG(IT_CURLIM_BUCK1, 1, 0x01),
+> +	REGMAP_IRQ_REG(IT_CURLIM_BUCK2, 1, 0x02),
+> +	REGMAP_IRQ_REG(IT_CURLIM_BUCK3, 1, 0x04),
+> +	REGMAP_IRQ_REG(IT_CURLIM_BUCK4, 1, 0x08),
+> +	REGMAP_IRQ_REG(IT_OCP_OTG, 1, 0x10),
+> +	REGMAP_IRQ_REG(IT_OCP_SWOUT, 1, 0x20),
+> +	REGMAP_IRQ_REG(IT_OCP_BOOST, 1, 0x40),
+> +	REGMAP_IRQ_REG(IT_OVP_BOOST, 1, 0x80),
+> +
+> +	REGMAP_IRQ_REG(IT_CURLIM_LDO1, 2, 0x01),
+> +	REGMAP_IRQ_REG(IT_CURLIM_LDO2, 2, 0x02),
+> +	REGMAP_IRQ_REG(IT_CURLIM_LDO3, 2, 0x04),
+> +	REGMAP_IRQ_REG(IT_CURLIM_LDO4, 2, 0x08),
+> +	REGMAP_IRQ_REG(IT_CURLIM_LDO5, 2, 0x10),
+> +	REGMAP_IRQ_REG(IT_CURLIM_LDO6, 2, 0x20),
+> +	REGMAP_IRQ_REG(IT_SHORT_SWOTG, 2, 0x40),
+> +	REGMAP_IRQ_REG(IT_SHORT_SWOUT, 2, 0x80),
+> +
+> +	REGMAP_IRQ_REG(IT_TWARN_F, 3, 0x01),
+> +	REGMAP_IRQ_REG(IT_TWARN_R, 3, 0x02),
+> +	REGMAP_IRQ_REG(IT_VINLOW_F, 3, 0x04),
+> +	REGMAP_IRQ_REG(IT_VINLOW_R, 3, 0x08),
+> +	REGMAP_IRQ_REG(IT_SWIN_F, 3, 0x40),
+> +	REGMAP_IRQ_REG(IT_SWIN_R, 3, 0x80),
+> +};
+> +
+> +static const struct regmap_irq_chip stpmic1_regmap_irq_chip = {
+> +	.name = "pmic_irq",
+> +	.status_base = INT_PENDING_R1,
+> +	.mask_base = INT_CLEAR_MASK_R1,
+> +	.unmask_base = INT_SET_MASK_R1,
+> +	.ack_base = INT_CLEAR_R1,
+> +	.num_regs = STPMIC1_PMIC_NUM_IRQ_REGS,
+> +	.irqs = stpmic1_irqs,
+> +	.num_irqs = ARRAY_SIZE(stpmic1_irqs),
+> +};
+> +
+> +static int stpmic1_probe(struct i2c_client *i2c,
+> +			 const struct i2c_device_id *id)
+> +{
+> +	struct stpmic1 *ddata;
+> +	struct device *dev = &i2c->dev;
+> +	int ret;
+> +	struct device_node *np = dev->of_node;
+> +	u32 reg;
+> +
+> +	ddata = devm_kzalloc(dev, sizeof(struct stpmic1), GFP_KERNEL);
+> +	if (!ddata)
+> +		return -ENOMEM;
+> +
+> +	i2c_set_clientdata(i2c, ddata);
+> +	ddata->dev = dev;
+> +
+> +	ddata->regmap = devm_regmap_init_i2c(i2c, &stpmic1_regmap_config);
+> +	if (IS_ERR(ddata->regmap))
+> +		return PTR_ERR(ddata->regmap);
+> +
+> +	ddata->irq = of_irq_get(np, STPMIC1_MAIN_IRQ);
+> +	if (ddata->irq < 0) {
+> +		dev_err(dev, "Failed to get main IRQ: %d\n", ddata->irq);
+> +		return ddata->irq;
+> +	}
+> +
+> +	/* Read Version ID */
+
+I think the MACRO name and error message make this comment
+superfluous.
+
+> +	ret = regmap_read(ddata->regmap, VERSION_SR, &reg);
+> +	if (ret) {
+> +		dev_err(dev, "Unable to read pmic version\n");
+
+"PMIC"
+
+> +		return ret;
+> +	}
+> +	dev_info(dev, "PMIC Chip Version: 0x%x\n", reg);
+> +
+> +	/* Initialize PMIC IRQ Chip & IRQ domains associated */
+
+"associated IRQ domains"
+
+> +	ret = devm_regmap_add_irq_chip(dev, ddata->regmap, ddata->irq,
+> +				       IRQF_ONESHOT | IRQF_SHARED,
+> +				       0, &stpmic1_regmap_irq_chip,
+> +				       &ddata->irq_data);
+> +	if (ret) {
+> +		dev_err(dev, "IRQ Chip registration failed: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	return devm_of_platform_populate(dev);
+> +}
+> +
+> +static const struct i2c_device_id stpmic1_id[] = {
+> +	{ "stpmic1"},
+> +	{}
+> +};
+
+I don't think this is required any more.
+
+> +MODULE_DEVICE_TABLE(i2c, stpmic1_id);
+
+-- 
+Lee Jones [李琼斯]
+Linaro Services Technical Lead
+Linaro.org │ Open source software for ARM SoCs
+Follow Linaro: Facebook | Twitter | Blog
