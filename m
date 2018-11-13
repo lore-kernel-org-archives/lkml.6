@@ -3,103 +3,92 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14FFCC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:35:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FD7AC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:39:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C8B9B223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:35:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8B9B223AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 3FE4B224E0
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 21:39:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FE4B224E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729564AbeKNHfp (ORCPT
+        id S1728202AbeKNHjG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 02:35:45 -0500
-Received: from mga14.intel.com ([192.55.52.115]:34582 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725783AbeKNHfp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 02:35:45 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga007.jf.intel.com ([10.7.209.58])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 13:35:42 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,229,1539673200"; 
-   d="scan'208";a="89049931"
-Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
-  by orsmga007.jf.intel.com with ESMTP; 13 Nov 2018 13:35:41 -0800
-Received: from orsmsx113.amr.corp.intel.com (10.22.240.9) by
- ORSMSX107.amr.corp.intel.com (10.22.240.5) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 13 Nov 2018 13:35:41 -0800
-Received: from orsmsx105.amr.corp.intel.com ([169.254.2.237]) by
- ORSMSX113.amr.corp.intel.com ([169.254.9.125]) with mapi id 14.03.0415.000;
- Tue, 13 Nov 2018 13:35:41 -0800
-From:   "Yu, Fenghua" <fenghua.yu@intel.com>
-To:     Borislav Petkov <bp@alien8.de>, "Moger, Babu" <Babu.Moger@amd.com>
-CC:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "Shen, Xiaochen" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: RE: [PATCH v7 01/13] arch/x86: Start renaming the rdt files to more
- generic names
-Thread-Topic: [PATCH v7 01/13] arch/x86: Start renaming the rdt files to
- more generic names
-Thread-Index: AQHUeG4jLHZyQ+Dwi0aJlEIkm8Brh6VM7DAAgAFUIeA=
-Date:   Tue, 13 Nov 2018 21:35:40 +0000
-Message-ID: <3E5A0FA7E9CA944F9D5414FEC6C71220985A6632@ORSMSX105.amr.corp.intel.com>
-References: <20181109205153.14811-1-babu.moger@amd.com>
- <20181109205153.14811-2-babu.moger@amd.com> <20181112171638.GH8167@zn.tnic>
-In-Reply-To: <20181112171638.GH8167@zn.tnic>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiYzBkNTRmYzEtOTgzMy00MDY4LTliMmYtYjNmYjlkNzlkYWFhIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiclwvR0h1bXdyYkVKcktPbDB4MnRrM1N2MU5mUmxQdk5GRGhsNEN1UWllclJmNFVIK1dqTTJhUGZzamdEcWhjY1EifQ==
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.138]
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+        Wed, 14 Nov 2018 02:39:06 -0500
+Received: from mail-ua1-f66.google.com ([209.85.222.66]:45878 "EHLO
+        mail-ua1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbeKNHjG (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 02:39:06 -0500
+Received: by mail-ua1-f66.google.com with SMTP id e16so3708698uam.12;
+        Tue, 13 Nov 2018 13:39:02 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=kmdSfl/YfKTGvEeMheBPWRnpnKSQK1usUNeGd+QT/+s=;
+        b=c7E27sIIo57yrdEnfk0JYVIeEsmY7qvQAqQxEFRaMzPagGWkWqcmbJl+LDILIo6QPN
+         L76kl1a20iTzzdBtFJN11FqKhsLzAGYKHT1oHQEwe6Cokp/2yg29RC5lHo/obKgpvuWp
+         UFZAub00vuCUBAjeSURoDnsRnAjQZMTWThHgGkuAO6JdYRMbYN1Uc38iVKkOJPxqKyJs
+         nn+IhQSpg5pk5b3w2xUFXJER0TdXBw20TvGB1OAy+iUWjhzbxunwzckTxGf4OEsOk51j
+         0v2s7QE18Yf8qrjoT4OFchzPvmkiThkyT/xC/v4b9wNEEJXV2cWXU9ECnhYddsT9pVdt
+         GVKw==
+X-Gm-Message-State: AGRZ1gJi5KMpFl6us0xUVQpCrtx7v7fS5dbB8eQ7ULAbrdFpjiHAwt1s
+        H82OoDo/zkQ07xF+/19XqG6ZYUbk/+URyVlZh7E=
+X-Google-Smtp-Source: AJdET5cOnqvBu/9ARumlRoUw+C1sacAqiEqVUg3wSGRBH8bOC9ldSJLTi9iWWCbk1qALJLQmyWDKQoBhWLGqC+/udyQ=
+X-Received: by 2002:ab0:1393:: with SMTP id m19mr3154876uae.75.1542145141849;
+ Tue, 13 Nov 2018 13:39:01 -0800 (PST)
 MIME-Version: 1.0
+References: <1541542052-10081-1-git-send-email-jacek.anaszewski@gmail.com>
+ <1541542052-10081-3-git-send-email-jacek.anaszewski@gmail.com>
+ <20181111120234.GA28794@amd> <a640167b-3a3e-daea-b377-6e82b653c5e8@gmail.com>
+ <20181111201605.GA20160@amd> <57b77d4e-39a0-aaf2-5952-c2c25dc58593@gmail.com>
+ <20181112103513.GB5695@amd> <662c02ba-455b-e2bf-a5e2-ae3933161894@gmail.com>
+ <20181112190554.GA13959@amd> <b167cfc1-e392-eec6-6455-5983dc1c7212@gmail.com> <20181112220616.GB11942@amd>
+In-Reply-To: <20181112220616.GB11942@amd>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Tue, 13 Nov 2018 22:38:49 +0100
+Message-ID: <CAMuHMdVAYpXPZie8DTrmMz+KXiVP=WNyFNtfTZPYHYkFOa9wqg@mail.gmail.com>
+Subject: Re: [PATCH 02/24] leds: core: Add support for composing LED class
+ device names
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+        linux-leds@vger.kernel.org,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Baolin Wang <baolin.wang@linaro.org>,
+        Daniel Mack <daniel@zonque.org>, dmurphy@ti.com,
+        Linus Walleij <linus.walleij@linaro.org>, oleg@kaa.org.ua,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        simon@lineageos.org, xiaotong.lu@spreadtrum.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-PiBGcm9tOiBCb3Jpc2xhdiBQZXRrb3YgW21haWx0bzpicEBhbGllbjguZGVdDQo+ICBTdWJqZWN0
-OiBbUEFUQ0ggdjcgMDEvMTNdIGFyY2gveDg2OiBTdGFydCByZW5hbWluZyB0aGUgcmR0IGZpbGVz
-IHRvIG1vcmUNCj4gZ2VuZXJpYyBuYW1lcw0KPiANCj4gSSBndWVzcyB0aGUgc3ViamVjdCBwcmVm
-aXggZm9yIGFsbCB0aG9zZSBzaG91bGQgYmUgImFyY2gvcmVzY3RybDoiIG9yIHNvIG5vdy4NCg0K
-SXMgIng4Ni9yZXNjdHJsIiBhIGJldHRlciBzdWJqZWN0IHByZWZpeD8NCg0KVGhhbmtzLg0KDQot
-RmVuZ2h1YQ0K
+Hi Pavel,
+
+On Mon, Nov 12, 2018 at 11:07 PM Pavel Machek <pavel@ucw.cz> wrote:
+> Not really, I'm afraid. Hard drives have no red LEDs on them (and the
+> LED would not be visible, anyway) so the "device" symlink in such case
+> would point to some kind of i2c LED controller.
+
+I've seen hard drives with LEDs on the PCB.
+External USB enclosures with hard drives typically have LEDs, too.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
