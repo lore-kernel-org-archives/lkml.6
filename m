@@ -7,54 +7,54 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B6BBC0044C
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:52:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 85E35C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:52:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 48DEA22507
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:52:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4DEA922507
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:52:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Y1yrWTXU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 48DEA22507
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XNTHJBvJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DEA922507
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731954AbeKMTtV (ORCPT
+        id S1731920AbeKMTtV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Tue, 13 Nov 2018 14:49:21 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:34465 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731875AbeKMTtU (ORCPT
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:37801 "EHLO
+        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731876AbeKMTtU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Tue, 13 Nov 2018 14:49:20 -0500
-Received: by mail-wr1-f66.google.com with SMTP id j26-v6so12526915wre.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 01:52:00 -0800 (PST)
+Received: by mail-wm1-f65.google.com with SMTP id p2-v6so10716401wmc.2
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 01:52:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=f89cMj1x0peUIdYx+E2neeLwZox9dXEqOpz/Qk6Yxrs=;
-        b=Y1yrWTXU3aK87bQqSob3sCL3iXKmCV/3pSwU9EFEf4UyY7kOoeEqkWVLx9nHGB9BU1
-         jis8vuUd0wNokc+WbCVee9OxhTa5mMJGyaHWNaZCWgg3821BilpYdpx2wDze1COPLdfA
-         0KibfLTi5padJ2UzBXtVPT/gmRH/DerQxI6Y4=
+        bh=5FLtnV+wQIcNUrNrHkM6Ut8LWj8aU2ocfMFyomIotT4=;
+        b=XNTHJBvJR7vTHxamm+10/rQwlHl+lCQChVUq7XhhWIZv5VzofJ4v/Cks61vFvzAkrj
+         JSnAgBerb+2dkykxd55Hxq5zoGPFwUmOMwQQ7+4SC2hITG+0NhusC6s9voQ+eDYnRx6e
+         WKnc8zCO9PBIlhIW4//6y/+DLO/aSdzDtrTS4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=f89cMj1x0peUIdYx+E2neeLwZox9dXEqOpz/Qk6Yxrs=;
-        b=j1S8yFG2xW1Y7Nlwj2Lpi0xUh00On00H4Xc4Jz621qzZ/5BkYNND0yxZIcSgEop5Tn
-         +LZbLyVH+aTOgCm4QM9VLk4BOVRG2inJS2ylBOv94SB2HgUzIHFmI9dzrOo2yUL4n3kn
-         63TuYeSjsJc65Y6ZnkDQkXQiIYpdlngjCbcYbI0UpIajZjUaR8kFjNmj5halNOyK77t1
-         T8pDyNpZzgZ8ukm7HxYT/qmxv2ZRBkJuFmfbGXpWfUXW2zVYYHo2DNUjjmS9RvRBeNnH
-         c6FiDnH/yyRT6Jkx8DmQ6EX0nq+QUt26eu/UwFzoCbKTREb7GqonneViO7GJqCz7I3Xf
-         P6Og==
-X-Gm-Message-State: AGRZ1gJDZT/XYMtWPiqkyMremMac1mGP+51JGSDvscznYmx8zdcq1Kq8
-        5TIUaEZy4i6BdawW5Y1+nrwAJg==
-X-Google-Smtp-Source: AJdET5cWqDM+asTq8sRWRxTpVsbFQgyMzq9hYTZXJfGZC7gVM6gjJoctEFJ6VMjza1lF6fRBgX8Rig==
-X-Received: by 2002:adf:e7c6:: with SMTP id e6-v6mr4151190wrn.49.1542102719379;
-        Tue, 13 Nov 2018 01:51:59 -0800 (PST)
+        bh=5FLtnV+wQIcNUrNrHkM6Ut8LWj8aU2ocfMFyomIotT4=;
+        b=q3wlBhVs/6W648d4vpAuQxB5pTaQe1LOJOlXX2+VUN7DRzaLREHAMerUATU2u0wYJh
+         Oe6U16CocK0npUuPlqpTR//erFjPxs9N9AaG6va60Vc6cDNtI4OkBhmISMcUv2kUy9qy
+         xYccZi8Zprl/0ddTmO7NdQ6qSys4Rj3hdcxrCu9c28Z7gc5iVntAJRlmgxEGvM5/UbzB
+         nXpTaOyKBCrC1huvSplw8umzxaWfJWL4yOeJjh88r+HY6nE/zlCZRLaSseVGxb2FpIwc
+         88T5tPzainbtitggMYKzxS3Lr54oAHGTXOU6YHt/o8syG17FNaZbDu5uDnlt8hu2XRbL
+         oc+g==
+X-Gm-Message-State: AGRZ1gJJA2PDufbxrR9LQq/vSGOItH6+P0GTsF3G+xedH5N1Pns80V9a
+        Ay4UMwJ0dIwtNYePKAJ4ozWtPA==
+X-Google-Smtp-Source: AJdET5dPUhi4uro2/QGE51QkU/Nhi0ZKMAwzYNQoncmtj/ls/wRWoQGP8AITcZQxR5AVgZh6MluVYQ==
+X-Received: by 2002:a1c:7ec9:: with SMTP id z192-v6mr2782098wmc.43.1542102721132;
+        Tue, 13 Nov 2018 01:52:01 -0800 (PST)
 Received: from lmecxl0911.lme.st.com ([2a04:cec0:1088:2b4c:8cab:bca7:b2f2:d2bb])
-        by smtp.gmail.com with ESMTPSA id d4sm6044279wrp.89.2018.11.13.01.51.57
+        by smtp.gmail.com with ESMTPSA id d4sm6044279wrp.89.2018.11.13.01.51.59
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 13 Nov 2018 01:51:58 -0800 (PST)
+        Tue, 13 Nov 2018 01:52:00 -0800 (PST)
 From:   Benjamin Gaignard <benjamin.gaignard@linaro.org>
 X-Google-Original-From: Benjamin Gaignard <benjamin.gaignard@st.com>
 To:     linus.walleij@linaro.org, robh+dt@kernel.org,
@@ -63,9 +63,9 @@ Cc:     linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-stm32@st-md-mailman.stormreply.com,
         Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: [PATCH 2/3] pinctrl: stm32: protect configuration registers with a hwspinlock
-Date:   Tue, 13 Nov 2018 10:51:41 +0100
-Message-Id: <20181113095142.32015-3-benjamin.gaignard@st.com>
+Subject: [PATCH 3/3] ARM: dts: stm32: Add hwlock for pinctrl
+Date:   Tue, 13 Nov 2018 10:51:42 +0100
+Message-Id: <20181113095142.32015-4-benjamin.gaignard@st.com>
 X-Mailer: git-send-email 2.15.0
 In-Reply-To: <20181113095142.32015-1-benjamin.gaignard@st.com>
 References: <20181113095142.32015-1-benjamin.gaignard@st.com>
@@ -74,200 +74,25 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If a hwspinlock if defined in device tree use it to protect
-configuration registers.
+Define a hwspinlock to be used by pin-controller
 
 Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
 ---
- drivers/pinctrl/stm32/pinctrl-stm32.c | 71 ++++++++++++++++++++++++++++++++++-
- 1 file changed, 70 insertions(+), 1 deletion(-)
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/stm32/pinctrl-stm32.c b/drivers/pinctrl/stm32/pinctrl-stm32.c
-index a9bec6e6fdd1..dce9dabaf4d5 100644
---- a/drivers/pinctrl/stm32/pinctrl-stm32.c
-+++ b/drivers/pinctrl/stm32/pinctrl-stm32.c
-@@ -8,6 +8,7 @@
-  */
- #include <linux/clk.h>
- #include <linux/gpio/driver.h>
-+#include <linux/hwspinlock.h>
- #include <linux/io.h>
- #include <linux/irq.h>
- #include <linux/mfd/syscon.h>
-@@ -51,6 +52,8 @@
- #define gpio_range_to_bank(chip) \
- 		container_of(chip, struct stm32_gpio_bank, range)
+diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+index c4851271e810..2886e5a6ac27 100644
+--- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
++++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+@@ -14,6 +14,7 @@
+ 			ranges = <0 0x50002000 0xa400>;
+ 			interrupt-parent = <&exti>;
+ 			st,syscfg = <&exti 0x60 0xff>;
++			hwlocks = <&hsem 0>;
+ 			pins-are-numbered;
  
-+#define HWSPINLOCK_TIMEOUT	5 /* msec */
-+
- static const char * const stm32_gpio_functions[] = {
- 	"gpio", "af0", "af1",
- 	"af2", "af3", "af4",
-@@ -91,6 +94,7 @@ struct stm32_pinctrl {
- 	struct irq_domain	*domain;
- 	struct regmap		*regmap;
- 	struct regmap_field	*irqmux[STM32_GPIO_PINS_PER_BANK];
-+	struct hwspinlock *hwlock;
- };
- 
- static inline int stm32_gpio_pin(int gpio)
-@@ -576,14 +580,24 @@ static int stm32_pmx_get_func_groups(struct pinctrl_dev *pctldev,
- static void stm32_pmx_set_mode(struct stm32_gpio_bank *bank,
- 		int pin, u32 mode, u32 alt)
- {
-+	struct stm32_pinctrl *pctl = dev_get_drvdata(bank->gpio_chip.parent);
- 	u32 val;
- 	int alt_shift = (pin % 8) * 4;
- 	int alt_offset = STM32_GPIO_AFRL + (pin / 8) * 4;
- 	unsigned long flags;
-+	int err = 0;
- 
- 	clk_enable(bank->clk);
- 	spin_lock_irqsave(&bank->lock, flags);
- 
-+	if (pctl->hwlock)
-+		err = hwspin_lock_timeout(pctl->hwlock, HWSPINLOCK_TIMEOUT);
-+
-+	if (err) {
-+		dev_err(pctl->dev, "Can't get hwspinlock\n");
-+		goto unlock;
-+	}
-+
- 	val = readl_relaxed(bank->base + alt_offset);
- 	val &= ~GENMASK(alt_shift + 3, alt_shift);
- 	val |= (alt << alt_shift);
-@@ -594,6 +608,10 @@ static void stm32_pmx_set_mode(struct stm32_gpio_bank *bank,
- 	val |= mode << (pin * 2);
- 	writel_relaxed(val, bank->base + STM32_GPIO_MODER);
- 
-+	if (pctl->hwlock)
-+		hwspin_unlock(pctl->hwlock);
-+
-+unlock:
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 	clk_disable(bank->clk);
- }
-@@ -683,17 +701,31 @@ static const struct pinmux_ops stm32_pmx_ops = {
- static void stm32_pconf_set_driving(struct stm32_gpio_bank *bank,
- 	unsigned offset, u32 drive)
- {
-+	struct stm32_pinctrl *pctl = dev_get_drvdata(bank->gpio_chip.parent);
- 	unsigned long flags;
- 	u32 val;
-+	int err = 0;
- 
- 	clk_enable(bank->clk);
- 	spin_lock_irqsave(&bank->lock, flags);
- 
-+	if (pctl->hwlock)
-+		err = hwspin_lock_timeout(pctl->hwlock, HWSPINLOCK_TIMEOUT);
-+
-+	if (err) {
-+		dev_err(pctl->dev, "Can't get hwspinlock\n");
-+		goto unlock;
-+	}
-+
- 	val = readl_relaxed(bank->base + STM32_GPIO_TYPER);
- 	val &= ~BIT(offset);
- 	val |= drive << offset;
- 	writel_relaxed(val, bank->base + STM32_GPIO_TYPER);
- 
-+	if (pctl->hwlock)
-+		hwspin_unlock(pctl->hwlock);
-+
-+unlock:
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 	clk_disable(bank->clk);
- }
-@@ -719,17 +751,31 @@ static u32 stm32_pconf_get_driving(struct stm32_gpio_bank *bank,
- static void stm32_pconf_set_speed(struct stm32_gpio_bank *bank,
- 	unsigned offset, u32 speed)
- {
-+	struct stm32_pinctrl *pctl = dev_get_drvdata(bank->gpio_chip.parent);
- 	unsigned long flags;
- 	u32 val;
-+	int err = 0;
- 
- 	clk_enable(bank->clk);
- 	spin_lock_irqsave(&bank->lock, flags);
- 
-+	if (pctl->hwlock)
-+		err = hwspin_lock_timeout(pctl->hwlock, HWSPINLOCK_TIMEOUT);
-+
-+	if (err) {
-+		dev_err(pctl->dev, "Can't get hwspinlock\n");
-+		goto unlock;
-+	}
-+
- 	val = readl_relaxed(bank->base + STM32_GPIO_SPEEDR);
- 	val &= ~GENMASK(offset * 2 + 1, offset * 2);
- 	val |= speed << (offset * 2);
- 	writel_relaxed(val, bank->base + STM32_GPIO_SPEEDR);
- 
-+	if (pctl->hwlock)
-+		hwspin_unlock(pctl->hwlock);
-+
-+unlock:
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 	clk_disable(bank->clk);
- }
-@@ -755,17 +801,31 @@ static u32 stm32_pconf_get_speed(struct stm32_gpio_bank *bank,
- static void stm32_pconf_set_bias(struct stm32_gpio_bank *bank,
- 	unsigned offset, u32 bias)
- {
-+	struct stm32_pinctrl *pctl = dev_get_drvdata(bank->gpio_chip.parent);
- 	unsigned long flags;
- 	u32 val;
-+	int err = 0;
- 
- 	clk_enable(bank->clk);
- 	spin_lock_irqsave(&bank->lock, flags);
- 
-+	if (pctl->hwlock)
-+		err = hwspin_lock_timeout(pctl->hwlock, HWSPINLOCK_TIMEOUT);
-+
-+	if (err) {
-+		dev_err(pctl->dev, "Can't get hwspinlock\n");
-+		goto unlock;
-+	}
-+
- 	val = readl_relaxed(bank->base + STM32_GPIO_PUPDR);
- 	val &= ~GENMASK(offset * 2 + 1, offset * 2);
- 	val |= bias << (offset * 2);
- 	writel_relaxed(val, bank->base + STM32_GPIO_PUPDR);
- 
-+	if (pctl->hwlock)
-+		hwspin_unlock(pctl->hwlock);
-+
-+unlock:
- 	spin_unlock_irqrestore(&bank->lock, flags);
- 	clk_disable(bank->clk);
- }
-@@ -1140,7 +1200,7 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct stm32_pinctrl *pctl;
- 	struct pinctrl_pin_desc *pins;
--	int i, ret, banks = 0;
-+	int i, ret, hwlock_id, banks = 0;
- 
- 	if (!np)
- 		return -EINVAL;
-@@ -1160,6 +1220,15 @@ int stm32_pctl_probe(struct platform_device *pdev)
- 
- 	platform_set_drvdata(pdev, pctl);
- 
-+	/* hwspinlock is optional */
-+	hwlock_id = of_hwspin_lock_get_id(pdev->dev.of_node, 0);
-+	if (hwlock_id < 0) {
-+		if (hwlock_id == -EPROBE_DEFER)
-+			return hwlock_id;
-+	} else {
-+		pctl->hwlock = hwspin_lock_request_specific(hwlock_id);
-+	}
-+
- 	pctl->dev = dev;
- 	pctl->match_data = match->data;
- 	ret = stm32_pctrl_build_state(pdev);
+ 			gpioa: gpio@50002000 {
 -- 
 2.15.0
 
