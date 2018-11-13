@@ -2,115 +2,107 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.9 required=3.0 tests=DATE_IN_PAST_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E6AC9C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:39:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E52EC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:45:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B1A76224E0
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:39:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B1A76224E0
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 1287922506
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 01:45:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1287922506
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=themaw.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730463AbeKMLf0 (ORCPT
+        id S1729685AbeKMLlH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 06:35:26 -0500
-Received: from foss.arm.com ([217.140.101.70]:45688 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726198AbeKMLfZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 06:35:25 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37D531596;
-        Mon, 12 Nov 2018 17:39:39 -0800 (PST)
-Received: from mbp (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 24CB93F718;
-        Mon, 12 Nov 2018 17:39:39 -0800 (PST)
-Received: from cmarinas by mbp with local (Exim 4.89)
-        (envelope-from <catalin.marinas@arm.com>)
-        id 1gMKke-0001BP-Me; Mon, 12 Nov 2018 22:32:12 +0000
-Date:   Mon, 12 Nov 2018 22:32:12 +0000
-From:   Catalin Marinas <catalin.marinas@arm.com>
-To:     Christoffer Dall <christoffer.dall@arm.com>
-Cc:     Amit Daniel Kachhap <amit.kachhap@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        linux-kernel@vger.kernel.org,
-        Kristina Martsenko <kristina.martsenko@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        Dave Martin <Dave.Martin@arm.com>,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 2/7] arm64/kvm: context-switch ptrauth registers
-Message-ID: <20181112223212.5o4ipc5kt5ziuupt@localhost>
-References: <1539773280-4159-1-git-send-email-amit.kachhap@arm.com>
- <1539773280-4159-3-git-send-email-amit.kachhap@arm.com>
- <20181102083725.GV12057@e113682-lin.lund.arm.com>
+        Tue, 13 Nov 2018 06:41:07 -0500
+Received: from icp-osb-irony-out6.external.iinet.net.au ([203.59.1.106]:53685
+        "EHLO icp-osb-irony-out6.external.iinet.net.au" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726111AbeKMLlH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 06:41:07 -0500
+X-Greylist: delayed 559 seconds by postgrey-1.27 at vger.kernel.org; Tue, 13 Nov 2018 06:41:05 EST
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2A1AACYKepb/1Sw0HYNVhwBAQEEAQE?=
+ =?us-ascii?q?HBAEBgVEHAQELAYQSg3iIGIxNBoEQg2eFU4R6hC+Ed4F6hHQDAgKDTzQNDQE?=
+ =?us-ascii?q?DAQEBAQEBAoZQAgEDIwQgMhAYAQwCJgICRxAGE4UWqANwfDMagxCHB4ELgXO?=
+ =?us-ascii?q?JGXiBB4ERM4phglcCiQ6GODKPVwmRNQoCiV4DhwMsgkiWR4INTS4KgyeCJxe?=
+ =?us-ascii?q?OKWWOGwEB?=
+X-IPAS-Result: =?us-ascii?q?A2A1AACYKepb/1Sw0HYNVhwBAQEEAQEHBAEBgVEHAQELA?=
+ =?us-ascii?q?YQSg3iIGIxNBoEQg2eFU4R6hC+Ed4F6hHQDAgKDTzQNDQEDAQEBAQEBAoZQA?=
+ =?us-ascii?q?gEDIwQgMhAYAQwCJgICRxAGE4UWqANwfDMagxCHB4ELgXOJGXiBB4ERM4phg?=
+ =?us-ascii?q?lcCiQ6GODKPVwmRNQoCiV4DhwMsgkiWR4INTS4KgyeCJxeOKWWOGwEB?=
+X-IronPort-AV: E=Sophos;i="5.54,497,1534780800"; 
+   d="scan'208";a="116718241"
+Received: from unknown (HELO [192.168.1.28]) ([118.208.176.84])
+  by icp-osb-irony-out6.iinet.net.au with ESMTP; 13 Nov 2018 09:36:07 +0800
+Subject: [PATCH 2/6] autofs - fix possible inode leak in autofs_fill_super()
+From:   Ian Kent <raven@themaw.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Al Viro <viro@ZenIV.linux.org.uk>,
+        autofs mailing list <autofs@vger.kernel.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-fsdevel <linux-fsdevel@vger.kernel.org>
+Date:   Tue, 13 Nov 2018 09:36:05 +0800
+Message-ID: <154207296462.11064.11496013579571371405.stgit@pluto-themaw-net>
+In-Reply-To: <154207295533.11064.12485527860509413072.stgit@pluto-themaw-net>
+References: <154207295533.11064.12485527860509413072.stgit@pluto-themaw-net>
+User-Agent: StGit/unknown-version
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181102083725.GV12057@e113682-lin.lund.arm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 02, 2018 at 09:37:25AM +0100, Christoffer Dall wrote:
-> On Wed, Oct 17, 2018 at 04:17:55PM +0530, Amit Daniel Kachhap wrote:
-> > From: Mark Rutland <mark.rutland@arm.com>
-> > 
-> > When pointer authentication is supported, a guest may wish to use it.
-> > This patch adds the necessary KVM infrastructure for this to work.
-> > 
-> > When we schedule a vcpu, we enable guest usage of pointer
-> > authentication instructions and accesses to the keys. After these are
-> > enabled, we allow context-switching the keys.
-> > 
-> > Pointer authentication consists of address authentication and generic
-> > authentication, and CPUs in a system might have varied support for
-> > either. Where support for either feature is not uniform, it is hidden
-> > from guests via ID register emulation, as a result of the cpufeature
-> > framework in the host.
-> > 
-> > Unfortunately, address authentication and generic authentication cannot
-> > be trapped separately, as the architecture provides a single EL2 trap
-> > covering both. If we wish to expose one without the other, we cannot
-> > prevent a (badly-written) guest from intermittently using a feature
-> > which is not uniformly supported (when scheduled on a physical CPU which
-> > supports the relevant feature). When the guest is scheduled on a
-> > physical CPU lacking the feature, these attempts will result in an UNDEF
-> > being taken by the guest.
-> > 
-> > Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-> > Signed-off-by: Amit Daniel Kachhap <amit.kachhap@arm.com>
-> > Cc: Marc Zyngier <marc.zyngier@arm.com>
-> > Cc: Christoffer Dall <christoffer.dall@arm.com>
-> > Cc: kvmarm@lists.cs.columbia.edu
-[...] 
-> Two questions:
-> 
->  - Can we limit all ptrauth functionality to VHE systems so that we
->    don't need to touch the non-VHE path and so that we don't need any of
->    the __hyp_text stuff?
+There is no check at all for a failure to allocate the root inode
+in autofs_fill_super(), handle it.
 
-I would say yes. ARMv8.3 implies v8.1, so can enable ptrauth only when
-VHE is built into the kernel and present in the CPU implementation.
+Signed-off-by: Ian Kent <raven@themaw.net>
+---
+ fs/autofs/inode.c |   10 ++++++++--
+ 1 file changed, 8 insertions(+), 2 deletions(-)
 
->  - Can we move all the save/restore logic to vcpu load/put as long as
->    the host kernel itself isn't using ptrauth, and if the host kernel at
->    some point begins to use ptrauth, can we have a hook to save/restore
->    at that time (similar to what we do for FPSIMD) to avoid this
->    overhead on every switch?
+diff --git a/fs/autofs/inode.c b/fs/autofs/inode.c
+index 846c052569dd..e5c06b5a7371 100644
+--- a/fs/autofs/inode.c
++++ b/fs/autofs/inode.c
+@@ -254,9 +254,13 @@ int autofs_fill_super(struct super_block *s, void *data, int silent)
+ 		goto fail_free;
+ 	}
+ 	root_inode = autofs_get_inode(s, S_IFDIR | 0755);
++	if (!root_inode) {
++		ret = -ENOMEM;
++		goto fail_ino;
++	}
+ 	root = d_make_root(root_inode);
+ 	if (!root)
+-		goto fail_ino;
++		goto fail_iput;
+ 	pipe = NULL;
+ 
+ 	root->d_fsdata = ino;
+@@ -304,8 +308,8 @@ int autofs_fill_super(struct super_block *s, void *data, int silent)
+ 	root_inode->i_op = &autofs_dir_inode_operations;
+ 
+ 	pr_debug("pipe fd = %d, pgrp = %u\n", pipefd, pid_nr(sbi->oz_pgrp));
+-	pipe = fget(pipefd);
+ 
++	pipe = fget(pipefd);
+ 	if (!pipe) {
+ 		pr_err("could not open pipe file descriptor\n");
+ 		goto fail_put_pid;
+@@ -334,6 +338,8 @@ int autofs_fill_super(struct super_block *s, void *data, int silent)
+ fail_dput:
+ 	dput(root);
+ 	goto fail_free;
++fail_iput:
++	iput(root_inode);
+ fail_ino:
+ 	autofs_free_ino(ino);
+ fail_free:
 
-We will probably enable ptrauth for the kernel as well fairly soon, so I
-don't think we should base the KVM assumption on the no ptrauth in
-kernel use-case.
-
--- 
-Catalin
