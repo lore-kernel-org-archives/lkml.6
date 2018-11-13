@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D03E3C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 96F71C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 95F2A21582
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5B89721582
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:35:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OAvmAWpm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 95F2A21582
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j73wiH89"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5B89721582
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728511AbeKNFfD (ORCPT
+        id S1728714AbeKNFfG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:35:03 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:45147 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725748AbeKNFfC (ORCPT
+        Wed, 14 Nov 2018 00:35:06 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43420 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727974AbeKNFfE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:35:02 -0500
-Received: by mail-wr1-f65.google.com with SMTP id k15-v6so14608096wre.12
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 11:35:28 -0800 (PST)
+        Wed, 14 Nov 2018 00:35:04 -0500
+Received: by mail-wr1-f67.google.com with SMTP id y3-v6so14622450wrh.10
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 11:35:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=N45uGwJI7bHihKcV0BSRFkJtCHSHOvuo/6e+W8z1m9k=;
-        b=OAvmAWpmF2o+Fpg4Pnw6qu3ARRtaDsJAqpVgzQ9cVtk/iZ+tNIZTvHltxE2H2d5Oa7
-         pLxd+hL3rb1yTlMVfOi8cY8K1hi+IIuQK3iPknUZ0aznqdNi0QWMDpTgpTSiOge3Ihj9
-         tK+hcOu30HHY8T9XhIThaeLPloPpwI3oaiRrI7sjCdddq0VzeK0+tbuLuBF/rn6oSslV
-         QrAazZdcLPiUs4Soz5h6oKY4Wrpox4DLR7Fd+8eTb/BUw+pPuXp+3kdWFh8e/p5Dc4a8
-         h00fZmedAEPAC24f8A9JAlFoAoYYj+ILBkvZT2lVzogLMJCzqUMaQsUQUM57OxeLjbw+
-         L08A==
+        bh=UtKKgibYbN9+8xoPeGbKs+nomifQiQH74EyGSmoPWEA=;
+        b=j73wiH89Hf+CkkdEwbRdt90Ypw/HGSwRxrpXEki+5lSuqj4Y41+6I/EMMACprq2DrK
+         yGjE5pjE9xcuGXFXIcKGGE/4YTR1/jb7RXdtPN2s/yVejulkzw/BUeL6Zm058mNqGh79
+         PGcZsxwztZ0e/7EP5xnwhr/4Oa6Js34+H8CPK4gby10Qxdduf2XUJkRx3tuX3fNfP3fi
+         z/GqgQ/zk03DQ47961u+OK/J5GRJunF0K4sYEwf3dUkUc7+ZaSVU0E509WcjcnKst4sl
+         nJh8xpCYNfUFdT/ZLtnT7GstUKpScMLVvtfOC0inx0/vIy1/VEBRewFvhCeFaYJJhL+K
+         ahZw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=N45uGwJI7bHihKcV0BSRFkJtCHSHOvuo/6e+W8z1m9k=;
-        b=pSo3TNTP3JIqhYMww5CuupdLc+yaViAWRV5u6OtcpEAuHtggDOiZcO5LFYHpUs0qAg
-         iqiR9lzaLhqb6XDIPcU3MTQz9hdMTX0CoSkkaWCja5S1G3PKgOhtU/v8wdhxPK28ston
-         slSpmsnUYbGPf+W8xuv8ex6P6c044VK/T1h5vAHU1Hh9s400Yg8yE9i6+a6S+/83+LF2
-         95FIeuOLs1Y9THMOhwR0oIs7B7lEfE9tSdc5Q7aT70AYsjXOJ7F5FehdsJx3t4atXLNf
-         ylDLJpX0cFvSwOTkqU27CtSFskFJCkFak127dBaJ+NoJH7Tw4Psq5xshQ6WT6vYxosQN
-         /D7Q==
-X-Gm-Message-State: AGRZ1gJUmjX9PUZdvZLmfCX4J3NrGmPxuli1iO95adkrEIlRGzQOOW/H
-        y+J/WKY09gRY8piZMlgiinI=
-X-Google-Smtp-Source: AJdET5fkAjPxfsX5H+eBEQ24Bj5mGVULU6kWu5FZwucCUQuP8rXm8fR0u+/2mTxhPqrwu0PdEcOgEw==
-X-Received: by 2002:a05:6000:1048:: with SMTP id c8mr6316801wrx.171.1542137727292;
-        Tue, 13 Nov 2018 11:35:27 -0800 (PST)
+        bh=UtKKgibYbN9+8xoPeGbKs+nomifQiQH74EyGSmoPWEA=;
+        b=f6ed1ZmSbYaHM0xlw+UZ4/TqtaHhHoRJGo5Unuz3fXMtAVpmlsAJ0RI5aoeOuHhlup
+         nQuEQzXkZ/F0AbASQoczmGkQiAHGaCuzqvIZt4e8FWKSiKVejlHLeQqeeS14IHYxL2p6
+         LRzThLgxmc8OFAbDleYaq941F0sak+eGPuzRklPZV8y50qrAgKVgeaRElrhWBZQE1Y3d
+         dh4EpIYDm9PWPpzb9PZBXY3EmQh+l9mXI37VnLpU21VK/vHyuQuABrKFmbvBvfMMdcgy
+         ui0fP7MUBSZeWTUrnQ+8HhGy5T4S4Zk95/o9r65KvdyHe6ZAYOUD8VI0kUcE2Zc2L4zz
+         61cg==
+X-Gm-Message-State: AGRZ1gKdHDvNzS7Datx+pg5Zv7boJEc2Ia/Us9j6eI9r4tuPPGET2XwK
+        9tKRTvOUl/mrQB2FAkhlfPc=
+X-Google-Smtp-Source: AJdET5fmVSRtVngu+1RmJuUZhjRlrZm8apGLtPnVlK+U/Raev0isT1MY5/4lnqCaxCBGjAwwr2c0fg==
+X-Received: by 2002:adf:8919:: with SMTP id s25-v6mr5952645wrs.44.1542137729672;
+        Tue, 13 Nov 2018 11:35:29 -0800 (PST)
 Received: from localhost ([95.239.98.134])
-        by smtp.gmail.com with ESMTPSA id e10-v6sm26269231wrp.56.2018.11.13.11.35.26
+        by smtp.gmail.com with ESMTPSA id c14-v6sm14510237wmh.44.2018.11.13.11.35.28
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 11:35:26 -0800 (PST)
+        Tue, 13 Nov 2018 11:35:28 -0800 (PST)
 From:   Cristian Sicilia <sicilia.cristian@gmail.com>
 To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Arnd Bergmann <arnd@arndb.de>,
@@ -65,9 +65,9 @@ To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Colin Ian King <colin.king@canonical.com>
 Cc:     Cristian Sicilia <sicilia.cristian@gmail.com>,
         devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/2] staging: rtlwifi: Add spaces to match open parenthesis
-Date:   Tue, 13 Nov 2018 20:34:38 +0100
-Message-Id: <1542137679-31726-2-git-send-email-sicilia.cristian@gmail.com>
+Subject: [PATCH v2 2/2] staging: rtlwifi: Add new line to stay in 80 characters
+Date:   Tue, 13 Nov 2018 20:34:39 +0100
+Message-Id: <1542137679-31726-3-git-send-email-sicilia.cristian@gmail.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542137679-31726-1-git-send-email-sicilia.cristian@gmail.com>
 References: <1542064736-27655-1-git-send-email-sicilia.cristian@gmail.com>
@@ -77,36 +77,28 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Added before parameters some spaces to match open parenthesis
-on previous line.
+The parameter is sent to next line to stay in 80
+characters
 
 Signed-off-by: Cristian Sicilia <sicilia.cristian@gmail.com>
 ---
- drivers/staging/rtlwifi/ps.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/staging/rtlwifi/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/staging/rtlwifi/ps.c b/drivers/staging/rtlwifi/ps.c
-index 0ca0532..5118773 100644
---- a/drivers/staging/rtlwifi/ps.c
-+++ b/drivers/staging/rtlwifi/ps.c
-@@ -245,7 +245,7 @@ void rtl_ips_nic_off_wq_callback(void *data)
- 			/* call before RF off */
- 			if (rtlpriv->cfg->ops->get_btc_status())
- 				rtlpriv->btcoexist.btc_ops->btc_ips_notify(rtlpriv,
--									ppsc->inactive_pwrstate);
-+									   ppsc->inactive_pwrstate);
- 
- 			/*rtl_pci_reset_trx_ring(hw); */
- 			_rtl_ps_inactive_ps(hw);
-@@ -291,7 +291,7 @@ void rtl_ips_nic_on(struct ieee80211_hw *hw)
- 				rtlpriv->phydm.ops->phydm_reset_dm(rtlpriv);
- 			if (rtlpriv->cfg->ops->get_btc_status())
- 				rtlpriv->btcoexist.btc_ops->btc_ips_notify(rtlpriv,
--									ppsc->inactive_pwrstate);
-+									   ppsc->inactive_pwrstate);
+diff --git a/drivers/staging/rtlwifi/core.c b/drivers/staging/rtlwifi/core.c
+index ca37f75..a990281 100644
+--- a/drivers/staging/rtlwifi/core.c
++++ b/drivers/staging/rtlwifi/core.c
+@@ -1882,7 +1882,8 @@ bool rtl_hal_pwrseqcmdparsing(struct rtl_priv *rtlpriv, u8 cut_version,
+ 				return true;
+ 			default:
+ 				WARN_ONCE(true,
+-					  "rtlwifi: %s(): Unknown CMD!!\n", __func__);
++					  "rtlwifi: %s(): Unknown CMD!!\n",
++					  __func__);
+ 				break;
+ 			}
  		}
- 	}
- 	mutex_unlock(&rtlpriv->locks.ips_mutex);
 -- 
 2.7.4
 
