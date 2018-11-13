@@ -2,152 +2,102 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59CBFC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:57:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1344CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:58:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 200B6223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:57:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="0Lrb7ycM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 200B6223AE
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id CDF6B22507
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 09:58:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDF6B22507
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732027AbeKMTzD (ORCPT
+        id S1732060AbeKMTzy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 14:55:03 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:33056 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731901AbeKMTzC (ORCPT
+        Tue, 13 Nov 2018 14:55:54 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54444 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731616AbeKMTzy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 14:55:02 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAD9sNVQ180668;
-        Tue, 13 Nov 2018 09:57:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=z0dYalhlLnoIMtFuMo7kFrizuS8Yivowb+uHkoImADo=;
- b=0Lrb7ycMEO9K568YWW/GycajySoKMioLQsgplaK7Ppr2VQ50Zg14YGnOGZJiEVsi3aw7
- BoW1Zd2RQLi/CekwyVtQkO2AWaykdGz71/deX3AP0Q5c3zi5zjoNtiCdUBtdpD0zICnu
- 9covUfBY/PR2qjXNqtJ0t4t96tYfz8yMr2lOoduI/yVv/5VRGn3ChWaX9aXcYwO05k9Q
- ET9/jpfh3DWqmCESNK0cz5hTZmwIbkANWPdhkrdLZnPwg64ksZ46rfjI7k35KJKl+gHL
- JJpOq1ZcYXf5L2kYBFlgaExqQNT2EIZz9g6T7LNFs11jGEjM9gWGJ14GF2QshStYtI+1 tQ== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2nnw6ehjhe-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Nov 2018 09:57:39 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAD9vdHH014166
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Tue, 13 Nov 2018 09:57:39 GMT
-Received: from abhmp0020.oracle.com (abhmp0020.oracle.com [141.146.116.26])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAD9vcBa025593;
-        Tue, 13 Nov 2018 09:57:38 GMT
-Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Tue, 13 Nov 2018 01:57:38 -0800
-From:   Jianchao Wang <jianchao.w.wang@oracle.com>
-To:     axboe@kernel.dk
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V6 5/5] blk-mq: replace and kill blk_mq_request_issue_directly
-Date:   Tue, 13 Nov 2018 17:56:56 +0800
-Message-Id: <1542103016-21037-6-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542103016-21037-1-git-send-email-jianchao.w.wang@oracle.com>
-References: <1542103016-21037-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9075 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811130093
+        Tue, 13 Nov 2018 14:55:54 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAD9rjS8028424;
+        Tue, 13 Nov 2018 10:58:08 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2nnq3j8qu8-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Tue, 13 Nov 2018 10:58:08 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 990DF31;
+        Tue, 13 Nov 2018 09:58:07 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 6D8742715;
+        Tue, 13 Nov 2018 09:58:07 +0000 (GMT)
+Received: from [10.201.21.58] (10.75.127.45) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Tue, 13 Nov
+ 2018 10:58:06 +0100
+Subject: Re: [PATCH 3/3] ARM: dts: stm32: Add hwlock for pinctrl
+To:     Benjamin Gaignard <benjamin.gaignard@linaro.org>,
+        <linus.walleij@linaro.org>, <robh+dt@kernel.org>
+CC:     <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        Benjamin Gaignard <benjamin.gaignard@st.com>
+References: <20181113095142.32015-1-benjamin.gaignard@st.com>
+ <20181113095142.32015-4-benjamin.gaignard@st.com>
+From:   Alexandre Torgue <alexandre.torgue@st.com>
+Message-ID: <2e76818f-28a0-1151-11f0-a9e8d3b5fd09@st.com>
+Date:   Tue, 13 Nov 2018 10:58:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181113095142.32015-4-benjamin.gaignard@st.com>
+Content-Type: text/plain; charset="utf-8"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.75.127.45]
+X-ClientProxiedBy: SFHDAG5NODE3.st.com (10.75.127.15) To SFHDAG3NODE2.st.com
+ (10.75.127.8)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace blk_mq_request_issue_directly with blk_mq_try_issue_directly
-in blk_insert_cloned_request and kill it as nobody uses it any more.
+Hi Benjamin
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- block/blk-core.c | 4 +++-
- block/blk-mq.c   | 9 +--------
- block/blk-mq.h   | 7 ++++---
- 3 files changed, 8 insertions(+), 12 deletions(-)
+On 11/13/18 10:51 AM, Benjamin Gaignard wrote:
+> Define a hwspinlock to be used by pin-controller
+> 
+> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+> ---
+>   arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 1 +
+>   1 file changed, 1 insertion(+)
+> 
 
-diff --git a/block/blk-core.c b/block/blk-core.c
-index fdc0ad2..e4eedc7 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -1421,6 +1421,8 @@ static int blk_cloned_rq_check_limits(struct request_queue *q,
-  */
- blk_status_t blk_insert_cloned_request(struct request_queue *q, struct request *rq)
- {
-+	blk_qc_t unused_cookie;
-+
- 	if (blk_cloned_rq_check_limits(q, rq))
- 		return BLK_STS_IOERR;
- 
-@@ -1436,7 +1438,7 @@ blk_status_t blk_insert_cloned_request(struct request_queue *q, struct request *
- 	 * bypass a potential scheduler on the bottom device for
- 	 * insert.
- 	 */
--	return blk_mq_request_issue_directly(rq);
-+	return blk_mq_try_issue_directly(rq->mq_hctx, rq, &unused_cookie, true);
- }
- EXPORT_SYMBOL_GPL(blk_insert_cloned_request);
- 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index f41a815..b5316c78 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1766,7 +1766,7 @@ static blk_status_t __blk_mq_issue_directly(struct blk_mq_hw_ctx *hctx,
- 	return ret;
- }
- 
--static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
-+blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
- 						struct request *rq,
- 						blk_qc_t *cookie,
- 						bool bypass)
-@@ -1845,13 +1845,6 @@ static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
- 	return ret;
- }
- 
--blk_status_t blk_mq_request_issue_directly(struct request *rq)
--{
--	blk_qc_t unused_cookie;
--
--	return blk_mq_try_issue_directly(rq->mq_hctx, rq, &unused_cookie, true);
--}
--
- void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
- 		struct list_head *list)
- {
-diff --git a/block/blk-mq.h b/block/blk-mq.h
-index facb6e9..f18c27c 100644
---- a/block/blk-mq.h
-+++ b/block/blk-mq.h
-@@ -61,9 +61,10 @@ void __blk_mq_insert_request(struct blk_mq_hw_ctx *hctx, struct request *rq,
- void blk_mq_request_bypass_insert(struct request *rq, bool run_queue);
- void blk_mq_insert_requests(struct blk_mq_hw_ctx *hctx, struct blk_mq_ctx *ctx,
- 				struct list_head *list);
--
--/* Used by blk_insert_cloned_request() to issue request directly */
--blk_status_t blk_mq_request_issue_directly(struct request *rq);
-+blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
-+						struct request *rq,
-+						blk_qc_t *cookie,
-+						bool bypass);
- void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
- 				    struct list_head *list);
- 
--- 
-2.7.4
+In commit title please add for which SoC it is targeted. If you don't 
+have to send new version for driver or dt-bindings, I will do it when 
+I'll apply.
+
+regards
+Alex
+
+> diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+> index c4851271e810..2886e5a6ac27 100644
+> --- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+> +++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
+> @@ -14,6 +14,7 @@
+>   			ranges = <0 0x50002000 0xa400>;
+>   			interrupt-parent = <&exti>;
+>   			st,syscfg = <&exti 0x60 0xff>;
+> +			hwlocks = <&hsem 0>;
+>   			pins-are-numbered;
+>   
+>   			gpioa: gpio@50002000 {
+> 
 
