@@ -2,114 +2,69 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA694C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:15:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8EEE6C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:15:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E5BD2250E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:15:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UdC94+D0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E5BD2250E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 541062250E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 00:15:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 541062250E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730299AbeKMKKs (ORCPT
+        id S1730476AbeKMKK5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 05:10:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47300 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725991AbeKMKKs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 05:10:48 -0500
-Received: from localhost (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 73804224E0;
-        Tue, 13 Nov 2018 00:15:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542068119;
-        bh=mzbjpKU9Vg741DbBOW8tnJ+52nAuVvvIrY1PneRqDt0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=UdC94+D0Frl08eKsQBi9rvG5wRJPWDmhbvd1ANtlICk7IhQTpRNUtsSccOsRj8eAT
-         2rCZgsBjoUZxtjTIwxo7dtrwS8vi2O+tF4JzdwZppLOBSNiBCGIfOWZtfPVz9suvnA
-         3ZOhiEEm3dY7ImcYEelT2jVZqyNObmft8chgsFVQ=
-Date:   Mon, 12 Nov 2018 16:15:17 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Yunlong Song <yunlong.song@huawei.com>
-Cc:     chao@kernel.org, yuchao0@huawei.com, yunlong.song@icloud.com,
-        miaoxie@huawei.com, bintian.wang@huawei.com, shengyong1@huawei.com,
-        heyunlei@huawei.com, linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] f2fs: only flush the single temp bio cache which owns
- the target page
-Message-ID: <20181112013003.GA83294@jaegeuk-macbookpro.roam.corp.google.com>
-References: <1540368651-14353-1-git-send-email-yunlong.song@huawei.com>
- <1540380945-18114-1-git-send-email-yunlong.song@huawei.com>
+        Tue, 13 Nov 2018 05:10:57 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15089 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725991AbeKMKK5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 05:10:57 -0500
+Received: from DGGEMS405-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id C0FDD3D90D4E9;
+        Tue, 13 Nov 2018 08:15:24 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.205) with Microsoft SMTP Server (TLS) id 14.3.408.0; Tue, 13 Nov
+ 2018 08:15:19 +0800
+Subject: Re: [PATCH 1/3] staging: erofs: unzip_vle.c: Replace comparison to
+ NULL.
+To:     Cristian Sicilia <sicilia.cristian@gmail.com>
+CC:     Chao Yu <yuchao0@huawei.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        <linux-erofs@lists.ozlabs.org>, <devel@driverdev.osuosl.org>,
+        <linux-kernel@vger.kernel.org>
+References: <1542055439-24444-1-git-send-email-sicilia.cristian@gmail.com>
+ <1542055439-24444-2-git-send-email-sicilia.cristian@gmail.com>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <4afeb152-b205-792f-8289-95d1fddb19ef@huawei.com>
+Date:   Tue, 13 Nov 2018 08:15:14 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1540380945-18114-1-git-send-email-yunlong.song@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <1542055439-24444-2-git-send-email-sicilia.cristian@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/24, Yunlong Song wrote:
-> Previously, when f2fs finds which temp bio cache owns the target page,
-> it will flush all the three temp bio caches, but we only need to flush
-> one single bio cache indeed, which can help to keep bio merged.
-> 
-> Signed-off-by: Yunlong Song <yunlong.song@huawei.com>
-> ---
->  fs/f2fs/data.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 106f116..882e217 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -396,13 +396,17 @@ static bool has_merged_page(struct f2fs_sb_info *sbi, struct inode *inode,
->  }
->  
->  static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
-> -				enum page_type type, enum temp_type temp)
-> +				struct inode *inode, struct page *page, nid_t ino,
-> +				enum page_type type, enum temp_type temp, bool force)
->  {
->  	enum page_type btype = PAGE_TYPE_OF_BIO(type);
->  	struct f2fs_bio_info *io = sbi->write_io[btype] + temp;
->  
->  	down_write(&io->io_rwsem);
->  
-> +	if (!force && !__has_merged_page(io, inode, page, ino))
-> +		goto out;
+Hi Cristian,
 
-Could you clean up this to call once in __submit_merged_write_cond() only?
+On 2018/11/13 4:43, Cristian Sicilia wrote:
+> Replace equal to NULL with logic unary operator,
+> and removing not equal to NULL comparison.
+> 
+> Signed-off-by: Cristian Sicilia <sicilia.cristian@gmail.com>
 
-> +
->  	/* change META to META_FLUSH in the checkpoint procedure */
->  	if (type >= META_FLUSH) {
->  		io->fio.type = META_FLUSH;
-> @@ -412,6 +416,7 @@ static void __f2fs_submit_merged_write(struct f2fs_sb_info *sbi,
->  			io->fio.op_flags |= REQ_PREFLUSH | REQ_FUA;
->  	}
->  	__submit_merged_bio(io);
-> +out:
->  	up_write(&io->io_rwsem);
->  }
->  
-> @@ -426,7 +431,7 @@ static void __submit_merged_write_cond(struct f2fs_sb_info *sbi,
->  
->  	for (temp = HOT; temp < NR_TEMP_TYPE; temp++) {
->  
-> -		__f2fs_submit_merged_write(sbi, type, temp);
-> +		__f2fs_submit_merged_write(sbi, inode, page, ino, type, temp, force);
->  
->  		/* TODO: use HOT temp only for meta pages now. */
->  		if (type >= META)
-> -- 
-> 1.8.5.2
+Indeed, I have several pending changes for this file...
+But these coding style fixes looks good to me. I will rebase them on your work...
+
+Reviewed-by: Gao Xiang <gaoxiang25@huawei.com>
+
+Thanks,
+Gao Xiang
