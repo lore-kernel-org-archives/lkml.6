@@ -2,160 +2,151 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33AF1C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:35:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D82DC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:36:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CCD842245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:35:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6149E2245E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 08:36:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="MM6Z2C5L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CCD842245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eCSpQ/1m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6149E2245E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731217AbeKMScK (ORCPT
+        id S1731292AbeKMSdj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 13:32:10 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:50994 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730736AbeKMScJ (ORCPT
+        Tue, 13 Nov 2018 13:33:39 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:52102 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730736AbeKMSdj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 13:32:09 -0500
-Received: by mail-wm1-f66.google.com with SMTP id 124-v6so11036252wmw.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 00:35:06 -0800 (PST)
+        Tue, 13 Nov 2018 13:33:39 -0500
+Received: by mail-it1-f196.google.com with SMTP id m34-v6so16893085iti.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 00:36:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=9/mv9m00FRVRwLhbfDsr8tIKnH2PvEBmJ5S5xo4mrYI=;
-        b=MM6Z2C5L706429h+9nAUp4v9h0bkD38uJqAkUVTDqljpEn3NKjL2MRsRr/2lj2xeMi
-         h2o/q7PSolpqGGxUz8xG7IGt3mZbRy0p/mTAtmdHLp12m5OMDiDCr3+4DPKzyQMMdFiv
-         GEdAsf4xq5Ky2Joe/YmE33r+NKJ8gunFVEmXqiM+ix4cl3nupviXgbDsSb4stnXqoxKj
-         SPj92OR1wiwLZ76fDCS0U8YDEnoagSfLCylAg4ngDLNqdVx4CtLqRdYvkoZmJwyl9Ui6
-         tymq9mbxYJ6y1OhsDv99G2Sb7KqU1vgyoMW4Ouei0VVXxBLCuSjkLbFZL5XvuLRpnujB
-         ESiw==
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=7XWeqlo+6lwHoVaCLUge+Tebs94xhxS3Zq6e11aLK7U=;
+        b=eCSpQ/1mLuWyKTCjy2uBcgud6vismnEyRTCrv2xi5jErbTwCEs3l0m5bLsjvxndex3
+         XIX2aKP21RPzZHBfGPdbHBfAwRdmh0wtdjkRRiwUMs96kFjQunMz1WtSa5/yJ2cghg0Z
+         78Fo9Bsamwc5PY8mCnInEgCjRT74bnEEKDGeBkaX85FGCfhwgx9mWUrs+xgEHzwJ6npp
+         omY9Q91hMCfIoGu7snbEJmhTKNb6xQBvYcStnru1pNTUUzZQ+yVe3wmn7e7apfWhw/nZ
+         NBPQKPrKGohR8IuhuNiLNsGyxUT+zLEwf/0jaNJ60teSUQL8b/86eMy7ko1CVlmuE9M5
+         zVSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=9/mv9m00FRVRwLhbfDsr8tIKnH2PvEBmJ5S5xo4mrYI=;
-        b=Dre0n0ldc3as4EHQYDekF2jyBQUc7s1QkLck6GVBGR34WuL60F6mf9ZAU1Li+2FL0+
-         fPaFKQxLVscCZCE7LVC/RcJ/iUz0amdF2ZpED7+Q6U3YuqCz2lfO+Z90YjmIKgDS3HUR
-         roOgrKR1uIc0wI5Dd8GWo1iMKdNtFAmvb2vi1KBlGlS06Vs0X0lsmDuYM95qZJH0ruNr
-         Dz4hTXne/k78pDEaFeAlM4Ese7gbxD3Atufn0Ra7JFSJx6+Kgo/gewPa4Df77Sqt7HfD
-         BFQ3vyzATM5IZxuSue8xKC3L/5obcP1ddu7oisquJ+CyBxtvPyDZktyk5A8LE4Pv1Fum
-         DamA==
-X-Gm-Message-State: AGRZ1gJpQCcuxwnZTwIAy3GOrWcRWCkYdTWGW1CD2inOIYx4+KBfnSn2
-        wTKUIMpeYjlsBHQTOh1sqNrMY69uzFA=
-X-Google-Smtp-Source: AJdET5d62ZhQYRPqK1teCVlr6OZlreSn5bkugmKggtfi+RFVDiI/j1tAgRxpUByGPmjNpfIb/6KeDQ==
-X-Received: by 2002:a7b:c052:: with SMTP id u18-v6mr2352293wmc.29.1542098105537;
-        Tue, 13 Nov 2018 00:35:05 -0800 (PST)
-Received: from [10.1.2.12] ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id d18-v6sm4180248wre.25.2018.11.13.00.35.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 00:35:05 -0800 (PST)
-Subject: Re: [PATCH] drm/meson: venc: dmt mode must use encp
-To:     Jorge Ramirez-Ortiz <jramirez@baylibre.com>, airlied@linux.ie,
-        carlo@caione.org, khilman@baylibre.com
-Cc:     dri-devel@lists.freedesktop.org, linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1542048069-22603-1-git-send-email-jramirez@baylibre.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <9f20e9d1-2e15-c087-db52-674300d7581d@baylibre.com>
-Date:   Tue, 13 Nov 2018 09:35:04 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=7XWeqlo+6lwHoVaCLUge+Tebs94xhxS3Zq6e11aLK7U=;
+        b=D+5lFbC5ehfsUqg5zhw7gv+TaYJecjPin5763MffON6CnTFBdYhFfvAmjjoRNvk4q4
+         rjgp1jczkd5nNjDzGREbLxap6E3AkZjtx3TnVm+rd5cpOzi8Pvo8fXIYYdxo6Lo4B45q
+         f+uahuoTRiiaoOJ5ULMGAVvzAhzVD81P7bR6J4eYp3/RG21fwAflINZkyj42+sxBkhIT
+         3G2/du9JjspEkYnnJs01jhQsPTZXBETXa550wV3OxQBl1oNFy0pS6iYqxU6Kw0Hu4Wgk
+         wsIsi0bJ2Vakapkf76AIZ030xRro6wVq698k0Mej6vQNzy7jrHUZazUw4HkAVz3GW+mj
+         3+QQ==
+X-Gm-Message-State: AGRZ1gJ6I1uEh1KMCotWgsrInElNu1dOLQOiE63UIGG4UGXCgt3bs4m2
+        9B+mR2w4gdQGHqaJwQTkXwT15B0qQZR905APvuL7lbF/cA4=
+X-Google-Smtp-Source: AJdET5dWCBGf8ZKedODaDgUJR+5eV+6KUrp2EPb3et2CMDZM2G1rKMxMlAtuqQR8P+BgjNmHd9b6f6yr9wvpSK1jBnQ=
+X-Received: by 2002:a02:a0c9:: with SMTP id i9-v6mr3906372jah.116.1542098195925;
+ Tue, 13 Nov 2018 00:36:35 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1542048069-22603-1-git-send-email-jramirez@baylibre.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <CA+ASDXN40pvbZKvsO3Cb8256AQJ3fyQh5TWdT+GDk_ncq11nMw@mail.gmail.com>
+ <CAK7LNAR5etb-oJDaxNZbH9-FmC3+hC3A_cwnbuWPQx0maHaDng@mail.gmail.com>
+ <20181109183436.GA45531@google.com> <20181110.085826.230851261@genki.is>
+ <m24lcpjjss.fsf@linux-m68k.org> <20181110.201050.925673938@genki.is>
+ <CAJ1xhMXDFAdiWMV6ODcJM8bfjs-ddyv8utf6N+Yh7+-Ne-KaHw@mail.gmail.com>
+ <20181111.174140.002789201@genki.is> <CAJ1xhMUA4GUzeDANqR1WafELmEpE+-V569t7e0xCotTG2Lvbyw@mail.gmail.com>
+ <CAJ1xhMWw8Mi2dubTFNOxhoP6hk+__Qjo-0+9sQbpqP5K-n4mVw@mail.gmail.com> <20181113000938.GA16783@google.com>
+In-Reply-To: <20181113000938.GA16783@google.com>
+From:   Alexander Kapshuk <alexander.kapshuk@gmail.com>
+Date:   Tue, 13 Nov 2018 10:35:59 +0200
+Message-ID: <CAJ1xhMVFt6bYgwY+N5VoFXNpm5kS1j_HV8-ZS8SkavNgZx1HOg@mail.gmail.com>
+Subject: Re: [PATCH] scripts/setlocalversion: Improve -dirty check with
+ git-status --no-optional-locks
+To:     Brian Norris <briannorris@chromium.org>
+Cc:     sky@genki.is, schwab@linux-m68k.org,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Douglas Anderson <dianders@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>, lists@nerdbynature.de,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 12/11/2018 19:41, Jorge Ramirez-Ortiz wrote:
-> From: Jorge Ramirez-Ortiz <jorge.ramirez.ortiz@gmail.com>
-> 
-> The video mode for DMT is only populated to support encp.
-> 
-> Signed-off-by: Jorge Ramirez-Ortiz <jorge.ramirez.ortiz@gmail.com>
-> ---
->  drivers/gpu/drm/meson/meson_venc.c | 15 ++++++++-------
->  1 file changed, 8 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/meson/meson_venc.c b/drivers/gpu/drm/meson/meson_venc.c
-> index 514245e..acbbad3 100644
-> --- a/drivers/gpu/drm/meson/meson_venc.c
-> +++ b/drivers/gpu/drm/meson/meson_venc.c
-> @@ -854,6 +854,13 @@ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
->  	unsigned int sof_lines;
->  	unsigned int vsync_lines;
->  
-> +	/* Use VENCI for 480i and 576i and double HDMI pixels */
-> +	if (mode->flags & DRM_MODE_FLAG_DBLCLK) {
-> +		hdmi_repeat = true;
-> +		use_enci = true;
-> +		venc_hdmi_latency = 1;
-> +	}
-> +
->  	if (meson_venc_hdmi_supported_vic(vic)) {
->  		vmode = meson_venc_hdmi_get_vic_vmode(vic);
->  		if (!vmode) {
-> @@ -865,13 +872,7 @@ void meson_venc_hdmi_mode_set(struct meson_drm *priv, int vic,
->  	} else {
->  		meson_venc_hdmi_get_dmt_vmode(mode, &vmode_dmt);
->  		vmode = &vmode_dmt;
-> -	}
-> -
-> -	/* Use VENCI for 480i and 576i and double HDMI pixels */
-> -	if (mode->flags & DRM_MODE_FLAG_DBLCLK) {
-> -		hdmi_repeat = true;
-> -		use_enci = true;
-> -		venc_hdmi_latency = 1;
-> +		use_enci = false;
->  	}
->  
->  	/* Repeat VENC pixels for 480/576i/p, 720p50/60 and 1080p50/60 */
-> 
+On Tue, Nov 13, 2018 at 2:09 AM Brian Norris <briannorris@chromium.org> wrote:
+>
+> On Mon, Nov 12, 2018 at 10:42:26AM +0200, Alexander Kapshuk wrote:
+> > An even simpler approach would be:
+> >
+> > {
+> >         git --no-optional-locks status -uno --porcelain 2>/dev/null ||
+> >         git diff-index --name-only HEAD
+> > } | grep -qv scripts/package &&
+> >         printf '%s' -dirty
+> >
+> > Sample run:
+> > cmd
+> > sh: cmd: command not found
+> >
+> > {
+> >         cmd 2>/dev/null ||
+> >         date
+> > } | grep -q 2018 &&
+> >         printf '%s' ok
+> > ok
+>
+> You lose accuracy here, because now you're skipping any line that
+> contains 'scripts/package', which would include, e.g., paths like
+>
+>   tools/some/other-scripts/package
+>
+> Maybe if the grep expression were more like this?
+>
+>   grep -qv '^\(.. \)\?scripts/package'
+>
+> I think it'd be safe enough to ignore paths that start with two
+> characters and a space, like:
+>
+> xy scripts/package
+> x/ scripts/package
+>
+> Brian
 
-Thanks !
+Thanks for your input.
+I've found the following grep command, that uses extended regular
+expressions, to work as required:
 
-Acked-by: Neil Armstrong <narmstrong@baylibre.com>
+{
+        echo hello
+        echo scripts/package
+        echo '.. scripts/package'
+        echo tools/some/other-scripts/package
+} | grep -Ev '^(.. )?scripts/package'
 
-I'll apply to drm-misc-fixes !
+[Output]
+hello
+tools/some/other-scripts/package
 
-Neil
+If the participants of this email exchange consider the proposed
+implementation as fitting the bill,
+
+{
+        git --no-optional-locks status -uno --porcelain 2>/dev/null ||
+        git diff-index --name-only HEAD
+} | grep -Eqv '^(.. )?scripts/package' &&
+        printf '%s' -dirty
+
+Was the original committer of the patch proposed here,
+https://lkml.org/lkml/2018/11/10/55, going to take it in, and resend it
+as v2 of the patch, or did you want me to submit the patch instead?
+I would be happy with either way.
+
+Thanks.
