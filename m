@@ -7,43 +7,43 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39003C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:51:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8573C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:51:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E764822522
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:51:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AA8FF2250E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:51:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YtoeGpzV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E764822522
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UxmdCXCk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA8FF2250E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732274AbeKMPrz (ORCPT
+        id S1732311AbeKMPr6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:47:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33856 "EHLO mail.kernel.org"
+        Tue, 13 Nov 2018 10:47:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:33958 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732221AbeKMPry (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:47:54 -0500
+        id S1732276AbeKMPr4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 10:47:56 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8E70422529;
-        Tue, 13 Nov 2018 05:51:26 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4672D22520;
+        Tue, 13 Nov 2018 05:51:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542088286;
-        bh=0+qUUorToCUDKC7tEPcD5MWoXpxUCyHI15pTI1x1Crk=;
+        s=default; t=1542088289;
+        bh=9iEchTNuhSxvpVncNOE/sMFjLJGH8MFYTgN2hKbZW34=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=YtoeGpzVBl0p0PyXu8nOg29o0DRLI39E5pGHsVGfVqqKmXPHiALE+8cTplXr8fGcA
-         LU9KFPVwPoGi+0KWkGJhf2GR3NSiAvV+rC0/8VKeS0XGtxSwVhmFgVSyHPJenOrfL5
-         YPyuUTI3koGSWCJhbtFuwHThxH0F8mmKmG/5d0XI=
+        b=UxmdCXCkmOkNMId3L4GToZbnviagaSp1ZeFDCZnVC9jJnzBjT/t759TzxBLuiBw2K
+         UIyt5rXxbkD/xJnfCTSU6uIEABmzy+t2TsQrqV/YrP5CU0n/iBUXgkbljlHejotDok
+         PJx2T+nODkXeRIEM371Tv74OOBEN5+oOrFirfKJU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     David Howells <dhowells@redhat.com>,
-        Sasha Levin <sashal@kernel.org>, linux-afs@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.18 20/39] afs: Handle EIO from delivery function
-Date:   Tue, 13 Nov 2018 00:50:34 -0500
-Message-Id: <20181113055053.78352-20-sashal@kernel.org>
+Cc:     Chengguang Xu <cgxu519@gmx.com>, Al Viro <viro@zeniv.linux.org.uk>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 24/39] fs/exofs: fix potential memory leak in mount option parsing
+Date:   Tue, 13 Nov 2018 00:50:38 -0500
+Message-Id: <20181113055053.78352-24-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181113055053.78352-1-sashal@kernel.org>
 References: <20181113055053.78352-1-sashal@kernel.org>
@@ -52,62 +52,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: David Howells <dhowells@redhat.com>
+From: Chengguang Xu <cgxu519@gmx.com>
 
-[ Upstream commit 4ac15ea53622272c01954461b4814892b7481b40 ]
+[ Upstream commit 515f1867addaba49c1c6ac73abfaffbc192c1db4 ]
 
-Fix afs_deliver_to_call() to handle -EIO being returned by the operation
-delivery function, indicating that the call found itself in the wrong
-state, by printing an error and aborting the call.
+There are some cases can cause memory leak when parsing
+option 'osdname'.
 
-Currently, an assertion failure will occur.  This can happen, say, if the
-delivery function falls off the end without calling afs_extract_data() with
-the want_more parameter set to false to collect the end of the Rx phase of
-a call.
-
-The assertion failure looks like:
-
-	AFS: Assertion failed
-	4 == 7 is false
-	0x4 == 0x7 is false
-	------------[ cut here ]------------
-	kernel BUG at fs/afs/rxrpc.c:462!
-
-and is matched in the trace buffer by a line like:
-
-kworker/7:3-3226 [007] ...1 85158.030203: afs_io_error: c=0003be0c r=-5 CM_REPLY
-
-Fixes: 98bf40cd99fc ("afs: Protect call->state changes against signals")
-Reported-by: Marc Dionne <marc.dionne@auristor.com>
-Signed-off-by: David Howells <dhowells@redhat.com>
+Signed-off-by: Chengguang Xu <cgxu519@gmx.com>
+Signed-off-by: Al Viro <viro@zeniv.linux.org.uk>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/afs/rxrpc.c | 5 ++++-
+ fs/exofs/super.c | 5 ++++-
  1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/fs/afs/rxrpc.c b/fs/afs/rxrpc.c
-index b6735ae3334e..167748df87eb 100644
---- a/fs/afs/rxrpc.c
-+++ b/fs/afs/rxrpc.c
-@@ -500,7 +500,6 @@ static void afs_deliver_to_call(struct afs_call *call)
- 		case -EINPROGRESS:
- 		case -EAGAIN:
- 			goto out;
--		case -EIO:
- 		case -ECONNABORTED:
- 			ASSERTCMP(state, ==, AFS_CALL_COMPLETE);
- 			goto done;
-@@ -509,6 +508,10 @@ static void afs_deliver_to_call(struct afs_call *call)
- 			rxrpc_kernel_abort_call(call->net->socket, call->rxcall,
- 						abort_code, ret, "KIV");
- 			goto local_abort;
-+		case -EIO:
-+			pr_err("kAFS: Call %u in bad state %u\n",
-+			       call->debug_id, state);
-+			/* Fall through */
- 		case -ENODATA:
- 		case -EBADMSG:
- 		case -EMSGSIZE:
+diff --git a/fs/exofs/super.c b/fs/exofs/super.c
+index 41cf2fbee50d..7d61e3fa378c 100644
+--- a/fs/exofs/super.c
++++ b/fs/exofs/super.c
+@@ -101,6 +101,7 @@ static int parse_options(char *options, struct exofs_mountopt *opts)
+ 		token = match_token(p, tokens, args);
+ 		switch (token) {
+ 		case Opt_name:
++			kfree(opts->dev_name);
+ 			opts->dev_name = match_strdup(&args[0]);
+ 			if (unlikely(!opts->dev_name)) {
+ 				EXOFS_ERR("Error allocating dev_name");
+@@ -866,8 +867,10 @@ static struct dentry *exofs_mount(struct file_system_type *type,
+ 	int ret;
+ 
+ 	ret = parse_options(data, &opts);
+-	if (ret)
++	if (ret) {
++		kfree(opts.dev_name);
+ 		return ERR_PTR(ret);
++	}
+ 
+ 	if (!opts.dev_name)
+ 		opts.dev_name = dev_name;
 -- 
 2.17.1
 
