@@ -2,162 +2,93 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 22A2FC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:52:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DB3CC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2B5F22419
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:52:45 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=akamai.com header.i=@akamai.com header.b="nnCHzrpG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2B5F22419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=akamai.com
+	by mail.kernel.org (Postfix) with ESMTP id DC845223C8
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:55:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC845223C8
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728786AbeKNFwW (ORCPT
+        id S1728558AbeKNFyk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:52:22 -0500
-Received: from mx0a-00190b01.pphosted.com ([67.231.149.131]:43600 "EHLO
-        mx0a-00190b01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725748AbeKNFwV (ORCPT
+        Wed, 14 Nov 2018 00:54:40 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35914 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbeKNFyk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:52:21 -0500
-Received: from pps.filterd (m0122333.ppops.net [127.0.0.1])
-        by mx0a-00190b01.pphosted.com (8.16.0.27/8.16.0.27) with SMTP id wADJl8aJ026728;
-        Tue, 13 Nov 2018 19:52:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=akamai.com; h=from : to : cc :
- subject : date : message-id : references : in-reply-to : content-type :
- content-id : content-transfer-encoding : mime-version; s=jan2016.eng;
- bh=J/xbIr70NunOZRiBgiJGcdqA/V77ozvyT5xNeTsP2RA=;
- b=nnCHzrpGwP2rgprWsFb7hpx7uACj2KvW6S9RqWTI8UGMcur+0mxb7nqmTERDmcrpxWQF
- p93i6kqP4VDuZ6t2KeXS+GDnzjXMs9QJLaId8aKzlb+Cp/w/2H49bSeM3JBR60bue9PF
- 2xf3Sgvm2gfR1U1uhm9E7zZNedYloaegbxG8YX724nAqtT7HdQujE6byhFWp+07d5udA
- oPeUw/syW/vZlFGfQ9hD5Y93aGdoCilaz2GY0bMiLztNmR0V9q6rMrxmzEwsngdlcw0+
- qqZYkq8QHaMJBJCxMRiOfRnqPL9eknb96Vvb4GcYIY4eqVRS5QhykaC2BVDPBSpiPZsl Bg== 
-Received: from prod-mail-ppoint1 (prod-mail-ppoint1.akamai.com [184.51.33.18])
-        by mx0a-00190b01.pphosted.com with ESMTP id 2nqayech6r-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-        Tue, 13 Nov 2018 19:52:26 +0000
-Received: from pps.filterd (prod-mail-ppoint1.akamai.com [127.0.0.1])
-        by prod-mail-ppoint1.akamai.com (8.16.0.21/8.16.0.21) with SMTP id wADJolp2011380;
-        Tue, 13 Nov 2018 14:52:25 -0500
-Received: from email.msg.corp.akamai.com ([172.27.25.30])
-        by prod-mail-ppoint1.akamai.com with ESMTP id 2nnujeq51d-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
-        Tue, 13 Nov 2018 14:52:24 -0500
-Received: from USTX2EX-DAG3MB1.msg.corp.akamai.com (172.27.27.22) by
- ustx2ex-dag1mb1.msg.corp.akamai.com (172.27.27.101) with Microsoft SMTP
- Server (TLS) id 15.0.1365.1; Tue, 13 Nov 2018 13:52:15 -0600
-Received: from USTX2EX-DAG3MB1.msg.corp.akamai.com ([172.27.27.22]) by
- USTX2EX-DAG3MB1.msg.corp.akamai.com ([172.27.27.22]) with mapi id
- 15.00.1365.000; Tue, 13 Nov 2018 14:52:15 -0500
-From:   "Zhivich, Michael" <mzhivich@akamai.com>
-To:     John Stultz <john.stultz@linaro.org>
-CC:     lkml <linux-kernel@vger.kernel.org>,
-        Ondrej Mosnacek <omosnace@redhat.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Jason Wessel <jason.wessel@windriver.com>,
-        "Hunt, Joshua" <johunt@akamai.com>,
-        "Banerjee, Debabrata" <dbanerje@akamai.com>
-Subject: Re: [PATCH] Revert "clocksource: Make clocksource validation work for
- all clocksources"
-Thread-Topic: [PATCH] Revert "clocksource: Make clocksource validation work
- for all clocksources"
-Thread-Index: AQHUermOKqr/WMoIJUWiYH0Cmjr/86VNCxSAgAEUOYA=
-Date:   Tue, 13 Nov 2018 19:52:15 +0000
-Message-ID: <68E373EE-86DC-4219-80F9-DAAF5A34977A@akamai.com>
-References: <20181112185651.17138-1-mzhivich@akamai.com>
- <CALAqxLVCwWATXruj+PAAtKMuE4TDCgHCeQAmpz39k33xFm_68Q@mail.gmail.com>
-In-Reply-To: <CALAqxLVCwWATXruj+PAAtKMuE4TDCgHCeQAmpz39k33xFm_68Q@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [172.19.35.23]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C4A0F4A61B3BAB478BCE59DC76258EFA@akamai.com>
-Content-Transfer-Encoding: base64
+        Wed, 14 Nov 2018 00:54:40 -0500
+Received: by mail-ed1-f68.google.com with SMTP id f23so2357169edb.3;
+        Tue, 13 Nov 2018 11:55:00 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=a7KjC7kywQgCEcxjXF2om1ZnMlO3DfI+tGhEZ4319dw=;
+        b=d0JQWKgiQTQJSHV5gLHnY30xW7/Bl9DwwaSIAagPKlQUi8ZI/bx63yzxdq0bHVtWpF
+         XkRrofTy+fzd2+9pS0BDBWdUBZt5BDFJ9X0r9kaWY2UeiTVD0F1amfD/Bor93R7O28Zf
+         5H2wo24Mb6EE2qCIiLHShH2jM52x0aI4VEjL55vI+LhPdxmrk0EUoOGYPJrJExO9eD8O
+         SKPOxkoFvqz4K3TxKFKK4bxYWNFKKZgn1XqxqIBMIj0mUbpro81NjR4UHSg2/M5oLK74
+         D1f/H9z+jTusLimF9gv/OJ+in3pQzayDWyGGh4tFXzG/fYpGfjwH55R8AfAtidPapvWe
+         RV8g==
+X-Gm-Message-State: AGRZ1gLqijnXIJ5wTmGjeroEIeJy/hsVZdNlZaXl4uzHU8Zzkewx81HH
+        IagUBVCDZJgj74wv2pCsCs0=
+X-Google-Smtp-Source: AJdET5fPF5ZdVQfB8rt146b0fICC0u7uq2VwJ5yy9qwcWdb0ZqDzi0WlIsHI6VQHadHk5jLFd8r0YA==
+X-Received: by 2002:a50:aece:: with SMTP id f14mr8840018edd.259.1542138899548;
+        Tue, 13 Nov 2018 11:54:59 -0800 (PST)
+Received: from kozik-lap ([178.38.103.27])
+        by smtp.googlemail.com with ESMTPSA id d1-v6sm5543972edd.32.2018.11.13.11.54.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Nov 2018 11:54:58 -0800 (PST)
+Date:   Tue, 13 Nov 2018 20:54:56 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: Re: [PATCHv5 4/6] ARM: dts: exynos: Add pin configuration for SD
+ write protect on Odroid XU3/XU4
+Message-ID: <20181113195456.GF2418@kozik-lap>
+References: <20180927140738.1006-1-linux.amoon@gmail.com>
+ <20180927140738.1006-5-linux.amoon@gmail.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1807170000 definitions=main-1811130180
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-13_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 priorityscore=1501 malwarescore=0
- suspectscore=0 phishscore=0 bulkscore=0 spamscore=0 clxscore=1015
- lowpriorityscore=0 mlxscore=0 impostorscore=0 mlxlogscore=999 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.0.1-1807170000
- definitions=main-1811130179
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20180927140738.1006-5-linux.amoon@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-T24gMTEvMTIvMTgsIDU6MjMgUE0sICJKb2huIFN0dWx0eiIgPGpvaG4uc3R1bHR6QGxpbmFyby5v
-cmc+IHdyb3RlOg0KDQogICAgT24gTW9uLCBOb3YgMTIsIDIwMTggYXQgMTA6NTYgQU0sIE1pY2hh
-ZWwgWmhpdmljaCA8bXpoaXZpY2hAYWthbWFpLmNvbT4gd3JvdGU6DQogICAgPiBSZXZlcnQgY29t
-bWl0IDFmNDVmMWYzM2M4YyAoImNsb2Nrc291cmNlOiBNYWtlIGNsb2Nrc291cmNlIHZhbGlkYXRp
-b24gd29yaw0KICAgID4gZm9yIGFsbCBjbG9ja3NvdXJjZXMiKSB0byByZXN0b3JlIGNvcnJlY3Qg
-Y2xvY2tzb3VyY2VfZGVsdGEoKSBjb21wdXRhdGlvbg0KICAgID4gZm9yIGNsb2Nrc291cmNlcyB0
-aGF0IHdyYXAgZnJlcXVlbnRseSwgd2hpbGUgcmV0YWluaW5nIHRoZSBjaGVjayBmb3IgdHNjDQog
-ICAgPiBkcmlmdGluZy4NCiAgICA+DQogICAgPiBUcnVuY2F0aW5nIHJlc3VsdCBvZiBjbG9ja3Nv
-dXJjZV9kZWx0YSgpIHRvIDAgY2F1c2VzIGluY29ycmVjdCBiZWhhdmlvciBmb3INCiAgICA+IGNs
-b2Nrc291cmNlcyB0aGF0IHdyYXAgZnJlcXVlbnRseSAoZS5nLiBhY3BpX3BtIHdoaWNoIGlzIG9u
-bHkgMjQtYml0IHdpZGUpLg0KICAgID4gSW4gcGFydGljdWxhciwgbGFyZ2UgdGltZSBkZWx0YXMg
-KGUuZy4gbGFzdCA9IDB4MDAwMDAwLCBub3cgPSAweDgwMDAwMCkNCiAgICA+IHdpbGwgYmUgaW5j
-b3JyZWN0bHkgY29tcHV0ZWQgYXMgMC4NCiAgICA+DQogICAgPiBJZiBhY3BpX3BtIGlzIHVzZWQg
-YXMgdGhlIGNsb2Nrc291cmNlIHdhdGNoZG9nLCBhbmQgbWFjaGluZSBpcyB1bmRlciBoZWF2eQ0K
-ICAgID4gbG9hZCwgdGhlIHRpbWUgcGVyaW9kIGZvciB0aGUgd2F0Y2hkb2cgY2hlY2sgbWF5IGJl
-IHNpZ25pZmljYW50bHkgbG9uZ2VyDQogICAgPiB0aGFuIHRoZSByZXF1ZXN0ZWQgMC41IHNlY29u
-ZHMuICBJZiB0aGUgd2F0Y2hkb2cgY2hlY2sgaXMgZGVsYXllZCBieSAyDQogICAgPiBzZWNvbmRz
-IChvYnNlcnZlZCBiZWhhdmlvciksIHRoZW4gYWNwaV9wbSB0aW1lIGRlbHRhIHdpbGwgYmUNCiAg
-ICA+DQogICAgPiAgICAgICAgIDIuNSBzZWMgKiAzNTc5NTQ1IHRpY2tzL3NlYyA9IDg5NDg4NjMg
-PSAweDg4OGMzZg0KICAgID4NCiAgICA+IHdoaWNoIHdpbGwgYmUgdHJlYXRlZCBhcyBuZWdhdGl2
-ZSBhbmQgdHJ1bmNhdGVkIHRvIDAuICBUaGlzIGJlaGF2aW9yIHdpbGwNCiAgICA+IGNhdXNlIHRz
-YyB0byBiZSBpbmNvcnJlY3RseSBkZWNsYXJlZCB1bnN0YWJsZSBpbiBjbG9ja3NvdXJjZV93YXRj
-aGRvZygpLCBhcw0KICAgID4gaXQgbm8gbG9uZ2VyIGFncmVlcyB3aXRoIGFjcGlfcG0uDQogICAg
-DQogICAgVGhhbmtzIGZvciByYWlzaW5nIHRoaXMgaXNzdWUgYW5kIHN1Ym1pdHRpbmcgdGhlIHBh
-dGNoIQ0KICAgIA0KICAgIFllYSwgdGhpcyBpcyBhIGNvbmNlcm4gcGFydGljdWxhcmx5IHdpdGgg
-cXVpY2sgd3JhcHBpbmcgY2xvY2tzb3VyY2VzLg0KICAgIFRob3VnaCBJIHdvcnJ5IHRoYXQgaWYg
-eW91J3JlIGFscmVhZHkgYmxvY2tpbmcgdGhlIHdhdGNoZG9nIGZyb20NCiAgICBydW5uaW5nIGZv
-ciAyLjUgc2Vjb25kcywgeW91J3JlIGxpa2VseSB0byBhbHNvIGJsb2NrIHRoZSB3YXRjaGRvZyBm
-b3INCiAgICBtb3JlIHRoZW4gNSBzZWNvbmRzLCB3aGljaCBpZiBJJ20gcmVtZW1iZXJpbmcgd291
-bGQgcmVzdWx0IGluIHRoZSBzYW1lDQogICAgcHJvYmxlbT8gIEluIG90aGVyIHdvcmRzLCBkb2Vz
-IHRoaXMgcmVhbGx5IHNvbHZlIHRoZSBwcm9ibGVtLCBvciBkb2VzDQogICAgaXQganVzdCBwdXNo
-IHRoZSBiYXIgYSBsaXR0bGUgZnVydGhlciBvdXQ/DQogICAgDQogICAgU28sIEknbSB3b25kZXJp
-bmcgdG8gcmVhbGx5IGZpeCB0aGlzLCBkbyB3ZSBuZWVkIHRvIGZpbmQgc29tZSB3YXkgdG8NCiAg
-ICByYWlzZSB0aGUgcHJpb3JpdHkgb2YgdGhlIGNsb2Nrc291cmNlIHdhdGNoZG9nLCBzbyBpdCBp
-c24ndCBkZWZlcnJlZA0KICAgIGZvciBxdWl0ZSBzbyBsb25nPw0KICAgIA0KICAgIHRoYW5rcw0K
-ICAgIC1qb2huDQogICAgDQoNClRoYW5rcyBmb3IgdGhlIHF1aWNrIHJlc3BvbnNlLiAgDQoNCklu
-IHByaW5jaXBsZSwgSSBhZ3JlZSB0aGF0IGEgcHJvcGVyIHNvbHV0aW9uIHdvdWxkIGhhdmUgdG8g
-ZW5zdXJlIHRoYXQgd2F0Y2hkb2cgdGltZXIgaXMgbm90IGJsb2NrZWQgZm9yIHRvbyBsb25nLiAg
-TXkgdW5kZXJzdGFuZGluZyBpcyB0aGF0IHdhdGNoZG9nIHdvcmsgaXMgdHJpZ2dlcmVkIHZpYSBU
-SU1FUiBzb2Z0aXJxIGFuZCB3aWxsIGdldCBwdXNoZWQgdG8ga3NvZnRpcnFkIHdoZW4gdGhlIHN5
-c3RlbSBpcyBidXN5LiAgSW4gcGFydGljdWxhciwgaXQgYXBwZWFycyB0aGF0IGRvX3NvZnRpcnEo
-KSBhbmQgaW52b2tlX3NvZnRpcnEoKSBib3RoIGNoZWNrIGtzb2Z0aXJxZF9ydW5uaW5nKCkgYmVm
-b3JlIGRlY2lkaW5nIHRvIGFjdHVhbGx5IGRvIHdvcmsuDQoNCk9uZSBpbnRlcmVzdGluZyBiaXQg
-aXMgdGhhdCBrc29mdGlycV9ydW5uaW5nKCkgd2lsbCBkaXNyZWdhcmQgYW4gYWN0aXZlIGtzb2Z0
-aXJxZCB0aHJlYWQgYW5kIHJldHVybiAiZmFsc2UiIHdoZW4gSElfU09GVElSUSBvciBUQVNLTEVU
-X1NPRlRJUlEgaXMgc2V0IChyZXN1bHRpbmcgaW4gYXQgbGVhc3QgYSBzaW5nbGUgcGFzcyBvdmVy
-IHBlbmRpbmcgc29mdGlycXMpLiAgSSB0aGluayBpdCB3b3VsZCBtYWtlIHNlbnNlIHRvIGFkZCBU
-SU1FUl9TT0ZUSVJRIHRvIHRoaXMgZXhjZXB0aW9uIGxpc3QgYXMgd2VsbC4NCg0KSW4gZmFjdCwg
-bG9va2luZyBiYWNrIGF0IHRoZSBjb21taXQgbG9nLCBJJ20gZmluZGluZyBzaW1pbGFyIHRob3Vn
-aHRzIG9uIHRoZSBzdWJqZWN0Og0KDQogICAgY29tbWl0IDNjNTM3NzZlMjlmODE3MTllZmNmOGY3
-YTZlMzBjZGY3NTNiZWU5NGQNCiAgICBBdXRob3I6IExpbnVzIFRvcnZhbGRzIDx0b3J2YWxkc0Bs
-aW51eC1mb3VuZGF0aW9uLm9yZz4gDQogICAgRGF0ZTogICBNb24gSmFuIDggMTE6NTE6MDQgMjAx
-OCAtMDgwMA0KDQogICAgTWFyayBISSBhbmQgVEFTS0xFVCBzb2Z0aXJxIHN5bmNocm9ub3VzDQog
-ICAgLi4uDQogICAgV2Ugc2hvdWxkIHByb2JhYmx5IGFsc28gY29uc2lkZXIgdGhlIHRpbWVyIHNv
-ZnRpcnFzIHRvIGJlIHN5bmNocm9ub3VzDQogICAgYW5kIG5vdCBiZSBkZWxheWVkIHRvIGtzb2Z0
-aXJxZCAoc2luY2UgdGhleSB3ZXJlIHRoZSBpc3N1ZSB3aXRoIHRoZQ0KICAgIGVhcmxpZXIgd2F0
-Y2hkb2cgcHJvYmxlbXMpLCBidXQgdGhhdCBzaG91bGQgYmUgZG9uZSBhcyBhIHNlcGFyYXRlIHBh
-dGNoLg0KICAgIFRoaXMgZG9lcyBvbmx5IHRoZSB0YXNrbGV0IGNhc2VzLg0KDQpJZiB0aGF0IG1h
-a2VzIHNlbnNlLCBJJ20gaGFwcHkgdG8gd3JpdGUgdXAgYSBwYXRjaC4NCg0KVGhhbmtzLA0KfiBN
-aWNoYWVsDQoNCg0K
+On Thu, Sep 27, 2018 at 02:07:36PM +0000, Anand Moon wrote:
+> Add SD card write-protect pin configuration to be sure that it will be
+> properly pulled down to indicate write access.
+> 
+> Suggested-by: Krzysztof Kozlowski <krzk@kernel.org>
+> Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+> ---
+> Changes since v4:
+> 1. Remove cd-gpios and wp-gpios leaving only WP pin configuration (after
+>    Marek Szyprowski feedback).
+> 2. Pull pin down.
+> 3. change the subject and commit message.
+> Sorry Krzysztof if I have copied your commit message to describe the
+> changes.
+
+Thanks, applied.
+
+Best regards,
+Krzysztof
+
