@@ -2,101 +2,81 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EA32AC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:36:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98028C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:38:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA66621582
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:36:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="t5Bj+MQB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA66621582
+	by mail.kernel.org (Postfix) with ESMTP id 58CCA20818
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 19:38:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58CCA20818
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730837AbeKNFgC (ORCPT
+        id S1727297AbeKNFhw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 00:36:02 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:35002 "EHLO
-        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725794AbeKNFgC (ORCPT
+        Wed, 14 Nov 2018 00:37:52 -0500
+Received: from mail-ed1-f45.google.com ([209.85.208.45]:42718 "EHLO
+        mail-ed1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725794AbeKNFhv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 00:36:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oOqcroex1tPs/2DHhvnFl0UwdwyLDVSzPLLsXWm5uCQ=; b=t5Bj+MQB3eeFCIN4Gq0u9aVzf
-        eiKB7RV0iKnUPEwcG5lfICYJ+4fVRktApGngLHpsTROTd5VoYptZV5qIZO77uKXLNcvrtaCdP/J4O
-        6zNw0BHyDRXM+cwJBmiO3a+bqO032+bql23EQl8a+BfQecuetWYIiohq6nYtf4KbfYvBc=;
-Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
-        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <broonie@sirena.org.uk>)
-        id 1gMeTy-0002UP-QT; Tue, 13 Nov 2018 19:36:19 +0000
-Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id CBE0D440078; Tue, 13 Nov 2018 19:36:12 +0000 (GMT)
-Date:   Tue, 13 Nov 2018 11:36:12 -0800
-From:   Mark Brown <broonie@kernel.org>
-To:     Vijendar Mukunda <Vijendar.Mukunda@amd.com>
-Cc:     Alexander.Deucher@amd.com, Vishnuvardhanrao.Ravulapati@amd.com,
-        Maruthi Srinivas Bayyavarapu <Maruthi.Bayyavarapu@amd.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Jaroslav Kysela <perex@perex.cz>,
-        Takashi Iwai <tiwai@suse.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
-        <alsa-devel@alsa-project.org>
-Subject: Re: [PATCH 01/11] ASoC: AMD: add ACP 3.x IP register header
-Message-ID: <20181113193612.GK2089@sirena.org.uk>
-References: <1542000903-19020-1-git-send-email-Vijendar.Mukunda@amd.com>
- <1542000903-19020-2-git-send-email-Vijendar.Mukunda@amd.com>
+        Wed, 14 Nov 2018 00:37:51 -0500
+Received: by mail-ed1-f45.google.com with SMTP id j6so6557631edp.9;
+        Tue, 13 Nov 2018 11:38:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0n/qxSoON2phZgYFSKD6jSe7+TthZ1bA59lqeWhxMeM=;
+        b=JBSto4QBXUwzDKlKKkxUEIaMr55fEkKYPIY7g9w46zMkH0HjF7SNYqxGmABHfn8UyT
+         vMX/TNFeKiRbc5KQTedvmBfO+IcuWwUKNb9I5096dr/7Lucx4LI1WFMe2w7uPuuzF0vc
+         RDMr/avMnMGM2anwhXJmYhRxXi6WYlECQh8h9+70a3qB2JCSntema6NKUGhsF0LBZFFq
+         b4WJYSG9eJt+GAmIOE2/ad3jh07V8YlxInkIDdrn4QsQTlOkTmBSUd5Hy8vVuqmEK4Gp
+         el4aQMmEeosBSXfBanEBb9o/D4vQ1bCNnvWamBZS11EdiBuoSgsled5thwzUwighRRJl
+         FWrg==
+X-Gm-Message-State: AGRZ1gI4bu8IWx4si2nZJoCocPKD4aavYnoRvUTu3HohQuCxwnRbjQAf
+        Eu3ID9sUZsnZmJ2VJ/cyZIg=
+X-Google-Smtp-Source: AJdET5dUW6RxnoZJ9sGiyT/xCt5b0YMxthNNjct9ka1JnTBM5WPM+wNhut1D/OHQTwp4Cd+cw78/Sg==
+X-Received: by 2002:a50:cb85:: with SMTP id k5-v6mr17731572edi.171.1542137895761;
+        Tue, 13 Nov 2018 11:38:15 -0800 (PST)
+Received: from kozik-lap ([178.38.103.27])
+        by smtp.googlemail.com with ESMTPSA id l19-v6sm6099263edc.3.2018.11.13.11.38.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Nov 2018 11:38:15 -0800 (PST)
+Date:   Tue, 13 Nov 2018 20:38:13 +0100
+From:   Krzysztof Kozlowski <krzk@kernel.org>
+To:     Anand Moon <linux.amoon@gmail.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Jaehoon Chung <jh80.chung@samsung.com>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-mmc@vger.kernel.org
+Subject: Re: [PATCHv5 3/6] ARM: dts: exynos: update maximum frequency for
+ sdcard to 200MHz
+Message-ID: <20181113193813.GD2418@kozik-lap>
+References: <20180927140738.1006-1-linux.amoon@gmail.com>
+ <20180927140738.1006-4-linux.amoon@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-        protocol="application/pgp-signature"; boundary="UlsYxwg8UDQn+EKZ"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1542000903-19020-2-git-send-email-Vijendar.Mukunda@amd.com>
-X-Cookie: No Canadian coins.
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20180927140738.1006-4-linux.amoon@gmail.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Sep 27, 2018 at 02:07:35PM +0000, Anand Moon wrote:
+> set the max-frequency to 200MHz for optimal performace.
+> 
 
---UlsYxwg8UDQn+EKZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Thanks, applied.
 
-On Mon, Nov 12, 2018 at 11:04:52AM +0530, Vijendar Mukunda wrote:
+Best regards,
+Krzysztof
 
-> @@ -0,0 +1,655 @@
-> +/*
-> + * ACP 3.0 Register documentation
-> + *
-> + * Copyright (C) 2016 Advanced Micro Devices, Inc.
-
-Please use SPDX headers on new files.
-
-
---UlsYxwg8UDQn+EKZ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvrJ6wACgkQJNaLcl1U
-h9A8Qwf9ETej1fTRkd2dbKa04Ypx0+iHUnJI6YKM0jJPY4kMfhS1py1AQfwzfPQN
-Rk20lF/6Puc80Y/YCif7bGrmbkPEb5iA/RpC0EV7PcVOjJOK4h+FiXh7vcUTA3Bx
-BHW65YU5q5kmE+4mmbCESdL5EUld9xA6KcpV99fX7iQ74SPy4tTLzS1oI0azCVwL
-Fi1L407CkWu1WvNo/5DySSaHfHj1AU3GtxDE5elGex7VCzNbTfzO14szVcyD2YuI
-zi2bJZZGySstQvXMlXLVu/7rMLxSjXGc7Ro/mM2BWrIEIj7mVfRIJWQefQ9udJfH
-JkMsaXcaILEMa/dOjEPDgmlTBOiJkQ==
-=YxuY
------END PGP SIGNATURE-----
-
---UlsYxwg8UDQn+EKZ--
