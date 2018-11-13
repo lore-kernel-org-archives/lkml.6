@@ -2,116 +2,101 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19147C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:22:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD38C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:28:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1035223AE
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:22:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A3212223AE
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:28:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=wavesemi.onmicrosoft.com header.i=@wavesemi.onmicrosoft.com header.b="O5DL7lX1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1035223AE
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mips.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b4JjvajD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3212223AE
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731226AbeKNIWd (ORCPT
+        id S1731148AbeKNI3C (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 03:22:33 -0500
-Received: from mail-eopbgr770137.outbound.protection.outlook.com ([40.107.77.137]:26271
-        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726022AbeKNIWc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 03:22:32 -0500
+        Wed, 14 Nov 2018 03:29:02 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:42661 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725783AbeKNI3B (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 03:29:01 -0500
+Received: by mail-wr1-f65.google.com with SMTP id u5-v6so9825447wrn.9
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 14:28:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=wavesemi.onmicrosoft.com; s=selector1-wavecomp-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lbUv+UUE1uZ4ABSJq706ynfLG9sIM9VL4/Y2WK3yAeQ=;
- b=O5DL7lX1u21a/Y5kuvMKfRI82vdc3E4d0biev3dLEAYU7JpvCbpur3T29ymogN8eOOh/JlKT9VRhWQmfWNrVtSbOoElxCsXBBawN+tql+lYarGyHxaRZx2DTyoq7ZiszfoPm7sftfTEcvdnFGjnr2AbkoACmKc/Voxi3FUGs8WY=
-Received: from CY4PR2201MB1272.namprd22.prod.outlook.com (10.171.216.146) by
- CY4PR2201MB1350.namprd22.prod.outlook.com (10.171.210.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.30; Tue, 13 Nov 2018 22:22:17 +0000
-Received: from CY4PR2201MB1272.namprd22.prod.outlook.com
- ([fe80::ace0:f12e:c2a0:dc23]) by CY4PR2201MB1272.namprd22.prod.outlook.com
- ([fe80::ace0:f12e:c2a0:dc23%9]) with mapi id 15.20.1294.045; Tue, 13 Nov 2018
- 22:22:17 +0000
-From:   Paul Burton <paul.burton@mips.com>
-To:     Maksym Kokhan <maksym.kokhan@globallogic.com>
-CC:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <pburton@wavecomp.com>,
-        James Hogan <jhogan@kernel.org>,
-        Andrii Bordunov <andrew.bordunov@gmail.com>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Maksym Kokhan <maksym.kokhan@globallogic.com>,
-        "linux-mips@linux-mips.org" <linux-mips@linux-mips.org>
-Subject: Re: [PATCH v2 1/2] mips: delete duplicated BUILTIN_DTB and LIBFDT
- configs
-Thread-Topic: [PATCH v2 1/2] mips: delete duplicated BUILTIN_DTB and LIBFDT
- configs
-Thread-Index: AQHUeqlP2hPOmPyUV0i5VQdXZqZRrqVOSVaA
-Date:   Tue, 13 Nov 2018 22:22:16 +0000
-Message-ID: <CY4PR2201MB12725B9145E49B80801D4AC5C1C20@CY4PR2201MB1272.namprd22.prod.outlook.com>
-References: <20181112170059.7199-1-maksym.kokhan@globallogic.com>
-In-Reply-To: <20181112170059.7199-1-maksym.kokhan@globallogic.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: MWHPR11CA0027.namprd11.prod.outlook.com
- (2603:10b6:300:115::13) To CY4PR2201MB1272.namprd22.prod.outlook.com
- (2603:10b6:910:61::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=pburton@wavecomp.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [4.16.204.77]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;CY4PR2201MB1350;6:bhet4MK4nnwRbB8z3QACuDngAAxQ4sS9pDFCiJ+e/pHSG5MIaP0k0/SggUQ+TRvklcJd6akmUHMFxkvhlAYLXLmAWgiFTHgrhDzELmN9A35mNGQnudinXtn+p3dRpZrNL9lxNs0dY8TO+hEWpo2t2v84PWd7/55Y46+9VVXDRSyodd9Yjxmqn6xKUG+8QbkpIPU+K9NydunWIst6E+EQUfsRltvQW3fdT8t0Fx9yOgoYweHYLPIXuXJtRoJjv5AnqMDYmWXLPs8lunT68hOLagbm0sENvipW8wakyFsUll59ojMPMe7IV7XlhkBw3Ly5UdTN7c/+2GsKSEqppbb2APJhHNXJxvly6D4bnUBGDJm6B+bCVFZaJGK4FyQrvo0or66T78b2UNzBv9o3JX+Dh+yvt0NSSLccF/TQS6axuJ9GYP5vwIn1OxdPT2oC/aIiO/fncMbdo55Zou2zoW3BJg==;5:0IVikwJ7yBlutKbV5BJGtura1VGaiQ83jkdjAEkX6LoypolqXCbBNj1HDp/jvwN3LYUoLR2uhDfk4pEFkLlYB4Fg4ODRTyupGAE4kPwwvk/5KYyhAi3jLrgL2QU0+td07Kfzg5V8Vwupw46Tmx6brn4Oqi8DLx9V82QdQoXf1o8=;7:gQkVKwojRo92fiH3WlI2JUD5vO4yUY7XoYjlnRRuw5td0XZWOXe+kdvSZdmNHrSmOIJLz0CYAZlb1zaVpdqE6pnDMUaSvCAmOjmB06lDuAg8T1CyOH5ocBCj9FLEAvDOG+/tj8UhdWK4rlhk9pJQtQ==
-x-ms-office365-filtering-correlation-id: 05417cc9-930c-4169-97a9-08d649b6780c
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390060)(7020095)(4652040)(7021145)(8989299)(5600074)(711020)(4534185)(7022145)(4603075)(4627221)(201702281549075)(8990200)(7048125)(7024125)(7027125)(7023125)(2017052603328)(7153060)(7193020);SRVR:CY4PR2201MB1350;
-x-ms-traffictypediagnostic: CY4PR2201MB1350:
-x-microsoft-antispam-prvs: <CY4PR2201MB13507EAA1F8173E782CB641CC1C20@CY4PR2201MB1350.namprd22.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3002001)(93006095)(3231382)(944501410)(52105112)(10201501046)(148016)(149066)(150057)(6041310)(20161123560045)(20161123562045)(20161123564045)(2016111802025)(20161123558120)(6043046)(201708071742011)(7699051)(76991095);SRVR:CY4PR2201MB1350;BCL:0;PCL:0;RULEID:;SRVR:CY4PR2201MB1350;
-x-forefront-prvs: 085551F5A8
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(346002)(376002)(136003)(39840400004)(366004)(396003)(189003)(199004)(476003)(486006)(446003)(11346002)(42882007)(33656002)(2900100001)(97736004)(25786009)(6246003)(3846002)(6116002)(44832011)(54906003)(316002)(71200400001)(71190400001)(6506007)(102836004)(105586002)(66066001)(106356001)(386003)(186003)(39060400002)(9686003)(7696005)(52116002)(76176011)(508600001)(4326008)(26005)(99286004)(14454004)(55016002)(5660300001)(7736002)(305945005)(81166006)(6436002)(8676002)(8936002)(74316002)(81156014)(68736007)(6916009)(256004)(2906002)(229853002)(53936002);DIR:OUT;SFP:1102;SCL:1;SRVR:CY4PR2201MB1350;H:CY4PR2201MB1272.namprd22.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: wavecomp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: eLiHTS1UdFGqsK84D5iup8ln2OiSAuIVbPhl5rD84Q5+X0rb5kNmGyFUc30udIIi+tr9Y/BFSxMZJfQzDFQPw+lvfKbtDpBXk05U5VvGr5rbwj4CGkBoROLGVEoHrq5VXgSRktwMNwjGUCUo3tcb9Mjp6BXpgv31kBoXQwHoaDYoh815Wpg0uF7AqZUzKuMZerFCmI77iN6qw+GrM7zyihehVtPprIC9WujbOY33015OPIV1vgmYna4z2M709Usw7GprIXPXBm5eglTzKr1c7ZPBPcAtRUGbzyjGhmqPWM5UGXcf0PxGq8QhDYCfPy3oayO7JdZWLcoBYD3HyG4ErIYTaSQBAhitTvhhb9vzNm0=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WlzqQztw5ybxsZPNf7wxGDOGdt0sdpBNZnWupQ5Jun8=;
+        b=b4JjvajDk37ehHPWzQgoKT38Bsa2zRom7ReX20K9QE1N6sqQyuyKa+suliy01yXRZl
+         9sG2ABgDDWiTu/PZVmXNZl0NHRzc0vO8p4JSwL+BxoDyk/eq/3eC3u29Xx7pSr+TAiMf
+         2tNgXzUMJI8XvlBLvZjJY1iKVu3483wxAT6411aHiP1gatXNMEVNHzI4Yi/OJlJBRNUs
+         ajoEwQXejpnKVHI47bJGX7BUzxsz8Fc5JBD4TQXAvP06E4ztuzemjee2uuPL/c9weT+j
+         6nmIY7nY/JeVqZbtdlB19JNAOGujEHf3RO3tI9QMAH74cb6kIE8lcT1b78UQOSG3FAco
+         rg3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=WlzqQztw5ybxsZPNf7wxGDOGdt0sdpBNZnWupQ5Jun8=;
+        b=SjQEJ4CNaVmEKMxdNFdb6dNhIU8KzUpZejp6YCZaKqkMSaDKfGSg1BZthnao++brf2
+         zg5PzSXLIdydnzQsbY+oiybfefhTuFlemVNqktvMn9j4fdqsg3OdSDL691uuzzhXVv/s
+         yDoUwWnZ0BddQdkWAfHW7mNRLQZWiShgLDytpOcif/vid7Zy2P8TzDNPHU+QhQugBWNa
+         euYrHxCT6SgrA+aJC0C6FfZu8hQa4UxYC0MK+3oR4/WxleAi0u56ffcM95vUX+NZSDNQ
+         nFJYxn+kC/RRPqfby+C8kMBKkIBY+mJeaWFVptPjWGDQ5bREHrBM35/VVC2heZVTM8UK
+         Y85A==
+X-Gm-Message-State: AGRZ1gL7X3BUIuifG3pphuH+ROjOVrJxqHDsXfMMEBLLPrlrInil42CV
+        Wn9JpRJgkUtLqbO77F7MbJY=
+X-Google-Smtp-Source: AJdET5d4lj8VQg9kWYG1fEHrGSl1n6b7iBymG6kRg78QilOdUofvXsEoQnzuXmQk8RVmZf4A+YQtVQ==
+X-Received: by 2002:a5d:4046:: with SMTP id w6mr6249862wrp.92.1542148125140;
+        Tue, 13 Nov 2018 14:28:45 -0800 (PST)
+Received: from localhost.localdomain ([2.236.87.61])
+        by smtp.googlemail.com with ESMTPSA id o15-v6sm17818440wrw.47.2018.11.13.14.28.44
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 14:28:44 -0800 (PST)
+From:   Paolo Cretaro <paolocretaro@gmail.com>
+To:     tytso@mit.edu
+Cc:     arnd@arndb.de, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org,
+        Paolo Cretaro <paolocretaro@gmail.com>
+Subject: [PATCH] drivers/char/random.c: add missing include <linux/hw_random.h>
+Date:   Tue, 13 Nov 2018 23:28:11 +0100
+Message-Id: <20181113222811.6724-1-paolocretaro@gmail.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-OriginatorOrg: mips.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05417cc9-930c-4169-97a9-08d649b6780c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 13 Nov 2018 22:22:17.0073
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 463607d3-1db3-40a0-8a29-970c56230104
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR2201MB1350
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+Include linux/hw_random.h header file to silence the following
+Wmissing-prototypes gcc warning:
+drivers/char/random.c:2346:6: warning: no previous prototype for ‘add_hwgenerator_randomness’ [-Wmissing-prototypes]
 
-Maksym Kokhan wrote:
-> CONFIG_BUILTIN_DTB and CONFIG_LIBFDT selection is duplicated
-> in menu "Machine selection" under MIPS_MALTA.
->=20
-> Signed-off-by: Maksym Kokhan <maksym.kokhan@globallogic.com>
-> Signed-off-by: Andrii Bordunov <andrew.bordunov@gmail.com>
+Signed-off-by: Paolo Cretaro <paolocretaro@gmail.com>
+---
+ drivers/char/random.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Series applied to mips-next.
+diff --git a/drivers/char/random.c b/drivers/char/random.c
+index 0a381897e4a5..02c65dd417ae 100644
+--- a/drivers/char/random.c
++++ b/drivers/char/random.c
+@@ -265,6 +265,7 @@
+ #include <linux/syscalls.h>
+ #include <linux/completion.h>
+ #include <linux/uuid.h>
++#include <linux/hw_random.h>
+ #include <crypto/chacha20.h>
+ 
+ #include <asm/processor.h>
+-- 
+2.19.1
 
-Thanks,
-    Paul
-
-[ This message was auto-generated; if you believe anything is incorrect
-  then please email paul.burton@mips.com to report it. ]
