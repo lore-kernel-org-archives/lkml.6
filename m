@@ -2,86 +2,917 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17196C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:03:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0AE06C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:04:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B2EA620896
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:03:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B2EA620896
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	by mail.kernel.org (Postfix) with ESMTP id A5A5020896
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 22:03:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5A5020896
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=anholt.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730445AbeKNIDp (ORCPT
+        id S1731058AbeKNIEH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 03:03:45 -0500
-Received: from mail-out.m-online.net ([212.18.0.10]:51001 "EHLO
-        mail-out.m-online.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725783AbeKNIDo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 03:03:44 -0500
-Received: from frontend01.mail.m-online.net (unknown [192.168.8.182])
-        by mail-out.m-online.net (Postfix) with ESMTP id 42vhTc0k5bz1r2nj;
-        Tue, 13 Nov 2018 23:03:32 +0100 (CET)
-Received: from localhost (dynscan1.mnet-online.de [192.168.6.70])
-        by mail.m-online.net (Postfix) with ESMTP id 42vhTb739dz1qrn8;
-        Tue, 13 Nov 2018 23:03:31 +0100 (CET)
-X-Virus-Scanned: amavisd-new at mnet-online.de
-Received: from mail.mnet-online.de ([192.168.8.182])
-        by localhost (dynscan1.mail.m-online.net [192.168.6.70]) (amavisd-new, port 10024)
-        with ESMTP id P3ZIq1MMviU3; Tue, 13 Nov 2018 23:03:31 +0100 (CET)
-X-Auth-Info: 87Qw1n2M1OTgDxe6XOh1hsy92xkkzaKo+MjTfTIGy3cCvaqzZY9IWVLrUKyOD30i
-Received: from igel.home (ppp-188-174-148-99.dynamic.mnet-online.de [188.174.148.99])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.mnet-online.de (Postfix) with ESMTPSA;
-        Tue, 13 Nov 2018 23:03:30 +0100 (CET)
-Received: by igel.home (Postfix, from userid 1000)
-        id 7CABF2C1F08; Tue, 13 Nov 2018 23:03:29 +0100 (CET)
-From:   Andreas Schwab <schwab@linux-m68k.org>
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     alexander.kapshuk@gmail.com, sky@genki.is,
-        yamada.masahiro@socionext.com,
-        Doug Anderson <dianders@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>, lists@nerdbynature.de,
-        Linux Kernel <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] scripts/setlocalversion: Improve -dirty check with git-status --no-optional-locks
-References: <20181110.085826.230851261@genki.is>
-        <m24lcpjjss.fsf@linux-m68k.org> <20181110.201050.925673938@genki.is>
-        <CAJ1xhMXDFAdiWMV6ODcJM8bfjs-ddyv8utf6N+Yh7+-Ne-KaHw@mail.gmail.com>
-        <20181111.174140.002789201@genki.is>
-        <CAJ1xhMUA4GUzeDANqR1WafELmEpE+-V569t7e0xCotTG2Lvbyw@mail.gmail.com>
-        <CAJ1xhMWw8Mi2dubTFNOxhoP6hk+__Qjo-0+9sQbpqP5K-n4mVw@mail.gmail.com>
-        <20181113000938.GA16783@google.com>
-        <CAJ1xhMVFt6bYgwY+N5VoFXNpm5kS1j_HV8-ZS8SkavNgZx1HOg@mail.gmail.com>
-        <CA+ASDXPcYp_joFeyGQ7TXFBSK-7i6bNFzaA1z=YYSDEjyMABdg@mail.gmail.com>
-        <20181113190335.GA50985@google.com>
-X-Yow:  Yow!  Now we can become alcoholics!
-Date:   Tue, 13 Nov 2018 23:03:29 +0100
-In-Reply-To: <20181113190335.GA50985@google.com> (Brian Norris's message of
-        "Tue, 13 Nov 2018 11:03:36 -0800")
-Message-ID: <878t1w7hzi.fsf@igel.home>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/26.1 (gnu/linux)
+        Wed, 14 Nov 2018 03:04:07 -0500
+Received: from anholt.net ([50.246.234.109]:51082 "EHLO anholt.net"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725783AbeKNIEG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 03:04:06 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id F215F10A1314;
+        Tue, 13 Nov 2018 14:03:56 -0800 (PST)
+X-Virus-Scanned: Debian amavisd-new at anholt.net
+Received: from anholt.net ([127.0.0.1])
+        by localhost (kingsolver.anholt.net [127.0.0.1]) (amavisd-new, port 10024)
+        with LMTP id am-mM7NnqZuc; Tue, 13 Nov 2018 14:03:52 -0800 (PST)
+Received: from eliezer.anholt.net (localhost [127.0.0.1])
+        by anholt.net (Postfix) with ESMTP id 7706A10A0552;
+        Tue, 13 Nov 2018 14:03:52 -0800 (PST)
+Received: by eliezer.anholt.net (Postfix, from userid 1000)
+        id 7D0952FE1BF5; Tue, 13 Nov 2018 14:03:51 -0800 (PST)
+From:   Eric Anholt <eric@anholt.net>
+To:     dri-devel@lists.freedesktop.org
+Cc:     linux-kernel@vger.kernel.org, boris.brezillon@bootlin.com,
+        Daniel Vetter <daniel.vetter@ffwll.ch>,
+        Dave Emett <david.emett@broadcom.com>
+Subject: Re: [PATCH 4/4] drm/v3d: Add support for submitting jobs to the TFU.
+In-Reply-To: <20181108161654.19888-5-eric@anholt.net>
+References: <20181108161654.19888-1-eric@anholt.net> <20181108161654.19888-5-eric@anholt.net>
+User-Agent: Notmuch/0.22.2+1~gb0bcfaa (http://notmuchmail.org) Emacs/25.2.2 (x86_64-pc-linux-gnu)
+Date:   Tue, 13 Nov 2018 14:03:51 -0800
+Message-ID: <87ftw4y6rc.fsf@anholt.net>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha512; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Nov 13 2018, Brian Norris <briannorris@chromium.org> wrote:
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-> +		} | grep -qv '^\(.. \)\?scripts/package'; then
+Eric Anholt <eric@anholt.net> writes:
 
-\? is a GNU extension, so if you want to stay portable you need to
-switch to ERE.
+> The TFU can copy from raster, UIF, and SAND input images to UIF output
+> images, with optional mipmap generation.  This will certainly be
+> useful for media EGL image input, but is also useful immediately for
+> mipmap generation without bogging the V3D core down.
+>
+> For now we only run the queue 1 job deep, and don't have any hang
+> recovery (though I don't think we should need it, with TFU).  Queuing
+> multiple jobs in the HW will require synchronizing the YUV coefficient
+> regs updates since they don't get FIFOed with the job.
+>
+> Signed-off-by: Eric Anholt <eric@anholt.net>
 
-Andreas.
+Ccing Dave Emett, who may be able to provide useful feedback.
 
--- 
-Andreas Schwab, schwab@linux-m68k.org
-GPG Key fingerprint = 7578 EB47 D4E5 4D69 2510  2552 DF73 E780 A9DA AEC1
-"And now for something completely different."
+I think one interesting question here is if TFU hangs (has it ever hung,
+in our experience?) do we want to reset the whole V3D, or is the reset
+flag in the TFU block enough?
+
+> ---
+>  drivers/gpu/drm/v3d/v3d_drv.c   |  12 ++-
+>  drivers/gpu/drm/v3d/v3d_drv.h   |  32 +++++-
+>  drivers/gpu/drm/v3d/v3d_gem.c   | 177 ++++++++++++++++++++++++++++----
+>  drivers/gpu/drm/v3d/v3d_irq.c   |  12 ++-
+>  drivers/gpu/drm/v3d/v3d_regs.h  |  58 +++++++++++
+>  drivers/gpu/drm/v3d/v3d_sched.c | 147 ++++++++++++++++++++++----
+>  drivers/gpu/drm/v3d/v3d_trace.h |  20 ++++
+>  include/uapi/drm/v3d_drm.h      |  25 +++++
+>  8 files changed, 431 insertions(+), 52 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.c b/drivers/gpu/drm/v3d/v3d_drv.c
+> index 4857c0a63131..da0863281a73 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.c
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.c
+> @@ -184,10 +184,15 @@ static int v3d_get_param_ioctl(struct drm_device *d=
+ev, void *data,
+>  		return 0;
+>  	}
+>=20=20
+> -	/* Any params that aren't just register reads would go here. */
+>=20=20
+> -	DRM_DEBUG("Unknown parameter %d\n", args->param);
+> -	return -EINVAL;
+> +	switch (args->param) {
+> +	case DRM_V3D_PARAM_SUPPORTS_TFU:
+> +		args->value =3D 1;
+> +		return 0;
+> +	default:
+> +		DRM_DEBUG("Unknown parameter %d\n", args->param);
+> +		return -EINVAL;
+> +	}
+>  }
+>=20=20
+>  static int
+> @@ -251,6 +256,7 @@ static const struct drm_ioctl_desc v3d_drm_ioctls[] =
+=3D {
+>  	DRM_IOCTL_DEF_DRV(V3D_MMAP_BO, v3d_mmap_bo_ioctl, DRM_RENDER_ALLOW),
+>  	DRM_IOCTL_DEF_DRV(V3D_GET_PARAM, v3d_get_param_ioctl, DRM_RENDER_ALLOW),
+>  	DRM_IOCTL_DEF_DRV(V3D_GET_BO_OFFSET, v3d_get_bo_offset_ioctl, DRM_RENDE=
+R_ALLOW),
+> +	DRM_IOCTL_DEF_DRV(V3D_SUBMIT_TFU, v3d_submit_tfu_ioctl, DRM_RENDER_ALLO=
+W | DRM_AUTH),
+>  };
+>=20=20
+>  static const struct vm_operations_struct v3d_vm_ops =3D {
+> diff --git a/drivers/gpu/drm/v3d/v3d_drv.h b/drivers/gpu/drm/v3d/v3d_drv.h
+> index 83c55ab6e1c0..e0624ea72942 100644
+> --- a/drivers/gpu/drm/v3d/v3d_drv.h
+> +++ b/drivers/gpu/drm/v3d/v3d_drv.h
+> @@ -8,19 +8,18 @@
+>  #include <drm/drm_gem.h>
+>  #include <drm/gpu_scheduler.h>
+>  #include <drm/drm_simple_kms_helper.h>
+> +#include "uapi/drm/v3d_drm.h"
+>=20=20
+>  #define GMP_GRANULARITY (128 * 1024)
+>=20=20
+> -/* Enum for each of the V3D queues.  We maintain various queue
+> - * tracking as an array because at some point we'll want to support
+> - * the TFU (texture formatting unit) as another queue.
+> - */
+> +/* Enum for each of the V3D queues. */
+>  enum v3d_queue {
+>  	V3D_BIN,
+>  	V3D_RENDER,
+> +	V3D_TFU,
+>  };
+>=20=20
+> -#define V3D_MAX_QUEUES (V3D_RENDER + 1)
+> +#define V3D_MAX_QUEUES (V3D_TFU + 1)
+>=20=20
+>  struct v3d_queue_state {
+>  	struct drm_gpu_scheduler sched;
+> @@ -74,6 +73,7 @@ struct v3d_dev {
+>=20=20
+>  	struct v3d_exec_info *bin_job;
+>  	struct v3d_exec_info *render_job;
+> +	struct v3d_tfu_job *tfu_job;
+>=20=20
+>  	struct v3d_queue_state queue[V3D_MAX_QUEUES];
+>=20=20
+> @@ -224,6 +224,25 @@ struct v3d_exec_info {
+>  	u32 qma, qms, qts;
+>  };
+>=20=20
+> +struct v3d_tfu_job {
+> +	struct drm_sched_job base;
+> +
+> +	struct drm_v3d_submit_tfu args;
+> +
+> +	/* An optional fence userspace can pass in for the job to depend on. */
+> +	struct dma_fence *in_fence;
+> +
+> +	/* v3d fence to be signaled by IRQ handler when the job is complete. */
+> +	struct dma_fence *done_fence;
+> +
+> +	struct v3d_dev *v3d;
+> +
+> +	struct kref refcount;
+> +
+> +	/* This is the array of BOs that were looked up at the start of exec. */
+> +	struct v3d_bo *bo[4];
+> +};
+> +
+>  /**
+>   * _wait_for - magic (register) wait macro
+>   *
+> @@ -287,9 +306,12 @@ int v3d_gem_init(struct drm_device *dev);
+>  void v3d_gem_destroy(struct drm_device *dev);
+>  int v3d_submit_cl_ioctl(struct drm_device *dev, void *data,
+>  			struct drm_file *file_priv);
+> +int v3d_submit_tfu_ioctl(struct drm_device *dev, void *data,
+> +			 struct drm_file *file_priv);
+>  int v3d_wait_bo_ioctl(struct drm_device *dev, void *data,
+>  		      struct drm_file *file_priv);
+>  void v3d_exec_put(struct v3d_exec_info *exec);
+> +void v3d_tfu_job_put(struct v3d_tfu_job *exec);
+>  void v3d_reset(struct v3d_dev *v3d);
+>  void v3d_invalidate_caches(struct v3d_dev *v3d);
+>  void v3d_flush_caches(struct v3d_dev *v3d);
+> diff --git a/drivers/gpu/drm/v3d/v3d_gem.c b/drivers/gpu/drm/v3d/v3d_gem.c
+> index d0dfdcbbd42c..adc8b1ec15e3 100644
+> --- a/drivers/gpu/drm/v3d/v3d_gem.c
+> +++ b/drivers/gpu/drm/v3d/v3d_gem.c
+> @@ -207,27 +207,27 @@ v3d_flush_caches(struct v3d_dev *v3d)
+>  }
+>=20=20
+>  static void
+> -v3d_attach_object_fences(struct v3d_exec_info *exec)
+> +v3d_attach_object_fences(struct v3d_bo **bos, int bo_count,
+> +			 struct dma_fence *fence)
+>  {
+> -	struct dma_fence *out_fence =3D exec->render_done_fence;
+> -	struct v3d_bo *bo;
+>  	int i;
+>=20=20
+> -	for (i =3D 0; i < exec->bo_count; i++) {
+> +	for (i =3D 0; i < bo_count; i++) {
+>  		/* XXX: Use shared fences for read-only objects. */
+> -		reservation_object_add_excl_fence(exec->bo[i]->resv, out_fence);
+> +		reservation_object_add_excl_fence(bos[i]->resv, fence);
+>  	}
+>  }
+>=20=20
+>  static void
+>  v3d_unlock_bo_reservations(struct drm_device *dev,
+> -			   struct v3d_exec_info *exec,
+> +			   struct v3d_bo **bos,
+> +			   int bo_count,
+>  			   struct ww_acquire_ctx *acquire_ctx)
+>  {
+>  	int i;
+>=20=20
+> -	for (i =3D 0; i < exec->bo_count; i++)
+> -		ww_mutex_unlock(&exec->bo[i]->resv->lock);
+> +	for (i =3D 0; i < bo_count; i++)
+> +		ww_mutex_unlock(&bos[i]->resv->lock);
+>=20=20
+>  	ww_acquire_fini(acquire_ctx);
+>  }
+> @@ -241,7 +241,8 @@ v3d_unlock_bo_reservations(struct drm_device *dev,
+>   */
+>  static int
+>  v3d_lock_bo_reservations(struct drm_device *dev,
+> -			 struct v3d_exec_info *exec,
+> +			 struct v3d_bo **bos,
+> +			 int bo_count,
+>  			 struct ww_acquire_ctx *acquire_ctx)
+>  {
+>  	int contended_lock =3D -1;
+> @@ -251,7 +252,7 @@ v3d_lock_bo_reservations(struct drm_device *dev,
+>=20=20
+>  retry:
+>  	if (contended_lock !=3D -1) {
+> -		struct v3d_bo *bo =3D exec->bo[contended_lock];
+> +		struct v3d_bo *bo =3D bos[contended_lock];
+>=20=20
+>  		ret =3D ww_mutex_lock_slow_interruptible(&bo->resv->lock,
+>  						       acquire_ctx);
+> @@ -261,20 +262,20 @@ v3d_lock_bo_reservations(struct drm_device *dev,
+>  		}
+>  	}
+>=20=20
+> -	for (i =3D 0; i < exec->bo_count; i++) {
+> +	for (i =3D 0; i < bo_count; i++) {
+>  		if (i =3D=3D contended_lock)
+>  			continue;
+>=20=20
+> -		ret =3D ww_mutex_lock_interruptible(&exec->bo[i]->resv->lock,
+> +		ret =3D ww_mutex_lock_interruptible(&bos[i]->resv->lock,
+>  						  acquire_ctx);
+>  		if (ret) {
+>  			int j;
+>=20=20
+>  			for (j =3D 0; j < i; j++)
+> -				ww_mutex_unlock(&exec->bo[j]->resv->lock);
+> +				ww_mutex_unlock(&bos[j]->resv->lock);
+>=20=20
+>  			if (contended_lock !=3D -1 && contended_lock >=3D i) {
+> -				struct v3d_bo *bo =3D exec->bo[contended_lock];
+> +				struct v3d_bo *bo =3D bos[contended_lock];
+>=20=20
+>  				ww_mutex_unlock(&bo->resv->lock);
+>  			}
+> @@ -294,10 +295,11 @@ v3d_lock_bo_reservations(struct drm_device *dev,
+>  	/* Reserve space for our shared (read-only) fence references,
+>  	 * before we commit the CL to the hardware.
+>  	 */
+> -	for (i =3D 0; i < exec->bo_count; i++) {
+> -		ret =3D reservation_object_reserve_shared(exec->bo[i]->resv, 1);
+> +	for (i =3D 0; i < bo_count; i++) {
+> +		ret =3D reservation_object_reserve_shared(bos[i]->resv, 1);
+>  		if (ret) {
+> -			v3d_unlock_bo_reservations(dev, exec, acquire_ctx);
+> +			v3d_unlock_bo_reservations(dev, bos, bo_count,
+> +						   acquire_ctx);
+>  			return ret;
+>  		}
+>  	}
+> @@ -420,6 +422,31 @@ void v3d_exec_put(struct v3d_exec_info *exec)
+>  	kref_put(&exec->refcount, v3d_exec_cleanup);
+>  }
+>=20=20
+> +static void
+> +v3d_tfu_job_cleanup(struct kref *ref)
+> +{
+> +	struct v3d_tfu_job *job =3D container_of(ref, struct v3d_tfu_job,
+> +					       refcount);
+> +	struct v3d_dev *v3d =3D job->v3d;
+> +	unsigned int i;
+> +
+> +	dma_fence_put(job->in_fence);
+> +	dma_fence_put(job->done_fence);
+> +
+> +	for (i =3D 0; i < ARRAY_SIZE(job->bo); i++)
+> +		drm_gem_object_put_unlocked(&job->bo[i]->base);
+> +
+> +	pm_runtime_mark_last_busy(v3d->dev);
+> +	pm_runtime_put_autosuspend(v3d->dev);
+> +
+> +	kfree(job);
+> +}
+> +
+> +void v3d_tfu_job_put(struct v3d_tfu_job *job)
+> +{
+> +	kref_put(&job->refcount, v3d_tfu_job_cleanup);
+> +}
+> +
+>  int
+>  v3d_wait_bo_ioctl(struct drm_device *dev, void *data,
+>  		  struct drm_file *file_priv)
+> @@ -537,7 +564,8 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *dat=
+a,
+>  	if (ret)
+>  		goto fail;
+>=20=20
+> -	ret =3D v3d_lock_bo_reservations(dev, exec, &acquire_ctx);
+> +	ret =3D v3d_lock_bo_reservations(dev, exec->bo, exec->bo_count,
+> +				       &acquire_ctx);
+>  	if (ret)
+>  		goto fail;
+>=20=20
+> @@ -571,9 +599,10 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *da=
+ta,
+>  				  &v3d_priv->sched_entity[V3D_RENDER]);
+>  	mutex_unlock(&v3d->sched_lock);
+>=20=20
+> -	v3d_attach_object_fences(exec);
+> +	v3d_attach_object_fences(exec->bo, exec->bo_count,
+> +				 exec->render_done_fence);
+>=20=20
+> -	v3d_unlock_bo_reservations(dev, exec, &acquire_ctx);
+> +	v3d_unlock_bo_reservations(dev, exec->bo, exec->bo_count, &acquire_ctx);
+>=20=20
+>  	/* Update the return sync object for the */
+>  	sync_out =3D drm_syncobj_find(file_priv, args->out_sync);
+> @@ -589,13 +618,119 @@ v3d_submit_cl_ioctl(struct drm_device *dev, void *=
+data,
+>=20=20
+>  fail_unreserve:
+>  	mutex_unlock(&v3d->sched_lock);
+> -	v3d_unlock_bo_reservations(dev, exec, &acquire_ctx);
+> +	v3d_unlock_bo_reservations(dev, exec->bo, exec->bo_count, &acquire_ctx);
+>  fail:
+>  	v3d_exec_put(exec);
+>=20=20
+>  	return ret;
+>  }
+>=20=20
+> +/**
+> + * v3d_submit_tfu_ioctl() - Submits a TFU (texture formatting) job to th=
+e V3D.
+> + * @dev: DRM device
+> + * @data: ioctl argument
+> + * @file_priv: DRM file for this fd
+> + *
+> + * Userspace provides the register setup for the TFU, which we don't
+> + * need to validate since the TFU is behind the MMU.
+> + */
+> +int
+> +v3d_submit_tfu_ioctl(struct drm_device *dev, void *data,
+> +		    struct drm_file *file_priv)
+> +{
+> +	struct v3d_dev *v3d =3D to_v3d_dev(dev);
+> +	struct v3d_file_priv *v3d_priv =3D file_priv->driver_priv;
+> +	struct drm_v3d_submit_tfu *args =3D data;
+> +	struct v3d_tfu_job *job;
+> +	struct ww_acquire_ctx acquire_ctx;
+> +	struct drm_syncobj *sync_out;
+> +	struct dma_fence *sched_done_fence;
+> +	int ret =3D 0;
+> +	int bo_count;
+> +
+> +	job =3D kcalloc(1, sizeof(*job), GFP_KERNEL);
+> +	if (!job)
+> +		return -ENOMEM;
+> +
+> +	ret =3D pm_runtime_get_sync(v3d->dev);
+> +	if (ret < 0) {
+> +		kfree(job);
+> +		return ret;
+> +	}
+> +
+> +	kref_init(&job->refcount);
+> +
+> +	ret =3D drm_syncobj_find_fence(file_priv, args->in_sync,
+> +				     0, 0, &job->in_fence);
+> +	if (ret =3D=3D -EINVAL)
+> +		goto fail;
+> +
+> +	job->args =3D *args;
+> +	job->v3d =3D v3d;
+> +
+> +	spin_lock(&file_priv->table_lock);
+> +	for (bo_count =3D 0; bo_count < ARRAY_SIZE(job->bo); bo_count++) {
+> +		struct drm_gem_object *bo;
+> +
+> +		if (!args->bo_handles[bo_count])
+> +			break;
+> +
+> +		bo =3D idr_find(&file_priv->object_idr,
+> +			      args->bo_handles[bo_count]);
+> +		if (!bo) {
+> +			DRM_DEBUG("Failed to look up GEM BO %d: %d\n",
+> +				  bo_count, args->bo_handles[bo_count]);
+> +			ret =3D -ENOENT;
+> +			spin_unlock(&file_priv->table_lock);
+> +			goto fail;
+> +		}
+> +		drm_gem_object_get(bo);
+> +		job->bo[bo_count] =3D to_v3d_bo(bo);
+> +	}
+> +	spin_unlock(&file_priv->table_lock);
+> +
+> +	ret =3D v3d_lock_bo_reservations(dev, job->bo, bo_count, &acquire_ctx);
+> +	if (ret)
+> +		goto fail;
+> +
+> +	mutex_lock(&v3d->sched_lock);
+> +	ret =3D drm_sched_job_init(&job->base,
+> +				 &v3d_priv->sched_entity[V3D_TFU],
+> +				 v3d_priv);
+> +	if (ret)
+> +		goto fail_unreserve;
+> +
+> +	sched_done_fence =3D dma_fence_get(&job->base.s_fence->finished);
+> +
+> +	kref_get(&job->refcount); /* put by scheduler job completion */
+> +	drm_sched_entity_push_job(&job->base, &v3d_priv->sched_entity[V3D_TFU]);
+> +	mutex_unlock(&v3d->sched_lock);
+> +
+> +	v3d_attach_object_fences(job->bo, bo_count, sched_done_fence);
+> +
+> +	v3d_unlock_bo_reservations(dev, job->bo, bo_count, &acquire_ctx);
+> +
+> +	/* Update the return sync object */
+> +	sync_out =3D drm_syncobj_find(file_priv, args->out_sync);
+> +	if (sync_out) {
+> +		drm_syncobj_replace_fence(sync_out, 0, sched_done_fence);
+> +		drm_syncobj_put(sync_out);
+> +	}
+> +	dma_fence_put(sched_done_fence);
+> +
+> +	v3d_tfu_job_put(job);
+> +
+> +	return 0;
+> +
+> +fail_unreserve:
+> +	mutex_unlock(&v3d->sched_lock);
+> +	v3d_unlock_bo_reservations(dev, job->bo, bo_count, &acquire_ctx);
+> +fail:
+> +	v3d_tfu_job_put(job);
+> +
+> +	return ret;
+> +}
+> +
+>  int
+>  v3d_gem_init(struct drm_device *dev)
+>  {
+> diff --git a/drivers/gpu/drm/v3d/v3d_irq.c b/drivers/gpu/drm/v3d/v3d_irq.c
+> index e07514eb11b5..dd7a7b0bd5a1 100644
+> --- a/drivers/gpu/drm/v3d/v3d_irq.c
+> +++ b/drivers/gpu/drm/v3d/v3d_irq.c
+> @@ -4,8 +4,8 @@
+>  /**
+>   * DOC: Interrupt management for the V3D engine
+>   *
+> - * When we take a binning or rendering flush done interrupt, we need
+> - * to signal the fence for that job so that the scheduler can queue up
+> + * When we take a bin, render, or TFU done interrupt, we need to
+> + * signal the fence for that job so that the scheduler can queue up
+>   * the next one and unblock any waiters.
+>   *
+>   * When we take the binner out of memory interrupt, we need to
+> @@ -23,7 +23,8 @@
+>=20=20
+>  #define V3D_HUB_IRQS ((u32)(V3D_HUB_INT_MMU_WRV |	\
+>  			    V3D_HUB_INT_MMU_PTI |	\
+> -			    V3D_HUB_INT_MMU_CAP))
+> +			    V3D_HUB_INT_MMU_CAP |	\
+> +			    V3D_HUB_INT_TFUC))
+>=20=20
+>  static void
+>  v3d_overflow_mem_work(struct work_struct *work)
+> @@ -117,6 +118,11 @@ v3d_hub_irq(int irq, void *arg)
+>  	/* Acknowledge the interrupts we're handling here. */
+>  	V3D_WRITE(V3D_HUB_INT_CLR, intsts);
+>=20=20
+> +	if (intsts & V3D_HUB_INT_TFUC) {
+> +		dma_fence_signal(v3d->tfu_job->done_fence);
+> +		status =3D IRQ_HANDLED;
+> +	}
+> +
+>  	if (intsts & (V3D_HUB_INT_MMU_WRV |
+>  		      V3D_HUB_INT_MMU_PTI |
+>  		      V3D_HUB_INT_MMU_CAP)) {
+> diff --git a/drivers/gpu/drm/v3d/v3d_regs.h b/drivers/gpu/drm/v3d/v3d_reg=
+s.h
+> index c3a5e4e44f73..92a2bd55e217 100644
+> --- a/drivers/gpu/drm/v3d/v3d_regs.h
+> +++ b/drivers/gpu/drm/v3d/v3d_regs.h
+> @@ -86,6 +86,64 @@
+>  # define V3D_TOP_GR_BRIDGE_SW_INIT_1                   0x0000c
+>  # define V3D_TOP_GR_BRIDGE_SW_INIT_1_V3D_CLK_108_SW_INIT BIT(0)
+>=20=20
+> +#define V3D_TFU_CS                                     0x00400
+> +/* Stops current job, empties input fifo. */
+> +# define V3D_TFU_CS_TFURST                             BIT(31)
+> +# define V3D_TFU_CS_CVTCT_MASK                         V3D_MASK(23, 16)
+> +# define V3D_TFU_CS_CVTCT_SHIFT                        16
+> +# define V3D_TFU_CS_NFREE_MASK                         V3D_MASK(13, 8)
+> +# define V3D_TFU_CS_NFREE_SHIFT                        8
+> +# define V3D_TFU_CS_BUSY                               BIT(0)
+> +
+> +#define V3D_TFU_SU                                     0x00404
+> +/* Interrupt when FINTTHR input slots are free (0 =3D disabled) */
+> +# define V3D_TFU_SU_FINTTHR_MASK                       V3D_MASK(13, 8)
+> +# define V3D_TFU_SU_FINTTHR_SHIFT                      8
+> +/* Skips resetting the CRC at the start of CRC generation. */
+> +# define V3D_TFU_SU_CRCCHAIN                           BIT(4)
+> +/* skips writes, computes CRC of the image.  miplevels must be 0. */
+> +# define V3D_TFU_SU_CRC                                BIT(3)
+> +# define V3D_TFU_SU_THROTTLE_MASK                      V3D_MASK(1, 0)
+> +# define V3D_TFU_SU_THROTTLE_SHIFT                     0
+> +
+> +#define V3D_TFU_ICFG                                   0x00408
+> +/* Interrupt when the conversion is complete. */
+> +# define V3D_TFU_ICFG_IOC                              BIT(0)
+> +
+> +/* Input Image Address */
+> +#define V3D_TFU_IIA                                    0x0040c
+> +/* Input Chroma Address */
+> +#define V3D_TFU_ICA                                    0x00410
+> +/* Input Image Stride */
+> +#define V3D_TFU_IIS                                    0x00414
+> +/* Input Image U-Plane Address */
+> +#define V3D_TFU_IUA                                    0x00418
+> +/* Output Image Address */
+> +#define V3D_TFU_IOA                                    0x0041c
+> +/* Image Output Size */
+> +#define V3D_TFU_IOS                                    0x00420
+> +/* TFU YUV Coefficient 0 */
+> +#define V3D_TFU_COEF0                                  0x00424
+> +/* Use these regs instead of the defaults. */
+> +# define V3D_TFU_COEF0_USECOEF                         BIT(31)
+> +/* TFU YUV Coefficient 1 */
+> +#define V3D_TFU_COEF1                                  0x00428
+> +/* TFU YUV Coefficient 2 */
+> +#define V3D_TFU_COEF2                                  0x0042c
+> +/* TFU YUV Coefficient 3 */
+> +#define V3D_TFU_COEF3                                  0x00430
+> +
+> +#define V3D_TFU_CRC                                    0x00434
+> +
+> +#define V3D_TFU_INT_STS                                0x00438
+> +#define V3D_TFU_INT_SET                                0x0043c
+> +#define V3D_TFU_INT_CLR                                0x00440
+> +#define V3D_TFU_INT_MSK_STS                            0x00444
+> +#define V3D_TFU_INT_MSK_SET                            0x00448
+> +#define V3D_TFU_INT_MSK_CLR                            0x0044c
+> +#define V3D_TFU_INT_TFUC                               BIT(1)
+> +#define V3D_TFU_INT_TFUF                               BIT(0)
+> +
+>  /* Per-MMU registers. */
+>=20=20
+>  #define V3D_MMUC_CONTROL                               0x01000
+> diff --git a/drivers/gpu/drm/v3d/v3d_sched.c b/drivers/gpu/drm/v3d/v3d_sc=
+hed.c
+> index e1f2aab0717b..7a3d4020cfca 100644
+> --- a/drivers/gpu/drm/v3d/v3d_sched.c
+> +++ b/drivers/gpu/drm/v3d/v3d_sched.c
+> @@ -30,6 +30,12 @@ to_v3d_job(struct drm_sched_job *sched_job)
+>  	return container_of(sched_job, struct v3d_job, base);
+>  }
+>=20=20
+> +static struct v3d_tfu_job *
+> +to_tfu_job(struct drm_sched_job *sched_job)
+> +{
+> +	return container_of(sched_job, struct v3d_tfu_job, base);
+> +}
+> +
+>  static void
+>  v3d_job_free(struct drm_sched_job *sched_job)
+>  {
+> @@ -38,6 +44,14 @@ v3d_job_free(struct drm_sched_job *sched_job)
+>  	v3d_exec_put(job->exec);
+>  }
+>=20=20
+> +static void
+> +v3d_tfu_job_free(struct drm_sched_job *sched_job)
+> +{
+> +	struct v3d_tfu_job *job =3D to_tfu_job(sched_job);
+> +
+> +	v3d_tfu_job_put(job);
+> +}
+> +
+>  /**
+>   * Returns the fences that the bin or render job depends on, one by one.
+>   * v3d_job_run() won't be called until all of them have been signaled.
+> @@ -76,6 +90,27 @@ v3d_job_dependency(struct drm_sched_job *sched_job,
+>  	return fence;
+>  }
+>=20=20
+> +/**
+> + * Returns the fences that the TFU job depends on, one by one.
+> + * v3d_tfu_job_run() won't be called until all of them have been
+> + * signaled.
+> + */
+> +static struct dma_fence *
+> +v3d_tfu_job_dependency(struct drm_sched_job *sched_job,
+> +		   struct drm_sched_entity *s_entity)
+> +{
+> +	struct v3d_tfu_job *job =3D to_tfu_job(sched_job);
+> +	struct dma_fence *fence;
+> +
+> +	fence =3D job->in_fence;
+> +	if (fence) {
+> +		job->in_fence =3D NULL;
+> +		return fence;
+> +	}
+> +
+> +	return NULL;
+> +}
+> +
+>  static struct dma_fence *v3d_job_run(struct drm_sched_job *sched_job)
+>  {
+>  	struct v3d_job *job =3D to_v3d_job(sched_job);
+> @@ -147,6 +182,71 @@ static struct dma_fence *v3d_job_run(struct drm_sche=
+d_job *sched_job)
+>  	return fence;
+>  }
+>=20=20
+> +static struct dma_fence *
+> +v3d_tfu_job_run(struct drm_sched_job *sched_job)
+> +{
+> +	struct v3d_tfu_job *job =3D to_tfu_job(sched_job);
+> +	struct v3d_dev *v3d =3D job->v3d;
+> +	struct drm_device *dev =3D &v3d->drm;
+> +	struct dma_fence *fence;
+> +
+> +	fence =3D v3d_fence_create(v3d, V3D_TFU);
+> +	if (IS_ERR(fence))
+> +		return NULL;
+> +
+> +	v3d->tfu_job =3D job;
+> +	if (job->done_fence)
+> +		dma_fence_put(job->done_fence);
+> +	job->done_fence =3D dma_fence_get(fence);
+> +
+> +	trace_v3d_submit_tfu(dev, to_v3d_fence(fence)->seqno);
+> +
+> +	V3D_WRITE(V3D_TFU_IIA, job->args.iia);
+> +	V3D_WRITE(V3D_TFU_IIS, job->args.iis);
+> +	V3D_WRITE(V3D_TFU_ICA, job->args.ica);
+> +	V3D_WRITE(V3D_TFU_IUA, job->args.iua);
+> +	V3D_WRITE(V3D_TFU_IOA, job->args.ioa);
+> +	V3D_WRITE(V3D_TFU_IOS, job->args.ios);
+> +	if (job->args.coef[0] & V3D_TFU_COEF0_USECOEF) {
+> +		V3D_WRITE(V3D_TFU_COEF0, job->args.coef[0]);
+> +		V3D_WRITE(V3D_TFU_COEF1, job->args.coef[1]);
+> +		V3D_WRITE(V3D_TFU_COEF2, job->args.coef[2]);
+> +		V3D_WRITE(V3D_TFU_COEF3, job->args.coef[3]);
+> +	}
+> +	/* ICFG kicks off the job. */
+> +	V3D_WRITE(V3D_TFU_ICFG, job->args.icfg | V3D_TFU_ICFG_IOC);
+> +
+> +	return fence;
+> +}
+> +
+> +static void
+> +v3d_gpu_reset_for_timeout(struct v3d_dev *v3d, struct drm_sched_job *sch=
+ed_job)
+> +{
+> +	enum v3d_queue q;
+> +
+> +	mutex_lock(&v3d->reset_lock);
+> +
+> +	/* block scheduler */
+> +	for (q =3D 0; q < V3D_MAX_QUEUES; q++) {
+> +		struct drm_gpu_scheduler *sched =3D &v3d->queue[q].sched;
+> +
+> +		kthread_park(sched->thread);
+> +		drm_sched_hw_job_reset(sched, (sched_job->sched =3D=3D sched ?
+> +					       sched_job : NULL));
+> +	}
+> +
+> +	/* get the GPU back into the init state */
+> +	v3d_reset(v3d);
+> +
+> +	/* Unblock schedulers and restart their jobs. */
+> +	for (q =3D 0; q < V3D_MAX_QUEUES; q++) {
+> +		drm_sched_job_recovery(&v3d->queue[q].sched);
+> +		kthread_unpark(v3d->queue[q].sched.thread);
+> +	}
+> +
+> +	mutex_unlock(&v3d->reset_lock);
+> +}
+> +
+>  static void
+>  v3d_job_timedout(struct drm_sched_job *sched_job)
+>  {
+> @@ -154,7 +254,6 @@ v3d_job_timedout(struct drm_sched_job *sched_job)
+>  	struct v3d_exec_info *exec =3D job->exec;
+>  	struct v3d_dev *v3d =3D exec->v3d;
+>  	enum v3d_queue job_q =3D job =3D=3D &exec->bin ? V3D_BIN : V3D_RENDER;
+> -	enum v3d_queue q;
+>  	u32 ctca =3D V3D_CORE_READ(0, V3D_CLE_CTNCA(job_q));
+>  	u32 ctra =3D V3D_CORE_READ(0, V3D_CLE_CTNRA(job_q));
+>=20=20
+> @@ -173,27 +272,15 @@ v3d_job_timedout(struct drm_sched_job *sched_job)
+>  		return;
+>  	}
+>=20=20
+> -	mutex_lock(&v3d->reset_lock);
+> -
+> -	/* block scheduler */
+> -	for (q =3D 0; q < V3D_MAX_QUEUES; q++) {
+> -		struct drm_gpu_scheduler *sched =3D &v3d->queue[q].sched;
+> -
+> -		kthread_park(sched->thread);
+> -		drm_sched_hw_job_reset(sched, (sched_job->sched =3D=3D sched ?
+> -					       sched_job : NULL));
+> -	}
+> -
+> -	/* get the GPU back into the init state */
+> -	v3d_reset(v3d);
+> +	v3d_gpu_reset_for_timeout(v3d, sched_job);
+> +}
+>=20=20
+> -	/* Unblock schedulers and restart their jobs. */
+> -	for (q =3D 0; q < V3D_MAX_QUEUES; q++) {
+> -		drm_sched_job_recovery(&v3d->queue[q].sched);
+> -		kthread_unpark(v3d->queue[q].sched.thread);
+> -	}
+> +static void
+> +v3d_tfu_job_timedout(struct drm_sched_job *sched_job)
+> +{
+> +	struct v3d_tfu_job *job =3D to_tfu_job(sched_job);
+>=20=20
+> -	mutex_unlock(&v3d->reset_lock);
+> +	v3d_gpu_reset_for_timeout(job->v3d, sched_job);
+>  }
+>=20=20
+>  static const struct drm_sched_backend_ops v3d_sched_ops =3D {
+> @@ -203,6 +290,13 @@ static const struct drm_sched_backend_ops v3d_sched_=
+ops =3D {
+>  	.free_job =3D v3d_job_free
+>  };
+>=20=20
+> +static const struct drm_sched_backend_ops v3d_tfu_sched_ops =3D {
+> +	.dependency =3D v3d_tfu_job_dependency,
+> +	.run_job =3D v3d_tfu_job_run,
+> +	.timedout_job =3D v3d_tfu_job_timedout,
+> +	.free_job =3D v3d_tfu_job_free
+> +};
+> +
+>  int
+>  v3d_sched_init(struct v3d_dev *v3d)
+>  {
+> @@ -233,6 +327,19 @@ v3d_sched_init(struct v3d_dev *v3d)
+>  		return ret;
+>  	}
+>=20=20
+> +	ret =3D drm_sched_init(&v3d->queue[V3D_TFU].sched,
+> +			     &v3d_tfu_sched_ops,
+> +			     hw_jobs_limit, job_hang_limit,
+> +			     msecs_to_jiffies(hang_limit_ms),
+> +			     "v3d_tfu");
+> +	if (ret) {
+> +		dev_err(v3d->dev, "Failed to create TFU scheduler: %d.",
+> +			ret);
+> +		drm_sched_fini(&v3d->queue[V3D_RENDER].sched);
+> +		drm_sched_fini(&v3d->queue[V3D_BIN].sched);
+> +		return ret;
+> +	}
+> +
+>  	return 0;
+>  }
+>=20=20
+> diff --git a/drivers/gpu/drm/v3d/v3d_trace.h b/drivers/gpu/drm/v3d/v3d_tr=
+ace.h
+> index 85dd351e1e09..f54ed9cd3444 100644
+> --- a/drivers/gpu/drm/v3d/v3d_trace.h
+> +++ b/drivers/gpu/drm/v3d/v3d_trace.h
+> @@ -42,6 +42,26 @@ TRACE_EVENT(v3d_submit_cl,
+>  		      __entry->ctnqea)
+>  );
+>=20=20
+> +TRACE_EVENT(v3d_submit_tfu,
+> +	    TP_PROTO(struct drm_device *dev,
+> +		     uint64_t seqno),
+> +	    TP_ARGS(dev, seqno),
+> +
+> +	    TP_STRUCT__entry(
+> +			     __field(u32, dev)
+> +			     __field(u64, seqno)
+> +			     ),
+> +
+> +	    TP_fast_assign(
+> +			   __entry->dev =3D dev->primary->index;
+> +			   __entry->seqno =3D seqno;
+> +			   ),
+> +
+> +	    TP_printk("dev=3D%u, seqno=3D%llu",
+> +		      __entry->dev,
+> +		      __entry->seqno)
+> +);
+> +
+>  TRACE_EVENT(v3d_reset_begin,
+>  	    TP_PROTO(struct drm_device *dev),
+>  	    TP_ARGS(dev),
+> diff --git a/include/uapi/drm/v3d_drm.h b/include/uapi/drm/v3d_drm.h
+> index b1e5de076b0f..3bb4c6136f18 100644
+> --- a/include/uapi/drm/v3d_drm.h
+> +++ b/include/uapi/drm/v3d_drm.h
+> @@ -36,6 +36,7 @@ extern "C" {
+>  #define DRM_V3D_MMAP_BO                           0x03
+>  #define DRM_V3D_GET_PARAM                         0x04
+>  #define DRM_V3D_GET_BO_OFFSET                     0x05
+> +#define DRM_V3D_SUBMIT_TFU                        0x06
+>=20=20
+>  #define DRM_IOCTL_V3D_SUBMIT_CL           DRM_IOWR(DRM_COMMAND_BASE + DR=
+M_V3D_SUBMIT_CL, struct drm_v3d_submit_cl)
+>  #define DRM_IOCTL_V3D_WAIT_BO             DRM_IOWR(DRM_COMMAND_BASE + DR=
+M_V3D_WAIT_BO, struct drm_v3d_wait_bo)
+> @@ -43,6 +44,7 @@ extern "C" {
+>  #define DRM_IOCTL_V3D_MMAP_BO             DRM_IOWR(DRM_COMMAND_BASE + DR=
+M_V3D_MMAP_BO, struct drm_v3d_mmap_bo)
+>  #define DRM_IOCTL_V3D_GET_PARAM           DRM_IOWR(DRM_COMMAND_BASE + DR=
+M_V3D_GET_PARAM, struct drm_v3d_get_param)
+>  #define DRM_IOCTL_V3D_GET_BO_OFFSET       DRM_IOWR(DRM_COMMAND_BASE + DR=
+M_V3D_GET_BO_OFFSET, struct drm_v3d_get_bo_offset)
+> +#define DRM_IOCTL_V3D_SUBMIT_TFU          DRM_IOWR(DRM_COMMAND_BASE + DR=
+M_V3D_SUBMIT_TFU, struct drm_v3d_submit_tfu)
+>=20=20
+>  /**
+>   * struct drm_v3d_submit_cl - ioctl argument for submitting commands to =
+the 3D
+> @@ -179,6 +181,7 @@ enum drm_v3d_param {
+>  	DRM_V3D_PARAM_V3D_CORE0_IDENT0,
+>  	DRM_V3D_PARAM_V3D_CORE0_IDENT1,
+>  	DRM_V3D_PARAM_V3D_CORE0_IDENT2,
+> +	DRM_V3D_PARAM_SUPPORTS_TFU,
+>  };
+>=20=20
+>  struct drm_v3d_get_param {
+> @@ -197,6 +200,28 @@ struct drm_v3d_get_bo_offset {
+>  	__u32 offset;
+>  };
+>=20=20
+> +struct drm_v3d_submit_tfu {
+> +	__u32 icfg;
+> +	__u32 iia;
+> +	__u32 iis;
+> +	__u32 ica;
+> +	__u32 iua;
+> +	__u32 ioa;
+> +	__u32 ios;
+> +	__u32 coef[4];
+> +	/* First handle is the output BO, following are other inputs.
+> +	 * 0 for unused.
+> +	 */
+> +	__u32 bo_handles[4];
+> +	/* sync object to block on before submitting the TFU job.  Each TFU
+> +	 * job will execute in the order submitted to its FD.  Synchronization
+> +	 * against rendering jobs requires using sync objects.
+> +	 */
+> +	__u32 in_sync;
+> +	/* Sync object to signal when the TFU job is done. */
+> +	__u32 out_sync;
+> +};
+> +
+>  #if defined(__cplusplus)
+>  }
+>  #endif
+> --=20
+> 2.19.1
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEE/JuuFDWp9/ZkuCBXtdYpNtH8nugFAlvrSkcACgkQtdYpNtH8
+nuiTSQ/9HxjzqsHDUso9ablEsrNr2uJNw4UmOZdZTH2iiBDV32qznts32lQsLzRc
+gbiOaauMOM+mGcM4cmE6t967NJGYw+rxEyLEUIBgvwzLXVg9IMz2hvRlcGwxt9U2
+I8PUOzfFhlRNH6LlcrHijqJNgvDb+qmtb93uPxRAZIj8LiAWquxT+xeIGBUYNfEr
+YVOOEwzAvhu4Rn2RX2PLwIIeyGvsvyOifSWr6kSv2C+ley61C6OqC1TCNW3COPsZ
+LrdAygW9wKOh1phPezhHNH3QZluQF/G15NSYEx7/7kFIj+Nd0ereb+NGBvWux23v
+1wpygfo9jXyvmYulz6S3HsGQpIh0gKsbt7rAcCpaQXSCilIJGPrd01BzEpYg2sLw
+BdwodpwgGiEJEAwSfbPMOQaPzkhcXg1h5yM9mCTadQlYdqK3ERMZieDhM5ccvA29
+Xfj0NIqDDLaWRAw7w3zghbrPvIbfW6gQY4Lth4Wpfz1Kp6eElJp9Dmq0BWrw/0hZ
+aC5HX7noi/Q82IoRo20swZuJhuWagjJWArpPkpJkDVevSEesMdZg/R1ZfSrzffYl
+nWFNVloyPBTYBy0DwcdpJ85KB+JCKy4GuooB4m47CTMvbjWN4UbLmBeDaS/gYZFD
+QcvNRoouAdUcE+wo5CsS3BnJp+d0rr5CIWjWo5hxznhlugh0PNQ=
+=LFvT
+-----END PGP SIGNATURE-----
+--=-=-=--
