@@ -2,144 +2,151 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBD3DC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:13:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6BEBC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:13:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B44B0223DD
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:13:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 70BBD2243E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 17:13:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b7UylKMq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B44B0223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jT+pzMCi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 70BBD2243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731651AbeKNDMQ (ORCPT
+        id S1731742AbeKNDMf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 22:12:16 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:38454 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731594AbeKNDMP (ORCPT
+        Tue, 13 Nov 2018 22:12:35 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:37865 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731126AbeKNDMf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 22:12:15 -0500
-Received: by mail-pg1-f195.google.com with SMTP id f8-v6so5977862pgq.5
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 09:13:16 -0800 (PST)
+        Tue, 13 Nov 2018 22:12:35 -0500
+Received: by mail-lf1-f67.google.com with SMTP id p17so9403597lfh.4;
+        Tue, 13 Nov 2018 09:13:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=IQFOYvKd7ujGq0kWl7JAh6wTAudeGvp6jbH2cWAtGXQ=;
-        b=b7UylKMqQnF0T1eFa51fCkxNJajM8kX+TP1rZXvWIgDNo/vmb7ApDyzSNwqbjFrtGx
-         h2yjT7jtFxCGYr2FzDUK1TyIqMYKC10/qUG33O/CZqdpXvzcDkSKPKlBhsIszNZjL/3E
-         JHHzBiiqTvoTNRf0Q3xlTUGiHBlQbVdN3PDeU=
+        d=gmail.com; s=20161025;
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=k2JeBfFhoU+gX6GHsYw6B5VuNeSX4B6xxkbtBWYkl6Y=;
+        b=jT+pzMCi+irxRLn5eAK8i94wOPRszu9H8TaQUuY+3bHsG+LEbw5bLQuY+PQu+0P1b0
+         8pGSoaxzt+gftXK/CFcMqKRWg+K6Hady+gVCUMWCe8utH3xzIjbXSW8lOLxyCsTeYyZc
+         aS1XyrM4sW/hgFle3us8+eAK1MjDdTh+h5yNdC/piqAZxJXAZDuPaVCOqLvBXjapfI7c
+         gGkAIkK0DEpZ8YCLjcWraWLFg3/NNglHoh4q21FZ1Vk6oBF2hQKseSKb/X//4F3COdM4
+         g7CFAtq3smyRJ5lmrKWsruSRyUkbFkvD5UlbStwRDTkiHi3IhWX2z2AhnXfOlhW3Gi28
+         X9jQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=IQFOYvKd7ujGq0kWl7JAh6wTAudeGvp6jbH2cWAtGXQ=;
-        b=BqjF0ufAohYzwChWl0vDjsLukxISCnvthR0bFZwjQkyy4BhZC0gZJBTwYlzyTnmECp
-         ypxthq+hPfwmfVX1stegWqd7kk9WcoIAEpSRaFWZRJJgf5kYL09MrpZoVNngV+H/KS6E
-         Oi4ZnX8zRum7TdBeREDP1T08vWmrwY65UYdj5UZNppdlzvkBhPbnm5ZdzfSncD2qeEBL
-         PSWG0o7yL2ujvpNs5SOXsspWUyxpjJhb2PriA1jflWVNFnIPeDiVJBi2zk1wMA1pefRp
-         4rN2I2UWM6nnDG8j5vseNgVgs5r1k9R6zF+ve5bjVAw7uOsuf0oWoTwBm3A/tckWMN28
-         97jA==
-X-Gm-Message-State: AGRZ1gLCUhIo+2Ba01KspRZTQH4ZpwyHdQc/R5vwKo+kT3sifnityRpd
-        pIeAzJJG/PHvRK+Fx/Gx2hacRb053c0=
-X-Google-Smtp-Source: AJdET5cxEXgXvYmSz4Akc7FyjOzbqOCyiG7RzE4CzqqPK51ClmRaCmAmlfxF8nPiSyXy5LXFzV5hZQ==
-X-Received: by 2002:a62:89d7:: with SMTP id n84-v6mr6027119pfk.255.1542129195336;
-        Tue, 13 Nov 2018 09:13:15 -0800 (PST)
-Received: from tuxbook-pro ([206.181.83.18])
-        by smtp.gmail.com with ESMTPSA id z13sm20130388pgf.84.2018.11.13.09.13.13
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 09:13:14 -0800 (PST)
-Date:   Tue, 13 Nov 2018 09:13:11 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Benjamin Gaignard <benjamin.gaignard@linaro.org>, ohad@wizery.com,
-        mark.rutland@arm.com, alexandre.torgue@st.com,
-        linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com,
-        Benjamin Gaignard <benjamin.gaignard@st.com>
-Subject: Re: [PATCH v3 1/4] dt-bindings: hwlock: Document STM32 hwspinlock
- bindings
-Message-ID: <20181113171311.GE10915@tuxbook-pro>
-References: <20181112152342.6561-1-benjamin.gaignard@st.com>
- <20181112152342.6561-2-benjamin.gaignard@st.com>
- <20181113021337.GA7237@bogus>
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=k2JeBfFhoU+gX6GHsYw6B5VuNeSX4B6xxkbtBWYkl6Y=;
+        b=HfXwby3Qf+kQRuNnsiqf1hI3ZiS8FrRlP0D1/k4uz3Uqg9tu8DG4aZVozOUgO5ILLy
+         baM9sCY63XYWqwjV2IqZ+ic9xLtmYrcumJ0L+b2X2xkNUgUTEIVA23brbF/txxDbEpN9
+         U9kraZ2EKh3DVGya1DnmnIp9TxV3dMHaZONs5LPJUX4BZ2w6eBKPhP1BX/AoA/pPx4OT
+         abAhvbn0Blq7NPRifaweWw4bPaVfWUOVXl+dhJdrAqlyPjX9OqdZ/zJf5AtOsJu6Mfj2
+         wolulyMNzHSeqmVxe52An9ksyUnB68YIMQU5RKrt91+2sE4d3KuFKBfqr2RgbPy/Z03L
+         M1Bw==
+X-Gm-Message-State: AGRZ1gJmM4ZOGcXdvIEdc9qSS/y0G8bAgO4RvRbAp7SEyOp6/TdmIPZw
+        WxIoQRlLo2E3I2vJe3HykcOOHBfo
+X-Google-Smtp-Source: AJdET5f+VOuoLDQppbXYLHHPecN/YOc5SKQEBERnQ9FWwwKMK2DZduUnDuLYbS1xhbpRqoRJudKbNQ==
+X-Received: by 2002:a19:be16:: with SMTP id o22mr3362294lff.22.1542129213243;
+        Tue, 13 Nov 2018 09:13:33 -0800 (PST)
+Received: from [192.168.2.145] (ppp91-76-171-181.pppoe.mtu-net.ru. [91.76.171.181])
+        by smtp.googlemail.com with ESMTPSA id y1-v6sm3468834ljh.39.2018.11.13.09.13.31
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 09:13:32 -0800 (PST)
+Subject: Re: [PATCH] media: staging: tegra-vde: print long unsigned using %lu
+ format specifier
+From:   Dmitry Osipenko <digetx@gmail.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Colin King <colin.king@canonical.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Thierry Reding <thierry.reding@gmail.com>,
+        Jonathan Hunter <jonathanh@nvidia.com>,
+        linux-media@vger.kernel.org, linux-tegra@vger.kernel.org,
+        devel@driverdev.osuosl.org
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20181108110224.1916-1-colin.king@canonical.com>
+ <0b3bf728-7b7e-7250-40eb-0827f8fe955b@xs4all.nl>
+ <67306f07-f270-3395-48c4-f6d4954e0d04@gmail.com>
+Message-ID: <84273284-1da5-daf8-491a-3374e2bf7b41@gmail.com>
+Date:   Tue, 13 Nov 2018 20:12:41 +0300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113021337.GA7237@bogus>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <67306f07-f270-3395-48c4-f6d4954e0d04@gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon 12 Nov 18:13 PST 2018, Rob Herring wrote:
-
-> On Mon, Nov 12, 2018 at 04:23:39PM +0100, Benjamin Gaignard wrote:
-> > Add bindings for STM32 hardware spinlock device
-> > 
-> > Signed-off-by: Benjamin Gaignard <benjamin.gaignard@st.com>
+On 13.11.2018 19:52, Dmitry Osipenko wrote:
+> On 09.11.2018 17:32, Hans Verkuil wrote:
+>> On 11/08/18 12:02, Colin King wrote:
+>>> From: Colin Ian King <colin.king@canonical.com>
+>>>
+>>> The frame.flags & FLAG_B_FRAME is promoted to a long unsigned because
+>>> of the use of the BIT() macro when defining FLAG_B_FRAME and causing a
+>>> build warning. Fix this by using the %lu format specifer.
+>>>
+>>> Cleans up warning:
+>>> drivers/staging/media/tegra-vde/tegra-vde.c:267:5: warning: format
+>>> specifies type 'int' but the argument has type 'unsigned long' [-Wformat]
+>>>
+>>> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+>>> ---
+>>>  drivers/staging/media/tegra-vde/tegra-vde.c | 2 +-
+>>>  1 file changed, 1 insertion(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/staging/media/tegra-vde/tegra-vde.c b/drivers/staging/media/tegra-vde/tegra-vde.c
+>>> index 6f06061a40d9..66cf14212c14 100644
+>>> --- a/drivers/staging/media/tegra-vde/tegra-vde.c
+>>> +++ b/drivers/staging/media/tegra-vde/tegra-vde.c
+>>> @@ -262,7 +262,7 @@ static void tegra_vde_setup_iram_tables(struct tegra_vde *vde,
+>>>  			value |= frame->frame_num;
+>>>  
+>>>  			dev_dbg(vde->miscdev.parent,
+>>> -				"\tFrame %d: frame_num = %d B_frame = %d\n",
+>>> +				"\tFrame %d: frame_num = %d B_frame = %lu\n",
+>>>  				i + 1, frame->frame_num,
+>>>  				(frame->flags & FLAG_B_FRAME));
+>>>  		} else {
+>>>
+>>
+>> Compiling for i686 gives:
+>>
+>> In file included from /home/hans/work/build/media-git/include/linux/printk.h:336,
+>>                  from /home/hans/work/build/media-git/include/linux/kernel.h:14,
+>>                  from /home/hans/work/build/media-git/include/linux/clk.h:16,
+>>                  from /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:12:
+>> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c: In function 'tegra_vde_setup_iram_tables':
+>> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:265:5: warning: format '%lu' expects argument of type 'long unsigned int', but argument 6 has type 'u32' {aka 'unsigned int'} [-Wformat=]
+>>      "\tFrame %d: frame_num = %d B_frame = %lu\n",
+>>      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>> /home/hans/work/build/media-git/include/linux/dynamic_debug.h:135:39: note: in definition of macro 'dynamic_dev_dbg'
+>>    __dynamic_dev_dbg(&descriptor, dev, fmt, \
+>>                                        ^~~
+>> /home/hans/work/build/media-git/include/linux/device.h:1463:23: note: in expansion of macro 'dev_fmt'
+>>   dynamic_dev_dbg(dev, dev_fmt(fmt), ##__VA_ARGS__)
+>>                        ^~~~~~~
+>> /home/hans/work/build/media-git/drivers/staging/media/tegra-vde/tegra-vde.c:264:4: note: in expansion of macro 'dev_dbg'
+>>     dev_dbg(vde->miscdev.parent,
+>>     ^~~~~~~
+>>
+>> Should it be %zu?
 > 
-> Linaro or ST? Please make the author email match.
+> Same on ARM32. Yes, it should be either %zu or "!!(frame->flags & FLAG_B_FRAME)".
 > 
 
-Thanks for the review Rob and thanks for spotting this.
+Actually this not a problem with a more recent -next. My bad, sorry for the noise. 
 
-@Benjamin, please resend the driver and dt-binding with matching author
-and sob - or if you wrote this as ST and want to send it upstream as
-Linaro add your new sob after the ST one.
-
-Regards,
-Bjorn
-
-> > ---
-> > version 3 :
-> > - fix clock name in properties description
-> > version 2 :
-> > - change clock name from hwspinlock to hsem to be align with hardware
-> >   documentation
-> > 
-> >  .../bindings/hwlock/st,stm32-hwspinlock.txt        | 23 ++++++++++++++++++++++
-> >  1 file changed, 23 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-> > 
-> > diff --git a/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-> > new file mode 100644
-> > index 000000000000..adf4f000ea3d
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/hwlock/st,stm32-hwspinlock.txt
-> > @@ -0,0 +1,23 @@
-> > +STM32 Hardware Spinlock Device Binding
-> > +-------------------------------------
-> > +
-> > +Required properties :
-> > +- compatible : should be "st,stm32-hwspinlock".
-> > +- reg : the register address of hwspinlock.
-> > +- #hwlock-cells : hwlock users only use the hwlock id to represent a specific
-> > +	hwlock, so the number of cells should be <1> here.
-> > +- clock-names : Must contain "hsem".
-> > +- clocks : Must contain a phandle entry for the clock in clock-names, see the
-> > +	common clock bindings.
-> > +
-> > +Please look at the generic hwlock binding for usage information for consumers,
-> > +"Documentation/devicetree/bindings/hwlock/hwlock.txt"
-> > +
-> > +Example of hwlock provider:
-> > +	hwspinlock@4c000000 {
-> > +		compatible = "st,stm32-hwspinlock";
-> > +		#hwlock-cells = <1>;
-> > +		reg = <0x4c000000 0x400>;
-> > +		clocks = <&rcc HSEM>;
-> > +		clock-names = "hsem";
-> > +	};
-> > -- 
-> > 2.15.0
-> > 
+Probably I should try again with a "trace points" patch that removes those debug messages.
