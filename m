@@ -2,139 +2,115 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49392C43610
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:59:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B58BCC0044C
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1AE7420818
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:59:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AE7420818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 84A5F2243E
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 11:59:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84A5F2243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fi.rohmeurope.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732729AbeKMV4w convert rfc822-to-8bit (ORCPT
+        id S1732836AbeKMV52 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 16:56:52 -0500
-Received: from mga11.intel.com ([192.55.52.93]:18115 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726934AbeKMV4v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 16:56:51 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 03:59:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
-   d="scan'208";a="85461526"
-Received: from fmsmsx108.amr.corp.intel.com ([10.18.124.206])
-  by fmsmga007.fm.intel.com with ESMTP; 13 Nov 2018 03:59:03 -0800
-Received: from fmsmsx101.amr.corp.intel.com (10.18.124.199) by
- FMSMSX108.amr.corp.intel.com (10.18.124.206) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 13 Nov 2018 03:59:03 -0800
-Received: from lcsmsx155.ger.corp.intel.com (10.186.165.233) by
- fmsmsx101.amr.corp.intel.com (10.18.124.199) with Microsoft SMTP Server (TLS)
- id 14.3.408.0; Tue, 13 Nov 2018 03:59:02 -0800
-Received: from hasmsx108.ger.corp.intel.com ([169.254.9.165]) by
- LCSMSX155.ger.corp.intel.com ([169.254.12.124]) with mapi id 14.03.0415.000;
- Tue, 13 Nov 2018 13:58:58 +0200
-From:   "Winkler, Tomas" <tomas.winkler@intel.com>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>,
-        "linux-security-module@vger.kernel.org" 
-        <linux-security-module@vger.kernel.org>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        "Struk, Tadeusz" <tadeusz.struk@intel.com>,
-        Stefan Berger <stefanb@linux.vnet.ibm.com>,
-        "Nayna Jain" <nayna@linux.ibm.com>,
-        Peter Huewe <peterhuewe@gmx.de>,
-        "Jason Gunthorpe" <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v5 16/17] tpm: take TPM chip power gating out of
- tpm_transmit()
-Thread-Topic: [PATCH v5 16/17] tpm: take TPM chip power gating out of
- tpm_transmit()
-Thread-Index: AQHUd238CNv13jYvhU+0nbO7Ml7SjKVGNDswgAAq4wCAAZjFgIAFeyMAgAAuTKA=
-Date:   Tue, 13 Nov 2018 11:58:58 +0000
-Message-ID: <5B8DA87D05A7694D9FA63FD143655C1B9DA1CC0A@hasmsx108.ger.corp.intel.com>
-References: <20181108141541.12832-1-jarkko.sakkinen@linux.intel.com>
- <20181108141541.12832-17-jarkko.sakkinen@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA18602@hasmsx108.ger.corp.intel.com>
- <20181108230700.GA8038@linux.intel.com>
- <5B8DA87D05A7694D9FA63FD143655C1B9DA190F4@hasmsx108.ger.corp.intel.com>
- <20181113111204.GD10434@linux.intel.com>
-In-Reply-To: <20181113111204.GD10434@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ctpclassification: CTP_NT
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZjhiZDQwMmMtNDQwZi00NGI5LWJkM2EtMjI1MTRkNmE1ZTA0IiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiNnBOa2ZzQ0pUZ2M5WHVqMjFzZXpndGxoZHc1ZnJiRDFVYithcDdodERqYmc5STlqNWpaSHcyaGx4UjlQQXE0dyJ9
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.12.116.92]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Tue, 13 Nov 2018 16:57:28 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:39218 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726934AbeKMV52 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 16:57:28 -0500
+Received: by mail-lf1-f65.google.com with SMTP id n18so8609861lfh.6;
+        Tue, 13 Nov 2018 03:59:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=4fWmEQHDymzQumdk/aytbyrz8Sfb7MJtwS0fcAz0+8Q=;
+        b=CEsl4JUt9lMKdBRXIvm4iyxlwdxdlSrsivsTOHoFyMa8/64W0U63SVdRd9JnGH2MTg
+         DtkeV8Q1NpFJfGS2ZzpFugP3cHCEngBMkKlsXG8V5kEOmLFfZXxtbUpE/arsUFj1lTfY
+         GbvyCbwY+ww6/2QTdylmJOGKq41xmlDfFuotyrbgmpb/zbN4kGgntQ9jpxBXX7FmXhNo
+         FljoL2MGmbJ+dgU0j3gzhlNVX8R+bd3TkFggU40C2lhVM9S9eSo+QNA96vsPZ8YHmixU
+         4FjawTRmZm/FXGxgbs3ra1TDN3hSn5dDCpZ/4rdZqb4jJyC816mU67U4ljS2f6YfgVNN
+         HK5g==
+X-Gm-Message-State: AGRZ1gKdo96M3Pt4tvVQqP2rnEmJiv0GvrPYwFvgTeEeOqq66OdD6gJw
+        nSlgsfY2Wu2rZfha72hSl6U=
+X-Google-Smtp-Source: AJdET5eY5Y8Z+Wd+y8qQgdrwaMKb79bzHHDnnpRZ/qJOEzRVVyE3QH6UbsC9cFbqs3Ab3FvcXvg1Fg==
+X-Received: by 2002:a19:d5:: with SMTP id 204mr2618716lfa.116.1542110377098;
+        Tue, 13 Nov 2018 03:59:37 -0800 (PST)
+Received: from localhost.localdomain ([213.255.186.46])
+        by smtp.gmail.com with ESMTPSA id g73-v6sm3518209lje.24.2018.11.13.03.59.35
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Nov 2018 03:59:36 -0800 (PST)
+Date:   Tue, 13 Nov 2018 13:59:27 +0200
+From:   Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+To:     mazziesaccount@gmail.com
+Cc:     Jonathan Corbet <corbet@lwn.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Russell King <linux@armlinux.org.uk>,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Andrey Smirnov <andrew.smirnov@gmail.com>,
+        Guenter Roeck <linux@roeck-us.net>,
+        Rob Herring <robh@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Lee Jones <lee.jones@linaro.org>,
+        Huang Shijie <sjhuang@iluvatar.ai>,
+        Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+        Daniel Kurtz <djkurtz@chromium.org>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        "Rafael J. Wysocki" <rafael.j.wysocki@intel.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org
+Subject: [PATCH v4 3/8] clk: clk-st: avoid clkdev lookup leak at remove
+Message-ID: <c2c140f03695488cf42c8af38ee9205d410a8907.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+References: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cover.1542107769.git.matti.vaittinen@fi.rohmeurope.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Use devm based clkdev lookup registration to avoid leaking lookup
+structures.
+
+Signed-off-by: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
+---
+ drivers/clk/x86/clk-st.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/clk/x86/clk-st.c b/drivers/clk/x86/clk-st.c
+index 3a0996f2d556..25d4b97aff9b 100644
+--- a/drivers/clk/x86/clk-st.c
++++ b/drivers/clk/x86/clk-st.c
+@@ -52,7 +52,8 @@ static int st_clk_probe(struct platform_device *pdev)
+ 		0, st_data->base + MISCCLKCNTL1, OSCCLKENB,
+ 		CLK_GATE_SET_TO_DISABLE, NULL);
+ 
+-	clk_hw_register_clkdev(hws[ST_CLK_GATE], "oscout1", NULL);
++	devm_clk_hw_register_clkdev(&pdev->dev, hws[ST_CLK_GATE], "oscout1",
++				    NULL);
+ 
+ 	return 0;
+ }
+-- 
+2.14.3
 
 
-> -----Original Message-----
-> From: Jarkko Sakkinen [mailto:jarkko.sakkinen@linux.intel.com]
-> Sent: Tuesday, November 13, 2018 13:12
-> To: Winkler, Tomas <tomas.winkler@intel.com>
-> Cc: linux-integrity@vger.kernel.org; linux-security-module@vger.kernel.org;
-> James Bottomley <James.Bottomley@HansenPartnership.com>; Struk,
-> Tadeusz <tadeusz.struk@intel.com>; Stefan Berger
-> <stefanb@linux.vnet.ibm.com>; Nayna Jain <nayna@linux.ibm.com>; Peter
-> Huewe <peterhuewe@gmx.de>; Jason Gunthorpe <jgg@ziepe.ca>; Arnd
-> Bergmann <arnd@arndb.de>; Greg Kroah-Hartman
-> <gregkh@linuxfoundation.org>; open list <linux-kernel@vger.kernel.org>
-> Subject: Re: [PATCH v5 16/17] tpm: take TPM chip power gating out of
-> tpm_transmit()
-> 
-> On Fri, Nov 09, 2018 at 09:37:48PM +0000, Winkler, Tomas wrote:
-> > > On Thu, Nov 08, 2018 at 06:38:59PM +0000, Winkler, Tomas wrote:
-> > > > > Call tpm_chip_start() and tpm_chip_stop() in
-> > > > >
-> > > > > * tpm_try_get_ops() and tpm_put_ops()
-> > > > > * tpm_chip_register()
-> > > > > * tpm2_del_space()
-> > > > >
-> > > > > And remove these calls from tpm_transmit(). The core reason for
-> > > > > this change is that in tpm_vtpm_proxy a locality change requires
-> > > > > a virtual TPM command (a command made up just for that driver).
-> > > > >
-> > > > I don't think you can do that,  locality has to be request for
-> > > > each command, as  for example tboot can request higher locality any
-> time.
-> > >
-> > > That could be a potential problem. How tboot intervention gets
-> > > prevented without this patch?
-> > As it was said, need to request locality and relinquish it for each
-> > command, I believe thought this is not required for client platforms
-> > only for servers.
-> 
-> And what I'm trying to under is why so.
-> 
-> If the intervention can happen at any time that would imply that even if you
-> would request and relinquish locality for a single TPM command, the
-> intervention could happen in the middle. That is why I'm asking why without
-> this patch things are just fine.
-Yes, w/o this constrain it would be okay to request locality only once, 
-we can ask tboot ask again but at the time the requirement was that locality can be taken of at any point, 
-I believe that the locality won't be granted till a single command is completed.
+-- 
+Matti Vaittinen
+ROHM Semiconductors
 
-Anyhow still the power gating is wrong in this patch do not ignore that part.
-
-Thanks
-Tomas
-
+~~~ "I don't think so," said Rene Descartes.  Just then, he vanished ~~~
