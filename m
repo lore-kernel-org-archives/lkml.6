@@ -2,107 +2,126 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53DD7C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:13:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 80005C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:14:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2188222510
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:13:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2188222510
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 5144A2251B
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:14:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5144A2251B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387564AbeKNBMB (ORCPT
+        id S2387649AbeKNBNA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:12:01 -0500
-Received: from mga18.intel.com ([134.134.136.126]:53210 "EHLO mga18.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731287AbeKNBMA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:12:00 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 13 Nov 2018 07:13:26 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
-   d="scan'208";a="280732220"
-Received: from ibanaga-mobl1.ger.corp.intel.com (HELO localhost) ([10.249.254.77])
-  by fmsmga006.fm.intel.com with ESMTP; 13 Nov 2018 07:13:18 -0800
-Date:   Tue, 13 Nov 2018 17:13:16 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Dave Hansen <dave.hansen@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        mark.shanahan@intel.com, andriy.shevchenko@linux.intel.com,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v15 23/23] x86/sgx: Driver documentation
-Message-ID: <20181113151316.GA3796@linux.intel.com>
-References: <20181102231320.29164-1-jarkko.sakkinen@linux.intel.com>
- <20181102231320.29164-24-jarkko.sakkinen@linux.intel.com>
- <154ded23-fd1d-f324-4e0a-9de8eddcda6d@intel.com>
- <20181106054911.GA15575@linux.intel.com>
- <e7b4c432-7005-308c-4da0-a80e0d294244@intel.com>
- <20181107163019.GA11509@linux.intel.com>
- <914dd171-b48a-12d9-eb77-3c40c8b210cb@intel.com>
- <20181108143942.GA13792@linux.intel.com>
- <20181108192040.GA21685@linux.intel.com>
+        Tue, 13 Nov 2018 20:13:00 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:58026 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732000AbeKNBNA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 20:13:00 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0C361A78;
+        Tue, 13 Nov 2018 07:14:26 -0800 (PST)
+Received: from darkstar (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 764DF3F5BD;
+        Tue, 13 Nov 2018 07:14:25 -0800 (PST)
+Date:   Tue, 13 Nov 2018 07:14:24 -0800
+From:   Patrick Bellasi <patrick.bellasi@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>
+Cc:     linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+        Ingo Molnar <mingo@redhat.com>, Tejun Heo <tj@kernel.org>,
+        "Rafael J . Wysocki" <rafael.j.wysocki@intel.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Paul Turner <pjt@google.com>,
+        Quentin Perret <quentin.perret@arm.com>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Morten Rasmussen <morten.rasmussen@arm.com>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Todd Kjos <tkjos@google.com>,
+        Joel Fernandes <joelaf@google.com>,
+        Steve Muckle <smuckle@google.com>,
+        Suren Baghdasaryan <surenb@google.com>
+Subject: Re: [PATCH v5 06/15] sched/core: uclamp: enforce last task UCLAMP_MAX
+Message-ID: <20181113151424.GB7681@darkstar>
+References: <20181029183311.29175-1-patrick.bellasi@arm.com>
+ <20181029183311.29175-8-patrick.bellasi@arm.com>
+ <20181111170848.GB3038@worktop>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181108192040.GA21685@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181111170848.GB3038@worktop>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 09:20:40PM +0200, Jarkko Sakkinen wrote:
-> On Thu, Nov 08, 2018 at 04:39:42PM +0200, Jarkko Sakkinen wrote:
-> > On Wed, Nov 07, 2018 at 09:09:37AM -0800, Dave Hansen wrote:
-> > > On 11/7/18 8:30 AM, Jarkko Sakkinen wrote:
-> > > >> Does this code run when I type "make kselftest"?  If not, I think we
-> > > >> should rectify that.
-> > > > No, it doesn't. It is just my backup for the non-SDK user space code
-> > > > that I've made that I will use to fork my user space SGX projects in
-> > > > the future.
-> > > > 
-> > > > I can work-out a selftest (and provide a new patch in the series) but
-> > > > I'm still wondering what the enclave should do. I would suggest that
-> > > > we start with an enclave that does just EEXIT and nothing else.
-> > > 
-> > > Yeah, that's a start.  But, a good selftest would include things like
-> > > faults and error conditions.
+On 11-Nov 18:08, Peter Zijlstra wrote:
+> On Mon, Oct 29, 2018 at 06:33:01PM +0000, Patrick Bellasi wrote:
+> > When a util_max clamped task sleeps, its clamp constraints are removed
+> > from the CPU. However, the blocked utilization on that CPU can still be
+> > higher than the max clamp value enforced while that task was running.
 > > 
-> > Great. We can add more entry points to the enclave for different tests
-> > but I'll start with a bare minimum. And yeah but ever goes into next
-> > version I'll document the fault handling.
+> > The release of a util_max clamp when a CPU is going to be idle could
+> > thus allow unwanted CPU frequency increases while tasks are not
+> > running. This can happen, for example, when a frequency update is
+> > triggered from another CPU of the same frequency domain.
+> > In this case, when we aggregate the utilization of all the CPUs in a
+> > shared frequency domain, schedutil can still see the full not clamped
+> > blocked utilization of all the CPUs and thus, eventually, increase the
+> > frequency.
 > 
-> For the v17 I'll add exactly two test cases:
+> > @@ -810,6 +811,28 @@ static inline void uclamp_cpu_update(struct rq *rq, unsigned int clamp_id)
+> >  		if (max_value >= SCHED_CAPACITY_SCALE)
+> >  			break;
+> >  	}
+> > +
+> > +	/*
+> > +	 * Just for the UCLAMP_MAX value, in case there are no RUNNABLE
+> > +	 * task, we want to keep the CPU clamped to the last task's clamp
+> > +	 * value. This is to avoid frequency spikes to MAX when one CPU, with
+> > +	 * an high blocked utilization, sleeps and another CPU, in the same
+> > +	 * frequency domain, do not see anymore the clamp on the first CPU.
+> > +	 *
+> > +	 * The UCLAMP_FLAG_IDLE is set whenever we detect, from the above
+> > +	 * loop, that there are no more RUNNABLE taks on that CPU.
+> > +	 * In this case we enforce the CPU util_max to that of the last
+> > +	 * dequeued task.
+> > +	 */
+> > +	if (max_value < 0) {
+> > +		if (clamp_id == UCLAMP_MAX) {
+> > +			rq->uclamp.flags |= UCLAMP_FLAG_IDLE;
+> > +			max_value = last_clamp_value;
+> > +		} else {
+> > +			max_value = uclamp_none(UCLAMP_MIN);
+> > +		}
+> > +	}
+> > +
+> >  	rq->uclamp.value[clamp_id] = max_value;
+> >  }
 > 
-> 1. EENTER/EEXIT
-> 2. EENTER/exception
+> *groan*, so it could be jet-lag, but I find the comment really hard to
+> understand.
 > 
-> So that it will easier to evaluate and demonstrate exception handling.
+> Would not something like:
 > 
-> /Jarkko
+> 	/*
+> 	 * Avoid blocked utilization pushing up the frequency when we go
+> 	 * idle (which drops the max-clamp) by retaining the last known
+> 	 * max-clamp.
+> 	 */
+> 
+> Be more clear?
 
-Here is my test program now:
+It works: short and effective... will update in v6.
 
-https://github.com/jsakkine-intel/sgx-selftest
+Thanks.
 
-It is ~1100 lines ATM. Next I'll deploy it to the kernel tree. It has
-only (1) now but I'll add (2) too when I convert this to a kernel patch
-(probably by doing sgx_call() with a NULL pointer).
+-- 
+#include <best/regards.h>
 
-/Jarkko
+Patrick Bellasi
