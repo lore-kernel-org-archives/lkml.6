@@ -2,181 +2,87 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A30C9C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FAE5C43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:19:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AEA922510
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:18:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AEA922510
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D20E322510
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 15:19:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D20E322510
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732778AbeKNBRN (ORCPT
+        id S2387725AbeKNBSS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 20:17:13 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:34566 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731324AbeKNBRN (ORCPT
+        Tue, 13 Nov 2018 20:18:18 -0500
+Received: from smtprelay0067.hostedemail.com ([216.40.44.67]:60432 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1731840AbeKNBSS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 20:17:13 -0500
-Received: by mail-wr1-f65.google.com with SMTP id j26-v6so13741610wre.1
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 07:18:38 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=TVio5aW1p9jCZScS1P7hnnowI7+E2mp8Lej3u8aWiDc=;
-        b=SQZlXH8NZpHnhg9fupY8kfzyfIb56gyFFP43OPoEKOeGrU3lIrQFUprRSFjq0BpZ2P
-         dMMminrALeUbR9NqyjLcq2PNy5dhGhC2R98IK2bIgJd7o4QymD3B/HRdV4kMAcgJ4t0u
-         TwwrC3Z7d0qM5kVf56fkRlFqO/WVHHdUeUnP76vb/Bxxf4HS+O/uW7EKey+GIW1a7hd1
-         68tjsRXkUVLFYWFDgwRrM9ga0gwvCC+7PQ34ojwB8SlLPy1HpWui3h34HfTqljCiYrfH
-         7PsJWZvOyKz4kZ81b2Req3yM6uHtS3hoT3+5NWVRHgf+JvSJRC2Dr7HZmsPf0SG4nUBQ
-         /+Ug==
-X-Gm-Message-State: AGRZ1gJvUHykvPcMrrRfpIeQW/DPNYilWrVQ0cewgiQ2iZuURjWbYfl7
-        jQmNg88WEpROuOTRrx7o1mwJoA==
-X-Google-Smtp-Source: AJdET5fEHBD5xiUcJl32FTC7Eh3RwjPyD7gwYJf0S4pM9WN6EqyOikKt3ZvHyT5BqlrDcmLhhz9meQ==
-X-Received: by 2002:a5d:4406:: with SMTP id z6-v6mr5521253wrq.294.1542122317263;
-        Tue, 13 Nov 2018 07:18:37 -0800 (PST)
-Received: from localhost.localdomain.com (nat-pool-brq-t.redhat.com. [213.175.37.10])
-        by smtp.gmail.com with ESMTPSA id u8-v6sm15725493wrr.33.2018.11.13.07.18.36
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 07:18:36 -0800 (PST)
-From:   Ondrej Mosnacek <omosnace@redhat.com>
-To:     selinux@vger.kernel.org, Paul Moore <paul@paul-moore.com>
-Cc:     Qian Cai <cai@gmx.us>, Stephen Smalley <sds@tycho.nsa.gov>,
-        Eric Paris <eparis@parisplace.org>,
-        linux-kernel@vger.kernel.org,
-        Ondrej Mosnacek <omosnace@redhat.com>, stable@vger.kernel.org,
-        Richard Haines <richard_c_haines@btinternet.com>
-Subject: [PATCH] selinux: check length properly in SCTP bind hook
-Date:   Tue, 13 Nov 2018 16:16:08 +0100
-Message-Id: <20181113151608.30424-1-omosnace@redhat.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <53491A18-DD21-4E34-BC2F-AB449C7844E8@gmx.us>
-References: <53491A18-DD21-4E34-BC2F-AB449C7844E8@gmx.us>
+        Tue, 13 Nov 2018 20:18:18 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay03.hostedemail.com (Postfix) with ESMTP id 903F2837F242;
+        Tue, 13 Nov 2018 15:19:42 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: tooth02_374569711be57
+X-Filterd-Recvd-Size: 2218
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf20.hostedemail.com (Postfix) with ESMTPA;
+        Tue, 13 Nov 2018 15:19:39 +0000 (UTC)
+Message-ID: <71d315a34e4b12b0eb1d4c9003b297e46695f9cf.camel@perches.com>
+Subject: Re: [PATCH 3/5] media: sunxi: Add A10 CSI driver
+From:   Joe Perches <joe@perches.com>
+To:     Hans Verkuil <hverkuil@xs4all.nl>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Date:   Tue, 13 Nov 2018 07:19:37 -0800
+In-Reply-To: <f34c79f5-66d6-2c2f-5616-020ad2b96400@xs4all.nl>
+References: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
+         <c53e1cdc3b139382b00ee06bf3980d3fd1742ec0.1542097288.git-series.maxime.ripard@bootlin.com>
+         <f34c79f5-66d6-2c2f-5616-020ad2b96400@xs4all.nl>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-selinux_sctp_bind_connect() must verify if the address buffer has
-sufficient length before accessing the 'sa_family' field. See
-__sctp_connect() for a similar check.
-
-The length of the whole address ('len') is already checked in the
-callees.
-
-Reported-by: Qian Cai <cai@gmx.us>
-Fixes: d452930fd3b9 ("selinux: Add SCTP support")
-Cc: <stable@vger.kernel.org> # 4.17+
-Cc: Richard Haines <richard_c_haines@btinternet.com>
-Signed-off-by: Ondrej Mosnacek <omosnace@redhat.com>
----
-Hi,
-
-On Mon, Nov 12, 2018 at 8:39 PM Qian Cai <cai@gmx.us> wrote:
-> Running the trinity fuzzer on the latest mainline (rc2) generates this,
+On Tue, 2018-11-13 at 13:24 +0100, Hans Verkuil wrote:
+> On 11/13/18 09:24, Maxime Ripard wrote:
+> > The older CSI drivers have camera capture interface different from the one
+> > in the newer ones.
+[]
+> > diff --git a/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.h b/drivers/media/platform/sunxi/sun4i-csi/sun4i_csi.h
+[]
+> > +	// Videobuf2
 > 
-> [15029.879626] BUG: KASAN: slab-out-of-bounds in selinux_sctp_bind_connect+0x60/0x150
-> [15029.887275] Read of size 2 at addr ffff801ec53c5080 by task trinity-main/18081
-> [15029.887294] 
-> [15029.887304] CPU: 28 PID: 18081 Comm: trinity-main Tainted: G        W  OE     4.20.0-rc2+ #15
-> [15029.887311] Hardware name: Huawei TaiShan 2280 /BC11SPCD, BIOS 1.50 06/01/2018
-> [15000.084786] [15029.887320] Call trace:
-> [15029.915511]  dump_backtrace+0x0/0x2c8
-> [15029.920046]  show_stack+0x24/0x30
-> [15029.923367]  dump_stack+0x118/0x19c
-> [15029.927539]  print_address_description+0x68/0x2a0
-> [15029.932245]  kasan_report+0x1b4/0x348
-> [15029.938760]  __asan_load2+0x7c/0xa0
-> [15029.945098]  selinux_sctp_bind_connect+0x60/0x150
-> 
-> [15029.950571]  security_sctp_bind_connect+0x58/0x90
-> [15029.955493]  __sctp_setsockopt_connectx+0x68/0x128 [sctp]
-> [15029.960943]  sctp_setsockopt+0x764/0x2928 [sctp]
-> [15029.965564]  sock_common_setsockopt+0x6c/0x80
-> [15029.969923]  __arm64_sys_setsockopt+0x13c/0x1f0
-> [15029.974456]  el0_svc_handler+0xd4/0x198
-> [15029.978293]  el0_svc+0x8/0xc
-> [15029.981174] 
-> [15029.982667] Allocated by task 18081:
-> [15029.986245]  kasan_kmalloc.part.1+0x40/0x108
-> [15029.990517]  kasan_kmalloc+0xb4/0xc8
-> [15029.994094]  __kmalloc_node+0x1c4/0x638
-> [15029.997933]  kvmalloc_node+0x98/0xa8
-> [15030.001511]  vmemdup_user+0x34/0x128
-> [15030.005137]  __sctp_setsockopt_connectx+0x44/0x128 [sctp]
-> [15030.010586]  sctp_setsockopt+0x764/0x2928 [sctp]
-> [15030.015205]  sock_common_setsockopt+0x6c/0x80
-> [15030.019564]  __arm64_sys_setsockopt+0x13c/0x1f0
-> [15030.024096]  el0_svc_handler+0xd4/0x198
-> [15030.027933]  el0_svc+0x8/0xc
-> [15030.030814] 
-> [15030.032306] Freed by task 3025:
-> [15030.035451]  __kasan_slab_free+0x114/0x228
-> [15030.039548]  kasan_slab_free+0x10/0x18
-> [15030.043299]  kfree+0x114/0x408
-> [15030.046357]  selinux_sk_free_security+0x38/0x48
-> [15030.050888]  security_sk_free+0x3c/0x58
-> [15030.054727]  __sk_destruct+0x3e8/0x570
-> [15030.058478]  sk_destruct+0x4c/0x58
-> [15030.061881]  __sk_free+0x68/0x138
-> [15030.065197]  sk_free+0x3c/0x48
-> [15030.068255]  unix_release_sock+0x4a8/0x550
-> [15030.072353]  unix_release+0x34/0x50
-> [15030.075843]  __sock_release+0x74/0x110
-> [15030.079593]  sock_close+0x24/0x38
-> [15030.082913]  __fput+0x1b8/0x368
-> [15030.086055]  ____fput+0x20/0x30
-> [15030.089199]  task_work_run+0x14c/0x1a8
-> [15030.092951]  do_notify_resume+0x1e4/0x200
-> [15030.096961]  work_pending+0x8/0x14
-> [15030.100363] 
-> [15030.101856] The buggy address belongs to the object at ffff801ec53c5080
-> [15030.101856]  which belongs to the cache kmalloc-128 of size 128
-> [15030.114376] The buggy address is located 0 bytes inside of
-> [15030.114376]  128-byte region [ffff801ec53c5080, ffff801ec53c5100)
-> [15030.125939] The buggy address belongs to the page:
-> [15030.130732] page:ffff7fe007b14f00 count:1 mapcount:0 mapping:ffff8016c0010480 index:0x0
-> [15030.138738] flags: 0x5fffff0000000200(slab)
-> [15030.142926] raw: 5fffff0000000200 ffff7fe007980608 ffff801ec000fd60 ffff8016c0010480
-> [15030.150671] raw: 0000000000000000 0000000000660066 00000001ffffffff 0000000000000000
-> [15030.158413] page dumped because: kasan: bad access detected
-> [15030.163984] 
-> [15030.165476] Memory state around the buggy address:
-> [15030.170269]  ffff801ec53c4f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15030.177491]  ffff801ec53c5000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15030.184714] >ffff801ec53c5080: 01 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15030.191934]                    ^
-> [15030.195164]  ffff801ec53c5100: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15030.202386]  ffff801ec53c5180: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-> [15030.209607] ==================================================================
-> [15030.216828] Disabling lock debugging due to kernel taint
+> Doesn't checkpatch.pl --strict complain about the use of '//'?
 
-I think I found the cause - Qian, can you test this patch if it fixes
-the problem?
+No, not since
 
- security/selinux/hooks.c | 3 +++
- 1 file changed, 3 insertions(+)
+commit dadf680de3c2eb4cba9840619991eda0cfe98778
+Author: Joe Perches <joe@perches.com>
+Date:   Tue Aug 2 14:04:33 2016 -0700
 
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 7ce683259357..a67459eb62d5 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -5318,6 +5318,9 @@ static int selinux_sctp_bind_connect(struct sock *sk, int optname,
- 	addr_buf = address;
- 
- 	while (walk_size < addrlen) {
-+		if (walk_size + sizeof(sa_family_t) > addrlen)
-+			return -EINVAL;
-+
- 		addr = addr_buf;
- 		switch (addr->sa_family) {
- 		case AF_UNSPEC:
--- 
-2.17.2
+    checkpatch: allow c99 style // comments
+    
+    Sanitise the lines that contain c99 comments so that the error doesn't
+    get emitted.
+
 
