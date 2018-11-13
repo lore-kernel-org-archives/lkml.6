@@ -2,216 +2,70 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D1745C43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:41:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 66E3FC43441
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:42:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CE142245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:41:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CE142245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 33D71206BA
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 12:42:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D71206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733001AbeKMWjb (ORCPT
+        id S1733095AbeKMWkP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 17:39:31 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39486 "EHLO mx1.redhat.com"
+        Tue, 13 Nov 2018 17:40:15 -0500
+Received: from gloria.sntech.de ([185.11.138.130]:54930 "EHLO gloria.sntech.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732728AbeKMWjb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 17:39:31 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 22E603082E51;
-        Tue, 13 Nov 2018 12:41:33 +0000 (UTC)
-Received: from [10.36.112.21] (ovpn-112-21.ams2.redhat.com [10.36.112.21])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4A3F8600D7;
-        Tue, 13 Nov 2018 12:41:21 +0000 (UTC)
-Subject: Re: [PATCH 2/2] kvm: Use huge pages for DAX-backed files
-To:     Pankaj Gupta <pagupta@redhat.com>, Barret Rhoden <brho@google.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        David Hildenbrand <david@redhat.com>,
-        Dave Jiang <dave.jiang@intel.com>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        =?UTF-8?B?UmFkaW0gS3LEjW3DocWZ?= <rkrcmar@redhat.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        linux-nvdimm@lists.01.org, linux-kernel@vger.kernel.org,
-        "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
-        kvm@vger.kernel.org, yu c zhang <yu.c.zhang@intel.com>,
-        yi z zhang <yi.z.zhang@intel.com>
-References: <20181109203921.178363-1-brho@google.com>
- <20181109203921.178363-3-brho@google.com>
- <043a592d-6592-3053-15a0-68cc54a26deb@redhat.com>
- <286665658.33247363.1542103353780.JavaMail.zimbra@redhat.com>
-From:   Paolo Bonzini <pbonzini@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <74665f91-9803-88d0-7730-bbb9c7b84da1@redhat.com>
-Date:   Tue, 13 Nov 2018 13:41:20 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.0
-MIME-Version: 1.0
-In-Reply-To: <286665658.33247363.1542103353780.JavaMail.zimbra@redhat.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Tue, 13 Nov 2018 12:41:33 +0000 (UTC)
+        id S1733010AbeKMWkP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Tue, 13 Nov 2018 17:40:15 -0500
+Received: from wd0155.dip.tu-dresden.de ([141.76.108.155] helo=phil.dip.tu-dresden.de)
+        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_128_GCM_SHA256:128)
+        (Exim 4.89)
+        (envelope-from <heiko@sntech.de>)
+        id 1gMY1D-0001YD-Vt; Tue, 13 Nov 2018 13:42:12 +0100
+From:   Heiko Stuebner <heiko@sntech.de>
+To:     thierry.reding@gmail.com
+Cc:     airlied@linux.ie, robh+dt@kernel.org, mark.rutland@arm.com,
+        dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, heiko@sntech.de,
+        Heiko Stuebner <heiko.stuebner@bq.com>
+Subject: [PATCH] dt-bindings: display: add binding for Innolux ee101ia-01d panel
+Date:   Tue, 13 Nov 2018 13:42:05 +0100
+Message-Id: <20181113124205.29319-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.18.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13/11/2018 11:02, Pankaj Gupta wrote:
-> 
->>
->> On 09.11.18 21:39, Barret Rhoden wrote:
->>> This change allows KVM to map DAX-backed files made of huge pages with
->>> huge mappings in the EPT/TDP.
->>>
->>> DAX pages are not PageTransCompound.  The existing check is trying to
->>> determine if the mapping for the pfn is a huge mapping or not.  For
->>> non-DAX maps, e.g. hugetlbfs, that means checking PageTransCompound.
->>> For DAX, we can check the page table itself.
->>>
->>> Note that KVM already faulted in the page (or huge page) in the host's
->>> page table, and we hold the KVM mmu spinlock (grabbed before checking
->>> the mmu seq).
->>
->> I wonder if the KVM mmu spinlock is enough for walking (not KVM
->> exclusive) host page tables. Can you elaborate?
-> 
-> As this patch is dependent on PageReserved patch(which is in progress), just 
-> wondering if we are able to test the code path for hugepage with DAX.
+From: Heiko Stuebner <heiko.stuebner@bq.com>
 
-The MMU spinlock is taken in kvm_mmu_notifier_invalidate_range_end, so
-it should be enough.
+This is a panel handled through the generic lvds-panel binding,
+so only needs its additional compatible specified.
 
-Paolo
+Signed-off-by: Heiko Stuebner <heiko.stuebner@bq.com>
+---
+ .../bindings/display/panel/innolux,ee101ia-01d.txt         | 7 +++++++
+ 1 file changed, 7 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.txt
 
-> 
-> Thanks,
-> Pankaj 
->  
->>
->>>
->>> Signed-off-by: Barret Rhoden <brho@google.com>
->>> ---
->>>  arch/x86/kvm/mmu.c | 34 ++++++++++++++++++++++++++++++++--
->>>  1 file changed, 32 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/arch/x86/kvm/mmu.c b/arch/x86/kvm/mmu.c
->>> index cf5f572f2305..2df8c459dc6a 100644
->>> --- a/arch/x86/kvm/mmu.c
->>> +++ b/arch/x86/kvm/mmu.c
->>> @@ -3152,6 +3152,36 @@ static int kvm_handle_bad_page(struct kvm_vcpu
->>> *vcpu, gfn_t gfn, kvm_pfn_t pfn)
->>>  	return -EFAULT;
->>>  }
->>>  
->>> +static bool pfn_is_huge_mapped(struct kvm *kvm, gfn_t gfn, kvm_pfn_t pfn)
->>> +{
->>> +	struct page *page = pfn_to_page(pfn);
->>> +	unsigned long hva, map_shift;
->>> +
->>> +	if (!is_zone_device_page(page))
->>> +		return PageTransCompoundMap(page);
->>> +
->>> +	/*
->>> +	 * DAX pages do not use compound pages.  The page should have already
->>> +	 * been mapped into the host-side page table during try_async_pf(), so
->>> +	 * we can check the page tables directly.
->>> +	 */
->>> +	hva = gfn_to_hva(kvm, gfn);
->>> +	if (kvm_is_error_hva(hva))
->>> +		return false;
->>> +
->>> +	/*
->>> +	 * Our caller grabbed the KVM mmu_lock with a successful
->>> +	 * mmu_notifier_retry, so we're safe to walk the page table.
->>> +	 */
->>> +	map_shift = dev_pagemap_mapping_shift(hva, current->mm);
->>
->> You could get rid of that local variable map_shift.
->>
->>> +	switch (map_shift) {
->>> +	case PMD_SHIFT:
->>> +	case PUD_SIZE:
->>> +		return true;
->>> +	}
->>> +	return false;
->>> +}
->>> +
->>>  static void transparent_hugepage_adjust(struct kvm_vcpu *vcpu,
->>>  					gfn_t *gfnp, kvm_pfn_t *pfnp,
->>>  					int *levelp)
->>> @@ -3168,7 +3198,7 @@ static void transparent_hugepage_adjust(struct
->>> kvm_vcpu *vcpu,
->>>  	 */
->>>  	if (!is_error_noslot_pfn(pfn) && !kvm_is_reserved_pfn(pfn) &&
->>>  	    level == PT_PAGE_TABLE_LEVEL &&
->>> -	    PageTransCompoundMap(pfn_to_page(pfn)) &&
->>> +	    pfn_is_huge_mapped(vcpu->kvm, gfn, pfn) &&
->>>  	    !mmu_gfn_lpage_is_disallowed(vcpu, gfn, PT_DIRECTORY_LEVEL)) {
->>>  		unsigned long mask;
->>>  		/*
->>> @@ -5678,7 +5708,7 @@ static bool kvm_mmu_zap_collapsible_spte(struct kvm
->>> *kvm,
->>>  		 */
->>>  		if (sp->role.direct &&
->>>  			!kvm_is_reserved_pfn(pfn) &&
->>> -			PageTransCompoundMap(pfn_to_page(pfn))) {
->>> +			pfn_is_huge_mapped(kvm, sp->gfn, pfn)) {
->>>  			pte_list_remove(rmap_head, sptep);
->>>  			need_tlb_flush = 1;
->>>  			goto restart;
->>>
->>
->> This looks surprisingly simple to me :)
->>
->> --
->>
->> Thanks,
->>
->> David / dhildenb
->>
+diff --git a/Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.txt b/Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.txt
+new file mode 100644
+index 000000000000..e5ca4ccd55ed
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/innolux,ee101ia-01d.txt
+@@ -0,0 +1,7 @@
++Innolux Corporation 10.1" EE101IA-01D WXGA (1280x800) LVDS panel
++
++Required properties:
++- compatible: should be "innolux,ee101ia-01d"
++
++This binding is compatible with the lvds-panel binding, which is specified
++in panel-lvds.txt in this directory.
+-- 
+2.18.0
 
