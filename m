@@ -2,124 +2,126 @@ Return-Path: <SRS0=UfG/=NY=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9EFDEC43441
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:17:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 179B6C43610
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:17:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28A6C2245E
-	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:17:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 76038224E0
+	for <linux-kernel@archiver.kernel.org>; Tue, 13 Nov 2018 05:17:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="O8G6gY1H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28A6C2245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="VRzB+YME"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76038224E0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727959AbeKMPNo (ORCPT
+        id S1730769AbeKMPNt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Tue, 13 Nov 2018 10:13:44 -0500
-Received: from mailout1.w1.samsung.com ([210.118.77.11]:52347 "EHLO
-        mailout1.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726111AbeKMPNo (ORCPT
+        Tue, 13 Nov 2018 10:13:49 -0500
+Received: from conssluserg-05.nifty.com ([210.131.2.90]:44720 "EHLO
+        conssluserg-05.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726111AbeKMPNt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Tue, 13 Nov 2018 10:13:44 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20181113051719euoutp017b4d3b9c97427c5bc5444ccf5e2320f5~ml0PEhiwb0533205332euoutp01p;
-        Tue, 13 Nov 2018 05:17:19 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20181113051719euoutp017b4d3b9c97427c5bc5444ccf5e2320f5~ml0PEhiwb0533205332euoutp01p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542086239;
-        bh=LPYjoS+0C2a3HV7byJ6VT2FylEsFyxNdcYoi+EuMbvE=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=O8G6gY1HUr09urjD9rTW6pQo5m9nKVquKQlNuB5bJjrMmpBlxuGA/U2iYjBnnpse+
-         gTIAE6+wpmOaTvkEalaLywZr6FEslt6B9Z28+5ZGL1qX/WqE6Vn0GXpuura7Fxne1I
-         miyllmznEl6NSoSSSjOKZ2uiyikEtG0nYrYOgXQ4=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181113051719eucas1p11b9c2286b1c48d53b96c91cadc890724~ml0OrHHws1639016390eucas1p1D;
-        Tue, 13 Nov 2018 05:17:19 +0000 (GMT)
-Received: from eucas1p2.samsung.com ( [182.198.249.207]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id 45.DC.04806.E5E5AEB5; Tue, 13
-        Nov 2018 05:17:19 +0000 (GMT)
-Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181113051718eucas1p22fafec2dc4d5ea4eedb3686f6d566fad~ml0NdtWfS2220222202eucas1p2v;
-        Tue, 13 Nov 2018 05:17:18 +0000 (GMT)
-X-AuditID: cbfec7f5-34dff700000012c6-7b-5bea5e5e70bb
-Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms1.samsung.com (EUCPMTA) with SMTP id AE.B3.04284.D5E5AEB5; Tue, 13
-        Nov 2018 05:17:17 +0000 (GMT)
-Received: from localhost.localdomain ([10.88.99.240]) by eusync1.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PI40020E9CLYX60@eusync1.samsung.com>; Tue, 13 Nov
-        2018 05:17:17 +0000 (GMT)
-From:   Huijin Park <huijin.park@samsung.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Huijin Park <huijin.park@samsung.com>, bbanghj.park@gmail.com
-Subject: [PATCH] mtd: change len type from signed to unsigned type
-Date:   Tue, 13 Nov 2018 00:16:41 -0500
-Message-id: <1542086201-18319-1-git-send-email-huijin.park@samsung.com>
-X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7djP87rxca+iDV7OYbJ4ufcQs8W+U/0s
-        Fh0XXSwu75rDZrG7aRm7xdE995gd2Dzmran22DnrLrvH5iX1Hn1bVjF6fN4kF8AaxWWTkpqT
-        WZZapG+XwJVxd+VvxoJbrBXXf61lbGC8wNLFyMkhIWAi0bH/I5DNxSEksIJR4sn3S8wQzmdG
-        iaNf1jHBVK16uoMJIrGMUeLS1MXsEM5fRonuhrnsIFVsAtoS19duZQSxRQQMJVZObQGbyyyw
-        nFHi3YkZYAlhASeJ6Ys3g41lEVCV6H57HSzOK+Au0T3hDTvEOjmJm+c6we6QELjLKrH3/0JG
-        iISLxOK2e1A3CUu8Or4FqkFGorPjIFQ8W+LXo1agzRxAdoXE23kqEGFjiXdv1zKD2MwCfBKT
-        tk1nhijhlehoE4IwPSTubgIbIiQQKzHjwD+mCYwSCxgZVjGKp5YW56anFhvnpZbrFSfmFpfm
-        pesl5+duYgRG1el/x7/uYNz3J+kQowAHoxIP74npL6OFWBPLiitzDzFKcDArifDuNHkVLcSb
-        klhZlVqUH19UmpNafIhRmoNFSZy3muFBtJBAemJJanZqakFqEUyWiYNTqoGxnSPzW0Xb/4vz
-        dtxuY5r7L3aDuOzfJevk30zvbH6TV+E933RD/oa627P2X559TnPDrx9ZJXqtJ31uFSjP9JMV
-        t5ir8a9w3X3NHAaFmTZin+NWSp3LP29sOiGqec+GfL+t0vqC/PoN3E+62qZKrPy1X+BdS+qz
-        Gb8T/HZ+6BLPiPHjMisWvSCvxFKckWioxVxUnAgADNigZKYCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOJMWRmVeSWpSXmKPExsVy+t/xy7qxca+iDe7OsrF4ufcQs8W+U/0s
-        Fh0XXSwu75rDZrG7aRm7xdE995gd2Dzmran22DnrLrvH5iX1Hn1bVjF6fN4kF8AaxWWTkpqT
-        WZZapG+XwJVxd+VvxoJbrBXXf61lbGC8wNLFyMkhIWAiserpDqYuRi4OIYEljBL73jYwQzj/
-        GSUm3jrNCFLFJqAtcX3tVjBbRMBQYuXUFrBuZoHljBIXrtiA2MICThLTF29mArFZBFQlut9e
-        B6vnFXCX6J7whh1im5zEzXOdzBMYuRYwMqxiFEktLc5Nzy021CtOzC0uzUvXS87P3cQI9P62
-        Yz8372C8tDH4EKMAB6MSD++J6S+jhVgTy4orcw8xSnAwK4nw7jR5FS3Em5JYWZValB9fVJqT
-        WnyIUZqDRUmc97xBZZSQQHpiSWp2ampBahFMlomDU6qB0eT12V7nLe8f7/9j/Mmv7vnCtZ92
-        KFm21J84b2ve4eq0uubfGnnthiPMrr3bjpY//hhTpfKz+1ng9yU1Oz+Jxj0/Ue1gYrL+RrNi
-        wZIvJ+Y5X5ywcNHOlshLb5xvTTle112R5hMdsKTF9+CU9oKzLDUvJgfw389wY9pd8Gin7iyF
-        jvUR1yvr85RYijMSDbWYi4oTAcKvtZ76AQAA
-X-CMS-MailID: 20181113051718eucas1p22fafec2dc4d5ea4eedb3686f6d566fad
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181113051718eucas1p22fafec2dc4d5ea4eedb3686f6d566fad
-References: <CGME20181113051718eucas1p22fafec2dc4d5ea4eedb3686f6d566fad@eucas1p2.samsung.com>
+        Tue, 13 Nov 2018 10:13:49 -0500
+Received: from mail-ua1-f49.google.com (mail-ua1-f49.google.com [209.85.222.49]) (authenticated)
+        by conssluserg-05.nifty.com with ESMTP id wAD5HHDs000601;
+        Tue, 13 Nov 2018 14:17:17 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-05.nifty.com wAD5HHDs000601
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1542086238;
+        bh=eIepQQZqGhbrF7uUL6KRHAz7aUR5FXmFTRzaAQhPa8E=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=VRzB+YMEqY0Fj2p6s4F32pXrZvW5LKr90C/SF8Yik0+644VsmQJtivWyGYCOeOqWY
+         IqFQhE7Laii82Pd7TYuOisZxWUwrTWC+2TQhnozOYWYoKvNc/u/LI0M3XhyJ04Z0pY
+         /t8tSyYINyj0MDWdtK6FINmAL40B59RjCC86+THvajMs2VPLOhmppoFBdXSIErZSXk
+         CXTPV2GDYKd+BUQHzwH97kCNHKB/cPqUzpuO4etQvpOkMw3sc/Y+Is6NtODBjEt6bw
+         KvSHQ/uwiaTI0oV8tdmR1NCeFYpX1hXFBE0IZeJ3qlVnT+jllFB7q6DTi3Km4rwMqD
+         lIoZA3aQN+Fsg==
+X-Nifty-SrcIP: [209.85.222.49]
+Received: by mail-ua1-f49.google.com with SMTP id d21so3881673uap.9;
+        Mon, 12 Nov 2018 21:17:17 -0800 (PST)
+X-Gm-Message-State: AGRZ1gLfGxUhWwT/v5bqsjH8Sp89PSbOvToSKMruWRKxyHoPKpR+p2pC
+        YCLl7n0qGpJZKWZStDzb364tTXj1OQ2yTGJWvm8=
+X-Google-Smtp-Source: AJdET5dj5QGaE7Ecx7U/WJGwqMdrASdN7yj/X8TFiar4CCe07FyYChwKdkxv8dTEcporgtJvQ2g8T+Fc5HfGZrWQtM0=
+X-Received: by 2002:ab0:3402:: with SMTP id z2mr1741892uap.6.1542086236514;
+ Mon, 12 Nov 2018 21:17:16 -0800 (PST)
+MIME-Version: 1.0
+References: <20181112042116.5271-1-joel@jms.id.au> <20181112042116.5271-2-joel@jms.id.au>
+ <CAKwvOdnBMFYXvS+GH0cUiczgkpLWtBinPRjkTJBQGrKjxktUUg@mail.gmail.com>
+In-Reply-To: <CAKwvOdnBMFYXvS+GH0cUiczgkpLWtBinPRjkTJBQGrKjxktUUg@mail.gmail.com>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Tue, 13 Nov 2018 14:16:40 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASE=xCaE-q_Jke5aDd9aF=dJ+ThUjORLa0i_m3e6UzUig@mail.gmail.com>
+Message-ID: <CAK7LNASE=xCaE-q_Jke5aDd9aF=dJ+ThUjORLa0i_m3e6UzUig@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] Makefile: Export clang toolchain variables
+To:     Nick Desaulniers <ndesaulniers@google.com>
+Cc:     Joel Stanley <joel@jms.id.au>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Michal Marek <michal.lkml@markovi.net>, dja@axtens.net,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "huijin.park" <huijin.park@samsung.com>
+On Tue, Nov 13, 2018 at 3:56 AM Nick Desaulniers
+<ndesaulniers@google.com> wrote:
+>
+> On Sun, Nov 11, 2018 at 8:21 PM Joel Stanley <joel@jms.id.au> wrote:
+> >
+> > The powerpc makefile will use these in it's boot wrapper.
+> >
+> > Signed-off-by: Joel Stanley <joel@jms.id.au>
+> > ---
+> >  Makefile | 1 +
+> >  1 file changed, 1 insertion(+)
+> >
+> > diff --git a/Makefile b/Makefile
+> > index 09278330282d..840efe6eb54c 100644
+> > --- a/Makefile
+> > +++ b/Makefile
+> > @@ -495,6 +495,7 @@ endif
+> >  ifneq ($(GCC_TOOLCHAIN),)
+> >  CLANG_FLAGS    += --gcc-toolchain=$(GCC_TOOLCHAIN)
+> >  endif
+> > +export CLANG_FLAGS
+> >  CLANG_FLAGS    += -no-integrated-as
+>
+> Does this export CLANG_FLAGS before `-no-integrated-as` is set?
 
-This patch casts the "len" parameter to an unsigned int.
-The callers of erase_write() pass the "len" parameter as unsigned int.
+This does not matter.
 
-Signed-off-by: huijin.park <huijin.park@samsung.com>
----
- drivers/mtd/mtdblock.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+For example, KBUILD_CFLAGS accumulates several compiler flags
+after it is marked as 'export'.
 
-diff --git a/drivers/mtd/mtdblock.c b/drivers/mtd/mtdblock.c
-index a5b1933..b2d5ed1 100644
---- a/drivers/mtd/mtdblock.c
-+++ b/drivers/mtd/mtdblock.c
-@@ -56,7 +56,7 @@ struct mtdblk_dev {
-  */
- 
- static int erase_write (struct mtd_info *mtd, unsigned long pos,
--			int len, const char *buf)
-+			unsigned int len, const char *buf)
- {
- 	struct erase_info erase;
- 	size_t retlen;
+
+> Either way, I think it would be clearer to export this after all the
+> relevant flags are set.
+
+OK. It is just a matter of preference,
+but I will move the export line below
+when I pick up this patch set.
+
+
+
+> >  KBUILD_CFLAGS  += $(CLANG_FLAGS)
+> >  KBUILD_AFLAGS  += $(CLANG_FLAGS)
+> > --
+> > 2.19.1
+> >
+>
+>
+> --
+> Thanks,
+> ~Nick Desaulniers
+
+
+
 -- 
-1.7.9.5
-
+Best Regards
+Masahiro Yamada
