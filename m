@@ -2,175 +2,145 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 298C3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:49:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B57C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:51:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E74B72243E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:49:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 69DED214F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:51:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="A6am2etp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E74B72243E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ve2C5CHb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69DED214F1
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387572AbeKOBxj (ORCPT
+        id S2387505AbeKOBzG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:53:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56138 "EHLO mail.kernel.org"
+        Wed, 14 Nov 2018 20:55:06 -0500
+Received: from mail.kernel.org ([198.145.29.99]:56674 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732950AbeKOBxj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:53:39 -0500
-Received: from devnote (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1728000AbeKOBzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 20:55:06 -0500
+Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D3D5A214F1;
-        Wed, 14 Nov 2018 15:49:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 4941C2250E;
+        Wed, 14 Nov 2018 15:51:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542210592;
-        bh=D18OzsVre62OCCAyxjcygNQHmbI7ApSJ9PDtChqSB9w=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=A6am2etpp90qUteJ6dJ6NBAHnp+G5DSaXGjx0dzIYNfT0FIgeuMTAML4a/SFB0cv3
-         yTP4GteG1Nj0lNi9Aza3P/qQx5oYKx89pOV924JEOf3nI8jnu6wj2l1NNzgY0ibS/M
-         aBOhA/Gxme7UqJkM5b0CsjJgZTwIhTvdZ43j4otI=
-Date:   Wed, 14 Nov 2018 07:49:51 -0800
-From:   Masami Hiramatsu <mhiramat@kernel.org>
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     Patrick =?UTF-8?B?U3TDpGhsaW4=?= <me@packi.ch>,
-        linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alan Kao <alankao@andestech.com>, Zong Li <zong@andestech.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        zhong jiang <zhongjiang@huawei.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jim Wilson <jimw@sifive.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-Subject: Re: [RFC/RFT 2/2] RISC-V: kprobes/kretprobe support
-Message-Id: <20181114074951.0902699286fdf8652f2878a4@kernel.org>
-In-Reply-To: <20181114003730.06f810517a270070734df4ce@kernel.org>
-References: <20181113195804.22825-1-me@packi.ch>
-        <20181113195804.22825-3-me@packi.ch>
-        <20181114003730.06f810517a270070734df4ce@kernel.org>
-X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        s=default; t=1542210678;
+        bh=VTHr3fAdt5vwARfak4LZXfyZmBjUoFavs+fdfIZIV7g=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=ve2C5CHb3hdZfl9ZwjhW0CZWCTa4UEWi0GF/FB9+0f40jqtrwpIjlZVPGVASq1NWn
+         8JcgogU9rIWBMTk1E31RbZDjNYZKxGy96K8yedl82OfVezDc2aKcrapmdwFJpD11VM
+         zUfOZxmeRDXm+W/AYxM5vrF+XMYoqDFspnOEnJRs=
+Received: by mail-qk1-f177.google.com with SMTP id d19so26545507qkg.5;
+        Wed, 14 Nov 2018 07:51:18 -0800 (PST)
+X-Gm-Message-State: AGRZ1gKjNrvJ+bsSCqoKzRfnT23bKroS+dEo0d+EHV865d8GjDBS5U4G
+        UoK26r/3gAehb6qFW19v2zKI3SktteRUQNKL3Q==
+X-Google-Smtp-Source: AJdET5dmVTn7ADDx8cfyCE/ie6eD7l/DpKIxg//L8J+CaN/aopv7fzZWfz0GtYQIHrKDBgsNJwwNV2U5XlovmjOl5TA=
+X-Received: by 2002:a0c:9e05:: with SMTP id p5mr2342136qve.246.1542210677398;
+ Wed, 14 Nov 2018 07:51:17 -0800 (PST)
+MIME-Version: 1.0
+References: <20181107101308.7626-1-wens@csie.org> <20181107101308.7626-2-wens@csie.org>
+ <5bea0ebe.1c69fb81.e15d7.98e1@mx.google.com> <CAGb2v65PqwKrRdh2_Y48zYnmJa0=hv3Bd4UdvdWvBBMfT2BfSw@mail.gmail.com>
+In-Reply-To: <CAGb2v65PqwKrRdh2_Y48zYnmJa0=hv3Bd4UdvdWvBBMfT2BfSw@mail.gmail.com>
+From:   Rob Herring <robh@kernel.org>
+Date:   Wed, 14 Nov 2018 09:51:05 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJrJHatiYB=Vaakbi1UUGOkqvAkZnZRG=zz5Ae_RzxGgg@mail.gmail.com>
+Message-ID: <CAL_JsqJrJHatiYB=Vaakbi1UUGOkqvAkZnZRG=zz5Ae_RzxGgg@mail.gmail.com>
+Subject: Re: [PATCH 01/15] dt-bindings: net: broadcom-bluetooth: Fix external
+ clock names
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        devicetree@vger.kernel.org,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
+        linux-sunxi@googlegroups.com,
+        Loic Poulain <loic.poulain@gmail.com>,
+        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
+        <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Nov 2018 00:37:30 -0800
-Masami Hiramatsu <mhiramat@kernel.org> wrote:
+On Tue, Nov 13, 2018 at 9:15 PM Chen-Yu Tsai <wens@csie.org> wrote:
+>
+> On Tue, Nov 13, 2018 at 7:37 AM Rob Herring <robh@kernel.org> wrote:
+> >
+> > On Wed, Nov 07, 2018 at 06:12:54PM +0800, Chen-Yu Tsai wrote:
+> > > The Broadcom Bluetooth controllers can take up to two external clocks:
+> > > an external frequency reference, substituting the main crystal, and a
+> > > LPO clock at 32.768 kHz substituting the internal LPO clock.
+> > >
+> > > In particular, the external LPO clock must be used when the controller
+> > > does not have NVRAM connected, and the main reference frequency is not
+> > > the default 20 MHz. This is described in detail in the datasheet.
+> > >
+> > > The original "extclk" clock name is ambiguous as to which of these it
+> > > refers to, and some designs might even require both.
+> > >
+> > > This patch deprecates the existing name, and adds "txco" and "lpo".
+> > >
+> > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+> > > ---
+> > >  Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 5 ++++-
+> > >  1 file changed, 4 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+> > > index 4194ff7e6ee6..2535e54219af 100644
+> > > --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+> > > +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+> > > @@ -18,7 +18,10 @@ Optional properties:
+> > >   - shutdown-gpios: GPIO specifier, used to enable the BT module
+> > >   - device-wakeup-gpios: GPIO specifier, used to wakeup the controller
+> > >   - host-wakeup-gpios: GPIO specifier, used to wakeup the host processor
+> > > - - clocks: clock specifier if external clock provided to the controller
+> > > + - clocks and clock-names: clock specifier if external clocks are provided
+> > > +   - "txco": external reference clock
+> > > +   - "extclk": deprecated, replaced by "txco"
+> > > +   - "lpo": external low power 32.768 kHz clock
+> > >   - clock-names: should be "extclk"
+> >
+> > This line should change?
+>
+> Yes. Missed that.
+>
+> >
+> > 'clocks' needs to describe how many clocks and the order of them.
+> >
+> > 'clock-names' needs to list the names. Keep them separate.
+>
+> I was under the impression that when clock-names was used, the
+> order of clocks shouldn't matter.
 
-> > +
-> > +static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
-> > +{
-> > +	if (is_compressed_insn(opcode))
-> > +		*(u16 *)addr = cpu_to_le16(opcode);
-> > +	else
-> > +		*addr = cpu_to_le32(opcode);
-> > +
+Generally, no. The order should be defined still.
 
-BTW, don't RISC-V need any i-cache flush and per-core serialization
-for patching the text area? (and no text_mutex protection?)
+> Also, both clocks are optional. The controller can use a standalone
+> crystal instead of an external TXCO, which would not get described in
+> the device tree, and/or not use an LPO clock. How would one describe
+> a device that has an LPO clock input but not a TXCO clock input?
 
-> > diff --git a/arch/riscv/kernel/probes/kprobes_trampoline.S b/arch/riscv/kernel/probes/kprobes_trampoline.S
-> > new file mode 100644
-> > index 000000000000..c7ceda9556a3
-> > --- /dev/null
-> > +++ b/arch/riscv/kernel/probes/kprobes_trampoline.S
-> > @@ -0,0 +1,91 @@
-> > +/* SPDX-License-Identifier: GPL-2.0+ */
-> > +
-> > +#include <linux/linkage.h>
-> > +
-> > +#include <asm/asm.h>
-> > +#include <asm/asm-offsets.h>
-> > +
-> > +	.text
-> > +	.altmacro
-> > +
-> > +	.macro save_all_base_regs
-> > +	REG_S x1,  PT_RA(sp)
-> > +	REG_S x3,  PT_GP(sp)
-> > +	REG_S x4,  PT_TP(sp)
-> > +	REG_S x5,  PT_T0(sp)
-> > +	REG_S x6,  PT_T1(sp)
-> > +	REG_S x7,  PT_T2(sp)
-> > +	REG_S x8,  PT_S0(sp)
-> > +	REG_S x9,  PT_S1(sp)
-> > +	REG_S x10, PT_A0(sp)
-> > +	REG_S x11, PT_A1(sp)
-> > +	REG_S x12, PT_A2(sp)
-> > +	REG_S x13, PT_A3(sp)
-> > +	REG_S x14, PT_A4(sp)
-> > +	REG_S x15, PT_A5(sp)
-> > +	REG_S x16, PT_A6(sp)
-> > +	REG_S x17, PT_A7(sp)
-> > +	REG_S x18, PT_S2(sp)
-> > +	REG_S x19, PT_S3(sp)
-> > +	REG_S x20, PT_S4(sp)
-> > +	REG_S x21, PT_S5(sp)
-> > +	REG_S x22, PT_S6(sp)
-> > +	REG_S x23, PT_S7(sp)
-> > +	REG_S x24, PT_S8(sp)
-> > +	REG_S x25, PT_S9(sp)
-> > +	REG_S x26, PT_S10(sp)
-> > +	REG_S x27, PT_S11(sp)
-> > +	REG_S x28, PT_T3(sp)
-> > +	REG_S x29, PT_T4(sp)
-> > +	REG_S x30, PT_T5(sp)
-> > +	REG_S x31, PT_T6(sp)
-> > +	.endm
-> > +
-> > +	.macro restore_all_base_regs
-> > +	REG_L x3,  PT_GP(sp)
-> > +	REG_L x4,  PT_TP(sp)
-> > +	REG_L x5,  PT_T0(sp)
-> > +	REG_L x6,  PT_T1(sp)
-> > +	REG_L x7,  PT_T2(sp)
-> > +	REG_L x8,  PT_S0(sp)
-> > +	REG_L x9,  PT_S1(sp)
-> > +	REG_L x10, PT_A0(sp)
-> > +	REG_L x11, PT_A1(sp)
-> > +	REG_L x12, PT_A2(sp)
-> > +	REG_L x13, PT_A3(sp)
-> > +	REG_L x14, PT_A4(sp)
-> > +	REG_L x15, PT_A5(sp)
-> > +	REG_L x16, PT_A6(sp)
-> > +	REG_L x17, PT_A7(sp)
-> > +	REG_L x18, PT_S2(sp)
-> > +	REG_L x19, PT_S3(sp)
-> > +	REG_L x20, PT_S4(sp)
-> > +	REG_L x21, PT_S5(sp)
-> > +	REG_L x22, PT_S6(sp)
-> > +	REG_L x23, PT_S7(sp)
-> > +	REG_L x24, PT_S8(sp)
-> > +	REG_L x25, PT_S9(sp)
-> > +	REG_L x26, PT_S10(sp)
-> > +	REG_L x27, PT_S11(sp)
-> > +	REG_L x28, PT_T3(sp)
-> > +	REG_L x29, PT_T4(sp)
-> > +	REG_L x30, PT_T5(sp)
-> > +	REG_L x31, PT_T6(sp)
-> > +	.endm
+A crystal would still be a fixed-clock. Does s/w need to know which one it is?
 
+Your's is a case where index alone doesn't work and you need
+clock-names. But still, you should define the order for when both
+clocks are present so we don't end with both orders for no good
+reason.
 
-It seems thses macros can be (partially?) shared with entry.S
+> Last, IMHO listing them with name + description, one item per line
+> is more readable then having the items on one line, then having the
+> next line list all their respective names. If ordering and number of
+> items is important, I could add the requirements to the description
+> of "clocks and clock-names"?
 
-Thank you,
+clocks can just say something like "1 or 2 clocks as defined in clock-names".
 
--- 
-Masami Hiramatsu <mhiramat@kernel.org>
+Rob
