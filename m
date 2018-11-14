@@ -2,534 +2,131 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8ADFAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:32:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 48ACAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:33:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 374F12145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:32:57 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="YTdLTNP1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 374F12145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 1A8282145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:33:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8282145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731337AbeKNOeY (ORCPT
+        id S1731480AbeKNOeq convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 09:34:24 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41282 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731192AbeKNOeX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 09:34:23 -0500
-Received: by mail-pf1-f196.google.com with SMTP id e22-v6so7224495pfn.8
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 20:32:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=EgUMnH26LW4SUNUBGoSPhzI9DbWQ9G5zJYUEbZXPeX4=;
-        b=YTdLTNP1QXheKxi3u+64xBnc1+az66CEYoLU1+mFtYRVNC4LarkKXJnf29tLSIgYKe
-         roC9yhDItmeETp7neTfY+RTboUUsih5g3TVh9TVtV7M6K52SfASvbhTWyQH7CSBK5iVu
-         z1LZn4X/TfLwera5wIC3TL9GX3ufiV7k0Hlog=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=EgUMnH26LW4SUNUBGoSPhzI9DbWQ9G5zJYUEbZXPeX4=;
-        b=fv85CEUC5M/GuwIKtju9YskTrv+jUjTfCRR+SEVOaHPEnBnc+DJggILIBVrqmH0k6h
-         hJE6/l2Qf0feSm21R3QuSVzic8Y+arBFxYjv5+0UNmYJErZWodtle67TgUrFVvfVyQWJ
-         L7RZxHgG77KFWU0tloWmuf7RKUG6daGVcoLLfHNFVchUGJXYlsfYYfSTktGH8pHG6FZO
-         r1Ze/DZbu48nYboxugB3AicMObi0Hx6jY8kXwBClXWjYrQXq/ZFv1EWaXwVeV7300xsZ
-         GZbg+wjfFAd6uM55VS6lQ0DheqRqThtRBvV9F2YMU2ZiD21/e7YRkn3tbJL0a+erl00c
-         dwUw==
-X-Gm-Message-State: AGRZ1gJWbV7h3l++TIBb8TYnVE0t6wkdP+16etwpFME0l0uPAKgx2mNj
-        APfBtUY43PhGBoHCFUvR+Za/IQ==
-X-Google-Smtp-Source: AJdET5f2W8EL0Ox4yHntmLpAG0vv2a2C6UzVwQUEhU2lwK54uCRy8cWrCETNf03CnC50keuTzlMyzg==
-X-Received: by 2002:a65:48c4:: with SMTP id o4mr320070pgs.371.1542169972935;
-        Tue, 13 Nov 2018 20:32:52 -0800 (PST)
-Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
-        by smtp.gmail.com with ESMTPSA id a17sm26382842pgm.26.2018.11.13.20.32.48
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Tue, 13 Nov 2018 20:32:52 -0800 (PST)
-From:   Firoz Khan <firoz.khan@linaro.org>
-To:     linux-sh@vger.kernel.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Rich Felker <dalias@libc.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>
-Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
-        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
-        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
-Subject: [PATCH v3 3/3] sh: generate uapi header and syscall table header files
-Date:   Wed, 14 Nov 2018 10:02:10 +0530
-Message-Id: <1542169930-24118-4-git-send-email-firoz.khan@linaro.org>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542169930-24118-1-git-send-email-firoz.khan@linaro.org>
-References: <1542169930-24118-1-git-send-email-firoz.khan@linaro.org>
+        Wed, 14 Nov 2018 09:34:46 -0500
+Received: from out1.zte.com.cn ([202.103.147.172]:34098 "EHLO mxct.zte.com.cn"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726813AbeKNOeq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 09:34:46 -0500
+Received: from mse01.zte.com.cn (unknown [10.30.3.20])
+        by Forcepoint Email with ESMTPS id C24258C3F9D250C45F4A;
+        Wed, 14 Nov 2018 12:33:09 +0800 (CST)
+Received: from notes_smtp.zte.com.cn ([10.30.1.239])
+        by mse01.zte.com.cn with ESMTP id wAE4X5v9095459;
+        Wed, 14 Nov 2018 12:33:05 +0800 (GMT-8)
+        (envelope-from wang.yi59@zte.com.cn)
+Received: from fox-host8.localdomain ([10.74.120.8])
+          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
+          with ESMTP id 2018111412332545-10576762 ;
+          Wed, 14 Nov 2018 12:33:25 +0800 
+From:   Yi Wang <wang.yi59@zte.com.cn>
+To:     riel@redhat.com, linux@rasmusvillemoes.dk
+Cc:     wang.yi59@zte.com.cn, keescook@chromium.org,
+        viro@ZenIV.linux.org.uk, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, rostedt@goodmis.org, tglx@linutronix.de,
+        mingo@kernel.org, rppt@linux.vnet.ibm.com,
+        linux@dominikbrodowski.net, pasha.tatashin@oracle.com,
+        ard.biesheuvel@linaro.org, luto@amacapital.net, wad@chromium.org,
+        mhocko@kernel.org, riel@surriel.com, ebiederm@xmission.com,
+        kirill.shutemov@linux.intel.com, guro@fb.com,
+        marcos.souza.org@gmail.com, zhong.weidong@zte.com.cn
+Subject: [PATCH v2] fork: Fix some -Wmissing-prototypes warnings
+Date:   Wed, 14 Nov 2018 12:34:47 +0800
+Message-Id: <1542170087-23645-1-git-send-email-wang.yi59@zte.com.cn>
+X-Mailer: git-send-email 1.8.3.1
+MIME-Version: 1.0
+X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
+ 21, 2013) at 2018-11-14 12:33:25,
+        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
+ 2018-11-14 12:32:57
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
+X-MAIL: mse01.zte.com.cn wAE4X5v9095459
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-System call table generation script must be run to gener-
-ate unistd_32.h and syscall_table.h files. This patch will
-have changes which will invokes the script.
+We get a warning when building kernel with W=1:
+kernel/fork.c:167:13: warning: no previous prototype for ‘arch_release_thread_stack’ [-Wmissing-prototypes]
+kernel/fork.c:779:13: warning: no previous prototype for ‘fork_init’ [-Wmissing-prototypes]
 
-This patch will generate unistd_32.h and syscall_table.h
-files by the syscall table generation script invoked by
-sh/Makefile and the generated files against the removed
-files must be identical.
+Add the missing declaration in head file to fix this.
 
-The generated uapi header file will be included in uapi/-
-asm/unistd.h and generated system call table header file
-will be included by kernel/syscall_32.S file.
+Also, remove arch_release_thread_stack() completely because no
+arch seems to implement it since bb9d81264 (arch: remove tile port).
 
-Signed-off-by: Firoz Khan <firoz.khan@linaro.org>
+Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
 ---
- arch/sh/Makefile                |   3 +
- arch/sh/include/asm/Kbuild      |   1 +
- arch/sh/include/uapi/asm/Kbuild |   1 +
- arch/sh/kernel/syscalls_32.S    | 387 +---------------------------------------
- 4 files changed, 8 insertions(+), 384 deletions(-)
+v2: remove arch_release_thread_stack(). Thanks to Rasmus.
+---
+ include/linux/sched/task.h | 2 ++
+ init/main.c                | 1 -
+ kernel/fork.c              | 5 -----
+ 3 files changed, 2 insertions(+), 6 deletions(-)
 
-diff --git a/arch/sh/Makefile b/arch/sh/Makefile
-index c521ade..4009bef 100644
---- a/arch/sh/Makefile
-+++ b/arch/sh/Makefile
-@@ -228,6 +228,9 @@ archclean:
- 	$(Q)$(MAKE) $(clean)=$(boot)
- 	$(Q)$(MAKE) $(clean)=arch/sh/kernel/vsyscall
+diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
+index 108ede9..44c6f15 100644
+--- a/include/linux/sched/task.h
++++ b/include/linux/sched/task.h
+@@ -39,6 +39,8 @@
  
-+archheaders:
-+	$(Q)$(MAKE) $(build)=arch/sh/kernel/syscalls all
+ extern void proc_caches_init(void);
+ 
++extern void fork_init(void);
 +
- define archhelp
- 	@echo '  zImage 	           - Compressed kernel image'
- 	@echo '  romImage	           - Compressed ROM image, if supported'
-diff --git a/arch/sh/include/asm/Kbuild b/arch/sh/include/asm/Kbuild
-index 6a5609a..b15caf3 100644
---- a/arch/sh/include/asm/Kbuild
-+++ b/arch/sh/include/asm/Kbuild
-@@ -1,3 +1,4 @@
-+generated-y += syscall_table.h
- generic-y += compat.h
- generic-y += current.h
- generic-y += delay.h
-diff --git a/arch/sh/include/uapi/asm/Kbuild b/arch/sh/include/uapi/asm/Kbuild
-index ba4d39c..a55e317 100644
---- a/arch/sh/include/uapi/asm/Kbuild
-+++ b/arch/sh/include/uapi/asm/Kbuild
-@@ -1,6 +1,7 @@
- # UAPI Header export list
- include include/uapi/asm-generic/Kbuild.asm
+ extern void release_task(struct task_struct * p);
  
-+generated-y += unistd_32.h
- generic-y += bitsperlong.h
- generic-y += bpf_perf_event.h
- generic-y += errno.h
-diff --git a/arch/sh/kernel/syscalls_32.S b/arch/sh/kernel/syscalls_32.S
-index 254bc22..54978e0 100644
---- a/arch/sh/kernel/syscalls_32.S
-+++ b/arch/sh/kernel/syscalls_32.S
-@@ -14,389 +14,8 @@
- #include <linux/sys.h>
- #include <linux/linkage.h>
+ #ifdef CONFIG_HAVE_COPY_THREAD_TLS
+diff --git a/init/main.c b/init/main.c
+index ee14710..8feda42 100644
+--- a/init/main.c
++++ b/init/main.c
+@@ -105,7 +105,6 @@
+ static int kernel_init(void *);
  
-+#define __SYSCALL(nr, entry, nargs) .long entry
- 	.data
- ENTRY(sys_call_table)
--	.long sys_restart_syscall	/* 0  -  old "setup()" system call*/
--	.long sys_exit
--	.long sys_fork
--	.long sys_read
--	.long sys_write
--	.long sys_open		/* 5 */
--	.long sys_close
--	.long sys_waitpid
--	.long sys_creat
--	.long sys_link
--	.long sys_unlink		/* 10 */
--	.long sys_execve
--	.long sys_chdir
--	.long sys_time
--	.long sys_mknod
--	.long sys_chmod		/* 15 */
--	.long sys_lchown16
--	.long sys_ni_syscall	/* old break syscall holder */
--	.long sys_stat
--	.long sys_lseek
--	.long sys_getpid		/* 20 */
--	.long sys_mount
--	.long sys_oldumount
--	.long sys_setuid16
--	.long sys_getuid16
--	.long sys_stime		/* 25 */
--	.long sys_ptrace
--	.long sys_alarm
--	.long sys_fstat
--	.long sys_pause
--	.long sys_utime		/* 30 */
--	.long sys_ni_syscall	/* old stty syscall holder */
--	.long sys_ni_syscall	/* old gtty syscall holder */
--	.long sys_access
--	.long sys_nice
--	.long sys_ni_syscall	/* 35 */		/* old ftime syscall holder */
--	.long sys_sync
--	.long sys_kill
--	.long sys_rename
--	.long sys_mkdir
--	.long sys_rmdir		/* 40 */
--	.long sys_dup
--	.long sys_sh_pipe
--	.long sys_times
--	.long sys_ni_syscall	/* old prof syscall holder */
--	.long sys_brk		/* 45 */
--	.long sys_setgid16
--	.long sys_getgid16
--	.long sys_signal
--	.long sys_geteuid16
--	.long sys_getegid16	/* 50 */
--	.long sys_acct
--	.long sys_umount		/* recycled never used phys() */
--	.long sys_ni_syscall	/* old lock syscall holder */
--	.long sys_ioctl
--	.long sys_fcntl		/* 55 */
--	.long sys_ni_syscall	/* old mpx syscall holder */
--	.long sys_setpgid
--	.long sys_ni_syscall	/* old ulimit syscall holder */
--	.long sys_ni_syscall	/* sys_olduname */
--	.long sys_umask		/* 60 */
--	.long sys_chroot
--	.long sys_ustat
--	.long sys_dup2
--	.long sys_getppid
--	.long sys_getpgrp		/* 65 */
--	.long sys_setsid
--	.long sys_sigaction
--	.long sys_sgetmask
--	.long sys_ssetmask
--	.long sys_setreuid16	/* 70 */
--	.long sys_setregid16
--	.long sys_sigsuspend
--	.long sys_sigpending
--	.long sys_sethostname
--	.long sys_setrlimit	/* 75 */
--	.long sys_old_getrlimit
--	.long sys_getrusage
--	.long sys_gettimeofday
--	.long sys_settimeofday
--	.long sys_getgroups16	/* 80 */
--	.long sys_setgroups16
--	.long sys_ni_syscall	/* sys_oldselect */
--	.long sys_symlink
--	.long sys_lstat
--	.long sys_readlink		/* 85 */
--	.long sys_uselib
--	.long sys_swapon
--	.long sys_reboot
--	.long sys_old_readdir
--	.long old_mmap		/* 90 */
--	.long sys_munmap
--	.long sys_truncate
--	.long sys_ftruncate
--	.long sys_fchmod
--	.long sys_fchown16		/* 95 */
--	.long sys_getpriority
--	.long sys_setpriority
--	.long sys_ni_syscall	/* old profil syscall holder */
--	.long sys_statfs
--	.long sys_fstatfs		/* 100 */
--	.long sys_ni_syscall	/* ioperm */
--	.long sys_socketcall
--	.long sys_syslog
--	.long sys_setitimer
--	.long sys_getitimer	/* 105 */
--	.long sys_newstat
--	.long sys_newlstat
--	.long sys_newfstat
--	.long sys_uname
--	.long sys_ni_syscall	/* 110 */ /* iopl */
--	.long sys_vhangup
--	.long sys_ni_syscall	/* idle */
--	.long sys_ni_syscall	/* vm86old */
--	.long sys_wait4
--	.long sys_swapoff		/* 115 */
--	.long sys_sysinfo
--	.long sys_ipc
--	.long sys_fsync
--	.long sys_sigreturn
--	.long sys_clone		/* 120 */
--	.long sys_setdomainname
--	.long sys_newuname
--	.long sys_cacheflush	/* x86: sys_modify_ldt */
--	.long sys_adjtimex
--	.long sys_mprotect		/* 125 */
--	.long sys_sigprocmask
--	.long sys_ni_syscall	/* old "create_module" */
--	.long sys_init_module
--	.long sys_delete_module
--	.long sys_ni_syscall	/* 130: old "get_kernel_syms" */
--	.long sys_quotactl
--	.long sys_getpgid
--	.long sys_fchdir
--	.long sys_bdflush
--	.long sys_sysfs		/* 135 */
--	.long sys_personality
--	.long sys_ni_syscall	/* for afs_syscall */
--	.long sys_setfsuid16
--	.long sys_setfsgid16
--	.long sys_llseek		/* 140 */
--	.long sys_getdents
--	.long sys_select
--	.long sys_flock
--	.long sys_msync
--	.long sys_readv		/* 145 */
--	.long sys_writev
--	.long sys_getsid
--	.long sys_fdatasync
--	.long sys_sysctl
--	.long sys_mlock		/* 150 */
--	.long sys_munlock
--	.long sys_mlockall
--	.long sys_munlockall
--	.long sys_sched_setparam
--	.long sys_sched_getparam   /* 155 */
--	.long sys_sched_setscheduler
--	.long sys_sched_getscheduler
--	.long sys_sched_yield
--	.long sys_sched_get_priority_max
--	.long sys_sched_get_priority_min  /* 160 */
--	.long sys_sched_rr_get_interval
--	.long sys_nanosleep
--	.long sys_mremap
--	.long sys_setresuid16
--	.long sys_getresuid16	/* 165 */
--	.long sys_ni_syscall	/* vm86 */
--	.long sys_ni_syscall	/* old "query_module" */
--	.long sys_poll
--	.long sys_ni_syscall	/* was nfsservctl */
--	.long sys_setresgid16	/* 170 */
--	.long sys_getresgid16
--	.long sys_prctl
--	.long sys_rt_sigreturn
--	.long sys_rt_sigaction
--	.long sys_rt_sigprocmask	/* 175 */
--	.long sys_rt_sigpending
--	.long sys_rt_sigtimedwait
--	.long sys_rt_sigqueueinfo
--	.long sys_rt_sigsuspend
--	.long sys_pread_wrapper	   /* 180 */
--	.long sys_pwrite_wrapper
--	.long sys_chown16
--	.long sys_getcwd
--	.long sys_capget
--	.long sys_capset           /* 185 */
--	.long sys_sigaltstack
--	.long sys_sendfile
--	.long sys_ni_syscall	/* getpmsg */
--	.long sys_ni_syscall	/* putpmsg */
--	.long sys_vfork            /* 190 */
--	.long sys_getrlimit
--	.long sys_mmap2
--	.long sys_truncate64
--	.long sys_ftruncate64
--	.long sys_stat64		/* 195 */
--	.long sys_lstat64
--	.long sys_fstat64
--	.long sys_lchown
--	.long sys_getuid
--	.long sys_getgid		/* 200 */
--	.long sys_geteuid
--	.long sys_getegid
--	.long sys_setreuid
--	.long sys_setregid
--	.long sys_getgroups	/* 205 */
--	.long sys_setgroups
--	.long sys_fchown
--	.long sys_setresuid
--	.long sys_getresuid
--	.long sys_setresgid	/* 210 */
--	.long sys_getresgid
--	.long sys_chown
--	.long sys_setuid
--	.long sys_setgid
--	.long sys_setfsuid		/* 215 */
--	.long sys_setfsgid
--	.long sys_pivot_root
--	.long sys_mincore
--	.long sys_madvise
--	.long sys_getdents64	/* 220 */
--	.long sys_fcntl64
--	.long sys_ni_syscall	/* reserved for TUX */
--	.long sys_ni_syscall	/* Reserved for Security */
--	.long sys_gettid
--	.long sys_readahead	/* 225 */
--	.long sys_setxattr
--	.long sys_lsetxattr
--	.long sys_fsetxattr
--	.long sys_getxattr
--	.long sys_lgetxattr	/* 230 */
--	.long sys_fgetxattr
--	.long sys_listxattr
--	.long sys_llistxattr
--	.long sys_flistxattr
--	.long sys_removexattr	/* 235 */
--	.long sys_lremovexattr
--	.long sys_fremovexattr
--	.long sys_tkill
--	.long sys_sendfile64
--	.long sys_futex		/* 240 */
--	.long sys_sched_setaffinity
--	.long sys_sched_getaffinity
--	.long sys_ni_syscall	/* reserved for set_thread_area */
--	.long sys_ni_syscall	/* reserved for get_thread_area */
--	.long sys_io_setup	/* 245 */
--	.long sys_io_destroy
--	.long sys_io_getevents
--	.long sys_io_submit
--	.long sys_io_cancel
--	.long sys_fadvise64	/* 250 */
--	.long sys_ni_syscall
--	.long sys_exit_group
--	.long sys_lookup_dcookie
--	.long sys_epoll_create
--	.long sys_epoll_ctl	/* 255 */
--	.long sys_epoll_wait
-- 	.long sys_remap_file_pages
-- 	.long sys_set_tid_address
-- 	.long sys_timer_create
-- 	.long sys_timer_settime		/* 260 */
-- 	.long sys_timer_gettime
-- 	.long sys_timer_getoverrun
-- 	.long sys_timer_delete
-- 	.long sys_clock_settime
-- 	.long sys_clock_gettime		/* 265 */
-- 	.long sys_clock_getres
-- 	.long sys_clock_nanosleep
--	.long sys_statfs64
--	.long sys_fstatfs64
--	.long sys_tgkill		/* 270 */
--	.long sys_utimes
-- 	.long sys_fadvise64_64_wrapper
--	.long sys_ni_syscall	/* Reserved for vserver */
--	.long sys_mbind
--	.long sys_get_mempolicy		/* 275 */
--	.long sys_set_mempolicy
--	.long sys_mq_open
--	.long sys_mq_unlink
--	.long sys_mq_timedsend
--	.long sys_mq_timedreceive       /* 280 */
--	.long sys_mq_notify
--	.long sys_mq_getsetattr
--	.long sys_kexec_load
--	.long sys_waitid
--	.long sys_add_key		/* 285 */
--	.long sys_request_key
--	.long sys_keyctl
--	.long sys_ioprio_set
--	.long sys_ioprio_get
--	.long sys_inotify_init		/* 290 */
--	.long sys_inotify_add_watch
--	.long sys_inotify_rm_watch
--	.long sys_ni_syscall
--	.long sys_migrate_pages
--	.long sys_openat		/* 295 */
--	.long sys_mkdirat
--	.long sys_mknodat
--	.long sys_fchownat
--	.long sys_futimesat
--	.long sys_fstatat64		/* 300 */
--	.long sys_unlinkat
--	.long sys_renameat
--	.long sys_linkat
--	.long sys_symlinkat
--	.long sys_readlinkat		/* 305 */
--	.long sys_fchmodat
--	.long sys_faccessat
--	.long sys_pselect6
--	.long sys_ppoll
--	.long sys_unshare		/* 310 */
--	.long sys_set_robust_list
--	.long sys_get_robust_list
--	.long sys_splice
--	.long sys_sync_file_range
--	.long sys_tee			/* 315 */
--	.long sys_vmsplice
--	.long sys_move_pages
--	.long sys_getcpu
--	.long sys_epoll_pwait
--	.long sys_utimensat		/* 320 */
--	.long sys_signalfd
--	.long sys_timerfd_create
--	.long sys_eventfd
--	.long sys_fallocate
--	.long sys_timerfd_settime	/* 325 */
--	.long sys_timerfd_gettime
--	.long sys_signalfd4
--	.long sys_eventfd2
--	.long sys_epoll_create1
--	.long sys_dup3			/* 330 */
--	.long sys_pipe2
--	.long sys_inotify_init1
--	.long sys_preadv
--	.long sys_pwritev
--	.long sys_rt_tgsigqueueinfo	/* 335 */
--	.long sys_perf_event_open
--	.long sys_fanotify_init
--	.long sys_fanotify_mark
--	.long sys_prlimit64
--	/* Broken-out socket family */
--	.long sys_socket		/* 340 */
--	.long sys_bind
--	.long sys_connect
--	.long sys_listen
--	.long sys_accept
--	.long sys_getsockname	/* 345 */
--	.long sys_getpeername
--	.long sys_socketpair
--	.long sys_send
--	.long sys_sendto
--	.long sys_recv			/* 350 */
--	.long sys_recvfrom
--	.long sys_shutdown
--	.long sys_setsockopt
--	.long sys_getsockopt
--	.long sys_sendmsg		/* 355 */
--	.long sys_recvmsg
--	.long sys_recvmmsg
--	.long sys_accept4
--	.long sys_name_to_handle_at
--	.long sys_open_by_handle_at	/* 360 */
--	.long sys_clock_adjtime
--	.long sys_syncfs
--	.long sys_sendmmsg
--	.long sys_setns
--	.long sys_process_vm_readv	/* 365 */
--	.long sys_process_vm_writev
--	.long sys_kcmp
--	.long sys_finit_module
--	.long sys_sched_getattr
--	.long sys_sched_setattr		/* 370 */
--	.long sys_renameat2
--	.long sys_seccomp
--	.long sys_getrandom
--	.long sys_memfd_create
--	.long sys_bpf			/* 375 */
--	.long sys_execveat
--	.long sys_userfaultfd
--	.long sys_membarrier
--	.long sys_mlock2
--	.long sys_copy_file_range	/* 380 */
--	.long sys_preadv2
--	.long sys_pwritev2
-+#include <asm/syscall_table.h>
-+#undef __SYSCALL
+ extern void init_IRQ(void);
+-extern void fork_init(void);
+ extern void radix_tree_init(void);
+ 
+ /*
+diff --git a/kernel/fork.c b/kernel/fork.c
+index 07cddff..c6d02be 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -164,10 +164,6 @@ static inline void free_task_struct(struct task_struct *tsk)
+ }
+ #endif
+ 
+-void __weak arch_release_thread_stack(unsigned long *stack)
+-{
+-}
+-
+ #ifndef CONFIG_ARCH_THREAD_STACK_ALLOCATOR
+ 
+ /*
+@@ -417,7 +413,6 @@ static void release_task_stack(struct task_struct *tsk)
+ 		return;  /* Better to leak the stack than to free prematurely */
+ 
+ 	account_kernel_stack(tsk, -1);
+-	arch_release_thread_stack(tsk->stack);
+ 	free_thread_stack(tsk);
+ 	tsk->stack = NULL;
+ #ifdef CONFIG_VMAP_STACK
 -- 
-1.9.1
+1.8.3.1
 
