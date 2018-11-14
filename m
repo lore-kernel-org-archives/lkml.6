@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63556C04EBC
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A83C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BC3A2243E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C86C2243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dt+cMgzp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BC3A2243E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKj7bS3R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C86C2243E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387402AbeKOIsf (ORCPT
+        id S2387593AbeKOIsp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:48:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34392 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:48:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728605AbeKOI1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:27:20 -0500
+        id S1728526AbeKOI1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:19 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EB1F82251A;
+        by mail.kernel.org (Postfix) with ESMTPSA id 04E4F2252A;
         Wed, 14 Nov 2018 22:22:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234137;
-        bh=dwpbcC/xzToXpkccDht6Z0VciEGWwLp1UJytnQyypBc=;
+        s=default; t=1542234136;
+        bh=WsZ7cth1cut/WPoI/+XfeCTb24XybtMELqifViPWIWc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Dt+cMgzpKihBp+NfclpJsH94tcA8R2Ld1nxRuSmohWhSyTyrAfG5EvVpr7ji72TYY
-         jZtaDcPHPtqV8KvcJ6SMag2GB4ZmoevQ/nVE4dk0iYfQ4YMBzI8l00nqG8DeADUnyN
-         wR5E+4i5pFR+nT6+JPpx/JTYTZEcRNEJdgU1T5S4=
+        b=SKj7bS3RwHkPBN2Cu4TOJmQAedbOFkejHqMOu6mBVZgM5gwrjxYZR7yQpscrd9Pfn
+         04GI4dyo6vUtWoTSIi2PS+sqI6ZCQZeJ8N8rldBUYWWIUIj/0Jh3pGRCLTi42APSse
+         g9mmFCQmLt5nP+grRSxWc19R4s/6lzhf4yyLrkLc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Liam Merwick <Liam.Merwick@oracle.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        Juergen Gross <jgross@suse.com>,
+Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 36/73] xen/grant-table: Fix incorrect gnttab_dma_free_pages() pr_debug message
-Date:   Wed, 14 Nov 2018 17:21:30 -0500
-Message-Id: <20181114222207.98701-36-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 32/73] ARM: dts: imx6sx-sdb: Fix enet phy regulator
+Date:   Wed, 14 Nov 2018 17:21:26 -0500
+Message-Id: <20181114222207.98701-32-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -54,38 +53,74 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Liam Merwick <Liam.Merwick@oracle.com>
+From: Leonard Crestez <leonard.crestez@nxp.com>
 
-[ Upstream commit d9cccfa7c4d1d9ef967ec9308df7304a18609b30 ]
+[ Upstream commit 1ad9fb750a104f51851c092edd7b3553f0218428 ]
 
-If a call to xenmem_reservation_increase() in gnttab_dma_free_pages()
-fails it triggers a message "Failed to decrease reservation..." which
-should be "Failed to increase reservation..."
+Bindings for "fixed-regulator" only explicitly support "gpio" property,
+not "gpios". Fix by correcting the property name.
 
-Fixes: 9bdc7304f536 ('xen/grant-table: Allow allocating buffers suitable for DMA')
-Reported-by: Ross Philipson <ross.philipson@oracle.com>
-Signed-off-by: Liam Merwick <liam.merwick@oracle.com>
-Reviewed-by: Mark Kanda <mark.kanda@oracle.com>
-Reviewed-by: Juergen Gross <jgross@suse.com>
-Signed-off-by: Juergen Gross <jgross@suse.com>
+The enet PHYs on imx6sx-sdb needs to be explicitly reset after a power
+cycle, this can be handled by the phy-reset-gpios property. Sadly this
+is not handled on suspend: the fec driver turns phy-supply off but
+doesn't assert phy-reset-gpios again on resume.
+
+Since additional phy-level work is required to support powering off the
+phy in suspend fix the problem by just marking the regulator as
+"boot-on" "always-on" so that it's never turned off. This behavior is
+equivalent to older releases.
+
+Keep the phy-reset-gpios property on fec anyway because it is a correct
+description of board design.
+
+This issue was exposed by commit efdfeb079cc3 ("regulator: fixed:
+Convert to use GPIO descriptor only") which causes the "gpios" property
+to also be parsed. Before that commit the "gpios" property had no
+effect, PHY reset was only handled in the the bootloader.
+
+This fixes linux-next boot failures previously reported here:
+ https://lore.kernel.org/patchwork/patch/982437/#1177900
+ https://lore.kernel.org/patchwork/patch/994091/#1178304
+
+Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/xen/grant-table.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm/boot/dts/imx6sx-sdb.dtsi | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/xen/grant-table.c b/drivers/xen/grant-table.c
-index 84575baceebc..97341fa75458 100644
---- a/drivers/xen/grant-table.c
-+++ b/drivers/xen/grant-table.c
-@@ -914,7 +914,7 @@ int gnttab_dma_free_pages(struct gnttab_dma_alloc_args *args)
+diff --git a/arch/arm/boot/dts/imx6sx-sdb.dtsi b/arch/arm/boot/dts/imx6sx-sdb.dtsi
+index f8f31872fa14..d6d517e4922f 100644
+--- a/arch/arm/boot/dts/imx6sx-sdb.dtsi
++++ b/arch/arm/boot/dts/imx6sx-sdb.dtsi
+@@ -115,7 +115,9 @@
+ 		regulator-name = "enet_3v3";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+-		gpios = <&gpio2 6 GPIO_ACTIVE_LOW>;
++		gpio = <&gpio2 6 GPIO_ACTIVE_LOW>;
++		regulator-boot-on;
++		regulator-always-on;
+ 	};
  
- 	ret = xenmem_reservation_increase(args->nr_pages, args->frames);
- 	if (ret != args->nr_pages) {
--		pr_debug("Failed to decrease reservation for DMA buffer\n");
-+		pr_debug("Failed to increase reservation for DMA buffer\n");
- 		ret = -EFAULT;
- 	} else {
- 		ret = 0;
+ 	reg_pcie_gpio: regulator-pcie-gpio {
+@@ -178,6 +180,7 @@
+ 	phy-supply = <&reg_enet_3v3>;
+ 	phy-mode = "rgmii";
+ 	phy-handle = <&ethphy1>;
++	phy-reset-gpios = <&gpio2 7 GPIO_ACTIVE_LOW>;
+ 	status = "okay";
+ 
+ 	mdio {
+@@ -371,6 +374,8 @@
+ 				MX6SX_PAD_RGMII1_RD3__ENET1_RX_DATA_3	0x3081
+ 				MX6SX_PAD_RGMII1_RX_CTL__ENET1_RX_EN	0x3081
+ 				MX6SX_PAD_ENET2_RX_CLK__ENET2_REF_CLK_25M	0x91
++				/* phy reset */
++				MX6SX_PAD_ENET2_CRS__GPIO2_IO_7		0x10b0
+ 			>;
+ 		};
+ 
 -- 
 2.17.1
 
