@@ -2,95 +2,263 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B64BCC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:24:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43377C04EBC
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:26:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8183A22360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:24:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="yGD54PGp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8183A22360
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mena.vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id 0D19722419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:26:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D19722419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728872AbeKOF2c (ORCPT
+        id S1726153AbeKOFay (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 00:28:32 -0500
-Received: from mail-vk1-f176.google.com ([209.85.221.176]:37383 "EHLO
-        mail-vk1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727264AbeKOF2b (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 00:28:31 -0500
-Received: by mail-vk1-f176.google.com with SMTP id 197so3909485vkf.4
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 11:24:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=X8WlNkiA1Csr43Gr4rrvpTKkHaPLpKLBTw3XqDDomEo=;
-        b=yGD54PGp4bfLP+IVazWds9FsWCMl8MWrl7MOSxcjciz/4VSwKSSLcO6OPbkyWzhz89
-         S3rYN4yeL7YdndXp+vK08+5AR5ZmBNgWyJhAkBdHAxySmNwjL4RrSRrtz/YXLtxXjAaA
-         58RDowkoNpylzN7qXGJ+JKOrRhjn508vno3c32pykQp6OubTNwKuwIZ8hLyJ8DKORMp0
-         oqbsqOOnIC9zsv02l7mvzmqn4exFqa+E1+GH8koza1o66RvU/U3xNUazLoOgEVGUE32N
-         S7fzcH+Z+AQgZIQjAQgsY+9Q7aYP2o+xQZNfAhrf0b1s6n+lrwzLhPhR6Rnak8vgRHWB
-         nLUw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=X8WlNkiA1Csr43Gr4rrvpTKkHaPLpKLBTw3XqDDomEo=;
-        b=qTZ1Lz3Nk8yN2GrMsGDJBIKZ8vYtD9GgR2MJ3d8kr63C3UM4nQ2ZWF4eL3ENYY7len
-         m7KIFhvrjgjDkfcdh7qOTdwyCwikvb/Q4+xj17dy5X2vlE8MrYu9fwvgRvlMMtvBFyaN
-         RnFrbItABG5hqyK6qzivIfJo/88KCe9i8CFoiqaQmY3lhtaxUEWlBOs81qlJl8stVtrR
-         RfwuRyGn/lwQNHMl6Lr0vIoEgLEKGAtvhIrl/lwegKyEICgSFQDHDsuV3KaxA1u3+Nb5
-         bkXeszoh+0pB11YbSQ1HpOaD3gXSSXvsQdDjFSFK/67q0PfQ1XlExFHjUYD7GUhD/OZG
-         pn+A==
-X-Gm-Message-State: AGRZ1gLxqd6vZxYN3gGZcTabyyFdMwrhM/FWME82rx77XgGkFPf6CSvP
-        hK002uQrRqaK/fPxY0LxUtrE/LZeYM667RNWBEkIQQ==
-X-Google-Smtp-Source: AJdET5dCxbooZy+cexUiDh/DlVJLfx0nqJgb50zDtY3Vw9XD/jFeFkWVqm62IhhAlWyNDn2kJt+eUsUps45Sk5JaERE=
-X-Received: by 2002:a1f:9042:: with SMTP id s63mr1362688vkd.17.1542223441804;
- Wed, 14 Nov 2018 11:24:01 -0800 (PST)
-MIME-Version: 1.0
-References: <CANBxJ=EQOt1t=PkLsMvtfB2SbiLMPeGvFxB7SJXf7m3OkcionQ@mail.gmail.com>
- <20181114180807.6crs7awhvo26ldbr@hawk.localdomain> <CADYN=9Jh10guVNFfhS8XH+RwZAouLJQu7Svg4+Tz3rQDexzDkg@mail.gmail.com>
-In-Reply-To: <CADYN=9Jh10guVNFfhS8XH+RwZAouLJQu7Svg4+Tz3rQDexzDkg@mail.gmail.com>
-From:   Ahmed Soliman <ahmedsoliman@mena.vt.edu>
-Date:   Wed, 14 Nov 2018 21:23:41 +0200
-Message-ID: <CANBxJ=G4xdF8ZOR4zyoX1edNa=jYxk1xrzoi+7Xgcqt9qDoM2w@mail.gmail.com>
-Subject: Re: KVM selftests are failing
-To:     Anders Roxell <anders.roxell@linaro.org>
-Cc:     Andrew Jones <drjones@redhat.com>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Thu, 15 Nov 2018 00:30:54 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:13191 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725756AbeKOFax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 00:30:53 -0500
+Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C07E430C1D0D;
+        Wed, 14 Nov 2018 19:26:23 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3F94B600D6;
+        Wed, 14 Nov 2018 19:26:21 +0000 (UTC)
+Date:   Wed, 14 Nov 2018 14:26:20 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, hch@lst.de, axboe@kernel.dk,
+        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
+        xose.vazquez@gmail.com, linux-nvme@lists.infradead.org,
+        chengjike.cheng@huawei.com, shenhong09@huawei.com,
+        dm-devel@redhat.com, wangzhoumengjian@huawei.com,
+        christophe.varoqui@opensvc.com, bmarzins@redhat.com,
+        sschremm@netapp.com, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Subject: Re: multipath-tools: add ANA support for NVMe device
+Message-ID: <20181114192620.GA18908@redhat.com>
+References: <1541657381-7452-1-git-send-email-lijie34@huawei.com>
+ <2691abf6733f791fb16b86d96446440e4aaff99f.camel@suse.com>
+ <20181112215323.GA7983@redhat.com>
+ <20181113161838.GC9827@localhost.localdomain>
+ <20181113180008.GA12513@redhat.com>
+ <20181114053837.GA15086@redhat.com>
+ <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
+ <20181114174746.GA18526@redhat.com>
+ <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 14 Nov 2018 19:26:24 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, Nov 14 2018 at  1:51pm -0500,
+Hannes Reinecke <hare@suse.de> wrote:
 
-> > I couldn't reproduce this on a Westmere. Are you sure you're testing
-> > a clean compilation? Can you bisect the kernel?
-I don't do a make clean normally, but I will do it this time when
-bisecting, also I only use shallow
- clones so it will also take some time pulling. Also to note, The arch
-I am using is Haswell, I am not
-sure if that should make any difference though.
-> What would be the difference in CONFIG_* fragments that you both have enabled?
+> On 11/14/18 6:47 PM, Mike Snitzer wrote:
+> > On Wed, Nov 14 2018 at  2:49am -0500,
+> > Hannes Reinecke <hare@suse.de> wrote:
+> > 
+> >> On 11/14/18 6:38 AM, Mike Snitzer wrote:
+> >>> On Tue, Nov 13 2018 at  1:00pm -0500,
+> >>> Mike Snitzer <snitzer@redhat.com> wrote:
+> >>>
+> >>>> [1]: http://lists.infradead.org/pipermail/linux-nvme/2018-November/020765.html
+> >>>> [2]: https://www.redhat.com/archives/dm-devel/2018-November/msg00072.html
+> >>> ...
+> >>>
+> >>> I knew there had to be a pretty tight coupling between the NVMe driver's
+> >>> native multipathing and ANA support... and that the simplicity of
+> >>> Hannes' patch [1] was too good to be true.
+> >>>
+> >>> The real justification for not making Hannes' change is it'd effectively
+> >>> be useless without first splitting out the ANA handling done during NVMe
+> >>> request completion (NVME_SC_ANA_* cases in nvme_failover_req) that
+> >>> triggers re-reading the ANA log page accordingly.
+> >>>
+> >>> So without the ability to drive the ANA workqueue to trigger
+> >>> nvme_read_ana_log() from the nvme driver's completion path -- even if
+> >>> nvme_core.multipath=N -- it really doesn't buy multipath-tools anything
+> >>> to have the NVMe driver export the ana state via sysfs, because that ANA
+> >>> state will never get updated.
+> >>>
+> >> Hmm. Indeed, I was more focussed on having the sysfs attributes
+> >> displayed, so yes, indeed it needs some more work.
+> > ...
+> >>> Not holding my breath BUT:
+> >>> if decoupling the reading of ANA state from native NVMe multipathing
+> >>> specific work during nvme request completion were an acceptable
+> >>> advancement I'd gladly do the work.
+> >>>
+> >> I'd be happy to work on that, given that we'll have to have 'real'
+> >> ANA support for device-mapper anyway for SLE12 SP4 etc.
+> > 
+> > I had a close enough look yesterday that I figured I'd just implement
+> > what I reasoned through as one way forward, compile tested only (patch
+> > relative to Jens' for-4.21/block):
+> > 
+> >  drivers/nvme/host/core.c      | 14 +++++++---
+> >  drivers/nvme/host/multipath.c | 65 ++++++++++++++++++++++++++-----------------
+> >  drivers/nvme/host/nvme.h      |  4 +++
+> >  3 files changed, 54 insertions(+), 29 deletions(-)
+> > 
+> > diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> > index f172d63db2b5..05313ab5d91e 100644
+> > --- a/drivers/nvme/host/core.c
+> > +++ b/drivers/nvme/host/core.c
+> > @@ -252,10 +252,16 @@ void nvme_complete_rq(struct request *req)
+> >  	trace_nvme_complete_rq(req);
+> >  
+> >  	if (unlikely(status != BLK_STS_OK && nvme_req_needs_retry(req))) {
+> > -		if ((req->cmd_flags & REQ_NVME_MPATH) &&
+> > -		    blk_path_error(status)) {
+> > -			nvme_failover_req(req);
+> > -			return;
+> > +		if (blk_path_error(status)) {
+> > +			struct nvme_ns *ns = req->q->queuedata;
+> > +			u16 nvme_status = nvme_req(req)->status;
+> > +
+> > +			if (req->cmd_flags & REQ_NVME_MPATH) {
+> > +				nvme_failover_req(req);
+> > +				nvme_update_ana(ns, nvme_status);
+> > +				return;
+> > +			}
+> > +			nvme_update_ana(ns, nvme_status);
+> >  		}
+> >  
+> >  		if (!blk_queue_dying(req->q)) {
+> > diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+> > index 5e3cc8c59a39..f7fbc161dc8c 100644
+> > --- a/drivers/nvme/host/multipath.c
+> > +++ b/drivers/nvme/host/multipath.c
+> > @@ -22,7 +22,7 @@ MODULE_PARM_DESC(multipath,
+> >  
+> >  inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+> >  {
+> > -	return multipath && ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
+> > +	return ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
+> >  }
+> >  
+> >  /*
+> > @@ -47,6 +47,17 @@ void nvme_set_disk_name(char *disk_name, struct nvme_ns *ns,
+> >  	}
+> >  }
+> >  
+> > +static bool nvme_ana_error(u16 status)
+> > +{
+> > +	switch (status & 0x7ff) {
+> > +	case NVME_SC_ANA_TRANSITION:
+> > +	case NVME_SC_ANA_INACCESSIBLE:
+> > +	case NVME_SC_ANA_PERSISTENT_LOSS:
+> > +		return true;
+> > +	}
+> > +	return false;
+> > +}
+> > +
+> >  void nvme_failover_req(struct request *req)
+> >  {
+> >  	struct nvme_ns *ns = req->q->queuedata;
+> > @@ -58,10 +69,7 @@ void nvme_failover_req(struct request *req)
+> >  	spin_unlock_irqrestore(&ns->head->requeue_lock, flags);
+> >  	blk_mq_end_request(req, 0);
+> >  
+> > -	switch (status & 0x7ff) {
+> > -	case NVME_SC_ANA_TRANSITION:
+> > -	case NVME_SC_ANA_INACCESSIBLE:
+> > -	case NVME_SC_ANA_PERSISTENT_LOSS:
+> > +	if (nvme_ana_error(status)) {
+> >  		/*
+> >  		 * If we got back an ANA error we know the controller is alive,
+> >  		 * but not ready to serve this namespaces.  The spec suggests
+> > @@ -69,31 +77,38 @@ void nvme_failover_req(struct request *req)
+> >  		 * that the admin and I/O queues are not serialized that is
+> >  		 * fundamentally racy.  So instead just clear the current path,
+> >  		 * mark the the path as pending and kick of a re-read of the ANA
+> > -		 * log page ASAP.
+> > +		 * log page ASAP (see nvme_update_ana() below).
+> >  		 */
+> >  		nvme_mpath_clear_current_path(ns);
+> > -		if (ns->ctrl->ana_log_buf) {
+> > -			set_bit(NVME_NS_ANA_PENDING, &ns->flags);
+> > -			queue_work(nvme_wq, &ns->ctrl->ana_work);
+> > +	} else {
+> > +		switch (status & 0x7ff) {
+> > +		case NVME_SC_HOST_PATH_ERROR:
+> > +			/*
+> > +			 * Temporary transport disruption in talking to the
+> > +			 * controller.  Try to send on a new path.
+> > +			 */
+> > +			nvme_mpath_clear_current_path(ns);
+> > +			break;
+> > +		default:
+> > +			/*
+> > +			 * Reset the controller for any non-ANA error as we
+> > +			 * don't know what caused the error.
+> > +			 */
+> > +			nvme_reset_ctrl(ns->ctrl);
+> > +			break;
+> >  		}
+> > -		break;
+> > -	case NVME_SC_HOST_PATH_ERROR:
+> > -		/*
+> > -		 * Temporary transport disruption in talking to the controller.
+> > -		 * Try to send on a new path.
+> > -		 */
+> > -		nvme_mpath_clear_current_path(ns);
+> > -		break;
+> > -	default:
+> > -		/*
+> > -		 * Reset the controller for any non-ANA error as we don't know
+> > -		 * what caused the error.
+> > -		 */
+> > -		nvme_reset_ctrl(ns->ctrl);
+> > -		break;
+> >  	}
+> Maybe move nvme_mpath_clear_current_path() out of the loop (it wouldn't
+> matter if we clear the path if we reset the controller afterwards); that
+> might even clean up the code even more.
 
-Here is my config file:
-https://pastebin.com/fCNV2z8c
+Not completely sure what you're suggesting.  But I was going for purely
+functional equivalent of the existing upstream code -- just with
+multipathing and ana split.
+
+Could be that in future it wouldn't make sense to always
+nvme_mpath_clear_current_path() for all cases?
+
+> 
+> > +}
+> >  
+> > -	kblockd_schedule_work(&ns->head->requeue_work);
+> > +void nvme_update_ana(struct nvme_ns *ns, u16 status)
+> > +{
+> > +	if (nvme_ana_error(status) && ns->ctrl->ana_log_buf) {
+> > +		set_bit(NVME_NS_ANA_PENDING, &ns->flags);
+> > +		queue_work(nvme_wq, &ns->ctrl->ana_work);
+> > +	}
+> > +
+> > +	if (multipath)
+> > +		kblockd_schedule_work(&ns->head->requeue_work);
+> >  }
+> 
+> maybe use 'ns->head->disk' here; we only need to call this if we have a
+> multipath disk.
+
+Sure.
+
+> Remaining bits are okay.
 
 Thanks,
--- 
-Ahmed,
-Junior Researcher, IoT and Cyber Security lab, SmartCI, Alexandria
-University, & CIS @  VMI
+Mike
