@@ -2,118 +2,155 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4410C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:42:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 192BBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACB0B2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:42:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D4D6B2145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fLBEjgbn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACB0B2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqRxH7ty"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D6B2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388061AbeKOIsE (ORCPT
+        id S1728688AbeKOI1U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:48:04 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44703 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728314AbeKOIsE (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:48:04 -0500
-Received: by mail-pg1-f196.google.com with SMTP id w3-v6so8014656pgs.11
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 14:42:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=KDSNJFY8Zp0hTmNXEj1+V5KLRIdXjNpgce8IuFPtqKA=;
-        b=fLBEjgbnp/x/vhcqBG71UAO2WvmDe03IVrWMQK3w95N+CcVg9bio18Oxcbcde3G21w
-         dJJENrqBzxgQimt8tP+tQAu5gBh3JA8bGCX9jGcZzCCpiAV64RcaE2LK0XQJWY9f4vdu
-         ZfL3VYhla/V62PDzI7XpvvkJ6oTN/3hT4HS2I=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=KDSNJFY8Zp0hTmNXEj1+V5KLRIdXjNpgce8IuFPtqKA=;
-        b=GSfZ3aTs3KLu1f2t0wZClc8EdRHtN7HZacN335HPcjcUtTku4tsocrahHANGGoiYun
-         tRenzMrMU8Y9/EOyh4XCBo0+Au90wyfZRbuaCjTPGiRHvjaOfbYKqa60rfopUxDK4OP9
-         Rk6RQhr06BC+abuxNuz04oBL+bLMIj88AmrJuXWk8G5nIbQLiFt2cBh3+jLILANi0GHD
-         OqqqbN0w9SYb7foAfJrj/LBuLcxEnF1swB+HJhQnA9msNEwvSCI/jLQJOj5Pv6jILIfv
-         tz/zAhKtSDDpsOkrsox5vXg/KE48yI1WF6kJSXADwPjAs8E8FCMR6dWCLnnUcmquiEOw
-         p2LA==
-X-Gm-Message-State: AGRZ1gIn3o2FZ+F1PUxSyo039wDnwktxpa1WIgRcGr78qrOlmo8sHi1B
-        0fZC+T+sxP+mz826bL6D5eg8Og==
-X-Google-Smtp-Source: AJdET5cVhMzB4zPsNBn6fAe4rOon2fG/457gJglzbNp0aYfmM8qIWirmpjiM9T7l2cB2ilgZXs2d1A==
-X-Received: by 2002:a63:4384:: with SMTP id q126mr3500904pga.160.1542235374082;
-        Wed, 14 Nov 2018 14:42:54 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id v12-v6sm31881889pfa.167.2018.11.14.14.42.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Nov 2018 14:42:53 -0800 (PST)
-Date:   Wed, 14 Nov 2018 14:42:52 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Stephen Boyd <swboyd@chromium.org>
-Cc:     David Airlie <airlied@linux.ie>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Clark <robdclark@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>,
-        Rajesh Yadav <ryadav@codeaurora.org>,
-        Douglas Anderson <dianders@chromium.org>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: msm/dsi: Add ref clock for 10nm PHY
-Message-ID: <20181114224252.GM22824@google.com>
-References: <20181102214534.184593-1-mka@chromium.org>
- <154154578082.88331.1035410665298962611@swboyd.mtv.corp.google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <154154578082.88331.1035410665298962611@swboyd.mtv.corp.google.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Thu, 15 Nov 2018 03:27:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728597AbeKOI1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:19 -0500
+Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3A96E22511;
+        Wed, 14 Nov 2018 22:22:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542234136;
+        bh=1CXasTFvsZWPK7WOW//EDKwxwHJs7EZbFAtTmH6oN4Q=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=bqRxH7ty4YhvweREmhB3dQDvYct8bAPEXCInWfMs+R1VqVRpyTL9Dr0DZV8bF1e5e
+         r+4Vuy5NzlY+FTqyyZCL/jnDvCwSWM1tkCDfDF2u6ObknjxVt0nLEFqyn0Rbf+kb4f
+         wUpqbSK3Ng0kV4s8gy2Z5OS1QkaBk/LU2THcEk8A=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Inki Dae <inki.dae@samsung.com>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 33/73] Revert "drm/exynos/decon5433: implement frame counter"
+Date:   Wed, 14 Nov 2018 17:21:27 -0500
+Message-Id: <20181114222207.98701-33-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
+References: <20181114222207.98701-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 03:09:40PM -0800, Stephen Boyd wrote:
-> Quoting Matthias Kaehlcke (2018-11-02 14:45:33)
-> > Allow the 10nm PHY driver to get the ref clock from the DT.
-> > 
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> >  Documentation/devicetree/bindings/display/msm/dsi.txt | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/display/msm/dsi.txt b/Documentation/devicetree/bindings/display/msm/dsi.txt
-> > index dfc743219bd88..d0d2046ceff69 100644
-> > --- a/Documentation/devicetree/bindings/display/msm/dsi.txt
-> > +++ b/Documentation/devicetree/bindings/display/msm/dsi.txt
-> > @@ -105,6 +105,10 @@ Required properties:
-> >  - power-domains: Should be <&mmcc MDSS_GDSC>.
-> >  - clocks: Phandles to device clocks. See [1] for details on clock bindings.
-> >  - clock-names: the following clocks are required:
-> > +  For 10nm PHY:
-> > +  * "iface"
-> > +  * "ref"
-> > +  For other PHYs:
-> >    * "iface"
-> 
-> Any reason we can't go back and do this for other phys too? They're all
-> the same with regards to this reference clk input.
+From: Inki Dae <inki.dae@samsung.com>
 
-To avoid breaking existing users, at least the 28nm PHY is used by
-msm8916. Also I don't have the hardware to test changes for other
-PHYs.
+[ Upstream commit 6ca469e22a30992b4478d2ab88737c70667c1e00 ]
 
-Cheers
+This reverts commit 0586feba322e1de05075700eb4b835c8b683e62b
 
-Matthias
+This patch makes it to need get_vblank_counter callback in crtc
+to get frame counter from decon driver.
+
+However, drm_dev->max_vblank_count is a member unique to
+vendor's DRM driver but in case of ARM DRM, some CRTC devices
+don't provide the frame counter value. As a result, this patch
+made extension and clone mode not working.
+
+Instead of this patch, we may need separated max_vblank_count
+which belongs to each CRTC device, or need to implement frame
+counter emulation for them who don't support HW frame counter.
+
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  9 ---------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 11 -----------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h       |  1 -
+ 3 files changed, 21 deletions(-)
+
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index 94529aa82339..aef487dd8731 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -164,13 +164,6 @@ static u32 decon_get_frame_count(struct decon_context *ctx, bool end)
+ 	return frm;
+ }
+ 
+-static u32 decon_get_vblank_counter(struct exynos_drm_crtc *crtc)
+-{
+-	struct decon_context *ctx = crtc->ctx;
+-
+-	return decon_get_frame_count(ctx, false);
+-}
+-
+ static void decon_setup_trigger(struct decon_context *ctx)
+ {
+ 	if (!ctx->crtc->i80_mode && !(ctx->out_type & I80_HW_TRG))
+@@ -536,7 +529,6 @@ static const struct exynos_drm_crtc_ops decon_crtc_ops = {
+ 	.disable		= decon_disable,
+ 	.enable_vblank		= decon_enable_vblank,
+ 	.disable_vblank		= decon_disable_vblank,
+-	.get_vblank_counter	= decon_get_vblank_counter,
+ 	.atomic_begin		= decon_atomic_begin,
+ 	.update_plane		= decon_update_plane,
+ 	.disable_plane		= decon_disable_plane,
+@@ -554,7 +546,6 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+ 	int ret;
+ 
+ 	ctx->drm_dev = drm_dev;
+-	drm_dev->max_vblank_count = 0xffffffff;
+ 
+ 	for (win = ctx->first_win; win < WINDOWS_NR; win++) {
+ 		ctx->configs[win].pixel_formats = decon_formats;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index eea90251808f..2696289ecc78 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -162,16 +162,6 @@ static void exynos_drm_crtc_disable_vblank(struct drm_crtc *crtc)
+ 		exynos_crtc->ops->disable_vblank(exynos_crtc);
+ }
+ 
+-static u32 exynos_drm_crtc_get_vblank_counter(struct drm_crtc *crtc)
+-{
+-	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-
+-	if (exynos_crtc->ops->get_vblank_counter)
+-		return exynos_crtc->ops->get_vblank_counter(exynos_crtc);
+-
+-	return 0;
+-}
+-
+ static const struct drm_crtc_funcs exynos_crtc_funcs = {
+ 	.set_config	= drm_atomic_helper_set_config,
+ 	.page_flip	= drm_atomic_helper_page_flip,
+@@ -181,7 +171,6 @@ static const struct drm_crtc_funcs exynos_crtc_funcs = {
+ 	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
+ 	.enable_vblank = exynos_drm_crtc_enable_vblank,
+ 	.disable_vblank = exynos_drm_crtc_disable_vblank,
+-	.get_vblank_counter = exynos_drm_crtc_get_vblank_counter,
+ };
+ 
+ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index c737c4bd2c19..630f1edc5de2 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -133,7 +133,6 @@ struct exynos_drm_crtc_ops {
+ 	void (*disable)(struct exynos_drm_crtc *crtc);
+ 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
+ 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
+-	u32 (*get_vblank_counter)(struct exynos_drm_crtc *crtc);
+ 	enum drm_mode_status (*mode_valid)(struct exynos_drm_crtc *crtc,
+ 		const struct drm_display_mode *mode);
+ 	bool (*mode_fixup)(struct exynos_drm_crtc *crtc,
+-- 
+2.17.1
+
