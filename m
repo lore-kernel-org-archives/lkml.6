@@ -7,44 +7,43 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5942AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:19:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EBEFC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:19:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 17B812145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:19:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 17B812145D
+	by mail.kernel.org (Postfix) with ESMTP id 217192145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:19:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 217192145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732792AbeKNXWS (ORCPT
+        id S1732844AbeKNXWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 18:22:18 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:52053 "EHLO
+        Wed, 14 Nov 2018 18:22:48 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:53981 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727700AbeKNXWS (ORCPT
+        with ESMTP id S1727700AbeKNXWs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 18:22:18 -0500
+        Wed, 14 Nov 2018 18:22:48 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAEDIsZ3399525
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAEDJSHV399565
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Wed, 14 Nov 2018 05:18:54 -0800
+        Wed, 14 Nov 2018 05:19:28 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAEDIr7i399522;
-        Wed, 14 Nov 2018 05:18:53 -0800
-Date:   Wed, 14 Nov 2018 05:18:53 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAEDJRD5399562;
+        Wed, 14 Nov 2018 05:19:27 -0800
+Date:   Wed, 14 Nov 2018 05:19:27 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Borislav Petkov <tipbot@zytor.com>
-Message-ID: <tip-68b5e4326e4b8ac9080835005d8254fed0fb3c56@git.kernel.org>
-Cc:     wang.yi59@zte.com.cn, linux-kernel@vger.kernel.org,
-        mingo@kernel.org, bp@suse.de, matz@suse.de, hpa@zytor.com,
-        tglx@linutronix.de
-Reply-To: tglx@linutronix.de, hpa@zytor.com, bp@suse.de, mingo@kernel.org,
-          wang.yi59@zte.com.cn, linux-kernel@vger.kernel.org, matz@suse.de
-In-Reply-To: <alpine.DEB.2.21.1811081633160.1549@nanos.tec.linutronix.de>
-References: <alpine.DEB.2.21.1811081633160.1549@nanos.tec.linutronix.de>
+Message-ID: <tip-8e1599fcac2efda8b7d433ef69d2492f0b351e3f@git.kernel.org>
+Cc:     linux-kernel@vger.kernel.org, mingo@kernel.org, tglx@linutronix.de,
+        bp@suse.de, x86@kernel.org, hpa@zytor.com
+Reply-To: linux-kernel@vger.kernel.org, mingo@kernel.org,
+          tglx@linutronix.de, bp@suse.de, x86@kernel.org, hpa@zytor.com
+In-Reply-To: <20181110141647.GA20073@zn.tnic>
+References: <20181110141647.GA20073@zn.tnic>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:x86/cleanups] x86/mce: Fix -Wmissing-prototypes warnings
-Git-Commit-ID: 68b5e4326e4b8ac9080835005d8254fed0fb3c56
+Subject: [tip:x86/cleanups] x86/traps: Complete prototype declarations
+Git-Commit-ID: 8e1599fcac2efda8b7d433ef69d2492f0b351e3f
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -58,126 +57,84 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  68b5e4326e4b8ac9080835005d8254fed0fb3c56
-Gitweb:     https://git.kernel.org/tip/68b5e4326e4b8ac9080835005d8254fed0fb3c56
+Commit-ID:  8e1599fcac2efda8b7d433ef69d2492f0b351e3f
+Gitweb:     https://git.kernel.org/tip/8e1599fcac2efda8b7d433ef69d2492f0b351e3f
 Author:     Borislav Petkov <bp@suse.de>
-AuthorDate: Fri, 9 Nov 2018 23:13:13 +0100
+AuthorDate: Mon, 12 Nov 2018 13:20:36 +0100
 Committer:  Borislav Petkov <bp@suse.de>
-CommitDate: Wed, 14 Nov 2018 13:46:26 +0100
+CommitDate: Wed, 14 Nov 2018 13:46:29 +0100
 
-x86/mce: Fix -Wmissing-prototypes warnings
+x86/traps: Complete prototype declarations
 
-Add the proper includes and make smca_get_name() static.
+... with proper variable names.
 
-Fix an actual bug too which the warning triggered:
-
-  arch/x86/kernel/cpu/mcheck/therm_throt.c:395:39: error: conflicting \
-  types for ‘smp_thermal_interrupt’
-   asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
-                                         ^~~~~~~~~~~~~~~~~~~~~
-  In file included from arch/x86/kernel/cpu/mcheck/therm_throt.c:29:
-  ./arch/x86/include/asm/traps.h:107:17: note: previous declaration of \
-	  ‘smp_thermal_interrupt’ was here
-   asmlinkage void smp_thermal_interrupt(void);
+No functional changes.
 
 Signed-off-by: Borislav Petkov <bp@suse.de>
-Cc: Yi Wang <wang.yi59@zte.com.cn>
-Cc: Michael Matz <matz@suse.de>
-Cc: x86@kernel.org
-Link: https://lkml.kernel.org/r/alpine.DEB.2.21.1811081633160.1549@nanos.tec.linutronix.de
+Cc: <x86@kernel.org>
+Link: https://lkml.kernel.org/r/20181110141647.GA20073@zn.tnic
 ---
- arch/x86/include/asm/traps.h             | 6 +++---
- arch/x86/kernel/cpu/mcheck/mce_amd.c     | 5 +++--
- arch/x86/kernel/cpu/mcheck/therm_throt.c | 3 ++-
- arch/x86/kernel/cpu/mcheck/threshold.c   | 3 ++-
- 4 files changed, 10 insertions(+), 7 deletions(-)
+ arch/x86/include/asm/traps.h | 44 ++++++++++++++++++++++----------------------
+ 1 file changed, 22 insertions(+), 22 deletions(-)
 
 diff --git a/arch/x86/include/asm/traps.h b/arch/x86/include/asm/traps.h
-index 3de69330e6c5..afbc87206886 100644
+index afbc87206886..877afdedbbc5 100644
 --- a/arch/x86/include/asm/traps.h
 +++ b/arch/x86/include/asm/traps.h
-@@ -104,9 +104,9 @@ extern int panic_on_unrecovered_nmi;
- 
- void math_emulate(struct math_emu_info *);
- #ifndef CONFIG_X86_32
--asmlinkage void smp_thermal_interrupt(void);
--asmlinkage void smp_threshold_interrupt(void);
--asmlinkage void smp_deferred_error_interrupt(void);
-+asmlinkage void smp_thermal_interrupt(struct pt_regs *regs);
-+asmlinkage void smp_threshold_interrupt(struct pt_regs *regs);
-+asmlinkage void smp_deferred_error_interrupt(struct pt_regs *regs);
+@@ -61,34 +61,34 @@ asmlinkage void xen_machine_check(void);
+ asmlinkage void xen_simd_coprocessor_error(void);
  #endif
  
- extern void ist_enter(struct pt_regs *regs);
-diff --git a/arch/x86/kernel/cpu/mcheck/mce_amd.c b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-index dd33c357548f..9c8e2daa48cd 100644
---- a/arch/x86/kernel/cpu/mcheck/mce_amd.c
-+++ b/arch/x86/kernel/cpu/mcheck/mce_amd.c
-@@ -23,6 +23,7 @@
- #include <linux/string.h>
+-dotraplinkage void do_divide_error(struct pt_regs *, long);
+-dotraplinkage void do_debug(struct pt_regs *, long);
+-dotraplinkage void do_nmi(struct pt_regs *, long);
+-dotraplinkage void do_int3(struct pt_regs *, long);
+-dotraplinkage void do_overflow(struct pt_regs *, long);
+-dotraplinkage void do_bounds(struct pt_regs *, long);
+-dotraplinkage void do_invalid_op(struct pt_regs *, long);
+-dotraplinkage void do_device_not_available(struct pt_regs *, long);
+-dotraplinkage void do_coprocessor_segment_overrun(struct pt_regs *, long);
+-dotraplinkage void do_invalid_TSS(struct pt_regs *, long);
+-dotraplinkage void do_segment_not_present(struct pt_regs *, long);
+-dotraplinkage void do_stack_segment(struct pt_regs *, long);
++dotraplinkage void do_divide_error(struct pt_regs *regs, long error_code);
++dotraplinkage void do_debug(struct pt_regs *regs, long error_code);
++dotraplinkage void do_nmi(struct pt_regs *regs, long error_code);
++dotraplinkage void do_int3(struct pt_regs *regs, long error_code);
++dotraplinkage void do_overflow(struct pt_regs *regs, long error_code);
++dotraplinkage void do_bounds(struct pt_regs *regs, long error_code);
++dotraplinkage void do_invalid_op(struct pt_regs *regs, long error_code);
++dotraplinkage void do_device_not_available(struct pt_regs *regs, long error_code);
++dotraplinkage void do_coprocessor_segment_overrun(struct pt_regs *regs, long error_code);
++dotraplinkage void do_invalid_TSS(struct pt_regs *regs, long error_code);
++dotraplinkage void do_segment_not_present(struct pt_regs *regs, long error_code);
++dotraplinkage void do_stack_segment(struct pt_regs *regs, long error_code);
+ #ifdef CONFIG_X86_64
+-dotraplinkage void do_double_fault(struct pt_regs *, long);
++dotraplinkage void do_double_fault(struct pt_regs *regs, long error_code);
+ #endif
+-dotraplinkage void do_general_protection(struct pt_regs *, long);
+-dotraplinkage void do_page_fault(struct pt_regs *, unsigned long);
+-dotraplinkage void do_spurious_interrupt_bug(struct pt_regs *, long);
+-dotraplinkage void do_coprocessor_error(struct pt_regs *, long);
+-dotraplinkage void do_alignment_check(struct pt_regs *, long);
++dotraplinkage void do_general_protection(struct pt_regs *regs, long error_code);
++dotraplinkage void do_page_fault(struct pt_regs *regs, unsigned long error_code);
++dotraplinkage void do_spurious_interrupt_bug(struct pt_regs *regs, long error_code);
++dotraplinkage void do_coprocessor_error(struct pt_regs *regs, long error_code);
++dotraplinkage void do_alignment_check(struct pt_regs *regs, long error_code);
+ #ifdef CONFIG_X86_MCE
+-dotraplinkage void do_machine_check(struct pt_regs *, long);
++dotraplinkage void do_machine_check(struct pt_regs *regs, long error_code);
+ #endif
+-dotraplinkage void do_simd_coprocessor_error(struct pt_regs *, long);
++dotraplinkage void do_simd_coprocessor_error(struct pt_regs *regs, long error_code);
+ #ifdef CONFIG_X86_32
+-dotraplinkage void do_iret_error(struct pt_regs *, long);
++dotraplinkage void do_iret_error(struct pt_regs *regs, long error_code);
+ #endif
+-dotraplinkage void do_mce(struct pt_regs *, long);
++dotraplinkage void do_mce(struct pt_regs *regs, long error_code);
  
- #include <asm/amd_nb.h>
-+#include <asm/traps.h>
- #include <asm/apic.h>
- #include <asm/mce.h>
- #include <asm/msr.h>
-@@ -99,7 +100,7 @@ static u32 smca_bank_addrs[MAX_NR_BANKS][NR_BLOCKS] __ro_after_init =
- 	[0 ... MAX_NR_BANKS - 1] = { [0 ... NR_BLOCKS - 1] = -1 }
- };
- 
--const char *smca_get_name(enum smca_bank_types t)
-+static const char *smca_get_name(enum smca_bank_types t)
+ static inline int get_si_code(unsigned long condition)
  {
- 	if (t >= N_SMCA_BANK_TYPES)
- 		return NULL;
-@@ -825,7 +826,7 @@ static void __log_error(unsigned int bank, u64 status, u64 addr, u64 misc)
- 	mce_log(&m);
- }
- 
--asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(void)
-+asmlinkage __visible void __irq_entry smp_deferred_error_interrupt(struct pt_regs *regs)
- {
- 	entering_irq();
- 	trace_deferred_error_apic_entry(DEFERRED_ERROR_VECTOR);
-diff --git a/arch/x86/kernel/cpu/mcheck/therm_throt.c b/arch/x86/kernel/cpu/mcheck/therm_throt.c
-index 2da67b70ba98..ee229ceee745 100644
---- a/arch/x86/kernel/cpu/mcheck/therm_throt.c
-+++ b/arch/x86/kernel/cpu/mcheck/therm_throt.c
-@@ -25,6 +25,7 @@
- #include <linux/cpu.h>
- 
- #include <asm/processor.h>
-+#include <asm/traps.h>
- #include <asm/apic.h>
- #include <asm/mce.h>
- #include <asm/msr.h>
-@@ -390,7 +391,7 @@ static void unexpected_thermal_interrupt(void)
- 
- static void (*smp_thermal_vector)(void) = unexpected_thermal_interrupt;
- 
--asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *r)
-+asmlinkage __visible void __irq_entry smp_thermal_interrupt(struct pt_regs *regs)
- {
- 	entering_irq();
- 	trace_thermal_apic_entry(THERMAL_APIC_VECTOR);
-diff --git a/arch/x86/kernel/cpu/mcheck/threshold.c b/arch/x86/kernel/cpu/mcheck/threshold.c
-index 2b584b319eff..c21e0a1efd0f 100644
---- a/arch/x86/kernel/cpu/mcheck/threshold.c
-+++ b/arch/x86/kernel/cpu/mcheck/threshold.c
-@@ -6,6 +6,7 @@
- #include <linux/kernel.h>
- 
- #include <asm/irq_vectors.h>
-+#include <asm/traps.h>
- #include <asm/apic.h>
- #include <asm/mce.h>
- #include <asm/trace/irq_vectors.h>
-@@ -18,7 +19,7 @@ static void default_threshold_interrupt(void)
- 
- void (*mce_threshold_vector)(void) = default_threshold_interrupt;
- 
--asmlinkage __visible void __irq_entry smp_threshold_interrupt(void)
-+asmlinkage __visible void __irq_entry smp_threshold_interrupt(struct pt_regs *regs)
- {
- 	entering_irq();
- 	trace_threshold_apic_entry(THRESHOLD_APIC_VECTOR);
