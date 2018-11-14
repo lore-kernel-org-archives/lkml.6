@@ -2,158 +2,133 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A358C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:02:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ECC53C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE43221582
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:02:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F8F421780
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:13:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EciIJfC7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE43221582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CWNG3NPw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F8F421780
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727536AbeKNOEL (ORCPT
+        id S1731126AbeKNOO1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 09:04:11 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:39671 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726823AbeKNOEL (ORCPT
+        Wed, 14 Nov 2018 09:14:27 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:42266 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727251AbeKNOO0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 09:04:11 -0500
-Received: by mail-pl1-f195.google.com with SMTP id b5-v6so7104036pla.6
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 20:02:47 -0800 (PST)
+        Wed, 14 Nov 2018 09:14:26 -0500
+Received: by mail-oi1-f194.google.com with SMTP id x63-v6so12439120oix.9
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 20:13:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=2/6H6fCpHKgt4ovDnj/a7mCGZ9VH8jkTFvWTLJAvTOw=;
-        b=EciIJfC7U4jHvmXl4c5Tu+aXjxzXJ/HRavJpAuCT/vGlYsvc+UPVPdRRrzTeZNa44m
-         zxyPpuhu77lz8EHVeyvwV9wdNGjyLJsBpcbCdMfQUZAa/vBX0mDSay0SSseNXL10OL8q
-         GuYWczKtwx181U2t8xoQFY6EouGk9oVg1HyMg=
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=pSciaaazLU+tsRiAXIAu1T0fgKnu1OCPXb5F+gL2BOQ=;
+        b=CWNG3NPwF16VQ2F4n4I9v4PJAe0jn/GVB3N9nkNzNjLsHqDvbWUN+H8g2JnEEpowp/
+         zv+JytzYuR/13ERA2gOIwSZDCfEnOoa/l0U4AhS6TOg0yZbPDRQepmOamRpkSICG5hFv
+         OlvgyQ5qGrs0AXPYoWFDHJMXmwxT5wUwHwAbw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2/6H6fCpHKgt4ovDnj/a7mCGZ9VH8jkTFvWTLJAvTOw=;
-        b=RHNPpCr+HW8F7487Md2+utfCDh6qht1eNxLEFF7ajIfQr2YnJbrMEsBuT/+9O1mavf
-         3PZHvEAErok46598PN+HhchOOBr+QK6PCh9B9ErREr/Zp/RibZ4lbJmndmJA9D4ga4cI
-         se/kbyInSitLdbb3mkPw3oi3gK7aL5qnPjARpxXxiWPowk2F/JlgMyMrs6/K+elAXCYK
-         yXQhcuvxwzQEVGt4NSrVL1w5UrBygbUPB4xYGoXes5tqo1n1O2lnAa/5EU+xIrI/WeHz
-         5mKKtkJPdmgr8qWHtrSpmQ9wq+aSJY1xzPnA1rRMBSUn7zQynffMgJwUPtofSWjvCpjS
-         LJFg==
-X-Gm-Message-State: AGRZ1gLFGgHSrgbu7Yzp87z9Rf5gLR8P/eteAoueACDrYE7KlQLhEBgL
-        DovYiGPWalAz4jHetM3dwJzs6g==
-X-Google-Smtp-Source: AJdET5e+aMX4pmGJmlZs23GN/v+lh8I2fHYY3bCdfeOu5LN+lieu/3D/UvMSgkEYszWGITv225f06A==
-X-Received: by 2002:a17:902:112b:: with SMTP id d40-v6mr353179pla.48.1542168166734;
-        Tue, 13 Nov 2018 20:02:46 -0800 (PST)
-Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id 186sm16283741pga.36.2018.11.13.20.02.44
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=pSciaaazLU+tsRiAXIAu1T0fgKnu1OCPXb5F+gL2BOQ=;
+        b=hsfP4J4icUOmPH7+IMbJACwAKKBiqz/mQdjZgCJgXkJ0A23DIJ1rhZapAWlLlFOrHr
+         POeuUQb1GGc7GFtzY/X66DXujdD0gUilFoXW61AIuSaECF1gp9zkA186Z9+vnsUzG7wD
+         6guZ2KXejvhTKf1HIscrH/xGODt4t0MJ90+r8Tx3MqD/MEPiGBllDx/CF/TAI95OomqN
+         JrWW57fe8+bhz9lIibOYFsxfqk1kKu97nxf8yu/PGoBR1Go9BEZUFO4PE01ugjOOV56u
+         ghrj28M9XV8ydh9cx4HObxIM0lkanScwNah0m4lB+3Rk19JAHMR0khlyzp1tWJlhTW1J
+         0rkQ==
+X-Gm-Message-State: AGRZ1gLNwN8cb7z5jxTHWuejLltrND4txjfmp1YTTtj59OSocZczSjpW
+        R6ttUYynIx+XzE936YSkB/XzY61XGc5Zkg==
+X-Google-Smtp-Source: AJdET5eNovwHnwU6gNZ2b3Q8vupxjwJUlI7BuBNfG4TBfglFxViZJXrbq673JvLpdD8uBR9E+6Gkrw==
+X-Received: by 2002:aca:afcb:: with SMTP id y194-v6mr154265oie.199.1542168780063;
+        Tue, 13 Nov 2018 20:13:00 -0800 (PST)
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com. [209.85.167.169])
+        by smtp.gmail.com with ESMTPSA id p37sm15149594otc.27.2018.11.13.20.12.58
+        for <linux-kernel@vger.kernel.org>
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 20:02:45 -0800 (PST)
-Date:   Wed, 14 Nov 2018 09:32:42 +0530
-From:   Viresh Kumar <viresh.kumar@linaro.org>
-To:     Dave Gerlach <d-gerlach@ti.com>
-Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
-        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Keerthy J <j-keerthy@ti.com>, Tero Kristo <t-kristo@ti.com>,
-        Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Johan Hovold <johan@kernel.org>
-Subject: Re: [PATCH v4] cpufreq: ti-cpufreq: Only register platform_device
- when supported
-Message-ID: <20181114040242.wfpvazl62g6phy3o@vireshk-i7>
-References: <20181113193040.15181-1-d-gerlach@ti.com>
+        Tue, 13 Nov 2018 20:12:59 -0800 (PST)
+Received: by mail-oi1-f169.google.com with SMTP id x63-v6so12439082oix.9
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 20:12:58 -0800 (PST)
+X-Received: by 2002:aca:5a41:: with SMTP id o62-v6mr146623oib.323.1542168778386;
+ Tue, 13 Nov 2018 20:12:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113193040.15181-1-d-gerlach@ti.com>
-User-Agent: NeoMutt/20180323-120-3dd1ac
+References: <20181113093048.236201-1-acourbot@chromium.org> <CAKQmDh-91tHP1VxLisW1A3GR9G7du3F-Y2XrrgoFU=gvhGoP6w@mail.gmail.com>
+In-Reply-To: <CAKQmDh-91tHP1VxLisW1A3GR9G7du3F-Y2XrrgoFU=gvhGoP6w@mail.gmail.com>
+From:   Alexandre Courbot <acourbot@chromium.org>
+Date:   Wed, 14 Nov 2018 13:12:46 +0900
+X-Gmail-Original-Message-ID: <CAPBb6MWJ1Qu9YoRRusOGiC7dioMkgvU=1dCF6XZ4xDUxp7ri9A@mail.gmail.com>
+Message-ID: <CAPBb6MWJ1Qu9YoRRusOGiC7dioMkgvU=1dCF6XZ4xDUxp7ri9A@mail.gmail.com>
+Subject: Re: [PATCH] media: venus: fix reported size of 0-length buffers
+To:     Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        linux-arm-msm@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 13-11-18, 13:30, Dave Gerlach wrote:
-> Currently the ti-cpufreq driver blindly registers a 'ti-cpufreq' to force
-> the driver to probe on any platforms where the driver is built in.
-> However, this should only happen on platforms that actually can make use
-> of the driver. There is already functionality in place to match the
-> SoC compatible so let's factor this out into a separate call and
-> make sure we find a match before creating the ti-cpufreq platform device.
-> 
-> Reviewed-by: Johan Hovold <johan@kernel.org>
-> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
-> ---
-> v3->v4: Use platform_device_register_data rather than
-> 	platform_device_register_resndata as we are only passing data.
-> 
-> 	v3: https://patchwork.kernel.org/patch/10681161/
-> 
->  drivers/cpufreq/ti-cpufreq.c | 26 +++++++++++++++++++++-----
->  1 file changed, 21 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
-> index 3f0e2a14895a..22b53bf26817 100644
-> --- a/drivers/cpufreq/ti-cpufreq.c
-> +++ b/drivers/cpufreq/ti-cpufreq.c
-> @@ -201,19 +201,28 @@ static const struct of_device_id ti_cpufreq_of_match[] = {
->  	{},
->  };
->  
-> +static const struct of_device_id *ti_cpufreq_match_node(void)
-> +{
-> +	struct device_node *np;
-> +	const struct of_device_id *match;
-> +
-> +	np = of_find_node_by_path("/");
-> +	match = of_match_node(ti_cpufreq_of_match, np);
-> +	of_node_put(np);
-> +
-> +	return match;
-> +}
-> +
->  static int ti_cpufreq_probe(struct platform_device *pdev)
->  {
->  	u32 version[VERSION_COUNT];
-> -	struct device_node *np;
->  	const struct of_device_id *match;
->  	struct opp_table *ti_opp_table;
->  	struct ti_cpufreq_data *opp_data;
->  	const char * const reg_names[] = {"vdd", "vbb"};
->  	int ret;
->  
-> -	np = of_find_node_by_path("/");
-> -	match = of_match_node(ti_cpufreq_of_match, np);
-> -	of_node_put(np);
-> +	match = dev_get_platdata(&pdev->dev);
->  	if (!match)
->  		return -ENODEV;
->  
-> @@ -290,7 +299,14 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
->  
->  static int ti_cpufreq_init(void)
->  {
-> -	platform_device_register_simple("ti-cpufreq", -1, NULL, 0);
-> +	const struct of_device_id *match;
-> +
-> +	/* Check to ensure we are on a compatible platform */
-> +	match = ti_cpufreq_match_node();
-> +	if (match)
-> +		platform_device_register_data(NULL, "ti-cpufreq", -1, match,
-> +					      sizeof(*match));
-> +
->  	return 0;
->  }
->  module_init(ti_cpufreq_init);
+On Wed, Nov 14, 2018 at 3:54 AM Nicolas Dufresne <nicolas@ndufresne.ca> wro=
+te:
+>
+>
+>
+> Le mar. 13 nov. 2018 04 h 30, Alexandre Courbot <acourbot@chromium.org> a=
+ =C3=A9crit :
+>>
+>> The last buffer is often signaled by an empty buffer with the
+>> V4L2_BUF_FLAG_LAST flag set. Such buffers were returned with the
+>> bytesused field set to the full size of the OPB, which leads
+>> user-space to believe that the buffer actually contains useful data. Fix
+>> this by passing the number of bytes reported used by the firmware.
+>
+>
+> That means the driver does not know on time which one is last. Why not ju=
+st returned EPIPE to userspace on DQBUF and ovoid this useless roundtrip ?
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+Sorry, I don't understand what you mean. EPIPE is supposed to be
+returned after a buffer with V4L2_BUF_FLAG_LAST is made available for
+dequeue. This patch amends the code that prepares this LAST-flagged
+buffer. How could we avoid a roundtrip in this case?
 
--- 
-viresh
+>
+>>
+>> Signed-off-by: Alexandre Courbot <acourbot@chromium.org>
+>> ---
+>>  drivers/media/platform/qcom/venus/vdec.c | 4 +---
+>>  1 file changed, 1 insertion(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/pl=
+atform/qcom/venus/vdec.c
+>> index 189ec975c6bb..282de21cf2e1 100644
+>> --- a/drivers/media/platform/qcom/venus/vdec.c
+>> +++ b/drivers/media/platform/qcom/venus/vdec.c
+>> @@ -885,10 +885,8 @@ static void vdec_buf_done(struct venus_inst *inst, =
+unsigned int buf_type,
+>>         vbuf->field =3D V4L2_FIELD_NONE;
+>>
+>>         if (type =3D=3D V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE) {
+>> -               unsigned int opb_sz =3D venus_helper_get_opb_size(inst);
+>> -
+>>                 vb =3D &vbuf->vb2_buf;
+>> -               vb2_set_plane_payload(vb, 0, bytesused ? : opb_sz);
+>> +               vb2_set_plane_payload(vb, 0, bytesused);
+>>                 vb->planes[0].data_offset =3D data_offset;
+>>                 vb->timestamp =3D timestamp_us * NSEC_PER_USEC;
+>>                 vbuf->sequence =3D inst->sequence_cap++;
+>> --
+>> 2.19.1.930.g4563a0d9d0-goog
+>>
