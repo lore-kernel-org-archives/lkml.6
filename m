@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFF8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:00:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CAE7EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:00:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD07522360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:00:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD07522360
+	by mail.kernel.org (Postfix) with ESMTP id 9AD7922419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:00:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AD7922419
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733047AbeKNXDi (ORCPT
+        id S1733020AbeKNXDi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 14 Nov 2018 18:03:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44564 "EHLO mx1.suse.de"
+Received: from mx2.suse.de ([195.135.220.15]:44580 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732948AbeKNXDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 18:03:35 -0500
+        id S1727731AbeKNXDg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 18:03:36 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id A8788B0EF;
-        Wed, 14 Nov 2018 13:00:24 +0000 (UTC)
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4DDA1B0F6;
+        Wed, 14 Nov 2018 13:00:26 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     stefan.wahren@i2se.com, eric@anholt.net,
         dave.stevenson@raspberrypi.org
@@ -33,9 +33,9 @@ Cc:     linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
         linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH 15/16] staging: vchiq_arm: fix open/release cdev functions
-Date:   Wed, 14 Nov 2018 13:59:41 +0100
-Message-Id: <20181114125942.25163-16-nsaenzjulienne@suse.de>
+Subject: [PATCH 16/16] staging: vchiq: add more tasks to the TODO list
+Date:   Wed, 14 Nov 2018 13:59:42 +0100
+Message-Id: <20181114125942.25163-17-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181114125942.25163-1-nsaenzjulienne@suse.de>
 References: <20181114125942.25163-1-nsaenzjulienne@suse.de>
@@ -46,334 +46,64 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Both functions checked the minor number of the cdev prior running the
-code. This was useless since the number of devices is already limited by
-alloc_chrdev_region.
-
-This removes the check and reindents the code where relevant.
+The TODO list was missing some tasks needed before upstreaming the
+device.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../interface/vchiq_arm/vchiq_arm.c           | 247 +++++++-----------
- 1 file changed, 100 insertions(+), 147 deletions(-)
+ .../staging/vc04_services/interface/vchi/TODO | 42 +++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-index a7dcced79980..153a396d21bd 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
-@@ -63,8 +63,6 @@
- #undef MODULE_PARAM_PREFIX
- #define MODULE_PARAM_PREFIX DEVICE_NAME "."
+diff --git a/drivers/staging/vc04_services/interface/vchi/TODO b/drivers/staging/vc04_services/interface/vchi/TODO
+index 0b3ec75ff627..fc2752bc95b2 100644
+--- a/drivers/staging/vc04_services/interface/vchi/TODO
++++ b/drivers/staging/vc04_services/interface/vchi/TODO
+@@ -49,3 +49,45 @@ such as dev_info, dev_dbg, and friends.
  
--#define VCHIQ_MINOR 0
--
- /* Some per-instance constants */
- #define MAX_COMPLETIONS 128
- #define MAX_SERVICES 64
-@@ -1950,195 +1948,150 @@ vchiq_compat_ioctl(struct file *file, unsigned int cmd, unsigned long arg)
- 
- #endif
- 
--/****************************************************************************
--*
--*   vchiq_open
--*
--***************************************************************************/
--
--static int
--vchiq_open(struct inode *inode, struct file *file)
-+static int vchiq_open(struct inode *inode, struct file *file)
- {
--	int dev = iminor(inode) & 0x0f;
-+	VCHIQ_STATE_T *state = vchiq_get_state();
-+	VCHIQ_INSTANCE_T instance;
- 
- 	vchiq_log_info(vchiq_arm_log_level, "vchiq_open");
--	switch (dev) {
--	case VCHIQ_MINOR: {
--		VCHIQ_STATE_T *state = vchiq_get_state();
--		VCHIQ_INSTANCE_T instance;
- 
--		if (!state) {
--			vchiq_log_error(vchiq_arm_log_level,
-+	if (!state) {
-+		vchiq_log_error(vchiq_arm_log_level,
- 				"vchiq has no connection to VideoCore");
--			return -ENOTCONN;
--		}
--
--		instance = kzalloc(sizeof(*instance), GFP_KERNEL);
--		if (!instance)
--			return -ENOMEM;
-+		return -ENOTCONN;
-+	}
- 
--		instance->state = state;
--		instance->pid = current->tgid;
-+	instance = kzalloc(sizeof(*instance), GFP_KERNEL);
-+	if (!instance)
-+		return -ENOMEM;
- 
--		vchiq_debugfs_add_instance(instance);
-+	instance->state = state;
-+	instance->pid = current->tgid;
- 
--		init_completion(&instance->insert_event);
--		init_completion(&instance->remove_event);
--		mutex_init(&instance->completion_mutex);
--		mutex_init(&instance->bulk_waiter_list_mutex);
--		INIT_LIST_HEAD(&instance->bulk_waiter_list);
-+	vchiq_debugfs_add_instance(instance);
- 
--		file->private_data = instance;
--	} break;
-+	init_completion(&instance->insert_event);
-+	init_completion(&instance->remove_event);
-+	mutex_init(&instance->completion_mutex);
-+	mutex_init(&instance->bulk_waiter_list_mutex);
-+	INIT_LIST_HEAD(&instance->bulk_waiter_list);
- 
--	default:
--		vchiq_log_error(vchiq_arm_log_level,
--			"Unknown minor device: %d", dev);
--		return -ENXIO;
--	}
-+	file->private_data = instance;
- 
- 	return 0;
- }
- 
--/****************************************************************************
--*
--*   vchiq_release
--*
--***************************************************************************/
--
--static int
--vchiq_release(struct inode *inode, struct file *file)
-+static int vchiq_release(struct inode *inode, struct file *file)
- {
--	int dev = iminor(inode) & 0x0f;
-+	VCHIQ_INSTANCE_T instance = file->private_data;
-+	VCHIQ_STATE_T *state = vchiq_get_state();
-+	VCHIQ_SERVICE_T *service;
- 	int ret = 0;
-+	int i;
- 
--	switch (dev) {
--	case VCHIQ_MINOR: {
--		VCHIQ_INSTANCE_T instance = file->private_data;
--		VCHIQ_STATE_T *state = vchiq_get_state();
--		VCHIQ_SERVICE_T *service;
--		int i;
-+	vchiq_log_info(vchiq_arm_log_level, "%s: instance=%lx", __func__,
-+		       (unsigned long)instance);
- 
--		vchiq_log_info(vchiq_arm_log_level,
--			"%s: instance=%lx",
--			__func__, (unsigned long)instance);
-+	if (!state) {
-+		ret = -EPERM;
-+		goto out;
-+	}
- 
--		if (!state) {
--			ret = -EPERM;
--			goto out;
--		}
-+	/* Ensure videocore is awake to allow termination. */
-+	vchiq_use_internal(instance->state, NULL, USE_TYPE_VCHIQ);
- 
--		/* Ensure videocore is awake to allow termination. */
--		vchiq_use_internal(instance->state, NULL,
--				USE_TYPE_VCHIQ);
-+	mutex_lock(&instance->completion_mutex);
- 
--		mutex_lock(&instance->completion_mutex);
-+	/* Wake the completion thread and ask it to exit */
-+	instance->closing = 1;
-+	complete(&instance->insert_event);
- 
--		/* Wake the completion thread and ask it to exit */
--		instance->closing = 1;
--		complete(&instance->insert_event);
-+	mutex_unlock(&instance->completion_mutex);
- 
--		mutex_unlock(&instance->completion_mutex);
-+	/* Wake the slot handler if the completion queue is full. */
-+	complete(&instance->remove_event);
- 
--		/* Wake the slot handler if the completion queue is full. */
--		complete(&instance->remove_event);
-+	/* Mark all services for termination... */
-+	i = 0;
-+	while ((service = next_service_by_instance(state, instance, &i))) {
-+		USER_SERVICE_T *user_service = service->base.userdata;
- 
--		/* Mark all services for termination... */
--		i = 0;
--		while ((service = next_service_by_instance(state, instance,
--			&i)) !=	NULL) {
--			USER_SERVICE_T *user_service = service->base.userdata;
-+		/* Wake the slot handler if the msg queue is full. */
-+		complete(&user_service->remove_event);
- 
--			/* Wake the slot handler if the msg queue is full. */
--			complete(&user_service->remove_event);
-+		vchiq_terminate_service_internal(service);
-+		unlock_service(service);
-+	}
- 
--			vchiq_terminate_service_internal(service);
--			unlock_service(service);
--		}
-+	/* ...and wait for them to die */
-+	i = 0;
-+	while ((service = next_service_by_instance(state, instance, &i))) {
-+		USER_SERVICE_T *user_service = service->base.userdata;
- 
--		/* ...and wait for them to die */
--		i = 0;
--		while ((service = next_service_by_instance(state, instance, &i))
--			!= NULL) {
--			USER_SERVICE_T *user_service = service->base.userdata;
-+		wait_for_completion(&service->remove_event);
+ A short top-down description of this driver's architecture (function of
+ kthreads, userspace, limitations) could be very helpful for reviewers.
 +
-+		BUG_ON(service->srvstate != VCHIQ_SRVSTATE_FREE);
- 
--			wait_for_completion(&service->remove_event);
-+		spin_lock(&msg_queue_spinlock);
++7) Review and comment memory barriers
 +
-+		while (user_service->msg_remove != user_service->msg_insert) {
-+			VCHIQ_HEADER_T *header;
-+			int m = user_service->msg_remove & (MSG_QUEUE_SIZE - 1);
- 
--			BUG_ON(service->srvstate != VCHIQ_SRVSTATE_FREE);
-+			header = user_service->msg_queue[m];
-+			user_service->msg_remove++;
-+			spin_unlock(&msg_queue_spinlock);
- 
-+			if (header)
-+				vchiq_release_message(service->handle, header);
- 			spin_lock(&msg_queue_spinlock);
-+		}
- 
--			while (user_service->msg_remove !=
--				user_service->msg_insert) {
--				VCHIQ_HEADER_T *header;
--				int m = user_service->msg_remove &
--					(MSG_QUEUE_SIZE - 1);
-+		spin_unlock(&msg_queue_spinlock);
- 
--				header = user_service->msg_queue[m];
--				user_service->msg_remove++;
--				spin_unlock(&msg_queue_spinlock);
-+		unlock_service(service);
-+	}
- 
--				if (header)
--					vchiq_release_message(
--						service->handle,
--						header);
--				spin_lock(&msg_queue_spinlock);
--			}
-+	/* Release any closed services */
-+	while (instance->completion_remove !=
-+		instance->completion_insert) {
-+		VCHIQ_COMPLETION_DATA_T *completion;
-+		VCHIQ_SERVICE_T *service;
- 
--			spin_unlock(&msg_queue_spinlock);
-+		completion = &instance->completions[
-+			instance->completion_remove & (MAX_COMPLETIONS - 1)];
-+		service = completion->service_userdata;
-+		if (completion->reason == VCHIQ_SERVICE_CLOSED) {
-+			USER_SERVICE_T *user_service = service->base.userdata;
- 
-+			/* Wake any blocked user-thread */
-+			if (instance->use_close_delivered)
-+				complete(&user_service->close_event);
- 			unlock_service(service);
- 		}
-+		instance->completion_remove++;
-+	}
- 
--		/* Release any closed services */
--		while (instance->completion_remove !=
--			instance->completion_insert) {
--			VCHIQ_COMPLETION_DATA_T *completion;
--			VCHIQ_SERVICE_T *service;
--
--			completion = &instance->completions[
--				instance->completion_remove &
--				(MAX_COMPLETIONS - 1)];
--			service = completion->service_userdata;
--			if (completion->reason == VCHIQ_SERVICE_CLOSED) {
--				USER_SERVICE_T *user_service =
--					service->base.userdata;
--
--				/* Wake any blocked user-thread */
--				if (instance->use_close_delivered)
--					complete(&user_service->close_event);
--				unlock_service(service);
--			}
--			instance->completion_remove++;
--		}
--
--		/* Release the PEER service count. */
--		vchiq_release_internal(instance->state, NULL);
-+	/* Release the PEER service count. */
-+	vchiq_release_internal(instance->state, NULL);
- 
--		{
--			struct bulk_waiter_node *waiter, *next;
-+	{
-+		struct bulk_waiter_node *waiter, *next;
- 
--			list_for_each_entry_safe(waiter, next,
--					&instance->bulk_waiter_list, list) {
--				list_del(&waiter->list);
--				vchiq_log_info(vchiq_arm_log_level,
--					"bulk_waiter - cleaned up %pK for pid %d",
--					waiter, waiter->pid);
--				kfree(waiter);
--			}
-+		list_for_each_entry_safe(waiter, next,
-+					 &instance->bulk_waiter_list, list) {
-+			list_del(&waiter->list);
-+			vchiq_log_info(vchiq_arm_log_level,
-+				"bulk_waiter - cleaned up %pK for pid %d",
-+				waiter, waiter->pid);
-+			kfree(waiter);
- 		}
-+	}
- 
--		vchiq_debugfs_remove_instance(instance);
-+	vchiq_debugfs_remove_instance(instance);
- 
--		kfree(instance);
--		file->private_data = NULL;
--	} break;
--
--	default:
--		vchiq_log_error(vchiq_arm_log_level,
--			"Unknown minor device: %d", dev);
--		ret = -ENXIO;
--	}
-+	kfree(instance);
-+	file->private_data = NULL;
- 
- out:
- 	return ret;
-@@ -3613,7 +3566,7 @@ static int __init vchiq_driver_init(void)
- 		return PTR_ERR(vchiq_class);
- 	}
- 
--	ret = alloc_chrdev_region(&vchiq_devid, VCHIQ_MINOR, 1, DEVICE_NAME);
-+	ret = alloc_chrdev_region(&vchiq_devid, 0, 1, DEVICE_NAME);
- 	if (ret) {
- 		pr_err("Failed to allocate vchiq's chrdev region\n");
- 		goto class_destroy;
++There is a heavy use of memory barriers in this driver, it would be very
++beneficial to go over all of them and, if correct, comment on their merits.
++Extra points to whomever confidently reviews the remote_event_*() family of
++functions.
++
++8) Get rid of custom function return values
++
++Most functions use a custom set of return values, we should force proper Linux
++error numbers. Special care is needed for VCHIQ_RETRY.
++
++9) Reformat core code with more sane indentations
++
++The code follows the 80 characters limitation yet tends to go 3 or 4 levels of
++indentation deep making it very unpleasant to read. This is specially relevant
++in the character driver ioctl code and in the core thread functions.
++
++10) Reorganize file structure: Move char driver to it's own file and join both
++platform files
++
++The cdev is defined alongside with the platform code in vchiq_arm.c. It would
++be nice to completely decouple it from the actual core code. For instance to be
++able to use bcm2835-audio without having /dev/vchiq created. One could argue
++it's better for security reasons or general cleanliness. It could even be
++interesting to create two different kernel modules, something the likes of
++vchiq-core.ko and vchiq-dev.ko. This would also ease the upstreaming process.
++
++The code in vchiq_bcm2835_arm.c should fit in the generic platform file.
++
++12) Get rid of all the struct typedefs
++
++Most structs are typedefd, it's not encouraged in the kernel.
++
++13) Get rid of all non essential global structures and create a proper per
++device structure
++
++The first thing one generally sees in a probe function is a memory allocation
++for all the device specific data. This structure is then passed all over the
++driver. This is good practice since it makes the driver work regardless of the
++number of devices probed.
 -- 
 2.19.1
 
