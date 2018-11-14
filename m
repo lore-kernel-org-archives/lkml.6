@@ -2,99 +2,151 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A53EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:54:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F940C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 684F62245E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:54:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684F62245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
+	by mail.kernel.org (Postfix) with ESMTP id 1D18D2145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:54:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D18D2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732303AbeKNU5B (ORCPT
+        id S1732427AbeKNU5k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 15:57:01 -0500
-Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:42882 "EHLO
-        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728033AbeKNU5A (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 15:57:00 -0500
-Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 05C86634C7D;
-        Wed, 14 Nov 2018 12:54:14 +0200 (EET)
-Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
-        (envelope-from <sakari.ailus@retiisi.org.uk>)
-        id 1gMsoH-0005f7-Pp; Wed, 14 Nov 2018 12:54:13 +0200
-Date:   Wed, 14 Nov 2018 12:54:13 +0200
-From:   Sakari Ailus <sakari.ailus@iki.fi>
-To:     Yong Deng <yong.deng@magewell.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Jacopo Mondi <jacopo+renesas@jmondi.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com,
-        Sakari Ailus <sakari.ailus@linux.intel.com>
-Subject: Re: [PATCH v12 0/2] Initial Allwinner V3s CSI Support
-Message-ID: <20181114105413.4gcfwt4cmchh6zsf@valkosipuli.retiisi.org.uk>
-References: <1540886988-27696-1-git-send-email-yong.deng@magewell.com>
+        Wed, 14 Nov 2018 15:57:40 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41806 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727883AbeKNU5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 15:57:40 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 884FA80D;
+        Wed, 14 Nov 2018 02:54:55 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 96E4B3F718;
+        Wed, 14 Nov 2018 02:54:53 -0800 (PST)
+Date:   Wed, 14 Nov 2018 10:54:51 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Andy Lutomirski <luto@amacapital.net>
+Cc:     Daniel Colascione <dancol@google.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        Carlos O'Donell <carlos@redhat.com>,
+        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+Message-ID: <20181114105449.GK3505@e103592.cambridge.arm.com>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+ <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
+ <877ehjx447.fsf@oldenburg.str.redhat.com>
+ <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+ <875zx2vhpd.fsf@oldenburg.str.redhat.com>
+ <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
+ <20181113193859.GJ3505@e103592.cambridge.arm.com>
+ <69B07026-5E8B-47FC-9313-E51E899FAFB0@amacapital.net>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <1540886988-27696-1-git-send-email-yong.deng@magewell.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <69B07026-5E8B-47FC-9313-E51E899FAFB0@amacapital.net>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Oct 30, 2018 at 04:09:48PM +0800, Yong Deng wrote:
-> I can't make v4l2-compliance always happy.
-> The V3s CSI support many pixformats. But they are not always available.
-> It's dependent on the input bus format (MEDIA_BUS_FMT_*). 
-> Example:
-> V4L2_PIX_FMT_SBGGR8: MEDIA_BUS_FMT_SBGGR8_1X8
-> V4L2_PIX_FMT_YUYV: MEDIA_BUS_FMT_YUYV8_2X8
-> But I can't get the subdev's format code before starting stream as the
-> subdev may change it. So I can't know which pixformats are available.
-> So I exports all the pixformats supported by SoC.
-> The result is the app (v4l2-compliance) is likely to fail on streamon.
+On Tue, Nov 13, 2018 at 12:58:39PM -0800, Andy Lutomirski wrote:
 > 
-> This patchset add initial support for Allwinner V3s CSI.
+> > On Nov 13, 2018, at 11:39 AM, Dave Martin <Dave.Martin@arm.com> wrote:
+> > 
+> > On Mon, Nov 12, 2018 at 05:19:14AM -0800, Daniel Colascione wrote:
+> > 
+> > [...]
+> > 
+> >> We can learn something from how Windows does things. On that system,
+> >> what we think of as "libc" is actually two parts. (More, actually, but
+> >> I'm simplifying.) At the lowest level, you have the semi-documented
+> >> ntdll.dll, which contains raw system call wrappers and arcane
+> >> kernel-userland glue. On top of ntdll live the "real" libc
+> >> (msvcrt.dll, kernel32.dll, etc.) that provide conventional
+> >> application-level glue. The tight integration between ntdll.dll and
+> >> the kernel allows Windows to do very impressive things. (For example,
+> >> on x86_64, Windows has no 32-bit ABI as far as the kernel is
+> >> concerned! You can still run 32-bit programs though, and that works
+> >> via ntdll.dll essentially shimming every system call and switching the
+> >> processor between long and compatibility mode as needed.) Normally,
+> >> you'd use the higher-level capabilities, but if you need something in
+> >> ntdll (e.g., if you're Cygwin) nothing stops your calling into the
+> >> lower-level system facilities directly. ntdll is tightly bound to the
+> >> kernel; the higher-level libc, not so.
+> >> 
+> >> We should adopt a similar approach. Shipping a lower-level
+> >> "liblinux.so" tightly bound to the kernel would not only let the
+> >> kernel bypass glibc's "editorial discretion" in exposing new
+> >> facilities to userspace, but would also allow for tighter user-kernel
+> >> integration that one can achieve with a simplistic syscall(2)-style
+> >> escape hatch. (For example, for a long time now, I've wanted to go
+> >> beyond POSIX and improve the system's signal handling API, and this
+> >> improvement requires userspace cooperation.) The vdso is probably too
+> >> small and simplistic to serve in this role; I'd want a real library.
+> > 
+> > Can you expand on your reasoning here?
+> > 
+> > Playing devil's advocate:
+> > 
+> > If the library is just exposing the syscall interface, I don't see
+> > why it _couldn't_ fit into the vdso (or something vdso-like).
+> > 
+> > If a separate library, I'd be concerned that it would accumulate
+> > value-add bloat over time, and the kernel ABI may start to creep since
+> > most software wouldn't invoke the kernel directly any more.  Even if
+> > it's maintained in the kernel tree, its existence as an apparently
+> > standalone component may encourage forking, leading to a potential
+> > compatibility mess.
+> > 
+> > The vdso approach would mean we can guarantee that the library is
+> > available and up to date at runtime, and may make it easier to keep
+> > what's in it down to sane essentials.
 > 
-> Allwinner V3s SoC features a CSI module with parallel interface.
+> Hmm. Putting on my vDSO hat:
 > 
-> This patchset implement a v4l2 framework driver and add a binding 
-> documentation for it. 
+> The vDSO could provide all kinds of nifty things. Better exception
+> handling comes to mind. But it has two major limitations that severely
+> restrict what it can do:
+> 
+> - It can’t allocate memory. We probably want to keep it that way.
+> 
+> - It can’t use TLS.  Solving this without genuinely awful ABI issues
+> may be extremely hard. We *could* require callers to pass a thread
+> pointer in, I suppose.
+> 
+> Also, if we make the vDSO stateful, CRIU is going to have a blast.  We
+> might need to expose explicit save and restore abilities.
+> 
+> As a straw man use case, it would be neat if DSOs (or the loader,
+> maybe) could register a list of exception fixups per DSO.  The kernel
+> could consult these lists before delivering a signal.  ISTM it wouldn’t
+> be so crazy if the vDSO handled registration, although it could uses
+> syscalls as well. If the vDSO did it, it would need somewhere to put
+> the lists.
 
-Applied with this diff from Maxime:
+Fair points, though this is rather what I meant by "sane essentials".
+Because there are strict limits on what can be done in the vDSO, it may
+be more bloat-resistant and more conservatively maintained.
 
-<URL:http://code.bulix.org/vf7b6g-504515?raw>
+This might provide a way to push some dumb compatibility kludge code
+that receives little ongoing maintenance outside the privilege wall,
+whereas it has to sit in the kernel proper today.
 
-The MAINTAINERS entry was also moved to the first patch.
+In theory we could opt to advertise new syscalls only via vDSO entry
+points, and not maintain __NR_xxx values for them (which may or may
+not upset ptrace users.)  Anyway, I digress...
 
-Thanks!
-
--- 
-Sakari Ailus
-e-mail: sakari.ailus@iki.fi
+Cheers
+---Dave
