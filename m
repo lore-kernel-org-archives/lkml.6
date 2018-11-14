@@ -2,153 +2,131 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40395C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:28:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E48AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:28:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07FE120868
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:28:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C824020868
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:28:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKqxHBDy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07FE120868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vyD6ubFw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C824020868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389384AbeKOIdl (ORCPT
+        id S2389439AbeKOIdt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:33:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39372 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:33:49 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39386 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388801AbeKOIcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:32:39 -0500
-Received: from localhost (unknown [104.132.0.74])
+        id S2388782AbeKOIci (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:32:38 -0500
+Received: from gmail.com (unknown [104.132.1.85])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1C25920825;
-        Wed, 14 Nov 2018 22:19:10 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id B13382175B;
+        Wed, 14 Nov 2018 21:54:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542233950;
-        bh=e+1g8ysiEmeAd46GphoqR4QLHNGpE9RlDgMbIMi8VXw=;
-        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
-        b=mKqxHBDyvEODUVWVNH/2H4qAYms0jlvhyFFauW3dtwTdzy+99NQRK0Zr3puRUob4y
-         8tEJmCo/LXOApiT8XCjqAL0w3PXTJN7iypzxxLG2i2uUqNUfCY0V/0c6TOcdQq7RJv
-         sT2dgajTDb6lQk+UgMbPbE4h0qWPbLAbASOJlbfA=
-Content-Type: text/plain; charset="utf-8"
+        s=default; t=1542232477;
+        bh=GgKyYMrZlbrZnXx2A/eOE1QtMQFOf0REK5vqRqD3XNU=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=vyD6ubFwCqtR8Tfq9aOrb+wjz38bgoiIXmrW1zUtv4zy/V37qmNMCjic+nRaOjPTc
+         baRoJ/KJlX3PnkIYn5aYoJhh5xDw4lQeF4+kxvW3LMUXaAyG9uxj/klHV2qOfIO4uZ
+         YPZ6+5PNmzDUkcazLGj1EAGmU71dWWfi+uMZFEr8=
+Date:   Wed, 14 Nov 2018 13:54:35 -0800
+From:   Eric Biggers <ebiggers@kernel.org>
+To:     Jann Horn <jannh@google.com>
+Cc:     dh.herrmann@googlemail.com, Jiri Kosina <jikos@kernel.org>,
+        benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Dmitry Vyukov <dvyukov@google.com>, dtor@google.com,
+        syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com,
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
+Subject: Re: [PATCH] HID: uhid: prevent uhid_char_write() under KERNEL_DS
+Message-ID: <20181114215434.GB87768@gmail.com>
+References: <20181114171447.GA87768@gmail.com>
+ <20181114180217.195917-1-ebiggers@kernel.org>
+ <CAG48ez3bPkh+DMPwiebM+r4ozX2CiVY=9=WMBP_xm1qVaSN4sQ@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-To:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
-        "mturquette@baylibre.com" <mturquette@baylibre.com>,
-        "robh+dt@kernel.org" <robh+dt@kernel.org>,
-        Janek Kotas <jank@cadence.com>
-From:   Stephen Boyd <sboyd@kernel.org>
-In-Reply-To: <D3711617-229C-4FA5-9E73-A7A3C025893B@global.cadence.com>
-Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <D3711617-229C-4FA5-9E73-A7A3C025893B@global.cadence.com>
-Message-ID: <154223394933.88331.14659021245427374668@swboyd.mtv.corp.google.com>
-User-Agent: alot/0.7
-Subject: Re: [PATCH 2/2] clk: Add Fixed MMIO clock driver
-Date:   Wed, 14 Nov 2018 14:19:09 -0800
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAG48ez3bPkh+DMPwiebM+r4ozX2CiVY=9=WMBP_xm1qVaSN4sQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Quoting Janek Kotas (2018-11-14 07:24:39)
-> This patch adds a driver for Fixed MMIO clock.
-> The driver reads a clock frequency value from a single 32-bit memory
-> mapped register and registers it as a fixed rate clock.
-> =
+On Wed, Nov 14, 2018 at 07:18:39PM +0100, 'Jann Horn' via syzkaller-bugs wrote:
+> +cc Andy
+> 
+> On Wed, Nov 14, 2018 at 7:03 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> > When a UHID_CREATE command is written to the uhid char device, a
+> > copy_from_user() is done from a user pointer embedded in the command.
+> > When the address limit is KERNEL_DS, e.g. as is the case during
+> > sendfile(), this can read from kernel memory.  Therefore, UHID_CREATE
+> > must not be allowed in this case.
+> >
+> > For consistency and to make sure all current and future uhid commands
+> > are covered, apply the restriction to uhid_char_write() as a whole
+> > rather than to UHID_CREATE specifically.
+> >
+> > Thanks to Dmitry Vyukov for adding uhid definitions to syzkaller and to
+> > Jann Horn for commit 9da3f2b740544 ("x86/fault: BUG() when uaccess
+> > helpers fault on kernel addresses"), allowing this bug to be found.
+> >
+> > Reported-by: syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com
+> 
+> Wheeeee, it found something! :)
+> 
+> > Fixes: d365c6cfd337 ("HID: uhid: add UHID_CREATE and UHID_DESTROY events")
+> > Cc: <stable@vger.kernel.org> # v3.6+
+> > Cc: Jann Horn <jannh@google.com>
+> > Signed-off-by: Eric Biggers <ebiggers@google.com>
+> > ---
+> >  drivers/hid/uhid.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
+> > index 3c55073136064..e94c5e248b56e 100644
+> > --- a/drivers/hid/uhid.c
+> > +++ b/drivers/hid/uhid.c
+> > @@ -705,6 +705,12 @@ static ssize_t uhid_char_write(struct file *file, const char __user *buffer,
+> >         int ret;
+> >         size_t len;
+> >
+> > +       if (uaccess_kernel()) { /* payload may contain a __user pointer */
+> > +               pr_err_once("%s: process %d (%s) called from kernel context, this is not allowed.\n",
+> > +                           __func__, task_tgid_vnr(current), current->comm);
+> > +               return -EACCES;
+> > +       }
+> 
+> If this file can conceivably be opened by a process that doesn't have
+> root privileges, this check should be something along the lines of
+> ib_safe_file_access() or sg_check_file_access().
+> 
+> Checking for uaccess_kernel() prevents the symptom that syzkaller
+> notices - a user being able to cause a kernel memory access -, but it
+> doesn't deal with the case where a user opens a file descriptor to
+> this device and tricks a more privileged process into writing into it
+> (e.g. by passing it to a suid binary as stdout or stderr).
+> 
 
-> It can be enabled with COMMON_CLK_FIXED_MMIO Kconfig option.
-> =
+Yep, I'll do that.
 
-> Signed-off-by: Jan Kotas <jank@cadence.com>
+> Looking closer, I wonder whether this kind of behavior is limited to
+> the UHID_CREATE request, which has a comment on it saying "/*
+> Obsolete! Use UHID_CREATE2. */". If we could keep this kind of ugly
+> kludge away from the code paths you're supposed to be using, that
+> would be nice...
+> 
 
-Sounds like a fine idea. Except I can see how it will be abused if there
-are a handful of these fixed rate "clks" somewhere in memory that all
-get populated. =
+I wanted to be careful, but yes AFAICS it can be limited to UHID_CREATE only,
+so I'll do that instead.
 
-
-Do you really have a fixed rate clk in hardware that exposes a single
-register, or do you have a set of them that some firmware is populating
-into an I/O memory space that we can read the fixed rates from? If it's
-the latter, I wonder why we can't just have the firmware populate the
-fixed rate clks into DT itself?
-
-> diff --git a/drivers/clk/clk-fixed-mmio.c b/drivers/clk/clk-fixed-mmio.c
-> new file mode 100644
-> index 0000000000..bbcadab345
-> --- /dev/null
-> +++ b/drivers/clk/clk-fixed-mmio.c
-> @@ -0,0 +1,49 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +/*
-> + * Memory Mapped IO Fixed Clock driver
-> + *
-> + * Copyright (C) 2018 Cadence Design Systems, Inc.
-> + *
-> + * Authors:
-> + *     Jan Kotas <jank@cadence.com>
-> + */
-> +
-> +#include <linux/clk.h>
-
-Is this include used?
-
-> +#include <linux/clk-provider.h>
-> +#include <linux/of_address.h>
-> +#include <linux/regmap.h>
-
-Is this include used?
-
-> +
-> +static void __init of_fixed_mmio_clk_setup(struct device_node *node)
-> +{
-> +       struct clk *clk;
-> +       const char *clk_name =3D node->name;
-> +       void __iomem *base;
-> +       u32 clk_freq;
-> +
-> +       base =3D of_iomap(node, 0);
-> +       if (!base) {
-> +               pr_err("%pOFn: failed to map address\n", node);
-> +               return;
-> +       }
-> +
-> +       clk_freq =3D readl(base);
-> +       iounmap(base);
-> +       of_property_read_string(node, "clock-output-names", &clk_name);
-> +
-> +       clk =3D clk_register_fixed_rate(NULL, clk_name, NULL, 0, clk_freq=
-);
-> +       if (IS_ERR(clk)) {
-> +               pr_err("%pOFn: failed to register fixed rate clock\n", no=
-de);
-> +               return;
-> +       }
-> +
-> +       if (of_clk_add_provider(node, of_clk_src_simple_get, clk)) {
-> +               pr_err("%pOFn: failed to add clock provider\n", node);
-> +               return;
-> +       }
-> +
-> +       pr_info("%pOFn: registered fixed-mmio-clock at %u Hz\n",
-> +               node, clk_freq);
-
-Please no "I'm alive!" messages.
-
-> +}
-> +
-> +CLK_OF_DECLARE(fixed_mmio_clk, "fixed-mmio-clock", of_fixed_mmio_clk_set=
-up);
-
-Any reason why this can't be a platform driver? It would make this much
-less DT specific and usable on other firmwares/platforms if we used a
-platform driver here.
-
+- Eric
