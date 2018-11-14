@@ -2,45 +2,45 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52D30C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:51:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62D02C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:51:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0410321780
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:51:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2610121780
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:51:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="iQRuf5sU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0410321780
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="Y6W7ku5Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2610121780
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726823AbeKOFzg (ORCPT
+        id S1727702AbeKOFzh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 00:55:36 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48154 "EHLO
+        Thu, 15 Nov 2018 00:55:37 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:48152 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725775AbeKOFzg (ORCPT
+        with ESMTP id S1725756AbeKOFzg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 00:55:36 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=sirena.org.uk; s=20170815-heliosphere; h=Content-Transfer-Encoding:
-        MIME-Version:Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-        Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-        Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=oCv4Lw9q0VTIhKfZpW+pK6HgBb+FJlUzjgZm/83nV8o=; b=iQRuf5sUdc6pxqq+oMLCY+4ib
-        658kuRHLSss/mEJoJvPQltxKcaIh21KSs0JwWDHPS1wmf19n6oOtSVAktpwCO3diQ84Nmg0OYfbxc
-        J2FsMCz/2RcfIawwh/vzRCqmKbLw5Q4TA+0eBUT0JW/aUMY6pwY7+Q/YG89F5dBYoJ28w=;
+        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
+        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
+        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=O3JJ6uQwUKnR1xfApJaiE6vCDrGC25cjY5kJAhwrCp4=; b=Y6W7ku5YOdV+WzkXuPO9o1nvKW
+        j0wor+ATkTHJ6dCWw4Sxn+A1ypNuauNvYut2U1Yl8jK7IqTHJS52UE5TdpgYu9ZeVhwxChHedd1Qk
+        YzzfjIbBS7m3zonXqNutxxi48XflkcLS0W/dR0Gfm0EqH7K8vUEwya3tjqKz+bT1JfGw=;
 Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gN1Bd-0004Kb-Bb; Wed, 14 Nov 2018 19:50:53 +0000
+        id 1gN1Bd-0004KZ-9M; Wed, 14 Nov 2018 19:50:53 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id EFED2440078; Wed, 14 Nov 2018 19:50:46 +0000 (GMT)
+        id 01D92440062; Wed, 14 Nov 2018 19:50:46 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Shuah Khan <shuah@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
@@ -48,11 +48,13 @@ To:     Shuah Khan <shuah@kernel.org>,
         "H . Peter Anvin" <hpa@zytor.com>,
         Andy Lutomirski <luto@amacapital.net>
 Cc:     linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
-        x86@kernel.org
-Subject: [PATCH RFC 0/2] Make fsgsbase test more stable
-Date:   Wed, 14 Nov 2018 11:50:41 -0800
-Message-Id: <20181114195043.8021-1-broonie@kernel.org>
+        x86@kernel.org, Mark Brown <broonie@kernel.org>
+Subject: [PATCH RFC 1/2] selftests/x86/fsgsbase: Indirect output through a wrapper function
+Date:   Wed, 14 Nov 2018 11:50:42 -0800
+Message-Id: <20181114195043.8021-2-broonie@kernel.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181114195043.8021-1-broonie@kernel.org>
+References: <20181114195043.8021-1-broonie@kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -60,29 +62,193 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series attempts to make the fsgsbase test in the x86 kselftest
-report a stable result.  On some Intel systems there are intermittent
-failures in this testcase which have been reported and discussed 
-previously:
+In preparation for a change to make this test run repeatedly which
+would generate huge amounts of output as is indirect all the printf()
+calls in the program through a wrapper and add a quiet flag which can
+be used to suppress the output.  This is fairly quick and dirty, I'm not
+100% sure what would be idiomatic here.
 
-   https://lore.kernel.org/lkml/20180126153631.ha7yc33fj5uhitjo@xps/
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/x86/fsgsbase.c | 52 ++++++++++++++++----------
+ 1 file changed, 32 insertions(+), 20 deletions(-)
 
-with the analysis concluding that this is a hardware issue affecting a
-subset of systems but no fix has been merged as yet.  In order to at
-least make the test more solid for use in automated testing this series
-modifies it to execute the test often enough to reproduce the problem
-reliably.
-
-I'm not happy with this since it doesn't fix the actual problem, the
-code isn't particularly clean and it makes the execution time for the
-selftests much longer - my main goal here is to restart the discussion
-of the test failure, I don't think merging this is a great idea.
-
-Mark Brown (2):
-      selftests/x86/fsgsbase: Indirect output through a wrapper function
-      selftests/x86/fsgsbase: Default to trying to run the test repeatedly
-
- tools/testing/selftests/x86/fsgsbase.c | 79 +++++++++++++++++++++++++---------
- 1 file changed, 58 insertions(+), 21 deletions(-)
-
+diff --git a/tools/testing/selftests/x86/fsgsbase.c b/tools/testing/selftests/x86/fsgsbase.c
+index f249e042b3b5..6cda6daa1f8c 100644
+--- a/tools/testing/selftests/x86/fsgsbase.c
++++ b/tools/testing/selftests/x86/fsgsbase.c
+@@ -7,6 +7,7 @@
+ #define _GNU_SOURCE
+ #include <stdio.h>
+ #include <stdlib.h>
++#include <stdarg.h>
+ #include <stdbool.h>
+ #include <string.h>
+ #include <sys/syscall.h>
+@@ -32,6 +33,17 @@ static volatile sig_atomic_t want_segv;
+ static volatile unsigned long segv_addr;
+ 
+ static int nerrs;
++static bool quiet;
++
++static void logger(const char *fmt, ...)
++{
++	va_list args;
++
++	va_start(args, fmt);
++	if (!quiet)
++		vprintf(fmt, args);
++	va_end(args);
++}
+ 
+ static void sethandler(int sig, void (*handler)(int, siginfo_t *, void *),
+ 		       int flags)
+@@ -118,29 +130,29 @@ static void check_gs_value(unsigned long value)
+ 	unsigned long base;
+ 	unsigned short sel;
+ 
+-	printf("[RUN]\tARCH_SET_GS to 0x%lx\n", value);
++	logger("[RUN]\tARCH_SET_GS to 0x%lx\n", value);
+ 	if (syscall(SYS_arch_prctl, ARCH_SET_GS, value) != 0)
+ 		err(1, "ARCH_SET_GS");
+ 
+ 	asm volatile ("mov %%gs, %0" : "=rm" (sel));
+ 	base = read_base(GS);
+ 	if (base == value) {
+-		printf("[OK]\tGSBASE was set as expected (selector 0x%hx)\n",
++		logger("[OK]\tGSBASE was set as expected (selector 0x%hx)\n",
+ 		       sel);
+ 	} else {
+ 		nerrs++;
+-		printf("[FAIL]\tGSBASE was not as expected: got 0x%lx (selector 0x%hx)\n",
++		logger("[FAIL]\tGSBASE was not as expected: got 0x%lx (selector 0x%hx)\n",
+ 		       base, sel);
+ 	}
+ 
+ 	if (syscall(SYS_arch_prctl, ARCH_GET_GS, &base) != 0)
+ 		err(1, "ARCH_GET_GS");
+ 	if (base == value) {
+-		printf("[OK]\tARCH_GET_GS worked as expected (selector 0x%hx)\n",
++		logger("[OK]\tARCH_GET_GS worked as expected (selector 0x%hx)\n",
+ 		       sel);
+ 	} else {
+ 		nerrs++;
+-		printf("[FAIL]\tARCH_GET_GS was not as expected: got 0x%lx (selector 0x%hx)\n",
++		logger("[FAIL]\tARCH_GET_GS was not as expected: got 0x%lx (selector 0x%hx)\n",
+ 		       base, sel);
+ 	}
+ }
+@@ -149,7 +161,7 @@ static void mov_0_gs(unsigned long initial_base, bool schedule)
+ {
+ 	unsigned long base, arch_base;
+ 
+-	printf("[RUN]\tARCH_SET_GS to 0x%lx then mov 0 to %%gs%s\n", initial_base, schedule ? " and schedule " : "");
++	logger("[RUN]\tARCH_SET_GS to 0x%lx then mov 0 to %%gs%s\n", initial_base, schedule ? " and schedule " : "");
+ 	if (syscall(SYS_arch_prctl, ARCH_SET_GS, initial_base) != 0)
+ 		err(1, "ARCH_SET_GS");
+ 
+@@ -161,10 +173,10 @@ static void mov_0_gs(unsigned long initial_base, bool schedule)
+ 	if (syscall(SYS_arch_prctl, ARCH_GET_GS, &arch_base) != 0)
+ 		err(1, "ARCH_GET_GS");
+ 	if (base == arch_base) {
+-		printf("[OK]\tGSBASE is 0x%lx\n", base);
++		logger("[OK]\tGSBASE is 0x%lx\n", base);
+ 	} else {
+ 		nerrs++;
+-		printf("[FAIL]\tGSBASE changed to 0x%lx but kernel reports 0x%lx\n", base, arch_base);
++		logger("[FAIL]\tGSBASE changed to 0x%lx but kernel reports 0x%lx\n", base, arch_base);
+ 	}
+ }
+ 
+@@ -195,7 +207,7 @@ static void do_remote_base()
+ 
+ 	unsigned short sel;
+ 	asm volatile ("mov %%gs, %0" : "=rm" (sel));
+-	printf("\tother thread: ARCH_SET_GS(0x%lx)%s -- sel is 0x%hx\n",
++	logger("\tother thread: ARCH_SET_GS(0x%lx)%s -- sel is 0x%hx\n",
+ 	       to_set, hard_zero ? " and clear gs" : "", sel);
+ }
+ 
+@@ -228,7 +240,7 @@ void do_unexpected_base(void)
+ 		.useable         = 0
+ 	};
+ 	if (syscall(SYS_modify_ldt, 1, &desc, sizeof(desc)) == 0) {
+-		printf("\tother thread: using LDT slot 0\n");
++		logger("\tother thread: using LDT slot 0\n");
+ 		asm volatile ("mov %0, %%gs" : : "rm" ((unsigned short)0x7));
+ 	} else {
+ 		/* No modify_ldt for us (configured out, perhaps) */
+@@ -250,10 +262,10 @@ void do_unexpected_base(void)
+ 		munmap(low_desc, sizeof(desc));
+ 
+ 		if (ret != 0) {
+-			printf("[NOTE]\tcould not create a segment -- test won't do anything\n");
++			logger("[NOTE]\tcould not create a segment -- test won't do anything\n");
+ 			return;
+ 		}
+-		printf("\tother thread: using GDT slot %d\n", desc.entry_number);
++		logger("\tother thread: using GDT slot %d\n", desc.entry_number);
+ 		asm volatile ("mov %0, %%gs" : : "rm" ((unsigned short)((desc.entry_number << 3) | 0x3)));
+ 	}
+ 
+@@ -298,10 +310,10 @@ static void set_gs_and_switch_to(unsigned long local,
+ 		local = 0;
+ 	}
+ 
+-	printf("[RUN]\tARCH_SET_GS(0x%lx)%s, then schedule to 0x%lx\n",
++	logger("[RUN]\tARCH_SET_GS(0x%lx)%s, then schedule to 0x%lx\n",
+ 	       local, hard_zero ? " and clear gs" : "", remote);
+ 	if (force_sel)
+-		printf("\tBefore schedule, set selector to 0x%hx\n", force_sel);
++		logger("\tBefore schedule, set selector to 0x%hx\n", force_sel);
+ 	if (syscall(SYS_arch_prctl, ARCH_SET_GS, local) != 0)
+ 		err(1, "ARCH_SET_GS");
+ 	if (hard_zero)
+@@ -309,7 +321,7 @@ static void set_gs_and_switch_to(unsigned long local,
+ 
+ 	if (read_base(GS) != local) {
+ 		nerrs++;
+-		printf("[FAIL]\tGSBASE wasn't set as expected\n");
++		logger("[FAIL]\tGSBASE wasn't set as expected\n");
+ 	}
+ 
+ 	if (force_sel) {
+@@ -335,11 +347,11 @@ static void set_gs_and_switch_to(unsigned long local,
+ 	asm volatile ("mov %%gs, %0" : "=rm" (sel_post_sched));
+ 	base = read_base(GS);
+ 	if (base == local && sel_pre_sched == sel_post_sched) {
+-		printf("[OK]\tGS/BASE remained 0x%hx/0x%lx\n",
++		logger("[OK]\tGS/BASE remained 0x%hx/0x%lx\n",
+ 		       sel_pre_sched, local);
+ 	} else {
+ 		nerrs++;
+-		printf("[FAIL]\tGS/BASE changed from 0x%hx/0x%lx to 0x%hx/0x%lx\n",
++		logger("[FAIL]\tGS/BASE changed from 0x%hx/0x%lx to 0x%hx/0x%lx\n",
+ 		       sel_pre_sched, local, sel_post_sched, base);
+ 	}
+ }
+@@ -348,7 +360,7 @@ static void test_unexpected_base(void)
+ {
+ 	unsigned long base;
+ 
+-	printf("[RUN]\tARCH_SET_GS(0), clear gs, then manipulate GSBASE in a different thread\n");
++	logger("[RUN]\tARCH_SET_GS(0), clear gs, then manipulate GSBASE in a different thread\n");
+ 	if (syscall(SYS_arch_prctl, ARCH_SET_GS, 0) != 0)
+ 		err(1, "ARCH_SET_GS");
+ 	asm volatile ("mov %0, %%gs" : : "rm" ((unsigned short)0));
+@@ -360,10 +372,10 @@ static void test_unexpected_base(void)
+ 
+ 	base = read_base(GS);
+ 	if (base == 0) {
+-		printf("[OK]\tGSBASE remained 0\n");
++		logger("[OK]\tGSBASE remained 0\n");
+ 	} else {
+ 		nerrs++;
+-		printf("[FAIL]\tGSBASE changed to 0x%lx\n", base);
++		logger("[FAIL]\tGSBASE changed to 0x%lx\n", base);
+ 	}
+ }
+ 
+-- 
+2.19.1
 
