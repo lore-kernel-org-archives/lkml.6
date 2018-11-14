@@ -2,88 +2,157 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91B41C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:01:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 022EEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:12:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2869D2146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:01:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2869D2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id B6E9C223D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:12:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6E9C223D0
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cn.fujitsu.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731103AbeKNQDl (ORCPT
+        id S1728797AbeKNQOO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 11:03:41 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14660 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726842AbeKNQDl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 11:03:41 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
-        by Forcepoint Email with ESMTP id 30E42E554F7A5;
-        Wed, 14 Nov 2018 14:01:30 +0800 (CST)
-Received: from localhost.localdomain.localdomain (10.175.113.25) by
- DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Wed, 14 Nov 2018 14:01:22 +0800
-From:   YueHaibing <yuehaibing@huawei.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     YueHaibing <yuehaibing@huawei.com>, <linux-kernel@vger.kernel.org>,
-        <kernel-janitors@vger.kernel.org>
-Subject: [PATCH -next] i3c: master: Remove set but not used variable 'old_i3c_scl_lim'
-Date:   Wed, 14 Nov 2018 06:10:47 +0000
-Message-ID: <1542175847-49517-1-git-send-email-yuehaibing@huawei.com>
-X-Mailer: git-send-email 1.8.3.1
-Content-Type: text/plain; charset="ISO-8859-1"
-Content-Transfer-Encoding: 7bit
+        Wed, 14 Nov 2018 11:14:14 -0500
+Received: from mail.cn.fujitsu.com ([183.91.158.132]:49503 "EHLO
+        heian.cn.fujitsu.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726813AbeKNQOO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 11:14:14 -0500
+X-IronPort-AV: E=Sophos;i="5.43,368,1503331200"; 
+   d="scan'208";a="48071459"
+Received: from unknown (HELO cn.fujitsu.com) ([10.167.33.5])
+  by heian.cn.fujitsu.com with ESMTP; 14 Nov 2018 14:12:19 +0800
+Received: from G08CNEXCHPEKD01.g08.fujitsu.local (unknown [10.167.33.80])
+        by cn.fujitsu.com (Postfix) with ESMTP id 558D94B5CBFA;
+        Wed, 14 Nov 2018 14:12:19 +0800 (CST)
+Received: from localhost.localdomain (10.167.225.56) by
+ G08CNEXCHPEKD01.g08.fujitsu.local (10.167.33.89) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Wed, 14 Nov 2018 14:12:24 +0800
+Date:   Wed, 14 Nov 2018 14:12:16 +0800
+From:   Chao Fan <fanc.fnst@cn.fujitsu.com>
+To:     Borislav Petkov <bp@alien8.de>
+CC:     Masayoshi Mizuma <msys.mizuma@gmail.com>,
+        <linux-kernel@vger.kernel.org>, <x86@kernel.org>,
+        <linux-efi@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <tglx@linutronix.de>, <mingo@redhat.com>, <hpa@zytor.com>,
+        <keescook@chromium.org>, <bhe@redhat.com>,
+        <indou.takao@jp.fujitsu.com>, <caoj.fnst@cn.fujitsu.com>
+Subject: Re: [PATCH v11 3/5] x86/boot: Add get_acpi_rsdp() to parse RSDP in
+ cmdlien from kexec
+Message-ID: <20181114061215.GC2875@localhost.localdomain>
+References: <20181112094645.4879-1-fanc.fnst@cn.fujitsu.com>
+ <20181112094645.4879-4-fanc.fnst@cn.fujitsu.com>
+ <20181112174343.mvjri2okwboew2nw@gabell>
+ <20181113021218.GD7453@localhost.localdomain>
+ <20181113161111.6jwm36fpxk5xjtn5@gabell>
+ <20181113175413.GL10502@zn.tnic>
+ <20181113200615.7dypqvhimxzlloek@gabell>
+ <20181113215156.GP10502@zn.tnic>
 MIME-Version: 1.0
-X-Originating-IP: [10.175.113.25]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20181113215156.GP10502@zn.tnic>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.167.225.56]
+X-yoursite-MailScanner-ID: 558D94B5CBFA.ADCC8
+X-yoursite-MailScanner: Found to be clean
+X-yoursite-MailScanner-From: fanc.fnst@cn.fujitsu.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes gcc '-Wunused-but-set-variable' warning:
+Hi Boris, Masa, and Baoquan,
 
-drivers/i3c/master/i3c-master-cdns.c: In function 'cdns_i3c_master_do_daa':
-drivers/i3c/master/i3c-master-cdns.c:1137:16: warning:
- variable 'old_i3c_scl_lim' set but not used [-Wunused-but-set-variable]
+On Tue, Nov 13, 2018 at 10:51:56PM +0100, Borislav Petkov wrote:
+>On Tue, Nov 13, 2018 at 03:06:16PM -0500, Masayoshi Mizuma wrote:
+>> I just felt the BOOT_STRING thing in lib/kstrtox.c confuses...
+>> I'm OK for now if it's applied your below comment.
+>
+>Well, actually, upon a second look, I don't think that including a .c
+>file into a header is ok:
+>
+>diff --git a/arch/x86/boot/string.h b/arch/x86/boot/string.h
+>index 3d78e27077f4..0ff3edb888e4 100644
+>--- a/arch/x86/boot/string.h
+>+++ b/arch/x86/boot/string.h
+>@@ -30,3 +30,7 @@ extern unsigned long long simple_strtoull(const char *cp, char **endp,
+>                                          unsigned int base);
+>
+> #endif /* BOOT_STRING_H */
+>+
+>+#ifdef BOOT_STRING
+>+#include "../../../lib/kstrtox.c"
+>+#endif
+>
+>Chao, why isn't this part of arch/x86/boot/compressed/misc.c ?
+>
 
-It never used since introdution in commit
-  acfab7d324b2 ("i3c: master: Add driver for Cadence IP")
+Fine, I have put it to misc.c:
 
-Signed-off-by: YueHaibing <yuehaibing@huawei.com>
----
- drivers/i3c/master/i3c-master-cdns.c | 4 ----
- 1 file changed, 4 deletions(-)
-
-diff --git a/drivers/i3c/master/i3c-master-cdns.c b/drivers/i3c/master/i3c-master-cdns.c
-index ad40162..e828921 100644
---- a/drivers/i3c/master/i3c-master-cdns.c
-+++ b/drivers/i3c/master/i3c-master-cdns.c
-@@ -1133,7 +1133,6 @@ static void cdns_i3c_master_upd_i3c_scl_lim(struct cdns_i3c_master *master)
- static int cdns_i3c_master_do_daa(struct i3c_master_controller *m)
+diff --git a/arch/x86/boot/compressed/misc.c b/arch/x86/boot/compressed/misc.c
+index 8dd1d5ccae58..714b05b65a33 100644
+--- a/arch/x86/boot/compressed/misc.c
++++ b/arch/x86/boot/compressed/misc.c
+@@ -426,3 +426,7 @@ void fortify_panic(const char *name)
  {
- 	struct cdns_i3c_master *master = to_cdns_i3c_master(m);
--	unsigned long old_i3c_scl_lim;
- 	u32 olddevs, newdevs;
- 	int ret, slot;
- 	u8 addrs[MAX_DEVS] = { };
-@@ -1165,9 +1164,6 @@ static int cdns_i3c_master_do_daa(struct i3c_master_controller *m)
- 	newdevs = readl(master->regs + DEVS_CTRL) & DEVS_CTRL_DEVS_ACTIVE_MASK;
- 	newdevs &= ~olddevs;
- 
--	/* Save the old limitation before add devices. */
--	old_i3c_scl_lim = master->i3c_scl_lim;
--
- 	/*
- 	 * Clear all retaining registers filled during DAA. We already
- 	 * have the addressed assigned to them in the addrs array.
+        error("detected buffer overflow");
+ }
++
++#ifdef BOOT_STRING
++#include "../../../../lib/kstrtox.c"
++#endif
 
+And define it in misc.h:
+
+diff --git a/arch/x86/boot/compressed/misc.h b/arch/x86/boot/compressed/misc.h
+index 4a3645fda0ed..98e28c4281ee 100644
+--- a/arch/x86/boot/compressed/misc.h
++++ b/arch/x86/boot/compressed/misc.h
+@@ -131,3 +131,5 @@ int num_immovable_mem;
+ void get_immovable_mem(void);
+ #endif
+ #endif
++#define BOOT_STRING
++extern int kstrtoull(const char *s, unsigned int base, unsigned long long *res);
+
+But isdigit() would be redefine, so:
+
+diff --git a/include/linux/ctype.h b/include/linux/ctype.h
+index 363b004426db..aba01c385232 100644
+--- a/include/linux/ctype.h
++++ b/include/linux/ctype.h
+@@ -23,10 +23,12 @@ extern const unsigned char _ctype[];
+ #define isalnum(c)     ((__ismask(c)&(_U|_L|_D)) != 0)
+ #define isalpha(c)     ((__ismask(c)&(_U|_L)) != 0)
+ #define iscntrl(c)     ((__ismask(c)&(_C)) != 0)
++#ifndef BOOT_STRING
+ static inline int isdigit(int c)
+ {
+        return '0' <= c && c <= '9';
+ }
++#endif
+ #define isgraph(c)     ((__ismask(c)&(_P|_U|_L|_D)) != 0)
+ #define islower(c)     ((__ismask(c)&(_L)) != 0)
+ #define isprint(c)     ((__ismask(c)&(_P|_U|_L|_D|_SP)) != 0)
+
+Now I can make it.
+I wonder whether this is OK to cover isdigit() with 'BOOT_STRING' tag.
+
+Thanks,
+Chao Fan
+
+>-- 
+>Regards/Gruss,
+>    Boris.
+>
+>Good mailing practices for 400: avoid top-posting and trim the reply.
+>
+>
 
 
