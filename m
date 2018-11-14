@@ -2,175 +2,225 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D6A6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:50:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A1888C07E85
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:58:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F6B522360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:50:43 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lQTLUsn0";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="pDuEkpSt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F6B522360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 6A8972087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:58:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6A8972087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731322AbeKNQwf (ORCPT
+        id S1731575AbeKNRAY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 11:52:35 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:51766 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727375AbeKNQwf (ORCPT
+        Wed, 14 Nov 2018 12:00:24 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:38981 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726927AbeKNRAX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 11:52:35 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 49D42604B4; Wed, 14 Nov 2018 06:50:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542178240;
-        bh=82UfzETP7/Psfc9H+N2iaVjkh0GWiSf+Ssm6733h5oY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=lQTLUsn0Bs6HCRvK3pCV7f2nCMCHIEQypCywzbakUQ4czw1i0SAEpofC7ctgGzAWm
-         IIaumGzzNHWLY5oX7VNJGekgZWKo/3eMsAuR6DlIR3b6kRx+SIp3QXL7B1BQ+jbHAj
-         r8ZdGPgZ6LJQbc48GilrkGeSBgErg5x86ZF5YO+U=
-Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
-        by smtp.codeaurora.org (Postfix) with ESMTP id 5D060604B4;
-        Wed, 14 Nov 2018 06:50:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542178239;
-        bh=82UfzETP7/Psfc9H+N2iaVjkh0GWiSf+Ssm6733h5oY=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=pDuEkpStAQON1geyANc0wQWUSvaKVAqO56r7mpOZi2U8MgdCx75iP8Xzz8bBx9XxR
-         zPjp8cRizbSdP3NlaBnz++gYcq6553u2bpTX40vZsjcCUJn0Cfow0Nu+GhJB96qHz0
-         AVRALxaDwYam//TfvIsIWUkVOLl6bPW8D7onYmVQ=
+        Wed, 14 Nov 2018 12:00:23 -0500
+Received: by mail-ed1-f65.google.com with SMTP id b14so10152494edt.6;
+        Tue, 13 Nov 2018 22:58:26 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=IFgmvrn1Uc4t3y/os32mrfJIYufUIc2ZFQ1ZVHConhQ=;
+        b=iTthEFgehMl5/4yRdYIQQhEjoLXCXMrYwwgH9GNiPvG2I2cB67TIgXWlD3D1Nr77UT
+         w7Vy1lE+pcwQDAStTZgvTleiZE2h3JPw3g72neKU2MBYdZb0WkNDKOTovjj8gaJlbSxb
+         bFFf5Btm5mQVJ81EaqNslpnGeAygekvHYl2kyDAMQ8mOF38lT2yaW7F6s3gvaZRXga0l
+         vTUiGG7jBPbnIRSl+nSmhj7hLucQB8JNgarAFrRSt7LIS/DroraGSfJrdEqbsruI2Jb/
+         i4xEcFn6aoJ9puL58NC4AF8IZTp/C8aY/ZVpgaEOF+exLSuTC1359LehIpSwifRQN0PG
+         ZTnQ==
+X-Gm-Message-State: AGRZ1gJwfkTd0FSTZSvWaTVgdteWlRZ07X2VVNsUEPcQcZJYvB3DzWYx
+        E81UdOLxDLLTsyPRcgSIrx/ysy2egPg=
+X-Google-Smtp-Source: AJdET5fWn10v5YhoLAaLitAe75OHbOXcQi+JMQtFIC91BdU047K1GRZhEu6fx9SKLUba7F9FzYq10g==
+X-Received: by 2002:a17:906:12d3:: with SMTP id l19-v6mr904845ejb.74.1542178706038;
+        Tue, 13 Nov 2018 22:58:26 -0800 (PST)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com. [209.85.128.45])
+        by smtp.gmail.com with ESMTPSA id r8-v6sm3386440ejb.52.2018.11.13.22.58.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 22:58:24 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id p2-v6so13593360wmc.2;
+        Tue, 13 Nov 2018 22:58:24 -0800 (PST)
+X-Received: by 2002:a1c:f008:: with SMTP id a8-v6mr711154wmb.5.1542178703511;
+ Tue, 13 Nov 2018 22:58:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Date:   Wed, 14 Nov 2018 12:20:39 +0530
-From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
-To:     Matthias Kaehlcke <mka@chromium.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v1 3/4] Bluetooth: hci_qca: clear HCI_QUIRK_RESET_ON_CLOSE
- flag
-In-Reply-To: <20181114021404.GI22824@google.com>
-References: <20181106120528.30342-1-bgodavar@codeaurora.org>
- <20181106120528.30342-4-bgodavar@codeaurora.org>
- <462C4F58-E6E2-4B20-B074-72DDFA6D7364@holtmann.org>
- <170e0419929840109d349b5df5e38364@codeaurora.org>
- <0CE81F0B-B122-4793-817F-F0F4738C44E0@holtmann.org>
- <c4ced688b33ad82b61a705908393a0a6@codeaurora.org>
- <20181114021404.GI22824@google.com>
-Message-ID: <fc23db7996b950d5a962456da9c179d9@codeaurora.org>
-X-Sender: bgodavar@codeaurora.org
-User-Agent: Roundcube Webmail/1.2.5
+References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+ <20181113111633.20189-26-jagan@amarulasolutions.com> <20181113122204.337db8b1@donnerap.cambridge.arm.com>
+ <CAMty3ZBQXcnU=490KREa=F-qctMtRep9-rrhrPd1UZStnV=hqw@mail.gmail.com>
+In-Reply-To: <CAMty3ZBQXcnU=490KREa=F-qctMtRep9-rrhrPd1UZStnV=hqw@mail.gmail.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 14 Nov 2018 14:58:11 +0800
+X-Gmail-Original-Message-ID: <CAGb2v669dkf2qaUDaosJEKSRKpPRVKWszb6BLL2NrAjWwp3t2Q@mail.gmail.com>
+Message-ID: <CAGb2v669dkf2qaUDaosJEKSRKpPRVKWszb6BLL2NrAjWwp3t2Q@mail.gmail.com>
+Subject: Re: [PATCH v4 25/26] [DO NOT MERGE] arm64: dts: allwinner:
+ bananapi-m64: Bananapi S070WV20-CT16 DSI panel
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Mike Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        linux-clk <linux-clk@vger.kernel.org>,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matthias,
+On Wed, Nov 14, 2018 at 2:31 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
+>
+> On Tue, Nov 13, 2018 at 5:52 PM Andre Przywara <andre.przywara@arm.com> wrote:
+> >
+> > On Tue, 13 Nov 2018 16:46:32 +0530
+> > Jagan Teki <jagan@amarulasolutions.com> wrote:
+> >
+> > Hi,
+> >
+> > > This patch add support for Bananapi S070WV20-CT16 DSI panel to
+> > > BPI-M64 board.
+> > >
+> > > DSI panel connected via board DSI port with,
+> > > - DC1SW as AVDD supply
+> >
+> > Are you sure of that? I don't see anything in the schematic to support
+> > this. The only power lines that go to the DSI connector are DCDC1 and
+> > PS. DC1SW is only connected to PortD on the SoC and to the Ethernet PHY.
+> > Is there anything I miss?
+>
+> Thanks for the comment, yes dc1sw is connected in ephy. I have reused
+> dc1, BSP is attached lcd_power1 to axp81x_dc1sw [1]. I just looking
+> for someone to comment, may be we can skip this regulator attachment.
 
-On 2018-11-14 07:44, Matthias Kaehlcke wrote:
-> On Tue, Nov 06, 2018 at 06:44:07PM +0530, Balakrishna Godavarthi wrote:
->> Hi Marcel,
->> 
->> On 2018-11-06 18:32, Marcel Holtmann wrote:
->> > Hi Balakrishna,
->> >
->> > > > > During hci down we are sending reset command to chip, which
->> > > > > is not required for wcn3990, as hdev->shutdown() will turn off the
->> > > > > regulators.
->> > > > > Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->> > > > > ---
->> > > > > drivers/bluetooth/hci_qca.c | 1 +
->> > > > > 1 file changed, 1 insertion(+)
->> > > > > diff --git a/drivers/bluetooth/hci_qca.c
->> > > > > b/drivers/bluetooth/hci_qca.c
->> > > > > index 8301663f0004..97b57e0f4725 100644
->> > > > > --- a/drivers/bluetooth/hci_qca.c
->> > > > > +++ b/drivers/bluetooth/hci_qca.c
->> > > > > @@ -1190,6 +1190,7 @@ static int qca_setup(struct hci_uart *hu)
->> > > > > 		 */
->> > > > > 		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
->> > > > > 		set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
->> > > > > +		clear_bit(HCI_QUIRK_RESET_ON_CLOSE, &hdev->quirks);
-> 
-> This patch doesn't apply cleanly against bluetooth-next, looks like
-> you have the unrelated "Bluetooth: hci_qca: Set
-> HCI_QUIRK_USE_BDADDR_PROPERTY for wcn3990"
-> (https://lore.kernel.org/patchwork/patch/1004372/) in your tree.
-> 
-[Bala]: this patch is on top of 
-https://lore.kernel.org/patchwork/patch/1004372/.
-         will remove the dependency and update the patch.
+That seems sketchy. The schematics show the connector has feeds from both
+the unregulated output IPSOUT (PS) and DCDC1. For designs with RGB LCD
+panels, we only see the PS feed. Since the LCD panel can be used in either
+RGB or MIPI DSI mode, I highly suspect the DCDC1 supply feeds the bridge
+IC.
 
->> > > > > 		hu->hdev->shutdown = qca_power_off;
->> > > > > 		ret = qca_wcn3990_init(hu);
->> > > > > 		if (ret)
->> > > > I am pretty certain that you didn’t want this quirk:
->> > > >        /* When this quirk is set, the HCI Reset command is send when
->> > > >         * closing the transport instead of when opening it.
->> > > > This quirk is for Bluetooth 1.0b devices where the HCI_Reset behavior
->> > > > was not clear or for devices that actually misbehave with the initial
->> > > > HCI_Reset.
->> > > > In addition, you commit message is totally misleading. That is not
->> > > > what is happening with this quirk.
->> > > > Regards
->> > > > Marcel
->> > >
->> > > My intention was reset command is not required when we do an hci down.
->> > > this is because of hdev->shutdown will turn off the regulators.
->> > > It is like turning off the chip. sending reset command after turning
->> > > off the chip is not required.
->> > >
->> > > I understand the usage of the quirk, will update the commit text.
->> >
->> > you are papering over the issue. Actually
->> > hci_serdev.c:hci_uart_register_device() is the culprit with the legacy
->> > code copied over from hci_ldisc.c:hci_uart_register_dev(). I think
->> > there is no point doing all this legacy line discipline quirk handling
->> > until it is really needed. The serdev drivers are all for recent
->> > hardware.
->> >
->> > That said, having moved over to a btuart.c approach and killed the
->> > whole hci_serdev.c thing would have been a lot better here. You will
->> > keep running in weird situations where 18 year old code keeps
->> > surprising you.
->> 
->> [Bala]: even i feel the same. they are lot such kind of HACK's we need 
->> to do
->> with current arch.
->>         when can we expect btuart.c merged to bt-next. i think having 
->> btuart
->> will helps us to have the control of
->>         vendor porto's call's like in btusb.c
-> 
-> btuart was initially part of the 'add support for Bluetooth on MT7622
-> SoC' series (https://lore.kernel.org/patchwork/patch/960806/), but was
-> dropped with v6
-> (https://lore.kernel.org/patchwork/project/lkml/list/?series=360046)
-> upon Marcel's request: 'Frankly I prefer to keep the btuart.c driver
-> for drivers that really just use H:4 as transport protocol. If the
-> protocol is only H:4 alike and has extra headers, then it should be a
-> separate driver.' 
-> (https://lore.kernel.org/patchwork/patch/960806/#1148426).
-> 
-> Cheers
-> 
-> Matthias
+As for DC1SW, this is likely referenced because it provides power to the
+GPIO lines that are used to control the LCD panel. If you don't provide
+power, you can't pull them up.
 
-[Bala]: currently our main moto is to make this driver to be stable for 
-both rome and wcn3990.
-         we will look into working on btuart.c type driver for future 
-qualcomm BT devices.
+While many of us dislike FEX and the new FEX-derived device tree, they
+do provide some information, such as regulator usage. Note that each
+regulator output has multiple names, which likely denote specific
+usages.
 
--- 
-Regards
-Balakrishna.
+I've asked BPI for schematics on the bridge board. Hopefully we'll
+have something in more detail. In the meantime, I suggest leaving
+this panel out of your next submission, and focus on getting the bulk
+of the dsi driver and dts changes in first.
+
+ChenYu
+
+>
+> >
+> > > - DCDC1 as DVDD supply
+> >
+> > That seems right, but doesn't match with what you write below.
+>
+> Commit need to fix s/DCDC1/DLDO1
+>
+> >
+> > > - PD6 gpio for reset pin
+> > > - PD5 gpio for backlight enable pin
+> > > - PD7 gpio for backlight vdd supply
+> > >
+> > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+> > > ---
+> > >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 42
+> > > +++++++++++++++++++ 1 file changed, 42 insertions(+)
+> > >
+> > > diff --git
+> > > a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
+> > > b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts index
+> > > ef1c90401bb2..6cb010e3bbd9 100644 ---
+> > > a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts +++
+> > > b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts @@ -45,6
+> > > +45,7 @@ #include "sun50i-a64.dtsi"
+> > >  #include <dt-bindings/gpio/gpio.h>
+> > > +#include <dt-bindings/pwm/pwm.h>
+> > >
+> > >  / {
+> > >       model = "BananaPi-M64";
+> > > @@ -56,6 +57,15 @@
+> > >               serial1 = &uart1;
+> > >       };
+> > >
+> > > +     backlight: backlight {
+> > > +             compatible = "pwm-backlight";
+> > > +             pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
+> > > +             brightness-levels = <1 2 4 8 16 32 64 128 512>;
+> > > +             default-brightness-level = <2>;
+> > > +             enable-gpios = <&pio 3 5 GPIO_ACTIVE_HIGH>; /*
+> > > LCD-BL-EN: PD5 */
+> > > +             power-supply = <&reg_vdd_backlight>;
+> > > +     };
+> > > +
+> > >       chosen {
+> > >               stdout-path = "serial0:115200n8";
+> > >       };
+> > > @@ -91,6 +101,15 @@
+> > >               };
+> > >       };
+> > >
+> > > +     reg_vdd_backlight: vdd-backlight {
+> > > +             compatible = "regulator-fixed";
+> > > +             regulator-name = "vdd-backlight";
+> > > +             regulator-min-microvolt = <3300000>;
+> > > +             regulator-max-microvolt = <3300000>;
+> > > +             gpio = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* LCD-PWR-EN:
+> > > PD7 */
+> > > +             enable-active-high;
+> > > +     };
+> > > +
+> > >       wifi_pwrseq: wifi_pwrseq {
+> > >               compatible = "mmc-pwrseq-simple";
+> > >               reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
+> > > @@ -101,6 +120,23 @@
+> > >       status = "okay";
+> > >  };
+> > >
+> > > +&dphy {
+> > > +     status = "okay";
+> > > +};
+> > > +
+> > > +&dsi {
+> > > +     status = "okay";
+> > > +
+> > > +     panel@0 {
+> > > +             compatible = "bananapi,s070wv20-ct16-icn6211";
+> > > +             reg = <0>;
+> > > +             avdd-supply = <&reg_dc1sw>;
+> >
+> > As mentioned above, I don't see this on the DSI connector.
+> >
+> > > +             dvdd-supply = <&reg_dldo1>;
+> >
+> > Mmh, this line is connected to the *SoC*, to drive the DSI data lines
+> > or the DPHY, presumably. So I wouldn't expect it in the panel node, but
+> > rather in the DPHY or DSI node. Although I can't find a power-supply
+> > property in those bindings.
+>
+> Got it, this has to attach via vcc-dsi-supply.
+>
+> [1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/bootloader/blobs/bpi-m64-lcd7.dts#L2266
