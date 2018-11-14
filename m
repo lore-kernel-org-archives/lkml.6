@@ -2,151 +2,168 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A392C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:10:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F052AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A96A22419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:10:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A96A22419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id ACA7222360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:11:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="MhqYAbKI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACA7222360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732530AbeKNTMX (ORCPT
+        id S1732462AbeKNTN2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 14:12:23 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:53703 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732439AbeKNTMX (ORCPT
+        Wed, 14 Nov 2018 14:13:28 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:43884 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729807AbeKNTN1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 14:12:23 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gMrBL-00061a-Ta; Wed, 14 Nov 2018 10:09:55 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gMrBJ-0006LU-R8; Wed, 14 Nov 2018 10:09:53 +0100
-Date:   Wed, 14 Nov 2018 10:09:53 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>
-Cc:     Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@karo-electronics.de>
-Subject: Re: =?iso-8859-1?B?W1JDRqBQQVRDSCx2Miwy?= =?iso-8859-1?B?LzJd?= pwm:
- imx: Configure output to GPIO in disabled state
-Message-ID: <20181114090953.jc6wkvgshn32bcm5@pengutronix.de>
-References: <fa96ae2a-c2cc-b47a-1198-5daffa7c865f@ysoft.com>
- <20181012160854.hmgpokxgsrqdzobx@pengutronix.de>
- <e4289ee5-3fc1-2848-1cae-77d29b5ed93c@ysoft.com>
- <20181107093355.e4n3irrnkybqsjvc@pengutronix.de>
- <eb4e7a42-bd5c-3ae2-ccb7-d1a73d5ae99c@ysoft.com>
- <20181107150125.7cpd4v5t7yi2254c@pengutronix.de>
- <4fbb7307-df01-d7bd-f2e2-e05e6d17807d@ysoft.com>
- <20181108191855.zuon3ecv4yjfbs7g@pengutronix.de>
- <283cfef3-16d0-8bd4-e306-6e34d44c3a86@ysoft.com>
- <20181109165555.vqbiwh4hlcnozdna@pengutronix.de>
+        Wed, 14 Nov 2018 14:13:27 -0500
+Received: by mail-wr1-f67.google.com with SMTP id y3-v6so16353462wrh.10
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 01:11:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:openpgp:autocrypt:organization
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=LXJF7UqFazHaPW4rafwoTdP5g5YNnnj0CJYnLCLBqEA=;
+        b=MhqYAbKI57q/S3r2qN4ocpWWEbrdZjIopssmXCo9wBwNcymAsvNv7QCKmf9lsOFvxg
+         wpNU9ENdUDg40/ib6yK2NK1C84fllsfe/EF/Es6huAJQ5sINAEGsUiwTYrd4XZg8Kfov
+         nsXEmnsDDwavTMj8tRkTeT73NcbHUCr9xyyY1pIwQPj2famMJoJSiYorIXa6s5/stwZ0
+         sKjQm7S1OAo62Kd09ecauz8Rns/66dMo8gm5bABQlM20Lry4PvCYFcdsHwDl4nzo/jVi
+         GkVTiYsBXlc1NAIujmDxtbWX1VKdWmQy1ZirrevusMo2gYFdSN21ZvzjfpjcCzWGsikC
+         CEXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :organization:message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=LXJF7UqFazHaPW4rafwoTdP5g5YNnnj0CJYnLCLBqEA=;
+        b=ahJhmJUFiyBzGayYeGr/4XaVAXs9Zfv9J+uVk+TYl3Hlulb1izvcg7WFf4/mGzs530
+         I4zG2YS+iLAsESBQDBxkc/0LiCDhZREmBWw8wYSVsHiVpqxgb9St65M0pcrE/r1f2wE8
+         FA2BiJFd3VISvMDj7DSi1Rj+Emn6h9zKSuUUZP1xEH/xxXa8y2qk+zj/kIZCUjT15Po2
+         3BYuSmWouOFU7w3tnQufCxBAp4tEKpygwGYo9Q/dQPqELsSr1sb0epgLZCIZvB9NCIOS
+         ZfIZUHOSpSY7rjsQXb2kpDeTh+cp1dV35JGvcCWdKsa6+Cz9DGZZKXfYOyQjXy8Q3eIE
+         fPqw==
+X-Gm-Message-State: AGRZ1gLlYj9rst+7qerAA2EpyGCyZxSyefqRrGm0XQLpvEqHNGHV/Zb3
+        83e1POAFopBAX0HQxl9Qap0b7i6CAek=
+X-Google-Smtp-Source: AJdET5fMbR871cE8mfQn03aTQ0hWfc/LkmCSe3NREi6AOzVVhWz1zMAXvVLEbmucQLyMzjJXro5zRw==
+X-Received: by 2002:adf:ed92:: with SMTP id c18mr994173wro.194.1542186663174;
+        Wed, 14 Nov 2018 01:11:03 -0800 (PST)
+Received: from [10.1.2.12] ([90.63.244.31])
+        by smtp.gmail.com with ESMTPSA id e10-v6sm28818863wrp.56.2018.11.14.01.11.02
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 01:11:02 -0800 (PST)
+Subject: Re: [PATCH v2 0/4] clk: meson: Add video clocks path
+To:     jbrunet@baylibre.com
+Cc:     linux-clk@vger.kernel.org, linux-amlogic@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <1541516257-16157-1-git-send-email-narmstrong@baylibre.com>
+ <f7679f4c93aca9a11b9078611b6c4952e83c9a9e.camel@baylibre.com>
+From:   Neil Armstrong <narmstrong@baylibre.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
+ GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
+ RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
+ NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
+ 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
+ ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
+ YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
+ GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
+ coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
+ SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
+ YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
+ mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
+ zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
+ 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
+ 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
+ RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
+ C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
+ Acmp6h8g
+Organization: Baylibre
+Message-ID: <5137a72c-e5fa-6fad-f1b6-e64968e78391@baylibre.com>
+Date:   Wed, 14 Nov 2018 10:11:01 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
+In-Reply-To: <f7679f4c93aca9a11b9078611b6c4952e83c9a9e.camel@baylibre.com>
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181109165555.vqbiwh4hlcnozdna@pengutronix.de>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Michal,
-
-On Fri, Nov 09, 2018 at 05:55:55PM +0100, Uwe Kleine-König wrote:
-> On Fri, Nov 09, 2018 at 02:24:42PM +0000, Vokáč Michal wrote:
-> > On 8.11.2018 20:18, Uwe Kleine-König wrote:
-> > > On Thu, Nov 08, 2018 at 03:21:44PM +0000, Vokáč Michal wrote:
-> > >> Hi Uwe,
-> > >>
-> > >> On 7.11.2018 16:01, Uwe Kleine-König wrote:
-> > >>>> Interesting idea. I just wonder why nobody else did not come up with such
-> > >>>> a simple solution before.
-> > >>>
-> > >>> I think I mentioned it already in this thread, but it went unnoticed :-)
-> > >>
-> > >> I meant it like "How happened this was not invented years ago, when people
-> > >> first noticed the issue with using inverted PWM for backlight on i.MX6."
-> > >> In our project, this issue dates back to 2015 :(
-> > >>
-> > >>> Then the patch isn't correct yet. The idea is always keep the hardware
-> > >>> running and only disable it if it's uninverted.
-> > >>
-> > >> OK, I got the point.
-> > >>
-> > >>> In imx_pwm_probe it's not yet known what the polarity is supposed to be,
-> > >>> right?
-> > >>
-> > >> Not really. It can already be known but currently there is no way how to
-> > >> pass the information to the probe function. I, as a creator of the device
-> > >> (and author of a DTS file) know that the circuit needs inverted PWM signal.
-> > >> And I know that the circuit needs to be disabled until I say it can be
-> > >> enabled. How I say that can warry. It may be default brightness level > 0
-> > >> in DTS file or from a userspace program using PWM sysfs interface.
-> > >>
-> > >>>   So the right thing to do there is to not touch the configuration
-> > >>> of the pwm. I think all states that are problematic then are also
-> > >>> problematic with the gpio/pinmux approach.
-> > >>
-> > >> I think my use-case I already presented before is an example where
-> > >> involving pinctrl solves the problem while the "leave PWM enabled
-> > >> for inverted users" does not. That is all the time between
-> > >> imx_pwm_probe() and imx_pwm_apply_v2().
-> > > 
-> > > You're doing in probe:
-> > > 
-> > >    if (pwm_is_running()):
-> > >      mux(pin, function=pwm)
-> > >    else:
-> > >      gpio_set_value(gpio, 0)
-> > >      mux(pin, function=gpio)
-> > > 
-> > > This gives you the right level assuming the gpio specification uses the
-> > > right flag (GPIO_ACTIVE_HIGH or GPIO_ACTIVE_LOW).
-> > 
-> > Agree.
-> > 
-> > > Taking your example with the backlight device you specify an "init" and
-> > > a "default" pinctrl and only "default" contains the muxing for the PWM
-> > > pin everything should be as smooth as necessary: The pwm is only muxed
-> > > when the backlight device is successfully bound.
-> > 
-> > Have you tried that Uwe? The bad news is I tested that before and now
-> > again and it does not work like that. We already discussed that earlier.
+On 13/11/2018 15:18, jbrunet@baylibre.com wrote:
+> On Tue, 2018-11-06 at 15:57 +0100, Neil Armstrong wrote:
+>> This patchset is an attempt to handle the Amlogic Meson GX Video clock
+>> in the Common Clock Framework in order to move the video pipeline and
+>> HDMI controller clock management out of the Meson DRM Driver.
+>>
+>> In order :
+>> - Add support the VID_PLL fully programmable divider used right after the
+>>   HDMI PLL clock source.
+>> - Fix the GXL HDMI PLL DCO
+>> - Add the video clock bindings covering all the video graphics pipeline
+>>   and the HDMI controller.
+>> - Add the clocks entries used in the video clock path
+>>
+>> The vid_pll programmable divider is introduced in its R/O form right now,
+>> but will be extended to be R/W in a next iteration.
+>>
+>> All dividers are flagged with CLK_GET_RATE_NOCACHE, and all gates are
+>> flagged
+>> with CLK_IGNORE_UNUSED since they are currently directly handled by the
+>> Meson DRM Driver.
+>>
+>> Once the DRM Driver is fully migrated to using the Common Clock Framework
+>> to handle the video clock tree, the CLK_GET_RATE_NOCACHE and
+>> CLK_IGNORE_UNUSED
+>> will be dropped.
+>>
+>> Changes since v1 at [1]:
+>>  - Fixed comments from Martin
+>>  - Fixed GXL HDMI PLL DCO
+>>  - Added the missing HDMI controller clock
+>>  - Moved bindings to a separate patch
+>>  - Updated the commit logs
+>>
+>> [1] 
+>> https://lkml.kernel.org/r/1532079581-978-1-git-send-email-narmstrong@baylibre.com
+>>
+>> Neil Armstrong (4):
+>>   clk: meson: Add vid_pll divider driver
+>>   clk: meson-gxbb: Fix HDMI PLL for GXL SoCs
+>>   dt-bindings: clk: meson-gxbb: Add Video clock bindings
+>>   clk: meson-gxbb: Add video clocks
+>>
+>>  drivers/clk/meson/Makefile            |   2 +-
+>>  drivers/clk/meson/clkc.h              |   6 +
+>>  drivers/clk/meson/gxbb.c              | 773
+>> +++++++++++++++++++++++++++++++++-
+>>  drivers/clk/meson/gxbb.h              |  26 +-
+>>  drivers/clk/meson/vid-pll-div.c       |  91 ++++
+>>  include/dt-bindings/clock/gxbb-clkc.h |  18 +
+>>  6 files changed, 911 insertions(+), 5 deletions(-)
+>>  create mode 100644 drivers/clk/meson/vid-pll-div.c
+>>
 > 
-> The key is that the pinmux setting for the PWM pin should be part of the
-> bl pinctrl, not the pwm pinctrl. Then "default" is only setup when the
-> bl device is successfully bound which is after the bl's .probe callback
-> called pwm_apply().
+> Looks sane enough ;)
+> 
+> Acked-by: Jerome Brunet <jbrunet@baylibre.com>
+> 
 
-Did my mail clear up my suggestion? Do you agree it should work like
-this (or even did you test that, as I did not)?
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+Thanks, applied on next/drivers !
