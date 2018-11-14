@@ -2,220 +2,240 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91D0EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:47:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8055C04EBC
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:47:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F0C72145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:47:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A258F2145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:47:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="Gh2HVBVT";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VHlom5a2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F0C72145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLbwUvSe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A258F2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728294AbeKOIwp (ORCPT
+        id S1727232AbeKOIxD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:52:45 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:58270 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbeKOIwp (ORCPT
+        Thu, 15 Nov 2018 03:53:03 -0500
+Received: from mail-wm1-f67.google.com ([209.85.128.67]:40819 "EHLO
+        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbeKOIxD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:52:45 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 14FBB607B9; Wed, 14 Nov 2018 22:47:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542235653;
-        bh=Zi/CGvImkuNErH602+9OMYjYvytM/zm3BJ8DgxPFzb4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Gh2HVBVTGy3TTzTquZubKmjISiR5tdPuIyQ0hTyBZd1/PYwnHrzlkBq5vdzrSRcmO
-         FFpExzrr94KwDOwC0t1gHDJwOzVZPDEOovUzJMpMvrFgd6uukbsSzKC4JM28EaQQ9X
-         HKpcEOgPkD9kIyJ2a6Vmw5LUADTV3J3Jiv/DYjc0=
-Received: from jcrouse-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-        (using TLSv1.2 with cipher DHE-RSA-AES128-SHA (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: jcrouse@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4FF496075A;
-        Wed, 14 Nov 2018 22:47:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542235652;
-        bh=Zi/CGvImkuNErH602+9OMYjYvytM/zm3BJ8DgxPFzb4=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=VHlom5a2kDcFwHvPtH2X8+Vo2cM/gOkug6uUBy6kTRDUkVfotIxZkzKsHk5R9z//+
-         YBymx04Z8q5QEzRwqYkwEt8oQEDA3wpYQifpMLd6B9GFYDeMyM2jTkg6Zk4jX5nw6I
-         rkqW9NHGBuwAMj/GLIi+MeYWm6gAaHMr4Wy26Eh4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4FF496075A
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jcrouse@codeaurora.org
-Date:   Wed, 14 Nov 2018 15:47:29 -0700
-From:   Jordan Crouse <jcrouse@codeaurora.org>
-To:     Jonathan Marek <jonathan@marek.ca>
-Cc:     freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Govind Singh <govinds@codeaurora.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <linux-arm-msm@vger.kernel.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
-        <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 5/9] drm/msm: add headless gpu device (for imx5)
-Message-ID: <20181114224729.GA6285@jcrouse-lnx.qualcomm.com>
-Mail-Followup-To: Jonathan Marek <jonathan@marek.ca>,
-        freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>,
-        David Airlie <airlied@linux.ie>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Niklas Cassel <niklas.cassel@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        Govind Singh <govinds@codeaurora.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" <linux-arm-msm@vger.kernel.org>,
-        "open list:DRM DRIVER FOR MSM ADRENO GPU" <dri-devel@lists.freedesktop.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20181114222418.15960-1-jonathan@marek.ca>
- <20181114222418.15960-5-jonathan@marek.ca>
+        Thu, 15 Nov 2018 03:53:03 -0500
+Received: by mail-wm1-f67.google.com with SMTP id q26so6177402wmf.5;
+        Wed, 14 Nov 2018 14:47:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=3sTgRbRtlBuRhiGv74EwLLuTsqUsnOf8/Os99kPorHs=;
+        b=lLbwUvSelNmXfLk2Yoa8A09JyX9aA0x+aNMVXPm9z5O/oKfTmwGGvI1TFcvJWPMWNY
+         JijCVvu5m2bfdYppKZyQN/uK4DJvbt0EwcTdjrAEMyIC6E7KoMLNiP+f3MaI65+RfYOj
+         s/EPI+G+k460HYG2K9Aj/bSzRlzQdwuDE4+ZL4lvuuUEQHLcjdAqg01wdNqi/rFHvom0
+         rJjiEV2I7vbaLQm41aIKaN6nVZBOwj8u2FJok22Mrkt99PnxG2CU5a1r/lMJ2+sQ86Z8
+         keEtwQnqMda5SWm/5KYlom6jSEguLFAeHGR1DOXOC5Rqm6DhTqML1CRNnZumLXCUi+pE
+         suwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=3sTgRbRtlBuRhiGv74EwLLuTsqUsnOf8/Os99kPorHs=;
+        b=mNDOZDvK158RzDoVO3877l6ylZ20m25yHTOQcgR4fYjiVJmHQ5hzEUKxYibZF6KMLt
+         yUfFxSkxbwO6It6000sY8zZr7XKiA8qGVvY3sGGHJSw/LsDNB/yQzG3D8z7wnZLEGE9j
+         SUt3vr2goVq1rAupn+MNQgaNP3xcuuhVwMXvJQjPLwBPILs4IJBvyAY48BGFtqOlgI0M
+         nDWq4hS9CMIixIo+twOcGKj4VmEqS+5rEX7tv4VKohLXyP4sVwAV5lh+SQ+1fmVO/qMe
+         wk7CS9I6VqBmQ4y8uFI/Ot8hJg0NT+3Pm1UoGjSu/7wma9dgIDMeQ5rvT5DFZ/mwa/RE
+         QY9g==
+X-Gm-Message-State: AGRZ1gKDu0rHvtH9XSyhhYXQpRO5jlWOg4e81OVrggyXN6+35cHDuNof
+        XSt00Z/10H6EEnR3m067q7PwXt4ZT7GUe69o8ig=
+X-Google-Smtp-Source: AJdET5edpHXv2vOxVTMu+d+g9l4T6tYv4j6iNkf85M4fDpkkYrCxk1R497V5Ol1oiFJGyczWGwIprB88OUmL2+Tc2fw=
+X-Received: by 2002:a1c:9f01:: with SMTP id i1-v6mr3267116wme.8.1542235669105;
+ Wed, 14 Nov 2018 14:47:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181114222418.15960-5-jonathan@marek.ca>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+References: <984fcef6d928632241a4a3bce41e2645a304d335.1541598751.git.leonard.crestez@nxp.com>
+In-Reply-To: <984fcef6d928632241a4a3bce41e2645a304d335.1541598751.git.leonard.crestez@nxp.com>
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+Date:   Wed, 14 Nov 2018 14:47:37 -0800
+Message-ID: <CAHQ1cqFx+5otBNGA1Cx1s=HuCLgOi9yM9z=qwrP=OASUcH21=A@mail.gmail.com>
+Subject: Re: [PATCH v2] PCI: imx: Add imx6sx suspend/resume support
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Philipp Zabel <p.zabel@pengutronix.de>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>, lorenzo.pieralisi@arm.com,
+        gustavo.pimentel@synopsys.com, Jingoo Han <jingoohan1@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Dong Aisheng <aisheng.dong@nxp.com>, linux-imx@nxp.com,
+        Sascha Hauer <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks for  the patch. Perhaps a small blurb here for the commit log to let
-folks know what your intent was.
-
-On Wed, Nov 14, 2018 at 05:24:12PM -0500, Jonathan Marek wrote:
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+On Wed, Nov 7, 2018 at 5:57 AM Leonard Crestez <leonard.crestez@nxp.com> wrote:
+>
+> Enable PCI suspend/resume support on imx6sx socs. This is similar to
+> imx7d with a few differences:
+>
+> * The PM_Turn_Off bit is exposed through an IOMUX GPR, like all other
+> pcie control bits on 6sx.
+> * The pcie_inbound_axi clk needs to be turned off in suspend. On resume
+> it is restored via resume -> deassert_core_reset -> enable_ref_clk.
+>
+> Most of the resume logic is shared with the initial reset after probe.
+>
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+>
 > ---
->  drivers/gpu/drm/msm/Kconfig       |  4 ++--
->  drivers/gpu/drm/msm/msm_debugfs.c |  2 +-
->  drivers/gpu/drm/msm/msm_drv.c     | 15 +++++++++++----
->  include/linux/qcom_scm.h          |  3 +++
->  4 files changed, 17 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
-> index 843a9d40c05e..cf549f1ed403 100644
-> --- a/drivers/gpu/drm/msm/Kconfig
-> +++ b/drivers/gpu/drm/msm/Kconfig
-> @@ -2,7 +2,7 @@
->  config DRM_MSM
->  	tristate "MSM DRM"
->  	depends on DRM
-> -	depends on ARCH_QCOM || (ARM && COMPILE_TEST)
-> +	depends on ARCH_QCOM || SOC_IMX5 || (ARM && COMPILE_TEST)
->  	depends on OF && COMMON_CLK
->  	depends on MMU
->  	select QCOM_MDT_LOADER if ARCH_QCOM
-> @@ -11,7 +11,7 @@ config DRM_MSM
->  	select DRM_PANEL
->  	select SHMEM
->  	select TMPFS
-> -	select QCOM_SCM
-> +	select QCOM_SCM if ARCH_QCOM
->  	select WANT_DEV_COREDUMP
->  	select SND_SOC_HDMI_CODEC if SND_SOC
->  	select SYNC_FILE
-> diff --git a/drivers/gpu/drm/msm/msm_debugfs.c b/drivers/gpu/drm/msm/msm_debugfs.c
-> index f0da0d3c8a80..1ca99ca356a4 100644
-> --- a/drivers/gpu/drm/msm/msm_debugfs.c
-> +++ b/drivers/gpu/drm/msm/msm_debugfs.c
-> @@ -235,7 +235,7 @@ int msm_debugfs_init(struct drm_minor *minor)
->  	debugfs_create_file("gpu", S_IRUSR, minor->debugfs_root,
->  		dev, &msm_gpu_fops);
->  
-> -	if (priv->kms->funcs->debugfs_init) {
-> +	if (priv->kms && priv->kms->funcs->debugfs_init) {
->  		ret = priv->kms->funcs->debugfs_init(priv->kms, minor);
->  		if (ret)
->  			return ret;
-> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-> index 9f219e02f3c7..a10cc0298d38 100644
-> --- a/drivers/gpu/drm/msm/msm_drv.c
-> +++ b/drivers/gpu/drm/msm/msm_drv.c
-> @@ -344,6 +344,7 @@ static int msm_drm_uninit(struct device *dev)
->  	return 0;
+> Changes since v1:
+> * Use a switch statement in imx6_pcie_pm_turnoff. The DT-based turnoff
+> path is still an if statement.
+> * Did not split imx6_pcie_clk_disable or call it from other paths, this
+> would bring complications and is somewhat unrelated.
+> * See v1 comments: https://lore.kernel.org/patchwork/patch/996806/
+>
+>  drivers/pci/controller/dwc/pci-imx6.c       | 44 ++++++++++++++++++---
+>  include/linux/mfd/syscon/imx6q-iomuxc-gpr.h |  1 +
+>  2 files changed, 40 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 2cbef2d7c207..54625569d0bc 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -771,41 +771,75 @@ static void imx6_pcie_ltssm_disable(struct device *dev)
+>         }
 >  }
->  
-> +#define KMS_HEADLESS 1
->  #define KMS_MDP4 4
->  #define KMS_MDP5 5
->  #define KMS_DPU  3
-> @@ -495,6 +496,9 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
->  	msm_gem_shrinker_init(ddev);
->  
->  	switch (get_mdp_ver(pdev)) {
-> +	case KMS_HEADLESS:
-> +		priv->kms = kms = NULL;
-
-I don't think you need to set priv->kms, it should come in as NULL. I would
-normally say that you should set kms to NULL when it is declared, but I kind of
-like pointing it out to the user.
-
-> +		break;
->  	case KMS_MDP4:
->  		kms = mdp4_kms_init(ddev);
->  		priv->kms = kms;
-> @@ -633,7 +637,7 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
->  	drm_mode_config_reset(ddev);
->  
->  #ifdef CONFIG_DRM_FBDEV_EMULATION
-> -	if (fbdev)
-> +	if (kms && fbdev)
->  		priv->fbdev = msm_fbdev_init(ddev);
->  #endif
->  
-> @@ -1315,9 +1319,11 @@ static int msm_pdev_probe(struct platform_device *pdev)
->  	struct component_match *match = NULL;
->  	int ret;
->  
-> -	ret = add_display_components(&pdev->dev, &match);
-> -	if (ret)
-> -		return ret;
-> +	if (get_mdp_ver(pdev) != KMS_HEADLESS) {
-> +		ret = add_display_components(&pdev->dev, &match);
-> +		if (ret)
-> +			return ret;
-> +	}
->  
->  	ret = add_gpu_components(&pdev->dev, &match);
->  	if (ret)
-> @@ -1342,6 +1348,7 @@ static int msm_pdev_remove(struct platform_device *pdev)
->  }
->  
->  static const struct of_device_id dt_match[] = {
-> +	{ .compatible = "qcom,adreno-headless", .data = (void *)KMS_HEADLESS },
->  	{ .compatible = "qcom,mdp4", .data = (void *)KMS_MDP4 },
->  	{ .compatible = "qcom,mdss", .data = (void *)KMS_MDP5 },
->  	{ .compatible = "qcom,sdm845-mdss", .data = (void *)KMS_DPU },
-> diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
-> index 06996ad4f2bc..1637385bcc17 100644
-> --- a/include/linux/qcom_scm.h
-> +++ b/include/linux/qcom_scm.h
-> @@ -67,6 +67,9 @@ extern int qcom_scm_iommu_secure_ptbl_init(u64 addr, u32 size, u32 spare);
->  extern int qcom_scm_io_readl(phys_addr_t addr, unsigned int *val);
->  extern int qcom_scm_io_writel(phys_addr_t addr, unsigned int val);
->  #else
-> +
-> +#include <linux/errno.h>
-> +
-
-This looks like a separate patch, albeit a useful one.
-
->  static inline
->  int qcom_scm_set_cold_boot_addr(void *entry, const cpumask_t *cpus)
+>
+>  static void imx6_pcie_pm_turnoff(struct imx6_pcie *imx6_pcie)
 >  {
+> -       reset_control_assert(imx6_pcie->turnoff_reset);
+> -       reset_control_deassert(imx6_pcie->turnoff_reset);
+> +       struct device *dev = imx6_pcie->pci->dev;
+> +
+> +       /* Some variants have a turnoff reset in DT */
+> +       if (imx6_pcie->turnoff_reset) {
+> +               reset_control_assert(imx6_pcie->turnoff_reset);
+> +               reset_control_deassert(imx6_pcie->turnoff_reset);
+> +               goto pm_turnoff_sleep;
+> +       }
+> +
+> +       /* Others poke directly at IOMUXC registers */
+> +       switch (imx6_pcie->variant) {
+> +       case IMX6SX:
+> +               regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> +                               IMX6SX_GPR12_PCIE_PM_TURN_OFF,
+> +                               IMX6SX_GPR12_PCIE_PM_TURN_OFF);
+> +               regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+> +                               IMX6SX_GPR12_PCIE_PM_TURN_OFF, 0);
+> +               break;
+> +       default:
+> +               dev_err(dev, "PME_Turn_Off not implemented\n");
+> +               return;
 
-Jordan
+Purely optionally, if you feel like avoiding goto you can change this to:
 
--- 
-The Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum,
-a Linux Foundation Collaborative Project
+default:
+    if (!imx6_pcie->turnoff_reset) {
+        dev_err(dev, "PME_Turn_Off not implemented\n");
+        return;
+    }
+
+    reset_control_assert(imx6_pcie->turnoff_reset);
+    reset_control_deassert(imx6_pcie->turnoff_reset);
+    break;
+
+but that's up to you. FWIW, patch looks reasonable:
+
+Reviewed-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+
+> +       }
+>
+>         /*
+>          * Components with an upstream port must respond to
+>          * PME_Turn_Off with PME_TO_Ack but we can't check.
+>          *
+>          * The standard recommends a 1-10ms timeout after which to
+>          * proceed anyway as if acks were received.
+>          */
+> +pm_turnoff_sleep:
+>         usleep_range(1000, 10000);
+>  }
+>
+>  static void imx6_pcie_clk_disable(struct imx6_pcie *imx6_pcie)
+>  {
+>         clk_disable_unprepare(imx6_pcie->pcie);
+>         clk_disable_unprepare(imx6_pcie->pcie_phy);
+>         clk_disable_unprepare(imx6_pcie->pcie_bus);
+>
+> -       if (imx6_pcie->variant == IMX7D) {
+> +       switch (imx6_pcie->variant) {
+> +       case IMX6SX:
+> +               clk_disable_unprepare(imx6_pcie->pcie_inbound_axi);
+> +               break;
+> +       case IMX7D:
+>                 regmap_update_bits(imx6_pcie->iomuxc_gpr, IOMUXC_GPR12,
+>                                    IMX7D_GPR12_PCIE_PHY_REFCLK_SEL,
+>                                    IMX7D_GPR12_PCIE_PHY_REFCLK_SEL);
+> +               break;
+> +       default:
+> +               break;
+>         }
+>  }
+>
+> +static inline bool imx6_pcie_supports_suspend(struct imx6_pcie *imx6_pcie)
+> +{
+> +       return (imx6_pcie->variant == IMX7D ||
+> +               imx6_pcie->variant == IMX6SX);
+> +}
+> +
+>  static int imx6_pcie_suspend_noirq(struct device *dev)
+>  {
+>         struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+>
+> -       if (imx6_pcie->variant != IMX7D)
+> +       if (!imx6_pcie_supports_suspend(imx6_pcie))
+>                 return 0;
+>
+>         imx6_pcie_pm_turnoff(imx6_pcie);
+>         imx6_pcie_clk_disable(imx6_pcie);
+>         imx6_pcie_ltssm_disable(dev);
+> @@ -817,11 +851,11 @@ static int imx6_pcie_resume_noirq(struct device *dev)
+>  {
+>         int ret;
+>         struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+>         struct pcie_port *pp = &imx6_pcie->pci->pp;
+>
+> -       if (imx6_pcie->variant != IMX7D)
+> +       if (!imx6_pcie_supports_suspend(imx6_pcie))
+>                 return 0;
+>
+>         imx6_pcie_assert_core_reset(imx6_pcie);
+>         imx6_pcie_init_phy(imx6_pcie);
+>         imx6_pcie_deassert_core_reset(imx6_pcie);
+> diff --git a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> index 6c1ad160ed87..c1b25f5e386d 100644
+> --- a/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> +++ b/include/linux/mfd/syscon/imx6q-iomuxc-gpr.h
+> @@ -438,10 +438,11 @@
+>  #define IMX6SX_GPR5_DISP_MUX_DCIC1_LCDIF1              (0x0 << 1)
+>  #define IMX6SX_GPR5_DISP_MUX_DCIC1_LVDS                        (0x1 << 1)
+>  #define IMX6SX_GPR5_DISP_MUX_DCIC1_MASK                        (0x1 << 1)
+>
+>  #define IMX6SX_GPR12_PCIE_TEST_POWERDOWN               BIT(30)
+> +#define IMX6SX_GPR12_PCIE_PM_TURN_OFF                  BIT(16)
+>  #define IMX6SX_GPR12_PCIE_RX_EQ_MASK                   (0x7 << 0)
+>  #define IMX6SX_GPR12_PCIE_RX_EQ_2                      (0x2 << 0)
+>
+>  /* For imx6ul iomux gpr register field define */
+>  #define IMX6UL_GPR1_ENET1_CLK_DIR              (0x1 << 17)
+> --
+> 2.17.1
+>
