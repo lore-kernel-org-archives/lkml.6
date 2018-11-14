@@ -2,87 +2,106 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
+	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 969A1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:51:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 94D01C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:55:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A7C622419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:51:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0519822360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:55:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CD7hiRgN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A7C622419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aussec.com header.i=@aussec.com header.b="Eoz4XBYV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0519822360
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=aussec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732469AbeKNWyp (ORCPT
+        id S1732271AbeKNW62 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 17:54:45 -0500
-Received: from mail-lj1-f194.google.com ([209.85.208.194]:34013 "EHLO
-        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728033AbeKNWyp (ORCPT
+        Wed, 14 Nov 2018 17:58:28 -0500
+Received: from csm1.csm-office.com.au ([165.228.118.109]:48334 "EHLO
+        sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727797AbeKNW62 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 17:54:45 -0500
-Received: by mail-lj1-f194.google.com with SMTP id u6-v6so13993800ljd.1
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 04:51:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6DQ5ok3d1HCyACAXAFNcRKnegy7bDqFjHbFfMbNcA8A=;
-        b=CD7hiRgNVhvl+VjRFGBJcbOozmdHmmEfXWkWT+uHRMkKPJWhnEydz95WlSqtAqZ7Eq
-         2TsBUeVbyIYQfYuikeHoCjwUAYZgaoQaW0GqZolYJPpUWxI3Gz9zxzMLuh6ez4BmruQ0
-         HhkDVxy/th1qfsLgIe7BUE/wWyJhAO2PtzmGk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6DQ5ok3d1HCyACAXAFNcRKnegy7bDqFjHbFfMbNcA8A=;
-        b=CF6lJRZJVxmjYMSDqmBQpQhf+RQo99J3S0SEhs8IkFduNdu3mUBUiVEGCh5o2fkT+6
-         dufWOnPSchTP5sqBqTNjDdNnEM8+VcV5FIKQInGl22wKsER8Nbka28WlxUZi0Zr771P+
-         RfHVgxRoU4Zeqsohr1YDGz32DFydGe08qj7Kq4SN9J3zB0xde0dqxL+lRDitdDBaz+R5
-         sNGGzYvteca5UwrqFBadIJQ5vbutweacKhoLjbHT22KEEZDxethVwIVJEeTQJVUjyvlx
-         1ZjK3mQ5oZwB4i5+QdG7sEhbUdn/THKpt8yv6b0eS4Ear4q25p1mu0ThvyApv3wBpC8c
-         +57A==
-X-Gm-Message-State: AGRZ1gJnhqHziokNeXUsBMKCw0wBHvvjNF4/E0DxUxTQ5iwYvtbitan3
-        WpQ96Skj2qV5x2BX+PQgemDEPAh39bUg3QSYcF3YKw==
-X-Google-Smtp-Source: AJdET5eO2pshaTQTpqpcLOVAsDCYmQoTeoBHBoyBpaU31suNlJVxti6g5E4X/2+b8wcWj8Q5VCRHJJySUzg41QDH7sk=
-X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr249756ljj.9.1542199896058;
- Wed, 14 Nov 2018 04:51:36 -0800 (PST)
-MIME-Version: 1.0
-References: <20181105232349.17351-1-jmkrzyszt@gmail.com>
-In-Reply-To: <20181105232349.17351-1-jmkrzyszt@gmail.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Wed, 14 Nov 2018 13:51:23 +0100
-Message-ID: <CACRpkdYxgh9Nvh3WsOmE25KRHhn-E9NJ-4wVSzt6SjOTRCuYLg@mail.gmail.com>
-Subject: Re: [PATCH] ARM: OMAP1: ams-delta: Provide GPIO lookup table for LED device
-To:     Janusz Krzysztofik <jmkrzyszt@gmail.com>
-Cc:     ext Tony Lindgren <tony@atomide.com>,
-        Aaro Koskinen <aaro.koskinen@iki.fi>,
-        Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-        Pavel Machek <pavel@ucw.cz>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        Linux-OMAP <linux-omap@vger.kernel.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        linux-leds@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Wed, 14 Nov 2018 17:58:28 -0500
+X-Virus-Scanned: amavisd-new at aussec.com
+Received: from hpdv6.aussec.com.com (c110-21-61-29.farfl4.nsw.optusnet.com.au [110.21.61.29])
+        (authenticated bits=0)
+        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTPSA id wAECsstV003333
+        (version=TLSv1.2 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO);
+        Wed, 14 Nov 2018 23:55:10 +1100
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aussec.com; s=2016;
+        t=1542200110; bh=TnnasEFWanrOaCrgNwZ9Yo6u3mdSfrsK1XA2RCHHYs0=;
+        h=From:To:Cc:Subject:Date;
+        b=Eoz4XBYVNmeFt6Fbcz3N4TsD2omusPXPcRnxvR3Eis+sClTZvLw+7sTAbfnuLUmJ0
+         qB0hDUukXhZYmIhk8xBJHdcWZm3HGnSVvWKUnqDnfe+L8eGW26HQgzHTRlB2Y8PDl7
+         qc6I6IRHofW5/rVDwWxdgoPR0i3jlnraBGY8dygly/VdgQl2KlCcR+kIr1RY7Fpf9j
+         YZcM8JlVtVtJ7wl5COSee08bR+D/3SVh0ZAiGII/s15EUHffgjJNOxdc1vd3/rQNb8
+         pKdaaWlX8RZsmZVD+xM5VuMEEQtqxvyOU7hvg1ner4DMMr6ZjD0XtfeVj314gTePbB
+         K/NyaZ+qxaCMQ==
+From:   Tom Burkart <tom@aussec.com>
+To:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
+Cc:     Tom Burkart <tom@aussec.com>
+Subject: [PATCH v7 0/4] PPS: pps-gpio PPS ECHO implementation
+Date:   Wed, 14 Nov 2018 23:54:28 +1100
+Message-Id: <20181114125432.16044-1-tom@aussec.com>
+X-Mailer: git-send-email 2.12.3
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 12:22 AM Janusz Krzysztofik <jmkrzyszt@gmail.com> wrote:
+Hi all,
+please find attached the PPS-GPIO PPS ECHO implementation patch. The
+driver claims to have echo functionality in the sysfs interface but this
+functionality is not present.  This patch provides this functionality.
 
-> Global GPIO numbers no longer have to be passed to leds-gpio driver,
-> replace their assignment with a lookup table.
->
-> Signed-off-by: Janusz Krzysztofik <jmkrzyszt@gmail.com>
+Parts 1 and 2 of the patch change the original driver from the number
+based GPIO ABI to the descriptor based ABI.  This has been modified
+to not break backward compatibility.
 
-Excellent Janusz! :)
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Parts 3 and 4 then add the PPS ECHO functionality.  This is enabled if a
+"echo-gpios" entry is found in the devicetree.
 
-Yours,
-Linus Walleij
+Changes in v4:
+There is a bugfix in part 2 that was returning an uninitialised variable
+and juggling some code that speeds up the probe by not running code when
+not using PPS ECHO.
+
+Changes in v5:
+Meet all requirements of checkpatch
+
+Changes in v6:
+Cosmetic changes to code layout
+
+Changes in v7:
+Also accept the DEPRECATED "gpios" devicetree entry to ensure backward
+compatibility.
+
+On the linuxpps mailing list it was suggested to use a hrtimer for
+resetting the GPIO ECHO active state to the inactive state.
+Please also comment on whether a hrtimer is necessary/desirable for the
+purpose of resetting the echo pin active state.  I am happy to implement
+it if there is a need.
+
+Please install, test and comment as it is now a quite major change to
+the driver.
+Please do send suggestions for improvement.
+
+Tom Burkart
+
+Tom Burkart (4):
+  dt-bindings: pps: descriptor-based gpio, capture-clear addition
+  pps: descriptor-based gpio, capture-clear addition
+  dt-bindings: pps: pps-gpio PPS ECHO implementation
+  pps: pps-gpio pps-echo implementation
+
+ Documentation/devicetree/bindings/pps/pps-gpio.txt |  17 +-
+ drivers/pps/clients/pps-gpio.c                     | 225 +++++++++++++++++----
+ include/linux/pps-gpio.h                           |   6 +-
+ 3 files changed, 203 insertions(+), 45 deletions(-)
+
+-- 
+2.12.3
+
