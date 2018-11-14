@@ -2,41 +2,42 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 33603C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:01:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54CCEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:01:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E34D222360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:01:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0558D22419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:01:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="YDxU6Mh+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E34D222360
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="cXijDtzz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0558D22419
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733213AbeKNXEs (ORCPT
+        id S1733272AbeKNXEy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 18:04:48 -0500
-Received: from mail-eopbgr80059.outbound.protection.outlook.com ([40.107.8.59]:56394
-        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
+        Wed, 14 Nov 2018 18:04:54 -0500
+Received: from mail-eopbgr40060.outbound.protection.outlook.com ([40.107.4.60]:28885
+        "EHLO EUR03-DB5-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728203AbeKNXEs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 18:04:48 -0500
+        id S1733173AbeKNXEu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 18:04:50 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=4y9ko9sSOl+xC7S1ZMqDGQcix+QWxbX/dXLo6/T5exY=;
- b=YDxU6Mh+xCzH0kt0Lg3Y5Y8DVIsoxSQuuJZkvrPwXxTSs14J9REQhdnn5+pf7b8A5Y0H63ow+DqWDGPoaD55iV59E802T7RPjpupjZDHbJ0UQjTHX3i4UHd2nMvSJkfq+5TVRvuc+d4uQ8UGXbfARxEJ6iRTIVdWOzrqtOjN3ng=
+ bh=uma8WhEMPxmXwpwpe+MW2mynAFUU2IDhkKg1Pd1oPrM=;
+ b=cXijDtzzcQ97qUKDXpqO04QxEglJ44N+cdubIi94FkbCzmnQJpPn7h0RJLtdzINlZUa1vPyt1b+M4Vd582LaZmbvSCJhb/U6qfUDy+UreQ3WfRnpZrARhSFXQ3KFzhmXYQ5JtKdJ/hQsVXmeBentyuw5tsdLjUupCMTHZLHn/PY=
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com (52.134.126.21) by
- AM0PR04MB4066.eurprd04.prod.outlook.com (52.134.125.24) with Microsoft SMTP
+ AM0PR04MB5187.eurprd04.prod.outlook.com (20.177.42.16) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Wed, 14 Nov 2018 13:01:31 +0000
+ 15.20.1294.22; Wed, 14 Nov 2018 13:01:35 +0000
 Received: from AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::797a:f972:9281:6d10]) by AM0PR04MB4211.eurprd04.prod.outlook.com
  ([fe80::797a:f972:9281:6d10%2]) with mapi id 15.20.1294.045; Wed, 14 Nov 2018
- 13:01:31 +0000
+ 13:01:35 +0000
 From:   "A.s. Dong" <aisheng.dong@nxp.com>
 To:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>
 CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
@@ -47,12 +48,15 @@ CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "shawnguo@kernel.org" <shawnguo@kernel.org>,
         Anson Huang <anson.huang@nxp.com>,
         Jacky Bai <ping.bai@nxp.com>, dl-linux-imx <linux-imx@nxp.com>,
-        "A.s. Dong" <aisheng.dong@nxp.com>
-Subject: [PATCH V6 0/9] clk: add imx7ulp clk support
-Thread-Topic: [PATCH V6 0/9] clk: add imx7ulp clk support
-Thread-Index: AQHUfBop1Xq5Us4kAEeJejcBpfY7Tg==
-Date:   Wed, 14 Nov 2018 13:01:31 +0000
-Message-ID: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Stephen Boyd <sboyd@codeaurora.org>
+Subject: [PATCH V6 1/9] clk: imx: add gatable clock divider support
+Thread-Topic: [PATCH V6 1/9] clk: imx: add gatable clock divider support
+Thread-Index: AQHUfBosRvu0AlBkdU+Xo11aelWMwA==
+Date:   Wed, 14 Nov 2018 13:01:35 +0000
+Message-ID: <1542200198-3017-2-git-send-email-aisheng.dong@nxp.com>
+References: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
+In-Reply-To: <1542200198-3017-1-git-send-email-aisheng.dong@nxp.com>
 Accept-Language: zh-CN, en-US
 Content-Language: en-US
 X-MS-Has-Attach: 
@@ -66,120 +70,345 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [119.31.174.66]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;AM0PR04MB4066;6:Fx5ibsszKcU97p+r8NAuPjE2TKC+N4iaPfUG0Wm3QT2lwbhG0S8Jbt0OgZsNRJX9/rkg3ufbiylCcI7TBAez89U+wxW9nsS2KKW0w6JTYthv9Huk19lM10Ekmi3JspNlt6mfg8Jc17no31KMmplexT4fU0kezDstmKL5ijo++yhZy0t987d+DQP8eZTn10q6QmZj78QIyMFrB5EpOcR+v2WBpy7fAInwPEt59D1kjlbRWxy2hIg6srYtTT4eNVttznEM4mTHmA2oyJsfxWJ5fmVU3bXA4qH38SR66iOtEvVC7U0SVOfQB+B+SchiH/cwMT88MDqkOK54tRG3zRN1Rz1x8SSfA2b1VX8yINKsidtbAKfxvrxMhH40nfUPHbX7U4I7+4r9MMID2T6kwKtjTy3XMWF0lfJN8nMpDaiU1rFWaCFaXAD3Wajm/C/kSu/uL0etYvqK4dhUsn4wymh+mA==;5:Q5+n8ytjLnEuGZ65PPRLTAtoX/4jVlC3bVRk4P4fnuM8Xsnt1U7wG/SKUyWtllnO+O+5suTBCEAxtpdU7++8VER5KNodOxQ29h4CRXdjjCBaJrRxv025M4+gQMprkwAztQw3gpb+AGp8XhTz0Bxx3TulQWIMbXbZSE4rP5vJAbw=;7:txLy8KUEjYreRsLfAPTFCgvTSVCxufB4C3xrcAMH2LK4gWCF2sS/vP/I8YFNvhmpEEOMujP62CmaUYDMoOhEke+ctUmnRUoWJ1K2LpkAQusJ7RZqOWSfTYCfOBHAkRQuBXy8jkbSUchT06AXxODBjw==
-x-ms-office365-filtering-correlation-id: 20f9f041-a664-45af-99d0-08d64a314c1b
+x-microsoft-exchange-diagnostics: 1;AM0PR04MB5187;6:8inYGhp04hNsQwYLYCZOVF+3l6OQZGMWO/mnfsS4lMnp+oAhuE3geycb4vvXO61+LUFY+kyYqoheivjuavIGh1MgBMGMqLvrUZYBEHQFr+winQ768liDD+AT6BwQmbw1foXVSXrMkD0k/rrsO03lYoDajGkAOvnR34AA1Pw5vcXJ+pDzGk7oJdrWIX+W67ZoQ1RMYBDSS0G8obkffQRISFuCKniUevoAYTXIr5zLATE59OqW7N/TUHQG/R4noJO2s1vYfXQcL/UWGs2/nXNErV3SuVdZRMrcjm8bG99KWgSmxZf4l1M7Fe8Il0cl4hgO9xQ7cuBF2ldsqd7trllspKl5JuIOR9JDdypzdCLNXPAhAFimbaLEhTtx9yMnb/hORAqtIrNm4R2ljIydsigB0D3IVYyry7P7thQNrstRK+OvbAAMyEQV3wDhavyEaqmEtdpqNGYMeoMgSYaeltIqGA==;5:UmRawTNm4QLwAZNC7s338Kk0QGIrj4O7lZ0uovZ8sCnrhEAuVe8V8fL+6qc5rlTV0uq+55F8tPPUpbh/ak74hizGfZP/DRPjL5+Ijnwl+tzUWVuaALwEl55xJbqG7GmVOTiT5a/eJqbhEoDqyqnUBl5jCcDJiA3uQPqoYC9udqQ=;7:v18R4qFGpQse/I+Y0AoQuaFWYheQvWH5EVNu7YtpT1B3rQBxVCdyw8oN0tgGXUja3HqJNPwAv2NRyQxAZB/m5ruKLC91GBKXxbKSV2aZWMsTs8cpHLDuBPTQ1f/+X4L0Ufl6SNUl3jKucHoi8PNKoA==
+x-ms-office365-filtering-correlation-id: 8b099a5f-d532-4d25-d696-08d64a314e7e
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB4066;
-x-ms-traffictypediagnostic: AM0PR04MB4066:
-x-microsoft-antispam-prvs: <AM0PR04MB4066042B266E43977E5B531D80C30@AM0PR04MB4066.eurprd04.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(269456686620040);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM0PR04MB5187;
+x-ms-traffictypediagnostic: AM0PR04MB5187:
+x-microsoft-antispam-prvs: <AM0PR04MB51870F609C8D9F921907A34E80C30@AM0PR04MB5187.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(185117386973197);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231410)(944501410)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB4066;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB4066;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231410)(944501410)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123560045)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:AM0PR04MB5187;BCL:0;PCL:0;RULEID:;SRVR:AM0PR04MB5187;
 x-forefront-prvs: 085634EFF4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(366004)(376002)(396003)(346002)(136003)(39860400002)(199004)(189003)(54534003)(5660300001)(25786009)(6916009)(14444005)(6436002)(4326008)(6486002)(486006)(54906003)(71190400001)(7736002)(305945005)(86362001)(2616005)(36756003)(14454004)(71200400001)(186003)(476003)(97736004)(99286004)(68736007)(8936002)(6116002)(3846002)(2501003)(8676002)(26005)(81166006)(81156014)(52116002)(478600001)(50226002)(5640700003)(102836004)(6512007)(2900100001)(105586002)(256004)(2906002)(53936002)(66066001)(2351001)(106356001)(6506007)(386003)(316002)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB4066;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:3;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(376002)(346002)(39860400002)(366004)(199004)(189003)(54534003)(6436002)(52116002)(71190400001)(71200400001)(446003)(105586002)(2351001)(305945005)(11346002)(26005)(106356001)(7736002)(76176011)(256004)(14444005)(5660300001)(54906003)(2906002)(6916009)(6486002)(316002)(68736007)(6506007)(102836004)(186003)(2900100001)(386003)(3846002)(478600001)(8676002)(66066001)(8936002)(6116002)(81166006)(14454004)(81156014)(4326008)(25786009)(476003)(36756003)(99286004)(53936002)(486006)(97736004)(5640700003)(50226002)(2616005)(6512007)(86362001)(2501003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM0PR04MB5187;H:AM0PR04MB4211.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
 received-spf: None (protection.outlook.com: nxp.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: fcE0DeADsq/2PJA6YZiu+2naP33fzdw6cQFNJvb1SjN1qSA4jSQ+U2yvlQrZXgMCSDDlWmXm3w09T3jaLsWKL4e3G65D5PGNG2K590qmQFdQ1nQMy4LzTUdTVke6Yt5XVjxfHCDIe8rQH8RwobiUevIzTKPS6NV0nNLyfAchh+ggk8tGcbR+zz3i5BsorCdOdfWrkFcObmn522yoLSbZv5jqqE+oHjF0jAUCbjV4PYNg0RQU00UoM6BCGUy9GMLffWGn35MfidlVzey/SQc80iOFS6+x8ZvF66QmUlYOoE2Ly9ilbT9+LiBYBe5lnJSoT8+QOTfpZD7OQg+k+u9/Bp6AYVA3HMVVLfoRurYw7EI=
+x-microsoft-antispam-message-info: rxr5LIqUvTgJJTjiRpYrCbbx6Ezdg366IsHCKhB9HowS1Q/Ker2osMXKdFBcucaD5S3A6B+qe7UMWFVc6FzfIln/eJOEL1N1etPJa7aLNV+6G0fq2z0/EFSKam/Y/HS04arTEkAo7FEuU3T2tXNPpsKhzS0rgDGaqHCFSTH4A1IAEFxEzML7qcf87kYUVOAXqPC4lK2rUv71H/weURQj19CSaJoJIHeZ2sGonXrHEk1FAFQ7wjy9lv6Joycx5Lkd5gkCfd3fXUBAfB8AoUtIUHwppjN3fsH5h6gy9LOY1lvdol36GyvoxxjmZlEGOCXAhMhrykT5fIVE6TLbhnJkFWejUrZWP892yHaOZYvDZ5M=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 20f9f041-a664-45af-99d0-08d64a314c1b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 13:01:31.3116
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8b099a5f-d532-4d25-d696-08d64a314e7e
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 13:01:35.3004
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB4066
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB5187
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch series intends to add imx7ulp clk support.
+For dividers with zero indicating clock is disabled, instead of giving a
+warning each time like "clkx: Zero divisor and CLK_DIVIDER_ALLOW_ZERO not
+set" in exist code, we'd like to introduce enable/disable function for it.
+e.g.
+000b - Clock disabled
+001b - Divide by 1
+010b - Divide by 2
+...
 
-i.MX7ULP Clock functions are under joint control of the System
-Clock Generation (SCG) modules, Peripheral Clock Control (PCC)
-modules, and Core Mode Controller (CMC)1 blocks
+Set rate when the clk is disabled will cache the rate request and only
+when the clk is enabled will the driver actually program the hardware to
+have the requested divider value. Similarly, when the clk is disabled we'll
+write a 0 there, but when the clk is enabled we'll restore whatever rate
+(divider) was chosen last.
 
-The clocking scheme provides clear separation between M4 domain
-and A7 domain. Except for a few clock sources shared between two
-domains, such as the System Oscillator clock, the Slow IRC (SIRC),
-and and the Fast IRC clock (FIRCLK), clock sources and clock
-management are separated and contained within each domain.
+It does mean that recalc rate will be sort of odd, because when the clk is
+off it will return 0, and when the clk is on it will return the right rate.
+So to make things work, we'll need to return the cached rate in recalc rate
+when the clk is off and read the hardware when the clk is on.
 
-M4 clock management consists of SCG0, PCC0, PCC1, and CMC0 modules.
-A7 clock management consists of SCG1, PCC2, PCC3, and CMC1 modules.
+NOTE for the default off divider, the recalc rate will still return 0 as
+there's still no proper preset rate. Enable such divider will give user
+a reminder error message.
 
-Note: this series only adds A7 clock domain support as M4 clock
-domain will be handled by M4 seperately.
+Cc: Stephen Boyd <sboyd@codeaurora.org>
+Cc: Michael Turquette <mturquette@baylibre.com>
+Cc: Shawn Guo <shawnguo@kernel.org>
+Signed-off-by: Dong Aisheng <aisheng.dong@nxp.com>
 
-Change Log:
+---
+ChangeLog:
 v5->v6:
- * move gatable divider from common divider to imx specfic folder(suggested=
- by Michael)
- * a small update of PATCH 9 for ddr/firc/dpll/sosc clocks to use divider t=
-able
+ * move gatable divider code into imx specific clock folder as suggested
+   by Michael. Patch title also updated accordingly.
 v4->v5:
- * rename to clk-composite-7ulp.c as we have another
-   clk-composite-8m.c, function name also changed accordingly
- * binding doc updated with adding input clocks for PCC module
+ * no changes
 v3->v4:
- * update after changing scg and pcc into separete nodes according to
-   Rob's suggestion
+ * no changes
 v2->v3:
- * Patch 1 changed on: 1) split normal and gate ops 2) fix the possible rac=
-y
-   Others no changes.
-
+ * split normal and gate ops
+ * fix the possible racy
 v1->v2:
  * add enable/disable for the type of CLK_DIVIDER_ZERO_GATE dividers
- * use clk_hw apis to register clocks
- * use of_clk_add_hw_provider
- * split the clocks register process into two parts: early part for possibl=
-e
-   timers clocks registered by CLK_OF_DECLARE_DRIVER and the later part for
-   the left normal peripheral clocks registered by a platform driver.
-
-Dong Aisheng (9):
-  clk: imx: add gatable clock divider support
-  clk: fractional-divider: add CLK_FRAC_DIVIDER_ZERO_BASED flag support
-  clk: imx: add pllv4 support
-  clk: imx: add pfdv2 support
-  clk: imx: add imx7ulp composite clk support
-  dt-bindings: clock: add imx7ulp clock binding doc
-  clk: imx: make mux parent strings const
-  clk: imx: implement new clk_hw based APIs
-  clk: imx: add imx7ulp clk driver
-
- .../devicetree/bindings/clock/imx7ulp-clock.txt    | 104 ++++++++++
- drivers/clk/clk-fractional-divider.c               |  10 +
- drivers/clk/imx/Makefile                           |   7 +-
- drivers/clk/imx/clk-busy.c                         |   2 +-
- drivers/clk/imx/clk-composite-7ulp.c               |  85 ++++++++
- drivers/clk/imx/clk-divider-gate.c                 | 219 +++++++++++++++++=
-+++
- drivers/clk/imx/clk-fixup-mux.c                    |   2 +-
- drivers/clk/imx/clk-imx7ulp.c                      | 220 +++++++++++++++++=
+---
+ drivers/clk/imx/Makefile           |   1 +
+ drivers/clk/imx/clk-divider-gate.c | 219 +++++++++++++++++++++++++++++++++=
 ++++
- drivers/clk/imx/clk-pfdv2.c                        | 201 +++++++++++++++++=
-++
- drivers/clk/imx/clk-pllv4.c                        | 182 +++++++++++++++++
- drivers/clk/imx/clk.c                              |  22 +++
- drivers/clk/imx/clk.h                              |  96 ++++++++-
- include/dt-bindings/clock/imx7ulp-clock.h          | 109 ++++++++++
- include/linux/clk-provider.h                       |   8 +
- 14 files changed, 1257 insertions(+), 10 deletions(-)
- create mode 100644 Documentation/devicetree/bindings/clock/imx7ulp-clock.t=
-xt
- create mode 100644 drivers/clk/imx/clk-composite-7ulp.c
+ drivers/clk/imx/clk.h              |   4 +
+ 3 files changed, 224 insertions(+)
  create mode 100644 drivers/clk/imx/clk-divider-gate.c
- create mode 100644 drivers/clk/imx/clk-imx7ulp.c
- create mode 100644 drivers/clk/imx/clk-pfdv2.c
- create mode 100644 drivers/clk/imx/clk-pllv4.c
- create mode 100644 include/dt-bindings/clock/imx7ulp-clock.h
 
+diff --git a/drivers/clk/imx/Makefile b/drivers/clk/imx/Makefile
+index 8c3baa7..077e732 100644
+--- a/drivers/clk/imx/Makefile
++++ b/drivers/clk/imx/Makefile
+@@ -4,6 +4,7 @@ obj-y +=3D \
+ 	clk.o \
+ 	clk-busy.o \
+ 	clk-cpu.o \
++	clk-divider-gate.o \
+ 	clk-fixup-div.o \
+ 	clk-fixup-mux.o \
+ 	clk-gate-exclusive.o \
+diff --git a/drivers/clk/imx/clk-divider-gate.c b/drivers/clk/imx/clk-divid=
+er-gate.c
+new file mode 100644
+index 0000000..b48fba2
+--- /dev/null
++++ b/drivers/clk/imx/clk-divider-gate.c
+@@ -0,0 +1,219 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ * Copyright 2018 NXP.
++ *   Dong Aisheng <aisheng.dong@nxp.com>
++ */
++
++#include <linux/clk-provider.h>
++#include <linux/err.h>
++#include <linux/io.h>
++#include <linux/slab.h>
++
++struct clk_divider_gate {
++	struct clk_divider divider;
++	u32 cached_val;
++};
++
++static inline struct clk_divider_gate *to_clk_divider_gate(struct clk_hw *=
+hw)
++{
++	struct clk_divider *div =3D to_clk_divider(hw);
++
++	return container_of(div, struct clk_divider_gate, divider);
++}
++
++static unsigned long clk_divider_gate_recalc_rate_ro(struct clk_hw *hw,
++						     unsigned long parent_rate)
++{
++	struct clk_divider *div =3D to_clk_divider(hw);
++	unsigned int val;
++
++	val =3D clk_readl(div->reg) >> div->shift;
++	val &=3D clk_div_mask(div->width);
++	if (!val)
++		return 0;
++
++	return divider_recalc_rate(hw, parent_rate, val, div->table,
++				   div->flags, div->width);
++}
++
++static unsigned long clk_divider_gate_recalc_rate(struct clk_hw *hw,
++						  unsigned long parent_rate)
++{
++	struct clk_divider_gate *div_gate =3D to_clk_divider_gate(hw);
++	struct clk_divider *div =3D to_clk_divider(hw);
++	unsigned long flags =3D 0;
++	unsigned int val;
++
++	spin_lock_irqsave(div->lock, flags);
++
++	if (!clk_hw_is_enabled(hw)) {
++		val =3D div_gate->cached_val;
++	} else {
++		val =3D clk_readl(div->reg) >> div->shift;
++		val &=3D clk_div_mask(div->width);
++	}
++
++	spin_unlock_irqrestore(div->lock, flags);
++
++	if (!val)
++		return 0;
++
++	return divider_recalc_rate(hw, parent_rate, val, div->table,
++				   div->flags, div->width);
++}
++
++static long clk_divider_round_rate(struct clk_hw *hw, unsigned long rate,
++				   unsigned long *prate)
++{
++	return clk_divider_ops.round_rate(hw, rate, prate);
++}
++
++static int clk_divider_gate_set_rate(struct clk_hw *hw, unsigned long rate=
+,
++				unsigned long parent_rate)
++{
++	struct clk_divider_gate *div_gate =3D to_clk_divider_gate(hw);
++	struct clk_divider *div =3D to_clk_divider(hw);
++	unsigned long flags =3D 0;
++	int value;
++	u32 val;
++
++	value =3D divider_get_val(rate, parent_rate, div->table,
++				div->width, div->flags);
++	if (value < 0)
++		return value;
++
++	spin_lock_irqsave(div->lock, flags);
++
++	if (clk_hw_is_enabled(hw)) {
++		val =3D clk_readl(div->reg);
++		val &=3D ~(clk_div_mask(div->width) << div->shift);
++		val |=3D (u32)value << div->shift;
++		clk_writel(val, div->reg);
++	} else {
++		div_gate->cached_val =3D value;
++	}
++
++	spin_unlock_irqrestore(div->lock, flags);
++
++	return 0;
++}
++
++static int clk_divider_enable(struct clk_hw *hw)
++{
++	struct clk_divider_gate *div_gate =3D to_clk_divider_gate(hw);
++	struct clk_divider *div =3D to_clk_divider(hw);
++	unsigned long flags =3D 0;
++	u32 val;
++
++	if (!div_gate->cached_val) {
++		pr_err("%s: no valid preset rate\n", clk_hw_get_name(hw));
++		return -EINVAL;
++	}
++
++	spin_lock_irqsave(div->lock, flags);
++	/* restore div val */
++	val =3D clk_readl(div->reg);
++	val |=3D div_gate->cached_val << div->shift;
++	clk_writel(val, div->reg);
++
++	spin_unlock_irqrestore(div->lock, flags);
++
++	return 0;
++}
++
++static void clk_divider_disable(struct clk_hw *hw)
++{
++	struct clk_divider_gate *div_gate =3D to_clk_divider_gate(hw);
++	struct clk_divider *div =3D to_clk_divider(hw);
++	unsigned long flags =3D 0;
++	u32 val;
++
++	spin_lock_irqsave(div->lock, flags);
++
++	/* store the current div val */
++	val =3D clk_readl(div->reg) >> div->shift;
++	val &=3D clk_div_mask(div->width);
++	div_gate->cached_val =3D val;
++	clk_writel(0, div->reg);
++
++	spin_unlock_irqrestore(div->lock, flags);
++}
++
++static int clk_divider_is_enabled(struct clk_hw *hw)
++{
++	struct clk_divider *div =3D to_clk_divider(hw);
++	u32 val;
++
++	val =3D clk_readl(div->reg) >> div->shift;
++	val &=3D clk_div_mask(div->width);
++
++	return val ? 1 : 0;
++}
++
++static const struct clk_ops clk_divider_gate_ro_ops =3D {
++	.recalc_rate =3D clk_divider_gate_recalc_rate_ro,
++	.round_rate =3D clk_divider_round_rate,
++};
++
++static const struct clk_ops clk_divider_gate_ops =3D {
++	.recalc_rate =3D clk_divider_gate_recalc_rate,
++	.round_rate =3D clk_divider_round_rate,
++	.set_rate =3D clk_divider_gate_set_rate,
++	.enable =3D clk_divider_enable,
++	.disable =3D clk_divider_disable,
++	.is_enabled =3D clk_divider_is_enabled,
++};
++
++/*
++ * NOTE: In order to resue the most code from the common divider,
++ * we also design our divider following the way that provids an extra
++ * clk_divider_flags, however it's fixed to CLK_DIVIDER_ONE_BASED by
++ * default as our HW is. Besides that it supports only CLK_DIVIDER_READ_ON=
+LY
++ * flag which can be specified by user flexibly.
++ */
++struct clk_hw *imx_clk_divider_gate(const char *name, const char *parent_n=
+ame,
++				    unsigned long flags, void __iomem *reg,
++				    u8 shift, u8 width, u8 clk_divider_flags,
++				    const struct clk_div_table *table,
++				    spinlock_t *lock)
++{
++	struct clk_init_data init;
++	struct clk_divider_gate *div_gate;
++	struct clk_hw *hw;
++	u32 val;
++	int ret;
++
++	div_gate  =3D kzalloc(sizeof(*div_gate), GFP_KERNEL);
++	if (!div_gate)
++		return ERR_PTR(-ENOMEM);
++
++	init.name =3D name;
++	if (clk_divider_flags & CLK_DIVIDER_READ_ONLY)
++		init.ops =3D &clk_divider_gate_ro_ops;
++	else
++		init.ops =3D &clk_divider_gate_ops;
++	init.flags =3D flags;
++	init.parent_names =3D parent_name ? &parent_name : NULL;
++	init.num_parents =3D parent_name ? 1 : 0;
++
++	div_gate->divider.reg =3D reg;
++	div_gate->divider.shift =3D shift;
++	div_gate->divider.width =3D width;
++	div_gate->divider.lock =3D lock;
++	div_gate->divider.table =3D table;
++	div_gate->divider.hw.init =3D &init;
++	div_gate->divider.flags =3D CLK_DIVIDER_ONE_BASED | clk_divider_flags;
++	/* cache gate status */
++	val =3D clk_readl(reg) >> shift;
++	val &=3D clk_div_mask(width);
++	div_gate->cached_val =3D val;
++
++	hw =3D &div_gate->divider.hw;
++	ret =3D clk_hw_register(NULL, hw);
++	if (ret) {
++		kfree(div_gate);
++		hw =3D ERR_PTR(ret);
++	}
++
++	return hw;
++}
+diff --git a/drivers/clk/imx/clk.h b/drivers/clk/imx/clk.h
+index 8076ec0..8e65282 100644
+--- a/drivers/clk/imx/clk.h
++++ b/drivers/clk/imx/clk.h
+@@ -220,4 +220,8 @@ struct clk *imx_clk_cpu(const char *name, const char *p=
+arent_name,
+ 		struct clk *div, struct clk *mux, struct clk *pll,
+ 		struct clk *step);
+=20
++struct clk_hw *imx_clk_divider_gate(const char *name, const char *parent_n=
+ame,
++		unsigned long flags, void __iomem *reg, u8 shift, u8 width,
++		u8 clk_divider_flags, const struct clk_div_table *table,
++		spinlock_t *lock);
+ #endif
 --=20
 2.7.4
 
