@@ -2,182 +2,184 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D164AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:51:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D71C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:52:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9084A2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:51:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9084A2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id CFF132243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:52:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xx7aepP8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFF132243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731915AbeKNUyi (ORCPT
+        id S1732334AbeKNUzU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 15:54:38 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:59961 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727816AbeKNUyh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 15:54:37 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A246420D72; Wed, 14 Nov 2018 11:51:52 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 73579206FF;
-        Wed, 14 Nov 2018 11:51:52 +0100 (CET)
-Date:   Wed, 14 Nov 2018 11:51:52 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Kishon Vijay Abraham I <kishon@ti.com>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        linux-media@vger.kernel.org,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org,
-        Krzysztof Witos <kwitos@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>
-Subject: Re: [PATCH v2 2/9] phy: Add configuration interface
-Message-ID: <20181114105152.sgk454t34hmzstkn@flea>
-References: <cover.c2c2ae47383b9dbbdee6b69cafdd7391c06dde4f.1541516029.git-series.maxime.ripard@bootlin.com>
- <4d0506aa0a61d234610b42a268a8326d9ea18466.1541516029.git-series.maxime.ripard@bootlin.com>
- <3a9a28df-8139-1036-a884-0de64aa07df1@ti.com>
+        Wed, 14 Nov 2018 15:55:20 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:44628 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727816AbeKNUzT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 15:55:19 -0500
+Received: by mail-qk1-f194.google.com with SMTP id n12so24875113qkh.11;
+        Wed, 14 Nov 2018 02:52:35 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oILDwk+dze61xBA2crzRxnTFLGC3E2KD7D6N85/WTVI=;
+        b=Xx7aepP8Ak0MGzdUibTtnMSFtRYS6VlYRoPhQHqyPINRT+QB5TA3LERQv2NE/EQa/g
+         MYk12MvVlEfMyf/DKo846Jj4HjX+OSHuozvChOyFYCj0WOgpHGo7IvHXDllH/besLr+b
+         4rYnzLV/IhzAYc1nVplknD2ds2jFP5PdAIjkHM5DXt2HSiOoF91adZ97UMzAbvq63IHd
+         CNIKmU7yO7ORr3Z5g2L0+iri0NUs0jxyYzVEgcWx9BELMmmMEyu37W8rHAY7GcnLtesw
+         VVH9ip1i6HbLwGj5FFB13Mk5mQswg0dYR3HzFD8EeBH3p0K5xALuFKf8iebRPXxYuY2R
+         kY3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oILDwk+dze61xBA2crzRxnTFLGC3E2KD7D6N85/WTVI=;
+        b=U8Q5Soup7UjOzBkldyhCUTOH1OMzylbV8zCHiFid8O9MNKSXq6L5WStVjuDIXDBwIK
+         3JEaDxIpf2PHgWBxWu72WP1tXUIHGD6TCKJLSh0dWq7viLGBQKu+IJXHm9JAnnyEB5Rp
+         EUaNyENEq4e6vhl7c5Hss1bTwhbWQWHwHFPBkb+qoXUxJXg65p7Q1HNYVHMwbh3WbEQM
+         c9RfoRrsNFw9V1vpTtK/amGaqKUxG8kMcPzID217EIQZJrGanlJtYGlyblDAoawKn7Fe
+         paTonoeTVwEofYMX/B3S7PCCkfmYf5SyXLIY3c+C203jJhM2GmtSUkRLt2H3iw1+Gu22
+         NQvQ==
+X-Gm-Message-State: AGRZ1gLi0nYx3ltpsp6e7VLnc2u6KU1Ymxvg3gsQGzthAts1N1tUtBAM
+        Q2Yec7DrbyJTuIe3NjRTF0yDJE5W6sNNpeR/v2U=
+X-Google-Smtp-Source: AJdET5dHZSlB6yPIR2OfhC+P0Zk1Rkj3yoGmwlFniEkOTEYgEBQZuJqtxb9IZzDIm67OXZdH2NNSRyVjhJL6LMxTTRE=
+X-Received: by 2002:aed:3e49:: with SMTP id m9mr1061264qtf.99.1542192754789;
+ Wed, 14 Nov 2018 02:52:34 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="32jb3i42ot3gk2nm"
-Content-Disposition: inline
-In-Reply-To: <3a9a28df-8139-1036-a884-0de64aa07df1@ti.com>
-User-Agent: NeoMutt/20180716
+References: <20181114022245.5798-1-loic.wyn@gmail.com> <20181114051603.GF7890@fedora.eng.vmware.com>
+ <CAJxRB+DyrRWLTsW6fpOYuhS5W3iS3FATSRsoQTFx9ZJjzLv_dg@mail.gmail.com>
+In-Reply-To: <CAJxRB+DyrRWLTsW6fpOYuhS5W3iS3FATSRsoQTFx9ZJjzLv_dg@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 14 Nov 2018 12:52:23 +0200
+Message-ID: <CAHp75VeE4ktOQ7AwL6v5Rend0EapEobYymyq2JW=D=nzM2qSbQ@mail.gmail.com>
+Subject: Re: [PATCH] ideapad-laptop: Add Lenovo Yoga 2 13 to the no_hw_rfkill
+ DMI list
+To:     Loic Wei-Yu-Neng <loic.wyn@gmail.com>
+Cc:     Darren Hart <dvhart@infradead.org>,
+        Ike Panhc <ike.pan@canonical.com>,
+        Andy Shevchenko <andy@infradead.org>,
+        Jiri Kosina <trivial@kernel.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 14, 2018 at 9:48 AM Loic Wei-Yu-Neng <loic.wyn@gmail.com> wrote:
+>
+> Hello Darren,
+> Yes, the current driver fails to match match my laptop. I need to add this patch to have wifi functional on my laptop.
+> Here is the dmidecode snippet from my laptop:
+>
+> Handle 0x0001, DMI type 1, 27 bytes
+> System Information
+> Manufacturer: LENOVO
+> Product Name: 20344
+> Version: Yoga 2 13
+> Serial Number: 3438666500284
+> UUID: 933A1748-ACE0-E311-A534-F8A9633129FA
+> Wake-up Type: Power Switch
+> SKU Number: LENOVO_MT_20344_BU_idea_FM_Yoga 2 13
+> Family: IDEAPAD
+>
 
---32jb3i42ot3gk2nm
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Yeah, it has slightly different Version string in your case.
 
-Hi Kishon
+Since patchwork (*) still didn't catch your patch you need to resend
+with all maintainers and mailing lists included like Darren suggested.
 
-On Mon, Nov 12, 2018 at 03:32:25PM +0530, Kishon Vijay Abraham I wrote:
-> On 06/11/18 8:24 PM, Maxime Ripard wrote:
-> > The phy framework is only allowing to configure the power state of the =
-PHY
-> > using the init and power_on hooks, and their power_off and exit
-> > counterparts.
-> >=20
-> > While it works for most, simple, PHYs supported so far, some more advan=
-ced
-> > PHYs need some configuration depending on runtime parameters. These PHYs
-> > have been supported by a number of means already, often by using ad-hoc
-> > drivers in their consumer drivers.
-> >=20
-> > That doesn't work too well however, when a consumer device needs to deal
-> > with multiple PHYs, or when multiple consumers need to deal with the sa=
-me
-> > PHY (a DSI driver and a CSI driver for example).
-> >=20
-> > So we'll add a new interface, through two funtions, phy_validate and
-> > phy_configure. The first one will allow to check that a current
-> > configuration, for a given mode, is applicable. It will also allow the =
-PHY
-> > driver to tune the settings given as parameters as it sees fit.
-> >=20
-> > phy_configure will actually apply that configuration in the phy itself.
-> >=20
-> > Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
-> > ---
-> >  drivers/phy/phy-core.c  | 61 +++++++++++++++++++++++++++++++++++++++++=
-+-
-> >  include/linux/phy/phy.h | 58 ++++++++++++++++++++++++++++++++++++++++-
-> >  2 files changed, 119 insertions(+)
-> >=20
-> > diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-> > index 35fd38c5a4a1..7bd3ed65c708 100644
-> > --- a/drivers/phy/phy-core.c
-> > +++ b/drivers/phy/phy-core.c
-> > @@ -408,6 +408,67 @@ int phy_calibrate(struct phy *phy)
-> >  EXPORT_SYMBOL_GPL(phy_calibrate);
-> > =20
-> >  /**
-> > + * phy_configure() - Changes the phy parameters
-> > + * @phy: the phy returned by phy_get()
-> > + * @opts: New configuration to apply
-> > + *
-> > + * Used to change the PHY parameters. phy_init() must have been called
-> > + * on the phy. The configuration will be applied on the current phy
-> > + * mode, that can be changed using phy_set_mode().
-> > + *
-> > + * Returns: 0 if successful, an negative error code otherwise
-> > + */
-> > +int phy_configure(struct phy *phy, union phy_configure_opts *opts)
-> > +{
-> > +	int ret;
-> > +
-> > +	if (!phy)
-> > +		return -EINVAL;
-> > +
-> > +	if (!phy->ops->configure)
-> > +		return -EOPNOTSUPP;
-> > +
-> > +	mutex_lock(&phy->mutex);
-> > +	ret =3D phy->ops->configure(phy, opts);
-> > +	mutex_unlock(&phy->mutex);
-> > +
-> > +	return ret;
-> > +}
->=20
-> EXPORT_SYMBOL_GPL is missing here and below.
+(*) patchwork is a database which is tracking patches and patch series
+that are communicated thru mailing lists. It makes maintainer's life
+easier and allow to keep a trail of what has been done and when.
+The web interface to our project is here
+https://patchwork.kernel.org/project/platform-driver-x86/list/
 
-Consider it done.
 
-> > +
-> > +/**
-> > + * phy_validate() - Checks the phy parameters
-> > + * @phy: the phy returned by phy_get()
-> > + * @mode: phy_mode the configuration is applicable to.
-> > + * @opts: Configuration to check
-> > + *
-> > + * Used to check that the current set of parameters can be handled by
-> > + * the phy. Implementations are free to tune the parameters passed as
-> > + * arguments if needed by some implementation detail or
-> > + * constraints. It will not change any actual configuration of the
-> > + * PHY, so calling it as many times as deemed fit will have no side
-> > + * effect.
-> > + *
-> > + * Returns: 0 if successful, an negative error code otherwise
-> > + */
-> > +int phy_validate(struct phy *phy, enum phy_mode mode,
-> > +		  union phy_configure_opts *opts)
->=20
-> We are planning to switch to mode/submode combination [1], so this might =
-have
-> to change.
+> Loic
+>
+> On Tue, Nov 13, 2018 at 9:16 PM Darren Hart <dvhart@infradead.org> wrote:
+>>
+>> On Tue, Nov 13, 2018 at 06:22:45PM -0800, Loic WEI YU NENG wrote:
+>> > Some Lenovo ideapad models lack a physical rfkill switch.
+>> > On Lenovo models Yoga 2 13, ideapad-laptop would wrongly report all
+>> > radios as blocked by hardware which caused wireless network connections
+>> > to fail.
+>> > Add these models without an rfkill switch to the no_hw_rfkill list.
+>> >
+>> > Signed-off-by: Loic WEI YU NENG <loic.wyn@gmail.com>
+>>
+>> Thank you for the patch.
+>>
+>> In the future, please be sure to check MAINTAINERS and include the
+>> relevant lists, now Cc'd.
+>>
+>> I see this in the context of your patch, but can you confirm the current
+>> driver fails to match your system? It contains the following, which I
+>> would expect to match:
+>>
+>>                .ident = "Lenovo Yoga 2 11 / 13 / Pro",
+>>                 .matches = {
+>>                         DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+>>                         DMI_MATCH(DMI_BOARD_NAME, "Yoga2"),
+>>                 },
+>>
+>> If it doesn't match, what does dmidecode report for SYS_VENDOR and
+>> BOARD_NAME on your system? Perhaps we need to make the above more
+>> generic.
+>>
+>> > ---
+>> >  drivers/platform/x86/ideapad-laptop.c | 7 +++++++
+>> >  1 file changed, 7 insertions(+)
+>> >
+>> > diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+>> > index b6489cba2985..1589dffab9fa 100644
+>> > --- a/drivers/platform/x86/ideapad-laptop.c
+>> > +++ b/drivers/platform/x86/ideapad-laptop.c
+>> > @@ -1188,6 +1188,13 @@ static const struct dmi_system_id no_hw_rfkill_list[] = {
+>> >                       DMI_MATCH(DMI_BOARD_NAME, "Yoga2"),
+>> >               },
+>> >       },
+>> > +     {
+>> > +             .ident = "Lenovo Yoga 2 13",
+>> > +             .matches = {
+>> > +                     DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+>> > +                     DMI_MATCH(DMI_PRODUCT_VERSION, "Yoga 2 13"),
+>> > +             },
+>> > +     },
+>> >       {
+>> >               .ident = "Lenovo Yoga 3 1170 / 1470",
+>> >               .matches = {
+>> > --
+>> > 2.17.1
+>> >
+>> >
+>>
+>> --
+>> Darren Hart
+>> VMware Open Source Technology Center
+>
+>
+>
+> --
+> Loic WEI YU NENG
+> US phone: +1 408 218 2826
+> FR phone: +33 674201069
+> email: loic.wyn@gmail.com
 
-Yes, I'm aware of that. If needed, it shouldn't be too hard to rework.
 
-Maxime
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---32jb3i42ot3gk2nm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+v+SAAKCRDj7w1vZxhR
-xd4KAQCgTxP0Iny1S4qIKFkd8A9D3wnv7pIQyNYHX9WZ3veABAD/dx5YKRWQmCSz
-Jg6veFo/A77Cfj3GCfGHzvgtgD3I4gY=
-=XbmS
------END PGP SIGNATURE-----
-
---32jb3i42ot3gk2nm--
+-- 
+With Best Regards,
+Andy Shevchenko
