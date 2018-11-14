@@ -2,131 +2,160 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 48ACAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:33:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D180C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:52:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8282145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:33:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8282145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zte.com.cn
+	by mail.kernel.org (Postfix) with ESMTP id 1891F21780
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:52:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k3JoBAeg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1891F21780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731480AbeKNOeq convert rfc822-to-8bit (ORCPT
+        id S1728525AbeKNOyO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 09:34:46 -0500
-Received: from out1.zte.com.cn ([202.103.147.172]:34098 "EHLO mxct.zte.com.cn"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726813AbeKNOeq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 09:34:46 -0500
-Received: from mse01.zte.com.cn (unknown [10.30.3.20])
-        by Forcepoint Email with ESMTPS id C24258C3F9D250C45F4A;
-        Wed, 14 Nov 2018 12:33:09 +0800 (CST)
-Received: from notes_smtp.zte.com.cn ([10.30.1.239])
-        by mse01.zte.com.cn with ESMTP id wAE4X5v9095459;
-        Wed, 14 Nov 2018 12:33:05 +0800 (GMT-8)
-        (envelope-from wang.yi59@zte.com.cn)
-Received: from fox-host8.localdomain ([10.74.120.8])
-          by szsmtp06.zte.com.cn (Lotus Domino Release 8.5.3FP6)
-          with ESMTP id 2018111412332545-10576762 ;
-          Wed, 14 Nov 2018 12:33:25 +0800 
-From:   Yi Wang <wang.yi59@zte.com.cn>
-To:     riel@redhat.com, linux@rasmusvillemoes.dk
-Cc:     wang.yi59@zte.com.cn, keescook@chromium.org,
-        viro@ZenIV.linux.org.uk, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, rostedt@goodmis.org, tglx@linutronix.de,
-        mingo@kernel.org, rppt@linux.vnet.ibm.com,
-        linux@dominikbrodowski.net, pasha.tatashin@oracle.com,
-        ard.biesheuvel@linaro.org, luto@amacapital.net, wad@chromium.org,
-        mhocko@kernel.org, riel@surriel.com, ebiederm@xmission.com,
-        kirill.shutemov@linux.intel.com, guro@fb.com,
-        marcos.souza.org@gmail.com, zhong.weidong@zte.com.cn
-Subject: [PATCH v2] fork: Fix some -Wmissing-prototypes warnings
-Date:   Wed, 14 Nov 2018 12:34:47 +0800
-Message-Id: <1542170087-23645-1-git-send-email-wang.yi59@zte.com.cn>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 14 Nov 2018 09:54:14 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:43946 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726610AbeKNOyN (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 09:54:13 -0500
+Received: by mail-pf1-f196.google.com with SMTP id g7-v6so7245350pfo.10
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 20:52:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9d9P7idAYlbZ/SsvBLr6K2Xvp3cwtGkn+tnNwPb2bYE=;
+        b=k3JoBAeg0hGagwwqHqxM315pkdGVUzdH6slh5IHAxR2BoUp34c/qs63qdENpb//+hJ
+         Pae7IUuqflWWRMSu41MoWoaPzyxd7RqYJS6ecLnOUeb4HL2/id7FDfFY8FSiAmtyxZ6z
+         zTabmZvUxC2r1ig0BQVHVwlJAczoHsRxDuz/o3DYPnw+mJOonTt+z90Uj+XoGgvvZJPT
+         N/8xeNnj3nWx4jvrkkVyN8liabAnhZYcjN9FNgm58LwXv7rri76gDpUksnAwyAFop+vR
+         PT5LDwdddyzpFRPzCZHv4q6XgloedCdi8TDHIBnQMRobGJjNrW6IfXy8iIE4d2HHnW0q
+         di/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9d9P7idAYlbZ/SsvBLr6K2Xvp3cwtGkn+tnNwPb2bYE=;
+        b=AmtEN+tWEpxNBSV1ITxxtmCqFbW3IHAQrGCVYMopa3TR1twfi1CB05DeNuBOrlB8jM
+         wy/25fYECVvtS3UsSmz+PIxMSEATSe+rnb+8ellRVtNakeG30R8BSJAhLkAsDnbaJ1at
+         gbonOxYrNbqen2gkJd5oiWhTTql+U+oWwsIvkYT3em8npLVJfGvXyRzFOkXlxzkqNQn8
+         LkNZsUILNLEb2FsDwQOYSO+p5X6RYVEW40fH/DBgv9sWpkWJws/pe2st0zoT/Y164gxZ
+         4Ytaq9c3Xxlbn4Oz3En8IadURZZGSHNhq+09PB9scOsp4FlhtPQqB20HAzDLZjXLcW7W
+         h/fg==
+X-Gm-Message-State: AGRZ1gJ6tnxA1WYuS+Fp24gyVic7pSjmcInEdVFtbhwLbL5DZjWVg9HN
+        qgMGqcH6tbVN3dwdUz9Zj3s=
+X-Google-Smtp-Source: AJdET5e0EAeAupzze8MbPHPUr1OOy9XQHLaF/k7usjR8pQdFMEYmB4umYg7wYabmV+r7KOopbQA9FA==
+X-Received: by 2002:a63:561b:: with SMTP id k27mr373834pgb.271.1542171160324;
+        Tue, 13 Nov 2018 20:52:40 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f22-v6sm20857827pfn.177.2018.11.13.20.52.38
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 20:52:39 -0800 (PST)
+Date:   Tue, 13 Nov 2018 20:52:37 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme: utilize two queue maps, one for reads and one for
+ writes
+Message-ID: <20181114045237.GA6456@roeck-us.net>
+References: <20181114004148.GA29545@roeck-us.net>
+ <f1e91342-2b04-6d9f-e77a-6e812c6888d0@kernel.dk>
 MIME-Version: 1.0
-X-MIMETrack: Itemize by SMTP Server on SZSMTP06/server/zte_ltd(Release 8.5.3FP6|November
- 21, 2013) at 2018-11-14 12:33:25,
-        Serialize by Router on notes_smtp/zte_ltd(Release 9.0.1FP7|August  17, 2016) at
- 2018-11-14 12:32:57
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
-X-MAIL: mse01.zte.com.cn wAE4X5v9095459
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1e91342-2b04-6d9f-e77a-6e812c6888d0@kernel.dk>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-We get a warning when building kernel with W=1:
-kernel/fork.c:167:13: warning: no previous prototype for ‘arch_release_thread_stack’ [-Wmissing-prototypes]
-kernel/fork.c:779:13: warning: no previous prototype for ‘fork_init’ [-Wmissing-prototypes]
+On Tue, Nov 13, 2018 at 05:51:08PM -0700, Jens Axboe wrote:
+> On 11/13/18 5:41 PM, Guenter Roeck wrote:
+> > Hi,
+> > 
+> > On Wed, Oct 31, 2018 at 08:36:31AM -0600, Jens Axboe wrote:
+> >> NVMe does round-robin between queues by default, which means that
+> >> sharing a queue map for both reads and writes can be problematic
+> >> in terms of read servicing. It's much easier to flood the queue
+> >> with writes and reduce the read servicing.
+> >>
+> >> Implement two queue maps, one for reads and one for writes. The
+> >> write queue count is configurable through the 'write_queues'
+> >> parameter.
+> >>
+> >> By default, we retain the previous behavior of having a single
+> >> queue set, shared between reads and writes. Setting 'write_queues'
+> >> to a non-zero value will create two queue sets, one for reads and
+> >> one for writes, the latter using the configurable number of
+> >> queues (hardware queue counts permitting).
+> >>
+> >> Reviewed-by: Hannes Reinecke <hare@suse.com>
+> >> Reviewed-by: Keith Busch <keith.busch@intel.com>
+> >> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> > 
+> > This patch causes hangs when running recent versions of
+> > -next with several architectures; see the -next column at
+> > kerneltests.org/builders for details.  Bisect log below; this
+> > was run with qemu on alpha. Reverting this patch as well as
+> > "nvme: add separate poll queue map" fixes the problem.
+> 
+> I don't see anything related to what hung, the trace, and so on.
+> Can you clue me in? Where are the test results with dmesg?
+> 
+alpha just stalls during boot. parisc reports a hung task
+in nvme_reset_work. sparc64 reports EIO when instantiating
+the nvme driver, called from nvme_reset_work, and then stalls.
+In all three cases, reverting the two mentioned patches fixes
+the problem.
 
-Add the missing declaration in head file to fix this.
+https://kerneltests.org/builders/qemu-parisc-next/builds/173/steps/qemubuildcommand_1/logs/stdio
 
-Also, remove arch_release_thread_stack() completely because no
-arch seems to implement it since bb9d81264 (arch: remove tile port).
+is an example log for parisc.
 
-Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
----
-v2: remove arch_release_thread_stack(). Thanks to Rasmus.
----
- include/linux/sched/task.h | 2 ++
- init/main.c                | 1 -
- kernel/fork.c              | 5 -----
- 3 files changed, 2 insertions(+), 6 deletions(-)
+I didn't check if the other boot failures (ppc looks bad)
+have the same root cause.
 
-diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-index 108ede9..44c6f15 100644
---- a/include/linux/sched/task.h
-+++ b/include/linux/sched/task.h
-@@ -39,6 +39,8 @@
- 
- extern void proc_caches_init(void);
- 
-+extern void fork_init(void);
-+
- extern void release_task(struct task_struct * p);
- 
- #ifdef CONFIG_HAVE_COPY_THREAD_TLS
-diff --git a/init/main.c b/init/main.c
-index ee14710..8feda42 100644
---- a/init/main.c
-+++ b/init/main.c
-@@ -105,7 +105,6 @@
- static int kernel_init(void *);
- 
- extern void init_IRQ(void);
--extern void fork_init(void);
- extern void radix_tree_init(void);
- 
- /*
-diff --git a/kernel/fork.c b/kernel/fork.c
-index 07cddff..c6d02be 100644
---- a/kernel/fork.c
-+++ b/kernel/fork.c
-@@ -164,10 +164,6 @@ static inline void free_task_struct(struct task_struct *tsk)
- }
- #endif
- 
--void __weak arch_release_thread_stack(unsigned long *stack)
--{
--}
--
- #ifndef CONFIG_ARCH_THREAD_STACK_ALLOCATOR
- 
- /*
-@@ -417,7 +413,6 @@ static void release_task_stack(struct task_struct *tsk)
- 		return;  /* Better to leak the stack than to free prematurely */
- 
- 	account_kernel_stack(tsk, -1);
--	arch_release_thread_stack(tsk->stack);
- 	free_thread_stack(tsk);
- 	tsk->stack = NULL;
- #ifdef CONFIG_VMAP_STACK
--- 
-1.8.3.1
+> How to reproduce?
+> 
+parisc:
 
+qemu-system-hppa -kernel vmlinux -no-reboot \
+	-snapshot -device nvme,serial=foo,drive=d0 \
+	-drive file=rootfs.ext2,if=none,format=raw,id=d0 \
+	-append 'root=/dev/nvme0n1 rw rootwait panic=-1 console=ttyS0,115200 ' \
+	-nographic -monitor null
+
+alpha:
+
+qemu-system-alpha -M clipper -kernel arch/alpha/boot/vmlinux -no-reboot \
+	-snapshot -device nvme,serial=foo,drive=d0 \
+	-drive file=rootfs.ext2,if=none,format=raw,id=d0 \
+	-append 'root=/dev/nvme0n1 rw rootwait panic=-1 console=ttyS0' \
+	-m 128M -nographic -monitor null -serial stdio
+
+sparc64:
+
+qemu-system-sparc64 -M sun4u -cpu 'TI UltraSparc IIi' -m 512 \
+	-snapshot -device nvme,serial=foo,drive=d0,bus=pciB \
+	-drive file=rootfs.ext2,if=none,format=raw,id=d0 \
+	-kernel arch/sparc/boot/image -no-reboot \
+	-append 'root=/dev/nvme0n1 rw rootwait panic=-1 console=ttyS0' \
+	-nographic -monitor none
+
+The root file systems are available from the respective subdirectories
+of:
+
+https://github.com/groeck/linux-build-test/tree/master/rootfs
+
+Guenter
