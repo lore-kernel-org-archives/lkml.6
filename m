@@ -2,80 +2,113 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F346C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:31:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3957C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:31:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3A8522243E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:31:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A8522243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id 8D2BD22360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:31:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="HdxoHmo6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D2BD22360
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732653AbeKODf3 (ORCPT
+        id S1733143AbeKODf5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 22:35:29 -0500
-Received: from shell.v3.sk ([90.176.6.54]:46298 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727972AbeKODf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 22:35:28 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id B9B694699F;
-        Wed, 14 Nov 2018 18:31:19 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id AmCwYft2Pnjc; Wed, 14 Nov 2018 18:31:17 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 4721646DA8;
-        Wed, 14 Nov 2018 18:31:17 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Ue_kIcgYCdv4; Wed, 14 Nov 2018 18:31:16 +0100 (CET)
-Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id 85F794699F;
-        Wed, 14 Nov 2018 18:31:16 +0100 (CET)
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
-Subject: [PATCH] spi: pxa2xx: Fix '"CONFIG_OF" is not defined' warning
-Date:   Wed, 14 Nov 2018 18:31:07 +0100
-Message-Id: <20181114173107.1229717-1-lkundrak@v3.sk>
-X-Mailer: git-send-email 2.19.1
+        Wed, 14 Nov 2018 22:35:57 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:40594 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727972AbeKODf5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 22:35:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=WY+A2GSKNZKavc/OhxH9D+6/6aKTalIZNhXFi3IJzrY=; b=HdxoHmo6k9mt+AiRyi3krUrz1
+        I6jT56/xrBHKhm97Dz7HLZ+PpvpvJNn2unc7W8wOUtF+IraR55xla/2IwqAFl+FWHvkp4fWAO2iBJ
+        z4QRZk3Zu3gw7Fmw3Amw0d2yd6PUYv0IVORKcGyVq6o/bYKFxsmsHI0P0EBsjB1KfbYDY=;
+Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gMz0q-00041z-B1; Wed, 14 Nov 2018 17:31:36 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 76057440078; Wed, 14 Nov 2018 17:31:29 +0000 (GMT)
+Date:   Wed, 14 Nov 2018 09:31:29 -0800
+From:   Mark Brown <broonie@kernel.org>
+To:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Adrien Charruel <adrien.charruel@devialet.com>
+Subject: Re: [PATCH 1/2] ASoC: ak4118: Add support for AK4118 S/PDIF
+ transceiver
+Message-ID: <20181114173129.GY2089@sirena.org.uk>
+References: <20181108124934.32381-1-peron.clem@gmail.com>
+ <20181113225135.GQ2089@sirena.org.uk>
+ <CAJiuCcewYbt4SDZfFzDfTfTzj_Z1cm=S3_GAA-zcYGW-jzXR4w@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="agGyne4gKHM29dDu"
+Content-Disposition: inline
+In-Reply-To: <CAJiuCcewYbt4SDZfFzDfTfTzj_Z1cm=S3_GAA-zcYGW-jzXR4w@mail.gmail.com>
+X-Cookie: No Canadian coins.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-A careless oversight. Sorry.
 
-Fixes: 0a897143b7c9 ("spi: pxa2xx: Add slave mode support")
-Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
----
- drivers/spi/spi-pxa2xx.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--agGyne4gKHM29dDu
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
-index 29e6025f104c..7194070e4009 100644
---- a/drivers/spi/spi-pxa2xx.c
-+++ b/drivers/spi/spi-pxa2xx.c
-@@ -1555,7 +1555,7 @@ pxa2xx_spi_init_pdata(struct platform_device *pdev)
- 	}
- #endif
-=20
--#if CONFIG_OF
-+#ifdef CONFIG_OF
- 	if (of_id) {
- 		pdata->is_slave =3D of_property_read_bool(pdev->dev.of_node,
- 								"spi-slave");
---=20
-2.19.1
+On Wed, Nov 14, 2018 at 11:55:17AM +0100, Cl=E9ment P=E9ron wrote:
+> On Tue, 13 Nov 2018 at 23:51, Mark Brown <broonie@kernel.org> wrote:
+> > On Thu, Nov 08, 2018 at 01:49:33PM +0100, Cl=E9ment P=E9ron wrote:
 
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +/*
+> > > + * ak4118.c  --  Asahi Kasei ALSA Soc Audio driver
+> > > + *
+
+> > Please make the entire comment a C++ one so this looks more intentional.
+
+> I check from other files and also this article says :
+> "For normal C source files, the string will be a comment using the
+> "//" syntax; header files, instead, use traditional (/* */) comments
+> for reasons related to tooling"
+> https://lwn.net/Articles/739183/
+
+Right, and what I said was that you should make the entire comment a C++
+one which means that the magic line will be C++ as required.
+
+--agGyne4gKHM29dDu
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvsW/AACgkQJNaLcl1U
+h9ARfAf7BUJ2TjdjCO1OP/yZi+Fz/tBTVFUVwsvmt3t6tDcgAnvBddRaxNkf2UnI
+Ku02xMMRFJVIlPiWqh0HqT1l758GfvSVaZC2YdDFSO+JVQnP+svyxnx0XaSuM8QF
+wU9yP4kUyOALyfBNqMcF2YaTfNSxxmiO49XIr0dVH6Sik+xdRbiY2apra+/oKmRt
+LRcnJLty1t6VyrZdAnUNWMH/L3oF/lEzOLrqTthEqpxfnaVhsReWu42qJeFmYI8n
+rJmR/6oe+mx+0y2USzduCUUn8syd0YExUkQSoF/sDgkwaFb7dWtF7bZ6s2CXGpqI
+6Se4ft3a4WA6K0hrGJbZMwr5iD7awg==
+=zoBY
+-----END PGP SIGNATURE-----
+
+--agGyne4gKHM29dDu--
