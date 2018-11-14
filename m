@@ -7,100 +7,88 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 35948C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 26999C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F0B282251B
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DDCD822513
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ny5J+sH1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0B282251B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="AcnUzaMu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDCD822513
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727029AbeKOI1N (ORCPT
+        id S1727404AbeKOI1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:27:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34374 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:27:14 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726758AbeKOI1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:27:12 -0500
+        id S1726774AbeKOI1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:13 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BC88022510;
-        Wed, 14 Nov 2018 22:22:08 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 064D22251C;
+        Wed, 14 Nov 2018 22:22:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234128;
-        bh=Mk2xhl4cODY/WVIJcuWQm+21kgdh0wtRNFPh2/XR1nE=;
+        s=default; t=1542234130;
+        bh=sAy9HCmOtJcj0jJB1bko3QTmA8w1Ib6MJJ5GOGm2DS0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ny5J+sH1V4z2Vvo1Z0WQxQ8/aH6+jdbkWsekaQ4RdYH7i1zSbo0I9zMtUdfsdPsbn
-         hb2ElukEQiAmfnS0Iy2xe8M8Wkjf1G23ZkqOnVlcMfAQDDxk6A78PBSeSSsGb1LvlD
-         Nh4AXvBg7uJBCw2yUJu+52SbUpxtZYtirkwvNtHQ=
+        b=AcnUzaMuTAnhj8ulxTDbmASrR6YxnoK3oytIkaFZ+7WSFcPhY/VMCCktel0Ft28Ge
+         BzJc1TEkRpzGN/hpItPX28uaiSRkedusBt99q0/zvKED68fe33cihKpSWiWtMO8y7v
+         lnQgVVjGNHSkqu+WArSIxWUyee9I8omWV5g2XlQ0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 02/73] netfilter: ipv6: fix oops when defragmenting locally generated fragments
-Date:   Wed, 14 Nov 2018 17:20:56 -0500
-Message-Id: <20181114222207.98701-2-sashal@kernel.org>
+Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
+        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 07/73] Revert "HID: add NOGET quirk for Eaton Ellipse MAX UPS"
+Date:   Wed, 14 Nov 2018 17:21:01 -0500
+Message-Id: <20181114222207.98701-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
 
-[ Upstream commit 61792b677415b77c8db04991c22966bb8de7603e ]
+[ Upstream commit 6298944d8f57f40ee2a3e6dcea1253e78d7a9969 ]
 
-Unlike ipv4 and normal ipv6 defrag, netfilter ipv6 defragmentation did
-not save/restore skb->dst.
+This reverts commit 67ddbb3e6568fb1820b2cc45b00c50702b114801.
 
-This causes oops when handling locally generated ipv6 fragments, as
-output path needs a valid dst.
+67ddbb3e656 ("HID: add NOGET quirk for Eaton Ellipse MAX UPS") was reported
+by Laurent Bigonville. It turns out that a later model Laurent got
+doesn't need the quirk after all.
 
-Reported-by: Maciej Żenczykowski <zenczykowski@gmail.com>
-Fixes: 84379c9afe01 ("netfilter: ipv6: nf_defrag: drop skb dst before queueing")
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+My take is that Eaton upgraded their firmwares, so we don't need it
+anymore.
+
+The old model was from 2012, so better make sure the new line works
+properly by removing the quirk. This allows upower to actually fetch
+the current data.
+
+Reported-by: Laurent Bigonville <bigon@bigon.be>
+Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Signed-off-by: Jiri Kosina <jkosina@suse.cz>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/ipv6/netfilter/nf_conntrack_reasm.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
+ drivers/hid/hid-quirks.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/net/ipv6/netfilter/nf_conntrack_reasm.c b/net/ipv6/netfilter/nf_conntrack_reasm.c
-index 8f68a518d9db..f76bd4d15704 100644
---- a/net/ipv6/netfilter/nf_conntrack_reasm.c
-+++ b/net/ipv6/netfilter/nf_conntrack_reasm.c
-@@ -587,11 +587,16 @@ int nf_ct_frag6_gather(struct net *net, struct sk_buff *skb, u32 user)
- 	 */
- 	ret = -EINPROGRESS;
- 	if (fq->q.flags == (INET_FRAG_FIRST_IN | INET_FRAG_LAST_IN) &&
--	    fq->q.meat == fq->q.len &&
--	    nf_ct_frag6_reasm(fq, skb, dev))
--		ret = 0;
--	else
-+	    fq->q.meat == fq->q.len) {
-+		unsigned long orefdst = skb->_skb_refdst;
-+
-+		skb->_skb_refdst = 0UL;
-+		if (nf_ct_frag6_reasm(fq, skb, dev))
-+			ret = 0;
-+		skb->_skb_refdst = orefdst;
-+	} else {
- 		skb_dst_drop(skb);
-+	}
- 
- out_unlock:
- 	spin_unlock_bh(&fq->q.lock);
+diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
+index 249d49b6b16c..caafbea94882 100644
+--- a/drivers/hid/hid-quirks.c
++++ b/drivers/hid/hid-quirks.c
+@@ -106,7 +106,6 @@ static const struct hid_device_id hid_quirks[] = {
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_C05A), HID_QUIRK_ALWAYS_POLL },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_C06A), HID_QUIRK_ALWAYS_POLL },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_MCS, USB_DEVICE_ID_MCS_GAMEPADBLOCK), HID_QUIRK_MULTI_INPUT },
+-	{ HID_USB_DEVICE(USB_VENDOR_ID_MGE, USB_DEVICE_ID_MGE_UPS), HID_QUIRK_NOGET },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_POWER_COVER), HID_QUIRK_NO_INIT_REPORTS },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_SURFACE_PRO_2), HID_QUIRK_NO_INIT_REPORTS },
+ 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_TOUCH_COVER_2), HID_QUIRK_NO_INIT_REPORTS },
 -- 
 2.17.1
 
