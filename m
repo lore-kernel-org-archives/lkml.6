@@ -2,1101 +2,189 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ECA77C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:53:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 236BAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:55:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4A5D822360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:53:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A5D822360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=packi.ch
+	by mail.kernel.org (Postfix) with ESMTP id D126322360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:55:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/zjGRiD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D126322360
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728292AbeKOG6H (ORCPT
+        id S1727943AbeKOHAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 01:58:07 -0500
-Received: from mail.binarylogic.ch ([88.198.23.72]:48564 "EHLO
-        mail.binarylogic.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725836AbeKOG6H (ORCPT
+        Thu, 15 Nov 2018 02:00:18 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:33633 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725836AbeKOHAR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 01:58:07 -0500
-Received: from [IPv6:2001:8e0:2002:7300:94d1:5a64:c83e:664b] (unknown [IPv6:2001:8e0:2002:7300:94d1:5a64:c83e:664b])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.binarylogic.ch (Postfix) with ESMTPSA id 86BD3DF386;
-        Wed, 14 Nov 2018 21:53:08 +0100 (CET)
-Subject: Re: [RFC/RFT 2/2] RISC-V: kprobes/kretprobe support
-To:     Masami Hiramatsu <mhiramat@kernel.org>
-Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Palmer Dabbelt <palmer@sifive.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        Alan Kao <alankao@andestech.com>, Zong Li <zong@andestech.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Will Deacon <will.deacon@arm.com>,
+        Thu, 15 Nov 2018 02:00:17 -0500
+Received: by mail-yw1-f68.google.com with SMTP id z72-v6so7887799ywa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 12:55:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:subject:to:cc:references:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=RDFdrO0t/ndgEa1f1xybGimoAq+XCBq3BKX8G9M290o=;
+        b=O/zjGRiDxIFt+mlTqzJNAprVCa+lDoOlN3VV9gl6KYa54UWLnc7JZQr1YlMoniZR+E
+         A1OdkxuzeZEtirBZJsZyX9Ara5aE4Ydaum+MFxPrZ21z4FL+pcd0KzuV9ltmf+UBw6GN
+         vPa8mHePIjdZ6zCdTuD9g+Oaj3vVyi4WIZRXWFtQkOngVT8MxqnOicPisyVzAJJutQ3H
+         Jtj9OvOErXVHttN0wacbtF/0Hcv4gQfqkYyGumqvek1kwtoV0hEnMVdN7v376rBO/+nO
+         mQQZyIDCeERQh9pxQLaMG4wPedIZ0Ouay6M+Z61i0VwLq/TL9HlBToIBMg50KUe+x/3K
+         yspQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:subject:to:cc:references:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=RDFdrO0t/ndgEa1f1xybGimoAq+XCBq3BKX8G9M290o=;
+        b=WVgoAqHZTmnZvS4CINUEG8Ls90ewy84oARiHXuDSFnMOAFS80qy1SMEL2B/Ohc6F0m
+         Dh9wtuNzgCSCclRZBay00vJszcdI8cNRAWTlRLNnuDJNhTgyAfTdXsbMShaM+n+qmYTh
+         Sif525Rta5vqW6JZIf8RG44rnGfBnZT8Cz9PAGKOwwbhvPJVRJA8gJHCsRKvIj+rJ1zm
+         9kjQg/EzjpW8h2n87lOK2QmCe45EjLAuqFhhuLstXDe0vwJjZCsxONXD8bnDgiyTqy3x
+         kPIPP8CkL001yn7rsRot9wBQUBfFpPKbNjka2l0sgkS9LyMaY8P47R394peo8NstVi08
+         QANg==
+X-Gm-Message-State: AGRZ1gJ5qfRvUTC3SvzWWbB8eS8Tei8LEIhraQOS9ABYUhp9GTWq9+Yy
+        AXrrqaKo/OgBOIOX1K5nle0=
+X-Google-Smtp-Source: AJdET5eCXQAWqkxEviOIKkm33wIaXLt4BRLni8fn6aLcXofljPu7lowolOC8SlaT1UsRn3B2a4rZbg==
+X-Received: by 2002:a0d:d107:: with SMTP id t7-v6mr3146214ywd.440.1542228928214;
+        Wed, 14 Nov 2018 12:55:28 -0800 (PST)
+Received: from [10.67.49.62] (igp-prod-emp-gw.vpn.broadcom.com. [192.19.223.250])
+        by smtp.googlemail.com with ESMTPSA id j131-v6sm7349277ywa.84.2018.11.14.12.55.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 12:55:27 -0800 (PST)
+From:   Florian Fainelli <f.fainelli@gmail.com>
+X-Google-Original-From: Florian Fainelli <fainelli@broadcom.com>
+Subject: Re: [PATCH] sched: Do not bug in __sched_setscheduler() when pi is
+ not used
+To:     Steven Rostedt <rostedt@goodmis.org>,
+        Peter Zijlstra <peterz@infradead.org>,
+        gregkh@linuxfoundation.org
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Laurent Dufour <ldufour@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@osdl.org>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        zhong jiang <zhongjiang@huawei.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Jim Wilson <jimw@sifive.com>,
-        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-        Souptick Joarder <jrdr.linux@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Al Viro <viro@zeniv.linux.org.uk>
-References: <20181113195804.22825-1-me@packi.ch>
- <20181113195804.22825-3-me@packi.ch>
- <20181114003730.06f810517a270070734df4ce@kernel.org>
-From:   Patrick Staehlin <me@packi.ch>
+        Ingo Molnar <mingo@elte.hu>
+References: <20170309101842.1449d49a@gandalf.local.home>
 Openpgp: preference=signencrypt
-Autocrypt: addr=me@packi.ch; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <a6abc4ce-4398-5ca6-992b-efb31e01c5ca@packi.ch>
-Date:   Wed, 14 Nov 2018 21:52:57 +0100
+Autocrypt: addr=fainelli@broadcom.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <46a07263-3327-94b6-f6b8-a0a17ae7bfee@broadcom.com>
+Date:   Wed, 14 Nov 2018 12:55:20 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181114003730.06f810517a270070734df4ce@kernel.org>
+In-Reply-To: <20170309101842.1449d49a@gandalf.local.home>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Masami,
-
-thank you for your remarks.
-
-On 14.11.18 09:37, Masami Hiramatsu wrote>
-> Thank you very much for implementing kprobes on RISC-V :)
+On 3/9/17 7:18 AM, Steven Rostedt wrote:
+> From: "Steven Rostedt (VMware)" <rostedt@goodmis.org>
 > 
-> On Tue, 13 Nov 2018 20:58:04 +0100
-> Patrick Stählin <me@packi.ch> wrote:
 > 
->> First implementation, adapted from arm64. The C.ADDISP16 instruction
->> gets simulated and the kprobes-handler called by inserting a C.EBREAK
->> instruction.
->>
->> C.ADDISP16 was chosen as it sets-up the stack frame for functions.
->> Some work has been done to support probes on non-compressed
->> instructions but there is no support yet for decoding those.
+> When priority inheritance was added back in 2.6.18 to sched_setscheduler, it
+> added a path to taking an rt-mutex wait_lock, which is not IRQ safe. As PI
+> is not a common occurrence, lockdep will likely never trigger if
+> sched_setscheduler was called from interrupt context. A BUG_ON() was added
+> to trigger if __sched_setscheduler() was ever called from interrupt context
+> because there was a possibility to take the wait_lock.
 > 
-> Does this only support C.ADDISP16? No other insns are supported?
-> Supporting 1 insn is too few I think.
+> Today the wait_lock is irq safe, but the path to taking it in
+> sched_setscheduler() is the same as the path to taking it from normal
+> context. The wait_lock is taken with raw_spin_lock_irq() and released with
+> raw_spin_unlock_irq() which will indiscriminately enable interrupts,
+> which would be bad in interrupt context.
+> 
+> The problem is that normalize_rt_tasks, which is called by triggering the
+> sysrq nice-all-RT-tasks was changed to call __sched_setscheduler(), and this
+> is done from interrupt context!
+> 
+> Now __sched_setscheduler() takes a "pi" parameter that is used to know if
+> the priority inheritance should be called or not. As the BUG_ON() only cares
+> about calling the PI code, it should only bug if called from interrupt
+> context with the "pi" parameter set to true.
+> 
+> Link: http://lkml.kernel.org/r/20170308124654.10e598f2@gandalf.local.home
+> 
+> Reported-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> Tested-by: Laurent Dufour <ldufour@linux.vnet.ibm.com>
+> Fixes: dbc7f069b93a ("sched: Use replace normalize_task() with __sched_setscheduler()")
+> Cc: Andrew Morton <akpm@osdl.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Ingo Molnar <mingo@elte.hu>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Steven Rostedt (VMware) <rostedt@goodmis.org>
 
-At the moment, yes. I'm waiting for some input from somebody with deeper
-insights into the RISC-V architecture than me before implementing more
-instructions, should solution I've chosen be woefully inadequate.
+Can this patch also be applied to the stable trees? The offending commit
+was first introduced in 4.2.
 
-> Can RISC-V do single stepping? If not, we need to prepare emulator
-> as match as possible, or for ALU instructions, we can run it on
-> buffer and hook it.
+Thank you!
 
-The debug-specification is still a draft but there are some softcores
-that implement it. But even if it was finalized I don't think this will
-be made a mandatory extension so we need to simulate/emulate a good part
-of the instruction set anyway.
+> ---
+>  kernel/sched/core.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+> index 3b31fc0..7292fa9 100644
+> --- a/kernel/sched/core.c
+> +++ b/kernel/sched/core.c
+> @@ -4129,8 +4129,8 @@ static int __sched_setscheduler(struct task_struct *p,
+>  	int queue_flags = DEQUEUE_SAVE | DEQUEUE_MOVE;
+>  	struct rq *rq;
+>  
+> -	/* May grab non-irq protected spin_locks: */
+> -	BUG_ON(in_interrupt());
+> +	/* The pi code expects interrupts enabled */
+> +	BUG_ON(pi && in_interrupt());
+>  recheck:
+>  	/* Double check policy once rq lock held: */
+>  	if (policy < 0) {
+> 
 
->> The way forward should be to uncompress the instructions for simulation
->> to reduce the number of instructions used to decode  the immediate
->> values on probe hit.
-> 
-> I have some comments on the patch, please review.
-> 
->>
->> Signed-off-by: Patrick Stählin <me@packi.ch>
->> ---
->>  arch/riscv/Kconfig                            |   5 +-
->>  arch/riscv/include/asm/kprobes.h              |  30 ++
->>  arch/riscv/include/asm/probes.h               |  26 ++
->>  arch/riscv/kernel/Makefile                    |   1 +
->>  arch/riscv/kernel/probes/Makefile             |   3 +
->>  arch/riscv/kernel/probes/decode-insn.c        |  38 ++
->>  arch/riscv/kernel/probes/decode-insn.h        |  23 +
->>  arch/riscv/kernel/probes/kprobes.c            | 401 ++++++++++++++++++
->>  arch/riscv/kernel/probes/kprobes_trampoline.S |  91 ++++
->>  arch/riscv/kernel/probes/simulate-insn.c      |  33 ++
->>  arch/riscv/kernel/probes/simulate-insn.h      |   8 +
->>  arch/riscv/kernel/traps.c                     |  13 +-
->>  arch/riscv/mm/fault.c                         |  28 +-
->>  13 files changed, 694 insertions(+), 6 deletions(-)
->>  create mode 100644 arch/riscv/include/asm/probes.h
->>  create mode 100644 arch/riscv/kernel/probes/Makefile
->>  create mode 100644 arch/riscv/kernel/probes/decode-insn.c
->>  create mode 100644 arch/riscv/kernel/probes/decode-insn.h
->>  create mode 100644 arch/riscv/kernel/probes/kprobes.c
->>  create mode 100644 arch/riscv/kernel/probes/kprobes_trampoline.S
->>  create mode 100644 arch/riscv/kernel/probes/simulate-insn.c
->>  create mode 100644 arch/riscv/kernel/probes/simulate-insn.h
->>
->> diff --git a/arch/riscv/Kconfig b/arch/riscv/Kconfig
->> index b157ac82d486..11ef4030e8f2 100644
->> --- a/arch/riscv/Kconfig
->> +++ b/arch/riscv/Kconfig
->> @@ -44,6 +44,8 @@ config RISCV
->>  	select GENERIC_IRQ_MULTI_HANDLER
->>  	select ARCH_HAS_PTE_SPECIAL
->>  	select HAVE_REGS_AND_STACK_ACCESS_API
->> +	select HAVE_KPROBES
->> +	select HAVE_KRETPROBES
->>  
->>  config MMU
->>  	def_bool y
->> @@ -89,9 +91,6 @@ config PGTABLE_LEVELS
->>  	default 3 if 64BIT
->>  	default 2
->>  
->> -config HAVE_KPROBES
->> -	def_bool n
->> -
->>  menu "Platform type"
->>  
->>  choice
->> diff --git a/arch/riscv/include/asm/kprobes.h b/arch/riscv/include/asm/kprobes.h
->> index c7eb010d1528..657adcd35a3d 100644
->> --- a/arch/riscv/include/asm/kprobes.h
->> +++ b/arch/riscv/include/asm/kprobes.h
->> @@ -19,4 +19,34 @@
->>  
->>  #include <asm-generic/kprobes.h>
->>  
->> +#ifdef CONFIG_KPROBES
->> +#include <linux/types.h>
->> +#include <linux/ptrace.h>
->> +#include <linux/percpu.h>
->> +
->> +#define flush_insn_slot(p)		do { } while (0)
->> +#define kretprobe_blacklist_size	0
->> +
->> +#include <asm/probes.h>
->> +
->> +struct prev_kprobe {
->> +	struct kprobe *kp;
->> +	unsigned int status;
->> +};
->> +
->> +/* per-cpu kprobe control block */
->> +struct kprobe_ctlblk {
->> +	unsigned int kprobe_status;
->> +	struct prev_kprobe prev_kprobe;
->> +};
->> +
->> +void arch_remove_kprobe(struct kprobe *p);
->> +int kprobe_fault_handler(struct pt_regs *regs, unsigned int cause);
->> +int kprobe_exceptions_notify(struct notifier_block *self,
->> +			     unsigned long val, void *data);
->> +int kprobe_breakpoint_handler(struct pt_regs *regs);
->> +void kretprobe_trampoline(void);
->> +void __kprobes *trampoline_probe_handler(struct pt_regs *regs);
->> +
->> +#endif /* CONFIG_KPROBES */
->>  #endif /* _RISCV_KPROBES_H */
->> diff --git a/arch/riscv/include/asm/probes.h b/arch/riscv/include/asm/probes.h
->> new file mode 100644
->> index 000000000000..64cf12567539
->> --- /dev/null
->> +++ b/arch/riscv/include/asm/probes.h
->> @@ -0,0 +1,26 @@
->> +/* SPDX-License-Identifier: GPL-2.0 */
->> +/*
->> + * Based on arch/arm64/include/asm/probes.h
->> + *
->> + * Copyright (C) 2013 Linaro Limited
->> + */
->> +#ifndef _RISCV_PROBES_H
->> +#define _RISCV_PROBES_H
->> +
->> +typedef u32 probe_opcode_t;
->> +typedef void (probes_handler_t) (u32 opcode, long addr, struct pt_regs *);
->> +
->> +/* architecture specific copy of original instruction */
->> +struct arch_probe_insn {
->> +	probes_handler_t *handler;
->> +	/* restore address after simulation */
->> +	unsigned long restore;
->> +};
->> +#ifdef CONFIG_KPROBES
->> +typedef u32 kprobe_opcode_t;
->> +struct arch_specific_insn {
->> +	struct arch_probe_insn api;
->> +};
->> +#endif
-> 
-> Are there any reason of putting this kprobes dedicated data structure here?
 
-No, this is from the arm64 implementation as they share the instruction
-decoding with uprobes. Forgot to clean that up.
-
-> 
->> +
->> +#endif /* _RISCV_PROBES_H */
->> diff --git a/arch/riscv/kernel/Makefile b/arch/riscv/kernel/Makefile
->> index f13f7f276639..5360a445b9d3 100644
->> --- a/arch/riscv/kernel/Makefile
->> +++ b/arch/riscv/kernel/Makefile
->> @@ -28,6 +28,7 @@ obj-y	+= stacktrace.o
->>  obj-y	+= vdso.o
->>  obj-y	+= cacheinfo.o
->>  obj-y	+= vdso/
->> +obj-y	+= probes/
->>  
->>  CFLAGS_setup.o := -mcmodel=medany
->>  
->> diff --git a/arch/riscv/kernel/probes/Makefile b/arch/riscv/kernel/probes/Makefile
->> new file mode 100644
->> index 000000000000..144d1c1743fb
->> --- /dev/null
->> +++ b/arch/riscv/kernel/probes/Makefile
->> @@ -0,0 +1,3 @@
->> +# SPDX-License-Identifier: GPL-2.0
->> +obj-$(CONFIG_KPROBES)		+= kprobes.o kprobes_trampoline.o \
->> +				   decode-insn.o simulate-insn.o
->> diff --git a/arch/riscv/kernel/probes/decode-insn.c b/arch/riscv/kernel/probes/decode-insn.c
->> new file mode 100644
->> index 000000000000..2d8f46f4c2e7
->> --- /dev/null
->> +++ b/arch/riscv/kernel/probes/decode-insn.c
->> @@ -0,0 +1,38 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +
->> +#include <linux/kernel.h>
->> +#include <linux/kprobes.h>
->> +#include <linux/module.h>
->> +#include <linux/kallsyms.h>
->> +#include <asm/sections.h>
->> +
->> +#include "decode-insn.h"
->> +#include "simulate-insn.h"
->> +
->> +#define C_ADDISP16_MASK 0x6F83
->> +#define C_ADDISP16_VAL  0x6101
->> +
->> +/* Return:
->> + *   INSN_REJECTED     If instruction is one not allowed to kprobe,
->> + *   INSN_GOOD_NO_SLOT If instruction is supported but doesn't use its slot.
->> + */
->> +enum probe_insn __kprobes
->> +riscv_probe_decode_insn(kprobe_opcode_t *addr, struct arch_probe_insn *api)
-> 
-> Please don't use __kprobes anymore. That is old stlye, instead, please
-> use NOKPROBE_SYMBOL() or nokprobe_inline for static-inline function.
-> (NOKPROBE_SYMBOL() will make the symbol non-inline always)
-
-OK, should I make a note to change that in the arm64 port as well in a
-separate patch?
-
-> 
->> +{
->> +	probe_opcode_t insn = le32_to_cpu(*addr);
->> +
->> +	if (!is_compressed_insn(insn)) {
->> +		pr_warn("Can't handle non-compressed instruction %x\n", insn);
->> +		return INSN_REJECTED;
->> +	}
->> +
->> +	/* c.addisp16 imm */
->> +	if ((insn & C_ADDISP16_MASK) == C_ADDISP16_VAL) {
->> +		api->handler = simulate_caddisp16;
->> +	} else {
->> +		pr_warn("Rejected unknown instruction %x\n", insn);
->> +		return INSN_REJECTED;
->> +	}
->> +
->> +	return INSN_GOOD_NO_SLOT;
->> +}
->> diff --git a/arch/riscv/kernel/probes/decode-insn.h b/arch/riscv/kernel/probes/decode-insn.h
->> new file mode 100644
->> index 000000000000..0053ed6a308a
->> --- /dev/null
->> +++ b/arch/riscv/kernel/probes/decode-insn.h
->> @@ -0,0 +1,23 @@
->> +/* SPDX-License-Identifier: GPL-2.0+ */
->> +#ifndef _RISCV_KERNEL_KPROBES_DECODE_INSN_H
->> +#define _RISCV_KERNEL_KPROBES_DECODE_INSN_H
->> +
->> +#include <asm/sections.h>
->> +#include <asm/kprobes.h>
->> +
->> +enum probe_insn {
->> +	INSN_REJECTED,
->> +	INSN_GOOD_NO_SLOT,
->> +};
->> +
->> +/*
->> + * Compressed instruction format:
->> + * xxxxxxxxxxxxxxaa where aa != 11
->> + */
->> +#define is_compressed_insn(insn) ((insn & 0x3) != 0x3)
->> +
->> +#ifdef CONFIG_KPROBES
->> +enum probe_insn __kprobes
->> +riscv_probe_decode_insn(kprobe_opcode_t *addr, struct arch_probe_insn *asi);
->> +#endif
->> +#endif /* _RISCV_KERNEL_KPROBES_DECODE_INSN_H */
->> diff --git a/arch/riscv/kernel/probes/kprobes.c b/arch/riscv/kernel/probes/kprobes.c
->> new file mode 100644
->> index 000000000000..3c7b5cf72ee1
->> --- /dev/null
->> +++ b/arch/riscv/kernel/probes/kprobes.c
->> @@ -0,0 +1,401 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +
->> +/*
->> + * Kprobes support for RISC-V
->> + *
->> + * Author: Patrick Stählin <me@packi.ch>
->> + */
->> +#include <linux/kprobes.h>
->> +#include <linux/extable.h>
->> +#include <linux/slab.h>
->> +#include <asm/ptrace.h>
->> +#include <linux/uaccess.h>
->> +#include <asm/sections.h>
->> +
->> +#include "decode-insn.h"
->> +
->> +DEFINE_PER_CPU(struct kprobe *, current_kprobe) = NULL;
->> +DEFINE_PER_CPU(struct kprobe_ctlblk, kprobe_ctlblk);
->> +
->> +static void __kprobes
->> +post_kprobe_handler(struct kprobe_ctlblk *, struct pt_regs *);
->> +
->> +static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
->> +{
->> +	if (is_compressed_insn(opcode))
->> +		*(u16 *)addr = cpu_to_le16(opcode);
->> +	else
->> +		*addr = cpu_to_le32(opcode);
->> +
->> +	return 0;
->> +}
->> +
->> +static void __kprobes arch_prepare_simulate(struct kprobe *p)
->> +{
->> +	unsigned long offset = is_compressed_insn(p->opcode) ? 2 : 4;
->> +
->> +	p->ainsn.api.restore = (unsigned long)p->addr + offset;
->> +}
->> +
->> +static void __kprobes arch_simulate_insn(struct kprobe *p, struct pt_regs *regs)
->> +{
->> +	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
->> +
->> +	if (p->ainsn.api.handler)
->> +		p->ainsn.api.handler((u32)p->opcode, (long)p->addr, regs);
-> 
-> it seems api.handler must be here, 
-
-true
-
-> 
->> +
->> +	/* single instruction simulated, now go for post processing */
->> +	post_kprobe_handler(kcb, regs);
->> +}
->> +
->> +int __kprobes arch_prepare_kprobe(struct kprobe *p)
->> +{
->> +	unsigned long probe_addr = (unsigned long)p->addr;
->> +	extern char __start_rodata[];
->> +	extern char __end_rodata[];
->> +
->> +	if (probe_addr & 0x1) {
->> +		pr_warn("Address not aligned.\n");
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* copy instruction */
->> +	p->opcode = le32_to_cpu(*p->addr);
->> +
->> +	if (probe_addr >= (unsigned long) __start_rodata &&
->> +	    probe_addr <= (unsigned long) __end_rodata) {
->> +		return -EINVAL;
->> +	}
->> +
->> +	/* decode instruction */
->> +	switch (riscv_probe_decode_insn(p->addr, &p->ainsn.api)) {
->> +	case INSN_REJECTED:	/* insn not supported */
->> +		return -EINVAL;
->> +
->> +	case INSN_GOOD_NO_SLOT:	/* insn needs simulation */
->> +		break;
->> +	}
->> +
->> +	arch_prepare_simulate(p);
->> +
->> +	return 0;
->> +}
->> +
->> +#define C_EBREAK_OPCODE 0x9002
->> +
->> +/* arm kprobe: install breakpoint in text */
->> +void __kprobes arch_arm_kprobe(struct kprobe *p)
->> +{
->> +	patch_text(p->addr, C_EBREAK_OPCODE);
->> +}
->> +
->> +/* disarm kprobe: remove breakpoint from text */
->> +void __kprobes arch_disarm_kprobe(struct kprobe *p)
->> +{
->> +	patch_text(p->addr, p->opcode);
->> +}
->> +
->> +void __kprobes arch_remove_kprobe(struct kprobe *p)
->> +{
->> +}
->> +
->> +static void __kprobes save_previous_kprobe(struct kprobe_ctlblk *kcb)
->> +{
->> +	kcb->prev_kprobe.kp = kprobe_running();
->> +	kcb->prev_kprobe.status = kcb->kprobe_status;
->> +}
->> +
->> +static void __kprobes restore_previous_kprobe(struct kprobe_ctlblk *kcb)
->> +{
->> +	__this_cpu_write(current_kprobe, kcb->prev_kprobe.kp);
->> +	kcb->kprobe_status = kcb->prev_kprobe.status;
->> +}
->> +
->> +static void __kprobes set_current_kprobe(struct kprobe *p)
->> +{
->> +	__this_cpu_write(current_kprobe, p);
->> +}
->> +
->> +static void __kprobes simulate(struct kprobe *p,
->> +			       struct pt_regs *regs,
->> +			       struct kprobe_ctlblk *kcb, int reenter)
->> +{
->> +	if (reenter) {
->> +		save_previous_kprobe(kcb);
->> +		set_current_kprobe(p);
->> +		kcb->kprobe_status = KPROBE_REENTER;
->> +	} else {
->> +		kcb->kprobe_status = KPROBE_HIT_SS;
->> +	}
->> +
->> +	arch_simulate_insn(p, regs);
->> +}
->> +
->> +static int __kprobes reenter_kprobe(struct kprobe *p,
->> +				    struct pt_regs *regs,
->> +				    struct kprobe_ctlblk *kcb)
->> +{
->> +	switch (kcb->kprobe_status) {
->> +	case KPROBE_HIT_SSDONE:
->> +	case KPROBE_HIT_ACTIVE:
->> +		kprobes_inc_nmissed_count(p);
->> +		simulate(p, regs, kcb, 1);
->> +		break;
->> +	case KPROBE_HIT_SS:
->> +	case KPROBE_REENTER:
->> +		pr_warn("Unrecoverable kprobe detected.\n");
->> +		dump_kprobe(p);
->> +		BUG();
->> +		break;
->> +	default:
->> +		WARN_ON(1);
->> +		return 0;
->> +	}
->> +
->> +	return 1;
-> 
-> If this always return 1, we can make it void return.
-
-Agreed, I'll change that.
-
-> 
->> +}
->> +
->> +static void __kprobes
->> +post_kprobe_handler(struct kprobe_ctlblk *kcb, struct pt_regs *regs)
->> +{
->> +	struct kprobe *cur = kprobe_running();
->> +
->> +	if (!cur)
->> +		return;
->> +
->> +	/* return addr restore if non-branching insn */
->> +	if (cur->ainsn.api.restore != 0)
->> +		instruction_pointer_set(regs, cur->ainsn.api.restore);
->> +
->> +	/* restore back original saved kprobe variables and continue */
->> +	if (kcb->kprobe_status == KPROBE_REENTER) {
->> +		restore_previous_kprobe(kcb);
->> +		return;
->> +	}
->> +	/* call post handler */
->> +	kcb->kprobe_status = KPROBE_HIT_SSDONE;
->> +	if (cur->post_handler)	{
->> +		/* post_handler can hit breakpoint and single step
->> +		 * again, so we enable D-flag for recursive exception.
->> +		 */
->> +		cur->post_handler(cur, regs, 0);
->> +	}
->> +
->> +	reset_current_kprobe();
->> +}
->> +
->> +int __kprobes kprobe_fault_handler(struct pt_regs *regs, unsigned int cause)
->> +{
->> +	struct kprobe *cur = kprobe_running();
->> +	struct kprobe_ctlblk *kcb = get_kprobe_ctlblk();
->> +
->> +	switch (kcb->kprobe_status) {
->> +	case KPROBE_HIT_SS:
->> +	case KPROBE_REENTER:
->> +		/*
->> +		 * We are here because the instruction being single
->> +		 * stepped caused a page fault. We reset the current
->> +		 * kprobe and the ip points back to the probe address
->> +		 * and allow the page fault handler to continue as a
->> +		 * normal page fault.
->> +		 */
->> +		instruction_pointer_set(regs, (unsigned long) cur->addr);
->> +		if (!instruction_pointer(regs))
->> +			BUG();
-> 
-> Use BUG_ON().
-
-OK
-
-> 
->> +
->> +		if (kcb->kprobe_status == KPROBE_REENTER)
->> +			restore_previous_kprobe(kcb);
->> +		else
->> +			reset_current_kprobe();
->> +
->> +		break;
->> +	case KPROBE_HIT_ACTIVE:
->> +	case KPROBE_HIT_SSDONE:
->> +		/*
->> +		 * We increment the nmissed count for accounting,
->> +		 * we can also use npre/npostfault count for accounting
->> +		 * these specific fault cases.
->> +		 */
->> +		kprobes_inc_nmissed_count(cur);
->> +
->> +		/*
->> +		 * We come here because instructions in the pre/post
->> +		 * handler caused the page_fault, this could happen
->> +		 * if handler tries to access user space by
->> +		 * copy_from_user(), get_user() etc. Let the
->> +		 * user-specified handler try to fix it first.
->> +		 */
->> +		if (cur->fault_handler && cur->fault_handler(cur, regs, cause))
->> +			return 1;
->> +
->> +		/*
->> +		 * In case the user-specified fault handler returned
->> +		 * zero, try to fix up.
->> +		 */
->> +		if (fixup_exception(regs))
->> +			return 1;
->> +	}
->> +	return 0;
->> +}
->> +
->> +static void __kprobes kprobe_handler(struct pt_regs *regs)
->> +{
-> 
-> Does this handler run under local IRQ disabled? (for making sure)
-
-Exceptions are being handled with locals IRQs _enabled_. As we've not
-implemented any simulated instructions to modify the instruction
-pointer, I think this is safe? Then again, I'm new to this, so please
-bear with me.
-
-> 
->> +	struct kprobe *p, *cur_kprobe;
->> +	struct kprobe_ctlblk *kcb;
->> +	unsigned long addr = instruction_pointer(regs);
->> +
->> +	kcb = get_kprobe_ctlblk();
->> +	cur_kprobe = kprobe_running();
->> +
->> +	p = get_kprobe((kprobe_opcode_t *) addr);
->> +
->> +	if (p) {
->> +		if (cur_kprobe) {
->> +			if (reenter_kprobe(p, regs, kcb))
->> +				return;
->> +		} else {
->> +			/* Probe hit */
->> +			set_current_kprobe(p);
->> +			kcb->kprobe_status = KPROBE_HIT_ACTIVE;
->> +
->> +			/*
->> +			 * If we have no pre-handler or it returned 0, we
->> +			 * continue with normal processing.  If we have a
->> +			 * pre-handler and it returned non-zero, it will
->> +			 * modify the execution path and no need to single
->> +			 * stepping. Let's just reset current kprobe and exit.
->> +			 *
->> +			 * pre_handler can hit a breakpoint and can step thru
->> +			 * before return, keep PSTATE D-flag enabled until
->> +			 * pre_handler return back.
-> 
-> Is this true on RISC-V too?
-
-It's not as we don't have a debug-unit at the moment. I'll remove the
-second part of the comment block.
-
-> 
->> +			 */
->> +			if (!p->pre_handler || !p->pre_handler(p, regs))
->> +				simulate(p, regs, kcb, 0);
->> +			else
->> +				reset_current_kprobe();
->> +		}
->> +	}
->> +	/*
->> +	 * The breakpoint instruction was removed right
->> +	 * after we hit it.  Another cpu has removed
->> +	 * either a probepoint or a debugger breakpoint
->> +	 * at this address.  In either case, no further
->> +	 * handling of this interrupt is appropriate.
->> +	 * Return back to original instruction, and continue.
->> +	 */
-> 
-> This should return 0 if it doesn't handle anything, but if it handles c.break
-> should return 1.
-
-I thought so too, but didn't insert one because of the comment (again,
-copied from arm64). If get_kprobe doesn't return a result, it could have
-been removed between the time the exception got raised or is the comment
-just wrong? On the other hand, solving it this way effectively means
-that we'll silently drop any other exceptions.
-
->> +}
->> +
->> +int __kprobes
->> +kprobe_breakpoint_handler(struct pt_regs *regs)
->> +{
->> +	kprobe_handler(regs);
->> +	return 1;
-> 
-> Why don't you call kprobe_handler directly?
-
-I should.
-
-> 
->> +}
->> +
->> +bool arch_within_kprobe_blacklist(unsigned long addr)
->> +{
->> +	if ((addr >= (unsigned long)__kprobes_text_start &&
->> +	    addr < (unsigned long)__kprobes_text_end) ||
->> +	    (addr >= (unsigned long)__entry_text_start &&
->> +	    addr < (unsigned long)__entry_text_end) ||
->> +	    !!search_exception_tables(addr))
->> +		return true;
->> +
->> +	return false;
->> +}
->> +
->> +void __kprobes __used *trampoline_probe_handler(struct pt_regs *regs)
->> +{
->> +	struct kretprobe_instance *ri = NULL;
->> +	struct hlist_head *head, empty_rp;
->> +	struct hlist_node *tmp;
->> +	unsigned long flags, orig_ret_address = 0;
->> +	unsigned long trampoline_address =
->> +		(unsigned long)&kretprobe_trampoline;
->> +	kprobe_opcode_t *correct_ret_addr = NULL;
->> +
-> 
-> 	It seems you don't setup instruction_pointer.
-
-I don't think I get what you mean by that. The instruction pointer (or
-rather the return address register) gets set by kretprobe_trampoline.S
-to the address returned from this function.
-
-> 
->> +	INIT_HLIST_HEAD(&empty_rp);
->> +	kretprobe_hash_lock(current, &head, &flags);
->> +
->> +	/*
->> +	 * It is possible to have multiple instances associated with a given
->> +	 * task either because multiple functions in the call path have
->> +	 * return probes installed on them, and/or more than one
->> +	 * return probe was registered for a target function.
->> +	 *
->> +	 * We can handle this because:
->> +	 *     - instances are always pushed into the head of the list
->> +	 *     - when multiple return probes are registered for the same
->> +	 *	 function, the (chronologically) first instance's ret_addr
->> +	 *	 will be the real return address, and all the rest will
->> +	 *	 point to kretprobe_trampoline.
->> +	 */
->> +	hlist_for_each_entry_safe(ri, tmp, head, hlist) {
->> +		if (ri->task != current)
->> +			/* another task is sharing our hash bucket */
->> +			continue;
->> +
->> +		orig_ret_address = (unsigned long)ri->ret_addr;
->> +
->> +		if (orig_ret_address != trampoline_address)
->> +			/*
->> +			 * This is the real return address. Any other
->> +			 * instances associated with this task are for
->> +			 * other calls deeper on the call stack
->> +			 */
->> +			break;
->> +	}
->> +
->> +	kretprobe_assert(ri, orig_ret_address, trampoline_address);
->> +
->> +	correct_ret_addr = ri->ret_addr;
->> +	hlist_for_each_entry_safe(ri, tmp, head, hlist) {
->> +		if (ri->task != current)
->> +			/* another task is sharing our hash bucket */
->> +			continue;
->> +
->> +		orig_ret_address = (unsigned long)ri->ret_addr;
->> +		if (ri->rp && ri->rp->handler) {
->> +			__this_cpu_write(current_kprobe, &ri->rp->kp);
->> +			get_kprobe_ctlblk()->kprobe_status = KPROBE_HIT_ACTIVE;
->> +			ri->ret_addr = correct_ret_addr;
->> +			ri->rp->handler(ri, regs);
->> +			__this_cpu_write(current_kprobe, NULL);
->> +		}
->> +
->> +		recycle_rp_inst(ri, &empty_rp);
->> +
->> +		if (orig_ret_address != trampoline_address)
->> +			/*
->> +			 * This is the real return address. Any other
->> +			 * instances associated with this task are for
->> +			 * other calls deeper on the call stack
->> +			 */
->> +			break;
->> +	}
->> +
->> +	kretprobe_hash_unlock(current, &flags);
->> +
->> +	hlist_for_each_entry_safe(ri, tmp, &empty_rp, hlist) {
->> +		hlist_del(&ri->hlist);
->> +		kfree(ri);
->> +	}
->> +	return (void *)orig_ret_address;
->> +}
->> +
->> +void __kprobes arch_prepare_kretprobe(struct kretprobe_instance *ri,
->> +				      struct pt_regs *regs)
->> +{
->> +	ri->ret_addr = (kprobe_opcode_t *)regs->ra;
->> +	regs->ra = (long)&kretprobe_trampoline;
->> +}
->> +
->> +int __kprobes arch_trampoline_kprobe(struct kprobe *p)
->> +{
->> +	return 0;
->> +}
->> +
->> +int __init arch_init_kprobes(void)
->> +{
->> +	return 0;
->> +}
->> diff --git a/arch/riscv/kernel/probes/kprobes_trampoline.S b/arch/riscv/kernel/probes/kprobes_trampoline.S
->> new file mode 100644
->> index 000000000000..c7ceda9556a3
->> --- /dev/null
->> +++ b/arch/riscv/kernel/probes/kprobes_trampoline.S
->> @@ -0,0 +1,91 @@
->> +/* SPDX-License-Identifier: GPL-2.0+ */
->> +
->> +#include <linux/linkage.h>
->> +
->> +#include <asm/asm.h>
->> +#include <asm/asm-offsets.h>
->> +
->> +	.text
->> +	.altmacro
->> +
->> +	.macro save_all_base_regs
->> +	REG_S x1,  PT_RA(sp)
->> +	REG_S x3,  PT_GP(sp)
->> +	REG_S x4,  PT_TP(sp)
->> +	REG_S x5,  PT_T0(sp)
->> +	REG_S x6,  PT_T1(sp)
->> +	REG_S x7,  PT_T2(sp)
->> +	REG_S x8,  PT_S0(sp)
->> +	REG_S x9,  PT_S1(sp)
->> +	REG_S x10, PT_A0(sp)
->> +	REG_S x11, PT_A1(sp)
->> +	REG_S x12, PT_A2(sp)
->> +	REG_S x13, PT_A3(sp)
->> +	REG_S x14, PT_A4(sp)
->> +	REG_S x15, PT_A5(sp)
->> +	REG_S x16, PT_A6(sp)
->> +	REG_S x17, PT_A7(sp)
->> +	REG_S x18, PT_S2(sp)
->> +	REG_S x19, PT_S3(sp)
->> +	REG_S x20, PT_S4(sp)
->> +	REG_S x21, PT_S5(sp)
->> +	REG_S x22, PT_S6(sp)
->> +	REG_S x23, PT_S7(sp)
->> +	REG_S x24, PT_S8(sp)
->> +	REG_S x25, PT_S9(sp)
->> +	REG_S x26, PT_S10(sp)
->> +	REG_S x27, PT_S11(sp)
->> +	REG_S x28, PT_T3(sp)
->> +	REG_S x29, PT_T4(sp)
->> +	REG_S x30, PT_T5(sp)
->> +	REG_S x31, PT_T6(sp)
->> +	.endm
->> +
->> +	.macro restore_all_base_regs
->> +	REG_L x3,  PT_GP(sp)
->> +	REG_L x4,  PT_TP(sp)
->> +	REG_L x5,  PT_T0(sp)
->> +	REG_L x6,  PT_T1(sp)
->> +	REG_L x7,  PT_T2(sp)
->> +	REG_L x8,  PT_S0(sp)
->> +	REG_L x9,  PT_S1(sp)
->> +	REG_L x10, PT_A0(sp)
->> +	REG_L x11, PT_A1(sp)
->> +	REG_L x12, PT_A2(sp)
->> +	REG_L x13, PT_A3(sp)
->> +	REG_L x14, PT_A4(sp)
->> +	REG_L x15, PT_A5(sp)
->> +	REG_L x16, PT_A6(sp)
->> +	REG_L x17, PT_A7(sp)
->> +	REG_L x18, PT_S2(sp)
->> +	REG_L x19, PT_S3(sp)
->> +	REG_L x20, PT_S4(sp)
->> +	REG_L x21, PT_S5(sp)
->> +	REG_L x22, PT_S6(sp)
->> +	REG_L x23, PT_S7(sp)
->> +	REG_L x24, PT_S8(sp)
->> +	REG_L x25, PT_S9(sp)
->> +	REG_L x26, PT_S10(sp)
->> +	REG_L x27, PT_S11(sp)
->> +	REG_L x28, PT_T3(sp)
->> +	REG_L x29, PT_T4(sp)
->> +	REG_L x30, PT_T5(sp)
->> +	REG_L x31, PT_T6(sp)
->> +	.endm
->> +
->> +ENTRY(kretprobe_trampoline)
->> +	addi sp, sp, -(PT_SIZE_ON_STACK)
->> +	save_all_base_regs
->> +
->> +	move a0, sp /* pt_regs */
->> +
->> +	call trampoline_probe_handler
->> +
->> +	/* use the result as the return-address */
->> +	move ra, a0
->> +
->> +	restore_all_base_regs
->> +	addi sp, sp, PT_SIZE_ON_STACK
->> +
->> +	ret
->> +ENDPROC(kretprobe_trampoline)
->> diff --git a/arch/riscv/kernel/probes/simulate-insn.c b/arch/riscv/kernel/probes/simulate-insn.c
->> new file mode 100644
->> index 000000000000..5734d9bae22f
->> --- /dev/null
->> +++ b/arch/riscv/kernel/probes/simulate-insn.c
->> @@ -0,0 +1,33 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +
->> +#include <linux/bitops.h>
->> +#include <linux/kernel.h>
->> +#include <linux/kprobes.h>
->> +
->> +#include "simulate-insn.h"
->> +
->> +#define bit_at(value, bit)		((value) & (1 << (bit)))
->> +#define move_bit_at(value, bit, to)	((bit_at(value, bit) >> bit) << to)
->> +
->> +void __kprobes
->> +simulate_caddisp16(u32 opcode, long addr, struct pt_regs *regs)
->> +{
->> +	s16 imm;
->> +
->> +	/*
->> +	 * Immediate value layout in c.addisp16:
->> +	 * xxx9 xxxx x468 75xx
->> +	 * 1  1    8    4    0
->> +	 * 5  2
->> +	 */
->> +	imm = sign_extend32(
->> +		move_bit_at(opcode, 12, 9) |
->> +		move_bit_at(opcode, 6, 4) |
->> +		move_bit_at(opcode, 5, 6) |
->> +		move_bit_at(opcode, 4, 8) |
->> +		move_bit_at(opcode, 3, 7) |
->> +		move_bit_at(opcode, 2, 5),
->> +		9);
->> +
->> +	regs->sp += imm;
-> 
-> What about updating regs->sepc?
-
-sepc gets updated by instruction_pointer_set in kprobe_handler
-
-> 
->> +}
->> diff --git a/arch/riscv/kernel/probes/simulate-insn.h b/arch/riscv/kernel/probes/simulate-insn.h
->> new file mode 100644
->> index 000000000000..dc2c06c30167
->> --- /dev/null
->> +++ b/arch/riscv/kernel/probes/simulate-insn.h
->> @@ -0,0 +1,8 @@
->> +/* SPDX-License-Identifier: GPL-2.0+ */
->> +
->> +#ifndef _RISCV_KERNEL_KPROBES_SIMULATE_INSN_H
->> +#define _RISCV_KERNEL_KPROBES_SIMULATE_INSN_H
->> +
->> +void simulate_caddisp16(u32 opcode, long addr, struct pt_regs *regs);
->> +
->> +#endif /* _RISCV_KERNEL_KPROBES_SIMULATE_INSN_H */
->> diff --git a/arch/riscv/kernel/traps.c b/arch/riscv/kernel/traps.c
->> index 24a9333dda2c..d7113178d401 100644
->> --- a/arch/riscv/kernel/traps.c
->> +++ b/arch/riscv/kernel/traps.c
->> @@ -18,6 +18,7 @@
->>  #include <linux/sched/signal.h>
->>  #include <linux/signal.h>
->>  #include <linux/kdebug.h>
->> +#include <linux/kprobes.h>
->>  #include <linux/uaccess.h>
->>  #include <linux/mm.h>
->>  #include <linux/module.h>
->> @@ -120,8 +121,14 @@ DO_ERROR_INFO(do_trap_ecall_m,
->>  
->>  asmlinkage void do_trap_break(struct pt_regs *regs)
->>  {
->> +	bool handler_found = false;
->> +
->> +#ifdef CONFIG_KPROBES
->> +	if (kprobe_breakpoint_handler(regs))
->> +		handler_found = 1;
-> 
-> Why don't you just return from here?
-
-Following the pattern I've seen in other places, I can change that.
-
-> 
->> +#endif
->>  #ifdef CONFIG_GENERIC_BUG
->> -	if (!user_mode(regs)) {
->> +	if (!handler_found && !user_mode(regs)) {
->>  		enum bug_trap_type type;
->>  
->>  		type = report_bug(regs->sepc, regs);
->> @@ -137,7 +144,9 @@ asmlinkage void do_trap_break(struct pt_regs *regs)
->>  	}
->>  #endif /* CONFIG_GENERIC_BUG */
->>  
->> -	force_sig_fault(SIGTRAP, TRAP_BRKPT, (void __user *)(regs->sepc), current);
->> +	if (!handler_found)
->> +		force_sig_fault(SIGTRAP, TRAP_BRKPT,
->> +			(void __user *)(regs->sepc), current);
->>  }
->>  
->>  #ifdef CONFIG_GENERIC_BUG
->> diff --git a/arch/riscv/mm/fault.c b/arch/riscv/mm/fault.c
->> index 88401d5125bc..eff816e33479 100644
->> --- a/arch/riscv/mm/fault.c
->> +++ b/arch/riscv/mm/fault.c
->> @@ -22,6 +22,7 @@
->>  
->>  #include <linux/mm.h>
->>  #include <linux/kernel.h>
->> +#include <linux/kprobes.h>
->>  #include <linux/interrupt.h>
->>  #include <linux/perf_event.h>
->>  #include <linux/signal.h>
->> @@ -30,11 +31,33 @@
->>  #include <asm/pgalloc.h>
->>  #include <asm/ptrace.h>
->>  
->> +#ifdef CONFIG_KPROBES
->> +static inline int notify_page_fault(struct pt_regs *regs, unsigned int cause)
-> 
-> please use nokprobe_inline.
-
-OK.
-
-> 
->> +{
->> +	int ret = 0;
->> +
->> +	/* kprobe_running() needs smp_processor_id() */
->> +	if (!user_mode(regs)) {
->> +		preempt_disable();
->> +		if (kprobe_running() && kprobe_fault_handler(regs, cause))
->> +			ret = 1;
->> +		preempt_enable();
->> +	}
->> +
->> +	return ret;
->> +}
->> +#else
->> +static inline int notify_page_fault(struct pt_regs *regs, unsigned int cause)
->> +{
->> +	return 0;
->> +}
->> +#endif
->> +
->>  /*
->>   * This routine handles page faults.  It determines the address and the
->>   * problem, and then passes it off to one of the appropriate routines.
->>   */
->> -asmlinkage void do_page_fault(struct pt_regs *regs)
->> +asmlinkage void __kprobes do_page_fault(struct pt_regs *regs)
->>  {
->>  	struct task_struct *tsk;
->>  	struct vm_area_struct *vma;
->> @@ -47,6 +70,9 @@ asmlinkage void do_page_fault(struct pt_regs *regs)
->>  	cause = regs->scause;
->>  	addr = regs->sbadaddr;
->>  
->> +	if (notify_page_fault(regs, cause))
->> +		return;
->> +
->>  	tsk = current;
->>  	mm = tsk->mm;
->>  
->> -- 
->> 2.17.1
->>
-> 
-> Thank you,
-> 
+-- 
+Florian
