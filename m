@@ -2,101 +2,192 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7995FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:28:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD48C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:35:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 442472175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:28:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 442472175B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 495442081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:35:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RUFf2coB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 495442081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731462AbeKNL3H (ORCPT
+        id S1731520AbeKNLgi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 06:29:07 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50336 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727005AbeKNL3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 06:29:07 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B18FA89AF4;
-        Wed, 14 Nov 2018 01:28:11 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F41A5D6A6;
-        Wed, 14 Nov 2018 01:28:11 +0000 (UTC)
-Date:   Tue, 13 Nov 2018 20:28:10 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Jens Axboe <axboe@kernel.dk>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: nvme: utilize two queue maps, one for reads and one for writes
-Message-ID: <20181114012810.GA14592@redhat.com>
-References: <20181114004148.GA29545@roeck-us.net>
- <f1e91342-2b04-6d9f-e77a-6e812c6888d0@kernel.dk>
+        Wed, 14 Nov 2018 06:36:38 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:34382 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726496AbeKNLgi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 06:36:38 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 17so6308325pgg.1
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 17:35:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=gQvd9hsuChOZr2uqZiJ3OSXJcekmgdWGffcbGLSrkSQ=;
+        b=RUFf2coBYbREPn6iG4VGWZsSEo9YJIkkBEZzKZ5elfdfCqZX3NLWanhqnAuEPsk2GS
+         4WhFr1QbiHkbe5H+Te4Tn/uWiXR4xU/eG7TfJ02y17QjKN7kpvHcx2nyxyrEqc16fdV8
+         4CMd3HvsnLNasN/gcVR2y30Z3Wc6J94tTi/p7E59tp35gxpzNC+LJPqqfF/9uSM5/Aj8
+         w6U5lYPXzjh6jSXHJamoBixNcMCjbmp13zhD7knQaTQEaln3HKjZ/oKYJrYiMNLuLaZ5
+         HvyRt/uOEjfJHK68M0k216/T9zYSQ81rf5EfnSGP1fxMtNEioaDyCxuqtw8y9i6BX42P
+         1HuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=gQvd9hsuChOZr2uqZiJ3OSXJcekmgdWGffcbGLSrkSQ=;
+        b=i3sFfwXVP8xjvzOjpaEDGy4ZzfbwHiC9Y81bF9jkH4mm8P0OQH4NcMvZ6g96YM4cgp
+         JTlcxBlaFkn3IZSUwS4I+2BEWdMZRjvyJQ/jfLbbJ+r8CbPrjNXzZcYZSfkJxaKGf1EX
+         x469m9tKP/w2aNBhfAsKg7vF1YVCTjzRjOe0Mgv1gNjrIJy5xFkVlhGZJ5UJ9FGcDn0O
+         THWTjOjlAa6Fp77nGDRei3AXNlC81w9pY4rxCrF1ClmZ4h3PHyx/xsw+JiAgL4SGWOud
+         1cwctPWu/58qd1+0NATF1AgQa0rP29ZcI7aVdFX4+Hfa/CX6SjxNvrEIH28dcDwkQl/O
+         XcUQ==
+X-Gm-Message-State: AGRZ1gIIyOzlrur+noUI4rDsZAeAGoMt4s9u/qGyRx6c+RbGnhR1TJbO
+        /mLJHmW+Bp2WHN2tts98P7c=
+X-Google-Smtp-Source: AJdET5d65Ha2lATK0uTmK8YHtmTj9Fo0V51wHzuipZHenWjjO/NsD+ECeoXN5NOkEEQK4Hi0TKOnNw==
+X-Received: by 2002:a63:d441:: with SMTP id i1-v6mr6884079pgj.31.1542159340578;
+        Tue, 13 Nov 2018 17:35:40 -0800 (PST)
+Received: from ?IPv6:2001:df0:0:200c:258c:e8b8:3f2:c132? ([2001:df0:0:200c:258c:e8b8:3f2:c132])
+        by smtp.gmail.com with ESMTPSA id p11sm13969294pgn.60.2018.11.13.17.35.33
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 17:35:39 -0800 (PST)
+Subject: Re: [RFC PATCH 01/13] arm: Fix mutual exclusion in arch_gettimeoffset
+To:     Russell King - ARM Linux <linux@armlinux.org.uk>,
+        Finn Thain <fthain@telegraphics.com.au>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen N Chivers <schivers@csc.com.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+References: <cover.1541995959.git.fthain@telegraphics.com.au>
+ <d1559db8eddb5b06747b152ae69b63c3aa66ed09.1541995959.git.fthain@telegraphics.com.au>
+ <20181112083422.GA19695@infradead.org>
+ <alpine.LNX.2.21.1811131420150.362@nippy.intranet>
+ <20181113092012.GI30658@n2100.armlinux.org.uk>
+ <alpine.LNX.2.21.1811140854280.371@nippy.intranet>
+ <20181113234336.GP30658@n2100.armlinux.org.uk>
+From:   Michael Schmitz <schmitzmic@gmail.com>
+Message-ID: <d9be7418-cc4a-f92f-1aa8-d92a58cd68a4@gmail.com>
+Date:   Wed, 14 Nov 2018 14:35:29 +1300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <f1e91342-2b04-6d9f-e77a-6e812c6888d0@kernel.dk>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 14 Nov 2018 01:28:12 +0000 (UTC)
+In-Reply-To: <20181113234336.GP30658@n2100.armlinux.org.uk>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13 2018 at  7:51pm -0500,
-Jens Axboe <axboe@kernel.dk> wrote:
 
-> On 11/13/18 5:41 PM, Guenter Roeck wrote:
-> > Hi,
-> > 
-> > On Wed, Oct 31, 2018 at 08:36:31AM -0600, Jens Axboe wrote:
-> >> NVMe does round-robin between queues by default, which means that
-> >> sharing a queue map for both reads and writes can be problematic
-> >> in terms of read servicing. It's much easier to flood the queue
-> >> with writes and reduce the read servicing.
-> >>
-> >> Implement two queue maps, one for reads and one for writes. The
-> >> write queue count is configurable through the 'write_queues'
-> >> parameter.
-> >>
-> >> By default, we retain the previous behavior of having a single
-> >> queue set, shared between reads and writes. Setting 'write_queues'
-> >> to a non-zero value will create two queue sets, one for reads and
-> >> one for writes, the latter using the configurable number of
-> >> queues (hardware queue counts permitting).
-> >>
-> >> Reviewed-by: Hannes Reinecke <hare@suse.com>
-> >> Reviewed-by: Keith Busch <keith.busch@intel.com>
-> >> Signed-off-by: Jens Axboe <axboe@kernel.dk>
-> > 
-> > This patch causes hangs when running recent versions of
-> > -next with several architectures; see the -next column at
-> > kerneltests.org/builders for details.  Bisect log below; this
-> > was run with qemu on alpha. Reverting this patch as well as
-> > "nvme: add separate poll queue map" fixes the problem.
-> 
-> I don't see anything related to what hung, the trace, and so on.
-> Can you clue me in? Where are the test results with dmesg?
-> 
-> How to reproduce?
+On 14/11/18 12:43 PM, Russell King - ARM Linux wrote:
+> On Wed, Nov 14, 2018 at 08:55:37AM +1100, Finn Thain wrote:
+>> On Tue, 13 Nov 2018, Russell King - ARM Linux wrote:
+>>
+>>> On Tue, Nov 13, 2018 at 02:39:00PM +1100, Finn Thain wrote:
+>>>> You could remove the old arch_gettimeoffset API without dropping any
+>>>> platforms.
+>>>>
+>>>> If no-one converts a given platform to the clocksource API it would mean
+>>>> that the default 'jiffies' clocksource will get used on that platform.
+>>>>
+>>>> Clock resolution and timer precision would be degraded, but that might not
+>>>> matter.
+>>>>
+>>>> Anyway, if someone who has this hardware is willing to test a clocksource
+>>>> API conversion, they can let me know and I'll attempt that patch.
+>>> There's reasons why that's not appropriate - such as not having two
+>>> separate timers in order to supply a clocksource and separate clock
+>>> event.
+>>>
+>>> Not all hardware is suited to the clocksource + clockevent idea.
+>>>
+>> Sorry, I don't follow.
+>>
+>> AFAIK, clocksources and clock event devices are orthogonal concepts. There
+>> are platforms with !ARCH_USES_GETTIMEOFFSET && !GENERIC_CLOCKEVENTS (and
+>> every other combination).
+>>
+>> A clocksource read method just provides a cycle count, and in this sense
+>> arch_gettimeoffset() is equivalent to a clocksource.
+> A clocksource provides a cycle counter that monotonically changes and
+> does not wrap between clockevent events.
+>
+> A clock event is responsible for providing events to the system when
+> some work is needing to be done, limited by the wrap interval of the
+> clocksource.
+>
+> Each time the clock event triggers an interrupt, the clocksource is
+> read to determine how much time has passed, using:
+>
+> 	count = (new_value - old_value) & available_bits
+> 	nanosecs = count * scale >> shift;
+>
+> If you try to combine the clocksource and clockevent because you only
+> have a single counter, and the counter has the behaviour of:
+> - counting down towards zero
+> - when reaching zero, triggers an interrupt, and reloads with N
+>
+> then this provides your clockevent, but you can't use this as a clock
+> source, because each time you receive an interrupt and try to read the
+> counter value, it will be approximately the same value.  This means
+> that the above calculation fails to register the correct number of
+> nanoseconds passing.  Hence, this does not work.
 
-Think Guenter should've provided a full kerneltests.org url, but I had a
-look and found this for powerpc with -next:
-https://kerneltests.org/builders/next-powerpc-next/builds/998/steps/buildcommand/logs/stdio
+So we'd still have to use jiffies + interpolation from the current timer 
+rundown counter as clocksource (since that will be monotonous and won't 
+wrap)?
 
-Has useful logs of the build failure due to block.
+The way Finn did the clocksource for m68k, the clocksource counter does 
+behave as it should (monotonous, doesn't wrap) at least so far as I've 
+tested. Using the same timer for clocksource and clock events will 
+degrade timekeeping based on timer events to jiffies resolution, as you 
+point out. That would already have been the case before, so no gain in 
+resolution. Other timekeeping would have worked at higher resolution 
+before (interpolating through arch_gettimeoffset) just the same as now 
+(interpolating through clocksource reads). Finn's clocksource read code 
+essentially is arch_gettimeoffset under a new name.
 
-(not seeing any -next failure for alpha but Guenter said he was using
-qemu so the build failure could've been any arch qemu supports)
+Are you saying that's not possible on arm, because the current timer 
+rundown counter can't be read while the timer is running?
 
-Mike
+If I were to run a second timer at higher rate for clocksource, but 
+keeping the 10 ms timer as clock event (could easily do that by using 
+timer D on Atari Falcon) - how would that improve my timekeeping? Clock 
+events still only happen 10 ms apart ...
+
+Cheers,
+
+     Michael
+
+>
+> Also note where I said above that the clock event device must be able
+> to provide an interrupt _before_ the clocksource wraps - clearly with
+> such a timer, that is utterly impossible.
+>
+> The simple solution is to not use such a counter as the clocksource,
+> which means you fall back to using the jiffies clocksource, and your
+> timekeeping has jiffy resolution - so 10ms, or possibly 1ms if you
+> want a 1kHz timer interval.  For most applications, that's simply way
+> to coarse, as was realised in the very early days of Linux.
+>
+> If only there was a way to interpolate between timer interrupts...
+> which is exactly what arch_gettimeoffset() does, and is a historical
+> reminant of the pre-clocksource/clockevent days of the kernel - but
+> it is the only way to get better resolution from this sort of setup.
+>
