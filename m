@@ -2,136 +2,148 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A88D7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 00:08:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 548B5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 00:09:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7771D2081C
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 00:08:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7771D2081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 108032081C
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 00:09:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="lZ9DXH9G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 108032081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731836AbeKNKJR (ORCPT
+        id S1731918AbeKNKKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 05:09:17 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53536 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726823AbeKNKJR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 05:09:17 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 1CC07AFEC;
-        Wed, 14 Nov 2018 00:08:33 +0000 (UTC)
-Subject: Re: UBSAN: Undefined behaviour in mm/page_alloc.c
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     Michal Hocko <mhocko@kernel.org>, Kyungtae Kim <kt0755@gmail.com>,
-        pavel.tatashin@microsoft.com, osalvador@suse.de,
-        rppt@linux.vnet.ibm.com, aaron.lu@intel.com,
-        iamjoonsoo.kim@lge.com, alexander.h.duyck@linux.intel.com,
-        mgorman@techsingularity.net, lifeasageek@gmail.com,
-        threeearcat@gmail.com, syzkaller@googlegroups.com,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Konstantin Khlebnikov <khlebnikov@yandex-team.ru>
-References: <CAEAjamseRRHu+TaTkd1TwpLNm8mtDGP=2K0WKLF0wH-3iLcW_w@mail.gmail.com>
- <20181109084353.GA5321@dhcp22.suse.cz>
- <20181113094305.GM15120@dhcp22.suse.cz>
- <20181113151503.fd370e28cb9df5a0933e9b04@linux-foundation.org>
- <d88fae5c-e12d-ca35-d200-587a2ff02ec9@suse.cz>
- <20181113153204.ea0c0895866838de9e3bc8d0@linux-foundation.org>
-From:   Vlastimil Babka <vbabka@suse.cz>
-Openpgp: preference=signencrypt
-Autocrypt: addr=vbabka@suse.cz; prefer-encrypt=mutual; keydata=
- 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
- cqmP8roqufIAj+Ohhzs=
-Message-ID: <1f4439c8-d669-a1ac-53f5-36c04da72a51@suse.cz>
-Date:   Wed, 14 Nov 2018 01:05:33 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181113153204.ea0c0895866838de9e3bc8d0@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 14 Nov 2018 05:10:05 -0500
+Received: from mailout2.samsung.com ([203.254.224.25]:63149 "EHLO
+        mailout2.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbeKNKKF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 05:10:05 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout2.samsung.com (KnoxPortal) with ESMTP id 20181114000920epoutp0261b41352d730f4e029eac7e43cbce8b1~m1Qncx7sk0340303403epoutp022;
+        Wed, 14 Nov 2018 00:09:20 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20181114000920epoutp0261b41352d730f4e029eac7e43cbce8b1~m1Qncx7sk0340303403epoutp022
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1542154160;
+        bh=G6M/G8A4LeHSA6kE3nAgopS/0y7V+gDNj/rBXiGyIOs=;
+        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
+        b=lZ9DXH9GRwGorcU7ETR5SXlJFDy0pLJhuZFfpI2TdUJeIbmjJd+MptnijuT+NQgAI
+         WP4inmIKg87cLd6NBDTWNK7GEJ2C6tccX61d8bqjwwsO6DQSarS1xWMS6mOqdf/1Ou
+         4uTot2Grx9GAOTCveXcosXvtOCvoewSgGnnNZR+s=
+Received: from epsmges2p2.samsung.com (unknown [182.195.40.158]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20181114000918epcas1p4fa80bf1f09da147dafbed3b702573386~m1Qk4jEMW0633106331epcas1p4P;
+        Wed, 14 Nov 2018 00:09:17 +0000 (GMT)
+Received: from epcas2p4.samsung.com ( [182.195.41.56]) by
+        epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        B3.8A.04407.DA76BEB5; Wed, 14 Nov 2018 09:09:17 +0900 (KST)
+Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
+        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
+        20181114000917epcas2p14bd73bd6d659354f69150ab73b515334~m1QkQEXDi2713027130epcas2p1V;
+        Wed, 14 Nov 2018 00:09:17 +0000 (GMT)
+X-AuditID: b6c32a46-7a1ff70000001137-4d-5beb67ad12c0
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 81.13.03702.DA76BEB5; Wed, 14 Nov
+        2018 09:09:17 +0900 (KST)
+MIME-version: 1.0
+Content-transfer-encoding: 8BIT
+Content-type: text/plain; charset="UTF-8"
+Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
+        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
+        <0PI50016TPRGF390@mmp2.samsung.com>; Wed, 14 Nov 2018 09:09:17 +0900 (KST)
+Message-id: <5BEB67AD.30800@samsung.com>
+Date:   Wed, 14 Nov 2018 09:09:17 +0900
+From:   Chanwoo Choi <cw00.choi@samsung.com>
+Organization: Samsung Electronics
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
+        Thunderbird/31.6.0
+To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+        krzk@kernel.org, b.zolnierkie@samsung.com, a.zummo@towertech.it,
+        alexandre.belloni@bootlin.com
+Cc:     linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] rtc: max77686: Fix the returned value in case of error
+ in 'max77686_rtc_read_time()'
+In-reply-to: <20181113233645.9118-1-christophe.jaillet@wanadoo.fr>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHKsWRmVeSWpSXmKPExsWy7bCmhe7a9NfRBv+Pm1ssuXiV3aL93TJ2
+        i40z1rNabD04F0jckrY4f34Du8XlXXPYLI6tvsLmwOExb021x6ZVnWwefVtWMXpMn/eTyePz
+        JjmPz3fXswawRWXbZKQmpqQWKaTmJeenZOal2yp5B8c7x5uaGRjqGlpamCsp5CXmptoqufgE
+        6Lpl5gCdo6RQlphTChQKSCwuVtK3synKLy1JVcjILy6xVUotSMkpsCzQK07MLS7NS9dLzs+1
+        MjQwMDIFKkzIzjjbeZyt4D9HxfmNm1kaGNezdzFyckgImEis+HiUrYuRi0NIYAejxO1Dv5kh
+        nO+MEsenvGGCqfowZyMTRGIDo0TPxYMsIAleAUGJH5PvAdkcHMwC8hJHLmWDhJkFNCW27gbZ
+        AFJ/l1GiffImdoh6DYkVb7ewgtgsAqoST27vYwOx2QS0JPa/uAFm8wsoSlz98ZgRxBYViJDY
+        Of8b2CARgVmMErPXbmSEWBYn8e0uF0iNsEC2xLMXu5lBbE4BJ4mfr88yQxx9n01i9ipNCNtF
+        Yt+lv1BxYYlXx7dAvS8t8WwVyEguILudUeLLi2ZWCGcCo8SHU5uh3jeWeLawiwniNT6JjsN/
+        2UGOkBDglehoE4Io8ZD4cmEfI8THUxklVt78zT6BUXYWUiDNQgTSLKRAWsDIvIpRLLWgODc9
+        tdiowAg5+jYxgtOeltsOxiXnfA4xCnAwKvHwWtx+FS3EmlhWXJl7iFGCg1lJhNc/+nW0EG9K
+        YmVValF+fFFpTmrxIUZTYBhPZJYSTc4HpuS8knhDUyNjY2MLU3NLYwNLJXHeh9Jzo4UE0hNL
+        UrNTUwtSi2D6mDg4pRoYF1fUPPINZ4nUemP/hun2MqGsOdnf7+yRuFJStnCztsaVSDbZcJOE
+        rLimGUv/GftaBOefFY050SjSJdP9RueWcIzGId/WRT39857xKS09X3L+xbVbjByLuu/46q/r
+        urx0beIhD+HbT2Y+nNA033/z0sQ6f6VNu3JlHuz59GinWtO7O4+W1dmXK7EUZyQaajEXFScC
+        AP7PJ6qRAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGLMWRmVeSWpSXmKPExsVy+t9jQd216a+jDdqmCVgsuXiV3aL93TJ2
+        i40z1rNabD04F0jckrY4f34Du8XlXXPYLI6tvsLmwOExb021x6ZVnWwefVtWMXpMn/eTyePz
+        JjmPz3fXswawRXHZpKTmZJalFunbJXBlnO08zlbwn6Pi/MbNLA2M69m7GDk5JARMJD7M2cgE
+        YgsJrGOUeN7ICGLzCghK/Jh8j6WLkYODWUBe4silbJAws4C6xKR5i5i7GLmAyu8zSjzu6WKH
+        qNeQWPF2CyuIzSKgKvHk9j42EJtNQEti/4sbYDa/gKLE1R+PGUFmigpESHSfqASZIyIwg1Fi
+        2cPF7BAL4iQOTvsMVi8skC3RMPkSK8Sy6YwSxz5+ZQZJcAo4Sfx8fZZ5AqPALCS3zkK4dRaS
+        WxcwMq9ilEwtKM5Nzy02KjDKSy3XK07MLS7NS9dLzs/dxAgM/W2Htfp3MD5eEn+IUYCDUYmH
+        1+L2q2gh1sSy4srcQ4wSHMxKIrz+0a+jhXhTEiurUovy44tKc1KLDzFKc7AoifPy5x+LFBJI
+        TyxJzU5NLUgtgskycXBKNTBmLM/f4+18/tgsvWmXm2+1zO2bzpi1ssthPvu9hfXfDBsiK9fc
+        e/goY6/iXLWN81MXpAg9DVV6zTG7dEud7hPmJSqNxz5qH3OIZZJKYYzM9vtmHcjM8Xpp0P87
+        9VvfBVQeFCgLKTzpZ9a22a//1dZN2wMkf+oYfTifMzd5tvSH+12fLqeIRl9TYinOSDTUYi4q
+        TgQAm6LEinkCAAA=
+X-CMS-MailID: 20181114000917epcas2p14bd73bd6d659354f69150ab73b515334
+X-Msg-Generator: CA
+CMS-TYPE: 102P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20181113233753epcas4p2ecc97f5931a34bc0d176111b155738b8
+References: <CGME20181113233753epcas4p2ecc97f5931a34bc0d176111b155738b8@epcas4p2.samsung.com>
+        <20181113233645.9118-1-christophe.jaillet@wanadoo.fr>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/14/18 12:32 AM, Andrew Morton wrote:
-> On Wed, 14 Nov 2018 00:23:28 +0100 Vlastimil Babka <vbabka@suse.cz> wrote:
+On 2018년 11월 14일 08:36, Christophe JAILLET wrote:
+> In case of error, we return 0.
+> This is spurious and not consistent with the other functions of the driver.
+> Commit e115a2bf1426 has modified more than what is said in the commit
+> message. Reverse part of it znd return an error when needed, as it was
+> previously.
 > 
->> On 11/14/18 12:15 AM, Andrew Morton wrote:
->>> On Tue, 13 Nov 2018 10:43:05 +0100 Michal Hocko <mhocko@kernel.org> wrote:
->>>
->>>> --- a/mm/page_alloc.c
->>>> +++ b/mm/page_alloc.c
->>>> @@ -4364,6 +4353,15 @@ __alloc_pages_nodemask(gfp_t gfp_mask, unsigned int order, int preferred_nid,
->>>>  	gfp_t alloc_mask; /* The gfp_t that was actually used for allocation */
->>>>  	struct alloc_context ac = { };
->>>>  
->>>> +	/*
->>>> +	 * There are several places where we assume that the order value is sane
->>>> +	 * so bail out early if the request is out of bound.
->>>> +	 */
->>>> +	if (unlikely(order >= MAX_ORDER)) {
->>>> +		WARN_ON_ONCE(!(gfp_mask & __GFP_NOWARN));
->>>> +		return NULL;
->>>> +	}
->>>> +
->>>
->>> I know "everybody enables CONFIG_DEBUG_VM", but given this is fastpath,
->>> we could help those who choose not to enable it by using
->>>
->>> #ifdef CONFIG_DEBUG_VM
->>> 	if (WARN_ON_ONCE(order >= MAX_ORDER && !(gfp_mask & __GFP_NOWARN)))
->>> 		return NULL;
->>> #endif
->>
->> Hmm, but that would mean there's still potential undefined behavior for
->> !CONFIG_DEBUG_VM, so I would prefer not to do it like that.
->>
+> Fixes: e115a2bf1426 ("rtc: max77686: stop validating rtc_time in .read_time")
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+>  drivers/rtc/rtc-max77686.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> What does "potential undefined behavior" mean here?
+> diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+> index 8a60900d6b8b..4aff349ae301 100644
+> --- a/drivers/rtc/rtc-max77686.c
+> +++ b/drivers/rtc/rtc-max77686.c
+> @@ -360,7 +360,7 @@ static int max77686_rtc_read_time(struct device *dev, struct rtc_time *tm)
+>  
+>  out:
+>  	mutex_unlock(&info->lock);
+> -	return 0;
+> +	return ret;
+>  }
+>  
+>  static int max77686_rtc_set_time(struct device *dev, struct rtc_time *tm)
+> 
 
-I mean that it becomes undefined once a caller with order >= MAX_ORDER
-appears. Worse if it's directly due to a userspace action, like in this
-case.
+Reviewed-by: Chanwoo Choi <cw00.choi@samsung.com>
+
+-- 
+Best Regards,
+Chanwoo Choi
+Samsung Electronics
