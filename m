@@ -2,115 +2,129 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2A6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 03:25:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6C899C169D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 03:38:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 32AA02082A
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 03:25:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 32AA02082A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 2E07C2243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 03:38:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="It8YIZzm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E07C2243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732008AbeKNN03 (ORCPT
+        id S1731904AbeKNNjg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 08:26:29 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:40268 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727065AbeKNN02 (ORCPT
+        Wed, 14 Nov 2018 08:39:36 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:40586 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727065AbeKNNjf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 08:26:28 -0500
-Received: by mail-ed1-f65.google.com with SMTP id d3so11784271edx.7;
-        Tue, 13 Nov 2018 19:25:10 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=3JA6m1eBDfTjSl52PzXe/thhnHCjOGYCNpyCBUrTusg=;
-        b=S6KhmGJDWfKBhL/FqI62xYdGlUy5xLM+epplSGA50Qwie0TjI/0DI/lwxQFc3K1uAv
-         +gtIHhCwwfFwyKhQT8Ph0t7+Wsa6oK9lDbfXgvB0nFnoIR+5BxFDm+46evN00h6JtNoW
-         EfxDkd1LoBPNySfp7xC+kOv2dRgCH7Jcc0+JOMWtEqc7vLo+NbM9RSoKprYU4hlbzQJi
-         2OOWfYbfWg2ZsPGITC42JDbhkYSuG/YbTL2RiXZ39+ZAf5l7th5QtByjaNk8yHVfmOL9
-         Z6eIZ8oNKJfx9J9alD9lWCZPbBoPaDCLBnUWtmgamjtDa3jWEY160a1lOkJUIRNxinM0
-         K/mg==
-X-Gm-Message-State: AGRZ1gL1fpKYHOZRYt4/FTl4umpc7VT5flQG2aNnH3mdW01xnUEWbdP8
-        eZ7ymAdcpth7NTcYvT9ncAZmeRgys6k=
-X-Google-Smtp-Source: AJdET5eGAJzUFbKhDPZPN0MzOv0PJ+UicI83IzCtkecyBmkTPQDYkxhCxwCmOO087vMvWq8SVPvqrQ==
-X-Received: by 2002:a17:906:3ed4:: with SMTP id d20-v6mr415069ejj.151.1542165909158;
-        Tue, 13 Nov 2018 19:25:09 -0800 (PST)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
-        by smtp.gmail.com with ESMTPSA id n34-v6sm6087801edc.34.2018.11.13.19.25.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 19:25:08 -0800 (PST)
-Received: by mail-wr1-f42.google.com with SMTP id y3-v6so15571687wrh.10;
-        Tue, 13 Nov 2018 19:25:08 -0800 (PST)
-X-Received: by 2002:adf:ecc5:: with SMTP id s5-v6mr144885wro.208.1542165908230;
- Tue, 13 Nov 2018 19:25:08 -0800 (PST)
+        Wed, 14 Nov 2018 08:39:35 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAE3Z38R097054;
+        Wed, 14 Nov 2018 03:38:11 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=b9ipmtCfv1pNq29VRYkspuamivSv3RhE9u3kWwbQcwg=;
+ b=It8YIZzmrh+hC/Itn/td8AktLRp69FT4yTevDtlZ1aF+VR62dDZh88hxeuBrw+qrjUbs
+ GJ/i4U/S56IpqYEAGa59H0HRaRii5fgBc20a8grtXXKu4W9HQo3cWizGZLxtefL1ztA6
+ X4xICukowB7UKyLvrrROaJr9WPDYDYYIX4rX3vxlfhSS8Cd6a7CSaUvKuJNTAAVsXGpk
+ lvN0KrQwEVz/ZLkyQz2Ks/TcrmYd8ePn5jG+GdjvMSYdlT7RI4x5C4S/RQp7tw/oAlTa
+ +MejTyQVcVH0BlslDwX5Cfwzy5CbBzp2MGG2yKpM1i7G5BP4vJNQf9ybJfOnqDCMw12Q /A== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2nr7cs0v3s-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Nov 2018 03:38:11 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAE3cBZB029341
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Nov 2018 03:38:11 GMT
+Received: from abhmp0013.oracle.com (abhmp0013.oracle.com [141.146.116.19])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAE3cAmZ029524;
+        Wed, 14 Nov 2018 03:38:10 GMT
+Received: from [10.182.71.8] (/10.182.71.8)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Tue, 13 Nov 2018 19:38:10 -0800
+Subject: Re: [PATCH V6 3/5] blk-mq: ensure hctx to be ran on mapped cpu when
+ issue directly
+To:     Ming Lei <tom.leiming@gmail.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>,
+        linux-block <linux-block@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <1542103016-21037-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1542103016-21037-4-git-send-email-jianchao.w.wang@oracle.com>
+ <d8d88eff-e3eb-542d-d4fa-06b6aff97ba0@kernel.dk>
+ <94ec3d97-f75f-645d-94f1-24d3fd476940@oracle.com>
+ <CACVXFVNZ1p4wV6S_FRyKssbUT9CV-aXZ=iRGQ-tY05v_7vxPnw@mail.gmail.com>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <6fa5f24c-727a-5d20-7677-da4ac3e173f9@oracle.com>
+Date:   Wed, 14 Nov 2018 11:38:16 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
-In-Reply-To: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 14 Nov 2018 11:24:48 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66ygbcomUMkcv8qMCAs_qviFMPzpxj-F4=YBrpuLrdSUw@mail.gmail.com>
-Message-ID: <CAGb2v66ygbcomUMkcv8qMCAs_qviFMPzpxj-F4=YBrpuLrdSUw@mail.gmail.com>
-Subject: Re: [PATCH 0/5] media: Allwinner A10 CSI support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CACVXFVNZ1p4wV6S_FRyKssbUT9CV-aXZ=iRGQ-tY05v_7vxPnw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9076 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811140031
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 4:24 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> Hi,
->
-> Here is a series introducing the support for the A10 (and SoCs of the same
-> generation) CMOS Sensor Interface (called CSI, not to be confused with
-> MIPI-CSI, which isn't support by that IP).
->
-> That interface is pretty straightforward, but the driver has a few issues
-> that I wanted to bring up:
->
->   * The only board I've been testing this with has an ov5640 sensor
->     attached, which doesn't work with the upstream driver. Copying the
->     Allwinner init sequence works though, and this is how it has been
->     tested. Testing with a second sensor would allow to see if it's an
->     issue on the CSI side or the sensor side.
->   * When starting a capture, the last buffer to capture will fail due to
->     double buffering being used, and we don't have a next buffer for the
->     last frame. I'm not sure how to deal with that though. It seems like
->     some drivers use a scratch buffer in such a case, some don't care, so
->     I'm not sure which solution should be preferred.
->   * We don't have support for the ISP at the moment, but this can be added
->     eventually.
->
->   * How to model the CSI module clock isn't really clear to me. It looks
->     like it goes through the CSI controller and then is muxed to one of the
->     CSI pin so that it can clock the sensor. I'm not quite sure how to
->     model it, if it should be a clock, the CSI driver being a clock
->     provider, or if the sensor should just use the module clock directly.
+On 11/14/18 11:02 AM, Ming Lei wrote:
+> On Wed, Nov 14, 2018 at 10:15 AM jianchao.wang
+> <jianchao.w.wang@oracle.com> wrote:
+>>
+>> Hi Jens
+>>
+>> Thanks for your kindly response.
+>>
+>> On 11/13/18 9:44 PM, Jens Axboe wrote:
+>>> On 11/13/18 2:56 AM, Jianchao Wang wrote:
+>>>> When issue request directly and the task is migrated out of the
+>>>> original cpu where it allocates request, hctx could be ran on
+>>>> the cpu where it is not mapped.
+>>>> To fix this,
+>>>>  - insert the request forcibly if BLK_MQ_F_BLOCKING is set.
+>>>>  - check whether the current is mapped to the hctx, if not, insert
+>>>>    forcibly.
+>>>>  - invoke __blk_mq_issue_directly under preemption disabled.
+>>>
+>>> I'm not too crazy about this one, adding a get/put_cpu() in the hot
+>>> path, and a cpumask test. The fact is that most/no drivers care
+>>> about strict placement. We always try to do so, if convenient,
+>>> since it's faster, but this seems to be doing the opposite.
+>>>
+>>> I'd be more inclined to have a driver flag if it needs guaranteed
+>>> placement, using one an ops BLK_MQ_F_STRICT_CPU flag or similar.
+>>>
+>>> What do you think?
+>>>
+>>
+>> I'd inclined blk-mq should comply with a unified rule, no matter the
+>> issuing directly path or inserting one. Then blk-mq would have a simpler
+>> model. And also this guarantee could be a little good for drivers,
+>> especially the case where cpu and hw queue mapping is 1:1.
+> 
+> I guess it is quite hard to respect this rule 100%, such as in case of
+> CPU hotplug.
+> 
+Yes, it is indeed the case.
 
-Which clock are you talking about? MCLK? This seems to be fed directly from
-the CCU, as there doesn't seem to be controls for it within the CSI hardware
-block, and the diagram doesn't list it either. IMO you don't have to model it.
-The camera sensor device node would just take a reference to it directly. You
-would probably enable the (separate) pinmux setting in the CSI controller node.
+Looks like this patch is contentious.
+I will drop this one and post later as a standalone one if necessary.
 
+Thanks
+Jianchao
 
-ChenYu
