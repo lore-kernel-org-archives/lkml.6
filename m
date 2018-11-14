@@ -7,191 +7,160 @@ X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AFD85C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9E7DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:56:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 64B9322360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:56:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 98CB921582
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:56:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="1UZN++lu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 64B9322360
+	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="CZX0yhPi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 98CB921582
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733121AbeKOBAK (ORCPT
+        id S1733158AbeKOBAT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:00:10 -0500
-Received: from mail-eopbgr690089.outbound.protection.outlook.com ([40.107.69.89]:15725
+        Wed, 14 Nov 2018 20:00:19 -0500
+Received: from mail-eopbgr690075.outbound.protection.outlook.com ([40.107.69.75]:50862
         "EHLO NAM04-CO1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725828AbeKOBAI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:00:08 -0500
+        id S1726846AbeKOBAT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 20:00:19 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ow830ZFFUNbjDNJNQ0cYY4oALd5mYA2t5DhL+9KV5Tg=;
- b=1UZN++luO73qLK43aE//RUpHW33AR3a89W7tNhBMzMJJzJjn0FPDrYfA2ZHgklhJFhd9ptVGXpHYgyK8AiDLfUQdyFiPZqgZevwNRCYG1OvNZuBhtq8ojCgPJaiYU3xwsRVz5HekTEL4cXEAIlifQ9lEANwgHblrNYwAnGByDf0=
-Received: from CY4PR02CA0007.namprd02.prod.outlook.com (2603:10b6:903:18::17)
- by SN4PR0201MB3518.namprd02.prod.outlook.com (2603:10b6:803:44::16) with
+ bh=y/C1FXJoc3ieaCJ2FXAqzrburIC/OFtuJI/KhWDVCJk=;
+ b=CZX0yhPikiG2gQq/sb3YwhRRwNF6VBP5K5BPC+NVkZNBvXK7+FW731XpUcy/w/eLXSQvtqOqbnXXfWZQZWsowA1yNFi5RtTSxYygeLddyOG5es58AWQfuQEPo0WB+3nJjNlfoQqgX2IYd/Zs8rifOcDFXvlOTVA4Lzk3UjTJmHw=
+Received: from DM6PR02CA0021.namprd02.prod.outlook.com (2603:10b6:5:1c::34) by
+ SN4PR0201MB3517.namprd02.prod.outlook.com (2603:10b6:803:44::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.30; Wed, 14 Nov
- 2018 14:54:40 +0000
-Received: from SN1NAM02FT037.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::207) by CY4PR02CA0007.outlook.office365.com
- (2603:10b6:903:18::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1339.21 via Frontend
- Transport; Wed, 14 Nov 2018 14:54:40 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.100)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.27; Wed, 14 Nov
+ 2018 14:55:50 +0000
+Received: from CY1NAM02FT056.eop-nam02.prod.protection.outlook.com
+ (2a01:111:f400:7e45::200) by DM6PR02CA0021.outlook.office365.com
+ (2603:10b6:5:1c::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1294.23 via Frontend
+ Transport; Wed, 14 Nov 2018 14:55:50 +0000
+Authentication-Results: spf=pass (sender IP is 149.199.60.83)
  smtp.mailfrom=xilinx.com; google.com; dkim=none (message not signed)
  header.d=none;google.com; dmarc=bestguesspass action=none
  header.from=xilinx.com;
 Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
-Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- SN1NAM02FT037.mail.protection.outlook.com (10.152.72.89) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1294.14
- via Frontend Transport; Wed, 14 Nov 2018 14:54:39 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:43848 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
+ 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
+ client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
+Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
+ CY1NAM02FT056.mail.protection.outlook.com (10.152.74.160) with Microsoft SMTP
+ Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.15
+ via Frontend Transport; Wed, 14 Nov 2018 14:55:50 +0000
+Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
+        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
         (envelope-from <bharat.kumar.gogada@xilinx.com>)
-        id 1gMwYx-0001gY-En; Wed, 14 Nov 2018 06:54:39 -0800
+        id 1gMwa5-0004jl-Ui; Wed, 14 Nov 2018 06:55:49 -0800
 Received: from [127.0.0.1] (helo=localhost)
         by xsj-pvapsmtp01 with smtp (Exim 4.63)
         (envelope-from <bharat.kumar.gogada@xilinx.com>)
-        id 1gMwYs-0007Y3-A9; Wed, 14 Nov 2018 06:54:34 -0800
-Received: from xsj-pvapsmtp01 (mailman.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wAEEsVj4014239;
-        Wed, 14 Nov 2018 06:54:32 -0800
+        id 1gMwa0-0007pv-RQ; Wed, 14 Nov 2018 06:55:44 -0800
+Received: from xsj-pvapsmtp01 (xsj-smtp1.xilinx.com [149.199.38.66])
+        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wAEEtffj023847;
+        Wed, 14 Nov 2018 06:55:42 -0800
 Received: from [172.23.37.224] (helo=xhdbharatku40.xilinx.com)
         by xsj-pvapsmtp01 with esmtp (Exim 4.63)
         (envelope-from <bharat.kumar.gogada@xilinx.com>)
-        id 1gMwYp-0007XE-EF; Wed, 14 Nov 2018 06:54:31 -0800
+        id 1gMwZx-0007nP-9i; Wed, 14 Nov 2018 06:55:41 -0800
 From:   Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-To:     <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+To:     <linux-kernel@vger.kernel.org>
 CC:     <bhelgaas@google.com>, <rgummal@xilinx.com>,
         Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
-Subject: [PATCH] PCI: Enable SERR# forwarding for Type-1 PCI devices
-Date:   Wed, 14 Nov 2018 20:17:01 +0530
-Message-ID: <1542206821-24503-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+Subject: [PATCH v2 1/4] PCI: Add setup_platform_service_irq hook to struct pci_host_bridge
+Date:   Wed, 14 Nov 2018 20:17:55 +0530
+Message-ID: <1542206878-24587-2-git-send-email-bharat.kumar.gogada@xilinx.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542206878-24587-1-git-send-email-bharat.kumar.gogada@xilinx.com>
+References: <1542206878-24587-1-git-send-email-bharat.kumar.gogada@xilinx.com>
 X-RCIS-Action: ALLOW
 X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
 X-TM-AS-User-Approved-Sender: Yes;Yes
 X-EOPAttributedMessage: 0
 X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(979002)(136003)(39860400002)(396003)(346002)(376002)(2980300002)(438002)(199004)(189003)(186003)(77096007)(2906002)(63266004)(2616005)(476003)(126002)(9786002)(36756003)(5660300001)(1857600001)(336012)(106466001)(106002)(47776003)(426003)(8936002)(6666004)(4326008)(356004)(50226002)(8676002)(36386004)(16586007)(48376002)(478600001)(107886003)(26005)(54906003)(305945005)(316002)(486006)(110136005)(7696005)(81156014)(81166006)(50466002)(51416003)(107986001)(5001870100001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN4PR0201MB3518;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT037;1:B3aJ9yO1+rLQjistZtWEs9QTiow+eYjZE7ARL8llmB1bXLoGO708PCDW+4ARIBB9wuCBUoZxL/UzQRCCbXIl70yGcZBx62s4niwKmv/dX4VKYO0yR6gd8tyyzR6orHFE
+X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(376002)(396003)(136003)(39860400002)(346002)(2980300002)(438002)(199004)(189003)(6916009)(305945005)(81156014)(5660300001)(478600001)(4326008)(6666004)(36756003)(107886003)(9786002)(50226002)(356004)(48376002)(8936002)(50466002)(81166006)(8676002)(476003)(2616005)(36386004)(126002)(316002)(63266004)(54906003)(16586007)(486006)(426003)(446003)(11346002)(2351001)(26005)(106466001)(106002)(336012)(76176011)(51416003)(7696005)(2906002)(77096007)(47776003)(186003)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN4PR0201MB3517;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT056;1:6Tg/PvKk78deLp29oOrbg8z21gbfWsF7iT2ANCxMv/pMxvoTOl9kGWNuZpmafYTNRRKGQXuMsi9IF3DCTrdgXs0pAsU5pqqsbreLKVoSEkM3iAlXduyV94Ijtiy5FZyE
 MIME-Version: 1.0
 Content-Type: text/plain
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 392fe82e-bdcc-49b5-ebb4-08d64a411aa5
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:SN4PR0201MB3518;
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;3:HoSC4kWwI4n2tTbxoDHlQP0mxldPNdBP3tLvo9yitoOMZ//Xpad7g77fUho/j8wW8lSEiALTFRYMdG3/MW9f5iOCUJr5MHbCsx04m/D7eEZpuXzmj3dLV3QZOIMB83C8WqWvilN8fMb6yZUe64Orqa4r57kvtHuSRjBPIpfwXDnAovIGsM85fDpYIiKXlFgj09avSkNi/O7Isnw+FYZ6rK4ns43UcHHcjELZ+BsxfZ8RjIMAiINMOYh135aO5TFYSyTnHqWeR+Np1aWUZe/Iqy8aL8JB8lQsmhmdH19Tmqrc9QVAiOF3lNJc/ejyuEqHuGfInYIfOTGzKSSyNOYelq3XMDKsNvHyXL537eN19fQ=;25:OktEI5p33WAyE+rRh0MYK88EJg5NQjfuTLlQSIIBjnLZPlinkHB76lzy2xpt6vXivPOCocJV89yrr3NxwtuQew+vC6S3hLhANmNuAmiS3qc0mBVX3RJFNuQ/Udv0m43PpZI6e7eY2bsBvo/WYmEmhH7EpHcShAAqEt8lKj7Rx4OzhH1pwquhDwzxx3WQea339v05O+Jz5eG1ffvspUuH7jxZXQqWVNYk+hmiqQcvizbNqWuGXGGtrHiLGVEuQjfaOJQehHFAUD50RKfCvcZQ2bB2pg25EfGt4mF+psHFSZv1PJJrBh1H0NbQMjhNL0oG8iV9fVPqOs17DYSen7XhgA==
-X-MS-TrafficTypeDiagnostic: SN4PR0201MB3518:
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;31:HYeb8bkNlRBOHzYriCZaZS96Vh8Hmbh817Q/YP1CMsKv/7VLH37cVUbFJzKX6tvpPDhyNj96B5tIdUHXPlNRwbLb22LS21pro8bBS51UIAT7kT1F5irxfQzsNGP0aFTdAOsDduwMvp1SIp5JBnwC9JwamxhvQe6JTg1dBffKnq/eZrg5/Q7xzmD/GNhOojDcALizMzbCzOG/O7H9zFe+0xCETJ7NHOY4okVuXgmssg8=;20:gfICMY8jNXL4tXkjjwv6P+fx7S6zaVT3m0WudAyT8bvZY1b3HR1ptv8apZ0PnTDSpX+K7o9iq2v2Z91cU99LyCVtRUeB+0JMVyxPQxrhkZOIL4PYjbZ0V09bLcd4b93uz+zRgrZVK26iNFYRqSpM6wHuNMokY+iqKOGh4X5OHJN6/2dr9aT1YLcmDuCN6n9eJJqSOFOP/+B3Ddqy3qcox/1ClcMfgUjlOVZVqQzd5ZRjn08pO/zmkoN04OkPvqtvqU78P6pBZfEWZXSY/UxM7XvsoljtAsVtNkzxiF9O6olvfEkToohTXIEcyD8/DktY+khDml7HZvV+nfsySQ32BqgvKn4jUhHGt0TL+ZFwKbBpNlS976Z/qc/1T/BKIDLOplXslfGveE3e1ImRZN4+yC4UKqMfN2ts40rxmt+MOANYtmsyLmn86t8DwSlRNLIZaQjS4dxKdaJy9OvBiF6g4FnK+JMWeJKJsDPisPxa48rn6jrCsfwM018RNjzKQPdE
+X-MS-Office365-Filtering-Correlation-Id: 86f5d4d2-4d96-457a-a5ce-08d64a4144af
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:SN4PR0201MB3517;
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3517;3:TcndaYjrgw58HT6HoIpWLFypK88g1yullYWuzH2sZ5GcfzSvhJf+0jTIieGGuxIDRVTpJemhdK59W3hJUMej9GLS3DYBMxXU6wrzY39eWCDHmUJgLuXooxSgjI1/MxHb9TkzH4AslWk9GakaxvkUIDKf0GpYKPjvmr/CS6bd8hvcemUQiQIvspToepxNWH58atnVBG894W0r2pxE6oXWGotUKpE2vNcKMdu2Jnn9AW9Ghnwww269PP8CEJc+GHmRsFITZTGvmlFHnbPvtT2qJcWgtm/33ivUBBHjsmKCxIfuB392hJSnmqhW+bSSgabs1AfamWMkWOPeXFvuQridSZALTx5IEVzEIvVMDl6ZuJ8=;25:lecP/aJT2pa93sghcMXUwPuI4qVJkIWW6+W8dPCWLNjR+YB8pUHit0cSdpyqVi/2VMHCo+l6akapMGnj1TktKrMQuUsTBzpKYyPLazP8NxNS7i0GjWukqXZ9SGyfncvi+xlU7rt41zFbknCPUZurXf4bW4OLzA0yWLxdc3IBTKb3BnAEPHxK/3gd/ftmMVfbhl6HBPWtrA6l0BSxhG1hB5Un2OYpCSa0FkacqL/ZLE/k4lJJsbnToxUfYS8R+vFUb6HjXaHHPtjzaGNCmfpWcWFg1L+ChauNi3z4VonFZNMmvwY5paLNsUDxq5KX8Q8g62QD+IkmMXPCrQVXlXVZeQ==
+X-MS-TrafficTypeDiagnostic: SN4PR0201MB3517:
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3517;31:JUMJHNBzSw9F/3cuhKrQMwInfFGqEmD6xEtEmTAmnEe41/FhUebHi56s2ZmSlYTHxaalWGh5eEYpAk0EHe4dkikNaPNLNA5pGIahvgfP4lPdCnfoLflpuvgK7s1DM3InvS3wud4+KhOdfMZas7Wi5N+XClvqIfJtiYJjppMsaW084A4KzhT+Tas6IJQLdBGv/2RSfOj3AXgJXpZN9xNqGWTsQd3W0QSS3m6ddvCdFkU=;20:amR/+3wlC8DRKE7vJXzY/T48HdDoMd6AJChZpD9dmePlEStsx2Veln7eQPKK51eww8bJNQxVX7jzNGKsEUoRBt/1T5xD68g3B4EHLIQxZJATX5kgsWqTysVbre5EpbLqiyjasrw5Lr3I8GVqoX5zlerUsg9e0nANRgJ0gjQNhx/KkblOzSazav9cdxt4Tsrhn641LUeayzUoYloktBxlnB7T8umGQsx+wSoVV+iZ3gdmh+MunRr0acFTHCS+S9MD+4rMy4Sw6e50vjHnEcLoJeoPxB3Hv+l34Ar2dryH4+D6ec1IiEfMaHThtb+mMZX0+4WAdtbHd4ZAMuNMvIPQlZRqDFRwtvB3V9u8hI1CF4emVCwGE/Tsk0GwCTmeZ4YZrMbNCeWVpxOUqAXOkv1nRM4BZnCuqhLfBpcGKJew6a0vYN39dMi36ci+D+scRc2UXdi7mXLBnPbcYpSNNj4own+cY8ZHMfN2iJAEL3/kqbpLShgJhnVfALGMbj1gsb59
 X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <SN4PR0201MB3518B39A1D615D701EC4ADD9A5C30@SN4PR0201MB3518.namprd02.prod.outlook.com>
+X-Microsoft-Antispam-PRVS: <SN4PR0201MB3517CD7F0AB01BC3EE570E0AA5C30@SN4PR0201MB3517.namprd02.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:(192813158149592);
 X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231382)(944501410)(52105112)(3002001)(10201501046)(93006095)(93004095)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:SN4PR0201MB3518;BCL:0;PCL:0;RULEID:;SRVR:SN4PR0201MB3518;
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;4:kbc2A6D+ukMo45aPHRIBf5ERLXaC1StLrlrGu2urXMI2uBj6oz7oDoShoRU4j70S2sSeHoP8V3PJIUbXOeTFKu+ItMK2I9sfIVfuJZRouz4lYcN6kZKc3IxiPJFyzo/9AvR+zf4FI42LzhUhCxn6Ml3QihLc34Tz0jnjffHFtH6Iv2Yai3SlLsytJIwHHa2H/fLoWi9rufCYXOZiE+/v81ejOrnVZm0hQ0acon7Y3urCUuO8DS0lQCL5xaS7lzBEjHYd8I7YU1+GISsoVD6jHOrw92cUe3TBw+0ZT1zTGyx6SBxctPv2ut2do6b+yMEK
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(10201501046)(3002001)(3231410)(944501410)(52105112)(93006095)(93004095)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:SN4PR0201MB3517;BCL:0;PCL:0;RULEID:;SRVR:SN4PR0201MB3517;
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3517;4:j2UkGqibLQ61SFh6tzAxTcXpH1j9U0GrR01VeuK3Iu3P0LGJA0L1lgqlv4gWTWENfHgptZHovr0ZoX8kSJ8RNTHmTiPRYoh6h+msSYEa/MXGhXmvstP+RmFjUHgz29G6MKkx3CK5aEzCV7Lkp1OkPU1Ym3aOFfvPwZ4/J2CJIBq0sOoKCPv86dr3cI5rkbsSQdd0WJcxm/H9vu8ySKkmJcOOp4Okb/53dHc4f6fgwudzN/Ut8RtjIMq6Tf6uweRFpo4InUvalGM0kqhBYkMN+zjchVQxx5cjOwmc8tt76sCk0ue7j+Hr2cHEFDUGz2bs
 X-Forefront-PRVS: 085634EFF4
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN4PR0201MB3518;23:sq/HaCpQB5yM7lTaUFf6BpIISneCTpJD0uaJG/O?=
- =?us-ascii?Q?4E0HH6k+Wcdj54mPDMb0OJ+cHfwnphcQWy6sL31DT3+0oeKD9AjXcJcZaUC1?=
- =?us-ascii?Q?+k46GbpS/4TKH791nAXEdPF2vgomv1UmmLM94Ko8IMkRlVWirFqCry0SupRv?=
- =?us-ascii?Q?/g5OG+Rd9xt7Ywt0qRudKpDSwtUrPJFnLh/WVEjivIc+oa8SOQ9lJXVo3bwF?=
- =?us-ascii?Q?J4y2Wb8BEq3QGi4UEFXsE5OKqZnpa4FKihj7wHRj+mDyWRgHwDuu3Ug0jMtk?=
- =?us-ascii?Q?G3TzIhKE87cNjtoWLrkRsuQ2XCtAGIDDf2DTBhW/jbwauyG8zkdBuHlF/EOG?=
- =?us-ascii?Q?FU1+YiETG0wE1IQQdd2zRkL1kIJO8Ftl9Tanf6Ng4j+uSHBOm6v6CbS5i8yU?=
- =?us-ascii?Q?9n+ZVH2M8ym0qoRUw7Qi5NCGjPwCArE249i+W1PFE8Cyss1WtWqqS4RMByfY?=
- =?us-ascii?Q?YiSBWbqBEcSgjZ9mX8NIkqfKk6DXq52OF3pzW0kLHhdo6bskXV++A99TSv5P?=
- =?us-ascii?Q?KlC+S7fAyuWbS4LkP1KCI7yEIQ4WYOyjIm+oS/xgOuh7q9CCCq7uogfzxlXD?=
- =?us-ascii?Q?Sasd3huHcds5KCu75D28e2+FJK5U6S4j+0/qOWwd5q35EPvdhqMzEdz3xiJf?=
- =?us-ascii?Q?lIcCZ0bnfhyFPLSHrbrXFvFlv1vCdv0NcXMubZviDewbiRCa0CeMKGvXJvHh?=
- =?us-ascii?Q?GSLpl6GqXGZBod4gZaUKqkffCaVE5KTJS7uk+RkrjcmhRr0lK4+CuwZFrv9C?=
- =?us-ascii?Q?piWP1jJZ5OlBxlNfBcdZdmWOOvRr5bzZ5Iz+ZriFUJqxsGuLStd9nKYBGw9T?=
- =?us-ascii?Q?kTcaQadp6TyhSOw+nRTPEor5ltqX+mbNgj72jgbKCfvSwp/1lkZWaO17n/dS?=
- =?us-ascii?Q?ep+xPJkafrgP+gusnU/js7l/ntgqK/kmOawmZgze8ou+e0Ehe5+l3ImxSGts?=
- =?us-ascii?Q?Bnz7vLz+tTDE1g2M/yBbKQ8pqIsy/SCeZm3ZVK1Hxi/FnKzSZSQ7uqDPZbK0?=
- =?us-ascii?Q?oFQsnFZRgTH9FnCnBVwUCClYp/R/uk+tLv+oP9XC1Srl3persc3VgsoPjm0f?=
- =?us-ascii?Q?2vUb8sOQB8BQV9iUtZbrUh4gObFZK1qkyI67ao9D6rNZ/rAgQ3iQxm0g45ln?=
- =?us-ascii?Q?ucjJ6SaQ93c5hFRKMHnWFSIhfD5TAV4YofOZBf4jiGM/pw1BU4z1wvGKba5/?=
- =?us-ascii?Q?GLHZU395bTgMkvCjZKGAz4tsatxo4+Bk3xwtk?=
-X-Microsoft-Antispam-Message-Info: pxSiEXxf7EyBPvjjmjxkUvuIU+0diCsuwpuzI7QvU2167GoJ6CjKDU0wBwK7FdsXbCkjlLqljJUik/yoyZvrq1e2D2M5nVKuQJk04kYyfH2ZgLZOm3sxewr6XfF7iSNVJY8Fv2JhVDEKF2fNOH2Wqoxcnu7BaPtFdIEQPev6swIHlIVblwzlphGPTe4FBtQnjbQKagCvyABunuFs/FQcxcMmOo8GPJ8mESoJZgRWwz6Mzlg9uy6GVxjwe27e0hxARxvIolFNOuTssVFt5hgK+iLdcnApy3B5iObnuwsGCPY9j8BpilheTODfyI5YliSN7B91BsamTQtWEGscX/FpCKmiSCi9ZLQFmmeWHaD2PEk=
-X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3518;6:7n+ZjdA24Cfypd6Y7QU+mk9kfUDrJNtczCWS2shcKJKtEITSqRdUPu436xByT39LjRTqobHYFn1yXsZtJG0r/5PhM6k2y+8hCY2ranzdHYac2mvhTucDj6NZKLHO5L+vARema6gcnVGM/PcX222cMkKJELzOZKMmcWqKtjQBr7UKaiIqTij3OrSBRDVCG+xIKBb3jtB5Te0mB+xD/uWZtnMwYFXu64/Fmoe2cnz2kHaHHhbooUiJCcGJpj3RYbUT6FuNjVwXXuGR/XTmp6GVUWgL/VZFGFb+q1U6znsvaTdoqHJYqZAqXHGE0HMhthwpW3xeAwdvzFuZ60ng0FK2YMPNYSbXtzx5sMR3Bjh7TopISN4ZPBdVNt2VVUKmvKX5CAu1x1etvBa4gGiBYeZkExbr2uOqgY1dKc0PWSvoLKCR4b9RuTj4BikDYPHyLT+kZnDHWMi91B+q4oAPWLP9XQ==;5:OZBlSreZdCpLuXErm5Fw/AnzKmDsfzNxTOvfnjrvK5QoqNffv0aC/n2j6xod2JhJUKaFIE3mHzT5BgmFGbwU8yauJ0IVw0AeccOcdW4qZJ9bVqMo6s76vTTwmfCjBVw8u0D38e/2XN6V3WFvdY8lz9bPcUqPGY025xQ0uv9cHU8=;7:8fZRU1TzWJPnhVaaeTbqmGe7NaWQtyGqbYguXgtCsmsOMJMha9B7pJfmSu6QJmmhAxEKh+JHarZzFGzTWdHaodfQYV+khfrQZbA303FkbzuhdtKzF3WIyOA/5pNMYHruCgOrDSfco7eRD/Cz50A/Aw==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;SN4PR0201MB3517;23:AH2XZ0bPMiX6HyGQf5OiS3nGFsu0NyId+ySACxf?=
+ =?us-ascii?Q?iblWB+0Dr8Y5RUn2PLuoa2f30KZZa65/3rQwoiphlCpJTlAneqcFqzanEFVW?=
+ =?us-ascii?Q?5FJPogPCFUpInE59jf7YH7SS5/kUSzM5et42ct2TAIOCTKMLSp/J0j989zj6?=
+ =?us-ascii?Q?uOyQ71XebqNSNkHJ0LK8HdcRqm3eD5dA8ZK9zvR02zqWeaKKcwjy1iqco1wF?=
+ =?us-ascii?Q?5Pio1ciWJEGrWJ5poKuAJ4riZCXu9/QeOMskvKkF5A7dxCNbey86nKrYUDCQ?=
+ =?us-ascii?Q?0jig/9SmYCMokLD8JgAbYUdCH7wsdCQj7F4/4uNAV8gj7OeQnnTiF4OFCS4d?=
+ =?us-ascii?Q?3ekBlKK4YYjoGMwmLhPNjl3zMnfx0mrS+rdZr/uuZdWqpo3QEFMEXbMqpV1y?=
+ =?us-ascii?Q?D2lPUOcdLWtC/CeXB1kcSKbkWmUru0e4Ot+GcdO2jaP6ffVTU6qknKAvssXI?=
+ =?us-ascii?Q?1zRQprAbrnJmEqoHTHSxE8x7gSz+BWIagXYvM8sztKOMEKLsyGkt3SMtZLcd?=
+ =?us-ascii?Q?Ef8MmiVZESSStSj01wPXgPljY2dqvuuHyfOsiUuKFYAvItB5EUtGYBEW1PY8?=
+ =?us-ascii?Q?xHiViB5QcbX+hddGBerHhAXXyAXdRJP6MZo0Ju60QxBI4Y9mTbMQDDKlnoI3?=
+ =?us-ascii?Q?PBl4WRBi9kTTuMHWam7JVy+/5KqLinfQRbVAnKKLlZiZPSMZEWRbljBsWB/H?=
+ =?us-ascii?Q?55+OICGABAiHsH7Qh1mR2ZuFoP8xxkleRZizRnt/PcQTNjx4zjUElQGYlhmz?=
+ =?us-ascii?Q?izLpBjpiGqE2lkx1zkUh9+grxHNRL5lipEqcLpqI7vDN7cXuJKRDKtL6pYAL?=
+ =?us-ascii?Q?xSaPbUEXYUOmgYJZ/l3d8l9Prxlf6ShpDRYKLyYr6MNkkoOgblR/Q39ddxEY?=
+ =?us-ascii?Q?fzkHAKihMfRWL+75RQhqzuwDIhxUSfONSdj8BicabyIkM7sEHOo9WrTeyMzR?=
+ =?us-ascii?Q?9PvLQeFNlDAlvTmqoTE2wc9tBmHhx+PZoApm0PMJ72hYru/KtOM3cizaxU1E?=
+ =?us-ascii?Q?eZxJqas6LL/PmLYat5/iqC3+6jVOx1oemE7iG84+VfGNiJ6rFdlWadid2nqY?=
+ =?us-ascii?Q?KJHE3iKx8j8z387eajTOGrGggnl/j0MHIBoEJ1VA6LBlTpu8z7MK1Sq9aZtn?=
+ =?us-ascii?Q?CU6gbfe4Tcs8=3D?=
+X-Microsoft-Antispam-Message-Info: ELPI+JFe97kpvQkrMxYfKjjh3WWr56JuWsL9/nknAcccUGFMH8dP7jjDZtckkgITHI3/Mp1ISO2jeGhvsyMgYd5B2/k1+REvQta3uT/XhvQohul2PE7G0pR0LQvIWjI33RUSrc2EO/hOgEt71Di18CmfivT+oxVs91GElk/uFL4KHs1RmyUsL8yNSZP6b/CJwPKu3Pqi14nnHVfG/U6+p8trNKLnUSwTgzhAGedQz6QXzj+q1qHM0KNTTea0bFy9748WSRG9FSzTz/PfE3N5SCJtFjPIIoyoterxoo1RGspfuK5bsSuORfVOi0jAkNEvNZHjYZwlSG8pXN/JZV2VAcO7epc3kChneCOT4LAjjpw=
+X-Microsoft-Exchange-Diagnostics: 1;SN4PR0201MB3517;6:eJC8CTK74i4EleJ7Y+QQkjEkG3l4RCNEIm2vlU3Fpl6WUAhDWz6LYE+cd5It/tfB/WMIrnXjkUkwA/ymyoMlSlzt4Jf9ft5dtuMl6RQ8qusSIOjfDbzigC2md8oyIcV2TTEwE9NJFWZykSsUmjm8vt25379IeTrk6yAb2LWyc7oBTZ5x+bXF2Zygo2vQL7p+gO3wtfaTUhr5Zq2aB/1bfNCkDG+roFcwqoJHGl65z3d0abZ8k3dZq161YMFyvVfbN/9WZ0s39VR4IMiBEDg7aaKYqQ+OlJAk70go0pxh71E4QyXBMM76ZGEhlzJq4nmd2k4J9xE73TD/jEjzX7JVayESnvm5d+w3qzeJXpK+NP/Cv/gIMX5nH8dD4hMiMUKaNIhGpydQlmJjNRKb8Wu3NNCEYfk/ZSh6G/BMhvWSDVzvNe+MtR1MDfLkCcXxtbq6uRKc8PVlduZavjwsBXMitw==;5:9OlrIZyKFvg/ozJokoqLOb4Xv15af1DH0WhBj4Tvym8myYRxo2l5i307He95Cevp8JMFA2xsMk9MSObgAbqX/tSCzhq4pi3KwX4bcO0kIDxax7gmEsACzHfzLc3BorqPb5vrbw6nABldzkYVWDAzL6x5rD0jvKcnBugp6Brazyk=;7:DJFkH8BNFVGheMZXGSd4Y7/GyXh+vp9CWwamE4eAD/DmQyrrTwBVC7mw0sPfB5sJwQWVmuQYXQ7sA6fi2ezp66Ph1lvfHyegcpZIrHG3IsZ33uDp6GWy250dXt5Cmbq/quN5YSTS6BdKfsnC6QB5Cg==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
 X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2018 14:54:39.8352
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Nov 2018 14:55:50.3476
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 392fe82e-bdcc-49b5-ebb4-08d64a411aa5
+X-MS-Exchange-CrossTenant-Network-Message-Id: 86f5d4d2-4d96-457a-a5ce-08d64a4144af
 X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0201MB3518
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN4PR0201MB3517
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As per Figure 6-3 in PCIe r4.0, sec 6.2.6, ERR_ messages
-will be forwarded from the secondary interface to the primary interface,
-if the SERR# Enable bit in the Bridge Control register is set.
-Currently PCI_BRIDGE_CTL_SERR is being enabled only in
-ACPI flow.
-This patch enables PCI_BRIDGE_CTL_SERR for Type-1 PCI device.
+As per section 6.2.4.1.2, 6.2.6 in PCIe r4.0 error interrupts can
+be delivered with paltform specific interrupt lines.
+Add setup_platform_service_irq hook to struct pci_host_bridge.
+Some platforms have dedicated interrupt line from root complex to
+interrupt controller for PCIe services like AER.
+This hook is to register platform IRQ's to PCIe port services.
 
 Signed-off-by: Bharat Kumar Gogada <bharat.kumar.gogada@xilinx.com>
 ---
- drivers/pci/probe.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ include/linux/pci.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-index b1c05b5..ed71e8e 100644
---- a/drivers/pci/probe.c
-+++ b/drivers/pci/probe.c
-@@ -1841,8 +1841,6 @@ static void program_hpp_type0(struct pci_dev *dev, struct hpp_type0 *hpp)
- 		pci_write_config_byte(dev, PCI_SEC_LATENCY_TIMER,
- 				      hpp->latency_timer);
- 		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &pci_bctl);
--		if (hpp->enable_serr)
--			pci_bctl |= PCI_BRIDGE_CTL_SERR;
- 		if (hpp->enable_perr)
- 			pci_bctl |= PCI_BRIDGE_CTL_PARITY;
- 		pci_write_config_word(dev, PCI_BRIDGE_CONTROL, pci_bctl);
-@@ -2114,6 +2112,23 @@ static void pci_configure_eetlp_prefix(struct pci_dev *dev)
- #endif
- }
- 
-+static void pci_configure_serr(struct pci_dev *dev)
-+{
-+	if (dev->hdr_type == PCI_HEADER_TYPE_BRIDGE) {
-+		u16 control;
-+
-+		/*
-+		 * A Type-1 PCI bridge will not forward ERR_ messages coming
-+		 * from an endpoint if SERR# forwarding is not enabled.
-+		 */
-+		pci_read_config_word(dev, PCI_BRIDGE_CONTROL, &control);
-+		if (!(control & PCI_BRIDGE_CTL_SERR)) {
-+			control |= PCI_BRIDGE_CTL_SERR;
-+			pci_write_config_word(dev, PCI_BRIDGE_CONTROL, control);
-+		}
-+	}
-+}
-+
- static void pci_configure_device(struct pci_dev *dev)
- {
- 	struct hotplug_params hpp;
-@@ -2124,6 +2139,7 @@ static void pci_configure_device(struct pci_dev *dev)
- 	pci_configure_relaxed_ordering(dev);
- 	pci_configure_ltr(dev);
- 	pci_configure_eetlp_prefix(dev);
-+	pci_configure_serr(dev);
- 
- 	memset(&hpp, 0, sizeof(hpp));
- 	ret = pci_get_hp_params(dev, &hpp);
+diff --git a/include/linux/pci.h b/include/linux/pci.h
+index 11c71c4..28e5e06b 100644
+--- a/include/linux/pci.h
++++ b/include/linux/pci.h
+@@ -481,6 +481,8 @@ struct pci_host_bridge {
+ 	u8 (*swizzle_irq)(struct pci_dev *, u8 *); /* Platform IRQ swizzler */
+ 	int (*map_irq)(const struct pci_dev *, u8, u8);
+ 	void (*release_fn)(struct pci_host_bridge *);
++	void (*setup_platform_service_irq)(struct pci_host_bridge *, int *,
++					   int);
+ 	void		*release_data;
+ 	struct msi_controller *msi;
+ 	unsigned int	ignore_reset_delay:1;	/* For entire hierarchy */
 -- 
 2.7.4
 
