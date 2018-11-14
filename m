@@ -2,164 +2,94 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEEE1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:18:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2091C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:19:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A86BB2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:18:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2F8602145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:19:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="XalUSWO0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A86BB2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="jx0fgPj5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F8602145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732743AbeKNUVc (ORCPT
+        id S1732781AbeKNUWR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 15:21:32 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:48506 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732174AbeKNUVc (ORCPT
+        Wed, 14 Nov 2018 15:22:17 -0500
+Received: from mail-wr1-f45.google.com ([209.85.221.45]:39084 "EHLO
+        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727704AbeKNUWR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 15:21:32 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAEAI21w098431;
-        Wed, 14 Nov 2018 04:18:02 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542190682;
-        bh=vUOWWRUdPOgLydfoDpd64Ej+y+tIu5gUMS5ilrkwaVw=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=XalUSWO0M6cOakPbhfhwn/Xg7I1GUXOyRU72lQNfuXU79cH+TYAjIBvv6n9ENeLtM
-         1U/daJfqu/xrzGvLsAiPiqiC+go5WbdRr0CVf8L1F8ogiGI0X2jnRdxp4anERz+ulW
-         ofwSEAaVcpAAJHaXRItPs8/NTsfZc2rdrz+BDht0=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAEAI2Mh021520
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 14 Nov 2018 04:18:02 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 14
- Nov 2018 04:18:01 -0600
-Received: from dflp32.itg.ti.com (10.64.6.15) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 14 Nov 2018 04:18:01 -0600
-Received: from [192.168.2.6] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dflp32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAEAHu9K018732;
-        Wed, 14 Nov 2018 04:17:57 -0600
-Subject: Re: [PATCH v1 1/5] drivercore: Revert "deferral race condition fix"
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>,
-        Mark Brown <broonie@kernel.org>
-CC:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        USB <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
-        <rogerq@ti.com>, Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Hans de Goede <hdegoede@redhat.com>, <grant.likely@arm.com>,
-        Andrzej Hajda <a.hajda@samsung.com>
-References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
- <1c2c1031-a6b4-cbce-ceed-c2ce229c204e@ti.com>
- <20181114003345.GV2089@sirena.org.uk>
- <CAHp75Vf7qozL8abZSh1gv_F3iSiZCprEK5_eGW=SRyUpjYrmtA@mail.gmail.com>
-From:   Peter Ujfalusi <peter.ujfalusi@ti.com>
-Message-ID: <262d8ef0-ead2-1ec8-d2e1-0c5f6497b1fb@ti.com>
-Date:   Wed, 14 Nov 2018 12:19:20 +0200
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Wed, 14 Nov 2018 15:22:17 -0500
+Received: by mail-wr1-f45.google.com with SMTP id b13so16599952wrx.6
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 02:19:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Q4804e+YAfMwo0m2iTgsbgD/GazyqzJvjXf1Ea4ELfk=;
+        b=jx0fgPj52zq9lvkex17tOmm2GyHsl4TJ/eaEiVCoQajEt9kjGlJ6edw+Azd4O2Ugd9
+         jksLHnZGNFQrBu8Luwcy6OJeW1hADA+uUOogWcc4KKYAqtvyXPC9odY1hPndX1Y//mTf
+         VHTs8K5LrYYXgPsFFu//ARjUqebRAxakxXCZBmddYkZdpwOwU1smb/dFAj7ouiEpqKvX
+         PMbTdArtA3rvQL/DOFByx5JKp4s/BpaiygQailf35B4ccLMeBGy96Ddb/OzhymJAQNSe
+         S5Va5rN5JSgphU6Sw0YX2yh1q6/N/Re7R00TtmOT4hyPP8n8nNJa8Jkz2QlcKSRQxzCi
+         1xgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=Q4804e+YAfMwo0m2iTgsbgD/GazyqzJvjXf1Ea4ELfk=;
+        b=URWr1+1DmV0uQqHp0C8bMCoWT70+7CmrbBp8zVnZDDWlQOEOoUFZJrE0jHNyyl1j1P
+         KLJibviflfmCGaOl7EGSba+Lk/FHwFR9IpiFYCUasjqqg/3dgDXDzr/PhOmbadxQUezH
+         tgmXaavC2QKOnjhaqu21akc31dpflFVV53uYM0nbva5DwBsbYiSpR5+ebOP4W9etj6as
+         FXXqb/yCjmlitImslWrmaE1V9RzhTUteDfV/xIWK2KsRqwmosTAjX2QjYhAI6iH6ZXzq
+         yq2I41HDDZH8NUzbrIIiIRbFqTzoo8NUDoH7CwRr8NPt2ubMmhjA1BTC2xTctgTkAiMR
+         ILsw==
+X-Gm-Message-State: AGRZ1gJXrlHy1Nd2R+gd9O3UHS0al+zZJe6A6eyswV0p1ciywJr7JiJL
+        8WRdSQQKMmjocd+wwBhm4XYyKQ==
+X-Google-Smtp-Source: AJdET5dBZlFJr2rARIrao+Qwunc58a2k8/PtrRlOm//dh8GXwPvG0ve8sWMIXJRfjxLUm0zt3XpE3w==
+X-Received: by 2002:adf:a31c:: with SMTP id c28-v6mr1270067wrb.195.1542190778603;
+        Wed, 14 Nov 2018 02:19:38 -0800 (PST)
+Received: from boomer.local ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.googlemail.com with ESMTPSA id i7-v6sm19832140wrs.55.2018.11.14.02.19.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Nov 2018 02:19:38 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH 0/2] arm64: dts: meson: add Libretech aml-s805x-ac support
+Date:   Wed, 14 Nov 2018 11:19:23 +0100
+Message-Id: <20181114101925.10526-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <CAHp75Vf7qozL8abZSh1gv_F3iSiZCprEK5_eGW=SRyUpjYrmtA@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Andy,
+This patchset adds support for the libretech aml-s805x-ac, aka 'La Frite'
 
-On 2018-11-14 10:45, Andy Shevchenko wrote:
-> On Wed, Nov 14, 2018 at 2:34 AM Mark Brown <broonie@kernel.org> wrote:
->>
->> On Mon, Nov 12, 2018 at 06:11:26PM +0200, Peter Ujfalusi wrote:
->>
->>> if we revert the commit then the original issue will re-surfaces. afaik
->>> it was not only audio which hit the 'last driver to be probed from the
->>> deferred list would never probe, unless we provoke the kernel to load
->>> additional module, or remove/reload the module' issue.
->>
->> Right, aren't we just going to be swapping one bug for another?
-> 
-> Have anyone in possession of Davinchi tested most recent kernel with
-> this revert?
+Jerome Brunet (1):
+  dt-bindings: arm: amlogic: add libretech aml-s805x-ac bindings
 
-I don't think it is related to daVinci, in fact we have seen the very
-same issue with OMAP4.
-Fwiw this was my initial patch
-http://lkml.iu.edu/hypermail/linux/kernel/1404.0/01603.html
-Grant based his change on this.
+Neil Armstrong (1):
+  arm64: dts: meson: add libretech aml-s805x-ac board
 
-Note the part in the commit message:
-"The issue has been observed on embedded systems with CONFIG_PREEMPT
-enabled, audio support built as modules and using nfsroot for root
-filesystem."
+ .../devicetree/bindings/arm/amlogic.txt       |   1 +
+ arch/arm64/boot/dts/amlogic/Makefile          |   1 +
+ .../amlogic/meson-gxl-s805x-libretech-ac.dts  | 249 ++++++++++++++++++
+ 3 files changed, 251 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts
 
-as I recall I was only able to reproduce the stall with nfsroot and
-buildroot fs. The timings were different compared to MMC rootfs.
+-- 
+2.19.1
 
-Anyways the patch fixes a real race condition which is generic:
-We have driverA and driverB as modules. driverB needs driverA to be
-registered to a framework (no direct, hard dependency).
-
-1. driverA starts to probe
-2. driverB starts to probe
-3. driverB can not continue as driverA is not registered itself to the
-framework -> driverB will defer
-4. driverA registers to the framework
-5. driverA probes successfully
-6. driver core will prepare the deferred probe list (note: driverB is
-still in it's probe, not in the deferred list)
-7. driverB returns from it's probe with -EPROBE_DEFER
-
-and here we are, driverB is alone in the deferred list and the list is
-not going to be tried as driverA and driverB were the last ones to
-probe.
-
-So, driverB is in the deferred list and stays there until other driver
-probes successfully as the deferred driver list only tried when a driver
-loads successfully (to see if that satisfy any of the deferred driver).
-
-We have evidence that this has happened, it is a generic issue given
-that now days we have more frameworks drivers are relying on.
-
->>> Do I understand correctly that in your case you have two modules
->>> (dwc3-pci and extcon-intel-mrfld) in a deferred probe loop, iow both of
->>> the drivers returns -EPROBE_DEFER and they just spin?
->>
->>> If both is deferring, how this supposed to work?
->>
->> I'm struggling to follow the original explanation too :(
-> 
-> Sorry, guys, I confused a nit myself. The bug is there, but
-> exxplanation is not fully corrent, indeed. I'll come back with more
-> details later.
-> 
-
-- Péter
-
-Texas Instruments Finland Oy, Porkkalankatu 22, 00180 Helsinki.
-Y-tunnus/Business ID: 0615521-4. Kotipaikka/Domicile: Helsinki
