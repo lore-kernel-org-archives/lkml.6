@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C132CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9DCE6C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2B15C2252A
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5CCB92252A
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IH2aNb4Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B15C2252A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/r9OAuk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5CCB92252A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388774AbeKOIaR (ORCPT
+        id S2388814AbeKOIaU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:30:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37456 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:30:20 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37522 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726754AbeKOIaQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:30:16 -0500
+        id S1726661AbeKOIaT (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:30:19 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8B83322529;
-        Wed, 14 Nov 2018 22:25:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 752982254C;
+        Wed, 14 Nov 2018 22:25:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234311;
-        bh=erJ7hkpOBveFnk0QiMG582cgAMCBIPlDT2p75nPi9AM=;
+        s=default; t=1542234315;
+        bh=H/UGnmYha20ZnbhlLz21yxKncy7PmtyJNaaQCUt9mZk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=IH2aNb4ZIL3TGC++3CtmzkoVqvR25YQTjp47yPtBxhSywYYRQ5roch3GC+WlJhwPE
-         SVcwSr43vPrSRVLe7TImKCsLZjFXb9ohQHaZnqldESa+BSbBqsk2okQ66ofU0b49T4
-         WT2aM2JaG/z1cb5RG6/H/1oqEtD2oqiUz9oMWSII=
+        b=G/r9OAukIl2yEoqsme0qkTjCzkzHF6H54sCw0khkFYobWE5tlW/0CSKaYQYe0eMhj
+         IS8n07EIbiPtV4alPvzN4UqZYY3GfMfiG26f3lYm0T4iVXqHyEsrr8DNKDwHHdL54x
+         3lStXRZcF+fJLA6PL1Pg5w+MIsMv9j2tC+KD8OVA=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
-        Igor Russkikh <igor.russkikh@aquantia.com>,
+Cc:     Andrew Lunn <andrew@lunn.ch>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 56/59] net: aquantia: invalid checksumm offload implementation
-Date:   Wed, 14 Nov 2018 17:23:28 -0500
-Message-Id: <20181114222335.99339-56-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 59/59] net: dsa: mv88e6xxx: Fix clearing of stats counters
+Date:   Wed, 14 Nov 2018 17:23:31 -0500
+Message-Id: <20181114222335.99339-59-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -54,144 +53,40 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
+From: Andrew Lunn <andrew@lunn.ch>
 
-[ Upstream commit ad703c2b9127f9acdef697ec4755f6da4beaa266 ]
+[ Upstream commit a9049ff9214da68df1179a7d5e36b43479abc9b8 ]
 
-Packets with marked invalid IP/UDP/TCP checksums were considered as good
-by the driver. The error was in a logic, processing offload bits in
-RX descriptor.
+The mv88e6161 would sometime fail to probe with a timeout waiting for
+the switch to complete an operation. This operation is supposed to
+clear the statistics counters. However, due to a read/modify/write,
+without the needed mask, the operation actually carried out was more
+random, with invalid parameters, resulting in the switch not
+responding. We need to preserve the histogram mode bits, so apply a
+mask to keep them.
 
-Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
-Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
+Reported-by: Chris Healy <Chris.Healy@zii.aero>
+Fixes: 40cff8fca9e3 ("net: dsa: mv88e6xxx: Fix stats histogram mode")
+Signed-off-by: Andrew Lunn <andrew@lunn.ch>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/aquantia/atlantic/aq_ring.c  | 35 +++++++++++-------
- .../aquantia/atlantic/hw_atl/hw_atl_b0.c      | 36 +++++++++----------
- 2 files changed, 41 insertions(+), 30 deletions(-)
+ drivers/net/dsa/mv88e6xxx/global1.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
-index d1e1a0ba8615..7134d0d4cdf7 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_ring.c
-@@ -172,6 +172,27 @@ bool aq_ring_tx_clean(struct aq_ring_s *self)
- 	return !!budget;
- }
+diff --git a/drivers/net/dsa/mv88e6xxx/global1.c b/drivers/net/dsa/mv88e6xxx/global1.c
+index d721ccf7d8be..38e399e0f30e 100644
+--- a/drivers/net/dsa/mv88e6xxx/global1.c
++++ b/drivers/net/dsa/mv88e6xxx/global1.c
+@@ -567,6 +567,8 @@ int mv88e6xxx_g1_stats_clear(struct mv88e6xxx_chip *chip)
+ 	if (err)
+ 		return err;
  
-+static void aq_rx_checksum(struct aq_ring_s *self,
-+			   struct aq_ring_buff_s *buff,
-+			   struct sk_buff *skb)
-+{
-+	if (!(self->aq_nic->ndev->features & NETIF_F_RXCSUM))
-+		return;
-+
-+	if (unlikely(buff->is_cso_err)) {
-+		++self->stats.rx.errors;
-+		skb->ip_summed = CHECKSUM_NONE;
-+		return;
-+	}
-+	if (buff->is_ip_cso) {
-+		__skb_incr_checksum_unnecessary(skb);
-+		if (buff->is_udp_cso || buff->is_tcp_cso)
-+			__skb_incr_checksum_unnecessary(skb);
-+	} else {
-+		skb->ip_summed = CHECKSUM_NONE;
-+	}
-+}
-+
- #define AQ_SKB_ALIGN SKB_DATA_ALIGN(sizeof(struct skb_shared_info))
- int aq_ring_rx_clean(struct aq_ring_s *self,
- 		     struct napi_struct *napi,
-@@ -267,18 +288,8 @@ int aq_ring_rx_clean(struct aq_ring_s *self,
- 		}
++	/* Keep the histogram mode bits */
++	val &= MV88E6XXX_G1_STATS_OP_HIST_RX_TX;
+ 	val |= MV88E6XXX_G1_STATS_OP_BUSY | MV88E6XXX_G1_STATS_OP_FLUSH_ALL;
  
- 		skb->protocol = eth_type_trans(skb, ndev);
--		if (unlikely(buff->is_cso_err)) {
--			++self->stats.rx.errors;
--			skb->ip_summed = CHECKSUM_NONE;
--		} else {
--			if (buff->is_ip_cso) {
--				__skb_incr_checksum_unnecessary(skb);
--				if (buff->is_udp_cso || buff->is_tcp_cso)
--					__skb_incr_checksum_unnecessary(skb);
--			} else {
--				skb->ip_summed = CHECKSUM_NONE;
--			}
--		}
-+
-+		aq_rx_checksum(self, buff, skb);
- 
- 		skb_set_hash(skb, buff->rss_hash,
- 			     buff->is_hash_l4 ? PKT_HASH_TYPE_L4 :
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-index d6d7e5e6fa18..7974e0713e12 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-@@ -653,9 +653,9 @@ static int hw_atl_b0_hw_ring_rx_receive(struct aq_hw_s *self,
- 		struct hw_atl_rxd_wb_s *rxd_wb = (struct hw_atl_rxd_wb_s *)
- 			&ring->dx_ring[ring->hw_head * HW_ATL_B0_RXD_SIZE];
- 
--		unsigned int is_err = 1U;
- 		unsigned int is_rx_check_sum_enabled = 0U;
- 		unsigned int pkt_type = 0U;
-+		u8 rx_stat = 0U;
- 
- 		if (!(rxd_wb->status & 0x1U)) { /* RxD is not done */
- 			break;
-@@ -663,35 +663,35 @@ static int hw_atl_b0_hw_ring_rx_receive(struct aq_hw_s *self,
- 
- 		buff = &ring->buff_ring[ring->hw_head];
- 
--		is_err = (0x0000003CU & rxd_wb->status);
-+		rx_stat = (0x0000003CU & rxd_wb->status) >> 2;
- 
- 		is_rx_check_sum_enabled = (rxd_wb->type) & (0x3U << 19);
--		is_err &= ~0x20U; /* exclude validity bit */
- 
- 		pkt_type = 0xFFU & (rxd_wb->type >> 4);
- 
--		if (is_rx_check_sum_enabled) {
--			if (0x0U == (pkt_type & 0x3U))
--				buff->is_ip_cso = (is_err & 0x08U) ? 0U : 1U;
-+		if (is_rx_check_sum_enabled & BIT(0) &&
-+		    (0x0U == (pkt_type & 0x3U)))
-+			buff->is_ip_cso = (rx_stat & BIT(1)) ? 0U : 1U;
- 
-+		if (is_rx_check_sum_enabled & BIT(1)) {
- 			if (0x4U == (pkt_type & 0x1CU))
--				buff->is_udp_cso = buff->is_cso_err ? 0U : 1U;
-+				buff->is_udp_cso = (rx_stat & BIT(2)) ? 0U :
-+						   !!(rx_stat & BIT(3));
- 			else if (0x0U == (pkt_type & 0x1CU))
--				buff->is_tcp_cso = buff->is_cso_err ? 0U : 1U;
--
--			/* Checksum offload workaround for small packets */
--			if (rxd_wb->pkt_len <= 60) {
--				buff->is_ip_cso = 0U;
--				buff->is_cso_err = 0U;
--			}
-+				buff->is_tcp_cso = (rx_stat & BIT(2)) ? 0U :
-+						   !!(rx_stat & BIT(3));
-+		}
-+		buff->is_cso_err = !!(rx_stat & 0x6);
-+		/* Checksum offload workaround for small packets */
-+		if (unlikely(rxd_wb->pkt_len <= 60)) {
-+			buff->is_ip_cso = 0U;
-+			buff->is_cso_err = 0U;
- 		}
--
--		is_err &= ~0x18U;
- 
- 		dma_unmap_page(ndev, buff->pa, buff->len, DMA_FROM_DEVICE);
- 
--		if (is_err || rxd_wb->type & 0x1000U) {
--			/* status error or DMA error */
-+		if ((rx_stat & BIT(0)) || rxd_wb->type & 0x1000U) {
-+			/* MAC error or DMA error */
- 			buff->is_error = 1U;
- 		} else {
- 			if (self->aq_nic_cfg->is_rss) {
+ 	err = mv88e6xxx_g1_write(chip, MV88E6XXX_G1_STATS_OP, val);
 -- 
 2.17.1
 
