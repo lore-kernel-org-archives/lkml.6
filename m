@@ -2,102 +2,113 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BA9AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B0CFCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0E54022419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:00:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E54022419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 692EE22419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:02:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxVIMtpe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 692EE22419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728244AbeKOJGL (ORCPT
+        id S1727091AbeKOJHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 04:06:11 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:47352 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726427AbeKOJGL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 04:06:11 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id CB38BB6B;
-        Wed, 14 Nov 2018 23:00:54 +0000 (UTC)
-Date:   Wed, 14 Nov 2018 15:00:53 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH 1/1] vmalloc: add test driver to analyse vmalloc
- allocator
-Message-Id: <20181114150053.c3fe42507923322a0a10ae1c@linux-foundation.org>
-In-Reply-To: <20181114151737.GA23419@dhcp22.suse.cz>
-References: <20181113151629.14826-1-urezki@gmail.com>
-        <20181113151629.14826-2-urezki@gmail.com>
-        <20181113141046.f62f5bd88d4ebc663b0ac100@linux-foundation.org>
-        <20181114151737.GA23419@dhcp22.suse.cz>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 15 Nov 2018 04:07:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:54074 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726224AbeKOJHp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 04:07:45 -0500
+Received: from localhost (unknown [64.114.255.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 227C52175B;
+        Wed, 14 Nov 2018 23:02:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542236549;
+        bh=udYU6pD/2YCdcxf5pfNMwEq5nm32L1u51rqIZitrVwc=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=RxVIMtpexQMgZVMvPMgGL/sR+yp7FY9IJzbdnmSOyaYWFjRABCEiqu42gl6bUaLo6
+         VqoM0CAer5G72gfTWDNUvwWG9Qcmucgx+SeZQtOUuqsb68ejb+ccOjXdjoqL3lIErQ
+         FvxZuLyM6qUzqGthWHlYtYyUzrPw6ZTemrR5pSZU=
+Date:   Wed, 14 Nov 2018 15:02:28 -0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     Jiri Slaby <jslaby@suse.com>, linux-kernel@vger.kernel.org,
+        Evan Green <evgreen@chromium.org>,
+        Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Manoj Gupta <manojgupta@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>
+Subject: Re: [PATCH v2] sysrq: Use panic() to force a crash
+Message-ID: <20181114230228.GA17998@kroah.com>
+References: <20180920171253.115372-1-mka@chromium.org>
+ <20181114225718.GN22824@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181114225718.GN22824@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Nov 2018 16:17:37 +0100 Michal Hocko <mhocko@kernel.org> wrote:
-
-> On Tue 13-11-18 14:10:46, Andrew Morton wrote:
-> [...]
-> > > +static int vmalloc_test_init(void)
-> > > +{
-> > > +	__my_vmalloc_node_range =
-> > > +		(void *) kallsyms_lookup_name("__vmalloc_node_range");
-> > > +
-> > > +	if (__my_vmalloc_node_range)
-> > > +		do_concurrent_test();
-> > > +
-> > > +	return -EAGAIN; /* Fail will directly unload the module */
-> > > +}
+On Wed, Nov 14, 2018 at 02:57:18PM -0800, Matthias Kaehlcke wrote:
+> On Thu, Sep 20, 2018 at 10:12:53AM -0700, Matthias Kaehlcke wrote:
+> > sysrq_handle_crash() currently forces a crash by dereferencing a
+> > NULL pointer, which is undefined behavior in C. Just call panic()
+> > instead, which is simpler and doesn't depend on compiler specific
+> > handling of the undefined behavior.
 > > 
-> > It's unclear why this module needs access to the internal
-> > __vmalloc_node_range().  Please fully explain this in the changelog.
+> > Remove the comment on why the RCU lock needs to be released, it isn't
+> > accurate anymore since the crash now isn't handled by the page fault
+> > handler (for reference: the comment was added by commit 984cf355aeaa
+> > ("sysrq: Fix warning in sysrq generated crash.")). Releasing the lock
+> > is still good practice though.
 > > 
-> > Then, let's just export the thing.  (I expect this module needs a
-> > Kconfig dependency on CONFIG_KALLSYMS, btw).  A suitable way of doing
-> > that would be
+> > Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > ---
+> >  drivers/tty/sysrq.c | 13 +++----------
+> >  1 file changed, 3 insertions(+), 10 deletions(-)
 > > 
-> > /* Exported for lib/test_vmalloc.c.  Please do not use elsewhere */
-> > EXPORT_SYMBOL_GPL(__vmalloc_node_range);
+> > diff --git a/drivers/tty/sysrq.c b/drivers/tty/sysrq.c
+> > index 06ed20dd01ba..d779a51499a0 100644
+> > --- a/drivers/tty/sysrq.c
+> > +++ b/drivers/tty/sysrq.c
+> > @@ -134,17 +134,10 @@ static struct sysrq_key_op sysrq_unraw_op = {
+> >  
+> >  static void sysrq_handle_crash(int key)
+> >  {
+> > -	char *killer = NULL;
+> > -
+> > -	/* we need to release the RCU read lock here,
+> > -	 * otherwise we get an annoying
+> > -	 * 'BUG: sleeping function called from invalid context'
+> > -	 * complaint from the kernel before the panic.
+> > -	 */
+> > +	/* release the RCU read lock before crashing */
+> >  	rcu_read_unlock();
+> > -	panic_on_oops = 1;	/* force panic */
+> > -	wmb();
+> > -	*killer = 1;
+> > +
+> > +	panic("sysrq triggered crash\n");
+> >  }
+> >  static struct sysrq_key_op sysrq_crash_op = {
+> >  	.handler	= sysrq_handle_crash,
 > 
-> There was a previous discussion that testing for internal infrastructure
-> is useful quite often and such a testing module needs an access to such
-> an internal infrastructure. Exporting those symbols via standard
-> EXPORT_SYMBOL_GPL is far from optimal because we can be pretty much sure
-> an abuse will arise sooner than later. I was proposing
-> EXPORT_SYMBOL_SELFTEST that would link only against testing modules.
+> Does this need further changes or is it ready to land?
 
-That's rather overdoing things, I think.  If someone uses a
-dont-use-this symbol then they get to own both pieces when it breaks.
+Ugh, it somehow got dropped from my queue, sorry.  I'll add it back and
+get to it next week, my fault.
 
-We could simply do
-
-#define EXPORT_SYMBOL_SELFTEST EXPORT_SYMBOL_GPL
-
-then write a script which checks the tree for usages of the
-thus-tagged symbols outside tools/testing and lib/ (?)
-
-> If that is not viable for some reason then kallsyms_lookup_name is a
-> dirty-but-usable workaround.
-
-Well yes.  It adds a dependency on CONFIG_KALLSYMS and will cause
-silent breakage if __vmalloc_node_range gets renamed, has its arguments
-changed, etc.
-
+greg k-h
