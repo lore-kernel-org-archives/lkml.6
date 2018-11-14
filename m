@@ -2,141 +2,99 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1A558C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:51:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E484C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DEF1C2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:51:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DEF1C2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 4207A20685
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:52:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4207A20685
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728102AbeKOI4e (ORCPT
+        id S1726952AbeKOI5p (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:56:34 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:45638 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726790AbeKOI4e (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:56:34 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 9B13EA5E;
-        Wed, 14 Nov 2018 22:51:20 +0000 (UTC)
-Date:   Wed, 14 Nov 2018 14:51:19 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Davidlohr Bueso <dave@stgolabs.net>
-Cc:     jbaron@akamai.com, viro@zeniv.linux.org.uk,
-        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Davidlohr Bueso <dbueso@suse.de>
-Subject: Re: [PATCH 2/2] fs/epoll: deal with wait_queue only once
-Message-Id: <20181114145119.2e00ce7530d32fc4958c3707@linux-foundation.org>
-In-Reply-To: <20181114182532.27981-2-dave@stgolabs.net>
-References: <20181114182532.27981-1-dave@stgolabs.net>
-        <20181114182532.27981-2-dave@stgolabs.net>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Thu, 15 Nov 2018 03:57:45 -0500
+Received: from mga04.intel.com ([192.55.52.120]:42175 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726487AbeKOI5p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:57:45 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 14:52:32 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,234,1539673200"; 
+   d="scan'208";a="96351484"
+Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
+  by FMSMGA003.fm.intel.com with ESMTP; 14 Nov 2018 14:52:32 -0800
+From:   Keith Busch <keith.busch@intel.com>
+To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+        linux-mm@kvack.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Dan Williams <dan.j.williams@intel.com>,
+        Keith Busch <keith.busch@intel.com>
+Subject: [PATCH 0/7] ACPI HMAT memory sysfs representation
+Date:   Wed, 14 Nov 2018 15:49:02 -0700
+Message-Id: <20181114224902.12082-1-keith.busch@intel.com>
+X-Mailer: git-send-email 2.13.6
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Nov 2018 10:25:32 -0800 Davidlohr Bueso <dave@stgolabs.net> wrote:
+This series provides a new sysfs representation for heterogeneous
+system memory.
 
-> There is no reason why we rearm the waitiqueue upon every
-> fetch_events retry (for when events are found yet send_events()
-> fails). If nothing else, this saves four lock operations per
-> retry, and furthermore reduces the scope of the lock even
-> further.
-> 
-> ..
->
-> --- a/fs/eventpoll.c
-> +++ b/fs/eventpoll.c
-> @@ -1749,6 +1749,7 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->  {
->  	int res = 0, eavail, timed_out = 0;
->  	u64 slack = 0;
-> +	bool waiter = false;
->  	wait_queue_entry_t wait;
->  	ktime_t expires, *to = NULL;
->  
-> @@ -1786,6 +1787,15 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->  	if (eavail)
->  		goto send_events;
->  
-> +	if (!waiter) {
-> +		waiter = true;
-> +		init_waitqueue_entry(&wait, current);
-> +
-> +		spin_lock_irq(&ep->wq.lock);
-> +		__add_wait_queue_exclusive(&ep->wq, &wait);
-> +		spin_unlock_irq(&ep->wq.lock);
-> +	}
-> +
->  	/*
->  	 * Busy poll timed out.  Drop NAPI ID for now, we can add
->  	 * it back in when we have moved a socket with a valid NAPI
-> @@ -1798,10 +1808,6 @@ static int ep_poll(struct eventpoll *ep, struct epoll_event __user *events,
->  	 * We need to sleep here, and we will be wake up by
->  	 * ep_poll_callback() when events will become available.
->  	 */
-> -	init_waitqueue_entry(&wait, current);
-> -	spin_lock_irq(&ep->wq.lock);
-> -	__add_wait_queue_exclusive(&ep->wq, &wait);
-> -	spin_unlock_irq(&ep->wq.lock);
+The previous series that was specific to HMAT that this series was based
+on was last posted here: https://lkml.org/lkml/2017/12/13/968
 
-Why was this moved to before the ep_reset_busy_poll_napi_id() call? 
-That movement placed the code ahead of the block comment which serves
-to explain its function.
+Platforms may provide multiple types of cpu attached system memory. The
+memory ranges for each type may have different characteristics that
+applications may wish to know about when considering what node they want
+their memory allocated from. 
 
+It had previously been difficult to describe these setups as memory
+rangers were generally lumped into the NUMA node of the CPUs. New
+platform attributes have been created and in use today that describe
+the more complex memory hierarchies that can be created.
 
-This?  Which also fixes that comment and reflows it to use 80 cols.
+This series first creates new generic APIs under the kernel's node
+representation. These new APIs can be used to create links among local
+memory and compute nodes and export characteristics about the memory
+nodes. Documentation desribing the new representation are provided.
 
---- a/fs/eventpoll.c~fs-epoll-deal-with-wait_queue-only-once-fix
-+++ a/fs/eventpoll.c
-@@ -1787,15 +1787,6 @@ fetch_events:
- 	if (eavail)
- 		goto send_events;
- 
--	if (!waiter) {
--		waiter = true;
--		init_waitqueue_entry(&wait, current);
--
--		spin_lock_irq(&ep->wq.lock);
--		__add_wait_queue_exclusive(&ep->wq, &wait);
--		spin_unlock_irq(&ep->wq.lock);
--	}
--
- 	/*
- 	 * Busy poll timed out.  Drop NAPI ID for now, we can add
- 	 * it back in when we have moved a socket with a valid NAPI
-@@ -1804,10 +1795,18 @@ fetch_events:
- 	ep_reset_busy_poll_napi_id(ep);
- 
- 	/*
--	 * We don't have any available event to return to the caller.
--	 * We need to sleep here, and we will be wake up by
--	 * ep_poll_callback() when events will become available.
-+	 * We don't have any available event to return to the caller.  We need
-+	 * to sleep here, and we will be woken by ep_poll_callback() when events
-+	 * become available.
- 	 */
-+	if (!waiter) {
-+		waiter = true;
-+		init_waitqueue_entry(&wait, current);
-+
-+		spin_lock_irq(&ep->wq.lock);
-+		__add_wait_queue_exclusive(&ep->wq, &wait);
-+		spin_unlock_irq(&ep->wq.lock);
-+	}
- 
- 	for (;;) {
- 		/*
-_
+Finally the series adds a kernel user for these new APIs from parsing
+the ACPI HMAT.
+
+Keith Busch (7):
+  node: Link memory nodes to their compute nodes
+  node: Add heterogenous memory performance
+  doc/vm: New documentation for memory performance
+  node: Add memory caching attributes
+  doc/vm: New documentation for memory cache
+  acpi: Create subtable parsing infrastructure
+  acpi/hmat: Parse and report heterogeneous memory
+
+ Documentation/vm/numacache.rst |  76 ++++++++
+ Documentation/vm/numaperf.rst  |  71 ++++++++
+ drivers/acpi/Kconfig           |   9 +
+ drivers/acpi/Makefile          |   1 +
+ drivers/acpi/hmat.c            | 384 +++++++++++++++++++++++++++++++++++++++++
+ drivers/acpi/tables.c          |  85 +++++++--
+ drivers/base/Kconfig           |   8 +
+ drivers/base/node.c            | 193 +++++++++++++++++++++
+ include/linux/node.h           |  47 +++++
+ 9 files changed, 864 insertions(+), 10 deletions(-)
+ create mode 100644 Documentation/vm/numacache.rst
+ create mode 100644 Documentation/vm/numaperf.rst
+ create mode 100644 drivers/acpi/hmat.c
+
+-- 
+2.14.4
 
