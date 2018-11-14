@@ -2,50 +2,55 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5056EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:36:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D61C7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:36:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DD372087A
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:36:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DD372087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 807DB22419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:36:51 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0H1juNl4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 807DB22419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732852AbeKNUjP (ORCPT
+        id S1732905AbeKNUja (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 15:39:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46666 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727807AbeKNUjP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 15:39:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 8DE2AB015;
-        Wed, 14 Nov 2018 10:36:33 +0000 (UTC)
-Message-ID: <3ade435ef087d61a293863a62c1b794ecf8dba14.camel@suse.de>
-Subject: Re: [dm-devel] multipath-tools: add ANA support for NVMe device
-From:   Martin Wilck <mwilck@suse.de>
-To:     Hannes Reinecke <hare@suse.de>, Sagi Grimberg <sagi@grimberg.me>,
-        Keith Busch <keith.busch@intel.com>, axboe@kernel.dk,
-        hch@lst.de, Mike Snitzer <snitzer@redhat.com>
-Cc:     xose.vazquez@gmail.com, chengjike.cheng@huawei.com,
-        lijie <lijie34@huawei.com>, shenhong09@huawei.com,
-        wangzhoumengjian@huawei.com, linux-nvme@lists.infradead.org,
-        sschremm@netapp.com, dm-devel@redhat.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Wed, 14 Nov 2018 11:36:31 +0100
-In-Reply-To: <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
-References: <1541657381-7452-1-git-send-email-lijie34@huawei.com>
-         <2691abf6733f791fb16b86d96446440e4aaff99f.camel@suse.com>
-         <20181112215323.GA7983@redhat.com>
-         <20181113161838.GC9827@localhost.localdomain>
-         <20181113180008.GA12513@redhat.com> <20181114053837.GA15086@redhat.com>
-         <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
+        Wed, 14 Nov 2018 15:39:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:45388 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727807AbeKNUja (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 15:39:30 -0500
+Received: from tleilax.poochiereds.net (cpe-71-70-156-158.nc.res.rr.com [71.70.156.158])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 221162087A;
+        Wed, 14 Nov 2018 10:36:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542191808;
+        bh=1sp4lJxd1MVv+65EgrYqBIGgLARpTHD7xH/qaCO6H00=;
+        h=Subject:From:To:Date:In-Reply-To:References:From;
+        b=0H1juNl4rmWKjoMcN6X5ymnmfaUiRua76XTCkEObRLCrGUpsmivXZ6CSqHnXc5H6V
+         gkVA9Ff1wG2UnlDcgtbTIHIqfH5oIDjUyPpJBI4TzRFCHElykbfTg78DxZP4N0ipK0
+         J1ziio0l430H7CvQnYvuE/qz2hoK694fmjA021bw=
+Message-ID: <b49e02d54460c79c4e5472983f6b9390005881b8.camel@kernel.org>
+Subject: Re: KASAN: use-after-free Read in locks_delete_block
+From:   Jeff Layton <jlayton@kernel.org>
+To:     NeilBrown <neilb@suse.com>,
+        syzbot <syzbot+a4a3d526b4157113ec6a@syzkaller.appspotmail.com>,
+        bfields@fieldses.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
+        viro@zeniv.linux.org.uk
+Date:   Wed, 14 Nov 2018 05:36:46 -0500
+In-Reply-To: <87bm6svhhl.fsf@notabene.neil.brown.name>
+References: <000000000000222b58057a7d9f39@google.com>
+         <9d9ad7f2781bf15af4bd6ccc9feee35c7cd17979.camel@kernel.org>
+         <87bm6svhhl.fsf@notabene.neil.brown.name>
 Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.1 
+X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
 Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -53,31 +58,142 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-14 at 08:49 +0100, Hannes Reinecke wrote:
-> On 11/14/18 6:38 AM, Mike Snitzer wrote:
+On Wed, 2018-11-14 at 07:40 +1100, NeilBrown wrote:
+> On Tue, Nov 13 2018, Jeff Layton wrote:
+> 
+> > On Mon, 2018-11-12 at 12:34 -0800, syzbot wrote:
+> > > Hello,
+> > > 
+> > > syzbot found the following crash on:
+> > > 
+> > > HEAD commit:    442b8cea2477 Add linux-next specific files for 20181109
+> > > git tree:       linux-next
+> > > console output: https://syzkaller.appspot.com/x/log.txt?x=115dbad5400000
+> > > kernel config:  https://syzkaller.appspot.com/x/.config?x=2f72bdb11df9fbe8
+> > > dashboard link: https://syzkaller.appspot.com/bug?extid=a4a3d526b4157113ec6a
+> > > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+> > > 
+> > > Unfortunately, I don't have any reproducer for this crash yet.
+> > > 
+> > > IMPORTANT: if you fix the bug, please add the following tag to the commit:
+> > > Reported-by: syzbot+a4a3d526b4157113ec6a@syzkaller.appspotmail.com
+> > > 
+> > > device loop0 blocksize: 4096
+> > > __find_get_block_slow() failed. block=1, b_blocknr=8
+> > > b_state=0x00000029, b_size=512
+> > > device loop0 blocksize: 4096
+> > > ==================================================================
+> > > BUG: KASAN: use-after-free in __list_del_entry_valid+0xf1/0x100  
+> > > lib/list_debug.c:51
+> > > Read of size 8 at addr ffff88017eb47b70 by task syz-executor3/13461
+> > > 
+> > > CPU: 0 PID: 13461 Comm: syz-executor3 Not tainted 4.20.0-rc1-next-20181109+  
+> > > #110
+> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+> > > Google 01/01/2011
+> > > Call Trace:
+> > >   __dump_stack lib/dump_stack.c:77 [inline]
+> > >   dump_stack+0x244/0x39d lib/dump_stack.c:113
+> > >   print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+> > >   kasan_report_error mm/kasan/report.c:354 [inline]
+> > >   kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+> > >   __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+> > >   __list_del_entry_valid+0xf1/0x100 lib/list_debug.c:51
+> > >   __list_del_entry include/linux/list.h:117 [inline]
+> > >   list_del_init include/linux/list.h:159 [inline]
+> > >   __locks_delete_block fs/locks.c:683 [inline]
+> > >   locks_delete_block+0xce/0x3d0 fs/locks.c:716
+> > >   locks_mandatory_area+0x48b/0x6a0 fs/locks.c:1398
+> > >   rw_verify_area+0x2f2/0x360 fs/read_write.c:386
+> > >   vfs_write+0x149/0x560 fs/read_write.c:544
+> > >   ksys_write+0x101/0x260 fs/read_write.c:598
+> > >   __do_sys_write fs/read_write.c:610 [inline]
+> > >   __se_sys_write fs/read_write.c:607 [inline]
+> > >   __x64_sys_write+0x73/0xb0 fs/read_write.c:607
+> > >   do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+> > >   entry_SYSCALL_64_after_hwframe+0x49/0xbe
+> > > RIP: 0033:0x457569
+> > > Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+> > > 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+> > > ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> > > RSP: 002b:00007ff2e8194c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+> > > RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+> > > RDX: 0000000000000010 RSI: 0000000020000180 RDI: 0000000000000006
+> > > RBP: 000000000072c0e0 R08: 0000000000000000 R09: 0000000000000000
+> > > R10: 0000000000000000 R11: 0000000000000246 R12: 00007ff2e81956d4
+> > > R13: 00000000004c571f R14: 00000000004d9360 R15: 00000000ffffffff
+> > > 
+> > > The buggy address belongs to the page:
+> > > page:ffffea0005fad1c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
+> > > flags: 0x2fffc0000000000()
+> > > raw: 02fffc0000000000 0000000000000000 ffffea0005fad1c8 0000000000000000
+> > > raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+> > > page dumped because: kasan: bad access detected
+> > > 
+> > > Memory state around the buggy address:
+> > >   ffff88017eb47a00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > >   ffff88017eb47a80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > > > ffff88017eb47b00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > > 
+> > >                                                               ^
+> > >   ffff88017eb47b80: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > >   ffff88017eb47c00: ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff ff
+> > > ==================================================================
+> > > 
 > > 
-> > Not holding my breath BUT:
-> > if decoupling the reading of ANA state from native NVMe
-> > multipathing
-> > specific work during nvme request completion were an acceptable
-> > advancement I'd gladly do the work.
+> > Ouch, crash down in the mandatory locking code. This is with Neil's set
+> > from last week. I haven't merged the series he sent the other day yet,
+> > but they don't seem to be different in this regard.
 > > 
-> I'd be happy to work on that, given that we'll have to have 'real'
-> ANA 
-> support for device-mapper anyway for SLE12 SP4 etc.
+> > Looks like the fl_blocked list might have had an entry on it that was
+> > freed without being removed? locks_mandatory_area declares a file_lock
+> > on the stack, but it seems to be initialized properly.
+> > 
+> > The one weird thing is that locks_mandatory_area sets FL_ACCESS and
+> > FL_SLEEP, but I don't see anything wrong with that right offhand.
+> > 
+> > Neil, any thoughts?
+> 
+> I'm not certain, but probably this:
+> 
+> From: NeilBrown <neilb@suse.com>
+> Date: Wed, 14 Nov 2018 07:38:05 +1100
+> Subject: [PATCH] fs/locks: always delete_block after waiting - mandatory locks
+> 
+> The patch
+>       fs/locks: always delete_block after waiting.
+> should have moved the locks_delete_block() call in
+> locks_mandatory_area() too.
+> 
+> This might fix the bug:
+> Reported-by: syzbot+a4a3d526b4157113ec6a@syzkaller.appspotmail.com
+> 
+> Signed-off-by: NeilBrown <neilb@suse.com>
+> ---
+>  fs/locks.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/locks.c b/fs/locks.c
+> index f456cd3d9d50..eb0c0b33fb7b 100644
+> --- a/fs/locks.c
+> +++ b/fs/locks.c
+> @@ -1436,9 +1436,9 @@ int locks_mandatory_area(struct inode *inode, struct file *filp, loff_t start,
+>  				continue;
+>  		}
+>  
+> -		locks_delete_block(&fl);
+>  		break;
+>  	}
+> +	locks_delete_block(&fl);
+>  
+>  	return error;
+>  }
 
-So, what's the way ahead for multipath-tools? 
+That makes sense. I went ahead and squashed this patch into the earlier
+one and pushed the result to my locks-next branch. linux-next should
+pick it up soon.
 
-Given that, IIUC, at least one official kernel (4.19) has been released
-with ANA support but without the ANA sysfs attributes exported to user
-space, multipath-tools can't rely on them being present. I for one have
-no issue with copying code from nvme-cli and doing NVMe ioctls from
-multipath-tools, as in Lijie's patch. When those sysfs attributes are
-added (and work as expected), we will use them, but IMO we'll need to
-fall back to ioctls until then, and also afterwards, because we can't
-assume to be always running on the latest kernel.
-
-Best,
-Martin
-
+Thanks!
+-- 
+Jeff Layton <jlayton@kernel.org>
 
