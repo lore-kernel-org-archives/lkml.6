@@ -2,182 +2,125 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6F4C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:49:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DC86C07E85
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:51:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DEB1223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:49:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DEB1223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 3DEC3223DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:51:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DEC3223DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732135AbeKNRvb (ORCPT
+        id S1731861AbeKNRxZ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 12:51:31 -0500
-Received: from mx2.suse.de ([195.135.220.15]:47858 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727375AbeKNRvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 12:51:31 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 94B85AC38;
-        Wed, 14 Nov 2018 07:49:23 +0000 (UTC)
-Subject: Re: multipath-tools: add ANA support for NVMe device
-To:     Mike Snitzer <snitzer@redhat.com>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, hch@lst.de, axboe@kernel.dk
-Cc:     Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
-        xose.vazquez@gmail.com, linux-nvme@lists.infradead.org,
-        chengjike.cheng@huawei.com, shenhong09@huawei.com,
-        dm-devel@redhat.com, wangzhoumengjian@huawei.com,
-        christophe.varoqui@opensvc.com, bmarzins@redhat.com,
-        sschremm@netapp.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1541657381-7452-1-git-send-email-lijie34@huawei.com>
- <2691abf6733f791fb16b86d96446440e4aaff99f.camel@suse.com>
- <20181112215323.GA7983@redhat.com>
- <20181113161838.GC9827@localhost.localdomain>
- <20181113180008.GA12513@redhat.com> <20181114053837.GA15086@redhat.com>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
-Date:   Wed, 14 Nov 2018 08:49:23 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181114053837.GA15086@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        Wed, 14 Nov 2018 12:53:25 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:60764 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725907AbeKNRxZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 12:53:25 -0500
+Received: from marcel-macbook.fritz.box (p4FF9F655.dip0.t-ipconnect.de [79.249.246.85])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 6EC98CEEAF;
+        Wed, 14 Nov 2018 08:58:48 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
+Subject: Re: [Letux-kernel] [PATCH RFC] bluetooth: add uart h4 devices via
+ serdev/devicetree
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20181113170128.0f59ef0e@kemnade.info>
+Date:   Wed, 14 Nov 2018 08:51:17 +0100
+Cc:     Rob Herring <robh@kernel.org>, sebastian.reichel@collabora.com,
+        hns@goldelico.com, devicetree@vger.kernel.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, letux-kernel@openphoenux.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <86A3A2E6-FC89-42FE-8410-9C8273EC9CF7@holtmann.org>
+References: <20181110232034.17277-1-andreas@kemnade.info>
+ <20181111024648.7rt7rlhaqihtqecv@earth.universe>
+ <20181112215812.18ebca35@aktux>
+ <2C74C837-A6D3-47C9-BE59-CCA594289B94@goldelico.com>
+ <20181112222726.73m2oca7hankvcjs@earth.universe>
+ <CABGGisxsdv+BTd5-HMzF8asEcWtL5F4CMzmkrBCwK=NibvqjLQ@mail.gmail.com>
+ <20181113170128.0f59ef0e@kemnade.info>
+To:     Andreas Kemnade <andreas@kemnade.info>
+X-Mailer: Apple Mail (2.3445.101.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/14/18 6:38 AM, Mike Snitzer wrote:
-> On Tue, Nov 13 2018 at  1:00pm -0500,
-> Mike Snitzer <snitzer@redhat.com> wrote:
-> 
->> On Tue, Nov 13 2018 at 11:18am -0500,
->> Keith Busch <keith.busch@intel.com> wrote:
->>
->>> On Mon, Nov 12, 2018 at 04:53:23PM -0500, Mike Snitzer wrote:
->>>> On Mon, Nov 12 2018 at 11:23am -0500,
->>>> Martin Wilck <mwilck@suse.com> wrote:
->>>>
->>>>> Hello Lijie,
->>>>>
->>>>> On Thu, 2018-11-08 at 14:09 +0800, lijie wrote:
->>>>>> Add support for Asynchronous Namespace Access as specified in NVMe
->>>>>> 1.3
->>>>>> TP 4004. The states are updated through reading the ANA log page.
->>>>>>
->>>>>> By default, the native nvme multipath takes over the nvme device.
->>>>>> We can pass a false to the parameter 'multipath' of the nvme-core.ko
->>>>>> module,when we want to use multipath-tools.
->>>>>
->>>>> Thank you for the patch. It looks quite good to me. I've tested it with
->>>>> a Linux target and found no problems so far.
->>>>>
->>>>> I have a few questions and comments inline below.
->>>>>
->>>>> I suggest you also have a look at detect_prio(); it seems to make sense
->>>>> to use the ana prioritizer for NVMe paths automatically if ANA is
->>>>> supported (with your patch, "detect_prio no" and "prio ana" have to be
->>>>> configured explicitly). But that can be done in a later patch.
->>>>
->>>> I (and others) think it makes sense to at least triple check with the
->>>> NVMe developers (now cc'd) to see if we could get agreement on the nvme
->>>> driver providing the ANA state via sysfs (when modparam
->>>> nvme_core.multipath=N is set), like Hannes proposed here:
->>>> http://lists.infradead.org/pipermail/linux-nvme/2018-November/020765.html
->>>>
->>>> Then the userspace multipath-tools ANA support could just read sysfs
->>>> rather than reinvent harvesting the ANA state via ioctl.
->>>
->>> I'd prefer not duplicating the log page parsing. Maybe nvme's shouldn't
->>> even be tied to CONFIG_NVME_MULTIPATH so that the 'multipath' param
->>> isn't even an issue.
->>
->> I like your instincts, we just need to take them a bit further.
->>
->> Splitting out the kernel's ANA log page parsing won't buy us much given
->> it is userspace (multipath-tools) that needs to consume it.  The less
->> work userspace needs to do (because kernel has already done it) the
->> better.
->>
->> If the NVMe driver is made to always track and export the ANA state via
->> sysfs [1] we'd avoid userspace parsing duplication "for free".  This
->> should occur regardless of what layer is reacting to the ANA state
->> changes (be it NVMe's native multipathing or multipath-tools).
->>
->> ANA and NVMe multipathing really are disjoint, making them tightly
->> coupled only serves to force NVMe driver provided multipathing _or_
->> userspace ANA state tracking duplication that really isn't ideal [2].
->>
->> We need a reasoned answer to the primary question of whether the NVMe
->> maintainers are willing to cooperate by providing this basic ANA sysfs
->> export even if nvme_core.multipath=N [1].
->>
->> Christoph said "No" [3], but offered little _real_ justification for why
->> this isn't the right thing for NVMe in general.
-> ...
->> [1]: http://lists.infradead.org/pipermail/linux-nvme/2018-November/020765.html
->> [2]: https://www.redhat.com/archives/dm-devel/2018-November/msg00072.html
-> ...
-> 
-> I knew there had to be a pretty tight coupling between the NVMe driver's
-> native multipathing and ANA support... and that the simplicity of
-> Hannes' patch [1] was too good to be true.
-> 
-> The real justification for not making Hannes' change is it'd effectively
-> be useless without first splitting out the ANA handling done during NVMe
-> request completion (NVME_SC_ANA_* cases in nvme_failover_req) that
-> triggers re-reading the ANA log page accordingly.
-> 
-> So without the ability to drive the ANA workqueue to trigger
-> nvme_read_ana_log() from the nvme driver's completion path -- even if
-> nvme_core.multipath=N -- it really doesn't buy multipath-tools anything
-> to have the NVMe driver export the ana state via sysfs, because that ANA
-> state will never get updated.
-> 
-Hmm. Indeed, I was more focussed on having the sysfs attributes 
-displayed, so yes, indeed it needs some more work.
+Hi Andreas,
 
->> The inability to provide proper justification for rejecting a patch
->> (that already had one co-maintainer's Reviewed-by [5]) _should_ render
->> that rejection baseless, and the patch applied (especially if there is
->> contributing subsystem developer interest in maintaining this support
->> over time, which there is).  At least that is what would happen in a
->> properly maintained kernel subsystem.
->>
->> It'd really go a long way if senior Linux NVMe maintainers took steps to
->> accept reasonable changes.
+>>>>> Am 12.11.2018 um 21:59 schrieb Andreas Kemnade <andreas@kemnade.info>:
+>>>>> On Sun, 11 Nov 2018 03:46:48 +0100
+>>>>> Sebastian Reichel <sebastian.reichel@collabora.com> wrote:  
+>>>>>> On Sun, Nov 11, 2018 at 12:20:34AM +0100, Andreas Kemnade wrote:  
+>>>>>>> This is a first try to be able to use h4 devices specified in
+>>>>>>> the devicetree, so you do not need to call hciattach and
+>>>>>>> it can be automatically probed.
+>>>>>>> 
+>>>>>>> Of course, proper devicetree bindings documentation is
+>>>>>>> missing. And also you would extend that by regulator/
+>>>>>>> enable gpio settings.
+>>>>>>> 
+>>>>>>> But before proceeding further it should be checked if the
+>>>>>>> general way of doing things is right.
+>>>>>>> 
+>>>>>>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+>>>>>>> ---  
+>>>>>> 
+>>>>>> Patch looks good to me, just one note
+>>>>>> 
+>>>>> I found one thing myself:
+>>>>> Shouldn't we have a generic compatible string like "generic-h4".
+>>>>> ehci-platform.c has for example:
+>>>>>       { .compatible = "generic-ehci", },  
+>>>> 
+>>>> There might be differences in h4 compatible devices (e.g. default
+>>>> baud rate) so that I would not bet there a "generic-h4" suffices
+>>>> in the long run.  
+>> 
+>> It will not because that doesn't define clocks, resets, gpios,
+>> supplies, etc. and the interactions of all those.
+>> 
+> well, we need a simple supply being on when the device is on.
+> Nothing more.
 > 
-> Even though I'm frustrated I was clearly too harsh and regret my tone.
-> I promise to _try_ to suck less.
+>>> My suggestion is to use this in DT:
+>>> 
+>>> compatible = "wi2wi,w2cbw003-bluetooth", "<something generic>";
+>>> 
+> That would be my slight preference here.
 > 
-> This dynamic of terse responses or no responses at all whenever NVMe
-> driver changes to ease multipath-tools NVMe support are floated is the
-> depressing gift that keeps on giving.  But enough excuses...
+>>> The driver can start with supporting just the generic compatible
+>>> string. If somebody finds some incompatible differences, the driver
+>>> can add a custom handler for the wi2wi chip without breaking DT
+>>> ABI.  
+>> 
+>> Any idea how many H4 devices there are? Somehow I doubt there are that
+>> many to be unmanageable.
+>> 
+> Well, many devices are h4 devices with some more or less important
+> vendor-specific commands. Well, "hciattach any" uses simple h4 protocol.
 > 
-> Not holding my breath BUT:
-> if decoupling the reading of ANA state from native NVMe multipathing
-> specific work during nvme request completion were an acceptable
-> advancement I'd gladly do the work.
+> those firmware download commands and they have their own drivers.
+> Most devices I had used bluetooth uart from the command line with, were
+> simple enough. The other question is whether those devices will run a
+> modern kernel.
 > 
-I'd be happy to work on that, given that we'll have to have 'real' ANA 
-support for device-mapper anyway for SLE12 SP4 etc.
+> No strong opinion here. 
 
-Cheers,
+doing the firmware load from user space via some magic tool is no longer going to work smoothly. It will be actually almost impossible with serdev. However I did post btuart.c driver which is pretty much just plain H:4. You would still somehow define the default baudraute since just picking 115200 is not always going to work.
 
-Hannes
--- 
-Dr. Hannes Reinecke		   Teamlead Storage & Networking
-hare@suse.de			               +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
-HRB 21284 (AG Nürnberg)
+Btw. I see nothing standing in the way of merging btuart.c driver and then go from there. Either I dig this out and submit or someone else does.
+
+Regards
+
+Marcel
+
