@@ -2,164 +2,230 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B253C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 02:31:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ED645C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 02:44:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1669F21582
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 02:31:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1669F21582
+	by mail.kernel.org (Postfix) with ESMTP id A625020818
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 02:44:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A625020818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732058AbeKNMcO convert rfc822-to-8bit (ORCPT
+        id S1731982AbeKNMpE convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 07:32:14 -0500
-Received: from mout.gmx.net ([212.227.15.19]:52335 "EHLO mout.gmx.net"
+        Wed, 14 Nov 2018 07:45:04 -0500
+Received: from mout.gmx.net ([212.227.17.21]:46207 "EHLO mout.gmx.net"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726496AbeKNMcN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 07:32:13 -0500
-Received: from [192.168.1.153] ([74.104.183.64]) by mail.gmx.com (mrgmx003
- [212.227.17.184]) with ESMTPSA (Nemesis) id 0LcShi-1ffDBw3L5q-00jtQW; Wed, 14
- Nov 2018 03:31:03 +0100
+        id S1726496AbeKNMpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 07:45:03 -0500
+Received: from [192.168.1.153] ([74.104.183.64]) by mail.gmx.com (mrgmx101
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 0M97Nh-1gCc6i4AH7-00CSw6; Wed, 14
+ Nov 2018 03:41:58 +0100
+From:   Qian Cai <cai@gmx.us>
 Content-Type: text/plain;
         charset=us-ascii
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: kmemleak: Early log buffer exceeded (525980) during boot
-From:   Qian Cai <cai@gmx.us>
-In-Reply-To: <trinity-cbe4d3e0-f780-48ea-af28-ed2813eafaf6-1541871732167@msvc-mesg-gmx021>
-Date:   Tue, 13 Nov 2018 21:31:00 -0500
-Cc:     linux kernel <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
 Content-Transfer-Encoding: 8BIT
-Message-Id: <DD82AD13-EFD2-4C22-8348-8023E0BDD960@gmx.us>
-References: <1541712198.12945.12.camel@gmx.us>
- <D7C9EA14-C812-406F-9570-CFF36F4C3983@gmx.us>
- <20181110165938.lbt6dfamk2ljafcv@localhost>
- <trinity-cbe4d3e0-f780-48ea-af28-ed2813eafaf6-1541871732167@msvc-mesg-gmx021>
-To:     Catalin Marinas <catalin.marinas@arm.com>
+Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
+Subject: WARNING: possible circular locking dependency detected
+Message-Id: <3F3E5B1B-4665-4EC9-BD6F-888306E214E2@gmx.us>
+Date:   Tue, 13 Nov 2018 21:41:54 -0500
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Russell King <linux@armlinux.org.uk>
+To:     linux kernel <linux-kernel@vger.kernel.org>
 X-Mailer: Apple Mail (2.3445.100.39)
-X-Provags-ID: V03:K1:XwpWRuzoYd0GTvGDk3mU9AlObzbF03nf7LpKjGqn9DxgDPUfe8g
- VnpSajqK+TR6xbmQOrm7RfzP6DwFA30aKxWH95Oq6qDoN8PVNxckeykqdUbE8tU5kKMRr5o
- +b9j5fvgiSxhoTK0xyr3ZAysw+n8xHa0gst2wwd1VAHLd9AeP7J+f5tj3B/jZ68mKsYr97k
- ZR992IgiI/gG/jBbEQEoA==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:yzNktzv9lew=:qzDjdQzxC4yXZCQaciWug+
- Enva5Skonq51qiEppJpMCSINzHaydZALKKMLKO2hepIuhEXmuoDA1LoHR98MWL2wUunp6UZVV
- IQYdQbqePj5nm8xWyCM5gTdaFmQz1crwMtkKdmqkYWR+ZXH52gFEsImDq7lB+863TCSr5bGUX
- OI0ZfoVmETN+UW1boJyOAHMtqiXqZy29KhCqaXaK1eixNVYFDpQcRZuUk5MRt1quwFGet4sJh
- WVYGxdJdv6vZbzyHjdCKUe3VCDXnwhwdbBt4q+rH9IihPQ4gMOhis3J3Mc9GUDjp4o3U7PNNV
- X+L0TnHDLkhzRBP3Ipeq4kpOAuesUJ7bvBOJ581D1c9FPCTOq7SpnxiFG4JgdOdRH89xLqqN0
- ABW/o2Iib6cmjK7ckYbcO7PwSZ9kSyQws2cMEfKUmKwBb9GqveMFo5VLuHZ5Btfi0Ciqisxty
- xVF5soF+DvY+mp4WQ65y0Ml9MK5ENwOksHNR4Shpw8Ab6szVDbkzNz3xOQV7K1fjqEqSDKZc3
- 2RFsQhCPB5RVJHqXUrqWpxwM2jeU+aP5UNbIaMhrcRNwJjOUV6dEedZNtekdE3ylu6cvSLB2r
- QOgioI2vW2RTOpVtxem/RRK0ptcbzp81TVaHwgphbI8B0kp5jYRr64Mo7qVIk0haNZ3Rp9RRW
- w0vl4h5WOrPvS1hYRqADP1m40nBF7ugsrmbcvtW9bp3DA9i9DFbUSuzDV8X2JIjCbZr0iSr6z
- PZgJmDRy/AF8bFyfX5DvssbusrQOEWO0Ns5i44NMunXHRlOWFi7ys4aVIvMnD9+fpvv/RO7Y2
- eZX61Ade6HeCffUFpGQ47xX9rEmBHVPy/9zgqrrTg0Fu9GnC/FeMfth2ZfjVURw0gYwk5oj0k
- IQbpvWYYBXfCsphx468Jopd5bguIlZ2OahdYfXll7LyxgVdPCVwmWaUJ7ByDIL+O8GQmUKtw7
- jAtCPbb1/mq7v035jUV5MeaSqUlyjVkUy+fjmrcv4o6n1W8JxfSe+MFobsjeDxB2TZJK8JYNJ
- Qg==
+X-Provags-ID: V03:K1:2FNtjNlfmOpqFUGt9jSI0+1S4VipgN/zh08xO6DCb/5PDRuyBTC
+ mKC2dVLo6o40f/2S3pe658hqmRGI5PAOqwof575BS9tgizrXLl5V10oLRGT67qK7GUry9X9
+ g19oQkvfr6OGJs88rlNb0h4yaOfPt/pDDDlWfivR4glHTmPWlNRCA/+iky2YKAEtl/gFDP5
+ I3/EmX0EWq+u+pFSK3QtA==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:TMEeXcgfiDk=:XsDqZqHLBKIYe6YI/ivbm7
+ RrdX/PjUB/6Ud95GkgE4l9+r8wmZ3G/7035pLLNaLWEfG4pwUVMiqjt5nV7vnVS0LUJCOuJZZ
+ lVRSbAxudfbuywxe5i6vJOwxNVvhCCPIvdCbK26bNssaL2OvsCuCLX8LZOImOednknPF50NcR
+ CN1BKiv5/6S0cX8/+pN5NlLd4HJ3Ha4Gn8w1kUn/jK47wkD+XbkT/TvyKc88wJ4dkUJdUfZ3p
+ kFWuQdN1P76cnkUx/gsdhlV5jQRC+rUozshXOWjt4V5nssHUiIPD+qKbkJB3zQVSx+Xrs86l4
+ sqNVjtUU8nd5wcL6BAqdTRXf6rRs6fUvgfItdS5fmDzoxaaFQGgXFwez/ONdvRDW4HuxF9Mf8
+ 5H4rXp7h0BzRvx+jseCfY7gxjANezi64R51aVCLtjC/iRu+RadlZ3pV8ogxicGcUlL4VNWzqB
+ U0LlXvBbBRXzkj4ZFt1Xcjg6C2LITKs2QJLzOBQ9cj20MPAttOwp1S66QAhHrglWjnkqhARoo
+ UUaNlDxaJ1ZI76j62GiohmMpk5m7qoIjBfCOQUcnmHxCP6611iUxnII7ttj6kxl4TCnJ27px9
+ R1okWfSK15QPhEpCVMRAYo6cPNjdi6JPWIxwYkCGloGqmANpXTD9ihaYBrndQZgjnhTIVzvUH
+ di6qjqFkj80vJTodkj+lHnxHbYyUJRerNc5Fg7ccguqurD3xpvfHO4AYw8/QgOSIUqDAdLRe0
+ IfOAP8LzS/OMrfbEX/esVR4NbGzKUGA6FbQnwYXtObJahlOQrRfX5fSvKBb24A5CSSP73fWkp
+ uDPz1wAUzUa39lgTXE8Nik8ZSURzh/Zq/gMKEcHdXlPJWFqQzHXAJudUGRZXhU0r7gDUeiaKR
+ 7U0niDBpyIvKpYhHlMPnggv4E5Nox/dgv42xTrPs/dwsvPuJI82u6XuNs7qibh
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Compiling kernel on an aarch64 server with the latest mainline (rc2) generated this,
 
-
-> On Nov 10, 2018, at 12:42 PM, Qian Cai <cai@gmx.us> wrote:
-> 
-> 
-> On 11/10/18 at 11:59 AM, Catalin Marinas wrote:
-> 
->> On Sat, Nov 10, 2018 at 10:08:10AM -0500, Qian Cai wrote:
->>> On Nov 8, 2018, at 4:23 PM, Qian Cai <cai@gmx.us> wrote:
->>>> The maximum value for DEBUG_KMEMLEAK_EARLY_LOG_SIZE is only 40000, so it
->>>> disables kmemleak every time on this aarch64 server running the latest mainline
->>>> (b00d209).
->>>> 
->>>> # echo scan > /sys/kernel/debug/kmemleak 
->>>> -bash: echo: write error: Device or resource busy
->>>> 
->>>> Any idea on how to enable kmemleak there?
->>> 
->>> I have managed to hard-code DEBUG_KMEMLEAK_EARLY_LOG_SIZE to 600000,
->> 
->> That's quite a high number, I wouldn't have thought it is needed.
->> Basically the early log buffer is only used until the slub allocator
->> gets initialised and kmemleak_init() is called from start_kernel(). I
->> don't know what allocates that much memory so early.
->> 
->> What else is in your .config?
-> https://c.gmx.com/@642631272677512867/tqD5eulbQAC-1h-fkVe1Iw
-> 
-> Does the dmesg helps? 
-> https://paste.ubuntu.com/p/BnhvXXhn7k/
->> 
->>> diff --git a/mm/kmemleak.c b/mm/kmemleak.c
->>> index 877de4fa0720..c10119102c10 100644
->>> --- a/mm/kmemleak.c
->>> +++ b/mm/kmemleak.c
->>> @@ -280,7 +280,7 @@ struct early_log {
->>> 
->>> /* early logging buffer and current position */
->>> static struct early_log
->>> -       early_log[CONFIG_DEBUG_KMEMLEAK_EARLY_LOG_SIZE] __initdata;
->>> +       early_log[600000] __initdata;
->> 
->> You don't need to patch the kernel, the config variable is there to be
->> changed.
-> Right, but the maximum is only 40000 in kconfig, so anything bigger than that will be rejected.
-
-I got soft lockups all over the place by compiling kernel on another aarch64 server with 256-CPU
-with DEBUG_KMEMLEAK_EARLY_LOG_SIZE=200000
-
-[  802.897516] watchdog: BUG: soft lockup - CPU#151 stuck for 22s! [kworker/151:1:1410]
-[  802.905311] Modules linked in: vfat fat ghash_ce i2c_smbus sha2_ce sha256_arm64 sha1_ce sg ipmi_ssif ipmi_devintf ipmi_msghandler sch_fq_codel xfs libcrc32c sr_mod cdrom ast mlx5_core i2c_algo_bit drm_kms_helper syscopyarea sysfillrect sysimgblt fb_sys_fops ttm drm uas usb_storage mlxfw devlink i2c_xlp9xx gpio_xlp dm_mirror dm_region_hash dm_log dm_mod
-[  802.936640] irq event stamp: 2717000
-[  802.940277] hardirqs last  enabled at (2716999): [<ffff200008fabd48>] _raw_write_unlock_irqrestore+0x80/0x88
-[  802.950166] hardirqs last disabled at (2717000): [<ffff2000080839b4>] el1_irq+0x74/0x140
-[  802.958405] softirqs last  enabled at (84510): [<ffff200008082210>] __do_softirq+0x7c8/0x9c8
-[  802.966914] softirqs last disabled at (84433): [<ffff20000812dbe4>] irq_exit+0x25c/0x2f0
-[  802.975035] CPU: 151 PID: 1410 Comm: kworker/151:1 Kdump: loaded Tainted: G        W    L    4.20.0-rc2+ #4
-[  802.984800] Hardware name: HPE Apollo 70             /C01_APACHE_MB         , BIOS L50_5.13_1.0.6 07/10/2018
-[  802.994692] Workqueue: events free_obj_work
-[  802.998918] pstate: 20400009 (nzCv daif +PAN -UAO)
-[  803.003755] pc : _raw_write_unlock_irqrestore+0x84/0x88
-[  803.009008] lr : _raw_write_unlock_irqrestore+0x80/0x88
-[  803.014251] sp : ffff8095884a6760
-[  803.017582] x29: ffff8095884a6760 x28: 0000000000000000 
-[  803.022916] x27: 0000000000000000 x26: ffff20000c318d80 
-[  803.028246] x25: ffff809254772738 x24: ffff20000dbf3be0 
-[  803.033581] x23: ffff80925477dc28 x22: dfff200000000000 
-[  803.038942] x21: ffff20000851ea9c x20: ffff20000c318d80 
-[  803.044352] x19: 0000000000000000 x18: 0000000000000000 
-[  803.049700] x17: 0000000000000000 x16: 0000000000000000 
-[  803.055064] x15: 0000000000000000 x14: 0000000000000000 
-[  803.060408] x13: 0000000000000000 x12: 000000000000005c 
-[  803.065733] x11: 00000000f2f2f2f2 x10: dfff200000000000 
-[  803.071061] x9 : ffff20000c139848 x8 : ffff8095cd9247d8 
-[  803.076389] x7 : 0000000041b58ab3 x6 : dfff200000000000 
-[  803.081723] x5 : ffff20000954e8b8 x4 : dfff200000000000 
-[  803.087064] x3 : 0000000000000001 x2 : 0000000000000007 
-[  803.092409] x1 : 086e7d9f6bfbf800 x0 : 0000000000000000 
-[  803.097752] Call trace:
-[  803.100249]  _raw_write_unlock_irqrestore+0x84/0x88
-[  803.105170]  create_object+0x4dc/0x600
-[  803.108957]  kmemleak_alloc+0xc8/0xd8
-[  803.112646]  kmem_cache_alloc+0x3b0/0x3f8
-[  803.116679]  __debug_object_init+0x8cc/0x918
-[  803.120978]  debug_object_activate+0x218/0x370
-[  803.125439]  __call_rcu+0xdc/0xad0
-[  803.128856]  call_rcu+0x30/0x40
-[  803.132019]  put_object+0x50/0x68
-[  803.135348]  __delete_object+0xfc/0x140
-[  803.139200]  delete_object_full+0x2c/0x38
-[  803.143235]  kmemleak_free+0xa4/0xb0
-[  803.146825]  kmem_cache_free+0x2e4/0x3a8
-[  803.150762]  free_obj_work+0x300/0x468
-[  803.154529]  process_one_work+0x60c/0xd90
-[  803.158575]  worker_thread+0x13c/0xa70
-[  803.162365]  kthread+0x1c4/0x1d0
-[  803.165618]  ret_from_fork+0x10/0x1c
+[  910.263839] WARNING: possible circular locking dependency detected
+[  910.263841] 4.20.0-rc2+ #4 Tainted: G        W    L   
+[  910.263843] ------------------------------------------------------
+[  910.263844] swapper/0/0 is trying to acquire lock:
++0x3f0/0x8806] 0000000071c616d1 (console_owner){-.-.}, at: console_unlock+0x26cc481d4 (&pool->ldy depends on therse order) is:
+[ 0.263880]        __queue_work+0x1dc/0xb78
+[  910.263882]        queue_work_on+0x140/0x158
+[  910.263883]        tty_flip_buffer_push+0xd8/0x108
+[  910.263885]        pty_write+0xf8/0x100
+[  910.263886]        n_tty_write+0x2d8/0x698
+[  910.263888]        tty_write+0x254/0x410
+[  910.263889]        __vfs_write+0xd4/0x330
+[  910.263891]        vfs_write+0xd8/0x240
+[  910.263892]        redirected_tty_write+0x74/0xd0
+[  910.263894]        do_iter_write+0x224/0x270
+[  910.263895]        vfs_writev+0x114/0x1d8
+[  910.263897]        do_writev+0xd8/0x1e0
+[  910.263898]        __arm64_sys_writev+0x50/0x60
+[  910.263900]        el0_svc_handler+0xd4/0x198
+[  910.263901]        el0_svc+0x8/0xc
+[  910.263902] 
+[  910.263903] -> #2 (&(&port->lock)->rlock){-.-.}:
+[  910.263908]        __lock_acquire+0x3f0/0x880
+[  910.263910]        lock_acquire+0x1a8/0x430
+[  910.263911]        _raw_spin_lock_irqsave+0x74/0x98
+[  910.263913]        tty_port_tty_get+0x28/0x68
+[  910.263915]        tty_port_default_wakeup+0x20/0x40
+[  910.263916]        tty_port_tty_wakeup+0x38/0x48
+[  910.263918]        uart_write_wakeup+0x2c/0x40
+[  910.263919]        pl011_tx_chars+0x2a4/0x358
+[  910.263921]        pl011_start_tx_pio+0x24/0xa8
+[  910.263922]        pl011_start_tx+0x150/0x2c0
+[  910.263924]        __uart_start.isra.1+0x84/0x90
+[  910.263925]        uart_write+0x1ec/0x2d8
+[  910.263927]        do_output_char+0x1c4/0x2a8
+[  910.263928]        n_tty_write+0x338/0x698
+[  910.263930]        tty_write+0x254/0x410
+[  910.263931]        redirected_tty_write+0xb4/0xd0
+[  910.263933]        do_iter_write+0x224/0x270
+[  910.263934]        vfs_writev+0x114/0x1d8
+[  910.263935]        do_writev+0xd8/0x1e0
+[  910.263937]        __arm64_sys_writev+0x50/0x60
+[  910.263939]        el0_svc_handler+0xd4/0x198
+[  910.263940]        el0_svc+0x8/0xc
+[  910.263941] 
+[  910.263942] -> #1 (&port_lock_key){-.-.}:
+[  910.263947]        __lock_acquire+0x3f0/0x880
+[  910.263949]        lock_acquire+0x1a8/0x430
+[  910.263950]        _raw_spin_lock+0x68/0x88
+[  910.263952]        pl011_console_write+0x1d8/0x258
+[  910.263953]        console_unlock+0x3ac/0x938
+[  910.263955]        register_console+0x360/0x4c8
+[  910.263956]        uart_add_one_port+0x798/0x870
+[  910.263958]        pl011_register_port+0x98/0x128
+[  910.263959]        sbsa_uart_probe+0x320/0x3b0
+[  910.263961]        platform_drv_probe+0x74/0xd0
+[  910.263962]        really_probe+0x424/0x678
+[  910.263964]        driver_probe_device+0x130/0x1a0
+[  910.263966]        __device_attach_driver+0x10c/0x188
+[  910.263967]        bus_for_each_drv+0xf8/0x158
+[  910.263969]        __device_attach+0x188/0x230
+[  910.263970]        device_initial_probe+0x24/0x30
+[  910.263972]        bus_probe_device+0xf0/0x100
+[  910.263973]        device_add+0x57c/0x9d8
+[  910.263975]        platform_device_add+0x198/0x388
+[  910.263977]        platform_device_register_full+0x16c/0x1e8
+[  910.263978]        acpi_create_platform_device+0x368/0x450
+[  910.263980]        acpi_default_enumeration+0x34/0x78
+[  910.263982]        acpi_bus_attach+0x2dc/0x3e0
+[  910.263983]        acpi_bus_attach+0x108/0x3e0
+[  910.263985]        acpi_bus_attach+0x108/0x3e0
+[  910.263986]        acpi_bus_attach+0x108/0x3e0
+[  910.263987]        acpi_bus_scan+0xb0/0x110
+[  910.263989]        acpi_scan_init+0x1a8/0x410
+[  910.263990]        acpi_init+0x3e8/0x47c
+[  910.263992]        do_one_initcall+0x160/0x6bc
+[  910.263993]        kernel_init_freeable+0x74c/0x814
+[  910.263995]        kernel_init+0x18/0x11c
+[  910.263996]        ret_from_fork+0x10/0x1c
+[  910.263997] 
+[  910.263998] -> #0 (console_owner){-.-.}:
+[  910.264004]        validate_chain.isra.17+0x998/0x1550
+[  910.264005]        __lock_acquire+0x3f0/0x880
+[  910.264007]        lock_acquire+0x1a8/0x430
+[  910.264008]        console_unlock+0x2c8/0x938
+[  910.264010]        vprintk_emit+0x358/0x5c0
+[  910.264011]        vprintk_default+0x60/0xa8
+[  910.264013]        vprintk_func+0x244/0x370
+[  910.264014]        printk+0xc8/0xf8
+[  910.264016]        show_workqueue_state+0x534/0xce0
+[  910.264018]        wq_watchdog_timer_fn+0x444/0x518
+[  910.264019]        call_timer_fn+0x1c4/0x708
+[  910.264021]        expire_timers+0x32c/0x448
+[  910.264022]        run_timer_softirq+0x290/0x328
+[  910.264024]        __do_softirq+0x248/0x9c8
+[  910.264025]        irq_exit+0x25c/0x2f0
+[  910.264027]        __handle_domain_irq+0x8c/0xf0
+[  910.264028]        gic_handle_irq+0xc0/0x168
+[  910.264029]        el1_irq+0xb4/0x140
+[  910.264031]        cpuidle_enter_state+0x150/0x6a0
+[  910.264032]        cpuidle_enter+0x34/0x48
+[  910.264034]        call_cpuidle+0x4c/0x78
+[  910.264035]        do_idle+0x328/0x360
+[  910.264037]        cpu_startup_entry+0x2c/0x30
+[  910.264038]        rest_init+0x248/0x31c
+[  910.264040]        arch_call_rest_init+0x14/0x1c
+[  910.264041]        start_kernel+0x568/0x5a8
+[  910.264042] 
+[  910.264044] other info that might help us debug this:
+[  910.264045] 
+[  910.264046] Chain exists of:
+[  910.264047]   console_owner --> &(&port->lock)->rlock --> &pool->lock/1
+[  910.264055] 
+[  910.264057]  Possible unsafe locking scenario:
+[  910.264058] 
+[  910.264059]        CPU0                    CPU1
+[  910.264061]        ----                    ----
+[  910.264062]   lock(&pool->lock/1);
+[  910.264066]                                lock(&(&port->lock)->rlock);
+[  910.264070]                                lock(&pool->lock/1);
+[  910.264073]   lock(console_owner);
+[  910.264076] 
+[  910.264078]  *** DEADLOCK ***
+[  910.264079] 
+[  910.264080] 4 locks held by swapper/0/0:
+[  910.264081]  #0: 00000000c45a46a0 ((&wq_watchdog_timer)){+.-.}, at: call_timer_fn+0x0/0x708
+[  910.264087]  #1: 00000000f6706545 (rcu_read_lock_sched){....}, at: show_workqueue_state+0x0/0xce0
+[  910.264094]  #2: 00000000f2c481d4 (&pool->lock/1){-.-.}, at: show_workqueue_state+0x468/0xce0
+[  910.264101]  #3: 0000000014da44b5 (console_lock){+.+.}, at: vprintk_emit+0x350/0x5c0
+[  910.264107] 
+[  910.264108] stack backtrace:
+[  910.264110] CPU: 0 PID: 0 Comm: swapper/0 Kdump: loaded Tainted: G        W    L    4.20.0-rc2+ #4
+[  910.264113] Hardware name: HPE Apollo 70             /C01_APACHE_MB         , BIOS L50_5.13_1.0.6 07/10/2018
+[  910.264114] Call trace:
+[  910.264116]  dump_backtrace+0x0/0x2c8
+[  910.264117]  show_stack+0x24/0x30
+[  910.264118]  dump_stack+0x118/0x19c
+[  910.264120]  print_circular_bug.isra.13+0x360/0x408
+[  910.264121]  check_prev_add.constprop.22+0x690/0xa10
+[  910.264123]  validate_chain.isra.17+0x998/0x1550
+[  910.264124]  __lock_acquire+0x3f0/0x880
+[  910.264126]  lock_acquire+0x1a8/0x430
+[  910.264127]  console_unlock+0x2c8/0x938
+[  910.264129]  vprintk_emit+0x358/0x5c0
+[  910.264130]  vprintk_default+0x60/0xa8
+[  910.264131]  vprintk_func+0x244/0x370
+[  910.264133]  printk+0xc8/0xf8
+[  910.264134]  show_workqueue_state+0x534/0xce0
+[  910.264136]  wq_watchdog_timer_fn+0x444/0x518
+[  910.264137]  call_timer_fn+0x1c4/0x708
+[  910.264138]  expire_timers+0x32c/0x448
+[  910.264140]  run_timer_softirq+0x290/0x328
+[  910.264141]  __do_softirq+0x248/0x9c8
+[  910.264143]  irq_exit+0x25c/0x2f0
+[  910.264144]  __handle_domain_irq+0x8c/0xf0
+[  910.264146]  gic_handle_irq+0xc0/0x168
+[  910.264147]  el1_irq+0xb4/0x140
+[  910.264148]  cpuidle_enter_state+0x150/0x6a0
+[  910.264150]  cpuidle_enter+0x34/0x48
+[  910.264151]  call_cpuidle+0x4c/0x78
+[  910.264152]  do_idle+0x328/0x360
+[  910.264154]  cpu_startup_entry+0x2c/0x30
+[  910.264155]  rest_init+0x248/0x31c
+[  910.264157]  arch_call_rest_init+0x14/0x1c
+[  910.264158]  start_kernel+0x568/0x5a8
+[  910.327979] ------------[ cut here ]------------
