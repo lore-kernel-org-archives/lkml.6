@@ -6,151 +6,96 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38ED4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:46:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2281FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:46:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 009332145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:46:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD56E2145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:46:43 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vgjMViOr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 009332145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1Os9YUxW"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD56E2145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727115AbeKOI1O (ORCPT
+        id S1726944AbeKOI1M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:27:14 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34408 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:27:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34384 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726892AbeKOI1N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:27:13 -0500
+        id S1726774AbeKOI1M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:12 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id CD1952251B;
+        by mail.kernel.org (Postfix) with ESMTPSA id 104CE22511;
         Wed, 14 Nov 2018 22:22:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542234129;
-        bh=Q92eScgjO+TudlWLKcxr/BkUUBMXqfbVXj7HzBEOX+0=;
+        bh=DEsOqQqd8uqeK3VdhnQr/b6NfLk4apK7i9craI7XF3c=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=vgjMViOrlOWEJDoEjfOaYhFjwVjxfnvm8HTOebFCVVVwp1tR0mkCB2Wj/rfwIhBzw
-         3ISNeQryCNBxReDobCpFMnx4fsVhqkY/48J8z8jmSa5LjnwMoVvISZVSwpheIvWiGC
-         0qg7X+a0APv7tGfF2pfCvnHwwnWc/oe99SZZ1W+s=
+        b=1Os9YUxWzJAtOC/nq3/F+87z3n0o3lIb1+UAwfPvD5oVJfp07jAGFT8PPnmcMRwWR
+         T0raEm7pVVrdb+demq7jvHlSSCz2pP2Yn8xIBBLpjKVbGqx5191T36m0gOUVfCdaTx
+         qdFxcTjkWMTDuul8WKn3rbiX5q8+tJdnMN3GJjw0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kai-Heng Feng <kai.heng.feng@canonical.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 06/73] HID: i2c-hid: Add a small delay after sleep command for Raydium touchpanel
-Date:   Wed, 14 Nov 2018 17:21:00 -0500
-Message-Id: <20181114222207.98701-6-sashal@kernel.org>
+Cc:     Jiri Slaby <jslaby@suse.cz>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 03/73] netfilter: bridge: define INT_MIN & INT_MAX in userspace
+Date:   Wed, 14 Nov 2018 17:20:57 -0500
+Message-Id: <20181114222207.98701-3-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kai-Heng Feng <kai.heng.feng@canonical.com>
+From: Jiri Slaby <jslaby@suse.cz>
 
-[ Upstream commit 00b790ea545b6ef30221adef6e9c3707e03b82b5 ]
+[ Upstream commit 5a8de47b3c250521dd632cdedaac6db88367defa ]
 
-Raydium touchpanel (2386:4B33) sometimes does not work in desktop session
-although it works in display manager.
+With 4.19, programs like ebtables fail to build when they include
+"linux/netfilter_bridge.h". It is caused by commit 94276fa8a2a4 which
+added a use of INT_MIN and INT_MAX to the header:
+: In file included from /usr/include/linux/netfilter_bridge/ebtables.h:18,
+:                  from include/ebtables_u.h:28,
+:                  from communication.c:23:
+: /usr/include/linux/netfilter_bridge.h:30:20: error: 'INT_MIN' undeclared here (not in a function)
+:   NF_BR_PRI_FIRST = INT_MIN,
+:                     ^~~~~~~
 
-During user logging, the display manager exits, close the HID device,
-then the device gets runtime suspended and powered off. The desktop
-session begins shortly after, opens the HID device, then the device gets
-runtime resumed and powered on.
+Define these constants by including "limits.h" when !__KERNEL__ (the
+same way as for other netfilter_* headers).
 
-If the trasition from display manager to desktop sesesion is fast, the
-touchpanel cannot switch from powered off to powered on in short
-timeframe. So add a small delay to workaround the issue.
-
-Signed-off-by: Kai-Heng Feng <kai.heng.feng@canonical.com>
-Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Fixes: 94276fa8a2a4 ("netfilter: bridge: Expose nf_tables bridge hook priorities through uapi")
+Signed-off-by: Jiri Slaby <jslaby@suse.cz>
+Acked-by: Máté Eckl <ecklm94@gmail.com>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-ids.h         |  3 +++
- drivers/hid/i2c-hid/i2c-hid.c | 19 +++++++++++++++++++
- 2 files changed, 22 insertions(+)
+ include/uapi/linux/netfilter_bridge.h | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index bc49909aba8e..636b9d903b26 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -921,6 +921,9 @@
- #define USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3003		0x3003
- #define USB_DEVICE_ID_QUANTA_OPTICAL_TOUCH_3008		0x3008
+diff --git a/include/uapi/linux/netfilter_bridge.h b/include/uapi/linux/netfilter_bridge.h
+index 156ccd089df1..1610fdbab98d 100644
+--- a/include/uapi/linux/netfilter_bridge.h
++++ b/include/uapi/linux/netfilter_bridge.h
+@@ -11,6 +11,10 @@
+ #include <linux/if_vlan.h>
+ #include <linux/if_pppox.h>
  
-+#define I2C_VENDOR_ID_RAYDIUM		0x2386
-+#define I2C_PRODUCT_ID_RAYDIUM_4B33	0x4b33
++#ifndef __KERNEL__
++#include <limits.h> /* for INT_MIN, INT_MAX */
++#endif
 +
- #define USB_VENDOR_ID_RAZER            0x1532
- #define USB_DEVICE_ID_RAZER_BLADE_14   0x011D
- 
-diff --git a/drivers/hid/i2c-hid/i2c-hid.c b/drivers/hid/i2c-hid/i2c-hid.c
-index 4e3592e7a3f7..88daa388e1f6 100644
---- a/drivers/hid/i2c-hid/i2c-hid.c
-+++ b/drivers/hid/i2c-hid/i2c-hid.c
-@@ -48,6 +48,7 @@
- #define I2C_HID_QUIRK_SET_PWR_WAKEUP_DEV	BIT(0)
- #define I2C_HID_QUIRK_NO_IRQ_AFTER_RESET	BIT(1)
- #define I2C_HID_QUIRK_NO_RUNTIME_PM		BIT(2)
-+#define I2C_HID_QUIRK_DELAY_AFTER_SLEEP		BIT(3)
- 
- /* flags */
- #define I2C_HID_STARTED		0
-@@ -157,6 +158,8 @@ struct i2c_hid {
- 
- 	bool			irq_wake_enabled;
- 	struct mutex		reset_lock;
-+
-+	unsigned long		sleep_delay;
- };
- 
- static const struct i2c_hid_quirks {
-@@ -171,6 +174,8 @@ static const struct i2c_hid_quirks {
- 	{ I2C_VENDOR_ID_HANTICK, I2C_PRODUCT_ID_HANTICK_5288,
- 		I2C_HID_QUIRK_NO_IRQ_AFTER_RESET |
- 		I2C_HID_QUIRK_NO_RUNTIME_PM },
-+	{ I2C_VENDOR_ID_RAYDIUM, I2C_PRODUCT_ID_RAYDIUM_4B33,
-+		I2C_HID_QUIRK_DELAY_AFTER_SLEEP },
- 	{ 0, 0 }
- };
- 
-@@ -386,6 +391,7 @@ static int i2c_hid_set_power(struct i2c_client *client, int power_state)
- {
- 	struct i2c_hid *ihid = i2c_get_clientdata(client);
- 	int ret;
-+	unsigned long now, delay;
- 
- 	i2c_hid_dbg(ihid, "%s\n", __func__);
- 
-@@ -403,9 +409,22 @@ static int i2c_hid_set_power(struct i2c_client *client, int power_state)
- 			goto set_pwr_exit;
- 	}
- 
-+	if (ihid->quirks & I2C_HID_QUIRK_DELAY_AFTER_SLEEP &&
-+	    power_state == I2C_HID_PWR_ON) {
-+		now = jiffies;
-+		if (time_after(ihid->sleep_delay, now)) {
-+			delay = jiffies_to_usecs(ihid->sleep_delay - now);
-+			usleep_range(delay, delay + 1);
-+		}
-+	}
-+
- 	ret = __i2c_hid_command(client, &hid_set_power_cmd, power_state,
- 		0, NULL, 0, NULL, 0);
- 
-+	if (ihid->quirks & I2C_HID_QUIRK_DELAY_AFTER_SLEEP &&
-+	    power_state == I2C_HID_PWR_SLEEP)
-+		ihid->sleep_delay = jiffies + msecs_to_jiffies(20);
-+
- 	if (ret)
- 		dev_err(&client->dev, "failed to change power setting.\n");
- 
+ /* Bridge Hooks */
+ /* After promisc drops, checksum checks. */
+ #define NF_BR_PRE_ROUTING	0
 -- 
 2.17.1
 
