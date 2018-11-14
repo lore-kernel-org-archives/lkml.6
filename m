@@ -4,46 +4,48 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E105CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42814C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F4F32252A
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3C402252A
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s3Jw1VZb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F4F32252A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H6Huy4ni"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3C402252A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388333AbeKOI31 (ORCPT
+        id S2388347AbeKOI31 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 15 Nov 2018 03:29:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36296 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:36278 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1733161AbeKOI30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726506AbeKOI30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 03:29:26 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6ED632252A;
-        Wed, 14 Nov 2018 22:24:22 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id F33902252F;
+        Wed, 14 Nov 2018 22:24:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542234262;
-        bh=43e4ScMAwofi2Co7N7LeyAcde7+k3iRoLGiQLiTwWIc=;
+        bh=NasmYevrKSo2ojzrfGCImC1oA5YeIPO6K0liShVKsTs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s3Jw1VZbT+0PFXxTThkU1tUQecHzu83SjTkSK05s7KwAVhwTD/icY2tkv9rA8FTCg
-         CMRKBhyIHnBdGTyyZPfxqO0h3tMwuvW4DJW3As7Apk+R9X2ahgIZmu4S/Rr4+M8DsZ
-         wCaj5QCLZLRWBx88IJuvXhewg/vTYExXd4XHz56Q=
+        b=H6Huy4nilQ9CEkKJjPXjbTzaK9H218w0HWSTPT5zhVtGS+TcOQH97LoIx189ZKY0H
+         PFWl2B1DkPyH3STCLKDfiDxxXlyFmzbez5LqjNAlkZ3/FyHF5KNIDYvSam8L42Tni6
+         e4fb3cGhbAmEqfTMlXuNkFFxqKmFm8Fo/UeDK92s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 28/59] clk: fixed-factor: fix of_node_get-put imbalance
-Date:   Wed, 14 Nov 2018 17:23:00 -0500
-Message-Id: <20181114222335.99339-28-sashal@kernel.org>
+Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Simon Horman <horms+renesas@verge.net.au>,
+        Sasha Levin <sashal@kernel.org>,
+        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.18 27/59] arm64: dts: renesas: r8a7795: add missing dma-names on hscif2
+Date:   Wed, 14 Nov 2018 17:22:59 -0500
+Message-Id: <20181114222335.99339-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -52,36 +54,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
 
-[ Upstream commit f98e8a572bddbf27032114127d2fcc78fa5e6a9d ]
+[ Upstream commit aab7a2414ba0d5c3d0571a90031b535adba7146a ]
 
-When the fixed factor clock is created by devicetree,
-of_clk_add_provider is called.  Add a call to
-of_clk_del_provider in the remove function to balance
-it out.
+hscif2 has 4 dmas, but has only 2 dma-names.
+This patch add missing dma-names.
 
-Reported-by: Alan Tull <atull@kernel.org>
-Fixes: 971451b3b15d ("clk: fixed-factor: Convert into a module platform driver")
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Fixes: e0f0bda79337701a ("arm64: dts: renesas: r8a7795: sort subnodes
+of the soc node")
+Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-fixed-factor.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 20724abd38bd..7df6b5b1e7ee 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -210,6 +210,7 @@ static int of_fixed_factor_clk_remove(struct platform_device *pdev)
- {
- 	struct clk *clk = platform_get_drvdata(pdev);
- 
-+	of_clk_del_provider(pdev->dev.of_node);
- 	clk_unregister_fixed_factor(clk);
- 
- 	return 0;
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index 91c392f879f9..43f95c918409 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -656,7 +656,7 @@
+ 			clock-names = "fck", "brg_int", "scif_clk";
+ 			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
+ 			       <&dmac2 0x35>, <&dmac2 0x34>;
+-			dma-names = "tx", "rx";
++			dma-names = "tx", "rx", "tx", "rx";
+ 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
+ 			resets = <&cpg 518>;
+ 			status = "disabled";
 -- 
 2.17.1
 
