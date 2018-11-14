@@ -2,211 +2,133 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 839E1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:32:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 225F1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:32:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 485EE22419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:32:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 485EE22419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id DF7C422419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:32:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VjQKofxb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF7C422419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726951AbeKOJhr (ORCPT
+        id S1727259AbeKOJiB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 04:37:47 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37400 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725952AbeKOJhr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 04:37:47 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 67831B038;
-        Wed, 14 Nov 2018 23:32:22 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     David Miller <davem@davemloft.net>, herbert@gondor.apana.org.au,
-        tgraf@suug.ch
-Date:   Thu, 15 Nov 2018 10:32:13 +1100
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        eric.dumazet@gmail.com
-Subject: [PATCH] rhashtable: detect when object movement between tables might
- have invalidated a lookup
-Message-ID: <87muqbtev6.fsf@notabene.neil.brown.name>
+        Thu, 15 Nov 2018 04:38:01 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:46551 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726770AbeKOJiA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 04:38:00 -0500
+Received: by mail-pf1-f196.google.com with SMTP id s9-v6so8669906pfm.13
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 15:32:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:content-transfer-encoding:to:from:in-reply-to:cc
+         :references:message-id:user-agent:subject:date;
+        bh=fGvsWsW6Kteq77ULrkAXfs6/LGYRAaA9EZJgq26lBOY=;
+        b=VjQKofxbQumMAuf8vSgUk9E3mqzipRHrWqyugGGc1zpbMVSv3Esm1yH3CgrvxEDmLS
+         +mpHkcCnrweqnw0vL3MUum0uYKUX60RbDBF1Oyn0yCLz5hTibQa88JZ6H39W27b/simo
+         XxRqXjjtMBOl+h/xUhT28laiM/xRxKCboj9hY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:content-transfer-encoding:to:from
+         :in-reply-to:cc:references:message-id:user-agent:subject:date;
+        bh=fGvsWsW6Kteq77ULrkAXfs6/LGYRAaA9EZJgq26lBOY=;
+        b=eg3RLUsuqHxF331lRX5GFHFlvsx0iiyRf+Za1DFJL2menKxTDo/p6xbmMGPeGQEzCc
+         q82wlPgf5TW/72J2OlOr7738rmiJv0uDOI0fqVF6mEXPCF5MorLYVK2RVrwGbOcDa7YM
+         b6SXCKrOmxnaf+kydBNoIuuDCa3EF5eW+41vZ+YcjqNLRZCqza4b0wnUtkB5P5v0d8BR
+         wAiFEwsMCBZz8t8R6ETlJnuFdi67BbVfWFwJOKwJNPmqnN2i73EMGOLWYYFiNizt3R8j
+         gLa/KcoxFeLbMdipcBAft/vgVaWn8fo/R7MDLXLtjejpJlu0mOfi18ToB4LDDxjhT4gk
+         TKJQ==
+X-Gm-Message-State: AGRZ1gILqC/PWTlJV1Bf0ytvR/XxntDyFWRR3k6AKaUntEbqCQQQ9XXI
+        MRSqMLadOtpaSW4bMy8OGfH4wg==
+X-Google-Smtp-Source: AJdET5dQx4k8XlJxIA3CacGqsO7YWgl+HC5YzOKs43f4LkkcwD97Ft35aj+CirsAQsxjorSpbgu2DA==
+X-Received: by 2002:a63:2a4a:: with SMTP id q71mr3618614pgq.374.1542238357329;
+        Wed, 14 Nov 2018 15:32:37 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:fed3:9637:a13a:6c15])
+        by smtp.gmail.com with ESMTPSA id k14sm26488428pgs.52.2018.11.14.15.32.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Nov 2018 15:32:36 -0800 (PST)
+Content-Type: text/plain; charset="utf-8"
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+Content-Transfer-Encoding: quoted-printable
+To:     Matthias Kaehlcke <mka@chromium.org>
+From:   Stephen Boyd <swboyd@chromium.org>
+In-Reply-To: <20181114224252.GM22824@google.com>
+Cc:     David Airlie <airlied@linux.ie>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Clark <robdclark@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Archit Taneja <architt@codeaurora.org>,
+        Sean Paul <seanpaul@chromium.org>,
+        Rajesh Yadav <ryadav@codeaurora.org>,
+        Douglas Anderson <dianders@chromium.org>,
+        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        freedreno@lists.freedesktop.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20181102214534.184593-1-mka@chromium.org>
+ <154154578082.88331.1035410665298962611@swboyd.mtv.corp.google.com>
+ <20181114224252.GM22824@google.com>
+Message-ID: <154223835618.88331.10714694524244533922@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 1/2] dt-bindings: msm/dsi: Add ref clock for 10nm PHY
+Date:   Wed, 14 Nov 2018 15:32:36 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
-Content-Transfer-Encoding: quoted-printable
+Quoting Matthias Kaehlcke (2018-11-14 14:42:52)
+> On Tue, Nov 06, 2018 at 03:09:40PM -0800, Stephen Boyd wrote:
+> > Quoting Matthias Kaehlcke (2018-11-02 14:45:33)
+> > > Allow the 10nm PHY driver to get the ref clock from the DT.
+> > > =
+
+> > > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
+> > > ---
+> > >  Documentation/devicetree/bindings/display/msm/dsi.txt | 4 ++++
+> > >  1 file changed, 4 insertions(+)
+> > > =
+
+> > > diff --git a/Documentation/devicetree/bindings/display/msm/dsi.txt b/=
+Documentation/devicetree/bindings/display/msm/dsi.txt
+> > > index dfc743219bd88..d0d2046ceff69 100644
+> > > --- a/Documentation/devicetree/bindings/display/msm/dsi.txt
+> > > +++ b/Documentation/devicetree/bindings/display/msm/dsi.txt
+> > > @@ -105,6 +105,10 @@ Required properties:
+> > >  - power-domains: Should be <&mmcc MDSS_GDSC>.
+> > >  - clocks: Phandles to device clocks. See [1] for details on clock bi=
+ndings.
+> > >  - clock-names: the following clocks are required:
+> > > +  For 10nm PHY:
+> > > +  * "iface"
+> > > +  * "ref"
+> > > +  For other PHYs:
+> > >    * "iface"
+> > =
+
+> > Any reason we can't go back and do this for other phys too? They're all
+> > the same with regards to this reference clk input.
+> =
+
+> To avoid breaking existing users, at least the 28nm PHY is used by
+> msm8916. Also I don't have the hardware to test changes for other
+> PHYs.
+> =
 
 
-Some users of rhashtables might need to move an object from one table
-to another -  this appears to be the reason for the incomplete usage
-of NULLS markers.
+Hmmm I don't see why we need to worry about breaking "legacy" users. If
+they're using an undocumented but still working method of doing
+something that should be OK, but I'd like to see us update the DTS and
+binding to be more forward looking so that future designs don't carry
+forward badness. And not having hardware hasn't really been a problem in
+the past either. We can probably have someone from Linaro test on any
+affected platforms.
 
-To support these, we store a unique NULLS_MARKER at the end of
-each chain, and when a search fails to find a match, we check
-if the NULLS marker found was the expected one.  If not, the search
-may not have examined all objects in the target bucket, so it is
-repeated.
-
-The unique NULLS_MARKER is derived from the address of the
-head of the chain.  As this cannot be derived at load-time the
-static rhnull in rht_bucket_nested() needs to be initialised
-at run time.
-
-Any caller of a lookup function must still be prepared for the
-possibility that the object returned is in a different table - it
-might have been there for some time.
-
-Note that this does NOT provide support for other uses of
-NULLS_MARKERs such as allocating with SLAB_TYPESAFE_BY_RCU or changing
-the key of an object and re-inserting it in the same table.
-These could only be done safely if new objects were inserted
-at the *start* of a hash chain, and that is not currently the case.
-
-Signed-off-by: NeilBrown <neilb@suse.com>
-=2D--
-
-I sent this patch back in July, but I made a bit of a mess of it.
-Here it is again, with a bit more care.
-
-Previously in
-   Commit: 9f9a707738aa ("rhashtable: remove nulls_base and related code.")
-I removed some 'nulls' related code that wasn't being used and wasn't
-usable.
-This patch adds code to provide the functionality that the removed
-code was intended for.
-Specifically, it is now possible to move an object in one rhashtable
-into another rhashtable, and still provide correct lookup(etc)
-semantics.
-
-If a lookup is performed on a table from which objects can be moved,
-then a found object will have been in the table at some point during the
-looku, but might not still be there.  If that lookup returns failure,
-then you can be sure that there was no matching object in the table for
-the entire duration of the lookup.
-
-This patch doesn't provide code to safely move an object.  It just adds
-enough code that the already-existing references to NULLS_MARKER()s make
-sense.
-
-NeilBrown
-
-
- include/linux/rhashtable.h | 25 +++++++++++++++++--------
- lib/rhashtable.c           |  8 +++++---
- 2 files changed, 22 insertions(+), 11 deletions(-)
-
-diff --git a/include/linux/rhashtable.h b/include/linux/rhashtable.h
-index eb7111039247..8cc240f14834 100644
-=2D-- a/include/linux/rhashtable.h
-+++ b/include/linux/rhashtable.h
-@@ -75,8 +75,10 @@ struct bucket_table {
- 	struct rhash_head __rcu *buckets[] ____cacheline_aligned_in_smp;
- };
-=20
-+#define	RHT_NULLS_MARKER(ptr)	\
-+	((void *)NULLS_MARKER(((unsigned long) (ptr)) >> 1))
- #define INIT_RHT_NULLS_HEAD(ptr)	\
-=2D	((ptr) =3D (typeof(ptr)) NULLS_MARKER(0))
-+	((ptr) =3D RHT_NULLS_MARKER(&(ptr)))
-=20
- static inline bool rht_is_a_nulls(const struct rhash_head *ptr)
- {
-@@ -471,6 +473,7 @@ static inline struct rhash_head *__rhashtable_lookup(
- 		.ht =3D ht,
- 		.key =3D key,
- 	};
-+	struct rhash_head __rcu * const *head;
- 	struct bucket_table *tbl;
- 	struct rhash_head *he;
- 	unsigned int hash;
-@@ -478,13 +481,19 @@ static inline struct rhash_head *__rhashtable_lookup(
- 	tbl =3D rht_dereference_rcu(ht->tbl, ht);
- restart:
- 	hash =3D rht_key_hashfn(ht, tbl, key, params);
-=2D	rht_for_each_rcu(he, tbl, hash) {
-=2D		if (params.obj_cmpfn ?
-=2D		    params.obj_cmpfn(&arg, rht_obj(ht, he)) :
-=2D		    rhashtable_compare(&arg, rht_obj(ht, he)))
-=2D			continue;
-=2D		return he;
-=2D	}
-+	head =3D rht_bucket(tbl, hash);
-+	do {
-+		rht_for_each_rcu_continue(he, *head, tbl, hash) {
-+			if (params.obj_cmpfn ?
-+			    params.obj_cmpfn(&arg, rht_obj(ht, he)) :
-+			    rhashtable_compare(&arg, rht_obj(ht, he)))
-+				continue;
-+			return he;
-+		}
-+		/* An object might have been moved to a different hash chain,
-+		 * while we walk along it - better check and retry.
-+		 */
-+	} while (he !=3D RHT_NULLS_MARKER(head));
-=20
- 	/* Ensure we see any new tables. */
- 	smp_rmb();
-diff --git a/lib/rhashtable.c b/lib/rhashtable.c
-index 30526afa8343..852ffa5160f1 100644
-=2D-- a/lib/rhashtable.c
-+++ b/lib/rhashtable.c
-@@ -1179,8 +1179,7 @@ struct rhash_head __rcu **rht_bucket_nested(const str=
-uct bucket_table *tbl,
- 					    unsigned int hash)
- {
- 	const unsigned int shift =3D PAGE_SHIFT - ilog2(sizeof(void *));
-=2D	static struct rhash_head __rcu *rhnull =3D
-=2D		(struct rhash_head __rcu *)NULLS_MARKER(0);
-+	static struct rhash_head __rcu *rhnull;
- 	unsigned int index =3D hash & ((1 << tbl->nest) - 1);
- 	unsigned int size =3D tbl->size >> tbl->nest;
- 	unsigned int subhash =3D hash;
-@@ -1198,8 +1197,11 @@ struct rhash_head __rcu **rht_bucket_nested(const st=
-ruct bucket_table *tbl,
- 		subhash >>=3D shift;
- 	}
-=20
-=2D	if (!ntbl)
-+	if (!ntbl) {
-+		if (!rhnull)
-+			INIT_RHT_NULLS_HEAD(rhnull);
- 		return &rhnull;
-+	}
-=20
- 	return &ntbl[subhash].bucket;
-=20
-=2D-=20
-2.14.0.rc0.dirty
-
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvssH0ACgkQOeye3VZi
-gblytxAAqGgxAj7OUxk7eth8rAi1+e09bVYsJx6299Gu0z8MUCcqXUGtPLDyjLTd
-b7DriROsrCXGhlNXknWiUiCuzV363jUkmHOJojJeTh+qBDp3hQFpewx3vgUukswQ
-hV7xPpcplW2OSki8UnKwIeFPFe41g16ZHiR+CLBF03h4WtK88p0H675EkumgI6z1
-Mg0LwzXJ2T202XRt7uMTkFVifuW/RhIkGeS4Bx3zZt4M2jPz00tXwNlgQ/97q5+c
-A7RKO2xnP8VmX10N4iX2qubwjIG7rhQ3oQ1WEcFKEhP7uTgwLs0ojSbldo3lI8Gc
-XGMqR2hDv9xa81UF+g0LxATHRHhr0jE5f369xvN/8YCZxz2S/7iPyrgSpu9i4gtm
-6+0YkCrnLfd+14NTg35G0IBl3FLN3LE5YvD0cu3w+b1AZmtRXPN10J1JovmiACKF
-Qcko9P45omo9NkxZF5RdWgXWyAJRs9PzRm4CCsor5bDpn23IVn/oYluTvZrjtlJa
-wKCYWJ0XnCXjbPMYw3It10BZ6Op4TpJWLohESyGL3xPlcntCSd65GnvPQbTt+exk
-OIyhmf65G3iu+eghovu/BR4BWQv2sHGwmrfPX/e5n5FG+7xrdPTwkf8f6dFo0y0m
-Oj0X6GPOJoNWfpSNOs+hS2ota/AdC989kuLRrkJK9bApHKKVAtQ=
-=IFph
------END PGP SIGNATURE-----
---=-=-=--
