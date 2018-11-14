@@ -2,53 +2,49 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 99149C04EBC
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 758D3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4405322544
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 346362252F
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OOFQrzJO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4405322544
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZWjFAoLN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 346362252F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388850AbeKOIag (ORCPT
+        id S2388890AbeKOIaj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:30:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37642 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:30:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37732 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728133AbeKOIaf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:30:35 -0500
+        id S2388854AbeKOIai (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:30:38 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5FC5722527;
-        Wed, 14 Nov 2018 22:25:30 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 6DBE62252D;
+        Wed, 14 Nov 2018 22:25:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234330;
-        bh=Nrl6vh916GDIk5xyxlQanmW2BZe6msIi8qdzQfW8XGY=;
+        s=default; t=1542234333;
+        bh=GFQKvytJwD0GB38Gsdw5sQYpdmc50JWPXv5AyFd8ZrM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OOFQrzJOcrF3JIk1cEct4tQzzjcUAGXUo9vO93FqOTg2H/ibq7wXjadKiYWj/GMEr
-         HebrMrcdz1vNL+cjJZSaU2l12hlHjNKLiJtOz8kQs3Tx1tyGFWFL74JDF/wvRUuOqE
-         uePNbRTnJKcpoEHYW069+71YRuesIXirNJKYZSUA=
+        b=ZWjFAoLNOpaJVv5s69AX1UAiwGK/EiFWuLeqlh3r1BcZtelME6IcnCMrI5qRSwMW9
+         PQYiLLqETHRdewLG2FAwjeBei9D/9CQGLDmV1BwlPvB8fqVwK5YWKiL4bsFkr0Vs7H
+         AwQzovI4PgtS8ZBBZDMWi4EET854Y6g9Fsg8mTRw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Eric Westbrook <eric@westbrook.io>,
-        Eric Westbrook <linux@westbrook.io>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 03/27] netfilter: ipset: actually allow allowable CIDR 0 in hash:net,port,net
-Date:   Wed, 14 Nov 2018 17:24:52 -0500
-Message-Id: <20181114222520.99926-3-sashal@kernel.org>
+Cc:     Tristram Ha <Tristram.Ha@microchip.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 06/27] net: dsa: microchip: initialize mutex before use
+Date:   Wed, 14 Nov 2018 17:24:55 -0500
+Message-Id: <20181114222520.99926-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222520.99926-1-sashal@kernel.org>
 References: <20181114222520.99926-1-sashal@kernel.org>
@@ -57,88 +53,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Westbrook <eric@westbrook.io>
+From: Tristram Ha <Tristram.Ha@microchip.com>
 
-[ Upstream commit 886503f34d63e681662057448819edb5b1057a97 ]
+[ Upstream commit 284fb78ed7572117846f8e1d1d8e3dbfd16880c2 ]
 
-Allow /0 as advertised for hash:net,port,net sets.
+Initialize mutex before use.  Avoid kernel complaint when
+CONFIG_DEBUG_LOCK_ALLOC is enabled.
 
-For "hash:net,port,net", ipset(8) says that "either subnet
-is permitted to be a /0 should you wish to match port
-between all destinations."
-
-Make that statement true.
-
-Before:
-
-    # ipset create cidrzero hash:net,port,net
-    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
-    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
-
-    # ipset create cidrzero6 hash:net,port,net family inet6
-    # ipset add cidrzero6 ::/0,12345,::/0
-    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
-
-After:
-
-    # ipset create cidrzero hash:net,port,net
-    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
-    # ipset test cidrzero 192.168.205.129,12345,172.16.205.129
-    192.168.205.129,tcp:12345,172.16.205.129 is in set cidrzero.
-
-    # ipset create cidrzero6 hash:net,port,net family inet6
-    # ipset add cidrzero6 ::/0,12345,::/0
-    # ipset test cidrzero6 fe80::1,12345,ff00::1
-    fe80::1,tcp:12345,ff00::1 is in set cidrzero6.
-
-See also:
-
-  https://bugzilla.kernel.org/show_bug.cgi?id=200897
-  https://github.com/ewestbrook/linux/commit/df7ff6efb0934ab6acc11f003ff1a7580d6c1d9c
-
-Signed-off-by: Eric Westbrook <linux@westbrook.io>
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+Fixes: b987e98e50ab90e5 ("dsa: add DSA switch driver for Microchip KSZ9477")
+Signed-off-by: Tristram Ha <Tristram.Ha@microchip.com>
+Reviewed-by: Pavel Machek <pavel@ucw.cz>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipset/ip_set_hash_netportnet.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/net/dsa/microchip/ksz_common.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/net/netfilter/ipset/ip_set_hash_netportnet.c b/net/netfilter/ipset/ip_set_hash_netportnet.c
-index 8602f2595a1a..0e6e40c6f652 100644
---- a/net/netfilter/ipset/ip_set_hash_netportnet.c
-+++ b/net/netfilter/ipset/ip_set_hash_netportnet.c
-@@ -213,13 +213,13 @@ hash_netportnet4_uadt(struct ip_set *set, struct nlattr *tb[],
+diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+index 56cd6d365352..6f4c9913f8f5 100644
+--- a/drivers/net/dsa/microchip/ksz_common.c
++++ b/drivers/net/dsa/microchip/ksz_common.c
+@@ -1104,11 +1104,6 @@ static int ksz_switch_init(struct ksz_device *dev)
+ {
+ 	int i;
  
- 	if (tb[IPSET_ATTR_CIDR]) {
- 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
--		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
-+		if (e.cidr[0] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
- 	}
+-	mutex_init(&dev->reg_mutex);
+-	mutex_init(&dev->stats_mutex);
+-	mutex_init(&dev->alu_mutex);
+-	mutex_init(&dev->vlan_mutex);
+-
+ 	dev->ds->ops = &ksz_switch_ops;
  
- 	if (tb[IPSET_ATTR_CIDR2]) {
- 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
--		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
-+		if (e.cidr[1] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
- 	}
+ 	for (i = 0; i < ARRAY_SIZE(ksz_switch_chips); i++) {
+@@ -1193,6 +1188,11 @@ int ksz_switch_register(struct ksz_device *dev)
+ 	if (dev->pdata)
+ 		dev->chip_id = dev->pdata->chip_id;
  
-@@ -492,13 +492,13 @@ hash_netportnet6_uadt(struct ip_set *set, struct nlattr *tb[],
- 
- 	if (tb[IPSET_ATTR_CIDR]) {
- 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
--		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
-+		if (e.cidr[0] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
- 	}
- 
- 	if (tb[IPSET_ATTR_CIDR2]) {
- 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
--		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
-+		if (e.cidr[1] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
- 	}
++	mutex_init(&dev->reg_mutex);
++	mutex_init(&dev->stats_mutex);
++	mutex_init(&dev->alu_mutex);
++	mutex_init(&dev->vlan_mutex);
++
+ 	if (ksz_switch_detect(dev))
+ 		return -EINVAL;
  
 -- 
 2.17.1
