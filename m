@@ -6,70 +6,70 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DA79AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:10:55 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A11D7C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:10:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9E2882077C
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:10:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 691132077C
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:10:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j3Vx7sll"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9E2882077C
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQvWGK9n"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 691132077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733308AbeKOBOa (ORCPT
+        id S2387415AbeKOBOb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:14:30 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:42486 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732906AbeKOBO2 (ORCPT
+        Wed, 14 Nov 2018 20:14:31 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:40874 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728686AbeKOBO2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Nov 2018 20:14:28 -0500
-Received: by mail-lf1-f65.google.com with SMTP id l10so8143244lfh.9;
-        Wed, 14 Nov 2018 07:10:51 -0800 (PST)
+Received: by mail-lf1-f66.google.com with SMTP id v5so11753969lfe.7;
+        Wed, 14 Nov 2018 07:10:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=J/c+w6z/yz43cYBFyZ3TL0i+G06NGqG/EL4mF7o7y7I=;
-        b=j3Vx7sllB8YxseBOlF3Q5Jn9l4Duvep/pGg3c2eRz2VsyvGYKqv4V4Ct23iWEfTaT1
-         MSK8dQEQkklDxNQ7Gyb19OOyMEaMgcLVkgrzm/jkauLomTA97cOzAh8cd2UN982h5CCN
-         Vpc1cQO4CPjE2nNMN6oFUJJ4aGs3YsNLHmQeEcLShOdZcWMgHybqs8Nu7pmi3d4RJnmW
-         ImRVEZOs4JSIFf+MWrjsPGpU1Kq1/wDaPBXfok41+TunNE3XAinJOTBB7KN6whPyVhv3
-         a/joHRR06tO70CjhZ0s1eFxza0Xg4y18LPWPUYV5DDk+fxxMv9am7iGyMEFjDnlDBY0D
-         nTtQ==
+        bh=V2gDxG4MoSD1NzQkqxYtCAFDyRdNskut3Xu6T0fkwZQ=;
+        b=CQvWGK9nwTDNldo2k2MncSCr3BEKRA/NlshmhQwrge6iu4KFTscNQMwNmRed6xcITv
+         5GSMpU7Ejm/uLFYBU2xPh4MR1PTSj3yTWVf/t6BSdSF9K7J7RHWdaOKNJdeMh/v+z4Eb
+         w3PQ5eoyn1G3yZZIzRxODGDSOUR1kL9SIIIW1fLVRvcZhBt2HFXhgoqRx49zACIxvU9b
+         h3ryqeRJmoVtFo/Icdm/DiMQ87FHrqn+rm9FbD/GXu3NN2BNpYBS7F3bNHe5/fpAFSBh
+         mO49wuS5k6+19MeaF1iGmlJd6WW/hF/iUMG4BQTMovC6+hJwflUAEqfPzsW5jjxygYmj
+         JGVA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=J/c+w6z/yz43cYBFyZ3TL0i+G06NGqG/EL4mF7o7y7I=;
-        b=gCHW1zSvLri9yCdhln+0STXu/mM1JJ5qzBfaSu6dqwXC38xxED1UHxvwjFk2jdLva0
-         M4oNPHv8c/Pe2Ndkslb2eO6zI8pYjXWcBUEw5BfrLkwX/Yb27KqzXZgJ7tfbnq4E+ADa
-         sVvJ9SmlUBxEBgER7qzQ8j+CglMArmjJrC6czvWzcOat5y3Mlf2vYburHpJEcgxHczVg
-         tTU/ASZNjt0kOmhEGOLu8y6FDG2fW9X8fAIq1xi1el4kdbwhVO1MpW+tONELCYiHvGkM
-         i+WG0r9YLNgqn1KvDDIaEf2XyOPBfBLGbjg8+bP1953bDpqZerWLzOrFP5164ERh1wA7
-         pyDw==
-X-Gm-Message-State: AGRZ1gLkklO0+iLGVTMoJGlKa09w4bTxhnaqbU5wUoI3TPgS9EPmZjjC
-        PrU5cGWLhhi0Gswva07OGSA=
-X-Google-Smtp-Source: AJdET5cjDZPbCyE/SL8lMxL2eDvhZuIOTBcPG7IDTrC0ECc0Gwavo2XPpRR1kPRGONxLuGBsw4FQhg==
-X-Received: by 2002:a19:6514:: with SMTP id z20mr1217053lfb.31.1542208250107;
-        Wed, 14 Nov 2018 07:10:50 -0800 (PST)
+        bh=V2gDxG4MoSD1NzQkqxYtCAFDyRdNskut3Xu6T0fkwZQ=;
+        b=ZN5WdOP4YxfP1/1SXvFejCYfl/9Glw0bcM6geTKiOZVYl0EynaTvhAwXnPDwot6Jqi
+         gA9Mk5DcISAnmQXTkN2oqLP+38ZQLLUQ0riKiyq/AF6SYniW3ZvgxZDcPE+LsjwlNgvT
+         64+czAMz+MLJkM3yPA4WWTr/z+Q4zrjgiA4vNr1idTMoVEst+JEVpWGaj7D8e9KuVh+b
+         W05TRZ/aATBHrSfDeGGyWjHtTojkO4b6l0NRfLHKFYvhvtJcgY9e198XWMbpgHXTgC+G
+         vpQb71a46k9DrjYJoS7wwfqI0oIE6X2Yn8iIdfX+7S7XGtVD2Y8gMuDTELs0Zgi2rf3H
+         C9pQ==
+X-Gm-Message-State: AGRZ1gL5QsLxbYSkjvnEaEYCLvGrli1FC3ydcKj8IserUyojZtrO8B6y
+        hvzakJxKOZ82/8NqCFbgkuU=
+X-Google-Smtp-Source: AJdET5cpxF/0XDrK0HKSuQlPd+JFqUPdcMDa4a619ws3GBEX/DfD9zuzHFUIRmHweWZGg9awwoaRvg==
+X-Received: by 2002:a19:24c6:: with SMTP id k189mr1317838lfk.77.1542208249366;
+        Wed, 14 Nov 2018 07:10:49 -0800 (PST)
 Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id 67-v6sm3990445ljc.26.2018.11.14.07.10.47
+        by smtp.gmail.com with ESMTPSA id g12-v6sm3770045lja.74.2018.11.14.07.10.47
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 07:10:48 -0800 (PST)
+        Wed, 14 Nov 2018 07:10:47 -0800 (PST)
 Received: from johan by xi.terra with local (Exim 4.91)
         (envelope-from <johan@xi.terra>)
-        id 1gMwoX-00058h-JD; Wed, 14 Nov 2018 16:10:45 +0100
+        id 1gMwoX-00058c-Gf; Wed, 14 Nov 2018 16:10:45 +0100
 From:   Johan Hovold <johan@kernel.org>
 To:     Rob Herring <robh@kernel.org>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Jiri Slaby <jslaby@suse.com>, Johan Hovold <johan@kernel.org>,
         Andrey Smirnov <andrew.smirnov@gmail.com>,
         linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 3/4] serdev: make synchronous write helper interruptible
-Date:   Wed, 14 Nov 2018 16:09:03 +0100
-Message-Id: <20181114150904.19653-4-johan@kernel.org>
+Subject: [PATCH 2/4] serdev: make synchronous write return bytes written
+Date:   Wed, 14 Nov 2018 16:09:02 +0100
+Message-Id: <20181114150904.19653-3-johan@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181114150904.19653-1-johan@kernel.org>
 References: <20181114150904.19653-1-johan@kernel.org>
@@ -80,72 +80,83 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Allow the synchronous serdev_device_write() helper to be interrupted.
+Make the synchronous serdev_device_write() helper behave analogous to
+the asynchronous serdev_device_write_buf() by returning the number of
+bytes written (or rather buffered) also on timeout.
 
-This is useful for cases where I/O is performed on behalf of user space
-and we don't want to block indefinitely when using flow control.
+This will allow drivers to distinguish the case where data was partially
+written from the case where no data was written.
+
+Also update the only two users that checked the return value.
 
 Signed-off-by: Johan Hovold <johan@kernel.org>
 ---
- drivers/tty/serdev/core.c | 20 ++++++++++++++------
- include/linux/serdev.h    |  2 +-
- 2 files changed, 15 insertions(+), 7 deletions(-)
+ drivers/gnss/serial.c     |  2 +-
+ drivers/gnss/sirf.c       |  2 +-
+ drivers/tty/serdev/core.c | 12 ++++++++++--
+ 3 files changed, 12 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
-index ee4c40336633..c7006bbb793a 100644
---- a/drivers/tty/serdev/core.c
-+++ b/drivers/tty/serdev/core.c
-@@ -231,7 +231,7 @@ EXPORT_SYMBOL_GPL(serdev_device_write_buf);
+diff --git a/drivers/gnss/serial.c b/drivers/gnss/serial.c
+index 31e891f00175..def64b36d994 100644
+--- a/drivers/gnss/serial.c
++++ b/drivers/gnss/serial.c
+@@ -65,7 +65,7 @@ static int gnss_serial_write_raw(struct gnss_device *gdev,
  
- int serdev_device_write(struct serdev_device *serdev,
- 			const unsigned char *buf, size_t count,
--			unsigned long timeout)
-+			long timeout)
- {
- 	struct serdev_controller *ctrl = serdev->ctrl;
- 	int written = 0;
-@@ -254,16 +254,24 @@ int serdev_device_write(struct serdev_device *serdev,
- 		written += ret;
- 		buf += ret;
- 		count -= ret;
--	} while (count &&
--		 (timeout = wait_for_completion_timeout(&serdev->write_comp,
--							timeout)));
-+
-+		if (count == 0)
-+			break;
-+
-+		timeout = wait_for_completion_interruptible_timeout(&serdev->write_comp,
-+								    timeout);
-+	} while (timeout > 0);
- 	mutex_unlock(&serdev->write_lock);
- 
- 	if (ret < 0)
+ 	/* write is only buffered synchronously */
+ 	ret = serdev_device_write(serdev, buf, count, MAX_SCHEDULE_TIMEOUT);
+-	if (ret < 0)
++	if (ret < 0 || ret < count)
  		return ret;
  
--	if (timeout == 0 && written == 0)
--		return -ETIMEDOUT;
-+	if (timeout <= 0 && written == 0) {
-+		if (timeout == -ERESTARTSYS)
-+			return -ERESTARTSYS;
-+		else
-+			return -ETIMEDOUT;
-+	}
+ 	/* FIXME: determine if interrupted? */
+diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
+index 71d014edd167..b3a4c0e91947 100644
+--- a/drivers/gnss/sirf.c
++++ b/drivers/gnss/sirf.c
+@@ -85,7 +85,7 @@ static int sirf_write_raw(struct gnss_device *gdev, const unsigned char *buf,
  
- 	return written;
+ 	/* write is only buffered synchronously */
+ 	ret = serdev_device_write(serdev, buf, count, MAX_SCHEDULE_TIMEOUT);
+-	if (ret < 0)
++	if (ret < 0 || ret < count)
+ 		return ret;
+ 
+ 	/* FIXME: determine if interrupted? */
+diff --git a/drivers/tty/serdev/core.c b/drivers/tty/serdev/core.c
+index c7d637d2bc56..ee4c40336633 100644
+--- a/drivers/tty/serdev/core.c
++++ b/drivers/tty/serdev/core.c
+@@ -234,6 +234,7 @@ int serdev_device_write(struct serdev_device *serdev,
+ 			unsigned long timeout)
+ {
+ 	struct serdev_controller *ctrl = serdev->ctrl;
++	int written = 0;
+ 	int ret;
+ 
+ 	if (!ctrl || !ctrl->ops->write_buf || !serdev->ops->write_wakeup)
+@@ -250,14 +251,21 @@ int serdev_device_write(struct serdev_device *serdev,
+ 		if (ret < 0)
+ 			break;
+ 
++		written += ret;
+ 		buf += ret;
+ 		count -= ret;
+-
+ 	} while (count &&
+ 		 (timeout = wait_for_completion_timeout(&serdev->write_comp,
+ 							timeout)));
+ 	mutex_unlock(&serdev->write_lock);
+-	return ret < 0 ? ret : (count ? -ETIMEDOUT : 0);
++
++	if (ret < 0)
++		return ret;
++
++	if (timeout == 0 && written == 0)
++		return -ETIMEDOUT;
++
++	return written;
  }
-diff --git a/include/linux/serdev.h b/include/linux/serdev.h
-index f153b2c7f0cd..070bf4e92df7 100644
---- a/include/linux/serdev.h
-+++ b/include/linux/serdev.h
-@@ -210,7 +210,7 @@ void serdev_device_wait_until_sent(struct serdev_device *, long);
- int serdev_device_get_tiocm(struct serdev_device *);
- int serdev_device_set_tiocm(struct serdev_device *, int, int);
- void serdev_device_write_wakeup(struct serdev_device *);
--int serdev_device_write(struct serdev_device *, const unsigned char *, size_t, unsigned long);
-+int serdev_device_write(struct serdev_device *, const unsigned char *, size_t, long);
- void serdev_device_write_flush(struct serdev_device *);
- int serdev_device_write_room(struct serdev_device *);
+ EXPORT_SYMBOL_GPL(serdev_device_write);
  
 -- 
 2.19.1
