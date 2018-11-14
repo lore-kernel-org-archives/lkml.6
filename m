@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20695C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:29:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43B22C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:29:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBB9E208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:29:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F0C8A20868
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:29:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="2qbqYSii"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBB9E208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UsNjFLtS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F0C8A20868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389382AbeKOIel (ORCPT
+        id S2389209AbeKOIbM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:34:41 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38642 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:31:12 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38492 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389217AbeKOIbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:31:18 -0500
+        id S2387586AbeKOIbM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:31:12 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9BC6B2254C;
-        Wed, 14 Nov 2018 22:26:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 65B1A2254A;
+        Wed, 14 Nov 2018 22:26:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234373;
-        bh=wbXmqKg6MlnWM2I8XfvaHmvg5/Y/u/qVap2PRb1xAOk=;
+        s=default; t=1542234367;
+        bh=Fooa1yfarSeTVgl+y8eFxYfP9BXy5hfd6QEXZ0pHIJo=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=2qbqYSiiq2565hKhaLCBgTJB9QytFRnenNq0v747kSG6Z/H6CxbIbz6hpd0Bf994o
-         kfiL8bZicwCpJm9YVx5FRDW9wa1JdfjDwS46T5bt06vRlem9a+TUx4Y3TQN6zavk5P
-         BqFi+KEsztbi2BfKpWbX3YCa3bqC4PRpeCzhz/RY=
+        b=UsNjFLtSSMFMKsa/BfmD3PyxMhRVQbCoqhNEDlgkHdH5IjdGCwriGv8DbPBFnsb5E
+         Bb1Pcp3OpCbGat6skpcftWb80MYR0WU5wCEiL0RI1BwtzJ1952Ls0H+QBrfx491Euv
+         p9s6taaiar21g+PjpSt5ZEbX/QLC8oPHoL6qJU4w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Denis Bolotin <denis.bolotin@cavium.com>,
-        Michal Kalderon <michal.kalderon@cavium.com>,
+Cc:     Julian Wiedmann <jwi@linux.ibm.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.9 12/13] qed: Fix memory/entry leak in qed_init_sp_request()
-Date:   Wed, 14 Nov 2018 17:25:53 -0500
-Message-Id: <20181114222558.100213-12-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.9 07/13] s390/qeth: fix HiperSockets sniffer
+Date:   Wed, 14 Nov 2018 17:25:48 -0500
+Message-Id: <20181114222558.100213-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222558.100213-1-sashal@kernel.org>
 References: <20181114222558.100213-1-sashal@kernel.org>
@@ -54,62 +53,70 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Bolotin <denis.bolotin@cavium.com>
+From: Julian Wiedmann <jwi@linux.ibm.com>
 
-[ Upstream commit 39477551df940ddb1339203817de04f5caaacf7a ]
+[ Upstream commit bd74a7f9cc033cf4d405788f80292268987dc0c5 ]
 
-Free the allocated SPQ entry or return the acquired SPQ entry to the free
-list in error flows.
+Sniffing mode for L3 HiperSockets requires that no IP addresses are
+registered with the HW. The preferred way to achieve this is for
+userspace to delete all the IPs on the interface. But qeth is expected
+to also tolerate a configuration where that is not the case, by skipping
+the IP registration when in sniffer mode.
+Since commit 5f78e29ceebf ("qeth: optimize IP handling in rx_mode callback")
+reworked the IP registration logic in the L3 subdriver, this no longer
+works. When the qeth device is set online, qeth_l3_recover_ip() now
+unconditionally registers all unicast addresses from our internal
+IP table.
 
-Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
+While we could fix this particular problem by skipping
+qeth_l3_recover_ip() on a sniffer device, the more future-proof change
+is to skip the IP address registration at the lowest level. This way we
+a) catch any future code path that attempts to register an IP address
+   without considering the sniffer scenario, and
+b) continue to build up our internal IP table, so that if sniffer mode
+   is switched off later we can operate just like normal.
+
+Fixes: 5f78e29ceebf ("qeth: optimize IP handling in rx_mode callback")
+Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../net/ethernet/qlogic/qed/qed_sp_commands.c    | 16 ++++++++++++++--
- 1 file changed, 14 insertions(+), 2 deletions(-)
+ drivers/s390/net/qeth_l3_main.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-index 2888eb0628f8..ac69ff3f7c5c 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-@@ -56,7 +56,7 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
+diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
+index efefe075557f..6e6ba1baf9c4 100644
+--- a/drivers/s390/net/qeth_l3_main.c
++++ b/drivers/s390/net/qeth_l3_main.c
+@@ -363,9 +363,6 @@ static void qeth_l3_clear_ip_htable(struct qeth_card *card, int recover)
  
- 	case QED_SPQ_MODE_BLOCK:
- 		if (!p_data->p_comp_data)
--			return -EINVAL;
-+			goto err;
+ 	QETH_CARD_TEXT(card, 4, "clearip");
  
- 		p_ent->comp_cb.cookie = p_data->p_comp_data->cookie;
- 		break;
-@@ -71,7 +71,7 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
- 	default:
- 		DP_NOTICE(p_hwfn, "Unknown SPQE completion mode %d\n",
- 			  p_ent->comp_mode);
--		return -EINVAL;
-+		goto err;
- 	}
+-	if (recover && card->options.sniffer)
+-		return;
+-
+ 	spin_lock_bh(&card->ip_lock);
  
- 	DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
-@@ -85,6 +85,18 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
- 	memset(&p_ent->ramrod, 0, sizeof(p_ent->ramrod));
+ 	hash_for_each_safe(card->ip_htable, i, tmp, addr, hnode) {
+@@ -823,6 +820,8 @@ static int qeth_l3_register_addr_entry(struct qeth_card *card,
+ 	int rc = 0;
+ 	int cnt = 3;
  
- 	return 0;
++	if (card->options.sniffer)
++		return 0;
+ 
+ 	if (addr->proto == QETH_PROT_IPV4) {
+ 		QETH_CARD_TEXT(card, 2, "setaddr4");
+@@ -858,6 +857,9 @@ static int qeth_l3_deregister_addr_entry(struct qeth_card *card,
+ {
+ 	int rc = 0;
+ 
++	if (card->options.sniffer)
++		return 0;
 +
-+err:
-+	/* qed_spq_get_entry() can either get an entry from the free_pool,
-+	 * or, if no entries are left, allocate a new entry and add it to
-+	 * the unlimited_pending list.
-+	 */
-+	if (p_ent->queue == &p_hwfn->p_spq->unlimited_pending)
-+		kfree(p_ent);
-+	else
-+		qed_spq_return_entry(p_hwfn, p_ent);
-+
-+	return -EINVAL;
- }
- 
- static enum tunnel_clss qed_tunn_get_clss_type(u8 type)
+ 	if (addr->proto == QETH_PROT_IPV4) {
+ 		QETH_CARD_TEXT(card, 2, "deladdr4");
+ 		QETH_CARD_HEX(card, 3, &addr->u.a4.addr, sizeof(int));
 -- 
 2.17.1
 
