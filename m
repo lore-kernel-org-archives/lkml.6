@@ -2,263 +2,110 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43377C04EBC
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:26:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABB30C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:29:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D19722419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:26:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D19722419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 7C8BB22360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:29:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7C8BB22360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726153AbeKOFay (ORCPT
+        id S1726511AbeKOFeH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 00:30:54 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:13191 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725756AbeKOFax (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 00:30:53 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C07E430C1D0D;
-        Wed, 14 Nov 2018 19:26:23 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3F94B600D6;
-        Wed, 14 Nov 2018 19:26:21 +0000 (UTC)
-Date:   Wed, 14 Nov 2018 14:26:20 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, hch@lst.de, axboe@kernel.dk,
-        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
-        xose.vazquez@gmail.com, linux-nvme@lists.infradead.org,
-        chengjike.cheng@huawei.com, shenhong09@huawei.com,
-        dm-devel@redhat.com, wangzhoumengjian@huawei.com,
-        christophe.varoqui@opensvc.com, bmarzins@redhat.com,
-        sschremm@netapp.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: multipath-tools: add ANA support for NVMe device
-Message-ID: <20181114192620.GA18908@redhat.com>
-References: <1541657381-7452-1-git-send-email-lijie34@huawei.com>
- <2691abf6733f791fb16b86d96446440e4aaff99f.camel@suse.com>
- <20181112215323.GA7983@redhat.com>
- <20181113161838.GC9827@localhost.localdomain>
- <20181113180008.GA12513@redhat.com>
- <20181114053837.GA15086@redhat.com>
- <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
- <20181114174746.GA18526@redhat.com>
- <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
+        Thu, 15 Nov 2018 00:34:07 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55130 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725756AbeKOFeH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 00:34:07 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 4B434AEBC;
+        Wed, 14 Nov 2018 19:29:35 +0000 (UTC)
+Date:   Wed, 14 Nov 2018 20:29:32 +0100
+From:   Petr Mladek <pmladek@suse.com>
+To:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc:     Steven Rostedt <rostedt@goodmis.org>, Qian Cai <cai@gmx.us>,
+        linux-kernel@vger.kernel.org, "Tobin C. Harding" <me@tobin.cc>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
+Subject: Re: WARNING: CPU: 26 PID: 64391 at lib/vsprintf.c:2193
+ set_precision+0x84/0x90
+Message-ID: <20181114192932.uir4fuuteer7bqtm@pathway.suse.cz>
+References: <1542128132.12945.19.camel@gmx.us>
+ <20181113172920.GI10650@smile.fi.intel.com>
+ <1542135498.12945.20.camel@gmx.us>
+ <20181113142317.379dbaf7@vmware.local.home>
+ <20181113230511.5di75uyht7ecdcvl@pathway.suse.cz>
+ <20181114093819.GL10650@smile.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Wed, 14 Nov 2018 19:26:24 +0000 (UTC)
+In-Reply-To: <20181114093819.GL10650@smile.fi.intel.com>
+User-Agent: NeoMutt/20170421 (1.8.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14 2018 at  1:51pm -0500,
-Hannes Reinecke <hare@suse.de> wrote:
-
-> On 11/14/18 6:47 PM, Mike Snitzer wrote:
-> > On Wed, Nov 14 2018 at  2:49am -0500,
-> > Hannes Reinecke <hare@suse.de> wrote:
+On Wed 2018-11-14 11:38:19, Andy Shevchenko wrote:
+> On Wed, Nov 14, 2018 at 12:05:12AM +0100, Petr Mladek wrote:
+> > On Tue 2018-11-13 14:23:17, Steven Rostedt wrote:
+> > > On Tue, 13 Nov 2018 13:58:18 -0500
+> > > Qian Cai <cai@gmx.us> wrote:
+> > > 
+> > > > > Care to print the len and name parameters before this line?  
+> > > > len = 60612; name =
+> > > 
+> > > How big are pages on arm64? Because we shouldn't get to this path if
+> > > the string is bigger than PAGE_SIZE. But I know that on PPC64,
+> > > PAGE_SIZE can be 64K, and 60612 is less than that. Thus, if we get
+> > > there, the test is against signed int:16 (16 bit signed integer) that
+> > > can go up to most 32768. If the string size is bigger than that, you
+> > > would get this error.
+> > > 
+> > > I would just say to ignore it.
 > > 
-> >> On 11/14/18 6:38 AM, Mike Snitzer wrote:
-> >>> On Tue, Nov 13 2018 at  1:00pm -0500,
-> >>> Mike Snitzer <snitzer@redhat.com> wrote:
-> >>>
-> >>>> [1]: http://lists.infradead.org/pipermail/linux-nvme/2018-November/020765.html
-> >>>> [2]: https://www.redhat.com/archives/dm-devel/2018-November/msg00072.html
-> >>> ...
-> >>>
-> >>> I knew there had to be a pretty tight coupling between the NVMe driver's
-> >>> native multipathing and ANA support... and that the simplicity of
-> >>> Hannes' patch [1] was too good to be true.
-> >>>
-> >>> The real justification for not making Hannes' change is it'd effectively
-> >>> be useless without first splitting out the ANA handling done during NVMe
-> >>> request completion (NVME_SC_ANA_* cases in nvme_failover_req) that
-> >>> triggers re-reading the ANA log page accordingly.
-> >>>
-> >>> So without the ability to drive the ANA workqueue to trigger
-> >>> nvme_read_ana_log() from the nvme driver's completion path -- even if
-> >>> nvme_core.multipath=N -- it really doesn't buy multipath-tools anything
-> >>> to have the NVMe driver export the ana state via sysfs, because that ANA
-> >>> state will never get updated.
-> >>>
-> >> Hmm. Indeed, I was more focussed on having the sysfs attributes
-> >> displayed, so yes, indeed it needs some more work.
-> > ...
-> >>> Not holding my breath BUT:
-> >>> if decoupling the reading of ANA state from native NVMe multipathing
-> >>> specific work during nvme request completion were an acceptable
-> >>> advancement I'd gladly do the work.
-> >>>
-> >> I'd be happy to work on that, given that we'll have to have 'real'
-> >> ANA support for device-mapper anyway for SLE12 SP4 etc.
+> > I tend to agree.
 > > 
-> > I had a close enough look yesterday that I figured I'd just implement
-> > what I reasoned through as one way forward, compile tested only (patch
-> > relative to Jens' for-4.21/block):
+> > > The only thing that can happen if
+> > > someone does this is to trigger the warning. Unless if it is considered
+> > > a form of DOS, where userspace just bombards the console by triggering
+> > > this waring.
 > > 
-> >  drivers/nvme/host/core.c      | 14 +++++++---
-> >  drivers/nvme/host/multipath.c | 65 ++++++++++++++++++++++++++-----------------
-> >  drivers/nvme/host/nvme.h      |  4 +++
-> >  3 files changed, 54 insertions(+), 29 deletions(-)
+> > We are actually on the safe side because it is WARN_ONCE().
 > > 
-> > diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> > index f172d63db2b5..05313ab5d91e 100644
-> > --- a/drivers/nvme/host/core.c
-> > +++ b/drivers/nvme/host/core.c
-> > @@ -252,10 +252,16 @@ void nvme_complete_rq(struct request *req)
-> >  	trace_nvme_complete_rq(req);
-> >  
-> >  	if (unlikely(status != BLK_STS_OK && nvme_req_needs_retry(req))) {
-> > -		if ((req->cmd_flags & REQ_NVME_MPATH) &&
-> > -		    blk_path_error(status)) {
-> > -			nvme_failover_req(req);
-> > -			return;
-> > +		if (blk_path_error(status)) {
-> > +			struct nvme_ns *ns = req->q->queuedata;
-> > +			u16 nvme_status = nvme_req(req)->status;
-> > +
-> > +			if (req->cmd_flags & REQ_NVME_MPATH) {
-> > +				nvme_failover_req(req);
-> > +				nvme_update_ana(ns, nvme_status);
-> > +				return;
-> > +			}
-> > +			nvme_update_ana(ns, nvme_status);
-> >  		}
-> >  
-> >  		if (!blk_queue_dying(req->q)) {
-> > diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-> > index 5e3cc8c59a39..f7fbc161dc8c 100644
-> > --- a/drivers/nvme/host/multipath.c
-> > +++ b/drivers/nvme/host/multipath.c
-> > @@ -22,7 +22,7 @@ MODULE_PARM_DESC(multipath,
-> >  
-> >  inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
-> >  {
-> > -	return multipath && ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
-> > +	return ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
-> >  }
-> >  
-> >  /*
-> > @@ -47,6 +47,17 @@ void nvme_set_disk_name(char *disk_name, struct nvme_ns *ns,
-> >  	}
-> >  }
-> >  
-> > +static bool nvme_ana_error(u16 status)
-> > +{
-> > +	switch (status & 0x7ff) {
-> > +	case NVME_SC_ANA_TRANSITION:
-> > +	case NVME_SC_ANA_INACCESSIBLE:
-> > +	case NVME_SC_ANA_PERSISTENT_LOSS:
-> > +		return true;
-> > +	}
-> > +	return false;
-> > +}
-> > +
-> >  void nvme_failover_req(struct request *req)
-> >  {
-> >  	struct nvme_ns *ns = req->q->queuedata;
-> > @@ -58,10 +69,7 @@ void nvme_failover_req(struct request *req)
-> >  	spin_unlock_irqrestore(&ns->head->requeue_lock, flags);
-> >  	blk_mq_end_request(req, 0);
-> >  
-> > -	switch (status & 0x7ff) {
-> > -	case NVME_SC_ANA_TRANSITION:
-> > -	case NVME_SC_ANA_INACCESSIBLE:
-> > -	case NVME_SC_ANA_PERSISTENT_LOSS:
-> > +	if (nvme_ana_error(status)) {
-> >  		/*
-> >  		 * If we got back an ANA error we know the controller is alive,
-> >  		 * but not ready to serve this namespaces.  The spec suggests
-> > @@ -69,31 +77,38 @@ void nvme_failover_req(struct request *req)
-> >  		 * that the admin and I/O queues are not serialized that is
-> >  		 * fundamentally racy.  So instead just clear the current path,
-> >  		 * mark the the path as pending and kick of a re-read of the ANA
-> > -		 * log page ASAP.
-> > +		 * log page ASAP (see nvme_update_ana() below).
-> >  		 */
-> >  		nvme_mpath_clear_current_path(ns);
-> > -		if (ns->ctrl->ana_log_buf) {
-> > -			set_bit(NVME_NS_ANA_PENDING, &ns->flags);
-> > -			queue_work(nvme_wq, &ns->ctrl->ana_work);
-> > +	} else {
-> > +		switch (status & 0x7ff) {
-> > +		case NVME_SC_HOST_PATH_ERROR:
-> > +			/*
-> > +			 * Temporary transport disruption in talking to the
-> > +			 * controller.  Try to send on a new path.
-> > +			 */
-> > +			nvme_mpath_clear_current_path(ns);
-> > +			break;
-> > +		default:
-> > +			/*
-> > +			 * Reset the controller for any non-ANA error as we
-> > +			 * don't know what caused the error.
-> > +			 */
-> > +			nvme_reset_ctrl(ns->ctrl);
-> > +			break;
-> >  		}
-> > -		break;
-> > -	case NVME_SC_HOST_PATH_ERROR:
-> > -		/*
-> > -		 * Temporary transport disruption in talking to the controller.
-> > -		 * Try to send on a new path.
-> > -		 */
-> > -		nvme_mpath_clear_current_path(ns);
-> > -		break;
-> > -	default:
-> > -		/*
-> > -		 * Reset the controller for any non-ANA error as we don't know
-> > -		 * what caused the error.
-> > -		 */
-> > -		nvme_reset_ctrl(ns->ctrl);
-> > -		break;
-> >  	}
-> Maybe move nvme_mpath_clear_current_path() out of the loop (it wouldn't
-> matter if we clear the path if we reset the controller afterwards); that
-> might even clean up the code even more.
-
-Not completely sure what you're suggesting.  But I was going for purely
-functional equivalent of the existing upstream code -- just with
-multipathing and ana split.
-
-Could be that in future it wouldn't make sense to always
-nvme_mpath_clear_current_path() for all cases?
-
+> > > But I don't see a problem with the actual design. There's
+> > > no reason we should be processing string variables bigger than 32768 in
+> > > vsprintf.
+> > 
+> > It is not even needed in this case. The string is limited also by
+> > MODULE_NAME_LEN.
 > 
-> > +}
-> >  
-> > -	kblockd_schedule_work(&ns->head->requeue_work);
-> > +void nvme_update_ana(struct nvme_ns *ns, u16 status)
-> > +{
-> > +	if (nvme_ana_error(status) && ns->ctrl->ana_log_buf) {
-> > +		set_bit(NVME_NS_ANA_PENDING, &ns->flags);
-> > +		queue_work(nvme_wq, &ns->ctrl->ana_work);
-> > +	}
-> > +
-> > +	if (multipath)
-> > +		kblockd_schedule_work(&ns->head->requeue_work);
-> >  }
+> At least not in this code.
 > 
-> maybe use 'ns->head->disk' here; we only need to call this if we have a
-> multipath disk.
+> Are you proposing to replace strlen(name) with strnlen(name, MODULE_NAME_LEN)?
 
-Sure.
+It might be a solution. Well, it looks like a wrong design when we
+would need to use MODULE_NAME_LEN outside module loader code. Also
+it does not handle other request_module() users that might be
+affected.
 
-> Remaining bits are okay.
+On the other hand, I am not sure how a proper solution would look
+like. request_module() should not limit printk format before
+the arguments are substituted.
 
-Thanks,
-Mike
+The most clean solution probably would be on the vsprintf-level.
+I mean to limit the precision by the overall string length
+limit. But it looks a bit weird as well.
+
+I still tend to ignore it. The code is safe from the security point of
+view. The warning would trigger only when completely misused.
+
+
+Best Regards,
+Petr
