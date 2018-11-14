@@ -2,112 +2,360 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0E1FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:07:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EC29DC07E85
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:08:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6DFEA223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:07:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DFEA223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kontron.De
+	by mail.kernel.org (Postfix) with ESMTP id B3B1B223DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:08:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3B1B223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732471AbeKNVJ4 (ORCPT
+        id S1732405AbeKNVLd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 16:09:56 -0500
-Received: from skedge03.snt-world.com ([91.208.41.68]:36468 "EHLO
-        skedge03.snt-world.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727649AbeKNVJz (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 16:09:55 -0500
-Received: from sntmail14r.snt-is.com (unknown [10.203.32.184])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        Wed, 14 Nov 2018 16:11:33 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54544 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726823AbeKNVLd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 16:11:33 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by skedge03.snt-world.com (Postfix) with ESMTPS id 7DDCF60B9F5E;
-        Wed, 14 Nov 2018 12:07:05 +0100 (CET)
-Received: from sntmail11s.snt-is.com (10.203.32.181) by sntmail14r.snt-is.com
- (10.203.32.184) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1466.3; Wed, 14 Nov
- 2018 12:07:05 +0100
-Received: from sntmail11s.snt-is.com ([fe80::b972:ad22:ada5:7c6a]) by
- sntmail11s.snt-is.com ([fe80::b972:ad22:ada5:7c6a%4]) with mapi id
- 15.01.1466.003; Wed, 14 Nov 2018 12:07:05 +0100
-From:   Schrempf Frieder <frieder.schrempf@kontron.De>
-To:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Han Xu <han.xu@nxp.com>
-CC:     "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        David Wolfe <david.wolfe@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "Prabhakar Kushwaha" <prabhakar.kushwaha@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Thread-Topic: [PATCH v5 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Thread-Index: AQHUe1dsObjF/PT8B0W0ex5X9UGX6qVO47aAgAADEgCAAAN+AIAAG+cAgAAGuQA=
-Date:   Wed, 14 Nov 2018 11:07:04 +0000
-Message-ID: <eb4b79be-c12b-16e7-e1dd-86a157cfdc7d@kontron.de>
-References: <1542116782-13118-1-git-send-email-frieder.schrempf@kontron.de>
- <1542116782-13118-4-git-send-email-frieder.schrempf@kontron.de>
- <VI1PR04MB572679944542ED6A438FD2FB99C30@VI1PR04MB5726.eurprd04.prod.outlook.com>
- <ce9cbfc0-3257-f117-aa21-cdee068579ce@kontron.de>
- <65577d13-b17d-8f69-313c-01d23240d1d9@kontron.de>
- <VI1PR04MB572664063A0E237D2EB7203A99C30@VI1PR04MB5726.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB572664063A0E237D2EB7203A99C30@VI1PR04MB5726.eurprd04.prod.outlook.com>
-Accept-Language: de-DE, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [172.25.9.43]
-x-c2processedorg: 51b406b7-48a2-4d03-b652-521f56ac89f3
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <89687489640DA44EB6C07997A23F0A96@snt-world.com>
-Content-Transfer-Encoding: base64
+        by mx1.redhat.com (Postfix) with ESMTPS id 2DD8F394D46;
+        Wed, 14 Nov 2018 11:08:44 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 854C5101E597;
+        Wed, 14 Nov 2018 11:08:34 +0000 (UTC)
+Date:   Wed, 14 Nov 2018 19:08:28 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Ming Lei <tom.leiming@gmail.com>, Jens Axboe <axboe@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hannes Reinecke <hare@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org
+Subject: Re: kobject lifetime issues in blk-mq
+Message-ID: <20181114110827.GA31430@ming.t460p>
+References: <20181109203518.GA7130@roeck-us.net>
+ <20181112092051.GA391@ming.t460p>
+ <20181112094406.GB391@ming.t460p>
+ <20181112164848.GA1790@roeck-us.net>
+ <20181112200236.GA4415@kroah.com>
+ <20181113002226.GA4455@ming.t460p>
+ <20181113004124.GC4455@ming.t460p>
 MIME-Version: 1.0
-X-SnT-MailScanner-Information: Please contact the ISP for more information
-X-SnT-MailScanner-ID: 7DDCF60B9F5E.AD138
-X-SnT-MailScanner: Found to be clean
-X-SnT-MailScanner-SpamCheck: 
-X-SnT-MailScanner-From: frieder.schrempf@kontron.de
-X-SnT-MailScanner-To: boris.brezillon@bootlin.com, broonie@kernel.org,
-        computersforpeace@gmail.com, david.wolfe@nxp.com,
-        dwmw2@infradead.org, fabio.estevam@nxp.com, han.xu@nxp.com,
-        linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org,
-        linux-spi@vger.kernel.org, marek.vasut@gmail.com,
-        miquel.raynal@bootlin.com, prabhakar.kushwaha@nxp.com,
-        richard@nod.at, shawnguo@kernel.org, yogeshnarayan.gaur@nxp.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113004124.GC4455@ming.t460p>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.38]); Wed, 14 Nov 2018 11:08:44 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDE0LjExLjE4IDExOjQzLCBZb2dlc2ggTmFyYXlhbiBHYXVyIHdyb3RlOg0KPiBIaSBG
-cmllZGVyLA0KPiANCj4gWy4uXQ0KPj4+DQo+Pj4gT2ssIEkgd2lsbCBoYXZlIGEgbG9vayBhdCB3
-aGF0IGNvdWxkIG1ha2UgdGhlIGNoaXAgc2VsZWN0aW9uIGZhaWwgaW4NCj4+PiBjYXNlIG9mIEFI
-QiByZWFkLg0KPj4NCj4+IENvdWxkIHlvdSB0cnkgd2l0aCB0aGlzIGNoYW5nZSBhcHBsaWVkOg0K
-Pj4NCj4+IEBAIC01MDMsNyArNTAzLDcgQEAgc3RhdGljIHZvaWQgZnNsX3FzcGlfc2VsZWN0X21l
-bShzdHJ1Y3QgZnNsX3FzcGkgKnEsIHN0cnVjdA0KPj4gc3BpX2RldmljZSAqc3BpKQ0KPj4gICAg
-ICAgICAgICAgICAgICAgICAgICAgICBtYXBfYWRkciA9IHEtPm1lbW1hcF9waHk7DQo+PiAgICAg
-ICAgICAgICAgICAgICBlbHNlDQo+PiAgICAgICAgICAgICAgICAgICAgICAgICAgIG1hcF9hZGRy
-ID0gcS0+bWVtbWFwX3BoeSArDQo+PiAtICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
-IDIgKiBxLT5kZXZ0eXBlX2RhdGEtPmFoYl9idWZfc2l6ZTsNCj4+ICsgICAgICAgICAgICAgICAg
-ICAgICAgICAgICAgICAgICAgcS0+ZGV2dHlwZV9kYXRhLT5haGJfYnVmX3NpemU7DQo+Pg0KPj4g
-ICAgICAgICAgICAgICAgICAgcXNwaV93cml0ZWwocSwgbWFwX2FkZHIsIHEtPmlvYmFzZSArIFFV
-QURTUElfU0ZBMUFEICsNCj4+IChpICogNCkpOw0KPj4gICAgICAgICAgIH0NCj4+DQo+IA0KPiBJ
-IGhhdmUgdHJpZWQgYWJvdmUgY2hhbmdlIGFuZCBhbHNvIGhhdmUgZG9uZSBmZXcgbW9yZSBjaGFu
-Z2VzIGJ1dCBzdGlsbCBBSEIgcmVhZCBmb3IgQ1MxIGlzIGZhbGxpbmcuDQoNCk1heWJlIENTMSBp
-cyBub3Qgc2VsZWN0ZWQgYmVjYXVzZSB3ZSByZXVzZSB0aGUgc2FtZSBtZW1vcnkgb2Zmc2V0IGFz
-IGZvciANCkNTMC4gQ2FuIHlvdSB0cnkgd2l0aCBhIGZpeGVkIG1hcHBpbmcgZm9yIGFsbCBmb3Vy
-IENTIGxpbmVzLCBsaWtlIHRoaXM6IA0KaHR0cHM6Ly9wYXN0ZS5lZS9wL21Zd2pQPw0KDQpUaGFu
-a3MsDQpGcmllZGVy
+On Tue, Nov 13, 2018 at 08:41:24AM +0800, Ming Lei wrote:
+> On Tue, Nov 13, 2018 at 08:22:26AM +0800, Ming Lei wrote:
+> > On Mon, Nov 12, 2018 at 12:02:36PM -0800, Greg Kroah-Hartman wrote:
+> > > On Mon, Nov 12, 2018 at 08:48:48AM -0800, Guenter Roeck wrote:
+> > > > On Mon, Nov 12, 2018 at 05:44:07PM +0800, Ming Lei wrote:
+> > > > > On Mon, Nov 12, 2018 at 05:20:51PM +0800, Ming Lei wrote:
+> > > > > > On Fri, Nov 09, 2018 at 12:35:18PM -0800, Guenter Roeck wrote:
+> > > > > > > Hi,
+> > > > > > > 
+> > > > > > > Images with CONFIG_DEBUG_KOBJECT=y, CONFIG_DEBUG_KOBJECT_RELEASE=y
+> > > > > > > enabled report kobject lifetime issues when booting an image in qemu
+> > > > > > > using virtio-scsi-pci.
+> > > > > > > 
+> > > > > > > Bisect points to two different commits, depending on the kernel
+> > > > > > > configuration.
+> > > > > > > 
+> > > > > > > 1st configuration: defconfig plus:
+> > > > > > > 
+> > > > > > > CONFIG_VIRTIO_BLK=y
+> > > > > > > CONFIG_SCSI_LOWLEVEL=y
+> > > > > > > CONFIG_SCSI_VIRTIO=y
+> > > > > > > CONFIG_VIRTIO_PCI=y
+> > > > > > > CONFIG_VIRTIO_MMIO=y
+> > > > > > > CONFIG_DEBUG_OBJECTS=y
+> > > > > > > CONFIG_DEBUG_OBJECTS_FREE=y
+> > > > > > > CONFIG_DEBUG_OBJECTS_TIMERS=y
+> > > > > > > CONFIG_DEBUG_KOBJECT=y
+> > > > > > > CONFIG_DEBUG_KOBJECT_RELEASE=y
+> > > > > > > 
+> > > > > > > Bisecting this configuration points to commit b5b6e8c8d3b4 ("scsi:
+> > > > > > > virtio_scsi: fix IO hang caused by automatic irq vector affinity")
+> > > > > > > as the culprit. This commit enforces the use of blk-mq for virtio_scsi;
+> > > > > > > the bisect log is therefore a bit misleading.
+> > > > > > > 
+> > > > > > > 2nd configuration: As above, plus:
+> > > > > > > CONFIG_SCSI_MQ_DEFAULT=y
+> > > > > > > 
+> > > > > > > With this configuration, bisect points to commit 7ea5fe31c12d
+> > > > > > > ("blk-mq: make lifetime consitent between q/ctx and its kobject").
+> > > > > > > 
+> > > > > > > The qemu command line used to reproduce the problem is as follows.
+> > > > > > > The qemu version does not seem to matter (I tested with qemu versions
+> > > > > > > 2.5, 2.11, and 3.0).
+> > > > > > > 
+> > > > > > > qemu-system-x86_64 \
+> > > > > > > 	-kernel arch/x86/boot/bzImage \
+> > > > > > > 	-device virtio-scsi-pci,id=scsi \
+> > > > > > > 	-device scsi-hd,bus=scsi.0,drive=d0 \
+> > > > > > > 	-drive file=./wheezy.img,format=raw,if=none,id=d0 \
+> > > > > > > 	-snapshot \
+> > > > > > > 	-m 2G -smp 4 -enable-kvm \
+> > > > > > > 	-net user,host=10.0.2.10,hostfwd=tcp::10022-:22 -net nic \
+> > > > > > > 	-nographic -monitor none \
+> > > > > > > 	-no-reboot \
+> > > > > > > 	-append "console=ttyS0 root=/dev/sda earlyprintk=serial panic_on_warn=1 panic=-1"
+> > > > > > > 
+> > > > > > > Root file system:
+> > > > > > > 	https://storage.googleapis.com/syzkaller/wheezy.img
+> > > > > > > or:
+> > > > > > > 	https://github.com/groeck/linux-build-test/blob/master/rootfs/x86_64/rootfs.ext2.gz
+> > > > > > > 
+> > > > > > > It seems that any root file system can be used to reproduce the problem.
+> > > > > > > Also, the problem is not limited to virtio-scsi-pci. I also tried
+> > > > > > > am53c974, lsi53c810, and lsi53c895a (after enabling the respective
+> > > > > > > drivers), with the same result.
+> > > > > > > 
+> > > > > > > Overall, this suggests that the problem is related to blk-mq and was
+> > > > > > > indeed introduced with commit 7ea5fe31c12d.
+> > > > > > > 
+> > > > > > > For reference, I attached an actual crash log as well as a set of bisect
+> > > > > > > logs below.
+> > > > > > > 
+> > > > > > > Unfortunately, my understanding of blk-mq is not good enough to find the
+> > > > > > > underlying problem and suggest a fix. Please let me know if there is
+> > > > > > > anything else I can do to help fixing the problem.
+> > > > > > > 
+> > > > > > > Note that the problem was originally reported by syzbot running a test
+> > > > > > > on chromeos-4.14. It may well be that the problem has already been
+> > > > > > > reported and is being worked on. If so, please apologize the noise.
+> > > > > > > 
+> > > > > > > Thanks,
+> > > > > > > Guenter
+> > > > > > > 
+> > > > > > > ---
+> > > > > > > [    8.700038] ------------[ cut here ]------------
+> > > > > > > [    8.700376] ODEBUG: free active (active state 0) object type: timer_list hint: delayed_work_timer_fn+0x0/0x10
+> > > > > > > [    8.701032] WARNING: CPU: 0 PID: 0 at lib/debugobjects.c:329 debug_print_object+0x6a/0x80
+> > > > > > > [    8.701032] Kernel panic - not syncing: panic_on_warn set ...
+> > > > > > > [    8.701032] CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.20.0-rc1 #30
+> > > > > > > [    8.701032] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Ubuntu-1.8.2-1ubuntu1 04/01/2014
+> > > > > > > [    8.701032] Call Trace:
+> > > > > > > [    8.701032]  <IRQ>
+> > > > > > > [    8.701032]  dump_stack+0x46/0x5b
+> > > > > > > [    8.701032]  panic+0xf3/0x246
+> > > > > > > [    8.701032]  ? debug_print_object+0x6a/0x80
+> > > > > > > [    8.701032]  __warn+0xeb/0xf0
+> > > > > > > [    8.701032]  ? debug_print_object+0x6a/0x80
+> > > > > > > [    8.701032]  ? debug_print_object+0x6a/0x80
+> > > > > > > [    8.701032]  report_bug+0xb1/0x120
+> > > > > > > [    8.701032]  fixup_bug.part.10+0x13/0x30
+> > > > > > > [    8.701032]  do_error_trap+0x8f/0xb0
+> > > > > > > [    8.701032]  do_invalid_op+0x31/0x40
+> > > > > > > [    8.701032]  ? debug_print_object+0x6a/0x80
+> > > > > > > [    8.701032]  invalid_op+0x14/0x20
+> > > > > > > [    8.701032] RIP: 0010:debug_print_object+0x6a/0x80
+> > > > > > > [    8.701032] Code: 8b 43 10 83 c2 01 8b 4b 14 89 15 c1 e2 78 01 4c 8b 45 00 4c
+> > > > > > > 89 e6 48 c7 c7 f0 ca 41 a6 48 8b 14 c5 a0 f7 24 a6 e8 06 8e cc ff <0f> 0b 5b 83
+> > > > > > > 05 70 47 1a 01 01 5d 41 5c c3 83 05 65 47 1a 01 01 c3
+> > > > > > > [    8.701032] RSP: 0018:ffff89b9fda03e48 EFLAGS: 00010082
+> > > > > > > [    8.701032] RAX: 0000000000000000 RBX: ffff89b9fd49d0c8 RCX: ffffffffa6646e18
+> > > > > > > [    8.701032] RDX: 0000000000000001 RSI: 0000000000000082 RDI: ffffffffa6cc596c
+> > > > > > > [    8.701032] RBP: ffffffffa664a5c0 R08: 79616c6564203a74 R09: 5f6b726f775f6465
+> > > > > > > [    8.701032] R10: ffff89b9fda03f10 R11: 3178302f3078302b R12: ffffffffa6403e22
+> > > > > > > [    8.701032] R13: 0000000000000001 R14: ffffffffa6d4d458 R15: ffff89b9fc4c8780
+> > > > > > > [    8.701032]  ? debug_print_object+0x6a/0x80
+> > > > > > > [    8.701032]  debug_check_no_obj_freed+0x1b8/0x1ea
+> > > > > > > [    8.701032]  ? rcu_process_callbacks+0x2a7/0x750
+> > > > > > > [    8.701032]  kmem_cache_free+0x6e/0x1a0
+> > > > > > > [    8.701032]  ? __blk_release_queue+0x150/0x150
+> > > > > > > [    8.701032]  rcu_process_callbacks+0x2a7/0x750
+> > > > > > > [    8.701032]  __do_softirq+0xf2/0x2c7
+> > > > > > > [    8.701032]  irq_exit+0xb7/0xc0
+> > > > > > > [    8.701032]  smp_apic_timer_interrupt+0x67/0x130
+> > > > > > > [    8.701032]  apic_timer_interrupt+0xf/0x20
+> > > > > > > [    8.701032]  </IRQ>
+> > > > > > > [    8.701032] RIP: 0010:default_idle+0x12/0x140
+> > > > > > > [    8.701032] Code: fe ff ff c6 43 08 00 fb eb b0 31 c0 eb b4 e8 65 c8 60 ff 90
+> > > > > > > 90 90 90 90 41 54 55 53 65 8b 2d 15 c4 3b 5a 66 66 66 66 90 fb f4 <65> 8b 2d 07
+> > > > > > > c4 3b 5a 66 66 66 66 90 5b 5d 41 5c c3 65 8b 05 f6 c3
+> > > > > > > [    8.701032] RSP: 0018:ffffffffa6603e98 EFLAGS: 00000246 ORIG_RAX: ffffffffffffff13
+> > > > > > > [    8.701032] RAX: ffffffffa5c52d10 RBX: 0000000000000000 RCX: 0000000000000000
+> > > > > > > [    8.701032] RDX: 0000000000000001 RSI: 0000000000000000 RDI: 000000020605092a
+> > > > > > > [    8.701032] RBP: 0000000000000000 R08: ffffffffcff7766a R09: ffff89b9fda20b00
+> > > > > > > [    8.701032] R10: 0000000000000000 R11: 0000000000002400 R12: ffffffffa6611740
+> > > > > > > [    8.701032] R13: 0000000000000000 R14: 0000000000000000 R15: ffffffffa6611740
+> > > > > > > [    8.701032]  ? __sched_text_end+0x5/0x5
+> > > > > > > [    8.701032]  do_idle+0x19c/0x230
+> > > > > > > [    8.701032]  cpu_startup_entry+0x14/0x20
+> > > > > > > [    8.701032]  start_kernel+0x491/0x4b1
+> > > > > > > [    8.701032]  secondary_startup_64+0xa4/0xb0
+> > > > > > > [    8.701032] Kernel Offset: 0x24200000 from 0xffffffff81000000 (relocation range: 0xffffffff80000000-0xffffffffbfffffff)
+> > > > > > > 
+> > > > > > 
+> > > > > > That is simply caused by enabling DEBUG_KOBJECT_RELEASE itself, which
+> > > > > > tries to do kboject_release() after delaying a while.
+> > > > > > 
+> > > > > > Wrt. this issue, q->mq_kobj is embedded in 'request_queue' whose
+> > > > > > instance is freed in release handler of q->kobj. So when one instance
+> > > > > > of 'request_queue' is freed, DEBUG_KOBJECT_RELEASE still expects that
+> > > > > > the q->mq_kobj is active.
+> > > > > > 
+> > > > > > The release handler of q->mq_kobj is NOP actually, so in reality it won't
+> > > > > > be one issue at all.
+> > > > > 
+> > > > > Given we have removed legacy IO path completely, it should be fine to
+> > > > > remove q->mq_kobj and simply put everything under the kobj of queue,
+> > > > > especially any attributes under mq aren't marked as stable ABI.
+> > > > 
+> > > > That might be possible going forward, but that does not appear to be
+> > > > a feasible solution for stable releases. I am not sure though if the
+> > > > "stable ABI" argument is valid. Almost all sysfs attributes are not
+> > > > marked stable. If there are applications using it, removing the atttributes
+> > > > would still break userspace.
+> > > 
+> > > Yeah, don't move attributes around for no good reason, you will make
+> > > userspace grumpy :)
+> > 
+> > There are very less attributes left under /sys/block/$DEV/mq.
+> > 
+> > > 
+> > > > Since the release function of mq_kobj is NOP (for reference, I assume
+> > > > we are talking about blk_mq_sysfs_release), can it just be NULL ?
+> > > 
+> > > Someone tried to work around the internal kernel warning that comes
+> > > about when you set a release function to NULL.  As per the in-kernel
+> > > documentation, I now get to make fun of that author by saying "do you
+> > > think I added those checks and message just for no good reason?  Don't
+> > > try to be smarter than the driver core by providing an empty release
+> > > function to make the kernel be quiet.  That's NOT what the kernel is
+> > > trying to tell you here at all."
+> > > 
+> > > So fix this, that is the correct thing to do.  Memory is freed in a
+> > > release function, to not do so is almost always a sign of a design bug.
+> > 
+> > The root cause is that both q->kobj and q->mq_kobj are bound to lifetime
+> > of same 'request_queue' instance.
+> > 
+> > We may allocate q->mq_kobj dynamically to fix this issue.
+> > 
+> > And now all drivers are converted to mq, and it is really necessary to keep
+> > 'q->mq_kobj'
+> > 
+> > > 
+> > > > That it is an empty function seems to be just as good or bad as having
+> > > > no function at all. An empty function just avoids the "broken" debug
+> > > > message. That message is still better than rendering DEBUG_KOBJECT_RELEASE
+> > > > useless.
+> > > > 
+> > > > Copying GregKH for input.
+> > > 
+> > > Thanks, this code is broken and needs to be fixed.
+> > 
+> > I will post a patch to address the 'issue'.
+> 
+> Not only q->mq_kobj, there is also each 'struct blk_mq_ctx' which is
+> referenced via percpu variable of q->queue_ctx, we still may introduce
+> one indirect table and allocate each blk_mq_ctx dynamically just for
+> making DEBUG_KOBJECT_RELEASE happy. But code can become not readable
+> as before.
+> 
+> Just wondering if it is possible to deal with this kind of shared
+> lifetime issue among kobjects.
+> 
+> In this case, q->mq_kobj, every 'struct blk_mq_ctx' referenced via
+> q->queue_ctx and q->kobj share same lifetime, it is fine to just
+> release them in one release handler.
+> 
+> I will think further and see if it can be done in clean/simple way.
+
+Hi Guenter, Greg and Guys,
+
+What do you think about the following approach?
+
+---
+diff --git a/block/blk-mq-sysfs.c b/block/blk-mq-sysfs.c
+index 2d737f9e7ba7..e15f5760ea1f 100644
+--- a/block/blk-mq-sysfs.c
++++ b/block/blk-mq-sysfs.c
+@@ -298,10 +298,12 @@ void blk_mq_sysfs_init(struct request_queue *q)
+ 	int cpu;
+ 
+ 	kobject_init(&q->mq_kobj, &blk_mq_ktype);
++	kobject_mark_no_delay_release(&q->mq_kobj);
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		ctx = per_cpu_ptr(q->queue_ctx, cpu);
+ 		kobject_init(&ctx->kobj, &blk_mq_ctx_ktype);
++		kobject_mark_no_delay_release(&ctx->kobj);
+ 	}
+ }
+ 
+diff --git a/include/linux/kobject.h b/include/linux/kobject.h
+index 1ab0d624fb36..a8857366fb76 100644
+--- a/include/linux/kobject.h
++++ b/include/linux/kobject.h
+@@ -78,6 +78,7 @@ struct kobject {
+ 	unsigned int state_add_uevent_sent:1;
+ 	unsigned int state_remove_uevent_sent:1;
+ 	unsigned int uevent_suppress:1;
++	unsigned int no_delay_release:1;
+ };
+ 
+ extern __printf(2, 3)
+@@ -136,6 +137,16 @@ static inline bool kobject_has_children(struct kobject *kobj)
+ 	return kobj->sd && kobj->sd->dir.subdirs;
+ }
+ 
++/*
++ * DEBUG_KOBJECT_RELEASE may break case in which more than one kboject
++ * share one same external object, and have same lifetime, so these
++ * users may tell kobject core to not do delay release via this helper.
++ */
++static inline void kobject_mark_no_delay_release(struct kobject *kobj)
++{
++	kobj->no_delay_release = 1;
++}
++
+ struct kobj_type {
+ 	void (*release)(struct kobject *kobj);
+ 	const struct sysfs_ops *sysfs_ops;
+diff --git a/lib/kobject.c b/lib/kobject.c
+index 97d86dc17c42..f6200c4d7aa1 100644
+--- a/lib/kobject.c
++++ b/lib/kobject.c
+@@ -683,10 +683,14 @@ static void kobject_release(struct kref *kref)
+ #ifdef CONFIG_DEBUG_KOBJECT_RELEASE
+ 	unsigned long delay = HZ + HZ * (get_random_int() & 0x3);
+ 	pr_info("kobject: '%s' (%p): %s, parent %p (delayed %ld)\n",
+-		 kobject_name(kobj), kobj, __func__, kobj->parent, delay);
++		 kobject_name(kobj), kobj, __func__, kobj->parent,
++		 delay * !kobj->no_delay_release);
+ 	INIT_DELAYED_WORK(&kobj->release, kobject_delayed_cleanup);
+ 
+-	schedule_delayed_work(&kobj->release, delay);
++	if (kobj->no_delay_release)
++		kobject_cleanup(kobj);
++	else
++		schedule_delayed_work(&kobj->release, delay);
+ #else
+ 	kobject_cleanup(kobj);
+ #endif
+
+-- 
+Ming
