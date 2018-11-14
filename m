@@ -2,291 +2,231 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D489C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:51:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F2AC04EBC
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:51:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A40E2243E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:51:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A40E2243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id D472B2250F
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:51:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="C+/Hscf2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D472B2250F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728724AbeKOE4B (ORCPT
+        id S1731479AbeKOE4Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 23:56:01 -0500
-Received: from mx2.suse.de ([195.135.220.15]:50434 "EHLO mx1.suse.de"
+        Wed, 14 Nov 2018 23:56:16 -0500
+Received: from mail-eopbgr80088.outbound.protection.outlook.com ([40.107.8.88]:47965
+        "EHLO EUR04-VI1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727251AbeKOE4B (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 23:56:01 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 7EFA4B0AE;
-        Wed, 14 Nov 2018 18:51:32 +0000 (UTC)
-Subject: Re: multipath-tools: add ANA support for NVMe device
-To:     Mike Snitzer <snitzer@redhat.com>
-Cc:     Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, hch@lst.de, axboe@kernel.dk,
-        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
-        xose.vazquez@gmail.com, linux-nvme@lists.infradead.org,
-        chengjike.cheng@huawei.com, shenhong09@huawei.com,
-        dm-devel@redhat.com, wangzhoumengjian@huawei.com,
-        christophe.varoqui@opensvc.com, bmarzins@redhat.com,
-        sschremm@netapp.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <1541657381-7452-1-git-send-email-lijie34@huawei.com>
- <2691abf6733f791fb16b86d96446440e4aaff99f.camel@suse.com>
- <20181112215323.GA7983@redhat.com>
- <20181113161838.GC9827@localhost.localdomain>
- <20181113180008.GA12513@redhat.com> <20181114053837.GA15086@redhat.com>
- <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
- <20181114174746.GA18526@redhat.com>
-From:   Hannes Reinecke <hare@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=hare@suse.de; prefer-encrypt=mutual; keydata=
- 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 bA==
-Organization: SUSE Linux GmbH
-Message-ID: <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
-Date:   Wed, 14 Nov 2018 19:51:28 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181114174746.GA18526@redhat.com>
-Content-Type: text/plain; charset=utf-8
+        id S1727251AbeKOE4Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 23:56:16 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=DCu/5b9uqqAFKOY9TVsuHOoWzWT6NhxhffmSJGqejZ4=;
+ b=C+/Hscf26f31nOhcJpbrZ7LK/22cw8fkuAyud3Bm3dQdNIC+aCB8Teyy2S+Wzei8Ql8BbE6rR4wefmTem/ewsrIpuQdQsziWEe+vuriyjXJNA9anD8/C44XqvIrADV39hjzhTLJXIMS+57vYRAhgV32rrvY9nlQ8MxDqqxUIuHs=
+Received: from AM6PR04MB5863.eurprd04.prod.outlook.com (20.179.3.87) by
+ AM6PR04MB4407.eurprd04.prod.outlook.com (20.177.39.139) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.22; Wed, 14 Nov 2018 18:51:43 +0000
+Received: from AM6PR04MB5863.eurprd04.prod.outlook.com
+ ([fe80::8997:7719:b47f:d7dd]) by AM6PR04MB5863.eurprd04.prod.outlook.com
+ ([fe80::8997:7719:b47f:d7dd%2]) with mapi id 15.20.1294.045; Wed, 14 Nov 2018
+ 18:51:43 +0000
+From:   Leo Li <leoyang.li@nxp.com>
+To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "bhelgaas@google.com" <bhelgaas@google.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "l.subrahmanya@mobiveil.co.in" <l.subrahmanya@mobiveil.co.in>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "lorenzo.pieralisi@arm.com" <lorenzo.pieralisi@arm.com>
+CC:     Mingkai Hu <mingkai.hu@nxp.com>,
+        "M.h. Lian" <minghuan.lian@nxp.com>,
+        Xiaowei Bao <xiaowei.bao@nxp.com>
+Subject: RE: [PATCH 21/23] dt-bindings: pci: Add NXP LX SoCs PCIe controller
+Thread-Topic: [PATCH 21/23] dt-bindings: pci: Add NXP LX SoCs PCIe controller
+Thread-Index: AQHUddOb6NF1nSu2a02ug+wCobpaOKVGZgTggAUB1oCABEHIIA==
+Date:   Wed, 14 Nov 2018 18:51:43 +0000
+Message-ID: <AM6PR04MB5863192E246F3ED6F5812E4F8FC30@AM6PR04MB5863.eurprd04.prod.outlook.com>
+References: <20181106131807.29951-1-Zhiqiang.Hou@nxp.com>
+ <20181106131807.29951-22-Zhiqiang.Hou@nxp.com>
+ <AM6PR04MB58639AF03E732FCF491113728FC50@AM6PR04MB5863.eurprd04.prod.outlook.com>
+ <AM6PR04MB57816EE50C61E064E6DC73A684C10@AM6PR04MB5781.eurprd04.prod.outlook.com>
+In-Reply-To: <AM6PR04MB57816EE50C61E064E6DC73A684C10@AM6PR04MB5781.eurprd04.prod.outlook.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=leoyang.li@nxp.com; 
+x-originating-ip: [64.114.255.97]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;AM6PR04MB4407;6:0RD+Wo5KGDcIkjkpVrYtgFCI8vdK64eTz17XrEn522LiirNK3x8LIN7p+FulWKP2+5HQbj5dwO+YXI+KgEI9X6DAdihoQXubZRfD4DgfHf+sON6ydCpBRzgm7mB+bJ3TxhRKITGYeTYCd6ojqdwanrVbghaJpcpDDyYqDog9oQj9uxYjRIcgUhQuUYAybalKzjNo7a8dtXGVKcb22TCf5zA6KSBBSNLpAO8MuRFOVtP2igIepLFZikKMxtFXKSLAx9OjF9/gwsfOVnEwZ+KPTHMRTrJi4Eyw5jEKFvEjuaTN/K9UtHKNGZpzGJAsCSFUB9KTl57/O10rWje/DNz2HE2UiSaErYfc0F/OFpdTj/KGB63XoDC21BEbb7z0Qb2KDqx4LsNaSdP18EMJuASeY/tM5SBNJDtjqLLJTIq74NkxX+/Eg9Bd/0xJVsNfkzbkhJ11xiFTJS2sz7WtXi2UQg==;5:menJ3gaeQLdm9tLXhvzQg8lTQYVdLcrnZES6jHIThwtYkgZODdxi8hpEBzbmWs0ugR5A69bDDVLgxUlu59HazUn6uAfCxzVRKTWnVoHIRfICoEFgEKqTsHca98vxlsmR0LBjfPBfUwIN+09CR1XcV96Jo1uRRePVj7o21hbktJQ=;7:DAMAvWpXkTFhbXudvYmC0bpcgwkCOJ4eYERviur/Jy+yMzhPXYThswhSDFqv0/277CO2vhDlD4mmQrphRF6jwk/Hz5lc5JYlQ+F0XUbSCzPNySomrJV7YmTB/1XJ/cmrqY9yiavuR3MSCojG7t5oFg==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 38d5e462-4acf-4f49-c29b-08d64a623857
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:AM6PR04MB4407;
+x-ms-traffictypediagnostic: AM6PR04MB4407:
+x-microsoft-antispam-prvs: <AM6PR04MB4407CC9FD419A05CCA6AEE2F8FC30@AM6PR04MB4407.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(258649278758335)(211936372134217)(180628864354917)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231415)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:AM6PR04MB4407;BCL:0;PCL:0;RULEID:;SRVR:AM6PR04MB4407;
+x-forefront-prvs: 085634EFF4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(6029001)(39860400002)(346002)(366004)(136003)(376002)(396003)(13464003)(189003)(199004)(14454004)(106356001)(105586002)(229853002)(476003)(7416002)(6246003)(305945005)(7736002)(11346002)(446003)(74316002)(8676002)(55016002)(486006)(6436002)(93886005)(81156014)(68736007)(110136005)(5660300001)(256004)(86362001)(316002)(81166006)(8936002)(9686003)(2201001)(186003)(53936002)(478600001)(2900100001)(33656002)(53546011)(6506007)(7696005)(3846002)(6116002)(2501003)(99286004)(97736004)(71190400001)(102836004)(66066001)(2906002)(71200400001)(54906003)(76176011)(26005)(4326008)(25786009)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:AM6PR04MB4407;H:AM6PR04MB5863.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Lwhj4jU/AjfP7u2nRWT/WRD6U23t2Q7a/yxWVUiUNHR7MXw0pj37RrsnE3tDUWllBDokGM/JdAHS07wB3NBtrP+rBqWb4BYMLbhaCyYMonC4gOOXMWqpfz0EHyIRj/TNvHhGTSVJ292BOIuDXAoqRwWwn1Tbt+jtWN+QvTgR7b/ZQ+8P3RYpMC2uY1SPFBeS9WoVrjUsZ0num9sPUHARhGnxNpPJt7vU5uaZlfbCxWEH3DMyPd+jW8x1/iOILUB9+3zCMDd0aRcIdO54bGLBUuz88PvKm+QE+LkmM9sLQvRteAsMjClSivPzQF1yPGurPX/UQGHLYR5ESRZzRkBWUuNIcdT2Zd4Aqo7PfZK77NI=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="gb2312"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 38d5e462-4acf-4f49-c29b-08d64a623857
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 18:51:43.1069
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM6PR04MB4407
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/14/18 6:47 PM, Mike Snitzer wrote:
-> On Wed, Nov 14 2018 at  2:49am -0500,
-> Hannes Reinecke <hare@suse.de> wrote:
-> 
->> On 11/14/18 6:38 AM, Mike Snitzer wrote:
->>> On Tue, Nov 13 2018 at  1:00pm -0500,
->>> Mike Snitzer <snitzer@redhat.com> wrote:
->>>
->>>> [1]: http://lists.infradead.org/pipermail/linux-nvme/2018-November/020765.html
->>>> [2]: https://www.redhat.com/archives/dm-devel/2018-November/msg00072.html
->>> ...
->>>
->>> I knew there had to be a pretty tight coupling between the NVMe driver's
->>> native multipathing and ANA support... and that the simplicity of
->>> Hannes' patch [1] was too good to be true.
->>>
->>> The real justification for not making Hannes' change is it'd effectively
->>> be useless without first splitting out the ANA handling done during NVMe
->>> request completion (NVME_SC_ANA_* cases in nvme_failover_req) that
->>> triggers re-reading the ANA log page accordingly.
->>>
->>> So without the ability to drive the ANA workqueue to trigger
->>> nvme_read_ana_log() from the nvme driver's completion path -- even if
->>> nvme_core.multipath=N -- it really doesn't buy multipath-tools anything
->>> to have the NVMe driver export the ana state via sysfs, because that ANA
->>> state will never get updated.
->>>
->> Hmm. Indeed, I was more focussed on having the sysfs attributes
->> displayed, so yes, indeed it needs some more work.
-> ...
->>> Not holding my breath BUT:
->>> if decoupling the reading of ANA state from native NVMe multipathing
->>> specific work during nvme request completion were an acceptable
->>> advancement I'd gladly do the work.
->>>
->> I'd be happy to work on that, given that we'll have to have 'real'
->> ANA support for device-mapper anyway for SLE12 SP4 etc.
-> 
-> I had a close enough look yesterday that I figured I'd just implement
-> what I reasoned through as one way forward, compile tested only (patch
-> relative to Jens' for-4.21/block):
-> 
->  drivers/nvme/host/core.c      | 14 +++++++---
->  drivers/nvme/host/multipath.c | 65 ++++++++++++++++++++++++++-----------------
->  drivers/nvme/host/nvme.h      |  4 +++
->  3 files changed, 54 insertions(+), 29 deletions(-)
-> 
-> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-> index f172d63db2b5..05313ab5d91e 100644
-> --- a/drivers/nvme/host/core.c
-> +++ b/drivers/nvme/host/core.c
-> @@ -252,10 +252,16 @@ void nvme_complete_rq(struct request *req)
->  	trace_nvme_complete_rq(req);
->  
->  	if (unlikely(status != BLK_STS_OK && nvme_req_needs_retry(req))) {
-> -		if ((req->cmd_flags & REQ_NVME_MPATH) &&
-> -		    blk_path_error(status)) {
-> -			nvme_failover_req(req);
-> -			return;
-> +		if (blk_path_error(status)) {
-> +			struct nvme_ns *ns = req->q->queuedata;
-> +			u16 nvme_status = nvme_req(req)->status;
-> +
-> +			if (req->cmd_flags & REQ_NVME_MPATH) {
-> +				nvme_failover_req(req);
-> +				nvme_update_ana(ns, nvme_status);
-> +				return;
-> +			}
-> +			nvme_update_ana(ns, nvme_status);
->  		}
->  
->  		if (!blk_queue_dying(req->q)) {
-> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-> index 5e3cc8c59a39..f7fbc161dc8c 100644
-> --- a/drivers/nvme/host/multipath.c
-> +++ b/drivers/nvme/host/multipath.c
-> @@ -22,7 +22,7 @@ MODULE_PARM_DESC(multipath,
->  
->  inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
->  {
-> -	return multipath && ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
-> +	return ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
->  }
->  
->  /*
-> @@ -47,6 +47,17 @@ void nvme_set_disk_name(char *disk_name, struct nvme_ns *ns,
->  	}
->  }
->  
-> +static bool nvme_ana_error(u16 status)
-> +{
-> +	switch (status & 0x7ff) {
-> +	case NVME_SC_ANA_TRANSITION:
-> +	case NVME_SC_ANA_INACCESSIBLE:
-> +	case NVME_SC_ANA_PERSISTENT_LOSS:
-> +		return true;
-> +	}
-> +	return false;
-> +}
-> +
->  void nvme_failover_req(struct request *req)
->  {
->  	struct nvme_ns *ns = req->q->queuedata;
-> @@ -58,10 +69,7 @@ void nvme_failover_req(struct request *req)
->  	spin_unlock_irqrestore(&ns->head->requeue_lock, flags);
->  	blk_mq_end_request(req, 0);
->  
-> -	switch (status & 0x7ff) {
-> -	case NVME_SC_ANA_TRANSITION:
-> -	case NVME_SC_ANA_INACCESSIBLE:
-> -	case NVME_SC_ANA_PERSISTENT_LOSS:
-> +	if (nvme_ana_error(status)) {
->  		/*
->  		 * If we got back an ANA error we know the controller is alive,
->  		 * but not ready to serve this namespaces.  The spec suggests
-> @@ -69,31 +77,38 @@ void nvme_failover_req(struct request *req)
->  		 * that the admin and I/O queues are not serialized that is
->  		 * fundamentally racy.  So instead just clear the current path,
->  		 * mark the the path as pending and kick of a re-read of the ANA
-> -		 * log page ASAP.
-> +		 * log page ASAP (see nvme_update_ana() below).
->  		 */
->  		nvme_mpath_clear_current_path(ns);
-> -		if (ns->ctrl->ana_log_buf) {
-> -			set_bit(NVME_NS_ANA_PENDING, &ns->flags);
-> -			queue_work(nvme_wq, &ns->ctrl->ana_work);
-> +	} else {
-> +		switch (status & 0x7ff) {
-> +		case NVME_SC_HOST_PATH_ERROR:
-> +			/*
-> +			 * Temporary transport disruption in talking to the
-> +			 * controller.  Try to send on a new path.
-> +			 */
-> +			nvme_mpath_clear_current_path(ns);
-> +			break;
-> +		default:
-> +			/*
-> +			 * Reset the controller for any non-ANA error as we
-> +			 * don't know what caused the error.
-> +			 */
-> +			nvme_reset_ctrl(ns->ctrl);
-> +			break;
->  		}
-> -		break;
-> -	case NVME_SC_HOST_PATH_ERROR:
-> -		/*
-> -		 * Temporary transport disruption in talking to the controller.
-> -		 * Try to send on a new path.
-> -		 */
-> -		nvme_mpath_clear_current_path(ns);
-> -		break;
-> -	default:
-> -		/*
-> -		 * Reset the controller for any non-ANA error as we don't know
-> -		 * what caused the error.
-> -		 */
-> -		nvme_reset_ctrl(ns->ctrl);
-> -		break;
->  	}
-Maybe move nvme_mpath_clear_current_path() out of the loop (it wouldn't
-matter if we clear the path if we reset the controller afterwards); that
-might even clean up the code even more.
-
-> +}
->  
-> -	kblockd_schedule_work(&ns->head->requeue_work);
-> +void nvme_update_ana(struct nvme_ns *ns, u16 status)
-> +{
-> +	if (nvme_ana_error(status) && ns->ctrl->ana_log_buf) {
-> +		set_bit(NVME_NS_ANA_PENDING, &ns->flags);
-> +		queue_work(nvme_wq, &ns->ctrl->ana_work);
-> +	}
-> +
-> +	if (multipath)
-> +		kblockd_schedule_work(&ns->head->requeue_work);
->  }
-
-maybe use 'ns->head->disk' here; we only need to call this if we have a
-multipath disk.
-
-Remaining bits are okay.
-
-Cheers,
-
-Hannes
--- 
-Dr. Hannes Reinecke		   Teamlead Storage & Networking
-hare@suse.de			               +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
-HRB 21284 (AG Nürnberg)
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogWi5xLiBIb3UNCj4gU2Vu
+dDogU3VuZGF5LCBOb3ZlbWJlciAxMSwgMjAxOCA1OjQ4IFBNDQo+IFRvOiBMZW8gTGkgPGxlb3lh
+bmcubGlAbnhwLmNvbT47IGxpbnV4LXBjaUB2Z2VyLmtlcm5lbC5vcmc7IGxpbnV4LWFybS0NCj4g
+a2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7IGRldmljZXRyZWVAdmdlci5rZXJuZWwub3JnOyBs
+aW51eC0NCj4ga2VybmVsQHZnZXIua2VybmVsLm9yZzsgYmhlbGdhYXNAZ29vZ2xlLmNvbTsgcm9i
+aCtkdEBrZXJuZWwub3JnOw0KPiBtYXJrLnJ1dGxhbmRAYXJtLmNvbTsgbC5zdWJyYWhtYW55YUBt
+b2JpdmVpbC5jby5pbjsNCj4gc2hhd25ndW9Aa2VybmVsLm9yZzsgbG9yZW56by5waWVyYWxpc2lA
+YXJtLmNvbQ0KPiBDYzogTWluZ2thaSBIdSA8bWluZ2thaS5odUBueHAuY29tPjsgTS5oLiBMaWFu
+DQo+IDxtaW5naHVhbi5saWFuQG54cC5jb20+OyBYaWFvd2VpIEJhbyA8eGlhb3dlaS5iYW9Abnhw
+LmNvbT4NCj4gU3ViamVjdDogUkU6IFtQQVRDSCAyMS8yM10gZHQtYmluZGluZ3M6IHBjaTogQWRk
+IE5YUCBMWCBTb0NzIFBDSWUgY29udHJvbGxlcg0KPiANCj4gSGkgTGVvLA0KPiANCj4gVGhhbmtz
+IGEgbG90IGZvciB5b3VyIGNvbW1lbnRzIQ0KPiANCj4gPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2Ut
+LS0tLQ0KPiA+IEZyb206IExlbyBMaQ0KPiA+IFNlbnQ6IDIwMTjE6jEx1MI5yNUgNToyOQ0KPiA+
+IFRvOiBaLnEuIEhvdSA8emhpcWlhbmcuaG91QG54cC5jb20+OyBsaW51eC1wY2lAdmdlci5rZXJu
+ZWwub3JnOw0KPiA+IGxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZzsgZGV2aWNl
+dHJlZUB2Z2VyLmtlcm5lbC5vcmc7DQo+ID4gbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsg
+YmhlbGdhYXNAZ29vZ2xlLmNvbTsgcm9iaCtkdEBrZXJuZWwub3JnOw0KPiA+IG1hcmsucnV0bGFu
+ZEBhcm0uY29tOyBsLnN1YnJhaG1hbnlhQG1vYml2ZWlsLmNvLmluOw0KPiA+IHNoYXduZ3VvQGtl
+cm5lbC5vcmc7IGxvcmVuem8ucGllcmFsaXNpQGFybS5jb20NCj4gPiBDYzogTWluZ2thaSBIdSA8
+bWluZ2thaS5odUBueHAuY29tPjsgTS5oLiBMaWFuDQo+ID4gPG1pbmdodWFuLmxpYW5AbnhwLmNv
+bT47IFhpYW93ZWkgQmFvIDx4aWFvd2VpLmJhb0BueHAuY29tPg0KPiA+IFN1YmplY3Q6IFJFOiBb
+UEFUQ0ggMjEvMjNdIGR0LWJpbmRpbmdzOiBwY2k6IEFkZCBOWFAgTFggU29DcyBQQ0llDQo+ID4g
+Y29udHJvbGxlcg0KPiA+DQo+ID4NCj4gPg0KPiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0t
+LS0NCj4gPiA+IEZyb206IFoucS4gSG91DQo+ID4gPiBTZW50OiBUdWVzZGF5LCBOb3ZlbWJlciA2
+LCAyMDE4IDc6MjEgQU0NCj4gPiA+IFRvOiBsaW51eC1wY2lAdmdlci5rZXJuZWwub3JnOyBsaW51
+eC1hcm0ta2VybmVsQGxpc3RzLmluZnJhZGVhZC5vcmc7DQo+ID4gPiBkZXZpY2V0cmVlQHZnZXIu
+a2VybmVsLm9yZzsgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZzsNCj4gPiA+IGJoZWxnYWFz
+QGdvb2dsZS5jb207IHJvYmgrZHRAa2VybmVsLm9yZzsgbWFyay5ydXRsYW5kQGFybS5jb207DQo+
+ID4gPiBsLnN1YnJhaG1hbnlhQG1vYml2ZWlsLmNvLmluOyBzaGF3bmd1b0BrZXJuZWwub3JnOyBM
+ZW8gTGkNCj4gPiA+IDxsZW95YW5nLmxpQG54cC5jb20+OyBsb3JlbnpvLnBpZXJhbGlzaUBhcm0u
+Y29tDQo+ID4gPiBDYzogTWluZ2thaSBIdSA8bWluZ2thaS5odUBueHAuY29tPjsgTS5oLiBMaWFu
+DQo+ID4gPiA8bWluZ2h1YW4ubGlhbkBueHAuY29tPjsgWGlhb3dlaSBCYW8gPHhpYW93ZWkuYmFv
+QG54cC5jb20+OyBaLnEuDQo+ID4gSG91DQo+ID4gPiA8emhpcWlhbmcuaG91QG54cC5jb20+DQo+
+ID4gPiBTdWJqZWN0OiBbUEFUQ0ggMjEvMjNdIGR0LWJpbmRpbmdzOiBwY2k6IEFkZCBOWFAgTFgg
+U29DcyBQQ0llDQo+ID4gPiBjb250cm9sbGVyDQo+ID4gPg0KPiA+ID4gRnJvbTogSG91IFpoaXFp
+YW5nIDxaaGlxaWFuZy5Ib3VAbnhwLmNvbT4NCj4gPiA+DQo+ID4gPiBBZGQgUENJZSBjb250cm9s
+bGVyIERUIGJpbmRpbmdzIG9mIE5YUCBMWCBzZXJpZXMgU29Dcy4NCj4gPg0KPiA+IEknbSBub3Qg
+c3VyZSBpZiB0aGlzIGlzIGEgZ29vZCBpZGVhIHRvIG5hbWUgdGhpcyBjb250cm9sbGVyIExYIFBD
+SWUgY29udHJvbGxlci4NCj4gPiBSaWdodCBub3csIGl0IGNvdWxkIGJlIHRydWUgdGhhdCBpdCBp
+cyBvbmx5IHVzZWQgb24gTFggc2VyaWVzIFNvQ3MuDQo+ID4gQnV0IEknbSBub3Qgc3VyZSBpZiB0
+aGUgTFMgc2VyaWVzIHdpbGwgbm90IHVzZSB0aGlzIGNvbnRyb2xsZXIgb3IgTFgNCj4gPiBzZXJp
+ZXMgd2lsbCBvbmx5IHVzZSB0aGlzIGNvbnRyb2xsZXIgaW4gdGhlIGZ1dHVyZS4NCj4gPg0KPiA+
+IFNpbmNlIHRoZSBMWCBzZXJpZXMgaXMgc3RpbGwgdXNpbmcgdGhlIGxheWVyc2NhcGUgYnJhbmRp
+bmcsIHNvDQo+ID4gcHJvYmFibHkgd2Ugc2hvdWxkIGtlZXAgdXNpbmcgdGhlIGxheWVyc2NhcGUt
+cGNpLnR4dCBhbmQgZGVmaW5lIHRoZSBQQ0llDQo+IEdlbjQgdmFyaWFudD8NCj4gDQo+IFllcywg
+d2lsbCBhZGQgdGhlIG5ldyBQQ0llIElQIGJpbmRpbmdzIHRvIExheWVyc2NhcGUtcGNpLnR4dC4N
+Cj4gDQo+ID4NCj4gPiBTYW1lIGNvbW1lbnQgZm9yIG90aGVyIHBsYWNlcyB1c2luZyB0aGUgTFgg
+bmFtaW5nIGluIHRoaXMgZHJpdmVyLg0KPiANCj4gRG8geW91IGhhdmUgYW55IHN1Z2dlc3Rpb24g
+YWJvdXQgaG93IHRvIG5hbWUgdGhlIGRyaXZlciBhbmQgcHJlZml4IG9mDQo+IHN0cnVjdHVyZXMg
+aW4gdGhlIGRyaXZlcj8NCg0KUHJvYmFibHkgc29tZXRoaW5nIGxpa2UgcGNpZS1sYXllcnNjYXBl
+LWdlbjQ/DQoNCj4gDQo+ID4NCj4gPiA+DQo+ID4gPiBTaWduZWQtb2ZmLWJ5OiBIb3UgWmhpcWlh
+bmcgPFpoaXFpYW5nLkhvdUBueHAuY29tPg0KPiA+ID4gLS0tDQo+ID4gPiAgLi4uL2RldmljZXRy
+ZWUvYmluZGluZ3MvcGNpL2x4LXBjaS50eHQgICAgICAgIHwgNTINCj4gPiArKysrKysrKysrKysr
+KysrKysrDQo+ID4gPiAgTUFJTlRBSU5FUlMgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAg
+ICAgIHwgIDggKysrDQo+ID4gPiAgMiBmaWxlcyBjaGFuZ2VkLCA2MCBpbnNlcnRpb25zKCspDQo+
+ID4gPiAgY3JlYXRlIG1vZGUgMTAwNjQ0IERvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
+cy9wY2kvbHgtcGNpLnR4dA0KPiA+ID4NCj4gPiA+IGRpZmYgLS1naXQgYS9Eb2N1bWVudGF0aW9u
+L2RldmljZXRyZWUvYmluZGluZ3MvcGNpL2x4LXBjaS50eHQNCj4gPiA+IGIvRG9jdW1lbnRhdGlv
+bi9kZXZpY2V0cmVlL2JpbmRpbmdzL3BjaS9seC1wY2kudHh0DQo+ID4gPiBuZXcgZmlsZSBtb2Rl
+IDEwMDY0NA0KPiA+ID4gaW5kZXggMDAwMDAwMDAwMDAwLi5kYzYwMmZlZjkzYjANCj4gPiA+IC0t
+LSAvZGV2L251bGwNCj4gPiA+ICsrKyBiL0RvY3VtZW50YXRpb24vZGV2aWNldHJlZS9iaW5kaW5n
+cy9wY2kvbHgtcGNpLnR4dA0KPiA+ID4gQEAgLTAsMCArMSw1MiBAQA0KPiA+ID4gK05YUCBMWCBQ
+Q0llIGNvbnRyb2xsZXINCj4gPiA+ICsNCj4gPiA+ICtUaGlzIFBDSWUgY29udHJvbGxlciBpcyBi
+YXNlZCBvbiB0aGUgTW9iaXZlaWwgUENJZSBJUCBhbmQgdGh1cw0KPiA+ID4gK2luaGVyaXRzIGFs
+bCB0aGUgY29tbW9uIHByb3BlcnRpZXMgZGVmaW5lZCBpbiBtb2JpdmVpbC1wY2llLnR4dC4NCj4g
+PiA+ICsNCj4gPiA+ICtSZXF1aXJlZCBwcm9wZXJ0aWVzOg0KPiA+ID4gKy0gY29tcGF0aWJsZTog
+c2hvdWxkIGNvbnRhaW4gdGhlIHBsYXRmb3JtIGlkZW50aWZpZXIgc3VjaCBhczoNCj4gPiA+ICsg
+ICJmc2wsbHgyMTYwYS1wY2llIg0KPiA+ID4gKy0gcmVnOiBiYXNlIGFkZHJlc3NlcyBhbmQgbGVu
+Z3RocyBvZiB0aGUgUENJZSBjb250cm9sbGVyIHJlZ2lzdGVyIGJsb2Nrcy4NCj4gPiA+ICsgICJj
+b25maWdfYXhpX3NsYXZlIjogUENJZSBjb250cm9sbGVyIHJlZ2lzdGVycw0KPiA+ID4gKyAgImNz
+cl9heGlfc2xhdmUiOiBCcmlkZ2UgY29uZmlnIHJlZ2lzdGVycw0KPiA+ID4gKy0gaW50ZXJydXB0
+czogQSBsaXN0IG9mIGludGVycnVwdCBvdXRwdXRzIG9mIHRoZSBjb250cm9sbGVyLiBNdXN0DQo+
+ID4gPiArY29udGFpbiBhbg0KPiA+ID4gKyAgZW50cnkgZm9yIGVhY2ggZW50cnkgaW4gdGhlIGlu
+dGVycnVwdC1uYW1lcyBwcm9wZXJ0eS4NCj4gPiA+ICstIGludGVycnVwdC1uYW1lczogSXQgY291
+bGQgaW5jbHVkZSB0aGUgZm9sbG93aW5nIGVudHJpZXM6DQo+ID4gPiArICAiaW50ciI6IFRoZSBp
+bnRlcnJ1cHQgdGhhdCBpcyBhc3NlcnRlZCBmb3IgY29udHJvbGxlciBpbnRlcnJ1cHRzDQo+ID4g
+PiArICAiYWVyIjogQXNzZXJ0ZWQgZm9yIGFlciBpbnRlcnJ1cHQgd2hlbiBjaGlwIHN1cHBvcnQg
+dGhlIGFlcg0KPiA+ID4gK2ludGVycnVwdA0KPiA+IHdpdGgNCj4gPiA+ICsJCSBub25lIE1TSS9N
+U0ktWC9JTlR4IG1vZGUsYnV0IHRoZXJlIGlzIGludGVycnVwdCBsaW5lIGZvcg0KPiA+ID4gYWVy
+Lg0KPiA+ID4gKyAgInBtZSI6IEFzc2VydGVkIGZvciBwbWUgaW50ZXJydXB0IHdoZW4gY2hpcCBz
+dXBwb3J0IHRoZSBwbWUNCj4gPiA+ICsgaW50ZXJydXB0DQo+ID4gPiB3aXRoDQo+ID4gPiArCQkg
+bm9uZSBNU0kvTVNJLVgvSU5UeCBtb2RlLGJ1dCB0aGVyZSBpcyBpbnRlcnJ1cHQgbGluZSBmb3IN
+Cj4gPiA+IHBtZS4NCj4gPiA+ICstIGRtYS1jb2hlcmVudDogSW5kaWNhdGVzIHRoYXQgdGhlIGhh
+cmR3YXJlIElQIGJsb2NrIGNhbiBlbnN1cmUgdGhlDQo+ID4gPiArY29oZXJlbmN5DQo+ID4gPiAr
+ICBvZiB0aGUgZGF0YSB0cmFuc2ZlcnJlZCBmcm9tL3RvIHRoZSBJUCBibG9jay4gVGhpcyBjYW4g
+YXZvaWQgdGhlDQo+ID4gPiArc29mdHdhcmUNCj4gPiA+ICsgIGNhY2hlIGZsdXNoL2ludmFsaWQg
+YWN0aW9ucywgYW5kIGltcHJvdmUgdGhlIHBlcmZvcm1hbmNlIHNpZ25pZmljYW50bHkuDQo+ID4g
+PiArLSBtc2ktcGFyZW50IDogU2VlIHRoZSBnZW5lcmljIE1TSSBiaW5kaW5nIGRlc2NyaWJlZCBp
+bg0KPiA+ID4gKyAgRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL2ludGVycnVwdC1j
+b250cm9sbGVyL21zaS50eHQuDQo+ID4gPiArDQo+ID4gPiArRXhhbXBsZToNCj4gPiA+ICsNCj4g
+PiA+ICsJcGNpZUAzNDAwMDAwIHsNCj4gPiA+ICsJCWNvbXBhdGlibGUgPSAiZnNsLGx4MjE2MGEt
+cGNpZSI7DQo+ID4gPiArCQlyZWcgPSA8MHgwMCAweDAzNDAwMDAwIDB4MCAweDAwMTAwMDAwICAg
+LyogY29udHJvbGxlcg0KPiA+ID4gcmVnaXN0ZXJzICovDQo+ID4gPiArCQkgICAgICAgMHg4MCAw
+eDAwMDAwMDAwIDB4MCAweDAwMDAxMDAwPjsgLyogY29uZmlndXJhdGlvbg0KPiA+ID4gc3BhY2Ug
+Ki8NCj4gPiA+ICsJCXJlZy1uYW1lcyA9ICJjc3JfYXhpX3NsYXZlIiwgImNvbmZpZ19heGlfc2xh
+dmUiOw0KPiA+ID4gKwkJaW50ZXJydXB0cyA9IDxHSUNfU1BJIDEwOCBJUlFfVFlQRV9MRVZFTF9I
+SUdIPiwgLyogQUVSDQo+ID4gPiBpbnRlcnJ1cHQgKi8NCj4gPiA+ICsJCQkgICAgIDxHSUNfU1BJ
+IDEwOCBJUlFfVFlQRV9MRVZFTF9ISUdIPiwgLyogUE1FDQo+ID4gPiBpbnRlcnJ1cHQgKi8NCj4g
+PiA+ICsJCQkgICAgIDxHSUNfU1BJIDEwOCBJUlFfVFlQRV9MRVZFTF9ISUdIPjsgLyoNCj4gPiA+
+IGNvbnRyb2xsZXIgaW50ZXJydXB0ICovDQo+ID4gPiArCQlpbnRlcnJ1cHQtbmFtZXMgPSAiYWVy
+IiwgInBtZSIsICJpbnRyIjsNCj4gPiA+ICsJCSNhZGRyZXNzLWNlbGxzID0gPDM+Ow0KPiA+ID4g
+KwkJI3NpemUtY2VsbHMgPSA8Mj47DQo+ID4gPiArCQlkZXZpY2VfdHlwZSA9ICJwY2kiOw0KPiA+
+ID4gKwkJYXBpby13aW5zID0gPDg+Ow0KPiA+ID4gKwkJcHBpby13aW5zID0gPDg+Ow0KPiA+ID4g
+KwkJZG1hLWNvaGVyZW50Ow0KPiA+ID4gKwkJYnVzLXJhbmdlID0gPDB4MCAweGZmPjsNCj4gPiA+
+ICsJCW1zaS1wYXJlbnQgPSA8Jml0cz47DQo+ID4gPiArCQlyYW5nZXMgPSA8MHg4MjAwMDAwMCAw
+eDAgMHg0MDAwMDAwMCAweDgwIDB4NDAwMDAwMDAgMHgwDQo+ID4gPiAweDQwMDAwMDAwPjsNCj4g
+PiA+ICsJCSNpbnRlcnJ1cHQtY2VsbHMgPSA8MT47DQo+ID4gPiArCQlpbnRlcnJ1cHQtbWFwLW1h
+c2sgPSA8MCAwIDAgNz47DQo+ID4gPiArCQlpbnRlcnJ1cHQtbWFwID0gPDAwMDAgMCAwIDEgJmdp
+YyBHSUNfU1BJIDEwOQ0KPiA+ID4gSVJRX1RZUEVfTEVWRUxfSElHSD4sDQo+ID4gPiArCQkJCTww
+MDAwIDAgMCAyICZnaWMgR0lDX1NQSSAxMTANCj4gPiA+IElSUV9UWVBFX0xFVkVMX0hJR0g+LA0K
+PiA+ID4gKwkJCQk8MDAwMCAwIDAgMyAmZ2ljIEdJQ19TUEkgMTExDQo+ID4gPiBJUlFfVFlQRV9M
+RVZFTF9ISUdIPiwNCj4gPiA+ICsJCQkJPDAwMDAgMCAwIDQgJmdpYyBHSUNfU1BJIDExMg0KPiA+
+ID4gSVJRX1RZUEVfTEVWRUxfSElHSD47DQo+ID4gPiArCX07DQo+ID4gPiBkaWZmIC0tZ2l0IGEv
+TUFJTlRBSU5FUlMgYi9NQUlOVEFJTkVSUyBpbmRleA0KPiA+ID4gMGM1N2NjZmYzMTg4Li43ZGE1
+NTVjOGUyZjUgMTAwNjQ0DQo+ID4gPiAtLS0gYS9NQUlOVEFJTkVSUw0KPiA+ID4gKysrIGIvTUFJ
+TlRBSU5FUlMNCj4gPiA+IEBAIC0xMTI1Miw2ICsxMTI1MiwxNCBAQCBMOglsaW51eC1hcm0ta2Vy
+bmVsQGxpc3RzLmluZnJhZGVhZC5vcmcNCj4gPiA+ICBTOglNYWludGFpbmVkDQo+ID4gPiAgRjoJ
+ZHJpdmVycy9wY2kvY29udHJvbGxlci9kd2MvKmxheWVyc2NhcGUqDQo+ID4gPg0KPiA+ID4gK1BD
+SSBEUklWRVIgRk9SIE5YUCBMWA0KPiA+ID4gK006CUhvdSBaaGlxaWFuZyA8WmhpcWlhbmcuSG91
+QG54cC5jb20+DQo+ID4gPiArTDoJbGludXgtcGNpQHZnZXIua2VybmVsLm9yZw0KPiA+ID4gK0w6
+CWxpbnV4LWFybS1rZXJuZWxAbGlzdHMuaW5mcmFkZWFkLm9yZw0KPiA+ID4gK1M6CU1haW50YWlu
+ZWQNCj4gPiA+ICtGOglEb2N1bWVudGF0aW9uL2RldmljZXRyZWUvYmluZGluZ3MvcGNpL2x4LXBj
+aS50eHQNCj4gPiA+ICtGOglkcml2ZXJzL3BjaS9jb250cm9sbGVyL21vYmliZWlsL3BjaS1seC5j
+DQo+ID4gPiArDQo+ID4gPiAgUENJIERSSVZFUiBGT1IgR0VORVJJQyBPRiBIT1NUUw0KPiA+ID4g
+IE06CVdpbGwgRGVhY29uIDx3aWxsLmRlYWNvbkBhcm0uY29tPg0KPiA+ID4gIEw6CWxpbnV4LXBj
+aUB2Z2VyLmtlcm5lbC5vcmcNCj4gPiA+IC0tDQo+ID4gPiAyLjE3LjENCj4gVGhhbmtzLA0KPiBa
+aGlxaWFuZw0K
