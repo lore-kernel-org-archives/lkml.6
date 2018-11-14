@@ -2,91 +2,116 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 25784C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C69A3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D82D122529
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8D7952252C
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ML2IlYys"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82D122529
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bHsaFDo+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D7952252C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388743AbeKOIaL (ORCPT
+        id S2388758AbeKOIaM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
+        Thu, 15 Nov 2018 03:30:12 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:43896 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388739AbeKOIaL (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 03:30:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37350 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728102AbeKOIaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:30:10 -0500
-Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 921DD22527;
-        Wed, 14 Nov 2018 22:25:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234305;
-        bh=B2xTaqHodWeIU3RwaaX9XP6z3DnX3YSw3TkrEhk26Ew=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ML2IlYys1/koaxFHFhYoFiaoi5Wnx/prO9pmvMo7jJiNSam++TqGaxFzBosKao7aa
-         eblTcDZr1JsziS4Q5aZYvXvjIjdabvXTrFSd0mNt1R0MC5xpL/r3t9+uCQm2dEbfzH
-         HeOAyvIAduYyJ04UjDFF3wUX3xwtj7COOmKyFH8Q=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Igor Russkikh <Igor.Russkikh@aquantia.com>,
-        Igor Russkikh <igor.russkikh@aquantia.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 55/59] net: aquantia: fixed enable unicast on 32 macvlan
-Date:   Wed, 14 Nov 2018 17:23:27 -0500
-Message-Id: <20181114222335.99339-55-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
-References: <20181114222335.99339-1-sashal@kernel.org>
+Received: by mail-pg1-f193.google.com with SMTP id n10-v6so8004568pgv.10
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 14:25:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=L4pSjUmIOTE0zfl+uSAhUu8uxkMsgvMqkVu4l5PVJLM=;
+        b=bHsaFDo+/Xp1Htf7bc1MJT/ArLhDCAld3LslMWj8wWkw2iq2Hj4HSgGXQ1hOcxtuqj
+         frLf0ZITUxUtUnAVmaH5mKdkiVVU1CKRwgk/rjkYH1dYSaRu84QaNUuKdbbdL7WtBxSz
+         i1naaE6Jc+P12tjPIVdSzNNkgfdX0spxF9goubowf9W8DADQkS+X5dqncBactkDOYJxT
+         BVPiqih4MIMS2LW4llPzcKoJJ6P3ifg/+EQ3lwNTS7IuBZPuO7azI345cvUL1P0gLUSg
+         +dMHcuClYt7LNu+vUC/So8dEwyoiPWRhCtldDkuXIqB65KEKdFCHS2vxsVL1QZePRuFV
+         s2PQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=L4pSjUmIOTE0zfl+uSAhUu8uxkMsgvMqkVu4l5PVJLM=;
+        b=olXDj9hrbq7uBUhWPIKv93dvoVj9dGt/dOG3HeX5qKAh2N7++JeRtzEIZeZwqf0BMb
+         OK8Gm7I7vHH0cHvoZd8sfGV2b974oc5JDgl5dPrl+3WqC9viBIIR39h/oZllKHxpL9um
+         6OnFdJRrXrGY92YpTMB0HC+UMdG0EMYFspFniRpRRwRj/4faN/MVAwoSPA8tMVleQq8w
+         52vaj7/TfPPfm1l4tJwdRMf9BQ2nAh8qtQ0pNZ7dGCNQF5AqP2yNTZ9m49SpgIubQw6J
+         n8PhmLd8bJuPi9suMn5PqJtcMRgWkcVEuq7PdwJDYMJdVKnwSFjLuAY9THhJVY2sgDsv
+         d6Lg==
+X-Gm-Message-State: AGRZ1gIDfE/WO3Zvip3qTrLLE//LkjBcR75IyaZZQI/q4f47pNYvKbkk
+        2UKZzVbpYD9x84pJLyoXwQS73w==
+X-Google-Smtp-Source: AJdET5fAT58x/BzMQd2RtKEsTOQKGn2dh+ZUdO8Xh6ZSiV+6B35HlgHIK+tYZDU/bvxv4sMqdXYLhw==
+X-Received: by 2002:a63:ec13:: with SMTP id j19mr3429999pgh.6.1542234306779;
+        Wed, 14 Nov 2018 14:25:06 -0800 (PST)
+Received: from [2620:15c:17:3:3a5:23a7:5e32:4598] ([2620:15c:17:3:3a5:23a7:5e32:4598])
+        by smtp.gmail.com with ESMTPSA id r81-v6sm54878447pfa.110.2018.11.14.14.25.05
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Nov 2018 14:25:06 -0800 (PST)
+Date:   Wed, 14 Nov 2018 14:25:05 -0800 (PST)
+From:   David Rientjes <rientjes@google.com>
+X-X-Sender: rientjes@chino.kir.corp.google.com
+To:     "Darryl T. Agostinelli" <dagostinelli@gmail.com>
+cc:     linux-mm@kvack.org, cl@linux.com, bvanassche@acm.org,
+        akpm@linux-foundation.org, penberg@kernel.org, vbabka@suse.cz,
+        iamjoonsoo.kim@lge.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Suppress the sparse warning ./include/linux/slab.h:332:43:
+ warning: dubious: x & !y
+In-Reply-To: <20181109022801.29979-1-dagostinelli@gmail.com>
+Message-ID: <alpine.DEB.2.21.1811141424130.212061@chino.kir.corp.google.com>
+References: <20181109022801.29979-1-dagostinelli@gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Igor Russkikh <Igor.Russkikh@aquantia.com>
+On Thu, 8 Nov 2018, Darryl T. Agostinelli wrote:
 
-[ Upstream commit bfaa9f8553d5c20703781e63f4fc8cb4792f18fd ]
+> Signed-off-by: Darryl T. Agostinelli <dagostinelli@gmail.com>
+> ---
+>  include/linux/slab.h | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/include/linux/slab.h b/include/linux/slab.h
+> index 918f374e7156..883b7f56bf35 100644
+> --- a/include/linux/slab.h
+> +++ b/include/linux/slab.h
+> @@ -317,6 +317,7 @@ static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags)
+>  	int is_dma = 0;
+>  	int type_dma = 0;
+>  	int is_reclaimable;
+> +	int y;
+>  
+>  #ifdef CONFIG_ZONE_DMA
+>  	is_dma = !!(flags & __GFP_DMA);
+> @@ -329,7 +330,10 @@ static __always_inline enum kmalloc_cache_type kmalloc_type(gfp_t flags)
+>  	 * If an allocation is both __GFP_DMA and __GFP_RECLAIMABLE, return
+>  	 * KMALLOC_DMA and effectively ignore __GFP_RECLAIMABLE
+>  	 */
+> -	return type_dma + (is_reclaimable & !is_dma) * KMALLOC_RECLAIM;
+> +
+> +	y = (is_reclaimable & (is_dma == 0 ? 1 : 0));
+> +
+> +	return type_dma + y * KMALLOC_RECLAIM;
+>  }
+>  
+>  /*
 
-Fixed a condition mistake due to which macvlans unicast
-item number 32 was not added in the unicast filter.
-
-The consequence is that when exactly 32 macvlans are created
-on NIC, the last created macvlan receives no traffic because
-its MAC was not registered in HW.
-
-Fixes: 94b3b542303f ("net: aquantia: vlan unicast address list correct handling")
-Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
-Tested-by: Nikita Danilov <nikita.danilov@aquantia.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/net/ethernet/aquantia/atlantic/aq_nic.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-index 7a22d0257e04..cd0a2fb354b7 100644
---- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
-@@ -590,7 +590,7 @@ int aq_nic_set_multicast_list(struct aq_nic_s *self, struct net_device *ndev)
- 		}
- 	}
- 
--	if (i > 0 && i < AQ_HW_MULTICAST_ADDRESS_MAX) {
-+	if (i > 0 && i <= AQ_HW_MULTICAST_ADDRESS_MAX) {
- 		packet_filter |= IFF_MULTICAST;
- 		self->mc_list.count = i;
- 		self->aq_hw_ops->hw_multicast_list_set(self->aq_hw,
--- 
-2.17.1
-
+I agree with you that the function as written is less than pretty :)  How 
+does the assembly change as a result of this code change, however?  This 
+will be in the kmalloc() path so impacting the assembly to fix a sparse 
+warning may not be warranted.
