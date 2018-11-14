@@ -6,36 +6,36 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05733C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 02:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E2C2C169D4
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 02:46:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BCB6522419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 02:46:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10EA5223D0
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 02:46:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qM+F5sK6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCB6522419
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="D8Cn6xqF"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10EA5223D0
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732216AbeKNMrd (ORCPT
+        id S1732186AbeKNMra (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 07:47:33 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51386 "EHLO mail.kernel.org"
+        Wed, 14 Nov 2018 07:47:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51336 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731854AbeKNMrb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 07:47:31 -0500
+        id S1731854AbeKNMr3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 07:47:29 -0500
 Received: from lerouge.suse.de (lfbn-ncy-1-241-207.w83-194.abo.wanadoo.fr [83.194.85.207])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 49679223C8;
-        Wed, 14 Nov 2018 02:46:19 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 08D8C223CB;
+        Wed, 14 Nov 2018 02:46:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542163581;
-        bh=ss1XwfAtdETZN5yX6kTWC5TF1aressA6u6hKvdhcIf0=;
+        s=default; t=1542163578;
+        bh=cTrK0ypnMwJ4q1jKsgmFdkRle1SRKoczWRKP/zjxvaI=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=qM+F5sK69Kbq+DhGYUU/J4ZRY/Sj30L6lucA9C+/buSQngdRhWQR7xloL91stlfAk
-         MpJi/9eNlLYbL9xMw4M8mS4dF5MuqAVU5sB2MRO1xPi/s0riYx++BiGyynQIzMit/z
-         mnWOFmw7w6k3F0/4197n9ZzdP6d3UmrhMXwZGDl4=
+        b=D8Cn6xqFCKwykxmRh64CQHhj8RM/8v30uQUnRqb9GJWWBXwDGVBZpBZVTQf3qAyNL
+         bkZen2O56rV01JoCNcjauYdFoGovGNQ32c8B1Y9KSil5ta6lUbFFdfFkwEtaKh+eZY
+         OgkmP4mcVtJRcTLJ64rpoqlCtt8bU2n07D3j9oBU=
 From:   Frederic Weisbecker <frederic@kernel.org>
 To:     LKML <linux-kernel@vger.kernel.org>
 Cc:     Frederic Weisbecker <frederic@kernel.org>,
@@ -44,9 +44,9 @@ Cc:     Frederic Weisbecker <frederic@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>,
         Yauheni Kaliuta <yauheni.kaliuta@redhat.com>,
         Ingo Molnar <mingo@kernel.org>, Rik van Riel <riel@redhat.com>
-Subject: [PATCH 02/25] sched/vtime: Protect idle accounting under vtime seqcount
-Date:   Wed, 14 Nov 2018 03:45:46 +0100
-Message-Id: <1542163569-20047-3-git-send-email-frederic@kernel.org>
+Subject: [PATCH 01/25] sched/vtime: Fix guest/system mis-accounting on task switch
+Date:   Wed, 14 Nov 2018 03:45:45 +0100
+Message-Id: <1542163569-20047-2-git-send-email-frederic@kernel.org>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542163569-20047-1-git-send-email-frederic@kernel.org>
 References: <1542163569-20047-1-git-send-email-frederic@kernel.org>
@@ -55,16 +55,26 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Locking the seqcount on idle vtime accounting wasn't thought to be
-necessary because the readers of idle cputime don't use vtime (yet).
+vtime_account_system() assumes that the target task to account cputime
+to is always the current task. This is most often true indeed except on
+task switch where we call:
 
-Now updating vtime expect the related seqcount to be locked so do it
-for locking coherency purposes.
+	vtime_common_task_switch(prev)
+		vtime_account_system(prev)
 
-Also idle cputime updates use vtime, but idle cputime readers use the
-traditional ad-hoc nohz time delta. We may want to consider moving
-readers to use vtime to consolidate the overall accounting scheme. The
-seqcount will be a functional requirement for it.
+Here prev is the scheduling-out task where we account the cputime to. It
+doesn't match current that is already the scheduling-in task at this
+stage of the context switch.
+
+So we end up checking the wrong task flags to determine if we are
+accounting guest or system time to the previous task.
+
+As a result the wrong task is used to check if the target is running in
+guest mode. We may then spuriously account or leak either system or
+guest time on task switch.
+
+Fix this assumption and also turn vtime_guest_enter/exit() to use the
+task passed in parameter as well to avoid future similar issues.
 
 Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
 Cc: Yauheni Kaliuta <yauheni.kaliuta@redhat.com>
@@ -74,25 +84,40 @@ Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Wanpeng Li <wanpengli@tencent.com>
 Cc: Ingo Molnar <mingo@kernel.org>
 ---
- kernel/sched/cputime.c | 4 ++++
- 1 file changed, 4 insertions(+)
+ kernel/sched/cputime.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/kernel/sched/cputime.c b/kernel/sched/cputime.c
-index 54eb945..6e74ec2 100644
+index 0796f93..54eb945 100644
 --- a/kernel/sched/cputime.c
 +++ b/kernel/sched/cputime.c
-@@ -800,7 +800,11 @@ EXPORT_SYMBOL_GPL(vtime_guest_exit);
+@@ -739,7 +739,7 @@ void vtime_account_system(struct task_struct *tsk)
  
- void vtime_account_idle(struct task_struct *tsk)
- {
-+	struct vtime *vtime = &tsk->vtime;
-+
-+	write_seqcount_begin(&vtime->seqcount);
- 	account_idle_time(get_vtime_delta(&tsk->vtime));
-+	write_seqcount_end(&vtime->seqcount);
+ 	write_seqcount_begin(&vtime->seqcount);
+ 	/* We might have scheduled out from guest path */
+-	if (current->flags & PF_VCPU)
++	if (tsk->flags & PF_VCPU)
+ 		vtime_account_guest(tsk, vtime);
+ 	else
+ 		__vtime_account_system(tsk, vtime);
+@@ -782,7 +782,7 @@ void vtime_guest_enter(struct task_struct *tsk)
+ 	 */
+ 	write_seqcount_begin(&vtime->seqcount);
+ 	__vtime_account_system(tsk, vtime);
+-	current->flags |= PF_VCPU;
++	tsk->flags |= PF_VCPU;
+ 	write_seqcount_end(&vtime->seqcount);
  }
+ EXPORT_SYMBOL_GPL(vtime_guest_enter);
+@@ -793,7 +793,7 @@ void vtime_guest_exit(struct task_struct *tsk)
  
- void arch_vtime_task_switch(struct task_struct *prev)
+ 	write_seqcount_begin(&vtime->seqcount);
+ 	vtime_account_guest(tsk, vtime);
+-	current->flags &= ~PF_VCPU;
++	tsk->flags &= ~PF_VCPU;
+ 	write_seqcount_end(&vtime->seqcount);
+ }
+ EXPORT_SYMBOL_GPL(vtime_guest_exit);
 -- 
 2.7.4
 
