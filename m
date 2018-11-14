@@ -2,112 +2,86 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F18C5C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:17:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 158C0C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:17:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B8BDC2251C
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:17:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="M8cBqgkC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B8BDC2251C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id DE4802251C
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:17:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE4802251C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728220AbeKOGVn (ORCPT
+        id S1728355AbeKOGWU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 01:21:43 -0500
-Received: from mail-pf1-f169.google.com ([209.85.210.169]:46817 "EHLO
-        mail-pf1-f169.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728116AbeKOGVm (ORCPT
+        Thu, 15 Nov 2018 01:22:20 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:42025 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725756AbeKOGWU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 01:21:42 -0500
-Received: by mail-pf1-f169.google.com with SMTP id s9-v6so8439460pfm.13
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 12:17:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=2BS6wjGA2OgHT7tX6ZWN2tHABauH2PkpyYy8AeEJrUU=;
-        b=M8cBqgkC+jQuIlkNg+Qtp/pRBLsFkVQRK9b1okZBE/9VXoOa5rXpxH5miAz5H3RWxR
-         UlKcp6YERYkFIgoVG1C8FwW4N3p1xobv6Ffee+lL/rmBC/AuZkIWuS/tcSlRtGp0K8XV
-         I421f4ZqVMcrWrtUz5xgf1Eqqi1PTGsoe4Gwk=
+        Thu, 15 Nov 2018 01:22:20 -0500
+Received: by mail-ot1-f66.google.com with SMTP id n46so15938639otb.9;
+        Wed, 14 Nov 2018 12:17:40 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=2BS6wjGA2OgHT7tX6ZWN2tHABauH2PkpyYy8AeEJrUU=;
-        b=MUm+8BsIG0SaJ5O+Fys/zZhak4nGZl1uD90V2Jz8zt0yYZghAXDqnYdyNkcwSIX/OL
-         iIdzF7I550lErQ9mglIT5QeUvw2mP4FNHe7uxeA+qe7JUPYMVj0+XGX7sRCmSrOXwRhO
-         qTgTvmcVIqZFFT3u5aODeeYrH328vvkYIBiXy2cqp84GDg3hSc2d7dH94rnTdJU21rxO
-         iGSoIIS1vHcgUDYmF3qNqWUzs7l/xjJ9eJsSC0pK6nM+2+zDDzH3wnfv+J9AdySmP5Hy
-         vyZSBN0HHikdggYaFjePlyI61Or2/5SbHcu6xaUSADt0CG+TF5wwytQPYC+RIaMEg1b/
-         w/NQ==
-X-Gm-Message-State: AGRZ1gLruBNdJg2Y2Ux2KsyOk6hhSsIT1vfar+2OpLbGtXrw6oPSye/3
-        4TcxOas5hZyX79jJIdyIxtRt7A==
-X-Google-Smtp-Source: AJdET5f+QpWU07qfZuLZ8z3C0C8Pnmx3SMcWfdvXlWtCGTzeo4cHJ+f4ppIrKujxYOHUojNYhHGIsg==
-X-Received: by 2002:a63:4c6:: with SMTP id 189mr3097232pge.391.1542226621592;
-        Wed, 14 Nov 2018 12:17:01 -0800 (PST)
-Received: from pure.paranoia.local ([172.83.40.72])
-        by smtp.gmail.com with ESMTPSA id h62-v6sm30985890pfg.27.2018.11.14.12.16.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Nov 2018 12:17:00 -0800 (PST)
-Date:   Wed, 14 Nov 2018 15:16:58 -0500
-From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     pr-tracker-bot@kernel.org, Bjorn Helgaas <helgaas@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [GIT PULL] PCI fixes for v4.20
-Message-ID: <20181114201658.GB25069@pure.paranoia.local>
-Mail-Followup-To: Borislav Petkov <bp@alien8.de>, pr-tracker-bot@kernel.org,
-        Bjorn Helgaas <helgaas@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-References: <20181114062010.GA189193@google.com>
- <20181114200003.14496.1490.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
- <20181114201214.GM13926@zn.tnic>
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=GtqFAv9KwHcyoOivYmIHnDy60NW6SOY69yVS28aIyzU=;
+        b=gqIWApnqtlRmTA0n4ovK3WLlEGin6RBbKGAxLaDCHVLD40t0r/BzulgE4c7sESkKWn
+         gCsoaNPPlSTATHOybhEXNWviB+XAdKWfHYH3HMUQm21JVMSAm2n1vx0Tn26G/zyWH0Ha
+         eY/qejjxpywF0otMdnQ6R2YOdhPGwfn+7b8zf/0JFKrL5O1CBXAywIoBH3jRFtnAlLUw
+         7ii+QPb1o9i9yQs/feVk8lEaGYmTQHrpGfzZ4N8bSRkO8QT7fmNf8HZEcCfIplPicm1z
+         3l4DoWJ1uzN/TZKzlcLt31Msk7nbh50Z/ZKFPmG3Qu4Dem34f/KTz1Mb4M9TcGDk0nx+
+         8SYw==
+X-Gm-Message-State: AGRZ1gKhGzwJKS+RP3pj7Lvy+sllO2q8f5fhLbuwHoA3l00RRfEDxfIs
+        wKbQBml9mNejz0wnAuSD5XJyV6zDR962E0dzmGTLRESC
+X-Google-Smtp-Source: AJdET5c1uNEqrJl7gf2kxHOVM2MuliQAxeGRZzaWO+7ne+4W1X1lL9glO6ujoATNa8ZaI7rsR037+ERCd40KWmkzhI0=
+X-Received: by 2002:a9d:4c84:: with SMTP id m4mr1856569otf.124.1542226659672;
+ Wed, 14 Nov 2018 12:17:39 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181114201214.GM13926@zn.tnic>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 14 Nov 2018 21:17:37 +0100
+Message-ID: <CAJZ5v0h04bhHbvL3gZ2L5JpnwjGVoFWc_A5YMm4Z5Eid+WQ4oQ@mail.gmail.com>
+Subject: [GIT PULL] ACPI fix for v4.20-rc3
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     ACPI Devel Maling List <linux-acpi@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 09:12:14PM +0100, Borislav Petkov wrote:
-> Hey Konstantin,
-> 
-> that bot needs some parsing improvs: "None None".
+Hi Linus,
 
-Correct, this is because the original pull request was for an ssh://
-URL, which I'm not properly handling for the purposes of generating
-responses. I will add some logic to deal with that.
+Please pull from the tag
 
--K
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ acpi-4.20-rc3
+
+with top-most commit 017ce359a7187192df5222a00fa3c9055eb3736d
+
+ ACPI / PMIC: xpower: fix IOSF_MBI dependency
+
+on top of commit 651022382c7f8da46cb4872a545ee1da6d097d2a
+
+ Linux 4.20-rc1
+
+to receive an ACPI fix for 4.20-rc3.
+
+This fixes a recently introduced build issue in the xpower PMIC
+driver (Arnd Bergmann).
+
+Thanks!
+
+
+---------------
+
+Arnd Bergmann (1):
+      ACPI / PMIC: xpower: fix IOSF_MBI dependency
+
+---------------
+
+ drivers/acpi/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
