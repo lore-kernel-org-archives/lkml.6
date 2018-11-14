@@ -2,161 +2,177 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DBCEC07E85
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:27:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F549C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:30:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 58BC7224E0
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:27:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="sCEWcqXv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 58BC7224E0
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 44EEC22419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:30:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44EEC22419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733307AbeKOBbK (ORCPT
+        id S1733122AbeKOBe1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:31:10 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:39611 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732450AbeKOBbK (ORCPT
+        Wed, 14 Nov 2018 20:34:27 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59474 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727952AbeKOBe1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:31:10 -0500
-Received: by mail-lf1-f67.google.com with SMTP id n18so11803075lfh.6;
-        Wed, 14 Nov 2018 07:27:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=lxuyA6K3eFznfbr2HJR5peke0YfBJniX+SvMsHc8lJU=;
-        b=sCEWcqXvyQMq7WjKCExXW+cCb9Rv6DY/CJlcmInQ+jVqe+v32DYYNFL4/6bt66ZFNj
-         CjNefWx/GvtfM4yjl+EwjSS5RgnHt65SZw8Z4Qyzy2ZISvTgSAE3NFVjp3PECilXNfmx
-         OyI5K6fpbaewwBme7czFC0N+yhzAraBHWoZgLrVKCajXeDORJL5BZbOT4VFqHrUyw9Bh
-         KKlcI6R9Go5MBdqsnP98X9hjpj1HShluA4vboh2mlCN+M0CP12BTzA2VxtkzmMZi/Kzy
-         uA5+yTTQmPl6k/yYHj+o053P7MAvd8Qcr05uSUr36zdFh1NKOEmF6mF3c61GaM5ViUaA
-         dafA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=lxuyA6K3eFznfbr2HJR5peke0YfBJniX+SvMsHc8lJU=;
-        b=Al6+dmDlkj23VnWhCoUqmeMLwVC9bl3QZOCS9rFMAsYQF8VdwA5NLKeYBwulmiEnhh
-         Hh/nIoGuGCbuN9jjA3aXqmhzzbjcznZIoNU6VAaxfjiOUBC/ZGwHm0l43TidL09cwrYw
-         LiB+MEnavo+cb+sHO6/uyD/TprvYLEdR8r53Ngc/FUpVhf/tpubAoixipT4Vt7DCQI2H
-         H7L9f+A5gUwtZqjv+Al+sM+qHZGC5UTF2QgPeSufYIJnGkMCnGU7fY5RoH4QPiXKJ7EZ
-         kBlpwwxrHegH6UxbuZyrB7a0/5ZPnNeC7m9duMrp/p7WrYio7KdMqzU9FlyzsDLaIcQo
-         wvnw==
-X-Gm-Message-State: AGRZ1gK3AkIYsnDBMdSF/VfRuJRFJZWTzftIPj2SZ9Eoe9Gr3REiYi9n
-        VoKJ/c1p/vKAwBm0Ypq2EOE=
-X-Google-Smtp-Source: AJdET5fL8RlXSAVhJgY6Ojly6xH0/+zgBhgP4LVL9SwPb5V1McZHE48KGnY63ujexAGKH0IPO8eNSw==
-X-Received: by 2002:a19:c70a:: with SMTP id x10mr1254108lff.88.1542209246335;
-        Wed, 14 Nov 2018 07:27:26 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id i78sm3968314lfa.9.2018.11.14.07.27.25
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 07:27:25 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gMx4c-0005H9-T4; Wed, 14 Nov 2018 16:27:22 +0100
-Date:   Wed, 14 Nov 2018 16:27:22 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org,
-        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
-        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v1 1/4] Bluetooth: hci_qca: use wait_until_sent() for
- power pulses
-Message-ID: <20181114152722.GA19900@localhost>
-References: <20181106120528.30342-1-bgodavar@codeaurora.org>
- <20181106120528.30342-2-bgodavar@codeaurora.org>
+        Wed, 14 Nov 2018 20:34:27 -0500
+Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAEFUTT1032755
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 10:30:44 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nrp1rse3a-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 10:30:43 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 14 Nov 2018 15:30:42 -0000
+Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 14 Nov 2018 15:30:39 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAEFUcSf38338652
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 14 Nov 2018 15:30:38 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 3EADDB2064;
+        Wed, 14 Nov 2018 15:30:38 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id F3D04B205F;
+        Wed, 14 Nov 2018 15:30:37 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.230.167])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 14 Nov 2018 15:30:37 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 5BD2F16C34C5; Wed, 14 Nov 2018 07:30:37 -0800 (PST)
+Date:   Wed, 14 Nov 2018 07:30:37 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>
+Cc:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h in
+ 4.20-rc1
+Reply-To: paulmck@linux.ibm.com
+References: <dc5e555d-129e-aae8-889d-7b4e82197b3b@c-s.fr>
+ <20181109201030.GI4170@linux.ibm.com>
+ <9b4e6f39-f36b-06e2-ea96-92dec192edc7@c-s.fr>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20181106120528.30342-2-bgodavar@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9b4e6f39-f36b-06e2-ea96-92dec192edc7@c-s.fr>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111415-0040-0000-0000-000004925C38
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010048; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01117365; UDB=6.00577119; IPR=6.00897475;
+ MB=3.00024160; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-14 15:30:40
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111415-0041-0000-0000-0000089B671D
+Message-Id: <20181114153037.GU4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-14_13:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811140139
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 05:35:25PM +0530, Balakrishna Godavarthi wrote:
-> wcn3990 requires a power pulse to turn ON/OFF along with
-> regulators. Sometimes we are observing the power pulses are sent
-> out with some time delay, due to queuing these commands. This is
-> causing synchronization issues with chip, which intern delay the
-> chip setup or may end up with communication issues.
+On Wed, Nov 14, 2018 at 03:43:05PM +0100, Christophe LEROY wrote:
 > 
-> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
-> ---
->  drivers/bluetooth/hci_qca.c | 22 +++++++++-------------
->  1 file changed, 9 insertions(+), 13 deletions(-)
 > 
-> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
-> index f72ded4ec9ae..051f081d1835 100644
-> --- a/drivers/bluetooth/hci_qca.c
-> +++ b/drivers/bluetooth/hci_qca.c
-> @@ -1016,8 +1016,7 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
->  static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
->  {
->  	struct hci_uart *hu = hci_get_drvdata(hdev);
-> -	struct qca_data *qca = hu->priv;
-> -	struct sk_buff *skb;
-> +	int ret;
->  
->  	/* These power pulses are single byte command which are sent
->  	 * at required baudrate to wcn3990. On wcn3990, we have an external
-> @@ -1030,18 +1029,14 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
->  	 * sending power pulses to SoC.
->  	 */
->  	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
-> -
-> -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
-> -	if (!skb)
-> -		return -ENOMEM;
-> -
->  	hci_uart_set_flow_control(hu, true);
-> +	ret = serdev_device_write(hu->serdev, &cmd, sizeof(cmd), 0);
+> Le 09/11/2018 à 21:10, Paul E. McKenney a écrit :
+> >On Fri, Nov 09, 2018 at 06:11:20PM +0100, Christophe LEROY wrote:
+> >>(Resending due to error in Paul's address)
+> >>
+> >>Paul
+> >>
+> >>I get the following UBSAN reports in 4.20-rc1 on an MPC8321E
+> >>(powerpc/book3s/32)
+> >>
+> >>I bisected it to 3e31009898699dfc ("rcu: Defer reporting RCU-preempt
+> >>quiescent states when disabled")
+> >
+> >Fixed by dfdc33585b0a ("rcu: Avoid signed integer overflow in
+> >rcu_preempt_deferred_qs()") in my -rcu tree and in -next, which I intend
+> >to push into the next merge window.
+> 
+> Thanks, I confirm it fixes the issue.
+> 
+> Do you intend to push it into 4.20-rc3 or do you mean 4.21 ?
 
-Don't you want a non-zero timeout here? Otherwise you might as well call
-serdev_device_write() directly.
+The next merge window, which will be either v4.21 or v5.0.  The v4.20
+merge window is over and done.  ;-)
 
-Also have you made sure that serdev_device_write_wakeup() is called in
-the drivers write-wakeup callback as serdev_device_write() requires?
+Please note that the gcc command-line arguments used by the Linux kernel
+prevent the compiler from taking advantage of the C-standard signed
+integer overflow aspect of undefined behavior, so this is a aesthetic
+issue rather than a failure case.  Plus the C++ standards committee just
+voted in a change that gets rid of signed integer overflow completely.
+It is not clear whether the C language will also make this change, but
+it does require that the usual compilers have the ability to operate in
+this manner.
 
-See this series in case what you really wanted was to wait indefinitely
-(you can use MAX_SCHEDULE_TIMEOUT):
+							Thanx, Paul
 
-	https://lkml.kernel.org/r/<20181114150904.19653-1-johan@kernel.org>
+> Christophe
+> 
+> >							Thanx, Paul
+> >
+> >>Thanks
+> >>Christophe
+> >>
+> >>[    4.919995] ================================================================================
+> >>[    4.928428] UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h:623:28
+> >>[    4.935198] signed integer overflow:
+> >>[    4.938766] 0 - -2147483648 cannot be represented in type 'int'
+> >>[    4.944678] CPU: 0 PID: 119 Comm: mkdir Not tainted
+> >>4.19.0-rc1-s3k-dev-00005-g5a60513 #214
+> >>[    4.952908] Call Trace:
+> >>[    4.955382] [dec4fd20] [c02cb0d0] ubsan_epilogue+0x18/0x74 (unreliable)
+> >>[    4.962003] [dec4fd30] [c02cb5e0] handle_overflow+0xd0/0xe0
+> >>[    4.967588] [dec4fdb0] [c007b424] rcu_preempt_deferred_qs+0xc0/0xc8
+> >>[    4.973857] [dec4fdd0] [c007be28] rcu_note_context_switch+0x74/0x608
+> >>[    4.980217] [dec4fe10] [c064b790] __schedule+0x58/0x6e0
+> >>[    4.985448] [dec4fe50] [c064bfdc] preempt_schedule_common+0x48/0x9c
+> >>[    4.991717] [dec4fe70] [c01308c8] handle_mm_fault+0x10fc/0x1ecc
+> >>[    4.997639] [dec4fee0] [c001339c] do_page_fault+0x10c/0x760
+> >>[    5.003225] [dec4ff40] [c001234c] handle_page_fault+0x14/0x40
+> >>[    5.008968] --- interrupt: 401 at 0xff9cff8
+> >>[    5.008968]     LR = 0xfeefd78
+> >>[    5.016170] ================================================================================
+> >>[    5.024591] ================================================================================
+> >>[    5.033005] UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h:627:28
+> >>[    5.039775] signed integer overflow:
+> >>[    5.043342] -2147483648 + -2147483648 cannot be represented in type 'int'
+> >>[    5.050118] CPU: 0 PID: 119 Comm: mkdir Not tainted
+> >>4.19.0-rc1-s3k-dev-00005-g5a60513 #214
+> >>[    5.058348] Call Trace:
+> >>[    5.060813] [dec4fd20] [c02cb0d0] ubsan_epilogue+0x18/0x74 (unreliable)
+> >>[    5.067433] [dec4fd30] [c02cb5e0] handle_overflow+0xd0/0xe0
+> >>[    5.073014] [dec4fdb0] [c007b408] rcu_preempt_deferred_qs+0xa4/0xc8
+> >>[    5.079283] [dec4fdd0] [c007be28] rcu_note_context_switch+0x74/0x608
+> >>[    5.085640] [dec4fe10] [c064b790] __schedule+0x58/0x6e0
+> >>[    5.090871] [dec4fe50] [c064bfdc] preempt_schedule_common+0x48/0x9c
+> >>[    5.097139] [dec4fe70] [c01308c8] handle_mm_fault+0x10fc/0x1ecc
+> >>[    5.103059] [dec4fee0] [c001339c] do_page_fault+0x10c/0x760
+> >>[    5.108642] [dec4ff40] [c001234c] handle_page_fault+0x14/0x40
+> >>[    5.114385] --- interrupt: 401 at 0xff9cff8
+> >>[    5.114385]     LR = 0xfeefd78
+> >>[    5.121588] ================================================================================
+> >>
+> 
 
-> +	if (ret < 0) {
-> +		bt_dev_err(hdev, "failed to send power pulse %02x to SoC", cmd);
-> +		return ret;
-> +	}
->  
-> -	skb_put_u8(skb, cmd);
-> -	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
-> -
-> -	skb_queue_tail(&qca->txq, skb);
-> -	hci_uart_tx_wakeup(hu);
-> +	serdev_device_wait_until_sent(hu->serdev, 0);
->  
->  	/* Wait for 100 uS for SoC to settle down */
->  	usleep_range(100, 200);
-> @@ -1283,7 +1278,8 @@ static void qca_power_shutdown(struct hci_uart *hu)
->  
->  	host_set_baudrate(hu, 2400);
->  	hci_uart_set_flow_control(hu, true);
-> -	serdev_device_write_buf(serdev, &cmd, sizeof(cmd));
-> +	serdev_device_write(serdev, &cmd, sizeof(cmd), 0);
-
-Same here.
-
-> +	serdev_device_wait_until_sent(serdev, 0);
->  	hci_uart_set_flow_control(hu, false);
->  	qca_power_setup(hu, false);
->  }
-
-Johan
