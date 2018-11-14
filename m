@@ -2,103 +2,111 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-2.2 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 119AFC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:36:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2CD2EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:37:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D709022419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:35:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D709022419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id E692622419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:37:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E692622419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731321AbeKNTi0 (ORCPT
+        id S1732290AbeKNTj2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 14:38:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55756 "EHLO mx1.redhat.com"
+        Wed, 14 Nov 2018 14:39:28 -0500
+Received: from mga06.intel.com ([134.134.136.31]:22103 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727558AbeKNTi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 14:38:26 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 64A71307A281;
-        Wed, 14 Nov 2018 09:35:58 +0000 (UTC)
-Received: from ming.t460p (ovpn-8-18.pek2.redhat.com [10.72.8.18])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2B73B60BF7;
-        Wed, 14 Nov 2018 09:35:50 +0000 (UTC)
-Date:   Wed, 14 Nov 2018 17:35:46 +0800
-From:   Ming Lei <ming.lei@redhat.com>
-To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
-Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V7 2/4] blk-mq: fix issue directly case when q is stopped
- or quiesced
-Message-ID: <20181114093544.GD20550@ming.t460p>
-References: <1542185131-15029-1-git-send-email-jianchao.w.wang@oracle.com>
- <1542185131-15029-3-git-send-email-jianchao.w.wang@oracle.com>
- <20181114092022.GC20550@ming.t460p>
- <6b29fb1a-31bc-ac3e-cdbd-80b2a9c95e11@oracle.com>
+        id S1727558AbeKNTj2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 14:39:28 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 01:36:59 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,231,1539673200"; 
+   d="scan'208";a="108457865"
+Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
+  by orsmga002.jf.intel.com with ESMTP; 14 Nov 2018 01:36:54 -0800
+Received: from andy by smile with local (Exim 4.91)
+        (envelope-from <andy.shevchenko@gmail.com>)
+        id 1gMrbQ-0006uC-H6; Wed, 14 Nov 2018 11:36:52 +0200
+Date:   Wed, 14 Nov 2018 11:36:52 +0200
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        USB <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
+        rogerq@ti.com, Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Subject: Re: [PATCH v1 2/5] extcon: Return -EPROBE_DEFER when extcon device
+ is not found
+Message-ID: <20181114093652.GK10650@smile.fi.intel.com>
+References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
+ <CGME20181110181155epcas2p1ac9bffb2dc7dd6337db5c37f8a87bd5e@epcas2p1.samsung.com>
+ <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
+ <5BE8C821.5080002@samsung.com>
+ <5BEB63C3.1020504@samsung.com>
+ <CAHp75Vfe586+tr5mUdSHv4ehmpi0KwS_m+UC0tfFHrdXwKhkig@mail.gmail.com>
+ <5BEBE741.6050101@samsung.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <6b29fb1a-31bc-ac3e-cdbd-80b2a9c95e11@oracle.com>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 14 Nov 2018 09:35:58 +0000 (UTC)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5BEBE741.6050101@samsung.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 05:29:54PM +0800, jianchao.wang wrote:
-> Hi Ming
-> 
-> On 11/14/18 5:20 PM, Ming Lei wrote:
-> > On Wed, Nov 14, 2018 at 04:45:29PM +0800, Jianchao Wang wrote:
-> >> When try to issue request directly, if the queue is stopped or
-> >> quiesced, 'bypass' will be ignored and return BLK_STS_OK to caller
-> >> to avoid it dispatch request again. Then the request will be
-> >> inserted with blk_mq_sched_insert_request. This is not correct
-> >> for dm-rq case where we should avoid to pass through the underlying
-> >> path's io scheduler.
+On Wed, Nov 14, 2018 at 06:13:37PM +0900, Chanwoo Choi wrote:
+> On 2018년 11월 14일 17:35, Andy Shevchenko wrote:
+> > On Wed, Nov 14, 2018 at 1:53 AM Chanwoo Choi <cw00.choi@samsung.com> wrote:
+> > 
+> >> I was thinking about again to change from NULL to EPROBE_DEFER.
 > >>
-> >> To fix it, use blk_mq_request_bypass_insert to insert the request
-> >> to hctx->dispatch when we cannot pass through io scheduler but have
-> >> to insert.
+> >> extcon_get_extcon_dev() function was almost called in the probe function.
+> >> But, this function might be called on other position instead of probe.
 > > 
-> > Not sure if the current behaviour is wrong, or worth of a fix.
+> > *Might be* sounds like a theoretical thing, care to share what is in you mind?
+> > Current users and more important the new coming one are *all* doing the same.
 > > 
-> > Bypassing io scheduler for dm-rq is only for sake of performance
-> > because there has been io scheduler for dm device already, and we
-> > just don't want to schedule these requests twice.
+> >> ENODEV is more correct error instead of EPROBE_DEFER.
+> > 
+> > So, you are proposing to continue duplicating conversion from ENODEV
+> > to EPROBE_DEFER in *each* caller?
 > 
-> As comment of commit 157f377beb710e84bd8bc7a3c4475c0674ebebd7
-> (block: directly insert blk-mq request from blk_insert_cloned_request())
+> The extcon core don't know the caller situation is in either probe() or other position
+> in the caller driver. The caller driver should decide the kind of error value
+> by using the return value of extcon_get_extcon_dev().
 > 
->     All said, a request-based DM multipath device's IO scheduler should be
->     the only one used -- when the original requests are issued to the
->     underlying paths as cloned requests they are inserted directly in the
->     underlying dispatch queue(s) rather than through an additional elevator.
->     
->     But commit bd166ef18 ("blk-mq-sched: add framework for MQ capable IO
->     schedulers") switched blk_insert_cloned_request() from using
->     blk_mq_insert_request() to blk_mq_sched_insert_request().  Which
->     incorrectly added elevator machinery into a call chain that isn't
->     supposed to have any.
-> 
-> It sounds like a wrong action.
+> extcon_get_extcon_dev() function cannot be modified for only one case.
+> If some device driver call extcon_get_extcon_dev() out of probe() fuction,
+> EPROBE_DEFER is not always correct.
 
-As I mentioned, it is only for the sake of performance, and IO scheduler
-has to be supported on these devices too, for example, one partition may
-be under dm-rq, and another partition can be accessed directly.
+I agree with this, but look at the current state of affairs. All users do the same.
+If we need to have another case we may consider this later.
 
-However, you are fixing the handling when queue is quiesced or stopped.
-Under this situation, it is fine to put requests into scheduler queue,
-given no performance need to be worried.
+API inside the kernel are not carved in the stone.
 
-Thanks,
-Ming
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
