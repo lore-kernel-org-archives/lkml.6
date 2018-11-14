@@ -2,160 +2,174 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE39DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:33:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF666C07E85
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:35:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D84220854
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:33:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D84220854
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=fpond.eu
+	by mail.kernel.org (Postfix) with ESMTP id 7684C20854
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:35:28 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TgH7DnZ9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7684C20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731642AbeKNQfR (ORCPT
+        id S1731471AbeKNQhR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 11:35:17 -0500
-Received: from mo4-p01-ob.smtp.rzone.de ([85.215.255.54]:18670 "EHLO
-        mo4-p01-ob.smtp.rzone.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727375AbeKNQfR (ORCPT
+        Wed, 14 Nov 2018 11:37:17 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44220 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727375AbeKNQhR (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 11:35:17 -0500
-X-RZG-AUTH: ":OWANVUa4dPFUgKR/3dpvnYP0Np73amq+g13rqGzmt2bYDnKIKaws6YXTsc4="
-X-RZG-CLASS-ID: mo00
-Received: from oxapp05-01.back.ox.d0m.de
-        by smtp-ox.front (RZmta 44.3 AUTH)
-        with ESMTPSA id 20819cuAE6ULydX
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-SHA384 (curve X9_62_prime256v1 with 256 ECDH bits, eq. 3072 bits RSA))
-        (Client did not present a certificate);
-        Wed, 14 Nov 2018 07:30:21 +0100 (CET)
-Date:   Wed, 14 Nov 2018 07:30:21 +0100 (CET)
-From:   Ulrich Hecht <uli@fpond.eu>
-To:     Geert Uytterhoeven <geert+renesas@glider.be>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     Eric Auger <eric.auger@redhat.com>,
-        Alex Williamson <alex.williamson@redhat.com>,
-        kvm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Message-ID: <1090034354.41357.1542177021922@webmail.strato.com>
-In-Reply-To: <20181113124744.7769-1-geert+renesas@glider.be>
-References: <20181113124744.7769-1-geert+renesas@glider.be>
-Subject: Re: [PATCH] reset: Add reset_control_get_count()
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Priority: 3
-Importance: Medium
-X-Mailer: Open-Xchange Mailer v7.8.4-Rev46
-X-Originating-Client: open-xchange-appsuite
+        Wed, 14 Nov 2018 11:37:17 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b81-v6so6889052pfe.11
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 22:35:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=kMnO6BDIsJ30LH5c9BjM4P+/oJIF7vjQsNdnpI3Mr50=;
+        b=TgH7DnZ95OGJBBG6jI8YaodhraQ7LsfrBfI1+BrxD+b27jFPURb+7jJX8YA71GVMJs
+         img0aCfDD/O0XLVW2vDMbXNY7/Kd5Q/19YIteIU0n4jRZtb+q88urFnOuPeqMBOYs1V+
+         FhDVEaaVNTTH8XFtlf/0ApvYEq6Wjtdu0QH0E=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=kMnO6BDIsJ30LH5c9BjM4P+/oJIF7vjQsNdnpI3Mr50=;
+        b=lunGNzkwg6skR/0G78bmIXd9851JCk0skcoCny3yjY4b/eM89LHtrtl3Lk8xMpsFPb
+         2ZaPMoSP9f15V7QOi5hoTxYCBlYFhtW75s7LlMzx3L4+iD6LH91dZLXC5CQow3VRDhRZ
+         Dnpo4+2n+plCxL2iPEL1QkfeD9492sQiOTej8rxHyxqsZtmqSWz9Y+D1Z1Wa1dmkAQsu
+         Lsmq1/auH1QKNgwVWy8XxqKlkuoOCnWvj3dSg0BaVLsd1XC/ZoQUp9mUhmmykW8/0cMz
+         1Ivyl3/dPuTUxsDPuRMihgoB8afmTR2lzBEGIYCtv7nmra1ixgjElYiBZm7u2XEjxJju
+         OU2Q==
+X-Gm-Message-State: AGRZ1gIToGW8YpSqoDXqyFSMb8FxbeDCvB9wDfWg4qnGTW4wtHrNrec+
+        OEPx6clXZqja0LUBfWcT60ZjlA==
+X-Google-Smtp-Source: AJdET5eTZ36mHZ++hqrdKXLoyuglANBvDeMD0ST3QAIlPBNaVc76O+3ndIn8XXj4hX2SsQ3uDcmC7A==
+X-Received: by 2002:a63:2ad4:: with SMTP id q203-v6mr618192pgq.356.1542177325572;
+        Tue, 13 Nov 2018 22:35:25 -0800 (PST)
+Received: from qualcomm-HP-ZBook-14-G2.qualcomm.com (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com. [103.229.18.19])
+        by smtp.gmail.com with ESMTPSA id l26-v6sm39097318pfg.161.2018.11.13.22.35.20
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Tue, 13 Nov 2018 22:35:24 -0800 (PST)
+From:   Firoz Khan <firoz.khan@linaro.org>
+To:     linux-parisc@vger.kernel.org,
+        "James E . J . Bottomley" <jejb@parisc-linux.org>,
+        Helge Deller <deller@gmx.de>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>
+Cc:     y2038@lists.linaro.org, linux-kernel@vger.kernel.org,
+        linux-arch@vger.kernel.org, arnd@arndb.de, deepa.kernel@gmail.com,
+        marcin.juszkiewicz@linaro.org, firoz.khan@linaro.org
+Subject: [PATCH v7 0/5] parisc: system call table generation support
+Date:   Wed, 14 Nov 2018 12:04:56 +0530
+Message-Id: <1542177301-25844-1-git-send-email-firoz.khan@linaro.org>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thank you for your patch.
+The purpose of this patch series is, we can easily
+add/modify/delete system call table support by cha-
+nging entry in syscall.tbl file instead of manually
+changing many files. The other goal is to unify the
+system call table generation support implementation
+across all the architectures.
 
-> On November 13, 2018 at 1:47 PM Geert Uytterhoeven <geert+renesas@glider.be> wrote:
-> 
-> 
-> Currently the reset core has internal support for counting the number of
-> resets for a device described in DT.  Generalize this to devices using
-> lookup resets, and export it for public use.
-> 
-> This will be used by generic drivers that need to be sure a device is
-> controlled by a single, dedicated reset line (e.g. vfio-platform).
-> 
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
-> See https://lore.kernel.org/lkml/1539003437.11512.20.camel@pengutronix.de/
-> for the rationale to ensure a single, dedicated reset line.
-> 
->  drivers/reset/core.c  | 41 +++++++++++++++++++++++++++++++++++++++++
->  include/linux/reset.h |  7 +++++++
->  2 files changed, 48 insertions(+)
-> 
-> diff --git a/drivers/reset/core.c b/drivers/reset/core.c
-> index 654e20ff2d5da9d4..c32b755ec373c338 100644
-> --- a/drivers/reset/core.c
-> +++ b/drivers/reset/core.c
-> @@ -859,3 +859,44 @@ devm_reset_control_array_get(struct device *dev, bool shared, bool optional)
->  	return rstc;
->  }
->  EXPORT_SYMBOL_GPL(devm_reset_control_array_get);
-> +
-> +static int reset_control_get_count_from_lookup(struct device *dev)
-> +{
-> +	const struct reset_control_lookup *lookup;
-> +	const char *dev_id = dev_name(dev);
-> +	int count = 0;
-> +
-> +	if (!dev)
-> +		return -EINVAL;
-> +
-> +	mutex_lock(&reset_lookup_mutex);
-> +
-> +	list_for_each_entry(lookup, &reset_lookup_list, list) {
-> +		if (!strcmp(lookup->dev_id, dev_id))
-> +			count++;
-> +	}
-> +
-> +	mutex_unlock(&reset_lookup_mutex);
-> +
-> +	if (count == 0)
-> +		count = -ENOENT;
-> +
-> +	return count;
-> +}
-> +
-> +/**
-> + * of_reset_control_get_count - Count number of resets available with a device
+The system call tables are in different format in
+all architecture. It will be difficult to manually
+add, modify or delete the system calls in the resp-
+ective files manually. To make it easy by keeping a
+script and which'll generate uapi header file and
+syscall table file.
 
-Should be "reset_control_get_count", without of_ prefix.
+syscall.tbl contains the list of available system
+calls along with system call number and correspond-
+ing entry point. Add a new system call in this arch-
+itecture will be possible by adding new entry in the
+syscall.tbl file.
 
-> + *
-> + * @dev: device for which to return the number of resets
-> + *
-> + * Returns positive reset count on success, or error number on failure and
-> + * on count being zero.
-> + */
-> +int reset_control_get_count(struct device *dev)
-> +{
-> +	if (dev->of_node)
-> +		return of_reset_control_get_count(dev->of_node);
-> +
-> +	return reset_control_get_count_from_lookup(dev);
-> +}
-> +EXPORT_SYMBOL_GPL(reset_control_get_count);
-> diff --git a/include/linux/reset.h b/include/linux/reset.h
-> index f0b094130686bf32..2698b36bd1eb3e0c 100644
-> --- a/include/linux/reset.h
-> +++ b/include/linux/reset.h
-> @@ -32,6 +32,8 @@ struct reset_control *devm_reset_control_array_get(struct device *dev,
->  struct reset_control *of_reset_control_array_get(struct device_node *np,
->  						 bool shared, bool optional);
->  
-> +int reset_control_get_count(struct device *dev);
-> +
->  #else
->  
->  static inline int reset_control_reset(struct reset_control *rstc)
-> @@ -97,6 +99,11 @@ of_reset_control_array_get(struct device_node *np, bool shared, bool optional)
->  	return optional ? NULL : ERR_PTR(-ENOTSUPP);
->  }
->  
-> +static inline int reset_control_get_count(struct device *dev)
-> +{
-> +	return -ENOENT;
-> +}
-> +
->  #endif /* CONFIG_RESET_CONTROLLER */
->  
->  static inline int __must_check device_reset(struct device *dev)
-> -- 
-> 2.17.1
->
+Adding a new table entry consisting of:
+        - System call number.
+        - ABI.
+        - System call name.
+        - Entry point name.
 
-CU
-Uli
+ARM, s390 and x86 architecuture does exist the sim-
+ilar support. I leverage their implementation to
+come up with a generic solution.
+
+I have done the same support for work for alpha, ia64,
+m68k, microblaze, mips, powerpc, sh, sparc and xtensa.
+Below mentioned git repository contains more details
+about the workflow.
+
+https://github.com/frzkhn/system_call_table_generator/
+
+Finally, this is the ground work to solve the Y2038
+issue. We need to add two dozen of system calls to
+solve Y2038 issue. So this patch series will help to
+add new system calls easily by adding new entry in
+the syscall.tbl.
+
+changes since v6:
+ - changed from generic-y to generated-y in Kbuild.
+
+changes since v5:
+ - optimized/updated the syscall table generation
+   scripts.
+ - fixed all mixed indentation issues in syscall.tbl.
+ - added "comments" in syscall_*.tbl.
+
+changes since v4:
+ - optimized/updated the syscall table generation
+   scripts.
+ - removed __IGNORE entries which was added in v2
+   to suppress the warning.
+
+changes since v3:
+ - optimized/updated the syscall table generation
+   scripts.
+ - added missing new line.
+
+changes since v2:
+ - updated the syscall.tbl file by including missed
+   entries.
+
+changes since v1:
+ - enclosed __NR_sycalls macro with __KERNEL__.
+
+Firoz Khan (5):
+  parisc: move __IGNORE* entries to non uapi header
+  parisc: add __NR_syscalls along with __NR_Linux_syscalls
+  parisc: add system call table generation support
+  parisc: generate uapi header and system call table files
+  parisc: syscalls: ignore nfsservctl for other architectures
+
+ arch/parisc/Makefile                      |   3 +
+ arch/parisc/include/asm/Kbuild            |   3 +
+ arch/parisc/include/asm/unistd.h          |   8 +
+ arch/parisc/include/uapi/asm/Kbuild       |   2 +
+ arch/parisc/include/uapi/asm/unistd.h     | 382 +------------------------
+ arch/parisc/kernel/syscall.S              |  11 +-
+ arch/parisc/kernel/syscall_table.S        | 459 ------------------------------
+ arch/parisc/kernel/syscalls/Makefile      |  57 ++++
+ arch/parisc/kernel/syscalls/syscall.tbl   | 369 ++++++++++++++++++++++++
+ arch/parisc/kernel/syscalls/syscallhdr.sh |  36 +++
+ arch/parisc/kernel/syscalls/syscalltbl.sh |  36 +++
+ scripts/checksyscalls.sh                  |   1 +
+ 12 files changed, 531 insertions(+), 836 deletions(-)
+ delete mode 100644 arch/parisc/kernel/syscall_table.S
+ create mode 100644 arch/parisc/kernel/syscalls/Makefile
+ create mode 100644 arch/parisc/kernel/syscalls/syscall.tbl
+ create mode 100644 arch/parisc/kernel/syscalls/syscallhdr.sh
+ create mode 100644 arch/parisc/kernel/syscalls/syscalltbl.sh
+
+-- 
+1.9.1
+
