@@ -2,109 +2,103 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92DCEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:33:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 119AFC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:36:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 57046223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:33:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=mobiveil.co.in header.i=@mobiveil.co.in header.b="l0oUMgVi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 57046223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mobiveil.co.in
+	by mail.kernel.org (Postfix) with ESMTP id D709022419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:35:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D709022419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731245AbeKNTfk (ORCPT
+        id S1731321AbeKNTi0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 14:35:40 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:38883 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727558AbeKNTfj (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 14:35:39 -0500
-Received: by mail-wr1-f65.google.com with SMTP id e3-v6so16485041wrs.5
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 01:33:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mobiveil.co.in; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=D5Lp9ntbsbh28GYUXUxxGmzBKIyMj7U/1WLCquFYSRo=;
-        b=l0oUMgVi8b67BPrJLTFJtkGqwT/S7KOtygHVB12epp3TAu+as9kZEYNzQ5xlB3/i3V
-         C3xnHyo9y9fAYr5fqSM+ss9/25h26VRk88ljBcfwY9mI5paAIGJK9IHJFKsa/mnuSS9s
-         cdDFCCYJgkvzRV1hqEisas4eE4Kptcmlt9EEE=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=D5Lp9ntbsbh28GYUXUxxGmzBKIyMj7U/1WLCquFYSRo=;
-        b=kEnpYYc+iouhgYHxHia049MJkXbKoJudeUmJqhuIkadmcXZ6cmpQ8AE/vAuxxXZg/9
-         x/tJG7doLq5XCP/cPTOD4Z+5jWYfdjdh3/aX8+QNfQ7hml9qxsJMhLHjEZvreUzh6gMu
-         Qf+juuejf0K4DfIUovWyvd08PMot3XF8iAkMnPvXpJSa+Ixt18PKDrobtwjOJ1dj1p6a
-         s+iLpT0r0nq8gsr5VmNI1dJYLEPwc4oF3hpSmDZq6K2kdmLDg5fn0+3RQzjsjrCMJLdr
-         sKrHlE7+cZ+CyiThGixpJX/583HgPdjXdGf9BAKDqWg10fG6cKp9/RzHL3hAT7PbIg4q
-         0f6g==
-X-Gm-Message-State: AGRZ1gJubDIWxJFa4M3AcKYzkXJdAADhlAMUdSbTLUx60B3B4VO46Fwc
-        Qt/ghD7HYZbc0l65JdRLd8kgVYzTzZ/7GcvCdAB5rw==
-X-Google-Smtp-Source: AJdET5cz1zJp/8q+kJ+haPqz1PNbmURdYIudfTmNyFrNugTqoS6UNGnpr5++Q/HS3izrFQjimH/MJlE+3ku/eYw52XM=
-X-Received: by 2002:a5d:4ec4:: with SMTP id s4-v6mr1066220wrv.32.1542187990966;
- Wed, 14 Nov 2018 01:33:10 -0800 (PST)
+        Wed, 14 Nov 2018 14:38:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55756 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727558AbeKNTi0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 14:38:26 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 64A71307A281;
+        Wed, 14 Nov 2018 09:35:58 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 2B73B60BF7;
+        Wed, 14 Nov 2018 09:35:50 +0000 (UTC)
+Date:   Wed, 14 Nov 2018 17:35:46 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V7 2/4] blk-mq: fix issue directly case when q is stopped
+ or quiesced
+Message-ID: <20181114093544.GD20550@ming.t460p>
+References: <1542185131-15029-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1542185131-15029-3-git-send-email-jianchao.w.wang@oracle.com>
+ <20181114092022.GC20550@ming.t460p>
+ <6b29fb1a-31bc-ac3e-cdbd-80b2a9c95e11@oracle.com>
 MIME-Version: 1.0
-References: <20181106131807.29951-1-Zhiqiang.Hou@nxp.com> <20181106131807.29951-16-Zhiqiang.Hou@nxp.com>
-In-Reply-To: <20181106131807.29951-16-Zhiqiang.Hou@nxp.com>
-From:   Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
-Date:   Wed, 14 Nov 2018 15:03:26 +0530
-Message-ID: <CAFZiPx270bWemYRekvk1BZ23RW3ecK+znEc6C1Dix_U-2y+cnA@mail.gmail.com>
-Subject: Re: [PATCH 15/23] dt-bindings: pci: mobiveil: change gpio_slave and
- apb_csr to optional
-To:     "Z.q. Hou" <zhiqiang.hou@nxp.com>
-Cc:     linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>, robh+dt@kernel.org,
-        mark.rutland@arm.com, shawnguo@kernel.org,
-        Leo Li <leoyang.li@nxp.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Mingkai Hu <mingkai.hu@nxp.com>,
-        "M.h. Lian" <minghuan.lian@nxp.com>, xiaowei.bao@nxp.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6b29fb1a-31bc-ac3e-cdbd-80b2a9c95e11@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Wed, 14 Nov 2018 09:35:58 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Acked-by: Subrahmanya Lingappa <l.subrahmanya@mobiveil.co.in>
+On Wed, Nov 14, 2018 at 05:29:54PM +0800, jianchao.wang wrote:
+> Hi Ming
+> 
+> On 11/14/18 5:20 PM, Ming Lei wrote:
+> > On Wed, Nov 14, 2018 at 04:45:29PM +0800, Jianchao Wang wrote:
+> >> When try to issue request directly, if the queue is stopped or
+> >> quiesced, 'bypass' will be ignored and return BLK_STS_OK to caller
+> >> to avoid it dispatch request again. Then the request will be
+> >> inserted with blk_mq_sched_insert_request. This is not correct
+> >> for dm-rq case where we should avoid to pass through the underlying
+> >> path's io scheduler.
+> >>
+> >> To fix it, use blk_mq_request_bypass_insert to insert the request
+> >> to hctx->dispatch when we cannot pass through io scheduler but have
+> >> to insert.
+> > 
+> > Not sure if the current behaviour is wrong, or worth of a fix.
+> > 
+> > Bypassing io scheduler for dm-rq is only for sake of performance
+> > because there has been io scheduler for dm device already, and we
+> > just don't want to schedule these requests twice.
+> 
+> As comment of commit 157f377beb710e84bd8bc7a3c4475c0674ebebd7
+> (block: directly insert blk-mq request from blk_insert_cloned_request())
+> 
+>     All said, a request-based DM multipath device's IO scheduler should be
+>     the only one used -- when the original requests are issued to the
+>     underlying paths as cloned requests they are inserted directly in the
+>     underlying dispatch queue(s) rather than through an additional elevator.
+>     
+>     But commit bd166ef18 ("blk-mq-sched: add framework for MQ capable IO
+>     schedulers") switched blk_insert_cloned_request() from using
+>     blk_mq_insert_request() to blk_mq_sched_insert_request().  Which
+>     incorrectly added elevator machinery into a call chain that isn't
+>     supposed to have any.
+> 
+> It sounds like a wrong action.
 
-On Tue, Nov 6, 2018 at 6:50 PM Z.q. Hou <zhiqiang.hou@nxp.com> wrote:
->
-> From: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
->
-> Change the "gpio_slave" and "apb_csr" to optional, the "gpio_slave"
-> is not used in current code, and "apb_csr" is not used by some
-> platorms.
->
-> Signed-off-by: Hou Zhiqiang <Zhiqiang.Hou@nxp.com>
-> ---
->  Documentation/devicetree/bindings/pci/mobiveil-pcie.txt | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/pci/mobiveil-pcie.txt b/Documentation/devicetree/bindings/pci/mobiveil-pcie.txt
-> index a618d4787dd7..64156993e052 100644
-> --- a/Documentation/devicetree/bindings/pci/mobiveil-pcie.txt
-> +++ b/Documentation/devicetree/bindings/pci/mobiveil-pcie.txt
-> @@ -10,8 +10,10 @@ Required properties:
->         interrupt source. The value must be 1.
->  - compatible: Should contain "mbvl,gpex40-pcie"
->  - reg: Should contain PCIe registers location and length
-> +       Mandatory:
->         "config_axi_slave": PCIe controller registers
->         "csr_axi_slave"   : Bridge config registers
-> +       Optional:
->         "gpio_slave"      : GPIO registers to control slot power
->         "apb_csr"         : MSI registers
->
-> --
-> 2.17.1
->
+As I mentioned, it is only for the sake of performance, and IO scheduler
+has to be supported on these devices too, for example, one partition may
+be under dm-rq, and another partition can be accessed directly.
+
+However, you are fixing the handling when queue is quiesced or stopped.
+Under this situation, it is fine to put requests into scheduler queue,
+given no performance need to be worried.
+
+Thanks,
+Ming
