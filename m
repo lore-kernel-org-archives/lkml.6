@@ -2,129 +2,204 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43324C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:21:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD765C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:21:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DD5F62145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:21:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD5F62145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
+	by mail.kernel.org (Postfix) with ESMTP id 6EF7F2080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:21:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF7F2080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732909AbeKNUYH (ORCPT
+        id S1732766AbeKNUYf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 15:24:07 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:46713 "EHLO
-        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728071AbeKNUYG (ORCPT
+        Wed, 14 Nov 2018 15:24:35 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:42100 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728071AbeKNUYf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 15:24:06 -0500
-Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAEAItg8004302;
-        Wed, 14 Nov 2018 11:20:58 +0100
-Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2nr7d4b21m-1
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Wed, 14 Nov 2018 11:20:58 +0100
-Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3480A3A;
-        Wed, 14 Nov 2018 10:20:57 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id D27EB270C;
-        Wed, 14 Nov 2018 10:20:56 +0000 (GMT)
-Received: from SFHDAG3NODE1.st.com (10.75.127.7) by SFHDAG5NODE2.st.com
- (10.75.127.14) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Wed, 14 Nov
- 2018 11:20:55 +0100
-Received: from SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86]) by
- SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86%20]) with mapi id
- 15.00.1347.000; Wed, 14 Nov 2018 11:20:55 +0100
-From:   Bich HEMON <bich.hemon@st.com>
-To:     Olof Johansson <olof@lixom.net>
-CC:     Russell King <linux@armlinux.org.uk>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre TORGUE <alexandre.torgue@st.com>,
-        Gerald BAEZA <gerald.baeza@st.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Ludovic BARRE <ludovic.barre@st.com>
-Subject: Re: [PATCH] ARM: stm32: debug: add low-level debug support
-Thread-Topic: [PATCH] ARM: stm32: debug: add low-level debug support
-Thread-Index: AQHTBvhu7ZuVgRQin0SIqpXfFjas8qVPSqoAgAD5r4CAAAJGgIAADqwAgACS2gCAAQCZAA==
-Date:   Wed, 14 Nov 2018 10:20:55 +0000
-Message-ID: <c836343d-7a22-7cb9-e635-29d301ab8387@st.com>
-References: <1501174209-27550-1-git-send-email-bich.hemon@st.com>
- <1501174209-27550-2-git-send-email-bich.hemon@st.com>
- <20181112182236.s7cs6dol4dmxkp7u@localhost>
- <f244c67b-de86-b0e7-7283-7b27f9591cf9@st.com>
- <20181113092422.GJ30658@n2100.armlinux.org.uk>
- <94666165-f206-5472-c848-499ba52cd354@st.com>
- <CAOesGMgBdzYthdoWzzSFqOHOfCyY_9jZBkDSpLtkWeVdOkLkTQ@mail.gmail.com>
-In-Reply-To: <CAOesGMgBdzYthdoWzzSFqOHOfCyY_9jZBkDSpLtkWeVdOkLkTQ@mail.gmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-user-agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-x-ms-exchange-messagesentrepresentingtype: 1
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.75.127.49]
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D2BB4136BC40FA4698FB63CCF108F4F8@st.com>
-Content-Transfer-Encoding: base64
+        Wed, 14 Nov 2018 15:24:35 -0500
+Received: by mail-ed1-f67.google.com with SMTP id j6so8159327edp.9;
+        Wed, 14 Nov 2018 02:21:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NyI4zlt3ENMEtsl6srjlGkp8VgEV9Zi81V1qPxmM7FM=;
+        b=MgeP7dECTA8mLZriMN7pzKkZE6euxL/WSIhBOIpRDK7alKbvUp7EIrwoJNZvAB4XgT
+         1ogz47nTEuuV6fLm4H2/3gnthNHbYk9UJM3oAHDC4XCJne8ku/Pb7Z44gqNeTpxSBoZ0
+         1vZrqpG/enxootW12fOUsqjHZQLARw8j49KoNh0nWQoskbYYO7xSafCGWvkLgqg7Q3O0
+         kvmHB5MAb/sUpoJ8LvfJHbYdHaBPLYxk9VJsFFioKiCNnYxCKWIYWIkQwiEsdLN27l6P
+         WEgPQIFEoL3836x0C5mltrdyzmnsvFyFiScevNSSLHbrj4Mqa0LwE/G+3nqD+yJ1JvAC
+         hirA==
+X-Gm-Message-State: AGRZ1gIIBA0aHT2Ow58zPITdsFwXV/NquXzTyvlvPrBGd+Lj1fkUfe8E
+        5tuA0Js5Ws9A/bv2F++1qkRKADXTR60=
+X-Google-Smtp-Source: AJdET5eSJYTqFrAdzl6q0SOvlSiHNBRvf4joIg6GzZytJT6c9oGcGv86A/CIyDRPJsLo12HKmdd5SA==
+X-Received: by 2002:a50:ccdd:: with SMTP id b29mr1595990edj.102.1542190915042;
+        Wed, 14 Nov 2018 02:21:55 -0800 (PST)
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
+        by smtp.gmail.com with ESMTPSA id o31-v6sm6049526eda.72.2018.11.14.02.21.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 02:21:54 -0800 (PST)
+Received: by mail-wm1-f50.google.com with SMTP id f1-v6so13129642wmg.1;
+        Wed, 14 Nov 2018 02:21:54 -0800 (PST)
+X-Received: by 2002:a1c:9f01:: with SMTP id i1-v6mr1316165wme.8.1542190914018;
+ Wed, 14 Nov 2018 02:21:54 -0800 (PST)
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-14_08:,,
- signatures=0
+References: <20181004122855.22981-1-icenowy@aosc.io> <20181004122855.22981-5-icenowy@aosc.io>
+In-Reply-To: <20181004122855.22981-5-icenowy@aosc.io>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Wed, 14 Nov 2018 18:21:33 +0800
+X-Gmail-Original-Message-ID: <CAGb2v668dozjLm9mWUw_Y12AZ6DM2ku9dgQ8B8feABNeFf3QSw@mail.gmail.com>
+Message-ID: <CAGb2v668dozjLm9mWUw_Y12AZ6DM2ku9dgQ8B8feABNeFf3QSw@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 04/10] arm64: allwinner: dts: h6: add
+ USB2-related device nodes
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGkgT2xvZiwNCg0KSSBoYWQgYSBsb29rIGF0IHlvdXIgbmV4dCBicmFuY2ggYW5kIG5vIGZpeCBp
-cyByZXF1aXJlZCBhcyB5b3UgY29ycmVjdGVkIA0KaXQgYWxsIGJ5IGNvbnNvbGlkYXRpbmcgTHVk
-b3ZpYydzIHZlcnNpb24gd2l0aCBtaW5lLg0KDQpUaGFua3MgYSBsb3QhDQoNCkJpY2gNCg0KT24g
-MTEvMTMvMTggODowMiBQTSwgT2xvZiBKb2hhbnNzb24gd3JvdGU6DQo+IFRha2UgYSBsb29rIGF0
-IHRoZSBwYXRjaCBJIG1lcmdlZCwgYW5kIHBsZWFzZSBmb2xsb3cgdXAgd2l0aCBhbnkgcGF0Y2gN
-Cj4gdG8gZml4dXAgYW55IGlzc3VlIHlvdSBmaW5kIHdpdGggaXQuDQo+IA0KPiBBcyBtZW50aW9u
-ZWQgaW4gbXkgb3JpZ2luYWwgZW1haWwsIEkgdHJpZWQgdG8gY29uc29saWRhdGUgdGhlIHR3bw0K
-PiB2ZXJzaW9ucywgc28gYSBsb29rLXRocm91Z2ggYW5kIGZvbGxvdyB1cCB3aXRoIGZpeGVzIHdv
-dWxkIGJlDQo+IGFwcHJlY2lhdGVkLiBUaGFua3MhDQo+IA0KPiANCj4gLU9sb2YNCj4gDQo+IE9u
-IFR1ZSwgTm92IDEzLCAyMDE4IGF0IDI6MTcgQU0gQmljaCBIRU1PTiA8YmljaC5oZW1vbkBzdC5j
-b20+IHdyb3RlOg0KPj4NCj4+DQo+Pg0KPj4gT24gMTEvMTMvMTggMTA6MjQgQU0sIFJ1c3NlbGwg
-S2luZyAtIEFSTSBMaW51eCB3cm90ZToNCj4+PiBPbiBUdWUsIE5vdiAxMywgMjAxOCBhdCAwOTox
-NjoxNkFNICswMDAwLCBCaWNoIEhFTU9OIHdyb3RlOg0KPj4+Pg0KPj4+PiBPbiAxMS8xMi8xOCA3
-OjIyIFBNLCBPbG9mIEpvaGFuc3NvbiB3cm90ZToNCj4+Pj4+IE9uIFRodSwgSnVsIDI3LCAyMDE3
-IGF0IDA0OjUwOjIwUE0gKzAwMDAsIEJpY2ggSEVNT04gd3JvdGU6DQo+Pj4+Pj4gRnJvbTogR2Vy
-YWxkIEJhZXphIDxnZXJhbGQuYmFlemFAc3QuY29tPg0KPj4+Pj4+DQo+Pj4+Pj4gVGhpcyBhZGRz
-IGxvdy1sZXZlbCBkZWJ1ZyBzdXBwb3J0IG9uIFVTQVJUMSBmb3IgU1RNMzJGNA0KPj4+Pj4+IGFu
-ZCBTVE0zMkY3Lg0KPj4+Pj4+IENvbXBpbGVkIHZpYSAnQ09ORklHX0RFQlVHX0xMJyBhbmQgJ0NP
-TkZJR19FQVJMWV9QUklOVEsnLg0KPj4+Pj4+IEVuYWJsZWQgdmlhICdlYXJseXByaW50aycgaW4g
-Ym9vdGFyZ3MuDQo+Pj4+Pj4NCj4+Pj4+PiBTaWduZWQtb2ZmLWJ5OiBHZXJhbGQgQmFlemEgPGdl
-cmFsZC5iYWV6YUBzdC5jb20+DQo+Pj4+Pj4gU2lnbmVkLW9mZi1ieTogQmljaCBIZW1vbiA8Ymlj
-aC5oZW1vbkBzdC5jb20+DQo+Pj4+Pg0KPj4+Pj4gSGksDQo+Pj4+Pg0KPj4+Pj4gVGhpcyBoYWQg
-ZmFsbGVuIGJldHdlZW4gdGhlIGNoYWlycyBpdCBzZWVtcy4gSSBoYXZlIGFwcGxpZWQgaXQgdG8g
-YXJtLXNvYw0KPj4+Pj4gbmV4dC9zb2Mgbm93LCBmb3IgNC4yMSBtZXJnZSB3aW5kb3cuDQo+Pj4+
-Pg0KPj4+Pj4gSXQgZW5kZWQgdXAgYmVpbmcgcGF0Y2hlZCB1cCBtYW51YWxseSB0byBjb25zb2xp
-ZGF0ZSB0aGUgdmVyc2lvbiBpbg0KPj4+Pj4gUnVzc2VsbCdzIHBhdGNoIHRyYWNrZXIgd2l0aCB0
-aGlzIHBvc3RlZCB2ZXJzaW9uLCBhbmQgSSB0d2Vha2VkIHdoaXRlc3BhY2UNCj4+Pj4+IGEgYml0
-LiBMZXQgbWUga25vdyBpZiBJIG1pc3NlZCBzb21ldGhpbmcuDQo+Pj4+Pg0KPj4+Pj4NCj4+Pj4+
-IFRoYW5rcywNCj4+Pj4+DQo+Pj4+PiAtT2xvZg0KPj4+Pj4NCj4+Pj4NCj4+Pj4gSGkgT2xvZiwN
-Cj4+Pj4NCj4+Pj4gUGxlYXNlIG5vdGUgdGhhdCB0aGlzIHBhdGNoIGhhcyB0byBiZSBhYmFuZG9u
-ZWQgYXMgTHVkb3ZpYyBCQVJSRSBwdXNoZWQNCj4+Pj4gYSBuZXcgdmVyc2lvbiBvZiB0aGlzIGNo
-YW5nZToNCj4+Pj4gaHR0cHM6Ly9wYXRjaHdvcmsuY29kZWF1cm9yYS5vcmcvcGF0Y2gvNDAwNTYz
-Lw0KPj4+Pg0KPj4+PiBZb3UgY2FuIGZpbmQgaXQgaW4gUnVzc2VsbCdzIHRyYWNrZXIgaGVyZToN
-Cj4+Pj4gaHR0cDovL3d3dy5hcm0ubGludXgub3JnLnVrL2RldmVsb3Blci9wYXRjaGVzL3ZpZXdw
-YXRjaC5waHA/aWQ9ODgwMy8xDQo+Pj4NCj4+PiBBbmQgSSdtIG5vdCBnb2luZyB0byBtZXJnZSB0
-aGF0IGJlY2F1c2U6DQo+Pj4NCj4+PiAxKSBpdCdzIG5vdCBmb3IgbWUgdG8gbWVyZ2UgLSBpdCBk
-b2Vzbid0IGdvIHRocm91Z2ggbXkgdHJlZSwgYnV0IHRocm91Z2gNCj4+PiAgICAgIGFybS1zb2Ms
-IHdoaWNoIE9sb2YgYW5kIEFybmQgbWFuYWdlLg0KPj4+IDIpIGl0J3Mgbm90IGJlZW4gb24gdGhl
-IG1haWxpbmcgbGlzdCBhcyBwZXIgbm9ybWFsIHN1Ym1pc3Npb24gcHJvY2Vzcy4NCj4+Pg0KPj4+
-IFNvcnJ5Lg0KPj4+DQo+Pg0KPj4gT2ssIHRoYW5rIHlvdSBmb3IgdGhlIGZlZWRiYWNrLg0KPj4N
-Cj4+IFNvIE9sb2YsIGNhbiB5b3UgcGxlYXNlIGlnbm9yZSBteSBwcmV2aW91cyBlbWFpbCBhbmQg
-bWVyZ2UgbXkgcGF0Y2ggYXMNCj4+IHlvdSBwcm9wb3NlZCBpdCBmb3IgNC4yMS4gTHVkb3ZpYydz
-IHBhdGNoIHdpbGwgYmUgYWJhbmRvbmVkIGluc3RlYWQuDQo+Pg0KPj4gVGhhbmtzLA0KPj4NCj4+
-IEJpY2g=
+Hi,
+
+On Thu, Oct 4, 2018 at 8:30 PM Icenowy Zheng <icenowy@aosc.io> wrote:
+>
+> Allwinner H6 has two USB2 ports, one OTG and one host-only.
+>
+> Add device tree nodes related to them.
+>
+> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> ---
+> No changes in v4.
+>
+> Changes in v3:
+> - Removed the wrongly introduced usb3phy node.
+> - Added Chen-Yu's Review tag.
+>
+>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 81 ++++++++++++++++++++
+>  1 file changed, 81 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> index 040828d2e2c0..3d60af6cb3ae 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> @@ -258,6 +258,87 @@
+>                         status = "disabled";
+>                 };
+>
+> +               usb2otg: usb@5100000 {
+> +                       compatible = "allwinner,sun8i-a33-musb";
+
+I added an SoC-specific compatible: "allwinner,sun50i-h6-musb".
+
+I'm also curious as to whether the MUSB controller was tested or not,
+since Allwinner now has EHCI/OHCI host pairs for host mode, and the Pine H64
+only does host mode.
+
+> +                       reg = <0x05100000 0x0400>;
+> +                       clocks = <&ccu CLK_BUS_OTG>;
+> +                       resets = <&ccu RST_BUS_OTG>;
+> +                       interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
+> +                       interrupt-names = "mc";
+> +                       phys = <&usb2phy 0>;
+> +                       phy-names = "usb";
+> +                       extcon = <&usb2phy 0>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               usb2phy: phy@5100400 {
+> +                       compatible = "allwinner,sun50i-h6-usb-phy";
+> +                       reg = <0x05100400 0x14>,
+> +                             <0x05101800 0x4>,
+> +                             <0x05311800 0x4>;
+> +                       reg-names = "phy_ctrl",
+> +                                   "pmu0",
+> +                                   "pmu3";
+> +                       clocks = <&ccu CLK_USB_PHY0>,
+> +                                <&ccu CLK_USB_PHY3>;
+> +                       clock-names = "usb0_phy",
+> +                                     "usb3_phy";
+> +                       resets = <&ccu RST_USB_PHY0>,
+> +                                <&ccu RST_USB_PHY3>;
+> +                       reset-names = "usb0_reset",
+> +                                     "usb3_reset";
+> +                       status = "disabled";
+> +                       #phy-cells = <1>;
+> +               };
+> +
+> +               ehci0: usb@5101000 {
+> +                       compatible = "allwinner,sun50i-h6-ehci", "generic-ehci";
+> +                       reg = <0x05101000 0x100>;
+> +                       interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_OHCI0>,
+> +                                <&ccu CLK_BUS_EHCI0>,
+> +                                <&ccu CLK_USB_OHCI0>;
+> +                       resets = <&ccu RST_BUS_OHCI0>,
+> +                                <&ccu RST_BUS_EHCI0>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               ohci0: usb@5101400 {
+> +                       compatible = "allwinner,sun50i-h6-ohci", "generic-ohci";
+> +                       reg = <0x05101400 0x100>;
+> +                       interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_OHCI0>,
+> +                                <&ccu CLK_USB_OHCI0>;
+> +                       resets = <&ccu RST_BUS_OHCI0>;
+> +                       status = "disabled";
+> +               };
+> +
+> +               ehci3: usb@5311000 {
+> +                       compatible = "allwinner,sun50i-h6-ehci", "generic-ehci";
+> +                       reg = <0x05311000 0x100>;
+> +                       interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_OHCI3>,
+> +                                <&ccu CLK_BUS_EHCI3>,
+> +                                <&ccu CLK_USB_OHCI3>;
+> +                       resets = <&ccu RST_BUS_OHCI3>,
+> +                                <&ccu RST_BUS_EHCI3>;
+> +                       phys = <&usb2phy 3>;
+> +                       phy-names = "usb";
+> +                       status = "disabled";
+> +               };
+> +
+> +               ohci3: usb@5311400 {
+> +                       compatible = "allwinner,sun50i-h6-ohci", "generic-ohci";
+> +                       reg = <0x05311400 0x100>;
+> +                       interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
+> +                       clocks = <&ccu CLK_BUS_OHCI3>,
+> +                                <&ccu CLK_USB_OHCI3>;
+> +                       resets = <&ccu RST_BUS_OHCI3>;
+> +                       phys = <&usb2phy 3>;
+> +                       phy-names = "usb";
+> +                       status = "disabled";
+> +               };
+> +
+
+This didn't apply cleanly due to the new HDMI nodes. I fixed it up locally.
+
+ChenYu
+
+>                 r_ccu: clock@7010000 {
+>                         compatible = "allwinner,sun50i-h6-r-ccu";
+>                         reg = <0x07010000 0x400>;
+> --
+> 2.18.0
+>
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
