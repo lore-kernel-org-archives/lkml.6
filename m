@@ -2,49 +2,50 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_SBL,URIBL_SBL_A,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53D95C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AC2BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1588E2243E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DF6842145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QjCFDEsg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1588E2243E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3W/8d/0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF6842145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387629AbeKOIur (ORCPT
+        id S1728279AbeKOI1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:50:47 -0500
+        Thu, 15 Nov 2018 03:27:15 -0500
 Received: from mail.kernel.org ([198.145.29.99]:34402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728214AbeKOI1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:27:15 -0500
+        id S1726951AbeKOI1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:14 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A9FB222511;
-        Wed, 14 Nov 2018 22:22:12 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id A4E3422513;
+        Wed, 14 Nov 2018 22:22:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234132;
-        bh=KcquHZ7K1YB+PSdWcvkktHBoJpVFoYegvtaupJDrfxI=;
+        s=default; t=1542234131;
+        bh=UWT8MJPfbqLXdKEcQjKA2l+HlBhdTlTeu3xz4bDilkY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=QjCFDEsgOeo7xPjx5SePTid6hhYGN9QHaLfoaIqOD6osLx6s1OtVjNj0jI5/phuUn
-         nimUoHCJ3a92chrksJQcHWxQDd/Gwu44Db1cbaS4LqFR98dxfg53idYx5+mh0PBPu2
-         2ZwByVvafB9eBGK7kpuWCMv9C7cmCrGB8c7VDaIo=
+        b=b3W/8d/0Mc0JTkRcFWuMbozYw4MfYiWXlx4jeDy8oKCXWA9NsA/hCi/BLliRab+Hk
+         oQZetcMWQgcCVfbHKjEVrc+zf9oPg24iZD1KxUPGmdCrfUntnBIucLNPXjoIDmrdHs
+         rBXWFnuIcRnEjMdVUPTMYxM2W6iP9RgHlr3AOFso=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Doug Berger <opendmb@gmail.com>,
-        Florian Fainelli <f.fainelli@gmail.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     "Justin M. Forbes" <jforbes@fedoraproject.org>,
+        Heiko Carstens <heiko.carstens@de.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 18/73] net: bcmgenet: protect stop from timeout
-Date:   Wed, 14 Nov 2018 17:21:12 -0500
-Message-Id: <20181114222207.98701-18-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 14/73] s390/mm: Fix ERROR: "__node_distance" undefined!
+Date:   Wed, 14 Nov 2018 17:21:08 -0500
+Message-Id: <20181114222207.98701-14-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -53,118 +54,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Doug Berger <opendmb@gmail.com>
+From: "Justin M. Forbes" <jforbes@fedoraproject.org>
 
-[ Upstream commit 09e805d2570a3a94f13dd9c9ad2bcab23da76e09 ]
+[ Upstream commit a541f0ebcc08ed8bc0cc492eec9a86cb280a9f24 ]
 
-A timing hazard exists when the network interface is stopped that
-allows a watchdog timeout to be processed by a separate core in
-parallel. This creates the potential for the timeout handler to
-wake the queues while the driver is shutting down, or access
-registers after their clocks have been removed.
+Fixes:
+ERROR: "__node_distance" [drivers/nvme/host/nvme-core.ko] undefined!
+make[1]: *** [scripts/Makefile.modpost:92: __modpost] Error 1
+make: *** [Makefile:1275: modules] Error 2
++ exit 1
 
-The more common case is that the watchdog timeout will produce a
-warning message which doesn't lead to a crash. The chances of this
-are greatly increased by the fact that bcmgenet_netif_stop stops
-the transmit queues which can easily precipitate a watchdog time-
-out because of stale trans_start data in the queues.
-
-This commit corrects the behavior by ensuring that the watchdog
-timeout is disabled before enterring bcmgenet_netif_stop. There
-are currently only two users of the bcmgenet_netif_stop function:
-close and suspend.
-
-The close case already handles the issue by exiting the RUNNING
-state before invoking the driver close service.
-
-The suspend case now performs the netif_device_detach to exit the
-PRESENT state before the call to bcmgenet_netif_stop rather than
-after it.
-
-These behaviors prevent any future scheduling of the driver timeout
-service during the window. The netif_tx_stop_all_queues function
-in bcmgenet_netif_stop is replaced with netif_tx_disable to ensure
-synchronization with any transmit or timeout threads that may
-already be executing on other cores.
-
-For symmetry, the netif_device_attach call upon resume is moved to
-after the call to bcmgenet_netif_start. Since it wakes the transmit
-queues it is not necessary to invoke netif_tx_start_all_queues from
-bcmgenet_netif_start so it is moved into the driver open service.
-
-Fixes: 1c1008c793fa ("net: bcmgenet: add main driver file")
-Signed-off-by: Doug Berger <opendmb@gmail.com>
-Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Justin M. Forbes <jforbes@fedoraproject.org>
+Signed-off-by: Heiko Carstens <heiko.carstens@de.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/broadcom/genet/bcmgenet.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ arch/s390/numa/numa.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/net/ethernet/broadcom/genet/bcmgenet.c b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-index 20c1681bb1af..2d6f090bf644 100644
---- a/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-+++ b/drivers/net/ethernet/broadcom/genet/bcmgenet.c
-@@ -2855,7 +2855,6 @@ static void bcmgenet_netif_start(struct net_device *dev)
+diff --git a/arch/s390/numa/numa.c b/arch/s390/numa/numa.c
+index 5bd374491f94..6c151b42e65d 100644
+--- a/arch/s390/numa/numa.c
++++ b/arch/s390/numa/numa.c
+@@ -54,6 +54,7 @@ int __node_distance(int a, int b)
+ {
+ 	return mode->distance ? mode->distance(a, b) : 0;
+ }
++EXPORT_SYMBOL(__node_distance);
  
- 	umac_enable_set(priv, CMD_TX_EN | CMD_RX_EN, true);
+ int numa_debug_enabled;
  
--	netif_tx_start_all_queues(dev);
- 	bcmgenet_enable_tx_napi(priv);
- 
- 	/* Monitor link interrupts now */
-@@ -2937,6 +2936,8 @@ static int bcmgenet_open(struct net_device *dev)
- 
- 	bcmgenet_netif_start(dev);
- 
-+	netif_tx_start_all_queues(dev);
-+
- 	return 0;
- 
- err_irq1:
-@@ -2958,7 +2959,7 @@ static void bcmgenet_netif_stop(struct net_device *dev)
- 	struct bcmgenet_priv *priv = netdev_priv(dev);
- 
- 	bcmgenet_disable_tx_napi(priv);
--	netif_tx_stop_all_queues(dev);
-+	netif_tx_disable(dev);
- 
- 	/* Disable MAC receive */
- 	umac_enable_set(priv, CMD_RX_EN, false);
-@@ -3620,13 +3621,13 @@ static int bcmgenet_suspend(struct device *d)
- 	if (!netif_running(dev))
- 		return 0;
- 
-+	netif_device_detach(dev);
-+
- 	bcmgenet_netif_stop(dev);
- 
- 	if (!device_may_wakeup(d))
- 		phy_suspend(dev->phydev);
- 
--	netif_device_detach(dev);
--
- 	/* Prepare the device for Wake-on-LAN and switch to the slow clock */
- 	if (device_may_wakeup(d) && priv->wolopts) {
- 		ret = bcmgenet_power_down(priv, GENET_POWER_WOL_MAGIC);
-@@ -3700,8 +3701,6 @@ static int bcmgenet_resume(struct device *d)
- 	/* Always enable ring 16 - descriptor ring */
- 	bcmgenet_enable_dma(priv, dma_ctrl);
- 
--	netif_device_attach(dev);
--
- 	if (!device_may_wakeup(d))
- 		phy_resume(dev->phydev);
- 
-@@ -3710,6 +3709,8 @@ static int bcmgenet_resume(struct device *d)
- 
- 	bcmgenet_netif_start(dev);
- 
-+	netif_device_attach(dev);
-+
- 	return 0;
- 
- out_clk_disable:
 -- 
 2.17.1
 
