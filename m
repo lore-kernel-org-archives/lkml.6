@@ -2,92 +2,101 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFB3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:10:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A2B4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:14:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 76685214F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:10:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 76685214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 3F36922419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:14:00 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TKAb/cQx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F36922419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732571AbeKNWN0 (ORCPT
+        id S1732549AbeKNWQ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 17:13:26 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34104 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727836AbeKNWN0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 17:13:26 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AE42488E57;
-        Wed, 14 Nov 2018 12:10:26 +0000 (UTC)
-Received: from oldenburg.str.redhat.com (ovpn-117-210.ams2.redhat.com [10.36.117.210])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AA01E103BAAD;
-        Wed, 14 Nov 2018 12:10:22 +0000 (UTC)
-From:   Florian Weimer <fweimer@redhat.com>
-To:     Adam Borowski <kilobyte@angband.pl>
-Cc:     Willy Tarreau <w@1wt.eu>,
-        "Michael Kerrisk \(man-pages\)" <mtk.manpages@gmail.com>,
-        Daniel Colascione <dancol@google.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "libc-alpha\@sourceware.org" <libc-alpha@sourceware.org>
-Subject: Re: Official Linux system wrapper library?
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
-        <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
-        <20181111081725.GA30248@1wt.eu>
-        <3664a508-ca74-4ff0-39a6-34543194a24e@gmail.com>
-        <20181111111143.GB4189@1wt.eu>
-        <87zhufvntw.fsf@oldenburg.str.redhat.com>
-        <20181114120348.or5id3hzrmltkyvb@angband.pl>
-Date:   Wed, 14 Nov 2018 13:10:16 +0100
-In-Reply-To: <20181114120348.or5id3hzrmltkyvb@angband.pl> (Adam Borowski's
-        message of "Wed, 14 Nov 2018 13:03:48 +0100")
-Message-ID: <87va4zc11z.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Wed, 14 Nov 2018 12:10:26 +0000 (UTC)
+        Wed, 14 Nov 2018 17:16:58 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:43162 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727780AbeKNWQ6 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 17:16:58 -0500
+Received: by mail-pl1-f195.google.com with SMTP id g59-v6so7701122plb.10
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 04:13:58 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id;
+        bh=f9HV0LS1Ii4UmTPpivxRZYMQGVQIv/yLKxNfYU46tF8=;
+        b=TKAb/cQxvYneIuWluj2Ai4HjHcW69k0PdhJsDPdvJ33xe3A8+WBtoKZNxOFhALZthj
+         w5rGQmlMRRMQVLZCrYTZAGF0OjoF12ej4wZsK/wcOiHZrFEk4Vct4Ra+s0yk4i8zmdE+
+         3hswvMyYfgC4dmcTDnxlxruodRie5PbUXeDtw=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=f9HV0LS1Ii4UmTPpivxRZYMQGVQIv/yLKxNfYU46tF8=;
+        b=ozN+saNMTWjIpo7y2E8o0NKrtaYj93l7z1lSTmXRMSXDIH6qeruizx0T5itEX7HuDs
+         BVQ6TwYLVlz+W6MPTybU4VbXuYcKMFCf6t7TkyZIhZvq2tBT0K/O+xC2bgTAIzWRb1py
+         vsK96l6F+t2NuK6AGMH/GRCfzN1LJhtRjzQBFi+jNeuzv6NWIjo+/ir1uc+XufPz2qYf
+         ujTwxpIVlvjQLzJtDp9hFtC/f/GZhGI+KC4B1/rq8xX3up6VnN+gGpEp29pnIBSMPE5q
+         euPxcjhAsnnUi5eCE3T4fvV471WHFxp61sWPGEqsm6ZBHSqO0yuxDTzXhOekTTtrXyPY
+         YhqA==
+X-Gm-Message-State: AGRZ1gKU/MQjaClwobOGulTQ3YhIenykqAeHuwymJQ1brhXFx/RWuUXa
+        0f6GKKwxDwoJvUPReNaSSPxadHMXFg==
+X-Google-Smtp-Source: AJdET5ebTkRZ3kQebakebhVUV5T/AQ4cmFqH3qGVaJIipkrEBWkzER42ycMFTLQDsQokLYM7cVaj+A==
+X-Received: by 2002:a17:902:be07:: with SMTP id r7-v6mr1661360pls.137.1542197637958;
+        Wed, 14 Nov 2018 04:13:57 -0800 (PST)
+Received: from localhost.localdomain ([2405:204:734f:c50:bc03:daf0:c43c:4a59])
+        by smtp.gmail.com with ESMTPSA id k70-v6sm26652807pfc.76.2018.11.14.04.13.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 04:13:56 -0800 (PST)
+From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To:     mchehab@kernel.org, robh+dt@kernel.org, todor.tomov@linaro.org,
+        hansverk@cisco.com
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: [PATCH v2] dt-bindings: media: i2c: Fix external clock frequency for OV5645
+Date:   Wed, 14 Nov 2018 17:43:38 +0530
+Message-Id: <20181114121338.28026-1-manivannan.sadhasivam@linaro.org>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-* Adam Borowski:
+Commit "4adb0a0432f4 media: ov5645: Supported external clock is 24MHz"
+modified the external clock frequency to be 24MHz instead of the
+23.88MHz in driver. Hence, modify the frequency value in binding.
 
-> On Sun, Nov 11, 2018 at 12:46:35PM +0100, Florian Weimer wrote:
->> A lot of multi-threaded applications assume that most high-level
->> functionality remains usable even after fork in a multi-threaded
->> process.
->
-> How would this be even possible?  Currently fork kills all threads
-> (save for the caller).
+Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+---
 
-glibc's fork acquires several locks around fork.  Other mallocs install
-fork handlers, too.
+Changes in v2:
 
-> Glibc's manpage also warns:
->
-> # After a fork() in a multithreaded program, the child can safely call only
-> # async-signal-safe functions (see signal-safety(7)) until such time as it
-> # calls execve(2).
->
-> Which makes sense as its malloc uses a mutex, and you can't take a breath
-> without a library call using malloc somewhere (or in C++, the language
-> itself).
+* Removed the wording about supported frequency since the hardware is
+  capable of accepting freq range from 6-27MHz.
 
-Right, but applications require a working malloc after fork,
-unfortunately.  opendir is often used to enumerate file descriptors
-which need closing, for example.
+ Documentation/devicetree/bindings/media/i2c/ov5645.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
-Florian
+diff --git a/Documentation/devicetree/bindings/media/i2c/ov5645.txt b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+index fd7aec9f8e24..b032abfcea36 100644
+--- a/Documentation/devicetree/bindings/media/i2c/ov5645.txt
++++ b/Documentation/devicetree/bindings/media/i2c/ov5645.txt
+@@ -37,7 +37,7 @@ Example:
+ 
+ 			clocks = <&clks 200>;
+ 			clock-names = "xclk";
+-			clock-frequency = <23880000>;
++			clock-frequency = <24000000>;
+ 
+ 			vdddo-supply = <&camera_dovdd_1v8>;
+ 			vdda-supply = <&camera_avdd_2v8>;
+-- 
+2.17.1
+
