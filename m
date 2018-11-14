@@ -2,202 +2,236 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87EFEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:17:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 95228C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:18:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BC392251D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:17:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BC392251D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E8482251E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:18:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="aVFzQ3Sx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E8482251E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728683AbeKOGWY (ORCPT
+        id S1728461AbeKOGW6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 01:22:24 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50526 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725756AbeKOGWW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 01:22:22 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 252D080D;
-        Wed, 14 Nov 2018 12:17:42 -0800 (PST)
-Received: from blommer (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E35AF3F718;
-        Wed, 14 Nov 2018 12:17:40 -0800 (PST)
-Date:   Wed, 14 Nov 2018 20:17:39 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Andrey Konovalov <andreyknvl@google.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Subject: Re: [PATCH v10 12/22] kasan, arm64: fix up fault handling logic
-Message-ID: <20181114201738.sb2lla7umljsx3qx@blommer>
-References: <cover.1541525354.git.andreyknvl@google.com>
- <4891a504adf61c0daf1e83642b6f7519328dfd5f.1541525354.git.andreyknvl@google.com>
- <20181108122228.xqwhpkjritrvqneq@lakrids.cambridge.arm.com>
- <CAAeHK+xPkbg_9P9oCkS-iB8S81vTxD3p5SbyWHy-vrp2ybkKmg@mail.gmail.com>
- <20181113220728.2h3kz67b2bz36wty@blommer>
- <CAAeHK+xe5LqbyWnYSDv2+QrLR=GK0JMzniAZBfL8kjXRwJravA@mail.gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAAeHK+xe5LqbyWnYSDv2+QrLR=GK0JMzniAZBfL8kjXRwJravA@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+        Thu, 15 Nov 2018 01:22:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39538 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725756AbeKOGW6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 01:22:58 -0500
+Received: from tzanussi-mobl.hsd1.il.comcast.net (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 307D92251C;
+        Wed, 14 Nov 2018 20:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542226697;
+        bh=w7JFJTRMJSJLIixkBk9n+eHA0kVJKQjjZA41cXQNRio=;
+        h=From:To:Cc:Subject:Date:From;
+        b=aVFzQ3SxiCxjTIkLVJBJZpYx5CyY4Z4FIQ6fasVWeadE/GeGiFkxxUkFLb2hEijbH
+         ywaMHCh9GmySE/Z+mg8Aaq4P/Z0hkRWMtW3wGizNf9Z/RStzW57aZukIyqm9oGwvC1
+         0bpDYC3EaI6xh5ktnieeDCz4ULLTktjQoAgQAEFE=
+From:   Tom Zanussi <zanussi@kernel.org>
+To:     rostedt@goodmis.org
+Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
+        vedang.patel@intel.com, bigeasy@linutronix.de,
+        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
+        julia@ni.com, linux-kernel@vger.kernel.org,
+        linux-rt-users@vger.kernel.org
+Subject: [PATCH v7 00/16] tracing: Hist trigger snapshot and onchange additions
+Date:   Wed, 14 Nov 2018 14:17:57 -0600
+Message-Id: <cover.1542221862.git.tom.zanussi@linux.intel.com>
+X-Mailer: git-send-email 2.14.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 09:06:23PM +0100, Andrey Konovalov wrote:
-> On Tue, Nov 13, 2018 at 11:07 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> > On Tue, Nov 13, 2018 at 04:01:27PM +0100, Andrey Konovalov wrote:
-> >> On Thu, Nov 8, 2018 at 1:22 PM, Mark Rutland <mark.rutland@arm.com> wrote:
-> >> > On Tue, Nov 06, 2018 at 06:30:27PM +0100, Andrey Konovalov wrote:
-> >> >> show_pte in arm64 fault handling relies on the fact that the top byte of
-> >> >> a kernel pointer is 0xff, which isn't always the case with tag-based
-> >> >> KASAN.
-> >> >
-> >> > That's for the TTBR1 check, right?
-> >> >
-> >> > i.e. for the following to work:
-> >> >
-> >> >         if (addr >= VA_START)
-> >> >
-> >> > ... we need the tag bits to be an extension of bit 55...
-> >> >
-> >> >>
-> >> >> This patch resets the top byte in show_pte.
-> >> >>
-> >> >> Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-> >> >> Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
-> >> >> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
-> >> >> ---
-> >> >>  arch/arm64/mm/fault.c | 3 +++
-> >> >>  1 file changed, 3 insertions(+)
-> >> >>
-> >> >> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> >> >> index 7d9571f4ae3d..d9a84d6f3343 100644
-> >> >> --- a/arch/arm64/mm/fault.c
-> >> >> +++ b/arch/arm64/mm/fault.c
-> >> >> @@ -32,6 +32,7 @@
-> >> >>  #include <linux/perf_event.h>
-> >> >>  #include <linux/preempt.h>
-> >> >>  #include <linux/hugetlb.h>
-> >> >> +#include <linux/kasan.h>
-> >> >>
-> >> >>  #include <asm/bug.h>
-> >> >>  #include <asm/cmpxchg.h>
-> >> >> @@ -141,6 +142,8 @@ void show_pte(unsigned long addr)
-> >> >>       pgd_t *pgdp;
-> >> >>       pgd_t pgd;
-> >> >>
-> >> >> +     addr = (unsigned long)kasan_reset_tag((void *)addr);
-> >> >
-> >> > ... but this ORs in (0xffUL << 56), which is not correct for addresses
-> >> > which aren't TTBR1 addresses to begin with, where bit 55 is clear, and
-> >> > throws away useful information.
-> >> >
-> >> > We could use untagged_addr() here, but that wouldn't be right for
-> >> > kernels which don't use TBI1, and we'd erroneously report addresses
-> >> > under the TTBR1 range as being in the TTBR1 range.
-> >> >
-> >> > I also see that the entry assembly for el{1,0}_{da,ia} clears the tag
-> >> > for EL0 addresses.
-> >> >
-> >> > So we could have:
-> >> >
-> >> > static inline bool is_ttbr0_addr(unsigned long addr)
-> >> > {
-> >> >         /* entry assembly clears tags for TTBR0 addrs */
-> >> >         return addr < TASK_SIZE_64;
-> >> > }
-> >> >
-> >> > static inline bool is_ttbr1_addr(unsigned long addr)
-> >> > {
-> >> >         /* TTBR1 addresses may have a tag if HWKASAN is in use */
-> >> >         return arch_kasan_reset_tag(addr) >= VA_START;
-> >> > }
-> >> >
-> >> > ... and use those in the conditionals, leaving the addr as-is for
-> >> > reporting purposes.
-> >>
-> >> Actually it looks like 276e9327 ("arm64: entry: improve data abort
-> >> handling of tagged pointers") already takes care of both user and
-> >> kernel fault addresses and correctly removes tags from them. So I
-> >> think we need to drop this patch.
-> >
-> > The clear_address_tag macro added in that commit only removes tags from TTBR0
-> > addresses, so that's not sufficient if the kernel is used tagged addresses
-> > (which will be in the TTBR1 range).
-> 
-> Do I understand correctly that TTBR0 means user space addresses and
-> TTBR1 means kernel addresses? 
+From: Tom Zanussi <tom.zanussi@linux.intel.com>
 
-Effectively, yes. The address space is split into two halves (with a gap in the
-middle). The high half (where we map the kernel) is covered by TTBR1, and the
-low half (where we map userspace) is covered by TTBR0.
+Hi,
 
-The TTBRs are the Translation Table Base Registers -- the two halves have
-separate page tables.
+This is v7 of the hist trigger snapshot and onchange additions
+patchset.  It does a bit of refactoring to address the suggestions
+made by Masami in v6.
 
-> In that commit I see that the clear_address_tag() macro is used in el0_da and
-> in el1_da, which means that it untags both user and kernel addresses (on data
-> aborts). Do I misunderstand something?
+It also adds an additional patch to update the trigger/inter-event
+testcases with SPDX license blurbs.
 
-It's called for faults taken from EL0 and EL1, but it only removes the tags
-from addresses covered by TTBR0. The logic is:
+BTW, I noticed that with the recent kselftest changes, I now get
+mangled output when running the selftests, though I can still see well
+enough that the tests passed as expected.  This happens with any of
+the ftrace selftests and not just the trigger selftests.  In my case,
+this is using the stock Terminal in Ubuntu 17.10, in case that helps.
+Example output:
 
-	.macro  clear_address_tag, dst, addr
-	tst     \addr, #(1 << 55)
-	bic     \dst, \addr, #(0xff << 56)
-	csel    \dst, \dst, \addr, eq
-	.endm
+  # ./ftracetest test.d/trigger/
+  
+-e === Ftrace unit tests ===
+-e -n [1] event trigger - test inter-event histogram trigger expected fail actions
+-e 	[\e[31mXFAIL\e[0m]
+-e -n [2] event trigger - test extended error support
+-e 	[\e[32mPASS\e[0m]
+-e -n [3] event trigger - test field variable support
+-e 	[\e[32mPASS\e[0m]
+-e -n [4] event trigger - test inter-event combined histogram trigger
+-e 	[\e[32mPASS\e[0m]
+-e -n [5] event trigger - test multiple actions on hist trigger
+-e 	[\e[32mPASS\e[0m]
+.
+.
+.
+-e 
+-e # of passed:  31
+-e # of failed:  0
+-e # of unresolved:  0
+-e # of untested:  0
+-e # of unsupported:  0
+-e # of xfailed:  1
+-e # of undefined(test bug):  0
 
-... which in C would be:
+v6->v7 changes:
 
-	if (!(addr & (1UL << 55))) {
-		addr &= ~(0xffUL << 56);
-	}
+  - Removed unnecessary HANDLER_ONMAX checks from onmax_print()/create()
+  - Moved handler assignment to acion_parse()
+  - Changed goto in ATION_TRACE case in action_create() to return
+  - Changed EINVAL to EEXIST in action_create() ACTION_SAVE case
+  - Made the return logic in create_actions() more consistent
+  - Merged 'tracing: Move hist trigger key printing into a separate
+    function' into 'tracing: Add hist trigger snapshot() action'
+  - Updated the new snapshot, onchange, and trace test cases to match
+    4.20 kselftest changes.
+  - Added new xfail test case that make sure certain unsupported
+    handler/action combinations fail as expected.
+  - While updating the test cases, realized that the other testcases
+    in the inter-event subdir needed SPDX license updates, so added
+    them.
 
-... and therefore does not affect TTBR1 addresses.
+v5->v6 changes:
+
+  - Added new Documentation patch explaining handler.action
+  - Added new README patch explaining handler.action
+  - Added separate snapshot() Documentation
+  - Added new snapshot() test case
+  - Updated README with snapshote()
+  - Added separate onchange() Documentation
+  - Added separate onchange() test case
+  - Updated README with onchange()
+  - Added separate trace() test case
+  - Updated README with trace() and <synthetic_event>() syntax
+
+v4->v5 changes:
+
+  - added 'trace' keyword test case
+  - added 'onchange' handler test case
+
+v3->v4 changes:
+
+  - added 'trace' keyword for generating synthetic events
+  - fix elt_data leak
+  - changed cond_update to cond_update_fn_t
+
+v2->v3 changes:
+
+  - fixed problem where trace actions were only being allowed for
+    onmatch handlers - now trace actions can be used with any handler.
+  - fixed problem where no action was being assigned to onmatch
+    handlers if save or snapshot actions were specified.
+
+v1->v2 changes:
+
+  - added missing tracing_cond_snapshot_data() definition for when
+    CONFIG_TRACER_SNAPSHOT not defined
+  - removed an unnecessary WARN_ON() in track_data_snapshot_print()
+
+
+Original text:
+
+This patchset adds some useful new functions to the hist
+trigger code: a snapshot action and an onchange handler.
+
+In order to make it easier to add these and in the process make the
+code more generic, I separated the code into explicit 'handlers' and
+'actions', handlers being things like 'onmax' and 'onchange', and
+'actions' being things like 'take a snapshot' or 'save some fields'.
+
+The first few patches do that basic refactoring, which make it easier
+to add the subsequent changes that arbitrarily combine actions and
+handlers.
+
+The fourth patch adds a 'conditional snapshot' capability that via a
+new tracing_snaphot_cond() function extends the existing snapshot
+code.  It allows the caller to associate some user data with the
+snapshot that can be checked and saved in an update() callback whose
+return value determines whether the snapshot should be taken or not.
+
+The remaining patches finally add the new snapshot action and onchange
+handler functionality - please see those patches for details and some
+examples.
 
 Thanks,
-Mark.
+
+Tom
+
+
+The following changes since commit ee474b81fe5aa5dc0faae920bf66240fbf55f891:
+
+  tracing/kprobes: Fix strpbrk() argument order (2018-11-05 09:47:14 -0500)
+
+are available in the git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/zanussi/linux-trace.git ftrace/hist-snapshot-onchange-v7
+
+Tom Zanussi (16):
+  tracing: Refactor hist trigger action code
+  tracing: Make hist trigger Documentation better reflect
+    actions/handlers
+  tracing: Add hist trigger handler.action documentation to README
+  tracing: Split up onmatch action data
+  tracing: Generalize hist trigger onmax and save action
+  tracing: Add conditional snapshot
+  tracing: Add hist trigger snapshot() action
+  tracing: Add hist trigger snapshot() action Documentation
+  tracing: Add hist trigger snapshot() action test case
+  tracing: Add hist trigger onchange() handler
+  tracing: Add hist trigger onchange() handler Documentation
+  tracing: Add hist trigger onchange() handler test case
+  tracing: Add alternative synthetic event trace action syntax
+  tracing: Add alternative synthetic event trace action test case
+  tracing: Add hist trigger action 'expected fail' test case
+  tracing: Add SPDX license GPL-2.0 license identifier to inter-event
+    testcases
+
+ Documentation/trace/histogram.rst                  |  285 +++++-
+ kernel/trace/trace.c                               |  177 +++-
+ kernel/trace/trace.h                               |   56 +-
+ kernel/trace/trace_events_hist.c                   | 1062 +++++++++++++++-----
+ kernel/trace/trace_events_trigger.c                |    2 +-
+ kernel/trace/trace_sched_wakeup.c                  |    2 +-
+ .../inter-event/trigger-action-hist-xfail.tc       |   30 +
+ .../inter-event/trigger-extended-error-support.tc  |    1 +
+ .../inter-event/trigger-field-variable-support.tc  |    1 +
+ .../trigger-inter-event-combined-hist.tc           |    1 +
+ .../inter-event/trigger-multi-actions-accept.tc    |    1 +
+ .../inter-event/trigger-onchange-action-hist.tc    |   28 +
+ .../inter-event/trigger-onmatch-action-hist.tc     |    1 +
+ .../trigger-onmatch-onmax-action-hist.tc           |    1 +
+ .../inter-event/trigger-onmax-action-hist.tc       |    1 +
+ .../inter-event/trigger-snapshot-action-hist.tc    |   43 +
+ .../trigger-synthetic-event-createremove.tc        |    1 +
+ .../inter-event/trigger-trace-action-hist.tc       |   42 +
+ 18 files changed, 1433 insertions(+), 302 deletions(-)
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-action-hist-xfail.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-onchange-action-hist.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-snapshot-action-hist.tc
+ create mode 100644 tools/testing/selftests/ftrace/test.d/trigger/inter-event/trigger-trace-action-hist.tc
+
+-- 
+2.14.1
+
