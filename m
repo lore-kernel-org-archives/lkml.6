@@ -2,200 +2,185 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 81983C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:31:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B932C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:32:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4807722360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:31:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CC32F22360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:32:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="PR4OePZp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4807722360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="kW7MwNvn";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ROoaTi+h"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC32F22360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731416AbeKNQdh (ORCPT
+        id S1731619AbeKNQeJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 11:33:37 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:37848 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728406AbeKNQdh (ORCPT
+        Wed, 14 Nov 2018 11:34:09 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:46320 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727528AbeKNQeJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 11:33:37 -0500
-Received: by mail-it1-f195.google.com with SMTP id j79-v6so22295545itb.2
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 22:31:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vKU19plQ0QxGJv9HTShl1PsYAdOaPOBDChZaaVzM228=;
-        b=PR4OePZpMxnhPaT9pTya1ucPktib0ZsG5so2dJH5tJWAqRdeaAA7vswAbIbZp9mESr
-         mgo6m046swB9FRFmDv6xvJfHYu3rgZcZb5aM9wLoZhExQvULZsVyGJx+VQ3Z9YpaQ660
-         AoEr6jGPBaCmV6FS0dZdmQDVWtbX53QLDmuBU=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vKU19plQ0QxGJv9HTShl1PsYAdOaPOBDChZaaVzM228=;
-        b=j1FOtpORIEIPEGPgNODGrxu7/K74N6dXhM/ZClRbWzYMWS6NuJKhuAA6Va8h4elJTD
-         jDtg3eY4hm/5CX7/bO4gsvyFZVC2vipM2vi6pR9BSIDvfvgfidVfTKTB21tZPQa/eB0/
-         z/5+CQxLExA/nnuh+w5Ry3+1Qom1K6yGz/zWPaUIEXdH7eYb3XW0g9ZAyjJ+WJK+88v/
-         ZQwoTtHcL25fjCJOvnnJeUbr8KEBkVuT1PjW/AM6y+GnGG6hZa4Ei7xOXJzxm/NBS7Nc
-         9xZwLFm4l/b3qu6rAxviTx2hRvb51bl/W1AYjhdqUXAJrredzWfzFONary4tt6ofhEOd
-         jyqw==
-X-Gm-Message-State: AGRZ1gKYHZbQ5CnQMt4daX06telA2Y1De1Ofzs2yZCBxJN3rS2L96Tc2
-        gCSXeMMhO8+LJa1tC+bmE62YjQ1ccJZuwLvJkIPT1A==
-X-Google-Smtp-Source: AFSGD/UIpyHyq8eOfc6V38APchtrzFQjyl2ydbTFASSo8t5fhfvHa8d2aBwiVJjUVeB3d3mq7bA1kDNR1shyJnzIx2g=
-X-Received: by 2002:a24:2710:: with SMTP id g16-v6mr909269ita.107.1542177105951;
- Tue, 13 Nov 2018 22:31:45 -0800 (PST)
+        Wed, 14 Nov 2018 11:34:09 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 35858607B9; Wed, 14 Nov 2018 06:32:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542177138;
+        bh=VSeSrAA4QLB+KdBPvzpw3SiKtST4OOVMqtb4rGQNfbc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=kW7MwNvn/q5ve2PykoFaRF+IgSAS6eqF+Ld7BZV3TnFomDlEy45CcTKCbVHoGa/fW
+         CrnbT23HzC1RlvKeJcgiHaIfk34/MB5ezK5cGK6YxhkDsz6xjR1pCRgG9fj0/4u3K3
+         1RBcDBuYLJNbBw3S66g0R78qIIpfGQfk43Va95TQ=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 9A5296071B;
+        Wed, 14 Nov 2018 06:32:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542177136;
+        bh=VSeSrAA4QLB+KdBPvzpw3SiKtST4OOVMqtb4rGQNfbc=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ROoaTi+hTD64c3DXzdrjoUWQMICdMhvWGBeu6W1rLhfdbMsg9t3nLJw3Wr7v/3a1Z
+         W+cgJJBhFdUCBbwtPRc6JUKoIllCBajgSeW3xlA/ltmkKKt3hE4OCXyvH/FAsvoIjg
+         RVvHKvxzhYTWxqoq/S+YtUDsFza6knrkxWpduWXA=
 MIME-Version: 1.0
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-26-jagan@amarulasolutions.com> <20181113122204.337db8b1@donnerap.cambridge.arm.com>
-In-Reply-To: <20181113122204.337db8b1@donnerap.cambridge.arm.com>
-From:   Jagan Teki <jagan@amarulasolutions.com>
-Date:   Wed, 14 Nov 2018 12:01:33 +0530
-Message-ID: <CAMty3ZBQXcnU=490KREa=F-qctMtRep9-rrhrPd1UZStnV=hqw@mail.gmail.com>
-Subject: Re: [PATCH v4 25/26] [DO NOT MERGE] arm64: dts: allwinner:
- bananapi-m64: Bananapi S070WV20-CT16 DSI panel
-To:     Andre Przywara <andre.przywara@arm.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Wed, 14 Nov 2018 12:02:16 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Matthias Kaehlcke <mka@chromium.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v1 2/4] Bluetooth: hci_qca: Pull RTS line high for
+ baudrate change command
+In-Reply-To: <20181114015504.GH22824@google.com>
+References: <20181106120528.30342-1-bgodavar@codeaurora.org>
+ <20181106120528.30342-3-bgodavar@codeaurora.org>
+ <20181114015504.GH22824@google.com>
+Message-ID: <25c29e35b32ca71fe6d0b02f4d6ed559@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 5:52 PM Andre Przywara <andre.przywara@arm.com> wrote:
->
-> On Tue, 13 Nov 2018 16:46:32 +0530
-> Jagan Teki <jagan@amarulasolutions.com> wrote:
->
-> Hi,
->
-> > This patch add support for Bananapi S070WV20-CT16 DSI panel to
-> > BPI-M64 board.
-> >
-> > DSI panel connected via board DSI port with,
-> > - DC1SW as AVDD supply
->
-> Are you sure of that? I don't see anything in the schematic to support
-> this. The only power lines that go to the DSI connector are DCDC1 and
-> PS. DC1SW is only connected to PortD on the SoC and to the Ethernet PHY.
-> Is there anything I miss?
+Hi Matthias,
 
-Thanks for the comment, yes dc1sw is connected in ephy. I have reused
-dc1, BSP is attached lcd_power1 to axp81x_dc1sw [1]. I just looking
-for someone to comment, may be we can skip this regulator attachment.
+On 2018-11-14 07:25, Matthias Kaehlcke wrote:
+> On Tue, Nov 06, 2018 at 05:35:26PM +0530, Balakrishna Godavarthi wrote:
+>> This patch will pull the RTS line high instead of turning off the
+>> flow control, while changing baudrate of host and chip.
+> 
+> Please don't only describe what is changed, but also why this change
+> is necessary.
+> 
+> IIUC the BT chip honors flow control during baudrate changes, however
+> it sometimes sends 'garbage' which results in "Bluetooth: hci0: Frame
+> reassembly failed (-84)" messages.
+> 
 
->
-> > - DCDC1 as DVDD supply
->
-> That seems right, but doesn't match with what you write below.
+[Bala]: will update the commit text.
 
-Commit need to fix s/DCDC1/DLDO1
+>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> ---
+>>  drivers/bluetooth/hci_qca.c | 23 ++++++++++++-----------
+>>  1 file changed, 12 insertions(+), 11 deletions(-)
+>> 
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index 051f081d1835..8301663f0004 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -963,7 +963,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  	struct hci_uart *hu = hci_get_drvdata(hdev);
+>>  	struct qca_data *qca = hu->priv;
+>>  	struct sk_buff *skb;
+>> -	struct qca_serdev *qcadev;
+>>  	u8 cmd[] = { 0x01, 0x48, 0xFC, 0x01, 0x00 };
+>> 
+>>  	if (baudrate > QCA_BAUDRATE_3200000)
+>> @@ -977,13 +976,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  		return -ENOMEM;
+>>  	}
+>> 
+>> -	/* Disabling hardware flow control is mandatory while
+>> -	 * sending change baudrate request to wcn3990 SoC.
+>> -	 */
+>> -	qcadev = serdev_device_get_drvdata(hu->serdev);
+>> -	if (qcadev->btsoc_type == QCA_WCN3990)
+>> -		hci_uart_set_flow_control(hu, true);
+>> -
+>>  	/* Assign commands to change baudrate and packet type. */
+>>  	skb_put_data(skb, cmd, sizeof(cmd));
+>>  	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+>> @@ -999,9 +991,6 @@ static int qca_set_baudrate(struct hci_dev *hdev, 
+>> uint8_t baudrate)
+>>  	schedule_timeout(msecs_to_jiffies(BAUDRATE_SETTLE_TIMEOUT_MS));
+>>  	set_current_state(TASK_RUNNING);
+>> 
+>> -	if (qcadev->btsoc_type == QCA_WCN3990)
+>> -		hci_uart_set_flow_control(hu, false);
+>> -
+>>  	return 0;
+>>  }
+>> 
+>> @@ -1086,6 +1075,7 @@ static int qca_check_speeds(struct hci_uart *hu)
+>>  static int qca_set_speed(struct hci_uart *hu, enum qca_speed_type 
+>> speed_type)
+>>  {
+>>  	unsigned int speed, qca_baudrate;
+>> +	struct qca_serdev *qcadev;
+>>  	int ret;
+>> 
+>>  	if (speed_type == QCA_INIT_SPEED) {
+>> @@ -1097,6 +1087,14 @@ static int qca_set_speed(struct hci_uart *hu, 
+>> enum qca_speed_type speed_type)
+>>  		if (!speed)
+>>  			return 0;
+>> 
+>> +		/* Pulling RTS line to high is mandatory while sending change
+>> +		 * baudrate request to SoC and also while setting the host
+>> +		 * baudrate.
+>> +		 */
+> 
+> Instead of just stating that this is 'mandatory' explain why it is
+> needed. Also better say 'Deassert RTS' instead of the more lower level
+> 'Pulling RTS line to high'. It could be something like 'Deassert RTS
+> to prevent the BT controller from sending garbage during the baudrate
+> change.'
+> 
 
->
-> > - PD6 gpio for reset pin
-> > - PD5 gpio for backlight enable pin
-> > - PD7 gpio for backlight vdd supply
-> >
-> > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > ---
-> >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 42
-> > +++++++++++++++++++ 1 file changed, 42 insertions(+)
-> >
-> > diff --git
-> > a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-> > b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts index
-> > ef1c90401bb2..6cb010e3bbd9 100644 ---
-> > a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts +++
-> > b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts @@ -45,6
-> > +45,7 @@ #include "sun50i-a64.dtsi"
-> >  #include <dt-bindings/gpio/gpio.h>
-> > +#include <dt-bindings/pwm/pwm.h>
-> >
-> >  / {
-> >       model = "BananaPi-M64";
-> > @@ -56,6 +57,15 @@
-> >               serial1 = &uart1;
-> >       };
-> >
-> > +     backlight: backlight {
-> > +             compatible = "pwm-backlight";
-> > +             pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-> > +             brightness-levels = <1 2 4 8 16 32 64 128 512>;
-> > +             default-brightness-level = <2>;
-> > +             enable-gpios = <&pio 3 5 GPIO_ACTIVE_HIGH>; /*
-> > LCD-BL-EN: PD5 */
-> > +             power-supply = <&reg_vdd_backlight>;
-> > +     };
-> > +
-> >       chosen {
-> >               stdout-path = "serial0:115200n8";
-> >       };
-> > @@ -91,6 +101,15 @@
-> >               };
-> >       };
-> >
-> > +     reg_vdd_backlight: vdd-backlight {
-> > +             compatible = "regulator-fixed";
-> > +             regulator-name = "vdd-backlight";
-> > +             regulator-min-microvolt = <3300000>;
-> > +             regulator-max-microvolt = <3300000>;
-> > +             gpio = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* LCD-PWR-EN:
-> > PD7 */
-> > +             enable-active-high;
-> > +     };
-> > +
-> >       wifi_pwrseq: wifi_pwrseq {
-> >               compatible = "mmc-pwrseq-simple";
-> >               reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-> > @@ -101,6 +120,23 @@
-> >       status = "okay";
-> >  };
-> >
-> > +&dphy {
-> > +     status = "okay";
-> > +};
-> > +
-> > +&dsi {
-> > +     status = "okay";
-> > +
-> > +     panel@0 {
-> > +             compatible = "bananapi,s070wv20-ct16-icn6211";
-> > +             reg = <0>;
-> > +             avdd-supply = <&reg_dc1sw>;
->
-> As mentioned above, I don't see this on the DSI connector.
->
-> > +             dvdd-supply = <&reg_dldo1>;
->
-> Mmh, this line is connected to the *SoC*, to drive the DSI data lines
-> or the DPHY, presumably. So I wouldn't expect it in the panel node, but
-> rather in the DPHY or DSI node. Although I can't find a power-supply
-> property in those bindings.
+[Bala]: will update the comment.
 
-Got it, this has to attach via vcc-dsi-supply.
+>> +		qcadev = serdev_device_get_drvdata(hu->serdev);
+>> +		if (qcadev->btsoc_type == QCA_WCN3990)
+>> +			serdev_device_set_rts(hu->serdev, false);
+>> +
+>>  		qca_baudrate = qca_get_baudrate_value(speed);
+>>  		bt_dev_dbg(hu->hdev, "Set UART speed to %d", speed);
+>>  		ret = qca_set_baudrate(hu->hdev, qca_baudrate);
+>> @@ -1104,6 +1102,9 @@ static int qca_set_speed(struct hci_uart *hu, 
+>> enum qca_speed_type speed_type)
+>>  			return ret;
+>> 
+>>  		host_set_baudrate(hu, speed);
+>> +
+>> +		if (qcadev->btsoc_type == QCA_WCN3990)
+>> +			serdev_device_set_rts(hu->serdev, true);
+>>  	}
+>> 
+>>  	return 0;
+> 
+> Tested-by: Matthias Kaehlcke <mka@chromium.org>
 
-[1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/bootloader/blobs/bpi-m64-lcd7.dts#L2266
+Thanks for testing.
+
+-- 
+Regards
+Balakrishna.
