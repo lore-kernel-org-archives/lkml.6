@@ -2,179 +2,121 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E0FCEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1764CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:16:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A1CDB22511
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:15:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sJBLMmof"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1CDB22511
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	by mail.kernel.org (Postfix) with ESMTP id E0C382250F
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:16:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E0C382250F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727359AbeKOGUb (ORCPT
+        id S1728052AbeKOGU6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 01:20:31 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:42500 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725756AbeKOGUb (ORCPT
+        Thu, 15 Nov 2018 01:20:58 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:45672 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725756AbeKOGU6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 01:20:31 -0500
-Received: from avalon.localnet (unknown [64.114.255.97])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8928ABB8;
-        Wed, 14 Nov 2018 21:15:45 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1542226548;
-        bh=nU9xNPZeZl5vxgruEE226tGyIbtyDI7Pisnc1/98ZhY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=sJBLMmofLqXut7QrYUZwsuR8GDhsWzbl3k9NLz04H7K9pbMR7yxKRaSxL7o8/O3DZ
-         kH8OmNUK7Zi040JtsK37T+Kpax2oLaoUiTlg+4agu4MsNbp7keIr1ydwjfZQHfqBKq
-         UjyH4Rq0uzCprGQ82r1eDpD8J/SqeaDONYwRN+aU=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Luis de Oliveira <luis.oliveira@synopsys.com>
-Cc:     Rob Herring <robh@kernel.org>, linux-media@vger.kernel.org,
-        linux-kernel@vger.kernel.org, joao.pinto@synopsys.com,
-        festevam@gmail.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Hans Verkuil <hans.verkuil@cisco.com>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Philipp Zabel <p.zabel@pengutronix.de>,
-        Keiichi Watanabe <keiichiw@chromium.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Todor Tomov <todor.tomov@linaro.org>,
-        devicetree@vger.kernel.org
-Subject: Re: [V3, 3/4] Documentation: dt-bindings: media: Document bindings for DW MIPI CSI-2 Host
-Date:   Wed, 14 Nov 2018 22:16:01 +0200
-Message-ID: <2394629.R0NRNf7gSs@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <45d87050-c5a8-dd96-20ae-d4951b0f4564@synopsys.com>
-References: <1539953556-35762-1-git-send-email-lolivei@synopsys.com> <20181024174007.GA2902@bogus> <45d87050-c5a8-dd96-20ae-d4951b0f4564@synopsys.com>
+        Thu, 15 Nov 2018 01:20:58 -0500
+Received: by mail-ot1-f65.google.com with SMTP id 32so15397890ota.12;
+        Wed, 14 Nov 2018 12:16:18 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=v4v56mZTf9/e7dYvXZZ+3+Q2k86oVKItDYfDMGSVIUM=;
+        b=f3hWCky8fy7hbbW4jEvtrZc9ABKNTerMer3ek+S1dlBDJmk4AcH8GLzoehYC8+/M2s
+         6hnykhgue64sJGjsZwy7V9QyXQ+Nnox7dsmMalk+wYZkMJwCxj6z+6vpWwCt+X6Z0XlU
+         EW+uk4RnzHBGsN2whHRCLH3ooyuGL/ZYsdexFsB817sYweFveoYDeq0Qnq6ReTakj8PW
+         kpGeNTgmIj4dSe+rSnCg87Hi3LgdJEQXOTgu+THrmXpRiA2Rx/tq9MTbkfZox/tXtkA6
+         ppCAr24vZhBqySfxBJl+Jp0Wrz1YEn16353Nvt1tyUUfhoVfAQvwF4OQFOWj3UONEutI
+         XIpA==
+X-Gm-Message-State: AGRZ1gIBlLcsEtkWv2CjOujx3QxIWIQfUNxVlncOBq+1k1pHTg379WYq
+        Rf9jjWunQ9eNAgCrPrX4nLy36oYMRtEs/XIkhCacsTXk
+X-Google-Smtp-Source: AJdET5eIeV0h3oYnIsQiPHyJLLoim94jeRgiIsaDZdvKvLGScspMWGalY1MV2lTMS++/SezbWSNWit9vI0iOsYKw+ms=
+X-Received: by 2002:a9d:588c:: with SMTP id x12mr2061778otg.139.1542226577467;
+ Wed, 14 Nov 2018 12:16:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+From:   "Rafael J. Wysocki" <rafael@kernel.org>
+Date:   Wed, 14 Nov 2018 21:16:14 +0100
+Message-ID: <CAJZ5v0jv7Bbkc4bsnu8xwjQWneRJedbdd3dNp98wEDdCYOpg9Q@mail.gmail.com>
+Subject: [GIT PULL] Power management updates for v4.20-rc3
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     Linux PM <linux-pm@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux Documentation <linux-doc@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Luis,
+Hi Linus,
 
-Thank you for the patch.
+Please pull from the tag
 
-On Tuesday, 13 November 2018 12:00:22 EET Luis de Oliveira wrote:
-> On 24-Oct-18 18:40, Rob Herring wrote:
-> > On Fri, Oct 19, 2018 at 02:52:25PM +0200, Luis Oliveira wrote:
-> >> Add bindings for Synopsys DesignWare MIPI CSI-2 host.
-> >> 
-> >> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
-> >> ---
-> >> Changelog
-> >> v2-V3
-> >> - removed IPI settings
-> >> 
-> >>  .../devicetree/bindings/media/snps,dw-csi-plat.txt | 52 ++++++++++++++++
-> >>  1 file changed, 52 insertions(+)
-> >>  create mode 100644
-> >>  Documentation/devicetree/bindings/media/snps,dw-csi-plat.txt>> 
-> >> diff --git a/Documentation/devicetree/bindings/media/snps,dw-csi-plat.txt
-> >> b/Documentation/devicetree/bindings/media/snps,dw-csi-plat.txt new file
-> >> mode 100644
-> >> index 0000000..be3da05
-> >> --- /dev/null
-> >> +++ b/Documentation/devicetree/bindings/media/snps,dw-csi-plat.txt
-> >> @@ -0,0 +1,52 @@
-> >> +Synopsys DesignWare CSI-2 Host controller
-> >> +
-> >> +Description
-> >> +-----------
-> >> +
-> >> +This HW block is used to receive image coming from an MIPI CSI-2
-> >> compatible +camera.
-> >> +
-> >> +Required properties:
-> >> +- compatible: shall be "snps,dw-csi-plat"
-> > 
-> > 'plat' is really part of the name of the h/w block?
-> 
-> It is the name of the platform driver for CSI compatible with this block. Is
-> that wrong?
+ git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
+ pm-4.20-rc3
 
-DT bindings describe hardware, not drivers. This should be the name of the IP 
-core, regardless of how the drivers are architectured and named.
+with top-most commit 97dc6c03c1b0a9af7aa26da7b0b266a762451f5f
 
-> >> +- reg			: physical base address and size of the device memory
-> >> mapped
-> >> +  registers;
-> >> +- interrupts		: CSI-2 Host interrupt
-> >> +- snps,output-type	: Core output to be used (IPI-> 0 or IDI->1 or
-> >> BOTH->2)
-> >> +			  These  values choose which of the Core outputs will be used,
-> >> +			  it can be Image Data Interface or Image Pixel Interface.
+ Merge branch 'pm-cpuidle'
 
-Does this describe what outputs the IP core has been instantiated 
-(synthesized) with, or what output(s) are used at runtime ? How does that 
-relate to the port nodes ?
+on top of commit 651022382c7f8da46cb4872a545ee1da6d097d2a
 
-> >> +- phys			: List of one PHY specifier (as defined in
-> >> +			  Documentation/devicetree/bindings/phy/phy-bindings.txt).
-> >> +			  This PHY is a MIPI DPHY working in RX mode.
-> >> +- resets		: Reference to a reset controller (optional)
-> >> +
-> >> +The per-board settings:
-> >> + - port sub-node describing a single endpoint connected to the camera as
-> >> +   described in video-interfaces.txt[1].
-> > 
-> > Need to say 2 ports and what is each port? Why no port #0?
-> 
-> I will elaborate on that.
-> 
-> >> +
-> >> +Example:
-> >> +
-> >> +	csi2_1: csi2@3000 {
-> >> +		compatible = "snps,dw-csi-plat";
-> >> +		#address-cells = <1>;
-> >> +		#size-cells = <0>;
-> >> +		reg = < 0x03000 0x7FF>;
-> >> +		interrupts = <2>;
-> >> +		output-type = <2>;
-> >> +		resets = <&dw_rst 1>;
-> >> +		phys = <&mipi_dphy_rx1 0>;
-> >> +		phy-names = "csi2-dphy";
-> > 
-> > Not documented. Not really needed for a single entry, so I'd just drop
-> > it.
-> 
-> I will, thanks.
-> 
-> >> +
-> >> +		/* CSI-2 per-board settings */
-> >> +		port@1 {
-> >> +			reg = <1>;
-> >> +			csi1_ep1: endpoint {
-> >> +				remote-endpoint = <&camera_1>;
-> >> +				data-lanes = <1 2>;
-> >> +			};
-> >> +		};
-> >> +		port@2 {
-> >> +			csi1_ep2: endpoint {
-> >> +				remote-endpoint = <&vif1_ep>;
-> >> +			};
-> >> +		};
-> >> +	};
+ Linux 4.20-rc1
 
--- 
-Regards,
+to receive power management updates for 4.20-rc3.
 
-Laurent Pinchart
+These remove a stale DT entry left behind after recent removal of
+a cpufreq driver without users, fix up error handling in the imx6q
+cpufreq driver, fix two issues in the cpufreq documentation, and
+update the ARM cpufreq driver.
+
+Specifics:
+
+ - Drop stale DT binding for the arm_big_little_dt driver removed
+   recently (Sudeep Holla).
+
+ - Fix up error handling in the imx6q cpufreq driver to make it
+   report voltage scaling failures (Anson Huang).
+
+ - Fix two issues in the cpufreq documentation (Viresh Kumar,
+   Zhao Wei Liew).
+
+ - Fix ARM cpuidle driver initialization regression from the 4.19
+   time frame and rework the driver registration part of it to
+   simplify code (Ulf Hansson).
+
+Thanks!
 
 
+---------------
 
+Anson Huang (1):
+      cpufreq: imx6q: add return value check for voltage scale
+
+Sudeep Holla (1):
+      dt-bindings: cpufreq: remove stale arm_big_little_dt entry
+
+Ulf Hansson (2):
+      ARM: cpuidle: Don't register the driver when back-end init returns -ENXIO
+      ARM: cpuidle: Convert to use cpuidle_register|unregister()
+
+Viresh Kumar (1):
+      Documentation: cpu-freq: Frequencies aren't always sorted
+
+Zhao Wei Liew (1):
+      Documentation: cpufreq: Correct a typo
+
+---------------
+
+ Documentation/admin-guide/pm/cpufreq.rst           |  2 +-
+ Documentation/cpu-freq/cpufreq-stats.txt           |  8 ++-
+ .../bindings/cpufreq/arm_big_little_dt.txt         | 65 ----------------------
+ drivers/cpufreq/imx6q-cpufreq.c                    |  7 ++-
+ drivers/cpuidle/cpuidle-arm.c                      | 40 +++----------
+ 5 files changed, 19 insertions(+), 103 deletions(-)
