@@ -2,138 +2,187 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D74AFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:15:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1068BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:17:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B001322360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:15:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B001322360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
+	by mail.kernel.org (Postfix) with ESMTP id A647522360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:17:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="PKYVsYVK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A647522360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387530AbeKOETw (ORCPT
+        id S1732174AbeKOEVq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 23:19:52 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:52542 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732847AbeKOETw (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 23:19:52 -0500
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-03.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gMzhO-0002EF-7r from joseph_myers@mentor.com ; Wed, 14 Nov 2018 10:15:34 -0800
-Received: from digraph.polyomino.org.uk (137.202.0.90) by
- SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Wed, 14 Nov 2018 18:15:30 +0000
-Received: from jsm28 (helo=localhost)
-        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
-        (envelope-from <joseph@codesourcery.com>)
-        id 1gMzhK-0005Ad-33; Wed, 14 Nov 2018 18:15:30 +0000
-Date:   Wed, 14 Nov 2018 18:15:30 +0000
-From:   Joseph Myers <joseph@codesourcery.com>
-X-X-Sender: jsm28@digraph.polyomino.org.uk
-To:     Daniel Colascione <dancol@google.com>
-CC:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>, nd <nd@arm.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
-Subject: Re: Official Linux system wrapper library?
-In-Reply-To: <CAKOZuesta_V=doXsVLc2E6WCQvywdur3F+u2pFKaPN+CEQd+ZQ@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1811141741000.16571@digraph.polyomino.org.uk>
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com> <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <877ehjx447.fsf@oldenburg.str.redhat.com> <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
- <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com> <20181113193859.GJ3505@e103592.cambridge.arm.com> <5853c297-9d84-86e5-dede-aa2957562c6b@arm.com>
- <CAKOZuesta_V=doXsVLc2E6WCQvywdur3F+u2pFKaPN+CEQd+ZQ@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 14 Nov 2018 23:21:46 -0500
+Received: from mail-eopbgr720073.outbound.protection.outlook.com ([40.107.72.73]:28928
+        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727761AbeKOEVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 23:21:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1fm8smFw14YT7PjMgpwTidNOwWINK5rVEO1tlfXy1mE=;
+ b=PKYVsYVKzGZK0s5h01dWgg4U0KSaEYa91LPmqRP8riQOQ8UcfxuN3VbmCilhQcNXeyO9tj1d5zizLuTneZlbQeDwCNuW9cVYlPSAdaVhsuX8XuMZI4kqdb3DGcHRJ/vDVZMWJVfHFjB993eKyRbsMbM7mSYYfIGIGGHNNTzpTfo=
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
+ DM5PR12MB1866.namprd12.prod.outlook.com (10.175.88.23) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Wed, 14 Nov 2018 18:17:25 +0000
+Received: from DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::4c23:f551:bc6a:554e]) by DM5PR12MB2471.namprd12.prod.outlook.com
+ ([fe80::4c23:f551:bc6a:554e%4]) with mapi id 15.20.1294.045; Wed, 14 Nov 2018
+ 18:17:25 +0000
+From:   "Moger, Babu" <Babu.Moger@amd.com>
+To:     "Yu, Fenghua" <fenghua.yu@intel.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC:     "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "Shen, Xiaochen" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Hunt, Douglas" <Douglas.Hunt@amd.com>
+Subject: Re: [PATCH v7 11/13] arch/x86: Introduce QOS feature for AMD
+Thread-Topic: [PATCH v7 11/13] arch/x86: Introduce QOS feature for AMD
+Thread-Index: AQHUeG4qy036y75SdUqlKSLDpRVWZKVORLIAgAE4oVCAAB5jAA==
+Date:   Wed, 14 Nov 2018 18:17:25 +0000
+Message-ID: <204f5ddb-21f3-5275-273b-02335a5a03c8@amd.com>
+References: <20181109205153.14811-1-babu.moger@amd.com>
+ <20181109205153.14811-12-babu.moger@amd.com>
+ <3E5A0FA7E9CA944F9D5414FEC6C71220985A6664@ORSMSX105.amr.corp.intel.com>
+ <DM5PR12MB2471AB9EFDE9E8D7C65C58A295C30@DM5PR12MB2471.namprd12.prod.outlook.com>
+In-Reply-To: <DM5PR12MB2471AB9EFDE9E8D7C65C58A295C30@DM5PR12MB2471.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SN4PR0501CA0141.namprd05.prod.outlook.com
+ (2603:10b6:803:2c::19) To DM5PR12MB2471.namprd12.prod.outlook.com
+ (2603:10b6:4:b5::10)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Babu.Moger@amd.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [165.204.78.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1866;20:y6l0DlSt+di7ooRN+Cyi3bjsQ2OAYYvFM683rYBkOvHUGigoIY8XR/yRsKPtmsO2yrRl/UVTmolpt2uQTQ4J8m52cLWFd9XDTuFZY1iM26f0aJhif4/hvTZkPyKAxXzfUH9Ifw/bhnWTNHa655kwtEZXP+XktUW53VoG0JIlb8wrQVUb9jXujzlIISpZGunyFi8PrlRnv6XZTaJZC+kaxFRkfnHsnIU+g3MLBzb+Ca9wr5AFeqJHr7Iovr9HZzG+
+x-ms-office365-filtering-correlation-id: 33108866-cdcb-487c-e717-08d64a5d6dd4
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1866;
+x-ms-traffictypediagnostic: DM5PR12MB1866:
+x-microsoft-antispam-prvs: <DM5PR12MB186659B1AE3C7B9A49D4EC3C95C30@DM5PR12MB1866.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(9452136761055)(228905959029699)(211936372134217)(240460790083961)(767451399110);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231415)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1866;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1866;
+x-forefront-prvs: 085634EFF4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(366004)(39860400002)(376002)(199004)(189003)(13464003)(229853002)(2501003)(26005)(3846002)(476003)(5660300001)(36756003)(68736007)(72206003)(256004)(966005)(14444005)(25786009)(102836004)(6506007)(53936002)(386003)(53546011)(6246003)(6306002)(6512007)(6486002)(186003)(6116002)(97736004)(11346002)(305945005)(7736002)(2616005)(6436002)(4326008)(86362001)(486006)(14454004)(93886005)(8936002)(8676002)(52116002)(2201001)(7406005)(2906002)(81166006)(66066001)(105586002)(81156014)(106356001)(99286004)(316002)(446003)(71190400001)(71200400001)(110136005)(2900100001)(54906003)(76176011)(478600001)(31696002)(7416002)(31686004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1866;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: S5osHZJ76y3T9zg6Il1N8VRZXwpJBPpwmogDvfsObmWN2SN/kCHy8kHu5tdkCDiAya92AfTQEKFspbSwfzd+oJDcgEtyW1KjeA8KciEENaWSl3ABHYNLIAKhNe4Qgli6Ksb/EQ5wbelcLindWEN25DX/mGFuMufSwwl7K156hmx4ID2adrSDgZDOhkjbyMBqCkwYWvyen/rTD5gI4iy6tWf/wO68vas34HM+hD0OQD8TD2a3r+JPVAP/ryABOKjObF4ukqsFbEr9ysg4d4gH/MK7NH/O2F72cD5XBED1zB8WpNLjJvbywKly+XiXeoB7pp1BckloSoJYjIE6R7LdvXvKE2l4FCfKkziiHrpTGhM=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <A7B185184D18164B9EAE17F22F9038A6@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) To
- SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33108866-cdcb-487c-e717-08d64a5d6dd4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 18:17:25.8199
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1866
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Nov 2018, Daniel Colascione wrote:
-
-> > there is a lot of bikesheding here by people who
-> > don't understand the constraints nor the use-cases.
-> 
-> Conversely, there's a lot of doubt-sowing from the other side that
-
-"other side" is the wrong concept here in the first place - it's supposed 
-to be a matter of cooperating projects trying to find good interfaces 
-together.
-
-Any new feature from the kernel that is meant to be of use to libcs is 
-best designed in a way involving such cooperation (with multiple libcs).  
-I concur with Zack's assessment in 
-<https://sourceware.org/ml/libc-alpha/2018-11/msg00286.html> that a 
-technical fix to process / communication issues cannot work here.  Any 
-feature (e.g. syscall library) with a design coming solely from the kernel 
-rather than a cooperative process is also likely to have an unsuitable 
-design meaning it doesn't get used.  Once we have sufficient communication 
-to design suitable interfaces *together*, "avoiding the need to 
-communicate" becomes irrelevant as a design criterion anyway.
-
-> After looking at the history of settid, signal multi-handler
-> registration, and other proposed improvements running into the brick
-> wall of glibc's API process, I think it's clear that requiring glibc
-> signoff on new kernel interfaces would simply lead to stagnation. It's
-
-That there was disagreement on some particular interface does not mean 
-there are problems with the basic principle of working with libc 
-maintainers (of multiple libcs, not just one!) to establish what the 
-intended userspace C API to some new kernel interface should be, and to 
-nail down the details of how the kernel interface is defined in the 
-process.
-
-(And as noted elsewhere, I think the main people objecting to generally 
-having bindings for all non-obsolescent syscalls are no longer active in 
-glibc.)
-
-If the semantics of some proposed kernel interface, both at the syscall 
-level and at the userspace C API level, are agreed e.g. by kernel and musl 
-people, I'd think the API agreement from musl would be a good indication 
-of the API also being suitable to add to glibc.  It's not necessary to get 
-agreement from every libc on every API - but there should be agreement 
-from *some* libc that is careful about API review.  If enough people with 
-good sense about libc APIs have judged some API for a new syscall 
-suitable, I expect other libcs can implement it even if it's not exactly 
-the API they'd come up with themselves.
-
-(I haven't seen enough comments on libc / kernel API design from people I 
-know to be associated with bionic, uclibc-ng, etc., to judge if they also 
-pay similarly careful attention to working out what a good C API design 
-for some interface should be.  Note that there are musl people active on 
-libc-alpha, which helps everyone arrive at a consensus on better C API 
-designs.)
-
-> The right answer is a move to an approximation of the BSD model and
-> bring the primary interface layer in-house.
-
-I could equally say we should take the kernel in-house and develop it to 
-better support glibc - that if the kernel doesn't provide what we want, we 
-should add the features to GNU Linux-libre and say that's the supported 
-kernel for use with glibc.  It's an equally absurd statement in a context 
-of multiple cooperating projects.
-
->  There's a lot of evidence that this model works.
-
-There's a lot of evidence that the model of separately maintained Linux 
-kernel and libc works (see: the number of devices using Linux kernels with 
-a range of different libc implementations that meet different needs).
-
--- 
-Joseph S. Myers
-joseph@codesourcery.com
+DQoNCk9uIDExLzE0LzE4IDEwOjM4IEFNLCBNb2dlciwgQmFidSB3cm90ZToNCj4gRmVuZ2h1YSwN
+Cj4gDQo+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPj4gRnJvbTogbGludXgta2VybmVs
+LW93bmVyQHZnZXIua2VybmVsLm9yZyA8bGludXgta2VybmVsLQ0KPj4gb3duZXJAdmdlci5rZXJu
+ZWwub3JnPiBPbiBCZWhhbGYgT2YgWXUsIEZlbmdodWENCj4+IFNlbnQ6IFR1ZXNkYXksIE5vdmVt
+YmVyIDEzLCAyMDE4IDM6NTAgUE0NCj4+IFRvOiBNb2dlciwgQmFidSA8QmFidS5Nb2dlckBhbWQu
+Y29tPjsgdGdseEBsaW51dHJvbml4LmRlOw0KPj4gbWluZ29AcmVkaGF0LmNvbTsgYnBAYWxpZW44
+LmRlOyBjb3JiZXRAbHduLm5ldDsgQ2hhdHJlLCBSZWluZXR0ZQ0KPj4gPHJlaW5ldHRlLmNoYXRy
+ZUBpbnRlbC5jb20+OyBwZXRlcnpAaW5mcmFkZWFkLm9yZzsNCj4+IGdyZWdraEBsaW51eGZvdW5k
+YXRpb24ub3JnOyBkYXZlbUBkYXZlbWxvZnQubmV0OyBha3BtQGxpbnV4LQ0KPj4gZm91bmRhdGlv
+bi5vcmcNCj4+IENjOiBocGFAenl0b3IuY29tOyB4ODZAa2VybmVsLm9yZzsgbWNoZWhhYitzYW1z
+dW5nQGtlcm5lbC5vcmc7DQo+PiBhcm5kQGFybmRiLmRlOyBrc3Rld2FydEBsaW51eGZvdW5kYXRp
+b24ub3JnOyBwb21icmVkYW5uZUBuZXhiLmNvbTsNCj4+IHJhZmFlbEBrZXJuZWwub3JnOyBraXJp
+bGwuc2h1dGVtb3ZAbGludXguaW50ZWwuY29tOyBMdWNrLCBUb255DQo+PiA8dG9ueS5sdWNrQGlu
+dGVsLmNvbT47IHFpYW55dWUuempAYWxpYmFiYS1pbmMuY29tOyBTaGVuLCBYaWFvY2hlbg0KPj4g
+PHhpYW9jaGVuLnNoZW5AaW50ZWwuY29tPjsgcGJvbnppbmlAcmVkaGF0LmNvbTsgU2luZ2gsIEJy
+aWplc2gNCj4+IDxicmlqZXNoLnNpbmdoQGFtZC5jb20+OyBIdXJ3aXR6LCBTaGVycnkgPHNoZXJy
+eS5odXJ3aXR6QGFtZC5jb20+Ow0KPj4gZHdtdzJAaW5mcmFkZWFkLm9yZzsgTGVuZGFja3ksIFRo
+b21hcyA8VGhvbWFzLkxlbmRhY2t5QGFtZC5jb20+Ow0KPj4gbHV0b0BrZXJuZWwub3JnOyBqb3Jv
+QDhieXRlcy5vcmc7IGphbm5oQGdvb2dsZS5jb207DQo+PiB2a3V6bmV0c0ByZWRoYXQuY29tOyBy
+aWFuQGFsdW0ubWl0LmVkdTsganBvaW1ib2VAcmVkaGF0LmNvbTsgbGludXgtDQo+PiBrZXJuZWxA
+dmdlci5rZXJuZWwub3JnOyBsaW51eC1kb2NAdmdlci5rZXJuZWwub3JnOyBZdSwgRmVuZ2h1YQ0K
+Pj4gPGZlbmdodWEueXVAaW50ZWwuY29tPg0KPj4gU3ViamVjdDogUkU6IFtQQVRDSCB2NyAxMS8x
+M10gYXJjaC94ODY6IEludHJvZHVjZSBRT1MgZmVhdHVyZSBmb3IgQU1EDQo+Pg0KPj4+IEZyb206
+IE1vZ2VyLCBCYWJ1IFttYWlsdG86QmFidS5Nb2dlckBhbWQuY29tXQ0KPj4+IFN1YmplY3Q6IFtQ
+QVRDSCB2NyAxMS8xM10gYXJjaC94ODY6IEludHJvZHVjZSBRT1MgZmVhdHVyZSBmb3IgQU1EDQo+
+Pj4gVGhlIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZmVhdHVyZSBpcyBhdmFpbGFibGUgYXQNCj4+
+PiBodHRwczovL2RldmVsb3Blci5hbWQuY29tL3dwLWNvbnRlbnQvcmVzb3VyY2VzLzU2Mzc1LnBk
+Zg0KPj4NCj4+PiArYm9vbCBjYm1fdmFsaWRhdGVfYW1kKGNoYXIgKmJ1ZiwgdTMyICpkYXRhLCBz
+dHJ1Y3QgcmR0X3Jlc291cmNlICpyKSB7DQo+Pj4gKwlpZiAodmFsID4gci0+ZGVmYXVsdF9jdHJs
+KSB7DQo+Pj4gKwkJcmR0X2xhc3RfY21kX3B1dHMoIm1hc2sgb3V0IG9mIHJhbmdlXG4iKTsNCj4+
+PiArCQlyZXR1cm4gZmFsc2U7DQo+Pj4gKwl9DQo+Pg0KPj4gSWYgdmFsIGlzIHplcm8sIHRoZW4g
+dGhpcyBjbG9zaWQgY2Fubm90IGFsbG9jYXRlIGFueSBjYWNoZSBsaW5lLg0KPj4NCj4+IEknbSB3
+b25kZXJpbmc6IGRvZXMgdGhhdCBtZWFuIHRoZSB0YXNrcyBydW5uaW5nIHdpdGggdGhpcyBjbG9z
+aWQgZGlyZWN0bHkNCj4+IGFjY2VzcyBtZW1vcnkgd2l0aG91dCBjYWNoZT8gSXMgdGhlcmUgYW55
+IHVzYWdlIGZvciB0aGlzIHNpdHVhdGlvbj8NCg0KSGVyZSBpcyB0aGUgZGV0YWlsZWQgYW5zd2Vy
+IHRvIHlvdXIgcXVlc3Rpb24gZnJvbSBEb3VnKGluIENDKS4NCg0KQSBjbG9zaWQgd2l0aCBMM19N
+QVNLIG9mIGFsbCAwJ3Mgd2lsbCBub3QgdXNlIGFueSBvZiB0aGUgTDMgY2FjaGUsIGJ1dA0Kd2ls
+bCBzdGlsbCBiZSBhYmxlIHRvIHVzZSBMMiBjYWNoZS4gIFNvLCBubywgdGhlIHByb2Nlc3NlcyBp
+biB0aGF0IGNsb3NpZA0Kd2lsbCBub3QgImRpcmVjdGx5IGFjY2VzcyBtZW1vcnkiIGluIHRoZSBz
+ZW5zZSB0aGF0IHRoZXkgd2lsbCB1c2UgdGhlIEwxDQphbmQgTDIgY2FjaGVzIGFzIG5vcm1hbC4g
+IEJ1dCBpZiB0aGV5IG1pc3MgdGhlIEwyIHRoZW4sIHllcywgdGhlIGFjY2Vzcw0Kd2lsbCBnbyBk
+aXJlY3RseSB0byBtZW1vcnkuICBUbyBiZSBwcmVjaXNlLCBub25lIG9mIHRoZSBsaW5lcyB3aGlj
+aCBhcmUNCmZldGNoZWQgYnkgYSBwcm9jZXNzIHJ1bm5pbmcgd2l0aCBzdWNoIGEgY29uZmlndXJh
+dGlvbiB3aWxsIGJlIGluc3RhbGxlZA0KaW4gdGhlIEwzIGNhY2hlLCBzbyBzdWJzZXF1ZW50IGFj
+Y2Vzc2VzIHdoaWNoIG1pc3MgdGhlIEwyIGNhY2hlIHdpbGwgbm90DQpmaW5kIHRoZSByZXF1ZXN0
+ZWQgZGF0YSBpbiB0aGUgTDMgY2FjaGUgYW5kIHdpbGwgdGhlbiBnbyBvbiB0byBhY2Nlc3MgbWVt
+b3J5Lg0KDQotIERvdWcNCg0KPiANCj4gSSB3b3VsZCB0aGluayBhbnkgbWVtb3J5IGFjY2VzcyBo
+YXMgdG8gaGFwcGVuIHZpYSBjYWNoZSBvbmx5LiAgQnV0DQo+IEkgYW0gbm90IHN1cmUgYWJvdXQg
+dGhlIHVzYWdlIG9mIHRoaXMgc2l0dWF0aW9uLiBXaWxsIGNoZWNrIG9uIHRoYXQuDQo+IFdpbGwg
+cG9zdCBpZiBJIGdldCBhbnkgbW9yZSBpbmZvcm1hdGlvbi4gQnV0IEkgY2FuIHNheSB0aGF0IGl0
+IGlzDQo+IGFsbG93ZWQgdG8gaGF2ZSBtYXNrIGFzIHplcm8uIExvb2tpbmcgYXQgdGhlIHNwZWNz
+DQo+IGh0dHBzOi8vZGV2ZWxvcGVyLmFtZC5jb20vd3AtY29udGVudC9yZXNvdXJjZXMvNTYzNzUu
+cGRmDQo+IA0KPiBUaGUgYml0cyB3aGljaCBhcmUgc2V0IGluIHRoZSB2YXJpb3VzIEwzX01BU0tf
+biByZWdpc3RlcnMgZG8gbm90IGhhdmUgdG8gYmUNCj4gY29udGlndW91cyBhbmQgbWF5IG92ZXJs
+YXAgaW4gYW55IGRlc2lyZWQgY29tYmluYXRpb24uIElmIGFuIEwzX01BU0tfbg0KPiByZWdpc3Rl
+ciBpcyBwcm9ncmFtbWVkIHdpdGggYWxsIDAncywgdGhhdCBDT1Mgd2lsbCBiZSBwcmV2ZW50ZWQg
+ZnJvbSBhbGxvY2F0aW5nDQo+IGFueSBsaW5lcyBpbiB0aGUgTDMgY2FjaGUuIEF0IHJlc2V0LCBh
+bGwgTDNfTUFTS19uIHJlZ2lzdGVycyBhcmUgaW5pdGlhbGl6ZWQgdG8gYWxsDQo+IDEncywgYWxs
+b3dpbmcgYWxsIHByb2Nlc3NvcnMgdG8gdXNlIHRoZSBlbnRpcmUgTDMgY2FjaGUgYWNjZXNzaWJs
+ZSB0byB0aGVtLg0KPiANCj4+DQo+PiBUaGFua3MuDQo+Pg0KPj4gLUZlbmdodWENCg==
