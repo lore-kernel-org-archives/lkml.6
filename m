@@ -2,88 +2,93 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A26AAC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:01:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C373C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:03:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 755AD208A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:01:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 755AD208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 0BC3F22419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:03:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BC3F22419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732392AbeKODFM (ORCPT
+        id S1732622AbeKODHX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 22:05:12 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:42312 "EHLO mail.bootlin.com"
+        Wed, 14 Nov 2018 22:07:23 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:31553 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725759AbeKODFM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 22:05:12 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id D67DE20D73; Wed, 14 Nov 2018 18:01:10 +0100 (CET)
-Received: from localhost (unknown [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id AF8512072A;
-        Wed, 14 Nov 2018 18:01:10 +0100 (CET)
-Date:   Wed, 14 Nov 2018 18:01:10 +0100
-From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
-To:     Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc:     a.zummo@towertech.it, linux-rtc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] rtc: max8997: Fix the returned value in case of error in
- 'max8997_rtc_read_alarm()'
-Message-ID: <20181114170110.GZ29768@piout.net>
-References: <20181114165025.2293-1-christophe.jaillet@wanadoo.fr>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181114165025.2293-1-christophe.jaillet@wanadoo.fr>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1725759AbeKODHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 22:07:23 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1270A315487B;
+        Wed, 14 Nov 2018 17:03:23 +0000 (UTC)
+Received: from thinkpad.redhat.com (ovpn-204-52.brq.redhat.com [10.40.204.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id EBB9160BF6;
+        Wed, 14 Nov 2018 17:03:20 +0000 (UTC)
+From:   Laurent Vivier <lvivier@redhat.com>
+To:     Michael Ellerman <mpe@ellerman.id.au>
+Cc:     linuxppc-dev@lists.ozlabs.org,
+        Satheesh Rajendran <satheera@in.ibm.com>,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        linux-kernel@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>
+Subject: [PATCH] powerpc/numa: fix hot-added CPU on memory-less node
+Date:   Wed, 14 Nov 2018 18:03:19 +0100
+Message-Id: <20181114170319.24828-1-lvivier@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 14 Nov 2018 17:03:23 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14/11/2018 17:50:25+0100, Christophe JAILLET wrote:
-> In case of error, we return 0.
-> This is spurious and not consistent with the other functions of the driver.
-> Commit 22652ba72453 has modified more than what is said in the commit
-> message and error should be propagated.
-> 
-> Fixes: 22652ba72453 ("rtc: stop validating rtc_time in .read_time")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-> ---
-> Not sure that the Fixes tag is the right one.
-> It is related, but not 100% accurate IMHO.
+Trying to hotplug a CPU on an empty NUMA node (without
+memory or CPU) crashes the kernel when the CPU is onlined.
 
-Well, as you note, this make your commit message wrong 22652ba72453
-didn't modified more than what it said and the behavior stayed exactly
-the same as the previous one. Can you reword?
+During the onlining process, the kernel calls start_secondary()
+that ends by calling
+set_numa_mem(local_memory_node(numa_cpu_lookup_table[cpu]))
+that relies on NODE_DATA(nid)->node_zonelists and in our case
+NODE_DATA(nid) is NULL.
 
-> ---
->  drivers/rtc/rtc-max8997.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/rtc/rtc-max8997.c b/drivers/rtc/rtc-max8997.c
-> index 08c661a332ec..20e50d9fdf88 100644
-> --- a/drivers/rtc/rtc-max8997.c
-> +++ b/drivers/rtc/rtc-max8997.c
-> @@ -215,7 +215,7 @@ static int max8997_rtc_read_alarm(struct device *dev, struct rtc_wkalrm *alrm)
->  
->  out:
->  	mutex_unlock(&info->lock);
-> -	return 0;
-> +	return ret;
->  }
->  
->  static int max8997_rtc_stop_alarm(struct max8997_rtc_info *info)
-> -- 
-> 2.17.1
-> 
+To fix that, add the same checking as we already have in
+find_and_online_cpu_nid(): if NODE_DATA() is NULL, use
+the first online node.
 
+Bug: https://github.com/linuxppc/linux/issues/184
+Fixes: ea05ba7c559c8e5a5946c3a94a2a266e9a6680a6
+       (powerpc/numa: Ensure nodes initialized for hotplug)
+Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+---
+ arch/powerpc/mm/numa.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
+
+diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
+index 3a048e98a132..1b2d25a3c984 100644
+--- a/arch/powerpc/mm/numa.c
++++ b/arch/powerpc/mm/numa.c
+@@ -483,6 +483,15 @@ static int numa_setup_cpu(unsigned long lcpu)
+ 	if (nid < 0 || !node_possible(nid))
+ 		nid = first_online_node;
+ 
++	if (NODE_DATA(nid) == NULL) {
++		/*
++		 * Default to using the nearest node that has memory installed.
++		 * Otherwise, it would be necessary to patch the kernel MM code
++		 * to deal with more memoryless-node error conditions.
++		 */
++		nid = first_online_node;
++	}
++
+ 	map_cpu_to_node(lcpu, nid);
+ 	of_node_put(cpu);
+ out:
 -- 
-Alexandre Belloni, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+2.17.2
+
