@@ -2,472 +2,177 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E255EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:19:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B79CCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:20:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 868E22251D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:19:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJfPc54a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 868E22251D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7AC612251C
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:20:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7AC612251C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387822AbeKOGYS (ORCPT
+        id S2387577AbeKOGZD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 01:24:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:39792 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732928AbeKOGXI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 01:23:08 -0500
-Received: from tzanussi-mobl.hsd1.il.comcast.net (c-98-220-238-81.hsd1.il.comcast.net [98.220.238.81])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ED82A2251E;
-        Wed, 14 Nov 2018 20:18:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542226707;
-        bh=1y3+nZPmym9Y24INUyk3lo8dwskak1xCHku6FAq+DLM=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:In-Reply-To:
-         References:From;
-        b=qJfPc54aL1xYef9sGJw7tPtj7Bp8wiBUF7L1TsZhystV2ERLnVmC1psPz5DFak0lM
-         oXQtKd37bquwghkQuqRtrVjXvIrTtZep38AnqNCxHtYjm4+pIzDl6hsJT4FUnps4/i
-         MN7ykls1l79p69lGXW9PuN3gnoNX5Vt0lrBqGbTo=
-From:   Tom Zanussi <zanussi@kernel.org>
-To:     rostedt@goodmis.org
-Cc:     tglx@linutronix.de, mhiramat@kernel.org, namhyung@kernel.org,
-        vedang.patel@intel.com, bigeasy@linutronix.de,
-        joel@joelfernandes.org, mathieu.desnoyers@efficios.com,
-        julia@ni.com, linux-kernel@vger.kernel.org,
-        linux-rt-users@vger.kernel.org
-Subject: [PATCH v7 06/16] tracing: Add conditional snapshot
-Date:   Wed, 14 Nov 2018 14:18:03 -0600
-Message-Id: <9a8debd48ee488e2c1188071364640703e0f593c.1542221863.git.tom.zanussi@linux.intel.com>
-X-Mailer: git-send-email 2.14.1
-In-Reply-To: <cover.1542221862.git.tom.zanussi@linux.intel.com>
-References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
-In-Reply-To: <cover.1542221862.git.tom.zanussi@linux.intel.com>
-References: <cover.1542221862.git.tom.zanussi@linux.intel.com>
+        Thu, 15 Nov 2018 01:25:03 -0500
+Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:48206 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727118AbeKOGZD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 01:25:03 -0500
+Received: from pps.filterd (m0098417.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAEKJsaD096402
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 15:20:21 -0500
+Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nrq719qvb-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 15:20:20 -0500
+Received: from localhost
+        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Wed, 14 Nov 2018 20:20:18 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Wed, 14 Nov 2018 20:20:15 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAEKKEBC28573714
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Wed, 14 Nov 2018 20:20:14 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 86265B2067;
+        Wed, 14 Nov 2018 20:20:14 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 4FCA7B205F;
+        Wed, 14 Nov 2018 20:20:14 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.80.221.2])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Wed, 14 Nov 2018 20:20:14 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id D973216C36C7; Wed, 14 Nov 2018 12:20:13 -0800 (PST)
+Date:   Wed, 14 Nov 2018 12:20:13 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     Ville =?iso-8859-1?Q?Syrj=E4l=E4?= <ville.syrjala@linux.intel.com>
+Cc:     linux-kernel@vger.kernel.org, Andi Kleen <ak@linux.intel.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Viresh Kumar <viresh.kumar@linaro.org>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>
+Subject: Re: [REGRESSION 4.20-rc1] 45975c7d21a1 ("rcu: Define RCU-sched API
+ in terms of RCU for Tree RCU PREEMPT builds")
+Reply-To: paulmck@linux.ibm.com
+References: <20181113135453.GW9144@intel.com>
+ <20181113151037.GG4170@linux.ibm.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181113151037.GG4170@linux.ibm.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111420-0040-0000-0000-000004927D1C
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010049; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01117462; UDB=6.00577119; IPR=6.00897571;
+ MB=3.00024164; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-14 20:20:17
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111420-0041-0000-0000-0000089B8825
+Message-Id: <20181114202013.GA27603@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-14_16:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811140181
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Tom Zanussi <tom.zanussi@linux.intel.com>
+On Tue, Nov 13, 2018 at 07:10:37AM -0800, Paul E. McKenney wrote:
+> On Tue, Nov 13, 2018 at 03:54:53PM +0200, Ville Syrjälä wrote:
+> > Hi Paul,
+> > 
+> > After 4.20-rc1 some of my 32bit UP machines no longer reboot/shutdown.
+> > I bisected this down to commit 45975c7d21a1 ("rcu: Define RCU-sched
+> > API in terms of RCU for Tree RCU PREEMPT builds").
+> > 
+> > I traced the hang into
+> > -> cpufreq_suspend()
+> >  -> cpufreq_stop_governor()
+> >   -> cpufreq_dbs_governor_stop()
+> >    -> gov_clear_update_util()
+> >     -> synchronize_sched()
+> >      -> synchronize_rcu()
+> > 
+> > Only PREEMPT=y is affected for obvious reasons, but that couldn't
+> > explain why the same UP kernel booted on an SMP machine worked fine.
+> > Eventually I realized that the difference between working and
+> > non-working machine was IOAPIC vs. PIC. With initcall_debug I saw
+> > that we mask everything in the PIC before cpufreq is shut down,
+> > and came up with the following fix:
+> > 
+> > diff --git a/drivers/cpufreq/cpufreq.c b/drivers/cpufreq/cpufreq.c
+> > index 7aa3dcad2175..f88bf3c77fc0 100644
+> > --- a/drivers/cpufreq/cpufreq.c
+> > +++ b/drivers/cpufreq/cpufreq.c
+> > @@ -2605,4 +2605,4 @@ static int __init cpufreq_core_init(void)
+> >         return 0;
+> >  }
+> >  module_param(off, int, 0444);
+> > -core_initcall(cpufreq_core_init);
+> > +late_initcall(cpufreq_core_init);
+> 
+> Thank you for testing this and tracking it down!
+> 
+> I am glad that you have a fix, but I hope that we can arrive at a less
+> constraining one.
+> 
+> > Here's the resulting change in inutcall_debug:
+> >   pci 0000:00:00.1: shutdown
+> >   hub 4-0:1.0: hub_ext_port_status failed (err = -110)
+> >   agpgart-intel 0000:00:00.0: shutdown
+> > + PM: Calling cpufreq_suspend+0x0/0x100
+> >   PM: Calling mce_syscore_shutdown+0x0/0x10
+> >   PM: Calling i8259A_shutdown+0x0/0x10
+> > - PM: Calling cpufreq_suspend+0x0/0x100
+> > + reboot: Restarting system
+> > + reboot: machine restart
+> > 
+> > I didn't really look into what other ramifications the cpufreq
+> > initcall change might have. cpufreq_global_kobject worries
+> > me a bit. Maybe that one has to remain in core_initcall() and
+> > we could just move the suspend to late_initcall()? Anyways,
+> > I figured I'd leave this for someone more familiar with the
+> > code to figure out ;) 
+> 
+> Let me guess...
+> 
+> When the system suspends or shuts down, there comes a point after which
+> there is only a single CPU that is running with preemption and interrupts
+> are disabled.  At this point, RCU must change the way that it works, and
+> the commit you bisected to would make the change more necessary.  But if
+> I am guessing correctly, we have just been getting lucky in the past.
+> 
+> It looks like RCU needs to create a struct syscore_ops with a shutdown
+> function and pass this to register_syscore_ops().  Maybe a suspend
+> function as well.  And RCU needs to invoke register_syscore_ops() at
+> a time that causes RCU's shutdown function to be invoked in the right
+> order with respect to the other work in flight.  The hope would be that
+> RCU's suspend function gets called just as the system transitions into
+> a mode where the scheduler is no longer active, give or take.
+> 
+> Does this make sense, or am I confused?
 
-Currently, tracing snapshots are context-free - they capture the ring
-buffer contents at the time the tracing_snapshot() function was
-invoked, and nothing else.  Additionally, they're always taken
-unconditionally - the calling code can decide whether or not to take a
-snapshot, but the data used to make that decision is kept separately
-from the snapshot itself.
+Well, it certainly does not make sense in that blocking is still legal
+at .shutdown() invocation time, which means that RCU cannot revert to
+its boot-time approach at that point.  Looks like I need hooks in a
+bunch of arch-dependent functions.  Which is certainly doable, but will
+take a bit more digging.
 
-This change adds the ability to associate with each trace instance
-some user data, along with an 'update' function that can use that data
-to determine whether or not to actually take a snapshot.  The update
-function can then update that data along with any other state (as part
-of the data presumably), if warranted.
-
-Because snapshots are 'global' per-instance, only one user can enable
-and use a conditional snapshot for any given trace instance.  To
-enable a conditional snapshot (see details in the function and data
-structure comments), the user calls tracing_snapshot_cond_enable().
-Similarly, to disable a conditional snapshot and free it up for other
-users, tracing_snapshot_cond_disable() should be called.
-
-To actually initiate a conditional snapshot, tracing_snapshot_cond()
-should be called.  tracing_snapshot_cond() will invoke the update()
-callback, allowing the user to decide whether or not to actually take
-the snapshot and update the user-defined data associated with the
-snapshot.  If the callback returns 'true', tracing_snapshot_cond()
-will then actually take the snapshot and return.
-
-This scheme allows for flexibility in snapshot implementations - for
-example, by implementing slightly different update() callbacks,
-snapshots can be taken in situations where the user is only interested
-in taking a snapshot when a new maximum in hit versus when a value
-changes in any way at all.  Future patches will demonstrate both
-cases.
-
-Signed-off-by: Tom Zanussi <tom.zanussi@linux.intel.com>
----
- kernel/trace/trace.c                | 162 ++++++++++++++++++++++++++++++++++--
- kernel/trace/trace.h                |  56 ++++++++++++-
- kernel/trace/trace_events_trigger.c |   2 +-
- kernel/trace/trace_sched_wakeup.c   |   2 +-
- 4 files changed, 211 insertions(+), 11 deletions(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index 998955dcc3ca..856623672f9d 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -894,7 +894,7 @@ int __trace_bputs(unsigned long ip, const char *str)
- EXPORT_SYMBOL_GPL(__trace_bputs);
- 
- #ifdef CONFIG_TRACER_SNAPSHOT
--void tracing_snapshot_instance(struct trace_array *tr)
-+void tracing_snapshot_instance(struct trace_array *tr, void *cond_data)
- {
- 	struct tracer *tracer = tr->current_trace;
- 	unsigned long flags;
-@@ -920,7 +920,7 @@ void tracing_snapshot_instance(struct trace_array *tr)
- 	}
- 
- 	local_irq_save(flags);
--	update_max_tr(tr, current, smp_processor_id());
-+	update_max_tr(tr, current, smp_processor_id(), cond_data);
- 	local_irq_restore(flags);
- }
- 
-@@ -942,10 +942,58 @@ void tracing_snapshot(void)
- {
- 	struct trace_array *tr = &global_trace;
- 
--	tracing_snapshot_instance(tr);
-+	tracing_snapshot_instance(tr, NULL);
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot);
- 
-+/**
-+ * tracing_snapshot_cond - conditionally take a snapshot of the current buffer.
-+ * @tr:		The tracing instance to snapshot
-+ * @cond_data:	The data to be tested conditionally, and possibly saved
-+ *
-+ * This is the same as tracing_snapshot() except that the snapshot is
-+ * conditional - the snapshot will only happen if the
-+ * cond_snapshot.update() implementation receiving the cond_data
-+ * returns true, which means that the trace array's cond_snapshot
-+ * update() operation used the cond_data to determine whether the
-+ * snapshot should be taken, and if it was, presumably saved it along
-+ * with the snapshot.
-+ */
-+void tracing_snapshot_cond(struct trace_array *tr, void *cond_data)
-+{
-+	tracing_snapshot_instance(tr, cond_data);
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond);
-+
-+/**
-+ * tracing_snapshot_cond_data - get the user data associated with a snapshot
-+ * @tr:		The tracing instance
-+ *
-+ * When the user enables a conditional snapshot using
-+ * tracing_snapshot_cond_enable(), the user-defined cond_data is saved
-+ * with the snapshot.  This accessor is used to retrieve it.
-+ *
-+ * Should not be called from cond_snapshot.update(), since it takes
-+ * the tr->max_lock lock, which the code calling
-+ * cond_snapshot.update() has already done.
-+ *
-+ * Returns the cond_data associated with the trace array's snapshot.
-+ */
-+void *tracing_cond_snapshot_data(struct trace_array *tr)
-+{
-+	void *cond_data = NULL;
-+
-+	arch_spin_lock(&tr->max_lock);
-+
-+	if (tr->cond_snapshot)
-+		cond_data = tr->cond_snapshot->cond_data;
-+
-+	arch_spin_unlock(&tr->max_lock);
-+
-+	return cond_data;
-+}
-+EXPORT_SYMBOL_GPL(tracing_cond_snapshot_data);
-+
- static int resize_buffer_duplicate_size(struct trace_buffer *trace_buf,
- 					struct trace_buffer *size_buf, int cpu_id);
- static void set_buffer_entries(struct trace_buffer *buf, unsigned long val);
-@@ -1025,12 +1073,85 @@ void tracing_snapshot_alloc(void)
- 	tracing_snapshot();
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot_alloc);
-+
-+/**
-+ * tracing_snapshot_cond_enable - enable conditional snapshot for an instance
-+ * @tr:		The tracing instance
-+ * @cond_data:	User data to associate with the snapshot
-+ * @update:	Implementation of the cond_snapshot update function
-+ *
-+ * Check whether the conditional snapshot for the given instance has
-+ * already been enabled; if so, return -EBUSY, else create a
-+ * cond_snapshot and save the cond_data and update function inside.
-+ *
-+ * Returns 0 if successful, error otherwise.
-+ */
-+int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data,
-+				 cond_update_fn_t update)
-+{
-+	struct cond_snapshot *cond_snapshot;
-+	int ret = 0;
-+
-+	cond_snapshot = kzalloc(sizeof(*cond_snapshot), GFP_KERNEL);
-+	if (!cond_snapshot)
-+		return -ENOMEM;
-+
-+	cond_snapshot->cond_data = cond_data;
-+	cond_snapshot->update = update;
-+
-+	arch_spin_lock(&tr->max_lock);
-+
-+	if (tr->cond_snapshot) {
-+		kfree(cond_snapshot);
-+		ret = -EBUSY;
-+	} else
-+		tr->cond_snapshot = cond_snapshot;
-+
-+	arch_spin_unlock(&tr->max_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_enable);
-+
-+/**
-+ * tracing_snapshot_cond_disable - disable conditional snapshot for an instance
-+ * @tr:		The tracing instance
-+ *
-+ * Check whether the conditional snapshot for the given instance is
-+ * enabled; if so, free the cond_snapshot associated with it,
-+ * otherwise return -EINVAL.
-+ *
-+ * Returns 0 if successful, error otherwise.
-+ */
-+int tracing_snapshot_cond_disable(struct trace_array *tr)
-+{
-+	int ret = 0;
-+
-+	arch_spin_lock(&tr->max_lock);
-+
-+	if (!tr->cond_snapshot)
-+		ret = -EINVAL;
-+	else {
-+		kfree(tr->cond_snapshot);
-+		tr->cond_snapshot = NULL;
-+	}
-+
-+	arch_spin_unlock(&tr->max_lock);
-+
-+	return ret;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_disable);
- #else
- void tracing_snapshot(void)
- {
- 	WARN_ONCE(1, "Snapshot feature not enabled, but internal snapshot used");
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot);
-+void tracing_snapshot_cond(struct trace_array *tr, void *cond_data)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but internal conditional snapshot used");
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond);
- int tracing_alloc_snapshot(void)
- {
- 	WARN_ONCE(1, "Snapshot feature not enabled, but snapshot allocation used");
-@@ -1043,6 +1164,27 @@ void tracing_snapshot_alloc(void)
- 	tracing_snapshot();
- }
- EXPORT_SYMBOL_GPL(tracing_snapshot_alloc);
-+void *tracing_cond_snapshot_data(struct trace_array *tr)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but tried to get internal conditional snapshot data");
-+
-+	return NULL;
-+}
-+EXPORT_SYMBOL_GPL(tracing_cond_snapshot_data);
-+int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data, cond_update_fn_t update)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but tried to enable internal conditional snapshot");
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_enable);
-+int tracing_snapshot_cond_disable(struct trace_array *tr)
-+{
-+	WARN_ONCE(1, "Snapshot feature not enabled, but tried to disable internal conditional snapshot");
-+
-+	return false;
-+}
-+EXPORT_SYMBOL_GPL(tracing_snapshot_cond_disable);
- #endif /* CONFIG_TRACER_SNAPSHOT */
- 
- void tracer_tracing_off(struct trace_array *tr)
-@@ -1359,7 +1501,8 @@ __update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
-  * about which task was the cause of this latency.
-  */
- void
--update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
-+update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu,
-+	      void *cond_data)
- {
- 	if (tr->stop_count)
- 		return;
-@@ -1380,6 +1523,11 @@ update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu)
- 	else
- 		ring_buffer_record_off(tr->max_buffer.buffer);
- 
-+	if (tr->cond_snapshot && !tr->cond_snapshot->update(tr, cond_data)) {
-+		arch_spin_unlock(&tr->max_lock);
-+		return;
-+	}
-+
- 	swap(tr->trace_buffer.buffer, tr->max_buffer.buffer);
- 
- 	__update_max_tr(tr, tsk, cpu);
-@@ -6489,7 +6637,7 @@ tracing_snapshot_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 		local_irq_disable();
- 		/* Now, we're going to swap */
- 		if (iter->cpu_file == RING_BUFFER_ALL_CPUS)
--			update_max_tr(tr, current, smp_processor_id());
-+			update_max_tr(tr, current, smp_processor_id(), NULL);
- 		else
- 			update_max_tr_single(tr, current, iter->cpu_file);
- 		local_irq_enable();
-@@ -7081,7 +7229,7 @@ ftrace_snapshot(unsigned long ip, unsigned long parent_ip,
- 		struct trace_array *tr, struct ftrace_probe_ops *ops,
- 		void *data)
- {
--	tracing_snapshot_instance(tr);
-+	tracing_snapshot_instance(tr, NULL);
- }
- 
- static void
-@@ -7103,7 +7251,7 @@ ftrace_count_snapshot(unsigned long ip, unsigned long parent_ip,
- 		(*count)--;
- 	}
- 
--	tracing_snapshot_instance(tr);
-+	tracing_snapshot_instance(tr, NULL);
- }
- 
- static int
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 3b8c0e24ab30..79ba2796c93a 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -194,6 +194,51 @@ struct trace_pid_list {
- 	unsigned long			*pids;
- };
- 
-+typedef bool (*cond_update_fn_t)(struct trace_array *tr, void *cond_data);
-+
-+/**
-+ * struct cond_snapshot - conditional snapshot data and callback
-+ *
-+ * The cond_snapshot structure encapsulates a callback function and
-+ * data associated with the snapshot for a given tracing instance.
-+ *
-+ * When a snapshot is taken conditionally, by invoking
-+ * tracing_snapshot_cond(tr, cond_data), the cond_data passed in is
-+ * passed in turn to the cond_snapshot.update() function.  That data
-+ * can be compared by the update() implementation with the cond_data
-+ * contained wihin the struct cond_snapshot instance associated with
-+ * the trace_array.  Because the tr->max_lock is held throughout the
-+ * update() call, the update() function can directly retrieve the
-+ * cond_snapshot and cond_data associated with the per-instance
-+ * snapshot associated with the trace_array.
-+ *
-+ * The cond_snapshot.update() implementation can save data to be
-+ * associated with the snapshot if it decides to, and returns 'true'
-+ * in that case, or it returns 'false' if the conditional snapshot
-+ * shouldn't be taken.
-+ *
-+ * The cond_snapshot instance is created and associated with the
-+ * user-defined cond_data by tracing_cond_snapshot_enable().
-+ * Likewise, the cond_snapshot instance is destroyed and is no longer
-+ * associated with the trace instance by
-+ * tracing_cond_snapshot_disable().
-+ *
-+ * The method below is required.
-+ *
-+ * @update: When a conditional snapshot is invoked, the update()
-+ *	callback function is invoked with the tr->max_lock held.  The
-+ *	update() implementation signals whether or not to actually
-+ *	take the snapshot, by returning 'true' if so, 'false' if no
-+ *	snapshot should be taken.  Because the max_lock is held for
-+ *	the duration of update(), the implementation is safe to
-+ *	directly retrieven and save any implementation data it needs
-+ *	to in association with the snapshot.
-+ */
-+struct cond_snapshot {
-+	void				*cond_data;
-+	cond_update_fn_t		update;
-+};
-+
- /*
-  * The trace array - an array of per-CPU trace arrays. This is the
-  * highest level data structure that individual tracers deal with.
-@@ -276,6 +321,7 @@ struct trace_array {
- #endif
- 	int			time_stamp_abs_ref;
- 	struct list_head	hist_vars;
-+	struct cond_snapshot	*cond_snapshot;
- };
- 
- enum {
-@@ -687,7 +733,8 @@ int trace_pid_write(struct trace_pid_list *filtered_pids,
- 		    const char __user *ubuf, size_t cnt);
- 
- #ifdef CONFIG_TRACER_MAX_TRACE
--void update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu);
-+void update_max_tr(struct trace_array *tr, struct task_struct *tsk, int cpu,
-+		   void *cond_data);
- void update_max_tr_single(struct trace_array *tr,
- 			  struct task_struct *tsk, int cpu);
- #endif /* CONFIG_TRACER_MAX_TRACE */
-@@ -1744,6 +1791,11 @@ static inline bool event_command_needs_rec(struct event_command *cmd_ops)
- extern int trace_event_enable_disable(struct trace_event_file *file,
- 				      int enable, int soft_disable);
- extern int tracing_alloc_snapshot(void);
-+extern void tracing_snapshot_cond(struct trace_array *tr, void *cond_data);
-+extern int tracing_snapshot_cond_enable(struct trace_array *tr, void *cond_data, cond_update_fn_t update);
-+
-+extern int tracing_snapshot_cond_disable(struct trace_array *tr);
-+extern void *tracing_cond_snapshot_data(struct trace_array *tr);
- 
- extern const char *__start___trace_bprintk_fmt[];
- extern const char *__stop___trace_bprintk_fmt[];
-@@ -1817,7 +1869,7 @@ static inline void trace_event_eval_update(struct trace_eval_map **map, int len)
- #endif
- 
- #ifdef CONFIG_TRACER_SNAPSHOT
--void tracing_snapshot_instance(struct trace_array *tr);
-+void tracing_snapshot_instance(struct trace_array *tr, void *cond_data);
- int tracing_alloc_snapshot_instance(struct trace_array *tr);
- #else
- static inline void tracing_snapshot_instance(struct trace_array *tr) { }
-diff --git a/kernel/trace/trace_events_trigger.c b/kernel/trace/trace_events_trigger.c
-index 2152d1e530cb..a77102a17046 100644
---- a/kernel/trace/trace_events_trigger.c
-+++ b/kernel/trace/trace_events_trigger.c
-@@ -1049,7 +1049,7 @@ snapshot_trigger(struct event_trigger_data *data, void *rec,
- 	struct trace_event_file *file = data->private_data;
- 
- 	if (file)
--		tracing_snapshot_instance(file->tr);
-+		tracing_snapshot_instance(file->tr, NULL);
- 	else
- 		tracing_snapshot();
- }
-diff --git a/kernel/trace/trace_sched_wakeup.c b/kernel/trace/trace_sched_wakeup.c
-index a86b303e6c67..95efd2b61529 100644
---- a/kernel/trace/trace_sched_wakeup.c
-+++ b/kernel/trace/trace_sched_wakeup.c
-@@ -494,7 +494,7 @@ probe_wakeup_sched_switch(void *ignore, bool preempt,
- 
- 	if (likely(!is_tracing_stopped())) {
- 		wakeup_trace->max_latency = delta;
--		update_max_tr(wakeup_trace, wakeup_task, wakeup_cpu);
-+		update_max_tr(wakeup_trace, wakeup_task, wakeup_cpu, NULL);
- 	}
- 
- out_unlock:
--- 
-2.14.1
+							Thanx, Paul
 
