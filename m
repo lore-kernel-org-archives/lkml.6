@@ -7,46 +7,46 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C829C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:49:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0573BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6AB59223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:49:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C18C6223DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:49:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="c8r29l6j"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB59223DD
+	dkim=pass (1024-bit key) header.d=agner.ch header.i=@agner.ch header.b="t9W1z9Ex"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C18C6223DD
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=agner.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732897AbeKODx5 (ORCPT
+        id S1733000AbeKODx6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 22:53:57 -0500
-Received: from mail.kmu-office.ch ([178.209.48.109]:50464 "EHLO
+        Wed, 14 Nov 2018 22:53:58 -0500
+Received: from mail.kmu-office.ch ([178.209.48.109]:50452 "EHLO
         mail.kmu-office.ch" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728686AbeKODx5 (ORCPT
+        with ESMTP id S1728033AbeKODx5 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Nov 2018 22:53:57 -0500
 Received: from trochilidae.toradex.int (unknown [46.140.72.82])
-        by mail.kmu-office.ch (Postfix) with ESMTPSA id EC4895C1859;
+        by mail.kmu-office.ch (Postfix) with ESMTPSA id B3CB95C1776;
         Wed, 14 Nov 2018 18:49:45 +0100 (CET)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=agner.ch; s=dkim;
-        t=1542217786;
+        t=1542217785;
         h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
          to:to:cc:cc:mime-version:mime-version:content-type:
          content-transfer-encoding:content-transfer-encoding:
          in-reply-to:in-reply-to:references:references;
-        bh=9dzvl57LvFMfN5DFhcVfqX8K/ZN+XEYte00Y/654CsE=;
-        b=c8r29l6jdWAqu3Bea6dyVQDikUe/AAxOGcOjS/K6+aGlOeqieErOOUXRN68B1711dsC2qS
-        WKVtc7nh8A8RFwjciYO4lgpBzvoHz5s/e6pZtbsysaTdSHkxOkMyrliFQtGXmV1QHegi9a
-        pUsprB+Ls4x1Z7uSA7zb2CznplHLkCY=
+        bh=WLKkszEWOPlBFuW2wcbYnhdMhnLa9QG3D33fjz0lQpw=;
+        b=t9W1z9ExdUtXJDW+Vbuqb0sh4I7pt349j5coJFsS554VrAMeGjsSDUcwZfLik4ZTb+kHG1
+        58TFaCePKL/rxz5PKweGtjS0Q+jREUFwiNz0i2p6+GQ6nTNl8+gwnebXnTeYojv5hIgfrP
+        piB4Y5rlQEgTSDNrHfTlaojPrLVNUk0=
 From:   Stefan Agner <stefan@agner.ch>
 To:     gregkh@linuxfoundation.org, jslaby@suse.com
 Cc:     fabio.estevam@nxp.com, u.kleine-koenig@pengutronix.de,
         s.hauer@pengutronix.de, linux-serial@vger.kernel.org,
         linux-kernel@vger.kernel.org, Stefan Agner <stefan@agner.ch>
-Subject: [PATCH 3/3] serial: imx: avoid crash when un/re-binding serial console device
-Date:   Wed, 14 Nov 2018 18:49:40 +0100
-Message-Id: <20181114174940.7865-3-stefan@agner.ch>
+Subject: [PATCH 2/3] serial: imx: unprepare console clocks on remove
+Date:   Wed, 14 Nov 2018 18:49:39 +0100
+Message-Id: <20181114174940.7865-2-stefan@agner.ch>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181114174940.7865-1-stefan@agner.ch>
 References: <20181114174940.7865-1-stefan@agner.ch>
@@ -57,66 +57,50 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the device used as a serial console gets un/re-binded, then
-register_console() will call imx_uart_setup_console() again.
-Drop __init so that imx_uart_setup_console() can be safely called
-at runtime.
+Currently imx_uart_console_setup() prepares clocks which do not
+get unprepared anywhere. Check whether the console has been used
+by testing if index is set and unprepare clocks in this case.
+
+This makes sure that clocks are properly unprepared after the
+console device has been unbound.
 
 Signed-off-by: Stefan Agner <stefan@agner.ch>
 ---
-This addresses a kernel panic seen when unbinding/rebinding the i.MX
-UART which is serial console on i.MX 6/7 via SSH:
-# cd /sys/bus/platform/drivers/imx-uart/
-# echo 30860000.serial > unbind && echo 30860000.serial > bind
-
-console [ttymxc0] disabled
-30860000.serial: ttymxc0 at MMIO 0x30860000 (irq = 52, base_baud = 1500000) is a IMX
-Unable to handle kernel paging request at virtual address c0c4b830
-pgd = 5e12e3d4
-[c0c4b830] *pgd=80c1141e(bad)
-Internal error: Oops: 8000000d [#1] SMP ARM
-Modules linked in:
-CPU: 0 PID: 866 Comm: sh Not tainted 4.18.15-00048-gb3b505988801-dirty #403
-Hardware name: Freescale i.MX7 Dual (Device Tree)
-PC is at imx_uart_console_setup+0x0/0x274
-LR is at register_console+0x184/0x3c4
-pc : [<c0c4b830>]    lr : [<c0171314>]    psr: a0070013
-sp : e8015db8  ip : c0d06548  fp : c0b4a158
-r10: ec1d9380  r9 : 00000001  r8 : 00000000
-r7 : 00000000  r6 : c0d819e0  r5 : c0d81e48  r4 : c0d47d68
-r3 : c0c4b830  r2 : 00000000  r1 : efffca03  r0 : c0d47d68
-Flags: NzCv  IRQs on  FIQs on  Mode SVC_32  ISA ARM  Segment none
-Control: 10c5387d  Table: a803806a  DAC: 00000051
-Process sh (pid: 866, stack limit = 0x9c2f1d49)
-
-It seems that also other drivers are affected. An alternative might be
-to disallow unbinding/rebinding instead.
-
- drivers/tty/serial/imx.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/tty/serial/imx.c | 13 +++++++++++--
+ 1 file changed, 11 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/tty/serial/imx.c b/drivers/tty/serial/imx.c
-index 757c91e5105a..674bd0ea2491 100644
+index 313c3b1900a8..757c91e5105a 100644
 --- a/drivers/tty/serial/imx.c
 +++ b/drivers/tty/serial/imx.c
-@@ -1966,7 +1966,7 @@ imx_uart_console_write(struct console *co, const char *s, unsigned int count)
-  * If the port was already initialised (eg, by a boot loader),
-  * try to determine the current setup.
-  */
--static void __init
-+static void
- imx_uart_console_get_options(struct imx_port *sport, int *baud,
- 			     int *parity, int *bits)
+@@ -2085,7 +2085,7 @@ static struct console imx_uart_console = {
+ 	.data		= &imx_uart_uart_driver,
+ };
+ 
+-#define IMX_CONSOLE	&imx_uart_console
++#define IMX_CONSOLE	(&imx_uart_console)
+ 
+ #ifdef CONFIG_OF
+ static void imx_uart_console_early_putchar(struct uart_port *port, int ch)
+@@ -2378,8 +2378,17 @@ static int imx_uart_probe(struct platform_device *pdev)
+ static int imx_uart_remove(struct platform_device *pdev)
  {
-@@ -2025,7 +2025,7 @@ imx_uart_console_get_options(struct imx_port *sport, int *baud,
- 	}
+ 	struct imx_port *sport = platform_get_drvdata(pdev);
++	int ret;
++
++	ret = uart_remove_one_port(&imx_uart_uart_driver, &sport->port);
++
++	if (IS_ENABLED(CONFIG_SERIAL_IMX_CONSOLE) && IMX_CONSOLE->index >= 0) {
++		clk_unprepare(sport->clk_ipg);
++		clk_unprepare(sport->clk_per);
++		IMX_CONSOLE->index = -1;
++	}
+ 
+-	return uart_remove_one_port(&imx_uart_uart_driver, &sport->port);
++	return ret;
  }
  
--static int __init
-+static int
- imx_uart_console_setup(struct console *co, char *options)
- {
- 	struct imx_port *sport;
+ static void imx_uart_restore_context(struct imx_port *sport)
 -- 
 2.19.1
 
