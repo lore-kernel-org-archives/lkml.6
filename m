@@ -2,101 +2,107 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B9CC04EBC
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:47:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EB49EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:47:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6B29722419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:47:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B29722419
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
+	by mail.kernel.org (Postfix) with ESMTP id B14EE208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:47:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Syxz4YIG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B14EE208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728256AbeKOGwF (ORCPT
+        id S1728497AbeKOGwO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 01:52:05 -0500
-Received: from sender-of-o53.zoho.com ([135.84.80.218]:21747 "EHLO
-        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725756AbeKOGwF (ORCPT
+        Thu, 15 Nov 2018 01:52:14 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:40605 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725756AbeKOGwO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 01:52:05 -0500
-ARC-Seal: i=1; a=rsa-sha256; t=1542228421; cv=none; 
-        d=zoho.com; s=zohoarc; 
-        b=Dp2RNO+l9R/QOvv88tT47O1nMZt3BY7BIBMJe9TTPD/BhLgsZPFyazoiOZQAsCkzpuSrVDNhWLP/Y/PO2CCRya5Ch7x9KQsf0gPXBTiEoz5VD8rBqE+b6qSOthwHq+CmtVVH7917hHtU3Hrme8V1YvzUx8YcIffot1udVPLQBIw=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
-        t=1542228421; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
-        bh=yHiZL1mYH+AVYQadTcbktf0OXMM7teDTUzRXY1I+bq8=; 
-        b=Gr7yegQlD6ciljlox4hdPy7FlsOzcHC6ENKCkSt84j/6o9xrsqV0/Mie9QyniG7Qs/k3wb1LNLirXzJ7lrtH1nLhxZLuslzkb1BL2nv7U4km0aI4986u3D4xil/gev0JkvRmVB/SgH6t5F5q0KVmIMqg0S7TKyKP+Fggr6cMyJM=
-ARC-Authentication-Results: i=1; mx.zoho.com;
-        dkim=pass  header.i=mniewoehner.de;
-        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
-        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
-Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
-        with SMTPS id 1542228417085432.2836951108044; Wed, 14 Nov 2018 12:46:57 -0800 (PST)
-Message-ID: <4f7cc7152f2266d8d0782889db2375d4c1c71987.camel@mniewoehner.de>
-Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
-From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
-To:     Mimi Zohar <zohar@linux.ibm.com>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
-        arnd@arndb.de, linux-integrity@vger.kernel.org,
-        linux-kernel <linux-kernel@vger.kernel.org>
-Cc:     Nayna Jain <nayna@linux.ibm.com>
-In-Reply-To: <1541972556.3734.90.camel@linux.ibm.com>
-References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
-         <1541960689.3190.4.camel@HansenPartnership.com>
-         <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
-         <1541962653.3190.7.camel@HansenPartnership.com>
-         <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
-         <1541968191.3190.12.camel@HansenPartnership.com>
-         <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
-         <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
-         <1541972556.3734.90.camel@linux.ibm.com>
+        Thu, 15 Nov 2018 01:52:14 -0500
+Received: by mail-ed1-f67.google.com with SMTP id d3so14266455edx.7;
+        Wed, 14 Nov 2018 12:47:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=9if5ej5Y4WJAukyqAzi3fXEcjjFsndOTSNgioEyLZOA=;
+        b=Syxz4YIG2Feb7eZOmiftTfN7gvp3LutIOPoknDedy8YnKM4r59twe0BndREiUn353u
+         345QEQzy9FJNnesQetN9VlnwNvjysGidlELO/5SGFgiYKttFi0oUGXagCJ+RuBfcCeUu
+         MwPTBOkGZ/NwbziShbTE9ZX5OODIUptWF4TWF5ZLt36OeGqpYYGd/zOEKJ+y3Pc/rZmg
+         TdJ37JaBG0hcC3MZtlml23o0oJiTN4YC8C1cEOY3TyILpjmnn1tZOFDfc8jti3Zia25i
+         Xd3sRKrkuCIYf/iX1WzH3U7tVPnalwJ8AajN9omrqjH8XaOAEwOs5n3PyvqRjbupuhbC
+         2Rxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=9if5ej5Y4WJAukyqAzi3fXEcjjFsndOTSNgioEyLZOA=;
+        b=IYmksoiYw8JYVzkBcTB20tits5vyzIMoO9jgqHD7kzLGZJiUxFUaKdHuEtwPsmql0L
+         NX40Ia3ANl4ddSAay/rdffEw3d3P6EVYaNDmTasG+u55BS4kZxrvqdRbDc/P4/c14sS6
+         sXA2SA/2YO9ffOWEBvtzCoiDaZBVN8kKJc+o9/4DRH7Q8o3KaMfbAxVGyugOX4iH0e1u
+         f/aQw9moJNLzt6suxhog6hj/RTIUD+pAxohHckI9pe36COaR66Da42c8/wqHSRaR7DCb
+         FDLu80Hne47VUsTxFlEKX9OVek+eMZQacXYZt67LAGomfWEZCj5RaJvMTDOlTMsFMsBg
+         ztWQ==
+X-Gm-Message-State: AGRZ1gKn+ib1tlBUBlzD4i00/QINXJuo2VXOBMzENUMU3Xulw5pS+tT9
+        dGvNj7L9501U2yekGd4Q5JlAo7PYC72x6RkH2A==
+X-Google-Smtp-Source: AJdET5ez2/+gHSgj8Q4iT4ZGireaefYf/y3BZBtlf+gz3yZnzo0W/891OjS1hvMc6RCNwjnp3YpFR5U+GmDDtbS/awI=
+X-Received: by 2002:a50:8a05:: with SMTP id i5-v6mr3363019edi.222.1542228445840;
+ Wed, 14 Nov 2018 12:47:25 -0800 (PST)
+MIME-Version: 1.0
+References: <lsq.1541965744.387173642@decadent.org.uk> <20181113015707.GA5984@roeck-us.net>
+In-Reply-To: <20181113015707.GA5984@roeck-us.net>
+From:   Johannes Pointner <h4nn35.work@gmail.com>
+Date:   Wed, 14 Nov 2018 21:47:12 +0100
+Message-ID: <CAHvQdo3ysM2xcm_jC17pHiujCNTKSKo55Rnh9UrGAY+HTp8=Wg@mail.gmail.com>
+Subject: Re: [PATCH 3.16 000/366] 3.16.61-rc1 review
+To:     ben@decadent.org.uk
+Cc:     linux@roeck-us.net, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org, torvalds@linux-foundation.org,
+        akpm@linux-foundation.org
 Content-Type: text/plain; charset="UTF-8"
-Date:   Wed, 14 Nov 2018 21:46:53 +0100
-Mime-Version: 1.0
-X-Mailer: Evolution 3.28.5 
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi all,
+On Tue, Nov 13, 2018 at 2:58 AM Guenter Roeck <linux@roeck-us.net> wrote:
+>
+> On Sun, Nov 11, 2018 at 07:49:04PM +0000, Ben Hutchings wrote:
+> > This is the start of the stable review cycle for the 3.16.61 release.
+> > There are 366 patches in this series, which will be posted as responses
+> > to this one.  If anyone has any issues with these being applied, please
+> > let me know.
+> >
+> > Responses should be made by Fri Nov 16 18:00:00 UTC 2018.
+> > Anything received after that time might be too late.
+> >
+> Build results:
+>         total: 140 pass: 139 fail: 1
+> Failed builds:
+>         i386:tools/perf
+> Qemu test results:
+>         total: 217 pass: 217 fail: 0
+>
+> Details are available at https://kerneltests.org/builders/.
+>
+> Guenter
 
-I tried that patch mentioned by Mimi but it does not change anything for me.
+Hello Ben,
 
-Then I did some more tests with different kernel configs and finally got TPM
-working by
-a) compiling TPM as modules and rmmod tpm* and re-modprobe tpm_tis.
+could you please include the following patch which makes it possible
+to build arm with gcc8
+a71ae0513c232c844009738af135a13e5d7e39c ARM: fix put_user() for gcc-8
+this is the version which landed in 3.18
+and also the following patch
+430c3fdb11ec1f0af1eca28460c922b9c1eb2ac5 turn off -Wattribute-alias
+this also the version which landed in 3.18
 
-(initramfs) dmesg | grep -i tpm
-[    0.000000] efi:  ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000 SMBIOS=0x9f5eb000
-SMBIOS 3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018 TPMEventLog=0x97cbb018
-[    0.003793] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-
-S06   00001260 AMI 00000000)
-(initramfs) rmmod tpm_crb tpm_tis tpm_tis_core tpm
-(initramfs) modprobe tpm_tis
-[   44.956905] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-
-b) compiling TPM-support in-kernel and manually bind the ACPI device
-
-(initramfs) dmesg | grep -i tpm
-[    0.000000] efi: ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000 SMBIOS=0x9f5eb000 SMBIOS
-3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018 TPMEventLog=0x97cbb018
-[    0.003546] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-S06 00001260
-AMI 00000000)
-(initramfs) echo MSFT0101:00 >/sys/bus/platform/drivers/tpm_tis/bind
-[  233.076079] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
-
-
-It seems to me, the kernel tries to enable the TPM to early...
-
-
-Michael
-
-
+Thx,
+Hannes
