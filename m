@@ -2,537 +2,127 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF1ABC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:51:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62008C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:54:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5754B208A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:51:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 20AC82087E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:54:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="p1gaIfdO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5754B208A3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hRh2kvvE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20AC82087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726611AbeKOJ4h (ORCPT
+        id S1726754AbeKOKAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 04:56:37 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:42757 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725952AbeKOJ4h (ORCPT
+        Thu, 15 Nov 2018 05:00:18 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:45830 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbeKOKAS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 04:56:37 -0500
-Received: by mail-pl1-f196.google.com with SMTP id x21-v6so5818275pln.9
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 15:51:11 -0800 (PST)
+        Thu, 15 Nov 2018 05:00:18 -0500
+Received: by mail-pl1-f194.google.com with SMTP id a14so3944143plm.12
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 15:54:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=s8NwkacCOHDgUMs5H1tLMIxteJURENSUEO8L2ADhymU=;
-        b=p1gaIfdO0ccQVZ1HJ8ZYBFsK6WXpdG6gsNao4nIdD24TAfciK3/2Y1FHBx+SIqCyX5
-         Zu5CpwFil81gb8FU9zCiOm3D+PQeaYK9HAEWnqfJWd8NDlN9yfBhj65mRrwfGtKxaHjl
-         RBbrZhdSt+EX9dHJg/lFbYPprVD1dnqSuuBckvdpD6Jm60Bwoj/rVm7jaxi5r/gJP2X8
-         zQaf8YiqY6dkhpXExknvUQydG6urQ5yFaP2nVKt8x4MyCiJr4dWP5a0rZl3PIsePt+ff
-         KEXMKnisiRxzrAo/+dv/e1yihBlWKJX37SbZJx0Wf4yYt8kG6DDOUP9HNIWU4sM3jgKm
-         8zMQ==
+        h=subject:from:to:cc:references:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=tsLmlgDGziJCBBACzNZNwJ9D2rttd9WPRN8P4AvXWEw=;
+        b=hRh2kvvEfU36GVnZ7UJfTCVmIwGNSqkt2MXlNdDpjWXCBxSRCnfI5OHBHq2zkuFBMi
+         pW0o2Ffh9tQHxcjZ+JMVIiTf3xqHX9vWdEXhF6Z0FnB7NoRTUi1TMm7djZvdgJlkHh8b
+         /58aCfelDqF09/4nV33nSwBfAdxR+dWD1sYkefqYOCLWB6RxQmCn2tJIuf166pacuVvR
+         EfsALrcQUMbUXko8Cy170smpwgy/iv4ZkQsp8lMbl6LJPhreRVAqeeEd3+cxOlyRezmW
+         K7P+kby4asnHS4XZf1VtyC94VGsgrVWQImeKv59Cb0flTX/rYkzNU3qbOZbFoWxz0ns9
+         cW3w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=s8NwkacCOHDgUMs5H1tLMIxteJURENSUEO8L2ADhymU=;
-        b=nOR9gtcdGdvJQ8tqLqyAMrdkR9EYOvwEeWOlCmcrBq7LT+QhDlOZToVVM0+f0v/ojM
-         8pFqNpLexU8enuKCRqiZ0HYQ4KcLzF9JEdRwkc1hflmfEOTmNhc0dFXzPa6PIIgVH7rI
-         0luJCf1LqJpOxGhYszO97L21aofZG9MnN7gO1A8CYlXTkoStITkxlZhjfE0HIpe/c6up
-         yz/c/lRI+YsEXQGu1C1RNjueikuTh1E17xauVqwCcxEFT9eFxtplPKaOurwzi1InpJXO
-         K4cjzPBgncUdH7Vq70ZNi7Z8GibvGO0GNo5uZBvE5Yoo6E2IHTLjMBexRUWuMdxDymfF
-         u+og==
-X-Gm-Message-State: AGRZ1gIrn1vGq4dvY0igPQk3SKnqSIrI1lm6h56wQLNesMEjhSsczwzT
-        fyr9OiF1i8xZLlSqqky6/lU=
-X-Google-Smtp-Source: AJdET5di0GdbkGkIeXg4zZB0rMgAW0AhgwNYBb83gt7Cr9l1r00INI6+yC0u/QZGTTi78D/3o47/ug==
-X-Received: by 2002:a17:902:28a8:: with SMTP id f37-v6mr3997394plb.264.1542239470518;
-        Wed, 14 Nov 2018 15:51:10 -0800 (PST)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id z13sm24092792pgf.84.2018.11.14.15.51.08
+        h=x-gm-message-state:subject:from:to:cc:references:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=tsLmlgDGziJCBBACzNZNwJ9D2rttd9WPRN8P4AvXWEw=;
+        b=Dm9tQNYPGjVL6xQDvBQ7w478rHJbhEVVOxFGJUFexyr0kys/LHYhM6nCKiI7UbWryA
+         uaMVXWY3Xhi06bo08dTqr8eYMj2tl077lMpVyIx7PHIj8XLFzm4ijgGcryKn/8/Z6HL0
+         +FXEUic7v2auiqx9rf55yNokjkvZaD4UsNUI8lcns2MwXJAGBY4cNbzZPdD4R2v4BY0u
+         fqsSut28OOm/P+aYyEcdsRDZDWDgPSmjA4pNPrMYtSGAlE1tB2/BUzEU9wIr68oV5XfI
+         G2yBZjMvVLUU58HTn71b5qbJiOHu0wXQPTHTWo0HN+3psVfTOVU9bIiZcq9LMmCC6a5o
+         qAgw==
+X-Gm-Message-State: AGRZ1gLQhDyiC6LVLDWrqXz8P0TzcqWPHmkm1kwlgKKfKSl6DamgA5Q7
+        NZUUFll7uAHamZitDpCcjW0PAgS0NJc=
+X-Google-Smtp-Source: AJdET5dN37cYuJ2i+IZulB/cpwDwrIC6c0agIhPXtVNwc8QRdgWEhR9IbNLTUJXEtlQzG0tyRLh9yA==
+X-Received: by 2002:a17:902:6ac3:: with SMTP id i3-v6mr3946320plt.153.1542239690793;
+        Wed, 14 Nov 2018 15:54:50 -0800 (PST)
+Received: from ?IPv6:2001:df0:0:200c:258c:e8b8:3f2:c132? ([2001:df0:0:200c:258c:e8b8:3f2:c132])
+        by smtp.gmail.com with ESMTPSA id s86-v6sm53023635pfa.137.2018.11.14.15.54.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 15:51:09 -0800 (PST)
-From:   Wei Yang <richard.weiyang@gmail.com>
-To:     mhocko@suse.com
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, Wei Yang <richard.weiyang@gmail.com>
-Subject: [PATCH] mm: use managed_zone() for more exact check in zone iteration
-Date:   Thu, 15 Nov 2018 07:50:40 +0800
-Message-Id: <20181114235040.36180-1-richard.weiyang@gmail.com>
-X-Mailer: git-send-email 2.15.1
+        Wed, 14 Nov 2018 15:54:49 -0800 (PST)
+Subject: Re: [RFC PATCH 06/13] m68k: Drop ARCH_USES_GETTIMEOFFSET
+From:   Michael Schmitz <schmitzmic@gmail.com>
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen N Chivers <schivers@csc.com.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Philip Blundell <philb@gnu.org>,
+        Joshua Thompson <funaho@jurai.org>
+References: <cover.1541995959.git.fthain@telegraphics.com.au>
+ <74edaee07800f91eb416ab3e72c4670b8ef4bd4e.1541995959.git.fthain@telegraphics.com.au>
+ <CAMuHMdXdo+L-Ta04zUsL62RSt1HOvmPJs7HFu_zEnc38R0FPjA@mail.gmail.com>
+ <alpine.LNX.2.21.1811122002530.351@nippy.intranet>
+ <fb617c67-089b-c4c0-2f47-28db41ffca6c@gmail.com>
+ <alpine.LNX.2.21.1811131413210.362@nippy.intranet>
+ <b824e485-796c-cbb6-9e50-504b03accd5d@gmail.com>
+ <alpine.LNX.2.21.1811131700010.366@nippy.intranet>
+ <0054c37f-ef34-e892-ff1d-02968ab529fa@gmail.com>
+ <alpine.LNX.2.21.1811140905440.371@nippy.intranet>
+ <73f75453-ce74-2c13-ba7c-f36f976d4ff7@gmail.com>
+ <ab36d408-a05f-f220-1c2b-b88333f1c33b@gmail.com>
+Message-ID: <459ad559-99bd-0196-13f4-80440cd39671@gmail.com>
+Date:   Thu, 15 Nov 2018 12:54:34 +1300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <ab36d408-a05f-f220-1c2b-b88333f1c33b@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For one zone, there are three digits to describe its space range:
+Hi Finn,
 
-    spanned_pages
-    present_pages
-    managed_pages
+On 14/11/18 3:58 PM, Michael Schmitz wrote:
+> Hi Finn,
+>
+> Am 14.11.2018 um 14:08 schrieb Michael Schmitz:
+>>> Can you also test tree fbf8405cd982 please?
+>>>
+>> My tests were on c606b5cf902 in case it wasn't clear. I've now seen
+>> fbf8405cd982, one moment please ...
+>>
+>> That one does appear to work - different versions of ARAnyM, and
+>> different userland versions though. I'll test that again with the setup
+>> that saw c606b5cf902 fail.
+>
+> Still fails on that emulator / userland.
+>
+Must be a quirk of ARAnyM 1.0.2 (or powerpc). With 0.9.15 on x86_64, 
+it's fine.
 
-The detailed meaning is written in include/linux/mmzone.h. This patch
-concerns about the last two.
+I'm sufficiently convinced to try this on actual hardware now.
 
-    present_pages is physical pages existing within the zone
-    managed_pages is present pages managed by the buddy system
+Cheers,
 
-From the definition, managed_pages is a more strict condition than
-present_pages.
+     Michael
 
-There are two functions using zone's present_pages as a boundary:
-
-    populated_zone()
-    for_each_populated_zone()
-
-By going through the kernel tree, most of their users are willing to
-access pages managed by the buddy system, which means it is more exact
-to check zone's managed_pages for a validation.
-
-This patch replaces those checks on present_pages to managed_pages by:
-
-    * change for_each_populated_zone() to for_each_managed_zone()
-    * convert for_each_populated_zone() to for_each_zone() and check
-      populated_zone() where is necessary
-    * change populated_zone() to managed_zone() at proper places
-
-Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-
----
-
-Michal, after last mail, I did one more thing to replace
-populated_zone() with managed_zone() at proper places.
-
-One thing I am not sure is those places in mm/compaction.c. I have
-chaged them. If not, please let me know.
-
-BTW, I did a boot up test with the patched kernel and looks smooth.
----
- arch/s390/mm/page-states.c |  2 +-
- include/linux/mmzone.h     |  8 +++-----
- kernel/power/snapshot.c    | 31 ++++++++++++++++++++-----------
- mm/compaction.c            |  8 ++++----
- mm/highmem.c               |  5 ++---
- mm/huge_memory.c           |  2 +-
- mm/khugepaged.c            |  2 +-
- mm/madvise.c               |  2 +-
- mm/migrate.c               |  2 +-
- mm/page-writeback.c        |  4 ++--
- mm/page_alloc.c            | 19 +++++++++----------
- mm/vmstat.c                | 14 +++++++-------
- 12 files changed, 52 insertions(+), 47 deletions(-)
-
-diff --git a/arch/s390/mm/page-states.c b/arch/s390/mm/page-states.c
-index dc3cede7f2ec..015430bf0c63 100644
---- a/arch/s390/mm/page-states.c
-+++ b/arch/s390/mm/page-states.c
-@@ -265,7 +265,7 @@ void arch_set_page_states(int make_stable)
- 		return;
- 	if (make_stable)
- 		drain_local_pages(NULL);
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone) {
- 		spin_lock_irqsave(&zone->lock, flags);
- 		for_each_migratetype_order(order, t) {
- 			list_for_each(l, &zone->free_area[order].free_list[t]) {
-diff --git a/include/linux/mmzone.h b/include/linux/mmzone.h
-index 847705a6d0ec..2174baba0546 100644
---- a/include/linux/mmzone.h
-+++ b/include/linux/mmzone.h
-@@ -937,11 +937,9 @@ extern struct zone *next_zone(struct zone *zone);
- 	     zone;					\
- 	     zone = next_zone(zone))
- 
--#define for_each_populated_zone(zone)		        \
--	for (zone = (first_online_pgdat())->node_zones; \
--	     zone;					\
--	     zone = next_zone(zone))			\
--		if (!populated_zone(zone))		\
-+#define for_each_managed_zone(zone)		        \
-+	for_each_zone(zone)				\
-+		if (!managed_zone(zone))		\
- 			; /* do nothing */		\
- 		else
- 
-diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-index b0308a2c6000..aa99efa73d89 100644
---- a/kernel/power/snapshot.c
-+++ b/kernel/power/snapshot.c
-@@ -592,10 +592,13 @@ static int create_mem_extents(struct list_head *list, gfp_t gfp_mask)
- 
- 	INIT_LIST_HEAD(list);
- 
--	for_each_populated_zone(zone) {
-+	for_each_zone(zone) {
- 		unsigned long zone_start, zone_end;
- 		struct mem_extent *ext, *cur, *aux;
- 
-+		if (!populated_zone(zone))
-+			continue;
-+
- 		zone_start = zone->zone_start_pfn;
- 		zone_end = zone_end_pfn(zone);
- 
-@@ -1193,8 +1196,8 @@ static unsigned int count_free_highmem_pages(void)
- 	struct zone *zone;
- 	unsigned int cnt = 0;
- 
--	for_each_populated_zone(zone)
--		if (is_highmem(zone))
-+	for_each_zone(zone)
-+		if (populated_zone(zone) && is_highmem(zone))
- 			cnt += zone_page_state(zone, NR_FREE_PAGES);
- 
- 	return cnt;
-@@ -1239,10 +1242,10 @@ static unsigned int count_highmem_pages(void)
- 	struct zone *zone;
- 	unsigned int n = 0;
- 
--	for_each_populated_zone(zone) {
-+	for_each_zone(zone) {
- 		unsigned long pfn, max_zone_pfn;
- 
--		if (!is_highmem(zone))
-+		if (!populated_zone(zone) || !is_highmem(zone))
- 			continue;
- 
- 		mark_free_pages(zone);
-@@ -1305,8 +1308,8 @@ static unsigned int count_data_pages(void)
- 	unsigned long pfn, max_zone_pfn;
- 	unsigned int n = 0;
- 
--	for_each_populated_zone(zone) {
--		if (is_highmem(zone))
-+	for_each_zone(zone) {
-+		if (!populated_zone(zone) || is_highmem(zone))
- 			continue;
- 
- 		mark_free_pages(zone);
-@@ -1399,9 +1402,12 @@ static void copy_data_pages(struct memory_bitmap *copy_bm,
- 	struct zone *zone;
- 	unsigned long pfn;
- 
--	for_each_populated_zone(zone) {
-+	for_each_zone(zone) {
- 		unsigned long max_zone_pfn;
- 
-+		if (!populated_zone(zone))
-+			continue;
-+
- 		mark_free_pages(zone);
- 		max_zone_pfn = zone_end_pfn(zone);
- 		for (pfn = zone->zone_start_pfn; pfn < max_zone_pfn; pfn++)
-@@ -1717,7 +1723,10 @@ int hibernate_preallocate_memory(void)
- 	saveable += save_highmem;
- 	highmem = save_highmem;
- 	size = 0;
--	for_each_populated_zone(zone) {
-+	for_each_zone(zone) {
-+		if (!populated_zone(zone))
-+			continue;
-+
- 		size += snapshot_additional_pages(zone);
- 		if (is_highmem(zone))
- 			highmem += zone_page_state(zone, NR_FREE_PAGES);
-@@ -1863,8 +1872,8 @@ static int enough_free_mem(unsigned int nr_pages, unsigned int nr_highmem)
- 	struct zone *zone;
- 	unsigned int free = alloc_normal;
- 
--	for_each_populated_zone(zone)
--		if (!is_highmem(zone))
-+	for_each_zone(zone)
-+		if (populated_zone(zone) && !is_highmem(zone))
- 			free += zone_page_state(zone, NR_FREE_PAGES);
- 
- 	nr_pages += count_pages_for_highmem(nr_highmem);
-diff --git a/mm/compaction.c b/mm/compaction.c
-index 7c607479de4a..8867c011dd45 100644
---- a/mm/compaction.c
-+++ b/mm/compaction.c
-@@ -276,7 +276,7 @@ void reset_isolation_suitable(pg_data_t *pgdat)
- 
- 	for (zoneid = 0; zoneid < MAX_NR_ZONES; zoneid++) {
- 		struct zone *zone = &pgdat->node_zones[zoneid];
--		if (!populated_zone(zone))
-+		if (!managed_zone(zone))
- 			continue;
- 
- 		/* Only flush if a full compaction finished recently */
-@@ -1832,7 +1832,7 @@ static void compact_node(int nid)
- 	for (zoneid = 0; zoneid < MAX_NR_ZONES; zoneid++) {
- 
- 		zone = &pgdat->node_zones[zoneid];
--		if (!populated_zone(zone))
-+		if (!managed_zone(zone))
- 			continue;
- 
- 		cc.nr_freepages = 0;
-@@ -1927,7 +1927,7 @@ static bool kcompactd_node_suitable(pg_data_t *pgdat)
- 	for (zoneid = 0; zoneid <= classzone_idx; zoneid++) {
- 		zone = &pgdat->node_zones[zoneid];
- 
--		if (!populated_zone(zone))
-+		if (!managed_zone(zone))
- 			continue;
- 
- 		if (compaction_suitable(zone, pgdat->kcompactd_max_order, 0,
-@@ -1963,7 +1963,7 @@ static void kcompactd_do_work(pg_data_t *pgdat)
- 		int status;
- 
- 		zone = &pgdat->node_zones[zoneid];
--		if (!populated_zone(zone))
-+		if (!managed_zone(zone))
- 			continue;
- 
- 		if (compaction_deferred(zone, cc.order))
-diff --git a/mm/highmem.c b/mm/highmem.c
-index 59db3223a5d6..1edc0539d25a 100644
---- a/mm/highmem.c
-+++ b/mm/highmem.c
-@@ -111,15 +111,14 @@ EXPORT_SYMBOL(totalhigh_pages);
- 
- EXPORT_PER_CPU_SYMBOL(__kmap_atomic_idx);
- 
--unsigned int nr_free_highpages (void)
-+unsigned int nr_free_highpages(void)
- {
- 	struct zone *zone;
- 	unsigned int pages = 0;
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone)
- 		if (is_highmem(zone))
- 			pages += zone_page_state(zone, NR_FREE_PAGES);
--	}
- 
- 	return pages;
- }
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 4e4ef8fa479d..d0f97b29c96f 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -2829,7 +2829,7 @@ static int split_huge_pages_set(void *data, u64 val)
- 	if (val != 1)
- 		return -EINVAL;
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone) {
- 		max_zone_pfn = zone_end_pfn(zone);
- 		for (pfn = zone->zone_start_pfn; pfn < max_zone_pfn; pfn++) {
- 			if (!pfn_valid(pfn))
-diff --git a/mm/khugepaged.c b/mm/khugepaged.c
-index c13625c1ad5e..4c3ec240d4d9 100644
---- a/mm/khugepaged.c
-+++ b/mm/khugepaged.c
-@@ -1845,7 +1845,7 @@ static void set_recommended_min_free_kbytes(void)
- 	int nr_zones = 0;
- 	unsigned long recommended_min;
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone) {
- 		/*
- 		 * We don't need to worry about fragmentation of
- 		 * ZONE_MOVABLE since it only has movable pages.
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 6cb1ca93e290..3a8eced61107 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -677,7 +677,7 @@ static int madvise_inject_error(int behavior,
- 	}
- 
- 	/* Ensure that all poisoned pages are removed from per-cpu lists */
--	for_each_populated_zone(zone)
-+	for_each_managed_zone(zone)
- 		drain_all_pages(zone);
- 
- 	return 0;
-diff --git a/mm/migrate.c b/mm/migrate.c
-index f7e4bfdc13b7..5c4846dd0ae3 100644
---- a/mm/migrate.c
-+++ b/mm/migrate.c
-@@ -1819,7 +1819,7 @@ static bool migrate_balanced_pgdat(struct pglist_data *pgdat,
- 	for (z = pgdat->nr_zones - 1; z >= 0; z--) {
- 		struct zone *zone = pgdat->node_zones + z;
- 
--		if (!populated_zone(zone))
-+		if (!managed_zone(zone))
- 			continue;
- 
- 		/* Avoid waking kswapd by allocating pages_to_migrate pages. */
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 3f690bae6b78..076f51e86149 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -281,7 +281,7 @@ static unsigned long node_dirtyable_memory(struct pglist_data *pgdat)
- 	for (z = 0; z < MAX_NR_ZONES; z++) {
- 		struct zone *zone = pgdat->node_zones + z;
- 
--		if (!populated_zone(zone))
-+		if (!managed_zone(zone))
- 			continue;
- 
- 		nr_pages += zone_page_state(zone, NR_FREE_PAGES);
-@@ -316,7 +316,7 @@ static unsigned long highmem_dirtyable_memory(unsigned long total)
- 				continue;
- 
- 			z = &NODE_DATA(node)->node_zones[i];
--			if (!populated_zone(z))
-+			if (!managed_zone(z))
- 				continue;
- 
- 			nr_pages = zone_page_state(z, NR_FREE_PAGES);
-diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-index c20d3c76bd59..458bd81cf75c 100644
---- a/mm/page_alloc.c
-+++ b/mm/page_alloc.c
-@@ -1747,7 +1747,7 @@ void __init page_alloc_init_late(void)
- 	memblock_discard();
- #endif
- 
--	for_each_populated_zone(zone)
-+	for_each_managed_zone(zone)
- 		set_zone_contiguous(zone);
- }
- 
-@@ -2569,9 +2569,8 @@ static void drain_pages(unsigned int cpu)
- {
- 	struct zone *zone;
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone)
- 		drain_pages_zone(cpu, zone);
--	}
- }
- 
- /*
-@@ -2655,7 +2654,7 @@ void drain_all_pages(struct zone *zone)
- 			if (pcp->pcp.count)
- 				has_pcps = true;
- 		} else {
--			for_each_populated_zone(z) {
-+			for_each_managed_zone(z) {
- 				pcp = per_cpu_ptr(z->pageset, cpu);
- 				if (pcp->pcp.count) {
- 					has_pcps = true;
-@@ -4857,7 +4856,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 	struct zone *zone;
- 	pg_data_t *pgdat;
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone) {
- 		if (show_mem_node_skip(filter, zone_to_nid(zone), nodemask))
- 			continue;
- 
-@@ -4940,7 +4939,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 				"yes" : "no");
- 	}
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone) {
- 		int i;
- 
- 		if (show_mem_node_skip(filter, zone_to_nid(zone), nodemask))
-@@ -4999,7 +4998,7 @@ void show_free_areas(unsigned int filter, nodemask_t *nodemask)
- 		printk(KERN_CONT "\n");
- 	}
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone) {
- 		unsigned int order;
- 		unsigned long nr[MAX_ORDER], flags, total = 0;
- 		unsigned char types[MAX_ORDER];
-@@ -5787,7 +5786,7 @@ void __init setup_per_cpu_pageset(void)
- 	struct pglist_data *pgdat;
- 	struct zone *zone;
- 
--	for_each_populated_zone(zone)
-+	for_each_managed_zone(zone)
- 		setup_zone_pageset(zone);
- 
- 	for_each_online_pgdat(pgdat)
-@@ -6905,7 +6904,7 @@ static void check_for_memory(pg_data_t *pgdat, int nid)
- 
- 	for (zone_type = 0; zone_type <= ZONE_MOVABLE - 1; zone_type++) {
- 		struct zone *zone = &pgdat->node_zones[zone_type];
--		if (populated_zone(zone)) {
-+		if (managed_zone(zone)) {
- 			if (IS_ENABLED(CONFIG_HIGHMEM))
- 				node_set_state(nid, N_HIGH_MEMORY);
- 			if (zone_type <= ZONE_NORMAL)
-@@ -7581,7 +7580,7 @@ int percpu_pagelist_fraction_sysctl_handler(struct ctl_table *table, int write,
- 	if (percpu_pagelist_fraction == old_percpu_pagelist_fraction)
- 		goto out;
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone) {
- 		unsigned int cpu;
- 
- 		for_each_possible_cpu(cpu)
-diff --git a/mm/vmstat.c b/mm/vmstat.c
-index 6038ce593ce3..06cd9e9ecba1 100644
---- a/mm/vmstat.c
-+++ b/mm/vmstat.c
-@@ -53,7 +53,7 @@ static void zero_zones_numa_counters(void)
- {
- 	struct zone *zone;
- 
--	for_each_populated_zone(zone)
-+	for_each_managed_zone(zone)
- 		zero_zone_numa_counters(zone);
- }
- 
-@@ -256,7 +256,7 @@ void refresh_zone_stat_thresholds(void)
- 		}
- 	}
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone) {
- 		struct pglist_data *pgdat = zone->zone_pgdat;
- 		unsigned long max_drift, tolerate_drift;
- 
-@@ -753,7 +753,7 @@ static int refresh_cpu_vm_stats(bool do_pagesets)
- 	int global_node_diff[NR_VM_NODE_STAT_ITEMS] = { 0, };
- 	int changes = 0;
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone) {
- 		struct per_cpu_pageset __percpu *p = zone->pageset;
- 
- 		for (i = 0; i < NR_VM_ZONE_STAT_ITEMS; i++) {
-@@ -854,7 +854,7 @@ void cpu_vm_stats_fold(int cpu)
- #endif
- 	int global_node_diff[NR_VM_NODE_STAT_ITEMS] = { 0, };
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone) {
- 		struct per_cpu_pageset *p;
- 
- 		p = per_cpu_ptr(zone->pageset, cpu);
-@@ -1578,8 +1578,8 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
- 		seq_printf(m, ", %ld", zone->lowmem_reserve[i]);
- 	seq_putc(m, ')');
- 
--	/* If unpopulated, no other information is useful */
--	if (!populated_zone(zone)) {
-+	/* If unmanaged, no other information is useful */
-+	if (!managed_zone(zone)) {
- 		seq_putc(m, '\n');
- 		return;
- 	}
-@@ -1817,7 +1817,7 @@ static bool need_update(int cpu)
- {
- 	struct zone *zone;
- 
--	for_each_populated_zone(zone) {
-+	for_each_managed_zone(zone) {
- 		struct per_cpu_pageset *p = per_cpu_ptr(zone->pageset, cpu);
- 
- 		BUILD_BUG_ON(sizeof(p->vm_stat_diff[0]) != 1);
--- 
-2.15.1
 
