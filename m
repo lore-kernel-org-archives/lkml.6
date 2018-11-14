@@ -2,125 +2,72 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 46A83C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F21F5C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C86C2243E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AACFA2243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SKj7bS3R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C86C2243E
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="YfxEaInm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AACFA2243E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387593AbeKOIsp (ORCPT
+        id S2388062AbeKOIss (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:48:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34716 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:48:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:47798 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728526AbeKOI1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:27:19 -0500
-Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1729037AbeKOIss (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:48:48 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 04E4F2252A;
-        Wed, 14 Nov 2018 22:22:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E0B862145D;
+        Wed, 14 Nov 2018 22:43:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234136;
-        bh=WsZ7cth1cut/WPoI/+XfeCTb24XybtMELqifViPWIWc=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SKj7bS3RwHkPBN2Cu4TOJmQAedbOFkejHqMOu6mBVZgM5gwrjxYZR7yQpscrd9Pfn
-         04GI4dyo6vUtWoTSIi2PS+sqI6ZCQZeJ8N8rldBUYWWIUIj/0Jh3pGRCLTi42APSse
-         g9mmFCQmLt5nP+grRSxWc19R4s/6lzhf4yyLrkLc=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Leonard Crestez <leonard.crestez@nxp.com>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 32/73] ARM: dts: imx6sx-sdb: Fix enet phy regulator
-Date:   Wed, 14 Nov 2018 17:21:26 -0500
-Message-Id: <20181114222207.98701-32-sashal@kernel.org>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
-References: <20181114222207.98701-1-sashal@kernel.org>
+        s=default; t=1542235418;
+        bh=KOBzcogoZDpWQ8X3NZkKMWjsmBn48oUPJqU192w0G/Q=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=YfxEaInmkxdNSfKG49pUSZ8MvMpe6lEPEBUMFPrDaTYDT60id/azFIzg78iLp8fA3
+         XtWh87KZwqeUkQZBT7kuG+JGc9gYymrcrqVLnXZJarLbR/5r3MXB24k71JD9HZO1C2
+         rlrLnBAO59t1ZGKwdakCoTDwn377Sl0lRlVHhB3k=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     Eric Anholt <eric@anholt.net>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stefan Wahren <stefan.wahren@i2se.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <1541862755-7034-1-git-send-email-stefan.wahren@i2se.com>
+Cc:     linux-clk@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Stefan Wahren <stefan.wahren@i2se.com>,
+        Simon Arlott <simon@arlott.org>,
+        Stephen Warren <swarren@wwwdotorg.org>
+References: <1541862755-7034-1-git-send-email-stefan.wahren@i2se.com>
+Message-ID: <154223541729.88331.3739552122757159999@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 04/17] clk: bcm2835: Switch to SPDX identifier
+Date:   Wed, 14 Nov 2018 14:43:37 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Leonard Crestez <leonard.crestez@nxp.com>
+Quoting Stefan Wahren (2018-11-10 07:12:35)
+> Adopt the SPDX license identifier headers to ease license compliance
+> management.
+> =
 
-[ Upstream commit 1ad9fb750a104f51851c092edd7b3553f0218428 ]
+> Cc: Simon Arlott <simon@arlott.org>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+> ---
 
-Bindings for "fixed-regulator" only explicitly support "gpio" property,
-not "gpios". Fix by correcting the property name.
-
-The enet PHYs on imx6sx-sdb needs to be explicitly reset after a power
-cycle, this can be handled by the phy-reset-gpios property. Sadly this
-is not handled on suspend: the fec driver turns phy-supply off but
-doesn't assert phy-reset-gpios again on resume.
-
-Since additional phy-level work is required to support powering off the
-phy in suspend fix the problem by just marking the regulator as
-"boot-on" "always-on" so that it's never turned off. This behavior is
-equivalent to older releases.
-
-Keep the phy-reset-gpios property on fec anyway because it is a correct
-description of board design.
-
-This issue was exposed by commit efdfeb079cc3 ("regulator: fixed:
-Convert to use GPIO descriptor only") which causes the "gpios" property
-to also be parsed. Before that commit the "gpios" property had no
-effect, PHY reset was only handled in the the bootloader.
-
-This fixes linux-next boot failures previously reported here:
- https://lore.kernel.org/patchwork/patch/982437/#1177900
- https://lore.kernel.org/patchwork/patch/994091/#1178304
-
-Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
-Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/arm/boot/dts/imx6sx-sdb.dtsi | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/arch/arm/boot/dts/imx6sx-sdb.dtsi b/arch/arm/boot/dts/imx6sx-sdb.dtsi
-index f8f31872fa14..d6d517e4922f 100644
---- a/arch/arm/boot/dts/imx6sx-sdb.dtsi
-+++ b/arch/arm/boot/dts/imx6sx-sdb.dtsi
-@@ -115,7 +115,9 @@
- 		regulator-name = "enet_3v3";
- 		regulator-min-microvolt = <3300000>;
- 		regulator-max-microvolt = <3300000>;
--		gpios = <&gpio2 6 GPIO_ACTIVE_LOW>;
-+		gpio = <&gpio2 6 GPIO_ACTIVE_LOW>;
-+		regulator-boot-on;
-+		regulator-always-on;
- 	};
- 
- 	reg_pcie_gpio: regulator-pcie-gpio {
-@@ -178,6 +180,7 @@
- 	phy-supply = <&reg_enet_3v3>;
- 	phy-mode = "rgmii";
- 	phy-handle = <&ethphy1>;
-+	phy-reset-gpios = <&gpio2 7 GPIO_ACTIVE_LOW>;
- 	status = "okay";
- 
- 	mdio {
-@@ -371,6 +374,8 @@
- 				MX6SX_PAD_RGMII1_RD3__ENET1_RX_DATA_3	0x3081
- 				MX6SX_PAD_RGMII1_RX_CTL__ENET1_RX_EN	0x3081
- 				MX6SX_PAD_ENET2_RX_CLK__ENET2_REF_CLK_25M	0x91
-+				/* phy reset */
-+				MX6SX_PAD_ENET2_CRS__GPIO2_IO_7		0x10b0
- 			>;
- 		};
- 
--- 
-2.17.1
+Applied to clk-next
 
