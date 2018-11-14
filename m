@@ -2,168 +2,188 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-7.0 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DCF0EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:52:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5858AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:57:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A18E02145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:52:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LOAXeH9e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A18E02145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B09F2145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:57:54 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B09F2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733027AbeKNXze (ORCPT
+        id S1733078AbeKOABN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 18:55:34 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:56110 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731746AbeKNXzd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 18:55:33 -0500
-Received: by mail-it1-f196.google.com with SMTP id o19so14740641itg.5;
-        Wed, 14 Nov 2018 05:52:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=2mDXyzbueqEFyyK00gWyNKmVjRgscRRsKN4+Ys04Ahg=;
-        b=LOAXeH9erY6aHFjxtQRRKeiOEN1UhiQjAP/svDLblD30iHuedwwUP8RJ4v1PjSc+Jk
-         tKGyMQFqMEAlJTpcAv1J1C8oJGkYdwhJQuSqDTVc2x7lMVVJxGW6/PnXRe0OmJL/l9Q7
-         gHnuFr9IHnAn0jYYX4cT0bCzPDkPqf4v0PmTP53E/Rxh9yKMvuSOm7ucqmZuL/9MTftt
-         otxnLt4Kofi2StiYgac2+aoksRE+DdIPGGOeYSBw3SFmPDuII01ECyIZAYXGma9OWlPp
-         sXLdhwBQ6GQc8D0E9Letfc5lseoTqBSFO0aRpg3G9zqrwk5eQ6EtHk6xpmgRGlJEHP1T
-         t1Lg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=2mDXyzbueqEFyyK00gWyNKmVjRgscRRsKN4+Ys04Ahg=;
-        b=rMzfzqTPELUztbaiCqPkwLtb41XvOq1bfJWqwhnbTB6JC2qL/exNp8ITUrv9/4n9tF
-         49Ra9ZUI9rEKDmA6ZWvdla7fpCxmXcMW/3T2sLp9UDqvdy3q+SJo1HJnglSO4g28qu5r
-         ZjCwTZDN/fSaUWeupRV2g/v7Zi8Si3brVlZ3U1ONOBKyhKY9qR7T+W2TDjpWbmaLUzqB
-         lcl605hOO7yclA+cV2ITTlY0iCfQE2FDWAzVXQItkMgOQThMRdjHFHb//is6z32aIVpQ
-         N8VyYEFeqcWyhdCwsZh3wM2W3TxHZEBV2/+MpASCS0RgqO64QmKinh3kI4Mwyt4+J3mX
-         cKGQ==
-X-Gm-Message-State: AGRZ1gJ5DXDinR/aYHH3sUPO/RfeKJSrkDvcJIpKusBhaxXrFpNagfcg
-        FqUkPfXfLhAv0tUI6mg88oC/6Wqt
-X-Google-Smtp-Source: AJdET5dFf+aObUDTwRe1zY66zQXR7V+3ntYHlSvVaqA7erZYRgfQShhjX9Nz52UQjN7XoQuc9vNvcA==
-X-Received: by 2002:a05:660c:706:: with SMTP id l6mr2096504itk.34.1542203532755;
-        Wed, 14 Nov 2018 05:52:12 -0800 (PST)
-Received: from localhost.localdomain ([198.52.185.227])
-        by smtp.gmail.com with ESMTPSA id s22-v6sm7876443iog.67.2018.11.14.05.52.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 05:52:12 -0800 (PST)
-From:   thesven73@gmail.com
-X-Google-Original-From: TheSven73@googlemail.com
-To:     svendev@arcx.com, siva.kallam@broadcom.com, prashant@broadcom.com,
-        mchan@broadcom.com, andrew@lunn.ch
-Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, arnd@arndb.de
-Subject: [PATCH v2] tg3: optionally get mac address from devicetree
-Date:   Wed, 14 Nov 2018 08:52:01 -0500
-Message-Id: <20181114135202.27104-1-TheSven73@googlemail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 14 Nov 2018 19:01:13 -0500
+Received: from mga18.intel.com ([134.134.136.126]:46656 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732369AbeKOABN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 19:01:13 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 05:57:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,232,1539673200"; 
+   d="asc'?scan'208";a="108005314"
+Received: from pipin.fi.intel.com (HELO localhost) ([10.237.72.97])
+  by fmsmga001.fm.intel.com with ESMTP; 14 Nov 2018 05:57:48 -0800
+From:   Felipe Balbi <balbi@kernel.org>
+To:     Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alan Stern <stern@rowland.harvard.edu>,
+        Johan Hovold <johan@kernel.org>,
+        Jaejoong Kim <climbbb.kim@gmail.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Roger Quadros <rogerq@ti.com>
+Cc:     linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        v.anuragkumar@gmail.com, Thinh Nguyen <thinhn@synopsys.com>,
+        Tejas Joglekar <tejas.joglekar@synopsys.com>,
+        Ajay Yugalkishore Pandey <APANDEY@xilinx.com>,
+        Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+Subject: Re: [PATCH V6 01/10] usb: gadget: udc: Add timer for stream capable endpoints
+In-Reply-To: <1539436498-24892-2-git-send-email-anurag.kumar.vulisha@xilinx.com>
+References: <1539436498-24892-1-git-send-email-anurag.kumar.vulisha@xilinx.com> <1539436498-24892-2-git-send-email-anurag.kumar.vulisha@xilinx.com>
+Date:   Wed, 14 Nov 2018 15:57:44 +0200
+Message-ID: <87k1lfiwx3.fsf@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the tg3 has a device node, and that node contains a valid
-mac address property, use that as the tg3's mac address.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-This behaviour was previously only present on SPARC, using a
-conditional compile (#ifdef CONFIG_SPARC), presumably because
-at the time, devicetree nodes for pci devices only worked on
-SPARC. However, this has recently been made universal, see
-commit 98d9f30c820d ("pci/of: Match PCI devices to OF nodes dynamically")
 
-Devicetree example:
-(see Documentation/devicetree/bindings/pci/pci.txt)
+Hi,
 
-&pcie {
-	host@0 {
-		#address-cells = <3>;
-		#size-cells = <2>;
-		reg = <0 0 0 0 0>;
-		bcm5778: bcm5778@0 {
-			reg = <0 0 0 0 0>;
-			mac-address = [CA 11 AB 1E 10 01];
-		};
-	};
-};
+Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com> writes:
+> When bulk streams are enabled for an endpoint, there can
+> be a condition where the gadget controller waits for the
+> host to issue prime transaction and the host controller
+> waits for the gadget to issue ERDY. This condition could
+> create a deadlock. To avoid such potential deadlocks, a
+> timer is started after queuing any request for the stream
+> capable endpoint in usb_ep_queue(). The gadget driver is
+> expected to stop the timer if a valid stream event is found.
+> If no stream event is found, the timer expires after the
+> STREAM_TIMEOUT_MS value and a callback function registered
+> by gadget driver to endpoint ops->stream_timeout API would be
+> called, so that the gadget driver can handle this situation.
+> This kind of behaviour is observed in dwc3 controller and
+> expected to be generic issue with other controllers supporting
+> bulk streams also.
+>
+> Signed-off-by: Anurag Kumar Vulisha <anurag.kumar.vulisha@xilinx.com>
+> ---
+>  Changes in v6:
+> 	1. This patch is newly added in this series to add timer into udc/core.c
+> ---
+>  drivers/usb/gadget/udc/core.c | 71 +++++++++++++++++++++++++++++++++++++=
++++++-
+>  include/linux/usb/gadget.h    | 12 ++++++++
+>  2 files changed, 82 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/usb/gadget/udc/core.c b/drivers/usb/gadget/udc/core.c
+> index af88b48..41cc23b 100644
+> --- a/drivers/usb/gadget/udc/core.c
+> +++ b/drivers/usb/gadget/udc/core.c
+> @@ -52,6 +52,24 @@ static int udc_bind_to_driver(struct usb_udc *udc,
+>  /* ---------------------------------------------------------------------=
+---- */
+>=20=20
+>  /**
+> + * usb_ep_stream_timeout - callback function for endpoint stream timeout=
+ timer
+> + * @arg: pointer to struct timer_list
+> + *
+> + * This function gets called only when bulk streams are enabled in the e=
+ndpoint
+> + * and only after ep->stream_timeout_timer has expired. The timer gets e=
+xpired
+> + * only when the gadget controller failed to find a valid stream event f=
+or this
+> + * endpoint. On timer expiry, this function calls the endpoint-specific =
+timeout
+> + * handler registered to endpoint ops->stream_timeout API.
+> + */
+> +static void usb_ep_stream_timeout(struct timer_list *arg)
+> +{
+> +	struct usb_ep *ep =3D from_timer(ep, arg, stream_timeout_timer);
+> +
+> +	if (ep->stream_capable && ep->ops->stream_timeout)
 
-Signed-off-by: Sven Van Asbroeck <svendev@arcx.com>
----
-v2:
-	removed redundant call to is_valid_ether_addr()
+why is the timer only for stream endpoints? What if we want to run this
+on non-stream capable eps?
 
- drivers/net/ethernet/broadcom/tg3.c | 29 +++++++++++++----------------
- 1 file changed, 13 insertions(+), 16 deletions(-)
+> +		ep->ops->stream_timeout(ep);
 
-diff --git a/drivers/net/ethernet/broadcom/tg3.c b/drivers/net/ethernet/broadcom/tg3.c
-index 89295306f161..e49112cac1fd 100644
---- a/drivers/net/ethernet/broadcom/tg3.c
-+++ b/drivers/net/ethernet/broadcom/tg3.c
-@@ -55,6 +55,7 @@
- #include <linux/hwmon.h>
- #include <linux/hwmon-sysfs.h>
- #include <linux/crc32poly.h>
-+#include <linux/of_net.h>
- 
- #include <net/checksum.h>
- #include <net/ip.h>
-@@ -16959,23 +16960,21 @@ static int tg3_get_invariants(struct tg3 *tp, const struct pci_device_id *ent)
- 	return err;
- }
- 
--#ifdef CONFIG_SPARC
--static int tg3_get_macaddr_sparc(struct tg3 *tp)
-+static int tg3_of_get_macaddr(struct tg3 *tp)
- {
--	struct net_device *dev = tp->dev;
--	struct pci_dev *pdev = tp->pdev;
--	struct device_node *dp = pci_device_to_OF_node(pdev);
--	const unsigned char *addr;
--	int len;
-+	struct device_node *np = pci_device_to_OF_node(tp->pdev);
-+	const void *mac;
- 
--	addr = of_get_property(dp, "local-mac-address", &len);
--	if (addr && len == ETH_ALEN) {
--		memcpy(dev->dev_addr, addr, ETH_ALEN);
--		return 0;
--	}
--	return -ENODEV;
-+	if (!np)
-+		return -ENODEV;
-+	mac = of_get_mac_address(np);
-+	if (!mac)
-+		return -EINVAL;
-+	memcpy(tp->dev->dev_addr, mac, ETH_ALEN);
-+	return 0;
- }
- 
-+#ifdef CONFIG_SPARC
- static int tg3_get_default_macaddr_sparc(struct tg3 *tp)
- {
- 	struct net_device *dev = tp->dev;
-@@ -16992,10 +16991,8 @@ static int tg3_get_device_address(struct tg3 *tp)
- 	int addr_ok = 0;
- 	int err;
- 
--#ifdef CONFIG_SPARC
--	if (!tg3_get_macaddr_sparc(tp))
-+	if (!tg3_of_get_macaddr(tp))
- 		return 0;
--#endif
- 
- 	if (tg3_flag(tp, IS_SSB_CORE)) {
- 		err = ssb_gige_get_macaddr(tp->pdev, &dev->dev_addr[0]);
--- 
-2.17.1
+you don't ned an extra operation here, ep_dequeue should be enough.
 
+> @@ -102,6 +132,10 @@ int usb_ep_enable(struct usb_ep *ep)
+>  	if (ret)
+>  		goto out;
+>=20=20
+> +	if (ep->stream_capable)
+> +		timer_setup(&ep->stream_timeout_timer,
+> +			    usb_ep_stream_timeout, 0);
+
+the timer should be per-request, not per-endpoint. Otherwise in case of
+multiple requests being queued, you can't give them different timeouts
+
+> @@ -269,6 +321,13 @@ int usb_ep_queue(struct usb_ep *ep,
+>=20=20
+>  	ret =3D ep->ops->queue(ep, req, gfp_flags);
+>=20=20
+> +	if (ep->stream_capable) {
+> +		ep->stream_timeout_timer.expires =3D jiffies +
+> +				msecs_to_jiffies(STREAM_TIMEOUT_MS);
+
+timeout value should be passed by the gadget driver. Add a new
+usb_ep_queue_timeout() that takes the new argument. Rename the current
+usb_ep_queue() to static int __usb_ep_queue() with an extra argument for
+timeout and introduce usb_ep_queue() without the argument, calling
+__usb_ep_queue() passing timeout as 0.
+
+> diff --git a/include/linux/usb/gadget.h b/include/linux/usb/gadget.h
+> index e5cd84a..2ebaef0 100644
+> --- a/include/linux/usb/gadget.h
+> +++ b/include/linux/usb/gadget.h
+> @@ -144,6 +144,7 @@ struct usb_ep_ops {
+>=20=20
+>  	int (*fifo_status) (struct usb_ep *ep);
+>  	void (*fifo_flush) (struct usb_ep *ep);
+> +	void (*stream_timeout) (struct usb_ep *ep);
+
+why?
+
+=2D-=20
+balbi
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEElLzh7wn96CXwjh2IzL64meEamQYFAlvsKdgACgkQzL64meEa
+mQalAQ/9EEqb4x4ZVovOafpFs7dKEojviFtYs7DcqBHeEwlQyO0C1tK9pDJ2balL
+boEwWvNC3sxVnZE3D+S7rdPspYrt3yP8KfXHNWuOyfQXQzrg4CCXSymSzUKjl9Z9
+IX7zA+ok1BIiPNwLKr5JIS2kRoaepMG9IgUb0fQTV42qUkRbzvrrgAPEPumqhgwn
+O+7kH0LZ5DPi2Dc0tckBvG9PQ0MiedO6ye7uCXoXPi+tNMKqy36bezH27/hcckBQ
+ENo54ABHViy4k0fp1+8nLtGLb7vEGULmrvdna7e+9mkaliFTvzb7bL0G2zLaoHQn
+09ywSN14ExtlE1plkdTQsQvCWR0YKCTAtZhZvYJY3G/OQM1FBsrSx+/FXoGOfM7B
+YRwb93ZbDI+dVmx/4wEcBhHmBAySi7ibZcsj9ODxdzdcgoRClLHe7sJcfMl4UcV7
+Yr8PVrK6z33lXTcyQLyI6Z9sBA7khZ5Vwm72GhqGuC3HbugQLPq5Aq4RpDholvUv
+Wdb0biYbgj22b5YoweCq7lY20MDiIGI9f+iXhFluC7A4E84UwGDA0qLhrz6uF7fx
+K8N+Ex9Kn9oQvce2jnKBYL1AaATc/u1MwH6otAGQfA9Kg1fPcnOT/Vhwg4ahIr3b
+S0WRX2VlM6lTyT+ItzTFMHqx/iXNH2+/hnSiq8jR0qD6G7aaVQ8=
+=sVay
+-----END PGP SIGNATURE-----
+--=-=-=--
