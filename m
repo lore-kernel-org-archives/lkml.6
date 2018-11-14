@@ -2,184 +2,99 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20D71C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A53EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:54:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CFF132243E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:52:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Xx7aepP8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CFF132243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 684F62245E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:54:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 684F62245E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=iki.fi
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732334AbeKNUzU (ORCPT
+        id S1732303AbeKNU5B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 15:55:20 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:44628 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727816AbeKNUzT (ORCPT
+        Wed, 14 Nov 2018 15:57:01 -0500
+Received: from nblzone-211-213.nblnetworks.fi ([83.145.211.213]:42882 "EHLO
+        hillosipuli.retiisi.org.uk" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728033AbeKNU5A (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 15:55:19 -0500
-Received: by mail-qk1-f194.google.com with SMTP id n12so24875113qkh.11;
-        Wed, 14 Nov 2018 02:52:35 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oILDwk+dze61xBA2crzRxnTFLGC3E2KD7D6N85/WTVI=;
-        b=Xx7aepP8Ak0MGzdUibTtnMSFtRYS6VlYRoPhQHqyPINRT+QB5TA3LERQv2NE/EQa/g
-         MYk12MvVlEfMyf/DKo846Jj4HjX+OSHuozvChOyFYCj0WOgpHGo7IvHXDllH/besLr+b
-         4rYnzLV/IhzAYc1nVplknD2ds2jFP5PdAIjkHM5DXt2HSiOoF91adZ97UMzAbvq63IHd
-         CNIKmU7yO7ORr3Z5g2L0+iri0NUs0jxyYzVEgcWx9BELMmmMEyu37W8rHAY7GcnLtesw
-         VVH9ip1i6HbLwGj5FFB13Mk5mQswg0dYR3HzFD8EeBH3p0K5xALuFKf8iebRPXxYuY2R
-         kY3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oILDwk+dze61xBA2crzRxnTFLGC3E2KD7D6N85/WTVI=;
-        b=U8Q5Soup7UjOzBkldyhCUTOH1OMzylbV8zCHiFid8O9MNKSXq6L5WStVjuDIXDBwIK
-         3JEaDxIpf2PHgWBxWu72WP1tXUIHGD6TCKJLSh0dWq7viLGBQKu+IJXHm9JAnnyEB5Rp
-         EUaNyENEq4e6vhl7c5Hss1bTwhbWQWHwHFPBkb+qoXUxJXg65p7Q1HNYVHMwbh3WbEQM
-         c9RfoRrsNFw9V1vpTtK/amGaqKUxG8kMcPzID217EIQZJrGanlJtYGlyblDAoawKn7Fe
-         paTonoeTVwEofYMX/B3S7PCCkfmYf5SyXLIY3c+C203jJhM2GmtSUkRLt2H3iw1+Gu22
-         NQvQ==
-X-Gm-Message-State: AGRZ1gLi0nYx3ltpsp6e7VLnc2u6KU1Ymxvg3gsQGzthAts1N1tUtBAM
-        Q2Yec7DrbyJTuIe3NjRTF0yDJE5W6sNNpeR/v2U=
-X-Google-Smtp-Source: AJdET5dHZSlB6yPIR2OfhC+P0Zk1Rkj3yoGmwlFniEkOTEYgEBQZuJqtxb9IZzDIm67OXZdH2NNSRyVjhJL6LMxTTRE=
-X-Received: by 2002:aed:3e49:: with SMTP id m9mr1061264qtf.99.1542192754789;
- Wed, 14 Nov 2018 02:52:34 -0800 (PST)
+        Wed, 14 Nov 2018 15:57:00 -0500
+Received: from valkosipuli.localdomain (valkosipuli.retiisi.org.uk [IPv6:2001:1bc8:1a6:d3d5::80:2])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by hillosipuli.retiisi.org.uk (Postfix) with ESMTPS id 05C86634C7D;
+        Wed, 14 Nov 2018 12:54:14 +0200 (EET)
+Received: from sakke by valkosipuli.localdomain with local (Exim 4.89)
+        (envelope-from <sakari.ailus@retiisi.org.uk>)
+        id 1gMsoH-0005f7-Pp; Wed, 14 Nov 2018 12:54:13 +0200
+Date:   Wed, 14 Nov 2018 12:54:13 +0200
+From:   Sakari Ailus <sakari.ailus@iki.fi>
+To:     Yong Deng <yong.deng@magewell.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacopo Mondi <jacopo+renesas@jmondi.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        linux-sunxi@googlegroups.com,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH v12 0/2] Initial Allwinner V3s CSI Support
+Message-ID: <20181114105413.4gcfwt4cmchh6zsf@valkosipuli.retiisi.org.uk>
+References: <1540886988-27696-1-git-send-email-yong.deng@magewell.com>
 MIME-Version: 1.0
-References: <20181114022245.5798-1-loic.wyn@gmail.com> <20181114051603.GF7890@fedora.eng.vmware.com>
- <CAJxRB+DyrRWLTsW6fpOYuhS5W3iS3FATSRsoQTFx9ZJjzLv_dg@mail.gmail.com>
-In-Reply-To: <CAJxRB+DyrRWLTsW6fpOYuhS5W3iS3FATSRsoQTFx9ZJjzLv_dg@mail.gmail.com>
-From:   Andy Shevchenko <andy.shevchenko@gmail.com>
-Date:   Wed, 14 Nov 2018 12:52:23 +0200
-Message-ID: <CAHp75VeE4ktOQ7AwL6v5Rend0EapEobYymyq2JW=D=nzM2qSbQ@mail.gmail.com>
-Subject: Re: [PATCH] ideapad-laptop: Add Lenovo Yoga 2 13 to the no_hw_rfkill
- DMI list
-To:     Loic Wei-Yu-Neng <loic.wyn@gmail.com>
-Cc:     Darren Hart <dvhart@infradead.org>,
-        Ike Panhc <ike.pan@canonical.com>,
-        Andy Shevchenko <andy@infradead.org>,
-        Jiri Kosina <trivial@kernel.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1540886988-27696-1-git-send-email-yong.deng@magewell.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 9:48 AM Loic Wei-Yu-Neng <loic.wyn@gmail.com> wrote:
->
-> Hello Darren,
-> Yes, the current driver fails to match match my laptop. I need to add this patch to have wifi functional on my laptop.
-> Here is the dmidecode snippet from my laptop:
->
-> Handle 0x0001, DMI type 1, 27 bytes
-> System Information
-> Manufacturer: LENOVO
-> Product Name: 20344
-> Version: Yoga 2 13
-> Serial Number: 3438666500284
-> UUID: 933A1748-ACE0-E311-A534-F8A9633129FA
-> Wake-up Type: Power Switch
-> SKU Number: LENOVO_MT_20344_BU_idea_FM_Yoga 2 13
-> Family: IDEAPAD
->
+On Tue, Oct 30, 2018 at 04:09:48PM +0800, Yong Deng wrote:
+> I can't make v4l2-compliance always happy.
+> The V3s CSI support many pixformats. But they are not always available.
+> It's dependent on the input bus format (MEDIA_BUS_FMT_*). 
+> Example:
+> V4L2_PIX_FMT_SBGGR8: MEDIA_BUS_FMT_SBGGR8_1X8
+> V4L2_PIX_FMT_YUYV: MEDIA_BUS_FMT_YUYV8_2X8
+> But I can't get the subdev's format code before starting stream as the
+> subdev may change it. So I can't know which pixformats are available.
+> So I exports all the pixformats supported by SoC.
+> The result is the app (v4l2-compliance) is likely to fail on streamon.
+> 
+> This patchset add initial support for Allwinner V3s CSI.
+> 
+> Allwinner V3s SoC features a CSI module with parallel interface.
+> 
+> This patchset implement a v4l2 framework driver and add a binding 
+> documentation for it. 
 
-Yeah, it has slightly different Version string in your case.
+Applied with this diff from Maxime:
 
-Since patchwork (*) still didn't catch your patch you need to resend
-with all maintainers and mailing lists included like Darren suggested.
+<URL:http://code.bulix.org/vf7b6g-504515?raw>
 
-(*) patchwork is a database which is tracking patches and patch series
-that are communicated thru mailing lists. It makes maintainer's life
-easier and allow to keep a trail of what has been done and when.
-The web interface to our project is here
-https://patchwork.kernel.org/project/platform-driver-x86/list/
+The MAINTAINERS entry was also moved to the first patch.
 
-
-> Loic
->
-> On Tue, Nov 13, 2018 at 9:16 PM Darren Hart <dvhart@infradead.org> wrote:
->>
->> On Tue, Nov 13, 2018 at 06:22:45PM -0800, Loic WEI YU NENG wrote:
->> > Some Lenovo ideapad models lack a physical rfkill switch.
->> > On Lenovo models Yoga 2 13, ideapad-laptop would wrongly report all
->> > radios as blocked by hardware which caused wireless network connections
->> > to fail.
->> > Add these models without an rfkill switch to the no_hw_rfkill list.
->> >
->> > Signed-off-by: Loic WEI YU NENG <loic.wyn@gmail.com>
->>
->> Thank you for the patch.
->>
->> In the future, please be sure to check MAINTAINERS and include the
->> relevant lists, now Cc'd.
->>
->> I see this in the context of your patch, but can you confirm the current
->> driver fails to match your system? It contains the following, which I
->> would expect to match:
->>
->>                .ident = "Lenovo Yoga 2 11 / 13 / Pro",
->>                 .matches = {
->>                         DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
->>                         DMI_MATCH(DMI_BOARD_NAME, "Yoga2"),
->>                 },
->>
->> If it doesn't match, what does dmidecode report for SYS_VENDOR and
->> BOARD_NAME on your system? Perhaps we need to make the above more
->> generic.
->>
->> > ---
->> >  drivers/platform/x86/ideapad-laptop.c | 7 +++++++
->> >  1 file changed, 7 insertions(+)
->> >
->> > diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
->> > index b6489cba2985..1589dffab9fa 100644
->> > --- a/drivers/platform/x86/ideapad-laptop.c
->> > +++ b/drivers/platform/x86/ideapad-laptop.c
->> > @@ -1188,6 +1188,13 @@ static const struct dmi_system_id no_hw_rfkill_list[] = {
->> >                       DMI_MATCH(DMI_BOARD_NAME, "Yoga2"),
->> >               },
->> >       },
->> > +     {
->> > +             .ident = "Lenovo Yoga 2 13",
->> > +             .matches = {
->> > +                     DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
->> > +                     DMI_MATCH(DMI_PRODUCT_VERSION, "Yoga 2 13"),
->> > +             },
->> > +     },
->> >       {
->> >               .ident = "Lenovo Yoga 3 1170 / 1470",
->> >               .matches = {
->> > --
->> > 2.17.1
->> >
->> >
->>
->> --
->> Darren Hart
->> VMware Open Source Technology Center
->
->
->
-> --
-> Loic WEI YU NENG
-> US phone: +1 408 218 2826
-> FR phone: +33 674201069
-> email: loic.wyn@gmail.com
-
-
+Thanks!
 
 -- 
-With Best Regards,
-Andy Shevchenko
+Sakari Ailus
+e-mail: sakari.ailus@iki.fi
