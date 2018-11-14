@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 42814C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71563C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3C402252A
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2EA5D2252A
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="H6Huy4ni"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3C402252A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kW3P0lt6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EA5D2252A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388347AbeKOI31 (ORCPT
+        id S2388350AbeKOI3a (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:29:27 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36278 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:29:30 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36428 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726506AbeKOI30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:29:26 -0500
+        id S1726506AbeKOI33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:29:29 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id F33902252F;
-        Wed, 14 Nov 2018 22:24:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58BB422527;
+        Wed, 14 Nov 2018 22:24:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234262;
-        bh=NasmYevrKSo2ojzrfGCImC1oA5YeIPO6K0liShVKsTs=;
+        s=default; t=1542234265;
+        bh=ySSQ3pcYerKH4OiBJKAgte5YYA9tT0QRHveHFw8BwvU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=H6Huy4nilQ9CEkKJjPXjbTzaK9H218w0HWSTPT5zhVtGS+TcOQH97LoIx189ZKY0H
-         PFWl2B1DkPyH3STCLKDfiDxxXlyFmzbez5LqjNAlkZ3/FyHF5KNIDYvSam8L42Tni6
-         e4fb3cGhbAmEqfTMlXuNkFFxqKmFm8Fo/UeDK92s=
+        b=kW3P0lt6rbdPsGurEEWhHwFo3w4TXHJs9RL6BX/+u9fm06af/9Iz/y6AjPVj5yaSa
+         XMqORQHERk7voSYyPCKlCdOjJyWa72hghqDvyWLrxOeTtrKKo7o5AreQabsPS7N5Wm
+         o+enpAAFzDbTDrNfuMMLbk+jTCbQH19EMws8+o0M=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Simon Horman <horms+renesas@verge.net.au>,
-        Sasha Levin <sashal@kernel.org>,
-        linux-renesas-soc@vger.kernel.org, devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 27/59] arm64: dts: renesas: r8a7795: add missing dma-names on hscif2
-Date:   Wed, 14 Nov 2018 17:22:59 -0500
-Message-Id: <20181114222335.99339-27-sashal@kernel.org>
+Cc:     Jeremy Linton <jeremy.linton@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 30/59] lib/raid6: Fix arm64 test build
+Date:   Wed, 14 Nov 2018 17:23:02 -0500
+Message-Id: <20181114222335.99339-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -54,36 +53,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+From: Jeremy Linton <jeremy.linton@arm.com>
 
-[ Upstream commit aab7a2414ba0d5c3d0571a90031b535adba7146a ]
+[ Upstream commit 313a06e636808387822af24c507cba92703568b1 ]
 
-hscif2 has 4 dmas, but has only 2 dma-names.
-This patch add missing dma-names.
+The lib/raid6/test fails to build the neon objects
+on arm64 because the correct machine type is 'aarch64'.
 
-Signed-off-by: Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-Fixes: e0f0bda79337701a ("arm64: dts: renesas: r8a7795: sort subnodes
-of the soc node")
-Signed-off-by: Simon Horman <horms+renesas@verge.net.au>
+Once this is correctly enabled, the neon recovery objects
+need to be added to the build.
+
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
+Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/arm64/boot/dts/renesas/r8a7795.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ lib/raid6/test/Makefile | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-index 91c392f879f9..43f95c918409 100644
---- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-+++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
-@@ -656,7 +656,7 @@
- 			clock-names = "fck", "brg_int", "scif_clk";
- 			dmas = <&dmac1 0x35>, <&dmac1 0x34>,
- 			       <&dmac2 0x35>, <&dmac2 0x34>;
--			dma-names = "tx", "rx";
-+			dma-names = "tx", "rx", "tx", "rx";
- 			power-domains = <&sysc R8A7795_PD_ALWAYS_ON>;
- 			resets = <&cpg 518>;
- 			status = "disabled";
+diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
+index 5d73f5cb4d8a..79777645cac9 100644
+--- a/lib/raid6/test/Makefile
++++ b/lib/raid6/test/Makefile
+@@ -27,7 +27,7 @@ ifeq ($(ARCH),arm)
+         CFLAGS += -I../../../arch/arm/include -mfpu=neon
+         HAS_NEON = yes
+ endif
+-ifeq ($(ARCH),arm64)
++ifeq ($(ARCH),aarch64)
+         CFLAGS += -I../../../arch/arm64/include
+         HAS_NEON = yes
+ endif
+@@ -41,7 +41,7 @@ ifeq ($(IS_X86),yes)
+ 		    gcc -c -x assembler - >&/dev/null &&        \
+ 		    rm ./-.o && echo -DCONFIG_AS_AVX512=1)
+ else ifeq ($(HAS_NEON),yes)
+-        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o
++        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
+         CFLAGS += -DCONFIG_KERNEL_MODE_NEON=1
+ else
+         HAS_ALTIVEC := $(shell printf '\#include <altivec.h>\nvector int a;\n' |\
 -- 
 2.17.1
 
