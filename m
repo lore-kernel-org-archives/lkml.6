@@ -2,171 +2,116 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05D8CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:52:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD621C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:05:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B73720866
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:44:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B73720866
+	by mail.kernel.org (Postfix) with ESMTP id 831E2214F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:05:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831E2214F1
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728466AbeKOEtD (ORCPT
+        id S1726426AbeKOFKO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 23:49:03 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:44134 "EHLO mail.skyhub.de"
+        Thu, 15 Nov 2018 00:10:14 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:44718 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726823AbeKOEtD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 23:49:03 -0500
+        id S1726153AbeKOFKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 00:10:14 -0500
 X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
 Received: from mail.skyhub.de ([127.0.0.1])
         by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id SUeoZ2faX-f6; Wed, 14 Nov 2018 19:44:40 +0100 (CET)
+        with ESMTP id a-a1lyWqu2CE; Wed, 14 Nov 2018 20:05:47 +0100 (CET)
 Received: from zn.tnic (p200300EC2BD0D200D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:d200:d571:4500:c00e:26fd])
         (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 033B81EC03C8;
-        Wed, 14 Nov 2018 19:44:40 +0100 (CET)
-Date:   Wed, 14 Nov 2018 19:44:36 +0100
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EB6451EC00FD;
+        Wed, 14 Nov 2018 20:05:46 +0100 (CET)
+Date:   Wed, 14 Nov 2018 20:05:43 +0100
 From:   Borislav Petkov <bp@alien8.de>
-To:     Yu-cheng Yu <yu-cheng.yu@intel.com>
-Cc:     x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, linux-mm@kvack.org,
-        linux-arch@vger.kernel.org, linux-api@vger.kernel.org,
-        Arnd Bergmann <arnd@arndb.de>,
-        Andy Lutomirski <luto@amacapital.net>,
-        Balbir Singh <bsingharora@gmail.com>,
-        Cyrill Gorcunov <gorcunov@gmail.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Eugene Syromiatnikov <esyr@redhat.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "H.J. Lu" <hjl.tools@gmail.com>, Jann Horn <jannh@google.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Kees Cook <keescook@chromium.org>,
-        Mike Kravetz <mike.kravetz@oracle.com>,
-        Nadav Amit <nadav.amit@gmail.com>,
-        Oleg Nesterov <oleg@redhat.com>, Pavel Machek <pavel@ucw.cz>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Randy Dunlap <rdunlap@infradead.org>,
-        "Ravi V. Shankar" <ravi.v.shankar@intel.com>,
-        Vedvyas Shanbhogue <vedvyas.shanbhogue@intel.com>
-Subject: Re: [PATCH v5 06/27] x86/cet: Control protection exception handler
-Message-ID: <20181114184436.GK13926@zn.tnic>
-References: <20181011151523.27101-1-yu-cheng.yu@intel.com>
- <20181011151523.27101-7-yu-cheng.yu@intel.com>
+To:     "Moger, Babu" <Babu.Moger@amd.com>
+Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "corbet@lwn.net" <corbet@lwn.net>,
+        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
+        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "tony.luck@intel.com" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
+Subject: Re: [PATCH v7 03/13] arch/x86: Re-arrange RDT init code
+Message-ID: <20181114190543.GL13926@zn.tnic>
+References: <20181109205153.14811-1-babu.moger@amd.com>
+ <20181109205153.14811-4-babu.moger@amd.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181011151523.27101-7-yu-cheng.yu@intel.com>
+In-Reply-To: <20181109205153.14811-4-babu.moger@amd.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-That subject needs a verb:
-
-Subject: [PATCH v5 06/27] x86/cet: Add control protection exception handler
-
-On Thu, Oct 11, 2018 at 08:15:02AM -0700, Yu-cheng Yu wrote:
-> A control protection exception is triggered when a control flow transfer
-> attempt violated shadow stack or indirect branch tracking constraints.
-> For example, the return address for a RET instruction differs from the
-> safe copy on the shadow stack; or a JMP instruction arrives at a non-
-> ENDBR instruction.
+On Fri, Nov 09, 2018 at 08:52:29PM +0000, Moger, Babu wrote:
+> Separate the call sequence for rdt_quirks and MBA feature.
+> This is in preparation to handle vendor differences in these
+> call sequences.
 > 
-> The control protection exception handler works in a similar way as the
-> general protection fault handler.
-> 
-> Signed-off-by: Yu-cheng Yu <yu-cheng.yu@intel.com>
+> Signed-off-by: Babu Moger <babu.moger@amd.com>
 > ---
->  arch/x86/entry/entry_64.S          |  2 +-
->  arch/x86/include/asm/traps.h       |  3 ++
->  arch/x86/kernel/idt.c              |  4 ++
->  arch/x86/kernel/signal_compat.c    |  2 +-
->  arch/x86/kernel/traps.c            | 64 ++++++++++++++++++++++++++++++
->  include/uapi/asm-generic/siginfo.h |  3 +-
->  6 files changed, 75 insertions(+), 3 deletions(-)
+>  arch/x86/kernel/cpu/resctrl.c | 29 +++++++++++++++++++++++------
+>  1 file changed, 23 insertions(+), 6 deletions(-)
+> 
+> diff --git a/arch/x86/kernel/cpu/resctrl.c b/arch/x86/kernel/cpu/resctrl.c
+> index 5d526dc45751..fd5320dddddc 100644
+> --- a/arch/x86/kernel/cpu/resctrl.c
+> +++ b/arch/x86/kernel/cpu/resctrl.c
+> @@ -794,6 +794,16 @@ static bool __init rdt_cpu_has(int flag)
+>  	return ret;
+>  }
+>  
+> +static __init bool rdt_mba_config(void)
+> +{
+> +	if (rdt_cpu_has(X86_FEATURE_MBA)) {
+> +		if (rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]))
+> +			return true;
 
-A *lot* of style problems here. Please use checkpatch and then common
-sense to check your patches before sending. All those below are valid,
-AFAICT:
+Or simpler:
 
-WARNING: function definition argument 'struct pt_regs *' should also have an identifier name
-#76: FILE: arch/x86/include/asm/traps.h:81:
-+dotraplinkage void do_control_protection(struct pt_regs *, long);
+        if (rdt_cpu_has(X86_FEATURE_MBA))
+                return rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]);
 
-WARNING: function definition argument 'long' should also have an identifier name
-#76: FILE: arch/x86/include/asm/traps.h:81:
-+dotraplinkage void do_control_protection(struct pt_regs *, long);
+        return false;
 
-WARNING: static const char * array should probably be static const char * const
-#124: FILE: arch/x86/kernel/traps.c:581:
-+static const char *control_protection_err[] =
-
-ERROR: that open brace { should be on the previous line
-#125: FILE: arch/x86/kernel/traps.c:582:
-+static const char *control_protection_err[] =
-+{
-
-WARNING: quoted string split across lines
-#158: FILE: arch/x86/kernel/traps.c:615:
-+		WARN_ONCE(1, "CET is disabled but got control "
-+			  "protection fault\n");
-
-WARNING: Prefer printk_ratelimited or pr_<level>_ratelimited to printk_ratelimit
-#165: FILE: arch/x86/kernel/traps.c:622:
-+	    printk_ratelimit()) {
-
-WARNING: Avoid logging continuation uses where feasible
-#176: FILE: arch/x86/kernel/traps.c:633:
-+		pr_cont("\n");
-
-ERROR: "(foo*)" should be "(foo *)"
-#183: FILE: arch/x86/kernel/traps.c:640:
-+	info.si_addr	= (void __user*)uprobe_get_trap_addr(regs);
-
-
-And now that patch doesn't even build anymore because of the siginfo
-changes which came in during the merge window. I guess I'll wait for
-your v6 patchset.
-
----
-arch/x86/kernel/traps.c: In function ‘do_control_protection’:
-arch/x86/kernel/traps.c:627:16: error: passing argument 1 of ‘clear_siginfo’ from incompatible pointer type [-Werror=incompatible-pointer-types]
-  clear_siginfo(&info);
-                ^~~~~
-In file included from ./include/linux/sched/signal.h:6,
-                 from ./include/linux/ptrace.h:7,
-                 from ./include/linux/ftrace.h:14,
-                 from ./include/linux/kprobes.h:42,
-                 from arch/x86/kernel/traps.c:19:
-./include/linux/signal.h:20:52: note: expected ‘kernel_siginfo_t *’ {aka ‘struct kernel_siginfo *’} but argument is of type ‘siginfo_t *’ {aka ‘struct siginfo *’}
- static inline void clear_siginfo(kernel_siginfo_t *info)
-                                  ~~~~~~~~~~~~~~~~~~^~~~
-arch/x86/kernel/traps.c:632:26: error: passing argument 2 of ‘force_sig_info’ from incompatible pointer type [-Werror=incompatible-pointer-types]
-  force_sig_info(SIGSEGV, &info, tsk);
-                          ^~~~~
-In file included from ./include/linux/ptrace.h:7,
-                 from ./include/linux/ftrace.h:14,
-                 from ./include/linux/kprobes.h:42,
-                 from arch/x86/kernel/traps.c:19:
-./include/linux/sched/signal.h:327:32: note: expected ‘struct kernel_siginfo *’ but argument is of type ‘siginfo_t *’ {aka ‘struct siginfo *’}
- extern int force_sig_info(int, struct kernel_siginfo *, struct task_struct *);
-                                ^~~~~~~~~~~~~~~~~~~~~~~
-cc1: some warnings being treated as errors
-make[2]: *** [scripts/Makefile.build:291: arch/x86/kernel/traps.o] Error 1
-make[1]: *** [scripts/Makefile.build:516: arch/x86/kernel] Error 2
-make[1]: *** Waiting for unfinished jobs....
-make: *** [Makefile:1060: arch/x86] Error 2
-make: *** Waiting for unfinished jobs....
+as rdt_get_mem_config() already returns bool.
 
 -- 
 Regards/Gruss,
