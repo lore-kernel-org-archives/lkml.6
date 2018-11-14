@@ -2,249 +2,101 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 859ADC07E85
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:22:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A6A9C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:23:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F6B5223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:22:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F6B5223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 21113223DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:23:43 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="h76ljEgK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21113223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732634AbeKNTZS (ORCPT
+        id S1732645AbeKNT0G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 14:25:18 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:37103 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732392AbeKNTZS (ORCPT
+        Wed, 14 Nov 2018 14:26:06 -0500
+Received: from userp2120.oracle.com ([156.151.31.85]:41628 "EHLO
+        userp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727154AbeKNT0G (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 14:25:18 -0500
-Received: by mail-ed1-f68.google.com with SMTP id h15so8213734edb.4;
-        Wed, 14 Nov 2018 01:22:49 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=VwB50JaiTaC2TDsw26YwsMiCnS6Ys+BF1RfBUcmBexg=;
-        b=Z5u6gN9R07T7cBMfZB145VfAI1DZestx9ynVidxWafVgXQvariv/vEsoXJa7ZIrGHt
-         OL2RnCVnJ4shDLZWL4Lpt7wn3J35Ib1UsIhjP89zknRMUHYXXiVNmx1E6zcKBK2+qhZI
-         EGkOmcWAATJPclyvDDhXgVaVxn4zUKfJi/pg2/ZDXn6io9ZQVeUkd5D/axXwS+sayREg
-         o86UEIP5Srm2x4Osk6kbdnW3x4V2o25J16oJKGSnrNjWiYcXMLfW+Ar3S3YvmDLdWG+W
-         k493Fl2i1uy7jgBIlXPp2DNr8VGxE/L8uQHHCX8LoxDMHK7Qg64/mSqacex31J/81Ddv
-         V6sA==
-X-Gm-Message-State: AGRZ1gJu5D7p/+HQZgzyHyF4fLwxPlKzMt5F/au1V6c3o/XzOqYFuToV
-        SDdLQ6Wi05qkdcTWM83z9vj5bwr6i3Y=
-X-Google-Smtp-Source: AJdET5eUuvbBtExUlFLpZ0f8f3fIXDD+OBY7y+5N3rPcfy7a3Y1r075pV6Ir1c7WmsbzfxClL4ehlw==
-X-Received: by 2002:a50:a4c8:: with SMTP id x8-v6mr1422164edb.210.1542187368383;
-        Wed, 14 Nov 2018 01:22:48 -0800 (PST)
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
-        by smtp.gmail.com with ESMTPSA id z50sm1117938edz.1.2018.11.14.01.22.47
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 01:22:48 -0800 (PST)
-Received: by mail-wr1-f49.google.com with SMTP id z13-v6so16423412wrs.3;
-        Wed, 14 Nov 2018 01:22:47 -0800 (PST)
-X-Received: by 2002:adf:e308:: with SMTP id b8-v6mr1129222wrj.91.1542187366940;
- Wed, 14 Nov 2018 01:22:46 -0800 (PST)
+        Wed, 14 Nov 2018 14:26:06 -0500
+Received: from pps.filterd (userp2120.oracle.com [127.0.0.1])
+        by userp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAE9JIuk112351;
+        Wed, 14 Nov 2018 09:23:38 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=IK33j/cjJDM6Bqqq1sMY/uKXJH5fF4J2KBtaga5auPg=;
+ b=h76ljEgKi7CBlQ1SqC01szZskUICsN0WJyI1cNThU9dDsY8qmkSQ8fVLpZPFPk2n4JIJ
+ KWJ7rc168vMhAPXjs0HdC+tlvU41UdQr458J/IA14MFNFxo74uIo1b+0N4O26FRLkfvB
+ EPJ+llF+YwNRs2OJAKWtvQrT3wTSqCpsX4yHSX5O1AUIteFIICyRvDbJtdOTZzegdVnn
+ rdmNOch1QvijqctRBtZGGlnomocImsqYkgg8vSqpXfl9oD9r0a+Z5clwUoY2kioB4Tf7
+ E9zqp15/R5Dn3eo2rqWm4YxElebYqSEUxRLFbHue+BbSa2iA6R8ih2OxV/CJfKT6FjAm oA== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2120.oracle.com with ESMTP id 2nr7cs23ya-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Nov 2018 09:23:37 +0000
+Received: from aserv0121.oracle.com (aserv0121.oracle.com [141.146.126.235])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAE9NawZ017938
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Wed, 14 Nov 2018 09:23:37 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by aserv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAE9NakT019453;
+        Wed, 14 Nov 2018 09:23:36 GMT
+Received: from [10.182.71.8] (/10.182.71.8)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Wed, 14 Nov 2018 01:23:36 -0800
+Subject: Re: [PATCH V7 1/4] blk-mq: refactor the code of issue request
+ directly
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1542185131-15029-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1542185131-15029-2-git-send-email-jianchao.w.wang@oracle.com>
+ <20181114091153.GB20550@ming.t460p>
+From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
+Message-ID: <17b51550-d45b-9861-b172-74ee0e256d98@oracle.com>
+Date:   Wed, 14 Nov 2018 17:23:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-26-jagan@amarulasolutions.com> <20181113122204.337db8b1@donnerap.cambridge.arm.com>
- <CAMty3ZBQXcnU=490KREa=F-qctMtRep9-rrhrPd1UZStnV=hqw@mail.gmail.com> <CAGb2v669dkf2qaUDaosJEKSRKpPRVKWszb6BLL2NrAjWwp3t2Q@mail.gmail.com>
-In-Reply-To: <CAGb2v669dkf2qaUDaosJEKSRKpPRVKWszb6BLL2NrAjWwp3t2Q@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 14 Nov 2018 17:22:33 +0800
-X-Gmail-Original-Message-ID: <CAGb2v64YOV48UwHc8-=jDt2Bp_4mNb3iuyEzj0d+GOQE_oT-Xg@mail.gmail.com>
-Message-ID: <CAGb2v64YOV48UwHc8-=jDt2Bp_4mNb3iuyEzj0d+GOQE_oT-Xg@mail.gmail.com>
-Subject: Re: [PATCH v4 25/26] [DO NOT MERGE] arm64: dts: allwinner:
- bananapi-m64: Bananapi S070WV20-CT16 DSI panel
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     =?UTF-8?Q?Andr=C3=A9_Przywara?= <andre.przywara@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        David Airlie <airlied@linux.ie>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com, linux-amarula@amarulasolutions.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181114091153.GB20550@ming.t460p>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9076 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=897
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811140086
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 2:58 PM Chen-Yu Tsai <wens@csie.org> wrote:
->
-> On Wed, Nov 14, 2018 at 2:31 PM Jagan Teki <jagan@amarulasolutions.com> wrote:
-> >
-> > On Tue, Nov 13, 2018 at 5:52 PM Andre Przywara <andre.przywara@arm.com> wrote:
-> > >
-> > > On Tue, 13 Nov 2018 16:46:32 +0530
-> > > Jagan Teki <jagan@amarulasolutions.com> wrote:
-> > >
-> > > Hi,
-> > >
-> > > > This patch add support for Bananapi S070WV20-CT16 DSI panel to
-> > > > BPI-M64 board.
-> > > >
-> > > > DSI panel connected via board DSI port with,
-> > > > - DC1SW as AVDD supply
-> > >
-> > > Are you sure of that? I don't see anything in the schematic to support
-> > > this. The only power lines that go to the DSI connector are DCDC1 and
-> > > PS. DC1SW is only connected to PortD on the SoC and to the Ethernet PHY.
-> > > Is there anything I miss?
-> >
-> > Thanks for the comment, yes dc1sw is connected in ephy. I have reused
-> > dc1, BSP is attached lcd_power1 to axp81x_dc1sw [1]. I just looking
-> > for someone to comment, may be we can skip this regulator attachment.
->
-> That seems sketchy. The schematics show the connector has feeds from both
-> the unregulated output IPSOUT (PS) and DCDC1. For designs with RGB LCD
-> panels, we only see the PS feed. Since the LCD panel can be used in either
-> RGB or MIPI DSI mode, I highly suspect the DCDC1 supply feeds the bridge
-> IC.
->
-> As for DC1SW, this is likely referenced because it provides power to the
-> GPIO lines that are used to control the LCD panel. If you don't provide
-> power, you can't pull them up.
->
-> While many of us dislike FEX and the new FEX-derived device tree, they
-> do provide some information, such as regulator usage. Note that each
-> regulator output has multiple names, which likely denote specific
-> usages.
->
-> I've asked BPI for schematics on the bridge board. Hopefully we'll
-> have something in more detail. In the meantime, I suggest leaving
-> this panel out of your next submission, and focus on getting the bulk
-> of the dsi driver and dts changes in first.
+Hi Ming
 
-I got the schematics, but unfortunately I can't share them publicly.
+On 11/14/18 5:11 PM, Ming Lei wrote:
+>>  
+>> -	if (!blk_mq_get_dispatch_budget(hctx))
+>> -		goto insert;
+>> +	if (unlikely(!blk_mq_get_dispatch_budget(hctx)))
+>> +		goto out_unlock;
+> The unlikely annotation is a bit misleading, since out-of-budget can
+> happen frequently in case of low queue depth, and there are lots of
+> such examples.
+> 
 
-It looks like VCC-MIPI on the connector is not connected to anything.
-All power is provided from IPSOUT, first through a current limiter IC
-turned on and off by LCD_PWR_EN, and then through some voltage regulators
-to provide the voltages for various parts of the panel, including LCD,
-capacitive touch, and the MIPI-DSI bridge. There's even an onboard EEPROM,
-though I'm not sure what that's for.
+This could be good for the case for no .get_budget and getting budget success.
+In case of out-of-budget, we insert the request which is slow path.
+It should be OK. Maybe some comment should be added for this.
 
-> >
-> > >
-> > > > - DCDC1 as DVDD supply
-> > >
-> > > That seems right, but doesn't match with what you write below.
-> >
-> > Commit need to fix s/DCDC1/DLDO1
-> >
-> > >
-> > > > - PD6 gpio for reset pin
-
-This toggles reset for both the panel itself and for the MIPI-DSI bridge.
-
-> > > > - PD5 gpio for backlight enable pin
-
-This enables the backlight's regulator.
-
-> > > > - PD7 gpio for backlight vdd supply
-
-This enables power to the whole panel module.
-
-Then you also have the two GPIOs for the capacitive touch controller.
-And also the I2C bus for the controller, and the EEPROM.
+Thanks
+Jianchao
 
 
-ChenYu
-
-> > > >
-> > > > Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> > > > ---
-> > > >  .../dts/allwinner/sun50i-a64-bananapi-m64.dts | 42
-> > > > +++++++++++++++++++ 1 file changed, 42 insertions(+)
-> > > >
-> > > > diff --git
-> > > > a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts
-> > > > b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts index
-> > > > ef1c90401bb2..6cb010e3bbd9 100644 ---
-> > > > a/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts +++
-> > > > b/arch/arm64/boot/dts/allwinner/sun50i-a64-bananapi-m64.dts @@ -45,6
-> > > > +45,7 @@ #include "sun50i-a64.dtsi"
-> > > >  #include <dt-bindings/gpio/gpio.h>
-> > > > +#include <dt-bindings/pwm/pwm.h>
-> > > >
-> > > >  / {
-> > > >       model = "BananaPi-M64";
-> > > > @@ -56,6 +57,15 @@
-> > > >               serial1 = &uart1;
-> > > >       };
-> > > >
-> > > > +     backlight: backlight {
-> > > > +             compatible = "pwm-backlight";
-> > > > +             pwms = <&r_pwm 0 50000 PWM_POLARITY_INVERTED>;
-> > > > +             brightness-levels = <1 2 4 8 16 32 64 128 512>;
-> > > > +             default-brightness-level = <2>;
-> > > > +             enable-gpios = <&pio 3 5 GPIO_ACTIVE_HIGH>; /*
-> > > > LCD-BL-EN: PD5 */
-> > > > +             power-supply = <&reg_vdd_backlight>;
-> > > > +     };
-> > > > +
-> > > >       chosen {
-> > > >               stdout-path = "serial0:115200n8";
-> > > >       };
-> > > > @@ -91,6 +101,15 @@
-> > > >               };
-> > > >       };
-> > > >
-> > > > +     reg_vdd_backlight: vdd-backlight {
-> > > > +             compatible = "regulator-fixed";
-> > > > +             regulator-name = "vdd-backlight";
-> > > > +             regulator-min-microvolt = <3300000>;
-> > > > +             regulator-max-microvolt = <3300000>;
-> > > > +             gpio = <&pio 3 7 GPIO_ACTIVE_HIGH>; /* LCD-PWR-EN:
-> > > > PD7 */
-> > > > +             enable-active-high;
-> > > > +     };
-> > > > +
-> > > >       wifi_pwrseq: wifi_pwrseq {
-> > > >               compatible = "mmc-pwrseq-simple";
-> > > >               reset-gpios = <&r_pio 0 2 GPIO_ACTIVE_LOW>; /* PL2 */
-> > > > @@ -101,6 +120,23 @@
-> > > >       status = "okay";
-> > > >  };
-> > > >
-> > > > +&dphy {
-> > > > +     status = "okay";
-> > > > +};
-> > > > +
-> > > > +&dsi {
-> > > > +     status = "okay";
-> > > > +
-> > > > +     panel@0 {
-> > > > +             compatible = "bananapi,s070wv20-ct16-icn6211";
-> > > > +             reg = <0>;
-> > > > +             avdd-supply = <&reg_dc1sw>;
-> > >
-> > > As mentioned above, I don't see this on the DSI connector.
-> > >
-> > > > +             dvdd-supply = <&reg_dldo1>;
-> > >
-> > > Mmh, this line is connected to the *SoC*, to drive the DSI data lines
-> > > or the DPHY, presumably. So I wouldn't expect it in the panel node, but
-> > > rather in the DPHY or DSI node. Although I can't find a power-supply
-> > > property in those bindings.
-> >
-> > Got it, this has to attach via vcc-dsi-supply.
-> >
-> > [1] https://github.com/BPI-SINOVOIP/BPI-M64-bsp/blob/master/bootloader/blobs/bpi-m64-lcd7.dts#L2266
