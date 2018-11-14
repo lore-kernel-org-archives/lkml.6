@@ -7,90 +7,152 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AAFE6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:36:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 558EFC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D1B421582
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:36:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DB832175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:37:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UgO+EwRV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D1B421582
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfxPyD58"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB832175B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388544AbeKOIlz (ORCPT
+        id S2388563AbeKOIm0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:41:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36592 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:42:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732588AbeKOI3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:29:39 -0500
+        id S2388285AbeKOI30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:29:26 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3B4D62252B;
-        Wed, 14 Nov 2018 22:24:35 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 8DC1F2252B;
+        Wed, 14 Nov 2018 22:24:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234275;
-        bh=G5j+Ol6cZRbYDWo5KjMY1thrxkR6Bjaj/PIVJ0EURec=;
+        s=default; t=1542234261;
+        bh=jCkQ/NI813++FSrvW44CuBWwtEFEu9t6E1eE/91zcSk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=UgO+EwRVGmcAa8tO3xVgz13R74Ecg3oNFIZSec9F2I9zXMNyvhP0CWavA69M84PXE
-         TnMvC0rQyMA/1Hb4Wo5ZfsnwFCMMxxgs9YDl5uZ6yHOM09CSbDWQXG7Bt7ku70UlXK
-         64fGuxwIuPnnTEzz52wOLgFQQhrKeQC0K6HGK5Ls=
+        b=EfxPyD581iUysEu+Fkgf0QVOGjhjwaL0Gtq5WlyPEYMjVX33giSqgoXlwqsBC11Qh
+         mkyUA6c4075Y9wHHIXE9BRFssX+k7WrRwoeKEI35XBXYsOosu11qDS7f8lfEWypeac
+         ehu4E5R0OW7typ0vqBih+3pp8hlr02WfsFiEO27w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Luis Henriques <lhenriques@suse.com>,
-        Ilya Dryomov <idryomov@gmail.com>,
-        Sasha Levin <sashal@kernel.org>, ceph-devel@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 35/59] ceph: quota: fix null pointer dereference in quota check
-Date:   Wed, 14 Nov 2018 17:23:07 -0500
-Message-Id: <20181114222335.99339-35-sashal@kernel.org>
+Cc:     Inki Dae <inki.dae@samsung.com>, Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.18 26/59] Revert "drm/exynos/decon5433: implement frame counter"
+Date:   Wed, 14 Nov 2018 17:22:58 -0500
+Message-Id: <20181114222335.99339-26-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Luis Henriques <lhenriques@suse.com>
+From: Inki Dae <inki.dae@samsung.com>
 
-[ Upstream commit 71f2cc64d027d712f29bf8d09d3e123302d5f245 ]
+[ Upstream commit 6ca469e22a30992b4478d2ab88737c70667c1e00 ]
 
-This patch fixes a possible null pointer dereference in
-check_quota_exceeded, detected by the static checker smatch, with the
-following warning:
+This reverts commit 0586feba322e1de05075700eb4b835c8b683e62b
 
-   fs/ceph/quota.c:240 check_quota_exceeded()
-    error: we previously assumed 'realm' could be null (see line 188)
+This patch makes it to need get_vblank_counter callback in crtc
+to get frame counter from decon driver.
 
-Fixes: b7a2921765cf ("ceph: quota: support for ceph.quota.max_files")
-Reported-by: Dan Carpenter <dan.carpenter@oracle.com>
-Signed-off-by: Luis Henriques <lhenriques@suse.com>
-Reviewed-by: "Yan, Zheng" <zyan@redhat.com>
-Signed-off-by: Ilya Dryomov <idryomov@gmail.com>
+However, drm_dev->max_vblank_count is a member unique to
+vendor's DRM driver but in case of ARM DRM, some CRTC devices
+don't provide the frame counter value. As a result, this patch
+made extension and clone mode not working.
+
+Instead of this patch, we may need separated max_vblank_count
+which belongs to each CRTC device, or need to implement frame
+counter emulation for them who don't support HW frame counter.
+
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- fs/ceph/quota.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  9 ---------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 11 -----------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h       |  1 -
+ 3 files changed, 21 deletions(-)
 
-diff --git a/fs/ceph/quota.c b/fs/ceph/quota.c
-index 242bfa5c0539..47cc6f41d100 100644
---- a/fs/ceph/quota.c
-+++ b/fs/ceph/quota.c
-@@ -237,7 +237,8 @@ static bool check_quota_exceeded(struct inode *inode, enum quota_check_op op,
- 		ceph_put_snap_realm(mdsc, realm);
- 		realm = next;
- 	}
--	ceph_put_snap_realm(mdsc, realm);
-+	if (realm)
-+		ceph_put_snap_realm(mdsc, realm);
- 	up_read(&mdsc->snap_rwsem);
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index e868773ea509..10b276353004 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -164,13 +164,6 @@ static u32 decon_get_frame_count(struct decon_context *ctx, bool end)
+ 	return frm;
+ }
  
- 	return exceeded;
+-static u32 decon_get_vblank_counter(struct exynos_drm_crtc *crtc)
+-{
+-	struct decon_context *ctx = crtc->ctx;
+-
+-	return decon_get_frame_count(ctx, false);
+-}
+-
+ static void decon_setup_trigger(struct decon_context *ctx)
+ {
+ 	if (!ctx->crtc->i80_mode && !(ctx->out_type & I80_HW_TRG))
+@@ -536,7 +529,6 @@ static const struct exynos_drm_crtc_ops decon_crtc_ops = {
+ 	.disable		= decon_disable,
+ 	.enable_vblank		= decon_enable_vblank,
+ 	.disable_vblank		= decon_disable_vblank,
+-	.get_vblank_counter	= decon_get_vblank_counter,
+ 	.atomic_begin		= decon_atomic_begin,
+ 	.update_plane		= decon_update_plane,
+ 	.disable_plane		= decon_disable_plane,
+@@ -554,7 +546,6 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+ 	int ret;
+ 
+ 	ctx->drm_dev = drm_dev;
+-	drm_dev->max_vblank_count = 0xffffffff;
+ 
+ 	for (win = ctx->first_win; win < WINDOWS_NR; win++) {
+ 		ctx->configs[win].pixel_formats = decon_formats;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index eea90251808f..2696289ecc78 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -162,16 +162,6 @@ static void exynos_drm_crtc_disable_vblank(struct drm_crtc *crtc)
+ 		exynos_crtc->ops->disable_vblank(exynos_crtc);
+ }
+ 
+-static u32 exynos_drm_crtc_get_vblank_counter(struct drm_crtc *crtc)
+-{
+-	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-
+-	if (exynos_crtc->ops->get_vblank_counter)
+-		return exynos_crtc->ops->get_vblank_counter(exynos_crtc);
+-
+-	return 0;
+-}
+-
+ static const struct drm_crtc_funcs exynos_crtc_funcs = {
+ 	.set_config	= drm_atomic_helper_set_config,
+ 	.page_flip	= drm_atomic_helper_page_flip,
+@@ -181,7 +171,6 @@ static const struct drm_crtc_funcs exynos_crtc_funcs = {
+ 	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
+ 	.enable_vblank = exynos_drm_crtc_enable_vblank,
+ 	.disable_vblank = exynos_drm_crtc_disable_vblank,
+-	.get_vblank_counter = exynos_drm_crtc_get_vblank_counter,
+ };
+ 
+ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index 0f6d079a55c9..46d659fd1703 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -133,7 +133,6 @@ struct exynos_drm_crtc_ops {
+ 	void (*disable)(struct exynos_drm_crtc *crtc);
+ 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
+ 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
+-	u32 (*get_vblank_counter)(struct exynos_drm_crtc *crtc);
+ 	enum drm_mode_status (*mode_valid)(struct exynos_drm_crtc *crtc,
+ 		const struct drm_display_mode *mode);
+ 	bool (*mode_fixup)(struct exynos_drm_crtc *crtc,
 -- 
 2.17.1
 
