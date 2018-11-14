@@ -2,116 +2,85 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5EE5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:41:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ED07C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:43:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BD9F21780
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:41:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BD9F21780
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3F62E2146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:43:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F62E2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732080AbeKNTnf (ORCPT
+        id S1732195AbeKNTqZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 14:43:35 -0500
-Received: from mx2.suse.de ([195.135.220.15]:37522 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727576AbeKNTnf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 14:43:35 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EE74DAE41;
-        Wed, 14 Nov 2018 09:41:04 +0000 (UTC)
-Date:   Wed, 14 Nov 2018 10:41:04 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     Baoquan He <bhe@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        aarcange@redhat.com
-Subject: Re: Memory hotplug softlock issue
-Message-ID: <20181114094104.GJ23419@dhcp22.suse.cz>
-References: <20181114070909.GB2653@MiWiFi-R3L-srv>
- <5a6c6d6b-ebcd-8bfa-d6e0-4312bfe86586@redhat.com>
- <20181114090042.GD2653@MiWiFi-R3L-srv>
- <8c03f925-8ca4-688c-569a-a7a449612782@redhat.com>
+        Wed, 14 Nov 2018 14:46:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:39624 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727558AbeKNTqY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 14:46:24 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A79D689AF9;
+        Wed, 14 Nov 2018 09:43:55 +0000 (UTC)
+Received: from ming.t460p (ovpn-8-18.pek2.redhat.com [10.72.8.18])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id C47D15D9C7;
+        Wed, 14 Nov 2018 09:43:49 +0000 (UTC)
+Date:   Wed, 14 Nov 2018 17:43:44 +0800
+From:   Ming Lei <ming.lei@redhat.com>
+To:     "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V7 1/4] blk-mq: refactor the code of issue request
+ directly
+Message-ID: <20181114094343.GA13193@ming.t460p>
+References: <1542185131-15029-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1542185131-15029-2-git-send-email-jianchao.w.wang@oracle.com>
+ <20181114091153.GB20550@ming.t460p>
+ <17b51550-d45b-9861-b172-74ee0e256d98@oracle.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8c03f925-8ca4-688c-569a-a7a449612782@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <17b51550-d45b-9861-b172-74ee0e256d98@oracle.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 14 Nov 2018 09:43:55 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 14-11-18 10:25:57, David Hildenbrand wrote:
-> On 14.11.18 10:00, Baoquan He wrote:
-> > Hi David,
-> > 
-> > On 11/14/18 at 09:18am, David Hildenbrand wrote:
-> >> Code seems to be waiting for the mem_hotplug_lock in read.
-> >> We hold mem_hotplug_lock in write whenever we online/offline/add/remove
-> >> memory. There are two ways to trigger offlining of memory:
-> >>
-> >> 1. Offlining via "cat offline > /sys/devices/system/memory/memory0/state"
-> >>
-> >> This always properly took the mem_hotplug_lock. Nothing changed
-> >>
-> >> 2. Offlining via "cat 0 > /sys/devices/system/memory/memory0/online"
-> >>
-> >> This didn't take the mem_hotplug_lock and I fixed that for this release.
-> >>
-> >> So if you were testing with 1., you should have seen the same error
-> >> before this release (unless there is something else now broken in this
-> >> release).
-> > 
-> > Thanks a lot for looking into this.
-> > 
-> > I triggered sysrq+t to check threads' state. You can see that we use
-> > firmware to trigger ACPI event to go to acpi_bus_offline(), it truly
-> > didn't take mem_hotplug_lock() and has taken it with your fix in
-> > commit 381eab4a6ee mm/memory_hotplug: fix online/offline_pages called w.o. mem_hotplug_lock
-> > 
-> > [  +0.007062] Workqueue: kacpi_hotplug acpi_hotplug_work_fn
-> > [  +0.005398] Call Trace:
-> > [  +0.002476]  ? page_vma_mapped_walk+0x307/0x710
-> > [  +0.004538]  ? page_remove_rmap+0xa2/0x340
-> > [  +0.004104]  ? ptep_clear_flush+0x54/0x60
-> > [  +0.004027]  ? enqueue_entity+0x11c/0x620
-> > [  +0.005904]  ? schedule+0x28/0x80
-> > [  +0.003336]  ? rmap_walk_file+0xf9/0x270
-> > [  +0.003940]  ? try_to_unmap+0x9c/0xf0
-> > [  +0.003695]  ? migrate_pages+0x2b0/0xb90
-> > [  +0.003959]  ? try_offline_node+0x160/0x160
-> > [  +0.004214]  ? __offline_pages+0x6ce/0x8e0
-> > [  +0.004134]  ? memory_subsys_offline+0x40/0x60
-> > [  +0.004474]  ? device_offline+0x81/0xb0
-> > [  +0.003867]  ? acpi_bus_offline+0xdb/0x140
-> > [  +0.004117]  ? acpi_device_hotplug+0x21c/0x460
-> > [  +0.004458]  ? acpi_hotplug_work_fn+0x1a/0x30
-> > [  +0.004372]  ? process_one_work+0x1a1/0x3a0
-> > [  +0.004195]  ? worker_thread+0x30/0x380
-> > [  +0.003851]  ? drain_workqueue+0x120/0x120
-> > [  +0.004117]  ? kthread+0x112/0x130
-> > [  +0.003411]  ? kthread_park+0x80/0x80
-> > [  +0.005325]  ? ret_from_fork+0x35/0x40
+On Wed, Nov 14, 2018 at 05:23:48PM +0800, jianchao.wang wrote:
+> Hi Ming
+> 
+> On 11/14/18 5:11 PM, Ming Lei wrote:
+> >>  
+> >> -	if (!blk_mq_get_dispatch_budget(hctx))
+> >> -		goto insert;
+> >> +	if (unlikely(!blk_mq_get_dispatch_budget(hctx)))
+> >> +		goto out_unlock;
+> > The unlikely annotation is a bit misleading, since out-of-budget can
+> > happen frequently in case of low queue depth, and there are lots of
+> > such examples.
 > > 
 > 
-> Yes, this is indeed another code path that was fixed (and I didn't
-> actually realize it ;) ). Thanks for the callchain. Before my fix
-> hotplug still would have never succeeded (offline_pages would have
-> silently looped forever) as far as I can tell.
+> This could be good for the case for no .get_budget and getting budget success.
+> In case of out-of-budget, we insert the request which is slow path.
 
-I haven't studied your patch yet so I am not really sure why you have
-added the lock into this path. The memory hotplug locking is certainly
-far from great but I believe we should really rething the scope of the
-lock. There shouldn't be any fundamental reason to use the global lock
-for the full offlining. So rather than moving the lock from one place to
-another we need a range locking I believe.
+In case of low queue depth, it is hard to say that 'insert request' is
+done in slow path, cause it happens quite frequently.
 
--- 
-Michal Hocko
-SUSE Labs
+I suggest to remove these two unlikely() since modern CPU's branch prediction
+should work well enough.
+
+Especially the annotation of unlikely() often means that this branch is
+missed in most of times for all settings, and it is obviously not true
+in this case.
+
+
+thanks,
+Ming
