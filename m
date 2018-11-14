@@ -2,134 +2,138 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DD273C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:27:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA40CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:27:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97E352254B
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:27:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A1FA720868
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:27:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="fqjhVrI+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97E352254B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="W2PSZmkg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1FA720868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388693AbeKOIcb (ORCPT
+        id S2388755AbeKOIch (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:32:31 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38836 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726644AbeKOIbc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:31:32 -0500
-Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A544C2254A;
-        Wed, 14 Nov 2018 22:26:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234386;
-        bh=aF7DJ9R90FxVkjB+OA4tqpYytpvxhJp8vgLdjQXDhpY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=fqjhVrI+7xN3+AJM2JCWHdhPnEjjfdzAPYFZxJwVFndPt8YS/obGRrcTkGfpGRDgI
-         TMzu/GI7sEYAR7NJLyJENlbBF+eKqVtgCdcRN0Dtw4gUN5rW1KWEb4EGdtHMicp+6q
-         ToXr+jCJCfg9jBkrNwjHVIHQwzJGcqIiigdIhER4=
-From:   Sasha Levin <sashal@kernel.org>
-To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Taehee Yoo <ap420073@gmail.com>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 5/8] netfilter: xt_IDLETIMER: add sysfs filename checking routine
-Date:   Wed, 14 Nov 2018 17:26:11 -0500
-Message-Id: <20181114222618.100378-5-sashal@kernel.org>
+        Thu, 15 Nov 2018 03:32:37 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:42699 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388219AbeKOIch (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:32:37 -0500
+Received: by mail-qk1-f193.google.com with SMTP id m5so28795847qka.9
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 14:27:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=otHAAoJeXEc/P3G/AXr3bWGwZWsjr5VuAddyjFBEbz8=;
+        b=W2PSZmkgLl+pPs0SdDeahlYMhhbo867cs819v+QI1hfxY9SoEqnEp8/HZBwOs5tKzb
+         2EFqlrw98eJ03EdrIwxJJ0EaMpHsOWrNW9sTGyuvo1eG259wELmgjbIcMOguxmW7BzlW
+         hHYzlLiSBY4G2q8IkjnPOQsXE19nYX6w/VTbAGjyPkAMv42GyXOH6IVCJ55EqRWkwY1O
+         AXAP5WspptyRPdJ4qlNNbdI9RIAv0JElgkYA3srGWeyGtyOgxsnlb0Igk1J43YAgfBlT
+         stqTDbFYOnydQgPxzPvbXpcEegVipDzvWgPJfpKglV8XpvvXCVi7eM3Fp2HQD6/RI4gt
+         j+4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=otHAAoJeXEc/P3G/AXr3bWGwZWsjr5VuAddyjFBEbz8=;
+        b=KvvVEznG2DF7ZKfLuf4Zlctvn0ZEahcq3MrqNGJjrQQA/30QMoecxzIRf+U9Udws4f
+         v05y9UeI35vdh+ZTBKecmlfdsFGJRgbzmDeRUzKUd0T3MyCZUE/Mlp8yKzI0hQnNXY/R
+         dYq2NQnbTjtd+FHf9eVkqu2Xy5B4UjEM3cmTTYR97OhM9UaP7SGLucf6BbzS++Mj4rTj
+         VmzzwOtplFFZcCRe05QmzUdGoav4s65MJfqWGVKFMgPdFHqs24VXNnOW61MgbUdTF8+/
+         i2UnMVIbqXcCXH5HMQPH0WvPzBi6HV6Jdb/mNEDhWXTIH2aZi560ZZytipO5d2vN0f4X
+         MGiQ==
+X-Gm-Message-State: AGRZ1gL4vKLBmFFyLnlV1Zt1JPCzzu8zt8GwDEP9En3f18LXExGnozj/
+        bputMgKirm8yL4Tu+qzXXnuCTQ==
+X-Google-Smtp-Source: AJdET5eTcpb9V7jPmDwJDLI0vCTjGj6rVW8niA3U3Mjyb5HBRRdHhsvcTsWtNry9/xjtPmf+yLdngw==
+X-Received: by 2002:a0c:afd1:: with SMTP id t17mr3745998qvc.93.1542234451549;
+        Wed, 14 Nov 2018 14:27:31 -0800 (PST)
+Received: from localhost.localdomain (modemcable014.247-57-74.mc.videotron.ca. [74.57.247.14])
+        by smtp.gmail.com with ESMTPSA id 24sm24067595qkp.65.2018.11.14.14.27.29
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 14:27:30 -0800 (PST)
+From:   Jonathan Marek <jonathan@marek.ca>
+To:     freedreno@lists.freedesktop.org
+Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
+        Sean Paul <seanpaul@chromium.org>,
+        Steve Kowalik <steven@wedontsleep.org>,
+        Rajesh Yadav <ryadav@codeaurora.org>,
+        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
+        dri-devel@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
+        GPU), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/9] drm/msm/mdp4: only use lut_clk on mdp4.2+
+Date:   Wed, 14 Nov 2018 17:24:08 -0500
+Message-Id: <20181114222418.15960-1-jonathan@marek.ca>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181114222618.100378-1-sashal@kernel.org>
-References: <20181114222618.100378-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Taehee Yoo <ap420073@gmail.com>
-
-[ Upstream commit 54451f60c8fa061af9051a53be9786393947367c ]
-
-When IDLETIMER rule is added, sysfs file is created under
-/sys/class/xt_idletimer/timers/
-But some label name shouldn't be used.
-".", "..", "power", "uevent", "subsystem", etc...
-So that sysfs filename checking routine is needed.
-
-test commands:
-   %iptables -I INPUT -j IDLETIMER --timeout 1 --label "power"
-
-splat looks like:
-[95765.423132] sysfs: cannot create duplicate filename '/devices/virtual/xt_idletimer/timers/power'
-[95765.433418] CPU: 0 PID: 8446 Comm: iptables Not tainted 4.19.0-rc6+ #20
-[95765.449755] Call Trace:
-[95765.449755]  dump_stack+0xc9/0x16b
-[95765.449755]  ? show_regs_print_info+0x5/0x5
-[95765.449755]  sysfs_warn_dup+0x74/0x90
-[95765.449755]  sysfs_add_file_mode_ns+0x352/0x500
-[95765.449755]  sysfs_create_file_ns+0x179/0x270
-[95765.449755]  ? sysfs_add_file_mode_ns+0x500/0x500
-[95765.449755]  ? idletimer_tg_checkentry+0x3e5/0xb1b [xt_IDLETIMER]
-[95765.449755]  ? rcu_read_lock_sched_held+0x114/0x130
-[95765.449755]  ? __kmalloc_track_caller+0x211/0x2b0
-[95765.449755]  ? memcpy+0x34/0x50
-[95765.449755]  idletimer_tg_checkentry+0x4e2/0xb1b [xt_IDLETIMER]
-[ ... ]
-
-Fixes: 0902b469bd25 ("netfilter: xtables: idletimer target implementation")
-Signed-off-by: Taehee Yoo <ap420073@gmail.com>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 ---
- net/netfilter/xt_IDLETIMER.c | 20 ++++++++++++++++++++
- 1 file changed, 20 insertions(+)
+ drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c | 22 +++++++++++++---------
+ 1 file changed, 13 insertions(+), 9 deletions(-)
 
-diff --git a/net/netfilter/xt_IDLETIMER.c b/net/netfilter/xt_IDLETIMER.c
-index 1718f536689f..8a1d2af3eed0 100644
---- a/net/netfilter/xt_IDLETIMER.c
-+++ b/net/netfilter/xt_IDLETIMER.c
-@@ -116,6 +116,22 @@ static void idletimer_tg_expired(unsigned long data)
- 	schedule_work(&timer->work);
- }
+diff --git a/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c b/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c
+index ae25d763cd8c..8f765f284d11 100644
+--- a/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c
++++ b/drivers/gpu/drm/msm/disp/mdp4/mdp4_kms.c
+@@ -206,7 +206,8 @@ int mdp4_disable(struct mdp4_kms *mdp4_kms)
+ 	clk_disable_unprepare(mdp4_kms->clk);
+ 	if (mdp4_kms->pclk)
+ 		clk_disable_unprepare(mdp4_kms->pclk);
+-	clk_disable_unprepare(mdp4_kms->lut_clk);
++	if (mdp4_kms->lut_clk)
++		clk_disable_unprepare(mdp4_kms->lut_clk);
+ 	if (mdp4_kms->axi_clk)
+ 		clk_disable_unprepare(mdp4_kms->axi_clk);
  
-+static int idletimer_check_sysfs_name(const char *name, unsigned int size)
-+{
-+	int ret;
-+
-+	ret = xt_check_proc_name(name, size);
-+	if (ret < 0)
-+		return ret;
-+
-+	if (!strcmp(name, "power") ||
-+	    !strcmp(name, "subsystem") ||
-+	    !strcmp(name, "uevent"))
-+		return -EINVAL;
-+
-+	return 0;
-+}
-+
- static int idletimer_tg_create(struct idletimer_tg_info *info)
- {
- 	int ret;
-@@ -126,6 +142,10 @@ static int idletimer_tg_create(struct idletimer_tg_info *info)
- 		goto out;
+@@ -220,7 +221,8 @@ int mdp4_enable(struct mdp4_kms *mdp4_kms)
+ 	clk_prepare_enable(mdp4_kms->clk);
+ 	if (mdp4_kms->pclk)
+ 		clk_prepare_enable(mdp4_kms->pclk);
+-	clk_prepare_enable(mdp4_kms->lut_clk);
++	if (mdp4_kms->lut_clk)
++		clk_prepare_enable(mdp4_kms->lut_clk);
+ 	if (mdp4_kms->axi_clk)
+ 		clk_prepare_enable(mdp4_kms->axi_clk);
+ 
+@@ -472,12 +474,13 @@ struct msm_kms *mdp4_kms_init(struct drm_device *dev)
+ 	if (IS_ERR(mdp4_kms->pclk))
+ 		mdp4_kms->pclk = NULL;
+ 
+-	// XXX if (rev >= MDP_REV_42) { ???
+-	mdp4_kms->lut_clk = devm_clk_get(&pdev->dev, "lut_clk");
+-	if (IS_ERR(mdp4_kms->lut_clk)) {
+-		dev_err(dev->dev, "failed to get lut_clk\n");
+-		ret = PTR_ERR(mdp4_kms->lut_clk);
+-		goto fail;
++	if (mdp4_kms->rev >= 2) {
++		mdp4_kms->lut_clk = devm_clk_get(&pdev->dev, "lut_clk");
++		if (IS_ERR(mdp4_kms->lut_clk)) {
++			dev_err(dev->dev, "failed to get lut_clk\n");
++			ret = PTR_ERR(mdp4_kms->lut_clk);
++			goto fail;
++		}
  	}
  
-+	ret = idletimer_check_sysfs_name(info->label, sizeof(info->label));
-+	if (ret < 0)
-+		goto out_free_timer;
-+
- 	sysfs_attr_init(&info->timer->attr.attr);
- 	info->timer->attr.attr.name = kstrdup(info->label, GFP_KERNEL);
- 	if (!info->timer->attr.attr.name) {
+ 	mdp4_kms->axi_clk = devm_clk_get(&pdev->dev, "bus_clk");
+@@ -488,7 +491,8 @@ struct msm_kms *mdp4_kms_init(struct drm_device *dev)
+ 	}
+ 
+ 	clk_set_rate(mdp4_kms->clk, config->max_clk);
+-	clk_set_rate(mdp4_kms->lut_clk, config->max_clk);
++	if (mdp4_kms->lut_clk)
++		clk_set_rate(mdp4_kms->lut_clk, config->max_clk);
+ 
+ 	pm_runtime_enable(dev->dev);
+ 	mdp4_kms->rpm_enabled = true;
 -- 
 2.17.1
 
