@@ -2,110 +2,157 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 453FFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:54:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76305C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:54:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0849422511
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:54:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E2A7208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:54:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dkcWczvT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0849422511
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZfMlm384"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E2A7208A3
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733291AbeKOC60 (ORCPT
+        id S2387485AbeKOC6z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 21:58:26 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:42194 "EHLO
+        Wed, 14 Nov 2018 21:58:55 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:44395 "EHLO
         mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727972AbeKOC60 (ORCPT
+        with ESMTP id S1727972AbeKOC6z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 21:58:26 -0500
-Received: by mail-pf1-f194.google.com with SMTP id 64so3725085pfr.9;
-        Wed, 14 Nov 2018 08:54:28 -0800 (PST)
+        Wed, 14 Nov 2018 21:58:55 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b81-v6so7700721pfe.11;
+        Wed, 14 Nov 2018 08:54:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=message-id:date:from:to:cc:subject:mime-version:content-disposition
-         :user-agent;
-        bh=+yls9oJorbmpf7QWL23T0ZZ+53Vz1DXjxTfu/kU/1Lc=;
-        b=dkcWczvTS0//hGztr7Z8Um2d3g1szbbMnGEhH9KypN4Rr01t4IEApJYrKL8L2r+wJw
-         hYn8yF1j5kKgXOUabZW+Do7pOuBgOFhKGjfIXCkfjO4jZcXqgXbfhdAWnwXSUUlOsKPX
-         bD0ycwny9U8mONYAKQEAcPF/NZDf6+sCXxJrLAFOdvp7pQt0rCa9Pk2CMlWY6+l02bNh
-         +Jr5GbXBQXY3/nuMPMRrLsjrGsg5bejgh7hHy/iySUjaUYeCkkahWCwF9Z1gto6JuTZt
-         kITdMPor9j+gP/+ua5mwBNJpSVHKstM6P5yhOKO/R7ek7KbKaKlPnmLHXi8U9MNhN62P
-         l7fg==
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=cktP2JyDWtD24IeJWjBeXS5qQ8POIqfhV8gUzVyoxYo=;
+        b=ZfMlm384368bWrAXMR4hfaTbPOtaxaSkmFgAaBbhrkWINXab1cawrhVEjTRqh07e0m
+         dIH/tIoJWmQdnpQqG7qb+gjvw36zACOsmwXS2S5xs8ZuTV6LGbdHM5ccPPcBXR07cGMl
+         DtbH4TthLUE0lz2T0yZJ+49tsGhYfk6EhWgEJqnhH8gY1vadeWixtpoj6aHS1GcUtkg2
+         Ae9NFLS6C/I1m0oHiEp9QduSByBDv/tmg0Y/eDCZhlEn4iaoEpO4IywaJovXWdzdUKsU
+         2bQ3bkkZoXAolYlxe6pPZEcLSI6GkkZH/FIRy+Zv8frmLiBipH6JSWVrpGjdPioKzyh6
+         WvGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:date:from:to:cc:subject:mime-version
-         :content-disposition:user-agent;
-        bh=+yls9oJorbmpf7QWL23T0ZZ+53Vz1DXjxTfu/kU/1Lc=;
-        b=TLXt+NyxYspdcDTyoNmH4sWmZkjgdhD2e9twTq7ylo85EjROyjjY20M3zZQ1PIRzzD
-         rMkmPRHSqaL8a8unXIXr5obFlwbInk/5w4HY5JLyPnvIUjnwA26kDdepmaaOHEJYFIyz
-         6V1xGaUw+Ki3MPz7aEJimZzlhnxwbrz/WgZhw28/+bxw//iasnAqCF2m7/uOFG70THE7
-         l/g354puVztKA9X02NL6hmFaOVIk5TG3GnsEiPzZ1rZINXh1t2PFcsd2uM0TTZaHxKkw
-         Kc1hLq9lDDyjiPQ4aZG2NBP5HMXi/GgECzL9aq+3OWcIRbQNRteSZGVh46j0JcapYW32
-         ZLyw==
-X-Gm-Message-State: AGRZ1gL5+4x9Mv3ZoenYz/b5qnN90zKfd0ky/+2OhqWwXEpJD+cVZol7
-        WpaeZPDotBwYRomfzzDoNbY=
-X-Google-Smtp-Source: AJdET5f1HRLG4oiIgEtYLgMHVEMcLqOjXLvCH1sR8JD58zxyE6d2EicULjf1gcPmOA4ScMfEl8Skrg==
-X-Received: by 2002:a62:3101:: with SMTP id x1-v6mr2806632pfx.204.1542214467699;
-        Wed, 14 Nov 2018 08:54:27 -0800 (PST)
-Received: from sabyasachi ([45.116.191.241])
-        by smtp.gmail.com with ESMTPSA id l63-v6sm22675772pfb.75.2018.11.14.08.54.25
-        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 14 Nov 2018 08:54:26 -0800 (PST)
-Message-ID: <5bec5342.1c69fb81.b02fa.ace9@mx.google.com>
-X-Google-Original-Message-ID: <20181114165421.GA3075@sabyasachi.linux@gmail.com>
-Date:   Wed, 14 Nov 2018 22:24:21 +0530
-From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-To:     satishkh@cisco.com, sebaddel@cisco.com, kartilak@cisco.com,
-        jejb@linux.vnet.ibm.com, martin.petersen@oracle.com
-Cc:     jrdr.linux@gmail.com, linux-scsi@vger.kernel.org,
-        linux-kernel@vger.kernel.org, brajeswar.linux@gmail.com
-Subject: [PATCH v2] drivers/scsi/fnic/fnic_trace.c: Use vzalloc
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=cktP2JyDWtD24IeJWjBeXS5qQ8POIqfhV8gUzVyoxYo=;
+        b=t0TkQxZ7F6KFFwdkUS/D9HHIF2NCJqykJL46srmIw/75NQW0ItO2he6RwKwcYWbuXF
+         Am9N9b7e3Zd2XUTQumqAXcT3NnXyznA0lLuBJe+LTzXE96FQICK+mbXK76LnhRYl9N6W
+         vPzmgcSQXU406AXjBL6lmLypjTvGKfZYQkTAh9jHCA7dqUM+JJKcHx8XhcM9F7ZSrhQ+
+         FoNnGN8obfc5eORetascvgnbq8e5Y1EK+8yqCyOzKDCd5k/llFwOrSPfWaxEeWXzDB6P
+         QKbrUh6IqciD236MPbk6mAhZ3zsImKE4jReh0aYIimo7yqPqb/0L5xgep79vENS8P+8I
+         wV1g==
+X-Gm-Message-State: AGRZ1gIQusDBMytM/YFXbQsbnl5agYc34f38WWuVE6CHyFuskVHfQ45y
+        xcksDUUqdpVPa50FlhmW5MM=
+X-Google-Smtp-Source: AJdET5clZPLtQZUjlf6JJxtq+M6gT2akJ1PqxRZWfpWArA4e4d6lnbkX7kVcNZj8hzu7++4fjofCEA==
+X-Received: by 2002:a62:a99:: with SMTP id 25mr2661487pfk.121.1542214495485;
+        Wed, 14 Nov 2018 08:54:55 -0800 (PST)
+Received: from nishad ([106.51.27.228])
+        by smtp.gmail.com with ESMTPSA id c7-v6sm29915527pfh.25.2018.11.14.08.54.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Nov 2018 08:54:54 -0800 (PST)
+Date:   Wed, 14 Nov 2018 22:24:47 +0530
+From:   Nishad Kamdar <nishadkamdar@gmail.com>
+To:     Jonathan Cameron <jic23@kernel.org>
+Cc:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>,
+        Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 4/4] staging: iio: ad7816: Add device tree table.
+Message-ID: <20181114163323.GB16316@nishad>
+References: <cover.1541733949.git.nishadkamdar@gmail.com>
+ <209172d47d8d14c1244556e5f05bbd6455b4de04.1541733949.git.nishadkamdar@gmail.com>
+ <c2dd05ea2893315e848bcf48af5e51b415d7a22c.camel@analog.com>
+ <20181111123802.212a8b79@archlinux>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.5.24 (2015-08-30)
+In-Reply-To: <20181111123802.212a8b79@archlinux>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replaced vmalloc + memset with vzalloc
+On Sun, Nov 11, 2018 at 12:38:02PM +0000, Jonathan Cameron wrote:
+> On Fri, 9 Nov 2018 08:11:57 +0000
+> "Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
+> 
+> > On Fri, 2018-11-09 at 13:08 +0530, Nishad Kamdar wrote:
+> > > Add device tree table for matching vendor ID.  
+> > 
+> > One comment inline for this.
+> > 
+> > Thanks
+> > Alex
+> > 
+> > > 
+> > > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> > > ---
+> > >  drivers/staging/iio/adc/ad7816.c | 7 +++++++
+> > >  1 file changed, 7 insertions(+)
+> > > 
+> > > diff --git a/drivers/staging/iio/adc/ad7816.c
+> > > b/drivers/staging/iio/adc/ad7816.c
+> > > index a2fead85cd46..b8a9149fbac1 100644
+> > > --- a/drivers/staging/iio/adc/ad7816.c
+> > > +++ b/drivers/staging/iio/adc/ad7816.c
+> > > @@ -422,6 +422,12 @@ static int ad7816_probe(struct spi_device *spi_dev)
+> > >  	return 0;
+> > >  }
+> > >  
+> > > +static const struct of_device_id ad7816_of_match[] = {
+> > > +	{ .compatible = "adi,ad7816", },  
+> > 
+> > I think you also need to add:
+> > +	{ .compatible = "adi,ad7817", },
+> > +	{ .compatible = "adi,ad7818", },
+> > 
+> 
+> Yes, please add all parts to the dt binding.
+> Particularly as they are functionally different in this case!
+> 
+> Please send a v4 for just this patch as the rest have now been
+> applied.
+> 
+> Thanks,
+> 
+> 
+> Jonathan
+> 
+> > > +	{ }
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, ad7816_of_match);
+> > > +
+> > >  static const struct spi_device_id ad7816_id[] = {
+> > >  	{ "ad7816", ID_AD7816 },
+> > >  	{ "ad7817", ID_AD7817 },
+> > > @@ -434,6 +440,7 @@ MODULE_DEVICE_TABLE(spi, ad7816_id);
+> > >  static struct spi_driver ad7816_driver = {
+> > >  	.driver = {
+> > >  		.name = "ad7816",
+> > > +		.of_match_table = of_match_ptr(ad7816_of_match),
+> > >  	},
+> > >  	.probe = ad7816_probe,
+> > >  	.id_table = ad7816_id,  
+>
 
-Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
----
-v2: Removed additional braces
+Ok. I'll do that.
 
- drivers/scsi/fnic/fnic_trace.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+Thanks for the reivew.
 
-diff --git a/drivers/scsi/fnic/fnic_trace.c b/drivers/scsi/fnic/fnic_trace.c
-index 8271785..bf0fd2a 100644
---- a/drivers/scsi/fnic/fnic_trace.c
-+++ b/drivers/scsi/fnic/fnic_trace.c
-@@ -468,14 +468,13 @@ int fnic_trace_buf_init(void)
- 	fnic_max_trace_entries = (trace_max_pages * PAGE_SIZE)/
- 					  FNIC_ENTRY_SIZE_BYTES;
- 
--	fnic_trace_buf_p = (unsigned long)vmalloc((trace_max_pages * PAGE_SIZE));
-+	fnic_trace_buf_p = (unsigned long)vzalloc(trace_max_pages * PAGE_SIZE);
- 	if (!fnic_trace_buf_p) {
- 		printk(KERN_ERR PFX "Failed to allocate memory "
- 				  "for fnic_trace_buf_p\n");
- 		err = -ENOMEM;
- 		goto err_fnic_trace_buf_init;
- 	}
--	memset((void *)fnic_trace_buf_p, 0, (trace_max_pages * PAGE_SIZE));
- 
- 	fnic_trace_entries.page_offset =
- 		vmalloc(array_size(fnic_max_trace_entries,
--- 
-2.7.4
-
+regards,
+Nishad
