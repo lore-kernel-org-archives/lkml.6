@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9E10C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:03:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 684C7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:03:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8B82422419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:03:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1DBAA208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:03:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="V2OPREry"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8B82422419
+	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="JMgJeJqd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DBAA208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=g.ncu.edu.tw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387709AbeKOCHO (ORCPT
+        id S2387758AbeKOCHU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 21:07:14 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:44815 "EHLO
+        Wed, 14 Nov 2018 21:07:20 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:37828 "EHLO
         mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387679AbeKOCHO (ORCPT
+        with ESMTP id S2387676AbeKOCHT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 21:07:14 -0500
-Received: by mail-pl1-f195.google.com with SMTP id s5-v6so7978999plq.11
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 08:03:24 -0800 (PST)
+        Wed, 14 Nov 2018 21:07:19 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5so1575497plr.4
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 08:03:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=g.ncu.edu.tw; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=277RPT5lwNcNZWinXpJrMFYhtW+VvY0zxQBKtONzPUQ=;
-        b=V2OPRErysQ57p91Fvn/SO8ZwsgGss/3BTvGz7oo7MwTCrdiknZjUwET60ZLJoUTola
-         Tbz0ZA/9+X+O/MlYIVPtddAufUyE4DD+qWVBKj1weEUTwbvMiGNQyoQf7Wk9OPwcD0h4
-         6x730O2xuNjbxT7Hc8TYhWEZbEdXwvtwLCK08=
+        bh=7NlOcQS1CVYAxETpCLLRykD6JVs/z/XSS1hZoJW810k=;
+        b=JMgJeJqdUpopiQmpcleJDdwDA+1w6Ag6VS9X03nyaaK66vSQhfZhrk7yFYL93dggk5
+         WwBHkPJFEI5x4+Xs2DkPMVdHGPO8HyLY+My9Y5arDRw/VGIfuhodPBEmntutyTbLzCf+
+         Dp8tkbRJIjIwfTXGgLGehXs2hOy65zOYIFDB0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=277RPT5lwNcNZWinXpJrMFYhtW+VvY0zxQBKtONzPUQ=;
-        b=k87q6yTMCsi2muAfdZxVwW41tMyz96DUVhI7mJd2oSFMTXvPcAd1n/jKmohdXL2JcR
-         P7PlJwePfPSbi1o7PVbnt36crJW438QsU4ZIy5+TJakd2AEJGH8l/Q/4lIhz/wxpkOfX
-         z3hYE7WfPrqT2Rg+V/KobfdW+YC/DJv4WXAPGV3W8yZQQHqE7+yfyd5JgcfwVYtFhOAf
-         0lgNNzKNC+YuWn/V7U7r58744eIThkv9r7klfrVAXNmmfeGwh7MjM2SFjGwoSxwMr106
-         Zeu2diFtZUc3DjT8VVbuxWZ/nA5LRW+RnRJvHciXgf6R8FDoE8bW8cXrCth0iOT9IG7q
-         3v9g==
-X-Gm-Message-State: AGRZ1gKpfLF8m0kYMKVhqLqYRuK5K979H154QnKfaCklGx7l9Ml4EA95
-        KDtg9b4E7WhNM5+oJ2TcRC2QgQ==
-X-Google-Smtp-Source: AJdET5fehHAeWRy4GBqVrmAtIXvfv2JslMurWFpk5xiGG+2oXM6Zpy/t3Ls1sR4lFfFeGTRXU5NTmA==
-X-Received: by 2002:a17:902:ab83:: with SMTP id f3-v6mr2400993plr.122.1542211404094;
-        Wed, 14 Nov 2018 08:03:24 -0800 (PST)
+        bh=7NlOcQS1CVYAxETpCLLRykD6JVs/z/XSS1hZoJW810k=;
+        b=P69WHANsWtWCYrrA3aYU92PG1S+OpfDF6TwLj0ug960UMfOpuJGAU/WAzC1umBGkg3
+         NquIWXk7FCgFpOVLxi8wRh0Z9R27grYVyOEvobxmPCpUi+fX2luXYx17dy/13c22Mvhi
+         9etSUyZxccG2mbH866SOzPqTzT2OF8sE4gcoOol82FjXtPa43W/r7oJN+5975rtq64Ju
+         vr9vg5w05/S/3bPDxye7FtBOM/1BYkpJ5H1Piht7djQlQ78VtNcN7wEQM3+tBXL5yWLt
+         CBm8NmECgCVtK+dWUW9mfS0rvJetPkjXFWxSfwWrQ8rWe1YDxjZX7V2FHmmJdj7F0aho
+         Mpwg==
+X-Gm-Message-State: AGRZ1gIkdu8CjRjOoVe8Cd69k4p/qp6WD/5ozTOlR395hWykEi2K7ic2
+        S0AlfK6sK9qICjsU433nRDFPLg==
+X-Google-Smtp-Source: AJdET5eRzRdNadvgZo2if0qGIQ8KT9erh30JD5LkJPqsCltWVwGtK/YLKdPm8VBKjpa0MyjZZHQYhQ==
+X-Received: by 2002:a17:902:f08f:: with SMTP id go15mr2513873plb.332.1542211410150;
+        Wed, 14 Nov 2018 08:03:30 -0800 (PST)
 Received: from starnight.local ([150.116.248.145])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm53449854pfk.133.2018.11.14.08.03.21
+        by smtp.gmail.com with ESMTPSA id s2-v6sm53449854pfk.133.2018.11.14.08.03.27
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 08:03:23 -0800 (PST)
+        Wed, 14 Nov 2018 08:03:29 -0800 (PST)
 From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
 To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
         "David S . Miller" <davem@davemloft.net>
@@ -66,9 +66,9 @@ Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Ken Yu <ken.yu@rakwireless.com>, linux-wpan@vger.kernel.org,
         Stefan Schmidt <stefan@datenfreihafen.org>,
         Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Subject: [PATCH V3 3/7] net: lorawan: Add LoRaWAN API declaration for LoRa devices
-Date:   Thu, 15 Nov 2018 00:01:24 +0800
-Message-Id: <20181114160126.4445-4-starnight@g.ncu.edu.tw>
+Subject: [PATCH V3 4/7] net: maclorawan: Add maclorawan module declaration
+Date:   Thu, 15 Nov 2018 00:01:25 +0800
+Message-Id: <20181114160126.4445-5-starnight@g.ncu.edu.tw>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181105.101610.1437737564548154497.davem@davemloft.net>
 References: <20181105.101610.1437737564548154497.davem@davemloft.net>
@@ -79,158 +79,222 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add public LoRaWAN API for compatible LoRa device drivers.
+Add the maclorawan header file for common APIs in the module.
 
 Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
 ---
 V2:
 - Split the LoRaWAN class module patch in V1 into LoRaWAN socket and
   LoRaWAN Soft MAC modules
-- Merge the lrw_operations: set_bw, set_mod, set_sf into set_dr
 - Use SPDX license identifiers
 
-V3:
-- Remove the unused lrw_random_addr function
+ net/maclorawan/maclorawan.h | 199 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 199 insertions(+)
+ create mode 100644 net/maclorawan/maclorawan.h
 
- include/linux/lora/lorawan.h | 131 +++++++++++++++++++++++++++++++++++
- 1 file changed, 131 insertions(+)
- create mode 100644 include/linux/lora/lorawan.h
-
-diff --git a/include/linux/lora/lorawan.h b/include/linux/lora/lorawan.h
+diff --git a/net/maclorawan/maclorawan.h b/net/maclorawan/maclorawan.h
 new file mode 100644
-index 000000000000..cdeb280b2261
+index 000000000000..66b87f051d51
 --- /dev/null
-+++ b/include/linux/lora/lorawan.h
-@@ -0,0 +1,131 @@
++++ b/net/maclorawan/maclorawan.h
+@@ -0,0 +1,199 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later OR BSD-3-Clause */
 +/*-
-+ * LoRaWAN compatible hardware's definitions
++ * LoRaWAN soft MAC
 + *
 + * Copyright (c) 2018 Jian-Hong, Pan <starnight@g.ncu.edu.tw>
 + *
 + */
 +
-+#ifndef __LORAWAN_H__
-+#define __LORAWAN_H__
++#ifndef __MAC_LORAWAN_H__
++#define __MAC_LORAWAN_H__
 +
++#include <linux/mutex.h>
++#include <linux/spinlock.h>
 +#include <linux/skbuff.h>
++#include <linux/workqueue.h>
++#include <linux/netdevice.h>
++#include <uapi/linux/if_arp.h>
++#include <crypto/hash.h>
++#include <crypto/skcipher.h>
++#include <linux/lora/lorawan.h>
 +
-+/* List the role of the LoRaWAN hardware */
++#define	LORAWAN_MODULE_NAME	"maclorawan"
++
++/* List the message types of LoRaWAN */
 +enum {
-+	LRW_GATEWAY,
-+	LRW_CLASS_A_NODE,
-+	LRW_CLASS_B_NODE,
-+	LRW_CLASS_C_NODE,
++	LRW_JOIN_REQUEST,
++	LRW_JOIN_ACCEPT,
++	LRW_UNCONFIRMED_DATA_UP,
++	LRW_UNCONFIRMED_DATA_DOWN,
++	LRW_CONFIRMED_DATA_UP,
++	LRW_CONFIRMED_DATA_DOWN,
++	LRW_RFU,
++	LRW_PROPRIETARY,
 +};
 +
-+/* List the RF modes */
++/* List the communication directions */
 +enum {
-+	LRW_LORA,
-+	LRW_FSK,
++	LRW_UPLINK,
++	LRW_DOWNLINK,
++};
++
++/* States of LoRaWAN slot timing */
++enum {
++	LRW_INIT_SS,
++	LRW_XMITTING_SS,
++	LRW_XMITTED,
++	LRW_RX1_SS,
++	LRW_RX2_SS,
++	LRW_RXTIMEOUT_SS,
++	LRW_RXRECEIVED_SS,
++	LRW_RETRANSMIT_SS,
++};
++
++#define	LRW_MHDR_LEN		1
++#define	LRW_FHDR_MAX_LEN	22
++#define	LRW_FOPS_MAX_LEN	15
++#define	LRW_FPORT_LEN		1
++#define	LRW_MIC_LEN		4
++
++/**
++ * lrw_fhdr - Hold the message's basic information of the frame
++ *
++ * @mtype:		this message's type
++ * @fctrl:		the frame control byte
++ * @fcnt:		this message's frame counter value
++ * @fopts:		this frame's options field
++ * @fopts_len:		the length of the fopts
++ */
++struct lrw_fhdr {
++	u8 mtype;
++	u8 fctrl;
++	u16 fcnt;
++	u8 fopts[LRW_FPORT_LEN];
++	u8 fopts_len;
 +};
 +
 +/**
-+ * lrw_dr - This structure holds the RF related configuration of the data rate.
-+ * @bw:
-+ * 	Bandwidth in Hz
++ * lrw_session - LoRaWAN session for Class A end device
 + *
-+ * @sf:
-+ * 	Spread factor of CSS modulation used by LoRa mode
-+ *
-+ * @mode:
-+ * 	LoRa or FSK mode
++ * @lrw_st:		points to the belonging lrw_st
++ * @entry:		the entry of the ss_list in lrw_struct
++ * @devaddr:		the LoRaWAN device address of this LoRaWAN hardware
++ * @fcnt_up:		uplink frame counter
++ * @fcnt_down:		downlink frame counter
++ * @fport:		the LoRaWAN data message's port field
++ * @tx_skb:		points to the TX skb, the frame
++ * @rx_skb:		points to the RX skb, the frame
++ * @tx_fhdr:		hold the message's basic information of the TX frame
++ * @rx_fhdr:		hold the message's basic information of the RX frame
++ * @tx_should_ack:	flag for determining the TX which should be acked or not
++ * @retry:		retry times for xmitting failed
++ * @state:		this session's current state
++ * @state_lock:		lock of the session's state
++ * @timer:		timing for this session and the state transition
++ * @timeout_work:	work if waiting acknowledge time out
++ * @rx_delay1:		RX1 delay time in seconds
++ * @rx_delay2:		RX2 delay time in seconds
++ * @rx1_window:		RX1 window opening time in mini-seconds
++ * @rx2_window:		RX2 window opening time in mini-seconds
++ * @ack_timeout:	time out time for waiting acknowledge in seconds
 + */
-+struct lrw_dr {
-+	u32 bw;
-+	u8 sf;
-+	u8 mode;
-+};
++struct lrw_session {
++	struct lrw_struct *lrw_st;
++	struct list_head entry;
 +
-+#define	LRW_DEVADDR_LEN		(sizeof(__le32))
++	u32 devaddr;
++	u16 fcnt_up;
++	u16 fcnt_down;
++	u8 fport;
++	struct sk_buff *tx_skb;
++	struct sk_buff *rx_skb;
++	struct lrw_fhdr tx_fhdr;
++	struct lrw_fhdr rx_fhdr;
 +
-+/* List the LoRa device's states of LoRaWAN hardware */
-+enum {
-+	LRW_STOP,
-+	LRW_START,
-+	LRW_STATE_IDLE,
-+	LRW_STATE_TX,
-+	LRW_STATE_RX,
++	bool tx_should_ack;
++	u8 retry;
++	u8 state;
++	spinlock_t state_lock;
++
++	struct timer_list timer;
++	struct work_struct timeout_work;
++	unsigned long rx_delay1;
++	unsigned long rx_delay2;
++	unsigned long rx1_window;
++	unsigned long rx2_window;
++	unsigned long ack_timeout;
 +};
 +
 +/**
-+ * lrw_hw - This structure holds the LoRa device of LoRaWAN hardware.
-+ * @priv:
-+ * 	points to the private data of the LoRa device
++ * lrw_struct - The full LoRaWAN hardware to the LoRa device.
++ *
++ * @dev:		this LoRa device registed in system
++ * @hw:			the LoRa device of this LoRaWAN hardware
++ * @ops:		handle of LoRa operations interfaces
++ * @rx_skb_list:	the list of received frames
++ * @ss_list:		LoRaWAN session list of this LoRaWAN hardware
++ * @_cur_ss:		pointer of the current processing session
++ * @rx_should_ack:	represent the current session should be acked or not
++ * @state:		the state of this LoRaWAN hardware
++ * @app_eui:		the LoRaWAN application EUI
++ * @dev_eui:		the LoRaWAN device EUI
++ * @devaddr:		the LoRaWAN device address of this LoRaWAN hardware
++ * @appky:		the Application key
++ * @nwkskey:		the Network session key
++ * @appskey:		the Application session key
++ * @nwks_shash_tfm:	the hash handler for LoRaWAN network session
++ * @nwks_skc_tfm:	the crypto handler for LoRaWAN network session
++ * @apps_skc_tfm:	the crypto handler for LoRaWAN application session
++ * @fcnt_up:		the counter of this LoRaWAN hardware's up frame
++ * @fcnt_down:		the counter of this LoRaWAN hardware's down frame
++ * @xmit_task:		the xmit task for the current LoRaWAN session
++ * @rx_work:		the RX work in workqueue for the current LoRaWAN session
++ * @ndev:		points to the emulating network device
++ * @_net:		the current network namespace of this LoRaWAN hardware
 + */
-+struct lrw_hw {
-+	void *priv;
++struct lrw_struct {
++	struct device dev;
++	struct lrw_hw hw;
++	struct lrw_operations *ops;
++
++	struct sk_buff_head rx_skb_list;
++	struct list_head ss_list;
++	struct mutex ss_list_lock;
++	struct lrw_session *_cur_ss;
++	bool rx_should_ack;
++	u8 state;
++
++	u64 app_eui;
++	u64 dev_eui;
++	u32 devaddr;
++	u8 appkey[LRW_KEY_LEN];
++	u8 nwkskey[LRW_KEY_LEN];
++	u8 appskey[LRW_KEY_LEN];
++	struct crypto_shash *nwks_shash_tfm;
++	struct crypto_skcipher *nwks_skc_tfm;
++	struct crypto_skcipher *apps_skc_tfm;
++
++	u16 fcnt_up;
++	u16 fcnt_down;
++
++	struct tasklet_struct xmit_task;
++	struct work_struct rx_work;
++
++	struct net_device *ndev;
++	possible_net_t _net;
 +};
 +
-+/**
-+ * lrw_operations - Lists the LoRaWAN device/interface's operations.
-+ * These are callback functions for the LoRaWAN module.  Compatible LoRa device
-+ * driver should implement some of them according to the usage.  The
-+ * unimplemented callback functions must be assigned as NULL.
-+ *
-+ * @start:
-+ *	called when the interface is being up state
-+ *
-+ * @stop:
-+ *	called when the interface is being down state
-+ *
-+ * @xmit_async:
-+ *	called to xmit the data through the interface asynchronously
-+ *
-+ * @set_txpower:
-+ *	called to set xmitting RF power in mBm of the interface
-+ *
-+ * @set_frq:
-+ *	called to set carrier frequency in Hz of the interface
-+ *
-+ * @set_dr:
-+ *	called to set related RF configuration of the LoRaWAN data rate
-+ *
-+ * @start_rx_window:
-+ *	called to ask the LoRa device open a receiving window
-+ *
-+ * @set_state:
-+ *	called to set the LoRa device's working state
-+ */
-+struct lrw_operations {
-+	int (*start)(struct lrw_hw *);
-+	void (*stop)(struct lrw_hw *);
++#define	NETDEV_2_LRW(ndev)	((struct lrw_struct *)netdev_priv(ndev))
 +
-+	int (*xmit_async)(struct lrw_hw *, struct sk_buff *);
-+	int (*set_txpower)(struct lrw_hw *, s32);
-+	int (*set_frq)(struct lrw_hw *, u32);
-+	int (*set_dr)(struct lrw_hw *, struct lrw_dr *);
-+	int (*start_rx_window)(struct lrw_hw *, u32);
-+	int (*set_state)(struct lrw_hw *, u8);
-+};
-+
-+struct lrw_hw *lrw_alloc_hw(size_t, struct lrw_operations *);
-+void lrw_free_hw(struct lrw_hw *);
-+int lrw_register_hw(struct lrw_hw *);
-+void lrw_unregister_hw(struct lrw_hw *);
-+void lrw_rx_irqsave(struct lrw_hw *, struct sk_buff *);
-+void lrw_xmit_complete(struct lrw_hw *, struct sk_buff *);
-+
-+void lrw_set_deveui(struct lrw_hw *, u64);
-+u64 lrw_get_deveui(struct lrw_hw *);
-+void lrw_set_appeui(struct lrw_hw *, u64);
-+u64 lrw_get_appeui(struct lrw_hw *);
-+void lrw_set_devaddr(struct lrw_hw *, u32);
-+u32 lrw_get_devaddr(struct lrw_hw *);
-+
-+enum {
-+	LRW_APPKEY,
-+	LRW_NWKSKEY,
-+	LRW_APPSKEY,
-+};
-+
-+#define	LRW_KEY_LEN		16
-+
-+int lrw_set_key(struct lrw_hw *, u8, u8 *, size_t);
++struct lrw_session * lrw_alloc_ss(struct lrw_struct *);
++void lrw_free_ss(struct lrw_session *);
++void lrw_del_ss(struct lrw_session *);
++int lrw_start_hw(struct lrw_struct *);
++void lrw_stop_hw(struct lrw_struct *);
++void lrw_prepare_tx_frame(struct lrw_session *);
++void lrw_xmit(unsigned long);
++void lrw_rx_work(struct work_struct *);
 +
 +#endif
 -- 
