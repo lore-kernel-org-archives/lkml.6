@@ -2,201 +2,133 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EC1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:43:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F3E0C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:43:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 871D822419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:43:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOVhNjg+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 871D822419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4907321582
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:43:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4907321582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732693AbeKOAqd (ORCPT
+        id S1732825AbeKOAqj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 19:46:33 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37767 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727780AbeKOAqc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 19:46:32 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 80so7468293pge.4
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 06:43:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=lI6Brk4FLVHP1n6C43ZrBQ76dtP9t2lQe8qWznPRBDE=;
-        b=TOVhNjg+x8DdTzwPVFrSgoleRvs5LHBmc01/jDavaqn9DmYJ9v/i4FcSEQuSit8yYU
-         KJ5AOO85mGdjjJKrFNcBXBQF2kXKg2lWuyZCDMgXYzauQYFjTl8rwmBuaDG1lip6JmIb
-         yFiiDNSVW2T9Km3eu7BYWsBTS49njWGALwiG8S4O0poi2ZBidW05dTJtyRQhdm2mKXNA
-         gryi0+GHtEJ1nDsJu1cV9pLGhTYe8AgVu5rmYKDFKyWFc1lS06yxQv8K1t4aXuMmmz+N
-         qGn12xOUyGB6Hb9Ma4M6hRse47kVyJDJglhn5d/T1UJdEUQbg8e0QELPyIJ6TmM/RrL5
-         mtJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=lI6Brk4FLVHP1n6C43ZrBQ76dtP9t2lQe8qWznPRBDE=;
-        b=knzhkP9SbOGAJgzVJGms9apOzZW8bSejawM23LJuKSnnyRKxgG4Svx/cKrQ/EnTkPa
-         FL04CteASbzpNDQ4ASNkcSA67vvktapHpFH76LsI5xLfL3pme+z3FGbHDXLXFlPqfM2y
-         iB2YD4K5XWb+6e8YaEer4FevzFLmhwx4uJxhzpmcCthjplRtYKo3P+oR0ZLlmIQM9sRa
-         o+naE7CrrVo9NuoA/RzjQPdibhcUp8aqtALpHSuF42SG9aeBGa/s78ThCOGimANBjQGh
-         HBRv8nB5OZX09Xh5r4MvVKxgzXJq46556wMzK2c5vFtmGj5+QllfaZw7L8iH0LFqPtRd
-         SXmQ==
-X-Gm-Message-State: AGRZ1gJCdmexHknfXYL+WoLr+kI1tXp+W/GlJ2d/k6T44XIAuyIVIDmj
-        A6E9JUCfJeNcQmUSbblXeNA=
-X-Google-Smtp-Source: AJdET5c8p0w1oIKn1gVZO4UgbmuAj7+2RCbMBCHkkIbniY9OKYIC3dP1s8/oO878l2m5NpQCLd4lDA==
-X-Received: by 2002:a65:514c:: with SMTP id g12mr1967249pgq.169.1542206581580;
-        Wed, 14 Nov 2018 06:43:01 -0800 (PST)
-Received: from ubuntu.localdomain ([104.238.150.158])
-        by smtp.gmail.com with ESMTPSA id t13sm36815678pgr.42.2018.11.14.06.42.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 06:43:01 -0800 (PST)
-From:   Muchun Song <smuchun@gmail.com>
-To:     mingo@kernel.org, peterz@infradead.org
-Cc:     linux-kernel@vger.kernel.org
-Subject: [PATCH] sched/fair: Clean up update_blocked_averages()
-Date:   Wed, 14 Nov 2018 22:42:43 +0800
-Message-Id: <20181114144243.100142-1-smuchun@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Wed, 14 Nov 2018 19:46:39 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:27567 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727780AbeKOAqi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 19:46:38 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42w6ft26mkz9tx58;
+        Wed, 14 Nov 2018 15:43:02 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id EAe8Y7IfrNS7; Wed, 14 Nov 2018 15:43:02 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42w6ft1b1Vz9tx56;
+        Wed, 14 Nov 2018 15:43:02 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id F2F1B8B83A;
+        Wed, 14 Nov 2018 15:43:06 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id McwZ0D3rWjVT; Wed, 14 Nov 2018 15:43:06 +0100 (CET)
+Received: from PO15451 (unknown [192.168.232.3])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 723198B838;
+        Wed, 14 Nov 2018 15:43:06 +0100 (CET)
+Subject: Re: UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h in
+ 4.20-rc1
+To:     paulmck@linux.ibm.com
+Cc:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <dc5e555d-129e-aae8-889d-7b4e82197b3b@c-s.fr>
+ <20181109201030.GI4170@linux.ibm.com>
+From:   Christophe LEROY <christophe.leroy@c-s.fr>
+Message-ID: <9b4e6f39-f36b-06e2-ea96-92dec192edc7@c-s.fr>
+Date:   Wed, 14 Nov 2018 15:43:05 +0100
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181109201030.GI4170@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: fr
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-First of all, with CONFIG_NO_HZ_COMMON is disabled, we don't need to call
-cfs_rq_has_blocked() and others_have_blocked(). And the local variable
-'done' is unnecessary as well.
 
-So we put the functions in the #ifdef block so that compiler can help us
-optimize the code(e.g. the local variable 'done' and the function call).
 
-After do that, we introduce a function named update_rq_blocked_load() to
-remove #ifdef from update_blocked_averages(), which can make the code
-clean.
+Le 09/11/2018 à 21:10, Paul E. McKenney a écrit :
+> On Fri, Nov 09, 2018 at 06:11:20PM +0100, Christophe LEROY wrote:
+>> (Resending due to error in Paul's address)
+>>
+>> Paul
+>>
+>> I get the following UBSAN reports in 4.20-rc1 on an MPC8321E
+>> (powerpc/book3s/32)
+>>
+>> I bisected it to 3e31009898699dfc ("rcu: Defer reporting RCU-preempt
+>> quiescent states when disabled")
+> 
+> Fixed by dfdc33585b0a ("rcu: Avoid signed integer overflow in
+> rcu_preempt_deferred_qs()") in my -rcu tree and in -next, which I intend
+> to push into the next merge window.
+> 
 
-Second, there are some the same function call in update_blocked_averages()
-regardless of whether CONFIG_FAIR_GROUP_SCHED is enabled or not. That is
-rt, dl and irq's load_avg update. So let the update_others_load_avg() do
-it.
+Thanks, I confirm it fixes the issue.
 
-Signed-off-by: Muchun Song <smuchun@gmail.com>
----
- kernel/sched/fair.c | 59 +++++++++++++++++++++++++++++----------------
- 1 file changed, 38 insertions(+), 21 deletions(-)
+Do you intend to push it into 4.20-rc3 or do you mean 4.21 ?
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index e30dea59d215..89b3b4a18eee 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -7367,6 +7367,7 @@ static void attach_tasks(struct lb_env *env)
- 	rq_unlock(env->dst_rq, &rf);
- }
- 
-+#ifdef CONFIG_NO_HZ_COMMON
- static inline bool cfs_rq_has_blocked(struct cfs_rq *cfs_rq)
- {
- 	if (cfs_rq->avg.load_avg)
-@@ -7394,6 +7395,37 @@ static inline bool others_have_blocked(struct rq *rq)
- 	return false;
- }
- 
-+static inline void update_rq_blocked_load(struct rq *rq, bool clear)
-+{
-+	rq->last_blocked_load_update_tick = jiffies;
-+	if (clear)
-+		rq->has_blocked_load = 0;
-+}
-+#else /* !CONFIG_NO_HZ_COMMON */
-+static inline bool cfs_rq_has_blocked(struct cfs_rq *cfs_rq)
-+{
-+	return false;
-+}
-+
-+static inline bool others_have_blocked(struct rq *rq)
-+{
-+	return false;
-+}
-+
-+static inline void update_rq_blocked_load(struct rq *rq, bool clear)
-+{
-+}
-+#endif /* CONFIG_NO_HZ_COMMON */
-+
-+static void update_others_load_avg(struct rq *rq)
-+{
-+	const struct sched_class *curr = rq->curr->sched_class;
-+
-+	update_rt_rq_load_avg(rq_clock_task(rq), rq, curr == &rt_sched_class);
-+	update_dl_rq_load_avg(rq_clock_task(rq), rq, curr == &dl_sched_class);
-+	update_irq_load_avg(rq, 0);
-+}
-+
- #ifdef CONFIG_FAIR_GROUP_SCHED
- 
- static inline bool cfs_rq_is_decayed(struct cfs_rq *cfs_rq)
-@@ -7417,7 +7449,6 @@ static void update_blocked_averages(int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
- 	struct cfs_rq *cfs_rq, *pos;
--	const struct sched_class *curr_class;
- 	struct rq_flags rf;
- 	bool done = true;
- 
-@@ -7455,19 +7486,12 @@ static void update_blocked_averages(int cpu)
- 			done = false;
- 	}
- 
--	curr_class = rq->curr->sched_class;
--	update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
--	update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
--	update_irq_load_avg(rq, 0);
-+	update_others_load_avg(rq);
- 	/* Don't need periodic decay once load/util_avg are null */
--	if (others_have_blocked(rq))
-+	if (done && others_have_blocked(rq))
- 		done = false;
- 
--#ifdef CONFIG_NO_HZ_COMMON
--	rq->last_blocked_load_update_tick = jiffies;
--	if (done)
--		rq->has_blocked_load = 0;
--#endif
-+	update_rq_blocked_load(rq, done);
- 	rq_unlock_irqrestore(rq, &rf);
- }
- 
-@@ -7522,22 +7546,15 @@ static inline void update_blocked_averages(int cpu)
- {
- 	struct rq *rq = cpu_rq(cpu);
- 	struct cfs_rq *cfs_rq = &rq->cfs;
--	const struct sched_class *curr_class;
- 	struct rq_flags rf;
- 
- 	rq_lock_irqsave(rq, &rf);
- 	update_rq_clock(rq);
- 	update_cfs_rq_load_avg(cfs_rq_clock_task(cfs_rq), cfs_rq);
- 
--	curr_class = rq->curr->sched_class;
--	update_rt_rq_load_avg(rq_clock_task(rq), rq, curr_class == &rt_sched_class);
--	update_dl_rq_load_avg(rq_clock_task(rq), rq, curr_class == &dl_sched_class);
--	update_irq_load_avg(rq, 0);
--#ifdef CONFIG_NO_HZ_COMMON
--	rq->last_blocked_load_update_tick = jiffies;
--	if (!cfs_rq_has_blocked(cfs_rq) && !others_have_blocked(rq))
--		rq->has_blocked_load = 0;
--#endif
-+	update_others_load_avg(rq);
-+	update_rq_blocked_load(rq, !cfs_rq_has_blocked(cfs_rq) &&
-+				   !others_have_blocked(rq));
- 	rq_unlock_irqrestore(rq, &rf);
- }
- 
--- 
-2.17.1
+Christophe
 
+> 							Thanx, Paul
+> 
+>> Thanks
+>> Christophe
+>>
+>> [    4.919995] ================================================================================
+>> [    4.928428] UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h:623:28
+>> [    4.935198] signed integer overflow:
+>> [    4.938766] 0 - -2147483648 cannot be represented in type 'int'
+>> [    4.944678] CPU: 0 PID: 119 Comm: mkdir Not tainted
+>> 4.19.0-rc1-s3k-dev-00005-g5a60513 #214
+>> [    4.952908] Call Trace:
+>> [    4.955382] [dec4fd20] [c02cb0d0] ubsan_epilogue+0x18/0x74 (unreliable)
+>> [    4.962003] [dec4fd30] [c02cb5e0] handle_overflow+0xd0/0xe0
+>> [    4.967588] [dec4fdb0] [c007b424] rcu_preempt_deferred_qs+0xc0/0xc8
+>> [    4.973857] [dec4fdd0] [c007be28] rcu_note_context_switch+0x74/0x608
+>> [    4.980217] [dec4fe10] [c064b790] __schedule+0x58/0x6e0
+>> [    4.985448] [dec4fe50] [c064bfdc] preempt_schedule_common+0x48/0x9c
+>> [    4.991717] [dec4fe70] [c01308c8] handle_mm_fault+0x10fc/0x1ecc
+>> [    4.997639] [dec4fee0] [c001339c] do_page_fault+0x10c/0x760
+>> [    5.003225] [dec4ff40] [c001234c] handle_page_fault+0x14/0x40
+>> [    5.008968] --- interrupt: 401 at 0xff9cff8
+>> [    5.008968]     LR = 0xfeefd78
+>> [    5.016170] ================================================================================
+>> [    5.024591] ================================================================================
+>> [    5.033005] UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h:627:28
+>> [    5.039775] signed integer overflow:
+>> [    5.043342] -2147483648 + -2147483648 cannot be represented in type 'int'
+>> [    5.050118] CPU: 0 PID: 119 Comm: mkdir Not tainted
+>> 4.19.0-rc1-s3k-dev-00005-g5a60513 #214
+>> [    5.058348] Call Trace:
+>> [    5.060813] [dec4fd20] [c02cb0d0] ubsan_epilogue+0x18/0x74 (unreliable)
+>> [    5.067433] [dec4fd30] [c02cb5e0] handle_overflow+0xd0/0xe0
+>> [    5.073014] [dec4fdb0] [c007b408] rcu_preempt_deferred_qs+0xa4/0xc8
+>> [    5.079283] [dec4fdd0] [c007be28] rcu_note_context_switch+0x74/0x608
+>> [    5.085640] [dec4fe10] [c064b790] __schedule+0x58/0x6e0
+>> [    5.090871] [dec4fe50] [c064bfdc] preempt_schedule_common+0x48/0x9c
+>> [    5.097139] [dec4fe70] [c01308c8] handle_mm_fault+0x10fc/0x1ecc
+>> [    5.103059] [dec4fee0] [c001339c] do_page_fault+0x10c/0x760
+>> [    5.108642] [dec4ff40] [c001234c] handle_page_fault+0x14/0x40
+>> [    5.114385] --- interrupt: 401 at 0xff9cff8
+>> [    5.114385]     LR = 0xfeefd78
+>> [    5.121588] ================================================================================
+>>
