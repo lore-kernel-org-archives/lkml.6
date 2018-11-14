@@ -2,108 +2,81 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C248C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:47:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B145C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:49:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2357223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:47:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2357223DD
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0B6C3223DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:49:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6C3223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728230AbeKOHwD (ORCPT
+        id S1727992AbeKOHyg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 02:52:03 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51512 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725756AbeKOHwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 02:52:02 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9A8D80D;
-        Wed, 14 Nov 2018 13:47:04 -0800 (PST)
-Received: from blommer (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0CBAA3F5A0;
-        Wed, 14 Nov 2018 13:47:04 -0800 (PST)
-Date:   Wed, 14 Nov 2018 21:47:02 +0000
-From:   Mark Rutland <mark.rutland@arm.com>
-To:     Kees Cook <keescook@chromium.org>
-Cc:     Kristina Martsenko <kristina.martsenko@arm.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Adam Wallis <awallis@codeaurora.org>,
-        Amit Kachhap <Amit.Kachhap@arm.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Christoffer Dall <christoffer.dall@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>,
-        Jacob Bramley <jacob.bramley@arm.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
-        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        kvmarm@lists.cs.columbia.edu,
-        linux-arch <linux-arch@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 00/17] ARMv8.3 pointer authentication support
-Message-ID: <20181114214701.gdnrznakwtm76jlt@blommer>
-References: <20181005084754.20950-1-kristina.martsenko@arm.com>
- <CAGXu5jLtxRitee143FE37PYkPCs0UArGgNEsiU8fzsQL9N8S-Q@mail.gmail.com>
- <df3e029b-51b3-51a0-70f7-3239234373e2@arm.com>
- <CAGXu5jJMfCz4qFY8y1Uf7BdP961ZeBotFVUb5owaksxnz26akg@mail.gmail.com>
+        Thu, 15 Nov 2018 02:54:36 -0500
+Received: from youngberry.canonical.com ([91.189.89.112]:52400 "EHLO
+        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbeKOHyf (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 02:54:35 -0500
+Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
+        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
+        (Exim 4.76)
+        (envelope-from <colin.king@canonical.com>)
+        id 1gN32W-0003H1-19; Wed, 14 Nov 2018 21:49:36 +0000
+From:   Colin King <colin.king@canonical.com>
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH][next] reset: fix null pointer dereference on dev by dev_name
+Date:   Wed, 14 Nov 2018 21:49:35 +0000
+Message-Id: <20181114214935.16038-1-colin.king@canonical.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGXu5jJMfCz4qFY8y1Uf7BdP961ZeBotFVUb5owaksxnz26akg@mail.gmail.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 05:09:00PM -0600, Kees Cook wrote:
-> On Tue, Nov 13, 2018 at 10:17 AM, Kristina Martsenko
-> <kristina.martsenko@arm.com> wrote:
-> > When the PAC authentication fails, it doesn't actually generate an
-> > exception, it just flips a bit in the high-order bits of the pointer,
-> > making the pointer invalid. Then when the pointer is dereferenced (e.g.
-> > as a function return address), it generates the usual type of exception
-> > for an invalid address.
-> 
-> Ah! Okay, thanks. I missed that detail. :)
-> 
-> What area of memory ends up being addressable with such bit flips?
-> (i.e. is the kernel making sure nothing executable ends up there?)
-> 
-> > So when a function return fails in user mode, the exception is handled
-> > in __do_user_fault and a forced SIGSEGV is delivered to the task. When a
-> > function return fails in kernel mode, the exception is handled in
-> > __do_kernel_fault and the task is killed.
-> >
-> > This is different from stack protector as we don't panic the kernel, we
-> > just kill the task. It would be difficult to panic as we don't have a
-> > reliable way of knowing that the exception was caused by a PAC
-> > authentication failure (we just have an invalid pointer with a specific
-> > bit flipped). We also don't print out any PAC-related warning.
-> 
-> There are other "guesses" in __do_kernel_fault(), I think? Could a
-> "PAC mismatch?" warning be included in the Oops if execution fails in
-> the address range that PAC failures would resolve into?
+From: Colin Ian King <colin.king@canonical.com>
 
-I'd personally prefer that we didn't try to guess if a fault is due to a failed
-AUT*, even for logging.
+The call to dev_name will dereference dev, however, dev is later
+being null checked, so there is a possibility of a null pointer
+dereference on dev by the call to dev_name. Fix this by null
+checking dev first before the call to dev_name
 
-Presently, it's not possible to distinguish between a fault resulting from a
-failed AUT* and a fault which happens to have hte same bits/clear, so there are
-false positives. The architecture may also change the precise details of the
-faulting address, and we'd have false negatives in that case.
+Detected by CoverityScan, CID#1475475 ("Dereference before null check")
 
-Given that, I think suggesting that a fault is due to a failed AUT* is liable
-to make things more confusing.
+Fixes: 2a6cb2b1d83b ("reset: Add reset_control_get_count()")
+Signed-off-by: Colin Ian King <colin.king@canonical.com>
+---
+ drivers/reset/core.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thanks,
-Mark.
+diff --git a/drivers/reset/core.c b/drivers/reset/core.c
+index 7f95fcb7805d..3d9a887c217e 100644
+--- a/drivers/reset/core.c
++++ b/drivers/reset/core.c
+@@ -799,12 +799,13 @@ EXPORT_SYMBOL_GPL(devm_reset_control_array_get);
+ static int reset_control_get_count_from_lookup(struct device *dev)
+ {
+ 	const struct reset_control_lookup *lookup;
+-	const char *dev_id = dev_name(dev);
++	const char *dev_id;
+ 	int count = 0;
+ 
+ 	if (!dev)
+ 		return -EINVAL;
+ 
++	dev_id = dev_name(dev);
+ 	mutex_lock(&reset_lookup_mutex);
+ 
+ 	list_for_each_entry(lookup, &reset_lookup_list, list) {
+-- 
+2.19.1
+
