@@ -7,43 +7,45 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F065C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70854C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:23:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C9FD22513
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2C7B722513
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:23:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ftcM1fdv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C9FD22513
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VfUP0yAA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C7B722513
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387599AbeKOI2B (ORCPT
+        id S1729125AbeKOI12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:28:01 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729131AbeKOI12 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 03:27:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34392 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729066AbeKOI11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:27 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 89C2E22527;
-        Wed, 14 Nov 2018 22:22:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id D1A0C22522;
+        Wed, 14 Nov 2018 22:22:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234145;
-        bh=PI+hZZNFGUt+emewcGFBoB5orr2rU7k1HOxK1T4GxAk=;
+        s=default; t=1542234143;
+        bh=bDzVpBEeasCK6L2LHb5Avj++8I4uhG/rkiWq/6M38lw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ftcM1fdvpZvicG3uP91MTWZRkdGkDgdl6iFugdrEtxQnKPaStyXMdhoqTriywdBdk
-         s4EdZqk5Uk0V4hnDBRXmnVGM8BppX8H4e+lhyx2sC+AvM0ZaEqed5jU0MDa5UrWcWm
-         ktq+H4jlA57m0voTZr9gaJhW06tkNHnq8nIzIm1s=
+        b=VfUP0yAA5NLEq8AAEAXbOuyWqGrKhle2asINIZlvf22r1bpm1eDhOVYesvhktxc9/
+         /ILYRLVcN8A/2GqsPoPi4K6uOPpeggE0Bn+AdyfvEryPyZWpgICbtQcC4Wpdk7HW/J
+         zv60k2ic219tLlT1ojNyRbcoxPHflX3vMYRCC2DI=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+Cc:     Sagiv Ozeri <sagiv.ozeri@cavium.com>,
+        Denis Bolotin <denis.bolotin@cavium.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 71/73] kbuild: deb-pkg: fix too low build version number
-Date:   Wed, 14 Nov 2018 17:22:05 -0500
-Message-Id: <20181114222207.98701-71-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 63/73] qed: Fix potential memory corruption
+Date:   Wed, 14 Nov 2018 17:21:57 -0500
+Message-Id: <20181114222207.98701-63-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -52,59 +54,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Masahiro Yamada <yamada.masahiro@socionext.com>
+From: Sagiv Ozeri <sagiv.ozeri@cavium.com>
 
-[ Upstream commit bbcde0a7241261cd0ca8d8e6b94a4113a4b71443 ]
+[ Upstream commit fa5c448d98f0df660bfcad3dd5facc027ef84cd3 ]
 
-Since commit b41d920acff8 ("kbuild: deb-pkg: split generating packaging
-and build"), the build version of the kernel contained in a deb package
-is too low by 1.
+A stuck ramrod should be deleted from the completion_pending list,
+otherwise it will be added again in the future and corrupt the list.
 
-Prior to the bad commit, the kernel was built first, then the number
-in .version file was read out, and written into the debian control file.
+Return error value to inform that ramrod is stuck and should be deleted.
 
-Now, the debian control file is created before the kernel is actually
-compiled, which is causing the version number mismatch.
-
-Let the mkdebian script pass KBUILD_BUILD_VERSION=${revision} to require
-the build system to use the specified version number.
-
-Fixes: b41d920acff8 ("kbuild: deb-pkg: split generating packaging and build")
-Reported-by: Doug Smythies <dsmythies@telus.net>
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-Tested-by: Doug Smythies <dsmythies@telus.net>
+Signed-off-by: Sagiv Ozeri <sagiv.ozeri@cavium.com>
+Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- scripts/package/mkdebian | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_spq.c | 12 +++++-------
+ 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-index 663a7f343b42..edcad61fe3cd 100755
---- a/scripts/package/mkdebian
-+++ b/scripts/package/mkdebian
-@@ -88,6 +88,7 @@ set_debarch() {
- version=$KERNELRELEASE
- if [ -n "$KDEB_PKGVERSION" ]; then
- 	packageversion=$KDEB_PKGVERSION
-+	revision=${packageversion##*-}
- else
- 	revision=$(cat .version 2>/dev/null||echo 1)
- 	packageversion=$version-$revision
-@@ -205,10 +206,12 @@ cat <<EOF > debian/rules
- #!$(command -v $MAKE) -f
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_spq.c b/drivers/net/ethernet/qlogic/qed/qed_spq.c
+index 43619b6bb232..7106ad17afe2 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_spq.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_spq.c
+@@ -142,6 +142,7 @@ static int qed_spq_block(struct qed_hwfn *p_hwfn,
  
- build:
--	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} KBUILD_SRC=
-+	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} \
-+	KBUILD_BUILD_VERSION=${revision} KBUILD_SRC=
+ 	DP_INFO(p_hwfn, "Ramrod is stuck, requesting MCP drain\n");
+ 	rc = qed_mcp_drain(p_hwfn, p_ptt);
++	qed_ptt_release(p_hwfn, p_ptt);
+ 	if (rc) {
+ 		DP_NOTICE(p_hwfn, "MCP drain failed\n");
+ 		goto err;
+@@ -150,18 +151,15 @@ static int qed_spq_block(struct qed_hwfn *p_hwfn,
+ 	/* Retry after drain */
+ 	rc = __qed_spq_block(p_hwfn, p_ent, p_fw_ret, true);
+ 	if (!rc)
+-		goto out;
++		return 0;
  
- binary-arch:
--	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} KBUILD_SRC= intdeb-pkg
-+	\$(MAKE) KERNELRELEASE=${version} ARCH=${ARCH} \
-+	KBUILD_BUILD_VERSION=${revision} KBUILD_SRC= intdeb-pkg
- 
- clean:
- 	rm -rf debian/*tmp debian/files
+ 	comp_done = (struct qed_spq_comp_done *)p_ent->comp_cb.cookie;
+-	if (comp_done->done == 1)
++	if (comp_done->done == 1) {
+ 		if (p_fw_ret)
+ 			*p_fw_ret = comp_done->fw_return_code;
+-out:
+-	qed_ptt_release(p_hwfn, p_ptt);
+-	return 0;
+-
++		return 0;
++	}
+ err:
+-	qed_ptt_release(p_hwfn, p_ptt);
+ 	DP_NOTICE(p_hwfn,
+ 		  "Ramrod is stuck [CID %08x cmd %02x protocol %02x echo %04x]\n",
+ 		  le32_to_cpu(p_ent->elem.hdr.cid),
 -- 
 2.17.1
 
