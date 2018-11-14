@@ -2,76 +2,111 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E51E5C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:01:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C7EDCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:04:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B04FC2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:01:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B04FC2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 84D8222419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:04:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hfAw4SEI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 84D8222419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733067AbeKOAEs (ORCPT
+        id S1732725AbeKOAID (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 19:04:48 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:37531 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727797AbeKOAEr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 19:04:47 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 8C7FA20747; Wed, 14 Nov 2018 15:01:24 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4DDBC206A1;
-        Wed, 14 Nov 2018 15:01:24 +0100 (CET)
-Date:   Wed, 14 Nov 2018 15:01:23 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Liu Xiang <liu.xiang6@zte.com.cn>
-Cc:     linux-mtd@lists.infradead.org, marek.vasut@gmail.com,
-        richard@nod.at, linux-kernel@vger.kernel.org,
-        liuxiang_1999@126.com, computersforpeace@gmail.com,
-        dwmw2@infradead.org, Tudor Ambarus <tudor.ambarus@microchip.com>
-Subject: Re: [PATCH] mtd: spi-nor: Add 4B_OPCODES flag to is25lp256
-Message-ID: <20181114150123.65623741@bbrezillon>
-In-Reply-To: <1542200118-3024-1-git-send-email-liu.xiang6@zte.com.cn>
-References: <1542200118-3024-1-git-send-email-liu.xiang6@zte.com.cn>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Wed, 14 Nov 2018 19:08:03 -0500
+Received: from mail-qk1-f195.google.com ([209.85.222.195]:40646 "EHLO
+        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726846AbeKOAIC (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 19:08:02 -0500
+Received: by mail-qk1-f195.google.com with SMTP id y16so25864049qki.7;
+        Wed, 14 Nov 2018 06:04:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=0evwfVr5oz23JFffPTRBSjiLxYvlnzJuk2S/0AYyRIo=;
+        b=hfAw4SEIugyuR6HPAThnyOioF4fmmcM+h3N3hkdFgdb7jElzP66qUly+xw+TyhuERd
+         XPlQ28+HeWJjszd7T0JhmTwujKgOM6BGUTcKkuV5O9IJ9lq3B43mozc5oXZjWJDIiRXB
+         OCGi9e7lhAA4GY93/QePYQS5j42HJIyj4JuRXvAgxYZ6iXiTFU0W2TAzRVD4pK54m0dS
+         N3YIwOjLb0bpIoY+9tf04m1LOeQYbZsKkoSSt4uES0x2JGAdp4fGjecGpr9slqvZV9mV
+         ooeN4A9Cf3HwMIi2Y25clHQYrx70NBgoCwNkm+P4ZHPPLPKokBwgPqe9YNUZVr3KcK7o
+         JWEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=0evwfVr5oz23JFffPTRBSjiLxYvlnzJuk2S/0AYyRIo=;
+        b=i5zWngSqiuio7UmG5vJmNsaJ/mxbbcWWW15IntijywG2hDIBQ8x+BbS9a70JnXx3mB
+         WZbOLEOtj0CNDpy81ozs40J6B8IVon2expD1XSh+jXetVEMofnRnDQvLeejMK+5MsbAH
+         P0Q5m+gGI8KgXtI400xI0c8WFKJOmj/YSMOXIWD1c2jEkEVWkBE57Vov+ZCLW8/BIgco
+         PY6q8fNpZA8CrH2kH/EL/VyE9e5FZvItCzmNuVbtih8hxaeOovRvgACFj92Yp9MoXnNJ
+         oyzOdb9kWPcMhXBrFgZFuYGgHSQIwkyPyR13NQe4SQjMYWuEReeIEpmfWu0nBwVt1aHu
+         Hr6Q==
+X-Gm-Message-State: AGRZ1gIteN+qyaJZWBKQBsh1c+hrwdwiHUyUu+NkEECE7Cp+SGQF9I0z
+        NfffEZ3E9WgNeIPChOSPjDYjzRl1OwLhiJvM7/Y=
+X-Google-Smtp-Source: AJdET5etUB1hAsnlUOPYlDOaF5Jv+myOdELoIvuGIQSeZ/hhvJUfDzVTW9k4UkEMeBJWzKs0xD7P4VQFqvO8wcPi7HA=
+X-Received: by 2002:a0c:c2ce:: with SMTP id c14mr1971511qvi.7.1542204278283;
+ Wed, 14 Nov 2018 06:04:38 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
+ <CGME20181110181155epcas2p1ac9bffb2dc7dd6337db5c37f8a87bd5e@epcas2p1.samsung.com>
+ <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
+ <5BE8C821.5080002@samsung.com> <5BEB63C3.1020504@samsung.com>
+ <CAHp75Vfe586+tr5mUdSHv4ehmpi0KwS_m+UC0tfFHrdXwKhkig@mail.gmail.com>
+ <5BEBE741.6050101@samsung.com> <20181114093652.GK10650@smile.fi.intel.com>
+ <5BEBEF7C.7060003@samsung.com> <CAHp75VcJwR7S8t2jSyRvtjKCwaUA5Pu=EL3+MjCgf3SVWnChEQ@mail.gmail.com>
+ <5BEC018E.8020102@samsung.com> <CAHp75Vc3NC95Wt9T2qx9SCGtwoR2hA7azGAHhqz7LO-yKz=mew@mail.gmail.com>
+In-Reply-To: <CAHp75Vc3NC95Wt9T2qx9SCGtwoR2hA7azGAHhqz7LO-yKz=mew@mail.gmail.com>
+From:   Andy Shevchenko <andy.shevchenko@gmail.com>
+Date:   Wed, 14 Nov 2018 16:04:26 +0200
+Message-ID: <CAHp75VduXH0OKcD2AyR03eNrWW8bKGL-ijfQocfQ+MDCAq0yag@mail.gmail.com>
+Subject: Re: [PATCH v1 2/5] extcon: Return -EPROBE_DEFER when extcon device is
+ not found
+To:     Chanwoo Choi <cw00.choi@samsung.com>
+Cc:     MyungJoo Ham <myungjoo.ham@samsung.com>,
+        USB <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
+        Guenter Roeck <linux@roeck-us.net>,
+        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
+        rogerq@ti.com, Linux PM <linux-pm@vger.kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
+        Darren Hart <dvhart@infradead.org>,
+        Platform Driver <platform-driver-x86@vger.kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Hans de Goede <hdegoede@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Nov 2018 20:55:18 +0800
-Liu Xiang <liu.xiang6@zte.com.cn> wrote:
+On Wed, Nov 14, 2018 at 1:17 PM Andy Shevchenko
+<andy.shevchenko@gmail.com> wrote:
+> On Wed, Nov 14, 2018 at 1:05 PM Chanwoo Choi <cw00.choi@samsung.com> wrote:
 
-> The is25lp256 supports 4-byte opcodes and quad output.
-> 
-> Suggested-by: Boris Brezillon <boris.brezillon@bootlin.com>
-> Signed-off-by: Liu Xiang <liu.xiang6@zte.com.cn>
+> > > Changing NULL to -ENODEV is a trading bad to worse.
 
-This one looks good. Tudor, can you have a look?
+> P.S. I still disagree with your arguments in relation to de facto use of an API.
 
-> ---
->  drivers/mtd/spi-nor/spi-nor.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-> index 3e54e31..3eba13a 100644
-> --- a/drivers/mtd/spi-nor/spi-nor.c
-> +++ b/drivers/mtd/spi-nor/spi-nor.c
-> @@ -1357,7 +1357,7 @@ static int spi_nor_is_locked(struct mtd_info *mtd, loff_t ofs, uint64_t len)
->  	{ "is25lp128",  INFO(0x9d6018, 0, 64 * 1024, 256,
->  			SECT_4K | SPI_NOR_DUAL_READ) },
->  	{ "is25lp256",  INFO(0x9d6019, 0, 64 * 1024, 512,
-> -			SECT_4K | SPI_NOR_DUAL_READ) },
-> +			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ | SPI_NOR_4B_OPCODES) },
->  	{ "is25wp032",  INFO(0x9d7016, 0, 64 * 1024,  64,
->  			SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ) },
->  	{ "is25wp064",  INFO(0x9d7017, 0, 64 * 1024, 128,
+I spoke to colleagues of mine and they are agree that semantically
+-EPROBE_DEFER is a wrong error code from API that matches against some
+list.
+On the other hand, they agree with me that changing NULL to -ENODEV is
+a trading bad to worse.
 
+So, I withdraw mine complaints against API.
+
+-- 
+With Best Regards,
+Andy Shevchenko
