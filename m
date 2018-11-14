@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31312C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:53:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAD47C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:53:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EEDDB2245E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:53:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EEDDB2245E
+	by mail.kernel.org (Postfix) with ESMTP id BBABA2175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:53:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBABA2175B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727082AbeKOI6Q (ORCPT
+        id S1728190AbeKOI6T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:58:16 -0500
-Received: from mga12.intel.com ([192.55.52.136]:50974 "EHLO mga12.intel.com"
+        Thu, 15 Nov 2018 03:58:19 -0500
+Received: from mga12.intel.com ([192.55.52.136]:50985 "EHLO mga12.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbeKOI6Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:58:16 -0500
+        id S1727084AbeKOI6R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:58:17 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 14:53:02 -0800
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 14:53:03 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,234,1539673200"; 
-   d="scan'208";a="106314877"
+   d="scan'208";a="106314883"
 Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
-  by fmsmga004.fm.intel.com with ESMTP; 14 Nov 2018 14:53:02 -0800
+  by fmsmga004.fm.intel.com with ESMTP; 14 Nov 2018 14:53:03 -0800
 From:   Keith Busch <keith.busch@intel.com>
 To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
         linux-mm@kvack.org
@@ -39,98 +39,108 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Dave Hansen <dave.hansen@intel.com>,
         Dan Williams <dan.j.williams@intel.com>,
         Keith Busch <keith.busch@intel.com>
-Subject: [PATCH 1/7] node: Link memory nodes to their compute nodes
-Date:   Wed, 14 Nov 2018 15:49:14 -0700
-Message-Id: <20181114224921.12123-2-keith.busch@intel.com>
+Subject: [PATCH 3/7] doc/vm: New documentation for memory performance
+Date:   Wed, 14 Nov 2018 15:49:16 -0700
+Message-Id: <20181114224921.12123-4-keith.busch@intel.com>
 X-Mailer: git-send-email 2.13.6
+In-Reply-To: <20181114224921.12123-2-keith.busch@intel.com>
+References: <20181114224921.12123-2-keith.busch@intel.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Memory-only nodes will often have affinity to a compute node, and
-platforms have ways to express that locality relationship.
+Platforms may provide system memory where some physical address ranges
+perform differently than others. These heterogeneous memory attributes are
+common to the node that provides the memory and exported by the kernel.
 
-A node containing CPUs or other DMA devices that can initiate memory
-access are referred to as "memory iniators". A "memory target" is a
-node that provides at least one phyiscal address range accessible to a
-memory initiator.
-
-In preparation for these systems, provide a new kernel API to link
-the target memory node to its initiator compute node with symlinks to
-each other.
-
-The following example shows the new sysfs hierarchy setup for memory node
-'Y' local to commpute node 'X':
-
-  # ls -l /sys/devices/system/node/nodeX/initiator*
-  /sys/devices/system/node/nodeX/targetY -> ../nodeY
-
-  # ls -l /sys/devices/system/node/nodeY/target*
-  /sys/devices/system/node/nodeY/initiatorX -> ../nodeX
+Add new documentation providing a brief overview of such systems and
+the attributes the kernel makes available to aid applications wishing
+to query this information.
 
 Signed-off-by: Keith Busch <keith.busch@intel.com>
 ---
- drivers/base/node.c  | 32 ++++++++++++++++++++++++++++++++
- include/linux/node.h |  2 ++
- 2 files changed, 34 insertions(+)
+ Documentation/vm/numaperf.rst | 71 +++++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 71 insertions(+)
+ create mode 100644 Documentation/vm/numaperf.rst
 
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 86d6cd92ce3d..a9b7512a9502 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -372,6 +372,38 @@ int register_cpu_under_node(unsigned int cpu, unsigned int nid)
- 				 kobject_name(&node_devices[nid]->dev.kobj));
- }
- 
-+int register_memory_node_under_compute_node(unsigned int m, unsigned int p)
-+{
-+	int ret;
-+	char initiator[20], target[17];
+diff --git a/Documentation/vm/numaperf.rst b/Documentation/vm/numaperf.rst
+new file mode 100644
+index 000000000000..5a3ecaff5474
+--- /dev/null
++++ b/Documentation/vm/numaperf.rst
+@@ -0,0 +1,71 @@
++.. _numaperf:
 +
-+	if (!node_online(p) || !node_online(m))
-+		return -ENODEV;
-+	if (m == p)
-+		return 0;
++================
++NUMA Performance
++================
 +
-+	snprintf(initiator, sizeof(initiator), "initiator%d", p);
-+	snprintf(target, sizeof(target), "target%d", m);
++Some platforms may have multiple types of memory attached to a single
++CPU. These disparate memory ranges share some characteristics, such as
++CPU cache coherence, but may have different performance. For example,
++different media types and buses affect bandwidth and latency.
 +
-+	ret = sysfs_create_link(&node_devices[p]->dev.kobj,
-+				&node_devices[m]->dev.kobj,
-+				target);
-+	if (ret)
-+		return ret;
++A system supporting such heterogeneous memory groups each memory type
++under different "nodes" based on similar CPU locality and performance
++characteristics.  Some memory may share the same node as a CPU, and
++others are provided as memory-only nodes. While memory only nodes do not
++provide CPUs, they may still be local to one or more compute nodes. The
++following diagram shows one such example of two compute noes with local
++memory and a memory only node for each of compute node:
 +
-+	ret = sysfs_create_link(&node_devices[m]->dev.kobj,
-+				&node_devices[p]->dev.kobj,
-+				initiator);
-+	if (ret)
-+		goto err;
++ +------------------+     +------------------+
++ | Compute Node 0   +-----+ Compute Node 1   |
++ | Local Node0 Mem  |     | Local Node1 Mem  |
++ +--------+---------+     +--------+---------+
++          |                        |
++ +--------+---------+     +--------+---------+
++ | Slower Node2 Mem |     | Slower Node3 Mem |
++ +------------------+     +--------+---------+
 +
-+	return 0;
-+ err:
-+	sysfs_remove_link(&node_devices[p]->dev.kobj,
-+			  kobject_name(&node_devices[m]->dev.kobj));
-+	return ret;
-+}
++A "memory initiator" is a node containing one or more devices such as
++CPUs or separate memory I/O devices that can initiate memory requests. A
++"memory target" is a node containing one or more CPU-accessible physical
++address ranges.
 +
- int unregister_cpu_under_node(unsigned int cpu, unsigned int nid)
- {
- 	struct device *obj;
-diff --git a/include/linux/node.h b/include/linux/node.h
-index 257bb3d6d014..1fd734a3fb3f 100644
---- a/include/linux/node.h
-+++ b/include/linux/node.h
-@@ -75,6 +75,8 @@ extern int register_mem_sect_under_node(struct memory_block *mem_blk,
- extern int unregister_mem_sect_under_nodes(struct memory_block *mem_blk,
- 					   unsigned long phys_index);
- 
-+extern int register_memory_node_under_compute_node(unsigned int m, unsigned int p);
++When multiple memory initiators exist, accessing the same memory
++target may not perform the same as each other. The highest performing
++initiator to a given target is considered to be one of that target's
++local initiators.
 +
- #ifdef CONFIG_HUGETLBFS
- extern void register_hugetlbfs_with_node(node_registration_func_t doregister,
- 					 node_registration_func_t unregister);
++To aid applications matching memory targets with their initiators,
++the kernel provide symlinks to each other like the following example::
++
++	# ls -l /sys/devices/system/node/nodeX/initiator*
++	/sys/devices/system/node/nodeX/targetY -> ../nodeY
++
++	# ls -l /sys/devices/system/node/nodeY/target*
++	/sys/devices/system/node/nodeY/initiatorX -> ../nodeX
++
++Applications may wish to consider which node they want their memory to
++be allocated from based on the nodes performance characteristics. If
++the system provides these attributes, the kernel exports them under the
++node sysfs hierarchy by appending the initiator_access directory under
++the node as follows::
++
++	/sys/devices/system/node/nodeY/initiator_access/
++
++The kernel does not provide performance attributes for non-local memory
++initiators. The performance characteristics the kernel provides for
++the local initiators are exported are as follows::
++
++	# tree /sys/devices/system/node/nodeY/initiator_access
++	/sys/devices/system/node/nodeY/initiator_access
++	|-- read_bandwidth
++	|-- read_latency
++	|-- write_bandwidth
++	`-- write_latency
++
++The bandwidth attributes are provided in MiB/second.
++
++The latency attributes are provided in nanoseconds.
++
++See also: https://www.uefi.org/sites/default/files/resources/ACPI_6_2.pdf
 -- 
 2.14.4
 
