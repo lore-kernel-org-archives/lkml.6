@@ -2,267 +2,108 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDEDAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:46:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C248C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:47:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2B63223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:46:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2B63223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D2357223DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:47:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2357223DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728127AbeKOHvk (ORCPT
+        id S1728230AbeKOHwD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 02:51:40 -0500
-Received: from mga02.intel.com ([134.134.136.20]:56080 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727873AbeKOHvk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 02:51:40 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 13:46:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,233,1539673200"; 
-   d="scan'208";a="281132362"
-Received: from chang-linux-2.sc.intel.com ([10.3.52.165])
-  by fmsmga006.fm.intel.com with ESMTP; 14 Nov 2018 13:46:41 -0800
-From:   "Chang S. Bae" <chang.seok.bae@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
+        Thu, 15 Nov 2018 02:52:03 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:51512 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725756AbeKOHwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 02:52:02 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9A8D80D;
+        Wed, 14 Nov 2018 13:47:04 -0800 (PST)
+Received: from blommer (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0CBAA3F5A0;
+        Wed, 14 Nov 2018 13:47:04 -0800 (PST)
+Date:   Wed, 14 Nov 2018 21:47:02 +0000
+From:   Mark Rutland <mark.rutland@arm.com>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Adam Wallis <awallis@codeaurora.org>,
+        Amit Kachhap <Amit.Kachhap@arm.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        linux-arch <linux-arch@vger.kernel.org>,
         LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4] x86/fsgsbase/64: Fix the base write helper functions
-Date:   Wed, 14 Nov 2018 13:46:41 -0800
-Message-Id: <20181114214641.8573-1-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.19.1
+Subject: Re: [PATCH 00/17] ARMv8.3 pointer authentication support
+Message-ID: <20181114214701.gdnrznakwtm76jlt@blommer>
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+ <CAGXu5jLtxRitee143FE37PYkPCs0UArGgNEsiU8fzsQL9N8S-Q@mail.gmail.com>
+ <df3e029b-51b3-51a0-70f7-3239234373e2@arm.com>
+ <CAGXu5jJMfCz4qFY8y1Uf7BdP961ZeBotFVUb5owaksxnz26akg@mail.gmail.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJMfCz4qFY8y1Uf7BdP961ZeBotFVUb5owaksxnz26akg@mail.gmail.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The helper functions that purport to write the base should just write it
-only. It shouldn't have magic optimizations to change the index.
+On Tue, Nov 13, 2018 at 05:09:00PM -0600, Kees Cook wrote:
+> On Tue, Nov 13, 2018 at 10:17 AM, Kristina Martsenko
+> <kristina.martsenko@arm.com> wrote:
+> > When the PAC authentication fails, it doesn't actually generate an
+> > exception, it just flips a bit in the high-order bits of the pointer,
+> > making the pointer invalid. Then when the pointer is dereferenced (e.g.
+> > as a function return address), it generates the usual type of exception
+> > for an invalid address.
+> 
+> Ah! Okay, thanks. I missed that detail. :)
+> 
+> What area of memory ends up being addressable with such bit flips?
+> (i.e. is the kernel making sure nothing executable ends up there?)
+> 
+> > So when a function return fails in user mode, the exception is handled
+> > in __do_user_fault and a forced SIGSEGV is delivered to the task. When a
+> > function return fails in kernel mode, the exception is handled in
+> > __do_kernel_fault and the task is killed.
+> >
+> > This is different from stack protector as we don't panic the kernel, we
+> > just kill the task. It would be difficult to panic as we don't have a
+> > reliable way of knowing that the exception was caused by a PAC
+> > authentication failure (we just have an invalid pointer with a specific
+> > bit flipped). We also don't print out any PAC-related warning.
+> 
+> There are other "guesses" in __do_kernel_fault(), I think? Could a
+> "PAC mismatch?" warning be included in the Oops if execution fails in
+> the address range that PAC failures would resolve into?
 
-Make the index explicitly changed from the caller, instead of including
-the code in the helpers.
+I'd personally prefer that we didn't try to guess if a fault is due to a failed
+AUT*, even for logging.
 
-Subsequently, the task write helpers do not handle for the current task
-anymore. The range check for a base value is also factored out, to
-minimize code redundancy from the caller.
+Presently, it's not possible to distinguish between a fault resulting from a
+failed AUT* and a fault which happens to have hte same bits/clear, so there are
+false positives. The architecture may also change the precise details of the
+faulting address, and we'd have false negatives in that case.
 
-v2: Fix further on the task write functions. Revert the changes on the
-task read helpers.
+Given that, I think suggesting that a fault is due to a failed AUT* is liable
+to make things more confusing.
 
-v3: Fix putreg(). Edit the changelog.
-
-v4: Update the task write helper functions and do_arch_prctl_64(). Fix
-the comment in putreg().
-
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
----
- arch/x86/include/asm/fsgsbase.h | 15 ++++--
- arch/x86/kernel/process_64.c    | 84 ++++++++++++++++-----------------
- arch/x86/kernel/ptrace.c        |  9 ++--
- 3 files changed, 56 insertions(+), 52 deletions(-)
-
-diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
-index eb377b6e9eed..bca4c743de77 100644
---- a/arch/x86/include/asm/fsgsbase.h
-+++ b/arch/x86/include/asm/fsgsbase.h
-@@ -16,8 +16,8 @@
-  */
- extern unsigned long x86_fsbase_read_task(struct task_struct *task);
- extern unsigned long x86_gsbase_read_task(struct task_struct *task);
--extern int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
--extern int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
-+extern void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
-+extern void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
- 
- /* Helper functions for reading/writing FS/GS base */
- 
-@@ -39,8 +39,15 @@ static inline unsigned long x86_gsbase_read_cpu_inactive(void)
- 	return gsbase;
- }
- 
--extern void x86_fsbase_write_cpu(unsigned long fsbase);
--extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
-+static inline void x86_fsbase_write_cpu(unsigned long fsbase)
-+{
-+	wrmsrl(MSR_FS_BASE, fsbase);
-+}
-+
-+static inline void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
-+{
-+	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+}
- 
- #endif /* CONFIG_X86_64 */
- 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 31b4755369f0..bba300dd8d64 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -337,24 +337,6 @@ static unsigned long x86_fsgsbase_read_task(struct task_struct *task,
- 	return base;
- }
- 
--void x86_fsbase_write_cpu(unsigned long fsbase)
--{
--	/*
--	 * Set the selector to 0 as a notion, that the segment base is
--	 * overwritten, which will be checked for skipping the segment load
--	 * during context switch.
--	 */
--	loadseg(FS, 0);
--	wrmsrl(MSR_FS_BASE, fsbase);
--}
--
--void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
--{
--	/* Set the selector to 0 for the same reason as %fs above. */
--	loadseg(GS, 0);
--	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
--}
--
- unsigned long x86_fsbase_read_task(struct task_struct *task)
- {
- 	unsigned long fsbase;
-@@ -383,38 +365,18 @@ unsigned long x86_gsbase_read_task(struct task_struct *task)
- 	return gsbase;
- }
- 
--int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
-+void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
- {
--	/*
--	 * Not strictly needed for %fs, but do it for symmetry
--	 * with %gs
--	 */
--	if (unlikely(fsbase >= TASK_SIZE_MAX))
--		return -EPERM;
-+	WARN_ON_ONCE(task == current);
- 
--	preempt_disable();
- 	task->thread.fsbase = fsbase;
--	if (task == current)
--		x86_fsbase_write_cpu(fsbase);
--	task->thread.fsindex = 0;
--	preempt_enable();
--
--	return 0;
- }
- 
--int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
-+void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
- {
--	if (unlikely(gsbase >= TASK_SIZE_MAX))
--		return -EPERM;
-+	WARN_ON_ONCE(task == current);
- 
--	preempt_disable();
- 	task->thread.gsbase = gsbase;
--	if (task == current)
--		x86_gsbase_write_cpu_inactive(gsbase);
--	task->thread.gsindex = 0;
--	preempt_enable();
--
--	return 0;
- }
- 
- int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
-@@ -758,11 +720,45 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
- 
- 	switch (option) {
- 	case ARCH_SET_GS: {
--		ret = x86_gsbase_write_task(task, arg2);
-+		preempt_disable();
-+		if (unlikely(arg2 >= TASK_SIZE_MAX))
-+			return -EPERM;
-+		/*
-+		 * ARCH_SET_GS has always overwritten the index
-+		 * and the base. Zero is the most sensible value
-+		 * to put in the index, and is the only value that
-+		 * makes any sense if FSGSBASE is unavailable.
-+		 */
-+		if (task == current) {
-+			loadseg(GS, 0);
-+			x86_gsbase_write_cpu_inactive(arg2);
-+		} else {
-+			task->thread.gsindex = 0;
-+			x86_gsbase_write_task(task, arg2);
-+		}
-+		preempt_enable();
- 		break;
- 	}
- 	case ARCH_SET_FS: {
--		ret = x86_fsbase_write_task(task, arg2);
-+		preempt_disable();
-+		/*
-+		 * Not strictly needed for %fs, but do it for symmetry
-+		 * with %gs
-+		 */
-+		if (unlikely(arg2 >= TASK_SIZE_MAX))
-+			return -EPERM;
-+		/*
-+		 * Set the selector to 0 for the same reason
-+		 * as %gs above.
-+		 */
-+		if (task == current) {
-+			loadseg(FS, 0);
-+			x86_fsbase_write_cpu(arg2);
-+		} else {
-+			task->thread.fsindex = 0;
-+			x86_fsbase_write_task(task, arg2);
-+		}
-+		preempt_enable();
- 		break;
- 	}
- 	case ARCH_GET_FS: {
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index ffae9b9740fd..4b8ee05dd6ad 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -397,11 +397,12 @@ static int putreg(struct task_struct *child,
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
- 		/*
--		 * When changing the FS base, use the same
--		 * mechanism as for do_arch_prctl_64().
-+		 * When changing the FS base, use do_arch_prctl_64()
-+		 * to set the index to zero and to set the base
-+		 * as requested.
- 		 */
- 		if (child->thread.fsbase != value)
--			return x86_fsbase_write_task(child, value);
-+			return do_arch_prctl_64(child, ARCH_SET_FS, value);
- 		return 0;
- 	case offsetof(struct user_regs_struct,gs_base):
- 		/*
-@@ -410,7 +411,7 @@ static int putreg(struct task_struct *child,
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
- 		if (child->thread.gsbase != value)
--			return x86_gsbase_write_task(child, value);
-+			return do_arch_prctl_64(child, ARCH_SET_GS, value);
- 		return 0;
- #endif
- 	}
--- 
-2.19.1
-
+Thanks,
+Mark.
