@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45179C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:32:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C2CF1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:33:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07BFF21582
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:32:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 797FC208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:33:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDTDxgat"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07BFF21582
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="R3c7mCmQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 797FC208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388874AbeKOIaj (ORCPT
+        id S2388342AbeKOIiF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:30:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37724 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:38:05 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37742 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388853AbeKOIah (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:30:37 -0500
+        id S1726722AbeKOIaj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:30:39 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0CA892252F;
-        Wed, 14 Nov 2018 22:25:33 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 122B42252A;
+        Wed, 14 Nov 2018 22:25:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234333;
-        bh=6rSZeZm2+N3gk2MuYFE+ZAbxz3kRRLER8M47SfOK/sQ=;
+        s=default; t=1542234334;
+        bh=BRSVUqGftte8q8s+pYFPblR0cRQjWXDHc4NYtbzA0M4=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=CDTDxgat3EOezIftFnPo0qwcdvOk5fGLr0zQK0TXfAFYu/Z6qhaRLmah93dFll/LW
-         HWp70kIi0Z1dxYPD0l7rkQA5VffIeL/Eb/I9UmNtNLjxTJnFeaQXv/6JdIy4nZ/Aax
-         JqjkxSvUiCLZp/5VqVvGuMkCDUkvzKKv2+cJWaxw=
+        b=R3c7mCmQ+htkynpMyUoar2yHVHngwXScM2QhfOtG0FU0vO66TOg0PneK7PJItTcPp
+         ZiA2A9suGklUXHhkJFTinsDkAuEzv7fsxb4jPZZSi0dvSdZ92/z3PlTtSpId+1m0Ao
+         13fNQnxo8DH4Pf39V2FS6HkzxsgtduxEtKzxCZ8Y=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Frieder Schrempf <frieder.schrempf@kontron.de>,
+Cc:     Florian Fainelli <f.fainelli@gmail.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 05/27] usbnet: smsc95xx: disable carrier check while suspending
-Date:   Wed, 14 Nov 2018 17:24:54 -0500
-Message-Id: <20181114222520.99926-5-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 07/27] net: systemport: Protect stop from timeout
+Date:   Wed, 14 Nov 2018 17:24:56 -0500
+Message-Id: <20181114222520.99926-7-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222520.99926-1-sashal@kernel.org>
 References: <20181114222520.99926-1-sashal@kernel.org>
@@ -54,49 +53,119 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Frieder Schrempf <frieder.schrempf@kontron.de>
+From: Florian Fainelli <f.fainelli@gmail.com>
 
-[ Upstream commit 7b900ead6cc66b2ee873cb042dfba169aa68b56c ]
+[ Upstream commit 7cb6a2a2c72c1ed8f42fb01f1a661281b568dead ]
 
-We need to make sure, that the carrier check polling is disabled
-while suspending. Otherwise we can end up with usbnet_read_cmd()
-being issued when only usbnet_read_cmd_nopm() is allowed. If this
-happens, read operations lock up.
+A timing hazard exists when the network interface is stopped that
+allows a watchdog timeout to be processed by a separate core in
+parallel. This creates the potential for the timeout handler to
+wake the queues while the driver is shutting down, or access
+registers after their clocks have been removed.
 
-Fixes: d69d169493 ("usbnet: smsc95xx: fix link detection for disabled autonegotiation")
-Signed-off-by: Frieder Schrempf <frieder.schrempf@kontron.de>
-Reviewed-by: Raghuram Chary J <RaghuramChary.Jallipalli@microchip.com>
+The more common case is that the watchdog timeout will produce a
+warning message which doesn't lead to a crash. The chances of this
+are greatly increased by the fact that bcm_sysport_netif_stop stops
+the transmit queues which can easily precipitate a watchdog time-
+out because of stale trans_start data in the queues.
+
+This commit corrects the behavior by ensuring that the watchdog
+timeout is disabled before enterring bcm_sysport_netif_stop. There
+are currently only two users of the bcm_sysport_netif_stop function:
+close and suspend.
+
+The close case already handles the issue by exiting the RUNNING
+state before invoking the driver close service.
+
+The suspend case now performs the netif_device_detach to exit the
+PRESENT state before the call to bcm_sysport_netif_stop rather than
+after it.
+
+These behaviors prevent any future scheduling of the driver timeout
+service during the window. The netif_tx_stop_all_queues function
+in bcm_sysport_netif_stop is replaced with netif_tx_disable to ensure
+synchronization with any transmit or timeout threads that may
+already be executing on other cores.
+
+For symmetry, the netif_device_attach call upon resume is moved to
+after the call to bcm_sysport_netif_start. Since it wakes the transmit
+queues it is not necessary to invoke netif_tx_start_all_queues from
+bcm_sysport_netif_start so it is moved into the driver open service.
+
+Fixes: 40755a0fce17 ("net: systemport: add suspend and resume support")
+Fixes: 80105befdb4b ("net: systemport: add Broadcom SYSTEMPORT Ethernet MAC driver")
+Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/smsc95xx.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+ drivers/net/ethernet/broadcom/bcmsysport.c | 15 +++++++--------
+ 1 file changed, 7 insertions(+), 8 deletions(-)
 
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index 99e684e39d35..9b8afe4da73b 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -1598,6 +1598,8 @@ static int smsc95xx_suspend(struct usb_interface *intf, pm_message_t message)
- 		return ret;
- 	}
- 
-+	cancel_delayed_work_sync(&pdata->carrier_check);
-+
- 	if (pdata->suspend_flags) {
- 		netdev_warn(dev->net, "error during last resume\n");
- 		pdata->suspend_flags = 0;
-@@ -1840,6 +1842,11 @@ static int smsc95xx_suspend(struct usb_interface *intf, pm_message_t message)
- 	 */
- 	if (ret && PMSG_IS_AUTO(message))
- 		usbnet_resume(intf);
-+
-+	if (ret)
-+		schedule_delayed_work(&pdata->carrier_check,
-+				      CARRIER_CHECK_DELAY);
-+
- 	return ret;
+diff --git a/drivers/net/ethernet/broadcom/bcmsysport.c b/drivers/net/ethernet/broadcom/bcmsysport.c
+index 6e7f9a470ea1..45462557e51c 100644
+--- a/drivers/net/ethernet/broadcom/bcmsysport.c
++++ b/drivers/net/ethernet/broadcom/bcmsysport.c
+@@ -1774,9 +1774,6 @@ static void bcm_sysport_netif_start(struct net_device *dev)
+ 		intrl2_1_mask_clear(priv, 0xffffffff);
+ 	else
+ 		intrl2_0_mask_clear(priv, INTRL2_0_TDMA_MBDONE_MASK);
+-
+-	/* Last call before we start the real business */
+-	netif_tx_start_all_queues(dev);
  }
  
+ static void rbuf_init(struct bcm_sysport_priv *priv)
+@@ -1922,6 +1919,8 @@ static int bcm_sysport_open(struct net_device *dev)
+ 
+ 	bcm_sysport_netif_start(dev);
+ 
++	netif_tx_start_all_queues(dev);
++
+ 	return 0;
+ 
+ out_clear_rx_int:
+@@ -1945,7 +1944,7 @@ static void bcm_sysport_netif_stop(struct net_device *dev)
+ 	struct bcm_sysport_priv *priv = netdev_priv(dev);
+ 
+ 	/* stop all software from updating hardware */
+-	netif_tx_stop_all_queues(dev);
++	netif_tx_disable(dev);
+ 	napi_disable(&priv->napi);
+ 	phy_stop(dev->phydev);
+ 
+@@ -2267,12 +2266,12 @@ static int bcm_sysport_suspend(struct device *d)
+ 	if (!netif_running(dev))
+ 		return 0;
+ 
++	netif_device_detach(dev);
++
+ 	bcm_sysport_netif_stop(dev);
+ 
+ 	phy_suspend(dev->phydev);
+ 
+-	netif_device_detach(dev);
+-
+ 	/* Disable UniMAC RX */
+ 	umac_enable_set(priv, CMD_RX_EN, 0);
+ 
+@@ -2356,8 +2355,6 @@ static int bcm_sysport_resume(struct device *d)
+ 		goto out_free_rx_ring;
+ 	}
+ 
+-	netif_device_attach(dev);
+-
+ 	/* RX pipe enable */
+ 	topctrl_writel(priv, 0, RX_FLUSH_CNTL);
+ 
+@@ -2402,6 +2399,8 @@ static int bcm_sysport_resume(struct device *d)
+ 
+ 	bcm_sysport_netif_start(dev);
+ 
++	netif_device_attach(dev);
++
+ 	return 0;
+ 
+ out_free_rx_ring:
 -- 
 2.17.1
 
