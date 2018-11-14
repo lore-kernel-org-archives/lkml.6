@@ -2,115 +2,85 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 20F48C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D2CBC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:06:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4D34208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:05:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="O586R77W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D34208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=armlinux.org.uk
+	by mail.kernel.org (Postfix) with ESMTP id 4CF55208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 12:06:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4CF55208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732697AbeKNWI2 (ORCPT
+        id S1732747AbeKNWJE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 17:08:28 -0500
-Received: from pandora.armlinux.org.uk ([78.32.30.218]:42332 "EHLO
-        pandora.armlinux.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727969AbeKNWI1 (ORCPT
+        Wed, 14 Nov 2018 17:09:04 -0500
+Received: from eddie.linux-mips.org ([148.251.95.138]:49022 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727969AbeKNWJE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 17:08:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=armlinux.org.uk; s=pandora-2014; h=Sender:In-Reply-To:Content-Type:
-        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=LFTqnV1S4JIKuBgB4a5qr9LQZA4sbsJFMIl8z6BIsUA=; b=O586R77W5PI5CBZuEGU83N1RJ
-        PCV1I4eleHO10StVCe0PoCe3ru4foyyAchLQ05jb2MnpovmhuqaFpCDo+ja16JL4+pQ+PjFjp0lUS
-        +cXM/3fzioo7Uea9JmAv0jAHyM3F8g1OeNC96MNLEUAHzIxxsyTvy0lzyvYQQXWZuU46A=;
-Received: from n2100.armlinux.org.uk ([2001:4d48:ad52:3201:214:fdff:fe10:4f86]:57870)
-        by pandora.armlinux.org.uk with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.90_1)
-        (envelope-from <linux@armlinux.org.uk>)
-        id 1gMtuz-0005Dh-Q5; Wed, 14 Nov 2018 12:05:13 +0000
-Received: from linux by n2100.armlinux.org.uk with local (Exim 4.90_1)
-        (envelope-from <linux@n2100.armlinux.org.uk>)
-        id 1gMtus-0006To-14; Wed, 14 Nov 2018 12:05:06 +0000
-Date:   Wed, 14 Nov 2018 12:05:00 +0000
-From:   Russell King - ARM Linux <linux@armlinux.org.uk>
-To:     Finn Thain <fthain@telegraphics.com.au>,
-        John Stultz <john.stultz@linaro.org>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stephen N Chivers <schivers@csc.com.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org
-Subject: Re: [RFC PATCH 01/13] arm: Fix mutual exclusion in arch_gettimeoffset
-Message-ID: <20181114120500.GE6567@n2100.armlinux.org.uk>
-References: <cover.1541995959.git.fthain@telegraphics.com.au>
- <d1559db8eddb5b06747b152ae69b63c3aa66ed09.1541995959.git.fthain@telegraphics.com.au>
+        Wed, 14 Nov 2018 17:09:04 -0500
+Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
+        with ESMTP id S23992362AbeKNMFPSER-C (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org> + 1 other);
+        Wed, 14 Nov 2018 13:05:15 +0100
+Date:   Wed, 14 Nov 2018 12:05:14 +0000 (GMT)
+From:   "Maciej W. Rozycki" <macro@linux-mips.org>
+To:     Alexandre Belloni <alexandre.belloni@bootlin.com>
+cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Matt Turner <mattst88@gmail.com>, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: m41t80: Complete error propagation from SMBus
+ calls
+In-Reply-To: <20181114095737.GV29768@piout.net>
+Message-ID: <alpine.LFD.2.21.1811141139450.21654@eddie.linux-mips.org>
+References: <alpine.LFD.2.21.1811070142240.20378@eddie.linux-mips.org> <20181114095737.GV29768@piout.net>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d1559db8eddb5b06747b152ae69b63c3aa66ed09.1541995959.git.fthain@telegraphics.com.au>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 03:12:39PM +1100, Finn Thain wrote:
-> Implementations of arch_gettimeoffset are generally not re-entrant
-> and assume that interrupts have been disabled. Unfortunately this
-> pre-condition got broken in v2.6.32.
+On Wed, 14 Nov 2018, Alexandre Belloni wrote:
 
-To me, it looks way worse than what you think.
+> >  I'll be posting further patches over the coming weeks, based on my 
+> > original effort as archived here: <https://lkml.org/lkml/2008/5/12/385>,
+> > <https://lore.kernel.org/patchwork/project/lkml/list/?series=73524&archive=both> 
+> > However I have just realised they'll need another iteration before I post 
+> > them.  So for now just these two obvious fixes.
+> > 
+> 
+> Regarding the persistent part, do you really need more than what is
+> provided? As far as I know, the timekeeping core is already taking care
+> of using the best source to get the suspended time.
 
-The original code sequence before conversion to arch_gettimeoffset()
-was:
+ For that we have platform code duplicating what the RTC framework 
+already does.  Some of that cannot be made to work reasonably.  See e.g. 
+arch/mips/dec/time.c or arch/mips/sibyte/swarm/rtc_*.c.
 
-1. lock (inc. disabling IRQs)
-2. read gettimeoffset correction
-3. add offset to current xtime
-4. unlock
+ The DEC code is technically sound, but spreads the same function (RTC 
+r/w access) across another place, in addition to drivers/rtc/rtc-cmos.c.  
+The SiByte code bypasses the I2C driver and therefore cannot be 
+converted to use I2C interrupts, which means system latency problems.  
+The write part used for NTP can be removed right away by making it 
+return -ENODEV, and I have separate patches to do that for these 
+platforms.  The read part cannot AFAICT.
 
-This means there is no chance for a timer interrupt to happen between
-reading the current offset and adding it to the current kernel time.
-If the timer does roll over, then the interrupt will remain pending,
-so the whole "read offset and add to xtime" is one atomic block and
-we can use the pending interrupt to indicate whether the timer has
-rolled over and apply the appropriate offset correction.
+ I think we can discuss that when I post the patches.  The m41t80 driver 
+currently does not work for me anyway and has to be fixed because of:
 
-With the arch_gettimeoffset() code, that changes:
+i2c /dev entries driver
+i2c-sibyte: i2c SMBus adapter module for SiByte board
+i2c i2c-1: doesn't support I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_I2C_BLOCK
 
-1. read clocksource (which will be jiffies)
-2. compute clocksource delta
-3. increment nanoseconds
-4. add gettimeoffset correction
+and the persistent part is only one patch in the upcoming number of 
+changes.
 
-If we receive a timer interrupt part-way through this, for example,
-between 2 and 3, then jiffies will increment (via do_timer()) and the
-interrupt will be cleared.  This means that the check in
-ioc_timer_gettimeoffset() for a pending interrupt, for example, will
-be false, and we will not know that an interrupt has happened.
+ Thanks for taking the other three patches.
 
-So, unless I'm missing something, commit 5cfc8ee0bb51 well and truely
-broke the accuracy of timekeeping on these platforms, and will result
-in timekeeping spontaneously jumping backwards.  I had been wondering
-why NTP had become less stable on EBSA110, but never investigated.
-
-However, that still does not justify blowing away this functionality
-without replacement, as Finn has been proposing.
-
--- 
-RMK's Patch system: http://www.armlinux.org.uk/developer/patches/
-FTTC broadband for 0.8mile line in suburbia: sync at 12.1Mbps down 622kbps up
-According to speedtest.net: 11.9Mbps down 500kbps up
+  Maciej
