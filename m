@@ -2,104 +2,139 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCD6EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:38:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5E8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9AC6D21780
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:38:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9AC6D21780
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 20E8121780
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:38:36 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PUZQHqwS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20E8121780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732519AbeKNTkw (ORCPT
+        id S1732570AbeKNTlC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 14:40:52 -0500
-Received: from mga06.intel.com ([134.134.136.31]:22214 "EHLO mga06.intel.com"
+        Wed, 14 Nov 2018 14:41:02 -0500
+Received: from m50-138.163.com ([123.125.50.138]:49130 "EHLO m50-138.163.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727558AbeKNTkv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 14:40:51 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 01:38:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,231,1539673200"; 
-   d="scan'208";a="100131111"
-Received: from smile.fi.intel.com (HELO smile) ([10.237.72.86])
-  by orsmga003.jf.intel.com with ESMTP; 14 Nov 2018 01:38:20 -0800
-Received: from andy by smile with local (Exim 4.91)
-        (envelope-from <andriy.shevchenko@linux.intel.com>)
-        id 1gMrcp-0006up-El; Wed, 14 Nov 2018 11:38:19 +0200
-Date:   Wed, 14 Nov 2018 11:38:19 +0200
-From:   Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To:     Petr Mladek <pmladek@suse.com>
-Cc:     Steven Rostedt <rostedt@goodmis.org>, Qian Cai <cai@gmx.us>,
-        linux-kernel@vger.kernel.org, "Tobin C. Harding" <me@tobin.cc>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Rasmus Villemoes <rasmus.villemoes@prevas.dk>
-Subject: Re: WARNING: CPU: 26 PID: 64391 at lib/vsprintf.c:2193
- set_precision+0x84/0x90
-Message-ID: <20181114093819.GL10650@smile.fi.intel.com>
-References: <1542128132.12945.19.camel@gmx.us>
- <20181113172920.GI10650@smile.fi.intel.com>
- <1542135498.12945.20.camel@gmx.us>
- <20181113142317.379dbaf7@vmware.local.home>
- <20181113230511.5di75uyht7ecdcvl@pathway.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113230511.5di75uyht7ecdcvl@pathway.suse.cz>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1727558AbeKNTlC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 14:41:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=FLK1WoeXSqfG8XLqhL
+        +Znss5msT8TGnbCCGJEZJBdPI=; b=PUZQHqwSybimpFp8FRsFgBdZPK30EC+pV+
+        7JCAl2ptjIxqhPQ0kg5/N/8ysat4LyLF5ZJi5roq4v3OKZHZkYhJ+L0Z//YUJfZr
+        mN/VHVV04LkZptOdOLYL2X502bo53K3QRwEPhj8NG6qlUavYnH0YXWDKpcv06Ymy
+        p6KyZZd7c=
+Received: from localhost.localdomain (unknown [221.0.93.75])
+        by smtp1 (Coremail) with SMTP id C9GowACHWQ0Q7etbTScIAA--.2807S2;
+        Wed, 14 Nov 2018 17:38:28 +0800 (CST)
+From:   zoro <long17.cool@163.com>
+To:     broonie@kernel.org
+Cc:     lgirdwood@gmail.com, linux-kernel@vger.kernel.org,
+        zoro <long17.cool@163.com>
+Subject: [PATCH] regulator/of_get_regulator: add child path to find the regulator supplier
+Date:   Wed, 14 Nov 2018 17:38:22 +0800
+Message-Id: <1542188302-9956-1-git-send-email-long17.cool@163.com>
+X-Mailer: git-send-email 1.7.9.5
+X-CM-TRANSID: C9GowACHWQ0Q7etbTScIAA--.2807S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7uw45Jw1UJFy8XF4ftr15XFb_yoW8Kw1kpr
+        4DWF9xCr4F9a4xuw4Syr12ya4Ygrn5Ca97AryrGw4fC3s5JF93Jr1UAF1Yv3Z5Jr4kGw42
+        yrW8AF1xCF15XFJanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UTCJdUUUUU=
+X-Originating-IP: [221.0.93.75]
+X-CM-SenderInfo: 5orqwi2xof00ro6rljoofrz/1tbi8BX+F1uoQY48zgAAsC
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 12:05:12AM +0100, Petr Mladek wrote:
-> On Tue 2018-11-13 14:23:17, Steven Rostedt wrote:
-> > On Tue, 13 Nov 2018 13:58:18 -0500
-> > Qian Cai <cai@gmx.us> wrote:
-> > 
-> > > > Care to print the len and name parameters before this line?  
-> > > len = 60612; name =
-> > 
-> > How big are pages on arm64? Because we shouldn't get to this path if
-> > the string is bigger than PAGE_SIZE. But I know that on PPC64,
-> > PAGE_SIZE can be 64K, and 60612 is less than that. Thus, if we get
-> > there, the test is against signed int:16 (16 bit signed integer) that
-> > can go up to most 32768. If the string size is bigger than that, you
-> > would get this error.
-> > 
-> > I would just say to ignore it.
-> 
-> I tend to agree.
-> 
-> > The only thing that can happen if
-> > someone does this is to trigger the warning. Unless if it is considered
-> > a form of DOS, where userspace just bombards the console by triggering
-> > this waring.
-> 
-> We are actually on the safe side because it is WARN_ONCE().
-> 
-> > But I don't see a problem with the actual design. There's
-> > no reason we should be processing string variables bigger than 32768 in
-> > vsprintf.
-> 
-> It is not even needed in this case. The string is limited also by
-> MODULE_NAME_LEN.
+when the VIR_LDO1 regulator supplier is it's brother,
+we can't find the supplier.
 
-At least not in this code.
+example code :
+&vir_regulator {
+	ldo0_vir: ldo0-virtual {
+		regulator-compatible = "VIR_LDO0";
+		regulator-name= "VIR_LDO0";
+		regulator-min-microvolt = <1000000>;
+		regulator-max-microvolt = <2000000>;
+	};
+	ldo1_vir: ldo1-virtual {
+		regulator-compatible = "VIR_LDO1";
+		regulator-name= "VIR_LDO1";
+		regulator-min-microvolt = <1000000>;
+		regulator-max-microvolt = <3000000>;
+		ldo1-supply = <&ldo0_vir>;
+	};
+	...
+}
 
-Are you proposing to replace strlen(name) with strnlen(name, MODULE_NAME_LEN)?
+so we add the child ptah to find the suppier.
 
+Signed-off-by: zoro <long17.cool@163.com>
+---
+ drivers/regulator/core.c |   35 +++++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 2c66b52..5520726 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -228,6 +228,37 @@ static void regulator_unlock_supply(struct regulator_dev *rdev)
+ }
+ 
+ /**
++ * of_get_child_regulator - get a child regulator device node
++ * based on supply name
++ * @parent: Parent device node
++ * @prop_name: Combination regulator supply name and "-supply"
++ *
++ * Traverse all child nodes.
++ * Extract the child regulator device node corresponding to the supply name.
++ * returns the device node corresponding to the regulator if found, else
++ * returns NULL.
++ */
++static struct device_node *of_get_child_regulator(struct device_node *parent,
++						  const char *prop_name)
++{
++	struct device_node *regnode = NULL;
++	struct device_node *child = NULL;
++
++	for_each_child_of_node(parent, child) {
++		regnode = of_parse_phandle(child, prop_name, 0);
++
++		if (!regnode) {
++			regnode = of_get_child_regulator(child, prop_name);
++			if (regnode)
++				return regnode;
++		} else {
++			return regnode;
++		}
++	}
++	return NULL;
++}
++
++/**
+  * of_get_regulator - get a regulator device node based on supply name
+  * @dev: Device pointer for the consumer (of regulator) device
+  * @supply: regulator supply name
+@@ -247,6 +278,10 @@ static struct device_node *of_get_regulator(struct device *dev, const char *supp
+ 	regnode = of_parse_phandle(dev->of_node, prop_name, 0);
+ 
+ 	if (!regnode) {
++		regnode = of_get_child_regulator(dev->of_node, prop_name);
++		if (regnode)
++			return regnode;
++
+ 		dev_dbg(dev, "Looking up %s property in node %pOF failed\n",
+ 				prop_name, dev->of_node);
+ 		return NULL;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+1.7.9.5
 
