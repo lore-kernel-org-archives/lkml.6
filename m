@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D030BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:24:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1814CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 97EC621780
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:24:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D3EC221780
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:24:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="PjzF40cG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 97EC621780
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="WE09Dz52"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D3EC221780
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732809AbeKNS0c (ORCPT
+        id S1732831AbeKNS0f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 13:26:32 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49748 "EHLO
+        Wed, 14 Nov 2018 13:26:35 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:49778 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728406AbeKNS0c (ORCPT
+        with ESMTP id S1728406AbeKNS0e (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 13:26:32 -0500
+        Wed, 14 Nov 2018 13:26:34 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=/j3bQXpd/gVTqLpGersu6eVAWT1I+PIQi+24w5zL65w=; b=PjzF40cGj9fpFDaBgEFmomV4Xu
-        W7i50ILLZCiy79xRnCNJkggV4KMgN574dqWZGq6KGQJDvaJh5WGsZ6Jj35QWgA21cPpWfeacwD3tO
-        WMIi0YV96jtexDyizT9oC+Jv2tlA4JGMVZh9Zkd1O2lNgLCFixwyu7sc4NkVej9KnbHQqKE0WnYnJ
-        7MvANHPcRGcQG+HFMAXaNv/ypeuT16Yg94kzhNTEjh6y1ETy7qGf+0NyoZ0iqZ9yXuAQAWf6yXSiX
-        n1kJlpobcPJUTqlt/eXrTepODHGpdOPLxryJ5xf4s7C869URkZs5qNijL3l0pCPTH0pE+GvCb9Z1x
-        oe6NyBZA==;
+        bh=GsHtQU8KJAoqQzvwuBiCrQ89XAn+XcV7cD1jiGzE/Fc=; b=WE09Dz52yyz5FZttM331+eO7dO
+        wCVZXhqbuoKexdScJZJaU6wAc7iqwOJhmSwdsWW1miAZPiGO4+W/I1r+zFqZ7MOnlsMh8dAcxfBXV
+        NcDR3g8zP6y7bwUJt5HoDy2w+i13leMJl6E5Rw2/BWNFVPH6Vh9H9cVShbX5gr25gLJ9BjdxqIJc1
+        /wTT6fb18Ege5BIzXc+3tkUh59wKZLY4fogDfKrezI/KvL9UebWjg/VymfnGC8yWGffh1yc696OHt
+        vrAfYEAS2iAKb56EZlZJ0uHuB5HH4xQg6QvqJnSRn9cUllwKsgB+hxZFIzy3NhMze/YxdMNfNGTR0
+        IsyJ/CzQ==;
 Received: from 089144211136.atnat0020.highway.a1.net ([89.144.211.136] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gMqSo-0004t9-VK; Wed, 14 Nov 2018 08:23:55 +0000
+        id 1gMqSr-0004tn-MV; Wed, 14 Nov 2018 08:23:58 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
@@ -48,9 +48,9 @@ To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
         linux-mm@kvack.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 14/34] powerpc/dart: remove dead cleanup code in iommu_init_early_dart
-Date:   Wed, 14 Nov 2018 09:22:54 +0100
-Message-Id: <20181114082314.8965-15-hch@lst.de>
+Subject: [PATCH 15/34] powerpc/dart: use the generic iommu bypass code
+Date:   Wed, 14 Nov 2018 09:22:55 +0100
+Message-Id: <20181114082314.8965-16-hch@lst.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181114082314.8965-1-hch@lst.de>
 References: <20181114082314.8965-1-hch@lst.de>
@@ -62,43 +62,87 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If dart_init failed we didn't have a chance to setup dma or controller
-ops yet, so there is no point in resetting them.
+Use the generic iommu bypass code instead of overriding set_dma_mask.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/powerpc/sysdev/dart_iommu.c | 11 +----------
- 1 file changed, 1 insertion(+), 10 deletions(-)
+ arch/powerpc/sysdev/dart_iommu.c | 45 +++++++++++---------------------
+ 1 file changed, 15 insertions(+), 30 deletions(-)
 
 diff --git a/arch/powerpc/sysdev/dart_iommu.c b/arch/powerpc/sysdev/dart_iommu.c
-index a5b40d1460f1..283ce04c5844 100644
+index 283ce04c5844..2681a19347ba 100644
 --- a/arch/powerpc/sysdev/dart_iommu.c
 +++ b/arch/powerpc/sysdev/dart_iommu.c
-@@ -428,7 +428,7 @@ void __init iommu_init_early_dart(struct pci_controller_ops *controller_ops)
+@@ -360,13 +360,6 @@ static void iommu_table_dart_setup(void)
+ 	set_bit(iommu_table_dart.it_size - 1, iommu_table_dart.it_map);
+ }
  
- 	/* Initialize the DART HW */
+-static void pci_dma_dev_setup_dart(struct pci_dev *dev)
+-{
+-	if (dart_is_u4)
+-		set_dma_offset(&dev->dev, DART_U4_BYPASS_BASE);
+-	set_iommu_table_base(&dev->dev, &iommu_table_dart);
+-}
+-
+ static void pci_dma_bus_setup_dart(struct pci_bus *bus)
+ {
+ 	if (!iommu_table_dart_inited) {
+@@ -390,27 +383,16 @@ static bool dart_device_on_pcie(struct device *dev)
+ 	return false;
+ }
+ 
+-static int dart_dma_set_mask(struct device *dev, u64 dma_mask)
++static void pci_dma_dev_setup_dart(struct pci_dev *dev)
+ {
+-	if (!dev->dma_mask || !dma_supported(dev, dma_mask))
+-		return -EIO;
+-
+-	/* U4 supports a DART bypass, we use it for 64-bit capable
+-	 * devices to improve performances. However, that only works
+-	 * for devices connected to U4 own PCIe interface, not bridged
+-	 * through hypertransport. We need the device to support at
+-	 * least 40 bits of addresses.
+-	 */
+-	if (dart_device_on_pcie(dev) && dma_mask >= DMA_BIT_MASK(40)) {
+-		dev_info(dev, "Using 64-bit DMA iommu bypass\n");
+-		set_dma_ops(dev, &dma_nommu_ops);
+-	} else {
+-		dev_info(dev, "Using 32-bit DMA via iommu\n");
+-		set_dma_ops(dev, &dma_iommu_ops);
+-	}
++	if (dart_is_u4 && dart_device_on_pcie(&dev->dev))
++		set_dma_offset(&dev->dev, DART_U4_BYPASS_BASE);
++	set_iommu_table_base(&dev->dev, &iommu_table_dart);
++}
+ 
+-	*dev->dma_mask = dma_mask;
+-	return 0;
++static bool iommu_bypass_supported_dart(struct pci_dev *dev, u64 mask)
++{
++	return dart_is_u4 && dart_device_on_pcie(&dev->dev);
+ }
+ 
+ void __init iommu_init_early_dart(struct pci_controller_ops *controller_ops)
+@@ -430,12 +412,15 @@ void __init iommu_init_early_dart(struct pci_controller_ops *controller_ops)
  	if (dart_init(dn) != 0)
--		goto bail;
-+		return;
+ 		return;
  
- 	/* Setup bypass if supported */
- 	if (dart_is_u4)
-@@ -439,15 +439,6 @@ void __init iommu_init_early_dart(struct pci_controller_ops *controller_ops)
+-	/* Setup bypass if supported */
+-	if (dart_is_u4)
+-		ppc_md.dma_set_mask = dart_dma_set_mask;
+-
++	/*
++	 * U4 supports a DART bypass, we use it for 64-bit capable devices to
++	 * improve performance.  However, that only works for devices connected
++	 * to the U4 own PCIe interface, not bridged through hypertransport.
++	 * We need the device to support at least 40 bits of addresses.
++	 */
+ 	controller_ops->dma_dev_setup = pci_dma_dev_setup_dart;
+ 	controller_ops->dma_bus_setup = pci_dma_bus_setup_dart;
++	controller_ops->iommu_bypass_supported = iommu_bypass_supported_dart;
  
  	/* Setup pci_dma ops */
  	set_pci_dma_ops(&dma_iommu_ops);
--	return;
--
-- bail:
--	/* If init failed, use direct iommu and null setup functions */
--	controller_ops->dma_dev_setup = NULL;
--	controller_ops->dma_bus_setup = NULL;
--
--	/* Setup pci_dma ops */
--	set_pci_dma_ops(&dma_nommu_ops);
- }
- 
- #ifdef CONFIG_PM
 -- 
 2.19.1
 
