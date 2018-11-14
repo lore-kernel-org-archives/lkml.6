@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4B4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 25784C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5105722527
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D82D122529
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SbxQA5hH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5105722527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ML2IlYys"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D82D122529
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388721AbeKOIaH (ORCPT
+        id S2388743AbeKOIaL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:30:07 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37308 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:30:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37350 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728102AbeKOIaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:30:07 -0500
+        id S1728102AbeKOIaK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:30:10 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C1B1422527;
-        Wed, 14 Nov 2018 22:25:02 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 921DD22527;
+        Wed, 14 Nov 2018 22:25:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234302;
-        bh=2dO5c+6+CxbfnRW7DqfhZvwupx7L0y3g41ojBDSVZJU=;
+        s=default; t=1542234305;
+        bh=B2xTaqHodWeIU3RwaaX9XP6z3DnX3YSw3TkrEhk26Ew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SbxQA5hH8vGNo6a7biDJaIYflwFwkvd+SgAVPxbSWKmhYShPFWIqKbQ9YgTbcyQ9d
-         t9gXIBVwwrtzg7QCw7Nm0vRuFco+kjWdsudamAi2cehtA65m85dfYuZX8idf8QooNM
-         IleBQcUYVs0DdeWOYh2BZ/Pl7pYYSEmyZwoI3pRY=
+        b=ML2IlYys1/koaxFHFhYoFiaoi5Wnx/prO9pmvMo7jJiNSam++TqGaxFzBosKao7aa
+         eblTcDZr1JsziS4Q5aZYvXvjIjdabvXTrFSd0mNt1R0MC5xpL/r3t9+uCQm2dEbfzH
+         HeOAyvIAduYyJ04UjDFF3wUX3xwtj7COOmKyFH8Q=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
+Cc:     Igor Russkikh <Igor.Russkikh@aquantia.com>,
         Igor Russkikh <igor.russkikh@aquantia.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 54/59] net: aquantia: fix potential IOMMU fault after driver unbind
-Date:   Wed, 14 Nov 2018 17:23:26 -0500
-Message-Id: <20181114222335.99339-54-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 55/59] net: aquantia: fixed enable unicast on 32 macvlan
+Date:   Wed, 14 Nov 2018 17:23:27 -0500
+Message-Id: <20181114222335.99339-55-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -54,112 +54,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
+From: Igor Russkikh <Igor.Russkikh@aquantia.com>
 
-[ Upstream commit 7a1bb49461b12b2e6332a4d054256835f45203f3 ]
+[ Upstream commit bfaa9f8553d5c20703781e63f4fc8cb4792f18fd ]
 
-IOMMU fault may occurr on unbind/bind or if_down/if_up sequence.
+Fixed a condition mistake due to which macvlans unicast
+item number 32 was not added in the unicast filter.
 
-Although driver disables the rings on down, this is not enough.
-Due to internal HW design, during subsequent initialization
-NIC sometimes may reuse RX descriptors cache and write to the
-host memory from the descriptor cache.
-That's get catched by IOMMU on host.
+The consequence is that when exactly 32 macvlans are created
+on NIC, the last created macvlan receives no traffic because
+its MAC was not registered in HW.
 
-This patch invalidates the descriptor cache in NIC on interface down
-to prevent writing to the cached descriptors and to the memory pointed
-in those descriptors.
-
-Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
+Fixes: 94b3b542303f ("net: aquantia: vlan unicast address list correct handling")
 Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
+Tested-by: Nikita Danilov <nikita.danilov@aquantia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- .../aquantia/atlantic/hw_atl/hw_atl_b0.c       |  6 ++++++
- .../aquantia/atlantic/hw_atl/hw_atl_llh.c      |  8 ++++++++
- .../aquantia/atlantic/hw_atl/hw_atl_llh.h      |  3 +++
- .../atlantic/hw_atl/hw_atl_llh_internal.h      | 18 ++++++++++++++++++
- 4 files changed, 35 insertions(+)
+ drivers/net/ethernet/aquantia/atlantic/aq_nic.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-index 3bdab972420b..d6d7e5e6fa18 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
-@@ -913,6 +913,12 @@ static int hw_atl_b0_hw_interrupt_moderation_set(struct aq_hw_s *self)
- static int hw_atl_b0_hw_stop(struct aq_hw_s *self)
- {
- 	hw_atl_b0_hw_irq_disable(self, HW_ATL_B0_INT_MASK);
-+
-+	/* Invalidate Descriptor Cache to prevent writing to the cached
-+	 * descriptors and to the data pointer of those descriptors
-+	 */
-+	hw_atl_rdm_rx_dma_desc_cache_init_set(self, 1);
-+
- 	return aq_hw_err_from_flags(self);
- }
+diff --git a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+index 7a22d0257e04..cd0a2fb354b7 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
++++ b/drivers/net/ethernet/aquantia/atlantic/aq_nic.c
+@@ -590,7 +590,7 @@ int aq_nic_set_multicast_list(struct aq_nic_s *self, struct net_device *ndev)
+ 		}
+ 	}
  
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
-index 10ba035dadb1..10ec5dc88e24 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
-@@ -619,6 +619,14 @@ void hw_atl_rpb_rx_flow_ctl_mode_set(struct aq_hw_s *aq_hw, u32 rx_flow_ctl_mode
- 			    HW_ATL_RPB_RX_FC_MODE_SHIFT, rx_flow_ctl_mode);
- }
- 
-+void hw_atl_rdm_rx_dma_desc_cache_init_set(struct aq_hw_s *aq_hw, u32 init)
-+{
-+	aq_hw_write_reg_bit(aq_hw, HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_ADR,
-+			    HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_MSK,
-+			    HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_SHIFT,
-+			    init);
-+}
-+
- void hw_atl_rpb_rx_pkt_buff_size_per_tc_set(struct aq_hw_s *aq_hw,
- 					    u32 rx_pkt_buff_size_per_tc, u32 buffer)
- {
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
-index dfb426f2dc2c..b3bf64b48b93 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
-@@ -325,6 +325,9 @@ void hw_atl_rpb_rx_pkt_buff_size_per_tc_set(struct aq_hw_s *aq_hw,
- 					    u32 rx_pkt_buff_size_per_tc,
- 					    u32 buffer);
- 
-+/* set rdm rx dma descriptor cache init */
-+void hw_atl_rdm_rx_dma_desc_cache_init_set(struct aq_hw_s *aq_hw, u32 init);
-+
- /* set rx xoff enable (per tc) */
- void hw_atl_rpb_rx_xoff_en_per_tc_set(struct aq_hw_s *aq_hw, u32 rx_xoff_en_per_tc,
- 				      u32 buffer);
-diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
-index e0cf70120f1d..e2ecdb1c5a5c 100644
---- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
-+++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
-@@ -293,6 +293,24 @@
- /* default value of bitfield desc{d}_reset */
- #define HW_ATL_RDM_DESCDRESET_DEFAULT 0x0
- 
-+/* rdm_desc_init_i bitfield definitions
-+ * preprocessor definitions for the bitfield rdm_desc_init_i.
-+ * port="pif_rdm_desc_init_i"
-+ */
-+
-+/* register address for bitfield rdm_desc_init_i */
-+#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_ADR 0x00005a00
-+/* bitmask for bitfield rdm_desc_init_i */
-+#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_MSK 0xffffffff
-+/* inverted bitmask for bitfield rdm_desc_init_i */
-+#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_MSKN 0x00000000
-+/* lower bit position of bitfield  rdm_desc_init_i */
-+#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_SHIFT 0
-+/* width of bitfield rdm_desc_init_i */
-+#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_WIDTH 32
-+/* default value of bitfield rdm_desc_init_i */
-+#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_DEFAULT 0x0
-+
- /* rx int_desc_wrb_en bitfield definitions
-  * preprocessor definitions for the bitfield "int_desc_wrb_en".
-  * port="pif_rdm_int_desc_wrb_en_i"
+-	if (i > 0 && i < AQ_HW_MULTICAST_ADDRESS_MAX) {
++	if (i > 0 && i <= AQ_HW_MULTICAST_ADDRESS_MAX) {
+ 		packet_filter |= IFF_MULTICAST;
+ 		self->mc_list.count = i;
+ 		self->aq_hw_ops->hw_multicast_list_set(self->aq_hw,
 -- 
 2.17.1
 
