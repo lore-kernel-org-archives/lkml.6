@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A85FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 01DF2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:26:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 35C622252D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AAC672252D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:59 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ViAnRbUU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35C622252D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="b3MTIW9V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AAC672252D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389081AbeKOIa6 (ORCPT
+        id S2389092AbeKOIbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:30:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38112 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:31:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38160 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728919AbeKOIa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:30:57 -0500
+        id S1726579AbeKOIa6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:30:58 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E416122547;
-        Wed, 14 Nov 2018 22:25:52 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 5831E2252F;
+        Wed, 14 Nov 2018 22:25:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542234353;
-        bh=mHAz9MAnJH7tul6c0bTk5fWgSzjxRjseFFNcPFQmS34=;
+        bh=d5VhEYfzLIlHLAILJAyEDxdgBMHN66zIP5IgevfMIbs=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ViAnRbUUB8AqjpJ17RNQ4ojDbfxsGAV/8cWfezyYQQy0UHs5Vp4P4qBZWlCZpF6Sy
-         pwPOrh6Hk632lxJuQTMDqt4wYg/sE5JtZFirrFQZRxdi4Fr5KJP8p/0V65UN/rrmWk
-         7solk1GWFbdAbPkmTmUIDpcRDbYeamiwXkqQsf1k=
+        b=b3MTIW9VJcfabjz8VyfXdVdHWxq2MZ/p+2mYPkuU8QNE9W7NnP+5IMeSVJqC4wJBU
+         Vg1zhfHOPalrDAFfZSIFMCbavShAA5aUfVuHsWm9qsF4BQHSi5LEcYtyDQIWqMYPN9
+         h9h0kL2S+LbI8qmQ1bdmW0ntenmUfuANHBwtoRt4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
-        "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 26/27] net: smsc95xx: Fix MTU range
-Date:   Wed, 14 Nov 2018 17:25:15 -0500
-Message-Id: <20181114222520.99926-26-sashal@kernel.org>
+Cc:     Vasily Averin <vvs@virtuozzo.com>, Theodore Ts'o <tytso@mit.edu>,
+        stable@kernel.org, Sasha Levin <sashal@kernel.org>,
+        linux-ext4@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 27/27] ext4: missing !bh check in ext4_xattr_inode_write()
+Date:   Wed, 14 Nov 2018 17:25:16 -0500
+Message-Id: <20181114222520.99926-27-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222520.99926-1-sashal@kernel.org>
 References: <20181114222520.99926-1-sashal@kernel.org>
@@ -54,37 +53,46 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-[ Upstream commit 85b18b0237ce9986a81a1b9534b5e2ee116f5504 ]
+[ Upstream commit eb6984fa4ce2837dcb1f66720a600f31b0bb3739 ]
 
-The commit f77f0aee4da4 ("net: use core MTU range checking in USB NIC
-drivers") introduce a common MTU handling for usbnet. But it's missing
-the necessary changes for smsc95xx. So set the MTU range accordingly.
+According to Ted Ts'o ext4_getblk() called in ext4_xattr_inode_write()
+should not return bh = NULL
 
-This patch has been tested on a Raspberry Pi 3.
+The only time that bh could be NULL, then, would be in the case of
+something really going wrong; a programming error elsewhere (perhaps a
+wild pointer dereference) or I/O error causing on-disk file system
+corruption (although that would be highly unlikely given that we had
+*just* allocated the blocks and so the metadata blocks in question
+probably would still be in the cache).
 
-Fixes: f77f0aee4da4 ("net: use core MTU range checking in USB NIC drivers")
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Fixes: e50e5129f384 ("ext4: xattr-in-inode support")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org # 4.13
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/smsc95xx.c | 2 ++
- 1 file changed, 2 insertions(+)
+ fs/ext4/xattr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index 9b8afe4da73b..2f65975a121f 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -1321,6 +1321,8 @@ static int smsc95xx_bind(struct usbnet *dev, struct usb_interface *intf)
- 	dev->net->ethtool_ops = &smsc95xx_ethtool_ops;
- 	dev->net->flags |= IFF_MULTICAST;
- 	dev->net->hard_header_len += SMSC95XX_TX_OVERHEAD_CSUM;
-+	dev->net->min_mtu = ETH_MIN_MTU;
-+	dev->net->max_mtu = ETH_DATA_LEN;
- 	dev->hard_mtu = dev->net->mtu + dev->net->hard_header_len;
- 
- 	pdata->dev = dev;
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 9bc50eef6127..34975e1aa7d2 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1387,6 +1387,12 @@ static int ext4_xattr_inode_write(handle_t *handle, struct inode *ea_inode,
+ 		bh = ext4_getblk(handle, ea_inode, block, 0);
+ 		if (IS_ERR(bh))
+ 			return PTR_ERR(bh);
++		if (!bh) {
++			WARN_ON_ONCE(1);
++			EXT4_ERROR_INODE(ea_inode,
++					 "ext4_getblk() return bh = NULL");
++			return -EFSCORRUPTED;
++		}
+ 		ret = ext4_journal_get_write_access(handle, bh);
+ 		if (ret)
+ 			goto out;
 -- 
 2.17.1
 
