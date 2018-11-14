@@ -2,204 +2,129 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD765C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:21:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F22D3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:30:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6EF7F2080F
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:21:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6EF7F2080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 991F02086A
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:30:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 991F02086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732766AbeKNUYf (ORCPT
+        id S1732673AbeKNUdC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 15:24:35 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:42100 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728071AbeKNUYf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 15:24:35 -0500
-Received: by mail-ed1-f67.google.com with SMTP id j6so8159327edp.9;
-        Wed, 14 Nov 2018 02:21:56 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=NyI4zlt3ENMEtsl6srjlGkp8VgEV9Zi81V1qPxmM7FM=;
-        b=MgeP7dECTA8mLZriMN7pzKkZE6euxL/WSIhBOIpRDK7alKbvUp7EIrwoJNZvAB4XgT
-         1ogz47nTEuuV6fLm4H2/3gnthNHbYk9UJM3oAHDC4XCJne8ku/Pb7Z44gqNeTpxSBoZ0
-         1vZrqpG/enxootW12fOUsqjHZQLARw8j49KoNh0nWQoskbYYO7xSafCGWvkLgqg7Q3O0
-         kvmHB5MAb/sUpoJ8LvfJHbYdHaBPLYxk9VJsFFioKiCNnYxCKWIYWIkQwiEsdLN27l6P
-         WEgPQIFEoL3836x0C5mltrdyzmnsvFyFiScevNSSLHbrj4Mqa0LwE/G+3nqD+yJ1JvAC
-         hirA==
-X-Gm-Message-State: AGRZ1gIIBA0aHT2Ow58zPITdsFwXV/NquXzTyvlvPrBGd+Lj1fkUfe8E
-        5tuA0Js5Ws9A/bv2F++1qkRKADXTR60=
-X-Google-Smtp-Source: AJdET5eSJYTqFrAdzl6q0SOvlSiHNBRvf4joIg6GzZytJT6c9oGcGv86A/CIyDRPJsLo12HKmdd5SA==
-X-Received: by 2002:a50:ccdd:: with SMTP id b29mr1595990edj.102.1542190915042;
-        Wed, 14 Nov 2018 02:21:55 -0800 (PST)
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com. [209.85.128.50])
-        by smtp.gmail.com with ESMTPSA id o31-v6sm6049526eda.72.2018.11.14.02.21.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 02:21:54 -0800 (PST)
-Received: by mail-wm1-f50.google.com with SMTP id f1-v6so13129642wmg.1;
-        Wed, 14 Nov 2018 02:21:54 -0800 (PST)
-X-Received: by 2002:a1c:9f01:: with SMTP id i1-v6mr1316165wme.8.1542190914018;
- Wed, 14 Nov 2018 02:21:54 -0800 (PST)
+        Wed, 14 Nov 2018 15:33:02 -0500
+Received: from mx2.suse.de ([195.135.220.15]:45756 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726823AbeKNUdC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 15:33:02 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 73514AFE4;
+        Wed, 14 Nov 2018 10:30:20 +0000 (UTC)
+Date:   Wed, 14 Nov 2018 11:30:14 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Chanho Min <chanho.min@lge.com>
+Cc:     'Oleg Nesterov' <oleg@redhat.com>,
+        "'Rafael J. Wysocki'" <rjw@rjwysocki.net>,
+        'Pavel Machek' <pavel@ucw.cz>,
+        'Len Brown' <len.brown@intel.com>,
+        'Andrew Morton' <akpm@linux-foundation.org>,
+        "'Eric W. Biederman'" <ebiederm@xmission.com>,
+        'Christian Brauner' <christian@brauner.io>,
+        'Anna-Maria Gleixner' <anna-maria@linutronix.de>,
+        'Alexander Viro' <viro@zeniv.linux.org.uk>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        'Seungho Park' <seungho1.park@lge.com>,
+        'Inkyu Hwang' <inkyu.hwang@lge.com>,
+        'Donghwan Jung' <donghwan.jung@lge.com>,
+        'Jongsung Kim' <neidhard.kim@lge.com>
+Subject: Re: [PATCH v2] exec: make de_thread() freezable
+Message-ID: <20181114103014.GN23419@dhcp22.suse.cz>
+References: <1541994885-20059-1-git-send-email-chanho.min@lge.com>
+ <20181113145339.GD16182@dhcp22.suse.cz>
+ <20181113161858.GE30990@redhat.com>
+ <20181113180058.GT15120@dhcp22.suse.cz>
+ <014a01d47c03$6b64eef0$422eccd0$@lge.com>
 MIME-Version: 1.0
-References: <20181004122855.22981-1-icenowy@aosc.io> <20181004122855.22981-5-icenowy@aosc.io>
-In-Reply-To: <20181004122855.22981-5-icenowy@aosc.io>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Wed, 14 Nov 2018 18:21:33 +0800
-X-Gmail-Original-Message-ID: <CAGb2v668dozjLm9mWUw_Y12AZ6DM2ku9dgQ8B8feABNeFf3QSw@mail.gmail.com>
-Message-ID: <CAGb2v668dozjLm9mWUw_Y12AZ6DM2ku9dgQ8B8feABNeFf3QSw@mail.gmail.com>
-Subject: Re: [linux-sunxi] [PATCH v4 04/10] arm64: allwinner: dts: h6: add
- USB2-related device nodes
-To:     Icenowy Zheng <icenowy@aosc.io>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <014a01d47c03$6b64eef0$422eccd0$@lge.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Wed 14-11-18 19:18:42, Chanho Min wrote:
+> > > > It's been some time since I have looked into this code so bear with
+> me.
+> > > > One thing is not really clear to me. Why does it help to exclude this
+> > > > particular task from the freezer
+> > >
+> > > we don't exclude it,
+> > >
+> > > > when it is not sleeping in the freezer.
+> > >
+> > > Yes, it is not sleeping in __refrigerator(), but it does
+> > >
+> > > 	schedule();
+> > > 	freezer_count();
+> > >
+> > > so it will enter __refrigerator() right after wakeup. If it won't be
+> > woken
+> > > up we do not care, we can consider it "frozen".
+> > 
+> > Right, but this is just silencing the freezing code to exclude this
+> > task, right?
+> > 
+> > > > I can see how other threads need to be zapped and TASK_WAKEKILL
+> > doesn't
+> > > > do that but shouldn't we fix that instead?
+> > >
+> > > Not sure I understand, but unlikely we can (or want) to make
+> > __refrigerator()
+> > > killable.
+> > 
+> > Why would that be a problem. If the kill is fatal then why to keep the
+> > killed task in the fridge?
+> > 
+> 
+> Is it  different between 'the killed task is frozen' and '__refrigerator()
+> is killable'?
+> From a general '__refrigerator()' implementation point of view I know that
+> it should not be killable.
 
-On Thu, Oct 4, 2018 at 8:30 PM Icenowy Zheng <icenowy@aosc.io> wrote:
->
-> Allwinner H6 has two USB2 ports, one OTG and one host-only.
->
-> Add device tree nodes related to them.
->
-> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> ---
-> No changes in v4.
->
-> Changes in v3:
-> - Removed the wrongly introduced usb3phy node.
-> - Added Chen-Yu's Review tag.
->
->  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 81 ++++++++++++++++++++
->  1 file changed, 81 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> index 040828d2e2c0..3d60af6cb3ae 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
-> @@ -258,6 +258,87 @@
->                         status = "disabled";
->                 };
->
-> +               usb2otg: usb@5100000 {
-> +                       compatible = "allwinner,sun8i-a33-musb";
+Is that because there are many paths that do not terminate right after
+the task get out of the fridge? Like the signal path?
 
-I added an SoC-specific compatible: "allwinner,sun50i-h6-musb".
+> > > Otherwise, how can we fix that?
+> > 
+> > We can mark all threads PF_NOFREEZE and wake them up. This would require
+> > some more changes of course but wouldn't that be a more appropriate
+> > solution? Do we want to block exec for ever just because some threads
+> > are in the fridge?
+> > 
+> 
+> IMHO, It seems to be difficult and buggy to control with PF_NOFREEZE.
+> Because,
+> The sub-thread can freeze and receive SIG_KILL before the marking of
+> PF_NOFREEZE
+> and it should be freezable in other cases.
 
-I'm also curious as to whether the MUSB controller was tested or not,
-since Allwinner now has EHCI/OHCI host pairs for host mode, and the Pine H64
-only does host mode.
+But we do control the ordering in this path no?
 
-> +                       reg = <0x05100000 0x0400>;
-> +                       clocks = <&ccu CLK_BUS_OTG>;
-> +                       resets = <&ccu RST_BUS_OTG>;
-> +                       interrupts = <GIC_SPI 23 IRQ_TYPE_LEVEL_HIGH>;
-> +                       interrupt-names = "mc";
-> +                       phys = <&usb2phy 0>;
-> +                       phy-names = "usb";
-> +                       extcon = <&usb2phy 0>;
-> +                       status = "disabled";
-> +               };
-> +
-> +               usb2phy: phy@5100400 {
-> +                       compatible = "allwinner,sun50i-h6-usb-phy";
-> +                       reg = <0x05100400 0x14>,
-> +                             <0x05101800 0x4>,
-> +                             <0x05311800 0x4>;
-> +                       reg-names = "phy_ctrl",
-> +                                   "pmu0",
-> +                                   "pmu3";
-> +                       clocks = <&ccu CLK_USB_PHY0>,
-> +                                <&ccu CLK_USB_PHY3>;
-> +                       clock-names = "usb0_phy",
-> +                                     "usb3_phy";
-> +                       resets = <&ccu RST_USB_PHY0>,
-> +                                <&ccu RST_USB_PHY3>;
-> +                       reset-names = "usb0_reset",
-> +                                     "usb3_reset";
-> +                       status = "disabled";
-> +                       #phy-cells = <1>;
-> +               };
-> +
-> +               ehci0: usb@5101000 {
-> +                       compatible = "allwinner,sun50i-h6-ehci", "generic-ehci";
-> +                       reg = <0x05101000 0x100>;
-> +                       interrupts = <GIC_SPI 24 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&ccu CLK_BUS_OHCI0>,
-> +                                <&ccu CLK_BUS_EHCI0>,
-> +                                <&ccu CLK_USB_OHCI0>;
-> +                       resets = <&ccu RST_BUS_OHCI0>,
-> +                                <&ccu RST_BUS_EHCI0>;
-> +                       status = "disabled";
-> +               };
-> +
-> +               ohci0: usb@5101400 {
-> +                       compatible = "allwinner,sun50i-h6-ohci", "generic-ohci";
-> +                       reg = <0x05101400 0x100>;
-> +                       interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&ccu CLK_BUS_OHCI0>,
-> +                                <&ccu CLK_USB_OHCI0>;
-> +                       resets = <&ccu RST_BUS_OHCI0>;
-> +                       status = "disabled";
-> +               };
-> +
-> +               ehci3: usb@5311000 {
-> +                       compatible = "allwinner,sun50i-h6-ehci", "generic-ehci";
-> +                       reg = <0x05311000 0x100>;
-> +                       interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&ccu CLK_BUS_OHCI3>,
-> +                                <&ccu CLK_BUS_EHCI3>,
-> +                                <&ccu CLK_USB_OHCI3>;
-> +                       resets = <&ccu RST_BUS_OHCI3>,
-> +                                <&ccu RST_BUS_EHCI3>;
-> +                       phys = <&usb2phy 3>;
-> +                       phy-names = "usb";
-> +                       status = "disabled";
-> +               };
-> +
-> +               ohci3: usb@5311400 {
-> +                       compatible = "allwinner,sun50i-h6-ohci", "generic-ohci";
-> +                       reg = <0x05311400 0x100>;
-> +                       interrupts = <GIC_SPI 29 IRQ_TYPE_LEVEL_HIGH>;
-> +                       clocks = <&ccu CLK_BUS_OHCI3>,
-> +                                <&ccu CLK_USB_OHCI3>;
-> +                       resets = <&ccu RST_BUS_OHCI3>;
-> +                       phys = <&usb2phy 3>;
-> +                       phy-names = "usb";
-> +                       status = "disabled";
-> +               };
-> +
+> I don't understand why it isn't appropriate for exec to block. The
+> exec can freeze. When tasks are thawed, the killed sub-thread will die
+> and wake de_thread(). The exec will continue to work from resume.
 
-This didn't apply cleanly due to the new HDMI nodes. I fixed it up locally.
-
-ChenYu
-
->                 r_ccu: clock@7010000 {
->                         compatible = "allwinner,sun50i-h6-r-ccu";
->                         reg = <0x07010000 0x400>;
-> --
-> 2.18.0
->
-> --
-> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
-> For more options, visit https://groups.google.com/d/optout.
+Because this is fragile. I haven't checked the full set of resources the
+task holds when in this path but I can imagine we can introduce lock
+dependency on freezing really easily.
+-- 
+Michal Hocko
+SUSE Labs
