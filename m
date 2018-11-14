@@ -2,120 +2,201 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC5EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:40:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 997DEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:40:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 815CB20818
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:40:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815CB20818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5448020818
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:40:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O5tHoxOb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5448020818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733270AbeKOBoa (ORCPT
+        id S2387447AbeKOBof (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:44:30 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38219 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728000AbeKOBoa (ORCPT
+        Wed, 14 Nov 2018 20:44:35 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:33716 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728000AbeKOBof (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:44:30 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p4-v6so7963318plo.5
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 07:40:45 -0800 (PST)
+        Wed, 14 Nov 2018 20:44:35 -0500
+Received: by mail-vs1-f66.google.com with SMTP id p74so9781503vsc.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 07:40:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=qhXBUPYPE3l/6xSc85gdUJMtEaXW+SdKf9Phc9De/B8=;
+        b=O5tHoxOb0xZT1oFMWnJLBbZgy8YpwssA8vPupJzplmRUhPvshHurejuvgNIRI4C2no
+         7AqjCTWtHwx8YP/HNBlcOeXt9hO3k3Bbj7RJoANiQvMmb2BApeiX3KPEjGaFjll5xd4H
+         SAuyV1xFsEHsc/AoBjaAIcKCkP7ZvstN+iFEfAVD4UsTCNzkbr6JmlALsqPUe15y4TEO
+         ercIpwGXe+okX2fqPFh7JxUTTsghAfsLvUCaMcERPrN9LBPMPSXs/W0cGVdne/cGjnqK
+         bhiZE2nnArjNRzZCy/XXZwu1fqgcyTJKBfSRminnQMugfVlp46i2PqOVkWj6wgPEXJsC
+         7W+Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=aMOqUwqEcY+BbL/wGADWN2ro23WXGClZxKZcWgBhzjY=;
-        b=C3CZDVUBHfeAwKHoY3XLtI+8rb8hw7rk5Ee1g0X6uoV3fsPy7fLAulasNZliqtdyqc
-         vvf7OF3Y0yD4xyNe4emWLuh42bJ3Jhn3vhR09SsKMXoHsOaQwizqVjwe/IIZEclJ5cBr
-         NX1BNg12Aep5HU8/OOPA1q1X/AtHvNbpyO2lq8Ax1+DqaAch8LeAsloI/wIswnomMbYN
-         GuN2dpMzxR5fCulBoOJSnkkrKD6y7zx53ovHe7lfUJn5Ae+BYBLuHe+X3Z8e7xseOIn5
-         GmY/AShCqb9zUPEoxHsySsn0l/2ur7NoA38G/li2bmGXD7a9qk7uY7kHqtnIM7D5Mnm4
-         DLxQ==
-X-Gm-Message-State: AGRZ1gI9Asu6F8a/fTlbnsUVLvvUJ332q/M86PUSmiixtCEq+p2cbqPU
-        vLK9TXb8GOEp69iI/musjA+PH4+4tBg=
-X-Google-Smtp-Source: AJdET5efyBiyGf5U9EhWGwJGkkcywA3rp2IOJOFC6BvHiW+VykwBBnhD+lI1FM6o1EREU0yXfV1H3g==
-X-Received: by 2002:a17:902:9a91:: with SMTP id w17-v6mr2323462plp.274.1542210045527;
-        Wed, 14 Nov 2018 07:40:45 -0800 (PST)
-Received: from [192.168.46.186] ([64.114.255.114])
-        by smtp.gmail.com with ESMTPSA id b27sm13952395pfh.113.2018.11.14.07.40.43
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 07:40:44 -0800 (PST)
-Subject: Re: [PATCH] Revert "HID: uhid: use strlcpy() instead of strncpy()"
-To:     David Herrmann <dh.herrmann@gmail.com>, linux-input@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, jikos@kernel.org,
-        benjamin.tissoires@redhat.com, Kees Cook <keescook@chromium.org>
-References: <20181114131642.21425-1-dh.herrmann@gmail.com>
-From:   Laura Abbott <labbott@redhat.com>
-Message-ID: <ea944fb3-0cd9-e6e6-5449-faab7c9603c1@redhat.com>
-Date:   Wed, 14 Nov 2018 07:40:43 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=qhXBUPYPE3l/6xSc85gdUJMtEaXW+SdKf9Phc9De/B8=;
+        b=Vv8PBkeFUYjpq0KcTlOUzqrdV0tdRIhiCW9AKTbUk+SgDlcGs8+6SlCOQa/38EG51A
+         gYUsDGUTl98pcKRrnrZXDNzZ/+7NuQHIKJ9Oyw/Dff0hK/TaYuqkAVpeF6EfXsCbGWhC
+         D7D+o2TIoHg0XL5mt5L7OJGJuMcXTpO8hheqfEs9ltJh6wqC+nPfBtpHzBVGHl8MT/iK
+         bn2MZgLpTlzhzzccMpyPz10i51XRS7ah3pX3GXFwayUuq6xW32S+TsZ/Q2xkpWD/zg+8
+         dFonFCi3FfqnkDkc+AH95JNk0GREEo9f0q4pDmBGPSPpT5oWJqw0DjpUsNjpD+kzO2kq
+         Q4+g==
+X-Gm-Message-State: AGRZ1gJAzijWir3xbfxz7rfTTKfLGOKRVFaYAH5gr+zLVrONevM4j6tr
+        8f0CEYGS/phR/CEE1zgXW+SDUazMBvpdJYOL37o5Dw==
+X-Google-Smtp-Source: AJdET5duI6gFzkjB9/3N/jXwI88Vod3a9ycACZLfwG3Oeb8HwlZ9siexlS6LwznRBJTN/Bl7C1woLcTAcPC5Jn3NGxs=
+X-Received: by 2002:a67:6e87:: with SMTP id j129mr1055506vsc.171.1542210048344;
+ Wed, 14 Nov 2018 07:40:48 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181114131642.21425-1-dh.herrmann@gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Wed, 14 Nov 2018 07:40:46
+ -0800 (PST)
+In-Reply-To: <5853c297-9d84-86e5-dede-aa2957562c6b@arm.com>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
+ <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <877ehjx447.fsf@oldenburg.str.redhat.com>
+ <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+ <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
+ <20181113193859.GJ3505@e103592.cambridge.arm.com> <5853c297-9d84-86e5-dede-aa2957562c6b@arm.com>
+From:   Daniel Colascione <dancol@google.com>
+Date:   Wed, 14 Nov 2018 07:40:46 -0800
+Message-ID: <CAKOZuesta_V=doXsVLc2E6WCQvywdur3F+u2pFKaPN+CEQd+ZQ@mail.gmail.com>
+Subject: Re: Official Linux system wrapper library?
+To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
+Cc:     Dave P Martin <Dave.Martin@arm.com>, nd <nd@arm.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        "Carlos O'Donell" <carlos@redhat.com>,
+        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/14/18 5:16 AM, David Herrmann wrote:
-> This reverts commit 336fd4f5f25157e9e8bd50e898a1bbcd99eaea46.
-> 
-> Please note that `strlcpy()` does *NOT* do what you think it does.
-> strlcpy() *ALWAYS* reads the full input string, regardless of the
-> 'length' parameter. That is, if the input is not zero-terminated,
-> strlcpy() will *READ* beyond input boundaries. It does this, because it
-> always returns the size it *would* copy if the target was big enough,
-> not the truncated size it actually copied.
-> 
-> The original code was perfectly fine. The hid device is
-> zero-initialized and the strncpy() functions copied up to n-1
-> characters. The result is always zero-terminated this way.
-> 
-> This is the third time someone tried to replace strncpy with strlcpy in
-> this function, and gets it wrong. I now added a comment that should at
-> least make people reconsider.
-> 
+On Wed, Nov 14, 2018 at 3:58 AM, Szabolcs Nagy <Szabolcs.Nagy@arm.com> wrote:
+> On 13/11/18 19:39, Dave Martin wrote:
+>> On Mon, Nov 12, 2018 at 05:19:14AM -0800, Daniel Colascione wrote:
+>>> We should adopt a similar approach. Shipping a lower-level
+>>> "liblinux.so" tightly bound to the kernel would not only let the
+>>> kernel bypass glibc's "editorial discretion" in exposing new
+>>> facilities to userspace, but would also allow for tighter user-kernel
+>>> integration that one can achieve with a simplistic syscall(2)-style
+>>> escape hatch. (For example, for a long time now, I've wanted to go
+>>> beyond POSIX and improve the system's signal handling API, and this
+>>> improvement requires userspace cooperation.) The vdso is probably too
+>>> small and simplistic to serve in this role; I'd want a real library.
+>>
+>> Can you expand on your reasoning here?
+>
+> such lib creates a useless abi+api layer that
+> somebody has to maintain and document (with or
+> without vdso).
 
-Can we switch to strscpy instead? This will quiet gcc and avoid the
-issues with strlcpy.
+People already maintain the kernel man pages and are very good.
 
-> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
-> ---
->   drivers/hid/uhid.c | 13 +++++++------
->   1 file changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
-> index fefedc0b4dc6..0dfdd0ac7120 100644
-> --- a/drivers/hid/uhid.c
-> +++ b/drivers/hid/uhid.c
-> @@ -496,12 +496,13 @@ static int uhid_dev_create2(struct uhid_device *uhid,
->   		goto err_free;
->   	}
->   
-> -	len = min(sizeof(hid->name), sizeof(ev->u.create2.name));
-> -	strlcpy(hid->name, ev->u.create2.name, len);
-> -	len = min(sizeof(hid->phys), sizeof(ev->u.create2.phys));
-> -	strlcpy(hid->phys, ev->u.create2.phys, len);
-> -	len = min(sizeof(hid->uniq), sizeof(ev->u.create2.uniq));
-> -	strlcpy(hid->uniq, ev->u.create2.uniq, len);
-> +	/* @hid is zero-initialized, strncpy() is correct, strlcpy() not */
-> +	len = min(sizeof(hid->name), sizeof(ev->u.create2.name)) - 1;
-> +	strncpy(hid->name, ev->u.create2.name, len);
-> +	len = min(sizeof(hid->phys), sizeof(ev->u.create2.phys)) - 1;
-> +	strncpy(hid->phys, ev->u.create2.phys, len);
-> +	len = min(sizeof(hid->uniq), sizeof(ev->u.create2.uniq)) - 1;
-> +	strncpy(hid->uniq, ev->u.create2.uniq, len);
->   
->   	hid->ll_driver = &uhid_hid_driver;
->   	hid->bus = ev->u.create2.bus;
-> 
+> it obviously cannot work together with a posix
+> conform libc implementation for which it would
+> require knowledge about
 
+You're incorrect on this point. See programs cobbled together out of
+syscall(2) invocations today: despite lack of libc integration, things
+do mostly work in practice. Calling through a library can't possible
+be worse, and in many ways can be much better.
+
+> thread cancellation internals,
+
+As I mentioned upthread, the only thing a libc needs in order to
+support cancellation properly (at least the way glibc does it)
+is a way to ask the kernel-provided userspace library whether a
+particular program counter address belongs to a certain code sequence
+immediately before the system call instruction, whatever that is.
+Providing this facility is doable without deep knowledge of libc's
+internals, and libc can use it without a deep knowledge of the
+interface library.
+
+> potentially TLS
+> for errno
+
+As someone else mentioned, errno is a libc construct. It's not *hard*
+to support setting errno though: libc could just be required to supply
+a well-defined libc_set_errno symbol that the kernel ABI library would
+then use as needed.
+
+> know libc types even ones that are
+> based on compile time feature macros
+
+This library would not have to do the things that libc does. Why would
+it have to support libc's feature test macros at all?
+
+> (and expose
+> them in headers in a way that does not collide
+> with libc headers)
+
+The kernel should have a set of types and a symbol namespace
+completely disjoint from libc's, with no compatibility hacks or macros
+needed. (That might take some renaming kernel-side.) If libc wants to
+provide a POSIX API, it can take on the responsibility for mapping the
+kernel's structures to libc's, but within its namespace, the kernel
+should be able to add types without fear of conflict.
+
+> abi variants the libc supports
+> (e.g. softfp, security hardened abi), libc
+> internal signals (for anything that's changing
+> signal masks), thread internals for syscalls that
+> require coordination between all user created
+> threads
+
+Most proposed new system calls do not create threads, manipulate
+signal masks, or muck with other internals, so these concerns just
+don't apply. That's why syscall(2) mostly works in practice. Even if a
+few new system calls *do* involve these internal details and require
+closer libc coordination, the majority (e.g., the new mount API,
+termios2) don't, and so can be exposed directly from the kernel
+project without being blocked by glibc.
+
+> (setxid),
+
+A kernel-side fix here would be the cleanest approach.
+
+> libc internal state for syscalls
+> that create/destroy threads.
+>
+> and thus such lib does not solve the problems
+> of users who actually requested wrappers for
+> new syscalls (since they want to call into libc
+> and create threads).
+>
+> there is a lot of bikesheding here by people who
+> don't understand the constraints nor the use-cases.
+
+Conversely, there's a lot of doubt-sowing from the other side that
+makes shipping a kernel-provided interface library seem harder than it
+is. Most new system calls do not bear on the integration concerns that
+you and others are raising, and whatever problems remain can be solved
+with a narrow interface between libc and a new interface library, one
+that would let both evolve independently.
+
+> an actual proposal in the thread that i think is
+> worth considering is to make the linux syscall
+> design process involve libc devs so the c api is
+> designed together with the syscall abi.
+
+After looking at the history of settid, signal multi-handler
+registration, and other proposed improvements running into the brick
+wall of glibc's API process, I think it's clear that requiring glibc
+signoff on new kernel interfaces would simply lead to stagnation. It's
+not as if we're approaching the problem from a position of ignorance.
+The right answer is a move to an approximation of the BSD model and
+bring the primary interface layer in-house.
+ There's a lot of evidence that this model works.
