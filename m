@@ -2,96 +2,80 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B7F2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:42:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD3FAC04EBC
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:46:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24195223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:42:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24195223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=canonical.com
+	by mail.kernel.org (Postfix) with ESMTP id 994382243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 21:46:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 994382243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728100AbeKOHrs (ORCPT
+        id S1727843AbeKOHvR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 02:47:48 -0500
-Received: from youngberry.canonical.com ([91.189.89.112]:52274 "EHLO
-        youngberry.canonical.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725756AbeKOHrs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 02:47:48 -0500
-Received: from 1.general.cking.uk.vpn ([10.172.193.212] helo=localhost)
-        by youngberry.canonical.com with esmtpsa (TLS1.0:RSA_AES_256_CBC_SHA1:32)
-        (Exim 4.76)
-        (envelope-from <colin.king@canonical.com>)
-        id 1gN2vv-0002uo-Ah; Wed, 14 Nov 2018 21:42:47 +0000
-From:   Colin King <colin.king@canonical.com>
-To:     Avi Fishman <avifishman70@gmail.com>,
-        Tomer Maimon <tmaimon77@gmail.com>,
-        Patrick Venture <venture@google.com>,
-        Nancy Yuen <yuenn@google.com>,
-        Brendan Higgins <brendanhiggins@google.com>,
-        Mark Brown <broonie@kernel.org>, openbmc@lists.ozlabs.org,
-        linux-spi@vger.kernel.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH][next] spi: npcm: fix u32 csgpio being checked for less than zero
-Date:   Wed, 14 Nov 2018 21:42:46 +0000
-Message-Id: <20181114214246.15591-1-colin.king@canonical.com>
-X-Mailer: git-send-email 2.19.1
+        Thu, 15 Nov 2018 02:51:17 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:50536 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725756AbeKOHvR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 02:51:17 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id J5a695jAwFTK; Wed, 14 Nov 2018 22:46:18 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD0D200D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:d200:d571:4500:c00e:26fd])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id AA6001EC03C8;
+        Wed, 14 Nov 2018 22:46:18 +0100 (CET)
+Date:   Wed, 14 Nov 2018 22:46:01 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+        Bjorn Helgaas <helgaas@kernel.org>
+Cc:     pr-tracker-bot@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: [GIT PULL] PCI fixes for v4.20
+Message-ID: <20181114214601.GO13926@zn.tnic>
+References: <20181114062010.GA189193@google.com>
+ <20181114200003.14496.1490.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+ <20181114201214.GM13926@zn.tnic>
+ <20181114201658.GB25069@pure.paranoia.local>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181114201658.GB25069@pure.paranoia.local>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin Ian King <colin.king@canonical.com>
+On Wed, Nov 14, 2018 at 03:16:58PM -0500, Konstantin Ryabitsev wrote:
+> On Wed, Nov 14, 2018 at 09:12:14PM +0100, Borislav Petkov wrote:
+> > Hey Konstantin,
+> > 
+> > that bot needs some parsing improvs: "None None".
+> 
+> Correct, this is because the original pull request was for an ssh://
 
-The u32 variable csgpio is being checked for an error return
-from the call to of_get_named_gpio, however, since this is unsigned
-this comparison will always be false. Fix this by making csgpio an
-int and fix up the %u format specifiers to %d accordingly.
+You'd think Bjorn would know better... :-)))
 
-Detected by CoverityScan, CID#1475476 ("Unsigned compared against 0")
-
-Fixes: 2a22f1b30cee ("spi: npcm: add NPCM PSPI controller driver")
-Signed-off-by: Colin Ian King <colin.king@canonical.com>
----
- drivers/spi/spi-npcm-pspi.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/spi/spi-npcm-pspi.c b/drivers/spi/spi-npcm-pspi.c
-index 51777515c83f..6dae91091143 100644
---- a/drivers/spi/spi-npcm-pspi.c
-+++ b/drivers/spi/spi-npcm-pspi.c
-@@ -329,7 +329,7 @@ static int npcm_pspi_probe(struct platform_device *pdev)
- 	unsigned long clk_hz;
- 	struct device_node *np = pdev->dev.of_node;
- 	int num_cs, i;
--	u32 csgpio;
-+	int csgpio;
- 	int irq;
- 	int ret;
- 
-@@ -417,12 +417,12 @@ static int npcm_pspi_probe(struct platform_device *pdev)
- 			dev_err(&pdev->dev, "failed to get csgpio#%u\n", i);
- 			goto out_disable_clk;
- 		}
--		dev_dbg(&pdev->dev, "csgpio#%u = %u\n", i, csgpio);
-+		dev_dbg(&pdev->dev, "csgpio#%u = %d\n", i, csgpio);
- 		ret = devm_gpio_request_one(&pdev->dev, csgpio,
- 					    GPIOF_OUT_INIT_HIGH, DRIVER_NAME);
- 		if (ret < 0) {
- 			dev_err(&pdev->dev,
--				"failed to configure csgpio#%u %u\n"
-+				"failed to configure csgpio#%u %d\n"
- 				, i, csgpio);
- 			goto out_disable_clk;
- 		}
 -- 
-2.19.1
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
