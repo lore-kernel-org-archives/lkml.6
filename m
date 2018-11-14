@@ -2,169 +2,80 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8780FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:26:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F346C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:31:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5210922360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:26:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5210922360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
+	by mail.kernel.org (Postfix) with ESMTP id 3A8522243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:31:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3A8522243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732765AbeKODap (ORCPT
+        id S1732653AbeKODf3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 22:30:45 -0500
-Received: from muru.com ([72.249.23.125]:54048 "EHLO muru.com"
+        Wed, 14 Nov 2018 22:35:29 -0500
+Received: from shell.v3.sk ([90.176.6.54]:46298 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725759AbeKODap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 22:30:45 -0500
-Received: from atomide.com (localhost [127.0.0.1])
-        by muru.com (Postfix) with ESMTPS id CBA5280E7;
-        Wed, 14 Nov 2018 17:26:39 +0000 (UTC)
-Date:   Wed, 14 Nov 2018 09:26:36 -0800
-From:   Tony Lindgren <tony@atomide.com>
-To:     Belisko Marek <marek.belisko@gmail.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org,
-        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>,
-        Laxman Dewangan <ldewangan@nvidia.com>
-Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
-Message-ID: <20181114172636.GG53235@atomide.com>
-References: <CAAfyv35bat+t6awL-VRigAoaUTySwOgZkQMs=W9mEKQ6VDW3FA@mail.gmail.com>
- <20180703084516.GT112168@atomide.com>
- <CAAfyv37F1s8Cg=pfxiN0dA6YEX7KMB-+uifjRoqAdKGWLeYEwA@mail.gmail.com>
- <20181113180656.GE53235@atomide.com>
- <20181114170353.GF53235@atomide.com>
+        id S1727972AbeKODf2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 22:35:28 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id B9B694699F;
+        Wed, 14 Nov 2018 18:31:19 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id AmCwYft2Pnjc; Wed, 14 Nov 2018 18:31:17 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 4721646DA8;
+        Wed, 14 Nov 2018 18:31:17 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id Ue_kIcgYCdv4; Wed, 14 Nov 2018 18:31:16 +0100 (CET)
+Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 85F794699F;
+        Wed, 14 Nov 2018 18:31:16 +0100 (CET)
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Daniel Mack <daniel@zonque.org>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH] spi: pxa2xx: Fix '"CONFIG_OF" is not defined' warning
+Date:   Wed, 14 Nov 2018 18:31:07 +0100
+Message-Id: <20181114173107.1229717-1-lkundrak@v3.sk>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181114170353.GF53235@atomide.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+A careless oversight. Sorry.
 
-* Tony Lindgren <tony@atomide.com> [181114 17:04]:
-> * Tony Lindgren <tony@atomide.com> [181113 18:07]:
-> > Hi
-> > 
-> > * Belisko Marek <marek.belisko@gmail.com> [180703 18:34]:
-> > > Hi Tony,
-> > > 
-> > > On Tue, Jul 3, 2018 at 10:45 AM Tony Lindgren <tony@atomide.com> wrote:
-> > > >
-> > > > * Belisko Marek <marek.belisko@gmail.com> [180620 09:40]:
-> > > > > Hello,
-> > > > >
-> > > > > I'm trying to fix warning (for omap5 board) produced by recent change
-> > > > > to avoid using IRQ_TYPE_NONE like:
-> > > > > [    1.818666] WARNING: CPU: 1 PID: 778 at
-> > > > > drivers/irqchip/irq-gic.c:1016 gic_irq_domain_translate+0x78/0x100
-> > > > > [    1.828839] Modules linked in:
-> > > > >
-> > > > > I did look to other commit which did update and without deep knowledge
-> > > > > I just simply do this small change:
-> > > > > diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi
-> > > > > b/arch/arm/boot/dts/omap5-board-common.dtsi
-> > > > > index 218892b..ab2df8c 100644
-> > > > > --- a/arch/arm/boot/dts/omap5-board-common.dtsi
-> > > > > +++ b/arch/arm/boot/dts/omap5-board-common.dtsi
-> > > > > @@ -393,7 +393,7 @@
-> > > > >
-> > > > >         palmas: palmas@48 {
-> > > > >                 compatible = "ti,palmas";
-> > > > > -               interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>; /* IRQ_SYS_1N */
-> > > > > +               interrupts = <GIC_SPI 7 IRQ_TYPE_HIGH>; /* IRQ_SYS_1N */
-> > > > >                 reg = <0x48>;
-> > > > >                 interrupt-controller;
-> > > > >                 #interrupt-cells = <2>;
-> > > > >
-> > > > > and it looks board boots fine. Only issue is that gpadc driver is not
-> > > > > working (at least not getting interrupts at all ADC fails with
-> > > > > timeout). I did look to gpadc driver and driver is not using
-> > > > > interrupts defined in dts but request interrupt directly from palmas
-> > > > > mfd module. Any ideas what needs to be changed to have gpadc again
-> > > > > working with mentioned patch?
-> > > >
-> > > > Can you try with IRQF_TRIGGER_HIGH added also to the flags to
-> > > > regmap_add_irq_chip() in drivers/mfd/palmas.c?
-> > > Nope issue is till present also after this change like:
-> > > diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi
-> > > b/arch/arm/boot/dts/omap5-board-common.dtsi
-> > > index 218892b..6912769 100644
-> > > --- a/arch/arm/boot/dts/omap5-board-common.dtsi
-> > > +++ b/arch/arm/boot/dts/omap5-board-common.dtsi
-> > > @@ -393,7 +393,7 @@
-> > > 
-> > >         palmas: palmas@48 {
-> > >                 compatible = "ti,palmas";
-> > > -               interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>; /* IRQ_SYS_1N */
-> > > +               interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>; /* IRQ_SYS_1N */
-> > >                 reg = <0x48>;
-> > >                 interrupt-controller;
-> > >                 #interrupt-cells = <2>;
-> > > @@ -432,9 +432,9 @@
-> > > 
-> > >                 gpadc: gpadc {
-> > >                         compatible = "ti,palmas-gpadc";
-> > > -                       interrupts = <18 0
-> > > -                                     16 0
-> > > -                                     17 0>;
-> > > +                       interrupts = <18 IRQ_TYPE_LEVEL_HIGH
-> > > +                                     16 IRQ_TYPE_LEVEL_HIGH
-> > > +                                     17 IRQ_TYPE_LEVEL_HIGH>;
-> > >                         #io-channel-cells = <1>;
-> > >                         ti,channel0-current-microamp = <5>;
-> > >                         ti,channel3-current-microamp = <10>;
-> > > diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
-> > > index 663a239..15d23db 100644
-> > > --- a/drivers/mfd/palmas.c
-> > > +++ b/drivers/mfd/palmas.c
-> > > @@ -601,7 +601,7 @@ static int palmas_i2c_probe(struct i2c_client *i2c,
-> > >         regmap_write(palmas->regmap[slave], addr, reg);
-> > > 
-> > >         ret = regmap_add_irq_chip(palmas->regmap[slave], palmas->irq,
-> > > -                                 IRQF_ONESHOT | pdata->irq_flags, 0,
-> > > +                                 IRQF_ONESHOT | IRQF_TRIGGER_HIGH |
-> > > pdata->irq_flags, 0,
-> > >                                   driver_data->irq_chip, &palmas->irq_data);
-> > >         if (ret < 0)
-> > >                 goto err_i2c;
-> > 
-> > Looks like the IRQ_TYPE_NONE issue still is there for omap5 and
-> > should be fixed with IRQ_TYPE_HIGH.
-> 
-> Looks like the gpadc interrupts get fixed for IRQ_TYPE_LEVEL_HIGH
-> if reconfiguring of PALMAS_POLARITY_CTRL_INT_POLARITY is disabled
-> in drivers/mfd/palmas.c.
-> 
-> The test being just:
-> 
-> modprobe palmas-gpadc
-> cat /sys/bus/iio/devices/iio:device0/*
-> 
-> > No idea about why palmas interrupts would stop working though,
-> > Peter, do you have any ideas on this one?
-> 
-> Still no idea why though, it seems tegra is inverting
-> the interrupt externally because of earlier patches for adding
-> "ti,irq-externally-inverted" property that never got added.
-> 
-> So I'm guessing the PALMAS_POLARITY_CTRL_INT_POLARITY
-> is wrongly configured on IRQ_TYPE_LEVEL_HIGH while it should
-> be done only for IRQ_TYPE_LEVEL_LOW instead?
-> 
-> So adding Laxman to Cc also.
+Fixes: 0a897143b7c9 ("spi: pxa2xx: Add slave mode support")
+Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
+---
+ drivers/spi/spi-pxa2xx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Now really adding Laxman to Cc.
+diff --git a/drivers/spi/spi-pxa2xx.c b/drivers/spi/spi-pxa2xx.c
+index 29e6025f104c..7194070e4009 100644
+--- a/drivers/spi/spi-pxa2xx.c
++++ b/drivers/spi/spi-pxa2xx.c
+@@ -1555,7 +1555,7 @@ pxa2xx_spi_init_pdata(struct platform_device *pdev)
+ 	}
+ #endif
+=20
+-#if CONFIG_OF
++#ifdef CONFIG_OF
+ 	if (of_id) {
+ 		pdata->is_slave =3D of_property_read_bool(pdev->dev.of_node,
+ 								"spi-slave");
+--=20
+2.19.1
 
-Regards,
-
-Tony
