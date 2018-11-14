@@ -6,42 +6,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 192BBC43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 58E74C04EBC
 	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4D6B2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 175EE2245E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:43:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="bqRxH7ty"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4D6B2145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="vPN4bdw3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 175EE2245E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728688AbeKOI1U (ORCPT
+        id S1732042AbeKOIsR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:27:20 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34470 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:48:17 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728597AbeKOI1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:27:19 -0500
+        id S1728647AbeKOI1U (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:20 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3A96E22511;
-        Wed, 14 Nov 2018 22:22:16 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2D64022528;
+        Wed, 14 Nov 2018 22:22:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234136;
-        bh=1CXasTFvsZWPK7WOW//EDKwxwHJs7EZbFAtTmH6oN4Q=;
+        s=default; t=1542234137;
+        bh=43e4ScMAwofi2Co7N7LeyAcde7+k3iRoLGiQLiTwWIc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=bqRxH7ty4YhvweREmhB3dQDvYct8bAPEXCInWfMs+R1VqVRpyTL9Dr0DZV8bF1e5e
-         r+4Vuy5NzlY+FTqyyZCL/jnDvCwSWM1tkCDfDF2u6ObknjxVt0nLEFqyn0Rbf+kb4f
-         wUpqbSK3Ng0kV4s8gy2Z5OS1QkaBk/LU2THcEk8A=
+        b=vPN4bdw3wEN5muZTv2f6ors38ricgZfA2HopRBheoFcpCd0aK7SDIm8zl1Gooi2rY
+         jpyX7ozKKQnf3UTKGF1xFyitpxUKFiAQo2W9HTVbmbVRJGcFmR/XQOGSavQPYd1ogX
+         Ira6jH2dBoAfcLAdc5EqejtverBnI9H4dovAQyaU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Inki Dae <inki.dae@samsung.com>, Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 33/73] Revert "drm/exynos/decon5433: implement frame counter"
-Date:   Wed, 14 Nov 2018 17:21:27 -0500
-Message-Id: <20181114222207.98701-33-sashal@kernel.org>
+Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 37/73] clk: fixed-factor: fix of_node_get-put imbalance
+Date:   Wed, 14 Nov 2018 17:21:31 -0500
+Message-Id: <20181114222207.98701-37-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -50,107 +52,36 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Inki Dae <inki.dae@samsung.com>
+From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
 
-[ Upstream commit 6ca469e22a30992b4478d2ab88737c70667c1e00 ]
+[ Upstream commit f98e8a572bddbf27032114127d2fcc78fa5e6a9d ]
 
-This reverts commit 0586feba322e1de05075700eb4b835c8b683e62b
+When the fixed factor clock is created by devicetree,
+of_clk_add_provider is called.  Add a call to
+of_clk_del_provider in the remove function to balance
+it out.
 
-This patch makes it to need get_vblank_counter callback in crtc
-to get frame counter from decon driver.
-
-However, drm_dev->max_vblank_count is a member unique to
-vendor's DRM driver but in case of ARM DRM, some CRTC devices
-don't provide the frame counter value. As a result, this patch
-made extension and clone mode not working.
-
-Instead of this patch, we may need separated max_vblank_count
-which belongs to each CRTC device, or need to implement frame
-counter emulation for them who don't support HW frame counter.
-
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Reported-by: Alan Tull <atull@kernel.org>
+Fixes: 971451b3b15d ("clk: fixed-factor: Convert into a module platform driver")
+Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+Signed-off-by: Stephen Boyd <sboyd@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  9 ---------
- drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 11 -----------
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |  1 -
- 3 files changed, 21 deletions(-)
+ drivers/clk/clk-fixed-factor.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index 94529aa82339..aef487dd8731 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -164,13 +164,6 @@ static u32 decon_get_frame_count(struct decon_context *ctx, bool end)
- 	return frm;
- }
- 
--static u32 decon_get_vblank_counter(struct exynos_drm_crtc *crtc)
--{
--	struct decon_context *ctx = crtc->ctx;
--
--	return decon_get_frame_count(ctx, false);
--}
--
- static void decon_setup_trigger(struct decon_context *ctx)
+diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
+index 20724abd38bd..7df6b5b1e7ee 100644
+--- a/drivers/clk/clk-fixed-factor.c
++++ b/drivers/clk/clk-fixed-factor.c
+@@ -210,6 +210,7 @@ static int of_fixed_factor_clk_remove(struct platform_device *pdev)
  {
- 	if (!ctx->crtc->i80_mode && !(ctx->out_type & I80_HW_TRG))
-@@ -536,7 +529,6 @@ static const struct exynos_drm_crtc_ops decon_crtc_ops = {
- 	.disable		= decon_disable,
- 	.enable_vblank		= decon_enable_vblank,
- 	.disable_vblank		= decon_disable_vblank,
--	.get_vblank_counter	= decon_get_vblank_counter,
- 	.atomic_begin		= decon_atomic_begin,
- 	.update_plane		= decon_update_plane,
- 	.disable_plane		= decon_disable_plane,
-@@ -554,7 +546,6 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
- 	int ret;
+ 	struct clk *clk = platform_get_drvdata(pdev);
  
- 	ctx->drm_dev = drm_dev;
--	drm_dev->max_vblank_count = 0xffffffff;
++	of_clk_del_provider(pdev->dev.of_node);
+ 	clk_unregister_fixed_factor(clk);
  
- 	for (win = ctx->first_win; win < WINDOWS_NR; win++) {
- 		ctx->configs[win].pixel_formats = decon_formats;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index eea90251808f..2696289ecc78 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -162,16 +162,6 @@ static void exynos_drm_crtc_disable_vblank(struct drm_crtc *crtc)
- 		exynos_crtc->ops->disable_vblank(exynos_crtc);
- }
- 
--static u32 exynos_drm_crtc_get_vblank_counter(struct drm_crtc *crtc)
--{
--	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
--
--	if (exynos_crtc->ops->get_vblank_counter)
--		return exynos_crtc->ops->get_vblank_counter(exynos_crtc);
--
--	return 0;
--}
--
- static const struct drm_crtc_funcs exynos_crtc_funcs = {
- 	.set_config	= drm_atomic_helper_set_config,
- 	.page_flip	= drm_atomic_helper_page_flip,
-@@ -181,7 +171,6 @@ static const struct drm_crtc_funcs exynos_crtc_funcs = {
- 	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
- 	.enable_vblank = exynos_drm_crtc_enable_vblank,
- 	.disable_vblank = exynos_drm_crtc_disable_vblank,
--	.get_vblank_counter = exynos_drm_crtc_get_vblank_counter,
- };
- 
- struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index c737c4bd2c19..630f1edc5de2 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -133,7 +133,6 @@ struct exynos_drm_crtc_ops {
- 	void (*disable)(struct exynos_drm_crtc *crtc);
- 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
- 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
--	u32 (*get_vblank_counter)(struct exynos_drm_crtc *crtc);
- 	enum drm_mode_status (*mode_valid)(struct exynos_drm_crtc *crtc,
- 		const struct drm_display_mode *mode);
- 	bool (*mode_fixup)(struct exynos_drm_crtc *crtc,
+ 	return 0;
 -- 
 2.17.1
 
