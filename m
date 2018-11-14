@@ -2,93 +2,162 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C373C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B551EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:03:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0BC3F22419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:03:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0BC3F22419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 88AE7208A3
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:03:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88AE7208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732622AbeKODHX (ORCPT
+        id S1732993AbeKODH6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 22:07:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:31553 "EHLO mx1.redhat.com"
+        Wed, 14 Nov 2018 22:07:58 -0500
+Received: from muru.com ([72.249.23.125]:54034 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725759AbeKODHX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 22:07:23 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 1270A315487B;
-        Wed, 14 Nov 2018 17:03:23 +0000 (UTC)
-Received: from thinkpad.redhat.com (ovpn-204-52.brq.redhat.com [10.40.204.52])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id EBB9160BF6;
-        Wed, 14 Nov 2018 17:03:20 +0000 (UTC)
-From:   Laurent Vivier <lvivier@redhat.com>
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linuxppc-dev@lists.ozlabs.org,
-        Satheesh Rajendran <satheera@in.ibm.com>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        linux-kernel@vger.kernel.org, Laurent Vivier <lvivier@redhat.com>
-Subject: [PATCH] powerpc/numa: fix hot-added CPU on memory-less node
-Date:   Wed, 14 Nov 2018 18:03:19 +0100
-Message-Id: <20181114170319.24828-1-lvivier@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Wed, 14 Nov 2018 17:03:23 +0000 (UTC)
+        id S1725759AbeKODH5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 22:07:57 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 453DF80E7;
+        Wed, 14 Nov 2018 17:03:57 +0000 (UTC)
+Date:   Wed, 14 Nov 2018 09:03:53 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Belisko Marek <marek.belisko@gmail.com>
+Cc:     LKML <linux-kernel@vger.kernel.org>, linux-omap@vger.kernel.org,
+        "Dr. H. Nikolaus Schaller" <hns@goldelico.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+Subject: Re: omap5 fixing palmas IRQ_TYPE_NONE warning leads to gpadc timeouts
+Message-ID: <20181114170353.GF53235@atomide.com>
+References: <CAAfyv35bat+t6awL-VRigAoaUTySwOgZkQMs=W9mEKQ6VDW3FA@mail.gmail.com>
+ <20180703084516.GT112168@atomide.com>
+ <CAAfyv37F1s8Cg=pfxiN0dA6YEX7KMB-+uifjRoqAdKGWLeYEwA@mail.gmail.com>
+ <20181113180656.GE53235@atomide.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113180656.GE53235@atomide.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Trying to hotplug a CPU on an empty NUMA node (without
-memory or CPU) crashes the kernel when the CPU is onlined.
+* Tony Lindgren <tony@atomide.com> [181113 18:07]:
+> Hi
+> 
+> * Belisko Marek <marek.belisko@gmail.com> [180703 18:34]:
+> > Hi Tony,
+> > 
+> > On Tue, Jul 3, 2018 at 10:45 AM Tony Lindgren <tony@atomide.com> wrote:
+> > >
+> > > * Belisko Marek <marek.belisko@gmail.com> [180620 09:40]:
+> > > > Hello,
+> > > >
+> > > > I'm trying to fix warning (for omap5 board) produced by recent change
+> > > > to avoid using IRQ_TYPE_NONE like:
+> > > > [    1.818666] WARNING: CPU: 1 PID: 778 at
+> > > > drivers/irqchip/irq-gic.c:1016 gic_irq_domain_translate+0x78/0x100
+> > > > [    1.828839] Modules linked in:
+> > > >
+> > > > I did look to other commit which did update and without deep knowledge
+> > > > I just simply do this small change:
+> > > > diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi
+> > > > b/arch/arm/boot/dts/omap5-board-common.dtsi
+> > > > index 218892b..ab2df8c 100644
+> > > > --- a/arch/arm/boot/dts/omap5-board-common.dtsi
+> > > > +++ b/arch/arm/boot/dts/omap5-board-common.dtsi
+> > > > @@ -393,7 +393,7 @@
+> > > >
+> > > >         palmas: palmas@48 {
+> > > >                 compatible = "ti,palmas";
+> > > > -               interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>; /* IRQ_SYS_1N */
+> > > > +               interrupts = <GIC_SPI 7 IRQ_TYPE_HIGH>; /* IRQ_SYS_1N */
+> > > >                 reg = <0x48>;
+> > > >                 interrupt-controller;
+> > > >                 #interrupt-cells = <2>;
+> > > >
+> > > > and it looks board boots fine. Only issue is that gpadc driver is not
+> > > > working (at least not getting interrupts at all ADC fails with
+> > > > timeout). I did look to gpadc driver and driver is not using
+> > > > interrupts defined in dts but request interrupt directly from palmas
+> > > > mfd module. Any ideas what needs to be changed to have gpadc again
+> > > > working with mentioned patch?
+> > >
+> > > Can you try with IRQF_TRIGGER_HIGH added also to the flags to
+> > > regmap_add_irq_chip() in drivers/mfd/palmas.c?
+> > Nope issue is till present also after this change like:
+> > diff --git a/arch/arm/boot/dts/omap5-board-common.dtsi
+> > b/arch/arm/boot/dts/omap5-board-common.dtsi
+> > index 218892b..6912769 100644
+> > --- a/arch/arm/boot/dts/omap5-board-common.dtsi
+> > +++ b/arch/arm/boot/dts/omap5-board-common.dtsi
+> > @@ -393,7 +393,7 @@
+> > 
+> >         palmas: palmas@48 {
+> >                 compatible = "ti,palmas";
+> > -               interrupts = <GIC_SPI 7 IRQ_TYPE_NONE>; /* IRQ_SYS_1N */
+> > +               interrupts = <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>; /* IRQ_SYS_1N */
+> >                 reg = <0x48>;
+> >                 interrupt-controller;
+> >                 #interrupt-cells = <2>;
+> > @@ -432,9 +432,9 @@
+> > 
+> >                 gpadc: gpadc {
+> >                         compatible = "ti,palmas-gpadc";
+> > -                       interrupts = <18 0
+> > -                                     16 0
+> > -                                     17 0>;
+> > +                       interrupts = <18 IRQ_TYPE_LEVEL_HIGH
+> > +                                     16 IRQ_TYPE_LEVEL_HIGH
+> > +                                     17 IRQ_TYPE_LEVEL_HIGH>;
+> >                         #io-channel-cells = <1>;
+> >                         ti,channel0-current-microamp = <5>;
+> >                         ti,channel3-current-microamp = <10>;
+> > diff --git a/drivers/mfd/palmas.c b/drivers/mfd/palmas.c
+> > index 663a239..15d23db 100644
+> > --- a/drivers/mfd/palmas.c
+> > +++ b/drivers/mfd/palmas.c
+> > @@ -601,7 +601,7 @@ static int palmas_i2c_probe(struct i2c_client *i2c,
+> >         regmap_write(palmas->regmap[slave], addr, reg);
+> > 
+> >         ret = regmap_add_irq_chip(palmas->regmap[slave], palmas->irq,
+> > -                                 IRQF_ONESHOT | pdata->irq_flags, 0,
+> > +                                 IRQF_ONESHOT | IRQF_TRIGGER_HIGH |
+> > pdata->irq_flags, 0,
+> >                                   driver_data->irq_chip, &palmas->irq_data);
+> >         if (ret < 0)
+> >                 goto err_i2c;
+> 
+> Looks like the IRQ_TYPE_NONE issue still is there for omap5 and
+> should be fixed with IRQ_TYPE_HIGH.
 
-During the onlining process, the kernel calls start_secondary()
-that ends by calling
-set_numa_mem(local_memory_node(numa_cpu_lookup_table[cpu]))
-that relies on NODE_DATA(nid)->node_zonelists and in our case
-NODE_DATA(nid) is NULL.
+Looks like the gpadc interrupts get fixed for IRQ_TYPE_LEVEL_HIGH
+if reconfiguring of PALMAS_POLARITY_CTRL_INT_POLARITY is disabled
+in drivers/mfd/palmas.c.
 
-To fix that, add the same checking as we already have in
-find_and_online_cpu_nid(): if NODE_DATA() is NULL, use
-the first online node.
+The test being just:
 
-Bug: https://github.com/linuxppc/linux/issues/184
-Fixes: ea05ba7c559c8e5a5946c3a94a2a266e9a6680a6
-       (powerpc/numa: Ensure nodes initialized for hotplug)
-Signed-off-by: Laurent Vivier <lvivier@redhat.com>
----
- arch/powerpc/mm/numa.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+modprobe palmas-gpadc
+cat /sys/bus/iio/devices/iio:device0/*
 
-diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
-index 3a048e98a132..1b2d25a3c984 100644
---- a/arch/powerpc/mm/numa.c
-+++ b/arch/powerpc/mm/numa.c
-@@ -483,6 +483,15 @@ static int numa_setup_cpu(unsigned long lcpu)
- 	if (nid < 0 || !node_possible(nid))
- 		nid = first_online_node;
- 
-+	if (NODE_DATA(nid) == NULL) {
-+		/*
-+		 * Default to using the nearest node that has memory installed.
-+		 * Otherwise, it would be necessary to patch the kernel MM code
-+		 * to deal with more memoryless-node error conditions.
-+		 */
-+		nid = first_online_node;
-+	}
-+
- 	map_cpu_to_node(lcpu, nid);
- 	of_node_put(cpu);
- out:
--- 
-2.17.2
+> No idea about why palmas interrupts would stop working though,
+> Peter, do you have any ideas on this one?
 
+Still no idea why though, it seems tegra is inverting
+the interrupt externally because of earlier patches for adding
+"ti,irq-externally-inverted" property that never got added.
+
+So I'm guessing the PALMAS_POLARITY_CTRL_INT_POLARITY
+is wrongly configured on IRQ_TYPE_LEVEL_HIGH while it should
+be done only for IRQ_TYPE_LEVEL_LOW instead?
+
+So adding Laxman to Cc also.
+
+Regards,
+
+Tony
