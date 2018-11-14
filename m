@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95DDFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:40:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3955DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:40:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 49282223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:40:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E58432243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:40:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="taVCGpDP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49282223DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ToH6PZBG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E58432243E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387696AbeKOIpj (ORCPT
+        id S2387996AbeKOIps (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:45:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34716 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:45:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729062AbeKOI10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728925AbeKOI10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 03:27:26 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 643132251A;
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FA1222511;
         Wed, 14 Nov 2018 22:22:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542234143;
-        bh=0OJuN9HRGZlv4LBTOK+dlMV9tDlXK9RT998OX73G7/U=;
+        bh=4u1W5WpuuL36zQcXRh/7NdXpHL/fzrU+3DaNPSEYa38=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=taVCGpDPB0AnHkhX2wJ+i7Z2tRE0UVD52igkDtIrQO7s9wXKENk9l8KhX+sxqo38Q
-         GvWfZmEAy1xLS+Rk3JEK2v4BUFElwXABqcLVigIJPaEFdB8Nu7NDEnfviSgkSj3C0I
-         7ElnSeSZtsdq59Cj0aqk/BMW+S3axR2p4j5It9Hk=
+        b=ToH6PZBGZg40gN5tU9vV5xdS/1UnS1KkqoOqlKVhQzB6veMUHSPL/VCMElW4Ogf+E
+         NejZGhjSTPSNpEWZRV7XKSVMqq04V6dckf+MfPjnBJwSPpFY6YoHEY1RRn08KpQWUa
+         FssDH9dOA0HZyX/ot/JSjnTqLAxnmGBHnognTuBk=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
 Cc:     Denis Bolotin <denis.bolotin@cavium.com>,
         Michal Kalderon <michal.kalderon@cavium.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 62/73] qed: Fix SPQ entries not returned to pool in error flows
-Date:   Wed, 14 Nov 2018 17:21:56 -0500
-Message-Id: <20181114222207.98701-62-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 61/73] qed: Fix blocking/unlimited SPQ entries leak
+Date:   Wed, 14 Nov 2018 17:21:55 -0500
+Message-Id: <20181114222207.98701-61-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -56,226 +56,143 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Denis Bolotin <denis.bolotin@cavium.com>
 
-[ Upstream commit fb5e7438e7a3c8966e04ccb0760170e9e06f3699 ]
+[ Upstream commit 2632f22ebd08da249c2017962a199a0cfb2324bf ]
 
-qed_sp_destroy_request() API was added for SPQ users that need to
-free/return the entry they acquired in their error flows.
+When there are no SPQ entries left in the free_pool, new entries are
+allocated and are added to the unlimited list. When an entry in the pool
+is available, the content is copied from the original entry, and the new
+entry is sent to the device. qed_spq_post() is not aware of that, so the
+additional entry is stored in the original entry as p_post_ent, which can
+later be returned to the pool.
 
 Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
 Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_fcoe.c    | 11 +++++++---
- drivers/net/ethernet/qlogic/qed/qed_iscsi.c   |  1 +
- drivers/net/ethernet/qlogic/qed/qed_l2.c      | 12 ++++++----
- drivers/net/ethernet/qlogic/qed/qed_rdma.c    |  1 +
- drivers/net/ethernet/qlogic/qed/qed_roce.c    |  1 +
- drivers/net/ethernet/qlogic/qed/qed_sp.h      | 11 ++++++++++
- .../net/ethernet/qlogic/qed/qed_sp_commands.c | 22 ++++++++++++-------
- drivers/net/ethernet/qlogic/qed/qed_sriov.c   |  1 +
- 8 files changed, 45 insertions(+), 15 deletions(-)
+ drivers/net/ethernet/qlogic/qed/qed_sp.h  |  3 ++
+ drivers/net/ethernet/qlogic/qed/qed_spq.c | 57 ++++++++++++-----------
+ 2 files changed, 33 insertions(+), 27 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_fcoe.c b/drivers/net/ethernet/qlogic/qed/qed_fcoe.c
-index cc1b373c0ace..46dc93d3b9b5 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_fcoe.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_fcoe.c
-@@ -147,7 +147,8 @@ qed_sp_fcoe_func_start(struct qed_hwfn *p_hwfn,
- 		       "Cannot satisfy CQ amount. CQs requested %d, CQs available %d. Aborting function start\n",
- 		       fcoe_pf_params->num_cqs,
- 		       p_hwfn->hw_info.feat_num[QED_FCOE_CQ]);
--		return -EINVAL;
-+		rc = -EINVAL;
-+		goto err;
- 	}
- 
- 	p_data->mtu = cpu_to_le16(fcoe_pf_params->mtu);
-@@ -156,14 +157,14 @@ qed_sp_fcoe_func_start(struct qed_hwfn *p_hwfn,
- 
- 	rc = qed_cxt_acquire_cid(p_hwfn, PROTOCOLID_FCOE, &dummy_cid);
- 	if (rc)
--		return rc;
-+		goto err;
- 
- 	cxt_info.iid = dummy_cid;
- 	rc = qed_cxt_get_cid_info(p_hwfn, &cxt_info);
- 	if (rc) {
- 		DP_NOTICE(p_hwfn, "Cannot find context info for dummy cid=%d\n",
- 			  dummy_cid);
--		return rc;
-+		goto err;
- 	}
- 	p_cxt = cxt_info.p_cxt;
- 	SET_FIELD(p_cxt->tstorm_ag_context.flags3,
-@@ -240,6 +241,10 @@ qed_sp_fcoe_func_start(struct qed_hwfn *p_hwfn,
- 	rc = qed_spq_post(p_hwfn, p_ent, NULL);
- 
- 	return rc;
-+
-+err:
-+	qed_sp_destroy_request(p_hwfn, p_ent);
-+	return rc;
- }
- 
- static int
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_iscsi.c b/drivers/net/ethernet/qlogic/qed/qed_iscsi.c
-index 1135387bd99d..4f8a685d1a55 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_iscsi.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_iscsi.c
-@@ -200,6 +200,7 @@ qed_sp_iscsi_func_start(struct qed_hwfn *p_hwfn,
- 		       "Cannot satisfy CQ amount. Queues requested %d, CQs available %d. Aborting function start\n",
- 		       p_params->num_queues,
- 		       p_hwfn->hw_info.feat_num[QED_ISCSI_CQ]);
-+		qed_sp_destroy_request(p_hwfn, p_ent);
- 		return -EINVAL;
- 	}
- 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_l2.c b/drivers/net/ethernet/qlogic/qed/qed_l2.c
-index 82a1bd1f8a8c..67c02ea93906 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_l2.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_l2.c
-@@ -740,8 +740,7 @@ int qed_sp_vport_update(struct qed_hwfn *p_hwfn,
- 
- 	rc = qed_sp_vport_update_rss(p_hwfn, p_ramrod, p_rss_params);
- 	if (rc) {
--		/* Return spq entry which is taken in qed_sp_init_request()*/
--		qed_spq_return_entry(p_hwfn, p_ent);
-+		qed_sp_destroy_request(p_hwfn, p_ent);
- 		return rc;
- 	}
- 
-@@ -1355,6 +1354,7 @@ qed_filter_ucast_common(struct qed_hwfn *p_hwfn,
- 			DP_NOTICE(p_hwfn,
- 				  "%d is not supported yet\n",
- 				  p_filter_cmd->opcode);
-+			qed_sp_destroy_request(p_hwfn, *pp_ent);
- 			return -EINVAL;
- 		}
- 
-@@ -2056,13 +2056,13 @@ qed_configure_rfs_ntuple_filter(struct qed_hwfn *p_hwfn,
- 	} else {
- 		rc = qed_fw_vport(p_hwfn, p_params->vport_id, &abs_vport_id);
- 		if (rc)
--			return rc;
-+			goto err;
- 
- 		if (p_params->qid != QED_RFS_NTUPLE_QID_RSS) {
- 			rc = qed_fw_l2_queue(p_hwfn, p_params->qid,
- 					     &abs_rx_q_id);
- 			if (rc)
--				return rc;
-+				goto err;
- 
- 			p_ramrod->rx_qid_valid = 1;
- 			p_ramrod->rx_qid = cpu_to_le16(abs_rx_q_id);
-@@ -2083,6 +2083,10 @@ qed_configure_rfs_ntuple_filter(struct qed_hwfn *p_hwfn,
- 		   (u64)p_params->addr, p_params->length);
- 
- 	return qed_spq_post(p_hwfn, p_ent, NULL);
-+
-+err:
-+	qed_sp_destroy_request(p_hwfn, p_ent);
-+	return rc;
- }
- 
- int qed_get_rxq_coalesce(struct qed_hwfn *p_hwfn,
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_rdma.c b/drivers/net/ethernet/qlogic/qed/qed_rdma.c
-index c71391b9c757..62113438c880 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_rdma.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_rdma.c
-@@ -1514,6 +1514,7 @@ qed_rdma_register_tid(void *rdma_cxt,
- 	default:
- 		rc = -EINVAL;
- 		DP_VERBOSE(p_hwfn, QED_MSG_RDMA, "rc = %d\n", rc);
-+		qed_sp_destroy_request(p_hwfn, p_ent);
- 		return rc;
- 	}
- 	SET_FIELD(p_ramrod->flags1,
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_roce.c b/drivers/net/ethernet/qlogic/qed/qed_roce.c
-index f9167d1354bb..e49fada85410 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_roce.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_roce.c
-@@ -745,6 +745,7 @@ static int qed_roce_sp_destroy_qp_responder(struct qed_hwfn *p_hwfn,
- 		DP_NOTICE(p_hwfn,
- 			  "qed destroy responder failed: cannot allocate memory (ramrod). rc = %d\n",
- 			  rc);
-+		qed_sp_destroy_request(p_hwfn, p_ent);
- 		return rc;
- 	}
- 
 diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp.h b/drivers/net/ethernet/qlogic/qed/qed_sp.h
-index 04259df8a5c2..3157c0d99441 100644
+index e95431f6acd4..04259df8a5c2 100644
 --- a/drivers/net/ethernet/qlogic/qed/qed_sp.h
 +++ b/drivers/net/ethernet/qlogic/qed/qed_sp.h
-@@ -399,6 +399,17 @@ struct qed_sp_init_data {
- 	struct qed_spq_comp_cb *p_comp_data;
+@@ -167,6 +167,9 @@ struct qed_spq_entry {
+ 	enum spq_mode			comp_mode;
+ 	struct qed_spq_comp_cb		comp_cb;
+ 	struct qed_spq_comp_done	comp_done; /* SPQ_MODE_EBLOCK */
++
++	/* Posted entry for unlimited list entry in EBLOCK mode */
++	struct qed_spq_entry		*post_ent;
  };
  
-+/**
-+ * @brief Returns a SPQ entry to the pool / frees the entry if allocated.
-+ *        Should be called on in error flows after initializing the SPQ entry
-+ *        and before posting it.
-+ *
-+ * @param p_hwfn
-+ * @param p_ent
-+ */
-+void qed_sp_destroy_request(struct qed_hwfn *p_hwfn,
-+			    struct qed_spq_entry *p_ent);
-+
- int qed_sp_init_request(struct qed_hwfn *p_hwfn,
- 			struct qed_spq_entry **pp_ent,
- 			u8 cmd,
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-index e86a1ea23613..888274fa208b 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
-@@ -47,6 +47,19 @@
- #include "qed_sp.h"
- #include "qed_sriov.h"
+ struct qed_eq {
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_spq.c b/drivers/net/ethernet/qlogic/qed/qed_spq.c
+index 1673fc90027f..43619b6bb232 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_spq.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_spq.c
+@@ -685,6 +685,8 @@ static int qed_spq_add_entry(struct qed_hwfn *p_hwfn,
+ 			/* EBLOCK responsible to free the allocated p_ent */
+ 			if (p_ent->comp_mode != QED_SPQ_MODE_EBLOCK)
+ 				kfree(p_ent);
++			else
++				p_ent->post_ent = p_en2;
  
-+void qed_sp_destroy_request(struct qed_hwfn *p_hwfn,
-+			    struct qed_spq_entry *p_ent)
+ 			p_ent = p_en2;
+ 		}
+@@ -768,6 +770,25 @@ static int qed_spq_pend_post(struct qed_hwfn *p_hwfn)
+ 				 SPQ_HIGH_PRI_RESERVE_DEFAULT);
+ }
+ 
++/* Avoid overriding of SPQ entries when getting out-of-order completions, by
++ * marking the completions in a bitmap and increasing the chain consumer only
++ * for the first successive completed entries.
++ */
++static void qed_spq_comp_bmap_update(struct qed_hwfn *p_hwfn, __le16 echo)
 +{
-+	/* qed_spq_get_entry() can either get an entry from the free_pool,
-+	 * or, if no entries are left, allocate a new entry and add it to
-+	 * the unlimited_pending list.
-+	 */
-+	if (p_ent->queue == &p_hwfn->p_spq->unlimited_pending)
-+		kfree(p_ent);
-+	else
-+		qed_spq_return_entry(p_hwfn, p_ent);
++	u16 pos = le16_to_cpu(echo) % SPQ_RING_SIZE;
++	struct qed_spq *p_spq = p_hwfn->p_spq;
++
++	__set_bit(pos, p_spq->p_comp_bitmap);
++	while (test_bit(p_spq->comp_bitmap_idx,
++			p_spq->p_comp_bitmap)) {
++		__clear_bit(p_spq->comp_bitmap_idx,
++			    p_spq->p_comp_bitmap);
++		p_spq->comp_bitmap_idx++;
++		qed_chain_return_produced(&p_spq->chain);
++	}
 +}
 +
- int qed_sp_init_request(struct qed_hwfn *p_hwfn,
- 			struct qed_spq_entry **pp_ent,
- 			u8 cmd, u8 protocol, struct qed_sp_init_data *p_data)
-@@ -111,14 +124,7 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
- 	return 0;
+ int qed_spq_post(struct qed_hwfn *p_hwfn,
+ 		 struct qed_spq_entry *p_ent, u8 *fw_return_code)
+ {
+@@ -825,11 +846,12 @@ int qed_spq_post(struct qed_hwfn *p_hwfn,
+ 				   p_ent->queue == &p_spq->unlimited_pending);
  
- err:
--	/* qed_spq_get_entry() can either get an entry from the free_pool,
--	 * or, if no entries are left, allocate a new entry and add it to
--	 * the unlimited_pending list.
--	 */
--	if (p_ent->queue == &p_hwfn->p_spq->unlimited_pending)
--		kfree(p_ent);
--	else
--		qed_spq_return_entry(p_hwfn, p_ent);
-+	qed_sp_destroy_request(p_hwfn, p_ent);
+ 		if (p_ent->queue == &p_spq->unlimited_pending) {
+-			/* This is an allocated p_ent which does not need to
+-			 * return to pool.
+-			 */
++			struct qed_spq_entry *p_post_ent = p_ent->post_ent;
++
+ 			kfree(p_ent);
+-			return rc;
++
++			/* Return the entry which was actually posted */
++			p_ent = p_post_ent;
+ 		}
  
- 	return -EINVAL;
- }
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sriov.c b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-index 9b08a9d9e151..ca6290fa0f30 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sriov.c
-@@ -101,6 +101,7 @@ static int qed_sp_vf_start(struct qed_hwfn *p_hwfn, struct qed_vf_info *p_vf)
- 	default:
- 		DP_NOTICE(p_hwfn, "Unknown VF personality %d\n",
- 			  p_hwfn->hw_info.personality);
-+		qed_sp_destroy_request(p_hwfn, p_ent);
- 		return -EINVAL;
- 	}
+ 		if (rc)
+@@ -843,7 +865,7 @@ int qed_spq_post(struct qed_hwfn *p_hwfn,
+ spq_post_fail2:
+ 	spin_lock_bh(&p_spq->lock);
+ 	list_del(&p_ent->list);
+-	qed_chain_return_produced(&p_spq->chain);
++	qed_spq_comp_bmap_update(p_hwfn, p_ent->elem.hdr.echo);
+ 
+ spq_post_fail:
+ 	/* return to the free pool */
+@@ -875,25 +897,8 @@ int qed_spq_completion(struct qed_hwfn *p_hwfn,
+ 	spin_lock_bh(&p_spq->lock);
+ 	list_for_each_entry_safe(p_ent, tmp, &p_spq->completion_pending, list) {
+ 		if (p_ent->elem.hdr.echo == echo) {
+-			u16 pos = le16_to_cpu(echo) % SPQ_RING_SIZE;
+-
+ 			list_del(&p_ent->list);
+-
+-			/* Avoid overriding of SPQ entries when getting
+-			 * out-of-order completions, by marking the completions
+-			 * in a bitmap and increasing the chain consumer only
+-			 * for the first successive completed entries.
+-			 */
+-			__set_bit(pos, p_spq->p_comp_bitmap);
+-
+-			while (test_bit(p_spq->comp_bitmap_idx,
+-					p_spq->p_comp_bitmap)) {
+-				__clear_bit(p_spq->comp_bitmap_idx,
+-					    p_spq->p_comp_bitmap);
+-				p_spq->comp_bitmap_idx++;
+-				qed_chain_return_produced(&p_spq->chain);
+-			}
+-
++			qed_spq_comp_bmap_update(p_hwfn, echo);
+ 			p_spq->comp_count++;
+ 			found = p_ent;
+ 			break;
+@@ -932,11 +937,9 @@ int qed_spq_completion(struct qed_hwfn *p_hwfn,
+ 			   QED_MSG_SPQ,
+ 			   "Got a completion without a callback function\n");
+ 
+-	if ((found->comp_mode != QED_SPQ_MODE_EBLOCK) ||
+-	    (found->queue == &p_spq->unlimited_pending))
++	if (found->comp_mode != QED_SPQ_MODE_EBLOCK)
+ 		/* EBLOCK  is responsible for returning its own entry into the
+-		 * free list, unless it originally added the entry into the
+-		 * unlimited pending list.
++		 * free list.
+ 		 */
+ 		qed_spq_return_entry(p_hwfn, found);
  
 -- 
 2.17.1
