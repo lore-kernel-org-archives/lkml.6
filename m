@@ -2,201 +2,99 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 997DEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:40:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28DFBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:43:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5448020818
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:40:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D78D222419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:43:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="O5tHoxOb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5448020818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PGmmqij0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D78D222419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387447AbeKOBof (ORCPT
+        id S1733310AbeKOBrC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:44:35 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:33716 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728000AbeKOBof (ORCPT
+        Wed, 14 Nov 2018 20:47:02 -0500
+Received: from mail-pf1-f181.google.com ([209.85.210.181]:34617 "EHLO
+        mail-pf1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728000AbeKOBrB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:44:35 -0500
-Received: by mail-vs1-f66.google.com with SMTP id p74so9781503vsc.0
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 07:40:49 -0800 (PST)
+        Wed, 14 Nov 2018 20:47:01 -0500
+Received: by mail-pf1-f181.google.com with SMTP id h3so1557818pfg.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 07:43:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=qhXBUPYPE3l/6xSc85gdUJMtEaXW+SdKf9Phc9De/B8=;
-        b=O5tHoxOb0xZT1oFMWnJLBbZgy8YpwssA8vPupJzplmRUhPvshHurejuvgNIRI4C2no
-         7AqjCTWtHwx8YP/HNBlcOeXt9hO3k3Bbj7RJoANiQvMmb2BApeiX3KPEjGaFjll5xd4H
-         SAuyV1xFsEHsc/AoBjaAIcKCkP7ZvstN+iFEfAVD4UsTCNzkbr6JmlALsqPUe15y4TEO
-         ercIpwGXe+okX2fqPFh7JxUTTsghAfsLvUCaMcERPrN9LBPMPSXs/W0cGVdne/cGjnqK
-         bhiZE2nnArjNRzZCy/XXZwu1fqgcyTJKBfSRminnQMugfVlp46i2PqOVkWj6wgPEXJsC
-         7W+Q==
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=+LrqeRLzCZh5UnH15yo3d1dbLZ1V/W8P2HnIyJcAXIc=;
+        b=PGmmqij0Xwi6t5wQvRNeBk54GW6X2CBByyNh0kG6/GgDUr28Ere/nP6uCngqNPQ6wS
+         8grQfgxD9gaGWjv0+s+ReGzZ5oSaaQZUO6/891gpG2Pev5I6bG9cVtArFaja0VM4/MCY
+         JUr0VgQIg6X3r1xkrzAfMbBqLwzeaiA8Vx3J4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=qhXBUPYPE3l/6xSc85gdUJMtEaXW+SdKf9Phc9De/B8=;
-        b=Vv8PBkeFUYjpq0KcTlOUzqrdV0tdRIhiCW9AKTbUk+SgDlcGs8+6SlCOQa/38EG51A
-         gYUsDGUTl98pcKRrnrZXDNzZ/+7NuQHIKJ9Oyw/Dff0hK/TaYuqkAVpeF6EfXsCbGWhC
-         D7D+o2TIoHg0XL5mt5L7OJGJuMcXTpO8hheqfEs9ltJh6wqC+nPfBtpHzBVGHl8MT/iK
-         bn2MZgLpTlzhzzccMpyPz10i51XRS7ah3pX3GXFwayUuq6xW32S+TsZ/Q2xkpWD/zg+8
-         dFonFCi3FfqnkDkc+AH95JNk0GREEo9f0q4pDmBGPSPpT5oWJqw0DjpUsNjpD+kzO2kq
-         Q4+g==
-X-Gm-Message-State: AGRZ1gJAzijWir3xbfxz7rfTTKfLGOKRVFaYAH5gr+zLVrONevM4j6tr
-        8f0CEYGS/phR/CEE1zgXW+SDUazMBvpdJYOL37o5Dw==
-X-Google-Smtp-Source: AJdET5duI6gFzkjB9/3N/jXwI88Vod3a9ycACZLfwG3Oeb8HwlZ9siexlS6LwznRBJTN/Bl7C1woLcTAcPC5Jn3NGxs=
-X-Received: by 2002:a67:6e87:: with SMTP id j129mr1055506vsc.171.1542210048344;
- Wed, 14 Nov 2018 07:40:48 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=+LrqeRLzCZh5UnH15yo3d1dbLZ1V/W8P2HnIyJcAXIc=;
+        b=d9HOHB1/RK/oluIZwJqLqfxvCjk1wP1rMPM1nwYM36QTYXG3ib2P2BLLRyKprBAu13
+         5/8VdymUhpt9J+KmiaMf7C0IRJ3ZjidEpVufV0n4eaogLhrGXP84gq1GA7yPQNCeomz/
+         lZmYCea5+kWO2/MpuIxLF9sYljK75gz5HbWSmtBblyYkGE3AL6JXwgT3VzYOmbf+FmBe
+         HEt1CxJTHuXV/toob7ztVynF9eCqwucGGFNaaFShe/SrRdU49DJet5mEdQrNu83QuBS1
+         peUE7MUEpDbgZ1D2ELrv+E0E1KMehdAxAl5UyKSw4wrdtKf/N/RHcjRMn0waaLHsFN4J
+         UaRw==
+X-Gm-Message-State: AGRZ1gJOqlahxPhi49YASqgaTwE8y2cGFKAxTFunjqv9jlrseqgxaGJE
+        UGZep9YBihYDnIfUUUi/q+1ahw==
+X-Google-Smtp-Source: AJdET5d1BuIDiogEuZnaDnU0/PGtFg312fvIfWfeTPR6jZTLQxRYXfR/WyM7Z35ORvY+XK8vO/BICw==
+X-Received: by 2002:a62:c104:: with SMTP id i4-v6mr2395824pfg.133.1542210195971;
+        Wed, 14 Nov 2018 07:43:15 -0800 (PST)
+Received: from pure.paranoia.local ([172.83.40.72])
+        by smtp.gmail.com with ESMTPSA id l26-v6sm43468483pfg.161.2018.11.14.07.43.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Nov 2018 07:43:15 -0800 (PST)
+Date:   Wed, 14 Nov 2018 10:43:12 -0500
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+Cc:     pr-tracker-bot@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@gmail.com>
+Subject: Re: [git pull] drm fixes for 4.20-rc2
+Message-ID: <20181114154312.GA31033@pure.paranoia.local>
+Mail-Followup-To: Jani Nikula <jani.nikula@linux.intel.com>,
+        pr-tracker-bot@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        Dave Airlie <airlied@gmail.com>
+References: <CAPM=9tzQBpaa7HcNvCHNxrPUDmF4o4orGy_kTJBA-8KBQO65Mw@mail.gmail.com>
+ <20181114005545.8329.81866.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+ <87zhuchqps.fsf@intel.com>
 MIME-Version: 1.0
-Received: by 2002:a67:f48d:0:0:0:0:0 with HTTP; Wed, 14 Nov 2018 07:40:46
- -0800 (PST)
-In-Reply-To: <5853c297-9d84-86e5-dede-aa2957562c6b@arm.com>
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
- <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <877ehjx447.fsf@oldenburg.str.redhat.com>
- <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
- <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
- <20181113193859.GJ3505@e103592.cambridge.arm.com> <5853c297-9d84-86e5-dede-aa2957562c6b@arm.com>
-From:   Daniel Colascione <dancol@google.com>
-Date:   Wed, 14 Nov 2018 07:40:46 -0800
-Message-ID: <CAKOZuesta_V=doXsVLc2E6WCQvywdur3F+u2pFKaPN+CEQd+ZQ@mail.gmail.com>
-Subject: Re: Official Linux system wrapper library?
-To:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>
-Cc:     Dave P Martin <Dave.Martin@arm.com>, nd <nd@arm.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
-        "Carlos O'Donell" <carlos@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <87zhuchqps.fsf@intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 3:58 AM, Szabolcs Nagy <Szabolcs.Nagy@arm.com> wrote:
-> On 13/11/18 19:39, Dave Martin wrote:
->> On Mon, Nov 12, 2018 at 05:19:14AM -0800, Daniel Colascione wrote:
->>> We should adopt a similar approach. Shipping a lower-level
->>> "liblinux.so" tightly bound to the kernel would not only let the
->>> kernel bypass glibc's "editorial discretion" in exposing new
->>> facilities to userspace, but would also allow for tighter user-kernel
->>> integration that one can achieve with a simplistic syscall(2)-style
->>> escape hatch. (For example, for a long time now, I've wanted to go
->>> beyond POSIX and improve the system's signal handling API, and this
->>> improvement requires userspace cooperation.) The vdso is probably too
->>> small and simplistic to serve in this role; I'd want a real library.
->>
->> Can you expand on your reasoning here?
->
-> such lib creates a useless abi+api layer that
-> somebody has to maintain and document (with or
-> without vdso).
+On Wed, Nov 14, 2018 at 12:57:03PM +0200, Jani Nikula wrote:
+> Hey, this is pretty nice! Thanks!
+> 
+> For whatever reason, two copies were sent, though:
+> 
+> http://mid.mail-archive.com/20181110193502.26034.53729.pr-tracker-bot-20ef6d06ef9a31a33516637a80521b9fc7f1f849@pdx-korg-gitolite-1.ci.codeaurora.org
+> http://mid.mail-archive.com/20181114005545.8329.81866.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org
 
-People already maintain the kernel man pages and are very good.
+Correct, this was my fault. I managed to run it against test data
+without disabling mail sending capability. Hopefully, I'll remember next
+time I have to do it. :)
 
-> it obviously cannot work together with a posix
-> conform libc implementation for which it would
-> require knowledge about
-
-You're incorrect on this point. See programs cobbled together out of
-syscall(2) invocations today: despite lack of libc integration, things
-do mostly work in practice. Calling through a library can't possible
-be worse, and in many ways can be much better.
-
-> thread cancellation internals,
-
-As I mentioned upthread, the only thing a libc needs in order to
-support cancellation properly (at least the way glibc does it)
-is a way to ask the kernel-provided userspace library whether a
-particular program counter address belongs to a certain code sequence
-immediately before the system call instruction, whatever that is.
-Providing this facility is doable without deep knowledge of libc's
-internals, and libc can use it without a deep knowledge of the
-interface library.
-
-> potentially TLS
-> for errno
-
-As someone else mentioned, errno is a libc construct. It's not *hard*
-to support setting errno though: libc could just be required to supply
-a well-defined libc_set_errno symbol that the kernel ABI library would
-then use as needed.
-
-> know libc types even ones that are
-> based on compile time feature macros
-
-This library would not have to do the things that libc does. Why would
-it have to support libc's feature test macros at all?
-
-> (and expose
-> them in headers in a way that does not collide
-> with libc headers)
-
-The kernel should have a set of types and a symbol namespace
-completely disjoint from libc's, with no compatibility hacks or macros
-needed. (That might take some renaming kernel-side.) If libc wants to
-provide a POSIX API, it can take on the responsibility for mapping the
-kernel's structures to libc's, but within its namespace, the kernel
-should be able to add types without fear of conflict.
-
-> abi variants the libc supports
-> (e.g. softfp, security hardened abi), libc
-> internal signals (for anything that's changing
-> signal masks), thread internals for syscalls that
-> require coordination between all user created
-> threads
-
-Most proposed new system calls do not create threads, manipulate
-signal masks, or muck with other internals, so these concerns just
-don't apply. That's why syscall(2) mostly works in practice. Even if a
-few new system calls *do* involve these internal details and require
-closer libc coordination, the majority (e.g., the new mount API,
-termios2) don't, and so can be exposed directly from the kernel
-project without being blocked by glibc.
-
-> (setxid),
-
-A kernel-side fix here would be the cleanest approach.
-
-> libc internal state for syscalls
-> that create/destroy threads.
->
-> and thus such lib does not solve the problems
-> of users who actually requested wrappers for
-> new syscalls (since they want to call into libc
-> and create threads).
->
-> there is a lot of bikesheding here by people who
-> don't understand the constraints nor the use-cases.
-
-Conversely, there's a lot of doubt-sowing from the other side that
-makes shipping a kernel-provided interface library seem harder than it
-is. Most new system calls do not bear on the integration concerns that
-you and others are raising, and whatever problems remain can be solved
-with a narrow interface between libc and a new interface library, one
-that would let both evolve independently.
-
-> an actual proposal in the thread that i think is
-> worth considering is to make the linux syscall
-> design process involve libc devs so the c api is
-> designed together with the syscall abi.
-
-After looking at the history of settid, signal multi-handler
-registration, and other proposed improvements running into the brick
-wall of glibc's API process, I think it's clear that requiring glibc
-signoff on new kernel interfaces would simply lead to stagnation. It's
-not as if we're approaching the problem from a position of ignorance.
-The right answer is a move to an approximation of the BSD model and
-bring the primary interface layer in-house.
- There's a lot of evidence that this model works.
+-K
