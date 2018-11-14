@@ -2,140 +2,119 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B9CC9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 05:15:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEDA8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 05:16:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FFB722360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 05:15:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FFB722360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 771012145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 05:16:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Q5Zl+Jz7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 771012145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731062AbeKNPR3 (ORCPT
+        id S1731260AbeKNPRn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 10:17:29 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:55863 "EHLO hermes.aosc.io"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726610AbeKNPR3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 10:17:29 -0500
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id A0766A2871;
-        Wed, 14 Nov 2018 05:15:45 +0000 (UTC)
-Message-ID: <fcba25b0035060006a750dfbacabf2bfcbd50eff.camel@aosc.io>
-Subject: Re: [PATCH v4 07/10] dt-bindings: phy: add binding for Allwinner
- USB3 PHY
-From:   Icenowy Zheng <icenowy@aosc.io>
-To:     Rob Herring <robh@kernel.org>
-Cc:     devicetree@vger.kernel.org,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-sunxi <linux-sunxi@googlegroups.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Date:   Wed, 14 Nov 2018 13:15:40 +0800
-In-Reply-To: <CAL_JsqL=YY2K0KPK-fN1O-a3R4o5GwYUZr9wyA2DOaXc29Hh3g@mail.gmail.com>
-References: <20181004122855.22981-1-icenowy@aosc.io>
-         <20181004122855.22981-8-icenowy@aosc.io> <20181005205855.GA2458@bogus>
-         <92e92f817d4df753d654124514e89c62f40d52eb.camel@aosc.io>
-         <CAL_JsqL=YY2K0KPK-fN1O-a3R4o5GwYUZr9wyA2DOaXc29Hh3g@mail.gmail.com>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Wed, 14 Nov 2018 10:17:43 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:37970 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727844AbeKNPRn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 10:17:43 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7SUe+/ehpmiimTUc9XjOTWu23hFD2utQUNrOSNT3kog=; b=Q5Zl+Jz7Bx75hqs83/E/f8DVv
+        EnHEc7gX/6bj5Z3gc+Orw7tb99OJeCCNtak0AsFHPYWtCtQsu8KFqchB9ucg9lGe6cLxxisS1TDAX
+        s+w0hdWK6AtnUwif4IYUOnM2bs5rBEQVKVENZBkyXgEXW1UxETx9NAi5xjYnkXmU/Wd7UyyOFdoOz
+        AzJkcvd0EhwR0/jbOMEdpUvtLinPU/yiPWcLLbTQaqQX6bLyzLxo2KftdiD6Z1WwjxmoF5eTBU4Cy
+        /ULVF6rI1XeWj9kL3RHnjkq5hCjpKyUdYIvZC8eShXN4p2EUEv1/3Pohe/2dlBq0TVhcuyco1O3da
+        CeOAw4EIg==;
+Received: from dvhart by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gMnX2-0007zd-HW; Wed, 14 Nov 2018 05:16:04 +0000
+Date:   Tue, 13 Nov 2018 21:16:03 -0800
+From:   Darren Hart <dvhart@infradead.org>
+To:     Loic WEI YU NENG <loic.wyn@gmail.com>
+Cc:     andy.shevchenko@gmail.com, ike.pan@canonical.com,
+        andy@infradead.org, trivial@kernel.org,
+        platform-driver-x86@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ideapad-laptop: Add Lenovo Yoga 2 13 to the no_hw_rfkill
+ DMI list
+Message-ID: <20181114051603.GF7890@fedora.eng.vmware.com>
+References: <20181114022245.5798-1-loic.wyn@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181114022245.5798-1-loic.wyn@gmail.com>
+User-Agent: Mutt/1.9.1 (2017-09-22)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018-10-18四的 08:58 -0500，Rob Herring写道：
-> On Sat, Oct 13, 2018 at 9:42 PM Icenowy Zheng <icenowy@aosc.io>
-> wrote:
-> > 
-> > 在 2018-10-05五的 15:58 -0500，Rob Herring写道：
-> > > On Thu, Oct 04, 2018 at 08:28:52PM +0800, Icenowy Zheng wrote:
-> > > > The new Allwinner H6 SoC contains a USB3 PHY that is wired to
-> > > > the
-> > > > external USB3 pins of the SoC.
-> > > > 
-> > > > Add a device tree binding for the PHY.
-> > > > 
-> > > > Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
-> > > > Reviewed-by: Chen-Yu Tsai <wens@csie.org>
-> > > > ---
-> > > > Changes in v4:
-> > > > - Changed Vbus regulator property to vbus-supply.
-> > > > 
-> > > > Changes in v3:
-> > > > - Added Chen-Yu's Review tag.
-> > > > 
-> > > > No changes in v2, v1.
-> > > > 
-> > > >  .../bindings/phy/sun50i-usb3-phy.txt          | 23
-> > > > +++++++++++++++++++
-> > > >  1 file changed, 23 insertions(+)
-> > > >  create mode 100644
-> > > > Documentation/devicetree/bindings/phy/sun50i-
-> > > > usb3-phy.txt
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/phy/sun50i-usb3-
-> > > > phy.txt b/Documentation/devicetree/bindings/phy/sun50i-usb3-
-> > > > phy.txt
-> > > > new file mode 100644
-> > > > index 000000000000..9f49c6b8c7e7
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/phy/sun50i-usb3-phy.txt
-> > > > @@ -0,0 +1,23 @@
-> > > > +Allwinner sun50i USB3 PHY
-> > > > +-----------------------
-> > > > +
-> > > > +Required properties:
-> > > > +- compatible : should be one of
-> > > > +  * allwinner,sun60i-h6-usb3-phy
-> > > > +- reg : a list of offset + length pairs
-> > > > +- #phy-cells : from the generic phy bindings, must be 0
-> > > > +- clocks : phandle + clock specifier for the phy clock
-> > > > +- resets : phandle + reset specifier for the phy reset
-> > > > +
-> > > > +Optional Properties:
-> > > > +- vbus-supply : a phandle to a regulator that provides power
-> > > > to
-> > > > VBUS.
-> > > 
-> > > This belongs in a connector node as it is part of the connector
-> > > unless
-> > > the phy physically needs Vbus for power.
-> > > 
-> > > But others have done this, so all the phys can just be wrong...
-> > 
-> > How should we reference the connector?
-> > 
-> > Via OF graph or simply a property in PHY node?
+On Tue, Nov 13, 2018 at 06:22:45PM -0800, Loic WEI YU NENG wrote:
+> Some Lenovo ideapad models lack a physical rfkill switch.
+> On Lenovo models Yoga 2 13, ideapad-laptop would wrongly report all
+> radios as blocked by hardware which caused wireless network connections
+> to fail.
+> Add these models without an rfkill switch to the no_hw_rfkill list.
 > 
-> The connector is either a child of the controller or an OF graph from
-> the controller to the connector. The phy driver needs the controller
-> node and then it can walk the tree or graph to get the connector
-> node.
+> Signed-off-by: Loic WEI YU NENG <loic.wyn@gmail.com>
 
-By reading the binding, it says the connector should be a child of the
-"interface controller", not the USB controller. In this case I think
-the interface controller is the PHY rather than the USB controller.
+Thank you for the patch.
 
-In addition, the connector is a passive component, and power management
-should be done by the "interface controller", either directly by the
-PHY or make a dummy interface controller driver that only controls the
-Vbus.
+In the future, please be sure to check MAINTAINERS and include the
+relevant lists, now Cc'd.
 
+I see this in the context of your patch, but can you confirm the current
+driver fails to match your system? It contains the following, which I
+would expect to match:
+
+               .ident = "Lenovo Yoga 2 11 / 13 / Pro",
+                .matches = {
+                        DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+                        DMI_MATCH(DMI_BOARD_NAME, "Yoga2"),
+                },
+
+If it doesn't match, what does dmidecode report for SYS_VENDOR and
+BOARD_NAME on your system? Perhaps we need to make the above more
+generic.
+
+> ---
+>  drivers/platform/x86/ideapad-laptop.c | 7 +++++++
+>  1 file changed, 7 insertions(+)
 > 
-> Rob
+> diff --git a/drivers/platform/x86/ideapad-laptop.c b/drivers/platform/x86/ideapad-laptop.c
+> index b6489cba2985..1589dffab9fa 100644
+> --- a/drivers/platform/x86/ideapad-laptop.c
+> +++ b/drivers/platform/x86/ideapad-laptop.c
+> @@ -1188,6 +1188,13 @@ static const struct dmi_system_id no_hw_rfkill_list[] = {
+>  			DMI_MATCH(DMI_BOARD_NAME, "Yoga2"),
+>  		},
+>  	},
+> +	{
+> +		.ident = "Lenovo Yoga 2 13",
+> +		.matches = {
+> +			DMI_MATCH(DMI_SYS_VENDOR, "LENOVO"),
+> +			DMI_MATCH(DMI_PRODUCT_VERSION, "Yoga 2 13"),
+> +		},
+> +	},
+>  	{
+>  		.ident = "Lenovo Yoga 3 1170 / 1470",
+>  		.matches = {
+> -- 
+> 2.17.1
 > 
-> _______________________________________________
-> linux-arm-kernel mailing list
-> linux-arm-kernel@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-arm-kernel
+> 
 
+-- 
+Darren Hart
+VMware Open Source Technology Center
