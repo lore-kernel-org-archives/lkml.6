@@ -7,48 +7,43 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63A7CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:31:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DFBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:32:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 272ED20868
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:31:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 400F920868
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:32:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yeDchHy3"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 272ED20868
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0SpdAFKx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 400F920868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389169AbeKOIgw (ORCPT
+        id S2388958AbeKOIaq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:36:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38012 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:30:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732565AbeKOIaw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:30:52 -0500
+        id S2388944AbeKOIao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:30:44 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0653E22544;
-        Wed, 14 Nov 2018 22:25:47 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 402D022530;
+        Wed, 14 Nov 2018 22:25:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234347;
-        bh=DBtGe6JmDp0M4F1i76GNFNWAiDYyOcxLcsM54PkfgEU=;
+        s=default; t=1542234339;
+        bh=7qD8qJ410/2mx5wfpPD7qk4XfpNCYCBgM6h0ckYRfg0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=yeDchHy3MYFU7uQYwtCVKeC/bvQKl/RkOy0liKLHxVTXYw6oLOBNenV7RVbVDlmue
-         hOt1Ul7SwtI6zpilsW0WGc7jFD9jXsPduLGF0bk9GoTCpzjjl1SKYpyVczFLMGVEhX
-         was/gry0gN8Ct53sEPow3RcvdVNbC7QbmX4RUKeU=
+        b=0SpdAFKx5PkT+jfcEbTXqD/979ghwoCtdSrRki50BHg8JL7Cqr74wRbyQKJbnN76T
+         MKhL+SNSd9e/gEvvq7FaglA6bnjwl+KRT912/EkcPJty9LQ29JUisYaQK9KhTuscvk
+         cPfHuAxSfquhJhGykbitwDQ7i7q75P0gY0ebkO+s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Valentin Schneider <valentin.schneider@arm.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Dietmar.Eggemann@arm.com,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Thomas Gleixner <tglx@linutronix.de>, morten.rasmussen@arm.com,
-        quentin.perret@arm.com, Ingo Molnar <mingo@kernel.org>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.14 18/27] sched/core: Take the hotplug lock in sched_init_smp()
-Date:   Wed, 14 Nov 2018 17:25:07 -0500
-Message-Id: <20181114222520.99926-18-sashal@kernel.org>
+Cc:     Inki Dae <inki.dae@samsung.com>, Sasha Levin <sashal@kernel.org>,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.14 13/27] Revert "drm/exynos/decon5433: implement frame counter"
+Date:   Wed, 14 Nov 2018 17:25:02 -0500
+Message-Id: <20181114222520.99926-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222520.99926-1-sashal@kernel.org>
 References: <20181114222520.99926-1-sashal@kernel.org>
@@ -57,88 +52,107 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Valentin Schneider <valentin.schneider@arm.com>
+From: Inki Dae <inki.dae@samsung.com>
 
-[ Upstream commit 40fa3780bac2b654edf23f6b13f4e2dd550aea10 ]
+[ Upstream commit 6ca469e22a30992b4478d2ab88737c70667c1e00 ]
 
-When running on linux-next (8c60c36d0b8c ("Add linux-next specific files
-for 20181019")) + CONFIG_PROVE_LOCKING=y on a big.LITTLE system (e.g.
-Juno or HiKey960), we get the following report:
+This reverts commit 0586feba322e1de05075700eb4b835c8b683e62b
 
- [    0.748225] Call trace:
- [    0.750685]  lockdep_assert_cpus_held+0x30/0x40
- [    0.755236]  static_key_enable_cpuslocked+0x20/0xc8
- [    0.760137]  build_sched_domains+0x1034/0x1108
- [    0.764601]  sched_init_domains+0x68/0x90
- [    0.768628]  sched_init_smp+0x30/0x80
- [    0.772309]  kernel_init_freeable+0x278/0x51c
- [    0.776685]  kernel_init+0x10/0x108
- [    0.780190]  ret_from_fork+0x10/0x18
+This patch makes it to need get_vblank_counter callback in crtc
+to get frame counter from decon driver.
 
-The static_key in question is 'sched_asym_cpucapacity' introduced by
-commit:
+However, drm_dev->max_vblank_count is a member unique to
+vendor's DRM driver but in case of ARM DRM, some CRTC devices
+don't provide the frame counter value. As a result, this patch
+made extension and clone mode not working.
 
-  df054e8445a4 ("sched/topology: Add static_key for asymmetric CPU capacity optimizations")
+Instead of this patch, we may need separated max_vblank_count
+which belongs to each CRTC device, or need to implement frame
+counter emulation for them who don't support HW frame counter.
 
-In this particular case, we enable it because smp_prepare_cpus() will
-end up fetching the capacity-dmips-mhz entry from the devicetree,
-so we already have some asymmetry detected when entering sched_init_smp().
-
-This didn't get detected in tip/sched/core because we were missing:
-
-  commit cb538267ea1e ("jump_label/lockdep: Assert we hold the hotplug lock for _cpuslocked() operations")
-
-Calls to build_sched_domains() post sched_init_smp() will hold the
-hotplug lock, it just so happens that this very first call is a
-special case. As stated by a comment in sched_init_smp(), "There's no
-userspace yet to cause hotplug operations" so this is a harmless
-warning.
-
-However, to both respect the semantics of underlying
-callees and make lockdep happy, take the hotplug lock in
-sched_init_smp(). This also satisfies the comment atop
-sched_init_domains() that says "Callers must hold the hotplug lock".
-
-Reported-by: Sudeep Holla <sudeep.holla@arm.com>
-Tested-by: Sudeep Holla <sudeep.holla@arm.com>
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Cc: Dietmar.Eggemann@arm.com
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: morten.rasmussen@arm.com
-Cc: quentin.perret@arm.com
-Link: http://lkml.kernel.org/r/1540301851-3048-1-git-send-email-valentin.schneider@arm.com
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Inki Dae <inki.dae@samsung.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- kernel/sched/core.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  9 ---------
+ drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 11 -----------
+ drivers/gpu/drm/exynos/exynos_drm_drv.h       |  1 -
+ 3 files changed, 21 deletions(-)
 
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 4e89ed8a0fb2..3bc664662081 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -5733,14 +5733,17 @@ void __init sched_init_smp(void)
- 	/*
- 	 * There's no userspace yet to cause hotplug operations; hence all the
- 	 * CPU masks are stable and all blatant races in the below code cannot
--	 * happen.
-+	 * happen. The hotplug lock is nevertheless taken to satisfy lockdep,
-+	 * but there won't be any contention on it.
- 	 */
-+	cpus_read_lock();
- 	mutex_lock(&sched_domains_mutex);
- 	sched_init_domains(cpu_active_mask);
- 	cpumask_andnot(non_isolated_cpus, cpu_possible_mask, cpu_isolated_map);
- 	if (cpumask_empty(non_isolated_cpus))
- 		cpumask_set_cpu(smp_processor_id(), non_isolated_cpus);
- 	mutex_unlock(&sched_domains_mutex);
-+	cpus_read_unlock();
+diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+index f905c214fdd0..5a5b3535411f 100644
+--- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
++++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
+@@ -160,13 +160,6 @@ static u32 decon_get_frame_count(struct decon_context *ctx, bool end)
+ 	return frm;
+ }
  
- 	/* Move init over to a non-isolated CPU */
- 	if (set_cpus_allowed_ptr(current, non_isolated_cpus) < 0)
+-static u32 decon_get_vblank_counter(struct exynos_drm_crtc *crtc)
+-{
+-	struct decon_context *ctx = crtc->ctx;
+-
+-	return decon_get_frame_count(ctx, false);
+-}
+-
+ static void decon_setup_trigger(struct decon_context *ctx)
+ {
+ 	if (!ctx->crtc->i80_mode && !(ctx->out_type & I80_HW_TRG))
+@@ -532,7 +525,6 @@ static const struct exynos_drm_crtc_ops decon_crtc_ops = {
+ 	.disable		= decon_disable,
+ 	.enable_vblank		= decon_enable_vblank,
+ 	.disable_vblank		= decon_disable_vblank,
+-	.get_vblank_counter	= decon_get_vblank_counter,
+ 	.atomic_begin		= decon_atomic_begin,
+ 	.update_plane		= decon_update_plane,
+ 	.disable_plane		= decon_disable_plane,
+@@ -550,7 +542,6 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
+ 	int ret;
+ 
+ 	ctx->drm_dev = drm_dev;
+-	drm_dev->max_vblank_count = 0xffffffff;
+ 
+ 	for (win = ctx->first_win; win < WINDOWS_NR; win++) {
+ 		int tmp = (win == ctx->first_win) ? 0 : win;
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+index 6ce0821590df..4787560bf93e 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
++++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
+@@ -147,16 +147,6 @@ static void exynos_drm_crtc_disable_vblank(struct drm_crtc *crtc)
+ 		exynos_crtc->ops->disable_vblank(exynos_crtc);
+ }
+ 
+-static u32 exynos_drm_crtc_get_vblank_counter(struct drm_crtc *crtc)
+-{
+-	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
+-
+-	if (exynos_crtc->ops->get_vblank_counter)
+-		return exynos_crtc->ops->get_vblank_counter(exynos_crtc);
+-
+-	return 0;
+-}
+-
+ static const struct drm_crtc_funcs exynos_crtc_funcs = {
+ 	.set_config	= drm_atomic_helper_set_config,
+ 	.page_flip	= drm_atomic_helper_page_flip,
+@@ -166,7 +156,6 @@ static const struct drm_crtc_funcs exynos_crtc_funcs = {
+ 	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
+ 	.enable_vblank = exynos_drm_crtc_enable_vblank,
+ 	.disable_vblank = exynos_drm_crtc_disable_vblank,
+-	.get_vblank_counter = exynos_drm_crtc_get_vblank_counter,
+ };
+ 
+ struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
+diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+index f8bae4cb4823..d228b5148dbc 100644
+--- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
++++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
+@@ -133,7 +133,6 @@ struct exynos_drm_crtc_ops {
+ 	void (*disable)(struct exynos_drm_crtc *crtc);
+ 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
+ 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
+-	u32 (*get_vblank_counter)(struct exynos_drm_crtc *crtc);
+ 	enum drm_mode_status (*mode_valid)(struct exynos_drm_crtc *crtc,
+ 		const struct drm_display_mode *mode);
+ 	int (*atomic_check)(struct exynos_drm_crtc *crtc,
 -- 
 2.17.1
 
