@@ -2,112 +2,82 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15037C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:07:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C3F9BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:07:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAC0C2146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:07:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAC0C2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=axis.com
+	by mail.kernel.org (Postfix) with ESMTP id 8CF1521780
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:07:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CF1521780
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733244AbeKOBLH (ORCPT
+        id S1733289AbeKOBLV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:11:07 -0500
-Received: from bastet.se.axis.com ([195.60.68.11]:54692 "EHLO
-        bastet.se.axis.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728116AbeKOBLG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:11:06 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by bastet.se.axis.com (Postfix) with ESMTP id 72CED18359;
-        Wed, 14 Nov 2018 16:07:28 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at bastet.se.axis.com
-Received: from bastet.se.axis.com ([IPv6:::ffff:127.0.0.1])
-        by localhost (bastet.se.axis.com [::ffff:127.0.0.1]) (amavisd-new, port 10024)
-        with LMTP id EFGLxgrijait; Wed, 14 Nov 2018 16:07:27 +0100 (CET)
-Received: from boulder03.se.axis.com (boulder03.se.axis.com [10.0.8.17])
-        by bastet.se.axis.com (Postfix) with ESMTPS id C3BF4185A2;
-        Wed, 14 Nov 2018 16:07:26 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id ADB361E06A;
-        Wed, 14 Nov 2018 16:07:26 +0100 (CET)
-Received: from boulder03.se.axis.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A0B511E066;
-        Wed, 14 Nov 2018 16:07:26 +0100 (CET)
-Received: from thoth.se.axis.com (unknown [10.0.2.173])
-        by boulder03.se.axis.com (Postfix) with ESMTP;
-        Wed, 14 Nov 2018 16:07:26 +0100 (CET)
-Received: from XBOX03.axis.com (xbox03.axis.com [10.0.5.17])
-        by thoth.se.axis.com (Postfix) with ESMTP id 938061151;
-        Wed, 14 Nov 2018 16:07:26 +0100 (CET)
-Received: from lnxricardw1.se.axis.com (10.0.5.60) by XBOX03.axis.com
- (10.0.5.17) with Microsoft SMTP Server (TLS) id 15.0.1365.1; Wed, 14 Nov 2018
- 16:07:26 +0100
-Date:   Wed, 14 Nov 2018 16:07:21 +0100
-From:   Ricard Wanderlof <ricard.wanderlof@axis.com>
-X-X-Sender: ricardw@lnxricardw1.se.axis.com
-To:     =?ISO-8859-15?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>
-CC:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Mark Brown <broonie@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>, <devicetree@vger.kernel.org>,
-        <alsa-devel@alsa-project.org>,
-        Adrien Charruel <adrien.charruel@devialet.com>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [alsa-devel] [PATCH v2 1/2] ASoC: ak4118: Add support for AK4118
- S/PDIF transceiver
-In-Reply-To: <20181114121642.1404-1-peron.clem@gmail.com>
-Message-ID: <alpine.DEB.2.20.1811141602590.20252@lnxricardw1.se.axis.com>
-References: <20181114121642.1404-1-peron.clem@gmail.com>
-User-Agent: Alpine 2.20 (DEB 67 2015-01-07)
+        Wed, 14 Nov 2018 20:11:21 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42116 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728116AbeKOBLV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 20:11:21 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 0C2D8AEFA;
+        Wed, 14 Nov 2018 15:07:43 +0000 (UTC)
+Date:   Wed, 14 Nov 2018 16:07:42 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, davem@davemloft.net,
+        pavel.tatashin@microsoft.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
+        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
+        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
+        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
+Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
+Message-ID: <20181114150742.GZ23419@dhcp22.suse.cz>
+References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8BIT
-X-Originating-IP: [10.0.5.60]
-X-ClientProxiedBy: XBOX02.axis.com (10.0.5.16) To XBOX03.axis.com (10.0.5.17)
-X-TM-AS-GCONF: 00
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-On Wed, 14 Nov 2018, Clément Péron wrote:
-
-> From: Adrien Charruel <adrien.charruel@devialet.com>
+On Mon 05-11-18 13:19:25, Alexander Duyck wrote:
+> This patchset is essentially a refactor of the page initialization logic
+> that is meant to provide for better code reuse while providing a
+> significant improvement in deferred page initialization performance.
 > 
-> The AK4118A is a digital audio transceiver supporting 8 input channels
-> at 192kHz and with 24bits resolution.
-> It converts the S/PDIF signal to I2S format and is configurable over I2C.
+> In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
+> memory per node I have seen the following. In the case of regular memory
+> initialization the deferred init time was decreased from 3.75s to 1.06s on
+> average. For the persistent memory the initialization time dropped from
+> 24.17s to 19.12s on average. This amounts to a 253% improvement for the
+> deferred memory initialization performance, and a 26% improvement in the
+> persistent memory initialization performance.
 > 
-> This driver introduce a minimal support of the AK4118, like selecting the
-> input channel, reading input frequency and detecting some errors.
+> I have called out the improvement observed with each patch.
 
-I'm curious, from what it seems, there is no checking that the input 
-sample rate actually matches the configured sample rate? It's perfectly 
-understandable for a driver which has 'minimal support', but it's 
-something a user must be aware of; for instance if someone does
+I have only glanced through the code (there is a lot of the code to look
+at here). And I do not like the code duplication and the way how you
+make the hotplug special. There shouldn't be any real reason for that
+IMHO (e.g. why do we init pfn-at-a-time in early init while we do
+pageblock-at-a-time for hotplug). I might be wrong here and the code
+reuse might be really hard to achieve though.
 
-arecord -r 48000 output.wav
+I am also not impressed by new iterators because this api is quite
+complex already. But this is mostly a detail.
 
-when the input data actually has a rate of 44100 Hz then the file will be 
-written with a header specifying 44100 Hz but the data will actually be 
-48000 Hz.
-
-It's not an objection on my part, just an observation. I don't know how 
-ALSA could enforce this in any way; ideally (barring automatic sample rate 
-conversion) one would want an error message that the sample rate specified 
-when opening the stream does not match the sample rate of the S/PDIF input 
-data.
-
-/Ricard
+Thing I do not like is that you keep microptimizing PageReserved part
+while there shouldn't be anything fundamental about it. We should just
+remove it rather than make the code more complex. I fell more and more
+guilty to add there actually.
 -- 
-Ricard Wolf Wanderlof                           ricardw(at)axis.com
-Axis Communications AB, Lund, Sweden            www.axis.com
-Phone +46 46 272 2016                           Fax +46 46 13 61 30
+Michal Hocko
+SUSE Labs
