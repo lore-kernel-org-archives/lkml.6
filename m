@@ -2,85 +2,101 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 196AFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BF4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:32:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD6AF2243E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:26:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD6AF2243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 40D342243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:32:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D342243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728293AbeKNV25 (ORCPT
+        id S1732208AbeKNVez (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 16:28:57 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:56978 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727598AbeKNV25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 16:28:57 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id IAXa0CHwVd4C; Wed, 14 Nov 2018 12:26:05 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD0D200D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:d200:d571:4500:c00e:26fd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E786A1EC0322;
-        Wed, 14 Nov 2018 12:26:04 +0100 (CET)
-Date:   Wed, 14 Nov 2018 12:26:01 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Lianbo Jiang <lijiang@redhat.com>
-Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        x86@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        akpm@linux-foundation.org, dyoung@redhat.com, bhe@redhat.com
-Subject: Re: [PATCH 1/2 v6] x86/kexec_file: add e820 entry in case e820 type
- string matches to io resource name
-Message-ID: <20181114112600.GD13926@zn.tnic>
-References: <20181114072926.13312-1-lijiang@redhat.com>
- <20181114072926.13312-2-lijiang@redhat.com>
+        Wed, 14 Nov 2018 16:34:55 -0500
+Received: from mx2.suse.de ([195.135.220.15]:56350 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727598AbeKNVez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 16:34:55 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 76B1AAF76;
+        Wed, 14 Nov 2018 11:32:01 +0000 (UTC)
+Date:   Wed, 14 Nov 2018 12:31:59 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Chanho Min <chanho.min@lge.com>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian@brauner.io>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Seungho Park <seungho1.park@lge.com>,
+        Inkyu Hwang <inkyu.hwang@lge.com>,
+        Donghwan Jung <donghwan.jung@lge.com>,
+        Jongsung Kim <neidhard.kim@lge.com>
+Subject: Re: [PATCH v2] exec: make de_thread() freezable
+Message-ID: <20181114113159.GR23419@dhcp22.suse.cz>
+References: <1541994885-20059-1-git-send-email-chanho.min@lge.com>
+ <20181113145339.GD16182@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181114072926.13312-2-lijiang@redhat.com>
+In-Reply-To: <20181113145339.GD16182@dhcp22.suse.cz>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 03:29:25PM +0800, Lianbo Jiang wrote:
-> When load the kernel image and initramfs by kexec_file_load syscall, it can
-> not add exact e820 reserved type to kdump kernel e820 table.
+On Tue 13-11-18 15:53:39, Michal Hocko wrote:
+> On Mon 12-11-18 12:54:45, Chanho Min wrote:
+> > Suspend fails due to the exec family of functions blocking the freezer.
+> > The casue is that de_thread() sleeps in TASK_UNINTERRUPTIBLE waiting for
+> > all sub-threads to die, and we have the deadlock if one of them is frozen.
+> > This also can occur with the schedule() waiting for the group thread leader
+> > to exit if it is frozen.
+> > 
+> > In our machine, it causes freeze timeout as bellows.
+> > 
+> > Freezing of tasks failed after 20.010 seconds (1 tasks refusing to freeze, wq_busy=0):
+> > setcpushares-ls D ffffffc00008ed70     0  5817   1483 0x0040000d
+> >  Call trace:
+> > [<ffffffc00008ed70>] __switch_to+0x88/0xa0
+> > [<ffffffc000d1c30c>] __schedule+0x1bc/0x720
+> > [<ffffffc000d1ca90>] schedule+0x40/0xa8
+> > [<ffffffc0001cd784>] flush_old_exec+0xdc/0x640
+> > [<ffffffc000220360>] load_elf_binary+0x2a8/0x1090
+> > [<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
+> > [<ffffffc00021c584>] load_script+0x20c/0x228
+> > [<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
+> > [<ffffffc0001ce8e0>] do_execveat_common.isra.14+0x4f8/0x6e8
+> > [<ffffffc0001cedd0>] compat_SyS_execve+0x38/0x48
+> > [<ffffffc00008de30>] el0_svc_naked+0x24/0x28
+> > 
+> > To fix this, make de_thread() freezable. It looks safe and works fine.
 > 
-> Kdump uses walk_iomem_res_desc() to iterate io resources, then adds matched
-> desc to e820 table for kdump kernel. But, when convert the e820 type into
-> the iores descriptors, several e820 types are converted to 'IORES_DES_NONE'
-> in this function e820_type_to_iores_desc(). So the walk_iomem_res_desc()
-> will get these unnecessary types(E820_TYPE_RAM/E820_TYPE_UNUSABLE/E820_TYPE
-> _KERN) when iterate io resources by the 'IORES_DES_NONE'.
+> It's been some time since I have looked into this code so bear with me.
+> One thing is not really clear to me. Why does it help to exclude this
+> particular task from the freezer when it is not sleeping in the freezer.
+> I can see how other threads need to be zapped and TASK_WAKEKILL doesn't
+> do that but shouldn't we fix that instead?
 > 
-> It needs filter out these redundant type(such as E820_TYPE_RAM/E820_TYPE_
-> UNUSABLE/E820_TYPE_KERN) in order to add exact e820 reserved type to kdump
-> kernel e820 table. Thus it also needs an extra checking in memmap_entry_
-> callback() to match the e820 type and resource name.
+> Or maybe I am missing something important here.
 
-Ok, it took me a while to parse what this is trying to say so let's
-start from the top:
+Just to not distract from the quick fix. This will silence the freezer
+but I believe that we need a better fix to not block exec by freezer
+long term. It seems much more complicated though so a quick fix makes
+some sense for now.
 
-* What resource type do you do need in the second kernel?
-
-* The most important question: why?
-
-* If it is the reserved resource, why aren't you adding
-IORES_DESC_RESERVED or so which to look for instead of this hacky string
-comparison?
-
+Acked-by: Michal Hocko <mhocko@suse.com>
 -- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Michal Hocko
+SUSE Labs
