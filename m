@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D15DBC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:34:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C10A7C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:34:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BA58208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:34:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 88B82208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:34:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="BVogK5A4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BA58208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wGy+4SME"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 88B82208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388623AbeKOI3z (ORCPT
+        id S2387896AbeKOIjq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:29:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36982 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:39:46 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388492AbeKOI3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:29:54 -0500
+        id S2388595AbeKOI3z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:29:55 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8FA3D2252D;
-        Wed, 14 Nov 2018 22:24:49 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 58FAB2252A;
+        Wed, 14 Nov 2018 22:24:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234289;
-        bh=4u1W5WpuuL36zQcXRh/7NdXpHL/fzrU+3DaNPSEYa38=;
+        s=default; t=1542234291;
+        bh=krtq+h754MddWi8cz5XwSX/AzQbXsXx7un+JWfna5cc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=BVogK5A4YmIjUC5+AhBbMgLdsvPwDqUXeNl9xlZwZnh6azkh8spsPEPNwCF6OW5QK
-         xE99H4xxIPmHTu84bQxt60bH+xNHyBA/LuQcH1ZajPiKv42GYSgejTl0JVrZDN2r5E
-         DpCnNFVdjy24d010fdifrTP8fEtwPSdQKNqs7Lok=
+        b=wGy+4SMEpbCnqykUWEoV3dWXPAAQXAaW4JV9SoyzAYU4awNpPMRIv4NMRgmxBKZir
+         DueHHXhHg7NeC5z3pAOwbWxoZPdOjvOavJDUY9GGxEPR4mQNqeVHdQEswvd+hjKCbN
+         5wdiwS3PEJ4XnK6re/W+8eG6tt/VtUXtPakSTOiw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Denis Bolotin <denis.bolotin@cavium.com>,
-        Michal Kalderon <michal.kalderon@cavium.com>,
+Cc:     Thor Thayer <thor.thayer@linux.intel.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 48/59] qed: Fix blocking/unlimited SPQ entries leak
-Date:   Wed, 14 Nov 2018 17:23:20 -0500
-Message-Id: <20181114222335.99339-48-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.18 51/59] net: stmmac: Fix RX packet size > 8191
+Date:   Wed, 14 Nov 2018 17:23:23 -0500
+Message-Id: <20181114222335.99339-51-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -54,146 +53,101 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Denis Bolotin <denis.bolotin@cavium.com>
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-[ Upstream commit 2632f22ebd08da249c2017962a199a0cfb2324bf ]
+[ Upstream commit 8137b6ef0ce469154e5cf19f8e7fe04d9a72ac5e ]
 
-When there are no SPQ entries left in the free_pool, new entries are
-allocated and are added to the unlimited list. When an entry in the pool
-is available, the content is copied from the original entry, and the new
-entry is sent to the device. qed_spq_post() is not aware of that, so the
-additional entry is stored in the original entry as p_post_ent, which can
-later be returned to the pool.
+Ping problems with packets > 8191 as shown:
 
-Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
-Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
+PING 192.168.1.99 (192.168.1.99) 8150(8178) bytes of data.
+8158 bytes from 192.168.1.99: icmp_seq=1 ttl=64 time=0.669 ms
+wrong data byte 8144 should be 0xd0 but was 0x0
+16    10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f
+      20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f
+%< ---------------snip--------------------------------------
+8112  b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd be bf
+      c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+8144  0 0 0 0 d0 d1
+      ^^^^^^^
+Notice the 4 bytes of 0 before the expected byte of d0.
+
+Databook notes that the RX buffer must be a multiple of 4/8/16
+bytes [1].
+
+Update the DMA Buffer size define to 8188 instead of 8192. Remove
+the -1 from the RX buffer size allocations and use the new
+DMA Buffer size directly.
+
+[1] Synopsys DesignWare Cores Ethernet MAC Universal v3.70a
+    [section 8.4.2 - Table 8-24]
+
+Tested on SoCFPGA Stratix10 with ping sweep from 100 to 8300 byte packets.
+
+Fixes: 286a83721720 ("stmmac: add CHAINED descriptor mode support (V4)")
+Suggested-by: Jose Abreu <jose.abreu@synopsys.com>
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_sp.h  |  3 ++
- drivers/net/ethernet/qlogic/qed/qed_spq.c | 57 ++++++++++++-----------
- 2 files changed, 33 insertions(+), 27 deletions(-)
+ drivers/net/ethernet/stmicro/stmmac/common.h    | 3 ++-
+ drivers/net/ethernet/stmicro/stmmac/descs_com.h | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/enh_desc.c  | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/ring_mode.c | 2 +-
+ 4 files changed, 5 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp.h b/drivers/net/ethernet/qlogic/qed/qed_sp.h
-index e95431f6acd4..04259df8a5c2 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_sp.h
-+++ b/drivers/net/ethernet/qlogic/qed/qed_sp.h
-@@ -167,6 +167,9 @@ struct qed_spq_entry {
- 	enum spq_mode			comp_mode;
- 	struct qed_spq_comp_cb		comp_cb;
- 	struct qed_spq_comp_done	comp_done; /* SPQ_MODE_EBLOCK */
-+
-+	/* Posted entry for unlimited list entry in EBLOCK mode */
-+	struct qed_spq_entry		*post_ent;
- };
+diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+index a15006e2fb29..72715c67c119 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/common.h
++++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+@@ -363,7 +363,8 @@ struct dma_features {
  
- struct qed_eq {
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_spq.c b/drivers/net/ethernet/qlogic/qed/qed_spq.c
-index 1673fc90027f..43619b6bb232 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_spq.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_spq.c
-@@ -685,6 +685,8 @@ static int qed_spq_add_entry(struct qed_hwfn *p_hwfn,
- 			/* EBLOCK responsible to free the allocated p_ent */
- 			if (p_ent->comp_mode != QED_SPQ_MODE_EBLOCK)
- 				kfree(p_ent);
-+			else
-+				p_ent->post_ent = p_en2;
+ /* GMAC TX FIFO is 8K, Rx FIFO is 16K */
+ #define BUF_SIZE_16KiB 16384
+-#define BUF_SIZE_8KiB 8192
++/* RX Buffer size must be < 8191 and multiple of 4/8/16 bytes */
++#define BUF_SIZE_8KiB 8188
+ #define BUF_SIZE_4KiB 4096
+ #define BUF_SIZE_2KiB 2048
  
- 			p_ent = p_en2;
- 		}
-@@ -768,6 +770,25 @@ static int qed_spq_pend_post(struct qed_hwfn *p_hwfn)
- 				 SPQ_HIGH_PRI_RESERVE_DEFAULT);
- }
- 
-+/* Avoid overriding of SPQ entries when getting out-of-order completions, by
-+ * marking the completions in a bitmap and increasing the chain consumer only
-+ * for the first successive completed entries.
-+ */
-+static void qed_spq_comp_bmap_update(struct qed_hwfn *p_hwfn, __le16 echo)
-+{
-+	u16 pos = le16_to_cpu(echo) % SPQ_RING_SIZE;
-+	struct qed_spq *p_spq = p_hwfn->p_spq;
-+
-+	__set_bit(pos, p_spq->p_comp_bitmap);
-+	while (test_bit(p_spq->comp_bitmap_idx,
-+			p_spq->p_comp_bitmap)) {
-+		__clear_bit(p_spq->comp_bitmap_idx,
-+			    p_spq->p_comp_bitmap);
-+		p_spq->comp_bitmap_idx++;
-+		qed_chain_return_produced(&p_spq->chain);
-+	}
-+}
-+
- int qed_spq_post(struct qed_hwfn *p_hwfn,
- 		 struct qed_spq_entry *p_ent, u8 *fw_return_code)
+diff --git a/drivers/net/ethernet/stmicro/stmmac/descs_com.h b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
+index ca9d7e48034c..40d6356a7e73 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/descs_com.h
++++ b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
+@@ -31,7 +31,7 @@
+ /* Enhanced descriptors */
+ static inline void ehn_desc_rx_set_on_ring(struct dma_desc *p, int end)
  {
-@@ -825,11 +846,12 @@ int qed_spq_post(struct qed_hwfn *p_hwfn,
- 				   p_ent->queue == &p_spq->unlimited_pending);
+-	p->des1 |= cpu_to_le32(((BUF_SIZE_8KiB - 1)
++	p->des1 |= cpu_to_le32((BUF_SIZE_8KiB
+ 			<< ERDES1_BUFFER2_SIZE_SHIFT)
+ 		   & ERDES1_BUFFER2_SIZE_MASK);
  
- 		if (p_ent->queue == &p_spq->unlimited_pending) {
--			/* This is an allocated p_ent which does not need to
--			 * return to pool.
--			 */
-+			struct qed_spq_entry *p_post_ent = p_ent->post_ent;
-+
- 			kfree(p_ent);
--			return rc;
-+
-+			/* Return the entry which was actually posted */
-+			p_ent = p_post_ent;
- 		}
+diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+index 77914c89d749..5ef91a790f9d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+@@ -262,7 +262,7 @@ static void enh_desc_init_rx_desc(struct dma_desc *p, int disable_rx_ic,
+ 				  int mode, int end)
+ {
+ 	p->des0 |= cpu_to_le32(RDES0_OWN);
+-	p->des1 |= cpu_to_le32((BUF_SIZE_8KiB - 1) & ERDES1_BUFFER1_SIZE_MASK);
++	p->des1 |= cpu_to_le32(BUF_SIZE_8KiB & ERDES1_BUFFER1_SIZE_MASK);
  
- 		if (rc)
-@@ -843,7 +865,7 @@ int qed_spq_post(struct qed_hwfn *p_hwfn,
- spq_post_fail2:
- 	spin_lock_bh(&p_spq->lock);
- 	list_del(&p_ent->list);
--	qed_chain_return_produced(&p_spq->chain);
-+	qed_spq_comp_bmap_update(p_hwfn, p_ent->elem.hdr.echo);
- 
- spq_post_fail:
- 	/* return to the free pool */
-@@ -875,25 +897,8 @@ int qed_spq_completion(struct qed_hwfn *p_hwfn,
- 	spin_lock_bh(&p_spq->lock);
- 	list_for_each_entry_safe(p_ent, tmp, &p_spq->completion_pending, list) {
- 		if (p_ent->elem.hdr.echo == echo) {
--			u16 pos = le16_to_cpu(echo) % SPQ_RING_SIZE;
--
- 			list_del(&p_ent->list);
--
--			/* Avoid overriding of SPQ entries when getting
--			 * out-of-order completions, by marking the completions
--			 * in a bitmap and increasing the chain consumer only
--			 * for the first successive completed entries.
--			 */
--			__set_bit(pos, p_spq->p_comp_bitmap);
--
--			while (test_bit(p_spq->comp_bitmap_idx,
--					p_spq->p_comp_bitmap)) {
--				__clear_bit(p_spq->comp_bitmap_idx,
--					    p_spq->p_comp_bitmap);
--				p_spq->comp_bitmap_idx++;
--				qed_chain_return_produced(&p_spq->chain);
--			}
--
-+			qed_spq_comp_bmap_update(p_hwfn, echo);
- 			p_spq->comp_count++;
- 			found = p_ent;
- 			break;
-@@ -932,11 +937,9 @@ int qed_spq_completion(struct qed_hwfn *p_hwfn,
- 			   QED_MSG_SPQ,
- 			   "Got a completion without a callback function\n");
- 
--	if ((found->comp_mode != QED_SPQ_MODE_EBLOCK) ||
--	    (found->queue == &p_spq->unlimited_pending))
-+	if (found->comp_mode != QED_SPQ_MODE_EBLOCK)
- 		/* EBLOCK  is responsible for returning its own entry into the
--		 * free list, unless it originally added the entry into the
--		 * unlimited pending list.
-+		 * free list.
- 		 */
- 		qed_spq_return_entry(p_hwfn, found);
- 
+ 	if (mode == STMMAC_CHAIN_MODE)
+ 		ehn_desc_rx_set_on_chain(p);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
+index a7ffc73fffe8..bc83ced94e1b 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
++++ b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
+@@ -140,7 +140,7 @@ static void clean_desc3(void *priv_ptr, struct dma_desc *p)
+ static int set_16kib_bfsize(int mtu)
+ {
+ 	int ret = 0;
+-	if (unlikely(mtu >= BUF_SIZE_8KiB))
++	if (unlikely(mtu > BUF_SIZE_8KiB))
+ 		ret = BUF_SIZE_16KiB;
+ 	return ret;
+ }
 -- 
 2.17.1
 
