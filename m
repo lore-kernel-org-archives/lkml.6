@@ -7,107 +7,91 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B413C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:40:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A860BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:40:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D79A9223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:40:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 628BD223DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:40:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s6U9bDkf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D79A9223DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DPCVsRRn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 628BD223DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733202AbeKOIpQ (ORCPT
+        id S2387751AbeKOI2j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:45:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35794 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:28:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34716 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387841AbeKOI2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:28:48 -0500
+        id S1729091AbeKOI11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:27 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 96C8A2251C;
-        Wed, 14 Nov 2018 22:23:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 74A6222529;
+        Wed, 14 Nov 2018 22:22:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234224;
-        bh=nP1onCC9/seQ1jWPRud0PiL/NRbZ0biTYNDwUwR3NOY=;
+        s=default; t=1542234144;
+        bh=8NKS1UrWEz4D9RM1pP/YEroVkFrHaFuZi3QnZEcCX5o=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s6U9bDkfNKqNIZsLt8z4frwEL5YQJJ8u70RMCYp1TthnDU+g8GTwiLcYOqvn2KlIx
-         2NfoKagq1lcb7O/PgRB5VRWpj1i4oY1rTG1WZZMTFhKzZAv+PT3qC1Vn1N3hJSK5jf
-         jLdZneUTOueie2vleGqnnhvUDTj7C8v3LErlnXEQ=
+        b=DPCVsRRn0XIvTF1VToVYqR7IQNoZh5+jJIi5U1D8iycqiMnULysdwG9CIea7kKLJM
+         odEhlWmr7mGxkH+RPlz4DALJlo2f4+Fau6E0ae7+llzFz2bMMdBirAy7yFeIn36lPv
+         XqO7haNdlObWq1djRcQs2yu3aSh53dJK2xrLZKzw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>,
-        linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 04/59] HID: alps: allow incoming reports when only the trackstick is opened
-Date:   Wed, 14 Nov 2018 17:22:36 -0500
-Message-Id: <20181114222335.99339-4-sashal@kernel.org>
+Cc:     Vasily Averin <vvs@virtuozzo.com>, Theodore Ts'o <tytso@mit.edu>,
+        stable@kernel.org, Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 66/73] ext4: missing !bh check in ext4_xattr_inode_write()
+Date:   Wed, 14 Nov 2018 17:22:00 -0500
+Message-Id: <20181114222207.98701-66-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
-References: <20181114222335.99339-1-sashal@kernel.org>
+In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
+References: <20181114222207.98701-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+From: Vasily Averin <vvs@virtuozzo.com>
 
-[ Upstream commit 7dd8db68949a7acc5bd528ee0ecb8f8720f49921 ]
+[ Upstream commit eb6984fa4ce2837dcb1f66720a600f31b0bb3739 ]
 
-If userspace only reads the trackstick node, and no one is listening to
-the touchpad nor the hidraw node then, the device is not powered on.
+According to Ted Ts'o ext4_getblk() called in ext4_xattr_inode_write()
+should not return bh = NULL
 
-Add open/close callbacks to allow users to disable the touchpad in Gnome
-while keeping the trackstick active.
+The only time that bh could be NULL, then, would be in the case of
+something really going wrong; a programming error elsewhere (perhaps a
+wild pointer dereference) or I/O error causing on-disk file system
+corruption (although that would be highly unlikely given that we had
+*just* allocated the blocks and so the metadata blocks in question
+probably would still be in the cache).
 
-Link: https://bugzilla.redhat.com/show_bug.cgi?id=1559632
-Link: https://gitlab.gnome.org/GNOME/mutter/issues/128
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+Fixes: e50e5129f384 ("ext4: xattr-in-inode support")
+Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Signed-off-by: Theodore Ts'o <tytso@mit.edu>
+Cc: stable@kernel.org # 4.13
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-alps.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ fs/ext4/xattr.c | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/drivers/hid/hid-alps.c b/drivers/hid/hid-alps.c
-index aec253b44156..3cd7229b6e54 100644
---- a/drivers/hid/hid-alps.c
-+++ b/drivers/hid/hid-alps.c
-@@ -660,6 +660,20 @@ static int T4_init(struct hid_device *hdev, struct alps_dev *pri_data)
- 	return ret;
- }
- 
-+static int alps_sp_open(struct input_dev *dev)
-+{
-+	struct hid_device *hid = input_get_drvdata(dev);
-+
-+	return hid_hw_open(hid);
-+}
-+
-+static void alps_sp_close(struct input_dev *dev)
-+{
-+	struct hid_device *hid = input_get_drvdata(dev);
-+
-+	hid_hw_close(hid);
-+}
-+
- static int alps_input_configured(struct hid_device *hdev, struct hid_input *hi)
- {
- 	struct alps_dev *data = hid_get_drvdata(hdev);
-@@ -733,6 +747,10 @@ static int alps_input_configured(struct hid_device *hdev, struct hid_input *hi)
- 		input2->id.version = input->id.version;
- 		input2->dev.parent = input->dev.parent;
- 
-+		input_set_drvdata(input2, hdev);
-+		input2->open = alps_sp_open;
-+		input2->close = alps_sp_close;
-+
- 		__set_bit(EV_KEY, input2->evbit);
- 		data->sp_btn_cnt = (data->sp_btn_info & 0x0F);
- 		for (i = 0; i < data->sp_btn_cnt; i++)
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index f36fc5d5b257..302725176571 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1388,6 +1388,12 @@ retry:
+ 		bh = ext4_getblk(handle, ea_inode, block, 0);
+ 		if (IS_ERR(bh))
+ 			return PTR_ERR(bh);
++		if (!bh) {
++			WARN_ON_ONCE(1);
++			EXT4_ERROR_INODE(ea_inode,
++					 "ext4_getblk() return bh = NULL");
++			return -EFSCORRUPTED;
++		}
+ 		ret = ext4_journal_get_write_access(handle, bh);
+ 		if (ret)
+ 			goto out;
 -- 
 2.17.1
 
