@@ -2,251 +2,299 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2DCAC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:36:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 71090C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:36:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F9072146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:36:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2540A2146D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:36:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ffUZ1F5u";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HXWgdq53"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F9072146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gk4ccZ3a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2540A2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732863AbeKOAju (ORCPT
+        id S1732941AbeKOAkB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 19:39:50 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:40042 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727357AbeKOAju (ORCPT
+        Wed, 14 Nov 2018 19:40:01 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41498 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727357AbeKOAkB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 19:39:50 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id CA9EA6044B; Wed, 14 Nov 2018 14:36:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542206180;
-        bh=VlEiyXe+KzKKz+Js0d8x3vINvYdHPJs429FntIfkbOQ=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=ffUZ1F5uEC7MbpE68L21embclgSRHKHq2K+96SphoyTvaTaTiLKoOrL+ZZD5Idfot
-         o/PKbEwaD1czgvhIHimOh59JO9FZPabfXkdp+Z6HowVRN+hS9KP674Vk+l60fq9+fA
-         OlfiMPIULMmwi8AbQrB8hUlRYfUV6u4TEbvkqmSE=
-Received: from [192.168.0.104] (unknown [183.83.73.254])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: vbadigan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 5F00D6044B;
-        Wed, 14 Nov 2018 14:36:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542206179;
-        bh=VlEiyXe+KzKKz+Js0d8x3vINvYdHPJs429FntIfkbOQ=;
-        h=Subject:From:To:Cc:References:Date:In-Reply-To:From;
-        b=HXWgdq53yema/ppJvyUYpR5xMo3wndyTnrn2u3ZkWPBcnxUcBs3JU3gZ4HxGuyxXr
-         foL2RH5kWJjgIH+85RaD0MsLw1tShbyWfUyIlqMXHGBvjDaAsxxpwjO6vPmbP4SVcC
-         OkV//Z4SecOr1F78nM24+mW3i7oaZaDo3aQODypQ=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 5F00D6044B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=vbadigan@codeaurora.org
-Subject: Re: [PATCH V3 1/3] mmc: sdhci: Allow platform controlled voltage
- switching
-From:   Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
-        robh+dt@kernel.org, Doug Anderson <dianders@google.com>,
-        asutoshd@codeaurora.org, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayali <sayalil@codeaurora.org>,
-        linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        vviswana@codeaurora.org, linux-kernel@vger.kernel.org
-References: <1539004739-32060-1-git-send-email-vbadigan@codeaurora.org>
- <1539004739-32060-2-git-send-email-vbadigan@codeaurora.org>
- <CAE=gft631u+ie3PRFkc5t1f3iYwuhbxDbxKUqvdZS5cFJaJbsA@mail.gmail.com>
- <dcb4a579-b308-76c0-7cc3-22bb95147470@codeaurora.org>
-Message-ID: <9a4708c8-cc43-a690-7ef7-da351eb1f967@codeaurora.org>
-Date:   Wed, 14 Nov 2018 20:06:04 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <dcb4a579-b308-76c0-7cc3-22bb95147470@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+        Wed, 14 Nov 2018 19:40:01 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 70so7451956pgh.8
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 06:36:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=s2/owihrhX8Ds9+oNUcEcQtQy7kzAHAObaBtfpKwRWo=;
+        b=Gk4ccZ3ain3+y6gmjMYN8RtQFswhzkss12hYhzlujIeCi6v+SDeEzeaHfObZJRkb5E
+         SHhRHQb1rHB0+XfeG9sFKSY00QFSOQsEgA+nVuNx87SKkDYKFdQJyVYcOkdfgelTG7zQ
+         MD/LiCGgsz1uJN/oroaVjpzcv67Ygd17+gxa34zUpNMn/knadbp6Ye5ztnoAijsxN765
+         2AfjMUUlk7G4fczyLyYrFCbTBLFQeCo2mJzaSYH28E5tc+J8RiiXpAQUcp3pUcRuX4EG
+         eruhGOd278zwR4HWzrJy1nl+BK8Gnw7l77NQW2lzirMdMpDIurjlmLPeZZ5HXelkw/7L
+         1cFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=s2/owihrhX8Ds9+oNUcEcQtQy7kzAHAObaBtfpKwRWo=;
+        b=qc92BsDzozsPXh0NxyjJQ/MSv8S+hvkvitw+fLhKQFQGo1+hdeJALhqvRJIN7BVnmg
+         GiFbePiuVNsvIVtI9YPmI+Xkzl0SdGpL/bgbGhoaSjsCIFFcuYeLKjNY2p2ebgz3Bo3d
+         6ub/zWiTkOZIi2U2JSKPOxG/R4BH/XKF0iaegjV1zYQupeqrL2puC0BxFdv9iSrucD8e
+         1s+tSOOJM86vqGMQpqULzMLQiYtc7I/GF72xp/pOpLX7GpJ3ciICI7WQSEOk0X+JcmkZ
+         +z2Y+3PU0NzJmnn0nNM6pR1hBnU7g0VnRwZIVEdphukyNd3Hw1gJxL0xB798q3NJwm5s
+         iuHQ==
+X-Gm-Message-State: AGRZ1gIhGnvKwWhKMrggMjjCbW7u+/Xscf7jGZtmfV7uXX7PpqJqJO32
+        HrFjg5DIYAoWQXW5SHsMA8k=
+X-Google-Smtp-Source: AJdET5fVbmT/D37OOnl5QiMcZbtQfHfjvePv5ylxoIZ9oTtTgwrofQyqB4eWn91XbmWW/bAsuwrfkA==
+X-Received: by 2002:a63:9306:: with SMTP id b6mr1921339pge.36.1542206190658;
+        Wed, 14 Nov 2018 06:36:30 -0800 (PST)
+Received: from ubuntu.localdomain ([104.238.150.158])
+        by smtp.gmail.com with ESMTPSA id 196-v6sm75409350pfc.71.2018.11.14.06.36.28
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 06:36:30 -0800 (PST)
+From:   Muchun Song <smuchun@gmail.com>
+To:     mingo@kernel.org, peterz@infradead.org
+Cc:     linux-kernel@vger.kernel.org
+Subject: [PATCH v3] sched/rt: Introduce rt_prio_lower() helper for comparing RT task prority
+Date:   Wed, 14 Nov 2018 22:36:13 +0800
+Message-Id: <20181114143613.99955-1-smuchun@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+We use a value to represent the priority of the RT task. But a smaller
+value corresponds to a higher priority. If there are two RT task A and B,
+their priorities are prio_a and prio_b, respectively. If prio_a is larger
+than prio_b, which means that the priority of RT task A is lower than RT
+task B. It may seem a bit strange.
 
+In rt.c, there are many if condition of priority comparison. We need to
+think carefully about which priority is higher because of this opposite
+logic when read those code. So we introduce rt_prio_lower() helper for
+comparing RT task prority, which can make code more readable.
 
-On 11/12/2018 10:49 PM, Veerabhadrarao Badiganti wrote:
->
-> On 10/17/2018 3:39 AM, Evan Green wrote:
->> On Mon, Oct 8, 2018 at 6:22 AM Veerabhadrarao Badiganti
->> <vbadigan@codeaurora.org> wrote:
->>> From: Vijay Viswanath <vviswana@codeaurora.org>
->>>
->>> Some controllers can have internal mechanism to inform the SW that it
->>> is ready for voltage switching. For such controllers, changing voltage
->>> before the HW is ready can result in various issues.
->>>
->>> During setup/cleanup of host, check whether regulator enable/disable
->>> was already done by platform driver.
->>>
->>> Signed-off-by: Vijay Viswanath <vviswana@codeaurora.org>
->>> Signed-off-by: Veerabhadrarao Badiganti <vbadigan@codeaurora.org>
->>> ---
->>>   drivers/mmc/host/sdhci.c | 32 +++++++++++++++++++-------------
->>>   drivers/mmc/host/sdhci.h |  1 +
->>>   2 files changed, 20 insertions(+), 13 deletions(-)
->>>
->>> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
->>> index 99bdae5..ea7ce1d 100644
->>> --- a/drivers/mmc/host/sdhci.c
->>> +++ b/drivers/mmc/host/sdhci.c
->>> @@ -3616,6 +3616,7 @@ int sdhci_setup_host(struct sdhci_host *host)
->>>          unsigned int override_timeout_clk;
->>>          u32 max_clk;
->>>          int ret;
->>> +       bool enable_vqmmc = false;
->>>
->>>          WARN_ON(host == NULL);
->>>          if (host == NULL)
->>> @@ -3629,9 +3630,12 @@ int sdhci_setup_host(struct sdhci_host *host)
->>>           * the host can take the appropriate action if regulators 
->>> are not
->>>           * available.
->>>           */
->>> -       ret = mmc_regulator_get_supply(mmc);
->>> -       if (ret)
->>> -               return ret;
->>> +       if (!mmc->supply.vqmmc) {
->>> +               ret = mmc_regulator_get_supply(mmc);
->>> +               if (ret)
->>> +                       return ret;
->>> +               enable_vqmmc  = true;
->>> +       }
->> Did you not like my suggestion in the previous patch of changing
->> mmc_regulator_get_supply to only get supplies that were not set
->> previously? What you have here is almost the same, except you've got
->> this weird coupling where if vqmmc is already present, you implicitly
->> skip looking at vmmc entirely (since mmc_regulator_get_supply does
->> more than just get vqmmc).
->
-> sure. Will update mmc_regulator_get_supply() as you suggested.
->
->>>          DBG("Version:   0x%08x | Present:  0x%08x\n",
->>>              sdhci_readw(host, SDHCI_HOST_VERSION),
->>> @@ -3880,7 +3884,15 @@ int sdhci_setup_host(struct sdhci_host *host)
->>>                  mmc->caps |= MMC_CAP_NEEDS_POLL;
->>>
->>>          if (!IS_ERR(mmc->supply.vqmmc)) {
->>> -               ret = regulator_enable(mmc->supply.vqmmc);
->>> +               if (enable_vqmmc) {
->>> +                       ret = regulator_enable(mmc->supply.vqmmc);
->>> +                       if (ret) {
->>> +                               pr_warn("%s: Failed to enable vqmmc 
->>> regulator: %d\n",
->>> +                                       mmc_hostname(mmc), ret);
->>> +                               mmc->supply.vqmmc = ERR_PTR(-EINVAL);
->>> +                       }
->>> +                       host->vqmmc_enabled = !ret;
->>> +               }
->>>
->>>                  /* If vqmmc provides no 1.8V signalling, then 
->>> there's no UHS */
->>>                  if 
->>> (!regulator_is_supported_voltage(mmc->supply.vqmmc, 1700000,
->>> @@ -3893,12 +3905,6 @@ int sdhci_setup_host(struct sdhci_host *host)
->>>                  if 
->>> (!regulator_is_supported_voltage(mmc->supply.vqmmc, 2700000,
->>>                                                      3600000))
->>>                          host->flags &= ~SDHCI_SIGNALING_330;
->>> -
->>> -               if (ret) {
->>> -                       pr_warn("%s: Failed to enable vqmmc 
->>> regulator: %d\n",
->>> -                               mmc_hostname(mmc), ret);
->>> -                       mmc->supply.vqmmc = ERR_PTR(-EINVAL);
->>> -               }
->>>          }
->>>
->>>          if (host->quirks2 & SDHCI_QUIRK2_NO_1_8_V) {
->>> @@ -4136,7 +4142,7 @@ int sdhci_setup_host(struct sdhci_host *host)
->>>          return 0;
->>>
->>>   unreg:
->>> -       if (!IS_ERR(mmc->supply.vqmmc))
->>> +       if (host->vqmmc_enabled)
->>>                  regulator_disable(mmc->supply.vqmmc);
->>>   undma:
->>>          if (host->align_buffer)
->>> @@ -4154,7 +4160,7 @@ void sdhci_cleanup_host(struct sdhci_host *host)
->>>   {
->>>          struct mmc_host *mmc = host->mmc;
->>>
->>> -       if (!IS_ERR(mmc->supply.vqmmc))
->>> +       if (host->vqmmc_enabled)
->>>                  regulator_disable(mmc->supply.vqmmc);
->>>
->>>          if (host->align_buffer)
->>> @@ -4287,7 +4293,7 @@ void sdhci_remove_host(struct sdhci_host 
->>> *host, int dead)
->>>
->>>          tasklet_kill(&host->finish_tasklet);
->>>
->>> -       if (!IS_ERR(mmc->supply.vqmmc))
->>> +       if (host->vqmmc_enabled)
->>>                  regulator_disable(mmc->supply.vqmmc);
->>>
->>>          if (host->align_buffer)
->>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
->>> index b001cf4..3c28152 100644
->>> --- a/drivers/mmc/host/sdhci.h
->>> +++ b/drivers/mmc/host/sdhci.h
->>> @@ -524,6 +524,7 @@ struct sdhci_host {
->>>          bool pending_reset;     /* Cmd/data reset is pending */
->>>          bool irq_wake_enabled;  /* IRQ wakeup is enabled */
->>>          bool v4_mode;           /* Host Version 4 Enable */
->>> +       bool vqmmc_enabled;     /* Vqmmc is enabled */
->> I still don't love this, since it doesn't mean what it says. Everyone
->> else that has a vqmmc_enabled member uses it to actually mean "vqmmc
->> is enabled", but this doesn't mean that. For example, you don't clear
->> this when you disable the regulator in patch 3, so this would be set
->> even if the regulator is disabled, and you don't set it when sdhci
->> enables the regulator, so the regulator is on when this flag is not
->> set.
->>
-Hi Evan
+Signed-off-by: Muchun Song <smuchun@gmail.com>
+---
+ kernel/sched/rt.c | 57 +++++++++++++++++++++++++++++------------------
+ 1 file changed, 35 insertions(+), 22 deletions(-)
 
-This flag is meant to say "disable vqmmc *only* if it is enabled by host 
-driver (sdhci_host)".
-If host driver doesn't enable vqmmc (enabled by platfrm driver) or if it 
-fails to enable it, then don't call disable vqmmc.
-
-Agree with you, the present name is not conveying its purpose.
-It must be something like "vqmmc_enabled_by_host".
-
-Please let me know if you have any suggestions on this name.
-
-
->> At the very least, I think a rename is in order. I'm struggling with
->> the rename, since
->> "vqmmc_pltfrm_enable_but_feel_free_to_call_set_voltage_anywhere" is
->> too long. I guess vqmmc_pltfrm_enabled is the best I've got for now.
->
-> Sure. Will rename it.
->
->>>          struct mmc_request *mrqs_done[SDHCI_MAX_MRQS];  /* Requests 
->>> done */
->>>          struct mmc_command *cmd;        /* Current command */
->>> -- 
->>> Qualcomm India Private Limited, on behalf of Qualcomm Innovation 
->>> Center, Inc.
->>> Qualcomm Innovation Center, Inc. is a member of Code Aurora Forum, a 
->>> Linux Foundation Collaborative Project.
->>>
->
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 9aa3287ce301..f28157c8212b 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -101,6 +101,15 @@ void init_rt_rq(struct rt_rq *rt_rq)
+ 	raw_spin_lock_init(&rt_rq->rt_runtime_lock);
+ }
+ 
++/**
++ * rt_prio_lower(a, b) returns true if the priority a is
++ * lower than the priority b, otherwise return false.
++ */
++static inline bool rt_prio_lower(int a, int b)
++{
++	return a > b;
++}
++
+ #ifdef CONFIG_RT_GROUP_SCHED
+ static void destroy_rt_bandwidth(struct rt_bandwidth *rt_b)
+ {
+@@ -262,7 +271,7 @@ static void pull_rt_task(struct rq *this_rq);
+ static inline bool need_pull_rt_task(struct rq *rq, struct task_struct *prev)
+ {
+ 	/* Try to pull RT tasks here if we lower this rq's prio */
+-	return rq->rt.highest_prio.curr > prev->prio;
++	return rt_prio_lower(rq->rt.highest_prio.curr, prev->prio);
+ }
+ 
+ static inline int rt_overloaded(struct rq *rq)
+@@ -377,7 +386,7 @@ static void enqueue_pushable_task(struct rq *rq, struct task_struct *p)
+ 	plist_add(&p->pushable_tasks, &rq->rt.pushable_tasks);
+ 
+ 	/* Update the highest prio pushable task */
+-	if (p->prio < rq->rt.highest_prio.next)
++	if (rt_prio_lower(rq->rt.highest_prio.next, p->prio))
+ 		rq->rt.highest_prio.next = p->prio;
+ }
+ 
+@@ -498,7 +507,7 @@ static void sched_rt_rq_enqueue(struct rt_rq *rt_rq)
+ 		else if (!on_rt_rq(rt_se))
+ 			enqueue_rt_entity(rt_se, 0);
+ 
+-		if (rt_rq->highest_prio.curr < curr->prio)
++		if (rt_prio_lower(curr->prio, rt_rq->highest_prio.curr))
+ 			resched_curr(rq);
+ 	}
+ }
+@@ -1044,7 +1053,7 @@ inc_rt_prio_smp(struct rt_rq *rt_rq, int prio, int prev_prio)
+ 	if (&rq->rt != rt_rq)
+ 		return;
+ #endif
+-	if (rq->online && prio < prev_prio)
++	if (rq->online && rt_prio_lower(prev_prio, prio))
+ 		cpupri_set(&rq->rd->cpupri, rq->cpu, prio);
+ }
+ 
+@@ -1079,7 +1088,7 @@ inc_rt_prio(struct rt_rq *rt_rq, int prio)
+ {
+ 	int prev_prio = rt_rq->highest_prio.curr;
+ 
+-	if (prio < prev_prio)
++	if (rt_prio_lower(prev_prio, prio))
+ 		rt_rq->highest_prio.curr = prio;
+ 
+ 	inc_rt_prio_smp(rt_rq, prio, prev_prio);
+@@ -1092,7 +1101,7 @@ dec_rt_prio(struct rt_rq *rt_rq, int prio)
+ 
+ 	if (rt_rq->rt_nr_running) {
+ 
+-		WARN_ON(prio < prev_prio);
++		WARN_ON(rt_prio_lower(prev_prio, prio));
+ 
+ 		/*
+ 		 * This may have been our highest task, and therefore
+@@ -1424,7 +1433,7 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+ 	 */
+ 	if (curr && unlikely(rt_task(curr)) &&
+ 	    (curr->nr_cpus_allowed < 2 ||
+-	     curr->prio <= p->prio)) {
++	     !rt_prio_lower(curr->prio, p->prio))) {
+ 		int target = find_lowest_rq(p);
+ 
+ 		/*
+@@ -1432,7 +1441,8 @@ select_task_rq_rt(struct task_struct *p, int cpu, int sd_flag, int flags)
+ 		 * not running a lower priority task.
+ 		 */
+ 		if (target != -1 &&
+-		    p->prio < cpu_rq(target)->rt.highest_prio.curr)
++		    rt_prio_lower(cpu_rq(target)->rt.highest_prio.curr,
++				  p->prio))
+ 			cpu = target;
+ 	}
+ 	rcu_read_unlock();
+@@ -1475,7 +1485,7 @@ static void check_preempt_equal_prio(struct rq *rq, struct task_struct *p)
+  */
+ static void check_preempt_curr_rt(struct rq *rq, struct task_struct *p, int flags)
+ {
+-	if (p->prio < rq->curr->prio) {
++	if (rt_prio_lower(rq->curr->prio, p->prio)) {
+ 		resched_curr(rq);
+ 		return;
+ 	}
+@@ -1732,7 +1742,8 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
+ 
+ 		lowest_rq = cpu_rq(cpu);
+ 
+-		if (lowest_rq->rt.highest_prio.curr <= task->prio) {
++		if (!rt_prio_lower(lowest_rq->rt.highest_prio.curr,
++				   task->prio)) {
+ 			/*
+ 			 * Target rq has tasks of equal or higher priority,
+ 			 * retrying does not release any lock and is unlikely
+@@ -1763,7 +1774,7 @@ static struct rq *find_lock_lowest_rq(struct task_struct *task, struct rq *rq)
+ 		}
+ 
+ 		/* If this rq is still suitable use it. */
+-		if (lowest_rq->rt.highest_prio.curr > task->prio)
++		if (rt_prio_lower(lowest_rq->rt.highest_prio.curr, task->prio))
+ 			break;
+ 
+ 		/* try again */
+@@ -1823,7 +1834,7 @@ static int push_rt_task(struct rq *rq)
+ 	 * higher priority than current. If that's the case
+ 	 * just reschedule current.
+ 	 */
+-	if (unlikely(next_task->prio < rq->curr->prio)) {
++	if (unlikely(rt_prio_lower(rq->curr->prio, next_task->prio))) {
+ 		resched_curr(rq);
+ 		return 0;
+ 	}
+@@ -2100,8 +2111,8 @@ static void pull_rt_task(struct rq *this_rq)
+ 		 * logically higher, the src_rq will push this task away.
+ 		 * And if its going logically lower, we do not care
+ 		 */
+-		if (src_rq->rt.highest_prio.next >=
+-		    this_rq->rt.highest_prio.curr)
++		if (!rt_prio_lower(this_rq->rt.highest_prio.curr,
++				src_rq->rt.highest_prio.next))
+ 			continue;
+ 
+ 		/*
+@@ -2121,7 +2132,8 @@ static void pull_rt_task(struct rq *this_rq)
+ 		 * Do we have an RT task that preempts
+ 		 * the to-be-scheduled task?
+ 		 */
+-		if (p && (p->prio < this_rq->rt.highest_prio.curr)) {
++		if (p && rt_prio_lower(this_rq->rt.highest_prio.curr,
++				       p->prio)) {
+ 			WARN_ON(p == src_rq->curr);
+ 			WARN_ON(!task_on_rq_queued(p));
+ 
+@@ -2133,7 +2145,7 @@ static void pull_rt_task(struct rq *this_rq)
+ 			 * p if it is lower in priority than the
+ 			 * current task on the run queue
+ 			 */
+-			if (p->prio < src_rq->curr->prio)
++			if (rt_prio_lower(src_rq->curr->prio, p->prio))
+ 				goto skip;
+ 
+ 			resched = true;
+@@ -2167,7 +2179,7 @@ static void task_woken_rt(struct rq *rq, struct task_struct *p)
+ 	    p->nr_cpus_allowed > 1 &&
+ 	    (dl_task(rq->curr) || rt_task(rq->curr)) &&
+ 	    (rq->curr->nr_cpus_allowed < 2 ||
+-	     rq->curr->prio <= p->prio))
++	     !rt_prio_lower(rq->curr->prio, p->prio)))
+ 		push_rt_tasks(rq);
+ }
+ 
+@@ -2242,7 +2254,8 @@ static void switched_to_rt(struct rq *rq, struct task_struct *p)
+ 		if (p->nr_cpus_allowed > 1 && rq->rt.overloaded)
+ 			rt_queue_push_tasks(rq);
+ #endif /* CONFIG_SMP */
+-		if (p->prio < rq->curr->prio && cpu_online(cpu_of(rq)))
++		if (rt_prio_lower(rq->curr->prio, p->prio) &&
++		    cpu_online(cpu_of(rq)))
+ 			resched_curr(rq);
+ 	}
+ }
+@@ -2263,18 +2276,18 @@ prio_changed_rt(struct rq *rq, struct task_struct *p, int oldprio)
+ 		 * If our priority decreases while running, we
+ 		 * may need to pull tasks to this runqueue.
+ 		 */
+-		if (oldprio < p->prio)
++		if (rt_prio_lower(p->prio, oldprio))
+ 			rt_queue_pull_task(rq);
+ 
+ 		/*
+ 		 * If there's a higher priority task waiting to run
+ 		 * then reschedule.
+ 		 */
+-		if (p->prio > rq->rt.highest_prio.curr)
++		if (rt_prio_lower(p->prio, rq->rt.highest_prio.curr))
+ 			resched_curr(rq);
+ #else
+ 		/* For UP simply resched on drop of prio */
+-		if (oldprio < p->prio)
++		if (rt_prio_lower(p->prio, oldprio))
+ 			resched_curr(rq);
+ #endif /* CONFIG_SMP */
+ 	} else {
+@@ -2283,7 +2296,7 @@ prio_changed_rt(struct rq *rq, struct task_struct *p, int oldprio)
+ 		 * greater than the current running task
+ 		 * then reschedule.
+ 		 */
+-		if (p->prio < rq->curr->prio)
++		if (rt_prio_lower(rq->curr->prio, p->prio))
+ 			resched_curr(rq);
+ 	}
+ }
+-- 
+2.17.1
 
