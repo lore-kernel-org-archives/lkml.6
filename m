@@ -2,144 +2,98 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63920C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 00:56:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C780FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:02:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 315482089F
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 00:56:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 315482089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.us
+	by mail.kernel.org (Postfix) with ESMTP id 89FEC22360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:02:03 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bz4dsa4e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89FEC22360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732087AbeKNK5N convert rfc822-to-8bit (ORCPT
+        id S1728792AbeKNLCx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 05:57:13 -0500
-Received: from mout.gmx.net ([212.227.17.22]:50623 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727295AbeKNK5N (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 05:57:13 -0500
-Received: from [192.168.1.153] ([74.104.183.64]) by mail.gmx.com (mrgmx101
- [212.227.17.174]) with ESMTPSA (Nemesis) id 0LlqNY-1fnfhd2Zvs-00ZSxv; Wed, 14
- Nov 2018 01:55:57 +0100
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.0 \(3445.100.39\))
-Subject: Re: ODEBUG: Out of memory. ODEBUG disabled
-From:   Qian Cai <cai@gmx.us>
-In-Reply-To: <FE1B58AA-FC0E-4E0A-8A76-F98B70548F36@gmx.us>
-Date:   Tue, 13 Nov 2018 19:55:55 -0500
-Cc:     Jan Stancek <jstancek@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Du Changbin <changbin.du@intel.com>,
-        Christian Borntraeger <borntraeger@de.ibm.com>
-Content-Transfer-Encoding: 8BIT
-Message-Id: <BD191D62-A66F-442C-94FD-13806C94A4A1@gmx.us>
-References: <trinity-be6414fb-25ba-4881-acc6-abe3b375d0d0-1541814329304@msvc-mesg-gmx021>
- <c7b58543-ffd2-44bb-1005-e9733782bad5@redhat.com>
- <trinity-0da197a3-0f6e-41a3-8ab7-a3519e158a88-1541859073829@msvc-mesg-gmx023>
- <FE1B58AA-FC0E-4E0A-8A76-F98B70548F36@gmx.us>
-To:     linux kernel <linux-kernel@vger.kernel.org>
-X-Mailer: Apple Mail (2.3445.100.39)
-X-Provags-ID: V03:K1:Zq6Gr13QYWhCXkwlVrxpTorEw4+6wglMiFN7Pytd2rMWuj5k9Mw
- bhRCKQCXrG8UCjKsAn5rvitMSWUXoGi1E0Rj50pu1wuxCj5zoeBAHG/1xOFysO8Oe8PdRs+
- +2gEWEyZSE/wS+3zzlWNC2oMqdt51aKuG3/GBJlUyRjY3VLxZCfucH6Z4+84oExmRpEx1QW
- HQPAII/jrQaSVgkcAtDWw==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:ZjtxYxf1h60=:13zVrbKI3pCkh4OdQy+ZbZ
- Rc7Zo/5zcD27ykkypWOtNkHYzDMzKAhi+WvFibH6FzhewFI5axhoaIwYR+ZX/jhwucwOOSGSx
- NmAkD5J9DT46p7JDMSLH8X73UnjhjnesRswMZHdPcq5nlpYi5FAtfcNvGNJc7toSfah21Pbxz
- MUA9iKWvj9yWNYbwu0y3Yg8ff2yaZL86wnfKfghobDotC+ddxJpX9Tgcry1NVUOlujz7h35Ty
- mXo/AWzeR7q3fqHRsE41eIQ1G6FzfxuqtOfEJjZ51mSNY3OIMoO3anSHJ/l1lqkLBKIGdeYw7
- am+gQdXk2sZrdsFsiB3hpmEje1dcLANI81kNokudodehjdkj7vAOCyE2dSst6jk8gtn1tx/Z5
- r1ffbNLMflhPWhQEbTLS4sZAQ8slmnt3r+M2q6SS+YloNy97omgudAvXt/JvtesF6wTUg8wua
- k3oqDMrYWORbrGTg54ATGI0aJftRx15cj9hF9iaDp8ZX3XS37oFJplPzaTwj8XiF1JHmZymL9
- 1pyKlgCJ93RbH11dCnezJqO6a1Be0bQN47yturEXJpBNMpJbOrsxyhoDDeyw9yVLF5EjhIO8O
- wsQ928qr/kaFxklu3Ke/xiOVXbtPKUYQGGU/9Jp7U45soOu3dk/jSrlchhlIxBEcdQZneDZNC
- AWGWDtXLQ267yH5bWIIJMe5kN7J4tVnWvPbFdbRyIqrhx+D6HwVVrZWtJg+aP55RBhEyLlQAT
- 1ApSenbxAwiRRt6OFV4J7Z5u7Dfub2ZIwTMnYLEYpIqeOAXcoROs31Gbz5CU10eysvW856GAr
- +V2G47+5i9uvVchlQv2LNKnakxXoeSGXDjqLrNZEu4bI1dz6F8e3+Cr5FUih6xMmkh+qTF23t
- M4g3BB+IS1OwxTf2iC4ACflw9HB377LmwdOMlXOjMy/2Jj+jxDEIX6X6Eut+7K
+        Wed, 14 Nov 2018 06:02:53 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:37127 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726193AbeKNLCw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 06:02:52 -0500
+Received: by mail-pf1-f193.google.com with SMTP id u3-v6so4293027pfm.4
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 17:02:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=yP7iG4Xc0EnORD2Lw8VTewjF3jn8iOuZJFfBlpMrWaU=;
+        b=bz4dsa4e+NDJLH+IhlqZFyFkd5k3Xg+HATsE/7DTnJhofPzlRxpd5nadZeY1Pb6wqH
+         nwexFcNKcnwqCfYKTe1nHNoW1LSac8U366nzlDZzj/HjvH6OeOrSqsSLDm/pXKIpKrxZ
+         AAF1exFkru0ptl7JHNigdLNrQrnm/1fw1A3QU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=yP7iG4Xc0EnORD2Lw8VTewjF3jn8iOuZJFfBlpMrWaU=;
+        b=inU82ecgkKvKW+//HixMmHHCFKIZJtieydJM+NQt7nIMtf2XTEWZRH6TuRG8lxU9OQ
+         c3NByMBCGFFAgXbcNvnjb+CwMSzHqP1qU5Bc48DPSNp0UxkPs0UzvWrjwyCFzhHlB0Ii
+         ekihzA1QkRN1VTO13Mvosrs9CH+LoiJ/jKZP99Ybg/J1LBS5KUGth0aV7KQ1Y2VF1RmV
+         IdJAP4PviOVj2cowQZmBh7i7sWuCCqHoqkmIVzW/jo8RJq4RpP66q7+RNJO/Vff5h4oT
+         h5lB++qi20W4lwtcE3zQS/eQ034EyqBvKaMHo7Ahr8QxstolU8VGj9iKxttSDMPFhjfS
+         kicw==
+X-Gm-Message-State: AGRZ1gIUjUoI3jg1FfKv0qukZhVxZqFqRGYStn/ZNWpPLEzZN1FFoUjF
+        iIH2f61s5nYW+Vf63Zuyb8vzdg==
+X-Google-Smtp-Source: AJdET5dw3oHLgAW0KDdOjizDhkhbWsQigObmda20G3WQaCYcMY1f/+QHeuvUQ643vLCCPb44kMIpTQ==
+X-Received: by 2002:a63:4a0a:: with SMTP id x10mr6843463pga.237.1542157320907;
+        Tue, 13 Nov 2018 17:02:00 -0800 (PST)
+Received: from pure.paranoia.local ([172.83.40.72])
+        by smtp.gmail.com with ESMTPSA id c14-v6sm24541785pfc.92.2018.11.13.17.01.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Tue, 13 Nov 2018 17:02:00 -0800 (PST)
+Date:   Tue, 13 Nov 2018 20:01:58 -0500
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     pr-tracker-bot@kernel.org
+Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Jann Horn <jannh@google.com>
+Subject: Re: [GIT PULL] namespace fixes for v4.20-rc2
+Message-ID: <20181114010157.GA24763@pure.paranoia.local>
+Mail-Followup-To: pr-tracker-bot@kernel.org,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        Linux Containers <containers@lists.linux-foundation.org>,
+        Jann Horn <jannh@google.com>
+References: <87pnvcls3n.fsf@xmission.com>
+ <20181114005545.8329.47629.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181114005545.8329.47629.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> On Nov 12, 2018, at 11:33 PM, Qian Cai <cai@gmx.us> wrote:
+On Wed, Nov 14, 2018 at 12:55:45AM +0000, pr-tracker-bot@kernel.org wrote:
+> The pull request you sent on Sat, 10 Nov 2018 12:12:12 -0600:
 > 
+> > git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git for-linus
 > 
-> 
->> On Nov 10, 2018, at 9:11 AM, Qian Cai <cai@gmx.us> wrote:
->> 
->> On 11/10/18 at 8:59 AM, Waiman Long wrote:
->> 
->>> On 11/09/2018 08:45 PM, Qian Cai wrote:
->>>>> Sent: Friday, November 09, 2018 at 5:08 PM
->>>>> From: "Waiman Long" <longman@redhat.com>
->>>>> To: "Qian Cai" <cai@gmx.us>, "Yang Shi" <yang.shi@linux.alibaba.com>
->>>>> Cc: "open list" <linux-kernel@vger.kernel.org>, "Thomas Gleixner" <tglx@linutronix.de>, "Arnd Bergmann" <arnd@arndb.de>, "Joel Fernandes (Google)" <joel@joelfernandes.org>, "Zhong Jiang" <zhongjiang@huawei.com>
->>>>> Subject: Re: ODEBUG: Out of memory. ODEBUG disabled
->>>>> 
->>>>> On 11/09/2018 04:51 PM, Qian Cai wrote:
->>>>>>> On Nov 9, 2018, at 4:42 PM, Yang Shi <yang.shi@linux.alibaba.com> wrote:
->>>>>>> 
->>>>>>> 
->>>>>>> 
->>>>>>> On 11/9/18 1:36 PM, Qian Cai wrote:
->>>>>>>> It is a bit annoying on this aarch64 server with 64 CPUs that is
->>>>>>>> booting the latest mainline (3541833fd1f2) causes object debugging
->>>>>>>> always running out of memory.
->>>>>>> May you please paste the detail failure log?
->>>>>> I assume you mean dmesg.
->>>>>> 
->>>>>> Here is the dmesg for 64 CPUs,
->>>>>> https://paste.ubuntu.com/p/BnhvXXhn7k/
->>>>>>>> I have to boot the kernel with only 16 CPUs instead (nr_cpus=16)
->>>>>>>> to make it work. Is it expected that object debugging is not going
->>>>>>>> to work with large machines?
->>>>>>> I don't think so. I'm supposed it works well with large CPU number on x86.
->>>>>> Here is the one with nr_cpus workaround,
->>>>>> https://paste.ubuntu.com/p/qMpd2CCPSV/
->>>>> The debugobjects code have a set of 1024 statically allocated debug
->>>>> objects that can be used in early boot before the slab memory allocator
->>>>> is initialized. Apparently, the system may have used up all the
->>>>> statically allocated objects. Try double ODEBUG_POOL_SIZE to see if it
->>>>> helps.
->>>> Great, you are right. Doubling the size makes it work. Does it make sense
->>>> to have a kconfig option instead?
->>> 
->>> First, I think you need to figure out what your system needed to use up
->>> so many debug objects in early boot. If there is a legitimate reason for
->>> this behavior, we can talk about having a kconfig option to increase that.
->> Anybody else not getting ODEBUG OOM with more than 64-CPU? As
->> mentioned, restricting to 16-CPU works fine. How can I figure out why the
->> system uses so much debug objects?
-> On another aarch64 server with 256-CPU, even double the size of
-> ODEBUG_POOL_SIZE, i.e., 2048 will get "ODEBUG: Out of memory. ODEBUG
-> disabled”.
+> has been merged into torvalds/linux.git:
+> https://git.kernel.org/torvalds/c/1de4f2ef216dade3b5bd5f5247c4c750a953f51c
 
-OK, here is the problem.
+Sorry for the duplicates! It's entirely the fault of my fat fingers that
+is unable to set the --nomail flag with test data properly.
 
-In order to get aarch64 work, the initial ODEBUG_POOL_SIZE on
-
-64-CPU:  need 2048
-256-CPU: need 8192 (4096 too small)
-
-This commit 97dd552eb23c
-
-+        * Increase the thresholds for allocating and freeing objects
-+        * according to the number of possible CPUs available in the system.
-+        */
-+       debug_objects_pool_size += num_possible_cpus() * 32;
-
-Why magic number 32?
-
-It needs to be bigger than that for aarch64.
-
-(2048 + 64 x 32 - 1024) / 64 = 48 (work on 64-cpu)
-(4096 + 256 x 32 - 1024) / 256 = 48 (not work on 256-cpu)
-(8196 + 256 x 32 - 1024) / 256 = 60 (work on 256-cpu)
+-K
