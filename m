@@ -2,167 +2,116 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C09CEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:09:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68A48C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:11:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9532B22360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:09:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9532B22360
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 2B0372243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:11:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NFga16Q2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B0372243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733180AbeKOCNs (ORCPT
+        id S1733246AbeKOCO4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 21:13:48 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:49022 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726295AbeKOCNs (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 21:13:48 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAEG7pcP042138
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 11:09:57 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nrmd0s6tf-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 11:09:50 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
-        Wed, 14 Nov 2018 16:09:45 -0000
-Received: from b06cxnps3075.portsmouth.uk.ibm.com (9.149.109.195)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 14 Nov 2018 16:09:40 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAEG9dJP60686522
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 14 Nov 2018 16:09:39 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 111BCA4067;
-        Wed, 14 Nov 2018 16:09:39 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D7384A405C;
-        Wed, 14 Nov 2018 16:09:31 +0000 (GMT)
-Received: from rapoport-lnx (unknown [9.148.206.38])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Wed, 14 Nov 2018 16:09:31 +0000 (GMT)
-Date:   Wed, 14 Nov 2018 08:09:28 -0800
-From:   Mike Rapoport <rppt@linux.ibm.com>
-To:     Yi Wang <wang.yi59@zte.com.cn>
-Cc:     riel@redhat.com, linux@rasmusvillemoes.dk, keescook@chromium.org,
-        viro@ZenIV.linux.org.uk, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, rostedt@goodmis.org, tglx@linutronix.de,
-        mingo@kernel.org, rppt@linux.vnet.ibm.com,
-        linux@dominikbrodowski.net, pasha.tatashin@oracle.com,
-        ard.biesheuvel@linaro.org, luto@amacapital.net, wad@chromium.org,
-        mhocko@kernel.org, riel@surriel.com, ebiederm@xmission.com,
-        kirill.shutemov@linux.intel.com, guro@fb.com,
-        marcos.souza.org@gmail.com, zhong.weidong@zte.com.cn
-Subject: Re: [PATCH v2] fork: Fix some -Wmissing-prototypes warnings
-References: <1542170087-23645-1-git-send-email-wang.yi59@zte.com.cn>
+        Wed, 14 Nov 2018 21:14:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34610 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726295AbeKOCO4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 21:14:56 -0500
+Received: from linux-8ccs (ip5f5adbda.dynamic.kabel-deutschland.de [95.90.219.218])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 398B022360;
+        Wed, 14 Nov 2018 16:11:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542211864;
+        bh=3FCN5veeezIRtQ+R8Sag7FMmSBB1PQgfbmBuHFamN6s=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=NFga16Q2G+FT9lcgA7G9DERYQR0J1QKduBVxLw/7kcbE2tCxwGnJG+WrvY6uH+YAy
+         l30PNvZ40STfBJq6glAYf4Fc9q/43Dge6D37lw8BNY+mZwag5baG1stywXUFauHBsp
+         NdGcDS9S4qEv+ve9lMzk7YSgqY5S/KqjgUiClgnU=
+Date:   Wed, 14 Nov 2018 17:10:59 +0100
+From:   Jessica Yu <jeyu@kernel.org>
+To:     Vincent Whitchurch <vincent.whitchurch@axis.com>
+Cc:     linux@armlinux.org.uk, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, live-patching@vger.kernel.org
+Subject: Re: [PATCH v2] ARM: module: Fix function kallsyms on Thumb-2
+Message-ID: <20181114161059.GB13928@linux-8ccs>
+References: <20181031084253.9650-1-vincent.whitchurch@axis.com>
+ <20181031155341.GA27878@linux-8ccs>
+ <20181101152913.r2isskngiahi6o2u@axis.com>
+ <20181102135322.GA5289@linux-8ccs>
+ <20181109135300.3tyord6amvd7wy54@axis.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1542170087-23645-1-git-send-email-wang.yi59@zte.com.cn>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-TM-AS-GCONF: 00
-x-cbid: 18111416-0028-0000-0000-00000319E50B
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111416-0029-0000-0000-000023D6510E
-Message-Id: <20181114160927.GA12756@rapoport-lnx>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-14_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=4 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811140145
+In-Reply-To: <20181109135300.3tyord6amvd7wy54@axis.com>
+X-OS:   Linux linux-8ccs 4.12.14-lp150.12.22-default x86_64
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 12:34:47PM +0800, Yi Wang wrote:
-> We get a warning when building kernel with W=1:
-> kernel/fork.c:167:13: warning: no previous prototype for ‘arch_release_thread_stack’ [-Wmissing-prototypes]
-> kernel/fork.c:779:13: warning: no previous prototype for ‘fork_init’ [-Wmissing-prototypes]
-> 
-> Add the missing declaration in head file to fix this.
-> 
-> Also, remove arch_release_thread_stack() completely because no
-> arch seems to implement it since bb9d81264 (arch: remove tile port).
-> 
-> Signed-off-by: Yi Wang <wang.yi59@zte.com.cn>
++++ Vincent Whitchurch [09/11/18 14:53 +0100]:
+>On Fri, Nov 02, 2018 at 02:53:22PM +0100, Jessica Yu wrote:
+>> +++ Vincent Whitchurch [01/11/18 16:29 +0100]:
+>> > On Wed, Oct 31, 2018 at 04:53:41PM +0100, Jessica Yu wrote:
+>> > > Could this be done in modpost? I'm guessing the answer is no as some
+>> > > relocations may rely on that bit being set in st_value, right?
+>> > > Therefore we can only clear the bit _after_ relocations to the module
+>> > > are applied at runtime, correct?
+>> >
+>> > Yes, that's correct, it needs to be done after the relocations.
+>> >
+>> > > I'm not against having an arch-specific kallsyms fixup function, my
+>> > > only concern would be if this would interfere with the delayed
+>> > > relocations livepatching does, if there are plans in the future to
+>> > > have livepatching on arm (IIRC there was an attempt at a port in
+>> > > 2016). If there exists some Thumb-2 relocation types that rely on that
+>> > > lowest bit in st_value being set in order to be applied, and we clear
+>> > > it permanently from the symtab, then livepatching wouldn't be able to
+>> > > apply those types of relocations anymore. If this is a legitimate
+>> > > concern, then perhaps an alternative solution would be to have an
+>> > > arch-specific kallsyms symbol-value-fixup function for accesses to
+>> > > sym.st_value, without modifying the module symtab.
+>> >
+>> > I'm not familiar with livepatching, but yes, if it needs to do
+>> > relocations later I guess we should preserve the original value.
+>>
+>> Yeah, I think the symtab needs to remain unmodified for livepatch to
+>> be able to do delayed relocations after module load.
+>>
+>> > I gave the alternative solution a go and it seems to work.
+>> > add_kallsyms() currently overwrites st_info so I had to move the
+>> > elf_type to the unused st_other field instead to preserve st_info:
+>>
+>> I think that's fine, I think the only usages of st_other I've found
+>> are during relocations, and the field is big enough for a char, so it
+>> should be fine to reuse it afterwards.
+>
+>If livepatch can do relocations later, doesn't that mean that we _can't_
+>reuse st_other for storing the elf_type?  OTOH, the current code
+>overwrites st_info, and I see that used from various archs' relocation
+>functions too, so perhaps I'm missing something.
 
-Acked-by: Mike Rapoport <rppt@linux.ibm.com>
+D'oh, I just contradicted myself. Yes, you are correct. AFAIK the only
+reason we haven't run into issues yet in livepatch is because the only
+arches it currently supports (x86, s390, powerpc) don't depend on
+st_info for module relocations. But yes, that's an outstanding problem
+that will need to be fixed if livepatch gains support on more arches,
+we shouldn't be overwriting that field. And after grepping around I do
+see that st_other is used in powerpc, alpha, sh for module
+relocations. I suggested in my other reply to your v3 patch that
+reusing st_size instead of st_info might work, since it's not used in
+the module loader/kallsyms, and arches don't seem to use it for module
+relocs. Maybe that would work?
 
-> ---
-> v2: remove arch_release_thread_stack(). Thanks to Rasmus.
-> ---
->  include/linux/sched/task.h | 2 ++
->  init/main.c                | 1 -
->  kernel/fork.c              | 5 -----
->  3 files changed, 2 insertions(+), 6 deletions(-)
-> 
-> diff --git a/include/linux/sched/task.h b/include/linux/sched/task.h
-> index 108ede9..44c6f15 100644
-> --- a/include/linux/sched/task.h
-> +++ b/include/linux/sched/task.h
-> @@ -39,6 +39,8 @@
->  
->  extern void proc_caches_init(void);
->  
-> +extern void fork_init(void);
-> +
->  extern void release_task(struct task_struct * p);
->  
->  #ifdef CONFIG_HAVE_COPY_THREAD_TLS
-> diff --git a/init/main.c b/init/main.c
-> index ee14710..8feda42 100644
-> --- a/init/main.c
-> +++ b/init/main.c
-> @@ -105,7 +105,6 @@
->  static int kernel_init(void *);
->  
->  extern void init_IRQ(void);
-> -extern void fork_init(void);
->  extern void radix_tree_init(void);
->  
->  /*
-> diff --git a/kernel/fork.c b/kernel/fork.c
-> index 07cddff..c6d02be 100644
-> --- a/kernel/fork.c
-> +++ b/kernel/fork.c
-> @@ -164,10 +164,6 @@ static inline void free_task_struct(struct task_struct *tsk)
->  }
->  #endif
->  
-> -void __weak arch_release_thread_stack(unsigned long *stack)
-> -{
-> -}
-> -
->  #ifndef CONFIG_ARCH_THREAD_STACK_ALLOCATOR
->  
->  /*
-> @@ -417,7 +413,6 @@ static void release_task_stack(struct task_struct *tsk)
->  		return;  /* Better to leak the stack than to free prematurely */
->  
->  	account_kernel_stack(tsk, -1);
-> -	arch_release_thread_stack(tsk->stack);
->  	free_thread_stack(tsk);
->  	tsk->stack = NULL;
->  #ifdef CONFIG_VMAP_STACK
-> -- 
-> 1.8.3.1
-> 
-
--- 
-Sincerely yours,
-Mike.
+Jessica
 
