@@ -2,104 +2,151 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92AA1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:23:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396BEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:23:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C8B022513
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:23:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F294822513
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:23:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="du9FHmqJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C8B022513
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="wrHLtjwE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F294822513
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387723AbeKOI22 (ORCPT
+        id S2387792AbeKOI2k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:28:28 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:55000 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729093AbeKOI21 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:28:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=HZ9FoT/Yy3OX8C0H4qzEvYCUztlDQL9Afu/eqdCHPIU=; b=du9FHmqJIFno6bdq2AWaNBqtB
-        q9G5S07pYfFUoBX6rUJlRGhD+Ggnu7bn0V2NmFfhXVu8PFulCAVmSvxDs0TavDbD4ApJYN3lRgZ0V
-        ZlWGBgkro3pzJ0HRwVJWmR1Gs43gASfN1yv9csU5NIl0gjDkjNDLgwEQc6cCsJ7yDrgmV26JIWW49
-        r4BR52qzvTZXmaqJf9CeWtFdnwYblbPpYACYw7pEhPy6Z49PsKlypZ68tCMD4cO2d3kvDZTbxgM/5
-        FttHCvpncqygVXjrC5SYPJUa12r9hCJwXIjJjP3r9D4d8ShA3rwNPW3H/7/RrnojeJ3PoOHluVe1T
-        8qNIkPKpA==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gN3ZB-0001Va-DA; Wed, 14 Nov 2018 22:23:21 +0000
-Date:   Wed, 14 Nov 2018 14:23:21 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, devel@linuxdriverproject.org,
-        linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org,
-        xen-devel@lists.xenproject.org, Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Hansen <chansen3@cisco.com>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        David Rientjes <rientjes@google.com>
-Subject: Re: [PATCH RFC 2/6] mm: convert PG_balloon to PG_offline
-Message-ID: <20181114222321.GB1784@bombadil.infradead.org>
-References: <20181114211704.6381-1-david@redhat.com>
- <20181114211704.6381-3-david@redhat.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181114211704.6381-3-david@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Thu, 15 Nov 2018 03:28:40 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729032AbeKOI11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:27 -0500
+Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FD6E22527;
+        Wed, 14 Nov 2018 22:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542234144;
+        bh=iQoC23f2OPy4jsdNlbZQ6KvEjMv0nqFHDwrABUUg/+o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=wrHLtjwE/Q4SJ3VxG79GUEfAiWmLD+bm2DF/GF9JeZf8gX8AjUkTlKK1gIjSA0nra
+         VOUrjaYhamseKCErm22CbU70T42e5ssQIguPIOSXrgnijGdwOKniS1zSzeXKVAAx1b
+         LgwDj+dDadfwSzdnptAatQw31UwtCMNTPd33stCg=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Thor Thayer <thor.thayer@linux.intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 64/73] net: stmmac: Fix RX packet size > 8191
+Date:   Wed, 14 Nov 2018 17:21:58 -0500
+Message-Id: <20181114222207.98701-64-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
+References: <20181114222207.98701-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 10:17:00PM +0100, David Hildenbrand wrote:
-> Rename PG_balloon to PG_offline. This is an indicator that the page is
-> logically offline, the content stale and that it should not be touched
-> (e.g. a hypervisor would have to allocate backing storage in order for the
-> guest to dump an unused page).  We can then e.g. exclude such pages from
-> dumps.
-> 
-> In following patches, we will make use of this bit also in other balloon
-> drivers.  While at it, document PGTABLE.
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-Thank you for documenting PGTABLE.  I didn't realise I also had this
-document to update when I added PGTABLE.
+[ Upstream commit 8137b6ef0ce469154e5cf19f8e7fe04d9a72ac5e ]
 
-> +++ b/Documentation/admin-guide/mm/pagemap.rst
-> @@ -78,6 +78,8 @@ number of times a page is mapped.
->      23. BALLOON
->      24. ZERO_PAGE
->      25. IDLE
-> +    26. PGTABLE
-> +    27. OFFLINE
+Ping problems with packets > 8191 as shown:
 
-So the offline *user* bit is new ... even though the *kernel* bit
-just renames the balloon bit.  I'm not sure how I feel about this.
-I'm going to think about it some more.  Could you share your decision
-process with us?
+PING 192.168.1.99 (192.168.1.99) 8150(8178) bytes of data.
+8158 bytes from 192.168.1.99: icmp_seq=1 ttl=64 time=0.669 ms
+wrong data byte 8144 should be 0xd0 but was 0x0
+16    10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f
+      20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f
+%< ---------------snip--------------------------------------
+8112  b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd be bf
+      c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+8144  0 0 0 0 d0 d1
+      ^^^^^^^
+Notice the 4 bytes of 0 before the expected byte of d0.
 
-I have no objection to renaming the balloon bit inside the kernel; I
-think that's a wise idea.  I'm just not sure whether we should rename
-the user balloon bit rather than adding a new bit.
+Databook notes that the RX buffer must be a multiple of 4/8/16
+bytes [1].
+
+Update the DMA Buffer size define to 8188 instead of 8192. Remove
+the -1 from the RX buffer size allocations and use the new
+DMA Buffer size directly.
+
+[1] Synopsys DesignWare Cores Ethernet MAC Universal v3.70a
+    [section 8.4.2 - Table 8-24]
+
+Tested on SoCFPGA Stratix10 with ping sweep from 100 to 8300 byte packets.
+
+Fixes: 286a83721720 ("stmmac: add CHAINED descriptor mode support (V4)")
+Suggested-by: Jose Abreu <jose.abreu@synopsys.com>
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ethernet/stmicro/stmmac/common.h    | 3 ++-
+ drivers/net/ethernet/stmicro/stmmac/descs_com.h | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/enh_desc.c  | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/ring_mode.c | 2 +-
+ 4 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+index b1b305f8f414..272b9ca66314 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/common.h
++++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+@@ -365,7 +365,8 @@ struct dma_features {
+ 
+ /* GMAC TX FIFO is 8K, Rx FIFO is 16K */
+ #define BUF_SIZE_16KiB 16384
+-#define BUF_SIZE_8KiB 8192
++/* RX Buffer size must be < 8191 and multiple of 4/8/16 bytes */
++#define BUF_SIZE_8KiB 8188
+ #define BUF_SIZE_4KiB 4096
+ #define BUF_SIZE_2KiB 2048
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/descs_com.h b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
+index ca9d7e48034c..40d6356a7e73 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/descs_com.h
++++ b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
+@@ -31,7 +31,7 @@
+ /* Enhanced descriptors */
+ static inline void ehn_desc_rx_set_on_ring(struct dma_desc *p, int end)
+ {
+-	p->des1 |= cpu_to_le32(((BUF_SIZE_8KiB - 1)
++	p->des1 |= cpu_to_le32((BUF_SIZE_8KiB
+ 			<< ERDES1_BUFFER2_SIZE_SHIFT)
+ 		   & ERDES1_BUFFER2_SIZE_MASK);
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+index 77914c89d749..5ef91a790f9d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+@@ -262,7 +262,7 @@ static void enh_desc_init_rx_desc(struct dma_desc *p, int disable_rx_ic,
+ 				  int mode, int end)
+ {
+ 	p->des0 |= cpu_to_le32(RDES0_OWN);
+-	p->des1 |= cpu_to_le32((BUF_SIZE_8KiB - 1) & ERDES1_BUFFER1_SIZE_MASK);
++	p->des1 |= cpu_to_le32(BUF_SIZE_8KiB & ERDES1_BUFFER1_SIZE_MASK);
+ 
+ 	if (mode == STMMAC_CHAIN_MODE)
+ 		ehn_desc_rx_set_on_chain(p);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
+index a7ffc73fffe8..bc83ced94e1b 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
++++ b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
+@@ -140,7 +140,7 @@ static void clean_desc3(void *priv_ptr, struct dma_desc *p)
+ static int set_16kib_bfsize(int mtu)
+ {
+ 	int ret = 0;
+-	if (unlikely(mtu >= BUF_SIZE_8KiB))
++	if (unlikely(mtu > BUF_SIZE_8KiB))
+ 		ret = BUF_SIZE_16KiB;
+ 	return ret;
+ }
+-- 
+2.17.1
+
