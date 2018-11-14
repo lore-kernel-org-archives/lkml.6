@@ -4,47 +4,47 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71563C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7086C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2EA5D2252A
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7364422527
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="kW3P0lt6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2EA5D2252A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="O915b4wJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7364422527
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388350AbeKOI3a (ORCPT
+        id S2388363AbeKOI3d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:29:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36428 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:29:33 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36486 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726506AbeKOI33 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:29:29 -0500
+        id S1726506AbeKOI3d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:29:33 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 58BB422527;
-        Wed, 14 Nov 2018 22:24:25 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1F2A322527;
+        Wed, 14 Nov 2018 22:24:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234265;
-        bh=ySSQ3pcYerKH4OiBJKAgte5YYA9tT0QRHveHFw8BwvU=;
+        s=default; t=1542234269;
+        bh=gXoIIb54hw3ikeHTYPk96wyPD8x+1yn4/1FB20z8p9g=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=kW3P0lt6rbdPsGurEEWhHwFo3w4TXHJs9RL6BX/+u9fm06af/9Iz/y6AjPVj5yaSa
-         XMqORQHERk7voSYyPCKlCdOjJyWa72hghqDvyWLrxOeTtrKKo7o5AreQabsPS7N5Wm
-         o+enpAAFzDbTDrNfuMMLbk+jTCbQH19EMws8+o0M=
+        b=O915b4wJc3CDg9AVTzuJ3I0jyTf2swmDOBn2MhcLRFnKFwlayaa4KV+4WciywUZV7
+         lVZ8B9BoJxD1UpmqcG3fTXHkniu3tRRowfJWkb5Pz6sjLqHbGYo9OZDheKag1AXeV0
+         vCXKb2L69wyAiNOvTq9RpweyFU4cFk0/TMVsoHkE=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jeremy Linton <jeremy.linton@arm.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 30/59] lib/raid6: Fix arm64 test build
-Date:   Wed, 14 Nov 2018 17:23:02 -0500
-Message-Id: <20181114222335.99339-30-sashal@kernel.org>
+Cc:     Harry Wentland <harry.wentland@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
+        dri-devel@lists.freedesktop.org
+Subject: [PATCH AUTOSEL 4.18 31/59] drm/amd/display: Stop leaking planes
+Date:   Wed, 14 Nov 2018 17:23:03 -0500
+Message-Id: <20181114222335.99339-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -53,46 +53,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jeremy Linton <jeremy.linton@arm.com>
+From: Harry Wentland <harry.wentland@amd.com>
 
-[ Upstream commit 313a06e636808387822af24c507cba92703568b1 ]
+[ Upstream commit 02680efbb10be0d2c867fe722ae23d588f6bebef ]
 
-The lib/raid6/test fails to build the neon objects
-on arm64 because the correct machine type is 'aarch64'.
+[Why]
+drm_plane_cleanup does not free the plane.
 
-Once this is correctly enabled, the neon recovery objects
-need to be added to the build.
+[How]
+Call drm_primary_helper_destroy which will also free the plane.
 
-Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Signed-off-by: Jeremy Linton <jeremy.linton@arm.com>
-Signed-off-by: Catalin Marinas <catalin.marinas@arm.com>
+Signed-off-by: Harry Wentland <harry.wentland@amd.com>
+Acked-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- lib/raid6/test/Makefile | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/lib/raid6/test/Makefile b/lib/raid6/test/Makefile
-index 5d73f5cb4d8a..79777645cac9 100644
---- a/lib/raid6/test/Makefile
-+++ b/lib/raid6/test/Makefile
-@@ -27,7 +27,7 @@ ifeq ($(ARCH),arm)
-         CFLAGS += -I../../../arch/arm/include -mfpu=neon
-         HAS_NEON = yes
- endif
--ifeq ($(ARCH),arm64)
-+ifeq ($(ARCH),aarch64)
-         CFLAGS += -I../../../arch/arm64/include
-         HAS_NEON = yes
- endif
-@@ -41,7 +41,7 @@ ifeq ($(IS_X86),yes)
- 		    gcc -c -x assembler - >&/dev/null &&        \
- 		    rm ./-.o && echo -DCONFIG_AS_AVX512=1)
- else ifeq ($(HAS_NEON),yes)
--        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o
-+        OBJS   += neon.o neon1.o neon2.o neon4.o neon8.o recov_neon.o recov_neon_inner.o
-         CFLAGS += -DCONFIG_KERNEL_MODE_NEON=1
- else
-         HAS_ALTIVEC := $(shell printf '\#include <altivec.h>\nvector int a;\n' |\
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+index 5b9cc3aeaa55..dd364c612958 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
+@@ -3049,7 +3049,7 @@ void dm_drm_plane_destroy_state(struct drm_plane *plane,
+ static const struct drm_plane_funcs dm_plane_funcs = {
+ 	.update_plane	= drm_atomic_helper_update_plane,
+ 	.disable_plane	= drm_atomic_helper_disable_plane,
+-	.destroy	= drm_plane_cleanup,
++	.destroy	= drm_primary_helper_destroy,
+ 	.reset = dm_drm_plane_reset,
+ 	.atomic_duplicate_state = dm_drm_plane_duplicate_state,
+ 	.atomic_destroy_state = dm_drm_plane_destroy_state,
 -- 
 2.17.1
 
