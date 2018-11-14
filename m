@@ -7,62 +7,62 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B369BC07E85
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:56:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A02C6C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7DF1822419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:56:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 66A6822419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:56:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="a4UHeMEI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7DF1822419
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ML1/RI8+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 66A6822419
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387526AbeKOEAP (ORCPT
+        id S2387568AbeKOEAQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 23:00:15 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:45133 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732981AbeKOEAO (ORCPT
+        Wed, 14 Nov 2018 23:00:16 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:42552 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732950AbeKOEAP (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 23:00:14 -0500
-Received: by mail-pg1-f194.google.com with SMTP id y4so7688059pgc.12
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 09:56:03 -0800 (PST)
+        Wed, 14 Nov 2018 23:00:15 -0500
+Received: by mail-pf1-f196.google.com with SMTP id 64so3808126pfr.9
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 09:56:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=wgQ6lhA7RkEviiHkwSDj/bCPpNPjF7ngHY8ighWmwmU=;
-        b=a4UHeMEIcEfzBqqcqd4pUkBF9vuauDlV2NEaWs78ydREPZ79oDz8FfibpMYXeslbSj
-         ancDmlMg3dM+9a+cWz2jhfj7h93DmNKU0COq3wRXsh+m9J+pSMmBt0IF+4qeGiRp/Mh7
-         /aHI060CNmHiJXTnuLAOnrzLVveApFqf7aA6k=
+        bh=y5+MZn1DLLZ77dFsQDhm0oDAc8e59ns2BiFEM+0UUsQ=;
+        b=ML1/RI8+lYgh8Lfbu5JQi/zaKuBY8GRTmrtpTLQ3eqqnjJGfyDNJ4ny/6/e6aNYtTF
+         jbCMPs80U71EVjWOc/3PeyqPP/va0oh8Tb7gsIP9FeEO4svIb+21EpfBGNQn1a5vq3d4
+         seANI8GpvQBuJESY+0dGsY4LyJy7jrQlFrh2w=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references;
-        bh=wgQ6lhA7RkEviiHkwSDj/bCPpNPjF7ngHY8ighWmwmU=;
-        b=eUki05OwvbUMuiyeklkTnkQ/J8Xu83swQS1R1NtSVzCg4OziXwuDR5CtXaK/Xo/lEZ
-         Jpxi9WmVUcOjKp1rpQbK+ipdthsSVovO7lU+ZVO+4eh/2rq9vQr2eii7DHnKjJW0haGp
-         LB0/NuD8KQq65iajqCItzkX2G4Js5vNpcfI5WoRyWCI30Y88ERpqN6IS00oB11HvknVt
-         XWJhpGfAj8t+InCVuP7yi1X6iKjYdJojSsRyhQjgwgKUeH/nKa3HCMl1WjMKD/rxDYfL
-         v1XSZW7EkpnVQc6Ekkoo0JUBBh/4ZXZou/P0Sx9Y6hu+MjbjoqtG7m5J8XqZRsR+rqvE
-         5YCg==
-X-Gm-Message-State: AGRZ1gJA6YczhLJQCzq3hXA+37Y3kbTV7ulFoRrBI3jtOmUhPPXJ5T1s
-        wmWbBHHoqsEi5m1pfsHOoFKkfg==
-X-Google-Smtp-Source: AJdET5c50OTCeag6KFT0/oxdth2rDXaremMD5A3UyWN+bwELaYDwKOfujbqqiSrRQAkowmhSlUlknw==
-X-Received: by 2002:a63:42c1:: with SMTP id p184mr2648383pga.202.1542218163043;
-        Wed, 14 Nov 2018 09:56:03 -0800 (PST)
+        bh=y5+MZn1DLLZ77dFsQDhm0oDAc8e59ns2BiFEM+0UUsQ=;
+        b=sk5Tm0Y4jb89KrfuNTkT6MXE8myqJBbQV/4LX4YLEaq41vOTbro0osJzRzEQJyA8vP
+         ek5HsN/LtIEviuP9bcirvLtZk+RupSM9RzbL6PlpmPnkRvL6KiBqzf1nZhCyq9zKwfqm
+         DozFS9CE/8r5RskBPqXWs41EnpHzu4lJsqa2+OMqlNXqxJygizm10G+d/QgIUa4A3z2Y
+         hrnNN6znlbgm2cmWROEskoJlZAPLT0tqpT6bDurTdbz5mIWtXUNqkQnFPLP0ASXEdmrS
+         1DmjpEHHi3rmVoEushLpllCTZVMwFEUpK5KSZbJ89Tp8VO6ZY8WGsg+K1SFeHxxitEBK
+         MV4g==
+X-Gm-Message-State: AGRZ1gJnJ9+AkkMfP+KJCfAziGDPtEqOqE2z3kKKRn5viHP2RoBkHPpM
+        6eUx0qLl/6fMJAbGcisn5zw4ug==
+X-Google-Smtp-Source: AJdET5eSM79VYTe8Mze8VsPiWhD5Dj/JtLXG9H/r3z+bPTxbEz0lAtZ6EwkoGPjgR2Vh4+EnX5IFmA==
+X-Received: by 2002:a63:8b4b:: with SMTP id j72mr2669319pge.126.1542218164233;
+        Wed, 14 Nov 2018 09:56:04 -0800 (PST)
 Received: from mba13.psav.com ([64.114.255.97])
-        by smtp.gmail.com with ESMTPSA id i2-v6sm21301738pgq.35.2018.11.14.09.56.00
+        by smtp.gmail.com with ESMTPSA id i2-v6sm21301738pgq.35.2018.11.14.09.56.03
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 09:56:00 -0800 (PST)
+        Wed, 14 Nov 2018 09:56:03 -0800 (PST)
 From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
 To:     linux-efi@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
 Cc:     Ard Biesheuvel <ard.biesheuvel@linaro.org>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 4/5] efi/arm: defer persistent reservations until after paging_init()
-Date:   Wed, 14 Nov 2018 09:55:43 -0800
-Message-Id: <20181114175544.12860-5-ard.biesheuvel@linaro.org>
+Subject: [PATCH 5/5] efi: permit calling efi_mem_reserve_persistent from atomic context
+Date:   Wed, 14 Nov 2018 09:55:44 -0800
+Message-Id: <20181114175544.12860-6-ard.biesheuvel@linaro.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114175544.12860-1-ard.biesheuvel@linaro.org>
 References: <20181114175544.12860-1-ard.biesheuvel@linaro.org>
@@ -71,95 +71,79 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The new memory EFI reservation feature we introduced to allow memory
-reservations to persist across kexec may trigger an unbounded number
-of calls to memblock_reserve(). The memblock subsystem can deal with
-this fine, but not before memblock resizing is enabled, which we can
-only do after paging_init(), when the memory we reallocate the array
-into is actually mapped.
+Currently, efi_mem_reserve_persistent() may not be called from atomic
+context, since both the kmalloc() call and the memremap() call may
+sleep.
 
-So break out the memreserve table processing into a separate routine
-and call it after paging_init() on arm64. On ARM, because of limited
-reviewing bandwidth of the maintainer, we cannot currently fix this,
-so instead, disable the EFI persistent memreserve entirely on ARM so
-we can fix it later.
+The kmalloc() call is easy enough to fix, but the memremap() call
+needs to be moved into an init hook since we cannot control the
+memory allocation behavior of memremap() at the call site.
 
-Tested-by: Marc Zyngier <marc.zyngier@arm.com>
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 ---
- arch/arm64/kernel/setup.c               | 1 +
- drivers/firmware/efi/efi.c              | 4 ++++
- drivers/firmware/efi/libstub/arm-stub.c | 3 +++
- include/linux/efi.h                     | 7 +++++++
- 4 files changed, 15 insertions(+)
+ drivers/firmware/efi/efi.c | 31 +++++++++++++++++++------------
+ 1 file changed, 19 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-index 953e316521fc..f4fc1e0544b7 100644
---- a/arch/arm64/kernel/setup.c
-+++ b/arch/arm64/kernel/setup.c
-@@ -313,6 +313,7 @@ void __init setup_arch(char **cmdline_p)
- 	arm64_memblock_init();
- 
- 	paging_init();
-+	efi_apply_persistent_mem_reservations();
- 
- 	acpi_table_upgrade();
- 
 diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 249eb70691b0..72a4da76d274 100644
+index 72a4da76d274..fad7c62cfc0e 100644
 --- a/drivers/firmware/efi/efi.c
 +++ b/drivers/firmware/efi/efi.c
-@@ -592,7 +592,11 @@ int __init efi_config_parse_tables(void *config_tables, int count, int sz,
- 
- 		early_memunmap(tbl, sizeof(*tbl));
- 	}
-+	return 0;
-+}
- 
-+int __init efi_apply_persistent_mem_reservations(void)
-+{
- 	if (efi.mem_reserve != EFI_INVALID_TABLE_ADDR) {
- 		unsigned long prsv = efi.mem_reserve;
- 
-diff --git a/drivers/firmware/efi/libstub/arm-stub.c b/drivers/firmware/efi/libstub/arm-stub.c
-index 30ac0c975f8a..3d36142cf812 100644
---- a/drivers/firmware/efi/libstub/arm-stub.c
-+++ b/drivers/firmware/efi/libstub/arm-stub.c
-@@ -75,6 +75,9 @@ void install_memreserve_table(efi_system_table_t *sys_table_arg)
- 	efi_guid_t memreserve_table_guid = LINUX_EFI_MEMRESERVE_TABLE_GUID;
- 	efi_status_t status;
- 
-+	if (IS_ENABLED(CONFIG_ARM))
-+		return;
-+
- 	status = efi_call_early(allocate_pool, EFI_LOADER_DATA, sizeof(*rsv),
- 				(void **)&rsv);
- 	if (status != EFI_SUCCESS) {
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 845174e113ce..100ce4a4aff6 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1167,6 +1167,8 @@ static inline bool efi_enabled(int feature)
- extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
- 
- extern bool efi_is_table_address(unsigned long phys_addr);
-+
-+extern int efi_apply_persistent_mem_reservations(void);
- #else
- static inline bool efi_enabled(int feature)
- {
-@@ -1185,6 +1187,11 @@ static inline bool efi_is_table_address(unsigned long phys_addr)
- {
- 	return false;
+@@ -967,36 +967,43 @@ bool efi_is_table_address(unsigned long phys_addr)
  }
-+
-+static inline int efi_apply_persistent_mem_reservations(void)
-+{
+ 
+ static DEFINE_SPINLOCK(efi_mem_reserve_persistent_lock);
++static struct linux_efi_memreserve *efi_memreserve_root __ro_after_init;
+ 
+ int efi_mem_reserve_persistent(phys_addr_t addr, u64 size)
+ {
+-	struct linux_efi_memreserve *rsv, *parent;
++	struct linux_efi_memreserve *rsv;
+ 
+-	if (efi.mem_reserve == EFI_INVALID_TABLE_ADDR)
++	if (!efi_memreserve_root)
+ 		return -ENODEV;
+ 
+-	rsv = kmalloc(sizeof(*rsv), GFP_KERNEL);
++	rsv = kmalloc(sizeof(*rsv), GFP_ATOMIC);
+ 	if (!rsv)
+ 		return -ENOMEM;
+ 
+-	parent = memremap(efi.mem_reserve, sizeof(*rsv), MEMREMAP_WB);
+-	if (!parent) {
+-		kfree(rsv);
+-		return -ENOMEM;
+-	}
+-
+ 	rsv->base = addr;
+ 	rsv->size = size;
+ 
+ 	spin_lock(&efi_mem_reserve_persistent_lock);
+-	rsv->next = parent->next;
+-	parent->next = __pa(rsv);
++	rsv->next = efi_memreserve_root->next;
++	efi_memreserve_root->next = __pa(rsv);
+ 	spin_unlock(&efi_mem_reserve_persistent_lock);
+ 
+-	memunmap(parent);
 +	return 0;
 +}
- #endif
  
- extern int efi_status_to_err(efi_status_t status);
++static int __init efi_memreserve_root_init(void)
++{
++	if (efi.mem_reserve == EFI_INVALID_TABLE_ADDR)
++		return -ENODEV;
++
++	efi_memreserve_root = memremap(efi.mem_reserve,
++				       sizeof(*efi_memreserve_root),
++				       MEMREMAP_WB);
++	if (!efi_memreserve_root)
++		return -ENOMEM;
+ 	return 0;
+ }
++early_initcall(efi_memreserve_root_init);
+ 
+ #ifdef CONFIG_KEXEC
+ static int update_efi_random_seed(struct notifier_block *nb,
 -- 
 2.17.1
 
