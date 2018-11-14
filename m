@@ -2,120 +2,88 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B745EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 686FCC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78F2322513
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 254BB22513
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CZez2+1X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78F2322513
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="U6+cEQCr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 254BB22513
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387569AbeKOI1v (ORCPT
+        id S1731549AbeKOI12 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:27:51 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:40644 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727873AbeKOI1v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:27:51 -0500
-Received: by mail-lf1-f66.google.com with SMTP id v5so12718054lfe.7;
-        Wed, 14 Nov 2018 14:22:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mudOypxtGS7u6RwPveAGdLhPQ6hhKSNLP/q3nn8s1uc=;
-        b=CZez2+1XVjyb6fQps6GWVnCVieYo0foGoeWWxoaNP+dCsxL92OlIDADLpD397rRCX3
-         msRWLNa2zjqs8CbazHeJ+zpojMSsrDG/ANPyxbdYy/ZIyZaXre4aqTV9zGPMTXgBawb3
-         bQy11ka6TKpH64HZlmVHzBQI/RfZXNYX3ysxgWgyFOyzuARMcWPAHsypIGnqUy9MD3kB
-         J1ZzJc5K6ybF3eoTGqVLCj+Dne6W+5YVAlhruDTWIRfACRzbU5WBp336wkOxINUG69Zh
-         5WfT2eSZEDBSSrjuB5OVrQ2Cy/t4yiv0iFiQjZXq53HzVcaeWTfMeWNMN/laMdDNH/Tc
-         80hg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mudOypxtGS7u6RwPveAGdLhPQ6hhKSNLP/q3nn8s1uc=;
-        b=qiksflNzBfnHT4gORUCNcazER33Z+HBqWITlnacR+KQJBhfxtlon59dMO4o1TDE9Kk
-         ALkPTrfejtG0/kOoDatK4aeBURAouTd9tmNY2EKffNYWeQAb1lTHbcL3ZRfSte0Zc9nw
-         q18ay5bMePbMXjmh1jEGpfEZOM3Pz16Ja6feOT/oF4ZI/VNzMmOrcEdWrDbw0n/6qmmi
-         j88P5WqsnZH0iBxFDOw1/wTt1qvzA6O2Ql3/xdaY6gCWWmF9oKS8DU5t2MYR9Rk1USMn
-         NxqIlEHeC92w44GcquuSW3VJmu3VIMq6+iCbBICpVhP5IGCjJ3K+wKqrDRzgEMln4ewm
-         H4OQ==
-X-Gm-Message-State: AGRZ1gLZMd7hvGEIihZWflp8/Ok1HP1XZeCGPasVy05Rm6Ffx5ir8Jgg
-        ae4LCbZYM7JUzx4b2+GoQtp3I4nzPYzOp9gtZA==
-X-Google-Smtp-Source: AJdET5cLDPiYn8SDq/UVtZvs2rFNU/dAl0uFjBFJcicJ28GoM3uh5Z752Ujz1QKOqgqCD6ZAlDY1sg2Oelvr7iQKXEM=
-X-Received: by 2002:a19:c954:: with SMTP id z81mr1935461lff.150.1542233845866;
- Wed, 14 Nov 2018 14:17:25 -0800 (PST)
-MIME-Version: 1.0
-References: <CAEJqkgiKzYTZQTGWNAPTeOPFWz658FWqDsAhyoxVDP1VKWSukg@mail.gmail.com>
- <CAEJqkgh7xksO7tmPHGkOXvWftc2AcCgi4j3S3C88CorV53+Hgw@mail.gmail.com>
-In-Reply-To: <CAEJqkgh7xksO7tmPHGkOXvWftc2AcCgi4j3S3C88CorV53+Hgw@mail.gmail.com>
-From:   Gabriel C <nix.or.die@gmail.com>
-Date:   Wed, 14 Nov 2018 23:16:59 +0100
-Message-ID: <CAEJqkghgyYMxRc8-wnF-J1CGhuYD2vfVDSiLU1A0fwpXKN7Huw@mail.gmail.com>
-Subject: Re: atk10k Unknown eventid and WARN() on resume with kernel 4.19
-To:     Kalle Valo <kvalo@codeaurora.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>, ath10k@lists.infradead.org,
-        linux-wireless@vger.kernel.org, dex77@frugalware.org,
-        linux-pm@vger.kernel.org, "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 15 Nov 2018 03:27:28 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729087AbeKOI11 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:27 -0500
+Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 408ED22526;
+        Wed, 14 Nov 2018 22:22:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542234144;
+        bh=OYwdI72nSvEeMaRKCm8f623xRMFUREu5VxKiANAzODY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=U6+cEQCrqbPEDgW5iXbzXT1qDPBjQtdgNnZgAdb8FN8vAOBHOJENB11aRsoUrIlVu
+         VCL90/4q4XaYQ8Ef+zRzbOP/HK2EAPwzt0GnjrG7JlSyiWKf/ONv2DQO+TM90B+A+h
+         0tpp4vadb6PZHXUW5lrLpK8vyWC89RGNBd736aQk=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 65/73] net: smsc95xx: Fix MTU range
+Date:   Wed, 14 Nov 2018 17:21:59 -0500
+Message-Id: <20181114222207.98701-65-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
+References: <20181114222207.98701-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Am Sa., 3. Nov. 2018 um 21:11 Uhr schrieb Gabriel C <nix.or.die@gmail.com>:
->
-> Am Sa., 3. Nov. 2018 um 21:01 Uhr schrieb Gabriel C <nix.or.die@gmail.com>:
-> >
-> > Hello,
-> >
-> > starting with kernel 4.19 we noticed  'Unknown eventid: xxxx' warnings
-> > on our Laptops.
-> >
-> > ...
-> >
-> > crazy@devnull:~$ dmesg | grep Unknow
-> > [    7.144998] ath10k_pci 0000:03:00.0: Unknown eventid: 118809
-> > [    7.147758] ath10k_pci 0000:03:00.0: Unknown eventid: 90118
-> > [    9.441654] ath10k_pci 0000:03:00.0: Unknown eventid: 118809
-> > [    9.444446] ath10k_pci 0000:03:00.0: Unknown eventid: 90118
-> > [   11.770997] ath10k_pci 0000:03:00.0: Unknown eventid: 118809
-> > [   11.773787] ath10k_pci 0000:03:00.0: Unknown eventid: 90118
-> > [320339.374108] ath10k_pci 0000:03:00.0: Unknown eventid: 118809
-> > [320339.377020] ath10k_pci 0000:03:00.0: Unknown eventid: 90118
-> > [320342.128664] ath10k_pci 0000:03:00.0: Unknown eventid: 118809
-> > [320342.131447] ath10k_pci 0000:03:00.0: Unknown eventid: 90118
-> > [320344.452864] ath10k_pci 0000:03:00.0: Unknown eventid: 118809
-> > [320344.455696] ath10k_pci 0000:03:00.0: Unknown eventid: 90118
-> >
-> > ....
-> >
-> > Both boxes also hits the following WARN*() on resume from S3:
-> >
->  Uh sorry .. Gmail doesn't like long lines it seems.
-> There the WARN() message:
->
-> http://ftp.frugalware.org/pub/other/people/crazy/warn.txt
->
-> >
-> > Please let me know if you need an dmesg or any other informations.
+From: Stefan Wahren <stefan.wahren@i2se.com>
 
+[ Upstream commit 85b18b0237ce9986a81a1b9534b5e2ee116f5504 ]
 
-Added pm list maybe someone there got some idea ?
+The commit f77f0aee4da4 ("net: use core MTU range checking in USB NIC
+drivers") introduce a common MTU handling for usbnet. But it's missing
+the necessary changes for smsc95xx. So set the MTU range accordingly.
 
-Also same issue reported there :
-https://bugzilla.kernel.org/show_bug.cgi?id=201499
+This patch has been tested on a Raspberry Pi 3.
 
-BR,
+Fixes: f77f0aee4da4 ("net: use core MTU range checking in USB NIC drivers")
+Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/usb/smsc95xx.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Gabriel C
+diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
+index 2d17f3b9bb16..f2d01cb6f958 100644
+--- a/drivers/net/usb/smsc95xx.c
++++ b/drivers/net/usb/smsc95xx.c
+@@ -1321,6 +1321,8 @@ static int smsc95xx_bind(struct usbnet *dev, struct usb_interface *intf)
+ 	dev->net->ethtool_ops = &smsc95xx_ethtool_ops;
+ 	dev->net->flags |= IFF_MULTICAST;
+ 	dev->net->hard_header_len += SMSC95XX_TX_OVERHEAD_CSUM;
++	dev->net->min_mtu = ETH_MIN_MTU;
++	dev->net->max_mtu = ETH_DATA_LEN;
+ 	dev->hard_mtu = dev->net->mtu + dev->net->hard_header_len;
+ 
+ 	pdata->dev = dev;
+-- 
+2.17.1
+
