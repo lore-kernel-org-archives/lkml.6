@@ -2,101 +2,138 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79BF4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:32:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 46B62C07E85
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:33:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 40D342243E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:32:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 40D342243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0B061214F1
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 11:33:48 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fR7JDe2z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B061214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732208AbeKNVez (ORCPT
+        id S1732396AbeKNVgi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 16:34:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:56350 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727598AbeKNVez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 16:34:55 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 76B1AAF76;
-        Wed, 14 Nov 2018 11:32:01 +0000 (UTC)
-Date:   Wed, 14 Nov 2018 12:31:59 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Chanho Min <chanho.min@lge.com>
-Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Christian Brauner <christian@brauner.io>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Anna-Maria Gleixner <anna-maria@linutronix.de>,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-fsdevel@vger.kernel.org,
-        Seungho Park <seungho1.park@lge.com>,
-        Inkyu Hwang <inkyu.hwang@lge.com>,
-        Donghwan Jung <donghwan.jung@lge.com>,
-        Jongsung Kim <neidhard.kim@lge.com>
-Subject: Re: [PATCH v2] exec: make de_thread() freezable
-Message-ID: <20181114113159.GR23419@dhcp22.suse.cz>
-References: <1541994885-20059-1-git-send-email-chanho.min@lge.com>
- <20181113145339.GD16182@dhcp22.suse.cz>
+        Wed, 14 Nov 2018 16:36:38 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37673 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbeKNVgi (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 16:36:38 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p2-v6so14358353wmc.2;
+        Wed, 14 Nov 2018 03:33:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:content-transfer-encoding:in-reply-to
+         :user-agent;
+        bh=YKynv5i976Bs+oA2+Hw62uL4KpU1VbryymcDUpH5res=;
+        b=fR7JDe2zMLSW27Wgfsaf2UXZeLy821ZeaP4MRlfFJstF47UIMuiujXQajqwmlgnUUe
+         YHqX6AHjkGSLHwSa2o0GYFT1Zyt44j5P68FVxyBB6FraGkPgKC67kwjTsazjNWL7cyGm
+         +48OgPIR3BhdfGU+MZt1ZoQ1TQSfrMfiQg1lmJqMO3JQ0/kwTy1nY4wOQBojCKDwfYLN
+         8im8nXB+Stb81tp+a+nwpLEloB0hCOejNVHdISWv3zwPICH6HHDAlxKSSWv3q+Y+yvTz
+         myhscKqWPJaQrWCkIcYkPPX6j5gidC6iwsmzBc1azuDDLGbkvVutIzZUEXAzlMMrSvjT
+         IR2g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:content-transfer-encoding
+         :in-reply-to:user-agent;
+        bh=YKynv5i976Bs+oA2+Hw62uL4KpU1VbryymcDUpH5res=;
+        b=QssZYMFsurWqpUINz8oKKmkbEuNwWX/92dy1uErv76ahr4apNJ10Lh2XB2sFUHgz1K
+         +jGaQj1z7YDebvjB+MVi4ENol8XIOWGaCXis6wlMKA6Wsj5jNFKpMuA4sbuMJU3l4lkM
+         wSP9x6WfALXpM0oPpOKfN/SWp9ujad8zu5rMUt35viMIpPZ0JDGqildw4D+jpDNOFoOZ
+         0Zmg2CpP0RGEt49i3z31IS8SLCiJypKg6CaRCk3whgPFTUHFS/Kk0/IRAup6H5ptBdJU
+         /vtqM33WXLgQwGPDXQPHDXLZWsWPGO9da27cwRcorPNVJG1fXtSGvv5BPrAyoIoa2emB
+         ZbGw==
+X-Gm-Message-State: AGRZ1gIUlSAueGDPmuvvKOnEHcgfHnXGCuNV7BE+VujdZKjqtOLSMaMw
+        afveKeYwsbLVk6iS9gn2mZE=
+X-Google-Smtp-Source: AJdET5fvU2NHQHuxeNNEV663PrNVpTAFj7tv+7w0p3yiRAPCGWLcb7slRz3l3LW4l470xTZnI4dVcw==
+X-Received: by 2002:a1c:85d2:: with SMTP id h201mr1004193wmd.151.1542195223932;
+        Wed, 14 Nov 2018 03:33:43 -0800 (PST)
+Received: from pali ([2a02:2b88:2:1::5cc6:2f])
+        by smtp.gmail.com with ESMTPSA id k15sm8361654wru.8.2018.11.14.03.33.42
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Nov 2018 03:33:42 -0800 (PST)
+Date:   Wed, 14 Nov 2018 12:33:41 +0100
+From:   Pali =?utf-8?B?Um9ow6Fy?= <pali.rohar@gmail.com>
+To:     Andreas Henriksson <andreas@fatal.se>
+Cc:     Jaroslav Skarvada <jskarvad@redhat.com>,
+        linux-fsdevel@vger.kernel.org, util-linux@vger.kernel.org,
+        linux-kernel@vger.kernel.org, mpluskal@suse.com,
+        base-system@gentoo.org,
+        Andy Shevchenko <andy.shevchenko@gmail.com>,
+        Karel Zak <kzak@redhat.com>, Andreas Bombe <aeb@debian.org>,
+        Andreas Bombe <andreas.bombe@gmail.com>,
+        Andreas Dilger <adilger@dilger.ca>,
+        Richard Weinberger <richard.weinberger@gmail.com>
+Subject: Re: Future of dosfstools project (FAT)
+Message-ID: <20181114113341.yx2wlzqku5yh3k4h@pali>
+References: <20180929084038.an6pfhnsd6tblejl@pali>
+ <20181002081654.jxesr3kj62snzez5@pali>
+ <510499199.34825028.1538469850257.JavaMail.zimbra@redhat.com>
+ <20181012091941.o22srnhse4kzqjhf@fatal.se>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181113145339.GD16182@dhcp22.suse.cz>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181012091941.o22srnhse4kzqjhf@fatal.se>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue 13-11-18 15:53:39, Michal Hocko wrote:
-> On Mon 12-11-18 12:54:45, Chanho Min wrote:
-> > Suspend fails due to the exec family of functions blocking the freezer.
-> > The casue is that de_thread() sleeps in TASK_UNINTERRUPTIBLE waiting for
-> > all sub-threads to die, and we have the deadlock if one of them is frozen.
-> > This also can occur with the schedule() waiting for the group thread leader
-> > to exit if it is frozen.
-> > 
-> > In our machine, it causes freeze timeout as bellows.
-> > 
-> > Freezing of tasks failed after 20.010 seconds (1 tasks refusing to freeze, wq_busy=0):
-> > setcpushares-ls D ffffffc00008ed70     0  5817   1483 0x0040000d
-> >  Call trace:
-> > [<ffffffc00008ed70>] __switch_to+0x88/0xa0
-> > [<ffffffc000d1c30c>] __schedule+0x1bc/0x720
-> > [<ffffffc000d1ca90>] schedule+0x40/0xa8
-> > [<ffffffc0001cd784>] flush_old_exec+0xdc/0x640
-> > [<ffffffc000220360>] load_elf_binary+0x2a8/0x1090
-> > [<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
-> > [<ffffffc00021c584>] load_script+0x20c/0x228
-> > [<ffffffc0001ccff4>] search_binary_handler+0x9c/0x240
-> > [<ffffffc0001ce8e0>] do_execveat_common.isra.14+0x4f8/0x6e8
-> > [<ffffffc0001cedd0>] compat_SyS_execve+0x38/0x48
-> > [<ffffffc00008de30>] el0_svc_naked+0x24/0x28
-> > 
-> > To fix this, make de_thread() freezable. It looks safe and works fine.
+On Friday 12 October 2018 11:19:41 Andreas Henriksson wrote:
+> Hello everyone,
 > 
-> It's been some time since I have looked into this code so bear with me.
-> One thing is not really clear to me. Why does it help to exclude this
-> particular task from the freezer when it is not sleeping in the freezer.
-> I can see how other threads need to be zapped and TASK_WAKEKILL doesn't
-> do that but shouldn't we fix that instead?
+> On Tue, Oct 02, 2018 at 04:44:10AM -0400, Jaroslav Skarvada wrote:
+> > I am downstream maintainer of dosfstools in Fedora/RHEL. My personal opinion
+> > with such kind of projects is that one or two years without activity doesn't
+> > mean the project is dead. I don't know what happened with Andreas, but
+> > in case of no response my +1 for the GitHub fork. I think it's non offensive
+> > solution which can be easily reverted if needed. Please let me know if you do it
 > 
-> Or maybe I am missing something important here.
+> It seems Andreas is a Debian Developer (like myself), so I used the
+> debian tooling for 'missing in action' (mia-query) and it seems
+> he is occationally active (but showing obvious signs of busyness).
+> 
+> I even found his irc nick and found him online. I told him about this
+> mailing list thread and he replied that he has been extremely busy
+> with things in his personal life lately and said he should really
+> try to find some time to catch up with things, but since he hasn't
+> replied here I thought I'd just let you know about the situation.
+> Hopefully things calms down for him soon to allow him to catch up.
 
-Just to not distract from the quick fix. This will silence the freezer
-but I believe that we need a better fix to not block exec by freezer
-long term. It seems much more complicated though so a quick fix makes
-some sense for now.
+Hi! One more month passed. Do you have some news? Probably when Andreas
+can look at pending patches?
 
-Acked-by: Michal Hocko <mhocko@suse.com>
+And... has somebody else time to look at those pending patches and do
+some initial review? I would really appreciate if somebody look and
+comment them.
+
+There are 14 open pull requests:
+https://github.com/dosfstools/dosfstools/pulls
+
+> I hope you find a good way to handle things in the mean time. More
+> people probably need to help out reviewing incoming issues/PRs and other
+> things that can help Andreas out with the maintenance burden, but with
+> his current lack of time it might be better if someone motivated and
+> capable just forks the project on github and starts doing the
+> maintenance work in the fork. If things works out well, maybe this gives
+> Andreas confidence he can safely hand over the official maintainer role
+> to someone with more time for it (and you can 'unfork' again).
+> 
+> Regards,
+> Andreas Henriksson
+
 -- 
-Michal Hocko
-SUSE Labs
+Pali Rohár
+pali.rohar@gmail.com
