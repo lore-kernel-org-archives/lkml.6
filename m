@@ -2,132 +2,202 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0D8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:55:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6784C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:56:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DC902145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:55:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D25D2243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:56:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUb6hNnV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC902145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="epr1XK9G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D25D2243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732470AbeKNU6O (ORCPT
+        id S1732414AbeKNU7d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 15:58:14 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:40990 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727883AbeKNU6O (ORCPT
+        Wed, 14 Nov 2018 15:59:33 -0500
+Received: from mail-yb1-f194.google.com ([209.85.219.194]:42282 "EHLO
+        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbeKNU7c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 15:58:14 -0500
-Received: by mail-yb1-f196.google.com with SMTP id t13-v6so6703804ybb.8;
-        Wed, 14 Nov 2018 02:55:28 -0800 (PST)
+        Wed, 14 Nov 2018 15:59:32 -0500
+Received: by mail-yb1-f194.google.com with SMTP id o204-v6so6691642yba.9
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 02:56:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=cKBdH59M66pVE1mkFNjjgivtPYYb7pmZ+I+vSeOZYIU=;
-        b=QUb6hNnVnNjXLFg364dSpcdzPM1VQOO4gb4DueTscFN98Lko/9Nas34duj6sB9XcXt
-         AB2JwXFiawF+7pEkXV9S9pyYKoVjM/FYegEQpoYWihKNKkWw13/JqbY/XHJ60X0V/2Ed
-         CLm8GkQ9L/ClSY+2gQm0pbDxxcpuDrOkabUpSwK12gmOrBkq4DctAm5kV6/JYlTKNsIz
-         X2BrO1sGXL1Q0kSWzr+ctG6TWWDc2YL+ZDQiskmn4oZnfakwq6fwhMUCp/wmueZFzgy+
-         0pWkcSc5CXQ7Z/p5MRdMuIoDPXrijOS6jviRmE1/oplif1ShK22qvFpMyQZT5I/Mbe6i
-         i9iA==
+         :cc;
+        bh=KL9x3B0Js4Sv2qULrUPmfHSLOOa6blBCFs8qkCayAIw=;
+        b=epr1XK9GshKXtbG22XDU4AVDsfsSK6GhR9tZ8/OYTMgjtJ2/n4rA1/2AlrMjsF3U+S
+         oGInUER7nRXpaXyi+xUG81ICplFFAc8wvfNHnxvMa4fer4GRAaqSI5mEItuCD6iInOa9
+         dzUTr8z7zyzP7Xb3efj/c3VhXW9022M4pNjVY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=cKBdH59M66pVE1mkFNjjgivtPYYb7pmZ+I+vSeOZYIU=;
-        b=eRB4w3JWoFevNc3lUUUiQ+VH/0xOwJ+rYb/wLrjsa3C77cuGjw2Qw1LokltVVpXGym
-         Z7guXfcXWE4a4wEjIVyMXod3/wbqBNqAOx4nlLMAoGx3R7v3udlAyLJsC9xleHCAoH5j
-         myGWVQnXq2HL98fOwrTlymIhWt8HBXSYFL81/T3dZNkb8d8BWdZE1jEzjG6dhWuslD+N
-         Iptvd8NlLMBFG1bgB9c32aUTXHgab+bSBiNSMGkjdth7LZ+cXZsmSJVbkFheB+O4bYm1
-         JbcDEqpdAt3+N8EuKOwxGioTs2iy7S/tiELSaFHaK7LOsdr4pQxWlsjhJZ9vadOcqhLG
-         3+Vw==
-X-Gm-Message-State: AGRZ1gJHrreExrLsr3TB0nNQ4CPGDCmY8WVOSm1wlJPQ86HD9xH/+GY8
-        hx0xbsONDvUodSgBTKGxMVdwNTDcFzLksklfqnw=
-X-Google-Smtp-Source: AJdET5eKxiMIGTNrdHAKM1dcEdY0ZshU0ePX8l8piP21PRyZWV+VZfrgxrnrCJUjTHsbqNzuVm79tFWfSewXrkGBQro=
-X-Received: by 2002:a25:952:: with SMTP id u18-v6mr976985ybm.474.1542192928266;
- Wed, 14 Nov 2018 02:55:28 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=KL9x3B0Js4Sv2qULrUPmfHSLOOa6blBCFs8qkCayAIw=;
+        b=J9Sw9Rq/kIKdTEsqNCZBEdWudm54oPa5m1K9dsAdq1X1PttLIG3v60VwTsfMHaPFdV
+         Sz8eC8QAib3K7B4/kf9KufrpI6KpQ4hK2yY6GUL3wwokXMooHz3POaKnRhTVcuHD6Tyd
+         ZeB1OwLT6L8mbViXM1JngIFI+/NKxsqN+Rej1sSP9RyfTnPsU8GdgZigKFoUoaLeV1s0
+         tFN59jeJ/niWqvZOJk17bAXyBIOf+08DY9a2VPUKkykTXQ+uLTMg9JncoQL66aUklDje
+         3fNFHPCLrv1SaH0hofcS5tL+pA35msbUfDQl3pV5Aoxw+rDmJPqWF7+HlGQ2maYM5pz3
+         7aMA==
+X-Gm-Message-State: AGRZ1gK5NEvy1cbI2l+N1NVLy6ceTv0x782+W3y9+tLr8YuLB8kOaOC2
+        vaWFFTTPdsOi/BqOFU680lOqzntfCsY=
+X-Google-Smtp-Source: AJdET5embI56lxGm//0o18WFEAoBKg8gXz9gPxXfiqkQrIoEgAMzmp5ZGDpmkVcmL4d1cdAkYSQLbw==
+X-Received: by 2002:a5b:c8f:: with SMTP id i15-v6mr996807ybq.404.1542193006821;
+        Wed, 14 Nov 2018 02:56:46 -0800 (PST)
+Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
+        by smtp.gmail.com with ESMTPSA id n38-v6sm5970701ywh.100.2018.11.14.02.56.45
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 02:56:46 -0800 (PST)
+Received: by mail-yw1-f43.google.com with SMTP id k6-v6so7051790ywa.11
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 02:56:45 -0800 (PST)
+X-Received: by 2002:a81:4786:: with SMTP id u128-v6mr1056471ywa.164.1542193005265;
+ Wed, 14 Nov 2018 02:56:45 -0800 (PST)
 MIME-Version: 1.0
-References: <20181108124934.32381-1-peron.clem@gmail.com> <20181113225135.GQ2089@sirena.org.uk>
-In-Reply-To: <20181113225135.GQ2089@sirena.org.uk>
-From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
-Date:   Wed, 14 Nov 2018 11:55:17 +0100
-Message-ID: <CAJiuCcewYbt4SDZfFzDfTfTzj_Z1cm=S3_GAA-zcYGW-jzXR4w@mail.gmail.com>
-Subject: Re: [PATCH 1/2] ASoC: ak4118: Add support for AK4118 S/PDIF transceiver
-To:     Mark Brown <broonie@kernel.org>
-Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Adrien Charruel <adrien.charruel@devialet.com>
+References: <1538222432-25894-1-git-send-email-sgorle@codeaurora.org> <1538222432-25894-3-git-send-email-sgorle@codeaurora.org>
+In-Reply-To: <1538222432-25894-3-git-send-email-sgorle@codeaurora.org>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Wed, 14 Nov 2018 19:56:33 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5D4p_1PGCYzeKTYJovS6PVA7rho0wj_knvr4Vm3gDOtTw@mail.gmail.com>
+Message-ID: <CAAFQd5D4p_1PGCYzeKTYJovS6PVA7rho0wj_knvr4Vm3gDOtTw@mail.gmail.com>
+Subject: Re: [PATCH v1 2/5] media: venus: dynamically configure codec type
+To:     sgorle@codeaurora.org
+Cc:     Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Hans Verkuil <hverkuil@xs4all.nl>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Linux Media Mailing List <linux-media@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        vgarodia@codeaurora.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Mark,
+On Sat, Sep 29, 2018 at 9:01 PM Srinu Gorle <sgorle@codeaurora.org> wrote:
+>
+> - currently video decoder instance is hardcoded to H.264 video format.
+> - this change enables video decoder dynamically configure to
+>   any supported video format.
+>
+> Signed-off-by: Srinu Gorle <sgorle@codeaurora.org>
+> ---
+>  drivers/media/platform/qcom/venus/helpers.c | 51 ++++++++++++++---------------
+>  drivers/media/platform/qcom/venus/helpers.h |  1 +
+>  drivers/media/platform/qcom/venus/vdec.c    |  2 ++
+>  3 files changed, 27 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/media/platform/qcom/venus/helpers.c b/drivers/media/platform/qcom/venus/helpers.c
+> index 822a853..c82dbac 100644
+> --- a/drivers/media/platform/qcom/venus/helpers.c
+> +++ b/drivers/media/platform/qcom/venus/helpers.c
+> @@ -36,47 +36,44 @@ struct intbuf {
+>         unsigned long attrs;
+>  };
+>
+> -bool venus_helper_check_codec(struct venus_inst *inst, u32 v4l2_pixfmt)
+> +u32 v4l2_venus_fmt(u32 pixfmt)
+>  {
+> -       struct venus_core *core = inst->core;
+> -       u32 session_type = inst->session_type;
+> -       u32 codec;
+> -
+> -       switch (v4l2_pixfmt) {
+> +       switch (pixfmt) {
+>         case V4L2_PIX_FMT_H264:
+> -               codec = HFI_VIDEO_CODEC_H264;
+> -               break;
+> +       case V4L2_PIX_FMT_H264_NO_SC:
+> +               return HFI_VIDEO_CODEC_H264;
+>         case V4L2_PIX_FMT_H263:
+> -               codec = HFI_VIDEO_CODEC_H263;
+> -               break;
+> +               return HFI_VIDEO_CODEC_H263;
+>         case V4L2_PIX_FMT_MPEG1:
+> -               codec = HFI_VIDEO_CODEC_MPEG1;
+> -               break;
+> +               return HFI_VIDEO_CODEC_MPEG1;
+>         case V4L2_PIX_FMT_MPEG2:
+> -               codec = HFI_VIDEO_CODEC_MPEG2;
+> -               break;
+> +               return HFI_VIDEO_CODEC_MPEG2;
+>         case V4L2_PIX_FMT_MPEG4:
+> -               codec = HFI_VIDEO_CODEC_MPEG4;
+> -               break;
+> +               return HFI_VIDEO_CODEC_MPEG4;
+>         case V4L2_PIX_FMT_VC1_ANNEX_G:
+>         case V4L2_PIX_FMT_VC1_ANNEX_L:
+> -               codec = HFI_VIDEO_CODEC_VC1;
+> -               break;
+> +               return HFI_VIDEO_CODEC_VC1;
+>         case V4L2_PIX_FMT_VP8:
+> -               codec = HFI_VIDEO_CODEC_VP8;
+> -               break;
+> +               return HFI_VIDEO_CODEC_VP8;
+>         case V4L2_PIX_FMT_VP9:
+> -               codec = HFI_VIDEO_CODEC_VP9;
+> -               break;
+> +               return HFI_VIDEO_CODEC_VP9;
+>         case V4L2_PIX_FMT_XVID:
+> -               codec = HFI_VIDEO_CODEC_DIVX;
+> -               break;
+> +               return HFI_VIDEO_CODEC_DIVX;
+>         case V4L2_PIX_FMT_HEVC:
+> -               codec = HFI_VIDEO_CODEC_HEVC;
+> -               break;
+> +               return HFI_VIDEO_CODEC_HEVC;
+>         default:
+> -               return false;
+> +               return 0;
+>         }
+> +}
+> +EXPORT_SYMBOL_GPL(v4l2_venus_fmt);
+> +
+> +bool venus_helper_check_codec(struct venus_inst *inst, u32 v4l2_pixfmt)
+> +{
+> +       struct venus_core *core = inst->core;
+> +       u32 session_type = inst->session_type;
+> +       u32 codec;
+> +
+> +       codec = v4l2_venus_fmt(v4l2_pixfmt);
+>
+>         if (session_type == VIDC_SESSION_TYPE_ENC && core->enc_codecs & codec)
+>                 return true;
+> diff --git a/drivers/media/platform/qcom/venus/helpers.h b/drivers/media/platform/qcom/venus/helpers.h
+> index 3de0c44..725831d 100644
+> --- a/drivers/media/platform/qcom/venus/helpers.h
+> +++ b/drivers/media/platform/qcom/venus/helpers.h
+> @@ -19,6 +19,7 @@
+>
+>  struct venus_inst;
+>
+> +u32 v4l2_venus_fmt(u32 pixfmt);
+>  bool venus_helper_check_codec(struct venus_inst *inst, u32 v4l2_pixfmt);
+>  struct vb2_v4l2_buffer *venus_helper_find_buf(struct venus_inst *inst,
+>                                               unsigned int type, u32 idx);
+> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
+> index 98675db..afe3b36 100644
+> --- a/drivers/media/platform/qcom/venus/vdec.c
+> +++ b/drivers/media/platform/qcom/venus/vdec.c
+> @@ -413,6 +413,8 @@ static int vdec_enum_framesizes(struct file *file, void *fh,
+>                                   V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
+>                 if (!fmt)
+>                         return -EINVAL;
+> +               inst->fmt_out = fmt;
+> +               inst->hfi_codec = v4l2_venus_fmt(fmt->pixfmt);
 
-On Tue, 13 Nov 2018 at 23:51, Mark Brown <broonie@kernel.org> wrote:
->
-> On Thu, Nov 08, 2018 at 01:49:33PM +0100, Cl=C3=A9ment P=C3=A9ron wrote:
->
-> This looks mostly good, a few small things below but nothing too major:
->
-> > --- /dev/null
-> > +++ b/sound/soc/codecs/ak4118.c
-> > @@ -0,0 +1,449 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +/*
-> > + * ak4118.c  --  Asahi Kasei ALSA Soc Audio driver
-> > + *
->
-> Please make the entire comment a C++ one so this looks more intentional.
+That's wrong. ENUM_FRAMESIZES (and any other ENUM_* or G_* ioctl) must
+not affect driver state or result in any other side effects.
 
-I check from other files and also this article says :
-"For normal C source files, the string will be a comment using the
-"//" syntax; header files, instead, use traditional (/* */) comments
-for reasons related to tooling"
-https://lwn.net/Articles/739183/
-
->
-> > +static const char * const ak4118_iec958_fs_texts[] =3D {
-> > +     "44100",
-> > +     "Reserved",
->
-> If you use a _VALUE_ENUM_SINGLE you can hide the reserved/invalid values
-> from userspace which is easier to use.
-
-Ok will change to SOC_VALUE_ENUM_SINGLE_DECL
-
->
-> > +     ret =3D request_threaded_irq(gpiod_to_irq(ak4118->irq), NULL,
-> > +                                ak4118_irq_handler, IRQF_TRIGGER_RISIN=
-G |
-> > +                                IRQF_ONESHOT, "ak4118-irq", ak4118);
-> > +     if (ret < 0) {
-> > +             dev_err(component->dev, "Fail to request_irq: %d\n", ret)=
-;
-> > +             return ret;
-> > +     }
->
-> You should request resources in the device level probe, there's no point
-> in requesting and releasing the interrupt like this.
-
-Ok, will change to devm_request_threaded_irq and remove the irq_free
-
-Thanks for the review,
-Regards,
-Cl=C3=A9ment
+Best regards,
+Tomasz
