@@ -2,49 +2,50 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D798C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3732C04EBC
 	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3D9022522
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 904222252D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cZhGdyMn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3D9022522
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="m2pZWqA6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 904222252D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729060AbeKOI10 (ORCPT
+        id S1729086AbeKOI11 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:27:26 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34392 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:27:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728925AbeKOI1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:27:24 -0500
+        id S1729032AbeKOI10 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:26 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0675622525;
-        Wed, 14 Nov 2018 22:22:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C5C6022520;
+        Wed, 14 Nov 2018 22:22:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234141;
-        bh=bvD5LbzOWtMYoYxJe90SSzXT6YTa+HyA9li0sVe/sBw=;
+        s=default; t=1542234142;
+        bh=gBQg2d1D88jv3FxnUPFkv8Z5gUs9Ya6aolVT3+ZfWUE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cZhGdyMn4gunEfkeI4Nvkxu4PCmRVpjhVckzXUax9A1rdTPp5gA962LXAKoB56s/t
-         3iV4VZW5AnOpbwS/byMvm8a4UdUiZA0CM4ZGDOJFWFdnsDOTYaYsSWAuLesl6s/Qar
-         tzveop6j+GlRrjVT/MSYwjVWtG1CrDK9s4v/4Ggo=
+        b=m2pZWqA6elEAMwFd2pj+tiA6/c9+1u79t3wefx/PEHGrQEpu2GJRJRiWZ78ZLHuo/
+         I/xebMYtiKxVT1nCxLMkfX52uPgnfOhDtuNSyQeTqRmc7lKMjlSVHOxC57MJVfOROb
+         4iJc5dxM0ukLgMiMG6Co9OcWdfLaXTneH7UdX3u4=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Gustavo Romero <gromero@linux.vnet.ibm.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
+Cc:     Denis Bolotin <denis.bolotin@cavium.com>,
+        Michal Kalderon <michal.kalderon@cavium.com>,
+        "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 53/73] perf tools: Fix undefined symbol scnprintf in libperf-jvmti.so
-Date:   Wed, 14 Nov 2018 17:21:47 -0500
-Message-Id: <20181114222207.98701-53-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 60/73] qed: Fix memory/entry leak in qed_init_sp_request()
+Date:   Wed, 14 Nov 2018 17:21:54 -0500
+Message-Id: <20181114222207.98701-60-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -53,135 +54,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Gustavo Romero <gromero@linux.vnet.ibm.com>
+From: Denis Bolotin <denis.bolotin@cavium.com>
 
-[ Upstream commit 6ac2226229d931153331a93d90655a3de05b9290 ]
+[ Upstream commit 39477551df940ddb1339203817de04f5caaacf7a ]
 
-Currently jvmti agent can not be used because function scnprintf is not
-present in the agent libperf-jvmti.so. As a result the JVM when using
-such agent to record JITed code profiling information will fail on
-looking up scnprintf:
+Free the allocated SPQ entry or return the acquired SPQ entry to the free
+list in error flows.
 
-  java: symbol lookup error: lib/libperf-jvmti.so: undefined symbol: scnprintf
-
-This commit fixes that by reverting to the use of snprintf, that can be
-looked up, instead of scnprintf, adding a proper check for the returned
-value in order to print a better error message when the jitdump file
-pathname is too long. Checking the returned value also helps to comply
-with some recent gcc versions, like gcc8, which will fail due to
-truncated writing checks related to the -Werror=format-truncation= flag.
-
-Signed-off-by: Gustavo Romero <gromero@linux.vnet.ibm.com>
-Acked-by: Jiri Olsa <jolsa@kernel.org>
-LPU-Reference: 1541117601-18937-2-git-send-email-gromero@linux.vnet.ibm.com
-Link: https://lkml.kernel.org/n/tip-mvpxxxy7wnzaj74cq75muw3f@git.kernel.org
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
+Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/jvmti/jvmti_agent.c | 49 ++++++++++++++++++++++++++--------
- 1 file changed, 38 insertions(+), 11 deletions(-)
+ .../net/ethernet/qlogic/qed/qed_sp_commands.c    | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/tools/perf/jvmti/jvmti_agent.c b/tools/perf/jvmti/jvmti_agent.c
-index ac1bcdc17dae..f7eb63cbbc65 100644
---- a/tools/perf/jvmti/jvmti_agent.c
-+++ b/tools/perf/jvmti/jvmti_agent.c
-@@ -125,7 +125,7 @@ perf_get_timestamp(void)
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
+index 77b6248ad3b9..e86a1ea23613 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
+@@ -80,7 +80,7 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
+ 
+ 	case QED_SPQ_MODE_BLOCK:
+ 		if (!p_data->p_comp_data)
+-			return -EINVAL;
++			goto err;
+ 
+ 		p_ent->comp_cb.cookie = p_data->p_comp_data->cookie;
+ 		break;
+@@ -95,7 +95,7 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
+ 	default:
+ 		DP_NOTICE(p_hwfn, "Unknown SPQE completion mode %d\n",
+ 			  p_ent->comp_mode);
+-		return -EINVAL;
++		goto err;
+ 	}
+ 
+ 	DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
+@@ -109,6 +109,18 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
+ 	memset(&p_ent->ramrod, 0, sizeof(p_ent->ramrod));
+ 
+ 	return 0;
++
++err:
++	/* qed_spq_get_entry() can either get an entry from the free_pool,
++	 * or, if no entries are left, allocate a new entry and add it to
++	 * the unlimited_pending list.
++	 */
++	if (p_ent->queue == &p_hwfn->p_spq->unlimited_pending)
++		kfree(p_ent);
++	else
++		qed_spq_return_entry(p_hwfn, p_ent);
++
++	return -EINVAL;
  }
  
- static int
--debug_cache_init(void)
-+create_jit_cache_dir(void)
- {
- 	char str[32];
- 	char *base, *p;
-@@ -144,8 +144,13 @@ debug_cache_init(void)
- 
- 	strftime(str, sizeof(str), JIT_LANG"-jit-%Y%m%d", &tm);
- 
--	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/", base);
--
-+	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/", base);
-+	if (ret >= PATH_MAX) {
-+		warnx("jvmti: cannot generate jit cache dir because %s/.debug/"
-+			" is too long, please check the cwd, JITDUMPDIR, and"
-+			" HOME variables", base);
-+		return -1;
-+	}
- 	ret = mkdir(jit_path, 0755);
- 	if (ret == -1) {
- 		if (errno != EEXIST) {
-@@ -154,20 +159,32 @@ debug_cache_init(void)
- 		}
- 	}
- 
--	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/jit", base);
-+	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/jit", base);
-+	if (ret >= PATH_MAX) {
-+		warnx("jvmti: cannot generate jit cache dir because"
-+			" %s/.debug/jit is too long, please check the cwd,"
-+			" JITDUMPDIR, and HOME variables", base);
-+		return -1;
-+	}
- 	ret = mkdir(jit_path, 0755);
- 	if (ret == -1) {
- 		if (errno != EEXIST) {
--			warn("cannot create jit cache dir %s", jit_path);
-+			warn("jvmti: cannot create jit cache dir %s", jit_path);
- 			return -1;
- 		}
- 	}
- 
--	snprintf(jit_path, PATH_MAX - 1, "%s/.debug/jit/%s.XXXXXXXX", base, str);
--
-+	ret = snprintf(jit_path, PATH_MAX, "%s/.debug/jit/%s.XXXXXXXX", base, str);
-+	if (ret >= PATH_MAX) {
-+		warnx("jvmti: cannot generate jit cache dir because"
-+			" %s/.debug/jit/%s.XXXXXXXX is too long, please check"
-+			" the cwd, JITDUMPDIR, and HOME variables",
-+			base, str);
-+		return -1;
-+	}
- 	p = mkdtemp(jit_path);
- 	if (p != jit_path) {
--		warn("cannot create jit cache dir %s", jit_path);
-+		warn("jvmti: cannot create jit cache dir %s", jit_path);
- 		return -1;
- 	}
- 
-@@ -228,7 +245,7 @@ void *jvmti_open(void)
- {
- 	char dump_path[PATH_MAX];
- 	struct jitheader header;
--	int fd;
-+	int fd, ret;
- 	FILE *fp;
- 
- 	init_arch_timestamp();
-@@ -245,12 +262,22 @@ void *jvmti_open(void)
- 
- 	memset(&header, 0, sizeof(header));
- 
--	debug_cache_init();
-+	/*
-+	 * jitdump file dir
-+	 */
-+	if (create_jit_cache_dir() < 0)
-+		return NULL;
- 
- 	/*
- 	 * jitdump file name
- 	 */
--	scnprintf(dump_path, PATH_MAX, "%s/jit-%i.dump", jit_path, getpid());
-+	ret = snprintf(dump_path, PATH_MAX, "%s/jit-%i.dump", jit_path, getpid());
-+	if (ret >= PATH_MAX) {
-+		warnx("jvmti: cannot generate jitdump file full path because"
-+			" %s/jit-%i.dump is too long, please check the cwd,"
-+			" JITDUMPDIR, and HOME variables", jit_path, getpid());
-+		return NULL;
-+	}
- 
- 	fd = open(dump_path, O_CREAT|O_TRUNC|O_RDWR, 0666);
- 	if (fd == -1)
+ static enum tunnel_clss qed_tunn_clss_to_fw_clss(u8 type)
 -- 
 2.17.1
 
