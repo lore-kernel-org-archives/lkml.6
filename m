@@ -2,219 +2,142 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36323C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 05:56:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9BD04C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:00:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E593F2146D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 05:56:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6330322360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 06:00:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=themaw.net header.i=@themaw.net header.b="AAF8SG+9";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="vPcW7dpD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E593F2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=themaw.net
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVCQ0lvk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6330322360
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731063AbeKNP5w (ORCPT
+        id S1730665AbeKNQBp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 10:57:52 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:40757 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726813AbeKNP5v (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 10:57:51 -0500
-Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id F3D0B22CEB;
-        Wed, 14 Nov 2018 00:56:06 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute1.internal (MEProxy); Wed, 14 Nov 2018 00:56:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=themaw.net; h=
-        message-id:subject:from:to:cc:date:in-reply-to:references
-        :content-type:mime-version:content-transfer-encoding; s=fm1; bh=
-        MEN4GmTBcN/AZNWoncXWTHY092zc2Nu49Y5cg8mXNDc=; b=AAF8SG+9jcxknUSG
-        ZVg6KkDhpCpmPmB9z4hOrILmzpWY7In8xL61UyvCiwH0hig50gPzlq4NojaAU2Dw
-        EBlgHRqxWi4DE1IDEl45Y02OjOZ2A0dod2u2WGRTiATuAU9UJSS2eCiPATB2xjYF
-        x+vWa49AEM7SfieOqJHwKptLVWqAg4B8R7lPLNqIN3WJ9ymrDjqR3Qr9maW1TMRF
-        9UB8Lgk3uUc/Ucp7S8HQAHgse7QfDIZ0h9GbJo/cQAq3T6hay5aUTVQ6j3PTIOXD
-        OIDCwWmc1xeI+QfVOwe8DZQKQsTkcXUjQeTWG8lstHO9pEnRbdkT2cfuLNxuGgRQ
-        65dcmg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-transfer-encoding:content-type
-        :date:from:in-reply-to:message-id:mime-version:references
-        :subject:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender
-        :x-sasl-enc; s=fm1; bh=MEN4GmTBcN/AZNWoncXWTHY092zc2Nu49Y5cg8mXN
-        Dc=; b=vPcW7dpDVeMbhQOeHvTAU2go+ml89UUzSY0mWmXtPQFlZBvfMmrQ7cLzM
-        ppbwZRsXPfyM8I5OG/TRxKgdmCfo139xEbFYGMnWR8bhHXeXn87XrFL4Kenn15dI
-        VS9RIMiuldsGbKXBZKY33fwnMWyTbXTz9QnvjHg+95LLzXdGVBQbzwDaJA1Q3D/9
-        rmISuu4KQYDFKZfQnpmZ2PA9r02ZQ/3rT5+enniVG/T4IWQ9gW/s8bKxoUmv60Pa
-        2/yzKt+5HYvbvMOabz85m2mycIlw//oPahOG5N8daM+lvOpRzL/kBvbuCD4L4etU
-        InZySbfwYDMtOod81XBgJ2zwYfFHw==
-X-ME-Sender: <xms:9rjrW4wlZ59DE1HamhGbgcWc1amVIfQXzDFTc-StNMM9pltAmt4kfg>
-X-ME-Proxy: <xmx:9rjrW_6QbdSU5SkVVgAfSgBeKnVaE7mW2bbbPuTpL9irgdtByJHdyQ>
-    <xmx:9rjrW8pz3blTlHLTLFx43K-JjP5j2krXBY-6U2ccqRQ4MOxNkzs5Og>
-    <xmx:9rjrW5hE623AaciwPLUA_ALbN9utEDlXVVoknOEfJb1UBV6CMT0Dmw>
-    <xmx:9rjrW-JFfkNJ-aBzSu1YX4vfuBKnakU11vY9Qor4HTExYOJuKoKD1g>
-    <xmx:9rjrWxDXtwU2YZM0IvoqG4EbXtGIvYnMd0ACCdkT_6SFbQ2eBPPMBg>
-    <xmx:9rjrW0j_n0yHzAxD9li8HQXXew9xGLGN58irQxEDGhcWPhWzPhLcug>
-Received: from localhost (unknown [118.208.176.84])
-        by mail.messagingengine.com (Postfix) with ESMTPA id F2341102DD;
-        Wed, 14 Nov 2018 00:56:03 -0500 (EST)
-Message-ID: <1c34ff9bf8852686371403d8f4efdfdcd5019042.camel@themaw.net>
-Subject: Re: [PATCH 4/6] autofs - use struct for mount params
-From:   Ian Kent <raven@themaw.net>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     kbuild-all@01.org, Al Viro <viro@ZenIV.linux.org.uk>,
-        autofs mailing list <autofs@vger.kernel.org>,
-        Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-fsdevel <linux-fsdevel@vger.kernel.org>
-Date:   Wed, 14 Nov 2018 13:56:01 +0800
-In-Reply-To: <201811140948.eYw7FEbR%fengguang.wu@intel.com>
-References: <154207297923.11064.15608451642929332541.stgit@pluto-themaw-net>
-         <201811140948.eYw7FEbR%fengguang.wu@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.28.5 (3.28.5-1.fc28) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Wed, 14 Nov 2018 11:01:45 -0500
+Received: from mail.kernel.org ([198.145.29.99]:57024 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726842AbeKNQBo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 11:01:44 -0500
+Received: from localhost (unknown [64.114.255.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id E29F02146D;
+        Wed, 14 Nov 2018 05:59:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542175199;
+        bh=H2FkeEHLjL414bPVZegIRuuO4If/uRSi8gkmWujMtmo=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=TVCQ0lvkqVaQX7IzQ6sB1YTaDnpSqWGCgogaM4MdLzoWX9Gk7M72yAaO/rDTLiqty
+         HwEaeulvV1AD+VaUuFWxUre0Ja1LTpdMutmsU8VKhoVSyI+ZI4qDyfNAx/ydBVvOPQ
+         xI+nvbkp4AUY1UBt+SwL2Afq3yiFvHIeYipeBfjc=
+Date:   Tue, 13 Nov 2018 23:59:56 -0600
+From:   Bjorn Helgaas <helgaas@kernel.org>
+To:     Alex_Gagniuc@Dellteam.com
+Cc:     oohall@gmail.com, gregkh@linuxfoundation.org,
+        keith.busch@intel.com, mr.nuke.me@gmail.com,
+        linux-pci@vger.kernel.org, Austin.Bolen@dell.com,
+        Shyam.Iyer@dell.com, linux-kernel@vger.kernel.org,
+        jonathan.derrick@intel.com, lukas@wunner.de, ruscur@russell.cc,
+        sbobroff@linux.ibm.com, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
+ disconnected
+Message-ID: <20181114055956.GA144931@google.com>
+References: <20181108220117.GA11466@kroah.com>
+ <20181108223258.GD2932@localhost.localdomain>
+ <20181108224255.GA20619@kroah.com>
+ <20d68e586fff4dcca5616d5056f6fc21@ausx13mps321.AMER.DELL.COM>
+ <20181108225109.GA3023@kroah.com>
+ <16bf9d14bc5f4a90b2b88dd2eb165186@ausx13mps321.AMER.DELL.COM>
+ <5da8d8aa9f3818af649b1ac547bc4e6062626ddf.camel@gmail.com>
+ <df85813c9860463d85f6c302dfe07b12@ausx13mps321.AMER.DELL.COM>
+ <20181113050240.GA182139@google.com>
+ <19136f44cd5c45e79bbef7e78a6bf332@ausx13mps321.AMER.DELL.COM>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <19136f44cd5c45e79bbef7e78a6bf332@ausx13mps321.AMER.DELL.COM>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-14 at 09:54 +0800, kbuild test robot wrote:
-> Hi Ian,
-> 
-> I love your patch! Yet something to improve:
-> 
-> [auto build test ERROR on linus/master]
-> [also build test ERROR on v4.20-rc2]
-> [cannot apply to next-20181113]
-> [if your patch is applied to the wrong git tree, please drop us a note to help
-> improve the system]
-> 
-> url:    
-> https://github.com/0day-ci/linux/commits/Ian-Kent/autofs-improve-ioctl-sbi-checks/20181114-021150
-> config: i386-allmodconfig (attached as .config)
-> compiler: gcc-7 (Debian 7.3.0-1) 7.3.0
-> reproduce:
->         # save the attached .config to linux build tree
->         make ARCH=i386 
-> 
-> All errors (new ones prefixed by >>):
-> 
->    fs/autofs/inode.c: In function 'autofs_fill_super':
-> > > fs/autofs/inode.c:361:28: error: invalid type argument of '->' (have
-> > > 'struct autofs_fs_params')
-> 
->      root_inode->i_uid = params->uid;
->                                ^~
->    fs/autofs/inode.c:362:28: error: invalid type argument of '->' (have
-> 'struct autofs_fs_params')
->      root_inode->i_gid = params->gid;
->                                ^~
+On Tue, Nov 13, 2018 at 10:39:15PM +0000, Alex_Gagniuc@Dellteam.com wrote:
+> On 11/12/2018 11:02 PM, Bjorn Helgaas wrote:
+> > 
+> > [EXTERNAL EMAIL]
+> > Please report any suspicious attachments, links, or requests for sensitive information.
 
-Oh, I fixed that, I must have messed up somewhere, I'll check what I have
-again.
+It looks like Dell's email system adds the above in such a way that the
+email quoting convention suggests that *I* wrote it, when I did not.
 
-Andrew, due to the patch order dependencies I think it would be best for
-me to re-post the series so please ignore this series.
-
-I'll put a v2 in the title of the re-posted series so they can be identified
-(is that the right thing to do?).
-
+> ...
+> > Do you think Linux observes the rule about not touching AER bits on
+> > FFS?  I'm not sure it does.  I'm not even sure what section of the
+> > spec is relevant.
 > 
-> vim +361 fs/autofs/inode.c
-> 
->    313	
->    314	int autofs_fill_super(struct super_block *s, void *data, int
-> silent)
->    315	{
->    316		struct inode *root_inode;
->    317		struct dentry *root;
->    318		struct autofs_fs_params params;
->    319		struct autofs_sb_info *sbi;
->    320		struct autofs_info *ino;
->    321		int ret = -EINVAL;
->    322	
->    323		sbi = autofs_alloc_sbi(s);
->    324		if (!sbi)
->    325			return -ENOMEM;
->    326	
->    327		pr_debug("starting up, sbi = %p\n", sbi);
->    328	
->    329		s->s_fs_info = sbi;
->    330		s->s_blocksize = 1024;
->    331		s->s_blocksize_bits = 10;
->    332		s->s_magic = AUTOFS_SUPER_MAGIC;
->    333		s->s_op = &autofs_sops;
->    334		s->s_d_op = &autofs_dentry_operations;
->    335		s->s_time_gran = 1;
->    336	
->    337		/*
->    338		 * Get the root inode and dentry, but defer checking for
-> errors.
->    339		 */
->    340		ino = autofs_new_ino(sbi);
->    341		if (!ino) {
->    342			ret = -ENOMEM;
->    343			goto fail_free;
->    344		}
->    345		root_inode = autofs_get_inode(s, S_IFDIR | 0755);
->    346		if (!root_inode) {
->    347			ret = -ENOMEM;
->    348			goto fail_ino;
->    349		}
->    350		root = d_make_root(root_inode);
->    351		if (!root)
->    352			goto fail_iput;
->    353	
->    354		root->d_fsdata = ino;
->    355	
->    356		memset(&params, 0, sizeof(struct autofs_fs_params));
->    357		if (autofs_parse_options(data, &params)) {
->    358			pr_err("called with bogus options\n");
->    359			goto fail_dput;
->    360		}
->  > 361		root_inode->i_uid = params->uid;
->    362		root_inode->i_gid = params->gid;
->    363	
->    364		ret = autofs_apply_sbi_options(sbi, &params);
->    365		if (ret)
->    366			goto fail_dput;
->    367	
->    368		if (autofs_type_trigger(sbi->type))
->    369			__managed_dentry_set_managed(root);
->    370	
->    371		root_inode->i_fop = &autofs_root_operations;
->    372		root_inode->i_op = &autofs_dir_inode_operations;
->    373	
->    374		/*
->    375		 * Success! Install the root dentry now to indicate
-> completion.
->    376		 */
->    377		s->s_root = root;
->    378		return 0;
->    379	
->    380		/*
->    381		 * Failure ... clean up.
->    382		 */
->    383	fail_dput:
->    384		dput(root);
->    385		goto fail_free;
->    386	fail_iput:
->    387		iput(root_inode);
->    388	fail_ino:
->    389		autofs_free_ino(ino);
->    390	fail_free:
->    391		kfree(sbi);
->    392		s->s_fs_info = NULL;
->    393		return ret;
->    394	}
->    395	
-> 
-> ---
-> 0-DAY kernel test infrastructure                Open Source Technology Center
-> https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+> I haven't found any place where linux breaks this rule. I'm very 
+> confident that, unless otherwise instructed, we follow this rule.
 
+Just to make sure we're on the same page, can you point me to this
+rule?  I do see that OSPM must request control of AER using _OSC
+before it touches the AER registers.  What I don't see is the
+connection between firmware-first and the AER registers.
+
+The closest I can find is the "Enabled" field in the HEST PCIe
+AER structures (ACPI v6.2, sec 18.3.2.4, .5, .6), where it says:
+
+  If the field value is 1, indicates this error source is
+  to be enabled.
+
+  If the field value is 0, indicates that the error source
+  is not to be enabled.
+
+  If FIRMWARE_FIRST is set in the flags field, the Enabled
+  field is ignored by the OSPM.
+
+AFAICT, Linux completely ignores the Enabled field in these
+structures.
+
+These structures also contain values the OS is apparently supposed to
+write to Device Control and several AER registers (in struct
+acpi_hest_aer_common).  Linux ignores these as well.
+
+These seem like fairly serious omissions in Linux.
+
+> > The whole issue of firmware-first, the mechanism by which firmware
+> > gets control, the System Error enables in Root Port Root Control
+> > registers, etc., is very murky to me.  Jon has a sort of similar issue
+> > with VMD where he needs to leave System Errors enabled instead of
+> > disabling them as we currently do.
+> 
+> Well, OS gets control via _OSC method, and based on that it should 
+> touch/not touch the AER bits. 
+
+I agree so far.
+
+> The bits that get set/cleared come from _HPX method,
+
+_HPX tells us about some AER registers, Device Control, Link Control,
+and some bridge registers.  It doesn't say anything about the Root
+Control register that Jon is concerned with.
+
+For firmware-first to work, firmware has to get control.  How does it
+get control?  How does OSPM know to either set up that mechanism or
+keep its mitts off something firmware set up before handoff?  In Jon's
+VMD case, I think firmware-first relies on the System Error controlled
+by the Root Control register.  Linux thinks it owns that, and I don't
+know how to learn otherwise.
+
+> and there's a more about the FFS described in ACPI spec. It 
+> seems that if platform, wants to enable VMD, it should pass the correct 
+> bits via _HPX. I'm curious to know in what new twisted way FFS doesn't 
+> work as intended.
+
+Bjorn
