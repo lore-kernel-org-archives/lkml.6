@@ -2,177 +2,107 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F549C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 403D3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 44EEC22419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:30:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 44EEC22419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 0833322419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:30:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="zF8cs8qf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0833322419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mena.vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733122AbeKOBe1 (ORCPT
+        id S1733265AbeKOBec (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:34:27 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:59474 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727952AbeKOBe1 (ORCPT
+        Wed, 14 Nov 2018 20:34:32 -0500
+Received: from mail-vs1-f65.google.com ([209.85.217.65]:44785 "EHLO
+        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733160AbeKOBec (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:34:27 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAEFUTT1032755
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 10:30:44 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nrp1rse3a-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 10:30:43 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Wed, 14 Nov 2018 15:30:42 -0000
-Received: from b01cxnp22036.gho.pok.ibm.com (9.57.198.26)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Wed, 14 Nov 2018 15:30:39 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22036.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAEFUcSf38338652
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 14 Nov 2018 15:30:38 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 3EADDB2064;
-        Wed, 14 Nov 2018 15:30:38 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id F3D04B205F;
-        Wed, 14 Nov 2018 15:30:37 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.80.230.167])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Wed, 14 Nov 2018 15:30:37 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 5BD2F16C34C5; Wed, 14 Nov 2018 07:30:37 -0800 (PST)
-Date:   Wed, 14 Nov 2018 07:30:37 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     Christophe LEROY <christophe.leroy@c-s.fr>
-Cc:     "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h in
- 4.20-rc1
-Reply-To: paulmck@linux.ibm.com
-References: <dc5e555d-129e-aae8-889d-7b4e82197b3b@c-s.fr>
- <20181109201030.GI4170@linux.ibm.com>
- <9b4e6f39-f36b-06e2-ea96-92dec192edc7@c-s.fr>
+        Wed, 14 Nov 2018 20:34:32 -0500
+Received: by mail-vs1-f65.google.com with SMTP id g68so9722973vsd.11
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 07:30:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=nJZ0hZLjIPCdZbwD/B96QEzrIL6ba4vJo4GwFwBJt7E=;
+        b=zF8cs8qfH41ZCNwb7sQKZlHP0vQ4abMd99IbdFFpg/Ml2re15D8ET2WzwnbEz/5/5n
+         uxlWTAXs5osBtc56vera2PGbSC+o5qwUHUGTjCKNMASGH+LS3H5rbWPA7aIvmUD1kRX2
+         2U2cjiYe5Xyv96zJ2WNwJ49eiv6d2f892Bsncu/sfGDcngozC3BedSlFzKZPY13/gw4q
+         xMSGKTcM+BYs/vwmYqQx5KztOH1arBandi2IzC5SELFitdkSBxNUaOx1+sIMZ7gnOMMw
+         SyXyxvzyHzGhBpaI44TlOjORA2e+4MvLQkO8uaiQxXltIMmjvD4HKl3k1XH9tpl8MTn2
+         bzhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=nJZ0hZLjIPCdZbwD/B96QEzrIL6ba4vJo4GwFwBJt7E=;
+        b=MrMcpOmQxzNJi3ghLuZ7iVlUglaprlGXmQwOrpcYJ3DH6VUYiCeyprKIKG90IihV0u
+         KpKaAZ7DXLfZmLVAivSyJGTz4zStLWps46ZAOPebnIYS20yhRpXYVvvaCFjW7dxgKiTa
+         GnRg+LFhUO9LG5K6018NOSn4ifkLUQv18SKxNZqfO5UYwK1oa+5cE0S5HOtytrWghP2E
+         5iafJ/Ysf3AbwrzWLE+ENsHY6roYdPucM+cKdxcG9dbHd5PNBrXuCUbx/E1pIsgiiO9X
+         ZqHZEEVq36MKSzZ4ZPO8EPy5UOz3h2dSs46tez/+pF8RIv5rNsEMx0CXJI3UKqdr3+U4
+         4JIg==
+X-Gm-Message-State: AGRZ1gIjYY7u38QNipfG2kaeuWc2tiFnLZCgR/0Snivq4C4UQ1pSAsV2
+        5cTfKbPCnm6T1ms7zl6wPUgjdcYuayke2bR/keCxCw==
+X-Google-Smtp-Source: AJdET5eHiECnlnAdzjCPxI4PC9L/wiI03ADJDx1C36fFA+IZXTF8FBJIO2xNmWqX0D6VBOE2be9xoVd+cNkD70zY554=
+X-Received: by 2002:a67:105:: with SMTP id 5mr1011199vsb.183.1542209449766;
+ Wed, 14 Nov 2018 07:30:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9b4e6f39-f36b-06e2-ea96-92dec192edc7@c-s.fr>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18111415-0040-0000-0000-000004925C38
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010048; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01117365; UDB=6.00577119; IPR=6.00897475;
- MB=3.00024160; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-14 15:30:40
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111415-0041-0000-0000-0000089B671D
-Message-Id: <20181114153037.GU4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-14_13:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811140139
+From:   Ahmed Soliman <ahmedsoliman@mena.vt.edu>
+Date:   Wed, 14 Nov 2018 17:30:28 +0200
+Message-ID: <CANBxJ=EQOt1t=PkLsMvtfB2SbiLMPeGvFxB7SJXf7m3OkcionQ@mail.gmail.com>
+Subject: KVM selftests are failing
+To:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org
+Cc:     Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 03:43:05PM +0100, Christophe LEROY wrote:
-> 
-> 
-> Le 09/11/2018 à 21:10, Paul E. McKenney a écrit :
-> >On Fri, Nov 09, 2018 at 06:11:20PM +0100, Christophe LEROY wrote:
-> >>(Resending due to error in Paul's address)
-> >>
-> >>Paul
-> >>
-> >>I get the following UBSAN reports in 4.20-rc1 on an MPC8321E
-> >>(powerpc/book3s/32)
-> >>
-> >>I bisected it to 3e31009898699dfc ("rcu: Defer reporting RCU-preempt
-> >>quiescent states when disabled")
-> >
-> >Fixed by dfdc33585b0a ("rcu: Avoid signed integer overflow in
-> >rcu_preempt_deferred_qs()") in my -rcu tree and in -next, which I intend
-> >to push into the next merge window.
-> 
-> Thanks, I confirm it fixes the issue.
-> 
-> Do you intend to push it into 4.20-rc3 or do you mean 4.21 ?
+Hello,
 
-The next merge window, which will be either v4.21 or v5.0.  The v4.20
-merge window is over and done.  ;-)
+KVM Self tests located at tools/testing/selftests/kvm seams to be failing.
+I have tried:
+ - dirty_log_test
+ - x86_64/cr4_cpuid_sync_test
+ - x86_64/evmcs_test
+ - x86_64/platform_info_test
+ - x86_64/set_sregs_test
+ - x86_64/state_test
+ - x86_64/sync_regs_test
+ - x86_64/vmx_tsc_adjust_test
 
-Please note that the gcc command-line arguments used by the Linux kernel
-prevent the compiler from taking advantage of the C-standard signed
-integer overflow aspect of undefined behavior, so this is a aesthetic
-issue rather than a failure case.  Plus the C++ standards committee just
-voted in a change that gets rid of signed integer overflow completely.
-It is not clear whether the C language will also make this change, but
-it does require that the usual compilers have the ability to operate in
-this manner.
+All of them triggered the following assert:
 
-							Thanx, Paul
+        ==== Test Assertion Failure ====
+        lib/kvm_util.c:596: ret == 0
+        pid=24507 tid=24507 - Invalid argument
+            1  0x000056360774e468: ?? ??:0
+            2  0x000056360774e609: ?? ??:0
+            3  0x00005636077537a0: ?? ??:0
+            4  0x000056360774d35e: ?? ??:0
+            5  0x00007f3117571ae6: ?? ??:0
+            6  0x000056360774d4a9: ?? ??:0
+        madvise failed,
+        addr: 0x7f3117350000
+        length: 0x200000
+        src_type: 0
 
-> Christophe
-> 
-> >							Thanx, Paul
-> >
-> >>Thanks
-> >>Christophe
-> >>
-> >>[    4.919995] ================================================================================
-> >>[    4.928428] UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h:623:28
-> >>[    4.935198] signed integer overflow:
-> >>[    4.938766] 0 - -2147483648 cannot be represented in type 'int'
-> >>[    4.944678] CPU: 0 PID: 119 Comm: mkdir Not tainted
-> >>4.19.0-rc1-s3k-dev-00005-g5a60513 #214
-> >>[    4.952908] Call Trace:
-> >>[    4.955382] [dec4fd20] [c02cb0d0] ubsan_epilogue+0x18/0x74 (unreliable)
-> >>[    4.962003] [dec4fd30] [c02cb5e0] handle_overflow+0xd0/0xe0
-> >>[    4.967588] [dec4fdb0] [c007b424] rcu_preempt_deferred_qs+0xc0/0xc8
-> >>[    4.973857] [dec4fdd0] [c007be28] rcu_note_context_switch+0x74/0x608
-> >>[    4.980217] [dec4fe10] [c064b790] __schedule+0x58/0x6e0
-> >>[    4.985448] [dec4fe50] [c064bfdc] preempt_schedule_common+0x48/0x9c
-> >>[    4.991717] [dec4fe70] [c01308c8] handle_mm_fault+0x10fc/0x1ecc
-> >>[    4.997639] [dec4fee0] [c001339c] do_page_fault+0x10c/0x760
-> >>[    5.003225] [dec4ff40] [c001234c] handle_page_fault+0x14/0x40
-> >>[    5.008968] --- interrupt: 401 at 0xff9cff8
-> >>[    5.008968]     LR = 0xfeefd78
-> >>[    5.016170] ================================================================================
-> >>[    5.024591] ================================================================================
-> >>[    5.033005] UBSAN: Undefined behaviour in kernel/rcu/tree_plugin.h:627:28
-> >>[    5.039775] signed integer overflow:
-> >>[    5.043342] -2147483648 + -2147483648 cannot be represented in type 'int'
-> >>[    5.050118] CPU: 0 PID: 119 Comm: mkdir Not tainted
-> >>4.19.0-rc1-s3k-dev-00005-g5a60513 #214
-> >>[    5.058348] Call Trace:
-> >>[    5.060813] [dec4fd20] [c02cb0d0] ubsan_epilogue+0x18/0x74 (unreliable)
-> >>[    5.067433] [dec4fd30] [c02cb5e0] handle_overflow+0xd0/0xe0
-> >>[    5.073014] [dec4fdb0] [c007b408] rcu_preempt_deferred_qs+0xa4/0xc8
-> >>[    5.079283] [dec4fdd0] [c007be28] rcu_note_context_switch+0x74/0x608
-> >>[    5.085640] [dec4fe10] [c064b790] __schedule+0x58/0x6e0
-> >>[    5.090871] [dec4fe50] [c064bfdc] preempt_schedule_common+0x48/0x9c
-> >>[    5.097139] [dec4fe70] [c01308c8] handle_mm_fault+0x10fc/0x1ecc
-> >>[    5.103059] [dec4fee0] [c001339c] do_page_fault+0x10c/0x760
-> >>[    5.108642] [dec4ff40] [c001234c] handle_page_fault+0x14/0x40
-> >>[    5.114385] --- interrupt: 401 at 0xff9cff8
-> >>[    5.114385]     LR = 0xfeefd78
-> >>[    5.121588] ================================================================================
-> >>
-> 
-
+I have tried the tests on both kvm(next) branch
+commit 22a7cdcae6a4a3c89748 as well as
+torvald's master  4.20-rc2.
+-- 
+Ahmed,
+Junior Researcher, IoT and Cyber Security lab, SmartCI, Alexandria
+University, & CIS @  VMI
