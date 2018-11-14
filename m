@@ -2,164 +2,138 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDF8C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:15:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D74AFC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:15:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7819722360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:15:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7819722360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id B001322360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:15:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B001322360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733211AbeKOETi (ORCPT
+        id S2387530AbeKOETw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 23:19:38 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:43216 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732847AbeKOETh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 23:19:37 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id Ifs4bUYlW6Sp; Wed, 14 Nov 2018 19:15:20 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD0D200D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:d200:d571:4500:c00e:26fd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8A0DD1EC037D;
-        Wed, 14 Nov 2018 19:15:20 +0100 (CET)
-From:   Borislav Petkov <bp@alien8.de>
-To:     KVM <kvm@vger.kernel.org>
-Cc:     Paolo Bonzini <pbonzini@redhat.com>,
-        =?UTF-8?q?Radim=20Kr=C4=8Dm=C3=A1=C5=99?= <rkrcmar@redhat.com>,
-        Joerg Roedel <joro@8bytes.org>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Tony Luck <tony.luck@intel.com>,
-        Yazen Ghannam <Yazen.Ghannam@amd.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v3 2/2] x86/kvm: Implement MSR_HWCR support
-Date:   Wed, 14 Nov 2018 19:15:07 +0100
-Message-Id: <20181114181507.6037-3-bp@alien8.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181114181507.6037-1-bp@alien8.de>
-References: <20181114181507.6037-1-bp@alien8.de>
+        Wed, 14 Nov 2018 23:19:52 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:52542 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732847AbeKOETw (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 23:19:52 -0500
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-03.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gMzhO-0002EF-7r from joseph_myers@mentor.com ; Wed, 14 Nov 2018 10:15:34 -0800
+Received: from digraph.polyomino.org.uk (137.202.0.90) by
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Wed, 14 Nov 2018 18:15:30 +0000
+Received: from jsm28 (helo=localhost)
+        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
+        (envelope-from <joseph@codesourcery.com>)
+        id 1gMzhK-0005Ad-33; Wed, 14 Nov 2018 18:15:30 +0000
+Date:   Wed, 14 Nov 2018 18:15:30 +0000
+From:   Joseph Myers <joseph@codesourcery.com>
+X-X-Sender: jsm28@digraph.polyomino.org.uk
+To:     Daniel Colascione <dancol@google.com>
+CC:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>, nd <nd@arm.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        Carlos O'Donell <carlos@redhat.com>,
+        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+In-Reply-To: <CAKOZuesta_V=doXsVLc2E6WCQvywdur3F+u2pFKaPN+CEQd+ZQ@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1811141741000.16571@digraph.polyomino.org.uk>
+References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com> <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <877ehjx447.fsf@oldenburg.str.redhat.com> <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
+ <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com> <20181113193859.GJ3505@e103592.cambridge.arm.com> <5853c297-9d84-86e5-dede-aa2957562c6b@arm.com>
+ <CAKOZuesta_V=doXsVLc2E6WCQvywdur3F+u2pFKaPN+CEQd+ZQ@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: SVR-IES-MBX-04.mgc.mentorg.com (139.181.222.4) To
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Borislav Petkov <bp@suse.de>
+On Wed, 14 Nov 2018, Daniel Colascione wrote:
 
-The hardware configuration register has some useful bits which can be
-used by guests. Implement McStatusWrEn which can be used by guests when
-injecting MCEs with the in-kernel mce-inject module.
+> > there is a lot of bikesheding here by people who
+> > don't understand the constraints nor the use-cases.
+> 
+> Conversely, there's a lot of doubt-sowing from the other side that
 
-For that, we need to set bit 18 - McStatusWrEn - first, before writing
-the MCi_STATUS registers (otherwise we #GP).
+"other side" is the wrong concept here in the first place - it's supposed 
+to be a matter of cooperating projects trying to find good interfaces 
+together.
 
-Add the required machinery to do so.
+Any new feature from the kernel that is meant to be of use to libcs is 
+best designed in a way involving such cooperation (with multiple libcs).  
+I concur with Zack's assessment in 
+<https://sourceware.org/ml/libc-alpha/2018-11/msg00286.html> that a 
+technical fix to process / communication issues cannot work here.  Any 
+feature (e.g. syscall library) with a design coming solely from the kernel 
+rather than a cooperative process is also likely to have an unsuitable 
+design meaning it doesn't get used.  Once we have sufficient communication 
+to design suitable interfaces *together*, "avoiding the need to 
+communicate" becomes irrelevant as a design criterion anyway.
 
-Signed-off-by: Borislav Petkov <bp@suse.de>
-Tested-by: Yazen Ghannam <yazen.ghannam@amd.com>
----
- arch/x86/kvm/svm.c | 12 +++++++++---
- arch/x86/kvm/x86.c | 34 +++++++++++++++++++++++++++++++---
- 2 files changed, 40 insertions(+), 6 deletions(-)
+> After looking at the history of settid, signal multi-handler
+> registration, and other proposed improvements running into the brick
+> wall of glibc's API process, I think it's clear that requiring glibc
+> signoff on new kernel interfaces would simply lead to stagnation. It's
 
-diff --git a/arch/x86/kvm/svm.c b/arch/x86/kvm/svm.c
-index 5c9c26dc7d84..db8e943f7576 100644
---- a/arch/x86/kvm/svm.c
-+++ b/arch/x86/kvm/svm.c
-@@ -251,6 +251,9 @@ struct vcpu_svm {
- 
- 	/* which host CPU was used for running this vcpu */
- 	unsigned int last_cpu;
-+
-+	/* MSRC001_0015 Hardware Configuration */
-+	u64 msr_hwcr;
- };
- 
- /*
-@@ -4155,7 +4158,7 @@ static int svm_get_msr(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 		msr_info->data = svm->msr_decfg;
- 		break;
- 	case MSR_K7_HWCR:
--		msr_info->data = 0;
-+		msr_info->data = svm->msr_hwcr;
- 		break;
- 	default:
- 		return kvm_get_msr_common(vcpu, msr_info);
-@@ -4365,8 +4368,11 @@ static int svm_set_msr(struct kvm_vcpu *vcpu, struct msr_data *msr)
- 		data &= ~(u64)0x40;	/* ignore flush filter disable */
- 		data &= ~(u64)0x100;	/* ignore ignne emulation enable */
- 		data &= ~(u64)0x8;	/* ignore TLB cache disable */
--		data &= ~(u64)0x40000;  /* ignore Mc status write enable */
--		if (data != 0) {
-+
-+		/* Handle McStatusWrEn */
-+		if (data == BIT_ULL(18)) {
-+			svm->msr_hwcr = data;
-+		} else if (data != 0) {
- 			vcpu_unimpl(vcpu, "unimplemented HWCR wrmsr: 0x%llx\n",
- 				    data);
- 			return 1;
-diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-index d9abbe24deb5..607fe883113c 100644
---- a/arch/x86/kvm/x86.c
-+++ b/arch/x86/kvm/x86.c
-@@ -2262,6 +2262,30 @@ static void kvmclock_sync_fn(struct work_struct *work)
- 					KVMCLOCK_SYNC_PERIOD);
- }
- 
-+/*
-+ * On AMD, HWCR[McStatusWrEn] controls whether setting MCi_STATUS results in #GP.
-+ */
-+static bool __set_mci_status(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
-+{
-+	if (guest_cpuid_is_amd(vcpu)) {
-+		struct msr_data tmp;
-+
-+		tmp.index = MSR_K7_HWCR;
-+
-+		if (kvm_x86_ops->get_msr(vcpu, &tmp))
-+			return false;
-+
-+		/* McStatusWrEn enabled? */
-+		if (tmp.data & BIT_ULL(18))
-+			return true;
-+	}
-+
-+	if (msr_info->data != 0)
-+		return false;
-+
-+	return true;
-+}
-+
- static int set_msr_mce(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- {
- 	u64 mcg_cap = vcpu->arch.mcg_cap;
-@@ -2293,9 +2317,13 @@ static int set_msr_mce(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
- 			if ((offset & 0x3) == 0 &&
- 			    data != 0 && (data | (1 << 10)) != ~(u64)0)
- 				return -1;
--			if (!msr_info->host_initiated &&
--				(offset & 0x3) == 1 && data != 0)
--				return -1;
-+
-+			/* MCi_STATUS */
-+			if ((offset & 0x3) == 1 && !msr_info->host_initiated) {
-+				if (!__set_mci_status(vcpu, msr_info))
-+						return -1;
-+			}
-+
- 			vcpu->arch.mce_banks[offset] = data;
- 			break;
- 		}
+That there was disagreement on some particular interface does not mean 
+there are problems with the basic principle of working with libc 
+maintainers (of multiple libcs, not just one!) to establish what the 
+intended userspace C API to some new kernel interface should be, and to 
+nail down the details of how the kernel interface is defined in the 
+process.
+
+(And as noted elsewhere, I think the main people objecting to generally 
+having bindings for all non-obsolescent syscalls are no longer active in 
+glibc.)
+
+If the semantics of some proposed kernel interface, both at the syscall 
+level and at the userspace C API level, are agreed e.g. by kernel and musl 
+people, I'd think the API agreement from musl would be a good indication 
+of the API also being suitable to add to glibc.  It's not necessary to get 
+agreement from every libc on every API - but there should be agreement 
+from *some* libc that is careful about API review.  If enough people with 
+good sense about libc APIs have judged some API for a new syscall 
+suitable, I expect other libcs can implement it even if it's not exactly 
+the API they'd come up with themselves.
+
+(I haven't seen enough comments on libc / kernel API design from people I 
+know to be associated with bionic, uclibc-ng, etc., to judge if they also 
+pay similarly careful attention to working out what a good C API design 
+for some interface should be.  Note that there are musl people active on 
+libc-alpha, which helps everyone arrive at a consensus on better C API 
+designs.)
+
+> The right answer is a move to an approximation of the BSD model and
+> bring the primary interface layer in-house.
+
+I could equally say we should take the kernel in-house and develop it to 
+better support glibc - that if the kernel doesn't provide what we want, we 
+should add the features to GNU Linux-libre and say that's the supported 
+kernel for use with glibc.  It's an equally absurd statement in a context 
+of multiple cooperating projects.
+
+>  There's a lot of evidence that this model works.
+
+There's a lot of evidence that the model of separately maintained Linux 
+kernel and libc works (see: the number of devices using Linux kernels with 
+a range of different libc implementations that meet different needs).
+
 -- 
-2.19.1
-
+Joseph S. Myers
+joseph@codesourcery.com
