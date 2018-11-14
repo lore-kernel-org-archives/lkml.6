@@ -2,124 +2,148 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8AF2EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:27:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24A91C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:29:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FF3A20869
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:27:05 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ANNAMCUF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FF3A20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id E08D720869
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:29:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E08D720869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732997AbeKOAaa (ORCPT
+        id S1733041AbeKOAcr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 19:30:30 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:40563 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726846AbeKOAaa (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 19:30:30 -0500
-Received: by mail-pf1-f196.google.com with SMTP id x2-v6so7993849pfm.7;
-        Wed, 14 Nov 2018 06:27:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=juWN0AHhn8PkaMOx73jGipNLB5iWRGd14Jgaz4hPCcw=;
-        b=ANNAMCUFkrDBdRa5ht98Lgkhp4dyFEtB5/xMGiUptBORK+RORKsIEW1SN6by0o5w+j
-         BlHQCQl1WL9fTwIe8SW2/oQzGG62rrPHoS8JKRk+KH7ZppClVC8y+KMbmB0hPHGjhSx6
-         xEjlWg5POqe0iSQZCe8fZa5rQWREQ4DiWd0raGiwx6n1ElX8Y5JZoFThHLuunt5M0vaV
-         dc+tR8ZDPZUzHtUZYq1//feqNz9CA9Ta6WEVGSUHLewXmsJjSzagJA4Jo9v99hsuTF4v
-         AY0ScSDYnU+/SQG27Ujpr5vE+GZ4SKTeTHCcLj9xKdQonRw2+3UNsNnVEjOqDgMMfzFE
-         Xv+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=juWN0AHhn8PkaMOx73jGipNLB5iWRGd14Jgaz4hPCcw=;
-        b=juj4AR59KNnq+E65O1mHxjBgMr/SRlg0rHrkqo2dc2SKid07pVxB0n1RJhoxQvmt0J
-         LD54OpFWBxdC3pvPWHQ9yHrF/uzWzR1DL6fS6T5/IUC8StT4tX1PC9y68xw+JkU0GU42
-         W2A1UrGYuGHGwdQyfnLLAY/q5ynWIYtW1jLDwuXO1R9SyQk4IgH9RzodhPw9GcbPUhII
-         u5q08ILo26vLTPMjtOzlQ99Tut/4KGtSLZnmX4GT0Vzzf6SnECF5Adk7hT+umMeENall
-         nPvPQTJciqwELunMj6yRWfMhq/MqtxnQLzB2J8FV/8eOYDdi9kv6gLnE6VQV4jepZ7hy
-         Gbyg==
-X-Gm-Message-State: AGRZ1gKi1ytESHrBBJpRQEZLfH4mCD+ZJ0NgH3GWdbnYau41kd+MOByH
-        vM3F5wgOZvT5aATNzJ955lT7H1Sz
-X-Google-Smtp-Source: AJdET5djP96MkSb8vgWvo7ASK/4tlg+U9TTus+1wfNutIa3sy4RqiEyXUN8bkHUJbvBAIPC+5wRL5A==
-X-Received: by 2002:a65:5c81:: with SMTP id a1-v6mr1916554pgt.390.1542205622352;
-        Wed, 14 Nov 2018 06:27:02 -0800 (PST)
-Received: from localhost.localdomain ([203.100.54.194])
-        by smtp.gmail.com with ESMTPSA id f193-v6sm34081124pfc.74.2018.11.14.06.26.59
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 06:27:01 -0800 (PST)
-From:   Yafang Shao <laoar.shao@gmail.com>
-To:     davem@davemloft.net, edumazet@google.com
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Yafang Shao <laoar.shao@gmail.com>
-Subject: [PATCH net-next] tcp: clean up STATE_TRACE
-Date:   Wed, 14 Nov 2018 22:26:17 +0800
-Message-Id: <1542205577-21925-1-git-send-email-laoar.shao@gmail.com>
-X-Mailer: git-send-email 1.8.3.1
+        Wed, 14 Nov 2018 19:32:47 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47814 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727357AbeKOAcq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 19:32:46 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 689212D818;
+        Wed, 14 Nov 2018 14:29:18 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
+        by smtp.corp.redhat.com (Postfix) with SMTP id 865475D9CC;
+        Wed, 14 Nov 2018 14:29:14 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 14 Nov 2018 15:29:18 +0100 (CET)
+Date:   Wed, 14 Nov 2018 15:29:13 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Chanho Min <chanho.min@lge.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Christian Brauner <christian@brauner.io>,
+        Anna-Maria Gleixner <anna-maria@linutronix.de>,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org,
+        Seungho Park <seungho1.park@lge.com>,
+        Inkyu Hwang <inkyu.hwang@lge.com>,
+        Donghwan Jung <donghwan.jung@lge.com>,
+        Jongsung Kim <neidhard.kim@lge.com>
+Subject: Re: [PATCH v2] exec: make de_thread() freezable
+Message-ID: <20181114142913.GA13885@redhat.com>
+References: <1541994885-20059-1-git-send-email-chanho.min@lge.com>
+ <20181113145339.GD16182@dhcp22.suse.cz>
+ <20181113161858.GE30990@redhat.com>
+ <20181113180058.GT15120@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113180058.GT15120@dhcp22.suse.cz>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Wed, 14 Nov 2018 14:29:19 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently we can use bpf or tcp tracepoint to conveniently trace the tcp
-state transition at the run time.
-So we don't need to do this stuff at the compile time anymore.
+On 11/13, Michal Hocko wrote:
+>
+> > > >
+> > > > To fix this, make de_thread() freezable. It looks safe and works fine.
+> > >
+> > > It's been some time since I have looked into this code so bear with me.
+> > > One thing is not really clear to me. Why does it help to exclude this
+> > > particular task from the freezer
+> >
+> > we don't exclude it,
+> >
+> > > when it is not sleeping in the freezer.
+> >
+> > Yes, it is not sleeping in __refrigerator(), but it does
+> >
+> > 	schedule();
+> > 	freezer_count();
+> >
+> > so it will enter __refrigerator() right after wakeup. If it won't be woken
+> > up we do not care, we can consider it "frozen".
+>
+> Right, but this is just silencing the freezing code to exclude this
+> task, right?
 
-Signed-off-by: Yafang Shao <laoar.shao@gmail.com>
----
- include/net/tcp.h | 12 ------------
- net/ipv4/tcp.c    |  4 ----
- 2 files changed, 16 deletions(-)
+Well yes... but I'd say this tells the freezing code that the caller is frozen,
+because it can do nothing till thaw_processes(). Except it can actually call
+__refrigerator() if, say, it is killed.
 
-diff --git a/include/net/tcp.h b/include/net/tcp.h
-index 4743836..9d51a20 100644
---- a/include/net/tcp.h
-+++ b/include/net/tcp.h
-@@ -1328,20 +1328,8 @@ static inline bool tcp_checksum_complete(struct sk_buff *skb)
- 
- bool tcp_add_backlog(struct sock *sk, struct sk_buff *skb);
- int tcp_filter(struct sock *sk, struct sk_buff *skb);
--
--#undef STATE_TRACE
--
--#ifdef STATE_TRACE
--static const char *statename[]={
--	"Unused","Established","Syn Sent","Syn Recv",
--	"Fin Wait 1","Fin Wait 2","Time Wait", "Close",
--	"Close Wait","Last ACK","Listen","Closing"
--};
--#endif
- void tcp_set_state(struct sock *sk, int state);
--
- void tcp_done(struct sock *sk);
--
- int tcp_abort(struct sock *sk, int err);
- 
- static inline void tcp_sack_reset(struct tcp_options_received *rx_opt)
-diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
-index 9e6bc4d..ca2b08c 100644
---- a/net/ipv4/tcp.c
-+++ b/net/ipv4/tcp.c
-@@ -2241,10 +2241,6 @@ void tcp_set_state(struct sock *sk, int state)
- 	 * socket sitting in hash tables.
- 	 */
- 	inet_sk_state_store(sk, state);
--
--#ifdef STATE_TRACE
--	SOCK_DEBUG(sk, "TCP sk=%p, State %s -> %s\n", sk, statename[oldstate], statename[state]);
--#endif
- }
- EXPORT_SYMBOL_GPL(tcp_set_state);
- 
--- 
-1.8.3.1
+> > > I can see how other threads need to be zapped and TASK_WAKEKILL doesn't
+> > > do that but shouldn't we fix that instead?
+> >
+> > Not sure I understand, but unlikely we can (or want) to make __refrigerator()
+> > killable.
+>
+> Why would that be a problem. If the kill is fatal then why to keep the
+> killed task in the fridge?
+
+This is the question to Rafael, but I think that uninterruptible fridge
+makes sense.
+
+Because the exiting task can do a lot of things, say IO. So at least we need
+to ensure that nobody can be killed after try_to_freeze_tasks() succeeds, and
+this needs the changes in kernel/power/process.c and can lead to other problems.
+
+And it is not clear to me why would we want to do this.
+
+> > Otherwise, how can we fix that?
+>
+> We can mark all threads PF_NOFREEZE and wake them up.
+
+We can't mark them PF_NOFREEZE but of course we could do something else
+for de_thread() in particular, see the 1st version of Chanho's fix:
+https://lore.kernel.org/lkml/1541671796-8725-1-git-send-email-chanho.min@lge.com/
+
+> This would require
+> some more changes of course
+
+Yes,
+
+> but wouldn't that be a more appropriate
+> solution? Do we want to block exec for ever just because some threads
+> are in the fridge?
+
+Why not?
+
+------------------------------------------------------------------------------
+To clarify. speaking of de_thread() in particular, this change can not solve
+all problems with freezer because de_thread() is called with cred_guard_mutex
+held. And this obviously means that try_to_freeze_tasks() still can fail if
+another task waits for this mutex.
+
+But. freezable_schedule() doesn't make the thing worse, we have a lot more
+problems (deadlocks) exactly because de_thread() sleeps wating for other threads
+with this mutex held.
+
+So I didn't even mention this problem, we need to narrow the scope of this mutex
+in any case, so imo this has nothing to do with s/schedule/freezable_schedule/.
+
+Oleg.
 
