@@ -2,106 +2,125 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67E98C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:58:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A9D9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:58:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 39DFE21780
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:58:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 39DFE21780
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id D1F1721780
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:58:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D1F1721780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733081AbeKOBCP (ORCPT
+        id S1733227AbeKOBCZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:02:15 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40326 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727846AbeKOBCP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:02:15 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id BCD34ACB8;
-        Wed, 14 Nov 2018 14:58:39 +0000 (UTC)
-Received: from shadow.suse.cz (shadow.suse.cz [10.100.13.111])
-        by dark.suse.cz (Postfix) with ESMTP id 89F4212CC0C;
-        Wed, 14 Nov 2018 15:58:39 +0100 (CET)
-Received: by shadow.suse.cz (Postfix, from userid 10002)
-        id 882CB447FF; Wed, 14 Nov 2018 15:58:39 +0100 (CET)
-Date:   Wed, 14 Nov 2018 15:58:39 +0100
-From:   Vojtech Pavlik <vojtech@suse.cz>
-To:     Tim Schumacher <timschumi@gmx.de>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        dmitry.torokhov@gmail.com
-Subject: Re: [PATCH] Input: iforce - Add the Saitek R440 Force Wheel
-Message-ID: <20181114145839.GB9749@suse.cz>
-References: <20181114095240.25967-1-timschumi@gmx.de>
+        Wed, 14 Nov 2018 20:02:25 -0500
+Received: from mail-vs1-f67.google.com ([209.85.217.67]:42721 "EHLO
+        mail-vs1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727846AbeKOBCY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 20:02:24 -0500
+Received: by mail-vs1-f67.google.com with SMTP id b74so9652277vsd.9
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 06:58:50 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qCGzNDuQH9vSRu+Fiidmh2F4/OGW5BLx2MAn5DAD5Pg=;
+        b=uIqIQC7JdenyRsg/V+dgSpz0xnv9pk1NMr9hqBcQWpUiQ5Pia1dd+bSWBQjyEzQGpG
+         YU56mlFLlxVhu/R/tQ5U1oUamq0Na++9aMObbAl/93d1B7TZbmadELXtLzjN+ZYCDvg6
+         BfyT07L+fPWoY8gA0hb/1zWNz5EMYL5teczbenK0FMmGN7rAAQHP9BSelG1mkafMX7yc
+         AOQRvGjvI99mOVWW+HpYMLsIVWF0rpiUoeHyren2227IRsYOTyGgIsFsBbF/wFvu0aOD
+         FtvZzUHzMd9xHoq+4CiCx7xxtUKL44VaEnci4E32PlE8N5GDVpXXaAymAz8pGSG2VjAo
+         sHtQ==
+X-Gm-Message-State: AGRZ1gLTczn3Tl31+KAesVNsrkBl3UlmHPFmPYNRpeooENEm1QtvWOZC
+        H6wj7vqmaibP/irtUjrmmu0ZBPFYvHA+X+4Ig5c=
+X-Google-Smtp-Source: AJdET5fQ+qIVJHQ/eWlZVgJU/3A3xdDBJ6H8Fv0wcxfP1lfxzAjradN0gbzWQlhXittm26jAgicQAcaVlxdLryvJH58=
+X-Received: by 2002:a67:b404:: with SMTP id x4mr1012296vsl.152.1542207529222;
+ Wed, 14 Nov 2018 06:58:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181114095240.25967-1-timschumi@gmx.de>
-X-Bounce-Cookie: It's a lemon tree, dear Watson!
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <cover.1541995959.git.fthain@telegraphics.com.au>
+ <d1559db8eddb5b06747b152ae69b63c3aa66ed09.1541995959.git.fthain@telegraphics.com.au>
+ <20181112083422.GA19695@infradead.org> <alpine.LNX.2.21.1811131420150.362@nippy.intranet>
+ <20181113092012.GI30658@n2100.armlinux.org.uk> <alpine.LNX.2.21.1811140854280.371@nippy.intranet>
+ <20181113234336.GP30658@n2100.armlinux.org.uk> <alpine.LNX.2.21.1811141142490.8@nippy.intranet>
+ <20181114141632.GT30658@n2100.armlinux.org.uk>
+In-Reply-To: <20181114141632.GT30658@n2100.armlinux.org.uk>
+From:   Geert Uytterhoeven <geert@linux-m68k.org>
+Date:   Wed, 14 Nov 2018 15:58:36 +0100
+Message-ID: <CAMuHMdWwknYYEYpU4ogVAbpWtrF9aG=4vrh505dM2Btp8KjKMg@mail.gmail.com>
+Subject: Re: [RFC PATCH 01/13] arm: Fix mutual exclusion in arch_gettimeoffset
+To:     Russell King <linux@armlinux.org.uk>
+Cc:     Finn Thain <fthain@telegraphics.com.au>,
+        Christoph Hellwig <hch@infradead.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen N Chivers <schivers@csc.com.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        Theodore Tso <tytso@mit.edu>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 10:52:40AM +0100, Tim Schumacher wrote:
-> Signed-off-by: Tim Schumacher <timschumi@gmx.de>
-> ---
-> Please note that I do NOT own this device.
-> 
-> I'm adding this based on the fact that this is an iforce-based
-> device and that the Windows driver for the R440 works for the
-> Logitech WingMan Formula Force after replacing the device/vendor
-> IDs (I got the vendor/device IDs from there as well).
-> 
-> Please don't add this patch if adding devices based on that is
-> not ok.
-> 
-> Also (not related to this patch specifically), does anyone know
-> what the question marks at the end of some device definitions
-> are supposed to mean?
+Hi Russell,
 
-I believe those are unconfirmed devices based on similar reasoning to yours.
+On Wed, Nov 14, 2018 at 3:16 PM Russell King - ARM Linux
+<linux@armlinux.org.uk> wrote:
+> On Wed, Nov 14, 2018 at 02:17:09PM +1100, Finn Thain wrote:
+> > So, even assuming that you're right about the limitations of single-timer
+> > platforms in general, removal of arch_gettimeoffset wouldn't require the
+> > removal of any platforms, AFAICT.
+>
+> I haven't proposed removing platforms.
+>
+> I'm just objecting to the idea of removing arch_gettimeoffset(),
+> thereby causing a regression by changing the resolution of
+> gettimeofday() without any sign of equivalent functionality.
+>
+> However, I now see (having searched mailing lists) what you are
+> trying to do - you have _not_ copied me or the mailing lists I'm
+> on with your cover message, so I'm *totally* lacking in the context
+> of your patch series, particularly where you are converting m68k
+> to use clocksources without needing the gettimeoffset() stuff.
+>
+> You have failed to explain that in this thread - probably assuming
+> that I've read your cover message.  I haven't until now, because
+> you never sent it to me or the linux-arm-kernel mailing list.
+>
+> I have found this thread _very_ frustrating, and frankly a waste of
+> my time discussing the finer points because of this lack of context.
+> Please ensure that if you're going to be sending a patch series,
+> that the cover message at least finds its way to the intended
+> audience of your patches, so that everyone has the context they
+> need when looking at (eg) the single patch they may receive.
+>
+> Alternatively, if someone raises a problem with the patch, and you
+> _know_ you haven't done that, then please consider informing them
+> where they can get more context, eg, by providing a link to your
+> archived cover message.  It would help avoid misunderstandings.
 
-> ---
->  drivers/input/joystick/iforce/iforce-main.c | 1 +
->  drivers/input/joystick/iforce/iforce-usb.c  | 1 +
->  2 files changed, 2 insertions(+)
-> 
-> diff --git a/drivers/input/joystick/iforce/iforce-main.c b/drivers/input/joystick/iforce/iforce-main.c
-> index 58d5cfe46526..432deecaeff9 100644
-> --- a/drivers/input/joystick/iforce/iforce-main.c
-> +++ b/drivers/input/joystick/iforce/iforce-main.c
-> @@ -67,6 +67,7 @@ static struct iforce_device iforce_device[] = {
->  	{ 0x05ef, 0x8888, "AVB Top Shot Force Feedback Racing Wheel",	btn_wheel, abs_wheel, ff_iforce }, //?
->  	{ 0x061c, 0xc0a4, "ACT LABS Force RS",                          btn_wheel, abs_wheel, ff_iforce }, //?
->  	{ 0x061c, 0xc084, "ACT LABS Force RS",				btn_wheel, abs_wheel, ff_iforce },
-> +	{ 0x06a3, 0xff04, "Saitek R440 Force Wheel",			btn_wheel, abs_wheel, ff_iforce }, //?
->  	{ 0x06f8, 0x0001, "Guillemot Race Leader Force Feedback",	btn_wheel, abs_wheel, ff_iforce }, //?
->  	{ 0x06f8, 0x0001, "Guillemot Jet Leader Force Feedback",	btn_joystick, abs_joystick_rudder, ff_iforce },
->  	{ 0x06f8, 0x0004, "Guillemot Force Feedback Racing Wheel",	btn_wheel, abs_wheel, ff_iforce }, //?
-> diff --git a/drivers/input/joystick/iforce/iforce-usb.c b/drivers/input/joystick/iforce/iforce-usb.c
-> index 78073259c9a1..cdea61ae838d 100644
-> --- a/drivers/input/joystick/iforce/iforce-usb.c
-> +++ b/drivers/input/joystick/iforce/iforce-usb.c
-> @@ -214,6 +214,7 @@ static const struct usb_device_id iforce_usb_ids[] = {
->  	{ USB_DEVICE(0x05ef, 0x8888) },		/* AVB Top Shot FFB Racing Wheel */
->  	{ USB_DEVICE(0x061c, 0xc0a4) },         /* ACT LABS Force RS */
->  	{ USB_DEVICE(0x061c, 0xc084) },         /* ACT LABS Force RS */
-> +	{ USB_DEVICE(0x06a3, 0xff04) },		/* Saitek R440 Force Wheel */
->  	{ USB_DEVICE(0x06f8, 0x0001) },		/* Guillemot Race Leader Force Feedback */
->  	{ USB_DEVICE(0x06f8, 0x0003) },		/* Guillemot Jet Leader Force Feedback */
->  	{ USB_DEVICE(0x06f8, 0x0004) },		/* Guillemot Force Feedback Racing Wheel */
-> -- 
-> 2.19.1.450.ga4b8ab536
-> 
+Sorry for the lack of context.
+The real trigger was also not explained in the cover message, and was a
+the threat to remove platforms not using modern timekeeping APIs, cfr.
+ "Removing support for old hardware from the kernel"
+(https://lwn.net/Articles/769468/).
 
--- 
-Vojtech Pavlik
-Director SUSE Labs
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
