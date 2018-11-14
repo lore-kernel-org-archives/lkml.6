@@ -2,187 +2,135 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1068BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:17:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DD3FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:19:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A647522360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:17:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 45AFC22419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:19:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="PKYVsYVK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A647522360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p0deHWiZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 45AFC22419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732174AbeKOEVq (ORCPT
+        id S1731738AbeKOEXX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 23:21:46 -0500
-Received: from mail-eopbgr720073.outbound.protection.outlook.com ([40.107.72.73]:28928
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727761AbeKOEVp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 23:21:45 -0500
+        Wed, 14 Nov 2018 23:23:23 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:33342 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727822AbeKOEXX (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 23:23:23 -0500
+Received: by mail-ot1-f66.google.com with SMTP id i20so9151755otl.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 10:19:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1fm8smFw14YT7PjMgpwTidNOwWINK5rVEO1tlfXy1mE=;
- b=PKYVsYVKzGZK0s5h01dWgg4U0KSaEYa91LPmqRP8riQOQ8UcfxuN3VbmCilhQcNXeyO9tj1d5zizLuTneZlbQeDwCNuW9cVYlPSAdaVhsuX8XuMZI4kqdb3DGcHRJ/vDVZMWJVfHFjB993eKyRbsMbM7mSYYfIGIGGHNNTzpTfo=
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1866.namprd12.prod.outlook.com (10.175.88.23) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Wed, 14 Nov 2018 18:17:25 +0000
-Received: from DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::4c23:f551:bc6a:554e]) by DM5PR12MB2471.namprd12.prod.outlook.com
- ([fe80::4c23:f551:bc6a:554e%4]) with mapi id 15.20.1294.045; Wed, 14 Nov 2018
- 18:17:25 +0000
-From:   "Moger, Babu" <Babu.Moger@amd.com>
-To:     "Yu, Fenghua" <fenghua.yu@intel.com>,
-        "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "bp@alien8.de" <bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
-        "Chatre, Reinette" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
-CC:     "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "Luck, Tony" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "Shen, Xiaochen" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-        "Hunt, Douglas" <Douglas.Hunt@amd.com>
-Subject: Re: [PATCH v7 11/13] arch/x86: Introduce QOS feature for AMD
-Thread-Topic: [PATCH v7 11/13] arch/x86: Introduce QOS feature for AMD
-Thread-Index: AQHUeG4qy036y75SdUqlKSLDpRVWZKVORLIAgAE4oVCAAB5jAA==
-Date:   Wed, 14 Nov 2018 18:17:25 +0000
-Message-ID: <204f5ddb-21f3-5275-273b-02335a5a03c8@amd.com>
-References: <20181109205153.14811-1-babu.moger@amd.com>
- <20181109205153.14811-12-babu.moger@amd.com>
- <3E5A0FA7E9CA944F9D5414FEC6C71220985A6664@ORSMSX105.amr.corp.intel.com>
- <DM5PR12MB2471AB9EFDE9E8D7C65C58A295C30@DM5PR12MB2471.namprd12.prod.outlook.com>
-In-Reply-To: <DM5PR12MB2471AB9EFDE9E8D7C65C58A295C30@DM5PR12MB2471.namprd12.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: SN4PR0501CA0141.namprd05.prod.outlook.com
- (2603:10b6:803:2c::19) To DM5PR12MB2471.namprd12.prod.outlook.com
- (2603:10b6:4:b5::10)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Babu.Moger@amd.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [165.204.78.1]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1866;20:y6l0DlSt+di7ooRN+Cyi3bjsQ2OAYYvFM683rYBkOvHUGigoIY8XR/yRsKPtmsO2yrRl/UVTmolpt2uQTQ4J8m52cLWFd9XDTuFZY1iM26f0aJhif4/hvTZkPyKAxXzfUH9Ifw/bhnWTNHa655kwtEZXP+XktUW53VoG0JIlb8wrQVUb9jXujzlIISpZGunyFi8PrlRnv6XZTaJZC+kaxFRkfnHsnIU+g3MLBzb+Ca9wr5AFeqJHr7Iovr9HZzG+
-x-ms-office365-filtering-correlation-id: 33108866-cdcb-487c-e717-08d64a5d6dd4
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4618075)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1866;
-x-ms-traffictypediagnostic: DM5PR12MB1866:
-x-microsoft-antispam-prvs: <DM5PR12MB186659B1AE3C7B9A49D4EC3C95C30@DM5PR12MB1866.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(9452136761055)(228905959029699)(211936372134217)(240460790083961)(767451399110);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231415)(944501410)(52105112)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1866;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1866;
-x-forefront-prvs: 085634EFF4
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(396003)(366004)(39860400002)(376002)(199004)(189003)(13464003)(229853002)(2501003)(26005)(3846002)(476003)(5660300001)(36756003)(68736007)(72206003)(256004)(966005)(14444005)(25786009)(102836004)(6506007)(53936002)(386003)(53546011)(6246003)(6306002)(6512007)(6486002)(186003)(6116002)(97736004)(11346002)(305945005)(7736002)(2616005)(6436002)(4326008)(86362001)(486006)(14454004)(93886005)(8936002)(8676002)(52116002)(2201001)(7406005)(2906002)(81166006)(66066001)(105586002)(81156014)(106356001)(99286004)(316002)(446003)(71190400001)(71200400001)(110136005)(2900100001)(54906003)(76176011)(478600001)(31696002)(7416002)(31686004)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1866;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
-received-spf: None (protection.outlook.com: amd.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: S5osHZJ76y3T9zg6Il1N8VRZXwpJBPpwmogDvfsObmWN2SN/kCHy8kHu5tdkCDiAya92AfTQEKFspbSwfzd+oJDcgEtyW1KjeA8KciEENaWSl3ABHYNLIAKhNe4Qgli6Ksb/EQ5wbelcLindWEN25DX/mGFuMufSwwl7K156hmx4ID2adrSDgZDOhkjbyMBqCkwYWvyen/rTD5gI4iy6tWf/wO68vas34HM+hD0OQD8TD2a3r+JPVAP/ryABOKjObF4ukqsFbEr9ysg4d4gH/MK7NH/O2F72cD5XBED1zB8WpNLjJvbywKly+XiXeoB7pp1BckloSoJYjIE6R7LdvXvKE2l4FCfKkziiHrpTGhM=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <A7B185184D18164B9EAE17F22F9038A6@namprd12.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=VAhEP5PNMrH23hKOuO24tYIVT3au/oY4s3WYk1e/KL0=;
+        b=p0deHWiZ8zp2wgZTk6marRA0FNp3CpR2cza+puGBNr8SlZQJFmKhWx2tlBXQddFWIa
+         i93pCArFx/l+YOFdmXR+K+P/ADB9/r7hVwIBosn2m56UTQPKw1DnSgo2IDO/aZcqnAbG
+         MGGpmLJCScMbmFbrqTVhgN9ftqeAi1SAo3QWOFXuHQyAkp+UhS7q4pE8/ao+I1+T8Gyl
+         7lIi6cC7CgBP/TUN2C2uZIavPFMofsWbYak0YuDQYOoHuSS6GoOidMSWyWp8+/5b8A8f
+         eR6UZYQgJ+KOL7umdLhDC06riniUCJ/tS02w+I1GyCF0yC2rxdCt/3UXpTbWbm3Pinc7
+         FAzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VAhEP5PNMrH23hKOuO24tYIVT3au/oY4s3WYk1e/KL0=;
+        b=sYdIR4TIS2TJHA+HcBTEOx7vbfjE7W50OhhCLm6dO8Uwlq7tqBqLnQ6gDBIGzL70pN
+         7zb/SpY9+HGLJ6V9p0hWq0QxsKK4ihKT5GJNz/BFN7D1nGNlzm55GMsXqpYa+jG1dJ9c
+         D8Bgb+EA9cmxwQEjmQudIpA/sfVusUhmUbOwOas++4TpE4rp3LUj3TYPf/4JNDpkD8z/
+         SkFQxHl1xIidaOD/Kj5ToWb136HDzweZObRCnhdkgpd1JmIpqcvQ9wSa5z3K793M1tnx
+         4cJ8I92BDDR7fdYIo8TjeJ/ygSW6C5aPQ/zdtDtGUhPrWGzxJnA1U6WfUn1I2Nz+7WQS
+         YruQ==
+X-Gm-Message-State: AGRZ1gLwKaMEa0wztQnufWCtDkZSED9hPQCAWq3XH1b11chfMRom/j6F
+        vInY7AIeKGyOoobZg6ObRW0WofZ3jzPohXXh/FR2iA==
+X-Google-Smtp-Source: AJdET5dCO6gbG9eIyc6vSx4dKX1Lob5XV0danCUc3USqrx+ffG8it47ZjllmOXi3ClS2TsxXGJxlINqNA8XU+gTmUa4=
+X-Received: by 2002:a9d:460e:: with SMTP id y14mr1841611ote.198.1542219545541;
+ Wed, 14 Nov 2018 10:19:05 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 33108866-cdcb-487c-e717-08d64a5d6dd4
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 18:17:25.8199
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1866
+References: <20181114171447.GA87768@gmail.com> <20181114180217.195917-1-ebiggers@kernel.org>
+In-Reply-To: <20181114180217.195917-1-ebiggers@kernel.org>
+From:   Jann Horn <jannh@google.com>
+Date:   Wed, 14 Nov 2018 19:18:39 +0100
+Message-ID: <CAG48ez3bPkh+DMPwiebM+r4ozX2CiVY=9=WMBP_xm1qVaSN4sQ@mail.gmail.com>
+Subject: Re: [PATCH] HID: uhid: prevent uhid_char_write() under KERNEL_DS
+To:     ebiggers@kernel.org
+Cc:     dh.herrmann@googlemail.com, Jiri Kosina <jikos@kernel.org>,
+        benjamin.tissoires@redhat.com, linux-input@vger.kernel.org,
+        kernel list <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com,
+        Dmitry Vyukov <dvyukov@google.com>, dtor@google.com,
+        syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com,
+        stable@vger.kernel.org, Andy Lutomirski <luto@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-DQoNCk9uIDExLzE0LzE4IDEwOjM4IEFNLCBNb2dlciwgQmFidSB3cm90ZToNCj4gRmVuZ2h1YSwN
-Cj4gDQo+PiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPj4gRnJvbTogbGludXgta2VybmVs
-LW93bmVyQHZnZXIua2VybmVsLm9yZyA8bGludXgta2VybmVsLQ0KPj4gb3duZXJAdmdlci5rZXJu
-ZWwub3JnPiBPbiBCZWhhbGYgT2YgWXUsIEZlbmdodWENCj4+IFNlbnQ6IFR1ZXNkYXksIE5vdmVt
-YmVyIDEzLCAyMDE4IDM6NTAgUE0NCj4+IFRvOiBNb2dlciwgQmFidSA8QmFidS5Nb2dlckBhbWQu
-Y29tPjsgdGdseEBsaW51dHJvbml4LmRlOw0KPj4gbWluZ29AcmVkaGF0LmNvbTsgYnBAYWxpZW44
-LmRlOyBjb3JiZXRAbHduLm5ldDsgQ2hhdHJlLCBSZWluZXR0ZQ0KPj4gPHJlaW5ldHRlLmNoYXRy
-ZUBpbnRlbC5jb20+OyBwZXRlcnpAaW5mcmFkZWFkLm9yZzsNCj4+IGdyZWdraEBsaW51eGZvdW5k
-YXRpb24ub3JnOyBkYXZlbUBkYXZlbWxvZnQubmV0OyBha3BtQGxpbnV4LQ0KPj4gZm91bmRhdGlv
-bi5vcmcNCj4+IENjOiBocGFAenl0b3IuY29tOyB4ODZAa2VybmVsLm9yZzsgbWNoZWhhYitzYW1z
-dW5nQGtlcm5lbC5vcmc7DQo+PiBhcm5kQGFybmRiLmRlOyBrc3Rld2FydEBsaW51eGZvdW5kYXRp
-b24ub3JnOyBwb21icmVkYW5uZUBuZXhiLmNvbTsNCj4+IHJhZmFlbEBrZXJuZWwub3JnOyBraXJp
-bGwuc2h1dGVtb3ZAbGludXguaW50ZWwuY29tOyBMdWNrLCBUb255DQo+PiA8dG9ueS5sdWNrQGlu
-dGVsLmNvbT47IHFpYW55dWUuempAYWxpYmFiYS1pbmMuY29tOyBTaGVuLCBYaWFvY2hlbg0KPj4g
-PHhpYW9jaGVuLnNoZW5AaW50ZWwuY29tPjsgcGJvbnppbmlAcmVkaGF0LmNvbTsgU2luZ2gsIEJy
-aWplc2gNCj4+IDxicmlqZXNoLnNpbmdoQGFtZC5jb20+OyBIdXJ3aXR6LCBTaGVycnkgPHNoZXJy
-eS5odXJ3aXR6QGFtZC5jb20+Ow0KPj4gZHdtdzJAaW5mcmFkZWFkLm9yZzsgTGVuZGFja3ksIFRo
-b21hcyA8VGhvbWFzLkxlbmRhY2t5QGFtZC5jb20+Ow0KPj4gbHV0b0BrZXJuZWwub3JnOyBqb3Jv
-QDhieXRlcy5vcmc7IGphbm5oQGdvb2dsZS5jb207DQo+PiB2a3V6bmV0c0ByZWRoYXQuY29tOyBy
-aWFuQGFsdW0ubWl0LmVkdTsganBvaW1ib2VAcmVkaGF0LmNvbTsgbGludXgtDQo+PiBrZXJuZWxA
-dmdlci5rZXJuZWwub3JnOyBsaW51eC1kb2NAdmdlci5rZXJuZWwub3JnOyBZdSwgRmVuZ2h1YQ0K
-Pj4gPGZlbmdodWEueXVAaW50ZWwuY29tPg0KPj4gU3ViamVjdDogUkU6IFtQQVRDSCB2NyAxMS8x
-M10gYXJjaC94ODY6IEludHJvZHVjZSBRT1MgZmVhdHVyZSBmb3IgQU1EDQo+Pg0KPj4+IEZyb206
-IE1vZ2VyLCBCYWJ1IFttYWlsdG86QmFidS5Nb2dlckBhbWQuY29tXQ0KPj4+IFN1YmplY3Q6IFtQ
-QVRDSCB2NyAxMS8xM10gYXJjaC94ODY6IEludHJvZHVjZSBRT1MgZmVhdHVyZSBmb3IgQU1EDQo+
-Pj4gVGhlIHNwZWNpZmljYXRpb24gZm9yIHRoaXMgZmVhdHVyZSBpcyBhdmFpbGFibGUgYXQNCj4+
-PiBodHRwczovL2RldmVsb3Blci5hbWQuY29tL3dwLWNvbnRlbnQvcmVzb3VyY2VzLzU2Mzc1LnBk
-Zg0KPj4NCj4+PiArYm9vbCBjYm1fdmFsaWRhdGVfYW1kKGNoYXIgKmJ1ZiwgdTMyICpkYXRhLCBz
-dHJ1Y3QgcmR0X3Jlc291cmNlICpyKSB7DQo+Pj4gKwlpZiAodmFsID4gci0+ZGVmYXVsdF9jdHJs
-KSB7DQo+Pj4gKwkJcmR0X2xhc3RfY21kX3B1dHMoIm1hc2sgb3V0IG9mIHJhbmdlXG4iKTsNCj4+
-PiArCQlyZXR1cm4gZmFsc2U7DQo+Pj4gKwl9DQo+Pg0KPj4gSWYgdmFsIGlzIHplcm8sIHRoZW4g
-dGhpcyBjbG9zaWQgY2Fubm90IGFsbG9jYXRlIGFueSBjYWNoZSBsaW5lLg0KPj4NCj4+IEknbSB3
-b25kZXJpbmc6IGRvZXMgdGhhdCBtZWFuIHRoZSB0YXNrcyBydW5uaW5nIHdpdGggdGhpcyBjbG9z
-aWQgZGlyZWN0bHkNCj4+IGFjY2VzcyBtZW1vcnkgd2l0aG91dCBjYWNoZT8gSXMgdGhlcmUgYW55
-IHVzYWdlIGZvciB0aGlzIHNpdHVhdGlvbj8NCg0KSGVyZSBpcyB0aGUgZGV0YWlsZWQgYW5zd2Vy
-IHRvIHlvdXIgcXVlc3Rpb24gZnJvbSBEb3VnKGluIENDKS4NCg0KQSBjbG9zaWQgd2l0aCBMM19N
-QVNLIG9mIGFsbCAwJ3Mgd2lsbCBub3QgdXNlIGFueSBvZiB0aGUgTDMgY2FjaGUsIGJ1dA0Kd2ls
-bCBzdGlsbCBiZSBhYmxlIHRvIHVzZSBMMiBjYWNoZS4gIFNvLCBubywgdGhlIHByb2Nlc3NlcyBp
-biB0aGF0IGNsb3NpZA0Kd2lsbCBub3QgImRpcmVjdGx5IGFjY2VzcyBtZW1vcnkiIGluIHRoZSBz
-ZW5zZSB0aGF0IHRoZXkgd2lsbCB1c2UgdGhlIEwxDQphbmQgTDIgY2FjaGVzIGFzIG5vcm1hbC4g
-IEJ1dCBpZiB0aGV5IG1pc3MgdGhlIEwyIHRoZW4sIHllcywgdGhlIGFjY2Vzcw0Kd2lsbCBnbyBk
-aXJlY3RseSB0byBtZW1vcnkuICBUbyBiZSBwcmVjaXNlLCBub25lIG9mIHRoZSBsaW5lcyB3aGlj
-aCBhcmUNCmZldGNoZWQgYnkgYSBwcm9jZXNzIHJ1bm5pbmcgd2l0aCBzdWNoIGEgY29uZmlndXJh
-dGlvbiB3aWxsIGJlIGluc3RhbGxlZA0KaW4gdGhlIEwzIGNhY2hlLCBzbyBzdWJzZXF1ZW50IGFj
-Y2Vzc2VzIHdoaWNoIG1pc3MgdGhlIEwyIGNhY2hlIHdpbGwgbm90DQpmaW5kIHRoZSByZXF1ZXN0
-ZWQgZGF0YSBpbiB0aGUgTDMgY2FjaGUgYW5kIHdpbGwgdGhlbiBnbyBvbiB0byBhY2Nlc3MgbWVt
-b3J5Lg0KDQotIERvdWcNCg0KPiANCj4gSSB3b3VsZCB0aGluayBhbnkgbWVtb3J5IGFjY2VzcyBo
-YXMgdG8gaGFwcGVuIHZpYSBjYWNoZSBvbmx5LiAgQnV0DQo+IEkgYW0gbm90IHN1cmUgYWJvdXQg
-dGhlIHVzYWdlIG9mIHRoaXMgc2l0dWF0aW9uLiBXaWxsIGNoZWNrIG9uIHRoYXQuDQo+IFdpbGwg
-cG9zdCBpZiBJIGdldCBhbnkgbW9yZSBpbmZvcm1hdGlvbi4gQnV0IEkgY2FuIHNheSB0aGF0IGl0
-IGlzDQo+IGFsbG93ZWQgdG8gaGF2ZSBtYXNrIGFzIHplcm8uIExvb2tpbmcgYXQgdGhlIHNwZWNz
-DQo+IGh0dHBzOi8vZGV2ZWxvcGVyLmFtZC5jb20vd3AtY29udGVudC9yZXNvdXJjZXMvNTYzNzUu
-cGRmDQo+IA0KPiBUaGUgYml0cyB3aGljaCBhcmUgc2V0IGluIHRoZSB2YXJpb3VzIEwzX01BU0tf
-biByZWdpc3RlcnMgZG8gbm90IGhhdmUgdG8gYmUNCj4gY29udGlndW91cyBhbmQgbWF5IG92ZXJs
-YXAgaW4gYW55IGRlc2lyZWQgY29tYmluYXRpb24uIElmIGFuIEwzX01BU0tfbg0KPiByZWdpc3Rl
-ciBpcyBwcm9ncmFtbWVkIHdpdGggYWxsIDAncywgdGhhdCBDT1Mgd2lsbCBiZSBwcmV2ZW50ZWQg
-ZnJvbSBhbGxvY2F0aW5nDQo+IGFueSBsaW5lcyBpbiB0aGUgTDMgY2FjaGUuIEF0IHJlc2V0LCBh
-bGwgTDNfTUFTS19uIHJlZ2lzdGVycyBhcmUgaW5pdGlhbGl6ZWQgdG8gYWxsDQo+IDEncywgYWxs
-b3dpbmcgYWxsIHByb2Nlc3NvcnMgdG8gdXNlIHRoZSBlbnRpcmUgTDMgY2FjaGUgYWNjZXNzaWJs
-ZSB0byB0aGVtLg0KPiANCj4+DQo+PiBUaGFua3MuDQo+Pg0KPj4gLUZlbmdodWENCg==
++cc Andy
+
+On Wed, Nov 14, 2018 at 7:03 PM Eric Biggers <ebiggers@kernel.org> wrote:
+> When a UHID_CREATE command is written to the uhid char device, a
+> copy_from_user() is done from a user pointer embedded in the command.
+> When the address limit is KERNEL_DS, e.g. as is the case during
+> sendfile(), this can read from kernel memory.  Therefore, UHID_CREATE
+> must not be allowed in this case.
+>
+> For consistency and to make sure all current and future uhid commands
+> are covered, apply the restriction to uhid_char_write() as a whole
+> rather than to UHID_CREATE specifically.
+>
+> Thanks to Dmitry Vyukov for adding uhid definitions to syzkaller and to
+> Jann Horn for commit 9da3f2b740544 ("x86/fault: BUG() when uaccess
+> helpers fault on kernel addresses"), allowing this bug to be found.
+>
+> Reported-by: syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com
+
+Wheeeee, it found something! :)
+
+> Fixes: d365c6cfd337 ("HID: uhid: add UHID_CREATE and UHID_DESTROY events")
+> Cc: <stable@vger.kernel.org> # v3.6+
+> Cc: Jann Horn <jannh@google.com>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
+> ---
+>  drivers/hid/uhid.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+>
+> diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
+> index 3c55073136064..e94c5e248b56e 100644
+> --- a/drivers/hid/uhid.c
+> +++ b/drivers/hid/uhid.c
+> @@ -705,6 +705,12 @@ static ssize_t uhid_char_write(struct file *file, const char __user *buffer,
+>         int ret;
+>         size_t len;
+>
+> +       if (uaccess_kernel()) { /* payload may contain a __user pointer */
+> +               pr_err_once("%s: process %d (%s) called from kernel context, this is not allowed.\n",
+> +                           __func__, task_tgid_vnr(current), current->comm);
+> +               return -EACCES;
+> +       }
+
+If this file can conceivably be opened by a process that doesn't have
+root privileges, this check should be something along the lines of
+ib_safe_file_access() or sg_check_file_access().
+
+Checking for uaccess_kernel() prevents the symptom that syzkaller
+notices - a user being able to cause a kernel memory access -, but it
+doesn't deal with the case where a user opens a file descriptor to
+this device and tricks a more privileged process into writing into it
+(e.g. by passing it to a suid binary as stdout or stderr).
+
+Looking closer, I wonder whether this kind of behavior is limited to
+the UHID_CREATE request, which has a comment on it saying "/*
+Obsolete! Use UHID_CREATE2. */". If we could keep this kind of ugly
+kludge away from the code paths you're supposed to be using, that
+would be nice...
