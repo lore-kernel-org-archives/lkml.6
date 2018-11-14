@@ -2,213 +2,151 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53954C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:30:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51311C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:30:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1858620868
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:30:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1858620868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 18C74208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:30:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="E55TwAvR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18C74208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389133AbeKOIbH (ORCPT
+        id S2388697AbeKOIf5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:31:07 -0500
-Received: from foss.arm.com ([217.140.101.70]:52058 "EHLO foss.arm.com"
+        Thu, 15 Nov 2018 03:35:57 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38120 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726579AbeKOIbE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:31:04 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1031E1596;
-        Wed, 14 Nov 2018 14:07:48 -0800 (PST)
-Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 488A63F5A0;
-        Wed, 14 Nov 2018 14:07:47 -0800 (PST)
-Date:   Wed, 14 Nov 2018 22:07:45 +0000
-From:   Will Deacon <will.deacon@arm.com>
-To:     Douglas Anderson <dianders@chromium.org>
-Cc:     Jason Wessel <jason.wessel@windriver.com>,
-        Daniel Thompson <daniel.thompson@linaro.org>,
-        kgdb-bugreport@lists.sourceforge.net,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-mips@linux-mips.org, linux-sh@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        James Hogan <jhogan@kernel.org>, linux-hexagon@vger.kernel.org,
-        Vineet Gupta <vgupta@synopsys.com>,
-        Rich Felker <dalias@libc.org>,
-        Ralf Baechle <ralf@linux-mips.org>,
-        linux-snps-arc@lists.infradead.org,
-        Yoshinori Sato <ysato@users.sourceforge.jp>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Russell King <linux@armlinux.org.uk>,
-        linux-arm-kernel@lists.infradead.org,
-        Christophe Leroy <christophe.leroy@c-s.fr>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Paul Burton <paul.burton@mips.com>,
-        Richard Kuo <rkuo@codeaurora.org>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH v4 2/4] kgdb: Fix kgdb_roundup_cpus() for arches who used
- smp_call_function()
-Message-ID: <20181114220744.GB4044@brain-police>
-References: <20181112182659.245726-1-dianders@chromium.org>
- <20181112182659.245726-3-dianders@chromium.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181112182659.245726-3-dianders@chromium.org>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+        id S2389044AbeKOIa5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:30:57 -0500
+Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 827BA2252B;
+        Wed, 14 Nov 2018 22:25:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542234352;
+        bh=da2o2nyR3BDZHBUQIrW87vzpE23+mBgQz24gC7oORVI=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=E55TwAvRwHkqad13qkIybXLu0BQjhD13eF02Vga6cq5TXisnQmZ19hU2vEQRc8YZQ
+         EePakaXu8eLVAsPo+lQ6OoxEbdHworWtc+hs+BhaCfI7kYJmkd4gkcBZZZtK/q4SUe
+         AgAH1owUK85OrIepZMjDeTVyPeiZaofRiezV+sVU=
+From:   Sasha Levin <sashal@kernel.org>
+To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     Thor Thayer <thor.thayer@linux.intel.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 25/27] net: stmmac: Fix RX packet size > 8191
+Date:   Wed, 14 Nov 2018 17:25:14 -0500
+Message-Id: <20181114222520.99926-25-sashal@kernel.org>
+X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181114222520.99926-1-sashal@kernel.org>
+References: <20181114222520.99926-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 10:26:56AM -0800, Douglas Anderson wrote:
-> When I had lockdep turned on and dropped into kgdb I got a nice splat
-> on my system.  Specifically it hit:
->   DEBUG_LOCKS_WARN_ON(current->hardirq_context)
-> 
-> Specifically it looked like this:
->   sysrq: SysRq : DEBUG
->   ------------[ cut here ]------------
->   DEBUG_LOCKS_WARN_ON(current->hardirq_context)
->   WARNING: CPU: 0 PID: 0 at .../kernel/locking/lockdep.c:2875 lockdep_hardirqs_on+0xf0/0x160
->   CPU: 0 PID: 0 Comm: swapper/0 Not tainted 4.19.0 #27
->   pstate: 604003c9 (nZCv DAIF +PAN -UAO)
->   pc : lockdep_hardirqs_on+0xf0/0x160
->   ...
->   Call trace:
->    lockdep_hardirqs_on+0xf0/0x160
->    trace_hardirqs_on+0x188/0x1ac
->    kgdb_roundup_cpus+0x14/0x3c
->    kgdb_cpu_enter+0x53c/0x5cc
->    kgdb_handle_exception+0x180/0x1d4
->    kgdb_compiled_brk_fn+0x30/0x3c
->    brk_handler+0x134/0x178
->    do_debug_exception+0xfc/0x178
->    el1_dbg+0x18/0x78
->    kgdb_breakpoint+0x34/0x58
->    sysrq_handle_dbg+0x54/0x5c
->    __handle_sysrq+0x114/0x21c
->    handle_sysrq+0x30/0x3c
->    qcom_geni_serial_isr+0x2dc/0x30c
->   ...
->   ...
->   irq event stamp: ...45
->   hardirqs last  enabled at (...44): [...] __do_softirq+0xd8/0x4e4
->   hardirqs last disabled at (...45): [...] el1_irq+0x74/0x130
->   softirqs last  enabled at (...42): [...] _local_bh_enable+0x2c/0x34
->   softirqs last disabled at (...43): [...] irq_exit+0xa8/0x100
->   ---[ end trace adf21f830c46e638 ]---
-> 
-> Looking closely at it, it seems like a really bad idea to be calling
-> local_irq_enable() in kgdb_roundup_cpus().  If nothing else that seems
-> like it could violate spinlock semantics and cause a deadlock.
-> 
-> Instead, let's use a private csd alongside
-> smp_call_function_single_async() to round up the other CPUs.  Using
-> smp_call_function_single_async() doesn't require interrupts to be
-> enabled so we can remove the offending bit of code.
-> 
-> In order to avoid duplicating this across all the architectures that
-> use the default kgdb_roundup_cpus(), we'll add a "weak" implementation
-> to debug_core.c.
-> 
-> Looking at all the people who previously had copies of this code,
-> there were a few variants.  I've attempted to keep the variants
-> working like they used to.  Specifically:
-> * For arch/arc we passed NULL to kgdb_nmicallback() instead of
->   get_irq_regs().
-> * For arch/mips there was a bit of extra code around
->   kgdb_nmicallback()
-> 
-> NOTE: In this patch we will still get into trouble if we try to round
-> up a CPU that failed to round up before.  We'll try to round it up
-> again and potentially hang when we try to grab the csd lock.  That's
-> not new behavior but we'll still try to do better in a future patch.
-> 
-> Suggested-by: Daniel Thompson <daniel.thompson@linaro.org>
-> Signed-off-by: Douglas Anderson <dianders@chromium.org>
-> ---
-> 
-> Changes in v4: None
-> Changes in v3:
-> - No separate init call.
-> - Don't round up the CPU that is doing the rounding up.
-> - Add "#ifdef CONFIG_SMP" to match the rest of the file.
-> - Updated desc saying we don't solve the "failed to roundup" case.
-> - Document the ignored parameter.
-> 
-> Changes in v2:
-> - Removing irq flags separated from fixing lockdep splat.
-> - Don't use smp_call_function (Daniel).
-> 
->  arch/arc/kernel/kgdb.c     | 10 ++--------
->  arch/arm/kernel/kgdb.c     | 12 ------------
->  arch/arm64/kernel/kgdb.c   | 12 ------------
->  arch/hexagon/kernel/kgdb.c | 27 ---------------------------
->  arch/mips/kernel/kgdb.c    |  9 +--------
->  arch/powerpc/kernel/kgdb.c |  4 ++--
->  arch/sh/kernel/kgdb.c      | 12 ------------
->  include/linux/kgdb.h       | 15 +++++++++++++--
->  kernel/debug/debug_core.c  | 35 +++++++++++++++++++++++++++++++++++
->  9 files changed, 53 insertions(+), 83 deletions(-)
+From: Thor Thayer <thor.thayer@linux.intel.com>
 
-[...]
+[ Upstream commit 8137b6ef0ce469154e5cf19f8e7fe04d9a72ac5e ]
 
-> diff --git a/kernel/debug/debug_core.c b/kernel/debug/debug_core.c
-> index f3cadda45f07..23f2b5613afa 100644
-> --- a/kernel/debug/debug_core.c
-> +++ b/kernel/debug/debug_core.c
-> @@ -55,6 +55,7 @@
->  #include <linux/mm.h>
->  #include <linux/vmacache.h>
->  #include <linux/rcupdate.h>
-> +#include <linux/irq.h>
->  
->  #include <asm/cacheflush.h>
->  #include <asm/byteorder.h>
-> @@ -220,6 +221,40 @@ int __weak kgdb_skipexception(int exception, struct pt_regs *regs)
->  	return 0;
->  }
->  
-> +#ifdef CONFIG_SMP
-> +
-> +/*
-> + * Default (weak) implementation for kgdb_roundup_cpus
-> + */
-> +
-> +static DEFINE_PER_CPU(call_single_data_t, kgdb_roundup_csd);
-> +
-> +void __weak kgdb_call_nmi_hook(void *ignored)
-> +{
-> +	kgdb_nmicallback(raw_smp_processor_id(), get_irq_regs());
-> +}
+Ping problems with packets > 8191 as shown:
 
-I suppose you could pass the cpu as an argument, but it doesn't really
-matter. Also, I think there are cases where the CSD callback can run without
-having received an IPI, so we could potentially up passing NULL for the regs
-here which probably goes boom.
+PING 192.168.1.99 (192.168.1.99) 8150(8178) bytes of data.
+8158 bytes from 192.168.1.99: icmp_seq=1 ttl=64 time=0.669 ms
+wrong data byte 8144 should be 0xd0 but was 0x0
+16    10 11 12 13 14 15 16 17 18 19 1a 1b 1c 1d 1e 1f
+      20 21 22 23 24 25 26 27 28 29 2a 2b 2c 2d 2e 2f
+%< ---------------snip--------------------------------------
+8112  b0 b1 b2 b3 b4 b5 b6 b7 b8 b9 ba bb bc bd be bf
+      c0 c1 c2 c3 c4 c5 c6 c7 c8 c9 ca cb cc cd ce cf
+8144  0 0 0 0 d0 d1
+      ^^^^^^^
+Notice the 4 bytes of 0 before the expected byte of d0.
 
-> +
-> +void __weak kgdb_roundup_cpus(void)
-> +{
-> +	call_single_data_t *csd;
-> +	int this_cpu = get_cpu();
+Databook notes that the RX buffer must be a multiple of 4/8/16
+bytes [1].
 
-Do you actually need to disable preemption here? afaict, irqs are already
-disabled by the kgdb core.
+Update the DMA Buffer size define to 8188 instead of 8192. Remove
+the -1 from the RX buffer size allocations and use the new
+DMA Buffer size directly.
 
-> +	int cpu;
-> +
-> +	for_each_cpu(cpu, cpu_online_mask) {
+[1] Synopsys DesignWare Cores Ethernet MAC Universal v3.70a
+    [section 8.4.2 - Table 8-24]
 
-for_each_online_cpu(cpu) ?
-I'm assuming this is serialised wrt CPU hotplug somehow?
+Tested on SoCFPGA Stratix10 with ping sweep from 100 to 8300 byte packets.
 
-Will
+Fixes: 286a83721720 ("stmmac: add CHAINED descriptor mode support (V4)")
+Suggested-by: Jose Abreu <jose.abreu@synopsys.com>
+Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
+Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ drivers/net/ethernet/stmicro/stmmac/common.h    | 3 ++-
+ drivers/net/ethernet/stmicro/stmmac/descs_com.h | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/enh_desc.c  | 2 +-
+ drivers/net/ethernet/stmicro/stmmac/ring_mode.c | 2 +-
+ 4 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/common.h b/drivers/net/ethernet/stmicro/stmmac/common.h
+index 627fec210e2f..8e2a19616bc9 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/common.h
++++ b/drivers/net/ethernet/stmicro/stmmac/common.h
+@@ -340,7 +340,8 @@ struct dma_features {
+ 
+ /* GMAC TX FIFO is 8K, Rx FIFO is 16K */
+ #define BUF_SIZE_16KiB 16384
+-#define BUF_SIZE_8KiB 8192
++/* RX Buffer size must be < 8191 and multiple of 4/8/16 bytes */
++#define BUF_SIZE_8KiB 8188
+ #define BUF_SIZE_4KiB 4096
+ #define BUF_SIZE_2KiB 2048
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/descs_com.h b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
+index ca9d7e48034c..40d6356a7e73 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/descs_com.h
++++ b/drivers/net/ethernet/stmicro/stmmac/descs_com.h
+@@ -31,7 +31,7 @@
+ /* Enhanced descriptors */
+ static inline void ehn_desc_rx_set_on_ring(struct dma_desc *p, int end)
+ {
+-	p->des1 |= cpu_to_le32(((BUF_SIZE_8KiB - 1)
++	p->des1 |= cpu_to_le32((BUF_SIZE_8KiB
+ 			<< ERDES1_BUFFER2_SIZE_SHIFT)
+ 		   & ERDES1_BUFFER2_SIZE_MASK);
+ 
+diff --git a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+index 2a828a312814..acd65a4f94d4 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
++++ b/drivers/net/ethernet/stmicro/stmmac/enh_desc.c
+@@ -262,7 +262,7 @@ static void enh_desc_init_rx_desc(struct dma_desc *p, int disable_rx_ic,
+ 				  int mode, int end)
+ {
+ 	p->des0 |= cpu_to_le32(RDES0_OWN);
+-	p->des1 |= cpu_to_le32((BUF_SIZE_8KiB - 1) & ERDES1_BUFFER1_SIZE_MASK);
++	p->des1 |= cpu_to_le32(BUF_SIZE_8KiB & ERDES1_BUFFER1_SIZE_MASK);
+ 
+ 	if (mode == STMMAC_CHAIN_MODE)
+ 		ehn_desc_rx_set_on_chain(p);
+diff --git a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
+index 28e4b5d50ce6..1af7b078b94d 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
++++ b/drivers/net/ethernet/stmicro/stmmac/ring_mode.c
+@@ -143,7 +143,7 @@ static void stmmac_clean_desc3(void *priv_ptr, struct dma_desc *p)
+ static int stmmac_set_16kib_bfsize(int mtu)
+ {
+ 	int ret = 0;
+-	if (unlikely(mtu >= BUF_SIZE_8KiB))
++	if (unlikely(mtu > BUF_SIZE_8KiB))
+ 		ret = BUF_SIZE_16KiB;
+ 	return ret;
+ }
+-- 
+2.17.1
+
