@@ -2,128 +2,143 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28424C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:26:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B09BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:26:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E52A622544
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:26:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0F07422546
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:26:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s95/JP5d"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E52A622544
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ynzfIIfG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F07422546
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389316AbeKOIbZ (ORCPT
+        id S2389338AbeKOIb1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:31:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:38736 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:31:27 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38748 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387606AbeKOIbX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:31:23 -0500
+        id S2387606AbeKOIb0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:31:26 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E4CE72252F;
-        Wed, 14 Nov 2018 22:26:18 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 2BF8D2252F;
+        Wed, 14 Nov 2018 22:26:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234379;
-        bh=Hg0CF+stZeR6FaJumtBds0wIapq9x8eu+Dxon/ks2I0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=s95/JP5dRjvgBE3y0L957M+AkItQkAWzEw8H8V/elQdsUfmoZEPF/Xr8BODoLa+rz
-         rYAy0Cdyc4530HsbCHr1v4W/1jK5adFyFjLLjEpxfiLixALAhvu2XFTUvynUUqkfdf
-         USakSzK+r6a4COyohckddc1H0WMjn0y9XyHBZtgo=
+        s=default; t=1542234381;
+        bh=WhL8T4vJtYyQMeFlkif01X07XDPMzywR7aMc2BrqDP0=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=ynzfIIfG1X8qN2iYgUi8+55P86huEciQIPykvhiFAwO6evWvDHyyN0WFB4dpheY7m
+         e80Nf0aBQR6n3Sxd4GlLrWP5DKPyx9rrdENOixeZIhMIrRpy5UDNL3TUbjDG6G9UJE
+         O2Cj9fk7t11nGBUzPnMCEsMwsX+VdSJLPhLlFiJY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vasily Gorbik <gor@linux.ibm.com>,
-        Martin Schwidefsky <schwidefsky@de.ibm.com>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.4 1/8] s390/vdso: add missing FORCE to build targets
-Date:   Wed, 14 Nov 2018 17:26:07 -0500
-Message-Id: <20181114222618.100378-1-sashal@kernel.org>
+Cc:     Eric Westbrook <eric@westbrook.io>,
+        Eric Westbrook <linux@westbrook.io>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.4 2/8] netfilter: ipset: actually allow allowable CIDR 0 in hash:net,port,net
+Date:   Wed, 14 Nov 2018 17:26:08 -0500
+Message-Id: <20181114222618.100378-2-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181114222618.100378-1-sashal@kernel.org>
+References: <20181114222618.100378-1-sashal@kernel.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vasily Gorbik <gor@linux.ibm.com>
+From: Eric Westbrook <eric@westbrook.io>
 
-[ Upstream commit b44b136a3773d8a9c7853f8df716bd1483613cbb ]
+[ Upstream commit 886503f34d63e681662057448819edb5b1057a97 ]
 
-According to Documentation/kbuild/makefiles.txt all build targets using
-if_changed should use FORCE as well. Add missing FORCE to make sure
-vdso targets are rebuild properly when not just immediate prerequisites
-have changed but also when build command differs.
+Allow /0 as advertised for hash:net,port,net sets.
 
-Reviewed-by: Philipp Rudo <prudo@linux.ibm.com>
-Signed-off-by: Vasily Gorbik <gor@linux.ibm.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+For "hash:net,port,net", ipset(8) says that "either subnet
+is permitted to be a /0 should you wish to match port
+between all destinations."
+
+Make that statement true.
+
+Before:
+
+    # ipset create cidrzero hash:net,port,net
+    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
+    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
+
+    # ipset create cidrzero6 hash:net,port,net family inet6
+    # ipset add cidrzero6 ::/0,12345,::/0
+    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
+
+After:
+
+    # ipset create cidrzero hash:net,port,net
+    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
+    # ipset test cidrzero 192.168.205.129,12345,172.16.205.129
+    192.168.205.129,tcp:12345,172.16.205.129 is in set cidrzero.
+
+    # ipset create cidrzero6 hash:net,port,net family inet6
+    # ipset add cidrzero6 ::/0,12345,::/0
+    # ipset test cidrzero6 fe80::1,12345,ff00::1
+    fe80::1,tcp:12345,ff00::1 is in set cidrzero6.
+
+See also:
+
+  https://bugzilla.kernel.org/show_bug.cgi?id=200897
+  https://github.com/ewestbrook/linux/commit/df7ff6efb0934ab6acc11f003ff1a7580d6c1d9c
+
+Signed-off-by: Eric Westbrook <linux@westbrook.io>
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/kernel/vdso32/Makefile | 6 +++---
- arch/s390/kernel/vdso64/Makefile | 6 +++---
- 2 files changed, 6 insertions(+), 6 deletions(-)
+ net/netfilter/ipset/ip_set_hash_netportnet.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/arch/s390/kernel/vdso32/Makefile b/arch/s390/kernel/vdso32/Makefile
-index ee8a18e50a25..29b72c46284d 100644
---- a/arch/s390/kernel/vdso32/Makefile
-+++ b/arch/s390/kernel/vdso32/Makefile
-@@ -29,7 +29,7 @@ GCOV_PROFILE := n
- $(obj)/vdso32_wrapper.o : $(obj)/vdso32.so
+diff --git a/net/netfilter/ipset/ip_set_hash_netportnet.c b/net/netfilter/ipset/ip_set_hash_netportnet.c
+index 9a14c237830f..b259a5814965 100644
+--- a/net/netfilter/ipset/ip_set_hash_netportnet.c
++++ b/net/netfilter/ipset/ip_set_hash_netportnet.c
+@@ -213,13 +213,13 @@ hash_netportnet4_uadt(struct ip_set *set, struct nlattr *tb[],
  
- # link rule for the .so file, .lds has to be first
--$(obj)/vdso32.so.dbg: $(src)/vdso32.lds $(obj-vdso32)
-+$(obj)/vdso32.so.dbg: $(src)/vdso32.lds $(obj-vdso32) FORCE
- 	$(call if_changed,vdso32ld)
+ 	if (tb[IPSET_ATTR_CIDR]) {
+ 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
+-		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
++		if (e.cidr[0] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
  
- # strip rule for the .so file
-@@ -38,12 +38,12 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
- 	$(call if_changed,objcopy)
+ 	if (tb[IPSET_ATTR_CIDR2]) {
+ 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
+-		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
++		if (e.cidr[1] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
  
- # assembly rules for the .S files
--$(obj-vdso32): %.o: %.S
-+$(obj-vdso32): %.o: %.S FORCE
- 	$(call if_changed_dep,vdso32as)
+@@ -492,13 +492,13 @@ hash_netportnet6_uadt(struct ip_set *set, struct nlattr *tb[],
  
- # actual build commands
- quiet_cmd_vdso32ld = VDSO32L $@
--      cmd_vdso32ld = $(CC) $(c_flags) -Wl,-T $^ -o $@
-+      cmd_vdso32ld = $(CC) $(c_flags) -Wl,-T $(filter %.lds %.o,$^) -o $@
- quiet_cmd_vdso32as = VDSO32A $@
-       cmd_vdso32as = $(CC) $(a_flags) -c -o $@ $<
+ 	if (tb[IPSET_ATTR_CIDR]) {
+ 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
+-		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
++		if (e.cidr[0] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
  
-diff --git a/arch/s390/kernel/vdso64/Makefile b/arch/s390/kernel/vdso64/Makefile
-index c4b03f9ed228..1b083d80de50 100644
---- a/arch/s390/kernel/vdso64/Makefile
-+++ b/arch/s390/kernel/vdso64/Makefile
-@@ -29,7 +29,7 @@ GCOV_PROFILE := n
- $(obj)/vdso64_wrapper.o : $(obj)/vdso64.so
- 
- # link rule for the .so file, .lds has to be first
--$(obj)/vdso64.so.dbg: $(src)/vdso64.lds $(obj-vdso64)
-+$(obj)/vdso64.so.dbg: $(src)/vdso64.lds $(obj-vdso64) FORCE
- 	$(call if_changed,vdso64ld)
- 
- # strip rule for the .so file
-@@ -38,12 +38,12 @@ $(obj)/%.so: $(obj)/%.so.dbg FORCE
- 	$(call if_changed,objcopy)
- 
- # assembly rules for the .S files
--$(obj-vdso64): %.o: %.S
-+$(obj-vdso64): %.o: %.S FORCE
- 	$(call if_changed_dep,vdso64as)
- 
- # actual build commands
- quiet_cmd_vdso64ld = VDSO64L $@
--      cmd_vdso64ld = $(CC) $(c_flags) -Wl,-T $^ -o $@
-+      cmd_vdso64ld = $(CC) $(c_flags) -Wl,-T $(filter %.lds %.o,$^) -o $@
- quiet_cmd_vdso64as = VDSO64A $@
-       cmd_vdso64as = $(CC) $(a_flags) -c -o $@ $<
+ 	if (tb[IPSET_ATTR_CIDR2]) {
+ 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
+-		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
++		if (e.cidr[1] > HOST_MASK)
+ 			return -IPSET_ERR_INVALID_CIDR;
+ 	}
  
 -- 
 2.17.1
