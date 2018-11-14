@@ -7,78 +7,82 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A147FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 37281C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 60EFB2252B
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E816B22549
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ju34Wl1M"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60EFB2252B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhHwakyr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E816B22549
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389001AbeKOIaw (ORCPT
+        id S2389041AbeKOIa4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:30:52 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37996 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:30:56 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38076 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732655AbeKOIav (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:30:51 -0500
+        id S1732655AbeKOIay (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:30:54 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9CD542252F;
-        Wed, 14 Nov 2018 22:25:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 54DA322545;
+        Wed, 14 Nov 2018 22:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234346;
-        bh=NIGjxT8I3Juh8qNPvc9qDBPYlvypKuFzzw0hwHYYBYU=;
+        s=default; t=1542234350;
+        bh=TYgc+vINxx5uRm4PO94snNVUk1UjMNEI8GStsXEUM5U=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Ju34Wl1MDLQN71sWNnUzbItfP3mbVqM3RaGaiPRp4cnA+qzD+qGVmAXrcUkuOQLLJ
-         XiQgXLhT5/45F8aP3wXPRInkA3w5wpwfuq6J2hPJ1h2N98gzoo8PtICs5J1CKVV9Nq
-         e+Xaagp/4rQ11u1k4iL/9++OxO/J9x6JZRVwRepM=
+        b=PhHwakyrjrvwdKORql3WaYE13AudFqeaTx/3mYG1Zg4Beb/wyqnSnHiimMfNk4stq
+         qZsLmF2f7ygVg/Pwe6CbzAEzkYlGxzA6QjnYIw31UdzzUeBwysbrrWEQP5EEvVO0Ct
+         TIV7dce8VrMT6u5RY2HCTvub8hZJtcrvlituibe0=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Vignesh R <vigneshr@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
-        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 17/27] i2c: omap: Enable for ARCH_K3
-Date:   Wed, 14 Nov 2018 17:25:06 -0500
-Message-Id: <20181114222520.99926-17-sashal@kernel.org>
+Cc:     =?UTF-8?q?Micha=C5=82=20Miros=C5=82aw?= <mirq-linux@rere.qmqm.pl>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH AUTOSEL 4.14 21/27] ibmvnic: fix accelerated VLAN handling
+Date:   Wed, 14 Nov 2018 17:25:10 -0500
+Message-Id: <20181114222520.99926-21-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222520.99926-1-sashal@kernel.org>
 References: <20181114222520.99926-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Vignesh R <vigneshr@ti.com>
+From: Michał Mirosław <mirq-linux@rere.qmqm.pl>
 
-[ Upstream commit 5b277402deac0691226a947df71c581686bd4020 ]
+[ Upstream commit e84b47941e15e6666afb8ee8b21d1c3fc1a013af ]
 
-Allow I2C_OMAP to be built for K3 platforms.
+Don't request tag insertion when it isn't present in outgoing skb.
 
-Signed-off-by: Vignesh R <vigneshr@ti.com>
-Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+Signed-off-by: Michał Mirosław <mirq-linux@rere.qmqm.pl>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/Kconfig | 2 +-
+ drivers/net/ethernet/ibm/ibmvnic.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-index 45a3f3ca29b3..75ea367ffd83 100644
---- a/drivers/i2c/busses/Kconfig
-+++ b/drivers/i2c/busses/Kconfig
-@@ -759,7 +759,7 @@ config I2C_OCORES
+diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
+index 046af22a37cb..5c7134ccc1fd 100644
+--- a/drivers/net/ethernet/ibm/ibmvnic.c
++++ b/drivers/net/ethernet/ibm/ibmvnic.c
+@@ -1259,7 +1259,7 @@ static int ibmvnic_xmit(struct sk_buff *skb, struct net_device *netdev)
+ 	tx_crq.v1.sge_len = cpu_to_be32(skb->len);
+ 	tx_crq.v1.ioba = cpu_to_be64(data_dma_addr);
  
- config I2C_OMAP
- 	tristate "OMAP I2C adapter"
--	depends on ARCH_OMAP
-+	depends on ARCH_OMAP || ARCH_K3
- 	default y if MACH_OMAP_H3 || MACH_OMAP_OSK
- 	help
- 	  If you say yes to this option, support will be included for the
+-	if (adapter->vlan_header_insertion) {
++	if (adapter->vlan_header_insertion && skb_vlan_tag_present(skb)) {
+ 		tx_crq.v1.flags2 |= IBMVNIC_TX_VLAN_INSERT;
+ 		tx_crq.v1.vlan_id = cpu_to_be16(skb->vlan_tci);
+ 	}
 -- 
 2.17.1
 
