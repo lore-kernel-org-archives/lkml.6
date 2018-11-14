@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8648DC04EBC
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:46:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5C6BC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:46:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 438432145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:46:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 719F92145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:46:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="VSFpn8mg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 438432145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gxpbS+Lu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 719F92145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728701AbeKOIvZ (ORCPT
+        id S1728880AbeKOIve (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:51:25 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:51:34 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727033AbeKOI1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726758AbeKOI1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 03:27:14 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id D1B622251E;
+        by mail.kernel.org (Postfix) with ESMTPSA id 75ABC2251A;
         Wed, 14 Nov 2018 22:22:10 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542234130;
-        bh=MkQnv5Bgk/SpTgY0nQ3IRemhlkB8mD3tZZ67qw+DL00=;
+        bh=SEbdy5TgLMAGR/zNkjj63tbnvvH0bocc/mOe7CwlPgk=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=VSFpn8mgbJxCaHTlUraPyLKkNW/k4XNZIYZ/raNyLR4BkxotbPEpULTRb7WZqOIUa
-         ZLDbd260zwgA5HryooPX+kdfEIzvDBUkdfoUCa7UP4VAxmBYE3gi2+I2bczHqIlygs
-         DbXGbTHLQ/bQbwb61dFQahuY6VaCa9zBIaAw9xvY=
+        b=gxpbS+LulRhOGWvaOfZ90uvnPdsGrtgNCt4KKq7bakxWyHQKjKXdLUaalS5LXKIfD
+         Nl9/rRJ7jl+Op3nwKVnifXHf7aJYUK87wdpEbxzqXRRp+LqSKLuhY4aM3jjM2ooNhq
+         okUMdejfvKerwa3oq/im2Lhqq2Nb9gaAHy/s3cCQ=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stefano Brivio <sbrivio@redhat.com>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+Cc:     Pablo Neira Ayuso <pablo@netfilter.org>,
+        Laura Garcia Liebana <nevola@gmail.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 10/73] netfilter: ipset: list:set: Decrease refcount synchronously on deletion and replace
-Date:   Wed, 14 Nov 2018 17:21:04 -0500
-Message-Id: <20181114222207.98701-10-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 09/73] Revert "netfilter: nft_numgen: add map lookups for numgen random operations"
+Date:   Wed, 14 Nov 2018 17:21:03 -0500
+Message-Id: <20181114222207.98701-9-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -54,190 +53,249 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefano Brivio <sbrivio@redhat.com>
+From: Pablo Neira Ayuso <pablo@netfilter.org>
 
-[ Upstream commit 439cd39ea136d2c026805264d58a91f36b6b64ca ]
+[ Upstream commit 4269fea768a11a447d8de620ce420f2214d4685c ]
 
-Commit 45040978c899 ("netfilter: ipset: Fix set:list type crash
-when flush/dump set in parallel") postponed decreasing set
-reference counters to the RCU callback.
+Laura found a better way to do this from userspace without requiring
+kernel infrastructure, revert this.
 
-An 'ipset del' command can terminate before the RCU grace period
-is elapsed, and if sets are listed before then, the reference
-counter shown in userspace will be wrong:
-
- # ipset create h hash:ip; ipset create l list:set; ipset add l
- # ipset del l h; ipset list h
- Name: h
- Type: hash:ip
- Revision: 4
- Header: family inet hashsize 1024 maxelem 65536
- Size in memory: 88
- References: 1
- Number of entries: 0
- Members:
- # sleep 1; ipset list h
- Name: h
- Type: hash:ip
- Revision: 4
- Header: family inet hashsize 1024 maxelem 65536
- Size in memory: 88
- References: 0
- Number of entries: 0
- Members:
-
-Fix this by making the reference count update synchronous again.
-
-As a result, when sets are listed, ip_set_name_byindex() might
-now fetch a set whose reference count is already zero. Instead
-of relying on the reference count to protect against concurrent
-set renaming, grab ip_set_ref_lock as reader and copy the name,
-while holding the same lock in ip_set_rename() as writer
-instead.
-
-Reported-by: Li Shuang <shuali@redhat.com>
-Fixes: 45040978c899 ("netfilter: ipset: Fix set:list type crash when flush/dump set in parallel")
-Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Fixes: 978d8f9055c3 ("netfilter: nft_numgen: add map lookups for numgen random operations")
+Signed-off-by: Laura Garcia Liebana <nevola@gmail.com>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/netfilter/ipset/ip_set.h |  2 +-
- net/netfilter/ipset/ip_set_core.c      | 23 +++++++++++------------
- net/netfilter/ipset/ip_set_list_set.c  | 17 +++++++++++------
- 3 files changed, 23 insertions(+), 19 deletions(-)
+ include/uapi/linux/netfilter/nf_tables.h |   4 +-
+ net/netfilter/nft_numgen.c               | 127 -----------------------
+ 2 files changed, 2 insertions(+), 129 deletions(-)
 
-diff --git a/include/linux/netfilter/ipset/ip_set.h b/include/linux/netfilter/ipset/ip_set.h
-index 34fc80f3eb90..1d100efe74ec 100644
---- a/include/linux/netfilter/ipset/ip_set.h
-+++ b/include/linux/netfilter/ipset/ip_set.h
-@@ -314,7 +314,7 @@ enum {
- extern ip_set_id_t ip_set_get_byname(struct net *net,
- 				     const char *name, struct ip_set **set);
- extern void ip_set_put_byindex(struct net *net, ip_set_id_t index);
--extern const char *ip_set_name_byindex(struct net *net, ip_set_id_t index);
-+extern void ip_set_name_byindex(struct net *net, ip_set_id_t index, char *name);
- extern ip_set_id_t ip_set_nfnl_get_byindex(struct net *net, ip_set_id_t index);
- extern void ip_set_nfnl_put(struct net *net, ip_set_id_t index);
+diff --git a/include/uapi/linux/netfilter/nf_tables.h b/include/uapi/linux/netfilter/nf_tables.h
+index e23290ffdc77..325ec6ef0a76 100644
+--- a/include/uapi/linux/netfilter/nf_tables.h
++++ b/include/uapi/linux/netfilter/nf_tables.h
+@@ -1581,8 +1581,8 @@ enum nft_ng_attributes {
+ 	NFTA_NG_MODULUS,
+ 	NFTA_NG_TYPE,
+ 	NFTA_NG_OFFSET,
+-	NFTA_NG_SET_NAME,
+-	NFTA_NG_SET_ID,
++	NFTA_NG_SET_NAME,	/* deprecated */
++	NFTA_NG_SET_ID,		/* deprecated */
+ 	__NFTA_NG_MAX
+ };
+ #define NFTA_NG_MAX	(__NFTA_NG_MAX - 1)
+diff --git a/net/netfilter/nft_numgen.c b/net/netfilter/nft_numgen.c
+index 649d1700ec5b..3cc1b3dc3c3c 100644
+--- a/net/netfilter/nft_numgen.c
++++ b/net/netfilter/nft_numgen.c
+@@ -24,7 +24,6 @@ struct nft_ng_inc {
+ 	u32			modulus;
+ 	atomic_t		counter;
+ 	u32			offset;
+-	struct nft_set		*map;
+ };
  
-diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
-index bc4bd247bb7d..fa15a831aeee 100644
---- a/net/netfilter/ipset/ip_set_core.c
-+++ b/net/netfilter/ipset/ip_set_core.c
-@@ -693,21 +693,20 @@ ip_set_put_byindex(struct net *net, ip_set_id_t index)
- EXPORT_SYMBOL_GPL(ip_set_put_byindex);
+ static u32 nft_ng_inc_gen(struct nft_ng_inc *priv)
+@@ -48,34 +47,11 @@ static void nft_ng_inc_eval(const struct nft_expr *expr,
+ 	regs->data[priv->dreg] = nft_ng_inc_gen(priv);
+ }
  
- /* Get the name of a set behind a set index.
-- * We assume the set is referenced, so it does exist and
-- * can't be destroyed. The set cannot be renamed due to
-- * the referencing either.
-- *
-+ * Set itself is protected by RCU, but its name isn't: to protect against
-+ * renaming, grab ip_set_ref_lock as reader (see ip_set_rename()) and copy the
-+ * name.
-  */
--const char *
--ip_set_name_byindex(struct net *net, ip_set_id_t index)
-+void
-+ip_set_name_byindex(struct net *net, ip_set_id_t index, char *name)
+-static void nft_ng_inc_map_eval(const struct nft_expr *expr,
+-				struct nft_regs *regs,
+-				const struct nft_pktinfo *pkt)
+-{
+-	struct nft_ng_inc *priv = nft_expr_priv(expr);
+-	const struct nft_set *map = priv->map;
+-	const struct nft_set_ext *ext;
+-	u32 result;
+-	bool found;
+-
+-	result = nft_ng_inc_gen(priv);
+-	found = map->ops->lookup(nft_net(pkt), map, &result, &ext);
+-
+-	if (!found)
+-		return;
+-
+-	nft_data_copy(&regs->data[priv->dreg],
+-		      nft_set_ext_data(ext), map->dlen);
+-}
+-
+ static const struct nla_policy nft_ng_policy[NFTA_NG_MAX + 1] = {
+ 	[NFTA_NG_DREG]		= { .type = NLA_U32 },
+ 	[NFTA_NG_MODULUS]	= { .type = NLA_U32 },
+ 	[NFTA_NG_TYPE]		= { .type = NLA_U32 },
+ 	[NFTA_NG_OFFSET]	= { .type = NLA_U32 },
+-	[NFTA_NG_SET_NAME]	= { .type = NLA_STRING,
+-				    .len = NFT_SET_MAXNAMELEN - 1 },
+-	[NFTA_NG_SET_ID]	= { .type = NLA_U32 },
+ };
+ 
+ static int nft_ng_inc_init(const struct nft_ctx *ctx,
+@@ -101,22 +77,6 @@ static int nft_ng_inc_init(const struct nft_ctx *ctx,
+ 					   NFT_DATA_VALUE, sizeof(u32));
+ }
+ 
+-static int nft_ng_inc_map_init(const struct nft_ctx *ctx,
+-			       const struct nft_expr *expr,
+-			       const struct nlattr * const tb[])
+-{
+-	struct nft_ng_inc *priv = nft_expr_priv(expr);
+-	u8 genmask = nft_genmask_next(ctx->net);
+-
+-	nft_ng_inc_init(ctx, expr, tb);
+-
+-	priv->map = nft_set_lookup_global(ctx->net, ctx->table,
+-					  tb[NFTA_NG_SET_NAME],
+-					  tb[NFTA_NG_SET_ID], genmask);
+-
+-	return PTR_ERR_OR_ZERO(priv->map);
+-}
+-
+ static int nft_ng_dump(struct sk_buff *skb, enum nft_registers dreg,
+ 		       u32 modulus, enum nft_ng_types type, u32 offset)
  {
--	const struct ip_set *set = ip_set_rcu_get(net, index);
-+	struct ip_set *set = ip_set_rcu_get(net, index);
- 
- 	BUG_ON(!set);
--	BUG_ON(set->ref == 0);
- 
--	/* Referenced, so it's safe */
--	return set->name;
-+	read_lock_bh(&ip_set_ref_lock);
-+	strncpy(name, set->name, IPSET_MAXNAMELEN);
-+	read_unlock_bh(&ip_set_ref_lock);
- }
- EXPORT_SYMBOL_GPL(ip_set_name_byindex);
- 
-@@ -1153,7 +1152,7 @@ static int ip_set_rename(struct net *net, struct sock *ctnl,
- 	if (!set)
- 		return -ENOENT;
- 
--	read_lock_bh(&ip_set_ref_lock);
-+	write_lock_bh(&ip_set_ref_lock);
- 	if (set->ref != 0) {
- 		ret = -IPSET_ERR_REFERENCED;
- 		goto out;
-@@ -1170,7 +1169,7 @@ static int ip_set_rename(struct net *net, struct sock *ctnl,
- 	strncpy(set->name, name2, IPSET_MAXNAMELEN);
- 
- out:
--	read_unlock_bh(&ip_set_ref_lock);
-+	write_unlock_bh(&ip_set_ref_lock);
- 	return ret;
+@@ -143,27 +103,10 @@ static int nft_ng_inc_dump(struct sk_buff *skb, const struct nft_expr *expr)
+ 			   priv->offset);
  }
  
-diff --git a/net/netfilter/ipset/ip_set_list_set.c b/net/netfilter/ipset/ip_set_list_set.c
-index 072a658fde04..4eef55da0878 100644
---- a/net/netfilter/ipset/ip_set_list_set.c
-+++ b/net/netfilter/ipset/ip_set_list_set.c
-@@ -148,9 +148,7 @@ __list_set_del_rcu(struct rcu_head * rcu)
+-static int nft_ng_inc_map_dump(struct sk_buff *skb,
+-			       const struct nft_expr *expr)
+-{
+-	const struct nft_ng_inc *priv = nft_expr_priv(expr);
+-
+-	if (nft_ng_dump(skb, priv->dreg, priv->modulus,
+-			NFT_NG_INCREMENTAL, priv->offset) ||
+-	    nla_put_string(skb, NFTA_NG_SET_NAME, priv->map->name))
+-		goto nla_put_failure;
+-
+-	return 0;
+-
+-nla_put_failure:
+-	return -1;
+-}
+-
+ struct nft_ng_random {
+ 	enum nft_registers      dreg:8;
+ 	u32			modulus;
+ 	u32			offset;
+-	struct nft_set		*map;
+ };
+ 
+ static u32 nft_ng_random_gen(struct nft_ng_random *priv)
+@@ -183,25 +126,6 @@ static void nft_ng_random_eval(const struct nft_expr *expr,
+ 	regs->data[priv->dreg] = nft_ng_random_gen(priv);
+ }
+ 
+-static void nft_ng_random_map_eval(const struct nft_expr *expr,
+-				   struct nft_regs *regs,
+-				   const struct nft_pktinfo *pkt)
+-{
+-	struct nft_ng_random *priv = nft_expr_priv(expr);
+-	const struct nft_set *map = priv->map;
+-	const struct nft_set_ext *ext;
+-	u32 result;
+-	bool found;
+-
+-	result = nft_ng_random_gen(priv);
+-	found = map->ops->lookup(nft_net(pkt), map, &result, &ext);
+-	if (!found)
+-		return;
+-
+-	nft_data_copy(&regs->data[priv->dreg],
+-		      nft_set_ext_data(ext), map->dlen);
+-}
+-
+ static int nft_ng_random_init(const struct nft_ctx *ctx,
+ 			      const struct nft_expr *expr,
+ 			      const struct nlattr * const tb[])
+@@ -226,21 +150,6 @@ static int nft_ng_random_init(const struct nft_ctx *ctx,
+ 					   NFT_DATA_VALUE, sizeof(u32));
+ }
+ 
+-static int nft_ng_random_map_init(const struct nft_ctx *ctx,
+-				  const struct nft_expr *expr,
+-				  const struct nlattr * const tb[])
+-{
+-	struct nft_ng_random *priv = nft_expr_priv(expr);
+-	u8 genmask = nft_genmask_next(ctx->net);
+-
+-	nft_ng_random_init(ctx, expr, tb);
+-	priv->map = nft_set_lookup_global(ctx->net, ctx->table,
+-					  tb[NFTA_NG_SET_NAME],
+-					  tb[NFTA_NG_SET_ID], genmask);
+-
+-	return PTR_ERR_OR_ZERO(priv->map);
+-}
+-
+ static int nft_ng_random_dump(struct sk_buff *skb, const struct nft_expr *expr)
  {
- 	struct set_elem *e = container_of(rcu, struct set_elem, rcu);
- 	struct ip_set *set = e->set;
--	struct list_set *map = set->data;
- 
--	ip_set_put_byindex(map->net, e->id);
- 	ip_set_ext_destroy(set, e);
- 	kfree(e);
+ 	const struct nft_ng_random *priv = nft_expr_priv(expr);
+@@ -249,22 +158,6 @@ static int nft_ng_random_dump(struct sk_buff *skb, const struct nft_expr *expr)
+ 			   priv->offset);
  }
-@@ -158,15 +156,21 @@ __list_set_del_rcu(struct rcu_head * rcu)
- static inline void
- list_set_del(struct ip_set *set, struct set_elem *e)
+ 
+-static int nft_ng_random_map_dump(struct sk_buff *skb,
+-				  const struct nft_expr *expr)
+-{
+-	const struct nft_ng_random *priv = nft_expr_priv(expr);
+-
+-	if (nft_ng_dump(skb, priv->dreg, priv->modulus,
+-			NFT_NG_RANDOM, priv->offset) ||
+-	    nla_put_string(skb, NFTA_NG_SET_NAME, priv->map->name))
+-		goto nla_put_failure;
+-
+-	return 0;
+-
+-nla_put_failure:
+-	return -1;
+-}
+-
+ static struct nft_expr_type nft_ng_type;
+ static const struct nft_expr_ops nft_ng_inc_ops = {
+ 	.type		= &nft_ng_type,
+@@ -274,14 +167,6 @@ static const struct nft_expr_ops nft_ng_inc_ops = {
+ 	.dump		= nft_ng_inc_dump,
+ };
+ 
+-static const struct nft_expr_ops nft_ng_inc_map_ops = {
+-	.type		= &nft_ng_type,
+-	.size		= NFT_EXPR_SIZE(sizeof(struct nft_ng_inc)),
+-	.eval		= nft_ng_inc_map_eval,
+-	.init		= nft_ng_inc_map_init,
+-	.dump		= nft_ng_inc_map_dump,
+-};
+-
+ static const struct nft_expr_ops nft_ng_random_ops = {
+ 	.type		= &nft_ng_type,
+ 	.size		= NFT_EXPR_SIZE(sizeof(struct nft_ng_random)),
+@@ -290,14 +175,6 @@ static const struct nft_expr_ops nft_ng_random_ops = {
+ 	.dump		= nft_ng_random_dump,
+ };
+ 
+-static const struct nft_expr_ops nft_ng_random_map_ops = {
+-	.type		= &nft_ng_type,
+-	.size		= NFT_EXPR_SIZE(sizeof(struct nft_ng_random)),
+-	.eval		= nft_ng_random_map_eval,
+-	.init		= nft_ng_random_map_init,
+-	.dump		= nft_ng_random_map_dump,
+-};
+-
+ static const struct nft_expr_ops *
+ nft_ng_select_ops(const struct nft_ctx *ctx, const struct nlattr * const tb[])
  {
-+	struct list_set *map = set->data;
-+
- 	set->elements--;
- 	list_del_rcu(&e->list);
-+	ip_set_put_byindex(map->net, e->id);
- 	call_rcu(&e->rcu, __list_set_del_rcu);
- }
+@@ -312,12 +189,8 @@ nft_ng_select_ops(const struct nft_ctx *ctx, const struct nlattr * const tb[])
  
- static inline void
--list_set_replace(struct set_elem *e, struct set_elem *old)
-+list_set_replace(struct ip_set *set, struct set_elem *e, struct set_elem *old)
- {
-+	struct list_set *map = set->data;
-+
- 	list_replace_rcu(&old->list, &e->list);
-+	ip_set_put_byindex(map->net, old->id);
- 	call_rcu(&old->rcu, __list_set_del_rcu);
- }
+ 	switch (type) {
+ 	case NFT_NG_INCREMENTAL:
+-		if (tb[NFTA_NG_SET_NAME])
+-			return &nft_ng_inc_map_ops;
+ 		return &nft_ng_inc_ops;
+ 	case NFT_NG_RANDOM:
+-		if (tb[NFTA_NG_SET_NAME])
+-			return &nft_ng_random_map_ops;
+ 		return &nft_ng_random_ops;
+ 	}
  
-@@ -298,7 +302,7 @@ list_set_uadd(struct ip_set *set, void *value, const struct ip_set_ext *ext,
- 	INIT_LIST_HEAD(&e->list);
- 	list_set_init_extensions(set, ext, e);
- 	if (n)
--		list_set_replace(e, n);
-+		list_set_replace(set, e, n);
- 	else if (next)
- 		list_add_tail_rcu(&e->list, &next->list);
- 	else if (prev)
-@@ -486,6 +490,7 @@ list_set_list(const struct ip_set *set,
- 	const struct list_set *map = set->data;
- 	struct nlattr *atd, *nested;
- 	u32 i = 0, first = cb->args[IPSET_CB_ARG0];
-+	char name[IPSET_MAXNAMELEN];
- 	struct set_elem *e;
- 	int ret = 0;
- 
-@@ -504,8 +509,8 @@ list_set_list(const struct ip_set *set,
- 		nested = ipset_nest_start(skb, IPSET_ATTR_DATA);
- 		if (!nested)
- 			goto nla_put_failure;
--		if (nla_put_string(skb, IPSET_ATTR_NAME,
--				   ip_set_name_byindex(map->net, e->id)))
-+		ip_set_name_byindex(map->net, e->id, name);
-+		if (nla_put_string(skb, IPSET_ATTR_NAME, name))
- 			goto nla_put_failure;
- 		if (ip_set_put_extensions(skb, set, e, true))
- 			goto nla_put_failure;
 -- 
 2.17.1
 
