@@ -4,50 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 332DCC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114FBC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EFC8422523
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B254F2252A
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfVJ9JXW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFC8422523
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K5b6YvkI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B254F2252A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388022AbeKOI3D (ORCPT
+        id S2388051AbeKOI3L (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:29:03 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35908 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:29:11 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35978 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387992AbeKOI3C (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:29:02 -0500
+        id S1726169AbeKOI3J (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:29:09 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 392C422521;
-        Wed, 14 Nov 2018 22:23:57 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 509B622523;
+        Wed, 14 Nov 2018 22:24:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234237;
-        bh=RYhWnVqHC3Gb9VSlNOvcS74z8kzSHDHn8ijT4HCuA3k=;
+        s=default; t=1542234245;
+        bh=q6jVL8WDWM+vfR1uGUfPYvjO6H+/r0sOMkjRsFgyH4w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=MfVJ9JXWbKdfkYHpxty705I7SuUXcEC6hDQCst2xypocg8Uhy0CNWhbiliVsMUag6
-         oslO1gkqef5ocnwNcexPWk2i/ba2XQZpcvr9N122PaV59cmEl7Y0ejmO+0n6IQ3MBH
-         cLV4RBGEIheFfgEjjLJjErNLvg4LuIqUAThe+bAI=
+        b=K5b6YvkI3gFHaRcG3vKOsuj0hWYtkAeVFInkj4fJFbHcX9jOx4aik0f0VrSAKZyix
+         RqIkJQk5yI2mr8LeXoOhyIZykrAEf6uUe9PHhKQd3igQh+m1l7PGkg0cyoLB113D4I
+         XeCpK53MkLwV9ZOqBYA7CbEMBtVmnKvDNbNwuc4w=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
-        Sasha Levin <sashal@kernel.org>,
-        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
-        netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 07/59] netfilter: ipset: fix ip_set_list allocation failure
-Date:   Wed, 14 Nov 2018 17:22:39 -0500
-Message-Id: <20181114222335.99339-7-sashal@kernel.org>
+Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org,
+        linux-arch@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH AUTOSEL 4.18 08/59] s390/mm: fix mis-accounting of pgtable_bytes
+Date:   Wed, 14 Nov 2018 17:22:40 -0500
+Message-Id: <20181114222335.99339-8-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -56,84 +52,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Andrey Ryabinin <aryabinin@virtuozzo.com>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit ed956f3947a01ff9875cd908d7c1ef1fe7f47bf0 ]
+[ Upstream commit e12e4044aede97974f2222eb7f0ed726a5179a32 ]
 
-ip_set_create() and ip_set_net_init() attempt to allocate physically
-contiguous memory for ip_set_list. If memory is fragmented, the
-allocations could easily fail:
+In case a fork or a clone system fails in copy_process and the error
+handling does the mmput() at the bad_fork_cleanup_mm label, the
+following warning messages will appear on the console:
 
-        vzctl: page allocation failure: order:7, mode:0xc0d0
+  BUG: non-zero pgtables_bytes on freeing mm: 16384
 
-        Call Trace:
-         dump_stack+0x19/0x1b
-         warn_alloc_failed+0x110/0x180
-         __alloc_pages_nodemask+0x7bf/0xc60
-         alloc_pages_current+0x98/0x110
-         kmalloc_order+0x18/0x40
-         kmalloc_order_trace+0x26/0xa0
-         __kmalloc+0x279/0x290
-         ip_set_net_init+0x4b/0x90 [ip_set]
-         ops_init+0x3b/0xb0
-         setup_net+0xbb/0x170
-         copy_net_ns+0xf1/0x1c0
-         create_new_namespaces+0xf9/0x180
-         copy_namespaces+0x8e/0xd0
-         copy_process+0xb61/0x1a00
-         do_fork+0x91/0x320
+The reason for that is the tricks we play with mm_inc_nr_puds() and
+mm_inc_nr_pmds() in init_new_context().
 
-Use kvcalloc() to fallback to 0-order allocations if high order
-page isn't available.
+A normal 64-bit process has 3 levels of page table, the p4d level and
+the pud level are folded. On process termination the free_pud_range()
+function in mm/memory.c will subtract 16KB from pgtable_bytes with a
+mm_dec_nr_puds() call, but there actually is not really a pud table.
 
-Signed-off-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+One issue with this is the fact that pgtable_bytes is usually off
+by a few kilobytes, but the more severe problem is that for a failed
+fork or clone the free_pgtables() function is not called. In this case
+there is no mm_dec_nr_puds() or mm_dec_nr_pmds() that go together with
+the mm_inc_nr_puds() and mm_inc_nr_pmds in init_new_context().
+The pgtable_bytes will be off by 16384 or 32768 bytes and we get the
+BUG message. The message itself is purely cosmetic, but annoying.
+
+To fix this override the mm_pmd_folded, mm_pud_folded and mm_p4d_folded
+function to check for the true size of the address space.
+
+Reported-by: Li Wang <liwang@redhat.com>
+Tested-by: Li Wang <liwang@redhat.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipset/ip_set_core.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ arch/s390/include/asm/mmu_context.h |  5 -----
+ arch/s390/include/asm/pgalloc.h     |  6 +++---
+ arch/s390/include/asm/pgtable.h     | 18 ++++++++++++++++++
+ arch/s390/include/asm/tlb.h         |  6 +++---
+ arch/s390/mm/pgalloc.c              |  1 +
+ 5 files changed, 25 insertions(+), 11 deletions(-)
 
-diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
-index fa15a831aeee..68db946df151 100644
---- a/net/netfilter/ipset/ip_set_core.c
-+++ b/net/netfilter/ipset/ip_set_core.c
-@@ -960,7 +960,7 @@ static int ip_set_create(struct net *net, struct sock *ctnl,
- 			/* Wraparound */
- 			goto cleanup;
- 
--		list = kcalloc(i, sizeof(struct ip_set *), GFP_KERNEL);
-+		list = kvcalloc(i, sizeof(struct ip_set *), GFP_KERNEL);
- 		if (!list)
- 			goto cleanup;
- 		/* nfnl mutex is held, both lists are valid */
-@@ -972,7 +972,7 @@ static int ip_set_create(struct net *net, struct sock *ctnl,
- 		/* Use new list */
- 		index = inst->ip_set_max;
- 		inst->ip_set_max = i;
--		kfree(tmp);
-+		kvfree(tmp);
- 		ret = 0;
- 	} else if (ret) {
- 		goto cleanup;
-@@ -2058,7 +2058,7 @@ ip_set_net_init(struct net *net)
- 	if (inst->ip_set_max >= IPSET_INVALID_ID)
- 		inst->ip_set_max = IPSET_INVALID_ID - 1;
- 
--	list = kcalloc(inst->ip_set_max, sizeof(struct ip_set *), GFP_KERNEL);
-+	list = kvcalloc(inst->ip_set_max, sizeof(struct ip_set *), GFP_KERNEL);
- 	if (!list)
- 		return -ENOMEM;
- 	inst->is_deleted = false;
-@@ -2086,7 +2086,7 @@ ip_set_net_exit(struct net *net)
- 		}
+diff --git a/arch/s390/include/asm/mmu_context.h b/arch/s390/include/asm/mmu_context.h
+index d16bc79c30bb..02331ce22bf4 100644
+--- a/arch/s390/include/asm/mmu_context.h
++++ b/arch/s390/include/asm/mmu_context.h
+@@ -44,8 +44,6 @@ static inline int init_new_context(struct task_struct *tsk,
+ 		mm->context.asce_limit = STACK_TOP_MAX;
+ 		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+ 				   _ASCE_USER_BITS | _ASCE_TYPE_REGION3;
+-		/* pgd_alloc() did not account this pud */
+-		mm_inc_nr_puds(mm);
+ 		break;
+ 	case -PAGE_SIZE:
+ 		/* forked 5-level task, set new asce with new_mm->pgd */
+@@ -61,9 +59,6 @@ static inline int init_new_context(struct task_struct *tsk,
+ 		/* forked 2-level compat task, set new asce with new mm->pgd */
+ 		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+ 				   _ASCE_USER_BITS | _ASCE_TYPE_SEGMENT;
+-		/* pgd_alloc() did not account this pmd */
+-		mm_inc_nr_pmds(mm);
+-		mm_inc_nr_puds(mm);
  	}
- 	nfnl_unlock(NFNL_SUBSYS_IPSET);
--	kfree(rcu_dereference_protected(inst->ip_set_list, 1));
-+	kvfree(rcu_dereference_protected(inst->ip_set_list, 1));
- }
+ 	crst_table_init((unsigned long *) mm->pgd, pgd_entry_type(mm));
+ 	return 0;
+diff --git a/arch/s390/include/asm/pgalloc.h b/arch/s390/include/asm/pgalloc.h
+index f0f9bcf94c03..5ee733720a57 100644
+--- a/arch/s390/include/asm/pgalloc.h
++++ b/arch/s390/include/asm/pgalloc.h
+@@ -36,11 +36,11 @@ static inline void crst_table_init(unsigned long *crst, unsigned long entry)
  
- static struct pernet_operations ip_set_net_ops = {
+ static inline unsigned long pgd_entry_type(struct mm_struct *mm)
+ {
+-	if (mm->context.asce_limit <= _REGION3_SIZE)
++	if (mm_pmd_folded(mm))
+ 		return _SEGMENT_ENTRY_EMPTY;
+-	if (mm->context.asce_limit <= _REGION2_SIZE)
++	if (mm_pud_folded(mm))
+ 		return _REGION3_ENTRY_EMPTY;
+-	if (mm->context.asce_limit <= _REGION1_SIZE)
++	if (mm_p4d_folded(mm))
+ 		return _REGION2_ENTRY_EMPTY;
+ 	return _REGION1_ENTRY_EMPTY;
+ }
+diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+index 5ab636089c60..960cf51e9d43 100644
+--- a/arch/s390/include/asm/pgtable.h
++++ b/arch/s390/include/asm/pgtable.h
+@@ -483,6 +483,24 @@ static inline int is_module_addr(void *addr)
+ 				   _REGION_ENTRY_PROTECT | \
+ 				   _REGION_ENTRY_NOEXEC)
+ 
++static inline bool mm_p4d_folded(struct mm_struct *mm)
++{
++	return mm->context.asce_limit <= _REGION1_SIZE;
++}
++#define mm_p4d_folded(mm) mm_p4d_folded(mm)
++
++static inline bool mm_pud_folded(struct mm_struct *mm)
++{
++	return mm->context.asce_limit <= _REGION2_SIZE;
++}
++#define mm_pud_folded(mm) mm_pud_folded(mm)
++
++static inline bool mm_pmd_folded(struct mm_struct *mm)
++{
++	return mm->context.asce_limit <= _REGION3_SIZE;
++}
++#define mm_pmd_folded(mm) mm_pmd_folded(mm)
++
+ static inline int mm_has_pgste(struct mm_struct *mm)
+ {
+ #ifdef CONFIG_PGSTE
+diff --git a/arch/s390/include/asm/tlb.h b/arch/s390/include/asm/tlb.h
+index 457b7ba0fbb6..b31c779cf581 100644
+--- a/arch/s390/include/asm/tlb.h
++++ b/arch/s390/include/asm/tlb.h
+@@ -136,7 +136,7 @@ static inline void pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
+ static inline void pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
+ 				unsigned long address)
+ {
+-	if (tlb->mm->context.asce_limit <= _REGION3_SIZE)
++	if (mm_pmd_folded(tlb->mm))
+ 		return;
+ 	pgtable_pmd_page_dtor(virt_to_page(pmd));
+ 	tlb_remove_table(tlb, pmd);
+@@ -152,7 +152,7 @@ static inline void pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
+ static inline void p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d,
+ 				unsigned long address)
+ {
+-	if (tlb->mm->context.asce_limit <= _REGION1_SIZE)
++	if (mm_p4d_folded(tlb->mm))
+ 		return;
+ 	tlb_remove_table(tlb, p4d);
+ }
+@@ -167,7 +167,7 @@ static inline void p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d,
+ static inline void pud_free_tlb(struct mmu_gather *tlb, pud_t *pud,
+ 				unsigned long address)
+ {
+-	if (tlb->mm->context.asce_limit <= _REGION2_SIZE)
++	if (mm_pud_folded(tlb->mm))
+ 		return;
+ 	tlb_remove_table(tlb, pud);
+ }
+diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
+index 76d89ee8b428..814f26520aa2 100644
+--- a/arch/s390/mm/pgalloc.c
++++ b/arch/s390/mm/pgalloc.c
+@@ -101,6 +101,7 @@ int crst_table_upgrade(struct mm_struct *mm, unsigned long end)
+ 			mm->context.asce_limit = _REGION1_SIZE;
+ 			mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+ 				_ASCE_USER_BITS | _ASCE_TYPE_REGION2;
++			mm_inc_nr_puds(mm);
+ 		} else {
+ 			crst_table_init(table, _REGION1_ENTRY_EMPTY);
+ 			pgd_populate(mm, (pgd_t *) table, (p4d_t *) pgd);
 -- 
 2.17.1
 
