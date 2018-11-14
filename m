@@ -7,57 +7,57 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C46DEC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:46:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 396DBC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:46:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E4C722511
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:46:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F3D50223DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:46:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="We5DQDDr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E4C722511
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="G1O35tlN"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D50223DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732374AbeKNSsd (ORCPT
+        id S1732275AbeKNSsa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 13:48:33 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:38874 "EHLO
+        Wed, 14 Nov 2018 13:48:30 -0500
+Received: from aserp2120.oracle.com ([141.146.126.78]:38826 "EHLO
         aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732150AbeKNSsc (ORCPT
+        with ESMTP id S1732156AbeKNSsa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 13:48:32 -0500
+        Wed, 14 Nov 2018 13:48:30 -0500
 Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAE8hxOk089052;
-        Wed, 14 Nov 2018 08:46:12 GMT
+        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAE8ho6e088992;
+        Wed, 14 Nov 2018 08:46:10 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
  subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=2kpgH3uGPuhpX7ndqfQ+P4DE4uncydkuu2AhXgfQn8w=;
- b=We5DQDDrwKOliVQUrhBJLi01EZy1ipENaEBcby7EB5lRphWT6Z9jxOOjnkliIbeEu3Ln
- cCEXI7+UJoZ3+MxWTakVBDv0ludGLp2qZ1RwH4RfuVsZdHWfLA+06Y9jMqN88bY4+Y+D
- ERI6mNH1CtEYY8lNMFRk1Vdq2FESmuwVEihCqvcMK18KOGgRVWAXq/eM3rgMz7/jflc5
- 9orefFxFGYW/SVdIhfy49kTa8MnE9badOJSO+KM5+6vazUTgrYm2TcuXTyrXwc64h1T0
- +h+Gx9voOU8fl+JNZ+afaYva75Y3tHgyzqxwNYoqltEJqSJblhIdr4CfBaHVzn7CpHNB ew== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by aserp2120.oracle.com with ESMTP id 2nr7cs1vt1-1
+ bh=KjtFBzl48kWHUaiGs45dIZaVO/sEyPqGFzaPjx5bZbs=;
+ b=G1O35tlNYi/1JO0QydAdqGAp0EpezPPjLG6qGsJW+DQNaOSCuD/k/469TV/QPxxqIRSz
+ wQZB3kifJQq5Vyoz02u0R9s3a7EKUSwQg57xF33aD8M+YktRP0LfNCnL9b7F47Xl/ze7
+ AMOXw6jifL4rhPjAUwGS2dwKaYP52rTk98G55tqdG8qrU6kvCunSsNaQwXX2op5ctfg6
+ TfEEAy+KFew4Baq+b0w+o4Wp3Jyz03sEGnU2XhwC6xfudZeUKCAk6ZZ4sQRj13pVgLEr
+ nm1aGsrPJxPxvjRZ9IJtPfjsk/ZDM+psDcLHfAIAkx9XNzEBreJE3FBmKmbmsoRCgP02 sA== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by aserp2120.oracle.com with ESMTP id 2nr7cs1vsk-1
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Nov 2018 08:46:12 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAE8k6sJ010967
+        Wed, 14 Nov 2018 08:46:10 +0000
+Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAE8k45e029574
         (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Nov 2018 08:46:07 GMT
+        Wed, 14 Nov 2018 08:46:04 GMT
 Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAE8k6Ye011600;
-        Wed, 14 Nov 2018 08:46:06 GMT
+        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAE8k3Zh025044;
+        Wed, 14 Nov 2018 08:46:03 GMT
 Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
         by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 14 Nov 2018 00:46:05 -0800
+        with ESMTP ; Wed, 14 Nov 2018 00:46:03 -0800
 From:   Jianchao Wang <jianchao.w.wang@oracle.com>
 To:     axboe@kernel.dk
 Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH V7 2/4] blk-mq: fix issue directly case when q is stopped or quiesced
-Date:   Wed, 14 Nov 2018 16:45:29 +0800
-Message-Id: <1542185131-15029-3-git-send-email-jianchao.w.wang@oracle.com>
+Subject: [PATCH V7 1/4] blk-mq: refactor the code of issue request directly
+Date:   Wed, 14 Nov 2018 16:45:28 +0800
+Message-Id: <1542185131-15029-2-git-send-email-jianchao.w.wang@oracle.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542185131-15029-1-git-send-email-jianchao.w.wang@oracle.com>
 References: <1542185131-15029-1-git-send-email-jianchao.w.wang@oracle.com>
@@ -71,54 +71,160 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When try to issue request directly, if the queue is stopped or
-quiesced, 'bypass' will be ignored and return BLK_STS_OK to caller
-to avoid it dispatch request again. Then the request will be
-inserted with blk_mq_sched_insert_request. This is not correct
-for dm-rq case where we should avoid to pass through the underlying
-path's io scheduler.
-
-To fix it, use blk_mq_request_bypass_insert to insert the request
-to hctx->dispatch when we cannot pass through io scheduler but have
-to insert.
+Merge blk_mq_try_issue_directly and __blk_mq_try_issue_directly
+into one interface to unify the interfaces to issue requests
+directly. The merged interface takes over the requests totally,
+it could insert, end or do nothing based on the return value of
+.queue_rq and 'bypass' parameter. Then caller needn't any other
+handling any more.
 
 Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
 ---
- block/blk-mq.c | 7 +++++--
- 1 file changed, 5 insertions(+), 2 deletions(-)
+ block/blk-mq.c | 93 ++++++++++++++++++++++++++++------------------------------
+ 1 file changed, 45 insertions(+), 48 deletions(-)
 
 diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 14b4d06..11c52bb 100644
+index 411be60..14b4d06 100644
 --- a/block/blk-mq.c
 +++ b/block/blk-mq.c
-@@ -1772,7 +1772,7 @@ static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
- 						bool bypass)
+@@ -1766,78 +1766,75 @@ static blk_status_t __blk_mq_issue_directly(struct blk_mq_hw_ctx *hctx,
+ 	return ret;
+ }
+ 
+-static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
++static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+ 						struct request *rq,
+ 						blk_qc_t *cookie,
+-						bool bypass_insert)
++						bool bypass)
  {
  	struct request_queue *q = rq->q;
--	bool run_queue = true;
-+	bool run_queue = true, force = false;
- 	blk_status_t ret = BLK_STS_RESOURCE;
- 	int srcu_idx;
+ 	bool run_queue = true;
++	blk_status_t ret = BLK_STS_RESOURCE;
++	int srcu_idx;
  
-@@ -1786,7 +1786,7 @@ static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
++	hctx_lock(hctx, &srcu_idx);
+ 	/*
+-	 * RCU or SRCU read lock is needed before checking quiesced flag.
++	 * hctx_lock is needed before checking quiesced flag.
+ 	 *
+-	 * When queue is stopped or quiesced, ignore 'bypass_insert' from
+-	 * blk_mq_request_issue_directly(), and return BLK_STS_OK to caller,
+-	 * and avoid driver to try to dispatch again.
++	 * When queue is stopped or quiesced, ignore 'bypass', insert
++	 * and return BLK_STS_OK to caller, and avoid driver to try to
++	 * dispatch again.
  	 */
- 	if (unlikely(blk_mq_hctx_stopped(hctx) || blk_queue_quiesced(q))) {
+-	if (blk_mq_hctx_stopped(hctx) || blk_queue_quiesced(q)) {
++	if (unlikely(blk_mq_hctx_stopped(hctx) || blk_queue_quiesced(q))) {
  		run_queue = false;
--		bypass = false;
-+		force = true;
- 		goto out_unlock;
+-		bypass_insert = false;
+-		goto insert;
++		bypass = false;
++		goto out_unlock;
  	}
  
-@@ -1817,6 +1817,9 @@ static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
- 		if (!bypass) {
- 			blk_mq_sched_insert_request(rq, false, run_queue, false);
- 			ret = BLK_STS_OK;
-+		} else if (force) {
-+			blk_mq_request_bypass_insert(rq, run_queue);
+-	if (q->elevator && !bypass_insert)
+-		goto insert;
++	/*
++	 * Bypass the potential scheduler on the bottom device.
++	 */
++	if (unlikely(q->elevator && !bypass))
++		goto out_unlock;
+ 
+-	if (!blk_mq_get_dispatch_budget(hctx))
+-		goto insert;
++	if (unlikely(!blk_mq_get_dispatch_budget(hctx)))
++		goto out_unlock;
+ 
+-	if (!blk_mq_get_driver_tag(rq)) {
++	if (unlikely(!blk_mq_get_driver_tag(rq))) {
+ 		blk_mq_put_dispatch_budget(hctx);
+-		goto insert;
++		goto out_unlock;
+ 	}
+ 
+-	return __blk_mq_issue_directly(hctx, rq, cookie);
+-insert:
+-	if (bypass_insert)
+-		return BLK_STS_RESOURCE;
+-
+-	blk_mq_sched_insert_request(rq, false, run_queue, false);
+-	return BLK_STS_OK;
+-}
+-
+-static void blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
+-		struct request *rq, blk_qc_t *cookie)
+-{
+-	blk_status_t ret;
+-	int srcu_idx;
+-
+-	might_sleep_if(hctx->flags & BLK_MQ_F_BLOCKING);
++	ret = __blk_mq_issue_directly(hctx, rq, cookie);
+ 
+-	hctx_lock(hctx, &srcu_idx);
++out_unlock:
++	hctx_unlock(hctx, srcu_idx);
+ 
+-	ret = __blk_mq_try_issue_directly(hctx, rq, cookie, false);
+-	if (ret == BLK_STS_RESOURCE || ret == BLK_STS_DEV_RESOURCE)
+-		blk_mq_sched_insert_request(rq, false, true, false);
+-	else if (ret != BLK_STS_OK)
+-		blk_mq_end_request(rq, ret);
++	switch (ret) {
++	case BLK_STS_OK:
++		break;
++	case BLK_STS_DEV_RESOURCE:
++	case BLK_STS_RESOURCE:
++		if (!bypass) {
++			blk_mq_sched_insert_request(rq, false, run_queue, false);
 +			ret = BLK_STS_OK;
++		}
++		break;
++	default:
++		if (!bypass) {
++			blk_mq_end_request(rq, ret);
++			ret = BLK_STS_OK;
++		}
++		break;
++	}
+ 
+-	hctx_unlock(hctx, srcu_idx);
++	return ret;
+ }
+ 
+ blk_status_t blk_mq_request_issue_directly(struct request *rq)
+ {
+-	blk_status_t ret;
+-	int srcu_idx;
+ 	blk_qc_t unused_cookie;
+-	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
+ 
+-	hctx_lock(hctx, &srcu_idx);
+-	ret = __blk_mq_try_issue_directly(hctx, rq, &unused_cookie, true);
+-	hctx_unlock(hctx, srcu_idx);
+-
+-	return ret;
++	return blk_mq_try_issue_directly(rq->mq_hctx, rq, &unused_cookie, true);
+ }
+ 
+ void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
+@@ -1958,13 +1955,13 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
+ 		if (same_queue_rq) {
+ 			data.hctx = same_queue_rq->mq_hctx;
+ 			blk_mq_try_issue_directly(data.hctx, same_queue_rq,
+-					&cookie);
++					&cookie, false);
  		}
- 		break;
- 	default:
+ 	} else if ((q->nr_hw_queues > 1 && is_sync) || (!q->elevator &&
+ 			!data.hctx->dispatch_busy)) {
+ 		blk_mq_put_ctx(data.ctx);
+ 		blk_mq_bio_to_request(rq, bio);
+-		blk_mq_try_issue_directly(data.hctx, rq, &cookie);
++		blk_mq_try_issue_directly(data.hctx, rq, &cookie, false);
+ 	} else {
+ 		blk_mq_put_ctx(data.ctx);
+ 		blk_mq_bio_to_request(rq, bio);
 -- 
 2.7.4
 
