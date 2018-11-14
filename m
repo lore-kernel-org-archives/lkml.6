@@ -2,201 +2,190 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61929C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:31:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8FE2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:34:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1F2B72086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:31:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F2B72086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=aosc.io
+	by mail.kernel.org (Postfix) with ESMTP id 9002B2087A
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:33:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9002B2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asrmicro.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732841AbeKNUeR convert rfc822-to-8bit (ORCPT
+        id S1732713AbeKNUgf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 15:34:17 -0500
-Received: from hermes.aosc.io ([199.195.250.187]:33238 "EHLO hermes.aosc.io"
+        Wed, 14 Nov 2018 15:36:35 -0500
+Received: from asrmicro.com ([210.13.118.86]:25618 "EHLO mail2012.asrmicro.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727883AbeKNUeQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 15:34:16 -0500
-Received: from localhost (localhost [127.0.0.1]) (Authenticated sender: icenowy@aosc.io)
-        by hermes.aosc.io (Postfix) with ESMTPSA id 76DA7A289B;
-        Wed, 14 Nov 2018 10:30:38 +0000 (UTC)
-Date:   Wed, 14 Nov 2018 18:30:24 +0800
-In-Reply-To: <CAGb2v668dozjLm9mWUw_Y12AZ6DM2ku9dgQ8B8feABNeFf3QSw@mail.gmail.com>
-References: <20181004122855.22981-1-icenowy@aosc.io> <20181004122855.22981-5-icenowy@aosc.io> <CAGb2v668dozjLm9mWUw_Y12AZ6DM2ku9dgQ8B8feABNeFf3QSw@mail.gmail.com>
+        id S1727853AbeKNUgf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 15:36:35 -0500
+Received: from mail2012.asrmicro.com (10.1.24.123) by mail2012.asrmicro.com
+ (10.1.24.123) with Microsoft SMTP Server (TLS) id 15.0.847.32; Wed, 14 Nov
+ 2018 18:33:34 +0800
+Received: from mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b]) by
+ mail2012.asrmicro.com ([fe80::7c1a:96dd:1a6b:c97b%16]) with mapi id
+ 15.00.0847.030; Wed, 14 Nov 2018 18:33:34 +0800
+From:   =?utf-8?B?WmhhbmcgWmhpemhvdSjlvKDmsrvmtLIp?= 
+        <zhizhouzhang@asrmicro.com>
+To:     Mark Rutland <mark.rutland@arm.com>
+CC:     "rostedt@goodmis.org" <rostedt@goodmis.org>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "zhizhouzh@gmail.com" <zhizhouzh@gmail.com>
+Subject: RE: [PATCH] ftrace: remove KASAN poison in ftrace_ops_test()
+Thread-Topic: [PATCH] ftrace: remove KASAN poison in ftrace_ops_test()
+Thread-Index: AQHUeY2fKh/JcQ8rO0iswpmZRwo466VKT74AgAFz44CAAbUpAIABmfhA
+Date:   Wed, 14 Nov 2018 10:33:34 +0000
+Message-ID: <3ffeeb685ab346879845b603dd21d682@mail2012.asrmicro.com>
+References: <1541949017-3001-1-git-send-email-zhizhouzhang@asrmicro.com>
+ <20181111173211.q2gzf7h4htxbezch@salmiak>
+ <a5c150395e9d4157a1a6cf95fe47bbc9@mail2012.asrmicro.com>
+ <20181113174754.gsghl5aj23xg5hl6@blommer>
+In-Reply-To: <20181113174754.gsghl5aj23xg5hl6@blommer>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.1.170.117]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 8BIT
-Subject: Re: [linux-sunxi] [PATCH v4 04/10] arm64: allwinner: dts: h6: add USB2-related device nodes
-To:     Chen-Yu Tsai <wens@csie.org>
-CC:     Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Kishon Vijay Abraham I <kishon@ti.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-sunxi@googlegroups.com
-From:   Icenowy Zheng <icenowy@aosc.io>
-Message-ID: <4B5BD39B-22E2-4DEA-A199-29094DB8C317@aosc.io>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-于 2018年11月14日 GMT+08:00 下午6:21:33, Chen-Yu Tsai <wens@csie.org> 写到:
->Hi,
->
->On Thu, Oct 4, 2018 at 8:30 PM Icenowy Zheng <icenowy@aosc.io> wrote:
->>
->> Allwinner H6 has two USB2 ports, one OTG and one host-only.
->>
->> Add device tree nodes related to them.
->>
->> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
->> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
->> ---
->> No changes in v4.
->>
->> Changes in v3:
->> - Removed the wrongly introduced usb3phy node.
->> - Added Chen-Yu's Review tag.
->>
->>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 81
->++++++++++++++++++++
->>  1 file changed, 81 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->> index 040828d2e2c0..3d60af6cb3ae 100644
->> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
->> @@ -258,6 +258,87 @@
->>                         status = "disabled";
->>                 };
->>
->> +               usb2otg: usb@5100000 {
->> +                       compatible = "allwinner,sun8i-a33-musb";
->
->I added an SoC-specific compatible: "allwinner,sun50i-h6-musb".
->
->I'm also curious as to whether the MUSB controller was tested or not,
->since Allwinner now has EHCI/OHCI host pairs for host mode, and the
->Pine H64
->only does host mode.
-
-USB plug-in detection relays on MUSB if it's enabled.
-
->
->> +                       reg = <0x05100000 0x0400>;
->> +                       clocks = <&ccu CLK_BUS_OTG>;
->> +                       resets = <&ccu RST_BUS_OTG>;
->> +                       interrupts = <GIC_SPI 23
->IRQ_TYPE_LEVEL_HIGH>;
->> +                       interrupt-names = "mc";
->> +                       phys = <&usb2phy 0>;
->> +                       phy-names = "usb";
->> +                       extcon = <&usb2phy 0>;
->> +                       status = "disabled";
->> +               };
->> +
->> +               usb2phy: phy@5100400 {
->> +                       compatible = "allwinner,sun50i-h6-usb-phy";
->> +                       reg = <0x05100400 0x14>,
->> +                             <0x05101800 0x4>,
->> +                             <0x05311800 0x4>;
->> +                       reg-names = "phy_ctrl",
->> +                                   "pmu0",
->> +                                   "pmu3";
->> +                       clocks = <&ccu CLK_USB_PHY0>,
->> +                                <&ccu CLK_USB_PHY3>;
->> +                       clock-names = "usb0_phy",
->> +                                     "usb3_phy";
->> +                       resets = <&ccu RST_USB_PHY0>,
->> +                                <&ccu RST_USB_PHY3>;
->> +                       reset-names = "usb0_reset",
->> +                                     "usb3_reset";
->> +                       status = "disabled";
->> +                       #phy-cells = <1>;
->> +               };
->> +
->> +               ehci0: usb@5101000 {
->> +                       compatible = "allwinner,sun50i-h6-ehci",
->"generic-ehci";
->> +                       reg = <0x05101000 0x100>;
->> +                       interrupts = <GIC_SPI 24
->IRQ_TYPE_LEVEL_HIGH>;
->> +                       clocks = <&ccu CLK_BUS_OHCI0>,
->> +                                <&ccu CLK_BUS_EHCI0>,
->> +                                <&ccu CLK_USB_OHCI0>;
->> +                       resets = <&ccu RST_BUS_OHCI0>,
->> +                                <&ccu RST_BUS_EHCI0>;
->> +                       status = "disabled";
->> +               };
->> +
->> +               ohci0: usb@5101400 {
->> +                       compatible = "allwinner,sun50i-h6-ohci",
->"generic-ohci";
->> +                       reg = <0x05101400 0x100>;
->> +                       interrupts = <GIC_SPI 25
->IRQ_TYPE_LEVEL_HIGH>;
->> +                       clocks = <&ccu CLK_BUS_OHCI0>,
->> +                                <&ccu CLK_USB_OHCI0>;
->> +                       resets = <&ccu RST_BUS_OHCI0>;
->> +                       status = "disabled";
->> +               };
->> +
->> +               ehci3: usb@5311000 {
->> +                       compatible = "allwinner,sun50i-h6-ehci",
->"generic-ehci";
->> +                       reg = <0x05311000 0x100>;
->> +                       interrupts = <GIC_SPI 28
->IRQ_TYPE_LEVEL_HIGH>;
->> +                       clocks = <&ccu CLK_BUS_OHCI3>,
->> +                                <&ccu CLK_BUS_EHCI3>,
->> +                                <&ccu CLK_USB_OHCI3>;
->> +                       resets = <&ccu RST_BUS_OHCI3>,
->> +                                <&ccu RST_BUS_EHCI3>;
->> +                       phys = <&usb2phy 3>;
->> +                       phy-names = "usb";
->> +                       status = "disabled";
->> +               };
->> +
->> +               ohci3: usb@5311400 {
->> +                       compatible = "allwinner,sun50i-h6-ohci",
->"generic-ohci";
->> +                       reg = <0x05311400 0x100>;
->> +                       interrupts = <GIC_SPI 29
->IRQ_TYPE_LEVEL_HIGH>;
->> +                       clocks = <&ccu CLK_BUS_OHCI3>,
->> +                                <&ccu CLK_USB_OHCI3>;
->> +                       resets = <&ccu RST_BUS_OHCI3>;
->> +                       phys = <&usb2phy 3>;
->> +                       phy-names = "usb";
->> +                       status = "disabled";
->> +               };
->> +
->
->This didn't apply cleanly due to the new HDMI nodes. I fixed it up
->locally.
->
->ChenYu
->
->>                 r_ccu: clock@7010000 {
->>                         compatible = "allwinner,sun50i-h6-r-ccu";
->>                         reg = <0x07010000 0x400>;
->> --
->> 2.18.0
->>
->> --
->> You received this message because you are subscribed to the Google
->Groups "linux-sunxi" group.
->> To unsubscribe from this group and stop receiving emails from it,
->send an email to linux-sunxi+unsubscribe@googlegroups.com.
->> For more options, visit https://groups.google.com/d/optout.
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogTWFyayBSdXRsYW5kIFtt
+YWlsdG86bWFyay5ydXRsYW5kQGFybS5jb21dDQo+IFNlbnQ6IFdlZG5lc2RheSwgTm92ZW1iZXIg
+MTQsIDIwMTggMTo0OCBBTQ0KPiBUbzogWmhhbmcgWmhpemhvdSjlvKDmsrvmtLIpIDx6aGl6aG91
+emhhbmdAYXNybWljcm8uY29tPg0KPiBDYzogcm9zdGVkdEBnb29kbWlzLm9yZzsgbWluZ29AcmVk
+aGF0LmNvbTsgbGludXgtDQo+IGtlcm5lbEB2Z2VyLmtlcm5lbC5vcmc7IHpoaXpob3V6aEBnbWFp
+bC5jb20NCj4gU3ViamVjdDogUmU6IFtQQVRDSF0gZnRyYWNlOiByZW1vdmUgS0FTQU4gcG9pc29u
+IGluIGZ0cmFjZV9vcHNfdGVzdCgpDQo+IA0KPiBPbiBNb24sIE5vdiAxMiwgMjAxOCBhdCAwODow
+OToyMkFNICswMDAwLCBaaGFuZyBaaGl6aG91KOW8oOayu+a0sikgd3JvdGU6DQo+ID4NCj4gPg0K
+PiA+ID4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gPiA+IEZyb206IE1hcmsgUnV0bGFu
+ZCBbbWFpbHRvOm1hcmsucnV0bGFuZEBhcm0uY29tXQ0KPiA+ID4gU2VudDogTW9uZGF5LCBOb3Zl
+bWJlciAxMiwgMjAxOCAxOjMyIEFNDQo+ID4gPiBUbzogWmhhbmcgWmhpemhvdSjlvKDmsrvmtLIp
+IDx6aGl6aG91emhhbmdAYXNybWljcm8uY29tPg0KPiA+ID4gQ2M6IHJvc3RlZHRAZ29vZG1pcy5v
+cmc7IG1pbmdvQHJlZGhhdC5jb207IGxpbnV4LQ0KPiA+ID4ga2VybmVsQHZnZXIua2VybmVsLm9y
+ZzsgemhpemhvdXpoQGdtYWlsLmNvbQ0KPiA+ID4gU3ViamVjdDogUmU6IFtQQVRDSF0gZnRyYWNl
+OiByZW1vdmUgS0FTQU4gcG9pc29uIGluIGZ0cmFjZV9vcHNfdGVzdCgpDQo+ID4gPg0KPiA+ID4g
+T24gU3VuLCBOb3YgMTEsIDIwMTggYXQgMTE6MTA6MTdQTSArMDgwMCwgWmhpemhvdSBaaGFuZyB3
+cm90ZToNCj4gPiA+ID4gZnRyYWNlX29wc190ZXN0KCkgcGFzc2VkIGxvY2FsIHZhcmlibGUgcGFy
+YW1ldGVyIHRvDQo+ID4gPiA+IGhhc2hfY29udGFpbnNfaXAoKSwgd2hpY2ggY291bGQgcmVzdWx0
+IEtBU0FOIHN0YWNrLW91dC1vZi1ib3VuZHMNCj4gPiA+IHdhcm5pbmcuDQo+ID4gPiA+DQo+ID4g
+PiA+IFNpZ25lZC1vZmYtYnk6IFpoaXpob3UgWmhhbmcgPHpoaXpob3V6aGFuZ0Bhc3JtaWNyby5j
+b20+DQo+ID4gPiA+IC0tLQ0KPiA+ID4gPiAga2VybmVsL3RyYWNlL2Z0cmFjZS5jIHwgMiArKw0K
+PiA+ID4gPiAgMSBmaWxlIGNoYW5nZWQsIDIgaW5zZXJ0aW9ucygrKQ0KPiA+ID4gPg0KPiA+ID4g
+PiBkaWZmIC0tZ2l0IGEva2VybmVsL3RyYWNlL2Z0cmFjZS5jIGIva2VybmVsL3RyYWNlL2Z0cmFj
+ZS5jIGluZGV4DQo+ID4gPiA+IGY1MzZmNjAuLjZlMTFmOTAgMTAwNjQ0DQo+ID4gPiA+IC0tLSBh
+L2tlcm5lbC90cmFjZS9mdHJhY2UuYw0KPiA+ID4gPiArKysgYi9rZXJuZWwvdHJhY2UvZnRyYWNl
+LmMNCj4gPiA+ID4gQEAgLTE1MjIsNiArMTUyMiw4IEBAIGZ0cmFjZV9vcHNfdGVzdChzdHJ1Y3Qg
+ZnRyYWNlX29wcyAqb3BzLA0KPiB1bnNpZ25lZA0KPiA+ID4gbG9uZyBpcCwgdm9pZCAqcmVncykN
+Cj4gPiA+ID4gIAlyY3VfYXNzaWduX3BvaW50ZXIoaGFzaC5maWx0ZXJfaGFzaCwgb3BzLT5mdW5j
+X2hhc2gtPmZpbHRlcl9oYXNoKTsNCj4gPiA+ID4gIAlyY3VfYXNzaWduX3BvaW50ZXIoaGFzaC5u
+b3RyYWNlX2hhc2gsIG9wcy0+ZnVuY19oYXNoLQ0KPiA+ID4gPm5vdHJhY2VfaGFzaCk7DQo+ID4g
+PiA+DQo+ID4gPiA+ICsJa2FzYW5fdW5wb2lzb25fdGFza19zdGFjayhjdXJyZW50KTsNCj4gPiA+
+DQo+ID4gPiBUaGlzIGlzIGV4dHJlbWVseSBoZWF2eS1oYW5kZWQsIGFuZCB3aWxsIG1hc2sgbGVn
+aXRpbWF0ZSBzdGFjay1vdXQtb2YtDQo+ID4gPiBib3VuZHMgZXJyb3JzLg0KPiA+ID4NCj4gPiBZ
+ZXMuIEkgdHJpZWQgdG8gZmluZCB3YXlzIHRvIG1hcmsgdGhpcyBmdW5jdGlvbiBubyBuZWVkIHRv
+IHBvaXNvbiwgYnV0DQo+ID4gZmFpbGVkLiBNeSBmaXJzdCB0aG91Z2h0IHdhcyBqdXN0IG1ha2Ug
+dGhpcyBmdW5jdGlvbiBub3QgcG9pc29uIGl0cyBzdGFjay4NCj4gPg0KPiA+ID4gUGFzc2luZyBh
+IHN0YWNrLWxvY2FsIHZhcmlhYmxlIGJ5IHJlZmVyZW5jZSAqc2hvdWxkIG5vdCogcmVzdWx0IGlu
+IEtBU0FODQo+ID4gPiB3YXJuaW5ncyB1bmxlc3MgS0FTQU4gaXRzZWxmIGlzIGJyb2tlbi4gQ2Fu
+IHlvdSBwbGVhc2UgZ2l2ZSBhbiBleGFtcGxlDQo+ID4gPiByZXBvcnQgd2hlbiB0aGlzIG9jY3Vy
+cz8NCj4gPiA+DQo+ID4gUGxlYXNlIGV4Y3VzZSBteSBsYWNrIG9mIGtub3dsZWRnZS4gRGlkIHlv
+dSBtZWFuIGlmIGEgZnVuY3Rpb24gcGFzc2luZyBhDQo+ID4gc3RhY2stbG9jYWwgdmFyaWFibGUg
+YXMgcGFyYW1ldGVyIHRvIGFub3RoZXIgZnVuY3Rpb24sIHRoZSBjb21waWxlciB3b24ndA0KPiA+
+IHBvaXNvbiB0aGUgc3RhY2stbG9jYWwgdmFyaWFibGU/DQo+IA0KPiBZZXMuIFRoYXQgc2hvdWxk
+IG5vdCBiZSBwb2lzb25lZCB1bmxlc3MgdGhlcmUgaXMgYSBjb21waWxlciBidWcuDQo+IA0KPiA+
+IFRoZSBLQVNBTiByZXBvcnQgaXMgYmFzZWQgb24gNC40LjE0NSwgSSdtIG5vdCBzdXJlIGZvciB0
+aGUgbGF0ZXN0IGtlcm5lbDoNCj4gPg0KPiA+IGMzIDAgKHN3YXBwZXIvMykNCj4gPT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PQ0KPiA9PT09
+PT09PQ0KPiA+IGMzIDAgKHN3YXBwZXIvMykgQlVHOiBLQVNBTjogc3RhY2stb3V0LW9mLWJvdW5k
+cyBpbg0KPiBoYXNoX2NvbnRhaW5zX2lwLmlzcmEuNCsweDQ0LzB4ZDANCj4gPiBjMyAwIChzd2Fw
+cGVyLzMpIFJlYWQgb2Ygc2l6ZSA4IGF0IGFkZHIgZmZmZmZmYzBkMjA0YmMyMCBieSB0YXNrDQo+
+IHN3YXBwZXIvMy8wDQo+ID4gYzMgMCAoc3dhcHBlci8zKQ0KPiA+IGMzIDAgKHN3YXBwZXIvMykg
+Q1BVOiAzIFBJRDogMCBDb21tOiBzd2FwcGVyLzMgTm90IHRhaW50ZWQgNC40LjE0NSsgIzE2OA0K
+PiA+IGMzIDAgKHN3YXBwZXIvMykgSGFyZHdhcmUgbmFtZTogQVNSIEFRVUlMQUMgRVZCIChEVCkN
+Cj4gPiBjMyAwIChzd2FwcGVyLzMpIENhbGwgdHJhY2U6DQo+ID4gYzMgMCAoc3dhcHBlci8zKSBb
+PGZmZmZmZjkwMDgwOTFhNTA+XSBkdW1wX2JhY2t0cmFjZSsweDAvMHg0MTgNCj4gPiBjMyAwIChz
+d2FwcGVyLzMpIFs8ZmZmZmZmOTAwODA5MWU5MD5dIHNob3dfc3RhY2srMHgyOC8weDM4DQo+ID4g
+YzMgMCAoc3dhcHBlci8zKSBbPGZmZmZmZjkwMDg2MjUzYTQ+XSBkdW1wX3N0YWNrKzB4ZTgvMHgx
+M2MNCj4gPiBjMyAwIChzd2FwcGVyLzMpIFs8ZmZmZmZmOTAwODMxYzE1Yz5dDQo+IHByaW50X2Fk
+ZHJlc3NfZGVzY3JpcHRpb24rMHg4Yy8weDJiMA0KPiA+IGMzIDAgKHN3YXBwZXIvMykgWzxmZmZm
+ZmY5MDA4MzFjNjg4Pl0ga2FzYW5fcmVwb3J0KzB4MjEwLzB4MzMwDQo+ID4gYzMgMCAoc3dhcHBl
+ci8zKSBbPGZmZmZmZjkwMDgzMWFiYTQ+XSBfX2FzYW5fbG9hZDgrMHg4NC8weDk4DQo+ID4gYzMg
+MCAoc3dhcHBlci8zKSBbPGZmZmZmZjkwMDgyMWE2OTQ+XSBoYXNoX2NvbnRhaW5zX2lwLmlzcmEu
+NCsweDQ0LzB4ZDANCj4gPiBjMyAwIChzd2FwcGVyLzMpIFs8ZmZmZmZmOTAwODIxYTdjOD5dIGZ0
+cmFjZV9vcHNfdGVzdC5pc3JhLjUrMHhhOC8weGUwDQo+ID4gYzMgMCAoc3dhcHBlci8zKSBbPGZm
+ZmZmZjkwMDgyMjM5Y2M+XSBmdHJhY2Vfb3BzX25vX29wcysweGRjLzB4MjE4DQo+ID4gYzMgMCAo
+c3dhcHBlci8zKSBbPGZmZmZmZjkwMDgwYTFkMGM+XSBmdHJhY2VfZ3JhcGhfY2FsbCsweDAvMHgx
+NA0KPiA+IGMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MDlhZmJjPl0gc2NhbGVfY3B1X2Nh
+cGFjaXR5KzB4MjQvMHg3MA0KPiA+IGMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MTNhZGEw
+Pl0gc3luY19lbnRpdHlfbG9hZF9hdmcrMHhiMC8weDRjMA0KPiA+IGMzIDAgKHN3YXBwZXIvMykg
+WzxmZmZmZmY5MDA4MTNiMWRjPl0gcmVtb3ZlX2VudGl0eV9sb2FkX2F2ZysweDJjLzB4ODANCj4g
+PiBjMyAwIChzd2FwcGVyLzMpIFs8ZmZmZmZmOTAwODEzYjI1MD5dIHRhc2tfZGVhZF9mYWlyKzB4
+MjAvMHgzMA0KPiA+IGMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MTExNjljPl0gZmluaXNo
+X3Rhc2tfc3dpdGNoKzB4MWY0LzB4MmEwDQo+ID4gYzMgMCAoc3dhcHBlci8zKSBbPGZmZmZmZjkw
+MDkyZGViOTQ+XSBfX3NjaGVkdWxlKzB4NGNjLzB4ZTgwDQo+ID4gYzMgMCAoc3dhcHBlci8zKSBb
+PGZmZmZmZjkwMDkyZGY4MjA+XSBzY2hlZHVsZSsweDcwLzB4MTEwDQo+ID4gYzMgMCAoc3dhcHBl
+ci8zKSBbPGZmZmZmZjkwMDkyZGZiZGM+XQ0KPiBzY2hlZHVsZV9wcmVlbXB0X2Rpc2FibGVkKzB4
+MjQvMHg3MA0KPiA+IGMzIDAgKHN3YXBwZXIvMykgWzxmZmZmZmY5MDA4MTUxZGM4Pl0gY3B1X3N0
+YXJ0dXBfZW50cnkrMHgxOTgvMHg1MzgNCj4gPiBjMyAwIChzd2FwcGVyLzMpIFs8ZmZmZmZmOTAw
+ODA5OWYzOD5dDQo+IHNlY29uZGFyeV9zdGFydF9rZXJuZWwrMHgyNTgvMHgyZjANCj4gPiBjMyAw
+IChzd2FwcGVyLzMpIFs8MDAwMDAwMDEwMzJlODAzYz5dIDB4MTAzMmU4MDNjDQo+ID4gYzMgMCAo
+c3dhcHBlci8zKQ0KPiA+IGMzIDAgKHN3YXBwZXIvMykgVGhlIGJ1Z2d5IGFkZHJlc3MgYmVsb25n
+cyB0byB0aGUgcGFnZToNCj4gPiBjMyAwIChzd2FwcGVyLzMpIHBhZ2U6ZmZmZmZmYmRjMzQ4MTJj
+MCBjb3VudDowIG1hcGNvdW50OjAgbWFwcGluZzoNCj4gKG51bGwpIGluZGV4OjB4MA0KPiA+IGMz
+IDAgKHN3YXBwZXIvMykgZmxhZ3M6IDB4MCgpDQo+ID4gYzMgMCAoc3dhcHBlci8zKSBwYWdlIGR1
+bXBlZCBiZWNhdXNlOiBrYXNhbjogYmFkIGFjY2VzcyBkZXRlY3RlZA0KPiA+IGMzIDAgKHN3YXBw
+ZXIvMykNCj4gPiBjMyAwIChzd2FwcGVyLzMpIE1lbW9yeSBzdGF0ZSBhcm91bmQgdGhlIGJ1Z2d5
+IGFkZHJlc3M6DQo+ID4gYzMgMCAoc3dhcHBlci8zKSAgZmZmZmZmYzBkMjA0YmIwMDogMDAgMDAg
+MDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDANCj4gMDAgMDANCj4gPiBjMyAwIChz
+d2FwcGVyLzMpICBmZmZmZmZjMGQyMDRiYjgwOiAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAwMCAw
+MCAwMCAwMCBmMSBmMQ0KPiBmMSBmMQ0KPiA+IGMzIDAgKHN3YXBwZXIvMykgPmZmZmZmZmMwZDIw
+NGJjMDA6IGYxIGYxIGYxIGYxIGYzIGYzIGYzIGYzIDAwIDAwIDAwIDAwIDAwIDAwIDAwDQo+IDAw
+DQo+ID4gYzMgMCAoc3dhcHBlci8zKSAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgXg0K
+PiA+IGMzIDAgKHN3YXBwZXIvMykgIGZmZmZmZmMwZDIwNGJjODA6IDAwIDAwIDAwIDAwIDAwIDAw
+IGYyIGYyIDAwIDAwIDAwIDAwIDAwIDAwDQo+IDAwIDAwDQo+ID4gYzMgMCAoc3dhcHBlci8zKSAg
+ZmZmZmZmYzBkMjA0YmQwMDogMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAgMDAg
+MDANCj4gMDAgMDANCj4gPiBjMyAwIChzd2FwcGVyLzMpDQo+ID09PT09PT09PT09PT09PT09PT09
+PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT09PT0NCj4gPT09PT09PT0NCj4gPiBj
+MyAxIChpbml0KSBpbml0OiBVbnRyYWNrZWQgcGlkIDMxMDMga2lsbGVkIGJ5IHNpZ25hbCAxNA0K
+PiA+IGM0IDk3MiAoc3l6LWV4ZWN1dG9yKSBhc3Itd2R0IGQ0MDgwMDAwLndhdGNoZG9nOiBmZWVk
+IGFzcl93ZHQoc29jX3dkdCkuDQo+IA0KPiBBaGEuIEkgdGFrZSBpdCB5b3UgaGF2ZSBLQ09WIGVu
+YWJsZWQ/DQo+IA0KPiBJbiB0aGUgcGFzdCBJJ3ZlIHNlZW4gZXJyb25lb3VzIEtBU0FOIHJlcG9y
+dHMgd2hlbiBLQVNBTiBhbmQgS0NPViB3ZXJlDQo+IGVuYWJsZWQgWzFdLCBzbyBJIHN1c3BlY3Qg
+dGhpcyBpcyBtYXkgYmUgYSBtaXMtY29tcGlsYXRpb24uDQo+IA0KPiA+IGM1IDQzMSAoa3dvcmtl
+ci91MTY6OCkgQzBfREZDOiBUaW1lIDExNzUxMDk4NzQ5MiAoMTI0OCAtPiAxNjAwKTsNCj4gPiBj
+NSA0MzEgKGt3b3JrZXIvdTE2OjgpIEMwX0RGQzogVGltZSAxMTc1ODIzNTg3OTkgKDE2MDAgLT4g
+MTI0OCk7DQo+ID4gYzUgNDMxIChrd29ya2VyL3UxNjo4KSBDMV9ERkM6IFRpbWUgNTExMzM2NTYy
+NzAgKDE5MDAgLT4gMTI0OCk7DQo+ID4gYzUgNDMxIChrd29ya2VyL3UxNjo4KSBDMV9ERkM6IFRp
+bWUgNTExMzM4NjQ0NjIgKDEyNDggLT4gMTYwMCk7DQo+ID4gYzUgNDMxIChrd29ya2VyL3UxNjo4
+KSBERFJfREZDOiBUaW1lIDAgKDAgLT4gMCk7DQo+ID4gYzUgNDMxIChrd29ya2VyL3UxNjo4KSBE
+RFJfREZDOiBUaW1lIDAgKDAgLT4gMCk7DQo+ID4gYzUgNDMxIChrd29ya2VyL3UxNjo4KSBDTEs6
+ICAgICAgR1BVKDMxMjAwMDAwMCwgMCk7VlBVKDgzMjAwMDAwMCwNCj4gMCk7SVNQKDMxMjAwMDAw
+MCwgMCk7DQo+ID4gYzUgNDMxIChrd29ya2VyL3UxNjo4KSBEVkM6ICAgICAgY2xzdDAoMTEpOyBj
+bHN0MSgxMSk7IG0yKDExKTsgcGVyaSgxKTsgZDFwKDEpOw0KPiA+IGM1IDQzMSAoa3dvcmtlci91
+MTY6OCkgVGVtcDogICAgIGNwdSg4MjAwMCk7IGdwdSg2NDAwMCk7IGRkcig2ODAwMCk7DQo+IGxv
+Y2FsKDY0MDAwKTsgYmF0dGVyeSgwKTsgcG1pYygwKQ0KPiA+IGM1IDQzMSAoa3dvcmtlci91MTY6
+OCkgQmF0dGVyeTogIHNvYyg1NzY0OCk7IGlfYmF0dGVyeSgtOTQxNTU2KTsNCj4gPiBjNSA0MzEg
+KGt3b3JrZXIvdTE2OjgpIDg4cG04OHgtYmF0dGVyeSA4OHBtODh4LWJhdHRlcnk6IGw9ODAlDQo+
+IHY9Mzk1N21WIHQwPTI1QyB0MT0wQyBjPS05NDFtQSBzdD1VTktOT1dOIG9jdj0wDQo+ID4NCj4g
+PiA+IFdoaWNoIGNvbXBpbGVyIGFyZSB5b3UgdXNpbmc/DQo+ID4gPg0KPiA+IEknbSB1c2luZyBn
+Y2MgNy4xLjA6IGFhcmNoNjQtbGludXgtZ251LWdjYyAoR0NDKSA3LjEuMC4NCj4gDQo+IFRoZSBp
+c3N1ZXMgSSBzYXcgWzFdIHdlcmUgYWxzbyB3aXRoIEdDQyA3LngNCj4gDQo+IENhbiB5b3Ugc2Vl
+IGlmIHlvdSBzZWUgdGhlIHNhbWUgaXNzdWUgdXNpbmcgdGhlIGtlcm5lbC5vcmcgY3Jvc3N0b29s
+IEdDQw0KPiA4LjEuMCBbMl0/DQo+IA0KVGhhbmtzLiBNeSB0ZXN0IGNhc2UgaXMgcnVubmluZyBz
+eXprYWxsZXIgZnV6eiB0ZXN0LiBBZnRlciBJIHN3aXRjaGVkIHRvIEdDQyA4LjEuMCwgMTAgaG91
+cnMgaGFzIHBhc3NlZCBhbmQgdGhpcyBpc3N1ZSBkb2Vzbid0IGFwcGVhciBhZ2Fpbi4gQmVmb3Jl
+IHRoaXMgY2hhbmdlLCB0aGUgaXNzdWUgaGFwcGVuZWQgYWxtb3N0IGV2ZXJ5IGhhbGYgaG91ci4g
+U28gaXQgc2VlbXMgdXNpbmcgYSBoaWdoZXIgdmVyc2lvbiB0b29sY2hhaW4gY2FuIGZpeCBteSBw
+cm9ibGVtLg0KDQo+IFRoYW5rcywNCj4gTWFyay4NCj4gDQo+IFsxXQ0KPiBodHRwczovL2xvcmUu
+a2VybmVsLm9yZy9sa21sLzIwMTcxMTI4MTUyNDA1LnZrd3hkYmtidW9ranQyaHZAbGFrcmlkcy5j
+YQ0KPiBtYnJpZGdlLmFybS5jb20vDQo+IFsyXSBodHRwczovL21pcnJvcnMuZWRnZS5rZXJuZWwu
+b3JnL3B1Yi90b29scy9jcm9zc3Rvb2wvDQo=
