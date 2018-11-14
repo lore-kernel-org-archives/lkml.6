@@ -4,46 +4,46 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9377FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EF2AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50A4D2252A
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:41 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C69842252B
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="k84VjjAS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50A4D2252A
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oRXCyxb7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C69842252B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388444AbeKOI3n (ORCPT
+        id S2388462AbeKOI3o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:29:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36668 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:29:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36738 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388414AbeKOI3l (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:29:41 -0500
+        id S2388434AbeKOI3n (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:29:43 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 9E84B22527;
-        Wed, 14 Nov 2018 22:24:36 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 3B3AC2252C;
+        Wed, 14 Nov 2018 22:24:39 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234276;
-        bh=54X0huYgws1qZJGHf+qhnjRL5wthg+ddG7wM/J9Ati8=;
+        s=default; t=1542234279;
+        bh=WxE7N/qfi6+or9zhhpQ8lyY8pqWJmY4GSc74YjTyoE8=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=k84VjjASyVPE5XpV1VpWgNe+TMjIUEsnc/sEhlDIP9iWf4DcGIuS+mPdvgrbU8zc1
-         Z6bf0gFFWVE9brU0vugQZsLhB2uRdBwTpqhrgrkw5mWvW025luLYIQ8Ggzk9/WFY4X
-         7NyTOcwSSsYC8IiN67XLnH244HS9X8SiqparnthU=
+        b=oRXCyxb7s9MpkxdeNX63zbYkjItCrMbsaV2oRNQNYN0ZLh0ur+SuukAUSD+Ep+C6S
+         qZkS9HzkcdIgYvxszyhE+AMNSk9CV6tJbvpy/MFDrQ4JNW3pRxQcqgR2IT0T5rx1Ii
+         ZsCa5WvfNMkNu8nCHMDdDyOXrhOx3AxMmBEcoguc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sagi Grimberg <sagi@grimberg.me>, Christoph Hellwig <hch@lst.de>,
-        Jens Axboe <axboe@kernel.dk>, Sasha Levin <sashal@kernel.org>,
-        linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 4.18 38/59] nvme: make sure ns head inherits underlying device limits
-Date:   Wed, 14 Nov 2018 17:23:10 -0500
-Message-Id: <20181114222335.99339-38-sashal@kernel.org>
+Cc:     Vignesh R <vigneshr@ti.com>, Wolfram Sang <wsa@the-dreams.de>,
+        Sasha Levin <sashal@kernel.org>, linux-i2c@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.18 39/59] i2c: omap: Enable for ARCH_K3
+Date:   Wed, 14 Nov 2018 17:23:11 -0500
+Message-Id: <20181114222335.99339-39-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -52,54 +52,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sagi Grimberg <sagi@grimberg.me>
+From: Vignesh R <vigneshr@ti.com>
 
-[ Upstream commit 8f676b8508c250bbe255096522fdefb73f1ea0b9 ]
+[ Upstream commit 5b277402deac0691226a947df71c581686bd4020 ]
 
-Whenever we update ns_head info, we need to make sure it is still
-compatible with all underlying backing devices because although nvme
-multipath doesn't have any explicit use of these limits, other devices
-can still be stacked on top of it which may rely on the underlying limits.
-Start with unlimited stacking limits, and every info update iterate over
-siblings and adjust queue limits.
+Allow I2C_OMAP to be built for K3 platforms.
 
-Signed-off-by: Sagi Grimberg <sagi@grimberg.me>
-Signed-off-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Signed-off-by: Vignesh R <vigneshr@ti.com>
+Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
+Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/nvme/host/core.c      | 4 +++-
- drivers/nvme/host/multipath.c | 1 +
- 2 files changed, 4 insertions(+), 1 deletion(-)
+ drivers/i2c/busses/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index bf65501e6ed6..33ec25db4f15 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1501,8 +1501,10 @@ static void __nvme_revalidate_disk(struct gendisk *disk, struct nvme_id_ns *id)
- 	if (ns->ndev)
- 		nvme_nvm_update_nvm_info(ns);
- #ifdef CONFIG_NVME_MULTIPATH
--	if (ns->head->disk)
-+	if (ns->head->disk) {
- 		nvme_update_disk_info(ns->head->disk, ns, id);
-+		blk_queue_stack_limits(ns->head->disk->queue, ns->queue);
-+	}
- #endif
- }
+diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
+index 4f8df2ec87b1..fb3a3707a66e 100644
+--- a/drivers/i2c/busses/Kconfig
++++ b/drivers/i2c/busses/Kconfig
+@@ -754,7 +754,7 @@ config I2C_OCORES
  
-diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
-index 1ffd3e8b13a1..20f5010ca7a2 100644
---- a/drivers/nvme/host/multipath.c
-+++ b/drivers/nvme/host/multipath.c
-@@ -197,6 +197,7 @@ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl, struct nvme_ns_head *head)
- 	blk_queue_flag_set(QUEUE_FLAG_NONROT, q);
- 	/* set to a default value for 512 until disk is validated */
- 	blk_queue_logical_block_size(q, 512);
-+	blk_set_stacking_limits(&q->limits);
- 
- 	/* we need to propagate up the VMC settings */
- 	if (ctrl->vwc & NVME_CTRL_VWC_PRESENT)
+ config I2C_OMAP
+ 	tristate "OMAP I2C adapter"
+-	depends on ARCH_OMAP
++	depends on ARCH_OMAP || ARCH_K3
+ 	default y if MACH_OMAP_H3 || MACH_OMAP_OSK
+ 	help
+ 	  If you say yes to this option, support will be included for the
 -- 
 2.17.1
 
