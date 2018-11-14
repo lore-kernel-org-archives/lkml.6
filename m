@@ -7,47 +7,45 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0B94EC43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F3A63C43610
 	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BF53722546
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A98B02252F
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="s/vWTxGv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF53722546
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlgD0UPj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A98B02252F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388520AbeKOI3v (ORCPT
+        id S2388567AbeKOI3x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:29:51 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36910 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:29:53 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36938 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732896AbeKOI3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S2388492AbeKOI3v (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 03:29:51 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ADB132252A;
-        Wed, 14 Nov 2018 22:24:46 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 9043722530;
+        Wed, 14 Nov 2018 22:24:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234286;
-        bh=3pgNGboFW7qWweOIrusQnlifn8muSDhWpj6xSkj2MrM=;
+        s=default; t=1542234287;
+        bh=boWMhWuXcDeXdREyAoKxNXLm7/7kxjnMmxOr5fhpdjE=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=s/vWTxGvo7SNrYdt9Jygu/ax4qVF06Vg69xI8yLtglyj+LcW7znmyatQomEPEetPx
-         pWtKjTCDMnPYu8ojpNPvLTOa1jspEZRoxxAaohFfQHCU7zBt9uFyaEZRv4wIWewMh7
-         kiOsQwpo/TIrM2fIrOVr6n9P2MTfvXBsJXdVE6fU=
+        b=KlgD0UPjGVRsrXN1yMx2KOoE7QELyY/BkeCnv5pHoxCQsghMM/yEDw/TSEmoQv2Sh
+         YRnxiS3Q64CKd9UsgTiRaKgPOLzenXDkMXorA4jRx8FtxenDdByXyLbmC2j9ePywAV
+         ySkuwLofl/t3fNMTUid7BZbOOyCzScBow4RoQzJU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jiri Olsa <jolsa@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.18 42/59] perf tools: Do not zero sample_id_all for group members
-Date:   Wed, 14 Nov 2018 17:23:14 -0500
-Message-Id: <20181114222335.99339-42-sashal@kernel.org>
+Cc:     Brett Creeley <brett.creeley@intel.com>,
+        Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>,
+        Jeff Kirsher <jeffrey.t.kirsher@intel.com>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.18 44/59] ice: Fix the bytecount sent to netdev_tx_sent_queue
+Date:   Wed, 14 Nov 2018 17:23:16 -0500
+Message-Id: <20181114222335.99339-44-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -56,56 +54,41 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jiri Olsa <jolsa@kernel.org>
+From: Brett Creeley <brett.creeley@intel.com>
 
-[ Upstream commit 8e88c29b351ed4e09dd63f825f1c8260b0cb0ab3 ]
+[ Upstream commit d944b46992f8e99b6bdc721e44b02e5ca294fa2b ]
 
-Andi reported following malfunction:
+Currently if the driver does a TSO offload the bytecount sent to
+netdev_tx_sent_queue will be incorrect. This is because in ice_tso we
+overwrite the initial value that we set in ice_tx_map. This creates a
+mismatch between the Tx and Tx clean flow. In the Tx clean flow we
+calculate the bytecount (called total_bytes) as we clean the
+descriptors so the value used in the Tx clean path is correct. Fix this
+by using += in ice_tso instead of =. This fixes the mismatch in
+bytecount mentioned above.
 
-  # perf record -e '{ref-cycles,cycles}:S' -a sleep 1
-  # perf script
-  non matching sample_id_all
-
-That's because we disable sample_id_all bit for non-sampling group
-members. We can't do that, because it needs to be the same over the
-whole event list. This patch keeps it untouched again.
-
-Reported-by: Andi Kleen <andi@firstfloor.org>
-Tested-by: Andi Kleen <andi@firstfloor.org>
-Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: http://lkml.kernel.org/r/20180923150420.27327-1-jolsa@kernel.org
-Fixes: e9add8bac6c6 ("perf evsel: Disable write_backward for leader sampling group events")
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Brett Creeley <brett.creeley@intel.com>
+Signed-off-by: Anirudh Venkataramanan <anirudh.venkataramanan@intel.com>
+Tested-by: Andrew Bowers <andrewx.bowers@intel.com>
+Signed-off-by: Jeff Kirsher <jeffrey.t.kirsher@intel.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- tools/perf/tests/attr/test-record-group-sampling | 1 -
- tools/perf/util/evsel.c                          | 1 -
- 2 files changed, 2 deletions(-)
+ drivers/net/ethernet/intel/ice/ice_txrx.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/attr/test-record-group-sampling b/tools/perf/tests/attr/test-record-group-sampling
-index 8a33ca4f9e1f..f0729c454f16 100644
---- a/tools/perf/tests/attr/test-record-group-sampling
-+++ b/tools/perf/tests/attr/test-record-group-sampling
-@@ -37,4 +37,3 @@ sample_freq=0
- sample_period=0
- freq=0
- write_backward=0
--sample_id_all=0
-diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
-index 6324afba8fdd..75073c4925cc 100644
---- a/tools/perf/util/evsel.c
-+++ b/tools/perf/util/evsel.c
-@@ -941,7 +941,6 @@ void perf_evsel__config(struct perf_evsel *evsel, struct record_opts *opts,
- 		attr->sample_freq    = 0;
- 		attr->sample_period  = 0;
- 		attr->write_backward = 0;
--		attr->sample_id_all  = 0;
- 	}
+diff --git a/drivers/net/ethernet/intel/ice/ice_txrx.c b/drivers/net/ethernet/intel/ice/ice_txrx.c
+index 6481e3d86374..0c95c8f83432 100644
+--- a/drivers/net/ethernet/intel/ice/ice_txrx.c
++++ b/drivers/net/ethernet/intel/ice/ice_txrx.c
+@@ -1519,7 +1519,7 @@ int ice_tso(struct ice_tx_buf *first, struct ice_tx_offload_params *off)
  
- 	if (opts->no_samples)
+ 	/* update gso_segs and bytecount */
+ 	first->gso_segs = skb_shinfo(skb)->gso_segs;
+-	first->bytecount = (first->gso_segs - 1) * off->header_len;
++	first->bytecount += (first->gso_segs - 1) * off->header_len;
+ 
+ 	cd_tso_len = skb->len - off->header_len;
+ 	cd_mss = skb_shinfo(skb)->gso_size;
 -- 
 2.17.1
 
