@@ -6,48 +6,51 @@ X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F20CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:18:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2ADC07E85
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:18:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 707BE223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:18:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 707BE223DD
+	by mail.kernel.org (Postfix) with ESMTP id 5DCCE223DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:18:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DCCE223DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731811AbeKNRUH (ORCPT
+        id S1731980AbeKNRUI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 12:20:07 -0500
-Received: from mail-it1-f197.google.com ([209.85.166.197]:41057 "EHLO
-        mail-it1-f197.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728686AbeKNRUG (ORCPT
+        Wed, 14 Nov 2018 12:20:08 -0500
+Received: from mail-it1-f198.google.com ([209.85.166.198]:33322 "EHLO
+        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727375AbeKNRUG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Wed, 14 Nov 2018 12:20:06 -0500
-Received: by mail-it1-f197.google.com with SMTP id s195-v6so19882807itc.6
+Received: by mail-it1-f198.google.com with SMTP id w68so3889129ith.0
         for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 23:18:07 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=Y/yWg3YYGycwr3bmHMHa6kV/M3YgU5C4ix25R3xyHjM=;
-        b=EnJtqJ2UIT/K7KoVBt0IHFjMJnhVdERXQ0p9UxI0YJMs7OnVhwrt06UkSqvvXRgWDz
-         zkUw00gs5B8nozQfICGW6iVnvETOXBfp6e6vbzVYd7Z7kzdniqO05G6IA8dYkEKEpO8G
-         2lwQ8kmTPIusUrkkBMvj6qsuHG4YjKxxTBFLPM4onDHh77BtMVeml4YJ9ROATY+rV06U
-         khHsV+XpvJ3dW4a/QnwQuHLEeoNi9zg5m0UlOebmI8sZQCWoXixzL5FUZZMbz4huRA57
-         hkYXux5XWQ+9R1bW3moMPsExTbRIXpL0v6sELEN+hwwS4krkJ9ny0PA1gooN2D/kxTdD
-         XxWw==
-X-Gm-Message-State: AGRZ1gJ4hGfBvWm9onVRmMLX7veD3j2GTupr4jgN+pOXXQu3nbC8exoc
-        RXLN0pWl5PlkKNxnzmYHtWCbO5FBUgqrd8QQ9yFppRO1a3xX
-X-Google-Smtp-Source: AJdET5fu8AlgtZKiN43cqDmRdnxUh75ea8ZBjEWcgcQi/eEGE0iEWo8c9W4jp6AAoFSjqYHsXd03X8FpSSGG1yr95VIR/ZHwxNkm
+        bh=oKZFd+ijTALEACq4VyK3aBsoKW4wWHUTyuI+flcvKYM=;
+        b=qR/asDsmVP+21j9ovwylPL2ijlpkBfTMdoBDw3m/Pw7p4amIaHshxmsYeEEGOFvh5I
+         dNm+B8K3jQnxwHPFq15dL8r6UnuJDzFE6JqxibNesftkIuWeNMh9Dl29u2lOJEmezTsg
+         QxdT867BeDUqWbTtB7BMyfqHkZimMEBo83XMzZ0mxkXLnfsW+ZX5YIBzJHy+yeSDCGCV
+         rG9nH0YMixenc734+FmrymV1t0Jwab3GCArm3JCnICsv+5xVDUhB3TwfN5i2B8LP3YeY
+         B1IxArkV45u5kWEj6M7J5h5MfN9qahE35ct24xCFTWJ+LYgiWENullcKMoNmEb43UbFm
+         UVVw==
+X-Gm-Message-State: AA+aEWZsf4AAwXX122MdFIoeIYOYOMy7+VxMQGqPTTeks+SidFg2j5rW
+        jb+gNieYifAR3crQ8gz54HPUW2QiM/+lLZ0rfTUR6vCMPc5s
+X-Google-Smtp-Source: AJdET5dOOTMF8JLsORqC91uHyyuXjTY+AjVPd4RiMWV3E9ycT1jhpD8lkFdYcmDynUIJ211U8rsW8sgvOAbFxlYbcXGHUODEoGyq
 MIME-Version: 1.0
-X-Received: by 2002:a24:4597:: with SMTP id c23mr748646itd.20.1542179887212;
- Tue, 13 Nov 2018 23:18:07 -0800 (PST)
-Date:   Tue, 13 Nov 2018 23:18:07 -0800
+X-Received: by 2002:a24:7a4b:: with SMTP id a72-v6mr760964itc.8.1542179886980;
+ Tue, 13 Nov 2018 23:18:06 -0800 (PST)
+Date:   Tue, 13 Nov 2018 23:18:06 -0800
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <0000000000005b7456057a9abc57@google.com>
-Subject: kernel BUG at mm/slab.c:LINE! (3)
-From:   syzbot <syzbot+2182db487a523d86bf34@syzkaller.appspotmail.com>
-To:     linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <00000000000057e614057a9abcd3@google.com>
+Subject: KASAN: null-ptr-deref Read in refcount_sub_and_test_checked (2)
+From:   syzbot <syzbot+0468b73bdbb243217224@syzkaller.appspotmail.com>
+To:     kyungmin.park@samsung.com, linux-kernel@vger.kernel.org,
+        linux-media@vger.kernel.org, m.szyprowski@samsung.com,
+        mchehab@kernel.org, pawel@osciak.com,
+        syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -58,55 +61,76 @@ Hello,
 
 syzbot found the following crash on:
 
-HEAD commit:    3e536cff3424 net: phy: check if advertising is zero using ..
-git tree:       net-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16f95b83400000
+HEAD commit:    ccda4af0f4b9 Linux 4.20-rc2
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=16f9cb0b400000
 kernel config:  https://syzkaller.appspot.com/x/.config?x=4a0a89f12ca9b0f5
-dashboard link: https://syzkaller.appspot.com/bug?extid=2182db487a523d86bf34
+dashboard link: https://syzkaller.appspot.com/bug?extid=0468b73bdbb243217224
 compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=148d46d5400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15c6a225400000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16d20893400000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=118f5a2b400000
 
 IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+2182db487a523d86bf34@syzkaller.appspotmail.com
+Reported-by: syzbot+0468b73bdbb243217224@syzkaller.appspotmail.com
 
-------------[ cut here ]------------
-DEBUG_LOCKS_WARN_ON(depth >= MAX_LOCK_DEPTH)
-------------[ cut here ]------------
-kernel BUG at mm/slab.c:4425!
-invalid opcode: 0000 [#1] PREEMPT SMP KASAN
-CPU: 0 PID: -642842048 Comm: ksoftirqd/0 Not tainted 4.20.0-rc2+ #294
+==================================================================
+BUG: KASAN: null-ptr-deref in atomic_read  
+include/asm-generic/atomic-instrumented.h:21 [inline]
+BUG: KASAN: null-ptr-deref in refcount_sub_and_test_checked+0x9d/0x310  
+lib/refcount.c:179
+Read of size 4 at addr 0000000000000020 by task syz-executor487/6051
+
+CPU: 0 PID: 6051 Comm: syz-executor487 Not tainted 4.20.0-rc2+ #333
 Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
 Google 01/01/2011
-RIP: 0010:__check_heap_object+0xa7/0xb5 mm/slab.c:4450
-Code: 48 c7 c7 15 73 12 89 e8 97 e3 0a 00 5d c3 41 8b 91 04 01 00 00 48 29  
-c7 48 39 d7 77 be 48 01 d0 48 29 c8 48 39 f0 72 b3 5d c3 <0f> 0b 48 c7 c7  
-15 73 12 89 e8 fd eb 0a 00 44 89 e9 48 c7 c7 d0 73
-RSP: 0018:ffff8881d9af0030 EFLAGS: 00010093
-RAX: 00000000000a57eb RBX: 1ffff1103b35e00d RCX: 000000000000000c
-RDX: ffff8881d9af0240 RSI: 0000000000000002 RDI: ffff8881d9af01d8
-RBP: ffff8881d9af0030 R08: ffff8881d9af0240 R09: ffff8881da970180
-R10: 000000004afd69e7 R11: 0000000000000000 R12: ffff8881d9af01d8
-R13: 0000000000000002 R14: ffffea000766bc00 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000068 CR3: 00000001bb987000 CR4: 00000000001406f0
 Call Trace:
-Modules linked in:
----[ end trace 1c9eb38e9e38ee03 ]---
-RIP: 0010:__check_heap_object+0xa7/0xb5 mm/slab.c:4450
-Code: 48 c7 c7 15 73 12 89 e8 97 e3 0a 00 5d c3 41 8b 91 04 01 00 00 48 29  
-c7 48 39 d7 77 be 48 01 d0 48 29 c8 48 39 f0 72 b3 5d c3 <0f> 0b 48 c7 c7  
-15 73 12 89 e8 fd eb 0a 00 44 89 e9 48 c7 c7 d0 73
-RSP: 0018:ffff8881d9af0030 EFLAGS: 00010093
-RAX: 00000000000a57eb RBX: 1ffff1103b35e00d RCX: 000000000000000c
-RDX: ffff8881d9af0240 RSI: 0000000000000002 RDI: ffff8881d9af01d8
-RBP: ffff8881d9af0030 R08: ffff8881d9af0240 R09: ffff8881da970180
-R10: 000000004afd69e7 R11: 0000000000000000 R12: ffff8881d9af01d8
-R13: 0000000000000002 R14: ffffea000766bc00 R15: 0000000000000001
-FS:  0000000000000000(0000) GS:ffff8881dae00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000000000000068 CR3: 00000001bb987000 CR4: 00000000001406f0
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  kasan_report_error mm/kasan/report.c:352 [inline]
+  kasan_report.cold.8+0x6d/0x309 mm/kasan/report.c:412
+  check_memory_region_inline mm/kasan/kasan.c:260 [inline]
+  check_memory_region+0x13e/0x1b0 mm/kasan/kasan.c:267
+  kasan_check_read+0x11/0x20 mm/kasan/kasan.c:272
+  atomic_read include/asm-generic/atomic-instrumented.h:21 [inline]
+  refcount_sub_and_test_checked+0x9d/0x310 lib/refcount.c:179
+  refcount_dec_and_test_checked+0x1a/0x20 lib/refcount.c:212
+  vb2_vmalloc_put+0x19/0x80  
+drivers/media/common/videobuf2/videobuf2-vmalloc.c:68
+  __vb2_buf_mem_free+0x112/0x210  
+drivers/media/common/videobuf2/videobuf2-core.c:242
+  __vb2_free_mem drivers/media/common/videobuf2/videobuf2-core.c:413 [inline]
+  __vb2_queue_free+0x830/0xa30  
+drivers/media/common/videobuf2/videobuf2-core.c:458
+  vb2_core_queue_release+0x62/0x80  
+drivers/media/common/videobuf2/videobuf2-core.c:2231
+  vb2_queue_release drivers/media/common/videobuf2/videobuf2-v4l2.c:837  
+[inline]
+  _vb2_fop_release+0x1d2/0x2b0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:1010
+  vb2_fop_release+0x77/0xc0  
+drivers/media/common/videobuf2/videobuf2-v4l2.c:1024
+  vivid_fop_release+0x18e/0x440 drivers/media/platform/vivid/vivid-core.c:474
+  v4l2_release+0x224/0x3a0 drivers/media/v4l2-core/v4l2-dev.c:456
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  exit_task_work include/linux/task_work.h:22 [inline]
+  do_exit+0x1ad6/0x26d0 kernel/exit.c:867
+  do_group_exit+0x177/0x440 kernel/exit.c:970
+  __do_sys_exit_group kernel/exit.c:981 [inline]
+  __se_sys_exit_group kernel/exit.c:979 [inline]
+  __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:979
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x442c78
+Code: Bad RIP value.
+RSP: 002b:00007fff4ac5a278 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 0000000000442c78
+RDX: 0000000000000000 RSI: 000000000000003c RDI: 0000000000000000
+RBP: 00000000004c2848 R08: 00000000000000e7 R09: ffffffffffffffd0
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000001
+R13: 00000000006d4180 R14: 0000000000000000 R15: 0000000000000000
+==================================================================
 
 
 ---
