@@ -2,447 +2,113 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 284A2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:50:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FDA1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:51:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB04722419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:50:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D21qEKe4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB04722419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 725A921582
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:51:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 725A921582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733068AbeKOAyL (ORCPT
+        id S1733075AbeKOAzG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 19:54:11 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36188 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727952AbeKOAyL (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 19:54:11 -0500
-Received: by mail-pg1-f196.google.com with SMTP id n2so298252pgm.3
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 06:50:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=Q5lVi/XKX9zwzxhleNmQKYQrpga+xqbiNMbCQQIONjA=;
-        b=D21qEKe4ayTMkBeOP+ZIveUI1YFOplt0Ycit58+wTb5p3m8MtgyeXNdtBvduBL799w
-         rCq0jvjJWh04Dw6JsyEv1pjbCpHC3TtMiS4Vy2XLeM2mR5KKIhcYSwXxPH14hoJyIl+6
-         d8finTpY/Ly9V1zlFFKlwmb26YhPNm1mYT6+pWVykW2HYUOoeb1BnwpLW6HLE8yv0ZvC
-         QQPYecox7bGzBqrdKSfegsgU22zmLnhIgKm07OFdiAabHKKuieSK3ylBo3NqHOA8p4+N
-         xYLkWgThSQcuVOHZtmPhshboYnLlb8XFdB1n5YUxgVG/+oBW5AJjow3yaEIxx8Q/TtE5
-         V/Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=Q5lVi/XKX9zwzxhleNmQKYQrpga+xqbiNMbCQQIONjA=;
-        b=gbgJ6oBTed58I8pLBqDGuR/0yToyLwHzBcz2FeLIkDkO3tMcx6U6iTfD26AfmZ73He
-         51vBkz6iTZ9Bid6KzWw5Zgb3Q9cTThQR02gmitZT7lm7pv7eJ78ZZSKis7o4YEML5O14
-         51q/JLfh1iQvHpLQKze/cqvuaCig5Z+sjwmAtATkesVc6S+hXqu+ztj9T0fS4lckeqPE
-         +HZLU0JU3GqJX8f9WtlJWlk9r6kDOiuyyBS3fVTT53KLMgVUHZG9kVm+MorWgptU8BE/
-         bYbqv5dkHvFk+uI+rcQAODT78abzDpn7RuHyNZCFtXytFlNwDIA/alKQ5cjnlWquroje
-         EboA==
-X-Gm-Message-State: AGRZ1gLMyHQu5SIffxheo3YaxvAUA6NvX1rIejDFyPHXYFe/8ObvfkV1
-        m1kOlnnKEv6Ghtu6Z1AOvm0=
-X-Google-Smtp-Source: AJdET5eRrwFJ7HwFP4Xl8EjkBWLuB7MpjnzMooQI/7AsYSuf8jO8okWKrpCj8+6clwFLf048hMlLVg==
-X-Received: by 2002:a63:fa46:: with SMTP id g6mr2054319pgk.18.1542207038229;
-        Wed, 14 Nov 2018 06:50:38 -0800 (PST)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id 4sm20918724pfq.10.2018.11.14.06.50.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Nov 2018 06:50:37 -0800 (PST)
-Date:   Wed, 14 Nov 2018 20:20:31 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Johan Hovold <johan@kernel.org>, Alex Elder <elder@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Rui Miguel Silva <rmfrfs@gmail.com>, greybus-dev@lists.linaro.org,
-        devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: greybus: gpio: switch GPIO portions to use
- GPIOLIB_IRQCHIP
-Message-ID: <20181114145027.GA15851@nishad>
+        Wed, 14 Nov 2018 19:55:06 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:38314 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1731585AbeKOAzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 19:55:06 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 277832074F; Wed, 14 Nov 2018 15:51:32 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
+        by mail.bootlin.com (Postfix) with ESMTPSA id EDE7C20379;
+        Wed, 14 Nov 2018 15:51:31 +0100 (CET)
+Date:   Wed, 14 Nov 2018 15:51:31 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     John Garry <john.garry@huawei.com>
+Cc:     catalin.marinas@arm.com, will.deacon@arm.com, wens@csie.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        icenowy@aosc.io
+Subject: Re: [PATCH] arm64: sunxi: Enable REGMAP_MMIO to fix linker error
+Message-ID: <20181114145131.qv4gzg6pqktkpun5@flea>
+References: <1542128665-78302-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="rhoukju7jkkjh5rs"
 Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <1542128665-78302-1-git-send-email-john.garry@huawei.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Convert the GPIO driver to use the GPIO irqchip library
-GPIOLIB_IRQCHIP instead of reimplementing the same.
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
-Changes in v2:
- - Retained irq.h and irqdomain.h headers.
- - Dropped function gb_gpio_irqchip_add() and
-   called gpiochip_irqchip_add() from probe().
- - Referred https://lkml.kernel.org/r/1476054589-28422-1-git-send-email-linus.walleij@linaro.org.
----
- drivers/staging/greybus/Kconfig |   1 +
- drivers/staging/greybus/gpio.c  | 184 ++++----------------------------
- 2 files changed, 24 insertions(+), 161 deletions(-)
+--rhoukju7jkkjh5rs
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/staging/greybus/Kconfig b/drivers/staging/greybus/Kconfig
-index ab096bcef98c..b571e4e8060b 100644
---- a/drivers/staging/greybus/Kconfig
-+++ b/drivers/staging/greybus/Kconfig
-@@ -148,6 +148,7 @@ if GREYBUS_BRIDGED_PHY
- config GREYBUS_GPIO
- 	tristate "Greybus GPIO Bridged PHY driver"
- 	depends on GPIOLIB
-+	select GPIOLIB_IRQCHIP
- 	---help---
- 	  Select this option if you have a device that follows the
- 	  Greybus GPIO Bridged PHY Class specification.
-diff --git a/drivers/staging/greybus/gpio.c b/drivers/staging/greybus/gpio.c
-index b1d4698019a1..2ec54744171d 100644
---- a/drivers/staging/greybus/gpio.c
-+++ b/drivers/staging/greybus/gpio.c
-@@ -9,9 +9,9 @@
- #include <linux/kernel.h>
- #include <linux/module.h>
- #include <linux/slab.h>
--#include <linux/gpio.h>
- #include <linux/irq.h>
- #include <linux/irqdomain.h>
-+#include <linux/gpio/driver.h>
- #include <linux/mutex.h>
- 
- #include "greybus.h"
-@@ -39,15 +39,8 @@ struct gb_gpio_controller {
- 
- 	struct gpio_chip	chip;
- 	struct irq_chip		irqc;
--	struct irq_chip		*irqchip;
--	struct irq_domain	*irqdomain;
--	unsigned int		irq_base;
--	irq_flow_handler_t	irq_handler;
--	unsigned int		irq_default_type;
- 	struct mutex		irq_lock;
- };
--#define gpio_chip_to_gb_gpio_controller(chip) \
--	container_of(chip, struct gb_gpio_controller, chip)
- #define irq_data_to_gpio_chip(d) (d->domain->host_data)
- 
- static int gb_gpio_line_count_operation(struct gb_gpio_controller *ggc)
-@@ -276,7 +269,7 @@ static void _gb_gpio_irq_set_type(struct gb_gpio_controller *ggc,
- static void gb_gpio_irq_mask(struct irq_data *d)
- {
- 	struct gpio_chip *chip = irq_data_to_gpio_chip(d);
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 	struct gb_gpio_line *line = &ggc->lines[d->hwirq];
- 
- 	line->masked = true;
-@@ -286,7 +279,7 @@ static void gb_gpio_irq_mask(struct irq_data *d)
- static void gb_gpio_irq_unmask(struct irq_data *d)
- {
- 	struct gpio_chip *chip = irq_data_to_gpio_chip(d);
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 	struct gb_gpio_line *line = &ggc->lines[d->hwirq];
- 
- 	line->masked = false;
-@@ -296,7 +289,7 @@ static void gb_gpio_irq_unmask(struct irq_data *d)
- static int gb_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- {
- 	struct gpio_chip *chip = irq_data_to_gpio_chip(d);
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 	struct gb_gpio_line *line = &ggc->lines[d->hwirq];
- 	struct device *dev = &ggc->gbphy_dev->dev;
- 	u8 irq_type;
-@@ -334,7 +327,7 @@ static int gb_gpio_irq_set_type(struct irq_data *d, unsigned int type)
- static void gb_gpio_irq_bus_lock(struct irq_data *d)
- {
- 	struct gpio_chip *chip = irq_data_to_gpio_chip(d);
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 
- 	mutex_lock(&ggc->irq_lock);
- }
-@@ -342,7 +335,7 @@ static void gb_gpio_irq_bus_lock(struct irq_data *d)
- static void gb_gpio_irq_bus_sync_unlock(struct irq_data *d)
- {
- 	struct gpio_chip *chip = irq_data_to_gpio_chip(d);
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 	struct gb_gpio_line *line = &ggc->lines[d->hwirq];
- 
- 	if (line->irq_type_pending) {
-@@ -391,7 +384,7 @@ static int gb_gpio_request_handler(struct gb_operation *op)
- 		return -EINVAL;
- 	}
- 
--	irq = irq_find_mapping(ggc->irqdomain, event->which);
-+	irq = irq_find_mapping(ggc->chip.irq.domain, event->which);
- 	if (!irq) {
- 		dev_err(dev, "failed to find IRQ\n");
- 		return -EINVAL;
-@@ -411,21 +404,21 @@ static int gb_gpio_request_handler(struct gb_operation *op)
- 
- static int gb_gpio_request(struct gpio_chip *chip, unsigned int offset)
- {
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 
- 	return gb_gpio_activate_operation(ggc, (u8)offset);
- }
- 
- static void gb_gpio_free(struct gpio_chip *chip, unsigned int offset)
- {
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 
- 	gb_gpio_deactivate_operation(ggc, (u8)offset);
- }
- 
- static int gb_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- {
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 	u8 which;
- 	int ret;
- 
-@@ -439,7 +432,7 @@ static int gb_gpio_get_direction(struct gpio_chip *chip, unsigned int offset)
- 
- static int gb_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- {
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 
- 	return gb_gpio_direction_in_operation(ggc, (u8)offset);
- }
-@@ -447,14 +440,14 @@ static int gb_gpio_direction_input(struct gpio_chip *chip, unsigned int offset)
- static int gb_gpio_direction_output(struct gpio_chip *chip, unsigned int offset,
- 				    int value)
- {
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 
- 	return gb_gpio_direction_out_operation(ggc, (u8)offset, !!value);
- }
- 
- static int gb_gpio_get(struct gpio_chip *chip, unsigned int offset)
- {
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 	u8 which;
- 	int ret;
- 
-@@ -468,7 +461,7 @@ static int gb_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 
- static void gb_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
- {
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 
- 	gb_gpio_set_value_operation(ggc, (u8)offset, !!value);
- }
-@@ -476,7 +469,7 @@ static void gb_gpio_set(struct gpio_chip *chip, unsigned int offset, int value)
- static int gb_gpio_set_config(struct gpio_chip *chip, unsigned int offset,
- 			      unsigned long config)
- {
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
-+	struct gb_gpio_controller *ggc = gpiochip_get_data(chip);
- 	u32 debounce;
- 
- 	if (pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE)
-@@ -506,135 +499,6 @@ static int gb_gpio_controller_setup(struct gb_gpio_controller *ggc)
- 	return ret;
- }
- 
--/**
-- * gb_gpio_irq_map() - maps an IRQ into a GB gpio irqchip
-- * @d: the irqdomain used by this irqchip
-- * @irq: the global irq number used by this GB gpio irqchip irq
-- * @hwirq: the local IRQ/GPIO line offset on this GB gpio
-- *
-- * This function will set up the mapping for a certain IRQ line on a
-- * GB gpio by assigning the GB gpio as chip data, and using the irqchip
-- * stored inside the GB gpio.
-- */
--static int gb_gpio_irq_map(struct irq_domain *domain, unsigned int irq,
--			   irq_hw_number_t hwirq)
--{
--	struct gpio_chip *chip = domain->host_data;
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
--
--	irq_set_chip_data(irq, ggc);
--	irq_set_chip_and_handler(irq, ggc->irqchip, ggc->irq_handler);
--	irq_set_noprobe(irq);
--	/*
--	 * No set-up of the hardware will happen if IRQ_TYPE_NONE
--	 * is passed as default type.
--	 */
--	if (ggc->irq_default_type != IRQ_TYPE_NONE)
--		irq_set_irq_type(irq, ggc->irq_default_type);
--
--	return 0;
--}
--
--static void gb_gpio_irq_unmap(struct irq_domain *d, unsigned int irq)
--{
--	irq_set_chip_and_handler(irq, NULL, NULL);
--	irq_set_chip_data(irq, NULL);
--}
--
--static const struct irq_domain_ops gb_gpio_domain_ops = {
--	.map	= gb_gpio_irq_map,
--	.unmap	= gb_gpio_irq_unmap,
--};
--
--/**
-- * gb_gpio_irqchip_remove() - removes an irqchip added to a gb_gpio_controller
-- * @ggc: the gb_gpio_controller to remove the irqchip from
-- *
-- * This is called only from gb_gpio_remove()
-- */
--static void gb_gpio_irqchip_remove(struct gb_gpio_controller *ggc)
--{
--	unsigned int offset;
--
--	/* Remove all IRQ mappings and delete the domain */
--	if (ggc->irqdomain) {
--		for (offset = 0; offset < (ggc->line_max + 1); offset++)
--			irq_dispose_mapping(irq_find_mapping(ggc->irqdomain,
--							     offset));
--		irq_domain_remove(ggc->irqdomain);
--	}
--
--	if (ggc->irqchip)
--		ggc->irqchip = NULL;
--}
--
--/**
-- * gb_gpio_irqchip_add() - adds an irqchip to a gpio chip
-- * @chip: the gpio chip to add the irqchip to
-- * @irqchip: the irqchip to add to the adapter
-- * @first_irq: if not dynamically assigned, the base (first) IRQ to
-- * allocate gpio irqs from
-- * @handler: the irq handler to use (often a predefined irq core function)
-- * @type: the default type for IRQs on this irqchip, pass IRQ_TYPE_NONE
-- * to have the core avoid setting up any default type in the hardware.
-- *
-- * This function closely associates a certain irqchip with a certain
-- * gpio chip, providing an irq domain to translate the local IRQs to
-- * global irqs, and making sure that the gpio chip
-- * is passed as chip data to all related functions. Driver callbacks
-- * need to use container_of() to get their local state containers back
-- * from the gpio chip passed as chip data. An irqdomain will be stored
-- * in the gpio chip that shall be used by the driver to handle IRQ number
-- * translation. The gpio chip will need to be initialized and registered
-- * before calling this function.
-- */
--static int gb_gpio_irqchip_add(struct gpio_chip *chip,
--			 struct irq_chip *irqchip,
--			 unsigned int first_irq,
--			 irq_flow_handler_t handler,
--			 unsigned int type)
--{
--	struct gb_gpio_controller *ggc;
--	unsigned int offset;
--	unsigned int irq_base;
--
--	if (!chip || !irqchip)
--		return -EINVAL;
--
--	ggc = gpio_chip_to_gb_gpio_controller(chip);
--
--	ggc->irqchip = irqchip;
--	ggc->irq_handler = handler;
--	ggc->irq_default_type = type;
--	ggc->irqdomain = irq_domain_add_simple(NULL,
--					ggc->line_max + 1, first_irq,
--					&gb_gpio_domain_ops, chip);
--	if (!ggc->irqdomain) {
--		ggc->irqchip = NULL;
--		return -EINVAL;
--	}
--
--	/*
--	 * Prepare the mapping since the irqchip shall be orthogonal to
--	 * any gpio calls. If the first_irq was zero, this is
--	 * necessary to allocate descriptors for all IRQs.
--	 */
--	for (offset = 0; offset < (ggc->line_max + 1); offset++) {
--		irq_base = irq_create_mapping(ggc->irqdomain, offset);
--		if (offset == 0)
--			ggc->irq_base = irq_base;
--	}
--
--	return 0;
--}
--
--static int gb_gpio_to_irq(struct gpio_chip *chip, unsigned int offset)
--{
--	struct gb_gpio_controller *ggc = gpio_chip_to_gb_gpio_controller(chip);
--
--	return irq_find_mapping(ggc->irqdomain, offset);
--}
--
- static int gb_gpio_probe(struct gbphy_device *gbphy_dev,
- 			 const struct gbphy_device_id *id)
- {
-@@ -693,7 +557,6 @@ static int gb_gpio_probe(struct gbphy_device *gbphy_dev,
- 	gpio->get = gb_gpio_get;
- 	gpio->set = gb_gpio_set;
- 	gpio->set_config = gb_gpio_set_config;
--	gpio->to_irq = gb_gpio_to_irq;
- 	gpio->base = -1;		/* Allocate base dynamically */
- 	gpio->ngpio = ggc->line_max + 1;
- 	gpio->can_sleep = true;
-@@ -702,24 +565,24 @@ static int gb_gpio_probe(struct gbphy_device *gbphy_dev,
- 	if (ret)
- 		goto exit_line_free;
- 
--	ret = gb_gpio_irqchip_add(gpio, irqc, 0,
--				   handle_level_irq, IRQ_TYPE_NONE);
-+	ret = gpiochip_add(gpio);
- 	if (ret) {
--		dev_err(&gbphy_dev->dev, "failed to add irq chip: %d\n", ret);
-+		dev_err(&gbphy_dev->dev, "failed to add gpio chip: %d\n", ret);
- 		goto exit_line_free;
- 	}
- 
--	ret = gpiochip_add(gpio);
-+	ret = gpiochip_irqchip_add(gpio, irqc, 0, handle_level_irq,
-+				   IRQ_TYPE_NONE);
- 	if (ret) {
--		dev_err(&gbphy_dev->dev, "failed to add gpio chip: %d\n", ret);
--		goto exit_gpio_irqchip_remove;
-+		dev_err(&gbphy_dev->dev, "failed to add irq chip: %d\n", ret);
-+		goto exit_gpiochip_remove;
- 	}
- 
- 	gbphy_runtime_put_autosuspend(gbphy_dev);
- 	return 0;
- 
--exit_gpio_irqchip_remove:
--	gb_gpio_irqchip_remove(ggc);
-+exit_gpiochip_remove:
-+	gpiochip_remove(gpio);
- exit_line_free:
- 	kfree(ggc->lines);
- exit_connection_disable:
-@@ -743,7 +606,6 @@ static void gb_gpio_remove(struct gbphy_device *gbphy_dev)
- 
- 	gb_connection_disable_rx(connection);
- 	gpiochip_remove(&ggc->chip);
--	gb_gpio_irqchip_remove(ggc);
- 	gb_connection_disable(connection);
- 	gb_connection_destroy(connection);
- 	kfree(ggc->lines);
--- 
-2.17.1
+Hi John,
 
+On Wed, Nov 14, 2018 at 01:04:25AM +0800, John Garry wrote:
+> The following linker failure can be seen for a certain heavily reduced
+> defconfig:
+> drivers/soc/sunxi/sunxi_sram.o: In function `sunxi_sram_probe':
+> drivers/soc/sunxi/sunxi_sram.c:353: undefined reference to `__devm_regmap=
+_init_mmio_clk'
+> drivers/soc/sunxi/sunxi_sram.c:353:(.text+0x3c4): relocation truncated to=
+ fit: R_AARCH64_CALL26 against undefined symbol `__devm_regmap_init_mmio_cl=
+k'
+>=20
+> It would seem that the sunxi sram driver implicitly depended on config
+> REGMAP_MMIO.
+>=20
+> To solve, select config REGMAP_MMIO for ARCH_SUNXI. This seems a better
+> option than selecting from the respective driver config as this just
+> defaults to ARCH_SUNXI.
+>=20
+> Fixes: 5828729bebbb ("soc: sunxi: export a regmap for EMAC clock reg on A=
+64")
+> Signed-off-by: John Garry <john.garry@huawei.com>
+>=20
+> diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+> index 51bc479..c8a6ad3 100644
+> --- a/arch/arm64/Kconfig.platforms
+> +++ b/arch/arm64/Kconfig.platforms
+> @@ -12,6 +12,7 @@ config ARCH_SUNXI
+>  	select ARCH_HAS_RESET_CONTROLLER
+>  	select GENERIC_IRQ_CHIP
+>  	select PINCTRL
+> +	select REGMAP_MMIO
+>  	select RESET_CONTROLLER
+>  	help
+>  	  This enables support for Allwinner sunxi based SoCs like the A64.
+
+The sunxi_sram driver has a Kconfig symbol of its own now, it would
+make more sense to add that select there, especially since we can also
+compile it for arm.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--rhoukju7jkkjh5rs
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+w2cwAKCRDj7w1vZxhR
+xRp5AQCe36RAikjCgNlMGBgMPdDUbcBEQl8Yphs/Nrlqy/tFPQD9Fsq6fdgXmLhm
+OLa5lr712+1tPnbvwEPQcuKXDudu8w8=
+=5vzN
+-----END PGP SIGNATURE-----
+
+--rhoukju7jkkjh5rs--
