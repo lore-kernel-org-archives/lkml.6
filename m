@@ -2,179 +2,86 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 562C4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:48:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 51364C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8DF22419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:48:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8DF22419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 1F8002080F
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:48:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F8002080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732444AbeKNTum (ORCPT
+        id S1732535AbeKNTun (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 14:50:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:49806 "EHLO mx1.redhat.com"
+        Wed, 14 Nov 2018 14:50:43 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:58350 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727598AbeKNTul (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 14:50:41 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 51AF5307CDCE;
-        Wed, 14 Nov 2018 09:48:11 +0000 (UTC)
-Received: from [10.36.117.19] (ovpn-117-19.ams2.redhat.com [10.36.117.19])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id CC69560150;
-        Wed, 14 Nov 2018 09:48:09 +0000 (UTC)
-Subject: Re: Memory hotplug softlock issue
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Baoquan He <bhe@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        aarcange@redhat.com
-References: <20181114070909.GB2653@MiWiFi-R3L-srv>
- <5a6c6d6b-ebcd-8bfa-d6e0-4312bfe86586@redhat.com>
- <20181114090042.GD2653@MiWiFi-R3L-srv>
- <8c03f925-8ca4-688c-569a-a7a449612782@redhat.com>
- <20181114094104.GJ23419@dhcp22.suse.cz>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <9bb86c98-e062-b045-7c22-6f037bd56f36@redhat.com>
-Date:   Wed, 14 Nov 2018 10:48:09 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        id S1727595AbeKNTum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 14:50:42 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id D368520D8A; Wed, 14 Nov 2018 10:48:10 +0100 (CET)
+Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
+        by mail.bootlin.com (Postfix) with ESMTPSA id A5DCD20D75;
+        Wed, 14 Nov 2018 10:48:00 +0100 (CET)
+Date:   Wed, 14 Nov 2018 10:48:00 +0100
+From:   Alexandre Belloni <alexandre.belloni@bootlin.com>
+To:     "Maciej W. Rozycki" <macro@linux-mips.org>
+Cc:     Alessandro Zummo <a.zummo@towertech.it>,
+        Matt Turner <mattst88@gmail.com>, linux-rtc@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rtc: m41t80: Complete error propagation from SMBus calls
+Message-ID: <20181114094800.GU29768@piout.net>
+References: <alpine.LFD.2.21.1811070142240.20378@eddie.linux-mips.org>
 MIME-Version: 1.0
-In-Reply-To: <20181114094104.GJ23419@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.49]); Wed, 14 Nov 2018 09:48:11 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.LFD.2.21.1811070142240.20378@eddie.linux-mips.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 14.11.18 10:41, Michal Hocko wrote:
-> On Wed 14-11-18 10:25:57, David Hildenbrand wrote:
->> On 14.11.18 10:00, Baoquan He wrote:
->>> Hi David,
->>>
->>> On 11/14/18 at 09:18am, David Hildenbrand wrote:
->>>> Code seems to be waiting for the mem_hotplug_lock in read.
->>>> We hold mem_hotplug_lock in write whenever we online/offline/add/remove
->>>> memory. There are two ways to trigger offlining of memory:
->>>>
->>>> 1. Offlining via "cat offline > /sys/devices/system/memory/memory0/state"
->>>>
->>>> This always properly took the mem_hotplug_lock. Nothing changed
->>>>
->>>> 2. Offlining via "cat 0 > /sys/devices/system/memory/memory0/online"
->>>>
->>>> This didn't take the mem_hotplug_lock and I fixed that for this release.
->>>>
->>>> So if you were testing with 1., you should have seen the same error
->>>> before this release (unless there is something else now broken in this
->>>> release).
->>>
->>> Thanks a lot for looking into this.
->>>
->>> I triggered sysrq+t to check threads' state. You can see that we use
->>> firmware to trigger ACPI event to go to acpi_bus_offline(), it truly
->>> didn't take mem_hotplug_lock() and has taken it with your fix in
->>> commit 381eab4a6ee mm/memory_hotplug: fix online/offline_pages called w.o. mem_hotplug_lock
->>>
->>> [  +0.007062] Workqueue: kacpi_hotplug acpi_hotplug_work_fn
->>> [  +0.005398] Call Trace:
->>> [  +0.002476]  ? page_vma_mapped_walk+0x307/0x710
->>> [  +0.004538]  ? page_remove_rmap+0xa2/0x340
->>> [  +0.004104]  ? ptep_clear_flush+0x54/0x60
->>> [  +0.004027]  ? enqueue_entity+0x11c/0x620
->>> [  +0.005904]  ? schedule+0x28/0x80
->>> [  +0.003336]  ? rmap_walk_file+0xf9/0x270
->>> [  +0.003940]  ? try_to_unmap+0x9c/0xf0
->>> [  +0.003695]  ? migrate_pages+0x2b0/0xb90
->>> [  +0.003959]  ? try_offline_node+0x160/0x160
->>> [  +0.004214]  ? __offline_pages+0x6ce/0x8e0
->>> [  +0.004134]  ? memory_subsys_offline+0x40/0x60
->>> [  +0.004474]  ? device_offline+0x81/0xb0
->>> [  +0.003867]  ? acpi_bus_offline+0xdb/0x140
->>> [  +0.004117]  ? acpi_device_hotplug+0x21c/0x460
->>> [  +0.004458]  ? acpi_hotplug_work_fn+0x1a/0x30
->>> [  +0.004372]  ? process_one_work+0x1a1/0x3a0
->>> [  +0.004195]  ? worker_thread+0x30/0x380
->>> [  +0.003851]  ? drain_workqueue+0x120/0x120
->>> [  +0.004117]  ? kthread+0x112/0x130
->>> [  +0.003411]  ? kthread_park+0x80/0x80
->>> [  +0.005325]  ? ret_from_fork+0x35/0x40
->>>
->>
->> Yes, this is indeed another code path that was fixed (and I didn't
->> actually realize it ;) ). Thanks for the callchain. Before my fix
->> hotplug still would have never succeeded (offline_pages would have
->> silently looped forever) as far as I can tell.
+On 07/11/2018 02:39:51+0000, Maciej W. Rozycki wrote:
+> Complement commit 85d77047c4ea ("drivers/rtc/rtc-m41t80.c: propagate 
+> error value from smbus functions") and correct the remaining places that 
+> fail to propagate the error code from SMBus calls.
 > 
-> I haven't studied your patch yet so I am not really sure why you have
-> added the lock into this path. The memory hotplug locking is certainly
-> far from great but I believe we should really rething the scope of the
-> lock. There shouldn't be any fundamental reason to use the global lock
-> for the full offlining. So rather than moving the lock from one place to
-> another we need a range locking I believe.
-See the patches for details, the lock was removed on this path by
-mistake not by design.
-
-Replacing the lock by some range lock can now be done. The tricky part
-will be get_online_mems(), we'll have to indicate a range somehow. For
-online/offline/add/remove, we have the range.
+> Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+> References: 85d77047c4ea ("drivers/rtc/rtc-m41t80.c: propagate error value from smbus functions")
+> ---
+> Hi,
+> 
+>  I think this does not qualify for backporting, but please feel free to 
+> decide otherwise.
+> 
+>  This change I did verify at run time to the extent I was able to, but I 
+> didn't try to trigger artificial errors.  Also the M41T81, which is the 
+> device I've been using this driver with, does not have battery failure 
+> indication implemented, so I could not execute the procfs handling path 
+> (again without making some artificial changes).  These changes should be 
+> obvious regardless.
+> 
+>  I'll be posting further patches over the coming weeks, based on my 
+> original effort as archived here: <https://lkml.org/lkml/2008/5/12/385>,
+> <https://lore.kernel.org/patchwork/project/lkml/list/?series=73524&archive=both> 
+> However I have just realised they'll need another iteration before I post 
+> them.  So for now just these two obvious fixes.
+> 
+>  Please apply.
+> 
+>   Maciej
+> ---
+>  drivers/rtc/rtc-m41t80.c |   13 ++++++++-----
+>  1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+Applied, thanks.
 
 -- 
-
-Thanks,
-
-David / dhildenb
+Alexandre Belloni, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
