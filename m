@@ -6,26 +6,26 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BDE83C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:01:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1951FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:01:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CC5022360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:01:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CC5022360
+	by mail.kernel.org (Postfix) with ESMTP id DD5DE2243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 13:01:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD5DE2243E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733150AbeKNXEV (ORCPT
+        id S1733171AbeKNXEd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 18:04:21 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44564 "EHLO mx1.suse.de"
+        Wed, 14 Nov 2018 18:04:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:44580 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1732843AbeKNXDd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 18:03:33 -0500
+        id S1728203AbeKNXDa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 18:03:30 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id C496FB0F1;
-        Wed, 14 Nov 2018 13:00:22 +0000 (UTC)
+        by mx1.suse.de (Postfix) with ESMTP id 16E29B0E5;
+        Wed, 14 Nov 2018 13:00:19 +0000 (UTC)
 From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 To:     stefan.wahren@i2se.com, eric@anholt.net,
         dave.stevenson@raspberrypi.org
@@ -33,9 +33,9 @@ Cc:     linux-rpi-kernel@lists.infradead.org, gregkh@linuxfoundation.org,
         linux-arm-kernel@lists.infradead.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org,
         Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-Subject: [PATCH 12/16] staging: vchiq_util: get rid of unneeded memory barriers
-Date:   Wed, 14 Nov 2018 13:59:38 +0100
-Message-Id: <20181114125942.25163-13-nsaenzjulienne@suse.de>
+Subject: [PATCH 06/16] staging: vchiq_arm: rework vchiq_ioc_copy_element_data
+Date:   Wed, 14 Nov 2018 13:59:32 +0100
+Message-Id: <20181114125942.25163-7-nsaenzjulienne@suse.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181114125942.25163-1-nsaenzjulienne@suse.de>
 References: <20181114125942.25163-1-nsaenzjulienne@suse.de>
@@ -46,74 +46,147 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-All the memory operations featured in this file modify/access memory
-that is only accessed by the CPU. So we can assume that all the memory
-barrier handling done by the completion routines is good enough for us.
+The function is passed to vchiq_core.c for it to go trough all the
+transfer elements (an array of pointers to data) and copy them into the
+actual transfer memory (contiguous memory).
+
+The logic in the function was "copy an element and return, except when
+the element is empty, in which case look for the next non-empty element
+and copy it. The function will be called as many times as necessary until
+all the elements are copied".
+
+Now, this approach already forces the function to loop around elements
+and felt convoluted, so it was changed to a more straightforward "Copy
+all the elements into memory as long as they fit".
+
+The resulting function is shorter and simpler.
 
 Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
 ---
- .../interface/vchiq_arm/vchiq_util.c          | 32 -------------------
- 1 file changed, 32 deletions(-)
+ .../interface/vchiq_arm/vchiq_arm.c           | 89 +++++++------------
+ 1 file changed, 31 insertions(+), 58 deletions(-)
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c
-index 44b954daa74a..4b8554bc647e 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_util.c
-@@ -84,20 +84,7 @@ void vchiu_queue_push(VCHIU_QUEUE_T *queue, VCHIQ_HEADER_T *header)
- 			flush_signals(current);
- 	}
- 
--	/*
--	 * Write to queue->storage must be visible after read from
--	 * queue->read
--	 */
--	smp_mb();
--
- 	queue->storage[queue->write & (queue->size - 1)] = header;
--
--	/*
--	 * Write to queue->storage must be visible before write to
--	 * queue->write
--	 */
--	smp_wmb();
--
- 	queue->write++;
- 
- 	complete(&queue->push);
-@@ -112,12 +99,6 @@ VCHIQ_HEADER_T *vchiu_queue_peek(VCHIU_QUEUE_T *queue)
- 
- 	complete(&queue->push); // We haven't removed anything from the queue.
- 
--	/*
--	 * Read from queue->storage must be visible after read from
--	 * queue->write
--	 */
--	smp_rmb();
--
- 	return queue->storage[queue->read & (queue->size - 1)];
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 34160cc3b8bd..1cdfdb714abc 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -752,74 +752,48 @@ static void close_delivered(USER_SERVICE_T *user_service)
  }
  
-@@ -130,20 +111,7 @@ VCHIQ_HEADER_T *vchiu_queue_pop(VCHIU_QUEUE_T *queue)
- 			flush_signals(current);
+ struct vchiq_io_copy_callback_context {
+-	struct vchiq_element *current_element;
+-	size_t current_element_offset;
++	struct vchiq_element *element;
++	size_t element_offset;
+ 	unsigned long elements_to_go;
+-	size_t current_offset;
+ };
+ 
+-static ssize_t
+-vchiq_ioc_copy_element_data(
+-	void *context,
+-	void *dest,
+-	size_t offset,
+-	size_t maxsize)
++static ssize_t vchiq_ioc_copy_element_data(void *context, void *dest,
++					   size_t offset, size_t maxsize)
+ {
+-	long res;
++	struct vchiq_io_copy_callback_context *cc = context;
++	size_t total_bytes_copied = 0;
+ 	size_t bytes_this_round;
+-	struct vchiq_io_copy_callback_context *copy_context =
+-		(struct vchiq_io_copy_callback_context *)context;
+-
+-	if (offset != copy_context->current_offset)
+-		return 0;
+-
+-	if (!copy_context->elements_to_go)
+-		return 0;
+-
+-	/*
+-	 * Complex logic here to handle the case of 0 size elements
+-	 * in the middle of the array of elements.
+-	 *
+-	 * Need to skip over these 0 size elements.
+-	 */
+-	while (1) {
+-		bytes_this_round = min(copy_context->current_element->size -
+-				       copy_context->current_element_offset,
+-				       maxsize);
+-
+-		if (bytes_this_round)
+-			break;
+ 
+-		copy_context->elements_to_go--;
+-		copy_context->current_element++;
+-		copy_context->current_element_offset = 0;
++	while (total_bytes_copied < maxsize) {
++		if (!cc->elements_to_go)
++			return total_bytes_copied;
+ 
+-		if (!copy_context->elements_to_go)
+-			return 0;
+-	}
++		if (!cc->element->size) {
++			cc->elements_to_go--;
++			cc->element++;
++			cc->element_offset = 0;
++			continue;
++		}
+ 
+-	res = copy_from_user(dest,
+-			     copy_context->current_element->data +
+-			     copy_context->current_element_offset,
+-			     bytes_this_round);
++		bytes_this_round = min(cc->element->size - cc->element_offset,
++				       maxsize - total_bytes_copied);
+ 
+-	if (res != 0)
+-		return -EFAULT;
++		if (copy_from_user(dest + total_bytes_copied,
++				  cc->element->data + cc->element_offset,
++				  bytes_this_round))
++			return -EFAULT;
+ 
+-	copy_context->current_element_offset += bytes_this_round;
+-	copy_context->current_offset += bytes_this_round;
++		cc->element_offset += bytes_this_round;
++		total_bytes_copied += bytes_this_round;
+ 
+-	/*
+-	 * Check if done with current element, and if so advance to the next.
+-	 */
+-	if (copy_context->current_element_offset ==
+-	    copy_context->current_element->size) {
+-		copy_context->elements_to_go--;
+-		copy_context->current_element++;
+-		copy_context->current_element_offset = 0;
++		if (cc->element_offset == cc->element->size) {
++			cc->elements_to_go--;
++			cc->element++;
++			cc->element_offset = 0;
++		}
  	}
  
--	/*
--	 * Read from queue->storage must be visible after read from
--	 * queue->write
--	 */
--	smp_rmb();
--
- 	header = queue->storage[queue->read & (queue->size - 1)];
--
--	/*
--	 * Read from queue->storage must be visible before write to
--	 * queue->read
--	 */
--	smp_mb();
--
- 	queue->read++;
+-	return bytes_this_round;
++	return maxsize;
+ }
  
- 	complete(&queue->pop);
+ /**************************************************************************
+@@ -836,10 +810,9 @@ vchiq_ioc_queue_message(VCHIQ_SERVICE_HANDLE_T handle,
+ 	unsigned long i;
+ 	size_t total_size = 0;
+ 
+-	context.current_element = elements;
+-	context.current_element_offset = 0;
++	context.element = elements;
++	context.element_offset = 0;
+ 	context.elements_to_go = count;
+-	context.current_offset = 0;
+ 
+ 	for (i = 0; i < count; i++) {
+ 		if (!elements[i].data && elements[i].size != 0)
 -- 
 2.19.1
 
