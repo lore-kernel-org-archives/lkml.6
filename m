@@ -7,152 +7,99 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 558EFC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A414C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:37:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DB832175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:37:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2037E2175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:37:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="EfxPyD58"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DB832175B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="G2cLGxFw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2037E2175B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388563AbeKOIm0 (ORCPT
+        id S2388309AbeKOI3Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:42:26 -0500
+        Thu, 15 Nov 2018 03:29:25 -0500
 Received: from mail.kernel.org ([198.145.29.99]:36268 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388285AbeKOI30 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:29:26 -0500
+        id S1733161AbeKOI3Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:29:24 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 8DC1F2252B;
-        Wed, 14 Nov 2018 22:24:21 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 299A52252C;
+        Wed, 14 Nov 2018 22:24:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234261;
-        bh=jCkQ/NI813++FSrvW44CuBWwtEFEu9t6E1eE/91zcSk=;
+        s=default; t=1542234260;
+        bh=GfEuefqR47puI99k2KhJ7QjFX9XdAstorKkoqRbIYMw=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=EfxPyD581iUysEu+Fkgf0QVOGjhjwaL0Gtq5WlyPEYMjVX33giSqgoXlwqsBC11Qh
-         mkyUA6c4075Y9wHHIXE9BRFssX+k7WrRwoeKEI35XBXYsOosu11qDS7f8lfEWypeac
-         ehu4E5R0OW7typ0vqBih+3pp8hlr02WfsFiEO27w=
+        b=G2cLGxFwgwhVHypA+FScRSF6AgwbxDYmF34HEuSeX3/Tni+l/CFGa+WDsOe9z+8XG
+         wjWb3m0ZVH0LtmgM6e2l5LPl5FDkbE+s1bWLEqegEVLrEKiAg3p41ivWo7gGEKLwhQ
+         n6koPic5Q/A1ch2+6AEw3mPCYkOdRLDNRBgM3Bgc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Inki Dae <inki.dae@samsung.com>, Sasha Levin <sashal@kernel.org>,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.18 26/59] Revert "drm/exynos/decon5433: implement frame counter"
-Date:   Wed, 14 Nov 2018 17:22:58 -0500
-Message-Id: <20181114222335.99339-26-sashal@kernel.org>
+Cc:     =?UTF-8?q?Holger=20Hoffst=C3=A4tte?= 
+        <holger@applied-asynchrony.com>,
+        "David S . Miller" <davem@davemloft.net>,
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.18 23/59] net: phy: realtek: fix RTL8201F sysfs name
+Date:   Wed, 14 Nov 2018 17:22:55 -0500
+Message-Id: <20181114222335.99339-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Inki Dae <inki.dae@samsung.com>
+From: Holger Hoffstätte <holger@applied-asynchrony.com>
 
-[ Upstream commit 6ca469e22a30992b4478d2ab88737c70667c1e00 ]
+[ Upstream commit 0432e833191ad4d17b7fc2364941f91dad51db1a ]
 
-This reverts commit 0586feba322e1de05075700eb4b835c8b683e62b
+Since 4.19 the following error in sysfs has appeared when using the
+r8169 NIC driver:
 
-This patch makes it to need get_vblank_counter callback in crtc
-to get frame counter from decon driver.
+$cd /sys/module/realtek/drivers
+$ls -l
+ls: cannot access 'mdio_bus:RTL8201F 10/100Mbps Ethernet': No such file or directory
+[..garbled dir entries follow..]
 
-However, drm_dev->max_vblank_count is a member unique to
-vendor's DRM driver but in case of ARM DRM, some CRTC devices
-don't provide the frame counter value. As a result, this patch
-made extension and clone mode not working.
+Apparently the forward slash in "10/100Mbps Ethernet" is interpreted
+as directory separator that leads nowhere, and was introduced in commit
+513588dd44b ("net: phy: realtek: add RTL8201F phy-id and functions").
 
-Instead of this patch, we may need separated max_vblank_count
-which belongs to each CRTC device, or need to implement frame
-counter emulation for them who don't support HW frame counter.
+Fix this by removing the offending slash in the driver name.
 
-Signed-off-by: Inki Dae <inki.dae@samsung.com>
+Other drivers in net/phy seem to have the same problem, but I cannot
+test/verify them.
+
+Fixes: 513588dd44b ("net: phy: realtek: add RTL8201F phy-id and functions")
+Signed-off-by: Holger Hoffstätte <holger@applied-asynchrony.com>
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/exynos/exynos5433_drm_decon.c |  9 ---------
- drivers/gpu/drm/exynos/exynos_drm_crtc.c      | 11 -----------
- drivers/gpu/drm/exynos/exynos_drm_drv.h       |  1 -
- 3 files changed, 21 deletions(-)
+ drivers/net/phy/realtek.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-index e868773ea509..10b276353004 100644
---- a/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-+++ b/drivers/gpu/drm/exynos/exynos5433_drm_decon.c
-@@ -164,13 +164,6 @@ static u32 decon_get_frame_count(struct decon_context *ctx, bool end)
- 	return frm;
- }
- 
--static u32 decon_get_vblank_counter(struct exynos_drm_crtc *crtc)
--{
--	struct decon_context *ctx = crtc->ctx;
--
--	return decon_get_frame_count(ctx, false);
--}
--
- static void decon_setup_trigger(struct decon_context *ctx)
- {
- 	if (!ctx->crtc->i80_mode && !(ctx->out_type & I80_HW_TRG))
-@@ -536,7 +529,6 @@ static const struct exynos_drm_crtc_ops decon_crtc_ops = {
- 	.disable		= decon_disable,
- 	.enable_vblank		= decon_enable_vblank,
- 	.disable_vblank		= decon_disable_vblank,
--	.get_vblank_counter	= decon_get_vblank_counter,
- 	.atomic_begin		= decon_atomic_begin,
- 	.update_plane		= decon_update_plane,
- 	.disable_plane		= decon_disable_plane,
-@@ -554,7 +546,6 @@ static int decon_bind(struct device *dev, struct device *master, void *data)
- 	int ret;
- 
- 	ctx->drm_dev = drm_dev;
--	drm_dev->max_vblank_count = 0xffffffff;
- 
- 	for (win = ctx->first_win; win < WINDOWS_NR; win++) {
- 		ctx->configs[win].pixel_formats = decon_formats;
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_crtc.c b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-index eea90251808f..2696289ecc78 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-+++ b/drivers/gpu/drm/exynos/exynos_drm_crtc.c
-@@ -162,16 +162,6 @@ static void exynos_drm_crtc_disable_vblank(struct drm_crtc *crtc)
- 		exynos_crtc->ops->disable_vblank(exynos_crtc);
- }
- 
--static u32 exynos_drm_crtc_get_vblank_counter(struct drm_crtc *crtc)
--{
--	struct exynos_drm_crtc *exynos_crtc = to_exynos_crtc(crtc);
--
--	if (exynos_crtc->ops->get_vblank_counter)
--		return exynos_crtc->ops->get_vblank_counter(exynos_crtc);
--
--	return 0;
--}
--
- static const struct drm_crtc_funcs exynos_crtc_funcs = {
- 	.set_config	= drm_atomic_helper_set_config,
- 	.page_flip	= drm_atomic_helper_page_flip,
-@@ -181,7 +171,6 @@ static const struct drm_crtc_funcs exynos_crtc_funcs = {
- 	.atomic_destroy_state = drm_atomic_helper_crtc_destroy_state,
- 	.enable_vblank = exynos_drm_crtc_enable_vblank,
- 	.disable_vblank = exynos_drm_crtc_disable_vblank,
--	.get_vblank_counter = exynos_drm_crtc_get_vblank_counter,
- };
- 
- struct exynos_drm_crtc *exynos_drm_crtc_create(struct drm_device *drm_dev,
-diff --git a/drivers/gpu/drm/exynos/exynos_drm_drv.h b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-index 0f6d079a55c9..46d659fd1703 100644
---- a/drivers/gpu/drm/exynos/exynos_drm_drv.h
-+++ b/drivers/gpu/drm/exynos/exynos_drm_drv.h
-@@ -133,7 +133,6 @@ struct exynos_drm_crtc_ops {
- 	void (*disable)(struct exynos_drm_crtc *crtc);
- 	int (*enable_vblank)(struct exynos_drm_crtc *crtc);
- 	void (*disable_vblank)(struct exynos_drm_crtc *crtc);
--	u32 (*get_vblank_counter)(struct exynos_drm_crtc *crtc);
- 	enum drm_mode_status (*mode_valid)(struct exynos_drm_crtc *crtc,
- 		const struct drm_display_mode *mode);
- 	bool (*mode_fixup)(struct exynos_drm_crtc *crtc,
+diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
+index 082fb40c656d..c278a870484c 100644
+--- a/drivers/net/phy/realtek.c
++++ b/drivers/net/phy/realtek.c
+@@ -168,7 +168,7 @@ static struct phy_driver realtek_drvs[] = {
+ 		.flags          = PHY_HAS_INTERRUPT,
+ 	}, {
+ 		.phy_id		= 0x001cc816,
+-		.name		= "RTL8201F 10/100Mbps Ethernet",
++		.name		= "RTL8201F Fast Ethernet",
+ 		.phy_id_mask	= 0x001fffff,
+ 		.features	= PHY_BASIC_FEATURES,
+ 		.flags		= PHY_HAS_INTERRUPT,
 -- 
 2.17.1
 
