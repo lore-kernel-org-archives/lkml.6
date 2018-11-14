@@ -2,86 +2,179 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FAAFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:12:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0FCEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:15:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05D2C2243E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:12:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05D2C2243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id A1CDB22511
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:15:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sJBLMmof"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A1CDB22511
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727014AbeKOGRH (ORCPT
+        id S1727359AbeKOGUb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 01:17:07 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:46768 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725756AbeKOGRH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 01:17:07 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id KljtVt_o18Yo; Wed, 14 Nov 2018 21:12:26 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD0D200D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:d200:d571:4500:c00e:26fd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A1AA21EC037D;
-        Wed, 14 Nov 2018 21:12:26 +0100 (CET)
-Date:   Wed, 14 Nov 2018 21:12:14 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     pr-tracker-bot@kernel.org,
-        Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-Cc:     Bjorn Helgaas <helgaas@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [GIT PULL] PCI fixes for v4.20
-Message-ID: <20181114201214.GM13926@zn.tnic>
-References: <20181114062010.GA189193@google.com>
- <20181114200003.14496.1490.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+        Thu, 15 Nov 2018 01:20:31 -0500
+Received: from perceval.ideasonboard.com ([213.167.242.64]:42500 "EHLO
+        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725756AbeKOGUb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 01:20:31 -0500
+Received: from avalon.localnet (unknown [64.114.255.97])
+        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 8928ABB8;
+        Wed, 14 Nov 2018 21:15:45 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+        s=mail; t=1542226548;
+        bh=nU9xNPZeZl5vxgruEE226tGyIbtyDI7Pisnc1/98ZhY=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=sJBLMmofLqXut7QrYUZwsuR8GDhsWzbl3k9NLz04H7K9pbMR7yxKRaSxL7o8/O3DZ
+         kH8OmNUK7Zi040JtsK37T+Kpax2oLaoUiTlg+4agu4MsNbp7keIr1ydwjfZQHfqBKq
+         UjyH4Rq0uzCprGQ82r1eDpD8J/SqeaDONYwRN+aU=
+From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To:     Luis de Oliveira <luis.oliveira@synopsys.com>
+Cc:     Rob Herring <robh@kernel.org>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org, joao.pinto@synopsys.com,
+        festevam@gmail.com, Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Hans Verkuil <hans.verkuil@cisco.com>,
+        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Keiichi Watanabe <keiichiw@chromium.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        devicetree@vger.kernel.org
+Subject: Re: [V3, 3/4] Documentation: dt-bindings: media: Document bindings for DW MIPI CSI-2 Host
+Date:   Wed, 14 Nov 2018 22:16:01 +0200
+Message-ID: <2394629.R0NRNf7gSs@avalon>
+Organization: Ideas on Board Oy
+In-Reply-To: <45d87050-c5a8-dd96-20ae-d4951b0f4564@synopsys.com>
+References: <1539953556-35762-1-git-send-email-lolivei@synopsys.com> <20181024174007.GA2902@bogus> <45d87050-c5a8-dd96-20ae-d4951b0f4564@synopsys.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181114200003.14496.1490.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey Konstantin,
+Hi Luis,
 
-that bot needs some parsing improvs: "None None".
+Thank you for the patch.
 
-On Wed, Nov 14, 2018 at 08:00:03PM +0000, pr-tracker-bot@kernel.org wrote:
-> The pull request you sent on Wed, 14 Nov 2018 00:20:10 -0600:
+On Tuesday, 13 November 2018 12:00:22 EET Luis de Oliveira wrote:
+> On 24-Oct-18 18:40, Rob Herring wrote:
+> > On Fri, Oct 19, 2018 at 02:52:25PM +0200, Luis Oliveira wrote:
+> >> Add bindings for Synopsys DesignWare MIPI CSI-2 host.
+> >> 
+> >> Signed-off-by: Luis Oliveira <lolivei@synopsys.com>
+> >> ---
+> >> Changelog
+> >> v2-V3
+> >> - removed IPI settings
+> >> 
+> >>  .../devicetree/bindings/media/snps,dw-csi-plat.txt | 52 ++++++++++++++++
+> >>  1 file changed, 52 insertions(+)
+> >>  create mode 100644
+> >>  Documentation/devicetree/bindings/media/snps,dw-csi-plat.txt>> 
+> >> diff --git a/Documentation/devicetree/bindings/media/snps,dw-csi-plat.txt
+> >> b/Documentation/devicetree/bindings/media/snps,dw-csi-plat.txt new file
+> >> mode 100644
+> >> index 0000000..be3da05
+> >> --- /dev/null
+> >> +++ b/Documentation/devicetree/bindings/media/snps,dw-csi-plat.txt
+> >> @@ -0,0 +1,52 @@
+> >> +Synopsys DesignWare CSI-2 Host controller
+> >> +
+> >> +Description
+> >> +-----------
+> >> +
+> >> +This HW block is used to receive image coming from an MIPI CSI-2
+> >> compatible +camera.
+> >> +
+> >> +Required properties:
+> >> +- compatible: shall be "snps,dw-csi-plat"
+> > 
+> > 'plat' is really part of the name of the h/w block?
 > 
-> > None None
+> It is the name of the platform driver for CSI compatible with this block. Is
+> that wrong?
+
+DT bindings describe hardware, not drivers. This should be the name of the IP 
+core, regardless of how the drivers are architectured and named.
+
+> >> +- reg			: physical base address and size of the device memory
+> >> mapped
+> >> +  registers;
+> >> +- interrupts		: CSI-2 Host interrupt
+> >> +- snps,output-type	: Core output to be used (IPI-> 0 or IDI->1 or
+> >> BOTH->2)
+> >> +			  These  values choose which of the Core outputs will be used,
+> >> +			  it can be Image Data Interface or Image Pixel Interface.
+
+Does this describe what outputs the IP core has been instantiated 
+(synthesized) with, or what output(s) are used at runtime ? How does that 
+relate to the port nodes ?
+
+> >> +- phys			: List of one PHY specifier (as defined in
+> >> +			  Documentation/devicetree/bindings/phy/phy-bindings.txt).
+> >> +			  This PHY is a MIPI DPHY working in RX mode.
+> >> +- resets		: Reference to a reset controller (optional)
+> >> +
+> >> +The per-board settings:
+> >> + - port sub-node describing a single endpoint connected to the camera as
+> >> +   described in video-interfaces.txt[1].
+> > 
+> > Need to say 2 ports and what is each port? Why no port #0?
 > 
-> has been merged into torvalds/linux.git:
-> https://git.kernel.org/torvalds/c/d41217aac0a577a247c9c8cde688419fde25fba5
+> I will elaborate on that.
 > 
-> Thank you!
+> >> +
+> >> +Example:
+> >> +
+> >> +	csi2_1: csi2@3000 {
+> >> +		compatible = "snps,dw-csi-plat";
+> >> +		#address-cells = <1>;
+> >> +		#size-cells = <0>;
+> >> +		reg = < 0x03000 0x7FF>;
+> >> +		interrupts = <2>;
+> >> +		output-type = <2>;
+> >> +		resets = <&dw_rst 1>;
+> >> +		phys = <&mipi_dphy_rx1 0>;
+> >> +		phy-names = "csi2-dphy";
+> > 
+> > Not documented. Not really needed for a single entry, so I'd just drop
+> > it.
 > 
-> -- 
-> Deet-doot-dot, I am a bot.
-> https://korg.wiki.kernel.org/userdoc/prtracker
+> I will, thanks.
+> 
+> >> +
+> >> +		/* CSI-2 per-board settings */
+> >> +		port@1 {
+> >> +			reg = <1>;
+> >> +			csi1_ep1: endpoint {
+> >> +				remote-endpoint = <&camera_1>;
+> >> +				data-lanes = <1 2>;
+> >> +			};
+> >> +		};
+> >> +		port@2 {
+> >> +			csi1_ep2: endpoint {
+> >> +				remote-endpoint = <&vif1_ep>;
+> >> +			};
+> >> +		};
+> >> +	};
 
 -- 
-Regards/Gruss,
-    Boris.
+Regards,
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+Laurent Pinchart
+
+
+
