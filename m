@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE0B7C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A4B4C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8AD3F22527
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:56 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5105722527
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="cFsoyRKJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8AD3F22527
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SbxQA5hH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5105722527
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388704AbeKOI36 (ORCPT
+        id S2388721AbeKOIaH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:29:58 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37086 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:30:07 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37308 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388629AbeKOI34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:29:56 -0500
+        id S1728102AbeKOIaH (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:30:07 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DE36422527;
-        Wed, 14 Nov 2018 22:24:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C1B1422527;
+        Wed, 14 Nov 2018 22:25:02 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234292;
-        bh=OYwdI72nSvEeMaRKCm8f623xRMFUREu5VxKiANAzODY=;
+        s=default; t=1542234302;
+        bh=2dO5c+6+CxbfnRW7DqfhZvwupx7L0y3g41ojBDSVZJU=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=cFsoyRKJkYHzJoDz3GMo8RUn4v/aUgO58IWnEL2buak/IQUrfS52beEZpJtbvAf7X
-         n/SlHrx2xIWIF21Ygd/vuXzhu8QCwg3t6vkbVjum6FYnPl+LO9z4oFPAuBHQAVGalw
-         smK3mobLazj+zHvXbteokbCdpvf0GO2ZPDghJZ4g=
+        b=SbxQA5hH8vGNo6a7biDJaIYflwFwkvd+SgAVPxbSWKmhYShPFWIqKbQ9YgTbcyQ9d
+         t9gXIBVwwrtzg7QCw7Nm0vRuFco+kjWdsudamAi2cehtA65m85dfYuZX8idf8QooNM
+         IleBQcUYVs0DdeWOYh2BZ/Pl7pYYSEmyZwoI3pRY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stefan Wahren <stefan.wahren@i2se.com>,
+Cc:     Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>,
+        Igor Russkikh <igor.russkikh@aquantia.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org,
-        linux-usb@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 52/59] net: smsc95xx: Fix MTU range
-Date:   Wed, 14 Nov 2018 17:23:24 -0500
-Message-Id: <20181114222335.99339-52-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.18 54/59] net: aquantia: fix potential IOMMU fault after driver unbind
+Date:   Wed, 14 Nov 2018 17:23:26 -0500
+Message-Id: <20181114222335.99339-54-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -54,37 +54,112 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stefan Wahren <stefan.wahren@i2se.com>
+From: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
 
-[ Upstream commit 85b18b0237ce9986a81a1b9534b5e2ee116f5504 ]
+[ Upstream commit 7a1bb49461b12b2e6332a4d054256835f45203f3 ]
 
-The commit f77f0aee4da4 ("net: use core MTU range checking in USB NIC
-drivers") introduce a common MTU handling for usbnet. But it's missing
-the necessary changes for smsc95xx. So set the MTU range accordingly.
+IOMMU fault may occurr on unbind/bind or if_down/if_up sequence.
 
-This patch has been tested on a Raspberry Pi 3.
+Although driver disables the rings on down, this is not enough.
+Due to internal HW design, during subsequent initialization
+NIC sometimes may reuse RX descriptors cache and write to the
+host memory from the descriptor cache.
+That's get catched by IOMMU on host.
 
-Fixes: f77f0aee4da4 ("net: use core MTU range checking in USB NIC drivers")
-Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+This patch invalidates the descriptor cache in NIC on interface down
+to prevent writing to the cached descriptors and to the memory pointed
+in those descriptors.
+
+Signed-off-by: Dmitry Bogdanov <dmitry.bogdanov@aquantia.com>
+Signed-off-by: Igor Russkikh <igor.russkikh@aquantia.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/usb/smsc95xx.c | 2 ++
- 1 file changed, 2 insertions(+)
+ .../aquantia/atlantic/hw_atl/hw_atl_b0.c       |  6 ++++++
+ .../aquantia/atlantic/hw_atl/hw_atl_llh.c      |  8 ++++++++
+ .../aquantia/atlantic/hw_atl/hw_atl_llh.h      |  3 +++
+ .../atlantic/hw_atl/hw_atl_llh_internal.h      | 18 ++++++++++++++++++
+ 4 files changed, 35 insertions(+)
 
-diff --git a/drivers/net/usb/smsc95xx.c b/drivers/net/usb/smsc95xx.c
-index 2d17f3b9bb16..f2d01cb6f958 100644
---- a/drivers/net/usb/smsc95xx.c
-+++ b/drivers/net/usb/smsc95xx.c
-@@ -1321,6 +1321,8 @@ static int smsc95xx_bind(struct usbnet *dev, struct usb_interface *intf)
- 	dev->net->ethtool_ops = &smsc95xx_ethtool_ops;
- 	dev->net->flags |= IFF_MULTICAST;
- 	dev->net->hard_header_len += SMSC95XX_TX_OVERHEAD_CSUM;
-+	dev->net->min_mtu = ETH_MIN_MTU;
-+	dev->net->max_mtu = ETH_DATA_LEN;
- 	dev->hard_mtu = dev->net->mtu + dev->net->hard_header_len;
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+index 3bdab972420b..d6d7e5e6fa18 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_b0.c
+@@ -913,6 +913,12 @@ static int hw_atl_b0_hw_interrupt_moderation_set(struct aq_hw_s *self)
+ static int hw_atl_b0_hw_stop(struct aq_hw_s *self)
+ {
+ 	hw_atl_b0_hw_irq_disable(self, HW_ATL_B0_INT_MASK);
++
++	/* Invalidate Descriptor Cache to prevent writing to the cached
++	 * descriptors and to the data pointer of those descriptors
++	 */
++	hw_atl_rdm_rx_dma_desc_cache_init_set(self, 1);
++
+ 	return aq_hw_err_from_flags(self);
+ }
  
- 	pdata->dev = dev;
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
+index 10ba035dadb1..10ec5dc88e24 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.c
+@@ -619,6 +619,14 @@ void hw_atl_rpb_rx_flow_ctl_mode_set(struct aq_hw_s *aq_hw, u32 rx_flow_ctl_mode
+ 			    HW_ATL_RPB_RX_FC_MODE_SHIFT, rx_flow_ctl_mode);
+ }
+ 
++void hw_atl_rdm_rx_dma_desc_cache_init_set(struct aq_hw_s *aq_hw, u32 init)
++{
++	aq_hw_write_reg_bit(aq_hw, HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_ADR,
++			    HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_MSK,
++			    HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_SHIFT,
++			    init);
++}
++
+ void hw_atl_rpb_rx_pkt_buff_size_per_tc_set(struct aq_hw_s *aq_hw,
+ 					    u32 rx_pkt_buff_size_per_tc, u32 buffer)
+ {
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
+index dfb426f2dc2c..b3bf64b48b93 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh.h
+@@ -325,6 +325,9 @@ void hw_atl_rpb_rx_pkt_buff_size_per_tc_set(struct aq_hw_s *aq_hw,
+ 					    u32 rx_pkt_buff_size_per_tc,
+ 					    u32 buffer);
+ 
++/* set rdm rx dma descriptor cache init */
++void hw_atl_rdm_rx_dma_desc_cache_init_set(struct aq_hw_s *aq_hw, u32 init);
++
+ /* set rx xoff enable (per tc) */
+ void hw_atl_rpb_rx_xoff_en_per_tc_set(struct aq_hw_s *aq_hw, u32 rx_xoff_en_per_tc,
+ 				      u32 buffer);
+diff --git a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
+index e0cf70120f1d..e2ecdb1c5a5c 100644
+--- a/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
++++ b/drivers/net/ethernet/aquantia/atlantic/hw_atl/hw_atl_llh_internal.h
+@@ -293,6 +293,24 @@
+ /* default value of bitfield desc{d}_reset */
+ #define HW_ATL_RDM_DESCDRESET_DEFAULT 0x0
+ 
++/* rdm_desc_init_i bitfield definitions
++ * preprocessor definitions for the bitfield rdm_desc_init_i.
++ * port="pif_rdm_desc_init_i"
++ */
++
++/* register address for bitfield rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_ADR 0x00005a00
++/* bitmask for bitfield rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_MSK 0xffffffff
++/* inverted bitmask for bitfield rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_MSKN 0x00000000
++/* lower bit position of bitfield  rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_SHIFT 0
++/* width of bitfield rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_WIDTH 32
++/* default value of bitfield rdm_desc_init_i */
++#define HW_ATL_RDM_RX_DMA_DESC_CACHE_INIT_DEFAULT 0x0
++
+ /* rx int_desc_wrb_en bitfield definitions
+  * preprocessor definitions for the bitfield "int_desc_wrb_en".
+  * port="pif_rdm_int_desc_wrb_en_i"
 -- 
 2.17.1
 
