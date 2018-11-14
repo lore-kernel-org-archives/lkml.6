@@ -2,129 +2,107 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-15.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44463C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:04:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F45CC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:06:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0CE5E21780
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:04:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CE5E21780
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id D7AEC21780
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:06:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EmFbADhQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D7AEC21780
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733084AbeKOBIJ (ORCPT
+        id S1733085AbeKOBKR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:08:09 -0500
-Received: from lb3-smtp-cloud8.xs4all.net ([194.109.24.29]:41506 "EHLO
-        lb3-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728125AbeKOBII (ORCPT
+        Wed, 14 Nov 2018 20:10:17 -0500
+Received: from mail-lf1-f43.google.com ([209.85.167.43]:45852 "EHLO
+        mail-lf1-f43.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728116AbeKOBKQ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:08:08 -0500
-Received: from [IPv6:2001:420:44c1:2579:94da:698d:8319:4499] ([IPv6:2001:420:44c1:2579:94da:698d:8319:4499])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id MwiJgl12y9VdZMwiNgNfMS; Wed, 14 Nov 2018 16:04:31 +0100
-Subject: Re: [PATCH][staging-next] drivers: staging: cedrus: find ctx before
- dereferencing it ctx
-To:     Colin King <colin.king@canonical.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Chen-Yu Tsai <wens@csie.org>, linux-media@vger.kernel.org,
-        devel@driverdev.osuosl.org, linux-arm-kernel@lists.infradead.org
-Cc:     kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181102190126.5628-1-colin.king@canonical.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <c54b52b2-c0b2-6afc-ad35-bbf396650418@xs4all.nl>
-Date:   Wed, 14 Nov 2018 16:04:19 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Wed, 14 Nov 2018 20:10:16 -0500
+Received: by mail-lf1-f43.google.com with SMTP id b20so11709600lfa.12
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 07:06:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=8OQTZC8ADrC7YKRerZWY5fDQCTbH9n2BV79a+m9XLaA=;
+        b=EmFbADhQmjIbECgCFPBFBYgNR4VHkFdhbtEQFMFgRiGvz37KvPMDYD4TVtexjytRXs
+         RPwdpa3rJ6nYuNQSCHu/ah0Q94tJAqoJQP4GGRTtQfDY1aW+xyVSbFUMFEGdpeDLq91J
+         tM+GzFt5ssrCWwc1bPYtU10ozone37d/DuRfFPink3bPFEQD7OYOrNbFiUmJEGD8eVKh
+         S3w/d9j4XDmDlRFbwRWT+/p+rnscAwjuAR7hkv6TDPQRO7sEU2uVnWGkuQN+2oPs2hEh
+         tHAwmU2Svb2tz53O9j3dp8r4+qvnwe2I095hHXgXSALOHRaotsz+HTQv6gK6u/UGWR4n
+         XDwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=8OQTZC8ADrC7YKRerZWY5fDQCTbH9n2BV79a+m9XLaA=;
+        b=Wq4eVKQlP07LwTbYJz6IrSPy3PEUzLZ5NjcEySGlCoGFyR1XkrRhMsXuJAcxM4cMHf
+         ys+5d3LB7aiG4yK/AQbL9ssKEY5MpjnTxwW3rFHOTf/3U5++IIla/O5G2AAjdh1jl4RK
+         F9ZoRpYyjjjlIa8xzOzr4+GrTUHgpjH/5EGaF3lwRNF0K1qbOngq3zSXyb55Nm14PY8e
+         E9HO1lofCEjTKAahIj11IzFqduK0AaEaIWOQuiHOxeWsQZxEiCAD5O+/phT6RGGWtQ3y
+         W2roD70BSfbhKDY8eb8RZBAM+K18uFZQpWnfclEHi05Inhbtvu6gEdkb4l/fEpm9781k
+         RGxg==
+X-Gm-Message-State: AGRZ1gK+78gTPXc8dWqficMjcPbajcROnZ/uAUq+7fvvDnoN0kxmr92o
+        KABmfGvmDLioMRZ9buiyzuOJ1jCV
+X-Google-Smtp-Source: AJdET5dnSVDcI9MdTuh7FgO5eBnF8bhwoTi9CfyR7TErRymdN4z6rP+SdrQGW4V+VNS2ByjiLjfSUA==
+X-Received: by 2002:a19:d912:: with SMTP id q18mr1071487lfg.24.1542207998821;
+        Wed, 14 Nov 2018 07:06:38 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id y80sm1279051lfd.36.2018.11.14.07.06.37
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 07:06:37 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gMwkU-000560-Gy; Wed, 14 Nov 2018 16:06:35 +0100
+Date:   Wed, 14 Nov 2018 16:06:34 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc:     linux-kernel@vger.kernel.org
+Subject: [GIT PULL] GNSS fixes for v4.20-rc3
+Message-ID: <20181114150634.GA19442@localhost>
 MIME-Version: 1.0
-In-Reply-To: <20181102190126.5628-1-colin.king@canonical.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfCJLZfHhTiKd4QB0LaTp/CK7JZN7cYHok1JuL1h0vDbrjPHji9bR9z4ZxpcPff7iueTgL2NbdQsVCuvhiWQBff6YMGzZw6gQe+3jcu5yURmOopwvDmCQ
- +MCP2boET6Mq3SJZeapTpr9GJ4/TE8/2Hixvw+577eldVMATUueQqwjCDiIz8uSUvaEKYlYURRKogdU7VaUP5yJ5BtOXB5Uj8P9rKZY/XxqQZHD+ZYPLM3ps
- pj3fOF5zO3wBo65lyp3d7yNlkcVZ9F39Q2RVrpvUnHe4XupMoT6wwCEDd3a+x/LeyLFGiCrH41jFIFvotiR6KIsM0p2MNfaM+eMgS4iLLC14ViWSg5KL+zVt
- MUMq3krlNNXJEq8RiKgbfo8n9onPjIZJVrj/koge8QvCZEX1g2Sg4/L7YRaVOxgkz1VB+IKlyU9KMCb885Q4CKJ7d2+Lg99jFg/rR50sDdAKAqG76rpPlgcf
- mEOi2GWRlhqliSnLkflQzd990s1xaUebwA+Uga3Kx7WrA/EcvXJbpIqcxthw+d0Xp4zO19i1yuV6CVCkYFy2q0l9DGw4TOH/oYHcZYSN19IChTAPPxehN3Ky
- NSQ+j7/mcjpG3NgUraeQCcpauuUv2tbHYWUygRFz5W5tLBYLissO7clhhsAsRi4ukNkvajNdNLYDJRZcVrmELtYf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/02/18 20:01, Colin King wrote:
-> From: Colin Ian King <colin.king@canonical.com>
-> 
-> Currently if count is an invalid value the v4l2_info message will
-> dereference a null ctx pointer to get the dev information. Fix
-> this by finding ctx first and then checking for an invalid count,
-> this way ctxt will be non-null hence avoiding the null pointer
-> dereference.
-> 
-> Detected by CoverityScan, CID#1475337 ("Explicit null dereferenced")
-> 
-> Fixes: 50e761516f2b ("media: platform: Add Cedrus VPU decoder driver")
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
-> ---
->  drivers/staging/media/sunxi/cedrus/cedrus.c | 22 ++++++++++-----------
->  1 file changed, 11 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
-> index 82558455384a..699d62dceb6c 100644
-> --- a/drivers/staging/media/sunxi/cedrus/cedrus.c
-> +++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
-> @@ -108,17 +108,6 @@ static int cedrus_request_validate(struct media_request *req)
->  	unsigned int count;
->  	unsigned int i;
->  
-> -	count = vb2_request_buffer_cnt(req);
-> -	if (!count) {
-> -		v4l2_info(&ctx->dev->v4l2_dev,
-> -			  "No buffer was provided with the request\n");
-> -		return -ENOENT;
-> -	} else if (count > 1) {
-> -		v4l2_info(&ctx->dev->v4l2_dev,
-> -			  "More than one buffer was provided with the request\n");
-> -		return -EINVAL;
-> -	}
-> -
->  	list_for_each_entry(obj, &req->objects, list) {
->  		struct vb2_buffer *vb;
->  
-> @@ -133,6 +122,17 @@ static int cedrus_request_validate(struct media_request *req)
->  	if (!ctx)
->  		return -ENOENT;
->  
-> +	count = vb2_request_buffer_cnt(req);
-> +	if (!count) {
-> +		v4l2_info(&ctx->dev->v4l2_dev,
-> +			  "No buffer was provided with the request\n");
-> +		return -ENOENT;
-> +	} else if (count > 1) {
-> +		v4l2_info(&ctx->dev->v4l2_dev,
-> +			  "More than one buffer was provided with the request\n");
-> +		return -EINVAL;
-> +	}
-> +
+The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
 
-Is this right? If there are no buffers in the request, then the list_for_each_entry()
-loop won't find a ctx either. This needs to be done differently: for these initial
-v4l2_info() statements you can get the cedrus_dev struct from req->mdev since the
-media_device is embedded in the cedrus_dev struct. In other words, some
-container_of magic is needed here.
+  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
 
-Regards,
+are available in the Git repository at:
 
-	Hans
+  https://git.kernel.org/pub/scm/linux/kernel/git/johan/gnss.git tags/gnss-4.20-rc3
 
->  	parent_hdl = &ctx->hdl;
->  
->  	hdl = v4l2_ctrl_request_hdl_find(req, parent_hdl);
-> 
+for you to fetch changes up to 9ac9252b4bcdaa7c257b707584b7e06effa7c992:
 
+  gnss: sirf: fix synchronous write timeout (2018-11-14 14:35:47 +0100)
+
+----------------------------------------------------------------
+GNSS fixes for v4.20-rc3
+
+The two serdev drivers were using the wrong timeout argument when
+expecting the serdev_device_write() helper to wait indefinitely,
+something which could result in incomplete writes when the controller
+write buffer was getting full.
+
+Signed-off-by: Johan Hovold <johan@kernel.org>
+
+----------------------------------------------------------------
+Johan Hovold (2):
+      gnss: serial: fix synchronous write timeout
+      gnss: sirf: fix synchronous write timeout
+
+ drivers/gnss/serial.c | 3 ++-
+ drivers/gnss/sirf.c   | 3 ++-
+ 2 files changed, 4 insertions(+), 2 deletions(-)
