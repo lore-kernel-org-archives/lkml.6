@@ -2,96 +2,119 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A66F3C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:17:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28C1FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:26:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6BCBA22360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:17:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="lC11sxMN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6BCBA22360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E1DDB20869
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:26:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E1DDB20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=chris-wilson.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733108AbeKOAUk (ORCPT
+        id S1732739AbeKOAaV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 19:20:40 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:41802 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726295AbeKOAUk (ORCPT
+        Wed, 14 Nov 2018 19:30:21 -0500
+Received: from mail.fireflyinternet.com ([109.228.58.192]:51993 "EHLO
+        fireflyinternet.com" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1726846AbeKOAaU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 19:20:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Fuxfoi2tfpKf98DtsaD/2e9sR4uDwwobYWJu+hrrObM=; b=lC11sxMNqLP0GyNAqNKc7uGCD
-        f2mNxsrIL4NhUfV8t9i16HnMzLtBKxss18n7jhcDv8aRVwKgqCakA7RIZLGhJ4eQB+i+nz+v0l6d0
-        zUHLYIHD9MFG+uTMCfr5CTuNk6lV6UO8sGtxkhEnz3qeqXl09dtRuLO9iAhlWhsc8j3HxfDXsHlLq
-        JkwsyWXEuGHf/oSg4JEAcok4AkDvFSi10f97jlEugH6PycxFyF45bfvtDnim3GFZwK1US4t3B5PyA
-        gdeBphcmgbUtOn0jQUQAF4vcLPruDQ9D3woLBSskNUbd4aaWOp5v/0raYafdlqSUEnwMi8+MlzzNP
-        MTEcm8aHw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gMvyk-0008TF-2v; Wed, 14 Nov 2018 14:17:14 +0000
-Date:   Wed, 14 Nov 2018 06:17:13 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     kernel test robot <rong.a.chen@intel.com>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>, lkp@01.org
-Subject: Re: [LKP] [page cache]  eb797a8ee0:  vm-scalability.throughput
- -16.5% regression
-Message-ID: <20181114141713.GA25731@bombadil.infradead.org>
-References: <20181114092242.GD18977@shao2-debian>
+        Wed, 14 Nov 2018 19:30:20 -0500
+X-Default-Received-SPF: pass (skip=forwardok (res=PASS)) x-ip-name=78.156.65.138;
+Received: from haswell.alporthouse.com (unverified [78.156.65.138]) 
+        by fireflyinternet.com (Firefly Internet (M1)) with ESMTP id 14483334-1500050 
+        for multiple; Wed, 14 Nov 2018 14:25:22 +0000
+From:   Chris Wilson <chris@chris-wilson.co.uk>
+To:     x86@kernel.org, linux-kernel@vger.kernel.org, tglx@linutronix.de,
+        bp@alien8.de
+Cc:     hpa@zytor.com, Chris Wilson <chris@chris-wilson.co.uk>,
+        Petri Latvala <petri.latvala@intel.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Jiri Olsa <jolsa@redhat.com>,
+        Namhyung Kim <namhyung@kernel.org>
+Subject: [PATCH] perf/x86: Bump INTEL_PMC_MAX_FIXED for Icelake
+Date:   Wed, 14 Nov 2018 14:25:18 +0000
+Message-Id: <20181114142518.15380-1-chris@chris-wilson.co.uk>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181114092242.GD18977@shao2-debian>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 05:22:42PM +0800, kernel test robot wrote:
-> FYI, we noticed a -16.5% regression of vm-scalability.throughput due to commit:
-> commit: eb797a8ee0ab4cd03df556980ce7bf167cadaa50 ("page cache: Rearrange address_space")
-> 
-> in testcase: vm-scalability
-> on test machine: 80 threads Skylake with 64G memory
-> with following parameters:
-> 
-> 	runtime: 300s
-> 	test: small-allocs
-> 	cpufreq_governor: performance
+<3>[    1.463458] hw perf events fixed 4 > max(3), clipping!
+<4>[    1.463468] WARNING: CPU: 0 PID: 1 at arch/x86/events/intel/core.c:4558 intel_pmu_init+0x11bf/0x13ca
+<4>[    1.463517] Modules linked in:
+<4>[    1.463535] CPU: 0 PID: 1 Comm: swapper/0 Not tainted 4.20.0-rc2-CI-CI_DRM_5134+ #1
+<4>[    1.463563] Hardware name: Intel Corporation Ice Lake Client Platform/IceLake U DDR4 SODIMM PD RVP TLC, BIOS ICLSFWR1.R00.2402.AD3.1810170014 10/17/2018
+<4>[    1.463611] RIP: 0010:intel_pmu_init+0x11bf/0x13ca
+<4>[    1.463631] Code: c5 ff b8 01 00 00 00 48 d3 e0 48 ff c8 83 fe 03 48 89 05 89 13 c5 ff 7e 1d ba 03 00 00 00 48 c7 c7 40 a0 07 82 e8 a6 3d 9a fe <0f> 0b c7 05 82 12 c5 ff 03 00 00 00 8b 0d 7c 12 c5 ff b8 01 00 00
+<4>[    1.463692] RSP: 0000:ffffc9000004fdd0 EFLAGS: 00010282
+<4>[    1.463714] RAX: 0000000000000000 RBX: 0000000000000000 RCX: 0000000000000000
+<4>[    1.463740] RDX: 0000000000000046 RSI: ffffffff8212883a RDI: ffffffff820d6d87
+<4>[    1.463766] RBP: ffffc9000004fe20 R08: 0000000000000001 R09: 0000000000000000
+<4>[    1.463793] R10: ffffffff8100b380 R11: 0000000000000000 R12: 0000000000000000
+<4>[    1.463819] R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+<4>[    1.463846] FS:  0000000000000000(0000) GS:ffff8884afe00000(0000) knlGS:0000000000000000
+<4>[    1.463876] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+<4>[    1.463898] CR2: ffff8884c03ff000 CR3: 0000000005210001 CR4: 0000000000760ef0
+<4>[    1.463924] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+<4>[    1.463951] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+<4>[    1.463976] PKRU: 00000000
+<4>[    1.463989] Call Trace:
+<4>[    1.464006]  ? printk+0x4d/0x69
+<4>[    1.464026]  ? merge_attr+0xa8/0xa8
+<4>[    1.464042]  ? init_hw_perf_events+0x31/0x6d8
+<4>[    1.464061]  init_hw_perf_events+0x31/0x6d8
+<4>[    1.464083]  ? merge_attr+0xa8/0xa8
+<4>[    1.464101]  do_one_initcall+0x58/0x2e0
+<4>[    1.464124]  kernel_init_freeable+0x135/0x352
+<4>[    1.464145]  ? rest_init+0x250/0x250
+<4>[    1.464164]  kernel_init+0x5/0x100
+<4>[    1.464181]  ret_from_fork+0x3a/0x50
+<4>[    1.464205] irq event stamp: 368
+<4>[    1.464221] hardirqs last  enabled at (367): [<ffffffff810fbb34>] vprintk_emit+0x124/0x320
+<4>[    1.464252] hardirqs last disabled at (368): [<ffffffff810019b0>] trace_hardirqs_off_thunk+0x1a/0x1c
+<4>[    1.464287] softirqs last  enabled at (0): [<ffffffff81083644>] copy_process.part.6+0x504/0x2250
+<4>[    1.464318] softirqs last disabled at (0): [<0000000000000000>]           (null)
+<4>[    1.464347] WARNING: CPU: 0 PID: 1 at arch/x86/events/intel/core.c:4558 intel_pmu_init+0x11bf/0x13ca
 
-Thanks for the report.  I am surprised by it, because I can't see what
-could have caused this.  On a 64-bit system (which your test is using),
-here's the effect of that patch:
+Signed-off-by: Chris Wilson <chris@chris-wilson.co.uk>
+Cc: Petri Latvala <petri.latvala@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Jiri Olsa <jolsa@redhat.com>
+Cc: Namhyung Kim <namhyung@kernel.org>
+---
+I am not aware of what the consequences are of bumping this limit, so
+please take the patch with a pinch of salt and more of a heads up!
+-Chris
+---
+ arch/x86/include/asm/perf_event.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-gfp_mask moves from being with private_lock up into a hole adjacent
-to i_mmap_writable.
-wb_err moves from the end of the array up to be with private_lock.
-address_space shrinks by 8 bytes.
-
-Hmm.  Might the shrinking be the problem?  Something in struct inode is
-now split across two cachelines, or is no longer in the same cacheline
-as something else?
-
-I'm at Plumbers this week, so I don't have much time to investigate,
-but this regression is very important to me and I shall dig into this
-when I can.  It's OK to revert this commit in the meantime; nothing
-depends on it yet.
-
-> In addition to that, the commit also has significant impact on the following tests:
-> 
-> | testcase: change | unixbench: unixbench.score 20.9% improvement                         |
-
-Huh.  If we had to choose, would a 20.9% improvement in unixbench be more
-important than a 16.5% penalty to will-it-scale?
+diff --git a/arch/x86/include/asm/perf_event.h b/arch/x86/include/asm/perf_event.h
+index 8bdf74902293..ab4cf7c12c40 100644
+--- a/arch/x86/include/asm/perf_event.h
++++ b/arch/x86/include/asm/perf_event.h
+@@ -7,7 +7,7 @@
+  */
+ 
+ #define INTEL_PMC_MAX_GENERIC				       32
+-#define INTEL_PMC_MAX_FIXED					3
++#define INTEL_PMC_MAX_FIXED					4
+ #define INTEL_PMC_IDX_FIXED				       32
+ 
+ #define X86_PMC_IDX_MAX					       64
+-- 
+2.19.1
 
