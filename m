@@ -2,178 +2,361 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D72C6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:13:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 62333C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:18:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DB3A22360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:13:45 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 14B0E22360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:18:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AJZsvrIR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DB3A22360
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="lVoeAqoj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14B0E22360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=163.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732430AbeKNTQH (ORCPT
+        id S1732465AbeKNTVG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 14:16:07 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:62882 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727776AbeKNTQG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 14:16:06 -0500
-Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20181114091340epoutp01ef0089779f84f29107c96d4d3d891097~m8r4b77QN0642006420epoutp01H;
-        Wed, 14 Nov 2018 09:13:40 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20181114091340epoutp01ef0089779f84f29107c96d4d3d891097~m8r4b77QN0642006420epoutp01H
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542186820;
-        bh=S2gn4YyB+De3Or5KGI6Y5e7NSUVAZy6a6JvN0VmO5OI=;
-        h=Date:From:To:Cc:Subject:In-reply-to:References:From;
-        b=AJZsvrIRKbK57WajUInZGxyhvTQ4dwI0w+SZOD81cBNjIQfhaabdYU9g/IgIchuVc
-         TUbtdUZULLdxjsC43EI0e6f7FXcUf07rns+iTzuQnOEydl4LTWkyB0geHUyylCNd1T
-         dGWx/3cUz8aJEP/LMZB7OvZ0UMzd/lLIECUCOAkw=
-Received: from epsmges1p2.samsung.com (unknown [182.195.40.154]) by
-        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
-        20181114091338epcas1p359b0f840e44adc5774beb8c5dd6ca3ab~m8r2cWr5j0331803318epcas1p3a;
-        Wed, 14 Nov 2018 09:13:38 +0000 (GMT)
-Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
-        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
-        5E.78.04069.247EBEB5; Wed, 14 Nov 2018 18:13:38 +0900 (KST)
-Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
-        epcas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181114091338epcas1p2959991201c73f2c3c703ca7b242a9f68~m8r2J89J13113131131epcas1p2z;
-        Wed, 14 Nov 2018 09:13:38 +0000 (GMT)
-X-AuditID: b6c32a36-f13ff70000000fe5-02-5bebe742d977
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 05.55.03701.147EBEB5; Wed, 14 Nov
-        2018 18:13:38 +0900 (KST)
-MIME-version: 1.0
-Content-transfer-encoding: 8BIT
-Content-type: text/plain; charset="utf-8"
-Received: from [10.113.63.77] by mmp2.samsung.com (Oracle Communications
-        Messaging Server 7.0.5.31.0 64bit (built May  5 2014)) with ESMTPA id
-        <0PI6009SNEYP3LA0@mmp2.samsung.com>; Wed, 14 Nov 2018 18:13:37 +0900 (KST)
-Message-id: <5BEBE741.6050101@samsung.com>
-Date:   Wed, 14 Nov 2018 18:13:37 +0900
-From:   Chanwoo Choi <cw00.choi@samsung.com>
-Organization: Samsung Electronics
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:31.0) Gecko/20100101
-        Thunderbird/31.6.0
-To:     Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc:     Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        MyungJoo Ham <myungjoo.ham@samsung.com>,
-        USB <linux-usb@vger.kernel.org>, Felipe Balbi <balbi@kernel.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        "Krogerus, Heikki" <heikki.krogerus@linux.intel.com>,
-        rogerq@ti.com, Linux PM <linux-pm@vger.kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Linux OMAP Mailing List <linux-omap@vger.kernel.org>,
-        Darren Hart <dvhart@infradead.org>,
-        Platform Driver <platform-driver-x86@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Hans de Goede <hdegoede@redhat.com>
-Subject: Re: [PATCH v1 2/5] extcon: Return -EPROBE_DEFER when extcon device
- is not found
-In-reply-to: <CAHp75Vfe586+tr5mUdSHv4ehmpi0KwS_m+UC0tfFHrdXwKhkig@mail.gmail.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA01Ta0wTWRj1dtrpoFbH+rpbI+JETWwEOmDhasC3ZlSMGN1kY2NwFu4C0k6b
-        TiG6v/CJVlAQjQYtD/EF+OKxbKsGNkUBcUVEiQ0GdqNEC5h1E0DUxMe0o5F/3z3nfPd+59x7
-        KULbROqodMGB7QJvZsjxyvqmheHhq14PmgyDF+egvH2nFag/vwmg5kN9auQsM6D95TdI9KZF
-        wp1VHiV6cuscic5eOK5EQ3l3ATp/6SCB+sr+VqDne6+QqOqOn0Cu4VMEyn2hRw9uO9AH7yPF
-        Ci1380WVivMU9ai52it6rqbyCMkV39/CNbquqrm3DV0k5xnNVnPH6ioB1+L7U8EN1YQmTtie
-        EZeG+RRsD8NCsjUlXUiNZzZuTVqdZIwxsOHsEhTLhAm8BcczaxISw9elmyVbTFgWb86UoERe
-        FJnIZXF2a6YDh6VZRUc8g20pZtsSW4TIW8RMITUi2WpZyhoMUUZJuDMjzdXwQGWrmry7ofY1
-        mQ2qJzoBRUF6MbxWqnWCEEpLuwFscWInGC/VowB63N0gQAQ07TkPCZm4KRFPqokAoaGnwPeF
-        vcrARgQ9B97tzAjABL0Q+odPKGV9D4C9L0fVsl4P244+UwZqJT0f1j79FMRJCW/0+8hAPZme
-        C7vevwwePJ3+BXpK3kkaNTWNjoSNWYEtCbpDBd9W1wdHmEpvh+2P7wTlIfRWWHDmcnBOSHvV
-        sLm1WCEbWAPL2058q6fCgZY6tWx+Fuy8Fy/rcwAc9u9XyYt8AP9vq/3WEA1flTkVsrNJ8L+R
-        XJXcrIGHD2llCQf7/zkGZMO9CjhwoZDIB7OLxmRU9COjojEZlQKiEszANtGSikXWFjX27mpA
-        8AHrY9zgfHuCF9AUYCZq/vUNmLQqPkvcY/ECSBHMNM1m06BJq0nh9/yO7dYke6YZi15glCIu
-        IHTTk63SdxAcSawxKjo6Gi1mY4wsy8zU9OlcJi2dyjtwBsY2bP/ep6BCdNngV58Hx7kGO91c
-        6AJcIZ5ct7J8eWiEsInMOVDh67KVMk31CapFQ67+x286flp/uXubrjOquWLW9d9it1Dz9r0i
-        Qf6H076O7tj2rBufRdcGYVfJwZ8nbCs4Wtiwo/UP/7jcEXGe7nads3jXl3R3K16VN/JXiemS
-        Iy7y49qZp3yGns+MUkzjWT1hF/mvceJtfdYDAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrNIsWRmVeSWpSXmKPExsVy+t9jQV2n56+jDTb18lj0Nk1nsng54TCj
-        xbG2J+wWXQsNLJoXr2ezeHMcKN61eieLxeVdc9gsZi/pZ7H43HuE0WLRslZmiycLzzBZ3G5c
-        wWaxes8LZou5X6YyW/Q80rI4vbvE4ueh80wOQh4bHq1m9dg56y67x+YVWh6bVnWyecw7Geix
-        f+4ado/3+66yeez83sDu0bdlFaPH8RvbmTw+b5IL4I7isklJzcksSy3St0vgypi77zRrwWr+
-        in2bn7M1MG7k6WLk5JAQMJE4136WuYuRi0NIYB2jxJ7dB5lAErwCghI/Jt9j6WLk4GAWkJc4
-        cikbwlSXmDIlF6L8PqPE3M1fWSHKtSROdV9nAbFZBFQlNl/5yw5iswHF97+4wQZi8wsoSlz9
-        8ZgRZI6oQIRE94nKLkZ2DhEBfYn9ZSATmQUusUo8eHcSrFpYIEri15SpTBCr7jFJbLhxkBkk
-        wSkQLLGss4d9AqPALCSHzkI4dBbCoQsYmVcxSqYWFOem5xYbFRjmpZbrFSfmFpfmpesl5+du
-        YgRG4bbDWn07GO8viT/EKMDBqMTDa3H7VbQQa2JZcWXuIUYJDmYlEV7/6NfRQrwpiZVVqUX5
-        8UWlOanFhxilOViUxHlv5x2LFBJITyxJzU5NLUgtgskycXBKNTDWvOjQzeEKj2o4FeA9L4N3
-        c2GZu5Wz2p6L1Rqvfgl9VN64KFwprKjyYt/T220ehplfGGSyvS7+XWzjs1Shqra3y7hRxtbL
-        Vn6et9amhHdT4v7zbv+7XKH9e2rtZFtZq5K/uzsL5JlUO7ncL7KcOF91zHdNCt9SmyA7wwz9
-        27euf+G+YG1iq8RSnJFoqMVcVJwIAHqv4Iq+AgAA
-X-CMS-MailID: 20181114091338epcas1p2959991201c73f2c3c703ca7b242a9f68
-X-Msg-Generator: CA
-CMS-TYPE: 101P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20181110181155epcas2p1ac9bffb2dc7dd6337db5c37f8a87bd5e
-References: <20181110181101.24557-1-andriy.shevchenko@linux.intel.com>
-        <CGME20181110181155epcas2p1ac9bffb2dc7dd6337db5c37f8a87bd5e@epcas2p1.samsung.com>
-        <20181110181101.24557-2-andriy.shevchenko@linux.intel.com>
-        <5BE8C821.5080002@samsung.com> <5BEB63C3.1020504@samsung.com>
-        <CAHp75Vfe586+tr5mUdSHv4ehmpi0KwS_m+UC0tfFHrdXwKhkig@mail.gmail.com>
+        Wed, 14 Nov 2018 14:21:06 -0500
+Received: from m50-134.163.com ([123.125.50.134]:36946 "EHLO m50-134.163.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1732249AbeKNTVG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 14:21:06 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+        s=s110527; h=From:Subject:Date:Message-Id; bh=GsBR0YlphABhfw8dld
+        WG813gR4G1xasRvCvNU/YyLHk=; b=lVoeAqojUCUZ54v86RlLLmeJXKH/R45lqx
+        QzYzc/WyO3iVTDyZzfgYxNcZAehwltkf2CQ+vMnUGM9px64y93cUAxtlvPKp2jEI
+        rcYZ62P2F1Eo8XqsZSACJ8kgTmqFOPUBaXJoGcLFpjbxUswfjeGX2BqG6CtDCI55
+        2ApcRNIqg=
+Received: from localhost.localdomain (unknown [221.0.93.75])
+        by smtp4 (Coremail) with SMTP id DtGowAA3d+NH6Otbo1cIAA--.1752S3;
+        Wed, 14 Nov 2018 17:18:06 +0800 (CST)
+From:   zoro <long17.cool@163.com>
+To:     alexandre.belloni@bootlin.com
+Cc:     a.zummo@towertech.it, mark.rutland@arm.com,
+        linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, zoro <long17.cool@163.com>
+Subject: [PATCH 2/3] rtc: sd3078: new driver.
+Date:   Wed, 14 Nov 2018 17:17:56 +0800
+Message-Id: <1542187077-9488-2-git-send-email-long17.cool@163.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1542187077-9488-1-git-send-email-long17.cool@163.com>
+References: <1542187077-9488-1-git-send-email-long17.cool@163.com>
+X-CM-TRANSID: DtGowAA3d+NH6Otbo1cIAA--.1752S3
+X-Coremail-Antispam: 1Uf129KBjvJXoW3Xr1kWw4DAF1UKw4ruFy8Xwb_yoWfJFy5pa
+        13AFy5KF4qqF43G3y5KFy8WF13Jw18A34IvF13Gw429w1UA3s8J3ZagryYy3Z8trn7CFWa
+        gr1YyFWYgr1q9aUanT9S1TB71UUUUUUqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+        9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U5Ma5UUUUU=
+X-Originating-IP: [221.0.93.75]
+X-CM-SenderInfo: 5orqwi2xof00ro6rljoofrz/1tbiVw7+F1etZrICMQAAst
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018년 11월 14일 17:35, Andy Shevchenko wrote:
-> On Wed, Nov 14, 2018 at 1:53 AM Chanwoo Choi <cw00.choi@samsung.com> wrote:
-> 
->> I was thinking about again to change from NULL to EPROBE_DEFER.
->>
->> extcon_get_extcon_dev() function was almost called in the probe function.
->> But, this function might be called on other position instead of probe.
-> 
-> *Might be* sounds like a theoretical thing, care to share what is in you mind?
-> Current users and more important the new coming one are *all* doing the same.
-> 
->> ENODEV is more correct error instead of EPROBE_DEFER.
-> 
-> So, you are proposing to continue duplicating conversion from ENODEV
-> to EPROBE_DEFER in *each* caller?
+The sd3078 is a combination RTC and SRAM device with I2C interface.
 
-The extcon core don't know the caller situation is in either probe() or other position
-in the caller driver. The caller driver should decide the kind of error value
-by using the return value of extcon_get_extcon_dev().
+Signed-off-by: zoro <long17.cool@163.com>
+---
+ MAINTAINERS              |    6 ++
+ drivers/rtc/Kconfig      |    9 ++
+ drivers/rtc/Makefile     |    1 +
+ drivers/rtc/rtc-sd3078.c |  232 ++++++++++++++++++++++++++++++++++++++++++++++
+ 4 files changed, 248 insertions(+)
+ create mode 100644 drivers/rtc/rtc-sd3078.c
 
-extcon_get_extcon_dev() function cannot be modified for only one case.
-If some device driver call extcon_get_extcon_dev() out of probe() fuction,
-EPROBE_DEFER is not always correct.
-
-> 
->> Sorry. I'll withdraw my opinion related acked-by tag until we are clarifying it.
-> 
-> I honestly don't know what to clarify here.
-> 
-> When we would have a real case we can change API correspondingly.
-> For now, the score is 5:0 with use cases in practice.
-> 
->> On 2018년 11월 12일 09:24, Chanwoo Choi wrote:
->>> On 2018년 11월 11일 03:10, Andy Shevchenko wrote:
->>>> All current users of extcon_get_extcon_dev() API considers
->>>> an extcon device a mandatory to appear. Thus, they all convert
->>>> NULL pointer to -EPROBE_DEFER error code.
->>>>
->>>> There is one more caller anticipated with the same requirements.
->>>>
->>>> To decrease a code duplication and a burden to the callers,
->>>> return -EPROBE_DEFER directly from extcon_get_extcon_dev().
-> 
-
-
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 2f3eba4..002fcd7 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -16125,6 +16125,12 @@ L:	linux-gpio@vger.kernel.org
+ S:	Maintained
+ F:	drivers/gpio/gpio-wcove.c
+ 
++WHWAVE RTC DRIVER
++M:	Zoro Li <long17.cool@163.com>
++L:	linux-rtc@vger.kernel.org
++S:	Maintained
++F:	drivers/rtc/rtc-sd3078.c
++
+ WIIMOTE HID DRIVER
+ M:	David Herrmann <dh.herrmann@googlemail.com>
+ L:	linux-input@vger.kernel.org
+diff --git a/drivers/rtc/Kconfig b/drivers/rtc/Kconfig
+index a819ef0..5b4b1b4 100644
+--- a/drivers/rtc/Kconfig
++++ b/drivers/rtc/Kconfig
+@@ -646,6 +646,15 @@ config RTC_DRV_S5M
+ 	  This driver can also be built as a module. If so, the module
+ 	  will be called rtc-s5m.
+ 
++config RTC_DRV_SD3078
++    tristate "ZXW Crystal SD3078"
++    help
++      If you say yes here you get support for the ZXW Crystal
++      SD3078 RTC chips.
++
++      This driver can also be built as a module. If so, the module
++      will be called rtc-sd3078.
++
+ endif # I2C
+ 
+ comment "SPI RTC drivers"
+diff --git a/drivers/rtc/Makefile b/drivers/rtc/Makefile
+index 290c173..f973bd0 100644
+--- a/drivers/rtc/Makefile
++++ b/drivers/rtc/Makefile
+@@ -148,6 +148,7 @@ obj-$(CONFIG_RTC_DRV_S3C)	+= rtc-s3c.o
+ obj-$(CONFIG_RTC_DRV_S5M)	+= rtc-s5m.o
+ obj-$(CONFIG_RTC_DRV_SA1100)	+= rtc-sa1100.o
+ obj-$(CONFIG_RTC_DRV_SC27XX)	+= rtc-sc27xx.o
++obj-$(CONFIG_RTC_DRV_SD3078)	+= rtc-sd3078.o
+ obj-$(CONFIG_RTC_DRV_SH)	+= rtc-sh.o
+ obj-$(CONFIG_RTC_DRV_SIRFSOC)	+= rtc-sirfsoc.o
+ obj-$(CONFIG_RTC_DRV_SNVS)	+= rtc-snvs.o
+diff --git a/drivers/rtc/rtc-sd3078.c b/drivers/rtc/rtc-sd3078.c
+new file mode 100644
+index 0000000..9428a33
+--- /dev/null
++++ b/drivers/rtc/rtc-sd3078.c
+@@ -0,0 +1,232 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Real Time Clock (RTC) Driver for sd3078
++ * Copyright (C) 2018 Zoro Li
++ */
++
++#include <linux/bcd.h>
++#include <linux/i2c.h>
++#include <linux/module.h>
++#include <linux/regmap.h>
++#include <linux/rtc.h>
++#include <linux/slab.h>
++
++#define SD3078_REG_SC			0x00
++#define SD3078_REG_MN			0x01
++#define SD3078_REG_HR			0x02
++#define SD3078_REG_DW			0x03
++#define SD3078_REG_DM			0x04
++#define SD3078_REG_MO			0x05
++#define SD3078_REG_YR			0x06
++
++#define SD3078_REG_CTRL1		0x0f
++#define SD3078_REG_CTRL2		0x10
++#define SD3078_REG_CTRL3		0x11
++
++#define KEY_WRITE1		0x80
++#define KEY_WRITE2		0x04
++#define KEY_WRITE3		0x80
++
++#define NUM_TIME_REGS   (SD3078_REG_YR - SD3078_REG_SC + 1)
++
++/*
++ * The sd3078 has write protection
++ * and we can choose whether or not to use it.
++ * Write protection is turned off by default.
++ */
++#define WRITE_PROTECT_EN	0
++
++struct sd3078 {
++	struct rtc_device	*rtc;
++	struct regmap		*regmap;
++};
++
++/*
++ * In order to prevent arbitrary modification of the time register,
++ * when modification of the register,
++ * the "write" bit needs to be written in a certain order.
++ * 1. set WRITE1 bit
++ * 2. set WRITE2 bit
++ * 3. set WRITE3 bit
++ */
++static void sd3078_enable_reg_write(struct sd3078 *sd3078)
++{
++	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL2,
++			   KEY_WRITE1, KEY_WRITE1);
++	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL1,
++			   KEY_WRITE2, KEY_WRITE2);
++	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL1,
++			   KEY_WRITE3, KEY_WRITE3);
++}
++
++#if WRITE_PROTECT_EN
++/*
++ * In order to prevent arbitrary modification of the time register,
++ * we should disable the write function.
++ * when disable write,
++ * the "write" bit needs to be clear in a certain order.
++ * 1. clear WRITE2 bit
++ * 2. clear WRITE3 bit
++ * 3. clear WRITE1 bit
++ */
++static void sd3078_disable_reg_write(struct sd3078 *sd3078)
++{
++	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL1,
++			   KEY_WRITE2, 0);
++	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL1,
++			   KEY_WRITE3, 0);
++	regmap_update_bits(sd3078->regmap, SD3078_REG_CTRL2,
++			   KEY_WRITE1, 0);
++}
++#endif
++
++static int sd3078_rtc_read_time(struct device *dev, struct rtc_time *tm)
++{
++	unsigned char hour;
++	unsigned char rtc_data[NUM_TIME_REGS] = {0};
++	struct i2c_client *client = to_i2c_client(dev);
++	struct sd3078 *sd3078 = i2c_get_clientdata(client);
++	int ret;
++
++	ret = regmap_bulk_read(sd3078->regmap, SD3078_REG_SC, rtc_data,
++			       NUM_TIME_REGS);
++	if (ret < 0) {
++		dev_err(dev, "reading from RTC failed with err:%d\n", ret);
++		return ret;
++	}
++
++	tm->tm_sec	= bcd2bin(rtc_data[SD3078_REG_SC] & 0x7F);
++	tm->tm_min	= bcd2bin(rtc_data[SD3078_REG_MN] & 0x7F);
++
++	/*
++	 * The sd3078 supports 12/24 hour mode.
++	 * When getting time,
++	 * we need to convert the 12 hour mode to the 24 hour mode.
++	 */
++	hour = rtc_data[SD3078_REG_HR];
++	if (hour & 0x80) /* 24H MODE */
++		tm->tm_hour = bcd2bin(rtc_data[SD3078_REG_HR] & 0x3F);
++	else if (hour & 0x20) /* 12H MODE PM */
++		tm->tm_hour = bcd2bin(rtc_data[SD3078_REG_HR] & 0x1F) + 12;
++	else /* 12H MODE AM */
++		tm->tm_hour = bcd2bin(rtc_data[SD3078_REG_HR] & 0x1F);
++
++	tm->tm_mday = bcd2bin(rtc_data[SD3078_REG_DM] & 0x3F);
++	tm->tm_wday = rtc_data[SD3078_REG_DW] & 0x07;
++	tm->tm_mon	= bcd2bin(rtc_data[SD3078_REG_MO] & 0x1F) - 1;
++	tm->tm_year = bcd2bin(rtc_data[SD3078_REG_YR]) + 100;
++
++	return 0;
++}
++
++static int sd3078_rtc_set_time(struct device *dev, struct rtc_time *tm)
++{
++	unsigned char rtc_data[NUM_TIME_REGS];
++	struct i2c_client *client = to_i2c_client(dev);
++	struct sd3078 *sd3078 = i2c_get_clientdata(client);
++	int ret;
++
++	rtc_data[SD3078_REG_SC] = bin2bcd(tm->tm_sec);
++	rtc_data[SD3078_REG_MN] = bin2bcd(tm->tm_min);
++	rtc_data[SD3078_REG_HR] = bin2bcd(tm->tm_hour) | 0x80;
++	rtc_data[SD3078_REG_DM] = bin2bcd(tm->tm_mday);
++	rtc_data[SD3078_REG_DW] = tm->tm_wday & 0x07;
++	rtc_data[SD3078_REG_MO] = bin2bcd(tm->tm_mon) + 1;
++	rtc_data[SD3078_REG_YR] = bin2bcd(tm->tm_year - 100);
++
++#if WRITE_PROTECT_EN
++	sd3078_enable_reg_write(sd3078);
++#endif
++
++	ret = regmap_bulk_write(sd3078->regmap, SD3078_REG_SC, rtc_data,
++				NUM_TIME_REGS);
++	if (ret < 0) {
++		dev_err(dev, "writing to RTC failed with err:%d\n", ret);
++		return ret;
++	}
++
++#if WRITE_PROTECT_EN
++	sd3078_disable_reg_write(sd3078);
++#endif
++
++	return 0;
++}
++
++static const struct rtc_class_ops sd3078_rtc_ops = {
++	.read_time	= sd3078_rtc_read_time,
++	.set_time	= sd3078_rtc_set_time,
++};
++
++static const struct regmap_config regmap_config = {
++	.reg_bits = 8,
++	.val_bits = 8,
++	.max_register = 0x11,
++};
++
++static int sd3078_probe(struct i2c_client *client,
++			const struct i2c_device_id *id)
++{
++	int ret;
++	struct sd3078 *sd3078;
++
++	if (!i2c_check_functionality(client->adapter, I2C_FUNC_I2C))
++		return -ENODEV;
++
++	sd3078 = devm_kzalloc(&client->dev, sizeof(*sd3078), GFP_KERNEL);
++	if (!sd3078)
++		return -ENOMEM;
++
++	sd3078->regmap = devm_regmap_init_i2c(client, &regmap_config);
++	if (IS_ERR(sd3078->regmap)) {
++		dev_err(&client->dev, "regmap allocation failed\n");
++		return PTR_ERR(sd3078->regmap);
++	}
++
++	i2c_set_clientdata(client, sd3078);
++
++	sd3078->rtc = devm_rtc_allocate_device(&client->dev);
++	if (IS_ERR(sd3078->rtc))
++		return PTR_ERR(sd3078->rtc);
++
++	sd3078->rtc->ops = &sd3078_rtc_ops;
++	sd3078->rtc->range_min = RTC_TIMESTAMP_BEGIN_2000;
++	sd3078->rtc->range_max = RTC_TIMESTAMP_END_2099;
++
++	ret = rtc_register_device(sd3078->rtc);
++	if (ret) {
++		dev_err(&client->dev, "failed to register rtc device\n");
++		return ret;
++	}
++
++	sd3078_enable_reg_write(sd3078);
++
++	return 0;
++}
++
++static const struct i2c_device_id sd3078_id[] = {
++	{"sd3078", 0},
++	{ }
++};
++MODULE_DEVICE_TABLE(i2c, sd3078_id);
++
++static const struct of_device_id rtc_dt_match[] = {
++	{ .compatible = "whwave,sd3078" },
++	{},
++};
++MODULE_DEVICE_TABLE(of, rtc_dt_match);
++
++struct i2c_driver sd3078_driver = {
++	.driver     = {
++		.name   = "sd3078",
++		.owner  = THIS_MODULE,
++		.of_match_table = of_match_ptr(rtc_dt_match),
++	},
++	.probe      = sd3078_probe,
++	.id_table   = sd3078_id,
++};
++
++module_i2c_driver(sd3078_driver);
++
++MODULE_AUTHOR("Zoro Li <long17.cool@163.com>");
++MODULE_DESCRIPTION("SD3078 RTC driver");
++MODULE_LICENSE("GPL v2");
 -- 
-Best Regards,
-Chanwoo Choi
-Samsung Electronics
+1.7.9.5
+
+
