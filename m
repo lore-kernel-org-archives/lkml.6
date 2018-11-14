@@ -2,96 +2,131 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A404C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:08:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B5F9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:11:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6D2292243E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:08:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6D2292243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5848022419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:11:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5848022419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732671AbeKOEM3 (ORCPT
+        id S1731394AbeKOEP7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 23:12:29 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47704 "EHLO mx1.redhat.com"
+        Wed, 14 Nov 2018 23:15:59 -0500
+Received: from foss.arm.com ([217.140.101.70]:49118 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727576AbeKOEM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 23:12:28 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 26D0B83F3E;
-        Wed, 14 Nov 2018 18:08:15 +0000 (UTC)
-Received: from hawk.localdomain (unknown [10.40.205.205])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 736A860BF6;
-        Wed, 14 Nov 2018 18:08:10 +0000 (UTC)
-Date:   Wed, 14 Nov 2018 19:08:07 +0100
-From:   Andrew Jones <drjones@redhat.com>
-To:     Ahmed Soliman <ahmedsoliman@mena.vt.edu>
-Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: KVM selftests are failing
-Message-ID: <20181114180807.6crs7awhvo26ldbr@hawk.localdomain>
-References: <CANBxJ=EQOt1t=PkLsMvtfB2SbiLMPeGvFxB7SJXf7m3OkcionQ@mail.gmail.com>
+        id S1727576AbeKOEP6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 23:15:58 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 875A4A78;
+        Wed, 14 Nov 2018 10:11:43 -0800 (PST)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B85593F718;
+        Wed, 14 Nov 2018 10:11:40 -0800 (PST)
+Date:   Wed, 14 Nov 2018 18:11:39 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Kristina Martsenko <kristina.martsenko@arm.com>,
+        linux-arm-kernel@lists.infradead.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arch@vger.kernel.org, Andrew Jones <drjones@redhat.com>,
+        Jacob Bramley <jacob.bramley@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Adam Wallis <awallis@codeaurora.org>,
+        "Suzuki K . Poulose" <suzuki.poulose@arm.com>,
+        Christoffer Dall <christoffer.dall@arm.com>,
+        kvmarm@lists.cs.columbia.edu,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Amit Kachhap <Amit.Kachhap@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>,
+        linux-kernel@vger.kernel.org, Kees Cook <keescook@chromium.org>,
+        gorcunov@openvz.org
+Subject: Re: [PATCH v5 07/17] arm64: add basic pointer authentication support
+Message-ID: <20181114181138.GB2580@brain-police>
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+ <20181005084754.20950-8-kristina.martsenko@arm.com>
+ <20181019111542.6wrvjguirglzg7vg@mbp>
+ <20181019112404.GD14246@arm.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CANBxJ=EQOt1t=PkLsMvtfB2SbiLMPeGvFxB7SJXf7m3OkcionQ@mail.gmail.com>
-User-Agent: Mutt/1.6.0.1 (2016-04-01)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Wed, 14 Nov 2018 18:08:15 +0000 (UTC)
+In-Reply-To: <20181019112404.GD14246@arm.com>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 05:30:28PM +0200, Ahmed Soliman wrote:
-> Hello,
-> 
-> KVM Self tests located at tools/testing/selftests/kvm seams to be failing.
-> I have tried:
->  - dirty_log_test
->  - x86_64/cr4_cpuid_sync_test
->  - x86_64/evmcs_test
->  - x86_64/platform_info_test
->  - x86_64/set_sregs_test
->  - x86_64/state_test
->  - x86_64/sync_regs_test
->  - x86_64/vmx_tsc_adjust_test
-> 
-> All of them triggered the following assert:
-> 
->         ==== Test Assertion Failure ====
->         lib/kvm_util.c:596: ret == 0
->         pid=24507 tid=24507 - Invalid argument
->             1  0x000056360774e468: ?? ??:0
->             2  0x000056360774e609: ?? ??:0
->             3  0x00005636077537a0: ?? ??:0
->             4  0x000056360774d35e: ?? ??:0
->             5  0x00007f3117571ae6: ?? ??:0
->             6  0x000056360774d4a9: ?? ??:0
->         madvise failed,
->         addr: 0x7f3117350000
->         length: 0x200000
->         src_type: 0
-> 
-> I have tried the tests on both kvm(next) branch
-> commit 22a7cdcae6a4a3c89748 as well as
-> torvald's master  4.20-rc2.
+Hi all,
 
-Hi Ahmed,
+On Fri, Oct 19, 2018 at 12:24:04PM +0100, Will Deacon wrote:
+> On Fri, Oct 19, 2018 at 12:15:43PM +0100, Catalin Marinas wrote:
+> > On Fri, Oct 05, 2018 at 09:47:44AM +0100, Kristina Martsenko wrote:
+> > > diff --git a/arch/arm64/include/asm/pointer_auth.h b/arch/arm64/include/asm/pointer_auth.h
+> > > new file mode 100644
+> > > index 000000000000..2aefedc31d9e
+> > > --- /dev/null
+> > > +++ b/arch/arm64/include/asm/pointer_auth.h
+> > > @@ -0,0 +1,63 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +#ifndef __ASM_POINTER_AUTH_H
+> > > +#define __ASM_POINTER_AUTH_H
+> > > +
+> > > +#include <linux/random.h>
+> > > +
+> > > +#include <asm/cpufeature.h>
+> > > +#include <asm/sysreg.h>
+> > > +
+> > > +#ifdef CONFIG_ARM64_PTR_AUTH
+> > > +/*
+> > > + * Each key is a 128-bit quantity which is split across a pair of 64-bit
+> > > + * registers (Lo and Hi).
+> > > + */
+> > > +struct ptrauth_key {
+> > > +	unsigned long lo, hi;
+> > > +};
+> > > +
+> > > +/*
+> > > + * We give each process its own instruction A key (APIAKey), which is shared by
+> > > + * all threads. This is inherited upon fork(), and reinitialised upon exec*().
+> > > + * All other keys are currently unused, with APIBKey, APDAKey, and APBAKey
+> > > + * instructions behaving as NOPs.
+> > > + */
+> > 
+> > I don't remember the past discussions but I assume the tools guys are ok
+> > with a single key shared by multiple threads. Ramana, could you ack this
+> > part, FTR?
+> > 
+> > (and it would help if someone from the Android and Chrome camps can
+> > confirm)
+> 
+> FWIW: I think we should be entertaining a prctl() interface to use a new
+> key on a per-thread basis. Obviously, this would need to be used with care
+> (e.g. you'd fork(); use the prctl() and then you'd better not return from
+> the calling function!).
+> 
+> Assuming we want this (Kees -- I was under the impression that everything in
+> Android would end up with the same key otherwise?), then the question is
+> do we want:
+> 
+>   - prctl() get/set operations for the key, or
+>   - prctl() set_random_key operation, or
+>   - both of the above?
+> 
+> Part of the answer to that may lie in the requirements of CRIU, where I
+> strongly suspect they need explicit get/set operations, although these
+> could be gated on CONFIG_CHECKPOINT_RESTORE=y.
 
-I couldn't reproduce this on a Westmere. Are you sure you're testing
-a clean compilation? Can you bisect the kernel?
+I managed to speak to the CRIU developers at LPC. The good news is that
+their preference is for a ptrace()-based interface for getting and setting
+the keys, so the only prctl() operation we need is to set a random key
+(separately for A and B).
 
-Thanks,
-drew
+Will
