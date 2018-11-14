@@ -2,151 +2,101 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.8 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A44C1C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:09:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7995FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:28:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5D2DF21582
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:09:08 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oh/DgIsf"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D2DF21582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 442472175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:28:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 442472175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731048AbeKNLJ6 (ORCPT
+        id S1731462AbeKNL3H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 06:09:58 -0500
-Received: from mail-pl1-f196.google.com ([209.85.214.196]:38500 "EHLO
-        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726573AbeKNLJ6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 06:09:58 -0500
-Received: by mail-pl1-f196.google.com with SMTP id p4-v6so6901987plo.5
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 17:09:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-transfer-encoding:content-language;
-        bh=oq9SkIBabmh+mBDoDozP8rQ3zmT5TdRgAHk3cwyY54o=;
-        b=Oh/DgIsfX72vjRikllWNgiCTPmWM6xhaRpWxExXPxBuSE86jd7dhswuKB2ZkXJcEaU
-         h8mAyKZIXenPVNhnuv1CSeDqVSuuM9v/7mnp2Xh8gDjX84gNGbfwSKLBEDPWWBC7t0jV
-         XQjxgmvULXQOO12QG1fbjYT4J0yLpeVwmK/A9athfLw1ou8GTUKHWwFAF+i+bjdLVkoL
-         84h8p2p2ybh2jzMTOhlJICHSdCUEFhN+9NIQllVzDl33fQf/HxgHcGEwbwAYdp5wM+ml
-         PgG7EDvkXebEgR63LIi6W0+Cn9ZJtCghVlpMZzqZXkChLQ5GHJ2c5B02dIUtfsSOXbfA
-         DUDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-transfer-encoding
-         :content-language;
-        bh=oq9SkIBabmh+mBDoDozP8rQ3zmT5TdRgAHk3cwyY54o=;
-        b=ogPog8rJuU5+rluYIKinZVJfO5RhrFk0P9MKxuPyjCAOemW3FIjvgWhuIqZ8EwPGzo
-         kdEpTqduckdrhPUBYtErGWKS59XzumoeBimWKs3Zs5qjzbIswheqyihqHl+m6iNRG8bp
-         Rb3NiWvKneoisx27qHwkUfhNp/gjkchZaHmRYk3PwB7a/qYK9OW3eXyzlcN9hIg/yPl9
-         2NJUBh4D7Oj+eUiSjm5zqd1cnkiwTxTsiG4wpHprYtZwhzv+LVob8qHc5XhFSRTuR71q
-         T/M7l6QmV1FVkONGwwf9vsPKNIVkJOa3RnXq2qd3qXNpfLJBp8mzRV3BVFWNbVxe1EwS
-         qJMQ==
-X-Gm-Message-State: AGRZ1gIkYysa3K8vh2dk13Ne02hW8bX0bfc90gGLXS0tvCHFz1dL2GfJ
-        ffz+FeVzsMm7IdlEGV8k3/I=
-X-Google-Smtp-Source: AJdET5e8Q9cIXEKuxBWX6J3UctmItlLV84qJIdIDY/M3rIzo6KV8trkzF6N42xrno8cGzuKhfDwlpw==
-X-Received: by 2002:a17:902:ab83:: with SMTP id f3-v6mr7123841plr.122.1542157745180;
-        Tue, 13 Nov 2018 17:09:05 -0800 (PST)
-Received: from ?IPv6:2001:df0:0:200c:213f:405e:f087:71ef? ([2001:df0:0:200c:213f:405e:f087:71ef])
-        by smtp.gmail.com with ESMTPSA id k14sm22762948pgs.52.2018.11.13.17.09.00
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 17:09:04 -0800 (PST)
-Subject: Re: [RFC PATCH 06/13] m68k: Drop ARCH_USES_GETTIMEOFFSET
-To:     Finn Thain <fthain@telegraphics.com.au>
-Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Stephen N Chivers <schivers@csc.com.au>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        John Stultz <john.stultz@linaro.org>,
-        linux-m68k <linux-m68k@lists.linux-m68k.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Philip Blundell <philb@gnu.org>,
-        Joshua Thompson <funaho@jurai.org>
-References: <cover.1541995959.git.fthain@telegraphics.com.au>
- <74edaee07800f91eb416ab3e72c4670b8ef4bd4e.1541995959.git.fthain@telegraphics.com.au>
- <CAMuHMdXdo+L-Ta04zUsL62RSt1HOvmPJs7HFu_zEnc38R0FPjA@mail.gmail.com>
- <alpine.LNX.2.21.1811122002530.351@nippy.intranet>
- <fb617c67-089b-c4c0-2f47-28db41ffca6c@gmail.com>
- <alpine.LNX.2.21.1811131413210.362@nippy.intranet>
- <b824e485-796c-cbb6-9e50-504b03accd5d@gmail.com>
- <alpine.LNX.2.21.1811131700010.366@nippy.intranet>
- <0054c37f-ef34-e892-ff1d-02968ab529fa@gmail.com>
- <alpine.LNX.2.21.1811140905440.371@nippy.intranet>
-From:   Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <73f75453-ce74-2c13-ba7c-f36f976d4ff7@gmail.com>
-Date:   Wed, 14 Nov 2018 14:08:56 +1300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Wed, 14 Nov 2018 06:29:07 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50336 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727005AbeKNL3H (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 06:29:07 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B18FA89AF4;
+        Wed, 14 Nov 2018 01:28:11 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 5F41A5D6A6;
+        Wed, 14 Nov 2018 01:28:11 +0000 (UTC)
+Date:   Tue, 13 Nov 2018 20:28:10 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: nvme: utilize two queue maps, one for reads and one for writes
+Message-ID: <20181114012810.GA14592@redhat.com>
+References: <20181114004148.GA29545@roeck-us.net>
+ <f1e91342-2b04-6d9f-e77a-6e812c6888d0@kernel.dk>
 MIME-Version: 1.0
-In-Reply-To: <alpine.LNX.2.21.1811140905440.371@nippy.intranet>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <f1e91342-2b04-6d9f-e77a-6e812c6888d0@kernel.dk>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.26]); Wed, 14 Nov 2018 01:28:12 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Finn,
+On Tue, Nov 13 2018 at  7:51pm -0500,
+Jens Axboe <axboe@kernel.dk> wrote:
 
-On 14/11/18 11:11 AM, Finn Thain wrote:
-> On Tue, 13 Nov 2018, Michael Schmitz wrote:
->
->> Running a recent kernel under ARAnyM shows 40 ns resolution so the Atari
->> hardware emulation is a little more complete.
->>
-> You mean, 40 us resolution, right?
+> On 11/13/18 5:41 PM, Guenter Roeck wrote:
+> > Hi,
+> > 
+> > On Wed, Oct 31, 2018 at 08:36:31AM -0600, Jens Axboe wrote:
+> >> NVMe does round-robin between queues by default, which means that
+> >> sharing a queue map for both reads and writes can be problematic
+> >> in terms of read servicing. It's much easier to flood the queue
+> >> with writes and reduce the read servicing.
+> >>
+> >> Implement two queue maps, one for reads and one for writes. The
+> >> write queue count is configurable through the 'write_queues'
+> >> parameter.
+> >>
+> >> By default, we retain the previous behavior of having a single
+> >> queue set, shared between reads and writes. Setting 'write_queues'
+> >> to a non-zero value will create two queue sets, one for reads and
+> >> one for writes, the latter using the configurable number of
+> >> queues (hardware queue counts permitting).
+> >>
+> >> Reviewed-by: Hannes Reinecke <hare@suse.com>
+> >> Reviewed-by: Keith Busch <keith.busch@intel.com>
+> >> Signed-off-by: Jens Axboe <axboe@kernel.dk>
+> > 
+> > This patch causes hangs when running recent versions of
+> > -next with several architectures; see the -next column at
+> > kerneltests.org/builders for details.  Bisect log below; this
+> > was run with qemu on alpha. Reverting this patch as well as
+> > "nvme: add separate poll queue map" fixes the problem.
+> 
+> I don't see anything related to what hung, the trace, and so on.
+> Can you clue me in? Where are the test results with dmesg?
+> 
+> How to reproduce?
 
-Sorry, typo. Should have been us of course.
+Think Guenter should've provided a full kerneltests.org url, but I had a
+look and found this for powerpc with -next:
+https://kerneltests.org/builders/next-powerpc-next/builds/998/steps/buildcommand/logs/stdio
 
->
->> Using that for initial tests, I can confirm that timer resolution is
->> reduced to 10ms after patch 6, and gets restored to 40ns after applying
->> the full series
-> Thanks for testing!
->
->> (once clocksource_init runs, that is - the first part of the boot is at
->> 10ms resolution only, a regression compared to with use of
->> arch_gettimeoffset).
->>
-> Sounds like a theoretical regression (?)
->
-> Is there any need for more precise timers (I mean, better than 40 us)
-> before clocksource_init runs?
+Has useful logs of the build failure due to block.
 
-I don't think so, given that we can run just fine with 10 ms resolution.
+(not seeing any -next failure for alpha but Guenter said he was using
+qemu so the build failure could've been any arch qemu supports)
 
->
->> Unfortunately, I can't log in at the console with all patches applied. I
->> immediately get the 'login timeout exceeded' message. Weird...
->>
-> I didn't see that in my tests... Was this aranym or real hardware or both?
-
-ARAnyM only so far.
-
->
-> Can you also test tree fbf8405cd982 please?
->
-My tests were on c606b5cf902 in case it wasn't clear. I've now seen 
-fbf8405cd982, one moment please ...
-
-That one does appear to work - different versions of ARAnyM, and 
-different userland versions though. I'll test that again with the setup 
-that saw c606b5cf902 fail.
-
-Cheers,
-
-     Michael
-
-
-
+Mike
