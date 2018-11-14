@@ -2,105 +2,101 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=0.1 required=3.0 tests=DKIM_ADSP_ALL,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=no
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 599DFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:46:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 97B9CC04EBC
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:47:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EA04E208A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:46:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="AlcayZtJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EA04E208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
+	by mail.kernel.org (Postfix) with ESMTP id 6B29722419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 20:47:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6B29722419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mniewoehner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728090AbeKOGvn (ORCPT
+        id S1728256AbeKOGwF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 01:51:43 -0500
-Received: from vps0.lunn.ch ([185.16.172.187]:34871 "EHLO vps0.lunn.ch"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725756AbeKOGvn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 01:51:43 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
-        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=8CF1b9uJ2LZtLg9OyJaWX8whrOCy5l8Cp4Uigi0mGNw=;
-        b=AlcayZtJnvaSDqjpF+D3dUwZbWZYxO2mRlqxcG/sXoifUrFX3bZaaSEbrRpbcHt3tjklUycUHILYLz9kqBsWduPIPbOjj2tghjF58r30ztq2neLT84AnBueq8BxIh5TZGXM/rMIp3ydF5NZV3+TVzoXYFKFAJO4Ch9/p+u/JIzo=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
-        (envelope-from <andrew@lunn.ch>)
-        id 1gN23q-0008Ty-2T; Wed, 14 Nov 2018 21:46:54 +0100
-Date:   Wed, 14 Nov 2018 21:46:54 +0100
-From:   Andrew Lunn <andrew@lunn.ch>
-To:     Martin Schiller <ms@dev.tdt.de>
-Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-        f.fainelli@gmail.com, davem@davemloft.net
-Subject: Re: [PATCH v2] net: phy: mdio-gpio: fix access that may sleep
-Message-ID: <20181114204654.GB32305@lunn.ch>
-References: <20181114061703.11026-1-ms@dev.tdt.de>
- <20181114063703.13379-1-ms@dev.tdt.de>
- <20181114070528.GD17052@lunn.ch>
- <248deac95f412b925b0de44ead2ffec6@dev.tdt.de>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <248deac95f412b925b0de44ead2ffec6@dev.tdt.de>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+        Thu, 15 Nov 2018 01:52:05 -0500
+Received: from sender-of-o53.zoho.com ([135.84.80.218]:21747 "EHLO
+        sender-of-o53.zoho.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725756AbeKOGwF (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 01:52:05 -0500
+ARC-Seal: i=1; a=rsa-sha256; t=1542228421; cv=none; 
+        d=zoho.com; s=zohoarc; 
+        b=Dp2RNO+l9R/QOvv88tT47O1nMZt3BY7BIBMJe9TTPD/BhLgsZPFyazoiOZQAsCkzpuSrVDNhWLP/Y/PO2CCRya5Ch7x9KQsf0gPXBTiEoz5VD8rBqE+b6qSOthwHq+CmtVVH7917hHtU3Hrme8V1YvzUx8YcIffot1udVPLQBIw=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zoho.com; s=zohoarc; 
+        t=1542228421; h=Content-Type:Content-Transfer-Encoding:Cc:Date:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:To:ARC-Authentication-Results; 
+        bh=yHiZL1mYH+AVYQadTcbktf0OXMM7teDTUzRXY1I+bq8=; 
+        b=Gr7yegQlD6ciljlox4hdPy7FlsOzcHC6ENKCkSt84j/6o9xrsqV0/Mie9QyniG7Qs/k3wb1LNLirXzJ7lrtH1nLhxZLuslzkb1BL2nv7U4km0aI4986u3D4xil/gev0JkvRmVB/SgH6t5F5q0KVmIMqg0S7TKyKP+Fggr6cMyJM=
+ARC-Authentication-Results: i=1; mx.zoho.com;
+        dkim=pass  header.i=mniewoehner.de;
+        spf=pass  smtp.mailfrom=linux@mniewoehner.de;
+        dmarc=pass header.from=<linux@mniewoehner.de> header.from=<linux@mniewoehner.de>
+Received: from z3r0 (31.187.91.78 [31.187.91.78]) by mx.zohomail.com
+        with SMTPS id 1542228417085432.2836951108044; Wed, 14 Nov 2018 12:46:57 -0800 (PST)
+Message-ID: <4f7cc7152f2266d8d0782889db2375d4c1c71987.camel@mniewoehner.de>
+Subject: Re: [BUG] Nuvoton NCPT650 TPM 2.0 mode not working
+From:   Michael =?ISO-8859-1?Q?Niew=F6hner?= <linux@mniewoehner.de>
+To:     Mimi Zohar <zohar@linux.ibm.com>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        peterhuewe@gmx.de, jarkko.sakkinen@linux.intel.com, jgg@ziepe.ca,
+        arnd@arndb.de, linux-integrity@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Cc:     Nayna Jain <nayna@linux.ibm.com>
+In-Reply-To: <1541972556.3734.90.camel@linux.ibm.com>
+References: <776f384a81466642472beb4a34b10f26f1de88e9.camel@mniewoehner.de>
+         <1541960689.3190.4.camel@HansenPartnership.com>
+         <e8eb56fdab618770917fbe5b174328dc1240f934.camel@mniewoehner.de>
+         <1541962653.3190.7.camel@HansenPartnership.com>
+         <7d8cc5ad4bb7548d283f363de6f24c90d5d0a2b2.camel@mniewoehner.de>
+         <1541968191.3190.12.camel@HansenPartnership.com>
+         <3243d0325b3ea5878d3f86b0ee4fec1498f21dc1.camel@mniewoehner.de>
+         <660b0934bc16c8d195a2724f8be4ba8dfbe71134.camel@mniewoehner.de>
+         <1541972556.3734.90.camel@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
+Date:   Wed, 14 Nov 2018 21:46:53 +0100
+Mime-Version: 1.0
+X-Mailer: Evolution 3.28.5 
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 08:43:49AM +0100, Martin Schiller wrote:
-> On 2018-11-14 08:05, Andrew Lunn wrote:
-> >On Wed, Nov 14, 2018 at 07:37:03AM +0100, Martin Schiller wrote:
-> >>This commit re-enables support for slow GPIO pins. It was initially
-> >>introduced by commit
-> >>	2d6c9091ab7630dfcf34417c6683ce4764d7d40a
-> >>and got lost by commit
-> >>	7e5fbd1e0700f1bdb94508f84ec2aeb01eed7b12
-> >
-> >Hi Martin
-> >
-> >Was it really lost? It looks like _cansleep() just adds an extra check
-> >might_sleep_if(extra_checks), but it does not change any
-> >functionality.
-> 
-> Well, you are right, the functionality itself is not broken, but using
-> the NON _cansleep() functions on GPIOs that have the cansleep flag set,
-> this leads to a lot of kernel warnings/backtraces which makes the system
-> in fact useless.
-> 
-> Thats the WARN_ON() here:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpio/gpiolib.c?h=v4.20-rc2#n2992
-> 
-> and here:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/gpio/gpiolib.c?h=v4.20-rc2#n3304
+Hi all,
 
-Hi Martin
+I tried that patch mentioned by Mimi but it does not change anything for me.
 
-Right, this is really what you are fixing. So the commit message
-should talk about these WARN_ON being hit.
+Then I did some more tests with different kernel configs and finally got TPM
+working by
+a) compiling TPM as modules and rmmod tpm* and re-modprobe tpm_tis.
 
-> >
-> >So the change itself is O.K, i'm just not too sure about the commit
-> >message.
-> >
-> >	Andrew
-> 
-> Hmm, ok. What would you suggest for a better commit message?
+(initramfs) dmesg | grep -i tpm
+[    0.000000] efi:  ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000 SMBIOS=0x9f5eb000
+SMBIOS 3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018 TPMEventLog=0x97cbb018
+[    0.003793] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-
+S06   00001260 AMI 00000000)
+(initramfs) rmmod tpm_crb tpm_tis tpm_tis_core tpm
+(initramfs) modprobe tpm_tis
+[   44.956905] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
 
-Up until commit XXX, the _cansleep variants of the gpio_ API was
-used. After that commit and the change to gpiod_ API, the _cansleep()
-was dropped. This then results in WARN_ON() when used with GPIO
-devices which do sleep. Add back the _cansleep() to avoid this.
+b) compiling TPM-support in-kernel and manually bind the ACPI device
 
-This is something which is useful in stable. So please base this fix
-on DaveM net tree, not net-next, and include a Fixes: tag for the
-patch which broke it.
+(initramfs) dmesg | grep -i tpm
+[    0.000000] efi: ACPI 2.0=0x9ea7e000 ACPI=0x9ea7e000 SMBIOS=0x9f5eb000 SMBIOS
+3.0=0x9f5ea000 ESRT=0x9c07d918 MEMATTR=0x9bea3018 TPMEventLog=0x97cbb018
+[    0.003546] ACPI: TPM2 0x000000009EAB7F70 000034 (v03 LENOVO TC-S06 00001260
+AMI 00000000)
+(initramfs) echo MSFT0101:00 >/sys/bus/platform/drivers/tpm_tis/bind
+[  233.076079] tpm_tis MSFT0101:00: 2.0 TPM (device-id 0xFE, rev-id 2)
 
-      Thanks
-	Andrew
+
+It seems to me, the kernel tries to enable the TPM to early...
+
+
+Michael
+
+
