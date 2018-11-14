@@ -2,268 +2,447 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5ED45C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:53:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE924C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:54:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 150B62084C
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:53:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 150B62084C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 81D8F22510
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:54:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="PhBAb1ya"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81D8F22510
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728747AbeKOI6t (ORCPT
+        id S1726906AbeKOJAC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:58:49 -0500
-Received: from mga12.intel.com ([192.55.52.136]:50974 "EHLO mga12.intel.com"
+        Thu, 15 Nov 2018 04:00:02 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51344 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727128AbeKOI6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:58:18 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 14:53:03 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,234,1539673200"; 
-   d="scan'208";a="106314887"
-Received: from unknown (HELO localhost.lm.intel.com) ([10.232.112.69])
-  by fmsmga004.fm.intel.com with ESMTP; 14 Nov 2018 14:53:03 -0800
-From:   Keith Busch <keith.busch@intel.com>
-To:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>,
-        Keith Busch <keith.busch@intel.com>
-Subject: [PATCH 4/7] node: Add memory caching attributes
-Date:   Wed, 14 Nov 2018 15:49:17 -0700
-Message-Id: <20181114224921.12123-5-keith.busch@intel.com>
-X-Mailer: git-send-email 2.13.6
-In-Reply-To: <20181114224921.12123-2-keith.busch@intel.com>
-References: <20181114224921.12123-2-keith.busch@intel.com>
+        id S1726427AbeKOJAB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 04:00:01 -0500
+Received: from localhost (unknown [64.114.255.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 217F32243E;
+        Wed, 14 Nov 2018 22:54:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542236087;
+        bh=iPJMdPQPrPwPmqbbRqdwz9cvcz9QnbVZC4gZJRFWjQg=;
+        h=Subject:To:From:Date:From;
+        b=PhBAb1ya+yq6tBPnv2LMzpgfI2pkt0i7HihcZqqjsH0DfDMfDSJgnp9R41JfaufLr
+         Rf0Glu0KutHCg/7YukijPrE0UPES+ljTsyfr/jc5II0F1V67B3nFY7879rXjrI0gV0
+         Z8rnxrXtwX46SnupkaeUi5jwQyIh6TKS9QJfGxHw=
+Subject: patch "tools: Add 'firmware' category and add ihex2fw tool" added to char-misc-next
+To:     andrew.smirnov@gmail.com, akpm@linux-foundation.org,
+        dwmw2@infradead.org, gregkh@linuxfoundation.org, kyle@kernel.org,
+        linux-kernel@vger.kernel.org, yamada.masahiro@socionext.com
+From:   <gregkh@linuxfoundation.org>
+Date:   Wed, 14 Nov 2018 14:54:46 -0800
+Message-ID: <15422360864898@kroah.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-System memory may have side caches to help improve access speed. While
-the system provided cache is transparent to the software accessing
-these memory ranges, applications can optimize their own access based
-on cache attributes.
 
-In preparation for such systems, provide a new API for the kernel to
-register these memory side caches under the memory node that provides it.
+This is a note to let you know that I've just added the patch titled
 
-The kernel's sysfs representation is modeled from the cpu cacheinfo
-attributes, as seen from /sys/devices/system/cpu/cpuX/cache/. Unlike CPU
-cacheinfo, though, a higher node's memory cache level is nearer to the
-CPU, while lower levels are closer to the backing memory. Also unlike
-CPU cache, the system handles flushing any dirty cached memory to the
-last level the memory on a power failure if the range is persistent.
+    tools: Add 'firmware' category and add ihex2fw tool
 
-The exported attributes are the cache size, the line size, associativity,
-and write back policy.
+to my char-misc git tree which can be found at
+    git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/char-misc.git
+in the char-misc-next branch.
 
-Signed-off-by: Keith Busch <keith.busch@intel.com>
+The patch will show up in the next release of the linux-next tree
+(usually sometime within the next 24 hours during the week.)
+
+The patch will also be merged in the next major kernel release
+during the merge window.
+
+If you have any questions about this process, please let me know.
+
+
+From 1e5106031f298af4ad29c2eb866780d9a21e9ab4 Mon Sep 17 00:00:00 2001
+From: Andrey Smirnov <andrew.smirnov@gmail.com>
+Date: Wed, 17 Oct 2018 11:27:18 -0700
+Subject: tools: Add 'firmware' category and add ihex2fw tool
+
+Commit 5620a0d1aacd ("firmware: delete in-kernel firmware") removed
+ihex2fw tool together with the rest of the contents of firmware/
+folder. Since that tool is quite useful for doing .ihex -> .fw
+converstion, restore its original source code to tools/firmware
+
+Suggested-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Kyle McMartin <kyle@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>
+Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc: David Woodhouse <dwmw2@infradead.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: linux-kernel <linux-kernel@vger.kernel.org>
+Signed-off-by: Andrey Smirnov <andrew.smirnov@gmail.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- drivers/base/node.c  | 117 +++++++++++++++++++++++++++++++++++++++++++++++++++
- include/linux/node.h |  23 ++++++++++
- 2 files changed, 140 insertions(+)
+ tools/Makefile           |   7 +-
+ tools/firmware/Makefile  |  13 ++
+ tools/firmware/ihex2fw.c | 281 +++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 298 insertions(+), 3 deletions(-)
+ create mode 100644 tools/firmware/Makefile
+ create mode 100644 tools/firmware/ihex2fw.c
 
-diff --git a/drivers/base/node.c b/drivers/base/node.c
-index 232535761998..bb94f1d18115 100644
---- a/drivers/base/node.c
-+++ b/drivers/base/node.c
-@@ -60,6 +60,12 @@ static DEVICE_ATTR(cpumap,  S_IRUGO, node_read_cpumask, NULL);
- static DEVICE_ATTR(cpulist, S_IRUGO, node_read_cpulist, NULL);
+diff --git a/tools/Makefile b/tools/Makefile
+index abb358a70ad0..77f1aee8ea01 100644
+--- a/tools/Makefile
++++ b/tools/Makefile
+@@ -13,6 +13,7 @@ help:
+ 	@echo '  cgroup                 - cgroup tools'
+ 	@echo '  cpupower               - a tool for all things x86 CPU power'
+ 	@echo '  firewire               - the userspace part of nosy, an IEEE-1394 traffic sniffer'
++	@echo '  firmware               - Firmware tools'
+ 	@echo '  freefall               - laptop accelerometer program for disk protection'
+ 	@echo '  gpio                   - GPIO tools'
+ 	@echo '  hv                     - tools used when in Hyper-V clients'
+@@ -60,7 +61,7 @@ acpi: FORCE
+ cpupower: FORCE
+ 	$(call descend,power/$@)
  
- #ifdef CONFIG_HMEM
-+struct node_cache_obj {
-+	struct kobject kobj;
-+	struct list_head node;
-+	struct node_cache_attrs cache_attrs;
-+};
-+
- const struct attribute_group node_access_attrs_group;
+-cgroup firewire hv guest spi usb virtio vm bpf iio gpio objtool leds wmi pci: FORCE
++cgroup firewire hv guest spi usb virtio vm bpf iio gpio objtool leds wmi pci firmware: FORCE
+ 	$(call descend,$@)
  
- #define ACCESS_ATTR(name) 						\
-@@ -101,6 +107,115 @@ void node_set_perf_attrs(unsigned int nid, struct node_hmem_attrs *hmem_attrs)
- 		pr_info("failed to add performance attribute group to node %d\n",
- 			nid);
- }
+ liblockdep: FORCE
+@@ -137,7 +138,7 @@ acpi_clean:
+ cpupower_clean:
+ 	$(call descend,power/cpupower,clean)
+ 
+-cgroup_clean hv_clean firewire_clean spi_clean usb_clean virtio_clean vm_clean wmi_clean bpf_clean iio_clean gpio_clean objtool_clean leds_clean pci_clean:
++cgroup_clean hv_clean firewire_clean spi_clean usb_clean virtio_clean vm_clean wmi_clean bpf_clean iio_clean gpio_clean objtool_clean leds_clean pci_clean firmware_clean:
+ 	$(call descend,$(@:_clean=),clean)
+ 
+ liblockdep_clean:
+@@ -175,6 +176,6 @@ clean: acpi_clean cgroup_clean cpupower_clean hv_clean firewire_clean \
+ 		perf_clean selftests_clean turbostat_clean spi_clean usb_clean virtio_clean \
+ 		vm_clean bpf_clean iio_clean x86_energy_perf_policy_clean tmon_clean \
+ 		freefall_clean build_clean libbpf_clean libsubcmd_clean liblockdep_clean \
+-		gpio_clean objtool_clean leds_clean wmi_clean pci_clean
++		gpio_clean objtool_clean leds_clean wmi_clean pci_clean firmware_clean
+ 
+ .PHONY: FORCE
+diff --git a/tools/firmware/Makefile b/tools/firmware/Makefile
+new file mode 100644
+index 000000000000..d329825aa31b
+--- /dev/null
++++ b/tools/firmware/Makefile
+@@ -0,0 +1,13 @@
++# SPDX-License-Identifier: GPL-2.0
++# Makefile for firmware tools
 +
-+struct cache_attribute_entry {
-+	struct attribute attr;
-+	ssize_t (*show)(struct node_cache_attrs *, char *);
++CFLAGS = -Wall -Wextra -g
++
++all: ihex2fw
++%: %.c
++	$(CC) $(CFLAGS) -o $@ $^
++
++clean:
++	$(RM) ihex2fw
++
++.PHONY: all clean
+\ No newline at end of file
+diff --git a/tools/firmware/ihex2fw.c b/tools/firmware/ihex2fw.c
+new file mode 100644
+index 000000000000..b58dd061e978
+--- /dev/null
++++ b/tools/firmware/ihex2fw.c
+@@ -0,0 +1,281 @@
++/*
++ * Parser/loader for IHEX formatted data.
++ *
++ * Copyright © 2008 David Woodhouse <dwmw2@infradead.org>
++ * Copyright © 2005 Jan Harkes <jaharkes@cs.cmu.edu>
++ *
++ * This program is free software; you can redistribute it and/or modify
++ * it under the terms of the GNU General Public License version 2 as
++ * published by the Free Software Foundation.
++ */
++
++#include <stdint.h>
++#include <arpa/inet.h>
++#include <stdio.h>
++#include <errno.h>
++#include <sys/types.h>
++#include <sys/stat.h>
++#include <sys/mman.h>
++#include <fcntl.h>
++#include <string.h>
++#include <unistd.h>
++#include <stdlib.h>
++#define _GNU_SOURCE
++#include <getopt.h>
++
++
++struct ihex_binrec {
++	struct ihex_binrec *next; /* not part of the real data structure */
++        uint32_t addr;
++        uint16_t len;
++        uint8_t data[];
 +};
 +
-+#define CACHE_ATTR(name, fmt) 						\
-+static ssize_t name##_show(struct node_cache_attrs *cache,		\
-+			   char *buf)					\
-+{									\
-+	return sprintf(buf, fmt "\n", cache->name);			\
-+}									\
-+static struct cache_attribute_entry cache_attr_##name = __ATTR_RO(name);
-+
-+CACHE_ATTR(size, "%lld")
-+CACHE_ATTR(level, "%d")
-+CACHE_ATTR(line_size, "%d")
-+CACHE_ATTR(associativity, "%d")
-+CACHE_ATTR(write_policy, "%d")
-+
-+static struct attribute *cache_attrs[] = {
-+	&cache_attr_level.attr,
-+	&cache_attr_associativity.attr,
-+	&cache_attr_size.attr,
-+	&cache_attr_line_size.attr,
-+	&cache_attr_write_policy.attr,
-+	NULL,
-+};
-+
-+static ssize_t cache_attr_show(struct kobject *kobj, struct attribute *attr,
-+			       char *page)
++/**
++ * nybble/hex are little helpers to parse hexadecimal numbers to a byte value
++ **/
++static uint8_t nybble(const uint8_t n)
 +{
-+	struct cache_attribute_entry *entry =
-+			container_of(attr, struct cache_attribute_entry, attr);
-+	struct node_cache_obj *cache_obj =
-+			container_of(kobj, struct node_cache_obj, kobj);
-+	return entry->show(&cache_obj->cache_attrs, page);
++	if      (n >= '0' && n <= '9') return n - '0';
++	else if (n >= 'A' && n <= 'F') return n - ('A' - 10);
++	else if (n >= 'a' && n <= 'f') return n - ('a' - 10);
++	return 0;
 +}
 +
-+static const struct sysfs_ops cache_ops = {
-+	.show	= &cache_attr_show,
-+};
-+
-+static struct kobj_type cache_ktype = {
-+	.default_attrs	= cache_attrs,
-+	.sysfs_ops	= &cache_ops,
-+};
-+
-+void node_add_cache(unsigned int nid, struct node_cache_attrs *cache_attrs)
++static uint8_t hex(const uint8_t *data, uint8_t *crc)
 +{
-+	struct node_cache_obj *cache_obj;
-+	struct node *node;
++	uint8_t val = (nybble(data[0]) << 4) | nybble(data[1]);
++	*crc += val;
++	return val;
++}
 +
-+	if (!node_online(nid) || !node_devices[nid])
-+		return;
++static int process_ihex(uint8_t *data, ssize_t size);
++static void file_record(struct ihex_binrec *record);
++static int output_records(int outfd);
 +
-+	node = node_devices[nid];
-+	list_for_each_entry(cache_obj, &node->cache_attrs, node) {
-+		if (cache_obj->cache_attrs.level == cache_attrs->level) {
-+			dev_warn(&node->dev,
-+				"attempt to add duplicate cache level:%d\n",
-+				cache_attrs->level);
-+			return;
++static int sort_records = 0;
++static int wide_records = 0;
++static int include_jump = 0;
++
++static int usage(void)
++{
++	fprintf(stderr, "ihex2fw: Convert ihex files into binary "
++		"representation for use by Linux kernel\n");
++	fprintf(stderr, "usage: ihex2fw [<options>] <src.HEX> <dst.fw>\n");
++	fprintf(stderr, "       -w: wide records (16-bit length)\n");
++	fprintf(stderr, "       -s: sort records by address\n");
++	fprintf(stderr, "       -j: include records for CS:IP/EIP address\n");
++	return 1;
++}
++
++int main(int argc, char **argv)
++{
++	int infd, outfd;
++	struct stat st;
++	uint8_t *data;
++	int opt;
++
++	while ((opt = getopt(argc, argv, "wsj")) != -1) {
++		switch (opt) {
++		case 'w':
++			wide_records = 1;
++			break;
++		case 's':
++			sort_records = 1;
++			break;
++		case 'j':
++			include_jump = 1;
++			break;
++		default:
++			return usage();
 +		}
 +	}
 +
-+	if (!node->cache_kobj)
-+		node->cache_kobj = kobject_create_and_add("cache",
-+							  &node->dev.kobj);
-+	if (!node->cache_kobj)
-+		return;
++	if (optind + 2 != argc)
++		return usage();
 +
-+	cache_obj = kzalloc(sizeof(*cache_obj), GFP_KERNEL);
-+	if (!cache_obj)
-+		return;
-+
-+	cache_obj->cache_attrs = *cache_attrs;
-+	if (kobject_init_and_add(&cache_obj->kobj, &cache_ktype, node->cache_kobj,
-+				 "index%d", cache_attrs->level)) {
-+		dev_warn(&node->dev, "failed to add cache level:%d\n",
-+			 cache_attrs->level);
-+		kfree(cache_obj);
-+		return;
++	if (!strcmp(argv[optind], "-"))
++		infd = 0;
++	else
++		infd = open(argv[optind], O_RDONLY);
++	if (infd == -1) {
++		fprintf(stderr, "Failed to open source file: %s",
++			strerror(errno));
++		return usage();
 +	}
-+	list_add_tail(&cache_obj->node, &node->cache_attrs);
-+}
-+
-+static void node_remove_caches(struct node *node)
-+{
-+	struct node_cache_obj *obj, *next;
-+
-+	if (!node->cache_kobj)
-+		return;
-+
-+	list_for_each_entry_safe(obj, next, &node->cache_attrs, node) {
-+		list_del(&obj->node);
-+		kobject_put(&obj->kobj);
-+		kfree(obj);
++	if (fstat(infd, &st)) {
++		perror("stat");
++		return 1;
 +	}
-+	kobject_put(node->cache_kobj);
++	data = mmap(NULL, st.st_size, PROT_READ, MAP_SHARED, infd, 0);
++	if (data == MAP_FAILED) {
++		perror("mmap");
++		return 1;
++	}
++
++	if (!strcmp(argv[optind+1], "-"))
++		outfd = 1;
++	else
++		outfd = open(argv[optind+1], O_TRUNC|O_CREAT|O_WRONLY, 0644);
++	if (outfd == -1) {
++		fprintf(stderr, "Failed to open destination file: %s",
++			strerror(errno));
++		return usage();
++	}
++	if (process_ihex(data, st.st_size))
++		return 1;
++
++	return output_records(outfd);
 +}
 +
-+static void node_init_caches(unsigned int nid)
++static int process_ihex(uint8_t *data, ssize_t size)
 +{
-+	INIT_LIST_HEAD(&node_devices[nid]->cache_attrs);
++	struct ihex_binrec *record;
++	uint32_t offset = 0;
++	uint32_t data32;
++	uint8_t type, crc = 0, crcbyte = 0;
++	int i, j;
++	int line = 1;
++	int len;
++
++	i = 0;
++next_record:
++	/* search for the start of record character */
++	while (i < size) {
++		if (data[i] == '\n') line++;
++		if (data[i++] == ':') break;
++	}
++
++	/* Minimum record length would be about 10 characters */
++	if (i + 10 > size) {
++		fprintf(stderr, "Can't find valid record at line %d\n", line);
++		return -EINVAL;
++	}
++
++	len = hex(data + i, &crc); i += 2;
++	if (wide_records) {
++		len <<= 8;
++		len += hex(data + i, &crc); i += 2;
++	}
++	record = malloc((sizeof (*record) + len + 3) & ~3);
++	if (!record) {
++		fprintf(stderr, "out of memory for records\n");
++		return -ENOMEM;
++	}
++	memset(record, 0, (sizeof(*record) + len + 3) & ~3);
++	record->len = len;
++
++	/* now check if we have enough data to read everything */
++	if (i + 8 + (record->len * 2) > size) {
++		fprintf(stderr, "Not enough data to read complete record at line %d\n",
++			line);
++		return -EINVAL;
++	}
++
++	record->addr  = hex(data + i, &crc) << 8; i += 2;
++	record->addr |= hex(data + i, &crc); i += 2;
++	type = hex(data + i, &crc); i += 2;
++
++	for (j = 0; j < record->len; j++, i += 2)
++		record->data[j] = hex(data + i, &crc);
++
++	/* check CRC */
++	crcbyte = hex(data + i, &crc); i += 2;
++	if (crc != 0) {
++		fprintf(stderr, "CRC failure at line %d: got 0x%X, expected 0x%X\n",
++			line, crcbyte, (unsigned char)(crcbyte-crc));
++		return -EINVAL;
++	}
++
++	/* Done reading the record */
++	switch (type) {
++	case 0:
++		/* old style EOF record? */
++		if (!record->len)
++			break;
++
++		record->addr += offset;
++		file_record(record);
++		goto next_record;
++
++	case 1: /* End-Of-File Record */
++		if (record->addr || record->len) {
++			fprintf(stderr, "Bad EOF record (type 01) format at line %d",
++				line);
++			return -EINVAL;
++		}
++		break;
++
++	case 2: /* Extended Segment Address Record (HEX86) */
++	case 4: /* Extended Linear Address Record (HEX386) */
++		if (record->addr || record->len != 2) {
++			fprintf(stderr, "Bad HEX86/HEX386 record (type %02X) at line %d\n",
++				type, line);
++			return -EINVAL;
++		}
++
++		/* We shouldn't really be using the offset for HEX86 because
++		 * the wraparound case is specified quite differently. */
++		offset = record->data[0] << 8 | record->data[1];
++		offset <<= (type == 2 ? 4 : 16);
++		goto next_record;
++
++	case 3: /* Start Segment Address Record */
++	case 5: /* Start Linear Address Record */
++		if (record->addr || record->len != 4) {
++			fprintf(stderr, "Bad Start Address record (type %02X) at line %d\n",
++				type, line);
++			return -EINVAL;
++		}
++
++		memcpy(&data32, &record->data[0], sizeof(data32));
++		data32 = htonl(data32);
++		memcpy(&record->data[0], &data32, sizeof(data32));
++
++		/* These records contain the CS/IP or EIP where execution
++		 * starts. If requested output this as a record. */
++		if (include_jump)
++			file_record(record);
++		goto next_record;
++
++	default:
++		fprintf(stderr, "Unknown record (type %02X)\n", type);
++		return -EINVAL;
++	}
++
++	return 0;
 +}
-+#else
-+static void node_init_caches(unsigned int nid) { }
-+static void node_remove_caches(struct node *node) { }
- #endif
- 
- #define K(x) ((x) << (PAGE_SHIFT - 10))
-@@ -345,6 +460,7 @@ static void node_device_release(struct device *dev)
- 	 */
- 	flush_work(&node->node_work);
- #endif
-+	node_remove_caches(node);
- 	kfree(node);
- }
- 
-@@ -658,6 +774,7 @@ int __register_one_node(int nid)
- 
- 	/* initialize work queue for memory hot plug */
- 	init_node_hugetlb_work(nid);
-+	node_init_caches(nid);
- 
- 	return error;
- }
-diff --git a/include/linux/node.h b/include/linux/node.h
-index 6a1aa6a153f8..f499a17f84bc 100644
---- a/include/linux/node.h
-+++ b/include/linux/node.h
-@@ -36,6 +36,27 @@ struct node_hmem_attrs {
- 	unsigned int write_latency;
- };
- void node_set_perf_attrs(unsigned int nid, struct node_hmem_attrs *hmem_attrs);
 +
-+enum cache_associativity {
-+	NODE_CACHE_DIRECT_MAP,
-+	NODE_CACHE_INDEXED,
-+	NODE_CACHE_OTHER,
-+};
++static struct ihex_binrec *records;
 +
-+enum cache_write_policy {
-+	NODE_CACHE_WRITE_BACK,
-+	NODE_CACHE_WRITE_THROUGH,
-+	NODE_CACHE_WRITE_OTHER,
-+};
++static void file_record(struct ihex_binrec *record)
++{
++	struct ihex_binrec **p = &records;
 +
-+struct node_cache_attrs {
-+	enum cache_associativity associativity;
-+	enum cache_write_policy write_policy;
-+	u64 size;
-+	u16 line_size;
-+	u8  level;
-+};
-+void node_add_cache(unsigned int nid, struct node_cache_attrs *cache_attrs);
- #endif
- 
- struct node {
-@@ -46,6 +67,8 @@ struct node {
- #endif
- #ifdef CONFIG_HMEM
- 	struct node_hmem_attrs hmem_attrs;
-+	struct list_head cache_attrs;
-+	struct kobject *cache_kobj;
- #endif
- };
- 
++	while ((*p) && (!sort_records || (*p)->addr < record->addr))
++		p = &((*p)->next);
++
++	record->next = *p;
++	*p = record;
++}
++
++static int output_records(int outfd)
++{
++	unsigned char zeroes[6] = {0, 0, 0, 0, 0, 0};
++	struct ihex_binrec *p = records;
++
++	while (p) {
++		uint16_t writelen = (p->len + 9) & ~3;
++
++		p->addr = htonl(p->addr);
++		p->len = htons(p->len);
++		if (write(outfd, &p->addr, writelen) != writelen)
++			return 1;
++		p = p->next;
++	}
++	/* EOF record is zero length, since we don't bother to represent
++	   the type field in the binary version */
++	if (write(outfd, zeroes, 6) != 6)
++		return 1;
++	return 0;
++}
 -- 
-2.14.4
+2.19.1
+
 
