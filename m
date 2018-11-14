@@ -7,63 +7,63 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 910F2C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:07:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C8A65C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:08:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3D0F522360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:07:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9116A2250F
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 09:08:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="SAzSm0uP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3D0F522360
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="K7MtDXrg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9116A2250F
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732455AbeKNTKP (ORCPT
+        id S1732505AbeKNTKU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 14:10:15 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:38954 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732401AbeKNTKP (ORCPT
+        Wed, 14 Nov 2018 14:10:20 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:36404 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727833AbeKNTKS (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 14:10:15 -0500
-Received: by mail-pl1-f195.google.com with SMTP id b5-v6so7481283pla.6
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 01:07:54 -0800 (PST)
+        Wed, 14 Nov 2018 14:10:18 -0500
+Received: by mail-pf1-f194.google.com with SMTP id b85so762877pfc.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 01:07:57 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :in-reply-to:references;
-        bh=DL1e+xmoW3uXXoV3aTSNVd0vUC31legRrah0dDPX+vY=;
-        b=SAzSm0uPSRFcsmt3SqxLbFDf1uSUjlodnHExvb0UhH2G6UQxsjdQj6NVGWEqawuQEb
-         PIu0aVma0XPEXwpFQqH6J2QglgLNC2qmE7mqW/rjDy//jlHylasnfG6UT04r/Dw82ywN
-         miJnCE8zN5A3nATTvi8+mlBB3owPCfySWMiiY=
+        bh=pM4xo8EH7+FwIopWG51Di3D79VxY65IdP6hwSYGqO0I=;
+        b=K7MtDXrg1XRlZAecffDu2MzNpa1VDLB9fXSRB8vDJw5KyHvioYDjarzVXJlTrF9oqa
+         veU3zPb4ithaS3sbFvKBqwAR/N27mZtvfmRGvpiHCqosUZlcDN8saJrRzX0s3aPWxGpI
+         WE+pIAHTzb+YiCU9tHXnD1U94RjQtAN7ufFEg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:in-reply-to:references;
-        bh=DL1e+xmoW3uXXoV3aTSNVd0vUC31legRrah0dDPX+vY=;
-        b=SNGxFnIGLgoptJqNpjdzY0+PE7Tp9mdnF8v+vKAfl3g5fbPl9waKM/daNRLKbG90Og
-         R49HSLUn+tbGStmbOEHdUIluCz2uWQH13qqXpP9N3kidRik4t4cXHKh+lKaFvQ4Ysang
-         5pFHaK6pdaNkc4jBDt2duwsd5x1agJGPNILOYAH2pZIME6XM0ek893ql7G7bAXc800d9
-         b1h52YOfDyq4MKyluzpOjx0AZBRF4uuM+fLAgBPoGGAJf8UTKhcsnvPd1Qvkwuk3vhiL
-         C5a0NUSiOmEBFESi61dua3u48Ogcuv1SHUyJDWqH3IAbQrzaRe3EZBPYVdlHPGx3Yihg
-         sZag==
-X-Gm-Message-State: AGRZ1gIJco2Jzq2dQShH0/93R7pmaPjmVr3miSDmYxwglcehsWpBRChl
-        Z4cJl8jzgaj+nJgf8A/JvZ7MsA==
-X-Google-Smtp-Source: AJdET5dB6EwrR4eDn3iL/RzHyEXTi7qtxzc/s/SpKARIdE+tnIzzaRxnBYaN5A22Izs92OyPCkBa7A==
-X-Received: by 2002:a17:902:50ec:: with SMTP id c41-v6mr1084807plj.176.1542186473650;
-        Wed, 14 Nov 2018 01:07:53 -0800 (PST)
+        bh=pM4xo8EH7+FwIopWG51Di3D79VxY65IdP6hwSYGqO0I=;
+        b=tUSxg6eKS6tAE/rXsFjIrsY0t9l7HA8B49J/b+gVqjBQrZ96NlbZc0w8nTXskXVl8K
+         sGi89lqRMeNYGp4ik9I8nCEbzEr2EKn21JB8Ko+EoXw9h4d8OmH8rF5VXAhY1m701Mr9
+         23fyF+mVerHiUKJxZPJewgPZrX5/fVRhNQEWm/peL2C2P+KHKQynVICkAw5Bopg2bxFN
+         JAJvFZ8CTZzH+9hfK1S6Z0ss1iKnVBERinOlJDS67k+zM6Yl+fe3PWN/stsIXmBEr49+
+         LlTnXOojkAUZggWX3OLGj+P385qwijhxFjNttmi+++dRqM20WouEONj9w/ZWYSkZrV2g
+         0YLQ==
+X-Gm-Message-State: AGRZ1gJ7T2uvW8w3UgK7H+uVMkEzpk0N/klitqj46TKVVyDrdhdpUnIb
+        SRLDO7375TUsUeMfF0++32QjLA==
+X-Google-Smtp-Source: AJdET5cJNV7IPnDyhU28H6D7jCTdXdaSAi42OMoFm4jW4HpXXYxzDcchu0+/4c+LAERMwEcW2NJXVA==
+X-Received: by 2002:a63:1204:: with SMTP id h4mr988699pgl.51.1542186477038;
+        Wed, 14 Nov 2018 01:07:57 -0800 (PST)
 Received: from baolinwangubtpc.spreadtrum.com ([117.18.48.102])
-        by smtp.gmail.com with ESMTPSA id 127-v6sm25048814pfx.91.2018.11.14.01.07.50
+        by smtp.gmail.com with ESMTPSA id 127-v6sm25048814pfx.91.2018.11.14.01.07.53
         (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Wed, 14 Nov 2018 01:07:53 -0800 (PST)
+        Wed, 14 Nov 2018 01:07:56 -0800 (PST)
 From:   Baolin Wang <baolin.wang@linaro.org>
 To:     sre@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com
 Cc:     linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, yuanjiang.yu@unisoc.com,
         baolin.wang@linaro.org, broonie@kernel.org
-Subject: [PATCH 3/5] power: supply: sc27xx: Add fuel gauge low voltage alarm
-Date:   Wed, 14 Nov 2018 17:07:06 +0800
-Message-Id: <ee1dd39f126bd03fb88381de9663d32df994d341.1542185618.git.baolin.wang@linaro.org>
+Subject: [PATCH 4/5] power: supply: sc27xx: Add suspend/resume interfaces
+Date:   Wed, 14 Nov 2018 17:07:07 +0800
+Message-Id: <edd5230db26b5f69b9b4030972b5a34927055460.1542185618.git.baolin.wang@linaro.org>
 X-Mailer: git-send-email 1.7.9.5
 In-Reply-To: <cover.1542185618.git.baolin.wang@linaro.org>
 References: <cover.1542185618.git.baolin.wang@linaro.org>
@@ -76,279 +76,118 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
 
-Add low voltage alarm support to make sure the battery capacity
-more accurate in lower voltage stage.
+Add fuel gauge platform suspend and resume interfaces. In suspend state,
+we should enable the low voltage and coulomb counter threshold interrupts
+to wake up system to calibrate the battery capacity in lower voltage stage.
 
 Signed-off-by: Yuanjiang Yu <yuanjiang.yu@unisoc.com>
 Signed-off-by: Baolin Wang <baolin.wang@linaro.org>
 ---
- drivers/power/supply/sc27xx_fuel_gauge.c |  171 +++++++++++++++++++++++++++++-
- 1 file changed, 170 insertions(+), 1 deletion(-)
+ drivers/power/supply/sc27xx_fuel_gauge.c |   77 ++++++++++++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
 
 diff --git a/drivers/power/supply/sc27xx_fuel_gauge.c b/drivers/power/supply/sc27xx_fuel_gauge.c
-index 66f4db2..962d0f8 100644
+index 962d0f8..8c52e29 100644
 --- a/drivers/power/supply/sc27xx_fuel_gauge.c
 +++ b/drivers/power/supply/sc27xx_fuel_gauge.c
-@@ -31,8 +31,11 @@
- #define SC27XX_FGU_OCV			0x24
- #define SC27XX_FGU_POCV			0x28
- #define SC27XX_FGU_CURRENT		0x2c
-+#define SC27XX_FGU_LOW_OVERLOAD		0x34
- #define SC27XX_FGU_CLBCNT_SETH		0x50
- #define SC27XX_FGU_CLBCNT_SETL		0x54
-+#define SC27XX_FGU_CLBCNT_DELTH		0x58
-+#define SC27XX_FGU_CLBCNT_DELTL		0x5c
- #define SC27XX_FGU_CLBCNT_VALH		0x68
- #define SC27XX_FGU_CLBCNT_VALL		0x6c
- #define SC27XX_FGU_CLBCNT_QMAXL		0x74
-@@ -40,6 +43,11 @@
- #define SC27XX_WRITE_SELCLB_EN		BIT(0)
- #define SC27XX_FGU_CLBCNT_MASK		GENMASK(15, 0)
- #define SC27XX_FGU_CLBCNT_SHIFT		16
-+#define SC27XX_FGU_LOW_OVERLOAD_MASK	GENMASK(12, 0)
-+
-+#define SC27XX_FGU_INT_MASK		GENMASK(9, 0)
-+#define SC27XX_FGU_LOW_OVERLOAD_INT	BIT(0)
-+#define SC27XX_FGU_CLBCNT_DELTA_INT	BIT(2)
+@@ -789,6 +789,7 @@ static int sc27xx_fgu_probe(struct platform_device *pdev)
+ 	data->bat_present = !!ret;
+ 	mutex_init(&data->lock);
+ 	data->dev = &pdev->dev;
++	platform_set_drvdata(pdev, data);
  
- #define SC27XX_FGU_CUR_BASIC_ADC	8192
- #define SC27XX_FGU_SAMPLE_HZ		2
-@@ -56,8 +64,10 @@
-  * @internal_resist: the battery internal resistance in mOhm
-  * @total_cap: the total capacity of the battery in mAh
-  * @init_cap: the initial capacity of the battery in mAh
-+ * @alarm_cap: the alarm capacity
-  * @init_clbcnt: the initial coulomb counter
-  * @max_volt: the maximum constant input voltage in millivolt
-+ * @min_volt: the minimum drained battery voltage in microvolt
-  * @table_len: the capacity table length
-  * @cur_1000ma_adc: ADC value corresponding to 1000 mA
-  * @vol_1000mv_adc: ADC value corresponding to 1000 mV
-@@ -75,14 +85,18 @@ struct sc27xx_fgu_data {
- 	int internal_resist;
- 	int total_cap;
- 	int init_cap;
-+	int alarm_cap;
- 	int init_clbcnt;
- 	int max_volt;
-+	int min_volt;
- 	int table_len;
- 	int cur_1000ma_adc;
- 	int vol_1000mv_adc;
- 	struct power_supply_battery_ocv_table *cap_table;
- };
- 
-+static int sc27xx_fgu_cap_to_clbcnt(struct sc27xx_fgu_data *data, int capacity);
-+
- static const char * const sc27xx_charger_supply_name[] = {
- 	"sc2731_charger",
- 	"sc2720_charger",
-@@ -100,6 +114,11 @@ static int sc27xx_fgu_adc_to_voltage(struct sc27xx_fgu_data *data, int adc)
- 	return DIV_ROUND_CLOSEST(adc * 1000, data->vol_1000mv_adc);
+ 	fgu_cfg.drv_data = data;
+ 	fgu_cfg.of_node = np;
+@@ -846,6 +847,81 @@ static int sc27xx_fgu_probe(struct platform_device *pdev)
+ 	return 0;
  }
  
-+static int sc27xx_fgu_voltage_to_adc(struct sc27xx_fgu_data *data, int vol)
++#ifdef CONFIG_PM_SLEEP
++static int sc27xx_fgu_resume(struct device *dev)
 +{
-+	return DIV_ROUND_CLOSEST(vol * data->vol_1000mv_adc, 1000);
-+}
++	struct sc27xx_fgu_data *data = dev_get_drvdata(dev);
++	int ret;
 +
- /*
-  * When system boots on, we can not read battery capacity from coulomb
-  * registers, since now the coulomb registers are invalid. So we should
-@@ -428,6 +447,92 @@ static void sc27xx_fgu_external_power_changed(struct power_supply *psy)
- 	.external_power_changed	= sc27xx_fgu_external_power_changed,
- };
- 
-+static void sc27xx_fgu_adjust_cap(struct sc27xx_fgu_data *data, int cap)
-+{
-+	data->init_cap = cap;
-+	data->init_clbcnt = sc27xx_fgu_cap_to_clbcnt(data, data->init_cap);
-+}
-+
-+static irqreturn_t sc27xx_fgu_interrupt(int irq, void *dev_id)
-+{
-+	struct sc27xx_fgu_data *data = dev_id;
-+	int ret, cap, ocv, adc;
-+	u32 status;
-+
-+	mutex_lock(&data->lock);
-+
-+	ret = regmap_read(data->regmap, data->base + SC27XX_FGU_INT_STS,
-+			  &status);
-+	if (ret)
-+		goto out;
-+
-+	ret = regmap_update_bits(data->regmap, data->base + SC27XX_FGU_INT_CLR,
-+				 status, status);
-+	if (ret)
-+		goto out;
-+
-+	/*
-+	 * When low overload voltage interrupt happens, we should calibrate the
-+	 * battery capacity in lower voltage stage.
-+	 */
-+	if (!(status & SC27XX_FGU_LOW_OVERLOAD_INT))
-+		goto out;
-+
-+	ret = sc27xx_fgu_get_capacity(data, &cap);
-+	if (ret)
-+		goto out;
-+
-+	ret = sc27xx_fgu_get_vbat_ocv(data, &ocv);
-+	if (ret)
-+		goto out;
-+
-+	/*
-+	 * If current OCV value is less than the minimum OCV value in OCV table,
-+	 * which means now battery capacity is 0%, and we should adjust the
-+	 * inititial capacity to 0.
-+	 */
-+	if (ocv <= data->cap_table[data->table_len - 1].ocv) {
-+		sc27xx_fgu_adjust_cap(data, 0);
-+	} else if (ocv <= data->min_volt) {
-+		/*
-+		 * If current OCV value is less than the low alarm voltage, but
-+		 * current capacity is larger than the alarm capacity, we should
-+		 * adjust the inititial capacity to alarm capacity.
-+		 */
-+		if (cap > data->alarm_cap) {
-+			sc27xx_fgu_adjust_cap(data, data->alarm_cap);
-+		} else if (cap <= 0) {
-+			int cur_cap;
-+
-+			/*
-+			 * If current capacity is equal with 0 or less than 0
-+			 * (some error occurs), we should adjust inititial
-+			 * capacity to the capacity corresponding to current OCV
-+			 * value.
-+			 */
-+			cur_cap = power_supply_ocv2cap_simple(data->cap_table,
-+							      data->table_len,
-+							      ocv);
-+			sc27xx_fgu_adjust_cap(data, cur_cap);
-+		}
-+
-+		/*
-+		 * After adjusting the battery capacity, we should set the
-+		 * lowest alarm voltage instead.
-+		 */
-+		data->min_volt = data->cap_table[data->table_len - 1].ocv;
-+		adc = sc27xx_fgu_voltage_to_adc(data, data->min_volt / 1000);
-+		regmap_update_bits(data->regmap, data->base + SC27XX_FGU_LOW_OVERLOAD,
-+				   SC27XX_FGU_LOW_OVERLOAD_MASK, adc);
-+	}
-+
-+out:
-+	mutex_unlock(&data->lock);
-+
-+	power_supply_changed(data->battery);
-+	return IRQ_HANDLED;
-+}
-+
- static irqreturn_t sc27xx_fgu_bat_detection(int irq, void *dev_id)
- {
- 	struct sc27xx_fgu_data *data = dev_id;
-@@ -509,7 +614,7 @@ static int sc27xx_fgu_hw_init(struct sc27xx_fgu_data *data)
- {
- 	struct power_supply_battery_info info = { };
- 	struct power_supply_battery_ocv_table *table;
--	int ret;
-+	int ret, delta_clbcnt, alarm_adc;
- 
- 	ret = power_supply_get_battery_info(data->battery, &info);
- 	if (ret) {
-@@ -520,6 +625,7 @@ static int sc27xx_fgu_hw_init(struct sc27xx_fgu_data *data)
- 	data->total_cap = info.charge_full_design_uah / 1000;
- 	data->max_volt = info.constant_charge_voltage_max_uv / 1000;
- 	data->internal_resist = info.factory_internal_resistance_uohm / 1000;
-+	data->min_volt = info.voltage_min_design_uv;
- 
- 	/*
- 	 * For SC27XX fuel gauge device, we only use one ocv-capacity
-@@ -537,6 +643,10 @@ static int sc27xx_fgu_hw_init(struct sc27xx_fgu_data *data)
- 		return -ENOMEM;
- 	}
- 
-+	data->alarm_cap = power_supply_ocv2cap_simple(data->cap_table,
-+						      data->table_len,
-+						      data->min_volt);
-+
- 	power_supply_put_battery_info(data->battery, &info);
- 
- 	ret = sc27xx_fgu_calibration(data);
-@@ -559,6 +669,50 @@ static int sc27xx_fgu_hw_init(struct sc27xx_fgu_data *data)
- 		goto disable_fgu;
- 	}
- 
-+	ret = regmap_update_bits(data->regmap, data->base + SC27XX_FGU_INT_CLR,
-+				 SC27XX_FGU_INT_MASK, SC27XX_FGU_INT_MASK);
++	ret = regmap_update_bits(data->regmap, data->base + SC27XX_FGU_INT_EN,
++				 SC27XX_FGU_LOW_OVERLOAD_INT |
++				 SC27XX_FGU_CLBCNT_DELTA_INT, 0);
 +	if (ret) {
-+		dev_err(data->dev, "failed to clear interrupt status\n");
-+		goto disable_clk;
-+	}
-+
-+	/*
-+	 * Set the voltage low overload threshold, which means when the battery
-+	 * voltage is lower than this threshold, the controller will generate
-+	 * one interrupt to notify.
-+	 */
-+	alarm_adc = sc27xx_fgu_voltage_to_adc(data, data->min_volt / 1000);
-+	ret = regmap_update_bits(data->regmap, data->base + SC27XX_FGU_LOW_OVERLOAD,
-+				 SC27XX_FGU_LOW_OVERLOAD_MASK, alarm_adc);
-+	if (ret) {
-+		dev_err(data->dev, "failed to set fgu low overload\n");
-+		goto disable_clk;
-+	}
-+
-+	/*
-+	 * Set the coulomb counter delta threshold, that means when the coulomb
-+	 * counter change is multiples of the delta threshold, the controller
-+	 * will generate one interrupt to notify the users to update the battery
-+	 * capacity. Now we set the delta threshold as a counter value of 1%
-+	 * capacity.
-+	 */
-+	delta_clbcnt = sc27xx_fgu_cap_to_clbcnt(data, 1);
-+
-+	ret = regmap_update_bits(data->regmap, data->base + SC27XX_FGU_CLBCNT_DELTL,
-+				 SC27XX_FGU_CLBCNT_MASK, delta_clbcnt);
-+	if (ret) {
-+		dev_err(data->dev, "failed to set low delta coulomb counter\n");
-+		goto disable_clk;
-+	}
-+
-+	ret = regmap_update_bits(data->regmap, data->base + SC27XX_FGU_CLBCNT_DELTH,
-+				 SC27XX_FGU_CLBCNT_MASK,
-+				 delta_clbcnt >> SC27XX_FGU_CLBCNT_SHIFT);
-+	if (ret) {
-+		dev_err(data->dev, "failed to set high delta coulomb counter\n");
-+		goto disable_clk;
-+	}
-+
- 	/*
- 	 * Get the boot battery capacity when system powers on, which is used to
- 	 * initialize the coulomb counter. After that, we can read the coulomb
-@@ -658,6 +812,21 @@ static int sc27xx_fgu_probe(struct platform_device *pdev)
- 		return ret;
- 	}
- 
-+	irq = platform_get_irq(pdev, 0);
-+	if (irq < 0) {
-+		dev_err(&pdev->dev, "no irq resource specified\n");
-+		return irq;
-+	}
-+
-+	ret = devm_request_threaded_irq(data->dev, irq, NULL,
-+					sc27xx_fgu_interrupt,
-+					IRQF_NO_SUSPEND | IRQF_ONESHOT,
-+					pdev->name, data);
-+	if (ret) {
-+		dev_err(data->dev, "failed to request fgu IRQ\n");
++		dev_err(data->dev, "failed to disable fgu interrupts\n");
 +		return ret;
 +	}
 +
- 	irq = gpiod_to_irq(data->gpiod);
- 	if (irq < 0) {
- 		dev_err(&pdev->dev, "failed to translate GPIO to IRQ\n");
++	return 0;
++}
++
++static int sc27xx_fgu_suspend(struct device *dev)
++{
++	struct sc27xx_fgu_data *data = dev_get_drvdata(dev);
++	int ret, status, ocv;
++
++	ret = sc27xx_fgu_get_status(data, &status);
++	if (ret)
++		return ret;
++
++	/*
++	 * If we are charging, then no need to enable the FGU interrupts to
++	 * adjust the battery capacity.
++	 */
++	if (status != POWER_SUPPLY_STATUS_NOT_CHARGING)
++		return 0;
++
++	ret = regmap_update_bits(data->regmap, data->base + SC27XX_FGU_INT_EN,
++				 SC27XX_FGU_LOW_OVERLOAD_INT,
++				 SC27XX_FGU_LOW_OVERLOAD_INT);
++	if (ret) {
++		dev_err(data->dev, "failed to enable low voltage interrupt\n");
++		return ret;
++	}
++
++	ret = sc27xx_fgu_get_vbat_ocv(data, &ocv);
++	if (ret)
++		goto disable_int;
++
++	/*
++	 * If current OCV is less than the minimum voltage, we should enable the
++	 * coulomb counter threshold interrupt to notify events to adjust the
++	 * battery capacity.
++	 */
++	if (ocv < data->min_volt) {
++		ret = regmap_update_bits(data->regmap,
++					 data->base + SC27XX_FGU_INT_EN,
++					 SC27XX_FGU_CLBCNT_DELTA_INT,
++					 SC27XX_FGU_CLBCNT_DELTA_INT);
++		if (ret) {
++			dev_err(data->dev,
++				"failed to enable coulomb threshold int\n");
++			goto disable_int;
++		}
++	}
++
++	return 0;
++
++disable_int:
++	regmap_update_bits(data->regmap, data->base + SC27XX_FGU_INT_EN,
++			   SC27XX_FGU_LOW_OVERLOAD_INT, 0);
++	return ret;
++}
++#endif
++
++static const struct dev_pm_ops sc27xx_fgu_pm_ops = {
++	SET_SYSTEM_SLEEP_PM_OPS(sc27xx_fgu_suspend, sc27xx_fgu_resume)
++};
++
+ static const struct of_device_id sc27xx_fgu_of_match[] = {
+ 	{ .compatible = "sprd,sc2731-fgu", },
+ 	{ }
+@@ -856,6 +932,7 @@ static int sc27xx_fgu_probe(struct platform_device *pdev)
+ 	.driver = {
+ 		.name = "sc27xx-fgu",
+ 		.of_match_table = sc27xx_fgu_of_match,
++		.pm = &sc27xx_fgu_pm_ops,
+ 	}
+ };
+ 
 -- 
 1.7.9.5
 
