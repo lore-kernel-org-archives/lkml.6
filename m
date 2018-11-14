@@ -2,151 +2,132 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F940C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:54:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A0D8C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D18D2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:54:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D18D2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 5DC902145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 10:55:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QUb6hNnV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DC902145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732427AbeKNU5k (ORCPT
+        id S1732470AbeKNU6O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 15:57:40 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:41806 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727883AbeKNU5k (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 15:57:40 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 884FA80D;
-        Wed, 14 Nov 2018 02:54:55 -0800 (PST)
-Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 96E4B3F718;
-        Wed, 14 Nov 2018 02:54:53 -0800 (PST)
-Date:   Wed, 14 Nov 2018 10:54:51 +0000
-From:   Dave Martin <Dave.Martin@arm.com>
-To:     Andy Lutomirski <luto@amacapital.net>
-Cc:     Daniel Colascione <dancol@google.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
-Subject: Re: Official Linux system wrapper library?
-Message-ID: <20181114105449.GK3505@e103592.cambridge.arm.com>
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com>
- <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com>
- <877ehjx447.fsf@oldenburg.str.redhat.com>
- <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
- <875zx2vhpd.fsf@oldenburg.str.redhat.com>
- <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
- <20181113193859.GJ3505@e103592.cambridge.arm.com>
- <69B07026-5E8B-47FC-9313-E51E899FAFB0@amacapital.net>
+        Wed, 14 Nov 2018 15:58:14 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:40990 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727883AbeKNU6O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 15:58:14 -0500
+Received: by mail-yb1-f196.google.com with SMTP id t13-v6so6703804ybb.8;
+        Wed, 14 Nov 2018 02:55:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=cKBdH59M66pVE1mkFNjjgivtPYYb7pmZ+I+vSeOZYIU=;
+        b=QUb6hNnVnNjXLFg364dSpcdzPM1VQOO4gb4DueTscFN98Lko/9Nas34duj6sB9XcXt
+         AB2JwXFiawF+7pEkXV9S9pyYKoVjM/FYegEQpoYWihKNKkWw13/JqbY/XHJ60X0V/2Ed
+         CLm8GkQ9L/ClSY+2gQm0pbDxxcpuDrOkabUpSwK12gmOrBkq4DctAm5kV6/JYlTKNsIz
+         X2BrO1sGXL1Q0kSWzr+ctG6TWWDc2YL+ZDQiskmn4oZnfakwq6fwhMUCp/wmueZFzgy+
+         0pWkcSc5CXQ7Z/p5MRdMuIoDPXrijOS6jviRmE1/oplif1ShK22qvFpMyQZT5I/Mbe6i
+         i9iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=cKBdH59M66pVE1mkFNjjgivtPYYb7pmZ+I+vSeOZYIU=;
+        b=eRB4w3JWoFevNc3lUUUiQ+VH/0xOwJ+rYb/wLrjsa3C77cuGjw2Qw1LokltVVpXGym
+         Z7guXfcXWE4a4wEjIVyMXod3/wbqBNqAOx4nlLMAoGx3R7v3udlAyLJsC9xleHCAoH5j
+         myGWVQnXq2HL98fOwrTlymIhWt8HBXSYFL81/T3dZNkb8d8BWdZE1jEzjG6dhWuslD+N
+         Iptvd8NlLMBFG1bgB9c32aUTXHgab+bSBiNSMGkjdth7LZ+cXZsmSJVbkFheB+O4bYm1
+         JbcDEqpdAt3+N8EuKOwxGioTs2iy7S/tiELSaFHaK7LOsdr4pQxWlsjhJZ9vadOcqhLG
+         3+Vw==
+X-Gm-Message-State: AGRZ1gJHrreExrLsr3TB0nNQ4CPGDCmY8WVOSm1wlJPQ86HD9xH/+GY8
+        hx0xbsONDvUodSgBTKGxMVdwNTDcFzLksklfqnw=
+X-Google-Smtp-Source: AJdET5eKxiMIGTNrdHAKM1dcEdY0ZshU0ePX8l8piP21PRyZWV+VZfrgxrnrCJUjTHsbqNzuVm79tFWfSewXrkGBQro=
+X-Received: by 2002:a25:952:: with SMTP id u18-v6mr976985ybm.474.1542192928266;
+ Wed, 14 Nov 2018 02:55:28 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <69B07026-5E8B-47FC-9313-E51E899FAFB0@amacapital.net>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <20181108124934.32381-1-peron.clem@gmail.com> <20181113225135.GQ2089@sirena.org.uk>
+In-Reply-To: <20181113225135.GQ2089@sirena.org.uk>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Wed, 14 Nov 2018 11:55:17 +0100
+Message-ID: <CAJiuCcewYbt4SDZfFzDfTfTzj_Z1cm=S3_GAA-zcYGW-jzXR4w@mail.gmail.com>
+Subject: Re: [PATCH 1/2] ASoC: ak4118: Add support for AK4118 S/PDIF transceiver
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        alsa-devel@alsa-project.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Adrien Charruel <adrien.charruel@devialet.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 12:58:39PM -0800, Andy Lutomirski wrote:
-> 
-> > On Nov 13, 2018, at 11:39 AM, Dave Martin <Dave.Martin@arm.com> wrote:
-> > 
-> > On Mon, Nov 12, 2018 at 05:19:14AM -0800, Daniel Colascione wrote:
-> > 
-> > [...]
-> > 
-> >> We can learn something from how Windows does things. On that system,
-> >> what we think of as "libc" is actually two parts. (More, actually, but
-> >> I'm simplifying.) At the lowest level, you have the semi-documented
-> >> ntdll.dll, which contains raw system call wrappers and arcane
-> >> kernel-userland glue. On top of ntdll live the "real" libc
-> >> (msvcrt.dll, kernel32.dll, etc.) that provide conventional
-> >> application-level glue. The tight integration between ntdll.dll and
-> >> the kernel allows Windows to do very impressive things. (For example,
-> >> on x86_64, Windows has no 32-bit ABI as far as the kernel is
-> >> concerned! You can still run 32-bit programs though, and that works
-> >> via ntdll.dll essentially shimming every system call and switching the
-> >> processor between long and compatibility mode as needed.) Normally,
-> >> you'd use the higher-level capabilities, but if you need something in
-> >> ntdll (e.g., if you're Cygwin) nothing stops your calling into the
-> >> lower-level system facilities directly. ntdll is tightly bound to the
-> >> kernel; the higher-level libc, not so.
-> >> 
-> >> We should adopt a similar approach. Shipping a lower-level
-> >> "liblinux.so" tightly bound to the kernel would not only let the
-> >> kernel bypass glibc's "editorial discretion" in exposing new
-> >> facilities to userspace, but would also allow for tighter user-kernel
-> >> integration that one can achieve with a simplistic syscall(2)-style
-> >> escape hatch. (For example, for a long time now, I've wanted to go
-> >> beyond POSIX and improve the system's signal handling API, and this
-> >> improvement requires userspace cooperation.) The vdso is probably too
-> >> small and simplistic to serve in this role; I'd want a real library.
-> > 
-> > Can you expand on your reasoning here?
-> > 
-> > Playing devil's advocate:
-> > 
-> > If the library is just exposing the syscall interface, I don't see
-> > why it _couldn't_ fit into the vdso (or something vdso-like).
-> > 
-> > If a separate library, I'd be concerned that it would accumulate
-> > value-add bloat over time, and the kernel ABI may start to creep since
-> > most software wouldn't invoke the kernel directly any more.  Even if
-> > it's maintained in the kernel tree, its existence as an apparently
-> > standalone component may encourage forking, leading to a potential
-> > compatibility mess.
-> > 
-> > The vdso approach would mean we can guarantee that the library is
-> > available and up to date at runtime, and may make it easier to keep
-> > what's in it down to sane essentials.
-> 
-> Hmm. Putting on my vDSO hat:
-> 
-> The vDSO could provide all kinds of nifty things. Better exception
-> handling comes to mind. But it has two major limitations that severely
-> restrict what it can do:
-> 
-> - It can’t allocate memory. We probably want to keep it that way.
-> 
-> - It can’t use TLS.  Solving this without genuinely awful ABI issues
-> may be extremely hard. We *could* require callers to pass a thread
-> pointer in, I suppose.
-> 
-> Also, if we make the vDSO stateful, CRIU is going to have a blast.  We
-> might need to expose explicit save and restore abilities.
-> 
-> As a straw man use case, it would be neat if DSOs (or the loader,
-> maybe) could register a list of exception fixups per DSO.  The kernel
-> could consult these lists before delivering a signal.  ISTM it wouldn’t
-> be so crazy if the vDSO handled registration, although it could uses
-> syscalls as well. If the vDSO did it, it would need somewhere to put
-> the lists.
+Hi Mark,
 
-Fair points, though this is rather what I meant by "sane essentials".
-Because there are strict limits on what can be done in the vDSO, it may
-be more bloat-resistant and more conservatively maintained.
+On Tue, 13 Nov 2018 at 23:51, Mark Brown <broonie@kernel.org> wrote:
+>
+> On Thu, Nov 08, 2018 at 01:49:33PM +0100, Cl=C3=A9ment P=C3=A9ron wrote:
+>
+> This looks mostly good, a few small things below but nothing too major:
+>
+> > --- /dev/null
+> > +++ b/sound/soc/codecs/ak4118.c
+> > @@ -0,0 +1,449 @@
+> > +// SPDX-License-Identifier: GPL-2.0
+> > +/*
+> > + * ak4118.c  --  Asahi Kasei ALSA Soc Audio driver
+> > + *
+>
+> Please make the entire comment a C++ one so this looks more intentional.
 
-This might provide a way to push some dumb compatibility kludge code
-that receives little ongoing maintenance outside the privilege wall,
-whereas it has to sit in the kernel proper today.
+I check from other files and also this article says :
+"For normal C source files, the string will be a comment using the
+"//" syntax; header files, instead, use traditional (/* */) comments
+for reasons related to tooling"
+https://lwn.net/Articles/739183/
 
-In theory we could opt to advertise new syscalls only via vDSO entry
-points, and not maintain __NR_xxx values for them (which may or may
-not upset ptrace users.)  Anyway, I digress...
+>
+> > +static const char * const ak4118_iec958_fs_texts[] =3D {
+> > +     "44100",
+> > +     "Reserved",
+>
+> If you use a _VALUE_ENUM_SINGLE you can hide the reserved/invalid values
+> from userspace which is easier to use.
 
-Cheers
----Dave
+Ok will change to SOC_VALUE_ENUM_SINGLE_DECL
+
+>
+> > +     ret =3D request_threaded_irq(gpiod_to_irq(ak4118->irq), NULL,
+> > +                                ak4118_irq_handler, IRQF_TRIGGER_RISIN=
+G |
+> > +                                IRQF_ONESHOT, "ak4118-irq", ak4118);
+> > +     if (ret < 0) {
+> > +             dev_err(component->dev, "Fail to request_irq: %d\n", ret)=
+;
+> > +             return ret;
+> > +     }
+>
+> You should request resources in the device level probe, there's no point
+> in requesting and releasing the interrupt like this.
+
+Ok, will change to devm_request_threaded_irq and remove the irq_free
+
+Thanks for the review,
+Regards,
+Cl=C3=A9ment
