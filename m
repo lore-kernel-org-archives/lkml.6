@@ -7,44 +7,48 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A859C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:41:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B5052C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:41:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3FB7223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:41:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 787672243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:41:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Priu/Ofk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3FB7223DD
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IhSD53n6"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 787672243E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728963AbeKOI1Y (ORCPT
+        id S2388136AbeKOIqm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:27:24 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34408 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:46:42 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34470 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728895AbeKOI1X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:27:23 -0500
+        id S1728743AbeKOI1Y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:24 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7E43622511;
+        by mail.kernel.org (Postfix) with ESMTPSA id B96BC22513;
         Wed, 14 Nov 2018 22:22:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542234140;
-        bh=gYWCMeLntYRCFq2khA6yuYLx0cObBt/t6DcHo51WtG0=;
+        bh=E/4ChsQ8iY/Cd6jUYfUCxL4aKyKdA8/o0duSaILRBVc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Priu/OfkCrFI70ra8+K8x8NF1Hqt/1K2W6/ZyDYZd83o/c7r/3AziJ7n+0YCUV7DQ
-         QWdKA8iGa4SnN4BgONreEGqlkk4zxrSZ8hcZHpcTnCqVSRaAvDuOVP/mLKqt0ZNoTs
-         y0/guMI/SrSDIgXVJKJvEF33112pgSHGwJ0nE0HI=
+        b=IhSD53n6jXCX3BKmt2PRWq2UkrgqX9nDuIlKi78TDy30Gd7oiZ4aG/gmpU/VKEgaG
+         b2ty1uBuYRT11ypzSYmxHtNKE3tMfdshoIxVaFRM3kvZ2LJ4CQMDO62+h/D6MXk+Rl
+         1kHhjmkdiQmradqo+M9b6V67bxj2Nftol+5Xo8Oc=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Wolfram Sang <wsa@the-dreams.de>,
+Cc:     Valentin Schneider <valentin.schneider@arm.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        Dietmar.Eggemann@arm.com,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, morten.rasmussen@arm.com,
+        quentin.perret@arm.com, Ingo Molnar <mingo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 51/73] i2c: qcom-geni: Fix runtime PM mismatch with child devices
-Date:   Wed, 14 Nov 2018 17:21:45 -0500
-Message-Id: <20181114222207.98701-51-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 52/73] sched/core: Take the hotplug lock in sched_init_smp()
+Date:   Wed, 14 Nov 2018 17:21:46 -0500
+Message-Id: <20181114222207.98701-52-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -53,78 +57,85 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Stephen Boyd <swboyd@chromium.org>
+From: Valentin Schneider <valentin.schneider@arm.com>
 
-[ Upstream commit 848bd3f3de9d44950c00eda6c115e8e9785440da ]
+[ Upstream commit 40fa3780bac2b654edf23f6b13f4e2dd550aea10 ]
 
-We need to enable runtime PM on this i2c controller before populating
-child devices with i2c_add_adapter(). Otherwise, if a child device uses
-runtime PM and stays runtime PM enabled we'll get the following warning
-at boot.
+When running on linux-next (8c60c36d0b8c ("Add linux-next specific files
+for 20181019")) + CONFIG_PROVE_LOCKING=y on a big.LITTLE system (e.g.
+Juno or HiKey960), we get the following report:
 
- Enabling runtime PM for inactive device (a98000.i2c) with active children
+ [    0.748225] Call trace:
+ [    0.750685]  lockdep_assert_cpus_held+0x30/0x40
+ [    0.755236]  static_key_enable_cpuslocked+0x20/0xc8
+ [    0.760137]  build_sched_domains+0x1034/0x1108
+ [    0.764601]  sched_init_domains+0x68/0x90
+ [    0.768628]  sched_init_smp+0x30/0x80
+ [    0.772309]  kernel_init_freeable+0x278/0x51c
+ [    0.776685]  kernel_init+0x10/0x108
+ [    0.780190]  ret_from_fork+0x10/0x18
 
-[...]
+The static_key in question is 'sched_asym_cpucapacity' introduced by
+commit:
 
- Call trace:
-  pm_runtime_enable+0xd8/0xf8
-  geni_i2c_probe+0x440/0x460
-  platform_drv_probe+0x74/0xc8
-[...]
+  df054e8445a4 ("sched/topology: Add static_key for asymmetric CPU capacity optimizations")
 
-Let's move the runtime PM enabling and setup to before we add the
-adapter, so that this device can respond to runtime PM requests from
-children.
+In this particular case, we enable it because smp_prepare_cpus() will
+end up fetching the capacity-dmips-mhz entry from the devicetree,
+so we already have some asymmetry detected when entering sched_init_smp().
 
-Fixes: 37692de5d523 ("i2c: i2c-qcom-geni: Add bus driver for the Qualcomm GENI I2C controller")
-Signed-off-by: Stephen Boyd <swboyd@chromium.org>
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
+This didn't get detected in tip/sched/core because we were missing:
+
+  commit cb538267ea1e ("jump_label/lockdep: Assert we hold the hotplug lock for _cpuslocked() operations")
+
+Calls to build_sched_domains() post sched_init_smp() will hold the
+hotplug lock, it just so happens that this very first call is a
+special case. As stated by a comment in sched_init_smp(), "There's no
+userspace yet to cause hotplug operations" so this is a harmless
+warning.
+
+However, to both respect the semantics of underlying
+callees and make lockdep happy, take the hotplug lock in
+sched_init_smp(). This also satisfies the comment atop
+sched_init_domains() that says "Callers must hold the hotplug lock".
+
+Reported-by: Sudeep Holla <sudeep.holla@arm.com>
+Tested-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Cc: Dietmar.Eggemann@arm.com
+Cc: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: morten.rasmussen@arm.com
+Cc: quentin.perret@arm.com
+Link: http://lkml.kernel.org/r/1540301851-3048-1-git-send-email-valentin.schneider@arm.com
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/i2c/busses/i2c-qcom-geni.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
+ kernel/sched/core.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-index 9f2eb02481d3..d7329177b0ea 100644
---- a/drivers/i2c/busses/i2c-qcom-geni.c
-+++ b/drivers/i2c/busses/i2c-qcom-geni.c
-@@ -590,18 +590,19 @@ static int geni_i2c_probe(struct platform_device *pdev)
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index ad97f3ba5ec5..35551110d277 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -5854,11 +5854,14 @@ void __init sched_init_smp(void)
+ 	/*
+ 	 * There's no userspace yet to cause hotplug operations; hence all the
+ 	 * CPU masks are stable and all blatant races in the below code cannot
+-	 * happen.
++	 * happen. The hotplug lock is nevertheless taken to satisfy lockdep,
++	 * but there won't be any contention on it.
+ 	 */
++	cpus_read_lock();
+ 	mutex_lock(&sched_domains_mutex);
+ 	sched_init_domains(cpu_active_mask);
+ 	mutex_unlock(&sched_domains_mutex);
++	cpus_read_unlock();
  
- 	dev_dbg(&pdev->dev, "i2c fifo/se-dma mode. fifo depth:%d\n", tx_depth);
- 
--	ret = i2c_add_adapter(&gi2c->adap);
--	if (ret) {
--		dev_err(&pdev->dev, "Error adding i2c adapter %d\n", ret);
--		return ret;
--	}
--
- 	gi2c->suspended = 1;
- 	pm_runtime_set_suspended(gi2c->se.dev);
- 	pm_runtime_set_autosuspend_delay(gi2c->se.dev, I2C_AUTO_SUSPEND_DELAY);
- 	pm_runtime_use_autosuspend(gi2c->se.dev);
- 	pm_runtime_enable(gi2c->se.dev);
- 
-+	ret = i2c_add_adapter(&gi2c->adap);
-+	if (ret) {
-+		dev_err(&pdev->dev, "Error adding i2c adapter %d\n", ret);
-+		pm_runtime_disable(gi2c->se.dev);
-+		return ret;
-+	}
-+
- 	return 0;
- }
- 
-@@ -609,8 +610,8 @@ static int geni_i2c_remove(struct platform_device *pdev)
- {
- 	struct geni_i2c_dev *gi2c = platform_get_drvdata(pdev);
- 
--	pm_runtime_disable(gi2c->se.dev);
- 	i2c_del_adapter(&gi2c->adap);
-+	pm_runtime_disable(gi2c->se.dev);
- 	return 0;
- }
- 
+ 	/* Move init over to a non-isolated CPU */
+ 	if (set_cpus_allowed_ptr(current, housekeeping_cpumask(HK_FLAG_DOMAIN)) < 0)
 -- 
 2.17.1
 
