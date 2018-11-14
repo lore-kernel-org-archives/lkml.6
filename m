@@ -2,200 +2,158 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F3CFC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 03:51:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A358C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:02:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 000832145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 03:51:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EE43221582
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 04:02:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="VvBzgLeP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 000832145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EciIJfC7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE43221582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732132AbeKNNxK (ORCPT
+        id S1727536AbeKNOEL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 08:53:10 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:44603 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727536AbeKNNxK (ORCPT
+        Wed, 14 Nov 2018 09:04:11 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:39671 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726823AbeKNOEL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 08:53:10 -0500
-Received: by mail-yb1-f193.google.com with SMTP id p144-v6so6336758yba.11
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 19:51:47 -0800 (PST)
+        Wed, 14 Nov 2018 09:04:11 -0500
+Received: by mail-pl1-f195.google.com with SMTP id b5-v6so7104036pla.6
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 20:02:47 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=vS5nXVf9at4eHGKf7t8sYB/wtasQlF/u1hitNkyIqUA=;
-        b=VvBzgLePV6q2GQJV/ZayfGfrRl7f4I8dzV4G3D0Q+EpT9Nip7c+mgWu8SKE4YKIRpz
-         n0uQnU7RgnA3VE+VtEJ8z/LRRwbsBa+5H6yvS4UTSXpRaIFk0PkvKPFQvHF39cofJsFu
-         UW9+v5jOBZMFlANq4i4O43zm/B+DqyOUqL57o=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=2/6H6fCpHKgt4ovDnj/a7mCGZ9VH8jkTFvWTLJAvTOw=;
+        b=EciIJfC7U4jHvmXl4c5Tu+aXjxzXJ/HRavJpAuCT/vGlYsvc+UPVPdRRrzTeZNa44m
+         zxyPpuhu77lz8EHVeyvwV9wdNGjyLJsBpcbCdMfQUZAa/vBX0mDSay0SSseNXL10OL8q
+         GuYWczKtwx181U2t8xoQFY6EouGk9oVg1HyMg=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=vS5nXVf9at4eHGKf7t8sYB/wtasQlF/u1hitNkyIqUA=;
-        b=ILVAt12UCuQlOyrF4XdBzsEFSkhjdT3LRQ5z6wTu1S3DoaKIlUF2Xm1Q7Yci7m0tzp
-         AVykEW2WrSJWYBks2Uxn2ngT2g1Uz3tChnYnLKHe3sy2/Lb0QlBzJUPxbC8drbgyftKU
-         JV+4nlyRJuO/0huEOUiPWDMfyphioGwZiepegl7qmYqlyZvnxsVaJJV8Dqlqisql8BmQ
-         qAlz4BulmGUpI8psS/V453ZA8tdYzG51g02RLP4uq9ACTYZy5MKs+L5gbCkzc9IPsc77
-         4M2qsNQKnO/JHMn35rfFjQeBARZSEBo1tvXDnMDO6kHtem750wukK5aWPBtaN3FKVdGu
-         Ac9w==
-X-Gm-Message-State: AGRZ1gLSfOyqn/rmGrOBKc1p8HM6hpKtMeD5zk5cMhAMUhFrZhLtFYWP
-        5ZKHLYUznLU2ueUpKOLzKAOuItw4JB0=
-X-Google-Smtp-Source: AJdET5e0tFFhsMmSptPjBGdxwrQmD4vH8qFht0ybOPyGidl1q0jE+QBoT4Y2oDV3u3ajamMR5cpedw==
-X-Received: by 2002:a25:d70e:: with SMTP id o14-v6mr189238ybg.467.1542167506592;
-        Tue, 13 Nov 2018 19:51:46 -0800 (PST)
-Received: from mail-yb1-f174.google.com (mail-yb1-f174.google.com. [209.85.219.174])
-        by smtp.gmail.com with ESMTPSA id a127-v6sm1377760ywg.46.2018.11.13.19.51.45
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=2/6H6fCpHKgt4ovDnj/a7mCGZ9VH8jkTFvWTLJAvTOw=;
+        b=RHNPpCr+HW8F7487Md2+utfCDh6qht1eNxLEFF7ajIfQr2YnJbrMEsBuT/+9O1mavf
+         3PZHvEAErok46598PN+HhchOOBr+QK6PCh9B9ErREr/Zp/RibZ4lbJmndmJA9D4ga4cI
+         se/kbyInSitLdbb3mkPw3oi3gK7aL5qnPjARpxXxiWPowk2F/JlgMyMrs6/K+elAXCYK
+         yXQhcuvxwzQEVGt4NSrVL1w5UrBygbUPB4xYGoXes5tqo1n1O2lnAa/5EU+xIrI/WeHz
+         5mKKtkJPdmgr8qWHtrSpmQ9wq+aSJY1xzPnA1rRMBSUn7zQynffMgJwUPtofSWjvCpjS
+         LJFg==
+X-Gm-Message-State: AGRZ1gLFGgHSrgbu7Yzp87z9Rf5gLR8P/eteAoueACDrYE7KlQLhEBgL
+        DovYiGPWalAz4jHetM3dwJzs6g==
+X-Google-Smtp-Source: AJdET5e+aMX4pmGJmlZs23GN/v+lh8I2fHYY3bCdfeOu5LN+lieu/3D/UvMSgkEYszWGITv225f06A==
+X-Received: by 2002:a17:902:112b:: with SMTP id d40-v6mr353179pla.48.1542168166734;
+        Tue, 13 Nov 2018 20:02:46 -0800 (PST)
+Received: from localhost ([122.172.88.116])
+        by smtp.gmail.com with ESMTPSA id 186sm16283741pga.36.2018.11.13.20.02.44
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 13 Nov 2018 19:51:45 -0800 (PST)
-Received: by mail-yb1-f174.google.com with SMTP id i78-v6so6382927ybg.0
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 19:51:45 -0800 (PST)
-X-Received: by 2002:a25:9944:: with SMTP id n4-v6mr232408ybo.114.1542167504922;
- Tue, 13 Nov 2018 19:51:44 -0800 (PST)
+        Tue, 13 Nov 2018 20:02:45 -0800 (PST)
+Date:   Wed, 14 Nov 2018 09:32:42 +0530
+From:   Viresh Kumar <viresh.kumar@linaro.org>
+To:     Dave Gerlach <d-gerlach@ti.com>
+Cc:     "Rafael J . Wysocki" <rjw@rjwysocki.net>,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org,
+        linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Keerthy J <j-keerthy@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        Tony Lindgren <tony@atomide.com>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Johan Hovold <johan@kernel.org>
+Subject: Re: [PATCH v4] cpufreq: ti-cpufreq: Only register platform_device
+ when supported
+Message-ID: <20181114040242.wfpvazl62g6phy3o@vireshk-i7>
+References: <20181113193040.15181-1-d-gerlach@ti.com>
 MIME-Version: 1.0
-References: <1539071530-1441-1-git-send-email-mgottam@codeaurora.org>
- <CAAFQd5BcFr11Hpngpn6hNL91OibAxUv25yh2qMohgfxsKusACw@mail.gmail.com>
- <8fe1d205-c5e7-01a0-9569-d3268911cddd@linaro.org> <38dfc098517b3ddb5d96195f2e27429d@codeaurora.org>
- <86714c89-20ec-07c8-2569-65e78e8d584d@linaro.org> <CAAFQd5DXWUCB7HvsLyVYU+h=2j6y1v3kcsTtHfNZYjfbHEgWGw@mail.gmail.com>
- <da2e7cef-5ade-7d43-92c1-f728644e61c9@linaro.org>
-In-Reply-To: <da2e7cef-5ade-7d43-92c1-f728644e61c9@linaro.org>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Wed, 14 Nov 2018 12:51:33 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5AhepthKo4ShsfFQwB4=ALyRZFf6zzEf99DEEBt2gX_jw@mail.gmail.com>
-Message-ID: <CAAFQd5AhepthKo4ShsfFQwB4=ALyRZFf6zzEf99DEEBt2gX_jw@mail.gmail.com>
-Subject: Re: [PATCH] media: venus: amend buffer size for bitstream plane
-To:     Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Cc:     mgottam@codeaurora.org, Hans Verkuil <hverkuil@xs4all.nl>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        vgarodia@codeaurora.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113193040.15181-1-d-gerlach@ti.com>
+User-Agent: NeoMutt/20180323-120-3dd1ac
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 7:46 PM Stanimir Varbanov
-<stanimir.varbanov@linaro.org> wrote:
->
-> Hi Tomasz,
->
-> On 11/13/18 11:13 AM, Tomasz Figa wrote:
-> > On Tue, Nov 13, 2018 at 5:12 PM Stanimir Varbanov
-> > <stanimir.varbanov@linaro.org> wrote:
-> >>
-> >> Hi Malathi,
-> >>
-> >> On 11/13/18 9:28 AM, mgottam@codeaurora.org wrote:
-> >>> On 2018-11-12 18:04, Stanimir Varbanov wrote:
-> >>>> Hi Tomasz,
-> >>>>
-> >>>> On 10/23/2018 05:50 AM, Tomasz Figa wrote:
-> >>>>> Hi Malathi,
-> >>>>>
-> >>>>> On Tue, Oct 9, 2018 at 4:58 PM Malathi Gottam
-> >>>>> <mgottam@codeaurora.org> wrote:
-> >>>>>>
-> >>>>>> For lower resolutions, incase of encoder, the compressed
-> >>>>>> frame size is more than half of the corresponding input
-> >>>>>> YUV. Keep the size as same as YUV considering worst case.
-> >>>>>>
-> >>>>>> Signed-off-by: Malathi Gottam <mgottam@codeaurora.org>
-> >>>>>> ---
-> >>>>>>  drivers/media/platform/qcom/venus/helpers.c | 2 +-
-> >>>>>>  1 file changed, 1 insertion(+), 1 deletion(-)
-> >>>>>>
-> >>>>>> diff --git a/drivers/media/platform/qcom/venus/helpers.c
-> >>>>>> b/drivers/media/platform/qcom/venus/helpers.c
-> >>>>>> index 2679adb..05c5423 100644
-> >>>>>> --- a/drivers/media/platform/qcom/venus/helpers.c
-> >>>>>> +++ b/drivers/media/platform/qcom/venus/helpers.c
-> >>>>>> @@ -649,7 +649,7 @@ u32 venus_helper_get_framesz(u32 v4l2_fmt, u32
-> >>>>>> width, u32 height)
-> >>>>>>         }
-> >>>>>>
-> >>>>>>         if (compressed) {
-> >>>>>> -               sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2 / 2;
-> >>>>>> +               sz = ALIGN(height, 32) * ALIGN(width, 32) * 3 / 2;
-> >>>>>>                 return ALIGN(sz, SZ_4K);
-> >>>>>>         }
-> >>>>>
-> >>>>> Note that the driver should not enforce one particular buffer size for
-> >>>>> bitstream buffers unless it's a workaround for broken firmware or
-> >>>>> hardware. The userspace should be able to select the desired size.
-> >>>>
-> >>>> Good point! Yes, we have to extend set_fmt to allow bigger sizeimage for
-> >>>> the compressed buffers (not only for encoder).
-> >>>
-> >>> So Stan you meant to say that we should allow s_fmt to accept client
-> >>> specified size?
-> >>
-> >> yes but I do expect:
-> >>
-> >> new_sizeimage = max(user_sizeimage, venus_helper_get_framesz)
-> >>
-> >> and also user_sizeimage should be sanitized.
-> >>
-> >>> If so should we set the inst->input_buf_size here in venc_s_fmt?
-> >>>
-> >>> @@ -333,10 +333,10 @@static const struct venus_format *
-> >>> venc_try_fmt_common(struct venus_inst *inst, struct v4l2_format *f)
-> >>>
-> >>>         pixmp->num_planes = fmt->num_planes;
-> >>>         pixmp->flags = 0;
-> >>> -
-> >>> -       pfmt[0].sizeimage = venus_helper_get_framesz(pixmp->pixelformat,
-> >>> -                                                    pixmp->width,
-> >>> -                                                    pixmp->height);
-> >>> +       if (!pfmt[0].sizeimage)
-> >>> +               pfmt[0].sizeimage =
-> >>> venus_helper_get_framesz(pixmp->pixelformat,
-> >>> +                                                            pixmp->width,
-> >>> +
-> >>> pixmp->height);
-> >>
-> >> yes, but please make
-> >>
-> >> pfmt[0].sizeimage = max(pfmt[0].sizeimage, venus_helper_get_framesz)
-> >>
-> >> and IMO this should be only for CAPTURE queue i.e. inst->output_buf_size
-> >>
-> >> I'm still not sure do we need it for OUTPUT encoder queue.
-> >>
-> >
-> > This would be indeed only for the queues that operate on a coded
-> > bitstream, i.e. both encoder CAPTURE and decoder OUTPUT.
->
-> Thanks for the confirmation.
->
-> >
-> > For image formats, sizeimage should be calculated by the driver based
-> > on the bytesperline and height. (Bytesperline may be fixed, if the
-> > hardware doesn't support flexible strides, but if it does, it's
-> > strongly recommended to use the bytesperline coming from the
-> > application as the stride +/- any necessary sanity checks.)
->
-> the hw should support stride but I'm not sure is that exposed by the
-> firmware interface.
+On 13-11-18, 13:30, Dave Gerlach wrote:
+> Currently the ti-cpufreq driver blindly registers a 'ti-cpufreq' to force
+> the driver to probe on any platforms where the driver is built in.
+> However, this should only happen on platforms that actually can make use
+> of the driver. There is already functionality in place to match the
+> SoC compatible so let's factor this out into a separate call and
+> make sure we find a match before creating the ti-cpufreq platform device.
+> 
+> Reviewed-by: Johan Hovold <johan@kernel.org>
+> Signed-off-by: Dave Gerlach <d-gerlach@ti.com>
+> ---
+> v3->v4: Use platform_device_register_data rather than
+> 	platform_device_register_resndata as we are only passing data.
+> 
+> 	v3: https://patchwork.kernel.org/patch/10681161/
+> 
+>  drivers/cpufreq/ti-cpufreq.c | 26 +++++++++++++++++++++-----
+>  1 file changed, 21 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/cpufreq/ti-cpufreq.c b/drivers/cpufreq/ti-cpufreq.c
+> index 3f0e2a14895a..22b53bf26817 100644
+> --- a/drivers/cpufreq/ti-cpufreq.c
+> +++ b/drivers/cpufreq/ti-cpufreq.c
+> @@ -201,19 +201,28 @@ static const struct of_device_id ti_cpufreq_of_match[] = {
+>  	{},
+>  };
+>  
+> +static const struct of_device_id *ti_cpufreq_match_node(void)
+> +{
+> +	struct device_node *np;
+> +	const struct of_device_id *match;
+> +
+> +	np = of_find_node_by_path("/");
+> +	match = of_match_node(ti_cpufreq_of_match, np);
+> +	of_node_put(np);
+> +
+> +	return match;
+> +}
+> +
+>  static int ti_cpufreq_probe(struct platform_device *pdev)
+>  {
+>  	u32 version[VERSION_COUNT];
+> -	struct device_node *np;
+>  	const struct of_device_id *match;
+>  	struct opp_table *ti_opp_table;
+>  	struct ti_cpufreq_data *opp_data;
+>  	const char * const reg_names[] = {"vdd", "vbb"};
+>  	int ret;
+>  
+> -	np = of_find_node_by_path("/");
+> -	match = of_match_node(ti_cpufreq_of_match, np);
+> -	of_node_put(np);
+> +	match = dev_get_platdata(&pdev->dev);
+>  	if (!match)
+>  		return -ENODEV;
+>  
+> @@ -290,7 +299,14 @@ static int ti_cpufreq_probe(struct platform_device *pdev)
+>  
+>  static int ti_cpufreq_init(void)
+>  {
+> -	platform_device_register_simple("ti-cpufreq", -1, NULL, 0);
+> +	const struct of_device_id *match;
+> +
+> +	/* Check to ensure we are on a compatible platform */
+> +	match = ti_cpufreq_match_node();
+> +	if (match)
+> +		platform_device_register_data(NULL, "ti-cpufreq", -1, match,
+> +					      sizeof(*match));
+> +
+>  	return 0;
+>  }
+>  module_init(ti_cpufreq_init);
 
-After thinking a bit more on this, there is actually some redundancy
-between format width and crop width, since one should be normally able
-to just set the format width to the buffer stride and crop to the
-buffer width and have arbitrary strides supported (+/- hw alignment
-requirements, but that's something that has to always be accounted
-for).
+Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
 
-Best regards,
-Tomasz
+-- 
+viresh
