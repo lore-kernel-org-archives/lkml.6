@@ -2,51 +2,48 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 220C7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78935C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCAAE22528
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3E8D82252D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="meEaZ8LI"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCAAE22528
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0A3d9sFu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8D82252D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728506AbeKOI1R (ORCPT
+        id S1728553AbeKOI1S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:27:17 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34408 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:27:18 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34402 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727038AbeKOI1O (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:27:14 -0500
+        id S1728460AbeKOI1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:17 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F95122512;
-        Wed, 14 Nov 2018 22:22:11 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id E250B22520;
+        Wed, 14 Nov 2018 22:22:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234131;
-        bh=DSlerBsIa2hOZCsBa38Ey/15idcm1DMM4+k5OQbdh54=;
+        s=default; t=1542234134;
+        bh=nRZ14k4xayMx1HEyuM3NhnBPX8LO+9RGM7qst4AnBCM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=meEaZ8LIfQzVGeB10iv+v6uelC1e9VH5TYxapdwftUnIt6bBMHFJ3n7M2z2cnoGGc
-         eukEc533j+oPymZnVBGjoYimU+hvan5V+CbgTlTTLG7xAusDvAp4J4TvAbdc1L9N+d
-         jl2bWYcY1pDaELZTWWYStGM7nNZcFjvN818FOJU4=
+        b=0A3d9sFu94hnpzevLLP74hr6TNlRW6wkjObVnUEjuiwQTaVUdEVpiNBBG8J/d0tlP
+         weoTEdwQDWlfzNka9+l+xlEP8NFh+DCLRerMlOFRNJPFbJGcNpD1h9pNDAsHyi+VGB
+         vK6+fj6ytPlJne4/PfUCJAnmP10gzd/KxUIYMLmY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Eric Westbrook <eric@westbrook.io>,
-        Eric Westbrook <linux@westbrook.io>,
-        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+Cc:     Florian Westphal <fw@strlen.de>,
         Pablo Neira Ayuso <pablo@netfilter.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 11/73] netfilter: ipset: actually allow allowable CIDR 0 in hash:net,port,net
-Date:   Wed, 14 Nov 2018 17:21:05 -0500
-Message-Id: <20181114222207.98701-11-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 23/73] netfilter: nft_compat: ebtables 'nat' table is normal chain type
+Date:   Wed, 14 Nov 2018 17:21:17 -0500
+Message-Id: <20181114222207.98701-23-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -55,89 +52,76 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Westbrook <eric@westbrook.io>
+From: Florian Westphal <fw@strlen.de>
 
-[ Upstream commit 886503f34d63e681662057448819edb5b1057a97 ]
+[ Upstream commit e4844c9c62a0fe47980d6c3d4b7a096a5d755925 ]
 
-Allow /0 as advertised for hash:net,port,net sets.
+Unlike ip(6)tables, the ebtables nat table has no special properties.
+This bug causes 'ebtables -A' to fail when using a target such as
+'snat' (ebt_snat target sets ".table = "nat"').  Targets that have
+no table restrictions work fine.
 
-For "hash:net,port,net", ipset(8) says that "either subnet
-is permitted to be a /0 should you wish to match port
-between all destinations."
-
-Make that statement true.
-
-Before:
-
-    # ipset create cidrzero hash:net,port,net
-    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
-    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
-
-    # ipset create cidrzero6 hash:net,port,net family inet6
-    # ipset add cidrzero6 ::/0,12345,::/0
-    ipset v6.34: The value of the CIDR parameter of the IP address is invalid
-
-After:
-
-    # ipset create cidrzero hash:net,port,net
-    # ipset add cidrzero 0.0.0.0/0,12345,0.0.0.0/0
-    # ipset test cidrzero 192.168.205.129,12345,172.16.205.129
-    192.168.205.129,tcp:12345,172.16.205.129 is in set cidrzero.
-
-    # ipset create cidrzero6 hash:net,port,net family inet6
-    # ipset add cidrzero6 ::/0,12345,::/0
-    # ipset test cidrzero6 fe80::1,12345,ff00::1
-    fe80::1,tcp:12345,ff00::1 is in set cidrzero6.
-
-See also:
-
-  https://bugzilla.kernel.org/show_bug.cgi?id=200897
-  https://github.com/ewestbrook/linux/commit/df7ff6efb0934ab6acc11f003ff1a7580d6c1d9c
-
-Signed-off-by: Eric Westbrook <linux@westbrook.io>
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Signed-off-by: Florian Westphal <fw@strlen.de>
 Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/ipset/ip_set_hash_netportnet.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ net/netfilter/nft_compat.c | 21 ++++++++++++---------
+ 1 file changed, 12 insertions(+), 9 deletions(-)
 
-diff --git a/net/netfilter/ipset/ip_set_hash_netportnet.c b/net/netfilter/ipset/ip_set_hash_netportnet.c
-index d391485a6acd..613e18e720a4 100644
---- a/net/netfilter/ipset/ip_set_hash_netportnet.c
-+++ b/net/netfilter/ipset/ip_set_hash_netportnet.c
-@@ -213,13 +213,13 @@ hash_netportnet4_uadt(struct ip_set *set, struct nlattr *tb[],
+diff --git a/net/netfilter/nft_compat.c b/net/netfilter/nft_compat.c
+index 32535eea51b2..ad2fe6a7e47d 100644
+--- a/net/netfilter/nft_compat.c
++++ b/net/netfilter/nft_compat.c
+@@ -54,9 +54,11 @@ static bool nft_xt_put(struct nft_xt *xt)
+ 	return false;
+ }
  
- 	if (tb[IPSET_ATTR_CIDR]) {
- 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
--		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
-+		if (e.cidr[0] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
+-static int nft_compat_chain_validate_dependency(const char *tablename,
+-						const struct nft_chain *chain)
++static int nft_compat_chain_validate_dependency(const struct nft_ctx *ctx,
++						const char *tablename)
+ {
++	enum nft_chain_types type = NFT_CHAIN_T_DEFAULT;
++	const struct nft_chain *chain = ctx->chain;
+ 	const struct nft_base_chain *basechain;
+ 
+ 	if (!tablename ||
+@@ -64,9 +66,12 @@ static int nft_compat_chain_validate_dependency(const char *tablename,
+ 		return 0;
+ 
+ 	basechain = nft_base_chain(chain);
+-	if (strcmp(tablename, "nat") == 0 &&
+-	    basechain->type->type != NFT_CHAIN_T_NAT)
+-		return -EINVAL;
++	if (strcmp(tablename, "nat") == 0) {
++		if (ctx->family != NFPROTO_BRIDGE)
++			type = NFT_CHAIN_T_NAT;
++		if (basechain->type->type != type)
++			return -EINVAL;
++	}
+ 
+ 	return 0;
+ }
+@@ -323,8 +328,7 @@ static int nft_target_validate(const struct nft_ctx *ctx,
+ 		if (target->hooks && !(hook_mask & target->hooks))
+ 			return -EINVAL;
+ 
+-		ret = nft_compat_chain_validate_dependency(target->table,
+-							   ctx->chain);
++		ret = nft_compat_chain_validate_dependency(ctx, target->table);
+ 		if (ret < 0)
+ 			return ret;
  	}
+@@ -570,8 +574,7 @@ static int nft_match_validate(const struct nft_ctx *ctx,
+ 		if (match->hooks && !(hook_mask & match->hooks))
+ 			return -EINVAL;
  
- 	if (tb[IPSET_ATTR_CIDR2]) {
- 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
--		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
-+		if (e.cidr[1] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
+-		ret = nft_compat_chain_validate_dependency(match->table,
+-							   ctx->chain);
++		ret = nft_compat_chain_validate_dependency(ctx, match->table);
+ 		if (ret < 0)
+ 			return ret;
  	}
- 
-@@ -493,13 +493,13 @@ hash_netportnet6_uadt(struct ip_set *set, struct nlattr *tb[],
- 
- 	if (tb[IPSET_ATTR_CIDR]) {
- 		e.cidr[0] = nla_get_u8(tb[IPSET_ATTR_CIDR]);
--		if (!e.cidr[0] || e.cidr[0] > HOST_MASK)
-+		if (e.cidr[0] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
- 	}
- 
- 	if (tb[IPSET_ATTR_CIDR2]) {
- 		e.cidr[1] = nla_get_u8(tb[IPSET_ATTR_CIDR2]);
--		if (!e.cidr[1] || e.cidr[1] > HOST_MASK)
-+		if (e.cidr[1] > HOST_MASK)
- 			return -IPSET_ERR_INVALID_CIDR;
- 	}
- 
 -- 
 2.17.1
 
