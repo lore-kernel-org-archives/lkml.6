@@ -2,131 +2,106 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8A5C4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:30:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CD984C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:32:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5660D2086A
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:30:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5660D2086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 96DB72086B
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:32:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 96DB72086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732214AbeKNRcC (ORCPT
+        id S1731947AbeKNRee (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 12:32:02 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41128 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727576AbeKNRcB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 12:32:01 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 97EF030AAD66;
-        Wed, 14 Nov 2018 07:30:00 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-24.pek2.redhat.com [10.72.12.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 0D385105B20A;
-        Wed, 14 Nov 2018 07:29:48 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kexec@lists.infradead.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, akpm@linux-foundation.org,
-        dyoung@redhat.com, bhe@redhat.com
-Subject: [PATCH 2/2 v6] x86/kexec_file: add reserved e820 ranges to kdump kernel e820 table
-Date:   Wed, 14 Nov 2018 15:29:26 +0800
-Message-Id: <20181114072926.13312-3-lijiang@redhat.com>
-In-Reply-To: <20181114072926.13312-1-lijiang@redhat.com>
-References: <20181114072926.13312-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Wed, 14 Nov 2018 07:30:00 +0000 (UTC)
+        Wed, 14 Nov 2018 12:34:34 -0500
+Received: from mx2.suse.de ([195.135.220.15]:46270 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726927AbeKNRee (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 12:34:34 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 13F17AC15;
+        Wed, 14 Nov 2018 07:32:31 +0000 (UTC)
+Date:   Wed, 14 Nov 2018 08:32:29 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Jiri Kosina <jikos@kernel.org>
+Cc:     Thomas Gleixner <tglx@linutronix.de>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        Andi Kleen <ak@linux.intel.com>, Borislav Petkov <bp@suse.de>,
+        LKML <linux-kernel@vger.kernel.org>, linux-mm@kvack.org
+Subject: Re: [PATCH] l1tf: drop the swap storage limit restriction when
+ l1tf=off
+Message-ID: <20181114073229.GC23419@dhcp22.suse.cz>
+References: <20181113184910.26697-1-mhocko@kernel.org>
+ <nycvar.YFH.7.76.1811132054521.19754@cbobk.fhfr.pm>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <nycvar.YFH.7.76.1811132054521.19754@cbobk.fhfr.pm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At present, when use the kexec_file_load syscall to load the kernel image
-and initramfs(for example: kexec -s -p xxx), the upstream kernel does not
-pass the e820 reserved ranges to the second kernel, which might produce
-two problems:
+On Tue 13-11-18 20:56:54, Jiri Kosina wrote:
+> On Tue, 13 Nov 2018, Michal Hocko wrote:
+> 
+> > From: Michal Hocko <mhocko@suse.com>
+> > 
+> > Swap storage is restricted to max_swapfile_size (~16TB on x86_64)
+> > whenever the system is deemed affected by L1TF vulnerability. Even
+> > though the limit is quite high for most deployments it seems to be
+> > too restrictive for deployments which are willing to live with the
+> > mitigation disabled.
+> > 
+> > We have a customer to deploy 8x 6,4TB PCIe/NVMe SSD swap devices
+> > which is clearly out of the limit.
+> > 
+> > Drop the swap restriction when l1tf=off is specified. It also doesn't
+> > make much sense to warn about too much memory for the l1tf mitigation
+> > when it is forcefully disabled by the administrator.
+> > 
+> > Signed-off-by: Michal Hocko <mhocko@suse.com>
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt | 2 ++
+> >  Documentation/admin-guide/l1tf.rst              | 5 ++++-
+> >  arch/x86/kernel/cpu/bugs.c                      | 3 ++-
+> >  arch/x86/mm/init.c                              | 2 +-
+> >  4 files changed, 9 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index 81d1d5a74728..a54f2bd39e77 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -2095,6 +2095,8 @@
+> >  			off
+> >  				Disables hypervisor mitigations and doesn't
+> >  				emit any warnings.
+> > +				It also drops the swap size and available
+> > +				RAM limit restriction.
+> 
+> Minor nit: I think this should explicitly mention that those two things 
+> are related to bare metal mitigation, to avoid any confusion (as otherwise 
+> the l1tf cmdline parameter is purely about hypervisor mitigations).
 
-The first one is the MMCONFIG issue, although which does not make the
-system crash or hang, this issue is still a potential risk, and also
-might lead to the hot-plug device could not be recognized in kdump kernel.
-Because the PCI MMCONFIG(extended mode) requires the reserved region
-otherwise it falls back to legacy mode. For example, the kdump kernel
-outputs the following log.
+Do you have any specific wording in mind?
 
-Example:
-......
-[   19.798354] PCI: MMCONFIG for domain 0000 [bus 00-ff] at [mem 0x80000000-0x8fffffff] (base 0x80000000)
-[   19.800653] [Firmware Info]: PCI: MMCONFIG at [mem 0x80000000-0x8fffffff] not reserved in ACPI motherboard resources
-[   19.800995] PCI: not using MMCONFIG
-......
+It also drops the swap size and available RAM limit restrictions on both
+hypervisor and bare metal.
 
-The correct kernel log is like this:
-......
-[    0.082649] PCI: MMCONFIG for domain 0000 [bus 00-ff] at [mem 0x80000000-0x8fffffff] (base 0x80000000)
-[    0.083610] PCI: MMCONFIG at [mem 0x80000000-0x8fffffff] reserved in E820
-......
+Sounds better?
 
-The second issue is that the e820 reserved ranges do not setup in kdump
-kernel, which will cause some functions that related to the e820 reserved
-ranges to become invalid. For example:
+> With that
+> 
+> 	Acked-by: Jiri Kosina <jkosina@suse.cz>
 
-early_memremap()->
-early_memremap_pgprot_adjust()->
-memremap_should_map_decrypted()->
-e820__get_entry_type()
-
-Please focus on these functions, early_memremap_pgprot_adjust() and
-memremap_should_map_decrypted().
-
-In the first kernel, these ranges sit in e820 reserved ranges, so the
-memremap_should_map_decrypted() will return true, that is to say, the
-reserved memory is decrypted, then the early_memremap_pgprot_adjust()
-will call the pgprot_decrypted() to clear the memory encryption mask.
-
-In the second kernel, because the e820 reserved ranges are not passed
-to the second kernel, these ranges don't sit in the e820 reserved ranges,
-so the memremap_should_map_decrypted() will return false, that is to say,
-the reserved memory is encrypted, and then the early_memremap_pgprot_
-adjust() will also call the pgprot_encrypted() to set the memory encryption
-mask.
-
-In fact, in the second kernel, the e820 reserved memory is still decrypted.
-Obviously, it has gone wrong. So, this issue must be fixed, otherwise kdump
-won't work in this case.
-
-The e820 reserved range is useful in kdump kernel, so it is necessary to
-pass the e820 reserved ranges to kdump kernel.
-
-Suggested-by: Dave Young <dyoung@redhat.com>
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
----
-Changes since v5:
-1. Improve the patch log
-
- arch/x86/kernel/crash.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index ae724a6e0a5f..d3167125800e 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -384,6 +384,10 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
- 	walk_iomem_res_desc(IORES_DESC_ACPI_NV_STORAGE, flags, 0, -1, &cmd,
- 			memmap_entry_callback);
- 
-+	cmd.type = E820_TYPE_RESERVED;
-+	walk_iomem_res_desc(IORES_DESC_NONE, 0, 0, -1, &cmd,
-+			   memmap_entry_callback);
-+
- 	/* Add crashk_low_res region */
- 	if (crashk_low_res.end) {
- 		ei.addr = crashk_low_res.start;
+Thanks!
 -- 
-2.17.1
-
+Michal Hocko
+SUSE Labs
