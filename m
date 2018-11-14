@@ -2,98 +2,153 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 691C6C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:28:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40395C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:28:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 287BE20868
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:28:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 07FE120868
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:28:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="QKZ5pI1b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 287BE20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="mKqxHBDy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07FE120868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389533AbeKOIdX (ORCPT
+        id S2389384AbeKOIdl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:33:23 -0500
-Received: from mail-qk1-f195.google.com ([209.85.222.195]:40776 "EHLO
-        mail-qk1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389439AbeKOIdW (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:33:22 -0500
-Received: by mail-qk1-f195.google.com with SMTP id y16so28791492qki.7
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 14:28:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek-ca.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=/bfKcwnq24c7GQi8+QH2x+kJfYvWUyEGaldZxXhKaVQ=;
-        b=QKZ5pI1bCT7/DOJNRodcpFW2+FjFGAvbRmPyw+gmRGvrGv8nVQINYAN2zniAefu7ci
-         zIpLKh8Sh05TTfEV/TlSEqfDg8bCdFo7lNcSrMua2Cm6PGS7U6CTtpeo+Q20AJ6zEQt6
-         N20f80YcJetdTymcNAZPv/mUuqCImxBRr1zG7HcWMr/bCChnk8KtmujailTeuA/6WSec
-         1i2RolnaFzIFme/fkHhecYkXFj8zRkuVI9RupqwyNghNlyOGb+gzpRYJK4mgmlkfy+o+
-         GfyBOtb0hdQdBTXGaUY/pViYYz2spMW5AXccJcs1hPzt1ipjsveObAD7ppngTQgqO7Qk
-         RF9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=/bfKcwnq24c7GQi8+QH2x+kJfYvWUyEGaldZxXhKaVQ=;
-        b=uO0QilUCfXDdXvFwKr4kutXuC+krv17NT4cSLvplOrszLz7ELgxjDdKbyuKHouU4Nf
-         iO2OHG5xJz9WVkJNLDIXheJZP53nilhoutT2ZNNocf/1X4U9fboZTl0WiZJYzmO+9KTt
-         S4lwbbS6GfGgPzvb9FXmZQvqGlVGZsnZsEOWeXoaxSu+D0C9GN92/Cm18M+Ec1DwRuvb
-         jCXdLBEWm2ZWiJ8z3VRBDVy3X/vNchNJAp5LUJuFWTh1Bu5a3dKhtbL3dQjSudIsT0y4
-         IADxGOEaEarNS6zpjdFbyjF2BHnZ9x3Xf/NuWJHFBzje5ztuRT+jvEVtf4+TxWYkloT0
-         xo8w==
-X-Gm-Message-State: AGRZ1gLIXNg9ydk1nMncadKE0JNgbWh2UHaks4344Y/jxd6ib3wuJKkG
-        RNCqUXdvv+MJvOffbgFbRLGIZg==
-X-Google-Smtp-Source: AJdET5epL6+ReeWFys4n1HAC8S4qwmwIIA3xO6f9HkBmSqPYapFnJDyUgIc+8U2r19cShRkqDkE6Xg==
-X-Received: by 2002:a37:6005:: with SMTP id u5mr3457068qkb.219.1542234496099;
-        Wed, 14 Nov 2018 14:28:16 -0800 (PST)
-Received: from localhost.localdomain (modemcable014.247-57-74.mc.videotron.ca. [74.57.247.14])
-        by smtp.gmail.com with ESMTPSA id 24sm24067595qkp.65.2018.11.14.14.28.14
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 14:28:15 -0800 (PST)
-From:   Jonathan Marek <jonathan@marek.ca>
-To:     freedreno@lists.freedesktop.org
-Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        linux-arm-msm@vger.kernel.org (open list:DRM DRIVER FOR MSM ADRENO GPU),
-        dri-devel@lists.freedesktop.org (open list:DRM DRIVER FOR MSM ADRENO
-        GPU), linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH 9/9] drm/msm: set priv->kms to NULL before uninit
-Date:   Wed, 14 Nov 2018 17:24:16 -0500
-Message-Id: <20181114222418.15960-9-jonathan@marek.ca>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20181114222418.15960-1-jonathan@marek.ca>
-References: <20181114222418.15960-1-jonathan@marek.ca>
+        Thu, 15 Nov 2018 03:33:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39372 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388801AbeKOIcj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:32:39 -0500
+Received: from localhost (unknown [104.132.0.74])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 1C25920825;
+        Wed, 14 Nov 2018 22:19:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542233950;
+        bh=e+1g8ysiEmeAd46GphoqR4QLHNGpE9RlDgMbIMi8VXw=;
+        h=To:From:In-Reply-To:Cc:References:Subject:Date:From;
+        b=mKqxHBDyvEODUVWVNH/2H4qAYms0jlvhyFFauW3dtwTdzy+99NQRK0Zr3puRUob4y
+         8tEJmCo/LXOApiT8XCjqAL0w3PXTJN7iypzxxLG2i2uUqNUfCY0V/0c6TOcdQq7RJv
+         sT2dgajTDb6lQk+UgMbPbE4h0qWPbLAbASOJlbfA=
+Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+To:     "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "mturquette@baylibre.com" <mturquette@baylibre.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>,
+        Janek Kotas <jank@cadence.com>
+From:   Stephen Boyd <sboyd@kernel.org>
+In-Reply-To: <D3711617-229C-4FA5-9E73-A7A3C025893B@global.cadence.com>
+Cc:     "linux-clk@vger.kernel.org" <linux-clk@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <D3711617-229C-4FA5-9E73-A7A3C025893B@global.cadence.com>
+Message-ID: <154223394933.88331.14659021245427374668@swboyd.mtv.corp.google.com>
+User-Agent: alot/0.7
+Subject: Re: [PATCH 2/2] clk: Add Fixed MMIO clock driver
+Date:   Wed, 14 Nov 2018 14:19:09 -0800
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-otherwise, priv->kms is non-NULL and msm_drm_uninit will cause a panic.
+Quoting Janek Kotas (2018-11-14 07:24:39)
+> This patch adds a driver for Fixed MMIO clock.
+> The driver reads a clock frequency value from a single 32-bit memory
+> mapped register and registers it as a fixed rate clock.
+> =
 
-Signed-off-by: Jonathan Marek <jonathan@marek.ca>
----
- drivers/gpu/drm/msm/msm_drv.c | 1 +
- 1 file changed, 1 insertion(+)
+> It can be enabled with COMMON_CLK_FIXED_MMIO Kconfig option.
+> =
 
-diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
-index bda23011494d..94b0593f6090 100644
---- a/drivers/gpu/drm/msm/msm_drv.c
-+++ b/drivers/gpu/drm/msm/msm_drv.c
-@@ -533,6 +533,7 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
- 		 */
- 		dev_err(dev, "failed to load kms\n");
- 		ret = PTR_ERR(kms);
-+		priv->kms = NULL;
- 		goto err_msm_uninit;
- 	}
- 
--- 
-2.17.1
+> Signed-off-by: Jan Kotas <jank@cadence.com>
+
+Sounds like a fine idea. Except I can see how it will be abused if there
+are a handful of these fixed rate "clks" somewhere in memory that all
+get populated. =
+
+
+Do you really have a fixed rate clk in hardware that exposes a single
+register, or do you have a set of them that some firmware is populating
+into an I/O memory space that we can read the fixed rates from? If it's
+the latter, I wonder why we can't just have the firmware populate the
+fixed rate clks into DT itself?
+
+> diff --git a/drivers/clk/clk-fixed-mmio.c b/drivers/clk/clk-fixed-mmio.c
+> new file mode 100644
+> index 0000000000..bbcadab345
+> --- /dev/null
+> +++ b/drivers/clk/clk-fixed-mmio.c
+> @@ -0,0 +1,49 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +/*
+> + * Memory Mapped IO Fixed Clock driver
+> + *
+> + * Copyright (C) 2018 Cadence Design Systems, Inc.
+> + *
+> + * Authors:
+> + *     Jan Kotas <jank@cadence.com>
+> + */
+> +
+> +#include <linux/clk.h>
+
+Is this include used?
+
+> +#include <linux/clk-provider.h>
+> +#include <linux/of_address.h>
+> +#include <linux/regmap.h>
+
+Is this include used?
+
+> +
+> +static void __init of_fixed_mmio_clk_setup(struct device_node *node)
+> +{
+> +       struct clk *clk;
+> +       const char *clk_name =3D node->name;
+> +       void __iomem *base;
+> +       u32 clk_freq;
+> +
+> +       base =3D of_iomap(node, 0);
+> +       if (!base) {
+> +               pr_err("%pOFn: failed to map address\n", node);
+> +               return;
+> +       }
+> +
+> +       clk_freq =3D readl(base);
+> +       iounmap(base);
+> +       of_property_read_string(node, "clock-output-names", &clk_name);
+> +
+> +       clk =3D clk_register_fixed_rate(NULL, clk_name, NULL, 0, clk_freq=
+);
+> +       if (IS_ERR(clk)) {
+> +               pr_err("%pOFn: failed to register fixed rate clock\n", no=
+de);
+> +               return;
+> +       }
+> +
+> +       if (of_clk_add_provider(node, of_clk_src_simple_get, clk)) {
+> +               pr_err("%pOFn: failed to add clock provider\n", node);
+> +               return;
+> +       }
+> +
+> +       pr_info("%pOFn: registered fixed-mmio-clock at %u Hz\n",
+> +               node, clk_freq);
+
+Please no "I'm alive!" messages.
+
+> +}
+> +
+> +CLK_OF_DECLARE(fixed_mmio_clk, "fixed-mmio-clock", of_fixed_mmio_clk_set=
+up);
+
+Any reason why this can't be a platform driver? It would make this much
+less DT specific and usable on other firmwares/platforms if we used a
+platform driver here.
 
