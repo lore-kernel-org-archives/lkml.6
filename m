@@ -2,51 +2,81 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DBE6DC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:22:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 499F1C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:22:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AC8B822360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:22:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC8B822360
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0233422360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:22:50 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="IAoTuPaJ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0233422360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733003AbeKOB0W (ORCPT
+        id S1733126AbeKOB02 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:26:22 -0500
-Received: from mga02.intel.com ([134.134.136.20]:3031 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725759AbeKOB0V (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:26:21 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 07:22:41 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,232,1539673200"; 
-   d="scan'208";a="100194164"
-Received: from tthayer-hp-z620.an.intel.com (HELO [10.122.105.146]) ([10.122.105.146])
-  by orsmga003.jf.intel.com with ESMTP; 14 Nov 2018 07:22:40 -0800
-Reply-To: thor.thayer@linux.intel.com
-Subject: Re: [PATCH] mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
-To:     Vignesh R <vigneshr@ti.com>, marek.vasut@gmail.com,
-        dwmw2@infradead.org, computersforpeace@gmail.com,
-        boris.brezillon@bootlin.com, richard@nod.at
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <1542130345-10005-1-git-send-email-thor.thayer@linux.intel.com>
- <07a0fbce-d1fa-6ac0-0428-3123c19cd89b@ti.com>
-From:   Thor Thayer <thor.thayer@linux.intel.com>
-Message-ID: <08feb671-6976-5ec8-ade1-fc2d48b8aad7@linux.intel.com>
-Date:   Wed, 14 Nov 2018 09:25:08 -0600
+        Wed, 14 Nov 2018 20:26:28 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:38319 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1733008AbeKOB01 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 20:26:27 -0500
+Received: by mail-io1-f67.google.com with SMTP id h4so7851473iom.5
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 07:22:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=F87CkJ9yANATsflDsztLH+KJ/GVeWsCnxe8Zn9TTp7k=;
+        b=IAoTuPaJ/kbENX11swbrOW9bCbov9wy7G8zvjHc+Xznq3Q3Raf3g3ZC2dHoUgdriza
+         hL4TCNYXN1wEulWxZMecOYQMOxOEpXLwpHAnW/tDNBTgZEWg35gv6ZdHDv07XZ7pbNMJ
+         QsY/gU/57E/fEzgxHsAJWohhvw/SoLg1iPtytBx5LJLyDr8a3aIACu4uztNgsxq5aPTd
+         5sx/AbJcI/HwBvD7vxJq4bQShXGar9vWSgGafTUAJjlZFYzXo2QSrQSq5YGywKzF9L6g
+         wkSat9hD/1zU3koii/rLX0sBgOE8zfUKJjZKvCTZmT9m4oGN8AZGFmjFNhw4w453+aLW
+         qfeA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=F87CkJ9yANATsflDsztLH+KJ/GVeWsCnxe8Zn9TTp7k=;
+        b=kMIkJ7bfg5Cwm7lXYrH5ds6u8Z076EOSKRT9GqU4tBcAhM53X/rrBeJIqkDTECrixq
+         Gq6Sos/zs9oNeosmohxwyEJNhKLhVSaWitH0iyxUc7hdTDMr5u61oZQL1AAGF3EnQyD7
+         ZxaxENo28VuVf5T35GLdJIXaD0Qq2RBArY1GxyjkFVDnD0AchKNKQ5z0xLC8zMZGAhx5
+         AuqCtJzC4IjxbaxtQJY9rr7oxPy0PtK5h9wMByYZ17utaSZstSKq+jQ67NkoJN6/89Zk
+         5uXc577XEKiICt9tlwf6Vz8KkD8e6DlJ7FHBx9Ok6ghS4qA8dnnZrCoheV/2X7CUy7m8
+         XWUw==
+X-Gm-Message-State: AGRZ1gK3AMRTeSwu8Hp2wMqlg0GZ0juOPjYxgseaQuYOMEWwZ4Y/ZIyZ
+        3BFt57/675MsjfKPxkUUe3BB2HvDVAw=
+X-Google-Smtp-Source: AFSGD/WmlIJBWNzH/PTzUT9x2Eo46KoXG2mQr+1/fSag3EPpQSIjriynBEHLHAH4Bj7kOgLkPTWHCw==
+X-Received: by 2002:a5e:cb07:: with SMTP id p7-v6mr1872672iom.178.1542208966746;
+        Wed, 14 Nov 2018 07:22:46 -0800 (PST)
+Received: from [192.168.1.56] ([216.160.245.98])
+        by smtp.gmail.com with ESMTPSA id x79sm5226616ita.34.2018.11.14.07.22.45
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 07:22:45 -0800 (PST)
+Subject: Re: [PATCH V7 1/4] blk-mq: refactor the code of issue request
+ directly
+To:     Ming Lei <ming.lei@redhat.com>,
+        "jianchao.wang" <jianchao.w.wang@oracle.com>
+Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1542185131-15029-1-git-send-email-jianchao.w.wang@oracle.com>
+ <1542185131-15029-2-git-send-email-jianchao.w.wang@oracle.com>
+ <20181114091153.GB20550@ming.t460p>
+ <17b51550-d45b-9861-b172-74ee0e256d98@oracle.com>
+ <20181114094343.GA13193@ming.t460p>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <42861ece-5519-bb59-e3a7-8fea1c731f19@kernel.dk>
+Date:   Wed, 14 Nov 2018 08:22:44 -0700
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <07a0fbce-d1fa-6ac0-0428-3123c19cd89b@ti.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <20181114094343.GA13193@ming.t460p>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -54,88 +84,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Vignesh,
+On 11/14/18 2:43 AM, Ming Lei wrote:
+> On Wed, Nov 14, 2018 at 05:23:48PM +0800, jianchao.wang wrote:
+>> Hi Ming
+>>
+>> On 11/14/18 5:11 PM, Ming Lei wrote:
+>>>>  
+>>>> -	if (!blk_mq_get_dispatch_budget(hctx))
+>>>> -		goto insert;
+>>>> +	if (unlikely(!blk_mq_get_dispatch_budget(hctx)))
+>>>> +		goto out_unlock;
+>>> The unlikely annotation is a bit misleading, since out-of-budget can
+>>> happen frequently in case of low queue depth, and there are lots of
+>>> such examples.
+>>>
+>>
+>> This could be good for the case for no .get_budget and getting budget success.
+>> In case of out-of-budget, we insert the request which is slow path.
+> 
+> In case of low queue depth, it is hard to say that 'insert request' is
+> done in slow path, cause it happens quite frequently.
+> 
+> I suggest to remove these two unlikely() since modern CPU's branch prediction
+> should work well enough.
+> 
+> Especially the annotation of unlikely() often means that this branch is
+> missed in most of times for all settings, and it is obviously not true
+> in this case.
 
-On 11/14/18 6:00 AM, Vignesh R wrote:
-> Hi,
-> 
-> On 13/11/18 11:02 PM, thor.thayer@linux.intel.com wrote:
->> From: Thor Thayer <thor.thayer@linux.intel.com>
->>
->> The current Cadence QSPI driver caused a kernel panic sporadically
->> when writing to QSPI. The problem was caused by writing more bytes
->> than needed because the QSPI operated on 4 bytes at a time.
->> <snip>
->> [   11.202044] Unable to handle kernel paging request at virtual address bffd3000
->> [   11.209254] pgd = e463054d
->> [   11.211948] [bffd3000] *pgd=2fffb811, *pte=00000000, *ppte=00000000
->> [   11.218202] Internal error: Oops: 7 [#1] SMP ARM
->> [   11.222797] Modules linked in:
->> [   11.225844] CPU: 1 PID: 1317 Comm: systemd-hwdb Not tainted 4.17.7-d0c45cd44a8f
->> [   11.235796] Hardware name: Altera SOCFPGA Arria10
->> [   11.240487] PC is at __raw_writesl+0x70/0xd4
->> [   11.244741] LR is at cqspi_write+0x1a0/0x2cc
->> </snip>
->> On a page boundary limit the number of bytes copied from the tx buffer
->> to remain within the page.
->>
->> This patch uses a temporary buffer to hold the 4 bytes to write and then
->> copies only the bytes required from the tx buffer. A min() function is
->> used to limit the length to prevent buffer indexing overflows.
->>
->> Reported-by: Adrian Amborzewicz <adrian.ambrozewicz@intel.com>
->> Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
->> ---
->>   drivers/mtd/spi-nor/cadence-quadspi.c | 19 ++++++++++++++++---
->>   1 file changed, 16 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
->> index d846428ef038..3659d94b4d2f 100644
->> --- a/drivers/mtd/spi-nor/cadence-quadspi.c
->> +++ b/drivers/mtd/spi-nor/cadence-quadspi.c
->> @@ -644,9 +644,23 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
->>   		ndelay(cqspi->wr_delay);
->>   
->>   	while (remaining > 0) {
->> +		size_t write_words, mod_bytes;
->> +
->>   		write_bytes = remaining > page_size ? page_size : remaining;
->> -		iowrite32_rep(cqspi->ahb_base, txbuf,
->> -			      DIV_ROUND_UP(write_bytes, 4));
->> +		write_words = write_bytes / 4;
->> +		mod_bytes = write_bytes % 4;
->> +		/* Write 4 bytes at a time then single bytes. */
->> +		if (write_words) {
->> +			iowrite32_rep(cqspi->ahb_base, txbuf, write_words);
->> +			txbuf += (write_words * 4);
->> +		}
->> +		if (mod_bytes) {
->> +			unsigned int temp = 0xFFFFFFFF;
->> +
->> +			memcpy(&temp, txbuf, min(sizeof(temp), mod_bytes));
-> 
-> Sorry, I dont understand why min() is required here since:
-> 	mod_bytes = write_bytes % 4;
-> Doesn't that ensure mod_bytes < sizeof(temp)?
-> 
+Agree, unlikely() should only be used for the error handling case or
+similar that does indeed almost never trigger. It should not be used
+for cases that don't trigger a lot in "most" circumstances.
 
-Yes, good point. I was being overly cautious with the memcpy buffers. I 
-will re-spin and re-submit. Thanks!
 
->> +			iowrite32(temp, cqspi->ahb_base);
->> +			txbuf += mod_bytes;
->> +		}
->>   
->>   		if (!wait_for_completion_timeout(&cqspi->transfer_complete,
->>   					msecs_to_jiffies(CQSPI_TIMEOUT_MS))) {
->> @@ -655,7 +669,6 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
->>   			goto failwr;
->>   		}
->>   
->> -		txbuf += write_bytes;
->>   		remaining -= write_bytes;
->>   
->>   		if (remaining > 0)
->>
-> 
+-- 
+Jens Axboe
 
