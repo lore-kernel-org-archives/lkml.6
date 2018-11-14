@@ -2,161 +2,231 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BF6FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:09:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 72C60C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:10:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 248D22175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:09:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2BFDF2175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:10:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Tdx3KVLo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 248D22175B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=marek-ca.20150623.gappssmtp.com header.i=@marek-ca.20150623.gappssmtp.com header.b="kkT6n/5N"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BFDF2175B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727612AbeKOJPE (ORCPT
+        id S1728556AbeKOJPz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 04:15:04 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:46498 "EHLO
-        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726869AbeKOJPE (ORCPT
+        Thu, 15 Nov 2018 04:15:55 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:43138 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728285AbeKOJPy (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 04:15:04 -0500
-Received: by mail-yb1-f196.google.com with SMTP id i17-v6so7597473ybp.13
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 15:09:45 -0800 (PST)
+        Thu, 15 Nov 2018 04:15:54 -0500
+Received: by mail-qk1-f193.google.com with SMTP id r71so28921419qkr.10
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 15:10:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=9+16vD7tcZqTqIQNEYNXJfNQR7PqVdvCAhaK0VxMFtk=;
-        b=Tdx3KVLozLw4/a7w8oaceLG5wGCuCkBWTfIn1nKefu1fE4X3lrKGLSWol/vsUe/5as
-         WjJPkLtcfbbNajPGIPgxWdZBuAAAQAGb2yfKFleJn4mvqdRcpwfGTwZ2mAgorMNcDINS
-         ++kdzcu/9gDWv66dcvu4vNUDq+hj70NdvSnWc=
+        d=marek-ca.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:references:from:message-id:date:user-agent:mime-version
+         :in-reply-to:content-language:content-transfer-encoding;
+        bh=TSDLuQ3uNX0dHUkhTI/OCK0jMt29KgrxyOBCpxWICMg=;
+        b=kkT6n/5Ndg1bYIJmu5cCAYfDeuzgTCu83WyALl1e6MmxuT17bAeD+hDp25O0+GbWdP
+         sCPj5ricFj6sdwdvm86CcD7AlcHdldXuBE5D5aUDkELClBWlNMBaEo1mNhqo1dePCNDa
+         gb5Y1I/wadGwm5DcaIe1bKpaveAN0dKzWjB6x+oJTXbngKniAPWWx4RQtaAiexYl6yce
+         xZVjTlsJf/oDDbngVjGo26OX64s33z3kpfTcJPbFrnDuCo6pk+KtzMzAD2VsXHKYnTxx
+         Oj0OZVs1U4d9fTNdyGz923hHZCAne2KtUHFf88b/453D1B+N6uTid9D0yGF9IZVP9Zb0
+         /WiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=9+16vD7tcZqTqIQNEYNXJfNQR7PqVdvCAhaK0VxMFtk=;
-        b=DTVs9XagQmERwrqRWW1n2yKmbAYHnUPX8fLjvra6SHidu/1g2uQcmldlvvfF4rEPYP
-         XKBt47UVd6SSTyoVVhrpK7Dqk9zNaRevsdog/fumdpNF3iPUKqRhoU3nNvYF4xivEuxf
-         t0DTRhNwf8sT7QJV62ZmcA9+kstKBJHMelqYghL7l1JHMQ/N9znGAB2dj9hpnPFVOT1E
-         5pAJ8R7mBJMFP8sEildGOD7YpwVM5v5I4Q1k017IEOrr0i0frfm5pBBw+vmJkDkGXlfT
-         qmONCNotwjZ9JOZjl0y3Ceys0TmQ3clpc+u+sZ/QpoT+o4ezUAkZ+IX6Ba4HnK3z/w7l
-         AYrw==
-X-Gm-Message-State: AGRZ1gLHaK7xKLk8EnBfGLB+DSzG9gktklVRhmzYiZfs3hlMyQ1B6TGN
-        Rv4obaBDpV3RlY3+P/parFiONRvLZyk=
-X-Google-Smtp-Source: AJdET5dmfQ67ExGAAHIS6FDqxo+jKDu1I2M2yyAvUJXqj7t03zAQShOwprmic9FdZ9OKW501coRQiQ==
-X-Received: by 2002:a25:728b:: with SMTP id n133-v6mr3660772ybc.160.1542236985111;
-        Wed, 14 Nov 2018 15:09:45 -0800 (PST)
-Received: from mail-yw1-f41.google.com (mail-yw1-f41.google.com. [209.85.161.41])
-        by smtp.gmail.com with ESMTPSA id c6-v6sm19135900ywh.34.2018.11.14.15.09.43
-        for <linux-kernel@vger.kernel.org>
+        h=x-gm-message-state:subject:to:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=TSDLuQ3uNX0dHUkhTI/OCK0jMt29KgrxyOBCpxWICMg=;
+        b=Qu/Nv4klyDXbIzIgr3TfwzS6/l0h19rRJ86y+7bq9gdQ5xvfdtynURRSGJisxNzOYi
+         HdtShej2Cd+FAtjxuj+bI4EJwcC6roiCMj6VSlcvQ2fkdYfjCGWNvEb73EAtBAygZnpC
+         +fBj/fhX3xDwDuSlZxdTe7MxWG3Jwe2TvjJcJ+zUe5WG+BjKHiXZ+bR6hi/ksxsuczQX
+         FNKYQvIW4MOOXbFV1pBP+mwCmI+KAVCRPkGR2AYGQ6+KbWuxVLfF7z6nBMOR8DXioqav
+         IS7ImR6TvHpgoFkrX06syUCqt/5KIv2dqf9Igpz2C+uEjEZjI68YGxakysnL+xB5puD8
+         QS5A==
+X-Gm-Message-State: AGRZ1gLgOTDiCbsIilnu33VXh4+7RO64rflY2QQlLLkovs3U8MGpGcGd
+        fTSrNEQ9YI4Y6oKFOHpRX5EOVLAoG6Emhw==
+X-Google-Smtp-Source: AJdET5eYdSpAnCkJB9v+oPJns1vufhrHstSaKqs3ZBL0tdPTNleQgn7j4z0tm5thRLZlJKMMiWK+Mg==
+X-Received: by 2002:a0c:c927:: with SMTP id r36mr4012797qvj.51.1542237034998;
+        Wed, 14 Nov 2018 15:10:34 -0800 (PST)
+Received: from [192.168.0.189] (modemcable014.247-57-74.mc.videotron.ca. [74.57.247.14])
+        by smtp.gmail.com with ESMTPSA id 6sm10936681qtn.31.2018.11.14.15.10.33
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 15:09:44 -0800 (PST)
-Received: by mail-yw1-f41.google.com with SMTP id t13so3795089ywe.13
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 15:09:43 -0800 (PST)
-X-Received: by 2002:a0d:d302:: with SMTP id v2-v6mr3823041ywd.124.1542236983381;
- Wed, 14 Nov 2018 15:09:43 -0800 (PST)
+        Wed, 14 Nov 2018 15:10:34 -0800 (PST)
+Subject: Re: [PATCH 5/9] drm/msm: add headless gpu device (for imx5)
+To:     freedreno@lists.freedesktop.org, Rob Clark <robdclark@gmail.com>,
+        David Airlie <airlied@linux.ie>,
+        Bjorn Andersson <bjorn.andersson@linaro.org>,
+        Niklas Cassel <niklas.cassel@linaro.org>,
+        Andy Gross <andy.gross@linaro.org>,
+        Govind Singh <govinds@codeaurora.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <linux-arm-msm@vger.kernel.org>,
+        "open list:DRM DRIVER FOR MSM ADRENO GPU" 
+        <dri-devel@lists.freedesktop.org>,
+        open list <linux-kernel@vger.kernel.org>
+References: <20181114222418.15960-1-jonathan@marek.ca>
+ <20181114222418.15960-5-jonathan@marek.ca>
+ <20181114224729.GA6285@jcrouse-lnx.qualcomm.com>
+From:   Jonathan marek <jonathan@marek.ca>
+Message-ID: <c4960412-691d-c6f4-9c56-9ab0b706c72f@marek.ca>
+Date:   Wed, 14 Nov 2018 18:08:31 -0500
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.8.0
 MIME-Version: 1.0
-Received: by 2002:a25:b906:0:0:0:0:0 with HTTP; Wed, 14 Nov 2018 15:09:42
- -0800 (PST)
-In-Reply-To: <ea944fb3-0cd9-e6e6-5449-faab7c9603c1@redhat.com>
-References: <20181114131642.21425-1-dh.herrmann@gmail.com> <ea944fb3-0cd9-e6e6-5449-faab7c9603c1@redhat.com>
-From:   Kees Cook <keescook@chromium.org>
-Date:   Wed, 14 Nov 2018 17:09:42 -0600
-X-Gmail-Original-Message-ID: <CAGXu5jJJGg5_crJ3v+AG5JZWVGLpDvZGr0UVyurzFxcv9Fwa5A@mail.gmail.com>
-Message-ID: <CAGXu5jJJGg5_crJ3v+AG5JZWVGLpDvZGr0UVyurzFxcv9Fwa5A@mail.gmail.com>
-Subject: Re: [PATCH] Revert "HID: uhid: use strlcpy() instead of strncpy()"
-To:     David Herrmann <dh.herrmann@gmail.com>
-Cc:     Laura Abbott <labbott@redhat.com>,
-        linux-input <linux-input@vger.kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Jiri Kosina <jikos@kernel.org>,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Xiongfeng Wang <xiongfeng.wang@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181114224729.GA6285@jcrouse-lnx.qualcomm.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 9:40 AM, Laura Abbott <labbott@redhat.com> wrote:
-> On 11/14/18 5:16 AM, David Herrmann wrote:
->>
->> This reverts commit 336fd4f5f25157e9e8bd50e898a1bbcd99eaea46.
->>
->> Please note that `strlcpy()` does *NOT* do what you think it does.
->> strlcpy() *ALWAYS* reads the full input string, regardless of the
->> 'length' parameter. That is, if the input is not zero-terminated,
->> strlcpy() will *READ* beyond input boundaries. It does this, because it
->> always returns the size it *would* copy if the target was big enough,
->> not the truncated size it actually copied.
->>
->> The original code was perfectly fine. The hid device is
->> zero-initialized and the strncpy() functions copied up to n-1
->> characters. The result is always zero-terminated this way.
->>
->> This is the third time someone tried to replace strncpy with strlcpy in
->> this function, and gets it wrong. I now added a comment that should at
->> least make people reconsider.
->>
->
-> Can we switch to strscpy instead? This will quiet gcc and avoid the
-> issues with strlcpy.
+On 11/14/2018 05:47 PM, Jordan Crouse wrote:
+> Thanks for  the patch. Perhaps a small blurb here for the commit log to let
+> folks know what your intent was.
+> 
 
-Yes please: it looks like these strings are expected to be NUL
-terminated, so strscpy() without the "- 1" and min() logic would be
-the correct solution here. If @hid is already zero, then this would
-just be:
+I will add an explanation. The intent is clear to me from the commit 
+message, but perhaps not for everyone.
 
-       strscpy(hid->name, ev->u.create2.name, sizeof(hid->name));
-       strscpy(hid->phys, ev->u.create2.phys, sizeof(hid->phys));
-       strscpy(hid->uniq, ev->u.create2.uniq, sizeof(hid->uniq));
-
-If they are NOT NUL terminated, then keep using strncpy() but mark the
-fields in the struct with the __nonstring attribute.
-
--Kees
-
->
->
->> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
+> On Wed, Nov 14, 2018 at 05:24:12PM -0500, Jonathan Marek wrote:
+>> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 >> ---
->>   drivers/hid/uhid.c | 13 +++++++------
->>   1 file changed, 7 insertions(+), 6 deletions(-)
+>>   drivers/gpu/drm/msm/Kconfig       |  4 ++--
+>>   drivers/gpu/drm/msm/msm_debugfs.c |  2 +-
+>>   drivers/gpu/drm/msm/msm_drv.c     | 15 +++++++++++----
+>>   include/linux/qcom_scm.h          |  3 +++
+>>   4 files changed, 17 insertions(+), 7 deletions(-)
 >>
->> diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
->> index fefedc0b4dc6..0dfdd0ac7120 100644
->> --- a/drivers/hid/uhid.c
->> +++ b/drivers/hid/uhid.c
->> @@ -496,12 +496,13 @@ static int uhid_dev_create2(struct uhid_device
->> *uhid,
->>                 goto err_free;
->>         }
->>   -     len = min(sizeof(hid->name), sizeof(ev->u.create2.name));
->> -       strlcpy(hid->name, ev->u.create2.name, len);
->> -       len = min(sizeof(hid->phys), sizeof(ev->u.create2.phys));
->> -       strlcpy(hid->phys, ev->u.create2.phys, len);
->> -       len = min(sizeof(hid->uniq), sizeof(ev->u.create2.uniq));
->> -       strlcpy(hid->uniq, ev->u.create2.uniq, len);
->> +       /* @hid is zero-initialized, strncpy() is correct, strlcpy() not
->> */
->> +       len = min(sizeof(hid->name), sizeof(ev->u.create2.name)) - 1;
->> +       strncpy(hid->name, ev->u.create2.name, len);
->> +       len = min(sizeof(hid->phys), sizeof(ev->u.create2.phys)) - 1;
->> +       strncpy(hid->phys, ev->u.create2.phys, len);
->> +       len = min(sizeof(hid->uniq), sizeof(ev->u.create2.uniq)) - 1;
->> +       strncpy(hid->uniq, ev->u.create2.uniq, len);
->>         hid->ll_driver = &uhid_hid_driver;
->>         hid->bus = ev->u.create2.bus;
->>
->
+>> diff --git a/drivers/gpu/drm/msm/Kconfig b/drivers/gpu/drm/msm/Kconfig
+>> index 843a9d40c05e..cf549f1ed403 100644
+>> --- a/drivers/gpu/drm/msm/Kconfig
+>> +++ b/drivers/gpu/drm/msm/Kconfig
+>> @@ -2,7 +2,7 @@
+>>   config DRM_MSM
+>>   	tristate "MSM DRM"
+>>   	depends on DRM
+>> -	depends on ARCH_QCOM || (ARM && COMPILE_TEST)
+>> +	depends on ARCH_QCOM || SOC_IMX5 || (ARM && COMPILE_TEST)
+>>   	depends on OF && COMMON_CLK
+>>   	depends on MMU
+>>   	select QCOM_MDT_LOADER if ARCH_QCOM
+>> @@ -11,7 +11,7 @@ config DRM_MSM
+>>   	select DRM_PANEL
+>>   	select SHMEM
+>>   	select TMPFS
+>> -	select QCOM_SCM
+>> +	select QCOM_SCM if ARCH_QCOM
+>>   	select WANT_DEV_COREDUMP
+>>   	select SND_SOC_HDMI_CODEC if SND_SOC
+>>   	select SYNC_FILE
+>> diff --git a/drivers/gpu/drm/msm/msm_debugfs.c b/drivers/gpu/drm/msm/msm_debugfs.c
+>> index f0da0d3c8a80..1ca99ca356a4 100644
+>> --- a/drivers/gpu/drm/msm/msm_debugfs.c
+>> +++ b/drivers/gpu/drm/msm/msm_debugfs.c
+>> @@ -235,7 +235,7 @@ int msm_debugfs_init(struct drm_minor *minor)
+>>   	debugfs_create_file("gpu", S_IRUSR, minor->debugfs_root,
+>>   		dev, &msm_gpu_fops);
+>>   
+>> -	if (priv->kms->funcs->debugfs_init) {
+>> +	if (priv->kms && priv->kms->funcs->debugfs_init) {
+>>   		ret = priv->kms->funcs->debugfs_init(priv->kms, minor);
+>>   		if (ret)
+>>   			return ret;
+>> diff --git a/drivers/gpu/drm/msm/msm_drv.c b/drivers/gpu/drm/msm/msm_drv.c
+>> index 9f219e02f3c7..a10cc0298d38 100644
+>> --- a/drivers/gpu/drm/msm/msm_drv.c
+>> +++ b/drivers/gpu/drm/msm/msm_drv.c
+>> @@ -344,6 +344,7 @@ static int msm_drm_uninit(struct device *dev)
+>>   	return 0;
+>>   }
+>>   
+>> +#define KMS_HEADLESS 1
+>>   #define KMS_MDP4 4
+>>   #define KMS_MDP5 5
+>>   #define KMS_DPU  3
+>> @@ -495,6 +496,9 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+>>   	msm_gem_shrinker_init(ddev);
+>>   
+>>   	switch (get_mdp_ver(pdev)) {
+>> +	case KMS_HEADLESS:
+>> +		priv->kms = kms = NULL;
+> 
+> I don't think you need to set priv->kms, it should come in as NULL. I would
+> normally say that you should set kms to NULL when it is declared, but I kind of
+> like pointing it out to the user.
+> 
 
+It comes as NULL, but initializing it here matches the other cases in 
+the switch (at the cost of 12 characters).
 
+>> +		break;
+>>   	case KMS_MDP4:
+>>   		kms = mdp4_kms_init(ddev);
+>>   		priv->kms = kms;
+>> @@ -633,7 +637,7 @@ static int msm_drm_init(struct device *dev, struct drm_driver *drv)
+>>   	drm_mode_config_reset(ddev);
+>>   
+>>   #ifdef CONFIG_DRM_FBDEV_EMULATION
+>> -	if (fbdev)
+>> +	if (kms && fbdev)
+>>   		priv->fbdev = msm_fbdev_init(ddev);
+>>   #endif
+>>   
+>> @@ -1315,9 +1319,11 @@ static int msm_pdev_probe(struct platform_device *pdev)
+>>   	struct component_match *match = NULL;
+>>   	int ret;
+>>   
+>> -	ret = add_display_components(&pdev->dev, &match);
+>> -	if (ret)
+>> -		return ret;
+>> +	if (get_mdp_ver(pdev) != KMS_HEADLESS) {
+>> +		ret = add_display_components(&pdev->dev, &match);
+>> +		if (ret)
+>> +			return ret;
+>> +	}
+>>   
+>>   	ret = add_gpu_components(&pdev->dev, &match);
+>>   	if (ret)
+>> @@ -1342,6 +1348,7 @@ static int msm_pdev_remove(struct platform_device *pdev)
+>>   }
+>>   
+>>   static const struct of_device_id dt_match[] = {
+>> +	{ .compatible = "qcom,adreno-headless", .data = (void *)KMS_HEADLESS },
+>>   	{ .compatible = "qcom,mdp4", .data = (void *)KMS_MDP4 },
+>>   	{ .compatible = "qcom,mdss", .data = (void *)KMS_MDP5 },
+>>   	{ .compatible = "qcom,sdm845-mdss", .data = (void *)KMS_DPU },
+>> diff --git a/include/linux/qcom_scm.h b/include/linux/qcom_scm.h
+>> index 06996ad4f2bc..1637385bcc17 100644
+>> --- a/include/linux/qcom_scm.h
+>> +++ b/include/linux/qcom_scm.h
+>> @@ -67,6 +67,9 @@ extern int qcom_scm_iommu_secure_ptbl_init(u64 addr, u32 size, u32 spare);
+>>   extern int qcom_scm_io_readl(phys_addr_t addr, unsigned int *val);
+>>   extern int qcom_scm_io_writel(phys_addr_t addr, unsigned int val);
+>>   #else
+>> +
+>> +#include <linux/errno.h>
+>> +
+> 
+> This looks like a separate patch, albeit a useful one.
+> 
 
--- 
-Kees Cook
+Yes, that isn't part of this patch. Oops.
+
+>>   static inline
+>>   int qcom_scm_set_cold_boot_addr(void *entry, const cpumask_t *cpus)
+>>   {
+> 
+> Jordan
+> 
+
+Jonathan
