@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 684C7C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:03:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0940C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:03:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1DBAA208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:03:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8EBF4208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:03:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="JMgJeJqd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1DBAA208E7
+	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="Xe2o+RGU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8EBF4208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=g.ncu.edu.tw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387758AbeKOCHU (ORCPT
+        id S2387804AbeKOCHY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 21:07:20 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:37828 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387676AbeKOCHT (ORCPT
+        Wed, 14 Nov 2018 21:07:24 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:33123 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1732450AbeKOCHX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 21:07:19 -0500
-Received: by mail-pl1-f195.google.com with SMTP id b5so1575497plr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 08:03:30 -0800 (PST)
+        Wed, 14 Nov 2018 21:07:23 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z11so4930777pgu.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 08:03:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=g.ncu.edu.tw; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=7NlOcQS1CVYAxETpCLLRykD6JVs/z/XSS1hZoJW810k=;
-        b=JMgJeJqdUpopiQmpcleJDdwDA+1w6Ag6VS9X03nyaaK66vSQhfZhrk7yFYL93dggk5
-         WwBHkPJFEI5x4+Xs2DkPMVdHGPO8HyLY+My9Y5arDRw/VGIfuhodPBEmntutyTbLzCf+
-         Dp8tkbRJIjIwfTXGgLGehXs2hOy65zOYIFDB0=
+        bh=FKT2FISMHyv8N3RNIMgKnskSouz7U+T77FZX5SCipNI=;
+        b=Xe2o+RGU3sDy1iJDIH1MyLPEML1Ft1xD37Su332rVOhPMdqBWW8aRD9WQlVMm68B5s
+         pQJ+/0xnT9A2nOGo6svH84cz4jmoj6qEFsxMoarWHUz5TzvXSMsESdHv5odwr0vvrk3G
+         bbhT6gzTxC0WXW0TSPWbKtRhQQeynOymODbtc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=7NlOcQS1CVYAxETpCLLRykD6JVs/z/XSS1hZoJW810k=;
-        b=P69WHANsWtWCYrrA3aYU92PG1S+OpfDF6TwLj0ug960UMfOpuJGAU/WAzC1umBGkg3
-         NquIWXk7FCgFpOVLxi8wRh0Z9R27grYVyOEvobxmPCpUi+fX2luXYx17dy/13c22Mvhi
-         9etSUyZxccG2mbH866SOzPqTzT2OF8sE4gcoOol82FjXtPa43W/r7oJN+5975rtq64Ju
-         vr9vg5w05/S/3bPDxye7FtBOM/1BYkpJ5H1Piht7djQlQ78VtNcN7wEQM3+tBXL5yWLt
-         CBm8NmECgCVtK+dWUW9mfS0rvJetPkjXFWxSfwWrQ8rWe1YDxjZX7V2FHmmJdj7F0aho
-         Mpwg==
-X-Gm-Message-State: AGRZ1gIkdu8CjRjOoVe8Cd69k4p/qp6WD/5ozTOlR395hWykEi2K7ic2
-        S0AlfK6sK9qICjsU433nRDFPLg==
-X-Google-Smtp-Source: AJdET5eRzRdNadvgZo2if0qGIQ8KT9erh30JD5LkJPqsCltWVwGtK/YLKdPm8VBKjpa0MyjZZHQYhQ==
-X-Received: by 2002:a17:902:f08f:: with SMTP id go15mr2513873plb.332.1542211410150;
-        Wed, 14 Nov 2018 08:03:30 -0800 (PST)
+        bh=FKT2FISMHyv8N3RNIMgKnskSouz7U+T77FZX5SCipNI=;
+        b=IkR4FmzukTUqw6JKAOfMNrVafnjKk97TDsz3H8ZkaZmoO8jzm8//9Wuiqp93BQd5CZ
+         N1ApIdIJgfPSM4qCJy3bZkOzLruQKazruzXCNLrdh6IQkFW0oTTqWryhxILamEWQO2zc
+         KYsZtPA2C9vc6yTYnzCviJJfvnh61n1U4v/695aOZTLOotX0emTqhaEUvmAA4Ok02AzJ
+         Ir2HJYM+ftYQTcUNrLqkCVarCfT3QAiAxgHkt+QrsNa3rSTeuizot1R76RXy1TdF9a6B
+         3516JSjVD6bSawHxqvaD4oAohcjTy0wyvmU/N50zZN91p1pkLWupVbcVgbhh2RDnGZik
+         lCXA==
+X-Gm-Message-State: AGRZ1gK5EXUyf/uNRtclJnDH1yk72PIg+J4V8CsB2M7vGVczGQCCsh37
+        d8dzWTdAEJZK6HDR9LM4yRamsw==
+X-Google-Smtp-Source: AJdET5cRBkyXFJvUKq3VCfQxAZsyxYt/N0oZLeiEwqFa9U4pj3eupedXYixZEDOCSc9ct0Q5uqt3kg==
+X-Received: by 2002:a62:6fc7:: with SMTP id k190-v6mr2547163pfc.97.1542211413417;
+        Wed, 14 Nov 2018 08:03:33 -0800 (PST)
 Received: from starnight.local ([150.116.248.145])
-        by smtp.gmail.com with ESMTPSA id s2-v6sm53449854pfk.133.2018.11.14.08.03.27
+        by smtp.gmail.com with ESMTPSA id s2-v6sm53449854pfk.133.2018.11.14.08.03.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 08:03:29 -0800 (PST)
+        Wed, 14 Nov 2018 08:03:32 -0800 (PST)
 From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
 To:     =?UTF-8?q?Andreas=20F=C3=A4rber?= <afaerber@suse.de>,
         "David S . Miller" <davem@davemloft.net>
@@ -66,9 +66,9 @@ Cc:     netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         Ken Yu <ken.yu@rakwireless.com>, linux-wpan@vger.kernel.org,
         Stefan Schmidt <stefan@datenfreihafen.org>,
         Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Subject: [PATCH V3 4/7] net: maclorawan: Add maclorawan module declaration
-Date:   Thu, 15 Nov 2018 00:01:25 +0800
-Message-Id: <20181114160126.4445-5-starnight@g.ncu.edu.tw>
+Subject: [PATCH V3 5/7] net: maclorawan: Implement the crypto of maclorawan module
+Date:   Thu, 15 Nov 2018 00:01:26 +0800
+Message-Id: <20181114160126.4445-6-starnight@g.ncu.edu.tw>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181105.101610.1437737564548154497.davem@davemloft.net>
 References: <20181105.101610.1437737564548154497.davem@davemloft.net>
@@ -79,25 +79,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add the maclorawan header file for common APIs in the module.
+Implement the crypto for encryption/decryption and message
+integrity code (MIC) according to LoRaWAN(TM) Specification Ver. 1.0.2.
 
 Signed-off-by: Jian-Hong Pan <starnight@g.ncu.edu.tw>
 ---
 V2:
 - Split the LoRaWAN class module patch in V1 into LoRaWAN socket and
   LoRaWAN Soft MAC modules
+- Rename the lrwsec files to crypto files
+- Modify for Big/Little-Endian
 - Use SPDX license identifiers
 
- net/maclorawan/maclorawan.h | 199 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 199 insertions(+)
- create mode 100644 net/maclorawan/maclorawan.h
+V3:
+- Order local variables from longest to shortest line in the functions
 
-diff --git a/net/maclorawan/maclorawan.h b/net/maclorawan/maclorawan.h
+ net/maclorawan/crypto.c | 209 ++++++++++++++++++++++++++++++++++++++++
+ net/maclorawan/crypto.h |  27 ++++++
+ 2 files changed, 236 insertions(+)
+ create mode 100644 net/maclorawan/crypto.c
+ create mode 100644 net/maclorawan/crypto.h
+
+diff --git a/net/maclorawan/crypto.c b/net/maclorawan/crypto.c
 new file mode 100644
-index 000000000000..66b87f051d51
+index 000000000000..5337a661c9d0
 --- /dev/null
-+++ b/net/maclorawan/maclorawan.h
-@@ -0,0 +1,199 @@
++++ b/net/maclorawan/crypto.c
+@@ -0,0 +1,209 @@
 +/* SPDX-License-Identifier: GPL-2.0-or-later OR BSD-3-Clause */
 +/*-
 + * LoRaWAN soft MAC
@@ -106,195 +114,238 @@ index 000000000000..66b87f051d51
 + *
 + */
 +
-+#ifndef __MAC_LORAWAN_H__
-+#define __MAC_LORAWAN_H__
-+
-+#include <linux/mutex.h>
-+#include <linux/spinlock.h>
-+#include <linux/skbuff.h>
-+#include <linux/workqueue.h>
-+#include <linux/netdevice.h>
-+#include <uapi/linux/if_arp.h>
++#include <linux/scatterlist.h>
 +#include <crypto/hash.h>
 +#include <crypto/skcipher.h>
-+#include <linux/lora/lorawan.h>
++#include "crypto.h"
 +
-+#define	LORAWAN_MODULE_NAME	"maclorawan"
++struct crypto_shash *
++lrw_mic_key_setup(u8 *k, size_t k_len)
++{
++	struct crypto_shash *tfm;
++	char *algo = "cmac(aes)";
++	int err;
 +
-+/* List the message types of LoRaWAN */
-+enum {
-+	LRW_JOIN_REQUEST,
-+	LRW_JOIN_ACCEPT,
-+	LRW_UNCONFIRMED_DATA_UP,
-+	LRW_UNCONFIRMED_DATA_DOWN,
-+	LRW_CONFIRMED_DATA_UP,
-+	LRW_CONFIRMED_DATA_DOWN,
-+	LRW_RFU,
-+	LRW_PROPRIETARY,
-+};
++	tfm = crypto_alloc_shash(algo, 0, 0);
++	if (!IS_ERR(tfm)) {
++		err = crypto_shash_setkey(tfm, k, k_len);
++		if (err) {
++			crypto_free_shash(tfm);
++			tfm = NULL;
++		}
++	}
 +
-+/* List the communication directions */
-+enum {
-+	LRW_UPLINK,
-+	LRW_DOWNLINK,
-+};
++	return tfm;
++}
 +
-+/* States of LoRaWAN slot timing */
-+enum {
-+	LRW_INIT_SS,
-+	LRW_XMITTING_SS,
-+	LRW_XMITTED,
-+	LRW_RX1_SS,
-+	LRW_RX2_SS,
-+	LRW_RXTIMEOUT_SS,
-+	LRW_RXRECEIVED_SS,
-+	LRW_RETRANSMIT_SS,
-+};
++int
++lrw_aes_cmac(struct crypto_shash *tfm, u8 *bz, u8 *data, size_t len, u8 *out)
++{
++	SHASH_DESC_ON_STACK(desc, tfm);
++	int err;
 +
-+#define	LRW_MHDR_LEN		1
-+#define	LRW_FHDR_MAX_LEN	22
-+#define	LRW_FOPS_MAX_LEN	15
-+#define	LRW_FPORT_LEN		1
-+#define	LRW_MIC_LEN		4
++	desc->tfm = tfm;
 +
-+/**
-+ * lrw_fhdr - Hold the message's basic information of the frame
++	err = crypto_shash_init(desc);
++	if (err)
++		goto lrw_aes_cmac_end;
++
++	err = crypto_shash_update(desc, bz, 16);
++	if (err)
++		goto lrw_aes_cmac_end;
++
++	err = crypto_shash_update(desc, data, len);
++	if (err)
++		goto lrw_aes_cmac_end;
++
++	err = crypto_shash_final(desc, out);
++
++lrw_aes_cmac_end:
++	return err;
++}
++
++int
++lrw_set_bzero(u8 dir, u32 devaddr, u32 fcnt, u8 len, u8 *bz)
++{
++	__le32 le_devaddr = cpu_to_le32(devaddr);
++	__le32 le_fcnt = cpu_to_le32(fcnt);
++
++	bz[0] = 0x49;
++	memset(bz + 1, 0x00, 4);
++	bz[5] = dir;
++	memcpy(bz + 6, &le_devaddr, 4);
++	memcpy(bz + 10, &le_fcnt, 4);
++	bz[14] = 0x00;
++	bz[15] = len;
++
++	return 0;
++}
++
++int
++lrw_calc_mic(struct crypto_shash *tfm,
++	     u8 dir, u32 devaddr, u32 fcnt, u8* buf, size_t len, u8 *mic4)
++{
++	u8 mic[16];
++	u8 bz[16];
++	int err;
++
++	/* According to LoRaWAN Specification Version 1.0.2
++	 * - 4.4 Massege Integrity Code (MIC) */
++	lrw_set_bzero(dir, devaddr, fcnt, len, bz);
++	err = lrw_aes_cmac(tfm, bz, buf, len, mic);
++	if (!err)
++		memcpy(mic4, mic, 4);
++
++	return err;
++}
++
++void
++lrw_mic_key_free(struct crypto_shash *tfm)
++{
++	crypto_free_shash(tfm);
++}
++
++struct crypto_skcipher *
++lrw_aes_enc_key_setup(char *algo, u8 *k, size_t k_len)
++{
++	struct crypto_skcipher *tfm;
++	int err;
++
++	tfm = crypto_alloc_skcipher(algo, 0, CRYPTO_ALG_ASYNC);
++	if (!IS_ERR(tfm)) {
++		err = crypto_skcipher_setkey(tfm, k, k_len);
++		if (err) {
++			crypto_free_skcipher(tfm);
++			tfm = NULL;
++		}
++	}
++
++	return tfm;
++}
++
++struct crypto_skcipher *
++lrw_encrypt_key_setup(u8 *k, size_t k_len)
++{
++	return lrw_aes_enc_key_setup("cbc(aes)", k, k_len);
++}
++
++int
++lrw_aes_enc(struct crypto_skcipher *tfm, u8 *in, size_t len, u8 *out)
++{
++	SKCIPHER_REQUEST_ON_STACK(req, tfm);
++	struct scatterlist src, dst;
++	u8 iv[16];
++	int err;
++
++	memset(iv, 0, 16);
++	/* The buffer for sg_init_one cannot be a global or const local
++	 * (will confuse the scatterlist) */
++	sg_init_one(&src, in, len);
++	sg_init_one(&dst, out, len);
++
++	skcipher_request_set_tfm(req, tfm);
++	skcipher_request_set_callback(req, 0, NULL, NULL);
++	skcipher_request_set_crypt(req, &src, &dst, len, iv);
++	err = crypto_skcipher_encrypt(req);
++	skcipher_request_zero(req);
++
++	return err;
++}
++
++#define	LRW_SEQUENCE_OF_BLOCK_LEN	16
++
++int
++lrw_set_sob(u8 dir, u32 devaddr, u32 fcnt, u8 index, u8 *sob)
++{
++	__le32 le_devaddr = cpu_to_le32(devaddr);
++	__le32 _fcnt = cpu_to_le32(fcnt);
++
++	sob[0] = 0x01;
++	memset(sob + 1, 0x00, 4);
++	sob[5] = dir;
++	memcpy(sob + 6, &le_devaddr, 4);
++	memcpy(sob + 10, &_fcnt, 4);
++	sob[14] = 0x00;
++	sob[15] = index;
++
++	return 0;
++}
++
++int
++lrw_encrypt_sob(struct crypto_skcipher *tfm, u8 *sob)
++{
++	return lrw_aes_enc(tfm, sob, LRW_SEQUENCE_OF_BLOCK_LEN, sob);
++}
++
++int
++lrw_encrypt_buf(struct crypto_skcipher *tfm,
++		u8 dir, u32 devaddr, u32 fcnt, u8 *buf, size_t len)
++{
++	u8 sob[LRW_SEQUENCE_OF_BLOCK_LEN];
++	u8 i, j;
++
++	/* According to LoRaWAN Specification Version 1.0.2
++	 * - 4.3.3 MAC Frame Payload Encryption (FRMPayload) */
++	for (i = 0; (i * LRW_SEQUENCE_OF_BLOCK_LEN) < len; i++) {
++		lrw_set_sob(dir, devaddr, fcnt, i, sob);
++		lrw_encrypt_sob(tfm, sob);
++		for (j = 0; (i * LRW_SEQUENCE_OF_BLOCK_LEN + j) < len; j++)
++			buf[i * LRW_SEQUENCE_OF_BLOCK_LEN + j] ^= sob[j];
++	}
++
++	return 0;
++}
++
++int
++lrw_decrypt_buf(struct crypto_skcipher *tfm,
++		u8 dir, u32 devaddr, u32 fcnt, u8 *buf, size_t len)
++{
++	/* Accoding to XOR swap algorithm */
++	return lrw_encrypt_buf(tfm, dir, devaddr, fcnt, buf, len);
++}
++
++void
++lrw_aes_enc_key_free(struct crypto_skcipher *tfm)
++{
++	crypto_free_skcipher(tfm);
++}
++
++void
++lrw_encrypt_key_free(struct crypto_skcipher *tfm)
++{
++	lrw_aes_enc_key_free(tfm);
++}
+diff --git a/net/maclorawan/crypto.h b/net/maclorawan/crypto.h
+new file mode 100644
+index 000000000000..2ede02efb8c6
+--- /dev/null
++++ b/net/maclorawan/crypto.h
+@@ -0,0 +1,27 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later OR BSD-3-Clause */
++/*-
++ * LoRaWAN soft MAC
 + *
-+ * @mtype:		this message's type
-+ * @fctrl:		the frame control byte
-+ * @fcnt:		this message's frame counter value
-+ * @fopts:		this frame's options field
-+ * @fopts_len:		the length of the fopts
-+ */
-+struct lrw_fhdr {
-+	u8 mtype;
-+	u8 fctrl;
-+	u16 fcnt;
-+	u8 fopts[LRW_FPORT_LEN];
-+	u8 fopts_len;
-+};
-+
-+/**
-+ * lrw_session - LoRaWAN session for Class A end device
++ * Copyright (c) 2018 Jian-Hong, Pan <starnight@g.ncu.edu.tw>
 + *
-+ * @lrw_st:		points to the belonging lrw_st
-+ * @entry:		the entry of the ss_list in lrw_struct
-+ * @devaddr:		the LoRaWAN device address of this LoRaWAN hardware
-+ * @fcnt_up:		uplink frame counter
-+ * @fcnt_down:		downlink frame counter
-+ * @fport:		the LoRaWAN data message's port field
-+ * @tx_skb:		points to the TX skb, the frame
-+ * @rx_skb:		points to the RX skb, the frame
-+ * @tx_fhdr:		hold the message's basic information of the TX frame
-+ * @rx_fhdr:		hold the message's basic information of the RX frame
-+ * @tx_should_ack:	flag for determining the TX which should be acked or not
-+ * @retry:		retry times for xmitting failed
-+ * @state:		this session's current state
-+ * @state_lock:		lock of the session's state
-+ * @timer:		timing for this session and the state transition
-+ * @timeout_work:	work if waiting acknowledge time out
-+ * @rx_delay1:		RX1 delay time in seconds
-+ * @rx_delay2:		RX2 delay time in seconds
-+ * @rx1_window:		RX1 window opening time in mini-seconds
-+ * @rx2_window:		RX2 window opening time in mini-seconds
-+ * @ack_timeout:	time out time for waiting acknowledge in seconds
 + */
-+struct lrw_session {
-+	struct lrw_struct *lrw_st;
-+	struct list_head entry;
 +
-+	u32 devaddr;
-+	u16 fcnt_up;
-+	u16 fcnt_down;
-+	u8 fport;
-+	struct sk_buff *tx_skb;
-+	struct sk_buff *rx_skb;
-+	struct lrw_fhdr tx_fhdr;
-+	struct lrw_fhdr rx_fhdr;
++#ifndef __LORAWAN_CRYPTO_H__
++#define __LORAWAN_CRYPTO_H__
 +
-+	bool tx_should_ack;
-+	u8 retry;
-+	u8 state;
-+	spinlock_t state_lock;
++#include <crypto/hash.h>
++#include <crypto/skcipher.h>
 +
-+	struct timer_list timer;
-+	struct work_struct timeout_work;
-+	unsigned long rx_delay1;
-+	unsigned long rx_delay2;
-+	unsigned long rx1_window;
-+	unsigned long rx2_window;
-+	unsigned long ack_timeout;
-+};
++struct crypto_shash *lrw_mic_key_setup(u8 *k, size_t k_len);
++int lrw_calc_mic(struct crypto_shash *tfm,
++		 u8 dir, u32 devaddr, u32 fcnt, u8* buf, size_t len, u8 *mic4);
++void lrw_mic_key_free(struct crypto_shash *tfm);
 +
-+/**
-+ * lrw_struct - The full LoRaWAN hardware to the LoRa device.
-+ *
-+ * @dev:		this LoRa device registed in system
-+ * @hw:			the LoRa device of this LoRaWAN hardware
-+ * @ops:		handle of LoRa operations interfaces
-+ * @rx_skb_list:	the list of received frames
-+ * @ss_list:		LoRaWAN session list of this LoRaWAN hardware
-+ * @_cur_ss:		pointer of the current processing session
-+ * @rx_should_ack:	represent the current session should be acked or not
-+ * @state:		the state of this LoRaWAN hardware
-+ * @app_eui:		the LoRaWAN application EUI
-+ * @dev_eui:		the LoRaWAN device EUI
-+ * @devaddr:		the LoRaWAN device address of this LoRaWAN hardware
-+ * @appky:		the Application key
-+ * @nwkskey:		the Network session key
-+ * @appskey:		the Application session key
-+ * @nwks_shash_tfm:	the hash handler for LoRaWAN network session
-+ * @nwks_skc_tfm:	the crypto handler for LoRaWAN network session
-+ * @apps_skc_tfm:	the crypto handler for LoRaWAN application session
-+ * @fcnt_up:		the counter of this LoRaWAN hardware's up frame
-+ * @fcnt_down:		the counter of this LoRaWAN hardware's down frame
-+ * @xmit_task:		the xmit task for the current LoRaWAN session
-+ * @rx_work:		the RX work in workqueue for the current LoRaWAN session
-+ * @ndev:		points to the emulating network device
-+ * @_net:		the current network namespace of this LoRaWAN hardware
-+ */
-+struct lrw_struct {
-+	struct device dev;
-+	struct lrw_hw hw;
-+	struct lrw_operations *ops;
-+
-+	struct sk_buff_head rx_skb_list;
-+	struct list_head ss_list;
-+	struct mutex ss_list_lock;
-+	struct lrw_session *_cur_ss;
-+	bool rx_should_ack;
-+	u8 state;
-+
-+	u64 app_eui;
-+	u64 dev_eui;
-+	u32 devaddr;
-+	u8 appkey[LRW_KEY_LEN];
-+	u8 nwkskey[LRW_KEY_LEN];
-+	u8 appskey[LRW_KEY_LEN];
-+	struct crypto_shash *nwks_shash_tfm;
-+	struct crypto_skcipher *nwks_skc_tfm;
-+	struct crypto_skcipher *apps_skc_tfm;
-+
-+	u16 fcnt_up;
-+	u16 fcnt_down;
-+
-+	struct tasklet_struct xmit_task;
-+	struct work_struct rx_work;
-+
-+	struct net_device *ndev;
-+	possible_net_t _net;
-+};
-+
-+#define	NETDEV_2_LRW(ndev)	((struct lrw_struct *)netdev_priv(ndev))
-+
-+struct lrw_session * lrw_alloc_ss(struct lrw_struct *);
-+void lrw_free_ss(struct lrw_session *);
-+void lrw_del_ss(struct lrw_session *);
-+int lrw_start_hw(struct lrw_struct *);
-+void lrw_stop_hw(struct lrw_struct *);
-+void lrw_prepare_tx_frame(struct lrw_session *);
-+void lrw_xmit(unsigned long);
-+void lrw_rx_work(struct work_struct *);
++struct crypto_skcipher *lrw_encrypt_key_setup(u8 *k, size_t k_len);
++int lrw_encrypt_buf(struct crypto_skcipher *tfm,
++		    u8 dir, u32 devaddr, u32 fcnt, u8 *buf, size_t len);
++int lrw_decrypt_buf(struct crypto_skcipher *tfm,
++		    u8 dir, u32 devaddr, u32 fcnt, u8 *buf, size_t len);
++void lrw_encrypt_key_free(struct crypto_skcipher *tfm);
 +
 +#endif
 -- 
