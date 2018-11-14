@@ -6,43 +6,46 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF01AC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A7BD9C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A58012145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6AB332145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2QMrnRh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A58012145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="NtWv6eIV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AB332145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728420AbeKOI1Q (ORCPT
+        id S1728367AbeKOI1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 15 Nov 2018 03:27:16 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34470 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727258AbeKOI1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726774AbeKOI1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 03:27:15 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 780F02251F;
+        by mail.kernel.org (Postfix) with ESMTPSA id DCFCD2251C;
         Wed, 14 Nov 2018 22:22:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234131;
-        bh=9xwGK+2urupgk2vnwrGGs4AkAQZdNSQg6tjA9ENXeOc=;
+        s=default; t=1542234132;
+        bh=T/g1PKjIxt36jDugOCzHFIdEDuLm7q/Xa1dPF39PNew=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=o2QMrnRhpCsNdyW+L6gmQYH+lITviAGcuKdZZKmPGC5JU/GKl2E96u00BCVoCe7SQ
-         C7yOTT5Hor7Wxp7CrvQ0aU2iBl7aGvhddLTfDwvkkeUEcBNlqVcFR7MWXEWM1+SGJ7
-         rHgEDrbd2D6MnHwYihxdoTRpjK2gDozJ1JT5fH7s=
+        b=NtWv6eIVx2JjPzIgUzDjhHmEyxUBK9ocwlOb2ARTbSrj3OUX2djVCgCg9UwZlkCz3
+         22q3sdXratygVpD4PtGm8Ic0TvKAbdsAfqJxesMXzYuNX2ZzkYiz4XKWdNTKEOqZEU
+         WOzSanu2SL0jAsOuxZzqNFWqc2Qo3Qa1SWXgJi38=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
+Cc:     Daniel Borkmann <daniel@iogearbox.net>,
+        Sandipan Das <sandipan@linux.vnet.ibm.com>,
+        Song Liu <songliubraving@fb.com>,
+        Alexei Starovoitov <ast@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 13/73] s390/mm: fix mis-accounting of pgtable_bytes
-Date:   Wed, 14 Nov 2018 17:21:07 -0500
-Message-Id: <20181114222207.98701-13-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 15/73] bpf: fix bpf_prog_get_info_by_fd to return 0 func_lens for unpriv
+Date:   Wed, 14 Nov 2018 17:21:09 -0500
+Message-Id: <20181114222207.98701-15-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -51,161 +54,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Martin Schwidefsky <schwidefsky@de.ibm.com>
+From: Daniel Borkmann <daniel@iogearbox.net>
 
-[ Upstream commit e12e4044aede97974f2222eb7f0ed726a5179a32 ]
+[ Upstream commit 28c2fae726bf5003cd209b0d5910a642af98316f ]
 
-In case a fork or a clone system fails in copy_process and the error
-handling does the mmput() at the bad_fork_cleanup_mm label, the
-following warning messages will appear on the console:
+While dbecd7388476 ("bpf: get kernel symbol addresses via syscall")
+zeroed info.nr_jited_ksyms in bpf_prog_get_info_by_fd() for queries
+from unprivileged users, commit 815581c11cc2 ("bpf: get JITed image
+lengths of functions via syscall") forgot about doing so and therefore
+returns the #elems of the user set up buffer which is incorrect. It
+also needs to indicate a info.nr_jited_func_lens of zero.
 
-  BUG: non-zero pgtables_bytes on freeing mm: 16384
-
-The reason for that is the tricks we play with mm_inc_nr_puds() and
-mm_inc_nr_pmds() in init_new_context().
-
-A normal 64-bit process has 3 levels of page table, the p4d level and
-the pud level are folded. On process termination the free_pud_range()
-function in mm/memory.c will subtract 16KB from pgtable_bytes with a
-mm_dec_nr_puds() call, but there actually is not really a pud table.
-
-One issue with this is the fact that pgtable_bytes is usually off
-by a few kilobytes, but the more severe problem is that for a failed
-fork or clone the free_pgtables() function is not called. In this case
-there is no mm_dec_nr_puds() or mm_dec_nr_pmds() that go together with
-the mm_inc_nr_puds() and mm_inc_nr_pmds in init_new_context().
-The pgtable_bytes will be off by 16384 or 32768 bytes and we get the
-BUG message. The message itself is purely cosmetic, but annoying.
-
-To fix this override the mm_pmd_folded, mm_pud_folded and mm_p4d_folded
-function to check for the true size of the address space.
-
-Reported-by: Li Wang <liwang@redhat.com>
-Tested-by: Li Wang <liwang@redhat.com>
-Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
+Fixes: 815581c11cc2 ("bpf: get JITed image lengths of functions via syscall")
+Signed-off-by: Daniel Borkmann <daniel@iogearbox.net>
+Cc: Sandipan Das <sandipan@linux.vnet.ibm.com>
+Cc: Song Liu <songliubraving@fb.com>
+Signed-off-by: Alexei Starovoitov <ast@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- arch/s390/include/asm/mmu_context.h |  5 -----
- arch/s390/include/asm/pgalloc.h     |  6 +++---
- arch/s390/include/asm/pgtable.h     | 18 ++++++++++++++++++
- arch/s390/include/asm/tlb.h         |  6 +++---
- arch/s390/mm/pgalloc.c              |  1 +
- 5 files changed, 25 insertions(+), 11 deletions(-)
+ kernel/bpf/syscall.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/s390/include/asm/mmu_context.h b/arch/s390/include/asm/mmu_context.h
-index 0717ee76885d..f1ab9420ccfb 100644
---- a/arch/s390/include/asm/mmu_context.h
-+++ b/arch/s390/include/asm/mmu_context.h
-@@ -45,8 +45,6 @@ static inline int init_new_context(struct task_struct *tsk,
- 		mm->context.asce_limit = STACK_TOP_MAX;
- 		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
- 				   _ASCE_USER_BITS | _ASCE_TYPE_REGION3;
--		/* pgd_alloc() did not account this pud */
--		mm_inc_nr_puds(mm);
- 		break;
- 	case -PAGE_SIZE:
- 		/* forked 5-level task, set new asce with new_mm->pgd */
-@@ -62,9 +60,6 @@ static inline int init_new_context(struct task_struct *tsk,
- 		/* forked 2-level compat task, set new asce with new mm->pgd */
- 		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
- 				   _ASCE_USER_BITS | _ASCE_TYPE_SEGMENT;
--		/* pgd_alloc() did not account this pmd */
--		mm_inc_nr_pmds(mm);
--		mm_inc_nr_puds(mm);
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 8339d81cba1d..3002e3cdc033 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -1961,6 +1961,7 @@ static int bpf_prog_get_info_by_fd(struct bpf_prog *prog,
+ 		info.jited_prog_len = 0;
+ 		info.xlated_prog_len = 0;
+ 		info.nr_jited_ksyms = 0;
++		info.nr_jited_func_lens = 0;
+ 		goto done;
  	}
- 	crst_table_init((unsigned long *) mm->pgd, pgd_entry_type(mm));
- 	return 0;
-diff --git a/arch/s390/include/asm/pgalloc.h b/arch/s390/include/asm/pgalloc.h
-index f0f9bcf94c03..5ee733720a57 100644
---- a/arch/s390/include/asm/pgalloc.h
-+++ b/arch/s390/include/asm/pgalloc.h
-@@ -36,11 +36,11 @@ static inline void crst_table_init(unsigned long *crst, unsigned long entry)
  
- static inline unsigned long pgd_entry_type(struct mm_struct *mm)
- {
--	if (mm->context.asce_limit <= _REGION3_SIZE)
-+	if (mm_pmd_folded(mm))
- 		return _SEGMENT_ENTRY_EMPTY;
--	if (mm->context.asce_limit <= _REGION2_SIZE)
-+	if (mm_pud_folded(mm))
- 		return _REGION3_ENTRY_EMPTY;
--	if (mm->context.asce_limit <= _REGION1_SIZE)
-+	if (mm_p4d_folded(mm))
- 		return _REGION2_ENTRY_EMPTY;
- 	return _REGION1_ENTRY_EMPTY;
- }
-diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
-index 0e7cb0dc9c33..de05466ce50c 100644
---- a/arch/s390/include/asm/pgtable.h
-+++ b/arch/s390/include/asm/pgtable.h
-@@ -485,6 +485,24 @@ static inline int is_module_addr(void *addr)
- 				   _REGION_ENTRY_PROTECT | \
- 				   _REGION_ENTRY_NOEXEC)
- 
-+static inline bool mm_p4d_folded(struct mm_struct *mm)
-+{
-+	return mm->context.asce_limit <= _REGION1_SIZE;
-+}
-+#define mm_p4d_folded(mm) mm_p4d_folded(mm)
-+
-+static inline bool mm_pud_folded(struct mm_struct *mm)
-+{
-+	return mm->context.asce_limit <= _REGION2_SIZE;
-+}
-+#define mm_pud_folded(mm) mm_pud_folded(mm)
-+
-+static inline bool mm_pmd_folded(struct mm_struct *mm)
-+{
-+	return mm->context.asce_limit <= _REGION3_SIZE;
-+}
-+#define mm_pmd_folded(mm) mm_pmd_folded(mm)
-+
- static inline int mm_has_pgste(struct mm_struct *mm)
- {
- #ifdef CONFIG_PGSTE
-diff --git a/arch/s390/include/asm/tlb.h b/arch/s390/include/asm/tlb.h
-index 457b7ba0fbb6..b31c779cf581 100644
---- a/arch/s390/include/asm/tlb.h
-+++ b/arch/s390/include/asm/tlb.h
-@@ -136,7 +136,7 @@ static inline void pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
- static inline void pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
- 				unsigned long address)
- {
--	if (tlb->mm->context.asce_limit <= _REGION3_SIZE)
-+	if (mm_pmd_folded(tlb->mm))
- 		return;
- 	pgtable_pmd_page_dtor(virt_to_page(pmd));
- 	tlb_remove_table(tlb, pmd);
-@@ -152,7 +152,7 @@ static inline void pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
- static inline void p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d,
- 				unsigned long address)
- {
--	if (tlb->mm->context.asce_limit <= _REGION1_SIZE)
-+	if (mm_p4d_folded(tlb->mm))
- 		return;
- 	tlb_remove_table(tlb, p4d);
- }
-@@ -167,7 +167,7 @@ static inline void p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d,
- static inline void pud_free_tlb(struct mmu_gather *tlb, pud_t *pud,
- 				unsigned long address)
- {
--	if (tlb->mm->context.asce_limit <= _REGION2_SIZE)
-+	if (mm_pud_folded(tlb->mm))
- 		return;
- 	tlb_remove_table(tlb, pud);
- }
-diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
-index 76d89ee8b428..814f26520aa2 100644
---- a/arch/s390/mm/pgalloc.c
-+++ b/arch/s390/mm/pgalloc.c
-@@ -101,6 +101,7 @@ int crst_table_upgrade(struct mm_struct *mm, unsigned long end)
- 			mm->context.asce_limit = _REGION1_SIZE;
- 			mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
- 				_ASCE_USER_BITS | _ASCE_TYPE_REGION2;
-+			mm_inc_nr_puds(mm);
- 		} else {
- 			crst_table_init(table, _REGION1_ENTRY_EMPTY);
- 			pgd_populate(mm, (pgd_t *) table, (p4d_t *) pgd);
 -- 
 2.17.1
 
