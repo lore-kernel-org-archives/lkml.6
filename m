@@ -2,204 +2,120 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A1BA0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:38:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BBC5EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:40:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6955F22511
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:38:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6955F22511
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 815CB20818
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:40:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 815CB20818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387504AbeKOBmJ (ORCPT
+        id S1733270AbeKOBoa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:42:09 -0500
-Received: from verein.lst.de ([213.95.11.211]:35719 "EHLO newverein.lst.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728358AbeKOBmJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:42:09 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 9C4C968CED; Wed, 14 Nov 2018 16:38:24 +0100 (CET)
-Date:   Wed, 14 Nov 2018 16:38:24 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     "Maciej W. Rozycki" <macro@linux-mips.org>
-Cc:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>,
-        Christoph Hellwig <hch@lst.de>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] MIPS: SiByte: Enable swiotlb for SWARM,
- LittleSur and BigSur
-Message-ID: <20181114153824.GC28823@lst.de>
-References: <alpine.LFD.2.21.1811131653160.9637@eddie.linux-mips.org> <alpine.LFD.2.21.1811132155090.9637@eddie.linux-mips.org>
+        Wed, 14 Nov 2018 20:44:30 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38219 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728000AbeKOBoa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 20:44:30 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p4-v6so7963318plo.5
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 07:40:45 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=aMOqUwqEcY+BbL/wGADWN2ro23WXGClZxKZcWgBhzjY=;
+        b=C3CZDVUBHfeAwKHoY3XLtI+8rb8hw7rk5Ee1g0X6uoV3fsPy7fLAulasNZliqtdyqc
+         vvf7OF3Y0yD4xyNe4emWLuh42bJ3Jhn3vhR09SsKMXoHsOaQwizqVjwe/IIZEclJ5cBr
+         NX1BNg12Aep5HU8/OOPA1q1X/AtHvNbpyO2lq8Ax1+DqaAch8LeAsloI/wIswnomMbYN
+         GuN2dpMzxR5fCulBoOJSnkkrKD6y7zx53ovHe7lfUJn5Ae+BYBLuHe+X3Z8e7xseOIn5
+         GmY/AShCqb9zUPEoxHsySsn0l/2ur7NoA38G/li2bmGXD7a9qk7uY7kHqtnIM7D5Mnm4
+         DLxQ==
+X-Gm-Message-State: AGRZ1gI9Asu6F8a/fTlbnsUVLvvUJ332q/M86PUSmiixtCEq+p2cbqPU
+        vLK9TXb8GOEp69iI/musjA+PH4+4tBg=
+X-Google-Smtp-Source: AJdET5efyBiyGf5U9EhWGwJGkkcywA3rp2IOJOFC6BvHiW+VykwBBnhD+lI1FM6o1EREU0yXfV1H3g==
+X-Received: by 2002:a17:902:9a91:: with SMTP id w17-v6mr2323462plp.274.1542210045527;
+        Wed, 14 Nov 2018 07:40:45 -0800 (PST)
+Received: from [192.168.46.186] ([64.114.255.114])
+        by smtp.gmail.com with ESMTPSA id b27sm13952395pfh.113.2018.11.14.07.40.43
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 07:40:44 -0800 (PST)
+Subject: Re: [PATCH] Revert "HID: uhid: use strlcpy() instead of strncpy()"
+To:     David Herrmann <dh.herrmann@gmail.com>, linux-input@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org, jikos@kernel.org,
+        benjamin.tissoires@redhat.com, Kees Cook <keescook@chromium.org>
+References: <20181114131642.21425-1-dh.herrmann@gmail.com>
+From:   Laura Abbott <labbott@redhat.com>
+Message-ID: <ea944fb3-0cd9-e6e6-5449-faab7c9603c1@redhat.com>
+Date:   Wed, 14 Nov 2018 07:40:43 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <alpine.LFD.2.21.1811132155090.9637@eddie.linux-mips.org>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20181114131642.21425-1-dh.herrmann@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 10:42:44PM +0000, Maciej W. Rozycki wrote:
-> The Broadcom SiByte BCM1250, BCM1125, and BCM1125H SOCs have an onchip 
-> DRAM controller that supports memory amounts of up to 16GiB, and due to 
-> how the address decoder has been wired in the SOC any memory beyond 1GiB 
-> is actually mapped starting from 4GiB physical up, that is beyond the 
-> 32-bit addressable limit[1].  Consequently if the maximum amount of 
-> memory has been installed, then it will span up to 19GiB.
+On 11/14/18 5:16 AM, David Herrmann wrote:
+> This reverts commit 336fd4f5f25157e9e8bd50e898a1bbcd99eaea46.
 > 
-> Many of the evaluation boards we support that are based on one of these 
-> SOCs have their memory soldered and the amount present fits in the 
-> 32-bit address range.  The BCM91250A SWARM board however has actual DIMM 
-> slots and accepts, depending on the peripherals revision of the SOC, up 
-> to 4GiB or 8GiB of memory in commercially available JEDEC modules[2].  
-> I believe this is also the case with the BCM91250C2 LittleSur board. 
-> This means that up to either 3GiB or 7GiB of memory requires 64-bit 
-> addressing to access.
+> Please note that `strlcpy()` does *NOT* do what you think it does.
+> strlcpy() *ALWAYS* reads the full input string, regardless of the
+> 'length' parameter. That is, if the input is not zero-terminated,
+> strlcpy() will *READ* beyond input boundaries. It does this, because it
+> always returns the size it *would* copy if the target was big enough,
+> not the truncated size it actually copied.
 > 
-> I believe the BCM91480B BigSur board, which has the BCM1480 SOC instead, 
-> accepts at least as much memory, although I have no documentation or 
-> actual hardware available to verify that.
+> The original code was perfectly fine. The hid device is
+> zero-initialized and the strncpy() functions copied up to n-1
+> characters. The result is always zero-terminated this way.
 > 
-> Both systems have PCI slots installed for use by any PCI option boards, 
-> including ones that only support 32-bit addressing (additionally the 
-> 32-bit PCI host bridge of the BCM1250, BCM1125, and BCM1125H SOCs limits 
-> addressing to 32-bits), and there is no IOMMU available.  Therefore for 
-> PCI DMA to work in the presence of memory beyond enable swiotlb for the
-> affected systems.
+> This is the third time someone tried to replace strncpy with strlcpy in
+> this function, and gets it wrong. I now added a comment that should at
+> least make people reconsider.
 > 
-> All the other SOC onchip DMA devices use 40-bit addressing and therefore 
-> can address the whole memory, so only enable swiotlb if PCI support and 
-> support for DMA beyond 4GiB have been both enabled in the configuration 
-> of the kernel.
-> 
-> This shows up as follows:
-> 
-> Broadcom SiByte BCM1250 B2 @ 800 MHz (SB1 rev 2)
-> Board type: SiByte BCM91250A (SWARM)
-> Determined physical RAM map:
->  memory: 000000000fe7fe00 @ 0000000000000000 (usable)
->  memory: 000000001ffffe00 @ 0000000080000000 (usable)
->  memory: 000000000ffffe00 @ 00000000c0000000 (usable)
->  memory: 0000000087fffe00 @ 0000000100000000 (usable)
-> software IO TLB: mapped [mem 0xcbffc000-0xcfffc000] (64MB)
-> 
-> in the bootstrap log and removes failures like these:
-> 
-> defxx 0000:02:00.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-> fddi0: Receive buffer allocation failed
-> fddi0: Adapter open failed!
-> IP-Config: Failed to open fddi0
-> defxx 0000:09:08.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-> fddi1: Receive buffer allocation failed
-> fddi1: Adapter open failed!
-> IP-Config: Failed to open fddi1
-> 
-> when memory beyond 4GiB is handed out to devices that can only do 32-bit 
-> addressing.
-> 
-> This updates commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need 
-> DMA32.").
-> 
-> References:
-> 
-> [1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R, 
->     Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview", 
->     "Memory Map", pp. 34-38
-> 
-> [2] "BCM91250A User Manual", Revision 91250A-UM100-R, Broadcom 
->     Corporation, 18 May 2004, Section 3: "Physical Description", 
->     "Supported DRAM", p. 23
-> 
-> Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-> References: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
+
+Can we switch to strscpy instead? This will quiet gcc and avoid the
+issues with strlcpy.
+
+> Signed-off-by: David Herrmann <dh.herrmann@gmail.com>
 > ---
-> Changes from v2:
+>   drivers/hid/uhid.c | 13 +++++++------
+>   1 file changed, 7 insertions(+), 6 deletions(-)
 > 
-> - missing reference to [1] added.
+> diff --git a/drivers/hid/uhid.c b/drivers/hid/uhid.c
+> index fefedc0b4dc6..0dfdd0ac7120 100644
+> --- a/drivers/hid/uhid.c
+> +++ b/drivers/hid/uhid.c
+> @@ -496,12 +496,13 @@ static int uhid_dev_create2(struct uhid_device *uhid,
+>   		goto err_free;
+>   	}
+>   
+> -	len = min(sizeof(hid->name), sizeof(ev->u.create2.name));
+> -	strlcpy(hid->name, ev->u.create2.name, len);
+> -	len = min(sizeof(hid->phys), sizeof(ev->u.create2.phys));
+> -	strlcpy(hid->phys, ev->u.create2.phys, len);
+> -	len = min(sizeof(hid->uniq), sizeof(ev->u.create2.uniq));
+> -	strlcpy(hid->uniq, ev->u.create2.uniq, len);
+> +	/* @hid is zero-initialized, strncpy() is correct, strlcpy() not */
+> +	len = min(sizeof(hid->name), sizeof(ev->u.create2.name)) - 1;
+> +	strncpy(hid->name, ev->u.create2.name, len);
+> +	len = min(sizeof(hid->phys), sizeof(ev->u.create2.phys)) - 1;
+> +	strncpy(hid->phys, ev->u.create2.phys, len);
+> +	len = min(sizeof(hid->uniq), sizeof(ev->u.create2.uniq)) - 1;
+> +	strncpy(hid->uniq, ev->u.create2.uniq, len);
+>   
+>   	hid->ll_driver = &uhid_hid_driver;
+>   	hid->bus = ev->u.create2.bus;
 > 
-> Changes from v1:
-> 
-> - title updated to include LittleSur.
-> ---
->  arch/mips/Kconfig                |    3 +++
->  arch/mips/sibyte/common/Makefile |    1 +
->  arch/mips/sibyte/common/dma.c    |   19 +++++++++++++++++++
->  3 files changed, 23 insertions(+)
-> 
-> linux-mips-sibyte-swiotlb.diff
-> Index: linux-20181104-swarm64-eb/arch/mips/Kconfig
-> ===================================================================
-> --- linux-20181104-swarm64-eb.orig/arch/mips/Kconfig
-> +++ linux-20181104-swarm64-eb/arch/mips/Kconfig
-> @@ -794,6 +794,7 @@ config SIBYTE_SWARM
->  	select SYS_SUPPORTS_HIGHMEM
->  	select SYS_SUPPORTS_LITTLE_ENDIAN
->  	select ZONE_DMA32 if 64BIT
-> +	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
->  
->  config SIBYTE_LITTLESUR
->  	bool "Sibyte BCM91250C2-LittleSur"
-> @@ -805,6 +806,7 @@ config SIBYTE_LITTLESUR
->  	select SYS_SUPPORTS_BIG_ENDIAN
->  	select SYS_SUPPORTS_HIGHMEM
->  	select SYS_SUPPORTS_LITTLE_ENDIAN
-> +	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
->  
->  config SIBYTE_SENTOSA
->  	bool "Sibyte BCM91250E-Sentosa"
-> @@ -826,6 +828,7 @@ config SIBYTE_BIGSUR
->  	select SYS_SUPPORTS_HIGHMEM
->  	select SYS_SUPPORTS_LITTLE_ENDIAN
->  	select ZONE_DMA32 if 64BIT
-> +	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
->  
->  config SNI_RM
->  	bool "SNI RM200/300/400"
-> Index: linux-20181104-swarm64-eb/arch/mips/sibyte/common/Makefile
-> ===================================================================
-> --- linux-20181104-swarm64-eb.orig/arch/mips/sibyte/common/Makefile
-> +++ linux-20181104-swarm64-eb/arch/mips/sibyte/common/Makefile
-> @@ -1,4 +1,5 @@
->  obj-y := cfe.o
-> +obj-$(CONFIG_SWIOTLB)			+= dma.o
->  obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
->  obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
->  obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
-> Index: linux-20181104-swarm64-eb/arch/mips/sibyte/common/dma.c
-> ===================================================================
-> --- /dev/null
-> +++ linux-20181104-swarm64-eb/arch/mips/sibyte/common/dma.c
-> @@ -0,0 +1,19 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + *	DMA support for Broadcom SiByte platforms.
-> + *
-> + *	Copyright (c) 2018  Maciej W. Rozycki
-> + *
-> + *	This program is free software; you can redistribute it and/or
-> + *	modify it under the terms of the GNU General Public License
-> + *	as published by the Free Software Foundation; either version
-> + *	2 of the License, or (at your option) any later version.
-> + */
 
-Ok, so you have the SPDX tag, but also the duplicate license text,
-which is what confused me earlier.
-
-This should just be:
-
-// SPDX-License-Identifier: GPL-2.0+
-/*
- *	DMA support for Broadcom SiByte platforms.
- *
- *	Copyright (c) 2018  Maciej W. Rozycki
- */
-
-With that looks good to me:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
