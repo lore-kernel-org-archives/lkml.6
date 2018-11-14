@@ -4,166 +4,243 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4137BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89D4BC43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:20:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0189D22360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:13:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0189D22360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 4DBCD22360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 16:20:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4DBCD22360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387554AbeKOCRp (ORCPT
+        id S1728432AbeKOCYh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 21:17:45 -0500
-Received: from mail-ed1-f65.google.com ([209.85.208.65]:39417 "EHLO
-        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727822AbeKOCRp (ORCPT
+        Wed, 14 Nov 2018 21:24:37 -0500
+Received: from metis.ext.pengutronix.de ([85.220.165.71]:55871 "EHLO
+        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725828AbeKOCYg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 21:17:45 -0500
-Received: by mail-ed1-f65.google.com with SMTP id b14so11624497edt.6;
-        Wed, 14 Nov 2018 08:13:52 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=RfWOmKQRmbEMHOxjGZmsaVrE2lw6kPdjyzf9nnMLiVo=;
-        b=t+VXDM84HSpQppqVlIHLpLdU81tBChsIZDq9qwaP0tFIidOobeV1ZUEXdzQ7a24SL3
-         yhKuDFZLOyCW9FuukCpwNyE76+hODWeUvg7o4lZ5pBd5vP6TdtIHY1FTaVPxTNfrpeOH
-         4w9AQl55MzB7xkB6JM+JX8xFGHosSvOilqcDlIgluU/AZ47qG+243O3gPp8VgPUcrm3V
-         47ZZ6oWmkueQCukXRt7U998Mw16XGE/F4Zy4kBvzngJmR8Q9EdHJ7IsqKPSkicq5L2EX
-         h4GJwjCLJ8nCutUd2DDfoKJOGQrRyeHN3Qk0fjNifvYrTXEc1vDgk0QHF5Nj3qdMa6Np
-         apRw==
-X-Gm-Message-State: AGRZ1gJdhOwm2+7wxKWPKsLpsdOf1ODcIkocXRl5/jvcLFIJRovH9pPw
-        UmtzzLhpaJfRFi5evXvyCCa58n7F28w=
-X-Google-Smtp-Source: AJdET5cBtAaaRaF0vD/pPtOhP77+GfZr61beYiewA1kSHWc5r7xo0RCtew5qUfhQfHkv45gIIFiigg==
-X-Received: by 2002:a50:afc4:: with SMTP id h62-v6mr2689497edd.209.1542212031705;
-        Wed, 14 Nov 2018 08:13:51 -0800 (PST)
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com. [209.85.221.54])
-        by smtp.gmail.com with ESMTPSA id b39-v6sm7434154ede.42.2018.11.14.08.13.51
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 08:13:51 -0800 (PST)
-Received: by mail-wr1-f54.google.com with SMTP id b13so17905596wrx.6;
-        Wed, 14 Nov 2018 08:13:51 -0800 (PST)
-X-Received: by 2002:a5d:69ce:: with SMTP id s14-v6mr2668598wrw.177.1542212030738;
- Wed, 14 Nov 2018 08:13:50 -0800 (PST)
-MIME-Version: 1.0
-References: <20181107101308.7626-1-wens@csie.org> <20181107101308.7626-2-wens@csie.org>
- <5bea0ebe.1c69fb81.e15d7.98e1@mx.google.com> <CAGb2v65PqwKrRdh2_Y48zYnmJa0=hv3Bd4UdvdWvBBMfT2BfSw@mail.gmail.com>
- <CAL_JsqJrJHatiYB=Vaakbi1UUGOkqvAkZnZRG=zz5Ae_RzxGgg@mail.gmail.com>
-In-Reply-To: <CAL_JsqJrJHatiYB=Vaakbi1UUGOkqvAkZnZRG=zz5Ae_RzxGgg@mail.gmail.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 15 Nov 2018 00:13:40 +0800
-X-Gmail-Original-Message-ID: <CAGb2v651WWMJigwLFneg6wXcwUeZKF0CooWe5bFpROMcjfn91A@mail.gmail.com>
-Message-ID: <CAGb2v651WWMJigwLFneg6wXcwUeZKF0CooWe5bFpROMcjfn91A@mail.gmail.com>
-Subject: Re: [PATCH 01/15] dt-bindings: net: broadcom-bluetooth: Fix external
- clock names
-To:     Rob Herring <robh@kernel.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-bluetooth@vger.kernel.org, linux-sunxi@googlegroups.com,
-        Loic Poulain <loic.poulain@gmail.com>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>
+        Wed, 14 Nov 2018 21:24:36 -0500
+Received: from kresse.hi.pengutronix.de ([2001:67c:670:100:1d::2a])
+        by metis.ext.pengutronix.de with esmtp (Exim 4.89)
+        (envelope-from <l.stach@pengutronix.de>)
+        id 1gMxuC-00032D-Kf; Wed, 14 Nov 2018 17:20:40 +0100
+Message-ID: <1542212438.23489.6.camel@pengutronix.de>
+Subject: Re: [PATCH] PCI: dwc: Limit config space size for i.MX6
+From:   Lucas Stach <l.stach@pengutronix.de>
+To:     Stefan Agner <stefan@agner.ch>, jingoohan1@gmail.com,
+        gustavo.pimentel@synopsys.com
+Cc:     bhelgaas@google.com, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Wed, 14 Nov 2018 17:20:38 +0100
+In-Reply-To: <40d0c27d612534033d146497029b1922@agner.ch>
+References: <20181019111350.6170-1-stefan@agner.ch>
+         <40d0c27d612534033d146497029b1922@agner.ch>
 Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.22.6-1+deb9u1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::2a
+X-SA-Exim-Mail-From: l.stach@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 11:51 PM Rob Herring <robh@kernel.org> wrote:
->
-> On Tue, Nov 13, 2018 at 9:15 PM Chen-Yu Tsai <wens@csie.org> wrote:
-> >
-> > On Tue, Nov 13, 2018 at 7:37 AM Rob Herring <robh@kernel.org> wrote:
-> > >
-> > > On Wed, Nov 07, 2018 at 06:12:54PM +0800, Chen-Yu Tsai wrote:
-> > > > The Broadcom Bluetooth controllers can take up to two external clocks:
-> > > > an external frequency reference, substituting the main crystal, and a
-> > > > LPO clock at 32.768 kHz substituting the internal LPO clock.
-> > > >
-> > > > In particular, the external LPO clock must be used when the controller
-> > > > does not have NVRAM connected, and the main reference frequency is not
-> > > > the default 20 MHz. This is described in detail in the datasheet.
-> > > >
-> > > > The original "extclk" clock name is ambiguous as to which of these it
-> > > > refers to, and some designs might even require both.
-> > > >
-> > > > This patch deprecates the existing name, and adds "txco" and "lpo".
-> > > >
-> > > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > > > ---
-> > > >  Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 5 ++++-
-> > > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> > > > index 4194ff7e6ee6..2535e54219af 100644
-> > > > --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> > > > +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> > > > @@ -18,7 +18,10 @@ Optional properties:
-> > > >   - shutdown-gpios: GPIO specifier, used to enable the BT module
-> > > >   - device-wakeup-gpios: GPIO specifier, used to wakeup the controller
-> > > >   - host-wakeup-gpios: GPIO specifier, used to wakeup the host processor
-> > > > - - clocks: clock specifier if external clock provided to the controller
-> > > > + - clocks and clock-names: clock specifier if external clocks are provided
-> > > > +   - "txco": external reference clock
-> > > > +   - "extclk": deprecated, replaced by "txco"
-> > > > +   - "lpo": external low power 32.768 kHz clock
-> > > >   - clock-names: should be "extclk"
-> > >
-> > > This line should change?
-> >
-> > Yes. Missed that.
-> >
-> > >
-> > > 'clocks' needs to describe how many clocks and the order of them.
-> > >
-> > > 'clock-names' needs to list the names. Keep them separate.
-> >
-> > I was under the impression that when clock-names was used, the
-> > order of clocks shouldn't matter.
->
-> Generally, no. The order should be defined still.
->
-> > Also, both clocks are optional. The controller can use a standalone
-> > crystal instead of an external TXCO, which would not get described in
-> > the device tree, and/or not use an LPO clock. How would one describe
-> > a device that has an LPO clock input but not a TXCO clock input?
->
-> A crystal would still be a fixed-clock. Does s/w need to know which one it is?
+Am Mittwoch, den 14.11.2018, 16:49 +0100 schrieb Stefan Agner:
+> On 19.10.2018 13:13, Stefan Agner wrote:
+> > Reading the full 4k config space through sysfs leads to an
+> > external abort. Testing on a platform showed that the upper
+> > limit is 512. Limit config space to 512.
+> 
+> Any comment on this patch?
+> 
+> Since other devices use similar quirks, I guess the fix can't be far
+> off?
+> 
+> Maybe restricting to the PCI device ID used in i.MX 6 only is too
+> restrictive, but I guess better restrictive for now?
 
-The datasheet doesn't mention anything s/w related. It does provide
-a CLK_REQ signal that the application can use to determine if the
-TXCO signal is required or not, but then again one can just enable
-it as part of the power sequencing. TXCO is general connected to the
-same pin as an XTAL input, so nothing s/w related there.
+I don't think we need a quirk here, but dw_pcie_rd_own_conf() should
+really check that the config read isn't targeting registers that are
+not implemented in the core.
 
-As for the clock rate, the hardware detects it via some measuring
-mechanism that requires the LPO clock be provided. Or the clock rate
-is provided through NVRAM, or if it's one of the two standard rates,
-using a latched pin. Hence I think if a crystal is used, it doesn't
-need to go into the device tree.
+According to the i.MX6 docs (PCIE_RC memory map) the last implemented
+register is at 0x158.
 
-> Your's is a case where index alone doesn't work and you need
-> clock-names. But still, you should define the order for when both
-> clocks are present so we don't end with both orders for no good
-> reason.
+Regards,
+Lucas
 
-I see. That makes sense.
-
-> > Last, IMHO listing them with name + description, one item per line
-> > is more readable then having the items on one line, then having the
-> > next line list all their respective names. If ordering and number of
-> > items is important, I could add the requirements to the description
-> > of "clocks and clock-names"?
->
-> clocks can just say something like "1 or 2 clocks as defined in clock-names".
-
-OK. I'll rework this.
-
-ChenYu
+> --
+> Stefan
+> 
+> > 
+> > > > Signed-off-by: Stefan Agner <stefan@agner.ch>
+> > ---
+> > I observed this on a Apalis iMX6 which uses the i.MX 6Quad without any
+> > PCIe device connected. It is especially annoying since it breaks by
+> > simply reading a file as root in sysfs (e.g. grepping through sysfs)...
+> > 
+> > I am not very familiar with PCIe, so there might be better/more generic
+> > ways to fix this?
+> > 
+> > # cat /sys/devices/soc0/soc/1ffc000.pcie/pci0000\:00/0000\:00\:00.0/config
+> > [  100.015997] pci_read_config, size 4096
+> > [  100.021433] Unhandled fault: imprecise external abort (0x1406) at 0xb6ea7000
+> > [  100.028985] pgd = 1a90ef4f
+> > [  100.031780] [b6ea7000] *pgd=4a039831
+> > [  100.035475] Internal error: : 1406 [#1] SMP ARM
+> > [  100.040094] Modules linked in:
+> > [  100.043230] CPU: 1 PID: 605 Comm: cat Not tainted 4.19.0-rc8+ #366
+> > [  100.049626] Hardware name: Freescale i.MX6 Quad/DualLite (Device Tree)
+> > [  100.056423] PC is at dw_pcie_read+0x50/0x84
+> > [  100.060790] LR is at dw_pcie_rd_own_conf+0x44/0x48
+> > [  100.065779] pc : [<c05bd600>]    lr : [<c05be248>]    psr: 60080093
+> > [  100.072274] sp : c3f77d40  ip : c3f77d50  fp : c3f77d4c
+> > [  100.077693] r10: 00000000  r9 : 00000004  r8 : c1708908
+> > [  100.083122] r7 : c3f77dc8  r6 : 00000200  r5 : 00000004  r4 : 00000000
+> > [  100.089895] r3 : 00000000  r2 : c3f77dc8  r1 : 00000000  r0 : f09b4200
+> > [  100.096657] Flags: nZCv  IRQs off  FIQs on  Mode SVC_32  ISA ARM 
+> > Segment none
+> > [  100.104152] Control: 10c5387d  Table: 13fb404a  DAC: 00000051
+> > [  100.110114] Process cat (pid: 605, stack limit = 0xcd2180c8)
+> > [  100.115994] Stack: (0xc3f77d40 to 0xc3f78000)
+> > [  100.120533] 7d40: c3f77d6c c3f77d50 c05be248 c05bd5bc eceede28
+> > ecef7800 00000000 00000200
+> > [  100.129025] 7d60: c3f77dbc c3f77d70 c05be2c4 c05be210 c05956dc
+> > 00000200 c3f77e08 c1708908
+> > [  100.137504] 7d80: c17665c4 c05956dc c3f77dbc 00000000 c0d27974
+> > c05be24c c1708908 00000200
+> > [  100.145980] 7da0: c3f77e08 c1708908 ec276000 ec276200 c3f77dec
+> > c3f77dc0 c059570c c05be258
+> > [  100.160586] 7dc0: c3f77dc8 00000000 ffffffff e5e423ab ec5c1800
+> > ec277000 00001000 13d8a000
+> > [  100.175434] 7de0: c3f77e3c c3f77df0 c05a4a5c c05956a8 c019b890
+> > 000003ff 00000001 00000000
+> > [  100.190328] 7e00: 00000000 00000000 00000000 e5e423ab ffffe000
+> > c05a4944 00000000 00000000
+> > [  100.205490] 7e20: 00000000 00000000 00000000 c38f5790 c3f77e6c
+> > c3f77e40 c038022c c05a4950
+> > [  100.220890] 7e40: 00000000 00000000 00001000 c3f77e58 c38f5780
+> > 00001000 c3f77f58 b6ea8000
+> > [  100.236386] 7e60: c3f77eac c3f77e70 c037fae0 c03801d8 00000000
+> > 00000000 c3f77e9c ec276000
+> > [  100.252114] 7e80: c0194a18 c1708908 c037fa28 c3fb83c0 c3f77f58
+> > 00000000 b6ea8000 00020000
+> > [  100.268039] 7ea0: c3f77f24 c3f77eb0 c02efcc4 c037fa34 00000022
+> > 00000000 00000000 00000000
+> > [  100.284170] 7ec0: 00000800 00000000 b6ea7000 c170eec8 00000817
+> > c1708908 c0119574 b6ea7000
+> > [  100.300390] 7ee0: c3f77fb0 00000000 c3f77fac c3f77ef8 c0119ac8
+> > c0119580 c3f77f5c e5e423ab
+> > [  100.316721] 7f00: 00020000 c3fb83c0 b6ea8000 c3f77f58 00000000
+> > b6ea8000 c3f77f54 c3f77f28
+> > [  100.333196] 7f20: c02efe74 c02efc94 c010e5c4 c010cc7c c3fb83c0
+> > c3fb83c0 00000000 00000000
+> > [  100.349704] 7f40: c1708908 b6ea8000 c3f77f94 c3f77f58 c02f0388
+> > c02efdf4 00000000 00000000
+> > [  100.366197] 7f60: c16eedd8 e5e423ab c1708d64 0000006c 7ff00000
+> > 00000000 00000003 c01011e4
+> > [  100.382693] 7f80: c3f76000 00000003 c3f77fa4 c3f77f98 c02f03fc
+> > c02f0344 00000000 c3f77fa8
+> > [  100.399206] 7fa0: c0101000 c02f03f8 0000006c 7ff00000 00000003
+> > b6ea8000 00020000 00000000
+> > [  100.415718] 7fc0: 0000006c 7ff00000 00000000 00000003 00000003
+> > 00000000 00020000 00000000
+> > [  100.432222] 7fe0: 00000003 bef56ab8 b6f53d57 b6ee06c6 80080030
+> > 00000003 00000000 00000000
+> > [  100.448703] Backtrace:
+> > [  100.455228] [<c05bd5b0>] (dw_pcie_read) from [<c05be248>]
+> > (dw_pcie_rd_own_conf+0x44/0x48)
+> > [  100.471541] [<c05be204>] (dw_pcie_rd_own_conf) from [<c05be2c4>]
+> > (dw_pcie_rd_conf+0x78/0x1c8)
+> > [  100.488164]  r7:00000200 r6:00000000 r5:ecef7800 r4:eceede28
+> > [  100.497930] [<c05be24c>] (dw_pcie_rd_conf) from [<c059570c>]
+> > (pci_user_read_config_dword+0x70/0xec)
+> > [  100.515006]  r10:ec276200 r9:ec276000 r8:c1708908 r7:c3f77e08
+> > r6:00000200 r5:c1708908
+> > [  100.530829]  r4:c05be24c
+> > [  100.537271] [<c059569c>] (pci_user_read_config_dword) from
+> > [<c05a4a5c>] (pci_read_config+0x118/0x2cc)
+> > [  100.554299]  r7:13d8a000 r6:00001000 r5:ec277000 r4:ec5c1800
+> > [  100.563911] [<c05a4944>] (pci_read_config) from [<c038022c>]
+> > (sysfs_kf_bin_read+0x60/0xac)
+> > [  100.579880]  r10:c38f5790 r9:00000000 r8:00000000 r7:00000000
+> > r6:00000000 r5:00000000
+> > [  100.595383]  r4:c05a4944
+> > [  100.601650] [<c03801cc>] (sysfs_kf_bin_read) from [<c037fae0>]
+> > (kernfs_fop_read+0xb8/0x200)
+> > [  100.617481]  r7:b6ea8000 r6:c3f77f58 r5:00001000 r4:c38f5780
+> > [  100.626926] [<c037fa28>] (kernfs_fop_read) from [<c02efcc4>]
+> > (__vfs_read+0x3c/0x160)
+> > [  100.642031]  r10:00020000 r9:b6ea8000 r8:00000000 r7:c3f77f58
+> > r6:c3fb83c0 r5:c037fa28
+> > [  100.657201]  r4:c1708908
+> > [  100.663320] [<c02efc88>] (__vfs_read) from [<c02efe74>] (vfs_read+0x8c/0x114)
+> > [  100.674165]  r9:b6ea8000 r8:00000000 r7:c3f77f58 r6:b6ea8000
+> > r5:c3fb83c0 r4:00020000
+> > [  100.689131] [<c02efde8>] (vfs_read) from [<c02f0388>] (ksys_read+0x50/0xb4)
+> > [  100.699876]  r9:b6ea8000 r8:c1708908 r7:00000000 r6:00000000
+> > r5:c3fb83c0 r4:c3fb83c0
+> > [  100.714919] [<c02f0338>] (ksys_read) from [<c02f03fc>] (sys_read+0x10/0x14)
+> > [  100.725650]  r10:00000003 r9:c3f76000 r8:c01011e4 r7:00000003
+> > r6:00000000 r5:7ff00000
+> > [  100.740784]  r4:0000006c
+> > [  100.746897] [<c02f03ec>] (sys_read) from [<c0101000>]
+> > (ret_fast_syscall+0x0/0x28)
+> > [  100.761495] Exception stack(0xc3f77fa8 to 0xc3f77ff0)
+> > [  100.770224] 7fa0:                   0000006c 7ff00000 00000003
+> > b6ea8000 00020000 00000000
+> > [  100.785624] 7fc0: 0000006c 7ff00000 00000000 00000003 00000003
+> > 00000000 00020000 00000000
+> > [  100.801074] 7fe0: 00000003 bef56ab8 b6f53d57 b6ee06c6
+> > [  100.809800] Code: e5821000 e89da800 e5901000 ee073f9a (e5821000)
+> > [  100.819571] ---[ end trace 1be350dbae42cdaf ]---
+> > 
+> > --
+> > Stefan
+> > 
+> >  drivers/pci/quirks.c    | 10 ++++++++++
+> >  include/linux/pci_ids.h |  1 +
+> >  2 files changed, 11 insertions(+)
+> > 
+> > diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> > index 6bc27b7fd452..24d8d1d614e5 100644
+> > --- a/drivers/pci/quirks.c
+> > +++ b/drivers/pci/quirks.c
+> > @@ -471,6 +471,16 @@
+> > > > DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_NETRONOME,	PCI_DEVICE_ID_NETRONOME_NFP600
+> > 
+> > > > > > DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_NETRONOME,	PCI_DEVICE_ID_NETRONOME_NFP5000,	quirk_nfp6000);
+> > 
+> > > > > > DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_NETRONOME,	PCI_DEVICE_ID_NETRONOME_NFP6000_VF,	quirk_nfp6000);
+> >  
+> > +/*
+> > + * This PCIe controller causes external abort if config addresses above 0x200
+> > + * are read.
+> > + */
+> > +static void quirk_dw_imx6(struct pci_dev *dev)
+> > +{
+> > > > +	dev->cfg_size = 0x200;
+> > +}
+> > > > > > +DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_SYNOPSYS,	PCI_DEVICE_ID_SYNOPSYS_IMX6,	quirk_dw_imx6);
+> > +
+> >  /*  On IBM Crocodile ipr SAS adapters, expand BAR to system page size */
+> >  static void quirk_extend_bar_to_page(struct pci_dev *dev)
+> >  {
+> > diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> > index d157983b84cf..cfd43468f983 100644
+> > --- a/include/linux/pci_ids.h
+> > +++ b/include/linux/pci_ids.h
+> > @@ -2354,6 +2354,7 @@
+> > > >  #define PCI_DEVICE_ID_CENATEK_IDE	0x0001
+> >  
+> > > >  #define PCI_VENDOR_ID_SYNOPSYS		0x16c3
+> > > > +#define PCI_DEVICE_ID_SYNOPSYS_IMX6	0xabcd
+> >  
+> > > >  #define PCI_VENDOR_ID_VITESSE		0x1725
+> > > >  #define PCI_DEVICE_ID_VITESSE_VSC7174	0x7174
