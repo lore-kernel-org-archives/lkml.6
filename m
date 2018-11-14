@@ -2,145 +2,79 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2B57C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:51:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23B4DC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:54:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 69DED214F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:51:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ve2C5CHb"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 69DED214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D9C01208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 15:54:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D9C01208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387505AbeKOBzG (ORCPT
+        id S2387456AbeKOB6E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 20:55:06 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56674 "EHLO mail.kernel.org"
+        Wed, 14 Nov 2018 20:58:04 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:50804 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728000AbeKOBzG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 20:55:06 -0500
-Received: from mail-qk1-f177.google.com (mail-qk1-f177.google.com [209.85.222.177])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        id S1727885AbeKOB6E (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 20:58:04 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 4941C2250E;
-        Wed, 14 Nov 2018 15:51:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542210678;
-        bh=VTHr3fAdt5vwARfak4LZXfyZmBjUoFavs+fdfIZIV7g=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=ve2C5CHb3hdZfl9ZwjhW0CZWCTa4UEWi0GF/FB9+0f40jqtrwpIjlZVPGVASq1NWn
-         8JcgogU9rIWBMTk1E31RbZDjNYZKxGy96K8yedl82OfVezDc2aKcrapmdwFJpD11VM
-         zUfOZxmeRDXm+W/AYxM5vrF+XMYoqDFspnOEnJRs=
-Received: by mail-qk1-f177.google.com with SMTP id d19so26545507qkg.5;
-        Wed, 14 Nov 2018 07:51:18 -0800 (PST)
-X-Gm-Message-State: AGRZ1gKjNrvJ+bsSCqoKzRfnT23bKroS+dEo0d+EHV865d8GjDBS5U4G
-        UoK26r/3gAehb6qFW19v2zKI3SktteRUQNKL3Q==
-X-Google-Smtp-Source: AJdET5dmVTn7ADDx8cfyCE/ie6eD7l/DpKIxg//L8J+CaN/aopv7fzZWfz0GtYQIHrKDBgsNJwwNV2U5XlovmjOl5TA=
-X-Received: by 2002:a0c:9e05:: with SMTP id p5mr2342136qve.246.1542210677398;
- Wed, 14 Nov 2018 07:51:17 -0800 (PST)
+        by mx1.redhat.com (Postfix) with ESMTPS id 1E573168F;
+        Wed, 14 Nov 2018 15:54:17 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.43.17.31])
+        by smtp.corp.redhat.com (Postfix) with SMTP id C393B60BF6;
+        Wed, 14 Nov 2018 15:54:14 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+        oleg@redhat.com; Wed, 14 Nov 2018 16:54:16 +0100 (CET)
+Date:   Wed, 14 Nov 2018 16:54:14 +0100
+From:   Oleg Nesterov <oleg@redhat.com>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     Ben Woodard <woodard@redhat.com>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Kees Cook <keescook@chromium.org>,
+        Michal Hocko <mhocko@suse.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] exec: increase BINPRM_BUF_SIZE to 256
+Message-ID: <20181114155413.GC13885@redhat.com>
+References: <20181112160931.GA28463@redhat.com>
+ <20181112160956.GA28472@redhat.com>
+ <20181112155248.4dde2613979f4c176565629e@linux-foundation.org>
+ <20181113165557.GG30990@redhat.com>
+ <20181113124305.73b8ac9e5a2ef9b18d3444b2@linux-foundation.org>
 MIME-Version: 1.0
-References: <20181107101308.7626-1-wens@csie.org> <20181107101308.7626-2-wens@csie.org>
- <5bea0ebe.1c69fb81.e15d7.98e1@mx.google.com> <CAGb2v65PqwKrRdh2_Y48zYnmJa0=hv3Bd4UdvdWvBBMfT2BfSw@mail.gmail.com>
-In-Reply-To: <CAGb2v65PqwKrRdh2_Y48zYnmJa0=hv3Bd4UdvdWvBBMfT2BfSw@mail.gmail.com>
-From:   Rob Herring <robh@kernel.org>
-Date:   Wed, 14 Nov 2018 09:51:05 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJrJHatiYB=Vaakbi1UUGOkqvAkZnZRG=zz5Ae_RzxGgg@mail.gmail.com>
-Message-ID: <CAL_JsqJrJHatiYB=Vaakbi1UUGOkqvAkZnZRG=zz5Ae_RzxGgg@mail.gmail.com>
-Subject: Re: [PATCH 01/15] dt-bindings: net: broadcom-bluetooth: Fix external
- clock names
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        devicetree@vger.kernel.org,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>,
-        linux-sunxi@googlegroups.com,
-        Loic Poulain <loic.poulain@gmail.com>,
-        "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" 
-        <linux-arm-kernel@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113124305.73b8ac9e5a2ef9b18d3444b2@linux-foundation.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Wed, 14 Nov 2018 15:54:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 9:15 PM Chen-Yu Tsai <wens@csie.org> wrote:
+On 11/13, Andrew Morton wrote:
 >
-> On Tue, Nov 13, 2018 at 7:37 AM Rob Herring <robh@kernel.org> wrote:
-> >
-> > On Wed, Nov 07, 2018 at 06:12:54PM +0800, Chen-Yu Tsai wrote:
-> > > The Broadcom Bluetooth controllers can take up to two external clocks:
-> > > an external frequency reference, substituting the main crystal, and a
-> > > LPO clock at 32.768 kHz substituting the internal LPO clock.
-> > >
-> > > In particular, the external LPO clock must be used when the controller
-> > > does not have NVRAM connected, and the main reference frequency is not
-> > > the default 20 MHz. This is described in detail in the datasheet.
-> > >
-> > > The original "extclk" clock name is ambiguous as to which of these it
-> > > refers to, and some designs might even require both.
-> > >
-> > > This patch deprecates the existing name, and adds "txco" and "lpo".
-> > >
-> > > Signed-off-by: Chen-Yu Tsai <wens@csie.org>
-> > > ---
-> > >  Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 5 ++++-
-> > >  1 file changed, 4 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> > > index 4194ff7e6ee6..2535e54219af 100644
-> > > --- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> > > +++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
-> > > @@ -18,7 +18,10 @@ Optional properties:
-> > >   - shutdown-gpios: GPIO specifier, used to enable the BT module
-> > >   - device-wakeup-gpios: GPIO specifier, used to wakeup the controller
-> > >   - host-wakeup-gpios: GPIO specifier, used to wakeup the host processor
-> > > - - clocks: clock specifier if external clock provided to the controller
-> > > + - clocks and clock-names: clock specifier if external clocks are provided
-> > > +   - "txco": external reference clock
-> > > +   - "extclk": deprecated, replaced by "txco"
-> > > +   - "lpo": external low power 32.768 kHz clock
-> > >   - clock-names: should be "extclk"
-> >
-> > This line should change?
+> On Tue, 13 Nov 2018 17:55:58 +0100 Oleg Nesterov <oleg@redhat.com> wrote:
 >
-> Yes. Missed that.
->
+> > > However it would be basically cost-free to increase
+> > > BINPRM_BUF_SIZE up to the point where sizeof(struct linux_binprm) ==
+> > > PAGE_SIZE?
 > >
-> > 'clocks' needs to describe how many clocks and the order of them.
-> >
-> > 'clock-names' needs to list the names. Keep them separate.
+> > I don't think we should take sizeof(struct linux_binprm) into account, the
+> > new members can come at any time and we can never decrease BINPRM_BUF_SIZE.
 >
-> I was under the impression that when clock-names was used, the
-> order of clocks shouldn't matter.
+> My main point is..  why not make BINPRM_BUF_SIZE a lot larger than 256?
 
-Generally, no. The order should be defined still.
+Of course we can make it larger. And of course 256 is just another silly/random
+value. Currently it seems to work, but if we have another bug report we should
+probably rework load_script() to use vmalloc()'ed buffer. Perhaps we should do
+this right now and I am just too lazy.
 
-> Also, both clocks are optional. The controller can use a standalone
-> crystal instead of an external TXCO, which would not get described in
-> the device tree, and/or not use an LPO clock. How would one describe
-> a device that has an LPO clock input but not a TXCO clock input?
+Oleg.
 
-A crystal would still be a fixed-clock. Does s/w need to know which one it is?
-
-Your's is a case where index alone doesn't work and you need
-clock-names. But still, you should define the order for when both
-clocks are present so we don't end with both orders for no good
-reason.
-
-> Last, IMHO listing them with name + description, one item per line
-> is more readable then having the items on one line, then having the
-> next line list all their respective names. If ordering and number of
-> items is important, I could add the requirements to the description
-> of "clocks and clock-names"?
-
-clocks can just say something like "1 or 2 clocks as defined in clock-names".
-
-Rob
