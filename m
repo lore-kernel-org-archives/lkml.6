@@ -2,104 +2,115 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC8E0C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:49:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BD071C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:50:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A078621582
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:49:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A078621582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9015422419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 14:50:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9015422419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733012AbeKOAxF (ORCPT
+        id S1733023AbeKOAxy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 19:53:05 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:38225 "EHLO mail.bootlin.com"
+        Wed, 14 Nov 2018 19:53:54 -0500
+Received: from mga18.intel.com ([134.134.136.126]:51395 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732450AbeKOAxE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 19:53:04 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 2C5712074F; Wed, 14 Nov 2018 15:49:31 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-30-49.w90-88.abo.wanadoo.fr [90.88.15.49])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 0165C20379;
-        Wed, 14 Nov 2018 15:49:30 +0100 (CET)
-Date:   Wed, 14 Nov 2018 15:49:30 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     YueHaibing <yuehaibing@huawei.com>
-Cc:     David Airlie <airlied@linux.ie>, Chen-Yu Tsai <wens@csie.org>,
-        dri-devel@lists.freedesktop.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH -next] drm/sun4i: hdmi: Use PTR_ERR_OR_ZERO in
- sun4i_tmds_create()
-Message-ID: <20181114144930.j26xlro2cke47xza@flea>
-References: <1541558063-100341-1-git-send-email-yuehaibing@huawei.com>
+        id S1727952AbeKOAxx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 19:53:53 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 06:50:21 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,232,1539673200"; 
+   d="scan'208";a="96249221"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by FMSMGA003.fm.intel.com with SMTP; 14 Nov 2018 06:50:18 -0800
+Received: by lahna (sSMTP sendmail emulation); Wed, 14 Nov 2018 16:50:17 +0200
+Date:   Wed, 14 Nov 2018 16:50:17 +0200
+From:   "mika.westerberg@linux.intel.com" <mika.westerberg@linux.intel.com>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Wangzhou (B)" <wangzhou1@hisilicon.com>,
+        Linuxarm <linuxarm@huawei.com>
+Subject: Re: Qemu Guest kernel 4.20-rc1 PCIe hotplug issue
+Message-ID: <20181114145017.GQ2500@lahna.fi.intel.com>
+References: <5FC3163CFD30C246ABAA99954A238FA8387DD344@FRAEML521-MBX.china.huawei.com>
+ <20181113122522.GA2500@lahna.fi.intel.com>
+ <5FC3163CFD30C246ABAA99954A238FA8387DF43F@FRAEML521-MBX.china.huawei.com>
+ <20181113125910.GB2500@lahna.fi.intel.com>
+ <5FC3163CFD30C246ABAA99954A238FA8387DF51F@FRAEML521-MBX.china.huawei.com>
+ <20181113150749.GC2500@lahna.fi.intel.com>
+ <5FC3163CFD30C246ABAA99954A238FA8387DF7B5@FRAEML521-MBX.china.huawei.com>
+ <20181114095225.GN2500@lahna.fi.intel.com>
+ <20181114133014.ge7cy2r2vrrtt6xx@wunner.de>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="bxddqxz2i5jewhca"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1541558063-100341-1-git-send-email-yuehaibing@huawei.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181114133014.ge7cy2r2vrrtt6xx@wunner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Wed, Nov 14, 2018 at 02:30:14PM +0100, Lukas Wunner wrote:
+> On Wed, Nov 14, 2018 at 11:52:25AM +0200, mika.westerberg@linux.intel.com wrote:
+> > On Tue, Nov 13, 2018 at 03:57:47PM +0000, Shameerali Kolothum Thodi wrote:
+> > > > The smb_mb() thing is not that clear (at least to me) because it is used
+> > > > in two places in the driver and both seem to be making write to
+> > > > ctrl->cmd_busy visible to other CPUs but I don't see where we deal with
+> > > > the read part.
+> > > > 
+> > > > I may be missing something, though.
+> > > 
+> > > I think the read part is in wait_event_timeout() which evaluates the
+> > > condition. The wake_up is called from the pciehp_isr().  Since the flag
+> > > is being updated in both process level and interrupt handler context,
+> > > smp_mb() is used. I think the same now applies to  ctrl->slot_ctrl now
+> > > as this being used in process context and interrupt context as well.
+> > 
+> > Right, but that would require to use another read/general barrier in the
+> > pciehp_isr() before we read the variable in case interrupt happens
+> > immediately on another CPU (at least that's my understanding).
+> 
+> In pcie_do_write_cmd(), please just move the
+> 
+> 	ctrl->slot_ctrl = slot_ctrl;
+> 
+> above the call to pcie_capability_write_word().
+> 
+> AFAICS an explicit memory barrier isn't needed here because of the call to
+> pcie_capability_write_word(), which "will [ordinarily] be guaranteed to be
+> fully ordered and uncombined" (Documentation/memory-barriers.txt, section
+> "KERNEL I/O BARRIER EFFECTS").
+> 
+> The memory barrier in pciehp_isr() is also bogus because the following
+> wake_up() implies a memory barrier if a task was woken.  (And if none
+> was woken, who cares.)
+> 
+> 
+> > Since I'm
+> > not too comfortable with all these barriers to be honest I would prefer
+> > reading the slot control register directly in pciehp_isr() :-)
+> 
+> That is an approach I'd strongly object to:  While pciehp itself only
+> signals very few interrupts (making an additional mmio read appear to
+> be negligible), it may share its interrupt with other devices.  On my
+> MacBookPro9,1, a hotplug port of the Thunderbolt controller shares
+> its interrupt line with the Wifi card and SD card reader, and those
+> may signal a huge number of interrupts.  On such a machine an additional
+> mmio read per interrupt becomes a problem.
 
---bxddqxz2i5jewhca
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+OK.
 
-Hi!
-
-On Wed, Nov 07, 2018 at 02:34:23AM +0000, YueHaibing wrote:
-> Use PTR_ERR_OR_ZERO rather than if(IS_ERR(...)) + PTR_ERR
->=20
-> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
-> ---
->  drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c | 5 +----
->  1 file changed, 1 insertion(+), 4 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c b/drivers/gpu/dr=
-m/sun4i/sun4i_hdmi_tmds_clk.c
-> index fb985ba..3d5ee6f 100644
-> --- a/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-> +++ b/drivers/gpu/drm/sun4i/sun4i_hdmi_tmds_clk.c
-> @@ -232,8 +232,5 @@ int sun4i_tmds_create(struct sun4i_hdmi *hdmi)
->  	tmds->div_offset =3D hdmi->variant->tmds_clk_div_offset;
-> =20
->  	hdmi->tmds_clk =3D devm_clk_register(hdmi->dev, &tmds->hw);
-> -	if (IS_ERR(hdmi->tmds_clk))
-> -		return PTR_ERR(hdmi->tmds_clk);
-> -
-> -	return 0;
-> +	return PTR_ERR_OR_ZERO(hdmi->tmds_clk);
-
-While this is technically correct (and I appreciate that this is also
-a matter of taste), I find the former syntax to be clearer and easier
-to extend if needed.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---bxddqxz2i5jewhca
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+w1+gAKCRDj7w1vZxhR
-xRpRAP9rYgWArEpgq7P/wY8Lmo+yxM4RN2CRLzR5vqDQNU+suQD7BRiMKWmV87dD
-b0/KX4wnPXW142jqRW1ztlvBcuRYHgo=
-=D1nG
------END PGP SIGNATURE-----
-
---bxddqxz2i5jewhca--
+I just sent a patch moving ctrl->slot_ctrl assignment to happen before
+pcie_capability_write_word().
