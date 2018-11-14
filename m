@@ -6,45 +6,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C5D64C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F0DAAC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8CACF2252C
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A38C22252B
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:24:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LZWBfp9B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8CACF2252C
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeAJ/msM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A38C22252B
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388393AbeKOI3h (ORCPT
+        id S2388413AbeKOI3j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:29:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36550 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:29:39 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36584 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732685AbeKOI3h (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:29:37 -0500
+        id S1732360AbeKOI3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:29:39 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 6F3202252A;
-        Wed, 14 Nov 2018 22:24:32 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id CE41522527;
+        Wed, 14 Nov 2018 22:24:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234272;
-        bh=1VkuYIl7WVdadopH5vZJRbyXvufH8kNnGzmeaiqKn0A=;
+        s=default; t=1542234274;
+        bh=6TmoVjPS0F7A73e/ZAt02YzjdxfJpinryyjqbLTc7EM=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=LZWBfp9BVhqpaXrjtoDdb9CC0PKmHZJ8WxdDj0Wnb9oyZac6c3M9CEbEawamEqK8X
-         2a8/DgyupoTNFwf5r+q3Q0ZqCssWOBDFxSw+DaLvqpViHgmB3Iyz+QgFZ0jFZvrboD
-         OOYYRlIgpdZRcZHOQABtXsoylKoIBJ/nGBCPI47c=
+        b=UeAJ/msM/bR1m2omhnJ1IZMA4BjRZciCas5zVOp/kMofIW18LFPyJQ/7fCuYKCnzP
+         UeAYP50GzOKOp8CJcLBobubFyzuadrChmg4GSaqcK4lhVKqBLQmrSFTqee1ot56Yni
+         HDkALDP3qUwGZryRohBnKkdlc/C6ImQb9CKJ8UXo=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Lyude Paul <lyude@redhat.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        Sasha Levin <sashal@kernel.org>, amd-gfx@lists.freedesktop.org,
-        dri-devel@lists.freedesktop.org
-Subject: [PATCH AUTOSEL 4.18 33/59] drm/amd/amdgpu/dm: Fix dm_dp_create_fake_mst_encoder()
-Date:   Wed, 14 Nov 2018 17:23:05 -0500
-Message-Id: <20181114222335.99339-33-sashal@kernel.org>
+Cc:     Thomas Richter <tmricht@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.18 34/59] s390/perf: Change CPUM_CF return code in event init function
+Date:   Wed, 14 Nov 2018 17:23:06 -0500
+Message-Id: <20181114222335.99339-34-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -53,91 +52,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Lyude Paul <lyude@redhat.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit 63237f8748bdf46dccf79ef8f98f05e9fe799162 ]
+[ Upstream commit 0bb2ae1b26e1fb7543ec7474cdd374ac4b88c4da ]
 
-[why]
-Removing connector reusage from DM to match the rest of the tree ended
-up revealing an issue that was surprisingly subtle. The original amdgpu
-code for DC that was submitted appears to have left a chunk in
-dm_dp_create_fake_mst_encoder() that tries to find a "master encoder",
-the likes of which isn't actually used or stored anywhere. It does so at
-the wrong time as well by trying to access parts of the drm_connector
-from the encoder init before it's actually been initialized. This
-results in a NULL pointer deref on MST hotplugs:
+The function perf_init_event() creates a new event and
+assignes it to a PMU. This a done in a loop over all existing
+PMUs. For each listed PMU the event init function is called
+and if this function does return any other error than -ENOENT,
+the loop is terminated the creation of the event fails.
 
-[  160.696613] BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-[  160.697234] PGD 0 P4D 0
-[  160.697814] Oops: 0010 [#1] SMP PTI
-[  160.698430] CPU: 2 PID: 64 Comm: kworker/2:1 Kdump: loaded Tainted: G           O      4.19.0Lyude-Test+ #2
-[  160.699020] Hardware name: HP HP ZBook 15 G4/8275, BIOS P70 Ver. 01.22 05/17/2018
-[  160.699672] Workqueue: events_long drm_dp_mst_link_probe_work [drm_kms_helper]
-[  160.700322] RIP: 0010:          (null)
-[  160.700920] Code: Bad RIP value.
-[  160.701541] RSP: 0018:ffffc9000029fc78 EFLAGS: 00010206
-[  160.702183] RAX: 0000000000000000 RBX: ffff8804440ed468 RCX: ffff8804440e9158
-[  160.702778] RDX: 0000000000000000 RSI: ffff8804556c5700 RDI: ffff8804440ed000
-[  160.703408] RBP: ffff880458e21800 R08: 0000000000000002 R09: 000000005fca0a25
-[  160.704002] R10: ffff88045a077a3d R11: ffff88045a077a3c R12: ffff8804440ed000
-[  160.704614] R13: ffff880458e21800 R14: ffff8804440e9000 R15: ffff8804440e9000
-[  160.705260] FS:  0000000000000000(0000) GS:ffff88045f280000(0000) knlGS:0000000000000000
-[  160.705854] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[  160.706478] CR2: ffffffffffffffd6 CR3: 000000000200a001 CR4: 00000000003606e0
-[  160.707124] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-[  160.707724] DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-[  160.708372] Call Trace:
-[  160.708998]  ? dm_dp_add_mst_connector+0xed/0x1d0 [amdgpu]
-[  160.709625]  ? drm_dp_add_port+0x2fa/0x470 [drm_kms_helper]
-[  160.710284]  ? wake_up_q+0x54/0x70
-[  160.710877]  ? __mutex_unlock_slowpath.isra.18+0xb3/0x110
-[  160.711512]  ? drm_dp_dpcd_access+0xe7/0x110 [drm_kms_helper]
-[  160.712161]  ? drm_dp_send_link_address+0x155/0x1e0 [drm_kms_helper]
-[  160.712762]  ? drm_dp_check_and_send_link_address+0xa3/0xd0 [drm_kms_helper]
-[  160.713408]  ? drm_dp_mst_link_probe_work+0x4b/0x80 [drm_kms_helper]
-[  160.714013]  ? process_one_work+0x1a1/0x3a0
-[  160.714667]  ? worker_thread+0x30/0x380
-[  160.715326]  ? wq_update_unbound_numa+0x10/0x10
-[  160.715939]  ? kthread+0x112/0x130
-[  160.716591]  ? kthread_create_worker_on_cpu+0x70/0x70
-[  160.717262]  ? ret_from_fork+0x35/0x40
-[  160.717886] Modules linked in: amdgpu(O) vfat fat snd_hda_codec_generic joydev i915 chash gpu_sched ttm i2c_algo_bit drm_kms_helper snd_hda_codec_hdmi hp_wmi syscopyarea iTCO_wdt sysfillrect sparse_keymap sysimgblt fb_sys_fops snd_hda_intel usbhid wmi_bmof drm snd_hda_codec btusb snd_hda_core intel_rapl btrtl x86_pkg_temp_thermal btbcm btintel coretemp snd_pcm crc32_pclmul bluetooth psmouse snd_timer snd pcspkr i2c_i801 mei_me i2c_core soundcore mei tpm_tis wmi tpm_tis_core hp_accel ecdh_generic lis3lv02d tpm video rfkill acpi_pad input_polldev hp_wireless pcc_cpufreq crc32c_intel serio_raw tg3 xhci_pci xhci_hcd [last unloaded: amdgpu]
-[  160.720141] CR2: 0000000000000000
+If the event is invalid, return -ENOENT to try other PMUs.
 
-Somehow the connector reusage DM was using for MST connectors managed to
-paper over this issue entirely; hence why this was never caught until
-now.
-
-[how]
-Since this code isn't used anywhere and seems useless anyway, we can
-just drop it entirely. This appears to fix the issue on my HP ZBook with
-an AMD WX4150.
-
-Signed-off-by: Lyude Paul <lyude@redhat.com>
-Reviewed-by: Harry Wentland <harry.wentland@amd.com>
-Signed-off-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 5 -----
- 1 file changed, 5 deletions(-)
+ arch/s390/kernel/perf_cpum_cf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-index ace9ad578ca0..4a748c72b534 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c
-@@ -295,12 +295,7 @@ dm_dp_create_fake_mst_encoder(struct amdgpu_dm_connector *connector)
- 	struct amdgpu_device *adev = dev->dev_private;
- 	struct amdgpu_encoder *amdgpu_encoder;
- 	struct drm_encoder *encoder;
--	const struct drm_connector_helper_funcs *connector_funcs =
--		connector->base.helper_private;
--	struct drm_encoder *enc_master =
--		connector_funcs->best_encoder(&connector->base);
+diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+index cc085e2d2ce9..74091fd3101e 100644
+--- a/arch/s390/kernel/perf_cpum_cf.c
++++ b/arch/s390/kernel/perf_cpum_cf.c
+@@ -373,7 +373,7 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 		return -ENOENT;
  
--	DRM_DEBUG_KMS("enc master is %p\n", enc_master);
- 	amdgpu_encoder = kzalloc(sizeof(*amdgpu_encoder), GFP_KERNEL);
- 	if (!amdgpu_encoder)
- 		return NULL;
+ 	if (ev > PERF_CPUM_CF_MAX_CTR)
+-		return -EINVAL;
++		return -ENOENT;
+ 
+ 	/* Obtain the counter set to which the specified counter belongs */
+ 	set = get_counter_set(ev);
 -- 
 2.17.1
 
