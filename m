@@ -7,44 +7,47 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3F83C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:23:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F16EFC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:23:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 71D1A2251D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:23:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AB3ED2251D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:23:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="pFD8fV2Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 71D1A2251D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="QTDXp+qz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB3ED2251D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387886AbeKOI2s (ORCPT
+        id S2387945AbeKOI26 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:28:48 -0500
-Received: from mail.kernel.org ([198.145.29.99]:35786 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:28:58 -0500
+Received: from mail.kernel.org ([198.145.29.99]:35856 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387839AbeKOI2s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:28:48 -0500
+        id S1726554AbeKOI25 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:28:57 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 3351D2251D;
-        Wed, 14 Nov 2018 22:23:44 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 61C452251C;
+        Wed, 14 Nov 2018 22:23:52 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234224;
-        bh=sAy9HCmOtJcj0jJB1bko3QTmA8w1Ib6MJJ5GOGm2DS0=;
+        s=default; t=1542234232;
+        bh=MkQnv5Bgk/SpTgY0nQ3IRemhlkB8mD3tZZ67qw+DL00=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=pFD8fV2ZyNJdsskSb1mgufH4+0BLohp+GMwLgtZuw/SU+7DVpRfA+XIDjBHxsObAC
-         /ZBoduPoBXhIaPmKWAZlixtkf+4fTp8qTZAKds+LZTW/kaKp6EWp+H983910CHjV0a
-         /nY5uzhVQAG2kLqxxlsflL0IJexXjOUYVTtqoJpo=
+        b=QTDXp+qzQtTfNnLmZFKgUBum3Mi/BzhKCpSuzWxhQ5LG9Ufyzi7uUFpaMGKX8F/1p
+         YdYR7rEoTuiAYm6fpOVSms2oL/rtdWSGNpSEFKBfr/TG6m1/S9r0FtHEdT8LDVSmgi
+         kNUXnL1jGrUFiv1NtFwwcT+ZGygBOpOSLWIxyshY=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Benjamin Tissoires <benjamin.tissoires@redhat.com>,
-        Jiri Kosina <jkosina@suse.cz>, Sasha Levin <sashal@kernel.org>,
-        linux-input@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.18 03/59] Revert "HID: add NOGET quirk for Eaton Ellipse MAX UPS"
-Date:   Wed, 14 Nov 2018 17:22:35 -0500
-Message-Id: <20181114222335.99339-3-sashal@kernel.org>
+Cc:     Stefano Brivio <sbrivio@redhat.com>,
+        Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
+        Pablo Neira Ayuso <pablo@netfilter.org>,
+        Sasha Levin <sashal@kernel.org>,
+        netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+        netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.18 05/59] netfilter: ipset: list:set: Decrease refcount synchronously on deletion and replace
+Date:   Wed, 14 Nov 2018 17:22:37 -0500
+Message-Id: <20181114222335.99339-5-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222335.99339-1-sashal@kernel.org>
 References: <20181114222335.99339-1-sashal@kernel.org>
@@ -53,43 +56,190 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+From: Stefano Brivio <sbrivio@redhat.com>
 
-[ Upstream commit 6298944d8f57f40ee2a3e6dcea1253e78d7a9969 ]
+[ Upstream commit 439cd39ea136d2c026805264d58a91f36b6b64ca ]
 
-This reverts commit 67ddbb3e6568fb1820b2cc45b00c50702b114801.
+Commit 45040978c899 ("netfilter: ipset: Fix set:list type crash
+when flush/dump set in parallel") postponed decreasing set
+reference counters to the RCU callback.
 
-67ddbb3e656 ("HID: add NOGET quirk for Eaton Ellipse MAX UPS") was reported
-by Laurent Bigonville. It turns out that a later model Laurent got
-doesn't need the quirk after all.
+An 'ipset del' command can terminate before the RCU grace period
+is elapsed, and if sets are listed before then, the reference
+counter shown in userspace will be wrong:
 
-My take is that Eaton upgraded their firmwares, so we don't need it
-anymore.
+ # ipset create h hash:ip; ipset create l list:set; ipset add l
+ # ipset del l h; ipset list h
+ Name: h
+ Type: hash:ip
+ Revision: 4
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 88
+ References: 1
+ Number of entries: 0
+ Members:
+ # sleep 1; ipset list h
+ Name: h
+ Type: hash:ip
+ Revision: 4
+ Header: family inet hashsize 1024 maxelem 65536
+ Size in memory: 88
+ References: 0
+ Number of entries: 0
+ Members:
 
-The old model was from 2012, so better make sure the new line works
-properly by removing the quirk. This allows upower to actually fetch
-the current data.
+Fix this by making the reference count update synchronous again.
 
-Reported-by: Laurent Bigonville <bigon@bigon.be>
-Signed-off-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.cz>
+As a result, when sets are listed, ip_set_name_byindex() might
+now fetch a set whose reference count is already zero. Instead
+of relying on the reference count to protect against concurrent
+set renaming, grab ip_set_ref_lock as reader and copy the name,
+while holding the same lock in ip_set_rename() as writer
+instead.
+
+Reported-by: Li Shuang <shuali@redhat.com>
+Fixes: 45040978c899 ("netfilter: ipset: Fix set:list type crash when flush/dump set in parallel")
+Signed-off-by: Stefano Brivio <sbrivio@redhat.com>
+Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/hid/hid-quirks.c | 1 -
- 1 file changed, 1 deletion(-)
+ include/linux/netfilter/ipset/ip_set.h |  2 +-
+ net/netfilter/ipset/ip_set_core.c      | 23 +++++++++++------------
+ net/netfilter/ipset/ip_set_list_set.c  | 17 +++++++++++------
+ 3 files changed, 23 insertions(+), 19 deletions(-)
 
-diff --git a/drivers/hid/hid-quirks.c b/drivers/hid/hid-quirks.c
-index 249d49b6b16c..caafbea94882 100644
---- a/drivers/hid/hid-quirks.c
-+++ b/drivers/hid/hid-quirks.c
-@@ -106,7 +106,6 @@ static const struct hid_device_id hid_quirks[] = {
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_C05A), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_LOGITECH, USB_DEVICE_ID_LOGITECH_MOUSE_C06A), HID_QUIRK_ALWAYS_POLL },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MCS, USB_DEVICE_ID_MCS_GAMEPADBLOCK), HID_QUIRK_MULTI_INPUT },
--	{ HID_USB_DEVICE(USB_VENDOR_ID_MGE, USB_DEVICE_ID_MGE_UPS), HID_QUIRK_NOGET },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_POWER_COVER), HID_QUIRK_NO_INIT_REPORTS },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_SURFACE_PRO_2), HID_QUIRK_NO_INIT_REPORTS },
- 	{ HID_USB_DEVICE(USB_VENDOR_ID_MICROSOFT, USB_DEVICE_ID_MS_TOUCH_COVER_2), HID_QUIRK_NO_INIT_REPORTS },
+diff --git a/include/linux/netfilter/ipset/ip_set.h b/include/linux/netfilter/ipset/ip_set.h
+index 34fc80f3eb90..1d100efe74ec 100644
+--- a/include/linux/netfilter/ipset/ip_set.h
++++ b/include/linux/netfilter/ipset/ip_set.h
+@@ -314,7 +314,7 @@ enum {
+ extern ip_set_id_t ip_set_get_byname(struct net *net,
+ 				     const char *name, struct ip_set **set);
+ extern void ip_set_put_byindex(struct net *net, ip_set_id_t index);
+-extern const char *ip_set_name_byindex(struct net *net, ip_set_id_t index);
++extern void ip_set_name_byindex(struct net *net, ip_set_id_t index, char *name);
+ extern ip_set_id_t ip_set_nfnl_get_byindex(struct net *net, ip_set_id_t index);
+ extern void ip_set_nfnl_put(struct net *net, ip_set_id_t index);
+ 
+diff --git a/net/netfilter/ipset/ip_set_core.c b/net/netfilter/ipset/ip_set_core.c
+index bc4bd247bb7d..fa15a831aeee 100644
+--- a/net/netfilter/ipset/ip_set_core.c
++++ b/net/netfilter/ipset/ip_set_core.c
+@@ -693,21 +693,20 @@ ip_set_put_byindex(struct net *net, ip_set_id_t index)
+ EXPORT_SYMBOL_GPL(ip_set_put_byindex);
+ 
+ /* Get the name of a set behind a set index.
+- * We assume the set is referenced, so it does exist and
+- * can't be destroyed. The set cannot be renamed due to
+- * the referencing either.
+- *
++ * Set itself is protected by RCU, but its name isn't: to protect against
++ * renaming, grab ip_set_ref_lock as reader (see ip_set_rename()) and copy the
++ * name.
+  */
+-const char *
+-ip_set_name_byindex(struct net *net, ip_set_id_t index)
++void
++ip_set_name_byindex(struct net *net, ip_set_id_t index, char *name)
+ {
+-	const struct ip_set *set = ip_set_rcu_get(net, index);
++	struct ip_set *set = ip_set_rcu_get(net, index);
+ 
+ 	BUG_ON(!set);
+-	BUG_ON(set->ref == 0);
+ 
+-	/* Referenced, so it's safe */
+-	return set->name;
++	read_lock_bh(&ip_set_ref_lock);
++	strncpy(name, set->name, IPSET_MAXNAMELEN);
++	read_unlock_bh(&ip_set_ref_lock);
+ }
+ EXPORT_SYMBOL_GPL(ip_set_name_byindex);
+ 
+@@ -1153,7 +1152,7 @@ static int ip_set_rename(struct net *net, struct sock *ctnl,
+ 	if (!set)
+ 		return -ENOENT;
+ 
+-	read_lock_bh(&ip_set_ref_lock);
++	write_lock_bh(&ip_set_ref_lock);
+ 	if (set->ref != 0) {
+ 		ret = -IPSET_ERR_REFERENCED;
+ 		goto out;
+@@ -1170,7 +1169,7 @@ static int ip_set_rename(struct net *net, struct sock *ctnl,
+ 	strncpy(set->name, name2, IPSET_MAXNAMELEN);
+ 
+ out:
+-	read_unlock_bh(&ip_set_ref_lock);
++	write_unlock_bh(&ip_set_ref_lock);
+ 	return ret;
+ }
+ 
+diff --git a/net/netfilter/ipset/ip_set_list_set.c b/net/netfilter/ipset/ip_set_list_set.c
+index 072a658fde04..4eef55da0878 100644
+--- a/net/netfilter/ipset/ip_set_list_set.c
++++ b/net/netfilter/ipset/ip_set_list_set.c
+@@ -148,9 +148,7 @@ __list_set_del_rcu(struct rcu_head * rcu)
+ {
+ 	struct set_elem *e = container_of(rcu, struct set_elem, rcu);
+ 	struct ip_set *set = e->set;
+-	struct list_set *map = set->data;
+ 
+-	ip_set_put_byindex(map->net, e->id);
+ 	ip_set_ext_destroy(set, e);
+ 	kfree(e);
+ }
+@@ -158,15 +156,21 @@ __list_set_del_rcu(struct rcu_head * rcu)
+ static inline void
+ list_set_del(struct ip_set *set, struct set_elem *e)
+ {
++	struct list_set *map = set->data;
++
+ 	set->elements--;
+ 	list_del_rcu(&e->list);
++	ip_set_put_byindex(map->net, e->id);
+ 	call_rcu(&e->rcu, __list_set_del_rcu);
+ }
+ 
+ static inline void
+-list_set_replace(struct set_elem *e, struct set_elem *old)
++list_set_replace(struct ip_set *set, struct set_elem *e, struct set_elem *old)
+ {
++	struct list_set *map = set->data;
++
+ 	list_replace_rcu(&old->list, &e->list);
++	ip_set_put_byindex(map->net, old->id);
+ 	call_rcu(&old->rcu, __list_set_del_rcu);
+ }
+ 
+@@ -298,7 +302,7 @@ list_set_uadd(struct ip_set *set, void *value, const struct ip_set_ext *ext,
+ 	INIT_LIST_HEAD(&e->list);
+ 	list_set_init_extensions(set, ext, e);
+ 	if (n)
+-		list_set_replace(e, n);
++		list_set_replace(set, e, n);
+ 	else if (next)
+ 		list_add_tail_rcu(&e->list, &next->list);
+ 	else if (prev)
+@@ -486,6 +490,7 @@ list_set_list(const struct ip_set *set,
+ 	const struct list_set *map = set->data;
+ 	struct nlattr *atd, *nested;
+ 	u32 i = 0, first = cb->args[IPSET_CB_ARG0];
++	char name[IPSET_MAXNAMELEN];
+ 	struct set_elem *e;
+ 	int ret = 0;
+ 
+@@ -504,8 +509,8 @@ list_set_list(const struct ip_set *set,
+ 		nested = ipset_nest_start(skb, IPSET_ATTR_DATA);
+ 		if (!nested)
+ 			goto nla_put_failure;
+-		if (nla_put_string(skb, IPSET_ATTR_NAME,
+-				   ip_set_name_byindex(map->net, e->id)))
++		ip_set_name_byindex(map->net, e->id, name);
++		if (nla_put_string(skb, IPSET_ATTR_NAME, name))
+ 			goto nla_put_failure;
+ 		if (ip_set_put_extensions(skb, set, e, true))
+ 			goto nla_put_failure;
 -- 
 2.17.1
 
