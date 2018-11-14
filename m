@@ -7,44 +7,45 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EFD31C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 77B59C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:32:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6F5D2175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:32:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3F2DD208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:32:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="OgO0aRdP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6F5D2175B
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jMQ7xW3p"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F2DD208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388926AbeKOIan (ORCPT
+        id S2389050AbeKOIhl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:30:43 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37832 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:37:41 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37842 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388904AbeKOIam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1726574AbeKOIam (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 03:30:42 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id BE87C22544;
-        Wed, 14 Nov 2018 22:25:37 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 45AA122545;
+        Wed, 14 Nov 2018 22:25:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234337;
-        bh=0u9/r7qgRR8NRsumUF4w6vwLt7EM/KRy+ZdQAT/mwLQ=;
+        s=default; t=1542234338;
+        bh=sjvZJ7vcajL9Glm+yd/ngax3sB5ZysW//iWeCdwgz0w=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=OgO0aRdPqgQnd8sooZiSKeoBCoJyrq5EHf/JGG7OR7wv9+Utav7RYYWoHihzxJY61
-         kG2/kThMkTDH6Xs66yb9BGyBM8/K1TrwUkxJ0I1NsURR66C09vb0meuvMa2yl9CV91
-         zBBVQDmqxe3Iet9avu5JwVROrGNXKlKaUwgRH3ZI=
+        b=jMQ7xW3p+/o617J6RH9Br3aTQlw7Hdmmpxo7+xWz/z5Suo/u3z46W9ndEfrLN9SOB
+         ttm4M4NiqOKILF27O4G7ryLvBX0l+a40ebjn8yyMLui6T2lAKzQjMv7PVNgFekEruQ
+         xH6jgUkl45SqpqcGUwtNgdaNaIY9bWn+6CYQkwCw=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Julian Wiedmann <jwi@linux.ibm.com>,
+Cc:     Shalom Toledo <shalomt@mellanox.com>,
+        Ido Schimmel <idosch@mellanox.com>,
         "David S . Miller" <davem@davemloft.net>,
-        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 10/27] s390/qeth: fix HiperSockets sniffer
-Date:   Wed, 14 Nov 2018 17:24:59 -0500
-Message-Id: <20181114222520.99926-10-sashal@kernel.org>
+        Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 11/27] mlxsw: spectrum: Fix IP2ME CPU policer configuration
+Date:   Wed, 14 Nov 2018 17:25:00 -0500
+Message-Id: <20181114222520.99926-11-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222520.99926-1-sashal@kernel.org>
 References: <20181114222520.99926-1-sashal@kernel.org>
@@ -53,70 +54,38 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Julian Wiedmann <jwi@linux.ibm.com>
+From: Shalom Toledo <shalomt@mellanox.com>
 
-[ Upstream commit bd74a7f9cc033cf4d405788f80292268987dc0c5 ]
+[ Upstream commit 96801552f846460fe9ac10f1b189602992f004e1 ]
 
-Sniffing mode for L3 HiperSockets requires that no IP addresses are
-registered with the HW. The preferred way to achieve this is for
-userspace to delete all the IPs on the interface. But qeth is expected
-to also tolerate a configuration where that is not the case, by skipping
-the IP registration when in sniffer mode.
-Since commit 5f78e29ceebf ("qeth: optimize IP handling in rx_mode callback")
-reworked the IP registration logic in the L3 subdriver, this no longer
-works. When the qeth device is set online, qeth_l3_recover_ip() now
-unconditionally registers all unicast addresses from our internal
-IP table.
+The CPU policer used to police packets being trapped via a local route
+(IP2ME) was incorrectly configured to police based on bytes per second
+instead of packets per second.
 
-While we could fix this particular problem by skipping
-qeth_l3_recover_ip() on a sniffer device, the more future-proof change
-is to skip the IP address registration at the lowest level. This way we
-a) catch any future code path that attempts to register an IP address
-   without considering the sniffer scenario, and
-b) continue to build up our internal IP table, so that if sniffer mode
-   is switched off later we can operate just like normal.
+Change the policer to police based on packets per second and avoid
+packet loss under certain circumstances.
 
-Fixes: 5f78e29ceebf ("qeth: optimize IP handling in rx_mode callback")
-Signed-off-by: Julian Wiedmann <jwi@linux.ibm.com>
+Fixes: 9148e7cf73ce ("mlxsw: spectrum: Add policers for trap groups")
+Signed-off-by: Shalom Toledo <shalomt@mellanox.com>
+Signed-off-by: Ido Schimmel <idosch@mellanox.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/s390/net/qeth_l3_main.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/mellanox/mlxsw/spectrum.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-diff --git a/drivers/s390/net/qeth_l3_main.c b/drivers/s390/net/qeth_l3_main.c
-index cd73172bff47..a19f2dc69e8a 100644
---- a/drivers/s390/net/qeth_l3_main.c
-+++ b/drivers/s390/net/qeth_l3_main.c
-@@ -358,9 +358,6 @@ static void qeth_l3_clear_ip_htable(struct qeth_card *card, int recover)
- 
- 	QETH_CARD_TEXT(card, 4, "clearip");
- 
--	if (recover && card->options.sniffer)
--		return;
--
- 	spin_lock_bh(&card->ip_lock);
- 
- 	hash_for_each_safe(card->ip_htable, i, tmp, addr, hnode) {
-@@ -818,6 +815,8 @@ static int qeth_l3_register_addr_entry(struct qeth_card *card,
- 	int rc = 0;
- 	int cnt = 3;
- 
-+	if (card->options.sniffer)
-+		return 0;
- 
- 	if (addr->proto == QETH_PROT_IPV4) {
- 		QETH_CARD_TEXT(card, 2, "setaddr4");
-@@ -853,6 +852,9 @@ static int qeth_l3_deregister_addr_entry(struct qeth_card *card,
- {
- 	int rc = 0;
- 
-+	if (card->options.sniffer)
-+		return 0;
-+
- 	if (addr->proto == QETH_PROT_IPV4) {
- 		QETH_CARD_TEXT(card, 2, "deladdr4");
- 		QETH_CARD_HEX(card, 3, &addr->u.a4.addr, sizeof(int));
+diff --git a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+index 8b48338b4a70..18bb6798937b 100644
+--- a/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
++++ b/drivers/net/ethernet/mellanox/mlxsw/spectrum.c
+@@ -3471,7 +3471,6 @@ static int mlxsw_sp_cpu_policers_set(struct mlxsw_core *mlxsw_core)
+ 			burst_size = 7;
+ 			break;
+ 		case MLXSW_REG_HTGT_TRAP_GROUP_SP_IP2ME:
+-			is_bytes = true;
+ 			rate = 4 * 1024;
+ 			burst_size = 4;
+ 			break;
 -- 
 2.17.1
 
