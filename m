@@ -2,123 +2,182 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EC514C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:48:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D6F4C43610
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:49:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD0F821780
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:48:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD0F821780
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
+	by mail.kernel.org (Postfix) with ESMTP id 0DEB1223DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 07:49:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DEB1223DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732101AbeKNRu1 convert rfc822-to-8bit (ORCPT
+        id S1732135AbeKNRvb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 12:50:27 -0500
-Received: from coyote.holtmann.net ([212.227.132.17]:33531 "EHLO
-        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727833AbeKNRu0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 12:50:26 -0500
-Received: from marcel-macbook.fritz.box (p4FF9F655.dip0.t-ipconnect.de [79.249.246.85])
-        by mail.holtmann.org (Postfix) with ESMTPSA id 77954CEEAF;
-        Wed, 14 Nov 2018 08:55:50 +0100 (CET)
-Content-Type: text/plain;
-        charset=utf-8
-Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
-Subject: Re: [PATCH v1 3/4] Bluetooth: hci_qca: clear HCI_QUIRK_RESET_ON_CLOSE
- flag
-From:   Marcel Holtmann <marcel@holtmann.org>
-In-Reply-To: <3c9684ec5fcc9f5d99be7e9b2e705514@codeaurora.org>
-Date:   Wed, 14 Nov 2018 08:48:19 +0100
-Cc:     Johan Hedberg <johan.hedberg@gmail.com>,
-        Matthias Kaehlcke <mka@chromium.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        linux-bluetooth@vger.kernel.org, hemantg@codeaurora.org,
-        linux-arm-msm@vger.kernel.org
-Content-Transfer-Encoding: 8BIT
-Message-Id: <FD7AE55A-D7AF-4C90-9D01-2DC197A97550@holtmann.org>
-References: <20181106120528.30342-1-bgodavar@codeaurora.org>
- <20181106120528.30342-4-bgodavar@codeaurora.org>
- <462C4F58-E6E2-4B20-B074-72DDFA6D7364@holtmann.org>
- <170e0419929840109d349b5df5e38364@codeaurora.org>
- <0CE81F0B-B122-4793-817F-F0F4738C44E0@holtmann.org>
- <c4ced688b33ad82b61a705908393a0a6@codeaurora.org>
- <3c9684ec5fcc9f5d99be7e9b2e705514@codeaurora.org>
-To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
-X-Mailer: Apple Mail (2.3445.101.1)
+        Wed, 14 Nov 2018 12:51:31 -0500
+Received: from mx2.suse.de ([195.135.220.15]:47858 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727375AbeKNRvb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 12:51:31 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 94B85AC38;
+        Wed, 14 Nov 2018 07:49:23 +0000 (UTC)
+Subject: Re: multipath-tools: add ANA support for NVMe device
+To:     Mike Snitzer <snitzer@redhat.com>,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, hch@lst.de, axboe@kernel.dk
+Cc:     Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
+        xose.vazquez@gmail.com, linux-nvme@lists.infradead.org,
+        chengjike.cheng@huawei.com, shenhong09@huawei.com,
+        dm-devel@redhat.com, wangzhoumengjian@huawei.com,
+        christophe.varoqui@opensvc.com, bmarzins@redhat.com,
+        sschremm@netapp.com, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <1541657381-7452-1-git-send-email-lijie34@huawei.com>
+ <2691abf6733f791fb16b86d96446440e4aaff99f.camel@suse.com>
+ <20181112215323.GA7983@redhat.com>
+ <20181113161838.GC9827@localhost.localdomain>
+ <20181113180008.GA12513@redhat.com> <20181114053837.GA15086@redhat.com>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
+Date:   Wed, 14 Nov 2018 08:49:23 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181114053837.GA15086@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Balakrishna,
-
->>>>>> During hci down we are sending reset command to chip, which
->>>>>> is not required for wcn3990, as hdev->shutdown() will turn off the
->>>>>> regulators.
->>>>>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
->>>>>> ---
->>>>>> drivers/bluetooth/hci_qca.c | 1 +
->>>>>> 1 file changed, 1 insertion(+)
->>>>>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
->>>>>> index 8301663f0004..97b57e0f4725 100644
->>>>>> --- a/drivers/bluetooth/hci_qca.c
->>>>>> +++ b/drivers/bluetooth/hci_qca.c
->>>>>> @@ -1190,6 +1190,7 @@ static int qca_setup(struct hci_uart *hu)
->>>>>> 		 */
->>>>>> 		set_bit(HCI_QUIRK_NON_PERSISTENT_SETUP, &hdev->quirks);
->>>>>> 		set_bit(HCI_QUIRK_USE_BDADDR_PROPERTY, &hdev->quirks);
->>>>>> +		clear_bit(HCI_QUIRK_RESET_ON_CLOSE, &hdev->quirks);
->>>>>> 		hu->hdev->shutdown = qca_power_off;
->>>>>> 		ret = qca_wcn3990_init(hu);
->>>>>> 		if (ret)
->>>>> I am pretty certain that you didn’t want this quirk:
->>>>>       /* When this quirk is set, the HCI Reset command is send when
->>>>>        * closing the transport instead of when opening it.
->>>>> This quirk is for Bluetooth 1.0b devices where the HCI_Reset behavior
->>>>> was not clear or for devices that actually misbehave with the initial
->>>>> HCI_Reset.
->>>>> In addition, you commit message is totally misleading. That is not
->>>>> what is happening with this quirk.
->>>>> Regards
->>>>> Marcel
->>>> My intention was reset command is not required when we do an hci down.
->>>> this is because of hdev->shutdown will turn off the regulators.
->>>> It is like turning off the chip. sending reset command after turning off the chip is not required.
->>>> I understand the usage of the quirk, will update the commit text.
->>> you are papering over the issue. Actually
->>> hci_serdev.c:hci_uart_register_device() is the culprit with the legacy
->>> code copied over from hci_ldisc.c:hci_uart_register_dev(). I think
->>> there is no point doing all this legacy line discipline quirk handling
->>> until it is really needed. The serdev drivers are all for recent
->>> hardware.
->>> That said, having moved over to a btuart.c approach and killed the
->>> whole hci_serdev.c thing would have been a lot better here. You will
->>> keep running in weird situations where 18 year old code keeps
->>> surprising you.
->> [Bala]: even i feel the same. they are lot such kind of HACK's we need
->> to do with current arch.
->>        when can we expect btuart.c merged to bt-next. i think having
->> btuart will helps us to have the control of
->>        vendor porto's call's like in btusb.c
->>> Regards
->>> Marcel
+On 11/14/18 6:38 AM, Mike Snitzer wrote:
+> On Tue, Nov 13 2018 at  1:00pm -0500,
+> Mike Snitzer <snitzer@redhat.com> wrote:
 > 
-> I need some clarification, do you expect some thing like this https://github.com/torvalds/linux/blob/master/drivers/bluetooth/btmtkuart.c for Qualcomm BT chip too.
-> it looks it is completely avoided hci_serdev.c interface.
+>> On Tue, Nov 13 2018 at 11:18am -0500,
+>> Keith Busch <keith.busch@intel.com> wrote:
+>>
+>>> On Mon, Nov 12, 2018 at 04:53:23PM -0500, Mike Snitzer wrote:
+>>>> On Mon, Nov 12 2018 at 11:23am -0500,
+>>>> Martin Wilck <mwilck@suse.com> wrote:
+>>>>
+>>>>> Hello Lijie,
+>>>>>
+>>>>> On Thu, 2018-11-08 at 14:09 +0800, lijie wrote:
+>>>>>> Add support for Asynchronous Namespace Access as specified in NVMe
+>>>>>> 1.3
+>>>>>> TP 4004. The states are updated through reading the ANA log page.
+>>>>>>
+>>>>>> By default, the native nvme multipath takes over the nvme device.
+>>>>>> We can pass a false to the parameter 'multipath' of the nvme-core.ko
+>>>>>> module,when we want to use multipath-tools.
+>>>>>
+>>>>> Thank you for the patch. It looks quite good to me. I've tested it with
+>>>>> a Linux target and found no problems so far.
+>>>>>
+>>>>> I have a few questions and comments inline below.
+>>>>>
+>>>>> I suggest you also have a look at detect_prio(); it seems to make sense
+>>>>> to use the ana prioritizer for NVMe paths automatically if ANA is
+>>>>> supported (with your patch, "detect_prio no" and "prio ana" have to be
+>>>>> configured explicitly). But that can be done in a later patch.
+>>>>
+>>>> I (and others) think it makes sense to at least triple check with the
+>>>> NVMe developers (now cc'd) to see if we could get agreement on the nvme
+>>>> driver providing the ANA state via sysfs (when modparam
+>>>> nvme_core.multipath=N is set), like Hannes proposed here:
+>>>> http://lists.infradead.org/pipermail/linux-nvme/2018-November/020765.html
+>>>>
+>>>> Then the userspace multipath-tools ANA support could just read sysfs
+>>>> rather than reinvent harvesting the ANA state via ioctl.
+>>>
+>>> I'd prefer not duplicating the log page parsing. Maybe nvme's shouldn't
+>>> even be tied to CONFIG_NVME_MULTIPATH so that the 'multipath' param
+>>> isn't even an issue.
+>>
+>> I like your instincts, we just need to take them a bit further.
+>>
+>> Splitting out the kernel's ANA log page parsing won't buy us much given
+>> it is userspace (multipath-tools) that needs to consume it.  The less
+>> work userspace needs to do (because kernel has already done it) the
+>> better.
+>>
+>> If the NVMe driver is made to always track and export the ANA state via
+>> sysfs [1] we'd avoid userspace parsing duplication "for free".  This
+>> should occur regardless of what layer is reacting to the ANA state
+>> changes (be it NVMe's native multipathing or multipath-tools).
+>>
+>> ANA and NVMe multipathing really are disjoint, making them tightly
+>> coupled only serves to force NVMe driver provided multipathing _or_
+>> userspace ANA state tracking duplication that really isn't ideal [2].
+>>
+>> We need a reasoned answer to the primary question of whether the NVMe
+>> maintainers are willing to cooperate by providing this basic ANA sysfs
+>> export even if nvme_core.multipath=N [1].
+>>
+>> Christoph said "No" [3], but offered little _real_ justification for why
+>> this isn't the right thing for NVMe in general.
+> ...
+>> [1]: http://lists.infradead.org/pipermail/linux-nvme/2018-November/020765.html
+>> [2]: https://www.redhat.com/archives/dm-devel/2018-November/msg00072.html
+> ...
+> 
+> I knew there had to be a pretty tight coupling between the NVMe driver's
+> native multipathing and ANA support... and that the simplicity of
+> Hannes' patch [1] was too good to be true.
+> 
+> The real justification for not making Hannes' change is it'd effectively
+> be useless without first splitting out the ANA handling done during NVMe
+> request completion (NVME_SC_ANA_* cases in nvme_failover_req) that
+> triggers re-reading the ANA log page accordingly.
+> 
+> So without the ability to drive the ANA workqueue to trigger
+> nvme_read_ana_log() from the nvme driver's completion path -- even if
+> nvme_core.multipath=N -- it really doesn't buy multipath-tools anything
+> to have the NVMe driver export the ana state via sysfs, because that ANA
+> state will never get updated.
+> 
+Hmm. Indeed, I was more focussed on having the sysfs attributes 
+displayed, so yes, indeed it needs some more work.
 
-you tell me actually. Are you using the H:4 transport or do you have an extra protocol layer / framing below it. If you do, then use your own driver, but if the transport is H:4 with vendor packets and vendor setup, then btuart.c (which is not yet upstream) should be your target.
+>> The inability to provide proper justification for rejecting a patch
+>> (that already had one co-maintainer's Reviewed-by [5]) _should_ render
+>> that rejection baseless, and the patch applied (especially if there is
+>> contributing subsystem developer interest in maintaining this support
+>> over time, which there is).  At least that is what would happen in a
+>> properly maintained kernel subsystem.
+>>
+>> It'd really go a long way if senior Linux NVMe maintainers took steps to
+>> accept reasonable changes.
+> 
+> Even though I'm frustrated I was clearly too harsh and regret my tone.
+> I promise to _try_ to suck less.
+> 
+> This dynamic of terse responses or no responses at all whenever NVMe
+> driver changes to ease multipath-tools NVMe support are floated is the
+> depressing gift that keeps on giving.  But enough excuses...
+> 
+> Not holding my breath BUT:
+> if decoupling the reading of ANA state from native NVMe multipathing
+> specific work during nvme request completion were an acceptable
+> advancement I'd gladly do the work.
+> 
+I'd be happy to work on that, given that we'll have to have 'real' ANA 
+support for device-mapper anyway for SLE12 SP4 etc.
 
-For the MTK hardware it was obvious that it was better served as a separate driver. For QCA serial it really depends on how much extra protocol you have to run. So this might be an exercise in trying QCA serial as a separate driver and then go from there.
+Cheers,
 
-It is clear that the baggage from hci_ldisc.c etc is in the way for serdev based systems.
-
-Regards
-
-Marcel
-
+Hannes
+-- 
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
+HRB 21284 (AG Nürnberg)
