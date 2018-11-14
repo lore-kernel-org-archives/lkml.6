@@ -6,44 +6,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9B3EC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B2DEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A757022544
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:44 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2A21D22545
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:25:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="GdjKibhx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A757022544
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="IHMUm7Ea"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A21D22545
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388973AbeKOIar (ORCPT
+        id S2388989AbeKOIau (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:30:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37832 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:30:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37960 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728198AbeKOIao (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:30:44 -0500
+        id S1732655AbeKOIas (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:30:48 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id ACE342252F;
-        Wed, 14 Nov 2018 22:25:39 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 080D12252F;
+        Wed, 14 Nov 2018 22:25:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234339;
-        bh=43e4ScMAwofi2Co7N7LeyAcde7+k3iRoLGiQLiTwWIc=;
+        s=default; t=1542234344;
+        bh=ghs7g8LiOyskv7wZcQDpY3Ipy+xaltBwxU+uIkrkG/0=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=GdjKibhxNJHC4u1/+I870zSyr7e1yZ9ATVz8lmquy5Mqu0P5Vg3agkgbtQ2I9UQbf
-         ST4SO1TveozSW6h8u59y+Yjpda/V7STiVUsezcYZ64uxfncxUxoAhPsO1BSYnDy7r2
-         lT4BkjWi2isPQHa6KEXg77UX/8OaqxQrL4Isl7xo=
+        b=IHMUm7Ea6rP0Pei8pMsjIZEKgp1iPLsjXhppRGf8xUGmwnQVkm/N6iGMwtaegzjU3
+         0fVXQSfsYWW0oy0utf95wZV5+OYk8Ik2/l8/oleejjhCIxXID/Xf/Bo2HSp+7VIEYp
+         oeDgvS6+/Ix7IN4DMZWWxP7yqjQqfGUrguZNBVJM=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        Sasha Levin <sashal@kernel.org>, linux-clk@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 14/27] clk: fixed-factor: fix of_node_get-put imbalance
-Date:   Wed, 14 Nov 2018 17:25:03 -0500
-Message-Id: <20181114222520.99926-14-sashal@kernel.org>
+Cc:     Thomas Richter <tmricht@linux.ibm.com>,
+        Martin Schwidefsky <schwidefsky@de.ibm.com>,
+        Sasha Levin <sashal@kernel.org>, linux-s390@vger.kernel.org
+Subject: [PATCH AUTOSEL 4.14 16/27] s390/perf: Change CPUM_CF return code in event init function
+Date:   Wed, 14 Nov 2018 17:25:05 -0500
+Message-Id: <20181114222520.99926-16-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222520.99926-1-sashal@kernel.org>
 References: <20181114222520.99926-1-sashal@kernel.org>
@@ -52,36 +52,39 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
+From: Thomas Richter <tmricht@linux.ibm.com>
 
-[ Upstream commit f98e8a572bddbf27032114127d2fcc78fa5e6a9d ]
+[ Upstream commit 0bb2ae1b26e1fb7543ec7474cdd374ac4b88c4da ]
 
-When the fixed factor clock is created by devicetree,
-of_clk_add_provider is called.  Add a call to
-of_clk_del_provider in the remove function to balance
-it out.
+The function perf_init_event() creates a new event and
+assignes it to a PMU. This a done in a loop over all existing
+PMUs. For each listed PMU the event init function is called
+and if this function does return any other error than -ENOENT,
+the loop is terminated the creation of the event fails.
 
-Reported-by: Alan Tull <atull@kernel.org>
-Fixes: 971451b3b15d ("clk: fixed-factor: Convert into a module platform driver")
-Signed-off-by: Ricardo Ribalda Delgado <ricardo.ribalda@gmail.com>
-Signed-off-by: Stephen Boyd <sboyd@kernel.org>
+If the event is invalid, return -ENOENT to try other PMUs.
+
+Signed-off-by: Thomas Richter <tmricht@linux.ibm.com>
+Reviewed-by: Hendrik Brueckner <brueckner@linux.ibm.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/clk/clk-fixed-factor.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/s390/kernel/perf_cpum_cf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/clk/clk-fixed-factor.c b/drivers/clk/clk-fixed-factor.c
-index 20724abd38bd..7df6b5b1e7ee 100644
---- a/drivers/clk/clk-fixed-factor.c
-+++ b/drivers/clk/clk-fixed-factor.c
-@@ -210,6 +210,7 @@ static int of_fixed_factor_clk_remove(struct platform_device *pdev)
- {
- 	struct clk *clk = platform_get_drvdata(pdev);
+diff --git a/arch/s390/kernel/perf_cpum_cf.c b/arch/s390/kernel/perf_cpum_cf.c
+index 746d03423333..61e91fee8467 100644
+--- a/arch/s390/kernel/perf_cpum_cf.c
++++ b/arch/s390/kernel/perf_cpum_cf.c
+@@ -376,7 +376,7 @@ static int __hw_perf_event_init(struct perf_event *event)
+ 		return -ENOENT;
  
-+	of_clk_del_provider(pdev->dev.of_node);
- 	clk_unregister_fixed_factor(clk);
+ 	if (ev > PERF_CPUM_CF_MAX_CTR)
+-		return -EINVAL;
++		return -ENOENT;
  
- 	return 0;
+ 	/* Obtain the counter set to which the specified counter belongs */
+ 	set = get_counter_set(ev);
 -- 
 2.17.1
 
