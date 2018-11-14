@@ -2,98 +2,151 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C780FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:02:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A44C1C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:09:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 89FEC22360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:02:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5D2DF21582
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 01:09:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="bz4dsa4e"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89FEC22360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Oh/DgIsf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D2DF21582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728792AbeKNLCx (ORCPT
+        id S1731048AbeKNLJ6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 06:02:53 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:37127 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726193AbeKNLCw (ORCPT
+        Wed, 14 Nov 2018 06:09:58 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:38500 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726573AbeKNLJ6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 06:02:52 -0500
-Received: by mail-pf1-f193.google.com with SMTP id u3-v6so4293027pfm.4
-        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 17:02:01 -0800 (PST)
+        Wed, 14 Nov 2018 06:09:58 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p4-v6so6901987plo.5
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 17:09:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yP7iG4Xc0EnORD2Lw8VTewjF3jn8iOuZJFfBlpMrWaU=;
-        b=bz4dsa4e+NDJLH+IhlqZFyFkd5k3Xg+HATsE/7DTnJhofPzlRxpd5nadZeY1Pb6wqH
-         nwexFcNKcnwqCfYKTe1nHNoW1LSac8U366nzlDZzj/HjvH6OeOrSqsSLDm/pXKIpKrxZ
-         AAF1exFkru0ptl7JHNigdLNrQrnm/1fw1A3QU=
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-transfer-encoding:content-language;
+        bh=oq9SkIBabmh+mBDoDozP8rQ3zmT5TdRgAHk3cwyY54o=;
+        b=Oh/DgIsfX72vjRikllWNgiCTPmWM6xhaRpWxExXPxBuSE86jd7dhswuKB2ZkXJcEaU
+         h8mAyKZIXenPVNhnuv1CSeDqVSuuM9v/7mnp2Xh8gDjX84gNGbfwSKLBEDPWWBC7t0jV
+         XQjxgmvULXQOO12QG1fbjYT4J0yLpeVwmK/A9athfLw1ou8GTUKHWwFAF+i+bjdLVkoL
+         84h8p2p2ybh2jzMTOhlJICHSdCUEFhN+9NIQllVzDl33fQf/HxgHcGEwbwAYdp5wM+ml
+         PgG7EDvkXebEgR63LIi6W0+Cn9ZJtCghVlpMZzqZXkChLQ5GHJ2c5B02dIUtfsSOXbfA
+         DUDQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=yP7iG4Xc0EnORD2Lw8VTewjF3jn8iOuZJFfBlpMrWaU=;
-        b=inU82ecgkKvKW+//HixMmHHCFKIZJtieydJM+NQt7nIMtf2XTEWZRH6TuRG8lxU9OQ
-         c3NByMBCGFFAgXbcNvnjb+CwMSzHqP1qU5Bc48DPSNp0UxkPs0UzvWrjwyCFzhHlB0Ii
-         ekihzA1QkRN1VTO13Mvosrs9CH+LoiJ/jKZP99Ybg/J1LBS5KUGth0aV7KQ1Y2VF1RmV
-         IdJAP4PviOVj2cowQZmBh7i7sWuCCqHoqkmIVzW/jo8RJq4RpP66q7+RNJO/Vff5h4oT
-         h5lB++qi20W4lwtcE3zQS/eQ034EyqBvKaMHo7Ahr8QxstolU8VGj9iKxttSDMPFhjfS
-         kicw==
-X-Gm-Message-State: AGRZ1gIUjUoI3jg1FfKv0qukZhVxZqFqRGYStn/ZNWpPLEzZN1FFoUjF
-        iIH2f61s5nYW+Vf63Zuyb8vzdg==
-X-Google-Smtp-Source: AJdET5dw3oHLgAW0KDdOjizDhkhbWsQigObmda20G3WQaCYcMY1f/+QHeuvUQ643vLCCPb44kMIpTQ==
-X-Received: by 2002:a63:4a0a:: with SMTP id x10mr6843463pga.237.1542157320907;
-        Tue, 13 Nov 2018 17:02:00 -0800 (PST)
-Received: from pure.paranoia.local ([172.83.40.72])
-        by smtp.gmail.com with ESMTPSA id c14-v6sm24541785pfc.92.2018.11.13.17.01.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 17:02:00 -0800 (PST)
-Date:   Tue, 13 Nov 2018 20:01:58 -0500
-From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To:     pr-tracker-bot@kernel.org
-Cc:     "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Jann Horn <jannh@google.com>
-Subject: Re: [GIT PULL] namespace fixes for v4.20-rc2
-Message-ID: <20181114010157.GA24763@pure.paranoia.local>
-Mail-Followup-To: pr-tracker-bot@kernel.org,
-        "Eric W. Biederman" <ebiederm@xmission.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-        Linux Containers <containers@lists.linux-foundation.org>,
-        Jann Horn <jannh@google.com>
-References: <87pnvcls3n.fsf@xmission.com>
- <20181114005545.8329.47629.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-transfer-encoding
+         :content-language;
+        bh=oq9SkIBabmh+mBDoDozP8rQ3zmT5TdRgAHk3cwyY54o=;
+        b=ogPog8rJuU5+rluYIKinZVJfO5RhrFk0P9MKxuPyjCAOemW3FIjvgWhuIqZ8EwPGzo
+         kdEpTqduckdrhPUBYtErGWKS59XzumoeBimWKs3Zs5qjzbIswheqyihqHl+m6iNRG8bp
+         Rb3NiWvKneoisx27qHwkUfhNp/gjkchZaHmRYk3PwB7a/qYK9OW3eXyzlcN9hIg/yPl9
+         2NJUBh4D7Oj+eUiSjm5zqd1cnkiwTxTsiG4wpHprYtZwhzv+LVob8qHc5XhFSRTuR71q
+         T/M7l6QmV1FVkONGwwf9vsPKNIVkJOa3RnXq2qd3qXNpfLJBp8mzRV3BVFWNbVxe1EwS
+         qJMQ==
+X-Gm-Message-State: AGRZ1gIkYysa3K8vh2dk13Ne02hW8bX0bfc90gGLXS0tvCHFz1dL2GfJ
+        ffz+FeVzsMm7IdlEGV8k3/I=
+X-Google-Smtp-Source: AJdET5e8Q9cIXEKuxBWX6J3UctmItlLV84qJIdIDY/M3rIzo6KV8trkzF6N42xrno8cGzuKhfDwlpw==
+X-Received: by 2002:a17:902:ab83:: with SMTP id f3-v6mr7123841plr.122.1542157745180;
+        Tue, 13 Nov 2018 17:09:05 -0800 (PST)
+Received: from ?IPv6:2001:df0:0:200c:213f:405e:f087:71ef? ([2001:df0:0:200c:213f:405e:f087:71ef])
+        by smtp.gmail.com with ESMTPSA id k14sm22762948pgs.52.2018.11.13.17.09.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Tue, 13 Nov 2018 17:09:04 -0800 (PST)
+Subject: Re: [RFC PATCH 06/13] m68k: Drop ARCH_USES_GETTIMEOFFSET
+To:     Finn Thain <fthain@telegraphics.com.au>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen N Chivers <schivers@csc.com.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Philip Blundell <philb@gnu.org>,
+        Joshua Thompson <funaho@jurai.org>
+References: <cover.1541995959.git.fthain@telegraphics.com.au>
+ <74edaee07800f91eb416ab3e72c4670b8ef4bd4e.1541995959.git.fthain@telegraphics.com.au>
+ <CAMuHMdXdo+L-Ta04zUsL62RSt1HOvmPJs7HFu_zEnc38R0FPjA@mail.gmail.com>
+ <alpine.LNX.2.21.1811122002530.351@nippy.intranet>
+ <fb617c67-089b-c4c0-2f47-28db41ffca6c@gmail.com>
+ <alpine.LNX.2.21.1811131413210.362@nippy.intranet>
+ <b824e485-796c-cbb6-9e50-504b03accd5d@gmail.com>
+ <alpine.LNX.2.21.1811131700010.366@nippy.intranet>
+ <0054c37f-ef34-e892-ff1d-02968ab529fa@gmail.com>
+ <alpine.LNX.2.21.1811140905440.371@nippy.intranet>
+From:   Michael Schmitz <schmitzmic@gmail.com>
+Message-ID: <73f75453-ce74-2c13-ba7c-f36f976d4ff7@gmail.com>
+Date:   Wed, 14 Nov 2018 14:08:56 +1300
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181114005545.8329.47629.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <alpine.LNX.2.21.1811140905440.371@nippy.intranet>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+Content-Language: en-US
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 12:55:45AM +0000, pr-tracker-bot@kernel.org wrote:
-> The pull request you sent on Sat, 10 Nov 2018 12:12:12 -0600:
-> 
-> > git://git.kernel.org/pub/scm/linux/kernel/git/ebiederm/user-namespace.git for-linus
-> 
-> has been merged into torvalds/linux.git:
-> https://git.kernel.org/torvalds/c/1de4f2ef216dade3b5bd5f5247c4c750a953f51c
+Hi Finn,
 
-Sorry for the duplicates! It's entirely the fault of my fat fingers that
-is unable to set the --nomail flag with test data properly.
+On 14/11/18 11:11 AM, Finn Thain wrote:
+> On Tue, 13 Nov 2018, Michael Schmitz wrote:
+>
+>> Running a recent kernel under ARAnyM shows 40 ns resolution so the Atari
+>> hardware emulation is a little more complete.
+>>
+> You mean, 40 us resolution, right?
 
--K
+Sorry, typo. Should have been us of course.
+
+>
+>> Using that for initial tests, I can confirm that timer resolution is
+>> reduced to 10ms after patch 6, and gets restored to 40ns after applying
+>> the full series
+> Thanks for testing!
+>
+>> (once clocksource_init runs, that is - the first part of the boot is at
+>> 10ms resolution only, a regression compared to with use of
+>> arch_gettimeoffset).
+>>
+> Sounds like a theoretical regression (?)
+>
+> Is there any need for more precise timers (I mean, better than 40 us)
+> before clocksource_init runs?
+
+I don't think so, given that we can run just fine with 10 ms resolution.
+
+>
+>> Unfortunately, I can't log in at the console with all patches applied. I
+>> immediately get the 'login timeout exceeded' message. Weird...
+>>
+> I didn't see that in my tests... Was this aranym or real hardware or both?
+
+ARAnyM only so far.
+
+>
+> Can you also test tree fbf8405cd982 please?
+>
+My tests were on c606b5cf902 in case it wasn't clear. I've now seen 
+fbf8405cd982, one moment please ...
+
+That one does appear to work - different versions of ARAnyM, and 
+different userland versions though. I'll test that again with the setup 
+that saw c606b5cf902 fail.
+
+Cheers,
+
+     Michael
+
+
+
