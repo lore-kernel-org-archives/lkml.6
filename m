@@ -2,168 +2,132 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-18.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8350FC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:51:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A19D3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:52:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 434A322419
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:51:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 685C022419
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:52:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hPdUUa5a"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 434A322419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lObfJOv1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 685C022419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728108AbeKOF4Z (ORCPT
+        id S1728291AbeKOF5G (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 00:56:25 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:40276 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725791AbeKOF4Y (ORCPT
+        Thu, 15 Nov 2018 00:57:06 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:53295 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725814AbeKOF5F (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 00:56:24 -0500
-Received: by mail-lj1-f195.google.com with SMTP id t22-v6so15189459lji.7
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 11:51:49 -0800 (PST)
+        Thu, 15 Nov 2018 00:57:05 -0500
+Received: by mail-it1-f193.google.com with SMTP id r12-v6so25837667ita.3
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 11:52:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:reply-to:mime-version
-         :content-disposition:user-agent;
-        bh=2i/cvADGYocfL81BkmfaGmckzFboR8oiOqfGNWB2BEU=;
-        b=hPdUUa5a6658NO/0Z9O4guxOuO8sGX/hi3uSF+31V3Yd5tGPvcw0wbvyiuq9lYyop4
-         e2s4dQtaKn04Q0du+HqJviD7AzMAgXSWNwUYWQfKO/awWvC/UhBfIeRh3kAuiZhR9YmU
-         IznQRFkZVOlZJI1lja/1LRooMCmL3Sl275NXtIr0QBJpiAb8dixZWNpgou022oKiKyeo
-         i/SqVN8VXeIS1dU4tFlqn2XYDWdqVHk4SmWTGFLguJk7ek5WGNuqx8tDYSlGwXmj/uU/
-         0yHTP8//mtoUbLhEtjKgQBLOIMMzGibqxbzGFkUZdOcvAuhD5wYaa4DW8qdx1irjnkfz
-         xnRA==
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=rsDFMuOwLKTLtBUJs8qWhs3U6FBd/SL9WGlQSq1WV5o=;
+        b=lObfJOv1sqhsO2xY1GvaXtH0NOmtlUeEn9A9yX2fqn0LUhC3lkQUz2uBP7p5BDNdFk
+         hpARwLqemAPlcH5kQiTfYukXRIfn7PN0+AvdhaYi2cJPrgPnLSgDKNCkzIb3LdDJakE2
+         kZapkAaiBYqX/Qp3sQx0/iTeNKsngSu4BaKchmsPtFlNIuwyFGWNEF3SDVg8SQcPSjuj
+         CoDv5eV92exOXSgRxhv/KhUGLsudBHtyQZXmA2GFRyzsYYrUXNDIMCMYPUi3xuurdIaf
+         IanOZ7uTmVHsRYwZjZkSQvDlwUw5KUYqgJc50Bi8vKaxaLwa32BLoMjEhk29ycOR69ni
+         trvg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :reply-to:mime-version:content-disposition:user-agent;
-        bh=2i/cvADGYocfL81BkmfaGmckzFboR8oiOqfGNWB2BEU=;
-        b=FZPlEVW7KhUHnU90OQMzoPDGqC64YXKQ3EzcAskbHTY1pSSJUGtCwLYoOAWqPh3ddN
-         7dUInGx6/9CzvmTRSw3DDksqeiBul9krGhySX773e9dYwLoykyDK+Qhr2UFrHVnYQnyZ
-         VXL5rVVDYLsBpceCJDjTmz5tVTBqss9rFuBkr8dtb5uT8uWd4xzo70YT1NqGMIt/BfT7
-         jbye4Ds1mmie6GYE7Ap4nn7dhSwSsBWyV6mRZ7/RLcdtCWbkgWFFep2G7Ps6J3Vm8oYF
-         1U3GvraxZ7E6egAbMLSbaoHqZUwZ1ZNLYJT90u9p6KwdqJKGyUohzrPiLAu22roaCjz1
-         8WRQ==
-X-Gm-Message-State: AGRZ1gLAqjT+OCFnHnLUIbsCIBInX6v9J/ofIyMt15LOxX4517GRuJWn
-        6OjfMprMP1MGFJCdqNRgn28=
-X-Google-Smtp-Source: AJdET5eCOCW+AO8030Hp+TY5etir27KymE1ohTytpC2BO3MJy4vQYfvVN+lFHiu02dNUju++7h/x9A==
-X-Received: by 2002:a2e:5dd9:: with SMTP id v86-v6mr2049015lje.86.1542225108048;
-        Wed, 14 Nov 2018 11:51:48 -0800 (PST)
-Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
-        by smtp.gmail.com with ESMTPSA id 26-v6sm478152ljb.16.2018.11.14.11.51.46
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 11:51:47 -0800 (PST)
-Received: from johan by xi.terra with local (Exim 4.91)
-        (envelope-from <johan@kernel.org>)
-        id 1gN1CS-00028J-NF; Wed, 14 Nov 2018 20:51:44 +0100
-Date:   Wed, 14 Nov 2018 20:51:44 +0100
-From:   Johan Hovold <johan@kernel.org>
-To:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     linux-kernel@vger.kernel.org
-Subject: [GIT PULL] GNSS fixes for v4.20-rc3 (take 2)
-Message-ID: <20181114195144.GA7982@localhost>
-Reply-To: 20181114150634.GA19442@localhost
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=rsDFMuOwLKTLtBUJs8qWhs3U6FBd/SL9WGlQSq1WV5o=;
+        b=WxibgfcBh5jAkzGkZGgRgdCgg+xgfw9pHmTmSdf8ShbMA710bw2XIVZ5Bs6IGLgp6P
+         pSRz/wCFEP1y2NCwiAqVghs1UzxY+Uz3/THjxuUw0kTtg9T0iCkN/8s9E6cEvEIytpxJ
+         q2Lk+oG0oWg2S3IcM7ReWuhFbw3cXL0zx13zhX2gcoN95a/uqGCbD6JUHGWaW25mfocG
+         shtXBXOxSdz2B/WFfC0+a7GP1arVmWBu28M2ne2exgTCult4EG/omRCFTL/ws1d/qIbY
+         lLhWD4xfkfCGfPv0RVdSs1IsDl93CnI0fVFmL9XhbovhWs6/r8vGBB7eSmFpoM+zG56s
+         UTQw==
+X-Gm-Message-State: AGRZ1gLeFatTUh7eNPB2lmMvE/aqaCNYeoH7XZbss02AleF7ezog/bzx
+        C0N7zuujyW69fztSmYH2N2doWjcHFHHBdRBh+X222Q==
+X-Google-Smtp-Source: AJdET5eHeI1RaAzzNNZd7JKWEz8b8fTRila9fZXG8tGRn9CSIcp0R3pw2mJ35MVXNz5LcgFdMqss0nYStfMvhwqqOd8=
+X-Received: by 2002:a02:4f88:: with SMTP id r8mr2981495jad.69.1542225149636;
+ Wed, 14 Nov 2018 11:52:29 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Received: by 2002:a02:7050:0:0:0:0:0 with HTTP; Wed, 14 Nov 2018 11:52:29
+ -0800 (PST)
+In-Reply-To: <20181107181054.GC255021@arrakis.emea.arm.com>
+References: <cover.1541525354.git.andreyknvl@google.com> <b2aa056b65b8f1a410379bf2f6ef439d5d99e8eb.1541525354.git.andreyknvl@google.com>
+ <20181107181054.GC255021@arrakis.emea.arm.com>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Wed, 14 Nov 2018 20:52:29 +0100
+Message-ID: <CAAeHK+zSEUq-bBide_kqwY831vQpxYUpjUNhPKSD0aC4OyewKw@mail.gmail.com>
+Subject: Re: [PATCH v10 08/22] kasan, arm64: untag address in __kimg_to_phys
+ and _virt_addr_is_linear
+To:     Catalin Marinas <catalin.marinas@arm.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Vishwath Mohan <vishwath@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Kostya Serebryany <kcc@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Evgeniy Stepanov <eugenis@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Greg,
+On Wed, Nov 7, 2018 at 7:10 PM, Catalin Marinas <catalin.marinas@arm.com> wrote:
+> On Tue, Nov 06, 2018 at 06:30:23PM +0100, Andrey Konovalov wrote:
+>> --- a/arch/arm64/include/asm/memory.h
+>> +++ b/arch/arm64/include/asm/memory.h
+>> @@ -92,6 +92,15 @@
+>>  #define KASAN_THREAD_SHIFT   0
+>>  #endif
+>>
+>> +#ifdef CONFIG_KASAN_SW_TAGS
+>> +#define KASAN_TAG_SHIFTED(tag)               ((unsigned long)(tag) << 56)
+>> +#define KASAN_SET_TAG(addr, tag)     (((addr) & ~KASAN_TAG_SHIFTED(0xff)) | \
+>> +                                             KASAN_TAG_SHIFTED(tag))
+>> +#define KASAN_RESET_TAG(addr)                KASAN_SET_TAG(addr, 0xff)
+>> +#else
+>> +#define KASAN_RESET_TAG(addr)                addr
+>> +#endif
+>
+> I think we should reuse the untagged_addr() macro we have in uaccess.h
+> (make it more general and move to another header file).
 
-Please ignore my previous pull request for GNSS fixes and consider this one
-instead.
-
-I've now asked Stephen to include the GNSS tree in linux-next, and he
-immediately spotted the missing Sign-offs. I was too focused on how best to
-split the gnss and serdev patches and handle their dependency that I even
-forgot to post the GNSS patches to the list after setting up the new tree
-(hence the diff below).
-
-Hopefully back in my usual routine after this.
-
-Johan
-
-
-The following changes since commit ccda4af0f4b92f7b4c308d3acc262f4a7e3affad:
-
-  Linux 4.20-rc2 (2018-11-11 17:12:31 -0600)
-
-are available in the Git repository at:
-
-  https://git.kernel.org/pub/scm/linux/kernel/git/johan/gnss.git tags/gnss-4.20-rc3
-
-for you to fetch changes up to 1decef370456870bf448a565be95db636428e106:
-
-  gnss: sirf: fix synchronous write timeout (2018-11-14 20:37:41 +0100)
-
-----------------------------------------------------------------
-GNSS fixes for v4.20-rc3
-
-The two serdev drivers were using the wrong timeout argument when
-expecting the serdev_device_write() helper to wait indefinitely,
-something which could result in incomplete writes when the controller
-write buffer was getting full.
-
-Signed-off-by: Johan Hovold <johan@kernel.org>
-
-----------------------------------------------------------------
-Johan Hovold (2):
-      gnss: serial: fix synchronous write timeout
-      gnss: sirf: fix synchronous write timeout
-
- drivers/gnss/serial.c | 3 ++-
- drivers/gnss/sirf.c   | 3 ++-
- 2 files changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gnss/serial.c b/drivers/gnss/serial.c
-index b01ba4438501..31e891f00175 100644
---- a/drivers/gnss/serial.c
-+++ b/drivers/gnss/serial.c
-@@ -13,6 +13,7 @@
- #include <linux/of.h>
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
-+#include <linux/sched.h>
- #include <linux/serdev.h>
- #include <linux/slab.h>
- 
-@@ -63,7 +64,7 @@ static int gnss_serial_write_raw(struct gnss_device *gdev,
- 	int ret;
- 
- 	/* write is only buffered synchronously */
--	ret = serdev_device_write(serdev, buf, count, 0);
-+	ret = serdev_device_write(serdev, buf, count, MAX_SCHEDULE_TIMEOUT);
- 	if (ret < 0)
- 		return ret;
- 
-diff --git a/drivers/gnss/sirf.c b/drivers/gnss/sirf.c
-index 79cb98950013..71d014edd167 100644
---- a/drivers/gnss/sirf.c
-+++ b/drivers/gnss/sirf.c
-@@ -16,6 +16,7 @@
- #include <linux/pm.h>
- #include <linux/pm_runtime.h>
- #include <linux/regulator/consumer.h>
-+#include <linux/sched.h>
- #include <linux/serdev.h>
- #include <linux/slab.h>
- #include <linux/wait.h>
-@@ -83,7 +84,7 @@ static int sirf_write_raw(struct gnss_device *gdev, const unsigned char *buf,
- 	int ret;
- 
- 	/* write is only buffered synchronously */
--	ret = serdev_device_write(serdev, buf, count, 0);
-+	ret = serdev_device_write(serdev, buf, count, MAX_SCHEDULE_TIMEOUT);
- 	if (ret < 0)
- 		return ret;
- 
+Will do in v11, thanks!
