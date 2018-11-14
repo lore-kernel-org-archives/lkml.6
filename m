@@ -6,44 +6,47 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78935C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2922FC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E8D82252D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:17 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E338222511
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:22:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="0A3d9sFu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E8D82252D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="npy0LUHo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E338222511
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728553AbeKOI1S (ORCPT
+        id S1728739AbeKOI1V (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:27:18 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34402 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 03:27:21 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34408 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728460AbeKOI1R (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:27:17 -0500
+        id S1728569AbeKOI1T (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:19 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id E250B22520;
-        Wed, 14 Nov 2018 22:22:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id C053D22525;
+        Wed, 14 Nov 2018 22:22:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234134;
-        bh=nRZ14k4xayMx1HEyuM3NhnBPX8LO+9RGM7qst4AnBCM=;
+        s=default; t=1542234135;
+        bh=iXQaoahU+WSY4TNy7hOIhTM5342jw2UAAu3tiNpo0Ss=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=0A3d9sFu94hnpzevLLP74hr6TNlRW6wkjObVnUEjuiwQTaVUdEVpiNBBG8J/d0tlP
-         weoTEdwQDWlfzNka9+l+xlEP8NFh+DCLRerMlOFRNJPFbJGcNpD1h9pNDAsHyi+VGB
-         vK6+fj6ytPlJne4/PfUCJAnmP10gzd/KxUIYMLmY=
+        b=npy0LUHo09X4qo2Rnls8Fq7ZmQPP2L6BjAwvXyCIgCOdZcbpEmR/Gxk3eU/TddS1X
+         FF5uv0/jQ962/rwiGjmCEu5xPVijJwfYIi40M8OVa6WCmpHBCn4FhD0gIDJ+XbhggR
+         HCvxlR3qpOeP65xM6Tyna5tZZqeM/gCPJ54sZvcU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Florian Westphal <fw@strlen.de>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+Cc:     Rob Herring <robh@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Mark Rutland <mark.rutland@arm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 23/73] netfilter: nft_compat: ebtables 'nat' table is normal chain type
-Date:   Wed, 14 Nov 2018 17:21:17 -0500
-Message-Id: <20181114222207.98701-23-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 31/73] ARM: dts: fsl: Fix improperly quoted stdout-path values
+Date:   Wed, 14 Nov 2018 17:21:25 -0500
+Message-Id: <20181114222207.98701-31-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -52,76 +55,61 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Florian Westphal <fw@strlen.de>
+From: Rob Herring <robh@kernel.org>
 
-[ Upstream commit e4844c9c62a0fe47980d6c3d4b7a096a5d755925 ]
+[ Upstream commit 1af6ab3bac8458fc2e92ad7bb97b62de4a1fddef ]
 
-Unlike ip(6)tables, the ebtables nat table has no special properties.
-This bug causes 'ebtables -A' to fail when using a target such as
-'snat' (ebt_snat target sets ".table = "nat"').  Targets that have
-no table restrictions work fine.
+A quoted label reference doesn't expand to the node path and is taken as
+a literal string. Dropping the quotes can fix this unless the baudrate
+string is appended in which case we have to use the alias.
 
-Signed-off-by: Florian Westphal <fw@strlen.de>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+At least on VF610, the problem was masked by setting the console in
+bootargs. Use the alias syntax with baudrate parameter so we can drop
+setting the console in bootargs.
+
+Cc: Shawn Guo <shawnguo@kernel.org>
+Cc: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Pengutronix Kernel Team <kernel@pengutronix.de>
+Cc: NXP Linux Team <linux-imx@nxp.com>
+Cc: Mark Rutland <mark.rutland@arm.com>
+Reviewed-by: Fabio Estevam <festevam@gmail.com>
+Reviewed-by: Stefan Agner <stefan@agner.ch>
+Signed-off-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- net/netfilter/nft_compat.c | 21 ++++++++++++---------
- 1 file changed, 12 insertions(+), 9 deletions(-)
+ arch/arm/boot/dts/imx53-ppd.dts       | 2 +-
+ arch/arm/boot/dts/vf610m4-colibri.dts | 4 ++--
+ 2 files changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/net/netfilter/nft_compat.c b/net/netfilter/nft_compat.c
-index 32535eea51b2..ad2fe6a7e47d 100644
---- a/net/netfilter/nft_compat.c
-+++ b/net/netfilter/nft_compat.c
-@@ -54,9 +54,11 @@ static bool nft_xt_put(struct nft_xt *xt)
- 	return false;
- }
+diff --git a/arch/arm/boot/dts/imx53-ppd.dts b/arch/arm/boot/dts/imx53-ppd.dts
+index cdb90bee7b4a..f202396e3f2a 100644
+--- a/arch/arm/boot/dts/imx53-ppd.dts
++++ b/arch/arm/boot/dts/imx53-ppd.dts
+@@ -55,7 +55,7 @@
+ 	};
  
--static int nft_compat_chain_validate_dependency(const char *tablename,
--						const struct nft_chain *chain)
-+static int nft_compat_chain_validate_dependency(const struct nft_ctx *ctx,
-+						const char *tablename)
- {
-+	enum nft_chain_types type = NFT_CHAIN_T_DEFAULT;
-+	const struct nft_chain *chain = ctx->chain;
- 	const struct nft_base_chain *basechain;
+ 	chosen {
+-		stdout-path = "&uart1:115200n8";
++		stdout-path = "serial0:115200n8";
+ 	};
  
- 	if (!tablename ||
-@@ -64,9 +66,12 @@ static int nft_compat_chain_validate_dependency(const char *tablename,
- 		return 0;
+ 	memory@70000000 {
+diff --git a/arch/arm/boot/dts/vf610m4-colibri.dts b/arch/arm/boot/dts/vf610m4-colibri.dts
+index 41ec66a96990..ca6249558760 100644
+--- a/arch/arm/boot/dts/vf610m4-colibri.dts
++++ b/arch/arm/boot/dts/vf610m4-colibri.dts
+@@ -50,8 +50,8 @@
+ 	compatible = "fsl,vf610m4";
  
- 	basechain = nft_base_chain(chain);
--	if (strcmp(tablename, "nat") == 0 &&
--	    basechain->type->type != NFT_CHAIN_T_NAT)
--		return -EINVAL;
-+	if (strcmp(tablename, "nat") == 0) {
-+		if (ctx->family != NFPROTO_BRIDGE)
-+			type = NFT_CHAIN_T_NAT;
-+		if (basechain->type->type != type)
-+			return -EINVAL;
-+	}
+ 	chosen {
+-		bootargs = "console=ttyLP2,115200 clk_ignore_unused init=/linuxrc rw";
+-		stdout-path = "&uart2";
++		bootargs = "clk_ignore_unused init=/linuxrc rw";
++		stdout-path = "serial2:115200";
+ 	};
  
- 	return 0;
- }
-@@ -323,8 +328,7 @@ static int nft_target_validate(const struct nft_ctx *ctx,
- 		if (target->hooks && !(hook_mask & target->hooks))
- 			return -EINVAL;
- 
--		ret = nft_compat_chain_validate_dependency(target->table,
--							   ctx->chain);
-+		ret = nft_compat_chain_validate_dependency(ctx, target->table);
- 		if (ret < 0)
- 			return ret;
- 	}
-@@ -570,8 +574,7 @@ static int nft_match_validate(const struct nft_ctx *ctx,
- 		if (match->hooks && !(hook_mask & match->hooks))
- 			return -EINVAL;
- 
--		ret = nft_compat_chain_validate_dependency(match->table,
--							   ctx->chain);
-+		ret = nft_compat_chain_validate_dependency(ctx, match->table);
- 		if (ret < 0)
- 			return ret;
- 	}
+ 	memory@8c000000 {
 -- 
 2.17.1
 
