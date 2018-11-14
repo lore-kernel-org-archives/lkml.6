@@ -2,229 +2,383 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+X-Spam-Status: No, score=-12.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 396DBC43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:46:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F38C2C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:49:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3D50223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:46:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A4BDA2250F
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:49:51 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="G1O35tlN"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D50223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="ONplcwjj"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A4BDA2250F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732275AbeKNSsa (ORCPT
+        id S1732099AbeKNSwG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 13:48:30 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:38826 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1732156AbeKNSsa (ORCPT
+        Wed, 14 Nov 2018 13:52:06 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:41439 "EHLO
+        mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727595AbeKNSwG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 13:48:30 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAE8ho6e088992;
-        Wed, 14 Nov 2018 08:46:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id : in-reply-to : references; s=corp-2018-07-02;
- bh=KjtFBzl48kWHUaiGs45dIZaVO/sEyPqGFzaPjx5bZbs=;
- b=G1O35tlNYi/1JO0QydAdqGAp0EpezPPjLG6qGsJW+DQNaOSCuD/k/469TV/QPxxqIRSz
- wQZB3kifJQq5Vyoz02u0R9s3a7EKUSwQg57xF33aD8M+YktRP0LfNCnL9b7F47Xl/ze7
- AMOXw6jifL4rhPjAUwGS2dwKaYP52rTk98G55tqdG8qrU6kvCunSsNaQwXX2op5ctfg6
- TfEEAy+KFew4Baq+b0w+o4Wp3Jyz03sEGnU2XhwC6xfudZeUKCAk6ZZ4sQRj13pVgLEr
- nm1aGsrPJxPxvjRZ9IJtPfjsk/ZDM+psDcLHfAIAkx9XNzEBreJE3FBmKmbmsoRCgP02 sA== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by aserp2120.oracle.com with ESMTP id 2nr7cs1vsk-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Nov 2018 08:46:10 +0000
-Received: from aserv0122.oracle.com (aserv0122.oracle.com [141.146.126.236])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAE8k45e029574
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Wed, 14 Nov 2018 08:46:04 GMT
-Received: from abhmp0001.oracle.com (abhmp0001.oracle.com [141.146.116.7])
-        by aserv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAE8k3Zh025044;
-        Wed, 14 Nov 2018 08:46:03 GMT
-Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 14 Nov 2018 00:46:03 -0800
-From:   Jianchao Wang <jianchao.w.wang@oracle.com>
-To:     axboe@kernel.dk
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V7 1/4] blk-mq: refactor the code of issue request directly
-Date:   Wed, 14 Nov 2018 16:45:28 +0800
-Message-Id: <1542185131-15029-2-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542185131-15029-1-git-send-email-jianchao.w.wang@oracle.com>
-References: <1542185131-15029-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9076 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811140080
+        Wed, 14 Nov 2018 13:52:06 -0500
+Received: by mail-yb1-f196.google.com with SMTP id t13-v6so6583233ybb.8
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 00:49:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=u/Y1sSGmSVaVgpuVH5i5voWG3JHtu3pfXWZU9RhFYkg=;
+        b=ONplcwjjrp/yuqSysDNDG8TSdNne0iG0PO6RZLuyKVsqVTZWgwjKf9HzSIDtxWFcn4
+         5tThhqX5ixJlcd2Uxjn0OsNxsAsq0hF2O1Kfoc733CrLBzjCk8sviSGKaCLpWgeU8DBR
+         1rs8VSQ++LApehyitkvdVLIyVg4+A3db1gP0s=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=u/Y1sSGmSVaVgpuVH5i5voWG3JHtu3pfXWZU9RhFYkg=;
+        b=q3f6MC0+V0imo4NsQwmEjOYZk+La05CU9aQKnw+MvN36jizB/afaE6UgXuWOidj4h5
+         0KfV15fKMFEoXZmPLZrD3vsPRZz+K/AMmuRgCvEdpQIL383oFcI5j3UEvEZc8O8k9lW6
+         wh+KjhFMu5hDHQ80CxAHy/k8pK2UPj43/SRWxy1KFcV6Nuuew8mBH8EtlFLISCgKVqOR
+         VVQTKfnqy1mDgh4nnSbYJyNo6KucGoqXxxGmh4Qcj1VNubBOcrdN7seqmejupyiW0D6V
+         E6PtTmtn6j0EKqo2kWB+IXe55VR2YTxguyJ6uLudzb2JERMLncPHyFlsXmTAavmEdTRC
+         4EMQ==
+X-Gm-Message-State: AGRZ1gIf1Zdpl7kuFNTWexxXNlPTES9uEeR4p+diZhS8m0oIYgRnsAlD
+        OEH5hoNoBZEftWlkakQLvjUm2zUx7rc=
+X-Google-Smtp-Source: AJdET5eBZuVRVgweMBuiawDqGoHLEuy1vCgiQYlqHtlA9nkyIilMdF6yVJvO2MK/70whRD94EYLH2w==
+X-Received: by 2002:a25:32c8:: with SMTP id y191-v6mr703261yby.450.1542185387766;
+        Wed, 14 Nov 2018 00:49:47 -0800 (PST)
+Received: from mail-yw1-f41.google.com (mail-yw1-f41.google.com. [209.85.161.41])
+        by smtp.gmail.com with ESMTPSA id p195-v6sm6129044ywe.83.2018.11.14.00.49.46
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 00:49:46 -0800 (PST)
+Received: by mail-yw1-f41.google.com with SMTP id l200so1376690ywe.10
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 00:49:46 -0800 (PST)
+X-Received: by 2002:a81:350c:: with SMTP id c12-v6mr762035ywa.342.1542185386174;
+ Wed, 14 Nov 2018 00:49:46 -0800 (PST)
+MIME-Version: 1.0
+References: <20180928082722.26951-1-enric.balletbo@collabora.com>
+In-Reply-To: <20180928082722.26951-1-enric.balletbo@collabora.com>
+From:   Tomasz Figa <tfiga@chromium.org>
+Date:   Wed, 14 Nov 2018 17:49:34 +0900
+X-Gmail-Original-Message-ID: <CAAFQd5BXOmCmwL1i=aBCy5rZn37e-9pYg_WXkgrCG9emV+zKtA@mail.gmail.com>
+Message-ID: <CAAFQd5BXOmCmwL1i=aBCy5rZn37e-9pYg_WXkgrCG9emV+zKtA@mail.gmail.com>
+Subject: Re: [PATCH v2] drm/rockchip: update cursors asynchronously through atomic.
+To:     Enric Balletbo i Serra <enric.balletbo@collabora.com>
+Cc:     Sandy Huang <hjc@rock-chips.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        David Airlie <airlied@linux.ie>,
+        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
+        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        dri-devel <dri-devel@lists.freedesktop.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Gustavo Padovan <gustavo.padovan@collabora.com>,
+        Sean Paul <seanpaul@google.com>, kernel@collabora.com,
+        =?UTF-8?Q?St=C3=A9phane_Marchesin?= <marcheu@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Merge blk_mq_try_issue_directly and __blk_mq_try_issue_directly
-into one interface to unify the interfaces to issue requests
-directly. The merged interface takes over the requests totally,
-it could insert, end or do nothing based on the return value of
-.queue_rq and 'bypass' parameter. Then caller needn't any other
-handling any more.
+Hi Enric,
 
-Signed-off-by: Jianchao Wang <jianchao.w.wang@oracle.com>
----
- block/blk-mq.c | 93 ++++++++++++++++++++++++++++------------------------------
- 1 file changed, 45 insertions(+), 48 deletions(-)
+On Fri, Sep 28, 2018 at 5:27 PM Enric Balletbo i Serra
+<enric.balletbo@collabora.com> wrote:
+>
+> Add support to async updates of cursors by using the new atomic
+> interface for that.
+>
+> Signed-off-by: Enric Balletbo i Serra <enric.balletbo@collabora.com>
+> ---
+> Hi,
+>
+> This is a second version of the patch to add async-plane update support
+> to the Rockchip driver.
+>
 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 411be60..14b4d06 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -1766,78 +1766,75 @@ static blk_status_t __blk_mq_issue_directly(struct blk_mq_hw_ctx *hctx,
- 	return ret;
- }
- 
--static blk_status_t __blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
-+static blk_status_t blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
- 						struct request *rq,
- 						blk_qc_t *cookie,
--						bool bypass_insert)
-+						bool bypass)
- {
- 	struct request_queue *q = rq->q;
- 	bool run_queue = true;
-+	blk_status_t ret = BLK_STS_RESOURCE;
-+	int srcu_idx;
- 
-+	hctx_lock(hctx, &srcu_idx);
- 	/*
--	 * RCU or SRCU read lock is needed before checking quiesced flag.
-+	 * hctx_lock is needed before checking quiesced flag.
- 	 *
--	 * When queue is stopped or quiesced, ignore 'bypass_insert' from
--	 * blk_mq_request_issue_directly(), and return BLK_STS_OK to caller,
--	 * and avoid driver to try to dispatch again.
-+	 * When queue is stopped or quiesced, ignore 'bypass', insert
-+	 * and return BLK_STS_OK to caller, and avoid driver to try to
-+	 * dispatch again.
- 	 */
--	if (blk_mq_hctx_stopped(hctx) || blk_queue_quiesced(q)) {
-+	if (unlikely(blk_mq_hctx_stopped(hctx) || blk_queue_quiesced(q))) {
- 		run_queue = false;
--		bypass_insert = false;
--		goto insert;
-+		bypass = false;
-+		goto out_unlock;
- 	}
- 
--	if (q->elevator && !bypass_insert)
--		goto insert;
-+	/*
-+	 * Bypass the potential scheduler on the bottom device.
-+	 */
-+	if (unlikely(q->elevator && !bypass))
-+		goto out_unlock;
- 
--	if (!blk_mq_get_dispatch_budget(hctx))
--		goto insert;
-+	if (unlikely(!blk_mq_get_dispatch_budget(hctx)))
-+		goto out_unlock;
- 
--	if (!blk_mq_get_driver_tag(rq)) {
-+	if (unlikely(!blk_mq_get_driver_tag(rq))) {
- 		blk_mq_put_dispatch_budget(hctx);
--		goto insert;
-+		goto out_unlock;
- 	}
- 
--	return __blk_mq_issue_directly(hctx, rq, cookie);
--insert:
--	if (bypass_insert)
--		return BLK_STS_RESOURCE;
--
--	blk_mq_sched_insert_request(rq, false, run_queue, false);
--	return BLK_STS_OK;
--}
--
--static void blk_mq_try_issue_directly(struct blk_mq_hw_ctx *hctx,
--		struct request *rq, blk_qc_t *cookie)
--{
--	blk_status_t ret;
--	int srcu_idx;
--
--	might_sleep_if(hctx->flags & BLK_MQ_F_BLOCKING);
-+	ret = __blk_mq_issue_directly(hctx, rq, cookie);
- 
--	hctx_lock(hctx, &srcu_idx);
-+out_unlock:
-+	hctx_unlock(hctx, srcu_idx);
- 
--	ret = __blk_mq_try_issue_directly(hctx, rq, cookie, false);
--	if (ret == BLK_STS_RESOURCE || ret == BLK_STS_DEV_RESOURCE)
--		blk_mq_sched_insert_request(rq, false, true, false);
--	else if (ret != BLK_STS_OK)
--		blk_mq_end_request(rq, ret);
-+	switch (ret) {
-+	case BLK_STS_OK:
-+		break;
-+	case BLK_STS_DEV_RESOURCE:
-+	case BLK_STS_RESOURCE:
-+		if (!bypass) {
-+			blk_mq_sched_insert_request(rq, false, run_queue, false);
-+			ret = BLK_STS_OK;
-+		}
-+		break;
-+	default:
-+		if (!bypass) {
-+			blk_mq_end_request(rq, ret);
-+			ret = BLK_STS_OK;
-+		}
-+		break;
-+	}
- 
--	hctx_unlock(hctx, srcu_idx);
-+	return ret;
- }
- 
- blk_status_t blk_mq_request_issue_directly(struct request *rq)
- {
--	blk_status_t ret;
--	int srcu_idx;
- 	blk_qc_t unused_cookie;
--	struct blk_mq_hw_ctx *hctx = rq->mq_hctx;
- 
--	hctx_lock(hctx, &srcu_idx);
--	ret = __blk_mq_try_issue_directly(hctx, rq, &unused_cookie, true);
--	hctx_unlock(hctx, srcu_idx);
--
--	return ret;
-+	return blk_mq_try_issue_directly(rq->mq_hctx, rq, &unused_cookie, true);
- }
- 
- void blk_mq_try_issue_list_directly(struct blk_mq_hw_ctx *hctx,
-@@ -1958,13 +1955,13 @@ static blk_qc_t blk_mq_make_request(struct request_queue *q, struct bio *bio)
- 		if (same_queue_rq) {
- 			data.hctx = same_queue_rq->mq_hctx;
- 			blk_mq_try_issue_directly(data.hctx, same_queue_rq,
--					&cookie);
-+					&cookie, false);
- 		}
- 	} else if ((q->nr_hw_queues > 1 && is_sync) || (!q->elevator &&
- 			!data.hctx->dispatch_busy)) {
- 		blk_mq_put_ctx(data.ctx);
- 		blk_mq_bio_to_request(rq, bio);
--		blk_mq_try_issue_directly(data.hctx, rq, &cookie);
-+		blk_mq_try_issue_directly(data.hctx, rq, &cookie, false);
- 	} else {
- 		blk_mq_put_ctx(data.ctx);
- 		blk_mq_bio_to_request(rq, bio);
--- 
-2.7.4
+I'm really sorry for the super late reply. I couldn't get cycles to
+look at this earlier. :(
 
+> The patch was tested on a Samsung Chromebook Plus in two ways.
+>
+>  1. Running all igt kms_cursor_legacy and kms_atomic tests and see that
+> there is no regression after the patch.
+>     Note that before the patch, the following igt tests failed:
+>     - basic-flip-before-cursor-legacy
+>     - basic-flip-before-cursor-atomic
+>     - cursor-vs-flip-legacy
+>     - cursor-vs-flip-toggle
+>     - flip-vs-cursor-atomic
+>     - flip-vs-cursor-crc-atomic
+>     - flip-vs-cursor-crc-legacy
+>     - flip-vs-cursor-legacy
+>     - flip-vs-cursor-crc-atomic
+>     - flip-vs-cursor-crc-legacy
+
+Are the last 2 tests repeated?
+
+>
+>     With the patch applied only two tests don't fail (these two are
+> expexted to not pass right now):
+>     - flip-vs-cursor-crc-atomic
+>     - flip-vs-cursor-crc-legac
+
+Did you mean "don't pass"?
+
+>
+>     You can check full IGT test report here:
+>     - Before the patch:
+>         https://people.collabora.com/~eballetbo/tests/igt/samsung-chromebook-plus/igt-1.23/4.19-rc5/index.html
+>     - With the patch applied:
+>         https://people.collabora.com/~eballetbo/tests/igt/samsung-chromebook-plus/igt-1.23/4.19-rc5-async-update/index.html
+>
+>  2. Running weston using the atomic API.
+>
+> Best regards,
+>   Enric
+>
+> Changes in v2:
+> - Change the framebuffer as well to cover jumpy cursor when hovering
+>   text boxes or hyperlink. (Tomasz)
+> - Use the PSR inhibit mechanism when accessing VOP hardware instead of
+>   PSR flushing (Tomasz)
+>
+> Changes in v1:
+> - Rebased on top of drm-misc
+> - In async_check call drm_atomic_helper_check_plane_state to check that
+>   the desired plane is valid and update various bits of derived state
+>   (clipped coordinates etc.)
+> - In async_check allow to configure new scaling in the fast path.
+> - In async_update force to flush all registered PSR encoders.
+> - In async_update call atomic_update directly.
+> - In async_update call vop_cfg_done needed to set the vop registers and take effect.
+>
+>  drivers/gpu/drm/rockchip/rockchip_drm_fb.c  | 36 ------------
+>  drivers/gpu/drm/rockchip/rockchip_drm_psr.c | 37 ++++++++++++
+>  drivers/gpu/drm/rockchip/rockchip_drm_psr.h |  3 +
+>  drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 62 +++++++++++++++++++++
+>  4 files changed, 102 insertions(+), 36 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+> index 7b6f7227d476..aec9a997de13 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_fb.c
+> @@ -128,24 +128,6 @@ rockchip_user_fb_create(struct drm_device *dev, struct drm_file *file_priv,
+>         return ERR_PTR(ret);
+>  }
+>
+> -static void
+> -rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state)
+> -{
+> -       struct drm_crtc *crtc;
+> -       struct drm_crtc_state *crtc_state;
+> -       struct drm_encoder *encoder;
+> -       u32 encoder_mask = 0;
+> -       int i;
+> -
+> -       for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
+> -               encoder_mask |= crtc_state->encoder_mask;
+> -               encoder_mask |= crtc->state->encoder_mask;
+> -       }
+> -
+> -       drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
+> -               rockchip_drm_psr_inhibit_get(encoder);
+> -}
+> -
+>  uint32_t rockchip_drm_get_vblank_ns(struct drm_display_mode *mode)
+>  {
+>         uint64_t vblank_time = mode->vtotal - mode->vdisplay;
+> @@ -156,24 +138,6 @@ uint32_t rockchip_drm_get_vblank_ns(struct drm_display_mode *mode)
+>         return vblank_time;
+>  }
+>
+> -static void
+> -rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state)
+> -{
+> -       struct drm_crtc *crtc;
+> -       struct drm_crtc_state *crtc_state;
+> -       struct drm_encoder *encoder;
+> -       u32 encoder_mask = 0;
+> -       int i;
+> -
+> -       for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
+> -               encoder_mask |= crtc_state->encoder_mask;
+> -               encoder_mask |= crtc->state->encoder_mask;
+> -       }
+> -
+> -       drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
+> -               rockchip_drm_psr_inhibit_put(encoder);
+> -}
+> -
+>  static void
+>  rockchip_atomic_helper_commit_tail_rpm(struct drm_atomic_state *old_state)
+>  {
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+> index 79d00d861a31..1635485955d3 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.c
+> @@ -13,6 +13,7 @@
+>   */
+>
+>  #include <drm/drmP.h>
+> +#include <drm/drm_atomic.h>
+>  #include <drm/drm_crtc_helper.h>
+>
+>  #include "rockchip_drm_drv.h"
+> @@ -109,6 +110,42 @@ int rockchip_drm_psr_inhibit_put(struct drm_encoder *encoder)
+>  }
+>  EXPORT_SYMBOL(rockchip_drm_psr_inhibit_put);
+>
+> +void rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state)
+> +{
+> +       struct drm_crtc *crtc;
+> +       struct drm_crtc_state *crtc_state;
+> +       struct drm_encoder *encoder;
+> +       u32 encoder_mask = 0;
+> +       int i;
+> +
+> +       for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
+> +               encoder_mask |= crtc_state->encoder_mask;
+> +               encoder_mask |= crtc->state->encoder_mask;
+> +       }
+> +
+> +       drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
+> +               rockchip_drm_psr_inhibit_get(encoder);
+> +}
+> +EXPORT_SYMBOL(rockchip_drm_psr_inhibit_get_state);
+> +
+> +void rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state)
+> +{
+> +       struct drm_crtc *crtc;
+> +       struct drm_crtc_state *crtc_state;
+> +       struct drm_encoder *encoder;
+> +       u32 encoder_mask = 0;
+> +       int i;
+> +
+> +       for_each_old_crtc_in_state(state, crtc, crtc_state, i) {
+> +               encoder_mask |= crtc_state->encoder_mask;
+> +               encoder_mask |= crtc->state->encoder_mask;
+> +       }
+> +
+> +       drm_for_each_encoder_mask(encoder, state->dev, encoder_mask)
+> +               rockchip_drm_psr_inhibit_put(encoder);
+> +}
+> +EXPORT_SYMBOL(rockchip_drm_psr_inhibit_put_state);
+> +
+>  /**
+>   * rockchip_drm_psr_inhibit_get - acquire PSR inhibit on given encoder
+>   * @encoder: encoder to obtain the PSR encoder
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
+> index 860c62494496..25350ba3237b 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_psr.h
+> @@ -20,6 +20,9 @@ void rockchip_drm_psr_flush_all(struct drm_device *dev);
+>  int rockchip_drm_psr_inhibit_put(struct drm_encoder *encoder);
+>  int rockchip_drm_psr_inhibit_get(struct drm_encoder *encoder);
+>
+> +void rockchip_drm_psr_inhibit_get_state(struct drm_atomic_state *state);
+> +void rockchip_drm_psr_inhibit_put_state(struct drm_atomic_state *state);
+> +
+>  int rockchip_drm_psr_register(struct drm_encoder *encoder,
+>                         int (*psr_set)(struct drm_encoder *, bool enable));
+>  void rockchip_drm_psr_unregister(struct drm_encoder *encoder);
+> diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> index 6642c2b9bb3c..682ce40166f7 100644
+> --- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> +++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
+> @@ -819,10 +819,72 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
+>         spin_unlock(&vop->reg_lock);
+>  }
+>
+> +static int vop_plane_atomic_async_check(struct drm_plane *plane,
+> +                                       struct drm_plane_state *state)
+> +{
+> +       struct vop_win *vop_win = to_vop_win(plane);
+> +       const struct vop_win_data *win = vop_win->data;
+> +       int min_scale = win->phy->scl ? FRAC_16_16(1, 8) :
+> +                                       DRM_PLANE_HELPER_NO_SCALING;
+> +       int max_scale = win->phy->scl ? FRAC_16_16(8, 1) :
+> +                                       DRM_PLANE_HELPER_NO_SCALING;
+> +       struct drm_crtc_state *crtc_state;
+> +       int ret;
+> +
+> +       if (plane != state->crtc->cursor)
+> +               return -EINVAL;
+> +
+> +       if (!plane->state)
+> +               return -EINVAL;
+> +
+> +       if (!plane->state->fb)
+> +               return -EINVAL;
+> +
+> +       if (state->state)
+> +               crtc_state = drm_atomic_get_existing_crtc_state(state->state,
+> +                                                               state->crtc);
+> +       else /* Special case for asynchronous cursor updates. */
+> +               crtc_state = plane->crtc->state;
+> +
+> +       ret = drm_atomic_helper_check_plane_state(plane->state,
+> +                                                 crtc_state,
+> +                                                 min_scale, max_scale,
+> +                                                 true, true);
+> +       return ret;
+> +}
+> +
+> +static void vop_plane_atomic_async_update(struct drm_plane *plane,
+> +                                         struct drm_plane_state *new_state)
+> +{
+> +       struct vop *vop = to_vop(plane->state->crtc);
+> +
+> +       plane->state->crtc_x = new_state->crtc_x;
+> +       plane->state->crtc_y = new_state->crtc_y;
+> +       plane->state->crtc_h = new_state->crtc_h;
+> +       plane->state->crtc_w = new_state->crtc_w;
+> +       plane->state->src_x = new_state->src_x;
+> +       plane->state->src_y = new_state->src_y;
+> +       plane->state->src_h = new_state->src_h;
+> +       plane->state->src_w = new_state->src_w;
+> +
+> +       drm_atomic_set_fb_for_plane(plane->state, new_state->fb);
+
+Isn't this going to drop the old fb reference on the floor without
+waiting for the hardware to actually stop scanning out from it?
+
+I believe we need to do something similar to what's already in
+vop_crtc_commit_flush(), but not called on this async path
+https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/rockchip/rockchip_drm_vop.c?h=next-20181114#n1045
+
+Perhaps it would be an option to call vop_crtc_commit_flush() from here?
+
+Best regards,
+Tomasz
+
+> +
+> +       if (vop->is_enabled) {
+> +               rockchip_drm_psr_inhibit_get_state(new_state->state);
+> +               vop_plane_atomic_update(plane, plane->state);
+> +               spin_lock(&vop->reg_lock);
+> +               vop_cfg_done(vop);
+> +               spin_unlock(&vop->reg_lock);
+> +               rockchip_drm_psr_inhibit_put_state(new_state->state);
+> +       }
+> +}
+> +
+>  static const struct drm_plane_helper_funcs plane_helper_funcs = {
+>         .atomic_check = vop_plane_atomic_check,
+>         .atomic_update = vop_plane_atomic_update,
+>         .atomic_disable = vop_plane_atomic_disable,
+> +       .atomic_async_check = vop_plane_atomic_async_check,
+> +       .atomic_async_update = vop_plane_atomic_async_update,
+>  };
+>
+>  static const struct drm_plane_funcs vop_plane_funcs = {
+> --
+> 2.19.0
+>
