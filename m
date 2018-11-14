@@ -2,82 +2,107 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18452C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:48:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F6DEC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:48:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D774C2245E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:48:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D774C2245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
+	by mail.kernel.org (Postfix) with ESMTP id 533B92243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 18:48:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 533B92243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bues.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732454AbeKOEw0 (ORCPT
+        id S1732965AbeKOEwl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 23:52:26 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:53589 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728351AbeKOEw0 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 23:52:26 -0500
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-03.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gN0Cn-0005DP-0w from joseph_myers@mentor.com ; Wed, 14 Nov 2018 10:48:01 -0800
-Received: from digraph.polyomino.org.uk (137.202.0.90) by
- SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Wed, 14 Nov 2018 18:47:57 +0000
-Received: from jsm28 (helo=localhost)
-        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
-        (envelope-from <joseph@codesourcery.com>)
-        id 1gN0Cj-0005hl-5M; Wed, 14 Nov 2018 18:47:57 +0000
-Date:   Wed, 14 Nov 2018 18:47:57 +0000
-From:   Joseph Myers <joseph@codesourcery.com>
-X-X-Sender: jsm28@digraph.polyomino.org.uk
-To:     Daniel Colascione <dancol@google.com>
-CC:     Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>, nd <nd@arm.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
-Subject: Re: Official Linux system wrapper library?
-In-Reply-To: <CAKOZuetCGCfNdJ2QM0phu3_3Q29f5Yeh=NHiM_A9MhHsCjK48A@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.1811141840140.16571@digraph.polyomino.org.uk>
-References: <CAKOZuesB4R=dCz4merWQN0FSCGrXmOgUUr4ienSbStBJguNv8g@mail.gmail.com> <bbc12da5-830e-99a7-95e3-d9da42947dc9@gmail.com> <877ehjx447.fsf@oldenburg.str.redhat.com> <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
- <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com> <20181113193859.GJ3505@e103592.cambridge.arm.com> <5853c297-9d84-86e5-dede-aa2957562c6b@arm.com> <CAKOZuesta_V=doXsVLc2E6WCQvywdur3F+u2pFKaPN+CEQd+ZQ@mail.gmail.com>
- <alpine.DEB.2.21.1811141741000.16571@digraph.polyomino.org.uk> <CAKOZuetCGCfNdJ2QM0phu3_3Q29f5Yeh=NHiM_A9MhHsCjK48A@mail.gmail.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+        Wed, 14 Nov 2018 23:52:41 -0500
+Received: from bues.ch ([80.190.117.144]:38908 "EHLO bues.ch"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727251AbeKOEwk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Wed, 14 Nov 2018 23:52:40 -0500
+Received: by bues.ch with esmtpsa (Exim 4.89)
+        (envelope-from <m@bues.ch>)
+        id 1gN0Cj-0002hI-VO; Wed, 14 Nov 2018 19:47:58 +0100
+Date:   Wed, 14 Nov 2018 19:46:28 +0100
+From:   Michael =?UTF-8?B?QsO8c2No?= <m@bues.ch>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     Kees Cook <keescook@chromium.org>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Kalle Valo <kvalo@codeaurora.org>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Varsha Rao <rvarsha016@gmail.com>,
+        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] b43: Use cordic algorithm from kernel library
+Message-ID: <20181114194628.0f485637@wiggum>
+In-Reply-To: <d93962cdc5a32fe99e6e5a25172920d28583aa6a.1542219596.git-series.plaes@plaes.org>
+References: <cover.c0b1738f3f06bbf87f4ad3200ece93322a5f135f.1542219596.git-series.plaes@plaes.org>
+ <d93962cdc5a32fe99e6e5a25172920d28583aa6a.1542219596.git-series.plaes@plaes.org>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-05.mgc.mentorg.com (139.181.222.5) To
- SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+ boundary="Sig_/v/Gtp+3WZf2T0zsNVwRZBC/"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Nov 2018, Daniel Colascione wrote:
+--Sig_/v/Gtp+3WZf2T0zsNVwRZBC/
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-> A good demonstration of a new commitment to pragmatism would be
-> merging the trivial wrappers for gettid(2).
+On Wed, 14 Nov 2018 20:27:52 +0200
+Priit Laes <plaes@plaes.org> wrote:
 
-I support the addition of gettid (for use with those syscalls that take 
-tids, and with appropriate documentation explaining the properties of 
-tids) - and, generally, wrappers for all non-obsolescent 
-architecture-independent Linux kernel syscalls, including ones that are 
-very Linux-specific, except maybe for a few interfaces fundamentally 
-inconsistent with glibc managing TLS etc. - they are, at least, no worse 
-as a source of APIs than all the old BSD / SVID interfaces we have from 
-when those were used as sources of APIs.
+> Kernel library has a common cordic algorithm which is identical
+> to internally implementatd one, so use it and drop the duplicate
+> implementation.
 
--- 
-Joseph S. Myers
-joseph@codesourcery.com
+
+In v2 of the series it has been said that:
+
+Arend van Spriel <arend.vanspriel@broadcom.com> wrote:
+> I recall doing a comparison between the algorithms and thought I put=20
+> that in the original commit message. However, it is not there. It is not=
+=20
+> exactly the same as in b43 so there are difference for certain angles,=20
+> most results are the same however. This implementation is slightly more=20
+> accurate on the full scale.
+
+
+That's not my definition of "identical".
+
+Please do not apply this patch without doing a thorough regression test
+on actual b43 LP hardware.
+
+
+--=20
+Michael
+
+--Sig_/v/Gtp+3WZf2T0zsNVwRZBC/
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCgAdFiEEihRzkKVZOnT2ipsS9TK+HZCNiw4FAlvsbYQACgkQ9TK+HZCN
+iw4ikA/9F3YX8qJLGOLZS+Mj84G+Pgbka+VHeXYzsA+7fl5qbRjf9LFz0/t3gpmS
+3VjpleNONAEBrEmt6jTCEOL6/c3MiBHlCZjG75zuybjjoHPkkpDv+0MMzNZP1SmS
+UfXDlXL8pvIp4rwDJvS7UEglfa9hjjUMUwLPwM/vJJ+I+dZWkgG/WB36J5r5o0uf
+rqWw944Ta21vm/tb5bhaH63WZx4/yO68K3vWUFASgysIIschAbiYI1hr6ewEx5yo
+7s+dahHO0pEWkf+C0bQ95a5+GSCC6mrphkonyQhYt1QYdsUQeS48Aog1HlEA2DWr
+H8kjt6pxgyNHrxHxni6zK/DTP72k4UUfVo5PPgNQrPazMAefimFWqwBGUp9zw9rw
+otpPxq2VsBD9tYVEwHuYrXanNI7gAqcirL8Dri931sm4dtKuHdKmid3JLzXBVgqF
+4qvGsbH8fcW63OPTHPYzrfSZj+gYquf+F86KK91PPopXvb0byUGgA5kNz/Uev2G/
+OmS0lPuPgwi2CgdfYKfRxLsA5dYhNNty030faoClat1jDII5gNecmt/54jj7XDbT
+o/OLLEw4YaiFPAfOwMh+l78iE6awbGlKmQdKczL4QuUs4SByXZAdAkfZTF/utIFe
+9OEaWjH0pP9jit1b0/7hp44fptvanh8zspM82+n/U/wlHLuWEq0=
+=VqWV
+-----END PGP SIGNATURE-----
+
+--Sig_/v/Gtp+3WZf2T0zsNVwRZBC/--
