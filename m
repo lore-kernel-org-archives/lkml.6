@@ -2,119 +2,135 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AD621C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:05:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CE2A3C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:13:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 831E2214F1
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:05:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 831E2214F1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 713F0223DD
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:13:02 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="n0+uLwfo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713F0223DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soleen.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbeKOFKO (ORCPT
+        id S1726348AbeKOFR1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 00:10:14 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:44718 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726153AbeKOFKO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 00:10:14 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id a-a1lyWqu2CE; Wed, 14 Nov 2018 20:05:47 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD0D200D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:d200:d571:4500:c00e:26fd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id EB6451EC00FD;
-        Wed, 14 Nov 2018 20:05:46 +0100 (CET)
-Date:   Wed, 14 Nov 2018 20:05:43 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     "Moger, Babu" <Babu.Moger@amd.com>
-Cc:     "tglx@linutronix.de" <tglx@linutronix.de>,
-        "mingo@redhat.com" <mingo@redhat.com>,
-        "corbet@lwn.net" <corbet@lwn.net>,
-        "fenghua.yu@intel.com" <fenghua.yu@intel.com>,
-        "reinette.chatre@intel.com" <reinette.chatre@intel.com>,
-        "peterz@infradead.org" <peterz@infradead.org>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
-        "davem@davemloft.net" <davem@davemloft.net>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
-        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
-        "arnd@arndb.de" <arnd@arndb.de>,
-        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
-        "pombredanne@nexb.com" <pombredanne@nexb.com>,
-        "rafael@kernel.org" <rafael@kernel.org>,
-        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-        "tony.luck@intel.com" <tony.luck@intel.com>,
-        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
-        "xiaochen.shen@intel.com" <xiaochen.shen@intel.com>,
-        "pbonzini@redhat.com" <pbonzini@redhat.com>,
-        "Singh, Brijesh" <brijesh.singh@amd.com>,
-        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
-        "luto@kernel.org" <luto@kernel.org>,
-        "joro@8bytes.org" <joro@8bytes.org>,
-        "jannh@google.com" <jannh@google.com>,
-        "vkuznets@redhat.com" <vkuznets@redhat.com>,
-        "rian@alum.mit.edu" <rian@alum.mit.edu>,
-        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: Re: [PATCH v7 03/13] arch/x86: Re-arrange RDT init code
-Message-ID: <20181114190543.GL13926@zn.tnic>
-References: <20181109205153.14811-1-babu.moger@amd.com>
- <20181109205153.14811-4-babu.moger@amd.com>
+        Thu, 15 Nov 2018 00:17:27 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:46390 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725757AbeKOFR1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 00:17:27 -0500
+Received: by mail-qk1-f194.google.com with SMTP id q1so27788107qkf.13
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 11:12:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=rKum7I1gn0a5UTdYuYZKys3E/k34JOcd+Hmhhlesiu0=;
+        b=n0+uLwfotrDroncoP0/QducyFYPIthRT1zkroDhhEwCgqcyFuEMNctjUmORAxLKDyr
+         tDYQtWCxl/ABNBEeSOg2reInYlSlndfu4WcABuq3sPWvPF+dmH5njQXjJjaoHpI+NOjG
+         d2xnKFblxXh737aO7hV1waD2/S3yEJjLN9l6+C3RdRgcPpw9ZLZOu9BCAcUIvNRIMz/s
+         EK85QolTDzkLDK7Jh7dDFBJOJeB7tES8pxEyrMkaUL5DqdgDrUQKCm08vUgsAJviJ9M1
+         36bBhFI20ALm7w5Xal84h/1d0ZE0xrGJrsexffgZ5U7YBYnUqPZ67/VnD8BcHUbDZn/X
+         KNZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=rKum7I1gn0a5UTdYuYZKys3E/k34JOcd+Hmhhlesiu0=;
+        b=c54el+DUGfHQdUeGxegbdDc6NFa51V+R5RnVUHgk27UDrB8DRMSwHC77T0Af6EQXY+
+         tASYHs3wBHrR+9PGgFH/61wGNyFe9LEx1eU8KmZqvT7Fj2J6H+mNkMT7Mr+2XpC0JHeb
+         YPyYsS+nu0Vs8t+GaYt06bl4yHbL1sSY9DjhgPS+Xat2kXOudxeQ4xHjwo3hnqTSDl3I
+         kwBD/svson+OLF3YrE03mhZtwRPTL+c1W4sQuhQtmkUzaRRYrc7YGe20h9xcLggpzwx/
+         58OGrWnbfwk/A48jgKtidgAFZ7B66RxQURVRb0zkpZh5LqByqzSYQu46UGcmXHqkxjlg
+         67yg==
+X-Gm-Message-State: AGRZ1gKIUkPalGk4u3CDdbsTsvYNl5ziEK2iplQbOFlkJxoJU/wl63W0
+        F15DIT7VAS87vujHcMMO5WRxKw==
+X-Google-Smtp-Source: AJdET5fW2We+6PxunCVpqzSgQzbh8Kt/jab2+GPxn9a02MFqgZVb4dfT9JsgDCbnYO0sZ906AQsq/w==
+X-Received: by 2002:a0c:92c3:: with SMTP id c3mr3194159qvc.12.1542222779397;
+        Wed, 14 Nov 2018 11:12:59 -0800 (PST)
+Received: from soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net ([40.117.208.181])
+        by smtp.gmail.com with ESMTPSA id y14sm10916907qkb.2.2018.11.14.11.12.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Nov 2018 11:12:57 -0800 (PST)
+Date:   Wed, 14 Nov 2018 19:12:53 +0000
+From:   Pavel Tatashin <pasha.tatashin@soleen.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        akpm@linux-foundation.org, linux-mm@kvack.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, davem@davemloft.net,
+        pavel.tatashin@microsoft.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
+        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
+        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
+        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
+Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
+Message-ID: <20181114191253.rpwm4d23yeahnavw@soleen.tm1wkky2jk1uhgkn0ivaxijq1c.bx.internal.cloudapp.net>
+References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
+ <20181114150742.GZ23419@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181109205153.14811-4-babu.moger@amd.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181114150742.GZ23419@dhcp22.suse.cz>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 08:52:29PM +0000, Moger, Babu wrote:
-> Separate the call sequence for rdt_quirks and MBA feature.
-> This is in preparation to handle vendor differences in these
-> call sequences.
+On 18-11-14 16:07:42, Michal Hocko wrote:
+> On Mon 05-11-18 13:19:25, Alexander Duyck wrote:
+> > This patchset is essentially a refactor of the page initialization logic
+> > that is meant to provide for better code reuse while providing a
+> > significant improvement in deferred page initialization performance.
+> > 
+> > In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
+> > memory per node I have seen the following. In the case of regular memory
+> > initialization the deferred init time was decreased from 3.75s to 1.06s on
+> > average. For the persistent memory the initialization time dropped from
+> > 24.17s to 19.12s on average. This amounts to a 253% improvement for the
+> > deferred memory initialization performance, and a 26% improvement in the
+> > persistent memory initialization performance.
+> > 
+> > I have called out the improvement observed with each patch.
 > 
-> Signed-off-by: Babu Moger <babu.moger@amd.com>
-> ---
->  arch/x86/kernel/cpu/resctrl.c | 29 +++++++++++++++++++++++------
->  1 file changed, 23 insertions(+), 6 deletions(-)
+> I have only glanced through the code (there is a lot of the code to look
+> at here). And I do not like the code duplication and the way how you
+> make the hotplug special. There shouldn't be any real reason for that
+> IMHO (e.g. why do we init pfn-at-a-time in early init while we do
+> pageblock-at-a-time for hotplug). I might be wrong here and the code
+> reuse might be really hard to achieve though.
+
+I do not like having __init_single_page() to be done differently for
+hotplug. I think, if that is fixed, there is almost no more code
+duplication, the rest looks alright to me.
+
 > 
-> diff --git a/arch/x86/kernel/cpu/resctrl.c b/arch/x86/kernel/cpu/resctrl.c
-> index 5d526dc45751..fd5320dddddc 100644
-> --- a/arch/x86/kernel/cpu/resctrl.c
-> +++ b/arch/x86/kernel/cpu/resctrl.c
-> @@ -794,6 +794,16 @@ static bool __init rdt_cpu_has(int flag)
->  	return ret;
->  }
->  
-> +static __init bool rdt_mba_config(void)
-> +{
-> +	if (rdt_cpu_has(X86_FEATURE_MBA)) {
-> +		if (rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]))
-> +			return true;
+> I am also not impressed by new iterators because this api is quite
+> complex already. But this is mostly a detail.
 
-Or simpler:
+I have reviewed all the patches in this series, and at first was also
+worried about the new iterators. But, after diving deeper, they actually
+make sense, and new memblock iterators look alright to me. The only
+iterator, that I would like to see improved is
+for_each_deferred_pfn_valid_range(), because it is very hard to
+understand it.
 
-        if (rdt_cpu_has(X86_FEATURE_MBA))
-                return rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]);
+This series is an impressive performance improvement, and I have
+confirmed it on both arm, and x86. It is also should be compatible with
+ktasks.
 
-        return false;
+> 
+> Thing I do not like is that you keep microptimizing PageReserved part
+> while there shouldn't be anything fundamental about it. We should just
 
-as rdt_get_mem_config() already returns bool.
+Agree.
 
--- 
-Regards/Gruss,
-    Boris.
-
-Good mailing practices for 400: avoid top-posting and trim the reply.
+> remove it rather than make the code more complex. I fell more and more
+> guilty to add there actually.
