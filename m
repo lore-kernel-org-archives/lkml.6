@@ -7,45 +7,44 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85342C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:44:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D3D6EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:44:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D2912145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:44:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9B3322145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:44:18 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fr0701My"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D2912145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="epXjT8E4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9B3322145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388159AbeKOItI (ORCPT
+        id S2387764AbeKOItI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Thu, 15 Nov 2018 03:49:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
+Received: from mail.kernel.org ([198.145.29.99]:34392 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728556AbeKOI1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        id S1728561AbeKOI1S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 03:27:18 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 5B96F22513;
+        by mail.kernel.org (Postfix) with ESMTPSA id 8C13722526;
         Wed, 14 Nov 2018 22:22:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
         s=default; t=1542234135;
-        bh=/GjJbxXY2PF+II1TwvnBfr1vR9hWy7TvKGclXlQKzf8=;
+        bh=Hsw5vOXX7a7Mvuiy7wxR3hzthoYPga30j6wtObtvOTQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=Fr0701MyvIadXCAkX2XURM+wvdvCMgs2UZHI+OmcbqvR9nqIsLhpJMRBA/yhb9IX2
-         mVkzCuFgqWZxFA2hWUZRt8j5RnvZq8LkAsPMbJnwb/REetdkpLSAkaR/x2gZGXaAPU
-         d3IgTD8CM+IOO1xlNtzdg7J9iSgnAM52UWVaxtMw=
+        b=epXjT8E4SXaM5VoVstjqGZaFAsu2wY1JAmDlRMQD+TqubOSsfe/vl7EZLFVuD156a
+         WiMkBOKZWKnY8Xm0p8YSVPJAvAKkCAiXeF/WLamLiuwLS9NPXT2IU88OES1vbHf13E
+         GcJJOaqVT3GkkgH5z9vGEjeota3f78xVvbDsNw3I=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     =?UTF-8?q?Holger=20Hoffst=C3=A4tte?= 
-        <holger@applied-asynchrony.com>,
-        "David S . Miller" <davem@davemloft.net>,
+Cc:     Oleksij Rempel <o.rempel@pengutronix.de>,
+        Shawn Guo <shawnguo@kernel.org>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 29/73] net: phy: realtek: fix RTL8201F sysfs name
-Date:   Wed, 14 Nov 2018 17:21:23 -0500
-Message-Id: <20181114222207.98701-29-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 30/73] ARM: dts: imx6sll: fix typo for fsl,imx6sll-i2c node
+Date:   Wed, 14 Nov 2018 17:21:24 -0500
+Message-Id: <20181114222207.98701-30-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -57,49 +56,34 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Holger Hoffstätte <holger@applied-asynchrony.com>
+From: Oleksij Rempel <o.rempel@pengutronix.de>
 
-[ Upstream commit 0432e833191ad4d17b7fc2364941f91dad51db1a ]
+[ Upstream commit 438ad09af5581b7024850b5dbb6353c7f2f7d8a9 ]
 
-Since 4.19 the following error in sysfs has appeared when using the
-r8169 NIC driver:
+Fix the type of compatible string "fs,imx6sll-i2c" which should be
+"fsl,imx6sll-i2c".
 
-$cd /sys/module/realtek/drivers
-$ls -l
-ls: cannot access 'mdio_bus:RTL8201F 10/100Mbps Ethernet': No such file or directory
-[..garbled dir entries follow..]
-
-Apparently the forward slash in "10/100Mbps Ethernet" is interpreted
-as directory separator that leads nowhere, and was introduced in commit
-513588dd44b ("net: phy: realtek: add RTL8201F phy-id and functions").
-
-Fix this by removing the offending slash in the driver name.
-
-Other drivers in net/phy seem to have the same problem, but I cannot
-test/verify them.
-
-Fixes: 513588dd44b ("net: phy: realtek: add RTL8201F phy-id and functions")
-Signed-off-by: Holger Hoffstätte <holger@applied-asynchrony.com>
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-Signed-off-by: David S. Miller <davem@davemloft.net>
+Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
+Acked-by: Uwe Kleine-König <u.kleine-koenig@pengutronix.de>
+Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/phy/realtek.c | 2 +-
+ arch/arm/boot/dts/imx6sll.dtsi | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/net/phy/realtek.c b/drivers/net/phy/realtek.c
-index 7fc8508b5231..271e8adc39f1 100644
---- a/drivers/net/phy/realtek.c
-+++ b/drivers/net/phy/realtek.c
-@@ -220,7 +220,7 @@ static struct phy_driver realtek_drvs[] = {
- 		.flags          = PHY_HAS_INTERRUPT,
- 	}, {
- 		.phy_id		= 0x001cc816,
--		.name		= "RTL8201F 10/100Mbps Ethernet",
-+		.name		= "RTL8201F Fast Ethernet",
- 		.phy_id_mask	= 0x001fffff,
- 		.features	= PHY_BASIC_FEATURES,
- 		.flags		= PHY_HAS_INTERRUPT,
+diff --git a/arch/arm/boot/dts/imx6sll.dtsi b/arch/arm/boot/dts/imx6sll.dtsi
+index 000e6136a9d6..3e6ffaf5f104 100644
+--- a/arch/arm/boot/dts/imx6sll.dtsi
++++ b/arch/arm/boot/dts/imx6sll.dtsi
+@@ -709,7 +709,7 @@
+ 			i2c1: i2c@21a0000 {
+ 				#address-cells = <1>;
+ 				#size-cells = <0>;
+-				compatible = "fs,imx6sll-i2c", "fsl,imx21-i2c";
++				compatible = "fsl,imx6sll-i2c", "fsl,imx21-i2c";
+ 				reg = <0x021a0000 0x4000>;
+ 				interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>;
+ 				clocks = <&clks IMX6SLL_CLK_I2C1>;
 -- 
 2.17.1
 
