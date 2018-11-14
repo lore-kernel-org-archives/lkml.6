@@ -2,121 +2,119 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 260F9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:30:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F768C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:31:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D5B6322360
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:30:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="hYVGyTx9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5B6322360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id D30BB22360
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 19:31:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D30BB22360
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727096AbeKOFfR (ORCPT
+        id S1727720AbeKOFff (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 00:35:17 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:43303 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725766AbeKOFfR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 00:35:17 -0500
-Received: by mail-pl1-f195.google.com with SMTP id g59-v6so8241536plb.10
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 11:30:46 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=U4qS4sG0ZQHLRjlc+Lx3+OgO7WRcrcCm6h8smRWD5rY=;
-        b=hYVGyTx9S+F4Ky/FMUWMe8BUhu9YGZ29jZAWGxPqb0jZJLC8AwjAoTLMUv43Ct9WYp
-         Vlc9aTrIyw69+5JoE2KCg4cI2RNPthm7+Lv4d3EKvzumgf8qwcFB2Y1GvAtxmHPDyhc0
-         VzfJQ1nUSdNzBJCk97mW+e2FqjTrGDGMQWI6iqkQgWNYWxuTyLC98xW+swBNxRAT7j4o
-         IsOqR4W41HCjAFQ/nwln1X0vIz/73Nc7rFHc44zGHCJrYS0qq4n6PA7VgPJcvzxyN3Hd
-         PF9HUAHJSuVdKQjDzy7VwrR07idtEV73sgsfmf0u/i801MqbpdnI+9ewyORYk1BJBSLJ
-         77nA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=U4qS4sG0ZQHLRjlc+Lx3+OgO7WRcrcCm6h8smRWD5rY=;
-        b=s8WMyzEmHu+pwxdtc3Y59CzmSPcLFV/Pv8WBypKn8jJhUxUF5scHAkJe7onA+wDzsk
-         FQPLMFJtTD5v8SOXlpxerE7gTFQLHLDLUo8cuQ6Ajjo0gvvkjh5tThh1Ric9Uf5oaNqj
-         5TKMkGCy7cReo1Nzg9ji6znqIw9xtPGxizlXhGWdtCj1WiCzdHXMYFk8zc8nutzByKPD
-         YRGvtvFnCv05ZtyTLWJhnNsBpf4rYP59kiwYkNX9lWJiKKy0AuFNNjgnGkU+UzDEetyi
-         qvPmrGEvL3pIDFn34+M+NMHRDVN4DoO5QT+zwKpAoJWE9Nie9XU5v8WQxmvHysb1eLTt
-         PXcA==
-X-Gm-Message-State: AGRZ1gLHhI0pNxQTlB7QQVqw3qERbH09Eh3dI6kervA8i4gMppAxplVj
-        r3eQ4mFEQ4Mawqd3Ffb1CyNmwQ==
-X-Google-Smtp-Source: AJdET5ekTQj4BxDyPNq1DCAzvS1u0iO7xTYvv/Xg/zZGebI8iod/+KTRrpDPREAaKUpwZq6d6ojh+g==
-X-Received: by 2002:a17:902:c01:: with SMTP id 1-v6mr3204768pls.15.1542223846326;
-        Wed, 14 Nov 2018 11:30:46 -0800 (PST)
-Received: from localhost ([64.114.255.97])
-        by smtp.gmail.com with ESMTPSA id k75-v6sm64995626pfb.119.2018.11.14.11.30.45
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Nov 2018 11:30:45 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
-Date:   Wed, 14 Nov 2018 11:30:45 -0800 (PST)
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-cc:     paul.walmsley@sifive.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Russell King <linux@armlinux.org.uk>, jimw@sifive.com,
-        Michal Marek <michal.lkml@markovi.net>,
-        Paul Walmsley <paul@pwsan.com>
-Subject: Re: [PATCH 2/2] modpost: skip ELF local symbols by default during
- section mismatch check
-In-Reply-To: <CAK7LNARC2+BLFay_-CtaJXKCu3M0NZzxbeff1XandeH58BbUcg@mail.gmail.com>
-Message-ID: <alpine.DEB.2.21.9999.1811141126450.22477@viisi.sifive.com>
-References: <20181020131911.22443-1-paul.walmsley@sifive.com> <20181020131911.22443-3-paul.walmsley@sifive.com> <CAK7LNARC2+BLFay_-CtaJXKCu3M0NZzxbeff1XandeH58BbUcg@mail.gmail.com>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Thu, 15 Nov 2018 00:35:35 -0500
+Received: from mga03.intel.com ([134.134.136.65]:23748 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725766AbeKOFfe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 00:35:34 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 11:31:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,233,1539673200"; 
+   d="scan'208";a="89306528"
+Received: from orsmsx107.amr.corp.intel.com ([10.22.240.5])
+  by orsmga007.jf.intel.com with ESMTP; 14 Nov 2018 11:31:03 -0800
+Received: from orsmsx157.amr.corp.intel.com (10.22.240.23) by
+ ORSMSX107.amr.corp.intel.com (10.22.240.5) with Microsoft SMTP Server (TLS)
+ id 14.3.408.0; Wed, 14 Nov 2018 11:31:02 -0800
+Received: from orsmsx105.amr.corp.intel.com ([169.254.2.237]) by
+ ORSMSX157.amr.corp.intel.com ([169.254.9.136]) with mapi id 14.03.0415.000;
+ Wed, 14 Nov 2018 11:31:02 -0800
+From:   "Yu, Fenghua" <fenghua.yu@intel.com>
+To:     "Moger, Babu" <Babu.Moger@amd.com>,
+        "tglx@linutronix.de" <tglx@linutronix.de>,
+        "mingo@redhat.com" <mingo@redhat.com>,
+        "bp@alien8.de" <bp@alien8.de>, "corbet@lwn.net" <corbet@lwn.net>,
+        "Chatre, Reinette" <reinette.chatre@intel.com>,
+        "peterz@infradead.org" <peterz@infradead.org>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        "akpm@linux-foundation.org" <akpm@linux-foundation.org>
+CC:     "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+        "mchehab+samsung@kernel.org" <mchehab+samsung@kernel.org>,
+        "arnd@arndb.de" <arnd@arndb.de>,
+        "kstewart@linuxfoundation.org" <kstewart@linuxfoundation.org>,
+        "pombredanne@nexb.com" <pombredanne@nexb.com>,
+        "rafael@kernel.org" <rafael@kernel.org>,
+        "kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
+        "Luck, Tony" <tony.luck@intel.com>,
+        "qianyue.zj@alibaba-inc.com" <qianyue.zj@alibaba-inc.com>,
+        "Shen, Xiaochen" <xiaochen.shen@intel.com>,
+        "pbonzini@redhat.com" <pbonzini@redhat.com>,
+        "Singh, Brijesh" <brijesh.singh@amd.com>,
+        "Hurwitz, Sherry" <sherry.hurwitz@amd.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "Lendacky, Thomas" <Thomas.Lendacky@amd.com>,
+        "luto@kernel.org" <luto@kernel.org>,
+        "joro@8bytes.org" <joro@8bytes.org>,
+        "jannh@google.com" <jannh@google.com>,
+        "vkuznets@redhat.com" <vkuznets@redhat.com>,
+        "rian@alum.mit.edu" <rian@alum.mit.edu>,
+        "jpoimboe@redhat.com" <jpoimboe@redhat.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "Hunt, Douglas" <Douglas.Hunt@amd.com>
+Subject: RE: [PATCH v7 11/13] arch/x86: Introduce QOS feature for AMD
+Thread-Topic: [PATCH v7 11/13] arch/x86: Introduce QOS feature for AMD
+Thread-Index: AQHUeG4uwPRu5I4I10iY3UihB8yywKVOQg0AgAHERQCAABuEgP//jN8Q
+Date:   Wed, 14 Nov 2018 19:31:01 +0000
+Message-ID: <3E5A0FA7E9CA944F9D5414FEC6C71220985A68FF@ORSMSX105.amr.corp.intel.com>
+References: <20181109205153.14811-1-babu.moger@amd.com>
+ <20181109205153.14811-12-babu.moger@amd.com>
+ <3E5A0FA7E9CA944F9D5414FEC6C71220985A6664@ORSMSX105.amr.corp.intel.com>
+ <DM5PR12MB2471AB9EFDE9E8D7C65C58A295C30@DM5PR12MB2471.namprd12.prod.outlook.com>
+ <204f5ddb-21f3-5275-273b-02335a5a03c8@amd.com>
+In-Reply-To: <204f5ddb-21f3-5275-273b-02335a5a03c8@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiMmJlZWExY2MtYTY4Zi00Yjg0LWI2YTItZTgyZjczYWUzMGUxIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoiSHJoM1Fid1wvUklRWk01bWZkbmFMVmxYMWRybnJqZ1RiV0wxcnR0eXNBSnl1eE1XeUw3K3pyUUN2emxFT3EwZlAifQ==
+x-ctpclassification: CTP_NT
+dlp-product: dlpe-windows
+dlp-version: 11.0.400.15
+dlp-reaction: no-action
+x-originating-ip: [10.22.254.140]
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello Masahiro,
-
-On Tue, 13 Nov 2018, Masahiro Yamada wrote:
-
-> Hi Paul,
->
-> On Sat, Oct 20, 2018 at 10:21 PM Paul Walmsley <paul.walmsley@sifive.com> wrote:
->>
->> During development of a serial console driver with a RISC-V toolchain,
->> the following modpost warning appeared:
->>
->> ----
->> WARNING: vmlinux.o(.data+0x19b10): Section mismatch in reference from the variable .LANCHOR1 to the function .init.text:sifive_serial_console_setup()
->> The variable .LANCHOR1 references
->> the function __init sifive_serial_console_setup()
->> If the reference is valid then annotate the
->> variable with __init* or __refdata (see linux/init.h) or name the variable:
->> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
->> ----
->
-> Could you provide me a little more information to reproduce it?
->
-> I tried your dev/paulw/serial-v4.19-rc7,
-> but I could not get that warning.
->
-> I used risc64-linux-gcc (GCC 7.3, 8.1) from kernel.org
-
-I observed this issue with gcc 8.2:
-
-riscv64-unknown-linux-gnu-gcc (crosstool-NG 1.23.0.534-710c8) 8.2.0
-
-This toolchain was built with mainline crosstool-NG:
-
-https://github.com/crosstool-ng/crosstool-ng
-
-using the "riscv64-unknown-linux-gnu" sample configuration.
-
-
-- Paul
+PiBGcm9tOiBNb2dlciwgQmFidSBbbWFpbHRvOkJhYnUuTW9nZXJAYW1kLmNvbV0NCj4gPj4gSSdt
+IHdvbmRlcmluZzogZG9lcyB0aGF0IG1lYW4gdGhlIHRhc2tzIHJ1bm5pbmcgd2l0aCB0aGlzIGNs
+b3NpZA0KPiA+PiBkaXJlY3RseSBhY2Nlc3MgbWVtb3J5IHdpdGhvdXQgY2FjaGU/IElzIHRoZXJl
+IGFueSB1c2FnZSBmb3IgdGhpcw0KPiBzaXR1YXRpb24/DQo+IA0KPiBIZXJlIGlzIHRoZSBkZXRh
+aWxlZCBhbnN3ZXIgdG8geW91ciBxdWVzdGlvbiBmcm9tIERvdWcoaW4gQ0MpLg0KPiANCj4gQSBj
+bG9zaWQgd2l0aCBMM19NQVNLIG9mIGFsbCAwJ3Mgd2lsbCBub3QgdXNlIGFueSBvZiB0aGUgTDMg
+Y2FjaGUsIGJ1dCB3aWxsIHN0aWxsDQo+IGJlIGFibGUgdG8gdXNlIEwyIGNhY2hlLiAgU28sIG5v
+LCB0aGUgcHJvY2Vzc2VzIGluIHRoYXQgY2xvc2lkIHdpbGwgbm90DQo+ICJkaXJlY3RseSBhY2Nl
+c3MgbWVtb3J5IiBpbiB0aGUgc2Vuc2UgdGhhdCB0aGV5IHdpbGwgdXNlIHRoZSBMMSBhbmQgTDIN
+Cj4gY2FjaGVzIGFzIG5vcm1hbC4gIEJ1dCBpZiB0aGV5IG1pc3MgdGhlIEwyIHRoZW4sIHllcywg
+dGhlIGFjY2VzcyB3aWxsIGdvDQo+IGRpcmVjdGx5IHRvIG1lbW9yeS4gIFRvIGJlIHByZWNpc2Us
+IG5vbmUgb2YgdGhlIGxpbmVzIHdoaWNoIGFyZSBmZXRjaGVkIGJ5IGENCj4gcHJvY2VzcyBydW5u
+aW5nIHdpdGggc3VjaCBhIGNvbmZpZ3VyYXRpb24gd2lsbCBiZSBpbnN0YWxsZWQgaW4gdGhlIEwz
+IGNhY2hlLA0KPiBzbyBzdWJzZXF1ZW50IGFjY2Vzc2VzIHdoaWNoIG1pc3MgdGhlIEwyIGNhY2hl
+IHdpbGwgbm90IGZpbmQgdGhlIHJlcXVlc3RlZA0KPiBkYXRhIGluIHRoZSBMMyBjYWNoZSBhbmQg
+d2lsbCB0aGVuIGdvIG9uIHRvIGFjY2VzcyBtZW1vcnkuDQoNClNlZW1zIGFsbCB6ZXJvcyBDQk0g
+cmVkdWNlcyB0aGUgY2FjaGVzIHRvIEwxIGFuZCBMMi4gVGhpcyBtaWdodCBiZSB1c2VmdWwgaW4g
+ZmFzdCBhY2Nlc3MgdG8gc21hbGwgZGF0YSBmaXR0aW5nIGluIEwyLg0KDQpUaGFuayB5b3UgdmVy
+eSBtdWNoIGZvciB5b3VyIGV4cGxhbmF0aW9uIQ0KDQotRmVuZ2h1YQ0K
