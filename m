@@ -7,40 +7,40 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 801C4C43610
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:23:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 98A57C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:24:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FB8E223DD
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:23:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A6DD2243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 08:24:00 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XRfab8TA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FB8E223DD
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TPdQTXCP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A6DD2243E
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732611AbeKNS0J (ORCPT
+        id S1732642AbeKNS0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Wed, 14 Nov 2018 13:26:09 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:49468 "EHLO
+Received: from bombadil.infradead.org ([198.137.202.133]:49476 "EHLO
         bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731357AbeKNS0I (ORCPT
+        with ESMTP id S1731357AbeKNS0J (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 13:26:08 -0500
+        Wed, 14 Nov 2018 13:26:09 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
         MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
         :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
         :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
         List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=RzRTCgEClb2rx7TuaPs70mJCA23e/7fho0KbiMszrpc=; b=XRfab8TAEwoa2qtxHIKXtEIqNq
-        C39r/ybTunjBM3K83uRCIeh0xFck4I3pLwTMwCwisdTukNVmCbTYrEkp3HKKozOV843s+xjsmC9VE
-        JRn6tKY7UbSrq4ePt6ypMdIEaQ57M8DwsL+u4OHOAzFEFmR2ZAZHtLvs3ye2fcyZZ4IPlKx+t4o7G
-        yE4Mt4r0xYTKpyE6Is3vZrBXa+r+OC/Tvqcc+GyWfT+PiLdduST0iEjUORQTu+8UiNvBVNEtU4gkp
-        4dg2Ghq29vTbXxz1m0ChOs3UWrblRsGxvaBOKy+WD2/CBDZhmqTYa1IDsgf57EpUHgobgu/mexOSi
-        DoUd3RJw==;
+        bh=4zqQQi9ctkbH3jopiquXd5fu3/8u2WITpCDxsIiflrA=; b=TPdQTXCPA7HV8duv45UM2kksn5
+        K4lnpxClg9GDk3B/eiCJa4zo9A4n3XQYGW6UgMSXdvOT/Y+/0t1EnBZ4bgrEiJBEcq9LlY5Zi6JWz
+        PxmcZdA48dAihR5Fq2ukodBfxVq5ZVP1oyejRLyEQJaODUkB1phAP/YhDDMMAweV7xbHuhPmFCc7m
+        DI3GM1UhqzxFGgUw19bGkwtGof2E0+MZ4TUQ6E9z+1/3uwWINb+TQc04myiZKvtH9aeUHK+6nKs9l
+        T9MKHtEgQXZEUHjNG7mYAO8/o61HSJy3CkQ5CqHfhJwUxPtrVBialr1tRcYv4lTPGWKABBQMYy02M
+        YJJ2riwA==;
 Received: from 089144211136.atnat0020.highway.a1.net ([89.144.211.136] helo=localhost)
         by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gMqSY-0004p9-DC; Wed, 14 Nov 2018 08:23:38 +0000
+        id 1gMqSd-0004pr-U3; Wed, 14 Nov 2018 08:23:44 +0000
 From:   Christoph Hellwig <hch@lst.de>
 To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
         Paul Mackerras <paulus@samba.org>,
@@ -48,9 +48,9 @@ To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
 Cc:     linuxppc-dev@lists.ozlabs.org, iommu@lists.linux-foundation.org,
         linux-mm@kvack.org, linux-arch@vger.kernel.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 08/34] powerpc/dma: untangle vio_dma_mapping_ops from dma_iommu_ops
-Date:   Wed, 14 Nov 2018 09:22:48 +0100
-Message-Id: <20181114082314.8965-9-hch@lst.de>
+Subject: [PATCH 10/34] powerpc/pseries: unwind dma_get_required_mask_pSeriesLP a bit
+Date:   Wed, 14 Nov 2018 09:22:50 +0100
+Message-Id: <20181114082314.8965-11-hch@lst.de>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181114082314.8965-1-hch@lst.de>
 References: <20181114082314.8965-1-hch@lst.de>
@@ -62,211 +62,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-vio_dma_mapping_ops currently does a lot of indirect calls through
-dma_iommu_ops, which not only make the code harder to follow but are
-also expensive in the post-spectre world.  Unwind the indirect calls
-by calling the ppc_iommu_* or iommu_* APIs directly applicable, or
-just use the dma_iommu_* methods directly where we can.
+Call dma_get_required_mask_pSeriesLP directly instead of dma_iommu_ops
+to simply the code a bit.
 
 Signed-off-by: Christoph Hellwig <hch@lst.de>
 ---
- arch/powerpc/include/asm/iommu.h     |  1 +
- arch/powerpc/kernel/dma-iommu.c      |  2 +-
- arch/powerpc/platforms/pseries/vio.c | 87 ++++++++++++----------------
- 3 files changed, 38 insertions(+), 52 deletions(-)
+ arch/powerpc/platforms/pseries/iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/powerpc/include/asm/iommu.h b/arch/powerpc/include/asm/iommu.h
-index 35db0cbc9222..75daa10f31a4 100644
---- a/arch/powerpc/include/asm/iommu.h
-+++ b/arch/powerpc/include/asm/iommu.h
-@@ -242,6 +242,7 @@ static inline int __init tce_iommu_bus_notifier_init(void)
- }
- #endif /* !CONFIG_IOMMU_API */
- 
-+u64 dma_iommu_get_required_mask(struct device *dev);
- int dma_iommu_mapping_error(struct device *dev, dma_addr_t dma_addr);
- 
- #else
-diff --git a/arch/powerpc/kernel/dma-iommu.c b/arch/powerpc/kernel/dma-iommu.c
-index 2ca6cfaebf65..0613278abf9f 100644
---- a/arch/powerpc/kernel/dma-iommu.c
-+++ b/arch/powerpc/kernel/dma-iommu.c
-@@ -92,7 +92,7 @@ int dma_iommu_dma_supported(struct device *dev, u64 mask)
- 		return 1;
- }
- 
--static u64 dma_iommu_get_required_mask(struct device *dev)
-+u64 dma_iommu_get_required_mask(struct device *dev)
- {
- 	struct iommu_table *tbl = get_iommu_table_base(dev);
- 	u64 mask;
-diff --git a/arch/powerpc/platforms/pseries/vio.c b/arch/powerpc/platforms/pseries/vio.c
-index 88f1ad1d6309..ea3a9745c812 100644
---- a/arch/powerpc/platforms/pseries/vio.c
-+++ b/arch/powerpc/platforms/pseries/vio.c
-@@ -492,7 +492,9 @@ static void *vio_dma_iommu_alloc_coherent(struct device *dev, size_t size,
- 		return NULL;
+diff --git a/arch/powerpc/platforms/pseries/iommu.c b/arch/powerpc/platforms/pseries/iommu.c
+index 06f02960b439..da5716de7f4c 100644
+--- a/arch/powerpc/platforms/pseries/iommu.c
++++ b/arch/powerpc/platforms/pseries/iommu.c
+@@ -1273,7 +1273,7 @@ static u64 dma_get_required_mask_pSeriesLP(struct device *dev)
+ 			return DMA_BIT_MASK(64);
  	}
  
--	ret = dma_iommu_ops.alloc(dev, size, dma_handle, flag, attrs);
-+	ret = iommu_alloc_coherent(dev, get_iommu_table_base(dev), size,
-+				    dma_handle, dev->coherent_dma_mask, flag,
-+				    dev_to_node(dev));
- 	if (unlikely(ret == NULL)) {
- 		vio_cmo_dealloc(viodev, roundup(size, PAGE_SIZE));
- 		atomic_inc(&viodev->cmo.allocs_failed);
-@@ -507,8 +509,7 @@ static void vio_dma_iommu_free_coherent(struct device *dev, size_t size,
- {
- 	struct vio_dev *viodev = to_vio_dev(dev);
- 
--	dma_iommu_ops.free(dev, size, vaddr, dma_handle, attrs);
--
-+	iommu_free_coherent(get_iommu_table_base(dev), size, vaddr, dma_handle);
- 	vio_cmo_dealloc(viodev, roundup(size, PAGE_SIZE));
+-	return dma_iommu_ops.get_required_mask(dev);
++	return dma_iommu_get_required_mask(dev);
  }
  
-@@ -518,22 +519,22 @@ static dma_addr_t vio_dma_iommu_map_page(struct device *dev, struct page *page,
-                                          unsigned long attrs)
- {
- 	struct vio_dev *viodev = to_vio_dev(dev);
--	struct iommu_table *tbl;
-+	struct iommu_table *tbl = get_iommu_table_base(dev);
- 	dma_addr_t ret = IOMMU_MAPPING_ERROR;
- 
--	tbl = get_iommu_table_base(dev);
--	if (vio_cmo_alloc(viodev, roundup(size, IOMMU_PAGE_SIZE(tbl)))) {
--		atomic_inc(&viodev->cmo.allocs_failed);
--		return ret;
--	}
--
--	ret = dma_iommu_ops.map_page(dev, page, offset, size, direction, attrs);
--	if (unlikely(dma_mapping_error(dev, ret))) {
--		vio_cmo_dealloc(viodev, roundup(size, IOMMU_PAGE_SIZE(tbl)));
--		atomic_inc(&viodev->cmo.allocs_failed);
--	}
--
-+	if (vio_cmo_alloc(viodev, roundup(size, IOMMU_PAGE_SIZE(tbl))))
-+		goto out_fail;
-+	ret = iommu_map_page(dev, tbl, page, offset, size, device_to_mask(dev),
-+			direction, attrs);
-+	if (unlikely(ret == IOMMU_MAPPING_ERROR))
-+		goto out_deallocate;
- 	return ret;
-+
-+out_deallocate:
-+	vio_cmo_dealloc(viodev, roundup(size, IOMMU_PAGE_SIZE(tbl)));
-+out_fail:
-+	atomic_inc(&viodev->cmo.allocs_failed);
-+	return IOMMU_MAPPING_ERROR;
- }
- 
- static void vio_dma_iommu_unmap_page(struct device *dev, dma_addr_t dma_handle,
-@@ -542,11 +543,9 @@ static void vio_dma_iommu_unmap_page(struct device *dev, dma_addr_t dma_handle,
- 				     unsigned long attrs)
- {
- 	struct vio_dev *viodev = to_vio_dev(dev);
--	struct iommu_table *tbl;
--
--	tbl = get_iommu_table_base(dev);
--	dma_iommu_ops.unmap_page(dev, dma_handle, size, direction, attrs);
-+	struct iommu_table *tbl = get_iommu_table_base(dev);
- 
-+	iommu_unmap_page(tbl, dma_handle, size, direction, attrs);
- 	vio_cmo_dealloc(viodev, roundup(size, IOMMU_PAGE_SIZE(tbl)));
- }
- 
-@@ -555,34 +554,32 @@ static int vio_dma_iommu_map_sg(struct device *dev, struct scatterlist *sglist,
-                                 unsigned long attrs)
- {
- 	struct vio_dev *viodev = to_vio_dev(dev);
--	struct iommu_table *tbl;
-+	struct iommu_table *tbl = get_iommu_table_base(dev);
- 	struct scatterlist *sgl;
- 	int ret, count;
- 	size_t alloc_size = 0;
- 
--	tbl = get_iommu_table_base(dev);
- 	for_each_sg(sglist, sgl, nelems, count)
- 		alloc_size += roundup(sgl->length, IOMMU_PAGE_SIZE(tbl));
- 
--	if (vio_cmo_alloc(viodev, alloc_size)) {
--		atomic_inc(&viodev->cmo.allocs_failed);
--		return 0;
--	}
--
--	ret = dma_iommu_ops.map_sg(dev, sglist, nelems, direction, attrs);
--
--	if (unlikely(!ret)) {
--		vio_cmo_dealloc(viodev, alloc_size);
--		atomic_inc(&viodev->cmo.allocs_failed);
--		return ret;
--	}
-+	if (vio_cmo_alloc(viodev, alloc_size))
-+		goto out_fail;
-+	ret = ppc_iommu_map_sg(dev, tbl, sglist, nelems, device_to_mask(dev),
-+			direction, attrs);
-+	if (unlikely(!ret))
-+		goto out_deallocate;
- 
- 	for_each_sg(sglist, sgl, ret, count)
- 		alloc_size -= roundup(sgl->dma_length, IOMMU_PAGE_SIZE(tbl));
- 	if (alloc_size)
- 		vio_cmo_dealloc(viodev, alloc_size);
--
- 	return ret;
-+
-+out_deallocate:
-+	vio_cmo_dealloc(viodev, alloc_size);
-+out_fail:
-+	atomic_inc(&viodev->cmo.allocs_failed);
-+	return 0;
- }
- 
- static void vio_dma_iommu_unmap_sg(struct device *dev,
-@@ -591,30 +588,18 @@ static void vio_dma_iommu_unmap_sg(struct device *dev,
- 		unsigned long attrs)
- {
- 	struct vio_dev *viodev = to_vio_dev(dev);
--	struct iommu_table *tbl;
-+	struct iommu_table *tbl = get_iommu_table_base(dev);
- 	struct scatterlist *sgl;
- 	size_t alloc_size = 0;
- 	int count;
- 
--	tbl = get_iommu_table_base(dev);
- 	for_each_sg(sglist, sgl, nelems, count)
- 		alloc_size += roundup(sgl->dma_length, IOMMU_PAGE_SIZE(tbl));
- 
--	dma_iommu_ops.unmap_sg(dev, sglist, nelems, direction, attrs);
--
-+	ppc_iommu_unmap_sg(tbl, sglist, nelems, direction, attrs);
- 	vio_cmo_dealloc(viodev, alloc_size);
- }
- 
--static int vio_dma_iommu_dma_supported(struct device *dev, u64 mask)
--{
--        return dma_iommu_ops.dma_supported(dev, mask);
--}
--
--static u64 vio_dma_get_required_mask(struct device *dev)
--{
--        return dma_iommu_ops.get_required_mask(dev);
--}
--
- static const struct dma_map_ops vio_dma_mapping_ops = {
- 	.alloc             = vio_dma_iommu_alloc_coherent,
- 	.free              = vio_dma_iommu_free_coherent,
-@@ -623,8 +608,8 @@ static const struct dma_map_ops vio_dma_mapping_ops = {
- 	.unmap_sg          = vio_dma_iommu_unmap_sg,
- 	.map_page          = vio_dma_iommu_map_page,
- 	.unmap_page        = vio_dma_iommu_unmap_page,
--	.dma_supported     = vio_dma_iommu_dma_supported,
--	.get_required_mask = vio_dma_get_required_mask,
-+	.dma_supported     = dma_iommu_mapping_error,
-+	.get_required_mask = dma_iommu_get_required_mask,
- 	.mapping_error	   = dma_iommu_mapping_error,
- };
- 
+ static int iommu_mem_notifier(struct notifier_block *nb, unsigned long action,
 -- 
 2.19.1
 
