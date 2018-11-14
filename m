@@ -2,139 +2,155 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F2696C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 00:11:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 86BE0C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 00:17:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0B4B2175B
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 00:11:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 425052175B
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 00:17:22 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UkYbvUpe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0B4B2175B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="JMHMlt7D"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 425052175B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730223AbeKNKMa (ORCPT
+        id S1730933AbeKNKSD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 05:12:30 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:42568 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726408AbeKNKM3 (ORCPT
+        Wed, 14 Nov 2018 05:18:03 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:42981 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726408AbeKNKSD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 05:12:29 -0500
-Received: by mail-pg1-f196.google.com with SMTP id d72so3035164pga.9;
-        Tue, 13 Nov 2018 16:11:47 -0800 (PST)
+        Wed, 14 Nov 2018 05:18:03 -0500
+Received: by mail-pg1-f195.google.com with SMTP id d72so3041020pga.9
+        for <linux-kernel@vger.kernel.org>; Tue, 13 Nov 2018 16:17:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=4QR7Dv+QdTTpwESOgXoue0bpc4d3760xOJqfAO3Cxcw=;
-        b=UkYbvUpexECjwSrOC2C1TaxQHVTqzIkR66l99O61g9yS8EUlNDfpZ39LnSQRIwsXN/
-         t0SjerKuWX6yBXKBpFclu0hWfbU7FhgrOQGQO4ysVPsx/PrwOjDiUhkrW5YxlR7b4Jew
-         LX4W2DWKDKTyeVwsV4CqvDmwQnUvlQjhGBVNJZ85ZONrJfaF1Oo/UrRf0kBGb+y0ThVV
-         gxBU1VTC79vXLasKRNBiAf5dZYH4Bab5EXbW/v1UF3S2dFqV4FOkQwKV/jGYZYnD8qtA
-         gr+Az9yto9BGpGcy2yt7PdS+WtdbxQjFLYNVUwZPsjQQ1rOY+hldY9kJNFiiFYxQjUBq
-         3oiQ==
+        bh=vaPrL5AVs+QSJPGBukt1u2S4cdrUJEqxE7lIf1OY0cE=;
+        b=JMHMlt7DSeuFoHJkZRU/5VdGNV/jn//Sg91XrMlmkkg8b4h+eEtwZBMc50VXXKz/VL
+         0Y2I4cIi4iwg70wqeyGhIa6wWal2qZ61Btc2jiSa6b+Yl5ZmiVjyNCuIvOCSE8kl8Rdy
+         qn/Ys7gUMh8VcgKKQJXCO3ERNEc0Zd5EEpxTQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=4QR7Dv+QdTTpwESOgXoue0bpc4d3760xOJqfAO3Cxcw=;
-        b=bRUBDS5vNjrcMaWBhC0AYdhQa6XM8W4YLrkFC1buMc8OS1MSEZWqohCQpz2azZM1dT
-         znGi/I+fAhhJsUiSHgsF9w17YVvN6rCJAU9IcOkxdQFlngJZK3ccmisbR+9vPfD+3v/w
-         /9ONiQTTg0dv8FHLCl7F1fShnsUkzhtyzLRrCtpMBnOyXlvj1Sro3/Y/7nt/f65mpj/G
-         JzpY0xIRp2YXoIfUpWZcSX0e4KLG05QSrpWr4ljqoVa8qK2J748KJUlXAHERS4Q68ur6
-         Xgc8wIO50uOtr+7qwS1LKeWKzbV0U3NmM+/YRGlBgzc/K5N4px3o2COOb0twGY5u+qJT
-         1GuA==
-X-Gm-Message-State: AGRZ1gIBYOYjK7Uo1SOE9s5tFRPf75yfn+m4WRIHxIj/hLomrCgQWhqm
-        Curn0NUotIDgRq2d93hiXJvehtjj
-X-Google-Smtp-Source: AJdET5cbbzNVbslSi7OrVHwtXL68Zms9RwrL7HWq+bcqRaH3fZ2jK3yZeAPigKRAe68wVk9O557mrg==
-X-Received: by 2002:a63:dc0c:: with SMTP id s12mr6784049pgg.398.1542154306809;
-        Tue, 13 Nov 2018 16:11:46 -0800 (PST)
-Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
-        by smtp.gmail.com with ESMTPSA id 202sm4382549pfy.87.2018.11.13.16.11.46
+        bh=vaPrL5AVs+QSJPGBukt1u2S4cdrUJEqxE7lIf1OY0cE=;
+        b=OwPrGSSdOvOxkiZwPUMU9/lWgS8t1XyDwf1BwekCdesvutec++DO8C8YBiwQ6+IPUV
+         TCC0Qzb8o8VNI8vlHd0SQYp5UnTPjy5exxz9GqU3bDFC0hYxcvOBMR+tvetv8g96NdeJ
+         yXZ9qscOoBmnmkc0EoHbLzL0HaLb0wVVCqrHbOQPewHJL4i9ia5lOhzF6SyHO1XpnSVL
+         eW+giohPYhJwfcGzT6NHQ2NwpVZRhvvvHRjlkXl+8MmtkNH90vulkCYj0bLc0fE9QwqU
+         1qEc2ok/Y0kq2dp8BawUZjoUgW3zuhvAuVJKh4KU9dh7+f32iDoHViVZ4RyWIESjfBWn
+         djZg==
+X-Gm-Message-State: AGRZ1gJ6wNbUavu5HV+tL7WEiI1ADa42pN+S9wydHa2Qx6SOgjAvKfW7
+        VFDNwkIZt+F1dI4IsyzNIs90LYeqIBo=
+X-Google-Smtp-Source: AJdET5ez3IrF06E+5fy+JSrcX4gco41KzioLzdsgd8C02DFCXvWlcIL+jD1BWVZxxtWuI5JCLD1MfQ==
+X-Received: by 2002:a63:c447:: with SMTP id m7mr6731822pgg.27.1542154639355;
+        Tue, 13 Nov 2018 16:17:19 -0800 (PST)
+Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
+        by smtp.gmail.com with ESMTPSA id x63-v6sm28278005pfk.14.2018.11.13.16.17.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Tue, 13 Nov 2018 16:11:46 -0800 (PST)
-Date:   Tue, 13 Nov 2018 16:11:42 -0800
-From:   Nicolin Chen <nicoleotsuka@gmail.com>
-To:     Guenter Roeck <linux@roeck-us.net>
-Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-        linux-kernel@vger.kernel.org, corbet@lwn.net,
-        linux-doc@vger.kernel.org
-Subject: Re: [PATCH] hwmon (ina3221) Add single-shot mode support
-Message-ID: <20181114001141.GA14925@Asurada-Nvidia.nvidia.com>
-References: <20181113042353.1507-1-nicoleotsuka@gmail.com>
- <20181113043248.GB11205@roeck-us.net>
- <20181113045823.GB26327@Asurada-Nvidia.nvidia.com>
- <20181113172102.GA21714@roeck-us.net>
+        Tue, 13 Nov 2018 16:17:18 -0800 (PST)
+Date:   Tue, 13 Nov 2018 16:17:17 -0800
+From:   Matthias Kaehlcke <mka@chromium.org>
+To:     Balakrishna Godavarthi <bgodavar@codeaurora.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v1 1/4] Bluetooth: hci_qca: use wait_until_sent() for
+ power pulses
+Message-ID: <20181114001717.GG22824@google.com>
+References: <20181106120528.30342-1-bgodavar@codeaurora.org>
+ <20181106120528.30342-2-bgodavar@codeaurora.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181113172102.GA21714@roeck-us.net>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181106120528.30342-2-bgodavar@codeaurora.org>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Guenter,
-
-On Tue, Nov 13, 2018 at 09:21:02AM -0800, Guenter Roeck wrote:
-> > > > INA3221 supports both continuous and single-shot modes. When
-> > > > running in the continuous mode, it keeps measuring the inputs
-> > > > and converting them to the data register even if there are no
-> > > > users reading the data out. In this use case, this could be a
-> > > > power waste.
-> > > > 
-> > > > So this patch adds a single-shot mode support so that ina3221
-> > > > could do measurement and conversion only if users trigger it,
-> > > > depending on the use case where it only needs to poll data in
-> > > > a lower frequency.
-> > > > 
-> > > > The change also exposes "mode" and "available_modes" nodes to
-> > > > allow users to switch between two operating modes.
-> > > > 
-> > > Lots and lots of complexity for little gain. Sorry, I don't see
-> > > the point of this change.
-> > 
-> > The chip is causing considerable power waste on battery-powered
-> > devices so we typically use it running in the single-shot mode.
+On Tue, Nov 06, 2018 at 05:35:25PM +0530, Balakrishna Godavarthi wrote:
+> wcn3990 requires a power pulse to turn ON/OFF along with
+> regulators. Sometimes we are observing the power pulses are sent
+> out with some time delay, due to queuing these commands. This is
+> causing synchronization issues with chip, which intern delay the
+> chip setup or may end up with communication issues.
 > 
-> And you need to be able to do that with a sysfs attribute ?
-> Are you planning to have some code switching back and forth
-> between the modes ?
->
-> You'll need to provide a good rationale why this needs to be
-> runtime configurable.
+> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+> ---
+>  drivers/bluetooth/hci_qca.c | 22 +++++++++-------------
+>  1 file changed, 9 insertions(+), 13 deletions(-)
+> 
+> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+> index f72ded4ec9ae..051f081d1835 100644
+> --- a/drivers/bluetooth/hci_qca.c
+> +++ b/drivers/bluetooth/hci_qca.c
+> @@ -1016,8 +1016,7 @@ static inline void host_set_baudrate(struct hci_uart *hu, unsigned int speed)
+>  static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+>  {
+>  	struct hci_uart *hu = hci_get_drvdata(hdev);
+> -	struct qca_data *qca = hu->priv;
+> -	struct sk_buff *skb;
+> +	int ret;
+>  
+>  	/* These power pulses are single byte command which are sent
+>  	 * at required baudrate to wcn3990. On wcn3990, we have an external
+> @@ -1030,18 +1029,14 @@ static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+>  	 * sending power pulses to SoC.
+>  	 */
+>  	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
+> -
+> -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
+> -	if (!skb)
+> -		return -ENOMEM;
+> -
+>  	hci_uart_set_flow_control(hu, true);
+> +	ret = serdev_device_write(hu->serdev, &cmd, sizeof(cmd), 0);
+> +	if (ret < 0) {
+> +		bt_dev_err(hdev, "failed to send power pulse %02x to SoC", cmd);
+> +		return ret;
+> +	}
+>  
+> -	skb_put_u8(skb, cmd);
+> -	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+> -
+> -	skb_queue_tail(&qca->txq, skb);
+> -	hci_uart_tx_wakeup(hu);
+> +	serdev_device_wait_until_sent(hu->serdev, 0);
+>  
+>  	/* Wait for 100 uS for SoC to settle down */
+>  	usleep_range(100, 200);
 
-Honestly, our old downstream driver didn't expose it via sysfs.
-Instead, it had a built-in "governor" to switch modes based on
-the CPU hotplug state and cpufreq. However, the interface used
-to register a CPU hotplug notification was already deprecated.
-And I don't feel this governor is generic enough to be present
-in the mainline code.
+Is the delay still needed now that we wait for the pulse to be sent? I
+didn't observe any problems without it in a few dozens of iterations.
 
-For me, it's not that necessary to be a sysfs attribute. I try
-to add it merely because I cannot find a good criteria for the
-mode switching in a hwmon driver. So having an open sysfs node
-may allow user space power daemon to decide its operating mode,
-since it knows which power mode the system is running at: full
-speed (charging/charged) or power saving (on-battery), and it
-knows how often this exact service will poll the sensor data.
+> @@ -1283,7 +1278,8 @@ static void qca_power_shutdown(struct hci_uart *hu)
+>  
+>  	host_set_baudrate(hu, 2400);
+>  	hci_uart_set_flow_control(hu, true);
+> -	serdev_device_write_buf(serdev, &cmd, sizeof(cmd));
+> +	serdev_device_write(serdev, &cmd, sizeof(cmd), 0);
+> +	serdev_device_wait_until_sent(serdev, 0);
+>  	hci_uart_set_flow_control(hu, false);
 
-An alternative way (without the sysfs node), after looking at
-other hwmon code, could be to have a timed polling thread and
-read data using an update_interval value from ABI. This might
-turn out to be more complicated as it'll also involve settings
-of hardware averaging and conversion time. Above all, I cannot
-figure out a good threshold of update_interval to switch modes.
+You could call qca_send_power_pulse(hdev, QCA_WCN3990_POWEROFF_PULSE)
+instead, as an earlier patch set did before skbs were used to send the
+power pulse.
 
-If you can give some advice of a better implementation, that'd
-be great.
+You can also consider to set the baudrate in qca_send_power_pulse()
+depending on the power pulse. On the plus side this would reduce a bit
+of clutter in the callers of qca_send_power_pulse(), on the negative
+side it would be harder to follow when baudrate changes occur (not
+sure this is a problem). Up to you, just an idea.
 
 Thanks
-Nicolin
+
+Matthias
