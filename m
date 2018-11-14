@@ -4,47 +4,45 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B990CC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EF01AC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7512B2145D
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A58012145D
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:45:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xEfOLSf2"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7512B2145D
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="o2QMrnRh"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A58012145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387616AbeKOIua (ORCPT
+        id S1728420AbeKOI1Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:50:30 -0500
-Received: from mail.kernel.org ([198.145.29.99]:34416 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728366AbeKOI1Q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 03:27:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:34470 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727258AbeKOI1P (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:27:15 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 1BC032251F;
-        Wed, 14 Nov 2018 22:22:13 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id 780F02251F;
+        Wed, 14 Nov 2018 22:22:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234133;
-        bh=+o49EspfuXdTJ+FcF11g8aK9UzURLz+7wHniHPfaM/0=;
+        s=default; t=1542234131;
+        bh=9xwGK+2urupgk2vnwrGGs4AkAQZdNSQg6tjA9ENXeOc=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=xEfOLSf2C9NJUr1F5kLobqy06pZFrl+jnm4vxHvU2gZj3xpUYkKChr5H1OKpnCP/i
-         2Bi4NG2sM25K7Rs+hooD8SHqUp3vti+hOxxKcyMwOd4BSkozyy3ZOXkhj+CQEiVcVc
-         XuYaFDgYmjiELHws0oEeJzvkBfM1ZERizCC+uh5A=
+        b=o2QMrnRhpCsNdyW+L6gmQYH+lITviAGcuKdZZKmPGC5JU/GKl2E96u00BCVoCe7SQ
+         C7yOTT5Hor7Wxp7CrvQ0aU2iBl7aGvhddLTfDwvkkeUEcBNlqVcFR7MWXEWM1+SGJ7
+         rHgEDrbd2D6MnHwYihxdoTRpjK2gDozJ1JT5fH7s=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>,
-        Pablo Neira Ayuso <pablo@netfilter.org>,
+Cc:     Martin Schwidefsky <schwidefsky@de.ibm.com>,
         Sasha Levin <sashal@kernel.org>
-Subject: [PATCH AUTOSEL 4.19 20/73] netfilter: ipset: Correct rcu_dereference() call in ip_set_put_comment()
-Date:   Wed, 14 Nov 2018 17:21:14 -0500
-Message-Id: <20181114222207.98701-20-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.19 13/73] s390/mm: fix mis-accounting of pgtable_bytes
+Date:   Wed, 14 Nov 2018 17:21:07 -0500
+Message-Id: <20181114222207.98701-13-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222207.98701-1-sashal@kernel.org>
 References: <20181114222207.98701-1-sashal@kernel.org>
@@ -53,38 +51,161 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
+From: Martin Schwidefsky <schwidefsky@de.ibm.com>
 
-[ Upstream commit 17b8b74c0f8dbf9b9e3301f9ca5b65dd1c079951 ]
+[ Upstream commit e12e4044aede97974f2222eb7f0ed726a5179a32 ]
 
-The function is called when rcu_read_lock() is held and not
-when rcu_read_lock_bh() is held.
+In case a fork or a clone system fails in copy_process and the error
+handling does the mmput() at the bad_fork_cleanup_mm label, the
+following warning messages will appear on the console:
 
-Signed-off-by: Jozsef Kadlecsik <kadlec@blackhole.kfki.hu>
-Signed-off-by: Pablo Neira Ayuso <pablo@netfilter.org>
+  BUG: non-zero pgtables_bytes on freeing mm: 16384
+
+The reason for that is the tricks we play with mm_inc_nr_puds() and
+mm_inc_nr_pmds() in init_new_context().
+
+A normal 64-bit process has 3 levels of page table, the p4d level and
+the pud level are folded. On process termination the free_pud_range()
+function in mm/memory.c will subtract 16KB from pgtable_bytes with a
+mm_dec_nr_puds() call, but there actually is not really a pud table.
+
+One issue with this is the fact that pgtable_bytes is usually off
+by a few kilobytes, but the more severe problem is that for a failed
+fork or clone the free_pgtables() function is not called. In this case
+there is no mm_dec_nr_puds() or mm_dec_nr_pmds() that go together with
+the mm_inc_nr_puds() and mm_inc_nr_pmds in init_new_context().
+The pgtable_bytes will be off by 16384 or 32768 bytes and we get the
+BUG message. The message itself is purely cosmetic, but annoying.
+
+To fix this override the mm_pmd_folded, mm_pud_folded and mm_p4d_folded
+function to check for the true size of the address space.
+
+Reported-by: Li Wang <liwang@redhat.com>
+Tested-by: Li Wang <liwang@redhat.com>
+Signed-off-by: Martin Schwidefsky <schwidefsky@de.ibm.com>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- include/linux/netfilter/ipset/ip_set_comment.h | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ arch/s390/include/asm/mmu_context.h |  5 -----
+ arch/s390/include/asm/pgalloc.h     |  6 +++---
+ arch/s390/include/asm/pgtable.h     | 18 ++++++++++++++++++
+ arch/s390/include/asm/tlb.h         |  6 +++---
+ arch/s390/mm/pgalloc.c              |  1 +
+ 5 files changed, 25 insertions(+), 11 deletions(-)
 
-diff --git a/include/linux/netfilter/ipset/ip_set_comment.h b/include/linux/netfilter/ipset/ip_set_comment.h
-index 8e2bab1e8e90..70877f8de7e9 100644
---- a/include/linux/netfilter/ipset/ip_set_comment.h
-+++ b/include/linux/netfilter/ipset/ip_set_comment.h
-@@ -43,11 +43,11 @@ ip_set_init_comment(struct ip_set *set, struct ip_set_comment *comment,
- 	rcu_assign_pointer(comment->c, c);
- }
+diff --git a/arch/s390/include/asm/mmu_context.h b/arch/s390/include/asm/mmu_context.h
+index 0717ee76885d..f1ab9420ccfb 100644
+--- a/arch/s390/include/asm/mmu_context.h
++++ b/arch/s390/include/asm/mmu_context.h
+@@ -45,8 +45,6 @@ static inline int init_new_context(struct task_struct *tsk,
+ 		mm->context.asce_limit = STACK_TOP_MAX;
+ 		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+ 				   _ASCE_USER_BITS | _ASCE_TYPE_REGION3;
+-		/* pgd_alloc() did not account this pud */
+-		mm_inc_nr_puds(mm);
+ 		break;
+ 	case -PAGE_SIZE:
+ 		/* forked 5-level task, set new asce with new_mm->pgd */
+@@ -62,9 +60,6 @@ static inline int init_new_context(struct task_struct *tsk,
+ 		/* forked 2-level compat task, set new asce with new mm->pgd */
+ 		mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+ 				   _ASCE_USER_BITS | _ASCE_TYPE_SEGMENT;
+-		/* pgd_alloc() did not account this pmd */
+-		mm_inc_nr_pmds(mm);
+-		mm_inc_nr_puds(mm);
+ 	}
+ 	crst_table_init((unsigned long *) mm->pgd, pgd_entry_type(mm));
+ 	return 0;
+diff --git a/arch/s390/include/asm/pgalloc.h b/arch/s390/include/asm/pgalloc.h
+index f0f9bcf94c03..5ee733720a57 100644
+--- a/arch/s390/include/asm/pgalloc.h
++++ b/arch/s390/include/asm/pgalloc.h
+@@ -36,11 +36,11 @@ static inline void crst_table_init(unsigned long *crst, unsigned long entry)
  
--/* Used only when dumping a set, protected by rcu_read_lock_bh() */
-+/* Used only when dumping a set, protected by rcu_read_lock() */
- static inline int
- ip_set_put_comment(struct sk_buff *skb, const struct ip_set_comment *comment)
+ static inline unsigned long pgd_entry_type(struct mm_struct *mm)
  {
--	struct ip_set_comment_rcu *c = rcu_dereference_bh(comment->c);
-+	struct ip_set_comment_rcu *c = rcu_dereference(comment->c);
+-	if (mm->context.asce_limit <= _REGION3_SIZE)
++	if (mm_pmd_folded(mm))
+ 		return _SEGMENT_ENTRY_EMPTY;
+-	if (mm->context.asce_limit <= _REGION2_SIZE)
++	if (mm_pud_folded(mm))
+ 		return _REGION3_ENTRY_EMPTY;
+-	if (mm->context.asce_limit <= _REGION1_SIZE)
++	if (mm_p4d_folded(mm))
+ 		return _REGION2_ENTRY_EMPTY;
+ 	return _REGION1_ENTRY_EMPTY;
+ }
+diff --git a/arch/s390/include/asm/pgtable.h b/arch/s390/include/asm/pgtable.h
+index 0e7cb0dc9c33..de05466ce50c 100644
+--- a/arch/s390/include/asm/pgtable.h
++++ b/arch/s390/include/asm/pgtable.h
+@@ -485,6 +485,24 @@ static inline int is_module_addr(void *addr)
+ 				   _REGION_ENTRY_PROTECT | \
+ 				   _REGION_ENTRY_NOEXEC)
  
- 	if (!c)
- 		return 0;
++static inline bool mm_p4d_folded(struct mm_struct *mm)
++{
++	return mm->context.asce_limit <= _REGION1_SIZE;
++}
++#define mm_p4d_folded(mm) mm_p4d_folded(mm)
++
++static inline bool mm_pud_folded(struct mm_struct *mm)
++{
++	return mm->context.asce_limit <= _REGION2_SIZE;
++}
++#define mm_pud_folded(mm) mm_pud_folded(mm)
++
++static inline bool mm_pmd_folded(struct mm_struct *mm)
++{
++	return mm->context.asce_limit <= _REGION3_SIZE;
++}
++#define mm_pmd_folded(mm) mm_pmd_folded(mm)
++
+ static inline int mm_has_pgste(struct mm_struct *mm)
+ {
+ #ifdef CONFIG_PGSTE
+diff --git a/arch/s390/include/asm/tlb.h b/arch/s390/include/asm/tlb.h
+index 457b7ba0fbb6..b31c779cf581 100644
+--- a/arch/s390/include/asm/tlb.h
++++ b/arch/s390/include/asm/tlb.h
+@@ -136,7 +136,7 @@ static inline void pte_free_tlb(struct mmu_gather *tlb, pgtable_t pte,
+ static inline void pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
+ 				unsigned long address)
+ {
+-	if (tlb->mm->context.asce_limit <= _REGION3_SIZE)
++	if (mm_pmd_folded(tlb->mm))
+ 		return;
+ 	pgtable_pmd_page_dtor(virt_to_page(pmd));
+ 	tlb_remove_table(tlb, pmd);
+@@ -152,7 +152,7 @@ static inline void pmd_free_tlb(struct mmu_gather *tlb, pmd_t *pmd,
+ static inline void p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d,
+ 				unsigned long address)
+ {
+-	if (tlb->mm->context.asce_limit <= _REGION1_SIZE)
++	if (mm_p4d_folded(tlb->mm))
+ 		return;
+ 	tlb_remove_table(tlb, p4d);
+ }
+@@ -167,7 +167,7 @@ static inline void p4d_free_tlb(struct mmu_gather *tlb, p4d_t *p4d,
+ static inline void pud_free_tlb(struct mmu_gather *tlb, pud_t *pud,
+ 				unsigned long address)
+ {
+-	if (tlb->mm->context.asce_limit <= _REGION2_SIZE)
++	if (mm_pud_folded(tlb->mm))
+ 		return;
+ 	tlb_remove_table(tlb, pud);
+ }
+diff --git a/arch/s390/mm/pgalloc.c b/arch/s390/mm/pgalloc.c
+index 76d89ee8b428..814f26520aa2 100644
+--- a/arch/s390/mm/pgalloc.c
++++ b/arch/s390/mm/pgalloc.c
+@@ -101,6 +101,7 @@ int crst_table_upgrade(struct mm_struct *mm, unsigned long end)
+ 			mm->context.asce_limit = _REGION1_SIZE;
+ 			mm->context.asce = __pa(mm->pgd) | _ASCE_TABLE_LENGTH |
+ 				_ASCE_USER_BITS | _ASCE_TYPE_REGION2;
++			mm_inc_nr_puds(mm);
+ 		} else {
+ 			crst_table_init(table, _REGION1_ENTRY_EMPTY);
+ 			pgd_populate(mm, (pgd_t *) table, (p4d_t *) pgd);
 -- 
 2.17.1
 
