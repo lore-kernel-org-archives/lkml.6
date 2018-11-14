@@ -2,282 +2,212 @@ Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIMWL_WL_MED,
+	DKIM_SIGNED,DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9C00BC43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:06:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55798C43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:06:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4E5AC208A3
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:06:19 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 135D42243E
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 17:06:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NegFMrb8"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E5AC208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=fb.com header.i=@fb.com header.b="bOY6aza3";
+	dkim=pass (1024-bit key) header.d=fb.onmicrosoft.com header.i=@fb.onmicrosoft.com header.b="XWv/w9NP"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 135D42243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=fb.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1733018AbeKODKS (ORCPT
+        id S1733160AbeKODKg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Wed, 14 Nov 2018 22:10:18 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:42248 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725759AbeKODKR (ORCPT
+        Wed, 14 Nov 2018 22:10:36 -0500
+Received: from mx0b-00082601.pphosted.com ([67.231.153.30]:64931 "EHLO
+        mx0a-00082601.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1725759AbeKODKg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Wed, 14 Nov 2018 22:10:17 -0500
-Received: by mail-pf1-f193.google.com with SMTP id 64so3741526pfr.9;
-        Wed, 14 Nov 2018 09:06:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uuktANu4TnaEEiDKStY1GSUmFr+VgFpLIMxiFlNYY/A=;
-        b=NegFMrb8tBo0IWks2L5Adru2gEPTAS134z45LyxEfX8M7WIit7zA0B1OSDoTwsBs5K
-         MJqNaYwX0bqSCIJT+62/avQNFOPsYzWBgv+f5y1U0AedWoJbrQCre2IIaVKd0Dz9DqvD
-         KVZ5n0RPMnpQAiGwsq2vY3hmIyWGdz9cPvv4boC8LntI65SyKJy5J4v5ki8bFzgc92zg
-         OyXZY0TIvtF+B3KWMTQ0zCZgh7uZypWkG6H0w5FR8MK/N5jIvCV54YU+XuQJiqwlC4eD
-         U8mk78PBc9IVUXTcrmKohqAF75GYhewO58fpcZGFnFNaY45XePi//KIb0YP4aTMUUQck
-         X4eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uuktANu4TnaEEiDKStY1GSUmFr+VgFpLIMxiFlNYY/A=;
-        b=g+kdpBNvydwEszNZGbfTOTqaRQVtWhVvvn5EtjtA+DydrHi7LVU6dN7+Pho4XYL7lN
-         5E9Fbs+hqGjUp1R3wjpSRK3ZhkAHLA7c3F4JBM7KCrwSdAaaTjCiVVgYGISWoiWQaZCQ
-         RmfVQ7g9YEh3LYu4gROBKRiPTwBJoYKMwEU8I8xFPRJrT5TelbcyPINXg/lWLna7QnMz
-         5O2Z340pg+XhfkJNenKo0djcw39S6nsZ1kqZSlvNViUgiN9EcxYjMdJHQOJMdqpIwjNj
-         UdR0aJlr/86eefQtaEWTmwkupOwxDgIA7UwSpn+pz1B7HIoazEOXe7HmBvDgpH+xu2Xw
-         U3Tg==
-X-Gm-Message-State: AGRZ1gKvSwfV5KhZ8vLpt1GZfk2ZncDE4nE14AgyJZ1Gayt0SrD52hD1
-        YshH81Xgglt+pSpIW3se9Kg=
-X-Google-Smtp-Source: AJdET5fsMczL45c7kyJ47bbFn9pzdapvULWSeT6ud+458zaoZ8STg0qe+5D56u+8S58KquYtFCTsQg==
-X-Received: by 2002:a62:a511:: with SMTP id v17-v6mr2771199pfm.18.1542215175893;
-        Wed, 14 Nov 2018 09:06:15 -0800 (PST)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id k38sm57076622pgb.33.2018.11.14.09.06.11
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Nov 2018 09:06:15 -0800 (PST)
-Date:   Wed, 14 Nov 2018 22:36:08 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Jonathan Cameron <jic23@jic23.retrosnub.co.uk>
-Cc:     Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich <Michael.Hennerich@analog.com>,
-        Hartmut Knaack <knaack.h@gmx.de>,
-        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/4] staging: iio: ad7816: Switch to the gpio
- descriptor interface
-Message-ID: <20181114170606.GA16897@nishad>
-References: <cover.1541733949.git.nishadkamdar@gmail.com>
- <3f9ea18864230b2758f86899b9bd1acb020dd176.1541733949.git.nishadkamdar@gmail.com>
- <20181111122405.23970900@archlinux>
- <20181111123154.176ac734@archlinux>
+        Wed, 14 Nov 2018 22:10:36 -0500
+Received: from pps.filterd (m0089730.ppops.net [127.0.0.1])
+        by m0089730.ppops.net (8.16.0.22/8.16.0.22) with SMTP id wAEH4c02017710;
+        Wed, 14 Nov 2018 09:06:29 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=from : to : cc : subject
+ : date : message-id : references : in-reply-to : content-type : content-id
+ : content-transfer-encoding : mime-version; s=facebook;
+ bh=SBHOXh5Ab4jAaZVCCtf4yqFFqUucT5F2vw11c/BFXcc=;
+ b=bOY6aza3IW2XZZ+5QhcSHnVpX3In/6buEZNPs+ftP1GUcF+Heoq3+QhFxkGqZEEPuWPK
+ 0DmEWhNsFnK0wGOykW4fIIV5jVbiA2qwNn+MK0+a04tUUTji+xZf5dSwNqRdcFOqbr6j
+ U5CIR194LoLr8il9YEqtXBSpny/qCKJXcck= 
+Received: from mail.thefacebook.com ([199.201.64.23])
+        by m0089730.ppops.net with ESMTP id 2nrn9hgj4c-15
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-SHA384 bits=256 verify=NOT);
+        Wed, 14 Nov 2018 09:06:28 -0800
+Received: from prn-hub02.TheFacebook.com (2620:10d:c081:35::126) by
+ prn-hub01.TheFacebook.com (2620:10d:c081:35::125) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.1.1531.3; Wed, 14 Nov 2018 09:06:26 -0800
+Received: from NAM01-BN3-obe.outbound.protection.outlook.com (192.168.54.28)
+ by o365-in.thefacebook.com (192.168.16.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.1.1531.3
+ via Frontend Transport; Wed, 14 Nov 2018 09:06:26 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.onmicrosoft.com;
+ s=selector1-fb-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SBHOXh5Ab4jAaZVCCtf4yqFFqUucT5F2vw11c/BFXcc=;
+ b=XWv/w9NPskVK+M0xuq/MuNhFq2osDCY22XWdRUmWzxPI2+J/9gTdo+NP1Vnrd25KprnSqceeEQrBzYr/QcmEf0h00Bhwuh6vv+L4F7vNnlRdGW/Rk8IHwOtVqUjC2fL4A5jRivgZnHV7mw9OC3VFcSJDtMjHuE+APSg7eJhvQAg=
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com (10.163.64.141) by
+ BY2PR15MB0888.namprd15.prod.outlook.com (10.164.171.146) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.20; Wed, 14 Nov 2018 17:06:06 +0000
+Received: from BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::8e8:753:f746:ed14]) by BY2PR15MB0167.namprd15.prod.outlook.com
+ ([fe80::8e8:753:f746:ed14%2]) with mapi id 15.20.1294.045; Wed, 14 Nov 2018
+ 17:06:06 +0000
+From:   Roman Gushchin <guro@fb.com>
+To:     Oleg Nesterov <oleg@redhat.com>
+CC:     Roman Gushchin <guroan@gmail.com>, Tejun Heo <tj@kernel.org>,
+        "cgroups@vger.kernel.org" <cgroups@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Kernel Team <Kernel-team@fb.com>
+Subject: Re: [PATCH v2 3/6] cgroup: cgroup v2 freezer
+Thread-Topic: [PATCH v2 3/6] cgroup: cgroup v2 freezer
+Thread-Index: AQHUetwXxFde3wHnZUKDpNhUsGNNTqVN2ueA///hhYCAAcPYAIAAAqeA
+Date:   Wed, 14 Nov 2018 17:06:06 +0000
+Message-ID: <20181114170558.GA24889@castle.DHCP.thefacebook.com>
+References: <20181112230422.5911-1-guro@fb.com>
+ <20181112230422.5911-5-guro@fb.com> <20181113154825.GC30990@redhat.com>
+ <20181113215919.GC15590@tower.DHCP.thefacebook.com>
+ <20181114165631.GE13885@redhat.com>
+In-Reply-To: <20181114165631.GE13885@redhat.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: MWHPR1701CA0018.namprd17.prod.outlook.com
+ (2603:10b6:301:14::28) To BY2PR15MB0167.namprd15.prod.outlook.com
+ (2a01:111:e400:58e0::13)
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [2620:10d:c090:180::1:6f7f]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BY2PR15MB0888;20:oFPrkhAkgiwzVEZMsdbbGdQgI62IHZ0QrjLy9GHioey4O7lpJoYzbDFouP6yGnixQHISCC7JP94dPp33FRetPTtiatBNtwXCVhBiy7nmOUalE7y9JKuOZRfg0algEWGCG8qiVpoK8oSEmMCmUgLe4FSoYHPQDlQX+WxyI3EazR8=
+x-ms-office365-filtering-correlation-id: 10ff33b8-cabb-4d8b-a458-08d64a5376ee
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BY2PR15MB0888;
+x-ms-traffictypediagnostic: BY2PR15MB0888:
+x-microsoft-antispam-prvs: <BY2PR15MB0888E2639B4DC87FD7C0D5BCBEC30@BY2PR15MB0888.namprd15.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(823302103)(3002001)(3231412)(11241501184)(944501410)(52105112)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BY2PR15MB0888;BCL:0;PCL:0;RULEID:;SRVR:BY2PR15MB0888;
+x-forefront-prvs: 085634EFF4
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(376002)(396003)(136003)(346002)(39860400002)(366004)(199004)(189003)(52314003)(575784001)(71200400001)(71190400001)(86362001)(7736002)(2900100001)(6246003)(76176011)(81156014)(81166006)(8676002)(99286004)(52116002)(2906002)(8936002)(39060400002)(6116002)(1076002)(229853002)(25786009)(5024004)(14444005)(68736007)(6916009)(256004)(186003)(102836004)(97736004)(93886005)(54906003)(5660300001)(316002)(6436002)(476003)(386003)(6506007)(33896004)(305945005)(478600001)(9686003)(53936002)(486006)(11346002)(6512007)(446003)(105586002)(14454004)(6486002)(106356001)(33656002)(4326008)(46003)(42262002);DIR:OUT;SFP:1102;SCL:1;SRVR:BY2PR15MB0888;H:BY2PR15MB0167.namprd15.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: fb.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: Oy0UOJltTX3uHRp0Pwj4Kv5WXCSXAOLerj2NpeBKPKi5DIE31Aqnbn4SqPpfH4qQ7KKbxsaJLUCwnIMNcHr8JoNWDpkWl8Ac3Fgnw6JKU8HYax5/cFiXHqS1NhT0hqcdWKWPy7TB3ixgRDTIGsXWWDTjKOz/Hc9mLqlmAo5TIO4VZGaFUfqUAdb7iwIt6vr28bNVkb2PgqY/VDtQwfGJlsRPKfaJMYU9Fc2a9+d1Fs1u7Qav2ve2lwHYcBscMTAOAkSKbxnZuTKXnAmgdngIh42g6OVl/OPWe5XcI1qeYjGUM8jvmU9tRbVZDqt/6sve1auelbc1BgPX2/lY3IaYRlqRLWEpRC5ZDeeUG/nQ5PA=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <2E7132A9E2449141A195A12CE298CFE0@namprd15.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181111123154.176ac734@archlinux>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 10ff33b8-cabb-4d8b-a458-08d64a5376ee
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Nov 2018 17:06:06.3120
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 8ae927fe-1255-47a7-a2af-5f3a069daaa2
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY2PR15MB0888
+X-OriginatorOrg: fb.com
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-14_13:,,
+ signatures=0
+X-Proofpoint-Spam-Reason: safe
+X-FB-Internal: Safe
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 12:31:54PM +0000, Jonathan Cameron wrote:
-> On Sun, 11 Nov 2018 12:24:05 +0000
-> Jonathan Cameron <jic23@kernel.org> wrote:
-> 
-> > On Fri, 9 Nov 2018 13:05:17 +0530
-> > Nishad Kamdar <nishadkamdar@gmail.com> wrote:
-> > 
-> > > Use the gpiod interface for rdwr_pin, convert_pin and busy_pin
-> > > instead of the deprecated old non-descriptor interface.
-> > > 
-> > > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>  
-> > Applied to the togreg branch of iio.git and pushed out as testing
-> > for the autobuilders to play with it.
-> Actually no it isn't, because I applied the previous version back in
-> October.  Please avoid resending patches that have already been applied.
-> It gets very confusing!
-> 
-> Jonathan
->
+On Wed, Nov 14, 2018 at 05:56:32PM +0100, Oleg Nesterov wrote:
+> Hi Roman,
+>=20
+> On 11/13, Roman Gushchin wrote:
+> >
+> > > > +#define TASK_FROZEN			0x1000
+> > > > +#define TASK_STATE_MAX			0x2000
+> > >
+> > > Just noticed the new task state... Why? Can't we avoid it?
+> >
+> > We can, but it's nice to show to userspace that tasks are frozen,
+> > rather than just stuck somewhere in the kernel...
+>=20
+> But then you need to change get_task_state() too. Which iiuc could
+> probably check ->frozen along with ->state.
+>=20
+> I do not think the new task state is a good idea, at least I would like
+> to ask you to make a separate patch which we can discuss separately.
 
-Sorry about that. I'll keep that in mind.
+Yeah, I have separated it in v3.
 
-Thanks for the review.
+>=20
+>=20
+> > > > +	set_current_state(TASK_WAKEKILL | TASK_INTERRUPTIBLE | TASK_FROZE=
+N);
+> > >
+> > > Why not __set_current_state() ?
+> >
+> > Hm, it's not a hot path at all, so set_current_state() is good enough.
+> > Not a strong preference, of course.
+>=20
+> It is not about performance, to me set_current_state() looks as if we nee=
+d
+> a memory barrier for some obscure/undocumented reason and this doesn't he=
+lp
+> to understand the code.
+>=20
+> > > If ->state include TASK_INTERRUPTIBLE, why do we need TASK_WAKEKILL?
+> > >
+> > > And again, why TASK_FROZEN?
+> >
+> > So, should it be just TASK_INTERRUPTIBLE | TASK_FROZEN ?
+>=20
+> Again, TASK_FROZEN is pointless at least until you change fs/proc or unti=
+l
+> you have wake_up_state(TASK_FROZEN). May be cgroup_do_freeze() and/or
+> ptrace_attach() could use it, but see above, I'd suggest to make another
+> patch.
+>=20
+> Looks like you need TASK_KILLABLE, see below.
+>=20
+> > > > +	clear_thread_flag(TIF_SIGPENDING);
+> > > > +	schedule();
+> > > > +	recalc_sigpending();
+> > >
+> > > I simply can't understand these 3 lines above but I bet this is not c=
+orrect ;)
+> >
+> > So, yeah, the problem is that if there is TIF_SIGPENDING bit set, sched=
+ule()
+> > will return immediately, so we're getting pretty much a busy loop here.
+>=20
+> I suspected this answer ;)
+>=20
+> > This is a nasty workaround.
+>=20
+> No, this is very wrong. Just suppose the caller is killed right before
+> clear_thread_flag(TIF_SIGPENDING).
 
-regards,
-Nishad
+So, I had TASK_KILLABLE before, but had some issues with ptrace/gdb.
+I'll revisit this option.
 
-> 
-> > 
-> > Thanks,
-> > 
-> > Jonathan
-> > 
-> > > ---
-> > >  drivers/staging/iio/adc/ad7816.c | 80 ++++++++++++++------------------
-> > >  1 file changed, 34 insertions(+), 46 deletions(-)
-> > > 
-> > > diff --git a/drivers/staging/iio/adc/ad7816.c b/drivers/staging/iio/adc/ad7816.c
-> > > index bf76a8620bdb..12c4e0ab4713 100644
-> > > --- a/drivers/staging/iio/adc/ad7816.c
-> > > +++ b/drivers/staging/iio/adc/ad7816.c
-> > > @@ -7,7 +7,7 @@
-> > >   */
-> > >  
-> > >  #include <linux/interrupt.h>
-> > > -#include <linux/gpio.h>
-> > > +#include <linux/gpio/consumer.h>
-> > >  #include <linux/device.h>
-> > >  #include <linux/kernel.h>
-> > >  #include <linux/slab.h>
-> > > @@ -44,9 +44,9 @@
-> > >  
-> > >  struct ad7816_chip_info {
-> > >  	struct spi_device *spi_dev;
-> > > -	u16 rdwr_pin;
-> > > -	u16 convert_pin;
-> > > -	u16 busy_pin;
-> > > +	struct gpio_desc *rdwr_pin;
-> > > +	struct gpio_desc *convert_pin;
-> > > +	struct gpio_desc *busy_pin;
-> > >  	u8  oti_data[AD7816_CS_MAX + 1];
-> > >  	u8  channel_id;	/* 0 always be temperature */
-> > >  	u8  mode;
-> > > @@ -61,28 +61,28 @@ static int ad7816_spi_read(struct ad7816_chip_info *chip, u16 *data)
-> > >  	int ret = 0;
-> > >  	__be16 buf;
-> > >  
-> > > -	gpio_set_value(chip->rdwr_pin, 1);
-> > > -	gpio_set_value(chip->rdwr_pin, 0);
-> > > +	gpiod_set_value(chip->rdwr_pin, 1);
-> > > +	gpiod_set_value(chip->rdwr_pin, 0);
-> > >  	ret = spi_write(spi_dev, &chip->channel_id, sizeof(chip->channel_id));
-> > >  	if (ret < 0) {
-> > >  		dev_err(&spi_dev->dev, "SPI channel setting error\n");
-> > >  		return ret;
-> > >  	}
-> > > -	gpio_set_value(chip->rdwr_pin, 1);
-> > > +	gpiod_set_value(chip->rdwr_pin, 1);
-> > >  
-> > >  	if (chip->mode == AD7816_PD) { /* operating mode 2 */
-> > > -		gpio_set_value(chip->convert_pin, 1);
-> > > -		gpio_set_value(chip->convert_pin, 0);
-> > > +		gpiod_set_value(chip->convert_pin, 1);
-> > > +		gpiod_set_value(chip->convert_pin, 0);
-> > >  	} else { /* operating mode 1 */
-> > > -		gpio_set_value(chip->convert_pin, 0);
-> > > -		gpio_set_value(chip->convert_pin, 1);
-> > > +		gpiod_set_value(chip->convert_pin, 0);
-> > > +		gpiod_set_value(chip->convert_pin, 1);
-> > >  	}
-> > >  
-> > > -	while (gpio_get_value(chip->busy_pin))
-> > > +	while (gpiod_get_value(chip->busy_pin))
-> > >  		cpu_relax();
-> > >  
-> > > -	gpio_set_value(chip->rdwr_pin, 0);
-> > > -	gpio_set_value(chip->rdwr_pin, 1);
-> > > +	gpiod_set_value(chip->rdwr_pin, 0);
-> > > +	gpiod_set_value(chip->rdwr_pin, 1);
-> > >  	ret = spi_read(spi_dev, &buf, sizeof(*data));
-> > >  	if (ret < 0) {
-> > >  		dev_err(&spi_dev->dev, "SPI data read error\n");
-> > > @@ -99,8 +99,8 @@ static int ad7816_spi_write(struct ad7816_chip_info *chip, u8 data)
-> > >  	struct spi_device *spi_dev = chip->spi_dev;
-> > >  	int ret = 0;
-> > >  
-> > > -	gpio_set_value(chip->rdwr_pin, 1);
-> > > -	gpio_set_value(chip->rdwr_pin, 0);
-> > > +	gpiod_set_value(chip->rdwr_pin, 1);
-> > > +	gpiod_set_value(chip->rdwr_pin, 0);
-> > >  	ret = spi_write(spi_dev, &data, sizeof(data));
-> > >  	if (ret < 0)
-> > >  		dev_err(&spi_dev->dev, "SPI oti data write error\n");
-> > > @@ -129,10 +129,10 @@ static ssize_t ad7816_store_mode(struct device *dev,
-> > >  	struct ad7816_chip_info *chip = iio_priv(indio_dev);
-> > >  
-> > >  	if (strcmp(buf, "full")) {
-> > > -		gpio_set_value(chip->rdwr_pin, 1);
-> > > +		gpiod_set_value(chip->rdwr_pin, 1);
-> > >  		chip->mode = AD7816_FULL;
-> > >  	} else {
-> > > -		gpio_set_value(chip->rdwr_pin, 0);
-> > > +		gpiod_set_value(chip->rdwr_pin, 0);
-> > >  		chip->mode = AD7816_PD;
-> > >  	}
-> > >  
-> > > @@ -345,15 +345,9 @@ static int ad7816_probe(struct spi_device *spi_dev)
-> > >  {
-> > >  	struct ad7816_chip_info *chip;
-> > >  	struct iio_dev *indio_dev;
-> > > -	unsigned short *pins = dev_get_platdata(&spi_dev->dev);
-> > >  	int ret = 0;
-> > >  	int i;
-> > >  
-> > > -	if (!pins) {
-> > > -		dev_err(&spi_dev->dev, "No necessary GPIO platform data.\n");
-> > > -		return -EINVAL;
-> > > -	}
-> > > -
-> > >  	indio_dev = devm_iio_device_alloc(&spi_dev->dev, sizeof(*chip));
-> > >  	if (!indio_dev)
-> > >  		return -ENOMEM;
-> > > @@ -364,34 +358,28 @@ static int ad7816_probe(struct spi_device *spi_dev)
-> > >  	chip->spi_dev = spi_dev;
-> > >  	for (i = 0; i <= AD7816_CS_MAX; i++)
-> > >  		chip->oti_data[i] = 203;
-> > > -	chip->rdwr_pin = pins[0];
-> > > -	chip->convert_pin = pins[1];
-> > > -	chip->busy_pin = pins[2];
-> > > -
-> > > -	ret = devm_gpio_request(&spi_dev->dev, chip->rdwr_pin,
-> > > -				spi_get_device_id(spi_dev)->name);
-> > > -	if (ret) {
-> > > -		dev_err(&spi_dev->dev, "Fail to request rdwr gpio PIN %d.\n",
-> > > -			chip->rdwr_pin);
-> > > +
-> > > +	chip->rdwr_pin = devm_gpiod_get(&spi_dev->dev, "rdwr", GPIOD_IN);
-> > > +	if (IS_ERR(chip->rdwr_pin)) {
-> > > +		ret = PTR_ERR(chip->rdwr_pin);
-> > > +		dev_err(&spi_dev->dev, "Failed to request rdwr GPIO: %d\n",
-> > > +			ret);
-> > >  		return ret;
-> > >  	}
-> > > -	gpio_direction_input(chip->rdwr_pin);
-> > > -	ret = devm_gpio_request(&spi_dev->dev, chip->convert_pin,
-> > > -				spi_get_device_id(spi_dev)->name);
-> > > -	if (ret) {
-> > > -		dev_err(&spi_dev->dev, "Fail to request convert gpio PIN %d.\n",
-> > > -			chip->convert_pin);
-> > > +	chip->convert_pin = devm_gpiod_get(&spi_dev->dev, "convert", GPIOD_IN);
-> > > +	if (IS_ERR(chip->convert_pin)) {
-> > > +		ret = PTR_ERR(chip->convert_pin);
-> > > +		dev_err(&spi_dev->dev, "Failed to request convert GPIO: %d\n",
-> > > +			ret);
-> > >  		return ret;
-> > >  	}
-> > > -	gpio_direction_input(chip->convert_pin);
-> > > -	ret = devm_gpio_request(&spi_dev->dev, chip->busy_pin,
-> > > -				spi_get_device_id(spi_dev)->name);
-> > > -	if (ret) {
-> > > -		dev_err(&spi_dev->dev, "Fail to request busy gpio PIN %d.\n",
-> > > -			chip->busy_pin);
-> > > +	chip->busy_pin = devm_gpiod_get(&spi_dev->dev, "busy", GPIOD_IN);
-> > > +	if (IS_ERR(chip->busy_pin)) {
-> > > +		ret = PTR_ERR(chip->busy_pin);
-> > > +		dev_err(&spi_dev->dev, "Failed to request busy GPIO: %d\n",
-> > > +			ret);
-> > >  		return ret;
-> > >  	}
-> > > -	gpio_direction_input(chip->busy_pin);
-> > >  
-> > >  	indio_dev->name = spi_get_device_id(spi_dev)->name;
-> > >  	indio_dev->dev.parent = &spi_dev->dev;  
-> > 
-> 
+>=20
+> > I believe we can clear and not call recalc_sigpending() at all. Does th=
+is seem
+> > to be correct?
+>=20
+> I think you need to simply remove both clear_thread_flag() and recalc_sig=
+pending().
+> If schedule() is called in TASK_KILLABLE state it will return only if
+> fatal_signal_pending() is true, and this is what we want, right?
+>=20
+> OK, it seems you are going to make the new version anyway, so I can wait =
+for it
+> and not read this series ;)
+
+Sure! I'm about to post it.
+
+Thanks!
