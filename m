@@ -7,45 +7,45 @@ X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3AAF9C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:31:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15E7EC43441
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:31:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 01C7A208E7
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:31:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D279C208E7
+	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 22:31:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="SYAT64c7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01C7A208E7
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="CJhuK6Go"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D279C208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388826AbeKOIgM (ORCPT
+        id S2388983AbeKOIgV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 03:36:12 -0500
+        Thu, 15 Nov 2018 03:36:21 -0500
 Received: from mail.kernel.org ([198.145.29.99]:38112 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389042AbeKOIa4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 03:30:56 -0500
+        id S2389006AbeKOIaz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 03:30:55 -0500
 Received: from sasha-vm.mshome.net (unknown [64.114.255.114])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id C48732252F;
-        Wed, 14 Nov 2018 22:25:51 +0000 (UTC)
+        by mail.kernel.org (Postfix) with ESMTPSA id BA45C2252B;
+        Wed, 14 Nov 2018 22:25:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542234352;
-        bh=fpKsXF9TOdAyuKLzEF6+hMjnlEL2or0w5lHYWcrl39c=;
+        s=default; t=1542234350;
+        bh=iZAxQcMPPpY9Q3je2812+UwfTT3Z7UmxS1YBjcblV64=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SYAT64c7bUNcOOP2uV6P3Z1qMwQzzcfk+DPP/b7YTOQRFzKU1RfZ4DxF6IDZO+wXE
-         UjxwUoAxTSOFhONk66nkg0jepiYlr+Xy7oqU7rBpx3aLQomyQk5rJ6knNdkattTLON
-         IK+iLjpaN9dHKhfWDqv1G2Tptu4a4cgzyCAAzPR4=
+        b=CJhuK6Go6w8YKUKTHuM7rbV98dq50exP5oC4qcpLTwmKIEHNizZe0CXheK0STUuj7
+         7Lkj/eXk5o1RJytx2P+AUrM8Y/CIQcibOo5uOMsxhhjZGJoac95Be1JnIl6lVy7Uf2
+         rO3tewGNTZ63mm/fRn+riOeIYIeABdkX6POI3oDU=
 From:   Sasha Levin <sashal@kernel.org>
 To:     stable@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     Sagiv Ozeri <sagiv.ozeri@cavium.com>,
-        Denis Bolotin <denis.bolotin@cavium.com>,
+Cc:     Denis Bolotin <denis.bolotin@cavium.com>,
+        Michal Kalderon <michal.kalderon@cavium.com>,
         "David S . Miller" <davem@davemloft.net>,
         Sasha Levin <sashal@kernel.org>, netdev@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.14 24/27] qed: Fix potential memory corruption
-Date:   Wed, 14 Nov 2018 17:25:13 -0500
-Message-Id: <20181114222520.99926-24-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 4.14 22/27] qed: Fix memory/entry leak in qed_init_sp_request()
+Date:   Wed, 14 Nov 2018 17:25:11 -0500
+Message-Id: <20181114222520.99926-22-sashal@kernel.org>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20181114222520.99926-1-sashal@kernel.org>
 References: <20181114222520.99926-1-sashal@kernel.org>
@@ -54,58 +54,62 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Sagiv Ozeri <sagiv.ozeri@cavium.com>
+From: Denis Bolotin <denis.bolotin@cavium.com>
 
-[ Upstream commit fa5c448d98f0df660bfcad3dd5facc027ef84cd3 ]
+[ Upstream commit 39477551df940ddb1339203817de04f5caaacf7a ]
 
-A stuck ramrod should be deleted from the completion_pending list,
-otherwise it will be added again in the future and corrupt the list.
+Free the allocated SPQ entry or return the acquired SPQ entry to the free
+list in error flows.
 
-Return error value to inform that ramrod is stuck and should be deleted.
-
-Signed-off-by: Sagiv Ozeri <sagiv.ozeri@cavium.com>
 Signed-off-by: Denis Bolotin <denis.bolotin@cavium.com>
+Signed-off-by: Michal Kalderon <michal.kalderon@cavium.com>
 Signed-off-by: David S. Miller <davem@davemloft.net>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
- drivers/net/ethernet/qlogic/qed/qed_spq.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
+ .../net/ethernet/qlogic/qed/qed_sp_commands.c    | 16 ++++++++++++++--
+ 1 file changed, 14 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/qlogic/qed/qed_spq.c b/drivers/net/ethernet/qlogic/qed/qed_spq.c
-index 0313e9c46979..467755b6dd0b 100644
---- a/drivers/net/ethernet/qlogic/qed/qed_spq.c
-+++ b/drivers/net/ethernet/qlogic/qed/qed_spq.c
-@@ -144,6 +144,7 @@ static int qed_spq_block(struct qed_hwfn *p_hwfn,
+diff --git a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
+index d7c5965328be..b26578464469 100644
+--- a/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
++++ b/drivers/net/ethernet/qlogic/qed/qed_sp_commands.c
+@@ -80,7 +80,7 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
  
- 	DP_INFO(p_hwfn, "Ramrod is stuck, requesting MCP drain\n");
- 	rc = qed_mcp_drain(p_hwfn, p_ptt);
-+	qed_ptt_release(p_hwfn, p_ptt);
- 	if (rc) {
- 		DP_NOTICE(p_hwfn, "MCP drain failed\n");
- 		goto err;
-@@ -152,18 +153,15 @@ static int qed_spq_block(struct qed_hwfn *p_hwfn,
- 	/* Retry after drain */
- 	rc = __qed_spq_block(p_hwfn, p_ent, p_fw_ret, true);
- 	if (!rc)
--		goto out;
-+		return 0;
+ 	case QED_SPQ_MODE_BLOCK:
+ 		if (!p_data->p_comp_data)
+-			return -EINVAL;
++			goto err;
  
- 	comp_done = (struct qed_spq_comp_done *)p_ent->comp_cb.cookie;
--	if (comp_done->done == 1)
-+	if (comp_done->done == 1) {
- 		if (p_fw_ret)
- 			*p_fw_ret = comp_done->fw_return_code;
--out:
--	qed_ptt_release(p_hwfn, p_ptt);
--	return 0;
--
-+		return 0;
-+	}
- err:
--	qed_ptt_release(p_hwfn, p_ptt);
- 	DP_NOTICE(p_hwfn,
- 		  "Ramrod is stuck [CID %08x cmd %02x protocol %02x echo %04x]\n",
- 		  le32_to_cpu(p_ent->elem.hdr.cid),
+ 		p_ent->comp_cb.cookie = p_data->p_comp_data->cookie;
+ 		break;
+@@ -95,7 +95,7 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
+ 	default:
+ 		DP_NOTICE(p_hwfn, "Unknown SPQE completion mode %d\n",
+ 			  p_ent->comp_mode);
+-		return -EINVAL;
++		goto err;
+ 	}
+ 
+ 	DP_VERBOSE(p_hwfn, QED_MSG_SPQ,
+@@ -109,6 +109,18 @@ int qed_sp_init_request(struct qed_hwfn *p_hwfn,
+ 	memset(&p_ent->ramrod, 0, sizeof(p_ent->ramrod));
+ 
+ 	return 0;
++
++err:
++	/* qed_spq_get_entry() can either get an entry from the free_pool,
++	 * or, if no entries are left, allocate a new entry and add it to
++	 * the unlimited_pending list.
++	 */
++	if (p_ent->queue == &p_hwfn->p_spq->unlimited_pending)
++		kfree(p_ent);
++	else
++		qed_spq_return_entry(p_hwfn, p_ent);
++
++	return -EINVAL;
+ }
+ 
+ static enum tunnel_clss qed_tunn_clss_to_fw_clss(u8 type)
 -- 
 2.17.1
 
