@@ -2,171 +2,116 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 14503C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:54:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA65C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:55:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3FE52081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:54:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 05B522081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:55:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="1F+o5nPH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3FE52081C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="dM2C4Gd8"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05B522081C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387870AbeKOVCE (ORCPT
+        id S2387962AbeKOVCW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 16:02:04 -0500
-Received: from esa6.microchip.iphmx.com ([216.71.154.253]:12957 "EHLO
-        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729006AbeKOVCE (ORCPT
+        Thu, 15 Nov 2018 16:02:22 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:37847 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387880AbeKOVCV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 16:02:04 -0500
-X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
-   d="scan'208";a="20441148"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 15 Nov 2018 03:54:43 -0700
-Received: from NAM04-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Thu, 15 Nov 2018 03:54:42 -0700
+        Thu, 15 Nov 2018 16:02:21 -0500
+Received: by mail-lj1-f195.google.com with SMTP id e5-v6so16899477lja.4
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 02:55:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SmR7RGIxwi8SSYTqd9GaIUo90dvqgl46CTeZGInBhBI=;
- b=1F+o5nPHhbSN8DlPp9UDMlVNFKLCJPW69AVE9tTl++7d4CQ3bJ+kECpIbkVEtCKMDYjY3CixnkcXq93oRR4wffmtg5ND+bzsxKqKUsRooKRLCEv7zYBrzS+018ufvuz5Gjns0KqHwr5TKw/I+UYm13oGDXTFpshbfEmcCmxCFe8=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1410.namprd11.prod.outlook.com (10.173.33.18) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Thu, 15 Nov 2018 10:54:39 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa%5]) with mapi id 15.20.1294.045; Thu, 15 Nov 2018
- 10:54:39 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <boris.brezillon@bootlin.com>, <liu.xiang6@zte.com.cn>,
-        <cyrille.pitchen@wedev4u.fr>
-CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <richard@nod.at>,
-        <liuxiang_1999@126.com>
-Subject: Re: [PATCH] mtd: spi-nor: Return error when nor->addr_width not match
- the device size
-Thread-Topic: [PATCH] mtd: spi-nor: Return error when nor->addr_width not
- match the device size
-Thread-Index: AQHUfBtKLi6qhlEPb0mvbCV2iWac9aVPShKAgAFg5AA=
-Date:   Thu, 15 Nov 2018 10:54:39 +0000
-Message-ID: <96397ec0-14de-f09a-a18d-c67396e33fba@microchip.com>
-References: <1542200165-3073-1-git-send-email-liu.xiang6@zte.com.cn>
- <20181114145129.568e4bb3@bbrezillon>
-In-Reply-To: <20181114145129.568e4bb3@bbrezillon>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR0102CA0047.eurprd01.prod.exchangelabs.com
- (2603:10a6:803::24) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1410;6:h2AmoCwqG4i0/fgmqK6UpcsU+UECAbnjgSyk5+gT70pt13IczpteciH+pcETBSAmUWcPW1H9qleU1PBJa14PMc2r8xzulkaWd5rlTm5F94G0GV/e3elgsNWVm+RU/u0WZdfu9NUDoPe+92VcseNXX62R+/OIOQ5gta61tnvWsxhSiZxVeqolvgekzKfDhLG8nVQQ86+Us+n56X9SYZf0gyfXA3l34W+7zqgebebGx3VirKTyZLq00eW9cX7V2r+ZEdM/Y6HhPx8HTrttcuWXo+XLPVdKVuthwDOHM2bmrg/KW2wGmDzlj0VoqTAyTuqhZwQrt4rHzclXPctPgqXoZZ5zlQ2zCGhlWrGdg4rr0UZjkPXkj/GwPW031oGkxjJyPLe3zyfAD2lgBfyHh6AezSuneidSxplMyifaHYofc58IkzxIEyqZkDKO4R7npZSXmkW50xXjrNkNYkZQpXpTEg==;5:BN9e9Gn4AcEJcgc/kxurdcLEtTnY5+X3KoAmFianEbTziQytOThMUpNNZv6DQeRoE/ROywS18GhveAQ1nRafY1nr7LuwcgBG3+kYfeVzUgQfn0H8GXIJyuCqtT28XBgW/C2T0rafNfixwMK/JNre2cHN1uG9ItAeYsX+fOnqLT4=;7:JDN/xMO0bKFaOTCJrkfZHi3VkuPIB1eCWQ7+nIu4Auy6dKkVQ5NU7gQP/vc4ANXjJDgwm2KaCWSGQ3C3hwXOD1SNiGIg+oh4PSWOX9F9ss4uMTHf4ESbydXLVc75XdiHMseLLGwCd4r6ZYXkYPKmIg==
-x-ms-office365-filtering-correlation-id: 0d9a75b3-df40-4a61-fb27-08d64ae8bd32
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1410;
-x-ms-traffictypediagnostic: BN6PR11MB1410:
-x-microsoft-antispam-prvs: <BN6PR11MB1410BE6DB18F141C04072BE4F0DC0@BN6PR11MB1410.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231415)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1410;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1410;
-x-forefront-prvs: 08572BD77F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(346002)(376002)(136003)(39860400002)(189003)(199004)(52314003)(229853002)(97736004)(6306002)(6512007)(6486002)(6436002)(256004)(14444005)(14454004)(2900100001)(31686004)(106356001)(105586002)(66066001)(81166006)(81156014)(39060400002)(8676002)(8936002)(316002)(486006)(446003)(71200400001)(53936002)(71190400001)(36756003)(476003)(110136005)(54906003)(11346002)(2616005)(6246003)(25786009)(5660300001)(6116002)(3846002)(478600001)(7416002)(4326008)(68736007)(72206003)(7736002)(99286004)(76176011)(186003)(52116002)(53546011)(386003)(6506007)(305945005)(102836004)(26005)(86362001)(31696002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1410;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: o3RtVsAwW5OFD27mOsjQC1LO3gtX6dQxgAi/1mlK8/vbxlzTuMw5Ce9tR40dpKZg6OreVsYzv/xfj8bIF8zQjP+NAYmYQYWSX1i51vuGb+O2M+UmrSOFjxP+xgVp3QaP4OM3qm2FIx+SyLajfKFH6KDR6z269GpxIHbmqKX3zYgqlcvhz1UYUyo0cG0/7elWYv9Jbcggg60vye3JzM5g1T6IRDuKLP47edUQ5eN75wrbKBddCdvYBgmmMiL7yZCI8CAZm2Dsiv9Tjzm91yGJjUXF0zP9PDxhpgzN5DRWR1gzfjxRxQ0U9HXI1F8S1ZOCvs/WMRgSn4Ybw3uTsVh9pRaq+UM4GQ2pQqj7FtZYuA8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <BC00E32308754F4A9A1D5CCE6B4D3AEE@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=KnvV7j/+nTg+LDaNboxyDZ6ldnjoYJ8B97EViposZH4=;
+        b=dM2C4Gd8bjmcVA+aNDUQs940Ok0/FDgGKh1YiJAVWY69sXbZbDxIF5mSKLRHSVRGfM
+         qS7aV3hF8AXCVf6o1HQZoIhn8vEEDkmzQBB2abQlsx/ndKbinQ54R6oV6xrkABbb3XRG
+         8u/BbxhEVfCyN99E+XUUzDJJ/MnPb79xqqVdI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=KnvV7j/+nTg+LDaNboxyDZ6ldnjoYJ8B97EViposZH4=;
+        b=AQPH7Tfup+VF+q19KsSVa8IftWYAN5MNB706BFxthRbrvThCdsK6LKhXlel0FNbBkm
+         LKQl18jw5seqmSBNOXQjhT162C8SK9CZBDisDDNWNZaA9TwvLcknjCYm+JFdK/Ui0Y3F
+         Y2Kkt1prJua2k32DdH0n/xNmJLtZtKbTC24yNVk99oY7ZwUTyHZsJXpQtZ4vNaPOHvWf
+         LJYHkRTXr1iiB7Bai0Q1TFeVtaU12pqx6YCX+cQPhldnvXhs3nh6f+shzm8aHNaQW9Rv
+         jogrASIGpX/5KyoaLwvYyz+dDkNlUNrtrlAmb9TkKHuzFQLdiLi0AWRTzGrHSxIxPVHS
+         ii0w==
+X-Gm-Message-State: AGRZ1gJzthCpDZhPhbXiv1wgAFxh7mEHuEC3/ETxWfIK4/yvCJ4b/cLO
+        502/8u96fqZ9xN0L43aG84v+B0ihSB9YNYd0Zfntcw==
+X-Google-Smtp-Source: AJdET5da+y1SGDuZQ/Zx6RK4UQtEjmIanlPADfQPdNS+Q0/qBMJ4OXTt1lWiGSCf5gUEOqlT8u1lV5MqIS+1YdlSjGQ=
+X-Received: by 2002:a2e:7403:: with SMTP id p3-v6mr3346731ljc.97.1542279300290;
+ Thu, 15 Nov 2018 02:55:00 -0800 (PST)
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d9a75b3-df40-4a61-fb27-08d64ae8bd32
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2018 10:54:39.3752
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1410
-X-OriginatorOrg: microchip.com
+References: <20181108101405.14062-1-ckeepax@opensource.cirrus.com> <20181108101405.14062-7-ckeepax@opensource.cirrus.com>
+In-Reply-To: <20181108101405.14062-7-ckeepax@opensource.cirrus.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 15 Nov 2018 11:54:48 +0100
+Message-ID: <CACRpkdZCUDsSZA3xAH05ZFuNP8dyHFapX7MJTVnD3A-ts1Y7yA@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] pinctrl: lochnagar: Add support for the Cirrus
+ Logic Lochnagar
+To:     Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc:     Lee Jones <lee.jones@linaro.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Mark Brown <broonie@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        patches@opensource.cirrus.com,
+        linux-clk <linux-clk@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SGksIExpdSwgQm9yaXMsIEN5cmlsbGUsDQoNCk9uIDExLzE0LzIwMTggMDM6NTEgUE0sIEJvcmlz
-IEJyZXppbGxvbiB3cm90ZToNCj4gT24gV2VkLCAxNCBOb3YgMjAxOCAyMDo1NjowNSArMDgwMA0K
-PiBMaXUgWGlhbmcgPGxpdS54aWFuZzZAenRlLmNvbS5jbj4gd3JvdGU6DQo+IA0KPj4gSW4gaXMy
-NWxwMjU2LCB0aGUgRFdPUkQxIG9mIEpFREVDIEJhc2ljIEZsYXNoIFBhcmFtZXRlciBIZWFkZXIN
-Cj4+IGlzIDB4ZmZmOTIwZTUuIFNvIHRoZSBEV09SRDFbMTg6MTddIEFkZHJlc3MgQnl0ZXMgYml0
-cyBhcmUgMGIwMCwNCg0KTGl1LCBjYW4geW91IHBvaW50IHVzIHRvIGEgZGF0YXNoZWV0IHRoYXQg
-aGFzIHRoZSBKRURFQyBCRlBUIHRhYmxlcyBkZXNjcmliZWQ/IEkNCmNvdWxkbid0IGZpbmQgb25l
-IC4uLg0KDQo+PiBtZWFucyB0aGF0IDMtQnl0ZSBvbmx5IGFkZHJlc3NpbmcuDQo+IA0KPiBBY2Nv
-cmRpbmcgdG8geW91ciBvdGhlciBwYXRjaCB0aGlzIE5PUiBzdXBwb3J0cyA0QiBvcGNvZGUsIHdo
-aWNoIG1lYW5zDQo+IHRoZSBTRkRQIHRhYmxlIGlzIHdyb25nLg0KPiANCj4+IEJ1dCB0aGUgZGV2
-aWNlIHNpemUgaXMgbGFyZ2VyDQo+PiB0aGFuIDE2TUIsIG5vci0+YWRkcl93aWR0aCBtdXN0IGJl
-IDQgdG8gYWNjZXNzIHRoZSB3aG9sZSBhZGRyZXNzLg0KPj4gQW4gZXJyb3Igc2hvdWxkIGJlIHJl
-dHVybmVkIHdoZW4gbm9yLT5hZGRyX3dpZHRoIG5vdCBtYXRjaA0KPiANCj4gCQkJCQkJICAgXmRv
-ZXMgbm90DQo+IA0KPj4gdGhlIGRldmljZSBzaXplIGluIHNwaV9ub3JfcGFyc2Vfc2ZkcCgpLg0K
-Pj4NCj4+IFN1Z2dlc3RlZC1ieTogQm9yaXMgQnJlemlsbG9uIDxib3Jpcy5icmV6aWxsb25AYm9v
-dGxpbi5jb20+DQo+PiBTaWduZWQtb2ZmLWJ5OiBMaXUgWGlhbmcgPGxpdS54aWFuZzZAenRlLmNv
-bS5jbj4NCj4+IC0tLQ0KPj4gIGRyaXZlcnMvbXRkL3NwaS1ub3Ivc3BpLW5vci5jIHwgNCArKysr
-DQo+PiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKQ0KPj4NCj4+IGRpZmYgLS1naXQg
-YS9kcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyBiL2RyaXZlcnMvbXRkL3NwaS1ub3Ivc3Bp
-LW5vci5jDQo+PiBpbmRleCAzZWJhMTNhLi43N2VhZjIyIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVy
-cy9tdGQvc3BpLW5vci9zcGktbm9yLmMNCj4+ICsrKyBiL2RyaXZlcnMvbXRkL3NwaS1ub3Ivc3Bp
-LW5vci5jDQo+PiBAQCAtMjY2OSw2ICsyNjY5LDEwIEBAIHN0YXRpYyBpbnQgc3BpX25vcl9wYXJz
-ZV9iZnB0KHN0cnVjdCBzcGlfbm9yICpub3IsDQo+PiAgCX0NCj4+ICAJcGFyYW1zLT5zaXplID4+
-PSAzOyAvKiBDb252ZXJ0IHRvIGJ5dGVzLiAqLw0KPj4gIA0KPj4gKwkvKmlmIHRoZSBkZXZpY2Ug
-ZXhjZWVkcyAxNk1pQiwgYWRkcl93aWR0aCBtdXN0IGJlIDQqLw0KPiANCj4gUGxlYXNlIGFkZCBh
-IHdoaXRlIHNwYWNlIGFmdGVyICcvKicgYW5kIGJlZm9yZSAnKi8nOg0KPiANCj4gCS8qIElmIHRo
-ZSBkZXZpY2UgZXhjZWVkcyAxNk1pQiwgLT5hZGRyX3dpZHRoIG11c3QgYmUgNC4gKi8NCj4gDQo+
-PiArCWlmICgocGFyYW1zLT5zaXplID4gMHgxMDAwMDAwKSAmJiAobm9yLT5hZGRyX3dpZHRoID09
-IDMpKQ0KPiANCj4gUGFyZW5zIGFyZSBub3QgbmVlZGVkIGFyb3VuZCBzdWItY29uZGl0aW9uczoN
-Cj4gDQo+IAlpZiAocGFyYW1zLT5zaXplID4gMHgxMDAwMDAwICYmIG5vci0+YWRkcl93aWR0aCA9
-PSAzKQ0KPiANCj4+ICsJCXJldHVybiAtRUlOVkFMOw0KPj4gKw0KPiANCj4gSSdtIG5vdCBzdXJl
-IHRoaXMgaXMgY29ycmVjdC4gTG9va3MgbGlrZSBzb21lIE5PUnMgb25seSBzdXBwb3J0IDNCDQo+
-IG9wY29kZXMgYnV0IGhhdmUgYSAiNC1ieXRlIGFkZHJlc3NpbmciIG1vZGUgKHNlZSBzZXRfNGJ5
-dGUoKSBbMV0pLg0KPiBEb24ndCBrbm93IHdoYXQncyByZXBvcnRlZCBieSB0aGUgQkZQVCBzZWN0
-aW9uIGluIHRoaXMgY2FzZSB0aG91Z2gNCj4gKEJGUFRfRFdPUkQxX0FERFJFU1NfQllURVNfM19P
-TkxZIG9yIEJGUFRfRFdPUkQxX0FERFJFU1NfQllURVNfM19PUl80KS4NCg0KQm9yaXMsIHRoaXMg
-aXMgaW4gY2xvc2UgcmVsYXRpb24gd2l0aCB5b3VyIHNlY29uZCBwYXRjaDogW1BBVENIIHYzIDIv
-Ml0gbXRkOg0Kc3BpLW5vcjogVXNlIDRCIG9wY29kZXMgd2hlbiB0aGUgTk9SIGFkdmVydGlzZXMg
-Ym90aCAzQiBhbmQgNEIuDQoNCldoZW4gbG9va2luZyBhZ2FpbiBhdCB0aGlzLCBJIHdvdWxkIHNh
-eSB0aGF0IGZvciB0aGUgZmxhc2hlcyB0aGF0IGhhdmUgYSAiNC1ieXRlDQphZGRyZXNzaW5nIiBt
-b2RlLCBidXQganVzdCAzQiBvcGNvZGVzLCBJIHdvdWxkIGV4cGVjdCB0aGUgRFdPUkQxWzE4OjE3
-XSB0byBiZSBvZg0KdmFsdWUgQkZQVF9EV09SRDFfQUREUkVTU19CWVRFU18zX09SXzQgKGVudGVy
-cyA0LUJ5dGUgbW9kZSBvbiBjb21tYW5kIC0gdXNlcyAzQg0Kb3Bjb2RlcykuDQoNCklmIEJGUFRf
-RFdPUkQxX0FERFJFU1NfQllURVNfM19PUl80IGFuZCA0QiBvcGNvZGVzLCB0aGVuIHdlIGNhbiBx
-dWVyeSBCRlBUDQpEV09SRDE2WzMxOjI0XTogaXQgc2hvdWxkIGhhdmUgdmFsdWUgeHgxeF94eHh4
-YiB0byBpbmRpY2F0ZSB0aGF0IDRCIG9wY29kZXMgYXJlDQpzdXBwb3J0ZWQuIEJ1dCB3aGljaCA0
-QiBvcGNvZGVzIGFyZSBzdXBwb3J0ZWQ/IERvIGFsbCAzQiBvcGNvZGVzIGhhdmUgYSA0Qg0Kb3Bj
-b2RlIGNvcnJlc3BvbmRlbnQgaWYgU0ZEUCA0LWJ5dGUgdGFibGUgaXMgbm90IGF2YWlsYWJsZT8g
-VGhpcyBtaWdodCBiZSBhIGdvb2QNCmFzc3VtcHRpb24sIGJ1dCBJIGNhbid0IHNlZSBpdCBhbnl3
-aGVyZSBpbiBqZXNkMjE2Yy4NCg0KQ3lyaWxsZSwgd2hlbiBsb29raW5nIGF0IGJhM2FlNmExZDRj
-ICgibXRkOiBzcGktbm9yOiBhZGQgYSBzdGF0ZWxlc3MgbWV0aG9kIHRvDQpzdXBwb3J0IG1lbW9y
-eSBzaXplIGFib3ZlIDEyOE1pYiIpIEkgc2VlIHRoYXQgYWxsIGZsYXNoZXMgdGhhdCBkZWNsYXJl
-DQpTUElfTk9SXzRCX09QQ09ERVMgd2lsbCBoYXZlIHRoZSAzQiBvcGNvZGVzIGNvbnZlcnRlZCB0
-byA0QiBvcGNvZGVzLCBhc3N1bWluZw0KdGhhdCBhbGwgM0Igb3Bjb2RlcyBoYXZlIGEgNEIgY29y
-cmVzcG9uZGVudC4gSXMgdGhpcyBhc3N1bXB0aW9uIGEgZ2VuZXJhbCBydWxlLA0Kb3IgaXQncyBq
-dXN0IGZvciB0aGUgU3BhbnNpb24gZmxhc2hlcz8NCg0KQ2hlZXJzLA0KdGENCg0KPiANCj4gQW55
-d2F5LCBJIHRoaW5rIHRoaXMgY2hlY2sgc2hvdWxkIGJlIG1vdmVkIGhlcmUgWzJdIHRvIGNvdmVy
-IHRoZQ0KPiBub24tU0ZEUCBjYXNlLg0KPiANCj4+ICAJLyogRmFzdCBSZWFkIHNldHRpbmdzLiAq
-Lw0KPj4gIAlmb3IgKGkgPSAwOyBpIDwgQVJSQVlfU0laRShzZmRwX2JmcHRfcmVhZHMpOyBpKysp
-IHsNCj4+ICAJCWNvbnN0IHN0cnVjdCBzZmRwX2JmcHRfcmVhZCAqcmQgPSAmc2ZkcF9iZnB0X3Jl
-YWRzW2ldOw0KPiANCj4gWzFdaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjQuMjAt
-cmMyL3NvdXJjZS9kcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyNMMjc4DQo+IFsyXWh0dHBz
-Oi8vZWxpeGlyLmJvb3RsaW4uY29tL2xpbnV4L3Y0LjIwLXJjMi9zb3VyY2UvZHJpdmVycy9tdGQv
-c3BpLW5vci9zcGktbm9yLmMjTDM3NTgNCj4gDQo=
+On Thu, Nov 8, 2018 at 11:14 AM Charles Keepax
+<ckeepax@opensource.cirrus.com> wrote:
+
+> Lochnagar is an evaluation and development board for Cirrus
+> Logic Smart CODEC and Amp devices. It allows the connection of
+> most Cirrus Logic devices on mini-cards, as well as allowing
+> connection of various application processor systems to provide a
+> full evaluation platform. This driver supports the board
+> controller chip on the Lochnagar board.
+>
+> Lochnagar provides many pins which can generally be used for an
+> audio function such as an AIF or a PDM interface, but also as
+> GPIOs.
+>
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+
+This v4 version looks very good to me!
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+
+Nitpicks (fix or not, my review tag stands):
+
+>  drivers/pinctrl/cirrus/pinctrl-lochnagar.c | 1145 ++++++++++++++++++++++++++++
+>  drivers/pinctrl/cirrus/pinctrl-lochnagar.h |  112 +++
+
+Why don't you just include that header file in the C file.
+112 lines +/- on a 1145 line file doesn't matter.
+
+> +       priv->gpio_chip = template_chip;
+
+I would just skip the template and just assign struct members
+directly.
+
+Bonus if you set ->label to something instance-unique as well.
+
+Yours,
+Linus Walleij
