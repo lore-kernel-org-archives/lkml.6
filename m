@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39782C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:53:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C289C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:53:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0D9E62077C
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:53:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0D9E62077C
+	by mail.kernel.org (Postfix) with ESMTP id EDEC9223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:53:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EDEC9223CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731921AbeKOS74 convert rfc822-to-8bit (ORCPT
+        id S1729087AbeKOS7v convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 13:59:56 -0500
-Received: from mx08-00178001.pphosted.com ([91.207.212.93]:39602 "EHLO
+        Thu, 15 Nov 2018 13:59:51 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53056 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1729037AbeKOS7v (ORCPT
+        by vger.kernel.org with ESMTP id S1728519AbeKOS7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 13:59:51 -0500
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAF8nXdO025851;
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAF8nJmX012034;
         Thu, 15 Nov 2018 09:52:31 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx08-00178001.pphosted.com with ESMTP id 2nr7cwrg89-1
+        by mx08-00178001.pphosted.com with ESMTP id 2nr7d8rg5r-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
         Thu, 15 Nov 2018 09:52:31 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1FD8B41;
-        Thu, 15 Nov 2018 08:52:30 +0000 (GMT)
-Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id F391C101A;
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id B56773D;
         Thu, 15 Nov 2018 08:52:29 +0000 (GMT)
-Received: from SFHDAG3NODE1.st.com (10.75.127.7) by SFHDAG3NODE3.st.com
- (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 15 Nov
+Received: from Webmail-eu.st.com (sfhdag3node2.st.com [10.75.127.8])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8F5ED128E;
+        Thu, 15 Nov 2018 08:52:29 +0000 (GMT)
+Received: from SFHDAG3NODE1.st.com (10.75.127.7) by SFHDAG3NODE2.st.com
+ (10.75.127.8) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 15 Nov
  2018 09:52:29 +0100
 Received: from SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86]) by
  SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86%20]) with mapi id
@@ -53,11 +53,12 @@ CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-stm32@st-md-mailman.stormreply.com" 
         <linux-stm32@st-md-mailman.stormreply.com>
-Subject: [PATCH 2/3] ARM: dts: stm32: add can1 sleep pins muxing
-Thread-Topic: [PATCH 2/3] ARM: dts: stm32: add can1 sleep pins muxing
-Thread-Index: AQHUfMCKSNUHjKhuRESaN83cK6JqVQ==
+Subject: [PATCH 1/3] ARM: dts: stm32: change CAN RAM mapping on stm32mp157c
+Thread-Topic: [PATCH 1/3] ARM: dts: stm32: change CAN RAM mapping on
+ stm32mp157c
+Thread-Index: AQHUfMCK5BYbFusytE6iCO2SRs0lIQ==
 Date:   Thu, 15 Nov 2018 08:52:29 +0000
-Message-ID: <1542271942-28130-3-git-send-email-bich.hemon@st.com>
+Message-ID: <1542271942-28130-2-git-send-email-bich.hemon@st.com>
 References: <1542271942-28130-1-git-send-email-bich.hemon@st.com>
 In-Reply-To: <1542271942-28130-1-git-send-email-bich.hemon@st.com>
 Accept-Language: en-US
@@ -77,30 +78,37 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add can1 pinctrl definition for low-power mode
+Split the 10Kbytes CAN message RAM to be able to use simultaneously
+FDCAN1 and FDCAN2 instances.
+First 5Kbytes are allocated to FDCAN1 and last 5Kbytes are used for
+FDCAN2. To do so, set the offset to 0x1400 in mram-cfg for FDCAN2.
 
 Signed-off-by: Bich Hemon <bich.hemon@st.com>
 ---
- arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 7 +++++++
- 1 file changed, 7 insertions(+)
+ arch/arm/boot/dts/stm32mp157c.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-index c485127..9ec4694 100644
---- a/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-+++ b/arch/arm/boot/dts/stm32mp157-pinctrl.dtsi
-@@ -246,6 +246,13 @@
- 				};
- 			};
+diff --git a/arch/arm/boot/dts/stm32mp157c.dtsi b/arch/arm/boot/dts/stm32mp157c.dtsi
+index 8bf1c17..ffd7457 100644
+--- a/arch/arm/boot/dts/stm32mp157c.dtsi
++++ b/arch/arm/boot/dts/stm32mp157c.dtsi
+@@ -684,7 +684,7 @@
  
-+			m_can1_sleep_pins_a: m_can1-sleep@0 {
-+				pins {
-+					pinmux = <STM32_PINMUX('H', 13, ANALOG)>, /* CAN1_TX */
-+						 <STM32_PINMUX('I', 9, ANALOG)>; /* CAN1_RX */
-+				};
-+			};
-+
- 			pwm2_pins_a: pwm2-0 {
- 				pins {
- 					pinmux = <STM32_PINMUX('A', 3, AF1)>; /* TIM2_CH4 */
+ 		m_can1: can@4400e000 {
+ 			compatible = "bosch,m_can";
+-			reg = <0x4400e000 0x400>, <0x44011000 0x2800>;
++			reg = <0x4400e000 0x400>, <0x44011000 0x1400>;
+ 			reg-names = "m_can", "message_ram";
+ 			interrupts = <GIC_SPI 19 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 21 IRQ_TYPE_LEVEL_HIGH>;
+@@ -704,7 +704,7 @@
+ 			interrupt-names = "int0", "int1";
+ 			clocks = <&rcc CK_HSE>, <&rcc FDCAN_K>;
+ 			clock-names = "hclk", "cclk";
+-			bosch,mram-cfg = <0x0 0 0 32 0 0 2 2>;
++			bosch,mram-cfg = <0x1400 0 0 32 0 0 2 2>;
+ 			status = "disabled";
+ 		};
+ 
 -- 
 1.9.1
