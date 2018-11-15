@@ -2,61 +2,62 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2D3C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:16:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 59137C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:16:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 715002133D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:16:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 145932133D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:16:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KsamsSTG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715002133D
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RJd4WjRr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 145932133D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388898AbeKPJ0J (ORCPT
+        id S2389068AbeKPJ0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 04:26:09 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:38415 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725860AbeKPJ0J (ORCPT
+        Fri, 16 Nov 2018 04:26:14 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34567 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbeKPJ0N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 04:26:09 -0500
-Received: by mail-ot1-f66.google.com with SMTP id u3so14542222ota.5;
-        Thu, 15 Nov 2018 15:16:16 -0800 (PST)
+        Fri, 16 Nov 2018 04:26:13 -0500
+Received: by mail-ot1-f65.google.com with SMTP id t5so19700117otk.1;
+        Thu, 15 Nov 2018 15:16:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=Endo/rnyrZtQzjl63XIlDlk+0dMOEvUstgeXnyJyS2g=;
-        b=KsamsSTGaj7EBVUbAIZgS9T7QGovy1ECRb9FIS9XU9sUYyBGhXoNh1Dxv+3p9Vb+MC
-         rBge74EsJgxU7dSbXROotH6geTkJ8i/KZyLd3HwVJonemqEDH1Ziqo+AU/h6Zm0vrxph
-         RGu/QdFcCc1SZwwYyNe80U3qp+gnfzF74r6n4yfrtwob7Wwep+SvBwBID8N+meev7cUK
-         NskWGA+n2lJQgl3rgu0ky2Vk1x3UmPO5s5yzC6uPNYnAeSE+27jgCl0erJwC8bIZgO5k
-         VjLuY1jTSF94wyopm5l0Tlxu76snt9z4RT5ZRK3DpuWe2USlEDYlqdLJdWo4D2LCrIy0
-         MW+A==
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=0/zlQteT7Eb+WVjd5aUv8zmL6TUh4WrZMBcM1VmM60w=;
+        b=RJd4WjRrMh+I3fogDnQnkEar5Mze93Z9Lnb32BCllXD4QjvTA0UEeAiidrUwivLnkn
+         Zy/jNIr4E7xK4+d5YunPO0SLw5nz1ms8tF1F4vtVwUjUdFpX+mZwzbr69vM6g5Irx9fF
+         oEcYj2+jBiQDx1nqXa+N0Ub37260OCLxo/2uV61XakP5nD4ffB4PHW0EaB4uhSNDvDOE
+         Nd5qcppdMBDhjG9Fwr+Lhp9IWUadb5LCndSrYruFqZwq+K9cioIutFKELf1ycYZdMGdI
+         O3uN65WmZ9rKbWXm41TjcLij/8yTtzOf1h++geWO6jvOru1cSUHB3rWEMogRsXIAl94e
+         ck3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=Endo/rnyrZtQzjl63XIlDlk+0dMOEvUstgeXnyJyS2g=;
-        b=BJorB97ht5wJXG8GG6AFBjLJVuLVHJGxpAIWV0ve7cgcO68DKId8ckXZzoPjAc5fQd
-         NPzoCygoHwDlLnc7Fvm07gwLjk4mP/DgrEb3dSaIiGZJ8grDU7vjbDJqZrFNwZN9bmdK
-         w6kBUa4teSpJ178wmDj44tI2U4+9UthkCr04Ykrp3r8+RKTZzcVD6wEUMM8oAJQmHOez
-         xgmS4V++qjB1IKNPRuEKFfLZGcf8LioulnEaz+OF1L+KwAkn4w+hS+SvNd3kfZ0/148v
-         +3gjTy0iUmzyplhyLzkRBIwDQzk3snGnGe1+UjPJD85lU2tmF5kl17qd7RcJtv9u7mby
-         P52w==
-X-Gm-Message-State: AGRZ1gImhMW76zuXNaq8A7m0ztRs7uEBoKNtZFOKTXibSMctaw/g3/OG
-        UjO+KxiEFkLOfB2MUtZrXzA=
-X-Google-Smtp-Source: AJdET5frJbOEeY/44Q01Ar6ekmvTcypP0TiJnoI3eU4fo6IOIeyweFzux9/jZ+VI6V2Avp76imE1ow==
-X-Received: by 2002:a9d:2aea:: with SMTP id e97mr5094109otb.206.1542323775740;
-        Thu, 15 Nov 2018 15:16:15 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=0/zlQteT7Eb+WVjd5aUv8zmL6TUh4WrZMBcM1VmM60w=;
+        b=OLVSQRCvscSfL1nob0esDXWIZLKAvQZAj0vTvxsskYt5gscHb9hZD79PSK1fdEkL50
+         zZfE9I3RAGl1cnfXTEb3ULV5ErFNWLKE8P+bsOKLLzWUXikxeZmXlFWsVvFqJTxo0sAC
+         V2Eo9Y2AYKZ+ZAXc3jGdw3z/J6Jy9Y4qN8NEWD6hHLkETiJkTWqFQBnYMByqKnwM+7e+
+         VlsoLOUTGtR/Z9YjbrrO/8DxBWUMQMkd8SnwKz18zn10PGrpzM2G4WfP1J2XY04tszyE
+         9dV+KERXaahQw3hvx9BbgaJcTJyJBwISnjWNlEFN6FdTR+TKqXHX17VXgFZq/NJCVoW3
+         SCsA==
+X-Gm-Message-State: AGRZ1gJf9NO8CrVzbnoDFxV7FLsJahQamwCcb8HdSsdnQDAgwPZ10MC0
+        QwbBbWE7wGhivGj1V7CNbqMQ4fc3GZM=
+X-Google-Smtp-Source: AJdET5cXWr6Qmr40kj0P21sABhxXuWQiugOA6lCkMgOojEvFft0MixSoyluh6J5y5WMoO5U1IIzehQ==
+X-Received: by 2002:a9d:41ca:: with SMTP id v10mr5271965oti.101.1542323779488;
+        Thu, 15 Nov 2018 15:16:19 -0800 (PST)
 Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
-        by smtp.gmail.com with ESMTPSA id o81-v6sm8680267oif.1.2018.11.15.15.16.14
+        by smtp.gmail.com with ESMTPSA id o81-v6sm8680267oif.1.2018.11.15.15.16.18
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 15:16:15 -0800 (PST)
+        Thu, 15 Nov 2018 15:16:19 -0800 (PST)
 From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
 To:     helgaas@google.com
 Cc:     austin_bolen@dell.com, alex_gagniuc@dellteam.com,
@@ -70,60 +71,115 @@ Cc:     austin_bolen@dell.com, alex_gagniuc@dellteam.com,
         "Oliver O'Halloran" <oohall@gmail.com>, linux-pci@vger.kernel.org,
         linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
         linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns AER
-Date:   Thu, 15 Nov 2018 17:16:01 -0600
-Message-Id: <20181115231605.24352-1-mr.nuke.me@gmail.com>
+Subject: [PATCH 1/2] PCI/AER: Do not use APEI/HEST to disable AER services globally
+Date:   Thu, 15 Nov 2018 17:16:02 -0600
+Message-Id: <20181115231605.24352-2-mr.nuke.me@gmail.com>
 X-Mailer: git-send-email 2.17.1
+In-Reply-To: <20181115231605.24352-1-mr.nuke.me@gmail.com>
+References: <20181115231605.24352-1-mr.nuke.me@gmail.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Thanks to Keith for pointing out that it doesn't make sense to disable
-AER services when only one device has a FIRMWARE_FIRST HEST.
+HEST is used to describe the meaning of errors received as part of ACPI
+Platform Error Interfaces (APEI). HEST is tightly coupled to ownership
+of AER, however the correct way to determine AER ownership is the _OSC
+method.
 
-AER ownership is an interesting issue brought in by FFS (firmware-first)
-model. In a nutshell if FFS handles AER, then OS should not touch any
-of the AER bits. FW might set things up so that it receives AER
-notifications via SMI. It's theoretically possible to receive SCIs,
-but the exact mechanism is platform-dependent. OS touching AER bits
-when firmware owns them may interfere with these notifications.
+_OSC is negotiated per root bus. It's possible to have one HEST
+descriptor for all root busses where AER is owned by firmware, and
+still have root busses that are not firmware-first. In that case we
+would incorrectly disable AER services globally.
 
-The ACPI mechanism for negotiating control of AER is _OSC, and is
-described in detail in ACPI 6.2 Ch. 6.2.11.3. _OSC is negotiated at
-the root bus level. Any root port, switch, or endpoint under the bus
-would have its AER ownership negotiated in one _OSC call.
+Instead of using HEST in making the determination, always request AER
+control via _OSC, and only disable AER when firmware denies control.
 
-Then there is HEST, which is part of ACPI Platform Error Interfaces
-(APEI). HEST tables describe the errors that FW may report to the OS.
-A types 6,7 and 7 HEST tables describe AER errors from PCIe devices.
-As part of this description, we're told if the error source is FFS.
+Signed-off-by: Alexandru Gagniuc <mr.nuke.me@gmail.com>
+---
+ drivers/acpi/pci_root.c  |  9 ++-------
+ drivers/pci/pcie/aer.c   | 25 +------------------------
+ include/linux/pci-acpi.h |  6 ------
+ 3 files changed, 3 insertions(+), 37 deletions(-)
 
-Information in HEST seems to be redundant, as each error reported by
-FW will have a CPER table that describes it in detail.
-
-Because HEST describes an error source as firmware-first or not, we've
-taken this to mean ownership of AER. Because AER ownership and error
-reporting are coupled, _OSC and HEST usually agree on the matter of
-ownership. However, that doesn't seem to be required by ACPI.
-
-I've asked around a few people at Dell and they unanimously agree that
-_OSC is the correct way to determine ownership of AER. In linux, we
-use the result of _OSC to enable AER services, but we use HEST to
-determine AER ownership. That's inconsistent. This series drops the
-use of HEST in favor of _OSC.
-
-[1] https://lkml.org/lkml/2018/11/15/62
-
-Alexandru Gagniuc (2):
-  PCI/AER: Do not use APEI/HEST to disable AER services globally
-  PCI/AER: Determine AER ownership based on _OSC instead of HEST
-
- drivers/acpi/pci_root.c  |  9 +----
- drivers/pci/pcie/aer.c   | 82 ++--------------------------------------
- include/linux/pci-acpi.h |  6 ---
- 3 files changed, 5 insertions(+), 92 deletions(-)
-
+diff --git a/drivers/acpi/pci_root.c b/drivers/acpi/pci_root.c
+index 707aafc7c2aa..32b2053bb0fa 100644
+--- a/drivers/acpi/pci_root.c
++++ b/drivers/acpi/pci_root.c
+@@ -491,13 +491,8 @@ static void negotiate_os_control(struct acpi_pci_root *root, int *no_aspm,
+ 	if (IS_ENABLED(CONFIG_HOTPLUG_PCI_SHPC))
+ 		control |= OSC_PCI_SHPC_NATIVE_HP_CONTROL;
+ 
+-	if (pci_aer_available()) {
+-		if (aer_acpi_firmware_first())
+-			dev_info(&device->dev,
+-				 "PCIe AER handled by firmware\n");
+-		else
+-			control |= OSC_PCI_EXPRESS_AER_CONTROL;
+-	}
++	if (pci_aer_available())
++		control |= OSC_PCI_EXPRESS_AER_CONTROL;
+ 
+ 	requested = control;
+ 	status = acpi_pci_osc_control_set(handle, &control,
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index a90a9194ac4a..ac014151b7a6 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -316,29 +316,6 @@ int pcie_aer_get_firmware_first(struct pci_dev *dev)
+ 	return dev->__aer_firmware_first;
+ }
+ 
+-static bool aer_firmware_first;
+-
+-/**
+- * aer_acpi_firmware_first - Check if APEI should control AER.
+- */
+-bool aer_acpi_firmware_first(void)
+-{
+-	static bool parsed = false;
+-	struct aer_hest_parse_info info = {
+-		.pci_dev	= NULL,	/* Check all PCIe devices */
+-		.firmware_first	= 0,
+-	};
+-
+-	if (pcie_ports_native)
+-		return false;
+-
+-	if (!parsed) {
+-		apei_hest_parse(aer_hest_parse, &info);
+-		aer_firmware_first = info.firmware_first;
+-		parsed = true;
+-	}
+-	return aer_firmware_first;
+-}
+ #endif
+ 
+ #define	PCI_EXP_AER_FLAGS	(PCI_EXP_DEVCTL_CERE | PCI_EXP_DEVCTL_NFERE | \
+@@ -1453,7 +1430,7 @@ static struct pcie_port_service_driver aerdriver = {
+  */
+ int __init pcie_aer_init(void)
+ {
+-	if (!pci_aer_available() || aer_acpi_firmware_first())
++	if (!pci_aer_available())
+ 		return -ENXIO;
+ 	return pcie_port_service_register(&aerdriver);
+ }
+diff --git a/include/linux/pci-acpi.h b/include/linux/pci-acpi.h
+index 8082b612f561..2e9c0b973eba 100644
+--- a/include/linux/pci-acpi.h
++++ b/include/linux/pci-acpi.h
+@@ -116,10 +116,4 @@ static inline void acpi_pci_add_bus(struct pci_bus *bus) { }
+ static inline void acpi_pci_remove_bus(struct pci_bus *bus) { }
+ #endif	/* CONFIG_ACPI */
+ 
+-#ifdef CONFIG_ACPI_APEI
+-extern bool aer_acpi_firmware_first(void);
+-#else
+-static inline bool aer_acpi_firmware_first(void) { return false; }
+-#endif
+-
+ #endif	/* _PCI_ACPI_H_ */
 -- 
 2.17.1
 
