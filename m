@@ -2,90 +2,200 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57712C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:12:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B562DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:17:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 27CFA20815
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:12:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CFA20815
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7E5A5223DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:17:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E5A5223DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388273AbeKOXUn (ORCPT
+        id S2388258AbeKOXYv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 18:20:43 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:40403 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729010AbeKOXUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 18:20:43 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 41A5B20752; Thu, 15 Nov 2018 14:12:53 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id DE8DE20510;
-        Thu, 15 Nov 2018 14:12:52 +0100 (CET)
-Date:   Thu, 15 Nov 2018 14:12:52 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Schrempf Frieder <frieder.schrempf@kontron.De>
-Cc:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        Marek Vasut <marek.vasut@gmail.com>,
-        Mark Brown <broonie@kernel.org>, Han Xu <han.xu@nxp.com>,
-        "dwmw2@infradead.org" <dwmw2@infradead.org>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "richard@nod.at" <richard@nod.at>,
-        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
-        David Wolfe <david.wolfe@nxp.com>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        "Prabhakar Kushwaha" <prabhakar.kushwaha@nxp.com>,
-        "shawnguo@kernel.org" <shawnguo@kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
- controller
-Message-ID: <20181115141252.52a5b32d@bbrezillon>
-In-Reply-To: <3e9aa917-cf3a-cf0e-8516-4e73d30eb2a1@kontron.de>
-References: <1542116782-13118-1-git-send-email-frieder.schrempf@kontron.de>
-        <1542116782-13118-4-git-send-email-frieder.schrempf@kontron.de>
-        <VI1PR04MB572679944542ED6A438FD2FB99C30@VI1PR04MB5726.eurprd04.prod.outlook.com>
-        <ce9cbfc0-3257-f117-aa21-cdee068579ce@kontron.de>
-        <65577d13-b17d-8f69-313c-01d23240d1d9@kontron.de>
-        <VI1PR04MB572664063A0E237D2EB7203A99C30@VI1PR04MB5726.eurprd04.prod.outlook.com>
-        <eb4b79be-c12b-16e7-e1dd-86a157cfdc7d@kontron.de>
-        <VI1PR04MB57265222E26C013D5D9C009B99DC0@VI1PR04MB5726.eurprd04.prod.outlook.com>
-        <3e9aa917-cf3a-cf0e-8516-4e73d30eb2a1@kontron.de>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 15 Nov 2018 18:24:51 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:39360 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729024AbeKOXYv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 18:24:51 -0500
+Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 103B39D53CF15;
+        Thu, 15 Nov 2018 21:17:00 +0800 (CST)
+Received: from localhost (10.202.226.46) by DGGEMS406-HUB.china.huawei.com
+ (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Thu, 15 Nov 2018
+ 21:16:55 +0800
+Date:   Thu, 15 Nov 2018 13:16:43 +0000
+From:   Jonathan Cameron <jonathan.cameron@huawei.com>
+To:     Keith Busch <keith.busch@intel.com>
+CC:     <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
+        <linux-mm@kvack.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "Rafael Wysocki" <rafael@kernel.org>,
+        Dave Hansen <dave.hansen@intel.com>,
+        "Dan Williams" <dan.j.williams@intel.com>
+Subject: Re: [PATCH 5/7] doc/vm: New documentation for memory cache
+Message-ID: <20181115131643.00003c0d@huawei.com>
+In-Reply-To: <20181114224921.12123-6-keith.busch@intel.com>
+References: <20181114224921.12123-2-keith.busch@intel.com>
+        <20181114224921.12123-6-keith.busch@intel.com>
+Organization: Huawei
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.202.226.46]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Nov 2018 11:43:05 +0000
-Schrempf Frieder <frieder.schrempf@kontron.De> wrote:
+On Wed, 14 Nov 2018 15:49:18 -0700
+Keith Busch <keith.busch@intel.com> wrote:
 
-> On 15.11.18 07:22, Yogesh Narayan Gaur wrote:
-> > Hi Frieder,
-> > 
-> > With below patch on top of your v5, Read/Write/Erase on CS1 is working fine for me.  
-> 
-> Ok, are you sure, that AHB read is working too with this patch?
-> You are removing the memmap_phy offset from SFAR and the SFXXAD register 
-> values.
-> 
-> I can understand that selection of the CS and IP commands will work like 
-> this, but I can't understand how AHB read should work without the base 
-> address of the mapped memory.
-> 
-> I'm afraid I still don't fully understand the background of these 
-> things,
+> Platforms may provide system memory that contains side caches to help
 
-Same here. Yogesh, can you give us more detail on why you decided to
-drop the memmap_phy offset?
+If we can call them "memory-side caches" that would avoid a persistent
+confusion on what they actually are.  It took me ages to get to the
+bottom of why they were always drawn to the side of the memory
+path ;)
 
-> but still thank you for testing.
+> spped up access. These memory caches are part of a memory node and
+
+speed
+
+> the cache attributes are exported by the kernel.
 > 
+> Add new documentation providing a brief overview of system memory side
+> caches and the kernel provided attributes for application optimization.
+A few few nits in line, but mostly looks good to me.
+
+Thanks,
+
+Jonathan
+
+> 
+> Signed-off-by: Keith Busch <keith.busch@intel.com>
+> ---
+>  Documentation/vm/numacache.rst | 76 ++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 76 insertions(+)
+>  create mode 100644 Documentation/vm/numacache.rst
+> 
+> diff --git a/Documentation/vm/numacache.rst b/Documentation/vm/numacache.rst
+> new file mode 100644
+> index 000000000000..e79c801b7e3b
+> --- /dev/null
+> +++ b/Documentation/vm/numacache.rst
+> @@ -0,0 +1,76 @@
+> +.. _numacache:
+> +
+> +==========
+> +NUMA Cache
+> +==========
+> +
+> +System memory may be constructed in a hierarchy of various performing
+
+of elements with various performance
+
+> +characteristics in order to provide large address space of slower
+> +performing memory cached by a smaller size of higher performing
+
+cached by smaller higher performing memory.
+
+> +memory. The system physical addresses that software is aware of see
+
+is aware of is provided (no 'see')
+
+> +is provided by the last memory level in the hierarchy, while higher
+> +performing memory transparently provides caching to slower levels.
+> +
+> +The term "far memory" is used to denote the last level memory in the
+> +hierarchy. Each increasing cache level provides higher performing CPU
+
+initiator rather than CPU?
+
+> +access, and the term "near memory" represents the highest level cache
+> +provided by the system. This number is different than CPU caches where
+> +the cache level (ex: L1, L2, L3) uses a CPU centric view with each level
+> +being lower performing and closer to system memory. The memory cache
+> +level is centric to the last level memory, so the higher numbered cache
+
+from the last level memory?
+
+> +level denotes memory nearer to the CPU, and further from far memory.
+> +
+> +The memory side caches are not directly addressable by software. When
+> +software accesses a system address, the system will return it from the
+> +near memory cache if it is present. If it is not present, the system
+> +accesses the next level of memory until there is either a hit in that
+> +cache level, or it reaches far memory.
+> +
+> +In order to maximize the performance out of such a setup, software may
+> +wish to query the memory cache attributes. If the system provides a way
+> +to query this information, for example with ACPI HMAT (Heterogeneous
+> +Memory Attribute Table)[1], the kernel will append these attributes to
+> +the NUMA node that provides the memory.
+> +
+> +When the kernel first registers a memory cache with a node, the kernel
+> +will create the following directory::
+> +
+> +	/sys/devices/system/node/nodeX/cache/
+
+Given we have other things with caches in a numa node, should we make
+this name more specific?
+
+> +
+> +If that directory is not present, then either the memory does not have
+> +a side cache, or that information is not provided to the kernel.
+> +
+> +The attributes for each level of cache is provided under its cache
+> +level index::
+> +
+> +	/sys/devices/system/node/nodeX/cache/indexA/
+> +	/sys/devices/system/node/nodeX/cache/indexB/
+> +	/sys/devices/system/node/nodeX/cache/indexC/
+> +
+> +Each cache level's directory provides its attributes. For example,
+> +the following is a single cache level and the attributes available for
+> +software to query::
+> +
+> +	# tree sys/devices/system/node/node0/cache/
+> +	/sys/devices/system/node/node0/cache/
+> +	|-- index1
+> +	|   |-- associativity
+> +	|   |-- level
+> +	|   |-- line_size
+> +	|   |-- size
+> +	|   `-- write_policy
+> +
+> +The cache "associativity" will be 0 if it is a direct-mapped cache, and
+> +non-zero for any other indexed based, multi-way associativity.
+This description is a little vague.  Right now I think we have 3 options
+from HMAT,
+1) no associativity (which I suppose could also be called fully associative?)
+2) direct mapped (0 in your case)
+3) Complex (who knows!)
+
+So how do you map 1 and 3?
+
+> +
+> +The "level" is the distance from the far memory, and matches the number
+> +appended to its "index" directory.
+> +
+> +The "line_size" is the number of bytes accessed on a cache miss.
+> +
+> +The "size" is the number of bytes provided by this cache level.
+> +
+> +The "write_policy" will be 0 for write-back, and non-zero for
+> +write-through caching.
+
+Do these not appear if the write_policy provided by acpi is "none".
+
+> +
+> +[1] https://www.uefi.org/sites/default/files/resources/ACPI_6_2.pdf
+
+
