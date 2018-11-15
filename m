@@ -2,144 +2,125 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91836C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:37:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 45792C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:38:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4FB89208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:37:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="YUMgEJUm"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FB89208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mena.vt.edu
+	by mail.kernel.org (Postfix) with ESMTP id 149B3223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:38:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 149B3223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388270AbeKOXpC (ORCPT
+        id S2388376AbeKOXqj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 18:45:02 -0500
-Received: from mail-vk1-f176.google.com ([209.85.221.176]:43144 "EHLO
-        mail-vk1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729034AbeKOXpC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 18:45:02 -0500
-Received: by mail-vk1-f176.google.com with SMTP id o130so4462850vke.10
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 05:37:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bkvrH/H7L01ZNgV8U26Z0LfgWYl8jbWsM+kMF4NPu0Q=;
-        b=YUMgEJUmKz5keVGP7Fsb2eUD9yGDV19IewgYPIZBylvZ0i+bQU5/ed/baXerpj5xMU
-         IOdNipQ0b9YOcynjYwMLOrAurBU0VxN2BLIv0IjayY52YvzFnaxhkw/Z3s3UeD8LHJVo
-         HL+q1xYUa63wNxD0nqSNQiuJn2ffCpPWiJPw6MYFtpCR6Zg0bKhi2ba7RACbf4mvz3tO
-         CxwnaCgbdQopPjEvrYD7ldMnMYdqJnn1l0r8wm5kFOamRG98+gQT1ftp0VqG2sgou0I5
-         uxL0l0eqOuOholN8f6gu1cUb1JMkVF8wiEyAffv6X5MXuWH+GOKyDmuPKFGDROOZCWrQ
-         Ku2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bkvrH/H7L01ZNgV8U26Z0LfgWYl8jbWsM+kMF4NPu0Q=;
-        b=DEP0sMRlr6LmO6NKm2VG4o1T1yQc5baBUOSyW3q85kStwnLnfg9mnA+XcNKs0B7gNg
-         KrIGQy8fdfwE8x9MuzTyTJlKaGBhdG6o2mZ3iPmENzuG3Si0Cc1xIqMcmcHMuUpP4HoV
-         0pXxr6+an86qdDu26JNqYrVEBSG9ji5JuTyNoHGK42vl5fMkXQTYBMyURxcQeGLPF1Z0
-         xmFA+lw7zC5xD9x1n3V35AfPuBZiWJ2FkyFGi1VXU6E+J/ZkFO3/fgl0VPH1yMYESYMa
-         T8R3yoTbSTW+43ufLrzsa1jvsK+bCowl+bmJKi0HnF7OU18HmR3AfDTUrrZnB3RUW/Kj
-         byOg==
-X-Gm-Message-State: AGRZ1gJf+0s4/bk5my8ja+xMgXM1JCouODdfk+Vyqsp2Yw2iYwA34scV
-        8ssDOHfraPFl6owqQqP5QgiGCEkpCOLySNKDVAz1aw==
-X-Google-Smtp-Source: AJdET5c6fQ4L8EJWNtzqIVMHhok8nyw5TOxqM5Uy6CXwmvt/ESF426PD0n1sCdvOZ+VSXz9OVX5JipFB7v+VFsRi5AI=
-X-Received: by 2002:a1f:360a:: with SMTP id d10mr2561814vka.79.1542289028041;
- Thu, 15 Nov 2018 05:37:08 -0800 (PST)
+        Thu, 15 Nov 2018 18:46:39 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48258 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729024AbeKOXqj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 18:46:39 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 067B3308212C;
+        Thu, 15 Nov 2018 13:38:46 +0000 (UTC)
+Received: from localhost (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4D0626091C;
+        Thu, 15 Nov 2018 13:38:42 +0000 (UTC)
+Date:   Thu, 15 Nov 2018 21:38:40 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        pifang@redhat.com, linux-kernel@vger.kernel.org,
+        akpm@linux-foundation.org, aarcange@redhat.com
+Subject: Re: Memory hotplug softlock issue
+Message-ID: <20181115133840.GR2653@MiWiFi-R3L-srv>
+References: <5a6c6d6b-ebcd-8bfa-d6e0-4312bfe86586@redhat.com>
+ <20181114090134.GG23419@dhcp22.suse.cz>
+ <20181114145250.GE2653@MiWiFi-R3L-srv>
+ <20181114150029.GY23419@dhcp22.suse.cz>
+ <20181115051034.GK2653@MiWiFi-R3L-srv>
+ <20181115073052.GA23831@dhcp22.suse.cz>
+ <20181115075349.GL2653@MiWiFi-R3L-srv>
+ <20181115083055.GD23831@dhcp22.suse.cz>
+ <20181115131211.GP2653@MiWiFi-R3L-srv>
+ <20181115131927.GT23831@dhcp22.suse.cz>
 MIME-Version: 1.0
-References: <CANBxJ=EQOt1t=PkLsMvtfB2SbiLMPeGvFxB7SJXf7m3OkcionQ@mail.gmail.com>
- <20181114180807.6crs7awhvo26ldbr@hawk.localdomain> <CADYN=9Jh10guVNFfhS8XH+RwZAouLJQu7Svg4+Tz3rQDexzDkg@mail.gmail.com>
- <CANBxJ=G4xdF8ZOR4zyoX1edNa=jYxk1xrzoi+7Xgcqt9qDoM2w@mail.gmail.com>
- <CANBxJ=EB8izWM8iLd49Uvd1z1O-gLvkGmiKNHjfHifFohj2xbg@mail.gmail.com> <20181115090203.5z25gwa2yznj6mmu@kamzik.brq.redhat.com>
-In-Reply-To: <20181115090203.5z25gwa2yznj6mmu@kamzik.brq.redhat.com>
-From:   Ahmed Soliman <ahmedsoliman@mena.vt.edu>
-Date:   Thu, 15 Nov 2018 15:36:44 +0200
-Message-ID: <CANBxJ=EHkuxKFoQw=K21o=9_FMhi_=on=Poq+ZF37eieoKV4zg@mail.gmail.com>
-Subject: Re: KVM selftests are failing
-To:     Andrew Jones <drjones@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>
-Cc:     Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115131927.GT23831@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.42]); Thu, 15 Nov 2018 13:38:46 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On 11/15/18 at 02:19pm, Michal Hocko wrote:
+> On Thu 15-11-18 21:12:11, Baoquan He wrote:
+> > On 11/15/18 at 09:30am, Michal Hocko wrote:
+> [...]
+> > > It would be also good to find out whether this is fs specific. E.g. does
+> > > it make any difference if you use a different one for your stress
+> > > testing?
+> > 
+> > Created a ramdisk and put stress bin there, then run stress -m 200, now
+> > seems it's stuck in libc-2.28.so migrating. And it's still xfs. So now xfs
+> > is a big suspect. At bottom I paste numactl printing, you can see that it's
+> > the last 4G.
+> > 
+> > Seems it's trying to migrate libc-2.28.so, but stress program keeps trying to
+> > access and activate it.
+> 
+> Is this still with faultaround disabled? I have seen exactly same
+> pattern in the bug I am working on. It was ext4 though.
 
-On Thu, Nov 15, 2018 at 11:02 AM Andrew Jones <drjones@redhat.com> wrote:
-> I think you should be able to pre-compile the selftests and save them,
-> and then bisect the kernel further back than their introduction. Actually
-> you may want to simplify the test case to just a mmap/madvise pair and
-> see if that reproduces, since kvm selftests doesn't do much more than
-> that. (Other than all the /dev/kvm ioctls - you have the right perms
-> on /dev/kvm, or are running as root, right?)
-yes I have /dev/kvm permissions, but it shouldn't matter at the moment.
+After a long time struggling, the last 2nd block where libc-2.28.so is
+located is reclaimed, now it comes to the last memory block, still
+stress program itself. swap migration entry has been made and trying to
+unmap, now it's looping there.
 
-well I stripped the kvm self tests from most stuff and ended up with
-simpler code
-(sorry for spaces, I am using web interface to send this email)
+[  +0.004445] migrating pfn 190ff2bb0 failed 
+[  +0.000013] page:ffffea643fcaec00 count:203 mapcount:201 mapping:ffff888dfb268f48 index:0x0
+[  +0.012809] shmem_aops 
+[  +0.000011] name:"stress" 
+[  +0.002550] flags: 0x1dfffffc008004e(referenced|uptodate|dirty|workingset|swapbacked)
+[  +0.010715] raw: 01dfffffc008004e ffffea643fcaec48 ffffea643fc714c8 ffff888dfb268f48
+[  +0.007828] raw: 0000000000000000 0000000000000000 000000cb000000c8 ffff888e72e92000
+[  +0.007810] page->mem_cgroup:ffff888e72e92000
+[  +0.004466] migrating pfn 190ff2bb1 failed 
+[  +0.000013] page:ffffea643fcaec40 count:203 mapcount:201 mapping:ffff888dfb268f48 index:0x2
+[  +0.014321] shmem_aops 
+[  +0.000024] name:"stress" 
+[  +0.002535] flags: 0x1dfffffc008004e(referenced|uptodate|dirty|workingset|swapbacked)
+[  +0.010680] raw: 01dfffffc008004e ffffc900000e3d80 ffffea643fcaec08 ffff888dfb268f48
+[  +0.007863] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e72e92000
+[  +0.007828] page->mem_cgroup:ffff888e72e92000
+[  +1.357302] migrating pfn 190ff1c53 failed 
+[  +0.000011] page:ffffea643fc714c0 count:202 mapcount:201 mapping:ffff888e5e395109 index:0x28
+[  +0.012756] anon 
+[  +0.000024] flags: 0x1dfffffc008004c(uptodate|dirty|workingset|swapbacked)
+[  +0.008961] raw: 01dfffffc008004c ffffea643fcaec08 ffffc900000e3d80 ffff888e5e395109
+[  +0.007847] raw: 0000000000000028 0000000000000000 000000ca000000c8 ffff888e72e92000
+[  +0.007844] page->mem_cgroup:ffff888e72e92000
+[  +0.004455] migrating pfn 190ff2bb0 failed 
+[  +0.000018] page:ffffea643fcaec00 count:203 mapcount:201 mapping:ffff888dfb268f48 index:0x0
+[  +0.014392] shmem_aops 
+[  +0.000010] name:"stress" 
+[  +0.002565] flags: 0x1dfffffc008004e(referenced|uptodate|dirty|workingset|swapbacked)
+[  +0.010675] raw: 01dfffffc008004e ffffea643fcaec48 ffffea643fc714c8 ffff888dfb268f48
+[  +0.007819] raw: 0000000000000000 0000000000000000 000000cb000000c8 ffff888e72e92000
+[  +0.007808] page->mem_cgroup:ffff888e72e92000
+[  +0.004431] migrating pfn 190ff2bb1 failed 
+[  +0.000019] page:ffffea643fcaec40 count:203 mapcount:201 mapping:ffff888dfb268f48 index:0x2
+[  +0.012688] shmem_aops 
+[  +0.000012] name:"stress" 
+[  +0.002525] flags: 0x1dfffffc008004e(referenced|uptodate|dirty|workingset|swapbacked)
+[  +0.012385] raw: 01dfffffc008004e ffffc900000e3d80 ffffea643fcaec08 ffff888dfb268f48
+[  +0.007840] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e72e92000
+[  +0.007832] page->mem_cgroup:ffff888e72e92000
 
-
-#include <stdio.h>
-#include <sys/mman.h>
-#include <string.h>
-#include <errno.h>
-static void *align(void *x, size_t size)
-{
-       size_t mask = size - 1;
-       return (void *) (((size_t) x + mask) & ~mask);
-}
-
-int main(){
-
-       int ret;
-       void *mmap_start;
-       void *host_mem;
-       size_t length = 6291456;
-
-       mmap_start = mmap(NULL, length, PROT_READ | PROT_WRITE,
-                       MAP_PRIVATE | MAP_ANONYMOUS | 0, -1, 0);
-       host_mem = align(mmap_start, 1);
-       ret = madvise(host_mem, length, MADV_NOHUGEPAGE);
-       printf("madvise returned: %d\nerrno: %d %s\n", ret, errno,
-strerror(errno));
-}
-
-Now I couldn't find a single commit to bisect from, I checked 4.20,
-4.19, 4.16, 4.10, 4.4 back to v3.18 tag
-and None of the builds I attempted did work. All of the kernels returned:
-
-madvise returned: -1
-errno: 22 Invalid argument
-
-and the strace logs looks like this:
-
-mmap(NULL, 6291456, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS,
--1, 0) = 0x7f46ea2a1000
-madvise(0x7f46ea2a1000, 6291456, MADV_NOHUGEPAGE) = -1 EINVAL (Invalid argument)
-
-For comprehension, this is done on intel core i7-4500U CPU @ 1.80GHz
-
-As for now I will comment the madvise line and the assert when writing
-my own kvm self test. I think it wouldn't cause any trouble?, If it is
-not the case, please let me know.
-
-Thanks,
-
--- 
-Ahmed
-Junior Researcher, IoT and Cyber Security lab, SmartCI, Alexandria
-University, & CIS @  VMI
