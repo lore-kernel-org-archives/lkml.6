@@ -2,122 +2,118 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64A8DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:39:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E9489C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:40:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2A9F422360
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:39:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="N20mpHW9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2A9F422360
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id BC2302080D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:40:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2302080D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728033AbeKOKpV (ORCPT
+        id S1726896AbeKOKq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 05:45:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54816 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 05:46:26 -0500
+Received: from mga02.intel.com ([134.134.136.20]:12924 "EHLO mga02.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726480AbeKOKpU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 05:45:20 -0500
-Received: from ebiggers.mtv.corp.google.com (unknown [104.132.1.85])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7CCB22080D;
-        Thu, 15 Nov 2018 00:39:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542242385;
-        bh=tGlChAUpdF5GJbN3F1xsWfT1Z15EF4aQxzj3SBBB2f0=;
-        h=From:To:Cc:Subject:Date:From;
-        b=N20mpHW9+3q3+H7ZxI5TdvkF66gdDa/4HQQVYcgoa+nLzgdwpkQ2obokYChwu2EhP
-         Xt3jsLZLTC7674nFXE48rYBu2iiY4qXnbvm3X1pAHKdsaTgeCJLmtmDU2pW0CmHRUc
-         e+dsEWOvGVv/AdXD7vw/SfJiEdE7aaPPzebvcnnw=
-From:   Eric Biggers <ebiggers@kernel.org>
-To:     linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>
-Cc:     Andrea Arcangeli <aarcange@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] userfaultfd: convert userfaultfd_ctx::refcount to refcount_t
-Date:   Wed, 14 Nov 2018 16:39:16 -0800
-Message-Id: <20181115003916.63381-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.19.1.930.g4563a0d9d0-goog
+        id S1726379AbeKOKqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 05:46:25 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 16:40:51 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,234,1539673200"; 
+   d="scan'208";a="108648355"
+Received: from ray.jf.intel.com (HELO [10.7.201.137]) ([10.7.201.137])
+  by orsmga002.jf.intel.com with ESMTP; 14 Nov 2018 16:40:51 -0800
+Subject: Re: [PATCH 4/7] node: Add memory caching attributes
+To:     Keith Busch <keith.busch@intel.com>, linux-kernel@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-mm@kvack.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Rafael Wysocki <rafael@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+References: <20181114224921.12123-2-keith.busch@intel.com>
+ <20181114224921.12123-5-keith.busch@intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
+ CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
+ 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
+ K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
+ VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
+ e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
+ ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
+ kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
+ rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
+ f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
+ mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
+ UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
+ sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
+ 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
+ cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
+ UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
+ db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
+ lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
+ kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
+ gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
+ AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
+ XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
+ e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
+ pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
+ YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
+ lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
+ M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
+ 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
+ 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
+ OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
+ ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
+ z5cecg==
+Message-ID: <a000e296-7d7f-6a98-3869-3b476101749e@intel.com>
+Date:   Wed, 14 Nov 2018 16:40:51 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181114224921.12123-5-keith.busch@intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Eric Biggers <ebiggers@google.com>
+On 11/14/18 2:49 PM, Keith Busch wrote:
+> System memory may have side caches to help improve access speed. While
+> the system provided cache is transparent to the software accessing
+> these memory ranges, applications can optimize their own access based
+> on cache attributes.
+> 
+> In preparation for such systems, provide a new API for the kernel to
+> register these memory side caches under the memory node that provides it.
+> 
+> The kernel's sysfs representation is modeled from the cpu cacheinfo
+> attributes, as seen from /sys/devices/system/cpu/cpuX/cache/. Unlike CPU
+> cacheinfo, though, a higher node's memory cache level is nearer to the
+> CPU, while lower levels are closer to the backing memory. Also unlike
+> CPU cache, the system handles flushing any dirty cached memory to the
+> last level the memory on a power failure if the range is persistent.
+> 
+> The exported attributes are the cache size, the line size, associativity,
+> and write back policy.
 
-Reference counters should use refcount_t rather than atomic_t, since the
-refcount_t implementation can prevent overflows, reducing the
-exploitability of reference leak bugs.  userfaultfd_ctx::refcount is a
-reference counter with the usual semantics, so convert it to refcount_t.
-
-Note: I replaced the BUG() on incrementing a 0 refcount with just
-refcount_inc(), since part of the semantics of refcount_t is that that
-incrementing a 0 refcount is not allowed; with CONFIG_REFCOUNT_FULL,
-refcount_inc() already checks for it and warns.
-
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- fs/userfaultfd.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/fs/userfaultfd.c b/fs/userfaultfd.c
-index 356d2b8568c14..8375faac2790d 100644
---- a/fs/userfaultfd.c
-+++ b/fs/userfaultfd.c
-@@ -53,7 +53,7 @@ struct userfaultfd_ctx {
- 	/* a refile sequence protected by fault_pending_wqh lock */
- 	struct seqcount refile_seq;
- 	/* pseudo fd refcounting */
--	atomic_t refcount;
-+	refcount_t refcount;
- 	/* userfaultfd syscall flags */
- 	unsigned int flags;
- 	/* features requested from the userspace */
-@@ -140,8 +140,7 @@ static int userfaultfd_wake_function(wait_queue_entry_t *wq, unsigned mode,
-  */
- static void userfaultfd_ctx_get(struct userfaultfd_ctx *ctx)
- {
--	if (!atomic_inc_not_zero(&ctx->refcount))
--		BUG();
-+	refcount_inc(&ctx->refcount);
- }
- 
- /**
-@@ -154,7 +153,7 @@ static void userfaultfd_ctx_get(struct userfaultfd_ctx *ctx)
-  */
- static void userfaultfd_ctx_put(struct userfaultfd_ctx *ctx)
- {
--	if (atomic_dec_and_test(&ctx->refcount)) {
-+	if (refcount_dec_and_test(&ctx->refcount)) {
- 		VM_BUG_ON(spin_is_locked(&ctx->fault_pending_wqh.lock));
- 		VM_BUG_ON(waitqueue_active(&ctx->fault_pending_wqh));
- 		VM_BUG_ON(spin_is_locked(&ctx->fault_wqh.lock));
-@@ -686,7 +685,7 @@ int dup_userfaultfd(struct vm_area_struct *vma, struct list_head *fcs)
- 			return -ENOMEM;
- 		}
- 
--		atomic_set(&ctx->refcount, 1);
-+		refcount_set(&ctx->refcount, 1);
- 		ctx->flags = octx->flags;
- 		ctx->state = UFFD_STATE_RUNNING;
- 		ctx->features = octx->features;
-@@ -1911,7 +1910,7 @@ SYSCALL_DEFINE1(userfaultfd, int, flags)
- 	if (!ctx)
- 		return -ENOMEM;
- 
--	atomic_set(&ctx->refcount, 1);
-+	refcount_set(&ctx->refcount, 1);
- 	ctx->flags = flags;
- 	ctx->features = 0;
- 	ctx->state = UFFD_STATE_WAIT_API;
--- 
-2.19.1.930.g4563a0d9d0-goog
-
+Could you also include an example of the layout?
