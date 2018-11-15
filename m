@@ -2,113 +2,139 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9606CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:30:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F56C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:36:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 54CC120825
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:30:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D8FDF2086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:36:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="jqwyqDGi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 54CC120825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XAgbl+zq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8FDF2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728326AbeKOPhH (ORCPT
+        id S1728002AbeKOPm0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 10:37:07 -0500
-Received: from imap.thunk.org ([74.207.234.97]:60224 "EHLO imap.thunk.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726811AbeKOPhG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 10:37:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
-         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
-        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-        List-Post:List-Owner:List-Archive;
-        bh=3JYbjVojWijXQ4cGYwg/g6bL18VcZm3hydbl0UQHNc8=; b=jqwyqDGith1nvcLnRSTtENqiN/
-        s6F9b16XXqURqzpn8qstEc5BJBKTEHWFgowMi3ta567VoyyZhzGSIc1GCjHdDg44cGCuCWQMHX+i+
-        G35o1zzjHsAq4Na+KfX+jQp6o0wSa8vhuAnJZKOArsQ7bLcBsC8Sf8ml5yeF4uO/kfXU=;
-Received: from root (helo=callcc.thunk.org)
-        by imap.thunk.org with local-esmtp (Exim 4.89)
-        (envelope-from <tytso@thunk.org>)
-        id 1gNAEV-0002VZ-K6; Thu, 15 Nov 2018 05:30:27 +0000
-Received: by callcc.thunk.org (Postfix, from userid 15806)
-        id 440377A47B7; Thu, 15 Nov 2018 00:30:26 -0500 (EST)
-Date:   Thu, 15 Nov 2018 00:30:26 -0500
-From:   "Theodore Y. Ts'o" <tytso@mit.edu>
-To:     Joseph Myers <joseph@codesourcery.com>
-Cc:     Daniel Colascione <dancol@google.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>, nd <nd@arm.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
-Subject: Re: Official Linux system wrapper library?
-Message-ID: <20181115053026.GA20617@thunk.org>
-Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
-        Joseph Myers <joseph@codesourcery.com>,
-        Daniel Colascione <dancol@google.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>, nd <nd@arm.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>, Willy Tarreau <w@1wt.eu>,
-        Vlastimil Babka <vbabka@suse.cz>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
-References: <877ehjx447.fsf@oldenburg.str.redhat.com>
- <CAKOZues5SEESpJU=6MDTrPXTA1KTZFGNQE4Lw4t0fO-WBTU62w@mail.gmail.com>
- <875zx2vhpd.fsf@oldenburg.str.redhat.com>
- <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com>
- <20181113193859.GJ3505@e103592.cambridge.arm.com>
- <5853c297-9d84-86e5-dede-aa2957562c6b@arm.com>
- <CAKOZuesta_V=doXsVLc2E6WCQvywdur3F+u2pFKaPN+CEQd+ZQ@mail.gmail.com>
- <alpine.DEB.2.21.1811141741000.16571@digraph.polyomino.org.uk>
- <CAKOZuetCGCfNdJ2QM0phu3_3Q29f5Yeh=NHiM_A9MhHsCjK48A@mail.gmail.com>
- <alpine.DEB.2.21.1811141840140.16571@digraph.polyomino.org.uk>
+        Thu, 15 Nov 2018 10:42:26 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:39938 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbeKOPmZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 10:42:25 -0500
+Received: by mail-pg1-f196.google.com with SMTP id z10so8481046pgp.7
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 21:36:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=K3UQ6qRsAXwfyaXxAGgu9zBEijeG59KSwrtSjdKQGvA=;
+        b=XAgbl+zqJjyPfXArCUN8V6u13wFfu1s/WnPXxLcv6MdR8VE6K3/+ukIEQ6YRFu8aXU
+         b9g8TUMAGxm0RHPDRjSDsDdPLEPEfRle0cOLIXQk9Yt7zSeAbmeI03U7VM4intTF1Khs
+         lAZlBCUikUWeIpugRLp+NOKmSjmQnbggmGu8uR/VB7yjWHSuK6+wOPP4Qs0f1UFHK9aE
+         JoZyHglNrGBfHM6HmgIVldNThMVgy/YJklY1OqPBDf1Z+EQtKQVJ9ClioyTi0lxsART9
+         K/nh8uCAtPAgm7rGs6/RLLlsV9KqRzxN1rampmi15Q9TRZbTNcsa6J7D5uV61G9BBLbo
+         Hvxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=K3UQ6qRsAXwfyaXxAGgu9zBEijeG59KSwrtSjdKQGvA=;
+        b=SgspwK5jQYx7in/2DTppFXHoUVotZBoymBmEYJBMgyHY7Y39hEiFDxvU545fiDcNA9
+         S3Zm9ZpIuUhmE6CmNXzMWSaVWf9ccRbAZ9C0ut9oWmg915t1NcJ4wwY+/h07OQn9R7mP
+         pEnHKbvEZuBryu6inf+KY7pMQLpE9Ey9gIVNbPRJwq6r6C5vicZllahODH4rXGfarJuj
+         0Bl2dFjZXOtdzZuW90chI4NMhvk3h6AnvOBRB/o4SevTg+YjvgMqu1Vrf6wa8Z2gXe0q
+         i+DnE4PN8jGVBhSbIyBZ+F9O0UN6soncR6b/PbldyRguxOoixBcJIXEDOtO/G0AMnWv2
+         jhZQ==
+X-Gm-Message-State: AGRZ1gKVFtVDE2PXFy1Wkd0FNPpMNFL1CQH1AKMUOSb2gYiYuWSZ5u1e
+        sii8HisPdnIcavH1HbyFI+7/f4whsOw=
+X-Google-Smtp-Source: AJdET5eXZIjOomr1RmTfpf3i5jAd4I0rDDQrn6Cq06yKRZ7stR0hhgPRFgBJmZupANGt4xbKn8/aQQ==
+X-Received: by 2002:a63:a064:: with SMTP id u36mr4563661pgn.145.1542260162001;
+        Wed, 14 Nov 2018 21:36:02 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id t3sm5949684pgv.31.2018.11.14.21.36.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 21:36:01 -0800 (PST)
+Date:   Wed, 14 Nov 2018 21:36:00 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] serial: 8250: Default SERIAL_OF_PLATFORM to SERIAL_8250
+Message-ID: <20181115053600.GB5535@roeck-us.net>
+References: <20181115011125.GA32556@roeck-us.net>
+ <29E7A6C0-7829-4650-93C6-7220FECAA6EF@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <alpine.DEB.2.21.1811141840140.16571@digraph.polyomino.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-SA-Exim-Connect-IP: <locally generated>
-X-SA-Exim-Mail-From: tytso@thunk.org
-X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
+In-Reply-To: <29E7A6C0-7829-4650-93C6-7220FECAA6EF@gmail.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 06:47:57PM +0000, Joseph Myers wrote:
-> On Wed, 14 Nov 2018, Daniel Colascione wrote:
+On Wed, Nov 14, 2018 at 07:56:47PM -0800, Florian Fainelli wrote:
 > 
-> > A good demonstration of a new commitment to pragmatism would be
-> > merging the trivial wrappers for gettid(2).
 > 
-> I support the addition of gettid (for use with those syscalls that take 
-> tids, and with appropriate documentation explaining the properties of 
-> tids) - and, generally, wrappers for all non-obsolescent 
-> architecture-independent Linux kernel syscalls, including ones that are 
-> very Linux-specific, except maybe for a few interfaces fundamentally 
-> inconsistent with glibc managing TLS etc. - they are, at least, no worse 
-> as a source of APIs than all the old BSD / SVID interfaces we have from 
-> when those were used as sources of APIs.
+> On November 14, 2018 5:11:25 PM PST, Guenter Roeck <linux@roeck-us.net> wrote:
+> >On Thu, Nov 01, 2018 at 11:26:06AM -0700, Florian Fainelli wrote:
+> >> It is way too easy to miss enabling SERIAL_OF_PLATFORM which would
+> >> result in the inability for the kernel to have a valid console
+> >device,
+> >> which can be seen with:
+> >> 
+> >> Warning: unable to open an initial console.
+> >> 
+> >> and then:
+> >> 
+> >> Run /init as init process
+> >> Kernel panic - not syncing: Attempted to kill init!
+> >exitcode=0x00000100
+> >> 
+> >> Since SERIAL_OF_PLATFORM already depends on SERIAL_8250 && OF there
+> >> really is no drawback to defaulting this config to the value of
+> >> SERIAL_8250.
+> >> 
+> >> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> >> Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> >
+> >This patch results in situations where CONFIG_SERIAL_OF_PLATFORM is now
+> >defined where it was not previously. Example mpc85xx_defconfig. This in
+> >turn results in boot failures for those configurations, with an error
+> >message of
+> >
+> >of_serial: probe of e0004500.serial failed with error -22
+> >
+> >which wasn't seen before.
+> 
+> Do you know which Device Tree is being used here? The most obvious thing that could be done is to add a !PPC condition but this might be missing other platforms doing their own 8250 registration yet being OF aware (sparc?).
 
-That's great.  But is it or is it not true (either de jure or de
-facto) that "a single active glibc developer" can block a system call
-from being supported by glibc by objecting?  And if not, under what is
-the process by resolving a conflict?
+This is a qemu boot test. No, I don't know what exactly is happening,
+except that this (emulated) system obviously does not expect
+CONFIG_SERIAL_OF_PLATFORM to be enabled and, afaik, the devicetree
+is generated internally by qemu. I would have thought that just enabling
+a configuration by default out of the blue might be considered problematic
+by itself, but maybe I am wrong.
 
-						- Ted
+> 
+> >
+> >Not sure if replacing a potential problem with a real one is really an
+> >improvement.`
+> 
+> That comment is not particularly helpful though I have an appreciation for when a change breaks things in unexpected ways and how frustrating that can be.
+
+What is really frustrating (and let me think about dropping all those
+boot tests) is that one ends up having to argue if the problem is real
+or only applies to a presumably or possibly wrong qemu emulation, and
+that one ends up having to discuss the validity of the test case. 
+
+Since this is "only" an emulation and thus not a "real" system,
+please feel free to ignore this report. I'll just drop all boot tests
+using this configuration once the patch hits mainline.
+
+Guenter
