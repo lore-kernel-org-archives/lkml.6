@@ -2,94 +2,100 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E171C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:31:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C698C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:33:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A3AD223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:31:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A3AD223CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id BF8C2223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:33:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF8C2223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388516AbeKPBjy (ORCPT
+        id S2388560AbeKPBlp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:39:54 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:36607 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387922AbeKPBjy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 20:39:54 -0500
-Received: by mail-ed1-f67.google.com with SMTP id f23so7830201edb.3;
-        Thu, 15 Nov 2018 07:31:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=r23vuUYSkm+xrOBFBpa4pm48aNe/ztVki6Hbye5Iaws=;
-        b=H39/8Jv84e0KZAMULioLz8PQY2+LPC/K27/xxkxFNdWWW0GEVSj+VH6ZPISiKexuo+
-         Nv+JuwEzFxUH3Uy+OL424gMo25mwOU7RQTN5YxcB0aaveKeIsgwa1qAIEbSBC4z7yzAU
-         2F18/kJHs06500pui5WkG2ZiKz8wer/99aApBhBaXjP+zfN1XWX9mIFLqH+ley10Kh9P
-         Ydk1AF8GHIlDX+scZraTokPFfEnDNlMMTA5P3A89EwBAz/+QGs/55qjUQqSgFUpiyB/I
-         +O11uk8SJdZHVI9NMWqjJ9bWqzs9pRqTNQ5psGAHRi08OiMtkT8kEpEqE+jv+cnaf2Ps
-         YBQQ==
-X-Gm-Message-State: AGRZ1gImKIglsje3COBpXDGENtqytvPdeh6GtXsHLxyOasJhtnocGuV3
-        isd9j32Kc9FwHPYsAELyQLZyspVAqHU=
-X-Google-Smtp-Source: AJdET5fWcFzJCrCkdUD8+mYKjeMwMz+YNdl3cyJwIVz//ACs7J2Ja25bBBBD2S5bKUiaU45O70RzVQ==
-X-Received: by 2002:aa7:d597:: with SMTP id r23mr6126168edq.51.1542295894204;
-        Thu, 15 Nov 2018 07:31:34 -0800 (PST)
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com. [209.85.221.50])
-        by smtp.gmail.com with ESMTPSA id e53sm5635296ede.90.2018.11.15.07.31.33
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 07:31:33 -0800 (PST)
-Received: by mail-wr1-f50.google.com with SMTP id z13-v6so21674322wrs.3;
-        Thu, 15 Nov 2018 07:31:33 -0800 (PST)
-X-Received: by 2002:adf:a599:: with SMTP id g25-v6mr6478270wrc.188.1542295893242;
- Thu, 15 Nov 2018 07:31:33 -0800 (PST)
+        Thu, 15 Nov 2018 20:41:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:48438 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726432AbeKPBlp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 20:41:45 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E2FB930820CE;
+        Thu, 15 Nov 2018 15:33:26 +0000 (UTC)
+Received: from krava (unknown [10.40.205.128])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 16B305C26E;
+        Thu, 15 Nov 2018 15:33:24 +0000 (UTC)
+Date:   Thu, 15 Nov 2018 16:33:24 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+Cc:     acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        ak@linux.intel.com
+Subject: Re: [PATCH 1/2] perf vendor events: Add stepping in CPUID string for
+ x86
+Message-ID: <20181115153324.GM9600@krava>
+References: <20181114212416.15665-1-kan.liang@linux.intel.com>
+ <20181115135347.GI9600@krava>
+ <7a63fdf4-828f-0685-e146-6d3d86d8655b@linux.intel.com>
+ <58a3caa6-0ba9-773b-9f99-1e4be5ff77fb@linux.intel.com>
 MIME-Version: 1.0
-References: <20181114082033.GA20712@arx-s1> <20181115151813.a27uov3zmgzjcerf@flea>
-In-Reply-To: <20181115151813.a27uov3zmgzjcerf@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 15 Nov 2018 23:31:23 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65V82YFjOp5K9tZSrBW8epiPE+t0qU8o_v1CsOU1GM08Q@mail.gmail.com>
-Message-ID: <CAGb2v65V82YFjOp5K9tZSrBW8epiPE+t0qU8o_v1CsOU1GM08Q@mail.gmail.com>
-Subject: Re: [PATCH v0 0/2] Initial Allwinner T3 support.
-To:     Hao Zhang <hao5781286@gmail.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Icenowy Zheng <icenowy@aosc.io>,
-        Linux Doc Mailing List <linux-doc@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-clk <linux-clk@vger.kernel.org>,
-        linux-gpio@vger.kernel.org, linux-sunxi@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <58a3caa6-0ba9-773b-9f99-1e4be5ff77fb@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 15 Nov 2018 15:33:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 11:18 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
-> Hi!
->
-> On Wed, Nov 14, 2018 at 04:20:33PM +0800, hao_zhang wrote:
-> > Initial Allwinner T3 support.
-> >
-> > Allwinner T3 (sun8i) SoC features a Quad-Core Cortex-A7 ARM CPU, and a
-> > Mali400 MP2 GPU from ARM. It is a not-pin-compatible quad core sucessor
-> > of the A20). It's also known as the Allwinner R40 for In-Car
-> > Entertainment usage.
->
-> That series looks good, thanks!  The only thing that would need to be
-> reworked is your Signed-off-by name, which (I guess?) should be
-> written the same way than in your Copyright info.
+On Thu, Nov 15, 2018 at 10:18:27AM -0500, Liang, Kan wrote:
 
-And also the author name of your git commits.
+SNIP
 
-Thanks
+> > > > +int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
+> > > > +{
+> > > > +    regex_t re;
+> > > > +    regmatch_t pmatch[1];
+> > > > +    int match;
+> > > > +    bool full_mapcpuid = is_full_cpuid(mapcpuid);
+> > > > +    bool full_cpuid = is_full_cpuid(cpuid);
+> > > 
+> > > cpuid will be always full from now right? why do we need to check it?
+> > > 
+> > 
+> > User may set cpuid by environment string "PERF_CPUID", which may not be
+> > full format.
+> > 
+> > > also please move this to arch/x86/util/pmu.c
+> > > so it matches the weak function object
+> > 
+> > Sure.
+> > 
+> 
+> It looks like both pmu.c and header.c have cpuid related functions.
+> For example,
+> get_cpuid_str() has weak function in pmu.c. It's declaration in header.h.
+> It's x86 specific function in x86/util/header.c
+> get_cpuid() has weak function in header.c. It's declaration in header.h.
+> It's x86 specific function in x86/util/header.c
+> 
+> It looks like most of the cpuid related functions are in header.c/h.
+> I think it may be better to move all the cpuid related functions to
+> header.c/h.
+> 
+> If it's OK for you, I will send a clean up patch later to move the weak
+> functions strcmp_cpuid_str() and get_cpuid_str() to header.c
+> 
+> What do you think?
+
+sounds good, thanks
+
+jirka
