@@ -2,95 +2,166 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E089EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:43:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31B74C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:43:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9F1C721582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:43:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1C721582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id E31D521582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:43:45 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bKpbqJ1+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E31D521582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388505AbeKPCvc (ORCPT
+        id S2388660AbeKPCvt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 21:51:32 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48971 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387839AbeKPCvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 21:51:32 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 4803C207AD; Thu, 15 Nov 2018 17:42:57 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 849262074D;
-        Thu, 15 Nov 2018 17:42:39 +0100 (CET)
-Date:   Thu, 15 Nov 2018 17:42:39 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Eric Anholt <eric@anholt.net>
-Subject: Re: [PATCH] drm/fb-helper: Blacklist writeback when adding
- connectors to fbdev
-Message-ID: <20181115174239.773b71e9@bbrezillon>
-In-Reply-To: <20181115163248.21168-1-paul.kocialkowski@bootlin.com>
-References: <20181115163248.21168-1-paul.kocialkowski@bootlin.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Thu, 15 Nov 2018 21:51:49 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:35399 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387839AbeKPCvs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 21:51:48 -0500
+Received: by mail-ed1-f65.google.com with SMTP id x30so12544511edx.2;
+        Thu, 15 Nov 2018 08:43:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:openpgp:autocrypt:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=GWbbrw8cRgOK4MqWWdslcedZq+NBZFlw2Zc/WEweDOM=;
+        b=bKpbqJ1+rmDWYcKZcNWzdLxwl1J6mOtUPPFic6Frrr8OfKI+N1wlLyEy1PlgbU5GXi
+         lB1jx7CB+n7lgPADwJJjSfnUjt2wo2KfaNwBrNHNB8PNIkwRLidRq2Dm9P9KoG8tkzf9
+         ajMxpR6Xy5LG0i1Eb+/j7FbvTX6kvwLpPhKzZopvyZOfAflzggvOe/1FOPmGzlGQBmbi
+         PKWzxKVHVoEjcCfkXFQXoAdFiEbGQhYFayyVyA9NyPSm3REysj00TbuBiBzioznVEQtq
+         Pw6MAzvlOOL3zj8EmZ4yaOf5ykILMyUIiHm9/Nu1tb1MmAu6eNuFXYgqSPQdgR8n6zB5
+         8ZDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
+         :message-id:date:user-agent:mime-version:in-reply-to
+         :content-language:content-transfer-encoding;
+        bh=GWbbrw8cRgOK4MqWWdslcedZq+NBZFlw2Zc/WEweDOM=;
+        b=i7Ofvx0HSID7Q9vhlK9R/k/C7/nNuwg2XmMD8VjVfa0rocitKBzOWG1unnkCWHacaR
+         O5z5rkzLsZG+tQgAaR0/Ty2k9OrJP6BTkZ3GPAwQ9OoaPJOkbotIbw01p0pjh+MRikjc
+         CHpdHnjX7V4yHtP/kxhQoLBEAijtNKQMlAOb93F4poCYnabSmOBNjYJV/TxrxH2WEyMg
+         VJhoHV6Zl0l1Im2wemXEz6pfSEnXH7M0Q7w4PALEjuBkbB9/1KoFZwXbY7prh89s7OBQ
+         xh/iB9BH34oqLbIDGMmVDfA9h55ADOwRyEvF01jCgp9ship+ZAyOkyLUDGbbxiUFeDji
+         +YbQ==
+X-Gm-Message-State: AGRZ1gIlWVkWDBFneNmUb0JNRL1HhRZP+V2ZGWbzryj/XlztPsWCb3Ww
+        7QszdZO2Q8pQdALPwnJh4Ko=
+X-Google-Smtp-Source: AJdET5e+c9OEAGXx9dwdK8rX5d8NEfrmhTMaTMqUFPkfPQgiheSLe8rHWv1QYIXgEkKfaeBTZJLkFA==
+X-Received: by 2002:a17:906:790b:: with SMTP id b11-v6mr5973702ejo.228.1542300193019;
+        Thu, 15 Nov 2018 08:43:13 -0800 (PST)
+Received: from ziggy.stardust ([37.223.147.230])
+        by smtp.gmail.com with ESMTPSA id x21-v6sm4281444ejf.2.2018.11.15.08.43.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 08:43:12 -0800 (PST)
+Subject: Re: [PATCH 1/4] dt-bindings: pwm: update bindings for MT7629 SoC
+To:     Ryder Lee <ryder.lee@mediatek.com>,
+        Marek Vasut <marek.vasut@gmail.com>
+Cc:     devicetree@vger.kernel.org, Guochun Mao <guochun.mao@mediatek.com>,
+        Roy Luo <cheng-hao.luo@mediatek.com>,
+        Weijie Gao <weijie.gao@mediatek.com>,
+        linux-kernel@vger.kernel.org,
+        Boris Brezillon <boris.brezillon@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        linux-mtd@lists.infradead.org, linux-mediatek@lists.infradead.org,
+        Brian Norris <computersforpeace@gmail.com>,
+        linux-arm-kernel@lists.infradead.org
+References: <1dc7b27cbad59c413d7076ff7d16b6757014d727.1542262833.git.ryder.lee@mediatek.com>
+ <1542263704.7928.2.camel@mtkswgap22>
+From:   Matthias Brugger <matthias.bgg@gmail.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=matthias.bgg@gmail.com; prefer-encrypt=mutual; keydata=
+ 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
+ UXI+r2JwH1CJjrHWeQEI2ucSKsNa8FllDmG/fQ==
+Message-ID: <b96ef8a5-ea09-2d24-23a1-ca9192e29ab5@gmail.com>
+Date:   Thu, 15 Nov 2018 17:43:10 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <1542263704.7928.2.camel@mtkswgap22>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Nov 2018 17:32:48 +0100
-Paul Kocialkowski <paul.kocialkowski@bootlin.com> wrote:
 
-> Writeback connectors do not produce any on-screen output and require
-> special care for use. Such connectors are hidden from enumeration in
-> DRM resources by default, but they are still picked-up by fbdev.
-> This makes rather little sense since fbdev is not really adapted for
-> dealing with writeback.
+
+On 15/11/2018 07:35, Ryder Lee wrote:
+> On Thu, 2018-11-15 at 14:26 +0800, Ryder Lee wrote:
+>> This updates bindings for MT7629 pwm controller.
+>>
+>> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+>> ---
+>>  Documentation/devicetree/bindings/pwm/pwm-mediatek.txt | 1 +
+>>  1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
+>> index 991728c..4a2885b 100644
+>> --- a/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
+>> +++ b/Documentation/devicetree/bindings/pwm/pwm-mediatek.txt
+>> @@ -6,6 +6,7 @@ Required properties:
+>>     - "mediatek,mt7622-pwm": found on mt7622 SoC.
+>>     - "mediatek,mt7623-pwm": found on mt7623 SoC.
+>>     - "mediatek,mt7628-pwm": found on mt7628 SoC.
+>> +   - "mediatek,mt7629-pwm": found on mt7629 SoC.
+>>   - reg: physical base address and length of the controller's registers.
+>>   - #pwm-cells: must be 2. See pwm.txt in this directory for a description of
+>>     the cell format.
 > 
-> Moreover, this is also a source of issues when userspace disables the
-> CRTC (and associated plane) without detaching the CRTC from the
-> connector (which is hidden by default). In this case, the connector is
-> still using the CRTC, leading to am "enabled/connectors mismatch" and
-
-				   ^an
-
-> eventually the failure of the associated atomic commit. This situation
-> happens with VC4 testing under IGT GPU Tools.
+> Please ignore this PWM patch. Sorry for the inconvenience :(
 > 
-> Filter out writeback connectors in the fbdev helper to solve this.
-> 
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
+Right, this would at least need a fallback compatible :)
 
-> ---
->  drivers/gpu/drm/drm_fb_helper.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
-> index a502f3e519fd..dd852a25d375 100644
-> --- a/drivers/gpu/drm/drm_fb_helper.c
-> +++ b/drivers/gpu/drm/drm_fb_helper.c
-> @@ -219,6 +219,9 @@ int drm_fb_helper_single_add_all_connectors(struct drm_fb_helper *fb_helper)
->  	mutex_lock(&fb_helper->lock);
->  	drm_connector_list_iter_begin(dev, &conn_iter);
->  	drm_for_each_connector_iter(connector, &conn_iter) {
-> +		if (connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK)
-> +			continue;
-> +
->  		ret = __drm_fb_helper_add_one_connector(fb_helper, connector);
->  		if (ret)
->  			goto fail;
-
+Regards,
+Matthias
