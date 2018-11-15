@@ -2,28 +2,28 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0CF23C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:37:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2DC1BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:37:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D56052087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:37:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D56052087A
+	by mail.kernel.org (Postfix) with ESMTP id 0399A2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:37:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0399A2087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388434AbeKOTos (ORCPT
+        id S2387900AbeKOTnK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:44:48 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:46316 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728699AbeKOTnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
         Thu, 15 Nov 2018 14:43:10 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:46338 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729006AbeKOTnJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:43:09 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id 963AD5FB44; Thu, 15 Nov 2018 17:36:04 +0800 (CST)
+        id A498E5FCA7; Thu, 15 Nov 2018 17:36:04 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
@@ -34,10 +34,12 @@ Cc:     Chen-Yu Tsai <wens@csie.org>,
         Loic Poulain <loic.poulain@gmail.com>,
         linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 00/15] ARM: sunxi: Enable Broadcom-based Bluetooth controllers
-Date:   Thu, 15 Nov 2018 17:35:48 +0800
-Message-Id: <20181115093603.26729-1-wens@csie.org>
+Subject: [PATCH v2 02/15] dt-bindings: net: broadcom-bluetooth: Add VBAT and VDDIO supplies
+Date:   Thu, 15 Nov 2018 17:35:50 +0800
+Message-Id: <20181115093603.26729-3-wens@csie.org>
 X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181115093603.26729-1-wens@csie.org>
+References: <20181115093603.26729-1-wens@csie.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -45,121 +47,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi everyone,
+The Broadcom Bluetooth chips have two power inputs, VBAT and VDDIO.
+The former provides overall power for the chip, while the latter powers
+the I/O pins and buffers.
 
-This is v2 of my Broadcom-based Bluetooth controllers on Allwinner SoC-
-based SBCs series.
+This patch adds properties for the two so we can describe the power
+supply relationships.
 
-Changes since v1:
+Reviewed-by: Rob Herring <robh@kernel.org>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ Documentation/devicetree/bindings/net/broadcom-bluetooth.txt | 2 ++
+ 1 file changed, 2 insertions(+)
 
-  - Collected tags
-  - Re-organize dt binding clocks and clock-names properties
-  - Simplify check for deferred probe when getting clocks
-  - Add explanation of Cubietruck's clk_out_a pinmux setting placement
-    to commit message.
-  - Add missing "uart-has-rtscts" property to Cubietruck device tree
-
-Original cover letter follows.
-
-
-On many Allwinner SBCs / developer boards, there is a WiFi+BT combo
-module from AMPAK. Inside is either one or two Broadcom chips, depending
-on the model. This series enables the Bluetooth controllers for AMPAK
-AP6210, AP6212, and AP6330 found on several boards. More will come later
-as other SoCs require changes to some other parts. I did not cover the
-SCO PCM connections from the controller to the SoC's I2S interface. It
-seems no one is actually doing this, so I was not sure how to proceed.
-Any suggestions?
-
-I deliberately left out the netdev mailing list and Dave Miller, as the
-only thing that is under net is the binding document. Maybe we should
-move that out of Documentation/devicetree/bindings/net/ ?
-
-Also, I'm not subscribed to the linux-bluetooth ML, so please CC me for
-any discussions.
-
-Patches 1 through 4 are device tree binding changes:
-
-1 - Make the external clock name unambiguous, and add a second entry for
-    the LPO clock.
-
-2 - Add regulator supply properties for the VBAT and VDDIO power pins.
-
-3 - Add a compatible string for BCM20702A1.
-
-4 - Add a compatible string for BCM4330.
-
-Patches 5 through 13 are changes to the driver, either improvements,
-or updates to handle the updated device tree binding.
-
-5 - Make the driver handle deferred probing for the external clock.
-
-6 - Simplify clock error checking for subsequent clk API calls.
-
-7 - Handle clock-names for the main external clock.
-
-8 - Support a new external clock, the LPO.
-
-9 - Support regulator supplies.
-
-10 - Wait a small amount of time after toggling the GPIO for the device
-     to settle.
-
-11 - Add support for BCM20702A1, including its default address.
-
-12 - Add BCM4330 compatible string to the driver.
-
-13 - Handle default address for BCM43430A0.
-
-14 - Enable Broadcom-based serdev Bluetooth for multiple Allwinner ARMv7
-     boards.
-
-15 - Enable Broadcom-based serdev Bluetooth for the Bananapi M64.
-
-checkpatch reports an error for both patch 11 and patch 13:
-
-    ERROR: space required after that close brace '}'
-
-I followed the existing code's style. If this is undesirable, I can send
-a follow-up patch fixing the entire code block.
-
-The first 13 patches should go through the Bluetooth tree, while we, the
-sunxi maintainers, will take the last 2.
-
-
-Thanks
-ChenYu
-
-Chen-Yu Tsai (14):
-  dt-bindings: net: broadcom-bluetooth: Fix external clock names
-  dt-bindings: net: broadcom-bluetooth: Add VBAT and VDDIO supplies
-  dt-bindings: net: broadcom-bluetooth: Add BCM20702A1 compatible string
-  dt-bindings: net: broadcom-bluetooth: Add BCM4330 compatible string
-  Bluetooth: hci_bcm: Handle deferred probing for the clock supply
-  Bluetooth: hci_bcm: Simplify clk_get error handling
-  Bluetooth: hci_bcm: Use "txco" and "extclk" to get clock reference
-  Bluetooth: hci_bcm: Add support for LPO clock
-  Bluetooth: hci_bcm: Add support for regulator supplies
-  Bluetooth: hci_bcm: Wait for device to come out of reset after power
-    on
-  Bluetooth: hci_bcm: Add compatible string for BCM4330
-  Bluetooth: btbcm: Add default address for BCM43430A0
-  ARM: dts: sunxi: Enable Broadcom-based Bluetooth for multiple boards
-  arm64: dts: allwinner: a64: bananapi-m64: Add Bluetooth device node
-
-Maxime Ripard (1):
-  Bluetooth: hci_bcm: Add BCM20702A1 variant
-
- .../bindings/net/broadcom-bluetooth.txt       |  11 +-
- arch/arm/boot/dts/sun7i-a20-cubietruck.dts    |  23 ++++
- arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts  |  18 +++
- .../boot/dts/sun8i-a83t-cubietruck-plus.dts   |  18 +++
- arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts  |  14 +++
- .../dts/allwinner/sun50i-a64-bananapi-m64.dts |  14 +++
- drivers/bluetooth/btbcm.c                     |  13 +-
- drivers/bluetooth/hci_bcm.c                   | 112 +++++++++++++++---
- 8 files changed, 206 insertions(+), 17 deletions(-)
-
+diff --git a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+index 711c75ac2bb5..78cfa0fbece9 100644
+--- a/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
++++ b/Documentation/devicetree/bindings/net/broadcom-bluetooth.txt
+@@ -23,6 +23,8 @@ Optional properties:
+    - "extclk": deprecated, replaced by "txco"
+    - "txco": external reference clock (not a standalone crystal)
+    - "lpo": external low power 32.768 kHz clock
++ - vbat-supply: phandle to regulator supply for VBAT
++ - vddio-supply: phandle to regulator supply for VDDIO
+ 
+ 
+ Example:
 -- 
 2.19.1
 
