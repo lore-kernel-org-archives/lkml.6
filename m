@@ -2,126 +2,171 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB165C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:11:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11CF5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87F22208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:11:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87F22208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id C39C82243E
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:12:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="QQxO8/SV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C39C82243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388374AbeKPBTl (ORCPT
+        id S2388460AbeKPBU1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:19:41 -0500
-Received: from mail-qk1-f194.google.com ([209.85.222.194]:37925 "EHLO
-        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726432AbeKPBTl (ORCPT
+        Thu, 15 Nov 2018 20:20:27 -0500
+Received: from mailout1.samsung.com ([203.254.224.24]:35632 "EHLO
+        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387839AbeKPBU1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 20:19:41 -0500
-Received: by mail-qk1-f194.google.com with SMTP id d19so32242459qkg.5;
-        Thu, 15 Nov 2018 07:11:27 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=p0N/pBTn+ZsgrWeJGG17owgymeafW3HxGK+Us5vI20I=;
-        b=nemDIPokDNWY0Y2SaFvAXrt11WpADUQBCqnGoEHEhueyVkLZnLkpyLRktugE3pXEw7
-         iA4PEKwZLYoZeZagS6U6AhhlSZ17G15uxuVL58vS/FvzGnK3OesXARd9Gwf64/rP2ftp
-         gmXpO9NcyErbrY3Dl229cNJq3IylK3IVcZzt9ua6KWVHz2Rj1Yv7LshpryaZ02MB6Q21
-         5MwN3lKpKS7bFQ8LDM3qHB4iS46brzFjpfuCH73OnePdAmLfKO9QsIjjPCierFGHkc9T
-         c4g58znuDlirMSYnddc0DFOxIvfCgN31RUBCZYDVsiFuZJ92LyB0XB0gNU37L5hDBFZO
-         +yaA==
-X-Gm-Message-State: AGRZ1gLdwliElPhiQf3uXEIDml3P17PiKfwZggGvwyCCn4sBYXdPXWvj
-        dSCdCBwwhnp+9eR8UM+btP1a7CoACv0cxIT8HeY=
-X-Google-Smtp-Source: AJdET5cwkb4lREhMoAfcfj1debtP1hONk3yaReydOZO+rJyw9R8m8U+Nyi8YcwHo3rCQumW/hIZdPcWvTCbvJCyg54A=
-X-Received: by 2002:ae9:d8c2:: with SMTP id u185mr5967041qkf.107.1542294686850;
- Thu, 15 Nov 2018 07:11:26 -0800 (PST)
-MIME-Version: 1.0
-References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
- <76b1d15d-232c-d8ba-5eba-8394e71be725@synopsys.com> <20181115135731.25f60990@bbrezillon>
- <20181115150137.GB4169@kunai>
-In-Reply-To: <20181115150137.GB4169@kunai>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Thu, 15 Nov 2018 07:11:09 -0800
-Message-ID: <CAK8P3a2aem0pFKwRgMq9CUsogJ=MU9d6VHzE0o0+WU0v1UWR4A@mail.gmail.com>
-Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
-To:     Wolfram Sang <wsa@the-dreams.de>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Vitor Soares <vitor.soares@synopsys.com>,
-        Linux I2C <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        Kumar Gala <galak@codeaurora.org>,
-        DTML <devicetree@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Mark Brown <broonie@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 15 Nov 2018 20:20:27 -0500
+Received: from epcas1p1.samsung.com (unknown [182.195.41.45])
+        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20181115151209epoutp01953f46a9136a35830216eb53aa42ae89~nVOKRmrqQ0617906179epoutp01J;
+        Thu, 15 Nov 2018 15:12:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20181115151209epoutp01953f46a9136a35830216eb53aa42ae89~nVOKRmrqQ0617906179epoutp01J
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1542294729;
+        bh=sdcBdklfj9pvomBPmTMp0SEphMakkVV863pYWtw29aQ=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=QQxO8/SVSNOw1k4LtaXLtwFLLotIRFjq247VZ+ky7tSRttY25m4vFMfLHXULuEOgB
+         yIuK3yttSb0aj0UnB/XkXCxaZaaM6RmQfbl0CryjyVhsYcW7k4oZbcc+blj220QfZn
+         OGQ8rF8N0Z4n5su8VMJo+dU9zFF8NBp+wjkV19jM=
+Received: from epsmges1p2.samsung.com (unknown [182.195.42.54]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20181115151207epcas1p31e126f8cb8a92cc9b576bb6f1164031c~nVOIoD2483141131411epcas1p3j;
+        Thu, 15 Nov 2018 15:12:07 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+        C0.56.04069.7CC8DEB5; Fri, 16 Nov 2018 00:12:07 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p4.samsung.com (KnoxPortal) with ESMTP id
+        20181115151207epcas1p45adfa96d5b52e10fbb5ace76ebae5e3e~nVOIOLR4j0538805388epcas1p40;
+        Thu, 15 Nov 2018 15:12:07 +0000 (GMT)
+X-AuditID: b6c32a36-f2bff70000000fe5-be-5bed8cc744e1
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id 63.B9.03701.7CC8DEB5; Fri, 16 Nov
+        2018 00:12:07 +0900 (KST)
+Received: from AMDC3058.DIGITAL.local ([106.120.53.102]) by mmp2.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PI8006WJQ7YQ380@mmp2.samsung.com>; Fri, 16 Nov 2018
+        00:12:07 +0900 (KST)
+From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+To:     Krzysztof Kozlowski <krzk@kernel.org>
+Cc:     Arnd Bergmann <arnd@arndb.de>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kukjin Kim <kgene@kernel.org>,
+        Markus Reichl <m.reichl@fivetechno.de>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Javier Martinez Canillas <javierm@redhat.com>,
+        Pankaj Dubey <pankaj.dubey@samsung.com>,
+        linux-samsung-soc@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        b.zolnierkie@samsung.com
+Subject: [PATCH 0/9] ARM: SAMSUNG: add Exynos chipid driver
+Date:   Thu, 15 Nov 2018 16:11:29 +0100
+Message-id: <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com>
+X-Mailer: git-send-email 1.9.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrIIsWRmVeSWpSXmKPExsWy7bCmnu7xnrfRBr9vqFvcWneO1eLvpGPs
+        FhtnrGe1uP7lOavFwmnLGS36H79mtjh/fgO7xabH11gtLu+aw2Yx4/w+JouXR34wWqw9cpfd
+        YtHWL+wOvB6/f01i9Lh1p95j06pONo/NS+o93u+7yubRt2UVo8fnTXIB7FFcNimpOZllqUX6
+        dglcGcc7LjEVzBKuaPqylb2B8SFfFyMnh4SAicScW5vZuxi5OIQEdjBKzFj/khHC+c4osWDh
+        UlaYqvbZ21ggEhsYJX6190C1/GKUWHqrF6yKTcBKYmL7KkYQW0RAU+L63+9gcWaBo8wSS65I
+        gNjCAtYSU7vfM4HYLAKqEk0Hr4PV8Ap4SMz9sRdqm5zEyWOTWUEWSAisYZM4fGsqC0TCRWJe
+        RydUkbDEq+NbgK7gALKlJS4dtYWon84o8ebXUhYIZz2jxJozx5ggGqwlDh+/CHURn8S7rz2s
+        EM28Eh1tQhAlHhIb7zxjAQkLCcRKXH9qOAEYCIwMqxjFUguKc9NTiw0LjPSKE3OLS/PS9ZLz
+        czcxgiNWy2wH46JzPocYBTgYlXh4DcrfRguxJpYVV+YeYpTgYFYS4XWrAwrxpiRWVqUW5ccX
+        leakFh9ilOZgURLnfSI1N1pIID2xJDU7NbUgtQgmy8TBKdXAqO+69t3OP5X7vXcJf3z6pv+m
+        +fvwwA7zDrOZJ2+cnf9hJo9T5DXRu54H3z498Dmu9PI/cRE5npO3tnPN45js0Hvz7ZRSHfNd
+        W7PEHhpNKijIs021Ldsnn7Gt/VRJR9Qmpcg3sy9OCMswOePMnHtgwdr1LOL1DjGztndNv23P
+        eGnKhejA1ddVjymxFGckGmoxFxUnAgAtG5UN1AIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprFLMWRmVeSWpSXmKPExsVy+t9jQd3jPW+jDX6t4LS4te4cq8XfScfY
+        LTbOWM9qcf3Lc1aLhdOWM1r0P37NbHH+/AZ2i02Pr7FaXN41h81ixvl9TBYvj/xgtFh75C67
+        xaKtX9gdeD1+/5rE6HHrTr3HplWdbB6bl9R7vN93lc2jb8sqRo/Pm+QC2KO4bFJSczLLUov0
+        7RK4Mo53XGIqmCVc0fRlK3sD40O+LkZODgkBE4n22dtYQGwhgXWMEjPOZXYxcgHZvxglpl3a
+        xwSSYBOwkpjYvooRxBYR0JS4/vc7K0gRs8BRZonPE7YzgySEBawlpna/B2tgEVCVaDp4nRXE
+        5hXwkJj7Yy8rxDY5iZPHJrNOYORawMiwilEytaA4Nz232KjAMC+1XK84Mbe4NC9dLzk/dxMj
+        MMS2Hdbq28F4f0n8IUYBDkYlHl6D8rfRQqyJZcWVuYcYJTiYlUR43eqAQrwpiZVVqUX58UWl
+        OanFhxilOViUxHlv5x2LFBJITyxJzU5NLUgtgskycXBKNTBq3ZkVdUzx2kY7/7XM/Lf8H59t
+        63Toqzt1gO3B/63/hauPComI2E8UWrTm1PFK9qKjmw0uRL2am6WSWhQ3pfxwL9tl41c5ErcV
+        a5ndTC/tNLc55pR9xaLY+1uw+583WxYmaZlwqq3NiU7Pi9nROPPVVrMjS4pefV2/XdEraq9s
+        r+/VFp7cK95KLMUZiYZazEXFiQDKNlXkLQIAAA==
+X-CMS-MailID: 20181115151207epcas1p45adfa96d5b52e10fbb5ace76ebae5e3e
+X-Msg-Generator: CA
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20181115151207epcas1p45adfa96d5b52e10fbb5ace76ebae5e3e
+References: <CGME20181115151207epcas1p45adfa96d5b52e10fbb5ace76ebae5e3e@epcas1p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 7:01 AM Wolfram Sang <wsa@the-dreams.de> wrote:
-> > What we could do though, is expose I3C devices that do not have a
-> > driver in kernel space, like spidev does.
->
-> ...
->
-> > Mark, Wolfram, Arnd, Greg, any opinion?
->
-> Is there a benefit for having drivers in userspace? My gut feeling is to
-> encourage people to write kernel drivers. If this is, for some reason,
-> not possible for some driver, then we have a use case at hand to test
-> the then-to-be-developed userspace interface against. Until then, I
-> personally wouldn't waste effort on designing it without a user in
-> sight.
->
-> Dunno if you have that, but a debug interface (exchanging data with
-> clients) on the other hand would be super useful most probably. Maybe
-> you can start having that in debugfs and already learn from it if you
-> ever want to move some interface outside of debugfs?
+Hi,
 
-I think it may depend a little bit on the complexity we require
-for a user interface. If it's basically just pread/pwrite, then the
-debugfs would not look any different from a stable interface,
-and there is little risk of getting it wrong. The more complex
-the interface turns out to be, the more cautious we may want
-to be about declaring it stable.
+This patchset adds Exynos chipid driver and converts Exynos platform
+code to use it. It is heavily based on "[PATCH v9 00/12] Introducing
+Exynos ChipId driver" patchset [1] so most credits go to Pankaj Dubey.
+The main difference in the current patchset is in taking simpler
+approach to converting existing Exynos platform code to use the new
+chipid driver. This results in much less code duplication.
 
-Other than that, I agree we should encourage users to write kernel
-drivers, but given the precedent of uio, libusb, spidev, i2c-dev,
-and vfio, it does seem extremely likely that users will have
-requirements for it, and I think it's a good idea to start the design
-discussion before users start building their own interfaces to do the
-same thing badly.
+The diffstat for "[PATCH v9 00/12] Introducing Exynos ChipId driver":
 
-        Arnd
+ 14 files changed, 587 insertions(+), 255 deletions(-)
+
+for the current patchset it is:
+
+ 14 files changed, 193 insertions(+), 195 deletions(-)
+
+This patchset has been tested on Exynos4210 (including rev0),
+Exynos3250, Exynos4412 & Exynos5422 SoCs.
+
+[1] https://marc.info/?l=linux-arm-kernel&m=149087972213359&w=2
+
+Best regards,
+--
+Bartlomiej Zolnierkiewicz
+Samsung R&D Institute Poland
+Samsung Electronics
+
+
+Bartlomiej Zolnierkiewicz (5):
+  ARM: EXYNOS: use chipid driver
+  ARM: EXYNOS: remove soc_is_exynos*() macros
+  ARM: SAMSUNG: remove samsung_rev()
+  ARM: SAMSUNG: remove s5p_init_cpu()
+  ARM: EXYNOS: remove <mach/map.h> include
+
+Pankaj Dubey (4):
+  ARM: EXYNOS: remove secondary startup initialization from
+    smp_prepare_cpus
+  soc: samsung: add exynos chipid driver support
+  ARM: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
+  ARM64: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
+
+ arch/arm/mach-exynos/Kconfig                 |   1 +
+ arch/arm/mach-exynos/common.h                |  81 ++-----------------
+ arch/arm/mach-exynos/exynos.c                |  75 ++++++++++--------
+ arch/arm/mach-exynos/firmware.c              |   8 +-
+ arch/arm/mach-exynos/include/mach/map.h      |  18 -----
+ arch/arm/mach-exynos/platsmp.c               |  40 ++--------
+ arch/arm/mach-exynos/pm.c                    |  25 +++---
+ arch/arm/plat-samsung/cpu.c                  |  17 ----
+ arch/arm/plat-samsung/include/plat/cpu.h     |   3 -
+ arch/arm/plat-samsung/include/plat/map-s5p.h |   2 -
+ arch/arm64/Kconfig.platforms                 |   1 +
+ drivers/soc/samsung/Kconfig                  |   5 ++
+ drivers/soc/samsung/Makefile                 |   1 +
+ drivers/soc/samsung/exynos-chipid.c          | 111 +++++++++++++++++++++++++++
+ 14 files changed, 193 insertions(+), 195 deletions(-)
+ delete mode 100644 arch/arm/mach-exynos/include/mach/map.h
+ create mode 100644 drivers/soc/samsung/exynos-chipid.c
+
+-- 
+1.9.1
+
