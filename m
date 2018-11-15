@@ -7,46 +7,45 @@ X-Spam-Status: No, score=-12.0 required=3.0
 	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9183FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:10:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ECA2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:11:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 62B5421780
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:10:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62B5421780
+	by mail.kernel.org (Postfix) with ESMTP id F315E21780
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:11:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F315E21780
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729082AbeKOTRq (ORCPT
+        id S2387641AbeKOTSV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:17:46 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:32825 "EHLO
+        Thu, 15 Nov 2018 14:18:21 -0500
+Received: from terminus.zytor.com ([198.137.202.136]:34107 "EHLO
         terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728564AbeKOTRq (ORCPT
+        with ESMTP id S1732953AbeKOTSV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:17:46 -0500
+        Thu, 15 Nov 2018 14:18:21 -0500
 Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAF9AUCs738735
+        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAF9B5cM738786
         (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 15 Nov 2018 01:10:30 -0800
+        Thu, 15 Nov 2018 01:11:05 -0800
 Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAF9AU6k738732;
-        Thu, 15 Nov 2018 01:10:30 -0800
-Date:   Thu, 15 Nov 2018 01:10:30 -0800
+        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAF9B5Jh738783;
+        Thu, 15 Nov 2018 01:11:05 -0800
+Date:   Thu, 15 Nov 2018 01:11:05 -0800
 X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
 From:   tip-bot for Ard Biesheuvel <tipbot@zytor.com>
-Message-ID: <tip-33412b8673135b18ea42beb7f5117ed0091798b6@git.kernel.org>
-Cc:     linux-kernel@vger.kernel.org, ard.biesheuvel@linaro.org,
-        torvalds@linux-foundation.org, peterz@infradead.org, hpa@zytor.com,
-        tglx@linutronix.de, mingo@kernel.org
-Reply-To: torvalds@linux-foundation.org, ard.biesheuvel@linaro.org,
-          linux-kernel@vger.kernel.org, hpa@zytor.com, mingo@kernel.org,
-          tglx@linutronix.de, peterz@infradead.org
-In-Reply-To: <20181114175544.12860-3-ard.biesheuvel@linaro.org>
-References: <20181114175544.12860-3-ard.biesheuvel@linaro.org>
+Message-ID: <tip-72a58a63a164b4e9d2d914e65caeb551846883f1@git.kernel.org>
+Cc:     torvalds@linux-foundation.org, hpa@zytor.com, mingo@kernel.org,
+        linux-kernel@vger.kernel.org, peterz@infradead.org,
+        tglx@linutronix.de, ard.biesheuvel@linaro.org
+Reply-To: ard.biesheuvel@linaro.org, peterz@infradead.org,
+          tglx@linutronix.de, linux-kernel@vger.kernel.org,
+          mingo@kernel.org, hpa@zytor.com, torvalds@linux-foundation.org
+In-Reply-To: <20181114175544.12860-4-ard.biesheuvel@linaro.org>
+References: <20181114175544.12860-4-ard.biesheuvel@linaro.org>
 To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/urgent] efi/arm: Revert deferred unmap of early memmap
- mapping
-Git-Commit-ID: 33412b8673135b18ea42beb7f5117ed0091798b6
+Subject: [tip:efi/urgent] efi/arm/libstub: Pack FDT after populating it
+Git-Commit-ID: 72a58a63a164b4e9d2d914e65caeb551846883f1
 X-Mailer: tip-git-log-daemon
 Robot-ID: <tip-bot.git.kernel.org>
 Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
@@ -60,82 +59,60 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  33412b8673135b18ea42beb7f5117ed0091798b6
-Gitweb:     https://git.kernel.org/tip/33412b8673135b18ea42beb7f5117ed0091798b6
+Commit-ID:  72a58a63a164b4e9d2d914e65caeb551846883f1
+Gitweb:     https://git.kernel.org/tip/72a58a63a164b4e9d2d914e65caeb551846883f1
 Author:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-AuthorDate: Wed, 14 Nov 2018 09:55:41 -0800
+AuthorDate: Wed, 14 Nov 2018 09:55:42 -0800
 Committer:  Ingo Molnar <mingo@kernel.org>
 CommitDate: Thu, 15 Nov 2018 10:04:46 +0100
 
-efi/arm: Revert deferred unmap of early memmap mapping
+efi/arm/libstub: Pack FDT after populating it
 
 Commit:
 
-  3ea86495aef2 ("efi/arm: preserve early mapping of UEFI memory map longer for BGRT")
+  24d7c494ce46 ("efi/arm-stub: Round up FDT allocation to mapping size")
 
-deferred the unmap of the early mapping of the UEFI memory map to
-accommodate the ACPI BGRT code, which looks up the memory type that
-backs the BGRT table to validate it against the requirements of the UEFI spec.
+increased the allocation size for the FDT image created by the stub to a
+fixed value of 2 MB, to simplify the former code that made several
+attempts with increasing values for the size. This is reasonable
+given that the allocation is of type EFI_LOADER_DATA, which is released
+to the kernel unless it is explicitly memblock_reserve()d by the early
+boot code.
 
-Unfortunately, this causes problems on ARM, which does not permit
-early mappings to persist after paging_init() is called, resulting
-in a WARN() splat. Since we don't support the BGRT table on ARM anway,
-let's revert ARM to the old behaviour, which is to take down the
-early mapping at the end of efi_init().
+However, this allocation size leaked into the 'size' field of the FDT
+header metadata, and so the entire allocation remains occupied by the
+device tree binary, even if most of it is not used to store device tree
+information.
+
+So call fdt_pack() to shrink the FDT data structure to its minimum size
+after populating all the fields, so that the remaining memory is no
+longer wasted.
 
 Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Cc: <stable@vger.kernel.org> # v4.12+
 Cc: Linus Torvalds <torvalds@linux-foundation.org>
 Cc: Peter Zijlstra <peterz@infradead.org>
 Cc: Thomas Gleixner <tglx@linutronix.de>
 Cc: linux-efi@vger.kernel.org
-Fixes: 3ea86495aef2 ("efi/arm: preserve early mapping of UEFI memory ...")
-Link: http://lkml.kernel.org/r/20181114175544.12860-3-ard.biesheuvel@linaro.org
+Fixes: 24d7c494ce46 ("efi/arm-stub: Round up FDT allocation to mapping size")
+Link: http://lkml.kernel.org/r/20181114175544.12860-4-ard.biesheuvel@linaro.org
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
 ---
- drivers/firmware/efi/arm-init.c    | 4 ++++
- drivers/firmware/efi/arm-runtime.c | 2 +-
- drivers/firmware/efi/memmap.c      | 3 +++
- 3 files changed, 8 insertions(+), 1 deletion(-)
+ drivers/firmware/efi/libstub/fdt.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/firmware/efi/arm-init.c b/drivers/firmware/efi/arm-init.c
-index 388a929baf95..1a6a77df8a5e 100644
---- a/drivers/firmware/efi/arm-init.c
-+++ b/drivers/firmware/efi/arm-init.c
-@@ -265,6 +265,10 @@ void __init efi_init(void)
- 				    (params.mmap & ~PAGE_MASK)));
- 
- 	init_screen_info();
-+
-+	/* ARM does not permit early mappings to persist across paging_init() */
-+	if (IS_ENABLED(CONFIG_ARM))
-+		efi_memmap_unmap();
- }
- 
- static int __init register_gop_device(void)
-diff --git a/drivers/firmware/efi/arm-runtime.c b/drivers/firmware/efi/arm-runtime.c
-index 922cfb813109..a00934d263c5 100644
---- a/drivers/firmware/efi/arm-runtime.c
-+++ b/drivers/firmware/efi/arm-runtime.c
-@@ -110,7 +110,7 @@ static int __init arm_enable_runtime_services(void)
- {
- 	u64 mapsize;
- 
--	if (!efi_enabled(EFI_BOOT) || !efi_enabled(EFI_MEMMAP)) {
-+	if (!efi_enabled(EFI_BOOT)) {
- 		pr_info("EFI services will not be available.\n");
- 		return 0;
+diff --git a/drivers/firmware/efi/libstub/fdt.c b/drivers/firmware/efi/libstub/fdt.c
+index 8830fa601e45..0c0d2312f4a8 100644
+--- a/drivers/firmware/efi/libstub/fdt.c
++++ b/drivers/firmware/efi/libstub/fdt.c
+@@ -158,6 +158,10 @@ static efi_status_t update_fdt(efi_system_table_t *sys_table, void *orig_fdt,
+ 			return efi_status;
+ 		}
  	}
-diff --git a/drivers/firmware/efi/memmap.c b/drivers/firmware/efi/memmap.c
-index fa2904fb841f..38b686c67b17 100644
---- a/drivers/firmware/efi/memmap.c
-+++ b/drivers/firmware/efi/memmap.c
-@@ -118,6 +118,9 @@ int __init efi_memmap_init_early(struct efi_memory_map_data *data)
- 
- void __init efi_memmap_unmap(void)
- {
-+	if (!efi_enabled(EFI_MEMMAP))
-+		return;
 +
- 	if (!efi.memmap.late) {
- 		unsigned long size;
++	/* shrink the FDT back to its minimum size */
++	fdt_pack(fdt);
++
+ 	return EFI_SUCCESS;
  
+ fdt_set_fail:
