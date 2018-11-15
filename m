@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E16EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:17:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B8DD9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 610AF2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:17:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 78891206BA
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:17:47 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gluegarage.com header.i=@gluegarage.com header.b="g+rE4K/B";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="I7wjocss"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610AF2087A
+	dkim=pass (1024-bit key) header.d=gluegarage.com header.i=@gluegarage.com header.b="bFuISejH";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UJaz7x2t"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78891206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gluegarage.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389031AbeKPI1O (ORCPT
+        id S2389055AbeKPI1Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 03:27:14 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:50719 "EHLO
+        Fri, 16 Nov 2018 03:27:25 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:34609 "EHLO
         out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729045AbeKPI1N (ORCPT
+        by vger.kernel.org with ESMTP id S1725985AbeKPI1Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:27:13 -0500
+        Fri, 16 Nov 2018 03:27:25 -0500
 Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id A2A00218B7;
-        Thu, 15 Nov 2018 17:17:31 -0500 (EST)
+        by mailout.nyi.internal (Postfix) with ESMTP id 9B22822326;
+        Thu, 15 Nov 2018 17:17:41 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Thu, 15 Nov 2018 17:17:31 -0500
+  by compute1.internal (MEProxy); Thu, 15 Nov 2018 17:17:41 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gluegarage.com;
          h=from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=mesmtp; bh=zdDOHVhfX6
-        venivR2p2CDNh26XuC0oKqDDvujWeSBsE=; b=g+rE4K/BXgOol9G/uZxW9Qo1HX
-        y4hvUA02Zwfrz4sA1My2UZWD8jDEWGGM6mdpZDOpXstt1oLeO1k8jp+F4HX+ymBJ
-        QzM0GYMw9mFBstEfGt8ArysRZM0NPKQwRStvtTMSqv9IE0OYQ7u/nsgglzjnaQq3
-        0rHudiPvY4RcjRkJI=
+        :mime-version:content-transfer-encoding; s=mesmtp; bh=QuTM9RYjL9
+        w5CMKskoMwsV3+b5RvhIJ1DEvyj9LlsaM=; b=bFuISejH5sQewz+4SNKNVROBzI
+        wCgcs4uqr+F8uj2ix+d2hKe8+ae2VTbPkJbiDUqXyTYPA6/26B6iXU5y66GPpruZ
+        aAY7jQISzXfXNy57N6pSBTTGo91GhBX30O8xec/Vd6tYh18vN4mFzwXOZAuwm+vF
+        NfXmZ3OAevc0qCXbo=
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=zdDOHVhfX6venivR2p2CDNh26XuC0oKqDDvujWeSBsE=; b=I7wjocss
-        bAZdnzHiBV+UbJ2Y3O6B3KLLJlMGc8r68+wmEbznrTICMQm93+FB+d4lUl+DVamM
-        Yz0POJaDnsgODtCPJ8Rcn17q1l/TQAu2GCFy8k42SdrAU8eTd0XeW3sjuIV2YcnP
-        yJBgJsL7TqAo0WIRS2u+oxNiUzc6IMaNaZ3UXApK2Og+lgHxrNsjXbLSgdulorFK
-        mz3QZSqqMQ42RRLzhbxdqcyk2ulfVFajMN+0HfXkJ6+qXWbBHlwK9ey3Fkh4bLsW
-        Mbp1EUWVeJTOmh29tPrN1zyUzTkrzGksThBQSAicdQFETvyQRseoY4HbiYCFMQoy
-        1oYuWopIK9NYkg==
-X-ME-Sender: <xms:e_DtW0FVlVen70zsVpZ5KvuGk4oGITaFMAZV653xcWpNOxl4mS2f2Q>
-X-ME-Proxy: <xmx:e_DtWxPN3sdd8_QvxVYJRL-EDc-MoSelAuDyORScBuRWavD0WaVyAQ>
-    <xmx:e_DtWxpKtNbvHJEwfCU8u-W5IG0ee2bZ9aPKJwHSGyYpYPdWuoe2uQ>
-    <xmx:e_DtWyDTwZSOi_dqStlJihlPCdPOz6nzeyWTepjb0iPeZ1IBFKl-Hw>
-    <xmx:e_DtW6NdIVfqXsQebFcdtDp6durAOiGjCWYHtjqD-Y07NWa7LWYnag>
-    <xmx:e_DtWwDn9H9R8oel0YaDzvqfkfMRVvWs1QXgOTWM_RTGKfDx7B4STg>
-    <xmx:e_DtWz-agHwjVkvazOysaRwH06lpC6AzcHWNPuxCTrjb-aVfpfXFEg>
+        fm1; bh=QuTM9RYjL9w5CMKskoMwsV3+b5RvhIJ1DEvyj9LlsaM=; b=UJaz7x2t
+        jtUuuDvrkIjhzQsX/6Z4Hm/wEBqYpiJGUgDQjB9mAo82QwmGPcHAvOvJ4IQTf0Cp
+        T/pFSs2tUcjUSjTA+5duauSulPNJSmRz4pfRgtOAXLyxHiB2l5rSlFZSbp3CPn/Y
+        Nr6fEaJE3gS4uMDqeKdXD1iWp21KVw4RC9L7FGSBQe1eycwLrL2VrUEnwbxp0JMX
+        HV8wdf0u2mhThBjhKJMfGrZHc/pAkSxe4f8im62fnFJp5sqapcaKUsxfd8PJsPdN
+        VOC1IllJY3f7+hbeU429zG04tlMKEyMHF0HIMi8Jlg3ac0awuh/lcSBa1zOdn4rb
+        zoCep4FXjpa8qw==
+X-ME-Sender: <xms:hfDtW0awH6Tf-ydTJocpnTDAbxCGPTFpfv4EA2W_GHjFrgyEcUVwag>
+X-ME-Proxy: <xmx:hfDtW4tkCUm9c6sdJZiMo7W4LtKH9xDCLRlC3s9KRw4Ft35nOfH_ZQ>
+    <xmx:hfDtW1qnwffXdNr_3jnvl1oY3w1CxJYjhp6FcIZsf5060mkcMVwOhw>
+    <xmx:hfDtW1lmofS4ql24vchTgDgojxLxmhg58oV-MbCMTTZTjXbwO-9ZBQ>
+    <xmx:hfDtW5wHf5waMrwko4Y-qRYDl0Wdjoy1eF8Wr4exoqQ1dTUjPPTFww>
+    <xmx:hfDtW9lQVKy7J9FQpsgZuyZC6HNqpCg6Ea6uRMV8SwJ9vrdEn6urpQ>
+    <xmx:hfDtW3CCPnb5eLyPlNF5zzdY6vVwqpuaNpT-7c9j5AOKruTIX7cjCQ>
 Received: from zaca_x230.localdomain (unknown [109.205.143.80])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 49BC2E4307;
-        Thu, 15 Nov 2018 17:17:27 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 097B6E46B7;
+        Thu, 15 Nov 2018 17:17:35 -0500 (EST)
 From:   Fernando Ramos <greenfoo@gluegarage.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     David Airlie <airlied@linux.ie>,
@@ -92,9 +92,9 @@ Cc:     David Airlie <airlied@linux.ie>,
         virtualization@lists.linux-foundation.org,
         etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         cocci@systeme.lip6.fr
-Subject: [PATCH 4/9] drm: remove deprecated "drm_dev_unref" function
-Date:   Thu, 15 Nov 2018 23:16:24 +0100
-Message-Id: <20181115221634.22715-5-greenfoo@gluegarage.com>
+Subject: [PATCH 5/9] drm: replace "drm_connector_unreference" with "drm_connector_put"
+Date:   Thu, 15 Nov 2018 23:16:25 +0100
+Message-Id: <20181115221634.22715-6-greenfoo@gluegarage.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181115221634.22715-1-greenfoo@gluegarage.com>
 References: <20181115221634.22715-1-greenfoo@gluegarage.com>
@@ -105,51 +105,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are no more places where this (deprecated) function is being used
-from, thus it can now be removed.
+This patch unifies the naming of DRM functions for reference counting as
+requested on Documentation/gpu/todo.rst
 
 Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
 ---
- drivers/gpu/drm/drm_drv.c | 13 -------------
- include/drm/drm_drv.h     |  1 -
- 2 files changed, 14 deletions(-)
+ drivers/gpu/drm/bridge/tc358764.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
-index 36e8e9cbec52..22c8f8252207 100644
---- a/drivers/gpu/drm/drm_drv.c
-+++ b/drivers/gpu/drm/drm_drv.c
-@@ -706,19 +706,6 @@ void drm_dev_put(struct drm_device *dev)
+diff --git a/drivers/gpu/drm/bridge/tc358764.c b/drivers/gpu/drm/bridge/tc358764.c
+index ee6b98efa9c2..afd491018bfc 100644
+--- a/drivers/gpu/drm/bridge/tc358764.c
++++ b/drivers/gpu/drm/bridge/tc358764.c
+@@ -379,7 +379,7 @@ static void tc358764_detach(struct drm_bridge *bridge)
+ 	drm_fb_helper_remove_one_connector(drm->fb_helper, &ctx->connector);
+ 	drm_panel_detach(ctx->panel);
+ 	ctx->panel = NULL;
+-	drm_connector_unreference(&ctx->connector);
++	drm_connector_put(&ctx->connector);
  }
- EXPORT_SYMBOL(drm_dev_put);
  
--/**
-- * drm_dev_unref - Drop reference of a DRM device
-- * @dev: device to drop reference of or NULL
-- *
-- * This is a compatibility alias for drm_dev_put() and should not be used by new
-- * code.
-- */
--void drm_dev_unref(struct drm_device *dev)
--{
--	drm_dev_put(dev);
--}
--EXPORT_SYMBOL(drm_dev_unref);
--
- static int create_compat_control_link(struct drm_device *dev)
- {
- 	struct drm_minor *minor;
-diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
-index 3199ef70c007..abac47c10f1d 100644
---- a/include/drm/drm_drv.h
-+++ b/include/drm/drm_drv.h
-@@ -621,7 +621,6 @@ void drm_dev_unregister(struct drm_device *dev);
- 
- void drm_dev_get(struct drm_device *dev);
- void drm_dev_put(struct drm_device *dev);
--void drm_dev_unref(struct drm_device *dev);
- void drm_put_dev(struct drm_device *dev);
- bool drm_dev_enter(struct drm_device *dev, int *idx);
- void drm_dev_exit(int idx);
+ static const struct drm_bridge_funcs tc358764_bridge_funcs = {
 -- 
 2.19.1
 
