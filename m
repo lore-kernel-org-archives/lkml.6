@@ -2,94 +2,57 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4AE5BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 31945C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:18:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1D6702086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:18:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D6702086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0211B2086A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:18:34 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0211B2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388493AbeKPB0g (ORCPT
+        id S2388543AbeKPB0s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:26:36 -0500
-Received: from mga18.intel.com ([134.134.136.126]:18963 "EHLO mga18.intel.com"
+        Thu, 15 Nov 2018 20:26:48 -0500
+Received: from mga07.intel.com ([134.134.136.100]:28364 "EHLO mga07.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388437AbeKPB0g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 20:26:36 -0500
+        id S1726432AbeKPB0s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 20:26:48 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 07:18:19 -0800
+Received: from fmsmga006.fm.intel.com ([10.253.24.20])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 07:18:32 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,236,1539673200"; 
-   d="scan'208";a="96545068"
-Received: from jlpingle-mobl.amr.corp.intel.com (HELO [10.251.6.38]) ([10.251.6.38])
-  by FMSMGA003.fm.intel.com with ESMTP; 15 Nov 2018 07:18:18 -0800
-Subject: Re: [PATCH v3 2/2] proc: add /proc/<pid>/arch_state
-To:     Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
-Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        arjan@linux.intel.com, linux-kernel@vger.kernel.org,
-        Aubrey Li <aubrey.li@linux.intel.com>
-References: <1542236407-4323-1-git-send-email-aubrey.li@intel.com>
- <1542236407-4323-2-git-send-email-aubrey.li@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <b869aa99-02e7-961d-829c-bf275023e06e@intel.com>
-Date:   Thu, 15 Nov 2018 07:18:18 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+   d="scan'208";a="281352803"
+Received: from linux.intel.com ([10.54.29.200])
+  by fmsmga006.fm.intel.com with ESMTP; 15 Nov 2018 07:18:31 -0800
+Received: from [10.251.29.1] (kliang2-mobl1.ccr.corp.intel.com [10.251.29.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id 3AA4E580475;
+        Thu, 15 Nov 2018 07:18:28 -0800 (PST)
+Subject: Re: [PATCH 1/2] perf vendor events: Add stepping in CPUID string for
+ x86
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        ak@linux.intel.com
+References: <20181114212416.15665-1-kan.liang@linux.intel.com>
+ <20181115135347.GI9600@krava>
+ <7a63fdf4-828f-0685-e146-6d3d86d8655b@linux.intel.com>
+Message-ID: <58a3caa6-0ba9-773b-9f99-1e4be5ff77fb@linux.intel.com>
+Date:   Thu, 15 Nov 2018 10:18:27 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <1542236407-4323-2-git-send-email-aubrey.li@intel.com>
-Content-Type: text/plain; charset=utf-8
+In-Reply-To: <7a63fdf4-828f-0685-e146-6d3d86d8655b@linux.intel.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
 Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
@@ -97,33 +60,91 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/14/18 3:00 PM, Aubrey Li wrote:
-> +void arch_thread_state(struct seq_file *m, struct task_struct *task)
-> +{
-> +	/*
-> +	 * Report AVX-512 Hi16_ZMM registers usage
-> +	 */
-> +	if (task->thread.fpu.hi16zmm_usage)
-> +		seq_putc(m, '1');
-> +	else
-> +		seq_putc(m, '0');
-> +	seq_putc(m, '\n');
-> +}
 
-Am I reading this right that this file just dumps out a plain 0 or 1
-based on the internal kernel state?  BTW, there's no example of the
-output in the changelog, so it's rather hard to tell if my guess is
-right.  (Hint, hint).
 
-If so, I'd really prefer you not do this.  We have /proc/$pid/stat to
-stand as a disaster in this regard.  It is essentially
-non-human-readable gibberish because it's impossible to tell what the
-values mean without a decoder ring.
+On 11/15/2018 9:26 AM, Liang, Kan wrote:
+> 
+> 
+> On 11/15/2018 8:53 AM, Jiri Olsa wrote:
+>> On Wed, Nov 14, 2018 at 01:24:15PM -0800, kan.liang@linux.intel.com 
+>> wrote:
+>>
+>> SNIP
+>>
+>>> diff --git a/tools/perf/arch/x86/util/header.c 
+>>> b/tools/perf/arch/x86/util/header.c
+>>> index fb0d71afee8b..b428a4b00bf7 100644
+>>> --- a/tools/perf/arch/x86/util/header.c
+>>> +++ b/tools/perf/arch/x86/util/header.c
+>>> @@ -4,6 +4,7 @@
+>>>   #include <stdio.h>
+>>>   #include <stdlib.h>
+>>>   #include <string.h>
+>>> +#include <regex.h>
+>>>   #include "../../util/header.h"
+>>> @@ -70,9 +71,73 @@ get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
+>>>   {
+>>>       char *buf = malloc(128);
+>>> -    if (buf && __get_cpuid(buf, 128, "%s-%u-%X$") < 0) {
+>>> +    if (buf && __get_cpuid(buf, 128, "%s-%u-%X-%X$") < 0) {
+>>>           free(buf);
+>>>           return NULL;
+>>>       }
+>>>       return buf;
+>>>   }
+>>> +
+>>> +/* Full CPUID format for x86 is vendor-family-model-stepping */
+>>> +static bool is_full_cpuid(const char *cpuid)
+>>> +{
+>>> +    const char *tmp = cpuid;
+>>> +    int count = 0;
+>>> +
+>>> +    while ((tmp = strchr(tmp, '-')) != NULL) {
+>>> +        count++;
+>>> +        tmp++;
+>>> +    }
+>>> +
+>>> +    if (count == 3)
+>>> +        return true;
+>>> +
+>>> +    return false;
+>>> +}
+>>> +
+>>> +int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
+>>> +{
+>>> +    regex_t re;
+>>> +    regmatch_t pmatch[1];
+>>> +    int match;
+>>> +    bool full_mapcpuid = is_full_cpuid(mapcpuid);
+>>> +    bool full_cpuid = is_full_cpuid(cpuid);
+>>
+>> cpuid will be always full from now right? why do we need to check it?
+>>
+> 
+> User may set cpuid by environment string "PERF_CPUID", which may not be 
+> full format.
+> 
+>> also please move this to arch/x86/util/pmu.c
+>> so it matches the weak function object
+> 
+> Sure.
+> 
 
-If we go down this road, we need a file along the lines of
-/proc/$pid/status.
+It looks like both pmu.c and header.c have cpuid related functions.
+For example,
+get_cpuid_str() has weak function in pmu.c. It's declaration in 
+header.h. It's x86 specific function in x86/util/header.c
+get_cpuid() has weak function in header.c. It's declaration in header.h. 
+It's x86 specific function in x86/util/header.c
 
-But, either way, this is a new ABI that we need to consider carefully.
-It needs documentation.  For instance, will this really mean "Hi16_ZMM
-user" from now until the end of time?  Or, does it just mean "group me
-with other tasks that have this bit set"?
+It looks like most of the cpuid related functions are in header.c/h.
+I think it may be better to move all the cpuid related functions to 
+header.c/h.
+
+If it's OK for you, I will send a clean up patch later to move the weak 
+functions strcmp_cpuid_str() and get_cpuid_str() to header.c
+
+What do you think?
+
+Thanks,
+Kan
