@@ -2,149 +2,112 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 156D0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:12:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9293C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:14:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C509E2250F
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:12:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MqmwYGlC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C509E2250F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 9C57B21780
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:14:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C57B21780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387854AbeKOVT6 (ORCPT
+        id S2387993AbeKOVVb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 16:19:58 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41473 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726664AbeKOVT6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 16:19:58 -0500
-Received: by mail-pf1-f196.google.com with SMTP id e22-v6so9533131pfn.8
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 03:12:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=vbop7OBClJCjHFIGAS9SchFiWVOUl+A2vrJQpE6xDgg=;
-        b=MqmwYGlCZvrs+wFca/CvXCN/dDPkgaHpKRhTAXgTyjm7SO5PWBqkYXhY52NN2pOtt7
-         FgUdlxZshkkyhsDTyxBhp1VBdIaXujfvJJ9pfoh3XmuBjlwMJwQBypTrteDrqF/BVqEL
-         6ktLDPFBECMqAgh6cIasWoeBiTdCP3pzJ0ZGQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=vbop7OBClJCjHFIGAS9SchFiWVOUl+A2vrJQpE6xDgg=;
-        b=hhi2YzgkPgC/fWS+Y59frqBDzehFSxu5hQtjAhlYkBugW6uOY/Km0rdtKRlnKL1Nmz
-         q90NKetoreQVo9s6pNhdvpEdo0Z2/CvKjG3GCdyzLlxSpwkjMBI+UohAPih5zYXfuVrv
-         n8UrTnP50SJkLi68UkabtyGRAMP0XKjLTuxUFyxW1hd+TDLthXpqvdXwhDE3gy5c1HSi
-         7GHx4POMQheXbYLM1SMskZFt8g5PlqKYTW1Up1QI7JU0DkO7A7sYkGHooiH09/YEl8Gb
-         K0Nkpf0JXanqLCFwULbwdaydOViqRh9w+iJkff6NsMA3d1KrFuAj4u8wX2ycVci9SMpz
-         8V8A==
-X-Gm-Message-State: AGRZ1gJH5/A8jGuwYTBrI0zfHEVyQUBfM414x5vHRV+H2H/Xa4q7qTI8
-        TSMnsrHSTu4MzK2BzSzfkzaG
-X-Google-Smtp-Source: AJdET5eNKEk7WQhf1e+rEgCmNG9nmwOMPIU6pAdtoPHqVKk7satIkNmxuNFgfI33rJUQMzpt8ZNsvg==
-X-Received: by 2002:a63:4101:: with SMTP id o1mr5308155pga.447.1542280353861;
-        Thu, 15 Nov 2018 03:12:33 -0800 (PST)
-Received: from Mani-XPS-13-9360 ([2409:4072:908:5dae:cd7f:9353:9ed0:7488])
-        by smtp.gmail.com with ESMTPSA id 19sm4821432pfs.108.2018.11.15.03.12.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 03:12:33 -0800 (PST)
-Date:   Thu, 15 Nov 2018 16:42:25 +0530
-From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To:     Parthiban Nallathambi <pn@denx.de>
-Cc:     afaerber@suse.de, robh+dt@kernel.org, mark.rutland@arm.com,
-        wsa@the-dreams.de, linux-arm-kernel@lists.infradead.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: actions: s700: Add I2C controller nodes
-Message-ID: <20181115111217.GC15537@Mani-XPS-13-9360>
-References: <20181113133235.37754-1-pn@denx.de>
+        Thu, 15 Nov 2018 16:21:31 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60342 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725827AbeKOVVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 16:21:31 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B497A78;
+        Thu, 15 Nov 2018 03:14:06 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82A9D3F718;
+        Thu, 15 Nov 2018 03:14:03 -0800 (PST)
+Date:   Thu, 15 Nov 2018 11:13:56 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Lukas Wunner <lukas@wunner.de>, iommu@lists.linux-foundation.org,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Jacob jun Pan <jacob.jun.pan@intel.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Christian Kellner <ckellner@redhat.com>,
+        Mario.Limonciello@dell.com,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
+Message-ID: <20181115111356.GA599@e107981-ln.cambridge.arm.com>
+References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
+ <20181112160628.86620-2-mika.westerberg@linux.intel.com>
+ <20181112180203.lx72gjfplb6xlur7@wunner.de>
+ <20181113105636.GB11202@e107981-ln.cambridge.arm.com>
+ <20181113112700.GT2500@lahna.fi.intel.com>
+ <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
+ <20181115102239.GU2500@lahna.fi.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181113133235.37754-1-pn@denx.de>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+In-Reply-To: <20181115102239.GU2500@lahna.fi.intel.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Parthiban,
-
-On Tue, Nov 13, 2018 at 02:32:35PM +0100, Parthiban Nallathambi wrote:
-> Add I2C controller nodes for Actions Semiconductor S700 SoC.
+On Thu, Nov 15, 2018 at 12:22:39PM +0200, Mika Westerberg wrote:
+> On Tue, Nov 13, 2018 at 11:45:36AM +0000, Lorenzo Pieralisi wrote:
+> > On Tue, Nov 13, 2018 at 01:27:00PM +0200, Mika Westerberg wrote:
+> > 
+> > [...]
+> > 
+> > > > To be frank the concept (and Microsoft _DSD bindings) seems a bit vague
+> > > > and not thoroughly defined and I would question its detection at
+> > > > PCI/ACPI core level, I would hope this can be clarified at ACPI
+> > > > specification level, at least.
+> > > 
+> > > I guess that is the way they envision to use _DSD. Instead of having
+> > > single UUID that covers all properties (like what we have with device
+> > > properties) they have one UUID per property "class". I certainly hope we
+> > > don't need to keep extending prp_guids[] array each time they invent
+> > > another "class" of properties.
+> > 
+> > It is even worse than that. This is a unilateral/obscure change that
+> > won't be part of ACPI specifications (I guess it was easier to add a
+> > UUID than add this to the ACPI specifications through the AWSG) but it
+> > is still supposed to be applicable to ACPI PCI bindings on any
+> > platforms/arches; this way of adding bindings does not work and it
+> > has to be rectified.
 > 
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-> ---
->  arch/arm64/boot/dts/actions/s700.dtsi | 40 +++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
+> I agree.
 > 
-> diff --git a/arch/arm64/boot/dts/actions/s700.dtsi b/arch/arm64/boot/dts/actions/s700.dtsi
-> index 192c7b39c8c1..573c844d7afe 100644
-> --- a/arch/arm64/boot/dts/actions/s700.dtsi
-> +++ b/arch/arm64/boot/dts/actions/s700.dtsi
-> @@ -174,6 +174,46 @@
->  			#clock-cells = <1>;
->  		};
->  
-> +		i2c0: i2c@e0170000 {
-> +			compatible = "actions,s900-i2c";
-
-Why don't you add a compatible for S700? Also, please add the pinctrl
-nodes for these busses and enable the ones exposed on board. These could
-go in a separate patch.
-
-Thanks,
-Mani
-
-> +			reg = <0 0xe0170000 0 0x1000>;
-> +			clocks = <&cmu CLK_I2C0>;
-> +			interrupts = <GIC_SPI 25 IRQ_TYPE_LEVEL_HIGH>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
-> +		i2c1: i2c@e0174000 {
-> +			compatible = "actions,s900-i2c";
-> +			reg = <0 0xe0174000 0 0x1000>;
-> +			clocks = <&cmu CLK_I2C1>;
-> +			interrupts = <GIC_SPI 26 IRQ_TYPE_LEVEL_HIGH>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
-> +		i2c2: i2c@e0178000 {
-> +			compatible = "actions,s900-i2c";
-> +			reg = <0 0xe0178000 0 0x1000>;
-> +			clocks = <&cmu CLK_I2C2>;
-> +			interrupts = <GIC_SPI 27 IRQ_TYPE_LEVEL_HIGH>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
-> +		i2c3: i2c@e017c000 {
-> +			compatible = "actions,s900-i2c";
-> +			reg = <0 0xe017c000 0 0x1000>;
-> +			clocks = <&cmu CLK_I2C3>;
-> +			interrupts = <GIC_SPI 28 IRQ_TYPE_LEVEL_HIGH>;
-> +			#address-cells = <1>;
-> +			#size-cells = <0>;
-> +			status = "disabled";
-> +		};
-> +
->  		sps: power-controller@e01b0100 {
->  			compatible = "actions,s700-sps";
->  			reg = <0x0 0xe01b0100 0x0 0x100>;
-> -- 
-> 2.17.2
+> For the existing property "classes" such as the one here I don't think
+> we can do anything. There are systems already with these included in
+> their ACPI tables.
 > 
+> I wonder if you have any objections regarding this patch?
+
+I have strong objections to the way these bindings have been forced upon
+everybody; if that's the way *generic* ACPI bindings are specified I
+wonder why there still exists an ACPI specification and related working
+group.
+
+I personally (but that's Bjorn and Rafael choice) think that this is
+not a change that belongs in PCI core, ACPI bindings are ill-defined
+and device tree bindings are non-existing.
+
+At the very least Microsoft should be asked to publish and discuss
+these bindings within the ACPI and UEFI forums.
+
+Lorenzo
