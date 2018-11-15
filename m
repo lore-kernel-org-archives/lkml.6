@@ -2,133 +2,119 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
 	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B985C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:38:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84722C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:40:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 004D82089D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:38:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 004D82089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 52185224E0
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:40:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52185224E0
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729033AbeKOSpl (ORCPT
+        id S1728870AbeKOSqw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 13:45:41 -0500
-Received: from mga17.intel.com ([192.55.52.151]:47159 "EHLO mga17.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728527AbeKOSpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 13:45:40 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 00:38:49 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,235,1539673200"; 
-   d="scan'208";a="104573356"
-Received: from aaronlu.sh.intel.com (HELO intel.com) ([10.239.159.44])
-  by fmsmga002.fm.intel.com with ESMTP; 15 Nov 2018 00:38:47 -0800
-Date:   Thu, 15 Nov 2018 16:38:47 +0800
-From:   Aaron Lu <aaron.lu@intel.com>
-To:     linux-mm <linux-mm@kvack.org>, lkml <linux-kernel@vger.kernel.org>
-Cc:     Vasily Averin <vvs@virtuozzo.com>, Michal Hocko <mhocko@suse.com>,
-        Huang Ying <ying.huang@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH] mm/swap: use nr_node_ids for avail_lists in swap_info_struct
-Message-ID: <20181115083847.GA11129@intel.com>
+        Thu, 15 Nov 2018 13:46:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42062 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728519AbeKOSqw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 13:46:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 90E2AAE78;
+        Thu, 15 Nov 2018 08:39:58 +0000 (UTC)
+Date:   Thu, 15 Nov 2018 09:39:57 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Matthew Wilcox <willy@infradead.org>,
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 1/1] vmalloc: add test driver to analyse vmalloc
+ allocator
+Message-ID: <20181115083957.GE23831@dhcp22.suse.cz>
+References: <20181113151629.14826-1-urezki@gmail.com>
+ <20181113151629.14826-2-urezki@gmail.com>
+ <20181113141046.f62f5bd88d4ebc663b0ac100@linux-foundation.org>
+ <20181114151737.GA23419@dhcp22.suse.cz>
+ <20181114150053.c3fe42507923322a0a10ae1c@linux-foundation.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20181114150053.c3fe42507923322a0a10ae1c@linux-foundation.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit a2468cc9bfdf ("swap: choose swap device according to
-numa node"), avail_lists field of swap_info_struct is changed to
-an array with MAX_NUMNODES elements. This made swap_info_struct
-size increased to 40KiB and needs an order-4 page to hold it.
+On Wed 14-11-18 15:00:53, Andrew Morton wrote:
+> On Wed, 14 Nov 2018 16:17:37 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+> 
+> > On Tue 13-11-18 14:10:46, Andrew Morton wrote:
+> > [...]
+> > > > +static int vmalloc_test_init(void)
+> > > > +{
+> > > > +	__my_vmalloc_node_range =
+> > > > +		(void *) kallsyms_lookup_name("__vmalloc_node_range");
+> > > > +
+> > > > +	if (__my_vmalloc_node_range)
+> > > > +		do_concurrent_test();
+> > > > +
+> > > > +	return -EAGAIN; /* Fail will directly unload the module */
+> > > > +}
+> > > 
+> > > It's unclear why this module needs access to the internal
+> > > __vmalloc_node_range().  Please fully explain this in the changelog.
+> > > 
+> > > Then, let's just export the thing.  (I expect this module needs a
+> > > Kconfig dependency on CONFIG_KALLSYMS, btw).  A suitable way of doing
+> > > that would be
+> > > 
+> > > /* Exported for lib/test_vmalloc.c.  Please do not use elsewhere */
+> > > EXPORT_SYMBOL_GPL(__vmalloc_node_range);
+> > 
+> > There was a previous discussion that testing for internal infrastructure
+> > is useful quite often and such a testing module needs an access to such
+> > an internal infrastructure. Exporting those symbols via standard
+> > EXPORT_SYMBOL_GPL is far from optimal because we can be pretty much sure
+> > an abuse will arise sooner than later. I was proposing
+> > EXPORT_SYMBOL_SELFTEST that would link only against testing modules.
+> 
+> That's rather overdoing things, I think.  If someone uses a
+> dont-use-this symbol then they get to own both pieces when it breaks.
 
-This is not optimal in that:
-1 Most systems have way less than MAX_NUMNODES(1024) nodes so it
-  is a waste of memory;
-2 It could cause swapon failure if the swap device is swapped on
-  after system has been running for a while, due to no order-4
-  page is available as pointed out by Vasily Averin.
+I do not think this has ever worked out. People are abusing internal
+stuff and then we have to live with that. That is my experience at
+least.
 
-Solve the above two issues by using nr_node_ids(which is the actual
-possible node number the running system has) for avail_lists instead
-of MAX_NUMNODES.
+> We could simply do
+> 
+> #define EXPORT_SYMBOL_SELFTEST EXPORT_SYMBOL_GPL
+>
+> then write a script which checks the tree for usages of the
+> thus-tagged symbols outside tools/testing and lib/ (?)
 
-nr_node_ids is unknown at compile time so can't be directly used
-when declaring this array. What I did here is to declare avail_lists
-as zero element array and allocate space for it when allocating
-space for swap_info_struct. The reason why keep using array but
-not pointer is plist_for_each_entry needs the field to be part
-of the struct, so pointer will not work.
+and then yell at people? We can try it out of course. The namespace
+would be quite clear and we could document the supported usage pattern.
+We also want to make EXPORT_SYMBOL_SELFTEST conditional. EXPORTs are not
+free and we do not want to add them if the whole testing infrastructure
+is disabled (assuming there is a global one for that).
 
-This patch is on top of Vasily Averin's fix commit. I think the
-use of kvzalloc for swap_info_struct is still needed in case
-nr_node_ids is really big on some systems.
+> > If that is not viable for some reason then kallsyms_lookup_name is a
+> > dirty-but-usable workaround.
+> 
+> Well yes.  It adds a dependency on CONFIG_KALLSYMS and will cause
+> silent breakage if __vmalloc_node_range gets renamed, has its arguments
+> changed, etc.
 
-Cc: Vasily Averin <vvs@virtuozzo.com>
-Cc: Michal Hocko <mhocko@suse.com>
-Cc: Huang Ying <ying.huang@intel.com>
-Signed-off-by: Aaron Lu <aaron.lu@intel.com>
----
- include/linux/swap.h | 11 ++++++++++-
- mm/swapfile.c        |  3 ++-
- 2 files changed, 12 insertions(+), 2 deletions(-)
+Yeah, I've said dirty ;)
 
-diff --git a/include/linux/swap.h b/include/linux/swap.h
-index d8a07a4f171d..3d3630b3f63d 100644
---- a/include/linux/swap.h
-+++ b/include/linux/swap.h
-@@ -233,7 +233,6 @@ struct swap_info_struct {
- 	unsigned long	flags;		/* SWP_USED etc: see above */
- 	signed short	prio;		/* swap priority of this type */
- 	struct plist_node list;		/* entry in swap_active_head */
--	struct plist_node avail_lists[MAX_NUMNODES];/* entry in swap_avail_heads */
- 	signed char	type;		/* strange name for an index */
- 	unsigned int	max;		/* extent of the swap_map */
- 	unsigned char *swap_map;	/* vmalloc'ed array of usage counts */
-@@ -274,6 +273,16 @@ struct swap_info_struct {
- 					 */
- 	struct work_struct discard_work; /* discard worker */
- 	struct swap_cluster_list discard_clusters; /* discard clusters list */
-+	struct plist_node avail_lists[0]; /*
-+					   * entries in swap_avail_heads, one
-+					   * entry per node.
-+					   * Must be last as the number of the
-+					   * array is nr_node_ids, which is not
-+					   * a fixed value so have to allocate
-+					   * dynamically.
-+					   * And it has to be an array so that
-+					   * plist_for_each_* can work.
-+					   */
- };
- 
- #ifdef CONFIG_64BIT
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 8688ae65ef58..6e06821623f6 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -2812,8 +2812,9 @@ static struct swap_info_struct *alloc_swap_info(void)
- 	struct swap_info_struct *p;
- 	unsigned int type;
- 	int i;
-+	int size = sizeof(*p) + nr_node_ids * sizeof(struct plist_node);
- 
--	p = kvzalloc(sizeof(*p), GFP_KERNEL);
-+	p = kvzalloc(size, GFP_KERNEL);
- 	if (!p)
- 		return ERR_PTR(-ENOMEM);
- 
 -- 
-2.17.2
-
+Michal Hocko
+SUSE Labs
