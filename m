@@ -2,156 +2,162 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 23E3FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:36:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7671C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:36:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E75A12243E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:36:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E75A12243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 8A9BF2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:36:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A9BF2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388289AbeKOTnO (ORCPT
+        id S2388336AbeKOTnX convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:43:14 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:46470 "EHLO
-        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388019AbeKOTnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:43:12 -0500
-Received: by wens.csie.org (Postfix, from userid 1000)
-        id D58CA5FD95; Thu, 15 Nov 2018 17:36:04 +0800 (CST)
-From:   Chen-Yu Tsai <wens@csie.org>
-To:     Marcel Holtmann <marcel@holtmann.org>,
-        Johan Hedberg <johan.hedberg@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>,
-        Loic Poulain <loic.poulain@gmail.com>,
-        linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 08/15] Bluetooth: hci_bcm: Add support for LPO clock
-Date:   Thu, 15 Nov 2018 17:35:56 +0800
-Message-Id: <20181115093603.26729-9-wens@csie.org>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181115093603.26729-1-wens@csie.org>
-References: <20181115093603.26729-1-wens@csie.org>
+        Thu, 15 Nov 2018 14:43:23 -0500
+Received: from lhrrgout.huawei.com ([185.176.76.210]:32772 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728887AbeKOTnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:43:22 -0500
+Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.108])
+        by Forcepoint Email with ESMTP id 018FEA423ECD6;
+        Thu, 15 Nov 2018 09:36:16 +0000 (GMT)
+Received: from FRAEMA702-CHM.china.huawei.com (10.206.14.51) by
+ lhreml701-cah.china.huawei.com (10.201.108.42) with Microsoft SMTP Server
+ (TLS) id 14.3.408.0; Thu, 15 Nov 2018 09:36:17 +0000
+Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.76]) by
+ FRAEMA702-CHM.china.huawei.com ([169.254.2.148]) with mapi id 14.03.0415.000;
+ Thu, 15 Nov 2018 10:36:10 +0100
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     Leon Romanovsky <leon@kernel.org>
+CC:     "davem@davemloft.net" <davem@davemloft.net>,
+        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
+        "lipeng (Y)" <lipeng321@huawei.com>,
+        "mehta.salil@opnsrc.net" <mehta.salil@opnsrc.net>,
+        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
+        Linuxarm <linuxarm@huawei.com>
+Subject: RE: [PATCH net-next 1/5] net: hns3: Enable HW GRO for Rev B(=0x21)
+ HNS3 hardware
+Thread-Topic: [PATCH net-next 1/5] net: hns3: Enable HW GRO for Rev B(=0x21)
+ HNS3 hardware
+Thread-Index: AQHUezmnt+3C9Q8AW0CD0gBKHyEzqqVNf78AgAMVqvA=
+Date:   Thu, 15 Nov 2018 09:36:10 +0000
+Message-ID: <F4CC6FACFEB3C54C9141D49AD221F7F93BFB6F3E@FRAEML521-MBX.china.huawei.com>
+References: <20181113101307.6020-1-salil.mehta@huawei.com>
+ <20181113101307.6020-2-salil.mehta@huawei.com>
+ <20181113112446.GC3759@mtr-leonro.mtl.com>
+In-Reply-To: <20181113112446.GC3759@mtr-leonro.mtl.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.47.88.106]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Broadcom Bluetooth controllers support a secondary LPO clock at
-32.768 kHz. This external clock provides low power timing, and also
-a way to detect the frequency of the main reference clock. On many
-designs without NVRAM and a non-default reference clock, this must
-be used or the controller will not function correctly.
+> From: Leon Romanovsky [mailto:leon@kernel.org]
+> Sent: Tuesday, November 13, 2018 11:25 AM
+> To: Salil Mehta <salil.mehta@huawei.com>
+> Cc: davem@davemloft.net; Zhuangyuzeng (Yisen) <yisen.zhuang@huawei.com>;
+> lipeng (Y) <lipeng321@huawei.com>; mehta.salil@opnsrc.net;
+> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
+> rdma@vger.kernel.org; Linuxarm <linuxarm@huawei.com>
+> Subject: Re: [PATCH net-next 1/5] net: hns3: Enable HW GRO for Rev
+> B(=0x21) HNS3 hardware
+> 
+> On Tue, Nov 13, 2018 at 10:13:03AM +0000, Salil Mehta wrote:
+> > From: Peng Li <lipeng321@huawei.com>
+> >
+> > HNS3 hardware Revision B(=0x21) supports Hardware GRO feature. This
+> > patch enables this feature in the HNS3 PF/VF driver.
+> >
+> > Signed-off-by: Peng Li <lipeng321@huawei.com>
+> > Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 
-Signed-off-by: Chen-Yu Tsai <wens@csie.org>
----
- drivers/bluetooth/hci_bcm.c | 41 ++++++++++++++++++++++++++++++++-----
- 1 file changed, 36 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index 1584c95c9c34..345d728a5434 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -72,7 +72,8 @@
-  * @btpu: Apple ACPI method to drive BT_REG_ON pin high ("Bluetooth Power Up")
-  * @btpd: Apple ACPI method to drive BT_REG_ON pin low ("Bluetooth Power Down")
-  * @txco_clk: external reference frequency clock used by Bluetooth device
-- * @clk_enabled: whether @txco_clk is prepared and enabled
-+ * @lpo_clk: external LPO clock used by Bluetooth device
-+ * @clk_enabled: whether clocks are prepared and enabled
-  * @init_speed: default baudrate of Bluetooth device;
-  *	the host UART is initially set to this baudrate so that
-  *	it can configure the Bluetooth device for @oper_speed
-@@ -103,6 +104,7 @@ struct bcm_device {
- #endif
- 
- 	struct clk		*txco_clk;
-+	struct clk		*lpo_clk;
- 	bool			clk_enabled;
- 
- 	u32			init_speed;
-@@ -215,21 +217,34 @@ static int bcm_gpio_set_power(struct bcm_device *dev, bool powered)
- 	int err;
- 
- 	if (powered && !dev->clk_enabled) {
--		err = clk_prepare_enable(dev->txco_clk);
-+		/* LPO clock needs to be 32.768 kHz */
-+		err = clk_set_rate(dev->lpo_clk, 32768);
-+		if (err) {
-+			dev_err(dev->dev, "Could not set LPO clock rate\n");
-+			return err;
-+		}
-+
-+		err = clk_prepare_enable(dev->lpo_clk);
- 		if (err)
- 			return err;
-+
-+		err = clk_prepare_enable(dev->txco_clk);
-+		if (err)
-+			goto err_lpo_clk_disable;
- 	}
- 
- 	err = dev->set_shutdown(dev, powered);
- 	if (err)
--		goto err_clk_disable;
-+		goto err_txco_clk_disable;
- 
- 	err = dev->set_device_wakeup(dev, powered);
- 	if (err)
- 		goto err_revert_shutdown;
- 
--	if (!powered && dev->clk_enabled)
-+	if (!powered && dev->clk_enabled) {
- 		clk_disable_unprepare(dev->txco_clk);
-+		clk_disable_unprepare(dev->lpo_clk);
-+	}
- 
- 	dev->clk_enabled = powered;
- 
-@@ -237,9 +252,12 @@ static int bcm_gpio_set_power(struct bcm_device *dev, bool powered)
- 
- err_revert_shutdown:
- 	dev->set_shutdown(dev, !powered);
--err_clk_disable:
-+err_txco_clk_disable:
- 	if (powered && !dev->clk_enabled)
- 		clk_disable_unprepare(dev->txco_clk);
-+err_lpo_clk_disable:
-+	if (powered && !dev->clk_enabled)
-+		clk_disable_unprepare(dev->lpo_clk);
- 	return err;
- }
- 
-@@ -934,6 +952,19 @@ static int bcm_get_resources(struct bcm_device *dev)
- 	if (IS_ERR(dev->txco_clk))
- 		dev->txco_clk = NULL;
- 
-+	dev->lpo_clk = devm_clk_get(dev->dev, "lpo");
-+	if (dev->lpo_clk == ERR_PTR(-EPROBE_DEFER))
-+		return PTR_ERR(dev->lpo_clk);
-+
-+	if (IS_ERR(dev->lpo_clk))
-+		dev->lpo_clk = NULL;
-+
-+	/* Check if we accidentally fetched the lpo clock twice */
-+	if (dev->lpo_clk && clk_is_match(dev->lpo_clk, dev->txco_clk)) {
-+		devm_clk_put(dev->dev, dev->txco_clk);
-+		dev->txco_clk = NULL;
-+	}
-+
- 	dev->device_wakeup = devm_gpiod_get_optional(dev->dev, "device-wakeup",
- 						     GPIOD_OUT_LOW);
- 	if (IS_ERR(dev->device_wakeup))
--- 
-2.19.1
+> >
+> > +	ret = hclge_config_gro(hdev, true);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev,
+> > +			"Failed to enable GRO in hardware, ret =%d\n", ret);
+> 
+> You already printed an error in the hclge_config_gro().
 
+sure. thanks.
+
+> 
+> > +		goto err_mdiobus_unreg;
+> > +	}
+> > +
+> >  	ret = hclge_init_vlan_config(hdev);
+> >  	if (ret) {
+> >  		dev_err(&pdev->dev, "VLAN init fail, ret =%d\n", ret);
+> > @@ -7221,6 +7250,13 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
+> >  		return ret;
+> >  	}
+> >
+> > +	ret = hclge_config_gro(hdev, true);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev,
+> > +			"Failed to enable GRO in hardware, ret =%d\n", ret);
+> 
+> Ditto
+
+ok.
+
+
+> >  static int hclgevf_rss_init_hw(struct hclgevf_dev *hdev)
+> >  {
+> >  	struct hclgevf_rss_cfg *rss_cfg = &hdev->rss_cfg;
+> > @@ -2122,6 +2145,13 @@ static int hclgevf_reset_hdev(struct
+> hclgevf_dev *hdev)
+> >  		return ret;
+> >  	}
+> >
+> > +	ret = hclgevf_config_gro(hdev, true);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev,
+> > +			"failed to enable VF GRO in hardware, ret =%d\n",
+> ret);
+> > +		return ret;
+> 
+> Ditto
+
+sure.
+
+
+> 
+> > +	}
+> > +
+> >  	ret = hclgevf_init_vlan_config(hdev);
+> >  	if (ret) {
+> >  		dev_err(&hdev->pdev->dev,
+> > @@ -2199,6 +2229,13 @@ static int hclgevf_init_hdev(struct hclgevf_dev
+> *hdev)
+> >  		goto err_config;
+> >  	}
+> >
+> > +	ret = hclgevf_config_gro(hdev, true);
+> > +	if (ret) {
+> > +		dev_err(&pdev->dev,
+> > +			"Failed to enable VF GRO in hardware, ret =%d\n",
+> ret);
+> 
+> Ditto
+
+Fixed in V2. Thanks Leon.
+
+
+Best regards
+Salil.
