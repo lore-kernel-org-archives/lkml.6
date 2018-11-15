@@ -2,290 +2,192 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-14.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9A365C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:44:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E32FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:48:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 266D0208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:44:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 266D0208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A57A2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:48:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A57A2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728047AbeKPHy1 (ORCPT
+        id S1726453AbeKPH5j (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 02:54:27 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:45940 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1725856AbeKPHy1 (ORCPT
+        Fri, 16 Nov 2018 02:57:39 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:41938 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbeKPH5i (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 02:54:27 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAFLiRqe072169
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 16:44:52 -0500
-Received: from e32.co.us.ibm.com (e32.co.us.ibm.com [32.97.110.150])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2nsent83r2-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 16:44:52 -0500
-Received: from localhost
-        by e32.co.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <julietk@linux.vnet.ibm.com>;
-        Thu, 15 Nov 2018 21:44:52 -0000
-Received: from b03cxnp08028.gho.boulder.ibm.com (9.17.130.20)
-        by e32.co.us.ibm.com (192.168.1.132) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 15 Nov 2018 21:44:47 -0000
-Received: from b03ledav001.gho.boulder.ibm.com (b03ledav001.gho.boulder.ibm.com [9.17.130.232])
-        by b03cxnp08028.gho.boulder.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAFLikwj19202070
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 15 Nov 2018 21:44:46 GMT
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 89E7C6E052;
-        Thu, 15 Nov 2018 21:44:46 +0000 (GMT)
-Received: from b03ledav001.gho.boulder.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id A71236E04C;
-        Thu, 15 Nov 2018 21:44:45 +0000 (GMT)
-Received: from juliets-mbp.austin.ibm.com (unknown [9.41.179.214])
-        by b03ledav001.gho.boulder.ibm.com (Postfix) with ESMTPS;
-        Thu, 15 Nov 2018 21:44:45 +0000 (GMT)
-To:     linuxppc-dev@lists.ozlabs.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Cc:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Thomas Falcon <tlfalcon@linux.vnet.ibm.com>,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        "David S. Miller" <davem@davemloft.net>,
-        Tyrel Datwyler <tyreld@linux.vnet.ibm.com>
-From:   Juliet Kim <julietk@linux.vnet.ibm.com>
-Subject: [PATCH] net/ibmnvic: Fix deadlock problem in reset
-Date:   Thu, 15 Nov 2018 15:44:44 -0600
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.0
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-TM-AS-GCONF: 00
-x-cbid: 18111521-0004-0000-0000-000014B33762
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010057; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01117969; UDB=6.00579908; IPR=6.00898078;
- MB=3.00024183; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-15 21:44:50
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111521-0005-0000-0000-000089861661
-Message-Id: <25faa351-51d3-3aeb-a1c9-e8d3259604dd@linux.vnet.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-15_16:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=2 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1011 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811150189
+        Fri, 16 Nov 2018 02:57:38 -0500
+Received: by mail-pf1-f195.google.com with SMTP id e22-v6so10315463pfn.8
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 13:48:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5lAnJ4Odmi3MOIXfrC7f3waSSM1TNTIQKK1l8SjDyk4=;
+        b=H96Thg7b2D6GFOqK7yFr2EJT/+iZeKKbN6xuiFE/HcVp4DLm91aB8bE9oaPEvBuMw5
+         3zpxpRxSjk8V3kQOeZ7upKkFO8heiIBdrIKO6CJybnWs47A8EaZTrNrTbBw8agTehYfL
+         tUiEnVpT6rLd93FLvuqE09MRlGbtmrpxiddTWVYepMZ1bj35eYFqe+X6YJEEmPqUDoBG
+         xk1TSXwvwE6IXkdFxMBWIs4P5XewOAN6N5Bj9UxTDrQv3zyvQC5HDIOWbSZ7XSp/tMzI
+         t7DojOGOpREGx501JNOhp/xWLjc63V46FUH8afON1rf1Ttzg+l2g60nXozCORK25ie9W
+         Wslw==
+X-Gm-Message-State: AGRZ1gKB+oQNhFk/3vw1Yr6tA6zGzMfvMVEehwNntRbgDxy/NgHm5bS3
+        7kg5F89pNx1gs5AR8bR1RAaf616x6A0=
+X-Google-Smtp-Source: AJdET5fEUFYsOrWhggAIBt5LpnTwfSWI4BpkgRXA8eV3TdOGoYjbhoMyKq8WcjAiYnztQIGPRxPX7Q==
+X-Received: by 2002:a62:995c:: with SMTP id d89-v6mr8169321pfe.11.1542318483718;
+        Thu, 15 Nov 2018 13:48:03 -0800 (PST)
+Received: from localhost ([122.177.154.119])
+        by smtp.gmail.com with ESMTPSA id z7sm17940256pga.6.2018.11.15.13.48.01
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 13:48:02 -0800 (PST)
+From:   Bhupesh Sharma <bhsharma@redhat.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     bhupesh.linux@gmail.com, bhsharma@redhat.com,
+        Boris Petkov <bp@alien8.de>, Baoquan He <bhe@redhat.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kazuhito Hagio <k-hagio@ab.jp.nec.com>,
+        Dave Anderson <anderson@redhat.com>,
+        James Morse <james.morse@arm.com>,
+        Omar Sandoval <osandov@fb.com>, x86@kernel.org,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH v2] x86_64, vmcoreinfo: Append 'page_offset_base' to vmcoreinfo
+Date:   Fri, 16 Nov 2018 03:17:49 +0530
+Message-Id: <1542318469-13699-1-git-send-email-bhsharma@redhat.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Subject: [PATCH] net/ibmnvic: Fix deadlock problem in reset
+x86_64 kernel uses 'page_offset_base' variable to point to the
+start of direct mapping of all physical memory. This variable
+is also updated for KASLR boot cases, so this can be exported
+via vmcoreinfo as a standard ABI between kernel and user-space,
+to allow user-space utilities to use the same for calculating
+the start of direct mapping of all physical memory.
 
-From: Juliet Kim <julietk@linux.vnet.ibm.com>
+'arch/x86/kernel/head64.c' sets the same as:
+   unsigned long page_offset_base __ro_after_init = __PAGE_OFFSET_BASE_L4;
 
-This patch changes to use rtnl_lock only during a reset to avoid
-deadlock that could occur when a thread operating close is holding
-rtnl_lock and waiting for reset_lock acquired by another thread,
-which is waiting for rtnl_lock in order to set the number of tx/rx
-queues during a reset.
+and also uses the same to indicate the base of KASLR regions on x86_64:
+   static __initdata struct kaslr_memory_region {
+	    unsigned long *base;
+	        unsigned long size_tb;
+   } kaslr_regions[] = {
+	    { &page_offset_base, 0 },
+   .. snip ..
 
-Also, we now setting the number of tx/rx queues during a soft reset
-for failover or LPM events.
+Adding 'page_offset_base' to the vmcoreinfo can be specially useful for
+live-debugging of a running kernel via user-space utilities
+like makedumpfile (see [1]).
 
-Signed-off-by: Juliet Kim <julietk@linux.vnet.ibm.com>
+Recently, I saw an issue with the 'makedumpfile' utility (see [2] for
+details), whose live debugging feature is broken with newer kernels
+(I tested the same with 4.19-rc8+ kernel), as KCORE_REMAP segments were
+added to kcore, thus leading to an additional sections in the same, and
+makedumpfile is not longer able to determine the start of direct
+mapping of all physical memory, as it relies on traversing the PT_LOAD
+segments inside kcore and using the last PT_LOAD segment
+to determine the start of direct mapping.
+
+Such user-space issues can be resolved if the user-space code instead
+uses a standard ABI to read the kernel exposed machine specific
+variables. With the kernel commit 23c85094fe1895caefdd
+["proc/kcore: add vmcoreinfo note to /proc/kcore"]), it is
+now possible to use the vmcoreinfo present inside kcore as the standard
+ABI which can be used by the user-space utilities for reading
+the machine specific information (and hence for debugging a
+live kernel).
+
+User-space utilities like makedumpfile, kexec-tools and crash
+are either already using this ABI or are discussing patches
+which look to add the same feature. This helps in simplifying the
+overall code and also in reducing code-rewrite across the
+user-space utilities for getting values of these kernel
+symbols/variables.
+
+Accordingly this patch allows appending 'page_offset_base' for
+x86_64 platforms to vmcoreinfo, so that user-space tools can use the
+same as a standard interface to determine the start of direct mapping
+of all physical memory.
+
+Testing:
+-------
+ - I tested this patch (rebased on 'linux-next') on a x86_64 machine
+   using the modified 'makedumpfile' user-space code (see [3] for my
+   github tree which contains the same) for determining how many pages
+   are dumpable when different dump_level is specified (which is
+   one use-case of live-debugging via 'makedumpfile').
+ - I tested both the KASLR and non-KASLR boot cases with this patch.
+ - Here is one sample log (for KASLR boot case) on my x86_64 machine:
+
+   < snip..>
+   The kernel doesn't support mmap(),read() will be used instead.
+
+   TYPE		PAGES			EXCLUDABLE	DESCRIPTION
+   ----------------------------------------------------------------------
+   ZERO		21299           	yes		Pages filled
+   with zero
+   NON_PRI_CACHE	91785           	yes		Cache
+   pages without private flag
+   PRI_CACHE	1               	yes		Cache pages with
+   private flag
+   USER		14057           	yes		User process
+   pages
+   FREE		740346          	yes		Free pages
+   KERN_DATA	58152           	no		Dumpable kernel
+   data
+
+   page size:		4096
+   Total pages on system:	925640
+   Total size on system:	3791421440       Byte
+
+[1]. MAN pages -> MAKEDUMPFILE(8) and CRASH(8)
+[2]. makedumpfile issue with latest kernels -> http://lists.infradead.org/pipermail/kexec/2018-October/021769.html
+[3]. https://github.com/bhupesh-sharma/makedumpfile/tree/add-page-offset-base-to-vmcore-v1
+
+Cc: Boris Petkov <bp@alien8.de>
+Cc: Baoquan He <bhe@redhat.com>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Kazuhito Hagio <k-hagio@ab.jp.nec.com>
+Cc: Dave Anderson <anderson@redhat.com>
+Cc: James Morse <james.morse@arm.com>
+Cc: Omar Sandoval <osandov@fb.com>
+Cc: x86@kernel.org
+Cc: kexec@lists.infradead.org
+Cc: linux-arm-kernel@lists.infradead.org
+Signed-off-by: Bhupesh Sharma <bhsharma@redhat.com>
 ---
-  drivers/net/ethernet/ibm/ibmvnic.c |   59 
-+++++++++++++-----------------------
-  drivers/net/ethernet/ibm/ibmvnic.h |    2 +
-  2 files changed, 22 insertions(+), 39 deletions(-)
+Changes since v1:
+ - Fixed the build issue reported by build bot and tested this version
+   with 'make allmodconfig'.
+ - Reworded most of the commit log to explain the intent behind the
+   patch.
 
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.c 
-b/drivers/net/ethernet/ibm/ibmvnic.c
-index 7893bef..4a5de59 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.c
-+++ b/drivers/net/ethernet/ibm/ibmvnic.c
-@@ -1103,20 +1103,15 @@ static int ibmvnic_open(struct net_device *netdev)
-         return 0;
-     }
+ arch/x86/kernel/machine_kexec_64.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
--   mutex_lock(&adapter->reset_lock);
--
-     if (adapter->state != VNIC_CLOSED) {
-         rc = ibmvnic_login(netdev);
--       if (rc) {
--           mutex_unlock(&adapter->reset_lock);
-+       if (rc)
-             return rc;
--       }
-
-         rc = init_resources(adapter);
-         if (rc) {
-             netdev_err(netdev, "failed to initialize resources\n");
-             release_resources(adapter);
--           mutex_unlock(&adapter->reset_lock);
-             return rc;
-         }
-     }
-@@ -1124,8 +1119,6 @@ static int ibmvnic_open(struct net_device *netdev)
-     rc = __ibmvnic_open(netdev);
-     netif_carrier_on(netdev);
-
--   mutex_unlock(&adapter->reset_lock);
--
-     return rc;
-  }
-
-@@ -1269,10 +1262,8 @@ static int ibmvnic_close(struct net_device *netdev)
-         return 0;
-     }
-
--   mutex_lock(&adapter->reset_lock);
-     rc = __ibmvnic_close(netdev);
-     ibmvnic_cleanup(netdev);
--   mutex_unlock(&adapter->reset_lock);
-
-     return rc;
-  }
-@@ -1820,20 +1811,15 @@ static int do_reset(struct ibmvnic_adapter *adapter,
-                 return rc;
-         } else if (adapter->req_rx_queues != old_num_rx_queues ||
-                adapter->req_tx_queues != old_num_tx_queues) {
--           adapter->map_id = 1;
-             release_rx_pools(adapter);
-             release_tx_pools(adapter);
--           rc = init_rx_pools(netdev);
--           if (rc)
--               return rc;
--           rc = init_tx_pools(netdev);
--           if (rc)
--               return rc;
--
-             release_napi(adapter);
--           rc = init_napi(adapter);
-+           release_vpd_data(adapter);
-+
-+           rc = init_resources(adapter);
-             if (rc)
-                 return rc;
-+
-         } else {
-             rc = reset_tx_pools(adapter);
-             if (rc)
-@@ -1917,17 +1903,8 @@ static int do_hard_reset(struct ibmvnic_adapter 
-*adapter,
-         adapter->state = VNIC_PROBED;
-         return 0;
-     }
--   /* netif_set_real_num_xx_queues needs to take rtnl lock here
--    * unless wait_for_reset is set, in which case the rtnl lock
--    * has already been taken before initializing the reset
--    */
--   if (!adapter->wait_for_reset) {
--       rtnl_lock();
--       rc = init_resources(adapter);
--       rtnl_unlock();
--   } else {
--       rc = init_resources(adapter);
--   }
-+
-+   rc = init_resources(adapter);
-     if (rc)
-         return rc;
-
-@@ -1986,13 +1963,21 @@ static void __ibmvnic_reset(struct work_struct 
-*work)
-     struct ibmvnic_rwi *rwi;
-     struct ibmvnic_adapter *adapter;
-     struct net_device *netdev;
-+   bool we_lock_rtnl = false;
-     u32 reset_state;
-     int rc = 0;
-
-     adapter = container_of(work, struct ibmvnic_adapter, ibmvnic_reset);
-     netdev = adapter->netdev;
-
--   mutex_lock(&adapter->reset_lock);
-+   /* netif_set_real_num_xx_queues needs to take rtnl lock here
-+    * unless wait_for_reset is set, in which case the rtnl lock
-+    * has already been taken before initializing the reset
-+    */
-+   if (!adapter->wait_for_reset) {
-+       rtnl_lock();
-+       we_lock_rtnl = true;
-+   }
-
-     reset_state = adapter->state;
-
-
-     rwi = get_next_rwi(adapter);
-@@ -2020,12 +2005,11 @@ static void __ibmvnic_reset(struct work_struct 
-*work)
-     if (rc) {
-         netdev_dbg(adapter->netdev, "Reset failed\n");
-         free_all_rwi(adapter);
--       mutex_unlock(&adapter->reset_lock);
--       return;
-     }
-
-     adapter->resetting = false;
--   mutex_unlock(&adapter->reset_lock);
-+   if (we_lock_rtnl)
-+       rtnl_unlock();
-  }
-
-  static int ibmvnic_reset(struct ibmvnic_adapter *adapter,
-@@ -4768,7 +4752,6 @@ static int ibmvnic_probe(struct vio_dev *dev, 
-const struct vio_device_id *id)
-
-     INIT_WORK(&adapter->ibmvnic_reset, __ibmvnic_reset);
-     INIT_LIST_HEAD(&adapter->rwi_list);
--   mutex_init(&adapter->reset_lock);
-     mutex_init(&adapter->rwi_lock);
-     adapter->resetting = false;
-
-@@ -4840,8 +4823,8 @@ static int ibmvnic_remove(struct vio_dev *dev)
-     struct ibmvnic_adapter *adapter = netdev_priv(netdev);
-
-     adapter->state = VNIC_REMOVING;
--   unregister_netdev(netdev);
--   mutex_lock(&adapter->reset_lock);
-+   rtnl_lock();
-+   unregister_netdevice(netdev);
-
-     release_resources(adapter);
-     release_sub_crqs(adapter, 1);
-@@ -4852,7 +4835,7 @@ static int ibmvnic_remove(struct vio_dev *dev)
-
-     adapter->state = VNIC_REMOVED;
-
--   mutex_unlock(&adapter->reset_lock);
-+   rtnl_unlock();
-     device_remove_file(&dev->dev, &dev_attr_failover);
-     free_netdev(netdev);
-     dev_set_drvdata(&dev->dev, NULL);
-diff --git a/drivers/net/ethernet/ibm/ibmvnic.h 
-b/drivers/net/ethernet/ibm/ibmvnic.h
-index 18103b8..99c4f8d 100644
---- a/drivers/net/ethernet/ibm/ibmvnic.h
-+++ b/drivers/net/ethernet/ibm/ibmvnic.h
-@@ -1075,7 +1075,7 @@ struct ibmvnic_adapter {
-     struct tasklet_struct tasklet;
-     enum vnic_state state;
-     enum ibmvnic_reset_reason reset_reason;
--   struct mutex reset_lock, rwi_lock;
-+   struct mutex rwi_lock;
-     struct list_head rwi_list;
-     struct work_struct ibmvnic_reset;
-     bool resetting;
+diff --git a/arch/x86/kernel/machine_kexec_64.c b/arch/x86/kernel/machine_kexec_64.c
+index 4c8acdfdc5a7..6161d77c5bfb 100644
+--- a/arch/x86/kernel/machine_kexec_64.c
++++ b/arch/x86/kernel/machine_kexec_64.c
+@@ -356,6 +356,9 @@ void arch_crash_save_vmcoreinfo(void)
+ 	VMCOREINFO_SYMBOL(init_top_pgt);
+ 	vmcoreinfo_append_str("NUMBER(pgtable_l5_enabled)=%d\n",
+ 			pgtable_l5_enabled());
++#ifdef CONFIG_RANDOMIZE_BASE
++	VMCOREINFO_NUMBER(page_offset_base);
++#endif
+ 
+ #ifdef CONFIG_NUMA
+ 	VMCOREINFO_SYMBOL(node_data);
+-- 
+2.7.4
 
