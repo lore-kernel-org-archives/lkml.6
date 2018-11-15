@@ -2,138 +2,136 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51F70C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:55:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 364E8C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:56:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 243BC21780
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:55:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 243BC21780
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 08CD0223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:56:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08CD0223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387958AbeKOUDB (ORCPT
+        id S2388002AbeKOUDL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 15:03:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52124 "EHLO mx1.redhat.com"
+        Thu, 15 Nov 2018 15:03:11 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:34349 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728609AbeKOUDB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 15:03:01 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 2407B168F;
-        Thu, 15 Nov 2018 09:55:54 +0000 (UTC)
-Received: from localhost.localdomain.com (ovpn-12-127.pek2.redhat.com [10.72.12.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 5C4F219C65;
-        Thu, 15 Nov 2018 09:55:48 +0000 (UTC)
-From:   Lianbo Jiang <lijiang@redhat.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     kexec@lists.infradead.org, x86@kernel.org, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, akpm@linux-foundation.org,
-        dyoung@redhat.com, bhe@redhat.com
-Subject: [PATCH 2/2 v7] x86/kexec_file: add reserved e820 ranges to kdump kernel e820 table
-Date:   Thu, 15 Nov 2018 17:55:29 +0800
-Message-Id: <20181115095529.21220-3-lijiang@redhat.com>
-In-Reply-To: <20181115095529.21220-1-lijiang@redhat.com>
-References: <20181115095529.21220-1-lijiang@redhat.com>
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 15 Nov 2018 09:55:54 +0000 (UTC)
+        id S1728609AbeKOUDL (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 15:03:11 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0926820D72; Thu, 15 Nov 2018 10:56:02 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id CA62C20741;
+        Thu, 15 Nov 2018 10:55:51 +0100 (CET)
+Date:   Thu, 15 Nov 2018 10:55:51 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Jagan Teki <jagan@amarulasolutions.com>
+Cc:     Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
+        Jernej Skrabec <jernej.skrabec@siol.net>,
+        Vasily Khoruzhick <anarsoul@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        David Airlie <airlied@linux.ie>,
+        dri-devel@lists.freedesktop.org,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org,
+        Michael Trimarchi <michael@amarulasolutions.com>,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
+        linux-amarula@amarulasolutions.com
+Subject: Re: [PATCH v4 08/26] drm/sun4i: sun6i_mipi_dsi: Fix VBP size
+ calculation
+Message-ID: <20181115095551.uctdkfmuwlnzhjnn@flea>
+References: <20181113111633.20189-1-jagan@amarulasolutions.com>
+ <20181113111633.20189-9-jagan@amarulasolutions.com>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="cw633pztpuimj6kk"
+Content-Disposition: inline
+In-Reply-To: <20181113111633.20189-9-jagan@amarulasolutions.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-At present, when use the kexec_file_load syscall to load the kernel image
-and initramfs(for example: kexec -s -p xxx), the upstream kernel does not
-pass the e820 reserved ranges to the second kernel, which might cause two
-problems:
 
-The first one is the MMCONFIG issue, although which does not make the
-system crash or hang, this issue is still a potential risk, and also
-might lead to the hot-plug device could not be recognized in kdump kernel.
-Because the PCI MMCONFIG(extended mode) requires the reserved region
-otherwise it falls back to legacy mode. For example, the kdump kernel
-outputs the following log.
+--cw633pztpuimj6kk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Example:
-......
-[   19.798354] PCI: MMCONFIG for domain 0000 [bus 00-ff] at [mem 0x80000000-0x8fffffff] (base 0x80000000)
-[   19.800653] [Firmware Info]: PCI: MMCONFIG at [mem 0x80000000-0x8fffffff] not reserved in ACPI motherboard resources
-[   19.800995] PCI: not using MMCONFIG
-......
+Hi,
 
-The correct kernel log is like this:
-......
-[    0.082649] PCI: MMCONFIG for domain 0000 [bus 00-ff] at [mem 0x80000000-0x8fffffff] (base 0x80000000)
-[    0.083610] PCI: MMCONFIG at [mem 0x80000000-0x8fffffff] reserved in E820
-......
+On Tue, Nov 13, 2018 at 04:46:15PM +0530, Jagan Teki wrote:
+> The horizontal and vertical back porch calculation in BSP
+> code is simply following the Linux drm comment diagram, in
+> include/drm/drm_modes.h which is
+>=20
+> [hv]back porch =3D [hv]total - [hv]sync_end
+>=20
+> BSP code form BPI-M64-bsp is calculating vertical back porch as
+> (from linux-sunxi/drivers/video/sunxi/disp2/disp/de/disp_lcd.c)
+>=20
+> timmings->ver_sync_time=3D panel_info->lcd_vspw;
+> timmings->ver_back_porch=3D panel_info->lcd_vbp-panel_info->lcd_vspw;
+>=20
+> vbp =3D panel->lcd_vbp;
+> vspw =3D panel->lcd_vspw;
+> dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D vbp-vspw;
+> dsi_dev[sel]->dsi_basic_size0.bits.vbp =3D panel->lcd_vbp - panel->lcd_vs=
+pw;
+> =3D>  timmings->ver_back_porch + panel_info->lcd_vspw - panel_info->lcd_v=
+spw
+> =3D>  timmings->ver_back_porch
+> =3D>  mode->vtotal - mode->end
+>=20
+> Which evatually same as mode->vtotal - mode->vsync_end so update the
+> same in SUN6I_DSI_BASIC_SIZE0_VBP
+>=20
+> On the information note, existing SUN6I_DSI_BASIC_SIZE0_VSA is proper
+> value.
+>=20
+> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 
-The second issue is that the e820 reserved ranges do not setup in kdump
-kernel, which will cause some functions that related to the e820 reserved
-ranges to become invalid. For example:
+I've tested your changes on my A33 board, and this commit will break
+it.
 
-early_memremap()->
-early_memremap_pgprot_adjust()->
-memremap_should_map_decrypted()->
-e820__get_entry_type()
+It creates vblank timeouts, and visual artifacts at the bottom of the
+display.
 
-Please focus on these functions, early_memremap_pgprot_adjust() and
-memremap_should_map_decrypted().
+Later commits seem to fix the issue, but will create some blanking on
+the upper third of the display.
 
-In the first kernel, these ranges sit in e820 reserved ranges, so the
-memremap_should_map_decrypted() will return true, that is to say, the
-reserved memory is decrypted, then the early_memremap_pgprot_adjust()
-will call the pgprot_decrypted() to clear the memory encryption mask.
+Since the documentation is quite sparse, and a MIPI-DSI analyzer is
+way too expensive, I'd really like to have at least what each of these
+commits are actually fixing, and what symptoms each of these were
+causing, and not just "the BSP does it".
 
-In the second kernel, because the e820 reserved ranges are not passed
-to the second kernel, these ranges don't sit in the e820 reserved ranges,
-so the memremap_should_map_decrypted() will return false, that is to say,
-the reserved memory is encrypted, and then the early_memremap_pgprot_
-adjust() will also call the pgprot_encrypted() to set the memory encryption
-mask.
+Having some datasheet for the panels you had working would help too.
 
-In fact, in the second kernel, the e820 reserved memory is still decrypted.
-Obviously, it has gone wrong. So, this issue must be fixed, otherwise kdump
-won't work in this case.
+Maxime
 
-The e820 reserved range is useful in kdump kernel, so it is necessary to
-pass the e820 reserved ranges to kdump kernel.
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
-Suggested-by: Dave Young <dyoung@redhat.com>
-Signed-off-by: Lianbo Jiang <lijiang@redhat.com>
----
-Changes since v5:
-1. Improve the patch log
+--cw633pztpuimj6kk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Changes since v6:
-1. Modify this patch, and walk through io resource based on the
-   new descriptor 'IORES_DESC_RESERVED'.
-2. Add comment in the code.
+-----BEGIN PGP SIGNATURE-----
 
- arch/x86/kernel/crash.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+1CpwAKCRDj7w1vZxhR
+xRksAP0VayJ3BucsWPpkUNCLS5uSpu0Y/UmHQJI6zYlOOw1O+QD/WG6DY2TRtgZx
+SkX1FYI9osX19IGL7yPL2/NHRlTVSQo=
+=zMmg
+-----END PGP SIGNATURE-----
 
-diff --git a/arch/x86/kernel/crash.c b/arch/x86/kernel/crash.c
-index f631a3f15587..5354a84f1684 100644
---- a/arch/x86/kernel/crash.c
-+++ b/arch/x86/kernel/crash.c
-@@ -380,6 +380,12 @@ int crash_setup_memmap_entries(struct kimage *image, struct boot_params *params)
- 	walk_iomem_res_desc(IORES_DESC_ACPI_NV_STORAGE, flags, 0, -1, &cmd,
- 			memmap_entry_callback);
- 
-+	/* Add e820 reserved ranges */
-+	cmd.type = E820_TYPE_RESERVED;
-+	flags = IORESOURCE_MEM;
-+	walk_iomem_res_desc(IORES_DESC_RESERVED, flags, 0, -1, &cmd,
-+			   memmap_entry_callback);
-+
- 	/* Add crashk_low_res region */
- 	if (crashk_low_res.end) {
- 		ei.addr = crashk_low_res.start;
--- 
-2.17.1
-
+--cw633pztpuimj6kk--
