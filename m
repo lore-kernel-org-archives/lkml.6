@@ -2,91 +2,87 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,UNPARSEABLE_RELAY autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2653FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DA2C2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:40:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DDC372245E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:40:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DDC372245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A28822133D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:40:54 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="J+PA00RY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A28822133D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388942AbeKPFty convert rfc822-to-8bit (ORCPT
+        id S2388968AbeKPFuB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 00:49:54 -0500
-Received: from mga09.intel.com ([134.134.136.24]:26178 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725742AbeKPFty (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 00:49:54 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga007.fm.intel.com ([10.253.24.52])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 11:40:46 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,237,1539673200"; 
-   d="scan'208";a="86257730"
-Received: from orsmsx101.amr.corp.intel.com ([10.22.225.128])
-  by fmsmga007.fm.intel.com with ESMTP; 15 Nov 2018 11:40:45 -0800
-Received: from orsmsx110.amr.corp.intel.com ([169.254.10.166]) by
- ORSMSX101.amr.corp.intel.com ([169.254.8.195]) with mapi id 14.03.0415.000;
- Thu, 15 Nov 2018 11:40:44 -0800
-From:   "Luck, Tony" <tony.luck@intel.com>
-To:     Leon Romanovsky <leon@kernel.org>,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-CC:     "Jiang, Dave" <dave.jiang@intel.com>,
-        "ksummit-discuss@lists.linuxfoundation.org" 
-        <ksummit-discuss@lists.linuxfoundation.org>,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        "Verma, Vishal L" <vishal.l.verma@intel.com>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "zwisler@kernel.org" <zwisler@kernel.org>
-Subject: RE: [Ksummit-discuss] [RFC PATCH 3/3] libnvdimm, MAINTAINERS:
- Subsystem Profile
-Thread-Topic: [Ksummit-discuss] [RFC PATCH 3/3] libnvdimm, MAINTAINERS:
- Subsystem Profile
-Thread-Index: AQHUfLnFX6xZ57KSNkyDzJsgEl8bDqVRZp4AgAAkMACAAC9XAIAABzMA//96PZA=
-Date:   Thu, 15 Nov 2018 19:40:44 +0000
-Message-ID: <3908561D78D1C84285E8C5FCA982C28F7D459E55@ORSMSX110.amr.corp.intel.com>
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <154225761038.2499188.1270468803677883744.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <CAMuHMdVOJsM=66RrnbOzVthsT9=dFRQtL2rv99tCPC02M=hiXw@mail.gmail.com>
-        <20181115061036.1575223d@silica.lan>
-        <20181115162008.GO3759@mtr-leonro.mtl.com>
-        <20181115110919.46978343@silica.lan>
- <20181115193520.GA24359@mtr-leonro.mtl.com>
-In-Reply-To: <20181115193520.GA24359@mtr-leonro.mtl.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-titus-metadata-40: eyJDYXRlZ29yeUxhYmVscyI6IiIsIk1ldGFkYXRhIjp7Im5zIjoiaHR0cDpcL1wvd3d3LnRpdHVzLmNvbVwvbnNcL0ludGVsMyIsImlkIjoiZWJkMmY4NTktYmFkZS00ZjAwLWEwOTItNjMyYjBmMjZmYzUzIiwicHJvcHMiOlt7Im4iOiJDVFBDbGFzc2lmaWNhdGlvbiIsInZhbHMiOlt7InZhbHVlIjoiQ1RQX05UIn1dfV19LCJTdWJqZWN0TGFiZWxzIjpbXSwiVE1DVmVyc2lvbiI6IjE3LjEwLjE4MDQuNDkiLCJUcnVzdGVkTGFiZWxIYXNoIjoibEdaaFNOS2hsRCsySWowMVlhWHQ3WWhrWVYwbkdid2c4NWoxTWJDa2JoM2w0UHRpZWlMY0Z3blUydXZOY1NINiJ9
-x-ctpclassification: CTP_NT
-dlp-product: dlpe-windows
-dlp-version: 11.0.400.15
-dlp-reaction: no-action
-x-originating-ip: [10.22.254.139]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Fri, 16 Nov 2018 00:50:01 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:49444 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725742AbeKPFuB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 00:50:01 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAFJYXOG024380;
+        Thu, 15 Nov 2018 19:40:47 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=to : cc : subject :
+ from : references : date : in-reply-to : message-id : mime-version :
+ content-type; s=corp-2018-07-02;
+ bh=t4Mey/o6k21jkGsyV4tnF5RN4d7l95/2zZ4UAEevzeg=;
+ b=J+PA00RYczZZvBLHjU7fSgJ+ZfSN1hJmY4KgBqo36IIrzRDsNuhSLKOlf7ocZoo8gMuT
+ WI+vHToo4K20ql6wuPa46mgBjQbzyqbNLtqKPmAGXCr8hbmS0yHvVThgwkIKjvftfRBb
+ scSQljbYNm+68qdmL7WyLfgmGO94raWTEYa3qtLd9mHyIB1m4xpVuacZfes0p6+/JNj0
+ mzf0LgE1RWsCgrV08680TvR6qrNQggKT2O4ySOvz7iNXIBkkA/LNM4ReJUSJ1EMx7niO
+ ruwBE4xdHK1VyZQbQFGHlPpussLyBv8PVkOt5UcgstgJ/bDR6DQg7p6aG56vfRRLuhk3 2w== 
+Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
+        by userp2130.oracle.com with ESMTP id 2nr7csbgbm-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Nov 2018 19:40:47 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAFJelHm027967
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Thu, 15 Nov 2018 19:40:47 GMT
+Received: from abhmp0003.oracle.com (abhmp0003.oracle.com [141.146.116.9])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAFJekOa001673;
+        Thu, 15 Nov 2018 19:40:46 GMT
+Received: from ca-mkp.ca.oracle.com (/10.159.214.123)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Thu, 15 Nov 2018 11:40:46 -0800
+To:     John Garry <john.garry@huawei.com>
+Cc:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>,
+        <linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linuxarm@huawei.com>
+Subject: Re: [PATCH 0/5] hisi_sas: Interrupt aggregation support
+From:   "Martin K. Petersen" <martin.petersen@oracle.com>
+Organization: Oracle Corporation
+References: <1541772396-161814-1-git-send-email-john.garry@huawei.com>
+Date:   Thu, 15 Nov 2018 14:40:41 -0500
+In-Reply-To: <1541772396-161814-1-git-send-email-john.garry@huawei.com> (John
+        Garry's message of "Fri, 9 Nov 2018 22:06:31 +0800")
+Message-ID: <yq1ftw2b03q.fsf@oracle.com>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.3 (gnu/linux)
 MIME-Version: 1.0
+Content-Type: text/plain
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9078 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=468
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811150170
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> I would recommend to remove this section at all.
-> New maintainers won't come out of blue, but will be come
-> from existing community and such individuals for sure will see
-> and judge by themselves to whom they trust and to whom not.
 
-Perhaps this is more of a hint to contributors than to maintainers
-(see earlier discussion on who is the target audience for these documents).
+John,
 
-It would help contributors know some names of useful reviewers (and
-thus this list should be picked up by scripts/get_maintainer.pl to help
-the user compose Cc: lists for e-mail patches).
+> This patchset adds 2 forms of interrupt aggregation support to the
+> driver:
 
--Tony
+Applied to 4.21/scsi-queue. Thank you!
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
