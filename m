@@ -2,205 +2,111 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-12.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9328DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:59:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0D319C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:03:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 51730223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:59:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 51730223CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id C1CBD223DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:03:01 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=paul-moore-com.20150623.gappssmtp.com header.i=@paul-moore-com.20150623.gappssmtp.com header.b="JjJGa1cV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1CBD223DD
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=paul-moore.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388335AbeKOXHO (ORCPT
+        id S2388217AbeKOXKq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 18:07:14 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14674 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728757AbeKOXHN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 18:07:13 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 65FDCDECBF2EA;
-        Thu, 15 Nov 2018 20:59:24 +0800 (CST)
-Received: from localhost (10.202.226.46) by DGGEMS413-HUB.china.huawei.com
- (10.3.19.213) with Microsoft SMTP Server id 14.3.408.0; Thu, 15 Nov 2018
- 20:59:20 +0800
-Date:   Thu, 15 Nov 2018 12:59:09 +0000
-From:   Jonathan Cameron <jonathan.cameron@huawei.com>
-To:     Keith Busch <keith.busch@intel.com>
-CC:     <linux-kernel@vger.kernel.org>, <linux-acpi@vger.kernel.org>,
-        <linux-mm@kvack.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "Rafael Wysocki" <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        "Dan Williams" <dan.j.williams@intel.com>
-Subject: Re: [PATCH 3/7] doc/vm: New documentation for memory performance
-Message-ID: <20181115125909.000067aa@huawei.com>
-In-Reply-To: <20181114224921.12123-4-keith.busch@intel.com>
-References: <20181114224921.12123-2-keith.busch@intel.com>
-        <20181114224921.12123-4-keith.busch@intel.com>
-Organization: Huawei
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; i686-w64-mingw32)
+        Thu, 15 Nov 2018 18:10:46 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:46326 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728801AbeKOXKq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 18:10:46 -0500
+Received: by mail-lf1-f67.google.com with SMTP id f23so14058538lfc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 05:02:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore-com.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=fU0bSahDOVLphCMLSHPEdDcSEo/lWX0hmnXsSE8SHtE=;
+        b=JjJGa1cVNvAjxasjq32pTy2r7G6/zLKQWghQAftoNiR7KSNvcEacIq4aAaCVWiQ9z2
+         Xmoz3waCssQ9WSvN4QIRBGWeYm+bMIapBEIl8Ayfer+yeOCP92SemG9iaNcLrEK406Lk
+         64T2l9V6+KHkwViSWdAL7T8JNXW+GMKRKPEcu7kB2CxpQPjyS2McnbasbzeAw9ELCRjF
+         IKzWgy/STZO+VJWu5lde5lf4TirVF3G0Iz58ZiGsu6CtaHzFT+FhXPkezXYmMw3AtsNK
+         NnZgb3iBAoX+rvqaDo5smvdguTUzQuFzv0cn3NqjfpwUI6FZEDKuQpPndPbvr2dLfd1K
+         RmkQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=fU0bSahDOVLphCMLSHPEdDcSEo/lWX0hmnXsSE8SHtE=;
+        b=Lh0v0WFGInT6+ixBjWxXu2WW47jqr8rgGobRoMO/CW/8LzgluqFg7VvI2Nq/T/6Gzw
+         nD62jKBhC4jo/gzAJbAwnS9MLhesIb4sDXVh27pLIcyDoNmk+kG+lVSjGvlfY85JSi/4
+         xf+zK/5alP0FbZivW5IyWPPKZwPO31Gv5WBumA9hSjaoGEKB5nmFBfhutthoAahEWGlY
+         IiPrxz5Sjz4jZgANNTWDyxOAhwB6+U3+aVClOR68zhjU0a9Yn+OgF0HrpP0InT1lLbKx
+         wC1LI7a05G7Z3iaOuEBqfFH0nYPayPuEXDXhQD1L2hy+KxHa20hVqwnXA8sFQMglLfu6
+         uWag==
+X-Gm-Message-State: AGRZ1gLR2Lthrkftlt+jnUCuLFjGw+L9YgoAYXB7C/DWm6j84VPWAoFP
+        vGhmyQsvrnVtt8ZfCKEEG0Byw5vbNQAuAyJT6dR+
+X-Google-Smtp-Source: AJdET5c5LRJPfYcCYNAtxewzKAyacBPE0MRcxhDW3MUowdf8MCl5aC/vDgvI6kXI4KpA7KwiDjkf6Z1FYtN6VmLL/sA=
+X-Received: by 2002:a19:a7c1:: with SMTP id q184mr3255399lfe.4.1542286978330;
+ Thu, 15 Nov 2018 05:02:58 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.202.226.46]
-X-CFilter-Loop: Reflected
+From:   Paul Moore <paul@paul-moore.com>
+Date:   Thu, 15 Nov 2018 08:02:47 -0500
+Message-ID: <CAHC9VhRWJ2s+z3TYazcgb6e2mkYuvD4Hy5W-N8i4Qo9Rn_8SeA@mail.gmail.com>
+Subject: [GIT PULL] SELinux fixes for v4.20 (#1)
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     selinux@vger.kernel.org, linux-security-module@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 14 Nov 2018 15:49:16 -0700
-Keith Busch <keith.busch@intel.com> wrote:
+Hi Linus,
 
-> Platforms may provide system memory where some physical address ranges
-> perform differently than others. These heterogeneous memory attributes are
-> common to the node that provides the memory and exported by the kernel.
-> 
-> Add new documentation providing a brief overview of such systems and
-> the attributes the kernel makes available to aid applications wishing
-> to query this information.
-> 
-> Signed-off-by: Keith Busch <keith.busch@intel.com>
-Hi Keith,
-
-Good to see another attempt at this, particularly thinking about simplifying
-what is provided to make it easier to use.
-
-I need to have a bit of a think about how this maps onto more complex
-topologies, but some initial comments / questions in the meantime.
-
-> ---
->  Documentation/vm/numaperf.rst | 71 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 71 insertions(+)
->  create mode 100644 Documentation/vm/numaperf.rst
-> 
-> diff --git a/Documentation/vm/numaperf.rst b/Documentation/vm/numaperf.rst
-> new file mode 100644
-> index 000000000000..5a3ecaff5474
-> --- /dev/null
-> +++ b/Documentation/vm/numaperf.rst
-> @@ -0,0 +1,71 @@
-> +.. _numaperf:
-> +
-> +================
-> +NUMA Performance
-> +================
-> +
-> +Some platforms may have multiple types of memory attached to a single
-> +CPU. These disparate memory ranges share some characteristics, such as
-> +CPU cache coherence, but may have different performance. For example,
-> +different media types and buses affect bandwidth and latency.
-> +
-> +A system supporting such heterogeneous memory groups each memory type
-> +under different "nodes" based on similar CPU locality and performance
-> +characteristics.
-
-I think this statement should be more specific.  The requirement is that
-it should have similar CPU locality and performance characteristics wrt
-to every initiator in the system, not just the local one.
-
->  Some memory may share the same node as a CPU, and
-> +others are provided as memory-only nodes. While memory only nodes do not
-> +provide CPUs, they may still be local to one or more compute nodes. The
-> +following diagram shows one such example of two compute noes with local
-> +memory and a memory only node for each of compute node:
-> +
-> + +------------------+     +------------------+
-> + | Compute Node 0   +-----+ Compute Node 1   |
-> + | Local Node0 Mem  |     | Local Node1 Mem  |
-> + +--------+---------+     +--------+---------+
-> +          |                        |
-> + +--------+---------+     +--------+---------+
-> + | Slower Node2 Mem |     | Slower Node3 Mem |
-> + +------------------+     +--------+---------+
-> +
-> +A "memory initiator" is a node containing one or more devices such as
-> +CPUs or separate memory I/O devices that can initiate memory requests. A
-> +"memory target" is a node containing one or more CPU-accessible physical
-> +address ranges.
-> +
-> +When multiple memory initiators exist, accessing the same memory
-> +target may not perform the same as each other. 
-
-When multiple initiators exist, they may not all show the same performance
-when accessing a given memory target.
-
-> The highest performing
-> +initiator to a given target is considered to be one of that target's
-> +local initiators.
-
-One of, or the only?   Are we allowing a many to one mapping if several
-initiators have the same performance but are in different nodes?
-
-Also, what is your measure of performance, latency or bandwidth or some
-combination of the two?
-
-> +
-> +To aid applications matching memory targets with their initiators,
-> +the kernel provide symlinks to each other like the following example::
-> +
-> +	# ls -l /sys/devices/system/node/nodeX/initiator*
-> +	/sys/devices/system/node/nodeX/targetY -> ../nodeY
-ls on initiator* is giving targetY?
-
-> +
-> +	# ls -l /sys/devices/system/node/nodeY/target*
-> +	/sys/devices/system/node/nodeY/initiatorX -> ../nodeX
-> +
-
-Just to check as I'm not clear, do we have self links when the 
-memory and initiators are in the same node?
-
-> +Applications may wish to consider which node they want their memory to
-> +be allocated from based on the nodes performance characteristics. If
-> +the system provides these attributes, the kernel exports them under the
-> +node sysfs hierarchy by appending the initiator_access directory under
-> +the node as follows::
-> +
-> +	/sys/devices/system/node/nodeY/initiator_access/
-> +
-> +The kernel does not provide performance attributes for non-local memory
-> +initiators. The performance characteristics the kernel provides for
-> +the local initiators are exported are as follows::
-> +
-> +	# tree /sys/devices/system/node/nodeY/initiator_access
-> +	/sys/devices/system/node/nodeY/initiator_access
-> +	|-- read_bandwidth
-> +	|-- read_latency
-> +	|-- write_bandwidth
-> +	`-- write_latency
-> +
-> +The bandwidth attributes are provided in MiB/second.
-> +
-> +The latency attributes are provided in nanoseconds.
-> +
-> +See also: https://www.uefi.org/sites/default/files/resources/ACPI_6_2.pdf
-
-My worry here is we are explicitly making an interface that is only ever
-providing "local" node information, where local node is not the best
-defined thing in the world for complex topologies.
-
-I have no problem with that making a sensible starting point for providing
-information userspace knows what to do with, just with an interface that
-in of itself doesn't make that clear.
-
-Perhaps something as simple as
-/sys/devices/system/nodeY/local_initiatorX
-/sys/devices/system/nodeX/local_targetY
-
-That leaves us the option of coming along later and having a full listing
-when a userspace requirement has become clear.  Another option would
-be an exhaustive list of all initiator / memory pairs that exist, with
-an additional sysfs file giving a list of those that are nearest
-to avoid every userspace program having to do the search.
+Two small SELinux fixes for v4.20; Ondrej's patch adds a check on user
+input, and my patch ensures we don't look past the end of a buffer.
+Both patches are quite small and pass the selinux-testsuite, please
+merge them into the next v4.20-rc.
 
 Thanks,
+-Paul
 
-Jonathan
+--
+The following changes since commit 4458bba09788e70e8fb39ad003f087cd9dfbd6ac:
 
+ selinux: Add __GFP_NOWARN to allocation at str_read()
+   (2018-09-13 15:36:25 -0400)
 
+are available in the Git repository at:
+
+ git://git.kernel.org/pub/scm/linux/kernel/git/pcmoore/selinux.git
+   tags/selinux-pr-20181115
+
+for you to fetch changes up to 877181a8d9dc663f7a73f77f50af714d7888ec3b:
+
+ selinux: fix non-MLS handling in mls_context_to_sid()
+   (2018-11-13 21:44:33 -0500)
+
+----------------------------------------------------------------
+selinux/stable-4.20 PR 20181115
+
+----------------------------------------------------------------
+Ondrej Mosnacek (1):
+     selinux: check length properly in SCTP bind hook
+
+Paul Moore (1):
+     selinux: fix non-MLS handling in mls_context_to_sid()
+
+security/selinux/hooks.c  |  3 +++
+security/selinux/ss/mls.c | 10 +++++++---
+2 files changed, 10 insertions(+), 3 deletions(-)
+
+-- 
+paul moore
+www.paul-moore.com
