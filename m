@@ -2,102 +2,127 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 346B0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:10:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 38965C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:24:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EC7C921582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:10:43 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC7C921582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 6ACD6223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:24:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6ACD6223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728453AbeKOPRB (ORCPT
+        id S1728198AbeKOPbD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 10:17:01 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44518 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726574AbeKOPRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 10:17:00 -0500
-Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B968830B64DD;
-        Thu, 15 Nov 2018 05:10:41 +0000 (UTC)
-Received: from localhost (ovpn-8-20.pek2.redhat.com [10.72.8.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 58A925C220;
-        Thu, 15 Nov 2018 05:10:36 +0000 (UTC)
-Date:   Thu, 15 Nov 2018 13:10:34 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        aarcange@redhat.com
-Subject: Re: Memory hotplug softlock issue
-Message-ID: <20181115051034.GK2653@MiWiFi-R3L-srv>
-References: <20181114070909.GB2653@MiWiFi-R3L-srv>
- <5a6c6d6b-ebcd-8bfa-d6e0-4312bfe86586@redhat.com>
- <20181114090134.GG23419@dhcp22.suse.cz>
- <20181114145250.GE2653@MiWiFi-R3L-srv>
- <20181114150029.GY23419@dhcp22.suse.cz>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181114150029.GY23419@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 15 Nov 2018 05:10:41 +0000 (UTC)
+        Thu, 15 Nov 2018 10:31:03 -0500
+Received: from ms.tdt.de ([195.243.126.94]:60830 "EHLO mail.dev.tdt.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726821AbeKOPbD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 10:31:03 -0500
+Received: from localhost.localdomain (unknown [10.2.3.20])
+        by mail.dev.tdt.de (Postfix) with ESMTPSA id 38644209AA;
+        Thu, 15 Nov 2018 05:24:40 +0000 (UTC)
+From:   Martin Schiller <ms@dev.tdt.de>
+To:     andrew@lunn.ch, sergei.shtylyov@cogentembedded.com,
+        f.fainelli@gmail.com
+Cc:     davem@davemloft.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Martin Schiller <ms@dev.tdt.de>
+Subject: [PATCH v5] net: phy: mdio-gpio: Fix working over slow can_sleep GPIOs
+Date:   Thu, 15 Nov 2018 06:24:28 +0100
+Message-Id: <20181115052428.8133-1-ms@dev.tdt.de>
+X-Mailer: git-send-email 2.11.0
+In-Reply-To: <20181114061703.11026-1-ms@dev.tdt.de>
+References: <20181114061703.11026-1-ms@dev.tdt.de>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/14/18 at 04:00pm, Michal Hocko wrote:
-> On Wed 14-11-18 22:52:50, Baoquan He wrote:
-> > On 11/14/18 at 10:01am, Michal Hocko wrote:
-> > > I have seen an issue when the migration cannot make a forward progress
-> > > because of a glibc page with a reference count bumping up and down. Most
-> > > probable explanation is the faultaround code. I am working on this and
-> > > will post a patch soon. In any case the migration should converge and if
-> > > it doesn't do then there is a bug lurking somewhere.
-> > > 
-> > > Failing on ENOMEM is a questionable thing. I haven't seen that happening
-> > > wildly but if it is a case then I wouldn't be opposed.
-> > 
-> > Applied your debugging patches, it helps a lot to printing message.
-> > 
-> > Below is the dmesg log about the migrating failure. It can't pass
-> > migrate_pages() and loop forever.
-> > 
-> > [  +0.083841] migrating pfn 10fff7d0 failed 
-> > [  +0.000005] page:ffffea043ffdf400 count:208 mapcount:201 mapping:ffff888dff4bdda8 index:0x2
-> > [  +0.012689] xfs_address_space_operations [xfs] 
-> > [  +0.000030] name:"stress" 
-> > [  +0.004556] flags: 0x5fffffc0000004(uptodate)
-> > [  +0.007339] raw: 005fffffc0000004 ffffc900000e3d80 ffffc900000e3d80 ffff888dff4bdda8
-> > [  +0.009488] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e7353d000
-> > [  +0.007726] page->mem_cgroup:ffff888e7353d000
-> > [  +0.084538] migrating pfn 10fff7d0 failed 
-> > [  +0.000006] page:ffffea043ffdf400 count:210 mapcount:201 mapping:ffff888dff4bdda8 index:0x2
-> > [  +0.012798] xfs_address_space_operations [xfs] 
-> > [  +0.000034] name:"stress" 
-> > [  +0.004524] flags: 0x5fffffc0000004(uptodate)
-> > [  +0.007068] raw: 005fffffc0000004 ffffc900000e3d80 ffffc900000e3d80 ffff888dff4bdda8
-> > [  +0.009359] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e7353d000
-> > [  +0.007728] page->mem_cgroup:ffff888e7353d000
-> 
-> I wouldn't be surprised if this was a similar/same issue I've been
-> chasing recently. Could you try to disable faultaround to see if that
-> helps. It seems that it helped in my particular case but I am still
-> waiting for the final good-to-go to post the patch as I do not own the
-> workload which triggered that issue.
+Up until commit 7e5fbd1e0700 ("net: mdio-gpio: Convert to use gpiod
+functions where possible"), the _cansleep variants of the gpio_ API was
+used. After that commit and the change to gpiod_ API, the _cansleep()
+was dropped. This then results in WARN_ON() when used with GPIO
+devices which do sleep. Add back the _cansleep() to avoid this.
 
-Tried, still stuck in last block sometime. Usually after several times
-of hotplug/unplug. If stop stress program, the last block will be
-offlined immediately.
+Fixes: 7e5fbd1e0700 ("net: mdio-gpio: Convert to use gpiod functions where possible")
+Signed-off-by: Martin Schiller <ms@dev.tdt.de>
+---
+v5:
+ - reworked commit message
+ - added "Fixes:" tag
+ - based on DaveM net tree instead of mainline
+ 
+v4:
+ - remove linewrap of kernel message
+ 
+v3:
+ - modified commit summary
+ - fixed commit cites in commit message
+ - fixed line continuation
+ 
+v2:
+ - fixed copy/paste bug in warning about slow GPIO pins
+---
+ drivers/net/phy/mdio-gpio.c | 14 +++++++++-----
+ 1 file changed, 9 insertions(+), 5 deletions(-)
 
-[root@ ~]# cat /sys/kernel/debug/fault_around_bytes 
-4096
+diff --git a/drivers/net/phy/mdio-gpio.c b/drivers/net/phy/mdio-gpio.c
+index 33265747bf39..3a5a24daf384 100644
+--- a/drivers/net/phy/mdio-gpio.c
++++ b/drivers/net/phy/mdio-gpio.c
+@@ -63,7 +63,7 @@ static void mdio_dir(struct mdiobb_ctrl *ctrl, int dir)
+ 		 * assume the pin serves as pull-up. If direction is
+ 		 * output, the default value is high.
+ 		 */
+-		gpiod_set_value(bitbang->mdo, 1);
++		gpiod_set_value_cansleep(bitbang->mdo, 1);
+ 		return;
+ 	}
+ 
+@@ -78,7 +78,7 @@ static int mdio_get(struct mdiobb_ctrl *ctrl)
+ 	struct mdio_gpio_info *bitbang =
+ 		container_of(ctrl, struct mdio_gpio_info, ctrl);
+ 
+-	return gpiod_get_value(bitbang->mdio);
++	return gpiod_get_value_cansleep(bitbang->mdio);
+ }
+ 
+ static void mdio_set(struct mdiobb_ctrl *ctrl, int what)
+@@ -87,9 +87,9 @@ static void mdio_set(struct mdiobb_ctrl *ctrl, int what)
+ 		container_of(ctrl, struct mdio_gpio_info, ctrl);
+ 
+ 	if (bitbang->mdo)
+-		gpiod_set_value(bitbang->mdo, what);
++		gpiod_set_value_cansleep(bitbang->mdo, what);
+ 	else
+-		gpiod_set_value(bitbang->mdio, what);
++		gpiod_set_value_cansleep(bitbang->mdio, what);
+ }
+ 
+ static void mdc_set(struct mdiobb_ctrl *ctrl, int what)
+@@ -97,7 +97,7 @@ static void mdc_set(struct mdiobb_ctrl *ctrl, int what)
+ 	struct mdio_gpio_info *bitbang =
+ 		container_of(ctrl, struct mdio_gpio_info, ctrl);
+ 
+-	gpiod_set_value(bitbang->mdc, what);
++	gpiod_set_value_cansleep(bitbang->mdc, what);
+ }
+ 
+ static const struct mdiobb_ops mdio_gpio_ops = {
+@@ -162,6 +162,10 @@ static int mdio_gpio_probe(struct platform_device *pdev)
+ 	if (ret)
+ 		return ret;
+ 
++	if (gpiod_cansleep(bitbang->mdc) || gpiod_cansleep(bitbang->mdio) ||
++	    gpiod_cansleep(bitbang->mdo))
++		dev_warn(&pdev->dev, "Slow GPIO pins might wreak havoc into MDIO bus timing");
++
+ 	if (pdev->dev.of_node) {
+ 		bus_id = of_alias_get_id(pdev->dev.of_node, "mdio-gpio");
+ 		if (bus_id < 0) {
+-- 
+2.11.0
+
