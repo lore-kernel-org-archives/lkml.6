@@ -2,36 +2,36 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.9 required=3.0 tests=DATE_IN_PAST_03_06,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DATE_IN_PAST_03_06,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F60DC04EBC
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 03:16:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43E79C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 03:16:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3F91D214F1
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 03:16:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3F91D214F1
+	by mail.kernel.org (Postfix) with ESMTP id 09D8722360
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 03:16:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 09D8722360
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728188AbeKONWM (ORCPT
+        id S1728392AbeKONWP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 08:22:12 -0500
-Received: from mail-eopbgr790052.outbound.protection.outlook.com ([40.107.79.52]:31187
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        Thu, 15 Nov 2018 08:22:15 -0500
+Received: from mail-eopbgr780047.outbound.protection.outlook.com ([40.107.78.47]:32021
+        "EHLO NAM03-BY2-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726892AbeKONWM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 08:22:12 -0500
-Received: from MWHPR19CA0050.namprd19.prod.outlook.com (2603:10b6:300:94::12)
- by DM3PR19MB0795.namprd19.prod.outlook.com (2603:10b6:0:1a::17) with
+        id S1726892AbeKONWP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 08:22:15 -0500
+Received: from BL2PR19CA0019.namprd19.prod.outlook.com (2603:10b6:201:f::29)
+ by BL2PR19MB0722.namprd19.prod.outlook.com (2603:10b6:201:1e::22) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.30; Thu, 15 Nov
- 2018 03:16:09 +0000
-Received: from BN1BFFO11FD025.protection.gbl (2a01:111:f400:7c10::1:188) by
- MWHPR19CA0050.outlook.office365.com (2603:10b6:300:94::12) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- 15.20.1339.21 via Frontend Transport; Thu, 15 Nov 2018 03:16:08 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.27; Thu, 15 Nov
+ 2018 03:16:11 +0000
+Received: from BN1BFFO11FD003.protection.gbl (2a01:111:f400:7c10::1:167) by
+ BL2PR19CA0019.outlook.office365.com (2603:10b6:201:f::29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1339.21 via Frontend Transport; Thu, 15 Nov 2018 03:16:11 +0000
 Authentication-Results: spf=softfail (sender IP is 208.19.100.21)
  smtp.mailfrom=microchip.com; vger.kernel.org; dkim=none (message not signed)
  header.d=none;vger.kernel.org; dmarc=none action=none
@@ -39,120 +39,118 @@ Authentication-Results: spf=softfail (sender IP is 208.19.100.21)
 Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
  microchip.com discourages use of 208.19.100.21 as permitted sender)
 Received: from AVMBX1.microsemi.net (208.19.100.21) by
- BN1BFFO11FD025.mail.protection.outlook.com (10.58.144.88) with Microsoft SMTP
+ BN1BFFO11FD003.mail.protection.outlook.com (10.58.144.66) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256) id
- 15.20.1339.12 via Frontend Transport; Thu, 15 Nov 2018 03:16:08 +0000
+ 15.20.1339.12 via Frontend Transport; Thu, 15 Nov 2018 03:16:11 +0000
 Received: from AVMBX3.microsemi.net (10.100.34.33) by AVMBX1.microsemi.net
  (10.100.34.31) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.1531.3; Wed, 14 Nov
- 2018 18:46:03 -0800
+ 2018 18:46:06 -0800
 Received: from server1.microsemi.net (10.188.116.185) by avmbx3.microsemi.net
  (10.100.34.33) with Microsoft SMTP Server id 15.1.1531.3 via Frontend
- Transport; Wed, 14 Nov 2018 18:46:01 -0800
+ Transport; Wed, 14 Nov 2018 18:46:04 -0800
 From:   Wesley Sheng <wesley.sheng@microchip.com>
 To:     <kurt.schwemmer@microsemi.com>, <logang@deltatee.com>,
         <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
         <linux-kernel@vger.kernel.org>
 CC:     <wesleyshenggit@sina.com>, <wesley.sheng@microchip.com>
-Subject: [PATCH 0/5] Switchtec MRPC DMA mode support
-Date:   Thu, 15 Nov 2018 17:43:59 +0800
-Message-ID: <1542275044-10970-1-git-send-email-wesley.sheng@microchip.com>
+Subject: [PATCH 1/5] switchtec: Remove immediate status check after submit a MRPC command
+Date:   Thu, 15 Nov 2018 17:44:00 +0800
+Message-ID: <1542275044-10970-2-git-send-email-wesley.sheng@microchip.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542275044-10970-1-git-send-email-wesley.sheng@microchip.com>
+References: <1542275044-10970-1-git-send-email-wesley.sheng@microchip.com>
 MIME-Version: 1.0
 Content-Type: text/plain
 X-EOPAttributedMessage: 0
-X-Matching-Connectors: 131867253686450817;(5a93feec-e11d-4f7b-166a-08d09f1f276b);()
-X-Forefront-Antispam-Report: CIP:208.19.100.21;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(346002)(39860400002)(376002)(136003)(396003)(2980300002)(199004)(189003)(48376002)(51416003)(498600001)(105596002)(77096007)(26005)(106466001)(450100002)(53416004)(53936002)(305945005)(107886003)(69596002)(97736004)(54906003)(68736007)(16586007)(316002)(5660300001)(4326008)(36756003)(50466002)(110136005)(14444005)(126002)(476003)(2616005)(2201001)(47776003)(2906002)(44832011)(81166006)(356004)(81156014)(8676002)(217873002)(50226002)(8936002)(336012)(486006)(86362001);DIR:OUT;SFP:1101;SCL:1;SRVR:DM3PR19MB0795;H:AVMBX1.microsemi.net;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
-X-Microsoft-Exchange-Diagnostics: 1;BN1BFFO11FD025;1:mz7MA8VyjqUHwcpgMzFX8tXIsIcNYC7wdLqD2rME9tCJG2lthjB/pcyxiIuq4wDz5YKx4EzZKCicibSSgY6vtZPXJLMp2tgoskfhb1F2kSwHDCSMOt94/R0O/STKO++Y
+X-Matching-Connectors: 131867253716909878;(5a93feec-e11d-4f7b-166a-08d09f1f276b);()
+X-Forefront-Antispam-Report: CIP:208.19.100.21;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(346002)(376002)(136003)(39860400002)(2980300002)(189003)(199004)(105596002)(53416004)(44832011)(476003)(126002)(2616005)(446003)(336012)(486006)(11346002)(81166006)(97736004)(81156014)(8676002)(50226002)(8936002)(68736007)(16586007)(110136005)(316002)(305945005)(54906003)(53936002)(6666004)(76176011)(107886003)(498600001)(5660300001)(36756003)(450100002)(47776003)(69596002)(86362001)(77096007)(2201001)(26005)(4326008)(48376002)(50466002)(51416003)(356004)(2906002)(106466001)(14773001);DIR:OUT;SFP:1101;SCL:1;SRVR:BL2PR19MB0722;H:AVMBX1.microsemi.net;FPR:;SPF:SoftFail;LANG:en;PTR:InfoDomainNonexistent;MX:1;A:1;
+X-Microsoft-Exchange-Diagnostics: 1;BN1BFFO11FD003;1:RM4hW4UfMdSorir6ySdSoZVwKmXoyBIEA+/1WglL4x6w5Sk0KCcY91SP0nXkyZ7/T5gcyIWXMkY4ACjAZnIxBAlOgMBadKv5B/IolXj7Po7teprpRAtHF0/vxwbDXIcY
 X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 2ec4056e-738c-4003-0a45-08d64aa8afe3
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(5600074)(711020)(2017052603328);SRVR:DM3PR19MB0795;
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR19MB0795;3:I2ovSnkgrLUMArjqJRYg+Svgss2IN0uHJtmoqS/0+aOc7lY2GzklCipwvgzKMEYx5gdk0CE3xICXL3NGB86HmEffh09UVeCM+cXUkLiZ3w7UYDYsOjS/6iGA1u6/7ma0CqKXxFlAB0JxJ9unmVk7I1HQr6Cs9tskQqBarAmFyfjVmTWLDldK4WnnV4do7REy/LR8tzMep8wuaZmy5IU/X3RTQuA4G/+mRHxuUM1ton3LPS/IvMs8CZRmsJAlys+1zNYfy62TfQyeTtEY2h0on9GTSuMHSpvV/2ojkXdnIC0kowLrjoqwCyiTP6BwBN7k3Jactfji0V+BL27BIddbcUYEgADms4Y5YZAutn6brtM=;25:WqXyjuhVQfbwlhCnPmvTvUG1p5tABQHpY6g7FY8/b1jctX7oF/yu2n9421gXdx/owlopPao1+Xanm+RCLTiop0hY1SPiw/PYeclyRRLJjnWx6ThwR4unjpBFOV7lbnqtdrz1miR0GkJNnDKIP9e6xfw7IGThTdTncwM0qQY6vMF8jzBYCxBVHfWuqHzKlcSxqLjOvj6KaURJk6qebZBqhw4Y5hvRqyaS8E7JDDMtd93S9bJNYNa3er26YczQTjVjLrYsnU9ZBti0eSqx4pDSLH9mZMKGA6w19dXksPABZGKkrWvSc8SUvW3DPlByA+qRd0YJwtmsuyW7b3dMrGo/ag==
-X-MS-TrafficTypeDiagnostic: DM3PR19MB0795:
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR19MB0795;31:10rVsRxHUzQt4jPWLvHDD46n6LJKa2kUejwoM4Gx8m+SFMPC9qUC2aLc3N4zZTXInLGAX52moULXyNu4b35MpKtUJnw8Q7LOk8TNxSriBl80Tljbj60BPPOwMRsm3x5xF1bwaRIXQ3fyCB4Yn/AbrjTlVDS/slliQrcgZFJ/52RjELBfWchBRRpIR3zDJZG4Z7Cq6amy7cJE9JoNMUJBfRHcHgCRznbyPzUyIMqyUS8=;4:l3hzHglYwNYc4Y8Ps3sLmUMSM2rNW5uH97Mg3tPVlI2mhSKhgBMLH15hXM1R4Qgx/SSdbekZgekh7Jj2rbxphhDjs5Oac+rIjlpoxE7qJNg3ZtZudJa456pPEVGdFHB6G9hcgrg75cMwf/u19/6OeYw1pJxxV5OtqV7PwzpxH7McuZAASdazqUfLvj04uLYmkmOVvMCdBL7vtK4Zh9y3NsbXve8mtuNUHG/ZDqD7YzsaSXok4SuumfmLrOyp0VTldtum7L05e3cXZAF6twNnEw==
-X-Microsoft-Antispam-PRVS: <DM3PR19MB07952E8DC958148CF2FC7B7395DC0@DM3PR19MB0795.namprd19.prod.outlook.com>
+X-MS-Office365-Filtering-Correlation-Id: f59d08c0-56f7-41c0-3101-08d64aa8b1b6
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(5600074)(711020)(2017052603328);SRVR:BL2PR19MB0722;
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR19MB0722;3:hOCtySvwlG/qeVQnFEdnR98+M/JaYPsitN0RPlZCW2zq30Qr62WFHuHPIOpnbVhKk/T3Rd31anJHYiFt8VkcqvertNmpfyIH40Si1DrZbqWaVB4/mW3NeL0mr6DPUQaVQ1zASPNiC+C96eun6UDjmSirIN0rm13GzWo3V0KK3h9MT8XyzXMe6pMes0exEQxUzdv4IwLVoI+enQNEc9GUBpCFn9AOlpBwyuxIZY9aizQAWKoC0e3cN/OMXdo/DxDQOyJBcoh//GU/XQ4ezIGoqnYf/xkDs9wrSe+JnprBag9SJcvPT/Hu5EAUBXfz5rSMwRliwn+8GvnUm61YKwnC5nStMV2foA8vTmtVYTtf6s4=;25:iYfVxxOUrHuUStDmi4sJDyRGm4PKcfSicB0Bklxf3+1o+puDg7SRHcNwaeIw/fqdke/MFFudGK2HgOzicR2JffOTgWup4+1Bwhn2lmvizgrXCvwRY564otYTIg0/pLpTWR9yZjbgBS0p2H8i4QNmBDqYtykX6iw0GRi7aSHMtUYz+vqWqYz/u4h2tT1RD242VAmLHLYYHqcAhoFaAQruJ0tHiVTOPQfZAEelRj7cG5H1Si2dSsQFcII3UgY83JtddaExWBDikMHZphQYKtFr/X9qQgmoixE0LHdlpwx5UiEJe9M/eQ1hukxIpEQ4vQYMnc6KYkIyB0c+ln8eFTT0Ww==
+X-MS-TrafficTypeDiagnostic: BL2PR19MB0722:
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR19MB0722;31:Fah6fesNY4KYTzm/u1+QmUY9aqv+A2GuCY8v/JyDpKjtfdiVhB1USndT2qpyR1Fg08Mo9C7o6mHeuV7ED8uWFjneCB292kWSFq3dcBUfuXMHQymcCAmyQvGo94II2p+YK6F3LVJCPbt4J5pP/qcuLiS7Le0VsYJ3kuYtq/vSyunMxA1Ejj82vd+REqxOqfxOG9Gnm0vbUV/BjKgBYDzlk+bOiplNztRs2Q5NPI3/77U=;4:y1DJ7mnltgkUheCyfGKiEB97S/RcBKhJ92jVD6vcsIVY0P98gOo3wcAtEFH/yVVTgdC/jIxN80yIadrJTvP+De7rQs3wv8Azb0OuzUXQ4pMz2o+2S8UhezMc77Yo+TZKJm6OSfQepWHavmoY5cZcZIwJP8Ht3AOMFBjgtqbKzCLpXdcsthDj5fEPzeql2tdA72kT3ZtmF/HWy9mPWZQvHTviwDwBBNHPjB56zyfu5ozkS0xUuTCNQCS43pEBPVeFbBuNjH6QYpO00secCcJoAg==
+X-Microsoft-Antispam-PRVS: <BL2PR19MB07226EF8AC877EC1960EC17895DC0@BL2PR19MB0722.namprd19.prod.outlook.com>
 X-Exchange-Antispam-Report-Test: UriScan:;
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(8121501046)(5005006)(3231415)(944501410)(52105112)(3002001)(10201501046)(93006095)(93001095)(6055026)(148016)(6096035)(20161123565025)(20161123559100)(20161123556025)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123561025)(20161123563025)(201708071742011)(7699051)(76991095);SRVR:DM3PR19MB0795;BCL:0;PCL:0;RULEID:(400006);SRVR:DM3PR19MB0795;
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(6095135)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231415)(944501410)(52105112)(6055026)(148016)(6096035)(201703131430075)(201703131448075)(201703131433075)(201703151042153)(20161123556025)(20161123565025)(20161123561025)(20161123559100)(20161123563025)(201708071742011)(7699051)(76991095);SRVR:BL2PR19MB0722;BCL:0;PCL:0;RULEID:(400006);SRVR:BL2PR19MB0722;
 X-Forefront-PRVS: 08572BD77F
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;DM3PR19MB0795;23:W5N3fhnGnKpTs5Y7g/NUMuzL30BGRZGkAk8OSIkh2?=
- =?us-ascii?Q?2iQTPTORbrYOmFcA6S4oHJfzfkhqNclJScwBj4Gay6NJsjm2N2yDNjjFxFZx?=
- =?us-ascii?Q?raNxmKfIoYuJbkzatzN7j7zWH3uX7vWTCcdhNEbacmWZRTzsDyaD3SmawhK2?=
- =?us-ascii?Q?b85jV3LWmsbz+AqG/OGPn7nzAxQJFM0k/5ngI/tTmaYCSjJmdgb+67lJJZM8?=
- =?us-ascii?Q?kAd5gkPgffSwbjNf+WTLnZI0iKpPdKPMkCOF8GHSaDiVKcjhurzcUhJ4LgP9?=
- =?us-ascii?Q?W72wloFCIf2lEBCSRdgYdCiKQt/KeqVjN7y0DiaJL10P8BdCknHGLiTDg1EO?=
- =?us-ascii?Q?ptjs4Km8khZ6Oa8V+sGTCl/x5ZZ5yUThDT//ub9C5TU9ta8ZgGL1LaAkRVCa?=
- =?us-ascii?Q?gUiZmwvtQPzP2gIXg7P+m70Q6OUkF4jQDcV4gfn6DoFYwaSq94qH26OHa6JJ?=
- =?us-ascii?Q?Iajn8VEhR4I4THjC9GubuLck03RMizKd0+Ynfxiszebhi9o80FUNzZb49QJd?=
- =?us-ascii?Q?WjDvsYC28n9brtkp9hcTocTPRncpDGp0IrYrexsPlxhZBMFX1jSTnrEr+cCH?=
- =?us-ascii?Q?hpOOsPL8HIwMJY93U0enaykY4GKOZasMOQrY1PQvEne08spFVjkwdEXaRpBB?=
- =?us-ascii?Q?WvdL1SVNeZsFbVFvPVAJf6aVZcbgG3HHyZWo72AdIKnTR4BoO/gLfnOxou2x?=
- =?us-ascii?Q?SRqyBbZgsCm8Tb3k5Yrv3jbdwDyseTJHbm7L6INQL+0KpKkPGSgBnd5Yi12z?=
- =?us-ascii?Q?P5EHp8KWRiYe3QwqBr6BIuOevbIvNYOgYrG9wCRpN0NFoP7r+h/DzwyFMPV6?=
- =?us-ascii?Q?XdMAO05BFgkFYV+0PVq3G8Sp/FXP7akt3gfvAnLDVme9WnZkapeDt4ZzxGbw?=
- =?us-ascii?Q?Q6wEGu4D3MJR7GZt3Wl0kSUgOTDgm8H5645waYEXnd0L7c/xTkiJUXffssYd?=
- =?us-ascii?Q?e5/2DWic8WlghB7d10axpYMVR3xDmQkuGJRW6oQcMXwltaMr2I0390OMnjhP?=
- =?us-ascii?Q?7NSSL3PXJvmssHoIk9WymzJ/0XwMVjf9SK1eMXKQn/mQkhN2SHwS/8oIM1K6?=
- =?us-ascii?Q?ezEZw1wQKZV0YIEdIHtPgyFDf1jJ81H8AUe/In4NjTqAgHFwfEzS+TsDKh3Y?=
- =?us-ascii?Q?GOKEp5vtK8=3D?=
-X-Microsoft-Antispam-Message-Info: X/8m0R/3sGwGRae2GyrSjZlC5cto6kLuci88/uKidvEB5NuJ5EyQMwgc9iQUM+OTFezbzbH+Cn8UdsOvDV7/CMknY1RJ+IcjQfek7kGKC8KuBM+IvZfBtGWu8fIlMZkU3BzjdMJXux1jh88WflBBtooh67rIhvq7ie43OfV3M8R/o4NMb+O6c92aG9VGnA9r2wcX7/eIA9pbGA3y5HSDKSniXORvup88HJp1g75o7pMC9jKUoYCF9fF8y8VP17zQqhoOA0ZlCakqpjMg3XKlbZ9sLLzZ96IKtwMv703CRH2YujrHVKGeb5V0W65W38FR0cRkSpkRG5KGNQa0Evis/amZrsjT4+gqOFEZMyoBRcU=
-X-Microsoft-Exchange-Diagnostics: 1;DM3PR19MB0795;6:6qkMzk9DT7QyN5lGQCBJBn7r/NWQ45pa8oRef/hS1Bxh8d0wvUD4O7fi/hSz503bXjwBN92OaiK+RXpQixA8ck1ogVbEH00jiJhgiLL9tsK9FvxckD8o08/jeQ7ym8zzf0od4S5BBg+lsWMYjkAdeJLZO2W0ZsIXKsuQEjc+gzRzhlNUZ+8XjNOSJaGbDG4TDcUZLHdCdx9u55KgrfGWI3cC2C/tiEVYcmwt83f0OAVT03tqg6iowcObtFmfQu0eIEo8voK6NE+biO3P2B4AlbLAmdeNoEEE4qRdKeEVk4pysRwOcCV2rTBxta0Wujj7fTxBQqQpZ1sSSdDDWdCJZ0tGSit6UTKQl2mdD35o2T18VFU9yaGOAeqAmv6EovmuaJhv3Jf2UGlgSYLqCygBHUuDViJxButPCY7jvRRRjKZK81beBaQRCrnY5YyB6vQ4cfliBytdnohxQ7HFcra3Xw==;5:kwfcAf7+0kuPAkRJ2Br3J4HsUwrBWDMdxQOEw6ctFNNdL4k+iZOB7hDbZQN6ORPTmmRtqJ8SIcddscxc94lu7fwq+/R5pPs6ZeWMpn/hqFOdEZXwtFPXjMrFXvryvwisJTeawhJ8LzcdR4VLnXECYTpCV91KrMukSMF/Ngl0QNQ=;7:wzJ68Mpajq3mFuxoZ+Dqld5cEs3vDOxNL01kSwCz3WpwCTDL5LsI0ByI78SZVefO0QwSoRJ9TVYbB85r3+FVlBbzHqcKU/1/0ZSRBMOMwz4vdMo03CmI1eAeHx/4J2h/Kd98ASacbhF8smOY1vz0Yg==
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BL2PR19MB0722;23:yi4QLl+fFwehGlCAtplhtLDyiJtbnvwh1bRcqDVWL?=
+ =?us-ascii?Q?iaM2IVtvp/ffyot9Gb6hwv1ipR6gCufabj8YPj9d0QwW7cCZrVAce0m2v53Q?=
+ =?us-ascii?Q?HYbOBcUdJ6ESvV9vArLQxsg80B7EimVIh+9ZfVSA0JsatE4HOdcB6Ziw2HJA?=
+ =?us-ascii?Q?UjH8FjVgFmCEjy1npWudTrOHv5NeDWalMVPMZmTDPm8BsoeCeG/uOrZ9bZeC?=
+ =?us-ascii?Q?dNE36ccVW6pQRTMGTdZm6LPSHZvGjloXxwlDIRrOUwk4K0Y/h5t9zSIJoZ9o?=
+ =?us-ascii?Q?sk4s4/jd4wSjYB+yuz5DJJv41ROiXOGYAZP7iqsrQJY/El8b9HV1HNBXKohN?=
+ =?us-ascii?Q?4h1Je7bBqu+cX5BMYSMA4AFi7KZ/Exl2ld7InJetA/HYL4JjvIvMAMDi0gCS?=
+ =?us-ascii?Q?L8+hYvu5fYcfnCfUawhhQyYukvaYuJHCNoLlyfZnFjHnAFTgu3YFUFsB0Cmz?=
+ =?us-ascii?Q?exrobOpLNoJZowv3r9xWFWYTomifBAPPnDleRH9CPO3KlXAuvyoBX5LNTkT4?=
+ =?us-ascii?Q?1+gGs3X4Hq6HsoNLQ1Js+LOwi7RzjRVP6mFln3JvCPHUWfnwswCPyTWkNd+C?=
+ =?us-ascii?Q?44682U2QTeiq3mGv0hkiy6SqCiWuE1IGhffgPAGzPiVjnQS7hpAMQ/GEetSp?=
+ =?us-ascii?Q?kd0YpRtVcoNRZB4zYrWMHqEWxJjRBprsaQznl/C5zJgeKx05P1u+8v9plq3+?=
+ =?us-ascii?Q?XSzrgt6eXMp0jDXc901XkrBk8QQ33E6DNqevGNqEir8uz/j/UYSgb7ocnP39?=
+ =?us-ascii?Q?v83IjdefiKlPJN5HrCgaaGAs/+AYvrt14Bt6Jjrj6KRmV02zwqYt17tf49dY?=
+ =?us-ascii?Q?f9C8N6i2fVZF0e3n6kJhbWBWFJmkCbaWeSa1+ywQz0BL9s/6m6ezBMo24+Yg?=
+ =?us-ascii?Q?NKZn2dUu0J0j6Cj4in5dTYdRQOEiM8WoqicusP+hkm2EjegejyzFFyLuZTyu?=
+ =?us-ascii?Q?FYf2Nd9URhreAdjkrFtKB0yycCGQSTxw/oyC6AYHQG65ZEfCyMx4dwzsNOCU?=
+ =?us-ascii?Q?ojPC6JfqeWAclVJ7C8e7E5Ayr1joncwZ02gI3g++xEhlkDjYX0tkOAUPt7tL?=
+ =?us-ascii?Q?DyF34RoP+1a2Nr4MZxkaPj6l3qo9QttqcsSdo5MND+Q6CZcpSCqlinFMa7h4?=
+ =?us-ascii?Q?Wbn60GHbtc/ecUeDsOoLs8yyw3HFvp8D9SZmt++Vst7KTaT+yPbuA=3D=3D?=
+X-Microsoft-Antispam-Message-Info: V4a9ZsI0uzknkr8lSs3tYgOMicNaxXPXjWinXE/urSZz7Q94kMB30Qkeq+ANK3NN4VFzHOt923pMWGtu0vXCDBFXPvwDRXmPw89Dqnh7TvjReziqbyZbx1ItjeZrIa6XgH58Fnb9uBJhbTMcL7NeWrpOAvgbu0Ir/i4u9705PmqKgtyb1fmKDCkZZZRVjGEprAC91jSXqX0wqqJH7+/6Quw1qLPqRIKTZsVCS7GbSbP6hMKbCD9gjnFWlIPDmAPEOlVGf7XCm1/CUUHGfqUfY4ggThKwNlvTl9l7G37tErZLOxuRnkwGYfEC2YSOFVHMUm1ZwKcoZpTiuspNnFeoCt/vXSwRAOCK3MUcFQiNO3w=
+X-Microsoft-Exchange-Diagnostics: 1;BL2PR19MB0722;6:UZG3KWHDc4GFzGWn425dCw+Voewc9WurX2WkMzn01Sw4ppgJwJhB3SVnNNte43xjCVNzKiN72rT0Dfrw3W2ao8UKTamoHGxnY4kZClPQuBgN3AxdOqLVzcplPzt84s1nCTjYkUzIKMfcoAQbuqAGZWpggRlqUn5D0HED6Wuyea/hZwrlolIQCgAyeRhIO8xzbKqDlTVTvbbmvGxjdGZ5ZYGf2RGh0+zJwss3NNYxohDcMwv64sLxuRTBrfJU14aOw3w++M2U/PATGDpUp3U9mpc9+zklV0hZYGjhtYHu7tTKNvPmpFP1p7AB02KBJQOlLLeGeSxhPG28u2CCS8byBU2CV/1kcKgFP9MRjKUWCzhAuTCLaw8FeMGdVHMGOkjcdOKGp765DamoD1jLqHz6UPR+Pq2nU/di+4/NknewiiDt1EKX8LDuebr8YMiqNowtDW16mxiXNSwTK6RDjNtp3Q==;5:Smry7zP4LElv8T5Culffp2e1l8q0OTLa459Dl3TyCCTVtnfU9iEy2yf6CCv9KXjejhJL+b+UZsO8Qu4H7LbSbo8GcNTNtD9MsIivvYrQ2VVBisNI6Nshn/YfuPqnxEZX0Le/5DHJS4667Qv4ZteIjU6hPS4lxjCs1aHDqPnuOx8=;7:EnOuAN58eBVOdo1B+HjRq5Of8DAIlKsXQzl9J6e0eK+25NREgqu4OGCDMRaEUJXLG4t5r659+7wNFmIsUvUKOYvpdSHsXjTUaBChn7px0Rf0Ga7hSdGRNzev02tK+7PIxxU4Rzy1nkb+sbyFlx1C4w==
 SpamDiagnosticOutput: 1:99
 SpamDiagnosticMetadata: NSPM
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2018 03:16:08.3951
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2018 03:16:11.4566
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2ec4056e-738c-4003-0a45-08d64aa8afe3
+X-MS-Exchange-CrossTenant-Network-Message-Id: f59d08c0-56f7-41c0-3101-08d64aa8b1b6
 X-MS-Exchange-CrossTenant-Id: 5afe0b00-7697-4969-b663-5eab37d5f47e
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=5afe0b00-7697-4969-b663-5eab37d5f47e;Ip=[208.19.100.21];Helo=[AVMBX1.microsemi.net]
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM3PR19MB0795
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL2PR19MB0722
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi, Everyone,
+From: Kelvin Cao <kelvin.cao@microchip.com>
 
-This patch series adds support for the Switchtec MRPC DMA mode.
+After submitting a Firmware Download MRPC command, Switchtec firmware will
+delay Management EP BAR MemRd TLP responses by more than 10ms. This is a
+firmware limitation. Delayed MemRd completions are problem for systems with
+a low Completion Timeout (CTO).
 
-Switchtec switches supports 2 MRPC interaction modes: MRPC normal mode and
-MRPC DMA mode, a new feature in the latest firmware versions. MRPC normal 
-mode requires the host to read the MRPC command status and output data. 
-In MRPC DMA mode the command status and output data are pushed directly to
-host memory and issues an interrupt upon completion. The advantage of MRPC
-DMA mode is avoiding potential high latency response from the Memory Read
-TLP. 
+The current driver checks the MRPC status immediately after submitting an
+MRPC command, which results in the MemRd TLP that's affected by the above
+limitation.
 
-Additionally, we've made the following changes:
+Remove the immediate status check and rely on the check after receiving an
+interrupt or timing out.
 
-* Improve the efficiency of filling MRPC Input buffer by enabling write 
-  combining on MRPC region of BAR
-* Software workaround for delay responded Memory READ TLPs that access 
-  the BAR
-* And several bug fixes
+This is only a software workaround to the READ issue and a proper fix of
+this should be done in firmware.
 
-Regards,
-Wesley
+Fixes: 080b47def5e5 ("MicroSemi Switchtec management interface driver")
+Signed-off-by: Kelvin Cao <kelvin.cao@microchip.com>
+Signed-off-by: Wesley Sheng <wesley.sheng@microchip.com>
+---
+ drivers/pci/switch/switchtec.c | 4 ----
+ 1 file changed, 4 deletions(-)
 
-
-
-Boris Glimcher (1):
-  switchtec: Set DMA coherent mask in Switchtec driver
-
-Joey Zhang (1):
-  switchtec: A temporary variable should be used for the flags of
-    switchtec_ioctl_event_ctl
-
-Kelvin Cao (2):
-  switchtec: Remove immediate status check after submit a MRPC command
-  switchtec: Improve MRPC efficiency by leveraging write combining
-
-Wesley Sheng (1):
-  switchtec: MRPC DMA mode implementation
-
- drivers/pci/switch/switchtec.c | 154 ++++++++++++++++++++++++++++++++++++-----
- include/linux/switchtec.h      |  16 +++++
- 2 files changed, 153 insertions(+), 17 deletions(-)
-
+diff --git a/drivers/pci/switch/switchtec.c b/drivers/pci/switch/switchtec.c
+index 54a8b30..d2bca2d 100644
+--- a/drivers/pci/switch/switchtec.c
++++ b/drivers/pci/switch/switchtec.c
+@@ -134,10 +134,6 @@ static void mrpc_cmd_submit(struct switchtec_dev *stdev)
+ 		    stuser->data, stuser->data_len);
+ 	iowrite32(stuser->cmd, &stdev->mmio_mrpc->cmd);
+ 
+-	stuser->status = ioread32(&stdev->mmio_mrpc->status);
+-	if (stuser->status != SWITCHTEC_MRPC_STATUS_INPROGRESS)
+-		mrpc_complete_cmd(stdev);
+-
+ 	schedule_delayed_work(&stdev->mrpc_timeout,
+ 			      msecs_to_jiffies(500));
+ }
 -- 
 2.7.4
 
