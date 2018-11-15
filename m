@@ -2,110 +2,74 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 731C0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:56:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 647FAC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:56:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CB7D208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:56:17 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N25TH/eM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CB7D208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 3736D208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:56:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3736D208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388643AbeKPEFE (ORCPT
+        id S2388761AbeKPEFN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 23:05:04 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38429 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726453AbeKPEFE (ORCPT
+        Thu, 15 Nov 2018 23:05:13 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:43182 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbeKPEFN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 23:05:04 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q1so2055388pfi.5
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 09:56:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=6G2KpmpfCtmqQlw0KlLFcSMUcNS3EWFTLTfjH5tvPWA=;
-        b=N25TH/eMZ1eCRPoRQyH7sADMQ3XHsVyGl2bp2bJISV5mhZVqNr03ivatjocEmFIEt1
-         gdH9/oeuBBJzCv+EdtZBPdhxHFxW9aM7c0Vu3GmGX57ZThpxrwGsCujJ6S+xmX1YJNnH
-         8BJetUAtSL3ksa7GBY7T7l06bf5of9FOSRz0zYKGwAEw5SYhcPN2DktovulmYB0lF9Yx
-         CI2QpSNkl1+ECtmWYyGuKUBM33VXeOJkoyA6aLdl1deZIeJaenQFy7djxwTNCZ4JMzgs
-         sDmPnuIzHEXdjfEbZ3eoIS3uVESJ8DLhI98nR8CeUxXBXPOwfiPVw8H87eAIXw5eO/3I
-         FdZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=6G2KpmpfCtmqQlw0KlLFcSMUcNS3EWFTLTfjH5tvPWA=;
-        b=bSxXmFIje2m+lwBYOlFJ2KjAJqy5cX8qLMBifWBMOC+Ac2aYMrs/TKbmo0TjcFFiCV
-         Vpc8H6ayIfhehpLbzD57rDLu2Nx5y5brElWaxtHpHCg5OF+UDTTTsrQKb8qxRngI6zWg
-         74GSdXZu8FL3xPiukxWFwKn0doBWKvKYA9SL8Fufr0/bRJ7u+mg2INOgc66R1Jeyk70q
-         wV0FyEMdhh83olzV3YN2j1aelfY4p2HUjy+0QFvj1P9x3ldSmfCshOK8IVkVzjf53XUc
-         KCLTOZGbyeowG1XfxBGkEU3BurjUrrGBr1P8wJfHAcsbTxmOmqK0Z5n/VpqyLkSPbEXa
-         incQ==
-X-Gm-Message-State: AGRZ1gKlRuu6mygMreT3xTzyOJwMnP6hW5y6mAJJAWwcSu0sH8Vz5Ur4
-        Zo6MpaydIOoqy8pC3CXDsepksrEKT1ov1QgKuo8=
-X-Google-Smtp-Source: AJdET5c3T/+W2EqPp6pC7PirZgkFA+xZ0xnD5veblIlBPyIzSFRxFTqCtAOqKJmdIzIk4ulEc0p27ZQFQah63F3SMVM=
-X-Received: by 2002:a63:bf0b:: with SMTP id v11mr6874893pgf.302.1542304574924;
- Thu, 15 Nov 2018 09:56:14 -0800 (PST)
-MIME-Version: 1.0
-References: <5bdfa97d.1c69fb81.4aef7.c9f7@mx.google.com>
-In-Reply-To: <5bdfa97d.1c69fb81.4aef7.c9f7@mx.google.com>
-From:   Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Date:   Thu, 15 Nov 2018 23:26:03 +0530
-Message-ID: <CAJr6mf0HfJNdsHG2H6VnRMYW1WGqBr1gvwMQoWk3mSdDhO3EmQ@mail.gmail.com>
-Subject: Re: [PATCH] arch/powerpc: Use dma_zalloc_coherent
-To:     benh@kernel.crashing.org, paulus@samba.org, mpe@ellerman.id.au
-Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+        Thu, 15 Nov 2018 23:05:13 -0500
+Received: from localhost (unknown [64.114.255.114])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 7E8C714779F59;
+        Thu, 15 Nov 2018 09:56:24 -0800 (PST)
+Date:   Thu, 15 Nov 2018 09:56:22 -0800 (PST)
+Message-Id: <20181115.095622.889070618474069350.davem@davemloft.net>
+To:     xuechaojing@huawei.com
+Cc:     linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        wulike1@huawei.com, chiqijun@huawei.com, fy.wang@huawei.com,
+        tony.qu@huawei.com, luoshaokai@huawei.com
+Subject: Re: [PATCH 1/1] net-next/hinic:fix three problems in HiNIC Driver
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181115052327.2859-1-xuechaojing@huawei.com>
+References: <20181115052327.2859-1-xuechaojing@huawei.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 15 Nov 2018 09:56:24 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 5, 2018 at 7:52 AM Sabyasachi Gupta
-<sabyasachi.linux@gmail.com> wrote:
->
-> Replaced dma_alloc_coherent + memset with dma_zalloc_coherent
->
-> Signed-off-by: Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+From: Xue Chaojing <xuechaojing@huawei.com>
+Date: Thu, 15 Nov 2018 05:23:27 +0000
 
-Any comment on this patch?
+> This patch fixes these problems:
+> 1. In order to improve performance, this patch add rx checksum offload
+> for the HiNIC driver. Performance test(Iperf) shows more than 95%
+> improvement in TCP streams.
+> 2. In add_mac_addr(), if the MAC address is a muliticast address, it
+> will not be set, which causes the network card fail to receive the
+> multicast packet. This patch fixes this bug.
+> 3. In rx_alloc_pkts(), there is a loop call of tasklet, which causes
+> 100% cpu utilization, even no packets are being received. This patch
+> fixes this bug.
+> 
+> Signed-off-by: Xue Chaojing <xuechaojing@huawei.com>
 
-> ---
->  arch/powerpc/sysdev/fsl_rmu.c | 4 +---
->  1 file changed, 1 insertion(+), 3 deletions(-)
->
-> diff --git a/arch/powerpc/sysdev/fsl_rmu.c b/arch/powerpc/sysdev/fsl_rmu.c
-> index 88b35a3d..8b0ebf3 100644
-> --- a/arch/powerpc/sysdev/fsl_rmu.c
-> +++ b/arch/powerpc/sysdev/fsl_rmu.c
-> @@ -756,15 +756,13 @@ fsl_open_outb_mbox(struct rio_mport *mport, void *dev_id, int mbox, int entries)
->         }
->
->         /* Initialize outbound message descriptor ring */
-> -       rmu->msg_tx_ring.virt = dma_alloc_coherent(priv->dev,
-> +       rmu->msg_tx_ring.virt = dma_zalloc_coherent(priv->dev,
->                                 rmu->msg_tx_ring.size * RIO_MSG_DESC_SIZE,
->                                 &rmu->msg_tx_ring.phys, GFP_KERNEL);
->         if (!rmu->msg_tx_ring.virt) {
->                 rc = -ENOMEM;
->                 goto out_dma;
->         }
-> -       memset(rmu->msg_tx_ring.virt, 0,
-> -                       rmu->msg_tx_ring.size * RIO_MSG_DESC_SIZE);
->         rmu->msg_tx_ring.tx_slot = 0;
->
->         /* Point dequeue/enqueue pointers at first entry in ring */
-> --
-> 2.7.4
->
+Each patch should do one thing.
+
+Please don't combine multiple changes into one patch like this.
+
+Post a proper patches series, one change per patch, with a proper
+"[PATCH 0/N] " header posting preceeding the series.
+
+Thanks.
