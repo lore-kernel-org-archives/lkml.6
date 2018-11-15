@@ -2,62 +2,89 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 663A4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:52:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76F80C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:52:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F63C223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:52:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F63C223CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 451C12077C
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:52:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 451C12077C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728935AbeKOS7Y (ORCPT
+        id S1729027AbeKOS7r convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 13:59:24 -0500
-Received: from mx2.suse.de ([195.135.220.15]:43992 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728519AbeKOS7X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 13:59:23 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id DBDBCAE78;
-        Thu, 15 Nov 2018 08:52:28 +0000 (UTC)
-Date:   Thu, 15 Nov 2018 09:52:27 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Yongkai Wu <nic.wuyk@gmail.com>
-Cc:     mike.kravetz@oracle.com, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/hugetl.c: keep the page mapping info when
- free_huge_page() hit the VM_BUG_ON_PAGE
-Message-ID: <20181115085227.GG23831@dhcp22.suse.cz>
-References: <CAJtqMcZp5AVva2yOM4gJET8Gd_j_BGJDLTkcqRdJynVCiRRFxQ@mail.gmail.com>
- <20181113130433.GB16182@dhcp22.suse.cz>
- <CAJtqMcY98hARD-_FmGYt875Tr6qmMP+42O7OWXNny6rD8ag91A@mail.gmail.com>
- <dc39308b-1b9e-0cce-471c-64f94f631f97@oracle.com>
- <CAJtqMcYzA6c1pTrWPcPETsJchOjpJS8iXVhDAJyWuVGCA4gKuA@mail.gmail.com>
+        Thu, 15 Nov 2018 13:59:47 -0500
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:53048 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728634AbeKOS7r (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 13:59:47 -0500
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAF8nJmY012034;
+        Thu, 15 Nov 2018 09:52:31 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2nr7d8rg5t-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Thu, 15 Nov 2018 09:52:31 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 967903A;
+        Thu, 15 Nov 2018 08:52:29 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag3node3.st.com [10.75.127.9])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4D725130D;
+        Thu, 15 Nov 2018 08:52:29 +0000 (GMT)
+Received: from SFHDAG3NODE1.st.com (10.75.127.7) by SFHDAG3NODE3.st.com
+ (10.75.127.9) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Thu, 15 Nov
+ 2018 09:52:28 +0100
+Received: from SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86]) by
+ SFHDAG3NODE1.st.com ([fe80::1166:1abb:aad4:5f86%20]) with mapi id
+ 15.00.1347.000; Thu, 15 Nov 2018 09:52:28 +0100
+From:   Bich HEMON <bich.hemon@st.com>
+To:     Alexandre TORGUE <alexandre.torgue@st.com>,
+        "mcoquelin.stm32@gmail.com" <mcoquelin.stm32@gmail.com>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "robh+dt@kernel.org" <robh+dt@kernel.org>
+CC:     "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-stm32@st-md-mailman.stormreply.com" 
+        <linux-stm32@st-md-mailman.stormreply.com>
+Subject: [PATCH 0/3] CAN fix for stm32mp157c
+Thread-Topic: [PATCH 0/3] CAN fix for stm32mp157c
+Thread-Index: AQHUfMCJYzTigdVFjUeihOzOfe8VNA==
+Date:   Thu, 15 Nov 2018 08:52:28 +0000
+Message-ID: <1542271942-28130-1-git-send-email-bich.hemon@st.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.75.127.47]
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAJtqMcYzA6c1pTrWPcPETsJchOjpJS8iXVhDAJyWuVGCA4gKuA@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-15_05:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 15-11-18 16:30:32, Yongkai Wu wrote:
-[...]
+This patchset changes the CAN RAM mapping and adds CAN sleep pins.
 
-Thanks for the clarification. It can be helpful for somebody trying to
-debug a similar issue in the future.
+Bich Hemon (3):
+  ARM: dts: stm32: change CAN RAM mapping on stm32mp157c
+  ARM: dts: stm32: add can1 sleep pins muxing
+  ARM: dts: stm32: add can1 sleep pins muxing on stm32mp157c-ev1 board
 
-> But i can not find a similar bug fix report or commit log.
-
-What about 6bc9b56433b7 ("mm: fix race on soft-offlining free huge pages") ?
+ arch/arm/boot/dts/stm32mp157-pinctrl.dtsi | 7 +++++++
+ arch/arm/boot/dts/stm32mp157c-ev1.dts     | 3 ++-
+ arch/arm/boot/dts/stm32mp157c.dtsi        | 4 ++--
+ 3 files changed, 11 insertions(+), 3 deletions(-)
 
 -- 
-Michal Hocko
-SUSE Labs
+1.9.1
