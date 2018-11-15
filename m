@@ -2,95 +2,99 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 56B11C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:59:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A6530C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A93BD20858
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:59:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=szeredi.hu header.i=@szeredi.hu header.b="iBK01pXt"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A93BD20858
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=szeredi.hu
+	by mail.kernel.org (Postfix) with ESMTP id 74BDE20858
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:00:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74BDE20858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388585AbeKPGIO (ORCPT
+        id S2388861AbeKPGJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 01:08:14 -0500
-Received: from mail-wr1-f45.google.com ([209.85.221.45]:32995 "EHLO
-        mail-wr1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725822AbeKPGIO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 01:08:14 -0500
-Received: by mail-wr1-f45.google.com with SMTP id u9-v6so22521817wrr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 11:59:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=szeredi.hu; s=google;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=FvAy8mN7qbYvQaEB02DOWcB6LaHJi1yXr2P6IN/AmZg=;
-        b=iBK01pXt6XuwnXxdqy/CY/6qixAPC2m+hoCwM9UzL0JoWc36TwMItw2O6JVJ6Hh2u9
-         SotXoFXw6sI/pql2aZ1xsbjEOARLZen1sMQ1JZyFU+len04NB4I9c9wkDPSW5XUxYgJ0
-         BjzflYCHFDwp+gLrOl4M2PQJEHTm5pmb5yY3E=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=FvAy8mN7qbYvQaEB02DOWcB6LaHJi1yXr2P6IN/AmZg=;
-        b=tqXTi77qj9HRoyX4ENJkkj78N8fvKuLFQv7cAKeuqVhiCFNp84tzigOYTPOuAtzxKm
-         fvidwvgu+NHkklQdZJNPmJ1Czk7ydTBZi/QdwQNqlV7A1NRkpNr028hpVKVgE6XwZ6Zn
-         tbxde8dXNsStfr4isEOr6YOPACZoZJ1tko2t+MJL+1QuB9LgETX2iHV/QPHw8CN3y4L7
-         nnoqkeqLdzP3Jhgv9Mp9Od+mbjzVRJ5Kq6/pcr15M5WsNNQsG1cyAlsu4a7oP0UQx69H
-         d5zDbi8LI5kUP88aoLG7M2fS4S2EE5OGXg0aSQKbVsQtCWO7p1PxKD/RX5wcMUHexaP6
-         ku2w==
-X-Gm-Message-State: AA+aEWbAp+Tl7Qegv9keXvMPj3kUnejfqjirbbLKVOBxVOAZIOJ+YEuk
-        Im8JgdYPUjr4SHT9mCSB0j5DyQ==
-X-Google-Smtp-Source: AFSGD/VCnEgy+zl4xQePhJpe8twMBxgClriFg3s7y7CH6Gmx9sNOVOju7h8013GOxCSGSKbgesLCHg==
-X-Received: by 2002:a5d:53ca:: with SMTP id a10mr3300345wrw.159.1542311939437;
-        Thu, 15 Nov 2018 11:58:59 -0800 (PST)
-Received: from veci.piliscsaba.redhat.com (catv-212-96-48-140.catv.broadband.hu. [212.96.48.140])
-        by smtp.gmail.com with ESMTPSA id e16sm3422942wrn.72.2018.11.15.11.58.58
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 11:58:58 -0800 (PST)
-Date:   Thu, 15 Nov 2018 20:58:52 +0100
-From:   Miklos Szeredi <miklos@szeredi.hu>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: [GIT PULL] fuse fixes for 4.20-rc3
-Message-ID: <20181115195852.GA5245@veci.piliscsaba.redhat.com>
+        Fri, 16 Nov 2018 01:09:27 -0500
+Received: from mga06.intel.com ([134.134.136.31]:38179 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725781AbeKPGJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 01:09:26 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 12:00:12 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,237,1539673200"; 
+   d="scan'208";a="104920081"
+Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.140])
+  by fmsmga002.fm.intel.com with ESMTP; 15 Nov 2018 12:00:02 -0800
+Date:   Thu, 15 Nov 2018 22:00:02 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
+Message-ID: <20181115200002.GA24006@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+ <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+ <1541522400.7839.48.camel@intel.com>
+ <20181107163757.GB11509@linux.intel.com>
+ <20181107180057.GB24807@linux.intel.com>
+ <20181108144603.GA14072@linux.intel.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181108144603.GA14072@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Linus,
+On Thu, Nov 08, 2018 at 04:46:03PM +0200, Jarkko Sakkinen wrote:
+> On Wed, Nov 07, 2018 at 10:00:57AM -0800, Sean Christopherson wrote:
+> > What do we gain by a single buffer vs. separate buffers?  The ioctl()
+> > would be slightly smaller but it seems like the actual code would be
+> > more complex.
+> 
+> I'm fine with either. It was just a suggestion.
+> 
+> > The enclave build process also utilizes the backing as temp storage
+> > to avoid having to alloc kernel memory when queueing pages to be added
+> > by the worker thread (which reminds me that I wanted to document why a
+> > worker thread is used).  Keeping this behavior would effectively make
+> > providing backing mandatory.
+> 
+> Would it be a problem just allocate those pages with alloc_page() and
+> free them in the worker thread?
+> 
+> > Are there any potential complications with ENCLS consuming userspace
+> > pointers?  We'd have to wrap them with user_access_{begin,end}() and
+> > probably tweak the fixup, but I assume having the fixup handler means
+> > we're generally ok?
+> 
+> Last time I did it I used get_user_pages() for pinning. I'm not sure
+> why I should do anything but just re-use that.
 
-Please pull from:
+What about VA page swapping? Not saying that it'd have to be done right
+now but we need to answer whether it is enclave local or a global asset.
+If it is local it would also require an argument.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/mszeredi/fuse.git tags/fuse-fixes-4.20-rc3
+I will most likely won't fix this for v17 because this detail needs
+careful consideration.
 
-A couple of fixes, all bound for -stable (i.e. not regressions in this
-cycle).
-
-Thanks,
-Miklos
-
-----------------------------------------------------------------
-Lukas Czerner (1):
-      fuse: fix use-after-free in fuse_direct_IO()
-
-Miklos Szeredi (2):
-      fuse: fix leaked notify reply
-      fuse: fix possibly missed wake-up after abort
-
----
- fs/fuse/dev.c  | 16 ++++++++++++----
- fs/fuse/file.c |  4 +++-
- 2 files changed, 15 insertions(+), 5 deletions(-)
+/Jarkko
