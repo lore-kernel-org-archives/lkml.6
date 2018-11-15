@@ -2,85 +2,87 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C784C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:29:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1BB16C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:29:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C9D032087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:29:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gNfJKuTq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9D032087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id D4B2F223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:29:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4B2F223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387586AbeKOTgD (ORCPT
+        id S2387670AbeKOTge convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:36:03 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:35359 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727265AbeKOTgD (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:36:03 -0500
-Received: by mail-lj1-f195.google.com with SMTP id x85-v6so16698673ljb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 01:29:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=Y2Pw5BW4NobDaK7PabjATdfAwHvKgPLqbZxz0yWjFdI=;
-        b=gNfJKuTq/4pctKGTRO+uyJrSVadUHqZkeSfVc9JAvjiFw6YyykCYDc3rC4Ho/Snfob
-         jueY4hq3g48ld2OzbbuXDg/XrdPm8RL4W2NywHGC/3zyk7wtFhdEGfWThD4nMJEzFY49
-         zORFcu66Qm2FkfTTMHSJ53RMs3RwEj2JpWBzk=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=Y2Pw5BW4NobDaK7PabjATdfAwHvKgPLqbZxz0yWjFdI=;
-        b=NmFwQYW5uJfqE9t83IrZTQrCNqc3XDf6nZA2ZMf+LpCjQ1O3xRLRCk/0fvlKdb3uuE
-         dJZV455Neiqw/+s7vmozHmpr6iWTnbVSszsj27JZM3DKxYibC062cLuzteiAPim6f7S9
-         +R9KzQHTsxXq8yg2ULTGN/aR6fbXhnB1X6b8J8ezmEcZy1/g3zBOSSn563i0m23vf5Tk
-         N+Qjbi06RMH1CoNKBGh8+IXJvjgQ0Ye9yyVxriN93ecXMzK5JOxDEYhEKLXX1EZCyGgc
-         pepdc+Pq7g8zbgJBCMZgO6tC37a6R45ZzsCggCsxqLQDUXcLljSLV90XnQeWgy81rKzV
-         TfGA==
-X-Gm-Message-State: AGRZ1gIf56c0T5B7wVyhwT8m9opGP3lFdnwHfMS/qFkE6F1bj7jNzo/Q
-        L0URxYTixtK6T+lSG6LOsmFW8AvfCvbCEgYCUwURTw==
-X-Google-Smtp-Source: AJdET5e8kpBjkoywQokynhJLJUnOdgUaIIizWFoMyUKVhiuHZNPoZ0AOcdk1ADIwhioTpaV2jaAcOpXLNQ7v3Ite+zA=
-X-Received: by 2002:a2e:7403:: with SMTP id p3-v6mr3177273ljc.97.1542274141222;
- Thu, 15 Nov 2018 01:29:01 -0800 (PST)
+        Thu, 15 Nov 2018 14:36:34 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:60298 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727265AbeKOTge (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:36:34 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 9639020D98; Thu, 15 Nov 2018 10:29:32 +0100 (CET)
+Received: from xps13 (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5A99D20510;
+        Thu, 15 Nov 2018 10:29:22 +0100 (CET)
+Date:   Thu, 15 Nov 2018 10:29:21 +0100
+From:   Miquel Raynal <miquel.raynal@bootlin.com>
+To:     Huijin Park <huijin.park@samsung.com>
+Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
+        bbanghj.park@gmail.com
+Subject: Re: [PATCH v2] mtd: change len type from signed to unsigned type
+Message-ID: <20181115102921.5117af90@xps13>
+In-Reply-To: <1542258430-19885-1-git-send-email-huijin.park@samsung.com>
+References: <CGME20181115050724eucas1p169b2046c03e108035199a4481a82a560@eucas1p1.samsung.com>
+        <1542258430-19885-1-git-send-email-huijin.park@samsung.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <1541587358-17654-1-git-send-email-narmstrong@baylibre.com>
-In-Reply-To: <1541587358-17654-1-git-send-email-narmstrong@baylibre.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 15 Nov 2018 10:28:49 +0100
-Message-ID: <CACRpkdYpk1Mts9SxQq5nAdBBcWyZJouYgwR6uQaKMOe8o6u=OA@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: meson-gxl: remove invalid GPIOX tsin_a pins
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 7, 2018 at 11:42 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
+Hi Huijin,
 
-> The GPIOX tsin_a pins wrongly uses the SDCard pinctrl bits, this
-> patch completely removes these pins entries until we find out what
-> are the correct bits and registers to be used instead.
->
-> Fixes: 5a6ae9b80139 ("pinctrl: meson-gxl: add tsin_a pins")
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+Huijin Park <huijin.park@samsung.com> wrote on Thu, 15 Nov 2018
+00:07:10 -0500:
 
-Patch applied.
-It doesn't look like a regression so I only applied it for
-next (v4.21).
+> From: "huijin.park" <huijin.park@samsung.com>
+> 
+> This patch casts the "len" parameter to an unsigned int.
+> The callers of erase_write() pass the "len" parameter as unsigned int.
 
-Yours,
-Linus Walleij
+Indeed. Perhaps it is worth backporting this patch to a stable releases?
+
+> 
+> Signed-off-by: huijin.park <huijin.park@samsung.com>
+> ---
+>  drivers/mtd/mtdblock.c |    2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/mtd/mtdblock.c b/drivers/mtd/mtdblock.c
+> index a5b1933..b2d5ed1 100644
+> --- a/drivers/mtd/mtdblock.c
+> +++ b/drivers/mtd/mtdblock.c
+> @@ -56,7 +56,7 @@ struct mtdblk_dev {
+>   */
+>  
+>  static int erase_write (struct mtd_info *mtd, unsigned long pos,
+> -			int len, const char *buf)
+> +			unsigned int len, const char *buf)
+>  {
+>  	struct erase_info erase;
+>  	size_t retlen;
+
+Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
+
+
+Thanks,
+Miquèl
