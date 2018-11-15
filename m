@@ -6,27 +6,27 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 70A53C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:52:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 24E93C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 469C6223DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:52:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 469C6223DD
+	by mail.kernel.org (Postfix) with ESMTP id DA6B82145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:52:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6B82145D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388842AbeKPBAH (ORCPT
+        id S2388863AbeKPBA3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:00:07 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:42889 "EHLO mail.bootlin.com"
+        Thu, 15 Nov 2018 20:00:29 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:42852 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388560AbeKPA64 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 19:58:56 -0500
+        id S2388485AbeKPA6q (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 19:58:46 -0500
 Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 179B620D75; Thu, 15 Nov 2018 15:50:47 +0100 (CET)
+        id 8FDCA2074F; Thu, 15 Nov 2018 15:50:37 +0100 (CET)
 Received: from localhost.localdomain (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 231FB20D7C;
-        Thu, 15 Nov 2018 15:50:28 +0100 (CET)
+        by mail.bootlin.com (Postfix) with ESMTPSA id 2D694208BE;
+        Thu, 15 Nov 2018 15:50:27 +0100 (CET)
 From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 To:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
@@ -41,9 +41,9 @@ Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
         linux-sunxi@googlegroups.com, Hans Verkuil <hverkuil@xs4all.nl>,
         Sakari Ailus <sakari.ailus@linux.intel.com>,
         Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: [PATCH 05/15] dt-bindings: sram: sunxi: Add bindings for the H5 with SRAM C1
-Date:   Thu, 15 Nov 2018 15:50:03 +0100
-Message-Id: <20181115145013.3378-6-paul.kocialkowski@bootlin.com>
+Subject: [PATCH 02/15] ARM: dts: sun8i-h3: Remove heading 0 in video-codec unit address
+Date:   Thu, 15 Nov 2018 15:50:00 +0100
+Message-Id: <20181115145013.3378-3-paul.kocialkowski@bootlin.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181115145013.3378-1-paul.kocialkowski@bootlin.com>
 References: <20181115145013.3378-1-paul.kocialkowski@bootlin.com>
@@ -54,40 +54,27 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This introduces new bindings for the H5 SoC in the SRAM controller.
-Because the SRAM layout is different from other SoCs, no backward
-compatibility is assumed with any of them.
-
-However, the C1 SRAM section alone looks similar to previous SoCs,
-so it is compatible with the initial A10 binding.
+This cosmetic change removes the heading 0 in the video-codec unit
+address, as it's done for other nodes.
 
 Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 ---
- Documentation/devicetree/bindings/sram/sunxi-sram.txt | 4 ++++
- 1 file changed, 4 insertions(+)
+ arch/arm/boot/dts/sun8i-h3.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/sram/sunxi-sram.txt b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-index 62dd0748f0ef..c043a6a4011e 100644
---- a/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-+++ b/Documentation/devicetree/bindings/sram/sunxi-sram.txt
-@@ -18,6 +18,7 @@ Required properties:
-     - "allwinner,sun8i-h3-system-control"
-     - "allwinner,sun50i-a64-sram-controller" (deprecated)
-     - "allwinner,sun50i-a64-system-control"
-+    - "allwinner,sun50i-h5-system-control"
-     - "allwinner,sun50i-h6-system-control", "allwinner,sun50i-a64-system-control"
- - reg : sram controller register offset + length
+diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
+index 3ecfabb10151..35d025af7deb 100644
+--- a/arch/arm/boot/dts/sun8i-h3.dtsi
++++ b/arch/arm/boot/dts/sun8i-h3.dtsi
+@@ -156,7 +156,7 @@
+ 			};
+ 		};
  
-@@ -55,6 +56,9 @@ The valid sections compatible for H3 are:
- The valid sections compatible for A64 are:
-     - allwinner,sun50i-a64-sram-c
- 
-+The valid sections compatible for H5 are:
-+    - allwinner,sun50i-h5-sram-c1, allwinner,sun4i-a10-sram-c1
-+
- The valid sections compatible for H6 are:
-     - allwinner,sun50i-h6-sram-c, allwinner,sun50i-a64-sram-c
- 
+-		video-codec@01c0e000 {
++		video-codec@1c0e000 {
+ 			compatible = "allwinner,sun8i-h3-video-engine";
+ 			reg = <0x01c0e000 0x1000>;
+ 			clocks = <&ccu CLK_BUS_VE>, <&ccu CLK_VE>,
 -- 
 2.19.1
 
