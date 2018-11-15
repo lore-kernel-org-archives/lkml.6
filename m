@@ -2,101 +2,161 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3FC3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:03:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8B54EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:04:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7EB9C2245E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:03:31 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="yHJ/Jbrx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7EB9C2245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 59BEB21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:04:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59BEB21582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726079AbeKPFM3 (ORCPT
+        id S1727586AbeKPFN1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 00:12:29 -0500
-Received: from mail.kernel.org ([198.145.29.99]:56228 "EHLO mail.kernel.org"
+        Fri, 16 Nov 2018 00:13:27 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:52271 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725741AbeKPFM2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 00:12:28 -0500
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 16052224E0;
-        Thu, 15 Nov 2018 19:03:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542308609;
-        bh=D4H2gd0G/Qe0GAPa1uFf3D6Igy/HWoDrMqTaYL1OR+I=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=yHJ/JbrxOJcfGAP5AryMtXRHj66l2m/ecWG3GwaYn+yZf2ahVJGLQsk4k9byASG1i
-         4f3puQg6nT+V4McEvWtVfUsJ45CJbwWX3pKl8Cf2+snSNmcnivB7a0Q/HK67YJkxEz
-         rubI7h+43XBIsp4LDY5j3+cH5lUGKMKzrDjFjJjs=
-Received: by mail-wr1-f51.google.com with SMTP id b13so22351448wrx.6;
-        Thu, 15 Nov 2018 11:03:29 -0800 (PST)
-X-Gm-Message-State: AA+aEWYLEBwvp+INoZ0rjvwaM3kPw1qG/+yUVTjf5KKXFdwrHNYCAclm
-        svq3MBpB3pa/FX4qj5F8RU4NbASaQb+mZLiAGqQ=
-X-Google-Smtp-Source: AFSGD/WF3UXizlB3L2JeJ9S/kdTmtwLDsuuV1rcDuRGHteeiUdQxAN4fnOZKtsONNY/fPGPgBuGc9X0i1ch3kORe6M4=
-X-Received: by 2002:adf:f28d:: with SMTP id k13mr5018251wro.78.1542308607583;
- Thu, 15 Nov 2018 11:03:27 -0800 (PST)
+        id S1725741AbeKPFN1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 00:13:27 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8C6272084B; Thu, 15 Nov 2018 20:04:25 +0100 (CET)
+Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5C11220714;
+        Thu, 15 Nov 2018 20:04:25 +0100 (CET)
+Date:   Thu, 15 Nov 2018 20:04:24 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        linux-media@vger.kernel.org, Andrzej Hajda <a.hajda@samsung.com>,
+        Chen-Yu Tsai <wens@csie.org>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>
+Subject: Re: [PATCH 1/5] dt-bindings: media: Add Allwinner A10 CSI binding
+Message-ID: <20181115190424.gpuekifrjli5mu77@flea>
+References: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
+ <60494dd4245ab01473d074dc5cd46198a2181614.1542097288.git-series.maxime.ripard@bootlin.com>
+ <20181113083855.s5jxrb32ru3myu3t@kekkonen.localdomain>
 MIME-Version: 1.0
-References: <0f5fe0d5b6a9c81b3f4395a1007ed0ba2239ae45.1541574485.git.ryder.lee@mediatek.com>
-In-Reply-To: <0f5fe0d5b6a9c81b3f4395a1007ed0ba2239ae45.1541574485.git.ryder.lee@mediatek.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Thu, 15 Nov 2018 11:03:16 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzofO3SPXcXsqj2pheKAP-fNSDupiR3WzW5_0_LDesLzdg@mail.gmail.com>
-Message-ID: <CAGp9LzofO3SPXcXsqj2pheKAP-fNSDupiR3WzW5_0_LDesLzdg@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: rng: update bindings for MT7629 SoC
-To:     ryder.lee@mediatek.com
-Cc:     herbert@gondor.apana.org.au, robh+dt@kernel.org,
-        devicetree@vger.kernel.org, weijie.gao@mediatek.com,
-        linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
-        linux-crypto@vger.kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="f37e5djwgbgmojp3"
+Content-Disposition: inline
+In-Reply-To: <20181113083855.s5jxrb32ru3myu3t@kekkonen.localdomain>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 6, 2018 at 11:11 PM Ryder Lee <ryder.lee@mediatek.com> wrote:
->
-> This updates bindings for MT7629 RNG driver.
->
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 
-Acked-by: Sean Wang <sean.wang@kernel.org>
+--f37e5djwgbgmojp3
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> ---
->  Documentation/devicetree/bindings/rng/mtk-rng.txt | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/Documentation/devicetree/bindings/rng/mtk-rng.txt b/Documentation/devicetree/bindings/rng/mtk-rng.txt
-> index 366b99b..ffa6a66 100644
-> --- a/Documentation/devicetree/bindings/rng/mtk-rng.txt
-> +++ b/Documentation/devicetree/bindings/rng/mtk-rng.txt
-> @@ -1,9 +1,10 @@
->  Device-Tree bindings for Mediatek random number generator
-> -found in Mediatek SoC family
-> +found in MediaTek SoC family
->
->  Required properties:
->  - compatible       : Should be
->                         "mediatek,mt7622-rng",  "mediatek,mt7623-rng" : for MT7622
-> +                       "mediatek,mt7629-rng",  "mediatek,mt7623-rng" : for MT7629
->                         "mediatek,mt7623-rng" : for MT7623
->  - clocks           : list of clock specifiers, corresponding to
->                       entries in clock-names property;
-> --
-> 1.9.1
->
->
-> _______________________________________________
-> Linux-mediatek mailing list
-> Linux-mediatek@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-mediatek
+Hi Sakari,
+
+On Tue, Nov 13, 2018 at 10:38:55AM +0200, Sakari Ailus wrote:
+> > +  - allwinner,has-isp: Whether the CSI controller has an ISP
+> > +                       associated to it or not
+>=20
+> Is the ISP a part of the same device? It sounds like that this is actually
+> a different device if it contains an ISP as well, and that should be
+> apparent from the compatible string. What do you think?
+
+I guess we can see it as both. It seems to be the exact same register
+set, except for the fact that the first instance has that ISP in
+addition, and several channels, as you pointed out in your other mail.
+
+What these channels are is not exactly clear. It looks like it's
+related to the BT656 interface where you could interleave channel
+bytes over the bus. I haven't really looked into it, and it doesn't
+look like we have any code (or hardware) able to do that though.
+
+> > +
+> > +If allwinner,has-isp is set, an additional "isp" clock is needed,
+> > +being a phandle to the clock driving the ISP.
+> > +
+> > +The CSI node should contain one 'port' child node with one child
+> > +'endpoint' node, according to the bindings defined in
+> > +Documentation/devicetree/bindings/media/video-interfaces.txt. The
+> > +endpoint's bus type must be parallel or BT656.
+> > +
+> > +Endpoint node properties for CSI
+> > +---------------------------------
+> > +
+> > +- remote-endpoint	: (required) a phandle to the bus receiver's endpoint
+> > +			   node
+>=20
+> Rob's opinion has been (AFAIU) that this is not needed as it's already a
+> part of the graph bindings. Unless you want to say that it's required, th=
+at
+> is --- the graph bindings document it as optional.
+
+Ok, I'll remove it.
+
+> > +- bus-width:		: (required) must be 8
+>=20
+> If this is the only value the hardware supports, I don't see why you shou=
+ld
+> specify it here.
+
+Ditto :)
+
+> > +- pclk-sample		: (optional) (default: sample on falling edge)
+> > +- hsync-active		: (only required for parallel)
+> > +- vsync-active		: (only required for parallel)
+> > +
+> > +Example:
+> > +
+> > +csi0: csi@1c09000 {
+> > +	compatible =3D "allwinner,sun7i-a20-csi",
+> > +		     "allwinner,sun4i-a10-csi";
+> > +	reg =3D <0x01c09000 0x1000>;
+> > +	interrupts =3D <GIC_SPI 42 IRQ_TYPE_LEVEL_HIGH>;
+> > +	clocks =3D <&ccu CLK_AHB_CSI0>, <&ccu CLK_CSI0>,
+> > +		 <&ccu CLK_CSI_SCLK>, <&ccu CLK_DRAM_CSI0>;
+> > +	clock-names =3D "ahb", "mod", "isp", "ram";
+> > +	resets =3D <&ccu RST_CSI0>;
+> > +	allwinner,csi-channels =3D <4>;
+> > +	allwinner,has-isp;
+> > +=09
+> > +	port {
+> > +		csi_from_ov5640: endpoint {
+> > +                        remote-endpoint =3D <&ov5640_to_csi>;
+> > +                        bus-width =3D <8>;
+> > +                        data-shift =3D <2>;
+>=20
+> data-shift needs to be documented above if it's relevant for the device.
+
+It's not really related to the CSI device in that case but the sensor,
+so I'll just leave it out.
+
+Thanks!
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--f37e5djwgbgmojp3
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+3DOAAKCRDj7w1vZxhR
+xc4LAP4qWgNQoIyi1KBkxAWejMjR0YpgCrt37hiunZiLN5pvvQEA3uqtaZw6cThN
+dk+hiwg40zcrvjhumNSCb7EMzbRjzQk=
+=IFrn
+-----END PGP SIGNATURE-----
+
+--f37e5djwgbgmojp3--
