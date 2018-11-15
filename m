@@ -2,125 +2,105 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF09EC04EBC
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 75C79C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 01:04:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 77F6222360
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:57:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DsJhtO6m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F6222360
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 23C91208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 01:04:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 23C91208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728303AbeKOLCh (ORCPT
+        id S1727180AbeKOLKA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 06:02:37 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58158 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726943AbeKOLCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 06:02:37 -0500
-Received: from localhost (unknown [64.114.255.97])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0FAFF208E7;
-        Thu, 15 Nov 2018 00:57:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542243420;
-        bh=kycEJDTnQ3efzpmgmTLjKFGm9sBL8UnyW8pLuhE3gtI=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=DsJhtO6mTXq5BRgWeUAr6WmikJToRnjoZYB2rztoQMxux7sk4a0JoGvBODxUfQgSZ
-         AR4ISx168MuKIT2M234fEvi1lKn6KqXEQ4fVEFVsuCNuuebjoxVg6vannCjwh8n5+Z
-         pNaKJ6npQwAWlva37cegeXQ4MVlW2j4Id13NYlYc=
-Date:   Wed, 14 Nov 2018 16:56:58 -0800
-From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Guenter Roeck <linux@roeck-us.net>,
-        Ming Lei <tom.leiming@gmail.com>, Jens Axboe <axboe@fb.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hannes Reinecke <hare@suse.de>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Christoph Hellwig <hch@lst.de>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
-        linux-scsi@vger.kernel.org
-Subject: Re: kobject lifetime issues in blk-mq
-Message-ID: <20181115005658.GA24847@kroah.com>
-References: <20181109203518.GA7130@roeck-us.net>
- <20181112092051.GA391@ming.t460p>
- <20181112094406.GB391@ming.t460p>
- <20181112164848.GA1790@roeck-us.net>
- <20181112200236.GA4415@kroah.com>
- <20181113002226.GA4455@ming.t460p>
- <20181113004124.GC4455@ming.t460p>
- <20181114110827.GA31430@ming.t460p>
- <20181114151410.GB26378@kroah.com>
- <20181115003616.GA32603@ming.t460p>
+        Thu, 15 Nov 2018 06:10:00 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48722 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725895AbeKOLKA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 06:10:00 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id AE687ACB5;
+        Thu, 15 Nov 2018 01:04:21 +0000 (UTC)
+Date:   Wed, 14 Nov 2018 17:04:15 -0800
+From:   Davidlohr Bueso <dave@stgolabs.net>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     jbaron@akamai.com, viro@zeniv.linux.org.uk,
+        linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Davidlohr Bueso <dbueso@suse.de>
+Subject: Re: [PATCH 2/2] fs/epoll: deal with wait_queue only once
+Message-ID: <20181115010415.2hgkc6w35m6jvh4g@linux-r8p5>
+References: <20181114182532.27981-1-dave@stgolabs.net>
+ <20181114182532.27981-2-dave@stgolabs.net>
+ <20181114145119.2e00ce7530d32fc4958c3707@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=us-ascii; format=flowed
 Content-Disposition: inline
-In-Reply-To: <20181115003616.GA32603@ming.t460p>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181114145119.2e00ce7530d32fc4958c3707@linux-foundation.org>
+User-Agent: NeoMutt/20180323
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 08:36:17AM +0800, Ming Lei wrote:
-> > So even if you think the kernel is not going to do this, remember, you
-> > have no control over it.  Reference counted objects are done this way
-> > for a reason, you really do not know who has a reference and you really
-> > do not care.
-> > 
-> > You are just papering over the real issue here, see my previous email
-> > for how to start working on resolving it.
-> 
-> IMO, there isn't real issue, and the issue is actually in 'delay release'.
+On Wed, 14 Nov 2018, Andrew Morton wrote:
 
-Nope, sorry, that is not true.
+>Why was this moved to before the ep_reset_busy_poll_napi_id() call?
+>That movement placed the code ahead of the block comment which serves
+>to explain its function.
 
-> Please look at the code in block/blk-mq-sysfs.c, both q->mq_kobj and all
-> ctx->kobj share same lifetime with q->kobj, we even don't call get/put
-> on q->mq_kobj & all ctx->kobj, and all are simply released in q->kobj's
-> release handler.
+Yikes, that was a brain fart.
 
-How do you "know" you are keeping those lifetimes in sync?  The joy of a
-kobject is that _ANYTHING_ can grab a reference to your object without
-you knowing about it.  That includes userspace programs.  Yes, sysfs is
-now much better and it trys to release that reference "quickly" when it
-determines you are trying to delete a kobject, but it's not perfict,
-there are still races there.
+>
+>
+>This?  Which also fixes that comment and reflows it to use 80 cols.
 
-And that is what the delay release code is showing you.  It is showing
-you that you "think" your reference counting is wrong, but it is not.
-It is showing you that if someone else grabs a reference, you are not
-correctly cleaning up for yourself.
+Looks good, thanks.
 
-Never think that you really know the lifetime of a kobject, once you
-realize that your code gets simpler and you can then just "trust" that
-the kernel will do the right thing no matter what.
-
-Because really, you are using a kobject because you want that correct
-reference counting logic.  By ignoring that logic, you are ignoring the
-reason to be using that object at all.  If you don't need reference
-counting, then don't use it at all.
-
-And if you need sysfs files, then you need to use the kobject and then
-you need to handle it properly, because again, you do NOT have full
-control over the lifetime of your object.  That's the basis for
-reference counting in the firstplace.
-
-So this code is broken without me evening having to look at it, please
-fix it to handle release properly.  Again, the kernel tried to tell you
-this, but you hacked around the kernel core to remove that warning
-incorrectly.  Please go read the kobject documentation again for even
-more details about this than what I said here.
-
-thanks,
-
-greg k-h
+>
+>--- a/fs/eventpoll.c~fs-epoll-deal-with-wait_queue-only-once-fix
+>+++ a/fs/eventpoll.c
+>@@ -1787,15 +1787,6 @@ fetch_events:
+> 	if (eavail)
+> 		goto send_events;
+>
+>-	if (!waiter) {
+>-		waiter = true;
+>-		init_waitqueue_entry(&wait, current);
+>-
+>-		spin_lock_irq(&ep->wq.lock);
+>-		__add_wait_queue_exclusive(&ep->wq, &wait);
+>-		spin_unlock_irq(&ep->wq.lock);
+>-	}
+>-
+> 	/*
+> 	 * Busy poll timed out.  Drop NAPI ID for now, we can add
+> 	 * it back in when we have moved a socket with a valid NAPI
+>@@ -1804,10 +1795,18 @@ fetch_events:
+> 	ep_reset_busy_poll_napi_id(ep);
+>
+> 	/*
+>-	 * We don't have any available event to return to the caller.
+>-	 * We need to sleep here, and we will be wake up by
+>-	 * ep_poll_callback() when events will become available.
+>+	 * We don't have any available event to return to the caller.  We need
+>+	 * to sleep here, and we will be woken by ep_poll_callback() when events
+>+	 * become available.
+> 	 */
+>+	if (!waiter) {
+>+		waiter = true;
+>+		init_waitqueue_entry(&wait, current);
+>+
+>+		spin_lock_irq(&ep->wq.lock);
+>+		__add_wait_queue_exclusive(&ep->wq, &wait);
+>+		spin_unlock_irq(&ep->wq.lock);
+>+	}
+>
+> 	for (;;) {
+> 		/*
+>_
+>
