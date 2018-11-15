@@ -2,148 +2,202 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E7CFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:57:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5278AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E56A52087B
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:57:01 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=tobin.cc header.i=@tobin.cc header.b="tuz/77yg";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="y5UIukD7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E56A52087B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tobin.cc
+	by mail.kernel.org (Postfix) with ESMTP id 033062145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:58:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 033062145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727041AbeKPKHC (ORCPT
+        id S2388970AbeKPKII (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 05:07:02 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:37481 "EHLO
-        out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725985AbeKPKHB (ORCPT
+        Fri, 16 Nov 2018 05:08:08 -0500
+Received: from eddie.linux-mips.org ([148.251.95.138]:60626 "EHLO
+        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbeKPKIH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 05:07:01 -0500
-Received: from compute5.internal (compute5.nyi.internal [10.202.2.45])
-        by mailout.nyi.internal (Postfix) with ESMTP id 7EC6622BCB;
-        Thu, 15 Nov 2018 18:56:59 -0500 (EST)
-Received: from mailfrontend2 ([10.202.2.163])
-  by compute5.internal (MEProxy); Thu, 15 Nov 2018 18:56:59 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tobin.cc; h=date
-        :from:to:cc:subject:message-id:references:mime-version
-        :content-type:in-reply-to; s=fm1; bh=iGxbPXZiAeIc6wM5MgXcNQU3hrX
-        ZX8JYakFfKn0Lpf8=; b=tuz/77yg3bBuBppczw9FTYGViUDcrM+eYWqvODL1UeI
-        SBOLJ/DyDjzW5Pw8I6fzZkJwhTEYaTxrKdAlJnnMdJZIqf3Ak43eSjgJ5KRJF+Qm
-        hkk5qEZ50D3NxFZFLwxtbfoeYwE92aCueDqgu7N+uFApGcYES75BxjtW3bD5pFMn
-        ANAVbCkpwT2qXk4K2JLNipKNjiV/XvUVda1VO1NxrbWZBdWPoHQKgwKCDzZupKBI
-        BTyGIwmDihL2GmQT7NwwZFtxW8Yr5+53TwmyUUSIHQno3w6xxE5cm1nCfW9sNnfs
-        ZL9n4OlkS+6OYmt4s3EDorFFBGp/DZCUYbMmATC5CFw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-        messagingengine.com; h=cc:content-type:date:from:in-reply-to
-        :message-id:mime-version:references:subject:to:x-me-proxy
-        :x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; bh=iGxbPX
-        ZiAeIc6wM5MgXcNQU3hrXZX8JYakFfKn0Lpf8=; b=y5UIukD77PXXIMt7ZSUteC
-        Jfj0Me04tx1Xn6P64KUHoCND0HEvp4F+X+pDgp94Mdx6XVERXyk6IQmcQQZqPmVe
-        dI4IoDtEALOJ7bE+ZGfHVhIpO+mmNK7v9i123FfqmXgk7gtKguAQ8XOhCOx9cgP/
-        HiQUpVSpxYYD5qQflbic5b1Is+a3WM6lZsk2Up/YbVxcl6RlzSd+P5IXnCAqyFWt
-        C9YhH6gDpAJcr2S90VstnXaDxVlWxZCSe0cWLie3p8p1zyNFl0jXuZkXScSUb8eE
-        9PY72oulpskC1xucrCf9k8hBuYWdBQW85jFGVO0JHFki8qU8Ra0exONzeZQJPHeg
-        ==
-X-ME-Sender: <xms:ygfuW7LhyHLxPlz1AS-TBNIA1tO19PYDdQ50cmdfSRM_Cumr1kbz5w>
-X-ME-Proxy: <xmx:ygfuW60hsHZhm00moyFtnAFC1JqlNtAm_0AjIOQf8A5vlfqEWDXoMw>
-    <xmx:ygfuW-VFlXRX9Ej7eu3PN49O9C-3uXLaS8VoCKMT1byZUXTusmHNjw>
-    <xmx:ygfuW4M7FhPXnMFonWwcAZ7sboFr6dSm1tW2_4-EdZ_ybDqlAlo23A>
-    <xmx:ygfuW5ya6195yoimq8jU169y__I4E8X2gvVSkYETtrlFC6EA6jWJCA>
-    <xmx:ygfuW9jIMCYgar8ivrMQWZawVbPLMpBKaeTkvB3SABT95Z2JT7wAAA>
-    <xmx:ywfuW5HD9hdrK_GeC7BzhdTHHoHynYbn7VMLk5XpR5Tp6wv1B6HsUA>
-Received: from localhost (unknown [64.114.255.97])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 025361037D;
-        Thu, 15 Nov 2018 18:56:57 -0500 (EST)
-Date:   Fri, 16 Nov 2018 10:56:51 +1100
-From:   "Tobin C. Harding" <me@tobin.cc>
-To:     Jani Nikula <jani.nikula@intel.com>
-Cc:     Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org, vishal.l.verma@intel.com,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-nvdimm@lists.01.org, Dmitry Vyukov <dvyukov@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Steve French <stfrench@microsoft.com>,
-        linux-doc@vger.kernel.org
-Subject: Re: [Ksummit-discuss] [RFC PATCH 2/3] MAINTAINERS, Handbook:
- Subsystem Profile
-Message-ID: <20181115235651.GD5782@caerus>
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com>
- <87pnv6ivl7.fsf@intel.com>
+        Fri, 16 Nov 2018 05:08:07 -0500
+Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
+        with ESMTP id S23990411AbeKOX4QsRHLR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 00:56:16 +0100
+Date:   Thu, 15 Nov 2018 23:56:16 +0000 (GMT)
+From:   "Maciej W. Rozycki" <macro@linux-mips.org>
+To:     Ralf Baechle <ralf@linux-mips.org>,
+        Paul Burton <paul.burton@mips.com>
+cc:     Christoph Hellwig <hch@lst.de>, linux-mips@linux-mips.org,
+        linux-kernel@vger.kernel.org
+Subject: [PATCH v4 3/3] MIPS: SiByte: Enable swiotlb for SWARM, LittleSur
+ and BigSur
+In-Reply-To: <alpine.LFD.2.21.1811131653160.9637@eddie.linux-mips.org>
+Message-ID: <alpine.LFD.2.21.1811152351250.21654@eddie.linux-mips.org>
+References: <alpine.LFD.2.21.1811131653160.9637@eddie.linux-mips.org>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87pnv6ivl7.fsf@intel.com>
-X-Mailer: Mutt 1.9.4 (2018-02-28)
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 10:38:44AM +0200, Jani Nikula wrote:
-> 
-> Cc: linux-doc
-> 
-> On Wed, 14 Nov 2018, Dan Williams <dan.j.williams@intel.com> wrote:
-> > As presented at the 2018 Linux Plumbers conference [1], the Subsystem
-> > Profile is proposed as a way to reduce friction between committers and
-> > maintainers and perhaps encourage conversations amongst maintainers
-> > about best practice policies.
-> >
-> > The profile contains short answers to some of the common policy
-> > questions a contributor might have, or that a maintainer might consider
-> > formalizing. The current list of maintenance policies is:
-> >
-> > Overview: General introduction to maintaining the subsystem
-> > Core: List of source files considered core
-> > Leaf: List of source files that consume core functionality
-> > Patches or Pull requests: Simple statement of expected submission format
-> > Last -rc for new feature submissions: Expected lead time for submissions
-> > Last -rc to merge features: Deadline for merge decisions
-> > Non-author Ack / Review Tags Required: Patch review economics
-> > Test Suite: Pass this suite before requesting inclusion
-> > Resubmit Cadence: When to ping the maintainer
-> > Trusted Reviewers: Help for triaging patches
-> > Time Zone / Office Hours: When might a maintainer be available
-> > Checkpatch / Style Cleanups: Policy on pure cleanup patches
-> > Off-list review: Request for review gates
-> > TODO: Potential development tasks up for grabs, or active focus areas
-> >
-> > The goal of the Subsystem Profile is to set expectations for
-> > contributors and interim or replacement maintainers for a subsystem.
-> 
-> First of all, I welcome documentation efforts like this.
-> 
-> The cover letter mainly focuses on the maintainer aspect, and the
-> documentation is added to the maintainer handbook. However, here you set
-> the goal as setting expectations for contributors. The example nvdimm
-> profile in patch 3/3 addresses the reader as a new maintainer, yet goes
-> on to set expectations also for contributors, not just the maintainer.
-> 
-> I do think the documentation for contributors and maintainers/committers
-> should be kept separate. Most contributors will never care about the
-> documentation for the latter. We have Documentation/process for
-> contributors, and I think the audience of Documentation/maintainer
-> should be strictly maintainers.
-> 
-> In summary, I do think we need all of the documentation you propose, and
-> I appreciate you taking this on, but I think this should be split by
-> audience.
+The Broadcom SiByte BCM1250, BCM1125, and BCM1125H SOCs have an onchip 
+DRAM controller that supports memory amounts of up to 16GiB, and due to 
+how the address decoder has been wired in the SOC any memory beyond 1GiB 
+is actually mapped starting from 4GiB physical up, that is beyond the 
+32-bit addressable limit[1].  Consequently if the maximum amount of 
+memory has been installed, then it will span up to 19GiB.
 
-I got confused by this at first also Jani.  This document is a template
-for use by maintainers.  The files created from the template (by a
-subsystem maintainer) are for contributors.  So I believe this document
-is in the correct place.
+Many of the evaluation boards we support that are based on one of these 
+SOCs have their memory soldered and the amount present fits in the 
+32-bit address range.  The BCM91250A SWARM board however has actual DIMM 
+slots and accepts, depending on the peripherals revision of the SOC, up 
+to 4GiB or 8GiB of memory in commercially available JEDEC modules[2].  
+I believe this is also the case with the BCM91250C2 LittleSur board. 
+This means that up to either 3GiB or 7GiB of memory requires 64-bit 
+addressing to access.
 
-Hope this helps to clarify.
+I believe the BCM91480B BigSur board, which has the BCM1480 SOC instead, 
+accepts at least as much memory, although I have no documentation or 
+actual hardware available to verify that.
 
-     Tobin
+Both systems have PCI slots installed for use by any PCI option boards, 
+including ones that only support 32-bit addressing (additionally the 
+32-bit PCI host bridge of the BCM1250, BCM1125, and BCM1125H SOCs limits 
+addressing to 32-bits), and there is no IOMMU available.  Therefore for 
+PCI DMA to work in the presence of memory beyond enable swiotlb for the
+affected systems.
+
+All the other SOC onchip DMA devices use 40-bit addressing and therefore 
+can address the whole memory, so only enable swiotlb if PCI support and 
+support for DMA beyond 4GiB have been both enabled in the configuration 
+of the kernel.
+
+This shows up as follows:
+
+Broadcom SiByte BCM1250 B2 @ 800 MHz (SB1 rev 2)
+Board type: SiByte BCM91250A (SWARM)
+Determined physical RAM map:
+ memory: 000000000fe7fe00 @ 0000000000000000 (usable)
+ memory: 000000001ffffe00 @ 0000000080000000 (usable)
+ memory: 000000000ffffe00 @ 00000000c0000000 (usable)
+ memory: 0000000087fffe00 @ 0000000100000000 (usable)
+software IO TLB: mapped [mem 0xcbffc000-0xcfffc000] (64MB)
+
+in the bootstrap log and removes failures like these:
+
+defxx 0000:02:00.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
+fddi0: Receive buffer allocation failed
+fddi0: Adapter open failed!
+IP-Config: Failed to open fddi0
+defxx 0000:09:08.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
+fddi1: Receive buffer allocation failed
+fddi1: Adapter open failed!
+IP-Config: Failed to open fddi1
+
+when memory beyond 4GiB is handed out to devices that can only do 32-bit 
+addressing.
+
+This updates commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need 
+DMA32.").
+
+References:
+
+[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R, 
+    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview", 
+    "Memory Map", pp. 34-38
+
+[2] "BCM91250A User Manual", Revision 91250A-UM100-R, Broadcom 
+    Corporation, 18 May 2004, Section 3: "Physical Description", 
+    "Supported DRAM", p. 23
+
+Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
+References: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
+---
+Hi,
+
+ Sending v4 of 3/3 only with the update requested, due to the minor scope 
+of the change.  Hopefully patchwork gets it right.
+
+  Maciej
+
+Changes from v3:
+
+- removed inline licence text.
+
+Changes from v2:
+
+- missing reference to [1] added.
+
+Changes from v1:
+
+- title updated to include LittleSur.
+---
+ arch/mips/Kconfig                |    3 +++
+ arch/mips/sibyte/common/Makefile |    1 +
+ arch/mips/sibyte/common/dma.c    |   14 ++++++++++++++
+ 3 files changed, 18 insertions(+)
+
+linux-mips-sibyte-swiotlb.diff
+Index: linux-20181104-swarm64-eb/arch/mips/Kconfig
+===================================================================
+--- linux-20181104-swarm64-eb.orig/arch/mips/Kconfig
++++ linux-20181104-swarm64-eb/arch/mips/Kconfig
+@@ -794,6 +794,7 @@ config SIBYTE_SWARM
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ZONE_DMA32 if 64BIT
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ 
+ config SIBYTE_LITTLESUR
+ 	bool "Sibyte BCM91250C2-LittleSur"
+@@ -806,6 +807,7 @@ config SIBYTE_LITTLESUR
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ZONE_DMA32 if 64BIT
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ 
+ config SIBYTE_SENTOSA
+ 	bool "Sibyte BCM91250E-Sentosa"
+@@ -827,6 +829,7 @@ config SIBYTE_BIGSUR
+ 	select SYS_SUPPORTS_HIGHMEM
+ 	select SYS_SUPPORTS_LITTLE_ENDIAN
+ 	select ZONE_DMA32 if 64BIT
++	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
+ 
+ config SNI_RM
+ 	bool "SNI RM200/300/400"
+Index: linux-20181104-swarm64-eb/arch/mips/sibyte/common/Makefile
+===================================================================
+--- linux-20181104-swarm64-eb.orig/arch/mips/sibyte/common/Makefile
++++ linux-20181104-swarm64-eb/arch/mips/sibyte/common/Makefile
+@@ -1,4 +1,5 @@
+ obj-y := cfe.o
++obj-$(CONFIG_SWIOTLB)			+= dma.o
+ obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
+ obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
+ obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
+Index: linux-20181104-swarm64-eb/arch/mips/sibyte/common/dma.c
+===================================================================
+--- /dev/null
++++ linux-20181104-swarm64-eb/arch/mips/sibyte/common/dma.c
+@@ -0,0 +1,14 @@
++// SPDX-License-Identifier: GPL-2.0+
++/*
++ *	DMA support for Broadcom SiByte platforms.
++ *
++ *	Copyright (c) 2018  Maciej W. Rozycki
++ */
++
++#include <linux/swiotlb.h>
++#include <asm/bootinfo.h>
++
++void __init plat_swiotlb_setup(void)
++{
++	swiotlb_init(1);
++}
