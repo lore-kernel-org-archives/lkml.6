@@ -2,107 +2,100 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D852C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:44:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF76BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:48:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB85C2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:44:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB85C2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 5D4DC223DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:48:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OPM7wFny"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5D4DC223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728166AbeKOPum (ORCPT
+        id S1728296AbeKOPy2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 10:50:42 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:52054 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726689AbeKOPum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 10:50:42 -0500
-Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id A7813315487C;
-        Thu, 15 Nov 2018 05:44:18 +0000 (UTC)
-Received: from localhost.localdomain (ovpn-12-127.pek2.redhat.com [10.72.12.127])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id A51B75DD7F;
-        Thu, 15 Nov 2018 05:44:11 +0000 (UTC)
-Subject: Re: [PATCH 1/2 v6] x86/kexec_file: add e820 entry in case e820 type
- string matches to io resource name
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
-        x86@kernel.org, tglx@linutronix.de, mingo@redhat.com,
-        akpm@linux-foundation.org, dyoung@redhat.com, bhe@redhat.com
-References: <20181114072926.13312-1-lijiang@redhat.com>
- <20181114072926.13312-2-lijiang@redhat.com> <20181114112600.GD13926@zn.tnic>
-From:   lijiang <lijiang@redhat.com>
-Message-ID: <9eb61523-7a08-24c4-ac15-050537bd9203@redhat.com>
-Date:   Thu, 15 Nov 2018 13:44:07 +0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 15 Nov 2018 10:54:28 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40223 "EHLO
+        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726821AbeKOPy1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 10:54:27 -0500
+Received: by mail-oi1-f194.google.com with SMTP id u130-v6so15787325oie.7;
+        Wed, 14 Nov 2018 21:48:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=gH2rjWn83IU2TGDsYQAmPrfVFRW+r+gBqCv4hek2XvQ=;
+        b=OPM7wFny/6owLT30gzzubnJxMCbe1UW7ct4O6MABpirU2un0AvGbUB7h1I2NOxkwsM
+         vka4vqfysQWM9y/wgWFXFSWFbP6FhhjhEIGO3ErW4Y2Hxs8TG1+gdNVp9PTY5QxQyJYl
+         /jmuV0lVuioGK7s+8av1/+BE2l1Pycd2X+227aUAOmTbywel1sFmX2RdzifW8ZU2/vaI
+         2zNmswPxJcN8VU7kZWC8qpq8ftLCrmaf/E83zd6tsz5GGNz1XwQ3N6PjXnJUlZuib2dw
+         Um5Wt4vvDcRJmeZfTE88E/ctLDd1axOS8SsDGezFYyqDa9Ws9Y/C626sL0srEjHLpeVQ
+         UcgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=gH2rjWn83IU2TGDsYQAmPrfVFRW+r+gBqCv4hek2XvQ=;
+        b=D+YCsTYC7pLx8nKSUwU+zT2iBvs2NtoeLeeXou4GXPFJ4aKdX/2o6VYYdLwMMY+UOa
+         Dr205mDDKeaZ2VbvFbLlv+6+CJd8pRwFL2F2bEd6T4IbuedjmzhvBipXd1QUz9ToGqGd
+         1uY1/rw+UthKQcoIfdvZc867rAFNzc58OWh4g6sXm82174H0C37IL1JUI3U2TkOI44Gg
+         7/+2usMZzBkIYFGmaUUVWHjAyTRO0dYyHhBWpped5EbeGi9ALN56o1+zmei6igfVcIrq
+         ZwPNzB+++8KrXp4VdEl2oeK88t1mDf8yKRBuX0Ve+XHIW6TYqWRUVNVAz7uzyhZoWvLy
+         RV/Q==
+X-Gm-Message-State: AGRZ1gJVw98xUx9SBu1zI1HHFhACI1t2fO/ADOa+eTg+2n4jbeIzXTBF
+        r+2/7vE5jT6vLYRkp5EtquvlVWh7Olute+5P3n4=
+X-Google-Smtp-Source: AJdET5cQpUHqR9wiNDE3zzooDgX+2vgf/FOv/FyAvayGYWotvHZfg5K7Bn9I8TSTyKb20KHZzkMiCBIAUNG8UNgrYxg=
+X-Received: by 2002:aca:6545:: with SMTP id j5mr2604609oiw.70.1542260882793;
+ Wed, 14 Nov 2018 21:48:02 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181114112600.GD13926@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 15 Nov 2018 05:44:18 +0000 (UTC)
+References: <20181108063929.29720-1-anarsoul@gmail.com> <20181108063929.29720-4-anarsoul@gmail.com>
+ <CAGb2v65zb4rXJJv018AfDC-YQgAAmahmQ=-Bb5CyU3kA6wBAqg@mail.gmail.com>
+In-Reply-To: <CAGb2v65zb4rXJJv018AfDC-YQgAAmahmQ=-Bb5CyU3kA6wBAqg@mail.gmail.com>
+From:   Vasily Khoruzhick <anarsoul@gmail.com>
+Date:   Wed, 14 Nov 2018 21:47:36 -0800
+Message-ID: <CA+E=qVegv61NgF4peK=Bz2RDvjCUX+M_njrpC4Ph+Jv+r2KFgg@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] arm64: dts: allwinner: a64: enable sound on Pinebook
+To:     Chen-Yu Tsai <wens@csie.org>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        arm-linux <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-在 2018年11月14日 19:26, Borislav Petkov 写道:
-> On Wed, Nov 14, 2018 at 03:29:25PM +0800, Lianbo Jiang wrote:
->> When load the kernel image and initramfs by kexec_file_load syscall, it can
->> not add exact e820 reserved type to kdump kernel e820 table.
->>
->> Kdump uses walk_iomem_res_desc() to iterate io resources, then adds matched
->> desc to e820 table for kdump kernel. But, when convert the e820 type into
->> the iores descriptors, several e820 types are converted to 'IORES_DES_NONE'
->> in this function e820_type_to_iores_desc(). So the walk_iomem_res_desc()
->> will get these unnecessary types(E820_TYPE_RAM/E820_TYPE_UNUSABLE/E820_TYPE
->> _KERN) when iterate io resources by the 'IORES_DES_NONE'.
->>
->> It needs filter out these redundant type(such as E820_TYPE_RAM/E820_TYPE_
->> UNUSABLE/E820_TYPE_KERN) in order to add exact e820 reserved type to kdump
->> kernel e820 table. Thus it also needs an extra checking in memmap_entry_
->> callback() to match the e820 type and resource name.
-> 
-> Ok, it took me a while to parse what this is trying to say so let's
-> start from the top:
-> 
-> * What resource type do you do need in the second kernel?
-> 
+On Wed, Nov 7, 2018 at 11:30 PM Chen-Yu Tsai <wens@csie.org> wrote:
+> > +
+> > +       speaker_amp: speaker_amp {
+> > +               compatible = "simple-audio-amplifier";
+> > +               enable-gpios = <&pio 7 7 GPIO_ACTIVE_HIGH>; /* PH7 */
+>
+> You might want to add a sound-name-prefix property. See
+>
+>     Documentation/devicetree/bindings/sound/name-prefix.txt
+>
+> Also this should have a reference to its power supply regulator.
 
-Thanks for your comment.
+You're right, it should reference its power supply which should be a
+fixed regulator controlled via GPIO from AXP803.
 
-The e820 reserved ranges need to be passed to the second kernel.
+Unfortunately there's no AXP803 GPIO support yet and
+simple-audio-amplifier doesn't have regulator property.
 
-> * The most important question: why?
-> 
+I have no time (and interest) to work on it in near future, so if
+anyone wants to pick it up - feel free to do so.
 
-At present, the upstream kernel does not pass the e820 reserved ranges to the
-second kernel, which might cause two problems:
-
-The first one is the MMCONFIG issue, the PCI MMCONFIG(extended mode) requires
-the reserved region otherwise it falls back to legacy mode, which might lead to
-the hot-plug device could not be recognized in kdump kernel.
-
-Another one is that the e820 reserved ranges do not setup in kdump kernel, which
-could cause kdump can't work in some machines. To know more information, please
-refer to the [PATCH 2/2 v6] patch log.
-
-
-> * If it is the reserved resource, why aren't you adding
-> IORES_DESC_RESERVED or so which to look for instead of this hacky string
-> comparison?
-> 
-
-Adding the new descriptor 'IORES_DESC_RESERVED' is also a good solution. I will
-modify these patches based on your suggestion and post again.
-
-Thanks.
-Lianbo
+Regards,
+Vasily
