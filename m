@@ -2,102 +2,85 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B0939C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:28:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C784C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:29:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 799ED2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:28:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 799ED2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id C9D032087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:29:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="gNfJKuTq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C9D032087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729114AbeKOTfX (ORCPT
+        id S2387586AbeKOTgD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:35:23 -0500
-Received: from inva021.nxp.com ([92.121.34.21]:37368 "EHLO inva021.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727265AbeKOTfX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:35:23 -0500
-Received: from inva021.nxp.com (localhost [127.0.0.1])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 7324820013D;
-        Thu, 15 Nov 2018 10:28:21 +0100 (CET)
-Received: from invc005.ap-rdc01.nxp.com (invc005.ap-rdc01.nxp.com [165.114.16.14])
-        by inva021.eu-rdc02.nxp.com (Postfix) with ESMTP id 0AFE820012F;
-        Thu, 15 Nov 2018 10:28:17 +0100 (CET)
-Received: from titan.ap.freescale.net (TITAN.ap.freescale.net [10.192.208.233])
-        by invc005.ap-rdc01.nxp.com (Postfix) with ESMTP id 5472D402AC;
-        Thu, 15 Nov 2018 17:28:11 +0800 (SGT)
-From:   Yinbo Zhu <yinbo.zhu@nxp.com>
-To:     yinbo.zhu@nxp.com, Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>, linux-kernel@vger.kernel.org
-Cc:     xiaobo.xie@nxp.com, ran.wang_1@nxp.com,
-        linux-arm-kernel@lists.infradead.org,
-        Rajesh Bhagat <rajesh.bhagat@nxp.com>
-Subject: [PATCH v1] arch: arm64: add ARM64 specific fucntions required for ehci fsl driver
-Date:   Thu, 15 Nov 2018 17:23:57 +0800
-Message-Id: <20181115092357.1556-1-yinbo.zhu@nxp.com>
-X-Mailer: git-send-email 2.14.1
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Thu, 15 Nov 2018 14:36:03 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:35359 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727265AbeKOTgD (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:36:03 -0500
+Received: by mail-lj1-f195.google.com with SMTP id x85-v6so16698673ljb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 01:29:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Y2Pw5BW4NobDaK7PabjATdfAwHvKgPLqbZxz0yWjFdI=;
+        b=gNfJKuTq/4pctKGTRO+uyJrSVadUHqZkeSfVc9JAvjiFw6YyykCYDc3rC4Ho/Snfob
+         jueY4hq3g48ld2OzbbuXDg/XrdPm8RL4W2NywHGC/3zyk7wtFhdEGfWThD4nMJEzFY49
+         zORFcu66Qm2FkfTTMHSJ53RMs3RwEj2JpWBzk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Y2Pw5BW4NobDaK7PabjATdfAwHvKgPLqbZxz0yWjFdI=;
+        b=NmFwQYW5uJfqE9t83IrZTQrCNqc3XDf6nZA2ZMf+LpCjQ1O3xRLRCk/0fvlKdb3uuE
+         dJZV455Neiqw/+s7vmozHmpr6iWTnbVSszsj27JZM3DKxYibC062cLuzteiAPim6f7S9
+         +R9KzQHTsxXq8yg2ULTGN/aR6fbXhnB1X6b8J8ezmEcZy1/g3zBOSSn563i0m23vf5Tk
+         N+Qjbi06RMH1CoNKBGh8+IXJvjgQ0Ye9yyVxriN93ecXMzK5JOxDEYhEKLXX1EZCyGgc
+         pepdc+Pq7g8zbgJBCMZgO6tC37a6R45ZzsCggCsxqLQDUXcLljSLV90XnQeWgy81rKzV
+         TfGA==
+X-Gm-Message-State: AGRZ1gIf56c0T5B7wVyhwT8m9opGP3lFdnwHfMS/qFkE6F1bj7jNzo/Q
+        L0URxYTixtK6T+lSG6LOsmFW8AvfCvbCEgYCUwURTw==
+X-Google-Smtp-Source: AJdET5e8kpBjkoywQokynhJLJUnOdgUaIIizWFoMyUKVhiuHZNPoZ0AOcdk1ADIwhioTpaV2jaAcOpXLNQ7v3Ite+zA=
+X-Received: by 2002:a2e:7403:: with SMTP id p3-v6mr3177273ljc.97.1542274141222;
+ Thu, 15 Nov 2018 01:29:01 -0800 (PST)
+MIME-Version: 1.0
+References: <1541587358-17654-1-git-send-email-narmstrong@baylibre.com>
+In-Reply-To: <1541587358-17654-1-git-send-email-narmstrong@baylibre.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 15 Nov 2018 10:28:49 +0100
+Message-ID: <CACRpkdYpk1Mts9SxQq5nAdBBcWyZJouYgwR6uQaKMOe8o6u=OA@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: meson-gxl: remove invalid GPIOX tsin_a pins
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "open list:ARM/Amlogic Meson..." <linux-amlogic@lists.infradead.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Rajesh Bhagat <rajesh.bhagat@nxp.com>
+On Wed, Nov 7, 2018 at 11:42 AM Neil Armstrong <narmstrong@baylibre.com> wrote:
 
-Add set/clear bits functions for ARM platform which are used by ehci fsl
-driver
+> The GPIOX tsin_a pins wrongly uses the SDCard pinctrl bits, this
+> patch completely removes these pins entries until we find out what
+> are the correct bits and registers to be used instead.
+>
+> Fixes: 5a6ae9b80139 ("pinctrl: meson-gxl: add tsin_a pins")
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
 
-Signed-off-by: Rajesh Bhagat <rajesh.bhagat@nxp.com>
-Signed-off-by: Yinbo Zhu <yinbo.zhu@nxp.com>
----
- arch/arm64/include/asm/io.h |   29 +++++++++++++++++++++++++++++
- 1 files changed, 29 insertions(+), 0 deletions(-)
+Patch applied.
+It doesn't look like a regression so I only applied it for
+next (v4.21).
 
-diff --git a/arch/arm64/include/asm/io.h b/arch/arm64/include/asm/io.h
-index e97b861..0dc4334 100644
---- a/arch/arm64/include/asm/io.h
-+++ b/arch/arm64/include/asm/io.h
-@@ -185,6 +185,35 @@ extern void __iomem *ioremap_cache(phys_addr_t phys_addr, size_t size);
- #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force __u32)cpu_to_be32(v), p); })
- #define iowrite64be(v,p)	({ __iowmb(); __raw_writeq((__force __u64)cpu_to_be64(v), p); })
- 
-+/* access ports */
-+#define setbits32(_addr, _v) iowrite32be(ioread32be(_addr) |  (_v), (_addr))
-+#define clrbits32(_addr, _v) iowrite32be(ioread32be(_addr) & ~(_v), (_addr))
-+
-+#define setbits16(_addr, _v) iowrite16be(ioread16be(_addr) |  (_v), (_addr))
-+#define clrbits16(_addr, _v) iowrite16be(ioread16be(_addr) & ~(_v), (_addr))
-+
-+#define setbits8(_addr, _v) iowrite8(ioread8(_addr) |  (_v), (_addr))
-+#define clrbits8(_addr, _v) iowrite8(ioread8(_addr) & ~(_v), (_addr))
-+
-+/* Clear and set bits in one shot.  These macros can be used to clear and
-+ * set multiple bits in a register using a single read-modify-write.  These
-+ * macros can also be used to set a multiple-bit bit pattern using a mask,
-+ * by specifying the mask in the 'clear' parameter and the new bit pattern
-+ * in the 'set' parameter.
-+ */
-+
-+#define clrsetbits_be32(addr, clear, set) \
-+	iowrite32be((ioread32be(addr) & ~(clear)) | (set), (addr))
-+#define clrsetbits_le32(addr, clear, set) \
-+	iowrite32le((ioread32le(addr) & ~(clear)) | (set), (addr))
-+#define clrsetbits_be16(addr, clear, set) \
-+	iowrite16be((ioread16be(addr) & ~(clear)) | (set), (addr))
-+#define clrsetbits_le16(addr, clear, set) \
-+	iowrite16le((ioread16le(addr) & ~(clear)) | (set), (addr))
-+#define clrsetbits_8(addr, clear, set) \
-+	iowrite8((ioread8(addr) & ~(clear)) | (set), (addr))
-+
-+
- /*
-  * Convert a physical pointer to a virtual kernel pointer for /dev/mem
-  * access
--- 
-1.7.1
-
+Yours,
+Linus Walleij
