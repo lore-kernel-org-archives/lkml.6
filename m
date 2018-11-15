@@ -2,106 +2,114 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8BFDFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:48:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DCEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:50:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 481702086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:48:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="IxRUCDZ4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 481702086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	by mail.kernel.org (Postfix) with ESMTP id 328192086A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:50:26 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328192086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726917AbeKOKyT (ORCPT
+        id S1727059AbeKOK4A (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 05:54:19 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:43103 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726379AbeKOKyT (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 05:54:19 -0500
-Received: by mail-pg1-f195.google.com with SMTP id n10-v6so8153835pgv.10
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 16:48:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:date:to:cc:subject:in-reply-to:message-id:references
-         :user-agent:mime-version;
-        bh=G6K4jErTdVMwbQariIN8TE58IJz0AnJi+dq0mm+J18s=;
-        b=IxRUCDZ4RUNUzSHarp7CNmBtfrpxmq3927ahN5xcL+2GOlrWlF1D9TvMlHYmzEBEFD
-         W4kdeuaM19sS44wEKDk8IK2b+t0PfqZphjXM3dZ0sTMMNPLV68+2iHpJUlYOV2i3AZI3
-         8FTq45iLTygvMkSuSRTklONl88c/tHrPqfREkKYJkey10VeKqoBUAQE4Eg8lqtYynrH/
-         LAywAGKor5fyEB/yD0bfYc+4afcmAgeYXIgYlt24seFZ9mMEbaCD2+touLZ6dFpk2Ixc
-         wUiaq8rhGk4kSNI/80ePkO7MTMI2qo/e2xl9/kuCTT/JiSRQDkvV5ixOPszjuJntmxNp
-         ETuA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:date:to:cc:subject:in-reply-to:message-id
-         :references:user-agent:mime-version;
-        bh=G6K4jErTdVMwbQariIN8TE58IJz0AnJi+dq0mm+J18s=;
-        b=r9K/0otNm7esWa2ev6N8z4C89OEeIZt0fLfE10pkIoX0ya/rd+hK8g/7qsuyyIBozD
-         3lM/gxinvq05E083Q5aTkqH5LJordEOAg5XcMeaEL1BdyIiQEkDmJ6SXnLZDbDj+Ibgr
-         /H5C06bSerAZfz5GNfrQvSVZUXjHKsFlBSJe6oHcu2Rnvl7S8yBKjBSFmNFvycZTWbdr
-         h6MAHukhbR/tj0u18lcrGbaCvNkd4z34VRJBfajrqy53x0/XPf1IMuKm7ddSnNBntDJY
-         /Q/DWc7j1IsZhnHVz1484KzPoecU+gTrcSnAsxFizAnz7iHmBMHTgS5GGwgAFvW+GTmA
-         0Rxg==
-X-Gm-Message-State: AGRZ1gIgUh/s/jrbm9Jxr2wBNEP8zbx1VLqDPR4PswJrvw794huDYL1V
-        ufrHLmJmkV1RenGKX7zB7RfVKg==
-X-Google-Smtp-Source: AJdET5eHhUbu7EBCqJ882/WuPYrsEr+QNkRKnPzLx8k1qh3awWP47bjGvwEKhrtdHhcyCoqnmDJkgw==
-X-Received: by 2002:a62:3501:: with SMTP id c1-v6mr4169225pfa.173.1542242923385;
-        Wed, 14 Nov 2018 16:48:43 -0800 (PST)
-Received: from localhost ([64.114.255.97])
-        by smtp.gmail.com with ESMTPSA id m9sm17314703pgd.32.2018.11.14.16.48.41
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Nov 2018 16:48:42 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-X-Google-Original-From: Paul Walmsley <paulw@sifive.com>
-Date:   Wed, 14 Nov 2018 16:48:41 -0800 (PST)
-To:     Sam Ravnborg <sam@ravnborg.org>
-cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        linux-kernel@vger.kernel.org, linux-kbuild@vger.kernel.org,
-        Russell King <linux@armlinux.org.uk>,
-        Jim Wilson <jimw@sifive.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>
-Subject: Re: [PATCH 0/2] modpost: skip section mismatch warnings on ELF local
- symbols by default
-In-Reply-To: <20181020140835.GA3351@ravnborg.org>
-Message-ID: <alpine.DEB.2.21.9999.1811141647190.22938@viisi.sifive.com>
-References: <20181020131911.22443-1-paul.walmsley@sifive.com> <20181020140835.GA3351@ravnborg.org>
-User-Agent: Alpine 2.21.9999 (DEB 301 2018-08-15)
+        Thu, 15 Nov 2018 05:56:00 -0500
+Received: from mga02.intel.com ([134.134.136.20]:14100 "EHLO mga02.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725895AbeKOKz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 05:55:59 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 16:50:23 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,234,1539673200"; 
+   d="scan'208";a="100330509"
+Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.251.21.216]) ([10.251.21.216])
+  by orsmga003.jf.intel.com with ESMTP; 14 Nov 2018 16:50:23 -0800
+Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
+        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-nvdimm@lists.01.org, davem@davemloft.net,
+        pavel.tatashin@microsoft.com, mingo@kernel.org,
+        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
+        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
+        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
+        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
+References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
+ <20181114150742.GZ23419@dhcp22.suse.cz>
+From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
+Message-ID: <9e8218eb-80bf-fc02-ae56-42ccfddb572e@linux.intel.com>
+Date:   Wed, 14 Nov 2018 16:50:23 -0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII; format=flowed
+In-Reply-To: <20181114150742.GZ23419@dhcp22.suse.cz>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Sam,
 
-On Sat, 20 Oct 2018, Sam Ravnborg wrote:
 
-> modpost is not supposed to be used outside the kernel build.
-> And therefore if we introduce a new option then the infrastructure
-> to enable that option should also be in place.
-> In this particular case I cannot see why we should add the possibility
-> to include local symbols, in other words do not add the option.
-> Wait a few days before you kill it, maybe others see the usefulness of it.
+On 11/14/2018 7:07 AM, Michal Hocko wrote:
+> On Mon 05-11-18 13:19:25, Alexander Duyck wrote:
+>> This patchset is essentially a refactor of the page initialization logic
+>> that is meant to provide for better code reuse while providing a
+>> significant improvement in deferred page initialization performance.
+>>
+>> In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
+>> memory per node I have seen the following. In the case of regular memory
+>> initialization the deferred init time was decreased from 3.75s to 1.06s on
+>> average. For the persistent memory the initialization time dropped from
+>> 24.17s to 19.12s on average. This amounts to a 253% improvement for the
+>> deferred memory initialization performance, and a 26% improvement in the
+>> persistent memory initialization performance.
+>>
+>> I have called out the improvement observed with each patch.
+> 
+> I have only glanced through the code (there is a lot of the code to look
+> at here). And I do not like the code duplication and the way how you
+> make the hotplug special. There shouldn't be any real reason for that
+> IMHO (e.g. why do we init pfn-at-a-time in early init while we do
+> pageblock-at-a-time for hotplug). I might be wrong here and the code
+> reuse might be really hard to achieve though.
 
-I've dropped the optionality from the patch set.
+Actually it isn't so much that hotplug is special. The issue is more 
+that the non-hotplug case is special in that you have to perform a 
+number of extra checks for things that just aren't necessary for the 
+hotplug case.
 
-> I checked if there were any options supported by modpost that
-> was not configurable in makefile.modpost.
-> And I could see that the -M and -K options in getopt() was leftovers.
-> The code that used these option was was dropped in:
-> a8773769d1a1e08d0ca15f890515401ab3860637 ("Kbuild: clear marker out of modpost")
->
-> Could you add a patch that delete these on top of what you already have.
+If anything I would probably need a new iterator that would be able to 
+take into account all the checks for the non-hotplug case and then 
+provide ranges of PFNs to initialize.
 
-Done.  This patch is now in the v2 set which should appear shortly.
+> I am also not impressed by new iterators because this api is quite
+> complex already. But this is mostly a detail.
 
-- Paul
+Yeah, the iterators were mostly an attempt at hiding some of the 
+complexity. Being able to break a loop down to just an iterator provding 
+the start of the range and the number of elements to initialize is 
+pretty easy to visualize, or at least I thought so.
+
+> Thing I do not like is that you keep microptimizing PageReserved part
+> while there shouldn't be anything fundamental about it. We should just
+> remove it rather than make the code more complex. I fell more and more
+> guilty to add there actually.
+
+I plan to remove it, but don't think I can get to it in this patch set.
+
+I was planning to submit one more iteration of this patch set early next 
+week, and then start focusing more on the removal of the PageReserved 
+bit for hotplug. I figure it is probably going to be a full patch set 
+onto itself and as you pointed out at the start of this email there is 
+already enough code to review without adding that.
+
+
