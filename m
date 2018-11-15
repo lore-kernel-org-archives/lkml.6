@@ -6,24 +6,24 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D008AC04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:37:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 73BDDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:37:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 995F82087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:37:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 995F82087A
+	by mail.kernel.org (Postfix) with ESMTP id 134B920825
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:37:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 134B920825
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388140AbeKOTnN (ORCPT
+        id S2388369AbeKOToL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:43:13 -0500
-Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:46474 "EHLO
+        Thu, 15 Nov 2018 14:44:11 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:46484 "EHLO
         wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388024AbeKOTnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:43:12 -0500
+        id S2388033AbeKOTnN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:43:13 -0500
 Received: by wens.csie.org (Postfix, from userid 1000)
-        id E69A85FDAF; Thu, 15 Nov 2018 17:36:04 +0800 (CST)
+        id 0E6175FDD7; Thu, 15 Nov 2018 17:36:05 +0800 (CST)
 From:   Chen-Yu Tsai <wens@csie.org>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
@@ -34,9 +34,9 @@ Cc:     Chen-Yu Tsai <wens@csie.org>,
         Loic Poulain <loic.poulain@gmail.com>,
         linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2 10/15] Bluetooth: hci_bcm: Wait for device to come out of reset after power on
-Date:   Thu, 15 Nov 2018 17:35:58 +0800
-Message-Id: <20181115093603.26729-11-wens@csie.org>
+Subject: [PATCH v2 14/15] ARM: dts: sunxi: Enable Broadcom-based Bluetooth for multiple boards
+Date:   Thu, 15 Nov 2018 17:36:02 +0800
+Message-Id: <20181115093603.26729-15-wens@csie.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181115093603.26729-1-wens@csie.org>
 References: <20181115093603.26729-1-wens@csie.org>
@@ -47,42 +47,191 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The datasheets for BCM20702 and BCM43438 both have power up time
-sequence graphs, however they are slightly different. Both chips
-also have an internal power-on-reset, which holds the chip in reset
-for a short time after the regulators are enabled.
+This patch adds the Bluetooth node, and the underlying UART node if it's
+missing, to the board device tree file for several boards. The LPO clock
+is also added to the WiFi side's power sequencing node if it's missing,
+to correctly represent the shared connections. There is also a PCM
+connection for Bluetooth, but this is not covered in this patch.
 
-For the BCM20702, the time period from when the regulators are enabled,
-until the chip settles and comes out of sleep state, is 6564 ~ 8171 us.
+These boards all have a WiFi+BT module from AMPAK, which contains one or
+two Broadcom chips, depending on the model. The older AP6210 contains
+two, while the newer AP6212 and AP6330 contain just one, as they use
+two-in-one combo chips.
 
-For the BCM43438, the graph only shows the time period from when the
-regulators are enabled until the chip responds by driving the host's
-CTS line low, assuming the host has already driven its RTS line low.
-This is shown to be 6.5 sleep cycles, with the sleep clock at 32.768
-kHz. This is around 2 ms.
+The Bluetooth side of the module is always connected to a UART on the
+same pingroup as the SDIO pins for the WiFi side, in a 4 wire
+configuration. Power to the VBAT and VDDIO pins are provided either by
+the PMIC, using one or several of its regulator outputs, or other fixed
+regulators on the board. The VBAT and VDDIO pins are shared with the
+WiFi side, which would correspond to vmmc-supply and vqmmc-supply in the
+mmc host node. A clock output from the SoC or the external X-Powers RTC
+provides the LPO low power clock at 32.768 kHz.
 
-Wait a full 10 ms after the regulators are enabled to account for signal
-rising times.
+All the boards covered in this patch are ones that do not require extra
+changes to the SoC's dtsi file. For the remaining boards that I have
+worked on, properties or device nodes for the LPO clock's source are
+missing.
+
+For the Cubietruck, the LPO clock is fed from CLK_OUT_A, which needs to
+be muxed on pin PI12. This can be represented in multiple ways. This
+patch puts the pinctrl property in the pin controller node. This is due
+to limitations in Linux, where pinmux settings, even the same one, can
+not be shared by multiple devices. Thus we cannot put it in both the
+WiFi and Bluetooth device nodes. Putting it the CCU node is another
+option, but Linux's CCU driver does not handle pinctrl. Also the pin
+controller is guaranteed to be initialized after the CCU, when clocks
+are available. And any other devices that use muxed pins are guaranteed
+to be initialized after the pin controller. Thus having the CLK_OUT_A
+pinmux reference be in the pin controller node is a good choice without
+having to deal with implementation issues.
 
 Signed-off-by: Chen-Yu Tsai <wens@csie.org>
 ---
- drivers/bluetooth/hci_bcm.c | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm/boot/dts/sun7i-a20-cubietruck.dts    | 23 +++++++++++++++++++
+ arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts  | 18 +++++++++++++++
+ .../boot/dts/sun8i-a83t-cubietruck-plus.dts   | 18 +++++++++++++++
+ arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts  | 14 +++++++++++
+ 4 files changed, 73 insertions(+)
 
-diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
-index f2101038284e..538ce8059bff 100644
---- a/drivers/bluetooth/hci_bcm.c
-+++ b/drivers/bluetooth/hci_bcm.c
-@@ -256,6 +256,9 @@ static int bcm_gpio_set_power(struct bcm_device *dev, bool powered)
- 		regulator_bulk_disable(BCM_NUM_SUPPLIES, dev->supplies);
- 	}
+diff --git a/arch/arm/boot/dts/sun7i-a20-cubietruck.dts b/arch/arm/boot/dts/sun7i-a20-cubietruck.dts
+index 5649161de1d7..be112c7b64cb 100644
+--- a/arch/arm/boot/dts/sun7i-a20-cubietruck.dts
++++ b/arch/arm/boot/dts/sun7i-a20-cubietruck.dts
+@@ -103,6 +103,8 @@
+ 		pinctrl-names = "default";
+ 		pinctrl-0 = <&mmc3_pwrseq_pin_cubietruck>;
+ 		reset-gpios = <&pio 7 9 GPIO_ACTIVE_LOW>; /* PH9 WIFI_EN */
++		clocks = <&ccu CLK_OUT_A>;
++		clock-names = "ext_clock";
+ 	};
  
-+	/* wait for device to power on and come out of reset */
-+	usleep_range(10000, 20000);
+ 	sound {
+@@ -246,6 +248,10 @@
+ };
+ 
+ &pio {
++	/* Pin outputs low power clock for WiFi and BT */
++	pinctrl-0 = <&clk_out_a_pins_a>;
++	pinctrl-names = "default";
 +
- 	dev->res_enabled = powered;
+ 	ahci_pwr_pin_cubietruck: ahci_pwr_pin@1 {
+ 		pins = "PH12";
+ 		function = "gpio_out";
+@@ -350,6 +356,23 @@
+ 	status = "okay";
+ };
  
- 	return 0;
++&uart2 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart2_pins_a>;
++	uart-has-rtscts;
++	status = "okay";
++
++	bluetooth {
++		compatible = "brcm,bcm20702a1";
++		clocks = <&ccu CLK_OUT_A>;
++		clock-names = "lpo";
++		device-wakeup-gpios = <&pio 7 24 GPIO_ACTIVE_LOW>; /* PH24 */
++		host-wakeup-gpios = <&pio 7 25 GPIO_ACTIVE_LOW>; /* PH25 */
++		shutdown-gpios = <&pio 7 18 GPIO_ACTIVE_HIGH>; /* PH18 */
++		max-speed = <1500000>;
++	};
++};
++
+ &usb_otg {
+ 	dr_mode = "otg";
+ 	status = "okay";
+diff --git a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+index 583a5a01642f..7d30d3e530fb 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-bananapi-m3.dts
+@@ -363,6 +363,24 @@
+ 	status = "okay";
+ };
+ 
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
++	uart-has-rtscts;
++	status = "okay";
++
++	bluetooth {
++		compatible = "brcm,bcm43438-bt";
++		clocks = <&ac100_rtc 1>;
++		clock-names = "lpo";
++		vbat-supply = <&reg_dldo1>;
++		vddio-supply = <&reg_dldo1>;
++		device-wakeup-gpios = <&pio 7 9 GPIO_ACTIVE_HIGH>; /* PH9 */
++		host-wakeup-gpios = <&r_pio 0 5 GPIO_ACTIVE_HIGH>; /* PL5 */
++		shutdown-gpios = <&r_pio 0 4 GPIO_ACTIVE_HIGH>; /* PL4 */
++	};
++};
++
+ &usbphy {
+ 	usb1_vbus-supply = <&reg_usb1_vbus>;
+ 	status = "okay";
+diff --git a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+index e5f0645e53a7..a5a9f5a0603e 100644
+--- a/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
++++ b/arch/arm/boot/dts/sun8i-a83t-cubietruck-plus.dts
+@@ -394,6 +394,24 @@
+ 	status = "okay";
+ };
+ 
++&uart1 {
++	pinctrl-names = "default";
++	pinctrl-0 = <&uart1_pins>, <&uart1_rts_cts_pins>;
++	uart-has-rtscts;
++	status = "okay";
++
++	bluetooth {
++		compatible = "brcm,bcm4330-bt";
++		clocks = <&ac100_rtc 1>;
++		clock-names = "lpo";
++		vbat-supply = <&reg_dcdc1>;
++		vddio-supply = <&reg_sw>;
++		device-wakeup-gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>; /* PL10 */
++		host-wakeup-gpios = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
++		shutdown-gpios = <&r_pio 0 4 GPIO_ACTIVE_HIGH>; /* PL4 */
++	};
++};
++
+ &usbphy {
+ 	usb1_vbus-supply = <&reg_usb1_vbus>;
+ 	usb2_vbus-supply = <&reg_usb2_vbus>;
+diff --git a/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts b/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
+index 0dbdb29a8fff..b85acca94441 100644
+--- a/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
++++ b/arch/arm/boot/dts/sun8i-r16-bananapi-m2m.dts
+@@ -91,6 +91,8 @@
+ 	wifi_pwrseq: wifi_pwrseq {
+ 		compatible = "mmc-pwrseq-simple";
+ 		reset-gpios = <&r_pio 0 6 GPIO_ACTIVE_LOW>; /* PL06 */
++		clocks = <&rtc 1>;
++		clock-names = "ext_clock";
+ 	};
+ };
+ 
+@@ -299,7 +301,19 @@
+ &uart1 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart1_pins_a>, <&uart1_pins_cts_rts_a>;
++	uart-has-rtscts;
+ 	status = "okay";
++
++	bluetooth {
++		compatible = "brcm,bcm43438-bt";
++		clocks = <&rtc 1>;
++		clock-names = "lpo";
++		vbat-supply = <&reg_dldo1>;
++		vddio-supply = <&reg_aldo3>;
++		device-wakeup-gpios = <&r_pio 0 10 GPIO_ACTIVE_HIGH>; /* PL10 */
++		host-wakeup-gpios = <&r_pio 0 9 GPIO_ACTIVE_HIGH>; /* PL9 */
++		shutdown-gpios = <&r_pio 0 8 GPIO_ACTIVE_HIGH>; /* PL8 */
++	};
+ };
+ 
+ &usb_otg {
 -- 
 2.19.1
 
