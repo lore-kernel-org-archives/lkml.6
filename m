@@ -2,137 +2,243 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 017E9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:16:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8127BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:16:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B54D02089F
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:16:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FEXIu7CD"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B54D02089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4A47A2089F
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:16:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A47A2089F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728343AbeKOMWO (ORCPT
+        id S1728455AbeKOMWU convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 07:22:14 -0500
-Received: from mail-it1-f194.google.com ([209.85.166.194]:38136 "EHLO
-        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbeKOMWO (ORCPT
+        Thu, 15 Nov 2018 07:22:20 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:34561 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbeKOMWU (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 07:22:14 -0500
-Received: by mail-it1-f194.google.com with SMTP id k141-v6so27055306itk.3;
-        Wed, 14 Nov 2018 18:16:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=jQHBAtntwHS5DQK8rKpseSf7SvF6HJrPt72yAzEe/bE=;
-        b=FEXIu7CDhACTWR/TYSVLGG+hybOTspf1JcwGY1/2x+oKl+TROmK8xnj+eZD0JHiFqV
-         U0TOkI6Z3cvx+slqgU5N35SeeBLyP52XCm1QXrHkpFp+RTm9zSj7TW/FCh0aQ6VyLVRx
-         tnsjSy5MAP97vwl0iw11oJI9GQMPTrBVglEsTufPmQAkofeU1JsnN7Pk3Bv00SA1fFbv
-         +dVB4syU9IfU5qRsoe9RGinVNQk3OOXJYSdoY2LVtIyLoaOZClyGJGecikEFsC1Tdy6a
-         JNwzScTi9fXVMCNba0lkpxRcaV4WlFCErZISIc7wC2MzDWncJ3TZauE54iXvoC+VVU9x
-         gJKw==
+        Thu, 15 Nov 2018 07:22:20 -0500
+Received: by mail-ed1-f65.google.com with SMTP id w19-v6so15415029eds.1;
+        Wed, 14 Nov 2018 18:16:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=jQHBAtntwHS5DQK8rKpseSf7SvF6HJrPt72yAzEe/bE=;
-        b=UJWNuMUbSGn8g8vXojagbT9LULe0+vOAUnb0cUuEaG5ge6KmTRtJRWky/6QmaW8t2l
-         Hy709AcWU9/S4u//FYpOrlleptZNS3J6X1+Kz9ef2+Nohg+Hp3dTHPouFsF9Sl19/BOB
-         sHijTnRxGeJchNKBz/dbzP0npkcKjWUoXO6Fe57W64SIYl0zTNO0W3wv6IGkPJdz+SKm
-         Xy4tQn+xUS1sxLBzjxhAKHEmCafPtNuxkZ1ZBGM9v0zAyiY7FBV7k9grsDofJTOIC9HT
-         0LjEgarr08Nsud48vWY/B4c57BQS2Bma7DwLmJSUBnkihPsi6X/0TTg6VdhoSwOVasvN
-         pmtw==
-X-Gm-Message-State: AA+aEWY+UhzmXR4I+6Z0T1F1JKhKSzl0SnnyLIKPeHb8wMZO2IyEo3wu
-        neGNdqTwiYriFW2WW23vi5HTvquBsR7Qt92rvZ43L2KldQc=
-X-Google-Smtp-Source: AJdET5e45JDTfAvZ/VCWwh6Pa0jDtE/w3o7M8aLnmP6II4ovWDEm8EtVGMv+AwKz9/4C6ySo/rk+vls8zrTWgwfrr/Y=
-X-Received: by 2002:a24:ad66:: with SMTP id a38-v6mr3889058itj.175.1542248183012;
- Wed, 14 Nov 2018 18:16:23 -0800 (PST)
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=98XJcJHl+bvavCfgNVS8P5aY6JvD6vg232Yegu2dz6k=;
+        b=PNe8N29231+W7Zcq6+4VRtirJi6jIYIxi64+rEX/KzKEwfoJkQHUvKWFBfPGZhMPiS
+         w4+ftCbK1manUuU5q7v//poUUTFJJZTp0GxJ/E1+0rYMoVtr+ktGNhPtx5AJfgOFWJE4
+         aZ9ZOuROEm0I1KfI1chNIrYCuaTIaCKsi7et1VjF2d6oadmHHvRxyKhx7HyVKwuLVXde
+         KrWJlJpcK9lqKlzJfvFwWF08Y374s8pu9xyCLWMLy4d3KUzcljrJmebCj3VzilZCdKTI
+         2iOXf5P2i2LeAOtXlByMIo+2Eaqp4DyB+VtgA0/UYL49PtQYpw9SVnaFKLzzDuB3yy3i
+         n8SA==
+X-Gm-Message-State: AGRZ1gJarWcmc4afjGh1slXUwnXg2xgm4vIjEnMEIA1OSa4NYqCX3Ves
+        1+QL+V9Ba0KZTF3brsPmHsQXQwbTpAY=
+X-Google-Smtp-Source: AJdET5emYdRHeinriyA5xV2MjNPkuyrT3OWJrjPwW1gNpqxQHt1SIQm9+kDDhZ0VoIQnxtY0de50tA==
+X-Received: by 2002:a17:906:c801:: with SMTP id cx1-v6mr3772206ejb.145.1542248186901;
+        Wed, 14 Nov 2018 18:16:26 -0800 (PST)
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com. [209.85.221.49])
+        by smtp.gmail.com with ESMTPSA id a35-v6sm7129106ede.69.2018.11.14.18.16.26
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 18:16:26 -0800 (PST)
+Received: by mail-wr1-f49.google.com with SMTP id j10so5213593wru.4;
+        Wed, 14 Nov 2018 18:16:26 -0800 (PST)
+X-Received: by 2002:adf:b608:: with SMTP id f8mr3827102wre.120.1542248185903;
+ Wed, 14 Nov 2018 18:16:25 -0800 (PST)
 MIME-Version: 1.0
-References: <2335309.gnWok9HYb4@agathebauer> <3227038.olIWmsCzzY@agathebauer>
- <20181105205119.GC25674@krava> <3799078.YBnU1OB0PF@agathebauer>
- <20181106001037.GQ6218@tassilo.jf.intel.com> <CAOBGo4za8hnGt1NUWy1Y1V12WycbxbYP0G0Sm=UT7T9dQ88vDg@mail.gmail.com>
- <20181111010702.GC6218@tassilo.jf.intel.com> <CAOBGo4zirLiKX8VcROAE=kAD0+qkF0E-cBv9DtBiQr=_obDv5w@mail.gmail.com>
- <20181112032637.GG6218@tassilo.jf.intel.com>
-In-Reply-To: <20181112032637.GG6218@tassilo.jf.intel.com>
-From:   Travis Downs <travis.downs@gmail.com>
-Date:   Wed, 14 Nov 2018 21:15:46 -0500
-Message-ID: <CAOBGo4xzvkitZvqnsPMKE3RYwfCsVSe3ng3eJkP2vdi35JSTFg@mail.gmail.com>
-Subject: Re: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
- unwinding - wrong stack pointer register value?]
-To:     ak@linux.intel.com
-Cc:     Milian Wolff <milian.wolff@kdab.com>, jolsa@redhat.com,
-        linux-kernel@vger.kernel.org, jolsa@kernel.org,
-        namhyung@kernel.org, linux-perf-users@vger.kernel.org,
-        acme@kernel.org
+References: <20181004122855.22981-1-icenowy@aosc.io> <20181004122855.22981-5-icenowy@aosc.io>
+ <CAGb2v668dozjLm9mWUw_Y12AZ6DM2ku9dgQ8B8feABNeFf3QSw@mail.gmail.com> <4B5BD39B-22E2-4DEA-A199-29094DB8C317@aosc.io>
+In-Reply-To: <4B5BD39B-22E2-4DEA-A199-29094DB8C317@aosc.io>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Thu, 15 Nov 2018 10:16:12 +0800
+X-Gmail-Original-Message-ID: <CAGb2v66Lndq1GMRDda3+2go1snGVS1fKTJTrHpP-B20FtG6VZA@mail.gmail.com>
+Message-ID: <CAGb2v66Lndq1GMRDda3+2go1snGVS1fKTJTrHpP-B20FtG6VZA@mail.gmail.com>
+Subject: Re: [linux-sunxi] [PATCH v4 04/10] arm64: allwinner: dts: h6: add
+ USB2-related device nodes
+To:     Icenowy Zheng <icenowy@aosc.io>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        linux-sunxi@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 10:26 PM Andi Kleen <ak@linux.intel.com> wrote:
-> On Sat, Nov 10, 2018 at 09:50:05PM -0500, Travis Downs wrote:
-
-> LBR is not part of PEBS, but is collected separately in the PMI handler.
-
-Thanks for clearing this up - so you can ignore any earlier
-suggestions on my part of trying to use LBR to fix the unwinding
-inconsistency.
-
-> >    In the case that PEBS events are used, the IP will differ essentially 100%
-> >    of the time, right? That is, there will always be *some* skid.
+On Wed, Nov 14, 2018 at 6:31 PM Icenowy Zheng <icenowy@aosc.io> wrote:
+> 于 2018年11月14日 GMT+08:00 下午6:21:33, Chen-Yu Tsai <wens@csie.org> 写到:
+> >Hi,
+> >
+> >On Thu, Oct 4, 2018 at 8:30 PM Icenowy Zheng <icenowy@aosc.io> wrote:
+> >>
+> >> Allwinner H6 has two USB2 ports, one OTG and one host-only.
+> >>
+> >> Add device tree nodes related to them.
+> >>
+> >> Signed-off-by: Icenowy Zheng <icenowy@aosc.io>
+> >> Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+> >> ---
+> >> No changes in v4.
+> >>
+> >> Changes in v3:
+> >> - Removed the wrongly introduced usb3phy node.
+> >> - Added Chen-Yu's Review tag.
+> >>
+> >>  arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi | 81
+> >++++++++++++++++++++
+> >>  1 file changed, 81 insertions(+)
+> >>
+> >> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> >b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> >> index 040828d2e2c0..3d60af6cb3ae 100644
+> >> --- a/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> >> +++ b/arch/arm64/boot/dts/allwinner/sun50i-h6.dtsi
+> >> @@ -258,6 +258,87 @@
+> >>                         status = "disabled";
+> >>                 };
+> >>
+> >> +               usb2otg: usb@5100000 {
+> >> +                       compatible = "allwinner,sun8i-a33-musb";
+> >
+> >I added an SoC-specific compatible: "allwinner,sun50i-h6-musb".
+> >
+> >I'm also curious as to whether the MUSB controller was tested or not,
+> >since Allwinner now has EHCI/OHCI host pairs for host mode, and the
+> >Pine H64
+> >only does host mode.
 >
-> I wouldn't say that.  It depends on what the CPU is doing and the IPC
-> of the code.
+> USB plug-in detection relays on MUSB if it's enabled.
 
-Well other than say a long-latency cache miss, it is my experience
-that the skid is generally never zero. That is, the PEBS and ireg IP
-will usually differ. This is mostly moot though: what is important is
-how often the ireg skip results in a different call chain (i.e., a
-return occurred between the PEBS point and the interrupt), as you have
-pointed out.
+That's not what I meant. Have you actually used the MUSB core in either
+device or host mode to know that it is compatible with the A33? And
+that it works correctly?
 
+IIRC ID detection is done by the PHY driver, using the GPIO lines.
+In host mode, since it's already directly routed to the host pair,
+it's the host pair that does plug-in detection. The MUSB core is
+completely unused. It should be quite clear if you look at the times
+each interrupt line fired.
+
+ChenYu
+
+> >
+> >> +                       reg = <0x05100000 0x0400>;
+> >> +                       clocks = <&ccu CLK_BUS_OTG>;
+> >> +                       resets = <&ccu RST_BUS_OTG>;
+> >> +                       interrupts = <GIC_SPI 23
+> >IRQ_TYPE_LEVEL_HIGH>;
+> >> +                       interrupt-names = "mc";
+> >> +                       phys = <&usb2phy 0>;
+> >> +                       phy-names = "usb";
+> >> +                       extcon = <&usb2phy 0>;
+> >> +                       status = "disabled";
+> >> +               };
+> >> +
+> >> +               usb2phy: phy@5100400 {
+> >> +                       compatible = "allwinner,sun50i-h6-usb-phy";
+> >> +                       reg = <0x05100400 0x14>,
+> >> +                             <0x05101800 0x4>,
+> >> +                             <0x05311800 0x4>;
+> >> +                       reg-names = "phy_ctrl",
+> >> +                                   "pmu0",
+> >> +                                   "pmu3";
+> >> +                       clocks = <&ccu CLK_USB_PHY0>,
+> >> +                                <&ccu CLK_USB_PHY3>;
+> >> +                       clock-names = "usb0_phy",
+> >> +                                     "usb3_phy";
+> >> +                       resets = <&ccu RST_USB_PHY0>,
+> >> +                                <&ccu RST_USB_PHY3>;
+> >> +                       reset-names = "usb0_reset",
+> >> +                                     "usb3_reset";
+> >> +                       status = "disabled";
+> >> +                       #phy-cells = <1>;
+> >> +               };
+> >> +
+> >> +               ehci0: usb@5101000 {
+> >> +                       compatible = "allwinner,sun50i-h6-ehci",
+> >"generic-ehci";
+> >> +                       reg = <0x05101000 0x100>;
+> >> +                       interrupts = <GIC_SPI 24
+> >IRQ_TYPE_LEVEL_HIGH>;
+> >> +                       clocks = <&ccu CLK_BUS_OHCI0>,
+> >> +                                <&ccu CLK_BUS_EHCI0>,
+> >> +                                <&ccu CLK_USB_OHCI0>;
+> >> +                       resets = <&ccu RST_BUS_OHCI0>,
+> >> +                                <&ccu RST_BUS_EHCI0>;
+> >> +                       status = "disabled";
+> >> +               };
+> >> +
+> >> +               ohci0: usb@5101400 {
+> >> +                       compatible = "allwinner,sun50i-h6-ohci",
+> >"generic-ohci";
+> >> +                       reg = <0x05101400 0x100>;
+> >> +                       interrupts = <GIC_SPI 25
+> >IRQ_TYPE_LEVEL_HIGH>;
+> >> +                       clocks = <&ccu CLK_BUS_OHCI0>,
+> >> +                                <&ccu CLK_USB_OHCI0>;
+> >> +                       resets = <&ccu RST_BUS_OHCI0>;
+> >> +                       status = "disabled";
+> >> +               };
+> >> +
+> >> +               ehci3: usb@5311000 {
+> >> +                       compatible = "allwinner,sun50i-h6-ehci",
+> >"generic-ehci";
+> >> +                       reg = <0x05311000 0x100>;
+> >> +                       interrupts = <GIC_SPI 28
+> >IRQ_TYPE_LEVEL_HIGH>;
+> >> +                       clocks = <&ccu CLK_BUS_OHCI3>,
+> >> +                                <&ccu CLK_BUS_EHCI3>,
+> >> +                                <&ccu CLK_USB_OHCI3>;
+> >> +                       resets = <&ccu RST_BUS_OHCI3>,
+> >> +                                <&ccu RST_BUS_EHCI3>;
+> >> +                       phys = <&usb2phy 3>;
+> >> +                       phy-names = "usb";
+> >> +                       status = "disabled";
+> >> +               };
+> >> +
+> >> +               ohci3: usb@5311400 {
+> >> +                       compatible = "allwinner,sun50i-h6-ohci",
+> >"generic-ohci";
+> >> +                       reg = <0x05311400 0x100>;
+> >> +                       interrupts = <GIC_SPI 29
+> >IRQ_TYPE_LEVEL_HIGH>;
+> >> +                       clocks = <&ccu CLK_BUS_OHCI3>,
+> >> +                                <&ccu CLK_USB_OHCI3>;
+> >> +                       resets = <&ccu RST_BUS_OHCI3>;
+> >> +                       phys = <&usb2phy 3>;
+> >> +                       phy-names = "usb";
+> >> +                       status = "disabled";
+> >> +               };
+> >> +
+> >
+> >This didn't apply cleanly due to the new HDMI nodes. I fixed it up
+> >locally.
+> >
+> >ChenYu
+> >
+> >>                 r_ccu: clock@7010000 {
+> >>                         compatible = "allwinner,sun50i-h6-r-ccu";
+> >>                         reg = <0x07010000 0x400>;
+> >> --
+> >> 2.18.0
+> >>
+> >> --
+> >> You received this message because you are subscribed to the Google
+> >Groups "linux-sunxi" group.
+> >> To unsubscribe from this group and stop receiving emails from it,
+> >send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> >> For more options, visit https://groups.google.com/d/optout.
 >
-> Also the backtrace inconsistency can only happen if the sample races with
-> function return. If you don't then the backtrace will point
-> to the correct function, even though the unwind IP is different.
->
-> For example in the common case where you profile a long loop it
-> is unlikely to happen.
-
-Agreed.
-
-
-> Could collect numbers how often it happens, but it would surprise
-> me if anything complicated is worth it. I would just do the minimum fixes
-> to address the unwinder errors, and perhaps add the "unwind ip differs"
-> indication.
-
-As above, I think the most important UX problem is not when the IP
-differs, but when the top frame of the IP unwind is different than the
-function in which the PEBS sample occurred. I think the case where the
-skid ends up with both in the same function doesn't pose any
-presentation difficulties [1]. When they are different though, it
-seems tough to present a consistent picture.
-
-[1] Strictly speaking, this the "IPs are in the same function" is not
-sufficient. Imagine a scenario where you have T->B->A (T calls B calls
-A) and the PEBS sample happens in A, and then A and B return, and now
-C then A are called (T->C->A) and the PMI happens. Now the PEBS IP and
-the ireg IP are in the same function, but the stacks are still
-inconsistent. It is probably fine to paper this over and show the user
-the T->C->A stack, as this stack is somehow accurate (it really
-happened), but the user might be confused when he looks at the
-annotation for A, and sees code being executed (having PEBS samples)
-that he knows can never execute when C calls A (for example) since the
-annotations are based on the hidden T->B->A execution...
-
-Bleh.
+> --
+> You received this message because you are subscribed to the Google Groups "linux-sunxi" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to linux-sunxi+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
