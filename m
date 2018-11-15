@@ -2,145 +2,202 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 579CDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:49:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A282EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:50:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 20D7F21582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:49:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 20D7F21582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 6028D223DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:50:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="jS60Gwj9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6028D223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728863AbeKORzq (ORCPT
+        id S1728874AbeKOR4s (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 12:55:46 -0500
-Received: from mail-it1-f198.google.com ([209.85.166.198]:53026 "EHLO
-        mail-it1-f198.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeKORzq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 12:55:46 -0500
-Received: by mail-it1-f198.google.com with SMTP id o205so9900628itc.2
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 23:49:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=94Yz197PuQr99cZ/uprED/KGQpRDi+X2PIFZDpzwMWY=;
-        b=qPOX/IK8ucdj7hMtcQOIh9fYbYwPSMWDwkgxOL2aEn/O642lSXbY9zKCPfY/hAua5X
-         ZiGj1nBV7NsFemNj8OQ1m5QyIaIZ9n+QoyCuHNt3ds2ddhOsxQiz86w+JqFN3A7+ItE8
-         gTQa5PKEp+UA1s7HJZrYobPxFxhGNcbZ+j7B48/BWXdgTiIlNA5+TsiOmw3sVMyYEYmz
-         eZcIzXnnmceLbCqCC7ZBQwW6JQAZAvwDNyjil3ZYV2xF0T2aLu0OyqmFZZQjzl2ZCQ8Q
-         a7O7nJi5QXqmX1wdCuwLm1v38jq/cU35i57aj1weqwseJega2iL6YuZmc3LTN2vsACK6
-         LI2Q==
-X-Gm-Message-State: AGRZ1gIr19h5uY6IvfNgr7EwnXmxym+HBvKULnAl7nGhCU7+HAseOOoK
-        PrlYaXS9p8zNqOQvQgBBaOo+WMtO3hrsKDQvfi32P3m19K7j
-X-Google-Smtp-Source: AJdET5dsv2u3JvtYBiQZK23fCwzooZldRMD3st+AgDyZjkZO0AB0oHvPH6Hy54JoDwu5y9Ywcdj7l3D85OGRhpqi87WBH1BKReEK
-MIME-Version: 1.0
-X-Received: by 2002:a02:4f87:: with SMTP id r7-v6mr3787479jad.25.1542268142613;
- Wed, 14 Nov 2018 23:49:02 -0800 (PST)
-Date:   Wed, 14 Nov 2018 23:49:02 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000c9fe68057aaf48ff@google.com>
-Subject: WARNING in bpf_check (2)
-From:   syzbot <syzbot+4fc427c7af994b0948be@syzkaller.appspotmail.com>
-To:     ast@kernel.org, daniel@iogearbox.net, linux-kernel@vger.kernel.org,
-        netdev@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+        Thu, 15 Nov 2018 12:56:48 -0500
+Received: from mail.kernel.org ([198.145.29.99]:36448 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727067AbeKOR4s (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 12:56:48 -0500
+Received: from devnote (unknown [64.114.255.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id B65B921582;
+        Thu, 15 Nov 2018 07:50:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542268205;
+        bh=7XF1fezt0O4sBhR1B3rFJZPqT8zuYrpGPjBU7AFtfVk=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=jS60Gwj9r2E30VJAwmTJLaRMKpOngFEOs3p1uRfYwwZIyd2Z47qkL2fDbQ7rR9Vpm
+         Hqnhc7GtrDkcAi7uKIP/aMXogmy09sKrUXuf/cjgZv/tRSkUJ3xnkFXYIjo2zWnahO
+         UfKliDkgZDf7emclSTPg8fclyO+fzKXrDlVpyO74=
+Date:   Wed, 14 Nov 2018 23:50:04 -0800
+From:   Masami Hiramatsu <mhiramat@kernel.org>
+To:     Patrick Staehlin <me@packi.ch>
+Cc:     linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Palmer Dabbelt <palmer@sifive.com>,
+        Albert Ou <aou@eecs.berkeley.edu>,
+        Alan Kao <alankao@andestech.com>, Zong Li <zong@andestech.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Will Deacon <will.deacon@arm.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        zhong jiang <zhongjiang@huawei.com>,
+        Anders Roxell <anders.roxell@linaro.org>,
+        "Eric W. Biederman" <ebiederm@xmission.com>,
+        Jim Wilson <jimw@sifive.com>,
+        Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+        Souptick Joarder <jrdr.linux@gmail.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Al Viro <viro@zeniv.linux.org.uk>
+Subject: Re: [RFC/RFT 2/2] RISC-V: kprobes/kretprobe support
+Message-Id: <20181114235004.1d57d911e15efaa8f18fa75e@kernel.org>
+In-Reply-To: <05082ba4-33d6-a95c-e049-78791dafc009@packi.ch>
+References: <20181113195804.22825-1-me@packi.ch>
+        <20181113195804.22825-3-me@packi.ch>
+        <20181114003730.06f810517a270070734df4ce@kernel.org>
+        <20181114074951.0902699286fdf8652f2878a4@kernel.org>
+        <05082ba4-33d6-a95c-e049-78791dafc009@packi.ch>
+X-Mailer: Sylpheed 3.5.0 (GTK+ 2.24.30; x86_64-pc-linux-gnu)
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Wed, 14 Nov 2018 22:10:52 +0100
+Patrick Staehlin <me@packi.ch> wrote:
 
-syzbot found the following crash on:
+> On 14.11.18 16:49, Masami Hiramatsu wrote:
+> > On Wed, 14 Nov 2018 00:37:30 -0800
+> > Masami Hiramatsu <mhiramat@kernel.org> wrote:
+> > 
+> >>> +
+> >>> +static int __kprobes patch_text(kprobe_opcode_t *addr, u32 opcode)
+> >>> +{
+> >>> +	if (is_compressed_insn(opcode))
+> >>> +		*(u16 *)addr = cpu_to_le16(opcode);
+> >>> +	else
+> >>> +		*addr = cpu_to_le32(opcode);
+> >>> +
+> > 
+> > BTW, don't RISC-V need any i-cache flush and per-core serialization
+> > for patching the text area? (and no text_mutex protection?)
+> 
+> Yes, we should probably call flush_icache_all. This code works on
+> QEMU/virt but I guess on real hardware you may run into problems,
+> especially when disarming the kprobe. I'll have a look at the arm64 code
+> again to see what's missing.
 
-HEAD commit:    ccda4af0f4b9 Linux 4.20-rc2
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=129edfbd400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4a0a89f12ca9b0f5
-dashboard link: https://syzkaller.appspot.com/bug?extid=4fc427c7af994b0948be
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=172b626d400000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=148dcb0b400000
+Note that self code-modifying is a special case for any processors, especially
+if that is multi-processor. In general, this may depend on the circuit desgin,
+not ISA.
+Some processor implementation will do in-order and no i-cache, no SMP, that will
+be simple, but if it is out-of-order, deep pipeline, huge i-cache, and many-core,
+you might have to care many things. We have to talk with someone who is designing
+real hardware, and maybe better to make the patch_text pluggable for variants.
+(or choose the safest way)
 
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+4fc427c7af994b0948be@syzkaller.appspotmail.com
+> >>> diff --git a/arch/riscv/kernel/probes/kprobes_trampoline.S b/arch/riscv/kernel/probes/kprobes_trampoline.S
+> >>> new file mode 100644
+> >>> index 000000000000..c7ceda9556a3
+> >>> --- /dev/null
+> >>> +++ b/arch/riscv/kernel/probes/kprobes_trampoline.S
+> >>> @@ -0,0 +1,91 @@
+> >>> +/* SPDX-License-Identifier: GPL-2.0+ */
+> >>> +
+> >>> +#include <linux/linkage.h>
+> >>> +
+> >>> +#include <asm/asm.h>
+> >>> +#include <asm/asm-offsets.h>
+> >>> +
+> >>> +	.text
+> >>> +	.altmacro
+> >>> +
+> >>> +	.macro save_all_base_regs
+> >>> +	REG_S x1,  PT_RA(sp)
+> >>> +	REG_S x3,  PT_GP(sp)
+> >>> +	REG_S x4,  PT_TP(sp)
+> >>> +	REG_S x5,  PT_T0(sp)
+> >>> +	REG_S x6,  PT_T1(sp)
+> >>> +	REG_S x7,  PT_T2(sp)
+> >>> +	REG_S x8,  PT_S0(sp)
+> >>> +	REG_S x9,  PT_S1(sp)
+> >>> +	REG_S x10, PT_A0(sp)
+> >>> +	REG_S x11, PT_A1(sp)
+> >>> +	REG_S x12, PT_A2(sp)
+> >>> +	REG_S x13, PT_A3(sp)
+> >>> +	REG_S x14, PT_A4(sp)
+> >>> +	REG_S x15, PT_A5(sp)
+> >>> +	REG_S x16, PT_A6(sp)
+> >>> +	REG_S x17, PT_A7(sp)
+> >>> +	REG_S x18, PT_S2(sp)
+> >>> +	REG_S x19, PT_S3(sp)
+> >>> +	REG_S x20, PT_S4(sp)
+> >>> +	REG_S x21, PT_S5(sp)
+> >>> +	REG_S x22, PT_S6(sp)
+> >>> +	REG_S x23, PT_S7(sp)
+> >>> +	REG_S x24, PT_S8(sp)
+> >>> +	REG_S x25, PT_S9(sp)
+> >>> +	REG_S x26, PT_S10(sp)
+> >>> +	REG_S x27, PT_S11(sp)
+> >>> +	REG_S x28, PT_T3(sp)
+> >>> +	REG_S x29, PT_T4(sp)
+> >>> +	REG_S x30, PT_T5(sp)
+> >>> +	REG_S x31, PT_T6(sp)
+> >>> +	.endm
+> >>> +
+> >>> +	.macro restore_all_base_regs
+> >>> +	REG_L x3,  PT_GP(sp)
+> >>> +	REG_L x4,  PT_TP(sp)
+> >>> +	REG_L x5,  PT_T0(sp)
+> >>> +	REG_L x6,  PT_T1(sp)
+> >>> +	REG_L x7,  PT_T2(sp)
+> >>> +	REG_L x8,  PT_S0(sp)
+> >>> +	REG_L x9,  PT_S1(sp)
+> >>> +	REG_L x10, PT_A0(sp)
+> >>> +	REG_L x11, PT_A1(sp)
+> >>> +	REG_L x12, PT_A2(sp)
+> >>> +	REG_L x13, PT_A3(sp)
+> >>> +	REG_L x14, PT_A4(sp)
+> >>> +	REG_L x15, PT_A5(sp)
+> >>> +	REG_L x16, PT_A6(sp)
+> >>> +	REG_L x17, PT_A7(sp)
+> >>> +	REG_L x18, PT_S2(sp)
+> >>> +	REG_L x19, PT_S3(sp)
+> >>> +	REG_L x20, PT_S4(sp)
+> >>> +	REG_L x21, PT_S5(sp)
+> >>> +	REG_L x22, PT_S6(sp)
+> >>> +	REG_L x23, PT_S7(sp)
+> >>> +	REG_L x24, PT_S8(sp)
+> >>> +	REG_L x25, PT_S9(sp)
+> >>> +	REG_L x26, PT_S10(sp)
+> >>> +	REG_L x27, PT_S11(sp)
+> >>> +	REG_L x28, PT_T3(sp)
+> >>> +	REG_L x29, PT_T4(sp)
+> >>> +	REG_L x30, PT_T5(sp)
+> >>> +	REG_L x31, PT_T6(sp)
+> >>> +	.endm
+> > 
+> > 
+> > It seems thses macros can be (partially?) shared with entry.S
+> 
+> Yes, I wanted to avoid somebody changing the shared code and breaking
+> random things. But that's what reviews are for. I'll think of something
+> for v2.
 
-audit: type=1400 audit(1542221670.986:36): avc:  denied  { map } for   
-pid=6270 comm="syz-executor244" path="/root/syz-executor244665442"  
-dev="sda1" ino=16484 scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
-tcontext=unconfined_u:object_r:user_home_t:s0 tclass=file permissive=1
-------------[ cut here ]------------
-audit: type=1400 audit(1542221670.986:37): avc:  denied  { prog_load } for   
-pid=6270 comm="syz-executor244"  
-scontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023  
-tcontext=unconfined_u:system_r:insmod_t:s0-s0:c0.c1023 tclass=bpf  
-permissive=1
-verifier bug. No program starts at insn 7
-WARNING: CPU: 0 PID: 6270 at kernel/bpf/verifier.c:5880 jit_subprogs  
-kernel/bpf/verifier.c:5879 [inline]
-WARNING: CPU: 0 PID: 6270 at kernel/bpf/verifier.c:5880 fixup_call_args  
-kernel/bpf/verifier.c:6023 [inline]
-WARNING: CPU: 0 PID: 6270 at kernel/bpf/verifier.c:5880  
-bpf_check+0x5461/0x6310 kernel/bpf/verifier.c:6404
-Kernel panic - not syncing: panic_on_warn set ...
-CPU: 0 PID: 6270 Comm: syz-executor244 Not tainted 4.20.0-rc2+ #112
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  panic+0x2ad/0x55c kernel/panic.c:188
-  __warn.cold.8+0x20/0x45 kernel/panic.c:540
-  report_bug+0x254/0x2d0 lib/bug.c:186
-  fixup_bug arch/x86/kernel/traps.c:178 [inline]
-  do_error_trap+0x11b/0x200 arch/x86/kernel/traps.c:271
-  do_invalid_op+0x36/0x40 arch/x86/kernel/traps.c:290
-  invalid_op+0x14/0x20 arch/x86/entry/entry_64.S:969
-RIP: 0010:jit_subprogs kernel/bpf/verifier.c:5879 [inline]
-RIP: 0010:fixup_call_args kernel/bpf/verifier.c:6023 [inline]
-RIP: 0010:bpf_check+0x5461/0x6310 kernel/bpf/verifier.c:6404
-Code: b6 14 02 4c 89 f0 83 e0 07 83 c0 03 38 d0 7c 08 84 d2 0f 85 69 0b 00  
-00 8b 73 04 48 c7 c7 c0 ca 30 88 44 01 ee e8 4f 14 b9 ff <0f> 0b 48 8b 54  
-24 08 b8 ff ff 37 00 48 c1 e0 2a 48 c1 ea 03 0f b6
-RSP: 0018:ffff8881c126f980 EFLAGS: 00010286
-RAX: 0000000000000000 RBX: ffffc90005e13040 RCX: 0000000000000000
-RDX: 0000000000000000 RSI: ffffffff8165e7e5 RDI: 0000000000000005
-RBP: ffff8881c126fb30 R08: ffff8881a322e0c0 R09: ffffed103b5c5020
-R10: ffffed103b5c5020 R11: ffff8881dae28107 R12: 0000000000000000
-R13: 0000000000000002 R14: ffffc90005e13044 R15: ffff8881c0da6380
-  bpf_prog_load+0x113d/0x1cc0 kernel/bpf/syscall.c:1528
-  __do_sys_bpf kernel/bpf/syscall.c:2504 [inline]
-  __se_sys_bpf kernel/bpf/syscall.c:2466 [inline]
-  __x64_sys_bpf+0x36c/0x520 kernel/bpf/syscall.c:2466
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x440159
-Code: 18 89 d0 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 00 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 fb 13 fc ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007fff04546138 EFLAGS: 00000207 ORIG_RAX: 0000000000000141
-RAX: ffffffffffffffda RBX: 00000000004002c8 RCX: 0000000000440159
-RDX: 0000000000000048 RSI: 0000000020000000 RDI: 0000000000000005
-RBP: 00000000006ca018 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000ffffffff R11: 0000000000000207 R12: 00000000004019e0
-R13: 0000000000401a70 R14: 0000000000000000 R15: 0000000000000000
-Kernel Offset: disabled
-Rebooting in 86400 seconds..
+Ah, OK. So for the first version, we introduce this separated code until
+someone complains it.
 
 
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Thank you,
 
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+-- 
+Masami Hiramatsu <mhiramat@kernel.org>
