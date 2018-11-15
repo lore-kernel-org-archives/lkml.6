@@ -2,173 +2,112 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE58C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:15:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F1E0C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:16:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A693A223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:15:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TmFQOGAQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A693A223CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 0F716223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:16:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F716223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388147AbeKOWWt (ORCPT
+        id S2388187AbeKOWYL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 17:22:49 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:35205 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729008AbeKOWWt (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 17:22:49 -0500
-Received: by mail-wr1-f66.google.com with SMTP id 96so4087466wrb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 04:15:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=nKnaYaT376yl2NVVvvXMGx6hInEwP7JhjKMhXhcEXsk=;
-        b=TmFQOGAQEUpKI0Eq+CWu1GmKjH796cixnNp71hlx6YTOSu9B5/2NHpTfiGAjtNIduK
-         v56tiKBWg/kooDp10FOeMd+BJq3x6AU+nxcdpsD+Z6apBlYD+JMOA1OwsgRqGI8ZLUUn
-         Kq/E4tMWLGQv3Y3oFLx4mdbsAJyXpehDDZz4w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=nKnaYaT376yl2NVVvvXMGx6hInEwP7JhjKMhXhcEXsk=;
-        b=oFv1gHGukowNksuuREUffaeV3kkjf6CLsZevAl6JYdtXhdSi3GyHZt3qzwJQOu9EG0
-         stjA+VZai+Qai0KlmCXv0zSLyp0D5YfehkuyjeStKmWW/dnxToG3++FGyO9ix/TVenKx
-         mN9NsGYbTnAATCIkDAieNg+SIxDXYmV/5yVW9FmpUR4Xd+FwG0qZVE6br+vvH3BV4ZRT
-         HiHcwIQuAYUU3gW2zSi9zVTfwcDFz5UkermbzjGBf9SYkSoYXn93NwIYVQcucZJ8D31a
-         Ob5+Stw16yV8nip4dL60mDWLO4RKHR44/WD9Qq/KWHtuV1uV8ajhNI7aErcWA2ycR9aT
-         ChSA==
-X-Gm-Message-State: AA+aEWZhaoiMlJI50n45DDh0u63t1A3Jrsrj+ZOlWCjc68OgKm3LkzFj
-        jMaLKLE3vBIWKzXmqLDXk8j1jw==
-X-Google-Smtp-Source: AFSGD/WO0WeB5t2hT4v4Tt7xt8vLeTaG3eKpfZ9jldZZlPMbk9ePKmPUmj97jWs2H/n9lNBtG/WYOQ==
-X-Received: by 2002:adf:e7d0:: with SMTP id e16mr2560566wrn.142.1542284110076;
-        Thu, 15 Nov 2018 04:15:10 -0800 (PST)
-Received: from [192.168.43.165] ([37.169.112.121])
-        by smtp.googlemail.com with ESMTPSA id r76-v6sm19711383wmb.21.2018.11.15.04.15.04
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 04:15:09 -0800 (PST)
-Subject: Re: [PATCH 1/2] clocksource: meson6_timer: use register names from
- the datasheet
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
-        khilman@baylibre.com, carlo@caione.org
-References: <20181028125501.17336-1-martin.blumenstingl@googlemail.com>
- <20181028125501.17336-2-martin.blumenstingl@googlemail.com>
- <6793aba9-87fc-6cf8-cada-f1fa6a1e0040@linaro.org>
- <CAFBinCBueqknBzV6PJnuSzd09=dd06gkjZG+ykr5qKLf=uRT2A@mail.gmail.com>
-From:   Daniel Lezcano <daniel.lezcano@linaro.org>
-Message-ID: <036e5c1e-7e02-9691-3c36-4ebdc4cce727@linaro.org>
-Date:   Thu, 15 Nov 2018 13:15:00 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 15 Nov 2018 17:24:11 -0500
+Received: from mga06.intel.com ([134.134.136.31]:4219 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729155AbeKOWYK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 17:24:10 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 04:16:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,236,1539673200"; 
+   d="scan'208";a="249920703"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga004.jf.intel.com with SMTP; 15 Nov 2018 04:16:28 -0800
+Received: by lahna (sSMTP sendmail emulation); Thu, 15 Nov 2018 14:16:27 +0200
+Date:   Thu, 15 Nov 2018 14:16:27 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Lukas Wunner <lukas@wunner.de>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Jacob jun Pan <jacob.jun.pan@intel.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Christian Kellner <ckellner@redhat.com>,
+        Mario.Limonciello@dell.com,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
+Message-ID: <20181115121627.GA2500@lahna.fi.intel.com>
+References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
+ <20181112160628.86620-2-mika.westerberg@linux.intel.com>
+ <20181112180203.lx72gjfplb6xlur7@wunner.de>
+ <20181113105636.GB11202@e107981-ln.cambridge.arm.com>
+ <20181113112700.GT2500@lahna.fi.intel.com>
+ <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
+ <20181115102239.GU2500@lahna.fi.intel.com>
+ <20181115111356.GA599@e107981-ln.cambridge.arm.com>
+ <20181115113737.GW2500@lahna.fi.intel.com>
+ <20181115120736.pscly6zwd3k2tvd2@wunner.de>
 MIME-Version: 1.0
-In-Reply-To: <CAFBinCBueqknBzV6PJnuSzd09=dd06gkjZG+ykr5qKLf=uRT2A@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115120736.pscly6zwd3k2tvd2@wunner.de>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/11/2018 07:23, Martin Blumenstingl wrote:
-> Hi Daniel,
+On Thu, Nov 15, 2018 at 01:07:36PM +0100, Lukas Wunner wrote:
+> On Thu, Nov 15, 2018 at 01:37:37PM +0200, Mika Westerberg wrote:
+> > On Thu, Nov 15, 2018 at 11:13:56AM +0000, Lorenzo Pieralisi wrote:
+> > > I have strong objections to the way these bindings have been forced upon
+> > > everybody; if that's the way *generic* ACPI bindings are specified I
+> > > wonder why there still exists an ACPI specification and related working
+> > > group.
+> > > 
+> > > I personally (but that's Bjorn and Rafael choice) think that this is
+> > > not a change that belongs in PCI core, ACPI bindings are ill-defined
+> > > and device tree bindings are non-existing.
+> > 
+> > Any idea where should I put it then? These systems are already out there
+> > and we need to support them one way or another.
 > 
-> thanks for your feedback!
+> I suppose those are all Thunderbolt, so could be handled by the
+> existing ->is_thunderbolt bit?
 > 
-> On Thu, Nov 15, 2018 at 2:35 AM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
->>
->> On 28/10/2018 13:55, Martin Blumenstingl wrote:
->>> This makes the driver use the names from S805 datasheet for the
->>> preprocessor #defines. This makes it easier to spot that the driver
->>> currently only supports Timer A (as clockevent with interrupt support)
->>> and Timer E (as clocksource without interrupts). Timer B, C and D (which
->>> are similar to Timer A) are currently not supported by the driver.
->>>
->>> While here, this also removes the internal "CED_ID" and "CSD_ID" defines
->>> which are used to identify the timer. These IDs are not described in the
->>> datasheet and thus make it harder to compare the code to what's written
->>> in the datasheet.
->>>
->>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
->>> ---
->>>  drivers/clocksource/meson6_timer.c | 110 ++++++++++++++++++-----------
->>>  1 file changed, 68 insertions(+), 42 deletions(-)
->>>
->>> diff --git a/drivers/clocksource/meson6_timer.c b/drivers/clocksource/meson6_timer.c
->>> index 92f20991a937..c622135bee9d 100644
->>> --- a/drivers/clocksource/meson6_timer.c
->>> +++ b/drivers/clocksource/meson6_timer.c
->>> @@ -10,6 +10,8 @@
->>>   * warranty of any kind, whether express or implied.
->>>   */
->>>
->>> +#include <linux/bitfield.h>
->>> +#include <linux/bitops.h>
->>>  #include <linux/clk.h>
->>>  #include <linux/clockchips.h>
->>>  #include <linux/interrupt.h>
->>> @@ -20,80 +22,102 @@
->>>  #include <linux/of_address.h>
->>>  #include <linux/of_irq.h>
->>>
->>> -#define CED_ID                       0
->>> -#define CSD_ID                       4
->>> -
->>> -#define TIMER_ISA_MUX                0
->>> -#define TIMER_ISA_VAL(t)     (((t) + 1) << 2)
->>> -
->>> -#define TIMER_INPUT_BIT(t)   (2 * (t))
->>> -#define TIMER_ENABLE_BIT(t)  (16 + (t))
->>> -#define TIMER_PERIODIC_BIT(t)        (12 + (t))
->>> +enum meson6_timera_input_clock {
->>> +     MESON_TIMERA_CLOCK_1US = 0x0,
->>> +     MESON_TIMERA_CLOCK_10US = 0x1,
->>> +     MESON_TIMERA_CLOCK_100US = 0x2,
->>> +     MESON_TIMERA_CLOCK_1MS = 0x3,
->>> +};
->>>
->>> -#define TIMER_CED_INPUT_MASK (3UL << TIMER_INPUT_BIT(CED_ID))
->>> -#define TIMER_CSD_INPUT_MASK (7UL << TIMER_INPUT_BIT(CSD_ID))
->>> +enum meson6_timere_input_clock {
->>> +     MESON_TIMERE_CLOCK_SYSTEM_CLOCK = 0x0,
->>> +     MESON_TIMERE_CLOCK_1US = 0x1,
->>> +     MESON_TIMERE_CLOCK_10US = 0x2,
->>> +     MESON_TIMERE_CLOCK_100US = 0x3,
->>> +     MESON_TIMERE_CLOCK_1MS = 0x4,
->>> +};
->>
->> It is not required to specify the values. The standard defines the
->> default first value is zero, and each enum has the value which is +1 of
->> the previous one.
-> the idea behind this is: these are values from the datasheet so I
-> wanted to make them easy to find when comparing the datasheet with the
-> driver.
-> I will replace the enums with simple #defines if there are no
-> objections (that also makes it consistent with the other register
-> values in the driver).
+> It was said in this thread that ->is_external is more generic in
+> that it could also be used on PCIe slots, however that use case
+> doesn't appear to lend itself to the "plug in while laptop owner
+> is getting coffee" attack.  To access PCIe slots on a server you
+> normally need access to a data center.  On a desktop, you usually
+> have to open the case, by which time the coffee may already have
+> been fetched.  So frankly the binding seems a bit over-engineered
+> to me and yet another thing that BIOS writers may get wrong.
 
-No objection to change them to macros :)
+I would not say it should include PCIe slots but there are other cables
+that carry PCIe and I was thinking we could make it to support those as
+well.
 
-  -- Daniel
+I have no problem using is_thunderbolt here, though if we don't want to
+support non-Thunderbolt external devices this way.
 
-
--- 
- <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
-
+However, the question here is more that where I should put the _DSD
+parsing code if it is not suitable to be placed inside PCI/ACPI core as
+I've done in this patch? ;-)
