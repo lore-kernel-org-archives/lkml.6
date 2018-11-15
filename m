@@ -2,174 +2,125 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5710FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:56:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AF09EC04EBC
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:57:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 153FA208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:56:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 77F6222360
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:57:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="llN7otdy"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 153FA208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="DsJhtO6m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77F6222360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728214AbeKOLCK (ORCPT
+        id S1728303AbeKOLCh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 06:02:10 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:41688 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727434AbeKOLCK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 06:02:10 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 70so8167834pgh.8
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 16:56:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references
-         :mime-version:content-transfer-encoding;
-        bh=jR9p6ed+q044UxVDucQZ+/nHR0L7rs3Ohg9y+9jXu4E=;
-        b=llN7otdymbhNFelaODeLHIUTU7aUH9dEHfq+jb2Nb81I+TkP+gVSksg0nsBxC2gKr/
-         gsjHC2Ct85U+EDnUaKLJuo/A41z/L4/rvjz4e9GQnstxopY3ewLDzqL/RQ2+Kf2GWlGX
-         LihIWlPV2LSSRplH5LQcbdJQRkx3e3M9yhi02imjHjL+yDA5oSrv89s+3wHtNSEr7Txe
-         NhOg34w+iQZad9vdP2y20tOvAfqfcc5qmrwKjeqLFhbNDO34n7UDuw2p/AlW0N5DWpL6
-         DSGco/eHWpmUkVjRGfC/M2meipxJKfkfK6IJMw2LCdKwfDtPrSIVShviqEJ1+UrDYM9q
-         DhyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=jR9p6ed+q044UxVDucQZ+/nHR0L7rs3Ohg9y+9jXu4E=;
-        b=mbpt7dsazsgS1Vz0ZWanCwZXccRSmBOMAYBChnegB4fuR8NGtv3YRnB5AndtIRRBII
-         DTPqSLub59gsOwl9wo/jgCok9I9tdDJCgKC37EMwxway83i3oUmbBJ0zaY46gDQQP0ZT
-         OqF7ZkbanUfRaM3cBvWEtUqDRdd+s6aq8ZJLvIcgddLvJOkr8MGWbgGOPcnKEDbTH7i/
-         ZE88xusDofrYIN1V8Kf+Y1dsOnRyWcRp28JMjBsm0l/QFcBq6bB340UT3nkNARSfibC3
-         vjwJ3xxwOW7ao4i1Jil7OjoNHlxs3U/eoYH/BxySoraygDAo4R6811CaPYVgdqHpkTTH
-         1HgQ==
-X-Gm-Message-State: AGRZ1gIbnSc6ntsDzzzU5FWHvSVxfk6lNtfd4/wZtdE2SP4aSAxREL+W
-        u5JWpnt1pG1tMTMT6LD9fEBlInTvKCk=
-X-Google-Smtp-Source: AJdET5cXIT3hSCvPSprLZrzA+WmIlEidifP4rT35J+g20Tmt3Dm1n7cAu7esjTcsho3o2E3AqsyvIw==
-X-Received: by 2002:a63:8c2:: with SMTP id 185mr3940793pgi.26.1542243392970;
-        Wed, 14 Nov 2018 16:56:32 -0800 (PST)
-Received: from viisi.sifive.com ([64.114.255.97])
-        by smtp.gmail.com with ESMTPSA id m10-v6sm47343509pfg.180.2018.11.14.16.56.32
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 16:56:32 -0800 (PST)
-From:   Paul Walmsley <paul.walmsley@sifive.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Paul Walmsley <paul.walmsley@sifive.com>,
-        Russell King <linux@armlinux.org.uk>,
-        Jim Wilson <jimw@sifive.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Sam Ravnborg <sam@ravnborg.org>, linux-kbuild@vger.kernel.org,
-        Paul Walmsley <paul@pwsan.com>
-Subject: [PATCH v2 2/2] modpost: skip ELF local symbols by default during section mismatch check
-Date:   Wed, 14 Nov 2018 16:56:02 -0800
-Message-Id: <20181115005602.30746-3-paul.walmsley@sifive.com>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181115005602.30746-1-paul.walmsley@sifive.com>
-References: <20181115005602.30746-1-paul.walmsley@sifive.com>
+        Thu, 15 Nov 2018 06:02:37 -0500
+Received: from mail.kernel.org ([198.145.29.99]:58158 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726943AbeKOLCh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 06:02:37 -0500
+Received: from localhost (unknown [64.114.255.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 0FAFF208E7;
+        Thu, 15 Nov 2018 00:57:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542243420;
+        bh=kycEJDTnQ3efzpmgmTLjKFGm9sBL8UnyW8pLuhE3gtI=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=DsJhtO6mTXq5BRgWeUAr6WmikJToRnjoZYB2rztoQMxux7sk4a0JoGvBODxUfQgSZ
+         AR4ISx168MuKIT2M234fEvi1lKn6KqXEQ4fVEFVsuCNuuebjoxVg6vannCjwh8n5+Z
+         pNaKJ6npQwAWlva37cegeXQ4MVlW2j4Id13NYlYc=
+Date:   Wed, 14 Nov 2018 16:56:58 -0800
+From:   Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Guenter Roeck <linux@roeck-us.net>,
+        Ming Lei <tom.leiming@gmail.com>, Jens Axboe <axboe@fb.com>,
+        Peter Zijlstra <peterz@infradead.org>,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hannes Reinecke <hare@suse.de>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Christoph Hellwig <hch@lst.de>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        "James E.J. Bottomley" <jejb@linux.vnet.ibm.com>,
+        linux-scsi@vger.kernel.org
+Subject: Re: kobject lifetime issues in blk-mq
+Message-ID: <20181115005658.GA24847@kroah.com>
+References: <20181109203518.GA7130@roeck-us.net>
+ <20181112092051.GA391@ming.t460p>
+ <20181112094406.GB391@ming.t460p>
+ <20181112164848.GA1790@roeck-us.net>
+ <20181112200236.GA4415@kroah.com>
+ <20181113002226.GA4455@ming.t460p>
+ <20181113004124.GC4455@ming.t460p>
+ <20181114110827.GA31430@ming.t460p>
+ <20181114151410.GB26378@kroah.com>
+ <20181115003616.GA32603@ming.t460p>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115003616.GA32603@ming.t460p>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-During development of a serial console driver with a gcc 8.2.0
-toolchain for RISC-V, the following modpost warning appeared:
+On Thu, Nov 15, 2018 at 08:36:17AM +0800, Ming Lei wrote:
+> > So even if you think the kernel is not going to do this, remember, you
+> > have no control over it.  Reference counted objects are done this way
+> > for a reason, you really do not know who has a reference and you really
+> > do not care.
+> > 
+> > You are just papering over the real issue here, see my previous email
+> > for how to start working on resolving it.
+> 
+> IMO, there isn't real issue, and the issue is actually in 'delay release'.
 
-----
-WARNING: vmlinux.o(.data+0x19b10): Section mismatch in reference from the variable .LANCHOR1 to the function .init.text:sifive_serial_console_setup()
-The variable .LANCHOR1 references
-the function __init sifive_serial_console_setup()
-If the reference is valid then annotate the
-variable with __init* or __refdata (see linux/init.h) or name the variable:
-*_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
-----
+Nope, sorry, that is not true.
 
-".LANCHOR1" is an ELF local symbol, automatically created by gcc's section
-anchor generation code:
+> Please look at the code in block/blk-mq-sysfs.c, both q->mq_kobj and all
+> ctx->kobj share same lifetime with q->kobj, we even don't call get/put
+> on q->mq_kobj & all ctx->kobj, and all are simply released in q->kobj's
+> release handler.
 
-https://gcc.gnu.org/onlinedocs/gccint/Anchored-Addresses.html
+How do you "know" you are keeping those lifetimes in sync?  The joy of a
+kobject is that _ANYTHING_ can grab a reference to your object without
+you knowing about it.  That includes userspace programs.  Yes, sysfs is
+now much better and it trys to release that reference "quickly" when it
+determines you are trying to delete a kobject, but it's not perfict,
+there are still races there.
 
-https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/varasm.c;h=cd9591a45617464946dcf9a126dde277d9de9804;hb=9fb89fa845c1b2e0a18d85ada0b077c84508ab78#l7473
+And that is what the delay release code is showing you.  It is showing
+you that you "think" your reference counting is wrong, but it is not.
+It is showing you that if someone else grabs a reference, you are not
+correctly cleaning up for yourself.
 
-This was verified by compiling the kernel with -fno-section-anchors.
-The serial driver code idiom triggering the warning is standard serial
-driver practice, and one that has a specific whitelist inclusion in
-modpost.c.
+Never think that you really know the lifetime of a kobject, once you
+realize that your code gets simpler and you can then just "trust" that
+the kernel will do the right thing no matter what.
 
-I'm neither a modpost nor an ELF expert, but naively, it doesn't seem
-useful for modpost to report section mismatch warnings caused by ELF
-local symbols by default.  Local symbols have compiler-generated
-names, and thus bypass modpost's whitelisting algorithm, which relies
-on the presence of a non-autogenerated symbol name.  This increases
-the likelihood that false positive warnings will be generated (as in
-the above case).
+Because really, you are using a kobject because you want that correct
+reference counting logic.  By ignoring that logic, you are ignoring the
+reason to be using that object at all.  If you don't need reference
+counting, then don't use it at all.
 
-Thus, disable section mismatch reporting on ELF local symbols.  The
-rationale here is similar to that of commit 2e3a10a1551d ("ARM: avoid
-ARM binutils leaking ELF local symbols") and of similar code already
-present in modpost.c:
+And if you need sysfs files, then you need to use the kobject and then
+you need to handle it properly, because again, you do NOT have full
+control over the lifetime of your object.  That's the basis for
+reference counting in the firstplace.
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/mod/modpost.c?h=v4.19-rc4&id=7876320f88802b22d4e2daf7eb027dd14175a0f8#n1256
+So this code is broken without me evening having to look at it, please
+fix it to handle release properly.  Again, the kernel tried to tell you
+this, but you hacked around the kernel core to remove that warning
+incorrectly.  Please go read the kobject documentation again for even
+more details about this than what I said here.
 
-This second version of the patch drops the option to keep section
-mismatch warnings for local sections, based on feedback from Sam
-Ravnborg <sam@ravnborg.org>; and clarifies that these warnings
-appear with gcc 8.2.0.
+thanks,
 
-Cc: Russell King <linux@armlinux.org.uk>
-Cc: Jim Wilson <jimw@sifive.com>
-Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc: Michal Marek <michal.lkml@markovi.net>
-Cc: Sam Ravnborg <sam@ravnborg.org>
-Cc: linux-kbuild@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-Signed-off-by: Paul Walmsley <paul@pwsan.com>
----
- scripts/mod/modpost.c | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
-
-diff --git a/scripts/mod/modpost.c b/scripts/mod/modpost.c
-index 85bd93c63180..0fb148171b78 100644
---- a/scripts/mod/modpost.c
-+++ b/scripts/mod/modpost.c
-@@ -1253,6 +1253,17 @@ static inline int is_arm_mapping_symbol(const char *str)
- 	       && (str[2] == '\0' || str[2] == '.');
- }
- 
-+/*
-+ * If a symbol name follows the convention for ELF-local symbols (i.e., the
-+ * name begins with a ".L"), return true; otherwise false.  This is used to
-+ * skip section mismatch reporting on ELF-local symbols, due to the risk of
-+ * false positives.
-+ */
-+static inline int is_local_symbol(const char *str)
-+{
-+	return str[0] == '.' && str[1] == 'L';
-+}
-+
- /*
-  * If there's no name there, ignore it; likewise, ignore it if it's
-  * one of the magic symbols emitted used by current ARM tools.
-@@ -1535,6 +1546,9 @@ static void default_mismatch_handler(const char *modname, struct elf_info *elf,
- 	if (strstarts(fromsym, "reference___initcall"))
- 		return;
- 
-+	if (is_local_symbol(fromsym))
-+		return;
-+
- 	tosec = sec_name(elf, get_secindex(elf, sym));
- 	to = find_elf_symbol(elf, r->r_addend, sym);
- 	tosym = sym_name(elf, to);
--- 
-2.19.1
-
+greg k-h
