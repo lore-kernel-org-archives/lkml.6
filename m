@@ -2,117 +2,373 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EDAC1C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:30:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 372A1C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:30:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B525D2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:30:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="xM8fL24m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B525D2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id E5CD52087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:30:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5CD52087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387940AbeKOThl (ORCPT
+        id S2387992AbeKOThm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:37:41 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:35160 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387548AbeKOThl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:37:41 -0500
-Received: by mail-wm1-f67.google.com with SMTP id t15-v6so17332269wmt.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 01:30:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uNm7UG+p0cFTwhhywuPjSiHbxGrq0ABTHOWshR9EV/A=;
-        b=xM8fL24mbu8ShG59YrloBNmRt+vznWfrG838jmPFzsWP0hhsmG22dcUez88i+EdhLY
-         07DQ+/S/nh/efYc1uiLipUoAfHUAHk/Q62zYklE5V09p/Lw97KccOPflASARTZZrg5pz
-         Cdeppy/EkxMME/46hJ3i/dITcE7VgTnZogTvNuwCwni49Lo9PyBXqKMk0TCSsVbKmozZ
-         hH9sVdmJmOsgHfJMAfuhVWBURCloyyFMHn+nTrl66jDciWz06P39yg3jyx1TSo9ZCKNY
-         ncaaJFKj2lA7v2eVQ22jiMM29tW5aETJ4T/vdU+PW447I6RBIUSjjw2acill89qtlNTX
-         5bfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uNm7UG+p0cFTwhhywuPjSiHbxGrq0ABTHOWshR9EV/A=;
-        b=M1IE+f7Au+cYzFABhoaztOiw+WYy92pPzHf13NGReEryREfeB1qjO/DHFKkKWIPH1l
-         qCQn1LDRFbHNCYbX9lRvEjXIzwUjeMMnckZKGZYDastLqmTFpkvu7d4ItnTAThgN7kJi
-         K7uCZT4WslW8iCsLgrtSpaNNqe33hH4RtiR+jz8232fGhzWI+u3IDF+FXMa5quO/U/1i
-         GQ7p2i45Db9w5JrEaO3K4tZ/r6gLv7t7pi4tadzM6hvw5wpafO+rf9X1mYiU+rIJjo7g
-         sRN+PIfpLS7866hPCzBL4GqS7uFEtKLWP9QK4RvNkdTBTOHpkryioaur/46FU7F4vbph
-         sB2A==
-X-Gm-Message-State: AGRZ1gIAf/J/esG7JSuGRJSggBd2cdzgL69FbWK8ASjqh61+UAV2nerq
-        KxkwdrqCKITqdjKW6l05Ambhhg==
-X-Google-Smtp-Source: AJdET5cnrvLUvsGLwqpKv6hpw+aiGJuSE24NGSxBtuQkp9Lzqm640R9T3+AI0eIZkQlnMNJZ0D3L3A==
-X-Received: by 2002:a1c:7c0b:: with SMTP id x11mr754185wmc.20.1542274238235;
-        Thu, 15 Nov 2018 01:30:38 -0800 (PST)
-Received: from Red ([2a01:cb1d:147:7200:2e56:dcff:fed2:c6d6])
-        by smtp.googlemail.com with ESMTPSA id f12-v6sm12950033wru.63.2018.11.15.01.30.35
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 01:30:37 -0800 (PST)
-Date:   Thu, 15 Nov 2018 10:30:34 +0100
-From:   LABBE Corentin <clabbe@baylibre.com>
-To:     Russell King - ARM Linux <linux@armlinux.org.uk>
-Cc:     Gilles.Muller@lip6.fr, Julia.Lawall@lip6.fr, agust@denx.de,
-        airlied@linux.ie, alexandre.torgue@st.com, alistair@popple.id.au,
-        benh@kernel.crashing.org, carlo@caione.org, davem@davemloft.net,
-        galak@kernel.crashing.org, joabreu@synopsys.com,
-        khilman@baylibre.com, matthias.bgg@gmail.com,
-        maxime.ripard@bootlin.com, michal.lkml@markovi.net,
-        mpe@ellerman.id.au, mporter@kernel.crashing.org,
-        narmstrong@baylibre.com, nicolas.palix@imag.fr, oss@buserror.net,
-        paulus@samba.org, peppe.cavallaro@st.com, tj@kernel.org,
-        vitb@kernel.crashing.org, wens@csie.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        linux-ide@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-mediatek@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
-        cocci@systeme.lip6.fr, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v3 0/7] include: add
- setbits32/clrbits32/clrsetbits32/setbits64/clrbits64/clrsetbits64
-Message-ID: <20181115093034.GB23965@Red>
-References: <1540366553-18541-1-git-send-email-clabbe@baylibre.com>
- <20181024085700.GR30658@n2100.armlinux.org.uk>
+        Thu, 15 Nov 2018 14:37:42 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:52518 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727265AbeKOThm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:37:42 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 35940D7C02585;
+        Thu, 15 Nov 2018 17:30:37 +0800 (CST)
+Received: from S00293818-DELL1.china.huawei.com (10.47.88.106) by
+ DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 15 Nov 2018 17:30:28 +0800
+From:   Salil Mehta <salil.mehta@huawei.com>
+To:     <davem@davemloft.net>
+CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
+        <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>
+Subject: [PATCH V2 net-next 2/5] net: hns3: Add handling of GRO Pkts not fully RX'ed in NAPI poll
+Date:   Thu, 15 Nov 2018 09:29:22 +0000
+Message-ID: <20181115092925.11812-3-salil.mehta@huawei.com>
+X-Mailer: git-send-email 2.8.3
+In-Reply-To: <20181115092925.11812-1-salil.mehta@huawei.com>
+References: <20181115092925.11812-1-salil.mehta@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181024085700.GR30658@n2100.armlinux.org.uk>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
+X-Originating-IP: [10.47.88.106]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Oct 24, 2018 at 09:57:00AM +0100, Russell King - ARM Linux wrote:
-> On Wed, Oct 24, 2018 at 07:35:46AM +0000, Corentin Labbe wrote:
-> > This patchset adds a new set of functions which are open-coded in lot of
-> > place.
-> > Basicly the pattern is always the same, "read, modify a bit, write"
-> > some driver and the powerpc arch already have thoses pattern them as functions. (like ahci_sunxi.c or dwmac-meson8b)
-> 
-> The advantage of them being open-coded is that it's _obvious_ to the
-> reviewer that there is a read-modify-write going on which, in a multi-
-> threaded environment, may need some locking (so it should trigger a
-> review of the locking around that code.)
-> 
-> With it hidden inside a helper which has no locking itself, it becomes
-> much easier to pass over in review, which means that races are much
-> more likely to go unspotted - and that is bad news.
-> 
+From: Peng Li <lipeng321@huawei.com>
 
-Hello
+The "FE bit" in the description means the last description for
+a packets. When HW GRO enable, HW write data to ring every
+packet/buffer, there is greater probability that driver handle
+with the describtion but HW still not set the "FE bit".
 
-I understand your fear, but I think the benefit overhaul thoses.
-Furthermore, drivers which I have converted does not need such locking.
+When drier handle the packet and HW still not set "FE bit",
+driver stores skb and bd_num in rx ring, and continue to use the
+skb and bd_num in next napi.
 
-If you want I can rename the header to linux/setbits-non-atomic.h for making obvious the lack of locking.
+Signed-off-by: Peng Li <lipeng321@huawei.com>
+Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+---
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 196 ++++++++++++------
+ .../net/ethernet/hisilicon/hns3/hns3_enet.h   |   6 +
+ 2 files changed, 140 insertions(+), 62 deletions(-)
 
-Regards
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+index a510ddfd45a5..d8c5e1198670 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
+@@ -2383,6 +2383,90 @@ static bool hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
+ 	}
+ }
+ 
++static int hns3_alloc_skb(struct hns3_enet_ring *ring, int length,
++			  unsigned char *va)
++{
++#define HNS3_NEED_ADD_FRAG	1
++	struct hns3_desc_cb *desc_cb = &ring->desc_cb[ring->next_to_clean];
++	struct net_device *netdev = ring->tqp->handle->kinfo.netdev;
++	struct sk_buff *skb;
++
++	ring->skb = napi_alloc_skb(&ring->tqp_vector->napi, HNS3_RX_HEAD_SIZE);
++	skb = ring->skb;
++	if (unlikely(!skb)) {
++		netdev_err(netdev, "alloc rx skb fail\n");
++
++		u64_stats_update_begin(&ring->syncp);
++		ring->stats.sw_err_cnt++;
++		u64_stats_update_end(&ring->syncp);
++
++		return -ENOMEM;
++	}
++
++	prefetchw(skb->data);
++
++	ring->pending_buf = 1;
++	if (length <= HNS3_RX_HEAD_SIZE) {
++		memcpy(__skb_put(skb, length), va, ALIGN(length, sizeof(long)));
++
++		/* We can reuse buffer as-is, just make sure it is local */
++		if (likely(page_to_nid(desc_cb->priv) == numa_node_id()))
++			desc_cb->reuse_flag = 1;
++		else /* This page cannot be reused so discard it */
++			put_page(desc_cb->priv);
++
++		ring_ptr_move_fw(ring, next_to_clean);
++		return 0;
++	}
++	u64_stats_update_begin(&ring->syncp);
++	ring->stats.seg_pkt_cnt++;
++	u64_stats_update_end(&ring->syncp);
++
++	ring->pull_len = eth_get_headlen(va, HNS3_RX_HEAD_SIZE);
++	__skb_put(skb, ring->pull_len);
++	hns3_nic_reuse_page(skb, 0, ring, ring->pull_len,
++			    desc_cb);
++	ring_ptr_move_fw(ring, next_to_clean);
++
++	return HNS3_NEED_ADD_FRAG;
++}
++
++static int hns3_add_frag(struct hns3_enet_ring *ring, struct hns3_desc *desc,
++			 struct sk_buff **out_skb, bool pending)
++{
++	struct sk_buff *skb = *out_skb;
++	struct hns3_desc_cb *desc_cb;
++	struct hns3_desc *pre_desc;
++	u32 bd_base_info;
++	int pre_bd;
++
++	/* if there is pending bd, the SW param next_to_clean has moved
++	 * to next and the next is NULL
++	 */
++	if (pending) {
++		pre_bd = (ring->next_to_clean - 1 + ring->desc_num) %
++			ring->desc_num;
++		pre_desc = &ring->desc[pre_bd];
++		bd_base_info = le32_to_cpu(pre_desc->rx.bd_base_info);
++	} else {
++		bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
++	}
++
++	while (!hnae3_get_bit(bd_base_info, HNS3_RXD_FE_B)) {
++		desc = &ring->desc[ring->next_to_clean];
++		desc_cb = &ring->desc_cb[ring->next_to_clean];
++		bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
++		if (!hnae3_get_bit(bd_base_info, HNS3_RXD_VLD_B))
++			return -ENXIO;
++
++		hns3_nic_reuse_page(skb, ring->pending_buf, ring, 0, desc_cb);
++		ring_ptr_move_fw(ring, next_to_clean);
++		ring->pending_buf++;
++	}
++
++	return 0;
++}
++
+ static void hns3_set_rx_skb_rss_type(struct hns3_enet_ring *ring,
+ 				     struct sk_buff *skb)
+ {
+@@ -2399,18 +2483,16 @@ static void hns3_set_rx_skb_rss_type(struct hns3_enet_ring *ring,
+ }
+ 
+ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+-			     struct sk_buff **out_skb, int *out_bnum)
++			     struct sk_buff **out_skb)
+ {
+ 	struct net_device *netdev = ring->tqp->handle->kinfo.netdev;
++	struct sk_buff *skb = ring->skb;
+ 	struct hns3_desc_cb *desc_cb;
+ 	struct hns3_desc *desc;
+-	struct sk_buff *skb;
+-	unsigned char *va;
+ 	u32 bd_base_info;
+-	int pull_len;
+ 	u32 l234info;
+ 	int length;
+-	int bnum;
++	int ret;
+ 
+ 	desc = &ring->desc[ring->next_to_clean];
+ 	desc_cb = &ring->desc_cb[ring->next_to_clean];
+@@ -2422,9 +2504,10 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 
+ 	/* Check valid BD */
+ 	if (unlikely(!hnae3_get_bit(bd_base_info, HNS3_RXD_VLD_B)))
+-		return -EFAULT;
++		return -ENXIO;
+ 
+-	va = (unsigned char *)desc_cb->buf + desc_cb->page_offset;
++	if (!skb)
++		ring->va = (unsigned char *)desc_cb->buf + desc_cb->page_offset;
+ 
+ 	/* Prefetch first cache line of first page
+ 	 * Idea is to cache few bytes of the header of the packet. Our L1 Cache
+@@ -2433,62 +2516,42 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 	 * lines. In such a case, single fetch would suffice to cache in the
+ 	 * relevant part of the header.
+ 	 */
+-	prefetch(va);
++	prefetch(ring->va);
+ #if L1_CACHE_BYTES < 128
+-	prefetch(va + L1_CACHE_BYTES);
++	prefetch(ring->va + L1_CACHE_BYTES);
+ #endif
+ 
+-	skb = *out_skb = napi_alloc_skb(&ring->tqp_vector->napi,
+-					HNS3_RX_HEAD_SIZE);
+-	if (unlikely(!skb)) {
+-		netdev_err(netdev, "alloc rx skb fail\n");
++	if (!skb) {
++		ret = hns3_alloc_skb(ring, length, ring->va);
++		*out_skb = skb = ring->skb;
+ 
+-		u64_stats_update_begin(&ring->syncp);
+-		ring->stats.sw_err_cnt++;
+-		u64_stats_update_end(&ring->syncp);
+-
+-		return -ENOMEM;
+-	}
+-
+-	prefetchw(skb->data);
+-
+-	bnum = 1;
+-	if (length <= HNS3_RX_HEAD_SIZE) {
+-		memcpy(__skb_put(skb, length), va, ALIGN(length, sizeof(long)));
+-
+-		/* We can reuse buffer as-is, just make sure it is local */
+-		if (likely(page_to_nid(desc_cb->priv) == numa_node_id()))
+-			desc_cb->reuse_flag = 1;
+-		else /* This page cannot be reused so discard it */
+-			put_page(desc_cb->priv);
++		if (ret < 0) /* alloc buffer fail */
++			return ret;
++		if (ret > 0) { /* need add frag */
++			ret = hns3_add_frag(ring, desc, &skb, false);
++			if (ret)
++				return ret;
+ 
+-		ring_ptr_move_fw(ring, next_to_clean);
++			/* As the head data may be changed when GRO enable, copy
++			 * the head data in after other data rx completed
++			 */
++			memcpy(skb->data, ring->va,
++			       ALIGN(ring->pull_len, sizeof(long)));
++		}
+ 	} else {
+-		u64_stats_update_begin(&ring->syncp);
+-		ring->stats.seg_pkt_cnt++;
+-		u64_stats_update_end(&ring->syncp);
+-
+-		pull_len = eth_get_headlen(va, HNS3_RX_HEAD_SIZE);
+-
+-		memcpy(__skb_put(skb, pull_len), va,
+-		       ALIGN(pull_len, sizeof(long)));
+-
+-		hns3_nic_reuse_page(skb, 0, ring, pull_len, desc_cb);
+-		ring_ptr_move_fw(ring, next_to_clean);
++		ret = hns3_add_frag(ring, desc, &skb, true);
++		if (ret)
++			return ret;
+ 
+-		while (!hnae3_get_bit(bd_base_info, HNS3_RXD_FE_B)) {
+-			desc = &ring->desc[ring->next_to_clean];
+-			desc_cb = &ring->desc_cb[ring->next_to_clean];
+-			bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
+-			hns3_nic_reuse_page(skb, bnum, ring, 0, desc_cb);
+-			ring_ptr_move_fw(ring, next_to_clean);
+-			bnum++;
+-		}
++		/* As the head data may be changed when GRO enable, copy
++		 * the head data in after other data rx completed
++		 */
++		memcpy(skb->data, ring->va,
++		       ALIGN(ring->pull_len, sizeof(long)));
+ 	}
+ 
+-	*out_bnum = bnum;
+-
+ 	l234info = le32_to_cpu(desc->rx.l234_info);
++	bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
+ 
+ 	/* Based on hw strategy, the tag offloaded will be stored at
+ 	 * ot_vlan_tag in two layer tag case, and stored at vlan_tag
+@@ -2539,6 +2602,7 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ 	ring->tqp_vector->rx_group.total_bytes += skb->len;
+ 
+ 	hns3_rx_checksum(ring, skb, desc);
++	*out_skb = skb;
+ 	hns3_set_rx_skb_rss_type(ring, skb);
+ 
+ 	return 0;
+@@ -2551,9 +2615,9 @@ int hns3_clean_rx_ring(
+ #define RCB_NOF_ALLOC_RX_BUFF_ONCE 16
+ 	struct net_device *netdev = ring->tqp->handle->kinfo.netdev;
+ 	int recv_pkts, recv_bds, clean_count, err;
+-	int unused_count = hns3_desc_unused(ring);
+-	struct sk_buff *skb = NULL;
+-	int num, bnum = 0;
++	int unused_count = hns3_desc_unused(ring) - ring->pending_buf;
++	struct sk_buff *skb = ring->skb;
++	int num;
+ 
+ 	num = readl_relaxed(ring->tqp->io_base + HNS3_RING_RX_RING_FBDNUM_REG);
+ 	rmb(); /* Make sure num taken effect before the other data is touched */
+@@ -2567,24 +2631,32 @@ int hns3_clean_rx_ring(
+ 			hns3_nic_alloc_rx_buffers(ring,
+ 						  clean_count + unused_count);
+ 			clean_count = 0;
+-			unused_count = hns3_desc_unused(ring);
++			unused_count = hns3_desc_unused(ring) -
++					ring->pending_buf;
+ 		}
+ 
+ 		/* Poll one pkt */
+-		err = hns3_handle_rx_bd(ring, &skb, &bnum);
++		err = hns3_handle_rx_bd(ring, &skb);
+ 		if (unlikely(!skb)) /* This fault cannot be repaired */
+ 			goto out;
+ 
+-		recv_bds += bnum;
+-		clean_count += bnum;
+-		if (unlikely(err)) {  /* Do jump the err */
+-			recv_pkts++;
++		if (err == -ENXIO) { /* Do not get FE for the packet */
++			goto out;
++		} else if (unlikely(err)) {  /* Do jump the err */
++			recv_bds += ring->pending_buf;
++			clean_count += ring->pending_buf;
++			ring->skb = NULL;
++			ring->pending_buf = 0;
+ 			continue;
+ 		}
+ 
+ 		/* Do update ip stack process */
+ 		skb->protocol = eth_type_trans(skb, netdev);
+ 		rx_fn(ring, skb);
++		recv_bds += ring->pending_buf;
++		clean_count += ring->pending_buf;
++		ring->skb = NULL;
++		ring->pending_buf = 0;
+ 
+ 		recv_pkts++;
+ 	}
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+index 10ff18af3cc7..d8c0998127be 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
+@@ -401,11 +401,17 @@ struct hns3_enet_ring {
+ 	 */
+ 	int next_to_clean;
+ 
++	int pull_len; /* head length for current packet */
++	unsigned char *va; /* first buffer address for current packet */
++
+ 	u32 flag;          /* ring attribute */
+ 	int irq_init_flag;
+ 
+ 	int numa_node;
+ 	cpumask_t affinity_mask;
++
++	int pending_buf;
++	struct sk_buff *skb;
+ };
+ 
+ struct hns_queue;
+-- 
+2.17.1
+
+
