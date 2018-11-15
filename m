@@ -3,40 +3,40 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 372A1C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:30:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 496DDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:30:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5CD52087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:30:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5CD52087A
+	by mail.kernel.org (Postfix) with ESMTP id 1B9F92087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:30:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B9F92087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387992AbeKOThm (ORCPT
+        id S2388130AbeKOThv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:37:42 -0500
-Received: from szxga06-in.huawei.com ([45.249.212.32]:52518 "EHLO huawei.com"
+        Thu, 15 Nov 2018 14:37:51 -0500
+Received: from szxga04-in.huawei.com ([45.249.212.190]:15100 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727265AbeKOThm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:37:42 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 35940D7C02585;
-        Thu, 15 Nov 2018 17:30:37 +0800 (CST)
+        id S1727265AbeKOThu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:37:50 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 0671212217692;
+        Thu, 15 Nov 2018 17:30:46 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.47.88.106) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 15 Nov 2018 17:30:28 +0800
+ 14.3.408.0; Thu, 15 Nov 2018 17:30:38 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>
-Subject: [PATCH V2 net-next 2/5] net: hns3: Add handling of GRO Pkts not fully RX'ed in NAPI poll
-Date:   Thu, 15 Nov 2018 09:29:22 +0000
-Message-ID: <20181115092925.11812-3-salil.mehta@huawei.com>
+Subject: [PATCH V2 net-next 4/5] net: hns3: Add skb chain when num of RX buf exceeds MAX_SKB_FRAGS
+Date:   Thu, 15 Nov 2018 09:29:24 +0000
+Message-ID: <20181115092925.11812-5-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181115092925.11812-1-salil.mehta@huawei.com>
 References: <20181115092925.11812-1-salil.mehta@huawei.com>
@@ -51,320 +51,113 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peng Li <lipeng321@huawei.com>
 
-The "FE bit" in the description means the last description for
-a packets. When HW GRO enable, HW write data to ring every
-packet/buffer, there is greater probability that driver handle
-with the describtion but HW still not set the "FE bit".
+MAX_SKB_FRAGS in protocol stack is defined as:
 
-When drier handle the packet and HW still not set "FE bit",
-driver stores skb and bd_num in rx ring, and continue to use the
-skb and bd_num in next napi.
+MAX_SKB_FRAGS is 17 when PAGE_SIZE is 4K. If HW enable GRO, it may
+merge small packets and the rx buffer may be more than
+MAX_SKB_FRAGS. So driver will add skb chain when RX buffer num.
+more than MAX_SKB_FRAGS.
 
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 196 ++++++++++++------
- .../net/ethernet/hisilicon/hns3/hns3_enet.h   |   6 +
- 2 files changed, 140 insertions(+), 62 deletions(-)
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 37 ++++++++++++++++++-
+ .../net/ethernet/hisilicon/hns3/hns3_enet.h   |  2 +
+ 2 files changed, 37 insertions(+), 2 deletions(-)
 
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index a510ddfd45a5..d8c5e1198670 100644
+index 860067898471..7776089b6bc2 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -2383,6 +2383,90 @@ static bool hns3_parse_vlan_tag(struct hns3_enet_ring *ring,
- 	}
+@@ -2361,6 +2361,9 @@ static void hns3_rx_checksum(struct hns3_enet_ring *ring, struct sk_buff *skb,
+ 
+ static void hns3_rx_skb(struct hns3_enet_ring *ring, struct sk_buff *skb)
+ {
++	if (skb_has_frag_list(skb))
++		napi_gro_flush(&ring->tqp_vector->napi, false);
++
+ 	napi_gro_receive(&ring->tqp_vector->napi, skb);
  }
  
-+static int hns3_alloc_skb(struct hns3_enet_ring *ring, int length,
-+			  unsigned char *va)
-+{
-+#define HNS3_NEED_ADD_FRAG	1
-+	struct hns3_desc_cb *desc_cb = &ring->desc_cb[ring->next_to_clean];
-+	struct net_device *netdev = ring->tqp->handle->kinfo.netdev;
-+	struct sk_buff *skb;
-+
-+	ring->skb = napi_alloc_skb(&ring->tqp_vector->napi, HNS3_RX_HEAD_SIZE);
-+	skb = ring->skb;
-+	if (unlikely(!skb)) {
-+		netdev_err(netdev, "alloc rx skb fail\n");
-+
-+		u64_stats_update_begin(&ring->syncp);
-+		ring->stats.sw_err_cnt++;
-+		u64_stats_update_end(&ring->syncp);
-+
-+		return -ENOMEM;
-+	}
-+
-+	prefetchw(skb->data);
-+
-+	ring->pending_buf = 1;
-+	if (length <= HNS3_RX_HEAD_SIZE) {
-+		memcpy(__skb_put(skb, length), va, ALIGN(length, sizeof(long)));
-+
-+		/* We can reuse buffer as-is, just make sure it is local */
-+		if (likely(page_to_nid(desc_cb->priv) == numa_node_id()))
-+			desc_cb->reuse_flag = 1;
-+		else /* This page cannot be reused so discard it */
-+			put_page(desc_cb->priv);
-+
-+		ring_ptr_move_fw(ring, next_to_clean);
-+		return 0;
-+	}
-+	u64_stats_update_begin(&ring->syncp);
-+	ring->stats.seg_pkt_cnt++;
-+	u64_stats_update_end(&ring->syncp);
-+
-+	ring->pull_len = eth_get_headlen(va, HNS3_RX_HEAD_SIZE);
-+	__skb_put(skb, ring->pull_len);
-+	hns3_nic_reuse_page(skb, 0, ring, ring->pull_len,
-+			    desc_cb);
-+	ring_ptr_move_fw(ring, next_to_clean);
-+
-+	return HNS3_NEED_ADD_FRAG;
-+}
-+
-+static int hns3_add_frag(struct hns3_enet_ring *ring, struct hns3_desc *desc,
-+			 struct sk_buff **out_skb, bool pending)
-+{
-+	struct sk_buff *skb = *out_skb;
-+	struct hns3_desc_cb *desc_cb;
-+	struct hns3_desc *pre_desc;
-+	u32 bd_base_info;
-+	int pre_bd;
-+
-+	/* if there is pending bd, the SW param next_to_clean has moved
-+	 * to next and the next is NULL
-+	 */
-+	if (pending) {
-+		pre_bd = (ring->next_to_clean - 1 + ring->desc_num) %
-+			ring->desc_num;
-+		pre_desc = &ring->desc[pre_bd];
-+		bd_base_info = le32_to_cpu(pre_desc->rx.bd_base_info);
-+	} else {
-+		bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
-+	}
-+
-+	while (!hnae3_get_bit(bd_base_info, HNS3_RXD_FE_B)) {
-+		desc = &ring->desc[ring->next_to_clean];
-+		desc_cb = &ring->desc_cb[ring->next_to_clean];
-+		bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
-+		if (!hnae3_get_bit(bd_base_info, HNS3_RXD_VLD_B))
-+			return -ENXIO;
-+
-+		hns3_nic_reuse_page(skb, ring->pending_buf, ring, 0, desc_cb);
-+		ring_ptr_move_fw(ring, next_to_clean);
-+		ring->pending_buf++;
-+	}
-+
-+	return 0;
-+}
-+
- static void hns3_set_rx_skb_rss_type(struct hns3_enet_ring *ring,
- 				     struct sk_buff *skb)
- {
-@@ -2399,18 +2483,16 @@ static void hns3_set_rx_skb_rss_type(struct hns3_enet_ring *ring,
- }
+@@ -2417,6 +2420,8 @@ static int hns3_alloc_skb(struct hns3_enet_ring *ring, int length,
+ 	prefetchw(skb->data);
  
- static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
--			     struct sk_buff **out_skb, int *out_bnum)
-+			     struct sk_buff **out_skb)
+ 	ring->pending_buf = 1;
++	ring->frag_num = 0;
++	ring->tail_skb = NULL;
+ 	if (length <= HNS3_RX_HEAD_SIZE) {
+ 		memcpy(__skb_put(skb, length), va, ALIGN(length, sizeof(long)));
+ 
+@@ -2435,7 +2440,7 @@ static int hns3_alloc_skb(struct hns3_enet_ring *ring, int length,
+ 
+ 	ring->pull_len = eth_get_headlen(va, HNS3_RX_HEAD_SIZE);
+ 	__skb_put(skb, ring->pull_len);
+-	hns3_nic_reuse_page(skb, 0, ring, ring->pull_len,
++	hns3_nic_reuse_page(skb, ring->frag_num++, ring, ring->pull_len,
+ 			    desc_cb);
+ 	ring_ptr_move_fw(ring, next_to_clean);
+ 
+@@ -2446,6 +2451,8 @@ static int hns3_add_frag(struct hns3_enet_ring *ring, struct hns3_desc *desc,
+ 			 struct sk_buff **out_skb, bool pending)
  {
- 	struct net_device *netdev = ring->tqp->handle->kinfo.netdev;
-+	struct sk_buff *skb = ring->skb;
+ 	struct sk_buff *skb = *out_skb;
++	struct sk_buff *head_skb = *out_skb;
++	struct sk_buff *new_skb;
  	struct hns3_desc_cb *desc_cb;
- 	struct hns3_desc *desc;
--	struct sk_buff *skb;
--	unsigned char *va;
+ 	struct hns3_desc *pre_desc;
  	u32 bd_base_info;
--	int pull_len;
- 	u32 l234info;
- 	int length;
--	int bnum;
-+	int ret;
+@@ -2470,7 +2477,33 @@ static int hns3_add_frag(struct hns3_enet_ring *ring, struct hns3_desc *desc,
+ 		if (!hnae3_get_bit(bd_base_info, HNS3_RXD_VLD_B))
+ 			return -ENXIO;
  
- 	desc = &ring->desc[ring->next_to_clean];
- 	desc_cb = &ring->desc_cb[ring->next_to_clean];
-@@ -2422,9 +2504,10 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
- 
- 	/* Check valid BD */
- 	if (unlikely(!hnae3_get_bit(bd_base_info, HNS3_RXD_VLD_B)))
--		return -EFAULT;
-+		return -ENXIO;
- 
--	va = (unsigned char *)desc_cb->buf + desc_cb->page_offset;
-+	if (!skb)
-+		ring->va = (unsigned char *)desc_cb->buf + desc_cb->page_offset;
- 
- 	/* Prefetch first cache line of first page
- 	 * Idea is to cache few bytes of the header of the packet. Our L1 Cache
-@@ -2433,62 +2516,42 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
- 	 * lines. In such a case, single fetch would suffice to cache in the
- 	 * relevant part of the header.
- 	 */
--	prefetch(va);
-+	prefetch(ring->va);
- #if L1_CACHE_BYTES < 128
--	prefetch(va + L1_CACHE_BYTES);
-+	prefetch(ring->va + L1_CACHE_BYTES);
- #endif
- 
--	skb = *out_skb = napi_alloc_skb(&ring->tqp_vector->napi,
--					HNS3_RX_HEAD_SIZE);
--	if (unlikely(!skb)) {
--		netdev_err(netdev, "alloc rx skb fail\n");
-+	if (!skb) {
-+		ret = hns3_alloc_skb(ring, length, ring->va);
-+		*out_skb = skb = ring->skb;
- 
--		u64_stats_update_begin(&ring->syncp);
--		ring->stats.sw_err_cnt++;
--		u64_stats_update_end(&ring->syncp);
--
--		return -ENOMEM;
--	}
--
--	prefetchw(skb->data);
--
--	bnum = 1;
--	if (length <= HNS3_RX_HEAD_SIZE) {
--		memcpy(__skb_put(skb, length), va, ALIGN(length, sizeof(long)));
--
--		/* We can reuse buffer as-is, just make sure it is local */
--		if (likely(page_to_nid(desc_cb->priv) == numa_node_id()))
--			desc_cb->reuse_flag = 1;
--		else /* This page cannot be reused so discard it */
--			put_page(desc_cb->priv);
-+		if (ret < 0) /* alloc buffer fail */
-+			return ret;
-+		if (ret > 0) { /* need add frag */
-+			ret = hns3_add_frag(ring, desc, &skb, false);
-+			if (ret)
-+				return ret;
- 
--		ring_ptr_move_fw(ring, next_to_clean);
-+			/* As the head data may be changed when GRO enable, copy
-+			 * the head data in after other data rx completed
-+			 */
-+			memcpy(skb->data, ring->va,
-+			       ALIGN(ring->pull_len, sizeof(long)));
+-		hns3_nic_reuse_page(skb, ring->pending_buf, ring, 0, desc_cb);
++		if (unlikely(ring->frag_num >= MAX_SKB_FRAGS)) {
++			new_skb = napi_alloc_skb(&ring->tqp_vector->napi,
++						 HNS3_RX_HEAD_SIZE);
++			if (unlikely(!new_skb)) {
++				netdev_err(ring->tqp->handle->kinfo.netdev,
++					   "alloc rx skb frag fail\n");
++				return -ENXIO;
++			}
++			ring->frag_num = 0;
++
++			if (ring->tail_skb) {
++				ring->tail_skb->next = new_skb;
++				ring->tail_skb = new_skb;
++			} else {
++				skb_shinfo(skb)->frag_list = new_skb;
++				ring->tail_skb = new_skb;
++			}
 +		}
- 	} else {
--		u64_stats_update_begin(&ring->syncp);
--		ring->stats.seg_pkt_cnt++;
--		u64_stats_update_end(&ring->syncp);
--
--		pull_len = eth_get_headlen(va, HNS3_RX_HEAD_SIZE);
--
--		memcpy(__skb_put(skb, pull_len), va,
--		       ALIGN(pull_len, sizeof(long)));
--
--		hns3_nic_reuse_page(skb, 0, ring, pull_len, desc_cb);
--		ring_ptr_move_fw(ring, next_to_clean);
-+		ret = hns3_add_frag(ring, desc, &skb, true);
-+		if (ret)
-+			return ret;
- 
--		while (!hnae3_get_bit(bd_base_info, HNS3_RXD_FE_B)) {
--			desc = &ring->desc[ring->next_to_clean];
--			desc_cb = &ring->desc_cb[ring->next_to_clean];
--			bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
--			hns3_nic_reuse_page(skb, bnum, ring, 0, desc_cb);
--			ring_ptr_move_fw(ring, next_to_clean);
--			bnum++;
--		}
-+		/* As the head data may be changed when GRO enable, copy
-+		 * the head data in after other data rx completed
-+		 */
-+		memcpy(skb->data, ring->va,
-+		       ALIGN(ring->pull_len, sizeof(long)));
- 	}
- 
--	*out_bnum = bnum;
--
- 	l234info = le32_to_cpu(desc->rx.l234_info);
-+	bd_base_info = le32_to_cpu(desc->rx.bd_base_info);
- 
- 	/* Based on hw strategy, the tag offloaded will be stored at
- 	 * ot_vlan_tag in two layer tag case, and stored at vlan_tag
-@@ -2539,6 +2602,7 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
- 	ring->tqp_vector->rx_group.total_bytes += skb->len;
- 
- 	hns3_rx_checksum(ring, skb, desc);
-+	*out_skb = skb;
- 	hns3_set_rx_skb_rss_type(ring, skb);
- 
- 	return 0;
-@@ -2551,9 +2615,9 @@ int hns3_clean_rx_ring(
- #define RCB_NOF_ALLOC_RX_BUFF_ONCE 16
- 	struct net_device *netdev = ring->tqp->handle->kinfo.netdev;
- 	int recv_pkts, recv_bds, clean_count, err;
--	int unused_count = hns3_desc_unused(ring);
--	struct sk_buff *skb = NULL;
--	int num, bnum = 0;
-+	int unused_count = hns3_desc_unused(ring) - ring->pending_buf;
-+	struct sk_buff *skb = ring->skb;
-+	int num;
- 
- 	num = readl_relaxed(ring->tqp->io_base + HNS3_RING_RX_RING_FBDNUM_REG);
- 	rmb(); /* Make sure num taken effect before the other data is touched */
-@@ -2567,24 +2631,32 @@ int hns3_clean_rx_ring(
- 			hns3_nic_alloc_rx_buffers(ring,
- 						  clean_count + unused_count);
- 			clean_count = 0;
--			unused_count = hns3_desc_unused(ring);
-+			unused_count = hns3_desc_unused(ring) -
-+					ring->pending_buf;
- 		}
- 
- 		/* Poll one pkt */
--		err = hns3_handle_rx_bd(ring, &skb, &bnum);
-+		err = hns3_handle_rx_bd(ring, &skb);
- 		if (unlikely(!skb)) /* This fault cannot be repaired */
- 			goto out;
- 
--		recv_bds += bnum;
--		clean_count += bnum;
--		if (unlikely(err)) {  /* Do jump the err */
--			recv_pkts++;
-+		if (err == -ENXIO) { /* Do not get FE for the packet */
-+			goto out;
-+		} else if (unlikely(err)) {  /* Do jump the err */
-+			recv_bds += ring->pending_buf;
-+			clean_count += ring->pending_buf;
-+			ring->skb = NULL;
-+			ring->pending_buf = 0;
- 			continue;
- 		}
- 
- 		/* Do update ip stack process */
- 		skb->protocol = eth_type_trans(skb, netdev);
- 		rx_fn(ring, skb);
-+		recv_bds += ring->pending_buf;
-+		clean_count += ring->pending_buf;
-+		ring->skb = NULL;
-+		ring->pending_buf = 0;
- 
- 		recv_pkts++;
++
++		if (ring->tail_skb) {
++			head_skb->truesize += hnae3_buf_size(ring);
++			head_skb->data_len += le16_to_cpu(desc->rx.size);
++			head_skb->len += le16_to_cpu(desc->rx.size);
++			skb = ring->tail_skb;
++		}
++
++		hns3_nic_reuse_page(skb, ring->frag_num++, ring, 0, desc_cb);
+ 		ring_ptr_move_fw(ring, next_to_clean);
+ 		ring->pending_buf++;
  	}
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index 10ff18af3cc7..d8c0998127be 100644
+index d8c0998127be..8e56b7e44978 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -401,11 +401,17 @@ struct hns3_enet_ring {
- 	 */
+@@ -402,6 +402,7 @@ struct hns3_enet_ring {
  	int next_to_clean;
  
-+	int pull_len; /* head length for current packet */
-+	unsigned char *va; /* first buffer address for current packet */
-+
- 	u32 flag;          /* ring attribute */
- 	int irq_init_flag;
+ 	int pull_len; /* head length for current packet */
++	u32 frag_num;
+ 	unsigned char *va; /* first buffer address for current packet */
  
- 	int numa_node;
- 	cpumask_t affinity_mask;
-+
-+	int pending_buf;
-+	struct sk_buff *skb;
+ 	u32 flag;          /* ring attribute */
+@@ -412,6 +413,7 @@ struct hns3_enet_ring {
+ 
+ 	int pending_buf;
+ 	struct sk_buff *skb;
++	struct sk_buff *tail_skb;
  };
  
  struct hns_queue;
