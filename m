@@ -2,165 +2,153 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80B4BC43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:19:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D6D7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:20:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 52E3B223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:19:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 52E3B223CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
+	by mail.kernel.org (Postfix) with ESMTP id 337B5223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:20:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 337B5223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388341AbeKOW0i (ORCPT
+        id S2388353AbeKOW1i (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 17:26:38 -0500
-Received: from mail-sh2.amlogic.com ([58.32.228.45]:23175 "EHLO
-        mail-sh2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387833AbeKOW0g (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 17:26:36 -0500
-Received: from localhost.localdomain (10.18.11.217) by mail-sh2.amlogic.com
- (10.18.11.6) with Microsoft SMTP Server id 15.0.1320.4; Thu, 15 Nov 2018
- 20:18:50 +0800
-From:   Jianxin Pan <jianxin.pan@amlogic.com>
-To:     Jerome Brunet <jbrunet@baylibre.com>,
-        Neil Armstrong <narmstrong@baylibre.com>
-CC:     Jianxin Pan <jianxin.pan@amlogic.com>,
-        Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Miquel Raynal <miquel.raynal@bootlin.com>,
-        Boris Brezillon <boris.brezillon@bootlin.com>,
-        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        Yixun Lan <yixun.lan@amlogic.com>,
-        Liang Yang <liang.yang@amlogic.com>,
-        Jian Hu <jian.hu@amlogic.com>,
-        Qiufang Dai <qiufang.dai@amlogic.com>,
-        Hanjie Lin <hanjie.lin@amlogic.com>,
-        Victor Wan <victor.wan@amlogic.com>,
-        <linux-clk@vger.kernel.org>, <linux-amlogic@lists.infradead.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: [PATCH v7 4/4] clk: meson: add one based divider support for sclk divider
-Date:   Thu, 15 Nov 2018 20:18:32 +0800
-Message-ID: <1542284312-55418-5-git-send-email-jianxin.pan@amlogic.com>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1542284312-55418-1-git-send-email-jianxin.pan@amlogic.com>
-References: <1542284312-55418-1-git-send-email-jianxin.pan@amlogic.com>
+        Thu, 15 Nov 2018 17:27:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:52632 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729008AbeKOW1i (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 17:27:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id D3A3AB023;
+        Thu, 15 Nov 2018 12:19:57 +0000 (UTC)
+Date:   Thu, 15 Nov 2018 13:19:50 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Mike Rapoport <rppt@linux.ibm.com>,
+        Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        devel@linuxdriverproject.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Hansen <chansen3@cisco.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        David Rientjes <rientjes@google.com>,
+        Konstantin Khlebnikov <koct9i@gmail.com>
+Subject: Re: [PATCH RFC 2/6] mm: convert PG_balloon to PG_offline
+Message-ID: <20181115121950.GQ23831@dhcp22.suse.cz>
+References: <20181114211704.6381-1-david@redhat.com>
+ <20181114211704.6381-3-david@redhat.com>
+ <20181114222321.GB1784@bombadil.infradead.org>
+ <b4668081-5aa3-d7f5-6880-d01c75cfc6ae@redhat.com>
+ <20181115020725.GC2353@rapoport-lnx>
+ <5730ee16-9b18-ad3d-0fb3-e9edb55e2298@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.18.11.217]
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <5730ee16-9b18-ad3d-0fb3-e9edb55e2298@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-When CLK_DIVIDER_ONE_BASED flag is set, the sclk divider will be:
-one based divider (div = val), and zero value gates the clock
+[Cc Konstantin - the patch is http://lkml.kernel.org/r/20181114211704.6381-3-david@redhat.com]
 
-Signed-off-by: Jianxin Pan <jianxin.pan@amlogic.com>
----
- drivers/clk/meson/clkc-audio.h |  1 +
- drivers/clk/meson/sclk-div.c   | 28 ++++++++++++++++++----------
- 2 files changed, 19 insertions(+), 10 deletions(-)
+On Thu 15-11-18 10:21:13, David Hildenbrand wrote:
+> On 15.11.18 03:07, Mike Rapoport wrote:
+> > On Wed, Nov 14, 2018 at 11:49:15PM +0100, David Hildenbrand wrote:
+> >> On 14.11.18 23:23, Matthew Wilcox wrote:
+> >>> On Wed, Nov 14, 2018 at 10:17:00PM +0100, David Hildenbrand wrote:
+> >>>> Rename PG_balloon to PG_offline. This is an indicator that the page is
+> >>>> logically offline, the content stale and that it should not be touched
+> >>>> (e.g. a hypervisor would have to allocate backing storage in order for the
+> >>>> guest to dump an unused page).  We can then e.g. exclude such pages from
+> >>>> dumps.
+> >>>>
+> >>>> In following patches, we will make use of this bit also in other balloon
+> >>>> drivers.  While at it, document PGTABLE.
+> >>>
+> >>> Thank you for documenting PGTABLE.  I didn't realise I also had this
+> >>> document to update when I added PGTABLE.
+> >>
+> >> Thank you for looking into this :)
+> >>
+> >>>
+> >>>> +++ b/Documentation/admin-guide/mm/pagemap.rst
+> >>>> @@ -78,6 +78,8 @@ number of times a page is mapped.
+> >>>>      23. BALLOON
+> >>>>      24. ZERO_PAGE
+> >>>>      25. IDLE
+> >>>> +    26. PGTABLE
+> >>>> +    27. OFFLINE
+> >>>
+> >>> So the offline *user* bit is new ... even though the *kernel* bit
+> >>> just renames the balloon bit.  I'm not sure how I feel about this.
+> >>> I'm going to think about it some more.  Could you share your decision
+> >>> process with us?
+> >>
+> >> BALLOON was/is documented as
+> >>
+> >> "23 - BALLOON
+> >>     balloon compaction page
+> >> "
+> >>
+> >> and only includes all virtio-ballon pages after the non-lru migration
+> >> feature has been implemented for ballooned pages. Since then, this flag
+> >> does basically no longer stands for what it actually was supposed to do.
+> > 
+> > Perhaps I missing something, but how the user should interpret "23" when he
+> > reads /proc/kpageflags?
+> 
+> Looking at the history in more detail:
+> 
+> commit 09316c09dde33aae14f34489d9e3d243ec0d5938
+> Author: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
+> Date:   Thu Oct 9 15:29:32 2014 -0700
+> 
+>     mm/balloon_compaction: add vmstat counters and kpageflags bit
+> 
+>     Always mark pages with PageBalloon even if balloon compaction is
+> disabled
+>     and expose this mark in /proc/kpageflags as KPF_BALLOON.
+> 
+> 
+> So KPF_BALLOON was exposed when virtio-balloon pages were always marked
+> with PG_balloon. So the documentation is actually wrong ("balloon page"
+> vs. "balloon compaction page").
+> 
+> I have no idea who actually used that information. I suspect this was
+> just some debugging aid.
+> 
+> > 
+> >> To not break uapi I decided to not rename it but instead to add a new flag.
+> > 
+> > I've got a feeling that uapi was anyway changed for the BALLON flag
+> > meaning.
+> 
+> Yes. If we *replace* KPF_BALLOON by KPF_OFFLINE
+> 
+> a) Some applications might no longer compile (I guess that's ok)
+> b) Some old applications will treat KPF_OFFLINE like KPF_BALLOON (which
+> should at least for virtio-balloon usage until now be fine - it is just
+> more generic)
 
-diff --git a/drivers/clk/meson/clkc-audio.h b/drivers/clk/meson/clkc-audio.h
-index 0a7c157..9bd6ced 100644
---- a/drivers/clk/meson/clkc-audio.h
-+++ b/drivers/clk/meson/clkc-audio.h
-@@ -20,6 +20,7 @@ struct meson_sclk_div_data {
- 	struct parm hi;
- 	unsigned int cached_div;
- 	struct clk_duty cached_duty;
-+	u8	flags;
- };
- 
- extern const struct clk_ops meson_clk_triphase_ops;
-diff --git a/drivers/clk/meson/sclk-div.c b/drivers/clk/meson/sclk-div.c
-index bc64019..d98707b 100644
---- a/drivers/clk/meson/sclk-div.c
-+++ b/drivers/clk/meson/sclk-div.c
-@@ -24,22 +24,23 @@
- 	return (struct meson_sclk_div_data *)clk->data;
- }
- 
--static int sclk_div_maxval(struct meson_sclk_div_data *sclk)
--{
--	return (1 << sclk->div.width) - 1;
--}
--
- static int sclk_div_maxdiv(struct meson_sclk_div_data *sclk)
- {
--	return sclk_div_maxval(sclk) + 1;
-+	if (sclk->flags & CLK_DIVIDER_ONE_BASED)
-+		return clk_div_mask(sclk->div.width);
-+	else
-+		return clk_div_mask(sclk->div.width) + 1;
- }
- 
- static int sclk_div_getdiv(struct clk_hw *hw, unsigned long rate,
- 			   unsigned long prate, int maxdiv)
- {
- 	int div = DIV_ROUND_CLOSEST_ULL((u64)prate, rate);
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_sclk_div_data *sclk = meson_sclk_div_data(clk);
-+	int mindiv = (sclk->flags & CLK_DIVIDER_ONE_BASED) ? 1 : 2;
- 
--	return clamp(div, 2, maxdiv);
-+	return clamp(div, mindiv, maxdiv);
- }
- 
- static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
-@@ -47,7 +48,7 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
- 			    struct meson_sclk_div_data *sclk)
- {
- 	struct clk_hw *parent = clk_hw_get_parent(hw);
--	int bestdiv = 0, i;
-+	int bestdiv = 0, i, mindiv;
- 	unsigned long maxdiv, now, parent_now;
- 	unsigned long best = 0, best_parent = 0;
- 
-@@ -64,8 +65,9 @@ static int sclk_div_bestdiv(struct clk_hw *hw, unsigned long rate,
- 	 * unsigned long in rate * i below
- 	 */
- 	maxdiv = min(ULONG_MAX / rate, maxdiv);
-+	mindiv = (sclk->flags & CLK_DIVIDER_ONE_BASED) ? 1 : 2;
- 
--	for (i = 2; i <= maxdiv; i++) {
-+	for (i = mindiv; i <= maxdiv; i++) {
- 		/*
- 		 * It's the most ideal case if the requested rate can be
- 		 * divided from parent clock without needing to change
-@@ -153,10 +155,14 @@ static int sclk_div_get_duty_cycle(struct clk_hw *hw,
- static void sclk_apply_divider(struct clk_regmap *clk,
- 			       struct meson_sclk_div_data *sclk)
- {
-+	unsigned int div;
-+
- 	if (MESON_PARM_APPLICABLE(&sclk->hi))
- 		sclk_apply_ratio(clk, sclk);
- 
--	meson_parm_write(clk->map, &sclk->div, sclk->cached_div - 1);
-+	div = (sclk->flags & CLK_DIVIDER_ONE_BASED) ?
-+		sclk->cached_div : (sclk->cached_div - 1);
-+	meson_parm_write(clk->map, &sclk->div, div);
- }
- 
- static int sclk_div_set_rate(struct clk_hw *hw, unsigned long rate,
-@@ -223,6 +229,8 @@ static void sclk_div_init(struct clk_hw *hw)
- 	/* if the divider is initially disabled, assume max */
- 	if (!val)
- 		sclk->cached_div = sclk_div_maxdiv(sclk);
-+	else if (sclk->flags & CLK_DIVIDER_ONE_BASED)
-+		sclk->cached_div = val;
- 	else
- 		sclk->cached_div = val + 1;
- 
+I do not think any compilation could break. If the semantic of the flag
+is preserved then everything should work as expected.
 -- 
-1.9.1
-
+Michal Hocko
+SUSE Labs
