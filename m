@@ -5,70 +5,70 @@ X-Spam-Level:
 X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8401FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:41:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E2F1C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:41:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 476122146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:41:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D84D12084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:41:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="oNnMo9Ht"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 476122146D
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="SHNCJWdy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D84D12084C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388947AbeKPIvF (ORCPT
+        id S2389013AbeKPIvH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 03:51:05 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:55129 "EHLO
+        Fri, 16 Nov 2018 03:51:07 -0500
+Received: from mail-wm1-f65.google.com ([209.85.128.65]:55132 "EHLO
         mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbeKPIvD (ORCPT
+        with ESMTP id S1729137AbeKPIvG (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:51:03 -0500
-Received: by mail-wm1-f65.google.com with SMTP id r63-v6so20408268wma.4;
-        Thu, 15 Nov 2018 14:41:17 -0800 (PST)
+        Fri, 16 Nov 2018 03:51:06 -0500
+Received: by mail-wm1-f65.google.com with SMTP id r63-v6so20408343wma.4;
+        Thu, 15 Nov 2018 14:41:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hBmjvcaHmhREoczRD+ZJjpcgQEWa7HVdYQV7xZ1p9X8=;
-        b=oNnMo9HtZmfmuyukR/sGSk+L/Als8N3WvlTH0aNjQNb8dM+iy/pkcMDWlzCbTv+DwN
-         GcMLqRv7eRMdYZ1Y2qDZGcOwYfNUh4eG8pJ+MdI75dcDw0XOsiPPAIZw7dwc38/6sdDo
-         lT0U2KYkdfzEUxnarevFXcBJvJbiAWL6RpXu/gahr6o/fIVAwjB6QfzYZRcl08VWx6hm
-         TFE0Sg8HaBaF898R6mH73jM8Ka07iPcyktQI3Xdey1wht6+7hXfRg/p6eOoQ4DqH9cCH
-         M3xU8DRZVJb9/x2ZvaOFW2u1U4ubnCtnIXae/DOs411gVhZsB5nnrHKI0uAUpu08vXLb
-         CEXg==
+        bh=VgKwrWYvBpPwZu+JHqxzLiLOxskcy+PR9OfxhhLd1fo=;
+        b=SHNCJWdyrTxI/X9eUqSIzECcQzWO/j6cBNxO5ayG3BjhBzczB7ufloPaBI+32YCU1M
+         gmyxghnapEAlt7T5OxhBOrD+4axSydnqulwLBQa0rloZRYCdWse86wX4F1HCPLpzSsMr
+         GQoDwXdfqrnt1hhQ5MNeWMlvzsducyPNcqbOb3LVNmVC/GiUz3PJqRxC90PwMJtvt8BB
+         e34zQ8KuxtS3ugMTsgVhrqaeWp5RR0n8vFpNLqU0zPpcMyao5kAqrIaq5vYk9T69cTiE
+         1nCnpPA9KUSPjEPEjT8So2ZisqKhJQLvO61b6s+DoKCy+5TeaiIomH3+h5UOLS4m6aEF
+         desA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hBmjvcaHmhREoczRD+ZJjpcgQEWa7HVdYQV7xZ1p9X8=;
-        b=pDZtZldTGF3mlj3aDvi1mF08X5lFKlzcuZnrQuNm0xHEqkhL3K3dVQk4QKT7xYH/zn
-         SJhMXXVGN4Lcdj0Fkj6IgfFdDdQcsdgUNX4Fqd2WbFRTWoB850mNg/tm5q3fpeLQHBPO
-         Gik+iS0lfnqGprCThMu2PwSLq8mnzxTlPThwf/Bk5EcJrw3jZ7E3Qcim1wj2ST1PJGWi
-         8R35wuoXCGD9edM6UsgO6mo4bok53Y4Uh3v9WKkXuuKIKJNDXa7nUA6wRK2bE65p2ggx
-         +jZC8XZCwLlJoEzxttjMUc9mGmZEuUQDdat3NEd3lL9l833+QsGF4LKOqC4Cb/7k7Ln2
-         Fh3A==
-X-Gm-Message-State: AGRZ1gKN6euoPFtFqGnWXb4WSJSnf9bHwv5TDP2o1NicMkaVaj20xFEG
-        9kgdFds1e7/poAfMiX2z79N3bAwd
-X-Google-Smtp-Source: AJdET5dqT8jWFi5ieLab45zKx3nVBVs3bm04Nuoj/1PdpFAO61IY3f2y+O/0dw5cRFN5sCTCMHDNxA==
-X-Received: by 2002:a1c:c2d4:: with SMTP id s203-v6mr6332449wmf.97.1542321676658;
-        Thu, 15 Nov 2018 14:41:16 -0800 (PST)
+        bh=VgKwrWYvBpPwZu+JHqxzLiLOxskcy+PR9OfxhhLd1fo=;
+        b=N1z3h6lQixAZfURebr5oSOfvD2GUZoYzLFcV/sMEF06VKPE4b9a+7qvhNSAuWmoRkD
+         6I6aaw1oENW8l/KkcyXD1pE7/PF9sF6dspAw/X4N9QbEIFeYGL08621ND/uQW8E1t5BZ
+         cUuDaFBbSjhv1pHSoleyeCRGIJwFsVREQjBqjwNwEgQqx3huaLUvscjn+vmXzLDX92ec
+         TLC/bs5KPPkfG/tks/HukKdCQSntOjOo4B3FsQqigaQ4wMX6120EGj675zpRh9EhOm8b
+         M3DvWKy+VEHJtp5KWTDzc2Ye6Ngu1bznwG64uFs1z/mnmIBw366M1EfuJryfQvxHWKdN
+         TSzw==
+X-Gm-Message-State: AGRZ1gJaFlciA4NZCJb3d5biL9CWABjdOtB5WV/iohv1cwZ2/FgCV1F5
+        NIHE4reTY/IWTOS+ReXEn1M=
+X-Google-Smtp-Source: AJdET5cPbHQqh4dqF/sRbQymwaCkpgtWXSON8bLvuhgQinRizG3akn8pQbQXPvi+SP3Rez37ZVRkVg==
+X-Received: by 2002:a1c:6382:: with SMTP id x124-v6mr7004135wmb.145.1542321678962;
+        Thu, 15 Nov 2018 14:41:18 -0800 (PST)
 Received: from blackbox.darklights.net (p200300DCD717A100B85ACE585A885C51.dip0.t-ipconnect.de. [2003:dc:d717:a100:b85a:ce58:5a88:5c51])
-        by smtp.googlemail.com with ESMTPSA id x12sm2076388wmc.37.2018.11.15.14.41.15
+        by smtp.googlemail.com with ESMTPSA id x12sm2076388wmc.37.2018.11.15.14.41.17
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 14:41:15 -0800 (PST)
+        Thu, 15 Nov 2018 14:41:18 -0800 (PST)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
         jbrunet@baylibre.com, narmstrong@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         mturquette@baylibre.com, sboyd@kernel.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH v2 1/6] clk: meson: clk-pll: check if the clock is already enabled
-Date:   Thu, 15 Nov 2018 23:40:43 +0100
-Message-Id: <20181115224048.13511-2-martin.blumenstingl@googlemail.com>
+Subject: [PATCH v2 3/6] clk: meson: meson8b: mark the CPU clock as CLK_IS_CRITICAL
+Date:   Thu, 15 Nov 2018 23:40:45 +0100
+Message-Id: <20181115224048.13511-4-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181115224048.13511-1-martin.blumenstingl@googlemail.com>
 References: <20181115224048.13511-1-martin.blumenstingl@googlemail.com>
@@ -79,82 +79,44 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Since commit 6f888e7bc7bd58 ("clk: meson: clk-pll: add enable bit") our
-PLLs also support the "enable" bit. Currently meson_clk_pll_enable
-unconditionally resets the PLL, enables it, takes it out of reset and
-waits until it is locked.
+We don't want the common clock framework to disable the "cpu_clk" if
+it's not used by any device. The cpufreq-dt driver does not enable the
+CPU clocks. However, even if it would we would still want the CPU clock
+to be enabled at all times because the CPU clock is also required even
+if we disable CPU frequency scaling on a specific board.
 
-This works fine for our current clock trees. However, there will be a
-problem once we allow modifications to sys_pll on Meson8, Meson8b and
-Meson8m2 (which will be required for CPU frequency scaling):
-the CPU clock is derived from the sys_pll clock. Once clk_enable is
-called on the CPU clock this will be propagated by the common clock
-framework up until the sys_pll clock. If we reset the PLL
-unconditionally in meson_clk_pll_enable the CPU will be stopped (on
-Meson8, Meson8b and Meson8m2).
-To prevent this we simply check if the PLL is already enabled and do
-reset the PLL if it's already enabled and locked.
+The reason why we want the CPU clock to be enabled is a clock further up
+in the tree:
+Since commit 6f888e7bc7bd58 ("clk: meson: clk-pll: add enable bit") the
+sys_pll can be disabled. However, since the CPU clock is derived from
+sys_pll we don't want sys_pll to get disabled. The common clock
+framework takes care of that for us by enabling all parent clocks of our
+CPU clock when we mark the CPU clock with CLK_IS_CRITICAL.
 
-Now that we have a utility function to check whether the PLL is enabled
-we can also pass that to our clk_ops to let the common clock framework
-know about the status of the hardware clock.
-For now this is of limited use since the only common clock framework's
-internal "disabled unused clocks" mechanism checks for this. Everything
-else still uses the ref-counting (internal to the common clock
-framework) when clk_enable is called.
+Until now this is not a problem yet because all clocks in the CPU
+clock's tree (including sys_pll) are read-only. However, once we allow
+modifications to the clocks in that tree we will need this.
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 ---
- drivers/clk/meson/clk-pll.c | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
+ drivers/clk/meson/meson8b.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/clk/meson/clk-pll.c b/drivers/clk/meson/clk-pll.c
-index f5b5b3fabe3c..afffc1547e20 100644
---- a/drivers/clk/meson/clk-pll.c
-+++ b/drivers/clk/meson/clk-pll.c
-@@ -200,11 +200,28 @@ static void meson_clk_pll_init(struct clk_hw *hw)
- 	}
- }
- 
-+static int meson_clk_pll_is_enabled(struct clk_hw *hw)
-+{
-+	struct clk_regmap *clk = to_clk_regmap(hw);
-+	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
-+
-+	if (meson_parm_read(clk->map, &pll->rst) ||
-+	    !meson_parm_read(clk->map, &pll->en) ||
-+	    !meson_parm_read(clk->map, &pll->l))
-+		return 0;
-+
-+	return 1;
-+}
-+
- static int meson_clk_pll_enable(struct clk_hw *hw)
- {
- 	struct clk_regmap *clk = to_clk_regmap(hw);
- 	struct meson_clk_pll_data *pll = meson_clk_pll_data(clk);
- 
-+	/* do nothing if the PLL is already enabled */
-+	if (clk_hw_is_enabled(hw))
-+		return 0;
-+
- 	/* Make sure the pll is in reset */
- 	meson_parm_write(clk->map, &pll->rst, 1);
- 
-@@ -288,10 +305,12 @@ const struct clk_ops meson_clk_pll_ops = {
- 	.recalc_rate	= meson_clk_pll_recalc_rate,
- 	.round_rate	= meson_clk_pll_round_rate,
- 	.set_rate	= meson_clk_pll_set_rate,
-+	.is_enabled	= meson_clk_pll_is_enabled,
- 	.enable		= meson_clk_pll_enable,
- 	.disable	= meson_clk_pll_disable
+diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+index a96bfee58a61..41a5025364f9 100644
+--- a/drivers/clk/meson/meson8b.c
++++ b/drivers/clk/meson/meson8b.c
+@@ -646,7 +646,8 @@ static struct clk_regmap meson8b_cpu_clk = {
+ 						  "cpu_scale_out_sel" },
+ 		.num_parents = 2,
+ 		.flags = (CLK_SET_RATE_PARENT |
+-			  CLK_SET_RATE_NO_REPARENT),
++			  CLK_SET_RATE_NO_REPARENT |
++			  CLK_IS_CRITICAL),
+ 	},
  };
  
- const struct clk_ops meson_clk_pll_ro_ops = {
- 	.recalc_rate	= meson_clk_pll_recalc_rate,
-+	.is_enabled	= meson_clk_pll_is_enabled,
- };
 -- 
 2.19.1
 
