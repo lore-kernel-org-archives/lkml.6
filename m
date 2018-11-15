@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 698AFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:52:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B09FDC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:52:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2CF3D2087E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:52:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6CF5021582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:52:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NlwwTDBl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2CF3D2087E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HiV+WPPx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6CF5021582
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728814AbeKOP7B (ORCPT
+        id S1728860AbeKOP7E (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 10:59:01 -0500
-Received: from mail-yb1-f193.google.com ([209.85.219.193]:37496 "EHLO
-        mail-yb1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728687AbeKOP7A (ORCPT
+        Thu, 15 Nov 2018 10:59:04 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:34050 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728687AbeKOP7E (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 10:59:00 -0500
-Received: by mail-yb1-f193.google.com with SMTP id d18-v6so7926233yba.4
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 21:52:35 -0800 (PST)
+        Thu, 15 Nov 2018 10:59:04 -0500
+Received: by mail-yw1-f68.google.com with SMTP id g75so3817581ywb.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 21:52:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=Q/fq5bZ27j9TjpABnmRVQDUsaoFNf4lBmEvm436b7+U=;
-        b=NlwwTDBlmA0fPIJo73KUlSBR/mJEba1O118YChkrG+s1/ZraNj0Y01Tr0TFVBwvcqE
-         b3VP3vfW5vtlKY/Yaut01gBNk/g90XX5pObDWWY1scgLt7FWnLNwf0k/f/ZJAMsfodDT
-         75tdAFCP5GXJcGbY8269qap+A6eZpP3OQmtvA=
+        bh=mrPWZ4GdwOXyyhtosApIY//VWuTOROBlwQRdZLFfLfw=;
+        b=HiV+WPPxY/gSkZ6gC+DNCc9Y2vBWfNVgOPT3BWdpSNF+ZsRnS37STM1PxhFeWOxJk7
+         cFOvcEWifXIokZViFT+vbL4+egWfA/TxC+vIG0ft1dHcRhRNLy48J8+rUXOumtlY1ryE
+         IJDckuWhvjAIuWei/B3sc/6i3+b0++1ZR75SQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=Q/fq5bZ27j9TjpABnmRVQDUsaoFNf4lBmEvm436b7+U=;
-        b=mFVP+Jvi7sdjIJm89CcOm9khfz1Vf/eu8YuAyk57wY04Hh0l1cxqkspEGynlkkK7c6
-         rAmAqwGk8TIZbYlUa6fYl4HK8qdCUrpDjGRxZC8sn/OlH8C7W8nToWgk+ITHXO0FGTTP
-         HVdcW5e8UAMPMbgCD+hY4HueZO0Ky1zsrXCpVq2mz0y4n9bpdybw4YZqxscVYHaNHmOs
-         IAzIknkSvLCfGy+Jlj01SjkLmHNQ/YnbKXv5PvMm6xVQCpAEmxC16jj3EwwY6ZskEvQl
-         1yXSX8zbKQfwi3T8I4A2pxhTKk41r1slmslJQa24Wjv8QhIRibJHzLcteU6ZnwXQMAUb
-         aSow==
-X-Gm-Message-State: AGRZ1gLddAJEDjee/Cvde8wxt6sfL0AK5g26Be/5l9coo556zpFZWw3l
-        p5Azi619SsK1wRx39sZNrN56GA==
-X-Google-Smtp-Source: AJdET5dV1cECJynsv29Nko5CWSDppNLoqAh4iDzCukPadApvjHVw3IyQVZdv0pPSnKHwEVXokEeW1A==
-X-Received: by 2002:a25:5983:: with SMTP id n125-v6mr4130285ybb.209.1542261154572;
-        Wed, 14 Nov 2018 21:52:34 -0800 (PST)
+        bh=mrPWZ4GdwOXyyhtosApIY//VWuTOROBlwQRdZLFfLfw=;
+        b=CILKW3q93wuz6cbopUjuq31RINobbaJES7oxB8tRh5Fg7NfNokPsv5YB1DYhmVaqoM
+         GDY8ta3h6juRgOsjzhYCw5phySSsxlicmM6Kl3ACYBGpJoQOIzO/46BJqWGvTxhgH3cR
+         R90XE91GOPnUlTOwd+6pQ7eyMStM1WYm69nJLDGRSbHSG/MlmwuD79e1N4NwyknINJcw
+         oep5oo2QCNktQNaInas0R8xAivTxbTCjKMtpDy2SEOOhL3TxP1loQUlUWntZMp1p1ngW
+         IWRn7N2WeW3C16cZ/kHE0dUiVp6YW2TuFO/NI8NlHPpwaSYtpr7G/ZEwrGtRMIUov4IP
+         Ez6Q==
+X-Gm-Message-State: AGRZ1gLHjYeX9AvBwY5r5YzFB17xtLxmi8jTe/VoHqt5Q0KJQSO8UMJ1
+        r1tGGp9QvwMn4MOdorJ2/jL6pA==
+X-Google-Smtp-Source: AJdET5fkMvsm2DHLjgTVbC8xwZoGqVoWAD7HWYAuRL/sUOtxs2GKhrvUm8Sfip4SGiWaYCL36lo1+A==
+X-Received: by 2002:a81:2f89:: with SMTP id v131-v6mr4450717ywv.104.1542261157829;
+        Wed, 14 Nov 2018 21:52:37 -0800 (PST)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id 207-v6sm7416843ywo.87.2018.11.14.21.52.33
+        by smtp.googlemail.com with ESMTPSA id o131-v6sm6399857ywb.107.2018.11.14.21.52.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 21:52:33 -0800 (PST)
+        Wed, 14 Nov 2018 21:52:37 -0800 (PST)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
         vgoyal@redhat.com, herbert@gondor.apana.org.au,
@@ -65,10 +65,13 @@ Cc:     prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
         james.morse@arm.com, bhsharma@redhat.com,
         kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v16 05/16] kexec_file: kexec_walk_memblock() only walks a dedicated region at kdump
-Date:   Thu, 15 Nov 2018 14:52:44 +0900
-Message-Id: <20181115055254.2812-6-takahiro.akashi@linaro.org>
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v16 06/16] lib: fdt: add a helper function for handling memory range property
+Date:   Thu, 15 Nov 2018 14:52:45 +0900
+Message-Id: <20181115055254.2812-7-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181115055254.2812-1-takahiro.akashi@linaro.org>
 References: <20181115055254.2812-1-takahiro.akashi@linaro.org>
@@ -79,48 +82,131 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In kdump case, there exists only one dedicated memblock region as usable
-memory (crashk_res). With this patch, kexec_walk_memblock() runs a given
-callback function on this region.
-
-Cosmetic change: 0 to MEMBLOCK_NONE at for_each_free_mem_range*()
+Added function, fdt_setprop_reg(), will be used later to handle
+kexec-specific property in arm64's kexec_file implementation.
+It will possibly be merged into libfdt in the future.
 
 Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
-Acked-by: Dave Young <dyoung@redhat.com>
-Cc: Vivek Goyal <vgoyal@redhat.com>
-Cc: Baoquan He <bhe@redhat.com>
+Cc: Rob Herring <robh+dt@kernel.org>
+Cc: Frank Rowand <frowand.list@gmail.com>
+Cc: devicetree@vger.kernel.org
 ---
- kernel/kexec_file.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ include/linux/libfdt.h | 26 ++++++++++++++++++++
+ lib/Makefile           |  2 +-
+ lib/fdt_addresses.c    | 56 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 83 insertions(+), 1 deletion(-)
+ create mode 100644 lib/fdt_addresses.c
 
-diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-index d03195a8cb6e..f1d0e00a3971 100644
---- a/kernel/kexec_file.c
-+++ b/kernel/kexec_file.c
-@@ -515,8 +515,11 @@ static int kexec_walk_memblock(struct kexec_buf *kbuf,
- 	phys_addr_t mstart, mend;
- 	struct resource res = { };
+diff --git a/include/linux/libfdt.h b/include/linux/libfdt.h
+index 90ed4ebfa692..47c4dc9e135c 100644
+--- a/include/linux/libfdt.h
++++ b/include/linux/libfdt.h
+@@ -5,4 +5,30 @@
+ #include <linux/libfdt_env.h>
+ #include "../../scripts/dtc/libfdt/libfdt.h"
  
-+	if (kbuf->image->type == KEXEC_TYPE_CRASH)
-+		return func(&crashk_res, kbuf);
++/**
++ * fdt_setprop_reg - add/set a memory region property
++ * @fdt: pointer to the device tree blob
++ * @nodeoffset: offset of the node to add a property at
++ * @name: name of property
++ * @addr: physical start address
++ * @size: size of region
++ *
++ * returns:
++ *	0, on success
++ *      -FDT_ERR_BADLAYOUT,
++ *	-FDT_ERR_BADMAGIC,
++ *	-FDT_ERR_BADNCELLS, if the node has a badly formatted or invalid
++ *		#address-cells property
++ *      -FDT_ERR_BADOFFSET, nodeoffset did not point to FDT_BEGIN_NODE tag
++ *	-FDT_ERR_BADSTATE,
++ *	-FDT_ERR_BADSTRUCTURE,
++ *	-FDT_ERR_BADVERSION,
++ *	-FDT_ERR_BADVALUE, addr or size doesn't fit to respective cells size
++ *      -FDT_ERR_NOSPACE, there is insufficient free space in the blob to
++ *              contain a new property
++ *	-FDT_ERR_TRUNCATED, standard meanings
++ */
++int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
++					       u64 addr, u64 size);
 +
- 	if (kbuf->top_down) {
--		for_each_free_mem_range_reverse(i, NUMA_NO_NODE, 0,
-+		for_each_free_mem_range_reverse(i, NUMA_NO_NODE, MEMBLOCK_NONE,
- 						&mstart, &mend, NULL) {
- 			/*
- 			 * In memblock, end points to the first byte after the
-@@ -530,8 +533,8 @@ static int kexec_walk_memblock(struct kexec_buf *kbuf,
- 				break;
- 		}
- 	} else {
--		for_each_free_mem_range(i, NUMA_NO_NODE, 0, &mstart, &mend,
--					NULL) {
-+		for_each_free_mem_range(i, NUMA_NO_NODE, MEMBLOCK_NONE,
-+					&mstart, &mend, NULL) {
- 			/*
- 			 * In memblock, end points to the first byte after the
- 			 * range while in kexec, end points to the last byte
+ #endif /* _INCLUDE_LIBFDT_H_ */
+diff --git a/lib/Makefile b/lib/Makefile
+index db06d1237898..2a96cb05e15d 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -205,7 +205,7 @@ KASAN_SANITIZE_stackdepot.o := n
+ KCOV_INSTRUMENT_stackdepot.o := n
+ 
+ libfdt_files = fdt.o fdt_ro.o fdt_wip.o fdt_rw.o fdt_sw.o fdt_strerror.o \
+-	       fdt_empty_tree.o
++	       fdt_empty_tree.o fdt_addresses.o
+ $(foreach file, $(libfdt_files), \
+ 	$(eval CFLAGS_$(file) = -I$(src)/../scripts/dtc/libfdt))
+ lib-$(CONFIG_LIBFDT) += $(libfdt_files)
+diff --git a/lib/fdt_addresses.c b/lib/fdt_addresses.c
+new file mode 100644
+index 000000000000..97ddd5a5cc10
+--- /dev/null
++++ b/lib/fdt_addresses.c
+@@ -0,0 +1,56 @@
++// SPDX-License-Identifier: GPL-2.0
++#include <linux/libfdt_env.h>
++#include <linux/types.h>
++#include "../scripts/dtc/libfdt/fdt_addresses.c"
++
++/*
++ * helper functions for arm64 kexec
++ * Those functions may be merged into libfdt in the future.
++ */
++
++/* This function assumes that cells is 1 or 2 */
++static void cpu64_to_fdt_cells(void *buf, u64 val64, int cells)
++{
++	__be32 val32;
++
++	while (cells) {
++		val32 = cpu_to_fdt32(val64 >> (32 * (--cells)));
++		memcpy(buf, &val32, sizeof(val32));
++		buf += sizeof(val32);
++	}
++}
++
++int fdt_setprop_reg(void *fdt, int nodeoffset, const char *name,
++						u64 addr, u64 size)
++{
++	int addr_cells, size_cells;
++	char buf[sizeof(__be32) * 2 * 2];
++		/* assume dt_root_[addr|size]_cells <= 2 */
++	void *prop;
++	size_t buf_size;
++
++	addr_cells = fdt_address_cells(fdt, 0);
++	if (addr_cells < 0)
++		return addr_cells;
++	size_cells = fdt_size_cells(fdt, 0);
++	if (size_cells < 0)
++		return size_cells;
++
++	/* if *_cells >= 2, cells can hold 64-bit values anyway */
++	if ((addr_cells == 1) && ((addr > U32_MAX) ||
++				  ((addr + size) > U32_MAX)))
++		return -FDT_ERR_BADVALUE;
++
++	if ((size_cells == 1) && (size > U32_MAX))
++		return -FDT_ERR_BADVALUE;
++
++	buf_size = (addr_cells + size_cells) * sizeof(u32);
++	prop = buf;
++
++	cpu64_to_fdt_cells(prop, addr, addr_cells);
++	prop += addr_cells * sizeof(u32);
++
++	cpu64_to_fdt_cells(prop, size, size_cells);
++
++	return fdt_setprop(fdt, nodeoffset, name, buf, buf_size);
++}
 -- 
 2.19.0
 
