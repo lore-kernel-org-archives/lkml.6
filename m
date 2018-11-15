@@ -4,68 +4,68 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 36F56C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:36:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA8CEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:38:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D8FDF2086B
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:36:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8F3602087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:38:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XAgbl+zq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D8FDF2086B
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XTgzcmyA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F3602087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728002AbeKOPm0 (ORCPT
+        id S1728376AbeKOPpC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 10:42:26 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:39938 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726811AbeKOPmZ (ORCPT
+        Thu, 15 Nov 2018 10:45:02 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:32795 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbeKOPpB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 10:42:25 -0500
-Received: by mail-pg1-f196.google.com with SMTP id z10so8481046pgp.7
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 21:36:02 -0800 (PST)
+        Thu, 15 Nov 2018 10:45:01 -0500
+Received: by mail-pf1-f193.google.com with SMTP id v68-v6so9131939pfk.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 21:38:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=K3UQ6qRsAXwfyaXxAGgu9zBEijeG59KSwrtSjdKQGvA=;
-        b=XAgbl+zqJjyPfXArCUN8V6u13wFfu1s/WnPXxLcv6MdR8VE6K3/+ukIEQ6YRFu8aXU
-         b9g8TUMAGxm0RHPDRjSDsDdPLEPEfRle0cOLIXQk9Yt7zSeAbmeI03U7VM4intTF1Khs
-         lAZlBCUikUWeIpugRLp+NOKmSjmQnbggmGu8uR/VB7yjWHSuK6+wOPP4Qs0f1UFHK9aE
-         JoZyHglNrGBfHM6HmgIVldNThMVgy/YJklY1OqPBDf1Z+EQtKQVJ9ClioyTi0lxsART9
-         K/nh8uCAtPAgm7rGs6/RLLlsV9KqRzxN1rampmi15Q9TRZbTNcsa6J7D5uV61G9BBLbo
-         Hvxg==
+        bh=vci6yHtscyCB8IsZ8fX1au55mpo0QlRWMX5IB0rSF0M=;
+        b=XTgzcmyAJA6/PonF+kEaiFnYF1Eo58FkuJeSV5Srx3cQG+/Im8rVtUeJ2LEguoVP2P
+         3w9bRIr8hRfu/9GdypvOsjY7BbDHtzBX/apHj4DY88hgs2zQi7ZcYbne48XZ4/wrxYZA
+         lVcMIgBOQ0Scn9Bq0Qk96rcQLbq5WeKjk0lh9+XO8REGGoWq1G6MSVmgv3rRYH5DylFp
+         V2je0QVU2AsICnclsnHc2PC3QQzPE90OltrH+K8T1mqTjYvEj46f2eqHB/7LrUe1cZMD
+         F/aD4vqKPruXPwX3VVfI7m+3toGVmiN1VAA6wiJqQ+EQjZeu+hVuNnVxbDbhHY6a1XLm
+         nbzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
          :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=K3UQ6qRsAXwfyaXxAGgu9zBEijeG59KSwrtSjdKQGvA=;
-        b=SgspwK5jQYx7in/2DTppFXHoUVotZBoymBmEYJBMgyHY7Y39hEiFDxvU545fiDcNA9
-         S3Zm9ZpIuUhmE6CmNXzMWSaVWf9ccRbAZ9C0ut9oWmg915t1NcJ4wwY+/h07OQn9R7mP
-         pEnHKbvEZuBryu6inf+KY7pMQLpE9Ey9gIVNbPRJwq6r6C5vicZllahODH4rXGfarJuj
-         0Bl2dFjZXOtdzZuW90chI4NMhvk3h6AnvOBRB/o4SevTg+YjvgMqu1Vrf6wa8Z2gXe0q
-         i+DnE4PN8jGVBhSbIyBZ+F9O0UN6soncR6b/PbldyRguxOoixBcJIXEDOtO/G0AMnWv2
-         jhZQ==
-X-Gm-Message-State: AGRZ1gKVFtVDE2PXFy1Wkd0FNPpMNFL1CQH1AKMUOSb2gYiYuWSZ5u1e
-        sii8HisPdnIcavH1HbyFI+7/f4whsOw=
-X-Google-Smtp-Source: AJdET5eXZIjOomr1RmTfpf3i5jAd4I0rDDQrn6Cq06yKRZ7stR0hhgPRFgBJmZupANGt4xbKn8/aQQ==
-X-Received: by 2002:a63:a064:: with SMTP id u36mr4563661pgn.145.1542260162001;
-        Wed, 14 Nov 2018 21:36:02 -0800 (PST)
+        bh=vci6yHtscyCB8IsZ8fX1au55mpo0QlRWMX5IB0rSF0M=;
+        b=U7sImbW8sasOWy3Xs0r6Mu475HEeVO1fyHewsaFqx8BgmOuMGE4iJnV56b2p6jNoLH
+         n8yeTLCDj1SY5BoPFKiyZ87OOwEMLCW9F4hqOjKDaoOIGYvANeyYxghi2dPpEFtOxCVK
+         JNjWpNb3gLUK+uR+474p5wHaRuqCSEzFNtJE4+LweQfNKUCJdGH9wbkXbj0C7LJ2hPQ0
+         uLBSV6qzDo4FK2ah+UnzlS0m6vJUMRQwbWr/Tv97PRISt/3AeQ0+WZKEfE+NbhsXeikZ
+         rkQ4lw73ESOCWQW16ftAuQl92TGYk1XCJ/EYKPkLeyxI6FOtICQpi0qKRE1sSoQewZDx
+         UlAA==
+X-Gm-Message-State: AGRZ1gK5eNufeYoNOxppX7OT0qNsNolGxFvPjY36RtD64+IJN3fxjY3W
+        TB46xPW/mnRolt1pJnFw1c98NjQIe/Q=
+X-Google-Smtp-Source: AJdET5dI9D2j+aIRBI0ahf9SUcL3Sb3RG/8UTfXvwlk/NM6tKiTxCTlRMb4vJZTNYBBOG/u0fuDStA==
+X-Received: by 2002:a65:6645:: with SMTP id z5mr4582167pgv.351.1542260318164;
+        Wed, 14 Nov 2018 21:38:38 -0800 (PST)
 Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id t3sm5949684pgv.31.2018.11.14.21.36.00
+        by smtp.gmail.com with ESMTPSA id u7-v6sm16134178pfu.34.2018.11.14.21.38.37
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 21:36:01 -0800 (PST)
-Date:   Wed, 14 Nov 2018 21:36:00 -0800
+        Wed, 14 Nov 2018 21:38:37 -0800 (PST)
+Date:   Wed, 14 Nov 2018 21:38:36 -0800
 From:   Guenter Roeck <linux@roeck-us.net>
 To:     Florian Fainelli <f.fainelli@gmail.com>
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org
 Subject: Re: [PATCH] serial: 8250: Default SERIAL_OF_PLATFORM to SERIAL_8250
-Message-ID: <20181115053600.GB5535@roeck-us.net>
+Message-ID: <20181115053836.GA7606@roeck-us.net>
 References: <20181115011125.GA32556@roeck-us.net>
  <29E7A6C0-7829-4650-93C6-7220FECAA6EF@gmail.com>
 MIME-Version: 1.0
@@ -113,14 +113,6 @@ On Wed, Nov 14, 2018 at 07:56:47PM -0800, Florian Fainelli wrote:
 > >which wasn't seen before.
 > 
 > Do you know which Device Tree is being used here? The most obvious thing that could be done is to add a !PPC condition but this might be missing other platforms doing their own 8250 registration yet being OF aware (sparc?).
-
-This is a qemu boot test. No, I don't know what exactly is happening,
-except that this (emulated) system obviously does not expect
-CONFIG_SERIAL_OF_PLATFORM to be enabled and, afaik, the devicetree
-is generated internally by qemu. I would have thought that just enabling
-a configuration by default out of the blue might be considered problematic
-by itself, but maybe I am wrong.
-
 > 
 > >
 > >Not sure if replacing a potential problem with a real one is really an
@@ -128,13 +120,6 @@ by itself, but maybe I am wrong.
 > 
 > That comment is not particularly helpful though I have an appreciation for when a change breaks things in unexpected ways and how frustrating that can be.
 
-What is really frustrating (and let me think about dropping all those
-boot tests) is that one ends up having to argue if the problem is real
-or only applies to a presumably or possibly wrong qemu emulation, and
-that one ends up having to discuss the validity of the test case. 
-
-Since this is "only" an emulation and thus not a "real" system,
-please feel free to ignore this report. I'll just drop all boot tests
-using this configuration once the patch hits mainline.
+Actally, never mind. I dropped the test cases. Sorry for the noise.
 
 Guenter
