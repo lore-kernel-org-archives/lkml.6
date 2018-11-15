@@ -5,72 +5,89 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 40789C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 04:34:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 63958C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 04:37:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0969B21582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 04:34:30 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0969B21582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+	by mail.kernel.org (Postfix) with ESMTP id 2D7CA214F1
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 04:37:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D7CA214F1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=telegraphics.com.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728492AbeKOOkm (ORCPT
+        id S1728439AbeKOOnV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 09:40:42 -0500
-Received: from ozlabs.org ([203.11.71.1]:57469 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728422AbeKOOkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 09:40:42 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42wT6C1y6zz9s5c;
-        Thu, 15 Nov 2018 15:34:26 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-From:   Michael Ellerman <mpe@ellerman.id.au>
-To:     Geert Uytterhoeven <geert@linux-m68k.org>,
-        linux-kernel@vger.kernel.org
-Subject: Re: Build regressions/improvements in v4.20-rc2
-In-Reply-To: <20181112213555.22941-1-geert@linux-m68k.org>
-References: <20181112213555.22941-1-geert@linux-m68k.org>
-Date:   Thu, 15 Nov 2018 15:34:26 +1100
-Message-ID: <87bm6ruffx.fsf@concordia.ellerman.id.au>
+        Thu, 15 Nov 2018 09:43:21 -0500
+Received: from kvm5.telegraphics.com.au ([98.124.60.144]:47526 "EHLO
+        kvm5.telegraphics.com.au" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726811AbeKOOnU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 09:43:20 -0500
+Received: from localhost (localhost.localdomain [127.0.0.1])
+        by kvm5.telegraphics.com.au (Postfix) with ESMTP id CA951272C2;
+        Wed, 14 Nov 2018 23:37:02 -0500 (EST)
+Date:   Thu, 15 Nov 2018 15:37:02 +1100 (AEDT)
+From:   Finn Thain <fthain@telegraphics.com.au>
+To:     Michael Schmitz <schmitzmic@gmail.com>
+cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Stephen N Chivers <schivers@csc.com.au>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        John Stultz <john.stultz@linaro.org>,
+        linux-m68k <linux-m68k@lists.linux-m68k.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Philip Blundell <philb@gnu.org>,
+        Joshua Thompson <funaho@jurai.org>
+Subject: Re: [RFC PATCH 06/13] m68k: Drop ARCH_USES_GETTIMEOFFSET
+In-Reply-To: <459ad559-99bd-0196-13f4-80440cd39671@gmail.com>
+Message-ID: <alpine.LNX.2.21.1811151535310.19@nippy.intranet>
+References: <cover.1541995959.git.fthain@telegraphics.com.au> <74edaee07800f91eb416ab3e72c4670b8ef4bd4e.1541995959.git.fthain@telegraphics.com.au> <CAMuHMdXdo+L-Ta04zUsL62RSt1HOvmPJs7HFu_zEnc38R0FPjA@mail.gmail.com> <alpine.LNX.2.21.1811122002530.351@nippy.intranet>
+ <fb617c67-089b-c4c0-2f47-28db41ffca6c@gmail.com> <alpine.LNX.2.21.1811131413210.362@nippy.intranet> <b824e485-796c-cbb6-9e50-504b03accd5d@gmail.com> <alpine.LNX.2.21.1811131700010.366@nippy.intranet> <0054c37f-ef34-e892-ff1d-02968ab529fa@gmail.com>
+ <alpine.LNX.2.21.1811140905440.371@nippy.intranet> <73f75453-ce74-2c13-ba7c-f36f976d4ff7@gmail.com> <ab36d408-a05f-f220-1c2b-b88333f1c33b@gmail.com> <459ad559-99bd-0196-13f4-80440cd39671@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Geert Uytterhoeven <geert@linux-m68k.org> writes:
-> Below is the list of build error/warning regressions/improvements in
-> v4.20-rc2[1] compared to v4.19[2].
->
-> Summarized:
->   - build errors: +3/-0
->   - build warnings: +123/-12803
->
-> JFYI, when comparing v4.20-rc2[1] to v4.20-rc1[3], the summaries are:
->   - build errors: +0/-0
->   - build warnings: +61/-10479
->
-> Happy fixing! ;-)
->
-> Thanks to the linux-next team for providing the build service.
->
-> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/ccda4af0f4b92f7b4c308d3acc262f4a7e3affad/ (all 240 configs)
-> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d/ (all 240 configs)
-> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/651022382c7f8da46cb4872a545ee1da6d097d2a/ (all 240 configs)
->
->
-> *** ERRORS ***
->
-> 3 error regressions:
->   + /kisskb/src/arch/s390/kernel/nospec-branch.c: error: macro "memcpy" passed 6 arguments, but takes just 3:  => 130:61
->   + /kisskb/src/sound/pci/hda/patch_ca0132.c: error: implicit declaration of function 'pci_iomap' [-Werror=implicit-function-declaration]:  => 8799:3
+On Thu, 15 Nov 2018, Michael Schmitz wrote:
 
->   + {standard input}: Error: Unrecognized opcode: `slbfee.':  => 89, 37
+> Hi Finn,
+> 
+> On 14/11/18 3:58 PM, Michael Schmitz wrote:
+> > Hi Finn,
+> > 
+> > Am 14.11.2018 um 14:08 schrieb Michael Schmitz:
+> > > > Can you also test tree fbf8405cd982 please?
+> > > > 
+> > > My tests were on c606b5cf902 in case it wasn't clear. I've now seen
+> > > fbf8405cd982, one moment please ...
+> > > 
+> > > That one does appear to work - different versions of ARAnyM, and
+> > > different userland versions though. I'll test that again with the setup
+> > > that saw c606b5cf902 fail.
+> > 
+> > Still fails on that emulator / userland.
+> > 
+> Must be a quirk of ARAnyM 1.0.2 (or powerpc). With 0.9.15 on x86_64, it's
+> fine.
+> 
 
-I have a fix queued for this one.
+Could be a regression in aranym?
 
-cheers
+Maybe it's worth trying 0.9.15 on the powerpc host?
+
+> I'm sufficiently convinced to try this on actual hardware now.
+> 
+
+Thanks!
+
+-- 
+
+> Cheers,
+> 
+> ??? Michael
+> 
+> 
+> 
