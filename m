@@ -2,108 +2,90 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,UNPARSEABLE_RELAY autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EF766C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:16:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 667A5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:20:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C2E8B2089F
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:16:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2E8B2089F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
+	by mail.kernel.org (Postfix) with ESMTP id 051F121582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:20:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="hjA2tUOx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 051F121582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728514AbeKOMW2 (ORCPT
+        id S1728301AbeKOM0R (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 07:22:28 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:63199 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1726574AbeKOMW2 (ORCPT
+        Thu, 15 Nov 2018 07:26:17 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:33124 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726480AbeKOM0R (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 07:22:28 -0500
-X-UUID: 18d2ffdbec494684a6da295c3f24ece5-20181115
-X-UUID: 18d2ffdbec494684a6da295c3f24ece5-20181115
-Received: from mtkcas08.mediatek.inc [(172.21.101.126)] by mailgw01.mediatek.com
-        (envelope-from <ryder.lee@mediatek.com>)
-        (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 138560396; Thu, 15 Nov 2018 10:16:24 +0800
-Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
- mtkmbs02n2.mediatek.inc (172.21.101.101) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Thu, 15 Nov 2018 10:16:16 +0800
-Received: from [172.21.77.33] (172.21.77.33) by MTKCAS06.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Thu, 15 Nov 2018 10:16:16 +0800
-Message-ID: <1542248176.30611.4.camel@mtkswgap22>
-Subject: Re: [resend PATCH 1/3] pwm: mediatek: drop flag 'has_clks'
-From:   Ryder Lee <ryder.lee@mediatek.com>
-To:     John Crispin <john@phrozen.org>
-CC:     Thierry Reding <thierry.reding@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>, <linux-pwm@vger.kernel.org>,
-        Weijie Gao <weijie.gao@mediatek.com>,
-        Roy Luo <cheng-hao.luo@mediatek.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <linux-mediatek@lists.infradead.org>
-Date:   Thu, 15 Nov 2018 10:16:16 +0800
-In-Reply-To: <2fc9dbac-4919-4ceb-49ac-67ddd7f203b5@phrozen.org>
-References: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542074855.git.ryder.lee@mediatek.com>
-         <20181114124752.GI2620@ulmo>
-         <2fc9dbac-4919-4ceb-49ac-67ddd7f203b5@phrozen.org>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.2.3-0ubuntu6 
-Content-Transfer-Encoding: 7bit
+        Thu, 15 Nov 2018 07:26:17 -0500
+Received: by mail-pl1-f193.google.com with SMTP id w22-v6so8716981plk.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 18:20:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=HTm2lBGyWs58fjKz8LORX/2WDmcLYfZ5cup1ucTDGVA=;
+        b=hjA2tUOxyaWihydcZ5uryvNPT2ezsqrGEsqcNi7K3zjLy/EaD3TJlVq80E2/i06lyd
+         QyRKdDz6oL4Cy88f95PHnsrz2BP0F6iWDx2ZGAZUmttLvQMKlVAGnn8yIr7BsQjffmba
+         gYm7WcZJWfEkO1tRNCIYy8FNNLfasWQcMjVlg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=HTm2lBGyWs58fjKz8LORX/2WDmcLYfZ5cup1ucTDGVA=;
+        b=cYr3wcNbPSIAYqFu6RtjEP5duF4Z3eY6Yx/rORDbbMsRWYZkf0iPzqTuD0KhrthHqO
+         hTTLsw7Zg1NxflTm3tD0LD44avLWaAFbhjg+k/YYBqEACrWKUiLJKquzep2Jt1QlZRW7
+         Rp0nFYzN2MdFFObg2KMAsgM3X6e5TLc+VPfaNOf6TYC+gt6RrT20Gez/amSJOJxyY4Ys
+         IEa3ZpXDavPwcJaleKrCzQG5yKHUpPN5NtjAONo2f8z4BFF/f/q+1fHp9BgoAlyLLCsw
+         tys7KZIEwSLuVHnbdYLMUIgoF5bTTU5Pn7tKUPbwouBdRjZ6IyfvHfvj1j9Dz/AtkcO0
+         b+Qw==
+X-Gm-Message-State: AGRZ1gKZSWMxEdPf6X2UZvM1Mfq+DyENF5kr9OO9sAvJjIJaalU5upEl
+        LJxmc2kwKZaiH9g/+5jgu2TW0g==
+X-Google-Smtp-Source: AJdET5e58pSVd/XWIIrjdv4rmWeIbIkr6HGXAhLNTY0vTDeSgi2OaDv0mr5cA6z/Ka9zF8uibGzY1Q==
+X-Received: by 2002:a17:902:d806:: with SMTP id a6mr4246194plz.172.1542248425360;
+        Wed, 14 Nov 2018 18:20:25 -0800 (PST)
+Received: from localhost ([2620:0:1000:1601:3aef:314f:b9ea:889f])
+        by smtp.gmail.com with ESMTPSA id z127-v6sm24389356pfz.135.2018.11.14.18.20.24
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Nov 2018 18:20:24 -0800 (PST)
+Date:   Wed, 14 Nov 2018 18:20:23 -0800
+From:   Joel Fernandes <joel@joelfernandes.org>
+To:     Kees Cook <keescook@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Anton Vorontsov <anton@enomsg.org>,
+        Colin Cross <ccross@android.com>,
+        Tony Luck <tony.luck@intel.com>
+Subject: Re: [PATCH RFC v2 0/3] cleanups for pstore and ramoops
+Message-ID: <20181115022023.GC242356@google.com>
+References: <20181103233818.44615-1-joel@joelfernandes.org>
+ <CAGXu5jJ3s=pXGaEVLycdV6TYScUmPqhChNBS92j2qUxct2+ZrQ@mail.gmail.com>
 MIME-Version: 1.0
-X-TM-SNTS-SMTP: 81364D0BD973C495A397C616D90E803CBAEBF535F8DFF9CCC6EA8C1EF360420C2000:8
-X-MTK:  N
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAGXu5jJ3s=pXGaEVLycdV6TYScUmPqhChNBS92j2qUxct2+ZrQ@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-14 at 14:27 +0100, John Crispin wrote:
-> On 14/11/2018 13:47, Thierry Reding wrote:
-> > On Tue, Nov 13, 2018 at 10:08:22AM +0800, Ryder Lee wrote:
-> >> The flag 'has_clks' and related checks are superfluous as the CCF
-> >> subsystem does this for you.
-> > Both of these mechanisms aren't equivalent. While CCF can deal with
-> > optional clocks, what the has_clks flag actually means is that the
-> > device doesn't need a clock (or doesn't have a clock input) on the
-> > devices where it is cleared.
-> >
-> > So I'd actually be in favor of keeping the has_clks property because it
-> > serves as an additional sanity check. For example if you run this driver
-> > on an SoC that "has clocks" but if you don't list them in DT, then after
-> > this patch the driver will happily continue without clocks, even though
-> > it may break completely without those clocks. I've seen SoCs respond to
-> > disabled clocks for a hardware block in different ways, in many cases an
-> > access to any of the registers will completely hang the CPU. In other
-> > cases it may just crash in some other way or give you some sort of
-> > machine exception. None of those are good, and make the tiny bit of
-> > additional code required to support the has_clks flag very attractive.
-> >
-> > But that's just my opinion. If you prefer to throw away that safety
-> > barrier, be my guest. But if you do, please move this functionality into
-> > the clock framework first and then make the driver use it.
-> >
-> > Thierry
+On Wed, Nov 14, 2018 at 01:14:57AM -0600, Kees Cook wrote:
+> On Sat, Nov 3, 2018 at 6:38 PM, Joel Fernandes (Google)
+> <joel@joelfernandes.org> wrote:
+> > Here are some simple cleanups and fixes for ramoops in pstore. Let me know
+> > what you think, thanks.
 > 
-> Hi,
-> 
-> sorry for my late response. I added the flag for the legacy MIPS 
-> silicon. These SoCs only have a single clock register with a few on/off 
-> bits. there is no complex clocktree or scaling. Hence COMMON_CLK is not 
-> supported by those SoCs. I fully agree with Thierry, that the flag makes 
-> this explicit and the intent was indeed to make sure that on silicon 
-> where clocks are required, that they really are listed in OF. This is 
-> indeed an extra sanity check and hiding it in an implicit check inside 
-> CCF does not feel right.
-> 
->      John
-> 
+> I took these and slightly tweaked code locations for the first one.
+> I'll send out the series for review when I'm back from Plumber's.
 
-Thanks for the detailed information:)  I will drop this patch in v1.
+Cool, thanks!
 
-Ryder
+ - Joel
 
