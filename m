@@ -2,117 +2,89 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6C1C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:16:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 12BE5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:16:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BEA2D20858
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:16:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA2D20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 81F1D20858
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:16:40 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="albLv87q"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81F1D20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388995AbeKPGZx (ORCPT
+        id S2389020AbeKPGZ4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 01:25:53 -0500
-Received: from mga06.intel.com ([134.134.136.31]:39486 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725809AbeKPGZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 01:25:53 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 12:16:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,237,1539673200"; 
-   d="scan'208";a="104924663"
-Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.140])
-  by fmsmga002.fm.intel.com with ESMTP; 15 Nov 2018 12:16:26 -0800
-Date:   Thu, 15 Nov 2018 22:16:25 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
-Message-ID: <20181115201625.GA25953@linux.intel.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
- <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
- <1541522400.7839.48.camel@intel.com>
- <20181107163757.GB11509@linux.intel.com>
- <20181107180057.GB24807@linux.intel.com>
- <20181108144603.GA14072@linux.intel.com>
- <20181115200002.GA24006@linux.intel.com>
- <20181115200406.GA24299@linux.intel.com>
+        Fri, 16 Nov 2018 01:25:56 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35476 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725809AbeKPGZy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 01:25:54 -0500
+Received: by mail-pf1-f194.google.com with SMTP id v9-v6so10225846pff.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 12:16:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:in-reply-to:references:date:message-id
+         :mime-version;
+        bh=+HOXid5qGwDwuXmbb30deKvvul/CHsc21hABNWZYiQY=;
+        b=albLv87qTJ6T9BngIXisWu1MMf+uZEp9i0SpwPDzd1/8AfDNA6oOzsbxVBikjD+roQ
+         sFo4i29btpnkUBi/8VzLq4mwXE6YX+bLrUsFL32HH+kq/hBV5tziDxQ+23MDT+k3UHKq
+         49LyOZk/5jsAhZImRVcxZMLraLZGdtyaHRQZVWZFT+/I3VIi6zbMJSCcE7PYY15V/xcb
+         ayNUV5OnxxDEMcsSP7w8IwX+BCEoQkJzp1af5pMYF0YcRZ5BGaUdXSkzP610rXBWGYBP
+         7yEtN3pi5xjU/zayUvJ+6KXoLI7FQHvGEbEI+8E5POtWX8r76yvRyCwQyJT27irYVPRc
+         taJA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
+         :message-id:mime-version;
+        bh=+HOXid5qGwDwuXmbb30deKvvul/CHsc21hABNWZYiQY=;
+        b=R7lsl39zvyVk+5Wd9k0/oj5yPxbK6R5RraaGpb4saidjPTF6ckIoUB5nCqv0SCv0jI
+         5JgSiY6vDOGwH5bD5LSPcVf/kzKQKP9gvWBkn20JqwAEOwDst8XI3eifQca3MMUuZaSC
+         lH0CmtvehBrJlIe81YjqSg84ytA+hUWEm6sRBfGEbzfxl2rfsS0s1luuZ5gD4qEt9ucK
+         uhosXL5F+oXr6K4118eHbiAHXVMlxYnelvlG+4Nxad87wfwuOoZZmO9X5OFR/Yujrv1z
+         td53cFZsRJg/cTLzEce15AHPyrlaWGvJ0A/FmUlmOuGv8e2apzmgYvt7w/TlWqzxS654
+         2k4Q==
+X-Gm-Message-State: AGRZ1gK35Q26vPuucCAMGYEgAXd4me9ZTXf6TcdegVhMFzpnl4V1XcW1
+        DOQEjHkKXCrqqmJZtX9feMkcfUNKn8Otgg==
+X-Google-Smtp-Source: AJdET5e9E+Ot/77tXyMAnb000lVTS3p5IF0NYSaJ3EpF6W/oq/FfakwoJdMXt0pkclPTpXXszcfzSg==
+X-Received: by 2002:a62:6547:: with SMTP id z68-v6mr7744736pfb.169.1542312997406;
+        Thu, 15 Nov 2018 12:16:37 -0800 (PST)
+Received: from localhost ([107.181.189.87])
+        by smtp.googlemail.com with ESMTPSA id j186-v6sm49444888pfg.117.2018.11.15.12.16.36
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 12:16:36 -0800 (PST)
+From:   Kevin Hilman <khilman@baylibre.com>
+To:     He Yangxuan <yangxuan8282@gmail.com>,
+        linux-amlogic@lists.infradead.org
+Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        narmstrong@baylibre.com, carlo@caione.org
+Subject: Re: [PATCH] ARM64: dts: meson: p230: disable advertisement EEE for GbE.
+In-Reply-To: <20181109125936.3siduqtjmj6vv5ur@raspberrypi>
+References: <20181109125936.3siduqtjmj6vv5ur@raspberrypi>
+Date:   Thu, 15 Nov 2018 12:16:35 -0800
+Message-ID: <7hh8gidrks.fsf@eze.i-did-not-set--mail-host-address--so-tickle-me>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115200406.GA24299@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 10:04:06PM +0200, Jarkko Sakkinen wrote:
-> On Thu, Nov 15, 2018 at 10:00:02PM +0200, Jarkko Sakkinen wrote:
-> > On Thu, Nov 08, 2018 at 04:46:03PM +0200, Jarkko Sakkinen wrote:
-> > > On Wed, Nov 07, 2018 at 10:00:57AM -0800, Sean Christopherson wrote:
-> > > > What do we gain by a single buffer vs. separate buffers?  The ioctl()
-> > > > would be slightly smaller but it seems like the actual code would be
-> > > > more complex.
-> > > 
-> > > I'm fine with either. It was just a suggestion.
-> > > 
-> > > > The enclave build process also utilizes the backing as temp storage
-> > > > to avoid having to alloc kernel memory when queueing pages to be added
-> > > > by the worker thread (which reminds me that I wanted to document why a
-> > > > worker thread is used).  Keeping this behavior would effectively make
-> > > > providing backing mandatory.
-> > > 
-> > > Would it be a problem just allocate those pages with alloc_page() and
-> > > free them in the worker thread?
-> > > 
-> > > > Are there any potential complications with ENCLS consuming userspace
-> > > > pointers?  We'd have to wrap them with user_access_{begin,end}() and
-> > > > probably tweak the fixup, but I assume having the fixup handler means
-> > > > we're generally ok?
-> > > 
-> > > Last time I did it I used get_user_pages() for pinning. I'm not sure
-> > > why I should do anything but just re-use that.
-> > 
-> > What about VA page swapping? Not saying that it'd have to be done right
-> > now but we need to answer whether it is enclave local or a global asset.
-> > If it is local it would also require an argument.
-> > 
-> > I will most likely won't fix this for v17 because this detail needs
-> > careful consideration.
-> 
-> I wonder if you can map shmem file to process address space so that you
-> get it accounted for the process? That would be optimal for us. This way
-> this won't become an API issue.
-> 
-> Yeah, as I started to implement this I realized these issues with the
-> API side that will arise. Even doing vm_mmap() in the kernel code would
-> be better than taking addresses through the ioctl. That is another
-> option.
+He Yangxuan <yangxuan8282@gmail.com> writes:
 
-This is how strongly think. I can go with VMAs for swapping *but* if
-that is the route I would recommend using vm_mmap() instead of taking
-pointer from user space. This way the way swapping is done can be always
-changed. It will be a huge lock-in to do it otherwise.
+> This patch disable EEE advertisement for P230 board (DWMAC + RTL8211F).
+> If not disable it, the network connection is not stable, will got issues
+> like throughput drop or broken link.
+>
+> Signed-off-by: He Yangxuan <yangxuan8282@gmail.com>
 
-/Jarkko
+Thanks for the patch.
+
+Queued for v4.21 (branch: v4.21/dt64)
+
+Kevin
