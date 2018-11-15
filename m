@@ -6,58 +6,58 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7C9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:07:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76B62C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:08:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C348422419
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:07:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3B9EC22419
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:08:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FcUHwk/i"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C348422419
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XHh2mbRV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3B9EC22419
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387814AbeKOUOW (ORCPT
+        id S2387832AbeKOUPL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 15:14:22 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42077 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1731710AbeKOUOW (ORCPT
+        Thu, 15 Nov 2018 15:15:11 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:40716 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728609AbeKOUPL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 15:14:22 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l10so10108134lfh.9
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 02:07:11 -0800 (PST)
+        Thu, 15 Nov 2018 15:15:11 -0500
+Received: by mail-lj1-f196.google.com with SMTP id t22-v6so16757472lji.7
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 02:08:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=dxzd5MBZH9zzK+XKhursnZ1G2JQb3P8B2Gj/36JGOYg=;
-        b=FcUHwk/iIRfQCTRSkOa+F++/PkHIN4Q3g3GrJ6QjcOfJRm0P/x8Vn/Drnl7vPIx5oz
-         OBGRhdUObQklOfWRd733LMyKQJVoxO9u5hyXoKd/ToI1A74IFj7LqecDTXUv1yAG1x3C
-         bowrNFiJak6lDtbJyagS7d44gN0HNBipS8IIY=
+        bh=EV9Xaw3aIvcjaEeSQdkxEOQrgYQVryj9pE4wCPEaBMI=;
+        b=XHh2mbRV/0AnIRxs158CJyuPBmA/L68zsw0fbUtjhdZ17lCz7Wux7Dm03oakNiviJl
+         5X4jML4r2Nc3cKQRrr+zg0E+CY27J+/uFEKpLYqRtyV/DQp0jz1QhW9YiRRpOA2xEiXS
+         InRW1MkIhh+f77mWNoOrEcrF1PuFkTjZ3rvE4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=dxzd5MBZH9zzK+XKhursnZ1G2JQb3P8B2Gj/36JGOYg=;
-        b=Rn1kE9xpRFxbRCL3EmDKmWcyfxdYGO3nfZZcTdFoUpxWVgmRi/TEvUWx1rx7qA/n1y
-         Z5OasW9MaDgLDzXOsicS4Wmh+77FwXpnN5Uf0DWvz6eP/npI5PTe0Ia/Dpk3xmDuvMxs
-         Sl8PwC2NUgTF7fm2eudfIvqkM7wlJn9ZWHkLzpqvA1B51WMazj6EQRmMKrC1A7XikGaa
-         V+uZiCy7EKDtEx1D4Fx58z+OxlFIrD80R54BUP4AELQOKqQE5pmt6t3+gu/XeOw9tJRT
-         uL7HsufP9IO980gmIFo/wrqQGk+eCpvJqjMTihsJRZ72KZeR9aytfDkkmivxBmtXVn8m
-         F3dQ==
-X-Gm-Message-State: AGRZ1gKO+7/cgb2+K11ZcI8yxjciij74QPGN2K5VG31dmDFnPyTsPVZk
-        yZ7+aeO77RYiQdC57NLskMzV15nDTptbixnqeLrgVw==
-X-Google-Smtp-Source: AJdET5cn0FAntD2uVapUYoXNwfwOgArbRaztzmgsKfkOQT+nK1+WE1g8e4YdBB+lgek2cI5q0cJvr7C7cNnm5qkUzM8=
-X-Received: by 2002:a19:f813:: with SMTP id a19mr2959523lff.67.1542276430843;
- Thu, 15 Nov 2018 02:07:10 -0800 (PST)
+        bh=EV9Xaw3aIvcjaEeSQdkxEOQrgYQVryj9pE4wCPEaBMI=;
+        b=nquzBrOLwYECHNQBZsbRo8B7+0ftu9XOa2hvnoG6P+wYVN1kPQDJYY4LjkCxbyPBTP
+         jDJ5OyIkzw6bWGNRVjzhxQBulJtoE8UwXpFQwpp2CnNl2la08MD78VNMqXooPJ1QLuh6
+         UKyZBcdaV3a8zRZ/CvPBN/XCekarfCUpbznMe/TfG0NlUob4PKWgDOIsW5NTpNrQ+UUj
+         NjBjJYLQGtkQQE/qzmeOWzG1pMLjLU1Lm7C3/RIbXRWCgf8q/A7lHa1oSlu5EPfP4v1p
+         pFaAgwl6MFY9sMAPBVh0KLw/EuDwCL7XWZpHsmOApQb/gihaNiU4WciJp9a18RIWEnt0
+         Mjag==
+X-Gm-Message-State: AGRZ1gLEfZaHtY/omIRrN4UgT5gWeJpFrm7X0v+2PipNP21SxW6LcGKo
+        pazWZw8lunF8pLT9i0au4N5J7+iX6BpRbkV5OkeifQ==
+X-Google-Smtp-Source: AJdET5f+M1xP/rt8wD+vxwYeEds5yXVA0HJnTCCvjvfHBPQXuVLhkghg6x24P9YCAP1GgRuD4uwQKGlTG1iz3neCs0I=
+X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr3261775ljk.4.1542276479500;
+ Thu, 15 Nov 2018 02:07:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org> <20181107174844.5381-3-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20181107174844.5381-3-manivannan.sadhasivam@linaro.org>
+References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org> <20181107174844.5381-4-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20181107174844.5381-4-manivannan.sadhasivam@linaro.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 15 Nov 2018 11:06:58 +0100
-Message-ID: <CACRpkdY=YF8q=1wYigLH83LLHsGdTO_VEpAP=oj8ojqbmLKQNA@mail.gmail.com>
-Subject: Re: [PATCH v3 2/4] arm64: dts: mediatek: mt6797: Add pinctrl support
+Date:   Thu, 15 Nov 2018 11:07:48 +0100
+Message-ID: <CACRpkdafzzsMdCSNPsk_FaF1iqJv=oXwKvB-rq5j5Ey+RNd=JQ@mail.gmail.com>
+Subject: Re: [PATCH v3 3/4] arm64: dts: mediatek: x20: Add pinmux support for UART1
 To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc:     sean.wang@kernel.org, Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -76,7 +76,8 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Wed, Nov 7, 2018 at 6:49 PM Manivannan Sadhasivam
 <manivannan.sadhasivam@linaro.org> wrote:
 
-> Add pinctrl support for Mediatek MT6797 SoC.
+> Add pinmux support for UART1 on MediatekX20 Development board based
+> on Mediatek MT6797 SoC.
 >
 > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
