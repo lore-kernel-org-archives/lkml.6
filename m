@@ -2,117 +2,168 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9775C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:03:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A701C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:04:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 94439223DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:03:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="xACi84vS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94439223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C901C20818
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:04:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C901C20818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388547AbeKPBLf (ORCPT
+        id S2388453AbeKPBNF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:11:35 -0500
-Received: from mail.kernel.org ([198.145.29.99]:33378 "EHLO mail.kernel.org"
+        Thu, 15 Nov 2018 20:13:05 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:47606 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388374AbeKPBLf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 20:11:35 -0500
-Received: from localhost (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S2387548AbeKPBNF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 20:13:05 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7BDF620818;
-        Thu, 15 Nov 2018 15:03:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542294202;
-        bh=F/l6jhD/ixFjgGEsTyXtJ0dblKRni2Q43VjvZssafm4=;
-        h=Date:From:To:Subject:References:In-Reply-To:From;
-        b=xACi84vSc0pKRBtpRbj/6Yk/F2MfLW+RucoMXjrg4IHlQa7fWTa3b7bxNCociTbve
-         3Xpv4h0Clz3Jf46q31DdIU0wbcUFVlD5IyWbdSNinop4VACP/pPTvUgIysiSqBT5wP
-         /xNUraPx4+VezSh6oRsMdLI9Gdd29TgQdq9jSF6Q=
-Date:   Thu, 15 Nov 2018 09:03:21 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Borislav Petkov <bp@alien8.de>, pr-tracker-bot@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Martin =?iso-8859-1?Q?Hundeb=F8ll?= <martin@geanix.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [GIT PULL] PCI fixes for v4.20
-Message-ID: <20181115150321.GB207836@google.com>
-References: <20181114062010.GA189193@google.com>
- <20181114200003.14496.1490.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
- <20181114201214.GM13926@zn.tnic>
- <20181114201658.GB25069@pure.paranoia.local>
- <20181114214601.GO13926@zn.tnic>
- <20181114222154.GA22445@pure.paranoia.local>
- <20181114224839.GP13926@zn.tnic>
- <20181115071252.GB94998@google.com>
- <20181115075330.GA32162@pure.paranoia.local>
+        by mx1.redhat.com (Postfix) with ESMTPS id E2532308FB94;
+        Thu, 15 Nov 2018 15:04:52 +0000 (UTC)
+Received: from [10.40.204.52] (ovpn-204-52.brq.redhat.com [10.40.204.52])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 2F3905DD78;
+        Thu, 15 Nov 2018 15:04:49 +0000 (UTC)
+Subject: Re: [PATCH] powerpc/numa: fix hot-added CPU on memory-less node
+To:     Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
+Cc:     Michael Ellerman <mpe@ellerman.id.au>,
+        Satheesh Rajendran <satheera@in.ibm.com>,
+        linux-kernel@vger.kernel.org,
+        Michael Bringmann <mwb@linux.vnet.ibm.com>,
+        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org
+References: <20181114170319.24828-1-lvivier@redhat.com>
+ <20181115091948.GA14462@dhcp-9-193-110-205.in.ibm.com>
+From:   Laurent Vivier <lvivier@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=lvivier@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <56649a0c-ea14-62fa-d81e-0d9b9da1d10f@redhat.com>
+Date:   Thu, 15 Nov 2018 16:04:48 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.7.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115075330.GA32162@pure.paranoia.local>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181115091948.GA14462@dhcp-9-193-110-205.in.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 15 Nov 2018 15:04:53 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 02:53:30AM -0500, Konstantin Ryabitsev wrote:
-> On Thu, Nov 15, 2018 at 01:12:53AM -0600, Bjorn Helgaas wrote:
-> > > and I kinda see the point of maybe not having your ssh username in the
-> > > URL. Not that it is a big deal for us, k.org users though.
-> > 
-> > Sorry, I don't understand the problem.  I have this in my .gitconfig:
-> > 
-> >     [url "ssh://git@gitolite.kernel.org"]
-> > 	    insteadOf = https://git.kernel.org
-> > 	    insteadOf = http://git.kernel.org
-> > 	    insteadOf = git://git.kernel.org
-> > 
-> > because I thought that was the recommended way (see the end of
-> > https://korg.wiki.kernel.org/userdoc/gitolite). But that also makes my
-> > request-pull:
-> > 
-> >     $ git request-pull origin/master git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git pci-v4.20-fixes-1
-> > 
-> > generate the ssh URL above.  If I remove the insteadOf stuff from
-> > .gitconfig, request-pull produces this instead:
-> > 
-> >     git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.20-fixes-1
-> > 
-> > I'm happy to do either; just tell me which :)
+On 15/11/2018 10:19, Satheesh Rajendran wrote:
+> On Wed, Nov 14, 2018 at 06:03:19PM +0100, Laurent Vivier wrote:
+>> Trying to hotplug a CPU on an empty NUMA node (without
+>> memory or CPU) crashes the kernel when the CPU is onlined.
+>>
+>> During the onlining process, the kernel calls start_secondary()
+>> that ends by calling
+>> set_numa_mem(local_memory_node(numa_cpu_lookup_table[cpu]))
+>> that relies on NODE_DATA(nid)->node_zonelists and in our case
+>> NODE_DATA(nid) is NULL.
+>>
+>> To fix that, add the same checking as we already have in
+>> find_and_online_cpu_nid(): if NODE_DATA() is NULL, use
+>> the first online node.
+>>
+>> Bug: https://github.com/linuxppc/linux/issues/184
+>> Fixes: ea05ba7c559c8e5a5946c3a94a2a266e9a6680a6
+>>        (powerpc/numa: Ensure nodes initialized for hotplug)
+>> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
+>> ---
+>>  arch/powerpc/mm/numa.c | 9 +++++++++
+>>  1 file changed, 9 insertions(+)
 > 
-> You didn't really do anything wrong. In *general* I prefer to see
-> public URLs if they are sent to public lists, so if you're cc'ing
-> something to LKML, I would generally expect the pull request to have a
-> public URL like https://git.kernel.org/ instead of a private ssh:// URL
-> that is only accessible to people with a kernel.org account.
+> This patch causes regression for cold plug numa case(Case 1) and 
+> hotplug case + reboot(Case 2) with adding all vcpus into node 0.
 > 
-> That's basically all there is to it. It doesn't *really* matter, since
-> Linus is the one who will be merging the actual pull request, and he
-> certainly has access to internal ssh:// URLs. However, in case someone
-> else was interested in reviewing the pull request, it would be more
-> friendly to have a public URL for them.
+> 
+> Env: HW: Power8 Host.
+> Kernel: 4.20-rc2 + this patch
+> 
+> Case 1:
+> 1. boot a guest with 8 vcpus(all available), spreadout in 4 numa nodes.
+> <vcpu placement='static'>8</vcpu>
+> ...
+>    <numa>
+>       <cell id='0' cpus='0-1' memory='4194304' unit='KiB'/>
+>       <cell id='1' cpus='2-3' memory='4194304' unit='KiB'/>
+>       <cell id='2' cpus='4-5' memory='0' unit='KiB'/>
+>       <cell id='3' cpus='6-7' memory='0' unit='KiB'/>
+>     </numa>
+> 
+> 2. Check lscpu --- all vcpus are added to node0 --> NOK
+> 
+> # lscpu
+...
+> NUMA node0 CPU(s):   0-7
+> NUMA node1 CPU(s):   
+> NUMA node2 CPU(s):   
+> NUMA node3 CPU(s): 
+> 
+> without this patch it was working fine.
+> # lscpu
+...
+> NUMA node0 CPU(s):   0,1
+> NUMA node1 CPU(s):   2,3
+> NUMA node2 CPU(s):   4,5
+> NUMA node3 CPU(s):   6,7
+> 
 
-OK, I think I'll remove the insteadOf chunk from my .gitconfig.  Should
-https://korg.wiki.kernel.org/userdoc/gitolite be updated to remove or
-expand that recommendation?  The only reason I added insteadOf in the first
-place was because it sounded like a security improvement.
+Good point. Thank you.
 
-Bjorn
+I'm going to see what happens and how the cold case allows to online
+CPUs on nodes with NODE_DATA() set to NULL (because it's what the patch
+changes).
+
+Thanks,
+Laurent
