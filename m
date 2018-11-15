@@ -2,199 +2,183 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80501C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:40:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5948BC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:41:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3ACBE20818
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:40:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3ACBE20818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 02B0A20818
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:41:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eh6N6bxm"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02B0A20818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388593AbeKPBsn (ORCPT
+        id S2388617AbeKPBuQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:48:43 -0500
-Received: from mga11.intel.com ([192.55.52.93]:48968 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726432AbeKPBsm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 20:48:42 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga003.fm.intel.com ([10.253.24.29])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 07:40:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,236,1539673200"; 
-   d="scan'208";a="96560126"
-Received: from jlpingle-mobl.amr.corp.intel.com (HELO [10.251.6.38]) ([10.251.6.38])
-  by FMSMGA003.fm.intel.com with ESMTP; 15 Nov 2018 07:40:22 -0800
-Subject: Re: [PATCH v3 1/2] x86/fpu: track AVX-512 usage of tasks
-To:     Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
-Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        arjan@linux.intel.com, linux-kernel@vger.kernel.org,
-        Aubrey Li <aubrey.li@linux.intel.com>
-References: <1542236407-4323-1-git-send-email-aubrey.li@intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <6f8a7b97-d889-ce77-b5ad-d03dbf4986b0@intel.com>
-Date:   Thu, 15 Nov 2018 07:40:22 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 15 Nov 2018 20:50:16 -0500
+Received: from mail-pf1-f195.google.com ([209.85.210.195]:33515 "EHLO
+        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbeKPBuP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 20:50:15 -0500
+Received: by mail-pf1-f195.google.com with SMTP id v68-v6so9888785pfk.0;
+        Thu, 15 Nov 2018 07:41:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=Cg6brz7mYbLRhNFEJEtQAETpRuMNOqibtuUBxg6orP4=;
+        b=Eh6N6bxmBaJCmbCwKW3nWNFuf4BU086XyvkfRs4vTvK36lWMY6cUN0FJX1PSYvywPA
+         imnNfFW8NM5MhtB/HlVZZcHG+VZLG6fwdGA8wfvH3nTVvJ65/UEg8XF5sPJgwcMQ+Hcp
+         24J7dBDK4YuAeDF1ME0tMs/isqPAtODXkGF+EuEklxGHrwSqW6x5O9XLDxpRfHpmSSvk
+         Sm1Rl+EzeIHqJmV2GbHPGqlz3EsJ6NJzstXHM7D/kaiWLp1iZCgeJ7SAzbxnhLcdmVAD
+         NANa4oTHJ5p9uJkn4VOq7tq40IfMMMlfkFxDrYrG6YazkS00ehOYAi289jFYFozTT7r6
+         m7Pg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=Cg6brz7mYbLRhNFEJEtQAETpRuMNOqibtuUBxg6orP4=;
+        b=Fa567TI+O1CpU8eoLgDaskr3u+zB+OUMne2Lg1+kX5O33Cti5+e7j0dyPOap/J3frr
+         F1XoC3J2cmi+yz8WbITbSYl3d4V5VJ0fCucPWLb15AuxMSkTb/2KyUDV5K5CbQOH+2FN
+         S6cJ0zjBJAFw+kCg71knVgH3izY2cRQ10o5Xuv0S/plchx7v2WtCp6nyLUX4RyRQ8m/Z
+         Ww1J2ZtUhVMZOIC3iKD5bpMRLNjO3+j5oONL6bSolTU2B2It0haRCm+W26esOOTSRbMl
+         PmGZJV39eCPdXF63Y35aovG7dBaLPuFnErbyF3VwBrzkTiDa5xsYJt/A8UASMdLhKaXa
+         YdOA==
+X-Gm-Message-State: AGRZ1gIGczk05TotICf1j32ASmp2qFlAF8EOIWFGlwBjDOM+p0fwEH2c
+        YVadhRST5mf9/HkbOjgYriLTcKYSPKs=
+X-Google-Smtp-Source: AJdET5c/4IUsmJbAFLjrppekHCGzB7YBq4feZP6VdbGvFFyn78AfrEs+pTt1JsSRVIRjujxms+LN6A==
+X-Received: by 2002:a63:5153:: with SMTP id r19mr6195032pgl.281.1542296514745;
+        Thu, 15 Nov 2018 07:41:54 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([103.227.97.233])
+        by smtp.gmail.com with ESMTPSA id u127-v6sm28519773pfb.47.2018.11.15.07.41.52
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 15 Nov 2018 07:41:53 -0800 (PST)
+Date:   Thu, 15 Nov 2018 21:15:30 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, vbabka@suse.cz, riel@surriel.com,
+        sfr@canb.auug.org.au, rppt@linux.vnet.ibm.com,
+        peterz@infradead.org, linux@armlinux.org.uk, robin.murphy@arm.com,
+        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
+        m.szyprowski@samsung.com, stefanr@s5r6.in-berlin.de,
+        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, kyungmin.park@samsung.com, mchehab@kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Subject: [PATCH 1/9] mm: Introduce new vm_insert_range API
+Message-ID: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-In-Reply-To: <1542236407-4323-1-git-send-email-aubrey.li@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/14/18 3:00 PM, Aubrey Li wrote:
-> AVX-512 component has 3 states, only Hi16_ZMM state causes notable
-> frequency drop. Add per task Hi16_ZMM state tracking to context switch.
+Previouly drivers have their own way of mapping range of
+kernel pages/memory into user vma and this was done by
+invoking vm_insert_page() within a loop.
 
-Just curious, but is there any public documentation of this?  It seems
-really odd to me that something using the same AVX-512 instructions on
-some low-numbered registers would behave differently than the same
-instructions on some high-numbered registers.  I'm not saying this is
-wrong, but it's certainly counter-intuitive and I think that begs for
-some more explanation.
+As this pattern is common across different drivers, it can
+be generalized by creating a new function and use it across
+the drivers.
 
-> The tracking turns on the usage flag immediately, but requires 3
-> consecutive context switches with no usage to clear it. This decay is
-> required because of AVX-512 using tasks could set Hi16_ZMM state back
-> to the init state themselves.
+vm_insert_range is the new API which will be used to map a
+range of kernel memory/pages to user vma.
 
-It would be nice to not assume that folks reading this changelog know
-what XSAVE 'init states' are.  In fact, that comment you have in the
-function below would be great here, but probably shouldn't be in the
-comment.
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+Reviewed-by: Matthew Wilcox <willy@infradead.org>
+---
+ include/linux/mm_types.h |  3 +++
+ mm/memory.c              | 28 ++++++++++++++++++++++++++++
+ mm/nommu.c               |  7 +++++++
+ 3 files changed, 38 insertions(+)
 
-I would say it even more strongly than that:  Part of the best practices
-for using AVX-512 is to use the VZEROUPPER instruction to zero out some
-state when the AVX-512 operation is finished.  Unlike all the other FPU
-and AVX state before it,  this means that the Hi16_ZMM is expected to
-frequently transition back to the "init state" in normal use.  This
-might cause this detection mechanism to frequently miss tasks that
-actually use AVX-512.  To fix that, add a decay.
-
-> Signed-off-by: Aubrey Li <aubrey.li@linux.intel.com>
-> Cc: Peter Zijlstra <peterz@infradead.org>
-> Cc: Andi Kleen <ak@linux.intel.com>
-> Cc: Tim Chen <tim.c.chen@linux.intel.com>
-> Cc: Dave Hansen <dave.hansen@intel.com>
-> Cc: Arjan van de Ven <arjan@linux.intel.com>
-> ---
->  arch/x86/include/asm/fpu/internal.h | 26 ++++++++++++++++++++++++++
->  arch/x86/include/asm/fpu/types.h    |  9 +++++++++
->  2 files changed, 35 insertions(+)
-> 
-> diff --git a/arch/x86/include/asm/fpu/internal.h b/arch/x86/include/asm/fpu/internal.h
-> index a38bf5a..f382449 100644
-> --- a/arch/x86/include/asm/fpu/internal.h
-> +++ b/arch/x86/include/asm/fpu/internal.h
-> @@ -275,6 +275,31 @@ static inline void copy_fxregs_to_kernel(struct fpu *fpu)
->  		     : "D" (st), "m" (*st), "a" (lmask), "d" (hmask)	\
->  		     : "memory")
->  
-> +#define	HI16ZMM_STATE_DECAY_COUNT	3
-> +/*
-> + * This function is called during context switch to update Hi16_ZMM state
-> + */
-> +static inline void update_hi16zmm_state(struct fpu *fpu)
-> +{
-> +	/*
-> +	 * XSAVE header contains a state-component bitmap(xfeatures),
-> +	 * which allows software to discover the state of the init
-> +	 * optimization used by XSAVEOPT and XSAVES.
-
-I don't think we need the XSAVE background here.  Can you put this in
-the changelog?
-
-> +	 * Hi16_ZMM state(one state of AVX-512 component) is tracked here
-> +	 * because its usage could cause notable core turbo frequency drop.
-
-I'd leave just this part of the comment.
-
-> +	 * AVX512-using tasks could set Hi16_ZMM state back to the init
-> +	 * state themselves. Thus, this tracking mechanism can miss.
-
-Can you make this a stronger statement, just like the changelog?
-
-> +	 * The decay usage ensures that false-negatives do not immediately
-> +	 * make a task be considered as not using Hi16_ZMM registers.
-> +	 */
-
-To ensure that false-negatives do not immediately show up, decay the
-usage count over time.
-
-
-> +	 *
-> +	 * Records the usage of the upper 16 AVX512 registers: ZMM16-ZMM31.
-> +	 * A value of non-zero is used to indicate whether there is valid
-> +	 * state in these AVX512 registers.
-> +	 */
-
-> 
->  	/*
-> +	 * @hi16zmm_usage:
-> +	 *
-> +	 * Records the usage of the upper 16 AVX512 registers: ZMM16-ZMM31.
-> +	 * A value of non-zero is used to indicate whether there is valid
-> +	 * state in these AVX512 registers.
-> +	 */
-> +	unsigned char			hi16zmm_usage;
-> +
-
-Nit: With the decay, this does not indicate register state.  It
-indicates whether the registers recently had state.
-
+diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+index 5ed8f62..15ae24f 100644
+--- a/include/linux/mm_types.h
++++ b/include/linux/mm_types.h
+@@ -523,6 +523,9 @@ extern void tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+ extern void tlb_finish_mmu(struct mmu_gather *tlb,
+ 				unsigned long start, unsigned long end);
+ 
++int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
++			struct page **pages, unsigned long page_count);
++
+ static inline void init_tlb_flush_pending(struct mm_struct *mm)
+ {
+ 	atomic_set(&mm->tlb_flush_pending, 0);
+diff --git a/mm/memory.c b/mm/memory.c
+index 15c417e..da904ed 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -1478,6 +1478,34 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+ }
+ 
+ /**
++ * vm_insert_range - insert range of kernel pages into user vma
++ * @vma: user vma to map to
++ * @addr: target user address of this page
++ * @pages: pointer to array of source kernel pages
++ * @page_count: no. of pages need to insert into user vma
++ *
++ * This allows drivers to insert range of kernel pages they've allocated
++ * into a user vma. This is a generic function which drivers can use
++ * rather than using their own way of mapping range of kernel pages into
++ * user vma.
++ */
++int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
++			struct page **pages, unsigned long page_count)
++{
++	unsigned long uaddr = addr;
++	int ret = 0, i;
++
++	for (i = 0; i < page_count; i++) {
++		ret = vm_insert_page(vma, uaddr, pages[i]);
++		if (ret < 0)
++			return ret;
++		uaddr += PAGE_SIZE;
++	}
++
++	return ret;
++}
++
++/**
+  * vm_insert_page - insert single page into user vma
+  * @vma: user vma to map to
+  * @addr: target user address of this page
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 749276b..d6ef5c7 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -473,6 +473,13 @@ int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
+ }
+ EXPORT_SYMBOL(vm_insert_page);
+ 
++int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
++			struct page **pages, unsigned long page_count)
++{
++	return -EINVAL;
++}
++EXPORT_SYMBOL(vm_insert_range);
++
+ /*
+  *  sys_brk() for the most part doesn't need the global kernel
+  *  lock, except when an application is doing something nasty
+-- 
+1.9.1
 
