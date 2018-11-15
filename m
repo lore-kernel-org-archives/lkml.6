@@ -2,111 +2,118 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F4F3C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:58:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1137C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:59:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D05A7223DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:58:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93E2D2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:59:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="q3J1IHYe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D05A7223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="SEk+Wt4W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E2D2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388527AbeKPBGV (ORCPT
+        id S2388355AbeKPBHS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:06:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:58374 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387548AbeKPBGV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 20:06:21 -0500
-Received: from localhost (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 36C002145D;
-        Thu, 15 Nov 2018 14:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542293890;
-        bh=VokujUKX9Uj+3nRbl7Hsy9LqlYu2KzRwkugAMRGo460=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=q3J1IHYe7XI7Bo8+2X/StayqzKr872Hf1re+gu7WzgqxKy0TaDK236UlTheO9BTTS
-         BT8Axdx7Szy6U4p7CkJrSS9SkjntnIoiT1xkacTLJdbYJfVnfagKl/VUw+X0QfNkKU
-         ev288S3yq1c1OmMiZ1ZPKTE6DTgFiXs6X9izblvM=
-Date:   Thu, 15 Nov 2018 08:58:09 -0600
-From:   Bjorn Helgaas <helgaas@kernel.org>
-To:     Kai Heng Feng <kai.heng.feng@canonical.com>
-Cc:     AceLan Kao <acelan.kao@canonical.com>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] pci: prevent sk hynix nvme from entering D3
-Message-ID: <20181115145809.GA207836@google.com>
-References: <20181106071214.12745-1-acelan.kao@canonical.com>
- <20181109002157.GK41183@google.com>
- <B21C5A96-AB21-4405-BBF1-9AD343425CA9@canonical.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+        Thu, 15 Nov 2018 20:07:18 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:44146 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726185AbeKPBHR (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 20:07:17 -0500
+Received: by mail-pf1-f193.google.com with SMTP id b81-v6so9323236pfe.11
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 06:59:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=24JG3cUKzQWrcKQyIOLhenCWTe3cRMt7frjOX9/e/2U=;
+        b=SEk+Wt4WCYLIr1NCgAvQlQB97RcZg4cCG5VKofuQ3NE1+GDriRyCBm/xgY+uLLsnt2
+         IO+miovqipaPJ2Hz3fT2L5KXCc6HYr1rWAM7JtRQe0h0SiGBSwbIWrXnmgZiKGJaXPJy
+         aiEybmsg95bXcrBeKNwMdfbZta+v3nz8zQsSJeeGJ0K523T0hSGV1EHGsyYBzOIksaIE
+         g/WvFh6LrnAco18uNvzDAJVEJkc7eD9dB7Wn9fjjUEdjjWChOOoi0L4LFj2zOa8I3a10
+         gnq+msRduQHYJnildlvMAXEMIVxTEwGqYFcalh4RutEev7g2feee3Y8GTvmJEQhiYG/g
+         xCVw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=24JG3cUKzQWrcKQyIOLhenCWTe3cRMt7frjOX9/e/2U=;
+        b=sIC6XaTuhgkD2IzLXm6SHAnvkSoPdPztgN5id2ugYk3VvjcfjW57HWbvbHLdPht8RB
+         qzOnK9+4pAnOIDPs6HJ3AmVfM0jzv5ZL0ipl70yLZrSJEIg/xNkCc/ELRilhAlUN6b1m
+         11ltGEm6Awwkc/CHE1u773fgqlVGz3Dazh4tQMcz/IQtqp3U8deupMKC6SyxFWRQc3Wx
+         F84futy+5iiT5GPtKnnstuTAtRO0uLjag1cVl1QMVOlbnIdVI7T4tEzrImR8EMcsvmiU
+         xrCXc/z0HrWAzELs3aH3DWKveETQ197gArBWnfgorBDwH2hd3Sl672nqFFACwEcFV2Bw
+         4X2g==
+X-Gm-Message-State: AGRZ1gItMR5WIT1Vwk00W8Mthv3tTFsEJyDJlqUgADi/s0vlCL3VACBV
+        AIeg+hmyt3j/HYnwOsQwM0WJkw==
+X-Google-Smtp-Source: AJdET5fikEuezpg+8evxWbxaEoQI4neyR57oXZ0MoazVwAMbfZoTNas87zquQZ6VLDC/WpZ0imazwg==
+X-Received: by 2002:a63:af45:: with SMTP id s5-v6mr6101120pgo.125.1542293946495;
+        Thu, 15 Nov 2018 06:59:06 -0800 (PST)
+Received: from localhost ([64.114.255.114])
+        by smtp.gmail.com with ESMTPSA id g5sm23690020pgu.57.2018.11.15.06.59.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 06:59:05 -0800 (PST)
+Date:   Thu, 15 Nov 2018 06:59:05 -0800 (PST)
+X-Google-Original-Date: Wed, 14 Nov 2018 16:50:43 PST (-0800)
+Subject:     Re: [PATCH] RISC-V: Fix raw_copy_{to,from}_user()
+In-Reply-To: <20181115002755.24195-1-olof@lixom.net>
+CC:     aou@eecs.berkeley.edu, linux-riscv@lists.infradead.org,
+        linux-kernel@vger.kernel.org, Olof Johansson <olof@lixom.net>
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Olof Johansson <olof@lixom.net>
+Message-ID: <mhng-4c28d7f1-e034-4506-9ace-40fc2abd1668@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <B21C5A96-AB21-4405-BBF1-9AD343425CA9@canonical.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 03:16:29PM +0800, Kai Heng Feng wrote:
-> > On Nov 9, 2018, at 08:21, Bjorn Helgaas <helgaas@kernel.org> wrote:
-> > On Tue, Nov 06, 2018 at 03:12:13PM +0800, AceLan Kao wrote:
-> >> It leads to the power consumption raises to 2.2W during s2idle, while
-> >> it consumes less than 1W during long idle if put SK hynix nvme to D3
-> >> and then enter s2idle.
-> >> From SK hynix FE, MS Windows doesn't put nvme to D3, and uses its own
-> >> APST feature to do the power management.
-> >> To leverage its APST feature during s2idle, we can't disable nvme
-> >> device while suspending, too.
-> 
-> We have a new Intel NVMe [8086:f1a6] that has this “new” behavior.
-> 
-> > I don't know how APST works, but it sounds like you want to disable D3
-> > if you're using APST.  But that's not what this patch does; this
-> > disables it always.
-> 
-> Ok, will work on a new patch that only disables D3 when APST is enabled.
+On Wed, 14 Nov 2018 16:27:55 PST (-0800), Olof Johansson wrote:
+> Sparse highlighted it, and appears to be a pure bug (from vs to).
+>
+> ./arch/riscv/include/asm/uaccess.h:403:35: warning: incorrect type in argument 1 (different address spaces)
+> ./arch/riscv/include/asm/uaccess.h:403:39: warning: incorrect type in argument 2 (different address spaces)
+> ./arch/riscv/include/asm/uaccess.h:409:37: warning: incorrect type in argument 1 (different address spaces)
+> ./arch/riscv/include/asm/uaccess.h:409:41: warning: incorrect type in argument 2 (different address spaces)
+>
+> Signed-off-by: Olof Johansson <olof@lixom.net>
+> ---
+>  arch/riscv/include/asm/uaccess.h | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/riscv/include/asm/uaccess.h b/arch/riscv/include/asm/uaccess.h
+> index 473cfc84e412f..8c3e3e3c8be12 100644
+> --- a/arch/riscv/include/asm/uaccess.h
+> +++ b/arch/riscv/include/asm/uaccess.h
+> @@ -400,13 +400,13 @@ extern unsigned long __must_check __asm_copy_from_user(void *to,
+>  static inline unsigned long
+>  raw_copy_from_user(void *to, const void __user *from, unsigned long n)
+>  {
+> -	return __asm_copy_to_user(to, from, n);
+> +	return __asm_copy_from_user(to, from, n);
+>  }
+>
+>  static inline unsigned long
+>  raw_copy_to_user(void __user *to, const void *from, unsigned long n)
+>  {
+> -	return __asm_copy_from_user(to, from, n);
+> +	return __asm_copy_to_user(to, from, n);
+>  }
+>
+>  extern long strncpy_from_user(char *dest, const char __user *src, long count);
 
-My comment was that the changelog didn't match the code.  I don't know
-which one is wrong, so I wasn't trying to suggest that you change the
-code.  If the code is right and the changelog is wrong, just change
-the changelog.
+Oh, no idea how I missed that one.  This looks like it's been in for a long 
+time, so I'm surprised anything works at all!
 
-> > I'm not sure we want a quirk for this at all, since as Christoph
-> > points out, it doesn't fix a functional issue as the other uses of
-> > quirk_no_ata_d3() do.
-> > 
-> > From your emails with Christoph, it sounds like this quirk is a
-> > workaround for a firmware defect.  If we *do* end up wanting a quirk,
-> > the changelog should at least mention the firmware defect and maybe
-> > check whether it has been fixed.
-> 
-> According to SK Hynix folks and new evidence on the new Intel NVMe
-> we have, this is something we are going to see more often.
+I'm going to add a stable CC and PR this to Linus this week, assuming I get 
+some time to at least give it a minimal test.
 
-Hmmm, are you suggesting that if we went this quirk route, we'd be
-updating the quirk frequently to add new devices?
-
-I'm opposed to that as a strategy because it makes needless work.  You
-have to update the quirk, backport it to older kernels, re-release
-distro kernels, etc.
-
-If this situation is going to happen frequently, it would be better to
-(a) fix the firmware defect (if that's what this is) or (b) pursue
-some APST or other spec change so there's a generic documented way to
-handle this without requiring device-specific quirks.
-
-Bjorn
+Thanks for catching this!
