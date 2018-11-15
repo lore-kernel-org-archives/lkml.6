@@ -3,101 +3,109 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BC697C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:22:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7CDADC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:25:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8E2FD20869
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:22:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E2FD20869
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4EF6E20869
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:25:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4EF6E20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387707AbeKOU37 (ORCPT
+        id S2387590AbeKOUc7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 15:29:59 -0500
-Received: from mga01.intel.com ([192.55.52.88]:53917 "EHLO mga01.intel.com"
+        Thu, 15 Nov 2018 15:32:59 -0500
+Received: from foss.arm.com ([217.140.101.70]:59576 "EHLO foss.arm.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728757AbeKOU37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 15:29:59 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 02:22:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,236,1539673200"; 
-   d="scan'208";a="100447495"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga003.jf.intel.com with SMTP; 15 Nov 2018 02:22:39 -0800
-Received: by lahna (sSMTP sendmail emulation); Thu, 15 Nov 2018 12:22:39 +0200
-Date:   Thu, 15 Nov 2018 12:22:39 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-Cc:     Lukas Wunner <lukas@wunner.de>, iommu@lists.linux-foundation.org,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Jacob jun Pan <jacob.jun.pan@intel.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Christian Kellner <ckellner@redhat.com>,
-        Mario.Limonciello@dell.com,
-        Anthony Wong <anthony.wong@canonical.com>,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
-Message-ID: <20181115102239.GU2500@lahna.fi.intel.com>
-References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
- <20181112160628.86620-2-mika.westerberg@linux.intel.com>
- <20181112180203.lx72gjfplb6xlur7@wunner.de>
- <20181113105636.GB11202@e107981-ln.cambridge.arm.com>
- <20181113112700.GT2500@lahna.fi.intel.com>
- <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
+        id S1728801AbeKOUc7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 15:32:59 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D716A80D;
+        Thu, 15 Nov 2018 02:25:44 -0800 (PST)
+Received: from e103592.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 348FF3F718;
+        Thu, 15 Nov 2018 02:25:42 -0800 (PST)
+Date:   Thu, 15 Nov 2018 10:25:39 +0000
+From:   Dave Martin <Dave.Martin@arm.com>
+To:     Will Deacon <will.deacon@arm.com>
+Cc:     Catalin Marinas <catalin.marinas@arm.com>,
+        linux-arch@vger.kernel.org, Jacob Bramley <jacob.bramley@arm.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        linux-kernel@vger.kernel.org, Adam Wallis <awallis@codeaurora.org>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        gorcunov@openvz.org,
+        Ramana Radhakrishnan <ramana.radhakrishnan@arm.com>,
+        Amit Kachhap <Amit.Kachhap@arm.com>,
+        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
+        Kees Cook <keescook@chromium.org>
+Subject: Re: [PATCH v5 07/17] arm64: add basic pointer authentication support
+Message-ID: <20181115102537.GL3505@e103592.cambridge.arm.com>
+References: <20181005084754.20950-1-kristina.martsenko@arm.com>
+ <20181005084754.20950-8-kristina.martsenko@arm.com>
+ <20181019111542.6wrvjguirglzg7vg@mbp>
+ <20181019112404.GD14246@arm.com>
+ <20181114181138.GB2580@brain-police>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181114181138.GB2580@brain-police>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 11:45:36AM +0000, Lorenzo Pieralisi wrote:
-> On Tue, Nov 13, 2018 at 01:27:00PM +0200, Mika Westerberg wrote:
-> 
-> [...]
-> 
-> > > To be frank the concept (and Microsoft _DSD bindings) seems a bit vague
-> > > and not thoroughly defined and I would question its detection at
-> > > PCI/ACPI core level, I would hope this can be clarified at ACPI
-> > > specification level, at least.
+On Wed, Nov 14, 2018 at 06:11:39PM +0000, Will Deacon wrote:
+
+[...]
+
+> On Fri, Oct 19, 2018 at 12:24:04PM +0100, Will Deacon wrote:
+
+[...]
+
+> > FWIW: I think we should be entertaining a prctl() interface to use a new
+> > key on a per-thread basis. Obviously, this would need to be used with care
+> > (e.g. you'd fork(); use the prctl() and then you'd better not return from
+> > the calling function!).
 > > 
-> > I guess that is the way they envision to use _DSD. Instead of having
-> > single UUID that covers all properties (like what we have with device
-> > properties) they have one UUID per property "class". I certainly hope we
-> > don't need to keep extending prp_guids[] array each time they invent
-> > another "class" of properties.
+> > Assuming we want this (Kees -- I was under the impression that everything in
+> > Android would end up with the same key otherwise?), then the question is
+> > do we want:
+> > 
+> >   - prctl() get/set operations for the key, or
+> >   - prctl() set_random_key operation, or
+> >   - both of the above?
+> > 
+> > Part of the answer to that may lie in the requirements of CRIU, where I
+> > strongly suspect they need explicit get/set operations, although these
+> > could be gated on CONFIG_CHECKPOINT_RESTORE=y.
 > 
-> It is even worse than that. This is a unilateral/obscure change that
-> won't be part of ACPI specifications (I guess it was easier to add a
-> UUID than add this to the ACPI specifications through the AWSG) but it
-> is still supposed to be applicable to ACPI PCI bindings on any
-> platforms/arches; this way of adding bindings does not work and it
-> has to be rectified.
+> I managed to speak to the CRIU developers at LPC. The good news is that
+> their preference is for a ptrace()-based interface for getting and setting
+> the keys, so the only prctl() operation we need is to set a random key
+> (separately for A and B).
 
-I agree.
+That's good if it works for them, and it seems the cleaner approach.
 
-For the existing property "classes" such as the one here I don't think
-we can do anything. There are systems already with these included in
-their ACPI tables.
+_If_ they run the new thread up to a checkpoint, restoring the memory
+and doing all the setup that requires in-thread syscalls, then stop it
+in ptrace to finally inject the regs, then it makes sense to set the
+keys at that stop -- i.e., you set the keys atomically* with the final
+setting of the thread's PC.
 
-I wonder if you have any objections regarding this patch?
+(* with respect to the target thread)
+
+So long as you're confident they've understood the implications of
+ptrauth for CRIU, I guess this can work.
+
+
+(In other news, they will also need to do some work to support SVE, but
+that's unrelated to ptrauth.)
+
+Cheers
+---Dave
