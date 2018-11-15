@@ -6,57 +6,57 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E5EFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:51:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E2486C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:53:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D4C272146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:51:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D4C272146D
+	by mail.kernel.org (Postfix) with ESMTP id ADAE42086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:53:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADAE42086B
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388635AbeKPB7r (ORCPT
+        id S2388437AbeKPCB5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:59:47 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:45864 "EHLO
+        Thu, 15 Nov 2018 21:01:57 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:38568 "EHLO
         mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388019AbeKPB7r (ORCPT
+        with ESMTP id S2388019AbeKPCB4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 20:59:47 -0500
-Received: by mail-ed1-f67.google.com with SMTP id d39so13839878edb.12;
-        Thu, 15 Nov 2018 07:51:23 -0800 (PST)
+        Thu, 15 Nov 2018 21:01:56 -0500
+Received: by mail-ed1-f67.google.com with SMTP id a2-v6so17128010edi.5;
+        Thu, 15 Nov 2018 07:53:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=5zpbH4Yb2tTnV4ez0Ft4yAoZB0DDvh788w7IAt4lqJ4=;
-        b=cDuM1jHl/hC97Z3OKlY1z36koLiR5c8KIbm3ajJ9QyrkvzZno1WWLAbqyoZNmPRHf7
-         RzWYkFtHeMybzE3ibKDvcwwPVzvTMN4eRIVcGn/BpLdH1bOEnbwmUmmqdEZpIKFPFxbn
-         g8GVRFnh75I/w7FS0niiDvxQyykJZ5Jyz6VvAZuSHGyZ0C1K6GJ6fd4mI2hdN15wt9wc
-         m9Il+V3UjWrJYyi5OXkoWgs3LyHcroqoHwiMTUzwuq7ijcBN7wJavEorcLOHc2Itxvbh
-         8MkadhkVPnY3HEg7wXxPqr0p88kVTgeKJfh/A9N05iM91w6F0BSUmvYfigqFL9OR8kU2
-         ji7w==
-X-Gm-Message-State: AGRZ1gLhTqBf7DqfV5xPRxrW8btP3NOZx7DZibCXWk6F1TDa0E/PkN3J
-        Cxux16M/PWpbbZvJNh52kjJTNw5qD4Y=
-X-Google-Smtp-Source: AJdET5ev8ckldGsF2MrdeaiUO1jRUmXxdIbdAAD0mFGBdmzcWDJDC2HfUNLpbQ5aMWBYn+OnPIPz9A==
-X-Received: by 2002:a05:6402:1347:: with SMTP id y7mr6322216edw.114.1542297082614;
-        Thu, 15 Nov 2018 07:51:22 -0800 (PST)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com. [209.85.221.42])
-        by smtp.gmail.com with ESMTPSA id c38sm4449128edb.15.2018.11.15.07.51.22
+        bh=5kelFFckd1xIAuSP72j37DURaRioIXquCJ6W4bnoWbg=;
+        b=U+y6AoXc+MPcF5L5Msdy1XCEVghGSM5suuUOLoJglYV38cHUajz1CT8gJr9/890h3u
+         sRXBNA9HwUFxhmaEKNPDqXCgoaPQsHBzJEB20b+mVoTcudRr1rf/0iBX7d0YPGar6K/4
+         hCxOy6bibgN+Tws8D/GvZeSkVSIEbpzsPPkiPHe9H89eoIadLcgs6j+st9F4IYLpGmYR
+         kFUwoEyhQbs/Kck3o5kavH9m1R+b3iu/3jYPrZuZ9WTvkQyx+EqummLhjBru9hK9SELQ
+         Qet3H0KfRpb4SoPNfap2/tSnIVZQIHtq/uT35DKRIo+fsaksp/fnXmabshA2HA+w9Vb2
+         DCfg==
+X-Gm-Message-State: AGRZ1gKw8SjPq46zCmBQIPx2Tjt5gXR+wuDa0Rsf2SlukBWzItEFw63n
+        sX3Ee5/88qp7RCODM0+g74o/Sn4Devo=
+X-Google-Smtp-Source: AJdET5fwCY+cs8IJUDLCshKwedtEM0xhxeB7guwwWvhfxBVWJfgAJi1Qv5qZHqWUkOUWuZIp30Y+cA==
+X-Received: by 2002:a50:998c:: with SMTP id m12-v6mr6364504edb.7.1542297211799;
+        Thu, 15 Nov 2018 07:53:31 -0800 (PST)
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com. [209.85.128.51])
+        by smtp.gmail.com with ESMTPSA id x35-v6sm7910585edb.24.2018.11.15.07.53.30
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 07:51:22 -0800 (PST)
-Received: by mail-wr1-f42.google.com with SMTP id j26-v6so21743594wre.1;
-        Thu, 15 Nov 2018 07:51:22 -0800 (PST)
-X-Received: by 2002:adf:a599:: with SMTP id g25-v6mr6541029wrc.188.1542297081716;
- Thu, 15 Nov 2018 07:51:21 -0800 (PST)
+        Thu, 15 Nov 2018 07:53:30 -0800 (PST)
+Received: by mail-wm1-f51.google.com with SMTP id p2-v6so18372194wmc.2;
+        Thu, 15 Nov 2018 07:53:30 -0800 (PST)
+X-Received: by 2002:a1c:9f01:: with SMTP id i1-v6mr5577531wme.8.1542297210182;
+ Thu, 15 Nov 2018 07:53:30 -0800 (PST)
 MIME-Version: 1.0
-References: <20181115145013.3378-1-paul.kocialkowski@bootlin.com> <20181115145013.3378-4-paul.kocialkowski@bootlin.com>
-In-Reply-To: <20181115145013.3378-4-paul.kocialkowski@bootlin.com>
+References: <20181115145013.3378-1-paul.kocialkowski@bootlin.com> <20181115145013.3378-5-paul.kocialkowski@bootlin.com>
+In-Reply-To: <20181115145013.3378-5-paul.kocialkowski@bootlin.com>
 From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 15 Nov 2018 23:51:12 +0800
-X-Gmail-Original-Message-ID: <CAGb2v66jEqqYA8-96GzguE_=PZribEDaMXxrYupTQdwjPkmBRQ@mail.gmail.com>
-Message-ID: <CAGb2v66jEqqYA8-96GzguE_=PZribEDaMXxrYupTQdwjPkmBRQ@mail.gmail.com>
-Subject: Re: [PATCH 03/15] ARM: dts: sun8i-h3: Fix the system-control register range
+Date:   Thu, 15 Nov 2018 23:53:21 +0800
+X-Gmail-Original-Message-ID: <CAGb2v67QgaeAMPrPagHnn9+gw2hsY7z=pA4bgOg=wSbEnG86Dw@mail.gmail.com>
+Message-ID: <CAGb2v67QgaeAMPrPagHnn9+gw2hsY7z=pA4bgOg=wSbEnG86Dw@mail.gmail.com>
+Subject: Re: [PATCH 04/15] soc: sunxi: sram: Enable EMAC clock access for H3 variant
 To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
         devicetree <devicetree@vger.kernel.org>,
@@ -80,15 +80,13 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Thu, Nov 15, 2018 at 10:50 PM Paul Kocialkowski
 <paul.kocialkowski@bootlin.com> wrote:
 >
-> Unlike in previous generations, the system-control register range is not
-> limited to a size of 0x30 on the H3. In particular, the EMAC clock
-> configuration register (accessed through syscon) is at offset 0x30 in
-> that range.
+> Just like the A64 and H5, the H3 SoC uses the system control block
+> to enable the EMAC clock.
 >
-> Extend the register size to its full range (0x1000) as a result.
+> Add a variant structure definition for the H3 and use it over the A10
+> one. This will allow using the H3-specific binding for the syscon node
+> attached to the EMAC instead of the generic syscon binding.
 >
 > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-Other than the subject format,
-
-Acked-by: Chen-Yu Tsai <wens@csie.org>
+Reviewed-by: Chen-Yu Tsai <wens@csie.org>
