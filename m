@@ -2,201 +2,128 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7FDAFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:53:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BB35C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:53:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3957F21780
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:53:37 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UQD3Q2jS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3957F21780
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id C38E7223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:53:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C38E7223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387611AbeKOUAl (ORCPT
+        id S2387779AbeKOUA6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 15:00:41 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:45854 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728699AbeKOUAl (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 15:00:41 -0500
-Received: by mail-wr1-f67.google.com with SMTP id k15-v6so20430730wre.12
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 01:53:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=+dWf1/cybYH9Uzg4HwdijekvX5EolKfnz5DYANY4zdw=;
-        b=UQD3Q2jS6uPfU2vXqpYTQW39KDdvhAmjsJ6mNaHQ1vHmoi1OA+iK5NmrR5XfebNgkA
-         OzyUqhsBRAtD5eFqf2tBp2nsU0pKb4VOTmQz0u3ICYmnQ3AmkOyHxQcCieS9GjceEW6V
-         JCXDk+jnQluYs4XkD5Ldgl8eeBnZhlOJZ+WsPhx96JL1biKO7gxewG6rYcRw0NrF+Gv/
-         l1evmUIIYd7CoUmFSKy57vigMkMBcWtZFukaCYbVZE/kIQ4RC3+CG3uzGLxVfGvVhZJ5
-         kegy3u10rO91CVlAglZSyb34CxEcly4VtELBJS75HffRmO43Bji1cxdWFmIs4n+ivK9s
-         wYZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=+dWf1/cybYH9Uzg4HwdijekvX5EolKfnz5DYANY4zdw=;
-        b=TOGKEVxE7vzZrjpoT1w9i/1Bzh8YJpyz2WUhMW24KrhPN3Gar2aCTMGFPZc6HvbZ4i
-         71PrDaDa6Lt7B6nVLCM6yoBsX3eYCCsDb+No3c/TIleoGtsrTsq4GbS57UQ5I9oc2kfq
-         Zfx1I7n6JbXfetzEzpclOzN2f5jHUdS4jhufZgtprfZneAO30tn+49NvuKHTOfDvdgIN
-         XaQiq+uTiTpXMPZ+fkc03kddCwHFkdubyvIQ3+5Xl4M4UfjlvhPezsoILMB6/0IjTgBI
-         VEp4jmnAJLxTVXpGLbC/MF4JbChvJcSzE4D2IubttXpSByJz4g+wUHyUC7wP0pjNwY0a
-         u+WA==
-X-Gm-Message-State: AGRZ1gKnLAvJxp27AlmUreqEsDcFD+VF2bn640rwge8nVnRKmNC//s5h
-        85FZRvrNrhvpd6ZgrSBK3AgLzA==
-X-Google-Smtp-Source: AJdET5eJsnEkHyTv3gNjHKE5lgO5FwzXDvh6Bs9z9OSBTy+nIHCxOKPG6UpXU9izjF8Clgo3TWBGnw==
-X-Received: by 2002:a5d:4609:: with SMTP id t9-v6mr5254025wrq.198.1542275612889;
-        Thu, 15 Nov 2018 01:53:32 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id f18-v6sm21984772wre.57.2018.11.15.01.53.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 01:53:32 -0800 (PST)
-Message-ID: <a27625d70e7061e0ee380230755449a1d34c55fb.camel@baylibre.com>
-Subject: Re: [RFC v1 1/7] clk: meson: meson8b: run from the XTAL when
- changing the CPU frequency
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        narmstrong@baylibre.com
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-Date:   Thu, 15 Nov 2018 10:53:30 +0100
-In-Reply-To: <20181114225725.2821-2-martin.blumenstingl@googlemail.com>
-References: <20181114225725.2821-1-martin.blumenstingl@googlemail.com>
-         <20181114225725.2821-2-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
+        Thu, 15 Nov 2018 15:00:58 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44140 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728634AbeKOUA6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 15:00:58 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 18C4E30A6941;
+        Thu, 15 Nov 2018 09:53:52 +0000 (UTC)
+Received: from [10.36.117.224] (ovpn-117-224.ams2.redhat.com [10.36.117.224])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 7A8DC19744;
+        Thu, 15 Nov 2018 09:53:46 +0000 (UTC)
+Subject: Re: Memory hotplug softlock issue
+To:     Baoquan He <bhe@redhat.com>
+Cc:     Michal Hocko <mhocko@kernel.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        aarcange@redhat.com
+References: <20181114070909.GB2653@MiWiFi-R3L-srv>
+ <5a6c6d6b-ebcd-8bfa-d6e0-4312bfe86586@redhat.com>
+ <20181114090134.GG23419@dhcp22.suse.cz>
+ <20181114145250.GE2653@MiWiFi-R3L-srv>
+ <20181114150029.GY23419@dhcp22.suse.cz>
+ <20181115051034.GK2653@MiWiFi-R3L-srv>
+ <20181115073052.GA23831@dhcp22.suse.cz>
+ <20181115075349.GL2653@MiWiFi-R3L-srv>
+ <20181115083055.GD23831@dhcp22.suse.cz>
+ <a1d4aa33-5c6d-1a6d-1426-46b2cebbf57e@redhat.com>
+ <20181115095225.GO2653@MiWiFi-R3L-srv>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <d5ae825a-90ed-b7e2-ee71-e18c87c83d1a@redhat.com>
+Date:   Thu, 15 Nov 2018 10:53:40 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181115095225.GO2653@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 15 Nov 2018 09:53:52 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-14 at 23:57 +0100, Martin Blumenstingl wrote:
-> Changing the CPU clock requires changing various clocks including the
-> SYS PLL. The existing meson clk-pll and clk-regmap drivers can change
-> all of the relevant clocks already.
-> However, changing for exampe the SYS PLL is problematic because as long
-> as the CPU is running off a clock derived from SYS PLL changing the
-> latter results in a full system lockup.
-> Fix this system lockup by switching the CPU clock to run off the XTAL
-> while we are changing the any of the clocks in the CPU clock tree.
+On 15.11.18 10:52, Baoquan He wrote:
+> On 11/15/18 at 10:42am, David Hildenbrand wrote:
+>> I am wondering why it is always the last memory block of that device
+>> (and even that node). Coincidence?
 > 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-
-Original submission wasn't that far off after all ;)
-
-Thanks for digging and fixing all the bugs around it ! It must have been quite
-a challenge !
-
-If you don't mind, I would prefer if your series put all the clock fixes
-first, and this particular change just before the last one allowing RW ops.
-
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
-
-> ---
->  drivers/clk/meson/meson8b.c | 63 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 63 insertions(+)
+> I remember one or two times it's the last 6G or 4G which stall there,
+> the size of memory block is 2G. But most of time it's the last memory
+> block. And from the debug printing added by Michal's patch, it's the
+> stress program itself which owns the migrating page and loop forvever
+> there.
 > 
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index 9bd5920da0ff..40e77fe4ba7c 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-> @@ -1103,6 +1103,53 @@ static const struct reset_control_ops
-> meson8b_clk_reset_ops = {
->  	.deassert = meson8b_clk_reset_deassert,
->  };
->  
-> +struct meson8b_nb_data {
-> +	struct notifier_block nb;
-> +	struct clk_hw_onecell_data *onecell_data;
-> +};
-> +
-> +static int meson8b_cpu_clk_notifier_cb(struct notifier_block *nb,
-> +				       unsigned long event, void *data)
-> +{
-> +	struct meson8b_nb_data *nb_data =
-> +		container_of(nb, struct meson8b_nb_data, nb);
-> +	struct clk_hw **hws = nb_data->onecell_data->hws;
-> +	struct clk_hw *cpu_clk_hw, *parent_clk_hw;
-> +	struct clk *cpu_clk, *parent_clk;
-> +	int ret;
-> +
-> +	switch (event) {
-> +	case PRE_RATE_CHANGE:
-> +		parent_clk_hw = hws[CLKID_XTAL];
-> +		break;
-> +
-> +	case POST_RATE_CHANGE:
-> +		parent_clk_hw = hws[CLKID_CPU_SCALE_OUT_SEL];
-> +		break;
-> +
-> +	default:
-> +		return NOTIFY_DONE;
-> +	}
-> +
-> +	cpu_clk_hw = hws[CLKID_CPUCLK];
-> +	cpu_clk = __clk_lookup(clk_hw_get_name(cpu_clk_hw));
-> +
-> +	parent_clk = __clk_lookup(clk_hw_get_name(parent_clk_hw));
-> +
-> +	ret = clk_set_parent(cpu_clk, parent_clk);
-> +	if (ret)
-> +		return notifier_from_errno(ret);
-> +
-> +	udelay(100);
-> +
-> +	return NOTIFY_OK;
-> +}
-> +
-> +static struct meson8b_nb_data meson8b_cpu_nb_data = {
-> +	.nb.notifier_call = meson8b_cpu_clk_notifier_cb,
-> +	.onecell_data = &meson8b_hw_onecell_data,
-> +};
-> +
->  static const struct regmap_config clkc_regmap_config = {
->  	.reg_bits       = 32,
->  	.val_bits       = 32,
-> @@ -1112,6 +1159,8 @@ static const struct regmap_config clkc_regmap_config =
-> {
->  static void __init meson8b_clkc_init(struct device_node *np)
->  {
->  	struct meson8b_clk_reset *rstc;
-> +	const char *notifier_clk_name;
-> +	struct clk *notifier_clk;
->  	void __iomem *clk_base;
->  	struct regmap *map;
->  	int i, ret;
-> @@ -1166,6 +1215,20 @@ static void __init meson8b_clkc_init(struct
-> device_node *np)
->  			return;
->  	}
->  
-> +	/*
-> +	 * FIXME we shouldn't program the muxes in notifier handlers. The
-> +	 * tricky programming sequence will be handled by the forthcoming
-> +	 * coordinated clock rates mechanism once that feature is released.
-> +	 */
-> +	notifier_clk_name = clk_hw_get_name(&meson8b_cpu_scale_out_sel.hw);
-> +	notifier_clk = __clk_lookup(notifier_clk_name);
-> +	ret = clk_notifier_register(notifier_clk, &meson8b_cpu_nb_data.nb);
-> +	if (ret) {
-> +		pr_err("%s: failed to register the CPU clock notifier\n",
-> +		       __func__);
-> +		return;
-> +	}
-> +
->  	ret = of_clk_add_hw_provider(np, of_clk_hw_onecell_get,
->  				     &meson8b_hw_onecell_data);
->  	if (ret)
 
+Alright, seems like you found a very good reproducer for an existing
+problem :)
 
+-- 
+
+Thanks,
+
+David / dhildenb
