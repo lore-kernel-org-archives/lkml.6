@@ -2,199 +2,103 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D781C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BE74CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:57:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D212E21780
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:56:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7E83321780
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:57:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QslEfbp7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D212E21780
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="LeyDi0IM"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E83321780
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388015AbeKOUDo (ORCPT
+        id S1732896AbeKOUE4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 15:03:44 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38807 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728719AbeKOUDo (ORCPT
+        Thu, 15 Nov 2018 15:04:56 -0500
+Received: from mail-io1-f66.google.com ([209.85.166.66]:40334 "EHLO
+        mail-io1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728634AbeKOUE4 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 15:03:44 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so3952234lja.5
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 01:56:35 -0800 (PST)
+        Thu, 15 Nov 2018 15:04:56 -0500
+Received: by mail-io1-f66.google.com with SMTP id r7-v6so13879102iog.7
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 01:57:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=x331bA8a2GWD5VrL19MROXhlhKzu5Fl6vQm27yOzBDQ=;
-        b=QslEfbp7sxaEnE+AEkyEPT3EvJ0QpG9+AlRrDK16jWweCtZOckMpYkEQptnuk/drgI
-         EhYK0e0PeFBP7qP3bxC7UW81l+lGdNZ0YJ8RC08zui886U556NWoPnsdu6IUQcnU224C
-         YGwko6ZkRag7W2v5dy2eJtzq5RB6gQuzUIyPs=
+        bh=wKu+ZpTgdrMph3MTU+jlN22vZuqb5xRwQWAGLjD0msE=;
+        b=LeyDi0IMg3ku3AAiptguG2b6UJbNeOmNu+IrRt1MBQ3QLb4PPDL9h/lRNhSu7ddeba
+         1LlyMQVNJkW59KTRG9Q/rQ1VJR1AcIeFVIuF6WEEP9Y2ZNnzUtcMSfFZYCzkcZha9DFH
+         hTIPsH0Z17VqzCpchticBaSU1yOtkjNvDUhXQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=x331bA8a2GWD5VrL19MROXhlhKzu5Fl6vQm27yOzBDQ=;
-        b=FMfLRryp5RlIQUrTdwZbMq9hajpzEPNOstZjFimBjKV3hKcaWhO/paEyr7lqzsS19Z
-         zwQjJa/+tYmR+8vuwbPuZoPKskI+C3xGwryWK1otYJGY4cMPS0lWae5uRRBISqDwylpt
-         59qYZ/M2pUcSoIeGsq+YY9dB2111I+xbnPhggLe3eSDOH7QV862X1xrgYTGtRtOtWE4H
-         ERKsFnTrn+K2JcBzAhVK8v73YDpQO0hRAzxfaaVMg5Uv1WiSHJyxAYvksfzAfE6v6b80
-         PiM1Li6UxbcPsJD6MTP5sQPTLng8/9z4Nln9Yt/TzHoZRyOihRDjP7xgrGSzZmEic8Ui
-         H8zQ==
-X-Gm-Message-State: AGRZ1gJehWlcNUzhA8Ivd0yiK5dstEL1khxhz1sx1xrTN40xW3kxluCM
-        LBzsT6aOjpbGEPJZLGZVLyxm8eMvAKNo5xaqQcAHhg==
-X-Google-Smtp-Source: AJdET5d63DrKUU6wYvpz/u/vdYcIN8f2sugqG2Yh2sD/3BYKkdXTjCnQPOuRW5CLQWEe1263aFZy7ne1DoPnncPde0E=
-X-Received: by 2002:a2e:9849:: with SMTP id e9-v6mr2455145ljj.9.1542275794527;
- Thu, 15 Nov 2018 01:56:34 -0800 (PST)
+        bh=wKu+ZpTgdrMph3MTU+jlN22vZuqb5xRwQWAGLjD0msE=;
+        b=WcJoC0DqlNmkrPGpT/gvrhCWwq6Kl1qp9Cfl0zb/0NyAcXwNBRWjkMmig12YTzefMQ
+         h8eRBboIoy7zPNpBIkH3MTeuNjGoqvq3iy3c4wEBe1fnwI0lmo3wennTLfctgwjO1oOo
+         DF/vpFVpDbwtLQiGXM5tJXBncSPU6US1suCgH7kq0bXYw2+CPz4RWop7YVPrfFT7YSnv
+         njwnz6ZKtY5nD6P4WW79GUkFoU7WhoMH7B3MjLKHqaoHwQ5eCzMLiReIbZVUW0x/uMxO
+         1KnHqc3vruLZ0agkb8+o9HzHgsZOxc3vughVP76aqsLLEtX372xCOCQHV5+06CpFLT/2
+         Nwrw==
+X-Gm-Message-State: AA+aEWYeuecoF0nZGvz0EiJPDBMywm+Jl9XOZ34rzoPkxFi/zB5u45wX
+        YSFHNO7cDGQNLzylQdu+gjw9QfLMNStwz4kKWvUU8A==
+X-Google-Smtp-Source: AFSGD/V39DmWYfS5WDypLkd1SeWrHWfWxgAxjv19BqjJEtM3OALWpvMw0tLZc7r/rwjBz/I5W3ZNa7ATk/xUGd5B/i8=
+X-Received: by 2002:a6b:6919:: with SMTP id e25mr4296509ioc.119.1542275867960;
+ Thu, 15 Nov 2018 01:57:47 -0800 (PST)
 MIME-Version: 1.0
-References: <1541603580-17448-1-git-send-email-andrei.stefanescu@microchip.com>
- <1541603580-17448-4-git-send-email-andrei.stefanescu@microchip.com>
-In-Reply-To: <1541603580-17448-4-git-send-email-andrei.stefanescu@microchip.com>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 15 Nov 2018 10:56:22 +0100
-Message-ID: <CACRpkda6NLv_HrzygJ5J082jrWwVH3Ljt-5bqJv1kvoax5wWWA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] gpio: add driver for sama5d2 PIOBU pins
-To:     Andrei.Stefanescu@microchip.com
-Cc:     Greg KH <gregkh@linuxfoundation.org>,
-        Nicolas Ferre <Nicolas.Ferre@microchip.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ludovic Desroches <Ludovic.Desroches@microchip.com>,
-        Cristian.Birsan@microchip.com,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>
+References: <1542104370-22831-1-git-send-email-firoz.khan@linaro.org> <CAMo8BfLt0NuQOTP6MBbRdOpK0_fWwtvfZArwVhwW1SZyzH4mbQ@mail.gmail.com>
+In-Reply-To: <CAMo8BfLt0NuQOTP6MBbRdOpK0_fWwtvfZArwVhwW1SZyzH4mbQ@mail.gmail.com>
+From:   Firoz Khan <firoz.khan@linaro.org>
+Date:   Thu, 15 Nov 2018 15:27:36 +0530
+Message-ID: <CALxhOng8jc3WCmw-i5LeghjE5EKuJaXVZGHLN98+552qqgUy=Q@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] xtensa: system call table generation support
+To:     Max Filippov <jcmvbkbc@gmail.com>
+Cc:     Chris Zankel <chris@zankel.net>, linux-xtensa@linux-xtensa.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Linux-Arch <linux-arch@vger.kernel.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Andrei,
+Hi Max,
 
-thanks for your patch!
-
-On Wed, Nov 7, 2018 at 4:12 PM <Andrei.Stefanescu@microchip.com> wrote:
-
-> PIOBU pins do not lose their voltage during Backup/Self-refresh.
-> This patch adds a simple GPIO controller for them.
+On Wed, 14 Nov 2018 at 05:23, Max Filippov <jcmvbkbc@gmail.com> wrote:
 >
-> This driver adds support for using the pins as GPIO
-> offering the possibility to read/set the voltage.
+> Hi Firoz,
 >
-> Signed-off-by: Andrei Stefanescu <andrei.stefanescu@microchip.com>
+> On Tue, Nov 13, 2018 at 2:19 AM Firoz Khan <firoz.khan@linaro.org> wrote:
+> [...]
+> > Firoz Khan (3):
+> >   xtensa: add __NR_syscalls along with __NR_syscall_count
+> >   xtensa: add system call table generation support
+> >   xtensa: generate uapi header and syscall table header files
+>
+> What's your plan for submission of this series? Are you going to
+> submit it with other similar series in a common tree, or shall I take
+> it into the xtensa tree?
 
-(...)
-> +config GPIO_SAMA5D2_PIOBU
-> +       tristate "SAMA5D2 PIOBU GPIO support"
-> +       depends on GPIO_SYSCON
+I prefer the second  option.
 
-Should it not be:
-depends on MFD_SYSCON
-select GPIO_SYSCON
+Thanks
+Firoz
 
-> +#include <linux/gpio.h>
-
-Drivers should only
-#include <linux/gpio/driver.h>
-
-Also add:
-#include <linux/bits.h>
-because you use BIT() macros.
-
-> +#define PIOBU_NUM 8
-> +#define PIOBU_REG_SIZE 4
-
-Isnt register size 4 implied by syscon, I think it is hardwired
-to 32 bits.
-
-> +/*
-> + * sama5d2_piobu_setup_pin - prepares a pin for sama5d2_piobu_set_direction call
-> + *
-> + * Do not consider pin for intrusion detection (normal and backup modes)
-> + * Do not consider pin as intrusion wakeup interrupt source
-
-Intrusion ... sounds like some burglar alarm :D
-
-> +/*
-> + * sama5d2_piobu_get_direction - gpiochip get_direction
-> + */
-
-Check all your kerneldoc comments please,
-
-/**
- * this_is_a_function() - This is a function
- */
-
-See
-Documentation/doc-guide/kernel-doc.rst
-
-> +static int sama5d2_piobu_get_direction(struct gpio_chip *chip,
-> +                                      unsigned int pin)
-> +{
-> +       int ret = sama5d2_piobu_read_value(chip, pin, PIOBU_DIRECTION);
-> +
-> +       if (ret < 0)
-> +               return ret;
-> +
-> +       return (ret == PIOBU_IN) ? GPIOF_DIR_IN : GPIOF_DIR_OUT;
-
-Please do not use these flags in drivers: they are for consumers.
-Just return 0/1.
-
-> +static int sama5d2_piobu_get(struct gpio_chip *chip, unsigned int pin)
-> +{
-> +       /* if pin is input, read value from PDS else read from SOD */
-> +       int ret = sama5d2_piobu_get_direction(chip, pin);
-> +
-> +       if (ret == GPIOF_DIR_IN)
-> +               ret = sama5d2_piobu_read_value(chip, pin, PIOBU_PDS);
-> +       else if (ret == GPIOF_DIR_OUT)
-> +               ret = sama5d2_piobu_read_value(chip, pin, PIOBU_SOD);
-
-Dito.
-
-> +static void sama5d2_piobu_set(struct gpio_chip *chip, unsigned int pin,
-> +                             int value)
-> +{
-> +       value = (value == 0) ? PIOBU_LOW : PIOBU_HIGH;
-
-That looks unorthodox. Just use an if() statement.
-
-> +const struct gpio_chip sama5d2_piobu_template_chip = {
-> +       .owner = THIS_MODULE,
-> +       .get_direction = sama5d2_piobu_get_direction,
-> +       .direction_input = sama5d2_piobu_direction_input,
-> +       .direction_output = sama5d2_piobu_direction_output,
-> +       .get = sama5d2_piobu_get,
-> +       .set = sama5d2_piobu_set,
-> +       .base = -1,
-> +       .ngpio = PIOBU_NUM,
-> +       .can_sleep = 0,
-(...)
-> +       piobu->chip = sama5d2_piobu_template_chip;
-> +       piobu->chip.label = pdev->name;
-> +       piobu->chip.parent = &pdev->dev;
-> +       piobu->chip.of_node = pdev->dev.of_node;
-
-This is just overcomplicating things. Instead of assigning the template
-just assign all function here in the probe() code, get rid of the
-templaye. It's easier to follow.
-
-> +       piobu->regmap =
-> +               syscon_regmap_lookup_by_compatible("microchip,sama5d2-piobu");
-
-So maybe just put this inside your syscon node and use:
-syscon_node_to_regmap(pdev->dev.parent->of_node);
-
-I might have more comments on the next version, but keep at it!
-
-Yours,
-Linus Walleij
+>
+> --
+> Thanks.
+> -- Max
