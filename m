@@ -2,216 +2,90 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B605C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:12:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57712C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:12:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF00A22419
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:12:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF00A22419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 27CFA20815
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:12:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27CFA20815
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388193AbeKOXUG (ORCPT
+        id S2388273AbeKOXUn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 18:20:06 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:35504 "EHLO mx1.redhat.com"
+        Thu, 15 Nov 2018 18:20:43 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:40403 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728931AbeKOXUG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 18:20:06 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 109AD3002893;
-        Thu, 15 Nov 2018 13:12:18 +0000 (UTC)
-Received: from localhost (ovpn-8-20.pek2.redhat.com [10.72.8.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 825E75D75C;
-        Thu, 15 Nov 2018 13:12:14 +0000 (UTC)
-Date:   Thu, 15 Nov 2018 21:12:11 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        aarcange@redhat.com
-Subject: Re: Memory hotplug softlock issue
-Message-ID: <20181115131211.GP2653@MiWiFi-R3L-srv>
-References: <20181114070909.GB2653@MiWiFi-R3L-srv>
- <5a6c6d6b-ebcd-8bfa-d6e0-4312bfe86586@redhat.com>
- <20181114090134.GG23419@dhcp22.suse.cz>
- <20181114145250.GE2653@MiWiFi-R3L-srv>
- <20181114150029.GY23419@dhcp22.suse.cz>
- <20181115051034.GK2653@MiWiFi-R3L-srv>
- <20181115073052.GA23831@dhcp22.suse.cz>
- <20181115075349.GL2653@MiWiFi-R3L-srv>
- <20181115083055.GD23831@dhcp22.suse.cz>
+        id S1729010AbeKOXUn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 18:20:43 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 41A5B20752; Thu, 15 Nov 2018 14:12:53 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id DE8DE20510;
+        Thu, 15 Nov 2018 14:12:52 +0100 (CET)
+Date:   Thu, 15 Nov 2018 14:12:52 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Schrempf Frieder <frieder.schrempf@kontron.De>
+Cc:     Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Han Xu <han.xu@nxp.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        David Wolfe <david.wolfe@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        "Prabhakar Kushwaha" <prabhakar.kushwaha@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v5 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Message-ID: <20181115141252.52a5b32d@bbrezillon>
+In-Reply-To: <3e9aa917-cf3a-cf0e-8516-4e73d30eb2a1@kontron.de>
+References: <1542116782-13118-1-git-send-email-frieder.schrempf@kontron.de>
+        <1542116782-13118-4-git-send-email-frieder.schrempf@kontron.de>
+        <VI1PR04MB572679944542ED6A438FD2FB99C30@VI1PR04MB5726.eurprd04.prod.outlook.com>
+        <ce9cbfc0-3257-f117-aa21-cdee068579ce@kontron.de>
+        <65577d13-b17d-8f69-313c-01d23240d1d9@kontron.de>
+        <VI1PR04MB572664063A0E237D2EB7203A99C30@VI1PR04MB5726.eurprd04.prod.outlook.com>
+        <eb4b79be-c12b-16e7-e1dd-86a157cfdc7d@kontron.de>
+        <VI1PR04MB57265222E26C013D5D9C009B99DC0@VI1PR04MB5726.eurprd04.prod.outlook.com>
+        <3e9aa917-cf3a-cf0e-8516-4e73d30eb2a1@kontron.de>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115083055.GD23831@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Thu, 15 Nov 2018 13:12:18 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/15/18 at 09:30am, Michal Hocko wrote:
-> On Thu 15-11-18 15:53:56, Baoquan He wrote:
-> > On 11/15/18 at 08:30am, Michal Hocko wrote:
-> > > On Thu 15-11-18 13:10:34, Baoquan He wrote:
-> > > > On 11/14/18 at 04:00pm, Michal Hocko wrote:
-> > > > > On Wed 14-11-18 22:52:50, Baoquan He wrote:
-> > > > > > On 11/14/18 at 10:01am, Michal Hocko wrote:
-> > > > > > > I have seen an issue when the migration cannot make a forward progress
-> > > > > > > because of a glibc page with a reference count bumping up and down. Most
-> > > > > > > probable explanation is the faultaround code. I am working on this and
-> > > > > > > will post a patch soon. In any case the migration should converge and if
-> > > > > > > it doesn't do then there is a bug lurking somewhere.
-> > > > > > > 
-> > > > > > > Failing on ENOMEM is a questionable thing. I haven't seen that happening
-> > > > > > > wildly but if it is a case then I wouldn't be opposed.
-> > > > > > 
-> > > > > > Applied your debugging patches, it helps a lot to printing message.
-> > > > > > 
-> > > > > > Below is the dmesg log about the migrating failure. It can't pass
-> > > > > > migrate_pages() and loop forever.
-> > > > > > 
-> > > > > > [  +0.083841] migrating pfn 10fff7d0 failed 
-> > > > > > [  +0.000005] page:ffffea043ffdf400 count:208 mapcount:201 mapping:ffff888dff4bdda8 index:0x2
-> > > > > > [  +0.012689] xfs_address_space_operations [xfs] 
-> > > > > > [  +0.000030] name:"stress" 
-> > > > > > [  +0.004556] flags: 0x5fffffc0000004(uptodate)
-> > > > > > [  +0.007339] raw: 005fffffc0000004 ffffc900000e3d80 ffffc900000e3d80 ffff888dff4bdda8
-> > > > > > [  +0.009488] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e7353d000
-> > > > > > [  +0.007726] page->mem_cgroup:ffff888e7353d000
-> > > > > > [  +0.084538] migrating pfn 10fff7d0 failed 
-> > > > > > [  +0.000006] page:ffffea043ffdf400 count:210 mapcount:201 mapping:ffff888dff4bdda8 index:0x2
-> > > > > > [  +0.012798] xfs_address_space_operations [xfs] 
-> > > > > > [  +0.000034] name:"stress" 
-> > > > > > [  +0.004524] flags: 0x5fffffc0000004(uptodate)
-> > > > > > [  +0.007068] raw: 005fffffc0000004 ffffc900000e3d80 ffffc900000e3d80 ffff888dff4bdda8
-> > > > > > [  +0.009359] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e7353d000
-> > > > > > [  +0.007728] page->mem_cgroup:ffff888e7353d000
-> > > > > 
-> > > > > I wouldn't be surprised if this was a similar/same issue I've been
-> > > > > chasing recently. Could you try to disable faultaround to see if that
-> > > > > helps. It seems that it helped in my particular case but I am still
-> > > > > waiting for the final good-to-go to post the patch as I do not own the
-> > > > > workload which triggered that issue.
-> > > > 
-> > > > Tried, still stuck in last block sometime. Usually after several times
-> > > > of hotplug/unplug. If stop stress program, the last block will be
-> > > > offlined immediately.
-> > > 
-> > > Is the pattern still the same? I mean failing over few pages with
-> > > reference count jumping up and down between attempts?
+On Thu, 15 Nov 2018 11:43:05 +0000
+Schrempf Frieder <frieder.schrempf@kontron.De> wrote:
+
+> On 15.11.18 07:22, Yogesh Narayan Gaur wrote:
+> > Hi Frieder,
 > > 
-> > ->count jumping up and down, mapcount stays the same value.
-> > 
-> > > 
-> > > > [root@ ~]# cat /sys/kernel/debug/fault_around_bytes 
-> > > > 4096
-> > > 
-> > > Can you make it 0?
-> > 
-> > I executed 'echo 0 > fault_around_bytes', value less than one page size
-> > will round up to one page.
+> > With below patch on top of your v5, Read/Write/Erase on CS1 is working fine for me.  
 > 
-> OK, I have missed that. So then there must be a different source of the
-> page count volatility. Is it always the same file?
+> Ok, are you sure, that AHB read is working too with this patch?
+> You are removing the memmap_phy offset from SFAR and the SFXXAD register 
+> values.
 > 
-> I think we can rule out memory reclaim because that depends on the page
-> lock. Is the stress test hitting on memory compaction? In other words,
-> are
-> grep compact /proc/vmstat
-> counters changing during the offline test heavily? I am asking because I
-> do not see compaction pfn walkers skipping over MIGRATE_ISOLATE
-> pageblocks. But I might be missing something easily.
+> I can understand that selection of the CS and IP commands will work like 
+> this, but I can't understand how AHB read should work without the base 
+> address of the mapped memory.
 > 
-> It would be also good to find out whether this is fs specific. E.g. does
-> it make any difference if you use a different one for your stress
-> testing?
+> I'm afraid I still don't fully understand the background of these 
+> things,
 
-Created a ramdisk and put stress bin there, then run stress -m 200, now
-seems it's stuck in libc-2.28.so migrating. And it's still xfs. So now xfs
-is a big suspect. At bottom I paste numactl printing, you can see that it's
-the last 4G.
+Same here. Yogesh, can you give us more detail on why you decided to
+drop the memmap_phy offset?
 
-Seems it's trying to migrate libc-2.28.so, but stress program keeps trying to
-access and activate it.
-
-[ 5055.461652] migrating pfn 190f4fb3e failed 
-[ 5055.461671] page:ffffea643d3ecf80 count:257 mapcount:251 mapping:ffff888e7a6ac528 index:0x85
-[ 5055.474734] xfs_address_space_operations [xfs] 
-[ 5055.474742] name:"libc-2.28.so" 
-[ 5055.481070] flags: 0x1dfffffc0000026(referenced|uptodate|active)
-[ 5055.490329] raw: 01dfffffc0000026 ffffc900000e3d80 ffffc900000e3d80 ffff888e7a6ac528
-[ 5055.498080] raw: 0000000000000085 0000000000000000 000000fc000000f9 ffff88810a8f2000
-[ 5055.505823] page->mem_cgroup:ffff88810a8f2000
-[ 5056.335970] migrating pfn 190f4fb3e failed 
-[ 5056.335990] page:ffffea643d3ecf80 count:255 mapcount:250 mapping:ffff888e7a6ac528 index:0x85
-[ 5056.348994] xfs_address_space_operations [xfs] 
-[ 5056.348998] name:"libc-2.28.so" 
-[ 5056.353555] flags: 0x1dfffffc0000026(referenced|uptodate|active)
-[ 5056.364680] raw: 01dfffffc0000026 ffffc900000e3d80 ffffc900000e3d80 ffff888e7a6ac528
-[ 5056.372428] raw: 0000000000000085 0000000000000000 000000fc000000f9 ffff88810a8f2000
-[ 5056.380172] page->mem_cgroup:ffff88810a8f2000
-[ 5057.332806] migrating pfn 190f4fb3e failed 
-[ 5057.332821] page:ffffea643d3ecf80 count:261 mapcount:250 mapping:ffff888e7a6ac528 index:0x85
-[ 5057.345889] xfs_address_space_operations [xfs] 
-[ 5057.345900] name:"libc-2.28.so" 
-[ 5057.350451] flags: 0x1dfffffc0000026(referenced|uptodate|active)
-[ 5057.359707] raw: 01dfffffc0000026 ffffc900000e3d80 ffffc900000e3d80 ffff888e7a6ac528
-[ 5057.369285] raw: 0000000000000085 0000000000000000 000000fc000000f9 ffff88810a8f2000
-[ 5057.377030] page->mem_cgroup:ffff88810a8f2000
-[ 5058.285457] migrating pfn 190f4fb3e failed 
-[ 5058.285489] page:ffffea643d3ecf80 count:257 mapcount:250 mapping:ffff888e7a6ac528 index:0x85
-[ 5058.298544] xfs_address_space_operations [xfs] 
-[ 5058.298556] name:"libc-2.28.so" 
-[ 5058.303092] flags: 0x1dfffffc0000026(referenced|uptodate|active)
-[ 5058.314358] raw: 01dfffffc0000026 ffffc900000e3d80 ffffc900000e3d80 ffff888e7a6ac528
-[ 5058.322109] raw: 0000000000000085 0000000000000000 000000fc000000f9 ffff88810a8f2000
-[ 5058.329848] page->mem_cgroup:ffff88810a8f2000
-
-
-[root@~]# numactl -H
-available: 8 nodes (0-7)
-node 0 cpus: 0 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 144 145 146 147 148 149 150 151 152 153 154 155 156 157 158 159 160 161
-node 0 size: 59817 MB
-node 0 free: 54253 MB
-node 1 cpus: 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179
-node 1 size: 65536 MB
-node 1 free: 61158 MB
-node 2 cpus: 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194 195 196 197
-node 2 size: 65536 MB
-node 2 free: 62752 MB
-node 3 cpus: 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 69 70 71 198 199 200 201 202 203 204 205 206 207 208 209 210 211 212 213 214 215
-node 3 size: 65536 MB
-node 3 free: 62708 MB
-node 4 cpus: 72 73 74 75 76 77 78 79 80 81 82 83 84 85 86 87 88 89 216 217 218 219 220 221 222 223 224 225 226 227 228 229 230 231 232 233
-node 4 size: 34816 MB
-node 4 free: 24141 MB
-node 5 cpus: 90 91 92 93 94 95 96 97 98 99 100 101 102 103 104 105 106 107 234 235 236 237 238 239 240 241 242 243 244 245 246 247 248 249 250 251
-node 5 size: 0 MB
-node 5 free: 0 MB
-node 6 cpus: 108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 252 253 254 255 256 257 258 259 260 261 262 263 264 265 266 267 268 269
-node 6 size: 0 MB
-node 6 free: 0 MB
-node 7 cpus: 126 127 128 129 130 131 132 133 134 135 136 137 138 139 140 141 142 143 270 271 272 273 274 275 276 277 278 279 280 281 282 283 284 285 286 287
-node 7 size: 4096 MB
-node 7 free: 6 MB
-node distances:
-node   0   1   2   3   4   5   6   7 
-  0:  10  21  31  21  41  41  51  51 
-  1:  21  10  21  31  41  41  51  51 
-  2:  31  21  10  21  51  51  41  41 
-  3:  21  31  21  10  51  51  41  41 
-  4:  41  41  51  51  10  21  31  21 
-  5:  41  41  51  51  21  10  21  31 
-  6:  51  51  41  41  31  21  10  21 
-  7:  51  51  41  41  21  31  21  10
-
+> but still thank you for testing.
+> 
