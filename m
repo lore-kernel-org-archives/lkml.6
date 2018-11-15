@@ -2,181 +2,157 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD91C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:02:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B8F2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:09:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1346421582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:02:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1346421582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 29F46223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:09:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="ucplL+lG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29F46223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388368AbeKPCK7 (ORCPT
+        id S2388436AbeKPCSE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 21:10:59 -0500
-Received: from mga02.intel.com ([134.134.136.20]:62690 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727434AbeKPCK7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 21:10:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 08:02:34 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,236,1539673200"; 
-   d="scan'208";a="100519336"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.251.21.216]) ([10.251.21.216])
-  by orsmga003.jf.intel.com with ESMTP; 15 Nov 2018 08:02:33 -0800
-Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, davem@davemloft.net,
-        pavel.tatashin@microsoft.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
-        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
-        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
-        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
-References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
- <20181114150742.GZ23419@dhcp22.suse.cz>
- <9e8218eb-80bf-fc02-ae56-42ccfddb572e@linux.intel.com>
- <20181115081006.GC23831@dhcp22.suse.cz>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <b4a4d2ca-da7a-b8cd-bf0f-a119ebd67da8@linux.intel.com>
-Date:   Thu, 15 Nov 2018 08:02:33 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 15 Nov 2018 21:18:04 -0500
+Received: from mail-eopbgr800055.outbound.protection.outlook.com ([40.107.80.55]:27072
+        "EHLO NAM03-DM3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729034AbeKPCSE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 21:18:04 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=m7K63WKwtvYfq1bDkANer7U/a6lic+3VLqGMCZLzvm0=;
+ b=ucplL+lGb6Mr4vXYBUR+XLsXe5qzWI1FyxStEFQWiFwxCV2VRHm7h2BOsMphMS7CXtEdB98xNw5XnpWjOqHftJDjFmF8EfJODyVn8dQ7t3iC3SkClUVZ5K95tQbIZQRr/HXui3NbqYg4zVFemflDBrFUWIWbs8Lxv4FAx/D6I3k=
+Received: from DM3PR12CA0088.namprd12.prod.outlook.com (2603:10b6:0:57::32) by
+ BLUPR12MB0611.namprd12.prod.outlook.com (2a01:111:e400:594e::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.26; Thu, 15 Nov
+ 2018 16:09:34 +0000
+Received: from BY2NAM03FT010.eop-NAM03.prod.protection.outlook.com
+ (2a01:111:f400:7e4a::204) by DM3PR12CA0088.outlook.office365.com
+ (2603:10b6:0:57::32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1339.20 via Frontend
+ Transport; Thu, 15 Nov 2018 16:09:34 +0000
+Authentication-Results: spf=none (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; alsa-project.org; dkim=none (message not signed)
+ header.d=none;alsa-project.org; dmarc=permerror action=none
+ header.from=amd.com;
+Received-SPF: None (protection.outlook.com: amd.com does not designate
+ permitted sender hosts)
+Received: from SATLEXCHOV01.amd.com (165.204.84.17) by
+ BY2NAM03FT010.mail.protection.outlook.com (10.152.84.122) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
+ 15.20.1339.10 via Frontend Transport; Thu, 15 Nov 2018 16:09:33 +0000
+Received: from LinuxHost.amd.com (10.34.1.3) by SATLEXCHOV01.amd.com
+ (10.181.40.71) with Microsoft SMTP Server id 14.3.389.1; Thu, 15 Nov 2018
+ 10:09:31 -0600
+From:   Vijendar Mukunda <Vijendar.Mukunda@amd.com>
+CC:     <vijendar.mukunda@amd.com>, <Alexander.Deucher@amd.com>,
+        Vijendar Mukunda <Vijendar.Mukunda@amd.com>,
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Mark Brown <broonie@kernel.org>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Akshu Agrawal <akshu.agrawal@amd.com>,
+        Alex Deucher <alexander.deucher@amd.com>,
+        Maruthi Bayyavarapu <maruthi.bayyavarapu@amd.com>,
+        "moderated list:SOUND - SOC LAYER / DYNAMIC AUDIO POWER MANAGEM..." 
+        <alsa-devel@alsa-project.org>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: [PATCH 1/2] ASoC: amd: Fixed build errors
+Date:   Thu, 15 Nov 2018 21:43:49 +0530
+Message-ID: <1542298434-17287-1-git-send-email-Vijendar.Mukunda@amd.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-In-Reply-To: <20181115081006.GC23831@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-Office365-Filtering-HT: Tenant
+X-Forefront-Antispam-Report: CIP:165.204.84.17;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(346002)(376002)(2980300002)(428003)(199004)(189003)(426003)(476003)(1671002)(50466002)(48376002)(2616005)(47776003)(126002)(336012)(72206003)(81156014)(8676002)(81166006)(68736007)(478600001)(7696005)(26005)(16586007)(51416003)(6666004)(77096007)(356004)(50226002)(186003)(54906003)(36756003)(316002)(86362001)(2906002)(4326008)(97736004)(305945005)(104016004)(109986005)(39060400002)(8936002)(486006)(5660300001)(53936002)(53416004)(106466001)(105586002)(266003);DIR:OUT;SFP:1101;SCL:1;SRVR:BLUPR12MB0611;H:SATLEXCHOV01.amd.com;FPR:;SPF:None;LANG:en;PTR:InfoDomainNonexistent;A:1;MX:1;
+X-Microsoft-Exchange-Diagnostics: 1;BY2NAM03FT010;1:pFeTW6iN8OV6gAhPReQ3Vn9CbMd9m/nkGI5R4Q8rfbb3LiZBbguqVATblap/lLd9ulgUQ8YqsyJDKWXRoYmCYMGK5f70mpkujxfY6OEDc+8PVXMg7jdbpBoO1KkonsxD
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id: e7f0188e-5011-4106-a15b-08d64b14bb58
+X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:BLUPR12MB0611;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0611;3:DGTjUPV/mFzS8vwv/3pgo8KeHsMdzz5238eTdfLIwy548h3qpCWLM/ouD1bIz8b6IaO4rRlNQxsc+y8eQZlZ1H8L9/MwMsfovYj5VbnkhHLhiMqUX9KqTb+tcWaOQ/Dig0GWCFUnDRgEgUCfGK1dYbe9oq0I0w82ZDhtXyV25r4E9d+H3pLW82h64k3NVjSwHHrfK99X6snUOMYlt6aOFbo0xXhGX4ZF2nxYgsLyDdC3qWNqz5DkN8oNZvPS93mFFN0J5Bj/hiz//VTkyOoTCPDiNc5XUSRauafQEafgAYwy8UOkPGpQA1eeJVHCujTcP1g4ERgaogjBGGLvnFQh35F4/J2Ulyj95xmPSXlmalo=;25:hQqx99kMXs+BMhjdY2CnGLKiDZWxEMhpy13Oniyy+5d4SWfAAwwBTjEI5ouxYazVZ2+DaD5B3V2N7S792uFW2SQFdtZJIjC13fjSYvZteCeDWlCX3PHAxh+J6QOrInHtOrzVrY/8i2ajz7qkvHi2bMEM/0ASG9xPsZGTD945tjNUPn8CRrxJ5702+04QnyyB/WkxUBJ8LzyeFWtb14d9f0pyeAEKWVelAwWBMpkmfmQl445IPK+wOLyQ/oUFYN2U5E18T74BLrCV3gXQEJHr+zA+ae2pXXddQ7T1+zla8A3FKe++dz9tJXFiuRupj+pD94Djrwm05g3DNaPsx4PJqw==
+X-MS-TrafficTypeDiagnostic: BLUPR12MB0611:
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0611;31:meZayOX2Gwfa0XHxL7R/zZnO8QGhXPHWG+PtLdJvmNfPc6jZ/voIf0FFjDiv2AjT24aPF2FiZ1Ewmh2QbzVRDIqqh10S7+SRGKSgHDT0sa24SaOmjhGJD+Z4d4MLgezo7kADeQzmk80cxhbBY0nCkD1z4fMEVd/WfCkDQxJyriF78jNSg90fM/2X1xpIQc7OIFwxL90my2Dw+zU5llUB4dmvR6nqahwvmvK9PEXleZ8=;20:8EYpe31r4Ol7W1D1wPmnO1ixYApoqgDqxX3kgrhmULev+E4tLmbaHfxyd+SgXKdoSZD/OAQ7Ak9ULfFjeCqhKXK0xX3yaSepZujhY2bN/xX2lKNK8V4AVdPyvkAQ+71k7XR61pUg3z1lXVixhtmYQ0GKXhrCiZnZAOdj4afo5hPhvzbfQrqYzUaBQdboh8dGAC5PWRdS4jnaPAzbo7o7tnQCGI3PcT0HeQ/+7THbDBdtdsg0Cm1VKzKIMB/lC/Tco4UgZzlE12CrGwOtMu8q+cdV3yMsPH1oDerTKPzQ0oTuNBH117Vuij4FFUUwGAY449nwBxxIswBhihDVsub9wR5foD5EJZVzytbtwXgKpZ0NkXcR0imUG8mKsVIwWLk7JKCGtxkao1UAlvNjVBcbPR+wzoiKLOpgm7J7NduNnXHC4QdGRSIr1atwlB9KjC0BeolRDyLKHLS6Xe9H32Utw2rEaPO7X9aNFt7bd3iI8fDCzccozqkH1SNqxfBi8rGx
+X-Microsoft-Antispam-PRVS: <BLUPR12MB0611C2748643BF6A61515D3397DC0@BLUPR12MB0611.namprd12.prod.outlook.com>
+X-Exchange-Antispam-Report-Test: UriScan:(767451399110);
+X-MS-Exchange-SenderADCheck: 1
+X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93003095)(3231415)(944501410)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BLUPR12MB0611;BCL:0;PCL:0;RULEID:;SRVR:BLUPR12MB0611;
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0611;4:TK4XmxJjHiu05gU9RzHHwzsKPJOn3P7M+vPG9Ohdz0OX5KvrXgq8CPzni46r4ZsJ2RnfI+9pyVDd0ZgIiSiv/bR9WmbmyK1MoFRCjhns2+a3ekqLMonnAb9Tf/g3kZExNCTTJ1prK08ce5mbU/ln/KTsrwFxhFqMmzbUNGfHRg9MVKnAs05SnLlxOmHz1nUARlN/97D54s9iHL24Aagjo61K6Og3HeUF/2Mos5d2MpNbwLoWnENHfByQfWLjhaII5KH4bvclvatODFgfqxJAmNxnSFVtq7N1EaFsjFfpST3umhjkLaWf1+Y1ZW5nNpMX
+X-Forefront-PRVS: 08572BD77F
+X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;BLUPR12MB0611;23:/v+2sTDGgtd7hHSNnDpzL9frWuc8+jSgUE6Jaoxqi?=
+ =?us-ascii?Q?fLzNVgdOrYqKv2B7QYziVcPxCdLFpWNAXr/ucbw0rFNYKDTUJ+2RNtXgmhNZ?=
+ =?us-ascii?Q?SM3uOIJ9AxePSepdpsWUJ9L5pa418E8HGDNGD7filwJIu9IWQKH0lXgy1UBY?=
+ =?us-ascii?Q?EvCHXGrhPbuXVIuPLhGuJMGjGE6scOkAPrEE9A/4IyOBZKoOuwvEIAEpH/ad?=
+ =?us-ascii?Q?Te9MX8ld7oAsrGnueFopxi7s8u4p3wubE9IyBF7wtHt4LFx55tBxrwQdnhPL?=
+ =?us-ascii?Q?mfGe9r4BjSTGWjsaQOQbm85aMirQpIUlOr54qpe1IiZimgcXGh7lez4fKVnI?=
+ =?us-ascii?Q?QyGww+W/Kf0DS3URpRxrpL/zBe0D64yQJdH4nT+CSo9XBdjoXk3hL+WCvW3S?=
+ =?us-ascii?Q?Io7ab81ymFIN2p0CDzuZaTMhge/zNCdTLHRR3t6Lty+TRjgFNRJqUEjmNHmm?=
+ =?us-ascii?Q?YBjO/pVcwVPpuRP/f/gj76BN0BdhM7olWKMqJ4sN19/kA/AaokZnR3UULZY4?=
+ =?us-ascii?Q?V6wOnkvjWWYQEmgNtCmOeTpVUO7sgi6PClAIJ566dsScBNyFge36IyJeZxK8?=
+ =?us-ascii?Q?/8fgBOEo1UmAyd7AnyW95jPuU8xKc1dhYiP97j/sEaF7fNftSW1lrR8fR2vb?=
+ =?us-ascii?Q?x+To6f6I9ITKXDZ6KJvNb/tDsrwvz6La9E2fSqTopoxK4zFING2Grb8oeVYt?=
+ =?us-ascii?Q?qMzLl86/WoYUh8N0PgtaWqLtjT+zzoal1o/edktptK1i/9zAbuMsWBZ3I0x1?=
+ =?us-ascii?Q?PFO3DZhGUFayaTjQ6dlz/v+keBga6CyhM2/O3IkNdfrTJMPB2rG0G054br16?=
+ =?us-ascii?Q?DrI1UHWI9IG4ZlsaWbVHc2v1FOouXdmx7R8mZlo+gwDOAoq2QFHFkqfU1Wey?=
+ =?us-ascii?Q?hNYhrKfKkNn3ccciog1P3gbLO5t1K+CVf8gp/J9NFaZLM5oS5HceicX1uwr6?=
+ =?us-ascii?Q?MlqFuLFu5d57Kl/O10iy5lC0l/WQUWUHVHXzeEhvbpMrU6CWb3pejNBgolhg?=
+ =?us-ascii?Q?3v3JcaW8C0kGWk8UoMi/yeIu0GNemOlwGq+1VSSgPGh5U+yzNjRf2+X7o1iV?=
+ =?us-ascii?Q?AmLg9GpFowe8ZlaKlC0umIS66V6WWrAds6PmrguxlBUNaSTv5jaq4/OZrlMX?=
+ =?us-ascii?Q?HDqHVmv+4sXdDTWyeVkfd6otzkc/m6z/IwS7U7iqZ7NLMUnGgxq0A=3D=3D?=
+X-Microsoft-Antispam-Message-Info: lLDlGhfUl/U2n3+RPBr3aCyWYRBSHy9YH4DR/tNhIe4UK13poOmUBIJ4mxsuGs7CxLFUgR4/kaRQuyxOziqqU9SiKWF1MBDs/u/W3UbfpsJYvVJHkCep9CdGZZ40kDuzOhpRh71dhmge9CA+s254R4BUE9YikDTls+Vb87iaTJiMj9ht8nvi6FOcnsWNAy8K+VgMWn+7rND6rhC+0oninyyrNP3e4BJiaVIvrBhcwP3lk5R+9L5Nz2UdlLY9eNDJPfKaZ8JDTQODZphfaHfvN4qpac/6yBxkuG1C3KqVx1eiicOVHPOtiPbtJefwtFVLsSHp1ghuNzR7cqQV3lG4flqltigd5sNdRafI4xzv/DQ=
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0611;6:h0+ZfINBALF66nPIv/vGmfGS+Fm3PJKx4RtlpSD8xjQw5tI1fAULj4sUcrpNKc5Ve0I+88KnK1cW6ClXO2J1fJXrDelfJn7vO+G3X1+2dzkRzsWiacjVZA4MSeaW3d54+AOayCI+3sZV9Yx6B/bgYNBsnO/jJVLHyf8swOyrg1k74tmcpnUo4MQAjsaUyDbcKIuFOeksHRsZkxm7DpfA9wLMwoCjbUdQQj3QDj4Rbh40yGKV3YAgjaVKEN1KwxQrihXoqDt1hd1drdL4NRllIuIoGTyRzJJsAoFi5C5DLf5v5esbpbEif6EjvhEcWCVLYfBrTXszk6Utqx6RNRUjgUAawbLcbVBPGfdqk2Yal1cq/OagmPd/9RR6jeIJu2twYg5lDnZ6b9DMQr8HIfEWQa0VnfNUrwD2iVHC1sC+zswbX3xdNcQSa0IbY4fqMrXZAHI+CLxRdPmbz61S3PKqzg==;5:LqHYTgh7vPKRRR9JwgTzD/aUH8NNryYERphHe2INBxxii9VhTMLLKkVFdGOJjeoigPVSXzRJzwns2lR2xKASWTZlLgT06V/oKX51fJmt2zlA1UcWAfqx/S0SwMylZQlOOEQWV8PJ9c5bkw5aYidMxfRD08+DzV4P8HKtJtaTwps=;7:ihz6weboXr/ZS5t0y/MJJSdddkECubc04FrJUFiRuhRFn1YLtqY9JyMzZqKKszvftMXwaE28PlUYjfMt18eJvGcH/fHtHMpx3hJiipbufSPDOnTpUzjhZvyLOpcmY6pDy3fmYmlSPkmnT3UdpmXF1A==
+SpamDiagnosticOutput: 1:99
+SpamDiagnosticMetadata: NSPM
+X-Microsoft-Exchange-Diagnostics: 1;BLUPR12MB0611;20:waC3yCky107PpWG7XG539VKdDF3y0aKvAhS0k+TbTYyt+HME9K5gX+6lEJxVraIK3A/BgojzP3s+z+oKI1VTLeJySJlhCCut+PIdAWFtg4Q0SaJh8+1lds9P3bqmLgBEtszl0636Lmo9/iOfmIFapbmsE9siLuK15tUEA6KitkT0R+2fdxtZi/UoVJ0546d6e/awDNkcx/Yiagemi3GLjAHv3CfQ4MAVj9IHmnNttj57GfdCj9WmXD12KWSpxAGo
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 15 Nov 2018 16:09:33.2362
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7f0188e-5011-4106-a15b-08d64b14bb58
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXCHOV01.amd.com]
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BLUPR12MB0611
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/15/2018 12:10 AM, Michal Hocko wrote:
-> On Wed 14-11-18 16:50:23, Alexander Duyck wrote:
->>
->>
->> On 11/14/2018 7:07 AM, Michal Hocko wrote:
->>> On Mon 05-11-18 13:19:25, Alexander Duyck wrote:
->>>> This patchset is essentially a refactor of the page initialization logic
->>>> that is meant to provide for better code reuse while providing a
->>>> significant improvement in deferred page initialization performance.
->>>>
->>>> In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
->>>> memory per node I have seen the following. In the case of regular memory
->>>> initialization the deferred init time was decreased from 3.75s to 1.06s on
->>>> average. For the persistent memory the initialization time dropped from
->>>> 24.17s to 19.12s on average. This amounts to a 253% improvement for the
->>>> deferred memory initialization performance, and a 26% improvement in the
->>>> persistent memory initialization performance.
->>>>
->>>> I have called out the improvement observed with each patch.
->>>
->>> I have only glanced through the code (there is a lot of the code to look
->>> at here). And I do not like the code duplication and the way how you
->>> make the hotplug special. There shouldn't be any real reason for that
->>> IMHO (e.g. why do we init pfn-at-a-time in early init while we do
->>> pageblock-at-a-time for hotplug). I might be wrong here and the code
->>> reuse might be really hard to achieve though.
->>
->> Actually it isn't so much that hotplug is special. The issue is more that
->> the non-hotplug case is special in that you have to perform a number of
->> extra checks for things that just aren't necessary for the hotplug case.
-> 
-> Can we hide those behind a helper (potentially with a jump label if
-> necessary) and still share a large part of the code? Also this code is
-> quite old and maybe we are overzealous with the early checks. Do we
-> really need them. Why should be early boot memory any different from the
-> hotplug. The only exception I can see should really be deferred
-> initialization check.
-> 
->> If anything I would probably need a new iterator that would be able to take
->> into account all the checks for the non-hotplug case and then provide ranges
->> of PFNs to initialize.
->>
->>> I am also not impressed by new iterators because this api is quite
->>> complex already. But this is mostly a detail.
->>
->> Yeah, the iterators were mostly an attempt at hiding some of the complexity.
->> Being able to break a loop down to just an iterator provding the start of
->> the range and the number of elements to initialize is pretty easy to
->> visualize, or at least I thought so.
-> 
-> I am not against hiding the complexity. I am mostly concerned that we
-> have too many of those iterators. Maybe we can reuse existing ones in
-> some way. If that is not really possible or it would make even more mess
-> then fair enough and go with new ones.
-> 
->>> Thing I do not like is that you keep microptimizing PageReserved part
->>> while there shouldn't be anything fundamental about it. We should just
->>> remove it rather than make the code more complex. I fell more and more
->>> guilty to add there actually.
->>
->> I plan to remove it, but don't think I can get to it in this patch set.
-> 
-> What I am trying to argue is that we should simply drop the
-> __SetPageReserved as an independent patch prior to this whole series.
-> As I've mentioned earlier, I have added this just to be sure and part of
-> that was that __add_section has set the reserved bit. This is no longer
-> the case since d0dc12e86b31 ("mm/memory_hotplug: optimize memory
-> hotplug").
-> 
-> Nobody should really depend on that because struct pages are in
-> undefined state after __add_pages and they should get fully initialized
-> after move_pfn_range_to_zone.
-> 
-> If you really insist on setting the reserved bit then it really has to
-> happen much sooner than it is right now. So I do not really see any
-> point in doing so. Sure there are some pfn walkers that really need to
-> do pfn_to_online_page because pfn_valid is not sufficient but that is
-> largely independent on any optimization work in this area.
-> 
-> I am sorry if I haven't been clear about that before. Does it make more
-> sense to you now?
+Fixed build errors.
+- Implicit declaration of pci_enable_msi() & pci_disable_msi()
+api's for openrisc architecture.
+- type defaults to 'int' in declaration of 'module_pci_driver'
 
-I get what you are saying I just don't agree with the ordering. I have 
-had these patches in the works for a couple months now. You are 
-essentially telling me to defer these in favor of taking care of the 
-reserved bit first.
+Enabled build for x86 architecture.
 
-The only spot where I think we disagree is that I would prefer to get 
-these in first, and then focus on the reserved bit. I'm not saying we 
-shouldn't do the work, but I would rather take care of the immediate 
-issue, and then "clean house" as it were. I've done that sort of thing 
-in the past where I start deferring patches and then by the end of 
-things I have a 60 patch set I am trying to push because one fix gets 
-ahead of another and another.
+Reviewed-by: Alex Deucher <alexander.deucher@amd.com>
+Signed-off-by: Vijendar Mukunda <vijendar.mukunda@amd.com>
+Tested-by: Ravulapati Vishnu vardhan Rao <Vishnuvardhanrao.Ravulapati@amd.com>
+---
+ sound/soc/amd/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-My big concern is that dropping the reserved bit is going to be much 
-more error prone than the work I have done in this patch set since it is 
-much more likely that somebody somewhere has made a false reliance on it 
-being set. If you have any tests you usually run for memory hotplug it 
-would be useful if you could point me in that direction. Then I can move 
-forward with the upcoming patch set with a bit more confidence.
+diff --git a/sound/soc/amd/Kconfig b/sound/soc/amd/Kconfig
+index 5f3b560..33ebec9 100644
+--- a/sound/soc/amd/Kconfig
++++ b/sound/soc/amd/Kconfig
+@@ -22,5 +22,6 @@ config SND_SOC_AMD_CZ_RT5645_MACH
+ 
+ config SND_SOC_AMD_ACP3x
+ 	tristate "AMD Audio Coprocessor-v3.x support"
++	depends on X86 && PCI
+ 	help
+ 	 This option enables ACP v3.x I2S support on AMD platform
+-- 
+2.7.4
 
-> P.S.
-> There is always that tempting thing to follow the existing code and
-> tweak it for a new purpose. This approach, however, adds more and more
-> complex code on top of something that might be wrong or stale already.
-> I have seen that in MM code countless times and I have contributed to
-> that myself. I am sorry to push back on this so hard but this code is
-> a mess and any changes to make it more optimal should really make sure
-> the foundations are solid before. Been there done that, not a huge fun
-> but that is the price for having basically unmaintained piece of code
-> that random usecases stop by and do what they need without ever
-> following up later.
-
-That is what I am doing. That is why I found and dropped the check for 
-the NUMA not in the deferred init. I am pushing back on code where it 
-makes sense to do so and determine what actually is adding value. My 
-concern is more that I am worried that trying to make things "perfect" 
-might be getting in the way of "good". Kernel development has always 
-been an incremental process. My preference would be to lock down what we 
-have before I go diving in and cleaning up other bits of the memory init.
