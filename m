@@ -2,157 +2,136 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 52C8BC43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:46:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB46C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:46:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0B42220825
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:46:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="UwpypDHH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B42220825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id F3D8820825
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:46:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D8820825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1732963AbeKOTxY (ORCPT
+        id S2387711AbeKOTxx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:53:24 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:33271 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728634AbeKOTxY (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:53:24 -0500
-Received: by mail-wr1-f67.google.com with SMTP id u9-v6so20453866wrr.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 01:46:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=message-id:subject:from:to:cc:date:in-reply-to:references
-         :user-agent:mime-version:content-transfer-encoding;
-        bh=cFkBvcAplJC6nmdc3QF15N00kkjLnDBYHi/fgtwAks0=;
-        b=UwpypDHH2b9IlOYOGRUoF7f29zv9U429aCoUaeFBk3ugCPHkLmmZFfd9+Ro62YI0Se
-         jmH/J5mAMQmomKrBA9ZkZz/NdaYt4VxFOuhE7abARDeOYGoU/qSDT/qigNE2bX8TKmDH
-         iHZDUyBJ5hCX1GCYeNYL9eap1bA/3NQrOTYNfFJ8Um+n9NzSNV3eLjdr4MANwSPysWH3
-         ykycZdPaiWhP+Lc20ZPXKl4wuBCL0klamjiQchJXurtH1Wtqyepvr+cpXXh1SMUrgmzV
-         4/R/4+GLyL0JK3z5FBR/5jUVqVFP4HWBUHyq3ONmpakPHWY7WnIaiAM/52/ulyL63wdz
-         wbOA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:user-agent:mime-version:content-transfer-encoding;
-        bh=cFkBvcAplJC6nmdc3QF15N00kkjLnDBYHi/fgtwAks0=;
-        b=SqN44Tb7j50G+RI3NyyuYBorJ1WtfC3s+gsIWDjHlwR2vIDDTpWd1RnPiPuTtJ/iza
-         bTj+DRGsPI3ax5d7k/RyDoNAjcaFdJU2AcHxs4Qh4hUEamH0wyeoQ7Ekf0j6MqRwWFh1
-         vb39z9sSdZ60AzxCDN6r4F/cxv7ujoDawj//9cUpFT/yyydei+SrDH17XBpZ/YW3O2IO
-         2qZKdpcb9XkCVvPhOUX0Hf1Xw+rDDtlyqbIKzAf9VZ6sxFiut9qJ+eIxccfoxPqKA2zK
-         NI1TmN/zGRe/H2zzCzaJlzirHxHDl+LH4Sw8Kshtzrlk+3JuSUGHQt42ncu7O0FD6Ggy
-         m7oA==
-X-Gm-Message-State: AGRZ1gIiSBqesQ8NyWyM2p6lvb/8IVJY1o5+xom5srWLHzU1x13kTxTx
-        swtEN6Y4CWc+PWisJVAVganl6w==
-X-Google-Smtp-Source: AJdET5dejrY50v8mNrsloMnJ5dEmExjrJyG8xoNgpOQG7aIuKeuGBU/JWqh4RDVlBiT9mcdZAm8f2A==
-X-Received: by 2002:adf:9022:: with SMTP id h31-v6mr5089266wrh.297.1542275177566;
-        Thu, 15 Nov 2018 01:46:17 -0800 (PST)
-Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
-        by smtp.gmail.com with ESMTPSA id l17-v6sm19635330wrb.86.2018.11.15.01.46.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 01:46:16 -0800 (PST)
-Message-ID: <223b47cc5077db7176e5d8c013f1a76091c3d70c.camel@baylibre.com>
-Subject: Re: [RFC v1 7/7] clk: meson: meson8b: allow changing the CPU clock
- tree
-From:   Jerome Brunet <jbrunet@baylibre.com>
-To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
-        narmstrong@baylibre.com
+        Thu, 15 Nov 2018 14:53:53 -0500
+Received: from mx2.suse.de ([195.135.220.15]:55094 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728634AbeKOTxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:53:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay1.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 499DAAEE7;
+        Thu, 15 Nov 2018 09:46:45 +0000 (UTC)
+Subject: Re: [PATCH] arm64: Make kpti command line options x86 compatible
+To:     Christoph Hellwig <hch@infradead.org>
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org
-Date:   Thu, 15 Nov 2018 10:46:15 +0100
-In-Reply-To: <20181114225725.2821-8-martin.blumenstingl@googlemail.com>
-References: <20181114225725.2821-1-martin.blumenstingl@googlemail.com>
-         <20181114225725.2821-8-martin.blumenstingl@googlemail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        linux-doc@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Richard Brown <rbrown@suse.de>,
+        Matthias Brugger <mbrugger@suse.com>
+References: <20181113152046.22389-1-agraf@suse.de>
+ <20181115094116.GA18154@infradead.org>
+From:   Alexander Graf <agraf@suse.de>
+Openpgp: preference=signencrypt
+Autocrypt: addr=agraf@suse.de; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <7af8ab89-6c55-3e54-e81c-4b5397cf0904@suse.de>
+Date:   Thu, 15 Nov 2018 10:46:43 +0100
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
+ Gecko/20100101 Thunderbird/60.3.0
+MIME-Version: 1.0
+In-Reply-To: <20181115094116.GA18154@infradead.org>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 2018-11-14 at 23:57 +0100, Martin Blumenstingl wrote:
-> Currently all clocks in the CPU clock tree are marked as read-only
-> (using the corresponding _ro_ clk_ops). This was correct since changing
-> the clock tree could cause the system to lock up.
-> Switch all clocks to their corresponding clk_ops variant which is not
-> read-only to allow changing the CPU clock tree since the bug which
-> locked up the system is now fixed (by switching the CPU clock temporary
-> to run off XTAL while changing the CPU clock tree).
-> 
-> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-> ---
->  drivers/clk/meson/meson8b.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
-> index c06a1a7faa4c..b3bdc7e05441 100644
-> --- a/drivers/clk/meson/meson8b.c
-> +++ b/drivers/clk/meson/meson8b.c
-> @@ -203,7 +203,7 @@ static struct clk_regmap meson8b_sys_pll_dco = {
->  	},
->  	.hw.init = &(struct clk_init_data){
->  		.name = "sys_pll_dco",
-> -		.ops = &meson_clk_pll_ro_ops,
-> +		.ops = &meson_clk_pll_ops,
->  		.parent_names = (const char *[]){ "xtal" },
->  		.num_parents = 1,
->  	},
-> @@ -218,7 +218,7 @@ static struct clk_regmap meson8b_sys_pll = {
->  	},
->  	.hw.init = &(struct clk_init_data){
->  		.name = "sys_pll",
-> -		.ops = &clk_regmap_divider_ro_ops,
-> +		.ops = &clk_regmap_divider_ops,
->  		.parent_names = (const char *[]){ "sys_pll_dco" },
->  		.num_parents = 1,
->  		.flags = CLK_SET_RATE_PARENT,
-> @@ -552,7 +552,7 @@ static struct clk_regmap meson8b_cpu_in_sel = {
->  	},
->  	.hw.init = &(struct clk_init_data){
->  		.name = "cpu_in_sel",
-> -		.ops = &clk_regmap_mux_ro_ops,
-> +		.ops = &clk_regmap_mux_ops,
->  		.parent_names = (const char *[]){ "xtal", "sys_pll" },
->  		.num_parents = 2,
->  		.flags = (CLK_SET_RATE_PARENT |
-> @@ -606,7 +606,7 @@ static struct clk_regmap meson8b_cpu_scale_div = {
->  	},
->  	.hw.init = &(struct clk_init_data){
->  		.name = "cpu_scale_div",
-> -		.ops = &clk_regmap_divider_ro_ops,
-> +		.ops = &clk_regmap_divider_ops,
->  		.parent_names = (const char *[]){ "cpu_in_sel" },
->  		.num_parents = 1,
->  		.flags = CLK_SET_RATE_PARENT,
-> @@ -623,7 +623,7 @@ static struct clk_regmap meson8b_cpu_scale_out_sel = {
->  	},
->  	.hw.init = &(struct clk_init_data){
->  		.name = "cpu_scale_out_sel",
-> -		.ops = &clk_regmap_mux_ro_ops,
-> +		.ops = &clk_regmap_mux_ops,
->  		/*
->  		 * NOTE: We are skipping the parent with value 0x2 (which is
->  		 * "cpu_div3") because it results in a duty cycle of 33% which
-> @@ -646,7 +646,7 @@ static struct clk_regmap meson8b_cpu_clk = {
->  	},
->  	.hw.init = &(struct clk_init_data){
->  		.name = "cpu_clk",
-> -		.ops = &clk_regmap_mux_ro_ops,
-> +		.ops = &clk_regmap_mux_ops,
->  		.parent_names = (const char *[]){ "xtal",
->  						  "cpu_scale_out_sel" },
->  		.num_parents = 2,
 
-Reviewed-by: Jerome Brunet <jbrunet@baylibre.com>
 
+On 15.11.18 10:41, Christoph Hellwig wrote:
+> On Tue, Nov 13, 2018 at 04:20:46PM +0100, Alexander Graf wrote:
+>> I've already stumbled over 2 cases where people got confused about how to
+>> disable kpti on AArch64. In both cases, they used existing x86_64 options
+>> and just applied that to an AArch64 system, expecting it to work.
+>>
+>> I think it makes a lot of sense to have compatible kernel command line
+>> parameters whenever we can have them be compatible.
+>>
+>> So this patch adds the pti= and no_pti kernel command line options, mapping
+>> them into the existing kpti= command line framework. It preserves the old
+>> syntax to maintain compatibility with older command lines.
+>>
+>> While at it, the patch also marks the respective options as dual-arch.
+> 
+> Thanks.  Which also brings up my old complainﬆ that arm64 and x86 should
+> use the same config option.  Bonus points for moving the parsing code
+> to a common file..
+
+Both archs handle the parameters in completely different code paths
+(probably due to arch constraints), so I'm not sure how doable it would
+be to combine the parsing.
+
+I'm also quite sure that we have more parameters like this around,
+especially with the other spectre mitigations. So if you see any, please
+feel free to send patches like this one to at least synchronize the user
+view.
+
+
+Alex
