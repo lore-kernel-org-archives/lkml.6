@@ -2,319 +2,133 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E094CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:38:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4B985C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:38:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D0E92089D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:38:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D0E92089D
+	by mail.kernel.org (Postfix) with ESMTP id 004D82089D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:38:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 004D82089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728992AbeKOSpE convert rfc822-to-8bit (ORCPT
+        id S1729033AbeKOSpl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 13:45:04 -0500
-Received: from mga14.intel.com ([192.55.52.115]:1883 "EHLO mga14.intel.com"
+        Thu, 15 Nov 2018 13:45:41 -0500
+Received: from mga17.intel.com ([192.55.52.151]:47159 "EHLO mga17.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728388AbeKOSpD (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 13:45:03 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
+        id S1728527AbeKOSpk (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 13:45:40 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
 X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 00:38:11 -0800
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 00:38:49 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,235,1539673200"; 
-   d="scan'208";a="108257245"
-Received: from jnikula-mobl3.fi.intel.com (HELO localhost) ([10.237.72.61])
-  by fmsmga001.fm.intel.com with ESMTP; 15 Nov 2018 00:38:08 -0800
-From:   Jani Nikula <jani.nikula@intel.com>
-To:     Dan Williams <dan.j.williams@intel.com>,
-        linux-kernel@vger.kernel.org
-Cc:     vishal.l.verma@intel.com,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-nvdimm@lists.01.org, Dmitry Vyukov <dvyukov@google.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Steve French <stfrench@microsoft.com>,
-        "Tobin C. Harding" <me@tobin.cc>, linux-doc@vger.kernel.org
-Subject: Re: [Ksummit-discuss] [RFC PATCH 2/3] MAINTAINERS, Handbook: Subsystem Profile
-In-Reply-To: <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com> <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com>
-Date:   Thu, 15 Nov 2018 10:38:44 +0200
-Message-ID: <87pnv6ivl7.fsf@intel.com>
+   d="scan'208";a="104573356"
+Received: from aaronlu.sh.intel.com (HELO intel.com) ([10.239.159.44])
+  by fmsmga002.fm.intel.com with ESMTP; 15 Nov 2018 00:38:47 -0800
+Date:   Thu, 15 Nov 2018 16:38:47 +0800
+From:   Aaron Lu <aaron.lu@intel.com>
+To:     linux-mm <linux-mm@kvack.org>, lkml <linux-kernel@vger.kernel.org>
+Cc:     Vasily Averin <vvs@virtuozzo.com>, Michal Hocko <mhocko@suse.com>,
+        Huang Ying <ying.huang@intel.com>,
+        Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH] mm/swap: use nr_node_ids for avail_lists in swap_info_struct
+Message-ID: <20181115083847.GA11129@intel.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Since commit a2468cc9bfdf ("swap: choose swap device according to
+numa node"), avail_lists field of swap_info_struct is changed to
+an array with MAX_NUMNODES elements. This made swap_info_struct
+size increased to 40KiB and needs an order-4 page to hold it.
 
-Cc: linux-doc
+This is not optimal in that:
+1 Most systems have way less than MAX_NUMNODES(1024) nodes so it
+  is a waste of memory;
+2 It could cause swapon failure if the swap device is swapped on
+  after system has been running for a while, due to no order-4
+  page is available as pointed out by Vasily Averin.
 
-On Wed, 14 Nov 2018, Dan Williams <dan.j.williams@intel.com> wrote:
-> As presented at the 2018 Linux Plumbers conference [1], the Subsystem
-> Profile is proposed as a way to reduce friction between committers and
-> maintainers and perhaps encourage conversations amongst maintainers
-> about best practice policies.
->
-> The profile contains short answers to some of the common policy
-> questions a contributor might have, or that a maintainer might consider
-> formalizing. The current list of maintenance policies is:
->
-> Overview: General introduction to maintaining the subsystem
-> Core: List of source files considered core
-> Leaf: List of source files that consume core functionality
-> Patches or Pull requests: Simple statement of expected submission format
-> Last -rc for new feature submissions: Expected lead time for submissions
-> Last -rc to merge features: Deadline for merge decisions
-> Non-author Ack / Review Tags Required: Patch review economics
-> Test Suite: Pass this suite before requesting inclusion
-> Resubmit Cadence: When to ping the maintainer
-> Trusted Reviewers: Help for triaging patches
-> Time Zone / Office Hours: When might a maintainer be available
-> Checkpatch / Style Cleanups: Policy on pure cleanup patches
-> Off-list review: Request for review gates
-> TODO: Potential development tasks up for grabs, or active focus areas
->
-> The goal of the Subsystem Profile is to set expectations for
-> contributors and interim or replacement maintainers for a subsystem.
+Solve the above two issues by using nr_node_ids(which is the actual
+possible node number the running system has) for avail_lists instead
+of MAX_NUMNODES.
 
-First of all, I welcome documentation efforts like this.
+nr_node_ids is unknown at compile time so can't be directly used
+when declaring this array. What I did here is to declare avail_lists
+as zero element array and allocate space for it when allocating
+space for swap_info_struct. The reason why keep using array but
+not pointer is plist_for_each_entry needs the field to be part
+of the struct, so pointer will not work.
 
-The cover letter mainly focuses on the maintainer aspect, and the
-documentation is added to the maintainer handbook. However, here you set
-the goal as setting expectations for contributors. The example nvdimm
-profile in patch 3/3 addresses the reader as a new maintainer, yet goes
-on to set expectations also for contributors, not just the maintainer.
+This patch is on top of Vasily Averin's fix commit. I think the
+use of kvzalloc for swap_info_struct is still needed in case
+nr_node_ids is really big on some systems.
 
-I do think the documentation for contributors and maintainers/committers
-should be kept separate. Most contributors will never care about the
-documentation for the latter. We have Documentation/process for
-contributors, and I think the audience of Documentation/maintainer
-should be strictly maintainers.
+Cc: Vasily Averin <vvs@virtuozzo.com>
+Cc: Michal Hocko <mhocko@suse.com>
+Cc: Huang Ying <ying.huang@intel.com>
+Signed-off-by: Aaron Lu <aaron.lu@intel.com>
+---
+ include/linux/swap.h | 11 ++++++++++-
+ mm/swapfile.c        |  3 ++-
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-In summary, I do think we need all of the documentation you propose, and
-I appreciate you taking this on, but I think this should be split by
-audience.
-
-BR,
-Jani.
-
-
->
-> See Documentation/maintainer/subsystem-profile.rst for more details, and
-> a follow-on example profile for the libnvdimm subsystem.
->
-> [1]: https://linuxplumbersconf.org/event/2/contributions/59/
->
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Steve French <stfrench@microsoft.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Tobin C. Harding <me@tobin.cc>
-> Cc: Olof Johansson <olof@lixom.net>
-> Cc: Martin K. Petersen <martin.petersen@oracle.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  Documentation/maintainer/index.rst             |    1 
->  Documentation/maintainer/subsystem-profile.rst |  145 ++++++++++++++++++++++++
->  MAINTAINERS                                    |    4 +
->  3 files changed, 150 insertions(+)
->  create mode 100644 Documentation/maintainer/subsystem-profile.rst
->
-> diff --git a/Documentation/maintainer/index.rst b/Documentation/maintainer/index.rst
-> index 2a14916930cb..1e6b1aaa6024 100644
-> --- a/Documentation/maintainer/index.rst
-> +++ b/Documentation/maintainer/index.rst
-> @@ -11,4 +11,5 @@ additions to this manual.
->  
->     configure-git
->     pull-requests
-> +   subsystem-profile
->  
-> diff --git a/Documentation/maintainer/subsystem-profile.rst b/Documentation/maintainer/subsystem-profile.rst
-> new file mode 100644
-> index 000000000000..a74b624e0972
-> --- /dev/null
-> +++ b/Documentation/maintainer/subsystem-profile.rst
-> @@ -0,0 +1,145 @@
-> +.. _subsystemprofile:
-> +
-> +Subsystem Profile
-> +=================
-> +
-> +The Subsystem Profile is a collection of policy positions that a
-> +maintainer or maintainer team establishes for the their subsystem. While
-> +there is a wide range of technical nuance on maintaining disparate
-> +sections of the kernel, the Subsystem Profile documents a known set of
-> +major process policies that vary between subsystems.  What follows is a
-> +list of policy questions a maintainer can answer and include a document
-> +in the kernel, or on an external website. It advertises to other
-> +maintainers and contributors the local policy of the subsystem. Some
-> +sections are optional like "Overview", "Off-list review", and "TODO".
-> +The others are recommended for all subsystems to address, but no section
-> +is mandatory. In addition there are no wrong answers, just document how
-> +a subsystem typically operates. Note that the profile follows the
-> +subsystem not the maintainer, i.e. there is no expectation that a
-> +maintainer of multiple subsystems deploys the same policy across those
-> +subsystems.
-> +
-> +
-> +Overview
-> +--------
-> +In this optional section of the profile provide a free form overview of
-> +the subsystem written as a hand-off document. In other words write a
-> +note to someone that would receive the “keys to the castle” in the event
-> +of extended or unexpected absence. “So, you have recently become the
-> +maintainer of the XYZ subsystem, condolences, it is a thankless job,
-> +here is the lay of the land.” Details to consider are the extended
-> +details that are not included in MAINTAINERS, and not addressed by the
-> +other profile questions below. For example details like, who has access
-> +to the git tree, branches that are pulled into -next, relevant
-> +specifications, issue trackers, and sensitive code areas. If available
-> +the Overview should link to other subsystem documentation that may
-> +clarify, re-iterate, emphasize / de-emphasize portions of the global
-> +process documentation for contributors (CodingStyle, SubmittingPatches,
-> +etc...).
-> +
-> +
-> +Core
-> +----
-> +A list of F: tags (as described by MAINTAINERS) listing what the
-> +maintainer considers to be core files. The review and lead time
-> +constraints for 'core' code may be stricter given the increased
-> +sensitivity and risk of change.
-> +
-> +
-> +Patches or Pull requests
-> +------------------------
-> +Some subsystems allow contributors to send pull requests, most require
-> +mailed patches. State “Patches only”, or “Pull requests accepted”.
-> +
-> +
-> +Last -rc for new feature submissions
-> +------------------------------------
-> +New feature submissions targeting the next merge window should have
-> +their first posting for consideration before this point. Patches that
-> +are submitted after this point should be clear that they are targeting
-> +the NEXT+1 merge window, or should come with sufficient justification
-> +why they should be considered on an expedited schedule. A general
-> +guideline is to set expectation with contributors that new feature
-> +submissions should appear before -rc5. The answer may be different for
-> +'Core:' files, include a second entry prefixed with 'Core:' if so.
-> +
-> +
-> +Last -rc to merge features
-> +--------------------------
-> +Indicate to contributors the point at which an as yet un-applied patch
-> +set will need to wait for the NEXT+1 merge window. Of course there is no
-> +obligation to ever except any given patchset, but if the review has not
-> +concluded by this point the expectation the contributor should wait and
-> +resubmit for the following merge window. The answer may be different for
-> +'Core:' files, include a second entry prefixed with 'Core:' if so.
-> +
-> +
-> +Non-author Ack / Review Tags Required
-> +-------------------------------------
-> +Let contributors and other maintainers know whether they can expect to
-> +see the maintainer self-commit patches without 3rd-party review. Some
-> +subsystem developer communities are so small as to make this requirement
-> +impractical. Others may have been bootstrapped by a submission of
-> +self-reviewed code at the outset, but have since moved to a
-> +non-author review-required stance. This section sets expectations on the
-> +code-review economics in the subsystem. For example, can a contributor
-> +trade review of a maintainer's, or other contributor's patches in
-> +exchange for consideration of their own.
-> +
-> +
-> +Test Suite
-> +----------
-> +Indicate the test suite all patches are expected to pass before being
-> +submitted for inclusion consideration.
-> +
-> +
-> +Resubmit Cadence
-> +----------------
-> +Define a rate at which a contributor should wait to resubmit a patchset
-> +that has not yet received comments. A general guideline is to try to
-> +meet a deadline of 1 - 2 weeks to acknowledge starting consideration for
-> +a patch set.
-> +
-> +
-> +Trusted Reviewers
-> +-----------------
-> +While a maintainer / maintainer-team is expected to be reviewer of last
-> +resort the review load is less onerous when distributed amongst
-> +contributors and or a trusted set of individuals.  This section is
-> +distinct from the R: tag (Designated Reviewer). Whereas R: identifies
-> +reviewers that should always be copied on a patch submission, the
-> +trusted reviewers here are individuals contributors can reach out to if
-> +a few 'Resubmit Cadence' intervals have gone by without maintainer
-> +action, or to otherwise consult for advice.
-> +
-> +
-> +Time Zone / Office Hours
-> +------------------------
-> +Let contributors know the time of day when one or more maintainers are
-> +usually actively monitoring the mailing list.
-> +
-> +
-> +Checkpatch / Style Cleanups
-> +---------------------------
-> +For subsystems with long standing code bases it is reasonable to decline
-> +to accept pure coding-style fixup patches. This is where you can let
-> +contributors know “Standalone style-cleanups are welcome”,
-> +“Style-cleanups to existing code only welcome with other feature
-> +changes”, or “Standalone style-cleanups to existing code are not
-> +welcome”.
-> +
-> +
-> +Off-list review
-> +---------------
-> +A maintainer may optionally require that contributors seek prior review
-> +of patches before initial submission for upstream. For example,
-> +“Developers from organization X, please seek internal review before
-> +requesting upstream review”. This policy identifies occasions where a
-> +maintainer wants to reflect some of the review load back to an
-> +organization.
-> +
-> +
-> +TODO
-> +----
-> +In this optional section include a list of work items that might be
-> +suitable for onboarding a new developer to the subsystem.
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 83b7b3943a12..bb4a83a7684d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -99,6 +99,10 @@ Descriptions of section entries:
->  	   Obsolete:	Old code. Something tagged obsolete generally means
->  			it has been replaced by a better system and you
->  			should be using that.
-> +	P: Subsystem Profile document for the maintainer entry.  This
-> +	   is either an in-tree file or a URI to a document.  The
-> +	   contents of a Subsystem Profile are described in
-> +	   Documentation/maintainer/subsystem-profile.rst.
->  	F: Files and directories with wildcard patterns.
->  	   A trailing slash includes all files and subdirectory files.
->  	   F:	drivers/net/	all files in and below drivers/net
->
-> _______________________________________________
-> Ksummit-discuss mailing list
-> Ksummit-discuss@lists.linuxfoundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
-
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index d8a07a4f171d..3d3630b3f63d 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -233,7 +233,6 @@ struct swap_info_struct {
+ 	unsigned long	flags;		/* SWP_USED etc: see above */
+ 	signed short	prio;		/* swap priority of this type */
+ 	struct plist_node list;		/* entry in swap_active_head */
+-	struct plist_node avail_lists[MAX_NUMNODES];/* entry in swap_avail_heads */
+ 	signed char	type;		/* strange name for an index */
+ 	unsigned int	max;		/* extent of the swap_map */
+ 	unsigned char *swap_map;	/* vmalloc'ed array of usage counts */
+@@ -274,6 +273,16 @@ struct swap_info_struct {
+ 					 */
+ 	struct work_struct discard_work; /* discard worker */
+ 	struct swap_cluster_list discard_clusters; /* discard clusters list */
++	struct plist_node avail_lists[0]; /*
++					   * entries in swap_avail_heads, one
++					   * entry per node.
++					   * Must be last as the number of the
++					   * array is nr_node_ids, which is not
++					   * a fixed value so have to allocate
++					   * dynamically.
++					   * And it has to be an array so that
++					   * plist_for_each_* can work.
++					   */
+ };
+ 
+ #ifdef CONFIG_64BIT
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index 8688ae65ef58..6e06821623f6 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -2812,8 +2812,9 @@ static struct swap_info_struct *alloc_swap_info(void)
+ 	struct swap_info_struct *p;
+ 	unsigned int type;
+ 	int i;
++	int size = sizeof(*p) + nr_node_ids * sizeof(struct plist_node);
+ 
+-	p = kvzalloc(sizeof(*p), GFP_KERNEL);
++	p = kvzalloc(size, GFP_KERNEL);
+ 	if (!p)
+ 		return ERR_PTR(-ENOMEM);
+ 
 -- 
-Jani Nikula, Intel Open Source Graphics Center
+2.17.2
+
