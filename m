@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0FEF0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:17:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9E16EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:17:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC5862145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:17:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 610AF2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:17:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gluegarage.com header.i=@gluegarage.com header.b="nmwpi/hN";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Gw/6GvoJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC5862145D
+	dkim=pass (1024-bit key) header.d=gluegarage.com header.i=@gluegarage.com header.b="g+rE4K/B";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="I7wjocss"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 610AF2087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gluegarage.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388985AbeKPI1F (ORCPT
+        id S2389031AbeKPI1O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 03:27:05 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:37225 "EHLO
+        Fri, 16 Nov 2018 03:27:14 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:50719 "EHLO
         out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1729045AbeKPI1F (ORCPT
+        by vger.kernel.org with ESMTP id S1729045AbeKPI1N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:27:05 -0500
+        Fri, 16 Nov 2018 03:27:13 -0500
 Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 5528623160;
-        Thu, 15 Nov 2018 17:17:23 -0500 (EST)
+        by mailout.nyi.internal (Postfix) with ESMTP id A2A00218B7;
+        Thu, 15 Nov 2018 17:17:31 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Thu, 15 Nov 2018 17:17:23 -0500
+  by compute1.internal (MEProxy); Thu, 15 Nov 2018 17:17:31 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gluegarage.com;
          h=from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=mesmtp; bh=UssMcyhLMr
-        6//YK+EB26j2teh4LGWOmFqH20G2+gzdA=; b=nmwpi/hNvw61BYn1Whanwh0tJk
-        8dlYNKPLt+ngGhY6qx6Kh/P9mdbYG1JQAGwxci/wB2JmRi8TyuREE1ZrC8/VKAer
-        zoyLrfxyrLX9cbm9UY7YY685qBHOx3YVmue3aZBBasIFqKena2msIGDfzwz26j9h
-        714UcJeuYACpqPVzM=
+        :mime-version:content-transfer-encoding; s=mesmtp; bh=zdDOHVhfX6
+        venivR2p2CDNh26XuC0oKqDDvujWeSBsE=; b=g+rE4K/BXgOol9G/uZxW9Qo1HX
+        y4hvUA02Zwfrz4sA1My2UZWD8jDEWGGM6mdpZDOpXstt1oLeO1k8jp+F4HX+ymBJ
+        QzM0GYMw9mFBstEfGt8ArysRZM0NPKQwRStvtTMSqv9IE0OYQ7u/nsgglzjnaQq3
+        0rHudiPvY4RcjRkJI=
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=UssMcyhLMr6//YK+EB26j2teh4LGWOmFqH20G2+gzdA=; b=Gw/6GvoJ
-        XxyFRhSACLjNuyVo18ycHPY+woYLFsyfKZi1DRaQOpBKLDOBufN+Rnz3Nm+0bFpF
-        iqDcM24NCcMxlWZnmuuE3ZLvtmWiuKwPE/CZCiP5sRtr8tnTD1kyAD+i/ZC1SynU
-        hy3NVbjsusKuFv8OtD36D7SZuhcLRg/poNiBZIkOopV7px9HrIyD9Jj+pn/BKEK6
-        je+x8mggThUsMhodJ+8VIWsqQH1dgFo1ucni86TL7SUpkXocAAacSBsA1jUsmYHJ
-        wOR4RYiMCiPbVLq9lDse2w6PpJp+lMCw2g/T0rikHiM6JXsmj7tZwab4DG+NugHN
-        nMFG544iwu3SzQ==
-X-ME-Sender: <xms:cvDtW_LCI6dykRn5707G5pAPP6UofOuje-6P7AhwyhKCVbPTVROUZw>
-X-ME-Proxy: <xmx:cvDtW9OGIpufVOYtsJ2GrR9vuxVd0OrZYIP0-j8bsSPg_jHvASk7mA>
-    <xmx:cvDtW25XPGxfwSKLfuybMZ0fyhsFA44ZU1EGNtXqUtIbE_dz_voXqw>
-    <xmx:c_DtWxVglftr-Di3-axcom39tklFZGs9fVj5D65_F3J6Pz5V5ZAcTA>
-    <xmx:c_DtWw3__kCMTbbsmuXneouzL6bNidr57LQlPBT-A7lW6MWoa9Ujrw>
-    <xmx:c_DtWwM7E0a27R9-b723smlm2IKjB1fy5mzshebyGqYlzr5paC9etg>
-    <xmx:c_DtW1vK4at6ZklY_0fSRgQHjzzrsXVD6Bl-otMqf7KdLmdo14I5HQ>
+        fm1; bh=zdDOHVhfX6venivR2p2CDNh26XuC0oKqDDvujWeSBsE=; b=I7wjocss
+        bAZdnzHiBV+UbJ2Y3O6B3KLLJlMGc8r68+wmEbznrTICMQm93+FB+d4lUl+DVamM
+        Yz0POJaDnsgODtCPJ8Rcn17q1l/TQAu2GCFy8k42SdrAU8eTd0XeW3sjuIV2YcnP
+        yJBgJsL7TqAo0WIRS2u+oxNiUzc6IMaNaZ3UXApK2Og+lgHxrNsjXbLSgdulorFK
+        mz3QZSqqMQ42RRLzhbxdqcyk2ulfVFajMN+0HfXkJ6+qXWbBHlwK9ey3Fkh4bLsW
+        Mbp1EUWVeJTOmh29tPrN1zyUzTkrzGksThBQSAicdQFETvyQRseoY4HbiYCFMQoy
+        1oYuWopIK9NYkg==
+X-ME-Sender: <xms:e_DtW0FVlVen70zsVpZ5KvuGk4oGITaFMAZV653xcWpNOxl4mS2f2Q>
+X-ME-Proxy: <xmx:e_DtWxPN3sdd8_QvxVYJRL-EDc-MoSelAuDyORScBuRWavD0WaVyAQ>
+    <xmx:e_DtWxpKtNbvHJEwfCU8u-W5IG0ee2bZ9aPKJwHSGyYpYPdWuoe2uQ>
+    <xmx:e_DtWyDTwZSOi_dqStlJihlPCdPOz6nzeyWTepjb0iPeZ1IBFKl-Hw>
+    <xmx:e_DtW6NdIVfqXsQebFcdtDp6durAOiGjCWYHtjqD-Y07NWa7LWYnag>
+    <xmx:e_DtWwDn9H9R8oel0YaDzvqfkfMRVvWs1QXgOTWM_RTGKfDx7B4STg>
+    <xmx:e_DtWz-agHwjVkvazOysaRwH06lpC6AzcHWNPuxCTrjb-aVfpfXFEg>
 Received: from zaca_x230.localdomain (unknown [109.205.143.80])
-        by mail.messagingengine.com (Postfix) with ESMTPA id B693CE49AD;
-        Thu, 15 Nov 2018 17:17:18 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 49BC2E4307;
+        Thu, 15 Nov 2018 17:17:27 -0500 (EST)
 From:   Fernando Ramos <greenfoo@gluegarage.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     David Airlie <airlied@linux.ie>,
@@ -92,9 +92,9 @@ Cc:     David Airlie <airlied@linux.ie>,
         virtualization@lists.linux-foundation.org,
         etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         cocci@systeme.lip6.fr
-Subject: [PATCH 3/9] drm: replace "drm_dev_unref" function with "drm_dev_put"
-Date:   Thu, 15 Nov 2018 23:16:23 +0100
-Message-Id: <20181115221634.22715-4-greenfoo@gluegarage.com>
+Subject: [PATCH 4/9] drm: remove deprecated "drm_dev_unref" function
+Date:   Thu, 15 Nov 2018 23:16:24 +0100
+Message-Id: <20181115221634.22715-5-greenfoo@gluegarage.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181115221634.22715-1-greenfoo@gluegarage.com>
 References: <20181115221634.22715-1-greenfoo@gluegarage.com>
@@ -105,188 +105,51 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch unifies the naming of DRM functions for reference counting as
-requested on Documentation/gpu/todo.rst
+There are no more places where this (deprecated) function is being used
+from, thus it can now be removed.
 
 Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
 ---
- drivers/gpu/drm/arc/arcpgu_drv.c             | 4 ++--
- drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 4 ++--
- drivers/gpu/drm/etnaviv/etnaviv_drv.c        | 4 ++--
- drivers/gpu/drm/mxsfb/mxsfb_drv.c            | 4 ++--
- drivers/gpu/drm/rcar-du/rcar_du_drv.c        | 2 +-
- drivers/gpu/drm/shmobile/shmob_drm_drv.c     | 4 ++--
- drivers/gpu/drm/tve200/tve200_drv.c          | 4 ++--
- drivers/gpu/drm/zte/zx_drm_drv.c             | 4 ++--
- 8 files changed, 15 insertions(+), 15 deletions(-)
+ drivers/gpu/drm/drm_drv.c | 13 -------------
+ include/drm/drm_drv.h     |  1 -
+ 2 files changed, 14 deletions(-)
 
-diff --git a/drivers/gpu/drm/arc/arcpgu_drv.c b/drivers/gpu/drm/arc/arcpgu_drv.c
-index f067de4e1e82..dcb06d4e9135 100644
---- a/drivers/gpu/drm/arc/arcpgu_drv.c
-+++ b/drivers/gpu/drm/arc/arcpgu_drv.c
-@@ -216,7 +216,7 @@ static int arcpgu_probe(struct platform_device *pdev)
- 	arcpgu_unload(drm);
- 
- err_unref:
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 
- 	return ret;
+diff --git a/drivers/gpu/drm/drm_drv.c b/drivers/gpu/drm/drm_drv.c
+index 36e8e9cbec52..22c8f8252207 100644
+--- a/drivers/gpu/drm/drm_drv.c
++++ b/drivers/gpu/drm/drm_drv.c
+@@ -706,19 +706,6 @@ void drm_dev_put(struct drm_device *dev)
  }
-@@ -227,7 +227,7 @@ static int arcpgu_remove(struct platform_device *pdev)
+ EXPORT_SYMBOL(drm_dev_put);
  
- 	drm_dev_unregister(drm);
- 	arcpgu_unload(drm);
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
+-/**
+- * drm_dev_unref - Drop reference of a DRM device
+- * @dev: device to drop reference of or NULL
+- *
+- * This is a compatibility alias for drm_dev_put() and should not be used by new
+- * code.
+- */
+-void drm_dev_unref(struct drm_device *dev)
+-{
+-	drm_dev_put(dev);
+-}
+-EXPORT_SYMBOL(drm_dev_unref);
+-
+ static int create_compat_control_link(struct drm_device *dev)
+ {
+ 	struct drm_minor *minor;
+diff --git a/include/drm/drm_drv.h b/include/drm/drm_drv.h
+index 3199ef70c007..abac47c10f1d 100644
+--- a/include/drm/drm_drv.h
++++ b/include/drm/drm_drv.h
+@@ -621,7 +621,6 @@ void drm_dev_unregister(struct drm_device *dev);
  
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-index 843cac222e60..f8da51a63e2f 100644
---- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-+++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-@@ -775,7 +775,7 @@ static int atmel_hlcdc_dc_drm_probe(struct platform_device *pdev)
- 	atmel_hlcdc_dc_unload(ddev);
- 
- err_unref:
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return ret;
- }
-@@ -786,7 +786,7 @@ static int atmel_hlcdc_dc_drm_remove(struct platform_device *pdev)
- 
- 	drm_dev_unregister(ddev);
- 	atmel_hlcdc_dc_unload(ddev);
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-index 83c1f46670bf..52802e6049e0 100644
---- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-+++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-@@ -550,7 +550,7 @@ static int etnaviv_bind(struct device *dev)
- out_bind:
- 	kfree(priv);
- out_unref:
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 
- 	return ret;
- }
-@@ -567,7 +567,7 @@ static void etnaviv_unbind(struct device *dev)
- 	drm->dev_private = NULL;
- 	kfree(priv);
- 
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- }
- 
- static const struct component_master_ops etnaviv_master_ops = {
-diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-index 2393e6d16ffd..88ba003979e6 100644
---- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-+++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-@@ -417,7 +417,7 @@ static int mxsfb_probe(struct platform_device *pdev)
- err_unload:
- 	mxsfb_unload(drm);
- err_free:
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 
- 	return ret;
- }
-@@ -428,7 +428,7 @@ static int mxsfb_remove(struct platform_device *pdev)
- 
- 	drm_dev_unregister(drm);
- 	mxsfb_unload(drm);
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-index 084f58df4a8c..c7fe2433ab9e 100644
---- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-+++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-@@ -454,7 +454,7 @@ static int rcar_du_remove(struct platform_device *pdev)
- 	drm_kms_helper_poll_fini(ddev);
- 	drm_mode_config_cleanup(ddev);
- 
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-index 6ececad6f845..8554102a6ead 100644
---- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-+++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-@@ -194,7 +194,7 @@ static int shmob_drm_remove(struct platform_device *pdev)
- 	drm_kms_helper_poll_fini(ddev);
- 	drm_mode_config_cleanup(ddev);
- 	drm_irq_uninstall(ddev);
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return 0;
- }
-@@ -290,7 +290,7 @@ static int shmob_drm_probe(struct platform_device *pdev)
- 	drm_kms_helper_poll_fini(ddev);
- 	drm_mode_config_cleanup(ddev);
- err_free_drm_dev:
--	drm_dev_unref(ddev);
-+	drm_dev_put(ddev);
- 
- 	return ret;
- }
-diff --git a/drivers/gpu/drm/tve200/tve200_drv.c b/drivers/gpu/drm/tve200/tve200_drv.c
-index 72efcecb44f7..28e2d03c0ccf 100644
---- a/drivers/gpu/drm/tve200/tve200_drv.c
-+++ b/drivers/gpu/drm/tve200/tve200_drv.c
-@@ -249,7 +249,7 @@ static int tve200_probe(struct platform_device *pdev)
- clk_disable:
- 	clk_disable_unprepare(priv->pclk);
- dev_unref:
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 	return ret;
- }
- 
-@@ -263,7 +263,7 @@ static int tve200_remove(struct platform_device *pdev)
- 		drm_panel_bridge_remove(priv->bridge);
- 	drm_mode_config_cleanup(drm);
- 	clk_disable_unprepare(priv->pclk);
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 
- 	return 0;
- }
-diff --git a/drivers/gpu/drm/zte/zx_drm_drv.c b/drivers/gpu/drm/zte/zx_drm_drv.c
-index 11ef17c2d1c1..5b6f1eda52e0 100644
---- a/drivers/gpu/drm/zte/zx_drm_drv.c
-+++ b/drivers/gpu/drm/zte/zx_drm_drv.c
-@@ -114,7 +114,7 @@ static int zx_drm_bind(struct device *dev)
- 	component_unbind_all(dev, drm);
- out_unregister:
- 	dev_set_drvdata(dev, NULL);
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- 	return ret;
- }
- 
-@@ -127,7 +127,7 @@ static void zx_drm_unbind(struct device *dev)
- 	drm_mode_config_cleanup(drm);
- 	component_unbind_all(dev, drm);
- 	dev_set_drvdata(dev, NULL);
--	drm_dev_unref(drm);
-+	drm_dev_put(drm);
- }
- 
- static const struct component_master_ops zx_drm_master_ops = {
+ void drm_dev_get(struct drm_device *dev);
+ void drm_dev_put(struct drm_device *dev);
+-void drm_dev_unref(struct drm_device *dev);
+ void drm_put_dev(struct drm_device *dev);
+ bool drm_dev_enter(struct drm_device *dev, int *idx);
+ void drm_dev_exit(int idx);
 -- 
 2.19.1
 
