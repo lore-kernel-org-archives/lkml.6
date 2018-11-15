@@ -2,131 +2,237 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 31582C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:01:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 50E24C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:01:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB17E22419
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:01:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0E782223DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:01:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="kvwlrzDC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB17E22419
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ErkZv0Ei"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E782223DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728918AbeKOSIQ (ORCPT
+        id S1728949AbeKOSIT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 13:08:16 -0500
-Received: from mail-lj1-f195.google.com ([209.85.208.195]:46200 "EHLO
-        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728859AbeKOSIQ (ORCPT
+        Thu, 15 Nov 2018 13:08:19 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42617 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728748AbeKOSIT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 13:08:16 -0500
-Received: by mail-lj1-f195.google.com with SMTP id v15-v6so16461793ljh.13
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 00:01:30 -0800 (PST)
+        Thu, 15 Nov 2018 13:08:19 -0500
+Received: by mail-lf1-f66.google.com with SMTP id l10so9856957lfh.9
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 00:01:32 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=FZo/WU/wfh2BElMjRxtfHFmffYHSyYmkaL3TP4/l1ww=;
-        b=kvwlrzDC5KAz3lGZd2LJ9FzTIqRLOpHh/Hj0TVoFzBD4DOJIy5gviPng6FMe+zMz8l
-         dBUc1lRwYQmIigY7gYEMziEHJx3LEEN6gewAax0iw5pvP7S68bc4yeoeB3HapcAijowY
-         P45gSo/kOrwrtf9z6LeZsuQ0jd7RjPiirmJaw=
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=izSJwDOoJ3L6HTUkifpUePhxXhaoXbjxzOD3sLoJ6W0=;
+        b=ErkZv0EijwJK///fVYaUxEP9AoVIgf3fcwZqKCa41oSNU8hLv5qa/7wfYjdHv6kFpd
+         Uvf2VrRobeVts/pueE3SCz3VyxOmKlrds2T56FQf2gI8ymQY/CwrPV/NbKpwS659cv/c
+         Hptxir2aw76r7t9H6UT1I2bPdwxCfIqGM5euk=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=FZo/WU/wfh2BElMjRxtfHFmffYHSyYmkaL3TP4/l1ww=;
-        b=bb63TN8rPx4Y60QT3HxUTPgVDjF8xlpI5WSgj31vBSAF62uJ1lKE7L63dxYzgWfU5p
-         aid7wyMJaJBBe3Ew6JAERlIjjgqBefjrqbwJbfxXzvWBZKuI8y9NmxM3MlP3Fhm6PE9Z
-         nV1Qz2/BHlhsvGx+EfRJje963pDVWPcBT0LEPnijiOKiPRzv36rzyNY30C6LCM1VTqf5
-         P3CpKvpLhCLsvSs6FVYZ0F+4KAQUpvnjVdxDiCilYYNlaHPVsSmnZCo79xNj9ChgtljG
-         m8w2oljhbreiNsWSj8ydmS7ABoKdSiq8V+3+G/6Uq38w6KEP1eigt8s6RNJY6j9z8tAH
-         ZeWw==
-X-Gm-Message-State: AGRZ1gJB3ihp1xxD6oSNpfDQqzY7VaPnz2qZf6HmAdt5B0f1LmaclAbc
-        Wdan4LndEZR/Hb5/ts959MYxSw==
-X-Google-Smtp-Source: AJdET5cnrqThCTXIw+C8aBSGWXOg7liPemuXuMqmlN1xMApWGgBIOnv5W1C9Q0bpIv3zLbe6u02hfA==
-X-Received: by 2002:a2e:97d7:: with SMTP id m23-v6mr3309624ljj.18.1542268889398;
-        Thu, 15 Nov 2018 00:01:29 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=izSJwDOoJ3L6HTUkifpUePhxXhaoXbjxzOD3sLoJ6W0=;
+        b=Kon3P7NsoyPngHQjuSmCVRTYfbgEs21cCevimWrmCwuqjA7PMuFAzB2O/B7SrEZTZB
+         RN0+46bJ9zkKtOQlwTD4K1Cv5DqmKPRFDxpAB//IexHJmWZu3Sp3LEJ3ycw6IqMCmwHH
+         uz1O++ZwvhspdQVDU+qArkjQIbVMFMBdHNufl7MSDtVM79YdlRuZUTJyLmalGvFJ+BbW
+         IYCftloDb7fi1aYiLJhBzO+eXTZxnnGLAEEyVvflRvdHqdZh0dqWS0Hg3MaZxKqc6Mun
+         kGS4PY97+ML0go9kXojymh9gHxk744rawm7a2wGGNAH+/RwT5a27U/QTcA5/vRT3XEPk
+         pwtQ==
+X-Gm-Message-State: AGRZ1gIKevNf3NP9XqFuEtwM3YJkFDRDPR07BZrL+ny1rbA5S5SZP49w
+        E454H4fKnv38n7En00+AcgHFsw==
+X-Google-Smtp-Source: AJdET5ckSAM6U/GKrDjF/OQpjwKEmG6zorcwkGrKG4fwOKBjLZOhriHpuyBZl6iLtMlZWIa9QW998w==
+X-Received: by 2002:a19:a7c1:: with SMTP id q184mr2725954lfe.4.1542268891912;
+        Thu, 15 Nov 2018 00:01:31 -0800 (PST)
 Received: from genomnajs.ideon.se ([85.235.10.227])
-        by smtp.gmail.com with ESMTPSA id o25sm4003427lfd.29.2018.11.15.00.01.27
+        by smtp.gmail.com with ESMTPSA id o25sm4003427lfd.29.2018.11.15.00.01.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 00:01:28 -0800 (PST)
+        Thu, 15 Nov 2018 00:01:30 -0800 (PST)
 From:   Linus Walleij <linus.walleij@linaro.org>
 To:     Liam Girdwood <lgirdwood@gmail.com>,
         Mark Brown <broonie@kernel.org>
 Cc:     linux-kernel@vger.kernel.org,
         Bartosz Golaszewski <bgolaszewski@baylibre.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH 0/8 v6] Finalize regulator descriptor work
-Date:   Thu, 15 Nov 2018 09:01:16 +0100
-Message-Id: <20181115080124.7789-1-linus.walleij@linaro.org>
+        Linus Walleij <linus.walleij@linaro.org>,
+        Sangbeom Kim <sbkim73@samsung.com>,
+        Chanwoo Choi <cw00.choi@samsung.com>,
+        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+        Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH 1/8 v6] regulator: s2mps11: Pass descriptor instead of GPIO number
+Date:   Thu, 15 Nov 2018 09:01:17 +0100
+Message-Id: <20181115080124.7789-2-linus.walleij@linaro.org>
 X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20181115080124.7789-1-linus.walleij@linaro.org>
+References: <20181115080124.7789-1-linus.walleij@linaro.org>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This series finalizes the regulator descriptor work.
+Instead of passing a global GPIO number for the enable GPIO, pass
+a descriptor looked up with the standard devm_gpiod_get_optional()
+call.
 
-We do this by:
+This regulator supports passing platform data, but enable/sleep
+regulators are looked up from the device tree exclusively, so
+we can need not touch other files.
 
-- Tidying up remaining drivers using .ena_gpio to pass
-  descriptors.
+Tested on Odroid XU3 (with s2mps11 although not using any GPIOs
+for regulators, so at least default paths are not broken).
 
-- Converting the GPIO regulator to use descriptors and
-  passing a descriptor for .ena_gpio.
+Cc: Sangbeom Kim <sbkim73@samsung.com>
+Cc: Chanwoo Choi <cw00.choi@samsung.com>
+Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+---
+ChangeLog v5->v6:
+- Tag on the nonexclusive bit as regulators can share a
+  GPIO line.
+ChangeLog v4->v5:
+- Fold in a kzalloc() fix from Bartlomiej Zolnierkiewicz
+ChangeLog v3->v4:
+- Changed regulator name to "s2mps11-regulator"
+- Collected Krzysztof's review and test tags.
+ChangeLog v2->v3:
+- Resending.
+ChangeLog v1->v2:
+- Rebase the patch on the other changes.
+---
+ drivers/regulator/s2mps11.c | 46 ++++++++++++++++++-------------------
+ 1 file changed, 23 insertions(+), 23 deletions(-)
 
-- Pull in all inversion and open drain semantics into
-  gpiolib.
-
-- Deleting the legacy GPIO numberspace handling from
-  the GPIO core.
-
-The 0day build robot is happy with the series.
-
-Linus Walleij (8):
-  regulator: s2mps11: Pass descriptor instead of GPIO number
-  regulator: wm8994: Pass descriptor instead of GPIO number
-  regulator: max77686: Pass descriptor instead of GPIO number
-  regulator: gpio: Convert to use descriptors
-  regulator: fixed/gpio: Pull inversion/OD into gpiolib
-  regulator: fixed/gpio: Update device tree bindings
-  regulator: gpio: Simplify probe path
-  regulator: core: Only support passing enable GPIO descriptors
-
- .../bindings/regulator/fixed-regulator.txt    |  13 +-
- .../bindings/regulator/gpio-regulator.txt     |   4 +
- arch/arm/mach-imx/mach-mx21ads.c              |   1 -
- arch/arm/mach-imx/mach-mx27ads.c              |   2 +-
- arch/arm/mach-mmp/brownstone.c                |   1 -
- arch/arm/mach-omap1/board-ams-delta.c         |   1 -
- arch/arm/mach-omap2/pdata-quirks.c            |   1 -
- arch/arm/mach-pxa/em-x270.c                   |   1 -
- arch/arm/mach-pxa/ezx.c                       |   3 +-
- arch/arm/mach-pxa/hx4700.c                    |  23 ++-
- arch/arm/mach-pxa/magician.c                  |  23 ++-
- arch/arm/mach-pxa/raumfeld.c                  |   1 -
- arch/arm/mach-pxa/zeus.c                      |   3 +-
- arch/arm/mach-s3c64xx/mach-crag6410-module.c  |  17 +-
- arch/arm/mach-sa1100/assabet.c                |   1 -
- arch/sh/boards/mach-ecovec24/setup.c          |   2 -
- .../intel-mid/device_libs/platform_bcm43xx.c  |   1 -
- drivers/mfd/wm8994-core.c                     |   9 -
- drivers/regulator/core.c                      |  40 +---
- drivers/regulator/da9055-regulator.c          |   1 -
- drivers/regulator/fixed.c                     |  35 +---
- drivers/regulator/gpio-regulator.c            | 189 +++++++-----------
- drivers/regulator/max77686-regulator.c        |  19 +-
- drivers/regulator/s2mps11.c                   |  46 ++---
- drivers/regulator/wm8994-regulator.c          |  20 +-
- include/linux/mfd/wm8994/pdata.h              |   3 -
- include/linux/regulator/driver.h              |  12 +-
- include/linux/regulator/fixed.h               |  10 -
- include/linux/regulator/gpio-regulator.h      |  18 +-
- 29 files changed, 205 insertions(+), 295 deletions(-)
-
+diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
+index 5bb6f4ca48db..6fec45897194 100644
+--- a/drivers/regulator/s2mps11.c
++++ b/drivers/regulator/s2mps11.c
+@@ -5,7 +5,7 @@
+ 
+ #include <linux/bug.h>
+ #include <linux/err.h>
+-#include <linux/gpio.h>
++#include <linux/gpio/consumer.h>
+ #include <linux/slab.h>
+ #include <linux/module.h>
+ #include <linux/of.h>
+@@ -14,7 +14,6 @@
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
+ #include <linux/regulator/of_regulator.h>
+-#include <linux/of_gpio.h>
+ #include <linux/mfd/samsung/core.h>
+ #include <linux/mfd/samsung/s2mps11.h>
+ #include <linux/mfd/samsung/s2mps13.h>
+@@ -44,7 +43,7 @@ struct s2mps11_info {
+ 	 * Array (size: number of regulators) with GPIO-s for external
+ 	 * sleep control.
+ 	 */
+-	int *ext_control_gpio;
++	struct gpio_desc **ext_control_gpiod;
+ };
+ 
+ static int get_ramp_delay(int ramp_delay)
+@@ -511,7 +510,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
+ 	case S2MPS14X:
+ 		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
+ 			val = S2MPS14_ENABLE_SUSPEND;
+-		else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
++		else if (s2mps11->ext_control_gpiod[rdev_get_id(rdev)])
+ 			val = S2MPS14_ENABLE_EXT_CONTROL;
+ 		else
+ 			val = rdev->desc->enable_mask;
+@@ -805,7 +804,7 @@ static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
+ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 		struct of_regulator_match *rdata, struct s2mps11_info *s2mps11)
+ {
+-	int *gpio = s2mps11->ext_control_gpio;
++	struct gpio_desc **gpio = s2mps11->ext_control_gpiod;
+ 	unsigned int i;
+ 	unsigned int valid_regulators[3] = { S2MPS14_LDO10, S2MPS14_LDO11,
+ 		S2MPS14_LDO12 };
+@@ -816,11 +815,20 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
+ 		if (!rdata[reg].init_data || !rdata[reg].of_node)
+ 			continue;
+ 
+-		gpio[reg] = of_get_named_gpio(rdata[reg].of_node,
+-				"samsung,ext-control-gpios", 0);
+-		if (gpio_is_valid(gpio[reg]))
+-			dev_dbg(&pdev->dev, "Using GPIO %d for ext-control over %d/%s\n",
+-					gpio[reg], reg, rdata[reg].name);
++		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
++				rdata[reg].of_node,
++				"samsung,ext-control-gpios",
++				0,
++				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
++				"s2mps11-regulator");
++		if (IS_ERR(gpio[reg])) {
++			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
++				reg, rdata[reg].name);
++			continue;
++		}
++		if (gpio[reg])
++			dev_dbg(&pdev->dev, "Using GPIO for ext-control over %d/%s\n",
++				reg, rdata[reg].name);
+ 	}
+ }
+ 
+@@ -1126,17 +1134,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 		return -EINVAL;
+ 	}
+ 
+-	s2mps11->ext_control_gpio = devm_kmalloc_array(&pdev->dev,
+-			rdev_num, sizeof(*s2mps11->ext_control_gpio),
++	s2mps11->ext_control_gpiod = devm_kmalloc_array(&pdev->dev,
++			rdev_num, sizeof(*s2mps11->ext_control_gpiod),
+ 			GFP_KERNEL);
+-	if (!s2mps11->ext_control_gpio)
++	if (!s2mps11->ext_control_gpiod)
+ 		return -ENOMEM;
+-	/*
+-	 * 0 is a valid GPIO so initialize all GPIO-s to negative value
+-	 * to indicate that external control won't be used for this regulator.
+-	 */
+-	for (i = 0; i < rdev_num; i++)
+-		s2mps11->ext_control_gpio[i] = -EINVAL;
+ 
+ 	if (!iodev->dev->of_node) {
+ 		if (iodev->pdata) {
+@@ -1166,8 +1168,6 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 	config.dev = &pdev->dev;
+ 	config.regmap = iodev->regmap_pmic;
+ 	config.driver_data = s2mps11;
+-	config.ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
+-	config.ena_gpio_initialized = true;
+ 	for (i = 0; i < rdev_num; i++) {
+ 		struct regulator_dev *regulator;
+ 
+@@ -1178,7 +1178,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 			config.init_data = rdata[i].init_data;
+ 			config.of_node = rdata[i].of_node;
+ 		}
+-		config.ena_gpio = s2mps11->ext_control_gpio[i];
++		config.ena_gpiod = s2mps11->ext_control_gpiod[i];
+ 
+ 		regulator = devm_regulator_register(&pdev->dev,
+ 						&regulators[i], &config);
+@@ -1189,7 +1189,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
+ 			goto out;
+ 		}
+ 
+-		if (gpio_is_valid(s2mps11->ext_control_gpio[i])) {
++		if (s2mps11->ext_control_gpiod[i]) {
+ 			ret = s2mps14_pmic_enable_ext_control(s2mps11,
+ 					regulator);
+ 			if (ret < 0) {
 -- 
 2.17.2
 
