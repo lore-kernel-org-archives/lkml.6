@@ -2,158 +2,137 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,FSL_HELO_FAKE,HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	URIBL_SBL,URIBL_SBL_A,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 88491C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:11:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 017E9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:16:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C8DA2089F
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:11:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B54D02089F
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:16:25 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Vl8j+NuX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C8DA2089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FEXIu7CD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B54D02089F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728289AbeKOMRM (ORCPT
+        id S1728343AbeKOMWO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 07:17:12 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:37868 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbeKOMRL (ORCPT
+        Thu, 15 Nov 2018 07:22:14 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:38136 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbeKOMWO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 07:17:11 -0500
-Received: by mail-pl1-f193.google.com with SMTP id b5so2279281plr.4
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 18:11:21 -0800 (PST)
+        Thu, 15 Nov 2018 07:22:14 -0500
+Received: by mail-it1-f194.google.com with SMTP id k141-v6so27055306itk.3;
+        Wed, 14 Nov 2018 18:16:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=49XnI6arT3v1CXSoUHRBjliSSvBvOE3PSXedAJX9RgE=;
-        b=Vl8j+NuXm7IDyt/0WCP0xu45sw5GqnDLbNanJ3DwiP6tjnwbZqxMUoYOG608UMoQpy
-         7TqC+enn2OVpTqKP8+hnsl7B4tmzXTTqaSLs9FBFySk+zO5xFdWG6abZjtVYncXfVSvc
-         qs+DPFwLTEKjLruxSu/IcX5qpemqnX4LTeGEk=
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=jQHBAtntwHS5DQK8rKpseSf7SvF6HJrPt72yAzEe/bE=;
+        b=FEXIu7CDhACTWR/TYSVLGG+hybOTspf1JcwGY1/2x+oKl+TROmK8xnj+eZD0JHiFqV
+         U0TOkI6Z3cvx+slqgU5N35SeeBLyP52XCm1QXrHkpFp+RTm9zSj7TW/FCh0aQ6VyLVRx
+         tnsjSy5MAP97vwl0iw11oJI9GQMPTrBVglEsTufPmQAkofeU1JsnN7Pk3Bv00SA1fFbv
+         +dVB4syU9IfU5qRsoe9RGinVNQk3OOXJYSdoY2LVtIyLoaOZClyGJGecikEFsC1Tdy6a
+         JNwzScTi9fXVMCNba0lkpxRcaV4WlFCErZISIc7wC2MzDWncJ3TZauE54iXvoC+VVU9x
+         gJKw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=49XnI6arT3v1CXSoUHRBjliSSvBvOE3PSXedAJX9RgE=;
-        b=levBx1LxKSnb4FeoQRdli9yxiSuzddgajILIAEeCdgAoo54hH6gNjzpsj7CUm1HjjF
-         c3kffmyVwYpARh6KWeDT3ZoMX1tRp9Y+dlqX3gA40xZB5tgpKaqyKDvg+FNfbnyg4tSB
-         xmrVXj9R7x4xSxqefXJ4dkE3Hv950oafkkmTe+mVwLfkgnoUz46f/MmK5egJLeMnzuq8
-         lmbFuNqs1/sQ14GithA6apF96Cuax8jZ0Wd06FWkUTvWRKCuCD1TPOGeiNv1G5e2ZovX
-         HeCRGxOrhrApIq5cFApn+xmePMzupGB2QuAXTrvyHVMl+C6GXl9DKrYP/2wir1ipccNv
-         xugw==
-X-Gm-Message-State: AGRZ1gKKyVxjDHcJ7frXK/uyf0O4WUW6Z5LuZ9tCB8DjQwb1xJaTAvUW
-        XckGcb47I6X7/rY5crIqLuEhyw==
-X-Google-Smtp-Source: AJdET5cD6xRTR7Kzvn+ky+fl2bnBePtCZU1bW7xnNj2OODp8rswbNy1Q5kTTdAOfsy99PtlDkiypxA==
-X-Received: by 2002:a17:902:8604:: with SMTP id f4-v6mr1298021plo.206.1542247881596;
-        Wed, 14 Nov 2018 18:11:21 -0800 (PST)
-Received: from google.com ([2620:15c:202:1:299d:6b87:5478:d28a])
-        by smtp.gmail.com with ESMTPSA id h17-v6sm36555915pfj.125.2018.11.14.18.11.19
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Nov 2018 18:11:20 -0800 (PST)
-Date:   Wed, 14 Nov 2018 18:11:18 -0800
-From:   Brian Norris <briannorris@chromium.org>
-To:     yamada.masahiro@socionext.com
-Cc:     Alexander Kapshuk <alexander.kapshuk@gmail.com>, sky@genki.is,
-        yamada.masahiro@socionext.com,
-        Doug Anderson <dianders@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>, lists@nerdbynature.de,
-        Linux Kernel <linux-kernel@vger.kernel.org>,
-        schwab@linux-m68k.org
-Subject: [PATCH v3] scripts/setlocalversion: Improve -dirty check with
- git-status --no-optional-locks
-Message-ID: <20181115021116.GA195691@google.com>
-References: <CAJ1xhMXDFAdiWMV6ODcJM8bfjs-ddyv8utf6N+Yh7+-Ne-KaHw@mail.gmail.com>
- <20181111.174140.002789201@genki.is>
- <CAJ1xhMUA4GUzeDANqR1WafELmEpE+-V569t7e0xCotTG2Lvbyw@mail.gmail.com>
- <CAJ1xhMWw8Mi2dubTFNOxhoP6hk+__Qjo-0+9sQbpqP5K-n4mVw@mail.gmail.com>
- <20181113000938.GA16783@google.com>
- <CAJ1xhMVFt6bYgwY+N5VoFXNpm5kS1j_HV8-ZS8SkavNgZx1HOg@mail.gmail.com>
- <CA+ASDXPcYp_joFeyGQ7TXFBSK-7i6bNFzaA1z=YYSDEjyMABdg@mail.gmail.com>
- <20181113190335.GA50985@google.com>
- <878t1w7hzi.fsf@igel.home>
- <CA+ASDXMuovgar22Z=sTcY=EV4KFtpwpjgdFOqvqAUYZEykzcWw@mail.gmail.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=jQHBAtntwHS5DQK8rKpseSf7SvF6HJrPt72yAzEe/bE=;
+        b=UJWNuMUbSGn8g8vXojagbT9LULe0+vOAUnb0cUuEaG5ge6KmTRtJRWky/6QmaW8t2l
+         Hy709AcWU9/S4u//FYpOrlleptZNS3J6X1+Kz9ef2+Nohg+Hp3dTHPouFsF9Sl19/BOB
+         sHijTnRxGeJchNKBz/dbzP0npkcKjWUoXO6Fe57W64SIYl0zTNO0W3wv6IGkPJdz+SKm
+         Xy4tQn+xUS1sxLBzjxhAKHEmCafPtNuxkZ1ZBGM9v0zAyiY7FBV7k9grsDofJTOIC9HT
+         0LjEgarr08Nsud48vWY/B4c57BQS2Bma7DwLmJSUBnkihPsi6X/0TTg6VdhoSwOVasvN
+         pmtw==
+X-Gm-Message-State: AA+aEWY+UhzmXR4I+6Z0T1F1JKhKSzl0SnnyLIKPeHb8wMZO2IyEo3wu
+        neGNdqTwiYriFW2WW23vi5HTvquBsR7Qt92rvZ43L2KldQc=
+X-Google-Smtp-Source: AJdET5e45JDTfAvZ/VCWwh6Pa0jDtE/w3o7M8aLnmP6II4ovWDEm8EtVGMv+AwKz9/4C6ySo/rk+vls8zrTWgwfrr/Y=
+X-Received: by 2002:a24:ad66:: with SMTP id a38-v6mr3889058itj.175.1542248183012;
+ Wed, 14 Nov 2018 18:16:23 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CA+ASDXMuovgar22Z=sTcY=EV4KFtpwpjgdFOqvqAUYZEykzcWw@mail.gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <2335309.gnWok9HYb4@agathebauer> <3227038.olIWmsCzzY@agathebauer>
+ <20181105205119.GC25674@krava> <3799078.YBnU1OB0PF@agathebauer>
+ <20181106001037.GQ6218@tassilo.jf.intel.com> <CAOBGo4za8hnGt1NUWy1Y1V12WycbxbYP0G0Sm=UT7T9dQ88vDg@mail.gmail.com>
+ <20181111010702.GC6218@tassilo.jf.intel.com> <CAOBGo4zirLiKX8VcROAE=kAD0+qkF0E-cBv9DtBiQr=_obDv5w@mail.gmail.com>
+ <20181112032637.GG6218@tassilo.jf.intel.com>
+In-Reply-To: <20181112032637.GG6218@tassilo.jf.intel.com>
+From:   Travis Downs <travis.downs@gmail.com>
+Date:   Wed, 14 Nov 2018 21:15:46 -0500
+Message-ID: <CAOBGo4xzvkitZvqnsPMKE3RYwfCsVSe3ng3eJkP2vdi35JSTFg@mail.gmail.com>
+Subject: Re: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
+ unwinding - wrong stack pointer register value?]
+To:     ak@linux.intel.com
+Cc:     Milian Wolff <milian.wolff@kdab.com>, jolsa@redhat.com,
+        linux-kernel@vger.kernel.org, jolsa@kernel.org,
+        namhyung@kernel.org, linux-perf-users@vger.kernel.org,
+        acme@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-git-diff-index does not refresh the index for you, so using it for a
-"-dirty" check can give misleading results. Commit 6147b1cf19651
-("scripts/setlocalversion: git: Make -dirty check more robust") tried to
-fix this by switching to git-status, but it overlooked the fact that
-git-status also writes to the .git directory of the source tree, which
-is definitely not kosher for an out-of-tree (O=) build. That is getting
-reverted.
+On Sun, Nov 11, 2018 at 10:26 PM Andi Kleen <ak@linux.intel.com> wrote:
+> On Sat, Nov 10, 2018 at 09:50:05PM -0500, Travis Downs wrote:
 
-Fortunately, git-status now supports avoiding writing to the index via
-the --no-optional-locks flag, as of git 2.14. It still calculates an
-up-to-date index, but it avoids writing it out to the .git directory.
+> LBR is not part of PEBS, but is collected separately in the PMI handler.
 
-So, let's retry the solution from commit 6147b1cf19651 using this new
-flag first, and if it fails, we assume this is an older version of git
-and just use the old git-diff-index method.
+Thanks for clearing this up - so you can ignore any earlier
+suggestions on my part of trying to use LBR to fix the unwinding
+inconsistency.
 
-It's hairy to get the 'grep -vq' (inverted matching) correct by stashing
-the output of git-status (you have to be careful about the difference
-betwen "empty stdin" and "blank line on stdin"), so just pipe the output
-directly to grep and use a regex that's good enough for both the
-git-status and git-diff-index version.
+> >    In the case that PEBS events are used, the IP will differ essentially 100%
+> >    of the time, right? That is, there will always be *some* skid.
+>
+> I wouldn't say that.  It depends on what the CPU is doing and the IPC
+> of the code.
 
-Cc: Genki Sky <sky@genki.is>
-Cc: Christian Kujau <lists@nerdbynature.de>
-Cc: Guenter Roeck <linux@roeck-us.net>
-Suggested-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
-Signed-off-by: Brian Norris <briannorris@chromium.org>
----
-v1 -> v2:
- * handle empty (non-dirty) results properly, where
-     echo "${empty_variable}" | grep -qv "${something_else}"
-   always has a 0 exit status (a blank line is an inverted match for any
-   non-blank expression). Just pipe directly to grep instead, with a
-   hopefully-not-too-permissive regex to handle both versions.
- * actually tested with dirty and non-dirty trees this time
+Well other than say a long-latency cache miss, it is my experience
+that the skid is generally never zero. That is, the PEBS and ireg IP
+will usually differ. This is mostly moot though: what is important is
+how often the ireg skip results in a different call chain (i.e., a
+return occurred between the PEBS point and the interrupt), as you have
+pointed out.
 
-v2 -> v3:
- * switch to extended regex (-E), instead of relying on GNU extension
-   (\?)
----
- scripts/setlocalversion | 12 ++++++++++--
- 1 file changed, 10 insertions(+), 2 deletions(-)
+>
+> Also the backtrace inconsistency can only happen if the sample races with
+> function return. If you don't then the backtrace will point
+> to the correct function, even though the unwind IP is different.
+>
+> For example in the common case where you profile a long loop it
+> is unlikely to happen.
 
-diff --git a/scripts/setlocalversion b/scripts/setlocalversion
-index 71f39410691b..365b3c2b8f43 100755
---- a/scripts/setlocalversion
-+++ b/scripts/setlocalversion
-@@ -73,8 +73,16 @@ scm_version()
- 			printf -- '-svn%s' "`git svn find-rev $head`"
- 		fi
- 
--		# Check for uncommitted changes
--		if git diff-index --name-only HEAD | grep -qv "^scripts/package"; then
-+		# Check for uncommitted changes.
-+		# First, with git-status, but --no-optional-locks is only
-+		# supported in git >= 2.14, so fall back to git-diff-index if
-+		# it fails. Note that git-diff-index does not refresh the
-+		# index, so it may give misleading results. See
-+		# git-update-index(1), git-diff-index(1), and git-status(1).
-+		if {
-+			git --no-optional-locks status -uno --porcelain 2>/dev/null ||
-+			git diff-index --name-only HEAD
-+		} | grep -qvE '^(.. )?scripts/package'; then
- 			printf '%s' -dirty
- 		fi
- 
--- 
-2.19.1.930.g4563a0d9d0-goog
+Agreed.
+
+
+> Could collect numbers how often it happens, but it would surprise
+> me if anything complicated is worth it. I would just do the minimum fixes
+> to address the unwinder errors, and perhaps add the "unwind ip differs"
+> indication.
+
+As above, I think the most important UX problem is not when the IP
+differs, but when the top frame of the IP unwind is different than the
+function in which the PEBS sample occurred. I think the case where the
+skid ends up with both in the same function doesn't pose any
+presentation difficulties [1]. When they are different though, it
+seems tough to present a consistent picture.
+
+[1] Strictly speaking, this the "IPs are in the same function" is not
+sufficient. Imagine a scenario where you have T->B->A (T calls B calls
+A) and the PEBS sample happens in A, and then A and B return, and now
+C then A are called (T->C->A) and the PMI happens. Now the PEBS IP and
+the ireg IP are in the same function, but the stacks are still
+inconsistent. It is probably fine to paper this over and show the user
+the T->C->A stack, as this stack is somehow accurate (it really
+happened), but the user might be confused when he looks at the
+annotation for A, and sees code being executed (having PEBS samples)
+that he knows can never execute when C calls A (for example) since the
+annotations are based on the hidden T->B->A execution...
+
+Bleh.
