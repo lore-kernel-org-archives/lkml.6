@@ -2,97 +2,128 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64B21C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:15:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB2D3C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:16:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2C0872133D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:15:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2C0872133D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 715002133D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:16:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KsamsSTG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715002133D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726996AbeKPJZe (ORCPT
+        id S2388898AbeKPJ0J (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 04:25:34 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34922 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725860AbeKPJZe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 04:25:34 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 17F9630832CF;
-        Thu, 15 Nov 2018 23:15:42 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (file01.intranet.prod.int.rdu2.redhat.com [10.11.5.7])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 3B052611BF;
-        Thu, 15 Nov 2018 23:15:35 +0000 (UTC)
-Received: from file01.intranet.prod.int.rdu2.redhat.com (localhost [127.0.0.1])
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4) with ESMTP id wAFNFYxa027298;
-        Thu, 15 Nov 2018 18:15:34 -0500
-Received: from localhost (mpatocka@localhost)
-        by file01.intranet.prod.int.rdu2.redhat.com (8.14.4/8.14.4/Submit) with ESMTP id wAFNFY4e027294;
-        Thu, 15 Nov 2018 18:15:34 -0500
-X-Authentication-Warning: file01.intranet.prod.int.rdu2.redhat.com: mpatocka owned process doing -bs
-Date:   Thu, 15 Nov 2018 18:15:34 -0500 (EST)
-From:   Mikulas Patocka <mpatocka@redhat.com>
-X-X-Sender: mpatocka@file01.intranet.prod.int.rdu2.redhat.com
-To:     Paul Lawrence <paullawrence@google.com>
-cc:     Alasdair Kergon <agk@redhat.com>,
-        Mike Snitzer <snitzer@redhat.com>, linux-doc@vger.kernel.org,
-        kernel-team@android.com, Jonathan Corbet <corbet@lwn.net>,
-        linux-kernel@vger.kernel.org, dm-devel@redhat.com,
-        Shaohua Li <shli@kernel.org>
-Subject: Re: [dm-devel] [RFC] dm-bow working prototype
-In-Reply-To: <fba91b2e-4b2e-8daf-ff64-a12c9139cada@google.com>
-Message-ID: <alpine.LRH.2.02.1811151809380.25860@file01.intranet.prod.int.rdu2.redhat.com>
-References: <20181023212358.60292-1-paullawrence@google.com> <20181023221819.GB17552@agk-dp.fab.redhat.com> <296148c2-f2d9-5818-ea76-d71a0d6f5cd4@google.com> <alpine.LRH.2.02.1810241514310.4080@file01.intranet.prod.int.rdu2.redhat.com>
- <4a934593-1bd1-be5f-35c0-945c42762627@google.com> <alpine.LRH.2.02.1810261558460.28906@file01.intranet.prod.int.rdu2.redhat.com> <fba91b2e-4b2e-8daf-ff64-a12c9139cada@google.com>
-User-Agent: Alpine 2.02 (LRH 1266 2009-07-14)
-MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.44]); Thu, 15 Nov 2018 23:15:42 +0000 (UTC)
+        Fri, 16 Nov 2018 04:26:09 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:38415 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725860AbeKPJ0J (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 04:26:09 -0500
+Received: by mail-ot1-f66.google.com with SMTP id u3so14542222ota.5;
+        Thu, 15 Nov 2018 15:16:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Endo/rnyrZtQzjl63XIlDlk+0dMOEvUstgeXnyJyS2g=;
+        b=KsamsSTGaj7EBVUbAIZgS9T7QGovy1ECRb9FIS9XU9sUYyBGhXoNh1Dxv+3p9Vb+MC
+         rBge74EsJgxU7dSbXROotH6geTkJ8i/KZyLd3HwVJonemqEDH1Ziqo+AU/h6Zm0vrxph
+         RGu/QdFcCc1SZwwYyNe80U3qp+gnfzF74r6n4yfrtwob7Wwep+SvBwBID8N+meev7cUK
+         NskWGA+n2lJQgl3rgu0ky2Vk1x3UmPO5s5yzC6uPNYnAeSE+27jgCl0erJwC8bIZgO5k
+         VjLuY1jTSF94wyopm5l0Tlxu76snt9z4RT5ZRK3DpuWe2USlEDYlqdLJdWo4D2LCrIy0
+         MW+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Endo/rnyrZtQzjl63XIlDlk+0dMOEvUstgeXnyJyS2g=;
+        b=BJorB97ht5wJXG8GG6AFBjLJVuLVHJGxpAIWV0ve7cgcO68DKId8ckXZzoPjAc5fQd
+         NPzoCygoHwDlLnc7Fvm07gwLjk4mP/DgrEb3dSaIiGZJ8grDU7vjbDJqZrFNwZN9bmdK
+         w6kBUa4teSpJ178wmDj44tI2U4+9UthkCr04Ykrp3r8+RKTZzcVD6wEUMM8oAJQmHOez
+         xgmS4V++qjB1IKNPRuEKFfLZGcf8LioulnEaz+OF1L+KwAkn4w+hS+SvNd3kfZ0/148v
+         +3gjTy0iUmzyplhyLzkRBIwDQzk3snGnGe1+UjPJD85lU2tmF5kl17qd7RcJtv9u7mby
+         P52w==
+X-Gm-Message-State: AGRZ1gImhMW76zuXNaq8A7m0ztRs7uEBoKNtZFOKTXibSMctaw/g3/OG
+        UjO+KxiEFkLOfB2MUtZrXzA=
+X-Google-Smtp-Source: AJdET5frJbOEeY/44Q01Ar6ekmvTcypP0TiJnoI3eU4fo6IOIeyweFzux9/jZ+VI6V2Avp76imE1ow==
+X-Received: by 2002:a9d:2aea:: with SMTP id e97mr5094109otb.206.1542323775740;
+        Thu, 15 Nov 2018 15:16:15 -0800 (PST)
+Received: from nuclearis2-1.lan (c-98-195-139-126.hsd1.tx.comcast.net. [98.195.139.126])
+        by smtp.gmail.com with ESMTPSA id o81-v6sm8680267oif.1.2018.11.15.15.16.14
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 15:16:15 -0800 (PST)
+From:   Alexandru Gagniuc <mr.nuke.me@gmail.com>
+To:     helgaas@google.com
+Cc:     austin_bolen@dell.com, alex_gagniuc@dellteam.com,
+        keith.busch@intel.com, Shyam_Iyer@Dell.com, lukas@wunner.de,
+        Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        "Oliver O'Halloran" <oohall@gmail.com>, linux-pci@vger.kernel.org,
+        linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxppc-dev@lists.ozlabs.org
+Subject: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns AER
+Date:   Thu, 15 Nov 2018 17:16:01 -0600
+Message-Id: <20181115231605.24352-1-mr.nuke.me@gmail.com>
+X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Thanks to Keith for pointing out that it doesn't make sense to disable
+AER services when only one device has a FIRMWARE_FIRST HEST.
 
+AER ownership is an interesting issue brought in by FFS (firmware-first)
+model. In a nutshell if FFS handles AER, then OS should not touch any
+of the AER bits. FW might set things up so that it receives AER
+notifications via SMI. It's theoretically possible to receive SCIs,
+but the exact mechanism is platform-dependent. OS touching AER bits
+when firmware owns them may interfere with these notifications.
 
-On Mon, 29 Oct 2018, Paul Lawrence wrote:
+The ACPI mechanism for negotiating control of AER is _OSC, and is
+described in detail in ACPI 6.2 Ch. 6.2.11.3. _OSC is negotiated at
+the root bus level. Any root port, switch, or endpoint under the bus
+would have its AER ownership negotiated in one _OSC call.
 
-> 
-> > The snapshot target could be hacked so that it remembers space trimmed
-> > with REQ_OP_DISCARD and won't reallocate these blocks.
-> > 
-> > But I suspect that running discard over the whole device would degrade
-> > performance more than copying some unneeded data.
-> > 
-> > How much data do you intend to backup with this solution?
-> > 
-> > 
-> We are space-constrained - we will have to free up space for the backup before
-> we apply the update, so we have to predict the size and keeping usage as low
-> as possible is thus very important.
-> 
-> Also, we've discussed the resizing requirement of the dm-snap solution and
-> that part is not attractive at all - it seems it would be impossible to
-> guarantee that the resizing happens in a timely fashion during the (very busy)
-> update cycle.
-> 
-> Thanks everyone for the insights, especially into how dm-snap works, which I
-> hadn't fully appreciated. At the moment, and for the above reasons, we intend
-> to continue with the dm-bow solution, but do want to keep this discussion
-> open. If anyone is going to be at Linux Plumbers, I'll be presenting this work
-> and would love to chat about it more.
+Then there is HEST, which is part of ACPI Platform Error Interfaces
+(APEI). HEST tables describe the errors that FW may report to the OS.
+A types 6,7 and 7 HEST tables describe AER errors from PCIe devices.
+As part of this description, we're told if the error source is FFS.
 
-dm-snapshot took 9 years to fix the last data corruption bug (2004-2013 - 
-the commit e9c6a182649f4259db704ae15a91ac820e63b0ca).
+Information in HEST seems to be redundant, as each error reported by
+FW will have a CPER table that describes it in detail.
 
-And with the new target duplicating the snapshot functionality, it may be 
-the same.
+Because HEST describes an error source as firmware-first or not, we've
+taken this to mean ownership of AER. Because AER ownership and error
+reporting are coupled, _OSC and HEST usually agree on the matter of
+ownership. However, that doesn't seem to be required by ACPI.
 
-Mikulas
+I've asked around a few people at Dell and they unanimously agree that
+_OSC is the correct way to determine ownership of AER. In linux, we
+use the result of _OSC to enable AER services, but we use HEST to
+determine AER ownership. That's inconsistent. This series drops the
+use of HEST in favor of _OSC.
+
+[1] https://lkml.org/lkml/2018/11/15/62
+
+Alexandru Gagniuc (2):
+  PCI/AER: Do not use APEI/HEST to disable AER services globally
+  PCI/AER: Determine AER ownership based on _OSC instead of HEST
+
+ drivers/acpi/pci_root.c  |  9 +----
+ drivers/pci/pcie/aer.c   | 82 ++--------------------------------------
+ include/linux/pci-acpi.h |  6 ---
+ 3 files changed, 5 insertions(+), 92 deletions(-)
+
+-- 
+2.17.1
+
