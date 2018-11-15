@@ -2,153 +2,109 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA8CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:13:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6CE98C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:15:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0518221582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:13:55 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 10BFA223DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:15:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="C7xE8FkU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0518221582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="bLtWpFaB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 10BFA223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388785AbeKPEWp (ORCPT
+        id S2388827AbeKPEYW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 23:22:45 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:56664 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388263AbeKPEWp (ORCPT
+        Thu, 15 Nov 2018 23:24:22 -0500
+Received: from mail-wr1-f68.google.com ([209.85.221.68]:34855 "EHLO
+        mail-wr1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388293AbeKPEYW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 23:22:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=iJrombQsdDfzskIy7mn7gPWNUPINFsQSqusfEjfitwM=; b=C7xE8FkU4sxz01ouFYsKRmkzS
-        SKrH2pEVaPT9HEfL2JZ8fHW0YUxdJILDAqkQUC+Tb5MHjn/e3i8+ztiwWCA5f5/BgMZRmexScgpoc
-        mZF9fWfsQZ/rOJUjzJEtkiI81OET0KeCtmqojZUNXTW2AEE3lDJLe9ZkUatmieiGmD023HPH4QDEM
-        8hXY1nkBXYjawf++CAcQ263o4BqZEfj/ubrTsnC50Qvi8fh7cgyPFrfEgcY25Dva2HxAJUgY+LuT9
-        Rg1XQYJIz5NpiW5J2zawRNninLawgumu9uuJjzrfJCGWGuCBi1n5MbzPRIsWVDD80SCmM9+97xxlj
-        8DJK6DDOQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNM99-0000h7-44; Thu, 15 Nov 2018 18:13:43 +0000
-Subject: Re: [PATCH 1/9] mm: Introduce new vm_insert_range API
-To:     Souptick Joarder <jrdr.linux@gmail.com>, akpm@linux-foundation.org,
-        willy@infradead.org, mhocko@suse.com,
-        kirill.shutemov@linux.intel.com, vbabka@suse.cz, riel@surriel.com,
-        sfr@canb.auug.org.au, rppt@linux.vnet.ibm.com,
-        peterz@infradead.org, linux@armlinux.org.uk, robin.murphy@arm.com,
-        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
-        m.szyprowski@samsung.com, stefanr@s5r6.in-berlin.de,
-        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, kyungmin.park@samsung.com, mchehab@kernel.org,
-        boris.ostrovsky@oracle.com, jgross@suse.com
-Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
-References: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <9655a12e-bd3d-aca2-6155-38924028eb5d@infradead.org>
-Date:   Thu, 15 Nov 2018 10:13:36 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 15 Nov 2018 23:24:22 -0500
+Received: by mail-wr1-f68.google.com with SMTP id 96so5352028wrb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 10:15:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=db37Pa5OnJlalbC1Xts7cB6LQKlYl4+3RdSS9c6lNEI=;
+        b=bLtWpFaBpk/wPHspDeG0fIh9AbH2ujlh3EP51D444ZgAzlve+vlGjjxEwDxcaTtAkT
+         rgCXRY+PxxPmOdX+GoEAIA3qb+GIlb/LYP7WV1Xa2Nx8vf84VK9E1mfPts4YMLEfC/mp
+         TN57c/VZ+KENihs+z3dvMsHCpTnfXMO2tHFAI=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=db37Pa5OnJlalbC1Xts7cB6LQKlYl4+3RdSS9c6lNEI=;
+        b=VJhinaoQoTa+RS/rPHxA1cGx80f4Y4hQJShyUyZgbfFUvqea1yz+8W44t2UIry7Dby
+         n1xQ1pne8yVcVtSqsEO8akS2Gygz3rlQWR/zuDSoSprZusFs6LBU4ROPdjqIk43yQYmv
+         PSP9oxFauVhowlsriPO+Bv6yJ6hDNBFO4URd4TtfUDBfPtVo96Rdq9gf0qot+dY3gUCl
+         nhNuAkI1YP2rCKB3qJpp+E2CWqrnPo0cfHuRQL7cpfXWTGD9IKCpwedZbJYpL+N1FmTs
+         x5lWjjK6vZgK6Pg48NrubD8Izsh6Unxpm8y5geDs5P+pJuwgOGlCkVNpAOtDL8l1T+r7
+         3XqQ==
+X-Gm-Message-State: AA+aEWYUuSu3ZDV3QGG8WDYXpL3Hr2dvB+wQ3K57WBojqAMr/oo7eL1R
+        gc94DcCcGCgU0eTiMRU6Wh/LgA==
+X-Google-Smtp-Source: AFSGD/X9cKTlxIlAHbK3AE971I0x3LU0e0k3zdvI7XGTRV1QKBslBSu0q0Qpu5sHjR4a711oMu5X8Q==
+X-Received: by 2002:adf:ecd0:: with SMTP id s16-v6mr1634740wro.208.1542305728442;
+        Thu, 15 Nov 2018 10:15:28 -0800 (PST)
+Received: from localhost.localdomain (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
+        by smtp.gmail.com with ESMTPSA id r76-v6sm20934737wmb.21.2018.11.15.10.15.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 15 Nov 2018 10:15:27 -0800 (PST)
+From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+To:     broonie@kernel.org, vkoul@kernel.org
+Cc:     alsa-devel@alsa-project.org, robh+dt@kernel.org,
+        linux-kernel@vger.kernel.org, bgoswami@codeaurora.org,
+        rohitkr@codeaurora.org, lgirdwood@gmail.com, tiwai@suse.com,
+        devicetree@vger.kernel.org, srini@kernel.org,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: [PATCH v3 0/5] ASoC: qdsp6: add compress offload support
+Date:   Thu, 15 Nov 2018 18:13:19 +0000
+Message-Id: <20181115181324.26784-1-srinivas.kandagatla@linaro.org>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-In-Reply-To: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/15/18 7:45 AM, Souptick Joarder wrote:
-> Previouly drivers have their own way of mapping range of
-> kernel pages/memory into user vma and this was done by
-> invoking vm_insert_page() within a loop.
-> 
-> As this pattern is common across different drivers, it can
-> be generalized by creating a new function and use it across
-> the drivers.
-> 
-> vm_insert_range is the new API which will be used to map a
-> range of kernel memory/pages to user vma.
-> 
-> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
-> Reviewed-by: Matthew Wilcox <willy@infradead.org>
-> ---
->  include/linux/mm_types.h |  3 +++
->  mm/memory.c              | 28 ++++++++++++++++++++++++++++
->  mm/nommu.c               |  7 +++++++
->  3 files changed, 38 insertions(+)
+This patchset adds support to very basic MP3 playback compress offload
+support via QDSP ASM module.
 
-Hi,
+Tested this patchset on DB410c with APQ8016 and DB820c with APQ8096 using
+tinycompress library.
 
-What is the opposite of vm_insert_range() or even of vm_insert_page()?
-or is there no need for that?
+Adding other codec support should be trivial w.r.t qdsp6 side, however
+there are other dependencies like compress UAPI header changes and
+FastRPC which are being worked in parallel. Once ready will post them!
 
+thanks,
+srini
 
-> diff --git a/mm/memory.c b/mm/memory.c
-> index 15c417e..da904ed 100644
-> --- a/mm/memory.c
-> +++ b/mm/memory.c
-> @@ -1478,6 +1478,34 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
->  }
->  
->  /**
-> + * vm_insert_range - insert range of kernel pages into user vma
-> + * @vma: user vma to map to
-> + * @addr: target user address of this page
-> + * @pages: pointer to array of source kernel pages
-> + * @page_count: no. of pages need to insert into user vma
+Changes since v2 (//lkml.org/lkml/2018/9/26/461):
+- Removed some unnecessary empty line adds.
+- Added more info to snd_compr_set_runtime_buffer() commit message
 
-s/no./number/
+Srinivas Kandagatla (5):
+  ALSA: soc-compress: add support to snd_compr_set_runtime_buffer()
+  ALSA: compress: make use of runtime buffer for copy
+  ASoC: q6asm-dai: dt-bindings: Add support to compress dais
+  ASoC: qdsp6: q6asm: add support to MP3 format
+  ASoC: qdsp6: q6asm-dai: Add support to compress offload
 
-> + *
-> + * This allows drivers to insert range of kernel pages they've allocated
-> + * into a user vma. This is a generic function which drivers can use
-> + * rather than using their own way of mapping range of kernel pages into
-> + * user vma.
-> + */
-> +int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
-> +			struct page **pages, unsigned long page_count)
-> +{
-> +	unsigned long uaddr = addr;
-> +	int ret = 0, i;
-> +
-> +	for (i = 0; i < page_count; i++) {
-> +		ret = vm_insert_page(vma, uaddr, pages[i]);
-> +		if (ret < 0)
-> +			return ret;
+ .../devicetree/bindings/sound/qcom,q6asm.txt  |  27 ++
+ include/sound/compress_driver.h               |  19 +
+ sound/core/compress_offload.c                 |  18 +-
+ sound/soc/qcom/Kconfig                        |   1 +
+ sound/soc/qcom/qdsp6/q6asm-dai.c              | 372 +++++++++++++++++-
+ sound/soc/qcom/qdsp6/q6asm.c                  |   5 +
+ 6 files changed, 438 insertions(+), 4 deletions(-)
 
-For a non-trivial value of page_count:
-Is it a problem if vm_insert_page() succeeds for several pages
-and then fails?
-
-> +		uaddr += PAGE_SIZE;
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +/**
->   * vm_insert_page - insert single page into user vma
->   * @vma: user vma to map to
->   * @addr: target user address of this page
-
-
-thanks.
 -- 
-~Randy
+2.19.1
+
