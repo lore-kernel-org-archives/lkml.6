@@ -2,123 +2,131 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 482FBC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:20:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 772FFC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:20:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 189F9223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:20:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 189F9223CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 2170522507
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:20:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="oPVkJ3FQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2170522507
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388657AbeKPC21 (ORCPT
+        id S2388689AbeKPC2o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 21:28:27 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:43770 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729034AbeKPC21 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 21:28:27 -0500
-Received: (qmail 2969 invoked by uid 2102); 15 Nov 2018 11:19:58 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 15 Nov 2018 11:19:58 -0500
-Date:   Thu, 15 Nov 2018 11:19:58 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 2/3] tools/memory-model: Refactor some RCU relations
-Message-ID: <Pine.LNX.4.44L0.1811151116420.1308-100000@iolanthe.rowland.org>
+        Thu, 15 Nov 2018 21:28:44 -0500
+Received: from mail.kernel.org ([198.145.29.99]:37686 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729034AbeKPC2o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 21:28:44 -0500
+Received: from localhost (unknown [64.114.255.114])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 32B1D223CB;
+        Thu, 15 Nov 2018 16:20:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542298815;
+        bh=GhIlKk7RdX4LS/XDlOC+iPR8tFEMb0oEGuNx8npoga4=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=oPVkJ3FQcMkn6Hf92tOm5w7Yd9t5qZgJmA9VVUbgOm6fHWqDVrxc3Blxuk+GhO+rw
+         lbyidh05/pECh82dcvXKQX5yK5VdlBCFQHsJP632MQrnfTaCg3O5LGt9ESk65hbvAw
+         iC+xyanZpCLD50TYv/6JZN682k58FMLXD6Y0R8nI=
+Date:   Thu, 15 Nov 2018 18:20:08 +0200
+From:   Leon Romanovsky <leon@kernel.org>
+To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Cc:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        Dave Jiang <dave.jiang@intel.com>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        vishal.l.verma@intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        zwisler@kernel.org
+Subject: Re: [Ksummit-discuss] [RFC PATCH 3/3] libnvdimm, MAINTAINERS:
+ Subsystem Profile
+Message-ID: <20181115162008.GO3759@mtr-leonro.mtl.com>
+References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154225761038.2499188.1270468803677883744.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <CAMuHMdVOJsM=66RrnbOzVthsT9=dFRQtL2rv99tCPC02M=hiXw@mail.gmail.com>
+ <20181115061036.1575223d@silica.lan>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha1;
+        protocol="application/pgp-signature"; boundary="BghK6+krpKHjj+jk"
+Content-Disposition: inline
+In-Reply-To: <20181115061036.1575223d@silica.lan>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for adding support for SRCU, refactor the definitions
-of rcu-fence, rcu-rscsi, rcu-link, and rb by moving the po and po?
-terms from the first two to the second two.  An rcu-gp relation is
-added; it is equivalent to gp with the po and po? terms removed.
 
-This is necessary because for SRCU, we will have to use the loc
-relation to check that the terms at the start and end of each disjunct
-in the definition of rcu-fence refer to the same srcu_struct
-location.  If these terms are hidden behind po and po?, there's no way
-to carry out this check.
+--BghK6+krpKHjj+jk
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
+On Thu, Nov 15, 2018 at 06:10:36AM -0800, Mauro Carvalho Chehab wrote:
+> Em Thu, 15 Nov 2018 09:03:11 +0100
+> Geert Uytterhoeven <geert@linux-m68k.org> escreveu:
+>
+> > Hi Dan,
+> >
+> > On Thu, Nov 15, 2018 at 6:06 AM Dan Williams <dan.j.williams@intel.com> wrote:
+> > > Document the basic policies of the libnvdimm subsystem and provide a
+> > > first example of a Subsystem Profile for others to duplicate and edit.
+> > >
+> > > Cc: Ross Zwisler <zwisler@kernel.org>
+> > > Cc: Vishal Verma <vishal.l.verma@intel.com>
+> > > Cc: Dave Jiang <dave.jiang@intel.com>
+> > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> >
+> > Thanks for your patch!
+> >
+> > > --- /dev/null
+> > > +++ b/Documentation/nvdimm/subsystem-profile.rst
+> >
+> > > +Trusted Reviewers
+> > > +-----------------
+> > > +Johannes Thumshirn
+> > > +Toshi Kani
+> > > +Jeff Moyer
+> > > +Robert Elliott
+> >
+> > Don't you want to add email addresses?
+> > Only the first one is listed in MAINTAINERS.
+>
+> IMO, it makes sense to have their e-mails here, in a way that it could
+> easily be parsed by get_maintainers.pl.
 
----
+I personally think that list of "trusted reviewers" makes more harm than
+good. It creates unneeded negative feelings to those who wanted to be in
+this list, but for any reason they don't. Those reviewers will feel
+"untrusted".
 
+Thanks
 
- tools/memory-model/linux-kernel.cat |   25 +++++++++++++++----------
- 1 file changed, 15 insertions(+), 10 deletions(-)
+--BghK6+krpKHjj+jk
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Index: usb-4.x/tools/memory-model/linux-kernel.cat
-===================================================================
---- usb-4.x.orig/tools/memory-model/linux-kernel.cat
-+++ usb-4.x/tools/memory-model/linux-kernel.cat
-@@ -91,32 +91,37 @@ acyclic pb as propagation
- (*******)
- 
- (*
-- * Effect of read-side critical section proceeds from the rcu_read_lock()
-- * onward on the one hand and from the rcu_read_unlock() backwards on the
-+ * Effects of read-side critical sections proceed from the rcu_read_unlock()
-+ * backwards on the one hand, and from the rcu_read_lock() forwards on the
-  * other hand.
-+ *
-+ * In the definition of rcu-fence below, the po term at the left-hand side
-+ * of each disjunct and the po? term at the right-hand end have been factored
-+ * out.  They have been moved into the definitions of rcu-link and rb.
-  *)
--let rcu-rscsi = po ; rcu-rscs^-1 ; po?
-+let rcu-gp = [Sync-rcu]		(* Compare with gp *)
-+let rcu-rscsi = rcu-rscs^-1
- 
- (*
-  * The synchronize_rcu() strong fence is special in that it can order not
-  * one but two non-rf relations, but only in conjunction with an RCU
-  * read-side critical section.
-  *)
--let rcu-link = hb* ; pb* ; prop
-+let rcu-link = po? ; hb* ; pb* ; prop ; po
- 
- (*
-  * Any sequence containing at least as many grace periods as RCU read-side
-  * critical sections (joined by rcu-link) acts as a generalized strong fence.
-  *)
--let rec rcu-fence = gp |
--	(gp ; rcu-link ; rcu-rscsi) |
--	(rcu-rscsi ; rcu-link ; gp) |
--	(gp ; rcu-link ; rcu-fence ; rcu-link ; rcu-rscsi) |
--	(rcu-rscsi ; rcu-link ; rcu-fence ; rcu-link ; gp) |
-+let rec rcu-fence = rcu-gp |
-+	(rcu-gp ; rcu-link ; rcu-rscsi) |
-+	(rcu-rscsi ; rcu-link ; rcu-gp) |
-+	(rcu-gp ; rcu-link ; rcu-fence ; rcu-link ; rcu-rscsi) |
-+	(rcu-rscsi ; rcu-link ; rcu-fence ; rcu-link ; rcu-gp) |
- 	(rcu-fence ; rcu-link ; rcu-fence)
- 
- (* rb orders instructions just as pb does *)
--let rb = prop ; rcu-fence ; hb* ; pb*
-+let rb = prop ; po ; rcu-fence ; po? ; hb* ; pb*
- 
- irreflexive rb as rcu
- 
+-----BEGIN PGP SIGNATURE-----
 
+iQIcBAEBAgAGBQJb7Zy4AAoJEORje4g2clindrgP/1qcVPjXlzT/2KPN0TVNBnWU
+znL7sRQ1QhswSAfRNWdSyqR4/15ANb8wz6lV4p22d+p/NuswrYRMqxWA5X6XTjUc
+L8Y8SQPMXIaGnlY7hUjY2FSnYSyK+sW71zZe6ys6ciDEmXhJYZGYx+kY2OENZ9K2
+lTIsQg5EPVNKP7lE9mMYe17ga1ctCDCzIuhvBLoIw7bHPHyefc4YCWRFJXh24vsn
+DnUZXzfg8WLie/PcdWAqkQlCPkG784+d6jAaiEHIe4iel4nJfXf1tzdwaUUSPq4U
+0Ri2m9l1KtdJHug1UV+/JFcQIq9I+M/rdjSqIkcZrKj1YIwKp39wqOzRe+bIVA0u
+/SY0zI0osAjDyWV5HrQRJko7XlXFlJxoqJLW/rGa2B3E3pigyAxoIj/Cs5alxJQg
+HYjjaktPfGWgW9i4/8IK2BJM8GdDbdG8qQe1v2neFPgbGC6tBGZMP9Rx/oXeq1NW
+UXj4wPzGczoXxmzKgrNLviEgL7UfRD31gMl6vO1wxhkVsMzGhdyB80awqQWSTSek
+7MztMEC0OM2aL043qrdH5oBqzCDgUaQL3KEY2O/r+BirBe1VlUpD3mW8sBvJ8gYs
+WaiDPE3zkaQkYJYvIctnOrJKi9cm1DSo1GCN6xQrA3+hBWAULUUyI0fmG0S3ftrc
+JOhcb8uIgYycsbk3MBdk
+=/bPL
+-----END PGP SIGNATURE-----
+
+--BghK6+krpKHjj+jk--
