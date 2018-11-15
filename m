@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01110C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:53:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 227A7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:53:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B3FAE2087E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:53:23 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D49D92087E
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:53:28 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="GsW9jmBC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3FAE2087E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ePmGRPD/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D49D92087E
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728977AbeKOP7r (ORCPT
+        id S1729003AbeKOP7w (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 10:59:47 -0500
-Received: from mail-yb1-f196.google.com ([209.85.219.196]:43962 "EHLO
+        Thu, 15 Nov 2018 10:59:52 -0500
+Received: from mail-yb1-f196.google.com ([209.85.219.196]:35769 "EHLO
         mail-yb1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbeKOP7q (ORCPT
+        with ESMTP id S1726943AbeKOP7v (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 10:59:46 -0500
-Received: by mail-yb1-f196.google.com with SMTP id h187-v6so7903292ybg.10
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 21:53:21 -0800 (PST)
+        Thu, 15 Nov 2018 10:59:51 -0500
+Received: by mail-yb1-f196.google.com with SMTP id z2-v6so7936833ybj.2
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 21:53:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=DVw/N+4o4xfdKNT3rQ+yr/g2LmbUltluLPP7xa2j7CY=;
-        b=GsW9jmBCepRRuemOaWg1s/fdiX69XAbbte5iR4Y6/rfI01QRT7mbkPfb8OzkOfxK0w
-         y/5MfoK7vDnE5RpI4HRZ9ID6g9bA1Nq0uZ9++cl0L+B8nOhsR79UAiYVRUMSsDy5qpQs
-         XeUoRbfCBofNBT82JdJZ+vVT/FzlsAZxelXVc=
+        bh=b/qBGuWcB3AvKhVU7KrMVZKitcb+1TETY1zXig3nkL8=;
+        b=ePmGRPD/oeb9REqt++JiB70heutg065ySKrqGdSWOo6V5eqn8wiA24QgJuenmDeyFk
+         1iU6Hqv7BMepvqiJQeneS65cQHkI+MvsNKWOLaIzc5Rn/YNWtV7FDNzLRHsuHFQLiB1e
+         534e/vv7LkINcd7EBeWsoB8UJ1v2seIiyR5ME=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=DVw/N+4o4xfdKNT3rQ+yr/g2LmbUltluLPP7xa2j7CY=;
-        b=pTnr8F7w1GhJRAapXKSVOkwXEgPwN4DgbQqNPVS4p0gHwO4aPusOzqpcJbdAqhWHGC
-         0J1THFWgh2AErDI4lwDxfZG6lOrMss8V5EecM7N20pQwrSJ6x5A5kJa0KRr7/6Umnt1P
-         UaDrLS9jdUQRUAYO0ZmBSJ+OX61S65gLMLFQJFyRfEgpo0Gp+ibOcgKVcYJ60l6ef1LO
-         TVG8xSjiK/4UwgmmJLshRUDkzmXDefQfcEQzOEQYNSw7Nxp8vQk2aJgHLyf4+rl62F9J
-         6qdl0K3mJaACHF5THMHHLXJyJ/1Af0MmRfzHSdzEMVnA5Jek0IgF46IK0q3HVztKwcLi
-         4ATA==
-X-Gm-Message-State: AGRZ1gKK8mc3PQoCu/2su7t/BQqFPmhaS4FYblTre4A8oNDZIMTlTzyE
-        DIn8hTDURa92Aku31Rm5yjolxg==
-X-Google-Smtp-Source: AJdET5d+kFXnkqMko+jgItDYVJf5BJsTF/ydXwGF2z06T/UztCXt6/ObK6ZNRgHVMc/LFdtG3t65ow==
-X-Received: by 2002:a25:6f86:: with SMTP id k128-v6mr4430682ybc.235.1542261201112;
-        Wed, 14 Nov 2018 21:53:21 -0800 (PST)
+        bh=b/qBGuWcB3AvKhVU7KrMVZKitcb+1TETY1zXig3nkL8=;
+        b=MvqT6jSt6K5QIH42kQjmYQUREoSf3EAR+OcJmvvUSOvxrHMZbc21QHQ0lcBVMyTl8f
+         7buCb19xeLlec6GJ67W/9kNp0m0wg2CvV2BpWO5cHsLIFPLJTvsrbHpS0QDHVFe+fBK2
+         4ZdriMNZOX4Z3QTmq31Wq32hsl+QsW9WMuW0p8yb1SRYw+7XumH/jE9zfil+0pJyAzR7
+         v+s4OcpWNN64M9PyxsYaPmBbyK4OEhTUBVM60KmIJyDN4XPZa9+ChAv+XqaK38K8rERM
+         ngAwYFI8B9SpoHXLuchtCpOIPOra4SpkY6g/t9vggtSuTkNB5kJ3i6tB5jdxkKyStaB6
+         KXBQ==
+X-Gm-Message-State: AGRZ1gL5FtDBc5Dcc9RR+ZTBXG9qcpd8V815NGG/wAzdV81scJtbvv8j
+        HhNeQeyDebMZd/uOxLqRYl3L2A==
+X-Google-Smtp-Source: AJdET5dH4rEzZh8i+E6gSIZ0HFdqA3dZXkUlcaFjdz653JDznaf97xCNXQk2EwE2lSQ7wdDFWLbBgQ==
+X-Received: by 2002:a25:84c7:: with SMTP id x7-v6mr4494386ybm.230.1542261205259;
+        Wed, 14 Nov 2018 21:53:25 -0800 (PST)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id 207-v6sm7417441ywo.87.2018.11.14.21.53.20
+        by smtp.googlemail.com with ESMTPSA id g21-v6sm7549135ywk.5.2018.11.14.21.53.24
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 21:53:20 -0800 (PST)
+        Wed, 14 Nov 2018 21:53:24 -0800 (PST)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
         vgoyal@redhat.com, herbert@gondor.apana.org.au,
@@ -66,9 +66,9 @@ Cc:     prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
         kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
         AKASHI Takahiro <takahiro.akashi@linaro.org>
-Subject: [PATCH v16 10/16] arm64: kexec_file: load initrd and device-tree
-Date:   Thu, 15 Nov 2018 14:52:49 +0900
-Message-Id: <20181115055254.2812-11-takahiro.akashi@linaro.org>
+Subject: [PATCH v16 11/16] arm64: kexec_file: allow for loading Image-format kernel
+Date:   Thu, 15 Nov 2018 14:52:50 +0900
+Message-Id: <20181115055254.2812-12-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181115055254.2812-1-takahiro.akashi@linaro.org>
 References: <20181115055254.2812-1-takahiro.akashi@linaro.org>
@@ -79,255 +79,195 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-load_other_segments() is expected to allocate and place all the necessary
-memory segments other than kernel, including initrd and device-tree
-blob (and elf core header for crash).
-While most of the code was borrowed from kexec-tools' counterpart,
-users may not be allowed to specify dtb explicitly, instead, the dtb
-presented by the original boot loader is reused.
+This patch provides kexec_file_ops for "Image"-format kernel. In this
+implementation, a binary is always loaded with a fixed offset identified
+in text_offset field of its header.
 
-arch_kimage_kernel_post_load_cleanup() is responsible for freeing arm64-
-specific data allocated in load_other_segments().
+Regarding signature verification for trusted boot, this patch doesn't
+contains CONFIG_KEXEC_VERIFY_SIG support, which is to be added later
+in this series, but file-attribute-based verification is still a viable
+option by enabling IMA security subsystem.
+
+You can sign(label) a to-be-kexec'ed kernel image on target file system
+with:
+    $ evmctl ima_sign --key /path/to/private_key.pem Image
+
+On live system, you must have IMA enforced with, at least, the following
+security policy:
+    "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig"
+
+See more details about IMA here:
+    https://sourceforge.net/p/linux-ima/wiki/Home/
 
 Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
 Reviewed-by: James Morse <james.morse@arm.com>
 ---
- arch/arm64/include/asm/kexec.h         |  17 +++
- arch/arm64/kernel/machine_kexec_file.c | 185 +++++++++++++++++++++++++
- 2 files changed, 202 insertions(+)
+ arch/arm64/include/asm/kexec.h         |   2 +
+ arch/arm64/kernel/Makefile             |   2 +-
+ arch/arm64/kernel/kexec_image.c        | 113 +++++++++++++++++++++++++
+ arch/arm64/kernel/machine_kexec_file.c |   1 +
+ 4 files changed, 117 insertions(+), 1 deletion(-)
+ create mode 100644 arch/arm64/kernel/kexec_image.c
 
 diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index e17f0529a882..bbb5f505b0ba 100644
+index bbb5f505b0ba..67e4cb75d1fd 100644
 --- a/arch/arm64/include/asm/kexec.h
 +++ b/arch/arm64/include/asm/kexec.h
-@@ -93,6 +93,23 @@ static inline void crash_prepare_suspend(void) {}
- static inline void crash_post_resume(void) {}
- #endif
- 
-+#ifdef CONFIG_KEXEC_FILE
-+#define ARCH_HAS_KIMAGE_ARCH
-+
-+struct kimage_arch {
-+	void *dtb;
-+	unsigned long dtb_mem;
-+};
-+
-+struct kimage;
-+
-+extern int arch_kimage_file_post_load_cleanup(struct kimage *image);
-+extern int load_other_segments(struct kimage *image,
-+		unsigned long kernel_load_addr, unsigned long kernel_size,
-+		char *initrd, unsigned long initrd_len,
-+		char *cmdline);
-+#endif
-+
- #endif /* __ASSEMBLY__ */
- 
- #endif
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index c38a8048ed00..b433d947d486 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -5,12 +5,197 @@
-  * Copyright (C) 2018 Linaro Limited
-  * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
-  *
-+ * Most code is derived from arm64 port of kexec-tools
-  */
- 
- #define pr_fmt(fmt) "kexec_file: " fmt
- 
-+#include <linux/ioport.h>
-+#include <linux/kernel.h>
- #include <linux/kexec.h>
-+#include <linux/libfdt.h>
-+#include <linux/memblock.h>
-+#include <linux/of_fdt.h>
-+#include <linux/string.h>
-+#include <linux/types.h>
-+#include <asm/byteorder.h>
-+
-+/* relevant device tree properties */
-+#define FDT_PSTR_INITRD_STA	"linux,initrd-start"
-+#define FDT_PSTR_INITRD_END	"linux,initrd-end"
-+#define FDT_PSTR_BOOTARGS	"bootargs"
- 
- const struct kexec_file_ops * const kexec_file_loaders[] = {
- 	NULL
+@@ -101,6 +101,8 @@ struct kimage_arch {
+ 	unsigned long dtb_mem;
  };
+ 
++extern const struct kexec_file_ops kexec_image_ops;
 +
-+int arch_kimage_file_post_load_cleanup(struct kimage *image)
+ struct kimage;
+ 
+ extern int arch_kimage_file_post_load_cleanup(struct kimage *image);
+diff --git a/arch/arm64/kernel/Makefile b/arch/arm64/kernel/Makefile
+index 030a39bff117..48868255f09c 100644
+--- a/arch/arm64/kernel/Makefile
++++ b/arch/arm64/kernel/Makefile
+@@ -51,7 +51,7 @@ arm64-obj-$(CONFIG_RANDOMIZE_BASE)	+= kaslr.o
+ arm64-obj-$(CONFIG_HIBERNATION)		+= hibernate.o hibernate-asm.o
+ arm64-obj-$(CONFIG_KEXEC_CORE)		+= machine_kexec.o relocate_kernel.o	\
+ 					   cpu-reset.o
+-arm64-obj-$(CONFIG_KEXEC_FILE)		+= machine_kexec_file.o
++arm64-obj-$(CONFIG_KEXEC_FILE)		+= machine_kexec_file.o kexec_image.o
+ arm64-obj-$(CONFIG_ARM64_RELOC_TEST)	+= arm64-reloc-test.o
+ arm64-reloc-test-y := reloc_test_core.o reloc_test_syms.o
+ arm64-obj-$(CONFIG_CRASH_DUMP)		+= crash_dump.o
+diff --git a/arch/arm64/kernel/kexec_image.c b/arch/arm64/kernel/kexec_image.c
+new file mode 100644
+index 000000000000..9f0d8b5d62d3
+--- /dev/null
++++ b/arch/arm64/kernel/kexec_image.c
+@@ -0,0 +1,113 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Kexec image loader
++
++ * Copyright (C) 2018 Linaro Limited
++ * Author: AKASHI Takahiro <takahiro.akashi@linaro.org>
++ */
++
++#define pr_fmt(fmt)	"kexec_file(Image): " fmt
++
++#include <linux/err.h>
++#include <linux/errno.h>
++#include <linux/kernel.h>
++#include <linux/kexec.h>
++#include <linux/string.h>
++#include <asm/byteorder.h>
++#include <asm/cpufeature.h>
++#include <asm/image.h>
++#include <asm/memory.h>
++
++static int image_probe(const char *kernel_buf, unsigned long kernel_len)
 +{
-+	vfree(image->arch.dtb);
-+	image->arch.dtb = NULL;
++	const struct arm64_image_header *h;
 +
-+	return kexec_image_post_load_cleanup_default(image);
-+}
++	h = (const struct arm64_image_header *)(kernel_buf);
 +
-+static int setup_dtb(struct kimage *image,
-+		     unsigned long initrd_load_addr, unsigned long initrd_len,
-+		     char *cmdline, void *dtb)
-+{
-+	int nodeoffset;
-+	int ret;
-+
-+	nodeoffset = fdt_path_offset(dtb, "/chosen");
-+	if (nodeoffset < 0)
++	if (!h || (kernel_len < sizeof(*h)) ||
++			memcmp(&h->magic, ARM64_IMAGE_MAGIC,
++				sizeof(h->magic)))
 +		return -EINVAL;
-+
-+	/* add bootargs */
-+	if (cmdline) {
-+		ret = fdt_setprop_string(dtb, nodeoffset, FDT_PSTR_BOOTARGS,
-+							cmdline);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+	} else {
-+		ret = fdt_delprop(dtb, nodeoffset, FDT_PSTR_BOOTARGS);
-+		if (ret && (ret != -FDT_ERR_NOTFOUND))
-+			return -EINVAL;
-+	}
-+
-+	/* add initrd-* */
-+	if (initrd_load_addr) {
-+		ret = fdt_setprop_u64(dtb, nodeoffset, FDT_PSTR_INITRD_STA,
-+							initrd_load_addr);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+
-+		ret = fdt_setprop_u64(dtb, nodeoffset, FDT_PSTR_INITRD_END,
-+						initrd_load_addr + initrd_len);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+	} else {
-+		ret = fdt_delprop(dtb, nodeoffset, FDT_PSTR_INITRD_STA);
-+		if (ret && (ret != -FDT_ERR_NOTFOUND))
-+			return -EINVAL;
-+
-+		ret = fdt_delprop(dtb, nodeoffset, FDT_PSTR_INITRD_END);
-+		if (ret && (ret != -FDT_ERR_NOTFOUND))
-+			return -EINVAL;
-+	}
 +
 +	return 0;
 +}
 +
-+/*
-+ * More space needed so that we can add initrd and bootargs.
-+ */
-+#define DTB_EXTRA_SPACE 0x1000
-+
-+static int create_dtb(struct kimage *image,
-+		      unsigned long initrd_load_addr, unsigned long initrd_len,
-+		      char *cmdline, void **dtb)
++static void *image_load(struct kimage *image,
++				char *kernel, unsigned long kernel_len,
++				char *initrd, unsigned long initrd_len,
++				char *cmdline, unsigned long cmdline_len)
 +{
-+	void *buf;
-+	size_t buf_size;
++	struct arm64_image_header *h;
++	u64 flags, value;
++	bool be_image, be_kernel;
++	struct kexec_buf kbuf;
++	unsigned long text_offset;
++	struct kexec_segment *kernel_segment;
 +	int ret;
 +
-+	buf_size = fdt_totalsize(initial_boot_params)
-+			+ strlen(cmdline) + DTB_EXTRA_SPACE;
++	/*
++	 * We require a kernel with an unambiguous Image header. Per
++	 * Documentation/booting.txt, this is the case when image_size
++	 * is non-zero (practically speaking, since v3.17).
++	 */
++	h = (struct arm64_image_header *)kernel;
++	if (!h->image_size)
++		return ERR_PTR(-EINVAL);
 +
-+	for (;;) {
-+		buf = vmalloc(buf_size);
-+		if (!buf)
-+			return -ENOMEM;
++	/* Check cpu features */
++	flags = le64_to_cpu(h->flags);
++	be_image = arm64_image_flag_field(flags, ARM64_IMAGE_FLAG_BE);
++	be_kernel = IS_ENABLED(CONFIG_CPU_BIG_ENDIAN);
++	if ((be_image != be_kernel) && !system_supports_mixed_endian())
++		return ERR_PTR(-EINVAL);
 +
-+		/* duplicate a device tree blob */
-+		ret = fdt_open_into(initial_boot_params, buf, buf_size);
-+		if (ret)
-+			return -EINVAL;
++	value = arm64_image_flag_field(flags, ARM64_IMAGE_FLAG_PAGE_SIZE);
++	if (((value == ARM64_IMAGE_FLAG_PAGE_SIZE_4K) &&
++			!system_supports_4kb_granule()) ||
++	    ((value == ARM64_IMAGE_FLAG_PAGE_SIZE_64K) &&
++			!system_supports_64kb_granule()) ||
++	    ((value == ARM64_IMAGE_FLAG_PAGE_SIZE_16K) &&
++			!system_supports_16kb_granule()))
++		return ERR_PTR(-EINVAL);
 +
-+		ret = setup_dtb(image, initrd_load_addr, initrd_len,
-+				cmdline, buf);
-+		if (ret) {
-+			vfree(buf);
-+			if (ret == -ENOMEM) {
-+				/* unlikely, but just in case */
-+				buf_size += DTB_EXTRA_SPACE;
-+				continue;
-+			} else {
-+				return ret;
-+			}
-+		}
-+
-+		/* trim it */
-+		fdt_pack(buf);
-+		*dtb = buf;
-+
-+		return 0;
-+	}
-+}
-+
-+int load_other_segments(struct kimage *image,
-+			unsigned long kernel_load_addr,
-+			unsigned long kernel_size,
-+			char *initrd, unsigned long initrd_len,
-+			char *cmdline)
-+{
-+	struct kexec_buf kbuf;
-+	void *dtb = NULL;
-+	unsigned long initrd_load_addr = 0, dtb_len;
-+	int ret = 0;
-+
++	/* Load the kernel */
 +	kbuf.image = image;
-+	/* not allocate anything below the kernel */
-+	kbuf.buf_min = kernel_load_addr + kernel_size;
-+
-+	/* load initrd */
-+	if (initrd) {
-+		kbuf.buffer = initrd;
-+		kbuf.bufsz = initrd_len;
-+		kbuf.mem = 0;
-+		kbuf.memsz = initrd_len;
-+		kbuf.buf_align = 0;
-+		/* within 1GB-aligned window of up to 32GB in size */
-+		kbuf.buf_max = round_down(kernel_load_addr, SZ_1G)
-+						+ (unsigned long)SZ_1G * 32;
-+		kbuf.top_down = false;
-+
-+		ret = kexec_add_buffer(&kbuf);
-+		if (ret)
-+			goto out_err;
-+		initrd_load_addr = kbuf.mem;
-+
-+		pr_debug("Loaded initrd at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-+				initrd_load_addr, initrd_len, initrd_len);
-+	}
-+
-+	/* load dtb */
-+	ret = create_dtb(image, initrd_load_addr, initrd_len, cmdline, &dtb);
-+	if (ret) {
-+		pr_err("Preparing for new dtb failed\n");
-+		goto out_err;
-+	}
-+
-+	dtb_len = fdt_totalsize(dtb);
-+	kbuf.buffer = dtb;
-+	kbuf.bufsz = dtb_len;
-+	kbuf.mem = 0;
-+	kbuf.memsz = dtb_len;
-+	/* not across 2MB boundary */
-+	kbuf.buf_align = SZ_2M;
++	kbuf.buf_min = 0;
 +	kbuf.buf_max = ULONG_MAX;
-+	kbuf.top_down = true;
++	kbuf.top_down = false;
++
++	kbuf.buffer = kernel;
++	kbuf.bufsz = kernel_len;
++	kbuf.mem = 0;
++	kbuf.memsz = le64_to_cpu(h->image_size);
++	text_offset = le64_to_cpu(h->text_offset);
++	kbuf.buf_align = MIN_KIMG_ALIGN;
++
++	/* Adjust kernel segment with TEXT_OFFSET */
++	kbuf.memsz += text_offset;
 +
 +	ret = kexec_add_buffer(&kbuf);
 +	if (ret)
-+		goto out_err;
-+	image->arch.dtb = dtb;
-+	image->arch.dtb_mem = kbuf.mem;
++		return ERR_PTR(ret);
 +
-+	pr_debug("Loaded dtb at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-+			kbuf.mem, dtb_len, dtb_len);
++	kernel_segment = &image->segment[image->nr_segments - 1];
++	kernel_segment->mem += text_offset;
++	kernel_segment->memsz -= text_offset;
++	image->start = kernel_segment->mem;
 +
-+	return 0;
++	pr_debug("Loaded kernel at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
++				kernel_segment->mem, kbuf.bufsz,
++				kernel_segment->memsz);
 +
-+out_err:
-+	vfree(dtb);
-+	return ret;
++	/* Load additional data */
++	ret = load_other_segments(image,
++				kernel_segment->mem, kernel_segment->memsz,
++				initrd, initrd_len, cmdline);
++
++	return ERR_PTR(ret);
 +}
++
++const struct kexec_file_ops kexec_image_ops = {
++	.probe = image_probe,
++	.load = image_load,
++};
+diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
+index b433d947d486..7e9d5ed3e238 100644
+--- a/arch/arm64/kernel/machine_kexec_file.c
++++ b/arch/arm64/kernel/machine_kexec_file.c
+@@ -26,6 +26,7 @@
+ #define FDT_PSTR_BOOTARGS	"bootargs"
+ 
+ const struct kexec_file_ops * const kexec_file_loaders[] = {
++	&kexec_image_ops,
+ 	NULL
+ };
+ 
 -- 
 2.19.0
 
