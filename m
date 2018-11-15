@@ -2,203 +2,114 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E308C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:21:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B336C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:22:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E819321780
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:21:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E819321780
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 2D16E2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:22:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2D16E2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387600AbeKOT21 (ORCPT
+        id S1732860AbeKOT34 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:28:27 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:55163 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728634AbeKOT21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:28:27 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C7BD92CD7E2;
-        Thu, 15 Nov 2018 09:21:26 +0000 (UTC)
-Received: from [10.36.117.224] (ovpn-117-224.ams2.redhat.com [10.36.117.224])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 245EA1062249;
-        Thu, 15 Nov 2018 09:21:13 +0000 (UTC)
-Subject: Re: [PATCH RFC 2/6] mm: convert PG_balloon to PG_offline
-To:     Mike Rapoport <rppt@linux.ibm.com>
-Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        devel@linuxdriverproject.org, linux-fsdevel@vger.kernel.org,
-        linux-pm@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Jonathan Corbet <corbet@lwn.net>,
-        Alexey Dobriyan <adobriyan@gmail.com>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Christian Hansen <chansen3@cisco.com>,
+        Thu, 15 Nov 2018 14:29:56 -0500
+Received: from mx2.suse.de ([195.135.220.15]:49884 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728757AbeKOT34 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:29:56 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 26E27AE29;
+        Thu, 15 Nov 2018 09:22:55 +0000 (UTC)
+Date:   Thu, 15 Nov 2018 10:22:54 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     David Rientjes <rientjes@google.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
         Vlastimil Babka <vbabka@suse.cz>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
         "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Michal Hocko <mhocko@suse.com>,
-        Pavel Tatashin <pasha.tatashin@oracle.com>,
-        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
-        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
-        Miles Chen <miles.chen@mediatek.com>,
-        David Rientjes <rientjes@google.com>
-References: <20181114211704.6381-1-david@redhat.com>
- <20181114211704.6381-3-david@redhat.com>
- <20181114222321.GB1784@bombadil.infradead.org>
- <b4668081-5aa3-d7f5-6880-d01c75cfc6ae@redhat.com>
- <20181115020725.GC2353@rapoport-lnx>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <5730ee16-9b18-ad3d-0fb3-e9edb55e2298@redhat.com>
-Date:   Thu, 15 Nov 2018 10:21:13 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-api@vger.kernel.org
+Subject: Re: [RFC PATCH] mm, proc: report PR_SET_THP_DISABLE in proc
+Message-ID: <20181115092254.GJ23831@dhcp22.suse.cz>
+References: <20181015150325.GN18839@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1810151519250.247641@chino.kir.corp.google.com>
+ <20181016104855.GQ18839@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1810161416540.83080@chino.kir.corp.google.com>
+ <20181017070531.GC18839@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1810171256330.60837@chino.kir.corp.google.com>
+ <20181018070031.GW18839@dhcp22.suse.cz>
+ <20181114132306.GX23419@dhcp22.suse.cz>
+ <alpine.DEB.2.21.1811141336010.200345@chino.kir.corp.google.com>
+ <20181115090242.GH23831@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20181115020725.GC2353@rapoport-lnx>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 15 Nov 2018 09:21:27 +0000 (UTC)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115090242.GH23831@dhcp22.suse.cz>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.11.18 03:07, Mike Rapoport wrote:
-> On Wed, Nov 14, 2018 at 11:49:15PM +0100, David Hildenbrand wrote:
->> On 14.11.18 23:23, Matthew Wilcox wrote:
->>> On Wed, Nov 14, 2018 at 10:17:00PM +0100, David Hildenbrand wrote:
->>>> Rename PG_balloon to PG_offline. This is an indicator that the page is
->>>> logically offline, the content stale and that it should not be touched
->>>> (e.g. a hypervisor would have to allocate backing storage in order for the
->>>> guest to dump an unused page).  We can then e.g. exclude such pages from
->>>> dumps.
->>>>
->>>> In following patches, we will make use of this bit also in other balloon
->>>> drivers.  While at it, document PGTABLE.
->>>
->>> Thank you for documenting PGTABLE.  I didn't realise I also had this
->>> document to update when I added PGTABLE.
->>
->> Thank you for looking into this :)
->>
->>>
->>>> +++ b/Documentation/admin-guide/mm/pagemap.rst
->>>> @@ -78,6 +78,8 @@ number of times a page is mapped.
->>>>      23. BALLOON
->>>>      24. ZERO_PAGE
->>>>      25. IDLE
->>>> +    26. PGTABLE
->>>> +    27. OFFLINE
->>>
->>> So the offline *user* bit is new ... even though the *kernel* bit
->>> just renames the balloon bit.  I'm not sure how I feel about this.
->>> I'm going to think about it some more.  Could you share your decision
->>> process with us?
->>
->> BALLOON was/is documented as
->>
->> "23 - BALLOON
->>     balloon compaction page
->> "
->>
->> and only includes all virtio-ballon pages after the non-lru migration
->> feature has been implemented for ballooned pages. Since then, this flag
->> does basically no longer stands for what it actually was supposed to do.
+On Thu 15-11-18 10:02:42, Michal Hocko wrote:
+> On Wed 14-11-18 13:41:12, David Rientjes wrote:
+> > On Wed, 14 Nov 2018, Michal Hocko wrote:
+> > 
+> > > > > > Do you know of any other userspace except your usecase? Is there
+> > > > > > anything fundamental that would prevent a proper API adoption for you?
+> > > > > > 
+> > > > > 
+> > > > > Yes, it would require us to go back in time and build patched binaries. 
+> > > > 
+> > > > I read that as there is a fundamental problem to update existing
+> > > > binaries. If that is the case then there surely is no way around it
+> > > > and another sad page in the screwed up APIs book we provide.
+> > > > 
+> > > > But I was under impression that the SW stack which actually does the
+> > > > monitoring is under your controll. Moreover I was under impression that
+> > > > you do not use the current vanilla kernel so there is no need for an
+> > > > immediate change on your end. It is trivial to come up with a backward
+> > > > compatible way to check for the new flag (if it is not present then
+> > > > fallback to vma flags).
+> > > > 
+> > 
+> > The userspace had a single way to determine if thp had been disabled for a 
+> > specific vma and that was broken with your commit.  We have since fixed 
+> > it.  Modifying our software stack to start looking for some field 
+> > somewhere else will not help anybody else that this has affected or will 
+> > affect.  I'm interested in not breaking userspace, not trying a wait and 
+> > see approach to see if anybody else complains once we start looking for 
+> > some other field.  The risk outweighs the reward, it already broke us, and 
+> > I'd prefer not to even open the possibility of breaking anybody else.
 > 
-> Perhaps I missing something, but how the user should interpret "23" when he
-> reads /proc/kpageflags?
-
-Looking at the history in more detail:
-
-commit 09316c09dde33aae14f34489d9e3d243ec0d5938
-Author: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
-Date:   Thu Oct 9 15:29:32 2014 -0700
-
-    mm/balloon_compaction: add vmstat counters and kpageflags bit
-
-    Always mark pages with PageBalloon even if balloon compaction is
-disabled
-    and expose this mark in /proc/kpageflags as KPF_BALLOON.
-
-
-So KPF_BALLOON was exposed when virtio-balloon pages were always marked
-with PG_balloon. So the documentation is actually wrong ("balloon page"
-vs. "balloon compaction page").
-
-I have no idea who actually used that information. I suspect this was
-just some debugging aid.
-
+> I very much agree on "do not break userspace" part but this is kind of
+> gray area. VMA flags are a deep internal implementation detail and
+> nobody should really depend on it for anything important. The original
+> motivation for introducing it was CRIU where it is kind of
+> understandable. I would argue they should find a different way but it is
+> just too late for them.
 > 
->> To not break uapi I decided to not rename it but instead to add a new flag.
+> For this particular case there was no other bug report except for yours
+> and if it is possible to fix it on your end then I would really love to
+> make the a sensible user interface to query the status. If we are going
+> to change the semantic of the exported flag again then we risk yet
+> another breakage.
 > 
-> I've got a feeling that uapi was anyway changed for the BALLON flag
-> meaning.
+> Therefore I am asking whether changing your particular usecase to a new
+> interface is possible because that would allow to have a longerm
+> sensible user interface rather than another kludge which still doesn't
+> cover all the usecases (e.g. there is no way to reliably query the
+> madvise status after your patch).
 
-Yes. If we *replace* KPF_BALLOON by KPF_OFFLINE
-
-a) Some applications might no longer compile (I guess that's ok)
-b) Some old applications will treat KPF_OFFLINE like KPF_BALLOON (which
-should at least for virtio-balloon usage until now be fine - it is just
-more generic)
-
-So I guess it's up to Maintainers/Matthew to decide :)
-
+Btw. this is essentially the same kind of problem as
+http://lkml.kernel.org/r/20181002100531.GC4135@quack2.suse.cz
+where the conclusion was to come up with a saner interface rather than
+mimic the previous one.
 -- 
-
-Thanks,
-
-David / dhildenb
+Michal Hocko
+SUSE Labs
