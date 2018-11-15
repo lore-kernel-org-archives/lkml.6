@@ -2,137 +2,95 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29D62C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:10:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA73C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:10:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE5D720815
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:10:34 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE5D720815
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9FD6920815
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:10:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FD6920815
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388805AbeKPFTf (ORCPT
+        id S2388911AbeKPFTh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 00:19:35 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:53075 "EHLO mail.bootlin.com"
+        Fri, 16 Nov 2018 00:19:37 -0500
+Received: from mga09.intel.com ([134.134.136.24]:23686 "EHLO mga09.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725742AbeKPFTe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 00:19:34 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 98F292084B; Thu, 15 Nov 2018 20:10:31 +0100 (CET)
-Received: from localhost (lfbn-1-10718-76.w90-89.abo.wanadoo.fr [90.89.68.76])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6A39820510;
-        Thu, 15 Nov 2018 20:10:31 +0100 (CET)
-Date:   Thu, 15 Nov 2018 20:10:31 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Chen-Yu Tsai <wens@csie.org>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>
-Subject: Re: [PATCH 0/5] media: Allwinner A10 CSI support
-Message-ID: <20181115191031.7jpb2g23fksof625@flea>
-References: <cover.71b0f9855c251f9dc389ee77ee6f0e1fad91fb0b.1542097288.git-series.maxime.ripard@bootlin.com>
- <CAGb2v66ygbcomUMkcv8qMCAs_qviFMPzpxj-F4=YBrpuLrdSUw@mail.gmail.com>
+        id S1725742AbeKPFTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 00:19:36 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 11:10:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,237,1539673200"; 
+   d="scan'208";a="108431466"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by fmsmga001.fm.intel.com with SMTP; 15 Nov 2018 11:10:27 -0800
+Received: by lahna (sSMTP sendmail emulation); Thu, 15 Nov 2018 21:10:26 +0200
+Date:   Thu, 15 Nov 2018 21:10:26 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Yehezkel Bernat <yehezkelshb@gmail.com>
+Cc:     lorenzo.pieralisi@arm.com, lukas@wunner.de,
+        iommu@lists.linux-foundation.org, joro@8bytes.org,
+        David Woodhouse <dwmw2@infradead.org>,
+        baolu.lu@linux.intel.com, ashok.raj@intel.com,
+        Bjorn Helgaas <bhelgaas@google.com>, rjw@rjwysocki.net,
+        jacob.jun.pan@intel.com, Andreas Noever <andreas.noever@gmail.com>,
+        michael.jamet@intel.com, Christian Kellner <ckellner@redhat.com>,
+        Mario Limonciello <Mario.Limonciello@dell.com>,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
+Message-ID: <20181115191026.GE4179@lahna.fi.intel.com>
+References: <20181113105636.GB11202@e107981-ln.cambridge.arm.com>
+ <20181113112700.GT2500@lahna.fi.intel.com>
+ <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
+ <20181115102239.GU2500@lahna.fi.intel.com>
+ <20181115111356.GA599@e107981-ln.cambridge.arm.com>
+ <20181115113737.GW2500@lahna.fi.intel.com>
+ <20181115120736.pscly6zwd3k2tvd2@wunner.de>
+ <20181115121627.GA2500@lahna.fi.intel.com>
+ <20181115174608.GA17691@e107981-ln.cambridge.arm.com>
+ <CA+CmpXv9yM6nFdb0mcMPGHS-B_uGbQHYoO6iuefZC8gWoZYD3Q@mail.gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="i7rh5slrqsdzymby"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAGb2v66ygbcomUMkcv8qMCAs_qviFMPzpxj-F4=YBrpuLrdSUw@mail.gmail.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <CA+CmpXv9yM6nFdb0mcMPGHS-B_uGbQHYoO6iuefZC8gWoZYD3Q@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, Nov 15, 2018 at 07:58:13PM +0200, Yehezkel Bernat wrote:
+> From what I know, there are more devices that suffer from similar security
+> issues like Thunderbolt, e.g. FireWire [1].
+> My assumption is that the same protection may be applied to such devices too,
+> even if currently it sounds like vendors care mostly about Thunderbolt (probably
+> because it removes the need for user approval for device connection; it becames
+> a simple plug-and-play experience).
 
---i7rh5slrqsdzymby
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+FireWire is kind of different but there are connectors such as
+ExpressCard and NVMe (over U.2 connector) which carry PCIe and are
+relatively easy to access without need for a screwdriver. AFAIK some
+eGPUs are also using some other proprietary (non-TBT) connector that
+carries PCIe.
 
-Hi,
+I was thinking we could cover all these with is_external filling them
+based on the _DSD or some other means in the kernel.
 
-On Wed, Nov 14, 2018 at 11:24:48AM +0800, Chen-Yu Tsai wrote:
-> On Tue, Nov 13, 2018 at 4:24 PM Maxime Ripard <maxime.ripard@bootlin.com>=
- wrote:
-> > Here is a series introducing the support for the A10 (and SoCs of the s=
-ame
-> > generation) CMOS Sensor Interface (called CSI, not to be confused with
-> > MIPI-CSI, which isn't support by that IP).
-> >
-> > That interface is pretty straightforward, but the driver has a few issu=
-es
-> > that I wanted to bring up:
-> >
-> >   * The only board I've been testing this with has an ov5640 sensor
-> >     attached, which doesn't work with the upstream driver. Copying the
-> >     Allwinner init sequence works though, and this is how it has been
-> >     tested. Testing with a second sensor would allow to see if it's an
-> >     issue on the CSI side or the sensor side.
-> >   * When starting a capture, the last buffer to capture will fail due to
-> >     double buffering being used, and we don't have a next buffer for the
-> >     last frame. I'm not sure how to deal with that though. It seems like
-> >     some drivers use a scratch buffer in such a case, some don't care, =
-so
-> >     I'm not sure which solution should be preferred.
-> >   * We don't have support for the ISP at the moment, but this can be ad=
-ded
-> >     eventually.
-> >
-> >   * How to model the CSI module clock isn't really clear to me. It looks
-> >     like it goes through the CSI controller and then is muxed to one of=
- the
-> >     CSI pin so that it can clock the sensor. I'm not quite sure how to
-> >     model it, if it should be a clock, the CSI driver being a clock
-> >     provider, or if the sensor should just use the module clock directl=
-y.
->=20
-> Which clock are you talking about? MCLK? This seems to be fed directly fr=
-om
-> the CCU, as there doesn't seem to be controls for it within the CSI hardw=
-are
-> block, and the diagram doesn't list it either. IMO you don't have to mode=
-l it.
-> The camera sensor device node would just take a reference to it directly.
+We would then deal all such devices as "untrusted" by default.
 
-Yeah, that what I went for, I guess we agree :)
+> Thus, I don't think binding it with dev->is_thunderbolt is the correct
+> thing to do.
 
-> You would probably enable the (separate) pinmux setting in the CSI
-> controller node.
-
-I'll change that.
-
-Thanks!
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---i7rh5slrqsdzymby
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+3EpwAKCRDj7w1vZxhR
-xay5AP0YIuMeE90TQHjAJ1bmsn3H3GyD9S7o46GGYjpDWeiDVAEA0LfACvVkvr4a
-UO4k+2DcRSF8um3oE1z73dhuaKYkJwk=
-=1sff
------END PGP SIGNATURE-----
-
---i7rh5slrqsdzymby--
+One option that I suggested already is that we keep both and mark all
+is_thunderbolt devices as is_external as well. But I guess this is up to
+Bjorn and Rafael to decide :-)
