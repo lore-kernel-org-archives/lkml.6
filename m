@@ -2,124 +2,117 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BB2C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4FCFC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:54:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED1102086B
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:53:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED1102086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 7B5D12086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:54:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="V6KG/vDK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7B5D12086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388558AbeKPCCI (ORCPT
+        id S2388612AbeKPCCp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 21:02:08 -0500
-Received: from mga14.intel.com ([192.55.52.115]:30306 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388019AbeKPCCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 21:02:08 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 07:53:45 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,236,1539673200"; 
-   d="scan'208";a="274265971"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga005.jf.intel.com with ESMTP; 15 Nov 2018 07:53:45 -0800
-Received: from [10.251.29.1] (kliang2-mobl1.ccr.corp.intel.com [10.251.29.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 54664580495;
-        Thu, 15 Nov 2018 07:53:44 -0800 (PST)
-Subject: Re: [PATCH 1/2] perf vendor events: Add stepping in CPUID string for
- x86
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        ak@linux.intel.com
-References: <20181114212416.15665-1-kan.liang@linux.intel.com>
- <20181115135347.GI9600@krava>
- <7a63fdf4-828f-0685-e146-6d3d86d8655b@linux.intel.com>
- <20181115152534.GL9600@krava>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <13ef65c9-1622-2bb7-3d61-65f469fe1a10@linux.intel.com>
-Date:   Thu, 15 Nov 2018 10:53:42 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 15 Nov 2018 21:02:45 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41375 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388337AbeKPCCp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 21:02:45 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p16-v6so9670691plr.8
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 07:54:22 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=LeBsOofA2UhTi1KfnUYz8etx06r1hUEa9jBx4Io3vqw=;
+        b=V6KG/vDKKUn2Mecz+5hcevEYUmwt1aQ15/s4Ysq/cf5Gk/sPnT66R30a+cFdPyYoVC
+         iNOVvHQ5E60wZ2l40VQ5hZt/sYbhsiNZeW63C1V9oafTCPOY/SqRbXplUXkhz4+I226N
+         wSKsszErlUj7AGgUha4ZhiKIqMgtmbTm0DvSQ=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=LeBsOofA2UhTi1KfnUYz8etx06r1hUEa9jBx4Io3vqw=;
+        b=o/QRvIQOP7wYb9ydaGL4lEYTpz7R305H28PGQ/OphGQez1/TN6jgE//68cUZZQ8xfy
+         llMvr1yYhJyKtQorozgGU2PwI3gKa/nJlWTzLXbYUHeUJqCvsD2x9OVxtGk+xK3SzzmU
+         LomDc19kg/jT+jsuk7R6rIDdHeitEzoygYJ0OosDbk/EQrba3HtxNsjmK7R0oDoNUO9c
+         Nn7p3OuNlBdbyO3bkW0wYhXk1tk4VdXdeFW7JeAT0Cj/aKUekX1PhxoDYxoVApENtrHv
+         GjRc7eA4Wch41myj85jymt6+/YXeLwsvZPtfC+VYJ2i/4zRDHTjBZWXxKFA7UZl37YlK
+         8dVg==
+X-Gm-Message-State: AGRZ1gJQIM4Fx6Q3PwHb7SUbuizV/32CVJiHailitbCyA+d/FWGzHq2G
+        FvhUiKgWJbGefsEe6VfJdifo1g==
+X-Google-Smtp-Source: AJdET5dWJSIFttZLvCPEqEDGy9Z503E1JNmCTFqsHbj9CPDT3Bxnkl1JPobiOUklUG5W7zsWxM77tw==
+X-Received: by 2002:a17:902:481:: with SMTP id e1-v6mr6782175ple.132.1542297261537;
+        Thu, 15 Nov 2018 07:54:21 -0800 (PST)
+Received: from pure.paranoia.local ([172.83.40.72])
+        by smtp.gmail.com with ESMTPSA id y1sm31137524pfi.123.2018.11.15.07.54.19
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 07:54:20 -0800 (PST)
+Date:   Thu, 15 Nov 2018 10:54:18 -0500
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>, pr-tracker-bot@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: [GIT PULL] PCI fixes for v4.20
+Message-ID: <20181115155418.GA25764@pure.paranoia.local>
+References: <20181114062010.GA189193@google.com>
+ <20181114200003.14496.1490.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+ <20181114201214.GM13926@zn.tnic>
+ <20181114201658.GB25069@pure.paranoia.local>
+ <20181114214601.GO13926@zn.tnic>
+ <20181114222154.GA22445@pure.paranoia.local>
+ <20181114224839.GP13926@zn.tnic>
+ <20181115071252.GB94998@google.com>
+ <20181115075330.GA32162@pure.paranoia.local>
+ <20181115150321.GB207836@google.com>
 MIME-Version: 1.0
-In-Reply-To: <20181115152534.GL9600@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181115150321.GB207836@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
->>>> +	/*
->>>> +	 * Full CPUID format is required to identify a platform.
->>>> +	 * Error out if the cpuid string is incomplete.
->>>> +	 */
->>>> +	if (full_mapcpuid && !full_cpuid) {
->>>> +		pr_info("Invalid CPUID %s. Full CPUID is required, "
->>>> +			"vendor-family-model-stepping\n", cpuid);
->>>> +		return 1;
->>>> +	}
->>>> +
->>>> +	if (regcomp(&re, mapcpuid, REG_EXTENDED) != 0) {
->>>> +		/* Warn unable to generate match particular string. */
->>>> +		pr_info("Invalid regular expression %s\n", mapcpuid);
->>>> +		return 1;
->>>> +	}
->>>> +
->>>> +	match = !regexec(&re, cpuid, 1, pmatch, 0);
->>>> +	regfree(&re);
->>>> +	if (match) {
->>>> +		size_t match_len = (pmatch[0].rm_eo - pmatch[0].rm_so);
->>>> +		size_t cpuid_len;
->>>> +
->>>> +		/* If the full CPUID format isn't required,
->>>> +		 * ignoring the stepping.
->>>> +		 */
->>>> +		if (!full_mapcpuid && full_cpuid)
->>>> +			cpuid_len = strrchr(cpuid, '-') - cpuid;
->>>> +		else
->>>> +			cpuid_len = strlen(cpuid);
->>>> +
->>>> +
->>>> +		/* Verify the entire string matched. */
->>>> +		if (match_len == cpuid_len)
->>>> +			return 0;
->>>
->>> why is this necessary?
->>>
->>
->> It's from previous common code. As my understanding, it just double check
->> the matched strings. There is no harmful. So I keep it.
+On Thu, Nov 15, 2018 at 09:03:21AM -0600, Bjorn Helgaas wrote:
+> > You didn't really do anything wrong. In *general* I prefer to see
+> > public URLs if they are sent to public lists, so if you're cc'ing
+> > something to LKML, I would generally expect the pull request to have a
+> > public URL like https://git.kernel.org/ instead of a private ssh:// URL
+> > that is only accessible to people with a kernel.org account.
+> > 
+> > That's basically all there is to it. It doesn't *really* matter, since
+> > Linus is the one who will be merging the actual pull request, and he
+> > certainly has access to internal ssh:// URLs. However, in case someone
+> > else was interested in reviewing the pull request, it would be more
+> > friendly to have a public URL for them.
 > 
-> right.. did you consider using the wildcard in the map file
-> so it'd cover the stepping, having entries like:
-> 
->    GenuineIntel-6-1F-*,v2,nehalemep,core
-> 
-> I haven't thought this one through, but seems we could bypass
-> those '-stepping' checks.. but probably other changes would be
-> necessary for the wildcard
-> 
+> OK, I think I'll remove the insteadOf chunk from my .gitconfig.  Should
+> https://korg.wiki.kernel.org/userdoc/gitolite be updated to remove or
+> expand that recommendation?  The only reason I added insteadOf in the first
+> place was because it sounded like a security improvement.
 
-If using wildcard, the full cpuid format is required for all platforms.
-The script which using environment string "PERF_CPUID" will definitely 
-be broken on all platforms.
-This patch (non-wildcard) only breaks the script on Skylake server and 
-Cascadelake server.
+It is. Does adding the insteadOf rules result in ssh:// URLs when using
+git-request-pull? I didn't expect that it would.
 
-I think that's the only drawback of using wildcard.
-
-Thanks,
-Kan
-
+-K
