@@ -2,119 +2,108 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E2EFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:20:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F968C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:21:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3778A208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:20:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5925D2133D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:21:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EQiOjfhP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3778A208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="lcJWK1OQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5925D2133D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728142AbeKPF34 (ORCPT
+        id S1729161AbeKPFaQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 00:29:56 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:35368 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727123AbeKPF34 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 00:29:56 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 32-v6so9446149pgu.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 11:20:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=RT+x/iQrkIWcwfEkVnN2HIogY3vnXb2WKtAGM88lLH8=;
-        b=EQiOjfhPqESRBDQ/AewYzps1EJ6sMS7moeTDKFIR8j+KhbpR6pQwAK+DTUjXCUtPlv
-         Qqm4xfOf+hV5IGoJHWOtvNL4hCUNv+ghduu/EUpf8rgTpLKr9/KkpDMbDxPWJgKydcyS
-         owjLhNJzSJkyg5MjhmQ4I0KIH7M8M+bJ5wXU8=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RT+x/iQrkIWcwfEkVnN2HIogY3vnXb2WKtAGM88lLH8=;
-        b=l1WLh4LdbHAfOHlaDQ7rVjJsWFE5rmrLMuevAMM/sj3UMREyie8LreDvIQNtDuaLZw
-         c3V6R5wxzxoEPYhDwwnoqO1sIuEVQ9gkiEpDkyeyhrE3bY5aeHepgeKDKO1qinGmt/B4
-         XNzvjLYlGFjd1ak/XEAbL+PMvxC17/C5OrUJBZBnqEBdveaKlZ0BSlFMm2t1FxS5caH7
-         ntEOtJIfAJ8mhMLADfHKitREZE8s2tFWWg+ihSQrBQas9PM/OUAuxAMb+sAMNCyorTVn
-         uIO0GihV0zlxq565y3/5rEf3lLmHi10F0rmRZp/Qh/kqLXftdpZDDrtR5beoDtgz3v94
-         Dywg==
-X-Gm-Message-State: AGRZ1gJQj9EKsiYAIgqMFjVPp3kSzWu0iy8m5LNGMpx9nIJUnk4fdayV
-        RMZttBCWFadJzILUqAPUzCPEvg==
-X-Google-Smtp-Source: AJdET5dFVDpQbgWGEjhej2UXiyhGj0MtYVYQ1FSdpM6d8hSkknUy9rnHNpH24s6T9dqbC9bfFU/GPA==
-X-Received: by 2002:a62:9f98:: with SMTP id v24-v6mr7605506pfk.163.1542309651203;
-        Thu, 15 Nov 2018 11:20:51 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id l187-v6sm25695161pfc.79.2018.11.15.11.20.49
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 11:20:50 -0800 (PST)
-Date:   Thu, 15 Nov 2018 11:20:47 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Jeffrey Hugo <jhugo@codeaurora.org>
-Cc:     andy.gross@linaro.org, david.brown@linaro.org, robh+dt@kernel.org,
-        mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
-        linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/4] arm64: dts: qcom: msm8998-mtp: Add external SD
-Message-ID: <20181115192047.GL10915@tuxbook-pro>
-References: <1542302291-6864-1-git-send-email-jhugo@codeaurora.org>
- <1542302291-6864-5-git-send-email-jhugo@codeaurora.org>
+        Fri, 16 Nov 2018 00:30:16 -0500
+Received: from mail.kernel.org ([198.145.29.99]:38680 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725916AbeKPFaP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 00:30:15 -0500
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id EEDC22133D;
+        Thu, 15 Nov 2018 19:21:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542309671;
+        bh=QXI5C+Ye96jf+48pvLdlRLxhqGorVauDUBYJEJI70cw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=lcJWK1OQA0BWc48BPDs82bo4mwCrKtJxaI3KmD8Dy9Nuxb6drUGyJqADZD9QUT23X
+         WqIA/uC0OiQ5KLsd0zmGh4v5Ei9BCouAiCnglLYUcYiAtEOhbU4cC5a5EOnBQld/HJ
+         hE/MZATyZViKGbUdDsaQGvntqHahDSn+wiF0R5gA=
+Received: by mail-wr1-f54.google.com with SMTP id u5-v6so17140349wrn.9;
+        Thu, 15 Nov 2018 11:21:10 -0800 (PST)
+X-Gm-Message-State: AGRZ1gIXKGczl50bRjOcfM2FQX7mNsF7AAqdYxAG5U2cf9Z+un+dIDLm
+        ytinnqNFnaeUQqXiyXXCaSa8wsrZoWZxtq3XwxE=
+X-Google-Smtp-Source: AJdET5cHr7ubgspxXlNDZBmZ5cr4mmgXFD3aAqv1nCccIq8G150ZDsYGIsvPfpMaAKBhgmPgZ2eXHNEmanH6HNoU3I0=
+X-Received: by 2002:adf:8989:: with SMTP id x9-v6mr6926815wrx.184.1542309669469;
+ Thu, 15 Nov 2018 11:21:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542302291-6864-5-git-send-email-jhugo@codeaurora.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <4c9044427b1aab373acd6ac76f0c905e2be79784.1542074855.git.ryder.lee@mediatek.com>
+ <9043534495d49c532bdb0b904344b77faeb41359.1542074855.git.ryder.lee@mediatek.com>
+In-Reply-To: <9043534495d49c532bdb0b904344b77faeb41359.1542074855.git.ryder.lee@mediatek.com>
+From:   Sean Wang <sean.wang@kernel.org>
+Date:   Thu, 15 Nov 2018 11:20:58 -0800
+X-Gmail-Original-Message-ID: <CAGp9Lzoko6ahpzLvDmBiEPLYmdhjtHeJXYDiFamZWiUYpcC9MA@mail.gmail.com>
+Message-ID: <CAGp9Lzoko6ahpzLvDmBiEPLYmdhjtHeJXYDiFamZWiUYpcC9MA@mail.gmail.com>
+Subject: Re: [resend PATCH 2/3] pwm: mediatek: add pwm support for MT7629 SoC
+To:     ryder.lee@mediatek.com
+Cc:     thierry.reding@gmail.com, linux-pwm@vger.kernel.org,
+        devicetree@vger.kernel.org, weijie.gao@mediatek.com,
+        linux-kernel@vger.kernel.org, cheng-hao.luo@mediatek.com,
+        robh+dt@kernel.org, linux-mediatek@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 15 Nov 09:18 PST 2018, Jeffrey Hugo wrote:
-
-> The externally accessible SD card slot on the MTP is driven by SDCC2.
-> Wire it up for use.
-> 
-> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+On Mon, Nov 12, 2018 at 6:09 PM Ryder Lee <ryder.lee@mediatek.com> wrote:
+>
+> This adds pwm controller support for MT7629 SoC.
+>
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 > ---
->  arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 13 +++++++++++++
->  arch/arm64/boot/dts/qcom/msm8998.dtsi     |  1 +
->  2 files changed, 14 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-> index b4276da..a90b427 100644
-> --- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
-> @@ -241,3 +241,16 @@
->  		};
->  	};
+>  drivers/pwm/pwm-mediatek.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/drivers/pwm/pwm-mediatek.c b/drivers/pwm/pwm-mediatek.c
+> index 9400c41..4ed95e5 100644
+> --- a/drivers/pwm/pwm-mediatek.c
+> +++ b/drivers/pwm/pwm-mediatek.c
+> @@ -292,11 +292,16 @@ static int mtk_pwm_remove(struct platform_device *pdev)
+>         .pwm45_fixup = true,
 >  };
-> +
-> +&sdhc2 {
-> +	status = "okay";
-
-Please fix the indentation of the rest of the properties in this block.
-
-> +        cd-gpios = <&tlmm 95 GPIO_ACTIVE_LOW>;
-> +
-> +        vmmc-supply = <&vreg_l21a_2p95>;
-> +        vqmmc-supply = <&vreg_l13a_2p95>;
-> +
-> +        pinctrl-names = "default", "sleep";
-> +        pinctrl-0 = <&sdc2_clk_on  &sdc2_cmd_on  &sdc2_data_on  &sdc2_cd_on>;
-> +        pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
+>
+> +static const struct mtk_pwm_platform_data mt7629_pwm_data = {
+> +       .num_pwms = 1,
 > +};
 
-With that,
+How about adding a property for the num_pwms for the PWM controller?
+It at least can help stop adding a new entry for every SoC with only
+differences on PWM number.
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
-
-Regards,
-Bjorn
+> +
+>  static const struct of_device_id mtk_pwm_of_match[] = {
+>         { .compatible = "mediatek,mt2712-pwm", .data = &mt2712_pwm_data },
+>         { .compatible = "mediatek,mt7622-pwm", .data = &mt7622_pwm_data },
+>         { .compatible = "mediatek,mt7623-pwm", .data = &mt7623_pwm_data },
+>         { .compatible = "mediatek,mt7628-pwm", .data = &mt7628_pwm_data },
+> +       { .compatible = "mediatek,mt7629-pwm", .data = &mt7629_pwm_data },
+>         { },
+>  };
+>  MODULE_DEVICE_TABLE(of, mtk_pwm_of_match);
+> --
+> 1.9.1
+>
+>
+> _______________________________________________
+> Linux-mediatek mailing list
+> Linux-mediatek@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-mediatek
