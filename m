@@ -2,146 +2,133 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5253AC04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 996EFC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:54:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 18AEC2089D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:53:36 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="icw4r83v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18AEC2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 642522089D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:54:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 642522089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728851AbeKOSAS (ORCPT
+        id S1728912AbeKOSAp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 13:00:18 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:39174 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728204AbeKOSAS (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 13:00:18 -0500
-Received: by mail-pf1-f196.google.com with SMTP id c72so4598735pfc.6
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 23:53:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google;
-        h=date:from:to:cc:subject:message-id:mail-followup-to:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=E+d4mnnheKWEDa0BjZsSxw4ixCHorNP6QfyAu2vE08I=;
-        b=icw4r83v6AIUBHz4AwnWpkA2SOGBY1ks0MMqCm+mApspcNyuXY0S/iEwyUigPCGfGX
-         LNytjxauy9KmdbPOIxnNoW3zUxhAYC7R+bR/C0DuUizv+wXqiYuHwLiiUQywJlZTMWAR
-         P6iZD+RRA2TZk70DM5k8jGKTfeW8G1mkbH6DM=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id
-         :mail-followup-to:references:mime-version:content-disposition
-         :in-reply-to:user-agent;
-        bh=E+d4mnnheKWEDa0BjZsSxw4ixCHorNP6QfyAu2vE08I=;
-        b=faigUqOLqsczkCKdpa7+lnWaJTiBy8Ky9CyO8zo5pgHsQcQOaAuI1E2G7DuFnQUXqq
-         Yr2kBBR1rIsTkVN52SxO4eE1pB29T6MvDmDeiND9g1Hid9hfKnu5Xx9HgvO7TnfYsd9R
-         IZ7C13OWzp1DRsE63yHCJlV6aVh0wH1EJkk2te+CfuaeK4y+GgnGbXZvw4fE/809nPzm
-         lLMsyGhnF8he2EZfhWKAzya2USLJk71rRBq4xJOVqHNS5Idoru0vAMhynLRBOj9iwpn6
-         0wKKgcELoAc4YafcpEudJCJaiu/DxC6MeqnRw7zC+xhNTTXHqOPZ7vPcCDvAY1Dg/Ii7
-         nupw==
-X-Gm-Message-State: AGRZ1gIMOrmSebxm6G+xN8yObLue9GQnZoV7N6YvXK37giELwYNTYY/u
-        dqhrBlMCk1HNPLkOTxEGXE+GGw==
-X-Google-Smtp-Source: AJdET5fim4LowC4uVLuJMSRQ2J2VVq4jlwdDnI9OwfhN8kXHmsLOdICix9J+JdFbJdzTOqZNsT4EwA==
-X-Received: by 2002:a62:4502:: with SMTP id s2-v6mr5386289pfa.31.1542268413597;
-        Wed, 14 Nov 2018 23:53:33 -0800 (PST)
-Received: from pure.paranoia.local ([172.83.40.72])
-        by smtp.gmail.com with ESMTPSA id 11-v6sm36337093pfr.55.2018.11.14.23.53.32
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Nov 2018 23:53:32 -0800 (PST)
-Date:   Thu, 15 Nov 2018 02:53:30 -0500
-From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Borislav Petkov <bp@alien8.de>, pr-tracker-bot@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [GIT PULL] PCI fixes for v4.20
-Message-ID: <20181115075330.GA32162@pure.paranoia.local>
-Mail-Followup-To: Bjorn Helgaas <helgaas@kernel.org>,
-        Borislav Petkov <bp@alien8.de>, pr-tracker-bot@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-References: <20181114062010.GA189193@google.com>
- <20181114200003.14496.1490.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
- <20181114201214.GM13926@zn.tnic>
- <20181114201658.GB25069@pure.paranoia.local>
- <20181114214601.GO13926@zn.tnic>
- <20181114222154.GA22445@pure.paranoia.local>
- <20181114224839.GP13926@zn.tnic>
- <20181115071252.GB94998@google.com>
+        Thu, 15 Nov 2018 13:00:45 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:57130 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728204AbeKOSAp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 13:00:45 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7B31A58E41;
+        Thu, 15 Nov 2018 07:54:01 +0000 (UTC)
+Received: from localhost (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id D6D835D9CA;
+        Thu, 15 Nov 2018 07:53:58 +0000 (UTC)
+Date:   Thu, 15 Nov 2018 15:53:56 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        aarcange@redhat.com
+Subject: Re: Memory hotplug softlock issue
+Message-ID: <20181115075349.GL2653@MiWiFi-R3L-srv>
+References: <20181114070909.GB2653@MiWiFi-R3L-srv>
+ <5a6c6d6b-ebcd-8bfa-d6e0-4312bfe86586@redhat.com>
+ <20181114090134.GG23419@dhcp22.suse.cz>
+ <20181114145250.GE2653@MiWiFi-R3L-srv>
+ <20181114150029.GY23419@dhcp22.suse.cz>
+ <20181115051034.GK2653@MiWiFi-R3L-srv>
+ <20181115073052.GA23831@dhcp22.suse.cz>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181115071252.GB94998@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181115073052.GA23831@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Thu, 15 Nov 2018 07:54:01 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 01:12:53AM -0600, Bjorn Helgaas wrote:
-> > and I kinda see the point of maybe not having your ssh username in the
-> > URL. Not that it is a big deal for us, k.org users though.
+On 11/15/18 at 08:30am, Michal Hocko wrote:
+> On Thu 15-11-18 13:10:34, Baoquan He wrote:
+> > On 11/14/18 at 04:00pm, Michal Hocko wrote:
+> > > On Wed 14-11-18 22:52:50, Baoquan He wrote:
+> > > > On 11/14/18 at 10:01am, Michal Hocko wrote:
+> > > > > I have seen an issue when the migration cannot make a forward progress
+> > > > > because of a glibc page with a reference count bumping up and down. Most
+> > > > > probable explanation is the faultaround code. I am working on this and
+> > > > > will post a patch soon. In any case the migration should converge and if
+> > > > > it doesn't do then there is a bug lurking somewhere.
+> > > > > 
+> > > > > Failing on ENOMEM is a questionable thing. I haven't seen that happening
+> > > > > wildly but if it is a case then I wouldn't be opposed.
+> > > > 
+> > > > Applied your debugging patches, it helps a lot to printing message.
+> > > > 
+> > > > Below is the dmesg log about the migrating failure. It can't pass
+> > > > migrate_pages() and loop forever.
+> > > > 
+> > > > [  +0.083841] migrating pfn 10fff7d0 failed 
+> > > > [  +0.000005] page:ffffea043ffdf400 count:208 mapcount:201 mapping:ffff888dff4bdda8 index:0x2
+> > > > [  +0.012689] xfs_address_space_operations [xfs] 
+> > > > [  +0.000030] name:"stress" 
+> > > > [  +0.004556] flags: 0x5fffffc0000004(uptodate)
+> > > > [  +0.007339] raw: 005fffffc0000004 ffffc900000e3d80 ffffc900000e3d80 ffff888dff4bdda8
+> > > > [  +0.009488] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e7353d000
+> > > > [  +0.007726] page->mem_cgroup:ffff888e7353d000
+> > > > [  +0.084538] migrating pfn 10fff7d0 failed 
+> > > > [  +0.000006] page:ffffea043ffdf400 count:210 mapcount:201 mapping:ffff888dff4bdda8 index:0x2
+> > > > [  +0.012798] xfs_address_space_operations [xfs] 
+> > > > [  +0.000034] name:"stress" 
+> > > > [  +0.004524] flags: 0x5fffffc0000004(uptodate)
+> > > > [  +0.007068] raw: 005fffffc0000004 ffffc900000e3d80 ffffc900000e3d80 ffff888dff4bdda8
+> > > > [  +0.009359] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e7353d000
+> > > > [  +0.007728] page->mem_cgroup:ffff888e7353d000
+> > > 
+> > > I wouldn't be surprised if this was a similar/same issue I've been
+> > > chasing recently. Could you try to disable faultaround to see if that
+> > > helps. It seems that it helped in my particular case but I am still
+> > > waiting for the final good-to-go to post the patch as I do not own the
+> > > workload which triggered that issue.
+> > 
+> > Tried, still stuck in last block sometime. Usually after several times
+> > of hotplug/unplug. If stop stress program, the last block will be
+> > offlined immediately.
 > 
-> Sorry, I don't understand the problem.  I have this in my .gitconfig:
-> 
->     [url "ssh://git@gitolite.kernel.org"]
-> 	    insteadOf = https://git.kernel.org
-> 	    insteadOf = http://git.kernel.org
-> 	    insteadOf = git://git.kernel.org
-> 
-> because I thought that was the recommended way (see the end of
-> https://korg.wiki.kernel.org/userdoc/gitolite). But that also makes my
-> request-pull:
-> 
->     $ git request-pull origin/master git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git pci-v4.20-fixes-1
-> 
-> generate the ssh URL above.  If I remove the insteadOf stuff from
-> .gitconfig, request-pull produces this instead:
-> 
->     git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.20-fixes-1
-> 
-> I'm happy to do either; just tell me which :)
+> Is the pattern still the same? I mean failing over few pages with
+> reference count jumping up and down between attempts?
 
-You didn't really do anything wrong. In *general* I prefer to see
-public URLs if they are sent to public lists, so if you're cc'ing
-something to LKML, I would generally expect the pull request to have a
-public URL like https://git.kernel.org/ instead of a private ssh:// URL
-that is only accessible to people with a kernel.org account.
+->count jumping up and down, mapcount stays the same value.
 
-That's basically all there is to it. It doesn't *really* matter, since
-Linus is the one who will be merging the actual pull request, and he
-certainly has access to internal ssh:// URLs. However, in case someone
-else was interested in reviewing the pull request, it would be more
-friendly to have a public URL for them.
+> 
+> > [root@ ~]# cat /sys/kernel/debug/fault_around_bytes 
+> > 4096
+> 
+> Can you make it 0?
 
-Best,
--K
+I executed 'echo 0 > fault_around_bytes', value less than one page size
+will round up to one page.
+
+/*
+ * fault_around_bytes must be rounded down to the nearest page order as it's
+ * what do_fault_around() expects to see.
+ */
+static int fault_around_bytes_set(void *data, u64 val)
+{
+        if (val / PAGE_SIZE > PTRS_PER_PTE)
+                return -EINVAL;
+        if (val > PAGE_SIZE)
+                fault_around_bytes = rounddown_pow_of_two(val);
+        else
+                fault_around_bytes = PAGE_SIZE; /* rounddown_pow_of_two(0) is undefined */
+        return 0;
+}
+
