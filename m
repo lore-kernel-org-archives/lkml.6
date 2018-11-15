@@ -2,125 +2,116 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5CFDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:09:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 54AB5C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:13:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EFFC223DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:09:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 11004223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:13:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="DK5gbKhi"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EFFC223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mena.vt.edu
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="e9wCopL2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11004223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388871AbeKPESd (ORCPT
+        id S2388676AbeKPEWD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 23:18:33 -0500
-Received: from mail-wr1-f65.google.com ([209.85.221.65]:35273 "EHLO
-        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388836AbeKPESc (ORCPT
+        Thu, 15 Nov 2018 23:22:03 -0500
+Received: from mail-pf1-f175.google.com ([209.85.210.175]:42427 "EHLO
+        mail-pf1-f175.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387839AbeKPEWD (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 23:18:32 -0500
-Received: by mail-wr1-f65.google.com with SMTP id 96so5334441wrb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 10:09:40 -0800 (PST)
+        Thu, 15 Nov 2018 23:22:03 -0500
+Received: by mail-pf1-f175.google.com with SMTP id 64so5601042pfr.9
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 10:13:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=eUb/ykbiDjRSxMeS2lRjQnFObTv9jCzDJK38qhNOr3Y=;
-        b=DK5gbKhia9qRJTHZtkzxnlvs0UmYDkX3DLhm8mh1/vXrV5M7xkU8xhjqrntMKtmwZA
-         5aI+BdDv95IjvCwOuB0TFqZDPG6jz0F822BgHmFUgbw97HVUKifCpPaSbBkq892FEZgl
-         Ps7wudFZdo+GvKp6VUXegb35QOm1BMxs7qdygWLeLLVllAlvQ5R89IlYkb9SKs0OQoAI
-         nyqR5mwzHuTozSr11EET9jxpJeIdIHUvuDLgej22uWjmAHZ5IvH4NDMrMDOyYxV/BVaF
-         /K9jDbDodwnWxl6tni17/sTjIxCrHFXtHZa/kJxwE14cLrcoSeHqTGtaWANSC+fRMfDU
-         5BMw==
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Z0upDZ2mFAUdjDXMYp+S4KJ1R74hWPx56On0E4nZmIs=;
+        b=e9wCopL2F24XiwBGWdhfkGc6Sy8Vg7P6NDKBnEWrEQcKk8LXyEtLMyLtDODDiDShET
+         Tgp9Zik6CwQesmlIHXieWgnjBEi3ZvRg5eRiKa2Dl/I/W70T1804vHb0RQi2MVI/udya
+         34yOTdlN1RW+DTkaAYFGAB1jGU7FwvFWpME8E=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=eUb/ykbiDjRSxMeS2lRjQnFObTv9jCzDJK38qhNOr3Y=;
-        b=GybORYiFqqBveT17Ifgm2AjMhVT6Qp6BNMkVsEvRsp7S3OEh7dCjCGgP1UchvlOIWU
-         YPAOe0nz/Um6u9Q6ya4aSooNIj7z2siZ1M5p+z/FrTA96iX5SBEp/lPl8GNn/V0X0bS/
-         2ER+crKkUXNx3rC9oeFa1Spw18322oc1XzJ5Q/RnWKtzymczoT53iYcCwhyrwP04Utvp
-         EYTcKbC+PDG3xmCveKhqUF/a2+NgbWrdtr5hl6ewPesUCsIPJ5aHNZJ1nookApL2e/Sr
-         F+YPV4uksEFVPYg50wsyLzdCv8nuI+Qqe2QnSPEV//9fow0KVl0HnLfuzK73ZoTLiJ6w
-         5dnw==
-X-Gm-Message-State: AGRZ1gJZiKurbUPAd9tMjhGPw6LVmfl2rUsARY6EB4Ku63uPAUgCY6w1
-        9gls3q5Hb16ffqEdt0hsyIHkRA==
-X-Google-Smtp-Source: AJdET5eOLOANa5+P4GTahN1zAQ4iX9hQ4Q5KPTXWV4iDSHxv0HhRLzbLGbkU/em2GbAYxqX0FK7a0g==
-X-Received: by 2002:a5d:6091:: with SMTP id w17-v6mr6555678wrt.193.1542305379747;
-        Thu, 15 Nov 2018 10:09:39 -0800 (PST)
-Received: from localhost.localdomain ([156.212.35.176])
-        by smtp.gmail.com with ESMTPSA id e7-v6sm21959888wra.10.2018.11.15.10.09.37
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 10:09:39 -0800 (PST)
-From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-X-Google-Original-From: Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
-To:     Shuah Khan <shuah@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
-        Andrew Jones <drjones@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Hossam Hassan <7ossam9063@gmail.com>,
-        Ahmed Lotfy <A7med.lotfey@gmail.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        Anders Roxell <anders.roxell@linaro.org>
-Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
-Subject: [PATCH] SelfTest: KVM: Drop Asserts for madvise failures
-Date:   Thu, 15 Nov 2018 20:09:07 +0200
-Message-Id: <20181115180907.13974-1-ahmedsoliman0x666@gmail.com>
-X-Mailer: git-send-email 2.18.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z0upDZ2mFAUdjDXMYp+S4KJ1R74hWPx56On0E4nZmIs=;
+        b=JT2vyO/dO7ON094LttXDBbK1wyYAv9xTLeh4DDY5dnxIL6aZlPiLsHhtykCfcU7d+k
+         OhGJRBNgZ1M6BiR3nMIM/HdkHZIUeom3vt8hA6kcIkZQVEXRbpp7X7Y1SEgOxzUtH3je
+         RBgLhxcs1PImedr3MQpgBVJOzdJrGjSnu9GjdfESfVDegIk0zFaSpYvdtS1KVl9L8lFv
+         rUICXPLKQgKGv5eQVGJxLJVKQGkfkvYTG+Na2CN89tLC48upHIpKwqYadWO+LBaUN21a
+         KN1TYUQFMOPwZvNQyH6IUcE4fZUdyr9U4v/4+IIYky0I6kp788+G2fMlUw0zUEDeHpbK
+         xpNA==
+X-Gm-Message-State: AGRZ1gLoVcZzmZ1MtPwsRE1ClyHo+dZ6jHy7nYcnwhgKiucVlGEwl+dP
+        GIB9/29U55iKHYTlFUYwxPtHPA==
+X-Google-Smtp-Source: AJdET5cfLmgZtlZbg+yDFPLI/N6InjIU4J17K2lyvtZfEqwO1+v6RLmuQhhVo87XEA5o+3wADZbZaw==
+X-Received: by 2002:a65:55ca:: with SMTP id k10mr6694049pgs.448.1542305590785;
+        Thu, 15 Nov 2018 10:13:10 -0800 (PST)
+Received: from pure.paranoia.local ([172.83.40.72])
+        by smtp.gmail.com with ESMTPSA id w2-v6sm30490745pfw.26.2018.11.15.10.13.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 10:13:10 -0800 (PST)
+Date:   Thu, 15 Nov 2018 13:13:07 -0500
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>, pr-tracker-bot@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: [GIT PULL] PCI fixes for v4.20
+Message-ID: <20181115181307.GA25806@pure.paranoia.local>
+References: <20181114201214.GM13926@zn.tnic>
+ <20181114201658.GB25069@pure.paranoia.local>
+ <20181114214601.GO13926@zn.tnic>
+ <20181114222154.GA22445@pure.paranoia.local>
+ <20181114224839.GP13926@zn.tnic>
+ <20181115071252.GB94998@google.com>
+ <20181115075330.GA32162@pure.paranoia.local>
+ <20181115150321.GB207836@google.com>
+ <20181115155418.GA25764@pure.paranoia.local>
+ <20181115172706.GA229449@google.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181115172706.GA229449@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+On Thu, Nov 15, 2018 at 11:27:06AM -0600, Bjorn Helgaas wrote:
+> > > OK, I think I'll remove the insteadOf chunk from my .gitconfig.  Should
+> > > https://korg.wiki.kernel.org/userdoc/gitolite be updated to remove or
+> > > expand that recommendation?  The only reason I added insteadOf in the first
+> > > place was because it sounded like a security improvement.
+> > 
+> > It is. Does adding the insteadOf rules result in ssh:// URLs when using
+> > git-request-pull? I didn't expect that it would.
+> 
+> Yep, it seems to for me.  Maybe I'm doing something else weird, because I
+> don't see many other pull requests with ssh:// URLs.
 
-madvise() returns -1 without CONFIG_TRANSPARENT_HUGEPAGE=y. That would
-trigger asserts when checking for return value of madvice. Following
-similar decision to [1]. I thought it is ok to assume that madvise()
-failures implies that THP is not supported by host kernel.
+Hmm, you're right -- I just tested this and it does. I can't imagine
+that's the intended effect of insteadOf -- it's supposed to alter URLs
+behind the scenes, not permanently transform them. I'll talk to git
+folks about it.
 
-Other options were to check for Transparent Huge Page support in
-/sys/kernel/mm/transparent_hugepage/enabled.
+For now, you should probably remove that from your gitconfig so that
+your pull requests have public URLs in them.
 
--- links --
-[1] https://lists.gnu.org/archive/html/qemu-devel/2015-11/msg04514.html
-
-Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
----
- tools/testing/selftests/kvm/lib/kvm_util.c | 14 ++++++--------
- 1 file changed, 6 insertions(+), 8 deletions(-)
-
-diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
-index 1b41e71283d5..7725cfdf1b79 100644
---- a/tools/testing/selftests/kvm/lib/kvm_util.c
-+++ b/tools/testing/selftests/kvm/lib/kvm_util.c
-@@ -586,14 +586,12 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
- 				 src_type == VM_MEM_SRC_ANONYMOUS_THP ?  huge_page_size : 1);
- 
- 	/* As needed perform madvise */
--	if (src_type == VM_MEM_SRC_ANONYMOUS || src_type == VM_MEM_SRC_ANONYMOUS_THP) {
--		ret = madvise(region->host_mem, npages * vm->page_size,
--			     src_type == VM_MEM_SRC_ANONYMOUS ? MADV_NOHUGEPAGE : MADV_HUGEPAGE);
--		TEST_ASSERT(ret == 0, "madvise failed,\n"
--			    "  addr: %p\n"
--			    "  length: 0x%lx\n"
--			    "  src_type: %x",
--			    region->host_mem, npages * vm->page_size, src_type);
-+	if (src_type == VM_MEM_SRC_ANONYMOUS) {
-+		madvise(region->host_mem, npages * vm->page_size,
-+				MADV_NOHUGEPAGE);
-+	} else if (src_type == VM_MEM_SRC_ANONYMOUS_THP) {
-+		madvise(region->host_mem, npages * vm->page_size,
-+				MADV_HUGEPAGE);
- 	}
- 
- 	region->unused_phy_pages = sparsebit_alloc();
--- 
-2.18.1
-
+Best,
+-K
