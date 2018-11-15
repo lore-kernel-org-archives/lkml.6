@@ -2,99 +2,107 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-12.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C279C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:37:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 135C5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:41:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0DFBE208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:37:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0DFBE208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id BE39E208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:41:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V03FPUFC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE39E208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726772AbeKPHrJ (ORCPT
+        id S1726279AbeKPHvA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 02:47:09 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:38588 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725856AbeKPHrJ (ORCPT
+        Fri, 16 Nov 2018 02:51:00 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:42874 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725856AbeKPHvA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 02:47:09 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id A5E5FC75;
-        Thu, 15 Nov 2018 21:37:36 +0000 (UTC)
-Date:   Thu, 15 Nov 2018 13:37:35 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Wei Yang <richard.weiyang@gmail.com>
-Cc:     mhocko@suse.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: use managed_zone() for more exact check in zone
- iteration
-Message-Id: <20181115133735.bb0313ec9293c415d08be550@linux-foundation.org>
-In-Reply-To: <20181114235040.36180-1-richard.weiyang@gmail.com>
-References: <20181114235040.36180-1-richard.weiyang@gmail.com>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 16 Nov 2018 02:51:00 -0500
+Received: by mail-lf1-f67.google.com with SMTP id l10so11578451lfh.9
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 13:41:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=w8hYc+cJknzx6E5VRs7a7d8rjfXPC1SfjFbzIaJtqfo=;
+        b=V03FPUFCFK2w1Mab6l2rlo+bIAC+wqoR9XgAzvLRNSXOS09CxxfqHfrLXuiENNqV6K
+         zGgv2s6YICJbufja/yEQWxJbg9LcMRLF+Zy52oMk+tKPv0O7g3RuGIKvB8z458jh1ucj
+         jS2AMoxiefJRFBu/UwRU2e4HgILH7AVhfuOGRzkLdFOVdDMTVwb+SNsX7jUnVTwMDBNL
+         axvUuTh2fRWeZ8ENLU7YuDfPMXpTreXu3eKdjsMjZWmI5Qz4ygMPEQyU6f3Gf8Zt0vPF
+         qsXkYMInJ4x7Bo00bjyrnmj3xt57RuynRzBMrMbwNq4WXmhfjmCV6SKVvPWstIruscoy
+         dGrw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=w8hYc+cJknzx6E5VRs7a7d8rjfXPC1SfjFbzIaJtqfo=;
+        b=W73Mk4mfhCHxIDjoZ6Uyv/YCjwGYGibQLhrmgEN3m/4TTWoGQyWh3D8SuwITyqjOJw
+         RSKHtVGyyUp2hOrn1XAzj06XwEpSuNJMoTehq73Esyh00GXzf/eguNoPkrHSF0mtwtwI
+         mVre5Ggy9996HCDNDUkbeQR+nXvIP+h2CoBODL6auy2KepOkxlzygbhnibOG21AA4qbd
+         pXAndBLDoaJXj6S4QcNqM3VX3jI361U5lZMZG6DbXVuVQYY4pRD5gZdlmDvwClt42l4l
+         RFZzlXH3FmpS30aGEqvnnNZa+X+iPI4g3BgnFs9RwbgAyC4aof45OHZ9kOv4k0H5Z7i3
+         c+fQ==
+X-Gm-Message-State: AGRZ1gJU0xwfTJqfJVfbuHH9AuY+zDU+6DV++BDvxXpZvRybIALjV55y
+        PXpPvCW1CLbtL0ihoxLy0PQ=
+X-Google-Smtp-Source: AJdET5eeK7SWosRA03+0T/91+KgImiLdb6FnRMbpXKsujDHVvJrcok3gZauJqFs8zzqC9c5bOEYccA==
+X-Received: by 2002:a19:7013:: with SMTP id h19mr4610239lfc.147.1542318085992;
+        Thu, 15 Nov 2018 13:41:25 -0800 (PST)
+Received: from octofox.cadence.com (jcmvbkbc-1-pt.tunnel.tserv24.sto1.ipv6.he.net. [2001:470:27:1fa::2])
+        by smtp.gmail.com with ESMTPSA id y14-v6sm2224847ljj.55.2018.11.15.13.41.23
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 13:41:25 -0800 (PST)
+From:   Max Filippov <jcmvbkbc@gmail.com>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel@vger.kernel.org, linux-xtensa@linux-xtensa.org,
+        Chris Zankel <chris@zankel.net>,
+        Max Filippov <jcmvbkbc@gmail.com>
+Subject: [PULL 0/2] Xtensa fixes for v4.20-rc3
+Date:   Thu, 15 Nov 2018 13:41:07 -0800
+Message-Id: <20181115214107.7376-1-jcmvbkbc@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Nov 2018 07:50:40 +0800 Wei Yang <richard.weiyang@gmail.com> wrote:
+Hi Linus,
 
-> For one zone, there are three digits to describe its space range:
-> 
->     spanned_pages
->     present_pages
->     managed_pages
-> 
-> The detailed meaning is written in include/linux/mmzone.h. This patch
-> concerns about the last two.
-> 
->     present_pages is physical pages existing within the zone
->     managed_pages is present pages managed by the buddy system
-> 
-> >From the definition, managed_pages is a more strict condition than
-> present_pages.
-> 
-> There are two functions using zone's present_pages as a boundary:
-> 
->     populated_zone()
->     for_each_populated_zone()
-> 
-> By going through the kernel tree, most of their users are willing to
-> access pages managed by the buddy system, which means it is more exact
-> to check zone's managed_pages for a validation.
-> 
-> This patch replaces those checks on present_pages to managed_pages by:
-> 
->     * change for_each_populated_zone() to for_each_managed_zone()
->     * convert for_each_populated_zone() to for_each_zone() and check
->       populated_zone() where is necessary
->     * change populated_zone() to managed_zone() at proper places
-> 
-> Signed-off-by: Wei Yang <richard.weiyang@gmail.com>
-> 
-> ---
-> 
-> Michal, after last mail, I did one more thing to replace
-> populated_zone() with managed_zone() at proper places.
-> 
-> One thing I am not sure is those places in mm/compaction.c. I have
-> chaged them. If not, please let me know.
-> 
-> BTW, I did a boot up test with the patched kernel and looks smooth.
+please pull two fixes for the Xtensa architecture.
 
-Seems sensible, but a bit scary.  A basic boot test is unlikely to
-expose subtle gremlins.
+The following changes since commit 84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d:
 
-Worse, the situations in which managed_zone() != populated_zone() are
-rare(?), so it will take a long time for problems to be discovered, I
-expect.
+  Linux 4.19 (2018-10-22 07:37:37 +0100)
 
-I'll toss it in there for now, let's see who breaks :(
+are available in the git repository at:
 
+  git://github.com/jcmvbkbc/linux-xtensa.git tags/xtensa-20181115
+
+for you to fetch changes up to 40dc948f234b73497c3278875eb08a01d5854d3f:
+
+  xtensa: fix boot parameters address translation (2018-11-14 00:15:32 -0800)
+
+----------------------------------------------------------------
+Xtensa fixes for v4.20-rc3
+
+- Fix stack alignment for bFLT binaries.
+- Fix physical-to-virtual address translation for boot parameters in MMUv3
+  256+256 and 512+512 virtual memory layouts.
+
+----------------------------------------------------------------
+Max Filippov (2):
+      xtensa: make sure bFLT stack is 16 byte aligned
+      xtensa: fix boot parameters address translation
+
+ arch/xtensa/include/asm/processor.h | 6 +++++-
+ arch/xtensa/kernel/head.S           | 7 +++++--
+ 2 files changed, 10 insertions(+), 3 deletions(-)
+
+Thanks.
+-- Max
