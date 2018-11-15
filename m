@@ -2,193 +2,123 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF28EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:20:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2AB5FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:23:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A0FDC223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:20:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A0FDC223CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id E6C3B21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:23:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F/kaVihX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E6C3B21582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388711AbeKPC3H (ORCPT
+        id S2388529AbeKPCcP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 21:29:07 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:43812 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1729034AbeKPC3H (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 21:29:07 -0500
-Received: (qmail 2985 invoked by uid 2102); 15 Nov 2018 11:20:37 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 15 Nov 2018 11:20:37 -0500
-Date:   Thu, 15 Nov 2018 11:20:37 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     "Paul E. McKenney" <paulmck@linux.ibm.com>
-cc:     LKMM Maintainers -- Akira Yokosawa <akiyks@gmail.com>,
-        Andrea Parri <andrea.parri@amarulasolutions.com>,
-        Boqun Feng <boqun.feng@gmail.com>,
-        Daniel Lustig <dlustig@nvidia.com>,
-        David Howells <dhowells@redhat.com>,
-        Jade Alglave <j.alglave@ucl.ac.uk>,
-        Luc Maranget <luc.maranget@inria.fr>,
-        Nicholas Piggin <npiggin@gmail.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Will Deacon <will.deacon@arm.com>,
-        Kernel development list <linux-kernel@vger.kernel.org>
-Subject: [PATCH 3/3] tools/memory-model: Add SRCU support
-Message-ID: <Pine.LNX.4.44L0.1811151117350.1308-100000@iolanthe.rowland.org>
+        Thu, 15 Nov 2018 21:32:15 -0500
+Received: from mail.kernel.org ([198.145.29.99]:39952 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387833AbeKPCcP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 21:32:15 -0500
+Received: from [192.168.1.19] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id A67DE21582;
+        Thu, 15 Nov 2018 16:23:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542299024;
+        bh=lC/5p+4DA0Y+uOH3t9CFAEViWWP9npa/YT4knRKuh2Y=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=F/kaVihXosiULrZw2noMMgr+Cg1bqjMOPGkYBWULbBa9uoFQXEvqMA4XLburfDnfB
+         7SMD35zT/XZ9P8A+wDy/MhcNrFnFHGk4rBYU1JgFKexUnfukSKNTAHvuXmxndxMUeP
+         xhBn/CsgJUrVbRVgMzoDXDkhBvu3dWjS7AYEjbGc=
+Subject: Re: [PATCHv4] reset: socfpga: add an early reset driver for SoCFPGA
+To:     Philipp Zabel <p.zabel@pengutronix.de>
+Cc:     linux-kernel@vger.kernel.org
+References: <20181113185048.8538-1-dinguyen@kernel.org>
+ <1542296087.4915.28.camel@pengutronix.de>
+From:   Dinh Nguyen <dinguyen@kernel.org>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <a81dda8e-d767-344a-d728-cbda4c616e84@kernel.org>
+Date:   Thu, 15 Nov 2018 10:23:43 -0600
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+In-Reply-To: <1542296087.4915.28.camel@pengutronix.de>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support for SRCU.  Herd creates srcu events and linux-kernel.def
-associates them with three possible annotations (srcu-lock,
-srcu-unlock, and sync-srcu) corresponding to the API routines
-srcu_read_lock(), srcu_read_unlock(), and synchronize_srcu().
-
-The linux-kernel.bell file now declares the annotations
-and determines matching lock/unlock pairs delimiting SRCU read-side
-critical sections, and it also checks for synchronize_srcu() calls
-inside an RCU critical section (which would generate a "sleeping in
-atomic context" error in real kernel code).  The linux-kernel.cat file
-now adds SRCU-induced ordering, analogous to the existing RCU-induced
-ordering, to the gp and rcu-fence relations.
-
-Curiously enough, these small changes to the model's .cat code are all
-that is needed to describe SRCU.
-
-Portions of this patch (linux-kernel.def and the first hunk in
-linux-kernel.bell) were written by Luc Maranget.
-
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-CC: Luc Maranget <luc.maranget@inria.fr>
-
----
 
 
- tools/memory-model/linux-kernel.bell |   25 +++++++++++++++++++++++++
- tools/memory-model/linux-kernel.cat  |   18 ++++++++++++++----
- tools/memory-model/linux-kernel.def  |    5 +++++
- 3 files changed, 44 insertions(+), 4 deletions(-)
+On 11/15/18 9:34 AM, Philipp Zabel wrote:
+> Hi Dinh,
+> 
+> On Tue, 2018-11-13 at 12:50 -0600, Dinh Nguyen wrote:
+>> @@ -120,7 +120,8 @@ static const struct reset_simple_devdata reset_simple_active_low = {
+>>  };
+>>  
+>>  static const struct of_device_id reset_simple_dt_ids[] = {
+>> -	{ .compatible = "altr,rst-mgr", .data = &reset_simple_socfpga },
+>> +	{ .compatible = "altr,stratix10-rst-mgr", "altr,rst-mgr",
+> 
+> This should be
+> 
+> +       { .compatible = "altr,stratix10-rst-mgr",
+> 
+> instead. The rest looks good to me. If you are ok with this change, I
+> can fix it up when applying.
+> 
 
-Index: usb-4.x/tools/memory-model/linux-kernel.bell
-===================================================================
---- usb-4.x.orig/tools/memory-model/linux-kernel.bell
-+++ usb-4.x/tools/memory-model/linux-kernel.bell
-@@ -33,6 +33,12 @@ enum Barriers = 'wmb (*smp_wmb*) ||
- 		'after-unlock-lock (*smp_mb__after_unlock_lock*)
- instructions F[Barriers]
- 
-+(* SRCU *)
-+enum SRCU = 'srcu-lock || 'srcu-unlock || 'sync-srcu
-+instructions SRCU[SRCU]
-+(* All srcu events *)
-+let Srcu = Srcu-lock | Srcu-unlock | Sync-srcu
-+
- (* Compute matching pairs of nested Rcu-lock and Rcu-unlock *)
- let rcu-rscs = let rec
- 	    unmatched-locks = Rcu-lock \ domain(matched)
-@@ -48,3 +54,22 @@ let rcu-rscs = let rec
- (* Validate nesting *)
- flag ~empty Rcu-lock \ domain(rcu-rscs) as unbalanced-rcu-locking
- flag ~empty Rcu-unlock \ range(rcu-rscs) as unbalanced-rcu-locking
-+
-+(* Compute matching pairs of nested Srcu-lock and Srcu-unlock *)
-+let srcu-rscs = let rec
-+	    unmatched-locks = Srcu-lock \ domain(matched)
-+	and unmatched-unlocks = Srcu-unlock \ range(matched)
-+	and unmatched = unmatched-locks | unmatched-unlocks
-+	and unmatched-po = ([unmatched] ; po ; [unmatched]) & loc
-+	and unmatched-locks-to-unlocks =
-+		([unmatched-locks] ; po ; [unmatched-unlocks]) & loc
-+	and matched = matched | (unmatched-locks-to-unlocks \
-+		(unmatched-po ; unmatched-po))
-+	in matched
-+
-+(* Validate nesting *)
-+flag ~empty Srcu-lock \ domain(srcu-rscs) as unbalanced-srcu-locking
-+flag ~empty Srcu-unlock \ range(srcu-rscs) as unbalanced-srcu-locking
-+
-+(* Check for use of synchronize_srcu() inside an RCU critical section *)
-+flag ~empty rcu-rscs & (po ; [Sync-srcu] ; po) as invalid-sleep
-Index: usb-4.x/tools/memory-model/linux-kernel.cat
-===================================================================
---- usb-4.x.orig/tools/memory-model/linux-kernel.cat
-+++ usb-4.x/tools/memory-model/linux-kernel.cat
-@@ -33,7 +33,7 @@ let mb = ([M] ; fencerel(Mb) ; [M]) |
- 	([M] ; po? ; [LKW] ; fencerel(After-spinlock) ; [M]) |
- 	([M] ; po ; [UL] ; (co | po) ; [LKW] ;
- 		fencerel(After-unlock-lock) ; [M])
--let gp = po ; [Sync-rcu] ; po?
-+let gp = po ; [Sync-rcu | Sync-srcu] ; po?
- 
- let strong-fence = mb | gp
- 
-@@ -92,15 +92,18 @@ acyclic pb as propagation
- 
- (*
-  * Effects of read-side critical sections proceed from the rcu_read_unlock()
-- * backwards on the one hand, and from the rcu_read_lock() forwards on the
-- * other hand.
-+ * or srcu_read_unlock() backwards on the one hand, and from the
-+ * rcu_read_lock() or srcu_read_lock() forwards on the other hand.
-  *
-  * In the definition of rcu-fence below, the po term at the left-hand side
-  * of each disjunct and the po? term at the right-hand end have been factored
-  * out.  They have been moved into the definitions of rcu-link and rb.
-+ * This was necessary in order to apply the "& loc" tests correctly.
-  *)
- let rcu-gp = [Sync-rcu]		(* Compare with gp *)
-+let srcu-gp = [Sync-srcu]
- let rcu-rscsi = rcu-rscs^-1
-+let srcu-rscsi = srcu-rscs^-1
- 
- (*
-  * The synchronize_rcu() strong fence is special in that it can order not
-@@ -112,12 +115,19 @@ let rcu-link = po? ; hb* ; pb* ; prop ;
- (*
-  * Any sequence containing at least as many grace periods as RCU read-side
-  * critical sections (joined by rcu-link) acts as a generalized strong fence.
-+ * Likewise for SRCU grace periods and read-side critical sections, provided
-+ * the synchronize_srcu() and srcu_read_[un]lock() calls refer to the same
-+ * struct srcu_struct location.
-  *)
--let rec rcu-fence = rcu-gp |
-+let rec rcu-fence = rcu-gp | srcu-gp |
- 	(rcu-gp ; rcu-link ; rcu-rscsi) |
-+	((srcu-gp ; rcu-link ; srcu-rscsi) & loc) |
- 	(rcu-rscsi ; rcu-link ; rcu-gp) |
-+	((srcu-rscsi ; rcu-link ; srcu-gp) & loc) |
- 	(rcu-gp ; rcu-link ; rcu-fence ; rcu-link ; rcu-rscsi) |
-+	((srcu-gp ; rcu-link ; rcu-fence ; rcu-link ; srcu-rscsi) & loc) |
- 	(rcu-rscsi ; rcu-link ; rcu-fence ; rcu-link ; rcu-gp) |
-+	((srcu-rscsi ; rcu-link ; rcu-fence ; rcu-link ; srcu-gp) & loc) |
- 	(rcu-fence ; rcu-link ; rcu-fence)
- 
- (* rb orders instructions just as pb does *)
-Index: usb-4.x/tools/memory-model/linux-kernel.def
-===================================================================
---- usb-4.x.orig/tools/memory-model/linux-kernel.def
-+++ usb-4.x/tools/memory-model/linux-kernel.def
-@@ -47,6 +47,11 @@ rcu_read_unlock() { __fence{rcu-unlock};
- synchronize_rcu() { __fence{sync-rcu}; }
- synchronize_rcu_expedited() { __fence{sync-rcu}; }
- 
-+// SRCU
-+srcu_read_lock(X)  __srcu{srcu-lock}(X)
-+srcu_read_unlock(X,Y) { __srcu{srcu-unlock}(X); }
-+synchronize_srcu(X)  { __srcu{sync-srcu}(X); }
-+
- // Atomic
- atomic_read(X) READ_ONCE(*X)
- atomic_set(X,V) { WRITE_ONCE(*X,V); }
-
+Sure..thanks,
+Dinh
