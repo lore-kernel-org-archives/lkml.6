@@ -2,348 +2,428 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-8.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B98C2C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:49:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2F578C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:52:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68E5D2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:49:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B5F3722419
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:52:12 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QxeuA7PG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68E5D2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iXo87PX7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B5F3722419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728536AbeKOP4R (ORCPT
+        id S1728457AbeKOP6f (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 10:56:17 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:34806 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbeKOP4R (ORCPT
+        Thu, 15 Nov 2018 10:58:35 -0500
+Received: from mail-yb1-f171.google.com ([209.85.219.171]:42226 "EHLO
+        mail-yb1-f171.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726574AbeKOP6f (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 10:56:17 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=uIj9L7Z9PP7yDreP7uGF00aHo15PGs45oEWG9RRcus0=; b=QxeuA7PG8foUv65UYR8jrBjhe
-        LivM03irRF13ClnST8XlDTi8WAckndUGWU9Py/SzINKBQXjdDSEY++R0XI+v6ZNK9db4se5/IWe4L
-        nQQvozEbON+X/sBE8+UmXv5JzijSFiNkBJUlvsxoRJuiB8rrosIN0i4Ub6hijKUhVFNGyGGQKI1ci
-        Z0XDn06SyVRhwCX175yKzAdlo5SI/4J6F6/DJGbW2RrugaoVCgEnNu3oodzX1cQcp1YJrON++li1i
-        fi04+78KcZKD0fSrN1UqCnfO/lJuPkFacOa9FtraQbxGr0YnBACX8JoZEXf9ipDjMSqkaaHZEnw4w
-        z0LofBbjw==;
-Received: from 189.27.28.95.dynamic.adsl.gvt.net.br ([189.27.28.95] helo=silica.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNAXH-0003so-5J; Thu, 15 Nov 2018 05:49:52 +0000
-Date:   Wed, 14 Nov 2018 21:49:22 -0800
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-kernel@vger.kernel.org, vishal.l.verma@intel.com,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-nvdimm@lists.01.org, Dmitry Vyukov <dvyukov@google.com>,
-        Steve French <stfrench@microsoft.com>,
-        "Tobin C. Harding" <me@tobin.cc>
-Subject: Re: [Ksummit-discuss] [RFC PATCH 2/3] MAINTAINERS, Handbook:
- Subsystem Profile
-Message-ID: <20181114214922.07d31676@silica.lan>
-In-Reply-To: <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 15 Nov 2018 10:58:35 -0500
+Received: by mail-yb1-f171.google.com with SMTP id o204-v6so7898475yba.9
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 21:52:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TM4l913qG01EnpfJjIm8kV5afEwT8/dSw+hVuiKJnAI=;
+        b=iXo87PX78pSQ8Nch+nwaTWX3fYCWSeM5Ws3HuvMIoTkGe5pYiPX6YloJbxFnDjEO7m
+         04Djrm/lWYGBb1dUi8UkP0FJwZphPR4uYbl9jX2JKodvGH7QhVv94k6fbLUOEIO45aU3
+         xv04srzyybkWM6sEEh4NG13jAAiAYuoJHuzDk=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=TM4l913qG01EnpfJjIm8kV5afEwT8/dSw+hVuiKJnAI=;
+        b=Zp8t32impjMRn6FkhwFCotH2A9Is+C1vGBLvrCbN0obbWUq9hC7D+Ew2XMcHRtszUo
+         dw8gzjwr08kGekDCFJY0b1rvuImgpoY5x63DfTifxn3L0SUQ1vFAXRo6++8nXYGLYFH2
+         ose4FshdWbBs41tHoegMAGfWkKHjZs8oGCCdl6mXlTnam9sJW6ZVmHal6fg2EC4JvBk2
+         fqnc+gIlHY7Xpe60PbnMVlc8+iyOnPwqO8oubdbhZkHLxFcVB5cjneuC49FJ3W5VgjOb
+         ErRmEogHjqHpUgOGNMBT/cce+N9R4PO+B9B0azf3DqXrJWxyXSIoTPxhFjsGYhoBWQkH
+         lrGQ==
+X-Gm-Message-State: AGRZ1gJ/OvqsVmCVG2y/+fF8rsdT/TJKaFYUG/bERwUtHNV9CiPoUYft
+        LcP0g5TjsV6NGdgGNfqWHmJc9g==
+X-Google-Smtp-Source: AJdET5eVPw4IN4FGD1DTn3zKhcZ63+nW0kbWL7nFw4GYz2m1pFQ2GNHK7S10Nq2w2uh+6P1lggUQiA==
+X-Received: by 2002:a25:7ec4:: with SMTP id z187-v6mr4488677ybc.373.1542261128675;
+        Wed, 14 Nov 2018 21:52:08 -0800 (PST)
+Received: from linaro.org ([121.95.100.191])
+        by smtp.googlemail.com with ESMTPSA id r18-v6sm7212257ywa.16.2018.11.14.21.52.07
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 21:52:08 -0800 (PST)
+From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
+To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
+        vgoyal@redhat.com, herbert@gondor.apana.org.au,
+        davem@davemloft.net, dyoung@redhat.com, bhe@redhat.com,
+        arnd@arndb.de, schwidefsky@de.ibm.com, heiko.carstens@de.ibm.com,
+        robh+dt@kernel.org, frowand.list@gmail.com
+Cc:     prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
+        james.morse@arm.com, bhsharma@redhat.com,
+        kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        AKASHI Takahiro <takahiro.akashi@linaro.org>,
+        devicetree@vger.kernel.org
+Subject: [PATCH v16 00/16] arm64: kexec: add kexec_file_load() support
+Date:   Thu, 15 Nov 2018 14:52:39 +0900
+Message-Id: <20181115055254.2812-1-takahiro.akashi@linaro.org>
+X-Mailer: git-send-email 2.19.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 14 Nov 2018 20:53:25 -0800
-Dan Williams <dan.j.williams@intel.com> escreveu:
+This is the sixteenth round of implementing kexec_file_load() support
+on arm64.[1] (See "Changes" below)
+Most of the code is based on kexec-tools.
 
-> As presented at the 2018 Linux Plumbers conference [1], the Subsystem
-> Profile is proposed as a way to reduce friction between committers and
-> maintainers and perhaps encourage conversations amongst maintainers
-> about best practice policies.
->=20
-> The profile contains short answers to some of the common policy
-> questions a contributor might have, or that a maintainer might consider
-> formalizing. The current list of maintenance policies is:
->=20
-> Overview: General introduction to maintaining the subsystem
-> Core: List of source files considered core
-> Leaf: List of source files that consume core functionality
-> Patches or Pull requests: Simple statement of expected submission format
-> Last -rc for new feature submissions: Expected lead time for submissions
-> Last -rc to merge features: Deadline for merge decisions
-> Non-author Ack / Review Tags Required: Patch review economics
-> Test Suite: Pass this suite before requesting inclusion
-> Resubmit Cadence: When to ping the maintainer
+This patch series enables us to
+  * load the kernel by specifying its file descriptor, instead of user-
+    filled buffer, at kexec_file_load() system call, and
+  * optionally verify its signature at load time for trusted boot.
+Kernel virtual address randomization is also supported since v9.
 
-> Trusted Reviewers: Help for triaging patches
+Contrary to kexec_load() system call, as we discussed a long time ago,
+users may not be allowed to provide a device tree to the 2nd kernel
+explicitly, hence enforcing a dt blob of the first kernel to be re-used
+internally.
 
-There is one detail with regards to reviewing process that I'm not sure
-how to express. There are some subsystems with co-maintainers, in the
-sense that all co-maintainers are equally responsible for the subsystem.
+To use kexec_file_load() system call, instead of kexec_load(), at kexec
+command, '-s' option must be specified. See [2] for a necessary patch for
+kexec-tools.
 
-There are other cases where there are sub-maintainers. That's, for example,
-the model we use on media. There, we have different sub-maintainers for:
+To analyze a generated crash dump file, use the latest master branch of
+crash utility[3]. I always try to submit patches to fix any inconsistencies
+introduced in the latest kernel.
 
-	- V4L2 drivers
-	- Camera Sensors
-	- Remote Controllers
-	- HDMI CEC
-	- DVB
-	- Media Controller
+Regarding a kernel image verification, a signature must be presented
+along with the binary itself. A signature is basically a hash value
+calculated against the whole binary data and encrypted by a key which
+will be authenticated by one of the system's trusted certificates.
+Any attempt to read and load a to-be-kexec-ed kernel image through
+a system call will be checked and blocked if the binary's hash value
+doesn't match its associated signature.
 
-The usual workflow is that they work as both reviewers and committers.
-After they commit a certain amount of patches, they submit for me to
-do a final review. This way, most of media patches have at least two
-SOBs from non-authors.
+There are two methods available now:
+1. implementing arch-specific verification hook of kexec_file_load()
+2. utilizing IMA(Integrity Measurement Architecture)[4] appraisal framework
 
-On this model, a sub-maintainer is more than a trusted reviewer. Not sure
-how to reflect it on this template.
-
-I'll do a better review of the profile when I'll try to write a subsystem
-profile for media.
-
-Regards,
-Mauro
-
-> Time Zone / Office Hours: When might a maintainer be available
-> Checkpatch / Style Cleanups: Policy on pure cleanup patches
-> Off-list review: Request for review gates
-> TODO: Potential development tasks up for grabs, or active focus areas
->=20
-> The goal of the Subsystem Profile is to set expectations for
-> contributors and interim or replacement maintainers for a subsystem.
->=20
-> See Documentation/maintainer/subsystem-profile.rst for more details, and
-> a follow-on example profile for the libnvdimm subsystem.
->=20
-> [1]: https://linuxplumbersconf.org/event/2/contributions/59/
->=20
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Steve French <stfrench@microsoft.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Tobin C. Harding <me@tobin.cc>
-> Cc: Olof Johansson <olof@lixom.net>
-> Cc: Martin K. Petersen <martin.petersen@oracle.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  Documentation/maintainer/index.rst             |    1=20
->  Documentation/maintainer/subsystem-profile.rst |  145 ++++++++++++++++++=
-++++++
->  MAINTAINERS                                    |    4 +
->  3 files changed, 150 insertions(+)
->  create mode 100644 Documentation/maintainer/subsystem-profile.rst
->=20
-> diff --git a/Documentation/maintainer/index.rst b/Documentation/maintaine=
-r/index.rst
-> index 2a14916930cb..1e6b1aaa6024 100644
-> --- a/Documentation/maintainer/index.rst
-> +++ b/Documentation/maintainer/index.rst
-> @@ -11,4 +11,5 @@ additions to this manual.
-> =20
->     configure-git
->     pull-requests
-> +   subsystem-profile
-> =20
-> diff --git a/Documentation/maintainer/subsystem-profile.rst b/Documentati=
-on/maintainer/subsystem-profile.rst
-> new file mode 100644
-> index 000000000000..a74b624e0972
-> --- /dev/null
-> +++ b/Documentation/maintainer/subsystem-profile.rst
-> @@ -0,0 +1,145 @@
-> +.. _subsystemprofile:
-> +
-> +Subsystem Profile
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +The Subsystem Profile is a collection of policy positions that a
-> +maintainer or maintainer team establishes for the their subsystem. While
-> +there is a wide range of technical nuance on maintaining disparate
-> +sections of the kernel, the Subsystem Profile documents a known set of
-> +major process policies that vary between subsystems.  What follows is a
-> +list of policy questions a maintainer can answer and include a document
-> +in the kernel, or on an external website. It advertises to other
-> +maintainers and contributors the local policy of the subsystem. Some
-> +sections are optional like "Overview", "Off-list review", and "TODO".
-> +The others are recommended for all subsystems to address, but no section
-> +is mandatory. In addition there are no wrong answers, just document how
-> +a subsystem typically operates. Note that the profile follows the
-> +subsystem not the maintainer, i.e. there is no expectation that a
-> +maintainer of multiple subsystems deploys the same policy across those
-> +subsystems.
-> +
-> +
-> +Overview
-> +--------
-> +In this optional section of the profile provide a free form overview of
-> +the subsystem written as a hand-off document. In other words write a
-> +note to someone that would receive the =E2=80=9Ckeys to the castle=E2=80=
-=9D in the event
-> +of extended or unexpected absence. =E2=80=9CSo, you have recently become=
- the
-> +maintainer of the XYZ subsystem, condolences, it is a thankless job,
-> +here is the lay of the land.=E2=80=9D Details to consider are the extend=
-ed
-> +details that are not included in MAINTAINERS, and not addressed by the
-> +other profile questions below. For example details like, who has access
-> +to the git tree, branches that are pulled into -next, relevant
-> +specifications, issue trackers, and sensitive code areas. If available
-> +the Overview should link to other subsystem documentation that may
-> +clarify, re-iterate, emphasize / de-emphasize portions of the global
-> +process documentation for contributors (CodingStyle, SubmittingPatches,
-> +etc...).
-> +
-> +
-> +Core
-> +----
-> +A list of F: tags (as described by MAINTAINERS) listing what the
-> +maintainer considers to be core files. The review and lead time
-> +constraints for 'core' code may be stricter given the increased
-> +sensitivity and risk of change.
-> +
-> +
-> +Patches or Pull requests
-> +------------------------
-> +Some subsystems allow contributors to send pull requests, most require
-> +mailed patches. State =E2=80=9CPatches only=E2=80=9D, or =E2=80=9CPull r=
-equests accepted=E2=80=9D.
-> +
-> +
-> +Last -rc for new feature submissions
-> +------------------------------------
-> +New feature submissions targeting the next merge window should have
-> +their first posting for consideration before this point. Patches that
-> +are submitted after this point should be clear that they are targeting
-> +the NEXT+1 merge window, or should come with sufficient justification
-> +why they should be considered on an expedited schedule. A general
-> +guideline is to set expectation with contributors that new feature
-> +submissions should appear before -rc5. The answer may be different for
-> +'Core:' files, include a second entry prefixed with 'Core:' if so.
-> +
-> +
-> +Last -rc to merge features
-> +--------------------------
-> +Indicate to contributors the point at which an as yet un-applied patch
-> +set will need to wait for the NEXT+1 merge window. Of course there is no
-> +obligation to ever except any given patchset, but if the review has not
-> +concluded by this point the expectation the contributor should wait and
-> +resubmit for the following merge window. The answer may be different for
-> +'Core:' files, include a second entry prefixed with 'Core:' if so.
-> +
-> +
-> +Non-author Ack / Review Tags Required
-> +-------------------------------------
-> +Let contributors and other maintainers know whether they can expect to
-> +see the maintainer self-commit patches without 3rd-party review. Some
-> +subsystem developer communities are so small as to make this requirement
-> +impractical. Others may have been bootstrapped by a submission of
-> +self-reviewed code at the outset, but have since moved to a
-> +non-author review-required stance. This section sets expectations on the
-> +code-review economics in the subsystem. For example, can a contributor
-> +trade review of a maintainer's, or other contributor's patches in
-> +exchange for consideration of their own.
-> +
-> +
-> +Test Suite
-> +----------
-> +Indicate the test suite all patches are expected to pass before being
-> +submitted for inclusion consideration.
-> +
-> +
-> +Resubmit Cadence
-> +----------------
-> +Define a rate at which a contributor should wait to resubmit a patchset
-> +that has not yet received comments. A general guideline is to try to
-> +meet a deadline of 1 - 2 weeks to acknowledge starting consideration for
-> +a patch set.
-> +
-> +
-> +Trusted Reviewers
-> +-----------------
-> +While a maintainer / maintainer-team is expected to be reviewer of last
-> +resort the review load is less onerous when distributed amongst
-> +contributors and or a trusted set of individuals.  This section is
-> +distinct from the R: tag (Designated Reviewer). Whereas R: identifies
-> +reviewers that should always be copied on a patch submission, the
-> +trusted reviewers here are individuals contributors can reach out to if
-> +a few 'Resubmit Cadence' intervals have gone by without maintainer
-> +action, or to otherwise consult for advice.
-> +
-> +
-> +Time Zone / Office Hours
-> +------------------------
-> +Let contributors know the time of day when one or more maintainers are
-> +usually actively monitoring the mailing list.
-> +
-> +
-> +Checkpatch / Style Cleanups
-> +---------------------------
-> +For subsystems with long standing code bases it is reasonable to decline
-> +to accept pure coding-style fixup patches. This is where you can let
-> +contributors know =E2=80=9CStandalone style-cleanups are welcome=E2=80=
-=9D,
-> +=E2=80=9CStyle-cleanups to existing code only welcome with other feature
-> +changes=E2=80=9D, or =E2=80=9CStandalone style-cleanups to existing code=
- are not
-> +welcome=E2=80=9D.
-> +
-> +
-> +Off-list review
-> +---------------
-> +A maintainer may optionally require that contributors seek prior review
-> +of patches before initial submission for upstream. For example,
-> +=E2=80=9CDevelopers from organization X, please seek internal review bef=
-ore
-> +requesting upstream review=E2=80=9D. This policy identifies occasions wh=
-ere a
-> +maintainer wants to reflect some of the review load back to an
-> +organization.
-> +
-> +
-> +TODO
-> +----
-> +In this optional section include a list of work items that might be
-> +suitable for onboarding a new developer to the subsystem.
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 83b7b3943a12..bb4a83a7684d 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -99,6 +99,10 @@ Descriptions of section entries:
->  	   Obsolete:	Old code. Something tagged obsolete generally means
->  			it has been replaced by a better system and you
->  			should be using that.
-> +	P: Subsystem Profile document for the maintainer entry.  This
-> +	   is either an in-tree file or a URI to a document.  The
-> +	   contents of a Subsystem Profile are described in
-> +	   Documentation/maintainer/subsystem-profile.rst.
->  	F: Files and directories with wildcard patterns.
->  	   A trailing slash includes all files and subdirectory files.
->  	   F:	drivers/net/	all files in and below drivers/net
->=20
-> _______________________________________________
-> Ksummit-discuss mailing list
-> Ksummit-discuss@lists.linuxfoundation.org
-> https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
+Before my v7, I believed that my patch only supports (1) but am now
+confident that (2) comes free if IMA is enabled and properly configured.
 
 
+(1) Arch-specific verification hook
+If CONFIG_KEXEC_VERIFY_SIG is enabled, kexec_file_load() invokes an arch-
+defined (and hence file-format-specific) hook function to check for the
+validity of kernel binary.
+
+On x86, a signature is embedded into a PE file (Microsoft's format) header
+of binary. Since arm64's "Image" can also be seen as a PE file as far as
+CONFIG_EFI is enabled, we adopt this format for kernel signing.  
+
+As in the case of UEFI applications, we can create a signed kernel image:
+    $ sbsign --key ${KEY} --cert ${CERT} Image
+
+You may want to use certs/signing_key.pem, which is intended to be used
+for module signing (CONFIG_MODULE_SIG), as ${KEY} and ${CERT} for test
+purpose.
 
 
-Cheers,
-Mauro
+(2) IMA appraisal-based
+IMA was first introduced in linux in order to meet TCG (Trusted Computing
+Group) requirement that all the sensitive files be *measured* before
+reading/executing them to detect any untrusted changes/modification.
+Then appraisal feature, which allows us to ensure the integrity of
+files and even prevent them from reading/executing, was added later.
+
+Meanwhile, kexec_file_load() has been merged since v3.17 and evolved to
+enable IMA-appraisal type verification by the commit b804defe4297 ("kexec:
+replace call to copy_file_from_fd() with kernel version").
+
+In this scheme, a signature will be stored in a extended file attribute,
+"security.ima" while a decryption key is hold in a dedicated keyring,
+".ima" or "_ima".  All the necessary process of verification is confined
+in a secure API, kernel_read_file_from_fd(), called by kexec_file_load().
+
+    Please note that powerpc is one of the two architectures now
+    supporting KEXEC_FILE, and that it wishes to extend IMA,
+    where a signature may be appended to "vmlinux" file[5], like module
+    signing, instead of using an extended file attribute.
+
+While IMA meant to be used with TPM (Trusted Platform Module) on secure
+platform, IMA is still usable without TPM. Here is an example procedure
+about how we can give it a try to run the feature using a self-signed
+root ca for demo/test purposes:
+
+ 1) Generate needed keys and certificates, following "Generate trusted
+    keys" section in README of ima-evm-utils[6].
+
+ 2) Build the kernel with the following kernel configurations, specifying
+    "ima-local-ca.pem" for CONFIG_SYSTEM_TRUSTED_KEYS:
+	CONFIG_EXT4_FS_SECURITY
+	CONFIG_INTEGRITY_SIGNATURE
+	CONFIG_INTEGRITY_ASYMMETRIC_KEYS
+	CONFIG_INTEGRITY_TRUSTED_KEYRING
+	CONFIG_IMA
+	CONFIG_IMA_WRITE_POLICY
+	CONFIG_IMA_READ_POLICY
+	CONFIG_IMA_APPRAISE
+	CONFIG_IMA_APPRAISE_BOOTPARAM
+	CONFIG_SYSTEM_TRUSTED_KEYS
+    Please note that CONFIG_KEXEC_VERIFY_SIG is not, actually should
+    not be, enabled.
+
+ 3) Sign(label) a kernel image binary to be kexec-ed on target filesystem:
+    $ evmctl ima_sign --key /path/to/private_key.pem /your/Image
+
+ 4) Add a command line parameter and boot the kernel:
+    ima_appraise=enforce
+
+ On live system,
+ 5) Set a security policy:
+    $ mount -t securityfs none /sys/kernel/security
+    $ echo "appraise func=KEXEC_KERNEL_CHECK appraise_type=imasig" \
+      > /sys/kernel/security/ima/policy
+
+ 6) Add a key for ima:
+    $ keyctl padd asymmetric my_ima_key %:.ima < /path/to/x509_ima.der
+    (or evmctl import /path/to/x509_ima.der <ima_keyring_id>)
+
+ 7) Then try kexec as normal.
+
+
+Concerns(or future works):
+* Support for physical address randomization
+* Signature verification of big endian kernel with CONFIG_KEXEC_VERIFY_SIG
+  While big-endian kernel can support kernel signing, I'm not sure that
+  Image can be recognized as in PE format because x86 standard only
+  defines little-endian-based format.
+* Support for vminux loading
+
+  [1] http://git.linaro.org/people/takahiro.akashi/linux-aarch64.git
+	branch:arm64/kexec_file
+  [2] http://git.linaro.org/people/takahiro.akashi/kexec-tools.git
+	branch:arm64/kexec_file
+  [3] http://github.com/crash-utility/crash.git
+  [4] https://sourceforge.net/p/linux-ima/wiki/Home/
+  [5] http://lkml.iu.edu//hypermail/linux/kernel/1707.0/03669.html
+  [6] https://sourceforge.net/p/linux-ima/ima-evm-utils/ci/master/tree/
+
+
+Changes in v16 (Nov 15, 2018)
+* rebased to v4.20-rc
+* remove CONFIG_HAVE_MEMBLOCK dependency from kexec_locate_mem_hole()
+* drop fdt_prop_len()
+* rename fill_property() to cpu64_to_fdt_cells(), adding range check to it
+* add lib/fdt_addresses.c which comes form libfdt
+* move fdt_setprop_reg() from drivers/of/fdt.c to lib/fdt_addresses.c
+  (Patch #6 was originally sent out under the name, "of/fdt: add helper
+  functions for handling properties")
+* modify struct arm64_image_header definition, moving it and related
+  HEAD_FLAG_* definitions to new asm/image.h
+* rework setup_dtb(), which is renamed to create_dtb(), not to reply on
+  fdt_prop_len()
+* some cleanup changes in image_load()
+
+Changes in v15 (Sep 28, 2018)
+* rework fdt helper functions, utilizing new fdt_address_cells() and
+  fdt_size_cells() from libfdt after Frank's comment
+  This change requires the following patches to be applied as well:
+  [7] http://lkml.iu.edu//hypermail/linux/kernel/1809.1/04800.html
+  [8] https://www.spinics.net/lists/devicetree/msg250653.html
+
+Changes in v14 (Sep 7, 2018)
+* rebased to v4.19-rc
+* define default KEXEC_BUF_MEM_UNKNOWN which indicates that,
+  if kexec_buf.mem does match it, kexec_locate_mem_hole() should allocate
+  free memory for arch
+
+Changes in v13 (July 31, 2018)
+* rebased to arm64/for-next/core
+* system call number changed to 294
+  (kexec-tools must be updated as well.)
+* rename arch_kexec_walk_mem() to kexec_walk_resources()
+* define string macros for dtb properties' names in setup_dtb()
+* use MEMBLOCK_NONE rather than 0 at for_each_mem_range[_reverse]()
+* rename dtb_buf to dtb in struct kexec_arch at right place
+* provide "kaslr-seed" only if random number generator is available
+
+Changes in v12 (July 24, 2018)
+ (mostly addressing James' comments)
+* unify all the variants of arch_kexec_walk_mem(), including s390's, into
+  common code, leaving arch_kexec_walk_mem() static (i.e. no longer
+  replaceable)
+* always initialize kbuf.mem to zero to align with a change above
+* set kbuf.buf_min/buf_max consistently between kexec and kdump
+* try to consistently use "unsigned long" for physical (kexec-time)
+  address, and "void *" for virtual (runtime) address in
+  load_other_segments() with a couple of variables renamed for readability
+* fix a 'sparse' warning against arch_kimage_file_post_load_cleanup()
+* fix a calculation of string length of "ARM64_MAGIC"
+* set kernel image alignment to MIN_KIMG_ALIGN rather than SZ_2M
+* set elf header alignment to SZ_64K rather than SZ_4K
+
+
+Changes in v11 (July 11, 2018)
+* split v10's patch#3, a refactoring stuff, into two parts, "just move"
+  and modify
+* remove selecting BUILD_BIN2C from KEXEC_FILE config
+* modify setup_dtb()
+   * to correct a return value on failure of fdt_xyz() call,
+   * to always remove existing bootargs and initrd-start/end properties,
+     if any, when copying current system's dtb into new dtb
+   * to use fdt_setprop_string() for bootargs (I'm now sure that
+     kimage->cmdline_buf is a null-terminated string.)
+* revise a warning comment in case of KEXEC_VERIFY_SIG but
+  !(EFI && SIGNED_PE_FILE_VERIFICATION)
+
+Changes in v10 (June 23, 2018)
+* rebased to v4.18-rc
+* change syscall number of kexec_file_load from 292 to 293
+* factor out memblock-based arch_kexec_walk_mem() from powerpc and
+  merge it into generic one
+* move generic fdt helper functions from arm64 dir to drivers/of
+  (dt_root_[addr|size]_cells are no longer __initdata.)
+* modify fill_property() to use 'while' loop
+* modify fdt_setprop_reg() to allocate a buffer on stack
+* modify setup_dtb() to use fdt_setprop_u64()
+* pass kernel_load_addr/size directly as arguments, instead of via
+  kimage_arch.kern_segment, at load_other_segments()
+* refuse loading an image which cannot be supported in image loader,
+  adding cpu-feature(MMFR0) helper functions
+* modify prepare_elf_headers() to use kmalloc() instead of vmalloc()
+* always pass arch.dtb_mem as the fourth argument to cpu_soft_restart()
+  in machine_kexec() while dtb_mem will be zero in kexec case
+
+Changes in v9 (April 25, 2018)
+* rebased to v4.17-rc
+* remove preparatory patches on generic/x86/ppc code
+  They have now been merged in v4.17-rc1.
+* allocate memory based on memblock list instead of system resources
+  This will prevent reserved regions, particularly UEFI/ACPI data,
+  from being corrupted.
+* correct dt property names, linux,initrd-*, in newly-created dtb
+  "linux," was missing.
+* remove alignment requirement for initrd loading
+* add kaslr (kernel virtual address randomization) support
+* misc code clean-up
+* revise commit messages
+
+Changes in v8 (Feb 22, 2018)
+* introduce ARCH_HAS_KEXEC_PURGATORY so that arm64 will be able to skip
+  purgatory
+* remove "ifdef CONFIG_X86_64" stuffs from a re-factored function,
+  prepare_elf64_headers(), making its interface more generic
+  (The original patch was split into two for easier reviews.)
+* modify cpu_soft_restart() so as to let the 2nd kernel jump into its entry
+  code directly without requiring purgatory in case of kexec_file_load
+* remove CONFIG_KEXEC_FILE_IMAGE_FMT and introduce
+  CONFIG_KEXEC_IMAGE_VERIFY_SIG, much similar to x86 but quite redundant
+  for now.
+* In addition, update/modify dependencies of KEXEC_IMAGE_VERIFY_SIG
+
+Changes in v7 (Dec 4, 2017)
+* rebased to v4.15-rc2
+* re-organize the patch set to separate KEXEC_FILE_VERIFY_SIG-related
+  code from the others
+* revamp factored-out code in kernel/kexec_file.c due to the changes
+  in original x86 code
+* redefine walk_sys_ram_res_rev() prototype due to change of callback
+  type in the counterpart, walk_sys_ram_res()
+* make KEXEC_FILE_IMAGE_FMT default on if KEXEC_FILE selected
+
+Changes in v6 (Oct 24, 2017)
+* fix a for-loop bug in _kexec_kernel_image_probe() per Julien
+
+Changes in v5 (Oct 10, 2017)
+* fix kbuild errors around patch #3
+per Julien's comments,
+* fix a bug in walk_system_ram_res_rev() with some cleanup
+* modify fdt_setprop_range() to use vmalloc()
+* modify fill_property() to use memset()
+
+Changes in v4 (Oct 2, 2017)
+* reinstate x86's arch_kexec_kernel_image_load()
+* rename weak arch_kexec_kernel_xxx() to _kexec_kernel_xxx() for
+  better re-use
+* constify kexec_file_loaders[]
+
+Changes in v3 (Sep 15, 2017)
+* fix kbuild test error
+* factor out arch_kexec_kernel_*() & arch_kimage_file_post_load_cleanup()
+* remove CONFIG_CRASH_CORE guard from kexec_file.c
+* add vmapped kernel region to vmcore for gdb backtracing
+  (see prepare_elf64_headers())
+* merge asm/kexec_file.h into asm/kexec.h
+* and some cleanups
+
+Changes in v2 (Sep 8, 2017)
+* move core-header-related functions from crash_core.c to kexec_file.c
+* drop hash-check code from purgatory
+* modify purgatory asm to remove arch_kexec_apply_relocations_add()
+* drop older kernel support
+* drop vmlinux support (at least, for this series)
+
+
+Patch #1 to #10 are essential part for KEXEC_FILE support
+(additionally allowing for IMA-based verification):
+  Patch #1 to #6 are all preparatory patches on generic side.
+  Patch #7 to #11 are to enable kexec_file_load on arm64.
+
+Patch #12 to #13 are for KEXEC_VERIFY_SIG (arch-specific verification)
+support
+AKASHI Takahiro (16):
+  asm-generic: add kexec_file_load system call to unistd.h
+  kexec_file: make kexec_image_post_load_cleanup_default() global
+  s390, kexec_file: drop arch_kexec_mem_walk()
+  powerpc, kexec_file: factor out memblock-based arch_kexec_walk_mem()
+  kexec_file: kexec_walk_memblock() only walks a dedicated region at
+    kdump
+  lib: fdt: add a helper function for handling memory range property
+  arm64: add image head flag definitions
+  arm64: cpufeature: add MMFR0 helper functions
+  arm64: enable KEXEC_FILE config
+  arm64: kexec_file: load initrd and device-tree
+  arm64: kexec_file: allow for loading Image-format kernel
+  arm64: kexec_file: add crash dump support
+  arm64: kexec_file: invoke the kernel without purgatory
+  include: pe.h: remove message[] from mz header definition
+  arm64: kexec_file: add kernel signature verification support
+  arm64: kexec_file: add kaslr support
+
+ arch/arm64/Kconfig                          |  33 ++
+ arch/arm64/include/asm/cpufeature.h         |  48 +++
+ arch/arm64/include/asm/image.h              |  59 ++++
+ arch/arm64/include/asm/kexec.h              |  23 ++
+ arch/arm64/kernel/Makefile                  |   3 +-
+ arch/arm64/kernel/cpu-reset.S               |   8 +-
+ arch/arm64/kernel/head.S                    |   3 +-
+ arch/arm64/kernel/image.h                   |  21 +-
+ arch/arm64/kernel/kexec_image.c             | 130 ++++++++
+ arch/arm64/kernel/machine_kexec.c           |  12 +-
+ arch/arm64/kernel/machine_kexec_file.c      | 337 ++++++++++++++++++++
+ arch/arm64/kernel/relocate_kernel.S         |   3 +-
+ arch/powerpc/kernel/machine_kexec_file_64.c |  54 ----
+ arch/s390/kernel/machine_kexec_file.c       |  10 -
+ include/linux/kexec.h                       |  11 +-
+ include/linux/libfdt.h                      |  26 ++
+ include/linux/pe.h                          |   2 +-
+ include/uapi/asm-generic/unistd.h           |   4 +-
+ kernel/kexec_file.c                         |  70 +++-
+ lib/Makefile                                |   2 +-
+ lib/fdt_addresses.c                         |  56 ++++
+ 21 files changed, 824 insertions(+), 91 deletions(-)
+ create mode 100644 arch/arm64/include/asm/image.h
+ create mode 100644 arch/arm64/kernel/kexec_image.c
+ create mode 100644 arch/arm64/kernel/machine_kexec_file.c
+ create mode 100644 lib/fdt_addresses.c
+
+-- 
+2.19.0
+
