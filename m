@@ -2,91 +2,90 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
+	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EFCC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:15:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EAB88C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:16:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A300F223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:15:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A300F223CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
+	by mail.kernel.org (Postfix) with ESMTP id A72792087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:16:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A72792087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=free.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388628AbeKPDXk (ORCPT
+        id S2388853AbeKPDZ2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 22:23:40 -0500
-Received: from relay1.mentorg.com ([192.94.38.131]:53816 "EHLO
-        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387833AbeKPDXk (ORCPT
+        Thu, 15 Nov 2018 22:25:28 -0500
+Received: from smtp04.smtpout.orange.fr ([80.12.242.126]:57291 "EHLO
+        smtp.smtpout.orange.fr" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388798AbeKPDZ1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 22:23:40 -0500
-Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-03.mgc.mentorg.com)
-        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
-        id 1gNLEI-0000bz-Bc from joseph_myers@mentor.com ; Thu, 15 Nov 2018 09:14:58 -0800
-Received: from digraph.polyomino.org.uk (137.202.0.90) by
- SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) with Microsoft SMTP Server
- (TLS) id 15.0.1320.4; Thu, 15 Nov 2018 17:14:54 +0000
-Received: from jsm28 (helo=localhost)
-        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
-        (envelope-from <joseph@codesourcery.com>)
-        id 1gNLEE-00008i-9o; Thu, 15 Nov 2018 17:14:54 +0000
-Date:   Thu, 15 Nov 2018 17:14:54 +0000
-From:   Joseph Myers <joseph@codesourcery.com>
-X-X-Sender: jsm28@digraph.polyomino.org.uk
-To:     "Theodore Y. Ts'o" <tytso@mit.edu>
-CC:     Daniel Colascione <dancol@google.com>,
-        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
-        Dave P Martin <Dave.Martin@arm.com>, nd <nd@arm.com>,
-        Florian Weimer <fweimer@redhat.com>,
-        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        Joel Fernandes <joelaf@google.com>,
-        Linux API <linux-api@vger.kernel.org>,
-        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
-        Carlos O'Donell <carlos@redhat.com>,
-        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
-Subject: Re: Official Linux system wrapper library?
-In-Reply-To: <20181115170807.GB20617@thunk.org>
-Message-ID: <alpine.DEB.2.21.1811151710490.27351@digraph.polyomino.org.uk>
-References: <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com> <20181113193859.GJ3505@e103592.cambridge.arm.com> <5853c297-9d84-86e5-dede-aa2957562c6b@arm.com> <CAKOZuesta_V=doXsVLc2E6WCQvywdur3F+u2pFKaPN+CEQd+ZQ@mail.gmail.com>
- <alpine.DEB.2.21.1811141741000.16571@digraph.polyomino.org.uk> <CAKOZuetCGCfNdJ2QM0phu3_3Q29f5Yeh=NHiM_A9MhHsCjK48A@mail.gmail.com> <alpine.DEB.2.21.1811141840140.16571@digraph.polyomino.org.uk> <20181115053026.GA20617@thunk.org>
- <alpine.DEB.2.21.1811151628490.27351@digraph.polyomino.org.uk> <20181115170807.GB20617@thunk.org>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
-MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-X-Originating-IP: [137.202.0.90]
-X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
- SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
+        Thu, 15 Nov 2018 22:25:27 -0500
+Received: from belgarion.home ([90.89.234.36])
+        by mwinf5d51 with ME
+        id 0HGf1z00S0nnJME03HGjey; Thu, 15 Nov 2018 18:16:44 +0100
+X-ME-Helo: belgarion.home
+X-ME-Auth: amFyem1pay5yb2JlcnRAb3JhbmdlLmZy
+X-ME-Date: Thu, 15 Nov 2018 18:16:44 +0100
+X-ME-IP: 90.89.234.36
+From:   Robert Jarzmik <robert.jarzmik@free.fr>
+To:     Robert Jarzmik <robert.jarzmik@free.fr>,
+        Linus Walleij <linus.walleij@linaro.org>
+Cc:     linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] gpio: pxa: fix legacy non pinctrl aware builds again
+Date:   Thu, 15 Nov 2018 18:16:38 +0100
+Message-Id: <20181115171638.5704-1-robert.jarzmik@free.fr>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Nov 2018, Theodore Y. Ts'o wrote:
+As pointed out by Gregor, spitz keyboard matrix is broken, with or
+without CONFIG_PINCTRL set, quoting :
+"The gpio matrix keypard on the Zaurus C3x00 (see spitz.c) does not work
+properly. Noticeable are that rshift+c does nothing where as lshift+c
+creates C.  Opposite it is for rshift+a vs lshift+a, here only rshift
+works. This affects a few other combinations using the rshift or lshift
+buttons."
 
-> On Thu, Nov 15, 2018 at 04:29:43PM +0000, Joseph Myers wrote:
-> > On Thu, 15 Nov 2018, Theodore Y. Ts'o wrote:
-> > 
-> > > That's great.  But is it or is it not true (either de jure or de
-> > > facto) that "a single active glibc developer" can block a system call
-> > > from being supported by glibc by objecting?  And if not, under what is
-> > > the process by resolving a conflict?
-> > 
-> > We use a consensus-building process as described at 
-> > <https://sourceware.org/glibc/wiki/Consensus>.
-> 
-> So can a single glibc developer can block Consensus?
+As a matter of fact, as for platform_data based builds CONFIG_PINCTRL=n
+is required for now (as opposed for devicetree builds where it should be
+set), this means gpio driver should change the direction, which is what
+was attempted by commit c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl
+aware builds").
 
-If it's a sustained objection - it still works an awful lot better than 
-how things worked before 2011/12.  (See my suggestion of having a process 
-involving a supermajority vote of the GNU maintainers for glibc in the 
-rare cases where a consensus cannot be reached - but those are rare enough 
-that actually agreeing a process for such cases has never been a 
-priority.)
+Unfortunately, the input case was inverted, and the direction change was
+never done. This wasn't seen up until now because the initial platform
+setup (MFP) was setting this direction. Yet in Gregory's case, the
+matrix-keypad driver changes back and forth the direction dynamically,
+and this is why he's the first to report it.
 
+Fixes: c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl aware builds")
+Tested-by: Greg <greguu@null.net>
+Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
+---
+ drivers/gpio/gpio-pxa.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index 63536655f274..501147c5f3ca 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -268,8 +268,8 @@ static int pxa_gpio_direction_input(struct gpio_chip *chip, unsigned offset)
+ 
+ 	if (pxa_gpio_has_pinctrl()) {
+ 		ret = pinctrl_gpio_direction_input(chip->base + offset);
+-		if (!ret)
+-			return 0;
++		if (ret)
++			return ret;
+ 	}
+ 
+ 	spin_lock_irqsave(&gpio_lock, flags);
 -- 
-Joseph S. Myers
-joseph@codesourcery.com
+2.11.0
+
