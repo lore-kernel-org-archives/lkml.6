@@ -6,23 +6,23 @@ X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C99ADC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:47:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 23775C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:47:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 83B6A21780
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:47:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9F435223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:47:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="n9F9aySa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83B6A21780
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="tY0zaZpB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F435223CB
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388972AbeKPF4Z (ORCPT
+        id S2388951AbeKPF4Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 16 Nov 2018 00:56:25 -0500
-Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57936 "EHLO
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:57966 "EHLO
         heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725949AbeKPF4Y (ORCPT
+        with ESMTP id S1725930AbeKPF4Y (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 16 Nov 2018 00:56:24 -0500
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
@@ -31,29 +31,27 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
         Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
         Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:References:
         List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:
-        List-Archive; bh=fkSlF70mk5fRSD9CTzIjKxlQva6cknf1ctrCOgORPds=; b=n9F9aySaJqw8
-        o/N6s94ZoHzNH/qZuyOz779McFz1kKTe0ch1Rt/3cbQJpeIwC/5VBsnXJtHaVaSyrvF3PeDz/B6Pj
-        V7EPkkyTY0Iraxsdvkf3EastTmWOLqS3HwremJ4GjuGgxu0TZHOpSXJdmt7hBRYoU3/KguDM2uCBt
-        m/RHE=;
+        List-Archive; bh=NIzKPHM727Q72rObW0ulzFG81qsMVkgaJiH4hLwoxV0=; b=tY0zaZpBr3sD
+        3kuAtr7BhqOeh3d2Yc/GS27ZYWmIItWa9Ku8oEk7DTDs7o/yWx+ph8NQ6BV45aSgTmR86iSyHljN8
+        mwrVjylpcio92vBVkIRGKu8QQyGNtGlbeAs9rLdPdCGx1JQcjDUGiKyqkKhZHye0gptjzdEyB4O8a
+        OYaA4=;
 Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
         by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
         (Exim 4.89)
         (envelope-from <broonie@sirena.org.uk>)
-        id 1gNNbY-0006Fi-SP; Thu, 15 Nov 2018 19:47:09 +0000
+        id 1gNNbY-0006Fd-AF; Thu, 15 Nov 2018 19:47:08 +0000
 Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
-        id 114BF44007C; Thu, 15 Nov 2018 19:47:07 +0000 (GMT)
+        id 9C09B44007A; Thu, 15 Nov 2018 19:47:06 +0000 (GMT)
 From:   Mark Brown <broonie@kernel.org>
 To:     Linus Walleij <linus.walleij@linaro.org>
-Cc:     Sangbeom Kim <sbkim73@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>,
-        Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
-        Krzysztof Kozlowski <krzk@kernel.org>,
+Cc:     patches@opensource.cirrus.com,
+        Charles Keepax <ckeepax@opensource.cirrus.com>,
+        Lee Jones <lee.jones@linaro.org>,
         Mark Brown <broonie@kernel.org>, linux-kernel@vger.kernel.org
-Subject: Applied "regulator: s2mps11: Pass descriptor instead of GPIO number" to the regulator tree
+Subject: Applied "regulator: wm8994: Pass descriptor instead of GPIO number" to the regulator tree
 In-Reply-To: 
-Message-Id: <20181115194707.114BF44007C@finisterre.ee.mobilebroadband>
-Date:   Thu, 15 Nov 2018 19:47:07 +0000 (GMT)
+Message-Id: <20181115194706.9C09B44007A@finisterre.ee.mobilebroadband>
+Date:   Thu, 15 Nov 2018 19:47:06 +0000 (GMT)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -61,7 +59,7 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 The patch
 
-   regulator: s2mps11: Pass descriptor instead of GPIO number
+   regulator: wm8994: Pass descriptor instead of GPIO number
 
 has been applied to the regulator tree at
 
@@ -86,156 +84,171 @@ to this mail.
 Thanks,
 Mark
 
-From 1c984942f0a480ed41635528234b8bc672f6bac7 Mon Sep 17 00:00:00 2001
+From 1d2f46814d20a55c45ac171739b6885826e0c793 Mon Sep 17 00:00:00 2001
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 15 Nov 2018 09:01:17 +0100
-Subject: [PATCH] regulator: s2mps11: Pass descriptor instead of GPIO number
+Date: Thu, 15 Nov 2018 09:01:18 +0100
+Subject: [PATCH] regulator: wm8994: Pass descriptor instead of GPIO number
 
 Instead of passing a global GPIO number for the enable GPIO, pass
-a descriptor looked up with the standard devm_gpiod_get_optional()
-call.
+a descriptor looked up from the device tree node or the board file
+decriptor table for the regulator.
 
-This regulator supports passing platform data, but enable/sleep
-regulators are looked up from the device tree exclusively, so
-we can need not touch other files.
+There is a single board file passing the GPIOs for LDO1 and LDO2
+through platform data, so augment this to pass descriptors
+associated with the i2c device as well.
 
-Tested on Odroid XU3 (with s2mps11 although not using any GPIOs
-for regulators, so at least default paths are not broken).
+The special GPIO enable DT property for the enable GPIO is
+nonstandard but this was accomodated in
+commit 6a537d48461deacc57c07ed86d9915e5aa4b3539
+"gpio: of: Support regulator nonstandard GPIO properties".
 
-Cc: Sangbeom Kim <sbkim73@samsung.com>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>
-Cc: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Tested-by: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: patches@opensource.cirrus.com
+Acked-by: Charles Keepax <ckeepax@opensource.cirrus.com>
+Acked-by: Lee Jones <lee.jones@linaro.org>
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/regulator/s2mps11.c | 46 ++++++++++++++++++-------------------
- 1 file changed, 23 insertions(+), 23 deletions(-)
+ arch/arm/mach-s3c64xx/mach-crag6410-module.c | 17 +++++++++++++++--
+ drivers/mfd/wm8994-core.c                    |  9 ---------
+ drivers/regulator/wm8994-regulator.c         | 20 ++++++++++++--------
+ include/linux/mfd/wm8994/pdata.h             |  3 ---
+ 4 files changed, 27 insertions(+), 22 deletions(-)
 
-diff --git a/drivers/regulator/s2mps11.c b/drivers/regulator/s2mps11.c
-index 5bb6f4ca48db..6fec45897194 100644
---- a/drivers/regulator/s2mps11.c
-+++ b/drivers/regulator/s2mps11.c
-@@ -5,7 +5,7 @@
+diff --git a/arch/arm/mach-s3c64xx/mach-crag6410-module.c b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+index 5aa472892465..76c4855a03bc 100644
+--- a/arch/arm/mach-s3c64xx/mach-crag6410-module.c
++++ b/arch/arm/mach-s3c64xx/mach-crag6410-module.c
+@@ -194,8 +194,8 @@ static struct wm8994_pdata wm8994_pdata = {
+ 		0x3,          /* IRQ out, active high, CMOS */
+ 	},
+ 	.ldo = {
+-		 { .enable = S3C64XX_GPN(6), .init_data = &wm8994_ldo1, },
+-		 { .enable = S3C64XX_GPN(4), .init_data = &wm8994_ldo2, },
++		 { .init_data = &wm8994_ldo1, },
++		 { .init_data = &wm8994_ldo2, },
+ 	},
+ };
  
- #include <linux/bug.h>
- #include <linux/err.h>
+@@ -203,6 +203,18 @@ static const struct i2c_board_info wm1277_devs[] = {
+ 	{ I2C_BOARD_INFO("wm8958", 0x1a),  /* WM8958 is the superset */
+ 	  .platform_data = &wm8994_pdata,
+ 	  .irq = GLENFARCLAS_PMIC_IRQ_BASE + WM831X_IRQ_GPIO_2,
++	  .dev_name = "wm8958",
++	},
++};
++
++static struct gpiod_lookup_table wm8994_gpiod_table = {
++	.dev_id = "i2c-wm8958", /* I2C device name */
++	.table = {
++		GPIO_LOOKUP("GPION", 6,
++			    "wlf,ldo1ena", GPIO_ACTIVE_HIGH),
++		GPIO_LOOKUP("GPION", 4,
++			    "wlf,ldo2ena", GPIO_ACTIVE_HIGH),
++		{ },
+ 	},
+ };
+ 
+@@ -381,6 +393,7 @@ static int wlf_gf_module_probe(struct i2c_client *i2c,
+ 
+ 	gpiod_add_lookup_table(&wm5102_reva_gpiod_table);
+ 	gpiod_add_lookup_table(&wm5102_gpiod_table);
++	gpiod_add_lookup_table(&wm8994_gpiod_table);
+ 
+ 	if (i < ARRAY_SIZE(gf_mods)) {
+ 		dev_info(&i2c->dev, "%s revision %d\n",
+diff --git a/drivers/mfd/wm8994-core.c b/drivers/mfd/wm8994-core.c
+index 22bd6525e09c..04a177efd245 100644
+--- a/drivers/mfd/wm8994-core.c
++++ b/drivers/mfd/wm8994-core.c
+@@ -21,7 +21,6 @@
+ #include <linux/mfd/core.h>
+ #include <linux/of.h>
+ #include <linux/of_device.h>
+-#include <linux/of_gpio.h>
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+@@ -306,14 +305,6 @@ static int wm8994_set_pdata_from_of(struct wm8994 *wm8994)
+ 
+ 	pdata->csnaddr_pd = of_property_read_bool(np, "wlf,csnaddr-pd");
+ 
+-	pdata->ldo[0].enable = of_get_named_gpio(np, "wlf,ldo1ena", 0);
+-	if (pdata->ldo[0].enable < 0)
+-		pdata->ldo[0].enable = 0;
+-
+-	pdata->ldo[1].enable = of_get_named_gpio(np, "wlf,ldo2ena", 0);
+-	if (pdata->ldo[1].enable < 0)
+-		pdata->ldo[1].enable = 0;
+-
+ 	return 0;
+ }
+ #else
+diff --git a/drivers/regulator/wm8994-regulator.c b/drivers/regulator/wm8994-regulator.c
+index 7a4ce6df4f22..d7fec533c403 100644
+--- a/drivers/regulator/wm8994-regulator.c
++++ b/drivers/regulator/wm8994-regulator.c
+@@ -19,7 +19,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/regulator/driver.h>
+ #include <linux/regulator/machine.h>
 -#include <linux/gpio.h>
 +#include <linux/gpio/consumer.h>
  #include <linux/slab.h>
- #include <linux/module.h>
- #include <linux/of.h>
-@@ -14,7 +14,6 @@
- #include <linux/regulator/driver.h>
- #include <linux/regulator/machine.h>
- #include <linux/regulator/of_regulator.h>
--#include <linux/of_gpio.h>
- #include <linux/mfd/samsung/core.h>
- #include <linux/mfd/samsung/s2mps11.h>
- #include <linux/mfd/samsung/s2mps13.h>
-@@ -44,7 +43,7 @@ struct s2mps11_info {
- 	 * Array (size: number of regulators) with GPIO-s for external
- 	 * sleep control.
- 	 */
--	int *ext_control_gpio;
-+	struct gpio_desc **ext_control_gpiod;
+ 
+ #include <linux/mfd/wm8994/core.h>
+@@ -129,6 +129,7 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
+ 	int id = pdev->id % ARRAY_SIZE(pdata->ldo);
+ 	struct regulator_config config = { };
+ 	struct wm8994_ldo *ldo;
++	struct gpio_desc *gpiod;
+ 	int ret;
+ 
+ 	dev_dbg(&pdev->dev, "Probing LDO%d\n", id + 1);
+@@ -145,12 +146,15 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
+ 	config.driver_data = ldo;
+ 	config.regmap = wm8994->regmap;
+ 	config.init_data = &ldo->init_data;
+-	if (pdata) {
+-		config.ena_gpio = pdata->ldo[id].enable;
+-	} else if (wm8994->dev->of_node) {
+-		config.ena_gpio = wm8994->pdata.ldo[id].enable;
+-		config.ena_gpio_initialized = true;
+-	}
++
++	/* Look up LDO enable GPIO from the parent device node */
++	gpiod = devm_gpiod_get_optional(pdev->dev.parent,
++					id ? "wlf,ldo2ena" : "wlf,ldo1ena",
++					GPIOD_OUT_LOW |
++					GPIOD_FLAGS_BIT_NONEXCLUSIVE);
++	if (IS_ERR(gpiod))
++		return PTR_ERR(gpiod);
++	config.ena_gpiod = gpiod;
+ 
+ 	/* Use default constraints if none set up */
+ 	if (!pdata || !pdata->ldo[id].init_data || wm8994->dev->of_node) {
+@@ -159,7 +163,7 @@ static int wm8994_ldo_probe(struct platform_device *pdev)
+ 
+ 		ldo->init_data = wm8994_ldo_default[id];
+ 		ldo->init_data.consumer_supplies = &ldo->supply;
+-		if (!config.ena_gpio)
++		if (!gpiod)
+ 			ldo->init_data.constraints.valid_ops_mask = 0;
+ 	} else {
+ 		ldo->init_data = *pdata->ldo[id].init_data;
+diff --git a/include/linux/mfd/wm8994/pdata.h b/include/linux/mfd/wm8994/pdata.h
+index b19c370fe81a..f346167c0e00 100644
+--- a/include/linux/mfd/wm8994/pdata.h
++++ b/include/linux/mfd/wm8994/pdata.h
+@@ -20,9 +20,6 @@
+ #define WM8994_NUM_AIF   3
+ 
+ struct wm8994_ldo_pdata {
+-	/** GPIOs to enable regulator, 0 or less if not available */
+-	int enable;
+-
+ 	const struct regulator_init_data *init_data;
  };
  
- static int get_ramp_delay(int ramp_delay)
-@@ -511,7 +510,7 @@ static int s2mps14_regulator_enable(struct regulator_dev *rdev)
- 	case S2MPS14X:
- 		if (test_bit(rdev_get_id(rdev), s2mps11->suspend_state))
- 			val = S2MPS14_ENABLE_SUSPEND;
--		else if (gpio_is_valid(s2mps11->ext_control_gpio[rdev_get_id(rdev)]))
-+		else if (s2mps11->ext_control_gpiod[rdev_get_id(rdev)])
- 			val = S2MPS14_ENABLE_EXT_CONTROL;
- 		else
- 			val = rdev->desc->enable_mask;
-@@ -805,7 +804,7 @@ static int s2mps14_pmic_enable_ext_control(struct s2mps11_info *s2mps11,
- static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		struct of_regulator_match *rdata, struct s2mps11_info *s2mps11)
- {
--	int *gpio = s2mps11->ext_control_gpio;
-+	struct gpio_desc **gpio = s2mps11->ext_control_gpiod;
- 	unsigned int i;
- 	unsigned int valid_regulators[3] = { S2MPS14_LDO10, S2MPS14_LDO11,
- 		S2MPS14_LDO12 };
-@@ -816,11 +815,20 @@ static void s2mps14_pmic_dt_parse_ext_control_gpio(struct platform_device *pdev,
- 		if (!rdata[reg].init_data || !rdata[reg].of_node)
- 			continue;
- 
--		gpio[reg] = of_get_named_gpio(rdata[reg].of_node,
--				"samsung,ext-control-gpios", 0);
--		if (gpio_is_valid(gpio[reg]))
--			dev_dbg(&pdev->dev, "Using GPIO %d for ext-control over %d/%s\n",
--					gpio[reg], reg, rdata[reg].name);
-+		gpio[reg] = devm_gpiod_get_from_of_node(&pdev->dev,
-+				rdata[reg].of_node,
-+				"samsung,ext-control-gpios",
-+				0,
-+				GPIOD_OUT_HIGH | GPIOD_FLAGS_BIT_NONEXCLUSIVE,
-+				"s2mps11-regulator");
-+		if (IS_ERR(gpio[reg])) {
-+			dev_err(&pdev->dev, "Failed to get control GPIO for %d/%s\n",
-+				reg, rdata[reg].name);
-+			continue;
-+		}
-+		if (gpio[reg])
-+			dev_dbg(&pdev->dev, "Using GPIO for ext-control over %d/%s\n",
-+				reg, rdata[reg].name);
- 	}
- }
- 
-@@ -1126,17 +1134,11 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	s2mps11->ext_control_gpio = devm_kmalloc_array(&pdev->dev,
--			rdev_num, sizeof(*s2mps11->ext_control_gpio),
-+	s2mps11->ext_control_gpiod = devm_kmalloc_array(&pdev->dev,
-+			rdev_num, sizeof(*s2mps11->ext_control_gpiod),
- 			GFP_KERNEL);
--	if (!s2mps11->ext_control_gpio)
-+	if (!s2mps11->ext_control_gpiod)
- 		return -ENOMEM;
--	/*
--	 * 0 is a valid GPIO so initialize all GPIO-s to negative value
--	 * to indicate that external control won't be used for this regulator.
--	 */
--	for (i = 0; i < rdev_num; i++)
--		s2mps11->ext_control_gpio[i] = -EINVAL;
- 
- 	if (!iodev->dev->of_node) {
- 		if (iodev->pdata) {
-@@ -1166,8 +1168,6 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 	config.dev = &pdev->dev;
- 	config.regmap = iodev->regmap_pmic;
- 	config.driver_data = s2mps11;
--	config.ena_gpio_flags = GPIOF_OUT_INIT_HIGH;
--	config.ena_gpio_initialized = true;
- 	for (i = 0; i < rdev_num; i++) {
- 		struct regulator_dev *regulator;
- 
-@@ -1178,7 +1178,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 			config.init_data = rdata[i].init_data;
- 			config.of_node = rdata[i].of_node;
- 		}
--		config.ena_gpio = s2mps11->ext_control_gpio[i];
-+		config.ena_gpiod = s2mps11->ext_control_gpiod[i];
- 
- 		regulator = devm_regulator_register(&pdev->dev,
- 						&regulators[i], &config);
-@@ -1189,7 +1189,7 @@ static int s2mps11_pmic_probe(struct platform_device *pdev)
- 			goto out;
- 		}
- 
--		if (gpio_is_valid(s2mps11->ext_control_gpio[i])) {
-+		if (s2mps11->ext_control_gpiod[i]) {
- 			ret = s2mps14_pmic_enable_ext_control(s2mps11,
- 					regulator);
- 			if (ret < 0) {
 -- 
 2.19.1
 
