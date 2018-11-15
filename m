@@ -2,112 +2,102 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6D51BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:19:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC697C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:22:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3E66A20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:19:47 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3E66A20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 8E2FD20869
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:22:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E2FD20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388231AbeKOU05 (ORCPT
+        id S2387707AbeKOU37 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 15:26:57 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14665 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728801AbeKOU0e (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 15:26:34 -0500
-Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 4D2DE73D9FC37;
-        Thu, 15 Nov 2018 18:19:14 +0800 (CST)
-Received: from localhost.localdomain (10.67.212.75) by
- DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 15 Nov 2018 18:19:08 +0800
-From:   John Garry <john.garry@huawei.com>
-To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
-CC:     <hare@suse.com>, <yanaijie@huawei.com>, <linuxarm@huawei.com>,
-        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
-        <joe@perches.com>, John Garry <john.garry@huawei.com>
-Subject: [PATCH v2 2/5] scsi: libsas: Use pr_fmt(fmt)
-Date:   Thu, 15 Nov 2018 18:20:29 +0800
-Message-ID: <1542277232-135789-3-git-send-email-john.garry@huawei.com>
-X-Mailer: git-send-email 2.8.1
-In-Reply-To: <1542277232-135789-1-git-send-email-john.garry@huawei.com>
-References: <1542277232-135789-1-git-send-email-john.garry@huawei.com>
+        Thu, 15 Nov 2018 15:29:59 -0500
+Received: from mga01.intel.com ([192.55.52.88]:53917 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728757AbeKOU37 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 15:29:59 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga003.jf.intel.com ([10.7.209.27])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 02:22:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,236,1539673200"; 
+   d="scan'208";a="100447495"
+Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
+  by orsmga003.jf.intel.com with SMTP; 15 Nov 2018 02:22:39 -0800
+Received: by lahna (sSMTP sendmail emulation); Thu, 15 Nov 2018 12:22:39 +0200
+Date:   Thu, 15 Nov 2018 12:22:39 +0200
+From:   Mika Westerberg <mika.westerberg@linux.intel.com>
+To:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+Cc:     Lukas Wunner <lukas@wunner.de>, iommu@lists.linux-foundation.org,
+        Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Jacob jun Pan <jacob.jun.pan@intel.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Christian Kellner <ckellner@redhat.com>,
+        Mario.Limonciello@dell.com,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
+Message-ID: <20181115102239.GU2500@lahna.fi.intel.com>
+References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
+ <20181112160628.86620-2-mika.westerberg@linux.intel.com>
+ <20181112180203.lx72gjfplb6xlur7@wunner.de>
+ <20181113105636.GB11202@e107981-ln.cambridge.arm.com>
+ <20181113112700.GT2500@lahna.fi.intel.com>
+ <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Originating-IP: [10.67.212.75]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In preparation for dropping the libsas printk wrappers, use pr_fmt(fmt)
-declaration to add the framework log prefix - "sas".
+On Tue, Nov 13, 2018 at 11:45:36AM +0000, Lorenzo Pieralisi wrote:
+> On Tue, Nov 13, 2018 at 01:27:00PM +0200, Mika Westerberg wrote:
+> 
+> [...]
+> 
+> > > To be frank the concept (and Microsoft _DSD bindings) seems a bit vague
+> > > and not thoroughly defined and I would question its detection at
+> > > PCI/ACPI core level, I would hope this can be clarified at ACPI
+> > > specification level, at least.
+> > 
+> > I guess that is the way they envision to use _DSD. Instead of having
+> > single UUID that covers all properties (like what we have with device
+> > properties) they have one UUID per property "class". I certainly hope we
+> > don't need to keep extending prp_guids[] array each time they invent
+> > another "class" of properties.
+> 
+> It is even worse than that. This is a unilateral/obscure change that
+> won't be part of ACPI specifications (I guess it was easier to add a
+> UUID than add this to the ACPI specifications through the AWSG) but it
+> is still supposed to be applicable to ACPI PCI bindings on any
+> platforms/arches; this way of adding bindings does not work and it
+> has to be rectified.
 
-Suggested-by: Joe Perches <joe@perches.com>
-Signed-off-by: John Garry <john.garry@huawei.com>
----
- drivers/scsi/libsas/sas_ata.c      |  2 +-
- drivers/scsi/libsas/sas_internal.h | 13 +++++++++++--
- drivers/scsi/libsas/sas_task.c     |  3 +++
- 3 files changed, 15 insertions(+), 3 deletions(-)
+I agree.
 
-diff --git a/drivers/scsi/libsas/sas_ata.c b/drivers/scsi/libsas/sas_ata.c
-index 4f6cdf5..9f3521f 100644
---- a/drivers/scsi/libsas/sas_ata.c
-+++ b/drivers/scsi/libsas/sas_ata.c
-@@ -375,7 +375,7 @@ static int sas_ata_printk(const char *level, const struct domain_device *ddev,
- 	vaf.fmt = fmt;
- 	vaf.va = &args;
- 
--	r = printk("%ssas: ata%u: %s: %pV",
-+	r = printk("%s" SAS_FMT "ata%u: %s: %pV",
- 		   level, ap->print_id, dev_name(dev), &vaf);
- 
- 	va_end(args);
-diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
-index 50e12d6..94ebf41 100644
---- a/drivers/scsi/libsas/sas_internal.h
-+++ b/drivers/scsi/libsas/sas_internal.h
-@@ -32,9 +32,18 @@
- #include <scsi/libsas.h>
- #include <scsi/sas_ata.h>
- 
--#define sas_printk(fmt, ...) printk(KERN_NOTICE "sas: " fmt, ## __VA_ARGS__)
-+#ifdef pr_fmt
-+#undef pr_fmt
-+#endif
-+
-+#define SAS_FMT "sas: "
-+
-+#define pr_fmt(fmt) SAS_FMT fmt
-+
-+#define sas_printk(fmt, ...) printk(KERN_NOTICE fmt, ## __VA_ARGS__)
-+
-+#define SAS_DPRINTK(fmt, ...) printk(KERN_DEBUG fmt, ## __VA_ARGS__)
- 
--#define SAS_DPRINTK(fmt, ...) printk(KERN_DEBUG "sas: " fmt, ## __VA_ARGS__)
- 
- #define TO_SAS_TASK(_scsi_cmd)  ((void *)(_scsi_cmd)->host_scribble)
- #define ASSIGN_SAS_TASK(_sc, _t) do { (_sc)->host_scribble = (void *) _t; } while (0)
-diff --git a/drivers/scsi/libsas/sas_task.c b/drivers/scsi/libsas/sas_task.c
-index a78e5bd..d305c8f 100644
---- a/drivers/scsi/libsas/sas_task.c
-+++ b/drivers/scsi/libsas/sas_task.c
-@@ -1,3 +1,6 @@
-+
-+#include "sas_internal.h"
-+
- #include <linux/kernel.h>
- #include <linux/export.h>
- #include <scsi/sas.h>
--- 
-1.9.1
+For the existing property "classes" such as the one here I don't think
+we can do anything. There are systems already with these included in
+their ACPI tables.
 
+I wonder if you have any objections regarding this patch?
