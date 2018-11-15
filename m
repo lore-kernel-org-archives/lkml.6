@@ -2,255 +2,205 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D071C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:20:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3363BC070C3
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:20:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 08A96223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:20:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 08A96223CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.vnet.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 06173223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:20:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06173223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729356AbeKOT1B (ORCPT
+        id S2387631AbeKOT1K (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:27:01 -0500
-Received: from mx0b-001b2d01.pphosted.com ([148.163.158.5]:37588 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1728719AbeKOT1B (ORCPT
+        Thu, 15 Nov 2018 14:27:10 -0500
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:49397 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728719AbeKOT1K (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:27:01 -0500
-Received: from pps.filterd (m0098416.ppops.net [127.0.0.1])
-        by mx0b-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAF9JHT5078351
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 04:20:01 -0500
-Received: from e06smtp07.uk.ibm.com (e06smtp07.uk.ibm.com [195.75.94.103])
-        by mx0b-001b2d01.pphosted.com with ESMTP id 2ns2yq865r-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 04:20:01 -0500
-Received: from localhost
-        by e06smtp07.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <sathnaga@linux.vnet.ibm.com>;
-        Thu, 15 Nov 2018 09:20:00 -0000
-Received: from b06cxnps3074.portsmouth.uk.ibm.com (9.149.109.194)
-        by e06smtp07.uk.ibm.com (192.168.101.137) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 15 Nov 2018 09:19:57 -0000
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
-        by b06cxnps3074.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAF9JuoI52035660
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 15 Nov 2018 09:19:56 GMT
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 4FF88A405C;
-        Thu, 15 Nov 2018 09:19:56 +0000 (GMT)
-Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id D67A7A405B;
-        Thu, 15 Nov 2018 09:19:54 +0000 (GMT)
-Received: from dhcp-9-193-110-205.in.ibm.com (unknown [9.122.211.233])
-        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
-        Thu, 15 Nov 2018 09:19:54 +0000 (GMT)
-Date:   Thu, 15 Nov 2018 14:49:48 +0530
-From:   Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
-To:     Laurent Vivier <lvivier@redhat.com>
-Cc:     Michael Ellerman <mpe@ellerman.id.au>,
-        Satheesh Rajendran <satheera@in.ibm.com>,
-        linux-kernel@vger.kernel.org,
-        Michael Bringmann <mwb@linux.vnet.ibm.com>,
-        Nathan Fontenot <nfont@linux.vnet.ibm.com>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH] powerpc/numa: fix hot-added CPU on memory-less node
-Reply-To: Satheesh Rajendran <sathnaga@linux.vnet.ibm.com>
-References: <20181114170319.24828-1-lvivier@redhat.com>
+        Thu, 15 Nov 2018 14:27:10 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id NDokgM65PQPpyNDongmaUX; Thu, 15 Nov 2018 10:20:09 +0100
+Subject: Re: [PATCH v5 0/2] media: platform: Add Aspeed Video Engine Driver
+To:     Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        robh+dt@kernel.org, andrew@aj.id.au, linux-aspeed@lists.ozlabs.org,
+        devicetree@vger.kernel.org, mark.rutland@arm.com,
+        Eddie James <eajames@linux.vnet.ibm.com>
+References: <1542056431-18146-1-git-send-email-eajames@linux.ibm.com>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <9b21fb44-2248-7921-2205-4a3f43d22d4b@xs4all.nl>
+Date:   Thu, 15 Nov 2018 10:20:06 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181114170319.24828-1-lvivier@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
-X-TM-AS-GCONF: 00
-x-cbid: 18111509-0028-0000-0000-0000031A403E
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111509-0029-0000-0000-000023D6AFBE
-Message-Id: <20181115091948.GA14462@dhcp-9-193-110-205.in.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-15_05:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811150085
+In-Reply-To: <1542056431-18146-1-git-send-email-eajames@linux.ibm.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfG45IlNUoxFSXk8AZry1ojryyelM2BpV0vdalIXAJaI1iXXmVvANXXewwq0XnTf9VbA3Pf5ogKm/DczXcUTpi0AwGqHsWmVL4YIKyiyHlvJJe7vmhpWe
+ a/WLD2JCW1qkNZmgIm1GnBzXg1+f5hew+PMF4KmMNMhfzi1oSOdLqYS8qTvRpBefeelYOTLi7XrAQlKNj0Ou5JYzgNNOlgBVsd9R+1Sr0UdT2PUyCqxhPM+5
+ Of+c0pt70CtBMhnRwj5pvec5hj7k9zkLfCko0tN5b08HdcDCM5x8cX15sN/ptnoRHwFH43HybVW1jC8290Q5JnzVRk7uugfPm1nd1is6Wq4wLFvJhH1m8F6M
+ 20HpUUMsOS9isho4oP9lYZ4Vg3fZ//DsysEjXQ7mwi4upmT3yZ2JdJBMIjnjEMxq6Q8i5b6+loGNLpbNsXO2rmGzsNFtxGJ+nIYGvHLN/+fe+h6qi8dO+2c+
+ j/0Y6w0LVj5IZJYHZShWiYI9oGqED6FjL0jMlQ==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 06:03:19PM +0100, Laurent Vivier wrote:
-> Trying to hotplug a CPU on an empty NUMA node (without
-> memory or CPU) crashes the kernel when the CPU is onlined.
+On 11/12/2018 10:00 PM, Eddie James wrote:
+> From: Eddie James <eajames@linux.vnet.ibm.com>
 > 
-> During the onlining process, the kernel calls start_secondary()
-> that ends by calling
-> set_numa_mem(local_memory_node(numa_cpu_lookup_table[cpu]))
-> that relies on NODE_DATA(nid)->node_zonelists and in our case
-> NODE_DATA(nid) is NULL.
+> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+> can capture and compress video data from digital or analog sources. With
+> the Aspeed chip acting as a service processor, the Video Engine can
+> capture the host processor graphics output.
 > 
-> To fix that, add the same checking as we already have in
-> find_and_online_cpu_nid(): if NODE_DATA() is NULL, use
-> the first online node.
+> This series adds a V4L2 driver for the VE, providing the usual V4L2 streaming
+> interface by way of videobuf2. Each frame, the driver triggers the hardware to
+> capture the host graphics output and compress it to JPEG format.
+
+I reviewed the driver, and there is still confusion about active timings and
+detected timings. You are really close, but it is still not right.
+
+The timings returned by G_DV_TIMINGS should never change, unless by calling
+S_DV_TIMINGS. The format returned by G_FMT should never change, unless by
+calling S_DV_TIMINGS (which implicitly changes the format) or S_FMT.
+
+Timings changes from the video or calling QUERY_DV_TIMINGS should have NO
+effect on the timings/format returned by G_DV_TIMINGS/G_FMT.
+
+Obviously, if the video timings change, then streaming will halt and an event
+is issued so userspace can take action.
+
 > 
-> Bug: https://github.com/linuxppc/linux/issues/184
-> Fixes: ea05ba7c559c8e5a5946c3a94a2a266e9a6680a6
->        (powerpc/numa: Ensure nodes initialized for hotplug)
-> Signed-off-by: Laurent Vivier <lvivier@redhat.com>
-> ---
->  arch/powerpc/mm/numa.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
+> v4l-utils HEAD dd3ff81f58c4e1e6f33765dc61ad33c48ae6bb07
+> 
+> v4l2-compliance SHA: not available, 32 bits
 
-This patch causes regression for cold plug numa case(Case 1) and 
-hotplug case + reboot(Case 2) with adding all vcpus into node 0.
+<snip>
 
+> Control ioctls (Input 0):
+> 	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+> 	test VIDIOC_QUERYCTRL: OK
+> 	test VIDIOC_G/S_CTRL: OK
+> 	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+> 		fail: v4l2-test-controls.cpp(823): failed to find event for control 'Chroma Subsampling'
 
-Env: HW: Power8 Host.
-Kernel: 4.20-rc2 + this patch
+That's weird. It's not clear to me why this fails.
 
-Case 1:
-1. boot a guest with 8 vcpus(all available), spreadout in 4 numa nodes.
-<vcpu placement='static'>8</vcpu>
-...
-   <numa>
-      <cell id='0' cpus='0-1' memory='4194304' unit='KiB'/>
-      <cell id='1' cpus='2-3' memory='4194304' unit='KiB'/>
-      <cell id='2' cpus='4-5' memory='0' unit='KiB'/>
-      <cell id='3' cpus='6-7' memory='0' unit='KiB'/>
-    </numa>
+> 	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+> 	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+> 	Standard Controls: 3 Private Controls: 0
+> 
+> Format ioctls (Input 0):
+> 	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+> 	test VIDIOC_G/S_PARM: OK
+> 	test VIDIOC_G_FBUF: OK (Not Supported)
+> 	test VIDIOC_G_FMT: OK
+> 	test VIDIOC_TRY_FMT: OK
+> 	test VIDIOC_S_FMT: OK
+> 	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+> 	test Cropping: OK (Not Supported)
+> 	test Composing: OK (Not Supported)
+> 	test Scaling: OK (Not Supported)
+> 
+> Codec ioctls (Input 0):
+> 	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+> 	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+> 	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+> 
+> Buffer ioctls (Input 0):
+> 		fail: v4l2-test-buffers.cpp(422): dmabuf_valid ^ !!(caps & V4L2_BUF_CAP_SUPPORTS_DMABUF)
 
-2. Check lscpu --- all vcpus are added to node0 --> NOK
+I updated v4l2-compliance, as this test was a bit too strict.
 
-# lscpu
-Architecture:        ppc64le
-Byte Order:          Little Endian
-CPU(s):              8
-On-line CPU(s) list: 0-7
-Thread(s) per core:  1
-Core(s) per socket:  8
-Socket(s):           1
-NUMA node(s):        4
-Model:               2.1 (pvr 004b 0201)
-Model name:          POWER8 (architected), altivec supported
-Hypervisor vendor:   KVM
-Virtualization type: para
-L1d cache:           64K
-L1i cache:           32K
-NUMA node0 CPU(s):   0-7
-NUMA node1 CPU(s):   
-NUMA node2 CPU(s):   
-NUMA node3 CPU(s): 
+> 	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: FAIL
+> 	test VIDIOC_EXPBUF: OK (Not Supported)
+> 
+> Test input 0:
+> 
+> Streaming ioctls:
+> 	test read/write: OK
+> 	test blocking wait: OK
+> 	test MMAP: OK                                     
+> 	test USERPTR: OK (Not Supported)
+> 		fail: v4l2-test-buffers.cpp(1102): exp_q.reqbufs(expbuf_node, q.g_buffers())
+> 		fail: v4l2-test-buffers.cpp(1192): setupDmaBuf(expbuf_node, node, q, exp_q)
 
-without this patch it was working fine.
-# lscpu
-Architecture:        ppc64le
-Byte Order:          Little Endian
-CPU(s):              8
-On-line CPU(s) list: 0-7
-Thread(s) per core:  1
-Core(s) per socket:  8
-Socket(s):           1
-NUMA node(s):        4
-Model:               2.1 (pvr 004b 0201)
-Model name:          POWER8 (architected), altivec supported
-Hypervisor vendor:   KVM
-Virtualization type: para
-L1d cache:           64K
-L1i cache:           32K
-NUMA node0 CPU(s):   0,1
-NUMA node1 CPU(s):   2,3
-NUMA node2 CPU(s):   4,5
-NUMA node3 CPU(s):   6,7
+You need to add:
 
+	.vidioc_expbuf = vb2_ioctl_expbuf,
 
-Case 2:
-1. boot a guest with 8 vcpus(2 available, 6 possible), spreadout in 4 numa nodes.
-<vcpu placement='static' current='2'>8</vcpu>
-...
-   <numa>
-      <cell id='0' cpus='0-1' memory='0' unit='KiB'/>
-      <cell id='1' cpus='2-3' memory='4194304' unit='KiB'/>
-      <cell id='2' cpus='4-5' memory='0' unit='KiB'/>
-      <cell id='3' cpus='6-7' memory='0' unit='KiB'/>
-    </numa>
+to aspeed_video_ioctl_ops.
 
-2. Hotplug all vcpus
-# lscpu
-Architecture:        ppc64le
-Byte Order:          Little Endian
-CPU(s):              8
-On-line CPU(s) list: 0-7
-Thread(s) per core:  1
-Core(s) per socket:  8
-Socket(s):           1
-NUMA node(s):        2
-Model:               2.1 (pvr 004b 0201)
-Model name:          POWER8 (architected), altivec supported
-Hypervisor vendor:   KVM
-Virtualization type: para
-L1d cache:           64K
-L1i cache:           32K
-NUMA node0 CPU(s):   0,1,4-7
-NUMA node1 CPU(s):   2,3
+> 	test DMABUF: FAIL
+> 
+> Total: 48, Succeeded: 45, Failed: 3, Warnings: 0
+> 
+> The apparent rate of change to the v4l2/vb2 API makes it difficult to pass
+> these tests. None of the failing tests even ran last time I submitted my
+> series. And V4L2_BUF_CAP_SUPPORTS_DMABUF is undefined in 4.19.
 
+When developing new drivers you should use the master branch of
+https://git.linuxtv.org/media_tree.git/
 
-3. reboot the guest
-# lscpu
-Architecture:        ppc64le
-Byte Order:          Little Endian
-CPU(s):              8
-On-line CPU(s) list: 0-7
-Thread(s) per core:  1
-Core(s) per socket:  8
-Socket(s):           1
-NUMA node(s):        4
-Model:               2.1 (pvr 004b 0201)
-Model name:          POWER8 (architected), altivec supported
-Hypervisor vendor:   KVM
-Virtualization type: para
-L1d cache:           64K
-L1i cache:           32K
-NUMA node0 CPU(s):   0-7
-NUMA node1 CPU(s):
-NUMA node2 CPU(s):
-NUMA node3 CPU(s):
-
-
-Without this patch, Case 2 crashes the guest during hotplug, i.e
-issue reported in https://github.com/linuxppc/linux/issues/184
+The v4l-utils repo is kept in sync with the latest code from that master branch.
 
 Regards,
--Satheesh.
+
+	Hans
 
 > 
-> diff --git a/arch/powerpc/mm/numa.c b/arch/powerpc/mm/numa.c
-> index 3a048e98a132..1b2d25a3c984 100644
-> --- a/arch/powerpc/mm/numa.c
-> +++ b/arch/powerpc/mm/numa.c
-> @@ -483,6 +483,15 @@ static int numa_setup_cpu(unsigned long lcpu)
->  	if (nid < 0 || !node_possible(nid))
->  		nid = first_online_node;
+> Changes since v4:
+>  - Set real min and max resolution in enum_dv_timings
+>  - Add check for vb2_is_busy before settings the timings
+>  - Set max frame rate to the actual max rather than max + 1
+>  - Correct the input status to 0.
+>  - Rework resolution change to only set the relevant h/w regs during startup or
+>    when set_timings is called.
 > 
-> +	if (NODE_DATA(nid) == NULL) {
-> +		/*
-> +		 * Default to using the nearest node that has memory installed.
-> +		 * Otherwise, it would be necessary to patch the kernel MM code
-> +		 * to deal with more memoryless-node error conditions.
-> +		 */
-> +		nid = first_online_node;
-> +	}
-> +
->  	map_cpu_to_node(lcpu, nid);
->  	of_node_put(cpu);
->  out:
-> -- 
-> 2.17.2
+> Changes since v3:
+>  - Switch update reg function to use u32 clear rather than unsigned long mask
+>  - Add timing information from host VGA signal
+>  - Fix binding documentation mispelling
+>  - Fix upper case hex values
+>  - Add wait_prepare and wait_finish
+>  - Set buffer state to queued (rather than error) if streaming fails to start
+>  - Switch engine busy print statement to error
+>  - Removed a couple unecessary type assignments in v4l2 ioctls
+>  - Added query_dv_timings, fixed get_dv_timings
+>  - Corrected source change event to fire if and only if size actually changes
+>  - Locked open and release
+> 
+> Changes since v2:
+>  - Switch to streaming interface. This involved a lot of changes.
+>  - Rework memory allocation due to using videobuf2 buffers, but also only
+>    allocate the necessary size of source buffer rather than the max size
+> 
+> Changes since v1:
+>  - Removed le32_to_cpu calls for JPEG header data
+>  - Reworked v4l2 ioctls to be compliant.
+>  - Added JPEG controls
+>  - Updated devicetree docs according to Rob's suggestions.
+>  - Added myself to MAINTAINERS
+> 
+> Eddie James (2):
+>   dt-bindings: media: Add Aspeed Video Engine binding documentation
+>   media: platform: Add Aspeed Video Engine driver
+> 
+>  .../devicetree/bindings/media/aspeed-video.txt     |   26 +
+>  MAINTAINERS                                        |    8 +
+>  drivers/media/platform/Kconfig                     |    9 +
+>  drivers/media/platform/Makefile                    |    1 +
+>  drivers/media/platform/aspeed-video.c              | 1711 ++++++++++++++++++++
+>  5 files changed, 1755 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+>  create mode 100644 drivers/media/platform/aspeed-video.c
 > 
 
