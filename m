@@ -2,144 +2,91 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0BAC0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:14:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2EFCC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:15:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7BC52087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:14:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7BC52087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id A300F223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:15:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A300F223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codesourcery.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388564AbeKPDXE (ORCPT
+        id S2388628AbeKPDXk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 22:23:04 -0500
-Received: from mx2.suse.de ([195.135.220.15]:40256 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387839AbeKPDXE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 22:23:04 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id E8A07AD98;
-        Thu, 15 Nov 2018 17:14:22 +0000 (UTC)
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     nsaaenzjulienne@suse.de, linux-kernel@vger.kernel.org
-Cc:     Nicolas Saenz Julienne <nsaenzjulienne@suse.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Subject: [PATCH] usb: hub: add I/O error retry & reset routine
-Date:   Thu, 15 Nov 2018 18:14:18 +0100
-Message-Id: <20181115171418.23522-1-nsaenzjulienne@suse.de>
-X-Mailer: git-send-email 2.19.1
+        Thu, 15 Nov 2018 22:23:40 -0500
+Received: from relay1.mentorg.com ([192.94.38.131]:53816 "EHLO
+        relay1.mentorg.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387833AbeKPDXk (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 22:23:40 -0500
+Received: from nat-ies.mentorg.com ([192.94.31.2] helo=SVR-IES-MBX-03.mgc.mentorg.com)
+        by relay1.mentorg.com with esmtps (TLSv1.2:ECDHE-RSA-AES256-SHA384:256)
+        id 1gNLEI-0000bz-Bc from joseph_myers@mentor.com ; Thu, 15 Nov 2018 09:14:58 -0800
+Received: from digraph.polyomino.org.uk (137.202.0.90) by
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3) with Microsoft SMTP Server
+ (TLS) id 15.0.1320.4; Thu, 15 Nov 2018 17:14:54 +0000
+Received: from jsm28 (helo=localhost)
+        by digraph.polyomino.org.uk with local-esmtp (Exim 4.90_1)
+        (envelope-from <joseph@codesourcery.com>)
+        id 1gNLEE-00008i-9o; Thu, 15 Nov 2018 17:14:54 +0000
+Date:   Thu, 15 Nov 2018 17:14:54 +0000
+From:   Joseph Myers <joseph@codesourcery.com>
+X-X-Sender: jsm28@digraph.polyomino.org.uk
+To:     "Theodore Y. Ts'o" <tytso@mit.edu>
+CC:     Daniel Colascione <dancol@google.com>,
+        Szabolcs Nagy <Szabolcs.Nagy@arm.com>,
+        Dave P Martin <Dave.Martin@arm.com>, nd <nd@arm.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        "Michael Kerrisk (man-pages)" <mtk.manpages@gmail.com>,
+        linux-kernel <linux-kernel@vger.kernel.org>,
+        Joel Fernandes <joelaf@google.com>,
+        Linux API <linux-api@vger.kernel.org>,
+        Willy Tarreau <w@1wt.eu>, Vlastimil Babka <vbabka@suse.cz>,
+        Carlos O'Donell <carlos@redhat.com>,
+        "libc-alpha@sourceware.org" <libc-alpha@sourceware.org>
+Subject: Re: Official Linux system wrapper library?
+In-Reply-To: <20181115170807.GB20617@thunk.org>
+Message-ID: <alpine.DEB.2.21.1811151710490.27351@digraph.polyomino.org.uk>
+References: <875zx2vhpd.fsf@oldenburg.str.redhat.com> <CAKOZuetdgk1QYhx1538-98rFpogMin=8DkPnCtU9_=ip23Vk7w@mail.gmail.com> <20181113193859.GJ3505@e103592.cambridge.arm.com> <5853c297-9d84-86e5-dede-aa2957562c6b@arm.com> <CAKOZuesta_V=doXsVLc2E6WCQvywdur3F+u2pFKaPN+CEQd+ZQ@mail.gmail.com>
+ <alpine.DEB.2.21.1811141741000.16571@digraph.polyomino.org.uk> <CAKOZuetCGCfNdJ2QM0phu3_3Q29f5Yeh=NHiM_A9MhHsCjK48A@mail.gmail.com> <alpine.DEB.2.21.1811141840140.16571@digraph.polyomino.org.uk> <20181115053026.GA20617@thunk.org>
+ <alpine.DEB.2.21.1811151628490.27351@digraph.polyomino.org.uk> <20181115170807.GB20617@thunk.org>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+X-Originating-IP: [137.202.0.90]
+X-ClientProxiedBy: svr-ies-mbx-02.mgc.mentorg.com (139.181.222.2) To
+ SVR-IES-MBX-03.mgc.mentorg.com (139.181.222.3)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-An URB submission error in the HUB's endpoint completion function
-renders the whole HUB device unresponsive. This patch introduces a
-routine that retries the submission for 1s to then, as a last resort,
-reset the whole device.
+On Thu, 15 Nov 2018, Theodore Y. Ts'o wrote:
 
-The implementation is based on usbhid/hid_core.c's, which implements the
-same functionality. It was tested with the help of BCC's error injection
-tool (inject.py).
+> On Thu, Nov 15, 2018 at 04:29:43PM +0000, Joseph Myers wrote:
+> > On Thu, 15 Nov 2018, Theodore Y. Ts'o wrote:
+> > 
+> > > That's great.  But is it or is it not true (either de jure or de
+> > > facto) that "a single active glibc developer" can block a system call
+> > > from being supported by glibc by objecting?  And if not, under what is
+> > > the process by resolving a conflict?
+> > 
+> > We use a consensus-building process as described at 
+> > <https://sourceware.org/glibc/wiki/Consensus>.
+> 
+> So can a single glibc developer can block Consensus?
 
-Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
----
- drivers/usb/core/hub.c | 43 +++++++++++++++++++++++++++++++++++++++++-
- drivers/usb/core/hub.h |  3 +++
- 2 files changed, 45 insertions(+), 1 deletion(-)
+If it's a sustained objection - it still works an awful lot better than 
+how things worked before 2011/12.  (See my suggestion of having a process 
+involving a supermajority vote of the GNU maintainers for glibc in the 
+rare cases where a consensus cannot be reached - but those are rare enough 
+that actually agreeing a process for such cases has never been a 
+priority.)
 
-diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-index d9bd7576786a..1447bdba59ec 100644
---- a/drivers/usb/core/hub.c
-+++ b/drivers/usb/core/hub.c
-@@ -607,6 +607,44 @@ static int hub_port_status(struct usb_hub *hub, int port1,
- 				   status, change, NULL);
- }
- 
-+static void hub_io_error(struct usb_hub *hub)
-+{
-+	/*
-+	 * If it has been a while since the last error, we'll assume
-+	 * this a brand new error and reset the retry timeout.
-+	 */
-+	if (time_after(jiffies, hub->stop_retry + HZ/2))
-+		hub->retry_delay = 0;
-+
-+	/* When an error occurs, retry at increasing intervals */
-+	if (hub->retry_delay == 0) {
-+		hub->retry_delay = 13;	/* Then 26, 52, 104, 104, ... */
-+		hub->stop_retry = jiffies + msecs_to_jiffies(1000);
-+	} else if (hub->retry_delay < 100)
-+		hub->retry_delay *= 2;
-+
-+	if (time_after(jiffies, hub->stop_retry)) {
-+		/* Retries failed, so do a port reset */
-+		usb_queue_reset_device(to_usb_interface(hub->intfdev));
-+		return;
-+	}
-+
-+	mod_timer(&hub->io_retry,
-+			jiffies + msecs_to_jiffies(hub->retry_delay));
-+}
-+
-+static void hub_retry_timeout(struct timer_list *t)
-+{
-+	struct usb_hub *hub = from_timer(hub, t, io_retry);
-+
-+	if (hub->disconnected || hub->quiescing)
-+		return;
-+
-+	dev_err(hub->intfdev, "retrying int urb\n");
-+	if (usb_submit_urb(hub->urb, GFP_ATOMIC))
-+		hub_io_error(hub);
-+}
-+
- static void kick_hub_wq(struct usb_hub *hub)
- {
- 	struct usb_interface *intf;
-@@ -713,8 +751,10 @@ static void hub_irq(struct urb *urb)
- 		return;
- 
- 	status = usb_submit_urb(hub->urb, GFP_ATOMIC);
--	if (status != 0 && status != -ENODEV && status != -EPERM)
-+	if (status != 0 && status != -ENODEV && status != -EPERM) {
- 		dev_err(hub->intfdev, "resubmit --> %d\n", status);
-+		hub_io_error(hub);
-+	}
- }
- 
- /* USB 2.0 spec Section 11.24.2.3 */
-@@ -1800,6 +1840,7 @@ static int hub_probe(struct usb_interface *intf, const struct usb_device_id *id)
- 	INIT_DELAYED_WORK(&hub->leds, led_work);
- 	INIT_DELAYED_WORK(&hub->init_work, NULL);
- 	INIT_WORK(&hub->events, hub_event);
-+	timer_setup(&hub->io_retry, hub_retry_timeout, 0);
- 	usb_get_intf(intf);
- 	usb_get_dev(hdev);
- 
-diff --git a/drivers/usb/core/hub.h b/drivers/usb/core/hub.h
-index 4accfb63f7dc..7dbd19c2c8d9 100644
---- a/drivers/usb/core/hub.h
-+++ b/drivers/usb/core/hub.h
-@@ -69,6 +69,9 @@ struct usb_hub {
- 	struct delayed_work	leds;
- 	struct delayed_work	init_work;
- 	struct work_struct      events;
-+	struct timer_list	io_retry;
-+	unsigned long		stop_retry;
-+	unsigned int		retry_delay;
- 	struct usb_port		**ports;
- };
- 
 -- 
-2.19.1
-
+Joseph S. Myers
+joseph@codesourcery.com
