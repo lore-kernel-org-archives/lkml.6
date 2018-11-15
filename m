@@ -2,81 +2,109 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 87CC3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:02:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14789C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:02:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 46EE22243E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:02:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46EE22243E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id CE8AC22419
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:02:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CE8AC22419
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dh-electronics.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728985AbeKOTJF (ORCPT
+        id S1729113AbeKOTJY convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:09:05 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:36628 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728527AbeKOTJF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:09:05 -0500
-Received: from smtp.corp.redhat.com (int-mx01.intmail.prod.int.phx2.redhat.com [10.5.11.11])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 8AE7737E87;
-        Thu, 15 Nov 2018 09:02:10 +0000 (UTC)
-Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7D554600C3;
-        Thu, 15 Nov 2018 09:02:05 +0000 (UTC)
-Date:   Thu, 15 Nov 2018 10:02:03 +0100
-From:   Andrew Jones <drjones@redhat.com>
-To:     Ahmed Soliman <ahmedsoliman@mena.vt.edu>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Xu <peterx@redhat.com>,
-        Vitaly Kuznetsov <vkuznets@redhat.com>,
-        linux-kernel@vger.kernel.org
-Subject: Re: KVM selftests are failing
-Message-ID: <20181115090203.5z25gwa2yznj6mmu@kamzik.brq.redhat.com>
-References: <CANBxJ=EQOt1t=PkLsMvtfB2SbiLMPeGvFxB7SJXf7m3OkcionQ@mail.gmail.com>
- <20181114180807.6crs7awhvo26ldbr@hawk.localdomain>
- <CADYN=9Jh10guVNFfhS8XH+RwZAouLJQu7Svg4+Tz3rQDexzDkg@mail.gmail.com>
- <CANBxJ=G4xdF8ZOR4zyoX1edNa=jYxk1xrzoi+7Xgcqt9qDoM2w@mail.gmail.com>
- <CANBxJ=EB8izWM8iLd49Uvd1z1O-gLvkGmiKNHjfHifFohj2xbg@mail.gmail.com>
+        Thu, 15 Nov 2018 14:09:24 -0500
+Received: from mout.kundenserver.de ([217.72.192.75]:55831 "EHLO
+        mout.kundenserver.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728527AbeKOTJY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:09:24 -0500
+Received: from sun05.dh.corp ([188.193.90.127]) by mrelayeu.kundenserver.de
+ (mreue109 [212.227.15.183]) with ESMTPA (Nemesis) id
+ 1M5fUy-1gPxM81PRq-007B6p; Thu, 15 Nov 2018 10:02:18 +0100
+Received: from sun1049.dh.corp (unknown [10.64.9.49])
+        by sun05.dh.corp (Postfix) with ESMTP id 76BAE1FA3D;
+        Thu, 15 Nov 2018 10:02:17 +0100 (CET)
+Received: from SUN1049.dh.corp ([::1]) by sun1049.dh.corp ([::1]) with mapi id
+ 14.03.0415.000; Thu, 15 Nov 2018 10:02:28 +0100
+From:   Christoph Niedermaier <cniedermaier@dh-electronics.de>
+To:     Jani Nikula <jani.nikula@linux.intel.com>
+CC:     "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        "C.Emde@osadl.org" <C.Emde@osadl.org>,
+        Jonathan Corbet <corbet@lwn.net>
+Subject: RE: [PATCH 0/2] Docs/EDID: Fixed and improved EDID documentation
+Thread-Topic: [PATCH 0/2] Docs/EDID: Fixed and improved EDID documentation
+Thread-Index: AQHUdd372aKemkOCNEebpzMkutC1AKVOFlyAgAJ8GyA=
+Date:   Thu, 15 Nov 2018 09:02:27 +0000
+Message-ID: <82DABEC7F9941D458E51BA62B2739EF437ADEC88@sun1049.dh.corp>
+References: <1541407715-5417-1-git-send-email-cniedermaier@dh-electronics.de>
+ <20181106073536.58b14759@lwn.net> <87lg5wg3s6.fsf@intel.com>
+In-Reply-To: <87lg5wg3s6.fsf@intel.com>
+Accept-Language: de-DE, en-US
+Content-Language: de-DE
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [10.64.31.6]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: 8BIT
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANBxJ=EB8izWM8iLd49Uvd1z1O-gLvkGmiKNHjfHifFohj2xbg@mail.gmail.com>
-User-Agent: NeoMutt/20180716
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.11
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 15 Nov 2018 09:02:10 +0000 (UTC)
+X-Provags-ID: V03:K1:Qb4mgpskgW0MXUQtlP4dCUR7R2VtQL6gWGvAWCfimZ+jTlCwlkJ
+ NXrSkj/lEDw/GHSGqIIeZRm/dYtMjxh7I3G1DL+Xz4e3X7ghvhznHWZHY6CfiGq31Ote71I
+ r/I5s63mffBssn+L87JMi9idjdLeI/Y9STAV5CdwRfkwDt65Y5jZJIzalZhtR+YbkNmquRn
+ Yzgb4mFw5t9iPyTUZqcSQ==
+X-UI-Out-Filterresults: notjunk:1;V01:K0:jlJJxiyd3ag=:N4Hi4y620LW887tr44Nf34
+ rN/JtX2Azzgjty2vrWdkJP2YCHVq9RMHYqcWDbts1MWhdXKfiU/LiqA2xqqTbe1smKo7UfFvY
+ u/aTuLCH6D1rBrRXPCZpltNDuaYJhxVz3GmBpQkIlUdlHa0Ql2RjN9haiIZsIgVIGu9qNy2SK
+ Mt3IlqE4c2IGgxhE3T3jJ3lpebfusaoE0pT/+t7NcBNg86K82DJzKv83iAVMmOvjBv3VHfDD7
+ uip8hPeovIM0apQeGqgWRgymSsp7NX7Mbnxq39U8KmRE6CosytralFZuecg7opQ/kmCIop6F4
+ b0O/KDsiShSuYCeGw0Y0JppsW6nZkuazVpUufnubPXflrFt2YjSkxQbrc+DqIdvCRM0edfr+P
+ tylStTROIak83/drtrUoQo6I+Y+p5Sk8phDzsTDf4RlAnDOMw3oT6sTC1E+vhGaYFFJ9RlvuF
+ 6/DdDTpbwHaJL1w1heXjkOtwz3IuBDxdt/Mhbj1dwY8OzR4QV2iNMZj6ttr6tSQ6sl3zyGUnP
+ urlnMyzmKFK0iqNg9f3xuvC+DfagbuzYQ6qJuEaRFiTwV6iK59P4l8qAxNboHs2flpRNxRsZq
+ kQkB3XjiV6ksqvGcMEFHk9neFgDd5X5vf+p84bp/7d5tEdp2rLFT886Hj9lwjsgQDTqtKBY8j
+ 3sP5cTZTPoWE1Ep8/bh+4WbivkwWcXlrL5UVUOZveL+vnrimdr0zxdiXcQQu7T/tUcCwldq8r
+ iUF5SyZTUglIm+Zn0lJXK955lFCQqDkC6OagelKZCSSeSTI7d8xxR2tLVPp8libSwdPMC3WdD
+ /OKp2sdeSxmWsNqn+4zW6n1TwwgOpzpK2NrMy8EUb0hSKF1b1E=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 11:29:59PM +0200, Ahmed Soliman wrote:
-> Hello again,
-> On Wed, Nov 14, 2018 at 9:23 PM Ahmed Soliman <ahmedsoliman@mena.vt.edu> wrote:
-> > I don't do a make clean normally, but I will do it this time when
-> > bisecting, also I only use shallow
-> >  clones so it will also take some time pulling. Also to note, The arch
-> > I am using is Haswell, I am not
-> > sure if that should make any difference though.
-> 
-> I started bisecting from commit 783e9e51266ebb7f78c606a53cb0fa41bb7c31a0
-> which introduces kvm selftests. I started from complete clean kernel build and
-> run, but unfortunately, I got the Assert there too.
+On Tue, 13 Nov 2018, Jani Nikula wrote:
+> On Tue, 06 Nov 2018, Jonathan Corbet <corbet@lwn.net> wrote:
+>> On Mon, 5 Nov 2018 09:48:33 +0100
+>> Christoph Niedermaier <cniedermaier@dh-electronics.de> wrote:
+>>
+>>> A problem was found when EDID data sets for displays other than the 
+>>> provided samples were generated. The patch series has no effect on 
+>>> the provided samples that still match the data used in 
+>>> drivers/gpu/drm/drm_edid_load.c.
+>>> The provided samples use small values for XOFFSET, XPULSE, YOFFSET 
+>>> and YPULSE, where the error doesn't occur. This fix corrects the use 
+>>> of that values in case of high values, because the most significant 
+>>> bits were treated incorrectly.
+>>> 
+>>> The previous version made it necessary to first generate an EDID data 
+>>> set without correct CRC and then to fix the CRC in a second step. 
+>>> This patch series adds the CRC calculation to the makefile in such a 
+>>> way that a correct EDID data set is generated in a single build step.
+>>
+>> This seems reasonable, I guess; I've applied both.  It seems to me, 
+>> though, that this stuff is in the wrong place.  Perhaps we should go 
+>> one step further and move it to tools/ ?
+>
+> And then the next step further would be to write a tool in a high level language to generate the data rather than assemble the binary. Such a tool would, of course, catch errors like the ones fixed by this patch.
 
-I think you should be able to pre-compile the selftests and save them,
-and then bisect the kernel further back than their introduction. Actually
-you may want to simplify the test case to just a mmap/madvise pair and
-see if that reproduces, since kvm selftests doesn't do much more than
-that. (Other than all the /dev/kvm ioctls - you have the right perms
-on /dev/kvm, or are running as root, right?)
+It would be nice, but for now it works.
+Speaking for me such a task has low priority,
+because in my opinion this code is not often used and
+it is more intended for documentation purpose.
 
-Thanks,
-drew
+Best regards,
+Christoph
