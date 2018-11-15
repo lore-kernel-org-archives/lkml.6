@@ -2,105 +2,96 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 07F9AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:50:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 531FAC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:52:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C208D214F1
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:49:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IQ7xg7Oq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C208D214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 204492145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:52:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 204492145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388107AbeKOV53 (ORCPT
+        id S2387998AbeKOV7x (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 16:57:29 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:54511 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728757AbeKOV53 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 16:57:29 -0500
-Received: by mail-wm1-f66.google.com with SMTP id r63-v6so18619669wma.4;
-        Thu, 15 Nov 2018 03:49:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ZM/2LdCmaMU+xo0886oSy4ErNpU1jeq1qxkIEeDLZsc=;
-        b=IQ7xg7OqOpPlw68XW3vcqW7fLg5ArWXTGbHTgex2NkRHRnwk4uSP184EYnMHZz1GvL
-         7UWK4Le1hmwRMUvd2wqxuF/OTDYvQE7JkuRvvEIQ3+jAD2woKn2rO7eoi7S8FQo/x9EP
-         v086Onpwflik5Iy7gbZJuP8yc/rMiu2onxVOiCE3RkUikONqHlFGJ7BB3rmPr1LhabKb
-         cFYI7VeCXkj7fV+4AwD9HE5lRO+lW+lClLg5Y+J+yQAlLRAmxWkOnXz/esKjgAPq4Tjq
-         sU/WKcKQRdK0TSnjJworHetORjzAQpnixpymKBpQrt9Cf52/IeOfPx9eRNrF+IRNeUBD
-         7eEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ZM/2LdCmaMU+xo0886oSy4ErNpU1jeq1qxkIEeDLZsc=;
-        b=pq6Ts+rcMAWBdZHkuZlt+tAaSSsP8cBvnBrJmRBoH3HQV8/iQXDLdtBvdRmAXOVlWx
-         VvM7uGWs5XTkQOFiKbYQtMbCKRVkrhZstwtTCwW+IBMCeKWuGV4/SgzpSCV+tMPEB8BE
-         7dVw/HP4CyNZ+NN9vg0YUi4H6Jc4nqfspw3IGG19qY/qRnfJ0e3HMdm0c+kcdqCLr3f1
-         pp14+WgD+2FwYsl6qFNvJBOGIwFk4S8IIDQfrPhKg7BsIcvwmgt/I5smUzPytgyNEBVV
-         5fmVmXAQEpfFz3NOyfsaLwUeTgxQJeHGRqhwmA0lE6IuUbFdpDuUUIrOMKFThdxN5qX6
-         bujg==
-X-Gm-Message-State: AGRZ1gJmriEwPbna9tOKIrn8zMEfy6maJWwUS5P8cPvssxkU6yDauzcG
-        By45E4iNX6woX6xEKAvE4pj1ciAKn+GVyjpfBFlmvof8
-X-Google-Smtp-Source: AJdET5e8n1d6kMsAB2581bUpqErKn90VeSfLhzIQz07mfsHvEHa+i1t7Wp7g8NI5YKY6xOGh/hEfHMJ/mWOnIdDFHnE=
-X-Received: by 2002:a1c:84cb:: with SMTP id g194-v6mr5238686wmd.24.1542282596286;
- Thu, 15 Nov 2018 03:49:56 -0800 (PST)
+        Thu, 15 Nov 2018 16:59:53 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:51490 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728859AbeKOV7x (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 16:59:53 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id V0iz64xxsmG7; Thu, 15 Nov 2018 12:52:19 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD00900D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:900:d571:4500:c00e:26fd])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 98E6B1EC0377;
+        Thu, 15 Nov 2018 12:52:19 +0100 (CET)
+Date:   Thu, 15 Nov 2018 12:52:13 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     David Hildenbrand <david@redhat.com>
+Cc:     Dave Young <dyoung@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        devel@linuxdriverproject.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Andrew Morton <akpm@linux-foundation.org>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Baoquan He <bhe@redhat.com>, Omar Sandoval <osandov@fb.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Matthew Wilcox <willy@infradead.org>,
+        Michal Hocko <mhocko@suse.com>,
+        Lianbo Jiang <lijiang@redhat.com>,
+        "Michael S. Tsirkin" <mst@redhat.com>
+Subject: Re: [PATCH RFC 3/6] kexec: export PG_offline to VMCOREINFO
+Message-ID: <20181115115213.GE26448@zn.tnic>
+References: <20181114211704.6381-1-david@redhat.com>
+ <20181114211704.6381-4-david@redhat.com>
+ <20181115061923.GA3971@dhcp-128-65.nay.redhat.com>
+ <20181115111023.GC26448@zn.tnic>
+ <4aa5d39d-a923-87de-d646-70b9cbfe62f0@redhat.com>
 MIME-Version: 1.0
-References: <20181107220443.29573-1-richard@nod.at>
-In-Reply-To: <20181107220443.29573-1-richard@nod.at>
-From:   =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>
-Date:   Thu, 15 Nov 2018 12:49:44 +0100
-Message-ID: <CACna6ryKs4LcSK8-FY3MB27O4b7MJqVROaSTQKtpGkqqZoQS7g@mail.gmail.com>
-Subject: Re: [PATCH v2] ubifs: Handle re-linking of inodes correctly while recovery
-To:     Richard Weinberger <richard@nod.at>
-Cc:     linux-mtd@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Stable <stable@vger.kernel.org>,
-        Russell Senior <russell@personaltelco.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <4aa5d39d-a923-87de-d646-70b9cbfe62f0@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, 7 Nov 2018 at 23:04, Richard Weinberger <richard@nod.at> wrote:
-> UBIFS's recovery code strictly assumes that a deleted inode will never
-> come back, therefore it removes all data which belongs to that inode
-> as soon it faces an inode with link count 0 in the replay list.
-> Before O_TMPFILE this assumption was perfectly fine. With O_TMPFILE
-> it can lead to data loss upon a power-cut.
->
-> Consider a journal with entries like:
-> 0: inode X (nlink =3D 0) /* O_TMPFILE was created */
-> 1: data for inode X /* Someone writes to the temp file */
-> 2: inode X (nlink =3D 0) /* inode was changed, xattr, chmod, =E2=80=A6 */
-> 3: inode X (nlink =3D 1) /* inode was re-linked via linkat() */
->
-> Upon replay of entry #2 UBIFS will drop all data that belongs to inode X,
-> this will lead to an empty file after mounting.
->
-> As solution for this problem, scan the replay list for a re-link entry
-> before dropping data.
->
-> Fixes: 474b93704f32 ("ubifs: Implement O_TMPFILE")
-> Cc: stable@vger.kernel.org
-> Cc: Russell Senior <russell@personaltelco.net>
-> Cc: Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
-> Reported-by: Russell Senior <russell@personaltelco.net>
-> Reported-by: Rafa=C5=82 Mi=C5=82ecki <zajec5@gmail.com>
-> Signed-off-by: Richard Weinberger <richard@nod.at>
+On Thu, Nov 15, 2018 at 12:20:40PM +0100, David Hildenbrand wrote:
+> Sorry to say, but that is the current practice without which
+> makedumpfile would not be able to work at all. (exclude user pages,
+> exclude page cache, exclude buddy pages). Let's not reinvent the wheel
+> here. This is how dumping works forever.
 
-Thank you!!!
+Sorry, but "we've always done this in the past" doesn't make it better.
 
-Tested-by: Rafa=C5=82 Mi=C5=82ecki <rafal@milecki.pl>
+> I don't see how there should be "set of pages which do not have
+> PG_offline".
+
+It doesn't have to be a set of pages. Think a (mmconfig perhaps) region
+which the kdump kernel should completely skip because poking in it in
+the kdump kernel, causes all kinds of havoc like machine checks. etc.
+We've had and still have one issue like that.
+
+But let me clarify my note: I don't want to be discussing with you the
+design of makedumpfile and how it should or should not work - that ship
+has already sailed. Apparently there are valid reasons to do it this
+way.
+
+I was *simply* stating that it feels wrong to export mm flags like that.
+
+But as I said already, that is mm guys' call and looking at how we're
+already exporting a bunch of stuff in the vmcoreinfo - including other
+mm flags - I guess one more flag doesn't matter anymore.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
