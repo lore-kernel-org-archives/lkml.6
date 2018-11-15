@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 10331C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:12:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC43C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:12:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C0D20208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:12:28 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 91A5D2080C
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:12:33 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="uopQ+OEz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0D20208A3
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j3omjP0L"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A5D2080C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388588AbeKPBUj (ORCPT
+        id S2388610AbeKPBUp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:20:39 -0500
-Received: from mailout1.samsung.com ([203.254.224.24]:35675 "EHLO
-        mailout1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726432AbeKPBUj (ORCPT
+        Thu, 15 Nov 2018 20:20:45 -0500
+Received: from mailout4.samsung.com ([203.254.224.34]:38399 "EHLO
+        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbeKPBUp (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 20:20:39 -0500
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-        by mailout1.samsung.com (KnoxPortal) with ESMTP id 20181115151222epoutp014a29004e76fe15d07e7979ef7595892e~nVOWZJQ-S0564405644epoutp01g;
-        Thu, 15 Nov 2018 15:12:22 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20181115151222epoutp014a29004e76fe15d07e7979ef7595892e~nVOWZJQ-S0564405644epoutp01g
+        Thu, 15 Nov 2018 20:20:45 -0500
+Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
+        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20181115151227epoutp0467cfab910f50b3cf6c960533d5290cf5~nVOapOAJn1320613206epoutp048;
+        Thu, 15 Nov 2018 15:12:27 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20181115151227epoutp0467cfab910f50b3cf6c960533d5290cf5~nVOapOAJn1320613206epoutp048
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542294742;
-        bh=GpBHhxFllghOSCtnxruKtLvFXzlEL/7kNI6p7ER0EuQ=;
+        s=mail20170921; t=1542294747;
+        bh=5GbDmz+oy4esatK4+k1/hnhgzRRda1luQ/7q8+U3NQY=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=uopQ+OEzFMcOJS0qZMQ/wD14Rv4ujsmcmCNqw8tuSUeiyhp5Yl76iZolI73N3qefd
-         GgnN6EFJ3+ztOQlJ9ReGolsIuWNEmH0E04C6XSwNjjCPg1kqcrOh503+ERFDeqmRjf
-         THXuSNzfcCdcKwvvGKob1oqUx2CcWwGT4CPKVUmE=
+        b=j3omjP0Ld5bTDM0BBWQK9aIakXowOe+K82gdQOLkf885G6LE68Ao3jY1U7PUlofGD
+         JCIGuW/XG6mcnW/zZrRY1iJMOk2QLR2OP6o4paEuCTXlQzRmbjTh1Vyb/iI6iVtEyK
+         z4sbNDtSv2GpLyi+17noN8FSwgMKtZWCysmVphss=
 Received: from epsmges2p3.samsung.com (unknown [182.195.42.71]) by
         epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20181115151221epcas2p1e6bf67b49f6f701e288c196c91fc5317~nVOVxHpRj2500425004epcas2p1s;
-        Thu, 15 Nov 2018 15:12:21 +0000 (GMT)
-Received: from epcas2p3.samsung.com ( [182.195.41.55]) by
+        20181115151226epcas2p16826183e4bc68aefa84950e6a67eabf7~nVOZyj6Qr2502025020epcas2p1t;
+        Thu, 15 Nov 2018 15:12:26 +0000 (GMT)
+Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
         epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        9B.64.04218.5DC8DEB5; Fri, 16 Nov 2018 00:12:21 +0900 (KST)
+        ED.64.04218.ADC8DEB5; Fri, 16 Nov 2018 00:12:26 +0900 (KST)
 Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20181115151221epcas2p17b8bbb240f70fdd7c5ecf1c0c27de35f~nVOVQKa1S1292412924epcas2p1p;
-        Thu, 15 Nov 2018 15:12:21 +0000 (GMT)
-X-AuditID: b6c32a47-be1ff7000000107a-4b-5bed8cd5faad
+        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+        20181115151225epcas2p4244fba019e0509d480f7953a05097105~nVOZcWuXU0890008900epcas2p4z;
+        Thu, 15 Nov 2018 15:12:25 +0000 (GMT)
+X-AuditID: b6c32a47-bf9ff7000000107a-52-5bed8cdaaac4
 Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id B2.28.03702.5DC8DEB5; Fri, 16 Nov
-        2018 00:12:21 +0900 (KST)
+        (Symantec Messaging Gateway) with SMTP id 93.28.03702.9DC8DEB5; Fri, 16 Nov
+        2018 00:12:25 +0900 (KST)
 Received: from AMDC3058.DIGITAL.local ([106.120.53.102]) by mmp2.samsung.com
         (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
         2014)) with ESMTPA id <0PI8006WJQ7YQ380@mmp2.samsung.com>; Fri, 16 Nov 2018
-        00:12:21 +0900 (KST)
+        00:12:25 +0900 (KST)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -69,41 +69,41 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH 3/9] ARM: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
-Date:   Thu, 15 Nov 2018 16:11:32 +0100
-Message-id: <1542294698-17470-4-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 4/9] ARM64: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
+Date:   Thu, 15 Nov 2018 16:11:33 +0100
+Message-id: <1542294698-17470-5-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrHIsWRmVeSWpSXmKPExsWy7bCmue7VnrfRBudOGljcWneO1eLvpGPs
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsWy7bCmme6tnrfRBu9fs1rcWneO1eLvpGPs
         FhtnrGe1uP7lOavFwmnLGS36H79mtjh/fgO7xabH11gtLu+aw2Yx4/w+JouXR34wWqw9cpfd
         YtHWL+wOvB6/f01i9Lh1p95j06pONo/NS+o93u+7yubRt2UVo8fnTXIB7FFcNimpOZllqUX6
-        dglcGdefZxYsZqv4cXQBawPjctYuRk4OCQETicdXjjJ1MXJxCAnsYJS437SPGcL5zijxbuVU
-        uKrW640sEIkNjBIT5k2CavnFKPHl+n92kCo2ASuJie2rGEFsEQFNiet/v4N1MwscZZZYckUC
-        xBYWcJPoPXQbKM7BwSKgKtF+0h8kzCvgIXHr106oZXISJ49NBrM5BTwltp9tB7tIQuAAm0TL
-        lodQRS4Sy3f3s0DYwhKvjm9hh7ClJZ6t2sgI0TCdUeLNr6UsEM56Rok1Z44xQVRZSxw+fhHq
-        Oj6JjsN/2UEukhDglehoE4Io8ZC48nktI8SXcxglfp3ZwzSBUXIBI8MqRrHUguLc9NRiowJj
-        veLE3OLSvHS95PzcTYzgWNZy38G47ZzPIUYBDkYlHl6D8rfRQqyJZcWVuYcYJTiYlUR43eqA
-        QrwpiZVVqUX58UWlOanFhxilOViUxHkfSs+NFhJITyxJzU5NLUgtgskycXBKNTCmd1YHHZnU
-        x77o3yyF0H0mvCrzRWPDy87/tc2bvWf5JP7jDUrfe+Ywfn2/WP3Ea7lkozUxzlbCan0v790+
-        LLj/5jP/8M3Guw5ISP2Rn/lhe8pevpLH5klvn67iCOOTezDRhdlW5NK/kvv1Xe/CXS2ui32c
-        VTQxveOL8Ck1plUnVx0tlivX29KoxFKckWioxVxUnAgA1V72weECAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrALMWRmVeSWpSXmKPExsVy+t9jQd2rPW+jDf695LW4te4cq8XfScfY
+        dglcGXN2r2IqmMZWsfvubuYGxgWsXYycHBICJhLvH84Asrk4hAR2MEocvLwIyvnOKDHl6xM2
+        mKoJ098yQSQ2MEo8WzCLDcL5xShx7NspRpAqNgEriYntq8BsEQFNiet/v4PtYBY4yiyx5IoE
+        iC0s4CFx9tUjJhCbRUBV4u22ecwgNi9QfOabiSwQ2+QkTh6bDNbLKeApsf1sOzPIMgmBA2wS
+        284fgjrJReJi6zx2CFtY4tXxLVC2tMSzVRsZIRqmM0q8+bWUBcJZzyix5swxJogqa4nDxy9C
+        nccn0XH4L1A3B1CcV6KjTQiixEPiZvMnqDfnMEoc+rqceQKj5AJGhlWMYqkFxbnpqcVGBcZ6
+        xYm5xaV56XrJ+bmbGMHxrOW+g3HbOZ9DjAIcjEo8vAblb6OFWBPLiitzDzFKcDArifC61QGF
+        eFMSK6tSi/Lji0pzUosPMUpzsCiJ8z6UnhstJJCeWJKanZpakFoEk2Xi4JRqYNw/s4JXNbPr
+        78/vk+UclNqjFpf+VGXx2Hk5xb3t5BGn//lSd39deJLYLzV5p4rFsfXXbs6a6HeQUX+S4/S+
+        nPz0wuePOV/0HPp09OPPQAnxhbu6D6ut2reuQq7N5+CunI8bji3Pu+z+WFNj9vLp1zvub7vv
+        tbA7reHym5fW3ZdD+jOUXoVUdG5TYinOSDTUYi4qTgQAjWLWfOMCAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMLMWRmVeSWpSXmKPExsVy+t9jQd2bPW+jDf5/1LS4te4cq8XfScfY
         LTbOWM9qcf3Lc1aLhdOWM1r0P37NbHH+/AZ2i02Pr7FaXN41h81ixvl9TBYvj/xgtFh75C67
         xaKtX9gdeD1+/5rE6HHrTr3HplWdbB6bl9R7vN93lc2jb8sqRo/Pm+QC2KO4bFJSczLLUov0
-        7RK4Mq4/zyxYzFbx4+gC1gbG5axdjJwcEgImEq3XG1lAbCGBdYwSy2bIdDFyAdm/GCXmXzgC
-        lmATsJKY2L6KEcQWEdCUuP73OytIEbPAUWaJzxO2M4MkhAXcJHoP3QZKcHCwCKhKtJ/0Bwnz
-        CnhI3Pq1E2qZnMTJY5PBbE4BT4ntZ9uZIRZ7SHz+e4Z9AiPPAkaGVYySqQXFuem5xUYFRnmp
-        5XrFibnFpXnpesn5uZsYgeG47bBW/w7Gx0viDzEKcDAq8fAalL+NFmJNLCuuzD3EKMHBrCTC
-        61YHFOJNSaysSi3Kjy8qzUktPsQozcGiJM7Ln38sUkggPbEkNTs1tSC1CCbLxMEp1cAY/v/C
-        Q0/Xqkn7+X++59TJe8iv2m521efftSV57Sf1105+e9lFzdruIWsQs6xNfzgjM7OPVNfSx8de
-        8YVPjOM81qqzk8/+19efj8PzwgUUv9ervp0dmWUkvpWl36tqwV/16+eFEqTcyquPnn1kPeHB
-        9itxMjFlyxMYepv59lscsRCfvjliZbESS3FGoqEWc1FxIgDZpOusQwIAAA==
-X-CMS-MailID: 20181115151221epcas2p17b8bbb240f70fdd7c5ecf1c0c27de35f
+        7RK4MubsXsVUMI2tYvfd3cwNjAtYuxg5OSQETCQmTH/L1MXIxSEksI5RYu/cacwQzi9GiRdP
+        tjKBVLEJWElMbF/FCGKLCGhKXP/7nRWkiFngKLPE5wnbmUESwgIeEmdfPQJrYBFQlXi7bR5Y
+        nBcoPvPNRBaIdXISJ49NBlvNKeApsf1sO1iNEFDN579n2Ccw8ixgZFjFKJlaUJybnltsVGCU
+        l1quV5yYW1yal66XnJ+7iREYlNsOa/XvYHy8JP4QowAHoxIPr0H522gh1sSy4srcQ4wSHMxK
+        IrxudUAh3pTEyqrUovz4otKc1OJDjNIcLErivPz5xyKFBNITS1KzU1MLUotgskwcnFINjP3a
+        f082rDwQvfDQvo2nNkoen+MTYfGf2froty+ioaY+j7q2tDTFnXqgPH+dPZ+beXOX2zzTw+wn
+        9OOkVI+krTmzUYbXK/6w1F8VB7uuYqMi9uyI8zZLeT7c9D74+9k9PpObx0Od7ye+fzjbpIax
+        4cPy0/kv7WTObbVLDZ9Rc+HL8uZANluJJCWW4oxEQy3mouJEAHZj+bRGAgAA
+X-CMS-MailID: 20181115151225epcas2p4244fba019e0509d480f7953a05097105
 X-Msg-Generator: CA
 CMS-TYPE: 102P
-X-CMS-RootMailID: 20181115151221epcas2p17b8bbb240f70fdd7c5ecf1c0c27de35f
+X-CMS-RootMailID: 20181115151225epcas2p4244fba019e0509d480f7953a05097105
 References: <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20181115151221epcas2p17b8bbb240f70fdd7c5ecf1c0c27de35f@epcas2p1.samsung.com>
+        <CGME20181115151225epcas2p4244fba019e0509d480f7953a05097105@epcas2p4.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
@@ -111,28 +111,27 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Pankaj Dubey <pankaj.dubey@samsung.com>
 
-As now we have chipid driver to initialize SoC related information
-let's include it in build by default.
+This patch enables exynos_chipid driver for ARCH_EXYNOS
+based SoC.
 
 Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- arch/arm/mach-exynos/Kconfig | 1 +
+ arch/arm64/Kconfig.platforms | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/arm/mach-exynos/Kconfig b/arch/arm/mach-exynos/Kconfig
-index b40963c..e3e63aa 100644
---- a/arch/arm/mach-exynos/Kconfig
-+++ b/arch/arm/mach-exynos/Kconfig
-@@ -13,6 +13,7 @@ menuconfig ARCH_EXYNOS
- 	select ARM_AMBA
- 	select ARM_GIC
+diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
+index 51bc479..84b88ab7 100644
+--- a/arch/arm64/Kconfig.platforms
++++ b/arch/arm64/Kconfig.platforms
+@@ -62,6 +62,7 @@ config ARCH_BRCMSTB
+ config ARCH_EXYNOS
+ 	bool "ARMv8 based Samsung Exynos SoC family"
  	select COMMON_CLK_SAMSUNG
 +	select EXYNOS_CHIPID
- 	select EXYNOS_THERMAL
+ 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
  	select EXYNOS_PMU
- 	select EXYNOS_SROM
+ 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
 -- 
 1.9.1
 
