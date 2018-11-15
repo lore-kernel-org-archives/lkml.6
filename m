@@ -2,148 +2,64 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 217EBC04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:34:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFEFC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:35:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DC9212086C
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:33:59 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="tkH3b2RS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC9212086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=dell.com
+	by mail.kernel.org (Postfix) with ESMTP id 005702086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:35:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 005702086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388929AbeKPFnF (ORCPT
+        id S2388938AbeKPFoL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 00:43:05 -0500
-Received: from esa8.dell-outbound.iphmx.com ([68.232.149.218]:22042 "EHLO
-        esa8.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725868AbeKPFnF (ORCPT
+        Fri, 16 Nov 2018 00:44:11 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:45140 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725841AbeKPFoL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 00:43:05 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
-  t=1542310437; x=1573846437;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=VQip/TrRTfb5FzDvAYT0yUl71BfNR0TbXzY6hJNk3Z0=;
-  b=tkH3b2RS3YpQA+LaTUrvRiHJ0T2uW3Dcv/VRAqOFqSBN6BlahHA5xQ5E
-   tGYqOQwRvFSjTUxS4qPjvbUhMj43ILdaGWjeGkQJxupk9YQZ4za1K1dP8
-   IWL5WtEPajQ+L0Jb4OPjhhgcQOUpEgMhCe7wTeX+z8FKAuTvZJID53BMj
-   s=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EBAABeye1bhyeV50NZChkBAQEBAQE?=
- =?us-ascii?q?BAQEBAQEHAQEBAQEBgVEEAQEBAQELAQGDWBInCowGX40rgXqVPBSBZgsBARi?=
- =?us-ascii?q?EVAKDczQJDQEDAQECAQECAQECEAEBAQoLCQgpL0IBDgGBZCKCZQEBAQEDARE?=
- =?us-ascii?q?VEz8MBAIBCBEEAQEBHhAoIQEFCAIEAQ0FCBqCf4ICnC0CgRCJWAEBAYFqM4o?=
- =?us-ascii?q?mjhuBEYMShEsBBwsBhXoCiQ6BdoVMjk5GBwKNDYQPIJB2l2ACBAIEBQIUgUa?=
- =?us-ascii?q?BHXFwgzyCNY4lQAExAYJViHiBH4EfAQE?=
-X-IPAS-Result: =?us-ascii?q?A2EBAABeye1bhyeV50NZChkBAQEBAQEBAQEBAQEHAQEBA?=
- =?us-ascii?q?QEBgVEEAQEBAQELAQGDWBInCowGX40rgXqVPBSBZgsBARiEVAKDczQJDQEDA?=
- =?us-ascii?q?QECAQECAQECEAEBAQoLCQgpL0IBDgGBZCKCZQEBAQEDAREVEz8MBAIBCBEEA?=
- =?us-ascii?q?QEBHhAoIQEFCAIEAQ0FCBqCf4ICnC0CgRCJWAEBAYFqM4omjhuBEYMShEsBB?=
- =?us-ascii?q?wsBhXoCiQ6BdoVMjk5GBwKNDYQPIJB2l2ACBAIEBQIUgUaBHXFwgzyCNY4lQ?=
- =?us-ascii?q?AExAYJViHiBH4EfAQE?=
-Received: from mx0a-00154901.pphosted.com (HELO mx0b-00154901.pphosted.com) ([67.231.149.39])
-  by esa8.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Nov 2018 13:33:57 -0600
-Received: from pps.filterd (m0090350.ppops.net [127.0.0.1])
-        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAFJMjp1067855;
-        Thu, 15 Nov 2018 14:33:56 -0500
-Received: from esa3.dell-outbound2.iphmx.com (esa3.dell-outbound2.iphmx.com [68.232.154.63])
-        by mx0b-00154901.pphosted.com with ESMTP id 2ns8ycafq6-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 15 Nov 2018 14:33:56 -0500
-From:   <Mario.Limonciello@dell.com>
-Received: from ausxipps306.us.dell.com ([143.166.148.156])
-  by esa3.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 16 Nov 2018 01:33:53 +0600
-X-LoopCount0: from 10.166.132.190
-X-IronPort-AV: E=Sophos;i="5.56,237,1539666000"; 
-   d="scan'208";a="238898926"
-To:     <mika.westerberg@linux.intel.com>, <lorenzo.pieralisi@arm.com>
-CC:     <lukas@wunner.de>, <iommu@lists.linux-foundation.org>,
-        <joro@8bytes.org>, <dwmw2@infradead.org>,
-        <baolu.lu@linux.intel.com>, <ashok.raj@intel.com>,
-        <bhelgaas@google.com>, <rjw@rjwysocki.net>,
-        <jacob.jun.pan@intel.com>, <andreas.noever@gmail.com>,
-        <michael.jamet@intel.com>, <YehezkelShB@gmail.com>,
-        <ckellner@redhat.com>, <anthony.wong@canonical.com>,
-        <linux-acpi@vger.kernel.org>, <linux-pci@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
-Thread-Topic: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
-Thread-Index: AQHUeqH3m6Bzl9jyAUGXGzFcP9h+yqVM0vKAgAEbdgCAAAh/AIAABTIAgAMNfYCAAA5UAIAABp6AgAAIYACAAAJ5gIAAXB0AgAAU5AD//6RacA==
-Date:   Thu, 15 Nov 2018 19:33:54 +0000
-Message-ID: <372db397d5384efd8e7264ba8e1b9cbd@ausx13mpc120.AMER.DELL.COM>
-References: <20181112180203.lx72gjfplb6xlur7@wunner.de>
- <20181113105636.GB11202@e107981-ln.cambridge.arm.com>
- <20181113112700.GT2500@lahna.fi.intel.com>
- <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
- <20181115102239.GU2500@lahna.fi.intel.com>
- <20181115111356.GA599@e107981-ln.cambridge.arm.com>
- <20181115113737.GW2500@lahna.fi.intel.com>
- <20181115120736.pscly6zwd3k2tvd2@wunner.de>
- <20181115121627.GA2500@lahna.fi.intel.com>
- <20181115174608.GA17691@e107981-ln.cambridge.arm.com>
- <20181115190054.GD4179@lahna.fi.intel.com>
-In-Reply-To: <20181115190054.GD4179@lahna.fi.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.143.242.75]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-15_14:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=895 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811150169
+        Fri, 16 Nov 2018 00:44:11 -0500
+Received: from localhost (unknown [64.114.255.97])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id DFB1F1479418D;
+        Thu, 15 Nov 2018 11:35:03 -0800 (PST)
+Date:   Thu, 15 Nov 2018 11:35:01 -0800 (PST)
+Message-Id: <20181115.113501.2215768757973757171.davem@davemloft.net>
+To:     natechancellor@gmail.com
+Cc:     sbrivio@redhat.com, sd@queasysnail.net, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] geneve: Add missing braces in addr6 initializer
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181112221248.11477-1-natechancellor@gmail.com>
+References: <20181112221248.11477-1-natechancellor@gmail.com>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=utf-8
+Content-Transfer-Encoding: base64
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Thu, 15 Nov 2018 11:35:04 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-> -----Original Message-----
-> From: Mika Westerberg <mika.westerberg@linux.intel.com>
-> Sent: Thursday, November 15, 2018 1:01 PM
-> To: Lorenzo Pieralisi
-> Cc: Lukas Wunner; iommu@lists.linux-foundation.org; Joerg Roedel; David
-> Woodhouse; Lu Baolu; Ashok Raj; Bjorn Helgaas; Rafael J. Wysocki; Jacob j=
-un Pan;
-> Andreas Noever; Michael Jamet; Yehezkel Bernat; Christian Kellner; Limonc=
-iello,
-> Mario; Anthony Wong; linux-acpi@vger.kernel.org; linux-pci@vger.kernel.or=
-g; linux-
-> kernel@vger.kernel.org
-> Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
->=20
->=20
-> [EXTERNAL EMAIL]
->=20
-> On Thu, Nov 15, 2018 at 05:46:08PM +0000, Lorenzo Pieralisi wrote:
-> > Do you really need to parse it if the dev->is_thunderbolt check is enou=
-gh ?
->=20
-> Yes, we need to parse it one way or another. dev->is_thunderbolt is
-> based on heuristics which do not apply anymore when the thing gets
-> integrated in the SoC.
->=20
-> The _DSD is there already (on existing systems) and is being used by
-> Windows so I don't understand why we cannot take advantage of it? Every
-> new system with Thunderbolt ports will have it.
-
-Furthermore it's entirely in the BIOS writers best interest to do this corr=
-ectly
-as it applies proper policy on Windows as well.
-
-I wouldn't be surprised if WHCK failed if it was done wrong.
+RnJvbTogTmF0aGFuIENoYW5jZWxsb3IgPG5hdGVjaGFuY2VsbG9yQGdtYWlsLmNvbT4NCkRhdGU6
+IE1vbiwgMTIgTm92IDIwMTggMTU6MTI6NDggLTA3MDANCg0KPiBDbGFuZyB3YXJuczoNCj4gDQo+
+IGRyaXZlcnMvbmV0L2dlbmV2ZS5jOjQyODoyOTogZXJyb3I6IHN1Z2dlc3QgYnJhY2VzIGFyb3Vu
+ZCBpbml0aWFsaXphdGlvbg0KPiBvZiBzdWJvYmplY3QgWy1XZXJyb3IsLVdtaXNzaW5nLWJyYWNl
+c10NCj4gICAgICAgICAgICAgICAgIHN0cnVjdCBpbjZfYWRkciBhZGRyNiA9IHsgMCB9Ow0KPiAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICBeDQo+ICAgICAgICAgICAg
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgIHt9DQo+IA0KPiBGaXhlczogYTA3OTY2NDQ3
+ZjM5ICgiZ2VuZXZlOiBJQ01QIGVycm9yIGxvb2t1cCBoYW5kbGVyIikNCj4gU2lnbmVkLW9mZi1i
+eTogTmF0aGFuIENoYW5jZWxsb3IgPG5hdGVjaGFuY2VsbG9yQGdtYWlsLmNvbT4NCg0KQW5kIHRo
+aXMgbWFrZXMgR0NDIHdhcm4uDQoNCmRyaXZlcnMvbmV0L2dlbmV2ZS5jOiBJbiBmdW5jdGlvbiDi
+gJhnZW5ldmVfdWRwX2VuY2FwX2Vycl9sb29rdXDigJk6DQpkcml2ZXJzL25ldC9nZW5ldmUuYzo0
+Mjg6Mjc6IHdhcm5pbmc6IG1pc3NpbmcgYnJhY2VzIGFyb3VuZCBpbml0aWFsaXplciBbLVdtaXNz
+aW5nLWJyYWNlc10NCiAgIHN0cnVjdCBpbjZfYWRkciBhZGRyNiA9IHsgeyAwIH0gfTsNCiAgICAg
+ICAgICAgICAgICAgICAgICAgICAgIF4NCiAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICB7
+IH0NCg0K77yI4pWvwrDilqHCsO+8ieKVr++4tSDilLvilIHilLsNCg==
