@@ -6,37 +6,37 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 367EDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:30:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF24FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:31:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 04CBE2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:30:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04CBE2087A
+	by mail.kernel.org (Postfix) with ESMTP id 974412087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:31:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 974412087A
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388177AbeKOTh4 (ORCPT
+        id S2388052AbeKOThs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:37:56 -0500
-Received: from szxga07-in.huawei.com ([45.249.212.35]:58120 "EHLO huawei.com"
+        Thu, 15 Nov 2018 14:37:48 -0500
+Received: from szxga07-in.huawei.com ([45.249.212.35]:58062 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727265AbeKOTh4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:37:56 -0500
-Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id 08F917C9B1E06;
-        Thu, 15 Nov 2018 17:30:52 +0800 (CST)
+        id S1727265AbeKOThr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:37:47 -0500
+Received: from DGGEMS402-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id D84F176DC4CC0;
+        Thu, 15 Nov 2018 17:30:41 +0800 (CST)
 Received: from S00293818-DELL1.china.huawei.com (10.47.88.106) by
  DGGEMS402-HUB.china.huawei.com (10.3.19.202) with Microsoft SMTP Server id
- 14.3.408.0; Thu, 15 Nov 2018 17:30:43 +0800
+ 14.3.408.0; Thu, 15 Nov 2018 17:30:33 +0800
 From:   Salil Mehta <salil.mehta@huawei.com>
 To:     <davem@davemloft.net>
 CC:     <salil.mehta@huawei.com>, <yisen.zhuang@huawei.com>,
         <lipeng321@huawei.com>, <mehta.salil@opnsrc.net>,
         <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
         <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>
-Subject: [PATCH V2 net-next 5/5] net: hns3: Adds GRO params to SKB for the stack
-Date:   Thu, 15 Nov 2018 09:29:25 +0000
-Message-ID: <20181115092925.11812-6-salil.mehta@huawei.com>
+Subject: [PATCH V2 net-next 3/5] net: hns3: Add support for ethtool -K to enable/disable HW GRO
+Date:   Thu, 15 Nov 2018 09:29:23 +0000
+Message-ID: <20181115092925.11812-4-salil.mehta@huawei.com>
 X-Mailer: git-send-email 2.8.3
 In-Reply-To: <20181115092925.11812-1-salil.mehta@huawei.com>
 References: <20181115092925.11812-1-salil.mehta@huawei.com>
@@ -51,119 +51,123 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Peng Li <lipeng321@huawei.com>
 
-When HW GRO enable, protocol stack will not do GRO again,
-driver should add gro param to the skb for the protocol
-stack..
+This patch adds support of ethtool -K to enable/disable
+hardware GRO in HNS3 PF/VF driver.
 
 Signed-off-by: Peng Li <lipeng321@huawei.com>
 Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
 ---
- .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 43 +++++++++++++++++++
- .../net/ethernet/hisilicon/hns3/hns3_enet.h   |  9 ++--
- 2 files changed, 49 insertions(+), 3 deletions(-)
+ drivers/net/ethernet/hisilicon/hns3/hnae3.h         |  3 +++
+ drivers/net/ethernet/hisilicon/hns3/hns3_enet.c     | 13 ++++++++++++-
+ .../net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c |  9 +++++++++
+ .../ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c   |  8 ++++++++
+ 4 files changed, 32 insertions(+), 1 deletion(-)
 
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hnae3.h b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+index 21d934b7a2a3..1746172ffbf7 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hnae3.h
++++ b/drivers/net/ethernet/hisilicon/hns3/hnae3.h
+@@ -305,6 +305,8 @@ struct hnae3_ae_dev {
+  *   Set vlan filter config of vf
+  * enable_hw_strip_rxvtag()
+  *   Enable/disable hardware strip vlan tag of packets received
++ * set_gro_en
++ *   Enable/disable HW GRO
+  */
+ struct hnae3_ae_ops {
+ 	int (*init_ae_dev)(struct hnae3_ae_dev *ae_dev);
+@@ -449,6 +451,7 @@ struct hnae3_ae_ops {
+ 	bool (*get_hw_reset_stat)(struct hnae3_handle *handle);
+ 	bool (*ae_dev_resetting)(struct hnae3_handle *handle);
+ 	unsigned long (*ae_dev_reset_cnt)(struct hnae3_handle *handle);
++	int (*set_gro_en)(struct hnae3_handle *handle, int enable);
+ };
+ 
+ struct hnae3_dcb_ops {
 diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-index 7776089b6bc2..22220af92aa9 100644
+index d8c5e1198670..860067898471 100644
 --- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
 +++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.c
-@@ -15,6 +15,7 @@
- #include <linux/vermagic.h>
- #include <net/gre.h>
- #include <net/pkt_cls.h>
-+#include <net/tcp.h>
- #include <net/vxlan.h>
+@@ -1345,6 +1345,15 @@ static int hns3_nic_set_features(struct net_device *netdev,
+ 			priv->ops.maybe_stop_tx = hns3_nic_maybe_stop_tx;
+ 	}
  
- #include "hnae3.h"
-@@ -2318,6 +2319,12 @@ static void hns3_rx_checksum(struct hns3_enet_ring *ring, struct sk_buff *skb,
- 	if (!(netdev->features & NETIF_F_RXCSUM))
- 		return;
- 
-+	/* We MUST enable hardware checksum before enabling hardware GRO */
-+	if (skb_shinfo(skb)->gso_size) {
-+		skb->ip_summed = CHECKSUM_UNNECESSARY;
-+		return;
++	if (changed & (NETIF_F_GRO_HW) && h->ae_algo->ops->set_gro_en) {
++		if (features & NETIF_F_GRO_HW)
++			ret = h->ae_algo->ops->set_gro_en(h, true);
++		else
++			ret = h->ae_algo->ops->set_gro_en(h, false);
++		if (ret)
++			return ret;
 +	}
 +
- 	/* check if hardware has done checksum */
- 	if (!hnae3_get_bit(bd_base_info, HNS3_RXD_L3L4P_B))
- 		return;
-@@ -2511,6 +2518,39 @@ static int hns3_add_frag(struct hns3_enet_ring *ring, struct hns3_desc *desc,
- 	return 0;
+ 	if ((changed & NETIF_F_HW_VLAN_CTAG_FILTER) &&
+ 	    h->ae_algo->ops->enable_vlan_filter) {
+ 		if (features & NETIF_F_HW_VLAN_CTAG_FILTER)
+@@ -1929,7 +1938,9 @@ static void hns3_set_default_feature(struct net_device *netdev)
+ 		NETIF_F_GSO_UDP_TUNNEL_CSUM | NETIF_F_SCTP_CRC;
+ 
+ 	if (pdev->revision >= 0x21) {
+-		netdev->hw_features |= NETIF_F_HW_VLAN_CTAG_FILTER;
++		netdev->hw_features |= NETIF_F_HW_VLAN_CTAG_FILTER |
++			NETIF_F_GRO_HW;
++		netdev->features |= NETIF_F_GRO_HW;
+ 
+ 		if (!(h->flags & HNAE3_SUPPORT_VF)) {
+ 			netdev->hw_features |= NETIF_F_NTUPLE;
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+index 3f8bd11d0824..eb6b6a5f744f 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_main.c
+@@ -7667,6 +7667,14 @@ static void hclge_get_link_mode(struct hnae3_handle *handle,
+ 	}
  }
  
-+static void hns3_set_gro_param(struct sk_buff *skb, u32 l234info,
-+			       u32 bd_base_info)
++static int hclge_gro_en(struct hnae3_handle *handle, int enable)
 +{
-+	u16 gro_count;
-+	u32 l3_type;
++	struct hclge_vport *vport = hclge_get_vport(handle);
++	struct hclge_dev *hdev = vport->back;
 +
-+	gro_count = hnae3_get_field(l234info, HNS3_RXD_GRO_COUNT_M,
-+				    HNS3_RXD_GRO_COUNT_S);
-+	/* if there is no HW GRO, do not set gro params */
-+	if (!gro_count)
-+		return;
-+
-+	/* tcp_gro_complete() will copy NAPI_GRO_CB(skb)->count
-+	 * to skb_shinfo(skb)->gso_segs
-+	 */
-+	NAPI_GRO_CB(skb)->count = gro_count;
-+
-+	l3_type = hnae3_get_field(l234info, HNS3_RXD_L3ID_M,
-+				  HNS3_RXD_L3ID_S);
-+	if (l3_type == HNS3_L3_TYPE_IPV4)
-+		skb_shinfo(skb)->gso_type = SKB_GSO_TCPV4;
-+	else if (l3_type == HNS3_L3_TYPE_IPV6)
-+		skb_shinfo(skb)->gso_type = SKB_GSO_TCPV6;
-+	else
-+		return;
-+
-+	skb_shinfo(skb)->gso_size = hnae3_get_field(bd_base_info,
-+						    HNS3_RXD_GRO_SIZE_M,
-+						    HNS3_RXD_GRO_SIZE_S);
-+	if (skb_shinfo(skb)->gso_size)
-+		tcp_gro_complete(skb);
++	return hclge_config_gro(hdev, enable);
 +}
 +
- static void hns3_set_rx_skb_rss_type(struct hns3_enet_ring *ring,
- 				     struct sk_buff *skb)
- {
-@@ -2645,6 +2685,9 @@ static int hns3_handle_rx_bd(struct hns3_enet_ring *ring,
+ static const struct hnae3_ae_ops hclge_ops = {
+ 	.init_ae_dev = hclge_init_ae_dev,
+ 	.uninit_ae_dev = hclge_uninit_ae_dev,
+@@ -7738,6 +7746,7 @@ static const struct hnae3_ae_ops hclge_ops = {
+ 	.get_hw_reset_stat = hclge_get_hw_reset_stat,
+ 	.ae_dev_resetting = hclge_ae_dev_resetting,
+ 	.ae_dev_reset_cnt = hclge_ae_dev_reset_cnt,
++	.set_gro_en = hclge_gro_en,
+ };
  
- 	ring->tqp_vector->rx_group.total_bytes += skb->len;
+ static struct hnae3_ae_algo ae_algo = {
+diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+index 2e889b829976..e27d6fa85a74 100644
+--- a/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
++++ b/drivers/net/ethernet/hisilicon/hns3/hns3vf/hclgevf_main.c
+@@ -2368,6 +2368,13 @@ void hclgevf_update_speed_duplex(struct hclgevf_dev *hdev, u32 speed,
+ 	hdev->hw.mac.duplex = duplex;
+ }
  
-+	/* This is needed in order to enable forwarding support */
-+	hns3_set_gro_param(skb, l234info, bd_base_info);
++static int hclgevf_gro_en(struct hnae3_handle *handle, int enable)
++{
++	struct hclgevf_dev *hdev = hclgevf_ae_get_hdev(handle);
 +
- 	hns3_rx_checksum(ring, skb, desc);
- 	*out_skb = skb;
- 	hns3_set_rx_skb_rss_type(ring, skb);
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-index 8e56b7e44978..3365c9596983 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3_enet.h
-@@ -109,6 +109,10 @@ enum hns3_nic_state {
- #define HNS3_RXD_DOI_B				21
- #define HNS3_RXD_OL3E_B				22
- #define HNS3_RXD_OL4E_B				23
-+#define HNS3_RXD_GRO_COUNT_S			24
-+#define HNS3_RXD_GRO_COUNT_M			(0x3f << HNS3_RXD_GRO_COUNT_S)
-+#define HNS3_RXD_GRO_FIXID_B			30
-+#define HNS3_RXD_GRO_ECN_B			31
++	return hclgevf_config_gro(hdev, enable);
++}
++
+ static void hclgevf_get_media_type(struct hnae3_handle *handle,
+ 				  u8 *media_type)
+ {
+@@ -2442,6 +2449,7 @@ static const struct hnae3_ae_ops hclgevf_ops = {
+ 	.get_hw_reset_stat = hclgevf_get_hw_reset_stat,
+ 	.ae_dev_resetting = hclgevf_ae_dev_resetting,
+ 	.ae_dev_reset_cnt = hclgevf_ae_dev_reset_cnt,
++	.set_gro_en = hclgevf_gro_en,
+ };
  
- #define HNS3_RXD_ODMAC_S			0
- #define HNS3_RXD_ODMAC_M			(0x3 << HNS3_RXD_ODMAC_S)
-@@ -135,9 +139,8 @@ enum hns3_nic_state {
- #define HNS3_RXD_TSIND_S			12
- #define HNS3_RXD_TSIND_M			(0x7 << HNS3_RXD_TSIND_S)
- #define HNS3_RXD_LKBK_B				15
--#define HNS3_RXD_HDL_S				16
--#define HNS3_RXD_HDL_M				(0x7ff << HNS3_RXD_HDL_S)
--#define HNS3_RXD_HSIND_B			31
-+#define HNS3_RXD_GRO_SIZE_S			16
-+#define HNS3_RXD_GRO_SIZE_M			(0x3ff << HNS3_RXD_GRO_SIZE_S)
- 
- #define HNS3_TXD_L3T_S				0
- #define HNS3_TXD_L3T_M				(0x3 << HNS3_TXD_L3T_S)
+ static struct hnae3_ae_algo ae_algovf = {
 -- 
 2.17.1
 
