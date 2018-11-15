@@ -2,90 +2,88 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ED0DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:45:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C757C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:45:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C7801223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:45:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="K0c1be03"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7801223CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 50E0921780
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:45:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50E0921780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388509AbeKPDx4 (ORCPT
+        id S2388687AbeKPDyZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 22:53:56 -0500
-Received: from mail.kernel.org ([198.145.29.99]:47756 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726910AbeKPDx4 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 22:53:56 -0500
-Received: from localhost (unknown [64.114.255.97])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id A3CC821780;
-        Thu, 15 Nov 2018 17:45:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542303909;
-        bh=RDzebsoglcjSA6jz06hC6i8s2tVLCMsDKrMeNBhlFt8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=K0c1be03yFqYR8qB/e5E9TmHh4Ig+/PE/x/mcKqMuIat+vNlJrfX215rqnZkM2wL7
-         I5BwtqaDv6Ke2pbhNLi78slDPDASAz+AqmQQpx1D+KPS4h2CKILLwASV+4p+/602lU
-         mfN2orLjyMo62qlz/LG7UTHcO94KdwMkYOHJcHRU=
-Date:   Thu, 15 Nov 2018 12:45:04 -0500
-From:   Sasha Levin <sashal@kernel.org>
-To:     Minchan Kim <minchan@kernel.org>
-Cc:     stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
+        Thu, 15 Nov 2018 22:54:25 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:38684 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726746AbeKPDyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 22:54:25 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 113BE80D;
+        Thu, 15 Nov 2018 09:45:39 -0800 (PST)
+Received: from brain-police (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1DC163F718;
+        Thu, 15 Nov 2018 09:45:38 -0800 (PST)
+Date:   Thu, 15 Nov 2018 17:45:33 +0000
+From:   Will Deacon <will.deacon@arm.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     linux-kernel@vger.kernel.org,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Frank Rowand <frowand.list@gmail.com>,
         Andrew Morton <akpm@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Howard Chen <howardsoc@google.com>
-Subject: Re: [PATCH] zram: close udev startup race condition as default groups
-Message-ID: <20181115174504.GJ95254@sasha-vm>
-References: <20181114055223.66476-1-minchan@kernel.org>
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Russell King <rmk+kernel@armlinux.org.uk>,
+        Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Andrey Konovalov <andreyknvl@google.com>,
+        Masahiro Yamada <yamada.masahiro@socionext.com>,
+        Robin Murphy <robin.murphy@arm.com>,
+        Laura Abbott <labbott@redhat.com>,
+        Stefan Agner <stefan@agner.ch>,
+        Johannes Weiner <hannes@cmpxchg.org>,
+        Greg Hackmann <ghackmann@android.com>,
+        Kristina Martsenko <kristina.martsenko@arm.com>,
+        CHANDAN VN <chandan.vn@samsung.com>,
+        "moderated list:ARM64 PORT (AARCH64 ARCHITECTURE)" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE" 
+        <devicetree@vger.kernel.org>, rppt@linux.ibm.com,
+        linux@armlinux.org.uk, green.hu@gmail.com, deanbo422@gmail.com,
+        gxt@pku.edu.cn, ard.biesheuvel@linaro.org,
+        linux-snps-arc@lists.infradead.org, vgupta@synopsys.com
+Subject: Re: [PATCH v4 4/6] arm64: Utilize phys_initrd_start/phys_initrd_size
+Message-ID: <20181115174532.GA3087@brain-police>
+References: <20181105225431.24485-1-f.fainelli@gmail.com>
+ <20181105225431.24485-5-f.fainelli@gmail.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181114055223.66476-1-minchan@kernel.org>
+In-Reply-To: <20181105225431.24485-5-f.fainelli@gmail.com>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 02:52:23PM +0900, Minchan Kim wrote:
->commit fef912bf860e upstream.
->commit 98af4d4df889 upstream.
->
->I got a report from Howard Chen that he saw zram and sysfs race(ie,
->zram block device file is created but sysfs for it isn't yet)
->when he tried to create new zram devices via hotadd knob.
->
->v4.20 kernel fixes it by [1, 2] but it's too large size to merge
->into -stable so this patch fixes the problem by registering defualt
->group by Greg KH's approach[3].
->
->This patch should be applied to every stable tree [3.16+] currently
->existing from kernel.org because the problem was introduced at 2.6.37
->by [4].
->
->[1] fef912bf860e, block: genhd: add 'groups' argument to device_add_disk
->[2] 98af4d4df889, zram: register default groups with device_add_disk()
->[3] http://kroah.com/log/blog/2013/06/26/how-to-create-a-sysfs-file-correctly/
->[4] 33863c21e69e9, Staging: zram: Replace ioctls with sysfs interface
->
->Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
->Cc: Hannes Reinecke <hare@suse.com>
->Tested-by: Howard Chen <howardsoc@google.com>
->Signed-off-by: Minchan Kim <minchan@kernel.org>
+On Mon, Nov 05, 2018 at 02:54:29PM -0800, Florian Fainelli wrote:
+> ARM64 is the only architecture that re-defines
+> __early_init_dt_declare_initrd() in order for that function to populate
+> initrd_start/initrd_end with physical addresses instead of virtual
+> addresses. Instead of having an override we can leverage
+> drivers/of/fdt.c populating phys_initrd_start/phys_initrd_size to
+> populate those variables for us.
+> 
+> Signed-off-by: Florian Fainelli <f.fainelli@gmail.com>
+> ---
+>  arch/arm64/mm/init.c | 20 ++++++++------------
+>  1 file changed, 8 insertions(+), 12 deletions(-)
 
-I've queued this for 4.19 and 4.18, but it doesn't apply to anything
-older than that.
+Looks ok to me:
 
---
-Thanks,
-Sasha
+Acked-by: Will Deacon <will.deacon@arm.com>
+
+Will
