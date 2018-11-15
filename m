@@ -2,105 +2,99 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6FD53C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:46:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C95FBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3FD6521582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:46:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3FD6521582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=8bytes.org
+	by mail.kernel.org (Postfix) with ESMTP id 8FD4A21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:46:20 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=tjader-xyz.20150623.gappssmtp.com header.i=@tjader-xyz.20150623.gappssmtp.com header.b="rLoloOfi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FD4A21582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=tjader.xyz
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388418AbeKPAyV (ORCPT
+        id S2388451AbeKPAyZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 19:54:21 -0500
-Received: from 8bytes.org ([81.169.241.247]:44016 "EHLO theia.8bytes.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387839AbeKPAyV (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 19:54:21 -0500
-Received: by theia.8bytes.org (Postfix, from userid 1000)
-        id 63A054A7; Thu, 15 Nov 2018 15:46:13 +0100 (CET)
-From:   Joerg Roedel <joro@8bytes.org>
-To:     Rex Zhu <rex.zhu@amd.com>, Evan Quan <evan.quan@amd.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        christian.koenig@amd.com, David1.Zhou@amd.com
-Cc:     amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, Joerg Roedel <jroedel@suse.de>
-Subject: [PATCH] drm/amdgpu: Fix Kernel Oops triggered by kfdtest
-Date:   Thu, 15 Nov 2018 15:46:12 +0100
-Message-Id: <20181115144612.30301-1-joro@8bytes.org>
-X-Mailer: git-send-email 2.17.1
+        Thu, 15 Nov 2018 19:54:25 -0500
+Received: from mail-oi1-f193.google.com ([209.85.167.193]:44794 "EHLO
+        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388379AbeKPAyZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 19:54:25 -0500
+Received: by mail-oi1-f193.google.com with SMTP id p82-v6so16891479oih.11
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 06:46:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=tjader-xyz.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ZPJGai7fwi6+Zi/4GIV7DgsJ/cloY+TjHG0xsfyN+FA=;
+        b=rLoloOfigGFs9WVjZA8NevOkSgm9QxJfQ5pf4awwVrvQUsbIeYI5h5rIDVdFl/GDyn
+         oHREawVFKOaNBPHaCB1BztmlPI66LuRtLCbnJdQ2785c/Y8T8uuSpikViEE4hIu9L4x4
+         xjuaKo4IN1WIGSQk0OkDLcuor9lh8ZBiIqRAqgf+B/U1g+NLP1TS2FrrM0lGmUEwZFnE
+         V7vFl9VO4dFGGCfmaOWis1oMbcdWtHpkBvWFJv3jAPxdl7j6ktSp+RS1XSIW+7wTQhsJ
+         j+YbVKjubj/3zvJ5eKSyrgacU3atz1PCbGeDdBFT6WTFoL4Hstw8UquvTDUZTHqo8pt2
+         ggeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ZPJGai7fwi6+Zi/4GIV7DgsJ/cloY+TjHG0xsfyN+FA=;
+        b=fH5H/TmRUXAuJUzJfmozGoW4I/H+0YFoXBNiMqE4Q4ZkKc0qzRDUcJ1a3S0sZDKgM5
+         Zw6MnzS5nyjLjvWhOVEblu4RUK/qJrTuAphAV2cDvDl54xSbs314LF+gj9k1pNExexz0
+         0CMzgiwzzc3VeSYsDdS8ddoubCoGVN1TcAb0RFvylI5uqSq8Dy7bod9CVIF1mFbWD33a
+         3aJgHqq7nyX/P1V7HIoipUm+PsfmK8bR2kiyQv0s9ZRD6oxGxmqowUvxDruiMPrzcvBy
+         SCZSnZV5/Uc6WIDX2KWobbIPjm1hBvVwacaf7xj9pZjsFNDh4Bcj9QKIHXmEZVDv4IJh
+         co1g==
+X-Gm-Message-State: AGRZ1gLNZSXyXrUuFisfYWEFkR7i/GIV5esuIWWQ4dFP4lBf1l56+2Ji
+        4Rqg+p5BdJrhyQUo3Vh987AqMi+yZ2d2z6RGNgjZ8w==
+X-Google-Smtp-Source: AJdET5f+f/d18AaGOAdX1MGql+Hfw8gs5sOj4Q8nPtCag6M1xtJ+YT6HIUEuja2Hnk97g4CWBhXDIhbAsM8LCSuhLJ0=
+X-Received: by 2002:aca:440b:: with SMTP id r11-v6mr3568456oia.3.1542293177661;
+ Thu, 15 Nov 2018 06:46:17 -0800 (PST)
+MIME-Version: 1.0
+References: <20180921142811.h5jraemk565alh3i@flea> <CAG7TQgE_KU_cK_4E+NG8Qcw-QB2=C6YoqBYR2svmWxywFyySCw@mail.gmail.com>
+ <20180925090139.qbu6tqav5oth7zkw@flea> <CAG7TQgFTsR4pf4jAcWMFoOmiP7AXYqjts60RP2kuJGU44AcQJQ@mail.gmail.com>
+ <20180927081711.llmwnvpu73loe5iv@flea> <CAG7TQgGMkvBnNE_WEth8gscKxN3qN8a44mNMWz3QP-2+JKfOzg@mail.gmail.com>
+ <20180929154754.abz3byvrufvnf4dq@flea> <CAG7TQgGS7DkLpNVYqfCD-9vMZkeY6r+L-5oXKWef3x-OVbqjtw@mail.gmail.com>
+ <20181002131312.soqwybsohdifvso3@flea> <CAG7TQgHWCJTaM+pFYFq0_8nWg7sA+d0huqu96sjhqZfeHwqbGQ@mail.gmail.com>
+ <20181005154844.234g5k3fw5txqxsl@flea>
+In-Reply-To: <20181005154844.234g5k3fw5txqxsl@flea>
+From:   =?UTF-8?Q?Rodrigo_Exterck=C3=B6tter_Tj=C3=A4der?= 
+        <rodrigo@tjader.xyz>
+Date:   Thu, 15 Nov 2018 12:46:06 -0200
+Message-ID: <CAG7TQgGO-CjPE6SAUa53GYhMr5-yVe0YaAL3UV15E+f9kKZVwA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] arm64: dts: allwinner: Olimex A64-OLinuXino: enable eMMC.
+To:     maxime.ripard@bootlin.com
+Cc:     wens@csie.org, robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Joerg Roedel <jroedel@suse.de>
+On Fri, Oct 5, 2018 at 12:48 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
+> > What about the idea of keeping the current dt for the most featureful
+> > variant and creating new dts for the other two?
+> >
+> > That would make it so that no one's device stops working and would
+> > have mailine support for all three devices.
+>
+> IIRC that has been the first introduced version, so that would make
+> sense. Chen-Yu, any opinion?
+>
+> > Also, the current device tree doesn't represent any existing device:
+> > it has wifi on but no emmc. That variation does not exist.
+>
+> Most of our device tree are far from complete, so you shouldn't treat
+> them as such.
 
-Running kfdtest on Kaveri triggers a kernel NULL-ptr dereference:
+So, any agreement on what is to be done about the devices tree for the
+A64-OLinuXino devices?
 
-	BUG: unable to handle kernel NULL pointer dereference at 0000000000000000
-	PGD 42c017067 P4D 42c017067 PUD 40f071067 PMD 0
-	Oops: 0010 [#1] SMP NOPTI
-	CPU: 0 PID: 13107 Comm: kfdtest Not tainted 4.20.0-rc2+ #11
-	Hardware name: Gigabyte Technology Co., Ltd. To be filled by O.E.M./F2A88XM-HD3, BIOS F6 05/28/2014
-	RIP: 0010:          (null)
-	Code: Bad RIP value.
-	RSP: 0018:ffffc90001adbbf0 EFLAGS: 00010202
-	RAX: ffffffffa0806240 RBX: ffff88842a0fbc00 RCX: 0000000000000002
-	RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffff888429690000
-	RBP: ffffc90001adbbf8 R08: 0000000000002000 R09: ffff88842e542ec0
-	R10: 00007feff778f008 R11: 00007feff778f010 R12: 0000000000000000
-	R13: ffff88840f063a20 R14: ffff88842a0fbd20 R15: 000000000f43ff60
-	FS:  00007feff7769740(0000) GS:ffff88842fa00000(0000) knlGS:0000000000000000
-	CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-	CR2: ffffffffffffffd6 CR3: 000000040f122000 CR4: 00000000000406f0
-	Call Trace:
-	 ? amdgpu_amdkfd_set_compute_idle+0x29/0x30 [amdgpu]
-	 register_process+0x140/0x150 [amdgpu]
-	 pqm_create_queue+0x395/0x560 [amdgpu]
-	 kfd_ioctl_create_queue+0x285/0x680 [amdgpu]
-	 kfd_ioctl+0x27f/0x450 [amdgpu]
-	 ? kfd_ioctl_destroy_queue+0x80/0x80 [amdgpu]
-	 do_vfs_ioctl+0x96/0x6a0
-	 ? __audit_syscall_entry+0xdd/0x130
-	 ? handle_mm_fault+0x11b/0x240
-	 ksys_ioctl+0x67/0x90
-	 __x64_sys_ioctl+0x1a/0x20
-	 do_syscall_64+0x61/0x190
-	 entry_SYSCALL_64_after_hwframe+0x44/0xa9
-
-The reason is that the pp_funcs->switch_power_profile
-function pointer is not set for a Kaveri ASIC and thus the
-kernel calls a NULL pointer.
-
-Add a check before calling the function to avoid that.
-
-Signed-off-by: Joerg Roedel <jroedel@suse.de>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_dpm.h | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_dpm.h b/drivers/gpu/drm/amd/amdgpu/amdgpu_dpm.h
-index f972cd156795..0ecedd30f2aa 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_dpm.h
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_dpm.h
-@@ -337,8 +337,9 @@ enum amdgpu_pcie_gen {
- 			(adev)->powerplay.pp_handle, request))
- 
- #define amdgpu_dpm_switch_power_profile(adev, type, en) \
--		((adev)->powerplay.pp_funcs->switch_power_profile(\
--			(adev)->powerplay.pp_handle, type, en))
-+		if ((adev)->powerplay.pp_funcs->switch_power_profile != NULL) \
-+			((adev)->powerplay.pp_funcs->switch_power_profile(\
-+				(adev)->powerplay.pp_handle, type, en))
- 
- #define amdgpu_dpm_set_clockgating_by_smu(adev, msg_id) \
- 		((adev)->powerplay.pp_funcs->set_clockgating_by_smu(\
--- 
-2.13.7
-
+In my opinion the best path would be keeping the current dt for the
+most featureful variant and creating new dts for the other two.
