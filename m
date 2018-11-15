@@ -4,58 +4,58 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DAC43C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:12:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CBD8FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:12:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91A5D2080C
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:12:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7F7C1223DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:12:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="j3omjP0L"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91A5D2080C
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EWPsBUgy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F7C1223DD
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388610AbeKPBUp (ORCPT
+        id S2388640AbeKPBUv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:20:45 -0500
-Received: from mailout4.samsung.com ([203.254.224.34]:38399 "EHLO
-        mailout4.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726432AbeKPBUp (ORCPT
+        Thu, 15 Nov 2018 20:20:51 -0500
+Received: from mailout3.samsung.com ([203.254.224.33]:32294 "EHLO
+        mailout3.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbeKPBUv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 20:20:45 -0500
-Received: from epcas2p3.samsung.com (unknown [182.195.41.55])
-        by mailout4.samsung.com (KnoxPortal) with ESMTP id 20181115151227epoutp0467cfab910f50b3cf6c960533d5290cf5~nVOapOAJn1320613206epoutp048;
-        Thu, 15 Nov 2018 15:12:27 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout4.samsung.com 20181115151227epoutp0467cfab910f50b3cf6c960533d5290cf5~nVOapOAJn1320613206epoutp048
+        Thu, 15 Nov 2018 20:20:51 -0500
+Received: from epcas1p3.samsung.com (unknown [182.195.41.47])
+        by mailout3.samsung.com (KnoxPortal) with ESMTP id 20181115151232epoutp03f2dfe7bcfbad44cc813a245cb124a65e~nVOfuLCmV0615306153epoutp03Y;
+        Thu, 15 Nov 2018 15:12:32 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20181115151232epoutp03f2dfe7bcfbad44cc813a245cb124a65e~nVOfuLCmV0615306153epoutp03Y
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542294747;
-        bh=5GbDmz+oy4esatK4+k1/hnhgzRRda1luQ/7q8+U3NQY=;
+        s=mail20170921; t=1542294752;
+        bh=Zwvrb0xVGcBCepsy/h/dxj+AxrEAQoLbTBAwD7D7+nQ=;
         h=From:To:Cc:Subject:Date:In-reply-to:References:From;
-        b=j3omjP0Ld5bTDM0BBWQK9aIakXowOe+K82gdQOLkf885G6LE68Ao3jY1U7PUlofGD
-         JCIGuW/XG6mcnW/zZrRY1iJMOk2QLR2OP6o4paEuCTXlQzRmbjTh1Vyb/iI6iVtEyK
-         z4sbNDtSv2GpLyi+17noN8FSwgMKtZWCysmVphss=
-Received: from epsmges2p3.samsung.com (unknown [182.195.42.71]) by
-        epcas2p1.samsung.com (KnoxPortal) with ESMTP id
-        20181115151226epcas2p16826183e4bc68aefa84950e6a67eabf7~nVOZyj6Qr2502025020epcas2p1t;
-        Thu, 15 Nov 2018 15:12:26 +0000 (GMT)
-Received: from epcas2p2.samsung.com ( [182.195.41.54]) by
-        epsmges2p3.samsung.com (Symantec Messaging Gateway) with SMTP id
-        ED.64.04218.ADC8DEB5; Fri, 16 Nov 2018 00:12:26 +0900 (KST)
-Received: from epsmgms2p2new.samsung.com (unknown [182.195.42.143]) by
-        epcas2p4.samsung.com (KnoxPortal) with ESMTP id
-        20181115151225epcas2p4244fba019e0509d480f7953a05097105~nVOZcWuXU0890008900epcas2p4z;
-        Thu, 15 Nov 2018 15:12:25 +0000 (GMT)
-X-AuditID: b6c32a47-bf9ff7000000107a-52-5bed8cdaaac4
-Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p2new.samsung.com
-        (Symantec Messaging Gateway) with SMTP id 93.28.03702.9DC8DEB5; Fri, 16 Nov
-        2018 00:12:25 +0900 (KST)
+        b=EWPsBUgyEOqXvkLR540q8OzMXhJwG7yjgdvRiTTwqREkpkn91GzBIAQ3feXbozPKa
+         B37trxH10nOyh8N3ezDl9D3mk/TktgzAWWOC2ONDqJDSsiy7HTSC8SVxjVB5o1f8S0
+         5RGs/ch/W0FCc6YSZBdKpKxUgdmny/YjJRFsrDWo=
+Received: from epsmges1p1.samsung.com (unknown [182.195.42.53]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20181115151231epcas1p312124b572725dc3ea1f490203c00058b~nVOeYc_-53140631406epcas1p35;
+        Thu, 15 Nov 2018 15:12:31 +0000 (GMT)
+Received: from epcas1p2.samsung.com ( [182.195.41.46]) by
+        epsmges1p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+        2F.85.04072.EDC8DEB5; Fri, 16 Nov 2018 00:12:30 +0900 (KST)
+Received: from epsmgms2p1new.samsung.com (unknown [182.195.42.142]) by
+        epcas1p3.samsung.com (KnoxPortal) with ESMTP id
+        20181115151230epcas1p35afa7ac09774a6e6256523b3a77453c3~nVOdfL7FU2045420454epcas1p3b;
+        Thu, 15 Nov 2018 15:12:30 +0000 (GMT)
+X-AuditID: b6c32a35-3f1ff70000000fe8-4d-5bed8cdee5eb
+Received: from epmmp2 ( [203.254.227.17]) by epsmgms2p1new.samsung.com
+        (Symantec Messaging Gateway) with SMTP id B5.B9.03701.DDC8DEB5; Fri, 16 Nov
+        2018 00:12:30 +0900 (KST)
 Received: from AMDC3058.DIGITAL.local ([106.120.53.102]) by mmp2.samsung.com
         (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
         2014)) with ESMTPA id <0PI8006WJQ7YQ380@mmp2.samsung.com>; Fri, 16 Nov 2018
-        00:12:25 +0900 (KST)
+        00:12:29 +0900 (KST)
 From:   Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 To:     Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Arnd Bergmann <arnd@arndb.de>,
@@ -69,69 +69,293 @@ Cc:     Arnd Bergmann <arnd@arndb.de>,
         linux-samsung-soc@vger.kernel.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         b.zolnierkie@samsung.com
-Subject: [PATCH 4/9] ARM64: EXYNOS: enable exynos_chipid for ARCH_EXYNOS
-Date:   Thu, 15 Nov 2018 16:11:33 +0100
-Message-id: <1542294698-17470-5-git-send-email-b.zolnierkie@samsung.com>
+Subject: [PATCH 5/9] ARM: EXYNOS: use chipid driver
+Date:   Thu, 15 Nov 2018 16:11:34 +0100
+Message-id: <1542294698-17470-6-git-send-email-b.zolnierkie@samsung.com>
 X-Mailer: git-send-email 1.9.1
 In-reply-to: <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com>
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrAIsWRmVeSWpSXmKPExsWy7bCmme6tnrfRBu9fs1rcWneO1eLvpGPs
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrDIsWRmVeSWpSXmKPExsWy7bCmnu69nrfRBiefWFrcWneO1eLvpGPs
         FhtnrGe1uP7lOavFwmnLGS36H79mtjh/fgO7xabH11gtLu+aw2Yx4/w+JouXR34wWqw9cpfd
         YtHWL+wOvB6/f01i9Lh1p95j06pONo/NS+o93u+7yubRt2UVo8fnTXIB7FFcNimpOZllqUX6
-        dglcGXN2r2IqmMZWsfvubuYGxgWsXYycHBICJhLvH84Asrk4hAR2MEocvLwIyvnOKDHl6xM2
-        mKoJ098yQSQ2MEo8WzCLDcL5xShx7NspRpAqNgEriYntq8BsEQFNiet/v4PtYBY4yiyx5IoE
-        iC0s4CFx9tUjJhCbRUBV4u22ecwgNi9QfOabiSwQ2+QkTh6bDNbLKeApsf1sOzPIMgmBA2wS
-        284fgjrJReJi6zx2CFtY4tXxLVC2tMSzVRsZIRqmM0q8+bWUBcJZzyix5swxJogqa4nDxy9C
-        nccn0XH4L1A3B1CcV6KjTQiixEPiZvMnqDfnMEoc+rqceQKj5AJGhlWMYqkFxbnpqcVGBcZ6
-        xYm5xaV56XrJ+bmbGMHxrOW+g3HbOZ9DjAIcjEo8vAblb6OFWBPLiitzDzFKcDArifC61QGF
-        eFMSK6tSi/Lji0pzUosPMUpzsCiJ8z6UnhstJJCeWJKanZpakFoEk2Xi4JRqYNw/s4JXNbPr
-        78/vk+UclNqjFpf+VGXx2Hk5xb3t5BGn//lSd39deJLYLzV5p4rFsfXXbs6a6HeQUX+S4/S+
-        nPz0wuePOV/0HPp09OPPQAnxhbu6D6ut2reuQq7N5+CunI8bji3Pu+z+WFNj9vLp1zvub7vv
-        tbA7reHym5fW3ZdD+jOUXoVUdG5TYinOSDTUYi4qTgQAjWLWfOMCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrMLMWRmVeSWpSXmKPExsVy+t9jQd2bPW+jDf5/1LS4te4cq8XfScfY
-        LTbOWM9qcf3Lc1aLhdOWM1r0P37NbHH+/AZ2i02Pr7FaXN41h81ixvl9TBYvj/xgtFh75C67
-        xaKtX9gdeD1+/5rE6HHrTr3HplWdbB6bl9R7vN93lc2jb8sqRo/Pm+QC2KO4bFJSczLLUov0
-        7RK4MubsXsVUMI2tYvfd3cwNjAtYuxg5OSQETCQmTH/L1MXIxSEksI5RYu/cacwQzi9GiRdP
-        tjKBVLEJWElMbF/FCGKLCGhKXP/7nRWkiFngKLPE5wnbmUESwgIeEmdfPQJrYBFQlXi7bR5Y
-        nBcoPvPNRBaIdXISJ49NBlvNKeApsf1sO1iNEFDN579n2Ccw8ixgZFjFKJlaUJybnltsVGCU
-        l1quV5yYW1yal66XnJ+7iREYlNsOa/XvYHy8JP4QowAHoxIPr0H522gh1sSy4srcQ4wSHMxK
-        IrxudUAh3pTEyqrUovz4otKc1OJDjNIcLErivPz5xyKFBNITS1KzU1MLUotgskwcnFINjP3a
-        f082rDwQvfDQvo2nNkoen+MTYfGf2froty+ioaY+j7q2tDTFnXqgPH+dPZ+beXOX2zzTw+wn
-        9OOkVI+krTmzUYbXK/6w1F8VB7uuYqMi9uyI8zZLeT7c9D74+9k9PpObx0Od7ye+fzjbpIax
-        4cPy0/kv7WTObbVLDZ9Rc+HL8uZANluJJCWW4oxEQy3mouJEAHZj+bRGAgAA
-X-CMS-MailID: 20181115151225epcas2p4244fba019e0509d480f7953a05097105
+        dglcGbv3/WItWGxb8e/XDdYGxrlGXYwcHBICJhLXbhd0MXJxCAnsYJQ4c2QZcxcjJ5DznVHi
+        /ztrEBukZtGXWewQRRsYJeauOckG4fxilHh27AY7SBWbgJXExPZVjCC2iICmxPW/31lBbGaB
+        o8wSS65IgGwTFjCWOLxMBiTMIqAq8enbThYQm1fAQ+Ls705GiGVyEiePTQZr5RTwlNh+tp0Z
+        ZJeEwAk2ieedK5ghilwkTrTPhGoQlnh1fAs7xDfSEpeO2kLUT2eUePNrKQuEs55RYs2ZY0wQ
+        DdYSh49fhDqOT+Ld1x5WiGZeiY42IYgSD4mdc3axQDw5h1HiyrMrbBMYJRcwMqxiFEstKM5N
+        Ty02LDDUK07MLS7NS9dLzs/dxAiOYy3THYxTzvkcYhTgYFTi4TUofxstxJpYVlyZe4hRgoNZ
+        SYTXrQ4oxJuSWFmVWpQfX1Sak1p8iFGag0VJnPeJ1NxoIYH0xJLU7NTUgtQimCwTB6dUA2Oq
+        asaW0+nthwQ0Gi4Wzjpc8Iq37t5htbQkTwMvyUUfgu0fPzktJ5sd/P3QnlXH29Lqmpfwrz3+
+        L56RmTlPPkMof+tPmXmvG/lWGOXN0z//6czbur1L5//efne1Z+WivzeOdYTxN7V0voxj2Xmw
+        +Kza7buy085eEA9W/L/b8qXNxy2JW002mh9XYinOSDTUYi4qTgQAYlQWtN8CAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrELMWRmVeSWpSXmKPExsVy+t9jQd17PW+jDdo6mS1urTvHavF30jF2
+        i40z1rNaXP/ynNVi4bTljBb9j18zW5w/v4HdYtPja6wWl3fNYbOYcX4fk8XLIz8YLdYeuctu
+        sWjrF3YHXo/fvyYxety6U++xaVUnm8fmJfUe7/ddZfPo27KK0ePzJrkA9igum5TUnMyy1CJ9
+        uwSujN37frEWLLat+PfrBmsD41yjLkZODgkBE4lFX2axdzFycQgJrGOU6JrWwAjh/GKUWP7r
+        IiNIFZuAlcTE9lVgtoiApsT1v99ZQYqYBY4yS3yesJ25i5GDQ1jAWOLwMhmQGhYBVYlP33ay
+        gNi8Ah4SZ393MkJsk5M4eWwyK4jNKeApsf1sOzOILQRU8/nvGfYJjDwLGBlWMUqmFhTnpucW
+        GxUY5qWW6xUn5haX5qXrJefnbmIEhuS2w1p9OxjvL4k/xCjAwajEw2tQ/jZaiDWxrLgy9xCj
+        BAezkgivWx1QiDclsbIqtSg/vqg0J7X4EKM0B4uSOO/tvGORQgLpiSWp2ampBalFMFkmDk6p
+        Bsbtf8/dtNWZ/+lgsdfjD1oK819+PPSjm2NuqsynkCnu/669dbs92XmK7LOvus9feSwp2mvz
+        cJbmT5b3nOvi+mcfDWvvmL5dIIiFZ0dffPWH9rtLUr9NZ3m6efqfTfPzhU5kl1mn3pwUxyfI
+        Is2b5x26Z3r3mqUMm8X3Re8/49q4+uksZe9Dn57HK7EUZyQaajEXFScCAKHRXYhFAgAA
+X-CMS-MailID: 20181115151230epcas1p35afa7ac09774a6e6256523b3a77453c3
 X-Msg-Generator: CA
-CMS-TYPE: 102P
-X-CMS-RootMailID: 20181115151225epcas2p4244fba019e0509d480f7953a05097105
+CMS-TYPE: 101P
+X-CMS-RootMailID: 20181115151230epcas1p35afa7ac09774a6e6256523b3a77453c3
 References: <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com>
-        <CGME20181115151225epcas2p4244fba019e0509d480f7953a05097105@epcas2p4.samsung.com>
+        <CGME20181115151230epcas1p35afa7ac09774a6e6256523b3a77453c3@epcas1p3.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Pankaj Dubey <pankaj.dubey@samsung.com>
+Add soc_dev_is_exynos*() helpers and use them instead of
+soc_is_exynos*() ones.
 
-This patch enables exynos_chipid driver for ARCH_EXYNOS
-based SoC.
-
-Signed-off-by: Pankaj Dubey <pankaj.dubey@samsung.com>
 Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
 ---
- arch/arm64/Kconfig.platforms | 1 +
- 1 file changed, 1 insertion(+)
+ arch/arm/mach-exynos/common.h   |  6 ++++++
+ arch/arm/mach-exynos/exynos.c   | 39 +++++++++++++++++++++++++++++++++++++++
+ arch/arm/mach-exynos/firmware.c |  8 ++++----
+ arch/arm/mach-exynos/platsmp.c  | 12 ++++++------
+ arch/arm/mach-exynos/pm.c       | 17 +++++++++--------
+ 5 files changed, 64 insertions(+), 18 deletions(-)
 
-diff --git a/arch/arm64/Kconfig.platforms b/arch/arm64/Kconfig.platforms
-index 51bc479..84b88ab7 100644
---- a/arch/arm64/Kconfig.platforms
-+++ b/arch/arm64/Kconfig.platforms
-@@ -62,6 +62,7 @@ config ARCH_BRCMSTB
- config ARCH_EXYNOS
- 	bool "ARMv8 based Samsung Exynos SoC family"
- 	select COMMON_CLK_SAMSUNG
-+	select EXYNOS_CHIPID
- 	select EXYNOS_PM_DOMAINS if PM_GENERIC_DOMAINS
- 	select EXYNOS_PMU
- 	select HAVE_S3C2410_WATCHDOG if WATCHDOG
+diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
+index 1b8699e..20d205e 100644
+--- a/arch/arm/mach-exynos/common.h
++++ b/arch/arm/mach-exynos/common.h
+@@ -9,8 +9,14 @@
+ #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
+ #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
+ 
++#include <linux/sys_soc.h>
+ #include <linux/platform_data/cpuidle-exynos.h>
+ 
++extern bool soc_dev_is_exynos3250(void);
++extern bool soc_dev_is_exynos4210_rev11(void);
++extern bool soc_dev_is_exynos4412(void);
++extern bool soc_dev_is_exynos542x(void);
++
+ #define EXYNOS3250_SOC_ID	0xE3472000
+ #define EXYNOS3_SOC_MASK	0xFFFFF000
+ 
+diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
+index 865dcc4..463e457 100644
+--- a/arch/arm/mach-exynos/exynos.c
++++ b/arch/arm/mach-exynos/exynos.c
+@@ -24,6 +24,45 @@
+ 
+ #include "common.h"
+ 
++static const struct soc_device_attribute exynos3250_soc_id[] = {
++	{ .soc_id = "EXYNOS3250" },
++	{ /* sentinel */ }
++};
++
++static const struct soc_device_attribute exynos4210_rev11_soc_id[] = {
++	{ .soc_id = "EXYNOS4210", .revision = "11" },
++	{ /* sentinel */ }
++};
++
++static const struct soc_device_attribute exynos4412_soc_id[] = {
++	{ .soc_id = "EXYNOS4412" },
++	{ /* sentinel */ }
++};
++
++static const struct soc_device_attribute exynos542x_soc_id[] = {
++	{ .soc_id = "EXYNOS5420" },
++	{ .soc_id = "EXYNOS5800" },
++	{ /* sentinel */ }
++};
++
++#define SOC_DEV_IS_EXYNOS(ver)						\
++bool soc_dev_is_exynos##ver(void)					\
++{									\
++	static bool init_done, is_exynos##ver;				\
++									\
++	if (!init_done) {						\
++		is_exynos##ver = !!soc_device_match(exynos##ver##_soc_id); \
++		init_done = true;					\
++	}								\
++									\
++	return is_exynos##ver;						\
++}
++
++SOC_DEV_IS_EXYNOS(3250);
++SOC_DEV_IS_EXYNOS(4210_rev11);
++SOC_DEV_IS_EXYNOS(4412);
++SOC_DEV_IS_EXYNOS(542x);
++
+ static struct platform_device exynos_cpuidle = {
+ 	.name              = "exynos_cpuidle",
+ #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
+diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
+index d602e3b..d526d5e 100644
+--- a/arch/arm/mach-exynos/firmware.c
++++ b/arch/arm/mach-exynos/firmware.c
+@@ -40,7 +40,7 @@ static int exynos_do_idle(unsigned long mode)
+ 		writel_relaxed(__pa_symbol(exynos_cpu_resume_ns),
+ 			       sysram_ns_base_addr + 0x24);
+ 		writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
+-		if (soc_is_exynos3250()) {
++		if (soc_dev_is_exynos3250()) {
+ 			flush_cache_all();
+ 			exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
+ 				   SMC_POWERSTATE_IDLE, 0);
+@@ -61,7 +61,7 @@ static int exynos_cpu_boot(int cpu)
+ 	 * Exynos3250 doesn't need to send smc command for secondary CPU boot
+ 	 * because Exynos3250 removes WFE in secure mode.
+ 	 */
+-	if (soc_is_exynos3250())
++	if (soc_dev_is_exynos3250())
+ 		return 0;
+ 
+ 	/*
+@@ -85,7 +85,7 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
+ 	 * additional offset for every CPU, with Exynos4412 being the only
+ 	 * exception.
+ 	 */
+-	if (soc_is_exynos4412())
++	if (soc_dev_is_exynos4412())
+ 		boot_reg += 4 * cpu;
+ 
+ 	writel_relaxed(boot_addr, boot_reg);
+@@ -101,7 +101,7 @@ static int exynos_get_cpu_boot_addr(int cpu, unsigned long *boot_addr)
+ 
+ 	boot_reg = sysram_ns_base_addr + 0x1c;
+ 
+-	if (soc_is_exynos4412())
++	if (soc_dev_is_exynos4412())
+ 		boot_reg += 4 * cpu;
+ 
+ 	*boot_addr = readl_relaxed(boot_reg);
+diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
+index c39ffd2..e2ba70f 100644
+--- a/arch/arm/mach-exynos/platsmp.c
++++ b/arch/arm/mach-exynos/platsmp.c
+@@ -88,7 +88,7 @@ void exynos_cpu_power_down(int cpu)
+ {
+ 	u32 core_conf;
+ 
+-	if (cpu == 0 && (soc_is_exynos5420() || soc_is_exynos5800())) {
++	if (cpu == 0 && soc_dev_is_exynos542x()) {
+ 		/*
+ 		 * Bypass power down for CPU0 during suspend. Check for
+ 		 * the SYS_PWR_REG value to decide if we are suspending
+@@ -115,7 +115,7 @@ void exynos_cpu_power_up(int cpu)
+ {
+ 	u32 core_conf = S5P_CORE_LOCAL_PWR_EN;
+ 
+-	if (soc_is_exynos3250())
++	if (soc_dev_is_exynos3250())
+ 		core_conf |= S5P_CORE_AUTOWAKEUP_EN;
+ 
+ 	pmu_raw_writel(core_conf,
+@@ -185,7 +185,7 @@ void exynos_scu_enable(void)
+ 
+ static void __iomem *cpu_boot_reg_base(void)
+ {
+-	if (soc_is_exynos4210() && samsung_rev() == EXYNOS4210_REV_1_1)
++	if (soc_dev_is_exynos4210_rev11())
+ 		return pmu_base_addr + S5P_INFORM5;
+ 	return sysram_base_addr;
+ }
+@@ -197,9 +197,9 @@ static inline void __iomem *cpu_boot_reg(int cpu)
+ 	boot_reg = cpu_boot_reg_base();
+ 	if (!boot_reg)
+ 		return IOMEM_ERR_PTR(-ENODEV);
+-	if (soc_is_exynos4412())
++	if (soc_dev_is_exynos4412())
+ 		boot_reg += 4*cpu;
+-	else if (soc_is_exynos5420() || soc_is_exynos5800())
++	else if (soc_dev_is_exynos542x())
+ 		boot_reg += 4;
+ 	return boot_reg;
+ }
+@@ -371,7 +371,7 @@ static int exynos_boot_secondary(unsigned int cpu, struct task_struct *idle)
+ 
+ 		call_firmware_op(cpu_boot, core_id);
+ 
+-		if (soc_is_exynos3250())
++		if (soc_dev_is_exynos3250())
+ 			dsb_sev();
+ 		else
+ 			arch_send_wakeup_ipi_mask(cpumask_of(cpu));
+diff --git a/arch/arm/mach-exynos/pm.c b/arch/arm/mach-exynos/pm.c
+index 48e7fb3..88c1bce 100644
+--- a/arch/arm/mach-exynos/pm.c
++++ b/arch/arm/mach-exynos/pm.c
+@@ -120,7 +120,7 @@ int exynos_pm_central_resume(void)
+ static void exynos_set_wakeupmask(long mask)
+ {
+ 	pmu_raw_writel(mask, S5P_WAKEUP_MASK);
+-	if (soc_is_exynos3250())
++	if (soc_dev_is_exynos3250())
+ 		pmu_raw_writel(0x0, S5P_WAKEUP_MASK2);
+ }
+ 
+@@ -135,7 +135,8 @@ static int exynos_aftr_finisher(unsigned long flags)
+ {
+ 	int ret;
+ 
+-	exynos_set_wakeupmask(soc_is_exynos3250() ? 0x40003ffe : 0x0000ff3e);
++	exynos_set_wakeupmask(soc_dev_is_exynos3250() ? 0x40003ffe
++						      : 0x0000ff3e);
+ 	/* Set value of power down register for aftr mode */
+ 	exynos_sys_powerdown_conf(SYS_AFTR);
+ 
+@@ -156,12 +157,12 @@ void exynos_enter_aftr(void)
+ 
+ 	cpu_pm_enter();
+ 
+-	if (soc_is_exynos3250())
++	if (soc_dev_is_exynos3250())
+ 		exynos_set_boot_flag(cpuid, C2_STATE);
+ 
+ 	exynos_pm_central_suspend();
+ 
+-	if (soc_is_exynos4412()) {
++	if (soc_dev_is_exynos4412()) {
+ 		/* Setting SEQ_OPTION register */
+ 		pmu_raw_writel(S5P_USE_STANDBY_WFI0 | S5P_USE_STANDBY_WFE0,
+ 			       S5P_CENTRAL_SEQ_OPTION);
+@@ -177,7 +178,7 @@ void exynos_enter_aftr(void)
+ 
+ 	exynos_pm_central_resume();
+ 
+-	if (soc_is_exynos3250())
++	if (soc_dev_is_exynos3250())
+ 		exynos_clear_boot_flag(cpuid, C2_STATE);
+ 
+ 	cpu_pm_exit();
+@@ -248,7 +249,7 @@ static int exynos_cpu0_enter_aftr(void)
+ 		while (exynos_cpu_power_state(1) != S5P_CORE_LOCAL_PWR_EN)
+ 			cpu_relax();
+ 
+-		if (soc_is_exynos3250()) {
++		if (soc_dev_is_exynos3250()) {
+ 			while (!pmu_raw_readl(S5P_PMU_SPARE2) &&
+ 			       !atomic_read(&cpu1_wakeup))
+ 				cpu_relax();
+@@ -278,7 +279,7 @@ static int exynos_cpu0_enter_aftr(void)
+ 
+ static int exynos_wfi_finisher(unsigned long flags)
+ {
+-	if (soc_is_exynos3250())
++	if (soc_dev_is_exynos3250())
+ 		flush_cache_all();
+ 	cpu_do_idle();
+ 
+@@ -300,7 +301,7 @@ static int exynos_cpu1_powerdown(void)
+ 	 */
+ 	exynos_cpu_power_down(1);
+ 
+-	if (soc_is_exynos3250())
++	if (soc_dev_is_exynos3250())
+ 		pmu_raw_writel(0, S5P_PMU_SPARE2);
+ 
+ 	ret = cpu_suspend(0, exynos_wfi_finisher);
 -- 
 1.9.1
 
