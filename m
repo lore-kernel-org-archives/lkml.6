@@ -2,125 +2,157 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27998C04EBC
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 01:35:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 397C8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 01:36:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E3F3F2089F
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 01:35:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 04C8622360
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 01:36:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wbmVNsen"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3F3F2089F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZYjDsqBB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04C8622360
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728322AbeKOLlP (ORCPT
+        id S1728344AbeKOLln (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 06:41:15 -0500
-Received: from aserp2120.oracle.com ([141.146.126.78]:56256 "EHLO
-        aserp2120.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbeKOLlO (ORCPT
+        Thu, 15 Nov 2018 06:41:43 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:32786 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbeKOLlm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 06:41:14 -0500
-Received: from pps.filterd (aserp2120.oracle.com [127.0.0.1])
-        by aserp2120.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAF1U0Le128824;
-        Thu, 15 Nov 2018 01:35:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=hKQkzgbLsQ66WXB6sPHOTALk0ojr6tOPyXzTnJyBbXE=;
- b=wbmVNsenHVT3Yb6/vNz998leHf45BMQMLQPaDWFBgRtZ4ns0+hiArz4icjKOI0I8DZV0
- ikpmBl3mieXAVZMFNK0FJNH5iUyMp3b+ynzaHd32wBVs2Ubu33aGb+HVsap+omYm7/cJ
- eOk75h/GtZdT6nAtX6XO6ltX2Zqq3FV7P+XIn9G0kJE1qkhpU0xWG8ECclfadAN8DkQd
- yU75WKEHvEvgi/Z7Slx2KuAIUGLe63iHMHs4/9gYwa/vQad4Kmj2IwB8cdyGr2YLzL9/
- Hl6HfjOEhwzCAEx2dJcJGAEEK+9gWfyUBv1/m98ndyBQvbDwVCOkCEmc+n44IpAi/bxp 4g== 
-Received: from userv0022.oracle.com (userv0022.oracle.com [156.151.31.74])
-        by aserp2120.oracle.com with ESMTP id 2nr7cs6udx-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Nov 2018 01:35:27 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAF1ZQ3t028728
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Nov 2018 01:35:26 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAF1ZQ6o028571;
-        Thu, 15 Nov 2018 01:35:26 GMT
-Received: from [10.182.69.118] (/10.182.69.118)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 14 Nov 2018 17:35:26 -0800
-Subject: Re: [PATCH V7 1/4] blk-mq: refactor the code of issue request
- directly
-To:     Jens Axboe <axboe@kernel.dk>, Ming Lei <ming.lei@redhat.com>
-Cc:     linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1542185131-15029-1-git-send-email-jianchao.w.wang@oracle.com>
- <1542185131-15029-2-git-send-email-jianchao.w.wang@oracle.com>
- <20181114091153.GB20550@ming.t460p>
- <17b51550-d45b-9861-b172-74ee0e256d98@oracle.com>
- <20181114094343.GA13193@ming.t460p>
- <42861ece-5519-bb59-e3a7-8fea1c731f19@kernel.dk>
-From:   "jianchao.wang" <jianchao.w.wang@oracle.com>
-Message-ID: <d7c48fb9-9294-49ff-bb18-67a5db3ea021@oracle.com>
-Date:   Thu, 15 Nov 2018 09:35:38 +0800
+        Thu, 15 Nov 2018 06:41:42 -0500
+Received: by mail-pg1-f195.google.com with SMTP id z11so5584084pgu.0
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 17:35:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=I8Ps1Ot+ilZM/p93NJCoBHoDOUqbuCiTwoYJCqizx7Q=;
+        b=ZYjDsqBB3yqmmfFeW+FTJ2vSUeSBoT+iJIYcRjJdaCdBizVbcjglncmXdjYYQnRwgG
+         d5eolt/rEavAaA5eLQtVOT7fjRwh2TTlc1EkR5REPKWxV09t/v3yRvqOewgfy+bIyvHa
+         UAHLv7acaEH6SpeQanofYCfmXEjc+Uagox3O8=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=I8Ps1Ot+ilZM/p93NJCoBHoDOUqbuCiTwoYJCqizx7Q=;
+        b=guu0FtASyzDlYlzqtIvjdt5p+R7dF9PVA161sFPs0BhJV0ZmtGBRlaV8+/o0m27HDt
+         EEEkZ9cjsk2KJ9nUO0lOQnmSk2uBjUoqEYJ15Sif4c5tJJUU+bKZZ7L56DSrWPGmqdNO
+         cTahFIv2lIFnbPExaWqCK7G4XSTpRmmIn2ispoDMWwwKNKcC9N18D7uZ9DX/x8/SA0/j
+         jA4I7UN1YgWvheGAkqAJQWrAyiy2YEShXXDWcyZbdggK25Fa0OcE6HY8VLitRGn71sox
+         eUZCMsxh7cdhVQSj74C5J+9xfRL4e71TyzJIKe30SzawAJGfPFAPQYq9D5rQ/Cc8H3FJ
+         jcSQ==
+X-Gm-Message-State: AGRZ1gJ4RuoEEk0dbuyjFndOnk377b3EkpZAXm/oTO8SRI8kvP33SFR1
+        tcL9ZBbTEuR52K3RpYSiJpIITg==
+X-Google-Smtp-Source: AJdET5dUkn00v53ZSXBdCZc60AdNhAE+LJSu71ZWD0AUnHFdV+dKdQNvZJQGdxZB2Vihxd+qVT5XZA==
+X-Received: by 2002:a63:4b60:: with SMTP id k32mr3930731pgl.186.1542245758681;
+        Wed, 14 Nov 2018 17:35:58 -0800 (PST)
+Received: from [172.30.51.152] ([64.114.255.97])
+        by smtp.googlemail.com with ESMTPSA id 18-v6sm38694983pfu.129.2018.11.14.17.35.57
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 17:35:57 -0800 (PST)
+Subject: Re: [PATCH 1/2] clocksource: meson6_timer: use register names from
+ the datasheet
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de
+Cc:     linux-arm-kernel@lists.infradead.org, khilman@baylibre.com,
+        carlo@caione.org
+References: <20181028125501.17336-1-martin.blumenstingl@googlemail.com>
+ <20181028125501.17336-2-martin.blumenstingl@googlemail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <6793aba9-87fc-6cf8-cada-f1fa6a1e0040@linaro.org>
+Date:   Thu, 15 Nov 2018 02:35:56 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <42861ece-5519-bb59-e3a7-8fea1c731f19@kernel.dk>
+In-Reply-To: <20181028125501.17336-2-martin.blumenstingl@googlemail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9077 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811150011
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/14/18 11:22 PM, Jens Axboe wrote:
-> On 11/14/18 2:43 AM, Ming Lei wrote:
->> On Wed, Nov 14, 2018 at 05:23:48PM +0800, jianchao.wang wrote:
->>> Hi Ming
->>>
->>> On 11/14/18 5:11 PM, Ming Lei wrote:
->>>>>  
->>>>> -	if (!blk_mq_get_dispatch_budget(hctx))
->>>>> -		goto insert;
->>>>> +	if (unlikely(!blk_mq_get_dispatch_budget(hctx)))
->>>>> +		goto out_unlock;
->>>> The unlikely annotation is a bit misleading, since out-of-budget can
->>>> happen frequently in case of low queue depth, and there are lots of
->>>> such examples.
->>>>
->>>
->>> This could be good for the case for no .get_budget and getting budget success.
->>> In case of out-of-budget, we insert the request which is slow path.
->>
->> In case of low queue depth, it is hard to say that 'insert request' is
->> done in slow path, cause it happens quite frequently.
->>
->> I suggest to remove these two unlikely() since modern CPU's branch prediction
->> should work well enough.
->>
->> Especially the annotation of unlikely() often means that this branch is
->> missed in most of times for all settings, and it is obviously not true
->> in this case.
+On 28/10/2018 13:55, Martin Blumenstingl wrote:
+> This makes the driver use the names from S805 datasheet for the
+> preprocessor #defines. This makes it easier to spot that the driver
+> currently only supports Timer A (as clockevent with interrupt support)
+> and Timer E (as clocksource without interrupts). Timer B, C and D (which
+> are similar to Timer A) are currently not supported by the driver.
 > 
-> Agree, unlikely() should only be used for the error handling case or
-> similar that does indeed almost never trigger. It should not be used
-> for cases that don't trigger a lot in "most" circumstances.
+> While here, this also removes the internal "CED_ID" and "CSD_ID" defines
+> which are used to identify the timer. These IDs are not described in the
+> datasheet and thus make it harder to compare the code to what's written
+> in the datasheet.
 > 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clocksource/meson6_timer.c | 110 ++++++++++++++++++-----------
+>  1 file changed, 68 insertions(+), 42 deletions(-)
+> 
+> diff --git a/drivers/clocksource/meson6_timer.c b/drivers/clocksource/meson6_timer.c
+> index 92f20991a937..c622135bee9d 100644
+> --- a/drivers/clocksource/meson6_timer.c
+> +++ b/drivers/clocksource/meson6_timer.c
+> @@ -10,6 +10,8 @@
+>   * warranty of any kind, whether express or implied.
+>   */
+>  
+> +#include <linux/bitfield.h>
+> +#include <linux/bitops.h>
+>  #include <linux/clk.h>
+>  #include <linux/clockchips.h>
+>  #include <linux/interrupt.h>
+> @@ -20,80 +22,102 @@
+>  #include <linux/of_address.h>
+>  #include <linux/of_irq.h>
+>  
+> -#define CED_ID			0
+> -#define CSD_ID			4
+> -
+> -#define TIMER_ISA_MUX		0
+> -#define TIMER_ISA_VAL(t)	(((t) + 1) << 2)
+> -
+> -#define TIMER_INPUT_BIT(t)	(2 * (t))
+> -#define TIMER_ENABLE_BIT(t)	(16 + (t))
+> -#define TIMER_PERIODIC_BIT(t)	(12 + (t))
+> +enum meson6_timera_input_clock {
+> +	MESON_TIMERA_CLOCK_1US = 0x0,
+> +	MESON_TIMERA_CLOCK_10US = 0x1,
+> +	MESON_TIMERA_CLOCK_100US = 0x2,
+> +	MESON_TIMERA_CLOCK_1MS = 0x3,
+> +};
+>  
+> -#define TIMER_CED_INPUT_MASK	(3UL << TIMER_INPUT_BIT(CED_ID))
+> -#define TIMER_CSD_INPUT_MASK	(7UL << TIMER_INPUT_BIT(CSD_ID))
+> +enum meson6_timere_input_clock {
+> +	MESON_TIMERE_CLOCK_SYSTEM_CLOCK = 0x0,
+> +	MESON_TIMERE_CLOCK_1US = 0x1,
+> +	MESON_TIMERE_CLOCK_10US = 0x2,
+> +	MESON_TIMERE_CLOCK_100US = 0x3,
+> +	MESON_TIMERE_CLOCK_1MS = 0x4,
+> +};
 
-That's really appreciated for all of your kindly response.
-Fair enough with 'unlikely'.
-I will remove these two wrong 'unlikely' in next version.
+It is not required to specify the values. The standard defines the
+default first value is zero, and each enum has the value which is +1 of
+the previous one.
 
-Thanks
-Jianchao
+Other than that, the changes look ok.
+
+
+
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
