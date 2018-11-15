@@ -2,167 +2,126 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F1906C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:12:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2498DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:12:25 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C1BB221780
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:12:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C1BB221780
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=zytor.com
+	by mail.kernel.org (Postfix) with ESMTP id 901BE21780
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:12:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Dgomb94m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 901BE21780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387660AbeKOTTB (ORCPT
+        id S1729134AbeKOTTT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:19:01 -0500
-Received: from terminus.zytor.com ([198.137.202.136]:37363 "EHLO
-        terminus.zytor.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728519AbeKOTTB (ORCPT
+        Thu, 15 Nov 2018 14:19:19 -0500
+Received: from mail-ed1-f67.google.com ([209.85.208.67]:35398 "EHLO
+        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728748AbeKOTTT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:19:01 -0500
-Received: from terminus.zytor.com (localhost [127.0.0.1])
-        by terminus.zytor.com (8.15.2/8.15.2) with ESMTPS id wAF9BgEX738829
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-        Thu, 15 Nov 2018 01:11:42 -0800
-Received: (from tipbot@localhost)
-        by terminus.zytor.com (8.15.2/8.15.2/Submit) id wAF9Bgxq738826;
-        Thu, 15 Nov 2018 01:11:42 -0800
-Date:   Thu, 15 Nov 2018 01:11:42 -0800
-X-Authentication-Warning: terminus.zytor.com: tipbot set sender to tipbot@zytor.com using -f
-From:   tip-bot for Ard Biesheuvel <tipbot@zytor.com>
-Message-ID: <tip-eff896288872d687d9662000ec9ae11b6d61766f@git.kernel.org>
-Cc:     ard.biesheuvel@linaro.org, hpa@zytor.com, mingo@kernel.org,
-        torvalds@linux-foundation.org, peterz@infradead.org,
-        marc.zyngier@arm.com, linux-kernel@vger.kernel.org,
-        tglx@linutronix.de
-Reply-To: hpa@zytor.com, ard.biesheuvel@linaro.org,
-          torvalds@linux-foundation.org, mingo@kernel.org,
-          peterz@infradead.org, tglx@linutronix.de,
-          linux-kernel@vger.kernel.org, marc.zyngier@arm.com
-In-Reply-To: <20181114175544.12860-5-ard.biesheuvel@linaro.org>
-References: <20181114175544.12860-5-ard.biesheuvel@linaro.org>
-To:     linux-tip-commits@vger.kernel.org
-Subject: [tip:efi/urgent] efi/arm: Defer persistent reservations until after
- paging_init()
-Git-Commit-ID: eff896288872d687d9662000ec9ae11b6d61766f
-X-Mailer: tip-git-log-daemon
-Robot-ID: <tip-bot.git.kernel.org>
-Robot-Unsubscribe: Contact <mailto:hpa@kernel.org> to get blacklisted from
- these emails
+        Thu, 15 Nov 2018 14:19:19 -0500
+Received: by mail-ed1-f67.google.com with SMTP id x30so11338928edx.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 01:12:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rasmusvillemoes.dk; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=UM9EjP0Hw28LqZf3C7ivhhk6R3koYbFfX0law4kebOA=;
+        b=Dgomb94mdd0qdW5Fg0GrQmbQC/kG22wh8FOvovgQtTU/yY5O94HtYABv2vqefK2enC
+         h3+Cst6BcmxzGNBCT0zV+wSArmHO/iH+rBQP3EDiGPiSHpGj9WVa+pTBHhLuGDH6Efnz
+         GkfiFcAcbZbqAXmLAMVA/shG3CHtoTqpKMHuo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=UM9EjP0Hw28LqZf3C7ivhhk6R3koYbFfX0law4kebOA=;
+        b=h5wVjDSL0cKwlYT08+jhz4Ht7TZyg4lwjfUPRleC5WMk8V89PlNkKFHduJ5d6jRLNv
+         HE+uKKCVj6I4EwrO7upBcEoJSv44MF/wwpYjEBbRwBARWTxfM7GKzll6/ExJHwoUwPBO
+         1y0Jzns1FmZ6NKcBgUIPNsmTyg13p6LEQGukiFKh02uOg/UTN1foeh7ygbKoU67tNdni
+         NYhEFeeUiZhWw+LDWUmuzPP8ETDCW3vMPhGEjI2t4K5CWwb6KAMqnkjQXZipkp9cTHeC
+         YBhuVU0rR4/gtKM92f3qHveRl415+5d4K/qtSbsD5ofReIpVRVAkWe3P01QbrbcK7vBB
+         kUrw==
+X-Gm-Message-State: AGRZ1gK0+wZ04uwihAJ81cqb0o2R868C7qhXuiBlyCunawLo40FIWYAH
+        H0UBylpIKew5gxq1n9sria5zy9/yAds=
+X-Google-Smtp-Source: AJdET5dFTBbM0XRCE44Rmdmmp3hAFpLP0Uias5lgY/h7WsaV3MeVwqG6TJwDl8IwEGf3wqE594krTw==
+X-Received: by 2002:a17:906:6b43:: with SMTP id o3-v6mr4690073ejs.31.1542273140318;
+        Thu, 15 Nov 2018 01:12:20 -0800 (PST)
+Received: from [172.26.253.252] ([193.47.71.171])
+        by smtp.gmail.com with ESMTPSA id f5-v6sm7164942edi.85.2018.11.15.01.12.19
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 01:12:19 -0800 (PST)
+Subject: Re: [PATCH 5/8] kbuild: change if_changed_rule to accept multi-line
+ recipe
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
+        linux-kbuild@vger.kernel.org
+Cc:     Sam Ravnborg <sam@ravnborg.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        linux-kernel@vger.kernel.org
+References: <1542270435-11181-1-git-send-email-yamada.masahiro@socionext.com>
+ <1542270435-11181-6-git-send-email-yamada.masahiro@socionext.com>
+From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Message-ID: <6ee62b52-5d6d-c540-5f01-f522b6986c4d@rasmusvillemoes.dk>
+Date:   Thu, 15 Nov 2018 10:12:18 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain; charset=UTF-8
-Content-Disposition: inline
+In-Reply-To: <1542270435-11181-6-git-send-email-yamada.masahiro@socionext.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Commit-ID:  eff896288872d687d9662000ec9ae11b6d61766f
-Gitweb:     https://git.kernel.org/tip/eff896288872d687d9662000ec9ae11b6d61766f
-Author:     Ard Biesheuvel <ard.biesheuvel@linaro.org>
-AuthorDate: Wed, 14 Nov 2018 09:55:43 -0800
-Committer:  Ingo Molnar <mingo@kernel.org>
-CommitDate: Thu, 15 Nov 2018 10:04:46 +0100
+On 15/11/2018 09.27, Masahiro Yamada wrote:
+> GNU Make supports 'define' ... 'endef' directive, which can describe
+> a recipe that consists of multiple lines.
+> 
+>   endef
+> 
+> This does not actually exploit the benefits of 'define' ... 'endef'
+> form. All shell commands must be concatenated with '; \' so that it
+> looks like a single command from the Makefile point of view. '@' can
+> only appear before the first action.
+> 
+> The root cause of this misfortune is the '@set -e;' in if_changed_rule.
+> It is easily solvable by moving '@set -e' to the 'cmd' macro.
+> 
+> The combo of $(call echo-cmd,*) $(cmd_*) in rule_cc_o_c and rule_as_o_S
+> were replaced with $(call cmd,*). The tailing back-slashes went away.
+> 
+> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> ---
+>  
+>  define rule_cc_o_c
+> -	$(call echo-cmd,checksrc) $(cmd_checksrc)			  \
+> -	$(call cmd_and_fixdep,cc_o_c)					  \
+> -	$(cmd_gen_ksymdeps)						  \
+> -	$(cmd_checkdoc)							  \
+> -	$(call echo-cmd,objtool) $(cmd_objtool)				  \
+> -	$(cmd_modversions_c)						  \
+> -	$(call echo-cmd,record_mcount) $(cmd_record_mcount)
+> +	$(call cmd,checksrc)
+> +	@$(call cmd_and_fixdep,cc_o_c)
+> +	$(call cmd,gen_ksymdeps)
+> +	$(call cmd,checkdoc)
+> +	$(call cmd,objtool)
+> +	$(call cmd,modversions_c)
+> +	$(call cmd,record_mcount)
+>  endef
 
-efi/arm: Defer persistent reservations until after paging_init()
+Does this mean that Make now spawns a new shell for each of these
+commands, and if so, what's the performance impact? Or am I just
+misreading things? If this does change the semantics (one shell instance
+versus many), I think that's worth mentioning explicitly in the
+changelog, regardless of whether there's no measuarable performance impact.
 
-The new memory EFI reservation feature we introduced to allow memory
-reservations to persist across kexec may trigger an unbounded number
-of calls to memblock_reserve(). The memblock subsystem can deal with
-this fine, but not before memblock resizing is enabled, which we can
-only do after paging_init(), when the memory we reallocate the array
-into is actually mapped.
-
-So break out the memreserve table processing into a separate routine
-and call it after paging_init() on arm64. On ARM, because of limited
-reviewing bandwidth of the maintainer, we cannot currently fix this,
-so instead, disable the EFI persistent memreserve entirely on ARM so
-we can fix it later.
-
-Tested-by: Marc Zyngier <marc.zyngier@arm.com>
-Signed-off-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-efi@vger.kernel.org
-Link: http://lkml.kernel.org/r/20181114175544.12860-5-ard.biesheuvel@linaro.org
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
----
- arch/arm64/kernel/setup.c               | 1 +
- drivers/firmware/efi/efi.c              | 4 ++++
- drivers/firmware/efi/libstub/arm-stub.c | 3 +++
- include/linux/efi.h                     | 7 +++++++
- 4 files changed, 15 insertions(+)
-
-diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
-index 953e316521fc..f4fc1e0544b7 100644
---- a/arch/arm64/kernel/setup.c
-+++ b/arch/arm64/kernel/setup.c
-@@ -313,6 +313,7 @@ void __init setup_arch(char **cmdline_p)
- 	arm64_memblock_init();
- 
- 	paging_init();
-+	efi_apply_persistent_mem_reservations();
- 
- 	acpi_table_upgrade();
- 
-diff --git a/drivers/firmware/efi/efi.c b/drivers/firmware/efi/efi.c
-index 249eb70691b0..72a4da76d274 100644
---- a/drivers/firmware/efi/efi.c
-+++ b/drivers/firmware/efi/efi.c
-@@ -592,7 +592,11 @@ int __init efi_config_parse_tables(void *config_tables, int count, int sz,
- 
- 		early_memunmap(tbl, sizeof(*tbl));
- 	}
-+	return 0;
-+}
- 
-+int __init efi_apply_persistent_mem_reservations(void)
-+{
- 	if (efi.mem_reserve != EFI_INVALID_TABLE_ADDR) {
- 		unsigned long prsv = efi.mem_reserve;
- 
-diff --git a/drivers/firmware/efi/libstub/arm-stub.c b/drivers/firmware/efi/libstub/arm-stub.c
-index 30ac0c975f8a..3d36142cf812 100644
---- a/drivers/firmware/efi/libstub/arm-stub.c
-+++ b/drivers/firmware/efi/libstub/arm-stub.c
-@@ -75,6 +75,9 @@ void install_memreserve_table(efi_system_table_t *sys_table_arg)
- 	efi_guid_t memreserve_table_guid = LINUX_EFI_MEMRESERVE_TABLE_GUID;
- 	efi_status_t status;
- 
-+	if (IS_ENABLED(CONFIG_ARM))
-+		return;
-+
- 	status = efi_call_early(allocate_pool, EFI_LOADER_DATA, sizeof(*rsv),
- 				(void **)&rsv);
- 	if (status != EFI_SUCCESS) {
-diff --git a/include/linux/efi.h b/include/linux/efi.h
-index 845174e113ce..100ce4a4aff6 100644
---- a/include/linux/efi.h
-+++ b/include/linux/efi.h
-@@ -1167,6 +1167,8 @@ static inline bool efi_enabled(int feature)
- extern void efi_reboot(enum reboot_mode reboot_mode, const char *__unused);
- 
- extern bool efi_is_table_address(unsigned long phys_addr);
-+
-+extern int efi_apply_persistent_mem_reservations(void);
- #else
- static inline bool efi_enabled(int feature)
- {
-@@ -1185,6 +1187,11 @@ static inline bool efi_is_table_address(unsigned long phys_addr)
- {
- 	return false;
- }
-+
-+static inline int efi_apply_persistent_mem_reservations(void)
-+{
-+	return 0;
-+}
- #endif
- 
- extern int efi_status_to_err(efi_status_t status);
+Rasmus
