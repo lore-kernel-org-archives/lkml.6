@@ -2,83 +2,102 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5750C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:32:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A75FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:32:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9831E21582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:32:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9831E21582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C316C21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:32:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="JEKS40JX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C316C21582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729058AbeKPFlO (ORCPT
+        id S2388454AbeKPFlY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 00:41:14 -0500
-Received: from mga11.intel.com ([192.55.52.93]:5289 "EHLO mga11.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725742AbeKPFlO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 00:41:14 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 11:32:07 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,237,1539673200"; 
-   d="scan'208";a="92381520"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by orsmga008.jf.intel.com with SMTP; 15 Nov 2018 11:32:01 -0800
-Received: by lahna (sSMTP sendmail emulation); Thu, 15 Nov 2018 21:32:01 +0200
-Date:   Thu, 15 Nov 2018 21:32:01 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Lukas Wunner <lukas@wunner.de>
-Cc:     Yehezkel Bernat <yehezkelshb@gmail.com>, lorenzo.pieralisi@arm.com,
-        iommu@lists.linux-foundation.org, joro@8bytes.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        baolu.lu@linux.intel.com, ashok.raj@intel.com,
-        Bjorn Helgaas <bhelgaas@google.com>, rjw@rjwysocki.net,
-        jacob.jun.pan@intel.com, Andreas Noever <andreas.noever@gmail.com>,
-        michael.jamet@intel.com, Christian Kellner <ckellner@redhat.com>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
-Message-ID: <20181115193201.GF4179@lahna.fi.intel.com>
-References: <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
- <20181115102239.GU2500@lahna.fi.intel.com>
- <20181115111356.GA599@e107981-ln.cambridge.arm.com>
- <20181115113737.GW2500@lahna.fi.intel.com>
- <20181115120736.pscly6zwd3k2tvd2@wunner.de>
- <20181115121627.GA2500@lahna.fi.intel.com>
- <20181115174608.GA17691@e107981-ln.cambridge.arm.com>
- <CA+CmpXv9yM6nFdb0mcMPGHS-B_uGbQHYoO6iuefZC8gWoZYD3Q@mail.gmail.com>
- <20181115191026.GE4179@lahna.fi.intel.com>
- <20181115192741.4ugt6usmsemokxle@wunner.de>
+        Fri, 16 Nov 2018 00:41:24 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:32868 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725742AbeKPFlY (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 00:41:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=kc6jaMDSIsYk92ov3wcXzIrCZOGTxxflOp+FIETUNLs=; b=JEKS40JX3MPm+xY9+0kTR45/2
+        h6Uobwp9i7QFJ+PRMT5gC9Z4mgG/EuAkQug72qjSHzgZ2Ot6/uVydDXTUsAiq9crp67XIiN0ky8om
+        eAoVxPowS2IrYOhjio6FeijFRlwShefmEwE4VG20SN3LpmBPdXEBvw01hh0irkpWxKrco=;
+Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gNNN8-0006Dr-NW; Thu, 15 Nov 2018 19:32:14 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 6DA17440078; Thu, 15 Nov 2018 19:32:08 +0000 (GMT)
+Date:   Thu, 15 Nov 2018 11:32:08 -0800
+From:   Mark Brown <broonie@kernel.org>
+To:     Cheng-Yi Chiang <cychiang@chromium.org>
+Cc:     linux-kernel@vger.kernel.org, oder_chiou@realtek.com,
+        alsa-devel@alsa-project.org, dgreid@chromium.org,
+        tzungbi@chromium.org
+Subject: Re: [PATCH 1/2] ASoC: rt5663: Add documentation for power supply
+ support
+Message-ID: <20181115193208.GO2089@sirena.org.uk>
+References: <20181115041334.79446-1-cychiang@chromium.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="0MVPm7EaLRZfIY9d"
 Content-Disposition: inline
-In-Reply-To: <20181115192741.4ugt6usmsemokxle@wunner.de>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20181115041334.79446-1-cychiang@chromium.org>
+X-Cookie: No Canadian coins.
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 08:27:41PM +0100, Lukas Wunner wrote:
-> On Thu, Nov 15, 2018 at 09:10:26PM +0200, Mika Westerberg wrote:
-> > I was thinking we could cover all these with is_external filling them
-> > based on the _DSD or some other means in the kernel.
-> > 
-> > We would then deal all such devices as "untrusted" by default.
-> 
-> Tinfoil hat on, even internal devices could be malicious.
-> What's the downside of enabling the feature for everything?
 
-Mostly performance, I think. That's the main reason we put all non
-external devices to passthrough IOMMU mode.
+--0MVPm7EaLRZfIY9d
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Thu, Nov 15, 2018 at 12:13:33PM +0800, Cheng-Yi Chiang wrote:
+
+> +++ b/Documentation/devicetree/bindings/sound/rt5663.txt
+> @@ -36,6 +36,9 @@ Optional properties:
+>    "realtek,impedance_sensing_num" is 2. It means that there are 2 ranges=
+ of
+>    impedance in the impedance sensing function.
+> =20
+> +- avdd-supply: Power supply for AVDD, providing 1.8V.
+> +- cpvdd-supply: Power supply for CPVDD, providing 3.5V.
+> +
+
+These should be mandatory properties, the device is going to need power
+to work.  The regulator API will handle incompletely specified boards
+for you, that's not a problem.
+
+--0MVPm7EaLRZfIY9d
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvtybcACgkQJNaLcl1U
+h9CoJQf/VdQDU6fQnTd8fQFAhMHF7OlBxmiyfzkgRvOmPDLMSMTfV2zJcLfMT2XB
+Z/FhyT0K5yMmPTbtIPBSrM4v0ECaQyOxHtUAomZQAQ32umS9ap5IiH1m8LTboKD/
+K19ektcrbWvmg3CwQRW+KZy4QwDdbyCoFjWxfMNz4aelzcKReenOtnicQ/DvZ4R3
+VVqLIK3IXKxOwW9gjx2/6GQDMR40xiNw8f1wCx7tbbX531on686Kwculduepbd0T
+87AjYOI3JtgbzYDzVSJYzgkN/fP81pV7JzKwglcG0Qg5C1BuBW0pvjXIMvULMtk/
+Gngq6BUSnmvtwz8Ye4hrE63kymarqw==
+=4gfH
+-----END PGP SIGNATURE-----
+
+--0MVPm7EaLRZfIY9d--
