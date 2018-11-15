@@ -2,185 +2,95 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F0B9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:01:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B90EBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:02:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2F2942146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:01:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F2942146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 877C12146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:02:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 877C12146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388083AbeKOWI4 (ORCPT
+        id S2388108AbeKOWKV (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 17:08:56 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:41424 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728931AbeKOWIz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 17:08:55 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id C941CC0495AD;
-        Thu, 15 Nov 2018 12:01:21 +0000 (UTC)
-Received: from [10.36.117.224] (ovpn-117-224.ams2.redhat.com [10.36.117.224])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 6422660BF6;
-        Thu, 15 Nov 2018 12:01:18 +0000 (UTC)
-Subject: Re: [PATCH RFC 3/6] kexec: export PG_offline to VMCOREINFO
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     Dave Young <dyoung@redhat.com>, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        devel@linuxdriverproject.org, linux-fsdevel@vger.kernel.org,
-        linux-pm@vger.kernel.org, xen-devel@lists.xenproject.org,
-        Andrew Morton <akpm@linux-foundation.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Baoquan He <bhe@redhat.com>, Omar Sandoval <osandov@fb.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Matthew Wilcox <willy@infradead.org>,
-        Michal Hocko <mhocko@suse.com>,
-        Lianbo Jiang <lijiang@redhat.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-References: <20181114211704.6381-1-david@redhat.com>
- <20181114211704.6381-4-david@redhat.com>
- <20181115061923.GA3971@dhcp-128-65.nay.redhat.com>
- <20181115111023.GC26448@zn.tnic>
- <4aa5d39d-a923-87de-d646-70b9cbfe62f0@redhat.com>
- <20181115115213.GE26448@zn.tnic>
-From:   David Hildenbrand <david@redhat.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
- 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
- SE+xAvmumFBY
-Organization: Red Hat GmbH
-Message-ID: <9d19a844-9ae0-9520-c32a-0a4491f8de43@redhat.com>
-Date:   Thu, 15 Nov 2018 13:01:17 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 15 Nov 2018 17:10:21 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14673 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728757AbeKOWKU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 17:10:20 -0500
+Received: from DGGEMS411-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id E5F72BDB63185;
+        Thu, 15 Nov 2018 20:01:20 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS411-HUB.china.huawei.com (10.3.19.211) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 15 Nov 2018 20:01:14 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Dave Airlie <airlied@redhat.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        "David Airlie" <airlied@linux.ie>,
+        Thierry Reding <treding@nvidia.com>,
+        Daniel Stone <daniels@collabora.com>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        "Adam Jackson" <ajax@redhat.com>
+CC:     YueHaibing <yuehaibing@huawei.com>,
+        <virtualization@lists.linux-foundation.org>,
+        <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] drm/cirrus: Remove set but not used variable 'bo'
+Date:   Thu, 15 Nov 2018 12:10:36 +0000
+Message-ID: <1542283836-152176-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-In-Reply-To: <20181115115213.GE26448@zn.tnic>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.31]); Thu, 15 Nov 2018 12:01:22 +0000 (UTC)
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15.11.18 12:52, Borislav Petkov wrote:
-> On Thu, Nov 15, 2018 at 12:20:40PM +0100, David Hildenbrand wrote:
->> Sorry to say, but that is the current practice without which
->> makedumpfile would not be able to work at all. (exclude user pages,
->> exclude page cache, exclude buddy pages). Let's not reinvent the wheel
->> here. This is how dumping works forever.
-> 
-> Sorry, but "we've always done this in the past" doesn't make it better.
+Fixes gcc '-Wunused-but-set-variable' warning:
 
-Just saying that "I'm not the first to do it, don't hit me with a stick" :)
+drivers/gpu/drm/cirrus/cirrus_fbdev.c: In function 'cirrusfb_create':
+drivers/gpu/drm/cirrus/cirrus_fbdev.c:172:20: warning:
+ variable 'bo' set but not used [-Wunused-but-set-variable]
 
-> 
->> I don't see how there should be "set of pages which do not have
->> PG_offline".
-> 
-> It doesn't have to be a set of pages. Think a (mmconfig perhaps) region
-> which the kdump kernel should completely skip because poking in it in
-> the kdump kernel, causes all kinds of havoc like machine checks. etc.
-> We've had and still have one issue like that.
+It never used since introduction in commit
+f9aa76a85248 ("drm/kms: driver for virtual cirrus under qemu")
 
-Indeed. And we still have without makedumpfile. I think you are aware of
-this, but I'll explain it just for consistency: PG_hwpoison
+Signed-off-by: YueHaibing <yuehaibing@huawei.com>
+---
+ drivers/gpu/drm/cirrus/cirrus_fbdev.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-At some point we detect a HW error and mask a page as PG_hwpoison.
-
-makedumpfile knows how to treat that flag and can exclude it from the
-dump (== not access it). No crash.
-
-kdump itself has no clue about old "struct pages". Especially:
-a) Where they are located in memory (e.g. SPARSE)
-b) What their format is ("where are the flags")
-c) What the meaning of flags is ("what does bit X mean")
-
-In order to know such information, we would have to do parsing of quite
-some information inside the kernel in kdump. Basically what makedumpfile
-does just now. Is this feasible? I don't think so.
-
-So we would need another approach to communicate such information as you
-said. I can't think of any, but if anybody reading this has an idea,
-please speak up. I am interested.
+diff --git a/drivers/gpu/drm/cirrus/cirrus_fbdev.c b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+index 68ab182..4dd499c 100644
+--- a/drivers/gpu/drm/cirrus/cirrus_fbdev.c
++++ b/drivers/gpu/drm/cirrus/cirrus_fbdev.c
+@@ -169,7 +169,6 @@ static int cirrusfb_create(struct drm_fb_helper *helper,
+ 	struct drm_mode_fb_cmd2 mode_cmd;
+ 	void *sysram;
+ 	struct drm_gem_object *gobj = NULL;
+-	struct cirrus_bo *bo = NULL;
+ 	int size, ret;
+ 
+ 	mode_cmd.width = sizes->surface_width;
+@@ -185,8 +184,6 @@ static int cirrusfb_create(struct drm_fb_helper *helper,
+ 		return ret;
+ 	}
+ 
+-	bo = gem_to_cirrus_bo(gobj);
+-
+ 	sysram = vmalloc(size);
+ 	if (!sysram)
+ 		return -ENOMEM;
 
 
-The *only* way right now we would have to handle such scenarios:
 
-1. While dumping memory and we get a machine check, fake reading a zero
-page instead of crashing.
-2. While dumping memory and we get a fault, fake reading a zero page
-instead of crashing.
 
-> 
-> But let me clarify my note: I don't want to be discussing with you the
-> design of makedumpfile and how it should or should not work - that ship
-> has already sailed. Apparently there are valid reasons to do it this
-> way.
 
-Indeed, and the basic design is to export these flags. (let's say
-"unfortunately", being able to handle such stuff in kdump directly would
-be the dream).
-
-> I was *simply* stating that it feels wrong to export mm flags like that.
-> 
-> But as I said already, that is mm guys' call and looking at how we're
-> already exporting a bunch of stuff in the vmcoreinfo - including other
-> mm flags - I guess one more flag doesn't matter anymore.
-
-Fair enough, noted. If you have an idea how to handle this in kdump,
-please let me know.
-
--- 
-
-Thanks,
-
-David / dhildenb
