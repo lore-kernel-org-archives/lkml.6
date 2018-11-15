@@ -2,208 +2,228 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 47394C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:32:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BC385C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:33:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A8472243E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:32:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A8472243E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=dev.tdt.de
+	by mail.kernel.org (Postfix) with ESMTP id 768292243E
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:33:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iXnhObX7"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 768292243E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388464AbeKOXkS (ORCPT
+        id S2388481AbeKOXk4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 18:40:18 -0500
-Received: from ms.tdt.de ([195.243.126.94]:34254 "EHLO mail.dev.tdt.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2388290AbeKOXkR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 18:40:17 -0500
-Received: from feckert01.dev.tdt.de (unknown [10.2.3.40])
-        by mail.dev.tdt.de (Postfix) with ESMTPSA id BDAE021A66;
-        Thu, 15 Nov 2018 13:32:22 +0000 (UTC)
-From:   Florian Eckert <fe@dev.tdt.de>
-To:     linus.walleij@linaro.org, andy.shevchenko@gmail.com,
-        piotr.krol@3mdeb.com, Eckert.Florian@googlemail.com,
-        dvhart@infradead.org
-Cc:     platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-gpio@vger.kernel.org, Florian Eckert <fe@dev.tdt.de>
-Subject: [PATCH v4 2/2] platform: Add reset button device for PC Engines APU boards
-Date:   Thu, 15 Nov 2018 14:32:01 +0100
-Message-Id: <20181115133201.29092-3-fe@dev.tdt.de>
-X-Mailer: git-send-email 2.11.0
-In-Reply-To: <20181115133201.29092-1-fe@dev.tdt.de>
-References: <20181115133201.29092-1-fe@dev.tdt.de>
+        Thu, 15 Nov 2018 18:40:56 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:46669 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388439AbeKOXk4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 18:40:56 -0500
+Received: by mail-io1-f67.google.com with SMTP id m1-v6so3587616ioc.13
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 05:33:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=PN5GmVrLpfWdsF3zaWwiiGhdRplA2T5ANDxt9t9i21A=;
+        b=iXnhObX7l2OKgdTf5CjZM295AYy1uoZCTE91Tp/1dKQLg9JefdrrpmPXHHH3UdObKt
+         pN62nO4KPi4bGH2xmBio2meUireyPkKmy+PCerF4ftx2WcLLPeYr4rpH0VrGYQtQpy1D
+         yEu9aGIS6ypqN2kvnmbxiN7/vmyNZbxNb5Q+oP7yffuUVi7EvNwotbRKiHFil8NS/5CY
+         VDX8zFzmf4NG4yDld38kquxVerCuyLSgmd06HD97igOXYLHA3xiY9jiWEHfaspfgLVPW
+         r8WM+Ex/ccxkarnklVgJzcc/pwRkFxX0gzun+u11bJUnwKZ4xeVJNMseifYXyiUHHeEY
+         N6Tw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=PN5GmVrLpfWdsF3zaWwiiGhdRplA2T5ANDxt9t9i21A=;
+        b=Eu6rKtk3RQxYMF8cHyjW2QiCmu2bDHxmTl3fkGmgS2V+r3ppTM3OCek7EjamJnSART
+         SByuxf5r3zonX6gDrGOhFCzjn/ux8vyTu9C0U3Ze6hARrTc2lDFap+pjoJtkBGDOdrbC
+         vs743Yz1S+1a0ny8TDZAXPdOcUU/mutYp2T+qFmuxQr8pp2j7wnwvexabui/QDo1QDNe
+         iZAf3G/H+X/yV2pEqz45qzCAgFEJKS/Km3/y8Nlb+JasQOmaVvvCX/xLVakPucMgp+Mr
+         eUjpvUseJKJ8w+luucpDwTJWr6YhD0H9T4hp7abxLeoT4rfsZOIXZuKFSP1dkJeEeFf3
+         E0Tw==
+X-Gm-Message-State: AA+aEWaa6UKSPlNLKRXme+xD2SfcjD0rVC33weKr6caldSVxHzY2L0uV
+        pWMazYLji791Ehba9IOmzfiU2O6NTO+9ZCZff1bGGw==
+X-Google-Smtp-Source: AJdET5cY7wYv0YbRe9C4nO5GZeiRHPUOrgpKhRPRoYyz9Ep5mftC7Sh55tN1TTxWck7QyzO9jm4//GVCVFddKAaGbcQ=
+X-Received: by 2002:a6b:c892:: with SMTP id y140mr4681023iof.192.1542288783330;
+ Thu, 15 Nov 2018 05:33:03 -0800 (PST)
+MIME-Version: 1.0
+Received: by 2002:a02:7050:0:0:0:0:0 with HTTP; Thu, 15 Nov 2018 05:33:02
+ -0800 (PST)
+In-Reply-To: <20181114201738.sb2lla7umljsx3qx@blommer>
+References: <cover.1541525354.git.andreyknvl@google.com> <4891a504adf61c0daf1e83642b6f7519328dfd5f.1541525354.git.andreyknvl@google.com>
+ <20181108122228.xqwhpkjritrvqneq@lakrids.cambridge.arm.com>
+ <CAAeHK+xPkbg_9P9oCkS-iB8S81vTxD3p5SbyWHy-vrp2ybkKmg@mail.gmail.com>
+ <20181113220728.2h3kz67b2bz36wty@blommer> <CAAeHK+xe5LqbyWnYSDv2+QrLR=GK0JMzniAZBfL8kjXRwJravA@mail.gmail.com>
+ <20181114201738.sb2lla7umljsx3qx@blommer>
+From:   Andrey Konovalov <andreyknvl@google.com>
+Date:   Thu, 15 Nov 2018 14:33:02 +0100
+Message-ID: <CAAeHK+zqkyb7rknhNT7ZUt0SBJb2s775UFnhpOjc0_yWHFgrvA@mail.gmail.com>
+Subject: Re: [PATCH v10 12/22] kasan, arm64: fix up fault handling logic
+To:     Mark Rutland <mark.rutland@arm.com>
+Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
+        Alexander Potapenko <glider@google.com>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Catalin Marinas <catalin.marinas@arm.com>,
+        Will Deacon <will.deacon@arm.com>,
+        Christoph Lameter <cl@linux.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Dave Martin <dave.martin@arm.com>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
+        "Eric W . Biederman" <ebiederm@xmission.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Paul Lawrence <paullawrence@google.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        kasan-dev@googlegroups.com,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        linux-sparse@vger.kernel.org,
+        Linux Memory Management List <linux-mm@kvack.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Kostya Serebryany <kcc@google.com>,
+        Evgeniy Stepanov <eugenis@google.com>,
+        Lee Smith <Lee.Smith@arm.com>,
+        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
+        Jacob Bramley <Jacob.Bramley@arm.com>,
+        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
+        Jann Horn <jannh@google.com>,
+        Mark Brand <markbrand@google.com>,
+        Chintan Pandya <cpandya@codeaurora.org>,
+        Vishwath Mohan <vishwath@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add a platform/x86 device "gpio-keys-polled" for the frontpanel reset button.
-This device uses the gpio-apu driver for APU borads from PC Engines.
+On Wed, Nov 14, 2018 at 9:17 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+> On Wed, Nov 14, 2018 at 09:06:23PM +0100, Andrey Konovalov wrote:
+>> On Tue, Nov 13, 2018 at 11:07 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+>> > On Tue, Nov 13, 2018 at 04:01:27PM +0100, Andrey Konovalov wrote:
+>> >> On Thu, Nov 8, 2018 at 1:22 PM, Mark Rutland <mark.rutland@arm.com> wrote:
+>> >> > On Tue, Nov 06, 2018 at 06:30:27PM +0100, Andrey Konovalov wrote:
+>> >> >> show_pte in arm64 fault handling relies on the fact that the top byte of
+>> >> >> a kernel pointer is 0xff, which isn't always the case with tag-based
+>> >> >> KASAN.
+>> >> >
+>> >> > That's for the TTBR1 check, right?
+>> >> >
+>> >> > i.e. for the following to work:
+>> >> >
+>> >> >         if (addr >= VA_START)
+>> >> >
+>> >> > ... we need the tag bits to be an extension of bit 55...
+>> >> >
+>> >> >>
+>> >> >> This patch resets the top byte in show_pte.
+>> >> >>
+>> >> >> Reviewed-by: Andrey Ryabinin <aryabinin@virtuozzo.com>
+>> >> >> Reviewed-by: Dmitry Vyukov <dvyukov@google.com>
+>> >> >> Signed-off-by: Andrey Konovalov <andreyknvl@google.com>
+>> >> >> ---
+>> >> >>  arch/arm64/mm/fault.c | 3 +++
+>> >> >>  1 file changed, 3 insertions(+)
+>> >> >>
+>> >> >> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
+>> >> >> index 7d9571f4ae3d..d9a84d6f3343 100644
+>> >> >> --- a/arch/arm64/mm/fault.c
+>> >> >> +++ b/arch/arm64/mm/fault.c
+>> >> >> @@ -32,6 +32,7 @@
+>> >> >>  #include <linux/perf_event.h>
+>> >> >>  #include <linux/preempt.h>
+>> >> >>  #include <linux/hugetlb.h>
+>> >> >> +#include <linux/kasan.h>
+>> >> >>
+>> >> >>  #include <asm/bug.h>
+>> >> >>  #include <asm/cmpxchg.h>
+>> >> >> @@ -141,6 +142,8 @@ void show_pte(unsigned long addr)
+>> >> >>       pgd_t *pgdp;
+>> >> >>       pgd_t pgd;
+>> >> >>
+>> >> >> +     addr = (unsigned long)kasan_reset_tag((void *)addr);
+>> >> >
+>> >> > ... but this ORs in (0xffUL << 56), which is not correct for addresses
+>> >> > which aren't TTBR1 addresses to begin with, where bit 55 is clear, and
+>> >> > throws away useful information.
+>> >> >
+>> >> > We could use untagged_addr() here, but that wouldn't be right for
+>> >> > kernels which don't use TBI1, and we'd erroneously report addresses
+>> >> > under the TTBR1 range as being in the TTBR1 range.
+>> >> >
+>> >> > I also see that the entry assembly for el{1,0}_{da,ia} clears the tag
+>> >> > for EL0 addresses.
+>> >> >
+>> >> > So we could have:
+>> >> >
+>> >> > static inline bool is_ttbr0_addr(unsigned long addr)
+>> >> > {
+>> >> >         /* entry assembly clears tags for TTBR0 addrs */
+>> >> >         return addr < TASK_SIZE_64;
+>> >> > }
+>> >> >
+>> >> > static inline bool is_ttbr1_addr(unsigned long addr)
+>> >> > {
+>> >> >         /* TTBR1 addresses may have a tag if HWKASAN is in use */
+>> >> >         return arch_kasan_reset_tag(addr) >= VA_START;
+>> >> > }
+>> >> >
+>> >> > ... and use those in the conditionals, leaving the addr as-is for
+>> >> > reporting purposes.
+>> >>
+>> >> Actually it looks like 276e9327 ("arm64: entry: improve data abort
+>> >> handling of tagged pointers") already takes care of both user and
+>> >> kernel fault addresses and correctly removes tags from them. So I
+>> >> think we need to drop this patch.
+>> >
+>> > The clear_address_tag macro added in that commit only removes tags from TTBR0
+>> > addresses, so that's not sufficient if the kernel is used tagged addresses
+>> > (which will be in the TTBR1 range).
+>>
+>> Do I understand correctly that TTBR0 means user space addresses and
+>> TTBR1 means kernel addresses?
+>
+> Effectively, yes. The address space is split into two halves (with a gap in the
+> middle). The high half (where we map the kernel) is covered by TTBR1, and the
+> low half (where we map userspace) is covered by TTBR0.
+>
+> The TTBRs are the Translation Table Base Registers -- the two halves have
+> separate page tables.
+>
+>> In that commit I see that the clear_address_tag() macro is used in el0_da and
+>> in el1_da, which means that it untags both user and kernel addresses (on data
+>> aborts). Do I misunderstand something?
+>
+> It's called for faults taken from EL0 and EL1, but it only removes the tags
+> from addresses covered by TTBR0. The logic is:
+>
+>         .macro  clear_address_tag, dst, addr
+>         tst     \addr, #(1 << 55)
+>         bic     \dst, \addr, #(0xff << 56)
+>         csel    \dst, \dst, \addr, eq
+>         .endm
+>
+> ... which in C would be:
+>
+>         if (!(addr & (1UL << 55))) {
+>                 addr &= ~(0xffUL << 56);
+>         }
+>
+> ... and therefore does not affect TTBR1 addresses.
 
-Signed-off-by: Florian Eckert <fe@dev.tdt.de>
----
- drivers/platform/x86/Kconfig                  |  11 +++
- drivers/platform/x86/Makefile                 |   1 +
- drivers/platform/x86/pcengines-apu-platform.c | 114 ++++++++++++++++++++++++++
- 3 files changed, 126 insertions(+)
- create mode 100644 drivers/platform/x86/pcengines-apu-platform.c
-
-diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-index 54f6a40c75c6..5cd27c2174cb 100644
---- a/drivers/platform/x86/Kconfig
-+++ b/drivers/platform/x86/Kconfig
-@@ -1288,6 +1288,17 @@ config INTEL_ATOMISP2_PM
- 	  To compile this driver as a module, choose M here: the module
- 	  will be called intel_atomisp2_pm.
- 
-+config PCENGINES_APU_PLATFORM
-+	bool "PCEngines APU System Support"
-+	depends on X86_64 && DMI && GPIOLIB
-+	help
-+	  This option enables system support for the PCEngines APU platform.
-+	  At present this just adds the GPIO reset button platform device on
-+	  APU2/APU3 boards.
-+
-+	  Note: You must still enable the drivers for GPIO and LED support
-+	  (GPIO_APU & LEDS_APU) to actually use the LEDs and the GPIOs.
-+
- endif # X86_PLATFORM_DEVICES
- 
- config PMC_ATOM
-diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefile
-index 39ae94135406..f899cc4c6b48 100644
---- a/drivers/platform/x86/Makefile
-+++ b/drivers/platform/x86/Makefile
-@@ -96,3 +96,4 @@ obj-$(CONFIG_INTEL_TURBO_MAX_3) += intel_turbo_max_3.o
- obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
- obj-$(CONFIG_I2C_MULTI_INSTANTIATE)	+= i2c-multi-instantiate.o
- obj-$(CONFIG_INTEL_ATOMISP2_PM)	+= intel_atomisp2_pm.o
-+obj-$(CONFIG_PCENGINES_APU_PLATFORM)	+= pcengines-apu-platform.o
-diff --git a/drivers/platform/x86/pcengines-apu-platform.c b/drivers/platform/x86/pcengines-apu-platform.c
-new file mode 100644
-index 000000000000..3bfbaa93cb11
---- /dev/null
-+++ b/drivers/platform/x86/pcengines-apu-platform.c
-@@ -0,0 +1,114 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * System Specific setup for PC-Engines APU2/APU3 devices
-+ *
-+ * Copyright (C) 2018 Florian Eckert <fe@dev.tdt.de>
-+ */
-+
-+#include <linux/dmi.h>
-+#include <linux/gpio_keys.h>
-+#include <linux/input.h>
-+#include <linux/module.h>
-+#include <linux/platform_device.h>
-+
-+static const struct dmi_system_id apu2_gpio_dmi_table[] __initconst = {
-+	/* PC Engines APU2 with "Legacy" bios < 4.0.8 */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "APU2")
-+		}
-+	},
-+	/* PC Engines APU2 with "Legacy" bios >= 4.0.8 */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "apu2")
-+		}
-+	},
-+	/* PC Engines APU2 with "Mainline" bios */
-+	{
-+		.ident = "apu2",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu2")
-+		}
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(dmi, apu2_gpio_dmi_table);
-+
-+static const struct dmi_system_id apu3_gpio_dmi_table[] __initconst = {
-+	/* PC Engines APU3 with "Legacy" bios < 4.0.8 */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "APU3")
-+		}
-+	},
-+	/* PC Engines APU3 with "Legacy" bios >= 4.0.8 */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "apu3")
-+		}
-+	},
-+	/* PC Engines APU3 with "Mainline" bios */
-+	{
-+		.ident = "apu3",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "PC Engines"),
-+			DMI_MATCH(DMI_BOARD_NAME, "PC Engines apu3")
-+		}
-+	},
-+	{}
-+};
-+MODULE_DEVICE_TABLE(dmi, apu3_gpio_dmi_table);
-+
-+
-+static struct gpio_keys_button apu_gpio_buttons[] = {
-+	{
-+		.code			= KEY_RESTART,
-+		.gpio			= 20,
-+		.active_low		= 1,
-+		.desc			= "Reset button",
-+		.type			= EV_KEY,
-+		.debounce_interval	= 60,
-+	}
-+};
-+
-+static struct gpio_keys_platform_data apu_buttons_data = {
-+	.buttons		= apu_gpio_buttons,
-+	.nbuttons		= ARRAY_SIZE(apu_gpio_buttons),
-+	.poll_interval		= 20,
-+};
-+
-+static struct platform_device apu_button_dev = {
-+	.name			= "gpio-keys-polled",
-+	.id			= 1,
-+	.dev = {
-+		.platform_data		= &apu_buttons_data,
-+	}
-+};
-+
-+static int __init apu_init(void)
-+{
-+	if (!(dmi_check_system(apu2_gpio_dmi_table)) &&
-+		!(dmi_check_system(apu3_gpio_dmi_table))) {
-+		return -ENODEV;
-+	}
-+
-+	return platform_device_register(&apu_button_dev);
-+}
-+
-+static void __exit apu_exit(void)
-+{
-+	platform_device_unregister(&apu_button_dev);
-+}
-+
-+module_init(apu_init);
-+module_exit(apu_exit);
--- 
-2.11.0
-
+Got it, will fix in v11, thanks!
