@@ -2,93 +2,116 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2134BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D7DEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:26:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D44752145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:20:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id F41732084C
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:26:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="X0aiHYkd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D44752145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bEltSFDk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F41732084C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388877AbeKPI3q (ORCPT
+        id S1726745AbeKPIfs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 03:29:46 -0500
-Received: from ozlabs.org ([203.11.71.1]:32775 "EHLO ozlabs.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725860AbeKPI3p (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:29:45 -0500
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by ozlabs.org (Postfix) with ESMTPSA id 42wwll0T30z9s9G;
-        Fri, 16 Nov 2018 09:20:03 +1100 (AEDT)
-Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
-        s=201702; t=1542320403;
-        bh=/28aHOEVHfeDUn+cuWops52FcNr6c7HMAg7R6vXq9Jw=;
-        h=Date:From:To:Cc:Subject:From;
-        b=X0aiHYkd6ig83Z302Cy1tZsm+CUnj7SJMD8sKPifLFfdpgV2TgkwceJrwhhyhEJy2
-         TAEMNRd0DAsg+1wnAq63o6+ftp5dThxm42JLgb0XjAaaO2xm3zqte/VQQ/BzTg0oLH
-         /BhUtHbGQTaoWfzhMitPOVBSn6OTChfbqJ/xY+r6+Lzy9zQUEo+yV3Qb1L/g5G57JD
-         tS+1xFb6y1dKhoVM5XU3SnCUS8XwTvwtVtLSTeNPJpzmofi9wHxdu1Ej4kKEzmIKiD
-         kyEblz0oDo/l9h4o98AUq6kLbSLD0iz/Z6dbwSlDNpB2Zl7Pl0Pm+rjbO86RZXDmp4
-         pRbofz1ScqCKw==
-Date:   Fri, 16 Nov 2018 09:19:57 +1100
-From:   Stephen Rothwell <sfr@canb.auug.org.au>
-To:     Steven Whitehouse <swhiteho@redhat.com>,
-        Bob Peterson <rpeterso@redhat.com>
-Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Andreas Gruenbacher <agruenba@redhat.com>
-Subject: linux-next: Signed-off-by missing for commit in the gfs2 tree
-Message-ID: <20181116091957.4880b95d@canb.auug.org.au>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
- boundary="Sig_/8LQH=6XtSCEUE2wh11.Vgxb"; protocol="application/pgp-signature"
+        Fri, 16 Nov 2018 03:35:48 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:55149 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725888AbeKPIfs (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 03:35:48 -0500
+Received: by mail-wm1-f68.google.com with SMTP id r63-v6so20382834wma.4
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 14:26:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=23LY6WuPP+2p80bqhM2jKxAXddCviLqJVVO7pCywEaY=;
+        b=bEltSFDkYBjsBGVALw9UaQWXokyjEJVbwArmmLAnL/ylJO7I1C0R+0BfPDq8vpMqFx
+         ic7dNMIipR5NjcWSOoHdicPDdeb7en+NxRc7OcAWQ2zQnvpMnhpfwFuK5o7a8mocxkmd
+         oMsd/d03nr3K6XgxkodBW9OEAh7LfLZkYEc9rUbTIGa6n0RzziAsO3w3enw01ISANY05
+         Nw31CGxYko+EmhYkg7vcc6cCdadTUjdJ/HyeyMsVgiygnjW4+SUDD+yQdf1WUyS1XhcZ
+         KHy/XZXZACD4bD4YhhQB7UlV4V4TJcxdBrVdjsQyzbMrWRElN0/goqOCJKkzRcT1riUB
+         NMZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=23LY6WuPP+2p80bqhM2jKxAXddCviLqJVVO7pCywEaY=;
+        b=ubs3gtttJb/59+TkhOR2pkOm8e0Wo3sQRC1pjmMSFGWDVLbQp+R5qGzBLePtj+EcS1
+         QMWALDsOJP6JVKYJWlkL5xPwxY+B9xCJC9/4jPR9/VWoAqE5dWr5KfkGttJ08y8owqi8
+         CyumxUC5/ItOkKlekVyueoTxPqYyRQqxEM7Z6BlpIvVjEGLNMaeKEcS9KlLazVkkk1US
+         1LBnlrdtnza7pvM/wc73CDPuveBDELG3BU1m4VNXUB02kaAcyPKErWTY3bEX80vhgEqh
+         4gofJ/F2UjMKNN93+YuJys40VPpaDpceDH8WrLXNP8cYoo1716zAl+0bNUdcbtYTVsi6
+         K8Rw==
+X-Gm-Message-State: AGRZ1gLoDyVJVvob55lTy11W38UFh+9gepPv9cZgYG496UvOkIq49KFB
+        B/t1DKRD2JHGytxGOWgFKQ==
+X-Google-Smtp-Source: AJdET5fg2r2lyiCtQpGaLmZRTtUyS43FbMCbWqALPsidqS6VkooTPpN6PV5WUo4xC7uXxlZY0SBsdQ==
+X-Received: by 2002:a1c:1a48:: with SMTP id a69-v6mr6947703wma.9.1542320765191;
+        Thu, 15 Nov 2018 14:26:05 -0800 (PST)
+Received: from localhost.Home ([2a02:c7d:9b5c:9b00:1a75:ff25:fe7f:eaba])
+        by smtp.gmail.com with ESMTPSA id a4-v6sm18900122wrr.71.2018.11.15.14.26.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 14:26:04 -0800 (PST)
+From:   Garry McNulty <garrmcnu@gmail.com>
+To:     linux-mtd@lists.infradead.org
+Cc:     richard@nod.at, dedekind1@gmail.com, adrian.hunter@intel.com,
+        s.hauer@pengutronix.de, linux-kernel@vger.kernel.org,
+        Garry McNulty <garrmcnu@gmail.com>
+Subject: [PATCH v2] ubifs: fix memory leak on error condition
+Date:   Thu, 15 Nov 2018 22:25:58 +0000
+Message-Id: <20181115222558.19189-1-garrmcnu@gmail.com>
+X-Mailer: git-send-email 2.9.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---Sig_/8LQH=6XtSCEUE2wh11.Vgxb
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+If the call to ubifs_read_nnode() fails in ubifs_lpt_calc_hash() an
+error is returned without freeing the memory allocated to 'buf'.
+Read and check the root node before allocating the buffer.
 
-Hi all,
+Detected by CoverityScan, CID 1441025 ("Resource leak")
 
-Commits
+Signed-off-by: Garry McNulty <garrmcnu@gmail.com>
+---
+ fs/ubifs/lpt.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-  25b76c531970 ("gfs2: add a helper function to get_log_header that can be =
-used elsewhere")
-  14e81158a6d6 ("gfs2: add more timing info to journal recovery process")
+diff --git a/fs/ubifs/lpt.c b/fs/ubifs/lpt.c
+index d1d5e96350dd..b0c5f06128b5 100644
+--- a/fs/ubifs/lpt.c
++++ b/fs/ubifs/lpt.c
+@@ -1675,6 +1675,12 @@ int ubifs_lpt_calc_hash(struct ubifs_info *c, u8 *hash)
+ 	if (!ubifs_authenticated(c))
+ 		return 0;
+ 
++	if (!c->nroot) {
++		err = ubifs_read_nnode(c, NULL, 0);
++		if (err)
++			return err;
++	}
++
+ 	desc = ubifs_hash_get_desc(c);
+ 	if (IS_ERR(desc))
+ 		return PTR_ERR(desc);
+@@ -1685,12 +1691,6 @@ int ubifs_lpt_calc_hash(struct ubifs_info *c, u8 *hash)
+ 		goto out;
+ 	}
+ 
+-	if (!c->nroot) {
+-		err = ubifs_read_nnode(c, NULL, 0);
+-		if (err)
+-			return err;
+-	}
+-
+ 	cnode = (struct ubifs_cnode *)c->nroot;
+ 
+ 	while (cnode) {
+-- 
+2.14.5
 
-are missing a Signed-off-by from their committer.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/8LQH=6XtSCEUE2wh11.Vgxb
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvt8Q0ACgkQAVBC80lX
-0GxOQgf/Rz/ccyhOt2dbNTkB9YhJZKvBXuS5XayI6v1DLTUl4szAIcyzNmyjJwhu
-Z+FMEDOa4wJGaI2MuSTI2oFewlQhlWyhH+xgDdXppdJlz7DwHvyHckSbBIitEnpC
-EYo6KKNNq6IqhalmwZDzD/B0D6s6EiDTftCcKk73YcyYe9DG2pcV+wb+SCfE4nCa
-bDI+weIBBu8gIqmZEH4HnaD3azKlaLyLr9hsvWK2vrU9/bKkQ2+Yc7B+zKuE6NZa
-RFKTixAdzyG6Bm0WDePww8nOah7nwTaMoe+SNBRbtRPy2GdiHKQXKzVO4x/zqhlQ
-kB7s9TjEZa8Wl1NNXPNUKv4v7FUuLQ==
-=EpR8
------END PGP SIGNATURE-----
-
---Sig_/8LQH=6XtSCEUE2wh11.Vgxb--
