@@ -2,139 +2,97 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 60ED0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A543C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:47:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1E73A214F1
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C13C7208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:47:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ndppcDYS"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1E73A214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Oc50Gom+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C13C7208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388409AbeKOXu6 (ORCPT
+        id S2388153AbeKOXzD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 18:50:58 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:51742 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729024AbeKOXu6 (ORCPT
+        Thu, 15 Nov 2018 18:55:03 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:57898 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729010AbeKOXzC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 18:50:58 -0500
-Received: by mail-it1-f195.google.com with SMTP id f84-v6so8111878ita.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 05:43:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
-         :cc;
-        bh=cI0/70tj+Fz0dv9vc6u4Hbc50xDUnJCH9C9jIgbl64k=;
-        b=ndppcDYSVsa+Pr7xBlpTUk8LpvMGYSHw6puUpr1OWID/NJ0JLXC0bEPkS0/zWfmmUZ
-         XuX19ujj39HLMpGl075hQPRwtjby3tRhL/cQTTP5ccAAQju92Gbl5vVCq7+jeuu/LBh5
-         OI/FuT7F/+ZK0oa4nlj3A1rO4DIrQVhILzOv/Evjr1zqLRl1RZUY7Jq6q68UDy4sFcTd
-         JjnFss7BPtItYkQWLebt5XnPhDaw8x+XcW+bRnV+02TKd8ukEv+i+BH+D8rEYfyYE+A9
-         YyeYVrO/SWseKdnTjjsTSs91LmrjExR9MP8/DN23LILJWaq4XbH9vOS2an2HWMzhOIWL
-         U1tA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
-         :message-id:subject:to:cc;
-        bh=cI0/70tj+Fz0dv9vc6u4Hbc50xDUnJCH9C9jIgbl64k=;
-        b=rhldaa1ak9Rfk+rMRLAXiiSE2UaSjmRwdoFPtBUs+8CW3T8WYpeWilPU47hwaRNZ+W
-         T0mkb9HwLt+rxkFaf2n4P5wtfj5c6LxfTEMF0NAkAM8pFN+3VaJOV/OEdt+NzwWrMudH
-         CJb6Fe+hjNfAqvwin7zcckjd56MhUWoGdj1bSn8+6V9PvVoodme8SPCMwgXjL/YdMD49
-         8PoEsmwwOF8VPFuPcab3w48yn2qqNJFeyESJbaJ1rwq1mt6ufsAWJ/jNnsNLot1lmml2
-         ERG87peJEVuwm7je4U5p9c8/8A/FxBS5s1AoFVrZNU2JT33qPtxAbyuHr3ySbp0lu6Re
-         w8yQ==
-X-Gm-Message-State: AA+aEWbYxNQS4d4rJHP5Ee1B86x+WuiQLaQPVY8HRRBt1A2vLajtoJiE
-        ReuroXLA6b4i/nU12nyQ6pOvu4tbscowqlU50rdPgw==
-X-Google-Smtp-Source: AJdET5fg0UanWtZiQgn05adpP6gDOLgjnwzdxZ2BuWiWW2zOOmgcF6Gqrxm4fuD3oydoJYenXBcamKa2KV/o1kHPg1o=
-X-Received: by 2002:a24:1642:: with SMTP id a63mr5351372ita.40.1542289383258;
- Thu, 15 Nov 2018 05:43:03 -0800 (PST)
-MIME-Version: 1.0
-Received: by 2002:a02:7050:0:0:0:0:0 with HTTP; Thu, 15 Nov 2018 05:43:02
- -0800 (PST)
-In-Reply-To: <CAAeHK+yAve4fBg_UZQsNdVJ5W-7v8tQnRa=amQMyBeE_yHcq5g@mail.gmail.com>
-References: <cover.1541525354.git.andreyknvl@google.com> <b2aa056b65b8f1a410379bf2f6ef439d5d99e8eb.1541525354.git.andreyknvl@google.com>
- <20181107165200.oaou6cx2lmjzmjyl@lakrids.cambridge.arm.com> <CAAeHK+yAve4fBg_UZQsNdVJ5W-7v8tQnRa=amQMyBeE_yHcq5g@mail.gmail.com>
-From:   Andrey Konovalov <andreyknvl@google.com>
-Date:   Thu, 15 Nov 2018 14:43:02 +0100
-Message-ID: <CAAeHK+yaYc4gOxWdvJALwUffAFDVwQe7+4Rwx=Ux936c_LtBFw@mail.gmail.com>
-Subject: Re: [PATCH v10 08/22] kasan, arm64: untag address in __kimg_to_phys
- and _virt_addr_is_linear
-To:     Mark Rutland <mark.rutland@arm.com>
-Cc:     Andrey Ryabinin <aryabinin@virtuozzo.com>,
-        Alexander Potapenko <glider@google.com>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Christoph Lameter <cl@linux.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nick Desaulniers <ndesaulniers@google.com>,
-        Marc Zyngier <marc.zyngier@arm.com>,
-        Dave Martin <dave.martin@arm.com>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        "Eric W . Biederman" <ebiederm@xmission.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Paul Lawrence <paullawrence@google.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        Mike Rapoport <rppt@linux.vnet.ibm.com>,
-        kasan-dev@googlegroups.com,
-        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        Thu, 15 Nov 2018 18:55:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=cYH4gsxFtygX1XaLn8nsv5VJETRhq30/Kt8o2YsCl2Y=; b=Oc50Gom+FpYiygi1yXbj+RV03
+        2KvZUnhVqMq35wHYbouitnM2yPBuYAT5uhyTW2JHu8oo1q5reisaLGU/TEmpMZU8qSI5YJ4Z4LzbA
+        hrlcRJuCqe/XVVIqqa/JpDqMCRY+JTpl75Pvahko3wYRsn3Jw+lTBroN3Q4MeureB3h6WdkkOevCK
+        bp/riLaZ0v5A9gZBzceq5AKx9/R3BK7qvblhJTJCuX0xcHncnljhXzu1RD3dYFBBabIWh+j2kkGV1
+        IbMwIlVhU8Hr+Rn+H018Pd0jEAtkiHD8t7Y62D244g37oxlOZyXcFKqMWE/y0lRtkc9HsbS0U2q+q
+        NeqQhiecw==;
+Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gNHz8-0000ta-Cr; Thu, 15 Nov 2018 13:47:06 +0000
+Date:   Thu, 15 Nov 2018 05:47:06 -0800
+From:   Matthew Wilcox <willy@infradead.org>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+        Kees Cook <keescook@chromium.org>,
+        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
         LKML <linux-kernel@vger.kernel.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        linux-sparse@vger.kernel.org,
-        Linux Memory Management List <linux-mm@kvack.org>,
-        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Kostya Serebryany <kcc@google.com>,
-        Evgeniy Stepanov <eugenis@google.com>,
-        Lee Smith <Lee.Smith@arm.com>,
-        Ramana Radhakrishnan <Ramana.Radhakrishnan@arm.com>,
-        Jacob Bramley <Jacob.Bramley@arm.com>,
-        Ruben Ayrapetyan <Ruben.Ayrapetyan@arm.com>,
-        Jann Horn <jannh@google.com>,
-        Mark Brand <markbrand@google.com>,
-        Chintan Pandya <cpandya@codeaurora.org>,
-        Vishwath Mohan <vishwath@google.com>
-Content-Type: text/plain; charset="UTF-8"
+        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
+        Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [RFC PATCH 1/1] vmalloc: add test driver to analyse vmalloc
+ allocator
+Message-ID: <20181115134706.GC19286@bombadil.infradead.org>
+References: <20181113151629.14826-1-urezki@gmail.com>
+ <20181113151629.14826-2-urezki@gmail.com>
+ <20181113141046.f62f5bd88d4ebc663b0ac100@linux-foundation.org>
+ <20181114151737.GA23419@dhcp22.suse.cz>
+ <20181114150053.c3fe42507923322a0a10ae1c@linux-foundation.org>
+ <20181115083957.GE23831@dhcp22.suse.cz>
+ <20181115084642.GB19286@bombadil.infradead.org>
+ <20181115125750.GS23831@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115125750.GS23831@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 8:23 PM, Andrey Konovalov <andreyknvl@google.com> wrote:
-> On Wed, Nov 7, 2018 at 5:52 PM, Mark Rutland <mark.rutland@arm.com> wrote:
->>>  /*
->>> @@ -232,7 +241,7 @@ static inline unsigned long kaslr_offset(void)
->>>  #define __is_lm_address(addr)        (!!((addr) & BIT(VA_BITS - 1)))
->>>
->>>  #define __lm_to_phys(addr)   (((addr) & ~PAGE_OFFSET) + PHYS_OFFSET)
->>> -#define __kimg_to_phys(addr) ((addr) - kimage_voffset)
->>> +#define __kimg_to_phys(addr) (KASAN_RESET_TAG(addr) - kimage_voffset)
->>
->> IIUC You need to adjust __lm_to_phys() too, since that could be passed
->> an address from SLAB.
->>
->> Maybe that's done in a later patch, but if so it's confusing to split it
->> out that way. It would be nicer to fix all the *_to_*() helpers in one
->> go.
->
-> __lm_to_phys() does & ~PAGE_OFFSET, so it resets the tag by itself. I
-> can add an explicit __tag_reset() if you think it makes sense.
+On Thu, Nov 15, 2018 at 01:57:50PM +0100, Michal Hocko wrote:
+> On Thu 15-11-18 00:46:42, Matthew Wilcox wrote:
+> > How about adding
+> > 
+> > #ifdef CONFIG_VMALLOC_TEST
+> > int run_internal_vmalloc_tests(void)
+> > {
+> > ...
+> > }
+> > EXPORT_SYMBOL_GPL(run_internal_vmalloc_tests);
+> > #endif
+> > 
+> > to vmalloc.c?  That would also allow calling functions which are marked
+> > as static, not just functions which aren't exported to modules.
+> 
+> Yes that would be easier but do we want to pollute the normal code with
+> testing? This looks messy to me.
 
-Hi Mark,
+I don't think it's necessarily the worst thing in the world if random
+people browsing the file are forced to read test-cases ;-)
 
-I think I've addressed all of your comments except for this one. Do
-you think it makes sense to add explicit __tag_reset() calls to
-__lm_to_phys() and a few other macros, that already set the tag to 0
-by doing & ~PAGE_OFFSET?
-
-Thanks!
+There's certainly a spectrum of possibilities here, one end being to
+basically just re-export static functions, and the other end putting
+every vmalloc test into vmalloc.c.  vmalloc.c is pretty big at 70kB, but
+on the other hand, it's the 18th largest file in mm/ (can you believe
+page_alloc.c is 230kB?!)
