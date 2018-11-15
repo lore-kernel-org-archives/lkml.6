@@ -3,71 +3,71 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8B93C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:54:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57F19C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:56:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67F65208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:54:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13918208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:56:01 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="vWrVQuTG"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67F65208E7
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="SPatuXT5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13918208E7
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727651AbeKPGDU (ORCPT
+        id S1729225AbeKPGFM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 01:03:20 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:34426 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725781AbeKPGDT (ORCPT
+        Fri, 16 Nov 2018 01:05:12 -0500
+Received: from mail-pg1-f176.google.com ([209.85.215.176]:38653 "EHLO
+        mail-pg1-f176.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725869AbeKPGFL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 01:03:19 -0500
-Received: by mail-pl1-f193.google.com with SMTP id f12-v6so9986668plo.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 11:54:07 -0800 (PST)
+        Fri, 16 Nov 2018 01:05:11 -0500
+Received: by mail-pg1-f176.google.com with SMTP id f8-v6so9474876pgq.5
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 11:55:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=baylibre-com.20150623.gappssmtp.com; s=20150623;
         h=from:to:cc:subject:in-reply-to:references:date:message-id
          :mime-version;
-        bh=Aewx7xs7fSoFRBP5YKN1c/T7Wnbr8mS1551G+7RyKtw=;
-        b=vWrVQuTGKe+61n39Kn+9ca3TvFQYImk13UVHkjLzHNAyUE+CfgiKBjKNhqtWdCRnyM
-         vm73HVslb3zSYQAXUWVSFDyR6Z8lNLs9JmN3J/ln+ffiZUwYazTG3fueNhTjJyJX8TXV
-         dGRpvwkFeUNrqkReVBKhh8SCiYGFDQIxh1OQJyNbHOl6FXyt9+AogJh/A7cT7NSqln/1
-         ONz6swWL7+AvN8PBgTwZyjfMShclIAseoq8iQu+F4tqoHuexMHJqaZtKM4mgiqvTElrI
-         Q6ivqPT49Dd7jVNu42P6W0vLHSfhajEY+dXFEBZzogZJvTQVCJmej1uTfxfCnd+/jTsg
-         pMRQ==
+        bh=CH10SDDZ6hHXpy8YIB68H5dVJKAng00DYj6IUoGpK0E=;
+        b=SPatuXT5jPUAaUj0i6Li+E7+AkH518jCs0GQEzae+S2qbZGRyenoqwBPTS6fEAxZBE
+         VVVj2Zihg5d6WWpda+k1M8UV7NOLGlVqMOgjjo6iCcUpIn3SjKZnp/hKIo5psG/BmM0f
+         nM5d3tmR/vekG1Sg+Q9agzcL0Cmkcqu391ba8lL1FVBSIir/Qhftfp7gn4y61u9EZn/M
+         p/0adm+WuHAHaqErdaA+dvxaE1uscf1+i77krKYgrH8i4+bkxF6UhmDbCnjI4ARrmVlV
+         cpWXnKC6+gNoHgGxGrRufk7A3ThiiLRY3BB7zAO1xuk7uwixW3N3xS0udg8oEZ82UeZV
+         Lk4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:in-reply-to:references:date
          :message-id:mime-version;
-        bh=Aewx7xs7fSoFRBP5YKN1c/T7Wnbr8mS1551G+7RyKtw=;
-        b=SzxvuWaZUGLFn9bHr3WkcbGGPMVBKbpssl+U1srkboDiRD7FYI/pI5q1Eek5XAqT+1
-         9v5hc+y/pbCwMtBSelvC/d3aqt6LnoE22llaiDSeUyH7grVoWCTppSovKN4fIjYObMlL
-         sy280yEnsVkTlC76Vpu2gjAE+eE3IoCHcp4luy9ejChTG5FkbM+qIyIGoW9ZOV48idMJ
-         7Dc0Kuw6gCeikyN6V9V8UngakATHNY+uc2DvXQ0Exuzkm6DohCt7qqQLUuna3lgtP3kH
-         n6DMsVdd+HjMD2FFOjWws6I1EB+X3b6ZsN7+3I/7ylrCG55nHq1SfL5aqx6KD+Jq8oES
-         u7qA==
-X-Gm-Message-State: AGRZ1gJlmFH/tV/29JGtMYxzdU7FCyL/pPrOPsT0nXhMkxjo0oE5aE6o
-        7j8EO8JdHDwBpJtikdlaJOQBaw==
-X-Google-Smtp-Source: AJdET5ePf5LFWf+1IeaL3l7YIoLWi9WYK0mrcWVp54d7nCgY/kF8xKUb8aVU8ZoA1jun1ed863W82Q==
-X-Received: by 2002:a17:902:bf03:: with SMTP id bi3-v6mr7767636plb.288.1542311647207;
-        Thu, 15 Nov 2018 11:54:07 -0800 (PST)
+        bh=CH10SDDZ6hHXpy8YIB68H5dVJKAng00DYj6IUoGpK0E=;
+        b=baToTFXQfQNldOZ4MnK+MgH0je0zroOZNeSLs9DRmNYnTn3XpcTNBvestx0J3h6W/6
+         lJ3tJnKLawoYz4WLnk4zZMpAArpX3s/yeQXmLHlWllz+nlwd+w1h7HwSSZ6k7UuR1tp2
+         M/muXJXYXgVtT728lzRpMwGgAApw8ACOfn9J4Lnk39mDEpUSNb4YHflvpw9sYOQGPXJg
+         DnCx8d40BS4JIujbyTvorX2gMpTEODzD6Ml/NZ8ZT7TC1jVRDjntcZln+VEtJFppWUj6
+         YhTDDqrf5F1QtRnFC6WfedySqhLg6eOa9LiPBaUNtWFcVQ0v5pLoO3cHWh8Q5qGYOxgW
+         hi/w==
+X-Gm-Message-State: AGRZ1gL1Z6T37tdPP2D+PXeO59AEa359sO2A0oMInMJrZRqEqMGCDaJS
+        G1AQSAFXDm9Mc0GhCqQ25ny7XA==
+X-Google-Smtp-Source: AJdET5dabca52VTH7fIifH2jIupNjz8nNrkMug0sQK1GNR+NAFmKtNQcn6NnIoMHlqJNeN+VXS47vw==
+X-Received: by 2002:a62:1308:: with SMTP id b8-v6mr7660702pfj.215.1542311758521;
+        Thu, 15 Nov 2018 11:55:58 -0800 (PST)
 Received: from localhost ([107.181.189.87])
-        by smtp.googlemail.com with ESMTPSA id w10-v6sm33087345pfg.1.2018.11.15.11.54.06
+        by smtp.googlemail.com with ESMTPSA id f62sm27017014pgc.67.2018.11.15.11.55.57
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 11:54:06 -0800 (PST)
+        Thu, 15 Nov 2018 11:55:57 -0800 (PST)
 From:   Kevin Hilman <khilman@baylibre.com>
-To:     Neil Armstrong <narmstrong@baylibre.com>
-Cc:     Neil Armstrong <narmstrong@baylibre.com>,
-        linux-amlogic@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] arm64: dts: meson-gx: fix GPIO lines names
-In-Reply-To: <1541587550-17842-1-git-send-email-narmstrong@baylibre.com>
-References: <1541587550-17842-1-git-send-email-narmstrong@baylibre.com>
-Date:   Thu, 15 Nov 2018 11:54:05 -0800
-Message-ID: <7hwopedsma.fsf@eze.i-did-not-set--mail-host-address--so-tickle-me>
+To:     Jerome Brunet <jbrunet@baylibre.com>,
+        Carlo Caione <carlo@caione.org>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>, devicetree@vger.kernel.org,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: meson-axg: s400: add cts-rts to the bluetooth uart
+In-Reply-To: <20181108095640.27876-1-jbrunet@baylibre.com>
+References: <20181108095640.27876-1-jbrunet@baylibre.com>
+Date:   Thu, 15 Nov 2018 11:55:56 -0800
+Message-ID: <7htvkidsj7.fsf@eze.i-did-not-set--mail-host-address--so-tickle-me>
 MIME-Version: 1.0
 Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
@@ -75,13 +75,11 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Neil Armstrong <narmstrong@baylibre.com> writes:
+Jerome Brunet <jbrunet@baylibre.com> writes:
 
-> The gpio line names were set in the pinctrl node instead of the gpio node,
-> at the time it was merged, it worked, but was obviously wrong.
-> This patches moves the properties to the gpio nodes for the board DT having
-> the GPIO lines names.
+> The uart used with bluetooth chipset on the s400 has flow control
+> available. Let's enable it.
 
-Queued for v4.21 (branch: v4.21/dt64)
+Queued for v4.21 with Neil's tag (branch: v4.21/dt64)
 
 Kevin
