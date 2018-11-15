@@ -2,612 +2,116 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1F52C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:14:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04D16C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:15:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9D2542245E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:14:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9D2542245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id BD9B3223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:15:49 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="zz46TUdO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD9B3223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mena.vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388718AbeKPCWp (ORCPT
+        id S2388782AbeKPCYP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 21:22:45 -0500
-Received: from inva020.nxp.com ([92.121.34.13]:56084 "EHLO inva020.nxp.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388226AbeKPCW2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 21:22:28 -0500
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id B4CD21A00B4;
-        Thu, 15 Nov 2018 17:13:58 +0100 (CET)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-        by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id A770B1A00B2;
-        Thu, 15 Nov 2018 17:13:58 +0100 (CET)
-Received: from fsr-ub1664-016.ea.freescale.net (fsr-ub1664-016.ea.freescale.net [10.171.71.216])
-        by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id 672B5205D6;
-        Thu, 15 Nov 2018 17:13:58 +0100 (CET)
-From:   Claudiu Manoil <claudiu.manoil@nxp.com>
-To:     "David S . Miller" <davem@davemloft.net>, netdev@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, alexandru.marginean@nxp.com,
-        catalin.horghidan@nxp.com
-Subject: [PATCH net-next 3/4] enetc: Add vf to pf messaging support
-Date:   Thu, 15 Nov 2018 18:13:55 +0200
-Message-Id: <1542298436-23422-4-git-send-email-claudiu.manoil@nxp.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542298436-23422-1-git-send-email-claudiu.manoil@nxp.com>
-References: <1542298436-23422-1-git-send-email-claudiu.manoil@nxp.com>
-X-Virus-Scanned: ClamAV using ClamSMTP
+        Thu, 15 Nov 2018 21:24:15 -0500
+Received: from mail-ua1-f45.google.com ([209.85.222.45]:38787 "EHLO
+        mail-ua1-f45.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387833AbeKPCYP (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 21:24:15 -0500
+Received: by mail-ua1-f45.google.com with SMTP id p9so7202743uaa.5
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 08:15:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Sh6o/Mn25PUR8M9CsY50B2LiJlattBZBHrkwcLg2viA=;
+        b=zz46TUdOVA8FahIM4mTvdXqfBKYOdUOHSYM439zauh9ojHENV9Yxo/KjqsHEVDawir
+         EcDlr0zg2BKHp6b38//bkoAZRXgigkyp+Zxb37mQ8eSxvL+LFA5f1mfypJ/P1II843+n
+         OPNOuy2/kt7ZGCbo62QoewMGL8Ugni5ZpEGsyJ9A0UVAydTfLlYCp/7iaFgYhvjOtsT3
+         DDgBfsU5QUhUs4oaj+62zTb+l6t/dIz8ektictWZHFP8jB8YAuUhZosMigc+2sLWE8dj
+         oXqAi6BtbQ1oVxwBg7nKAdyamw0Znoh+VQGVz+q6tdb9mfewREziyxvRJrIJeCSYpdq5
+         m/3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Sh6o/Mn25PUR8M9CsY50B2LiJlattBZBHrkwcLg2viA=;
+        b=K2vA5ymsU3TP5k7sUEEEmyRGTLB0+fjyPlwHMgZGTXYeoC6wJR/jENqRvkKUNt6h/O
+         6mgvZxYt1Sg/D8AKzJjOQ8GpaW0IvpphK5YZhua8EzhIVdJ7JsA4oWwti0xgylGsIJJ9
+         p8WuKXn/ULHEIQ2i3hA7bfgChPFvwTp61K/YoSgs6AElTPe0HCLbX3vB78lJ5pnj+aON
+         NtMtV4Mu4J7xtErkeN0MlOkuEFYPXzymd5TtthKmZXrIN6qqqg/IqJ8nuEyH6rCbIHUT
+         ueFAE7fpA3UPIW6VECkE++tta/FohuaZHZdLQHEFaTEAaDAfbD5rd6NRgXRcw3oNYhMu
+         OhXQ==
+X-Gm-Message-State: AGRZ1gJ8t7h4YmupyUFeZ/CCE7yivtxNB+BRxzYKVW6kavWYmp6GXnOO
+        qAl9kG1NV6rV4ipNd+cR84SRIh3c/k21QmeEG+Bm3w==
+X-Google-Smtp-Source: AJdET5d9dfMIBGA0CAz1ZmT9kDorwZY9DtKZgNh90OD9HdnmpTX4dLTwCXqNzxPUWt6KnQJruiq9tyXke4h7d+SDVeo=
+X-Received: by 2002:ab0:4121:: with SMTP id j30mr3018112uad.65.1542298546292;
+ Thu, 15 Nov 2018 08:15:46 -0800 (PST)
+MIME-Version: 1.0
+References: <CANBxJ=EQOt1t=PkLsMvtfB2SbiLMPeGvFxB7SJXf7m3OkcionQ@mail.gmail.com>
+ <20181114180807.6crs7awhvo26ldbr@hawk.localdomain> <CADYN=9Jh10guVNFfhS8XH+RwZAouLJQu7Svg4+Tz3rQDexzDkg@mail.gmail.com>
+ <CANBxJ=G4xdF8ZOR4zyoX1edNa=jYxk1xrzoi+7Xgcqt9qDoM2w@mail.gmail.com>
+ <CANBxJ=EB8izWM8iLd49Uvd1z1O-gLvkGmiKNHjfHifFohj2xbg@mail.gmail.com>
+ <20181115090203.5z25gwa2yznj6mmu@kamzik.brq.redhat.com> <CANBxJ=EHkuxKFoQw=K21o=9_FMhi_=on=Poq+ZF37eieoKV4zg@mail.gmail.com>
+ <20181115145028.qijg7hjswcuabrt2@kamzik.brq.redhat.com>
+In-Reply-To: <20181115145028.qijg7hjswcuabrt2@kamzik.brq.redhat.com>
+From:   Ahmed Soliman <ahmedsoliman@mena.vt.edu>
+Date:   Thu, 15 Nov 2018 18:15:22 +0200
+Message-ID: <CANBxJ=EGR=7RrO8ZtJFUwpNZRy_adjCObNtWtcMA=y4rLgeWaQ@mail.gmail.com>
+Subject: Re: KVM selftests are failing
+To:     Andrew Jones <drjones@redhat.com>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-VSIs (VFs) may send a message to the PSI (PF) for general notification
-or to gain access to hardware resources which requires host inspection.
-These messages may vary in size and are handled as a partition copy
-between two memory regions owned by the respective participants.
-The PSI will respond with fail or success and a 16-bit message code.
-The patch implements the vf to pf messaging mechanism above and, as the
-first application making use of this support, it enables the VF to
-configure its own primary MAC address.
+Hello,
+On Thu, Nov 15, 2018 at 4:50 PM Andrew Jones <drjones@redhat.com> wrote:
+>
+> On Thu, Nov 15, 2018 at 03:36:44PM +0200, Ahmed Soliman wrote:
+> > mmap(NULL, 6291456, PROT_READ|PROT_WRITE, MAP_PRIVATE|MAP_ANONYMOUS,
+> > -1, 0) = 0x7f46ea2a1000
+> > madvise(0x7f46ea2a1000, 6291456, MADV_NOHUGEPAGE) = -1 EINVAL (Invalid argument)
+> >
+> > For comprehension, this is done on intel core i7-4500U CPU @ 1.80GHz
+>
+> Argh. I see what it is. Your config doesn't have CONFIG_TRANSPARENT_HUGEPAGE=y,
+> so madvise_behavior_valid() returns false, which causes madvise() to
+> immediately return EINVAL. We should be more careful in kvm selftests with
+> our madvise behavior use.
+>
+> >
+> > As for now I will comment the madvise line and the assert when writing
+> > my own kvm self test. I think it wouldn't cause any trouble?, If it is
+> > not the case, please let me know.
+> >
+>
+> You may not need madvise() at all for your test, depending on what you're
+> doing. So leaving it out may be fine. Reworking kvm selftests to ensure
+> only valid madvise behaviors are used (and only when necessary), before
+> adding new tests, would be best.
 
-Signed-off-by: Catalin Horghidan <catalin.horghidan@nxp.com>
-Signed-off-by: Claudiu Manoil <claudiu.manoil@nxp.com>
----
- drivers/net/ethernet/freescale/enetc/Makefile    |   1 +
- drivers/net/ethernet/freescale/enetc/enetc.h     |  14 ++
- drivers/net/ethernet/freescale/enetc/enetc_hw.h  |  50 +++++++
- drivers/net/ethernet/freescale/enetc/enetc_msg.c | 163 +++++++++++++++++++++++
- drivers/net/ethernet/freescale/enetc/enetc_pf.c  |  80 ++++++++++-
- drivers/net/ethernet/freescale/enetc/enetc_pf.h  |  17 +++
- drivers/net/ethernet/freescale/enetc/enetc_vf.c  |  85 ++++++++++++
- 7 files changed, 407 insertions(+), 3 deletions(-)
- create mode 100644 drivers/net/ethernet/freescale/enetc/enetc_msg.c
+Confirmed it worked after CONFIG_TRANSPARENT_HUGEPAGE=y
+I will send a patch soon that should make the self test check if
+Transparent huge pages are enabled first before issuing the related
+madvise()
 
-diff --git a/drivers/net/ethernet/freescale/enetc/Makefile b/drivers/net/ethernet/freescale/enetc/Makefile
-index a85ef2b..9529b018 100644
---- a/drivers/net/ethernet/freescale/enetc/Makefile
-+++ b/drivers/net/ethernet/freescale/enetc/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0
- obj-$(CONFIG_FSL_ENETC) += fsl-enetc.o
- fsl-enetc-$(CONFIG_FSL_ENETC) += enetc.o enetc_cbdr.o enetc_ethtool.o
-+fsl-enetc-$(CONFIG_PCI_IOV) += enetc_msg.o
- fsl-enetc-objs := enetc_pf.o $(fsl-enetc-y)
- 
- obj-$(CONFIG_FSL_ENETC_VF) += fsl-enetc-vf.o
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc.h b/drivers/net/ethernet/freescale/enetc/enetc.h
-index 0dd2d28..756737a 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc.h
-+++ b/drivers/net/ethernet/freescale/enetc/enetc.h
-@@ -102,6 +102,12 @@ struct enetc_cbdr {
- #define ENETC_TXBD(BDR, i) (&(((union enetc_tx_bd *)((BDR).bd_base))[i]))
- #define ENETC_RXBD(BDR, i) (&(((union enetc_rx_bd *)((BDR).bd_base))[i]))
- 
-+struct enetc_msg_swbd {
-+	void *vaddr;
-+	dma_addr_t dma;
-+	int size;
-+};
-+
- #define ENETC_REV1	0x1
- enum enetc_errata {
- 	ENETC_ERR_TXCSUM	= BIT(0),
-@@ -171,6 +177,14 @@ struct enetc_ndev_priv {
- 	phy_interface_t if_mode;
- };
- 
-+/* Messaging */
-+
-+/* VF-PF set primary MAC address message format */
-+struct enetc_msg_cmd_set_primary_mac {
-+	struct enetc_msg_cmd_header header;
-+	struct sockaddr mac;
-+};
-+
- #define ENETC_CBD(R, i)	(&(((struct enetc_cbd *)((R).bd_base))[i]))
- 
- #define ENETC_CBDR_TIMEOUT	1000 /* usecs */
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_hw.h b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-index 6aa06140..82d2831 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_hw.h
-@@ -34,6 +34,29 @@
- #define ENETC_SIPMAR0	0x80
- #define ENETC_SIPMAR1	0x84
- 
-+/* VF-PF Message passing */
-+#define ENETC_DEFAULT_MSG_SIZE	1024	/* and max size */
-+/* msg size encoding: default and max msg value of 1024B encoded as 0 */
-+static inline u32 enetc_vsi_set_msize(u32 size)
-+{
-+	return size < ENETC_DEFAULT_MSG_SIZE ? size >> 5 : 0;
-+}
-+
-+#define ENETC_PSIMSGRR	0x204
-+#define ENETC_PSIMSGRR_MR_MASK	GENMASK(2, 1)
-+#define ENETC_PSIMSGRR_MR(n) BIT((n) + 1) /* n = VSI index */
-+#define ENETC_PSIVMSGRCVAR0(n)	(0x210 + (n) * 0x8) /* n = VSI index */
-+#define ENETC_PSIVMSGRCVAR1(n)	(0x214 + (n) * 0x8)
-+
-+#define ENETC_VSIMSGSR	0x204	/* RO */
-+#define ENETC_VSIMSGSR_MB	BIT(0)
-+#define ENETC_VSIMSGSR_MS	BIT(1)
-+#define ENETC_VSIMSGSNDAR0	0x210
-+#define ENETC_VSIMSGSNDAR1	0x214
-+
-+#define ENETC_SIMSGSR_SET_MC(val) ((val) << 16)
-+#define ENETC_SIMSGSR_GET_MC(val) ((val) >> 16)
-+
- /* SI statistics */
- #define ENETC_SIROCT	0x300
- #define ENETC_SIRFRM	0x308
-@@ -404,6 +427,33 @@ static inline void enetc_get_primary_mac_addr(struct enetc_hw *hw, u8 *addr)
- /* base index for Rx/Tx interrupts */
- #define ENETC_BDR_INT_BASE_IDX	1
- 
-+/* Messaging */
-+
-+/* Command completion status */
-+enum enetc_msg_cmd_status {
-+	ENETC_MSG_CMD_STATUS_OK,
-+	ENETC_MSG_CMD_STATUS_FAIL
-+};
-+
-+/* VSI-PSI command message types */
-+enum enetc_msg_cmd_type {
-+	ENETC_MSG_CMD_MNG_MAC = 1, /* manage MAC address */
-+	ENETC_MSG_CMD_MNG_RX_MAC_FILTER,/* manage RX MAC table */
-+	ENETC_MSG_CMD_MNG_RX_VLAN_FILTER /* manage RX VLAN table */
-+};
-+
-+/* VSI-PSI command action types */
-+enum enetc_msg_cmd_action_type {
-+	ENETC_MSG_CMD_MNG_ADD = 1,
-+	ENETC_MSG_CMD_MNG_REMOVE
-+};
-+
-+/* PSI-VSI command header format */
-+struct enetc_msg_cmd_header {
-+	u16 type;	/* command class type */
-+	u16 id;		/* denotes the specific required action */
-+};
-+
- /* Common H/W utility functions */
- 
- static inline void enetc_enable_rxvlan(struct enetc_hw *hw, int si_idx,
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_msg.c b/drivers/net/ethernet/freescale/enetc/enetc_msg.c
-new file mode 100644
-index 0000000..71e0cf2
---- /dev/null
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_msg.c
-@@ -0,0 +1,163 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR BSD-3-Clause)
-+/* Copyright 2017-2018 NXP */
-+
-+#include "enetc_pf.h"
-+
-+static void enetc_msg_disable_mr_int(struct enetc_hw *hw)
-+{
-+	u32 psiier = enetc_rd(hw, ENETC_PSIIER);
-+	/* disable MR int source(s) */
-+	enetc_wr(hw, ENETC_PSIIER, psiier & ~ENETC_PSIIER_MR_MASK);
-+}
-+
-+static void enetc_msg_enable_mr_int(struct enetc_hw *hw)
-+{
-+	u32 psiier = enetc_rd(hw, ENETC_PSIIER);
-+
-+	enetc_wr(hw, ENETC_PSIIER, psiier | ENETC_PSIIER_MR_MASK);
-+}
-+
-+static irqreturn_t enetc_msg_psi_msix(int irq, void *data)
-+{
-+	struct enetc_si *si = (struct enetc_si *)data;
-+	struct enetc_pf *pf = enetc_si_priv(si);
-+
-+	enetc_msg_disable_mr_int(&si->hw);
-+	schedule_work(&pf->msg_task);
-+
-+	return IRQ_HANDLED;
-+}
-+
-+static void enetc_msg_task(struct work_struct *work)
-+{
-+	struct enetc_pf *pf = container_of(work, struct enetc_pf, msg_task);
-+	struct enetc_hw *hw = &pf->si->hw;
-+	unsigned long mr_mask;
-+	int i;
-+
-+	for (;;) {
-+		mr_mask = enetc_rd(hw, ENETC_PSIMSGRR) & ENETC_PSIMSGRR_MR_MASK;
-+		if (!mr_mask) {
-+			/* re-arm MR interrupts, w1c the IDR reg */
-+			enetc_wr(hw, ENETC_PSIIDR, ENETC_PSIIER_MR_MASK);
-+			enetc_msg_enable_mr_int(hw);
-+			return;
-+		}
-+
-+		for (i = 0; i < pf->num_vfs; i++) {
-+			u32 psimsgrr;
-+			u16 msg_code;
-+
-+			if (!(ENETC_PSIMSGRR_MR(i) & mr_mask))
-+				continue;
-+
-+			enetc_msg_handle_rxmsg(pf, i, &msg_code);
-+
-+			psimsgrr = ENETC_SIMSGSR_SET_MC(msg_code);
-+			psimsgrr |= ENETC_PSIMSGRR_MR(i); /* w1c */
-+			enetc_wr(hw, ENETC_PSIMSGRR, psimsgrr);
-+		}
-+	}
-+}
-+
-+/* Init */
-+static int enetc_msg_alloc_mbx(struct enetc_si *si, int idx)
-+{
-+	struct enetc_pf *pf = enetc_si_priv(si);
-+	struct device *dev = &si->pdev->dev;
-+	struct enetc_hw *hw = &si->hw;
-+	struct enetc_msg_swbd *msg;
-+	u32 val;
-+
-+	msg = &pf->rxmsg[idx];
-+	/* allocate and set receive buffer */
-+	msg->size = ENETC_DEFAULT_MSG_SIZE;
-+
-+	msg->vaddr = dma_zalloc_coherent(dev, msg->size, &msg->dma,
-+					 GFP_KERNEL);
-+	if (!msg->vaddr) {
-+		dev_err(dev, "msg: fail to alloc dma buffer of size: %d\n",
-+			msg->size);
-+		return -ENOMEM;
-+	}
-+
-+	/* set multiple of 32 bytes */
-+	val = lower_32_bits(msg->dma);
-+	enetc_wr(hw, ENETC_PSIVMSGRCVAR0(idx), val);
-+	val = upper_32_bits(msg->dma);
-+	enetc_wr(hw, ENETC_PSIVMSGRCVAR1(idx), val);
-+
-+	return 0;
-+}
-+
-+static void enetc_msg_free_mbx(struct enetc_si *si, int idx)
-+{
-+	struct enetc_pf *pf = enetc_si_priv(si);
-+	struct enetc_hw *hw = &si->hw;
-+	struct enetc_msg_swbd *msg;
-+
-+	msg = &pf->rxmsg[idx];
-+	dma_free_coherent(&si->pdev->dev, msg->size, msg->vaddr, msg->dma);
-+	memset(msg, 0, sizeof(*msg));
-+
-+	enetc_wr(hw, ENETC_PSIVMSGRCVAR0(idx), 0);
-+	enetc_wr(hw, ENETC_PSIVMSGRCVAR1(idx), 0);
-+}
-+
-+int enetc_msg_psi_init(struct enetc_pf *pf)
-+{
-+	struct enetc_si *si = pf->si;
-+	int vector, i, err;
-+
-+	/* register message passing interrupt handler */
-+	sprintf(pf->msg_int_name, "%s-vfmsg", si->ndev->name);
-+	vector = pci_irq_vector(si->pdev, ENETC_SI_INT_IDX);
-+	err = request_irq(vector, enetc_msg_psi_msix, 0, pf->msg_int_name, si);
-+	if (err) {
-+		dev_err(&si->pdev->dev,
-+			"PSI messaging: request_irq() failed!\n");
-+		return err;
-+	}
-+
-+	/* set one IRQ entry for PSI message receive notification (SI int) */
-+	enetc_wr(&si->hw, ENETC_SIMSIVR, ENETC_SI_INT_IDX);
-+
-+	/* initialize PSI mailbox */
-+	INIT_WORK(&pf->msg_task, enetc_msg_task);
-+
-+	for (i = 0; i < pf->num_vfs; i++) {
-+		err = enetc_msg_alloc_mbx(si, i);
-+		if (err)
-+			goto err_init_mbx;
-+	}
-+
-+	/* enable MR interrupts */
-+	enetc_msg_enable_mr_int(&si->hw);
-+
-+	return 0;
-+
-+err_init_mbx:
-+	for (i--; i >= 0; i--)
-+		enetc_msg_free_mbx(si, i);
-+
-+	free_irq(vector, si);
-+
-+	return err;
-+}
-+
-+void enetc_msg_psi_free(struct enetc_pf *pf)
-+{
-+	struct enetc_si *si = pf->si;
-+	int i;
-+
-+	cancel_work_sync(&pf->msg_task);
-+
-+	/* disable MR interrupts */
-+	enetc_msg_disable_mr_int(&si->hw);
-+
-+	for (i = 0; i < pf->num_vfs; i++)
-+		enetc_msg_free_mbx(si, i);
-+
-+	/* de-register message passing interrupt handler */
-+	free_irq(pci_irq_vector(si->pdev, ENETC_SI_INT_IDX), si);
-+}
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pf.c b/drivers/net/ethernet/freescale/enetc/enetc_pf.c
-index fe704ca..98d7c8f 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_pf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_pf.c
-@@ -365,6 +365,7 @@ static int enetc_pf_set_vf_mac(struct net_device *ndev, int vf, u8 *mac)
- {
- 	struct enetc_ndev_priv *priv = netdev_priv(ndev);
- 	struct enetc_pf *pf = enetc_si_priv(priv->si);
-+	struct enetc_vf_state *vf_state;
- 
- 	if (vf >= pf->total_vfs)
- 		return -EINVAL;
-@@ -372,6 +373,9 @@ static int enetc_pf_set_vf_mac(struct net_device *ndev, int vf, u8 *mac)
- 	if (!is_valid_ether_addr(mac))
- 		return -EADDRNOTAVAIL;
- 
-+	vf_state = &pf->vf_state[vf];
-+	vf_state->flags |= ENETC_VF_FLAG_PF_SET_MAC;
-+
- 	enetc_pf_set_primary_mac_addr(&priv->si->hw, vf + 1, mac);
- 	return 0;
- }
-@@ -531,6 +535,53 @@ static void enetc_configure_port(struct enetc_pf *pf)
- 	enetc_port_wr(hw, ENETC_PMR, ENETC_PMR_EN);
- }
- 
-+/* Messaging */
-+static u16 enetc_msg_pf_set_vf_primary_mac_addr(struct enetc_pf *pf,
-+						int vf_id)
-+{
-+	struct enetc_vf_state *vf_state = &pf->vf_state[vf_id];
-+	struct enetc_msg_swbd *msg = &pf->rxmsg[vf_id];
-+	struct enetc_msg_cmd_set_primary_mac *cmd;
-+	struct device *dev = &pf->si->pdev->dev;
-+	u16 cmd_id;
-+	char *addr;
-+
-+	cmd = (struct enetc_msg_cmd_set_primary_mac *)msg->vaddr;
-+	cmd_id = cmd->header.id;
-+	if (cmd_id != ENETC_MSG_CMD_MNG_ADD)
-+		return ENETC_MSG_CMD_STATUS_FAIL;
-+
-+	addr = cmd->mac.sa_data;
-+	if (vf_state->flags & ENETC_VF_FLAG_PF_SET_MAC)
-+		dev_warn(dev, "Attempt to override PF set mac addr for VF%d\n",
-+			 vf_id);
-+	else
-+		enetc_pf_set_primary_mac_addr(&pf->si->hw, vf_id + 1, addr);
-+
-+	return ENETC_MSG_CMD_STATUS_OK;
-+}
-+
-+void enetc_msg_handle_rxmsg(struct enetc_pf *pf, int vf_id, u16 *status)
-+{
-+	struct enetc_msg_swbd *msg = &pf->rxmsg[vf_id];
-+	struct device *dev = &pf->si->pdev->dev;
-+	struct enetc_msg_cmd_header *cmd_hdr;
-+	u16 cmd_type;
-+
-+	*status = ENETC_MSG_CMD_STATUS_OK;
-+	cmd_hdr = (struct enetc_msg_cmd_header *)msg->vaddr;
-+	cmd_type = cmd_hdr->type;
-+
-+	switch (cmd_type) {
-+	case ENETC_MSG_CMD_MNG_MAC:
-+		*status = enetc_msg_pf_set_vf_primary_mac_addr(pf, vf_id);
-+		break;
-+	default:
-+		dev_err(dev, "command not supported (cmd_type: 0x%x)\n",
-+			cmd_type);
-+	}
-+}
-+
- #ifdef CONFIG_PCI_IOV
- static int enetc_sriov_configure(struct pci_dev *pdev, int num_vfs)
- {
-@@ -541,17 +592,40 @@ static int enetc_sriov_configure(struct pci_dev *pdev, int num_vfs)
- 	if (!num_vfs) {
- 		pf->num_vfs = 0;
- 		pci_disable_sriov(pdev);
-+		enetc_msg_psi_free(pf);
-+		kfree(pf->vf_state);
- 	} else {
-+		pf->num_vfs = num_vfs;
-+
-+		pf->vf_state = kcalloc(num_vfs, sizeof(struct enetc_vf_state),
-+				       GFP_KERNEL);
-+		if (!pf->vf_state) {
-+			pf->num_vfs = 0;
-+			return -ENOMEM;
-+		}
-+
-+		err = enetc_msg_psi_init(pf);
-+		if (err) {
-+			dev_err(&pdev->dev, "enetc_msg_psi_init (%d)\n", err);
-+			goto err_msg_psi;
-+		}
-+
- 		err = pci_enable_sriov(pdev, num_vfs);
- 		if (err) {
- 			dev_err(&pdev->dev, "pci_enable_sriov err %d\n", err);
--			return err;
-+			goto err_en_sriov;
- 		}
--
--		pf->num_vfs = num_vfs;
- 	}
- 
- 	return num_vfs;
-+
-+err_en_sriov:
-+	enetc_msg_psi_free(pf);
-+err_msg_psi:
-+	kfree(pf->vf_state);
-+	pf->num_vfs = 0;
-+
-+	return err;
- }
- #else
- #define enetc_sriov_configure(pdev, num_vfs)	(void)0
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_pf.h b/drivers/net/ethernet/freescale/enetc/enetc_pf.h
-index a9dbb082..9449eb6 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_pf.h
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_pf.h
-@@ -19,14 +19,31 @@ struct enetc_mac_filter {
- 
- #define ENETC_VLAN_HT_SIZE	64
- 
-+enum enetc_vf_flags {
-+	ENETC_VF_FLAG_PF_SET_MAC	= BIT(0),
-+};
-+
-+struct enetc_vf_state {
-+	enum enetc_vf_flags flags;
-+};
-+
- struct enetc_pf {
- 	struct enetc_si *si;
- 	int num_vfs; /* number of active VFs, after sriov_init */
- 	int total_vfs; /* max number of VFs, set for PF at probe */
-+	struct enetc_vf_state *vf_state;
- 
- 	struct enetc_mac_filter mac_filter[ENETC_MAX_NUM_MAC_FLT];
- 
-+	struct enetc_msg_swbd rxmsg[ENETC_MAX_NUM_VFS];
-+	struct work_struct msg_task;
-+	char msg_int_name[IFNAMSIZ + 8];
-+
- 	char vlan_promisc_simap; /* bitmap of SIs in VLAN promisc mode */
- 	DECLARE_BITMAP(vlan_ht_filter, ENETC_VLAN_HT_SIZE);
- 	DECLARE_BITMAP(active_vlans, VLAN_N_VID);
- };
-+
-+int enetc_msg_psi_init(struct enetc_pf *pf);
-+void enetc_msg_psi_free(struct enetc_pf *pf);
-+void enetc_msg_handle_rxmsg(struct enetc_pf *pf, int mbox_id, u16 *status);
-diff --git a/drivers/net/ethernet/freescale/enetc/enetc_vf.c b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-index 9b18515..e877178 100644
---- a/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-+++ b/drivers/net/ethernet/freescale/enetc/enetc_vf.c
-@@ -13,12 +13,97 @@ static const char enetc_drv_ver[] = ENETC_DRV_VER_STR;
- #define ENETC_DRV_NAME_STR "ENETC VF driver"
- static const char enetc_drv_name[] = ENETC_DRV_NAME_STR;
- 
-+/* Messaging */
-+static void enetc_msg_vsi_write_msg(struct enetc_hw *hw,
-+				    struct enetc_msg_swbd *msg)
-+{
-+	u32 val;
-+
-+	val = enetc_vsi_set_msize(msg->size) | lower_32_bits(msg->dma);
-+	enetc_wr(hw, ENETC_VSIMSGSNDAR1, upper_32_bits(msg->dma));
-+	enetc_wr(hw, ENETC_VSIMSGSNDAR0, val);
-+}
-+
-+static int enetc_msg_vsi_send(struct enetc_si *si, struct enetc_msg_swbd *msg)
-+{
-+	int timeout = 100;
-+	u32 vsimsgsr;
-+
-+	enetc_msg_vsi_write_msg(&si->hw, msg);
-+
-+	do {
-+		vsimsgsr = enetc_rd(&si->hw, ENETC_VSIMSGSR);
-+		if (!(vsimsgsr & ENETC_VSIMSGSR_MB))
-+			break;
-+
-+		usleep_range(1000, 2000);
-+	} while (--timeout);
-+
-+	if (!timeout)
-+		return -ETIMEDOUT;
-+
-+	/* check for message delivery error */
-+	if (vsimsgsr & ENETC_VSIMSGSR_MS) {
-+		dev_err(&si->pdev->dev, "VSI command execute error: %d\n",
-+			ENETC_SIMSGSR_GET_MC(vsimsgsr));
-+		return -EIO;
-+	}
-+
-+	return 0;
-+}
-+
-+static int enetc_msg_vsi_set_primary_mac_addr(struct enetc_ndev_priv *priv,
-+					      struct sockaddr *saddr)
-+{
-+	struct enetc_msg_cmd_set_primary_mac *cmd;
-+	struct enetc_msg_swbd msg;
-+	int err;
-+
-+	msg.size = ALIGN(sizeof(struct enetc_msg_cmd_set_primary_mac), 64);
-+	msg.vaddr = dma_zalloc_coherent(priv->dev, msg.size, &msg.dma,
-+					GFP_KERNEL);
-+	if (!msg.vaddr) {
-+		dev_err(priv->dev, "Failed to alloc Tx msg (size: %d)\n",
-+			msg.size);
-+		return -ENOMEM;
-+	}
-+
-+	cmd = (struct enetc_msg_cmd_set_primary_mac *)msg.vaddr;
-+	cmd->header.type = ENETC_MSG_CMD_MNG_MAC;
-+	cmd->header.id = ENETC_MSG_CMD_MNG_ADD;
-+	memcpy(&cmd->mac, saddr, sizeof(struct sockaddr));
-+
-+	/* send the command and wait */
-+	err = enetc_msg_vsi_send(priv->si, &msg);
-+
-+	dma_free_coherent(priv->dev, msg.size, msg.vaddr, msg.dma);
-+
-+	return err;
-+}
-+
-+static int enetc_vf_set_mac_addr(struct net_device *ndev, void *addr)
-+{
-+	struct enetc_ndev_priv *priv = netdev_priv(ndev);
-+	struct sockaddr *saddr = addr;
-+	int err;
-+
-+	if (!is_valid_ether_addr(saddr->sa_data))
-+		return -EADDRNOTAVAIL;
-+
-+	err = enetc_msg_vsi_set_primary_mac_addr(priv, saddr);
-+	if (err)
-+		return err;
-+
-+	return 0;
-+}
-+
- /* Probing/ Init */
- static const struct net_device_ops enetc_ndev_ops = {
- 	.ndo_open		= enetc_open,
- 	.ndo_stop		= enetc_close,
- 	.ndo_start_xmit		= enetc_xmit,
- 	.ndo_get_stats		= enetc_get_stats,
-+	.ndo_set_mac_address	= enetc_vf_set_mac_addr,
- 	.ndo_do_ioctl		= enetc_ioctl,
- };
- 
+Thanks,
 -- 
-2.7.4
-
+Ahmed,
+Junior Researcher, IoT and Cyber Security lab, SmartCI, Alexandria
+University, & CIS @  VMI
