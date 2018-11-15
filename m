@@ -2,128 +2,266 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8DDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:56:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CF16EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:00:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C44552087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:56:42 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44552087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 8D1412087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:00:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1412087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727195AbeKPJG3 (ORCPT
+        id S1726861AbeKPJKi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 04:06:29 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:53912 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726233AbeKPJG3 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 04:06:29 -0500
-Received: from pps.filterd (m0098399.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAFMtODF008107
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 17:56:40 -0500
-Received: from e17.ny.us.ibm.com (e17.ny.us.ibm.com [129.33.205.207])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nsfewyq7e-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 17:56:39 -0500
-Received: from localhost
-        by e17.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Thu, 15 Nov 2018 22:56:37 -0000
-Received: from b01cxnp22035.gho.pok.ibm.com (9.57.198.25)
-        by e17.ny.us.ibm.com (146.89.104.204) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Thu, 15 Nov 2018 22:56:32 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp22035.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAFMuV9Z44171400
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 15 Nov 2018 22:56:31 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id EFAC3B206C;
-        Thu, 15 Nov 2018 22:56:30 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id BEEC6B2064;
-        Thu, 15 Nov 2018 22:56:30 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.168.9])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Thu, 15 Nov 2018 22:56:30 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 40B0216C373E; Thu, 15 Nov 2018 14:56:30 -0800 (PST)
-Date:   Thu, 15 Nov 2018 14:56:30 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
-        mingo@kernel.org
-Cc:     stern@rowland.harvard.edu, parri.andrea@gmail.com,
-        will.deacon@arm.com, peterz@infradead.org, boqun.feng@gmail.com,
-        npiggin@gmail.com, dhowells@redhat.com, j.alglave@ucl.ac.uk,
-        luc.maranget@inria.fr, akiyks@gmail.com
-Subject: Q&A from "Concurrency with tools/memory-model"
-Reply-To: paulmck@linux.ibm.com
+        Fri, 16 Nov 2018 04:10:38 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:59465 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725916AbeKPJKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 04:10:37 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 0DE62207BD; Fri, 16 Nov 2018 00:00:45 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 5EF9E2072C;
+        Fri, 16 Nov 2018 00:00:44 +0100 (CET)
+Date:   Fri, 16 Nov 2018 00:00:43 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Fernando Ramos <greenfoo@gluegarage.com>
+Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>,
+        Alexey Brodkin <abrodkin@synopsys.com>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Ludovic Desroches <ludovic.desroches@microchip.com>,
+        Gerd Hoffmann <kraxel@redhat.com>,
+        Archit Taneja <architt@codeaurora.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Russell King <linux+etnaviv@armlinux.org.uk>,
+        Christian Gmeiner <christian.gmeiner@gmail.com>,
+        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
+        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Julia Lawall <Julia.Lawall@lip6.fr>,
+        Gilles Muller <Gilles.Muller@lip6.fr>,
+        Nicolas Palix <nicolas.palix@imag.fr>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Haneen Mohammed <hamohammed.sa@gmail.com>,
+        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        virtualization@lists.linux-foundation.org,
+        etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
+        cocci@systeme.lip6.fr
+Subject: Re: [PATCH 3/9] drm: replace "drm_dev_unref" function with
+ "drm_dev_put"
+Message-ID: <20181116000043.3b0f6f27@bbrezillon>
+In-Reply-To: <20181115221634.22715-4-greenfoo@gluegarage.com>
+References: <20181115221634.22715-1-greenfoo@gluegarage.com>
+        <20181115221634.22715-4-greenfoo@gluegarage.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18111522-0040-0000-0000-0000049333FE
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010057; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01117993; UDB=6.00577119; IPR=6.00898102;
- MB=3.00024184; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-15 22:56:35
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111522-0041-0000-0000-0000089C3FE6
-Message-Id: <20181115225630.GA30917@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-15_17:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=343 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811150198
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello!
+On Thu, 15 Nov 2018 23:16:23 +0100
+Fernando Ramos <greenfoo@gluegarage.com> wrote:
 
-Good turnout and some good questions here in Vancouver BC, please see
-below for rough notes.  ;-)
+> This patch unifies the naming of DRM functions for reference counting as
+> requested on Documentation/gpu/todo.rst
+> 
+> Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
+> ---
+>  drivers/gpu/drm/arc/arcpgu_drv.c             | 4 ++--
+>  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 4 ++--
 
-							Thanx, Paul
+For the Atmel HLCDC driver
 
-------------------------------------------------------------------------
+Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-"Concurrency with tools/memory-model"
-
-Andrea Parri presenting.
-
-Rough notes of Q&A.
-
-o	Want atomic bit operation.
-
-o	But smp_read_barrier_depends() not there, so how to note pairing?
-	A:  Note the dependency as the other end of the pairing.
-
-o	Speculation barriers, as in Spectre and Meltdown?  A: This would
-	require adding timing, not in the immediate future.
-
-o	What ordering does system calls provide?  A: None that we know of.
-	Boqun: Userspace needs to explicitly provide the needed ordering
-	when interacting with the kernel.  Some architectures do provide
-	full barriers, but not to be counted on.
-
-o	Why herd7?  A: Based on other formalizations -- note that herd7
-	had a number of hardware models.  Paul: Plus the founder of the
-	LKMM project is a co-author of herd, which might have had some
-	effect.
-
-o	Why not also model interrupts and NMIs?  Promela and spin have
-	been used for this.  A: Cannot currently model them.  You can
-	emulated them with additional threads and locks, if you wish.
-	Vincent Nimal and Lihao Liang have done some academic work on
-	these topics.
+>  drivers/gpu/drm/etnaviv/etnaviv_drv.c        | 4 ++--
+>  drivers/gpu/drm/mxsfb/mxsfb_drv.c            | 4 ++--
+>  drivers/gpu/drm/rcar-du/rcar_du_drv.c        | 2 +-
+>  drivers/gpu/drm/shmobile/shmob_drm_drv.c     | 4 ++--
+>  drivers/gpu/drm/tve200/tve200_drv.c          | 4 ++--
+>  drivers/gpu/drm/zte/zx_drm_drv.c             | 4 ++--
+>  8 files changed, 15 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/arc/arcpgu_drv.c b/drivers/gpu/drm/arc/arcpgu_drv.c
+> index f067de4e1e82..dcb06d4e9135 100644
+> --- a/drivers/gpu/drm/arc/arcpgu_drv.c
+> +++ b/drivers/gpu/drm/arc/arcpgu_drv.c
+> @@ -216,7 +216,7 @@ static int arcpgu_probe(struct platform_device *pdev)
+>  	arcpgu_unload(drm);
+>  
+>  err_unref:
+> -	drm_dev_unref(drm);
+> +	drm_dev_put(drm);
+>  
+>  	return ret;
+>  }
+> @@ -227,7 +227,7 @@ static int arcpgu_remove(struct platform_device *pdev)
+>  
+>  	drm_dev_unregister(drm);
+>  	arcpgu_unload(drm);
+> -	drm_dev_unref(drm);
+> +	drm_dev_put(drm);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> index 843cac222e60..f8da51a63e2f 100644
+> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
+> @@ -775,7 +775,7 @@ static int atmel_hlcdc_dc_drm_probe(struct platform_device *pdev)
+>  	atmel_hlcdc_dc_unload(ddev);
+>  
+>  err_unref:
+> -	drm_dev_unref(ddev);
+> +	drm_dev_put(ddev);
+>  
+>  	return ret;
+>  }
+> @@ -786,7 +786,7 @@ static int atmel_hlcdc_dc_drm_remove(struct platform_device *pdev)
+>  
+>  	drm_dev_unregister(ddev);
+>  	atmel_hlcdc_dc_unload(ddev);
+> -	drm_dev_unref(ddev);
+> +	drm_dev_put(ddev);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> index 83c1f46670bf..52802e6049e0 100644
+> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
+> @@ -550,7 +550,7 @@ static int etnaviv_bind(struct device *dev)
+>  out_bind:
+>  	kfree(priv);
+>  out_unref:
+> -	drm_dev_unref(drm);
+> +	drm_dev_put(drm);
+>  
+>  	return ret;
+>  }
+> @@ -567,7 +567,7 @@ static void etnaviv_unbind(struct device *dev)
+>  	drm->dev_private = NULL;
+>  	kfree(priv);
+>  
+> -	drm_dev_unref(drm);
+> +	drm_dev_put(drm);
+>  }
+>  
+>  static const struct component_master_ops etnaviv_master_ops = {
+> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+> index 2393e6d16ffd..88ba003979e6 100644
+> --- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+> +++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
+> @@ -417,7 +417,7 @@ static int mxsfb_probe(struct platform_device *pdev)
+>  err_unload:
+>  	mxsfb_unload(drm);
+>  err_free:
+> -	drm_dev_unref(drm);
+> +	drm_dev_put(drm);
+>  
+>  	return ret;
+>  }
+> @@ -428,7 +428,7 @@ static int mxsfb_remove(struct platform_device *pdev)
+>  
+>  	drm_dev_unregister(drm);
+>  	mxsfb_unload(drm);
+> -	drm_dev_unref(drm);
+> +	drm_dev_put(drm);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> index 084f58df4a8c..c7fe2433ab9e 100644
+> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
+> @@ -454,7 +454,7 @@ static int rcar_du_remove(struct platform_device *pdev)
+>  	drm_kms_helper_poll_fini(ddev);
+>  	drm_mode_config_cleanup(ddev);
+>  
+> -	drm_dev_unref(ddev);
+> +	drm_dev_put(ddev);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+> index 6ececad6f845..8554102a6ead 100644
+> --- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+> +++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
+> @@ -194,7 +194,7 @@ static int shmob_drm_remove(struct platform_device *pdev)
+>  	drm_kms_helper_poll_fini(ddev);
+>  	drm_mode_config_cleanup(ddev);
+>  	drm_irq_uninstall(ddev);
+> -	drm_dev_unref(ddev);
+> +	drm_dev_put(ddev);
+>  
+>  	return 0;
+>  }
+> @@ -290,7 +290,7 @@ static int shmob_drm_probe(struct platform_device *pdev)
+>  	drm_kms_helper_poll_fini(ddev);
+>  	drm_mode_config_cleanup(ddev);
+>  err_free_drm_dev:
+> -	drm_dev_unref(ddev);
+> +	drm_dev_put(ddev);
+>  
+>  	return ret;
+>  }
+> diff --git a/drivers/gpu/drm/tve200/tve200_drv.c b/drivers/gpu/drm/tve200/tve200_drv.c
+> index 72efcecb44f7..28e2d03c0ccf 100644
+> --- a/drivers/gpu/drm/tve200/tve200_drv.c
+> +++ b/drivers/gpu/drm/tve200/tve200_drv.c
+> @@ -249,7 +249,7 @@ static int tve200_probe(struct platform_device *pdev)
+>  clk_disable:
+>  	clk_disable_unprepare(priv->pclk);
+>  dev_unref:
+> -	drm_dev_unref(drm);
+> +	drm_dev_put(drm);
+>  	return ret;
+>  }
+>  
+> @@ -263,7 +263,7 @@ static int tve200_remove(struct platform_device *pdev)
+>  		drm_panel_bridge_remove(priv->bridge);
+>  	drm_mode_config_cleanup(drm);
+>  	clk_disable_unprepare(priv->pclk);
+> -	drm_dev_unref(drm);
+> +	drm_dev_put(drm);
+>  
+>  	return 0;
+>  }
+> diff --git a/drivers/gpu/drm/zte/zx_drm_drv.c b/drivers/gpu/drm/zte/zx_drm_drv.c
+> index 11ef17c2d1c1..5b6f1eda52e0 100644
+> --- a/drivers/gpu/drm/zte/zx_drm_drv.c
+> +++ b/drivers/gpu/drm/zte/zx_drm_drv.c
+> @@ -114,7 +114,7 @@ static int zx_drm_bind(struct device *dev)
+>  	component_unbind_all(dev, drm);
+>  out_unregister:
+>  	dev_set_drvdata(dev, NULL);
+> -	drm_dev_unref(drm);
+> +	drm_dev_put(drm);
+>  	return ret;
+>  }
+>  
+> @@ -127,7 +127,7 @@ static void zx_drm_unbind(struct device *dev)
+>  	drm_mode_config_cleanup(drm);
+>  	component_unbind_all(dev, drm);
+>  	dev_set_drvdata(dev, NULL);
+> -	drm_dev_unref(drm);
+> +	drm_dev_put(drm);
+>  }
+>  
+>  static const struct component_master_ops zx_drm_master_ops = {
 
