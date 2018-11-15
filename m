@@ -2,169 +2,141 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C0484C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:28:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 144F2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:31:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 81ECE21780
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:28:59 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C7B7E21780
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:31:37 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="aYeBtxCK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 81ECE21780
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="KCuNC0LM";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="QKu1W79e"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C7B7E21780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388932AbeKPEhv (ORCPT
+        id S2388683AbeKPEka (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 23:37:51 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:38175 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388821AbeKPEhu (ORCPT
+        Thu, 15 Nov 2018 23:40:30 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:51736 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726453AbeKPEka (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 23:37:50 -0500
-Received: by mail-pf1-f196.google.com with SMTP id q1so2096597pfi.5
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 10:28:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=cKqxCmj+g8wylWj4eAfctUKW1L6Qx1DV5mBadTwoHi0=;
-        b=aYeBtxCKN4fkLNjtgzi/IbgY/RCrYdQBDjus/pC7t2KKIOWW41bLlF0BI3wKNkM6MV
-         XipZqHXMqDKk1Z2fjnHTdMlF78IHpC05xrExzrwEnR044plj42lc60XwAYtybmSMLbXd
-         QU7qyfv8LoQ7Xl0Mdriw1X36qDSz0ir0+R3AfuTOhkQXGe43pSVGXn6LkHZ/SMTwbn8I
-         kkShBdyZ5HroecyXfNNxRrjiyWqSsew3pII+uQ9ToybQq6bzpyWQCNc3PGYVprSXPIxy
-         LPb8+ar3qE9hO8eQ18F8kWROsZ3+jbd1MxdOUkMib1xTGn4X3uFLEemxqbvSKec5wxfS
-         AK1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=cKqxCmj+g8wylWj4eAfctUKW1L6Qx1DV5mBadTwoHi0=;
-        b=QYYuTEa1gpDJw3rEf0yMwSrQdP5o8lBz9SAdUGECs5zUwg5U9CjMXoUsMdNqkbeLQX
-         yt7rdWeeerhohg3Wu50DALQXMJcyhoE8Ou3IP5G004R73Q1L8R2dX9kUwfuz+uvZR0hc
-         VLXUyCvJTY1Ink5hI5gg7n5OfrcixZ5TlWai8PN4nldbeCXA4mnUM7PSlnSwtj9l+CZI
-         ZtbKD0Mqto6vKuPXaYOsLI0lFNJlgUQQ0aD4jXEVqJST+mBlNfo+Gymb8fbS6GUEMAZy
-         M+8xvN2utDnDhOrEIfX+DGD6JcWngunvvGvEhBxqrp5/b0CxCV9qke72peaSV2fmi6xa
-         9E2w==
-X-Gm-Message-State: AGRZ1gLcKi6xwJGu01aaffUoIMdrxNshsBfOeSEFLh/KEaVubdLJVaKH
-        XdDV5D0Xuvl1g10kgbFNHE1bVA==
-X-Google-Smtp-Source: AJdET5cUkx5Cw0zfoRvC4mN0QBbB0FymNnWasc/6x4Bd2JTU0z9jg4Wqk9Tv9MwiHUzAQ/sFbYLksA==
-X-Received: by 2002:a63:790e:: with SMTP id u14mr6781823pgc.452.1542306535815;
-        Thu, 15 Nov 2018 10:28:55 -0800 (PST)
-Received: from vader ([64.114.255.97])
-        by smtp.gmail.com with ESMTPSA id f6-v6sm35792916pfg.128.2018.11.15.10.28.54
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 10:28:55 -0800 (PST)
-Date:   Thu, 15 Nov 2018 10:28:54 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 02/19] block: introduce bio_for_each_bvec()
-Message-ID: <20181115182854.GB9348@vader>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-3-ming.lei@redhat.com>
+        Thu, 15 Nov 2018 23:40:30 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 9D0296076A; Thu, 15 Nov 2018 18:31:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542306695;
+        bh=jpEIkjvcZ8jlQzVWhG3nb8LE1eYiqzJG4XzJilQuduI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=KCuNC0LMz7AfCGu/kdvTHh7oblZPtonfPdbiEoVPpiJzyGShTBzNZX2QvIvzHPaoq
+         Q/jlFSmTdBpsN/3MuO82Fg+dFlNlhnhFDJzq82AW4FzLL5bV03x8AA4WPZcimFFxxG
+         9xKiMOIrZhhNwcB9BnhdRkM6vxS6tu8mVVSOGw24=
+Received: from [10.226.60.81] (i-global254.qualcomm.com [199.106.103.254])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: jhugo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 909E96044B;
+        Thu, 15 Nov 2018 18:31:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542306694;
+        bh=jpEIkjvcZ8jlQzVWhG3nb8LE1eYiqzJG4XzJilQuduI=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=QKu1W79eS6Bw8yuhfurqGZFSHwzm/7sD/nYeABUsCmytWancBGfZ6zLl2EvyszIyd
+         zX5w9mkzJJaO+prs6AEWlVgKsn1jNkoZ58EchcUTq2w4dwishZ12L2ze90yQ0U3WCw
+         pGo2DvmiAn2FUcL1QafDrEo8TfMrYqzA4pmAvftY=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 909E96044B
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
+Subject: Re: [RFC 0/3] Unify CPU topology across ARM64 & RISC-V
+To:     Atish Patra <atish.patra@wdc.com>, linux-kernel@vger.kernel.org
+Cc:     mark.rutland@arm.com, devicetree@vger.kernel.org,
+        Damien.LeMoal@wdc.com, juri.lelli@arm.com, anup@brainfault.org,
+        palmer@sifive.com, jeremy.linton@arm.com, robh+dt@kernel.org,
+        sudeep.holla@arm.com, mick@ics.forth.gr,
+        linux-riscv@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org
+References: <1541728209-3224-1-git-send-email-atish.patra@wdc.com>
+From:   Jeffrey Hugo <jhugo@codeaurora.org>
+Message-ID: <07d92dd4-f943-47ee-e168-46bfaf4ed755@codeaurora.org>
+Date:   Thu, 15 Nov 2018 11:31:33 -0700
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115085306.9910-3-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <1541728209-3224-1-git-send-email-atish.patra@wdc.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 04:52:49PM +0800, Ming Lei wrote:
-> This helper is used for iterating over multi-page bvec for bio
-> split & merge code.
+On 11/8/2018 6:50 PM, Atish Patra wrote:
+> The cpu-map DT entry in ARM64 can describe the CPU topology in
+> much better way compared to other existing approaches. RISC-V can
+> easily adopt this binding to represent it's own CPU topology.
+> Thus, both cpu-map DT binding and topology parsing code can be
+> moved to a common location so that RISC-V or any other
+> architecture can leverage that.
 > 
-> Cc: Dave Chinner <dchinner@redhat.com>
-> Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> Cc: Mike Snitzer <snitzer@redhat.com>
-> Cc: dm-devel@redhat.com
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Shaohua Li <shli@kernel.org>
-> Cc: linux-raid@vger.kernel.org
-> Cc: linux-erofs@lists.ozlabs.org
-> Cc: David Sterba <dsterba@suse.com>
-> Cc: linux-btrfs@vger.kernel.org
-> Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> Cc: linux-xfs@vger.kernel.org
-> Cc: Gao Xiang <gaoxiang25@huawei.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Theodore Ts'o <tytso@mit.edu>
-> Cc: linux-ext4@vger.kernel.org
-> Cc: Coly Li <colyli@suse.de>
-> Cc: linux-bcache@vger.kernel.org
-> Cc: Boaz Harrosh <ooo@electrozaur.com>
-> Cc: Bob Peterson <rpeterso@redhat.com>
-> Cc: cluster-devel@redhat.com
-
-Reviewed-by: Omar Sandoval <osandov@fb.com>
-
-One comment below.
-
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  include/linux/bio.h  | 34 +++++++++++++++++++++++++++++++---
->  include/linux/bvec.h | 36 ++++++++++++++++++++++++++++++++----
->  2 files changed, 63 insertions(+), 7 deletions(-)
+> The relevant discussion regarding unifying cpu topology can be
+> found in [1].
 > 
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 056fb627edb3..1f0dcf109841 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -76,6 +76,9 @@
->  #define bio_data_dir(bio) \
->  	(op_is_write(bio_op(bio)) ? WRITE : READ)
->  
-> +#define bio_iter_mp_iovec(bio, iter)				\
-> +	mp_bvec_iter_bvec((bio)->bi_io_vec, (iter))
-> +
->  /*
->   * Check whether this bio carries any data or not. A NULL bio is allowed.
->   */
-> @@ -135,18 +138,33 @@ static inline bool bio_full(struct bio *bio)
->  #define bio_for_each_segment_all(bvl, bio, i)				\
->  	for (i = 0, bvl = (bio)->bi_io_vec; i < (bio)->bi_vcnt; i++, bvl++)
->  
-> -static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
-> -				    unsigned bytes)
-> +static inline void __bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
-> +				      unsigned bytes, bool mp)
->  {
->  	iter->bi_sector += bytes >> 9;
->  
->  	if (bio_no_advance_iter(bio))
->  		iter->bi_size -= bytes;
->  	else
-> -		bvec_iter_advance(bio->bi_io_vec, iter, bytes);
-> +		if (!mp)
-> +			bvec_iter_advance(bio->bi_io_vec, iter, bytes);
-> +		else
-> +			mp_bvec_iter_advance(bio->bi_io_vec, iter, bytes);
+> arch_topology seems to be a perfect place to move the common
+> code. I have not introduced any functional changes in the moved
+> to code. The only downside in this approach is that the capacity
+> code will be executed for RISC-V as well. But, it will exit
+> immediately after not able to find the appropriate DT node. If
+> the overhead is considered too much, we can always compile out
+> capacity related functions under a different config for the
+> architectures that do not support them.
+> 
+> The patches have been tested for RISC-V and compile tested for
+> ARM64.
+> 
+> The socket changes[2] can be merged on top of this series or vice
+> versa.
+> 
+> [1] https://lkml.org/lkml/2018/11/6/19
+> [2] https://lkml.org/lkml/2018/11/7/918
+> 
+> Atish Patra (3):
+>    dt-binding: cpu-topology: Move cpu-map to a common binding.
+>    cpu-topology: Move cpu topology code to common code.
+>    RISC-V: Parse cpu topology during boot.
+> 
+>   Documentation/devicetree/bindings/arm/topology.txt | 475 -------------------
+>   .../devicetree/bindings/cpu/cpu-topology.txt       | 526 +++++++++++++++++++++
+>   arch/arm64/include/asm/topology.h                  |  23 +-
+>   arch/arm64/kernel/topology.c                       | 305 +-----------
+>   arch/riscv/Kconfig                                 |   1 +
+>   arch/riscv/kernel/smpboot.c                        |   6 +-
+>   drivers/base/arch_topology.c                       | 303 ++++++++++++
+>   include/linux/arch_topology.h                      |  23 +
+>   include/linux/topology.h                           |   1 +
+>   9 files changed, 864 insertions(+), 799 deletions(-)
+>   delete mode 100644 Documentation/devicetree/bindings/arm/topology.txt
+>   create mode 100644 Documentation/devicetree/bindings/cpu/cpu-topology.txt
+> 
 
-if (!foo) {} else {} hurts my brain, please do
+I was interested in testing these on QDF2400, an ARM64 platform, since 
+this series touches core ARM64 code and I'd hate to see a regression. 
+However, I can't figure out what baseline to use to apply these. 
+Different patches cause different conflicts of a variety of baselines I 
+attempted.
 
-		if (mp)
-			mp_bvec_iter_advance(bio->bi_io_vec, iter, bytes);
-		else
-			bvec_iter_advance(bio->bi_io_vec, iter, bytes);
+What are these intended to apply to?
+
+Also, you might want to run them through checkpatch next time.  There 
+are several whitespace errors.
+
+-- 
+Jeffrey Hugo
+Qualcomm Datacenter Technologies as an affiliate of Qualcomm 
+Technologies, Inc.
+Qualcomm Technologies, Inc. is a member of the
+Code Aurora Forum, a Linux Foundation Collaborative Project.
