@@ -2,118 +2,75 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 29032C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 04:34:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40789C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 04:34:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DA21F21582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 04:34:23 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nZV8RHnW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA21F21582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 0969B21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 04:34:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0969B21582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728375AbeKOOkc (ORCPT
+        id S1728492AbeKOOkm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 09:40:32 -0500
-Received: from lelv0143.ext.ti.com ([198.47.23.248]:49136 "EHLO
-        lelv0143.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726689AbeKOOkb (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 09:40:31 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAF4YBAK100299;
-        Wed, 14 Nov 2018 22:34:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542256451;
-        bh=4UK8O4R0P/UHnHCnVunUBGNwLBYJD5a0id+AgXMDXbE=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To;
-        b=nZV8RHnWky2UZ5Dkks1yiEh/ozknzoPo2Zyy6kJD//U0RzQ0k6bqf7JRY1HzMKQHw
-         1WZOGRrBJWy/eT2I5YSjAifgVsoUUs/xxADwfsSicayOmFSokRgYyQQioEfFcQtzbO
-         wRomdkXiTZTrvXfEDKAb/sIeN2MgoHfMij1LIAbg=
-Received: from DFLE109.ent.ti.com (dfle109.ent.ti.com [10.64.6.30])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAF4YBhV118221
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Wed, 14 Nov 2018 22:34:11 -0600
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Wed, 14
- Nov 2018 22:34:11 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Wed, 14 Nov 2018 22:34:11 -0600
-Received: from [172.24.190.89] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAF4Y9oY013041;
-        Wed, 14 Nov 2018 22:34:10 -0600
-Subject: Re: [PATCH AUTOSEL 4.18 39/59] i2c: omap: Enable for ARCH_K3
-To:     Sasha Levin <sashal@kernel.org>,
-        "stable@vger.kernel.org" <stable@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Wolfram Sang <wsa@the-dreams.de>,
-        "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>
-References: <20181114222335.99339-1-sashal@kernel.org>
- <20181114222335.99339-39-sashal@kernel.org>
-From:   Vignesh R <vigneshr@ti.com>
-Message-ID: <779d8829-c90d-120a-5b7d-749c07d2a2ed@ti.com>
-Date:   Thu, 15 Nov 2018 10:05:02 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 15 Nov 2018 09:40:42 -0500
+Received: from ozlabs.org ([203.11.71.1]:57469 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728422AbeKOOkm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 09:40:42 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42wT6C1y6zz9s5c;
+        Thu, 15 Nov 2018 15:34:26 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Geert Uytterhoeven <geert@linux-m68k.org>,
+        linux-kernel@vger.kernel.org
+Subject: Re: Build regressions/improvements in v4.20-rc2
+In-Reply-To: <20181112213555.22941-1-geert@linux-m68k.org>
+References: <20181112213555.22941-1-geert@linux-m68k.org>
+Date:   Thu, 15 Nov 2018 15:34:26 +1100
+Message-ID: <87bm6ruffx.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-In-Reply-To: <20181114222335.99339-39-sashal@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+Geert Uytterhoeven <geert@linux-m68k.org> writes:
+> Below is the list of build error/warning regressions/improvements in
+> v4.20-rc2[1] compared to v4.19[2].
+>
+> Summarized:
+>   - build errors: +3/-0
+>   - build warnings: +123/-12803
+>
+> JFYI, when comparing v4.20-rc2[1] to v4.20-rc1[3], the summaries are:
+>   - build errors: +0/-0
+>   - build warnings: +61/-10479
+>
+> Happy fixing! ;-)
+>
+> Thanks to the linux-next team for providing the build service.
+>
+> [1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/ccda4af0f4b92f7b4c308d3acc262f4a7e3affad/ (all 240 configs)
+> [2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/84df9525b0c27f3ebc2ebb1864fa62a97fdedb7d/ (all 240 configs)
+> [3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/651022382c7f8da46cb4872a545ee1da6d097d2a/ (all 240 configs)
+>
+>
+> *** ERRORS ***
+>
+> 3 error regressions:
+>   + /kisskb/src/arch/s390/kernel/nospec-branch.c: error: macro "memcpy" passed 6 arguments, but takes just 3:  => 130:61
+>   + /kisskb/src/sound/pci/hda/patch_ca0132.c: error: implicit declaration of function 'pci_iomap' [-Werror=implicit-function-declaration]:  => 8799:3
 
-On 15/11/18 3:53 AM, Sasha Levin wrote:
-> From: Vignesh R <vigneshr@ti.com>
-> 
-> [ Upstream commit 5b277402deac0691226a947df71c581686bd4020 ]
+>   + {standard input}: Error: Unrecognized opcode: `slbfee.':  => 89, 37
 
-This patch depends on c77245722fb4 ("arm64: Add support for TI's K3
-Multicore SoC architecture") which adds ARCH_K3 Kconfig symbol and
-merged to mainline in v4.19. Since I don't see c77245722fb4 in
-stable tree, please drop this commit from stable queues prior to v4.19
-(4.18, 4.14, 4.9, 4.4 and 3.18).
+I have a fix queued for this one.
 
-> 
-> Allow I2C_OMAP to be built for K3 platforms.
-> 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
-> Reviewed-by: Grygorii Strashko <grygorii.strashko@ti.com>
-> Signed-off-by: Wolfram Sang <wsa@the-dreams.de>
-> Signed-off-by: Sasha Levin <sashal@kernel.org>
-> ---
->  drivers/i2c/busses/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/i2c/busses/Kconfig b/drivers/i2c/busses/Kconfig
-> index 4f8df2ec87b1..fb3a3707a66e 100644
-> --- a/drivers/i2c/busses/Kconfig
-> +++ b/drivers/i2c/busses/Kconfig
-> @@ -754,7 +754,7 @@ config I2C_OCORES
->  
->  config I2C_OMAP
->  	tristate "OMAP I2C adapter"
-> -	depends on ARCH_OMAP
-> +	depends on ARCH_OMAP || ARCH_K3
->  	default y if MACH_OMAP_H3 || MACH_OMAP_OSK
->  	help
->  	  If you say yes to this option, support will be included for the
-> 
-
--- 
-Regards
-Vignesh
+cheers
