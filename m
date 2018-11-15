@@ -2,104 +2,130 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1735FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:29:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08D37C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:31:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D2A2D21780
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:29:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="L0/JYsGC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2A2D21780
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id CA36521780
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:31:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA36521780
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387636AbeKOSgd (ORCPT
+        id S1728906AbeKOShu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 13:36:33 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:52830 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728673AbeKOSgc (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 13:36:32 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id wAF8RHoX022794;
-        Thu, 15 Nov 2018 17:27:18 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com wAF8RHoX022794
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542270439;
-        bh=IRtBlra79ityFxOzerUxtBZ6lgbNtkSmw7waFIWzvW8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=L0/JYsGCHGw9RdA0nXXyQTKucxaanMg9FPbDoZhP1nH8N6t59KJzqQgkBS3jLzIVp
-         9HoQI+x8Ak1IEsWhVRGGeiBZriIttOYRjzXzoqtegTN5mCJRTM8rOyx9bcSup3/y17
-         fClIOULsk2a8u+JxIcadlAIhQvLdHCBtci9ny5CRsbUywdnIqsfxP3PUt2xc5587Zh
-         NSgWpGqwqhT5S12N+SeQcsrrC+2HgxUzcjJvvz+ruhbp6GRQmuUZqII6VEVpoVFUTS
-         PabHxVysRfBFUIc8zENeI4mnff7x0SzMLx9giBbgOd2w1nXxKRwSm6DG8wA7WskVG4
-         yYwgqr3/PSJpA==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Richard Weinberger <richard@nod.at>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>,
-        Jeff Dike <jdike@addtoit.com>
-Subject: [PATCH 0/8] kbuild: clean-up modversion, TRIM_UNUSED_KSYMS, if_changed_rule, etc.
-Date:   Thu, 15 Nov 2018 17:27:07 +0900
-Message-Id: <1542270435-11181-1-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
+        Thu, 15 Nov 2018 13:37:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:40640 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728519AbeKOShu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 13:37:50 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 25A30AD33;
+        Thu, 15 Nov 2018 08:30:57 +0000 (UTC)
+Date:   Thu, 15 Nov 2018 09:30:55 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Baoquan He <bhe@redhat.com>
+Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        aarcange@redhat.com
+Subject: Re: Memory hotplug softlock issue
+Message-ID: <20181115083055.GD23831@dhcp22.suse.cz>
+References: <20181114070909.GB2653@MiWiFi-R3L-srv>
+ <5a6c6d6b-ebcd-8bfa-d6e0-4312bfe86586@redhat.com>
+ <20181114090134.GG23419@dhcp22.suse.cz>
+ <20181114145250.GE2653@MiWiFi-R3L-srv>
+ <20181114150029.GY23419@dhcp22.suse.cz>
+ <20181115051034.GK2653@MiWiFi-R3L-srv>
+ <20181115073052.GA23831@dhcp22.suse.cz>
+ <20181115075349.GL2653@MiWiFi-R3L-srv>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115075349.GL2653@MiWiFi-R3L-srv>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As a Kbuild maintainer, I always struggle to keep the core makefiles
-clean because people tend to squeeze more and more clutter code into
-the kbuild core in order to do what they want to do.
+On Thu 15-11-18 15:53:56, Baoquan He wrote:
+> On 11/15/18 at 08:30am, Michal Hocko wrote:
+> > On Thu 15-11-18 13:10:34, Baoquan He wrote:
+> > > On 11/14/18 at 04:00pm, Michal Hocko wrote:
+> > > > On Wed 14-11-18 22:52:50, Baoquan He wrote:
+> > > > > On 11/14/18 at 10:01am, Michal Hocko wrote:
+> > > > > > I have seen an issue when the migration cannot make a forward progress
+> > > > > > because of a glibc page with a reference count bumping up and down. Most
+> > > > > > probable explanation is the faultaround code. I am working on this and
+> > > > > > will post a patch soon. In any case the migration should converge and if
+> > > > > > it doesn't do then there is a bug lurking somewhere.
+> > > > > > 
+> > > > > > Failing on ENOMEM is a questionable thing. I haven't seen that happening
+> > > > > > wildly but if it is a case then I wouldn't be opposed.
+> > > > > 
+> > > > > Applied your debugging patches, it helps a lot to printing message.
+> > > > > 
+> > > > > Below is the dmesg log about the migrating failure. It can't pass
+> > > > > migrate_pages() and loop forever.
+> > > > > 
+> > > > > [  +0.083841] migrating pfn 10fff7d0 failed 
+> > > > > [  +0.000005] page:ffffea043ffdf400 count:208 mapcount:201 mapping:ffff888dff4bdda8 index:0x2
+> > > > > [  +0.012689] xfs_address_space_operations [xfs] 
+> > > > > [  +0.000030] name:"stress" 
+> > > > > [  +0.004556] flags: 0x5fffffc0000004(uptodate)
+> > > > > [  +0.007339] raw: 005fffffc0000004 ffffc900000e3d80 ffffc900000e3d80 ffff888dff4bdda8
+> > > > > [  +0.009488] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e7353d000
+> > > > > [  +0.007726] page->mem_cgroup:ffff888e7353d000
+> > > > > [  +0.084538] migrating pfn 10fff7d0 failed 
+> > > > > [  +0.000006] page:ffffea043ffdf400 count:210 mapcount:201 mapping:ffff888dff4bdda8 index:0x2
+> > > > > [  +0.012798] xfs_address_space_operations [xfs] 
+> > > > > [  +0.000034] name:"stress" 
+> > > > > [  +0.004524] flags: 0x5fffffc0000004(uptodate)
+> > > > > [  +0.007068] raw: 005fffffc0000004 ffffc900000e3d80 ffffc900000e3d80 ffff888dff4bdda8
+> > > > > [  +0.009359] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e7353d000
+> > > > > [  +0.007728] page->mem_cgroup:ffff888e7353d000
+> > > > 
+> > > > I wouldn't be surprised if this was a similar/same issue I've been
+> > > > chasing recently. Could you try to disable faultaround to see if that
+> > > > helps. It seems that it helped in my particular case but I am still
+> > > > waiting for the final good-to-go to post the patch as I do not own the
+> > > > workload which triggered that issue.
+> > > 
+> > > Tried, still stuck in last block sometime. Usually after several times
+> > > of hotplug/unplug. If stop stress program, the last block will be
+> > > offlined immediately.
+> > 
+> > Is the pattern still the same? I mean failing over few pages with
+> > reference count jumping up and down between attempts?
+> 
+> ->count jumping up and down, mapcount stays the same value.
+> 
+> > 
+> > > [root@ ~]# cat /sys/kernel/debug/fault_around_bytes 
+> > > 4096
+> > 
+> > Can you make it 0?
+> 
+> I executed 'echo 0 > fault_around_bytes', value less than one page size
+> will round up to one page.
 
-The biggest step forward in this series is to re-implement
-the build trick of CONFIG_TRIM_UNUSED_KSYMS in a cleaner way.
-scripts/Kbuild.include now looks nice again.
-Also, in my rough estimation, building with CONFIG_TRIM_UNUSED_KSYMS
-became 40-50 % faster.
+OK, I have missed that. So then there must be a different source of the
+page count volatility. Is it always the same file?
 
-Besides those, nice cleanups are here and there.
+I think we can rule out memory reclaim because that depends on the page
+lock. Is the stress test hitting on memory compaction? In other words,
+are
+grep compact /proc/vmstat
+counters changing during the offline test heavily? I am asking because I
+do not see compaction pfn walkers skipping over MIGRATE_ISOLATE
+pageblocks. But I might be missing something easily.
 
-
-
-Masahiro Yamada (8):
-  kbuild: remove redundant 'set -e' from filechk_* defines
-  kbuild: remove redundant 'set -e' from sub_cmd_record_mcount
-  kbuild: refactor modversions build rules
-  kbuild: simplify dependency generation for CONFIG_TRIM_UNUSED_KSYMS
-  kbuild: change if_changed_rule to accept multi-line recipe
-  kbuild: remove trailing semicolon from cmd_* passed to if_changed_rule
-  kbuild: refactor if_changed and if_changed_dep
-  kbuild: remove redundant 'set -e' from cmd_* defines
-
- arch/um/Makefile             |  2 +-
- include/asm-generic/export.h | 13 +++---
- include/linux/export.h       | 18 ++++----
- scripts/Kbuild.include       | 44 +++-----------------
- scripts/Makefile.build       | 98 +++++++++++++++++++-------------------------
- scripts/Makefile.lib         |  2 +-
- scripts/basic/fixdep.c       | 31 ++------------
- scripts/gen_ksymdeps.sh      | 25 +++++++++++
- scripts/package/Makefile     |  1 -
- 9 files changed, 96 insertions(+), 138 deletions(-)
- create mode 100755 scripts/gen_ksymdeps.sh
-
+It would be also good to find out whether this is fs specific. E.g. does
+it make any difference if you use a different one for your stress
+testing?
 -- 
-2.7.4
-
+Michal Hocko
+SUSE Labs
