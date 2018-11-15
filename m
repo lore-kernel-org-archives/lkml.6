@@ -2,137 +2,56 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F96DC04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:05:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C459CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:15:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0F3FF2145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:05:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0F3FF2145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 8A3142086C
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:15:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A3142086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389034AbeKPHOs (ORCPT
+        id S2389016AbeKPHYX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 02:14:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:50744 "EHLO mx1.redhat.com"
+        Fri, 16 Nov 2018 02:24:23 -0500
+Received: from muru.com ([72.249.23.125]:54070 "EHLO muru.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725809AbeKPHOs (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 02:14:48 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id B331FC04B2C8;
-        Thu, 15 Nov 2018 21:05:20 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 1949E5D739;
-        Thu, 15 Nov 2018 21:05:11 +0000 (UTC)
-Date:   Thu, 15 Nov 2018 16:05:10 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Omar Sandoval <osandov@osandov.com>
-Cc:     Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        dm-devel@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 03/19] block: use bio_for_each_bvec() to compute
- multi-page bvec count
-Message-ID: <20181115210510.GA24908@redhat.com>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-4-ming.lei@redhat.com>
- <20181115202028.GC9348@vader>
+        id S1725856AbeKPHYX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 02:24:23 -0500
+Received: from atomide.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTPS id 9347F8107;
+        Thu, 15 Nov 2018 21:14:55 +0000 (UTC)
+Date:   Thu, 15 Nov 2018 13:14:51 -0800
+From:   Tony Lindgren <tony@atomide.com>
+To:     Lubomir Rintel <lkundrak@v3.sk>, Mark Brown <broonie@kernel.org>
+Cc:     Geert Uytterhoeven <geert+renesas@glider.be>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+Subject: Regression in next with spi return from transfer_one()
+Message-ID: <20181115211451.GH53235@atomide.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181115202028.GC9348@vader>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Thu, 15 Nov 2018 21:05:21 +0000 (UTC)
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15 2018 at  3:20pm -0500,
-Omar Sandoval <osandov@osandov.com> wrote:
+Hi,
 
-> On Thu, Nov 15, 2018 at 04:52:50PM +0800, Ming Lei wrote:
-> > First it is more efficient to use bio_for_each_bvec() in both
-> > blk_bio_segment_split() and __blk_recalc_rq_segments() to compute how
-> > many multi-page bvecs there are in the bio.
-> > 
-> > Secondly once bio_for_each_bvec() is used, the bvec may need to be
-> > splitted because its length can be very longer than max segment size,
-> > so we have to split the big bvec into several segments.
-> > 
-> > Thirdly when splitting multi-page bvec into segments, the max segment
-> > limit may be reached, so the bio split need to be considered under
-> > this situation too.
-> > 
-> > Cc: Dave Chinner <dchinner@redhat.com>
-> > Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> > Cc: Mike Snitzer <snitzer@redhat.com>
-> > Cc: dm-devel@redhat.com
-> > Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> > Cc: linux-fsdevel@vger.kernel.org
-> > Cc: Shaohua Li <shli@kernel.org>
-> > Cc: linux-raid@vger.kernel.org
-> > Cc: linux-erofs@lists.ozlabs.org
-> > Cc: David Sterba <dsterba@suse.com>
-> > Cc: linux-btrfs@vger.kernel.org
-> > Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> > Cc: linux-xfs@vger.kernel.org
-> > Cc: Gao Xiang <gaoxiang25@huawei.com>
-> > Cc: Christoph Hellwig <hch@lst.de>
-> > Cc: Theodore Ts'o <tytso@mit.edu>
-> > Cc: linux-ext4@vger.kernel.org
-> > Cc: Coly Li <colyli@suse.de>
-> > Cc: linux-bcache@vger.kernel.org
-> > Cc: Boaz Harrosh <ooo@electrozaur.com>
-> > Cc: Bob Peterson <rpeterso@redhat.com>
-> > Cc: cluster-devel@redhat.com
-> > Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> > ---
-> >  block/blk-merge.c | 90 ++++++++++++++++++++++++++++++++++++++++++++++---------
-> >  1 file changed, 76 insertions(+), 14 deletions(-)
-> > 
-> > diff --git a/block/blk-merge.c b/block/blk-merge.c
-> > index 91b2af332a84..6f7deb94a23f 100644
-> > --- a/block/blk-merge.c
-> > +++ b/block/blk-merge.c
-> > @@ -160,6 +160,62 @@ static inline unsigned get_max_io_size(struct request_queue *q,
-> >  	return sectors;
-> >  }
-> >  
-> > +/*
-> > + * Split the bvec @bv into segments, and update all kinds of
-> > + * variables.
-> > + */
-> > +static bool bvec_split_segs(struct request_queue *q, struct bio_vec *bv,
-> > +		unsigned *nsegs, unsigned *last_seg_size,
-> > +		unsigned *front_seg_size, unsigned *sectors)
-> > +{
-> > +	bool need_split = false;
-> > +	unsigned len = bv->bv_len;
-> > +	unsigned total_len = 0;
-> > +	unsigned new_nsegs = 0, seg_size = 0;
-> 
-> "unsigned int" here and everywhere else.
+Commit 810923f3bf06 ("spi: Deal with slaves that return from
+transfer_one() unfinished") causes a regression at least on
+droid 4 with SPI PMIC and regulators on the PMIC. During boot
+the device just hangs there waiting for rootfs to appear on
+MMC. Reverting 810923f3bf06 makes things work again.
 
-Curious why?  I've wondered what govens use of "unsigned" vs "unsigned
-int" recently and haven't found _the_ reason to pick one over the other.
+Any ideas why this might be?
 
-Thanks,
-Mike
+Regards,
+
+Tony
