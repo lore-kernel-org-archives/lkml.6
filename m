@@ -2,116 +2,98 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2946EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:47:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B7563C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:49:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EB7DD2133D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:47:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EB7DD2133D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 74B232133D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:49:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TNXxMh/5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74B232133D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389147AbeKPI5I (ORCPT
+        id S1729263AbeKPI7I (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 03:57:08 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:44066 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725916AbeKPI5H (ORCPT
+        Fri, 16 Nov 2018 03:59:08 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:35662 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725948AbeKPI7I (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:57:07 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 48273B6D;
-        Thu, 15 Nov 2018 22:47:20 +0000 (UTC)
-Date:   Thu, 15 Nov 2018 14:47:19 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Jann Horn <jannh@google.com>,
-        Davidlohr Bueso <dave@stgolabs.net>,
-        Oleg Nesterov <oleg@redhat.com>,
-        Christoph Lameter <clameter@sgi.com>,
-        Kemi Wang <kemi.wang@intel.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH AUTOSEL 3.18 8/9] mm/vmstat.c: assert that vmstat_text
- is in sync with stat_items_size
-Message-Id: <20181115144719.d26dc7a2d47fade8d41a83d5@linux-foundation.org>
-In-Reply-To: <20181115223718.GB1706@sasha-vm>
-References: <20181113055252.79406-1-sashal@kernel.org>
-        <20181113055252.79406-8-sashal@kernel.org>
-        <20181115140810.e3292c83467544f6a1d82686@linux-foundation.org>
-        <20181115223718.GB1706@sasha-vm>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+        Fri, 16 Nov 2018 03:59:08 -0500
+Received: by mail-lj1-f193.google.com with SMTP id x85-v6so18687983ljb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 14:49:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=b0KvRkJRDAECrC64Kt2e9OGW666XAF51Tt7gv3CXMxA=;
+        b=TNXxMh/5eVA9s299UR/Q1cWqx+Yo1vfYRWDhkMC1zOMD28ePln2o09e7VmJ/3pqvjB
+         Dw8ymxNH7Z41v8xWd06iBJpEGtaTVykKL6MWhlYMDCs3AIUP5Sv1rOJMzFR33nPqOuZo
+         Bss+2kxeGhEZ417QEHhqREMg1UcvnMYNiI7xo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=b0KvRkJRDAECrC64Kt2e9OGW666XAF51Tt7gv3CXMxA=;
+        b=erUPw0KPTRyhSr9/i0JrSrroiDBkgcwJD4ujxgqa1MpGtY/J/DLqhMa6AOJsD0HJQa
+         M4Y5Et2GGTDK7kOl5Nbn1gNAgxFG7npnX5sWNNOy+3z3OOkgpWroFdtnDU72o5Mgr9++
+         S0saA29WIIGj8M/IVO9kNSUhwAsMrVyQyI1ZnmV+Go4WEp7fOrvAY1R7jlAlLAUj7JMb
+         kjni0UIkzmHKanI+tnRUAlFoyul7PUJ7yLCTBnqu+Ai04aq4DzIkhljeyYijrX8TAB16
+         M3Ea6ofklxFDWu0X6mbKQ79NtFkkv897JgBcJpGGkISGqNKVAdpIL7r6wIqLkhjK8RMN
+         ZjGg==
+X-Gm-Message-State: AA+aEWYXJTHtYnOd8/kD0X5XwkwuqhTr1QxysBh9hNtOHxT6OtsYCuXA
+        cg9ThvreuMqSraE47ni9uRjoCtzk906iVQYQ+z/3XfO6wsY=
+X-Google-Smtp-Source: AFSGD/WYpociEs9LRnsxPsfFKgsLl9gzY50PlfuMqlyY5Yg3Fy90Jni3igM1vGn5rZNwAWWMaqRjelBAw3KwjB+vOkk=
+X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr158883ljk.4.1542322159666;
+ Thu, 15 Nov 2018 14:49:19 -0800 (PST)
+MIME-Version: 1.0
+References: <20181115171638.5704-1-robert.jarzmik@free.fr>
+In-Reply-To: <20181115171638.5704-1-robert.jarzmik@free.fr>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 15 Nov 2018 23:49:07 +0100
+Message-ID: <CACRpkdbJ6AoF=Y0XzrMrfg_oFX_DhdhQ_hafbtacD8N=g1uXRA@mail.gmail.com>
+Subject: Re: [PATCH] gpio: pxa: fix legacy non pinctrl aware builds again
+To:     Robert Jarzmik <robert.jarzmik@free.fr>
+Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Nov 2018 17:37:18 -0500 Sasha Levin <sashal@kernel.org> wrote:
+On Thu, Nov 15, 2018 at 6:16 PM Robert Jarzmik <robert.jarzmik@free.fr> wrote:
 
-> On Thu, Nov 15, 2018 at 02:08:10PM -0800, Andrew Morton wrote:
-> >On Tue, 13 Nov 2018 00:52:51 -0500 Sasha Levin <sashal@kernel.org> wrote:
-> >
-> >> From: Jann Horn <jannh@google.com>
-> >>
-> >> [ Upstream commit f0ecf25a093fc0589f0a6bc4c1ea068bbb67d220 ]
-> >>
-> >> Having two gigantic arrays that must manually be kept in sync, including
-> >> ifdefs, isn't exactly robust.  To make it easier to catch such issues in
-> >> the future, add a BUILD_BUG_ON().
-> >>
-> >> ...
-> >>
-> >> --- a/mm/vmstat.c
-> >> +++ b/mm/vmstat.c
-> >> @@ -1189,6 +1189,8 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
-> >>  	stat_items_size += sizeof(struct vm_event_state);
-> >>  #endif
-> >>
-> >> +	BUILD_BUG_ON(stat_items_size !=
-> >> +		     ARRAY_SIZE(vmstat_text) * sizeof(unsigned long));
-> >>  	v = kmalloc(stat_items_size, GFP_KERNEL);
-> >>  	m->private = v;
-> >>  	if (!v)
-> >
-> >I don't think there's any way in which this can make a -stable kernel
-> >more stable!
-> >
-> >
-> >Generally, I consider -stable in every patch I merge, so for each patch
-> >which doesn't have cc:stable, that tag is missing for a reason.
-> >
-> >In other words, your criteria for -stable addition are different from
-> >mine.
-> >
-> >And I think your criteria differ from those described in
-> >Documentation/process/stable-kernel-rules.rst.
-> >
-> >So... what is your overall thinking on patch selection?
-> 
-> Indeed, this doesn't fix anything.
-> 
-> My concern is that in the future, we will pull a patch that will cause
-> the issue described here, and that issue will only be relevant on
-> stable. It is very hard to debug this, and I suspect that stable kernels
-> will still pass all their tests with flying colors.
-> 
-> As an example, consider the case where commit 28e2c4bb99aa ("mm/vmstat.c:
-> fix outdated vmstat_text") is backported to a kernel that doesn't have
-> commit 7a9cdebdcc17 ("mm: get rid of vmacache_flush_all() entirely").
-> 
-> I also felt safe with this patch since it adds a single BUILD_BUG_ON()
-> which does nothing during runtime, so the chances it introduces anything
-> beyond a build regression seemed to be slim to none.
+> As pointed out by Gregor, spitz keyboard matrix is broken, with or
+> without CONFIG_PINCTRL set, quoting :
+> "The gpio matrix keypard on the Zaurus C3x00 (see spitz.c) does not work
+> properly. Noticeable are that rshift+c does nothing where as lshift+c
+> creates C.  Opposite it is for rshift+a vs lshift+a, here only rshift
+> works. This affects a few other combinations using the rshift or lshift
+> buttons."
+>
+> As a matter of fact, as for platform_data based builds CONFIG_PINCTRL=n
+> is required for now (as opposed for devicetree builds where it should be
+> set), this means gpio driver should change the direction, which is what
+> was attempted by commit c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl
+> aware builds").
+>
+> Unfortunately, the input case was inverted, and the direction change was
+> never done. This wasn't seen up until now because the initial platform
+> setup (MFP) was setting this direction. Yet in Gregory's case, the
+> matrix-keypad driver changes back and forth the direction dynamically,
+> and this is why he's the first to report it.
+>
+> Fixes: c4e5ffb6f224 ("gpio: pxa: fix legacy non pinctrl aware builds")
+> Tested-by: Greg <greguu@null.net>
+> Signed-off-by: Robert Jarzmik <robert.jarzmik@free.fr>
 
-Well OK.  But my question was general and covers basically every
-autosel patch which originated in -mm.
+Patch applied for fixes.
 
+Yours,
+Linus Walleij
