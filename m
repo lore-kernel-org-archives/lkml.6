@@ -2,272 +2,100 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0E183C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:06:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8F0F5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:07:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C86EC2245E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:06:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="iAhgzAvu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C86EC2245E
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id 5BADF20815
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:07:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5BADF20815
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388949AbeKPFPN (ORCPT
+        id S2388824AbeKPFQn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 00:15:13 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33022 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388909AbeKPFPM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 00:15:12 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=V+JMCPQPTXR/2268sL57x6N33ZatvXBmPYvafESpNf8=; b=iAhgzAvuqAAeMm4tpm9SUm9fx6
-        7e1QLFyWawm9a4E6xSqQOReCuBx1WbKaQaEGnhnP9TAaeQqNH59FsGq0GU2G+ERRHYvPHwk1LcW1o
-        RfD5vA7Zp6KrL490ZXCicib0L3ivl3ZWX/YRZJKH/XGFR9Ek1K13FfJf7yP+bojr+vrsQVmBamXUV
-        hylZ/KJ/EqDGNQ6yRsf2JkklJ4OfAfUeJUCRHz/1qSr1C4Rqv/M3Nd9Pvw0BuBrFv4dLqpa3T5tyE
-        xxLuqgDGxtesgNMYsFP/1Q3S3AFvA2x4xWeuff71hH1XccolxtqYYIT79o49v/eWgSbSWnQhp3ZJ6
-        XIOA/eeQ==;
-Received: from 089144211136.atnat0020.highway.a1.net ([89.144.211.136] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNMxo-00068O-7M; Thu, 15 Nov 2018 19:06:04 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alex.bou9@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-alpha@vger.kernel.org, linux-mips@linux-mips.org
-Subject: [PATCH 6/9] PCI: consolidate the PCI_SYSCALL symbol
-Date:   Thu, 15 Nov 2018 20:05:34 +0100
-Message-Id: <20181115190538.17016-7-hch@lst.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181115190538.17016-1-hch@lst.de>
-References: <20181115190538.17016-1-hch@lst.de>
+        Fri, 16 Nov 2018 00:16:43 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:52807 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725741AbeKPFQn (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 00:16:43 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 8369E20D7C; Thu, 15 Nov 2018 20:07:40 +0100 (CET)
+Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
+        by mail.bootlin.com (Postfix) with ESMTPSA id D83592084B;
+        Thu, 15 Nov 2018 20:07:39 +0100 (CET)
+Date:   Thu, 15 Nov 2018 20:07:39 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     vitor <vitor.soares@synopsys.com>
+Cc:     Arnd Bergmann <arnd@arndb.de>, Wolfram Sang <wsa@the-dreams.de>,
+        Linux I2C <linux-i2c@vger.kernel.org>,
+        Jonathan Corbet <corbet@lwn.net>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Przemyslaw Sroka <psroka@cadence.com>,
+        Arkadiusz Golec <agolec@cadence.com>,
+        Alan Douglas <adouglas@cadence.com>,
+        Bartosz Folta <bfolta@cadence.com>,
+        Damian Kos <dkos@cadence.com>,
+        "Alicja Jurasik-Urbaniak" <alicja@cadence.com>,
+        Cyprian Wronka <cwronka@cadence.com>,
+        Suresh Punnoose <sureshp@cadence.com>,
+        Rafal Ciepiela <rafalc@cadence.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        Pawel Moll <pawel.moll@arm.com>,
+        "Mark Rutland" <mark.rutland@arm.com>,
+        Ian Campbell <ijc+devicetree@hellion.org.uk>,
+        Kumar Gala <galak@codeaurora.org>,
+        DTML <devicetree@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Xiang Lin <Xiang.Lin@synaptics.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Przemyslaw Gaj <pgaj@cadence.com>,
+        Peter Rosin <peda@axentia.se>,
+        Mike Shettel <mshettel@codeaurora.org>,
+        Stephen Boyd <swboyd@chromium.org>,
+        Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
+Message-ID: <20181115200739.20b22d52@bbrezillon>
+In-Reply-To: <08a591ae-c75b-80b4-b608-ca92f6d932f9@synopsys.com>
+References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
+        <76b1d15d-232c-d8ba-5eba-8394e71be725@synopsys.com>
+        <20181115135731.25f60990@bbrezillon>
+        <CAK8P3a0gmCtMac7ctKZ3r=2Dxo03pYvuXkQ7c4Vnt9yMoLDMSQ@mail.gmail.com>
+        <08a591ae-c75b-80b4-b608-ca92f6d932f9@synopsys.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Let architectures select the syscall support instead of duplicating the
-kconfig entry.
+On Thu, 15 Nov 2018 15:25:11 +0000
+vitor <vitor.soares@synopsys.com> wrote:
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/alpha/Kconfig      | 4 +---
- arch/arc/Kconfig        | 4 +---
- arch/arm/Kconfig        | 4 +---
- arch/arm64/Kconfig      | 4 +---
- arch/ia64/Kconfig       | 4 +---
- arch/microblaze/Kconfig | 4 +---
- arch/powerpc/Kconfig    | 4 +---
- arch/sparc/Kconfig      | 4 +---
- drivers/pci/Kconfig     | 3 +++
- 9 files changed, 11 insertions(+), 24 deletions(-)
+> Hi Arnd,
+> 
+> On 15/11/18 14:25, Arnd Bergmann wrote:
+> > I agree about better not exposing the bus as a /dev/i3c* node, and that we
+> > probably do need to expose individual devices in some form to allow
+> > writing complete user space drivers that can do everything a kernel driver
+> > can do.
+> >
+> > Can you describe what a low-level interface to the device looks like
+> > in the kernel? Can this be abstracted as simply pread()/pwrite() plus
+> > an interrupt mechanism, or do we need a set of ioctl() operations as
+> > well?  
+> 
+> Like in i2c is likely to need the ioctl() too.
 
-diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
-index 2bf98e581684..1f679508bc34 100644
---- a/arch/alpha/Kconfig
-+++ b/arch/alpha/Kconfig
-@@ -8,6 +8,7 @@ config ALPHA
- 	select ARCH_USE_CMPXCHG_LOCKREF
- 	select FORCE_PCI if !ALPHA_JENSEN
- 	select PCI_DOMAINS if PCI
-+	select PCI_SYSCALL if PCI
- 	select HAVE_AOUT
- 	select HAVE_IDE
- 	select HAVE_OPROFILE
-@@ -322,9 +323,6 @@ config ISA_DMA_API
- 	bool
- 	default y
- 
--config PCI_SYSCALL
--	def_bool PCI
--
- config ALPHA_NONAME
- 	bool
- 	depends on ALPHA_BOOK1 || ALPHA_NONAME_CH
-diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-index 5d2dde4b04cd..54d618960a14 100644
---- a/arch/arc/Kconfig
-+++ b/arch/arc/Kconfig
-@@ -46,6 +46,7 @@ config ARC
- 	select OF
- 	select OF_EARLY_FLATTREE
- 	select OF_RESERVED_MEM
-+	select PCI_SYSCALL if PCI
- 	select PERF_USE_VMALLOC if ARC_CACHE_VIPT_ALIASING
- 
- config ARCH_HAS_CACHE_LINE_SIZE
-@@ -550,7 +551,4 @@ config FORCE_MAX_ZONEORDER
- 	default "12" if ARC_HUGEPAGE_16M
- 	default "11"
- 
--config PCI_SYSCALL
--	def_bool PCI
--
- source "kernel/power/Kconfig"
-diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-index 5eab9f943723..73d0f5e9feb7 100644
---- a/arch/arm/Kconfig
-+++ b/arch/arm/Kconfig
-@@ -103,6 +103,7 @@ config ARM
- 	select OF_RESERVED_MEM if OF
- 	select OLD_SIGACTION
- 	select OLD_SIGSUSPEND3
-+	select PCI_SYSCALL if PCI
- 	select PERF_USE_VMALLOC
- 	select REFCOUNT_FULL
- 	select RTC_LIB
-@@ -1218,9 +1219,6 @@ config PCI_NANOENGINE
- 	help
- 	  Enable PCI on the BSE nanoEngine board.
- 
--config PCI_SYSCALL
--	def_bool PCI
--
- config PCI_HOST_ITE8152
- 	bool
- 	depends on PCI && MACH_ARMCORE
-diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-index 0eba26143350..8db186f8442b 100644
---- a/arch/arm64/Kconfig
-+++ b/arch/arm64/Kconfig
-@@ -166,6 +166,7 @@ config ARM64
- 	select OF_RESERVED_MEM
- 	select PCI_DOMAINS_GENERIC if PCI
- 	select PCI_ECAM if ACPI
-+	select PCI_SYSCALL if PCI
- 	select POWER_RESET
- 	select POWER_SUPPLY
- 	select REFCOUNT_FULL
-@@ -289,9 +290,6 @@ config ARCH_PROC_KCORE_TEXT
- 
- source "arch/arm64/Kconfig.platforms"
- 
--config PCI_SYSCALL
--	def_bool PCI
--
- menu "Kernel Features"
- 
- menu "ARM errata workarounds via the alternatives framework"
-diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-index 7cf4b8bd779f..8f18d90c933d 100644
---- a/arch/ia64/Kconfig
-+++ b/arch/ia64/Kconfig
-@@ -16,6 +16,7 @@ config IA64
- 	select ARCH_MIGHT_HAVE_ACPI_PDC if ACPI
- 	select FORCE_PCI if (!IA64_HP_SIM)
- 	select PCI_DOMAINS if PCI
-+	select PCI_SYSCALL if PCI
- 	select HAVE_UNSTABLE_SCHED_CLOCK
- 	select HAVE_EXIT_THREAD
- 	select HAVE_IDE
-@@ -545,9 +546,6 @@ if !IA64_HP_SIM
- 
- menu "Bus options (PCI, PCMCIA)"
- 
--config PCI_SYSCALL
--	def_bool PCI
--
- source "drivers/pcmcia/Kconfig"
- 
- endmenu
-diff --git a/arch/microblaze/Kconfig b/arch/microblaze/Kconfig
-index 551252d5c561..b3012bb4e2b2 100644
---- a/arch/microblaze/Kconfig
-+++ b/arch/microblaze/Kconfig
-@@ -37,6 +37,7 @@ config MICROBLAZE
- 	select OF
- 	select OF_EARLY_FLATTREE
- 	select PCI_DOMAINS_GENERIC if PCI
-+	select PCI_SYSCALL if PCI
- 	select TRACING_SUPPORT
- 	select VIRT_TO_BUS
- 	select CPU_NO_EFFICIENT_FFS
-@@ -268,9 +269,6 @@ endmenu
- 
- menu "Bus Options"
- 
--config PCI_SYSCALL
--	def_bool PCI
--
- config PCI_XILINX
- 	bool "Xilinx PCI host bridge support"
- 	depends on PCI
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index edd3686eec28..cbdcd1c0b1e0 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -237,6 +237,7 @@ config PPC
- 	select OLD_SIGACTION			if PPC32
- 	select OLD_SIGSUSPEND
- 	select PCI_DOMAINS			if PCI
-+	select PCI_SYSCALL			if PCI
- 	select RTC_LIB
- 	select SPARSE_IRQ
- 	select SYSCTL_EXCEPTION_TRACE
-@@ -932,9 +933,6 @@ config FSL_GTM
- 	help
- 	  Freescale General-purpose Timers support
- 
--config PCI_SYSCALL
--	def_bool PCI
--
- config PCI_8260
- 	bool
- 	depends on PCI && 8260
-diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-index d2b760b4d2d2..20417b8b12a5 100644
---- a/arch/sparc/Kconfig
-+++ b/arch/sparc/Kconfig
-@@ -39,6 +39,7 @@ config SPARC
- 	select GENERIC_STRNCPY_FROM_USER
- 	select GENERIC_STRNLEN_USER
- 	select MODULES_USE_ELF_RELA
-+	select PCI_SYSCALL if PCI
- 	select ODD_RT_SIGACTION
- 	select OLD_SIGSUSPEND
- 	select ARCH_HAS_SG_CHAIN
-@@ -474,9 +475,6 @@ config SUN_LDOMS
- 	  Say Y here is you want to support virtual devices via
- 	  Logical Domains.
- 
--config PCI_SYSCALL
--	def_bool PCI
--
- config PCIC_PCI
- 	bool
- 	depends on PCI && SPARC32 && !SPARC_LEON
-diff --git a/drivers/pci/Kconfig b/drivers/pci/Kconfig
-index 95812fc4958c..904847d173de 100644
---- a/drivers/pci/Kconfig
-+++ b/drivers/pci/Kconfig
-@@ -30,6 +30,9 @@ config PCI_DOMAINS_GENERIC
- 	select PCI_DOMAINS
- 	bool
- 
-+config PCI_SYSCALL
-+	bool
-+
- source "drivers/pci/pcie/Kconfig"
- 
- config PCI_MSI
--- 
-2.19.1
-
+Yep, I think we'll need an ioctl given the various type of transfers
+one case use to interact with a device.
