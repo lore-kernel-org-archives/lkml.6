@@ -2,441 +2,64 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 50EBFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:51:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 11EC2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:03:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F27C8208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 21:51:16 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=CAVIUMNETWORKS.onmicrosoft.com header.i=@CAVIUMNETWORKS.onmicrosoft.com header.b="QeSCq3xd"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F27C8208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=cavium.com
+	by mail.kernel.org (Postfix) with ESMTP id CC49D2145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:03:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CC49D2145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=atomide.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728465AbeKPIAj (ORCPT
+        id S1726808AbeKPIMk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 03:00:39 -0500
-Received: from mail-eopbgr710055.outbound.protection.outlook.com ([40.107.71.55]:40852
-        "EHLO NAM05-BY2-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725856AbeKPIAj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:00:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=CAVIUMNETWORKS.onmicrosoft.com; s=selector1-cavium-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HK63y46NvY2v8rCtKPHxB/VIm2dsbuxmrVP1DpWpAEA=;
- b=QeSCq3xddKelq/sSBwMBhciMrU0rB5yD4G2bOHtKywvAJrcEk3CsPXBNT9S5Wqt3H9s8a2Ws7Es4eVm0dS/jQcBCrNvCvNKQrSV/cgaXLMLaBwODvde9RHhTDm1HZo5+lgxE99IzKMWyUS0W7S98aIYnu9Hw3AH3OtH1gJLj0wE=
-Received: from SN6PR07MB5326.namprd07.prod.outlook.com (52.135.105.33) by
- SN6PR07MB4863.namprd07.prod.outlook.com (52.135.75.11) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.31; Thu, 15 Nov 2018 21:51:01 +0000
-Received: from SN6PR07MB5326.namprd07.prod.outlook.com
- ([fe80::f0b9:acf9:7513:c149]) by SN6PR07MB5326.namprd07.prod.outlook.com
- ([fe80::f0b9:acf9:7513:c149%5]) with mapi id 15.20.1294.045; Thu, 15 Nov 2018
- 21:51:01 +0000
-From:   Robert Richter <rrichter@cavium.com>
-To:     Marc Zyngier <marc.zyngier@arm.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Jason Cooper <jason@lakedaemon.net>
-CC:     Will Deacon <will.deacon@arm.com>,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        Julien Thierry <julien.thierry@arm.com>,
-        Lorenzo Pieralisi <Lorenzo.Pieralisi@arm.com>,
-        John Garry <john.garry@huawei.com>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Richter, Robert" <Robert.Richter@cavium.com>
-Subject: [PATCH 1/2] irqchip/gic-v3-its: Handle its nodes as kernel devices
-Thread-Topic: [PATCH 1/2] irqchip/gic-v3-its: Handle its nodes as kernel
- devices
-Thread-Index: AQHUfS1M8BOMzP3chU2EG+tUYudjEQ==
-Date:   Thu, 15 Nov 2018 21:51:01 +0000
-Message-ID: <20181115215012.23922-2-rrichter@cavium.com>
-References: <20181115215012.23922-1-rrichter@cavium.com>
-In-Reply-To: <20181115215012.23922-1-rrichter@cavium.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: AM5PR0701CA0059.eurprd07.prod.outlook.com
- (2603:10a6:203:2::21) To SN6PR07MB5326.namprd07.prod.outlook.com
- (2603:10b6:805:73::33)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Robert.Richter@cavium.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [77.180.169.238]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;SN6PR07MB4863;6:MDodehHKlrKZHhUWLdeYcj54qsNY4ZXkUZOboCb2mlEdcRqrqfzTQqH+ggNDzpRqYukfdaFEsT2u12QIwj22aSgLY5/5gnpI8nNXLOkSPJ4Al0MxcFlaqK6ilJGf4LRTUNGfle1dFcml96ayhNUnOArv1tXKHLKI/LM/ntcGCyzEzw97wpz6KIFcmnYqX0rOFcdA95obuzdkUhYk0wpLZsTaFwc1fukVZ1F01R00AeITVnXUfSrBuxt0Rwl0KOPjwHaqwSi96OlH7Q0f/cKXgTVjD6nMUmN6eeVZq8ZI5dwALUxd7xUvxc0QgkCB5IN+ClZyMd4w4XAnFMxcwKt2LB/V/DL7x4H2+LJBhGaWs/hoitUyhY4Z5jCjqi0dukdYyqBASDXGCkNUtpB9YfeWMvHIHE9XY/WTiaR78s94GvgJK/zorXA3ZnXkQgiR4bf7drAgvDlncS7rq3q0n/r8OA==;5:DloRNHA3otTX12ceW/bIjkyUQ91Wbw+AlfkMphEpFCW5UcDMeGC2VH78xo03OW6ZdJ8I1TSC163ozxjzXYZTySnm4hTW+0znuJ/r1HIgZmeuIhwZXvqnWRFkzHn3/pQODadpL1H24GDf6yPfdbDaWNHarzDZWkJF1az4D8IZFPw=;7:vNEj03+KgvdLfUWUXlPso99XCkzWZjiiTDOaeaXJheWFBBgMp+UFSbI7yvWs4l8Get5f04peCDhhBjxy3Ivq+hcAJGlBAemr07V/7xagqT9qsAHoylwErb7f/myHj+mIgB/ra+TSk+b5LrVpT7fV1A==
-x-ms-office365-filtering-correlation-id: 68912d93-1799-4900-292d-08d64b446e9a
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN6PR07MB4863;
-x-ms-traffictypediagnostic: SN6PR07MB4863:
-x-microsoft-antispam-prvs: <SN6PR07MB486372957FADE2D2EC303D3BF1DC0@SN6PR07MB4863.namprd07.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(3231415)(944501410)(52105112)(10201501046)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(20161123558120)(20161123562045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(201708071742011)(7699051)(76991095);SRVR:SN6PR07MB4863;BCL:0;PCL:0;RULEID:;SRVR:SN6PR07MB4863;
-x-forefront-prvs: 08572BD77F
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(979002)(136003)(396003)(366004)(39860400002)(376002)(346002)(189003)(199004)(186003)(386003)(6436002)(106356001)(26005)(6506007)(72206003)(14454004)(6486002)(97736004)(3846002)(6116002)(68736007)(105586002)(2906002)(8936002)(81156014)(81166006)(8676002)(1076002)(102836004)(316002)(99286004)(54906003)(66066001)(110136005)(2900100001)(7416002)(76176011)(256004)(14444005)(39060400002)(446003)(305945005)(52116002)(71200400001)(71190400001)(6512007)(486006)(476003)(2616005)(11346002)(107886003)(25786009)(7736002)(5660300001)(4326008)(36756003)(53936002)(478600001)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR07MB4863;H:SN6PR07MB5326.namprd07.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: cavium.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: u0oJIPeAJmUAjK2VZprlo9/YjWO2sBDpkWj3OENANKCQ4wabJtfsp0ss3+DAoHy+U2R/x8Pzkq1BPHcjG/3DlOH3GcGngBLcF0OPgm3Lg/pTyTz+em6MeM2HGZCCvLlkQcVRFdCHX/TyXr9LExwvvtVx4PPY/rK5X5ESwZL8YzKPyi/GpNOG4ik+xQa19Swb8X4m9vf65tDz1Gq9IXhLW6qWS4iAG83kWckYENDws0TKtLO3t3F14I9ZlYRjCwAYPdlfBsKLHtaTguyMyDq5nthBuhJwZXaCSOf/qLarz3a/qxitGTrZuUg+twseXsvDAbWA+Eb1ZPRjZ6rZ4wV/RMkvZtyC4JuWKi+yDW0W46c=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 16 Nov 2018 03:12:40 -0500
+Received: from muru.com ([72.249.23.125]:54094 "EHLO muru.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725888AbeKPIMj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 03:12:39 -0500
+Received: from hillo.muru.com (localhost [127.0.0.1])
+        by muru.com (Postfix) with ESMTP id D4E7B8107;
+        Thu, 15 Nov 2018 22:03:03 +0000 (UTC)
+From:   Tony Lindgren <tony@atomide.com>
+To:     linux-omap@vger.kernel.org
+Cc:     Dave Gerlach <d-gerlach@ti.com>, Faiz Abbas <faiz_abbas@ti.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Keerthy <j-keerthy@ti.com>, Nishanth Menon <nm@ti.com>,
+        Suman Anna <s-anna@ti.com>, Tero Kristo <t-kristo@ti.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/2] Two non-urgent ti-sysc driver fixes
+Date:   Thu, 15 Nov 2018 14:02:35 -0800
+Message-Id: <20181115220237.32129-1-tony@atomide.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-OriginatorOrg: cavium.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 68912d93-1799-4900-292d-08d64b446e9a
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2018 21:51:01.1664
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 711e4ccf-2e9b-4bcf-a551-4094005b6194
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR07MB4863
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Manage its nodes as kernel devices. We can then use the kernel's
-device resource management for memory allocation. Freeing memory
-becomes much easier now. This also allows us to use CMA for the
-allocation of large its tables.
+Hi,
 
-Signed-off-by: Robert Richter <rrichter@cavium.com>
----
- drivers/irqchip/irq-gic-v3-its.c | 123 +++++++++++++++++++----------------=
-----
- 1 file changed, 59 insertions(+), 64 deletions(-)
+Here are two fixes for ti-sysc for issues I've noticed while testing on
+more SoCs. Looks like these can wait until v4.21 merge window.
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-=
-its.c
-index 13cf56c66483..a4b1b2fcb60f 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -21,6 +21,7 @@
- #include <linux/cpu.h>
- #include <linux/crash_dump.h>
- #include <linux/delay.h>
-+#include <linux/device.h>
- #include <linux/dma-iommu.h>
- #include <linux/efi.h>
- #include <linux/interrupt.h>
-@@ -99,6 +100,7 @@ struct its_device;
-  * list of devices writing to it.
-  */
- struct its_node {
-+	struct device		dev;
- 	raw_spinlock_t		lock;
- 	struct list_head	entry;
- 	void __iomem		*base;
-@@ -697,7 +699,7 @@ static struct its_cmd_block *its_allocate_entry(struct =
-its_node *its)
- 	while (its_queue_full(its)) {
- 		count--;
- 		if (!count) {
--			pr_err_ratelimited("ITS queue not draining\n");
-+			dev_err_ratelimited(&its->dev, "ITS queue not draining\n");
- 			return NULL;
- 		}
- 		cpu_relax();
-@@ -763,7 +765,7 @@ static int its_wait_for_range_completion(struct its_nod=
-e *its,
-=20
- 		count--;
- 		if (!count) {
--			pr_err_ratelimited("ITS queue timeout (%llu %llu %llu)\n",
-+			dev_err_ratelimited(&its->dev, "ITS queue timeout (%llu %llu %llu)\n",
- 					   from_idx, to_idx, rd_idx);
- 			return -1;
- 		}
-@@ -1744,14 +1746,15 @@ static int its_setup_baser(struct its_node *its, st=
-ruct its_baser *baser,
- retry_alloc_baser:
- 	alloc_pages =3D (PAGE_ORDER_TO_SIZE(order) / psz);
- 	if (alloc_pages > GITS_BASER_PAGES_MAX) {
--		pr_warn("ITS@%pa: %s too large, reduce ITS pages %u->%u\n",
--			&its->phys_base, its_base_type_string[type],
--			alloc_pages, GITS_BASER_PAGES_MAX);
-+		dev_warn(&its->dev, "%s Table too large, reduce ITS pages %u->%u\n",
-+			its_base_type_string[type], alloc_pages,
-+			GITS_BASER_PAGES_MAX);
- 		alloc_pages =3D GITS_BASER_PAGES_MAX;
- 		order =3D get_order(GITS_BASER_PAGES_MAX * psz);
- 	}
-=20
--	base =3D (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO, order);
-+	base =3D (void *)devm_get_free_pages(&its->dev, GFP_KERNEL | __GFP_ZERO,
-+					   order);
- 	if (!base)
- 		return -ENOMEM;
-=20
-@@ -1819,7 +1822,7 @@ static int its_setup_baser(struct its_node *its, stru=
-ct its_baser *baser,
- 		 * size and retry. If we reach 4K, then
- 		 * something is horribly wrong...
- 		 */
--		free_pages((unsigned long)base, order);
-+		devm_free_pages(&its->dev, (unsigned long)base);
- 		baser->base =3D NULL;
-=20
- 		switch (psz) {
-@@ -1833,10 +1836,9 @@ static int its_setup_baser(struct its_node *its, str=
-uct its_baser *baser,
- 	}
-=20
- 	if (val !=3D tmp) {
--		pr_err("ITS@%pa: %s doesn't stick: %llx %llx\n",
--		       &its->phys_base, its_base_type_string[type],
--		       val, tmp);
--		free_pages((unsigned long)base, order);
-+		dev_err(&its->dev, "%s doesn't stick: %llx %llx\n",
-+		       its_base_type_string[type], val, tmp);
-+		devm_free_pages(&its->dev, (unsigned long)base);
- 		return -ENXIO;
- 	}
-=20
-@@ -1845,8 +1847,8 @@ static int its_setup_baser(struct its_node *its, stru=
-ct its_baser *baser,
- 	baser->psz =3D psz;
- 	tmp =3D indirect ? GITS_LVL1_ENTRY_SIZE : esz;
-=20
--	pr_info("ITS@%pa: allocated %d %s @%lx (%s, esz %d, psz %dK, shr %d)\n",
--		&its->phys_base, (int)(PAGE_ORDER_TO_SIZE(order) / (int)tmp),
-+	dev_info(&its->dev, "allocated %d %s @%lx (%s, esz %d, psz %dK, shr %d)\n=
-",
-+		(int)(PAGE_ORDER_TO_SIZE(order) / (int)tmp),
- 		its_base_type_string[type],
- 		(unsigned long)virt_to_phys(base),
- 		indirect ? "indirect" : "flat", (int)esz,
-@@ -1899,9 +1901,8 @@ static bool its_parse_indirect_baser(struct its_node =
-*its,
- 	if (new_order >=3D MAX_ORDER) {
- 		new_order =3D MAX_ORDER - 1;
- 		ids =3D ilog2(PAGE_ORDER_TO_SIZE(new_order) / (int)esz);
--		pr_warn("ITS@%pa: %s Table too large, reduce ids %u->%u\n",
--			&its->phys_base, its_base_type_string[type],
--			its->device_ids, ids);
-+		dev_warn(&its->dev, "%s Table too large, reduce ids %u->%u\n",
-+			its_base_type_string[type], its->device_ids, ids);
- 	}
-=20
- 	*order =3D new_order;
-@@ -1909,19 +1910,6 @@ static bool its_parse_indirect_baser(struct its_node=
- *its,
- 	return indirect;
- }
-=20
--static void its_free_tables(struct its_node *its)
--{
--	int i;
--
--	for (i =3D 0; i < GITS_BASER_NR_REGS; i++) {
--		if (its->tables[i].base) {
--			free_pages((unsigned long)its->tables[i].base,
--				   its->tables[i].order);
--			its->tables[i].base =3D NULL;
--		}
--	}
--}
--
- static int its_alloc_tables(struct its_node *its)
- {
- 	u64 shr =3D GITS_BASER_InnerShareable;
-@@ -1956,10 +1944,8 @@ static int its_alloc_tables(struct its_node *its)
- 		}
-=20
- 		err =3D its_setup_baser(its, baser, cache, shr, psz, order, indirect);
--		if (err < 0) {
--			its_free_tables(its);
-+		if (err < 0)
- 			return err;
--		}
-=20
- 		/* Update settings which will be used for next BASERn */
- 		psz =3D baser->psz;
-@@ -2369,6 +2355,9 @@ static struct its_device *its_create_device(struct it=
-s_node *its, u32 dev_id,
-=20
- 	gic_flush_dcache_to_poc(itt, sz);
-=20
-+	/* prevent its from being released */
-+	get_device(&its->dev);
-+
- 	dev->its =3D its;
- 	dev->itt =3D itt;
- 	dev->nr_ites =3D nr_ites;
-@@ -2452,7 +2441,7 @@ static int its_msi_prepare(struct irq_domain *domain,=
- struct device *dev,
- 		 * another alias (PCI bridge of some sort). No need to
- 		 * create the device.
- 		 */
--		pr_debug("Reusing ITT for devID %x\n", dev_id);
-+		dev_dbg(&its->dev, "Reusing ITT for devID %x\n", dev_id);
- 		goto out;
- 	}
-=20
-@@ -2460,7 +2449,7 @@ static int its_msi_prepare(struct irq_domain *domain,=
- struct device *dev,
- 	if (!its_dev)
- 		return -ENOMEM;
-=20
--	pr_debug("ITT %d entries, %d bits\n", nvec, ilog2(nvec));
-+	dev_dbg(&its->dev, "ITT %d entries, %d bits\n", nvec, ilog2(nvec));
- out:
- 	info->scratchpad[0].ptr =3D its_dev;
- 	return 0;
-@@ -3481,8 +3470,9 @@ static int __init its_compute_its_list_map(struct its=
-_node *its)
- 	return its_number;
- }
-=20
--static void its_free(struct its_node *its)
--{
-+static void its_device_release(struct device *dev) {
-+	struct its_node *its =3D container_of(dev, struct its_node, dev);
-+
- 	kfree(its);
- }
-=20
-@@ -3519,24 +3509,37 @@ static int __init its_init_one(struct its_node *its=
-)
- 	u64 baser, tmp, typer;
- 	int err;
-=20
--	its_base =3D ioremap(its->phys_base, its->phys_size);
-+	/* On error always use put_device() to free devices */
-+	device_initialize(&its->dev);
-+	its->dev.release =3D its_device_release;
-+
-+	err =3D dev_set_name(&its->dev, "its@%pa", &its->phys_base);
-+	if (!err)
-+		err =3D device_add(&its->dev);
-+
-+	if (err) {
-+		pr_warn("ITS@%pa: Unable to register device\n", &its->phys_base);
-+		return err;
-+	}
-+
-+	its_base =3D devm_ioremap(&its->dev, its->phys_base, its->phys_size);
- 	if (!its_base) {
--		pr_warn("ITS@%pa: Unable to map ITS registers\n", &its->phys_base);
-+		dev_warn(&its->dev, "Unable to map ITS registers\n");
- 		err =3D -ENOMEM;
- 		goto fail;
- 	}
-=20
- 	val =3D readl_relaxed(its_base + GITS_PIDR2) & GIC_PIDR2_ARCH_MASK;
- 	if (val !=3D 0x30 && val !=3D 0x40) {
--		pr_warn("ITS@%pa: No ITS detected, giving up\n", &its->phys_base);
-+		dev_warn(&its->dev, "No ITS detected, giving up\n");
- 		err =3D -ENODEV;
--		goto out_unmap;
-+		goto fail;
- 	}
-=20
- 	err =3D its_force_quiescent(its_base);
- 	if (err) {
--		pr_warn("ITS@%pa: Failed to quiesce, giving up\n", &its->phys_base);
--		goto out_unmap;
-+		dev_warn(&its->dev, "Failed to quiesce, giving up\n");
-+		goto fail;
- 	}
-=20
- 	typer =3D gic_read_typer(its_base + GITS_TYPER);
-@@ -3548,23 +3551,21 @@ static int __init its_init_one(struct its_node *its=
-)
- 		if (!(typer & GITS_TYPER_VMOVP)) {
- 			err =3D its_compute_its_list_map(its);
- 			if (err < 0)
--				goto out_unmap;
-+				goto fail;
-=20
- 			its->list_nr =3D err;
-=20
--			pr_info("ITS@%pa: Using ITS number %d\n",
--				&its->phys_base, err);
-+			dev_info(&its->dev, "Using ITS number %d\n", err);
- 		} else {
--			pr_info("ITS@%pa: Single VMOVP capable\n",
--				&its->phys_base);
-+			dev_info(&its->dev, "Single VMOVP capable\n");
- 		}
- 	}
-=20
--	its->cmd_base =3D (void *)__get_free_pages(GFP_KERNEL | __GFP_ZERO,
--						get_order(ITS_CMD_QUEUE_SZ));
-+	its->cmd_base =3D (void *)devm_get_free_pages(&its->dev,
-+		GFP_KERNEL | __GFP_ZERO, get_order(ITS_CMD_QUEUE_SZ));
- 	if (!its->cmd_base) {
- 		err =3D -ENOMEM;
--		goto out_unmap;
-+		goto fail;
- 	}
- 	its->cmd_write =3D its->cmd_base;
- 	its->get_msi_base =3D its_irq_get_msi_base;
-@@ -3574,11 +3575,11 @@ static int __init its_init_one(struct its_node *its=
-)
-=20
- 	err =3D its_alloc_tables(its);
- 	if (err)
--		goto out_free_cmd;
-+		goto fail;
-=20
- 	err =3D its_alloc_collections(its);
- 	if (err)
--		goto out_free_tables;
-+		goto fail;
-=20
- 	baser =3D (virt_to_phys(its->cmd_base)	|
- 		 GITS_CBASER_RaWaWb		|
-@@ -3601,7 +3602,7 @@ static int __init its_init_one(struct its_node *its)
- 			baser |=3D GITS_CBASER_nC;
- 			gits_write_cbaser(baser, its->base + GITS_CBASER);
- 		}
--		pr_info("ITS: using cache flushing for cmd queue\n");
-+		dev_info(&its->dev, "using cache flushing for cmd queue\n");
- 		its->flags |=3D ITS_FLAGS_CMDQ_NEEDS_FLUSHING;
- 	}
-=20
-@@ -3617,20 +3618,14 @@ static int __init its_init_one(struct its_node *its=
-)
-=20
- 	err =3D its_init_domain(its);
- 	if (err)
--		goto out_free_tables;
-+		goto fail;
-=20
--	pr_info("ITS@%pa: ITS node added\n", &its->phys_base);
-+	dev_info(&its->dev, "ITS node added\n");
-=20
- 	return 0;
--
--out_free_tables:
--	its_free_tables(its);
--out_free_cmd:
--	free_pages((unsigned long)its->cmd_base, get_order(ITS_CMD_QUEUE_SZ));
--out_unmap:
--	iounmap(its_base);
- fail:
--	pr_err("ITS@%pa: failed probing (%d)\n", &its->phys_base, err);
-+	dev_err(&its->dev, "failed probing (%d)\n", err);
-+	device_del(&its->dev);
- 	return err;
- }
-=20
-@@ -3939,7 +3934,7 @@ static int __init its_init(void)
- 		/* Needs to be called in non-atomic context */
- 		err =3D its_init_one(its);
- 		if (err)
--			its_free(its);
-+			put_device(&its->dev);
-=20
- 		raw_spin_lock(&its_lock);
-=20
---=20
-2.11.0
+Regards,
 
+Tony
+
+
+Tony Lindgren (2):
+  bus: ti-sysc: Fix getting optional clocks in clock_roles
+  bus: ti-sysc: Add mcasp optional clocks flag
+
+ .../devicetree/bindings/bus/ti-sysc.txt       |  1 +
+ drivers/bus/ti-sysc.c                         | 20 +++++++++++++++++--
+ 2 files changed, 19 insertions(+), 2 deletions(-)
+
+-- 
+2.19.1
