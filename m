@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB2FFC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:18:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D281EC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:18:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A57B322506
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:18:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9C1E4223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 17:18:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HH+Ve2H5";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SECjpY9B"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A57B322506
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="E/KpC8ne";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="lVAYVv30"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1E4223CB
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388910AbeKPD1S (ORCPT
+        id S2388933AbeKPD1U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 22:27:18 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:36146 "EHLO
+        Thu, 15 Nov 2018 22:27:20 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36244 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388365AbeKPD1R (ORCPT
+        with ESMTP id S2388915AbeKPD1T (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 22:27:17 -0500
+        Thu, 15 Nov 2018 22:27:19 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 471BC60877; Thu, 15 Nov 2018 17:18:36 +0000 (UTC)
+        id 041CB6074C; Thu, 15 Nov 2018 17:18:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542302316;
-        bh=G74NOZ0PPU+A+RwAjbHgGcPe2SHZvaT61mqdy6hWQq8=;
+        s=default; t=1542302318;
+        bh=kaPRYSS3r6qq+/1RSIfb8ZdMoLxNbSE+pJfxJJKzYMQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HH+Ve2H5Kn3DSacT44fWHVyTcOmp0OP6YY7Tw5S8tvTUAKOIVq7lzCweHOsSnTsxs
-         wByOMgNIWRpgInCCiOk4pkrmtFJZPWT+XrSA3fTKrQ6sc28NYXBRKaL6kxW6b9NEG3
-         KHdYOO0UcdENDtB4zkz5+NVKnti5eAAUphHMa0nM=
+        b=E/KpC8ness6That3mv0D4/yRWNg49mjHXunkZ6lIKBtwXgahxgqW2iRU+B7fc+tGy
+         fGjsTle8J8pnnn+frbVTlOwdgckJ7u0cyFpO5rHdTihjEMfKeObaysFH/5oRDYaLLP
+         sN042RAOyAs3PpGbCcQYzQQ9YYI86viw7RaMzeX8=
 Received: from jhugo-perf-lnx.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: jhugo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id E0B5560791;
-        Thu, 15 Nov 2018 17:18:34 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8323760886;
+        Thu, 15 Nov 2018 17:18:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542302315;
-        bh=G74NOZ0PPU+A+RwAjbHgGcPe2SHZvaT61mqdy6hWQq8=;
+        s=default; t=1542302317;
+        bh=kaPRYSS3r6qq+/1RSIfb8ZdMoLxNbSE+pJfxJJKzYMQ=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=SECjpY9BGCi1DoaXl9v/EIEtyB3GG7xCCHG9W0BN4Ru+ApdNcPvtZOxDpvv2UWY3U
-         tMIg7xlxuHStgOfm1jHJJ0Je9PJZ2xCOjObES/3ycbXzdgZn1KmL3kIHnp6ETBsWdt
-         na9wpl+rqVPjIj6XsoZ0DYrcD6rdCcGtO6VRZOo8=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org E0B5560791
+        b=lVAYVv30sazQjjhBUM1l5zb0CgHsf0y9E3y7XJRw1WLJd+fdGknibHVPbv03yNFqf
+         574GtJj9Mho8+rihuVR2osoaJT59lwJpNnvO6JGpVQ3kk2+IB4qYwBOojqx1V0PRp+
+         XL7w9mcrKYEYEjUVc76rmzjMltuZAGnCg4nirq/U=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8323760886
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=jhugo@codeaurora.org
 From:   Jeffrey Hugo <jhugo@codeaurora.org>
@@ -58,9 +58,9 @@ Cc:     bjorn.andersson@linaro.org, robh+dt@kernel.org,
         mark.rutland@arm.com, linux-arm-msm@vger.kernel.org,
         linux-soc@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, Jeffrey Hugo <jhugo@codeaurora.org>
-Subject: [PATCH 2/4] arm64: dts: qcom: msm8998: Add SDCC2
-Date:   Thu, 15 Nov 2018 10:18:09 -0700
-Message-Id: <1542302291-6864-3-git-send-email-jhugo@codeaurora.org>
+Subject: [PATCH 3/4] arm64: dts: qcom: msm8998: Add SDC2 control pins
+Date:   Thu, 15 Nov 2018 10:18:10 -0700
+Message-Id: <1542302291-6864-4-git-send-email-jhugo@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1542302291-6864-1-git-send-email-jhugo@codeaurora.org>
 References: <1542302291-6864-1-git-send-email-jhugo@codeaurora.org>
@@ -69,50 +69,109 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SDCC2 is typically used as the controller for an external SD card slot.
+The SDC2 control pins are typically used to manage sleep.
 
 Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
 ---
- arch/arm64/boot/dts/qcom/msm8998.dtsi | 19 ++++++++++++++++++-
- 1 file changed, 18 insertions(+), 1 deletion(-)
+ arch/arm64/boot/dts/qcom/msm8998-pins.dtsi | 78 ++++++++++++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/msm8998.dtsi      |  2 +
+ 2 files changed, 80 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/qcom/msm8998-pins.dtsi
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-index a948d4b..09deee0 100644
---- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
-@@ -53,7 +53,7 @@
- 	};
- 
- 	clocks {
--		xo {
-+		xo: xo {
- 			compatible = "fixed-clock";
- 			#clock-cells = <0>;
- 			clock-frequency = <19200000>;
-@@ -605,6 +605,23 @@
- 			#mbox-cells = <1>;
- 		};
- 
-+		sdhc2: sdhci@c0a4900 {
-+			compatible = "qcom,sdhci-msm-v4";
-+			reg = <0xc0a4900 0x314>, <0xc0a4000 0x800>;
-+			reg-names = "hc_mem", "core_mem";
+diff --git a/arch/arm64/boot/dts/qcom/msm8998-pins.dtsi b/arch/arm64/boot/dts/qcom/msm8998-pins.dtsi
+new file mode 100644
+index 0000000..a22abf9
+--- /dev/null
++++ b/arch/arm64/boot/dts/qcom/msm8998-pins.dtsi
+@@ -0,0 +1,78 @@
++// SPDX-License-Identifier: GPL-2.0
++/* Copyright (c) 2018, The Linux Foundation. All rights reserved. */
 +
-+			interrupts = <GIC_SPI 125 IRQ_TYPE_LEVEL_HIGH>,
-+				     <GIC_SPI 221 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "hc_irq", "pwr_irq";
++&tlmm {
++	sdc2_clk_on: sdc2_clk_on {
++		config {
++			pins = "sdc2_clk";
++			bias-disable;           /* NO pull */
++			drive-strength = <16>;  /* 16 MA */
++		};
++	};
 +
-+			clock-names = "iface", "core", "xo";
-+			clocks = <&gcc GCC_SDCC2_AHB_CLK>,
-+				 <&gcc GCC_SDCC2_APPS_CLK>,
-+				 <&xo>;
-+			bus-width = <4>;
-+			status = "disabled";
++	sdc2_clk_off: sdc2_clk_off {
++		config {
++			pins = "sdc2_clk";
++			bias-disable;           /* NO pull */
++			drive-strength = <2>;   /* 2 MA */
++		};
++	};
++
++	sdc2_cmd_on: sdc2_cmd_on {
++		config {
++			pins = "sdc2_cmd";
++			bias-pull-up;           /* pull up */
++			drive-strength = <10>;  /* 10 MA */
++		};
++	};
++
++	sdc2_cmd_off: sdc2_cmd_off {
++		config {
++			pins = "sdc2_cmd";
++			bias-pull-up;           /* pull up */
++			drive-strength = <2>;   /* 2 MA */
++		};
++	};
++
++	sdc2_data_on: sdc2_data_on {
++		config {
++			pins = "sdc2_data";
++			bias-pull-up;           /* pull up */
++			drive-strength = <10>;  /* 10 MA */
++		};
++	};
++
++	sdc2_data_off: sdc2_data_off {
++		config {
++			pins = "sdc2_data";
++			bias-pull-up;           /* pull up */
++			drive-strength = <2>;   /* 2 MA */
++		};
++	};
++
++	sdc2_cd_on: sdc2_cd_on {
++		mux {
++			pins = "gpio95";
++			function = "gpio";
 +		};
 +
- 		blsp2_uart1: serial@c1b0000 {
- 			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
- 			reg = <0xc1b0000 0x1000>;
++		config {
++			pins = "gpio95";
++			bias-pull-up;           /* pull up */
++			drive-strength = <2>;   /* 2 MA */
++		};
++	};
++
++	sdc2_cd_off: sdc2_cd_off {
++		mux {
++			pins = "gpio95";
++			function = "gpio";
++		};
++
++		config {
++			pins = "gpio95";
++			bias-pull-up;           /* pull up */
++			drive-strength = <2>;   /* 2 MA */
++		};
++	};
++};
+diff --git a/arch/arm64/boot/dts/qcom/msm8998.dtsi b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+index 09deee0..94827f4 100644
+--- a/arch/arm64/boot/dts/qcom/msm8998.dtsi
++++ b/arch/arm64/boot/dts/qcom/msm8998.dtsi
+@@ -705,3 +705,5 @@
+ 		};
+ 	};
+ };
++
++#include "msm8998-pins.dtsi"
 -- 
 Qualcomm Datacenter Technologies as an affiliate of Qualcomm Technologies, Inc.
 Qualcomm Technologies, Inc. is a member of the
