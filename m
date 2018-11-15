@@ -2,155 +2,143 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93E7CC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:57:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9F4AEC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:58:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5121321582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:57:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 6671E21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:58:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="3HRNgiGV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5121321582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hTgOsLGt"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6671E21582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728561AbeKONDo (ORCPT
+        id S1728565AbeKONEv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 08:03:44 -0500
-Received: from mail-eopbgr720080.outbound.protection.outlook.com ([40.107.72.80]:30080
-        "EHLO NAM05-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725895AbeKONDo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 08:03:44 -0500
+        Thu, 15 Nov 2018 08:04:51 -0500
+Received: from mail-pg1-f196.google.com ([209.85.215.196]:36298 "EHLO
+        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725895AbeKONEv (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 08:04:51 -0500
+Received: by mail-pg1-f196.google.com with SMTP id n2so1128636pgm.3;
+        Wed, 14 Nov 2018 18:58:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jztwi0iLrnI2uVPxbm4c9Ama3YItlM9rYBZeT+Z0ThI=;
- b=3HRNgiGVvJHMYpFT80v392px4+IXhHymUG3Vyt25Sg+x6pwmnSd5IYb2L+OcNv1ViZH9a3erVBmB1free3itDBDy04Z+wUp5saSJGqm9hrOBxOuSRu8mJxzh2GboIrXP7w4rFozzHACEwZyRVn7GKiL4ZMdAAg0JmzC+dPmT5K0=
-Received: from MWHPR0201MB3628.namprd02.prod.outlook.com (10.167.162.139) by
- MWHPR0201MB3531.namprd02.prod.outlook.com (10.167.162.16) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.26; Thu, 15 Nov 2018 02:57:43 +0000
-Received: from MWHPR0201MB3628.namprd02.prod.outlook.com
- ([fe80::bdb1:a728:19ef:e8fb]) by MWHPR0201MB3628.namprd02.prod.outlook.com
- ([fe80::bdb1:a728:19ef:e8fb%2]) with mapi id 15.20.1294.045; Thu, 15 Nov 2018
- 02:57:41 +0000
-From:   Radhey Shyam Pandey <radheys@xilinx.com>
-To:     Vinod Koul <vkoul@kernel.org>
-CC:     "dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-        Michal Simek <michals@xilinx.com>,
-        Appana Durga Kedareswara Rao <appanad@xilinx.com>,
-        "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>,
-        "linux-arm-kernel@lists.infradead.org" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 2/4] dmaengine: xilinx_dma: Refactor axidma channel
- validation
-Thread-Topic: [PATCH v2 2/4] dmaengine: xilinx_dma: Refactor axidma channel
- validation
-Thread-Index: AQHUWBht6vLGgHgXI0mDLFYdYMiXIaVKor+AgAXHuzA=
-Date:   Thu, 15 Nov 2018 02:57:41 +0000
-Message-ID: <MWHPR0201MB36283D3B93A3CB6E14165CE9C7DC0@MWHPR0201MB3628.namprd02.prod.outlook.com>
-References: <1538241480-13844-1-git-send-email-radhey.shyam.pandey@xilinx.com>
- <1538241480-13844-3-git-send-email-radhey.shyam.pandey@xilinx.com>
- <20181111102947.GG12092@vkoul-mobl>
-In-Reply-To: <20181111102947.GG12092@vkoul-mobl>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=radheys@xilinx.com; 
-x-originating-ip: [208.98.202.34]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR0201MB3531;6:A5ANfK0Dm7UL4ktdGUTt1+afLwXzL3n/65vG7aUb1DPgMnajr+N7u4WtOTXrKmSlczJSi9jj9PlQ817xaVkIHz9VHodq81zYk8zfadfnyv+tAkvPHKmraxh/YjP56S+lEEmOGiyf/aCHAF890jIwIMg2j4Qt/JXho63RZGFnWinQak4Gv/j5U+7Y97goZo1QtQgRX57JqqY4bhKqCVOjwtmirEAH45MvGcJVKrfs5Dxz5wyfJtsxZN6OeThftdanO/W+LdVd2PeNEge/5kSyjMWeRNtUPvTmZqJj3S78Uw2PyJ1CbtLqBl2Ff4XIX0X2ZUU3ADuRHqQaHM0KnjLEk0kYsxHCT3rCgnFAFp0zMhm/GgAwcG+RZW4ePVOePA/SgA9dXz7hgYYX9a3/8tT3I/pfqWF8FhZXcWvXyXsDuK9P2rc96pE9F7Srv+10+X81eV20UBZD+DF9KXd7n2/DHA==;5:3ifxKA+scMIgagyPbQiH5dS4QAej4rtrSLlylurevFfPkffXOQWu6QaBi8FGXWr+5mcPn9ehv8FfBQ6jQ3/lfM7nwtzz9TNQjrg0yBnAtWkMIclty4g0T6t30Bn9SLINIb9DKvqORGql1zK0714G39GwnWQ2HKV0HADD18qh2Es=;7:KbEgtBC+D5CnDvLUtjk0hDVOwlcxvIhwlJrNJaf3fzTsOZm0JymgjuLgl+UGNGjUrENbgEEPmkyFMTOvYS/nz+5CCowc84raKyCIYyrPIUctIS/cmNAnEqAvfCZE8RqpdFRo08qpMTVB6INAl97b8g==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;SOR;
-x-forefront-antispam-report: SFV:SKI;SCL:-1;SFV:NSPM;SFS:(10009020)(39860400002)(376002)(396003)(366004)(346002)(136003)(13464003)(189003)(199004)(14444005)(256004)(6116002)(3846002)(54906003)(6246003)(55016002)(7696005)(71190400001)(25786009)(2900100001)(99286004)(74316002)(14454004)(76176011)(186003)(53936002)(81156014)(66066001)(8676002)(7736002)(6436002)(71200400001)(81166006)(86362001)(11346002)(9686003)(446003)(316002)(486006)(476003)(8936002)(478600001)(2906002)(97736004)(5660300001)(53546011)(6506007)(105586002)(229853002)(106356001)(33656002)(4326008)(305945005)(68736007)(102836004)(6916009)(26005);DIR:OUT;SFP:1101;SCL:1;SRVR:MWHPR0201MB3531;H:MWHPR0201MB3628.namprd02.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-x-ms-office365-filtering-correlation-id: 6e3413e6-9bef-4935-107d-08d64aa61c49
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR0201MB3531;
-x-ms-traffictypediagnostic: MWHPR0201MB3531:
-x-microsoft-antispam-prvs: <MWHPR0201MB353156C9FBC7FDE11810F922C7DC0@MWHPR0201MB3531.namprd02.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(228905959029699)(9452136761055)(258649278758335)(163750095850)(192813158149592);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3231415)(944501410)(52105112)(10201501046)(3002001)(6055026)(148016)(149066)(150057)(6041310)(20161123562045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123560045)(201708071742011)(7699051)(76991095);SRVR:MWHPR0201MB3531;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0201MB3531;
-x-forefront-prvs: 08572BD77F
-received-spf: None (protection.outlook.com: xilinx.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: ZJiz8hcqD5+Tu/7n9gPKn4ozLPwUIDYUAnnOOqyMhPz9YeI39jAoWBLUqftQqkLa9MH8zg3r7jmgsuG8DyT3Dq1Xu2EGQm5mbIqKM1Kc4FoxfNmJ2QfF4XyhNUm4gG/NXYSB5F+6a6rgOWTwL1wqHJVn7dsdNRXxgovg5ljydar7NvZzVZxfHcs/II1J7SpnkhECipY/rxgPvEQceDhNMwLpptmP7y0HiGLNSzbZeYfNdELK01FVuD6FhdiUoZOAyUHvoikq49vnF1kkbD7LosE7FbzE4CGIDdW2UeZ5Cm/tVwTec3+EwLfLQ4e9wYx64+Jwv7qM28sfqIximG3TZgDq6voHQwjIP8j0jXOozzs=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
-MIME-Version: 1.0
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6e3413e6-9bef-4935-107d-08d64aa61c49
-X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2018 02:57:41.6709
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0201MB3531
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=vnGKn21GuxPuJAqQR+VJ5kBIIu+qIP1/T0+dJpk5kfE=;
+        b=hTgOsLGtfidqlz84RYneEfHeM62wHoZNQK0Ig/ZU6GhnmnIKT3kI8A+nYs/Fwa5Mwg
+         Ip0r473P1jFvUp/muMn9KWG8d3wnzxUTN5bZbZMkFRbNEk0nh8EOQ/uubLu7VUADyeNh
+         +cA/qGgVCIvFKDo0svVWD3Kw52oMXVTibrILQ4Q8qfsmDOxCkYFA/pxwOQxVsyc5lNsQ
+         nqKgl64OF6fb/acV7PmxdMBTa7WB1GH39ntlrGDs76B37DHiv63Vzt8kUg1xRJNBT2vy
+         YykxJS6jDxaDpn/5vofmgCs1hox1+l7f+F1YxVA5dCuDmvjWDDXtDaG8fzTGnqrnObDl
+         laAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=vnGKn21GuxPuJAqQR+VJ5kBIIu+qIP1/T0+dJpk5kfE=;
+        b=cHXgFWhEjigh8G+4V+K+Cl1vAhPU/0dqzK4lalrYByQTOAL6LWw8Aaa7g0172uahFv
+         l6MjSwaCiaYwl+noNpKAJEpseDVBoLnEyHPLUhlSMmp37MeDZAXXQ9Hx61ApfKI2kShS
+         Q+ONbE4SOaF8DNvypSmKTsJnR3p3D2dqmW3C2kze2FMoUPfCcQwDyC2Lf8XLvc6IJU1J
+         NqJAXbWQYiuSj8LQPVPPYW4T5Y1D/w2yXrs3s8XQ+/rkw2lGeaeaWScEcYOCwW0ohflF
+         RbMNdMaY9iNtX7/Ls62Z5DtGZGLfJVerVJO1QggTT0we/TYolLjOaV+E7qC/mpaYT44G
+         pCLg==
+X-Gm-Message-State: AGRZ1gJVFFzvvAgXeQscUqjlljxgOJrs2K+GIkKhxXIWy7wob/8cxJ3K
+        MwVTaS909N4aUN2tGGyVaoA=
+X-Google-Smtp-Source: AJdET5c8wakfesr5l1SWUs0KxGRThRGcFWaUSpv0qgL1HqxHEFS16+skgjfZH6MFCO6a976L/NsVaA==
+X-Received: by 2002:a63:6782:: with SMTP id b124mr4199101pgc.151.1542250732313;
+        Wed, 14 Nov 2018 18:58:52 -0800 (PST)
+Received: from localhost (59-120-186-245.HINET-IP.hinet.net. [59.120.186.245])
+        by smtp.gmail.com with ESMTPSA id i193sm32940204pgc.22.2018.11.14.18.58.51
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 18:58:51 -0800 (PST)
+From:   "Ji-Ze Hong (Peter Hong)" <hpeter@gmail.com>
+X-Google-Original-From: "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
+To:     johan@kernel.org
+Cc:     gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+        linux-kernel@vger.kernel.org, peter_hong@fintek.com.tw,
+        "Ji-Ze Hong (Peter Hong)" <hpeter+linux_kernel@gmail.com>
+Subject: [PATCH V1 1/1] USB: serial: f81534: fix reading old/new IC config
+Date:   Thu, 15 Nov 2018 10:58:44 +0800
+Message-Id: <1542250724-11667-1-git-send-email-hpeter+linux_kernel@gmail.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> -----Original Message-----
-> From: Vinod Koul <vkoul@kernel.org>
-> Sent: Sunday, November 11, 2018 2:30 AM
-> To: Radhey Shyam Pandey <radheys@xilinx.com>
-> Cc: dan.j.williams@intel.com; Michal Simek <michals@xilinx.com>; Appana
-> Durga Kedareswara Rao <appanad@xilinx.com>; dmaengine@vger.kernel.org;
-> linux-arm-kernel@lists.infradead.org; linux-kernel@vger.kernel.org
-> Subject: Re: [PATCH v2 2/4] dmaengine: xilinx_dma: Refactor axidma channe=
-l
-> validation
->=20
-> On 29-09-18, 11:17, Radhey Shyam Pandey wrote:
-> > In axidma start_transfer, prefer checking channel states before
-> > other params i.e pending_list. No functional change.
->=20
-> There needs to be proper reason rather than a preference, can you
-> explain why
-Initially, I thought to group channel states check before checking
-pending_list. It came up in doing diff with xilinx tree and mainline
-tree. But agree it's not of significant importance and can be dropped.
->=20
-> >
-> > Signed-off-by: Radhey Shyam Pandey <radhey.shyam.pandey@xilinx.com>
-> > ---
-> > Changes for v2:
-> > Modified the commit message to mark it as non-functional change.
-> > ---
-> >  drivers/dma/xilinx/xilinx_dma.c |    4 ++--
-> >  1 files changed, 2 insertions(+), 2 deletions(-)
-> >
-> > diff --git a/drivers/dma/xilinx/xilinx_dma.c b/drivers/dma/xilinx/xilin=
-x_dma.c
-> > index 06d1632..a37871e 100644
-> > --- a/drivers/dma/xilinx/xilinx_dma.c
-> > +++ b/drivers/dma/xilinx/xilinx_dma.c
-> > @@ -1271,10 +1271,10 @@ static void xilinx_dma_start_transfer(struct
-> xilinx_dma_chan *chan)
-> >  	if (chan->err)
-> >  		return;
-> >
-> > -	if (list_empty(&chan->pending_list))
-> > +	if (!chan->idle)
-> >  		return;
-> >
-> > -	if (!chan->idle)
-> > +	if (list_empty(&chan->pending_list))
-> >  		return;
-> >
-> >  	head_desc =3D list_first_entry(&chan->pending_list,
-> > --
-> > 1.7.1
->=20
-> --
-> ~Vinod
+The F81532/534 had a internal configuration space to save & control
+IC state with address F81534_CUSTOM_ADDRESS_START (0x2f00). Layout
+as following:
+	+00h: to indicate the section is valid
+	+01h~04h: UART Mode & port availability
+	+05h~08h: Output pin control on IC power on
+	+09h~12h: Output pin control on working <-- New added
+
+Old driver will use +05~08h as default on working, but newer IC will
+configed with shutdown mode(7) in 05h~08h and working mode with RS232(1)
+in 09h~12h. It'll make mainstream driver not working.
+
+This patch will make mainstream driver compatible older and newer IC.
+If using a old IC, the +05h~08h will be 00h~06h, we'll direct apply it.
+If using a new IC, the +05h~08h will be 07h or larger, we'll read +09h~12h
+to apply newer configuration.
+
+Signed-off-by: Ji-Ze Hong (Peter Hong) <hpeter+linux_kernel@gmail.com>
+---
+ drivers/usb/serial/f81534.c | 20 +++++++++++++++++---
+ 1 file changed, 17 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/usb/serial/f81534.c b/drivers/usb/serial/f81534.c
+index 380933db34dd..2b39bda035c7 100644
+--- a/drivers/usb/serial/f81534.c
++++ b/drivers/usb/serial/f81534.c
+@@ -45,14 +45,17 @@
+ #define F81534_CONFIG1_REG		(0x09 + F81534_UART_BASE_ADDRESS)
+ 
+ #define F81534_DEF_CONF_ADDRESS_START	0x3000
+-#define F81534_DEF_CONF_SIZE		8
++#define F81534_DEF_CONF_SIZE		12
+ 
+ #define F81534_CUSTOM_ADDRESS_START	0x2f00
+ #define F81534_CUSTOM_DATA_SIZE		0x10
+ #define F81534_CUSTOM_NO_CUSTOM_DATA	0xff
+ #define F81534_CUSTOM_VALID_TOKEN	0xf0
+ #define F81534_CONF_OFFSET		1
+-#define F81534_CONF_GPIO_OFFSET		4
++#define F81534_CONF_INIT_GPIO_OFFSET	4
++#define F81534_CONF_WORK_GPIO_OFFSET	8
++#define F81534_CONF_GPIO_SHUTDOWN	7
++#define F81534_CONF_GPIO_RS232		1
+ 
+ #define F81534_MAX_DATA_BLOCK		64
+ #define F81534_MAX_BUS_RETRY		20
+@@ -1337,8 +1340,19 @@ static int f81534_set_port_output_pin(struct usb_serial_port *port)
+ 	serial_priv = usb_get_serial_data(serial);
+ 	port_priv = usb_get_serial_port_data(port);
+ 
+-	idx = F81534_CONF_GPIO_OFFSET + port_priv->phy_num;
++	idx = F81534_CONF_INIT_GPIO_OFFSET + port_priv->phy_num;
+ 	value = serial_priv->conf_data[idx];
++	if (value >= F81534_CONF_GPIO_SHUTDOWN) {
++		/*
++		 * Newer IC configure will make transceiver in shutdown mode on
++		 * initial power on. We need enable it before using UARTs.
++		 */
++		idx = F81534_CONF_WORK_GPIO_OFFSET + port_priv->phy_num;
++		value = serial_priv->conf_data[idx];
++		if (value >= F81534_CONF_GPIO_SHUTDOWN)
++			value = F81534_CONF_GPIO_RS232;
++	}
++
+ 	pins = &f81534_port_out_pins[port_priv->phy_num];
+ 
+ 	for (i = 0; i < ARRAY_SIZE(pins->pin); ++i) {
+-- 
+2.7.4
+
