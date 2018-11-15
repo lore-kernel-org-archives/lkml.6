@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A70FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:18:13 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 520BBC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3C1C1206BA
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:18:13 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 164DE206BA
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 22:18:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=gluegarage.com header.i=@gluegarage.com header.b="oHKwvqod";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="R++EWDrq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3C1C1206BA
+	dkim=pass (1024-bit key) header.d=gluegarage.com header.i=@gluegarage.com header.b="j0XXfzZt";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="f9c0pr9O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 164DE206BA
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gluegarage.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389119AbeKPI1v (ORCPT
+        id S2389136AbeKPI17 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 03:27:51 -0500
-Received: from out5-smtp.messagingengine.com ([66.111.4.29]:41287 "EHLO
+        Fri, 16 Nov 2018 03:27:59 -0500
+Received: from out5-smtp.messagingengine.com ([66.111.4.29]:37569 "EHLO
         out5-smtp.messagingengine.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725888AbeKPI1u (ORCPT
+        by vger.kernel.org with ESMTP id S1725888AbeKPI16 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 03:27:50 -0500
+        Fri, 16 Nov 2018 03:27:58 -0500
 Received: from compute1.internal (compute1.nyi.internal [10.202.2.41])
-        by mailout.nyi.internal (Postfix) with ESMTP id 1ABE5229F1;
-        Thu, 15 Nov 2018 17:18:08 -0500 (EST)
+        by mailout.nyi.internal (Postfix) with ESMTP id CBF1E22F25;
+        Thu, 15 Nov 2018 17:18:16 -0500 (EST)
 Received: from mailfrontend1 ([10.202.2.162])
-  by compute1.internal (MEProxy); Thu, 15 Nov 2018 17:18:08 -0500
+  by compute1.internal (MEProxy); Thu, 15 Nov 2018 17:18:16 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gluegarage.com;
          h=from:to:cc:subject:date:message-id:in-reply-to:references
-        :mime-version:content-transfer-encoding; s=mesmtp; bh=mQiY+XZCz9
-        Ns7nNOXsOiTUkbneyFRMkgnJhmjJbz3HA=; b=oHKwvqod/YeJhDJv8ekzZwXIlI
-        C3ABQeZI3G950c3B/7VyVjFZ/1Em78nfcBoYqfMeSArW6gqAz8TwQGOxtX2haPsZ
-        n/ChKM3SjWuTqumHqwbpPF7dmxsFihuWMCQBzH5yGiLX/Mf4A1/HFq7AOl/baNoE
-        E2LknX+COrlRmhl8g=
+        :mime-version:content-transfer-encoding; s=mesmtp; bh=ONICivwTMT
+        ENz178nXjnq+JH0phQ4XP7eTBS8xMMsgo=; b=j0XXfzZteFoXlAzrIAQVQPWZ+p
+        /P1msFrgPInflhKXWGL00BJBgq/90SJ3o44YakRE1FsoVersFzbvDN8L6eScBmdH
+        c4GjXRgi5X7ieJ644a0qXgqCVmlg5N/Rb5KhTqeC6LAtCejtz2n+YrKmNtbVuh4i
+        TaWCpx77IQ1k9Uj8I=
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
         messagingengine.com; h=cc:content-transfer-encoding:date:from
         :in-reply-to:message-id:mime-version:references:subject:to
         :x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-        fm1; bh=mQiY+XZCz9Ns7nNOXsOiTUkbneyFRMkgnJhmjJbz3HA=; b=R++EWDrq
-        kaqrf3GFzCdcJvwrrTX05xLlbc9msmBe9BBUP6O6sPYMIzG6WVH4B+fhtdXW9GrJ
-        laMu23EOG1SH95GH4LMaH5iJbUgrN45vQeM/ItgwbFV7cKvLNYiacM+Oj+BIc7oX
-        eH/efbqz6I3fM1Ir0c4CnluDuJm8iatXhGwWVcw/aUeMtbdDr3aoG6BE3ofkVfjQ
-        hV3DmEe/OiWjQdpbB/hkTcanFkpRw1+MPfl0h7bVfgC3NrXZ9r2EJ4uvsrtk09nm
-        TIjUMH8yyeNa/rQlzAOFmE6Y+xfUXu6wIW113JxVPgdtdLwQ124DVeraTik+Q7US
-        LQdl6kxhWcOktw==
-X-ME-Sender: <xms:n_DtW-z4VTDHGrx8pL8LXK9w6L1kWEpT3KkL7TZSdx89Jj4EaokqKQ>
-X-ME-Proxy: <xmx:n_DtWyzid4ikdFl8oo_Sg4QZCMcg_vOXjl8rC0MqgLqEYrtwmcpt0g>
-    <xmx:n_DtW8MdqaCZem-3OrBJfD_fhUMamQgZBZP8iDGhfpwKMFUizmzthg>
-    <xmx:n_DtW75bScxiH0ZtlhgJbrRLcdjoB6RJFiM5iBOd2XSD6EZn6j2OQQ>
-    <xmx:n_DtW1OvaNg2Scqm0fO8qlBioXnkgQu-4C7tjfg71gTy-9I_ZqcM7A>
-    <xmx:n_DtWxnrL6gmMAb5NMC8OOxxehDVB9lNis8nXKtancp7HXoZfYZsFQ>
-    <xmx:oPDtWwjOYA57H7qu1bXHfgDAYcyyrX0PKTBeUUnfXhL6sEmo8FDtCw>
+        fm1; bh=ONICivwTMTENz178nXjnq+JH0phQ4XP7eTBS8xMMsgo=; b=f9c0pr9O
+        jZPW7HdVJiFadeyNHbAYXBWTu4a3Jb4x/YcqoOBNnemnfGjn3J7/RiFpUlBOjhyM
+        c4X83SPbMm1VcZnyuo9xhygHLx22t0Rpg+ZRyfOW54sKTvpz73bS8ZHPaY/ER3vv
+        8ko01m2zrV02uNgha2ih+xtub44f505sLmJHVqNwLb4BRUCA87xZmtpvoC8eDUDi
+        4hNS81IjDfGCFamKPEDa2Df1xiKlMVXU4aZgRt64Fy+/m4qJF68Leo2kpiZs/RNS
+        ylJlv0iG641MUMCXMwWnxWjcYziIFB0ZxGf6vFPNgmDqDXl2+9NQyJAuEcjL2jpc
+        W7nh8bjfmMFogA==
+X-ME-Sender: <xms:qPDtW5JFldXh20GL88EcR4HdSkPWzZl2YPGPBzjrvPWn-GrKuOr4kQ>
+X-ME-Proxy: <xmx:qPDtW63VboRASe8qLjnbsfFULsaPyYhu5rAnv8vkObqPTvJE3fzMow>
+    <xmx:qPDtW0NvQybNtmMg6toUd4yW6EQB9nLvKh3cYAv6ijdd6HFzdd-6Tw>
+    <xmx:qPDtW1NoCFCrdLdZJZu6DrM5biKOAVkBD7vSgEkuy19PhOkPB3iO2A>
+    <xmx:qPDtW0mgFGEEZNkQHwyK-QV7_UveCwjsoVQwgFK8Pbj3Lzl4VK2yWw>
+    <xmx:qPDtWwDDEN5yKsjgUhSSqjVc_0UFN2MNj3qU27g9Mw_YWg9S_diP5w>
+    <xmx:qPDtW-RQn5FsI15JAcoll9w0QGPgyiY8aBpY4FZGZssPJrUmBLY_TQ>
 Received: from zaca_x230.localdomain (unknown [109.205.143.80])
-        by mail.messagingengine.com (Postfix) with ESMTPA id 874DFE46B7;
-        Thu, 15 Nov 2018 17:18:03 -0500 (EST)
+        by mail.messagingengine.com (Postfix) with ESMTPA id 24315E4307;
+        Thu, 15 Nov 2018 17:18:12 -0500 (EST)
 From:   Fernando Ramos <greenfoo@gluegarage.com>
 To:     dri-devel@lists.freedesktop.org
 Cc:     David Airlie <airlied@linux.ie>,
@@ -92,9 +92,9 @@ Cc:     David Airlie <airlied@linux.ie>,
         virtualization@lists.linux-foundation.org,
         etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
         cocci@systeme.lip6.fr
-Subject: [PATCH 8/9] drm: remove no longer needed drm-get-put coccinelle script
-Date:   Thu, 15 Nov 2018 23:16:28 +0100
-Message-Id: <20181115221634.22715-9-greenfoo@gluegarage.com>
+Subject: [PATCH 9/9] docs: drm: remove no longer relevant TODO entry
+Date:   Thu, 15 Nov 2018 23:16:29 +0100
+Message-Id: <20181115221634.22715-10-greenfoo@gluegarage.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181115221634.22715-1-greenfoo@gluegarage.com>
 References: <20181115221634.22715-1-greenfoo@gluegarage.com>
@@ -105,99 +105,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The coccinelle script was used to rename some (deprecated) functions
-which no longer exist now.
+This entry asked to rename all drm core "*_reference/_unrefence"
+functions to "*_get/_put".
+
+Now that this task is complete, we can remove this entry from the TODO
+list.
 
 Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
 ---
- scripts/coccinelle/api/drm-get-put.cocci | 78 ------------------------
- 1 file changed, 78 deletions(-)
- delete mode 100644 scripts/coccinelle/api/drm-get-put.cocci
+ Documentation/gpu/todo.rst | 17 -----------------
+ 1 file changed, 17 deletions(-)
 
-diff --git a/scripts/coccinelle/api/drm-get-put.cocci b/scripts/coccinelle/api/drm-get-put.cocci
-deleted file mode 100644
-index 3a09c97ad87d..000000000000
---- a/scripts/coccinelle/api/drm-get-put.cocci
-+++ /dev/null
-@@ -1,78 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--///
--/// Use drm_*_get() and drm_*_put() helpers instead of drm_*_reference() and
--/// drm_*_unreference() helpers.
--///
--// Confidence: High
--// Copyright: (C) 2017 NVIDIA Corporation
--// Options: --no-includes --include-headers
--//
+diff --git a/Documentation/gpu/todo.rst b/Documentation/gpu/todo.rst
+index 77c2b3c25565..85433af65442 100644
+--- a/Documentation/gpu/todo.rst
++++ b/Documentation/gpu/todo.rst
+@@ -28,23 +28,6 @@ them, but also all the virtual ones used by KVM, so everyone qualifies).
+ 
+ Contact: Daniel Vetter, Thierry Reding, respective driver maintainers
+ 
+-Switch from reference/unreference to get/put
+---------------------------------------------
 -
--virtual patch
--virtual report
+-For some reason DRM core uses ``reference``/``unreference`` suffixes for
+-refcounting functions, but kernel uses ``get``/``put`` (e.g.
+-``kref_get``/``put()``). It would be good to switch over for consistency, and
+-it's shorter. Needs to be done in 3 steps for each pair of functions:
 -
--@depends on patch@
--expression object;
--@@
+-* Create new ``get``/``put`` functions, define the old names as compatibility
+-  wrappers
+-* Switch over each file/driver using a cocci-generated spatch.
+-* Once all users of the old names are gone, remove them.
 -
--(
--- drm_connector_reference(object)
--+ drm_connector_get(object)
--|
--- drm_connector_unreference(object)
--+ drm_connector_put(object)
--|
--- drm_framebuffer_reference(object)
--+ drm_framebuffer_get(object)
--|
--- drm_framebuffer_unreference(object)
--+ drm_framebuffer_put(object)
--|
--- drm_gem_object_reference(object)
--+ drm_gem_object_get(object)
--|
--- drm_gem_object_unreference(object)
--+ drm_gem_object_put(object)
--|
--- __drm_gem_object_unreference(object)
--+ __drm_gem_object_put(object)
--|
--- drm_gem_object_unreference_unlocked(object)
--+ drm_gem_object_put_unlocked(object)
--|
--- drm_dev_unref(object)
--+ drm_dev_put(object)
--)
+-This way drivers/patches in the progress of getting merged won't break.
 -
--@r depends on report@
--expression object;
--position p;
--@@
+-Contact: Daniel Vetter
 -
--(
--drm_connector_unreference@p(object)
--|
--drm_connector_reference@p(object)
--|
--drm_framebuffer_unreference@p(object)
--|
--drm_framebuffer_reference@p(object)
--|
--drm_gem_object_unreference@p(object)
--|
--drm_gem_object_reference@p(object)
--|
--__drm_gem_object_unreference(object)
--|
--drm_gem_object_unreference_unlocked(object)
--|
--drm_dev_unref@p(object)
--)
--
--@script:python depends on report@
--object << r.object;
--p << r.p;
--@@
--
--msg="WARNING: use get/put helpers to reference and dereference %s" % (object)
--coccilib.report.print_report(p[0], msg)
+ Convert existing KMS drivers to atomic modesetting
+ --------------------------------------------------
+ 
 -- 
 2.19.1
 
