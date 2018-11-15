@@ -2,97 +2,107 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A543C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:47:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1EA5FC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:48:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C13C7208E7
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:47:09 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Oc50Gom+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C13C7208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id E3E4E223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 13:48:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E3E4E223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388153AbeKOXzD (ORCPT
+        id S2388297AbeKOXz6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 18:55:03 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:57898 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729010AbeKOXzC (ORCPT
+        Thu, 15 Nov 2018 18:55:58 -0500
+Received: from mail2-relais-roc.national.inria.fr ([192.134.164.83]:39456 "EHLO
+        mail2-relais-roc.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1729010AbeKOXz6 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 18:55:02 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=cYH4gsxFtygX1XaLn8nsv5VJETRhq30/Kt8o2YsCl2Y=; b=Oc50Gom+FpYiygi1yXbj+RV03
-        2KvZUnhVqMq35wHYbouitnM2yPBuYAT5uhyTW2JHu8oo1q5reisaLGU/TEmpMZU8qSI5YJ4Z4LzbA
-        hrlcRJuCqe/XVVIqqa/JpDqMCRY+JTpl75Pvahko3wYRsn3Jw+lTBroN3Q4MeureB3h6WdkkOevCK
-        bp/riLaZ0v5A9gZBzceq5AKx9/R3BK7qvblhJTJCuX0xcHncnljhXzu1RD3dYFBBabIWh+j2kkGV1
-        IbMwIlVhU8Hr+Rn+H018Pd0jEAtkiHD8t7Y62D244g37oxlOZyXcFKqMWE/y0lRtkc9HsbS0U2q+q
-        NeqQhiecw==;
-Received: from willy by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNHz8-0000ta-Cr; Thu, 15 Nov 2018 13:47:06 +0000
-Date:   Thu, 15 Nov 2018 05:47:06 -0800
-From:   Matthew Wilcox <willy@infradead.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
-        Kees Cook <keescook@chromium.org>,
-        Shuah Khan <shuah@kernel.org>, linux-mm@kvack.org,
-        LKML <linux-kernel@vger.kernel.org>,
-        Oleksiy Avramchenko <oleksiy.avramchenko@sonymobile.com>,
-        Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [RFC PATCH 1/1] vmalloc: add test driver to analyse vmalloc
- allocator
-Message-ID: <20181115134706.GC19286@bombadil.infradead.org>
-References: <20181113151629.14826-1-urezki@gmail.com>
- <20181113151629.14826-2-urezki@gmail.com>
- <20181113141046.f62f5bd88d4ebc663b0ac100@linux-foundation.org>
- <20181114151737.GA23419@dhcp22.suse.cz>
- <20181114150053.c3fe42507923322a0a10ae1c@linux-foundation.org>
- <20181115083957.GE23831@dhcp22.suse.cz>
- <20181115084642.GB19286@bombadil.infradead.org>
- <20181115125750.GS23831@dhcp22.suse.cz>
+        Thu, 15 Nov 2018 18:55:58 -0500
+X-IronPort-AV: E=Sophos;i="5.56,236,1539640800"; 
+   d="scan'208";a="355837763"
+Received: from unknown (HELO hadrien) ([64.114.255.114])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 14:47:37 +0100
+Date:   Thu, 15 Nov 2018 05:47:35 -0800 (PST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Geert Uytterhoeven <geert@linux-m68k.org>
+cc:     Julia Lawall <julia.lawall@lip6.fr>,
+        Dan Williams <dan.j.williams@intel.com>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
+        vishal.l.verma@intel.com,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        stfrench@microsoft.com, Greg KH <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        "Tobin C. Harding" <me@tobin.cc>
+Subject: Re: [Ksummit-discuss] [RFC PATCH 2/3] MAINTAINERS, Handbook: Subsystem
+ Profile
+In-Reply-To: <CAMuHMdVmvCOX6gF0BskQ1NBUpdMZHSBQXpxkx085B9ZKGm0wiA@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1811150544090.2354@hadrien>
+References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com> <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com> <alpine.DEB.2.21.1811142146230.9620@hadrien>
+ <CAMuHMdVmvCOX6gF0BskQ1NBUpdMZHSBQXpxkx085B9ZKGm0wiA@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115125750.GS23831@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 01:57:50PM +0100, Michal Hocko wrote:
-> On Thu 15-11-18 00:46:42, Matthew Wilcox wrote:
-> > How about adding
-> > 
-> > #ifdef CONFIG_VMALLOC_TEST
-> > int run_internal_vmalloc_tests(void)
-> > {
-> > ...
-> > }
-> > EXPORT_SYMBOL_GPL(run_internal_vmalloc_tests);
-> > #endif
-> > 
-> > to vmalloc.c?  That would also allow calling functions which are marked
-> > as static, not just functions which aren't exported to modules.
-> 
-> Yes that would be easier but do we want to pollute the normal code with
-> testing? This looks messy to me.
 
-I don't think it's necessarily the worst thing in the world if random
-people browsing the file are forced to read test-cases ;-)
 
-There's certainly a spectrum of possibilities here, one end being to
-basically just re-export static functions, and the other end putting
-every vmalloc test into vmalloc.c.  vmalloc.c is pretty big at 70kB, but
-on the other hand, it's the 18th largest file in mm/ (can you believe
-page_alloc.c is 230kB?!)
+On Thu, 15 Nov 2018, Geert Uytterhoeven wrote:
+
+> Hi Julia,
+>
+> On Thu, Nov 15, 2018 at 6:48 AM Julia Lawall <julia.lawall@lip6.fr> wrote:
+> > On Wed, 14 Nov 2018, Dan Williams wrote:
+> > > As presented at the 2018 Linux Plumbers conference [1], the Subsystem
+> > > Profile is proposed as a way to reduce friction between committers and
+> > > maintainers and perhaps encourage conversations amongst maintainers
+> > > about best practice policies.
+> > >
+> > > The profile contains short answers to some of the common policy
+> > > questions a contributor might have, or that a maintainer might consider
+> > > formalizing. The current list of maintenance policies is:
+> > >
+> > > Overview: General introduction to maintaining the subsystem
+> > > Core: List of source files considered core
+> > > Leaf: List of source files that consume core functionality
+> > > Patches or Pull requests: Simple statement of expected submission format
+> > > Last -rc for new feature submissions: Expected lead time for submissions
+> > > Last -rc to merge features: Deadline for merge decisions
+> > > Non-author Ack / Review Tags Required: Patch review economics
+> > > Test Suite: Pass this suite before requesting inclusion
+> > > Resubmit Cadence: When to ping the maintainer
+> > > Trusted Reviewers: Help for triaging patches
+> > > Time Zone / Office Hours: When might a maintainer be available
+> > > Checkpatch / Style Cleanups: Policy on pure cleanup patches
+> > > Off-list review: Request for review gates
+> > > TODO: Potential development tasks up for grabs, or active focus areas
+> >
+> > How about patch subject lines?  What is the formula that should be used to
+> > transform the name(s) of the affected file(s) into an appropriate suject
+> > line?
+>
+> Automating that may be difficult.
+> I always use "git log --oneline", and try to derive something sane
+> from its output.
+
+Yes, I do likewise.  But there may be some subsystems for which it would
+be possible to come up with a more specific policy.  The advantage of what
+is proposed here is that it is not necessary to come up with a single
+formula that works everywhere.  Even a description in English could be
+helpful.
+
+Other subsystem specific properties such as what tree to work on, whether
+to CC stable, ordering of variables or header files, etc could also be
+useful to mention.  Anything that will cause a maintainer to immediately
+reject a patch for syntactic reasons.
+
+julia
