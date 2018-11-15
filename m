@@ -2,112 +2,173 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 38DC6C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:15:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EBE58C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:15:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ECE42223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:15:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A693A223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:15:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="hxoiO6jq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ECE42223CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TmFQOGAQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A693A223CB
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388072AbeKOWWh (ORCPT
+        id S2388147AbeKOWWt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 17:22:37 -0500
-Received: from smtprelay2.synopsys.com ([198.182.60.111]:34294 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729115AbeKOWWh (ORCPT
+        Thu, 15 Nov 2018 17:22:49 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:35205 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729008AbeKOWWt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 17:22:37 -0500
-Received: from mailhost.synopsys.com (mailhost1.synopsys.com [10.12.238.239])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id F12FF10C0EC0;
-        Thu, 15 Nov 2018 04:14:58 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1542284100; bh=+f6CaX9sdBvxhaZjl87yutS7vpcH14fol/SpDoSU0iI=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=hxoiO6jqvAbaxsZf2+wg06DQN3x1pIz6lQumkZzmHArEINLRR0H5qGlIYpuEesJHB
-         3eeXmX29JNrnLHLX2xd7/AeusNlAkZob+6i6MCy/VtueKrL4YqCifImT/SColv5fce
-         JT27R/aR62mTkUERiTxCBM9kpskR9hLMgpXoZ4OGBm3DekAYZifP7NEB1WravqCOem
-         lRtrq0kNFekbWwKd5IMSMwbl0LrNySQwLy/FGTMmmXY/we567/0z4H6+euOLtsT8w8
-         mL5J7L9h5ud6jbH9UWwgEWJA1VLOxRxQrtDHCpPfGAc8zs01HCp6K34+VYFiva+1TM
-         L69SXqdulxiqA==
-Received: from US01WEHTC2.internal.synopsys.com (us01wehtc2-vip.internal.synopsys.com [10.12.239.238])
-        by mailhost.synopsys.com (Postfix) with ESMTP id 5EEE756DF;
-        Thu, 15 Nov 2018 04:14:57 -0800 (PST)
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- US01WEHTC2.internal.synopsys.com (10.12.239.237) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 15 Nov 2018 04:14:57 -0800
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- DE02WEHTCA.internal.synopsys.com (10.225.19.92) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 15 Nov 2018 13:14:55 +0100
-Received: from [10.0.2.15] (10.107.19.116) by DE02WEHTCB.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Thu, 15 Nov
- 2018 13:14:55 +0100
-Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>
-CC:     Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        Cyprian Wronka <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        Rafal Ciepiela <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        "Kumar Gala" <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Vitor Soares <Vitor.Soares@synopsys.com>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>
-References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
-From:   vitor <vitor.soares@synopsys.com>
-Message-ID: <76b1d15d-232c-d8ba-5eba-8394e71be725@synopsys.com>
-Date:   Thu, 15 Nov 2018 12:14:37 +0000
+        Thu, 15 Nov 2018 17:22:49 -0500
+Received: by mail-wr1-f66.google.com with SMTP id 96so4087466wrb.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 04:15:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=nKnaYaT376yl2NVVvvXMGx6hInEwP7JhjKMhXhcEXsk=;
+        b=TmFQOGAQEUpKI0Eq+CWu1GmKjH796cixnNp71hlx6YTOSu9B5/2NHpTfiGAjtNIduK
+         v56tiKBWg/kooDp10FOeMd+BJq3x6AU+nxcdpsD+Z6apBlYD+JMOA1OwsgRqGI8ZLUUn
+         Kq/E4tMWLGQv3Y3oFLx4mdbsAJyXpehDDZz4w=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=nKnaYaT376yl2NVVvvXMGx6hInEwP7JhjKMhXhcEXsk=;
+        b=oFv1gHGukowNksuuREUffaeV3kkjf6CLsZevAl6JYdtXhdSi3GyHZt3qzwJQOu9EG0
+         stjA+VZai+Qai0KlmCXv0zSLyp0D5YfehkuyjeStKmWW/dnxToG3++FGyO9ix/TVenKx
+         mN9NsGYbTnAATCIkDAieNg+SIxDXYmV/5yVW9FmpUR4Xd+FwG0qZVE6br+vvH3BV4ZRT
+         HiHcwIQuAYUU3gW2zSi9zVTfwcDFz5UkermbzjGBf9SYkSoYXn93NwIYVQcucZJ8D31a
+         Ob5+Stw16yV8nip4dL60mDWLO4RKHR44/WD9Qq/KWHtuV1uV8ajhNI7aErcWA2ycR9aT
+         ChSA==
+X-Gm-Message-State: AA+aEWZhaoiMlJI50n45DDh0u63t1A3Jrsrj+ZOlWCjc68OgKm3LkzFj
+        jMaLKLE3vBIWKzXmqLDXk8j1jw==
+X-Google-Smtp-Source: AFSGD/WO0WeB5t2hT4v4Tt7xt8vLeTaG3eKpfZ9jldZZlPMbk9ePKmPUmj97jWs2H/n9lNBtG/WYOQ==
+X-Received: by 2002:adf:e7d0:: with SMTP id e16mr2560566wrn.142.1542284110076;
+        Thu, 15 Nov 2018 04:15:10 -0800 (PST)
+Received: from [192.168.43.165] ([37.169.112.121])
+        by smtp.googlemail.com with ESMTPSA id r76-v6sm19711383wmb.21.2018.11.15.04.15.04
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 04:15:09 -0800 (PST)
+Subject: Re: [PATCH 1/2] clocksource: meson6_timer: use register names from
+ the datasheet
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc:     linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        tglx@linutronix.de, linux-arm-kernel@lists.infradead.org,
+        khilman@baylibre.com, carlo@caione.org
+References: <20181028125501.17336-1-martin.blumenstingl@googlemail.com>
+ <20181028125501.17336-2-martin.blumenstingl@googlemail.com>
+ <6793aba9-87fc-6cf8-cada-f1fa6a1e0040@linaro.org>
+ <CAFBinCBueqknBzV6PJnuSzd09=dd06gkjZG+ykr5qKLf=uRT2A@mail.gmail.com>
+From:   Daniel Lezcano <daniel.lezcano@linaro.org>
+Message-ID: <036e5c1e-7e02-9691-3c36-4ebdc4cce727@linaro.org>
+Date:   Thu, 15 Nov 2018 13:15:00 +0100
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181026144333.12276-1-boris.brezillon@bootlin.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <CAFBinCBueqknBzV6PJnuSzd09=dd06gkjZG+ykr5qKLf=uRT2A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-X-Originating-IP: [10.107.19.116]
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On 15/11/2018 07:23, Martin Blumenstingl wrote:
+> Hi Daniel,
+> 
+> thanks for your feedback!
+> 
+> On Thu, Nov 15, 2018 at 2:35 AM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>>
+>> On 28/10/2018 13:55, Martin Blumenstingl wrote:
+>>> This makes the driver use the names from S805 datasheet for the
+>>> preprocessor #defines. This makes it easier to spot that the driver
+>>> currently only supports Timer A (as clockevent with interrupt support)
+>>> and Timer E (as clocksource without interrupts). Timer B, C and D (which
+>>> are similar to Timer A) are currently not supported by the driver.
+>>>
+>>> While here, this also removes the internal "CED_ID" and "CSD_ID" defines
+>>> which are used to identify the timer. These IDs are not described in the
+>>> datasheet and thus make it harder to compare the code to what's written
+>>> in the datasheet.
+>>>
+>>> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+>>> ---
+>>>  drivers/clocksource/meson6_timer.c | 110 ++++++++++++++++++-----------
+>>>  1 file changed, 68 insertions(+), 42 deletions(-)
+>>>
+>>> diff --git a/drivers/clocksource/meson6_timer.c b/drivers/clocksource/meson6_timer.c
+>>> index 92f20991a937..c622135bee9d 100644
+>>> --- a/drivers/clocksource/meson6_timer.c
+>>> +++ b/drivers/clocksource/meson6_timer.c
+>>> @@ -10,6 +10,8 @@
+>>>   * warranty of any kind, whether express or implied.
+>>>   */
+>>>
+>>> +#include <linux/bitfield.h>
+>>> +#include <linux/bitops.h>
+>>>  #include <linux/clk.h>
+>>>  #include <linux/clockchips.h>
+>>>  #include <linux/interrupt.h>
+>>> @@ -20,80 +22,102 @@
+>>>  #include <linux/of_address.h>
+>>>  #include <linux/of_irq.h>
+>>>
+>>> -#define CED_ID                       0
+>>> -#define CSD_ID                       4
+>>> -
+>>> -#define TIMER_ISA_MUX                0
+>>> -#define TIMER_ISA_VAL(t)     (((t) + 1) << 2)
+>>> -
+>>> -#define TIMER_INPUT_BIT(t)   (2 * (t))
+>>> -#define TIMER_ENABLE_BIT(t)  (16 + (t))
+>>> -#define TIMER_PERIODIC_BIT(t)        (12 + (t))
+>>> +enum meson6_timera_input_clock {
+>>> +     MESON_TIMERA_CLOCK_1US = 0x0,
+>>> +     MESON_TIMERA_CLOCK_10US = 0x1,
+>>> +     MESON_TIMERA_CLOCK_100US = 0x2,
+>>> +     MESON_TIMERA_CLOCK_1MS = 0x3,
+>>> +};
+>>>
+>>> -#define TIMER_CED_INPUT_MASK (3UL << TIMER_INPUT_BIT(CED_ID))
+>>> -#define TIMER_CSD_INPUT_MASK (7UL << TIMER_INPUT_BIT(CSD_ID))
+>>> +enum meson6_timere_input_clock {
+>>> +     MESON_TIMERE_CLOCK_SYSTEM_CLOCK = 0x0,
+>>> +     MESON_TIMERE_CLOCK_1US = 0x1,
+>>> +     MESON_TIMERE_CLOCK_10US = 0x2,
+>>> +     MESON_TIMERE_CLOCK_100US = 0x3,
+>>> +     MESON_TIMERE_CLOCK_1MS = 0x4,
+>>> +};
+>>
+>> It is not required to specify the values. The standard defines the
+>> default first value is zero, and each enum has the value which is +1 of
+>> the previous one.
+> the idea behind this is: these are values from the datasheet so I
+> wanted to make them easy to find when comparing the datasheet with the
+> driver.
+> I will replace the enums with simple #defines if there are no
+> objections (that also makes it consistent with the other register
+> values in the driver).
 
-Given the current state of the subsystem I think it might worth start to 
-think how to expose the devices under /dev.
-My initial thoughts are to do the same think as for i2c, expose the 
-buses or the i3c_devices and use ioctl for private transfers. Some 
-direct CCC commands can be sent through the /sys as you plan for SETNEWDA .
+No objection to change them to macros :)
 
-What do you think about this?
+  -- Daniel
 
-Best regards,
-Vitor Soares
 
+-- 
+ <http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
