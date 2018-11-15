@@ -2,94 +2,157 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2A33FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:19:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 49599C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:19:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF68F20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:19:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF68F20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
+	by mail.kernel.org (Postfix) with ESMTP id 1AF0220868
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:19:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1AF0220868
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387918AbeKOU0M (ORCPT
+        id S2387985AbeKOU0d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 15:26:12 -0500
-Received: from relay.sw.ru ([185.231.240.75]:39660 "EHLO relay.sw.ru"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387833AbeKOU0M (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 15:26:12 -0500
-Received: from [172.16.24.21]
-        by relay.sw.ru with esmtp (Exim 4.90_1)
-        (envelope-from <vvs@virtuozzo.com>)
-        id 1gNEjh-0006vc-Hw; Thu, 15 Nov 2018 13:18:57 +0300
-From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH 3/3] dlm: memory leaks on error path in dlm_user_request()
-To:     linux-kernel@vger.kernel.org,
-        Christine Caulfield <ccaulfie@redhat.com>,
-        David Teigland <teigland@redhat.com>, cluster-devel@redhat.com
-Message-ID: <537ce9d6-b311-3909-f625-2175eb5cf456@virtuozzo.com>
-Date:   Thu, 15 Nov 2018 13:18:56 +0300
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 15 Nov 2018 15:26:33 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14667 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1731710AbeKOU0d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 15:26:33 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.58])
+        by Forcepoint Email with ESMTP id 5825C802852CA;
+        Thu, 15 Nov 2018 18:19:14 +0800 (CST)
+Received: from localhost.localdomain (10.67.212.75) by
+ DGGEMS413-HUB.china.huawei.com (10.3.19.213) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 15 Nov 2018 18:19:08 +0800
+From:   John Garry <john.garry@huawei.com>
+To:     <jejb@linux.vnet.ibm.com>, <martin.petersen@oracle.com>
+CC:     <hare@suse.com>, <yanaijie@huawei.com>, <linuxarm@huawei.com>,
+        <linux-kernel@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <joe@perches.com>, John Garry <john.garry@huawei.com>
+Subject: [PATCH v2 3/5] scsi: libsas: Drop sas_printk()
+Date:   Thu, 15 Nov 2018 18:20:30 +0800
+Message-ID: <1542277232-135789-4-git-send-email-john.garry@huawei.com>
+X-Mailer: git-send-email 2.8.1
+In-Reply-To: <1542277232-135789-1-git-send-email-john.garry@huawei.com>
+References: <1542277232-135789-1-git-send-email-john.garry@huawei.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-Originating-IP: [10.67.212.75]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to comment in dlm_user_request() ua should be freed
-in dlm_free_lkb() after successful attach to lkb.
+The printk wrapper sas_printk() adds little value now that libsas logs
+already have the "sas" prefix through pr_fmt(fmt), so just use
+pr_notice() directly.
 
-However ua is attached to lkb not in set_lock_args() but later,
-inside request_lock().
+In addition, strings which span multiple lines are reunited.
 
-Fixes 597d0cae0f99 ("[DLM] dlm: user locks")
-Cc: stable@kernel.org # 2.6.19
-
-Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
+Originally-from: Joe Perches <joe@perches.com>
+Signed-off-by: John Garry <john.garry@huawei.com>
 ---
- fs/dlm/lock.c | 14 +++++++-------
- 1 file changed, 7 insertions(+), 7 deletions(-)
+ drivers/scsi/libsas/sas_expander.c | 22 ++++++++++------------
+ drivers/scsi/libsas/sas_init.c     |  4 ++--
+ drivers/scsi/libsas/sas_internal.h |  2 --
+ drivers/scsi/libsas/sas_phy.c      |  8 ++++----
+ 4 files changed, 16 insertions(+), 20 deletions(-)
 
-diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
-index 03d767b94f7b..a928ba008d7d 100644
---- a/fs/dlm/lock.c
-+++ b/fs/dlm/lock.c
-@@ -5795,20 +5795,20 @@ int dlm_user_request(struct dlm_ls *ls, struct dlm_user_args *ua,
- 			goto out;
- 		}
+diff --git a/drivers/scsi/libsas/sas_expander.c b/drivers/scsi/libsas/sas_expander.c
+index 0d1f727..579304d 100644
+--- a/drivers/scsi/libsas/sas_expander.c
++++ b/drivers/scsi/libsas/sas_expander.c
+@@ -393,7 +393,7 @@ static int sas_ex_phy_discover_helper(struct domain_device *dev, u8 *disc_req,
+ 		return res;
+ 	dr = &((struct smp_resp *)disc_resp)->disc;
+ 	if (memcmp(dev->sas_addr, dr->attached_sas_addr, SAS_ADDR_SIZE) == 0) {
+-		sas_printk("Found loopback topology, just ignore it!\n");
++		pr_notice("Found loopback topology, just ignore it!\n");
+ 		return 0;
  	}
--
--	/* After ua is attached to lkb it will be freed by dlm_free_lkb().
--	   When DLM_IFL_USER is set, the dlm knows that this is a userspace
--	   lock and that lkb_astparam is the dlm_user_args structure. */
--
- 	error = set_lock_args(mode, &ua->lksb, flags, namelen, timeout_cs,
- 			      fake_astfn, ua, fake_bastfn, &args);
--	lkb->lkb_flags |= DLM_IFL_USER;
--
- 	if (error) {
-+		kfree(ua->lksb.sb_lvbptr);
-+		ua->lksb.sb_lvbptr = NULL;
-+		kfree(ua);
- 		__put_lkb(ls, lkb);
- 		goto out;
- 	}
+ 	sas_set_ex_phy(dev, single, disc_resp);
+@@ -1262,19 +1262,17 @@ static void sas_print_parent_topology_bug(struct domain_device *child,
+ 	};
+ 	struct domain_device *parent = child->parent;
  
-+	/* After ua is attached to lkb it will be freed by dlm_free_lkb().
-+	   When DLM_IFL_USER is set, the dlm knows that this is a userspace
-+	   lock and that lkb_astparam is the dlm_user_args structure. */
-+	lkb->lkb_flags |= DLM_IFL_USER;
- 	error = request_lock(ls, lkb, name, namelen, &args);
+-	sas_printk("%s ex %016llx phy 0x%x <--> %s ex %016llx "
+-		   "phy 0x%x has %c:%c routing link!\n",
++	pr_notice("%s ex %016llx phy 0x%x <--> %s ex %016llx phy 0x%x has %c:%c routing link!\n",
++		  ex_type[parent->dev_type],
++		  SAS_ADDR(parent->sas_addr),
++		  parent_phy->phy_id,
  
- 	switch (error) {
+-		   ex_type[parent->dev_type],
+-		   SAS_ADDR(parent->sas_addr),
+-		   parent_phy->phy_id,
++		  ex_type[child->dev_type],
++		  SAS_ADDR(child->sas_addr),
++		  child_phy->phy_id,
+ 
+-		   ex_type[child->dev_type],
+-		   SAS_ADDR(child->sas_addr),
+-		   child_phy->phy_id,
+-
+-		   sas_route_char(parent, parent_phy),
+-		   sas_route_char(child, child_phy));
++		  sas_route_char(parent, parent_phy),
++		  sas_route_char(child, child_phy));
+ }
+ 
+ static int sas_check_eeds(struct domain_device *child,
+diff --git a/drivers/scsi/libsas/sas_init.c b/drivers/scsi/libsas/sas_init.c
+index ede0af7..a3c25e2 100644
+--- a/drivers/scsi/libsas/sas_init.c
++++ b/drivers/scsi/libsas/sas_init.c
+@@ -623,8 +623,8 @@ struct asd_sas_event *sas_alloc_event(struct asd_sas_phy *phy)
+ 	if (atomic_read(&phy->event_nr) > phy->ha->event_thres) {
+ 		if (i->dft->lldd_control_phy) {
+ 			if (cmpxchg(&phy->in_shutdown, 0, 1) == 0) {
+-				sas_printk("The phy%02d bursting events, shut it down.\n",
+-					phy->id);
++				pr_notice("The phy%02d bursting events, shut it down.\n",
++					  phy->id);
+ 				sas_notify_phy_event(phy, PHYE_SHUTDOWN);
+ 			}
+ 		} else {
+diff --git a/drivers/scsi/libsas/sas_internal.h b/drivers/scsi/libsas/sas_internal.h
+index 94ebf41..910aa31 100644
+--- a/drivers/scsi/libsas/sas_internal.h
++++ b/drivers/scsi/libsas/sas_internal.h
+@@ -40,8 +40,6 @@
+ 
+ #define pr_fmt(fmt) SAS_FMT fmt
+ 
+-#define sas_printk(fmt, ...) printk(KERN_NOTICE fmt, ## __VA_ARGS__)
+-
+ #define SAS_DPRINTK(fmt, ...) printk(KERN_DEBUG fmt, ## __VA_ARGS__)
+ 
+ 
+diff --git a/drivers/scsi/libsas/sas_phy.c b/drivers/scsi/libsas/sas_phy.c
+index bf3e1b9..0374243 100644
+--- a/drivers/scsi/libsas/sas_phy.c
++++ b/drivers/scsi/libsas/sas_phy.c
+@@ -122,11 +122,11 @@ static void sas_phye_shutdown(struct work_struct *work)
+ 		phy->enabled = 0;
+ 		ret = i->dft->lldd_control_phy(phy, PHY_FUNC_DISABLE, NULL);
+ 		if (ret)
+-			sas_printk("lldd disable phy%02d returned %d\n",
+-				phy->id, ret);
++			pr_notice("lldd disable phy%02d returned %d\n",
++				  phy->id, ret);
+ 	} else
+-		sas_printk("phy%02d is not enabled, cannot shutdown\n",
+-			phy->id);
++		pr_notice("phy%02d is not enabled, cannot shutdown\n",
++			  phy->id);
+ }
+ 
+ /* ---------- Phy class registration ---------- */
 -- 
-2.17.1
+1.9.1
 
