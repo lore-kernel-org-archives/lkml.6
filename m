@@ -2,205 +2,203 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3363BC070C3
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:20:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E308C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:21:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 06173223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:20:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06173223CB
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id E819321780
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:21:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E819321780
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387631AbeKOT1K (ORCPT
+        id S2387600AbeKOT21 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:27:10 -0500
-Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:49397 "EHLO
-        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728719AbeKOT1K (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:27:10 -0500
-Received: from [192.168.2.10] ([212.251.195.8])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id NDokgM65PQPpyNDongmaUX; Thu, 15 Nov 2018 10:20:09 +0100
-Subject: Re: [PATCH v5 0/2] media: platform: Add Aspeed Video Engine Driver
-To:     Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        robh+dt@kernel.org, andrew@aj.id.au, linux-aspeed@lists.ozlabs.org,
-        devicetree@vger.kernel.org, mark.rutland@arm.com,
-        Eddie James <eajames@linux.vnet.ibm.com>
-References: <1542056431-18146-1-git-send-email-eajames@linux.ibm.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <9b21fb44-2248-7921-2205-4a3f43d22d4b@xs4all.nl>
-Date:   Thu, 15 Nov 2018 10:20:06 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
+        Thu, 15 Nov 2018 14:28:27 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:55163 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728634AbeKOT21 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:28:27 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id C7BD92CD7E2;
+        Thu, 15 Nov 2018 09:21:26 +0000 (UTC)
+Received: from [10.36.117.224] (ovpn-117-224.ams2.redhat.com [10.36.117.224])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 245EA1062249;
+        Thu, 15 Nov 2018 09:21:13 +0000 (UTC)
+Subject: Re: [PATCH RFC 2/6] mm: convert PG_balloon to PG_offline
+To:     Mike Rapoport <rppt@linux.ibm.com>
+Cc:     Matthew Wilcox <willy@infradead.org>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+        devel@linuxdriverproject.org, linux-fsdevel@vger.kernel.org,
+        linux-pm@vger.kernel.org, xen-devel@lists.xenproject.org,
+        Jonathan Corbet <corbet@lwn.net>,
+        Alexey Dobriyan <adobriyan@gmail.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Christian Hansen <chansen3@cisco.com>,
+        Vlastimil Babka <vbabka@suse.cz>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        "Michael S. Tsirkin" <mst@redhat.com>,
+        Michal Hocko <mhocko@suse.com>,
+        Pavel Tatashin <pasha.tatashin@oracle.com>,
+        Alexander Duyck <alexander.h.duyck@linux.intel.com>,
+        Naoya Horiguchi <n-horiguchi@ah.jp.nec.com>,
+        Miles Chen <miles.chen@mediatek.com>,
+        David Rientjes <rientjes@google.com>
+References: <20181114211704.6381-1-david@redhat.com>
+ <20181114211704.6381-3-david@redhat.com>
+ <20181114222321.GB1784@bombadil.infradead.org>
+ <b4668081-5aa3-d7f5-6880-d01c75cfc6ae@redhat.com>
+ <20181115020725.GC2353@rapoport-lnx>
+From:   David Hildenbrand <david@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=david@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+ SE+xAvmumFBY
+Organization: Red Hat GmbH
+Message-ID: <5730ee16-9b18-ad3d-0fb3-e9edb55e2298@redhat.com>
+Date:   Thu, 15 Nov 2018 10:21:13 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <1542056431-18146-1-git-send-email-eajames@linux.ibm.com>
+In-Reply-To: <20181115020725.GC2353@rapoport-lnx>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfG45IlNUoxFSXk8AZry1ojryyelM2BpV0vdalIXAJaI1iXXmVvANXXewwq0XnTf9VbA3Pf5ogKm/DczXcUTpi0AwGqHsWmVL4YIKyiyHlvJJe7vmhpWe
- a/WLD2JCW1qkNZmgIm1GnBzXg1+f5hew+PMF4KmMNMhfzi1oSOdLqYS8qTvRpBefeelYOTLi7XrAQlKNj0Ou5JYzgNNOlgBVsd9R+1Sr0UdT2PUyCqxhPM+5
- Of+c0pt70CtBMhnRwj5pvec5hj7k9zkLfCko0tN5b08HdcDCM5x8cX15sN/ptnoRHwFH43HybVW1jC8290Q5JnzVRk7uugfPm1nd1is6Wq4wLFvJhH1m8F6M
- 20HpUUMsOS9isho4oP9lYZ4Vg3fZ//DsysEjXQ7mwi4upmT3yZ2JdJBMIjnjEMxq6Q8i5b6+loGNLpbNsXO2rmGzsNFtxGJ+nIYGvHLN/+fe+h6qi8dO+2c+
- j/0Y6w0LVj5IZJYHZShWiYI9oGqED6FjL0jMlQ==
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.29]); Thu, 15 Nov 2018 09:21:27 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/12/2018 10:00 PM, Eddie James wrote:
-> From: Eddie James <eajames@linux.vnet.ibm.com>
+On 15.11.18 03:07, Mike Rapoport wrote:
+> On Wed, Nov 14, 2018 at 11:49:15PM +0100, David Hildenbrand wrote:
+>> On 14.11.18 23:23, Matthew Wilcox wrote:
+>>> On Wed, Nov 14, 2018 at 10:17:00PM +0100, David Hildenbrand wrote:
+>>>> Rename PG_balloon to PG_offline. This is an indicator that the page is
+>>>> logically offline, the content stale and that it should not be touched
+>>>> (e.g. a hypervisor would have to allocate backing storage in order for the
+>>>> guest to dump an unused page).  We can then e.g. exclude such pages from
+>>>> dumps.
+>>>>
+>>>> In following patches, we will make use of this bit also in other balloon
+>>>> drivers.  While at it, document PGTABLE.
+>>>
+>>> Thank you for documenting PGTABLE.  I didn't realise I also had this
+>>> document to update when I added PGTABLE.
+>>
+>> Thank you for looking into this :)
+>>
+>>>
+>>>> +++ b/Documentation/admin-guide/mm/pagemap.rst
+>>>> @@ -78,6 +78,8 @@ number of times a page is mapped.
+>>>>      23. BALLOON
+>>>>      24. ZERO_PAGE
+>>>>      25. IDLE
+>>>> +    26. PGTABLE
+>>>> +    27. OFFLINE
+>>>
+>>> So the offline *user* bit is new ... even though the *kernel* bit
+>>> just renames the balloon bit.  I'm not sure how I feel about this.
+>>> I'm going to think about it some more.  Could you share your decision
+>>> process with us?
+>>
+>> BALLOON was/is documented as
+>>
+>> "23 - BALLOON
+>>     balloon compaction page
+>> "
+>>
+>> and only includes all virtio-ballon pages after the non-lru migration
+>> feature has been implemented for ballooned pages. Since then, this flag
+>> does basically no longer stands for what it actually was supposed to do.
 > 
-> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
-> can capture and compress video data from digital or analog sources. With
-> the Aspeed chip acting as a service processor, the Video Engine can
-> capture the host processor graphics output.
-> 
-> This series adds a V4L2 driver for the VE, providing the usual V4L2 streaming
-> interface by way of videobuf2. Each frame, the driver triggers the hardware to
-> capture the host graphics output and compress it to JPEG format.
+> Perhaps I missing something, but how the user should interpret "23" when he
+> reads /proc/kpageflags?
 
-I reviewed the driver, and there is still confusion about active timings and
-detected timings. You are really close, but it is still not right.
+Looking at the history in more detail:
 
-The timings returned by G_DV_TIMINGS should never change, unless by calling
-S_DV_TIMINGS. The format returned by G_FMT should never change, unless by
-calling S_DV_TIMINGS (which implicitly changes the format) or S_FMT.
+commit 09316c09dde33aae14f34489d9e3d243ec0d5938
+Author: Konstantin Khlebnikov <k.khlebnikov@samsung.com>
+Date:   Thu Oct 9 15:29:32 2014 -0700
 
-Timings changes from the video or calling QUERY_DV_TIMINGS should have NO
-effect on the timings/format returned by G_DV_TIMINGS/G_FMT.
+    mm/balloon_compaction: add vmstat counters and kpageflags bit
 
-Obviously, if the video timings change, then streaming will halt and an event
-is issued so userspace can take action.
+    Always mark pages with PageBalloon even if balloon compaction is
+disabled
+    and expose this mark in /proc/kpageflags as KPF_BALLOON.
 
-> 
-> v4l-utils HEAD dd3ff81f58c4e1e6f33765dc61ad33c48ae6bb07
-> 
-> v4l2-compliance SHA: not available, 32 bits
 
-<snip>
+So KPF_BALLOON was exposed when virtio-balloon pages were always marked
+with PG_balloon. So the documentation is actually wrong ("balloon page"
+vs. "balloon compaction page").
 
-> Control ioctls (Input 0):
-> 	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
-> 	test VIDIOC_QUERYCTRL: OK
-> 	test VIDIOC_G/S_CTRL: OK
-> 	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
-> 		fail: v4l2-test-controls.cpp(823): failed to find event for control 'Chroma Subsampling'
-
-That's weird. It's not clear to me why this fails.
-
-> 	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
-> 	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
-> 	Standard Controls: 3 Private Controls: 0
-> 
-> Format ioctls (Input 0):
-> 	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
-> 	test VIDIOC_G/S_PARM: OK
-> 	test VIDIOC_G_FBUF: OK (Not Supported)
-> 	test VIDIOC_G_FMT: OK
-> 	test VIDIOC_TRY_FMT: OK
-> 	test VIDIOC_S_FMT: OK
-> 	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
-> 	test Cropping: OK (Not Supported)
-> 	test Composing: OK (Not Supported)
-> 	test Scaling: OK (Not Supported)
-> 
-> Codec ioctls (Input 0):
-> 	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
-> 	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
-> 	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
-> 
-> Buffer ioctls (Input 0):
-> 		fail: v4l2-test-buffers.cpp(422): dmabuf_valid ^ !!(caps & V4L2_BUF_CAP_SUPPORTS_DMABUF)
-
-I updated v4l2-compliance, as this test was a bit too strict.
-
-> 	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: FAIL
-> 	test VIDIOC_EXPBUF: OK (Not Supported)
-> 
-> Test input 0:
-> 
-> Streaming ioctls:
-> 	test read/write: OK
-> 	test blocking wait: OK
-> 	test MMAP: OK                                     
-> 	test USERPTR: OK (Not Supported)
-> 		fail: v4l2-test-buffers.cpp(1102): exp_q.reqbufs(expbuf_node, q.g_buffers())
-> 		fail: v4l2-test-buffers.cpp(1192): setupDmaBuf(expbuf_node, node, q, exp_q)
-
-You need to add:
-
-	.vidioc_expbuf = vb2_ioctl_expbuf,
-
-to aspeed_video_ioctl_ops.
-
-> 	test DMABUF: FAIL
-> 
-> Total: 48, Succeeded: 45, Failed: 3, Warnings: 0
-> 
-> The apparent rate of change to the v4l2/vb2 API makes it difficult to pass
-> these tests. None of the failing tests even ran last time I submitted my
-> series. And V4L2_BUF_CAP_SUPPORTS_DMABUF is undefined in 4.19.
-
-When developing new drivers you should use the master branch of
-https://git.linuxtv.org/media_tree.git/
-
-The v4l-utils repo is kept in sync with the latest code from that master branch.
-
-Regards,
-
-	Hans
+I have no idea who actually used that information. I suspect this was
+just some debugging aid.
 
 > 
-> Changes since v4:
->  - Set real min and max resolution in enum_dv_timings
->  - Add check for vb2_is_busy before settings the timings
->  - Set max frame rate to the actual max rather than max + 1
->  - Correct the input status to 0.
->  - Rework resolution change to only set the relevant h/w regs during startup or
->    when set_timings is called.
+>> To not break uapi I decided to not rename it but instead to add a new flag.
 > 
-> Changes since v3:
->  - Switch update reg function to use u32 clear rather than unsigned long mask
->  - Add timing information from host VGA signal
->  - Fix binding documentation mispelling
->  - Fix upper case hex values
->  - Add wait_prepare and wait_finish
->  - Set buffer state to queued (rather than error) if streaming fails to start
->  - Switch engine busy print statement to error
->  - Removed a couple unecessary type assignments in v4l2 ioctls
->  - Added query_dv_timings, fixed get_dv_timings
->  - Corrected source change event to fire if and only if size actually changes
->  - Locked open and release
-> 
-> Changes since v2:
->  - Switch to streaming interface. This involved a lot of changes.
->  - Rework memory allocation due to using videobuf2 buffers, but also only
->    allocate the necessary size of source buffer rather than the max size
-> 
-> Changes since v1:
->  - Removed le32_to_cpu calls for JPEG header data
->  - Reworked v4l2 ioctls to be compliant.
->  - Added JPEG controls
->  - Updated devicetree docs according to Rob's suggestions.
->  - Added myself to MAINTAINERS
-> 
-> Eddie James (2):
->   dt-bindings: media: Add Aspeed Video Engine binding documentation
->   media: platform: Add Aspeed Video Engine driver
-> 
->  .../devicetree/bindings/media/aspeed-video.txt     |   26 +
->  MAINTAINERS                                        |    8 +
->  drivers/media/platform/Kconfig                     |    9 +
->  drivers/media/platform/Makefile                    |    1 +
->  drivers/media/platform/aspeed-video.c              | 1711 ++++++++++++++++++++
->  5 files changed, 1755 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
->  create mode 100644 drivers/media/platform/aspeed-video.c
-> 
+> I've got a feeling that uapi was anyway changed for the BALLON flag
+> meaning.
 
+Yes. If we *replace* KPF_BALLOON by KPF_OFFLINE
+
+a) Some applications might no longer compile (I guess that's ok)
+b) Some old applications will treat KPF_OFFLINE like KPF_BALLOON (which
+should at least for virtio-balloon usage until now be fine - it is just
+more generic)
+
+So I guess it's up to Maintainers/Matthew to decide :)
+
+-- 
+
+Thanks,
+
+David / dhildenb
