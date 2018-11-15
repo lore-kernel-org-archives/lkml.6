@@ -2,87 +2,80 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39265C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:23:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6BC69C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:24:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0719B214F1
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:23:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0719B214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3CFAD214F1
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:24:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CFAD214F1
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387950AbeKOWap (ORCPT
+        id S2388168AbeKOWbp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 17:30:45 -0500
-Received: from mx2.suse.de ([195.135.220.15]:53090 "EHLO mx1.suse.de"
+        Thu, 15 Nov 2018 17:31:45 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:53406 "EHLO huawei.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728699AbeKOWap (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 17:30:45 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 64AB8B023;
-        Thu, 15 Nov 2018 12:23:05 +0000 (UTC)
-Date:   Thu, 15 Nov 2018 13:23:02 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     David Hildenbrand <david@redhat.com>
-Cc:     linux-mm@kvack.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org, devel@linuxdriverproject.org,
-        linux-fsdevel@vger.kernel.org, linux-pm@vger.kernel.org,
-        xen-devel@lists.xenproject.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Matthew Wilcox <willy@infradead.org>,
-        "Michael S. Tsirkin" <mst@redhat.com>
-Subject: Re: [PATCH RFC 6/6] PM / Hibernate: exclude all PageOffline() pages
-Message-ID: <20181115122302.GR23831@dhcp22.suse.cz>
-References: <20181114211704.6381-1-david@redhat.com>
- <20181114211704.6381-7-david@redhat.com>
+        id S1728699AbeKOWbp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 17:31:45 -0500
+Received: from DGGEMS404-HUB.china.huawei.com (unknown [172.30.72.59])
+        by Forcepoint Email with ESMTP id 17FCACD583125;
+        Thu, 15 Nov 2018 20:24:02 +0800 (CST)
+Received: from localhost.localdomain.localdomain (10.175.113.25) by
+ DGGEMS404-HUB.china.huawei.com (10.3.19.204) with Microsoft SMTP Server id
+ 14.3.408.0; Thu, 15 Nov 2018 20:23:55 +0800
+From:   YueHaibing <yuehaibing@huawei.com>
+To:     Scott Wood <oss@buserror.net>,
+        Kumar Gala <galak@kernel.crashing.org>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>
+CC:     Yue Haibing <yuehaibing@huawei.com>,
+        <linuxppc-dev@lists.ozlabs.org>, <linux-kernel@vger.kernel.org>,
+        <kernel-janitors@vger.kernel.org>
+Subject: [PATCH -next] powerpc/platforms/85xx: drop pointless static qualifier
+Date:   Thu, 15 Nov 2018 12:33:16 +0000
+Message-ID: <1542285196-156161-1-git-send-email-yuehaibing@huawei.com>
+X-Mailer: git-send-email 1.8.3.1
+Content-Type: text/plain; charset="ISO-8859-1"
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181114211704.6381-7-david@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Originating-IP: [10.175.113.25]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed 14-11-18 22:17:04, David Hildenbrand wrote:
-[...]
-> diff --git a/kernel/power/snapshot.c b/kernel/power/snapshot.c
-> index b0308a2c6000..01db1d13481a 100644
-> --- a/kernel/power/snapshot.c
-> +++ b/kernel/power/snapshot.c
-> @@ -1222,7 +1222,7 @@ static struct page *saveable_highmem_page(struct zone *zone, unsigned long pfn)
->  	BUG_ON(!PageHighMem(page));
->  
->  	if (swsusp_page_is_forbidden(page) ||  swsusp_page_is_free(page) ||
-> -	    PageReserved(page))
-> +	    PageReserved(page) || PageOffline(page))
->  		return NULL;
->  
->  	if (page_is_guard(page))
-> @@ -1286,6 +1286,9 @@ static struct page *saveable_page(struct zone *zone, unsigned long pfn)
->  	if (swsusp_page_is_forbidden(page) || swsusp_page_is_free(page))
->  		return NULL;
->  
-> +	if (PageOffline(page))
-> +		return NULL;
-> +
->  	if (PageReserved(page)
->  	    && (!kernel_page_present(page) || pfn_is_nosave(pfn)))
->  		return NULL;
+From: Yue Haibing <yuehaibing@huawei.com>
 
-Btw. now that you are touching this file could you also make
-s@pfn_to_page@pfn_to_online_page@ please? We really do not want to touch
-offline pfn ranges in general. A separate patch for that of course.
+There is no need to have the 'void __iomem *cpld_base' variable static
+since new value always be assigned before use it.
 
-Thanks!
--- 
-Michal Hocko
-SUSE Labs
+Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
+---
+ arch/powerpc/platforms/85xx/t1042rdb_diu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/platforms/85xx/t1042rdb_diu.c b/arch/powerpc/platforms/85xx/t1042rdb_diu.c
+index dac36ba..2d16521 100644
+--- a/arch/powerpc/platforms/85xx/t1042rdb_diu.c
++++ b/arch/powerpc/platforms/85xx/t1042rdb_diu.c
+@@ -39,7 +39,7 @@
+  */
+ static void t1042rdb_set_monitor_port(enum fsl_diu_monitor_port port)
+ {
+-	static void __iomem *cpld_base;
++	void __iomem *cpld_base;
+ 
+ 	cpld_base = of_iomap(cpld_node, 0);
+ 	if (!cpld_base) {
+
+
+
+
+
