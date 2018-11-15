@@ -2,91 +2,101 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,PLING_QUERY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 166C0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:06:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 15A19C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:06:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99E622083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:06:11 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D12A12083E
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 02:06:32 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IyxrDmZJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99E622083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="knuktajb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D12A12083E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728239AbeKOML6 (ORCPT
+        id S1728371AbeKOMMT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 07:11:58 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:43199 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725895AbeKOML6 (ORCPT
+        Thu, 15 Nov 2018 07:12:19 -0500
+Received: from mail-it1-f195.google.com ([209.85.166.195]:51951 "EHLO
+        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728257AbeKOMMT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 07:11:58 -0500
-Received: by mail-io1-f67.google.com with SMTP id t81-v6so13296407iod.10;
-        Wed, 14 Nov 2018 18:06:09 -0800 (PST)
+        Thu, 15 Nov 2018 07:12:19 -0500
+Received: by mail-it1-f195.google.com with SMTP id f84-v6so5882703ita.1
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 18:06:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
+        d=chromium.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=XUz/XSl6RoQ53EWVZFImh1lTtVq5//CnDHoDtignLls=;
-        b=IyxrDmZJ5+DzQdqvWM/ucI02P3PU2iJNW2gHZKXV5S95ZLdIINj0vIYhFVOlW4ntTT
-         cV6sCrKyOJPN/GNM4mmIc1C+7b5+EqUgyc6017e6iKVDXaF7mxvtWtAoSpaHmQog5FZ4
-         tsVM/X+6B18exMADAESxspiqVx+BgSdw9erQeibtHKmyq8bB9bm8uDa+fllNE8KBMWRG
-         ARojpwe5U7vyGXQnCMcAryt1uagQps2KLay1mDpP2M7vIxSVMffJBHrQsAafpSAOipcN
-         d8JLAWEUYTLMB0zzRVlloEZQULgIEaFw3DqSmktrhCRnfCrDcZlioTKP8SOkW/X8f+eQ
-         9iaA==
+        bh=oE4/LR38JL0XHDSAaadS2KXyKURyuNsWg/bnBKhGqdk=;
+        b=knuktajb4ImdZxQsT0K5u9rIXXMkT+wo02DPb9ysE7sM5LOrv12FET6QqqgmtyZiRf
+         koKxMaJuB+8AV9pxwR1EZ9RmuVc6tbvtUJxVLoIjLjE0609cT3nM6LAxatXGZuCFDsow
+         X4lhjEr7R8KBU3KopXawi355anz3/gSCB4FNI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=XUz/XSl6RoQ53EWVZFImh1lTtVq5//CnDHoDtignLls=;
-        b=tNs6Bt4L37QjEpsjoKpkjfOLfS/HFIBM0pUX8bGYIeVechjXa4v/ALlkUX6fWEQZeI
-         b1arCv61tjO7gvOfTA5Yfq219F6DWz8/nkqsnqbqlUXq+x48fmf7SlREBuK0bAT+/PbO
-         Gh2u1NWHWLMs0fHLXLtOE9CE/cVMjU++tu2fUrqvNlicWwAsMA1a8DN7KzJ19/uh9A2A
-         sSRTbejlt8zV1xOROdqMV5BFKrSsgwXqdWU7ZNXJzNp9fbdyOxLN+rCbhNeQmaIPWeaN
-         ZZJV/hRlIm9362XiAjlSKMbkfWGOlkz7AB0xjgrkDZtIgcBAXXMQqPcj7QNGt4dr7Z3d
-         OgoA==
-X-Gm-Message-State: AGRZ1gKDGsCXf+Hnm9PghaGQjMviHSIxjdOmWC5KfTlE4RobllMvP5rs
-        NyqLOFTHnUNDwjnCInDZWsdDyYdkc9RGs/87Tw8=
-X-Google-Smtp-Source: AJdET5fGm7wRVo26aUsFBFy7FCSbGFmJ2028p8VSMU/YxexAavTkr53LdQSv0pPDFMzngzBS3VZ/mP0Bqafi4C2NsM8=
-X-Received: by 2002:a6b:5b02:: with SMTP id v2-v6mr3686730ioh.157.1542247568790;
- Wed, 14 Nov 2018 18:06:08 -0800 (PST)
+        bh=oE4/LR38JL0XHDSAaadS2KXyKURyuNsWg/bnBKhGqdk=;
+        b=pBiWgIuUSRUEVRoYo5S7B1uOgmGabFJh7I+Pzb4LRIsnH0sBSjLCMUdzKtr4GQaaKq
+         jbpC93WdDkKv6rWnja2ZpbRz+t/nPh+ikFIJiVNcf3381drlqJI351Aqc/fGrlcaUIX8
+         muIs7JQmT9LdaSG4dMWoudIy6uH6ikAXeuscCPuR7bsFy2uXZXLpViZERCl0SNp+2//P
+         i2+ozpgGfm+mLkT7jzqHp05xPrKULRgOcUe1sucy0r1FmSLjP4dDves1LgwSzkYsnoxC
+         UiDo79onMcVLFaJIOfV33eDsUdNsCU/FP2daDvyjNRdOxGj69/UKHibShU43oAoGMLbv
+         CgwA==
+X-Gm-Message-State: AGRZ1gL4Sw23+mv5j9ImZJK2JD9LIe14ccpydkUkzltN95ySDPQWiK2t
+        DOFC/2sgievzcN5QoAkdNoLwEn7YDoY=
+X-Google-Smtp-Source: AFSGD/VdzOMmH0x7SSc4guHiFzQI/jXSHzvBYUSR9dm8iOSnEHFFHb/R1llbTDRakNrORryDavtOnQ==
+X-Received: by 2002:a24:9582:: with SMTP id m124-v6mr4006890itd.109.1542247589643;
+        Wed, 14 Nov 2018 18:06:29 -0800 (PST)
+Received: from mail-it1-f178.google.com (mail-it1-f178.google.com. [209.85.166.178])
+        by smtp.gmail.com with ESMTPSA id s22-v6sm8526343iog.67.2018.11.14.18.06.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 14 Nov 2018 18:06:28 -0800 (PST)
+Received: by mail-it1-f178.google.com with SMTP id o19so17963953itg.5
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 18:06:28 -0800 (PST)
+X-Received: by 2002:a24:9582:: with SMTP id m124-v6mr4006824itd.109.1542247587657;
+ Wed, 14 Nov 2018 18:06:27 -0800 (PST)
 MIME-Version: 1.0
-References: <2335309.gnWok9HYb4@agathebauer> <CAOBGo4zirLiKX8VcROAE=kAD0+qkF0E-cBv9DtBiQr=_obDv5w@mail.gmail.com>
- <20181112032637.GG6218@tassilo.jf.intel.com> <31474933.dcNFsqGoRn@agathebauer>
-In-Reply-To: <31474933.dcNFsqGoRn@agathebauer>
-From:   Travis Downs <travis.downs@gmail.com>
-Date:   Wed, 14 Nov 2018 21:05:32 -0500
-Message-ID: <CAOBGo4wPeobp90eqZF1apZxHUn-dnh6L3Rpt_=beR49o3XHY7g@mail.gmail.com>
-Subject: Re: PEBS level 2/3 breaks dwarf unwinding! [WAS: Re: Broken dwarf
- unwinding - wrong stack pointer register value?]
-To:     Milian Wolff <milian.wolff@kdab.com>
-Cc:     ak@linux.intel.com, jolsa@redhat.com, linux-kernel@vger.kernel.org,
-        jolsa@kernel.org, namhyung@kernel.org,
-        linux-perf-users@vger.kernel.org, acme@kernel.org
+References: <20181110.085826.230851261@genki.is> <m24lcpjjss.fsf@linux-m68k.org>
+ <20181110.201050.925673938@genki.is> <CAJ1xhMXDFAdiWMV6ODcJM8bfjs-ddyv8utf6N+Yh7+-Ne-KaHw@mail.gmail.com>
+ <20181111.174140.002789201@genki.is> <CAJ1xhMUA4GUzeDANqR1WafELmEpE+-V569t7e0xCotTG2Lvbyw@mail.gmail.com>
+ <CAJ1xhMWw8Mi2dubTFNOxhoP6hk+__Qjo-0+9sQbpqP5K-n4mVw@mail.gmail.com>
+ <20181113000938.GA16783@google.com> <CAJ1xhMVFt6bYgwY+N5VoFXNpm5kS1j_HV8-ZS8SkavNgZx1HOg@mail.gmail.com>
+ <CA+ASDXPcYp_joFeyGQ7TXFBSK-7i6bNFzaA1z=YYSDEjyMABdg@mail.gmail.com>
+ <20181113190335.GA50985@google.com> <878t1w7hzi.fsf@igel.home>
+In-Reply-To: <878t1w7hzi.fsf@igel.home>
+From:   Brian Norris <briannorris@chromium.org>
+Date:   Wed, 14 Nov 2018 18:06:16 -0800
+X-Gmail-Original-Message-ID: <CA+ASDXMuovgar22Z=sTcY=EV4KFtpwpjgdFOqvqAUYZEykzcWw@mail.gmail.com>
+Message-ID: <CA+ASDXMuovgar22Z=sTcY=EV4KFtpwpjgdFOqvqAUYZEykzcWw@mail.gmail.com>
+Subject: Re: [PATCH v2] scripts/setlocalversion: Improve -dirty check with
+ git-status --no-optional-locks
+To:     schwab@linux-m68k.org
+Cc:     Alexander Kapshuk <alexander.kapshuk@gmail.com>, sky@genki.is,
+        yamada.masahiro@socionext.com,
+        Doug Anderson <dianders@chromium.org>,
+        Guenter Roeck <linux@roeck-us.net>, lists@nerdbynature.de,
+        Linux Kernel <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 8:20 AM Milian Wolff <milian.wolff@kdab.com> wrote:
+On Tue, Nov 13, 2018 at 2:03 PM Andreas Schwab <schwab@linux-m68k.org> wrote:
+>
+> On Nov 13 2018, Brian Norris <briannorris@chromium.org> wrote:
+>
+> > +             } | grep -qv '^\(.. \)\?scripts/package'; then
+>
+> \? is a GNU extension, so if you want to stay portable you need to
+> switch to ERE.
 
-> 3) I suggest we always keep the first frame and sample IP from the user regs,
-> i.e. the accurate PEBS/IBS IP. Then we add the following frames from unwinding
-> the ustack with the iregs.
+Ack. That's what I get for reading the GNU man pages... I'll send a v3.
 
-Does this mean that the displayed unwind will sometimes be
-"impossible" to have actually be generated from a consistent execution
-of the user program?
-
-For example, the top frame (from PEBS) and second frame (from iregs)
-may be inconsistent in that the latter function never calls the first.
-At this point it would be good to have an indication at the top frame
-is from a different source than the rest of the frames, lest the user
-pull is hair out trying to determine how function X seems to call
-function Y despite that not being the case in the source.
+Thanks,
+Brian
