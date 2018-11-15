@@ -2,112 +2,364 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C9293C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:14:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFC8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:16:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C57B21780
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:14:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C57B21780
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id BB3BF21780
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:16:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sqtfB5kD"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BB3BF21780
+Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387993AbeKOVVb (ORCPT
+        id S2387939AbeKOVX1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 16:21:31 -0500
-Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:60342 "EHLO
-        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725827AbeKOVVb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 16:21:31 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9B497A78;
-        Thu, 15 Nov 2018 03:14:06 -0800 (PST)
-Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 82A9D3F718;
-        Thu, 15 Nov 2018 03:14:03 -0800 (PST)
-Date:   Thu, 15 Nov 2018 11:13:56 +0000
-From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Lukas Wunner <lukas@wunner.de>, iommu@lists.linux-foundation.org,
-        Joerg Roedel <joro@8bytes.org>,
-        David Woodhouse <dwmw2@infradead.org>,
-        Lu Baolu <baolu.lu@linux.intel.com>,
-        Ashok Raj <ashok.raj@intel.com>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Jacob jun Pan <jacob.jun.pan@intel.com>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        Michael Jamet <michael.jamet@intel.com>,
-        Yehezkel Bernat <YehezkelShB@gmail.com>,
-        Christian Kellner <ckellner@redhat.com>,
-        Mario.Limonciello@dell.com,
-        Anthony Wong <anthony.wong@canonical.com>,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
-Message-ID: <20181115111356.GA599@e107981-ln.cambridge.arm.com>
-References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
- <20181112160628.86620-2-mika.westerberg@linux.intel.com>
- <20181112180203.lx72gjfplb6xlur7@wunner.de>
- <20181113105636.GB11202@e107981-ln.cambridge.arm.com>
- <20181113112700.GT2500@lahna.fi.intel.com>
- <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
- <20181115102239.GU2500@lahna.fi.intel.com>
+        Thu, 15 Nov 2018 16:23:27 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:38589 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726664AbeKOVX1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 16:23:27 -0500
+Received: by mail-vk1-f194.google.com with SMTP id w72so4383757vkd.5
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 03:16:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=V59VMKiAX1QuR9YDIgWhnOMXhEHzzOEkMggGrkfprOI=;
+        b=sqtfB5kDgjGn7Hh/2C6LmUQBQknL4KPDIKlhaSh3wL/51cWRLuYWN9vFEOoe1bEI8e
+         5g/gfNGw/oQRUplMb/sxxhED5oTgLitzXFgz+vRhkvM9FI8814GCdFSiXsip10jyNXL6
+         CJrYpYnEl3c5JVlio7ZLV/qzx6T2ZeSQkztC6Fr2a2Qu4d5Lbghnyjy60rkmlPnjjNol
+         S6uLE6+7ONnTiUHTpOPeax676aZb0F7c1u6yOav5MyynlXU6nhKxGiB45eARIXCz7DYp
+         i/Xs2n9TIcXn1BuW+UH03xLcJv+9nod5kLVsAy5ecUm2Y5iyL1+pZKAeJpy87YNrzIwx
+         DW3Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=V59VMKiAX1QuR9YDIgWhnOMXhEHzzOEkMggGrkfprOI=;
+        b=TJG4j+ab8S/wcWGqh/nYm7VXbpJwDNeFu/Bj4J8A26hUw0iXQghy3NvPXGwbjvQOz7
+         cm4Kx32YeLO/zXAOZzgq7V0fya33nGfoUIyNYkw6HrwWxiJuuvvpw7S8AlcpwUPTbxEL
+         XzjAH3icfcgAuhBLE55v6gqtfN7L1Dna5/dvAQlW0vQ8xEqLAV/ytAYM5F/OTs3DQjER
+         HOcmy0PWdqR7t4FRkeEu8k2z+g25dQbC3njoK3Sp8+Xv4PTSNfOHrjR+jzu+Ji3YXJhL
+         35wouZj21UhT1g78bOWbtKguoMVo4rtQOBIyG/MU/P41K/Xrivj+TVeyuESLY2iJi4zn
+         fFvA==
+X-Gm-Message-State: AGRZ1gJ5XjrYFI0i9y7oKAjTeiZO9+xcIrZNOx9Stdx60d6kIC+5Cc19
+        N5ilKHWNWefgpHffaI75AsWoHWe49E4BQT4W6tcdpA==
+X-Google-Smtp-Source: AJdET5e/huIZ8Xw5bHTDXhDZRrbtZVcf3iODvODBWw0FCjYOlUcL1RSsn4Sdl36MBc2VPaJvxp//bqf3StwWEEjqkzA=
+X-Received: by 2002:a1f:4886:: with SMTP id v128mr2461044vka.8.1542280559987;
+ Thu, 15 Nov 2018 03:15:59 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115102239.GU2500@lahna.fi.intel.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
+References: <CAEAjamtSGa6hVqe2QDTONjHp7H8qCvMYYuFSTswiSEnx5oUAeQ@mail.gmail.com>
+ <20181114150859.GT4170@linux.ibm.com> <CAG_fn=VX0xfxzY2H=sb7miOGRCS0qcxiGg9xp1yJ10SGhSN2tg@mail.gmail.com>
+ <20181114160531.GV4170@linux.ibm.com> <CAEAjamsMGks-xfFzfRTg5PaeRAU=oB5z+mQV=62jAm3d6Y7BNg@mail.gmail.com>
+In-Reply-To: <CAEAjamsMGks-xfFzfRTg5PaeRAU=oB5z+mQV=62jAm3d6Y7BNg@mail.gmail.com>
+From:   Alexander Potapenko <glider@google.com>
+Date:   Thu, 15 Nov 2018 12:15:48 +0100
+Message-ID: <CAG_fn=WkM=1bcrZujb-trMqBq5m+LwDi1+x-oNenmE0qKB1V4g@mail.gmail.com>
+Subject: Re: KMSAN: uninit-value in rcu_accelerate_cbs / KMSAN: uninit-value
+ in rcu_process_callbacks
+To:     Kyungtae Kim <kt0755@gmail.com>
+Cc:     Paul McKenney <paulmck@linux.ibm.com>, josh@joshtriplett.org,
+        Steven Rostedt <rostedt@goodmis.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        jiangshanlai@gmail.com, Byoungyoung Lee <lifeasageek@gmail.com>,
+        DaeRyong Jeong <threeearcat@gmail.com>,
+        syzkaller@googlegroups.com, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 12:22:39PM +0200, Mika Westerberg wrote:
-> On Tue, Nov 13, 2018 at 11:45:36AM +0000, Lorenzo Pieralisi wrote:
-> > On Tue, Nov 13, 2018 at 01:27:00PM +0200, Mika Westerberg wrote:
-> > 
-> > [...]
-> > 
-> > > > To be frank the concept (and Microsoft _DSD bindings) seems a bit vague
-> > > > and not thoroughly defined and I would question its detection at
-> > > > PCI/ACPI core level, I would hope this can be clarified at ACPI
-> > > > specification level, at least.
-> > > 
-> > > I guess that is the way they envision to use _DSD. Instead of having
-> > > single UUID that covers all properties (like what we have with device
-> > > properties) they have one UUID per property "class". I certainly hope we
-> > > don't need to keep extending prp_guids[] array each time they invent
-> > > another "class" of properties.
-> > 
-> > It is even worse than that. This is a unilateral/obscure change that
-> > won't be part of ACPI specifications (I guess it was easier to add a
-> > UUID than add this to the ACPI specifications through the AWSG) but it
-> > is still supposed to be applicable to ACPI PCI bindings on any
-> > platforms/arches; this way of adding bindings does not work and it
-> > has to be rectified.
-> 
-> I agree.
-> 
-> For the existing property "classes" such as the one here I don't think
-> we can do anything. There are systems already with these included in
-> their ACPI tables.
-> 
-> I wonder if you have any objections regarding this patch?
+On Thu, Nov 15, 2018 at 5:05 AM Kyungtae Kim <kt0755@gmail.com> wrote:
+>
+> Thank you for all your comments.
+>
+> Thanks,
+> Kyungtae Kim
+> On Wed, Nov 14, 2018 at 11:05 AM Paul E. McKenney <paulmck@linux.ibm.com>=
+ wrote:
+> >
+> > On Wed, Nov 14, 2018 at 04:31:11PM +0100, Alexander Potapenko wrote:
+> > > On Wed, Nov 14, 2018 at 4:09 PM Paul E. McKenney <paulmck@linux.ibm.c=
+om> wrote:
+> > > >
+> > > > On Wed, Nov 14, 2018 at 04:03:33AM -0500, Kyungtae Kim wrote:
+> > > > > We report two crashes in v4.19-rc8 (4.20-rc1 as well, I guess):
+> > > > > (Unfortunately, there is no repro for those.)
+> > > > >
+> > > > > The two crashes seem to share the same issue.
+> > > > > In both cases, (uninitialized) memory access violation occurs
+> > > > > when "rdp->cblist" is about to be accessed (kernel/rcu/tree.c:283=
+8,1728).
+> > > > > I guess those are freed before the use, but I still haven't figur=
+ed
+> > > > > out the reason why.
+> > > > > I'm looking forward to some help.
+> > >
+> > > First of all, I'd avoid reporting KMSAN bugs without clear reproducer=
+s.
+> > > The tool is still in beta and may still give false positives due to
+> > > either missed initialization or rare memory corruptions.
+> >
+> > OK, I will set this aside, then, thank you!
+> >
+> >                                                         Thanx, Paul
+> >
+> > > > You lost me on this one.  In both cases, rdp references a per-CPU
+> > > > variable that is implicitly initialized to all zeroes, due to being
+> > > > (sort of) a C-language global.
+> > > >
+> > > > If a callback is queued early, then the following lines in __call_r=
+cu()
+> > > > will make an honest list of that field because of the :
+> > > >
+> > > >                 if (rcu_segcblist_empty(&rdp->cblist))
+> > > >                         rcu_segcblist_init(&rdp->cblist);
+> > > >
+> > > > Otherwise, when rcu_init() is invoked during early boot, we have th=
+is
+> > > > in rcu_init_percpu_data(), which is called from rcutree_prepare_cpu=
+()
+> > > > which is called from rcu_init(), which is called from start_kernel(=
+):
+> > > >
+> > > >         if (rcu_segcblist_empty(&rdp->cblist) && /* No early-boot C=
+Bs? */
+> > > >             !init_nocb_callback_list(rdp))
+> > > >                 rcu_segcblist_init(&rdp->cblist);  /* Re-enable cal=
+lbacks. */
+> > > >
+> > > > So either init_nocb_callback_list() initializes the alternative cal=
+lback
+> > > > lists for a no-CBs CPU or rcu_segcblist_init() again makes an hones=
+t
+> > > > list of that field.
+> > > >
+> > > > My guess is that your tool is missing the
+> > > >
+> > > >         rdp =3D this_cpu_ptr(rsp->rda);
+> > > >
+> > > > in the __call_rcu() case, and also missing the
+> > > >
+> > > >         struct rcu_data *rdp =3D per_cpu_ptr(rsp->rda, cpu);
+> > > >
+> > > > Note that the ->rda field is explicitly compile-time initialized to
+> > > > the base address of the per-CPU variable, which is rcu_preempt_data=
+,
+> > > > rcu_bh_data, or rcu_sched_data, depending on which RCU flavor is at=
+ hand.
+> > > > (In v4.20-rc1, these are all merged into a single flavor to rule th=
+em all.)
+> > > >
+> > > > Alternatively, your tool might be missing the implicit initializati=
+on
+> > > > of per-CPU variables.
+> > > This used to be fine, but after rebasing to v4.20-rc2 I also started
+> > > seeing strange reports on per-CPU variables. Taking a look.
+No, this was a bug in kmsan_check_memory(), which isn't involved in
+the bug reported by Kyungtae Kim.
+Therefore I'm assuming per-CPU variables are innocent, but would still
+love to see a reproducer for the bug.
+> > > > Or maybe I am missing something.  If so, please let me know what it=
+ is.
+> > > >
+> > > >                                                         Thanx, Paul
+> > > >
+> > > > > Crash log 1
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > BUG: KMSAN: uninit-value in __rcu_process_callbacks
+> > > > > kernel/rcu/tree.c:2838 [inline]
+> > > > > BUG: KMSAN: uninit-value in rcu_process_callbacks+0x5ac/0x1cb0
+> > > > > kernel/rcu/tree.c:2864
+> > > > > CPU: 0 PID: 20 Comm: kauditd Not tainted 4.19.0-rc8+ #18
+> > > > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs=
+ 01/01/2011
+> > > > > Call Trace:
+> > > > >  <IRQ>
+> > > > >  __dump_stack lib/dump_stack.c:77 [inline]
+> > > > >  dump_stack+0x305/0x460 lib/dump_stack.c:113
+> > > > >  kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
+> > > > >  __msan_warning+0x7d/0xe0 mm/kmsan/kmsan_instr.c:500
+> > > > >  __rcu_process_callbacks kernel/rcu/tree.c:2838 [inline]
+> > > > >  rcu_process_callbacks+0x5ac/0x1cb0 kernel/rcu/tree.c:2864
+> > > > >  __do_softirq+0x5ff/0xa55 kernel/softirq.c:292
+> > > > >  invoke_softirq kernel/softirq.c:373 [inline]
+> > > > >  irq_exit+0x22d/0x270 kernel/softirq.c:414
+> > > > >  exiting_irq+0xe/0x10 arch/x86/include/asm/apic.h:536
+> > > > >  smp_apic_timer_interrupt+0x64/0x90 arch/x86/kernel/apic/apic.c:1=
+059
+> > > > >  apic_timer_interrupt+0xf/0x20 arch/x86/entry/entry_64.S:869
+> > > > >  </IRQ>
+> > > > > RIP: 0010:finish_lock_switch+0x2b/0x40 kernel/sched/core.c:2578
+> > > > > Code: 48 89 e5 53 48 89 fb e8 e3 43 9a 00 8b b8 88 0c 00 00 48 8b=
+ 00
+> > > > > 48 85 c0 75 12 48 89 df e8 7d 38 9a 00 c6 00 00 c6 03 00 fb 5b <5=
+d> c3
+> > > > > e8 de 42 9a 00 eb e7 66 66 66 2e 0f 1f 84 00 00 00 00 00 55
+> > > > > RSP: 0018:ffff88010622fca0 EFLAGS: 00000286 ORIG_RAX: fffffffffff=
+fff13
+> > > > > RAX: ffff8801105bcc40 RBX: ffff8801061554c0 RCX: ffff8801105bdc40
+> > > > > RDX: ffff8801105bdc40 RSI: aaaaaaaaaaaab000 RDI: ffffea00077ec560
+> > > > > RBP: ffff88010622fca0 R08: ffffffff7fffffff R09: 0000000000000002
+> > > > > R10: 0000000000000000 R11: 0000000000000000 R12: ffff8800751cb880
+> > > > > R13: 0000000000000000 R14: ffff880106155db8 R15: ffff88013fcb9c40
+> > > > >  finish_task_switch+0xe3/0x270 kernel/sched/core.c:2679
+> > > > >  context_switch kernel/sched/core.c:2832 [inline]
+> > > > >  __schedule+0x78f/0x8f0 kernel/sched/core.c:3479
+> > > > >  schedule+0x1cc/0x300 kernel/sched/core.c:3523
+> > > > >  kauditd_thread+0xc64/0xee0 kernel/audit.c:889
+> > > > >  kthread+0x5b1/0x5f0 kernel/kthread.c:247
+> > > > >  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+> > > > >
+> > > > > Uninit was created at:
+> > > > >  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:255 [inline]
+> > > > >  kmsan_internal_alloc_meta_for_pages+0x157/0x730 mm/kmsan/kmsan.c=
+:693
+> > > > >  kmsan_alloc_page+0x80/0xe0 mm/kmsan/kmsan_hooks.c:320
+> > > > >  __alloc_pages_nodemask+0x128c/0x69b0 mm/page_alloc.c:4416
+> > > > >  alloc_pages_current+0x51f/0x760 mm/mempolicy.c:2093
+> > > > >  alloc_pages include/linux/gfp.h:511 [inline]
+> > > > >  alloc_slab_page mm/slub.c:1459 [inline]
+> > > > >  allocate_slab mm/slub.c:1604 [inline]
+> > > > >  new_slab+0x552/0x1f30 mm/slub.c:1675
+> > > > >  new_slab_objects mm/slub.c:2438 [inline]
+> > > > >  ___slab_alloc+0x1414/0x1dd0 mm/slub.c:2590
+> > > > >  __slab_alloc mm/slub.c:2630 [inline]
+> > > > >  slab_alloc_node mm/slub.c:2693 [inline]
+> > > > >  slab_alloc mm/slub.c:2735 [inline]
+> > > > >  kmem_cache_alloc+0xc9b/0xda0 mm/slub.c:2740
+> > > > >  kmem_cache_zalloc include/linux/slab.h:697 [inline]
+> > > > >  avc_alloc_node+0x109/0xb90 security/selinux/avc.c:572
+> > > > >  avc_update_node+0x172/0x1ee0 security/selinux/avc.c:859
+> > > > >  avc_denied+0x312/0x360 security/selinux/avc.c:1024
+> > > > >  avc_has_perm_noaudit+0x733/0x770 security/selinux/avc.c:1155
+> > > > >  avc_has_perm+0x172/0x480 security/selinux/avc.c:1184
+> > > > >  sock_has_perm security/selinux/hooks.c:4539 [inline]
+> > > > >  selinux_socket_sendmsg+0x297/0x360 security/selinux/hooks.c:4875
+> > > > >  security_socket_sendmsg+0x127/0x200 security/security.c:1410
+> > > > >  sock_sendmsg net/socket.c:628 [inline]
+> > > > >  ___sys_sendmsg+0xd5f/0x1290 net/socket.c:2116
+> > > > >  __sys_sendmsg net/socket.c:2154 [inline]
+> > > > >  __do_sys_sendmsg net/socket.c:2163 [inline]
+> > > > >  __se_sys_sendmsg+0x307/0x460 net/socket.c:2161
+> > > > >  __x64_sys_sendmsg+0x4a/0x70 net/socket.c:2161
+> > > > >  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+> > > > >  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > >
+> > > > > Crash log 2
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > > BUG: KMSAN: uninit-value in rcu_accelerate_cbs+0x821/0x990
+> > > > > kernel/rcu/tree.c:1728
+> > > > > CPU: 0 PID: 10 Comm: rcu_sched Not tainted 4.19.0-rc8+ #18
+> > > > > Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS Bochs=
+ 01/01/2011
+> > > > > Call Trace:
+> > > > >  __dump_stack lib/dump_stack.c:77 [inline]
+> > > > >  dump_stack+0x305/0x460 lib/dump_stack.c:113
+> > > > >  kmsan_report+0x1a2/0x2e0 mm/kmsan/kmsan.c:917
+> > > > >  __msan_warning+0x7d/0xe0 mm/kmsan/kmsan_instr.c:500
+> > > > >  rcu_accelerate_cbs+0x821/0x990 kernel/rcu/tree.c:1728
+> > > > >  __note_gp_changes+0x2ac/0x9e0 kernel/rcu/tree.c:1807
+> > > > >  rcu_gp_cleanup kernel/rcu/tree.c:2109 [inline]
+> > > > >  rcu_gp_kthread+0x3019/0x3990 kernel/rcu/tree.c:2236
+> > > > >  kthread+0x5b1/0x5f0 kernel/kthread.c:247
+> > > > >  ret_from_fork+0x35/0x40 arch/x86/entry/entry_64.S:416
+> > > > >
+> > > > > Uninit was created at:
+> > > > >  kmsan_save_stack_with_flags mm/kmsan/kmsan.c:255 [inline]
+> > > > >  kmsan_internal_alloc_meta_for_pages+0x157/0x730 mm/kmsan/kmsan.c=
+:693
+> > > > >  kmsan_alloc_page+0x80/0xe0 mm/kmsan/kmsan_hooks.c:320
+> > > > >  __alloc_pages_nodemask+0x128c/0x69b0 mm/page_alloc.c:4416
+> > > > >  alloc_pages_current+0x51f/0x760 mm/mempolicy.c:2093
+> > > > >  alloc_pages include/linux/gfp.h:511 [inline]
+> > > > >  alloc_slab_page mm/slub.c:1459 [inline]
+> > > > >  allocate_slab mm/slub.c:1604 [inline]
+> > > > >  new_slab+0x552/0x1f30 mm/slub.c:1675
+> > > > >  new_slab_objects mm/slub.c:2438 [inline]
+> > > > >  ___slab_alloc+0x1414/0x1dd0 mm/slub.c:2590
+> > > > >  __slab_alloc mm/slub.c:2630 [inline]
+> > > > >  slab_alloc_node mm/slub.c:2693 [inline]
+> > > > >  slab_alloc mm/slub.c:2735 [inline]
+> > > > >  kmem_cache_alloc+0xc9b/0xda0 mm/slub.c:2740
+> > > > >  kmem_cache_zalloc include/linux/slab.h:697 [inline]
+> > > > >  avc_alloc_node+0x109/0xb90 security/selinux/avc.c:572
+> > > > >  avc_insert security/selinux/avc.c:696 [inline]
+> > > > >  avc_compute_av+0x31e/0x1050 security/selinux/avc.c:1008
+> > > > >  avc_has_perm_noaudit+0x516/0x770 security/selinux/avc.c:1149
+> > > > >  avc_has_perm+0x172/0x480 security/selinux/avc.c:1184
+> > > > >  selinux_socket_create+0x248/0x3c0 security/selinux/hooks.c:4560
+> > > > >  security_socket_create+0x146/0x210 security/security.c:1372
+> > > > >  __sock_create+0x26b/0xf30 net/socket.c:1232
+> > > > >  sock_create net/socket.c:1317 [inline]
+> > > > >  __sys_socket+0x180/0x670 net/socket.c:1347
+> > > > >  __do_sys_socket net/socket.c:1356 [inline]
+> > > > >  __se_sys_socket+0x8d/0xb0 net/socket.c:1354
+> > > > >  __x64_sys_socket+0x4a/0x70 net/socket.c:1354
+> > > > >  do_syscall_64+0xb8/0x100 arch/x86/entry/common.c:291
+> > > > >  entry_SYSCALL_64_after_hwframe+0x63/0xe7
+> > > > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > > >
+> > > > > Thanks,
+> > > > > Kyungtae Kim
+> > > > >
+> > > >
+> > > > --
+> > > > You received this message because you are subscribed to the Google =
+Groups "syzkaller" group.
+> > > > To unsubscribe from this group and stop receiving emails from it, s=
+end an email to syzkaller+unsubscribe@googlegroups.com.
+> > > > For more options, visit https://groups.google.com/d/optout.
+> > >
+> > >
+> > >
+> > > --
+> > > Alexander Potapenko
+> > > Software Engineer
+> > >
+> > > Google Germany GmbH
+> > > Erika-Mann-Stra=C3=9Fe, 33
+> > > 80636 M=C3=BCnchen
+> > >
+> > > Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+> > > Registergericht und -nummer: Hamburg, HRB 86891
+> > > Sitz der Gesellschaft: Hamburg
+> > >
+> >
+>
+> --
+> You received this message because you are subscribed to the Google Groups=
+ "syzkaller" group.
+> To unsubscribe from this group and stop receiving emails from it, send an=
+ email to syzkaller+unsubscribe@googlegroups.com.
+> For more options, visit https://groups.google.com/d/optout.
 
-I have strong objections to the way these bindings have been forced upon
-everybody; if that's the way *generic* ACPI bindings are specified I
-wonder why there still exists an ACPI specification and related working
-group.
 
-I personally (but that's Bjorn and Rafael choice) think that this is
-not a change that belongs in PCI core, ACPI bindings are ill-defined
-and device tree bindings are non-existing.
 
-At the very least Microsoft should be asked to publish and discuss
-these bindings within the ACPI and UEFI forums.
+--=20
+Alexander Potapenko
+Software Engineer
 
-Lorenzo
+Google Germany GmbH
+Erika-Mann-Stra=C3=9Fe, 33
+80636 M=C3=BCnchen
+
+Gesch=C3=A4ftsf=C3=BChrer: Paul Manicle, Halimah DeLaine Prado
+Registergericht und -nummer: Hamburg, HRB 86891
+Sitz der Gesellschaft: Hamburg
