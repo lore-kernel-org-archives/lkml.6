@@ -2,61 +2,60 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 376BDC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:55:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ABF87C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:01:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE4552081C
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:55:37 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 74A3320825
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:01:19 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="QLKV4CMv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE4552081C
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="IBOESC9o"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74A3320825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388017AbeKOVC4 (ORCPT
+        id S2388264AbeKOVIj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 16:02:56 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:46405 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387550AbeKOVCz (ORCPT
+        Thu, 15 Nov 2018 16:08:39 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45591 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388234AbeKOVIh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 16:02:55 -0500
-Received: by mail-pf1-f194.google.com with SMTP id s9-v6so9499073pfm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 02:55:35 -0800 (PST)
+        Thu, 15 Nov 2018 16:08:37 -0500
+Received: by mail-pg1-f195.google.com with SMTP id y4so8844595pgc.12
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 03:01:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=Zzu87GxHN0mbabwi8Y3C4VEFFjXcq3OClY2rIjyq71I=;
-        b=QLKV4CMvyQjckVsYkLtNo9wo9HHKJblLFYIMAz1IQ8XCdWc+NbHPWObJIhaYxDAwfd
-         FaBS8xkSbNLWVUdoZGb8agIaGXtEQFaTUDyomjGk657O5ogqLctCTjHVp27WbsP8bG/u
-         xOBofWN+X7yXXMlhNZNHO0d9/3u/ASRIuTT6c=
+        bh=PjRbarftVaeegdHhXEWWPcdfdsqiFYrh2sxl6OIBO1w=;
+        b=IBOESC9oVvroh5+TuwvOcb0cK/SnWAoREZpWpDYoBc7REJ6R2Y0ZD3xThcKKTjnGaQ
+         Dnct2tD6W54ChTRoFgBQo0nrPm/iycXcOsKdqUiPzCDWToNSzMeR/9qFRMxgHO2QsX0o
+         HTwrfIHHdr+LQ9blDczIKtb2yFcVgFd5OwLyY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Zzu87GxHN0mbabwi8Y3C4VEFFjXcq3OClY2rIjyq71I=;
-        b=OskYbwZoNu9CyBAR7JNCwFL7YEnsBet0YeT+5kRuq+dQe52j28wlT19lH0+1Ixpyx2
-         nss3OPo2P+/+9AO6+8jwcUUqp+XdaCI+mqfE6w8+x1dA3fkB76ashibnWIZPDDVeRi5y
-         TRcKOdO2shuBjfJq1XQJAZkRBCdzgVawBLJZPDqnu+4u61MevjuxU8x20dPSYqH/Q+1g
-         N4g0w2zgVpQ6nCV1JhHLlmv09EMwDpjfQZnDiP2z0q0z+l2ZY57BBbqL9ufDfqdv+WGN
-         5vrAQQ9OldLvHfWyRSvtGObmhUkgkiuge7F19DE/sZhwS3aLLiMk5SBxmQzumWTNIx2M
-         2BEg==
-X-Gm-Message-State: AGRZ1gKWbmH7jVF2Tw9T889QJ3cgI2diMVhYfBlHs5vcoXHVAcXmKJ9u
-        nwV+hfuGHlQYiB/EO0KMVRPK
-X-Google-Smtp-Source: AJdET5dXSA1ETi23hPGQRHzsMKt74muhAAKBtloF2GogsrKBz4m+TQwh2p16TgB5xTpUMSm6/zT8Hw==
-X-Received: by 2002:a65:4049:: with SMTP id h9mr5276712pgp.304.1542279335029;
-        Thu, 15 Nov 2018 02:55:35 -0800 (PST)
+        bh=PjRbarftVaeegdHhXEWWPcdfdsqiFYrh2sxl6OIBO1w=;
+        b=K8OzFaou0wVfBE9rKY3nn8+sFgZQCQ0cHT6rv+z391LbLN3jBNvPD6skbo8ZX3lpLd
+         +s402+xJwdAdwd8FbcQjb27DthcKXRzPihHVaGUnADlOIsWerbSUPDt90gZR8SfavoAS
+         20czpsRPqrOwBbGctbQX+iqq45QF+akqTJK1E+xc1LjIgSFWL1Uy7RmGzieojXziBPcS
+         I9CIfExBsGlguUR1EOU/jPttuLARqwuPXGQV5Mz2ZBswZLPCZ/Bosuhv8PWsV0qo990G
+         yhPWvoappNhOLUHtK4hESrDtmwSl/+INzXmVbkmSoS6Whd5bf3Wx1YfEnvV1DOkUNmWJ
+         4Gaw==
+X-Gm-Message-State: AGRZ1gIL+cQE4QMFPLbfTJ/Igz/0nWHOCdAXkM2r84Ay5fQ3jHU5qHeX
+        mR6VKNWN8p0q6tv1HGDHEqZu
+X-Google-Smtp-Source: AJdET5dXvXDKHeimyJAd32tVi+K7Szph1XUmQVGCoRLc7fMH438lHxB0wxDt9CrNxXeZdpO3DBOOFA==
+X-Received: by 2002:a62:d10c:: with SMTP id z12mr6098928pfg.52.1542279675744;
+        Thu, 15 Nov 2018 03:01:15 -0800 (PST)
 Received: from Mani-XPS-13-9360 ([2409:4072:908:5dae:cd7f:9353:9ed0:7488])
-        by smtp.gmail.com with ESMTPSA id r83sm27998249pfc.115.2018.11.15.02.55.28
+        by smtp.gmail.com with ESMTPSA id z127-v6sm30421012pfz.135.2018.11.15.03.01.07
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 02:55:34 -0800 (PST)
-Date:   Thu, 15 Nov 2018 16:25:24 +0530
+        Thu, 15 Nov 2018 03:01:15 -0800 (PST)
+Date:   Thu, 15 Nov 2018 16:31:04 +0530
 From:   Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 To:     Parthiban Nallathambi <pn@denx.de>
 Cc:     linus.walleij@linaro.org, afaerber@suse.de, robh+dt@kernel.org,
@@ -66,217 +65,93 @@ Cc:     linus.walleij@linaro.org, afaerber@suse.de, robh+dt@kernel.org,
         will.deacon@arm.com, mp-cs@actions-semi.com,
         thomas.liau@actions-semi.com, linux@cubietech.com,
         sravanhome@gmail.com
-Subject: Re: [PATCH v6 3/5] dt-bindings: pinctrl: Add bindings for Actions
- Semi S700 SoC
-Message-ID: <20181115105524.GA15537@Mani-XPS-13-9360>
+Subject: Re: [PATCH v6 0/5] Add Actions Semi S700 pinctrl support
+Message-ID: <20181115110104.GB15537@Mani-XPS-13-9360>
 References: <20181113100709.5615-1-pn@denx.de>
- <20181113100709.5615-4-pn@denx.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181113100709.5615-4-pn@denx.de>
+In-Reply-To: <20181113100709.5615-1-pn@denx.de>
 User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 13, 2018 at 11:07:07AM +0100, Parthiban Nallathambi wrote:
-> From: Saravanan Sekar <sravanhome@gmail.com>
+On Tue, Nov 13, 2018 at 11:07:04AM +0100, Parthiban Nallathambi wrote:
+> This patchset adds pinctrl support for Actions Semi S700 SoC.
+> Pinmux functions are only accessible for pin groups while pinconf
+> parameters are available for both pin groups and individual pins.
 > 
-> Add pinctrl and pio bindings for Actions Semi S700 SoC.
+> pinctrl driver is verified using the Cubieboard7.
 > 
-> Signed-off-by: Parthiban Nallathambi <pn@denx.de>
-> Signed-off-by: Saravanan Sekar <sravanhome@gmail.com>
-> Reviewed-by: Rob Herring <robh@kernel.org>
-> ---
->  .../bindings/pinctrl/actions,s700-pinctrl.txt | 170 ++++++++++++++++++
->  1 file changed, 170 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt b/Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
-> new file mode 100644
-> index 000000000000..c72c09c38537
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
-> @@ -0,0 +1,170 @@
-> +Actions Semi S700 Pin Controller
-> +
-> +This binding describes the pin controller found in the S700 SoC.
-> +
-> +Required Properties:
-> +
-> +- compatible:   Should be "actions,s700-pinctrl"
-> +- reg:          Should contain the register base address and size of
-> +		the pin controller.
-> +- clocks:       phandle of the clock feeding the pin controller
-> +- gpio-controller: Marks the device node as a GPIO controller.
-> +- gpio-ranges: Specifies the mapping between gpio controller and
-> +               pin-controller pins.
-> +- #gpio-cells: Should be two. The first cell is the gpio pin number
-> +		and the second cell is used for optional parameters.
-> +- interrupt-controller: Marks the device node as an interrupt controller.
-> +- #interrupt-cells: Specifies the number of cells needed to encode an
-> +		interrupt.  Shall be set to 2.  The first cell
-> +		defines the interrupt number, the second encodes
-> +		the trigger flags described in
-> +		bindings/interrupt-controller/interrupts.txt
-> +- interrupts: The interrupt outputs from the controller. There is one GPIO
-> +              interrupt per GPIO bank. The number of interrupts listed depends
-> +              on the number of GPIO banks on the SoC. The interrupts must be
-> +              ordered by bank, starting with bank 0.
-> +
-> +Please refer to pinctrl-bindings.txt in this directory for details of the
-> +common pinctrl bindings used by client devices, including the meaning of the
-> +phrase "pin configuration node".
-> +
-> +The pin configuration nodes act as a container for an arbitrary number of
-> +subnodes. Each of these subnodes represents some desired configuration for a
-> +pin, a group, or a list of pins or groups. This configuration can include the
-> +mux function to select on those group(s), and various pin configuration
-> +parameters, such as pull-up, drive strength, etc.
-> +
-> +PIN CONFIGURATION NODES:
-> +
-> +The name of each subnode is not important; all subnodes should be enumerated
-> +and processed purely based on their content.
-> +
-> +Each subnode only affects those parameters that are explicitly listed. In
-> +other words, a subnode that lists a mux function but no pin configuration
-> +parameters implies no information about any pin configuration parameters.
-> +Similarly, a pin subnode that describes a pullup parameter implies no
-> +information about e.g. the mux function.
-> +
-> +Pinmux functions are available only for the pin groups while pinconf
-> +parameters are available for both pin groups and individual pins.
-> +
-> +The following generic properties as defined in pinctrl-bindings.txt are valid
-> +to specify in a pin configuration subnode:
-> +
-> +Required Properties:
-> +
-> +- pins:		An array of strings, each string containing the name of a pin.
-> +		These pins are used for selecting the pull control and schmitt
-> +		trigger parameters. The following are the list of pins
-> +		available:
-> +
-> +		eth_txd0, eth_txd1, eth_txd2, eth_txd3, eth_txen, eth_rxer,
-> +		eth_crs_dv, eth_rxd1, eth_rxd0, eth_rxd2, eth_rxd3, eth_ref_clk,
-> +		eth_mdc, eth_mdio, sirq0, sirq1, sirq2, i2s_d0, i2s_bclk0,
-> +		i2s_lrclk0, i2s_mclk0, i2s_d1, i2s_bclk1, i2s_lrclk1, i2s_mclk1,
-> +		pcm1_in, pcm1_clk, pcm1_sync, pcm1_out, ks_in0, ks_in1, ks_in2,
-> +		ks_in3, ks_out0, ks_out1, ks_out2, lvds_oep, lvds_oen, lvds_odp,
-> +		lvds_odn, lvds_ocp, lvds_ocn, lvds_obp, lvds_obn, lvds_oap,
-> +		lvds_oan, lvds_eep, lvds_een, lvds_edp, lvds_edn, lvds_ecp,
-> +		lvds_ecn, lvds_ebp, lvds_ebn, lvds_eap, lvds_ean, lcd0_d18,
-> +		lcd0_d2, dsi_dp3, dsi_dn3, dsi_dp1, dsi_dn1, dsi_cp, dsi_cn,
-> +		dsi_dp0, dsi_dn0, dsi_dp2, dsi_dn2, sd0_d0, sd0_d1, sd0_d2,
-> +		sd0_d3, sd1_d0, sd1_d1, sd1_d2, sd1_d3, sd0_cmd, sd0_clk,
-> +		sd1_cmd, sd1_clk, spi0_ss, spi0_miso, uart0_rx, uart0_tx,
-> +		uart2_rx, uart2_tx, uart2_rtsb, uart2_ctsb, uart3_rx, uart3_tx,
-> +		uart3_rtsb, uart3_ctsb, i2c0_sclk, i2c0_sdata, i2c1_sclk,
-> +		i2c1_sdata, i2c2_sdata, csi_dn0, csi_dp0, csi_dn1, csi_dp1,
-> +		csi_cn, csi_cp, csi_dn2, csi_dp2, csi_dn3, csi_dp3,
-> +		sensor0_pclk, sensor0_ckout, dnand_d0, dnand_d1, dnand_d2,
-> +		dnand_d3, dnand_d4, dnand_d5, dnand_d6, dnand_d7, dnand_wrb,
-> +		dnand_rdb, dnand_rdbn, dnand_dqs, dnand_dqsn, dnand_rb0,
-> +		dnand_ale, dnand_cle, dnand_ceb0, dnand_ceb1, dnand_ceb2,
-> +		dnand_ceb3, porb, clko_25m, bsel, pkg0, pkg1, pkg2, pkg3
-> +
-> +- groups:       An array of strings, each string containing the name of a pin
-> +                group. These pin groups are used for selecting the pinmux
-> +                functions.
-> +		rgmii_txd23_mfp, rgmii_rxd2_mfp, rgmii_rxd3_mfp, lcd0_d18_mfp,
-> +		rgmii_txd01_mfp, rgmii_txd0_mfp, rgmii_txd1_mfp, rgmii_txen_mfp,
-> +		rgmii_rxen_mfp, rgmii_rxd1_mfp, rgmii_rxd0_mfp, rgmii_ref_clk_mfp,
-> +		i2s_d0_mfp, i2s_pcm1_mfp, i2s0_pcm0_mfp, i2s1_pcm0_mfp,
-> +		i2s_d1_mfp, ks_in2_mfp, ks_in1_mfp, ks_in0_mfp, ks_in3_mfp,
-> +		ks_out0_mfp, ks_out1_mfp, ks_out2_mfp, lvds_o_pn_mfp, dsi_dn0_mfp,
-> +		dsi_dp2_mfp, lcd0_d2_mfp, dsi_dp3_mfp, dsi_dn3_mfp, dsi_dp0_mfp,
-> +		lvds_ee_pn_mfp, uart2_rx_tx_mfp, spi0_i2c_pcm_mfp, dsi_dnp1_cp_d2_mfp,
-> +		dsi_dnp1_cp_d17_mfp, lvds_e_pn_mfp, dsi_dn2_mfp, uart2_rtsb_mfp,
-> +		uart2_ctsb_mfp, uart3_rtsb_mfp, uart3_ctsb_mfp, sd0_d0_mfp, sd0_d1_mfp,
-> +		sd0_d2_d3_mfp, sd1_d0_d3_mfp, sd0_cmd_mfp, sd0_clk_mfp, sd1_cmd_mfp,
-> +		uart0_rx_mfp, clko_25m_mfp, csi_cn_cp_mfp, sens0_ckout_mfp, uart0_tx_mfp,
-> +		i2c0_mfp, csi_dn_dp_mfp, sen0_pclk_mfp, pcm1_in_mfp, pcm1_clk_mfp,
-> +		pcm1_sync_mfp, pcm1_out_mfp, dnand_data_wr_mfp, dnand_acle_ce0_mfp,
-> +		nand_ceb2_mfp, nand_ceb3_mfp
-> +
-> +		These pin groups are used for selecting the drive strength
-> +		parameters.
-> +
-> +		sirq_drv, rgmii_txd23_drv, rgmii_rxd23_drv, rgmii_txd01_txen_drv,
-> +		rgmii_rxer_drv, rgmii_crs_drv, rgmii_rxd10_drv, rgmii_ref_clk_drv,
-> +		smi_mdc_mdio_drv, i2s_d0_drv, i2s_bclk0_drv, i2s3_drv, i2s13_drv,
-> +		pcm1_drv, ks_in_drv, ks_out_drv, lvds_all_drv, lcd_d18_d2_drv,
-> +		dsi_all_drv, sd0_d0_d3_drv, sd0_cmd_drv, sd0_clk_drv, spi0_all_drv,
-> +		uart0_rx_drv, uart0_tx_drv, uart2_all_drv, i2c0_all_drv, i2c12_all_drv,
-> +		sens0_pclk_drv, sens0_ckout_drv, uart3_all_drv
-> +
-> +- function:	An array of strings, each string containing the name of the
-> +		pinmux functions. These functions can only be selected by
-> +		the corresponding pin groups. The following are the list of
-> +		pinmux functions available:
-> +
-> +		nor, eth_rgmii, eth_sgmii, spi0, spi1, spi2, spi3, seNs0, sens1,
-> +		uart0, uart1, uart2, uart3, uart4, uart5, uart6, i2s0, i2s1,
-> +		pcm1, pcm0, ks, jtag, pwm0, pwm1, pwm2, pwm3, pwm4, pwm5, p0,
-> +		sd0, sd1, sd2, i2c0, i2c1, i2c2, i2c3, dsi, lvds, usb30,
-> +		clko_25m, mipi_csi, nand, spdif, sirq0, sirq1, sirq2, bt, lcd0
-> +
-> +Optional Properties:
-> +
-> +- bias-pull-down: No arguments. The specified pins should be configured as
-> +		pull down.
-> +- bias-pull-up:   No arguments. The specified pins should be configured as
-> +		pull up.
-> +- input-schmitt-enable: No arguments: Enable schmitt trigger for the specified
-> +		pins
-> +- input-schmitt-disable: No arguments: Disable schmitt trigger for the specified
-> +		pins
-> +- drive-strength: Integer. Selects the drive strength for the specified
-> +		pins in mA.
-> +		Valid values are:
-> +		<2>
-> +		<4>
-> +		<8>
-> +		<12>
-> +
-> +Example:
-> +
-> +	pinctrl: pinctrl@e01b0000 {
-> +		compatible = "actions,s700-pinctrl";
-> +		reg = <0x0 0xe01b0000 0x0 0x1000>;
-> +		clocks = <&cmu CLK_GPIO>;
-> +		gpio-controller;
-> +		gpio-ranges = <&pinctrl 0 0 136>;
-> +		#gpio-cells = <2>;
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +                interrupts = <GIC_SPI 36 IRQ_TYPE_LEVEL_HIGH>,
-> +                             <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>,
-> +                             <GIC_SPI 38 IRQ_TYPE_LEVEL_HIGH>,
-> +                             <GIC_SPI 39 IRQ_TYPE_LEVEL_HIGH>,
-> +                             <GIC_SPI 40 IRQ_TYPE_LEVEL_HIGH>,
+> common functionalities from s900 is moved for all Actions Semi
+> SoC's usage.
+> Common pad control configurations are moved to SoC specific
+>
 
-Nitpick: Cells should be terminated with a semicolon. This was mentioned
-in my previous review as well.
+Hi Parthiban,
+
+This series looks good to me. Just spotted one nitpick in bindings
+patch. Please note that I don't have any S900 device currently to test
+the patches. Although nothing looks like breaking.
+
+So for the whole series,
+
+Acked-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+Thanks a ton for picking it up!
 
 Regards,
 Mani
 
-> +
-> +		uart3-default: uart3-default {
-> +			pinmux {
-> +				groups = "uart3_rtsb_mfp", "uart3_ctsb_mfp";
-> +				function = "uart3";
-> +			};
-> +			pinconf {
-> +				groups = "uart3_all_drv";
-> +				drive-strength = <2>;
-> +			};
-> +		};
-> +	};
+> dts entry for pinctrl depends on clock driver which is still under review:
+> https://patchwork.kernel.org/patch/10533959/
+> 
+> Thanks,
+> Saravanan
+> Parthiban
+> 
+> Changelog in v2
+> - GPIO Interrupt support is added
+> - Device tree entry for GPIO and Interrupt configured
+> - GPIO and pinctrl define reorder, commit message findings fixed
+> 
+> depends on owl GPIO Interrupt support
+> https://patchwork.kernel.org/patch/10483477/
+> 
+> Chnagelog in v3
+> - Fixed 0-DAY bisectibility error
+> 
+> Chnagelog in v4
+> - Fixed 0-DAY sparse warnings on static declaration
+> 
+> Chnagelog in v5
+> - Rebase to mainline
+> 
+> Chnagelog in v6
+> - Rebase to 4.20-rc2 mainline
+> - Fixed nitpick findings in v5
+> 
+> Saravanan Sekar (5):
+>   pinctrl: actions: define constructor generic to Actions Semi SoC's
+>   pinctrl: actions: define pad control configurtion to SoC specific
+>   dt-bindings: pinctrl: Add bindings for Actions Semi S700 SoC
+>   pinctrl: actions: Add Actions Semi S700 pinctrl driver
+>   arm64: dts: actions: Add pinctrl node for Actions Semi S700
+> 
+>  .../bindings/pinctrl/actions,s700-pinctrl.txt |  170 ++
+>  arch/arm64/boot/dts/actions/s700.dtsi         |   16 +
+>  drivers/pinctrl/actions/Kconfig               |    6 +
+>  drivers/pinctrl/actions/Makefile              |    1 +
+>  drivers/pinctrl/actions/pinctrl-owl.c         |   71 +-
+>  drivers/pinctrl/actions/pinctrl-owl.h         |  142 +-
+>  drivers/pinctrl/actions/pinctrl-s700.c        | 1912 +++++++++++++++++
+>  drivers/pinctrl/actions/pinctrl-s900.c        |  205 +-
+>  8 files changed, 2324 insertions(+), 199 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/actions,s700-pinctrl.txt
+>  create mode 100644 drivers/pinctrl/actions/pinctrl-s700.c
+> 
 > -- 
 > 2.17.2
 > 
