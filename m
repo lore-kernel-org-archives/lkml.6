@@ -2,87 +2,94 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 523B0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:06:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BCD8C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:06:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 05F3420818
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:06:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05F3420818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 4F4B420818
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:06:23 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F4B420818
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388486AbeKPBOY (ORCPT
+        id S2388548AbeKPBOd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:14:24 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:44997 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387839AbeKPBOX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 20:14:23 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id E0DA220893; Thu, 15 Nov 2018 16:06:10 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B30FD20379;
-        Thu, 15 Nov 2018 16:06:10 +0100 (CET)
-Date:   Thu, 15 Nov 2018 16:06:10 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Chen-Yu Tsai <wens@csie.org>, devicetree@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-sunxi@googlegroups.com, dri-devel@lists.freedesktop.org,
-        David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        linux-amarula@amarulasolutions.com
-Subject: Re: [PATCH v3 2/2] arm64: dts: allwinner: a64: Add device node for
- Mali-400 GPU
-Message-ID: <20181115150610.5vmfa66u6tx4s3ig@flea>
-References: <20181114042837.15149-1-jagan@amarulasolutions.com>
- <20181114042837.15149-2-jagan@amarulasolutions.com>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="evhggvtbhqzuc3d5"
-Content-Disposition: inline
-In-Reply-To: <20181114042837.15149-2-jagan@amarulasolutions.com>
-User-Agent: NeoMutt/20180716
+        Thu, 15 Nov 2018 20:14:33 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:35708 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388294AbeKPBOd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 20:14:33 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0A26BEBD;
+        Thu, 15 Nov 2018 07:06:21 -0800 (PST)
+Received: from big-swifty.misterjones.org (usa-sjc-mx-foss1.foss.arm.com [217.140.101.70])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C3F723F5BD;
+        Thu, 15 Nov 2018 07:06:20 -0800 (PST)
+Date:   Thu, 15 Nov 2018 15:06:19 +0000
+Message-ID: <868t1uwfbo.wl-marc.zyngier@arm.com>
+From:   Marc Zyngier <marc.zyngier@arm.com>
+To:     Peng Hao <peng.hao2@zte.com.cn>
+Cc:     <christoffer.dall@arm.com>, <linux-arm-kernel@lists.infradead.org>,
+        <kvmarm@lists.cs.columbia.edu>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH]  kvm: arm/arm64 : fix vm's hanging at startup time
+In-Reply-To: <1542294848-73839-1-git-send-email-peng.hao2@zte.com.cn>
+References: <1542294848-73839-1-git-send-email-peng.hao2@zte.com.cn>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL/10.8 EasyPG/1.0.0 Emacs/25.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Organization: ARM Ltd
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Thu, 15 Nov 2018 15:14:08 +0000,
+Peng Hao <peng.hao2@zte.com.cn> wrote:
+> 
+> When virtual machine starts, hang up. The kernel version of guest
+> is 4.16. Host support vgic_v3.
+> It was mainly due to the incorrect vgic_irq's(intid=27) group value
+> during injection interruption. when kvm_vgic_vcpu_init is called,
+> dist is not initialized at this time. Unable to get vgic V3 or V2
+> correctly, so group is not set.
+> group is setted to 1 when vgic_mmio_write_group is invoked at some
+> time.
+> when irq->group=0 (intid=27), No ICH_LR_GROUP flag was set and
+> interrupt injection failed.
+> 
+> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
+> ---
+>  virt/kvm/arm/vgic/vgic-v3.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
+> index 9c0dd23..d101000 100644
+> --- a/virt/kvm/arm/vgic/vgic-v3.c
+> +++ b/virt/kvm/arm/vgic/vgic-v3.c
+> @@ -198,7 +198,7 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu, struct vgic_irq *irq, int lr)
+>  	if (vgic_irq_is_mapped_level(irq) && (val & ICH_LR_PENDING_BIT))
+>  		irq->line_level = false;
+>  
+> -	if (irq->group)
+> +	if (model == KVM_DEV_TYPE_ARM_VGIC_V3)
+>  		val |= ICH_LR_GROUP;
+>  
+>  	val |= (u64)irq->priority << ICH_LR_PRIORITY_SHIFT;
 
---evhggvtbhqzuc3d5
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+This patch makes exactly zero sense. The group is a property of the
+interrupt, and has nothing to do with the model used for the emulation
 
-On Wed, Nov 14, 2018 at 09:58:37AM +0530, Jagan Teki wrote:
-> Add support for Allwinner A64 has Mali-400MP2.
->=20
-> All interrupt lines are mentioned in the manual so used the same.
->=20
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Which version of the kernel is this against? What userspace are you
+using? How can I reproduce this issue?
 
-Applied both, thanks
+Thanks,
 
-Maxime
+	M.
 
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---evhggvtbhqzuc3d5
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+2LYgAKCRDj7w1vZxhR
-xYE9AP9BHK+vnMRtUM7t6IWkvWKGxpYEXwTSef07kJdDsuhdYgEA7vrJSVRBrt1Y
-ERnHlF8ITXFethj4gTxt4nFzhr+obAc=
-=kXC1
------END PGP SIGNATURE-----
-
---evhggvtbhqzuc3d5--
+-- 
+Jazz is not dead, it just smell funny.
