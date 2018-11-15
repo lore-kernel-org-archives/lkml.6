@@ -2,136 +2,100 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A3D0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:07:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C55C7C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:07:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1FE17223CB
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:07:12 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="USn7PyKQ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1FE17223CB
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 99043223CB
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:07:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99043223CB
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388204AbeKOWOp (ORCPT
+        id S2388221AbeKOWPO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 17:14:45 -0500
-Received: from mail-it1-f196.google.com ([209.85.166.196]:40384 "EHLO
-        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2387706AbeKOWOo (ORCPT
+        Thu, 15 Nov 2018 17:15:14 -0500
+Received: from bmailout3.hostsharing.net ([176.9.242.62]:53295 "EHLO
+        bmailout3.hostsharing.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387647AbeKOWPO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 17:14:44 -0500
-Received: by mail-it1-f196.google.com with SMTP id e11so28867856itl.5;
-        Thu, 15 Nov 2018 04:07:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=SC0iu5+qvyM6BTQbbF+F86byESvB1HjyehgnpM0EmZU=;
-        b=USn7PyKQ7WKKQ9MU7i1CFvYRkWZjGZdApBCPQ4La7ts7e3P6gRe8POQqu5oxYTSNgv
-         9R7Km4tCmRrekkS9ghPXmbM0yn6qJh5ToZeJ52J3KElZRqa97ZiogQnuRlpyjQuacGGN
-         MBTF2wW5s7QE8dSw2cMJ36UF3rnl7HnuzJeF9gBTEOLaDcf2YGndRETFngAqc1R7xaO9
-         4VYdQH8IAVrLB8nqId6vqId9Kklt1ic56caa8liSAjaIpc69AmY1tl949yONA2fNBLJQ
-         LhxVQM6o/VA9yTbTQYI6DDwIFdHWTZQA+D79mQ+DbXhR4aVfgghlUPWejggbifMhoPM8
-         GJpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=SC0iu5+qvyM6BTQbbF+F86byESvB1HjyehgnpM0EmZU=;
-        b=GFR5o2qw79O+kEVXiDpMmGs4oE/qdg0f/FYE8ibFdu5KEqPvJ26nbLn5Q23+nlHaXs
-         bJ/28/N189aD6TwayWWJsLMH0AOa9PwFmaNTak1RLHSvoWqAWw4ygFWdkFQtw8szQ0NI
-         FwPMS2AjNELcyKVKWAwHHwrj0mS/aQIyUKYh2f1P4LaFNUC1BQuF8ZKslWpGOEmX2Pc0
-         mJFj+P9DhqBuhrKXpANsoOWSFdTxg9+F+Aroj9CuY+ZRnZsafL7Q3p4iSvIdid84WPjb
-         pcU+Rk5HPFetrh3HfiW2RP2sPfLULH+1J00gxEccf3w0DdH6iaSGrbkivDTK8ZFlkCqu
-         Tvlg==
-X-Gm-Message-State: AGRZ1gLUxsFoQ52E5m1gDn4fki8gLosivuFSDkIH+L0cxdkhGlX864Kt
-        oG+ZoSTjBas8rfu4svVT+VI0FmvQllWxyO2w9c0=
-X-Google-Smtp-Source: AJdET5eNpVtIQhY4jkChDCpRhdwDaxjE96MbyPAY7I/thQRAbByoe4tkaew/2cu/vE5s8jPsfdzvETNj5UQKA7RX/JA=
-X-Received: by 2002:a02:b529:: with SMTP id l38mr5077605jaj.25.1542283625243;
- Thu, 15 Nov 2018 04:07:05 -0800 (PST)
+        Thu, 15 Nov 2018 17:15:14 -0500
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (Client CN "*.hostsharing.net", Issuer "COMODO RSA Domain Validation Secure Server CA" (not verified))
+        by bmailout3.hostsharing.net (Postfix) with ESMTPS id C7FD7100D9403;
+        Thu, 15 Nov 2018 13:07:36 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+        id 4077B15429E; Thu, 15 Nov 2018 13:07:36 +0100 (CET)
+Date:   Thu, 15 Nov 2018 13:07:36 +0100
+From:   Lukas Wunner <lukas@wunner.de>
+To:     Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc:     Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        iommu@lists.linux-foundation.org, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>,
+        Lu Baolu <baolu.lu@linux.intel.com>,
+        Ashok Raj <ashok.raj@intel.com>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Jacob jun Pan <jacob.jun.pan@intel.com>,
+        Andreas Noever <andreas.noever@gmail.com>,
+        Michael Jamet <michael.jamet@intel.com>,
+        Yehezkel Bernat <YehezkelShB@gmail.com>,
+        Christian Kellner <ckellner@redhat.com>,
+        Mario.Limonciello@dell.com,
+        Anthony Wong <anthony.wong@canonical.com>,
+        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
+Message-ID: <20181115120736.pscly6zwd3k2tvd2@wunner.de>
+References: <20181112160628.86620-1-mika.westerberg@linux.intel.com>
+ <20181112160628.86620-2-mika.westerberg@linux.intel.com>
+ <20181112180203.lx72gjfplb6xlur7@wunner.de>
+ <20181113105636.GB11202@e107981-ln.cambridge.arm.com>
+ <20181113112700.GT2500@lahna.fi.intel.com>
+ <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
+ <20181115102239.GU2500@lahna.fi.intel.com>
+ <20181115111356.GA599@e107981-ln.cambridge.arm.com>
+ <20181115113737.GW2500@lahna.fi.intel.com>
 MIME-Version: 1.0
-References: <CAG48ez3bPkh+DMPwiebM+r4ozX2CiVY=9=WMBP_xm1qVaSN4sQ@mail.gmail.com>
- <20181114215509.163600-1-ebiggers@kernel.org> <CAG48ez02ZYZOKRXuZ9yYUijZnaaw=G7-KYu1rB7C99+B45VqjQ@mail.gmail.com>
- <CAE_wzQ_GqjwkhUjoPs3h-s7KSVe8KoH-uu-4mf672JN0X89d6g@mail.gmail.com>
- <20181114230046.GC87768@gmail.com> <CAE_wzQ_OS-BnRrXjKFhNBeRFRYsQkX2tNO3DEUQRFR7g7A7-2g@mail.gmail.com>
- <CAO-hwJJ3jkQFyf7oByERd98nqEUTjJRu_1tZpFK9sWvgT921iQ@mail.gmail.com>
-In-Reply-To: <CAO-hwJJ3jkQFyf7oByERd98nqEUTjJRu_1tZpFK9sWvgT921iQ@mail.gmail.com>
-From:   David Herrmann <dh.herrmann@gmail.com>
-Date:   Thu, 15 Nov 2018 13:06:53 +0100
-Message-ID: <CANq1E4ThFYS8=QqnyUVMAafy3BHb8CiDqm9LmT22XZzm9wJSeg@mail.gmail.com>
-Subject: Re: [PATCH v2] HID: uhid: forbid UHID_CREATE under KERNEL_DS or
- elevated privileges
-To:     Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Cc:     Dmitry Torokhov <dtor@google.com>, ebiggers@kernel.org,
-        jannh@google.com, Jiri Kosina <jikos@kernel.org>,
-        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        syzkaller-bugs@googlegroups.com,
-        Dmitry Vyukov <dvyukov@google.com>,
-        syzbot+72473edc9bf4eb1c6556@syzkaller.appspotmail.com,
-        stable <stable@vger.kernel.org>,
-        Andy Lutomirski <luto@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115113737.GW2500@lahna.fi.intel.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hey
+On Thu, Nov 15, 2018 at 01:37:37PM +0200, Mika Westerberg wrote:
+> On Thu, Nov 15, 2018 at 11:13:56AM +0000, Lorenzo Pieralisi wrote:
+> > I have strong objections to the way these bindings have been forced upon
+> > everybody; if that's the way *generic* ACPI bindings are specified I
+> > wonder why there still exists an ACPI specification and related working
+> > group.
+> > 
+> > I personally (but that's Bjorn and Rafael choice) think that this is
+> > not a change that belongs in PCI core, ACPI bindings are ill-defined
+> > and device tree bindings are non-existing.
+> 
+> Any idea where should I put it then? These systems are already out there
+> and we need to support them one way or another.
 
-On Thu, Nov 15, 2018 at 9:14 AM Benjamin Tissoires
-<benjamin.tissoires@redhat.com> wrote:
->
-> On Thu, Nov 15, 2018 at 12:20 AM Dmitry Torokhov <dtor@google.com> wrote:
-> > > I think it's best not to make
-> > > assumptions about how the interface will be used and to be consistent with how
-> > > other ->write() methods in the kernel handle the misfeature where a __user
-> > > pointer in the write() or read() payload is dereferenced.
-> >
-> > I can see that you might want to check credentials, etc, if interface
-> > can be accessed by unprivileged process, however is it a big no no for
-> > uhid/userio/uinput devices.
->
-> Yep, any sane distribution would restrict the permissions of
-> uhid/userio/uinput to only be accessed by root. If that ever changes,
-> there is already an issue with the system and it was compromised
-> either by a terribly dizzy sysadmin.
+I suppose those are all Thunderbolt, so could be handled by the
+existing ->is_thunderbolt bit?
 
-UHID is safe to be used by a non-root user. This does not imply that
-you should open up access to the world, but you are free to have a
-dedicated group or user with access to uhid. I agree that in most
-common desktop-scenarios you should not grant world-access to it,
-though.
+It was said in this thread that ->is_external is more generic in
+that it could also be used on PCIe slots, however that use case
+doesn't appear to lend itself to the "plug in while laptop owner
+is getting coffee" attack.  To access PCIe slots on a server you
+normally need access to a data center.  On a desktop, you usually
+have to open the case, by which time the coffee may already have
+been fetched.  So frankly the binding seems a bit over-engineered
+to me and yet another thing that BIOS writers may get wrong.
 
-> >
-> > > Temporarily switching
-> > > to USER_DS would only avoid one of the two problems.
-> >
-> > So because of the above there is only one problem. If your system
-> > opened access to uhid to random processes you have much bigger
-> > problems than exposing some data from a suid binary. You can spam "rm
-> > -rf .; rm -rf /" though uhid if there is interactive session
-> > somewhere.
-> >
-> > >
-> > > Do you think the proposed restrictions would actually break anything?
-> >
-> > It would break if someone uses UHID_CREATE with sendpage. I do not
-> > know if anyone does. If we were certain there are no users we'd simply
-> > removed UHID_CREATE altogether.
->
-> AFAICT, there are 2 users of uhid:
-> - bluez for BLE devices (using HID over GATT)
-> - hid-replay for debugging.
+Well, just my 2 cents anyway.
 
-There are several more (eg., android bt-broadcom), and UHID_CREATE is
-actively used. Dropping support for it will break these use-cases.
-
-Thanks
-David
+Lukas
