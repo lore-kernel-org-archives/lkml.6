@@ -2,162 +2,113 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B7671C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:36:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C558C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:36:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8A9BF2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:36:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8A9BF2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 49B6A2243E
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:36:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49B6A2243E
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388336AbeKOTnX convert rfc822-to-8bit (ORCPT
+        id S2388248AbeKOTnO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:43:23 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32772 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728887AbeKOTnW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:43:22 -0500
-Received: from lhreml701-cah.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id 018FEA423ECD6;
-        Thu, 15 Nov 2018 09:36:16 +0000 (GMT)
-Received: from FRAEMA702-CHM.china.huawei.com (10.206.14.51) by
- lhreml701-cah.china.huawei.com (10.201.108.42) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Thu, 15 Nov 2018 09:36:17 +0000
-Received: from FRAEML521-MBX.china.huawei.com ([169.254.1.76]) by
- FRAEMA702-CHM.china.huawei.com ([169.254.2.148]) with mapi id 14.03.0415.000;
- Thu, 15 Nov 2018 10:36:10 +0100
-From:   Salil Mehta <salil.mehta@huawei.com>
-To:     Leon Romanovsky <leon@kernel.org>
-CC:     "davem@davemloft.net" <davem@davemloft.net>,
-        "Zhuangyuzeng (Yisen)" <yisen.zhuang@huawei.com>,
-        "lipeng (Y)" <lipeng321@huawei.com>,
-        "mehta.salil@opnsrc.net" <mehta.salil@opnsrc.net>,
-        "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linux-rdma@vger.kernel.org" <linux-rdma@vger.kernel.org>,
-        Linuxarm <linuxarm@huawei.com>
-Subject: RE: [PATCH net-next 1/5] net: hns3: Enable HW GRO for Rev B(=0x21)
- HNS3 hardware
-Thread-Topic: [PATCH net-next 1/5] net: hns3: Enable HW GRO for Rev B(=0x21)
- HNS3 hardware
-Thread-Index: AQHUezmnt+3C9Q8AW0CD0gBKHyEzqqVNf78AgAMVqvA=
-Date:   Thu, 15 Nov 2018 09:36:10 +0000
-Message-ID: <F4CC6FACFEB3C54C9141D49AD221F7F93BFB6F3E@FRAEML521-MBX.china.huawei.com>
-References: <20181113101307.6020-1-salil.mehta@huawei.com>
- <20181113101307.6020-2-salil.mehta@huawei.com>
- <20181113112446.GC3759@mtr-leonro.mtl.com>
-In-Reply-To: <20181113112446.GC3759@mtr-leonro.mtl.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-originating-ip: [10.47.88.106]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: 8BIT
+        Thu, 15 Nov 2018 14:43:14 -0500
+Received: from mirror2.csie.ntu.edu.tw ([140.112.30.76]:46476 "EHLO
+        wens.csie.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388028AbeKOTnM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:43:12 -0500
+Received: by wens.csie.org (Postfix, from userid 1000)
+        id EC1245FD9F; Thu, 15 Nov 2018 17:36:04 +0800 (CST)
+From:   Chen-Yu Tsai <wens@csie.org>
+To:     Marcel Holtmann <marcel@holtmann.org>,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>
+Cc:     Loic Poulain <loic.poulain@gmail.com>,
+        linux-bluetooth@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Chen-Yu Tsai <wens@csie.org>
+Subject: [PATCH v2 11/15] Bluetooth: hci_bcm: Add BCM20702A1 variant
+Date:   Thu, 15 Nov 2018 17:35:59 +0800
+Message-Id: <20181115093603.26729-12-wens@csie.org>
+X-Mailer: git-send-email 2.19.1
+In-Reply-To: <20181115093603.26729-1-wens@csie.org>
+References: <20181115093603.26729-1-wens@csie.org>
 MIME-Version: 1.0
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-> From: Leon Romanovsky [mailto:leon@kernel.org]
-> Sent: Tuesday, November 13, 2018 11:25 AM
-> To: Salil Mehta <salil.mehta@huawei.com>
-> Cc: davem@davemloft.net; Zhuangyuzeng (Yisen) <yisen.zhuang@huawei.com>;
-> lipeng (Y) <lipeng321@huawei.com>; mehta.salil@opnsrc.net;
-> netdev@vger.kernel.org; linux-kernel@vger.kernel.org; linux-
-> rdma@vger.kernel.org; Linuxarm <linuxarm@huawei.com>
-> Subject: Re: [PATCH net-next 1/5] net: hns3: Enable HW GRO for Rev
-> B(=0x21) HNS3 hardware
-> 
-> On Tue, Nov 13, 2018 at 10:13:03AM +0000, Salil Mehta wrote:
-> > From: Peng Li <lipeng321@huawei.com>
-> >
-> > HNS3 hardware Revision B(=0x21) supports Hardware GRO feature. This
-> > patch enables this feature in the HNS3 PF/VF driver.
-> >
-> > Signed-off-by: Peng Li <lipeng321@huawei.com>
-> > Signed-off-by: Salil Mehta <salil.mehta@huawei.com>
+From: Maxime Ripard <maxime.ripard@bootlin.com>
 
+The BCM20702A1 chip is a single-chip Bluetooth 4.0 controller and
+transceiver. It is found in the AMPAK AP6210 WiFi+BT package.
 
-> >
-> > +	ret = hclge_config_gro(hdev, true);
-> > +	if (ret) {
-> > +		dev_err(&pdev->dev,
-> > +			"Failed to enable GRO in hardware, ret =%d\n", ret);
-> 
-> You already printed an error in the hclge_config_gro().
+Signed-off-by: Maxime Ripard <maxime.ripard@bootlin.com>
+Signed-off-by: Chen-Yu Tsai <wens@csie.org>
+---
+ drivers/bluetooth/btbcm.c   | 6 ++++++
+ drivers/bluetooth/hci_bcm.c | 1 +
+ 2 files changed, 7 insertions(+)
 
-sure. thanks.
+diff --git a/drivers/bluetooth/btbcm.c b/drivers/bluetooth/btbcm.c
+index e3e4d929e74f..22d4b530da03 100644
+--- a/drivers/bluetooth/btbcm.c
++++ b/drivers/bluetooth/btbcm.c
+@@ -33,6 +33,7 @@
+ #define VERSION "0.1"
+ 
+ #define BDADDR_BCM20702A0 (&(bdaddr_t) {{0x00, 0xa0, 0x02, 0x70, 0x20, 0x00}})
++#define BDADDR_BCM20702A1 (&(bdaddr_t) {{0x00, 0x00, 0xa0, 0x02, 0x70, 0x20}})
+ #define BDADDR_BCM4324B3 (&(bdaddr_t) {{0x00, 0x00, 0x00, 0xb3, 0x24, 0x43}})
+ #define BDADDR_BCM4330B1 (&(bdaddr_t) {{0x00, 0x00, 0x00, 0xb1, 0x30, 0x43}})
+ 
+@@ -64,6 +65,9 @@ int btbcm_check_bdaddr(struct hci_dev *hdev)
+ 	 * The address 00:20:70:02:A0:00 indicates a BCM20702A0 controller
+ 	 * with no configured address.
+ 	 *
++	 * The address 20:70:02:A0:00:00 indicates a BCM20702A1 controller
++	 * with no configured address.
++	 *
+ 	 * The address 43:24:B3:00:00:00 indicates a BCM4324B3 controller
+ 	 * with waiting for configuration state.
+ 	 *
+@@ -71,6 +75,7 @@ int btbcm_check_bdaddr(struct hci_dev *hdev)
+ 	 * with waiting for configuration state.
+ 	 */
+ 	if (!bacmp(&bda->bdaddr, BDADDR_BCM20702A0) ||
++	    !bacmp(&bda->bdaddr, BDADDR_BCM20702A1) ||
+ 	    !bacmp(&bda->bdaddr, BDADDR_BCM4324B3) ||
+ 	    !bacmp(&bda->bdaddr, BDADDR_BCM4330B1)) {
+ 		bt_dev_info(hdev, "BCM: Using default device address (%pMR)",
+@@ -330,6 +335,7 @@ static const struct bcm_subver_table bcm_uart_subver_table[] = {
+ 	{ 0x2209, "BCM43430A1"  },	/* 001.002.009 */
+ 	{ 0x6119, "BCM4345C0"	},	/* 003.001.025 */
+ 	{ 0x230f, "BCM4356A2"	},	/* 001.003.015 */
++	{ 0x220e, "BCM20702A1"  },	/* 001.002.014 */
+ 	{ }
+ };
+ 
+diff --git a/drivers/bluetooth/hci_bcm.c b/drivers/bluetooth/hci_bcm.c
+index 538ce8059bff..8c75e7a67379 100644
+--- a/drivers/bluetooth/hci_bcm.c
++++ b/drivers/bluetooth/hci_bcm.c
+@@ -1396,6 +1396,7 @@ static void bcm_serdev_remove(struct serdev_device *serdev)
+ 
+ #ifdef CONFIG_OF
+ static const struct of_device_id bcm_bluetooth_of_match[] = {
++	{ .compatible = "brcm,bcm20702a1" },
+ 	{ .compatible = "brcm,bcm43438-bt" },
+ 	{ },
+ };
+-- 
+2.19.1
 
-> 
-> > +		goto err_mdiobus_unreg;
-> > +	}
-> > +
-> >  	ret = hclge_init_vlan_config(hdev);
-> >  	if (ret) {
-> >  		dev_err(&pdev->dev, "VLAN init fail, ret =%d\n", ret);
-> > @@ -7221,6 +7250,13 @@ static int hclge_reset_ae_dev(struct hnae3_ae_dev *ae_dev)
-> >  		return ret;
-> >  	}
-> >
-> > +	ret = hclge_config_gro(hdev, true);
-> > +	if (ret) {
-> > +		dev_err(&pdev->dev,
-> > +			"Failed to enable GRO in hardware, ret =%d\n", ret);
-> 
-> Ditto
-
-ok.
-
-
-> >  static int hclgevf_rss_init_hw(struct hclgevf_dev *hdev)
-> >  {
-> >  	struct hclgevf_rss_cfg *rss_cfg = &hdev->rss_cfg;
-> > @@ -2122,6 +2145,13 @@ static int hclgevf_reset_hdev(struct
-> hclgevf_dev *hdev)
-> >  		return ret;
-> >  	}
-> >
-> > +	ret = hclgevf_config_gro(hdev, true);
-> > +	if (ret) {
-> > +		dev_err(&pdev->dev,
-> > +			"failed to enable VF GRO in hardware, ret =%d\n",
-> ret);
-> > +		return ret;
-> 
-> Ditto
-
-sure.
-
-
-> 
-> > +	}
-> > +
-> >  	ret = hclgevf_init_vlan_config(hdev);
-> >  	if (ret) {
-> >  		dev_err(&hdev->pdev->dev,
-> > @@ -2199,6 +2229,13 @@ static int hclgevf_init_hdev(struct hclgevf_dev
-> *hdev)
-> >  		goto err_config;
-> >  	}
-> >
-> > +	ret = hclgevf_config_gro(hdev, true);
-> > +	if (ret) {
-> > +		dev_err(&pdev->dev,
-> > +			"Failed to enable VF GRO in hardware, ret =%d\n",
-> ret);
-> 
-> Ditto
-
-Fixed in V2. Thanks Leon.
-
-
-Best regards
-Salil.
