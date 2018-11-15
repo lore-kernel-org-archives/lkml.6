@@ -1,156 +1,120 @@
-Return-Path: <SRS0=v0ik=NZ=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA4A4C43441
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:56:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AD368C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:12:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 682E02087E
-	for <linux-kernel@archiver.kernel.org>; Wed, 14 Nov 2018 23:56:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 60F4E21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:12:07 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Z8neoLnM"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 682E02087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=hammerspace.com header.i=@hammerspace.com header.b="bcFCqRZc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60F4E21582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=hammerspace.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726961AbeKOKCA (ORCPT
+        id S1726914AbeKOKRf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 05:02:00 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:43663 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726630AbeKOKCA (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 05:02:00 -0500
-Received: by mail-pg1-f193.google.com with SMTP id n10-v6so8098806pgv.10
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 15:56:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=aYwvw4CCvWN7nmt5+MPowfiTeIWOXdMhQ6m2Rk92D90=;
-        b=Z8neoLnMuSH26cCOu1dQQwUzJd4YtjyuZHuxdvqVoJ8+70lB6UmT7EbWp3mJcueiTs
-         01cjLgIglbE81S0ATxFVtExtvpYNRh+JfCIGFitm8snqkLlWbpjf0u6ZXzHt0UQhRjW1
-         tsRf5iqnbceAeuhZmvALln3XWtssvlQJyYqqA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=aYwvw4CCvWN7nmt5+MPowfiTeIWOXdMhQ6m2Rk92D90=;
-        b=t4uxjkNa1PWjR4tHT7jgfU1iwgMvYmrn0GqmFJBmAVf4G/FReY8ZbN1bCGfAeAax//
-         8CEBSceeHoiQ9n7fmTpC5608BpomXEoyLP+nUNVwfOddEK/GAhH8wGtcV2KIJyDASPcx
-         b4ZTeVpKIdFGrW8w+9QtowOnsBE5mGV1wRzzJODPJZurumM6fQVw6yuCIAGhQa2Ra1lS
-         SCztT/7bCLwVVHyY5mtC+zAVGQr+qvvBH+miA4AoEGKrew1496U1jzpj12rPlqleZABs
-         vBizazRQpCXVjQ+h4+dp81xPMCbSRJCoITcD8yWs+1T6lHaPl9BafPZMoT4t9BVvEkyB
-         HK8g==
-X-Gm-Message-State: AGRZ1gIJo/UJ4ShnsexzxheGkeKKel3+9k9fW8zt17DVZNwbkslhDXGP
-        wEaUGto9130QP8/TzxiJJdxIkQ==
-X-Google-Smtp-Source: AJdET5eeMJmXOGlO9I1LanjuCBgZUyj+6zXyTvQz0i3XRMv6vyXLZw+wlBrgS7HJKLAou2qvAtuB3w==
-X-Received: by 2002:a63:104d:: with SMTP id 13mr3658821pgq.303.1542239791942;
-        Wed, 14 Nov 2018 15:56:31 -0800 (PST)
-Received: from localhost ([2620:15c:202:1:b6af:f85:ed6c:ac6a])
-        by smtp.gmail.com with ESMTPSA id 71-v6sm5884910pfs.108.2018.11.14.15.56.31
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Wed, 14 Nov 2018 15:56:31 -0800 (PST)
-Date:   Wed, 14 Nov 2018 15:56:30 -0800
-From:   Matthias Kaehlcke <mka@chromium.org>
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     Rob Clark <robdclark@gmail.com>, David Airlie <airlied@linux.ie>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Sean Paul <seanpaul@chromium.org>, ryadav@codeaurora.org,
-        Stephen Boyd <swboyd@chromium.org>,
-        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
-        dri-devel <dri-devel@lists.freedesktop.org>,
-        freedreno <freedreno@lists.freedesktop.org>,
-        devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/2] drm/msm/dsi: Get PHY ref clock from the DT
-Message-ID: <20181114235630.GO22824@google.com>
-References: <20181102214534.184593-1-mka@chromium.org>
- <20181102214534.184593-2-mka@chromium.org>
- <CAD=FV=Vyv5sRhJNgpP6Gnn3+6zRjGsT8RozCY6xx51Tr_hRoeg@mail.gmail.com>
+        Thu, 15 Nov 2018 05:17:35 -0500
+Received: from mail-eopbgr790138.outbound.protection.outlook.com ([40.107.79.138]:2383
+        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1726080AbeKOKRf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 05:17:35 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=hammerspace.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Aq1ONZAHgHFdes4pt0KzBc+HGC2YXhLbegd0xHy31DQ=;
+ b=bcFCqRZc0O9Uf9VoU5lsfTJePePdDJFPVU+/buhEKepE362+PJR280+Xes2lWeaOsAbkqtu06FDM763GMlgk2j5q8xU+cNmIL2ePufolo3+hXiq1yli5c8m3DTY06yB87mlAbyshWPxap7nEWyAN1UoFDvLOMDTTWkQxiL6f1G0=
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com (52.135.95.148) by
+ SN6PR13MB2287.namprd13.prod.outlook.com (52.135.94.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.12; Thu, 15 Nov 2018 00:12:01 +0000
+Received: from SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::205a:69c2:1cf5:b475]) by SN6PR13MB2494.namprd13.prod.outlook.com
+ ([fe80::205a:69c2:1cf5:b475%3]) with mapi id 15.20.1361.004; Thu, 15 Nov 2018
+ 00:12:01 +0000
+From:   Trond Myklebust <trondmy@hammerspace.com>
+To:     "torvalds@linux-foundation.org" <torvalds@linux-foundation.org>
+CC:     "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linux-nfs@vger.kernel.org" <linux-nfs@vger.kernel.org>
+Subject: [GIT PULL] Please pull NFS fixes for 4.20
+Thread-Topic: [GIT PULL] Please pull NFS fixes for 4.20
+Thread-Index: AQHUfHfUVW2lu4QPyUSk+LyTqFzoQw==
+Date:   Thu, 15 Nov 2018 00:12:01 +0000
+Message-ID: <15f600c2e93b3c764a236168e47891c1f46fc2e5.camel@hammerspace.com>
+Accept-Language: en-US, en-GB
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [68.40.195.73]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;SN6PR13MB2287;6:d1Kep49GH6qsD/AES/1R9NgdUGyxV++je5UFF31nTtyL90k5n4N15g0ceY05Gky/nJdFe32LQraF02UQtRI1krulPoOiyORH41Rt9WuNmvU96jxVJYrXItmDqfXP1X4G0nrcf0t7BgEVJjuWg/hHRGKhm3UktgnzQ1tu1iE5+e5ui4Skwm9BKdExLGi2rSywc6mGPJOLSi7zavPAG0FCdjw795G8rybuu87aBJ+B6E4iBpJNVa9YrFusF4xc6o3v6oOJjyn0iewwfzfV2F/cEopkXp2fYUTcJo82C456b2enIcBauKMdeDSyZnxiWK0Yi7sOj+frq4sOh4rMHizxj8+fbOdaWT1MYzUo8Tgjp5nP12UX/xotbmJ3Xtx3VhWmIauwkmcTGqiYMWFppYpeCM+q5AzIgcvPPQCTP85r16Xi2Witn3oXWpyIudbxwLwx7X91rM622yNRV5HL5m9yhA==;5:43VOHXXEB+nRKATxUshh6w+RgFnsg2Q8NLtL+BpcBx2hW933rOCpJQSpcMJ5TKX2XKcUdqATNiYzpNGldcH6gkyJ72fJTws9p+Nkz1uysRf+F8Fmhj51Xf4bve2ZhVtXlbl2fyn/5fDh+FGErXvUJ4CYA7QpP6QBUvqMVOKs3oo=;7:DgTuGilH2CwSqlX+69qcPOPoFwPvir9muj8PNS+jiyFxHtZ4+o+goDScg+4FQ82OGpDsBnFI+kqsYl7C4+os+4uEpzGJFQiUqDB5kYpOQgAEd6uuNF4lwk6CkT1dhedPFUGF5BhSjeRB3XpNtAwh7A==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 39425c43-b077-49b7-0e29-08d64a8ef790
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:SN6PR13MB2287;
+x-ms-traffictypediagnostic: SN6PR13MB2287:
+x-microsoft-antispam-prvs: <SN6PR13MB2287D27104162AE5E7F74EE2B8DC0@SN6PR13MB2287.namprd13.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(93006095)(93001095)(3002001)(10201501046)(3231415)(944501410)(52105112)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:SN6PR13MB2287;BCL:0;PCL:0;RULEID:;SRVR:SN6PR13MB2287;
+x-forefront-prvs: 08572BD77F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(979002)(346002)(136003)(39830400003)(376002)(366004)(396003)(189003)(199004)(478600001)(53936002)(86362001)(186003)(71200400001)(71190400001)(105586002)(118296001)(256004)(14444005)(106356001)(97736004)(6512007)(26005)(575784001)(6916009)(102836004)(6506007)(305945005)(5660300001)(14454004)(2900100001)(6436002)(2501003)(6346003)(5640700003)(4001150100001)(66066001)(7736002)(6486002)(4326008)(6116002)(1730700003)(8676002)(25786009)(81156014)(81166006)(486006)(99286004)(316002)(2616005)(54906003)(8936002)(476003)(3846002)(2351001)(2906002)(36756003)(68736007)(969003)(989001)(999001)(1009001)(1019001);DIR:OUT;SFP:1102;SCL:1;SRVR:SN6PR13MB2287;H:SN6PR13MB2494.namprd13.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: hammerspace.com does not designate
+ permitted sender hosts)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=trondmy@hammerspace.com; 
+x-microsoft-antispam-message-info: Itk1TQO5qhJl/JcukWnXYSn8VvWJ/WHjNez72laUKzDQm5++8K//HLK6vWeH2BfJlW6vJIQigwRRyXJ2Qv5vfjcxOosQvcSMmGCRus2KNvfc9r1iqMr+pxmVNbIIVvJZ4mUQ9ObwjTEPwFMW71S0z0IVLRZdmGEaqKauW5pRJ5wFZqQz7wQIdqfjOHuFW9FhojyaBKoFyXeY+Se/69YO2Z+57fSZ6PzCzSILPGL5m48yPnMFFd3Hb3kXfG6IxSVSGT8NhWPT0+0V26BtMbnAVqLUW8WXVX1XOrp49pwuKqvKZuHn0S7DrfrRR2Tv1997k+WrOGhWDmfltOWl5v/VMdnkA5BaU4borrX8CDMdT2g=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <515F9C4070FCF241B8A61752A127744F@namprd13.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAD=FV=Vyv5sRhJNgpP6Gnn3+6zRjGsT8RozCY6xx51Tr_hRoeg@mail.gmail.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+X-OriginatorOrg: hammerspace.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 39425c43-b077-49b7-0e29-08d64a8ef790
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2018 00:12:01.6446
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 0d4fed5c-3a70-46fe-9430-ece41741f59e
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR13MB2287
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 02:04:31PM -0800, Doug Anderson wrote:
-> Hi,
-> 
-> On Fri, Nov 2, 2018 at 2:45 PM Matthias Kaehlcke <mka@chromium.org> wrote:
-> >
-> > Get the PHY ref clock from the device tree instead of hardcoding
-> > its name and rate.
-> >
-> > Signed-off-by: Matthias Kaehlcke <mka@chromium.org>
-> > ---
-> >  drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c | 11 ++++++++++-
-> >  1 file changed, 10 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-> > index 4c03f0b7343ed..1016eb50df8f5 100644
-> > --- a/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-> > +++ b/drivers/gpu/drm/msm/dsi/pll/dsi_pll_10nm.c
-> > @@ -91,6 +91,8 @@ struct dsi_pll_10nm {
-> >         void __iomem *phy_cmn_mmio;
-> >         void __iomem *mmio;
-> >
-> > +       struct clk *vco_ref_clk;
-> > +
-> >         u64 vco_ref_clk_rate;
-> >         u64 vco_current_rate;
-> >
-> > @@ -630,7 +632,8 @@ static int pll_10nm_register(struct dsi_pll_10nm *pll_10nm)
-> >         char clk_name[32], parent[32], vco_name[32];
-> >         char parent2[32], parent3[32], parent4[32];
-> >         struct clk_init_data vco_init = {
-> > -               .parent_names = (const char *[]){ "xo" },
-> > +               .parent_names = (const char *[]){
-> > +                       __clk_get_name(pll_10nm->vco_ref_clk) },
-> >                 .num_parents = 1,
-> >                 .name = vco_name,
-> >                 .flags = CLK_IGNORE_UNUSED,
-> > @@ -786,6 +789,12 @@ struct msm_dsi_pll *msm_dsi_pll_10nm_init(struct platform_device *pdev, int id)
-> >         pll_10nm->id = id;
-> >         pll_10nm_list[id] = pll_10nm;
-> >
-> > +       pll_10nm->vco_ref_clk = devm_clk_get(&pdev->dev, "ref");
-> > +       if (IS_ERR(pll_10nm->vco_ref_clk)) {
-> > +               dev_err(&pdev->dev, "couldn't get 'ref' clock\n");
-> > +               return (void *)pll_10nm->vco_ref_clk;
-> > +       }
-> 
-> So, ummmm.  Can you follow the same pattern for all the other clocks
-> in this file too?  All parents should get their name based on
-> references in the device tree.
-> 
-> It turns out that right now we have a mismatch because
-> "drivers/clk/qcom/dispcc-sdm845.c" calls "dsi0pllbyte"
-> "dsi0_phy_pll_out_byteclk" and calls "dsi0pll"
-> "dsi0_phy_pll_out_dsiclk".  We might want to change the names in
-> dispcc-sdm845.c, but it wouldn't matter if we simply didn't hardcode
-> them here.
-
-Hm, I understand the problem, but not quite what you mean with 'follow
-the same pattern'. The VCO ref clock is an 'external'/existing clock,
-hence it can be specificed in the DT and obtained with
-_clk_get(). However the clocks you mention above are 'created' by the
-PHY driver, so we could only specify their names in the DT, not sure
-if that's what you are suggesting. I guess 'clock-output-names' could
-be used, though it isn't really useful to describe the names in a
-clock tree. If you still think this should be done please share how
-you envision the DT entries to look.
-
-Cheers
-
-Matthias
+SGkgTGludXMsDQoNClRoZSBmb2xsb3dpbmcgY2hhbmdlcyBzaW5jZSBjb21taXQgY2NkYTRhZjBm
+NGI5MmY3YjRjMzA4ZDNhY2MyNjJmNGE3ZTNhZmZhZDoNCg0KICBMaW51eCA0LjIwLXJjMiAoMjAx
+OC0xMS0xMSAxNzoxMjozMSAtMDYwMCkNCg0KYXJlIGF2YWlsYWJsZSBpbiB0aGUgR2l0IHJlcG9z
+aXRvcnkgYXQ6DQoNCiAgZ2l0Oi8vZ2l0LmxpbnV4LW5mcy5vcmcvcHJvamVjdHMvdHJvbmRteS9s
+aW51eC1uZnMuZ2l0IHRhZ3MvbmZzLWZvci00LjIwLTMNCg0KZm9yIHlvdSB0byBmZXRjaCBjaGFu
+Z2VzIHVwIHRvIGUzOWQ4YTE4NmVkMDAyODU0MTk2NjY4Y2I3NTYyZmZkZmJjNmQzNzk6DQoNCiAg
+TkZTdjQ6IEZpeCBhbiBPb3BzIGR1cmluZyBkZWxlZ2F0aW9uIGNhbGxiYWNrcyAoMjAxOC0xMS0x
+MyAxNzoxNToxNyAtMDUwMCkNCg0KQ2hlZXJzLA0KICAgVHJvbmQNCg0KLS0tLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLQ0KTkZTIGNs
+aWVudCBidWdmaXhlcyBmb3IgTGludXggNC4yMA0KDQpIaWdobGlnaHRzIGluY2x1ZGU6DQoNClN0
+YWJsZSBmaXhlczoNCi0gRG9uJ3QgZXhpdCB0aGUgTkZTdjQgc3RhdGUgbWFuYWdlciB3aXRob3V0
+IGNsZWFyaW5nIE5GUzRDTE5UX01BTkFHRVJfUlVOTklORw0KDQpCdWdmaXhlczoNCi0gRml4IGFu
+IE9vcHMgd2hlbiBkZXN0cm95aW5nIHRoZSBSUENTRUNfR1NTIGNyZWRlbnRpYWwgY2FjaGUNCi0g
+Rml4IGFuIE9vcHMgZHVyaW5nIGRlbGVnYXRpb24gY2FsbGJhY2tzDQotIEVuc3VyZSB0aGF0IHRo
+ZSBORlN2NCBzdGF0ZSBtYW5hZ2VyIGV4aXRzIHRoZSBsb29wIG9uIFNJR0tJTEwNCi0gRml4IGEg
+Ym9ndXMgZ2V0L3B1dCBpbiBnZW5lcmljX2tleV90b19leHBpcmUoKQ0KDQotLS0tLS0tLS0tLS0t
+LS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tDQpUcm9u
+ZCBNeWtsZWJ1c3QgKDUpOg0KICAgICAgTkZTdjQ6IERvbid0IGV4aXQgdGhlIHN0YXRlIG1hbmFn
+ZXIgd2l0aG91dCBjbGVhcmluZyBORlM0Q0xOVF9NQU5BR0VSX1JVTk5JTkcNCiAgICAgIE5GU3Y0
+OiBFbnN1cmUgdGhhdCB0aGUgc3RhdGUgbWFuYWdlciBleGl0cyB0aGUgbG9vcCBvbiBTSUdLSUxM
+DQogICAgICBTVU5SUEM6IEZpeCBhIE9vcHMgd2hlbiBkZXN0cm95aW5nIHRoZSBSUENTRUNfR1NT
+IGNyZWRlbnRpYWwgY2FjaGUNCiAgICAgIFNVTlJQQzogRml4IGEgYm9ndXMgZ2V0L3B1dCBpbiBn
+ZW5lcmljX2tleV90b19leHBpcmUoKQ0KICAgICAgTkZTdjQ6IEZpeCBhbiBPb3BzIGR1cmluZyBk
+ZWxlZ2F0aW9uIGNhbGxiYWNrcw0KDQogZnMvbmZzL2NhbGxiYWNrX3Byb2MuYyAgICAgICAgIHwg
+IDQgKy0tDQogZnMvbmZzL2RlbGVnYXRpb24uYyAgICAgICAgICAgIHwgMTEgKysrKysrLS0NCiBm
+cy9uZnMvbmZzNHN0YXRlLmMgICAgICAgICAgICAgfCAxMCArKysrLS0tDQogbmV0L3N1bnJwYy9h
+dXRoX2dlbmVyaWMuYyAgICAgIHwgIDggKy0tLS0tDQogbmV0L3N1bnJwYy9hdXRoX2dzcy9hdXRo
+X2dzcy5jIHwgNjEgKysrKysrKysrKysrKysrKysrKysrKysrKysrKystLS0tLS0tLS0tLS0tDQog
+NSBmaWxlcyBjaGFuZ2VkLCA2MCBpbnNlcnRpb25zKCspLCAzNCBkZWxldGlvbnMoLSkNCi0tIA0K
+VHJvbmQgTXlrbGVidXN0DQpMaW51eCBORlMgY2xpZW50IG1haW50YWluZXIsIEhhbW1lcnNwYWNl
+DQp0cm9uZC5teWtsZWJ1c3RAaGFtbWVyc3BhY2UuY29tDQoNCg0K
