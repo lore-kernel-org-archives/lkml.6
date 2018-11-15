@@ -2,143 +2,131 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,UNPARSEABLE_RELAY,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7BD5DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 03:13:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 605B3C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 03:13:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4515B214F1
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 03:13:24 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="wbo5OIU+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4515B214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 0CF17214F1
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 03:13:30 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0CF17214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728520AbeKONTX (ORCPT
+        id S1728574AbeKONT3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 08:19:23 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:57032 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728166AbeKONTM (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 08:19:12 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAF33xA4029268;
-        Thu, 15 Nov 2018 03:13:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=from : to : cc :
- subject : date : message-id; s=corp-2018-07-02;
- bh=LWLAp0Td9iaRdosjojClvLVG51epeI0HTz9AmhEJeT8=;
- b=wbo5OIU+q4UJOwr7pjp1qkMfNbbP3lnDK2OAscOeBx8Lx7hxu1y3/pUSZ+DNLP5sHAdx
- acz/7EKqJ/bTE0y+u0dM0oW1dtbCKHUzNA5uWs/5Vrn9jMYukeHwCQA+xGYzgKk8cwOv
- lB2TP+kRPTpv2I5pv7WY8coqNWnJ0ehTW7HFIbtlhoqBLKaUqTtcIcBSnxpkmMxmPuZ2
- a7coZ5ngiiclhLpqb54Ew0GfiiWfBTfnpmzj43AowojDeLZ5D6A3yyICOEsEG1sEjbwC
- sNcVXMPrbgi+vV90PVUkRIP0XCEsUhlN2TGQ3TO08p/P3MqGJMg3GF0XfP6Vtc2m5Pu2 bw== 
-Received: from aserv0022.oracle.com (aserv0022.oracle.com [141.146.126.234])
-        by userp2130.oracle.com with ESMTP id 2nr7cs73u5-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Nov 2018 03:13:08 +0000
-Received: from userv0121.oracle.com (userv0121.oracle.com [156.151.31.72])
-        by aserv0022.oracle.com (8.14.4/8.14.4) with ESMTP id wAF3D2Og030438
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Thu, 15 Nov 2018 03:13:02 GMT
-Received: from abhmp0014.oracle.com (abhmp0014.oracle.com [141.146.116.20])
-        by userv0121.oracle.com (8.14.4/8.13.8) with ESMTP id wAF3D1ES010324;
-        Thu, 15 Nov 2018 03:13:01 GMT
-Received: from will-ThinkCentre-M93p.cn.oracle.com (/10.182.70.234)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Wed, 14 Nov 2018 19:12:58 -0800
-From:   Jianchao Wang <jianchao.w.wang@oracle.com>
-To:     axboe@kernel.dk
-Cc:     ming.lei@redhat.com, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH V8 0/3] blk-mq: refactor code of issue request directly
-Date:   Thu, 15 Nov 2018 11:12:35 +0800
-Message-Id: <1542251558-10517-1-git-send-email-jianchao.w.wang@oracle.com>
-X-Mailer: git-send-email 2.7.4
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9077 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=1 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811150026
+        Thu, 15 Nov 2018 08:19:29 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:34720 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728166AbeKONT3 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 08:19:29 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 5D49F308A972;
+        Thu, 15 Nov 2018 03:13:28 +0000 (UTC)
+Received: from localhost (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 9940A608C3;
+        Thu, 15 Nov 2018 03:13:27 +0000 (UTC)
+Date:   Thu, 15 Nov 2018 11:13:25 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Oscar Salvador <OSalvador@suse.com>, linux-mm@kvack.org,
+        LKML <linux-kernel@vger.kernel.org>,
+        Michal Hocko <mhocko@suse.com>
+Subject: Re: [PATCH] mm, memory_hotplug: check zone_movable in
+ has_unmovable_pages
+Message-ID: <20181115031325.GI2653@MiWiFi-R3L-srv>
+References: <20181106095524.14629-1-mhocko@kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181106095524.14629-1-mhocko@kernel.org>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 15 Nov 2018 03:13:28 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jens
+On 11/06/18 at 10:55am, Michal Hocko wrote:
+> From: Michal Hocko <mhocko@suse.com>
+> 
+> Page state checks are racy. Under a heavy memory workload (e.g. stress
+> -m 200 -t 2h) it is quite easy to hit a race window when the page is
+> allocated but its state is not fully populated yet. A debugging patch to
 
-Please consider this patchset for 4.21.
-It refactors the code of issue request directly to unify the interface
-and make the code clearer and more readable.
+The original phenomenon is the value of /sys/devices/system/memory/memoryxxx/removable
+is 0 on several memory blocks of hotpluggable node. And almost on each
+hotpluggable node, there are one or several blocks which has this zero
+value of removable attribute. It caused the hot removing failure always.
 
-The 1st patch refactors the code of issue request directly to unify the
-helper interface which could handle all the cases.
+And only cat /sys/devices/system/memory/memoryxxx/removable will trigger
+the call trace.
 
-The 2nd patch make blk_mq_sched_insert_requests issue requests directly
-with 'bypass' false, then it needn't to handle the non-issued requests
-any more.
+With this fix, all 'removable' of memory block on those hotpluggable
+nodes are '1', and hotplug can succeed.
 
-The 3rd patch replace and kill the blk_mq_request_issue_directly.
+> dump the struct page state shows
+> : [  476.575516] has_unmovable_pages: pfn:0x10dfec00, found:0x1, count:0x0
+> : [  476.582103] page:ffffea0437fb0000 count:1 mapcount:1 mapping:ffff880e05239841 index:0x7f26e5000 compound_mapcount: 1
+> : [  476.592645] flags: 0x5fffffc0090034(uptodate|lru|active|head|swapbacked)
+> 
+> Note that the state has been checked for both PageLRU and PageSwapBacked
+> already. Closing this race completely would require some sort of retry
+> logic. This can be tricky and error prone (think of potential endless
+> or long taking loops).
+> 
+> Workaround this problem for movable zones at least. Such a zone should
+> only contain movable pages. 15c30bc09085 ("mm, memory_hotplug: make
+> has_unmovable_pages more robust") has told us that this is not strictly
+> true though. Bootmem pages should be marked reserved though so we can
+> move the original check after the PageReserved check. Pages from other
+> zones are still prone to races but we even do not pretend that memory
+> hotremove works for those so pre-mature failure doesn't hurt that much.
+> 
+> Reported-and-tested-by: Baoquan He <bhe@redhat.com>
+> Acked-by: Baoquan He <bhe@redhat.com>
+> Fixes: "mm, memory_hotplug: make has_unmovable_pages more robust")
 
-V8:
- - drop the original 2nd patch which try to insert requests into hctx->dispatch
-   if quiesced or stopped.
- - remove two wrong 'unlikely'
+Fixes: 15c30bc09085 "mm, memory_hotplug: make has_unmovable_pages more robust")
 
-V7:
- - drop the original 3rd patch which try to ensure hctx to be ran on
-   its mapped cpu in issueing directly path.
-
-V6:
- - drop original 1st patch to address Jen's comment
- - discard the enum mq_issue_decision and blk_mq_make_decision and use
-   BLK_STS_* return values directly to address Jen's comment. (1/5)
- - add 'unlikely' in blk_mq_try_issue_directly (1/5)
- - refactor the 2nd and 3rd patch based on the new 1st patch.
- - reserve the unused_cookie in 4th and 5th patch
-
-V5:
- - rebase against Jens' for-4.21/block branch
- - adjust the order of patch04 and patch05
- - add patch06 to replace and kill the one line blk_mq_request_bypass_insert
- - comment changes
-
-V4:
- - split the original patch 1 into two patches, 1st and 2nd patch currently
- - rename the mq_decision to mq_issue_decision
- - comment changes
-
-V3:
- - Correct the code about the case bypass_insert is true and io scheduler
-   attached. The request still need to be issued in case above. (1/4)
- - Refactor the code to make code clearer. blk_mq_make_request is introduced
-   to decide insert, end or just return based on the return value of .queue_rq
-   and bypass_insert (1/4) 
- - Add the 2nd patch. It introduce a new decision result which indicates to
-   insert request with blk_mq_request_bypass_insert.
- - Modify the code to adapt the new patch 1.
-
-V2:
- - Add 1st and 2nd patch to refactor the code.
-
-Jianchao Wang(3)
-  blk-mq: refactor the code of issue request directly
-  blk-mq: issue directly with bypass 'false' in blk_mq_sched_insert_requests
-  blk-mq: replace and kill blk_mq_request_issue_directly
-
-block/blk-core.c     |   4 +-
-block/blk-mq-sched.c |   8 ++--
-block/blk-mq.c       | 103 +++++++++++++++++++++------------------------------
-block/blk-mq.h       |   7 ++--
-4 files changed, 53 insertions(+), 69 deletions(-)
-
-Thanks
-Jianchao
-
-
-
-
+> Signed-off-by: Michal Hocko <mhocko@suse.com>
+> ---
+> 
+> Hi,
+> this has been reported [1] and we have tried multiple things to address
+> the issue. The only reliable way was to reintroduce the movable zone
+> check into has_unmovable_pages. This time it should be safe also for
+> the bug originally fixed by 15c30bc09085.
+> 
+> [1] http://lkml.kernel.org/r/20181101091055.GA15166@MiWiFi-R3L-srv
+>  mm/page_alloc.c | 8 ++++++++
+>  1 file changed, 8 insertions(+)
+> 
+> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+> index 863d46da6586..c6d900ee4982 100644
+> --- a/mm/page_alloc.c
+> +++ b/mm/page_alloc.c
+> @@ -7788,6 +7788,14 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
+>  		if (PageReserved(page))
+>  			goto unmovable;
+>  
+> +		/*
+> +		 * If the zone is movable and we have ruled out all reserved
+> +		 * pages then it should be reasonably safe to assume the rest
+> +		 * is movable.
+> +		 */
+> +		if (zone_idx(zone) == ZONE_MOVABLE)
+> +			continue;
+> +
+>  		/*
+>  		 * Hugepages are not in LRU lists, but they're movable.
+>  		 * We need not scan over tail pages bacause we don't
+> -- 
+> 2.19.1
+> 
