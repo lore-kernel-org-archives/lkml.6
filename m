@@ -2,172 +2,255 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2425C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:26:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BEE8AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:30:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7560D2146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:26:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7560D2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 780ED21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:30:56 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RN0ulnK4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 780ED21582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388467AbeKPAe4 (ORCPT
+        id S2388319AbeKPAi6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 19:34:56 -0500
-Received: from mga14.intel.com ([192.55.52.115]:23848 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1732953AbeKPAez (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 19:34:55 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 06:26:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,236,1539673200"; 
-   d="scan'208";a="92293579"
-Received: from linux.intel.com ([10.54.29.200])
-  by orsmga008.jf.intel.com with ESMTP; 15 Nov 2018 06:26:52 -0800
-Received: from [10.251.29.1] (kliang2-mobl1.ccr.corp.intel.com [10.251.29.1])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by linux.intel.com (Postfix) with ESMTPS id 8B8FD580475;
-        Thu, 15 Nov 2018 06:26:51 -0800 (PST)
-Subject: Re: [PATCH 1/2] perf vendor events: Add stepping in CPUID string for
- x86
-To:     Jiri Olsa <jolsa@redhat.com>
-Cc:     acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
-        linux-kernel@vger.kernel.org, namhyung@kernel.org,
-        ak@linux.intel.com
-References: <20181114212416.15665-1-kan.liang@linux.intel.com>
- <20181115135347.GI9600@krava>
-From:   "Liang, Kan" <kan.liang@linux.intel.com>
-Message-ID: <7a63fdf4-828f-0685-e146-6d3d86d8655b@linux.intel.com>
-Date:   Thu, 15 Nov 2018 09:26:50 -0500
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Thu, 15 Nov 2018 19:38:58 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:48062 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729034AbeKPAi5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 19:38:57 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
+        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
+        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=13GjQAwG2XhFWnrd76t6ce0eSS3JyU9WsK9Y9zGJ6O8=; b=RN0ulnK4N95ENPHVIZZj6cDQ7
+        UjsUya0NS+ZDvvtEqJmYrLufV3CHdTyl1Bbxe7IcZ39Im8DqbkPltftroZzMargVw1BU9R1YeEABp
+        PDA2csMMOyJPamJB6pZnY8Oe6SjGkWrO7J0+co0TBu85RzHWFohmf/IwM9YjzrLj57NayAhT63NGe
+        EIpN9oS8SA4+pDWLNTMEuoGsoA+4JY9u5qRDY0RhWydH5sJ/8D9NCZ3Y5BJbKuhf6swabRSxR7e3D
+        eJCj/ULigUox05utTniFsMF7vf3xVa+JUwYPOYlycnuCl7Sc5OwOKtc/yoHygPHQaduXsQVEBAJN4
+        seyA/tAmw==;
+Received: from 189.27.28.95.dynamic.adsl.gvt.net.br ([189.27.28.95] helo=silica.lan)
+        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gNIfS-0001P8-QU; Thu, 15 Nov 2018 14:30:51 +0000
+Date:   Thu, 15 Nov 2018 06:30:40 -0800
+From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+To:     Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-kernel@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        linux-nvdimm@lists.01.org, Vishal Verma <vishal.l.verma@intel.com>,
+        Ross Zwisler <zwisler@kernel.org>
+Subject: Re: [Ksummit-discuss] [RFC PATCH 3/3] libnvdimm, MAINTAINERS:
+ Subsystem Profile
+Message-ID: <20181115063040.11eaef93@silica.lan>
+In-Reply-To: <154225761038.2499188.1270468803677883744.stgit@dwillia2-desk3.amr.corp.intel.com>
+References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
+        <154225761038.2499188.1270468803677883744.stgit@dwillia2-desk3.amr.corp.intel.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
 MIME-Version: 1.0
-In-Reply-To: <20181115135347.GI9600@krava>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Em Wed, 14 Nov 2018 20:53:30 -0800
+Dan Williams <dan.j.williams@intel.com> escreveu:
+
+> Document the basic policies of the libnvdimm subsystem and provide a
+> first example of a Subsystem Profile for others to duplicate and edit.
+>=20
+> Cc: Ross Zwisler <zwisler@kernel.org>
+> Cc: Vishal Verma <vishal.l.verma@intel.com>
+> Cc: Dave Jiang <dave.jiang@intel.com>
+> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+> ---
+>  Documentation/nvdimm/subsystem-profile.rst |   86 ++++++++++++++++++++++=
+++++++
+>  MAINTAINERS                                |    4 +
+>  2 files changed, 90 insertions(+)
+>  create mode 100644 Documentation/nvdimm/subsystem-profile.rst
+>=20
+> diff --git a/Documentation/nvdimm/subsystem-profile.rst b/Documentation/n=
+vdimm/subsystem-profile.rst
+> new file mode 100644
+> index 000000000000..d3428be7528e
+> --- /dev/null
+> +++ b/Documentation/nvdimm/subsystem-profile.rst
+
+Hmm... would it make sense to add a pointer at maintainer/index.rst (or to =
+some
+other .rst file) for those profiles too?
+
+> @@ -0,0 +1,86 @@
+> +LIBNVDIMM Subsystem Profile
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D
+> +
+> +Overview
+> +--------
+
+A minor nitpick here: I would add a blank line after each topic/subtopic.
+
+On some cases, Sphinx will do wrong without that blank line, and having
+some places with that extra line and others without it sounds unbalanced
+on my eyes ;-)
+
+> +So, you have recently become a maintainer of the LIBNVDIMM subsystem,
+> +condolences, it is a thankless job, here is the lay of the land. The git
+
+My understanding that the main focus of this document is to help people to
+submit patches to the subsystem.
+
+With that in mind, I would never start the doc talking only to maintainers,
+as developers will likely just stop reading it at the above paragraph.
+
+> +tree, git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git/, is
+> +writable by all the individuals listed in LIBNVDIMM section of
+> +MAINTAINERS. Access is granted per the typical kernel.org account
+> +management policies. Two branches in that tree are regularly pulled into
+> +-next, libnvdimm-for-next, and libnvdimm-fixes. The submit rate of
+> +patches is low, usually enough for one person to handle. There is a
+> +patchwork instance at
+> +https://patchwork.kernel.org/project/linux-nvdimm/list/, and it
+> +historically is only used for ingesting patches and collecting
+> +ack/review tags, i.e. no expectation to update the patch state after it
+> +has been dispositioned, or merged.
+> +
+> +The most sensitive code area is the ACPI DSM (Device Specific Method)
+> +path. In addition to the general fragility of an ioctl() ABI the ACPI
+> +DSM scheme allows any vendor to implement any command without any prior
+> +review by the ACPI committee. For this reason the LIBNVDIMM system seeks
+> +to constrain the proliferation of vendor commands and at a minimum
+> +requires any command support to be publicly documented. Over time the
+> +submission rate of new vendor-specific commands is falling as more
+> +commands are defined with named methods in the official ACPI
+> +specification.
+
+As Jani pointed, all the above stuff is for maintainers, but several other
+stuff on this document are for developers. The best would likely to have
+two separate files.
+
+However, maintaining it on two separate files could be painful. Maybe
+we could have an specific section, at the end of the document, with
+maintainers-specific instructions.
+
+> +
+> +LIBNVDIMM sits at the intersection of device-drivers, the block-layer,
+> +core memory-management, and filesystems. Be sure to re-route memory
+> +management patches to the -mm tree, and otherwise pull-in fs-devel for
+> +patches that touch anything related to DAX.
+
+This is for developers, so it sounds OK!
+
+> +
+> +Core
+> +----
+> +F: drivers/nvdimm/\*_devs.c
+> +F: drivers/acpi/nfit/\*.[ch]
+> +
+> +
+> +Patches or Pull requests
+> +------------------------
+> +Patches only
+> +
+> +
+> +Last day for new feature submissions
+> +------------------------------------
+> +Before -rc5
+> +
+> +
+> +Last day to merge features
+> +--------------------------
+> +End of last -rc
+> +
+> +
+> +Non-author Ack / Review Tags Required
+> +-------------------------------------
+> +Required
+> +
+> +
+> +Test Suite
+> +----------
+> +Run =E2=80=98make check=E2=80=99 from https://github.com/pmem/ndctl
+> +
+> +
+> +Trusted Reviewers
+> +-----------------
+> +Johannes Thumshirn
+> +Toshi Kani
+> +Jeff Moyer
+> +Robert Elliott
+
+See my other email commenting about that.
+
+> +
+> +
+> +Resubmit Cadence
+> +----------------
+> +8 business days
+> +
+> +
+> +Time Zone / Office Hours
+> +------------------------
+> +8:00am to 5:00pm Pacific Time Zone
+> +
+> +
+> +Checkpatch / Style cleanups
+> +---------------------------
+> +Standalone style-cleanups are welcome.
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index bb4a83a7684d..ba2beedd4605 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -8439,6 +8439,7 @@ M:	Dan Williams <dan.j.williams@intel.com>
+>  M:	Vishal Verma <vishal.l.verma@intel.com>
+>  M:	Dave Jiang <dave.jiang@intel.com>
+>  L:	linux-nvdimm@lists.01.org
+> +P:	Documentation/nvdimm/subsystem-profile.rst
+>  Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
+>  S:	Supported
+>  F:	drivers/nvdimm/blk.c
+> @@ -8450,6 +8451,7 @@ M:	Dan Williams <dan.j.williams@intel.com>
+>  M:	Ross Zwisler <zwisler@kernel.org>
+>  M:	Dave Jiang <dave.jiang@intel.com>
+>  L:	linux-nvdimm@lists.01.org
+> +P:	Documentation/nvdimm/subsystem-profile.rst
+>  Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
+>  S:	Supported
+>  F:	drivers/nvdimm/btt*
+> @@ -8460,6 +8462,7 @@ M:	Dan Williams <dan.j.williams@intel.com>
+>  M:	Vishal Verma <vishal.l.verma@intel.com>
+>  M:	Dave Jiang <dave.jiang@intel.com>
+>  L:	linux-nvdimm@lists.01.org
+> +P:	Documentation/nvdimm/subsystem-profile.rst
+>  Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
+>  S:	Supported
+>  F:	drivers/nvdimm/pmem*
+> @@ -8478,6 +8481,7 @@ M:	Ross Zwisler <zwisler@kernel.org>
+>  M:	Vishal Verma <vishal.l.verma@intel.com>
+>  M:	Dave Jiang <dave.jiang@intel.com>
+>  L:	linux-nvdimm@lists.01.org
+> +P:	Documentation/nvdimm/subsystem-profile.rst
+>  Q:	https://patchwork.kernel.org/project/linux-nvdimm/list/
+>  T:	git git://git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git
+>  S:	Supported
+>=20
+> _______________________________________________
+> Ksummit-discuss mailing list
+> Ksummit-discuss@lists.linuxfoundation.org
+> https://lists.linuxfoundation.org/mailman/listinfo/ksummit-discuss
 
 
-On 11/15/2018 8:53 AM, Jiri Olsa wrote:
-> On Wed, Nov 14, 2018 at 01:24:15PM -0800, kan.liang@linux.intel.com wrote:
-> 
-> SNIP
-> 
->> diff --git a/tools/perf/arch/x86/util/header.c b/tools/perf/arch/x86/util/header.c
->> index fb0d71afee8b..b428a4b00bf7 100644
->> --- a/tools/perf/arch/x86/util/header.c
->> +++ b/tools/perf/arch/x86/util/header.c
->> @@ -4,6 +4,7 @@
->>   #include <stdio.h>
->>   #include <stdlib.h>
->>   #include <string.h>
->> +#include <regex.h>
->>   
->>   #include "../../util/header.h"
->>   
->> @@ -70,9 +71,73 @@ get_cpuid_str(struct perf_pmu *pmu __maybe_unused)
->>   {
->>   	char *buf = malloc(128);
->>   
->> -	if (buf && __get_cpuid(buf, 128, "%s-%u-%X$") < 0) {
->> +	if (buf && __get_cpuid(buf, 128, "%s-%u-%X-%X$") < 0) {
->>   		free(buf);
->>   		return NULL;
->>   	}
->>   	return buf;
->>   }
->> +
->> +/* Full CPUID format for x86 is vendor-family-model-stepping */
->> +static bool is_full_cpuid(const char *cpuid)
->> +{
->> +	const char *tmp = cpuid;
->> +	int count = 0;
->> +
->> +	while ((tmp = strchr(tmp, '-')) != NULL) {
->> +		count++;
->> +		tmp++;
->> +	}
->> +
->> +	if (count == 3)
->> +		return true;
->> +
->> +	return false;
->> +}
->> +
->> +int strcmp_cpuid_str(const char *mapcpuid, const char *cpuid)
->> +{
->> +	regex_t re;
->> +	regmatch_t pmatch[1];
->> +	int match;
->> +	bool full_mapcpuid = is_full_cpuid(mapcpuid);
->> +	bool full_cpuid = is_full_cpuid(cpuid);
-> 
-> cpuid will be always full from now right? why do we need to check it?
->
 
-User may set cpuid by environment string "PERF_CPUID", which may not be 
-full format.
 
-> also please move this to arch/x86/util/pmu.c
-> so it matches the weak function object
-
-Sure.
-
-> 
->> +
->> +	/*
->> +	 * Full CPUID format is required to identify a platform.
->> +	 * Error out if the cpuid string is incomplete.
->> +	 */
->> +	if (full_mapcpuid && !full_cpuid) {
->> +		pr_info("Invalid CPUID %s. Full CPUID is required, "
->> +			"vendor-family-model-stepping\n", cpuid);
->> +		return 1;
->> +	}
->> +
->> +	if (regcomp(&re, mapcpuid, REG_EXTENDED) != 0) {
->> +		/* Warn unable to generate match particular string. */
->> +		pr_info("Invalid regular expression %s\n", mapcpuid);
->> +		return 1;
->> +	}
->> +
->> +	match = !regexec(&re, cpuid, 1, pmatch, 0);
->> +	regfree(&re);
->> +	if (match) {
->> +		size_t match_len = (pmatch[0].rm_eo - pmatch[0].rm_so);
->> +		size_t cpuid_len;
->> +
->> +		/* If the full CPUID format isn't required,
->> +		 * ignoring the stepping.
->> +		 */
->> +		if (!full_mapcpuid && full_cpuid)
->> +			cpuid_len = strrchr(cpuid, '-') - cpuid;
->> +		else
->> +			cpuid_len = strlen(cpuid);
->> +
->> +
->> +		/* Verify the entire string matched. */
->> +		if (match_len == cpuid_len)
->> +			return 0;
-> 
-> why is this necessary?
-> 
-
-It's from previous common code. As my understanding, it just double 
-check the matched strings. There is no harmful. So I keep it.
-
-Thanks,
-Kan
+Cheers,
+Mauro
