@@ -2,102 +2,117 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_LOCAL_NOVOWEL,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51730C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:16:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EE6C1C04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:16:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE65A20858
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:16:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i1d0FkX0"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE65A20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id BEA2D20858
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:16:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BEA2D20858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388917AbeKPGZi (ORCPT
+        id S2388995AbeKPGZx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 01:25:38 -0500
-Received: from mail-yw1-f67.google.com ([209.85.161.67]:34920 "EHLO
-        mail-yw1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725809AbeKPGZh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 01:25:37 -0500
-Received: by mail-yw1-f67.google.com with SMTP id h32so3111796ywk.2;
-        Thu, 15 Nov 2018 12:16:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=xNOq9oINJ0J+C/vT4gXsM+kCD/N6LkuUBG1PR5VgTG4=;
-        b=i1d0FkX0c2sDtdHLdPExT1poqT3YDap948Tfw7sfIYr8gfbJFsU+qIPAWg59a5ZuOA
-         9h0U6Kwx7mNJUZGztM2u3nUDNpZHklspMVIk6ri7/sjQbWBieAUfZYppVwgAzsLe+w/t
-         l1arl+Yk40luVx72IqkUsYwCetq74F3oovAsUWk6jAQ7wCjrmokMQX5HsdK6hSJCZIq0
-         BcFg55d0WWZdX7tg/gOtkBx93VqLNR/Io+jBW8B3OqjiPKekNnOsV4zDFxkuKCcUqAU3
-         UNiQo9aA5ygHGEzO83Px2Cm9heZVxenJ1A32vToy3LFJbjeyv4W8FGe1DuD7V7CsM3N+
-         XKOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=xNOq9oINJ0J+C/vT4gXsM+kCD/N6LkuUBG1PR5VgTG4=;
-        b=DwAhzLfmAy3aVxDObYGcP1KGmT7ScV+OyUhEvk2GsIhSwiyZnCQCAeN8tAK6fxKAFa
-         8MbFC4uktrrDabp6bMVh+xtk1tTCqFaKzADr3sVryCj6G2f82FQrtGBRuws7wu4IcsGj
-         jmJjreoL8qgdCQXZKz7sxBmMg5sGsLq9OVn3ZhCThOsiM1NX3bappYjmEi444gAourCX
-         qOyL9xhkrPjwrw0fBowRkVZpA1jXnHiVuH2emGgkEGl/Al2RCFuM2v7H5cjRQGxVpVxq
-         Ej2axtx2UK5kBxDKzNzcw4b+CbW3wWodaKReqAFKCFmScofPIaVsQexl+GrSK18Hok8r
-         ZtMg==
-X-Gm-Message-State: AGRZ1gJ+10PLARtPQKHIN5gqPwuYtG2lYv+gNDKPYk0BzP33Z5z76GaP
-        FJIcpl2HpA8+zWEukvTA0bqd60J/ze15jZnGl1SdArmS
-X-Google-Smtp-Source: AJdET5dqinuimUIx1B2NCPxMUsWcQ8OgE+wOzlUMthIOMEOQR/noCiDWas9oa2CtrAEFq8q299H/5tLQatRADziBxJw=
-X-Received: by 2002:a81:346:: with SMTP id 67-v6mr7345296ywd.275.1542312980599;
- Thu, 15 Nov 2018 12:16:20 -0800 (PST)
+        Fri, 16 Nov 2018 01:25:53 -0500
+Received: from mga06.intel.com ([134.134.136.31]:39486 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725809AbeKPGZx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 01:25:53 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga002.fm.intel.com ([10.253.24.26])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 12:16:35 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,237,1539673200"; 
+   d="scan'208";a="104924663"
+Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.140])
+  by fmsmga002.fm.intel.com with ESMTP; 15 Nov 2018 12:16:26 -0800
+Date:   Thu, 15 Nov 2018 22:16:25 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Sean Christopherson <sean.j.christopherson@intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, Suresh Siddha <suresh.b.siddha@intel.com>,
+        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
+Message-ID: <20181115201625.GA25953@linux.intel.com>
+References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
+ <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
+ <1541522400.7839.48.camel@intel.com>
+ <20181107163757.GB11509@linux.intel.com>
+ <20181107180057.GB24807@linux.intel.com>
+ <20181108144603.GA14072@linux.intel.com>
+ <20181115200002.GA24006@linux.intel.com>
+ <20181115200406.GA24299@linux.intel.com>
 MIME-Version: 1.0
-References: <1542104370-22831-1-git-send-email-firoz.khan@linaro.org>
- <CAMo8BfLt0NuQOTP6MBbRdOpK0_fWwtvfZArwVhwW1SZyzH4mbQ@mail.gmail.com> <CALxhOng8jc3WCmw-i5LeghjE5EKuJaXVZGHLN98+552qqgUy=Q@mail.gmail.com>
-In-Reply-To: <CALxhOng8jc3WCmw-i5LeghjE5EKuJaXVZGHLN98+552qqgUy=Q@mail.gmail.com>
-From:   Max Filippov <jcmvbkbc@gmail.com>
-Date:   Thu, 15 Nov 2018 12:16:09 -0800
-Message-ID: <CAMo8BfLgf7+89X6bGtK9iKz2FkZwCtDT4W=ipc4R0OTgjMGoAQ@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] xtensa: system call table generation support
-To:     Firoz Khan <firoz.khan@linaro.org>
-Cc:     Chris Zankel <chris@zankel.net>, linux-xtensa@linux-xtensa.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038@lists.linaro.org, LKML <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        marcin.juszkiewicz@linaro.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115200406.GA24299@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 1:57 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> On Wed, 14 Nov 2018 at 05:23, Max Filippov <jcmvbkbc@gmail.com> wrote:
-> > On Tue, Nov 13, 2018 at 2:19 AM Firoz Khan <firoz.khan@linaro.org> wrote:
-> > [...]
-> > > Firoz Khan (3):
-> > >   xtensa: add __NR_syscalls along with __NR_syscall_count
-> > >   xtensa: add system call table generation support
-> > >   xtensa: generate uapi header and syscall table header files
-> >
-> > What's your plan for submission of this series? Are you going to
-> > submit it with other similar series in a common tree, or shall I take
-> > it into the xtensa tree?
->
-> I prefer the second  option.
+On Thu, Nov 15, 2018 at 10:04:06PM +0200, Jarkko Sakkinen wrote:
+> On Thu, Nov 15, 2018 at 10:00:02PM +0200, Jarkko Sakkinen wrote:
+> > On Thu, Nov 08, 2018 at 04:46:03PM +0200, Jarkko Sakkinen wrote:
+> > > On Wed, Nov 07, 2018 at 10:00:57AM -0800, Sean Christopherson wrote:
+> > > > What do we gain by a single buffer vs. separate buffers?  The ioctl()
+> > > > would be slightly smaller but it seems like the actual code would be
+> > > > more complex.
+> > > 
+> > > I'm fine with either. It was just a suggestion.
+> > > 
+> > > > The enclave build process also utilizes the backing as temp storage
+> > > > to avoid having to alloc kernel memory when queueing pages to be added
+> > > > by the worker thread (which reminds me that I wanted to document why a
+> > > > worker thread is used).  Keeping this behavior would effectively make
+> > > > providing backing mandatory.
+> > > 
+> > > Would it be a problem just allocate those pages with alloc_page() and
+> > > free them in the worker thread?
+> > > 
+> > > > Are there any potential complications with ENCLS consuming userspace
+> > > > pointers?  We'd have to wrap them with user_access_{begin,end}() and
+> > > > probably tweak the fixup, but I assume having the fixup handler means
+> > > > we're generally ok?
+> > > 
+> > > Last time I did it I used get_user_pages() for pinning. I'm not sure
+> > > why I should do anything but just re-use that.
+> > 
+> > What about VA page swapping? Not saying that it'd have to be done right
+> > now but we need to answer whether it is enclave local or a global asset.
+> > If it is local it would also require an argument.
+> > 
+> > I will most likely won't fix this for v17 because this detail needs
+> > careful consideration.
+> 
+> I wonder if you can map shmem file to process address space so that you
+> get it accounted for the process? That would be optimal for us. This way
+> this won't become an API issue.
+> 
+> Yeah, as I started to implement this I realized these issues with the
+> API side that will arise. Even doing vm_mmap() in the kernel code would
+> be better than taking addresses through the ioctl. That is another
+> option.
 
-Ok, I've applied the series to my xtensa tree, it should appear in the next
-linux-next.
+This is how strongly think. I can go with VMAs for swapping *but* if
+that is the route I would recommend using vm_mmap() instead of taking
+pointer from user space. This way the way swapping is done can be always
+changed. It will be a huge lock-in to do it otherwise.
 
--- 
-Thanks.
--- Max
+/Jarkko
