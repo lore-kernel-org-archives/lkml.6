@@ -2,255 +2,146 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.4 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 69DC3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:52:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5253AC04EBF
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:53:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 21F54223DD
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:52:30 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 18AEC2089D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 07:53:36 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0OQzb6P"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 21F54223DD
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="icw4r83v"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 18AEC2089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linuxfoundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728829AbeKOR7L (ORCPT
+        id S1728851AbeKOSAS (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 12:59:11 -0500
-Received: from mail.kernel.org ([198.145.29.99]:36762 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727984AbeKOR7L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 12:59:11 -0500
-Received: from localhost (unknown [64.114.255.114])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id EA94E2089D;
-        Thu, 15 Nov 2018 07:52:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542268347;
-        bh=WFHF2a+WfKg8SK1wjimVErdtos0lWfg6NmS4ZEjLzf0=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=n0OQzb6PXWfRSbPKVd0GCU5sbBVjmFleXvTTHnFaF6GZE+bB8CZTf7m+ZWb5W7yZL
-         wFdBS5HydjqkRsfccakJWVHqIoUCzLAJdTVZwECzv3xo33L56c+WTHRnD22LnJs2WV
-         OtQHTGCIcgLzOn//8D9IgIjp2aK8mWrkR3PnWeM8=
-Date:   Wed, 14 Nov 2018 23:52:26 -0800
-From:   Jaegeuk Kim <jaegeuk@kernel.org>
-To:     Chao Yu <yuchao0@huawei.com>
-Cc:     linux-f2fs-devel@lists.sourceforge.net,
-        linux-kernel@vger.kernel.org, chao@kernel.org
-Subject: Re: [PATCH] f2fs: add bio cache for IPU
-Message-ID: <20181115075226.GA83610@jaegeuk-macbookpro.roam.corp.google.com>
-References: <20181023083817.3466-1-yuchao0@huawei.com>
+        Thu, 15 Nov 2018 13:00:18 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39174 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728204AbeKOSAS (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 13:00:18 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c72so4598735pfc.6
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 23:53:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google;
+        h=date:from:to:cc:subject:message-id:mail-followup-to:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=E+d4mnnheKWEDa0BjZsSxw4ixCHorNP6QfyAu2vE08I=;
+        b=icw4r83v6AIUBHz4AwnWpkA2SOGBY1ks0MMqCm+mApspcNyuXY0S/iEwyUigPCGfGX
+         LNytjxauy9KmdbPOIxnNoW3zUxhAYC7R+bR/C0DuUizv+wXqiYuHwLiiUQywJlZTMWAR
+         P6iZD+RRA2TZk70DM5k8jGKTfeW8G1mkbH6DM=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id
+         :mail-followup-to:references:mime-version:content-disposition
+         :in-reply-to:user-agent;
+        bh=E+d4mnnheKWEDa0BjZsSxw4ixCHorNP6QfyAu2vE08I=;
+        b=faigUqOLqsczkCKdpa7+lnWaJTiBy8Ky9CyO8zo5pgHsQcQOaAuI1E2G7DuFnQUXqq
+         Yr2kBBR1rIsTkVN52SxO4eE1pB29T6MvDmDeiND9g1Hid9hfKnu5Xx9HgvO7TnfYsd9R
+         IZ7C13OWzp1DRsE63yHCJlV6aVh0wH1EJkk2te+CfuaeK4y+GgnGbXZvw4fE/809nPzm
+         lLMsyGhnF8he2EZfhWKAzya2USLJk71rRBq4xJOVqHNS5Idoru0vAMhynLRBOj9iwpn6
+         0wKKgcELoAc4YafcpEudJCJaiu/DxC6MeqnRw7zC+xhNTTXHqOPZ7vPcCDvAY1Dg/Ii7
+         nupw==
+X-Gm-Message-State: AGRZ1gIMOrmSebxm6G+xN8yObLue9GQnZoV7N6YvXK37giELwYNTYY/u
+        dqhrBlMCk1HNPLkOTxEGXE+GGw==
+X-Google-Smtp-Source: AJdET5fim4LowC4uVLuJMSRQ2J2VVq4jlwdDnI9OwfhN8kXHmsLOdICix9J+JdFbJdzTOqZNsT4EwA==
+X-Received: by 2002:a62:4502:: with SMTP id s2-v6mr5386289pfa.31.1542268413597;
+        Wed, 14 Nov 2018 23:53:33 -0800 (PST)
+Received: from pure.paranoia.local ([172.83.40.72])
+        by smtp.gmail.com with ESMTPSA id 11-v6sm36337093pfr.55.2018.11.14.23.53.32
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Nov 2018 23:53:32 -0800 (PST)
+Date:   Thu, 15 Nov 2018 02:53:30 -0500
+From:   Konstantin Ryabitsev <konstantin@linuxfoundation.org>
+To:     Bjorn Helgaas <helgaas@kernel.org>
+Cc:     Borislav Petkov <bp@alien8.de>, pr-tracker-bot@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+Subject: Re: [GIT PULL] PCI fixes for v4.20
+Message-ID: <20181115075330.GA32162@pure.paranoia.local>
+Mail-Followup-To: Bjorn Helgaas <helgaas@kernel.org>,
+        Borislav Petkov <bp@alien8.de>, pr-tracker-bot@kernel.org,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+        Thomas Lendacky <Thomas.Lendacky@amd.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>,
+        Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
+References: <20181114062010.GA189193@google.com>
+ <20181114200003.14496.1490.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
+ <20181114201214.GM13926@zn.tnic>
+ <20181114201658.GB25069@pure.paranoia.local>
+ <20181114214601.GO13926@zn.tnic>
+ <20181114222154.GA22445@pure.paranoia.local>
+ <20181114224839.GP13926@zn.tnic>
+ <20181115071252.GB94998@google.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20181023083817.3466-1-yuchao0@huawei.com>
-User-Agent: Mutt/1.8.2 (2017-04-18)
+In-Reply-To: <20181115071252.GB94998@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Chao,
+On Thu, Nov 15, 2018 at 01:12:53AM -0600, Bjorn Helgaas wrote:
+> > and I kinda see the point of maybe not having your ssh username in the
+> > URL. Not that it is a big deal for us, k.org users though.
+> 
+> Sorry, I don't understand the problem.  I have this in my .gitconfig:
+> 
+>     [url "ssh://git@gitolite.kernel.org"]
+> 	    insteadOf = https://git.kernel.org
+> 	    insteadOf = http://git.kernel.org
+> 	    insteadOf = git://git.kernel.org
+> 
+> because I thought that was the recommended way (see the end of
+> https://korg.wiki.kernel.org/userdoc/gitolite). But that also makes my
+> request-pull:
+> 
+>     $ git request-pull origin/master git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git pci-v4.20-fixes-1
+> 
+> generate the ssh URL above.  If I remove the insteadOf stuff from
+> .gitconfig, request-pull produces this instead:
+> 
+>     git://git.kernel.org/pub/scm/linux/kernel/git/helgaas/pci.git tags/pci-v4.20-fixes-1
+> 
+> I'm happy to do either; just tell me which :)
 
-I suspect this brings a system stuck by missing bio being flushed. Please check
-the changes.
+You didn't really do anything wrong. In *general* I prefer to see
+public URLs if they are sent to public lists, so if you're cc'ing
+something to LKML, I would generally expect the pull request to have a
+public URL like https://git.kernel.org/ instead of a private ssh:// URL
+that is only accessible to people with a kernel.org account.
 
-Thanks,
+That's basically all there is to it. It doesn't *really* matter, since
+Linus is the one who will be merging the actual pull request, and he
+certainly has access to internal ssh:// URLs. However, in case someone
+else was interested in reviewing the pull request, it would be more
+friendly to have a public URL for them.
 
-On 10/23, Chao Yu wrote:
-> SQLite in Wal mode may trigger sequential IPU write in db-wal file, after
-> commit d1b3e72d5490 ("f2fs: submit bio of in-place-update pages"), we
-> lost the chance of merging page in inner managed bio cache, result in
-> submitting more small-sized IO.
-> 
-> So let's add temporary bio in writepages() to cache mergeable write IO as
-> much as possible.
-> 
-> Test case:
-> 1. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
-> 2. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
-> 
-> Before:
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65552, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65560, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65568, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65576, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65584, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65592, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65600, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65608, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65616, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65624, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65632, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65640, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65648, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65656, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65664, size = 4096
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57352, size = 4096
-> 
-> After:
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 65536
-> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57368, size = 4096
-> 
-> Signed-off-by: Chao Yu <yuchao0@huawei.com>
-> ---
->  fs/f2fs/data.c    | 57 +++++++++++++++++++++++++++++++++++++++++++++--
->  fs/f2fs/f2fs.h    |  3 +++
->  fs/f2fs/segment.c |  5 ++++-
->  3 files changed, 62 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
-> index 01b7f59523dc..0c8f18dc140d 100644
-> --- a/fs/f2fs/data.c
-> +++ b/fs/f2fs/data.c
-> @@ -491,6 +491,49 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
->  	return 0;
->  }
->  
-> +int f2fs_merge_page_bio(struct f2fs_io_info *fio)
-> +{
-> +	struct bio *bio = *fio->bio;
-> +	struct page *page = fio->encrypted_page ?
-> +			fio->encrypted_page : fio->page;
-> +
-> +	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
-> +			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
-> +		return -EFAULT;
-> +
-> +	trace_f2fs_submit_page_bio(page, fio);
-> +	f2fs_trace_ios(fio, 0);
-> +
-> +	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
-> +			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
-> +		__submit_bio(fio->sbi, bio, fio->type);
-> +		bio = NULL;
-> +	}
-> +alloc_new:
-> +	if (!bio) {
-> +		bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
-> +				BIO_MAX_PAGES, false, fio->type, fio->temp);
-> +		*fio->last_block = fio->new_blkaddr;
-> +		bio_set_op_attrs(bio, fio->op, fio->op_flags);
-> +	}
-> +
-> +	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
-> +		__submit_bio(fio->sbi, bio, fio->type);
-> +		bio = NULL;
-> +		goto alloc_new;
-> +	}
-> +
-> +	if (fio->io_wbc)
-> +		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
-> +
-> +	*fio->last_block = fio->new_blkaddr;
-> +
-> +	inc_page_count(fio->sbi, WB_DATA_TYPE(fio->page));
-> +
-> +	*fio->bio = bio;
-> +	return 0;
-> +}
-> +
->  void f2fs_submit_page_write(struct f2fs_io_info *fio)
->  {
->  	struct f2fs_sb_info *sbi = fio->sbi;
-> @@ -1899,6 +1942,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
->  }
->  
->  static int __write_data_page(struct page *page, bool *submitted,
-> +				struct bio **bio,
-> +				sector_t *last_block,
->  				struct writeback_control *wbc,
->  				enum iostat_type io_type)
->  {
-> @@ -1924,6 +1969,8 @@ static int __write_data_page(struct page *page, bool *submitted,
->  		.need_lock = LOCK_RETRY,
->  		.io_type = io_type,
->  		.io_wbc = wbc,
-> +		.bio = bio,
-> +		.last_block = last_block,
->  	};
->  
->  	trace_f2fs_writepage(page, DATA);
-> @@ -2051,7 +2098,7 @@ static int __write_data_page(struct page *page, bool *submitted,
->  static int f2fs_write_data_page(struct page *page,
->  					struct writeback_control *wbc)
->  {
-> -	return __write_data_page(page, NULL, wbc, FS_DATA_IO);
-> +	return __write_data_page(page, NULL, NULL, NULL, wbc, FS_DATA_IO);
->  }
->  
->  /*
-> @@ -2067,6 +2114,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->  	int done = 0;
->  	struct pagevec pvec;
->  	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
-> +	struct bio *bio = NULL;
-> +	sector_t last_block;
->  	int nr_pages;
->  	pgoff_t uninitialized_var(writeback_index);
->  	pgoff_t index;
-> @@ -2154,7 +2203,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->  			if (!clear_page_dirty_for_io(page))
->  				goto continue_unlock;
->  
-> -			ret = __write_data_page(page, &submitted, wbc, io_type);
-> +			ret = __write_data_page(page, &submitted, &bio,
-> +						&last_block, wbc, io_type);
->  			if (unlikely(ret)) {
->  				/*
->  				 * keep nr_to_write, since vfs uses this to
-> @@ -2201,6 +2251,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->  	if (nwritten)
->  		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
->  								NULL, 0, DATA);
-> +	/* submit cached bio of IPU write */
-> +	if (bio)
-> +		__submit_bio(sbi, bio, DATA);
->  
->  	return ret;
->  }
-> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-> index 8932276015f9..6af2a105529d 100644
-> --- a/fs/f2fs/f2fs.h
-> +++ b/fs/f2fs/f2fs.h
-> @@ -1042,6 +1042,8 @@ struct f2fs_io_info {
->  	bool retry;		/* need to reallocate block address */
->  	enum iostat_type io_type;	/* io type */
->  	struct writeback_control *io_wbc; /* writeback control */
-> +	struct bio **bio;		/* bio for ipu */
-> +	sector_t *last_block;		/* last block number in bio */
->  	unsigned char version;		/* version of the node */
->  };
->  
-> @@ -3085,6 +3087,7 @@ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
->  				nid_t ino, enum page_type type);
->  void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
->  int f2fs_submit_page_bio(struct f2fs_io_info *fio);
-> +int f2fs_merge_page_bio(struct f2fs_io_info *fio);
->  void f2fs_submit_page_write(struct f2fs_io_info *fio);
->  struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
->  			block_t blk_addr, struct bio *bio);
-> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
-> index 3aa2f00262b3..b51b182dd7f4 100644
-> --- a/fs/f2fs/segment.c
-> +++ b/fs/f2fs/segment.c
-> @@ -3194,7 +3194,10 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
->  
->  	stat_inc_inplace_blocks(fio->sbi);
->  
-> -	err = f2fs_submit_page_bio(fio);
-> +	if (fio->bio)
-> +		err = f2fs_merge_page_bio(fio);
-> +	else
-> +		err = f2fs_submit_page_bio(fio);
->  	if (!err)
->  		update_device_state(fio);
->  
-> -- 
-> 2.18.0.rc1
+Best,
+-K
