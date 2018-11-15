@@ -5,39 +5,39 @@ X-Spam-Level:
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9489C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:40:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 652A7C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:41:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BC2302080D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:40:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BC2302080D
+	by mail.kernel.org (Postfix) with ESMTP id 342B62080D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:41:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 342B62080D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726896AbeKOKq0 (ORCPT
+        id S1727024AbeKOKrK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 05:46:26 -0500
-Received: from mga02.intel.com ([134.134.136.20]:12924 "EHLO mga02.intel.com"
+        Thu, 15 Nov 2018 05:47:10 -0500
+Received: from mga18.intel.com ([134.134.136.126]:29266 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726379AbeKOKqZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 05:46:25 -0500
+        id S1726080AbeKOKrJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 05:47:09 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from orsmga002.jf.intel.com ([10.7.209.21])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 16:40:51 -0800
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 16:41:35 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,234,1539673200"; 
-   d="scan'208";a="108648355"
+   d="scan'208";a="108648636"
 Received: from ray.jf.intel.com (HELO [10.7.201.137]) ([10.7.201.137])
-  by orsmga002.jf.intel.com with ESMTP; 14 Nov 2018 16:40:51 -0800
-Subject: Re: [PATCH 4/7] node: Add memory caching attributes
+  by orsmga002.jf.intel.com with ESMTP; 14 Nov 2018 16:41:35 -0800
+Subject: Re: [PATCH 5/7] doc/vm: New documentation for memory cache
 To:     Keith Busch <keith.busch@intel.com>, linux-kernel@vger.kernel.org,
         linux-acpi@vger.kernel.org, linux-mm@kvack.org
 Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         Rafael Wysocki <rafael@kernel.org>,
         Dan Williams <dan.j.williams@intel.com>
 References: <20181114224921.12123-2-keith.busch@intel.com>
- <20181114224921.12123-5-keith.busch@intel.com>
+ <20181114224921.12123-6-keith.busch@intel.com>
 From:   Dave Hansen <dave.hansen@intel.com>
 Openpgp: preference=signencrypt
 Autocrypt: addr=dave.hansen@intel.com; keydata=
@@ -83,12 +83,12 @@ Autocrypt: addr=dave.hansen@intel.com; keydata=
  OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
  ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
  z5cecg==
-Message-ID: <a000e296-7d7f-6a98-3869-3b476101749e@intel.com>
-Date:   Wed, 14 Nov 2018 16:40:51 -0800
+Message-ID: <c86b7a76-fff1-0b15-163f-75bdf732ce6a@intel.com>
+Date:   Wed, 14 Nov 2018 16:41:35 -0800
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
-In-Reply-To: <20181114224921.12123-5-keith.busch@intel.com>
+In-Reply-To: <20181114224921.12123-6-keith.busch@intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -98,22 +98,15 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On 11/14/18 2:49 PM, Keith Busch wrote:
-> System memory may have side caches to help improve access speed. While
-> the system provided cache is transparent to the software accessing
-> these memory ranges, applications can optimize their own access based
-> on cache attributes.
-> 
-> In preparation for such systems, provide a new API for the kernel to
-> register these memory side caches under the memory node that provides it.
-> 
-> The kernel's sysfs representation is modeled from the cpu cacheinfo
-> attributes, as seen from /sys/devices/system/cpu/cpuX/cache/. Unlike CPU
-> cacheinfo, though, a higher node's memory cache level is nearer to the
-> CPU, while lower levels are closer to the backing memory. Also unlike
-> CPU cache, the system handles flushing any dirty cached memory to the
-> last level the memory on a power failure if the range is persistent.
-> 
-> The exported attributes are the cache size, the line size, associativity,
-> and write back policy.
+> +	# tree sys/devices/system/node/node0/cache/
+> +	/sys/devices/system/node/node0/cache/
+> +	|-- index1
+> +	|   |-- associativity
+> +	|   |-- level
+> +	|   |-- line_size
+> +	|   |-- size
+> +	|   `-- write_policy
 
-Could you also include an example of the layout?
+Whoops, and here it is...
+
+
