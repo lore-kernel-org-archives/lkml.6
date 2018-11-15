@@ -2,190 +2,171 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E459C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:53:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 14503C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:54:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E452022419
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:53:29 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B3FE52081C
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:54:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PvO+NqzX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E452022419
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="1F+o5nPH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B3FE52081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387742AbeKOVAs (ORCPT
+        id S2387870AbeKOVCE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 16:00:48 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:38406 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729155AbeKOVAr (ORCPT
+        Thu, 15 Nov 2018 16:02:04 -0500
+Received: from esa6.microchip.iphmx.com ([216.71.154.253]:12957 "EHLO
+        esa6.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729006AbeKOVCE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 16:00:47 -0500
-Received: by mail-wr1-f66.google.com with SMTP id e3-v6so20713939wrs.5
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 02:53:26 -0800 (PST)
+        Thu, 15 Nov 2018 16:02:04 -0500
+X-IronPort-AV: E=Sophos;i="5.54,499,1534834800"; 
+   d="scan'208";a="20441148"
+Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 15 Nov 2018 03:54:43 -0700
+Received: from NAM04-SN1-obe.outbound.protection.outlook.com (10.10.215.89) by
+ email.microchip.com (10.10.76.106) with Microsoft SMTP Server (TLS) id
+ 14.3.352.0; Thu, 15 Nov 2018 03:54:42 -0700
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=Kdwkk+JTkwoXHDdx2SngHAYYQSmEf+5XoiDD0mwKm4s=;
-        b=PvO+NqzXOPVFlAiX3vowkHW1DEg9nocq4YRC40D8UdKuM5sVRLE9hMAWnHW1rIwxoH
-         rqFMzdVOs/+uo0IFDTMDS6EQTsQ7/n1iJiJefzxkHSbaxSHJt30uQ0cNPiFbrLd2tTnL
-         pYfry0Fp5yagkWqzaevO279/aDvH8n5pjp0F4=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=Kdwkk+JTkwoXHDdx2SngHAYYQSmEf+5XoiDD0mwKm4s=;
-        b=LbH4pqqb7LuDeR+xyn7GV0imlZEPYNN2aqWTeNyqzN4FBbZ2HKmNCqKf0mmIG1l/ze
-         O6Y6ULWxaLVe+KPcSXTnGVf1YFmLC1zFmJgt9r81W5sm1EZkwcX2sPlk04XRJ703pyJW
-         wx3m7QBmk3kE/Z40nAO9/yHNYowySrfGt2BrXQSFmWtfAH+3V9qSXQAKlvUlofolLLQh
-         oZleicD6eslzTS4L9oNs9bTQBYO10sUGrCGPT0NQimYF645pOew2xl6fN/IeLHsZXF+m
-         nHPX364AhC0F9bdDahGk6/jPd7TCCo5ojN1dKMZdbQJLIP63d2lZ3yjQ6zbJf+dcNJVq
-         fuVA==
-X-Gm-Message-State: AGRZ1gJOEBEiWh89DJHetytZ08SEwfKkB8NnY4ErzmJTV10+gaelLX9d
-        QSqHYlraQOODzsXzoLdnsbR4eg==
-X-Google-Smtp-Source: AJdET5ecJB3CGXTzCTC7c8fDNmolqvreyLb0zj7OCAdX/gXl9YCcjsI8a5GsRScwj1fFyio2+lwspA==
-X-Received: by 2002:adf:f20a:: with SMTP id p10-v6mr5294508wro.293.1542279206016;
-        Thu, 15 Nov 2018 02:53:26 -0800 (PST)
-Received: from [192.168.0.19] (cpc90716-aztw32-2-0-cust92.18-1.cable.virginm.net. [86.26.100.93])
-        by smtp.googlemail.com with ESMTPSA id z3-v6sm15113093wma.6.2018.11.15.02.53.24
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 02:53:25 -0800 (PST)
-Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
-To:     Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Stephen Boyd <sboyd@kernel.org>
-Cc:     Joel Fernandes <joel@joelfernandes.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>,
-        Jiri Slaby <jslaby@suse.com>,
-        Kees Cook <keescook@chromium.org>,
-        Geliang Tang <geliangtang@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Pramod Gurav <gpramod@codeaurora.org>,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>
-References: <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
- <20181016141610.639b9000@gandalf.local.home>
- <accdce6d-8fd2-9f15-d4cd-704cbf0b32eb@codeaurora.org>
- <20181016144123.24c47b38@gandalf.local.home>
- <7781815e-cba2-9e36-db6d-268298747876@codeaurora.org>
- <20181016150328.3450d718@gandalf.local.home>
- <c94103d2-ed5d-bf43-fc71-c60e108f303e@codeaurora.org>
- <20181017223334.29ca2837@vmware.local.home>
- <58d2474c-53cd-e6cb-2d25-db38d1a88da6@codeaurora.org>
- <20181018091706.62310b38@gandalf.local.home>
- <20181019041740.GB141835@joelaf.mtv.corp.google.com>
- <8a75f2d5-f1bd-504e-b545-ae2e2f61ca8f@codeaurora.org>
- <20181019095122.0f1c0946@gandalf.local.home>
- <9cafe321-87f6-98a3-3bda-c2f7a3d7fc67@codeaurora.org>
- <20181019111205.5c8e98e8@gandalf.local.home>
- <1e6cc1fa5263b9edfcf7567d3f9f65fd@codeaurora.org>
- <38099043-f5ed-6d81-bf94-13f61cfa8507@linaro.org>
- <8f65f83b-8cd9-5e35-c324-30b86390906e@codeaurora.org>
-From:   Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Message-ID: <ed648cc5-0748-8bcc-5ebb-ce6dbc7d4fee@linaro.org>
-Date:   Thu, 15 Nov 2018 10:53:24 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.2.1
-MIME-Version: 1.0
-In-Reply-To: <8f65f83b-8cd9-5e35-c324-30b86390906e@codeaurora.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
+ d=microchiptechnology.onmicrosoft.com;
+ s=selector1-microchiptechnology-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SmR7RGIxwi8SSYTqd9GaIUo90dvqgl46CTeZGInBhBI=;
+ b=1F+o5nPHhbSN8DlPp9UDMlVNFKLCJPW69AVE9tTl++7d4CQ3bJ+kECpIbkVEtCKMDYjY3CixnkcXq93oRR4wffmtg5ND+bzsxKqKUsRooKRLCEv7zYBrzS+018ufvuz5Gjns0KqHwr5TKw/I+UYm13oGDXTFpshbfEmcCmxCFe8=
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
+ BN6PR11MB1410.namprd11.prod.outlook.com (10.173.33.18) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Thu, 15 Nov 2018 10:54:39 +0000
+Received: from BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::11b7:21db:803a:7cfa]) by BN6PR11MB1842.namprd11.prod.outlook.com
+ ([fe80::11b7:21db:803a:7cfa%5]) with mapi id 15.20.1294.045; Thu, 15 Nov 2018
+ 10:54:39 +0000
+From:   <Tudor.Ambarus@microchip.com>
+To:     <boris.brezillon@bootlin.com>, <liu.xiang6@zte.com.cn>,
+        <cyrille.pitchen@wedev4u.fr>
+CC:     <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
+        <computersforpeace@gmail.com>, <richard@nod.at>,
+        <liuxiang_1999@126.com>
+Subject: Re: [PATCH] mtd: spi-nor: Return error when nor->addr_width not match
+ the device size
+Thread-Topic: [PATCH] mtd: spi-nor: Return error when nor->addr_width not
+ match the device size
+Thread-Index: AQHUfBtKLi6qhlEPb0mvbCV2iWac9aVPShKAgAFg5AA=
+Date:   Thu, 15 Nov 2018 10:54:39 +0000
+Message-ID: <96397ec0-14de-f09a-a18d-c67396e33fba@microchip.com>
+References: <1542200165-3073-1-git-send-email-liu.xiang6@zte.com.cn>
+ <20181114145129.568e4bb3@bbrezillon>
+In-Reply-To: <20181114145129.568e4bb3@bbrezillon>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: VI1PR0102CA0047.eurprd01.prod.exchangelabs.com
+ (2603:10a6:803::24) To BN6PR11MB1842.namprd11.prod.outlook.com
+ (2603:10b6:404:103::18)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=Tudor.Ambarus@microchip.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [94.177.32.154]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BN6PR11MB1410;6:h2AmoCwqG4i0/fgmqK6UpcsU+UECAbnjgSyk5+gT70pt13IczpteciH+pcETBSAmUWcPW1H9qleU1PBJa14PMc2r8xzulkaWd5rlTm5F94G0GV/e3elgsNWVm+RU/u0WZdfu9NUDoPe+92VcseNXX62R+/OIOQ5gta61tnvWsxhSiZxVeqolvgekzKfDhLG8nVQQ86+Us+n56X9SYZf0gyfXA3l34W+7zqgebebGx3VirKTyZLq00eW9cX7V2r+ZEdM/Y6HhPx8HTrttcuWXo+XLPVdKVuthwDOHM2bmrg/KW2wGmDzlj0VoqTAyTuqhZwQrt4rHzclXPctPgqXoZZ5zlQ2zCGhlWrGdg4rr0UZjkPXkj/GwPW031oGkxjJyPLe3zyfAD2lgBfyHh6AezSuneidSxplMyifaHYofc58IkzxIEyqZkDKO4R7npZSXmkW50xXjrNkNYkZQpXpTEg==;5:BN9e9Gn4AcEJcgc/kxurdcLEtTnY5+X3KoAmFianEbTziQytOThMUpNNZv6DQeRoE/ROywS18GhveAQ1nRafY1nr7LuwcgBG3+kYfeVzUgQfn0H8GXIJyuCqtT28XBgW/C2T0rafNfixwMK/JNre2cHN1uG9ItAeYsX+fOnqLT4=;7:JDN/xMO0bKFaOTCJrkfZHi3VkuPIB1eCWQ7+nIu4Auy6dKkVQ5NU7gQP/vc4ANXjJDgwm2KaCWSGQ3C3hwXOD1SNiGIg+oh4PSWOX9F9ss4uMTHf4ESbydXLVc75XdiHMseLLGwCd4r6ZYXkYPKmIg==
+x-ms-office365-filtering-correlation-id: 0d9a75b3-df40-4a61-fb27-08d64ae8bd32
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1410;
+x-ms-traffictypediagnostic: BN6PR11MB1410:
+x-microsoft-antispam-prvs: <BN6PR11MB1410BE6DB18F141C04072BE4F0DC0@BN6PR11MB1410.namprd11.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:;
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231415)(944501410)(52105112)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123558120)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1410;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1410;
+x-forefront-prvs: 08572BD77F
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(366004)(346002)(376002)(136003)(39860400002)(189003)(199004)(52314003)(229853002)(97736004)(6306002)(6512007)(6486002)(6436002)(256004)(14444005)(14454004)(2900100001)(31686004)(106356001)(105586002)(66066001)(81166006)(81156014)(39060400002)(8676002)(8936002)(316002)(486006)(446003)(71200400001)(53936002)(71190400001)(36756003)(476003)(110136005)(54906003)(11346002)(2616005)(6246003)(25786009)(5660300001)(6116002)(3846002)(478600001)(7416002)(4326008)(68736007)(72206003)(7736002)(99286004)(76176011)(186003)(52116002)(53546011)(386003)(6506007)(305945005)(102836004)(26005)(86362001)(31696002)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1410;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: microchip.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: o3RtVsAwW5OFD27mOsjQC1LO3gtX6dQxgAi/1mlK8/vbxlzTuMw5Ce9tR40dpKZg6OreVsYzv/xfj8bIF8zQjP+NAYmYQYWSX1i51vuGb+O2M+UmrSOFjxP+xgVp3QaP4OM3qm2FIx+SyLajfKFH6KDR6z269GpxIHbmqKX3zYgqlcvhz1UYUyo0cG0/7elWYv9Jbcggg60vye3JzM5g1T6IRDuKLP47edUQ5eN75wrbKBddCdvYBgmmMiL7yZCI8CAZm2Dsiv9Tjzm91yGJjUXF0zP9PDxhpgzN5DRWR1gzfjxRxQ0U9HXI1F8S1ZOCvs/WMRgSn4Ybw3uTsVh9pRaq+UM4GQ2pQqj7FtZYuA8=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <BC00E32308754F4A9A1D5CCE6B4D3AEE@namprd11.prod.outlook.com>
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0d9a75b3-df40-4a61-fb27-08d64ae8bd32
+X-MS-Exchange-CrossTenant-originalarrivaltime: 15 Nov 2018 10:54:39.3752
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1410
+X-OriginatorOrg: microchip.com
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 15/11/18 10:33, Sai Prakash Ranjan wrote:
-> On 11/13/2018 3:14 PM, Srinivas Kandagatla wrote:
->> Hi Sai,
->>
->>
->>
->> On 25/10/18 15:36, saiprakash.ranjan@codeaurora.org wrote:
->>> "If I disable dma node and LS-UART0, then I don't see any crash and
->>> ftrace also works fine"
->>>
->>> And one more observation is that even without ftrace cmdline, if I use
->>> earlycon and disable dma, I face the same crash.
->>>
->>> So basically this seems to be some kind of earlycon and dma issue and
->>> not ftrace(I can be wrong).
->>>
->>> So adding Srinivas for more info on this dma node.
->>
->> Its Interesting that my old email conversations with SBoyd show that I 
->> have investigated this issue in early 2016!
->>
->> My analysis so far:
->>
->> This reason for such behavior is due the common iface clock
->> (GCC_BLSP1_AHB_CLK) across multiple drivers(serial ports, bam dma
->> and other low speed devices).
->> The code flow in DB410C is bit different, as the uart0 is first
->> attempted to set as console and then uart1, this ordering triggers
->> pm state change uart_change_pm(state, UART_PM_STATE_OFF) from serial
->> core while setting up uart0, this would go and disable all the
->> clocks for uart0.
->> As uart1 is not setup Yet, and earlycon is still active, any
->> attempts by earlycon to write to registers would trigger a system
->> reboot as the clock was just disabled by uart0 change_pm code.
->>
->> This can even be triggered with any drivers like spi which uses same
->> clock I guess.
->>
->> Hope it helps,
->>
->> Either earlycon needs to reference the clocks or those clocks needs to
->> be marked always-on (but only with earlycon).
->>
->>>
->>> Also just for a note: apq8096-db820c.dtsi shows UART0 is disabled 
->>> because
->>> bootloader does not allow access to it. Could this also be the case 
->>> for db410c?
->> No, this is not the case with DB410c. DB820c has added restrictions in 
->> TZ, I think new booloaders should have solved this issue.
->>
->>
-> 
-> Hi Srinivas,
-> 
-> Thanks a lot for pointing out the cause of crash.
-> I just tried setting GCC_BLSP1_AHB_CLK with flag CLK_IS_CRITICAL and the
-> crash disappears.
-> 
-> But I suppose setting CLK_IS_CRITICAL is not the solution?
-> 
-
-Yes, this is not the solution, but it proves that the hand-off between 
-booloaders and kernel is the issue.
-
-In general there is wider issue with resources hand-off between 
-bootloader and kernel.
-
-There has been some proposal in the past by Viresh for a new framework 
-called boot-constriants (https://lkml.org/lkml/2017/12/14/440) which am 
-not sure if its still actively looked at. But something similar should 
-be the way to address such issues.
-
---srini
-
-
-
-
-> Thanks,
-> Sai
+SGksIExpdSwgQm9yaXMsIEN5cmlsbGUsDQoNCk9uIDExLzE0LzIwMTggMDM6NTEgUE0sIEJvcmlz
+IEJyZXppbGxvbiB3cm90ZToNCj4gT24gV2VkLCAxNCBOb3YgMjAxOCAyMDo1NjowNSArMDgwMA0K
+PiBMaXUgWGlhbmcgPGxpdS54aWFuZzZAenRlLmNvbS5jbj4gd3JvdGU6DQo+IA0KPj4gSW4gaXMy
+NWxwMjU2LCB0aGUgRFdPUkQxIG9mIEpFREVDIEJhc2ljIEZsYXNoIFBhcmFtZXRlciBIZWFkZXIN
+Cj4+IGlzIDB4ZmZmOTIwZTUuIFNvIHRoZSBEV09SRDFbMTg6MTddIEFkZHJlc3MgQnl0ZXMgYml0
+cyBhcmUgMGIwMCwNCg0KTGl1LCBjYW4geW91IHBvaW50IHVzIHRvIGEgZGF0YXNoZWV0IHRoYXQg
+aGFzIHRoZSBKRURFQyBCRlBUIHRhYmxlcyBkZXNjcmliZWQ/IEkNCmNvdWxkbid0IGZpbmQgb25l
+IC4uLg0KDQo+PiBtZWFucyB0aGF0IDMtQnl0ZSBvbmx5IGFkZHJlc3NpbmcuDQo+IA0KPiBBY2Nv
+cmRpbmcgdG8geW91ciBvdGhlciBwYXRjaCB0aGlzIE5PUiBzdXBwb3J0cyA0QiBvcGNvZGUsIHdo
+aWNoIG1lYW5zDQo+IHRoZSBTRkRQIHRhYmxlIGlzIHdyb25nLg0KPiANCj4+IEJ1dCB0aGUgZGV2
+aWNlIHNpemUgaXMgbGFyZ2VyDQo+PiB0aGFuIDE2TUIsIG5vci0+YWRkcl93aWR0aCBtdXN0IGJl
+IDQgdG8gYWNjZXNzIHRoZSB3aG9sZSBhZGRyZXNzLg0KPj4gQW4gZXJyb3Igc2hvdWxkIGJlIHJl
+dHVybmVkIHdoZW4gbm9yLT5hZGRyX3dpZHRoIG5vdCBtYXRjaA0KPiANCj4gCQkJCQkJICAgXmRv
+ZXMgbm90DQo+IA0KPj4gdGhlIGRldmljZSBzaXplIGluIHNwaV9ub3JfcGFyc2Vfc2ZkcCgpLg0K
+Pj4NCj4+IFN1Z2dlc3RlZC1ieTogQm9yaXMgQnJlemlsbG9uIDxib3Jpcy5icmV6aWxsb25AYm9v
+dGxpbi5jb20+DQo+PiBTaWduZWQtb2ZmLWJ5OiBMaXUgWGlhbmcgPGxpdS54aWFuZzZAenRlLmNv
+bS5jbj4NCj4+IC0tLQ0KPj4gIGRyaXZlcnMvbXRkL3NwaS1ub3Ivc3BpLW5vci5jIHwgNCArKysr
+DQo+PiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5zZXJ0aW9ucygrKQ0KPj4NCj4+IGRpZmYgLS1naXQg
+YS9kcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyBiL2RyaXZlcnMvbXRkL3NwaS1ub3Ivc3Bp
+LW5vci5jDQo+PiBpbmRleCAzZWJhMTNhLi43N2VhZjIyIDEwMDY0NA0KPj4gLS0tIGEvZHJpdmVy
+cy9tdGQvc3BpLW5vci9zcGktbm9yLmMNCj4+ICsrKyBiL2RyaXZlcnMvbXRkL3NwaS1ub3Ivc3Bp
+LW5vci5jDQo+PiBAQCAtMjY2OSw2ICsyNjY5LDEwIEBAIHN0YXRpYyBpbnQgc3BpX25vcl9wYXJz
+ZV9iZnB0KHN0cnVjdCBzcGlfbm9yICpub3IsDQo+PiAgCX0NCj4+ICAJcGFyYW1zLT5zaXplID4+
+PSAzOyAvKiBDb252ZXJ0IHRvIGJ5dGVzLiAqLw0KPj4gIA0KPj4gKwkvKmlmIHRoZSBkZXZpY2Ug
+ZXhjZWVkcyAxNk1pQiwgYWRkcl93aWR0aCBtdXN0IGJlIDQqLw0KPiANCj4gUGxlYXNlIGFkZCBh
+IHdoaXRlIHNwYWNlIGFmdGVyICcvKicgYW5kIGJlZm9yZSAnKi8nOg0KPiANCj4gCS8qIElmIHRo
+ZSBkZXZpY2UgZXhjZWVkcyAxNk1pQiwgLT5hZGRyX3dpZHRoIG11c3QgYmUgNC4gKi8NCj4gDQo+
+PiArCWlmICgocGFyYW1zLT5zaXplID4gMHgxMDAwMDAwKSAmJiAobm9yLT5hZGRyX3dpZHRoID09
+IDMpKQ0KPiANCj4gUGFyZW5zIGFyZSBub3QgbmVlZGVkIGFyb3VuZCBzdWItY29uZGl0aW9uczoN
+Cj4gDQo+IAlpZiAocGFyYW1zLT5zaXplID4gMHgxMDAwMDAwICYmIG5vci0+YWRkcl93aWR0aCA9
+PSAzKQ0KPiANCj4+ICsJCXJldHVybiAtRUlOVkFMOw0KPj4gKw0KPiANCj4gSSdtIG5vdCBzdXJl
+IHRoaXMgaXMgY29ycmVjdC4gTG9va3MgbGlrZSBzb21lIE5PUnMgb25seSBzdXBwb3J0IDNCDQo+
+IG9wY29kZXMgYnV0IGhhdmUgYSAiNC1ieXRlIGFkZHJlc3NpbmciIG1vZGUgKHNlZSBzZXRfNGJ5
+dGUoKSBbMV0pLg0KPiBEb24ndCBrbm93IHdoYXQncyByZXBvcnRlZCBieSB0aGUgQkZQVCBzZWN0
+aW9uIGluIHRoaXMgY2FzZSB0aG91Z2gNCj4gKEJGUFRfRFdPUkQxX0FERFJFU1NfQllURVNfM19P
+TkxZIG9yIEJGUFRfRFdPUkQxX0FERFJFU1NfQllURVNfM19PUl80KS4NCg0KQm9yaXMsIHRoaXMg
+aXMgaW4gY2xvc2UgcmVsYXRpb24gd2l0aCB5b3VyIHNlY29uZCBwYXRjaDogW1BBVENIIHYzIDIv
+Ml0gbXRkOg0Kc3BpLW5vcjogVXNlIDRCIG9wY29kZXMgd2hlbiB0aGUgTk9SIGFkdmVydGlzZXMg
+Ym90aCAzQiBhbmQgNEIuDQoNCldoZW4gbG9va2luZyBhZ2FpbiBhdCB0aGlzLCBJIHdvdWxkIHNh
+eSB0aGF0IGZvciB0aGUgZmxhc2hlcyB0aGF0IGhhdmUgYSAiNC1ieXRlDQphZGRyZXNzaW5nIiBt
+b2RlLCBidXQganVzdCAzQiBvcGNvZGVzLCBJIHdvdWxkIGV4cGVjdCB0aGUgRFdPUkQxWzE4OjE3
+XSB0byBiZSBvZg0KdmFsdWUgQkZQVF9EV09SRDFfQUREUkVTU19CWVRFU18zX09SXzQgKGVudGVy
+cyA0LUJ5dGUgbW9kZSBvbiBjb21tYW5kIC0gdXNlcyAzQg0Kb3Bjb2RlcykuDQoNCklmIEJGUFRf
+RFdPUkQxX0FERFJFU1NfQllURVNfM19PUl80IGFuZCA0QiBvcGNvZGVzLCB0aGVuIHdlIGNhbiBx
+dWVyeSBCRlBUDQpEV09SRDE2WzMxOjI0XTogaXQgc2hvdWxkIGhhdmUgdmFsdWUgeHgxeF94eHh4
+YiB0byBpbmRpY2F0ZSB0aGF0IDRCIG9wY29kZXMgYXJlDQpzdXBwb3J0ZWQuIEJ1dCB3aGljaCA0
+QiBvcGNvZGVzIGFyZSBzdXBwb3J0ZWQ/IERvIGFsbCAzQiBvcGNvZGVzIGhhdmUgYSA0Qg0Kb3Bj
+b2RlIGNvcnJlc3BvbmRlbnQgaWYgU0ZEUCA0LWJ5dGUgdGFibGUgaXMgbm90IGF2YWlsYWJsZT8g
+VGhpcyBtaWdodCBiZSBhIGdvb2QNCmFzc3VtcHRpb24sIGJ1dCBJIGNhbid0IHNlZSBpdCBhbnl3
+aGVyZSBpbiBqZXNkMjE2Yy4NCg0KQ3lyaWxsZSwgd2hlbiBsb29raW5nIGF0IGJhM2FlNmExZDRj
+ICgibXRkOiBzcGktbm9yOiBhZGQgYSBzdGF0ZWxlc3MgbWV0aG9kIHRvDQpzdXBwb3J0IG1lbW9y
+eSBzaXplIGFib3ZlIDEyOE1pYiIpIEkgc2VlIHRoYXQgYWxsIGZsYXNoZXMgdGhhdCBkZWNsYXJl
+DQpTUElfTk9SXzRCX09QQ09ERVMgd2lsbCBoYXZlIHRoZSAzQiBvcGNvZGVzIGNvbnZlcnRlZCB0
+byA0QiBvcGNvZGVzLCBhc3N1bWluZw0KdGhhdCBhbGwgM0Igb3Bjb2RlcyBoYXZlIGEgNEIgY29y
+cmVzcG9uZGVudC4gSXMgdGhpcyBhc3N1bXB0aW9uIGEgZ2VuZXJhbCBydWxlLA0Kb3IgaXQncyBq
+dXN0IGZvciB0aGUgU3BhbnNpb24gZmxhc2hlcz8NCg0KQ2hlZXJzLA0KdGENCg0KPiANCj4gQW55
+d2F5LCBJIHRoaW5rIHRoaXMgY2hlY2sgc2hvdWxkIGJlIG1vdmVkIGhlcmUgWzJdIHRvIGNvdmVy
+IHRoZQ0KPiBub24tU0ZEUCBjYXNlLg0KPiANCj4+ICAJLyogRmFzdCBSZWFkIHNldHRpbmdzLiAq
+Lw0KPj4gIAlmb3IgKGkgPSAwOyBpIDwgQVJSQVlfU0laRShzZmRwX2JmcHRfcmVhZHMpOyBpKysp
+IHsNCj4+ICAJCWNvbnN0IHN0cnVjdCBzZmRwX2JmcHRfcmVhZCAqcmQgPSAmc2ZkcF9iZnB0X3Jl
+YWRzW2ldOw0KPiANCj4gWzFdaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20vbGludXgvdjQuMjAt
+cmMyL3NvdXJjZS9kcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYyNMMjc4DQo+IFsyXWh0dHBz
+Oi8vZWxpeGlyLmJvb3RsaW4uY29tL2xpbnV4L3Y0LjIwLXJjMi9zb3VyY2UvZHJpdmVycy9tdGQv
+c3BpLW5vci9zcGktbm9yLmMjTDM3NTgNCj4gDQo=
