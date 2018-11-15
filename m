@@ -2,148 +2,114 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 89593C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:36:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C4280C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:38:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5104C2146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:36:54 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5104C2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
+	by mail.kernel.org (Postfix) with ESMTP id 83766208E7
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:38:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20150623.gappssmtp.com header.i=@kernel-dk.20150623.gappssmtp.com header.b="zHYb82Eg"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 83766208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388661AbeKPEpr (ORCPT
+        id S2388816AbeKPErU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 23:45:47 -0500
-Received: from shell.v3.sk ([90.176.6.54]:52244 "EHLO shell.v3.sk"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726453AbeKPEpr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 23:45:47 -0500
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id C0CD74C35E;
-        Thu, 15 Nov 2018 19:36:47 +0100 (CET)
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id raIzwUPqoDly; Thu, 15 Nov 2018 19:36:44 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 0434D4C37B;
-        Thu, 15 Nov 2018 19:36:44 +0100 (CET)
-X-Virus-Scanned: amavisd-new at zimbra.v3.sk
-Received: from shell.v3.sk ([127.0.0.1])
-        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id GdJT7ZIrdELW; Thu, 15 Nov 2018 19:36:43 +0100 (CET)
-Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id C46B44C35E;
-        Thu, 15 Nov 2018 19:36:42 +0100 (CET)
-Message-ID: <e1de44148e06379b04c72f925a30fb0e346536eb.camel@v3.sk>
-Subject: Re: [PATCH 12/15] power: supply: olpc_battery: Use DT to get
- battery version
-From:   Lubomir Rintel <lkundrak@v3.sk>
-To:     Pavel Machek <pavel@ucw.cz>
-Cc:     Mark Brown <broonie@kernel.org>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        James Cameron <quozl@laptop.org>,
-        Sebastian Reichel <sre@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Eric Miao <eric.y.miao@gmail.com>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        platform-driver-x86@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-pm@vger.kernel.org
-Date:   Thu, 15 Nov 2018 19:36:41 +0100
-In-Reply-To: <20181104123710.GE23864@amd>
-References: <20181010172300.317643-1-lkundrak@v3.sk>
-         <20181010172300.317643-13-lkundrak@v3.sk> <20181104123710.GE23864@amd>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
-Mime-Version: 1.0
+        Thu, 15 Nov 2018 23:47:20 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41455 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727123AbeKPErT (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 23:47:19 -0500
+Received: by mail-pl1-f196.google.com with SMTP id p16-v6so9873430plr.8
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 10:38:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20150623.gappssmtp.com; s=20150623;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=s+h1PGMW8AGmG25SSRRoDX7YGcSulR3PXt4l/hTHmmw=;
+        b=zHYb82EgzXtDiZU1BixOA0CpGx1AudkyRl3YeedHmwhUrxH9weOIKSQ0+o2oi/Kc3Z
+         1BAjPBYwvkKQVfBp4djHDnxo3bOasAdYsiqRPd6bVj1aTIabG6U98IXKRZTt8SDroa36
+         tsyRgjns9bg+SP2E3SjdEIEskogsfFg3V8dGIu5BiS7I/rmFrfRxU0FsxKFUvkuukIRz
+         4/+wixXMg0vnN+NPQzq0qOiMa7cBVXXm28c4jleJe9uG1Q3w2yE+Vo5gLU8NRVQT9/U/
+         88vL0yiufditIacLrHpmKYnnn8P2OXW6lgLPeK8g4PngwH16mafRVisSpBJzyZfdJvH1
+         /hGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=s+h1PGMW8AGmG25SSRRoDX7YGcSulR3PXt4l/hTHmmw=;
+        b=KbJQH3R/BR/AVSKYqJr+ddEgFP7xex1kNy/Lnc5kQj+d514RNy4/UaImvjVlxHite2
+         nwnij+H5R+uuwTCrpzqTHA+UAJ+IqlOPPCYqsQLCWyPPK9tSjjI9GA4EWDW2i1iNos3M
+         n0NDqtQ16H2bZoOtuAQUkqvpaISc1NxAGCFpiFst+t19tyFuBUA2udiDJYV5fF1zkUrD
+         cWJWC0mlex4mzKszw61XcRx4vBzJYBS5JMMUmdZdKyVS2B1nbW6+C613kbD81uhp2oYQ
+         fFDvGMF7yYgnHw5TV5X8CckZmCyQ9toyCghINaFZvzCLw/FcG96D64cgPFqkox9zorA5
+         BdHw==
+X-Gm-Message-State: AGRZ1gJR1kvb+r/xbFACKtpVCjeHAnWB5fjovCirMEUUrlcbpphrAmzA
+        zvqPow0ZI0hyzRSi7NZIk2tXp8B4UaU=
+X-Google-Smtp-Source: AJdET5ce4aVWB15zVGRb/eSBwC9dV2Ae9rU3AWatpY7vlCW2ckwzJSRxTK5pDVVLh5usE4/RdggDNQ==
+X-Received: by 2002:a17:902:8f8f:: with SMTP id z15-v6mr7452933plo.257.1542307103352;
+        Thu, 15 Nov 2018 10:38:23 -0800 (PST)
+Received: from ?IPv6:2620:10d:c081:1130::11f6? ([2620:10d:c090:180::1:7813])
+        by smtp.gmail.com with ESMTPSA id 127-v6sm30854875pfx.91.2018.11.15.10.38.21
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 10:38:22 -0800 (PST)
+Subject: Re: [PATCH] nvme: utilize two queue maps, one for reads and one for
+ writes
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20181115182833.GA15729@roeck-us.net>
+From:   Jens Axboe <axboe@kernel.dk>
+Message-ID: <77d1536f-3229-1225-c5ad-d0a928c222cb@kernel.dk>
+Date:   Thu, 15 Nov 2018 11:38:20 -0700
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
+MIME-Version: 1.0
+In-Reply-To: <20181115182833.GA15729@roeck-us.net>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, 2018-11-04 at 13:37 +0100, Pavel Machek wrote:
-> On Wed 2018-10-10 19:22:57, Lubomir Rintel wrote:
-> > Avoid using the x86 OLPC platform specific call to get the board
-> > version. It won't work on FDT-based ARM MMP2 platform.
-> > 
-> > Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> > Reviewed-by: Andy Shevchenko <andy.shevchenko@gmail.com>
+On 11/15/18 11:28 AM, Guenter Roeck wrote:
+> Hi Jens,
 > 
-> Acked-by: Pavel Machek <pavel@ucw.cz>
+>> I think the below patch should fix it.
+>>
+> Sorry I wasn't able to test this earlier. Looks like it does
+> fix the problem; the problem is no longer seen in next-20181115.
+> Minor comment below.
+
+That's fine, thanks for testing!
+
+>>  		/*
+>> -		 * Need IRQs for read+write queues, and one for the admin queue
+>> +		 * Need IRQs for read+write queues, and one for the admin queue.
+>> +		 * If we can't get more than one vector, we have to share the
+>> +		 * admin queue and IO queue vector. For that case, don't add
+>> +		 * an extra vector for the admin queue, or we'll continue
+>> +		 * asking for 2 and get -ENOSPC in return.
+>>  		 */
+>> -		nr_io_queues = irq_sets[0] + irq_sets[1] + 1;
+>> +		if (result == -ENOSPC && nr_io_queues == 1)
+>> +			nr_io_queues = 1;
 > 
-> AFAICT, this should go earlier in the series; first, add support in
-> the code, then switch to new name in DTS.
+> Setting nr_io_queues to 1 when it already is set to 1 doesn't really do
+> anything. Is this for clarification ?
 
-I think it's all right this way: I'm not removing the old compatible
-string -- functionality provided by one version of the battery is a
-superset of the another.
+Guess that does look a bit odd, alternative would be to flip the
+condition, but I think this one is easier to read.
 
-Also, the older version of the driver with only the XO-1 compatible
-string guesses the actual battery version by querying the board version
-directly, so up to this patch things keep working the way they used to
-regardless of the new compatible string.
-
-Lubo
-
-> 								Pavel
-> 
-> > ---
-> >  drivers/power/supply/olpc_battery.c | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/drivers/power/supply/olpc_battery.c
-> > b/drivers/power/supply/olpc_battery.c
-> > index 5a97e42a3547..540d44bf536f 100644
-> > --- a/drivers/power/supply/olpc_battery.c
-> > +++ b/drivers/power/supply/olpc_battery.c
-> > @@ -19,6 +19,7 @@
-> >  #include <linux/jiffies.h>
-> >  #include <linux/sched.h>
-> >  #include <linux/olpc-ec.h>
-> > +#include <linux/of.h>
-> >  #include <asm/olpc.h>
-> >  
-> >  
-> > @@ -622,11 +623,13 @@ static int olpc_battery_probe(struct
-> > platform_device *pdev)
-> >  	olpc_ac = power_supply_register(&pdev->dev, &olpc_ac_desc,
-> > NULL);
-> >  	if (IS_ERR(olpc_ac))
-> >  		return PTR_ERR(olpc_ac);
-> > -
-> > -	if (olpc_board_at_least(olpc_board_pre(0xd0))) { /* XO-1.5 */
-> > +	if (of_property_match_string(pdev->dev.of_node, "compatible",
-> > +					"olpc,xo1.5-battery") >= 0) {
-> > +		/* XO-1.5 */
-> >  		olpc_bat_desc.properties = olpc_xo15_bat_props;
-> >  		olpc_bat_desc.num_properties =
-> > ARRAY_SIZE(olpc_xo15_bat_props);
-> > -	} else { /* XO-1 */
-> > +	} else {
-> > +		/* XO-1 */
-> >  		olpc_bat_desc.properties = olpc_xo1_bat_props;
-> >  		olpc_bat_desc.num_properties =
-> > ARRAY_SIZE(olpc_xo1_bat_props);
-> >  	}
-> > @@ -672,6 +675,7 @@ static int olpc_battery_remove(struct
-> > platform_device *pdev)
-> >  
-> >  static const struct of_device_id olpc_battery_ids[] = {
-> >  	{ .compatible = "olpc,xo1-battery" },
-> > +	{ .compatible = "olpc,xo1.5-battery" },
-> >  	{}
-> >  };
-> >  MODULE_DEVICE_TABLE(of, olpc_battery_ids);
+-- 
+Jens Axboe
 
