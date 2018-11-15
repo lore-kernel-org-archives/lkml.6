@@ -2,186 +2,107 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 431A8C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:39:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1D852C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:44:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EE7BB2087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:39:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="u9kNJeI7"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE7BB2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CB85C2087A
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:44:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB85C2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728502AbeKOPph (ORCPT
+        id S1728166AbeKOPum (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 10:45:37 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:60286 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727067AbeKOPph (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 10:45:37 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=U3vHJvY8zhg9jV6Q+prFR6+FpOif1jl4lgNAL0Rlp/c=; b=u9kNJeI7RuAPZMZwo6nJ+sqgF
-        unAJDZnIRvKK6W8z4RZaWKOeUZ0Kq0Hc4SjHVGXGVDM6RI+UmqWHfTd7PvxjQf9tR52/QuuCTIg2T
-        /Q55Gmm28s8C2Qne6XSYALKEyT79kYAaO5cCIR46pRrwM3t+UezQSr2GQlyn8c36vRnIPjgSc+zU/
-        O2JkRc7+ViWvORQnYgjWBRqN/NokoZ4yjyiCgRD2F68AgKM2AppMSahD4cV7Wo7uyVfhemYa7RvEq
-        o66mg+QXeSXD/k6bxByjTOwwjoITpcGHogzJWoWO7NqAqszQJpRBO3C5CE8w6Z/cfEn7J5HaH77/j
-        TIQH+AaKw==;
-Received: from 189.27.28.95.dynamic.adsl.gvt.net.br ([189.27.28.95] helo=silica.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNAMy-0000hi-BP; Thu, 15 Nov 2018 05:39:13 +0000
-Date:   Wed, 14 Nov 2018 21:39:01 -0800
-From:   Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-kernel@vger.kernel.org, vishal.l.verma@intel.com,
-        linux-nvdimm@lists.01.org,
-        ksummit-discuss@lists.linuxfoundation.org
-Subject: Re: [Ksummit-discuss] [RFC PATCH 1/3] MAINTAINERS: Reclaim the P:
- tag for Subsystem Profile
-Message-ID: <20181114213901.75768212@silica.lan>
-In-Reply-To: <154225759959.2499188.5163439674278041458.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <154225759959.2499188.5163439674278041458.stgit@dwillia2-desk3.amr.corp.intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 15 Nov 2018 10:50:42 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:52054 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726689AbeKOPum (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 10:50:42 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id A7813315487C;
+        Thu, 15 Nov 2018 05:44:18 +0000 (UTC)
+Received: from localhost.localdomain (ovpn-12-127.pek2.redhat.com [10.72.12.127])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A51B75DD7F;
+        Thu, 15 Nov 2018 05:44:11 +0000 (UTC)
+Subject: Re: [PATCH 1/2 v6] x86/kexec_file: add e820 entry in case e820 type
+ string matches to io resource name
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     linux-kernel@vger.kernel.org, kexec@lists.infradead.org,
+        x86@kernel.org, tglx@linutronix.de, mingo@redhat.com,
+        akpm@linux-foundation.org, dyoung@redhat.com, bhe@redhat.com
+References: <20181114072926.13312-1-lijiang@redhat.com>
+ <20181114072926.13312-2-lijiang@redhat.com> <20181114112600.GD13926@zn.tnic>
+From:   lijiang <lijiang@redhat.com>
+Message-ID: <9eb61523-7a08-24c4-ac15-050537bd9203@redhat.com>
+Date:   Thu, 15 Nov 2018 13:44:07 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <20181114112600.GD13926@zn.tnic>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Thu, 15 Nov 2018 05:44:18 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 14 Nov 2018 20:53:19 -0800
-Dan Williams <dan.j.williams@intel.com> escreveu:
-
-> Fixup some P: entries to be M: and rename the remaining ones to 'E:' for
-> "entity". The P: tag will be used to indicate the location of a
-> Subsystem Profile for a given MAINTAINERS entry.
+在 2018年11月14日 19:26, Borislav Petkov 写道:
+> On Wed, Nov 14, 2018 at 03:29:25PM +0800, Lianbo Jiang wrote:
+>> When load the kernel image and initramfs by kexec_file_load syscall, it can
+>> not add exact e820 reserved type to kdump kernel e820 table.
+>>
+>> Kdump uses walk_iomem_res_desc() to iterate io resources, then adds matched
+>> desc to e820 table for kdump kernel. But, when convert the e820 type into
+>> the iores descriptors, several e820 types are converted to 'IORES_DES_NONE'
+>> in this function e820_type_to_iores_desc(). So the walk_iomem_res_desc()
+>> will get these unnecessary types(E820_TYPE_RAM/E820_TYPE_UNUSABLE/E820_TYPE
+>> _KERN) when iterate io resources by the 'IORES_DES_NONE'.
+>>
+>> It needs filter out these redundant type(such as E820_TYPE_RAM/E820_TYPE_
+>> UNUSABLE/E820_TYPE_KERN) in order to add exact e820 reserved type to kdump
+>> kernel e820 table. Thus it also needs an extra checking in memmap_entry_
+>> callback() to match the e820 type and resource name.
 > 
-> Cc: Joe Perches <joe@perches.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> ---
->  MAINTAINERS |   18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
+> Ok, it took me a while to parse what this is trying to say so let's
+> start from the top:
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 0abecc528dac..83b7b3943a12 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -76,7 +76,7 @@ trivial patch so apply some common sense.
->  
->  Descriptions of section entries:
->  
-> -	P: Person (obsolete)
-> +	E: Entity (obsolete)
+> * What resource type do you do need in the second kernel?
+> 
 
-I don't like very much the idea of renaming it, but that's just my 2 cents.
+Thanks for your comment.
 
-IMO, the best would be to replace them to a non-obsolete field on a patch
-that would remove it, then another patch would re-add with a different
-meaning.
+The e820 reserved ranges need to be passed to the second kernel.
 
-On a quick look, I suspect we could get rid of all remaining entries.
-See below.
+> * The most important question: why?
+> 
 
->  	M: Mail patches to: FullName <address@domain>
->  	R: Designated reviewer: FullName <address@domain>
->  	   These reviewers should be CCed on patches.
-> @@ -771,7 +771,7 @@ S:	Orphan
->  F:	drivers/usb/gadget/udc/amd5536udc.*
->  
->  AMD GEODE PROCESSOR/CHIPSET SUPPORT
-> -P:	Andres Salomon <dilinger@queued.net>
-> +M:	Andres Salomon <dilinger@queued.net>
->  L:	linux-geode@lists.infradead.org (moderated for non-subscribers)
->  W:	http://www.amd.com/us-en/ConnectivitySolutions/TechnicalResources/0,,50_2334_2452_11363,00.html
->  S:	Supported
-> @@ -9271,7 +9271,7 @@ F:	drivers/staging/media/tegra-vde/
->  
->  MEDIA INPUT INFRASTRUCTURE (V4L/DVB)
->  M:	Mauro Carvalho Chehab <mchehab@kernel.org>
+At present, the upstream kernel does not pass the e820 reserved ranges to the
+second kernel, which might cause two problems:
 
-> -P:	LinuxTV.org Project
-> +E:	LinuxTV.org Project
+The first one is the MMCONFIG issue, the PCI MMCONFIG(extended mode) requires
+the reserved region otherwise it falls back to legacy mode, which might lead to
+the hot-plug device could not be recognized in kdump kernel.
 
-LinuxTV is not really an entity. Just a name for a community-maintained site
-where we store data about it.
+Another one is that the e820 reserved ranges do not setup in kdump kernel, which
+could cause kdump can't work in some machines. To know more information, please
+refer to the [PATCH 2/2 v6] patch log.
 
-That's already a "W:" tag pointing for it, so I would just remove it.
 
-If you decide to remove, feel free to add my ack:
+> * If it is the reserved resource, why aren't you adding
+> IORES_DESC_RESERVED or so which to look for instead of this hacky string
+> comparison?
+> 
 
-	Acked-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+Adding the new descriptor 'IORES_DESC_RESERVED' is also a good solution. I will
+modify these patches based on your suggestion and post again.
 
->  L:	linux-media@vger.kernel.org
->  W:	https://linuxtv.org
->  Q:	http://patchwork.kernel.org/project/linux-media/list/
-> @@ -12465,7 +12465,7 @@ S:	Maintained
->  F:	arch/mips/ralink
->  
->  RALINK RT2X00 WIRELESS LAN DRIVER
-> -P:	rt2x00 project
-> +E:	rt2x00 project
-
-I suspect that the above info is not really useful, and it is probably just
-a left-over from the past history. 
-
-I suspect that, if removed, nobody will really miss it, as it is quite
-obvious :-)
-
->  M:	Stanislaw Gruszka <sgruszka@redhat.com>
->  M:	Helmut Schaa <helmut.schaa@googlemail.com>
->  L:	linux-wireless@vger.kernel.org
-> @@ -12764,7 +12764,7 @@ S:	Supported
->  F:	drivers/net/ethernet/rocker/
->  
->  ROCKETPORT DRIVER
-> -P:	Comtrol Corp.
-> +E:	Comtrol Corp.
-
-There's already a W: field pointing to the company that maintains it.
-So, IMHO this is simply duplicated stuff that can be removed.
-
->  W:	http://www.comtrol.com
->  S:	Maintained
->  F:	Documentation/serial/rocket.txt
-> @@ -13577,15 +13577,15 @@ F:	drivers/video/fbdev/simplefb.c
->  F:	include/linux/platform_data/simplefb.h
-
->  SIMTEC EB110ATX (Chalice CATS)
-> -P:	Ben Dooks
-> -P:	Vincent Sanders <vince@simtec.co.uk>
-> +E:	Ben Dooks
-> +M:	Vincent Sanders <vince@simtec.co.uk>
->  M:	Simtec Linux Team <linux@simtec.co.uk>
->  W:	http://www.simtec.co.uk/products/EB110ATX/
->  S:	Supported
->  
->  SIMTEC EB2410ITX (BAST)
-> -P:	Ben Dooks
-> -P:	Vincent Sanders <vince@simtec.co.uk>
-> +E:	Ben Dooks
-> +M:	Vincent Sanders <vince@simtec.co.uk>
->  M:	Simtec Linux Team <linux@simtec.co.uk>
->  W:	http://www.simtec.co.uk/products/EB2410ITX/
->  S:	Supported
-
-On the above two drivers, I've no idea why to keep it there. Ben Dooks
-seems to be a past maintainer. He is already listed at CREDITS
-for several things including Simtec.
-
-So, I guess this information is duplicated/obsoleted and could just 
-be removed.
-
-Cheers,
-Mauro
+Thanks.
+Lianbo
