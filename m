@@ -2,127 +2,95 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1373FC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:41:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E089EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:43:01 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CBEFF21582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:41:01 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CBEFF21582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 9F1C721582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 16:43:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9F1C721582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388598AbeKPCtd (ORCPT
+        id S2388505AbeKPCvc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 21:49:33 -0500
-Received: from mx2.suse.de ([195.135.220.15]:36184 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S2387839AbeKPCtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 21:49:33 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id AFF09AF09;
-        Thu, 15 Nov 2018 16:40:57 +0000 (UTC)
-Date:   Thu, 15 Nov 2018 17:40:52 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, davem@davemloft.net,
-        pavel.tatashin@microsoft.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
-        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
-        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
-        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
-Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
-Message-ID: <20181115164052.GW23831@dhcp22.suse.cz>
-References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
- <20181114150742.GZ23419@dhcp22.suse.cz>
- <9e8218eb-80bf-fc02-ae56-42ccfddb572e@linux.intel.com>
- <20181115081006.GC23831@dhcp22.suse.cz>
- <b4a4d2ca-da7a-b8cd-bf0f-a119ebd67da8@linux.intel.com>
+        Thu, 15 Nov 2018 21:51:32 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:48971 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2387839AbeKPCvc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 21:51:32 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 4803C207AD; Thu, 15 Nov 2018 17:42:57 +0100 (CET)
+Received: from bbrezillon (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 849262074D;
+        Thu, 15 Nov 2018 17:42:39 +0100 (CET)
+Date:   Thu, 15 Nov 2018 17:42:39 +0100
+From:   Boris Brezillon <boris.brezillon@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH] drm/fb-helper: Blacklist writeback when adding
+ connectors to fbdev
+Message-ID: <20181115174239.773b71e9@bbrezillon>
+In-Reply-To: <20181115163248.21168-1-paul.kocialkowski@bootlin.com>
+References: <20181115163248.21168-1-paul.kocialkowski@bootlin.com>
+X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b4a4d2ca-da7a-b8cd-bf0f-a119ebd67da8@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 15-11-18 08:02:33, Alexander Duyck wrote:
-> On 11/15/2018 12:10 AM, Michal Hocko wrote:
-> > On Wed 14-11-18 16:50:23, Alexander Duyck wrote:
-[...]
-> > > I plan to remove it, but don't think I can get to it in this patch set.
-> > 
-> > What I am trying to argue is that we should simply drop the
-> > __SetPageReserved as an independent patch prior to this whole series.
-> > As I've mentioned earlier, I have added this just to be sure and part of
-> > that was that __add_section has set the reserved bit. This is no longer
-> > the case since d0dc12e86b31 ("mm/memory_hotplug: optimize memory
-> > hotplug").
-> > 
-> > Nobody should really depend on that because struct pages are in
-> > undefined state after __add_pages and they should get fully initialized
-> > after move_pfn_range_to_zone.
-> > 
-> > If you really insist on setting the reserved bit then it really has to
-> > happen much sooner than it is right now. So I do not really see any
-> > point in doing so. Sure there are some pfn walkers that really need to
-> > do pfn_to_online_page because pfn_valid is not sufficient but that is
-> > largely independent on any optimization work in this area.
-> > 
-> > I am sorry if I haven't been clear about that before. Does it make more
-> > sense to you now?
+On Thu, 15 Nov 2018 17:32:48 +0100
+Paul Kocialkowski <paul.kocialkowski@bootlin.com> wrote:
+
+> Writeback connectors do not produce any on-screen output and require
+> special care for use. Such connectors are hidden from enumeration in
+> DRM resources by default, but they are still picked-up by fbdev.
+> This makes rather little sense since fbdev is not really adapted for
+> dealing with writeback.
 > 
-> I get what you are saying I just don't agree with the ordering. I have had
-> these patches in the works for a couple months now. You are essentially
-> telling me to defer these in favor of taking care of the reserved bit first.
+> Moreover, this is also a source of issues when userspace disables the
+> CRTC (and associated plane) without detaching the CRTC from the
+> connector (which is hidden by default). In this case, the connector is
+> still using the CRTC, leading to am "enabled/connectors mismatch" and
 
-General development is to fix correctness and/or cleanup stale code
-first and optimize on top. I really do not see why this should be
-any different. Especially when page reserved bit is a part of your
-optimization work.
+				   ^an
 
-There is some review feedback to address from this version so you can
-add a patch to remove the reserved bit to the series - feel free to
-reuse my explanation as the justification. I really do not think you
-have to change other call sites because they would be broken in the same
-way as when the bit is set (late).
+> eventually the failure of the associated atomic commit. This situation
+> happens with VC4 testing under IGT GPU Tools.
+> 
+> Filter out writeback connectors in the fbdev helper to solve this.
+> 
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-> The only spot where I think we disagree is that I would prefer to get these
-> in first, and then focus on the reserved bit. I'm not saying we shouldn't do
-> the work, but I would rather take care of the immediate issue, and then
-> "clean house" as it were. I've done that sort of thing in the past where I
-> start deferring patches and then by the end of things I have a 60 patch set
-> I am trying to push because one fix gets ahead of another and another.
+Reviewed-by: Boris Brezillon <boris.brezillon@bootlin.com>
 
-This is nothing exceptional and it happened to me as well.
+> ---
+>  drivers/gpu/drm/drm_fb_helper.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_fb_helper.c b/drivers/gpu/drm/drm_fb_helper.c
+> index a502f3e519fd..dd852a25d375 100644
+> --- a/drivers/gpu/drm/drm_fb_helper.c
+> +++ b/drivers/gpu/drm/drm_fb_helper.c
+> @@ -219,6 +219,9 @@ int drm_fb_helper_single_add_all_connectors(struct drm_fb_helper *fb_helper)
+>  	mutex_lock(&fb_helper->lock);
+>  	drm_connector_list_iter_begin(dev, &conn_iter);
+>  	drm_for_each_connector_iter(connector, &conn_iter) {
+> +		if (connector->connector_type == DRM_MODE_CONNECTOR_WRITEBACK)
+> +			continue;
+> +
+>  		ret = __drm_fb_helper_add_one_connector(fb_helper, connector);
+>  		if (ret)
+>  			goto fail;
 
-> My big concern is that dropping the reserved bit is going to be much more
-> error prone than the work I have done in this patch set since it is much
-> more likely that somebody somewhere has made a false reliance on it being
-> set. If you have any tests you usually run for memory hotplug it would be
-> useful if you could point me in that direction. Then I can move forward with
-> the upcoming patch set with a bit more confidence.
-
-There is nothing except for exercising hotplug and do random stuff to
-it. We simply do not know about all the pfn walkers so we have to count
-on a reasonable model to justify changes. I hope I have clarified why
-the reserved bit doesn't act the purpose it has been added for.
-
-I understand that you want to push your optimization work ASAP but I _do_
-care about longterm maintainability much more than having performance
-gain _right_ now.
-
-That being said, I am not nacking your series so if others really think
-that I am asking too much I can live with that. I was overruled the last
-time when the first optimization pile went in. I still hope we can get
-the result cleaned up as promised, though.
--- 
-Michal Hocko
-SUSE Labs
