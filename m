@@ -2,121 +2,172 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 53E23C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:17:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 33A60C43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:24:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 14C7F2133D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:17:43 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id ED90F2146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:24:02 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Ng4M+KQH"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 14C7F2133D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="xNHPvfwn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED90F2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389123AbeKPJ1e (ORCPT
+        id S1726921AbeKPJd4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 04:27:34 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:42255 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbeKPJ1d (ORCPT
+        Fri, 16 Nov 2018 04:33:56 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:42648 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726360AbeKPJdz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 04:27:33 -0500
-Received: by mail-lf1-f68.google.com with SMTP id l10so11727246lfh.9
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 15:17:39 -0800 (PST)
+        Fri, 16 Nov 2018 04:33:55 -0500
+Received: by mail-pf1-f194.google.com with SMTP id 64so5956005pfr.9
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 15:24:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=O3qA3Z8T+gkll+1f2b8huiB8+JsdOCeMXgQ+0JAI2x4=;
-        b=Ng4M+KQHkYdO714tc6OBeYue2frZEmGpn9KZE7qsOy4Q9A4GXJZ3LKdQqO+NYYa5Wd
-         KHai1MvzUwU65dUonm6X9ZPjrcnZfjMGZZiL9i7y6ta3gEwNusjQ6ZKO5VLAKtx9XpT9
-         LFNIKvouX/z7dSMrwdRRZE9c6W9iibosRKLhY=
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=jwnypmXRKe0aQmFwiDDHQvx5bHMn94jQ/OjQzX3YuJ0=;
+        b=xNHPvfwni0CT/Ud+WG0Z+eArtj5FLHdX5ny0CAJBgZw/w5k8sAxb3sDWxubpfB1ZS/
+         7WVq1n1Fp4vLIVMGHxTYOo5cgiGZQgwqJ7uYQNM33OACNJrd6jMSaYIYIelZKKlgosfK
+         nkEnkYrUnadWqJ43cAXSq2fMz5RDwApNaX7RGATH2cbmys5FkjmJdNzQ2hvgOQoVv/Gp
+         c5H+d8rWap2eHHnCaFtK4alcHdtD8uBvY3LcbPJXqocRZhw2iSpIq1ao3UU6L1cjlLAN
+         3qaL6ExIwzLXqtDfHjK/EfEagOR/RXXe0pXUMJLjb8iAEqGmsTTgFST/ahlPUZeRcNVf
+         m83Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=O3qA3Z8T+gkll+1f2b8huiB8+JsdOCeMXgQ+0JAI2x4=;
-        b=qppyNtAI7S0q3OExgb43vA/2y9YCxO8yD5rxq/x/UM1lFpzCHiS2oyP58YksWD9W+P
-         qvZt1PtaqlUH2SrBOYy9GCgZwv/jo8nqSYLwnIuskpGkzRWroRm2RNSpHicOV0/vEewp
-         SlnAQeVRuA8vhrhU/9wKfbNHML+Z9HmXnspZiDIkxA20qLV6jVIbEYet1TuzvYge7vIm
-         Drco4WmlqucNJ6fJp1dDlkDWw+ivligwURzZ2nN6RqlhsredZGCpTQJMVziQDvgucg8b
-         SlPDvGpRlxEcwb+Ap++0WiQprHQn/9F0MKX8v9zorheG3nJIXl3c/VZJHegNC6WOfqHb
-         HDug==
-X-Gm-Message-State: AGRZ1gJ+4pX6or7QAHgw91hOje1hYXuf6zjF9YW+W4XECaBk61TYFbqA
-        ZsazApfZSKv4knE/ZZgr8K9tAKvCCME=
-X-Google-Smtp-Source: AJdET5emcamn/Jluseaxx18iKyvl69Ys2+lYjVvXJNI69X4xbenPzHZyZ9EXILXSlGg1uIHO9xG2rA==
-X-Received: by 2002:a19:24c6:: with SMTP id k189mr4608098lfk.77.1542323858878;
-        Thu, 15 Nov 2018 15:17:38 -0800 (PST)
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com. [209.85.208.178])
-        by smtp.gmail.com with ESMTPSA id g70-v6sm859987ljg.92.2018.11.15.15.17.37
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 15:17:37 -0800 (PST)
-Received: by mail-lj1-f178.google.com with SMTP id x85-v6so18737767ljb.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 15:17:37 -0800 (PST)
-X-Received: by 2002:a2e:880a:: with SMTP id x10-v6mr154387ljh.174.1542323856676;
- Thu, 15 Nov 2018 15:17:36 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=jwnypmXRKe0aQmFwiDDHQvx5bHMn94jQ/OjQzX3YuJ0=;
+        b=M/9byyC9ZFr2d5FOyffxIvH48rgs9UiKcvGPvv8tFFCEaQ9CuJwB2KfdQu5s95hLBN
+         WEHpPBjMlFr+2jUABInfg1A9RTJD7VJVZfYPrlD1l8TXlEVy+AtnbGDe+gOkBkNCfGpm
+         INtcIdA7X8vaP25zPXKkaF5EuwEypi3FHn4djBn2UKy+fXzYrqIIqSkVyp2veMPxoXYo
+         t83kMyU9xrI8DtfxBhFDCDcXHTrJLYgHj3bPEqcIJ2TVD/0xcsJO8ppVAARGtjL90W4t
+         jX3UVTbTMcS57GeQqizjzn1olEMClHdrJvH6piFxPhi+hOdzml2UP+BNIuV7YXWxl4GG
+         /+sQ==
+X-Gm-Message-State: AGRZ1gJ294o8aR1M3mh+wZgnh6QyzdlQjR/0S4Zz2Kyl+m879fVsFL+j
+        5ED7uCyIhS2e5uwtM5ThsHkRjw==
+X-Google-Smtp-Source: AJdET5f1hxetB9UqDibiUkx95kTB/X389pkp9WONJq7RyIqm5kAs3ITocaP1OtKLLpS24I28CEXFdQ==
+X-Received: by 2002:a63:344e:: with SMTP id b75mr7449203pga.184.1542324240224;
+        Thu, 15 Nov 2018 15:24:00 -0800 (PST)
+Received: from vader ([64.114.255.97])
+        by smtp.gmail.com with ESMTPSA id x63-v6sm38337415pfk.14.2018.11.15.15.23.58
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 15:23:59 -0800 (PST)
+Date:   Thu, 15 Nov 2018 15:23:56 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 05/19] block: introduce bvec_last_segment()
+Message-ID: <20181115232356.GA23238@vader>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-6-ming.lei@redhat.com>
 MIME-Version: 1.0
-References: <1539004739-32060-1-git-send-email-vbadigan@codeaurora.org>
- <1539004739-32060-2-git-send-email-vbadigan@codeaurora.org>
- <CAE=gft631u+ie3PRFkc5t1f3iYwuhbxDbxKUqvdZS5cFJaJbsA@mail.gmail.com>
- <dcb4a579-b308-76c0-7cc3-22bb95147470@codeaurora.org> <9a4708c8-cc43-a690-7ef7-da351eb1f967@codeaurora.org>
-In-Reply-To: <9a4708c8-cc43-a690-7ef7-da351eb1f967@codeaurora.org>
-From:   Evan Green <evgreen@chromium.org>
-Date:   Thu, 15 Nov 2018 15:17:00 -0800
-X-Gmail-Original-Message-ID: <CAE=gft7VCzVDS+hDQUiXh=76ytkg4Djf8kZXtESsQsxoPJrwXA@mail.gmail.com>
-Message-ID: <CAE=gft7VCzVDS+hDQUiXh=76ytkg4Djf8kZXtESsQsxoPJrwXA@mail.gmail.com>
-Subject: Re: [PATCH V3 1/3] mmc: sdhci: Allow platform controlled voltage switching
-To:     vbadigan@codeaurora.org
-Cc:     adrian.hunter@intel.com, Ulf Hansson <ulf.hansson@linaro.org>,
-        robh+dt@kernel.org, Doug Anderson <dianders@google.com>,
-        asutoshd@codeaurora.org, riteshh@codeaurora.org,
-        stummala@codeaurora.org, sayali <sayalil@codeaurora.org>,
-        linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        vviswana@codeaurora.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115085306.9910-6-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 6:36 AM Veerabhadrarao Badiganti
-<vbadigan@codeaurora.org> wrote:
->
-> >>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
-> >>> index b001cf4..3c28152 100644
-> >>> --- a/drivers/mmc/host/sdhci.h
-> >>> +++ b/drivers/mmc/host/sdhci.h
-> >>> @@ -524,6 +524,7 @@ struct sdhci_host {
-> >>>          bool pending_reset;     /* Cmd/data reset is pending */
-> >>>          bool irq_wake_enabled;  /* IRQ wakeup is enabled */
-> >>>          bool v4_mode;           /* Host Version 4 Enable */
-> >>> +       bool vqmmc_enabled;     /* Vqmmc is enabled */
-> >> I still don't love this, since it doesn't mean what it says. Everyone
-> >> else that has a vqmmc_enabled member uses it to actually mean "vqmmc
-> >> is enabled", but this doesn't mean that. For example, you don't clear
-> >> this when you disable the regulator in patch 3, so this would be set
-> >> even if the regulator is disabled, and you don't set it when sdhci
-> >> enables the regulator, so the regulator is on when this flag is not
-> >> set.
-> >>
-> Hi Evan
->
-> This flag is meant to say "disable vqmmc *only* if it is enabled by host
-> driver (sdhci_host)".
-> If host driver doesn't enable vqmmc (enabled by platfrm driver) or if it
-> fails to enable it, then don't call disable vqmmc.
->
-> Agree with you, the present name is not conveying its purpose.
-> It must be something like "vqmmc_enabled_by_host".
->
-> Please let me know if you have any suggestions on this name.
+On Thu, Nov 15, 2018 at 04:52:52PM +0800, Ming Lei wrote:
+> BTRFS and guard_bio_eod() need to get the last singlepage segment
+> from one multipage bvec, so introduce this helper to make them happy.
+> 
+> Cc: Dave Chinner <dchinner@redhat.com>
+> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> Cc: Mike Snitzer <snitzer@redhat.com>
+> Cc: dm-devel@redhat.com
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Shaohua Li <shli@kernel.org>
+> Cc: linux-raid@vger.kernel.org
+> Cc: linux-erofs@lists.ozlabs.org
+> Cc: David Sterba <dsterba@suse.com>
+> Cc: linux-btrfs@vger.kernel.org
+> Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> Cc: linux-xfs@vger.kernel.org
+> Cc: Gao Xiang <gaoxiang25@huawei.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Theodore Ts'o <tytso@mit.edu>
+> Cc: linux-ext4@vger.kernel.org
+> Cc: Coly Li <colyli@suse.de>
+> Cc: linux-bcache@vger.kernel.org
+> Cc: Boaz Harrosh <ooo@electrozaur.com>
+> Cc: Bob Peterson <rpeterso@redhat.com>
+> Cc: cluster-devel@redhat.com
 
-Yeah. Maybe vqmmc_pltfrm_controlled? Or vqmmc_enabled_by_platfrm as
-you suggested?
--Evan
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+
+Minor comments below.
+
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  include/linux/bvec.h | 25 +++++++++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+> 
+> diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+> index 3d61352cd8cf..01616a0b6220 100644
+> --- a/include/linux/bvec.h
+> +++ b/include/linux/bvec.h
+> @@ -216,4 +216,29 @@ static inline bool mp_bvec_iter_advance(const struct bio_vec *bv,
+>  	.bi_bvec_done	= 0,						\
+>  }
+>  
+> +/*
+> + * Get the last singlepage segment from the multipage bvec and store it
+> + * in @seg
+> + */
+> +static inline void bvec_last_segment(const struct bio_vec *bvec,
+> +		struct bio_vec *seg)
+
+Indentation is all messed up here.
+
+> +{
+> +	unsigned total = bvec->bv_offset + bvec->bv_len;
+> +	unsigned last_page = total / PAGE_SIZE;
+> +
+> +	if (last_page * PAGE_SIZE == total)
+> +		last_page--;
+
+I think this could just be
+
+	unsigned int last_page = (total - 1) / PAGE_SIZE;
+
+> +	seg->bv_page = nth_page(bvec->bv_page, last_page);
+> +
+> +	/* the whole segment is inside the last page */
+> +	if (bvec->bv_offset >= last_page * PAGE_SIZE) {
+> +		seg->bv_offset = bvec->bv_offset % PAGE_SIZE;
+> +		seg->bv_len = bvec->bv_len;
+> +	} else {
+> +		seg->bv_offset = 0;
+> +		seg->bv_len = total - last_page * PAGE_SIZE;
+> +	}
+> +}
+> +
+>  #endif /* __LINUX_BVEC_ITER_H */
+> -- 
+> 2.9.5
+> 
