@@ -2,95 +2,115 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FAKE_REPLY_C,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CEA73C04EBF
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:10:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A9986C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:11:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9FD6920815
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:10:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9FD6920815
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6FDB920815
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:11:31 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ngGg0dZa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6FDB920815
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388911AbeKPFTh (ORCPT
+        id S1727994AbeKPFUb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 00:19:37 -0500
-Received: from mga09.intel.com ([134.134.136.24]:23686 "EHLO mga09.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725742AbeKPFTg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 00:19:36 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by orsmga102.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 11:10:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,237,1539673200"; 
-   d="scan'208";a="108431466"
-Received: from lahna.fi.intel.com (HELO lahna) ([10.237.72.157])
-  by fmsmga001.fm.intel.com with SMTP; 15 Nov 2018 11:10:27 -0800
-Received: by lahna (sSMTP sendmail emulation); Thu, 15 Nov 2018 21:10:26 +0200
-Date:   Thu, 15 Nov 2018 21:10:26 +0200
-From:   Mika Westerberg <mika.westerberg@linux.intel.com>
-To:     Yehezkel Bernat <yehezkelshb@gmail.com>
-Cc:     lorenzo.pieralisi@arm.com, lukas@wunner.de,
-        iommu@lists.linux-foundation.org, joro@8bytes.org,
-        David Woodhouse <dwmw2@infradead.org>,
-        baolu.lu@linux.intel.com, ashok.raj@intel.com,
-        Bjorn Helgaas <bhelgaas@google.com>, rjw@rjwysocki.net,
-        jacob.jun.pan@intel.com, Andreas Noever <andreas.noever@gmail.com>,
-        michael.jamet@intel.com, Christian Kellner <ckellner@redhat.com>,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        Anthony Wong <anthony.wong@canonical.com>,
-        linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
-Message-ID: <20181115191026.GE4179@lahna.fi.intel.com>
-References: <20181113105636.GB11202@e107981-ln.cambridge.arm.com>
- <20181113112700.GT2500@lahna.fi.intel.com>
- <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
- <20181115102239.GU2500@lahna.fi.intel.com>
- <20181115111356.GA599@e107981-ln.cambridge.arm.com>
- <20181115113737.GW2500@lahna.fi.intel.com>
- <20181115120736.pscly6zwd3k2tvd2@wunner.de>
- <20181115121627.GA2500@lahna.fi.intel.com>
- <20181115174608.GA17691@e107981-ln.cambridge.arm.com>
- <CA+CmpXv9yM6nFdb0mcMPGHS-B_uGbQHYoO6iuefZC8gWoZYD3Q@mail.gmail.com>
+        Fri, 16 Nov 2018 00:20:31 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43847 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725742AbeKPFUa (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 00:20:30 -0500
+Received: by mail-pl1-f194.google.com with SMTP id g59-v6so9910788plb.10
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 11:11:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=KBvxmcf0Rlk9ebls9dlzpPkv7ZpQaMBOSobJFOkavx0=;
+        b=ngGg0dZaLDlU/sC85tsvLm/MtNXG1c2GET3Dv9oHjqoVyhc90tTq/aFVWK8nf+xY8V
+         3II1/FYQ8gYsLt+ZnMjtRcOWYWDaU9XW8HnATwmggvHSurirZ7Bm1ol7D7vkY0WzfMjS
+         gC99fiYawICarBL0wuSFEvxRgpSCgmOTp3GLl4axjc4L5YsORiTZwBReWPbBmk4hT6Mk
+         MkCpy6WNvkpvgrMF95k53XRgnyTkN/EGzj0Ypjreep9FFBhi3f9WSFjnqN7/fFaGk5VJ
+         ZBa42ItYi7xVaELAlmL30jUB4G9IE1zs8TF1IeSaLg8ZPgr1OoE58mMMm7PmUvqyp2wp
+         V8yQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :mime-version:content-disposition:user-agent;
+        bh=KBvxmcf0Rlk9ebls9dlzpPkv7ZpQaMBOSobJFOkavx0=;
+        b=SDJiHEur5pFbh4Hm/gtw9xeTSyI4zrpnsGhygw0l6aF6IwDPFHwk/jCgvx178+CtdY
+         0Gt3ocfC+VSWXMwrz3MrnvNGUYWaT4lTiQLi5X0JGlnqbDEdRmxJpyqDDEAl4p88VB6D
+         fXSGGMC+gMCLGGTUozh7Rx4PuBCbxC8UlSgghmihB5s1rpW/CQ0bZ2j5yi7IsAK8gQRs
+         Wj34ejyO2o3Saio6tShBbtmKsvDMrPhrVYfEWFHRwg1sFhp5aI21uEEv9Z/hYkNR75To
+         MJ/tbqYeFXBKBea+ci2rV8//O3/jKUWfuBV3+ITyXMOmQVeDf2W/VDeCRwxRmp+1SqpP
+         Jyaw==
+X-Gm-Message-State: AGRZ1gJDY2VWimsaVP53MzGvXZlgKBOohD8+4WJPFDIRgQ3uPcI6mplT
+        epkRu4guIPNOz08/ElVR5U5dLCEr8/A=
+X-Google-Smtp-Source: AJdET5fPebqqTxxmH8fZQz9+JrBmBW/W2gOLT/eOfpHGSE/mBYO8U88SFrN8FwabBn4skioKN4pOUw==
+X-Received: by 2002:a17:902:e01:: with SMTP id 1-v6mr7272243plw.251.1542309088467;
+        Thu, 15 Nov 2018 11:11:28 -0800 (PST)
+Received: from localhost ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id f62sm26949701pgc.67.2018.11.15.11.11.27
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 11:11:27 -0800 (PST)
+Date:   Thu, 15 Nov 2018 11:11:26 -0800
+From:   Guenter Roeck <linux@roeck-us.net>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>,
+        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme: utilize two queue maps, one for reads and one for
+ writes
+Message-ID: <20181115191126.GA16973@roeck-us.net>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CA+CmpXv9yM6nFdb0mcMPGHS-B_uGbQHYoO6iuefZC8gWoZYD3Q@mail.gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 07:58:13PM +0200, Yehezkel Bernat wrote:
-> From what I know, there are more devices that suffer from similar security
-> issues like Thunderbolt, e.g. FireWire [1].
-> My assumption is that the same protection may be applied to such devices too,
-> even if currently it sounds like vendors care mostly about Thunderbolt (probably
-> because it removes the need for user approval for device connection; it becames
-> a simple plug-and-play experience).
+On Wed, Nov 14, 2018 at 10:12:44AM -0700, Jens Axboe wrote:
+> 
+> I think the below patch should fix it.
+> 
 
-FireWire is kind of different but there are connectors such as
-ExpressCard and NVMe (over U.2 connector) which carry PCIe and are
-relatively easy to access without need for a screwdriver. AFAIK some
-eGPUs are also using some other proprietary (non-TBT) connector that
-carries PCIe.
+I spoke too early. sparc64, next-20181115:
 
-I was thinking we could cover all these with is_external filling them
-based on the _DSD or some other means in the kernel.
+[   14.204370] nvme nvme0: pci function 0000:02:00.0
+[   14.249956] nvme nvme0: Removing after probe failure status: -5
+[   14.263496] ------------[ cut here ]------------
+[   14.263913] WARNING: CPU: 0 PID: 15 at kernel/irq/manage.c:1597 __free_irq+0xa4/0x320
+[   14.264265] Trying to free already-free IRQ 9
+[   14.264519] Modules linked in:
+[   14.264961] CPU: 0 PID: 15 Comm: kworker/u2:1 Not tainted 4.20.0-rc2-next-20181115 #1
+[   14.265555] Workqueue: nvme-reset-wq nvme_reset_work
+[   14.265899] Call Trace:
+[   14.266118]  [000000000046944c] __warn+0xcc/0x100
+[   14.266375]  [00000000004694b0] warn_slowpath_fmt+0x30/0x40
+[   14.266635]  [00000000004d4ce4] __free_irq+0xa4/0x320
+[   14.266867]  [00000000004d4ff8] free_irq+0x38/0x80
+[   14.267092]  [00000000007b1874] pci_free_irq+0x14/0x40
+[   14.267327]  [00000000008a5444] nvme_dev_disable+0xe4/0x520
+[   14.267576]  [00000000008a69b8] nvme_reset_work+0x138/0x1c60
+[   14.267827]  [0000000000488dd0] process_one_work+0x230/0x6e0
+[   14.268079]  [00000000004894f4] worker_thread+0x274/0x520
+[   14.268321]  [0000000000490624] kthread+0xe4/0x120
+[   14.268544]  [00000000004060c4] ret_from_fork+0x1c/0x2c
+[   14.268825]  [0000000000000000]           (null)
+[   14.269089] irq event stamp: 32796
+[   14.269350] hardirqs last  enabled at (32795): [<0000000000b624a4>] _raw_spin_unlock_irqrestore+0x24/0x80
+[   14.269757] hardirqs last disabled at (32796): [<0000000000b622f4>] _raw_spin_lock_irqsave+0x14/0x60
+[   14.270566] softirqs last  enabled at (32780): [<0000000000b64c18>] __do_softirq+0x238/0x520
+[   14.271206] softirqs last disabled at (32729): [<000000000042ceec>] do_softirq_own_stack+0x2c/0x40
+[   14.272288] ---[ end trace cb79ccd2a0a03f3c ]---
 
-We would then deal all such devices as "untrusted" by default.
+Looks like an error during probe followed by an error cleanup problem.
 
-> Thus, I don't think binding it with dev->is_thunderbolt is the correct
-> thing to do.
-
-One option that I suggested already is that we keep both and mark all
-is_thunderbolt devices as is_external as well. But I guess this is up to
-Bjorn and Rafael to decide :-)
+Guenter
