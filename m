@@ -2,126 +2,71 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2498DC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:12:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6ACC5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:12:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 901BE21780
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:12:24 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 29A1F21780
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:12:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=rasmusvillemoes.dk header.i=@rasmusvillemoes.dk header.b="Dgomb94m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 901BE21780
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rasmusvillemoes.dk
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ASURhQvB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 29A1F21780
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729134AbeKOTTT (ORCPT
+        id S2387715AbeKOTTW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:19:19 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:35398 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728748AbeKOTTT (ORCPT
+        Thu, 15 Nov 2018 14:19:22 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:54436 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728748AbeKOTTV (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:19:19 -0500
-Received: by mail-ed1-f67.google.com with SMTP id x30so11338928edx.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 01:12:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rasmusvillemoes.dk; s=google;
-        h=subject:to:cc:references:from:message-id:date:user-agent
-         :mime-version:in-reply-to:content-language:content-transfer-encoding;
-        bh=UM9EjP0Hw28LqZf3C7ivhhk6R3koYbFfX0law4kebOA=;
-        b=Dgomb94mdd0qdW5Fg0GrQmbQC/kG22wh8FOvovgQtTU/yY5O94HtYABv2vqefK2enC
-         h3+Cst6BcmxzGNBCT0zV+wSArmHO/iH+rBQP3EDiGPiSHpGj9WVa+pTBHhLuGDH6Efnz
-         GkfiFcAcbZbqAXmLAMVA/shG3CHtoTqpKMHuo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
-         :user-agent:mime-version:in-reply-to:content-language
-         :content-transfer-encoding;
-        bh=UM9EjP0Hw28LqZf3C7ivhhk6R3koYbFfX0law4kebOA=;
-        b=h5wVjDSL0cKwlYT08+jhz4Ht7TZyg4lwjfUPRleC5WMk8V89PlNkKFHduJ5d6jRLNv
-         HE+uKKCVj6I4EwrO7upBcEoJSv44MF/wwpYjEBbRwBARWTxfM7GKzll6/ExJHwoUwPBO
-         1y0Jzns1FmZ6NKcBgUIPNsmTyg13p6LEQGukiFKh02uOg/UTN1foeh7ygbKoU67tNdni
-         NYhEFeeUiZhWw+LDWUmuzPP8ETDCW3vMPhGEjI2t4K5CWwb6KAMqnkjQXZipkp9cTHeC
-         YBhuVU0rR4/gtKM92f3qHveRl415+5d4K/qtSbsD5ofReIpVRVAkWe3P01QbrbcK7vBB
-         kUrw==
-X-Gm-Message-State: AGRZ1gK0+wZ04uwihAJ81cqb0o2R868C7qhXuiBlyCunawLo40FIWYAH
-        H0UBylpIKew5gxq1n9sria5zy9/yAds=
-X-Google-Smtp-Source: AJdET5dFTBbM0XRCE44Rmdmmp3hAFpLP0Uias5lgY/h7WsaV3MeVwqG6TJwDl8IwEGf3wqE594krTw==
-X-Received: by 2002:a17:906:6b43:: with SMTP id o3-v6mr4690073ejs.31.1542273140318;
-        Thu, 15 Nov 2018 01:12:20 -0800 (PST)
-Received: from [172.26.253.252] ([193.47.71.171])
-        by smtp.gmail.com with ESMTPSA id f5-v6sm7164942edi.85.2018.11.15.01.12.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 01:12:19 -0800 (PST)
-Subject: Re: [PATCH 5/8] kbuild: change if_changed_rule to accept multi-line
- recipe
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-kbuild@vger.kernel.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-References: <1542270435-11181-1-git-send-email-yamada.masahiro@socionext.com>
- <1542270435-11181-6-git-send-email-yamada.masahiro@socionext.com>
-From:   Rasmus Villemoes <linux@rasmusvillemoes.dk>
-Message-ID: <6ee62b52-5d6d-c540-5f01-f522b6986c4d@rasmusvillemoes.dk>
-Date:   Thu, 15 Nov 2018 10:12:18 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 15 Nov 2018 14:19:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=0TNaX70GioYtvTQDqyv/QpWDX7/5UE5L7j1Mc0R2P60=; b=ASURhQvBmA8mzpNoKYuGXh44J
+        WDDVgXJPF0P3xh+/0NB4we9wPiJSTZmOdCsjYCUv74/OChY6K3UUrAjmnI2VyfiFa9rF8S+iQRf0+
+        CToW5f/gmBAsRNk8FDt5gk8eK5oQyJjBQZ4WD1i6BdD31mfvwnzte5NaTHKCkT9fd7/g3yRGvZjJd
+        /OfiFSQnZ37SmT57oeKUoe+87auELsrnsQBz54zE/Et1UrZnJuF5mqmS905e4uBtgtELcGYbolc3B
+        QTQ1zVQuHzZK+vn5ZwpKOxH6vG59286SNnKFmI5UVhMCxps88M0wFgF6GHOVmUDuRhSjW76a8Fmx0
+        CzK9+1vIw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gNDhG-0006l3-8c; Thu, 15 Nov 2018 09:12:22 +0000
+Date:   Thu, 15 Nov 2018 01:12:22 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Palmer Dabbelt <palmer@sifive.com>
+Cc:     linux-kernel@vger.kernel.org, andrea.parri@amarulasolutions.com,
+        aou@eecs.berkeley.edu, keescook@chromium.org,
+        Arnd Bergmann <arnd@arndb.de>, corbet@lwn.net,
+        yamada.masahiro@socionext.com, jhogan@kernel.org,
+        Will Deacon <will.deacon@arm.com>, jglisse@redhat.com,
+        linux-doc@vger.kernel.org, dhowells@redhat.com, jcmvbkbc@gmail.com,
+        rmk+kernel@armlinux.org.uk, mathieu.desnoyers@efficios.com,
+        ren_guo@c-sky.com, david.abdurachmanov@gmail.com,
+        linux-riscv@lists.infradead.org, mingo@kernel.org
+Subject: Re: Re-run features-refresh.sh
+Message-ID: <20181115091222.GA25926@infradead.org>
+References: <20181113020113.29640-1-palmer@sifive.com>
 MIME-Version: 1.0
-In-Reply-To: <1542270435-11181-6-git-send-email-yamada.masahiro@socionext.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113020113.29640-1-palmer@sifive.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15/11/2018 09.27, Masahiro Yamada wrote:
-> GNU Make supports 'define' ... 'endef' directive, which can describe
-> a recipe that consists of multiple lines.
-> 
->   endef
-> 
-> This does not actually exploit the benefits of 'define' ... 'endef'
-> form. All shell commands must be concatenated with '; \' so that it
-> looks like a single command from the Makefile point of view. '@' can
-> only appear before the first action.
-> 
-> The root cause of this misfortune is the '@set -e;' in if_changed_rule.
-> It is easily solvable by moving '@set -e' to the 'cmd' macro.
-> 
-> The combo of $(call echo-cmd,*) $(cmd_*) in rule_cc_o_c and rule_as_o_S
-> were replaced with $(call cmd,*). The tailing back-slashes went away.
-> 
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
->  
->  define rule_cc_o_c
-> -	$(call echo-cmd,checksrc) $(cmd_checksrc)			  \
-> -	$(call cmd_and_fixdep,cc_o_c)					  \
-> -	$(cmd_gen_ksymdeps)						  \
-> -	$(cmd_checkdoc)							  \
-> -	$(call echo-cmd,objtool) $(cmd_objtool)				  \
-> -	$(cmd_modversions_c)						  \
-> -	$(call echo-cmd,record_mcount) $(cmd_record_mcount)
-> +	$(call cmd,checksrc)
-> +	@$(call cmd_and_fixdep,cc_o_c)
-> +	$(call cmd,gen_ksymdeps)
-> +	$(call cmd,checkdoc)
-> +	$(call cmd,objtool)
-> +	$(call cmd,modversions_c)
-> +	$(call cmd,record_mcount)
->  endef
+FYI, we really should kill ARCH_SG_CHAIN in its current form.
 
-Does this mean that Make now spawns a new shell for each of these
-commands, and if so, what's the performance impact? Or am I just
-misreading things? If this does change the semantics (one shell instance
-versus many), I think that's worth mentioning explicitly in the
-changelog, regardless of whether there's no measuarable performance impact.
+See my series here, which could use a review or two:
 
-Rasmus
+https://lkml.org/lkml/2018/11/9/958
