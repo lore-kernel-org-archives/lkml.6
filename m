@@ -2,99 +2,80 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A6530C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:00:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2E52BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:00:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 74BDE20858
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:00:15 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 74BDE20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id AA14320858
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 20:00:26 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Z5X5pB1/"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA14320858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lunn.ch
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388861AbeKPGJ1 (ORCPT
+        id S2388944AbeKPGJi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 01:09:27 -0500
-Received: from mga06.intel.com ([134.134.136.31]:38179 "EHLO mga06.intel.com"
+        Fri, 16 Nov 2018 01:09:38 -0500
+Received: from vps0.lunn.ch ([185.16.172.187]:36458 "EHLO vps0.lunn.ch"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725781AbeKPGJ0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 01:09:26 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from fmsmga002.fm.intel.com ([10.253.24.26])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 12:00:12 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,237,1539673200"; 
-   d="scan'208";a="104920081"
-Received: from ncanderx-mobl.ger.corp.intel.com (HELO localhost) ([10.249.254.140])
-  by fmsmga002.fm.intel.com with ESMTP; 15 Nov 2018 12:00:02 -0800
-Date:   Thu, 15 Nov 2018 22:00:02 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Sean Christopherson <sean.j.christopherson@intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v16 18/22] platform/x86: Intel SGX driver
-Message-ID: <20181115200002.GA24006@linux.intel.com>
-References: <20181106134758.10572-1-jarkko.sakkinen@linux.intel.com>
- <20181106134758.10572-19-jarkko.sakkinen@linux.intel.com>
- <1541522400.7839.48.camel@intel.com>
- <20181107163757.GB11509@linux.intel.com>
- <20181107180057.GB24807@linux.intel.com>
- <20181108144603.GA14072@linux.intel.com>
+        id S1725781AbeKPGJi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 01:09:38 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch; s=20171124;
+        h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date; bh=RFVaex0J5cVLVJaLe+VxyvJo3nA63HCzkrb3FqfhCKE=;
+        b=Z5X5pB1/yABTI/baihjFdS7RjOCd4fKH/4TGwTZKHjTxaaazmBsgDK+Wvsw6O29XwRPfHAVE2Nc2fA0KTu9UtFiEdZrIcPDPmCMLli7kiZyTAF4VHN7zGw+fQfohJGBKAuEjzcAYgJQK60IWkjqaHgh5vbdiLuZ0ETJGNQKIqEI=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.84_2)
+        (envelope-from <andrew@lunn.ch>)
+        id 1gNNoI-0000Cb-5C; Thu, 15 Nov 2018 21:00:18 +0100
+Date:   Thu, 15 Nov 2018 21:00:18 +0100
+From:   Andrew Lunn <andrew@lunn.ch>
+To:     thesven73@gmail.com
+Cc:     svendev@arcx.com, siva.kallam@broadcom.com, prashant@broadcom.com,
+        mchan@broadcom.com, davem@davemloft.net,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org, arnd@arndb.de
+Subject: Re: [PATCH v2] tg3: optionally get mac address from devicetree
+Message-ID: <20181115200018.GC32274@lunn.ch>
+References: <20181114135202.27104-1-TheSven73@googlemail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181108144603.GA14072@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181114135202.27104-1-TheSven73@googlemail.com>
+User-Agent: Mutt/1.5.23 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 08, 2018 at 04:46:03PM +0200, Jarkko Sakkinen wrote:
-> On Wed, Nov 07, 2018 at 10:00:57AM -0800, Sean Christopherson wrote:
-> > What do we gain by a single buffer vs. separate buffers?  The ioctl()
-> > would be slightly smaller but it seems like the actual code would be
-> > more complex.
+On Wed, Nov 14, 2018 at 08:52:01AM -0500, thesven73@gmail.com wrote:
+> If the tg3 has a device node, and that node contains a valid
+> mac address property, use that as the tg3's mac address.
 > 
-> I'm fine with either. It was just a suggestion.
+> This behaviour was previously only present on SPARC, using a
+> conditional compile (#ifdef CONFIG_SPARC), presumably because
+> at the time, devicetree nodes for pci devices only worked on
+> SPARC. However, this has recently been made universal, see
+> commit 98d9f30c820d ("pci/of: Match PCI devices to OF nodes dynamically")
 > 
-> > The enclave build process also utilizes the backing as temp storage
-> > to avoid having to alloc kernel memory when queueing pages to be added
-> > by the worker thread (which reminds me that I wanted to document why a
-> > worker thread is used).  Keeping this behavior would effectively make
-> > providing backing mandatory.
+> Devicetree example:
+> (see Documentation/devicetree/bindings/pci/pci.txt)
 > 
-> Would it be a problem just allocate those pages with alloc_page() and
-> free them in the worker thread?
+> &pcie {
+> 	host@0 {
+> 		#address-cells = <3>;
+> 		#size-cells = <2>;
+> 		reg = <0 0 0 0 0>;
+> 		bcm5778: bcm5778@0 {
+> 			reg = <0 0 0 0 0>;
+> 			mac-address = [CA 11 AB 1E 10 01];
+> 		};
+> 	};
+> };
 > 
-> > Are there any potential complications with ENCLS consuming userspace
-> > pointers?  We'd have to wrap them with user_access_{begin,end}() and
-> > probably tweak the fixup, but I assume having the fixup handler means
-> > we're generally ok?
-> 
-> Last time I did it I used get_user_pages() for pinning. I'm not sure
-> why I should do anything but just re-use that.
+> Signed-off-by: Sven Van Asbroeck <svendev@arcx.com>
 
-What about VA page swapping? Not saying that it'd have to be done right
-now but we need to answer whether it is enclave local or a global asset.
-If it is local it would also require an argument.
+Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 
-I will most likely won't fix this for v17 because this detail needs
-careful consideration.
-
-/Jarkko
+    Andrew
