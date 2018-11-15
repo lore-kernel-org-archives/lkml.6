@@ -6,33 +6,34 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E574C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:18:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3193DC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:18:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C47A20868
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:18:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C47A20868
+	by mail.kernel.org (Postfix) with ESMTP id EE19720868
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:18:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EE19720868
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=virtuozzo.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387614AbeKOUZe (ORCPT
+        id S2387806AbeKOUZj (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 15:25:34 -0500
-Received: from relay.sw.ru ([185.231.240.75]:39646 "EHLO relay.sw.ru"
+        Thu, 15 Nov 2018 15:25:39 -0500
+Received: from relay.sw.ru ([185.231.240.75]:39648 "EHLO relay.sw.ru"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728859AbeKOUZd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 15:25:33 -0500
+        id S1728859AbeKOUZj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 15:25:39 -0500
 Received: from [172.16.24.21]
         by relay.sw.ru with esmtp (Exim 4.90_1)
         (envelope-from <vvs@virtuozzo.com>)
-        id 1gNEj6-0006vR-3L; Thu, 15 Nov 2018 13:18:20 +0300
+        id 1gNEjB-0006vW-3m; Thu, 15 Nov 2018 13:18:25 +0300
 From:   Vasily Averin <vvs@virtuozzo.com>
-Subject: [PATCH 1/3] dlm: possible memory leak on error path in create_lkb()
+Subject: [PATCH 2/3] dlm: lost put_lkb on error path in receive_convert() and
+ receive_unlock()
 To:     linux-kernel@vger.kernel.org,
         Christine Caulfield <ccaulfie@redhat.com>,
         David Teigland <teigland@redhat.com>, cluster-devel@redhat.com
-Message-ID: <a4b90c7b-7cd3-aa58-5170-33148dd9b5cb@virtuozzo.com>
-Date:   Thu, 15 Nov 2018 13:18:18 +0300
+Message-ID: <c04809a2-5806-2b63-f819-903b12b1aab5@virtuozzo.com>
+Date:   Thu, 15 Nov 2018 13:18:24 +0300
 User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
  Thunderbird/60.2.1
 MIME-Version: 1.0
@@ -44,24 +45,32 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Fixes 3d6aa675fff9 ("dlm: keep lkbs in idr")
-Cc: stable@kernel.org # 3.1
+Fixes 6d40c4a708e0 ("dlm: improve error and debug messages")
+Cc: stable@kernel.org # 3.5
 
 Signed-off-by: Vasily Averin <vvs@virtuozzo.com>
 ---
- fs/dlm/lock.c | 1 +
- 1 file changed, 1 insertion(+)
+ fs/dlm/lock.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/fs/dlm/lock.c b/fs/dlm/lock.c
-index cc91963683de..2cb125cc21c9 100644
+index 2cb125cc21c9..03d767b94f7b 100644
 --- a/fs/dlm/lock.c
 +++ b/fs/dlm/lock.c
-@@ -1209,6 +1209,7 @@ static int create_lkb(struct dlm_ls *ls, struct dlm_lkb **lkb_ret)
+@@ -4180,6 +4180,7 @@ static int receive_convert(struct dlm_ls *ls, struct dlm_message *ms)
+ 			  (unsigned long long)lkb->lkb_recover_seq,
+ 			  ms->m_header.h_nodeid, ms->m_lkid);
+ 		error = -ENOENT;
++		dlm_put_lkb(lkb);
+ 		goto fail;
+ 	}
  
- 	if (rv < 0) {
- 		log_error(ls, "create_lkb idr error %d", rv);
-+		dlm_free_lkb(lkb);
- 		return rv;
+@@ -4233,6 +4234,7 @@ static int receive_unlock(struct dlm_ls *ls, struct dlm_message *ms)
+ 			  lkb->lkb_id, lkb->lkb_remid,
+ 			  ms->m_header.h_nodeid, ms->m_lkid);
+ 		error = -ENOENT;
++		dlm_put_lkb(lkb);
+ 		goto fail;
  	}
  
 -- 
