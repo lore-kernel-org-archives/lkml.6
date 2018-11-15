@@ -2,87 +2,114 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E81C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:57:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E257C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:59:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 07B9F2087E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:57:21 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="JiPcsECX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 07B9F2087E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 102642087E
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:59:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 102642087E
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728253AbeKOQDp (ORCPT
+        id S1728480AbeKOQF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 11:03:45 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:33948 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbeKOQDo (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 11:03:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=Of1YOonu0nmKZ09v+9jRmYSm80+DzCGnvLsx+BmwZxM=; b=JiPcsECXrDjDdE312XCPv7AdD
-        MJWQOPuG7TzBVJkgfYp9wDIlojxOATRPCxIXvMtPhLozxI0nvhBIg9ckSS2s0oZmMmQwVVR8Zo0dH
-        tQ9n7lPbRDxVIyxoC4RdHO0+FDRW5abcRO2jICh7pEBRXbStDjihY4OZ2j823DP5HRKvfo+C2qbjA
-        O1A93tWq29HPggpqsq98p9VxsUuYGEjutYJi5xn8DCs0yWAs7a5IhM08fjn9N/MLanAaAIzmKb9iH
-        JliCeH2kCSwZzjxeNoF0+bs1yxCYn0eA1GHZEEmyiOuNywOs6c7uWed2VWxXvJ8PXYePDOrOfrjjG
-        lq3d/T9xA==;
-Received: from 189.27.28.95.dynamic.adsl.gvt.net.br ([189.27.28.95] helo=silica.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNAeQ-0002S2-IK; Thu, 15 Nov 2018 05:57:15 +0000
-Date:   Wed, 14 Nov 2018 21:56:58 -0800
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-kernel@vger.kernel.org, Dave Jiang <dave.jiang@intel.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Dmitry Vyukov <dvyukov@google.com>,
-        Vishal Verma <vishal.l.verma@intel.com>,
-        Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Ross Zwisler <zwisler@kernel.org>,
-        Joe Perches <joe@perches.com>,
-        "Tobin C. Harding" <me@tobin.cc>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Steve French <stfrench@microsoft.com>,
-        Olof Johansson <olof@lixom.net>, linux-nvdimm@lists.01.org,
-        ksummit-discuss@lists.linuxfoundation.org
-Subject: Re: [RFC PATCH 0/3] Maintainer Handbook: Subsystem Profile
-Message-ID: <20181114215658.78e1908c@silica.lan>
-In-Reply-To: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 15 Nov 2018 11:05:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:35856 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726574AbeKOQF0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 11:05:26 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 2622E308426A;
+        Thu, 15 Nov 2018 05:59:00 +0000 (UTC)
+Received: from dhcp-128-65.nay.redhat.com (ovpn-12-146.pek2.redhat.com [10.72.12.146])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 99D8C1019628;
+        Thu, 15 Nov 2018 05:58:56 +0000 (UTC)
+Date:   Thu, 15 Nov 2018 13:58:53 +0800
+From:   Dave Young <dyoung@redhat.com>
+To:     lijiang <lijiang@redhat.com>
+Cc:     Borislav Petkov <bp@alien8.de>, linux-kernel@vger.kernel.org,
+        kexec@lists.infradead.org, x86@kernel.org, tglx@linutronix.de,
+        mingo@redhat.com, akpm@linux-foundation.org, bhe@redhat.com
+Subject: Re: [PATCH 1/2 v6] x86/kexec_file: add e820 entry in case e820 type
+ string matches to io resource name
+Message-ID: <20181115055853.GA4445@dhcp-128-65.nay.redhat.com>
+References: <20181114072926.13312-1-lijiang@redhat.com>
+ <20181114072926.13312-2-lijiang@redhat.com>
+ <20181114112600.GD13926@zn.tnic>
+ <9eb61523-7a08-24c4-ac15-050537bd9203@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9eb61523-7a08-24c4-ac15-050537bd9203@redhat.com>
+User-Agent: Mutt/1.9.5 (2018-04-13)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Thu, 15 Nov 2018 05:59:00 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 14 Nov 2018 20:53:13 -0800
-Dan Williams <dan.j.williams@intel.com> escreveu:
+On 11/15/18 at 01:44pm, lijiang wrote:
+> 在 2018年11月14日 19:26, Borislav Petkov 写道:
+> > On Wed, Nov 14, 2018 at 03:29:25PM +0800, Lianbo Jiang wrote:
+> >> When load the kernel image and initramfs by kexec_file_load syscall, it can
+> >> not add exact e820 reserved type to kdump kernel e820 table.
+> >>
+> >> Kdump uses walk_iomem_res_desc() to iterate io resources, then adds matched
+> >> desc to e820 table for kdump kernel. But, when convert the e820 type into
+> >> the iores descriptors, several e820 types are converted to 'IORES_DES_NONE'
+> >> in this function e820_type_to_iores_desc(). So the walk_iomem_res_desc()
+> >> will get these unnecessary types(E820_TYPE_RAM/E820_TYPE_UNUSABLE/E820_TYPE
+> >> _KERN) when iterate io resources by the 'IORES_DES_NONE'.
+> >>
+> >> It needs filter out these redundant type(such as E820_TYPE_RAM/E820_TYPE_
+> >> UNUSABLE/E820_TYPE_KERN) in order to add exact e820 reserved type to kdump
+> >> kernel e820 table. Thus it also needs an extra checking in memmap_entry_
+> >> callback() to match the e820 type and resource name.
+> > 
+> > Ok, it took me a while to parse what this is trying to say so let's
+> > start from the top:
+> > 
+> > * What resource type do you do need in the second kernel?
+> > 
+> 
+> Thanks for your comment.
+> 
+> The e820 reserved ranges need to be passed to the second kernel.
+> 
+> > * The most important question: why?
+> > 
+> 
+> At present, the upstream kernel does not pass the e820 reserved ranges to the
+> second kernel, which might cause two problems:
+> 
+> The first one is the MMCONFIG issue, the PCI MMCONFIG(extended mode) requires
+> the reserved region otherwise it falls back to legacy mode, which might lead to
+> the hot-plug device could not be recognized in kdump kernel.
+> 
+> Another one is that the e820 reserved ranges do not setup in kdump kernel, which
+> could cause kdump can't work in some machines. To know more information, please
+> refer to the [PATCH 2/2 v6] patch log.
+> 
+> 
+> > * If it is the reserved resource, why aren't you adding
+> > IORES_DESC_RESERVED or so which to look for instead of this hacky string
+> > comparison?
+> > 
+> 
+> Adding the new descriptor 'IORES_DESC_RESERVED' is also a good solution. I will
 
-> At a recently concluded session at the Linux Plumbers Conference I
-> proposed a "Subsystem Profile" as a document that a maintainer can
-> provide to set contributor expectations and provide fodder for a
-> discussion between maintainers about the merits of different maintainer
-> policies.
+I was not sure if something else depends on IORES_DESC_NONE and if it is
+easy to split it and add IORES_DESC_RESERVED
 
-As discussed at LPC, please don't forget to add a patch teaching
-get_maintainers.pl to print the subsystem rules tag (if any) at the
-final version of this series.
+But if you can prove it is safe then it would be a better way.
 
-Cheers,
-Mauro
+Thanks
+Dave
