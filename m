@@ -2,108 +2,211 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26623C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:39:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8C76EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:40:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED7702086B
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:39:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED7702086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id 50D362086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:40:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50D362086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388276AbeKPArR (ORCPT
+        id S2388384AbeKPAsr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 19:47:17 -0500
-Received: from foss.arm.com ([217.140.101.70]:34884 "EHLO foss.arm.com"
+        Thu, 15 Nov 2018 19:48:47 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:42453 "EHLO mail.bootlin.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729034AbeKPArR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 19:47:17 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A42AEBD;
-        Thu, 15 Nov 2018 06:39:11 -0800 (PST)
-Received: from donnerap.cambridge.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.72.51.249])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 494673F5CF;
-        Thu, 15 Nov 2018 06:39:10 -0800 (PST)
-Date:   Thu, 15 Nov 2018 14:39:06 +0000
-From:   Andre Przywara <andre.przywara@arm.com>
-To:     Peng Hao <peng.hao2@zte.com.cn>
-Cc:     christoffer.dall@arm.com, marc.zyngier@arm.com,
-        kvmarm@lists.cs.columbia.edu, linux-arm-kernel@lists.infradead.org,
+        id S1729034AbeKPAsr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 19:48:47 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id CF60820893; Thu, 15 Nov 2018 15:40:39 +0100 (CET)
+Received: from localhost.localdomain (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 7AD8320714;
+        Thu, 15 Nov 2018 15:40:29 +0100 (CET)
+From:   Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+To:     linux-media@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: Re: [PATCH]  kvm: arm/arm64 : fix vm's hanging at startup time
-Message-ID: <20181115143906.5c2302d5@donnerap.cambridge.arm.com>
-In-Reply-To: <1542294848-73839-1-git-send-email-peng.hao2@zte.com.cn>
-References: <1542294848-73839-1-git-send-email-peng.hao2@zte.com.cn>
-Organization: ARM
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
+        linux-sunxi@googlegroups.com, Hans Verkuil <hverkuil@xs4all.nl>,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Tomasz Figa <tfiga@chromium.org>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>
+Subject: [PATCH] media: cedrus: Remove global IRQ spin lock from the driver
+Date:   Thu, 15 Nov 2018 15:39:55 +0100
+Message-Id: <20181115143955.2645-1-paul.kocialkowski@bootlin.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Nov 2018 23:14:08 +0800
-Peng Hao <peng.hao2@zte.com.cn> wrote:
+We initially introduced a spin lock to ensure that the VPU registers
+are not accessed concurrently between our setup function and IRQ
+handler. Because the V4L2 M2M API only allows one job to run at a time
+and our jobs are completed following the IRQ handler, there is actually
+no chance of an interrupt happening while programming the VPU registers.
 
-Hi,
+In addition, holding a spin lock is problematic when doing more than
+simply configuring the registers in the setup operation. H.265 support
+currently involves a CMA allocation in that step, which is not
+compatible with an atomic context.
 
-> When virtual machine starts, hang up.
+As a result, remove the global IRQ spin lock.
 
-I take it you mean the *guest* hangs? Because it doesn't get a timer
-interrupt?
+Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+---
+ drivers/staging/media/sunxi/cedrus/cedrus.c       |  1 -
+ drivers/staging/media/sunxi/cedrus/cedrus.h       |  2 --
+ drivers/staging/media/sunxi/cedrus/cedrus_dec.c   |  9 ---------
+ drivers/staging/media/sunxi/cedrus/cedrus_hw.c    | 13 +------------
+ drivers/staging/media/sunxi/cedrus/cedrus_video.c |  5 -----
+ 5 files changed, 1 insertion(+), 29 deletions(-)
 
-> The kernel version of guest
-> is 4.16. Host support vgic_v3.
-
-Your host kernel is something recent, I guess?
-
-> It was mainly due to the incorrect vgic_irq's(intid=27) group value
-> during injection interruption. when kvm_vgic_vcpu_init is called,
-> dist is not initialized at this time. Unable to get vgic V3 or V2
-> correctly, so group is not set.
-
-Mmh, that shouldn't happen with (v)GICv3. Do you use QEMU (which
-version?) or some other userland tool?
-
-> group is setted to 1 when vgic_mmio_write_group is invoked at some
-> time.
-> when irq->group=0 (intid=27), No ICH_LR_GROUP flag was set and
-> interrupt injection failed.
-> 
-> Signed-off-by: Peng Hao <peng.hao2@zte.com.cn>
-> ---
->  virt/kvm/arm/vgic/vgic-v3.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/virt/kvm/arm/vgic/vgic-v3.c b/virt/kvm/arm/vgic/vgic-v3.c
-> index 9c0dd23..d101000 100644
-> --- a/virt/kvm/arm/vgic/vgic-v3.c
-> +++ b/virt/kvm/arm/vgic/vgic-v3.c
-> @@ -198,7 +198,7 @@ void vgic_v3_populate_lr(struct kvm_vcpu *vcpu,
-> struct vgic_irq *irq, int lr) if (vgic_irq_is_mapped_level(irq) &&
-> (val & ICH_LR_PENDING_BIT)) irq->line_level = false;
->  
-> -	if (irq->group)
-> +	if (model == KVM_DEV_TYPE_ARM_VGIC_V3)
-
-This is not the right fix, not only because it basically reverts the
-GICv3 part of 87322099052 (KVM: arm/arm64: vgic: Signal IRQs using
-their configured group).
-
-Can you try to work out why kvm_vgic_vcpu_init() is apparently called
-before dist->vgic_model is set, also what value it has?
-If I understand the code correctly, that shouldn't happen for a GICv3.
-
-Cheers,
-Andre.
-
->  		val |= ICH_LR_GROUP;
->  
->  	val |= (u64)irq->priority << ICH_LR_PRIORITY_SHIFT;
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.c b/drivers/staging/media/sunxi/cedrus/cedrus.c
+index dd121f66fa2d..42c6f09bd75a 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus.c
+@@ -279,7 +279,6 @@ static int cedrus_probe(struct platform_device *pdev)
+ 	dev->dec_ops[CEDRUS_CODEC_MPEG2] = &cedrus_dec_ops_mpeg2;
+ 
+ 	mutex_init(&dev->dev_mutex);
+-	spin_lock_init(&dev->irq_lock);
+ 
+ 	ret = v4l2_device_register(&pdev->dev, &dev->v4l2_dev);
+ 	if (ret) {
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus.h b/drivers/staging/media/sunxi/cedrus/cedrus.h
+index 3f61248c57ac..3acfdcf83691 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus.h
++++ b/drivers/staging/media/sunxi/cedrus/cedrus.h
+@@ -105,8 +105,6 @@ struct cedrus_dev {
+ 
+ 	/* Device file mutex */
+ 	struct mutex		dev_mutex;
+-	/* Interrupt spinlock */
+-	spinlock_t		irq_lock;
+ 
+ 	void __iomem		*base;
+ 
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+index e40180a33951..6c5e310a7cf7 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_dec.c
+@@ -28,7 +28,6 @@ void cedrus_device_run(void *priv)
+ 	struct cedrus_dev *dev = ctx->dev;
+ 	struct cedrus_run run = { 0 };
+ 	struct media_request *src_req;
+-	unsigned long flags;
+ 
+ 	run.src = v4l2_m2m_next_src_buf(ctx->fh.m2m_ctx);
+ 	run.dst = v4l2_m2m_next_dst_buf(ctx->fh.m2m_ctx);
+@@ -39,8 +38,6 @@ void cedrus_device_run(void *priv)
+ 	if (src_req)
+ 		v4l2_ctrl_request_setup(src_req, &ctx->hdl);
+ 
+-	spin_lock_irqsave(&ctx->dev->irq_lock, flags);
+-
+ 	switch (ctx->src_fmt.pixelformat) {
+ 	case V4L2_PIX_FMT_MPEG2_SLICE:
+ 		run.mpeg2.slice_params = cedrus_find_control_data(ctx,
+@@ -55,16 +52,10 @@ void cedrus_device_run(void *priv)
+ 
+ 	dev->dec_ops[ctx->current_codec]->setup(ctx, &run);
+ 
+-	spin_unlock_irqrestore(&ctx->dev->irq_lock, flags);
+-
+ 	/* Complete request(s) controls if needed. */
+ 
+ 	if (src_req)
+ 		v4l2_ctrl_request_complete(src_req, &ctx->hdl);
+ 
+-	spin_lock_irqsave(&ctx->dev->irq_lock, flags);
+-
+ 	dev->dec_ops[ctx->current_codec]->trigger(ctx);
+-
+-	spin_unlock_irqrestore(&ctx->dev->irq_lock, flags);
+ }
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+index 32adbcbe6175..0662906aab57 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_hw.c
+@@ -122,24 +122,17 @@ static irqreturn_t cedrus_irq(int irq, void *data)
+ 	struct vb2_v4l2_buffer *src_buf, *dst_buf;
+ 	enum vb2_buffer_state state;
+ 	enum cedrus_irq_status status;
+-	unsigned long flags;
+-
+-	spin_lock_irqsave(&dev->irq_lock, flags);
+ 
+ 	ctx = v4l2_m2m_get_curr_priv(dev->m2m_dev);
+ 	if (!ctx) {
+ 		v4l2_err(&dev->v4l2_dev,
+ 			 "Instance released before the end of transaction\n");
+-		spin_unlock_irqrestore(&dev->irq_lock, flags);
+-
+ 		return IRQ_NONE;
+ 	}
+ 
+ 	status = dev->dec_ops[ctx->current_codec]->irq_status(ctx);
+-	if (status == CEDRUS_IRQ_NONE) {
+-		spin_unlock_irqrestore(&dev->irq_lock, flags);
++	if (status == CEDRUS_IRQ_NONE)
+ 		return IRQ_NONE;
+-	}
+ 
+ 	dev->dec_ops[ctx->current_codec]->irq_disable(ctx);
+ 	dev->dec_ops[ctx->current_codec]->irq_clear(ctx);
+@@ -150,8 +143,6 @@ static irqreturn_t cedrus_irq(int irq, void *data)
+ 	if (!src_buf || !dst_buf) {
+ 		v4l2_err(&dev->v4l2_dev,
+ 			 "Missing source and/or destination buffers\n");
+-		spin_unlock_irqrestore(&dev->irq_lock, flags);
+-
+ 		return IRQ_HANDLED;
+ 	}
+ 
+@@ -163,8 +154,6 @@ static irqreturn_t cedrus_irq(int irq, void *data)
+ 	v4l2_m2m_buf_done(src_buf, state);
+ 	v4l2_m2m_buf_done(dst_buf, state);
+ 
+-	spin_unlock_irqrestore(&dev->irq_lock, flags);
+-
+ 	return IRQ_WAKE_THREAD;
+ }
+ 
+diff --git a/drivers/staging/media/sunxi/cedrus/cedrus_video.c b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
+index 5c5fce678b93..8721b4a7d496 100644
+--- a/drivers/staging/media/sunxi/cedrus/cedrus_video.c
++++ b/drivers/staging/media/sunxi/cedrus/cedrus_video.c
+@@ -380,18 +380,13 @@ static void cedrus_queue_cleanup(struct vb2_queue *vq, u32 state)
+ {
+ 	struct cedrus_ctx *ctx = vb2_get_drv_priv(vq);
+ 	struct vb2_v4l2_buffer *vbuf;
+-	unsigned long flags;
+ 
+ 	for (;;) {
+-		spin_lock_irqsave(&ctx->dev->irq_lock, flags);
+-
+ 		if (V4L2_TYPE_IS_OUTPUT(vq->type))
+ 			vbuf = v4l2_m2m_src_buf_remove(ctx->fh.m2m_ctx);
+ 		else
+ 			vbuf = v4l2_m2m_dst_buf_remove(ctx->fh.m2m_ctx);
+ 
+-		spin_unlock_irqrestore(&ctx->dev->irq_lock, flags);
+-
+ 		if (!vbuf)
+ 			return;
+ 
+-- 
+2.19.1
 
