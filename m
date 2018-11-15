@@ -2,138 +2,495 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1534C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:34:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F57CC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:34:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A711421582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:34:47 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZaENnvNn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A711421582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id C0F9D21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:34:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C0F9D21582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388459AbeKPAmt (ORCPT
+        id S2388487AbeKPAmy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 19:42:49 -0500
-Received: from mail.kernel.org ([198.145.29.99]:45432 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2387839AbeKPAmt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 19:42:49 -0500
-Received: from [192.168.1.19] (cpe-70-114-128-244.austin.res.rr.com [70.114.128.244])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0B380208A3;
-        Thu, 15 Nov 2018 14:34:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542292484;
-        bh=vYkTuEYfxKWRaZFUjuckWasyhttg1PvHu9eZ5BzkAuY=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=ZaENnvNnzmlyEBZU/6Unu3ko7I1EKtnziKryYIm4u4vG+T/te3o45TXHXKg+q0GMf
-         1jOEPVyN7C1Wna1ZjDB7AEMPfUgQpWEvOPED1SB0q4sJ14hH4Yg+oQjHA8vswVPdo4
-         fcIB89IsQwi4PZkN2qftDFNMDB7P5S4OCTy6jfpY=
-Subject: Re: [PATCH 3/3] ARM: socfpga: dts: document "altr,stratix10-rst-mgr"
- binding
-To:     Philipp Zabel <p.zabel@pengutronix.de>
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20181105200549.17159-1-dinguyen@kernel.org>
- <20181105200549.17159-3-dinguyen@kernel.org>
- <1542274379.4915.3.camel@pengutronix.de>
-From:   Dinh Nguyen <dinguyen@kernel.org>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dinguyen@kernel.org; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <be901b34-1370-afec-89c6-d7938320bfc2@kernel.org>
-Date:   Thu, 15 Nov 2018 08:34:41 -0600
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Thu, 15 Nov 2018 19:42:54 -0500
+Received: from lb1-smtp-cloud9.xs4all.net ([194.109.24.22]:55009 "EHLO
+        lb1-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2387839AbeKPAmy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 19:42:54 -0500
+Received: from [192.168.2.10] ([212.251.195.8])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id NIj5gQ82qQPpyNIj9go6Li; Thu, 15 Nov 2018 15:34:46 +0100
+Subject: Re: [PATCH v2 1/2] media: docs-rst: Document memory-to-memory video
+ decoder interface
+To:     Tomasz Figa <tfiga@chromium.org>, linux-media@vger.kernel.org
+Cc:     linux-kernel@vger.kernel.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        =?UTF-8?B?UGF3ZcWCIE/Fm2NpYWs=?= <posciak@chromium.org>,
+        Alexandre Courbot <acourbot@chromium.org>,
+        Kamil Debski <kamil@wypas.org>,
+        Andrzej Hajda <a.hajda@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Jeongtae Park <jtp.park@samsung.com>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Tiffany Lin <tiffany.lin@mediatek.com>,
+        Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+        Stanimir Varbanov <stanimir.varbanov@linaro.org>,
+        Todor Tomov <todor.tomov@linaro.org>,
+        Nicolas Dufresne <nicolas@ndufresne.ca>,
+        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+        dave.stevenson@raspberrypi.org,
+        Ezequiel Garcia <ezequiel@collabora.com>,
+        Maxime Jourdan <maxi.jourdan@wanadoo.fr>
+References: <20181022144901.113852-1-tfiga@chromium.org>
+ <20181022144901.113852-2-tfiga@chromium.org>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <45f6797a-5e9c-e2f9-2606-a5bb81d12f11@xs4all.nl>
+Date:   Thu, 15 Nov 2018 15:34:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.2.1
 MIME-Version: 1.0
-In-Reply-To: <1542274379.4915.3.camel@pengutronix.de>
+In-Reply-To: <20181022144901.113852-2-tfiga@chromium.org>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-CMAE-Envelope: MS4wfJkMElEcwIfHAF/PrVyTTvTj8/7AMGG4yQcu4DKr38NIMP0DGUMTslZxOQ2DN8F1WS7FjBF5yke20yr7dLDpzvt5o4lDnVVX+F/x2KLuShcpxuUuxs6a
+ Ljuz3ZoJX0geroUAqYHfv0mdKtzEEUk0fxhoB1LroEeH1GP/hryiy1zvWL28gGiDpX5G/Dyp4hV727bnCICcOL8nl1CBIgT8G8JXKq6BOjW3uk1VX1n7aUaX
+ WRb7m1ugeppsBW0+XGQXuAA76pOZ5cDE5xqAOjTzy8kkWHdptIwYRCeeu2BkdESGGJd8Yl+NzVFPowBwVn5w54EYOg13HWLkMxto3geeEwy8Pcg0cQxZAZim
+ uCKXLK/m2pOxv9jm0oiiF6YNZikF9knXLcE9iw1isvCUQtMFKdqOT08IxiBFSv8GKaxqR6ankdz9syj4MsYUOmsIzpaMpAe3dNIDY+coFKTRHsGlZFeBWRiF
+ Jo5ISw0kqWLX28PWFXIHDUjMhe2n7+otKcyIUx3yG8sQEyPpOjK/oP36ZkpFNbpV5Dpe1Th8ArlFZci2jRhk73tR/XoGzZbucwrn6WtCjLmo6IlsTYJbhjcs
+ 4UVK2s34FQTJV5Km9e7NEbQWOutvLzwX6z8MQEi7DtBC0Mfd9lrSCZosrNrOdhdVRSAf032br0edw9a8W8p00ycZ5q9NyHaV21Tsguagkp7eyDfpubpkPLIf
+ j7iROD0DEUkrVfe+rlEVzS/NyN0OedzD4fO+2zx/VLJSmtwkgydYWlADLNpj8f1K8bLzsYmy/1qiEHDY4WD3/rCfpk2pBYNGbe/Vm7XH11rXXjphus33m3Ts
+ KlyGfCk5nQ0zW/iZZyQhvgKxypsYVRCjjdVvd5eGobzSHeA0Nfp0vsMKb2qJVWnbeklbGKQfWRW9YJyg8Qg=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/15/18 3:32 AM, Philipp Zabel wrote:
-> Hi Dinh,
+On 10/22/2018 04:48 PM, Tomasz Figa wrote:
+> Due to complexity of the video decoding process, the V4L2 drivers of
+> stateful decoder hardware require specific sequences of V4L2 API calls
+> to be followed. These include capability enumeration, initialization,
+> decoding, seek, pause, dynamic resolution change, drain and end of
+> stream.
 > 
-> On Mon, 2018-11-05 at 14:05 -0600, Dinh Nguyen wrote:
->> "altr,stratix10-rst-mgr" is used for the Stratix10 reset manager.
->>
->> Signed-off-by: Dinh Nguyen <dinguyen@kernel.org>
->> ---
->>  Documentation/devicetree/bindings/reset/socfpga-reset.txt | 3 ++-
->>  1 file changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/Documentation/devicetree/bindings/reset/socfpga-reset.txt b/Documentation/devicetree/bindings/reset/socfpga-reset.txt
->> index 98c9f560e5c5..38fe34fd8b8a 100644
->> --- a/Documentation/devicetree/bindings/reset/socfpga-reset.txt
->> +++ b/Documentation/devicetree/bindings/reset/socfpga-reset.txt
->> @@ -1,7 +1,8 @@
->>  Altera SOCFPGA Reset Manager
->>  
->>  Required properties:
->> -- compatible : "altr,rst-mgr"
->> +- compatible : "altr,rst-mgr" for (Cyclone5/Arria5/Arria10)
->> +	       "altr,stratix10-rst-mgr","altr,rst-mgr" for Stratix10 ARM64 SoC
+> Specifics of the above have been discussed during Media Workshops at
+> LinuxCon Europe 2012 in Barcelona and then later Embedded Linux
+> Conference Europe 2014 in Düsseldorf. The de facto Codec API that
+> originated at those events was later implemented by the drivers we already
+> have merged in mainline, such as s5p-mfc or coda.
 > 
-> git grep '\(altr\|intel\),stratix10'
+> The only thing missing was the real specification included as a part of
+> Linux Media documentation. Fix it now and document the decoder part of
+> the Codec API.
 > 
-> currently only shows "intel,stratix10-clkmgr". Should this be
-> "intel,stratix10-rst-mgr"? I think keeping "altr," is fine for
-> consistency, just wanted to point it out.
+> Signed-off-by: Tomasz Figa <tfiga@chromium.org>
+> ---
+>  Documentation/media/uapi/v4l/dev-decoder.rst  | 1082 +++++++++++++++++
+>  Documentation/media/uapi/v4l/devices.rst      |    1 +
+>  Documentation/media/uapi/v4l/pixfmt-v4l2.rst  |    5 +
+>  Documentation/media/uapi/v4l/v4l2.rst         |   10 +-
+>  .../media/uapi/v4l/vidioc-decoder-cmd.rst     |   40 +-
+>  Documentation/media/uapi/v4l/vidioc-g-fmt.rst |   14 +
+>  6 files changed, 1137 insertions(+), 15 deletions(-)
+>  create mode 100644 Documentation/media/uapi/v4l/dev-decoder.rst
 > 
+> diff --git a/Documentation/media/uapi/v4l/dev-decoder.rst b/Documentation/media/uapi/v4l/dev-decoder.rst
+> new file mode 100644
+> index 000000000000..09c7a6621b8e
+> --- /dev/null
+> +++ b/Documentation/media/uapi/v4l/dev-decoder.rst
+> @@ -0,0 +1,1082 @@
+> +.. -*- coding: utf-8; mode: rst -*-
+> +
+> +.. _decoder:
+> +
+> +*************************************************
+> +Memory-to-memory Stateful Video Decoder Interface
+> +*************************************************
+> +
+> +A stateful video decoder takes complete chunks of the bitstream (e.g. Annex-B
+> +H.264/HEVC stream, raw VP8/9 stream) and decodes them into raw video frames in
+> +display order. The decoder is expected not to require any additional information
+> +from the client to process these buffers.
+> +
+> +Performing software parsing, processing etc. of the stream in the driver in
+> +order to support this interface is strongly discouraged. In case such
+> +operations are needed, use of the Stateless Video Decoder Interface (in
+> +development) is strongly advised.
+> +
+> +Conventions and notation used in this document
+> +==============================================
+> +
+> +1. The general V4L2 API rules apply if not specified in this document
+> +   otherwise.
+> +
+> +2. The meaning of words “must”, “may”, “should”, etc. is as per RFC
+> +   2119.
+> +
+> +3. All steps not marked “optional” are required.
+> +
+> +4. :c:func:`VIDIOC_G_EXT_CTRLS`, :c:func:`VIDIOC_S_EXT_CTRLS` may be used
+> +   interchangeably with :c:func:`VIDIOC_G_CTRL`, :c:func:`VIDIOC_S_CTRL`,
+> +   unless specified otherwise.
+> +
+> +5. Single-plane API (see spec) and applicable structures may be used
+> +   interchangeably with Multi-plane API, unless specified otherwise,
+> +   depending on decoder capabilities and following the general V4L2
+> +   guidelines.
+> +
+> +6. i = [a..b]: sequence of integers from a to b, inclusive, i.e. i =
+> +   [0..2]: i = 0, 1, 2.
+> +
+> +7. Given an ``OUTPUT`` buffer A, A’ represents a buffer on the ``CAPTURE``
+> +   queue containing data (decoded frame/stream) that resulted from processing
+> +   buffer A.
+> +
+> +.. _decoder-glossary:
+> +
+> +Glossary
+> +========
+> +
+> +CAPTURE
+> +   the destination buffer queue; for decoder, the queue of buffers containing
+> +   decoded frames; for encoder, the queue of buffers containing encoded
+> +   bitstream; ``V4L2_BUF_TYPE_VIDEO_CAPTURE```` or
+> +   ``V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE``; data are captured from the hardware
+> +   into ``CAPTURE`` buffers
+> +
+> +client
+> +   application client communicating with the decoder or encoder implementing
+> +   this interface
+> +
+> +coded format
+> +   encoded/compressed video bitstream format (e.g. H.264, VP8, etc.); see
+> +   also: raw format
+> +
+> +coded height
+> +   height for given coded resolution
+> +
+> +coded resolution
+> +   stream resolution in pixels aligned to codec and hardware requirements;
+> +   typically visible resolution rounded up to full macroblocks;
+> +   see also: visible resolution
+> +
+> +coded width
+> +   width for given coded resolution
+> +
+> +decode order
+> +   the order in which frames are decoded; may differ from display order if the
+> +   coded format includes a feature of frame reordering; for decoders,
+> +   ``OUTPUT`` buffers must be queued by the client in decode order; for
+> +   encoders ``CAPTURE`` buffers must be returned by the encoder in decode order
+> +
+> +destination
+> +   data resulting from the decode process; ``CAPTURE``
+> +
+> +display order
+> +   the order in which frames must be displayed; for encoders, ``OUTPUT``
+> +   buffers must be queued by the client in display order; for decoders,
+> +   ``CAPTURE`` buffers must be returned by the decoder in display order
+> +
+> +DPB
+> +   Decoded Picture Buffer; an H.264 term for a buffer that stores a decoded
+> +   raw frame available for reference in further decoding steps.
+> +
+> +EOS
+> +   end of stream
+> +
+> +IDR
+> +   Instantaneous Decoder Refresh; a type of a keyframe in H.264-encoded stream,
+> +   which clears the list of earlier reference frames (DPBs)
+> +
+> +keyframe
+> +   an encoded frame that does not reference frames decoded earlier, i.e.
+> +   can be decoded fully on its own.
+> +
+> +macroblock
+> +   a processing unit in image and video compression formats based on linear
+> +   block transforms (e.g. H.264, VP8, VP9); codec-specific, but for most of
+> +   popular codecs the size is 16x16 samples (pixels)
+> +
+> +OUTPUT
+> +   the source buffer queue; for decoders, the queue of buffers containing
+> +   encoded bitstream; for encoders, the queue of buffers containing raw frames;
+> +   ``V4L2_BUF_TYPE_VIDEO_OUTPUT`` or ``V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE``; the
+> +   hardware is fed with data from ``OUTPUT`` buffers
+> +
+> +PPS
+> +   Picture Parameter Set; a type of metadata entity in H.264 bitstream
+> +
+> +raw format
+> +   uncompressed format containing raw pixel data (e.g. YUV, RGB formats)
+> +
+> +resume point
+> +   a point in the bitstream from which decoding may start/continue, without
+> +   any previous state/data present, e.g.: a keyframe (VP8/VP9) or
+> +   SPS/PPS/IDR sequence (H.264); a resume point is required to start decode
+> +   of a new stream, or to resume decoding after a seek
+> +
+> +source
+> +   data fed to the decoder or encoder; ``OUTPUT``
+> +
+> +source height
+> +   height in pixels for given source resolution; relevant to encoders only
+> +
+> +source resolution
+> +   resolution in pixels of source frames being source to the encoder and
+> +   subject to further cropping to the bounds of visible resolution; relevant to
+> +   encoders only
+> +
+> +source width
+> +   width in pixels for given source resolution; relevant to encoders only
+> +
+> +SPS
+> +   Sequence Parameter Set; a type of metadata entity in H.264 bitstream
+> +
+> +stream metadata
+> +   additional (non-visual) information contained inside encoded bitstream;
+> +   for example: coded resolution, visible resolution, codec profile
+> +
+> +visible height
+> +   height for given visible resolution; display height
+> +
+> +visible resolution
+> +   stream resolution of the visible picture, in pixels, to be used for
+> +   display purposes; must be smaller or equal to coded resolution;
+> +   display resolution
+> +
+> +visible width
+> +   width for given visible resolution; display width
+> +
+> +State machine
+> +=============
+> +
+> +.. kernel-render:: DOT
+> +   :alt: DOT digraph of decoder state machine
+> +   :caption: Decoder state machine
+> +
+> +   digraph decoder_state_machine {
+> +       node [shape = doublecircle, label="Decoding"] Decoding;
+> +
+> +       node [shape = circle, label="Initialization"] Initialization;
+> +       node [shape = circle, label="Capture\nsetup"] CaptureSetup;
+> +       node [shape = circle, label="Dynamic\nresolution\nchange"] ResChange;
+> +       node [shape = circle, label="Stopped"] Stopped;
+> +       node [shape = circle, label="Drain"] Drain;
+> +       node [shape = circle, label="Seek"] Seek;
+> +       node [shape = circle, label="End of stream"] EoS;
+> +
+> +       node [shape = point]; qi
+> +       qi -> Initialization [ label = "open()" ];
+> +
+> +       Initialization -> CaptureSetup [ label = "CAPTURE\nformat\nestablished" ];
+> +
+> +       CaptureSetup -> Stopped [ label = "CAPTURE\nbuffers\nready" ];
+> +
+> +       Decoding -> ResChange [ label = "Stream\nresolution\nchange" ];
+> +       Decoding -> Drain [ label = "V4L2_DEC_CMD_STOP" ];
+> +       Decoding -> EoS [ label = "EoS mark\nin the stream" ];
+> +       Decoding -> Seek [ label = "VIDIOC_STREAMOFF(OUTPUT)" ];
+> +       Decoding -> Stopped [ label = "VIDIOC_STREAMOFF(CAPTURE)" ];
+> +       Decoding -> Decoding;
+> +
+> +       ResChange -> CaptureSetup [ label = "CAPTURE\nformat\nestablished" ];
+> +       ResChange -> Seek [ label = "VIDIOC_STREAMOFF(OUTPUT)" ];
+> +
+> +       EoS -> Drain [ label = "Implicit\ndrain" ];
+> +
+> +       Drain -> Stopped [ label = "All CAPTURE\nbuffers dequeued\nor\nVIDIOC_STREAMOFF(CAPTURE)" ];
+> +       Drain -> Seek [ label = "VIDIOC_STREAMOFF(OUTPUT)" ];
+> +
+> +       Seek -> Decoding [ label = "VIDIOC_STREAMON(OUTPUT)" ];
+> +       Seek -> Initialization [ label = "VIDIOC_REQBUFS(OUTPUT, 0)" ];
+> +
+> +       Stopped -> Decoding [ label = "V4L2_DEC_CMD_START\nor\nVIDIOC_STREAMON(CAPTURE)" ];
+> +       Stopped -> Seek [ label = "VIDIOC_STREAMOFF(OUTPUT)" ];
+> +   }
+> +
+> +Querying capabilities
+> +=====================
+> +
+> +1. To enumerate the set of coded formats supported by the decoder, the
+> +   client may call :c:func:`VIDIOC_ENUM_FMT` on ``OUTPUT``.
+> +
+> +   * The full set of supported formats will be returned, regardless of the
+> +     format set on ``CAPTURE``.
+> +
+> +2. To enumerate the set of supported raw formats, the client may call
+> +   :c:func:`VIDIOC_ENUM_FMT` on ``CAPTURE``.
+> +
+> +   * Only the formats supported for the format currently active on ``OUTPUT``
+> +     will be returned.
+> +
+> +   * In order to enumerate raw formats supported by a given coded format,
+> +     the client must first set that coded format on ``OUTPUT`` and then
+> +     enumerate formats on ``CAPTURE``.
+> +
+> +3. The client may use :c:func:`VIDIOC_ENUM_FRAMESIZES` to detect supported
+> +   resolutions for a given format, passing desired pixel format in
+> +   :c:type:`v4l2_frmsizeenum` ``pixel_format``.
+> +
+> +   * Values returned by :c:func:`VIDIOC_ENUM_FRAMESIZES` for a coded pixel
+> +     formats will include all possible coded resolutions supported by the
+> +     decoder for given coded pixel format.
+> +
+> +   * Values returned by :c:func:`VIDIOC_ENUM_FRAMESIZES` for a raw pixel format
+> +     will include all possible frame buffer resolutions supported by the
+> +     decoder for given raw pixel format and the coded format currently set on
+> +     ``OUTPUT``.
+> +
+> +4. Supported profiles and levels for given format, if applicable, may be
+> +   queried using their respective controls via :c:func:`VIDIOC_QUERYCTRL`.
+> +
+> +Initialization
+> +==============
+> +
+> +1. **Optional.** Enumerate supported ``OUTPUT`` formats and resolutions. See
+> +   `Querying capabilities` above.
+> +
+> +2. Set the coded format on ``OUTPUT`` via :c:func:`VIDIOC_S_FMT`
+> +
+> +   * **Required fields:**
+> +
+> +     ``type``
+> +         a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+> +
+> +     ``pixelformat``
+> +         a coded pixel format
+> +
+> +     ``width``, ``height``
+> +         required only if cannot be parsed from the stream for the given
+> +         coded format; optional otherwise - set to zero to ignore
+> +
+> +     ``sizeimage``
+> +         desired size of ``OUTPUT`` buffers; the decoder may adjust it to
+> +         match hardware requirements
+> +
+> +     other fields
+> +         follow standard semantics
+> +
+> +   * **Return fields:**
+> +
+> +     ``sizeimage``
+> +         adjusted size of ``CAPTURE`` buffers
+> +
+> +   * If width and height are set to non-zero values, the ``CAPTURE`` format
+> +     will be updated with an appropriate frame buffer resolution instantly.
+> +     However, for coded formats that include stream resolution information,
+> +     after the decoder is done parsing the information from the stream, it will
+> +     update the ``CAPTURE`` format with new values and signal a source change
+> +     event.
+> +
+> +   .. warning::
+> +
+> +      Changing the ``OUTPUT`` format may change the currently set ``CAPTURE``
+> +      format. The decoder will derive a new ``CAPTURE`` format from the
+> +      ``OUTPUT`` format being set, including resolution, colorimetry
+> +      parameters, etc. If the client needs a specific ``CAPTURE`` format, it
+> +      must adjust it afterwards.
+> +
+> +3.  **Optional.** Query the minimum number of buffers required for ``OUTPUT``
+> +    queue via :c:func:`VIDIOC_G_CTRL`. This is useful if the client intends to
+> +    use more buffers than the minimum required by hardware/format.
+> +
+> +    * **Required fields:**
+> +
+> +      ``id``
+> +          set to ``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``
+> +
+> +    * **Return fields:**
+> +
+> +      ``value``
+> +          the minimum number of ``OUTPUT`` buffers required for the currently
+> +          set format
+> +
+> +4.  Allocate source (bitstream) buffers via :c:func:`VIDIOC_REQBUFS` on
+> +    ``OUTPUT``.
+> +
+> +    * **Required fields:**
+> +
+> +      ``count``
+> +          requested number of buffers to allocate; greater than zero
+> +
+> +      ``type``
+> +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+> +
+> +      ``memory``
+> +          follows standard semantics
+> +
+> +    * **Return fields:**
+> +
+> +      ``count``
+> +          the actual number of buffers allocated
+> +
+> +    .. warning::
+> +
+> +       The actual number of allocated buffers may differ from the ``count``
+> +       given. The client must check the updated value of ``count`` after the
+> +       call returns.
+> +
+> +    .. note::
+> +
+> +       To allocate more than the minimum number of buffers (for pipeline
+> +       depth), the client may query the ``V4L2_CID_MIN_BUFFERS_FOR_OUTPUT``
+> +       control to get the minimum number of buffers required by the
+> +       decoder/format, and pass the obtained value plus the number of
+> +       additional buffers needed in the ``count`` field to
+> +       :c:func:`VIDIOC_REQBUFS`.
+> +
+> +    Alternatively, :c:func:`VIDIOC_CREATE_BUFS` on the ``OUTPUT`` queue can be
+> +    used to have more control over buffer allocation.
+> +
+> +    * **Required fields:**
+> +
+> +      ``count``
+> +          requested number of buffers to allocate; greater than zero
+> +
+> +      ``type``
+> +          a ``V4L2_BUF_TYPE_*`` enum appropriate for ``OUTPUT``
+> +
+> +      ``memory``
+> +          follows standard semantics
+> +
+> +      ``format``
+> +          follows standard semantics
+> +
+> +    * **Return fields:**
+> +
+> +      ``count``
+> +          adjusted to the number of allocated buffers
+> +
+> +    .. warning::
+> +
+> +       The actual number of allocated buffers may differ from the ``count``
+> +       given. The client must check the updated value of ``count`` after the
+> +       call returns.
+> +
+> +5.  Start streaming on the ``OUTPUT`` queue via :c:func:`VIDIOC_STREAMON`.
+> +
+> +6.  **This step only applies to coded formats that contain resolution information
+> +    in the stream.**
 
-Thanks for pointing it out. I think it's okay to keep it "altr".
+As far as I know all codecs have resolution/metadata in the stream.
 
-Dinh
+As discussed in the "[PATCH vicodec v4 0/3] Add support to more pixel formats in
+vicodec" thread, it is easiest to assume that there is always metadata.
+
+Perhaps there should be a single mention somewhere that such codecs are not
+supported at the moment, but to be frank how can you decode a stream without
+it containing such essential information? You are much more likely to implement
+such a codec as a stateless codec.
+
+So I would just drop this sentence here (and perhaps at other places in this
+document or the encoder document as well).
+
+Regards,
+
+	Hans
