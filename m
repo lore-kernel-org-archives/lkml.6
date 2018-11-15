@@ -2,114 +2,176 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E35C0C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:34:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2255AC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:34:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4DDB208A3
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:34:19 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4DDB208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id DF323208A3
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 14:34:38 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ivwMDfEM";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="LAbmLrXL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF323208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388403AbeKPAmW (ORCPT
+        id S2388438AbeKPAml (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 19:42:22 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:47058 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2388084AbeKPAmW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 19:42:22 -0500
-Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4729D80E7B;
-        Thu, 15 Nov 2018 14:34:17 +0000 (UTC)
-Received: from localhost (ovpn-8-20.pek2.redhat.com [10.72.8.20])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 7DE61100164E;
-        Thu, 15 Nov 2018 14:34:16 +0000 (UTC)
-Date:   Thu, 15 Nov 2018 22:34:12 +0800
-From:   Baoquan He <bhe@redhat.com>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
-        pifang@redhat.com, linux-kernel@vger.kernel.org,
-        akpm@linux-foundation.org, aarcange@redhat.com
-Subject: Re: Memory hotplug softlock issue
-Message-ID: <20181115143412.GS2653@MiWiFi-R3L-srv>
-References: <20181114145250.GE2653@MiWiFi-R3L-srv>
- <20181114150029.GY23419@dhcp22.suse.cz>
- <20181115051034.GK2653@MiWiFi-R3L-srv>
- <20181115073052.GA23831@dhcp22.suse.cz>
- <20181115075349.GL2653@MiWiFi-R3L-srv>
- <20181115083055.GD23831@dhcp22.suse.cz>
- <20181115131211.GP2653@MiWiFi-R3L-srv>
- <20181115131927.GT23831@dhcp22.suse.cz>
- <20181115133840.GR2653@MiWiFi-R3L-srv>
- <20181115143204.GV23831@dhcp22.suse.cz>
+        Thu, 15 Nov 2018 19:42:41 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:51322 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2387839AbeKPAml (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 19:42:41 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 47A8461310; Thu, 15 Nov 2018 14:34:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542292476;
+        bh=xaFaJuhxeA0F2SUUV8a2E1LPngaLvBnPIYiWLBbAG9o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=ivwMDfEMsKx35AGnS9yqPOS4bh12isGWNjJBSboOCUyZGZH9qLmZo2TYuSlVOLoKQ
+         m3GU+GKOONG/Vgb3n5ccvUM6981FnJ1nAhlrUf7ty63NSs5O5UV9dNHNT7CwqfwvFZ
+         F3ywwu67w654SPr2D8a4v+kysTxmfi2hn6/OHjyg=
+Received: from mail.codeaurora.org (localhost.localdomain [127.0.0.1])
+        by smtp.codeaurora.org (Postfix) with ESMTP id 72C7161320;
+        Thu, 15 Nov 2018 14:34:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542292469;
+        bh=xaFaJuhxeA0F2SUUV8a2E1LPngaLvBnPIYiWLBbAG9o=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LAbmLrXL7JzMSXqQBwNVVRf/RKps9a7H7xyLxnGItcw0xnpW5/pa5G47ajMkv74OC
+         dQiqz7KslEPBRABLcqYLgNturzip0s01B0lEJCgZmp8SySDOReMSOYHAAEVcIXY7Vs
+         KUYjnqxOq0u4K3h9UAADXzue9X+FbQzduCcCEdP4=
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115143204.GV23831@dhcp22.suse.cz>
-User-Agent: Mutt/1.9.1 (2017-09-22)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.25]); Thu, 15 Nov 2018 14:34:17 +0000 (UTC)
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Date:   Thu, 15 Nov 2018 20:04:29 +0530
+From:   Balakrishna Godavarthi <bgodavar@codeaurora.org>
+To:     Johan Hovold <johan@kernel.org>
+Cc:     marcel@holtmann.org, johan.hedberg@gmail.com, mka@chromium.org,
+        linux-kernel@vger.kernel.org, linux-bluetooth@vger.kernel.org,
+        hemantg@codeaurora.org, linux-arm-msm@vger.kernel.org,
+        Johan Hovold <jhovold@gmail.com>
+Subject: Re: [PATCH v1 1/4] Bluetooth: hci_qca: use wait_until_sent() for
+ power pulses
+In-Reply-To: <20181114152722.GA19900@localhost>
+References: <20181106120528.30342-1-bgodavar@codeaurora.org>
+ <20181106120528.30342-2-bgodavar@codeaurora.org>
+ <20181114152722.GA19900@localhost>
+Message-ID: <e2362ad539463a3a139419b93ccca831@codeaurora.org>
+X-Sender: bgodavar@codeaurora.org
+User-Agent: Roundcube Webmail/1.2.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/15/18 at 03:32pm, Michal Hocko wrote:
-> On Thu 15-11-18 21:38:40, Baoquan He wrote:
-> > On 11/15/18 at 02:19pm, Michal Hocko wrote:
-> > > On Thu 15-11-18 21:12:11, Baoquan He wrote:
-> > > > On 11/15/18 at 09:30am, Michal Hocko wrote:
-> > > [...]
-> > > > > It would be also good to find out whether this is fs specific. E.g. does
-> > > > > it make any difference if you use a different one for your stress
-> > > > > testing?
-> > > > 
-> > > > Created a ramdisk and put stress bin there, then run stress -m 200, now
-> > > > seems it's stuck in libc-2.28.so migrating. And it's still xfs. So now xfs
-> > > > is a big suspect. At bottom I paste numactl printing, you can see that it's
-> > > > the last 4G.
-> > > > 
-> > > > Seems it's trying to migrate libc-2.28.so, but stress program keeps trying to
-> > > > access and activate it.
-> > > 
-> > > Is this still with faultaround disabled? I have seen exactly same
-> > > pattern in the bug I am working on. It was ext4 though.
-> > 
-> > After a long time struggling, the last 2nd block where libc-2.28.so is
-> > located is reclaimed, now it comes to the last memory block, still
-> > stress program itself. swap migration entry has been made and trying to
-> > unmap, now it's looping there.
-> > 
-> > [  +0.004445] migrating pfn 190ff2bb0 failed 
-> > [  +0.000013] page:ffffea643fcaec00 count:203 mapcount:201 mapping:ffff888dfb268f48 index:0x0
-> > [  +0.012809] shmem_aops 
-> > [  +0.000011] name:"stress" 
-> > [  +0.002550] flags: 0x1dfffffc008004e(referenced|uptodate|dirty|workingset|swapbacked)
-> > [  +0.010715] raw: 01dfffffc008004e ffffea643fcaec48 ffffea643fc714c8 ffff888dfb268f48
-> > [  +0.007828] raw: 0000000000000000 0000000000000000 000000cb000000c8 ffff888e72e92000
-> > [  +0.007810] page->mem_cgroup:ffff888e72e92000
-> [...]
-> > [  +0.004455] migrating pfn 190ff2bb0 failed 
-> > [  +0.000018] page:ffffea643fcaec00 count:203 mapcount:201 mapping:ffff888dfb268f48 index:0x0
-> > [  +0.014392] shmem_aops 
-> > [  +0.000010] name:"stress" 
-> > [  +0.002565] flags: 0x1dfffffc008004e(referenced|uptodate|dirty|workingset|swapbacked)
-> > [  +0.010675] raw: 01dfffffc008004e ffffea643fcaec48 ffffea643fc714c8 ffff888dfb268f48
-> > [  +0.007819] raw: 0000000000000000 0000000000000000 000000cb000000c8 ffff888e72e92000
-> > [  +0.007808] page->mem_cgroup:ffff888e72e92000
-> 
-> OK, so this is tmpfs backed code of your stree test. This just tells us
-> that this is not fs specific. Reference count is 2 more than the map
-> count which is the expected state. So the reference count must have been
-> elevated at the time when the migration was attempted. Shmem supports
-> fault around so this might be still possible (assuming it is enabled).
-> If not we really need to dig deeper. I will think of a debugging patch.
+Hi Johan,
 
-Yes, faultaround is enabled. Will disable it and test again. Will report
-test result.
+On 2018-11-14 20:57, Johan Hovold wrote:
+> On Tue, Nov 06, 2018 at 05:35:25PM +0530, Balakrishna Godavarthi wrote:
+>> wcn3990 requires a power pulse to turn ON/OFF along with
+>> regulators. Sometimes we are observing the power pulses are sent
+>> out with some time delay, due to queuing these commands. This is
+>> causing synchronization issues with chip, which intern delay the
+>> chip setup or may end up with communication issues.
+>> 
+>> Signed-off-by: Balakrishna Godavarthi <bgodavar@codeaurora.org>
+>> ---
+>>  drivers/bluetooth/hci_qca.c | 22 +++++++++-------------
+>>  1 file changed, 9 insertions(+), 13 deletions(-)
+>> 
+>> diff --git a/drivers/bluetooth/hci_qca.c b/drivers/bluetooth/hci_qca.c
+>> index f72ded4ec9ae..051f081d1835 100644
+>> --- a/drivers/bluetooth/hci_qca.c
+>> +++ b/drivers/bluetooth/hci_qca.c
+>> @@ -1016,8 +1016,7 @@ static inline void host_set_baudrate(struct 
+>> hci_uart *hu, unsigned int speed)
+>>  static int qca_send_power_pulse(struct hci_dev *hdev, u8 cmd)
+>>  {
+>>  	struct hci_uart *hu = hci_get_drvdata(hdev);
+>> -	struct qca_data *qca = hu->priv;
+>> -	struct sk_buff *skb;
+>> +	int ret;
+>> 
+>>  	/* These power pulses are single byte command which are sent
+>>  	 * at required baudrate to wcn3990. On wcn3990, we have an external
+>> @@ -1030,18 +1029,14 @@ static int qca_send_power_pulse(struct hci_dev 
+>> *hdev, u8 cmd)
+>>  	 * sending power pulses to SoC.
+>>  	 */
+>>  	bt_dev_dbg(hdev, "sending power pulse %02x to SoC", cmd);
+>> -
+>> -	skb = bt_skb_alloc(sizeof(cmd), GFP_KERNEL);
+>> -	if (!skb)
+>> -		return -ENOMEM;
+>> -
+>>  	hci_uart_set_flow_control(hu, true);
+>> +	ret = serdev_device_write(hu->serdev, &cmd, sizeof(cmd), 0);
+> 
+> Don't you want a non-zero timeout here? Otherwise you might as well 
+> call
+> serdev_device_write() directly.
+> 
+
+[Bala]: we need an in definite timeout for these commands. will use 
+HCI_UART_TX_WAKEUP.
+
+> Also have you made sure that serdev_device_write_wakeup() is called in
+> the drivers write-wakeup callback as serdev_device_write() requires?
+> 
+> See this series in case what you really wanted was to wait indefinitely
+> (you can use MAX_SCHEDULE_TIMEOUT):
+> 
+> 	https://lkml.kernel.org/r/<20181114150904.19653-1-johan@kernel.org>
+> 
+
+[Bala]: thanks for pointers. from 
+https://lore.kernel.org/patchwork/patch/1012358/
+         it was clear to me that i need call below functions in order to 
+wait until full data is sent.
+
+         serdev_device_write_wakeup()
+         serdev_device_write()
+         serdev_device_wait_until_sent()
+
+         correct me whether my understanding is correct.
+
+>> +	if (ret < 0) {
+>> +		bt_dev_err(hdev, "failed to send power pulse %02x to SoC", cmd);
+>> +		return ret;
+>> +	}
+>> 
+>> -	skb_put_u8(skb, cmd);
+>> -	hci_skb_pkt_type(skb) = HCI_COMMAND_PKT;
+>> -
+>> -	skb_queue_tail(&qca->txq, skb);
+>> -	hci_uart_tx_wakeup(hu);
+>> +	serdev_device_wait_until_sent(hu->serdev, 0);
+>> 
+>>  	/* Wait for 100 uS for SoC to settle down */
+>>  	usleep_range(100, 200);
+>> @@ -1283,7 +1278,8 @@ static void qca_power_shutdown(struct hci_uart 
+>> *hu)
+>> 
+>>  	host_set_baudrate(hu, 2400);
+>>  	hci_uart_set_flow_control(hu, true);
+>> -	serdev_device_write_buf(serdev, &cmd, sizeof(cmd));
+>> +	serdev_device_write(serdev, &cmd, sizeof(cmd), 0);
+> 
+> Same here.
+> 
+>> +	serdev_device_wait_until_sent(serdev, 0);
+>>  	hci_uart_set_flow_control(hu, false);
+>>  	qca_power_setup(hu, false);
+>>  }
+> 
+> Johan
+
+-- 
+Regards
+Balakrishna.
