@@ -2,114 +2,95 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 64DCEC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:50:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4503BC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:52:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 328192086A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:50:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 328192086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 00AF022360
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 00:52:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=netronome-com.20150623.gappssmtp.com header.i=@netronome-com.20150623.gappssmtp.com header.b="UFScXvyc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 00AF022360
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=netronome.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727059AbeKOK4A (ORCPT
+        id S1726704AbeKOK6H (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 05:56:00 -0500
-Received: from mga02.intel.com ([134.134.136.20]:14100 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725895AbeKOKz7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 05:55:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga003.jf.intel.com ([10.7.209.27])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 16:50:23 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,234,1539673200"; 
-   d="scan'208";a="100330509"
-Received: from ahduyck-mobl.amr.corp.intel.com (HELO [10.251.21.216]) ([10.251.21.216])
-  by orsmga003.jf.intel.com with ESMTP; 14 Nov 2018 16:50:23 -0800
-Subject: Re: [mm PATCH v5 0/7] Deferred page init improvements
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-nvdimm@lists.01.org, davem@davemloft.net,
-        pavel.tatashin@microsoft.com, mingo@kernel.org,
-        kirill.shutemov@linux.intel.com, dan.j.williams@intel.com,
-        dave.jiang@intel.com, rppt@linux.vnet.ibm.com, willy@infradead.org,
-        vbabka@suse.cz, khalid.aziz@oracle.com, ldufour@linux.vnet.ibm.com,
-        mgorman@techsingularity.net, yi.z.zhang@linux.intel.com
-References: <154145268025.30046.11742652345962594283.stgit@ahduyck-desk1.jf.intel.com>
- <20181114150742.GZ23419@dhcp22.suse.cz>
-From:   Alexander Duyck <alexander.h.duyck@linux.intel.com>
-Message-ID: <9e8218eb-80bf-fc02-ae56-42ccfddb572e@linux.intel.com>
-Date:   Wed, 14 Nov 2018 16:50:23 -0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Thu, 15 Nov 2018 05:58:07 -0500
+Received: from mail-pf1-f178.google.com ([209.85.210.178]:37331 "EHLO
+        mail-pf1-f178.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726579AbeKOK6H (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 05:58:07 -0500
+Received: by mail-pf1-f178.google.com with SMTP id u3-v6so6098978pfm.4
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 16:52:31 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=netronome-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:in-reply-to:references
+         :organization:mime-version:content-transfer-encoding;
+        bh=PH9TZWPv3eKyjOGYG8VjoG7+n0qNQyxSzNew9XQnMh0=;
+        b=UFScXvycx1DdSuVOAXeAo7Pk00NnSUNCG0EMdWVKfzbdVKPowZqlD0krN0CD2WMmNV
+         43do4TnS3iBn0DUSYxOd27tfdAM5x8hejIhR++0Uoz+GB3B0xU6xqvDpS7lrTSAjuMIj
+         Zk81Kwo0Zpi3yWXOdxbfGG0tuHooPv9+uvqQ7rzZDD2cauMkYiSxmAECcMHvDrU6eD8C
+         FaHqtPXUkNTGxrLK1ybi23/QSNnmA1e2L1/c+pu4MQXGLDF3oSv9ovF4BH1HsjbfPbAy
+         3SwUx6pCS+mbA+7O799a+GZz8NASbnSvxEI1n7KfVQXLrbWrPmRyeoywSOlvm7K6lTTB
+         18ow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:in-reply-to
+         :references:organization:mime-version:content-transfer-encoding;
+        bh=PH9TZWPv3eKyjOGYG8VjoG7+n0qNQyxSzNew9XQnMh0=;
+        b=KYhn1m57rgtnBjhhZ+tW+2xGfjmMhUAoocg1N6weL2j9fNkVlS2l7f/ginZjF3bixj
+         3PxJN0S1W0yPlFWzVCTPmIsWycZhkTDM2QELKWG3T+H07NxSXC7kIlmkzHtwrT8zfN3o
+         eYNGYidDLL+2r2TU25F/+CNxhhrpuqPIpj3Yc7oCxdorraGs+K+r1kiiw5JyF1zO0KXz
+         lwe82DcCGmyhuEOg5Dr4uqD+vRvgoqkhlJiC75LVrVAfd78iATeklidrvotbV200mV6D
+         zPhBryEWlVe4rCC8bHeFDswHKHtAw2s3OKDhgNBtn5nwJhJqH6lmh1GX3XlhI89Kyf+h
+         cTSg==
+X-Gm-Message-State: AGRZ1gIp/ahzRix/Xr9gu3bAl5Lwkwfz6ea3osz5QOHLonaUwioDSegX
+        NMIWl1hvckqGrW0TZWKRs8BstmSBakqSrg==
+X-Google-Smtp-Source: AJdET5e5fWAs83u04HeHPV5YL57izn/eilh/5xeIPtbMDrS6d+Pdk1336gu5lIJbbtCscXOHvtOjcg==
+X-Received: by 2002:a63:6483:: with SMTP id y125mr3767861pgb.91.1542243150569;
+        Wed, 14 Nov 2018 16:52:30 -0800 (PST)
+Received: from cakuba.netronome.com ([64.114.255.114])
+        by smtp.gmail.com with ESMTPSA id j12-v6sm27520045pfi.61.2018.11.14.16.52.30
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Wed, 14 Nov 2018 16:52:30 -0800 (PST)
+Date:   Wed, 14 Nov 2018 16:52:27 -0800
+From:   Jakub Kicinski <jakub.kicinski@netronome.com>
+To:     Colin King <colin.king@canonical.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>, netdev@vger.kernel.org,
+        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][bpf-next] bpf: fix null pointer dereference on pointer
+ offload
+Message-ID: <20181114165227.222663d5@cakuba.netronome.com>
+In-Reply-To: <20181113092926.27081-1-colin.king@canonical.com>
+References: <20181113092926.27081-1-colin.king@canonical.com>
+Organization: Netronome Systems, Ltd.
 MIME-Version: 1.0
-In-Reply-To: <20181114150742.GZ23419@dhcp22.suse.cz>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 11/14/2018 7:07 AM, Michal Hocko wrote:
-> On Mon 05-11-18 13:19:25, Alexander Duyck wrote:
->> This patchset is essentially a refactor of the page initialization logic
->> that is meant to provide for better code reuse while providing a
->> significant improvement in deferred page initialization performance.
->>
->> In my testing on an x86_64 system with 384GB of RAM and 3TB of persistent
->> memory per node I have seen the following. In the case of regular memory
->> initialization the deferred init time was decreased from 3.75s to 1.06s on
->> average. For the persistent memory the initialization time dropped from
->> 24.17s to 19.12s on average. This amounts to a 253% improvement for the
->> deferred memory initialization performance, and a 26% improvement in the
->> persistent memory initialization performance.
->>
->> I have called out the improvement observed with each patch.
+On Tue, 13 Nov 2018 09:29:26 +0000, Colin King wrote:
+> From: Colin Ian King <colin.king@canonical.com>
 > 
-> I have only glanced through the code (there is a lot of the code to look
-> at here). And I do not like the code duplication and the way how you
-> make the hotplug special. There shouldn't be any real reason for that
-> IMHO (e.g. why do we init pfn-at-a-time in early init while we do
-> pageblock-at-a-time for hotplug). I might be wrong here and the code
-> reuse might be really hard to achieve though.
+> Pointer offload is being null checked however the following statement
+> dereferences the potentially null pointer offload when assigning
+> offload->dev_state.  Fix this by only assigning it if offload is not
+> null.
+> 
+> Detected by CoverityScan, CID#1475437 ("Dereference after null check")
+> 
+> Fixes: 00db12c3d141 ("bpf: call verifier_prep from its callback in struct bpf_offload_dev")
+> Signed-off-by: Colin Ian King <colin.king@canonical.com>
 
-Actually it isn't so much that hotplug is special. The issue is more 
-that the non-hotplug case is special in that you have to perform a 
-number of extra checks for things that just aren't necessary for the 
-hotplug case.
+Acked-by: Jakub Kicinski <jakub.kicinski@netronome.com>
 
-If anything I would probably need a new iterator that would be able to 
-take into account all the checks for the non-hotplug case and then 
-provide ranges of PFNs to initialize.
-
-> I am also not impressed by new iterators because this api is quite
-> complex already. But this is mostly a detail.
-
-Yeah, the iterators were mostly an attempt at hiding some of the 
-complexity. Being able to break a loop down to just an iterator provding 
-the start of the range and the number of elements to initialize is 
-pretty easy to visualize, or at least I thought so.
-
-> Thing I do not like is that you keep microptimizing PageReserved part
-> while there shouldn't be anything fundamental about it. We should just
-> remove it rather than make the code more complex. I fell more and more
-> guilty to add there actually.
-
-I plan to remove it, but don't think I can get to it in this patch set.
-
-I was planning to submit one more iteration of this patch set early next 
-week, and then start focusing more on the removal of the PageReserved 
-bit for hotplug. I figure it is probably going to be a full patch set 
-onto itself and as you pointed out at the start of this email there is 
-already enough code to review without adding that.
-
-
+Thanks!
