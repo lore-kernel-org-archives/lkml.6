@@ -2,576 +2,97 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 126B4C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id ADF67C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:57:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A2D0B2245E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:55:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="joOF/3Ry"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A2D0B2245E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 6914E21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:57:55 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6914E21582
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725943AbeKPFEJ (ORCPT
+        id S1726029AbeKPFGv (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 00:04:09 -0500
-Received: from mail.kernel.org ([198.145.29.99]:52564 "EHLO mail.kernel.org"
+        Fri, 16 Nov 2018 00:06:51 -0500
+Received: from shell.v3.sk ([90.176.6.54]:52348 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725841AbeKPFEJ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 00:04:09 -0500
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 03D6A2245E;
-        Thu, 15 Nov 2018 18:55:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542308109;
-        bh=y/qPinYTg2Vcc6C7zaPJQecqKzoKtUPmLRxRyWsfkLs=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=joOF/3RycT2YWkd/h6ZFe3nSo6M1VcPXlzWgQr2uHYqOJwt3TlOqDu3Jvu4v5U8V1
-         3oqDntY8lG0pVdWpUtRFJ3bobn2KNdXo45hhUNIGe+6uMbjxTAisyiyhCfsU1X2wGy
-         qtTqj1lb3ABOX6hU0XUClb3bpoigt9+6pu0a/iGw=
-Received: by mail-wm1-f43.google.com with SMTP id f19-v6so16502917wmb.0;
-        Thu, 15 Nov 2018 10:55:08 -0800 (PST)
-X-Gm-Message-State: AGRZ1gLdNFfgeUh7Pi5SW1BTEkB0o3RUBOMeTN2k4mBccl68/tw13fDh
-        s363+14WTR8n2+dNd+b4PxJ71cWqE8EYo8vefvk=
-X-Google-Smtp-Source: AJdET5dho599w+9gRRnTfbbCKrzphsDbmI/O3WA0LmFzYREVuLfcdoRkjJYduXf5OYeqGwYw4QgT0FkLfJeoYH8ZCtI=
-X-Received: by 2002:a1c:4e18:: with SMTP id g24-v6mr172455wmh.92.1542308107360;
- Thu, 15 Nov 2018 10:55:07 -0800 (PST)
-MIME-Version: 1.0
-References: <5d63d26156d2972b7e9f55c9743b66d7c6dac2ec.1541986223.git.ryder.lee@mediatek.com>
-In-Reply-To: <5d63d26156d2972b7e9f55c9743b66d7c6dac2ec.1541986223.git.ryder.lee@mediatek.com>
-From:   Sean Wang <sean.wang@kernel.org>
-Date:   Thu, 15 Nov 2018 10:54:55 -0800
-X-Gmail-Original-Message-ID: <CAGp9LzpxCu7UCRdaotNr-Zh9ZRfyTaHrUAYgHhOadONLhha+_g@mail.gmail.com>
-Message-ID: <CAGp9LzpxCu7UCRdaotNr-Zh9ZRfyTaHrUAYgHhOadONLhha+_g@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] pinctrl: mediatek: add pinctrl support for MT7629 SoC
-To:     ryder.lee@mediatek.com
-Cc:     Linus Walleij <linus.walleij@linaro.org>, robh+dt@kernel.org,
-        Matthias Brugger <matthias.bgg@gmail.com>,
-        linux-gpio@vger.kernel.org, weijie.gao@mediatek.com,
-        cheng-hao.luo@mediatek.com, devicetree@vger.kernel.org,
+        id S1725742AbeKPFGv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 00:06:51 -0500
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 455C14C388;
+        Thu, 15 Nov 2018 19:57:49 +0100 (CET)
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
+        with ESMTP id 71A5V7ibCKxB; Thu, 15 Nov 2018 19:57:46 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by zimbra.v3.sk (Postfix) with ESMTP id 19BC34C46F;
+        Thu, 15 Nov 2018 19:57:46 +0100 (CET)
+X-Virus-Scanned: amavisd-new at zimbra.v3.sk
+Received: from shell.v3.sk ([127.0.0.1])
+        by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id jJkvuG9Uix5p; Thu, 15 Nov 2018 19:57:45 +0100 (CET)
+Received: from belphegor (nat-pool-brq-t.redhat.com [213.175.37.10])
+        by zimbra.v3.sk (Postfix) with ESMTPSA id E46714C388;
+        Thu, 15 Nov 2018 19:57:44 +0100 (CET)
+Message-ID: <49eee45692f16dcbcf8aceaf3a999bb7f33178ba.camel@v3.sk>
+Subject: Re: [PATCH 02/15] Revert "platform/olpc: Make ec explicitly
+ non-modular"
+From:   Lubomir Rintel <lkundrak@v3.sk>
+To:     Pavel Machek <pavel@ucw.cz>
+Cc:     Mark Brown <broonie@kernel.org>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Darren Hart <dvhart@infradead.org>,
+        Andy Shevchenko <andy@infradead.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        James Cameron <quozl@laptop.org>,
+        Sebastian Reichel <sre@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Eric Miao <eric.y.miao@gmail.com>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Daniel Mack <daniel@zonque.org>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org
+        platform-driver-x86@vger.kernel.org, devel@driverdev.osuosl.org,
+        linux-pm@vger.kernel.org
+Date:   Thu, 15 Nov 2018 19:57:44 +0100
+In-Reply-To: <20181102221626.GC5322@amd>
+References: <20181010172300.317643-1-lkundrak@v3.sk>
+         <20181010172300.317643-3-lkundrak@v3.sk> <20181102221626.GC5322@amd>
 Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sun, Nov 11, 2018 at 5:45 PM Ryder Lee <ryder.lee@mediatek.com> wrote:
->
-> This adds MT7629 pinctrl driver based on MediaTek pinctrl-moore core.
->
-> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+On Fri, 2018-11-02 at 23:16 +0100, Pavel Machek wrote:
+> On Wed 2018-10-10 19:22:47, Lubomir Rintel wrote:
+> > It doesn't make sense to always have this built-in, e.g. on ARM
+> > multiplatform kernels. A better way to address the problem the
+> > original
+> > commit aimed to solve is to fix Kconfig.
+> > 
+> > This reverts commit f48d1496b8537d75776478c6942dd87f34d7f270.
+> 
+> This looks ok, but I don't see the Kconfig fix in the series. Is it
+> needed?
 
-The driver is totally based on the new core to add its table, would be
-less error-prone and allows us to understand the differences between
-each new hardware at once.
+It's flipped to a tristate in "Platform: OLPC: Move OLPC config symbol
+out of x86 tree" and mentioned in the commit message.
 
-Acked-by: Sean Wang <sean.wang@kernel.org>
+Perhaps I could made that clear by separating the change into a
+separate patch. I'm keeping it as it is in next version of the patch
+set, but I'm going to improve this one's commit message and sort the
+patches closer together.
 
-> ---
-> Changes since v1:
-> -add a new function for wifi.
-> -drop useless 'ext' groups and its groups.
-> ---
->  drivers/pinctrl/mediatek/Kconfig          |   6 +
->  drivers/pinctrl/mediatek/Makefile         |   1 +
->  drivers/pinctrl/mediatek/pinctrl-mt7629.c | 450 ++++++++++++++++++++++++++++++
->  3 files changed, 457 insertions(+)
->  create mode 100644 drivers/pinctrl/mediatek/pinctrl-mt7629.c
->
-> diff --git a/drivers/pinctrl/mediatek/Kconfig b/drivers/pinctrl/mediatek/Kconfig
-> index 9d142e1..1b2a7b4 100644
-> --- a/drivers/pinctrl/mediatek/Kconfig
-> +++ b/drivers/pinctrl/mediatek/Kconfig
-> @@ -48,6 +48,12 @@ config PINCTRL_MT7623
->         depends on PINCTRL_MTK_MOORE
->         default y
->
-> +config PINCTRL_MT7629
-> +       bool "Mediatek MT7629 pin control"
-> +       depends on MACH_MT7629 || COMPILE_TEST
-> +       depends on PINCTRL_MTK_MOORE
-> +       default y
-> +
->  config PINCTRL_MT8135
->         bool "Mediatek MT8135 pin control"
->         depends on MACH_MT8135 || COMPILE_TEST
-> diff --git a/drivers/pinctrl/mediatek/Makefile b/drivers/pinctrl/mediatek/Makefile
-> index 70d8000..c2a16b1 100644
-> --- a/drivers/pinctrl/mediatek/Makefile
-> +++ b/drivers/pinctrl/mediatek/Makefile
-> @@ -13,6 +13,7 @@ obj-$(CONFIG_PINCTRL_MT8127)  += pinctrl-mt8127.o
->  obj-$(CONFIG_PINCTRL_MT6765)   += pinctrl-mt6765.o
->  obj-$(CONFIG_PINCTRL_MT7622)   += pinctrl-mt7622.o
->  obj-$(CONFIG_PINCTRL_MT7623)   += pinctrl-mt7623.o
-> +obj-$(CONFIG_PINCTRL_MT7629)   += pinctrl-mt7629.o
->  obj-$(CONFIG_PINCTRL_MT8173)   += pinctrl-mt8173.o
->  obj-$(CONFIG_PINCTRL_MT8183)   += pinctrl-mt8183.o
->  obj-$(CONFIG_PINCTRL_MT6397)   += pinctrl-mt6397.o
-> diff --git a/drivers/pinctrl/mediatek/pinctrl-mt7629.c b/drivers/pinctrl/mediatek/pinctrl-mt7629.c
-> new file mode 100644
-> index 0000000..b5f0fa4
-> --- /dev/null
-> +++ b/drivers/pinctrl/mediatek/pinctrl-mt7629.c
-> @@ -0,0 +1,450 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * The MT7629 driver based on Linux generic pinctrl binding.
-> + *
-> + * Copyright (C) 2018 MediaTek Inc.
-> + * Author: Ryder Lee <ryder.lee@mediatek.com>
-> + */
-> +
-> +#include "pinctrl-moore.h"
-> +
-> +#define MT7629_PIN(_number, _name, _eint_n)                            \
-> +       MTK_PIN(_number, _name, 0, _eint_n, DRV_GRP1)
-> +
-> +static const struct mtk_pin_field_calc mt7629_pin_mode_range[] = {
-> +       PIN_FIELD(0, 78, 0x300, 0x10, 0, 4),
-> +};
-> +
-> +static const struct mtk_pin_field_calc mt7629_pin_dir_range[] = {
-> +       PIN_FIELD(0, 78, 0x0, 0x10, 0, 1),
-> +};
-> +
-> +static const struct mtk_pin_field_calc mt7629_pin_di_range[] = {
-> +       PIN_FIELD(0, 78, 0x200, 0x10, 0, 1),
-> +};
-> +
-> +static const struct mtk_pin_field_calc mt7629_pin_do_range[] = {
-> +       PIN_FIELD(0, 78, 0x100, 0x10, 0, 1),
-> +};
-> +
-> +static const struct mtk_pin_field_calc mt7629_pin_ies_range[] = {
-> +       PIN_FIELD(0, 10, 0x1000, 0x10, 0, 1),
-> +       PIN_FIELD(11, 18, 0x2000, 0x10, 0, 1),
-> +       PIN_FIELD(19, 32, 0x3000, 0x10, 0, 1),
-> +       PIN_FIELD(33, 48, 0x4000, 0x10, 0, 1),
-> +       PIN_FIELD(49, 50, 0x5000, 0x10, 0, 1),
-> +       PIN_FIELD(51, 69, 0x6000, 0x10, 0, 1),
-> +       PIN_FIELD(70, 78, 0x7000, 0x10, 0, 1),
-> +};
-> +
-> +static const struct mtk_pin_field_calc mt7629_pin_smt_range[] = {
-> +       PIN_FIELD(0, 10, 0x1100, 0x10, 0, 1),
-> +       PIN_FIELD(11, 18, 0x2100, 0x10, 0, 1),
-> +       PIN_FIELD(19, 32, 0x3100, 0x10, 0, 1),
-> +       PIN_FIELD(33, 48, 0x4100, 0x10, 0, 1),
-> +       PIN_FIELD(49, 50, 0x5100, 0x10, 0, 1),
-> +       PIN_FIELD(51, 69, 0x6100, 0x10, 0, 1),
-> +       PIN_FIELD(70, 78, 0x7100, 0x10, 0, 1),
-> +};
-> +
-> +static const struct mtk_pin_field_calc mt7629_pin_pullen_range[] = {
-> +       PIN_FIELD(0, 10, 0x1400, 0x10, 0, 1),
-> +       PIN_FIELD(11, 18, 0x2400, 0x10, 0, 1),
-> +       PIN_FIELD(19, 32, 0x3400, 0x10, 0, 1),
-> +       PIN_FIELD(33, 48, 0x4400, 0x10, 0, 1),
-> +       PIN_FIELD(49, 50, 0x5400, 0x10, 0, 1),
-> +       PIN_FIELD(51, 69, 0x6400, 0x10, 0, 1),
-> +       PIN_FIELD(70, 78, 0x7400, 0x10, 0, 1),
-> +};
-> +
-> +static const struct mtk_pin_field_calc mt7629_pin_pullsel_range[] = {
-> +       PIN_FIELD(0, 10, 0x1500, 0x10, 0, 1),
-> +       PIN_FIELD(11, 18, 0x2500, 0x10, 0, 1),
-> +       PIN_FIELD(19, 32, 0x3500, 0x10, 0, 1),
-> +       PIN_FIELD(33, 48, 0x4500, 0x10, 0, 1),
-> +       PIN_FIELD(49, 50, 0x5500, 0x10, 0, 1),
-> +       PIN_FIELD(51, 69, 0x6500, 0x10, 0, 1),
-> +       PIN_FIELD(70, 78, 0x7500, 0x10, 0, 1),
-> +};
-> +
-> +static const struct mtk_pin_field_calc mt7629_pin_drv_range[] = {
-> +       PIN_FIELD(0, 10, 0x1600, 0x10, 0, 4),
-> +       PIN_FIELD(11, 18, 0x2600, 0x10, 0, 4),
-> +       PIN_FIELD(19, 32, 0x3600, 0x10, 0, 4),
-> +       PIN_FIELD(33, 48, 0x4600, 0x10, 0, 4),
-> +       PIN_FIELD(49, 50, 0x5600, 0x10, 0, 4),
-> +       PIN_FIELD(51, 69, 0x6600, 0x10, 0, 4),
-> +       PIN_FIELD(70, 78, 0x7600, 0x10, 0, 4),
-> +};
-> +
-> +static const struct mtk_pin_field_calc mt7629_pin_tdsel_range[] = {
-> +       PIN_FIELD(0, 10, 0x1200, 0x10, 0, 4),
-> +       PIN_FIELD(11, 18, 0x2200, 0x10, 0, 4),
-> +       PIN_FIELD(19, 32, 0x3200, 0x10, 0, 4),
-> +       PIN_FIELD(33, 48, 0x4200, 0x10, 0, 4),
-> +       PIN_FIELD(49, 50, 0x5200, 0x10, 0, 4),
-> +       PIN_FIELD(51, 69, 0x6200, 0x10, 0, 4),
-> +       PIN_FIELD(70, 78, 0x7200, 0x10, 0, 4),
-> +};
-> +
-> +static const struct mtk_pin_field_calc mt7629_pin_rdsel_range[] = {
-> +       PIN_FIELD(0, 10, 0x1300, 0x10, 0, 4),
-> +       PIN_FIELD(11, 18, 0x2300, 0x10, 0, 4),
-> +       PIN_FIELD(19, 32, 0x3300, 0x10, 0, 4),
-> +       PIN_FIELD(33, 48, 0x4300, 0x10, 0, 4),
-> +       PIN_FIELD(49, 50, 0x5300, 0x10, 0, 4),
-> +       PIN_FIELD(51, 69, 0x6300, 0x10, 0, 4),
-> +       PIN_FIELD(70, 78, 0x7300, 0x10, 0, 4),
-> +};
-> +
-> +static const struct mtk_pin_reg_calc mt7629_reg_cals[] = {
-> +       [PINCTRL_PIN_REG_MODE] = MTK_RANGE(mt7629_pin_mode_range),
-> +       [PINCTRL_PIN_REG_DIR] = MTK_RANGE(mt7629_pin_dir_range),
-> +       [PINCTRL_PIN_REG_DI] = MTK_RANGE(mt7629_pin_di_range),
-> +       [PINCTRL_PIN_REG_DO] = MTK_RANGE(mt7629_pin_do_range),
-> +       [PINCTRL_PIN_REG_IES] = MTK_RANGE(mt7629_pin_ies_range),
-> +       [PINCTRL_PIN_REG_SMT] = MTK_RANGE(mt7629_pin_smt_range),
-> +       [PINCTRL_PIN_REG_PULLSEL] = MTK_RANGE(mt7629_pin_pullsel_range),
-> +       [PINCTRL_PIN_REG_PULLEN] = MTK_RANGE(mt7629_pin_pullen_range),
-> +       [PINCTRL_PIN_REG_DRV] = MTK_RANGE(mt7629_pin_drv_range),
-> +       [PINCTRL_PIN_REG_TDSEL] = MTK_RANGE(mt7629_pin_tdsel_range),
-> +       [PINCTRL_PIN_REG_RDSEL] = MTK_RANGE(mt7629_pin_rdsel_range),
-> +};
-> +
-> +static const struct mtk_pin_desc mt7629_pins[] = {
-> +       MT7629_PIN(0, "TOP_5G_CLK", 53),
-> +       MT7629_PIN(1, "TOP_5G_DATA", 54),
-> +       MT7629_PIN(2, "WF0_5G_HB0", 55),
-> +       MT7629_PIN(3, "WF0_5G_HB1", 56),
-> +       MT7629_PIN(4, "WF0_5G_HB2", 57),
-> +       MT7629_PIN(5, "WF0_5G_HB3", 58),
-> +       MT7629_PIN(6, "WF0_5G_HB4", 59),
-> +       MT7629_PIN(7, "WF0_5G_HB5", 60),
-> +       MT7629_PIN(8, "WF0_5G_HB6", 61),
-> +       MT7629_PIN(9, "XO_REQ", 9),
-> +       MT7629_PIN(10, "TOP_RST_N", 10),
-> +       MT7629_PIN(11, "SYS_WATCHDOG", 11),
-> +       MT7629_PIN(12, "EPHY_LED0_N_JTDO", 12),
-> +       MT7629_PIN(13, "EPHY_LED1_N_JTDI", 13),
-> +       MT7629_PIN(14, "EPHY_LED2_N_JTMS", 14),
-> +       MT7629_PIN(15, "EPHY_LED3_N_JTCLK", 15),
-> +       MT7629_PIN(16, "EPHY_LED4_N_JTRST_N", 16),
-> +       MT7629_PIN(17, "WF2G_LED_N", 17),
-> +       MT7629_PIN(18, "WF5G_LED_N", 18),
-> +       MT7629_PIN(19, "I2C_SDA", 19),
-> +       MT7629_PIN(20, "I2C_SCL", 20),
-> +       MT7629_PIN(21, "GPIO_9", 21),
-> +       MT7629_PIN(22, "GPIO_10", 22),
-> +       MT7629_PIN(23, "GPIO_11", 23),
-> +       MT7629_PIN(24, "GPIO_12", 24),
-> +       MT7629_PIN(25, "UART1_TXD", 25),
-> +       MT7629_PIN(26, "UART1_RXD", 26),
-> +       MT7629_PIN(27, "UART1_CTS", 27),
-> +       MT7629_PIN(28, "UART1_RTS", 28),
-> +       MT7629_PIN(29, "UART2_TXD", 29),
-> +       MT7629_PIN(30, "UART2_RXD", 30),
-> +       MT7629_PIN(31, "UART2_CTS", 31),
-> +       MT7629_PIN(32, "UART2_RTS", 32),
-> +       MT7629_PIN(33, "MDI_TP_P1", 33),
-> +       MT7629_PIN(34, "MDI_TN_P1", 34),
-> +       MT7629_PIN(35, "MDI_RP_P1", 35),
-> +       MT7629_PIN(36, "MDI_RN_P1", 36),
-> +       MT7629_PIN(37, "MDI_RP_P2", 37),
-> +       MT7629_PIN(38, "MDI_RN_P2", 38),
-> +       MT7629_PIN(39, "MDI_TP_P2", 39),
-> +       MT7629_PIN(40, "MDI_TN_P2", 40),
-> +       MT7629_PIN(41, "MDI_TP_P3", 41),
-> +       MT7629_PIN(42, "MDI_TN_P3", 42),
-> +       MT7629_PIN(43, "MDI_RP_P3", 43),
-> +       MT7629_PIN(44, "MDI_RN_P3", 44),
-> +       MT7629_PIN(45, "MDI_RP_P4", 45),
-> +       MT7629_PIN(46, "MDI_RN_P4", 46),
-> +       MT7629_PIN(47, "MDI_TP_P4", 47),
-> +       MT7629_PIN(48, "MDI_TN_P4", 48),
-> +       MT7629_PIN(49, "SMI_MDC", 49),
-> +       MT7629_PIN(50, "SMI_MDIO", 50),
-> +       MT7629_PIN(51, "PCIE_PERESET_N", 51),
-> +       MT7629_PIN(52, "PWM_0", 52),
-> +       MT7629_PIN(53, "GPIO_0", 0),
-> +       MT7629_PIN(54, "GPIO_1", 1),
-> +       MT7629_PIN(55, "GPIO_2", 2),
-> +       MT7629_PIN(56, "GPIO_3", 3),
-> +       MT7629_PIN(57, "GPIO_4", 4),
-> +       MT7629_PIN(58, "GPIO_5", 5),
-> +       MT7629_PIN(59, "GPIO_6", 6),
-> +       MT7629_PIN(60, "GPIO_7", 7),
-> +       MT7629_PIN(61, "GPIO_8", 8),
-> +       MT7629_PIN(62, "SPI_CLK", 62),
-> +       MT7629_PIN(63, "SPI_CS", 63),
-> +       MT7629_PIN(64, "SPI_MOSI", 64),
-> +       MT7629_PIN(65, "SPI_MISO", 65),
-> +       MT7629_PIN(66, "SPI_WP", 66),
-> +       MT7629_PIN(67, "SPI_HOLD", 67),
-> +       MT7629_PIN(68, "UART0_TXD", 68),
-> +       MT7629_PIN(69, "UART0_RXD", 69),
-> +       MT7629_PIN(70, "TOP_2G_CLK", 70),
-> +       MT7629_PIN(71, "TOP_2G_DATA", 71),
-> +       MT7629_PIN(72, "WF0_2G_HB0", 72),
-> +       MT7629_PIN(73, "WF0_2G_HB1", 73),
-> +       MT7629_PIN(74, "WF0_2G_HB2", 74),
-> +       MT7629_PIN(75, "WF0_2G_HB3", 75),
-> +       MT7629_PIN(76, "WF0_2G_HB4", 76),
-> +       MT7629_PIN(77, "WF0_2G_HB5", 77),
-> +       MT7629_PIN(78, "WF0_2G_HB6", 78),
-> +};
-> +
-> +/* List all groups consisting of these pins dedicated to the enablement of
-> + * certain hardware block and the corresponding mode for all of the pins.
-> + * The hardware probably has multiple combinations of these pinouts.
-> + */
-> +
-> +/* LED for EPHY */
-> +static int mt7629_ephy_leds_pins[] = { 12, 13, 14, 15, 16, 17, 18, };
-> +static int mt7629_ephy_leds_funcs[] = { 1, 1, 1, 1, 1, 1, 1, };
-> +static int mt7629_ephy_led0_pins[] = { 12, };
-> +static int mt7629_ephy_led0_funcs[] = { 1, };
-> +static int mt7629_ephy_led1_pins[] = { 13, };
-> +static int mt7629_ephy_led1_funcs[] = { 1, };
-> +static int mt7629_ephy_led2_pins[] = { 14, };
-> +static int mt7629_ephy_led2_funcs[] = { 1, };
-> +static int mt7629_ephy_led3_pins[] = { 15, };
-> +static int mt7629_ephy_led3_funcs[] = { 1, };
-> +static int mt7629_ephy_led4_pins[] = { 16, };
-> +static int mt7629_ephy_led4_funcs[] = { 1, };
-> +static int mt7629_wf2g_led_pins[] = { 17, };
-> +static int mt7629_wf2g_led_funcs[] = { 1, };
-> +static int mt7629_wf5g_led_pins[] = { 18, };
-> +static int mt7629_wf5g_led_funcs[] = { 1, };
-> +
-> +/* Watchdog */
-> +static int mt7629_watchdog_pins[] = { 11, };
-> +static int mt7629_watchdog_funcs[] = { 1, };
-> +
-> +/* LED for GPHY */
-> +static int mt7629_gphy_leds_0_pins[] = { 21, 22, 23, };
-> +static int mt7629_gphy_leds_0_funcs[] = { 2, 2, 2, };
-> +static int mt7629_gphy_led1_0_pins[] = { 21, };
-> +static int mt7629_gphy_led1_0_funcs[] = { 2, };
-> +static int mt7629_gphy_led2_0_pins[] = { 22, };
-> +static int mt7629_gphy_led2_0_funcs[] = { 2, };
-> +static int mt7629_gphy_led3_0_pins[] = { 23, };
-> +static int mt7629_gphy_led3_0_funcs[] = { 2, };
-> +static int mt7629_gphy_leds_1_pins[] = { 57, 58, 59, };
-> +static int mt7629_gphy_leds_1_funcs[] = { 1, 1, 1, };
-> +static int mt7629_gphy_led1_1_pins[] = { 57, };
-> +static int mt7629_gphy_led1_1_funcs[] = { 1, };
-> +static int mt7629_gphy_led2_1_pins[] = { 58, };
-> +static int mt7629_gphy_led2_1_funcs[] = { 1, };
-> +static int mt7629_gphy_led3_1_pins[] = { 59, };
-> +static int mt7629_gphy_led3_1_funcs[] = { 1, };
-> +
-> +/* I2C */
-> +static int mt7629_i2c_0_pins[] = { 19, 20, };
-> +static int mt7629_i2c_0_funcs[] = { 1, 1, };
-> +static int mt7629_i2c_1_pins[] = { 53, 54, };
-> +static int mt7629_i2c_1_funcs[] = { 1, 1, };
-> +
-> +/* SPI */
-> +static int mt7629_spi_0_pins[] = { 21, 22, 23, 24, };
-> +static int mt7629_spi_0_funcs[] = { 1, 1, 1, 1, };
-> +static int mt7629_spi_1_pins[] = { 62, 63, 64, 65, };
-> +static int mt7629_spi_1_funcs[] = { 1, 1, 1, 1, };
-> +static int mt7629_spi_wp_pins[] = { 66, };
-> +static int mt7629_spi_wp_funcs[] = { 1, };
-> +static int mt7629_spi_hold_pins[] = { 67, };
-> +static int mt7629_spi_hold_funcs[] = { 1, };
-> +
-> +/* UART */
-> +static int mt7629_uart1_0_txd_rxd_pins[] = { 25, 26, };
-> +static int mt7629_uart1_0_txd_rxd_funcs[] = { 1, 1, };
-> +static int mt7629_uart1_1_txd_rxd_pins[] = { 53, 54, };
-> +static int mt7629_uart1_1_txd_rxd_funcs[] = { 2, 2, };
-> +static int mt7629_uart2_0_txd_rxd_pins[] = { 29, 30, };
-> +static int mt7629_uart2_0_txd_rxd_funcs[] = { 1, 1, };
-> +static int mt7629_uart2_1_txd_rxd_pins[] = { 57, 58, };
-> +static int mt7629_uart2_1_txd_rxd_funcs[] = { 2, 2, };
-> +static int mt7629_uart1_0_cts_rts_pins[] = { 27, 28, };
-> +static int mt7629_uart1_0_cts_rts_funcs[] = { 1, 1, };
-> +static int mt7629_uart1_1_cts_rts_pins[] = { 55, 56, };
-> +static int mt7629_uart1_1_cts_rts_funcs[] = { 2, 2, };
-> +static int mt7629_uart2_0_cts_rts_pins[] = { 31, 32, };
-> +static int mt7629_uart2_0_cts_rts_funcs[] = { 1, 1, };
-> +static int mt7629_uart2_1_cts_rts_pins[] = { 59, 60, };
-> +static int mt7629_uart2_1_cts_rts_funcs[] = { 2, 2, };
-> +static int mt7629_uart0_txd_rxd_pins[] = { 68, 69, };
-> +static int mt7629_uart0_txd_rxd_funcs[] = { 1, 1, };
-> +
-> +/* MDC/MDIO */
-> +static int mt7629_mdc_mdio_pins[] = { 49, 50, };
-> +static int mt7629_mdc_mdio_funcs[] = { 1, 1, };
-> +
-> +/* PCIE */
-> +static int mt7629_pcie_pereset_pins[] = { 51, };
-> +static int mt7629_pcie_pereset_funcs[] = { 1, };
-> +static int mt7629_pcie_wake_pins[] = { 55, };
-> +static int mt7629_pcie_wake_funcs[] = { 1, };
-> +static int mt7629_pcie_clkreq_pins[] = { 56, };
-> +static int mt7629_pcie_clkreq_funcs[] = { 1, };
-> +
-> +/* PWM */
-> +static int mt7629_pwm_0_pins[] = { 52, };
-> +static int mt7629_pwm_0_funcs[] = { 1, };
-> +static int mt7629_pwm_1_pins[] = { 61, };
-> +static int mt7629_pwm_1_funcs[] = { 2, };
-> +
-> +/* WF 2G */
-> +static int mt7629_wf0_2g_pins[] = { 70, 71, 72, 73, 74, 75, 76, 77, 78, };
-> +static int mt7629_wf0_2g_funcs[] = { 1, 1, 1, 1, 1, 1, 1, 1, };
-> +
-> +/* WF 5G */
-> +static int mt7629_wf0_5g_pins[] = { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, };
-> +static int mt7629_wf0_5g_funcs[] = { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, };
-> +
-> +/* SNFI */
-> +static int mt7629_snfi_pins[] = { 62, 63, 64, 65, 66, 67 };
-> +static int mt7629_snfi_funcs[] = { 2, 2, 2, 2, 2, 2 };
-> +
-> +/* SPI NOR */
-> +static int mt7629_snor_pins[] = { 62, 63, 64, 65, 66, 67 };
-> +static int mt7629_snor_funcs[] = { 1, 1, 1, 1, 1, 1 };
-> +
-> +static const struct group_desc mt7629_groups[] = {
-> +       PINCTRL_PIN_GROUP("ephy_leds", mt7629_ephy_leds),
-> +       PINCTRL_PIN_GROUP("ephy_led0", mt7629_ephy_led0),
-> +       PINCTRL_PIN_GROUP("ephy_led1", mt7629_ephy_led1),
-> +       PINCTRL_PIN_GROUP("ephy_led2", mt7629_ephy_led2),
-> +       PINCTRL_PIN_GROUP("ephy_led3", mt7629_ephy_led3),
-> +       PINCTRL_PIN_GROUP("ephy_led4", mt7629_ephy_led4),
-> +       PINCTRL_PIN_GROUP("wf2g_led", mt7629_wf2g_led),
-> +       PINCTRL_PIN_GROUP("wf5g_led", mt7629_wf5g_led),
-> +       PINCTRL_PIN_GROUP("watchdog", mt7629_watchdog),
-> +       PINCTRL_PIN_GROUP("gphy_leds_0", mt7629_gphy_leds_0),
-> +       PINCTRL_PIN_GROUP("gphy_led1_0", mt7629_gphy_led1_0),
-> +       PINCTRL_PIN_GROUP("gphy_led2_0", mt7629_gphy_led2_0),
-> +       PINCTRL_PIN_GROUP("gphy_led3_0", mt7629_gphy_led3_0),
-> +       PINCTRL_PIN_GROUP("gphy_leds_1", mt7629_gphy_leds_1),
-> +       PINCTRL_PIN_GROUP("gphy_led1_1", mt7629_gphy_led1_1),
-> +       PINCTRL_PIN_GROUP("gphy_led2_1", mt7629_gphy_led2_1),
-> +       PINCTRL_PIN_GROUP("gphy_led3_1", mt7629_gphy_led3_1),
-> +       PINCTRL_PIN_GROUP("i2c_0", mt7629_i2c_0),
-> +       PINCTRL_PIN_GROUP("i2c_1", mt7629_i2c_1),
-> +       PINCTRL_PIN_GROUP("spi_0", mt7629_spi_0),
-> +       PINCTRL_PIN_GROUP("spi_1", mt7629_spi_1),
-> +       PINCTRL_PIN_GROUP("spi_wp", mt7629_spi_wp),
-> +       PINCTRL_PIN_GROUP("spi_hold", mt7629_spi_hold),
-> +       PINCTRL_PIN_GROUP("uart1_0_txd_rxd", mt7629_uart1_0_txd_rxd),
-> +       PINCTRL_PIN_GROUP("uart1_1_txd_rxd", mt7629_uart1_1_txd_rxd),
-> +       PINCTRL_PIN_GROUP("uart2_0_txd_rxd", mt7629_uart2_0_txd_rxd),
-> +       PINCTRL_PIN_GROUP("uart2_1_txd_rxd", mt7629_uart2_1_txd_rxd),
-> +       PINCTRL_PIN_GROUP("uart1_0_cts_rts", mt7629_uart1_0_cts_rts),
-> +       PINCTRL_PIN_GROUP("uart1_1_cts_rts", mt7629_uart1_1_cts_rts),
-> +       PINCTRL_PIN_GROUP("uart2_0_cts_rts", mt7629_uart2_0_cts_rts),
-> +       PINCTRL_PIN_GROUP("uart2_1_cts_rts", mt7629_uart2_1_cts_rts),
-> +       PINCTRL_PIN_GROUP("uart0_txd_rxd", mt7629_uart0_txd_rxd),
-> +       PINCTRL_PIN_GROUP("mdc_mdio", mt7629_mdc_mdio),
-> +       PINCTRL_PIN_GROUP("pcie_pereset", mt7629_pcie_pereset),
-> +       PINCTRL_PIN_GROUP("pcie_wake", mt7629_pcie_wake),
-> +       PINCTRL_PIN_GROUP("pcie_clkreq", mt7629_pcie_clkreq),
-> +       PINCTRL_PIN_GROUP("pwm_0", mt7629_pwm_0),
-> +       PINCTRL_PIN_GROUP("pwm_1", mt7629_pwm_1),
-> +       PINCTRL_PIN_GROUP("wf0_5g", mt7629_wf0_5g),
-> +       PINCTRL_PIN_GROUP("wf0_2g", mt7629_wf0_2g),
-> +       PINCTRL_PIN_GROUP("snfi", mt7629_snfi),
-> +       PINCTRL_PIN_GROUP("spi_nor", mt7629_snor),
-> +};
-> +
-> +/* Joint those groups owning the same capability in user point of view which
-> + * allows that people tend to use through the device tree.
-> + */
-> +static const char *mt7629_ethernet_groups[] = { "mdc_mdio", };
-> +static const char *mt7629_i2c_groups[] = { "i2c_0", "i2c_1", };
-> +static const char *mt7629_led_groups[] = { "ephy_leds", "ephy_led0",
-> +                                          "ephy_led1", "ephy_led2",
-> +                                          "ephy_led3", "ephy_led4",
-> +                                          "wf2g_led", "wf5g_led",
-> +                                          "gphy_leds_0", "gphy_led1_0",
-> +                                          "gphy_led2_0", "gphy_led3_0",
-> +                                          "gphy_leds_1", "gphy_led1_1",
-> +                                          "gphy_led2_1", "gphy_led3_1",};
-> +static const char *mt7629_pcie_groups[] = { "pcie_pereset", "pcie_wake",
-> +                                           "pcie_clkreq", };
-> +static const char *mt7629_pwm_groups[] = { "pwm_0", "pwm_1", };
-> +static const char *mt7629_spi_groups[] = { "spi_0", "spi_1", "spi_wp",
-> +                                          "spi_hold", };
-> +static const char *mt7629_uart_groups[] = { "uart1_0_txd_rxd",
-> +                                           "uart1_1_txd_rxd",
-> +                                           "uart2_0_txd_rxd",
-> +                                           "uart2_1_txd_rxd",
-> +                                           "uart1_0_cts_rts",
-> +                                           "uart1_1_cts_rts",
-> +                                           "uart2_0_cts_rts",
-> +                                           "uart2_1_cts_rts",
-> +                                           "uart0_txd_rxd", };
-> +static const char *mt7629_wdt_groups[] = { "watchdog", };
-> +static const char *mt7629_wifi_groups[] = { "wf0_5g", "wf0_2g", };
-> +static const char *mt7629_flash_groups[] = { "snfi", "spi_nor" };
-> +
-> +static const struct function_desc mt7629_functions[] = {
-> +       {"eth", mt7629_ethernet_groups, ARRAY_SIZE(mt7629_ethernet_groups)},
-> +       {"i2c", mt7629_i2c_groups, ARRAY_SIZE(mt7629_i2c_groups)},
-> +       {"led", mt7629_led_groups, ARRAY_SIZE(mt7629_led_groups)},
-> +       {"pcie", mt7629_pcie_groups, ARRAY_SIZE(mt7629_pcie_groups)},
-> +       {"pwm", mt7629_pwm_groups, ARRAY_SIZE(mt7629_pwm_groups)},
-> +       {"spi", mt7629_spi_groups, ARRAY_SIZE(mt7629_spi_groups)},
-> +       {"uart", mt7629_uart_groups, ARRAY_SIZE(mt7629_uart_groups)},
-> +       {"watchdog", mt7629_wdt_groups, ARRAY_SIZE(mt7629_wdt_groups)},
-> +       {"wifi", mt7629_wifi_groups, ARRAY_SIZE(mt7629_wifi_groups)},
-> +       {"flash", mt7629_flash_groups, ARRAY_SIZE(mt7629_flash_groups)},
-> +};
-> +
-> +static const struct mtk_eint_hw mt7629_eint_hw = {
-> +       .port_mask = 7,
-> +       .ports     = 7,
-> +       .ap_num    = ARRAY_SIZE(mt7629_pins),
-> +       .db_cnt    = 16,
-> +};
-> +
-> +static struct mtk_pin_soc mt7629_data = {
-> +       .reg_cal = mt7629_reg_cals,
-> +       .pins = mt7629_pins,
-> +       .npins = ARRAY_SIZE(mt7629_pins),
-> +       .grps = mt7629_groups,
-> +       .ngrps = ARRAY_SIZE(mt7629_groups),
-> +       .funcs = mt7629_functions,
-> +       .nfuncs = ARRAY_SIZE(mt7629_functions),
-> +       .eint_hw = &mt7629_eint_hw,
-> +       .gpio_m = 0,
-> +       .ies_present = true,
-> +       .base_names = mtk_default_register_base_names,
-> +       .nbase_names = ARRAY_SIZE(mtk_default_register_base_names),
-> +       .bias_disable_set = mtk_pinconf_bias_disable_set_rev1,
-> +       .bias_disable_get = mtk_pinconf_bias_disable_get_rev1,
-> +       .bias_set = mtk_pinconf_bias_set_rev1,
-> +       .bias_get = mtk_pinconf_bias_get_rev1,
-> +       .drive_set = mtk_pinconf_drive_set_rev1,
-> +       .drive_get = mtk_pinconf_drive_get_rev1,
-> +};
-> +
-> +static const struct of_device_id mt7629_pinctrl_of_match[] = {
-> +       { .compatible = "mediatek,mt7629-pinctrl", },
-> +       {}
-> +};
-> +
-> +static int mt7629_pinctrl_probe(struct platform_device *pdev)
-> +{
-> +       return mtk_moore_pinctrl_probe(pdev, &mt7629_data);
-> +}
-> +
-> +static struct platform_driver mt7629_pinctrl_driver = {
-> +       .driver = {
-> +               .name = "mt7629-pinctrl",
-> +               .of_match_table = mt7629_pinctrl_of_match,
-> +       },
-> +       .probe = mt7629_pinctrl_probe,
-> +};
-> +
-> +static int __init mt7629_pinctrl_init(void)
-> +{
-> +       return platform_driver_register(&mt7629_pinctrl_driver);
-> +}
-> +arch_initcall(mt7629_pinctrl_init);
-> --
-> 1.9.1
->
+> 							Pavel
+
+Lubo								
+
