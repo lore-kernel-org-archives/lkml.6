@@ -2,127 +2,113 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3EA29C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:06:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 42ACEC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:06:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0708821582
+	by mail.kernel.org (Postfix) with ESMTP id 0971C21582
 	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 19:06:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mGrQbhuC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0708821582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iacsgEmH"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0971C21582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388427AbeKPFPB (ORCPT
+        id S2388822AbeKPFPC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 00:15:01 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:59950 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725742AbeKPFPA (ORCPT
+        Fri, 16 Nov 2018 00:15:02 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:33468 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725742AbeKPFPC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 00:15:00 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        MIME-Version:References:In-Reply-To:Message-Id:Date:Subject:Cc:To:From:Sender
-        :Reply-To:Content-Type:Content-ID:Content-Description:Resent-Date:Resent-From
-        :Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=IylCCNV0aDkueSo9V0FfpQRG6hvw8k3aFkjN7Oh7FrU=; b=mGrQbhuCTitVob/QGO1MHKIOOr
-        U7W9l473uZ8mtVrZKaOQWm9ayIlBziRDLQBddqrUsn8CjAR9bPy1LW8ktfv6w1jfjgCqKEt6tDFzq
-        b7lV2vZuKdk4L41Jt6RBIOr4JvsBU6xGFtUNvdC6z5HsM2dVEuuk2yF78wy7bAlL8xB1lthRQld1k
-        ZIXfGu0qNIJw9YAc5YMaNCDdCVHA4uu6YUj3hLC1xY2LcFkRKvpE6mkKTRkDMl1ArZF1lS1nx8L2U
-        yySGpV4JJ7mmEjdXuYhNraI1eh3rAepOgyxY1FPrtJ5vC/mtKEJZ0JKh3tKb7CNSLmWE7tG5Da4lF
-        +iB4IDxg==;
-Received: from 089144211136.atnat0020.highway.a1.net ([89.144.211.136] helo=localhost)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNMxe-0005vy-QY; Thu, 15 Nov 2018 19:05:55 +0000
-From:   Christoph Hellwig <hch@lst.de>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     Matt Porter <mporter@kernel.crashing.org>,
-        Alexandre Bounine <alex.bou9@gmail.com>,
-        Dominik Brodowski <linux@dominikbrodowski.net>,
-        linux-kbuild@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-pci@vger.kernel.org, linux-arch@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        linux-alpha@vger.kernel.org, linux-mips@linux-mips.org
-Subject: [PATCH 3/9] MIPS: remove the HT_PCI config option
-Date:   Thu, 15 Nov 2018 20:05:31 +0100
-Message-Id: <20181115190538.17016-4-hch@lst.de>
-X-Mailer: git-send-email 2.19.1
-In-Reply-To: <20181115190538.17016-1-hch@lst.de>
-References: <20181115190538.17016-1-hch@lst.de>
+        Fri, 16 Nov 2018 00:15:02 -0500
+Received: by mail-pf1-f194.google.com with SMTP id v68-v6so10149711pfk.0
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 11:06:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5EWbEROrU0zaWW7UOv3ESx84BUVxAc0dB7SceFTrffA=;
+        b=iacsgEmHICoq37kGEMWGdXKcjHOClmixHpMd+CbdBwmA9rxnDp4Xtl2rLj7/GF9Lim
+         xaG5Cag3bpYrVC7MhEwyrgFwFqnMwuvQ6Z4FM7ZqAL3kBky1d3pTPAzltHMpnUE6gft4
+         ih53FYYxt3lFZ23ZzyxPFCTfvK8Cel9lvWAuY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5EWbEROrU0zaWW7UOv3ESx84BUVxAc0dB7SceFTrffA=;
+        b=JWoOz4kI/lRzbGHrcwkcaHFsRf0CO1vTgq91Ja8CUZiWbYc2ePAwKEW+cXBTt0JnJf
+         fQFzEO7V3P6z+ZW3rchetrBcZUKT3IwoeHrLvLTvdb+klrZ3x4GmdRQzquVVUUTi90Lq
+         FcRk1QX+m2Fp6rxzuD9YiObrd3jRbB3CCbCSX1X7nYL5h0Gi74wKP4S7EYud+4V9Dtm+
+         82N9UBaF/BZTkBaJCAHc/W2sgdC7e1xYT38qcJFPNfTox9VAm9V2cCSihSHNuNaRvasQ
+         MQxu6/ktWiTQUhGnvF28avBDdCaaeC48Wu8Xq2pzkYkWmNgOcT8l6MY42MoxfPT/qCLA
+         4VeA==
+X-Gm-Message-State: AGRZ1gIXsjaoGb8zoXdN2sExGM+floVvyfESYRUt4/YySZ43uUj1uOCB
+        i4xgqezp3csVTJY96K4ObgPbzw==
+X-Google-Smtp-Source: AJdET5cQguhSaGWG3ddMXpMSvS6ZyCnKpd43GpU3c6IUOBQXM87a1JGkJjEZeiH5UlLXuGEELZlrKA==
+X-Received: by 2002:aa7:86d3:: with SMTP id h19-v6mr7608122pfo.225.1542308761003;
+        Thu, 15 Nov 2018 11:06:01 -0800 (PST)
+Received: from localhost ([64.114.255.97])
+        by smtp.gmail.com with ESMTPSA id b5-v6sm35539284pfe.60.2018.11.15.11.06.00
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 11:06:00 -0800 (PST)
+Date:   Thu, 15 Nov 2018 11:05:59 -0800
+From:   Andy Gross <andy.gross@linaro.org>
+To:     Jeffrey Hugo <jhugo@codeaurora.org>
+Cc:     david.brown@linaro.org, bjorn.andersson@linaro.org,
+        robh+dt@kernel.org, mark.rutland@arm.com,
+        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 4/4] arm64: dts: qcom: msm8998-mtp: Add external SD
+Message-ID: <20181115190559.GA17484@hector>
+References: <1542302291-6864-1-git-send-email-jhugo@codeaurora.org>
+ <1542302291-6864-5-git-send-email-jhugo@codeaurora.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542302291-6864-5-git-send-email-jhugo@codeaurora.org>
+User-Agent: Mutt/1.5.23.1 (2014-03-12)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This option is always selected from LOONGSON_MACH3X.  Switch to just
-seleting PCI from that option and definining LOONGSON_PCIIO_BASE based
-on CONFIG_LOONGSON_MACH3X.
+On Thu, Nov 15, 2018 at 10:18:11AM -0700, Jeffrey Hugo wrote:
+> The externally accessible SD card slot on the MTP is driven by SDCC2.
+> Wire it up for use.
+> 
+> Signed-off-by: Jeffrey Hugo <jhugo@codeaurora.org>
+> ---
+>  arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi | 13 +++++++++++++
+>  arch/arm64/boot/dts/qcom/msm8998.dtsi     |  1 +
+>  2 files changed, 14 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> index b4276da..a90b427 100644
+> --- a/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/msm8998-mtp.dtsi
+> @@ -241,3 +241,16 @@
+>  		};
+>  	};
+>  };
+> +
+> +&sdhc2 {
+> +	status = "okay";
+> +        cd-gpios = <&tlmm 95 GPIO_ACTIVE_LOW>;
+> +
+> +        vmmc-supply = <&vreg_l21a_2p95>;
+> +        vqmmc-supply = <&vreg_l13a_2p95>;
+> +
+> +        pinctrl-names = "default", "sleep";
+> +        pinctrl-0 = <&sdc2_clk_on  &sdc2_cmd_on  &sdc2_data_on  &sdc2_cd_on>;
+> +        pinctrl-1 = <&sdc2_clk_off &sdc2_cmd_off &sdc2_data_off &sdc2_cd_off>;
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/mips/Kconfig                                | 11 -----------
- arch/mips/include/asm/mach-loongson64/loongson.h |  2 +-
- arch/mips/loongson64/Kconfig                     |  2 +-
- 3 files changed, 2 insertions(+), 13 deletions(-)
+Fix to use tabs instead of spaces.
 
-diff --git a/arch/mips/Kconfig b/arch/mips/Kconfig
-index 8272ea4c7264..7d28c9dd75d0 100644
---- a/arch/mips/Kconfig
-+++ b/arch/mips/Kconfig
-@@ -3040,17 +3040,6 @@ config PCI
- 	  your box. Other bus systems are ISA, EISA, or VESA. If you have PCI,
- 	  say Y, otherwise N.
- 
--config HT_PCI
--	bool "Support for HT-linked PCI"
--	default y
--	depends on CPU_LOONGSON3
--	select PCI
--	select PCI_DOMAINS
--	help
--	  Loongson family machines use Hyper-Transport bus for inter-core
--	  connection and device connection. The PCI bus is a subordinate
--	  linked at HT. Choose Y for Loongson-3 based machines.
--
- config PCI_DOMAINS
- 	bool
- 
-diff --git a/arch/mips/include/asm/mach-loongson64/loongson.h b/arch/mips/include/asm/mach-loongson64/loongson.h
-index d0ae5d55413b..b6870fec0f99 100644
---- a/arch/mips/include/asm/mach-loongson64/loongson.h
-+++ b/arch/mips/include/asm/mach-loongson64/loongson.h
-@@ -113,7 +113,7 @@ static inline void do_perfcnt_IRQ(void)
- #define LOONGSON_PCICFG_SIZE	0x00000800	/* 2K */
- #define LOONGSON_PCICFG_TOP	(LOONGSON_PCICFG_BASE+LOONGSON_PCICFG_SIZE-1)
- 
--#if defined(CONFIG_HT_PCI)
-+#ifdef CONFIG_CPU_LOONGSON3
- #define LOONGSON_PCIIO_BASE	loongson_sysconf.pci_io_base
- #else
- #define LOONGSON_PCIIO_BASE	0x1fd00000
-diff --git a/arch/mips/loongson64/Kconfig b/arch/mips/loongson64/Kconfig
-index c865b4b9b775..781a5156ab21 100644
---- a/arch/mips/loongson64/Kconfig
-+++ b/arch/mips/loongson64/Kconfig
-@@ -76,7 +76,7 @@ config LOONGSON_MACH3X
- 	select CPU_HAS_WB
- 	select HW_HAS_PCI
- 	select ISA
--	select HT_PCI
-+	select PCI
- 	select I8259
- 	select IRQ_MIPS_CPU
- 	select NR_CPUS_DEFAULT_4
--- 
-2.19.1
 
+Regards,
+Andy
