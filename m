@@ -4,61 +4,60 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 575E3C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:06:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0F7C9C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:07:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1C61F22511
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:06:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C348422419
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 10:07:14 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j0PVt956"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1C61F22511
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FcUHwk/i"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C348422419
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387692AbeKOUNx (ORCPT
+        id S2387814AbeKOUOW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 15:13:53 -0500
-Received: from mail-lf1-f66.google.com ([209.85.167.66]:34600 "EHLO
-        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729104AbeKOUNx (ORCPT
+        Thu, 15 Nov 2018 15:14:22 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:42077 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1731710AbeKOUOW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 15:13:53 -0500
-Received: by mail-lf1-f66.google.com with SMTP id p6so13723949lfc.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 02:06:43 -0800 (PST)
+        Thu, 15 Nov 2018 15:14:22 -0500
+Received: by mail-lf1-f68.google.com with SMTP id l10so10108134lfh.9
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 02:07:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=e9xmuD29golhRbMzZC1OkEZTzZxnb+j9vpQuo3mwuWM=;
-        b=j0PVt956gXPXEAICuMY/qFKZt/1deiJxcydV2B58zufHMdyqv+pOwc7/OhpqzrilcK
-         sGFzCgas1RDG+Y2DWBOEnBwftqIMi0iyJRrjY225CmTmzs1T25TONTkPsHzcLHp2/7CI
-         85Jc1R1zmBj0nVV0bP5JyhDMmJZwVyfMv7zfA=
+        bh=dxzd5MBZH9zzK+XKhursnZ1G2JQb3P8B2Gj/36JGOYg=;
+        b=FcUHwk/iIRfQCTRSkOa+F++/PkHIN4Q3g3GrJ6QjcOfJRm0P/x8Vn/Drnl7vPIx5oz
+         OBGRhdUObQklOfWRd733LMyKQJVoxO9u5hyXoKd/ToI1A74IFj7LqecDTXUv1yAG1x3C
+         bowrNFiJak6lDtbJyagS7d44gN0HNBipS8IIY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=e9xmuD29golhRbMzZC1OkEZTzZxnb+j9vpQuo3mwuWM=;
-        b=qj09LmG/Lsfjyj+VZVi+SyYpOiIFIWuvRA9Fq5a7pE1SqznCL5w1X6ZaLiIiYmQYde
-         x2U+ZUzYoj6B+TalOv0bMa9RY5xcq1ENcon8oPJKT0zUmTs3jNiPj7+OHTb2q9y2ys/k
-         yWvinqodpgoSqhvqvjsYkS7Zwk+wv3YxGpSrRxHwieG8ddK/wiFj8VwbuubbCstPirBk
-         rI1YjgMrX1smDR2jkZOJ9xdt7hOEZLBuFeqrab5vw3+gzrs4IbOz4B/whoa6hvBqo5fq
-         PC6zl8y5Yu5jtY0CdPqhbADDoWiHInhtwig94jYuQO62xbWjh/pgYYJPKdbBIdmX5pJG
-         qsaQ==
-X-Gm-Message-State: AGRZ1gJ/MRGu5+69mq/tUTGxpoSefkwBg3BTPRudINqOHe2Aa40H/rYg
-        75RMBYhAqHzL+DtcNXBAxeIQto4yym6XkYJw37g0Dy+Wmsw=
-X-Google-Smtp-Source: AJdET5diWcql3sbmVXUYXSGTxnDNOBauhiz8knyC8bgLJj/at7ZO4jfozURFNNCfrXyTVKXjISFGbU0gUa/6ZORnmQA=
-X-Received: by 2002:a19:5154:: with SMTP id f81mr3223929lfb.96.1542276402376;
- Thu, 15 Nov 2018 02:06:42 -0800 (PST)
+        bh=dxzd5MBZH9zzK+XKhursnZ1G2JQb3P8B2Gj/36JGOYg=;
+        b=Rn1kE9xpRFxbRCL3EmDKmWcyfxdYGO3nfZZcTdFoUpxWVgmRi/TEvUWx1rx7qA/n1y
+         Z5OasW9MaDgLDzXOsicS4Wmh+77FwXpnN5Uf0DWvz6eP/npI5PTe0Ia/Dpk3xmDuvMxs
+         Sl8PwC2NUgTF7fm2eudfIvqkM7wlJn9ZWHkLzpqvA1B51WMazj6EQRmMKrC1A7XikGaa
+         V+uZiCy7EKDtEx1D4Fx58z+OxlFIrD80R54BUP4AELQOKqQE5pmt6t3+gu/XeOw9tJRT
+         uL7HsufP9IO980gmIFo/wrqQGk+eCpvJqjMTihsJRZ72KZeR9aytfDkkmivxBmtXVn8m
+         F3dQ==
+X-Gm-Message-State: AGRZ1gKO+7/cgb2+K11ZcI8yxjciij74QPGN2K5VG31dmDFnPyTsPVZk
+        yZ7+aeO77RYiQdC57NLskMzV15nDTptbixnqeLrgVw==
+X-Google-Smtp-Source: AJdET5cn0FAntD2uVapUYoXNwfwOgArbRaztzmgsKfkOQT+nK1+WE1g8e4YdBB+lgek2cI5q0cJvr7C7cNnm5qkUzM8=
+X-Received: by 2002:a19:f813:: with SMTP id a19mr2959523lff.67.1542276430843;
+ Thu, 15 Nov 2018 02:07:10 -0800 (PST)
 MIME-Version: 1.0
-References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org> <20181107174844.5381-5-manivannan.sadhasivam@linaro.org>
-In-Reply-To: <20181107174844.5381-5-manivannan.sadhasivam@linaro.org>
+References: <20181107174844.5381-1-manivannan.sadhasivam@linaro.org> <20181107174844.5381-3-manivannan.sadhasivam@linaro.org>
+In-Reply-To: <20181107174844.5381-3-manivannan.sadhasivam@linaro.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Thu, 15 Nov 2018 11:06:27 +0100
-Message-ID: <CACRpkdbk+KHtt2q=i5kUYOtPCmq4PsnhBxnC=2iSVVLg5ekL7g@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] pinctrl: mediatek: Add initial pinctrl driver for
- MT6797 SoC
+Date:   Thu, 15 Nov 2018 11:06:58 +0100
+Message-ID: <CACRpkdY=YF8q=1wYigLH83LLHsGdTO_VEpAP=oj8ojqbmLKQNA@mail.gmail.com>
+Subject: Re: [PATCH v3 2/4] arm64: dts: mediatek: mt6797: Add pinctrl support
 To:     Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 Cc:     sean.wang@kernel.org, Matthias Brugger <matthias.bgg@gmail.com>,
         Rob Herring <robh+dt@kernel.org>,
@@ -77,16 +76,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 On Wed, Nov 7, 2018 at 6:49 PM Manivannan Sadhasivam
 <manivannan.sadhasivam@linaro.org> wrote:
 
-> Add initial pinctrl driver for Mediatek MT6797 SoC supporting only
-> GPIO and pinmux configurations.
+> Add pinctrl support for Mediatek MT6797 SoC.
 >
-> Tested-by: Matthias Brugger <matthias.bgg@gmail.com>
-> Acked-by: Sean Wang <sean.wang@kernel.org>
 > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
 
-Patch applied!
-
-Thanks for fixing this driver.
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
