@@ -2,101 +2,115 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-11.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 632D9C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:29:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3FB8EC43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:29:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 28C1D21582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:29:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 06F38223DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 08:29:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="1XUlQo/x"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 28C1D21582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EjIOaYz2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 06F38223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387531AbeKOSgO (ORCPT
+        id S2387594AbeKOSg3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 13:36:14 -0500
-Received: from conuserg-08.nifty.com ([210.131.2.75]:52245 "EHLO
-        conuserg-08.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728519AbeKOSgO (ORCPT
+        Thu, 15 Nov 2018 13:36:29 -0500
+Received: from mail-lj1-f193.google.com ([209.85.208.193]:40488 "EHLO
+        mail-lj1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728673AbeKOSg3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 13:36:14 -0500
-Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-08.nifty.com with ESMTP id wAF8RHoY022794;
-        Thu, 15 Nov 2018 17:27:19 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-08.nifty.com wAF8RHoY022794
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542270440;
-        bh=LcE9BN1a5DuG2wOq3e8fyNB+oCKI7v/kfDfDv2Oxnmo=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=1XUlQo/x0kZUUITUMIjno5BW8ae7vqNHV9Bv9MuK8KG7e50dk2WjCjcqs/DGwB77y
-         u8yft67gs28JseS9C/W+YOcE/wfDzJK1jtMlc34eI+G0ouT9T44xkwlLNl4OBdlxtH
-         CxlSI60Ndwk+e30xH1KvdyolSfjAY4+z/pyDA6uOSmQeLpM+mzARIrX30BKzyVOOsv
-         U2/lQJbGfTzGMEs5cYRSebYsKWZZM4IWOHGEI1g2jGiZ7bpBsw7Fv2vvIirR/JHXlM
-         YlXTleUBQdAesuembsyN6N9xI9tjEo8Wfao8r0t0vxjkGgc4X+vAOkBlyW5ZnZXZ6k
-         Cus/pGpNxCD/g==
-X-Nifty-SrcIP: [153.142.97.92]
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-To:     linux-kbuild@vger.kernel.org
-Cc:     Sam Ravnborg <sam@ravnborg.org>,
-        Nicolas Pitre <nicolas.pitre@linaro.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        linux-um@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Michal Marek <michal.lkml@markovi.net>,
-        Richard Weinberger <richard@nod.at>,
-        Jeff Dike <jdike@addtoit.com>
-Subject: [PATCH 1/8] kbuild: remove redundant 'set -e' from filechk_* defines
-Date:   Thu, 15 Nov 2018 17:27:08 +0900
-Message-Id: <1542270435-11181-2-git-send-email-yamada.masahiro@socionext.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542270435-11181-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1542270435-11181-1-git-send-email-yamada.masahiro@socionext.com>
+        Thu, 15 Nov 2018 13:36:29 -0500
+Received: by mail-lj1-f193.google.com with SMTP id t22-v6so16521612lji.7
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 00:29:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:from:date:message-id:subject:to:cc;
+        bh=o6SjfnH23J9O8Igrs5F2hSC8HGUAb0eNoJfNBzzOvh0=;
+        b=EjIOaYz2X0wj2m3lg4daqdw4znyLG680Tab+cHXPH7r9Ap0T/B30xQ18Bck0Cwe9mb
+         LEQlGaQzP/Vsny+62KaeQT9UhID2jMGjR9gXujRXkcvU4JtXSpG6idp3Y1PKhp4vpn/q
+         hS511N33PpVS70buy3n7cgvK7fLsvCPQUDzhU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=o6SjfnH23J9O8Igrs5F2hSC8HGUAb0eNoJfNBzzOvh0=;
+        b=eer8btD9C8aoE7/mPgIKUOwAgz6f+P005PMCvmHwuYdYvrh6yCaEGbFQ9nCcOU3qGx
+         UaZO+Ms8J5u8l8UfC2FShv0kruTk7DogGO2l4dFsQvD5eAmrcDyZOoLSYBENbjjwVJcc
+         AmjCAIZcXqGsuS6S6wMzzYdJf/2I0+Td+phPm6ZAIpaAEDvCBeKoXT4maY75uP60Pivo
+         mOGUsTxIC7XFHZAnnu+f4fIkPrKQUP71tXUOSaWjOfOtl0NVkJz4T0u1zhUjBLxxn7JC
+         ITRmjib1gDSo61ATH9r7PgNAgVqWqO2C93ry5uKyzX+ZHrpJ5FfUGnrJRMB3lhpDSOlw
+         3lKQ==
+X-Gm-Message-State: AGRZ1gIPRnaAzcWXMCEMQ+1HBUCKSFyK/qOarL4EwMWEREdF3NHxki/1
+        gV8RWilU8o9VgaFq7gtTjFqFWYhp61UlqHWXn753wowWbEQ/Ww==
+X-Google-Smtp-Source: AJdET5f/TiovzhaPe7BIrotK21ZwZisxkhC5Zbk40ME8UVceYJGU9hWM04ZaN8Ch1/bEX5oi1emIfaEFiukIgOTKr/w=
+X-Received: by 2002:a2e:710a:: with SMTP id m10-v6mr457219ljc.66.1542270577252;
+ Thu, 15 Nov 2018 00:29:37 -0800 (PST)
+MIME-Version: 1.0
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Thu, 15 Nov 2018 09:29:25 +0100
+Message-ID: <CACRpkdYht47bTGK_LSy9xqXAJ4axdarC0zqRoKpR4zOwjG-qRQ@mail.gmail.com>
+Subject: [GIT PULL] pin control fixes for v4.20
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The filechk macro in scripts/Kbuild.include already sets 'set -e'.
+Hi Linus,
 
-Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
----
+here are some few pin control fixes for v4.20. Just meson
+(a very specific hardware) and establishing a git repo for
+Intel pin control.
 
- arch/um/Makefile     | 2 +-
- scripts/Makefile.lib | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Please pull it in!
 
-diff --git a/arch/um/Makefile b/arch/um/Makefile
-index ab1066c..71ff3d0 100644
---- a/arch/um/Makefile
-+++ b/arch/um/Makefile
-@@ -152,7 +152,7 @@ $(HOST_DIR)/um/user-offsets.s: __headers FORCE
- 	$(Q)$(MAKE) $(build)=$(HOST_DIR)/um $@
- 
- define filechk_gen-asm-offsets
--        (set -e; \
-+        ( \
-          echo "/*"; \
-          echo " * DO NOT MODIFY."; \
-          echo " *"; \
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 8fe4468..ae3ae97 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -406,7 +406,7 @@ endef
- # Use filechk to avoid rebuilds when a header changes, but the resulting file
- # does not
- define filechk_offsets
--	(set -e; \
-+	( \
- 	 echo "#ifndef $2"; \
- 	 echo "#define $2"; \
- 	 echo "/*"; \
--- 
-2.7.4
+Yours,
+Linus Walleij
 
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/linusw/linux-pinctrl.git
+tags/pinctrl-v4.20-2
+
+for you to fetch changes up to 595b0674ce781e38522097b18718ce3c3bffc1a1:
+
+  MAINTAINERS: Add tree link for Intel pin control driver (2018-11-09
+11:36:51 +0100)
+
+----------------------------------------------------------------
+Pin control fixes for the v4.20 series:
+
+- A bunch of meson fixes for this (Allwinner) platform.
+
+- Establish a git repo for Intel pin control in MAINTAINERS.
+
+----------------------------------------------------------------
+Andy Shevchenko (1):
+      MAINTAINERS: Add tree link for Intel pin control driver
+
+Jerome Brunet (5):
+      pinctrl: meson: fix pinconf bias disable
+      pinctrl: meson: fix gxbb ao pull register bits
+      pinctrl: meson: fix gxl ao pull register bits
+      pinctrl: meson: fix meson8 ao pull register bits
+      pinctrl: meson: fix meson8b ao pull register bits
+
+ MAINTAINERS                                | 1 +
+ drivers/pinctrl/meson/pinctrl-meson-gxbb.c | 2 +-
+ drivers/pinctrl/meson/pinctrl-meson-gxl.c  | 2 +-
+ drivers/pinctrl/meson/pinctrl-meson.c      | 2 +-
+ drivers/pinctrl/meson/pinctrl-meson8.c     | 2 +-
+ drivers/pinctrl/meson/pinctrl-meson8b.c    | 2 +-
+ 6 files changed, 6 insertions(+), 5 deletions(-)
