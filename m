@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C600BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:53:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60D86C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:53:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 842E82087E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:53:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1885B21582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:53:40 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="j2R2QQRz"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 842E82087E
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CE5vd3yn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1885B21582
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729046AbeKOQAA (ORCPT
+        id S1729072AbeKOQAD (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 11:00:00 -0500
-Received: from mail-yw1-f66.google.com ([209.85.161.66]:42372 "EHLO
-        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726943AbeKOP77 (ORCPT
+        Thu, 15 Nov 2018 11:00:03 -0500
+Received: from mail-yw1-f68.google.com ([209.85.161.68]:43238 "EHLO
+        mail-yw1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726943AbeKOQAC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 10:59:59 -0500
-Received: by mail-yw1-f66.google.com with SMTP id x2so1844713ywc.9
-        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 21:53:33 -0800 (PST)
+        Thu, 15 Nov 2018 11:00:02 -0500
+Received: by mail-yw1-f68.google.com with SMTP id l200so2683195ywe.10
+        for <linux-kernel@vger.kernel.org>; Wed, 14 Nov 2018 21:53:36 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=M0hbeCh1UKPHriGwoJtqoIhFiJS4pqBvteNzMpOOqEM=;
-        b=j2R2QQRzTmCm/H2I7k4eBK4g/dz0MuUN8Tu6rMbhngctlQhlCchBaEqc//rA6ZgW5p
-         6LvDiN/tCVGaLrs/lHTim7I4nTw6D2cmaOYnxEiqHPdW2l21rr795UQx4wEFBdW/3Ypj
-         Xcq/MCZFRBF3DdYdwMiY3mH9hkdcbyiqO1ve0=
+        bh=ZdHE4nfr8T5Hxvr10M0CzI0OedYEfMU03IOSvEtlq5c=;
+        b=CE5vd3ynonGHBkYw/svmJseji3AdkYx2PTsO7N8kj5DlWdgSooK8h+NeNDDgdH+woQ
+         C+judgaQy+d5cOZH/xop4WnRz9+V6OO3FQT4orsCkiBFHZVpY/tBrqK5rWRHvyRIE+47
+         WiBnGGR2zA9bYIgBxZaZ17TJKE47FK6i5+vfc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=M0hbeCh1UKPHriGwoJtqoIhFiJS4pqBvteNzMpOOqEM=;
-        b=WWly00ZKDO3FVJb6aOW5CKWvhVEY2/9ssO/IvaR2/yfFcyUb5qFduLEezKOX7/J8pj
-         P5ezW+6aEKl6OcH+cr+hZkMe7GqrqfBX6JDZD2D/RFIyo8afZFfTuenf1Zk1H887RtDf
-         zfKfWaPmfyaWmX9u/DfIEBictqnx5econuYDJVvhywhhqcRW4t8Pv0Eo/xN1soaR2MXy
-         WVV7CKC6aiQu94N16jjh/qNB7BsRNeY9iLSblqk7jVUlD/qSuEYNR9wOobNFgjVkBLS3
-         SsFcpDotKl3I5v9wLQbltCh1AAqTDBrU8yz8f8J0VBWKJGMYxPjYSQnaF1+XqHTHGXrG
-         DwiA==
-X-Gm-Message-State: AGRZ1gLZGR31jX6HLQKp4AHwXfbBoMHId/DWPsbvUCpFkuZ8ErmBqmZZ
-        G8i2LDQomNAnZmR88OgdQ9yE5w==
-X-Google-Smtp-Source: AJdET5eGx2+rsQ/bswzrm571J/0BF4boo0YGryTyL1xF/XR16/BI1q0LzxGrgbLsNTLOnZ5dDytXTQ==
-X-Received: by 2002:a81:7897:: with SMTP id t145-v6mr4653791ywc.466.1542261212771;
-        Wed, 14 Nov 2018 21:53:32 -0800 (PST)
+        bh=ZdHE4nfr8T5Hxvr10M0CzI0OedYEfMU03IOSvEtlq5c=;
+        b=VhMysMTlsjpX8AiwBmcSH0tCS6dzOfnMg8WZ938cV5m83uyppSpmcx7Lck4JFqXmbw
+         zRg5KaIAQuu7UrXi4H3weEOcHYdwI/M6QZ1Dq83Aasyu0m9nBh7W3WKEiAXY/2Z8G4pq
+         bqOytR8f+p51/p2j2jWPFwE8ZIfoTQg7X4Sxke2yMdWBj+NI4W8cDRhT5XtFjbsqKPKO
+         awc0667AlFILcdCBFsMkuUT5VjV3mD9NfF9tecuG5lQIdQ/ZwfVGYzC5QqCSTwXic9/t
+         wVshA4GImP/rwmyzYlP/KxwU6k1nEu7hb5FbPH0w4QNDHXMo0FlKrzpFK5CNfZjfczka
+         9QHg==
+X-Gm-Message-State: AGRZ1gJv31kPRwFQzYG5H0ixkjOvbR5qU2GqnsuVcOXhA2FJ7TKUkN2e
+        QTUTvF1+vdMX1rVxlXDdvFwGOg==
+X-Google-Smtp-Source: AJdET5fGpTZnl/mRIO/GS7hi+EtTXbFnciJHECh3J0lA3SDKmagGw0cKZSNn4mSnFwmudXhop2BEBQ==
+X-Received: by 2002:a0d:c683:: with SMTP id i125-v6mr4713864ywd.467.1542261216503;
+        Wed, 14 Nov 2018 21:53:36 -0800 (PST)
 Received: from linaro.org ([121.95.100.191])
-        by smtp.googlemail.com with ESMTPSA id s129-v6sm6769228ywc.41.2018.11.14.21.53.31
+        by smtp.googlemail.com with ESMTPSA id j65-v6sm6516907ywg.52.2018.11.14.21.53.35
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 14 Nov 2018 21:53:32 -0800 (PST)
+        Wed, 14 Nov 2018 21:53:36 -0800 (PST)
 From:   AKASHI Takahiro <takahiro.akashi@linaro.org>
 To:     catalin.marinas@arm.com, will.deacon@arm.com, dhowells@redhat.com,
         vgoyal@redhat.com, herbert@gondor.apana.org.au,
@@ -65,13 +65,10 @@ Cc:     prudo@linux.ibm.com, ard.biesheuvel@linaro.org,
         james.morse@arm.com, bhsharma@redhat.com,
         kexec@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
         linux-kernel@vger.kernel.org,
-        AKASHI Takahiro <takahiro.akashi@linaro.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Frank Rowand <frowand.list@gmail.com>,
-        devicetree@vger.kernel.org
-Subject: [PATCH v16 12/16] arm64: kexec_file: add crash dump support
-Date:   Thu, 15 Nov 2018 14:52:51 +0900
-Message-Id: <20181115055254.2812-13-takahiro.akashi@linaro.org>
+        AKASHI Takahiro <takahiro.akashi@linaro.org>
+Subject: [PATCH v16 13/16] arm64: kexec_file: invoke the kernel without purgatory
+Date:   Thu, 15 Nov 2018 14:52:52 +0900
+Message-Id: <20181115055254.2812-14-takahiro.akashi@linaro.org>
 X-Mailer: git-send-email 2.19.0
 In-Reply-To: <20181115055254.2812-1-takahiro.akashi@linaro.org>
 References: <20181115055254.2812-1-takahiro.akashi@linaro.org>
@@ -82,194 +79,88 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Enabling crash dump (kdump) includes
-* prepare contents of ELF header of a core dump file, /proc/vmcore,
-  using crash_prepare_elf64_headers(), and
-* add two device tree properties, "linux,usable-memory-range" and
-  "linux,elfcorehdr", which represent respectively a memory range
-  to be used by crash dump kernel and the header's location
+On arm64, purgatory would do almost nothing. So just invoke secondary
+kernel directly by jumping into its entry code.
+
+While, in this case, cpu_soft_restart() must be called with dtb address
+in the fifth argument, the behavior still stays compatible with kexec_load
+case as long as the argument is null.
 
 Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+Reviewed-by: James Morse <james.morse@arm.com>
 Cc: Catalin Marinas <catalin.marinas@arm.com>
 Cc: Will Deacon <will.deacon@arm.com>
-Reviewed-by: James Morse <james.morse@arm.com>
-Cc: Rob Herring <robh+dt@kernel.org>
-Cc: Frank Rowand <frowand.list@gmail.com>
-Cc: devicetree@vger.kernel.org
 ---
- arch/arm64/include/asm/kexec.h         |  4 ++
- arch/arm64/kernel/machine_kexec_file.c | 97 +++++++++++++++++++++++++-
- 2 files changed, 98 insertions(+), 3 deletions(-)
+ arch/arm64/kernel/cpu-reset.S       |  8 ++++----
+ arch/arm64/kernel/machine_kexec.c   | 12 ++++++++++--
+ arch/arm64/kernel/relocate_kernel.S |  3 ++-
+ 3 files changed, 16 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/include/asm/kexec.h b/arch/arm64/include/asm/kexec.h
-index 67e4cb75d1fd..660705515e33 100644
---- a/arch/arm64/include/asm/kexec.h
-+++ b/arch/arm64/include/asm/kexec.h
-@@ -99,6 +99,10 @@ static inline void crash_post_resume(void) {}
- struct kimage_arch {
- 	void *dtb;
- 	unsigned long dtb_mem;
-+	/* Core ELF header buffer */
-+	void *elf_headers;
-+	unsigned long elf_headers_mem;
-+	unsigned long elf_headers_sz;
- };
+diff --git a/arch/arm64/kernel/cpu-reset.S b/arch/arm64/kernel/cpu-reset.S
+index 8021b46c9743..a2be30275a73 100644
+--- a/arch/arm64/kernel/cpu-reset.S
++++ b/arch/arm64/kernel/cpu-reset.S
+@@ -22,11 +22,11 @@
+  * __cpu_soft_restart(el2_switch, entry, arg0, arg1, arg2) - Helper for
+  * cpu_soft_restart.
+  *
+- * @el2_switch: Flag to indicate a swich to EL2 is needed.
++ * @el2_switch: Flag to indicate a switch to EL2 is needed.
+  * @entry: Location to jump to for soft reset.
+- * arg0: First argument passed to @entry.
+- * arg1: Second argument passed to @entry.
+- * arg2: Third argument passed to @entry.
++ * arg0: First argument passed to @entry. (relocation list)
++ * arg1: Second argument passed to @entry.(physical kernel entry)
++ * arg2: Third argument passed to @entry. (physical dtb address)
+  *
+  * Put the CPU into the same state as it would be if it had been reset, and
+  * branch to what would be the reset vector. It must be executed with the
+diff --git a/arch/arm64/kernel/machine_kexec.c b/arch/arm64/kernel/machine_kexec.c
+index 922add8adb74..aa9c94113700 100644
+--- a/arch/arm64/kernel/machine_kexec.c
++++ b/arch/arm64/kernel/machine_kexec.c
+@@ -212,9 +212,17 @@ void machine_kexec(struct kimage *kimage)
+ 	 * uses physical addressing to relocate the new image to its final
+ 	 * position and transfers control to the image entry point when the
+ 	 * relocation is complete.
++	 * In kexec case, kimage->start points to purgatory assuming that
++	 * kernel entry and dtb address are embedded in purgatory by
++	 * userspace (kexec-tools).
++	 * In kexec_file case, the kernel starts directly without purgatory.
+ 	 */
+-
+-	cpu_soft_restart(reboot_code_buffer_phys, kimage->head, kimage->start, 0);
++	cpu_soft_restart(reboot_code_buffer_phys, kimage->head, kimage->start,
++#ifdef CONFIG_KEXEC_FILE
++						kimage->arch.dtb_mem);
++#else
++						0);
++#endif
  
- extern const struct kexec_file_ops kexec_image_ops;
-diff --git a/arch/arm64/kernel/machine_kexec_file.c b/arch/arm64/kernel/machine_kexec_file.c
-index 7e9d5ed3e238..ab296b98d633 100644
---- a/arch/arm64/kernel/machine_kexec_file.c
-+++ b/arch/arm64/kernel/machine_kexec_file.c
-@@ -16,11 +16,15 @@
- #include <linux/libfdt.h>
- #include <linux/memblock.h>
- #include <linux/of_fdt.h>
-+#include <linux/slab.h>
- #include <linux/string.h>
- #include <linux/types.h>
-+#include <linux/vmalloc.h>
- #include <asm/byteorder.h>
- 
- /* relevant device tree properties */
-+#define FDT_PSTR_KEXEC_ELFHDR	"linux,elfcorehdr"
-+#define FDT_PSTR_MEM_RANGE	"linux,usable-memory-range"
- #define FDT_PSTR_INITRD_STA	"linux,initrd-start"
- #define FDT_PSTR_INITRD_END	"linux,initrd-end"
- #define FDT_PSTR_BOOTARGS	"bootargs"
-@@ -35,6 +39,10 @@ int arch_kimage_file_post_load_cleanup(struct kimage *image)
- 	vfree(image->arch.dtb);
- 	image->arch.dtb = NULL;
- 
-+	vfree(image->arch.elf_headers);
-+	image->arch.elf_headers = NULL;
-+	image->arch.elf_headers_sz = 0;
-+
- 	return kexec_image_post_load_cleanup_default(image);
+ 	BUG(); /* Should never get here. */
  }
+diff --git a/arch/arm64/kernel/relocate_kernel.S b/arch/arm64/kernel/relocate_kernel.S
+index f407e422a720..95fd94209aae 100644
+--- a/arch/arm64/kernel/relocate_kernel.S
++++ b/arch/arm64/kernel/relocate_kernel.S
+@@ -32,6 +32,7 @@
+ ENTRY(arm64_relocate_new_kernel)
  
-@@ -49,6 +57,22 @@ static int setup_dtb(struct kimage *image,
- 	if (nodeoffset < 0)
- 		return -EINVAL;
+ 	/* Setup the list loop variables. */
++	mov	x18, x2				/* x18 = dtb address */
+ 	mov	x17, x1				/* x17 = kimage_start */
+ 	mov	x16, x0				/* x16 = kimage_head */
+ 	raw_dcache_line_size x15, x0		/* x15 = dcache line size */
+@@ -107,7 +108,7 @@ ENTRY(arm64_relocate_new_kernel)
+ 	isb
  
-+	if (image->type == KEXEC_TYPE_CRASH) {
-+		/* add linux,elfcorehdr */
-+		ret = fdt_setprop_reg(dtb, nodeoffset, FDT_PSTR_KEXEC_ELFHDR,
-+				image->arch.elf_headers_mem,
-+				image->arch.elf_headers_sz);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+
-+		/* add linux,usable-memory-range */
-+		ret = fdt_setprop_reg(dtb, nodeoffset, FDT_PSTR_MEM_RANGE,
-+				crashk_res.start,
-+				crashk_res.end - crashk_res.start + 1);
-+		if (ret)
-+			return (ret == -FDT_ERR_NOSPACE ? -ENOMEM : -EINVAL);
-+	}
-+
- 	/* add bootargs */
- 	if (cmdline) {
- 		ret = fdt_setprop_string(dtb, nodeoffset, FDT_PSTR_BOOTARGS,
-@@ -86,7 +110,8 @@ static int setup_dtb(struct kimage *image,
- }
- 
- /*
-- * More space needed so that we can add initrd and bootargs.
-+ * More space needed so that we can add initrd, bootargs,
-+ * userable-memory-range and elfcorehdr.
-  */
- #define DTB_EXTRA_SPACE 0x1000
- 
-@@ -132,6 +157,43 @@ static int create_dtb(struct kimage *image,
- 	}
- }
- 
-+static int prepare_elf_headers(void **addr, unsigned long *sz)
-+{
-+	struct crash_mem *cmem;
-+	unsigned int nr_ranges;
-+	int ret;
-+	u64 i;
-+	phys_addr_t start, end;
-+
-+	nr_ranges = 1; /* for exclusion of crashkernel region */
-+	for_each_mem_range(i, &memblock.memory, NULL, NUMA_NO_NODE,
-+					MEMBLOCK_NONE, &start, &end, NULL)
-+		nr_ranges++;
-+
-+	cmem = kmalloc(sizeof(struct crash_mem) +
-+			sizeof(struct crash_mem_range) * nr_ranges, GFP_KERNEL);
-+	if (!cmem)
-+		return -ENOMEM;
-+
-+	cmem->max_nr_ranges = nr_ranges;
-+	cmem->nr_ranges = 0;
-+	for_each_mem_range(i, &memblock.memory, NULL, NUMA_NO_NODE,
-+					MEMBLOCK_NONE, &start, &end, NULL) {
-+		cmem->ranges[cmem->nr_ranges].start = start;
-+		cmem->ranges[cmem->nr_ranges].end = end - 1;
-+		cmem->nr_ranges++;
-+	}
-+
-+	/* Exclude crashkernel region */
-+	ret = crash_exclude_mem_range(cmem, crashk_res.start, crashk_res.end);
-+
-+	if (!ret)
-+		ret =  crash_prepare_elf64_headers(cmem, true, addr, sz);
-+
-+	kfree(cmem);
-+	return ret;
-+}
-+
- int load_other_segments(struct kimage *image,
- 			unsigned long kernel_load_addr,
- 			unsigned long kernel_size,
-@@ -139,14 +201,43 @@ int load_other_segments(struct kimage *image,
- 			char *cmdline)
- {
- 	struct kexec_buf kbuf;
--	void *dtb = NULL;
--	unsigned long initrd_load_addr = 0, dtb_len;
-+	void *headers, *dtb = NULL;
-+	unsigned long headers_sz, initrd_load_addr = 0, dtb_len;
- 	int ret = 0;
- 
- 	kbuf.image = image;
- 	/* not allocate anything below the kernel */
- 	kbuf.buf_min = kernel_load_addr + kernel_size;
- 
-+	/* load elf core header */
-+	if (image->type == KEXEC_TYPE_CRASH) {
-+		ret = prepare_elf_headers(&headers, &headers_sz);
-+		if (ret) {
-+			pr_err("Preparing elf core header failed\n");
-+			goto out_err;
-+		}
-+
-+		kbuf.buffer = headers;
-+		kbuf.bufsz = headers_sz;
-+		kbuf.mem = 0;
-+		kbuf.memsz = headers_sz;
-+		kbuf.buf_align = SZ_64K; /* largest supported page size */
-+		kbuf.buf_max = ULONG_MAX;
-+		kbuf.top_down = true;
-+
-+		ret = kexec_add_buffer(&kbuf);
-+		if (ret) {
-+			vfree(headers);
-+			goto out_err;
-+		}
-+		image->arch.elf_headers = headers;
-+		image->arch.elf_headers_mem = kbuf.mem;
-+		image->arch.elf_headers_sz = headers_sz;
-+
-+		pr_debug("Loaded elf core header at 0x%lx bufsz=0x%lx memsz=0x%lx\n",
-+			 image->arch.elf_headers_mem, headers_sz, headers_sz);
-+	}
-+
- 	/* load initrd */
- 	if (initrd) {
- 		kbuf.buffer = initrd;
+ 	/* Start new image. */
+-	mov	x0, xzr
++	mov	x0, x18
+ 	mov	x1, xzr
+ 	mov	x2, xzr
+ 	mov	x3, xzr
 -- 
 2.19.0
 
