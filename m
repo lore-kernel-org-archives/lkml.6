@@ -2,290 +2,124 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 18089C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 00705C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:07:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C94A02083E
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:05:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C94A02083E
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6C1D921582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:07:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="DmJ+biDE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6C1D921582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728604AbeKOPLc (ORCPT
+        id S1728689AbeKOPNp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 10:11:32 -0500
-Received: from mga02.intel.com ([134.134.136.20]:43523 "EHLO mga02.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728527AbeKOPLc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 10:11:32 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga004.fm.intel.com ([10.253.24.48])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 14 Nov 2018 21:05:13 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,235,1539673200"; 
-   d="scan'208";a="106394989"
-Received: from dwillia2-desk3.jf.intel.com (HELO dwillia2-desk3.amr.corp.intel.com) ([10.54.39.16])
-  by fmsmga004.fm.intel.com with ESMTP; 14 Nov 2018 21:05:13 -0800
-Subject: [RFC PATCH 2/3] MAINTAINERS, Handbook: Subsystem Profile
-From:   Dan Williams <dan.j.williams@intel.com>
-To:     linux-kernel@vger.kernel.org
-Cc:     Jonathan Corbet <corbet@lwn.net>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Steve French <stfrench@microsoft.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        "Tobin C. Harding" <me@tobin.cc>, Olof Johansson <olof@lixom.net>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        Daniel Vetter <daniel.vetter@ffwll.ch>,
-        Joe Perches <joe@perches.com>,
-        Dmitry Vyukov <dvyukov@google.com>, vishal.l.verma@intel.com,
-        corbet@lwn.net, linux-nvdimm@lists.01.org,
-        ksummit-discuss@lists.linuxfoundation.org
-Date:   Wed, 14 Nov 2018 20:53:25 -0800
-Message-ID: <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com>
-In-Reply-To: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
-User-Agent: StGit/0.18-2-gc94f
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+        Thu, 15 Nov 2018 10:13:45 -0500
+Received: from mailout2.w1.samsung.com ([210.118.77.12]:41075 "EHLO
+        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726689AbeKOPNp (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 10:13:45 -0500
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181115050726euoutp02b3fb91d7fe4565f9a3653c706000b7a7~nM_KtBW-Z0693406934euoutp02i;
+        Thu, 15 Nov 2018 05:07:26 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181115050726euoutp02b3fb91d7fe4565f9a3653c706000b7a7~nM_KtBW-Z0693406934euoutp02i
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+        s=mail20170921; t=1542258446;
+        bh=LPYjoS+0C2a3HV7byJ6VT2FylEsFyxNdcYoi+EuMbvE=;
+        h=From:To:Cc:Subject:Date:References:From;
+        b=DmJ+biDEEfD/VZ3EBA523Bz7sMG6vvViF288MTbti2BePix5PiKGf+vFspZ9yp6Xo
+         o3+HAZVgFsmLBKzt6SG6+CYZNZtaYgxN1uaQjoStAZ4EmiG1tx3lWx8QEpc0GQR82l
+         o5NKTFa8yIkoPNBI9P52S/olwCndDNzWGUfyDFhA=
+Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181115050725eucas1p15364624bca3f4eedcb89fe5083404a09~nM_KCr5P20922809228eucas1p1K;
+        Thu, 15 Nov 2018 05:07:25 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+        eusmges2new.samsung.com (EUCPMTA) with SMTP id B9.74.04294.D0FFCEB5; Thu, 15
+        Nov 2018 05:07:25 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+        20181115050724eucas1p169b2046c03e108035199a4481a82a560~nM_JSFA7O0711707117eucas1p1S;
+        Thu, 15 Nov 2018 05:07:24 +0000 (GMT)
+X-AuditID: cbfec7f4-84fff700000010c6-74-5becff0df5ff
+Received: from eusync4.samsung.com ( [203.254.199.214]) by
+        eusmgms1.samsung.com (EUCPMTA) with SMTP id D3.CC.04284.C0FFCEB5; Thu, 15
+        Nov 2018 05:07:24 +0000 (GMT)
+Received: from localhost.localdomain ([10.88.99.240]) by eusync4.samsung.com
+        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
+        2014)) with ESMTPA id <0PI7004S0Y805630@eusync4.samsung.com>; Thu, 15 Nov
+        2018 05:07:24 +0000 (GMT)
+From:   Huijin Park <huijin.park@samsung.com>
+To:     Boris Brezillon <boris.brezillon@bootlin.com>
+Cc:     Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org,
+        Huijin Park <huijin.park@samsung.com>, bbanghj.park@gmail.com
+Subject: [PATCH v2] mtd: change len type from signed to unsigned type
+Date:   Thu, 15 Nov 2018 00:07:10 -0500
+Message-id: <1542258430-19885-1-git-send-email-huijin.park@samsung.com>
+X-Mailer: git-send-email 2.7.4
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprIIsWRmVeSWpSXmKPExsWy7djPc7q8/99EG5y9zGLxcu8hZot9p/pZ
+        LDouulhc3jWHzWJ30zJ2i6N77jE7sHnMW1PtsXPWXXaPzUvqPfq2rGL0+LxJLoA1issmJTUn
+        syy1SN8ugSvj7srfjAW3WCuu/1rL2MB4gaWLkZNDQsBE4sunTuYuRi4OIYEVjBJPHm1hhXA+
+        M0pM6gFxIKp+Lm2EqlrGKPHp/RkmCOcvo8Tf19fBZrEJaEtcX7uVEcQWETCUWDm1hQWkiFlg
+        OaPEuxMzwBLCAq4SN/4fZgOxWQRUJW42bWMGsXkF3CU2/N3HDLFOTuLmuU4o+y6rxOPH/F2M
+        HEC2i8Sj/SIQYWGJV8e3sEPYMhKdHQeZIOxsiV+PWlkgyisk3s5TgQgbS7x7uxZsIrMAn8Sk
+        bdOZIUp4JTrahCBKPCTevr/JBhIWEoiVuPhTewKjxAJGhlWM4qmlxbnpqcVGeanlesWJucWl
+        eel6yfm5mxiBEXX63/EvOxh3/Uk6xCjAwajEw3vC6k20EGtiWXFl7iFGCQ5mJRHeBTVAId6U
+        xMqq1KL8+KLSnNTiQ4zSHCxK4rzVDA+ihQTSE0tSs1NTC1KLYLJMHJxSDYw6V85Nz9WM1vCe
+        ss1otlWaOwcny5F/vx//+8p44UaIUO2CKQ9ftO5d1nPgdmjxot+f22v9pHj90xPZT9967L3H
+        cMn1JVGK7tWBaZ8FLtvdZDNh+5ppVSDfbGL0dtHcnvYCw5cHNc9K1e38b/rSd9HNH8vORFaz
+        lW7sZzWW//3P5fGh3qWNL4KUWIozEg21mIuKEwE0u73CpAIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrOJMWRmVeSWpSXmKPExsVy+t/xa7o8/99EGzz9L23xcu8hZot9p/pZ
+        LDouulhc3jWHzWJ30zJ2i6N77jE7sHnMW1PtsXPWXXaPzUvqPfq2rGL0+LxJLoA1issmJTUn
+        syy1SN8ugSvj7srfjAW3WCuu/1rL2MB4gaWLkZNDQsBE4ufSRuYuRi4OIYEljBLv26awQDj/
+        GSUOr9zKBlLFJqAtcX3tVkYQW0TAUGLl1BawbmaB5YwSF67YgNjCAq4SN/4fBqtnEVCVuNm0
+        jRnE5hVwl9jwdx8zxDY5iZvnOpknMHItYGRYxSiSWlqcm55bbKhXnJhbXJqXrpecn7uJEej9
+        bcd+bt7BeGlj8CFGAQ5GJR7eE1ZvooVYE8uKK3MPMUpwMCuJ8C6oAQrxpiRWVqUW5ccXleak
+        Fh9ilOZgURLnPW9QGSUkkJ5YkpqdmlqQWgSTZeLglGpgzKp/kH268ulV01e9Judncm3Z/F2J
+        MdXOMm+tWe/y33xpso4fTY5UXripwiviYVoQ4K/dejte6Yj7nTSr34lmAeXHRQxmLn3zO+Rh
+        3JKlNZOiWO//Fd5r+tKOz6TD7srvy001yXG5V08/kf0UPHO5T+82h3bD9jPL++Zu2+19U4/p
+        ebXmLu5FSizFGYmGWsxFxYkAUasv8voBAAA=
+X-CMS-MailID: 20181115050724eucas1p169b2046c03e108035199a4481a82a560
+X-Msg-Generator: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20181115050724eucas1p169b2046c03e108035199a4481a82a560
+References: <CGME20181115050724eucas1p169b2046c03e108035199a4481a82a560@eucas1p1.samsung.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-As presented at the 2018 Linux Plumbers conference [1], the Subsystem
-Profile is proposed as a way to reduce friction between committers and
-maintainers and perhaps encourage conversations amongst maintainers
-about best practice policies.
+From: "huijin.park" <huijin.park@samsung.com>
 
-The profile contains short answers to some of the common policy
-questions a contributor might have, or that a maintainer might consider
-formalizing. The current list of maintenance policies is:
+This patch casts the "len" parameter to an unsigned int.
+The callers of erase_write() pass the "len" parameter as unsigned int.
 
-Overview: General introduction to maintaining the subsystem
-Core: List of source files considered core
-Leaf: List of source files that consume core functionality
-Patches or Pull requests: Simple statement of expected submission format
-Last -rc for new feature submissions: Expected lead time for submissions
-Last -rc to merge features: Deadline for merge decisions
-Non-author Ack / Review Tags Required: Patch review economics
-Test Suite: Pass this suite before requesting inclusion
-Resubmit Cadence: When to ping the maintainer
-Trusted Reviewers: Help for triaging patches
-Time Zone / Office Hours: When might a maintainer be available
-Checkpatch / Style Cleanups: Policy on pure cleanup patches
-Off-list review: Request for review gates
-TODO: Potential development tasks up for grabs, or active focus areas
-
-The goal of the Subsystem Profile is to set expectations for
-contributors and interim or replacement maintainers for a subsystem.
-
-See Documentation/maintainer/subsystem-profile.rst for more details, and
-a follow-on example profile for the libnvdimm subsystem.
-
-[1]: https://linuxplumbersconf.org/event/2/contributions/59/
-
-Cc: Jonathan Corbet <corbet@lwn.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Steve French <stfrench@microsoft.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Tobin C. Harding <me@tobin.cc>
-Cc: Olof Johansson <olof@lixom.net>
-Cc: Martin K. Petersen <martin.petersen@oracle.com>
-Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-Cc: Joe Perches <joe@perches.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: huijin.park <huijin.park@samsung.com>
 ---
- Documentation/maintainer/index.rst             |    1 
- Documentation/maintainer/subsystem-profile.rst |  145 ++++++++++++++++++++++++
- MAINTAINERS                                    |    4 +
- 3 files changed, 150 insertions(+)
- create mode 100644 Documentation/maintainer/subsystem-profile.rst
+ drivers/mtd/mtdblock.c |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/maintainer/index.rst b/Documentation/maintainer/index.rst
-index 2a14916930cb..1e6b1aaa6024 100644
---- a/Documentation/maintainer/index.rst
-+++ b/Documentation/maintainer/index.rst
-@@ -11,4 +11,5 @@ additions to this manual.
+diff --git a/drivers/mtd/mtdblock.c b/drivers/mtd/mtdblock.c
+index a5b1933..b2d5ed1 100644
+--- a/drivers/mtd/mtdblock.c
++++ b/drivers/mtd/mtdblock.c
+@@ -56,7 +56,7 @@ struct mtdblk_dev {
+  */
  
-    configure-git
-    pull-requests
-+   subsystem-profile
- 
-diff --git a/Documentation/maintainer/subsystem-profile.rst b/Documentation/maintainer/subsystem-profile.rst
-new file mode 100644
-index 000000000000..a74b624e0972
---- /dev/null
-+++ b/Documentation/maintainer/subsystem-profile.rst
-@@ -0,0 +1,145 @@
-+.. _subsystemprofile:
-+
-+Subsystem Profile
-+=================
-+
-+The Subsystem Profile is a collection of policy positions that a
-+maintainer or maintainer team establishes for the their subsystem. While
-+there is a wide range of technical nuance on maintaining disparate
-+sections of the kernel, the Subsystem Profile documents a known set of
-+major process policies that vary between subsystems.  What follows is a
-+list of policy questions a maintainer can answer and include a document
-+in the kernel, or on an external website. It advertises to other
-+maintainers and contributors the local policy of the subsystem. Some
-+sections are optional like "Overview", "Off-list review", and "TODO".
-+The others are recommended for all subsystems to address, but no section
-+is mandatory. In addition there are no wrong answers, just document how
-+a subsystem typically operates. Note that the profile follows the
-+subsystem not the maintainer, i.e. there is no expectation that a
-+maintainer of multiple subsystems deploys the same policy across those
-+subsystems.
-+
-+
-+Overview
-+--------
-+In this optional section of the profile provide a free form overview of
-+the subsystem written as a hand-off document. In other words write a
-+note to someone that would receive the “keys to the castle” in the event
-+of extended or unexpected absence. “So, you have recently become the
-+maintainer of the XYZ subsystem, condolences, it is a thankless job,
-+here is the lay of the land.” Details to consider are the extended
-+details that are not included in MAINTAINERS, and not addressed by the
-+other profile questions below. For example details like, who has access
-+to the git tree, branches that are pulled into -next, relevant
-+specifications, issue trackers, and sensitive code areas. If available
-+the Overview should link to other subsystem documentation that may
-+clarify, re-iterate, emphasize / de-emphasize portions of the global
-+process documentation for contributors (CodingStyle, SubmittingPatches,
-+etc...).
-+
-+
-+Core
-+----
-+A list of F: tags (as described by MAINTAINERS) listing what the
-+maintainer considers to be core files. The review and lead time
-+constraints for 'core' code may be stricter given the increased
-+sensitivity and risk of change.
-+
-+
-+Patches or Pull requests
-+------------------------
-+Some subsystems allow contributors to send pull requests, most require
-+mailed patches. State “Patches only”, or “Pull requests accepted”.
-+
-+
-+Last -rc for new feature submissions
-+------------------------------------
-+New feature submissions targeting the next merge window should have
-+their first posting for consideration before this point. Patches that
-+are submitted after this point should be clear that they are targeting
-+the NEXT+1 merge window, or should come with sufficient justification
-+why they should be considered on an expedited schedule. A general
-+guideline is to set expectation with contributors that new feature
-+submissions should appear before -rc5. The answer may be different for
-+'Core:' files, include a second entry prefixed with 'Core:' if so.
-+
-+
-+Last -rc to merge features
-+--------------------------
-+Indicate to contributors the point at which an as yet un-applied patch
-+set will need to wait for the NEXT+1 merge window. Of course there is no
-+obligation to ever except any given patchset, but if the review has not
-+concluded by this point the expectation the contributor should wait and
-+resubmit for the following merge window. The answer may be different for
-+'Core:' files, include a second entry prefixed with 'Core:' if so.
-+
-+
-+Non-author Ack / Review Tags Required
-+-------------------------------------
-+Let contributors and other maintainers know whether they can expect to
-+see the maintainer self-commit patches without 3rd-party review. Some
-+subsystem developer communities are so small as to make this requirement
-+impractical. Others may have been bootstrapped by a submission of
-+self-reviewed code at the outset, but have since moved to a
-+non-author review-required stance. This section sets expectations on the
-+code-review economics in the subsystem. For example, can a contributor
-+trade review of a maintainer's, or other contributor's patches in
-+exchange for consideration of their own.
-+
-+
-+Test Suite
-+----------
-+Indicate the test suite all patches are expected to pass before being
-+submitted for inclusion consideration.
-+
-+
-+Resubmit Cadence
-+----------------
-+Define a rate at which a contributor should wait to resubmit a patchset
-+that has not yet received comments. A general guideline is to try to
-+meet a deadline of 1 - 2 weeks to acknowledge starting consideration for
-+a patch set.
-+
-+
-+Trusted Reviewers
-+-----------------
-+While a maintainer / maintainer-team is expected to be reviewer of last
-+resort the review load is less onerous when distributed amongst
-+contributors and or a trusted set of individuals.  This section is
-+distinct from the R: tag (Designated Reviewer). Whereas R: identifies
-+reviewers that should always be copied on a patch submission, the
-+trusted reviewers here are individuals contributors can reach out to if
-+a few 'Resubmit Cadence' intervals have gone by without maintainer
-+action, or to otherwise consult for advice.
-+
-+
-+Time Zone / Office Hours
-+------------------------
-+Let contributors know the time of day when one or more maintainers are
-+usually actively monitoring the mailing list.
-+
-+
-+Checkpatch / Style Cleanups
-+---------------------------
-+For subsystems with long standing code bases it is reasonable to decline
-+to accept pure coding-style fixup patches. This is where you can let
-+contributors know “Standalone style-cleanups are welcome”,
-+“Style-cleanups to existing code only welcome with other feature
-+changes”, or “Standalone style-cleanups to existing code are not
-+welcome”.
-+
-+
-+Off-list review
-+---------------
-+A maintainer may optionally require that contributors seek prior review
-+of patches before initial submission for upstream. For example,
-+“Developers from organization X, please seek internal review before
-+requesting upstream review”. This policy identifies occasions where a
-+maintainer wants to reflect some of the review load back to an
-+organization.
-+
-+
-+TODO
-+----
-+In this optional section include a list of work items that might be
-+suitable for onboarding a new developer to the subsystem.
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 83b7b3943a12..bb4a83a7684d 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -99,6 +99,10 @@ Descriptions of section entries:
- 	   Obsolete:	Old code. Something tagged obsolete generally means
- 			it has been replaced by a better system and you
- 			should be using that.
-+	P: Subsystem Profile document for the maintainer entry.  This
-+	   is either an in-tree file or a URI to a document.  The
-+	   contents of a Subsystem Profile are described in
-+	   Documentation/maintainer/subsystem-profile.rst.
- 	F: Files and directories with wildcard patterns.
- 	   A trailing slash includes all files and subdirectory files.
- 	   F:	drivers/net/	all files in and below drivers/net
+ static int erase_write (struct mtd_info *mtd, unsigned long pos,
+-			int len, const char *buf)
++			unsigned int len, const char *buf)
+ {
+ 	struct erase_info erase;
+ 	size_t retlen;
+-- 
+1.7.9.5
 
