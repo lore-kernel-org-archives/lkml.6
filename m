@@ -2,94 +2,98 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C83F9C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:08:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 560C5C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:09:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C51D21582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:08:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C51D21582
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 2678E223DD
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 18:09:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2678E223DD
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388768AbeKPERf (ORCPT
+        id S2388835AbeKPES2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 23:17:35 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:37116 "EHLO mail.skyhub.de"
+        Thu, 15 Nov 2018 23:18:28 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46424 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726453AbeKPERe (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 23:17:34 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id NjzTbk6zuTDl; Thu, 15 Nov 2018 19:08:41 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD00900D5714500C00E26FD.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:900:d571:4500:c00e:26fd])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        id S1726453AbeKPES2 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 23:18:28 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BEF701EC03C8;
-        Thu, 15 Nov 2018 19:08:41 +0100 (CET)
-Date:   Thu, 15 Nov 2018 19:08:42 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
-        pr-tracker-bot@kernel.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Thomas Lendacky <Thomas.Lendacky@amd.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Martin =?utf-8?Q?Hundeb=C3=B8ll?= <martin@geanix.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org
-Subject: Re: [GIT PULL] PCI fixes for v4.20
-Message-ID: <20181115180842.GD25056@zn.tnic>
-References: <20181114201214.GM13926@zn.tnic>
- <20181114201658.GB25069@pure.paranoia.local>
- <20181114214601.GO13926@zn.tnic>
- <20181114222154.GA22445@pure.paranoia.local>
- <20181114224839.GP13926@zn.tnic>
- <20181115071252.GB94998@google.com>
- <20181115075330.GA32162@pure.paranoia.local>
- <20181115150321.GB207836@google.com>
- <20181115155418.GA25764@pure.paranoia.local>
- <20181115172706.GA229449@google.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181115172706.GA229449@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        by mx1.redhat.com (Postfix) with ESMTPS id 41B9C30014D1;
+        Thu, 15 Nov 2018 18:09:37 +0000 (UTC)
+Received: from vitty.brq.redhat.com (unknown [10.43.2.155])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 1E88560BF9;
+        Thu, 15 Nov 2018 18:09:34 +0000 (UTC)
+From:   Vitaly Kuznetsov <vkuznets@redhat.com>
+To:     Linux PM <linux-pm@vger.kernel.org>
+Cc:     "Rafael J. Wysocki" <rjw@rjwysocki.net>, kys@microsoft.com,
+        haiyangz@microsoft.com, sthemmin@microsoft.com,
+        Jiri Kosina <jikos@kernel.org>,
+        Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        linux-input@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [PATCH RESEND] hyper-v: Fix wakeup from suspend-to-idle
+Date:   Thu, 15 Nov 2018 19:09:33 +0100
+Message-Id: <20181115180933.396-1-vkuznets@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Thu, 15 Nov 2018 18:09:37 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 11:27:06AM -0600, Bjorn Helgaas wrote:
-> Yep, it seems to for me.  Maybe I'm doing something else weird, because I
-> don't see many other pull requests with ssh:// URLs.
+It makes little sense but still possible to put Hyper-V guests into
+suspend-to-idle state. To wake them up two wakeup sources were registered
+in the past: hyperv-keyboard and hid-hyperv. However, since
+commit eed4d47efe95 ("ACPI / sleep: Ignore spurious SCI wakeups from
+suspend-to-idle") pm_wakeup_event() from these devices is ignored. Switch
+to pm_wakeup_hard_event() API as these devices are actually the only
+possible way to wakeup Hyper-V guests.
 
-So what I've done here is I've added a remote git repo using the
-*public* URL of my repo and so when I use git request-pull, I always
-point to the public one - I need to fetch the tag before, of course, but
-that's trivial - and then the URL is the public one.
+Fixes: eed4d47efe95 (ACPI / sleep: Ignore spurious SCI wakeups from suspend-to-idle)
+Reviewed-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+Acked-by: K. Y. Srinivasan <kys@microsoft.com>
+Acked-by: Jiri Kosina <jkosina@suse.cz>
+Signed-off-by: Vitaly Kuznetsov <vkuznets@redhat.com>
+---
+- It seems the patch slipped through the cracks, resending.
+---
+ drivers/hid/hid-hyperv.c              | 2 +-
+ drivers/input/serio/hyperv-keyboard.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
 
-I.e,
-
-$ git request-pull master bp-pub <TAG>
-
-This has the additional value of *actually* making sure I've really
-pushed the tag.
-
-HTH.
-
+diff --git a/drivers/hid/hid-hyperv.c b/drivers/hid/hid-hyperv.c
+index b372854cf38d..704049e62d58 100644
+--- a/drivers/hid/hid-hyperv.c
++++ b/drivers/hid/hid-hyperv.c
+@@ -309,7 +309,7 @@ static void mousevsc_on_receive(struct hv_device *device,
+ 		hid_input_report(input_dev->hid_device, HID_INPUT_REPORT,
+ 				 input_dev->input_buf, len, 1);
+ 
+-		pm_wakeup_event(&input_dev->device->device, 0);
++		pm_wakeup_hard_event(&input_dev->device->device);
+ 
+ 		break;
+ 	default:
+diff --git a/drivers/input/serio/hyperv-keyboard.c b/drivers/input/serio/hyperv-keyboard.c
+index 47a0e81a2989..a8b9be3e28db 100644
+--- a/drivers/input/serio/hyperv-keyboard.c
++++ b/drivers/input/serio/hyperv-keyboard.c
+@@ -177,7 +177,7 @@ static void hv_kbd_on_receive(struct hv_device *hv_dev,
+ 		 * state because the Enter-UP can trigger a wakeup at once.
+ 		 */
+ 		if (!(info & IS_BREAK))
+-			pm_wakeup_event(&hv_dev->device, 0);
++			pm_wakeup_hard_event(&hv_dev->device);
+ 
+ 		break;
+ 
 -- 
-Regards/Gruss,
-    Boris.
+2.17.2
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
