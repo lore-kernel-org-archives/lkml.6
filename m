@@ -2,125 +2,95 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59B93C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:58:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B9393C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:00:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F1F2A2146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 11:58:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F1F2A2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 8514A2146D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 12:00:15 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8514A2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388161AbeKOWGQ (ORCPT
+        id S2387893AbeKOWHq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 17:06:16 -0500
-Received: from szxga04-in.huawei.com ([45.249.212.190]:15103 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728859AbeKOWGP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 17:06:15 -0500
-Received: from DGGEMS407-HUB.china.huawei.com (unknown [172.30.72.59])
-        by Forcepoint Email with ESMTP id 4C44394AF5CAC;
-        Thu, 15 Nov 2018 19:56:35 +0800 (CST)
-Received: from [127.0.0.1] (10.177.31.96) by DGGEMS407-HUB.china.huawei.com
- (10.3.19.207) with Microsoft SMTP Server id 14.3.408.0; Thu, 15 Nov 2018
- 19:56:32 +0800
-Subject: Re: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring'
-To:     "Huang, Ray" <Ray.Huang@amd.com>,
-        "Deucher, Alexander" <Alexander.Deucher@amd.com>,
-        "Koenig, Christian" <Christian.Koenig@amd.com>,
-        "Zhou, David(ChunMing)" <David1.Zhou@amd.com>,
-        "airlied@linux.ie" <airlied@linux.ie>,
-        "Liu, Shaoyun" <Shaoyun.Liu@amd.com>,
-        "Francis, David" <David.Francis@amd.com>,
-        "Xu, Feifei" <Feifei.Xu@amd.com>, "Gao, Likun" <Likun.Gao@amd.com>
-References: <1542279133-103893-1-git-send-email-yuehaibing@huawei.com>
- <BY2PR12MB0040A0E1C221A3EBBF270C30ECDC0@BY2PR12MB0040.namprd12.prod.outlook.com>
-CC:     "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
-        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>
-From:   YueHaibing <yuehaibing@huawei.com>
-Message-ID: <6e67a5b3-6a0e-6c3a-af90-2125713f522f@huawei.com>
-Date:   Thu, 15 Nov 2018 19:56:31 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.2.0
+        Thu, 15 Nov 2018 17:07:46 -0500
+Received: from mail-oi1-f170.google.com ([209.85.167.170]:36652 "EHLO
+        mail-oi1-f170.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728859AbeKOWHq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 17:07:46 -0500
+Received: by mail-oi1-f170.google.com with SMTP id r127-v6so16514610oie.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 04:00:13 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc;
+        bh=DLYLnAp7oKkXxtcqmiShaxm/JJayVA+5CjfmFG4t3Ks=;
+        b=UP0HAFOurwVH8ioDdb0HMWiLWLXzjLwtRpt/ZMYj8XTaEJQD2lhxExHFbgvl6fZkbL
+         PCkmTfeu9JEKINTMf+Axq2O2DJiVpenZVnnhp2i5zHQxi+BrWPLY+0OLRrNfbEpyDvSc
+         4H0rbhzVRIm/oQLHEl1dhDscQbVMQCQS8uDWly0ylzT+/h6v8JdpgYN8yAOK3FA11zqm
+         N8rQMa8oFwXZDtroOWD8Cc31c3W7JdSn59tw8zrSsRnChkILzuzPMKHaanwzpAjZRlr8
+         jGKMcUk86CAM0e1rleHhyBQXfcl4Yw1HbDqAJsh0EbVIz2mhIWpYsfuM1L9ptwYA944R
+         gNHw==
+X-Gm-Message-State: AGRZ1gK5pF1kiBa37DelYpdVBFdvBKHIsIleL/Fk7KAzXYkhYnSzeXC8
+        e+X+AOsq4/YjKSbn1GWpThKZ3RwL9iEdjxSbm6FCqg==
+X-Google-Smtp-Source: AJdET5dSzkaUwcjtCBVWOB7o7rdQMtjV+VuXEPzqjnxAlcbm0iB6l59zfW9z4tPGDwmYFFTuwfLSIDUxoBm98u20EtA=
+X-Received: by 2002:aca:3785:: with SMTP id e127-v6mr3565044oia.147.1542283212791;
+ Thu, 15 Nov 2018 04:00:12 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <BY2PR12MB0040A0E1C221A3EBBF270C30ECDC0@BY2PR12MB0040.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.177.31.96]
-X-CFilter-Loop: Reflected
+From:   Andreas Gruenbacher <agruenba@redhat.com>
+Date:   Thu, 15 Nov 2018 13:00:01 +0100
+Message-ID: <CAHc6FU6P0HdDWGMmsjyArQ746N7RBE3qMVq3aZgkfGjb153yJw@mail.gmail.com>
+Subject: [GIT PULL] gfs2: 4.20 fixes
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     cluster-devel <cluster-devel@redhat.com>,
+        LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+Hi Linus,
 
-On 2018/11/15 19:49, Huang, Ray wrote:
->> -----Original Message-----
->> From: YueHaibing [mailto:yuehaibing@huawei.com]
->> Sent: Thursday, November 15, 2018 6:52 PM
->> To: Deucher, Alexander <Alexander.Deucher@amd.com>; Koenig, Christian
->> <Christian.Koenig@amd.com>; Zhou, David(ChunMing)
->> <David1.Zhou@amd.com>; airlied@linux.ie; Liu, Shaoyun
->> <Shaoyun.Liu@amd.com>; Francis, David <David.Francis@amd.com>; Huang,
->> Ray <Ray.Huang@amd.com>; Xu, Feifei <Feifei.Xu@amd.com>; Gao, Likun
->> <Likun.Gao@amd.com>
->> Cc: YueHaibing <yuehaibing@huawei.com>; amd-gfx@lists.freedesktop.org;
->> dri-devel@lists.freedesktop.org; linux-kernel@vger.kernel.org; kernel-
->> janitors@vger.kernel.org
->> Subject: [PATCH -next] drm/amdgpu: remove set but not used variable 'ring'
->>
->> Fixes gcc '-Wunused-but-set-variable' warning:
->>
->> drivers/gpu/drm/amd/amdgpu/psp_v10_0.c: In function
->> 'psp_v10_0_ring_stop':
->> drivers/gpu/drm/amd/amdgpu/psp_v10_0.c:230:19: warning:
->>  variable 'ring' set but not used [-Wunused-but-set-variable]
->>
->> It not used since commit
->> 4ef72453311a ("drm/amdgpu: added api for stopping psp ring (v2)")
-> 
-> Thanks, please also remove the similar code in psp_v3_1. 
-> With that updates, patch is Reviewed-by: Huang Rui <ray.huang@amd.com>
-> 
+could you please pull the following gfs2 fixes for 4.20?
 
-Ok, will send v2.
+Thank you,
+Andreas
 
->>
->> Signed-off-by: YueHaibing <yuehaibing@huawei.com>
->> ---
->>  drivers/gpu/drm/amd/amdgpu/psp_v10_0.c | 3 ---
->>  1 file changed, 3 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
->> b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
->> index 295c220..d78b430 100644
->> --- a/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
->> +++ b/drivers/gpu/drm/amd/amdgpu/psp_v10_0.c
->> @@ -240,12 +240,9 @@ static int psp_v10_0_ring_stop(struct psp_context
->> *psp,
->>  			       enum psp_ring_type ring_type)  {
->>  	int ret = 0;
->> -	struct psp_ring *ring;
->>  	unsigned int psp_ring_reg = 0;
->>  	struct amdgpu_device *adev = psp->adev;
->>
->> -	ring = &psp->km_ring;
->> -
->>  	/* Write the ring destroy command to C2PMSG_64 */
->>  	psp_ring_reg = 3 << 16;
->>  	WREG32_SOC15(MP0, 0, mmMP0_SMN_C2PMSG_64, psp_ring_reg);
->>
->>
->>
->>
-> 
-> 
-> .
-> 
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
 
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/gfs2/linux-gfs2.git
+tags/gfs2-4.20.fixes2
+
+for you to fetch changes up to 77d36cabdf8e7c8d46b3e275a3d7958549de04b0:
+
+  gfs2: Fix iomap buffer head reference counting bug (2018-11-11 12:20:05 +0000)
+
+----------------------------------------------------------------
+Fix two bugs leading to leaked buffer head references:
+
+  gfs2: Put bitmap buffers in put_super
+  gfs2: Fix iomap buffer head reference counting bug
+
+And one bug leading to significant slow-downs when deleting large files:
+
+  gfs2: Fix metadata read-ahead during truncate (2)
+
+----------------------------------------------------------------
+Andreas Gruenbacher (4):
+      gfs2: Put bitmap buffers in put_super
+      gfs2: Fix metadata read-ahead during truncate (2)
+      Merge tag 'v4.20-rc1'
+      gfs2: Fix iomap buffer head reference counting bug
+
+ fs/gfs2/bmap.c | 54 +++++++++++++++++++++++++++---------------------------
+ fs/gfs2/rgrp.c |  3 ++-
+ 2 files changed, 29 insertions(+), 28 deletions(-)
