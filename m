@@ -2,128 +2,102 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3022BC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:07:43 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 346B0C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:10:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ED63121582
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:07:42 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Sj62++nW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED63121582
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=samsung.com
+	by mail.kernel.org (Postfix) with ESMTP id EC7C921582
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 05:10:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EC7C921582
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728690AbeKOPN7 (ORCPT
+        id S1728453AbeKOPRB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 10:13:59 -0500
-Received: from mailout2.w1.samsung.com ([210.118.77.12]:41095 "EHLO
-        mailout2.w1.samsung.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726574AbeKOPN6 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 10:13:58 -0500
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-        by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20181115050739euoutp023eab5ebcf506070356f6b48684a59f08~nM_XlEOyX0729607296euoutp02Y;
-        Thu, 15 Nov 2018 05:07:39 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20181115050739euoutp023eab5ebcf506070356f6b48684a59f08~nM_XlEOyX0729607296euoutp02Y
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-        s=mail20170921; t=1542258459;
-        bh=5LRIQh9YHvh62I5JA0g7iDNlkANNGmFUQHYraxvpNoU=;
-        h=From:To:Cc:Subject:Date:References:From;
-        b=Sj62++nWhqtzDaZaUW9Gm1n0RMTAAySAQyp4Qg9by2BZrNxAD27/shjga9G/Axytd
-         oaMS6pdF7/1jHuHMrmfu9spreX+eM9M9U+88+ytklaqNq++W7iDJQ9gD0cQ55WU5yV
-         vmu8IyVkE2TjqMxDhYgoEn96crfHqzlTmufvqbMk=
-Received: from eusmges3new.samsung.com (unknown [203.254.199.245]) by
-        eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-        20181115050739eucas1p2b9f9bcfc189627e216e40de1444f9f45~nM_XQww-r0053400534eucas1p2e;
-        Thu, 15 Nov 2018 05:07:39 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-        eusmges3new.samsung.com (EUCPMTA) with SMTP id C9.D5.04806.B1FFCEB5; Thu, 15
-        Nov 2018 05:07:39 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-        eucas1p1.samsung.com (KnoxPortal) with ESMTP id
-        20181115050737eucas1p104ccec527d0713f9414bc75e0959feb6~nM_VcPYZ_0711807118eucas1p1i;
-        Thu, 15 Nov 2018 05:07:37 +0000 (GMT)
-X-AuditID: cbfec7f5-34dff700000012c6-99-5becff1bdd30
-Received: from eusync1.samsung.com ( [203.254.199.211]) by
-        eusmgms2.samsung.com (EUCPMTA) with SMTP id 97.81.04128.91FFCEB5; Thu, 15
-        Nov 2018 05:07:37 +0000 (GMT)
-Received: from localhost.localdomain ([10.88.99.240]) by eusync1.samsung.com
-        (Oracle Communications Messaging Server 7.0.5.31.0 64bit (built May  5
-        2014)) with ESMTPA id <0PI7001RJY8JV850@eusync1.samsung.com>; Thu, 15 Nov
-        2018 05:07:37 +0000 (GMT)
-From:   Huijin Park <huijin.park@samsung.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-Cc:     Marek Vasut <marek.vasut@gmail.com>, linux-mtd@lists.infradead.org,
-        linux-kernel@vger.kernel.org,
-        Huijin Park <huijin.park@samsung.com>, bbanghj.park@gmail.com
-Subject: [PATCH v2] mtd: spi-nor: cast to u64 to avoid uint overflows
-Date:   Thu, 15 Nov 2018 00:07:29 -0500
-Message-id: <1542258449-19930-1-git-send-email-huijin.park@samsung.com>
-X-Mailer: git-send-email 2.7.4
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprMIsWRmVeSWpSXmKPExsWy7djPc7rS/99EGzQc5bN4ufcQs8W+U/0s
-        Fh0XXSwu75rDZrG7aRm7xdE995gd2Dzmran22DnrLrvH5iX1Hn1bVjF6fN4kF8AaxWWTkpqT
-        WZZapG+XwJXR8eMCc0ELR8XhnytZGhgfsXUxcnJICJhI3NjYzNLFyMUhJLCCUeLC4VWsEM5n
-        RonpHy+xwlR9bOhlhEgsY5T4/vkklPOXUWLdqXfsIFVsAtoS19duZQSxRQQMJVZObQGbyyyw
-        nFHi3YkZYAlhAVeJbYe2MIHYLAKqElsOLgA6hIODV8Bd4nezPcQ2OYmb5zqZQXolBB6ySrR9
-        ngx1rIvE9RMzoGxhiVfHt7BD2DISlyd3s0DY2RK/HrWygMyUEKiQeDtPBSJsLPHu7VpmEJtZ
-        gE9i0rbpzBAlvBIdbUIQJR4SKx9tALtMSCBWYmHLH5YJjBILGBlWMYqnlhbnpqcWG+ellusV
-        J+YWl+al6yXn525iBEbV6X/Hv+5g3Pcn6RCjAAejEg/vDY830UKsiWXFlbmHGCU4mJVEeBfU
-        AIV4UxIrq1KL8uOLSnNSiw8xSnOwKInzVjM8iBYSSE8sSc1OTS1ILYLJMnFwSjUwVtpfz7/n
-        5MWfoyu+4rmS5puqr1uZynVVu1MbWjaEC1pdjzy8cc7OJN+f2wwt9srcmL7GyHb1XK+P+erP
-        jrduFDKYkv9k6qXFRQt1OwSeBh8QrhBbb/m88f3+paJ2r/dfmGZSbMbGFeb60C2xrzxKN/lQ
-        irKe5a9NrFf0OOzj7Wt9X0RFL/qoxFKckWioxVxUnAgA0R7Sq6YCAAA=
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrGJMWRmVeSWpSXmKPExsVy+t/xy7qS/99EG6zYJGLxcu8hZot9p/pZ
-        LDouulhc3jWHzWJ30zJ2i6N77jE7sHnMW1PtsXPWXXaPzUvqPfq2rGL0+LxJLoA1issmJTUn
-        syy1SN8ugSuj48cF5oIWjorDP1eyNDA+Yuti5OSQEDCR+NjQy9jFyMUhJLCEUWLxqtmsEM5/
-        RonXL++wgFSxCWhLXF+7lRHEFhEwlFg5tQUsziywnFHiwhUbEFtYwFVi26EtTCA2i4CqxJaD
-        C4A2cHDwCrhL/G62h1gmJ3HzXCfzBEauBYwMqxhFUkuLc9Nzi430ihNzi0vz0vWS83M3MQJ9
-        v+3Yzy07GLveBR9iFOBgVOLhPWH1JlqINbGsuDL3EKMEB7OSCO+CGqAQb0piZVVqUX58UWlO
-        avEhRmkOFiVx3vMGlVFCAumJJanZqakFqUUwWSYOTqkGxkimvyUhFduqz4nEPs35prRgw8kL
-        b0ulz0ftF471jX/2Uspvyyv/Ux/OXd/Spjtt4ubUtCu2ml83yO6MqfqZPsv19ptjrj5+37Ot
-        3p9PeRg9p83vnKbzYWvJNet+Tn0T6j1l6zSVmI5HAX/2xgWEt8Y5fDbV3Ly7WsbqUfnX37WL
-        J80Pii94w63EUpyRaKjFXFScCADPDZtj+QEAAA==
-X-CMS-MailID: 20181115050737eucas1p104ccec527d0713f9414bc75e0959feb6
-X-Msg-Generator: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20181115050737eucas1p104ccec527d0713f9414bc75e0959feb6
-References: <CGME20181115050737eucas1p104ccec527d0713f9414bc75e0959feb6@eucas1p1.samsung.com>
+        Thu, 15 Nov 2018 10:17:01 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:44518 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726574AbeKOPRA (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 10:17:00 -0500
+Received: from smtp.corp.redhat.com (int-mx06.intmail.prod.int.phx2.redhat.com [10.5.11.16])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B968830B64DD;
+        Thu, 15 Nov 2018 05:10:41 +0000 (UTC)
+Received: from localhost (ovpn-8-20.pek2.redhat.com [10.72.8.20])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 58A925C220;
+        Thu, 15 Nov 2018 05:10:36 +0000 (UTC)
+Date:   Thu, 15 Nov 2018 13:10:34 +0800
+From:   Baoquan He <bhe@redhat.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
+        aarcange@redhat.com
+Subject: Re: Memory hotplug softlock issue
+Message-ID: <20181115051034.GK2653@MiWiFi-R3L-srv>
+References: <20181114070909.GB2653@MiWiFi-R3L-srv>
+ <5a6c6d6b-ebcd-8bfa-d6e0-4312bfe86586@redhat.com>
+ <20181114090134.GG23419@dhcp22.suse.cz>
+ <20181114145250.GE2653@MiWiFi-R3L-srv>
+ <20181114150029.GY23419@dhcp22.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181114150029.GY23419@dhcp22.suse.cz>
+User-Agent: Mutt/1.9.1 (2017-09-22)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.16
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Thu, 15 Nov 2018 05:10:41 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: "huijin.park" <huijin.park@samsung.com>
+On 11/14/18 at 04:00pm, Michal Hocko wrote:
+> On Wed 14-11-18 22:52:50, Baoquan He wrote:
+> > On 11/14/18 at 10:01am, Michal Hocko wrote:
+> > > I have seen an issue when the migration cannot make a forward progress
+> > > because of a glibc page with a reference count bumping up and down. Most
+> > > probable explanation is the faultaround code. I am working on this and
+> > > will post a patch soon. In any case the migration should converge and if
+> > > it doesn't do then there is a bug lurking somewhere.
+> > > 
+> > > Failing on ENOMEM is a questionable thing. I haven't seen that happening
+> > > wildly but if it is a case then I wouldn't be opposed.
+> > 
+> > Applied your debugging patches, it helps a lot to printing message.
+> > 
+> > Below is the dmesg log about the migrating failure. It can't pass
+> > migrate_pages() and loop forever.
+> > 
+> > [  +0.083841] migrating pfn 10fff7d0 failed 
+> > [  +0.000005] page:ffffea043ffdf400 count:208 mapcount:201 mapping:ffff888dff4bdda8 index:0x2
+> > [  +0.012689] xfs_address_space_operations [xfs] 
+> > [  +0.000030] name:"stress" 
+> > [  +0.004556] flags: 0x5fffffc0000004(uptodate)
+> > [  +0.007339] raw: 005fffffc0000004 ffffc900000e3d80 ffffc900000e3d80 ffff888dff4bdda8
+> > [  +0.009488] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e7353d000
+> > [  +0.007726] page->mem_cgroup:ffff888e7353d000
+> > [  +0.084538] migrating pfn 10fff7d0 failed 
+> > [  +0.000006] page:ffffea043ffdf400 count:210 mapcount:201 mapping:ffff888dff4bdda8 index:0x2
+> > [  +0.012798] xfs_address_space_operations [xfs] 
+> > [  +0.000034] name:"stress" 
+> > [  +0.004524] flags: 0x5fffffc0000004(uptodate)
+> > [  +0.007068] raw: 005fffffc0000004 ffffc900000e3d80 ffffc900000e3d80 ffff888dff4bdda8
+> > [  +0.009359] raw: 0000000000000002 0000000000000000 000000cb000000c8 ffff888e7353d000
+> > [  +0.007728] page->mem_cgroup:ffff888e7353d000
+> 
+> I wouldn't be surprised if this was a similar/same issue I've been
+> chasing recently. Could you try to disable faultaround to see if that
+> helps. It seems that it helped in my particular case but I am still
+> waiting for the final good-to-go to post the patch as I do not own the
+> workload which triggered that issue.
 
-The "params->size" is defined as "u64".
-And "info->sector_size" and "info->n_sectors" are defined as
-unsigned int and u16.
-Thus, u64 data might have strange data(loss data) if the result
-overflows an unsigned int.
-This patch casts "info->sector_size" and "info->n_sectors" to an u64.
+Tried, still stuck in last block sometime. Usually after several times
+of hotplug/unplug. If stop stress program, the last block will be
+offlined immediately.
 
-Signed-off-by: huijin.park <huijin.park@samsung.com>
----
- drivers/mtd/spi-nor/spi-nor.c |    2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index d9c368c..527f281 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -2459,7 +2459,7 @@ static int spi_nor_init_params(struct spi_nor *nor,
- 	memset(params, 0, sizeof(*params));
- 
- 	/* Set SPI NOR sizes. */
--	params->size = info->sector_size * info->n_sectors;
-+	params->size = (u64)info->sector_size * (u64)info->n_sectors;
- 	params->page_size = info->page_size;
- 
- 	/* (Fast) Read settings. */
--- 
-1.7.9.5
-
+[root@ ~]# cat /sys/kernel/debug/fault_around_bytes 
+4096
