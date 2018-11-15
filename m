@@ -2,91 +2,124 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2486C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:53:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BB2C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:53:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ADAE42086B
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:53:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ADAE42086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id ED1102086B
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:53:47 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED1102086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388437AbeKPCB5 (ORCPT
+        id S2388558AbeKPCCI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 21:01:57 -0500
-Received: from mail-ed1-f67.google.com ([209.85.208.67]:38568 "EHLO
-        mail-ed1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388019AbeKPCB4 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 21:01:56 -0500
-Received: by mail-ed1-f67.google.com with SMTP id a2-v6so17128010edi.5;
-        Thu, 15 Nov 2018 07:53:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=5kelFFckd1xIAuSP72j37DURaRioIXquCJ6W4bnoWbg=;
-        b=U+y6AoXc+MPcF5L5Msdy1XCEVghGSM5suuUOLoJglYV38cHUajz1CT8gJr9/890h3u
-         sRXBNA9HwUFxhmaEKNPDqXCgoaPQsHBzJEB20b+mVoTcudRr1rf/0iBX7d0YPGar6K/4
-         hCxOy6bibgN+Tws8D/GvZeSkVSIEbpzsPPkiPHe9H89eoIadLcgs6j+st9F4IYLpGmYR
-         kFUwoEyhQbs/Kck3o5kavH9m1R+b3iu/3jYPrZuZ9WTvkQyx+EqummLhjBru9hK9SELQ
-         Qet3H0KfRpb4SoPNfap2/tSnIVZQIHtq/uT35DKRIo+fsaksp/fnXmabshA2HA+w9Vb2
-         DCfg==
-X-Gm-Message-State: AGRZ1gKw8SjPq46zCmBQIPx2Tjt5gXR+wuDa0Rsf2SlukBWzItEFw63n
-        sX3Ee5/88qp7RCODM0+g74o/Sn4Devo=
-X-Google-Smtp-Source: AJdET5fwCY+cs8IJUDLCshKwedtEM0xhxeB7guwwWvhfxBVWJfgAJi1Qv5qZHqWUkOUWuZIp30Y+cA==
-X-Received: by 2002:a50:998c:: with SMTP id m12-v6mr6364504edb.7.1542297211799;
-        Thu, 15 Nov 2018 07:53:31 -0800 (PST)
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com. [209.85.128.51])
-        by smtp.gmail.com with ESMTPSA id x35-v6sm7910585edb.24.2018.11.15.07.53.30
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 07:53:30 -0800 (PST)
-Received: by mail-wm1-f51.google.com with SMTP id p2-v6so18372194wmc.2;
-        Thu, 15 Nov 2018 07:53:30 -0800 (PST)
-X-Received: by 2002:a1c:9f01:: with SMTP id i1-v6mr5577531wme.8.1542297210182;
- Thu, 15 Nov 2018 07:53:30 -0800 (PST)
+        Thu, 15 Nov 2018 21:02:08 -0500
+Received: from mga14.intel.com ([192.55.52.115]:30306 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2388019AbeKPCCI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 21:02:08 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga005.jf.intel.com ([10.7.209.41])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 07:53:45 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,236,1539673200"; 
+   d="scan'208";a="274265971"
+Received: from linux.intel.com ([10.54.29.200])
+  by orsmga005.jf.intel.com with ESMTP; 15 Nov 2018 07:53:45 -0800
+Received: from [10.251.29.1] (kliang2-mobl1.ccr.corp.intel.com [10.251.29.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        by linux.intel.com (Postfix) with ESMTPS id 54664580495;
+        Thu, 15 Nov 2018 07:53:44 -0800 (PST)
+Subject: Re: [PATCH 1/2] perf vendor events: Add stepping in CPUID string for
+ x86
+To:     Jiri Olsa <jolsa@redhat.com>
+Cc:     acme@kernel.org, mingo@redhat.com, peterz@infradead.org,
+        linux-kernel@vger.kernel.org, namhyung@kernel.org,
+        ak@linux.intel.com
+References: <20181114212416.15665-1-kan.liang@linux.intel.com>
+ <20181115135347.GI9600@krava>
+ <7a63fdf4-828f-0685-e146-6d3d86d8655b@linux.intel.com>
+ <20181115152534.GL9600@krava>
+From:   "Liang, Kan" <kan.liang@linux.intel.com>
+Message-ID: <13ef65c9-1622-2bb7-3d61-65f469fe1a10@linux.intel.com>
+Date:   Thu, 15 Nov 2018 10:53:42 -0500
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <20181115145013.3378-1-paul.kocialkowski@bootlin.com> <20181115145013.3378-5-paul.kocialkowski@bootlin.com>
-In-Reply-To: <20181115145013.3378-5-paul.kocialkowski@bootlin.com>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Thu, 15 Nov 2018 23:53:21 +0800
-X-Gmail-Original-Message-ID: <CAGb2v67QgaeAMPrPagHnn9+gw2hsY7z=pA4bgOg=wSbEnG86Dw@mail.gmail.com>
-Message-ID: <CAGb2v67QgaeAMPrPagHnn9+gw2hsY7z=pA4bgOg=wSbEnG86Dw@mail.gmail.com>
-Subject: Re: [PATCH 04/15] soc: sunxi: sram: Enable EMAC clock access for H3 variant
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-sunxi@googlegroups.com, Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181115152534.GL9600@krava>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 10:50 PM Paul Kocialkowski
-<paul.kocialkowski@bootlin.com> wrote:
->
-> Just like the A64 and H5, the H3 SoC uses the system control block
-> to enable the EMAC clock.
->
-> Add a variant structure definition for the H3 and use it over the A10
-> one. This will allow using the H3-specific binding for the syscon node
-> attached to the EMAC instead of the generic syscon binding.
->
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
 
-Reviewed-by: Chen-Yu Tsai <wens@csie.org>
+>>>> +	/*
+>>>> +	 * Full CPUID format is required to identify a platform.
+>>>> +	 * Error out if the cpuid string is incomplete.
+>>>> +	 */
+>>>> +	if (full_mapcpuid && !full_cpuid) {
+>>>> +		pr_info("Invalid CPUID %s. Full CPUID is required, "
+>>>> +			"vendor-family-model-stepping\n", cpuid);
+>>>> +		return 1;
+>>>> +	}
+>>>> +
+>>>> +	if (regcomp(&re, mapcpuid, REG_EXTENDED) != 0) {
+>>>> +		/* Warn unable to generate match particular string. */
+>>>> +		pr_info("Invalid regular expression %s\n", mapcpuid);
+>>>> +		return 1;
+>>>> +	}
+>>>> +
+>>>> +	match = !regexec(&re, cpuid, 1, pmatch, 0);
+>>>> +	regfree(&re);
+>>>> +	if (match) {
+>>>> +		size_t match_len = (pmatch[0].rm_eo - pmatch[0].rm_so);
+>>>> +		size_t cpuid_len;
+>>>> +
+>>>> +		/* If the full CPUID format isn't required,
+>>>> +		 * ignoring the stepping.
+>>>> +		 */
+>>>> +		if (!full_mapcpuid && full_cpuid)
+>>>> +			cpuid_len = strrchr(cpuid, '-') - cpuid;
+>>>> +		else
+>>>> +			cpuid_len = strlen(cpuid);
+>>>> +
+>>>> +
+>>>> +		/* Verify the entire string matched. */
+>>>> +		if (match_len == cpuid_len)
+>>>> +			return 0;
+>>>
+>>> why is this necessary?
+>>>
+>>
+>> It's from previous common code. As my understanding, it just double check
+>> the matched strings. There is no harmful. So I keep it.
+> 
+> right.. did you consider using the wildcard in the map file
+> so it'd cover the stepping, having entries like:
+> 
+>    GenuineIntel-6-1F-*,v2,nehalemep,core
+> 
+> I haven't thought this one through, but seems we could bypass
+> those '-stepping' checks.. but probably other changes would be
+> necessary for the wildcard
+> 
+
+If using wildcard, the full cpuid format is required for all platforms.
+The script which using environment string "PERF_CPUID" will definitely 
+be broken on all platforms.
+This patch (non-wildcard) only breaks the script on Skylake server and 
+Cascadelake server.
+
+I think that's the only drawback of using wildcard.
+
+Thanks,
+Kan
+
