@@ -2,366 +2,123 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 173C1C43610
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:44:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2C882C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:44:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BE16D2146D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:44:09 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DE3D322419
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 15:44:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QMabDYpR"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BE16D2146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WPUlk2x5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE3D322419
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388712AbeKPBw1 (ORCPT
+        id S2388603AbeKPBxM (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 20:52:27 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42126 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2388571AbeKPBw1 (ORCPT
+        Thu, 15 Nov 2018 20:53:12 -0500
+Received: from mail-pg1-f194.google.com ([209.85.215.194]:43878 "EHLO
+        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726432AbeKPBxM (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 20:52:27 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:MIME-Version:References:In-Reply-To:Message-ID:Subject:Cc:To:
-        From:Date:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=1kuzehewwH6fX7xB7/QpDUccRseuTywo3Yztn3l7QZw=; b=QMabDYpR4+TgoVA87TUeldRTD
-        qVV2QErUcDb1EX9+dkd1p7ZkN7lD09CxA1SRuKBOVgC6nutEOWEw3faFmTt2ReKiMAWK0Oy4pQ05P
-        NZfTZ9RsaSWHroQtg0FSFNcRADwyGLz4/9RuzhMGJeRlkjsS3P3PYcH71egDtSmZZdD/fOKjfvgSG
-        wCWnMFTAEVSBcAqDSa9rJhoLjpLtWTWCdVveU14WTNrDh/qkDdAHJrOISvHS0PDaEta2UM0t0VH50
-        GnRSkvH264InFBtkszEVXnt5tpNlmywVU71Sbkw5JGA7t6UZoh7NWoKYfJWC5hEBbylr22NF6QvhP
-        uEfq7NgwA==;
-Received: from [64.114.255.114] (helo=silica.lan)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNJoM-00065o-JK; Thu, 15 Nov 2018 15:44:06 +0000
-Date:   Thu, 15 Nov 2018 07:44:03 -0800
-From:   Mauro Carvalho Chehab <mchehab@kernel.org>
-To:     Dan Williams <dan.j.williams@intel.com>
-Cc:     linux-kernel@vger.kernel.org, vishal.l.verma@intel.com,
-        ksummit-discuss@lists.linuxfoundation.org,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-nvdimm@lists.01.org, Dmitry Vyukov <dvyukov@google.com>,
-        Steve French <stfrench@microsoft.com>,
-        "Tobin C. Harding" <me@tobin.cc>, linux-media@vger.kernel.org
-Subject: Re: [Ksummit-discuss] [RFC PATCH 2/3] MAINTAINERS, Handbook:
- Subsystem Profile
-Message-ID: <20181115074403.45d9a16a@silica.lan>
-In-Reply-To: <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com>
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
-        <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-redhat-linux-gnu)
+        Thu, 15 Nov 2018 20:53:12 -0500
+Received: by mail-pg1-f194.google.com with SMTP id n10-v6so9174445pgv.10
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 07:44:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
+         :user-agent;
+        bh=aM1C42m8xdOqFETa7vpI1nSS13dxTXWD/5chbQoQBa8=;
+        b=WPUlk2x5CRHbvpM1bKX0kitApnk9BOX9wd6CvD1uXCrRKIH6tLEay2hxykg+jfsOB5
+         J3wKWSBsuJ6udvfS4G6bvMcO6ox+2kzBEBlokR74eBZjoMw6d8x1PN71smAmcbb6mBup
+         OdgkIHjtmqbhHbuOLy/q3SSyLzA2k+Xpsv24H8M3CFunfT0Vso70i7cPyZZzP0niaf+O
+         JGIryGQnwC1aAak8kAS+Qx8SqdiY8zDRVlIBvvktT+IuNNm53fGMh6V+fHDKJ1kl3EAv
+         aNkn5Ps0QTpVVhzhG4tLFaxNej9aYPChR96QL/bg7V+spivBI26bw5QPRPmo5pwul8kV
+         BkFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
+         :content-disposition:user-agent;
+        bh=aM1C42m8xdOqFETa7vpI1nSS13dxTXWD/5chbQoQBa8=;
+        b=PiaU5NPM1gbAaKwaPr5QbGoQ28od4hi0Wjwgs7ARBb/j9QVBOBjYPpc3zn+sWnNggp
+         iB53i2WkWecFPkNUyLDvkcZKwmYiO0pwQqL0ZI8ai6rb0KS9e114c6Z/PYhn+2pwM4cy
+         RWSpTg1PA5TU2kZhUyV92ccYcoaZkGHYe8xCZFlRVM4OtMWWGxFiwXcxX2Oci6ElHsqh
+         HTTysG1ByBBt0kJxUl7zwlRYEJZNAdp6x3w+Q+Lq0Z1TBEHPiOYkMmoExu+xKSxy73VT
+         3AvbF8quihv4DPrH/69Xp8R0aDDOMyQR/yOhjhtOTZAi9xsJDuX/VK7/ZhDRJvxCQNAU
+         OawA==
+X-Gm-Message-State: AGRZ1gJepdw9AjEGD04gu/DxKyL/+8jOnjQkiUe49xOxKxH11hzo2PvB
+        J4m1cNcP5LyuHbfTiOoiVrI=
+X-Google-Smtp-Source: AJdET5e7n4pF+rhd6dDpXXTPWo1Rru/vt9norA53b2YS+zYvPSJKdhFnnXdL8xxj4jhF0QHgnmIpvw==
+X-Received: by 2002:a62:6241:: with SMTP id w62-v6mr6901975pfb.69.1542296690923;
+        Thu, 15 Nov 2018 07:44:50 -0800 (PST)
+Received: from jordon-HP-15-Notebook-PC ([103.227.97.233])
+        by smtp.gmail.com with ESMTPSA id z127-v6sm32794856pfz.135.2018.11.15.07.44.49
+        (version=TLS1 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
+        Thu, 15 Nov 2018 07:44:49 -0800 (PST)
+Date:   Thu, 15 Nov 2018 21:18:26 +0530
+From:   Souptick Joarder <jrdr.linux@gmail.com>
+To:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie
+Cc:     linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        dri-devel@lists.freedesktop.org, linux-rockchip@lists.infradead.org
+Subject: [PATCH 4/9] drm/rockchip/rockchip_drm_gem.c: Convert to use
+ vm_insert_range
+Message-ID: <20181115154826.GA27948@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Wed, 14 Nov 2018 20:53:25 -0800
-Dan Williams <dan.j.williams@intel.com> escreveu:
+Convert to use vm_insert_range() to map range of kernel
+memory to user vma.
 
-> As presented at the 2018 Linux Plumbers conference [1], the Subsystem
-> Profile is proposed as a way to reduce friction between committers and
-> maintainers and perhaps encourage conversations amongst maintainers
-> about best practice policies.
-> 
-> The profile contains short answers to some of the common policy
-> questions a contributor might have, or that a maintainer might consider
-> formalizing. The current list of maintenance policies is:
-> 
-> Overview: General introduction to maintaining the subsystem
-> Core: List of source files considered core
-> Leaf: List of source files that consume core functionality
-> Patches or Pull requests: Simple statement of expected submission format
-> Last -rc for new feature submissions: Expected lead time for submissions
-> Last -rc to merge features: Deadline for merge decisions
-> Non-author Ack / Review Tags Required: Patch review economics
-> Test Suite: Pass this suite before requesting inclusion
-> Resubmit Cadence: When to ping the maintainer
-> Trusted Reviewers: Help for triaging patches
-> Time Zone / Office Hours: When might a maintainer be available
-> Checkpatch / Style Cleanups: Policy on pure cleanup patches
-> Off-list review: Request for review gates
-> TODO: Potential development tasks up for grabs, or active focus areas
-> 
-> The goal of the Subsystem Profile is to set expectations for
-> contributors and interim or replacement maintainers for a subsystem.
-> 
-> See Documentation/maintainer/subsystem-profile.rst for more details, and
-> a follow-on example profile for the libnvdimm subsystem.
-> 
-> [1]: https://linuxplumbersconf.org/event/2/contributions/59/
-> 
-> Cc: Jonathan Corbet <corbet@lwn.net>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Mauro Carvalho Chehab <mchehab@kernel.org>
-> Cc: Steve French <stfrench@microsoft.com>
-> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> Cc: Linus Torvalds <torvalds@linux-foundation.org>
-> Cc: Tobin C. Harding <me@tobin.cc>
-> Cc: Olof Johansson <olof@lixom.net>
-> Cc: Martin K. Petersen <martin.petersen@oracle.com>
-> Cc: Daniel Vetter <daniel.vetter@ffwll.ch>
-> Cc: Joe Perches <joe@perches.com>
-> Cc: Dmitry Vyukov <dvyukov@google.com>
-> Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+---
+ drivers/gpu/drm/rockchip/rockchip_drm_gem.c | 20 ++------------------
+ 1 file changed, 2 insertions(+), 18 deletions(-)
 
-Ok, I sort of followed the proposed model, adding a documentation for
-the media subsystem using the template.
-
-I'm pretty sure this is incomplete and more work would be needed.
-So, for now, this is just an example.
-
-Also, I didn't test building it on Sphinx (nor added any reference for it
-at MAINTAINERS), as my main goal here was to see how the model would fit
-for us.
-
-I noticed a few issues there:
-
-1) Describing the "core" files. The media subsystem is complex: depending on
-the device type, we have different APIs and different cores. So, our core
-is actually a set of different cores. I ended by adding sub-sections.
-
-Also, several things were not described there. For example, we store
-DVB frontend drivers on an specific directory. We have drivers there organized
-by bus type. So, one directory for I2C, one for USB, one for PCI, ...
-
-It should probably make sense to be able to tell about that.
-
-So, I would actually prefer to have, at the profile, a "files" section,
-instead of "core".
-
-2) As I said before, on media, we have sub-maintainers. Not sure how to
-describe them on this template.
-
-3) I noticed one big missing thing there: in the case of media, we are
-responsible also to maintaining media staging drivers, that goes at
-drivers/staging/media. IMO, it would be important to be able to describe
-who maintains staging stuff - e. g. if the subsystem maintainers prefer
-to let staging up to staging maintainers or if they'll maintain themselves.
-
-In the latter, it probably makes sense to describe any specific thing
-related to it (where staging will be at the tree, are there any special
-rules for them?)
-
-Anyway, RFC patch follows.
-
+diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+index a8db758..2cb83bb 100644
+--- a/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
++++ b/drivers/gpu/drm/rockchip/rockchip_drm_gem.c
+@@ -221,26 +221,10 @@ static int rockchip_drm_gem_object_mmap_iommu(struct drm_gem_object *obj,
+ 					      struct vm_area_struct *vma)
+ {
+ 	struct rockchip_gem_object *rk_obj = to_rockchip_obj(obj);
+-	unsigned int i, count = obj->size >> PAGE_SHIFT;
+ 	unsigned long user_count = vma_pages(vma);
+-	unsigned long uaddr = vma->vm_start;
+-	unsigned long offset = vma->vm_pgoff;
+-	unsigned long end = user_count + offset;
+-	int ret;
 -
+-	if (user_count == 0)
+-		return -ENXIO;
+-	if (end > count)
+-		return -ENXIO;
+ 
+-	for (i = offset; i < end; i++) {
+-		ret = vm_insert_page(vma, uaddr, rk_obj->pages[i]);
+-		if (ret)
+-			return ret;
+-		uaddr += PAGE_SIZE;
+-	}
+-
+-	return 0;
++	return vm_insert_range(vma, vma->vm_start, rk_obj->pages,
++				user_count);
+ }
+ 
+ static int rockchip_drm_gem_object_mmap_dma(struct drm_gem_object *obj,
+-- 
+1.9.1
 
-[PATCH] [RFC] Add a system profile description for media subsystem
-
-This RFC aligns with current Dan's proposal for having subsystem
-specific ruleset stored at the Kernel tree.
-
-On this initial RFC, I opted to not add the reviewers e-mail
-(adding just a "<>") as a boilerplate. If we decide keeping emails
-there, I'll add them.
-
-Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-
-diff --git a/Documentation/media/subsystem-profile.rst b/Documentation/media/subsystem-profile.rst
-new file mode 100644
-index 000000000000..7a5d6f691d05
---- /dev/null
-+++ b/Documentation/media/subsystem-profile.rst
-@@ -0,0 +1,186 @@
-+Media Subsystem Profile
-+=======================
-+
-+Overview
-+--------
-+
-+The media subsystem cover support for a variety of devices: stream
-+capture, analog and digital TV, cameras, remote controllers, HDMI CEC
-+and media pipeline control.
-+
-+Both our userspace and Kernel APIs are documented and should be kept in
-+sync with the API changes. It means that all patches that add new
-+features to the subsystem should also bring changes to the corresponding
-+API files.
-+
-+Also, patches for device drivers that changes the Open Firmware/Device
-+Tree bindings should be reviewed by the Device Tree maintainers.
-+
-+Due to the size and wide scope of the media subsystem, our
-+maintainership model is to have sub-maintainers that have a broad
-+knowledge of an specific aspect of the subsystem. It is a
-+sub-maintainers task to review the patches, providing feedback to users
-+if the patches are following the subsystem rules and are properly using
-+the media internal and external APIs.
-+
-+We have a set of compliance tools at https://git.linuxtv.org/v4l-utils.git/
-+that should be used in order to check if the drivers are properly
-+implementing the media APIs.
-+
-+Patches for the media subsystem should be sent to the media mailing list
-+at linux-media@vger.kernel.org as plain text only e-mail. emails with
-+HTML will be automacially rejected by the mail server.
-+
-+Our workflow is heavily based on Patchwork, meaning that, once a patch
-+is submitted, it should appear at:
-+
-+   - https://patchwork.linuxtv.org/project/linux-media/list/
-+
-+If it doesn't automatically appear there after a few minutes, then
-+probably something got wrong on your submission. Please check if the
-+email is in plain text only and if your emailer is not mangling with
-+whitespaces before complaining or submit it again.
-+
-+Core
-+----
-+
-+Documentation
-++++++++++++++
-+
-+F: Documentation/media
-+
-+Kernelspace API headers
-++++++++++++++++++++++++
-+
-+F: include/media/*.h
-+
-+Digital TV Core
-++++++++++++++++
-+
-+F: drivers/media/dvb-core
-+
-+HDMI CEC Core
-++++++++++++++
-+
-+F: drivers/media/cec
-+
-+Media Controller Core
-++++++++++++++++++++++
-+
-+F: drivers/media/media-\*.[ch]
-+
-+Remote Controller Core
-+++++++++++++++++++++++
-+
-+F: drivers/media/rc/rc-core-priv.h
-+F: drivers/media/rc/rc-ir-raw.c
-+F: drivers/media/rc/rc-main.c
-+F: drivers/media/rc/ir\*-decoder.c
-+F: drivers/media/rc/lirc_dev.c
-+
-+Video4linux Core
-+++++++++++++++++
-+
-+F: drivers/media/v4l2-core
-+
-+Patches or Pull requests
-+------------------------
-+
-+All patches should be submitted via e-mail for review. We use
-+pull requests on our workflow between sub-maintainers and the
-+maintainer.
-+
-+
-+Last day for new feature submissions
-+------------------------------------
-+
-+Before -rc5
-+
-+
-+Last day to merge features
-+--------------------------
-+
-+Before -rc7
-+
-+
-+Non-author Ack / Review Tags Required
-+-------------------------------------
-+
-+Not required, but desirable
-+
-+
-+Test Suite
-+----------
-+
-+Use the several *-compliance tools that are part of the v4l-utils
-+package.
-+
-+
-+Trusted Reviewers
-+-----------------
-+
-+Sub-maintainers
-++++++++++++++++
-+
-+At the media subsystem, we have a group of senior developers that are
-+responsible for doing the code reviews at the drivers (called
-+sub-maintainers), and another senior developer responsible for the
-+subsystem as a hole. For core changes, whenever possible, multiple
-+media (sub-)maintainers do the review.
-+
-+The sub-maintainers work on specific areas of the subsystem, as
-+described below:
-+
-+- Sensor drivers
-+
-+  R: Sakari Ailus <>
-+
-+- V4L2 drivers
-+
-+  R: Hans Verkuil <>
-+
-+- Media controller drivers
-+
-+  R: Laurent Pinchart <>
-+
-+- HDMI CEC
-+
-+- Remote Controllers
-+
-+  R: Sean Young <>
-+
-+- Digital TV
-+
-+  R: Michael Krufky <>
-+  R: Sean Young <>
-+
-+
-+Resubmit Cadence
-+----------------
-+
-+Provided that your patch is at https://patchwork.linuxtv.org, it should
-+be sooner or later handled, so you don't need to re-submit a patch.
-+
-+Please notice that the media subsystem is a high traffic one, so it
-+could take a while for us to be able to review your patches. Feel free
-+to ping if you don't get a feedback on a couple of weeks.
-+
-+Time Zone / Office Hours
-+------------------------
-+
-+Media developers are distributed all around the globe. So, don't assume
-+that we're on your time zone. We usually don't work on local holidays or
-+at weekends. Please also notice that, during the Kernel merge window,
-+we're usually busy ensuring that everything goes smoothly, meaning that
-+we usually have a lot of patches waiting for review just after that. So
-+you should expect a higher delay during the merge window and one week
-+before/after it.
-+
-+
-+Checkpatch / Style cleanups
-+---------------------------
-+
-+Standalone style-cleanups are welcome, but they should be grouped per
-+directory. So, for example, if you're doing a cleanup at drivers
-+under drivers/media, please send a single patch for all drivers under
-+drivers/media/pci, another one for drivers/media/usb and so on.
-
-
-
-
-
-Cheers,
-Mauro
