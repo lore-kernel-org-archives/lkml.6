@@ -2,266 +2,154 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CF16EC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:00:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3600C43441
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:01:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8D1412087A
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:00:50 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8D1412087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id A24E32145D
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:01:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1drFgjb"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A24E32145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726861AbeKPJKi (ORCPT
+        id S1729586AbeKPJLJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 04:10:38 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:59465 "EHLO mail.bootlin.com"
+        Fri, 16 Nov 2018 04:11:09 -0500
+Received: from mail.kernel.org ([198.145.29.99]:52886 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725916AbeKPJKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 04:10:37 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 0DE62207BD; Fri, 16 Nov 2018 00:00:45 +0100 (CET)
-Received: from bbrezillon (91-160-177-164.subs.proxad.net [91.160.177.164])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 5EF9E2072C;
-        Fri, 16 Nov 2018 00:00:44 +0100 (CET)
-Date:   Fri, 16 Nov 2018 00:00:43 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     Fernando Ramos <greenfoo@gluegarage.com>
-Cc:     dri-devel@lists.freedesktop.org, David Airlie <airlied@linux.ie>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, Jonathan Corbet <corbet@lwn.net>,
-        Alexey Brodkin <abrodkin@synopsys.com>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Alexandre Belloni <alexandre.belloni@bootlin.com>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Gerd Hoffmann <kraxel@redhat.com>,
-        Archit Taneja <architt@codeaurora.org>,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Lucas Stach <l.stach@pengutronix.de>,
-        Russell King <linux+etnaviv@armlinux.org.uk>,
-        Christian Gmeiner <christian.gmeiner@gmail.com>,
-        Marek Vasut <marex@denx.de>, Stefan Agner <stefan@agner.ch>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Shawn Guo <shawnguo@kernel.org>,
-        Julia Lawall <Julia.Lawall@lip6.fr>,
-        Gilles Muller <Gilles.Muller@lip6.fr>,
-        Nicolas Palix <nicolas.palix@imag.fr>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Haneen Mohammed <hamohammed.sa@gmail.com>,
-        linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        virtualization@lists.linux-foundation.org,
-        etnaviv@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org,
-        cocci@systeme.lip6.fr
-Subject: Re: [PATCH 3/9] drm: replace "drm_dev_unref" function with
- "drm_dev_put"
-Message-ID: <20181116000043.3b0f6f27@bbrezillon>
-In-Reply-To: <20181115221634.22715-4-greenfoo@gluegarage.com>
-References: <20181115221634.22715-1-greenfoo@gluegarage.com>
-        <20181115221634.22715-4-greenfoo@gluegarage.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1725916AbeKPJLI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 04:11:08 -0500
+Received: from localhost (unknown [64.114.255.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id CB9F12087A;
+        Thu, 15 Nov 2018 23:01:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542322878;
+        bh=asiffcZE7PRfB3X2yHLMzAWIFRCOH07XY+NKYFvBB3w=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=F1drFgjbuRFh4tEYW99y0Yqdfd++q6yRvl4bFNO9jbUeMMib0/EXzzsT1ap8ax1SS
+         7zMd6ONQMmk+jTkXjiQOx0OppXmRBT0thIcaxrUOJhidIO9mkMiCgwDfST5XRZQxEW
+         KWoB+5VNV/bFsw9mRpiFOOLkqippeZZ+/qP+2gBI=
+Date:   Thu, 15 Nov 2018 18:01:18 -0500
+From:   Sasha Levin <sashal@kernel.org>
+To:     Andrew Morton <akpm@linux-foundation.org>
+Cc:     stable@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Jann Horn <jannh@google.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Christoph Lameter <clameter@sgi.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH AUTOSEL 3.18 8/9] mm/vmstat.c: assert that vmstat_text is
+ in sync with stat_items_size
+Message-ID: <20181115230118.GC1706@sasha-vm>
+References: <20181113055252.79406-1-sashal@kernel.org>
+ <20181113055252.79406-8-sashal@kernel.org>
+ <20181115140810.e3292c83467544f6a1d82686@linux-foundation.org>
+ <20181115223718.GB1706@sasha-vm>
+ <20181115144719.d26dc7a2d47fade8d41a83d5@linux-foundation.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20181115144719.d26dc7a2d47fade8d41a83d5@linux-foundation.org>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Nov 2018 23:16:23 +0100
-Fernando Ramos <greenfoo@gluegarage.com> wrote:
+On Thu, Nov 15, 2018 at 02:47:19PM -0800, Andrew Morton wrote:
+>On Thu, 15 Nov 2018 17:37:18 -0500 Sasha Levin <sashal@kernel.org> wrote:
+>
+>> On Thu, Nov 15, 2018 at 02:08:10PM -0800, Andrew Morton wrote:
+>> >On Tue, 13 Nov 2018 00:52:51 -0500 Sasha Levin <sashal@kernel.org> wrote:
+>> >
+>> >> From: Jann Horn <jannh@google.com>
+>> >>
+>> >> [ Upstream commit f0ecf25a093fc0589f0a6bc4c1ea068bbb67d220 ]
+>> >>
+>> >> Having two gigantic arrays that must manually be kept in sync, including
+>> >> ifdefs, isn't exactly robust.  To make it easier to catch such issues in
+>> >> the future, add a BUILD_BUG_ON().
+>> >>
+>> >> ...
+>> >>
+>> >> --- a/mm/vmstat.c
+>> >> +++ b/mm/vmstat.c
+>> >> @@ -1189,6 +1189,8 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
+>> >>  	stat_items_size += sizeof(struct vm_event_state);
+>> >>  #endif
+>> >>
+>> >> +	BUILD_BUG_ON(stat_items_size !=
+>> >> +		     ARRAY_SIZE(vmstat_text) * sizeof(unsigned long));
+>> >>  	v = kmalloc(stat_items_size, GFP_KERNEL);
+>> >>  	m->private = v;
+>> >>  	if (!v)
+>> >
+>> >I don't think there's any way in which this can make a -stable kernel
+>> >more stable!
+>> >
+>> >
+>> >Generally, I consider -stable in every patch I merge, so for each patch
+>> >which doesn't have cc:stable, that tag is missing for a reason.
+>> >
+>> >In other words, your criteria for -stable addition are different from
+>> >mine.
+>> >
+>> >And I think your criteria differ from those described in
+>> >Documentation/process/stable-kernel-rules.rst.
+>> >
+>> >So... what is your overall thinking on patch selection?
+>>
+>> Indeed, this doesn't fix anything.
+>>
+>> My concern is that in the future, we will pull a patch that will cause
+>> the issue described here, and that issue will only be relevant on
+>> stable. It is very hard to debug this, and I suspect that stable kernels
+>> will still pass all their tests with flying colors.
+>>
+>> As an example, consider the case where commit 28e2c4bb99aa ("mm/vmstat.c:
+>> fix outdated vmstat_text") is backported to a kernel that doesn't have
+>> commit 7a9cdebdcc17 ("mm: get rid of vmacache_flush_all() entirely").
+>>
+>> I also felt safe with this patch since it adds a single BUILD_BUG_ON()
+>> which does nothing during runtime, so the chances it introduces anything
+>> beyond a build regression seemed to be slim to none.
+>
+>Well OK.  But my question was general and covers basically every
+>autosel patch which originated in -mm.
 
-> This patch unifies the naming of DRM functions for reference counting as
-> requested on Documentation/gpu/todo.rst
-> 
-> Signed-off-by: Fernando Ramos <greenfoo@gluegarage.com>
-> ---
->  drivers/gpu/drm/arc/arcpgu_drv.c             | 4 ++--
->  drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c | 4 ++--
+Sure. I picked 3 patches that show up on top when I google for AUTOSEL
+in linux-mm, maybe they'll be a good example to help me understand why
+they were not selected.
 
-For the Atmel HLCDC driver
+This one fixes a case where too few struct pages are allocated when
+using mirrorred memory:
 
-Acked-by: Boris Brezillon <boris.brezillon@bootlin.com>
+	https://marc.info/?l=linux-mm&m=154211933211147&w=2
 
->  drivers/gpu/drm/etnaviv/etnaviv_drv.c        | 4 ++--
->  drivers/gpu/drm/mxsfb/mxsfb_drv.c            | 4 ++--
->  drivers/gpu/drm/rcar-du/rcar_du_drv.c        | 2 +-
->  drivers/gpu/drm/shmobile/shmob_drm_drv.c     | 4 ++--
->  drivers/gpu/drm/tve200/tve200_drv.c          | 4 ++--
->  drivers/gpu/drm/zte/zx_drm_drv.c             | 4 ++--
->  8 files changed, 15 insertions(+), 15 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/arc/arcpgu_drv.c b/drivers/gpu/drm/arc/arcpgu_drv.c
-> index f067de4e1e82..dcb06d4e9135 100644
-> --- a/drivers/gpu/drm/arc/arcpgu_drv.c
-> +++ b/drivers/gpu/drm/arc/arcpgu_drv.c
-> @@ -216,7 +216,7 @@ static int arcpgu_probe(struct platform_device *pdev)
->  	arcpgu_unload(drm);
->  
->  err_unref:
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  
->  	return ret;
->  }
-> @@ -227,7 +227,7 @@ static int arcpgu_remove(struct platform_device *pdev)
->  
->  	drm_dev_unregister(drm);
->  	arcpgu_unload(drm);
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  
->  	return 0;
->  }
-> diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-> index 843cac222e60..f8da51a63e2f 100644
-> --- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-> +++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_dc.c
-> @@ -775,7 +775,7 @@ static int atmel_hlcdc_dc_drm_probe(struct platform_device *pdev)
->  	atmel_hlcdc_dc_unload(ddev);
->  
->  err_unref:
-> -	drm_dev_unref(ddev);
-> +	drm_dev_put(ddev);
->  
->  	return ret;
->  }
-> @@ -786,7 +786,7 @@ static int atmel_hlcdc_dc_drm_remove(struct platform_device *pdev)
->  
->  	drm_dev_unregister(ddev);
->  	atmel_hlcdc_dc_unload(ddev);
-> -	drm_dev_unref(ddev);
-> +	drm_dev_put(ddev);
->  
->  	return 0;
->  }
-> diff --git a/drivers/gpu/drm/etnaviv/etnaviv_drv.c b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> index 83c1f46670bf..52802e6049e0 100644
-> --- a/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> +++ b/drivers/gpu/drm/etnaviv/etnaviv_drv.c
-> @@ -550,7 +550,7 @@ static int etnaviv_bind(struct device *dev)
->  out_bind:
->  	kfree(priv);
->  out_unref:
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  
->  	return ret;
->  }
-> @@ -567,7 +567,7 @@ static void etnaviv_unbind(struct device *dev)
->  	drm->dev_private = NULL;
->  	kfree(priv);
->  
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  }
->  
->  static const struct component_master_ops etnaviv_master_ops = {
-> diff --git a/drivers/gpu/drm/mxsfb/mxsfb_drv.c b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> index 2393e6d16ffd..88ba003979e6 100644
-> --- a/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> +++ b/drivers/gpu/drm/mxsfb/mxsfb_drv.c
-> @@ -417,7 +417,7 @@ static int mxsfb_probe(struct platform_device *pdev)
->  err_unload:
->  	mxsfb_unload(drm);
->  err_free:
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  
->  	return ret;
->  }
-> @@ -428,7 +428,7 @@ static int mxsfb_remove(struct platform_device *pdev)
->  
->  	drm_dev_unregister(drm);
->  	mxsfb_unload(drm);
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  
->  	return 0;
->  }
-> diff --git a/drivers/gpu/drm/rcar-du/rcar_du_drv.c b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> index 084f58df4a8c..c7fe2433ab9e 100644
-> --- a/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> +++ b/drivers/gpu/drm/rcar-du/rcar_du_drv.c
-> @@ -454,7 +454,7 @@ static int rcar_du_remove(struct platform_device *pdev)
->  	drm_kms_helper_poll_fini(ddev);
->  	drm_mode_config_cleanup(ddev);
->  
-> -	drm_dev_unref(ddev);
-> +	drm_dev_put(ddev);
->  
->  	return 0;
->  }
-> diff --git a/drivers/gpu/drm/shmobile/shmob_drm_drv.c b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-> index 6ececad6f845..8554102a6ead 100644
-> --- a/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-> +++ b/drivers/gpu/drm/shmobile/shmob_drm_drv.c
-> @@ -194,7 +194,7 @@ static int shmob_drm_remove(struct platform_device *pdev)
->  	drm_kms_helper_poll_fini(ddev);
->  	drm_mode_config_cleanup(ddev);
->  	drm_irq_uninstall(ddev);
-> -	drm_dev_unref(ddev);
-> +	drm_dev_put(ddev);
->  
->  	return 0;
->  }
-> @@ -290,7 +290,7 @@ static int shmob_drm_probe(struct platform_device *pdev)
->  	drm_kms_helper_poll_fini(ddev);
->  	drm_mode_config_cleanup(ddev);
->  err_free_drm_dev:
-> -	drm_dev_unref(ddev);
-> +	drm_dev_put(ddev);
->  
->  	return ret;
->  }
-> diff --git a/drivers/gpu/drm/tve200/tve200_drv.c b/drivers/gpu/drm/tve200/tve200_drv.c
-> index 72efcecb44f7..28e2d03c0ccf 100644
-> --- a/drivers/gpu/drm/tve200/tve200_drv.c
-> +++ b/drivers/gpu/drm/tve200/tve200_drv.c
-> @@ -249,7 +249,7 @@ static int tve200_probe(struct platform_device *pdev)
->  clk_disable:
->  	clk_disable_unprepare(priv->pclk);
->  dev_unref:
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  	return ret;
->  }
->  
-> @@ -263,7 +263,7 @@ static int tve200_remove(struct platform_device *pdev)
->  		drm_panel_bridge_remove(priv->bridge);
->  	drm_mode_config_cleanup(drm);
->  	clk_disable_unprepare(priv->pclk);
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  
->  	return 0;
->  }
-> diff --git a/drivers/gpu/drm/zte/zx_drm_drv.c b/drivers/gpu/drm/zte/zx_drm_drv.c
-> index 11ef17c2d1c1..5b6f1eda52e0 100644
-> --- a/drivers/gpu/drm/zte/zx_drm_drv.c
-> +++ b/drivers/gpu/drm/zte/zx_drm_drv.c
-> @@ -114,7 +114,7 @@ static int zx_drm_bind(struct device *dev)
->  	component_unbind_all(dev, drm);
->  out_unregister:
->  	dev_set_drvdata(dev, NULL);
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  	return ret;
->  }
->  
-> @@ -127,7 +127,7 @@ static void zx_drm_unbind(struct device *dev)
->  	drm_mode_config_cleanup(drm);
->  	component_unbind_all(dev, drm);
->  	dev_set_drvdata(dev, NULL);
-> -	drm_dev_unref(drm);
-> +	drm_dev_put(drm);
->  }
->  
->  static const struct component_master_ops zx_drm_master_ops = {
+Race condition with memory hotplug due to missing locks:
 
+	https://marc.info/?l=linux-mm&m=154211934011188&w=2
+
+Raising an OOM event that causes issues in userspace when no OOM has
+actually occured:
+
+	https://marc.info/?l=linux-mm&m=154211939811582&w=2
+
+
+I think that all 3 cases represent a "real" bug users can hit, and I
+honestly don't know why they were not tagged for stable.
+
+--
+Thanks,
+Sasha
