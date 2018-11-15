@@ -2,136 +2,123 @@ Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BB46C43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:46:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8494AC43610
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:46:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id F3D8820825
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:46:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3D8820825
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 49C8920825
+	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 09:46:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Hvc9TnhK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 49C8920825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2387711AbeKOTxx (ORCPT
+        id S2387915AbeKOTx5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Thu, 15 Nov 2018 14:53:53 -0500
-Received: from mx2.suse.de ([195.135.220.15]:55094 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728634AbeKOTxw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Thu, 15 Nov 2018 14:53:52 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 499DAAEE7;
-        Thu, 15 Nov 2018 09:46:45 +0000 (UTC)
-Subject: Re: [PATCH] arm64: Make kpti command line options x86 compatible
-To:     Christoph Hellwig <hch@infradead.org>
+        Thu, 15 Nov 2018 14:53:57 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:37143 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728634AbeKOTx4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Thu, 15 Nov 2018 14:53:56 -0500
+Received: by mail-wm1-f66.google.com with SMTP id p2-v6so17237054wmc.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 01:46:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=Sa3kl/RsjKWO+z6SiPlqidK82hY1mr0ur092VFUOkug=;
+        b=Hvc9TnhKlehbUHjKPaiBDz5attI7I+wYSLh51MLpJ+eNQOGP+XvngiocaMnKDtu+1f
+         Bf3zLY+D025HUG61N+Kch7XAk57Reh1GvqeC/M9mD/ylAkgHC2v74GdevWIpoIjnZB4/
+         LE2D5zyl6XVltLRNrcybf7WA+jnzzEHUZqoE4Ls1qYvst68jGjgCqFMQGXd99Lvz5EYK
+         E9FYlqtkEk7C4P0xgVLfGiwKS9HrIJlMHrOUwzOZeoZZDr1gBvmIn+w0fvv43T0BI3zW
+         tNRNy5i8Goc8R23dqT2yhXCJaUukUhJsl8J52WYTXcGgBwYUQ+e8JXxE3Edpe58KeN+g
+         sx7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=Sa3kl/RsjKWO+z6SiPlqidK82hY1mr0ur092VFUOkug=;
+        b=bFZnrpIIlUFxW0Yq5Es5XcmEOoKc4xPOQ1xEWiEizvpfDHYC24DvwhvhABqpGNZx7D
+         457SrRtKrWRRiwC2hZVsyN/pO0PDsvCM9UZSlrVkVi1dDlAuPWYqm2uk5irmr1lHkAsD
+         NfCc/WXYQvo8rNE/UZDmjpTtlIts41hsdF3TS8NUwM+qZEiuKMmuk5fJxRdMYqd719se
+         NmySTGbhLseiZlw1T5LOOh8BXbwQuFnjC6gSSyVgnp0nF/sB36ttPNqJaVN7DjN3ZdDx
+         Kfq6Kb5ktDBwsn+gCXrXFJwEaShzioLproxYu4r124N4Ht3yFirsRhk3v9WL71NAN3P6
+         sutQ==
+X-Gm-Message-State: AGRZ1gI8n5pB3hA+eviawaJf/NXb87xyT+XLvxl3AK6/CgNKC5ctYyUk
+        uhsZf9gQJCPt0ZHnonEwWD4w4w==
+X-Google-Smtp-Source: AJdET5ec4VYABAIx97zKtMEl91kHSFI522CxXZHs5m5Fzho1KOKbdonjkjwCFKFBhqoDTg90XkhVyQ==
+X-Received: by 2002:a1c:c545:: with SMTP id v66mr4879066wmf.132.1542275209188;
+        Thu, 15 Nov 2018 01:46:49 -0800 (PST)
+Received: from boomer.baylibre.com ([2a01:e34:eeb6:4690:106b:bae3:31ed:7561])
+        by smtp.gmail.com with ESMTPSA id m7sm5251705wml.32.2018.11.15.01.46.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 01:46:48 -0800 (PST)
+Message-ID: <533bd2bd4dced1610a803e7b2d51995e5577ba1d.camel@baylibre.com>
+Subject: Re: [RFC v1 5/7] clk: meson: meson8b: mark the CPU clock as
+ CLK_IS_CRITICAL
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        linux-amlogic@lists.infradead.org, linux-clk@vger.kernel.org,
+        narmstrong@baylibre.com
 Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-doc@vger.kernel.org,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon <will.deacon@arm.com>,
-        Richard Brown <rbrown@suse.de>,
-        Matthias Brugger <mbrugger@suse.com>
-References: <20181113152046.22389-1-agraf@suse.de>
- <20181115094116.GA18154@infradead.org>
-From:   Alexander Graf <agraf@suse.de>
-Openpgp: preference=signencrypt
-Autocrypt: addr=agraf@suse.de; prefer-encrypt=mutual; keydata=
- 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
-Message-ID: <7af8ab89-6c55-3e54-e81c-4b5397cf0904@suse.de>
-Date:   Thu, 15 Nov 2018 10:46:43 +0100
-User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:60.0)
- Gecko/20100101 Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181115094116.GA18154@infradead.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+        mturquette@baylibre.com, sboyd@kernel.org
+Date:   Thu, 15 Nov 2018 10:46:46 +0100
+In-Reply-To: <20181114225725.2821-6-martin.blumenstingl@googlemail.com>
+References: <20181114225725.2821-1-martin.blumenstingl@googlemail.com>
+         <20181114225725.2821-6-martin.blumenstingl@googlemail.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
-
-On 15.11.18 10:41, Christoph Hellwig wrote:
-> On Tue, Nov 13, 2018 at 04:20:46PM +0100, Alexander Graf wrote:
->> I've already stumbled over 2 cases where people got confused about how to
->> disable kpti on AArch64. In both cases, they used existing x86_64 options
->> and just applied that to an AArch64 system, expecting it to work.
->>
->> I think it makes a lot of sense to have compatible kernel command line
->> parameters whenever we can have them be compatible.
->>
->> So this patch adds the pti= and no_pti kernel command line options, mapping
->> them into the existing kpti= command line framework. It preserves the old
->> syntax to maintain compatibility with older command lines.
->>
->> While at it, the patch also marks the respective options as dual-arch.
+On Wed, 2018-11-14 at 23:57 +0100, Martin Blumenstingl wrote:
+> We don't want the common clock framework to disable the "cpu_clk" if
+> it's not used by any device. The cpufreq-dt driver does not enable the
+> CPU clocks. However, even if it would we would still want the CPU clock
+> to be enabled at all times because the CPU clock is also required even
+> if we disable CPU frequency scaling on a specific board.
 > 
-> Thanks.  Which also brings up my old complainﬆ that arm64 and x86 should
-> use the same config option.  Bonus points for moving the parsing code
-> to a common file..
+> The reason why we want the CPU clock to be enabled is a clock further up
+> in the tree:
+> Since commit 6f888e7bc7bd58 ("clk: meson: clk-pll: add enable bit") the
+> sys_pll can be disabled. However, since the CPU clock is derived from
+> sys_pll we don't want sys_pll to get disabled. The common clock
+> framework takes care of that for us by enabling all parent clocks of our
+> CPU clock when we mark the CPU clock with CLK_IS_CRITICAL.
+> 
+> Until now this is not a problem yet because all clocks in the CPU
+> clock's tree (including sys_pll) are read-only. However, once we allow
+> modifications to the clocks in that tree we will need this.
+> 
+> Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+> ---
+>  drivers/clk/meson/meson8b.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/clk/meson/meson8b.c b/drivers/clk/meson/meson8b.c
+> index 8a3c346e110d..d566dd5bc567 100644
+> --- a/drivers/clk/meson/meson8b.c
+> +++ b/drivers/clk/meson/meson8b.c
+> @@ -646,7 +646,8 @@ static struct clk_regmap meson8b_cpu_clk = {
+>  						  "cpu_scale_out_sel" },
+>  		.num_parents = 2,
+>  		.flags = (CLK_SET_RATE_PARENT |
+> -			  CLK_SET_RATE_NO_REPARENT),
+> +			  CLK_SET_RATE_NO_REPARENT |
+> +			  CLK_IS_CRITICAL),
+>  	},
+>  };
+>  
 
-Both archs handle the parameters in completely different code paths
-(probably due to arch constraints), so I'm not sure how doable it would
-be to combine the parsing.
+Acked-by: Jerome Brunet <jbrunet@baylibre.com>
 
-I'm also quite sure that we have more parameters like this around,
-especially with the other spectre mitigations. So if you see any, please
-feel free to send patches like this one to at least synchronize the user
-view.
-
-
-Alex
