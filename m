@@ -2,255 +2,161 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A152C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:13:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83216C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:22:51 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 258382087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:13:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 258382087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 4BDE82087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:22:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BDE82087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=keep-it-simple.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389826AbeKQAZc (ORCPT
+        id S1728402AbeKQAfX convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 19:25:32 -0500
-Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:39549 "EHLO
-        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728024AbeKQAZc (ORCPT
+        Fri, 16 Nov 2018 19:35:23 -0500
+Received: from martinlund.org ([173.255.130.145]:51037 "EHLO
+        slmp-550-86.slc.westdc.net" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1727999AbeKQAfX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 19:25:32 -0500
-Received: from [IPv6:2001:983:e9a7:1:b167:1e29:5b51:e4fb] ([IPv6:2001:983:e9a7:1:b167:1e29:5b51:e4fb])
-        by smtp-cloud8.xs4all.net with ESMTPA
-        id NeregC7X9cvkSNerfgRIDj; Fri, 16 Nov 2018 15:12:55 +0100
-Subject: Re: [PATCH v3] media: vivid: Improve timestamping
-To:     Gabriel Francisco Mandaji <gfmandaji@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc:     lkcamp@lists.libreplanetbr.org
-References: <20181111223937.GA24963@gfm-note>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <2623431d-fa96-30f9-2d1c-e5c8470d31ff@xs4all.nl>
-Date:   Fri, 16 Nov 2018 15:12:54 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Fri, 16 Nov 2018 19:35:23 -0500
+Received: from mail-ot1-f45.google.com ([209.85.210.45]:36607)
+        by slmp-550-86.slc.westdc.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
+        (Exim 4.91)
+        (envelope-from <martin.lund@keep-it-simple.com>)
+        id 1gNf1D-00ECRf-NV
+        for linux-kernel@vger.kernel.org; Fri, 16 Nov 2018 07:22:47 -0700
+Received: by mail-ot1-f45.google.com with SMTP id k98so21454399otk.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 06:22:47 -0800 (PST)
+X-Gm-Message-State: AGRZ1gJxxJmJTQfJJr2Hx/RQFBEwDGhpy/PrE0vh+9CfyvCucuSsvGjC
+        A+gfGDOLyOAWDYH6u31eNXVR8jdhqKRf8B1j4JI=
+X-Google-Smtp-Source: AJdET5e8pa88IjE92X3SGicSUF8VSKByqpHlLCVpHqFD7GdwGfiWMJof8Nj34UmPyqfH6VbpNt/qmsLZe34ibyEMuyg=
+X-Received: by 2002:a9d:599a:: with SMTP id u26mr6778004oth.11.1542378167289;
+ Fri, 16 Nov 2018 06:22:47 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181111223937.GA24963@gfm-note>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfLlFjzgkOqdMms5UJltKVRkM60VignrrURqRwNBJLuuHxvYXoNCdHPZUKz8STjghUdZ6+jSiHTtT/UmbP1g39SOCrpJK/yCmFFa2Wl1QQM09NDW/uf64
- CoMDYUpW7Vca87QTsazYLBa8mipVAJ5ZJC9KO56iHDUvn+3KIVJIy3yHnaabDu9b5IS8ca/cf520LE+mihZ+P2ptkgDNBtBo4QN8FGtJbX0WXbEmbHMNwFBf
- VhiAVTkQcdMLIPsE8iF1KgI2gKILk7ws8XUkV+ZVdYnS62iqOnUoyO5aWhHSa0zFlLUCU4Q+ZvFvOvsecEQb0lMfvE1YFOl9HkxxJ7Ith2CgDxGd+oyKZpZk
- qtNZomRqt3tkxZ0pj+kWdw0FTndZqdwJGrBKRnqc7S7myLKGJMk1/zJ8qnDMQzuttVG8jpQi
+References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
+ <1541739641-17789-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
+ <CAB7pii3kx75ajF=8TsU7mWrmrzoHLiy7uAb+PirGw04BH65bZg@mail.gmail.com>
+ <6ce1726a-f24d-17b8-d839-0a51c424a850@xilinx.com> <MWHPR02MB26231009A82C0372F62B5292AFDD0@MWHPR02MB2623.namprd02.prod.outlook.com>
+In-Reply-To: <MWHPR02MB26231009A82C0372F62B5292AFDD0@MWHPR02MB2623.namprd02.prod.outlook.com>
+From:   Martin Lund <martin.lund@keep-it-simple.com>
+Date:   Fri, 16 Nov 2018 15:22:35 +0100
+X-Gmail-Original-Message-ID: <CAB7pii2XYoP8bejamD2Rp0gtu6u07De+io0Yh3p1b=B-wE1_Fw@mail.gmail.com>
+Message-ID: <CAB7pii2XYoP8bejamD2Rp0gtu6u07De+io0Yh3p1b=B-wE1_Fw@mail.gmail.com>
+Subject: Re: [LINUX PATCH v12 1/3] dt-bindings: mtd: arasan: Add device tree
+ binding documentation
+To:     nagasure@xilinx.com
+Cc:     michals@xilinx.com, Martin Lund <martin.lund@keep-it-simple.com>,
+        naga sureshkumar <nagasuresh12@gmail.com>,
+        boris.brezillon@bootlin.com, richard@nod.at,
+        linux-kernel@vger.kernel.org,
+        =?UTF-8?B?TWFyZWsgVmHFoXV0?= <marek.vasut@gmail.com>,
+        linux-mtd@lists.infradead.org, miquel.raynal@bootlin.com,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>, robh@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8BIT
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - slmp-550-86.slc.westdc.net
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - keep-it-simple.com
+X-Get-Message-Sender-Via: slmp-550-86.slc.westdc.net: authenticated_id: martin.lund+keep-it-simple.com/only user confirmed/virtual account not confirmed
+X-Authenticated-Sender: slmp-550-86.slc.westdc.net: martin.lund@keep-it-simple.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/11/2018 11:39 PM, Gabriel Francisco Mandaji wrote:
-> Simulate a more precise timestamp by calculating it based on the
-> current framerate.
-> 
-> Signed-off-by: Gabriel Francisco Mandaji <gfmandaji@gmail.com>
+Yes, the clk_ prefix is kind of unnecessary. Though, all the
+clock-names in zynqmp.dtsi are still using the prefix - hopefully that
+will eventually be cleaned out.
 
-Something is still wrong: the frame period calculation is fine for
-input 0 (webcam), but if I switch to another input (S-Video/TV/HDMI),
-then it is totally wrong: for input 3 (HDMI) the fps seems to be off
-by a factor of 10000 (i.e. I see a framerate of over 60000 where I
-expected to see 60 Hz), and for inputs 2 and 3 I get 7000 fps for
-PAL and 110000 for NTSC.
+Either way, we just need to make sure the device tree doc clock-names
+are consistent with whatever is used by the driver.
 
-v4l2-ctl -P (== VIDIOC_G_PARM) returns the right thing here.
-
-This calculation is the problem:
-
-	u64 f_period = dev->timeperframe_vid_cap.numerator * 1000000000 /
-		       dev->timeperframe_vid_cap.denominator;
-
-You need to cast dev->timeperframe_vid_cap.numerator to a u64
-first otherwise the multiplication overflows the u32 if numerator is > 4.
-
-Also note that you cannot divide 64 bit values: not all architectures
-support that. Use do_div instead.
-
-With that change it should work.
-
-Regards,
-
-	Hans
-
-> ---
-> Changes in v2:
->     - fix spelling
->     - end of exposure is offset by 90% of the frame period
->     - fix timestamp calculation for FIELD_ALTERNATE (untested)
->     - timestamp is now calculated and set from vivid_thread_cap_tick()
->     - capture vbi uses the same timestamp as non-vbi, but offset by 5%
->     - timestamp stays consistent even if the FPS changes
->     - tested with dropped frames
-> Changes in v3:
->     - fix calculating offset for 'End of Frame'
->     - fix changing 'Timestamp Source' mid-capture
->     - change order of operation when calculating the VBI's offset
-> ---
->  drivers/media/platform/vivid/vivid-core.h        |  3 ++
->  drivers/media/platform/vivid/vivid-kthread-cap.c | 47 +++++++++++++++++-------
->  drivers/media/platform/vivid/vivid-vbi-cap.c     |  4 --
->  3 files changed, 36 insertions(+), 18 deletions(-)
-> 
-> diff --git a/drivers/media/platform/vivid/vivid-core.h b/drivers/media/platform/vivid/vivid-core.h
-> index 1891254..f7b2a0b 100644
-> --- a/drivers/media/platform/vivid/vivid-core.h
-> +++ b/drivers/media/platform/vivid/vivid-core.h
-> @@ -392,6 +392,9 @@ struct vivid_dev {
->  	/* thread for generating video capture stream */
->  	struct task_struct		*kthread_vid_cap;
->  	unsigned long			jiffies_vid_cap;
-> +	u64				cap_stream_start;
-> +	u64				cap_frame_period;
-> +	u64				cap_frame_eof_offset;
->  	u32				cap_seq_offset;
->  	u32				cap_seq_count;
->  	bool				cap_seq_resync;
-> diff --git a/drivers/media/platform/vivid/vivid-kthread-cap.c b/drivers/media/platform/vivid/vivid-kthread-cap.c
-> index eebfff2..f97cb6a 100644
-> --- a/drivers/media/platform/vivid/vivid-kthread-cap.c
-> +++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
-> @@ -425,12 +425,6 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
->  		is_loop = true;
->  
->  	buf->vb.sequence = dev->vid_cap_seq_count;
-> -	/*
-> -	 * Take the timestamp now if the timestamp source is set to
-> -	 * "Start of Exposure".
-> -	 */
-> -	if (dev->tstamp_src_is_soe)
-> -		buf->vb.vb2_buf.timestamp = ktime_get_ns();
->  	if (dev->field_cap == V4L2_FIELD_ALTERNATE) {
->  		/*
->  		 * 60 Hz standards start with the bottom field, 50 Hz standards
-> @@ -554,14 +548,6 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
->  			}
->  		}
->  	}
-> -
-> -	/*
-> -	 * If "End of Frame" is specified at the timestamp source, then take
-> -	 * the timestamp now.
-> -	 */
-> -	if (!dev->tstamp_src_is_soe)
-> -		buf->vb.vb2_buf.timestamp = ktime_get_ns();
-> -	buf->vb.vb2_buf.timestamp += dev->time_wrap_offset;
->  }
->  
->  /*
-> @@ -667,10 +653,25 @@ static void vivid_overlay(struct vivid_dev *dev, struct vivid_buffer *buf)
->  	}
->  }
->  
-> +static void vivid_cap_update_frame_period(struct vivid_dev *dev)
-> +{
-> +	u64 f_period = dev->timeperframe_vid_cap.numerator * 1000000000 /
-> +		       dev->timeperframe_vid_cap.denominator;
-> +	if (dev->field_cap == V4L2_FIELD_ALTERNATE)
-> +		f_period /= 2;
-> +	/*
-> +	 * If "End of Frame", then offset the exposure time by 0.9
-> +	 * of the frame period.
-> +	 */
-> +	dev->cap_frame_eof_offset = f_period * 9 / 10;
-> +	dev->cap_frame_period = f_period;
-> +}
-> +
->  static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
->  {
->  	struct vivid_buffer *vid_cap_buf = NULL;
->  	struct vivid_buffer *vbi_cap_buf = NULL;
-> +	u64 f_time = 0;
->  
->  	dprintk(dev, 1, "Video Capture Thread Tick\n");
->  
-> @@ -702,6 +703,11 @@ static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
->  	if (!vid_cap_buf && !vbi_cap_buf)
->  		goto update_mv;
->  
-> +	f_time = dev->cap_frame_period * dev->vid_cap_seq_count +
-> +		 dev->cap_stream_start + dev->time_wrap_offset;
-> +	if (!dev->tstamp_src_is_soe)
-> +		f_time += dev->cap_frame_eof_offset;
-> +
->  	if (vid_cap_buf) {
->  		v4l2_ctrl_request_setup(vid_cap_buf->vb.vb2_buf.req_obj.req,
->  					&dev->ctrl_hdl_vid_cap);
-> @@ -721,9 +727,13 @@ static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
->  				VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE);
->  		dprintk(dev, 2, "vid_cap buffer %d done\n",
->  				vid_cap_buf->vb.vb2_buf.index);
-> +
-> +		vid_cap_buf->vb.vb2_buf.timestamp = f_time;
->  	}
->  
->  	if (vbi_cap_buf) {
-> +		u64 vbi_period;
-> +
->  		v4l2_ctrl_request_setup(vbi_cap_buf->vb.vb2_buf.req_obj.req,
->  					&dev->ctrl_hdl_vbi_cap);
->  		if (dev->stream_sliced_vbi_cap)
-> @@ -736,6 +746,10 @@ static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
->  				VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE);
->  		dprintk(dev, 2, "vbi_cap %d done\n",
->  				vbi_cap_buf->vb.vb2_buf.index);
-> +
-> +		/* If capturing a VBI, offset by 0.05 */
-> +		vbi_period = dev->cap_frame_period * 5 / 100;
-> +		vbi_cap_buf->vb.vb2_buf.timestamp = f_time + vbi_period;
->  	}
->  	dev->dqbuf_error = false;
->  
-> @@ -767,6 +781,8 @@ static int vivid_thread_vid_cap(void *data)
->  	dev->cap_seq_count = 0;
->  	dev->cap_seq_resync = false;
->  	dev->jiffies_vid_cap = jiffies;
-> +	dev->cap_stream_start = ktime_get_ns();
-> +	vivid_cap_update_frame_period(dev);
->  
->  	for (;;) {
->  		try_to_freeze();
-> @@ -779,6 +795,9 @@ static int vivid_thread_vid_cap(void *data)
->  			dev->jiffies_vid_cap = cur_jiffies;
->  			dev->cap_seq_offset = dev->cap_seq_count + 1;
->  			dev->cap_seq_count = 0;
-> +			dev->cap_stream_start += dev->cap_frame_period *
-> +						 dev->cap_seq_offset;
-> +			vivid_cap_update_frame_period(dev);
->  			dev->cap_seq_resync = false;
->  		}
->  		numerator = dev->timeperframe_vid_cap.numerator;
-> diff --git a/drivers/media/platform/vivid/vivid-vbi-cap.c b/drivers/media/platform/vivid/vivid-vbi-cap.c
-> index 903cebe..17aa4b0 100644
-> --- a/drivers/media/platform/vivid/vivid-vbi-cap.c
-> +++ b/drivers/media/platform/vivid/vivid-vbi-cap.c
-> @@ -95,8 +95,6 @@ void vivid_raw_vbi_cap_process(struct vivid_dev *dev, struct vivid_buffer *buf)
->  
->  	if (!VIVID_INVALID_SIGNAL(dev->std_signal_mode))
->  		vivid_vbi_gen_raw(&dev->vbi_gen, &vbi, vbuf);
-> -
-> -	buf->vb.vb2_buf.timestamp = ktime_get_ns() + dev->time_wrap_offset;
->  }
->  
->  
-> @@ -119,8 +117,6 @@ void vivid_sliced_vbi_cap_process(struct vivid_dev *dev,
->  		for (i = 0; i < 25; i++)
->  			vbuf[i] = dev->vbi_gen.data[i];
->  	}
-> -
-> -	buf->vb.vb2_buf.timestamp = ktime_get_ns() + dev->time_wrap_offset;
->  }
->  
->  static int vbi_cap_queue_setup(struct vb2_queue *vq,
-> 
-
+Br, Martin
+On Fri, Nov 16, 2018 at 2:50 PM Naga Sureshkumar Relli
+<nagasure@xilinx.com> wrote:
+>
+> Hi,
+>
+> > -----Original Message-----
+> > From: Michal Simek [mailto:michal.simek@xilinx.com]
+> > Sent: Friday, November 16, 2018 6:04 PM
+> > To: Martin Lund <martin.lund@keep-it-simple.com>; Naga Sureshkumar Relli
+> > <nagasure@xilinx.com>
+> > Cc: boris.brezillon@bootlin.com; miquel.raynal@bootlin.com; richard@nod.at; David
+> > Woodhouse <dwmw2@infradead.org>; Brian Norris <computersforpeace@gmail.com>; Marek
+> > Vašut <marek.vasut@gmail.com>; naga sureshkumar <nagasuresh12@gmail.com>; linux-
+> > mtd@lists.infradead.org; linux-kernel@vger.kernel.org; robh@kernel.org
+> > Subject: Re: [LINUX PATCH v12 1/3] dt-bindings: mtd: arasan: Add device tree binding
+> > documentation
+> >
+> > On 16. 11. 18 12:50, Martin Lund wrote:
+> > > Hi Naga,
+> > >
+> > > I've been working on running up the latest kernel (v4.20-rc2) on our
+> > > custom Xilinx hw board so that I can test the v12 version of your
+> > > Arasan nand driver.
+> > >
+> > > I've managed to get the driver successfully up and running and ready
+> > > for testing with a Micron MT29F64G08AFAAAWP device. However, setting
+> > > it up I've found a few inaccuracies in the documentation of the device
+> > > tree bindings.
+> > >
+> > > This is the device configuration that ended up working for me with
+> > > linux v4.20-rc2:
+> > >
+> > >        nfc: nand@ff100000 {
+> > >             compatible = "xlnx,zynqmp-nand", "arasan,nfc-v3p10";
+> > >             reg = <0x0 0xff100000 0x0 0x1000>;
+> > >             clock-names = "clk_sys", "clk_flash";
+> > >             clocks = <&clk200>, <&clk100>;
+> > >             interrupt-parent = <&gic>;
+> > >             interrupts = <0 14 4>;
+> > >             #address-cells = <1>;
+> > >             #size-cells = <0>;
+> > >
+> > >             nand@0 {
+> > >                 reg = <0>;
+> > >                 nand-ecc-mode = "hw";
+> > >             };
+> > >         };
+> > >
+> > > Compared with the example you will notice that "clock-name" should be
+> > > "clock-names". reg was missing a "0x0".
+> >
+> > clock-names and even that names - you are right it is not correct and should be fixed.
+> Clock-names I will change from "clock-name" to "clock-names".
+> But I got some review comments previously, to use "sys" instead of  "clk_sys" and "flash" instead of "clk_flash".
+> And I have to change this in driver.
+> I will update that.
+>
+> Thanks,
+> Naga Sureshkumar Relli
+>
+> >
+> > Missing 0x0 in reg doesn't matter because it depends on address/size cells.
+> >
+> > > I think it is helpful to provide a real-world working example, so you
+> > > might also consider changing the example "clocks" configuration to
+> > > clk200/clk100 since there is no clk_misc among the clock sources of
+> > > any of the xilinx zynqmp board device tree configurations.
+> >
+> > Real example is the best normally just c&p from existing dts is the way to go.
+> > But in connection to clocks it doesn't matter what exactly should be there and I don't think
+> > there is any consistency in that. Hopefully this will be removed by yaml conversion.
+> >
+> > Thanks,
+> > Michal
+>
+> ______________________________________________________
+> Linux MTD discussion mailing list
+> http://lists.infradead.org/mailman/listinfo/linux-mtd/
