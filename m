@@ -2,165 +2,99 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-13.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_ADSP_CUSTOM_MED,
+	DKIM_INVALID,DKIM_SIGNED,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E2713C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:21:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 415B8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:25:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9DF322086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:21:03 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E882E2075B
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:25:09 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel-com.20150623.gappssmtp.com header.i=@intel-com.20150623.gappssmtp.com header.b="cObWPwP6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DF322086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VqeIL7OB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E882E2075B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726398AbeKQFel (ORCPT
+        id S1726117AbeKQFir (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 00:34:41 -0500
-Received: from mail-ot1-f65.google.com ([209.85.210.65]:41298 "EHLO
-        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725729AbeKQFek (ORCPT
+        Sat, 17 Nov 2018 00:38:47 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:56117 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725753AbeKQFir (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 00:34:40 -0500
-Received: by mail-ot1-f65.google.com with SMTP id u16so22019862otk.8
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 11:21:01 -0800 (PST)
+        Sat, 17 Nov 2018 00:38:47 -0500
+Received: by mail-it1-f193.google.com with SMTP id o19so27251715itg.5
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 11:25:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=intel-com.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=FG/4Jjmvs2/E0bpWqVu0+m501zYz/K8dKJh/95r8ZbM=;
-        b=cObWPwP6i6pcw8qcKqSt/tkpofMBGpbvtl2X5WYdagQSsbDZz6ZPIvDAIxLfMpkT7D
-         TSg1x2MIONQtmLY3yELhgRBi+mvIccUnhKbc+hEIdpokScKfv0abVfNGpHqEJ0RxiAk8
-         01KxUT8eBMQ42IvfKOqLasi8jGdbYMGoQeOotO+e7gGwAyQ5h2xWguExSHQTQz7BBrwA
-         dZNd/OaSFfLg3O7cTRAkk/Ln+wXbX8k8pL75TiP2J4EMr/uBRL+P7Z1gfxp9nkcoQkfn
-         OMeVDq+vwXTxx1vFT+5psMVW6zx6XY+cRojpmEKBTCGZMd50NWC1l9RQ6e8Zh1iiZ8CR
-         M4kA==
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=Cl+4hI8AT/4WzbNU4JdkprR2WMupktfIGm4x6sL9WIg=;
+        b=VqeIL7OBiymwxlSnG5TFoTSLJd88Ud0R94F9SAP9H5C37vn6X5N6c78ohXHLzLU6TB
+         f1mNMKWLGpFFOyV0F3GGqKX3P7BlFdfgolO2wukFkUqtrVpQCc4EKPuiJ0y87NDpeVBA
+         Su8wKHJz5ORcyqiC07k262D1AgTspbLTXPFT5k5dXehLBVF4DMC5bRjpE+TK5TPmRjm6
+         Z6kSRn+FjCk84l1jCH0iboqkK4LJtfLq1lAy8PDFMPfR3zwk+zhuBZnr5KrUstZWBouW
+         YXX1FdcBGK0J7RWTZWUjIUfy7X0p2NLiYOulquHuX3ijSKudwiRkY3oF1697lbMQlh/D
+         ZTiA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=FG/4Jjmvs2/E0bpWqVu0+m501zYz/K8dKJh/95r8ZbM=;
-        b=cyPY8UTSiR+Bg2tdTNSWPJdzhZVObsCoKWCP0/YlbIhn6PIELJEkBN4Quca8slEaDN
-         VVThPYUjVmewphsvdp9KKmho1d959j1A/9yMViZrudEfe+PSoux2B5UI3GLz0dWpmMpm
-         w59DguAqTytAraHZY7/MdmGc1rOx6NAb9PP1rSbDAFFu09RVxsvO1F5jHnQQYYg4ly1o
-         NCJTRWu1TRQjaL/gR7W4+62tSW5xKPDnwIXRNWzzBYt215ELeeYFwJ4vRvjdqgZyjlY7
-         6RFP8Q2KY9axolxnQ5LODjYw1fp8cMGBHm/vEvItKASjg67F+3B+Hd6Ay08wFx9fhlmG
-         omYw==
-X-Gm-Message-State: AGRZ1gLZrHA+mOjLcRxVihOPdxcqi7bP0/7TEdTVWF+oJFPcd3Jh4che
-        h+Fyb2LrTj4iWp6mKQPy21+NSzGolbAAqfC21DQ+tw==
-X-Google-Smtp-Source: AJdET5eipulPAPjGDn0LefThTBBuoSDKDXuPsUxc1IUPI7Ohr6F6OcUis64YLf3RBnqqjgAzXbc5dUO4Rgzzfnj/Oas=
-X-Received: by 2002:a9d:f07:: with SMTP id 7mr6840010ott.353.1542396060967;
- Fri, 16 Nov 2018 11:21:00 -0800 (PST)
-MIME-Version: 1.0
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154225761038.2499188.1270468803677883744.stgit@dwillia2-desk3.amr.corp.intel.com>
- <20181115063040.11eaef93@silica.lan>
-In-Reply-To: <20181115063040.11eaef93@silica.lan>
-From:   Dan Williams <dan.j.williams@intel.com>
-Date:   Fri, 16 Nov 2018 11:20:49 -0800
-Message-ID: <CAPcyv4gySBHp=-xnwA7f10K2wDuqPAB2C8C=9uU0q_mXcnzxbw@mail.gmail.com>
-Subject: Re: [Ksummit-discuss] [RFC PATCH 3/3] libnvdimm, MAINTAINERS:
- Subsystem Profile
-To:     mchehab+samsung@kernel.org
-Cc:     Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Dave Jiang <dave.jiang@intel.com>,
-        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Vishal L Verma <vishal.l.verma@intel.com>, zwisler@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=Cl+4hI8AT/4WzbNU4JdkprR2WMupktfIGm4x6sL9WIg=;
+        b=FqHj8GemxPmSICISzYStxVg2fGbTjO4PGobCQx1KR6f4RFRhHIMjMoqNtrpjuKhyJJ
+         2m/sOrjyWRzvCAjopjXgUzqzPVxG1as7iZUiccsYEYzs40J5Meao4+DQg6S7LKMY5Jvr
+         h9TInaqs5yY6NDrV4Z7hliABzu3cQXfCeU9MPiI1aErwS2WynP0i4KGtUVrcOr7ZSrUY
+         zjIkx3tVHeJmldkZJSvMeM6pknPW/Qt4yLGUOqeI+PlVobdn7K+NLSy4EwJ19EJ7ZiEn
+         0e7fs9cXhzTnFiysfLI8gZ/MMJaaGOKGhOH2ybRCgqz9I5BcX0KZMEmk73HovF0Wyv7H
+         2N8g==
+X-Gm-Message-State: AGRZ1gKnOfdjnVTMiPM85ZBTLMB57MBqKMLIy81iX+Tz5nDawozlGeZH
+        UEWjcEp9jBsoj/GaDiolpgo=
+X-Google-Smtp-Source: AJdET5eW0I5CLXTHMoiMKsMMo9WeZ9TGTjS8x6O2Ag8nLzUf708g+TkUYIMEcVQ4/UTOMtOVeyC1Nw==
+X-Received: by 2002:a02:ba01:: with SMTP id z1mr11276190jan.100.1542396306961;
+        Fri, 16 Nov 2018 11:25:06 -0800 (PST)
+Received: from localhost.localdomain ([2605:a000:1316:611a:feaa:14ff:fe2b:c4fa])
+        by smtp.gmail.com with ESMTPSA id b66-v6sm11047288itd.35.2018.11.16.11.25.05
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Nov 2018 11:25:06 -0800 (PST)
+From:   Connor McAdams <conmanx360@gmail.com>
+Cc:     Connor McAdams <conmanx360@gmail.com>,
+        Jaroslav Kysela <perex@perex.cz>,
+        Takashi Iwai <tiwai@suse.com>,
+        Takashi Sakamoto <o-takashi@sakamocchi.jp>,
+        Alastair Bridgewater <alastair.bridgewater@gmail.com>,
+        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 1/2] ALSA: hda/ca0132 - Add new ZxR quirk
+Date:   Fri, 16 Nov 2018 14:24:55 -0500
+Message-Id: <20181116192517.5128-1-conmanx360@gmail.com>
+X-Mailer: git-send-email 2.18.1
+To:     unlisted-recipients:; (no To-header on input)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 6:31 AM Mauro Carvalho Chehab
-<mchehab+samsung@kernel.org> wrote:
->
-> Em Wed, 14 Nov 2018 20:53:30 -0800
-> Dan Williams <dan.j.williams@intel.com> escreveu:
->
-> > Document the basic policies of the libnvdimm subsystem and provide a
-> > first example of a Subsystem Profile for others to duplicate and edit.
-> >
-> > Cc: Ross Zwisler <zwisler@kernel.org>
-> > Cc: Vishal Verma <vishal.l.verma@intel.com>
-> > Cc: Dave Jiang <dave.jiang@intel.com>
-> > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
-> > ---
-> >  Documentation/nvdimm/subsystem-profile.rst |   86 ++++++++++++++++++++++++++++
-> >  MAINTAINERS                                |    4 +
-> >  2 files changed, 90 insertions(+)
-> >  create mode 100644 Documentation/nvdimm/subsystem-profile.rst
-> >
-> > diff --git a/Documentation/nvdimm/subsystem-profile.rst b/Documentation/nvdimm/subsystem-profile.rst
-> > new file mode 100644
-> > index 000000000000..d3428be7528e
-> > --- /dev/null
-> > +++ b/Documentation/nvdimm/subsystem-profile.rst
->
-> Hmm... would it make sense to add a pointer at maintainer/index.rst (or to some
-> other .rst file) for those profiles too?
->
-> > @@ -0,0 +1,86 @@
-> > +LIBNVDIMM Subsystem Profile
-> > +===========================
-> > +
-> > +Overview
-> > +--------
->
-> A minor nitpick here: I would add a blank line after each topic/subtopic.
->
-> On some cases, Sphinx will do wrong without that blank line, and having
-> some places with that extra line and others without it sounds unbalanced
-> on my eyes ;-)
->
-> > +So, you have recently become a maintainer of the LIBNVDIMM subsystem,
-> > +condolences, it is a thankless job, here is the lay of the land. The git
->
-> My understanding that the main focus of this document is to help people to
-> submit patches to the subsystem.
->
-> With that in mind, I would never start the doc talking only to maintainers,
-> as developers will likely just stop reading it at the above paragraph.
+This patch adds a new PCI subsys ID for the ZxR, as found and tested by
+other users. Without a way to know if any Z's use it as well, it keeps
+the quirk of QUIRK_SBZ and goes through the HDA subsys test function.
 
-Yes, I see this is confusing now. I'll fix up the Subsystem Profile
-description text to be written with maintainers as the audience and
-clarify that the per-subsystem instance is written with contributors
-as the audience.
+Signed-off-by: Connor McAdams <conmanx360@gmail.com>
+---
+ sound/pci/hda/patch_ca0132.c | 1 +
+ 1 file changed, 1 insertion(+)
 
->
-> > +tree, git.kernel.org/pub/scm/linux/kernel/git/nvdimm/nvdimm.git/, is
-> > +writable by all the individuals listed in LIBNVDIMM section of
-> > +MAINTAINERS. Access is granted per the typical kernel.org account
-> > +management policies. Two branches in that tree are regularly pulled into
-> > +-next, libnvdimm-for-next, and libnvdimm-fixes. The submit rate of
-> > +patches is low, usually enough for one person to handle. There is a
-> > +patchwork instance at
-> > +https://patchwork.kernel.org/project/linux-nvdimm/list/, and it
-> > +historically is only used for ingesting patches and collecting
-> > +ack/review tags, i.e. no expectation to update the patch state after it
-> > +has been dispositioned, or merged.
-> > +
-> > +The most sensitive code area is the ACPI DSM (Device Specific Method)
-> > +path. In addition to the general fragility of an ioctl() ABI the ACPI
-> > +DSM scheme allows any vendor to implement any command without any prior
-> > +review by the ACPI committee. For this reason the LIBNVDIMM system seeks
-> > +to constrain the proliferation of vendor commands and at a minimum
-> > +requires any command support to be publicly documented. Over time the
-> > +submission rate of new vendor-specific commands is falling as more
-> > +commands are defined with named methods in the official ACPI
-> > +specification.
->
-> As Jani pointed, all the above stuff is for maintainers, but several other
-> stuff on this document are for developers. The best would likely to have
-> two separate files.
->
-> However, maintaining it on two separate files could be painful. Maybe
-> we could have an specific section, at the end of the document, with
-> maintainers-specific instructions.
+diff --git a/sound/pci/hda/patch_ca0132.c b/sound/pci/hda/patch_ca0132.c
+index 9c0b94ba786e..4c21bd24bcbd 100644
+--- a/sound/pci/hda/patch_ca0132.c
++++ b/sound/pci/hda/patch_ca0132.c
+@@ -1189,6 +1189,7 @@ static const struct snd_pci_quirk ca0132_quirks[] = {
+ 	SND_PCI_QUIRK(0x1028, 0x0708, "Alienware 15 R2 2016", QUIRK_ALIENWARE),
+ 	SND_PCI_QUIRK(0x1102, 0x0010, "Sound Blaster Z", QUIRK_SBZ),
+ 	SND_PCI_QUIRK(0x1102, 0x0023, "Sound Blaster Z", QUIRK_SBZ),
++	SND_PCI_QUIRK(0x1102, 0x0033, "Sound Blaster ZxR", QUIRK_SBZ),
+ 	SND_PCI_QUIRK(0x1458, 0xA016, "Recon3Di", QUIRK_R3DI),
+ 	SND_PCI_QUIRK(0x1458, 0xA026, "Gigabyte G1.Sniper Z97", QUIRK_R3DI),
+ 	SND_PCI_QUIRK(0x1458, 0xA036, "Gigabyte GA-Z170X-Gaming 7", QUIRK_R3DI),
+-- 
+2.18.1
 
-Yes, good idea, will incorporate.
