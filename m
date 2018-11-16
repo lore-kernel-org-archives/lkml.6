@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D24C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:40:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27146C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:40:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 99E562087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:40:48 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C520E20684
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:40:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="S2T6BdWe"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99E562087C
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="hCMq8psU"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C520E20684
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390312AbeKQCxw (ORCPT
+        id S2390341AbeKQCx7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 21:53:52 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:44537 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2390166AbeKQCxv (ORCPT
+        Fri, 16 Nov 2018 21:53:59 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:46345 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389906AbeKQCx7 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 21:53:51 -0500
-Received: by mail-pf1-f196.google.com with SMTP id b81-v6so11157946pfe.11
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 08:40:45 -0800 (PST)
+        Fri, 16 Nov 2018 21:53:59 -0500
+Received: by mail-pl1-f193.google.com with SMTP id t13so8439172ply.13
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 08:40:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=MRo42Xf+FQpuD9HBlP4kHgZ6kHSlZrL0EE25YHygWMY=;
-        b=S2T6BdWe4saNqr8iZpsCHP/vmNp1zYBDZeUNmr44SF6J0TY+di02NvuGEMk3OMnRqd
-         uodzP5KSJsAw856X8sbpZ1+C7XmfY652LOfU1ARhg4s78dhnVad0Gz5/h8XmY1SEGuBp
-         DFbaA1ROMKE1CPSDJAPai98J4NwIkPl1derII=
+        bh=unTAt8M0SXUTc4AjLxvQUad05zgG8064fa7RSiDqgEY=;
+        b=hCMq8psUo1YQuMs6XNrZMPxPnRG1jV/PJ6ZS31JJzN4wfbZe4cwz/MnRypGlyuTKW9
+         BADDptjYy/b7feGT+GxD8SvU2NSVmMb2PbUoNj/i2koxcssG+7HdDbm5bXuncSWSBpQT
+         oqnoSIXAypDWjcDvOWSjDi5XF8vi2RxPWLdU4=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=MRo42Xf+FQpuD9HBlP4kHgZ6kHSlZrL0EE25YHygWMY=;
-        b=lNCFgsvDzkjwMXC07jyE4Ocg3ByWwIDmC7Fidekn7dvVUaD+2G2bmbVpqlcY54pJrz
-         YHiSZFckvV99sj5i1sCMPlTikj3D7uV4Ky7gjdeGIvJOoj0jRapgUQ3Jr1+zyo9RHzS9
-         +dPz6IS2cq2Gm8oy8PWDMBT8Z5eZBnqEZIJZOGKxvCqvxtUzPPv9MCoh5hwcD9OocwTZ
-         SZCsenSpnkbyOotxQ3qGwcKOBQw59Q42KOipZTSchqopjbc1U7ZezJUQ7PMMDDbbtD12
-         B6HJhwXNadAYqwDfjd4tRwOSC5yUtRbYTdb1EPYfKltCcVqnVltH4iF6OcF8b6bHePb7
-         A0cQ==
-X-Gm-Message-State: AGRZ1gJzQtKedLMy7G/+2XofMkhaBHWuHvA4g3XWt/T9B/Byjj4hsDPO
-        9iEccG/1+lY7fxMH2zD17Etgrg==
-X-Google-Smtp-Source: AJdET5dZ5SU50zmOjkRJkoJuTE+S0902DCIO0+YdWzY+sLBUXEOUSOcfG/pI+yUb0aZoOL90/n2p9Q==
-X-Received: by 2002:a62:528e:: with SMTP id g136mr7747262pfb.111.1542386445340;
-        Fri, 16 Nov 2018 08:40:45 -0800 (PST)
+        bh=unTAt8M0SXUTc4AjLxvQUad05zgG8064fa7RSiDqgEY=;
+        b=FFrVu6KGsVLQkY+RtPpdeWTftKgDQpT7DZXPZwZ80GIlnaTuy31KyxSMXq1LHgoHfW
+         F1y2bSRBfpUs9njS0XeVH9Jz+juT0alzu/1+nKmSPdC+T4Pdu9rdu/NbLp2Dx7Zfo0ag
+         0u4SjW8ab0jNckOPAGGxCDFTCJpOWECdwbMaRHAd/4PEojjcPwmFH0DoEEXKksqE/Jvf
+         0TSMV9kHOQEMopnibAynIT/PsXWFLViM/HaRShqHOz1EGkUmZAH3Oi8fH88AF1t5qrfx
+         XgVznieJoWiBKnHbVhbdQV26fGw33llBo/EdY+Xo1GP7DASjHRT092Jc5wFEKcCbVAHC
+         OAxQ==
+X-Gm-Message-State: AGRZ1gJNVB+PtTGeIvwTKKVkdOciW0ksjyy+GmE5M0oT7RlEWgvxEaTL
+        dLH5V+212PYIm4MsgXMWDXjY9A==
+X-Google-Smtp-Source: AJdET5dv/VKX92zVdIvfpUcZGZ+EyNAv4VMzrVrB/0XXfYNJ0wDN35mNIAtMQNPP6eC3zIZxm8NpWA==
+X-Received: by 2002:a17:902:2c03:: with SMTP id m3mr11086384plb.6.1542386453212;
+        Fri, 16 Nov 2018 08:40:53 -0800 (PST)
 Received: from localhost.localdomain ([115.97.190.86])
-        by smtp.gmail.com with ESMTPSA id p5-v6sm34622213pfb.109.2018.11.16.08.40.38
+        by smtp.gmail.com with ESMTPSA id p5-v6sm34622213pfb.109.2018.11.16.08.40.45
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 08:40:44 -0800 (PST)
+        Fri, 16 Nov 2018 08:40:52 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -72,9 +72,9 @@ To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com,
         linux-amarula@amarulasolutions.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 09/12] drm/sun4i: sun6i_mipi_dsi: Enable burst mode HBP, HSA_HSE
-Date:   Fri, 16 Nov 2018 22:09:13 +0530
-Message-Id: <20181116163916.29621-10-jagan@amarulasolutions.com>
+Subject: [PATCH v2 10/12] dt-bindings: panel: Add Feiyang FY07024DI26A30-D MIPI-DSI LCD panel
+Date:   Fri, 16 Nov 2018 22:09:14 +0530
+Message-Id: <20181116163916.29621-11-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181116163916.29621-1-jagan@amarulasolutions.com>
 References: <20181116163916.29621-1-jagan@amarulasolutions.com>
@@ -85,53 +85,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Horizontal back porch, sync active and sync end bits are
-needed to disable for burst mode panel operations.
+Feiyang FY07024DI26A30-D is 1024x600, 4-lane MIPI-DSI LCD panel.
 
-So, disable them via dsi base control register.
+Add dt-bingings for it.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
+Reviewed-by: Rob Herring <robh@kernel.org>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++---
- 1 file changed, 9 insertions(+), 3 deletions(-)
+ .../display/panel/feiyang,fy07024di26a30d.txt | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/feiyang,fy07024di26a30d.txt
 
-diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 22d2987c3298..20a1de8493e0 100644
---- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-+++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -644,15 +644,21 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 	struct sun6i_dsi_timings timings;
- 	size_t bytes;
- 	u8 *buffer;
-+	u32 val = 0;
- 
- 	/* Do all timing calculations up front to allocate buffer space */
- 
- 	memset(&timings, 0, sizeof(timings));
- 
--	if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
-+	if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST) {
- 		timings.hblk = (mode->hdisplay * Bpp);
--	else
+diff --git a/Documentation/devicetree/bindings/display/panel/feiyang,fy07024di26a30d.txt b/Documentation/devicetree/bindings/display/panel/feiyang,fy07024di26a30d.txt
+new file mode 100644
+index 000000000000..82caa7b65ae8
+--- /dev/null
++++ b/Documentation/devicetree/bindings/display/panel/feiyang,fy07024di26a30d.txt
+@@ -0,0 +1,20 @@
++Feiyang FY07024DI26A30-D 7" MIPI-DSI LCD Panel
 +
-+		regmap_read(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, &val);
-+		val |= SUN6I_DSI_BASIC_CTL_HBP_DIS;
-+		val |= SUN6I_DSI_BASIC_CTL_HSA_HSE_DIS;
-+	} else {
- 		sun6i_dsi_get_timings(dsi, mode, &timings);
-+	}
- 
- 	/* How many bytes do we need to send all payloads? */
- 	bytes = max_t(size_t, max(max(timings.hfp, timings.hblk),
-@@ -661,7 +667,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
- 	if (WARN_ON(!buffer))
- 		return;
- 
--	regmap_write(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, 0);
-+	regmap_write(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, val);
- 
- 	regmap_write(dsi->regs, SUN6I_DSI_SYNC_HSS_REG,
- 		     sun6i_dsi_build_sync_pkt(MIPI_DSI_H_SYNC_START,
++Required properties:
++- compatible: must be "feiyang,fy07024di26a30d"
++- reg: DSI virtual channel used by that screen
++- avdd-supply: analog regulator dc1 switch
++- dvdd-supply: 3v3 digital regulator
++- reset-gpios: a GPIO phandle for the reset pin
++
++Optional properties:
++- backlight: phandle for the backlight control.
++
++panel@0 {
++	compatible = "feiyang,fy07024di26a30d";
++	reg = <0>;
++	avdd-supply = <&reg_dc1sw>;
++	dvdd-supply = <&reg_dldo2>;
++	reset-gpios = <&pio 3 24 GPIO_ACTIVE_HIGH>; /* LCD-RST: PD24 */
++	backlight = <&backlight>;
++};
 -- 
 2.18.0.321.gffc6fa0e3
 
