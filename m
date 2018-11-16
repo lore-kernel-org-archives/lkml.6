@@ -2,89 +2,156 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
+	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 27588C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:18:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 68460C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E26EC20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:18:19 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="RQkTxLAU"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E26EC20892
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 37670208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:19:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37670208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389359AbeKPT3o (ORCPT
+        id S2389427AbeKPTa1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 14:29:44 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:44600 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727398AbeKPT3o (ORCPT
+        Fri, 16 Nov 2018 14:30:27 -0500
+Received: from mailgw01.mediatek.com ([210.61.82.183]:62775 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727398AbeKPTa0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 14:29:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=b5OutxS0GhcercmpX11Sg1tknmPeUT3sBqckvewo8zA=; b=RQkTxLAUFOLPA0J+RppItlpIB
-        9kxTGUs2y4LLsgZ8EuCtZwLQLM2MMhu1rG+qls0/zIjSoV5AvMQZPzgiAteiRkkB60IFUCQuNi2Pw
-        Xlkg3+1gJh0u0eLVG1GBlvVINgJXch1SU9tm6k2gb1UU4C4VjPqJchEvC3CBW//wmHqqpNrnVCUgS
-        qNM73fMXTq0i66M7gARtiW6xyn1qmMDBXKkuST/tWiT/J3p5QB4BWcOYeMJ3c0L8iMtWC6ayOEhsF
-        Izub2bAiZd7A+UyM1hYDB1G9pfULIjbAUY5e1DPsAqS6H4e4BFXhyUa+Vxwi2DLVDE75zEZ56Mee2
-        I8nJ1dmew==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNaGK-0002Gm-Ok; Fri, 16 Nov 2018 09:18:04 +0000
-Date:   Fri, 16 Nov 2018 01:18:04 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Mika Westerberg <mika.westerberg@linux.intel.com>
-Cc:     Yehezkel Bernat <yehezkelshb@gmail.com>, ashok.raj@intel.com,
-        Mario Limonciello <Mario.Limonciello@dell.com>,
-        michael.jamet@intel.com, Christian Kellner <ckellner@redhat.com>,
-        rjw@rjwysocki.net, Anthony Wong <anthony.wong@canonical.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Andreas Noever <andreas.noever@gmail.com>,
-        iommu@lists.linux-foundation.org, lukas@wunner.de,
-        jacob.jun.pan@intel.com, linux-pci@vger.kernel.org,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        linux-acpi@vger.kernel.org, David Woodhouse <dwmw2@infradead.org>
-Subject: Re: [PATCH 1/4] PCI / ACPI: Identify external PCI devices
-Message-ID: <20181116091804.GA4548@infradead.org>
-References: <20181113112700.GT2500@lahna.fi.intel.com>
- <20181113114527.GA12821@e107981-ln.cambridge.arm.com>
- <20181115102239.GU2500@lahna.fi.intel.com>
- <20181115111356.GA599@e107981-ln.cambridge.arm.com>
- <20181115113737.GW2500@lahna.fi.intel.com>
- <20181115120736.pscly6zwd3k2tvd2@wunner.de>
- <20181115121627.GA2500@lahna.fi.intel.com>
- <20181115174608.GA17691@e107981-ln.cambridge.arm.com>
- <CA+CmpXv9yM6nFdb0mcMPGHS-B_uGbQHYoO6iuefZC8gWoZYD3Q@mail.gmail.com>
- <20181115191026.GE4179@lahna.fi.intel.com>
+        Fri, 16 Nov 2018 14:30:26 -0500
+X-UUID: 5cb67d35a357418495ab0bc90dbba86b-20181116
+X-UUID: 5cb67d35a357418495ab0bc90dbba86b-20181116
+Received: from mtkcas07.mediatek.inc [(172.21.101.84)] by mailgw01.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mhqrelay.mediatek.com ESMTP with TLS)
+        with ESMTP id 2124849772; Fri, 16 Nov 2018 17:18:54 +0800
+Received: from MTKCAS06.mediatek.inc (172.21.101.30) by
+ mtkmbs03n1.mediatek.inc (172.21.101.181) with Microsoft SMTP Server (TLS) id
+ 15.0.1395.4; Fri, 16 Nov 2018 17:18:53 +0800
+Received: from localhost.localdomain (10.17.3.153) by MTKCAS06.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 16 Nov 2018 17:18:52 +0800
+From:   Biao Huang <biao.huang@mediatek.com>
+To:     <davem@davemloft.net>, <robh+dt@kernel.org>
+CC:     <honghui.zhang@mediatek.com>, <yt.shen@mediatek.com>,
+        <liguo.zhang@mediatek.com>, <mark.rutland@arm.com>,
+        <nelson.chang@mediatek.com>, <matthias.bgg@gmail.com>,
+        <biao.huang@mediatek.com>, <netdev@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <joabreu@synopsys.com>,
+        <andrew@lunn.ch>
+Subject: [v3, PATCH 2/2] dt-binding: mediatek-dwmac: add binding document for MediaTek MT2712 DWMAC
+Date:   Fri, 16 Nov 2018 17:18:46 +0800
+Message-ID: <1542359926-28800-2-git-send-email-biao.huang@mediatek.com>
+X-Mailer: git-send-email 1.7.9.5
+In-Reply-To: <1542359926-28800-1-git-send-email-biao.huang@mediatek.com>
+References: <1542359926-28800-1-git-send-email-biao.huang@mediatek.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115191026.GE4179@lahna.fi.intel.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 09:10:26PM +0200, Mika Westerberg wrote:
-> FireWire is kind of different but there are connectors such as
-> ExpressCard and NVMe (over U.2 connector) which carry PCIe and are
-> relatively easy to access without need for a screwdriver. AFAIK some
-> eGPUs are also using some other proprietary (non-TBT) connector that
-> carries PCIe.
+The commit adds the device tree binding documentation for the MediaTek DWMAC
+found on MediaTek MT2712.
 
-U.2 is a data center internal form factor with hot plug capability. If
-you enable an iommu for that by default you will make a lot of people
-very unhappy.
+Change-Id: I3728666bf65927164bd82fa8dddb90df8270bd44
+Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+---
+ .../devicetree/bindings/net/mediatek-dwmac.txt     |   77 ++++++++++++++++++++
+ 1 file changed, 77 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/net/mediatek-dwmac.txt
 
-More importantly NVMe is now used for the current/next generation
-Compact Flash and SD cards, which contain full PCIe gen 3 links.
+diff --git a/Documentation/devicetree/bindings/net/mediatek-dwmac.txt b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+new file mode 100644
+index 0000000..7fd56e0
+--- /dev/null
++++ b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+@@ -0,0 +1,77 @@
++MediaTek DWMAC glue layer controller
++
++This file documents platform glue layer for stmmac.
++Please see stmmac.txt for the other unchanged properties.
++
++The device node has following properties.
++
++Required properties:
++- compatible:  Should be "mediatek,mt2712-gmac" for MT2712 SoC
++- reg:  Address and length of the register set for the device
++- interrupts:  Should contain the MAC interrupts
++- interrupt-names: Should contain a list of interrupt names corresponding to
++	the interrupts in the interrupts property, if available.
++	Should be "macirq" for the main MAC IRQ
++- clocks: Must contain a phandle for each entry in clock-names.
++- clock-names: The name of the clock listed in the clocks property. These are
++	"axi", "apb", "mac_ext", "mac_parent", "ptp_ref", "ptp_parent", "ptp_top"
++	for MT2712 SoC
++- mac-address: See ethernet.txt in the same directory
++- phy-mode: See ethernet.txt in the same directory
++
++Optional properties:
++- tx-delay: TX clock delay macro value. Range is 0~31. Default is 0.
++	It should be defined for rgmii/rgmii-rxid/mii interface.
++- rx-delay: RX clock delay macro value. Range is 0~31. Default is 0.
++	It should be defined for rgmii/rgmii-txid/mii/rmii interface.
++- fine-tune: This property will select coarse-tune delay or fine delay
++	for rgmii interface.
++	If fine-tune delay is enabled, tx-delay/rx-delay is 170+/-50ps
++	per stage.
++	Else coarse-tune delay is enabled, tx-delay/rx-delay is 0.55+/-0.2ns
++	per stage.
++	This property do not apply to non-rgmii PHYs.
++	Only coarse-tune delay is supported for mii/rmii PHYs.
++- rmii-rxc: Reference clock of rmii is from external PHYs,
++	and it can be connected to TXC or RXC pin on MT2712 SoC.
++	If ref_clk <--> TXC, disable it.
++	Else ref_clk <--> RXC, enable it.
++- txc-inverse: Inverse tx clock for mii/rgmii.
++	Inverse tx clock inside MAC relative to reference clock for rmii,
++	and it rarely happen.
++- rxc-inverse: Inverse rx clock for mii/rgmii interfaces.
++	Inverse reference clock for rmii.
++
++Example:
++	eth: ethernet@1101c000 {
++		compatible = "mediatek,mt2712-gmac";
++		reg = <0 0x1101c000 0 0x1300>;
++		interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_LOW>;
++		interrupt-names = "macirq";
++		phy-mode ="rgmii-id";
++		mac-address = [00 55 7b b5 7d f7];
++		clock-names = "axi",
++			      "apb",
++			      "mac_ext",
++			      "mac_parent",
++			      "ptp_ref",
++			      "ptp_parent",
++			      "ptp_top";
++		clocks = <&pericfg CLK_PERI_GMAC>,
++			 <&pericfg CLK_PERI_GMAC_PCLK>,
++			 <&topckgen CLK_TOP_ETHER_125M_SEL>,
++			 <&topckgen CLK_TOP_ETHERPLL_125M>,
++			 <&topckgen CLK_TOP_ETHER_50M_SEL>,
++			 <&topckgen CLK_TOP_APLL1_D3>,
++			 <&topckgen CLK_TOP_APLL1>;
++		snps,txpbl = <32>;
++		snps,rxpbl = <32>;
++		snps,reset-gpio = <&pio 87 GPIO_ACTIVE_LOW>;
++		snps,reset-active-low;
++		tx-delay = <9>;
++		rx-delay = <9>;
++		fine-tune;
++		rmii-rxc;
++		txc-inverse;
++		rxc-inverse;
++	};
+-- 
+1.7.9.5
+
