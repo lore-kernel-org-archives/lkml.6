@@ -2,163 +2,162 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6420DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 08:53:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BF3F4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 08:55:31 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2E8C7208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 08:53:48 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="yRSFw7TZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2E8C7208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+	by mail.kernel.org (Postfix) with ESMTP id 921A9208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 08:55:31 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 921A9208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389066AbeKPTFJ (ORCPT
+        id S2389400AbeKPTGw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 14:05:09 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:53415 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727526AbeKPTFI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 14:05:08 -0500
-Received: by mail-wm1-f65.google.com with SMTP id f10-v6so21202379wme.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 00:53:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
-        h=subject:to:cc:references:from:openpgp:autocrypt:organization
-         :message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=7hzHKK2Bq/brkNiGyAudqFya43IkCaPZVoqXPJeNx2U=;
-        b=yRSFw7TZvQ2ztj3vFoBNR+Kcf5VRG+90Bi6qvAmGbWdn2NrvrHzQZKZyBNVyMfiBmp
-         V0eqNnyyPinYHe9i1rpI5v8wYhpAg52dXCj3BMIiyoOy/QlL/enAnrk4Vjf6BHe0X51Z
-         EeD+nSkT0wywDQq6bWPzFqw3u3hR0VrKpO9pdwiqflaetQYnTjhVscajg72ZavmqwTf1
-         cLT82ek5MNk3lQpiUkQ2ca1m45yvkJ5wCtsgq/kyZzZz2dmHuWpretSQPaz8hBpx8GuS
-         Zx8jEOzfPyFveC6/4k+BwD4hbuc5bW40EH4oNksg08lyqhIwrmnRKYLdz4yNxajG52rw
-         1rpA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:subject:to:cc:references:from:openpgp:autocrypt
-         :organization:message-id:date:user-agent:mime-version:in-reply-to
-         :content-language:content-transfer-encoding;
-        bh=7hzHKK2Bq/brkNiGyAudqFya43IkCaPZVoqXPJeNx2U=;
-        b=WxYIg5Oimr1YrTQ6ELEqsj5YxbknwBArI8rlvKNzozFhamYtju5XKwuTwxVszPoXVl
-         kuBpCTVhqsgxfi7ZKAazYY8WD/wFOyy3cj0ETwmJ+KEM49vTiX24OZYziDrz/epTwsd8
-         kBZGTc6oqspb3LknDY3lWrNtM0eb285WFF8UPFblMdbqjqdz+fojgCnRke9OuRH+YZ6J
-         BZ1/3TvrO5A3BBeGg44Jy0ZrPdEOLVDMRneQzmTsIrl0HY+x+SElREmCXSWw/sRZKfJZ
-         xfxB2xMzaEovKNrnf74pZx6WULJVYR33pXdwRnu71kgsfMByNj8wXN+xzxmam2n4lSRr
-         Q/NA==
-X-Gm-Message-State: AGRZ1gJ9kmISkl4oVlWCYcaUgjN1GHkkJmQ5E8Wi+AvRIogSaqEXSaxU
-        90xydInR0MkJEwylzO3TH+fbVg==
-X-Google-Smtp-Source: AJdET5crr2Ms1ETZd00gjb5pzao7HOOtHFNtKG6batz0aJK7/mW3i4ueVFIZCMB0BYGOAJhxZfpAEg==
-X-Received: by 2002:a1c:9f0b:: with SMTP id i11-v6mr1679177wme.59.1542358423757;
-        Fri, 16 Nov 2018 00:53:43 -0800 (PST)
-Received: from [10.1.2.12] ([90.63.244.31])
-        by smtp.gmail.com with ESMTPSA id l5-v6sm29094523wrv.84.2018.11.16.00.53.42
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 00:53:43 -0800 (PST)
-Subject: Re: [PATCH v5 1/3] arm64: dts: meson-gxl: add support for phicomm n1
-To:     He Yangxuan <yangxuan8282@gmail.com>,
-        linux-amlogic@lists.infradead.org
-Cc:     linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org, carlo@caione.org, khilman@baylibre.com
-References: <20181110033904.4207-1-yangxuan8282@gmail.com>
- <20181110033904.4207-2-yangxuan8282@gmail.com>
-From:   Neil Armstrong <narmstrong@baylibre.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=narmstrong@baylibre.com; prefer-encrypt=mutual; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKE5laWwgQXJtc3Ryb25nIDxuYXJtc3Ryb25nQGJheWxpYnJlLmNvbT7CwHsEEwEKACUC
- GyMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheABQJXDO2CAhkBAAoJEBaat7Gkz/iubGIH/iyk
- RqvgB62oKOFlgOTYCMkYpm2aAOZZLf6VKHKc7DoVwuUkjHfIRXdslbrxi4pk5VKU6ZP9AKsN
- NtMZntB8WrBTtkAZfZbTF7850uwd3eU5cN/7N1Q6g0JQihE7w4GlIkEpQ8vwSg5W7hkx3yQ6
- 2YzrUZh/b7QThXbNZ7xOeSEms014QXazx8+txR7jrGF3dYxBsCkotO/8DNtZ1R+aUvRfpKg5
- ZgABTC0LmAQnuUUf2PHcKFAHZo5KrdO+tyfL+LgTUXIXkK+tenkLsAJ0cagz1EZ5gntuheLD
- YJuzS4zN+1Asmb9kVKxhjSQOcIh6g2tw7vaYJgL/OzJtZi6JlIXOwE0ETVkGzwEIALyKDN/O
- GURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYpQTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXM
- coJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hi
- SvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY4yG6xI99NIPEVE9lNBXBKIlewIyVlkOa
- YvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoMMtsyw18YoX9BqMFInxqYQQ3j/HpVgTSv
- mo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUXoUk33HEAEQEAAcLAXwQYAQIACQUCTVkG
- zwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfnM7IbRuiSZS1unlySUVYu3SD6YBYnNi3G
- 5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa33eDIHu/zr1HMKErm+2SD6PO9umRef8V8
- 2o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCSKmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+
- RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJ
- C3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTTQbM0WUIBIcGmq38+OgUsMYu4NzLu7uZF
- Acmp6h8g
-Organization: Baylibre
-Message-ID: <5974964f-e81a-8edd-23d1-f6a80185f9cc@baylibre.com>
-Date:   Fri, 16 Nov 2018 09:53:42 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 16 Nov 2018 14:06:52 -0500
+Received: from mx2.suse.de ([195.135.220.15]:54512 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727398AbeKPTGw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 14:06:52 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 439EBAC36;
+        Fri, 16 Nov 2018 08:55:27 +0000 (UTC)
+Date:   Fri, 16 Nov 2018 09:55:25 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Christoph Lameter <clameter@sgi.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH AUTOSEL 3.18 8/9] mm/vmstat.c: assert that vmstat_text is
+ in sync with stat_items_size
+Message-ID: <20181116085525.GC14706@dhcp22.suse.cz>
+References: <20181113055252.79406-1-sashal@kernel.org>
+ <20181113055252.79406-8-sashal@kernel.org>
+ <20181115140810.e3292c83467544f6a1d82686@linux-foundation.org>
+ <20181115223718.GB1706@sasha-vm>
+ <20181115144719.d26dc7a2d47fade8d41a83d5@linux-foundation.org>
+ <20181115230118.GC1706@sasha-vm>
 MIME-Version: 1.0
-In-Reply-To: <20181110033904.4207-2-yangxuan8282@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115230118.GC1706@sasha-vm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 10/11/2018 04:39, He Yangxuan wrote:
-> This patch adds support for the Phicomm N1. This device based on P230 reference design.
-> And this box doesn't have cvbs, so disable related section in device tree.
+On Thu 15-11-18 18:01:18, Sasha Levin wrote:
+> On Thu, Nov 15, 2018 at 02:47:19PM -0800, Andrew Morton wrote:
+> > On Thu, 15 Nov 2018 17:37:18 -0500 Sasha Levin <sashal@kernel.org> wrote:
+> > 
+> > > On Thu, Nov 15, 2018 at 02:08:10PM -0800, Andrew Morton wrote:
+> > > >On Tue, 13 Nov 2018 00:52:51 -0500 Sasha Levin <sashal@kernel.org> wrote:
+> > > >
+> > > >> From: Jann Horn <jannh@google.com>
+> > > >>
+> > > >> [ Upstream commit f0ecf25a093fc0589f0a6bc4c1ea068bbb67d220 ]
+> > > >>
+> > > >> Having two gigantic arrays that must manually be kept in sync, including
+> > > >> ifdefs, isn't exactly robust.  To make it easier to catch such issues in
+> > > >> the future, add a BUILD_BUG_ON().
+> > > >>
+> > > >> ...
+> > > >>
+> > > >> --- a/mm/vmstat.c
+> > > >> +++ b/mm/vmstat.c
+> > > >> @@ -1189,6 +1189,8 @@ static void *vmstat_start(struct seq_file *m, loff_t *pos)
+> > > >>  	stat_items_size += sizeof(struct vm_event_state);
+> > > >>  #endif
+> > > >>
+> > > >> +	BUILD_BUG_ON(stat_items_size !=
+> > > >> +		     ARRAY_SIZE(vmstat_text) * sizeof(unsigned long));
+> > > >>  	v = kmalloc(stat_items_size, GFP_KERNEL);
+> > > >>  	m->private = v;
+> > > >>  	if (!v)
+> > > >
+> > > >I don't think there's any way in which this can make a -stable kernel
+> > > >more stable!
+> > > >
+> > > >
+> > > >Generally, I consider -stable in every patch I merge, so for each patch
+> > > >which doesn't have cc:stable, that tag is missing for a reason.
+> > > >
+> > > >In other words, your criteria for -stable addition are different from
+> > > >mine.
+> > > >
+> > > >And I think your criteria differ from those described in
+> > > >Documentation/process/stable-kernel-rules.rst.
+> > > >
+> > > >So... what is your overall thinking on patch selection?
+> > > 
+> > > Indeed, this doesn't fix anything.
+> > > 
+> > > My concern is that in the future, we will pull a patch that will cause
+> > > the issue described here, and that issue will only be relevant on
+> > > stable. It is very hard to debug this, and I suspect that stable kernels
+> > > will still pass all their tests with flying colors.
+> > > 
+> > > As an example, consider the case where commit 28e2c4bb99aa ("mm/vmstat.c:
+> > > fix outdated vmstat_text") is backported to a kernel that doesn't have
+> > > commit 7a9cdebdcc17 ("mm: get rid of vmacache_flush_all() entirely").
+> > > 
+> > > I also felt safe with this patch since it adds a single BUILD_BUG_ON()
+> > > which does nothing during runtime, so the chances it introduces anything
+> > > beyond a build regression seemed to be slim to none.
+> > 
+> > Well OK.  But my question was general and covers basically every
+> > autosel patch which originated in -mm.
 > 
-> Signed-off-by: He Yangxuan <yangxuan8282@gmail.com>
-> ---
->  arch/arm64/boot/dts/amlogic/Makefile                |  1 +
->  .../boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts | 21 +++++++++++++++++++++
->  2 files changed, 22 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
+> Sure. I picked 3 patches that show up on top when I google for AUTOSEL
+> in linux-mm, maybe they'll be a good example to help me understand why
+> they were not selected.
 > 
-> diff --git a/arch/arm64/boot/dts/amlogic/Makefile b/arch/arm64/boot/dts/amlogic/Makefile
-> index c31f29d66..49f3ac5d8 100644
-> --- a/arch/arm64/boot/dts/amlogic/Makefile
-> +++ b/arch/arm64/boot/dts/amlogic/Makefile
-> @@ -18,6 +18,7 @@ dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-nexbox-a95x.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905x-p212.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p230.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-p231.dtb
-> +dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905d-phicomm-n1.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s805x-p241.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-p281.dtb
->  dtb-$(CONFIG_ARCH_MESON) += meson-gxl-s905w-tx3-mini.dtb
-> diff --git a/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
-> new file mode 100644
-> index 000000000..9a8a8a7e4
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/amlogic/meson-gxl-s905d-phicomm-n1.dts
-> @@ -0,0 +1,21 @@
-> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> +/*
-> + * Copyright (c) 2018 He Yangxuan
-> + */
-> +
-> +/dts-v1/;
-> +
-> +#include "meson-gxl-s905d-p230.dts"
-> +
-> +/ {
-> +	compatible = "phicomm,n1", "amlogic,s905d", "amlogic,meson-gxl";
-> +	model = "Phicomm N1";
-> +
-> +	cvbs-connector {
-> +		status = "disabled";
-> +	};
-> +};
-> +
-> +&cvbs_vdac_port {
-> +	status = "disabled";
-> +};
+> This one fixes a case where too few struct pages are allocated when
+> using mirrorred memory:
 > 
+> 	https://marc.info/?l=linux-mm&m=154211933211147&w=2
 
-Reviewed-by: Neil Armstrong <narmstrong@baylibre.com>
+Let me quote "I found this bug by reading the code." I do not think
+anybody has ever seen this in practice.
+
+> Race condition with memory hotplug due to missing locks:
+> 
+> 	https://marc.info/?l=linux-mm&m=154211934011188&w=2
+
+Memory hotplug locking is dubious at best and this patch doesn't really
+fix it. It fixes a theoretical problem. I am not aware anybody would be
+hitting in practice. We need to rework the locking quite extensively.
+
+> Raising an OOM event that causes issues in userspace when no OOM has
+> actually occured:
+> 
+> 	https://marc.info/?l=linux-mm&m=154211939811582&w=2
+
+The patch makes sense I just do not think this is a stable material. The
+semantic of the event was and still is suboptimal.
+
+> I think that all 3 cases represent a "real" bug users can hit, and I
+> honestly don't know why they were not tagged for stable.
+
+It would be much better to ask in the respective email thread rather
+than spamming mailing with AUTOSEL patches which rarely get any
+attention.
+
+We have been through this discussion several times already and I thought
+we have agreed that those subsystems which are seriously considering stable
+are opted out from the AUTOSEL automagic. Has anything changed in that
+regards.
+-- 
+Michal Hocko
+SUSE Labs
