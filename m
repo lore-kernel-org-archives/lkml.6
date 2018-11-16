@@ -2,120 +2,72 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5B387C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:48:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E6070C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:50:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 19FA1206B2
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:48:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ubgVzFgC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 19FA1206B2
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id AECD020858
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:50:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AECD020858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=codethink.co.uk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728741AbeKQCBR (ORCPT
+        id S2389978AbeKQCDf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 21:01:17 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:44079 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728124AbeKQCBQ (ORCPT
+        Fri, 16 Nov 2018 21:03:35 -0500
+Received: from imap1.codethink.co.uk ([176.9.8.82]:54606 "EHLO
+        imap1.codethink.co.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728485AbeKQCDf (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 21:01:16 -0500
-Received: by mail-pl1-f194.google.com with SMTP id s5-v6so11333695plq.11;
-        Fri, 16 Nov 2018 07:48:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=yyEBDisrzZDucWgLb++IQwrYwud34siQQ4o1Acb9MGY=;
-        b=ubgVzFgCDdMxgGqJ8h4aoYjxkDvp4I4ujpdud2WiCXrQ1G7tuJBxNedDWavhFCCrW5
-         GHv9ILjkIj7NadcQZJanrtG3rsjyXUOjLUHBf6Pv94IUIHMqQHHXwWlfJitXXmHuGxSB
-         QZd+xyew7SnNiQLdP4TEUhUJrSc8rAqYDBHrRDRxTXikXy4+8nvgfS7PRXF5iMGi02BK
-         JNQVF9y8t+YNPXQk1OECejVtmVLypAuvwLnzlcLhBEXOaxZmvPWqjsej4DEG42TJGROd
-         kSxm2NYw+wZzn35UKwhmTUw+03uiDtTN6uZuCMGQg1xDcAXrha96TzWKaSmEQ9RsvhxV
-         wXJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :references:mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yyEBDisrzZDucWgLb++IQwrYwud34siQQ4o1Acb9MGY=;
-        b=mcVhZ1VkL/fDZHdEohlKS0Hz6eHMQBa+/Pbi+/pAnnJ9mizJYL069vJlNIwlJleve4
-         AW0scywodBDMAKWbR/VpxIKGktFnD4xikSKK6AbpidFShZgVxj+dhFZJvOy2fmQ2sgxc
-         dqMsz7zbzE4deMS030AMtvHARoPIMkfOT0l3sYirDu+ajos0DwwC7TXLW0pglM3uByie
-         rvvC4v2TLN19yZ0hvjW/pYh//RO7OIblkNHj3PXwX5Cd8DnemPWaCwqi6ZmrXMBcCG2P
-         2vC56GnTHitJ31lopL7EScodgucFle68iWfmM+YBcu7phkj6jShPbpTI+0EylwIYNOrg
-         cbgQ==
-X-Gm-Message-State: AGRZ1gJoXlOb8nmwB5amUwTNj9WXy/Zp+tmCwFxZeIuUwgnjuPVIW8NK
-        4J/bIWvQEpNQdxhvwxJfHwY=
-X-Google-Smtp-Source: AJdET5e1EOoEaG+/JJ3bVEngwn9k66zz9d2ubtmvSBtHr7ZCQcLm8/QOzflIiQaI9yZqHqU+ThLY2g==
-X-Received: by 2002:a17:902:8a88:: with SMTP id p8-v6mr11108007plo.94.1542383303455;
-        Fri, 16 Nov 2018 07:48:23 -0800 (PST)
-Received: from google.com ([64.114.255.114])
-        by smtp.gmail.com with ESMTPSA id 67-v6sm39450236pfk.134.2018.11.16.07.48.22
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Nov 2018 07:48:22 -0800 (PST)
-Date:   Fri, 16 Nov 2018 07:48:20 -0800
-From:   Minchan Kim <minchan@kernel.org>
-To:     Sasha Levin <sashal@kernel.org>
-Cc:     stable@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Sergey Senozhatsky <sergey.senozhatsky@gmail.com>,
-        Hannes Reinecke <hare@suse.com>,
-        Howard Chen <howardsoc@google.com>
-Subject: Re: [PATCH] zram: close udev startup race condition as default groups
-Message-ID: <20181116154820.GA255402@google.com>
-References: <20181114055223.66476-1-minchan@kernel.org>
- <20181115174504.GJ95254@sasha-vm>
+        Fri, 16 Nov 2018 21:03:35 -0500
+Received: from [148.252.241.226] (helo=rainbowdash)
+        by imap1.codethink.co.uk with esmtpsa (Exim 4.84_2 #1 (Debian))
+        id 1gNgOD-00036S-Up; Fri, 16 Nov 2018 15:50:38 +0000
+Received: from ben by rainbowdash with local (Exim 4.91)
+        (envelope-from <ben@rainbowdash.codethink.co.uk>)
+        id 1gNgOD-0004xa-L2; Fri, 16 Nov 2018 15:50:37 +0000
+From:   Ben Dooks <ben.dooks@codethink.co.uk>
+To:     oneukum@suse.com, linux-usb@vger.kernel.org
+Cc:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        Ben Dooks <ben.dooks@codethink.co.uk>
+Subject: [PATCH] usbnet: use tasklet_init() for usbnet_bh handler
+Date:   Fri, 16 Nov 2018 15:50:35 +0000
+Message-Id: <20181116155035.19025-1-ben.dooks@codethink.co.uk>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115174504.GJ95254@sasha-vm>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 12:45:04PM -0500, Sasha Levin wrote:
-> On Wed, Nov 14, 2018 at 02:52:23PM +0900, Minchan Kim wrote:
-> > commit fef912bf860e upstream.
-> > commit 98af4d4df889 upstream.
-> > 
-> > I got a report from Howard Chen that he saw zram and sysfs race(ie,
-> > zram block device file is created but sysfs for it isn't yet)
-> > when he tried to create new zram devices via hotadd knob.
-> > 
-> > v4.20 kernel fixes it by [1, 2] but it's too large size to merge
-> > into -stable so this patch fixes the problem by registering defualt
-> > group by Greg KH's approach[3].
-> > 
-> > This patch should be applied to every stable tree [3.16+] currently
-> > existing from kernel.org because the problem was introduced at 2.6.37
-> > by [4].
-> > 
-> > [1] fef912bf860e, block: genhd: add 'groups' argument to device_add_disk
-> > [2] 98af4d4df889, zram: register default groups with device_add_disk()
-> > [3] http://kroah.com/log/blog/2013/06/26/how-to-create-a-sysfs-file-correctly/
-> > [4] 33863c21e69e9, Staging: zram: Replace ioctls with sysfs interface
-> > 
-> > Cc: Sergey Senozhatsky <sergey.senozhatsky@gmail.com>
-> > Cc: Hannes Reinecke <hare@suse.com>
-> > Tested-by: Howard Chen <howardsoc@google.com>
-> > Signed-off-by: Minchan Kim <minchan@kernel.org>
-> 
-> I've queued this for 4.19 and 4.18, but it doesn't apply to anything
-> older than that.
+The tasklet initialisation would be better done by tasklet_init()
+instead of assuming all the fields are in an ok state by default.
 
-Thanks for the review, Hannes.
+Note, this does not fix any known bug.
 
-Sasha, I will send separate patches for older stable kernel.
-Thanks for picking the patch.
+Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+---
+ drivers/net/usb/usbnet.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-> 
-> --
-> Thanks,
-> Sasha
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index 28d76c827e70..8f7db959d319 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -1704,8 +1704,7 @@ usbnet_probe (struct usb_interface *udev, const struct usb_device_id *prod)
+ 	skb_queue_head_init (&dev->txq);
+ 	skb_queue_head_init (&dev->done);
+ 	skb_queue_head_init(&dev->rxq_pause);
+-	dev->bh.func = (void (*)(unsigned long))usbnet_bh;
+-	dev->bh.data = (unsigned long)&dev->delay;
++	tasklet_init(&dev->bh, (void (*)(unsigned long))usbnet_bh, (unsigned long)&dev->delay);
+ 	INIT_WORK (&dev->kevent, usbnet_deferred_kevent);
+ 	init_usb_anchor(&dev->deferred);
+ 	timer_setup(&dev->delay, usbnet_bh, 0);
+-- 
+2.19.1
+
