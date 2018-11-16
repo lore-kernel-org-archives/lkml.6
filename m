@@ -2,129 +2,189 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E41C4C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:03:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEAF6C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:13:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ABAC0208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:03:42 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id AD9012145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:13:17 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S9fe7+0R"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABAC0208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="CyncKu55"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD9012145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389117AbeKPPOc (ORCPT
+        id S1727655AbeKPPYI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 10:14:32 -0500
-Received: from mail-vs1-f66.google.com ([209.85.217.66]:45939 "EHLO
-        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727328AbeKPPOb (ORCPT
+        Fri, 16 Nov 2018 10:24:08 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:45743 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727124AbeKPPYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 10:14:31 -0500
-Received: by mail-vs1-f66.google.com with SMTP id v10so5671838vsv.12
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 21:03:40 -0800 (PST)
+        Fri, 16 Nov 2018 10:24:07 -0500
+Received: by mail-qk1-f196.google.com with SMTP id d135so35612104qkc.12
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 21:13:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=bbTGX7jTjM3mFVlhKI5w1XE1KgMp5DkMTJobe/defSk=;
-        b=S9fe7+0RqXdy6DikKQCtD3Vmfru5/KrtCa1qI7Zorm5WRL7JS066k2ZJMqaWefvqnU
-         +qb674p/PP4wcpI1vEQnKcqSkEC5hJebr4/oP5mD3lmVRSTZFpHZ1ZeDkwndH1mrroWP
-         lX6eK8FyBy6kw8pWty9vHrGUeSuZ5MxFEzIgY=
+        d=linaro.org; s=google;
+        h=date:from:to:cc:subject:in-reply-to:message-id:references
+         :user-agent:mime-version;
+        bh=B2EdM+72quGJ7vFvERTQ17aISz/apRKrBzgbhXypf8U=;
+        b=CyncKu55LvCbEg3hVAvQBQZlSQWGOzh9qf7t2PO3PT4aAtPIb1s0cth2282OVtH+Un
+         Dzzi981XLkFjRlVvtuS/olzlESPmImw2ilkCtIYpyy34BT2Gi8k9Rh4yNThwGoYcHWUS
+         yAku7xbutYsPZlJizfB7q8B7xElV1U7Fiv4dA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=bbTGX7jTjM3mFVlhKI5w1XE1KgMp5DkMTJobe/defSk=;
-        b=N/fsSqmuYJZa/DocuhwbcEZ+2zCeqcDqj9LhqyG7LQB4992M/OX8/2QsPic96uSw2j
-         HjPItr5I+UwBavKUEtZy0COxR+28VFt0y0B5TgU+0xJjira/9rOyK+oaLv2LMrsZ3N+w
-         mMu99T/IGmgZcdj43ao1KCzapa2EJh63vfvjVtUsJfkPiVezMKMLGgMquKCvak5Cx60s
-         1EWxaypOcGf1R19D+rprfA6EH7dPVPHqKGz+5fP3n1S93mQrDsGlhkNqADF2+XtoBU5g
-         rMx+9t5OaryXW1S8Pj01NoEph557DO2dTeBwdlrW/xBSPJHoZIq1A6Kye0xb8EEd9O80
-         REgw==
-X-Gm-Message-State: AGRZ1gJLoy1qX8R2VzUMo3UaEPgIwWL84Qhur/SOJEXPydPw8ysH+hRw
-        YHPziiHPIGWrtiecI6eu22Gib3v5yJU=
-X-Google-Smtp-Source: AJdET5eL80f+EYEpwgWDeQcuWHUS6hvxa5QLmsgqk2uccup/pdRtgCxbPwzaokB26Gfa2fC0sPPIcQ==
-X-Received: by 2002:a67:ca0c:: with SMTP id z12mr3463838vsk.83.1542344619598;
-        Thu, 15 Nov 2018 21:03:39 -0800 (PST)
-Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
-        by smtp.gmail.com with ESMTPSA id d195sm7286880vka.29.2018.11.15.21.03.38
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 21:03:38 -0800 (PST)
-Received: by mail-vs1-f41.google.com with SMTP id p193so12727720vsd.7
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 21:03:38 -0800 (PST)
-X-Received: by 2002:a67:f598:: with SMTP id i24mr3932394vso.87.1542344617863;
- Thu, 15 Nov 2018 21:03:37 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:in-reply-to:message-id
+         :references:user-agent:mime-version;
+        bh=B2EdM+72quGJ7vFvERTQ17aISz/apRKrBzgbhXypf8U=;
+        b=VoRZ5F9wlgbDL1ujgUqjyApCZtT2etRMmRFol6D96Q6cynLWSNHfSZX5MOUoJXkwri
+         Sg/0EDZ8dxMV9xpkxADbFFlouNb/xFP5FhmmCnV64VG18BgauJXuUKOH3w1i3F9OaELT
+         KCC8CtEO5iNcW4bTrq0kr/ejuZ9D72najBGjNSrYtAJDBYCcso9K5EpKH3eXqCvbyj2g
+         kRaPMWWmgShiNqJtxSKJ+WTrIyoRscUMozb141jcbdEpSYfzd2VjpErjetK9GHgAPaBi
+         f8qchjfpHdHlieghdkTIO1b1bU3NGxXFMftSq/RwP+1LgO81y6mIPYFkDA6B1wUj21Cn
+         tzgg==
+X-Gm-Message-State: AGRZ1gL+eSWH7promNELwTt5KyVhgGi21nF+0jYZT9EphrD8SogWaCWS
+        nYMxTsDWj/9F08XcuKuEx1S1SA==
+X-Google-Smtp-Source: AJdET5eAXnsH0UtwD8cVCwMNc+Ma+sERYi5Ax63QzViGMXwNNDNSKiSj2htDBj0bTZ0Mv3dHCjvrZw==
+X-Received: by 2002:a37:b405:: with SMTP id d5mr8693275qkf.162.1542345194620;
+        Thu, 15 Nov 2018 21:13:14 -0800 (PST)
+Received: from xanadu.home (modemcable228.104-82-70.mc.videotron.ca. [70.82.104.228])
+        by smtp.gmail.com with ESMTPSA id z20sm4259182qkb.41.2018.11.15.21.13.11
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 21:13:13 -0800 (PST)
+Date:   Fri, 16 Nov 2018 00:13:10 -0500 (EST)
+From:   Nicolas Pitre <nicolas.pitre@linaro.org>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+cc:     linux-kbuild@vger.kernel.org, Sam Ravnborg <sam@ravnborg.org>,
+        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+        linux-arch@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        linux-kernel@vger.kernel.org,
+        Michal Marek <michal.lkml@markovi.net>,
+        Will Deacon <will.deacon@arm.com>,
+        Ingo Molnar <mingo@kernel.org>,
+        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Subject: Re: [PATCH 4/8] kbuild: simplify dependency generation for
+ CONFIG_TRIM_UNUSED_KSYMS
+In-Reply-To: <1542270435-11181-5-git-send-email-yamada.masahiro@socionext.com>
+Message-ID: <nycvar.YSQ.7.76.1811152346510.1993@knanqh.ubzr>
+References: <1542270435-11181-1-git-send-email-yamada.masahiro@socionext.com> <1542270435-11181-5-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
 MIME-Version: 1.0
-References: <20181116004247.172977-1-dbasehore@chromium.org>
-In-Reply-To: <20181116004247.172977-1-dbasehore@chromium.org>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Thu, 15 Nov 2018 21:03:24 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=VjN3J66wv2LGhQYD+-_W1q+KCzvo3V_1F9ktAb-T-i4A@mail.gmail.com>
-Message-ID: <CAD=FV=VjN3J66wv2LGhQYD+-_W1q+KCzvo3V_1F9ktAb-T-i4A@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: rk3399: Add xin32k clk
-To:     Derek Basehore <dbasehore@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, Tony Xie <tony.xie@rock-chips.com>,
-        Chris <zyw@rock-chips.com>, ayaka@soulik.info,
-        "nickey.yang" <nickey.yang@rock-chips.com>,
-        =?UTF-8?B?6YOR6Iic5Lm+?= <zhengsq@rock-chips.com>,
-        Klaus Goger <klaus.goger@theobroma-systems.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Thu, 15 Nov 2018, Masahiro Yamada wrote:
 
-On Thu, Nov 15, 2018 at 4:42 PM Derek Basehore <dbasehore@chromium.org> wrote:
->
-> This adds the xin32k clock to the RK3399 CPU. Even though it's not
-> directly used, muxes will end up traversing the entire clk tree on
-> calls to determine_rate if it doesn't exist.
->
-> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 7 +++++++
->  1 file changed, 7 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> index 99e7f65c1779..6a32293982d0 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> @@ -191,6 +191,13 @@
->                 #clock-cells = <0>;
->         };
->
-> +       xin32k: xin32k {
+> My main motivation of this commit is to clean up scripts/Kbuild.include
+> and scripts/Makefile.build.
+> 
+> Currently, CONFIG_TRIM_UNUSED_KSYMS works with a tricky gimmick;
+> possibly exported symbols are detected by letting $(CPP) replace
+> EXPORT_SYMBOL* with a special string '=== __KSYM_*===', which is
+> post-processed by sed, and passed to fixdep. The extra preprocessing
+> is costly, and hacking cmd_and_fixdep is ugly.
+> 
+> I came up with a new way to find exported symbols; insert a dummy
+> symbol __ksym_marker_* to each potentially exported symbol. Those
+> dummy symbols are picked up by $(NM), post-processed by sed, then
+> appended to .*.cmd files. I collected the post-process part to a
+> new shell script scripts/gen_ksymdeps.sh for readability. The dummy
+> symbols are put into the .discard.* section so that the linker
+> script rips them off the final vmlinux or modules.
 
-nit: xin32k is the name of the clock that rk3399 consumes.  It seems a
-little weird to name this node with that name.  Can you call this:
+Brilliant!  I really like it.
 
-ap_rtc_clk: ap-rtc-clk
+Minor comments below.
 
-...after the gru schematic?  You wouldn't change the
-clock-output-names, just the node name / label.
+> diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
+> index 4d73e6e..294d6ae 100644
+> --- a/include/asm-generic/export.h
+> +++ b/include/asm-generic/export.h
+> @@ -59,16 +59,19 @@ __kcrctab_\name:
+>  .endm
+>  #undef __put
+>  
+> -#if defined(__KSYM_DEPS__)
+> -
+> -#define __EXPORT_SYMBOL(sym, val, sec)	=== __KSYM_##sym ===
+> -
+> -#elif defined(CONFIG_TRIM_UNUSED_KSYMS)
+> +#if defined(CONFIG_TRIM_UNUSED_KSYMS)
+>  
+>  #include <linux/kconfig.h>
+>  #include <generated/autoksyms.h>
+>  
+> +.macro __ksym_marker sym
+> +	.section ".discard.ksym","a"
+> +__ksym_marker_\sym:
+> +	 .previous
+
+Does this work as intended? I have vague memories about having problems 
+with sections being discarded when they don't allocate any space.
+
+> +.endm
+> +
+>  #define __EXPORT_SYMBOL(sym, val, sec)				\
+> +	__ksym_marker sym;					\
+>  	__cond_export_sym(sym, val, sec, __is_defined(__KSYM_##sym))
+>  #define __cond_export_sym(sym, val, sec, conf)			\
+>  	___cond_export_sym(sym, val, sec, conf)
+> diff --git a/include/linux/export.h b/include/linux/export.h
+> index ce764a5..0413a3d 100644
+> --- a/include/linux/export.h
+> +++ b/include/linux/export.h
+> @@ -92,22 +92,22 @@ struct kernel_symbol {
+>   */
+>  #define __EXPORT_SYMBOL(sym, sec)
+>  
+> -#elif defined(__KSYM_DEPS__)
+> +#elif defined(CONFIG_TRIM_UNUSED_KSYMS)
+> +
+> +#include <generated/autoksyms.h>
+>  
+>  /*
+>   * For fine grained build dependencies, we want to tell the build system
+>   * about each possible exported symbol even if they're not actually exported.
+> - * We use a string pattern that is unlikely to be valid code that the build
+> - * system filters out from the preprocessor output (see ksym_dep_filter
+> - * in scripts/Kbuild.include).
+> + * We use a symbol pattern __ksym_marker_<symbol> that the build system filters
+> + * from the $(NM) output (see scripts/gen_ksymdep.sh). These symbols are
+> + * discarded in the final link stage.
+>   */
+> -#define __EXPORT_SYMBOL(sym, sec)	=== __KSYM_##sym ===
+> -
+> -#elif defined(CONFIG_TRIM_UNUSED_KSYMS)
+> -
+> -#include <generated/autoksyms.h>
+> +#define __ksym_marker(sym)	\
+> +	static int __ksym_marker_##sym[0] __section(".discard.ksym") __used
+
+Even if this is discarded during the final link, maybe this could save 
+a tiny amount of disk space by using a char instead?
+
+> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
+> index 7f3ca6e..e5ba9b1 100644
+> --- a/scripts/Makefile.build
+> +++ b/scripts/Makefile.build
+> @@ -254,9 +254,18 @@ objtool_dep = $(objtool_obj)					\
+>  	      $(wildcard include/config/orc/unwinder.h		\
+>  			 include/config/stack/validation.h)
+>  
+> +ifdef CONFIG_TRIM_UNUSED_KSYMS
+> +cmd_gen_ksymdeps = \
+> +	$(CONFIG_SHELL) $(srctree)/scripts/gen_ksymdeps.sh $@ > $(dot-target).tmp; \
+> +	cat $(dot-target).tmp >> $(dot-target).cmd; \
+> +	rm -f $(dot-target).tmp;
+
+Why don't you append to $(dot-target).cmd directly?
 
 
-> +               compatible = "fixed-clock";
-> +               clock-frequency = <32000>;
-
-I checked the datasheet for the 32K clock and it shows that this is a
-32768 Hz clock, not a 32000 Hz one.  I also checked the rk808 clock
-driver (which is supposed to be compatible with rk3399) and it
-produces a 32768 clock.
+Nicolas
