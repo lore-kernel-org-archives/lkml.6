@@ -2,165 +2,151 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CB6C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:30:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E980C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7D3162087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:30:35 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3162087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D6042087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:33:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XYNsSh4K"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D6042087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389595AbeKQAnK (ORCPT
+        id S2389682AbeKQAp5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 19:43:10 -0500
-Received: from mga14.intel.com ([192.55.52.115]:61058 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728079AbeKQAnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 19:43:10 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 06:30:33 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="108706240"
-Received: from unknown (HELO localhost.jf.intel.com) ([10.54.55.47])
-  by fmsmga001.fm.intel.com with ESMTP; 16 Nov 2018 06:30:29 -0800
-From:   kan.liang@linux.intel.com
-To:     tglx@linutronix.de, peterz@infradead.org, mingo@redhat.com,
-        linux-kernel@vger.kernel.org
-Cc:     ak@linux.intel.com, yao.jin@linux.intel.com,
-        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>
-Subject: [PATCH] perf/x86/intel/uncore: Fix client IMC events return huge result
-Date:   Fri, 16 Nov 2018 05:19:45 -0800
-Message-Id: <20181116131945.5480-1-kan.liang@linux.intel.com>
-X-Mailer: git-send-email 2.14.5
+        Fri, 16 Nov 2018 19:45:57 -0500
+Received: from mail-wr1-f66.google.com ([209.85.221.66]:44771 "EHLO
+        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728079AbeKQAp4 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 19:45:56 -0500
+Received: by mail-wr1-f66.google.com with SMTP id j17-v6so25087205wrq.11
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 06:33:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=/Ds6kY7caoXv7q2oOebUUecloBqAClLsY7lsUUakJxY=;
+        b=XYNsSh4KcZqM1teisP3y25Mhhq8mZChM9oodmj96FEWNfX0/vL3SkAGkHjA15r6+uG
+         9yAxq5mLa+4C/b5UawpE1z63m6hDHPVGcrkKYwI5pdPh1f6NwCD4COUReKLzQ9C65P36
+         JgTYyAiQc94XYSoxSui24sq7F3JbVY8K5Em/YavjZBtm7rJU5lxT1zRIovN2naFbvxSO
+         v5uid3d5wUdWnI4n0TCpV0SahdHHD0zZNjpZ9S2oj/akqHYsq6wACZrhYC9Tw/kQjeaC
+         dc8HiB6DEYzlLBQtpZDL7By712lPpzOqxmZCzBEqO9+kB1opENuduSOpHkdcjGajI+jH
+         kpmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=/Ds6kY7caoXv7q2oOebUUecloBqAClLsY7lsUUakJxY=;
+        b=gnEoXdEzF0ThXFtvm/oDe/rYBMTrez7wdtwJzJHGnySQBUYbRzWIMCW28pNyQimkKO
+         ieJAy2aKv24S8Z5LwXM8mxbLxP/1Ge0saKtUdqh1IRZHpJOIif1VnVmqnY/VITAv1PR1
+         +0enDKMiT+TOipN08r8brvn2lEx5euo9Kf4PClJO2Jzj5XgGUyWsMExxc76tMP8OIhqH
+         GcVT7kFrehh/4njw3dazp8Ji0R0dj1/wnzvSqn1H1Y7m/dTy4L9S8A4v+UaAwDky/jKM
+         8Oo/zMJBO3i09NDv+8o5vlq8UkaYUIbbvuAqgStIzlY9p8++aTKnwT9EbXnyGL0x6Xn2
+         9+7w==
+X-Gm-Message-State: AGRZ1gJF5wqewj+SLW/3mnv4dlAsEIAnIB98ff1T+lepDM3OLr4NlMSr
+        4dysALnBe0CjbPisueabfiw=
+X-Google-Smtp-Source: AJdET5fjRl46+lTPZoKVgHMKrs704z0rdJ5kEojqnXXu6Wv3LlafPBXlkfhIE65gpCIsWCqUUa/2Uw==
+X-Received: by 2002:adf:92e5:: with SMTP id 92-v6mr9721353wrn.124.1542378797297;
+        Fri, 16 Nov 2018 06:33:17 -0800 (PST)
+Received: from debian ([148.252.241.226])
+        by smtp.gmail.com with ESMTPSA id j13sm18506253wrx.5.2018.11.16.06.33.16
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Nov 2018 06:33:16 -0800 (PST)
+Date:   Fri, 16 Nov 2018 14:33:14 +0000
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Jan Kara <jack@suse.cz>
+Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
+        Andrew Gabbasov <andrew_gabbasov@mentor.com>
+Subject: Re: [PATCH] udf: fix dvd mounting error
+Message-ID: <20181116143314.qn7jmtyz4ad4bax6@debian>
+References: <20181115122600.15821-1-sudipm.mukherjee@gmail.com>
+ <20181116125633.GG24157@quack2.suse.cz>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116125633.GG24157@quack2.suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Kan Liang <kan.liang@linux.intel.com>
+On Fri, Nov 16, 2018 at 01:56:33PM +0100, Jan Kara wrote:
+> On Thu 15-11-18 12:26:00, Sudip Mukherjee wrote:
+> > Some DVDs are failing to mount with the error:
+> > 
+> > [  632.305370] UDF-fs: warning (device loop0): udf_load_vrs: No anchor found
+> > [  632.305372] UDF-fs: Scanning with blocksize 512 failed
+> > [  632.307837] UDF-fs: warning (device loop0): udf_load_vrs: No anchor found
+> > [  632.307839] UDF-fs: Scanning with blocksize 1024 failed
+> > [  632.309320] UDF-fs: incorrect dstring lengths (32/32)
+> > [  632.309361] UDF-fs: Scanning with blocksize 2048 failed
+> > [  632.309530] UDF-fs: warning (device loop0): udf_load_vrs: No VRS found
+> > [  632.309531] UDF-fs: Scanning with blocksize 4096 failed
+> > 
+> > This particular DVD used to work with v4.4 kernels, and has stopped
+> > working after updating the kernel to v4.14. Did a git bisect and that
+> > pointed to:
+> > c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
 
-The client IMC bandwidth events return very huge result.
-  perf stat -e uncore_imc/data_reads/ -e uncore_imc/data_writes/ -I
-10000 -a
-  10.000117222 34,788.76 MiB uncore_imc/data_reads/
-  10.000117222 8.26 MiB uncore_imc/data_writes/
-  20.000374584 34,842.89 MiB uncore_imc/data_reads/
-  20.000374584 10.45 MiB uncore_imc/data_writes/
-  30.000633299 37,965.29 MiB uncore_imc/data_reads/
-  30.000633299 323.62 MiB uncore_imc/data_writes/
-  40.000891548 41,012.88 MiB uncore_imc/data_reads/
-  40.000891548 6.98 MiB uncore_imc/data_writes/
-  50.001142480 1,125,899,906,621,494.75 MiB uncore_imc/data_reads/
-  50.001142480 6.97 MiB uncore_imc/data_writes/
+<snip>
 
-The client IMC events are freerunning counters. They still use the
-old event encoding format (0x1 for data_read and 0x2 for data write).
-The counter bit width is calculated by common code, which assume that
-the standard encoding format is used for the freerunning counters.
-Error bit width information is calculated.
+> From e1a7680b960fe25821f2419b4c0b1215f8ab2f9b Mon Sep 17 00:00:00 2001
+> From: Jan Kara <jack@suse.cz>
+> Date: Fri, 16 Nov 2018 13:43:17 +0100
+> Subject: [PATCH] udf: Allow mounting volumes with incorrect identification
+>  strings
+> 
+> Commit c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
+> started to be more strict when checking whether converted strings are
+> properly formatted. Sudip reports that there are DVDs where the volume
+> identification string is actually too long - UDF reports:
+> 
+> [  632.309320] UDF-fs: incorrect dstring lengths (32/32)
+> 
+> during mount and fails the mount. This is mostly harmless failure as we
+> don't need volume identification (and even less volume set
+> identification) for anything. So just truncate the volume identification
+> string if it is too long and replace it with 'Invalid' if we just cannot
+> convert it for other reasons. This keeps slightly incorrect media still
+> mountable.
+> 
+> CC: stable@vger.kernel.org
+> Fixes: c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
+> Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+> Signed-off-by: Jan Kara <jack@suse.cz>
+> ---
 
-The event->attr.config, which directly from user space, should not be
-used by the functions of freerunning counters.
-For client IMC events, the attr.config needs to be converted to the
-standard encoding format. The modified event config will be stored in
-event->hw.config.
-For other freerunning counters, the attr.config has the correct format.
-Just save it in event->hw.config.
-Using event->hw.config to replace event->attr.config for the functions
-of freerunning counters.
+It works perfectly. Thanks.
 
-Fix: commit 9aae1780e7e8 ("perf/x86/intel/uncore: Clean up client IMC
-uncore")
-Reported-by: Jin Yao <yao.jin@linux.intel.com>
-Tested-by: Jin Yao <yao.jin@linux.intel.com>
-Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
----
- arch/x86/events/intel/uncore.c     |  1 +
- arch/x86/events/intel/uncore.h     | 12 ++++++------
- arch/x86/events/intel/uncore_snb.c |  4 +++-
- 3 files changed, 10 insertions(+), 7 deletions(-)
+Tested-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
 
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index 27a461414b30..2690135bf83f 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -740,6 +740,7 @@ static int uncore_pmu_event_init(struct perf_event *event)
- 		/* fixed counters have event field hardcoded to zero */
- 		hwc->config = 0ULL;
- 	} else if (is_freerunning_event(event)) {
-+		hwc->config = event->attr.config;
- 		if (!check_valid_freerunning_event(box, event))
- 			return -EINVAL;
- 		event->hw.idx = UNCORE_PMC_IDX_FREERUNNING;
-diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
-index e17ab885b1e9..cc6dd4f78158 100644
---- a/arch/x86/events/intel/uncore.h
-+++ b/arch/x86/events/intel/uncore.h
-@@ -285,8 +285,8 @@ static inline
- unsigned int uncore_freerunning_counter(struct intel_uncore_box *box,
- 					struct perf_event *event)
- {
--	unsigned int type = uncore_freerunning_type(event->attr.config);
--	unsigned int idx = uncore_freerunning_idx(event->attr.config);
-+	unsigned int type = uncore_freerunning_type(event->hw.config);
-+	unsigned int idx = uncore_freerunning_idx(event->hw.config);
- 	struct intel_uncore_pmu *pmu = box->pmu;
- 
- 	return pmu->type->freerunning[type].counter_base +
-@@ -360,7 +360,7 @@ static inline
- unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
- 				     struct perf_event *event)
- {
--	unsigned int type = uncore_freerunning_type(event->attr.config);
-+	unsigned int type = uncore_freerunning_type(event->hw.config);
- 
- 	return box->pmu->type->freerunning[type].bits;
- }
-@@ -368,7 +368,7 @@ unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
- static inline int uncore_num_freerunning(struct intel_uncore_box *box,
- 					 struct perf_event *event)
- {
--	unsigned int type = uncore_freerunning_type(event->attr.config);
-+	unsigned int type = uncore_freerunning_type(event->hw.config);
- 
- 	return box->pmu->type->freerunning[type].num_counters;
- }
-@@ -382,8 +382,8 @@ static inline int uncore_num_freerunning_types(struct intel_uncore_box *box,
- static inline bool check_valid_freerunning_event(struct intel_uncore_box *box,
- 						 struct perf_event *event)
- {
--	unsigned int type = uncore_freerunning_type(event->attr.config);
--	unsigned int idx = uncore_freerunning_idx(event->attr.config);
-+	unsigned int type = uncore_freerunning_type(event->hw.config);
-+	unsigned int idx = uncore_freerunning_idx(event->hw.config);
- 
- 	return (type < uncore_num_freerunning_types(box, event)) &&
- 	       (idx < uncore_num_freerunning(box, event));
-diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
-index 8527c3e1038b..48d7121f71c7 100644
---- a/arch/x86/events/intel/uncore_snb.c
-+++ b/arch/x86/events/intel/uncore_snb.c
-@@ -425,9 +425,11 @@ static int snb_uncore_imc_event_init(struct perf_event *event)
- 
- 	/* must be done before validate_group */
- 	event->hw.event_base = base;
--	event->hw.config = cfg;
- 	event->hw.idx = idx;
- 
-+	/* Convert to standard encoding format for free running counters */
-+	event->hw.config = ((cfg - 1) << 8) | 0x10ff;
-+
- 	/* no group validation needed, we have free running counters */
- 
- 	return 0;
--- 
-2.14.3
+>  fs/udf/super.c   | 16 ++++++++++------
+>  fs/udf/unicode.c | 14 +++++++++++---
+>  2 files changed, 21 insertions(+), 9 deletions(-)
+> 
 
+<snip>
+
+> -	if (ret < 0)
+> -		goto out_bh;
+> -
+> -	strncpy(UDF_SB(sb)->s_volume_ident, outstr, ret);
+> +	if (ret < 0) {
+> +		strcpy(UDF_SB(sb)->s_volume_ident, "Invalid");
+
+Just a suggestion. Even on failed cases, having the volume identification
+as "Invalid" might confuse the users. Since you have a maximum limit as 31
+maybe something more meaningful like "No Name" ?
+
+--
+Regards
+Sudip
