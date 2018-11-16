@@ -2,212 +2,98 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AE97C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:34:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2923DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:36:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AEA0D2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:34:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="bFjqa+aO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AEA0D2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	by mail.kernel.org (Postfix) with ESMTP id EAE802087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:36:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE802087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389563AbeKPWqg (ORCPT
+        id S2389705AbeKPWtJ convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 17:46:36 -0500
-Received: from mail-eopbgr760071.outbound.protection.outlook.com ([40.107.76.71]:28386
-        "EHLO NAM02-CY1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727868AbeKPWqg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 17:46:36 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FQFQAyvH0SwYXWiQpuJbXj4bTVHG26Sj1tDsbh6qugg=;
- b=bFjqa+aOgqQZb5h/tEpfQy7mev/cK8YTL5R35gx5NilZZ3Dt2n75PebNvTBdhZeMkH1wFgsUr2gClGyvD9yodbc2yWro5SS10OhDhvdZ1an2gKYtO1nsekL/MerGOsA4LsDnJxDO/fHagSJxfIvqX96D80otFbFKrKT4NFN48ic=
-Received: from BN6PR02CA0084.namprd02.prod.outlook.com (2603:10b6:405:60::25)
- by SN6PR02MB4336.namprd02.prod.outlook.com (2603:10b6:805:a4::29) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.21; Fri, 16 Nov
- 2018 12:34:21 +0000
-Received: from CY1NAM02FT050.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e45::203) by BN6PR02CA0084.outlook.office365.com
- (2603:10b6:405:60::25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id 15.20.1339.20 via Frontend
- Transport; Fri, 16 Nov 2018 12:34:20 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.100)
- smtp.mailfrom=xilinx.com; keep-it-simple.com; dkim=none (message not signed)
- header.d=none;keep-it-simple.com; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.100 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.100; helo=xsj-pvapsmtpgw02;
-Received: from xsj-pvapsmtpgw02 (149.199.60.100) by
- CY1NAM02FT050.mail.protection.outlook.com (10.152.75.65) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.15
- via Frontend Transport; Fri, 16 Nov 2018 12:34:19 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66]:49854 helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw02 with esmtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1gNdKE-0004JE-Lw; Fri, 16 Nov 2018 04:34:18 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <michal.simek@xilinx.com>)
-        id 1gNdK9-0005LD-ID; Fri, 16 Nov 2018 04:34:13 -0800
-Received: from xsj-pvapsmtp01 (mailhub.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp2.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wAGCY2Lg004084;
-        Fri, 16 Nov 2018 04:34:02 -0800
-Received: from [172.30.17.111]
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <michals@xilinx.com>)
-        id 1gNdJx-0005Is-SP; Fri, 16 Nov 2018 04:34:02 -0800
-Subject: Re: [LINUX PATCH v12 1/3] dt-bindings: mtd: arasan: Add device tree
- binding documentation
-To:     Martin Lund <martin.lund@keep-it-simple.com>,
-        <naga.sureshkumar.relli@xilinx.com>
-CC:     <boris.brezillon@bootlin.com>, <miquel.raynal@bootlin.com>,
-        <richard@nod.at>, David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        =?UTF-8?Q?Marek_Va=c5=a1ut?= <marek.vasut@gmail.com>,
-        naga sureshkumar <nagasuresh12@gmail.com>,
-        <linux-mtd@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <robh@kernel.org>
-References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
- <1541739641-17789-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
- <CAB7pii3kx75ajF=8TsU7mWrmrzoHLiy7uAb+PirGw04BH65bZg@mail.gmail.com>
-From:   Michal Simek <michal.simek@xilinx.com>
-Message-ID: <6ce1726a-f24d-17b8-d839-0a51c424a850@xilinx.com>
-Date:   Fri, 16 Nov 2018 13:33:58 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <CAB7pii3kx75ajF=8TsU7mWrmrzoHLiy7uAb+PirGw04BH65bZg@mail.gmail.com>
-Content-Type: text/plain; charset="utf-8"
+        Fri, 16 Nov 2018 17:49:09 -0500
+Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:31777 "EHLO
+        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S2389685AbeKPWtI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 17:49:08 -0500
+Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
+ TLS) by relay.mimecast.com with ESMTP id
+ uk-mta-110-sHBmeO1DNEmY3fg_B1RTqw-1; Fri, 16 Nov 2018 12:36:54 +0000
+Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
+ (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri,
+ 16 Nov 2018 12:37:00 +0000
+Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
+ AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
+ Fri, 16 Nov 2018 12:37:00 +0000
+From:   David Laight <David.Laight@ACULAB.COM>
+To:     'Alexandru Gagniuc' <mr.nuke.me@gmail.com>,
+        "helgaas@google.com" <helgaas@google.com>
+CC:     "austin_bolen@dell.com" <austin_bolen@dell.com>,
+        "alex_gagniuc@dellteam.com" <alex_gagniuc@dellteam.com>,
+        "keith.busch@intel.com" <keith.busch@intel.com>,
+        "Shyam_Iyer@Dell.com" <Shyam_Iyer@Dell.com>,
+        "lukas@wunner.de" <lukas@wunner.de>,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
+        Len Brown <lenb@kernel.org>,
+        Russell Currey <ruscur@russell.cc>,
+        Sam Bobroff <sbobroff@linux.ibm.com>,
+        Oliver O'Halloran <oohall@gmail.com>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+Subject: RE: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
+ AER
+Thread-Topic: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
+ AER
+Thread-Index: AQHUfTk7lFmreXBXOEO6S+wDoXDgXaVSVjAw
+Date:   Fri, 16 Nov 2018 12:37:00 +0000
+Message-ID: <ab363e80d45e4c3d91770c1b1010d1ce@AcuMS.aculab.com>
+References: <20181115231605.24352-1-mr.nuke.me@gmail.com>
+In-Reply-To: <20181115231605.24352-1-mr.nuke.me@gmail.com>
+Accept-Language: en-GB, en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.100;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(396003)(376002)(136003)(346002)(39860400002)(2980300002)(438002)(189003)(199004)(76176011)(446003)(476003)(64126003)(11346002)(44832011)(126002)(2486003)(486006)(2616005)(36756003)(23676004)(36386004)(65806001)(426003)(47776003)(65956001)(77096007)(336012)(186003)(14444005)(217873002)(31686004)(26005)(63266004)(4326008)(229853002)(6636002)(106466001)(50466002)(8936002)(7416002)(9786002)(478600001)(230700001)(65826007)(5660300001)(2906002)(356004)(31696002)(6666004)(6246003)(110136005)(106002)(39060400002)(316002)(58126008)(54906003)(8676002)(81166006)(81156014)(305945005)(107986001)(5001870100001);DIR:OUT;SFP:1101;SCL:1;SRVR:SN6PR02MB4336;H:xsj-pvapsmtpgw02;FPR:;SPF:Pass;LANG:en;PTR:xapps1.xilinx.com,unknown-60-100.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;CY1NAM02FT050;1:PmhT/mLR8NeELi1TycD4FZi9VQ/RRNVGAIpwzt7sivMhF4fGse6oegSVMV58AtvvIIx0FDQGLSvLuJt0Gvy0/vyELpKgMSnHcuyySV2+V7ud2r6wNlgtkuFLKwZ0SqT6
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 35404c9b-b8d2-491c-37f6-08d64bbfd4a6
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(4608076)(2017052603328)(7153060);SRVR:SN6PR02MB4336;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4336;3:d9xw3MZSh2wo/Xeb//TNMDpNGon0O3ji2hNt7pDR6uGBUlHSnrqDFYKLXbnAqV8Z9deE1UDiEDjJPUMsuwOl47WELIG72DwNVqEL3P0PgJmhZtpIr7hICGQqu9p7kQQY0lWHE11UoKazNRFgus4vGV1qqoOG7d/Eh+FcAmxvM+onK/T7TXD1fY2jkuLx7M5wbUWx9oImgbmKBuWVCvzKCgSZvNt2cLyVDiQ6DyJ5q4MV0mcDmYeIDqdEA3kL1w9ptdaQqw4adagCUb7bHDNB8qS+EUUnAjSI0vBe02juJkKkg+vbBAytW4TJ+ZyRC3X4l0P6iUzZJuEJnuFDZlHqhquvKCfadq0+Zx7CcxcfY2U=;25:n6iAAFv9fLQo8IpY2TiSW0W+9ppEAaYUjv0qFzG1Bj0sRE9C0GzDSkJri4tlgHkVg6OSAacOTi83Mz8jYqQbm+L4IZUYPZcwvz1faCn9i9Jf3exohC+rSMbLBLfI6PgjESzaUBgy3GSxCTvZnIwqUzt7reCa99tF5gvpWokB67S4G6eoMplpVTANpHM1YufC9MbIpv9hl0afyNoYSG0AGn44LFgP3KYlGSU8mOjrl1YNP/zfyhlAOJyBRosSg9oL9NOvK/pgJL45gZnwzjSy1Vhj2C7HEeZkGf1/7WBtBLDe9ayR8OYD/Mt6juDJN+k7RhDnKgupvKYnWcvjnqOrrA==
-X-MS-TrafficTypeDiagnostic: SN6PR02MB4336:
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4336;31:LwPpxA0zaUcRzxL4f/iMWSGnY6tikfkp016kSOADQE8XJECvI+hbJ+Y2mua0kBFsPxfh9gQHVEJ1c3yW6XEn7wf4MhqIsc3xv4y+RxQhRdZV5ho9FuTAIoE5nmFeaJt/3xXXS1qHJEKGFjewb6ZgZxLlybNnEu1QMyhbn8d0v3EYvgWUd8uNbzNi6AxDDrgSIqqv/RlCne9VdV9vcPArc47L9gG4NGTmXjvPu9b76uA=;20:ZsPPXAoLNxXSG34EKBe4+kKCZrD/TpF/CkP9e/hSCultj6uC8afPYUegn8KI/VTpe91K1Sq6OCg0fEQ6GnDr7csy9gopiXkbT7Gi89q5Xx7UdZi2iDEZHykVqqf5cSWy4AP3RzpKA7hCUGTxXHZn3faO2V692XIymoKXAODv8JmpRIdvnBxFU4EGiUZMVR69nyuQiOPjDIHO7P/vk9Ylwe+Zsl95tEiOlMMec3ziurCVpdQIKoZHi7JKkw5mtJ4MzbOqkIRTgTwHiaZEkfmGw0TlT5Bx/O7AClYnSRZcvEbNRjYHMagGMPYjUWH+1HaIMiS909wAyqCeCdD2c+xdu572BFXrcTUnj0EmLchJ0qSXRXeBXciWVIEDOOFua1O2mPOcjKDktpDXWPLcj2+rzcxa+chEKJRoRcPzn7chamUjzo2it7QcYYBll4NUKTRFlJwPYjYRnzAzEJuY282uOnmCxqgyrI47S+n/ld4equ3KMsz35PHHhiphvYgFBtmj
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <SN6PR02MB4336CB87BB56EC07454164CFC6DD0@SN6PR02MB4336.namprd02.prod.outlook.com>
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93004095)(3002001)(3231415)(944501410)(52105112)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123558120)(20161123564045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:SN6PR02MB4336;BCL:0;PCL:0;RULEID:;SRVR:SN6PR02MB4336;
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4336;4:3mCPg8myaGjEUbx1BT5+NPTp4UzfbxA+aCQps/mDH9BQ1AY215bPHsagcZl5VcnQLtYksnGN1hXESRBYZnheR0yflJZinzGiY5Lo0X1ZslBUuRB96XeTBOhCX6l8bL13S/I4sgLgNNX37HFHv6yWjkMCPvVMRIDzniGCuWsQGE33lwrdfHshyf3GIghZH1eblUszO3uIl81PWROjYLtcztTXNboPxAP6JvqBRnPOnJRT3//nJNUi3cqV58q+xO8/ZL4nXHKsn5Ok8iN1UrQD5Q==
-X-Forefront-PRVS: 0858FF8026
-X-Microsoft-Exchange-Diagnostics: =?utf-8?B?MTtTTjZQUjAyTUI0MzM2OzIzOlI5NnEwU0Jtd0FiOVJiTjBSVVdCMzZhMHZz?=
- =?utf-8?B?Um5TK1hsTkUxekNwM3l1WjdpRXBNTEY4dG5BWVNhK3R0by9sUVpCcHM0TVhX?=
- =?utf-8?B?Yis3N21oSnZmMEJtK1lvL1NoZlZ3WkZaRXZib2pQMHhXMk95UHpaUlQybG9P?=
- =?utf-8?B?dnppSHE5Nk5OazdsMzlmeGJlUG9ZVFRVTGZHYW5OWHhTVm4wVUxhaXlaaFMz?=
- =?utf-8?B?K0RYNmNSQVE1SnU2TWdFM2toT0lYTDVyMFRHaFRPREVYTVVLNHFsdHJMR0J6?=
- =?utf-8?B?NTFscUZsUUdybmZNcVlWUis0V3kzTE03SkdCbDZuVXRUbEFpVS84Mktub3hF?=
- =?utf-8?B?bzdGT0RkSkhGUXdCM0kwcTkwclB1MG92TWs2dHRxQmZpeGRybDQ0d0RrcWRi?=
- =?utf-8?B?eWZKQmFycHhyS2RoY0xCOWJiQ25iUVdNdWVpM3V0b2szcFJabGpLbmZjYUh4?=
- =?utf-8?B?TjdyRTNoUldOMGpCRy9wbWNMRDdhQmFmYTVway9TdkRxVi9tQUdEa1dINyt4?=
- =?utf-8?B?d0dvWHhuWjNyNGlYMWx3U3h1dDdJVzdmT1oyeXBJWHBQK29zL29yNHNTajRo?=
- =?utf-8?B?MC9jblBaS3hTZDRlb1dDYy9GVklvdHg3TmRnSFgwVWNUMkltRHlEWDFHRTI5?=
- =?utf-8?B?ZzBQTnlqQ2oxQWJzMWUyMUpjdWRTMklZcUwxcEhZb0RncWJ5R0dkWkZ3a2tq?=
- =?utf-8?B?RWRrQ3BwcjUxUFNGY0lFVDZWNklEcnRFaklKQWFIK24yOE1rUTJ5bm9MMTVs?=
- =?utf-8?B?aTJGVTVId2psLzZPSHpVTUY2TWNnUk5kY2VyZmJVaGVPY0NrUVF3Q0ZWY0FL?=
- =?utf-8?B?VUVsWks2ekI2c1lXKzVHZEowY3VLMVdpZE4vK3lPcm9RQjNpeUNiNmpOZE45?=
- =?utf-8?B?VTNNZFFCSFJxS3Y2V1cwUnhQQm1zbVZKcDZXdGJvdldzTXZaWldKbDdBWDBs?=
- =?utf-8?B?WWNFZzROOHVhRWd0VUtRTUFqQ3Z2TVpWRnNJU2RyWHRhYmljYUhESU1PR2Vh?=
- =?utf-8?B?THFMcjR0c3d0UTVPMmpmOHJudVI4amRUT1dKSFkyazBVU29MaGRacmkyNXI0?=
- =?utf-8?B?Ylk3K3htbldUUWIxSVBWWVpmWmVYcE5ROGNweDAvSTBBbkZ3dVBvb3QxZ1Y5?=
- =?utf-8?B?S0kzY2pXUzNoc1pJYmhoWUJtOTZiNlhoTGw4KzBzNGQrR05EcEZjbk04bGRC?=
- =?utf-8?B?SVpjWmRuQWVoR3FQcHlTeW5JSmdvNS93OHdtQmtiQy9jM2ZRdFlDOUtIdEZu?=
- =?utf-8?B?VXlFZ0FIa2JBbFZ5cHpTV1VKcXRlWm4xSWFod041WitxZnVUM3d1MlcxMU9r?=
- =?utf-8?B?MjNEQURxOTkybWprVmxud3NJblducVV5U1VVMkk0YkM2UWNDMkVPdmJTdkRC?=
- =?utf-8?B?a1AvVXk2dUFWenN6UHNRZ2toVkxlcEIvbzZoV05WR29qbTNLWnJkNlFpZ3V5?=
- =?utf-8?B?enl1dmxINVFtcERFdzFZd3o5dkk5Z1Q3dnMxY0VjU2I4Ump1T002U3hjTFVV?=
- =?utf-8?B?c3ZKaDM4MitoTFpVZ2cxbjg5N2tsV3ZGdmU2UGkwNVJLQldrWDhiY3MwZG1s?=
- =?utf-8?B?eDhreUdwNHF3Y1pnOC9YYnh1dEJYOGVUbFdxSit6TjhxUHpBU2ZzNEx1eVQ3?=
- =?utf-8?B?Rmt3MTJQYUZEK0R1MytEUWQ2cVNTbnVsck83emZ4OUlvV3QzbWZJbWppK0J0?=
- =?utf-8?B?SWdXbGJzQ3lLdC90WFhYbDcxdFAva1hwUExobjVqbFhKK0NEMkd5N3kwOUE2?=
- =?utf-8?B?OXE5QlEyRHZHZVRpN25TZGpGdDRrU2ZuYjFUZ0Y5dm5rZFhLK2YrQmdtd0w5?=
- =?utf-8?B?c3d2czVqbk1pTTJKYjMwTGJ0WVVmZy9JRCszcC9FdlV4RU9LeFRzQjd1NXRi?=
- =?utf-8?Q?xzrSJz8+YcqzfdmaqnCBlGoBnfq+JGNx?=
-X-Microsoft-Antispam-Message-Info: +hlUIRfHUpT1Fy/rMtA+s2dhvCIPAqnjrcz2kigeBKW/FYd5DBO2mTzcXQDA7w25b/49p5kr8cic6xjgNLU0UjCZj735jenDr8SRwGS78J86s0Ud/8XrIs+ulet0zbFgOwSitfcsUE/a13X93k1lmtm/6et8VDlevwz+SVqtpX+kdzD+hqmXGSbBh6ig4D7Y8dCjeiL5aOC1GXCX9ou5NaVW8X3yi14RUlmWS8CWbJdD+Ai5NjWkvF3PBQUSn5cP7a5w1ueMCqV3X+yX7X2yCEXQIn6FRI06rr+XDoN9rBorkQfEM8EqrYJX7vSu6JSU9FP4ZMYRmaM5MuoZ3kSvcOfYiS8P5zsd188E+9dFXfI=
-X-Microsoft-Exchange-Diagnostics: 1;SN6PR02MB4336;6:ef0wE1VhjjQ08Fj49F4UqFOSopSYQGQ4CU+hJ1NfYwZksgLTtseCyVwe/0VdyHTSGZ5RSuk+Uy1cCdiQoW55F6apTYDr1p9cU+lCWBDn2fX6b+fYv0lV2fc+gq/ovZKUYRiaMCMcMc27GwUR0b45ZZRPfYaE5pU+cNGQANcNSZDC62JSxese0eJzNV2SyThjTzXBq7JE15AM4CwKfezEU+JgpSEvHOPGsz5ehyYVQN1S22cANj2SSfjP1GIPqrJ6bl1H0v700rST4RqX0Dxi7Pzxo+uC7RRyTQ3rMTadsn7gYGmTFsy+i93nxkR7GHq7izk8fj5NPxQuLysOJFM8be86UNX4fa7PDUBecpmbdI8Iq/pgXU//agrrwlMzXcM3PpXLwr7BFByiGp2ePGcJiUODUwlKLZcpzp5gJ25rqbnICL0Y0rWoWa0O6hg/Yljhj8IP5OErXb0DHxm4eKJtbw==;5:guHDrRXG3zLMh5Pyrnu2vFPvtpCb88QyeFMoHHZtOTgJ744QZp+3zJ+VazhCa6HfyKuabhmlIBr35j6pIX19bf7ZqpAPPpTs7et3BXqEMZGHdqxs5F3F4FTch+ccmiCOdH2ty20icqFH07q2IWaf9d0dnl77HAhiblreJ2WHtzE=;7:abv1DilEGpFP2H3ITQJFZ2r8CxzHWpbe4dHaGoNPQF5OwXRKdd85//TCyoACwiX5f0vEK7N3hPxUrtQNQ76Yn60029QAp74QjtZYHSmEPMgv0wGuEpHM4XjYsW18pi57ru++5fxHuYl0vIy20ZC7Lw==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2018 12:34:19.1441
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 35404c9b-b8d2-491c-37f6-08d64bbfd4a6
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.100];Helo=[xsj-pvapsmtpgw02]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN6PR02MB4336
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.202.205.107]
+MIME-Version: 1.0
+X-MC-Unique: sHBmeO1DNEmY3fg_B1RTqw-1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 16. 11. 18 12:50, Martin Lund wrote:
-> Hi Naga,
-> 
-> I've been working on running up the latest kernel (v4.20-rc2) on our
-> custom Xilinx hw board so that I can test the v12 version of your
-> Arasan nand driver.
-> 
-> I've managed to get the driver successfully up and running and ready
-> for testing with a Micron MT29F64G08AFAAAWP device. However, setting
-> it up I've found a few inaccuracies in the documentation of the device
-> tree bindings.
-> 
-> This is the device configuration that ended up working for me with
-> linux v4.20-rc2:
-> 
->        nfc: nand@ff100000 {
->             compatible = "xlnx,zynqmp-nand", "arasan,nfc-v3p10";
->             reg = <0x0 0xff100000 0x0 0x1000>;
->             clock-names = "clk_sys", "clk_flash";
->             clocks = <&clk200>, <&clk100>;
->             interrupt-parent = <&gic>;
->             interrupts = <0 14 4>;
->             #address-cells = <1>;
->             #size-cells = <0>;
-> 
->             nand@0 {
->                 reg = <0>;
->                 nand-ecc-mode = "hw";
->             };
->         };
-> 
-> Compared with the example you will notice that "clock-name" should be
-> "clock-names". reg was missing a "0x0".
+From: Alexandru Gagniuc
+> Sent: 15 November 2018 23:16
+...
+> I've asked around a few people at Dell and they unanimously agree that
+> _OSC is the correct way to determine ownership of AER.
 
-clock-names and even that names - you are right it is not correct and
-should be fixed.
+This is all very well, but we have systems (they might be Dell ones)
+where failure of a PCIe link (even when all the drivers are removed)
+causes an NMI - and crashes the kernel.
 
-Missing 0x0 in reg doesn't matter because it depends on address/size cells.
+There are other systems which have AER registers available for
+some of the PCIe devices, but the BIOS ignores them and _OSC
+doesn't let the kernel take control.
+In this case the AER registers can contain useful information
+after a read returns ~0u.
+It would be useful to be able to get this information without
+having to grovel through all the PCIe config space.
 
-> I think it is helpful to provide a real-world working example, so you
-> might also consider changing the example "clocks" configuration to
-> clk200/clk100 since there is no clk_misc among the clock sources of
-> any of the xilinx zynqmp board device tree configurations.
+	David
 
-Real example is the best normally just c&p from existing dts is the way
-to go.
-But in connection to clocks it doesn't matter what exactly should be
-there and I don't think there is any consistency in that. Hopefully this
-will be removed by yaml conversion.
-
-Thanks,
-Michal
+-
+Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
+Registration No: 1397386 (Wales)
 
