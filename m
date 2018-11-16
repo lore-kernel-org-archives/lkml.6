@@ -2,87 +2,131 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 139C3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:38:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC981C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:38:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D964D2087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:38:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D964D2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=rowland.harvard.edu
+	by mail.kernel.org (Postfix) with ESMTP id 983762087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:38:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 983762087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389988AbeKQBvJ (ORCPT
+        id S2390034AbeKQBvN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 20:51:09 -0500
-Received: from iolanthe.rowland.org ([192.131.102.54]:34480 "HELO
-        iolanthe.rowland.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with SMTP id S1728175AbeKQBvJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 20:51:09 -0500
-Received: (qmail 1710 invoked by uid 2102); 16 Nov 2018 10:38:18 -0500
-Received: from localhost (sendmail-bs@127.0.0.1)
-  by localhost with SMTP; 16 Nov 2018 10:38:18 -0500
-Date:   Fri, 16 Nov 2018 10:38:18 -0500 (EST)
-From:   Alan Stern <stern@rowland.harvard.edu>
-X-X-Sender: stern@iolanthe.rowland.org
-To:     Ben Dooks <ben.dooks@codethink.co.uk>
-cc:     Ben Dooks <ben-linux@fluff.org>, <gregkh@linuxfoundation.org>,
-        <linux-usb@vger.kernel.org>, <linux-kernel@lists.codethink.co.uk>,
+        Fri, 16 Nov 2018 20:51:13 -0500
+Received: from mga12.intel.com ([192.55.52.136]:58871 "EHLO mga12.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728175AbeKQBvN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 20:51:13 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by fmsmga106.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 07:38:22 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
+   d="scan'208";a="106862967"
+Received: from sjchrist-coffee.jf.intel.com (HELO linux.intel.com) ([10.54.74.154])
+  by fmsmga004.fm.intel.com with ESMTP; 16 Nov 2018 07:38:21 -0800
+Date:   Fri, 16 Nov 2018 07:38:21 -0800
+From:   Sean Christopherson <sean.j.christopherson@intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
+        platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org,
+        dave.hansen@intel.com, nhorman@redhat.com, npmccallum@redhat.com,
+        serge.ayoun@intel.com, shay.katz-zamir@intel.com,
+        haitao.huang@linux.intel.com, andriy.shevchenko@linux.intel.com,
+        tglx@linutronix.de, kai.svahn@intel.com, mark.shanahan@intel.com,
+        luto@amacapital.net, Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
         <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] USB: host: ehci: allow tine of highspeed nak-count
-In-Reply-To: <39eb9e8b-2b5d-ea75-3232-be77c3743dbc@codethink.co.uk>
-Message-ID: <Pine.LNX.4.44L0.1811161034500.1487-100000@iolanthe.rowland.org>
+Subject: Re: [PATCH v17 03/23] x86/cpufeatures: Add SGX sub-features (as
+ Linux-defined bits)
+Message-ID: <20181116153821.GA29898@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-4-jarkko.sakkinen@linux.intel.com>
+ <20181116143715.GJ20313@zn.tnic>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116143715.GJ20313@zn.tnic>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Nov 2018, Ben Dooks wrote:
-
-> On 14/11/18 18:47, Alan Stern wrote:
-> > On Wed, 14 Nov 2018, Ben Dooks wrote:
+On Fri, Nov 16, 2018 at 03:37:15PM +0100, Borislav Petkov wrote:
+> On Fri, Nov 16, 2018 at 03:01:10AM +0200, Jarkko Sakkinen wrote:
+> > From: Sean Christopherson <sean.j.christopherson@intel.com>
 > > 
-> >> From: Ben Dooks <ben.dooks@codethink.co.uk>
-> >>
-> >> At least some systems benefit with less scheduling if the NAK count
-> >> value is set higher than the default 4. For instance a Tegra3 with
-> >> an SMSC9512 showed less interrupt load when this was changed to 14.
+> > CPUID_12_EAX is an Intel-defined feature bits leaf dedicated for SGX
+> > that enumerates the SGX instruction sets that are supported by the
+> > CPU, e.g. SGX1, SGX2, etc...  Because Linux currently only cares about
+> > two bits (SGX1 and SGX2) and there are currently only four documented
+> > bits in total, relocate the bits to Linux-defined word 8 to conserve
+> > space.
 > > 
-> > Interesting.  Why do you think this is?  In theory, increasing the NAK
-> > count RL value should cause a higher memory bus load and perhaps a
-> > slight rise in the interrupt load (transfers will complete a little
-> > more quickly because the controller tries harder to poll the endpoints
-> > and see if they are ready).
-> 
-> I thought the NAK counter was decremented until the transfer is given
-> up on.
-
-That's right.  So if the RL value is higher, there will be more polling
-attempts in quick succession before the NAK counter drops to 0 and the
-controller gives up.  More polling attempts in quick succession means 
-heavier memory bus usage.
-
-> I'm going to have to go back and get some actual figures from
-> a running system as this was originally done over a year ago with the
-> SMSC9512 (IIRC) network driver.
-> 
-> >> To allow the changing of this value, add a sysfs node to each of
-> >> the controllers to allow run-time changing.
-> >>
-> >> Signed-off-by: Ben Dooks <ben.dooks@codethink.co.uk>
+> > But, keep the bit positions identical between the Intel-defined value
+> > and the Linux-defined value, e.g. keep SGX1 at bit 0.  This allows KVM
+> > to use its existing code for probing guest CPUID bits using Linux's
+> > X86_FEATURE_* definitions.  To do so, shift around some existing bits
+> > to effectively reserve bits 0-7 of word 8 for SGX sub-features.
 > > 
-> > The patch looks okay to me.
+> > Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > ---
+> >  arch/x86/include/asm/cpufeatures.h       | 21 +++++++++++++++------
+> >  arch/x86/kernel/cpu/scattered.c          |  2 ++
+> >  tools/arch/x86/include/asm/cpufeatures.h | 21 +++++++++++++++------
+> >  3 files changed, 32 insertions(+), 12 deletions(-)
+> > 
+> > diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> > index da7fed4939a3..afdf5f2e13b5 100644
+> > --- a/arch/x86/include/asm/cpufeatures.h
+> > +++ b/arch/x86/include/asm/cpufeatures.h
+> > @@ -222,12 +222,21 @@
+> >  #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
+> >  #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
+> >  
+> > -/* Virtualization flags: Linux defined, word 8 */
+> > -#define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
+> > -#define X86_FEATURE_VNMI		( 8*32+ 1) /* Intel Virtual NMI */
+> > -#define X86_FEATURE_FLEXPRIORITY	( 8*32+ 2) /* Intel FlexPriority */
+> > -#define X86_FEATURE_EPT			( 8*32+ 3) /* Intel Extended Page Table */
+> > -#define X86_FEATURE_VPID		( 8*32+ 4) /* Intel Virtual Processor ID */
+> > +/*
+> > + * Scattered Intel features: Linux defined, word 8.
+> > + *
+> > + * Note that the bit location of the SGX features is meaningful as KVM expects
+> > + * the Linux defined bit to match the Intel defined bit, e.g. X86_FEATURE_SGX1
+> > + * must remain at bit 0, SGX2 at bit 1, etc...
+> > + */
+> > +#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
+> > +#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
+> > +
 > 
-> I'll look at getting some tracing from the SMSC driver to see what
-> is going on.
+> Yeah, add here	^^^^
+> 
+> /* Bits [0:7] are reserved for SGX */
+> 
+> or so, so that people don't use those. Once CPUID(12) gets more bits
+> added to it, I don't see anything wrong with allocating a separate leaf
+> for that.
+> 
+> BUT(!), the question then is whether kvm would still be ok with that?
+> I'm thinking yes, as it will simply use the new definitions, or?
 
-Okay.  Should we consider the patch to be held in suspense until then?
-
-Alan Stern
-
+Yep, wouldn't be a problem for KVM.
