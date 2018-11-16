@@ -2,98 +2,139 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2923DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:36:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3F326C04EBC
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:39:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EAE802087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:36:58 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EAE802087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ACULAB.COM
+	by mail.kernel.org (Postfix) with ESMTP id 148222087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:39:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 148222087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389705AbeKPWtJ convert rfc822-to-8bit (ORCPT
+        id S2389639AbeKPWvR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 17:49:09 -0500
-Received: from eu-smtp-delivery-151.mimecast.com ([207.82.80.151]:31777 "EHLO
-        eu-smtp-delivery-151.mimecast.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S2389685AbeKPWtI (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 17:49:08 -0500
-Received: from AcuMS.aculab.com (156.67.243.126 [156.67.243.126]) (Using
- TLS) by relay.mimecast.com with ESMTP id
- uk-mta-110-sHBmeO1DNEmY3fg_B1RTqw-1; Fri, 16 Nov 2018 12:36:54 +0000
-Received: from AcuMS.Aculab.com (fd9f:af1c:a25b::d117) by AcuMS.aculab.com
- (fd9f:af1c:a25b::d117) with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri,
- 16 Nov 2018 12:37:00 +0000
-Received: from AcuMS.Aculab.com ([fe80::43c:695e:880f:8750]) by
- AcuMS.aculab.com ([fe80::43c:695e:880f:8750%12]) with mapi id 15.00.1347.000;
- Fri, 16 Nov 2018 12:37:00 +0000
-From:   David Laight <David.Laight@ACULAB.COM>
-To:     'Alexandru Gagniuc' <mr.nuke.me@gmail.com>,
-        "helgaas@google.com" <helgaas@google.com>
-CC:     "austin_bolen@dell.com" <austin_bolen@dell.com>,
-        "alex_gagniuc@dellteam.com" <alex_gagniuc@dellteam.com>,
-        "keith.busch@intel.com" <keith.busch@intel.com>,
-        "Shyam_Iyer@Dell.com" <Shyam_Iyer@Dell.com>,
-        "lukas@wunner.de" <lukas@wunner.de>,
-        Bjorn Helgaas <bhelgaas@google.com>,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>,
-        Len Brown <lenb@kernel.org>,
-        Russell Currey <ruscur@russell.cc>,
-        Sam Bobroff <sbobroff@linux.ibm.com>,
-        Oliver O'Halloran <oohall@gmail.com>,
-        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-Subject: RE: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
- AER
-Thread-Topic: [PATCH 0/2] PCI/AER: Consistently use _OSC to determine who owns
- AER
-Thread-Index: AQHUfTk7lFmreXBXOEO6S+wDoXDgXaVSVjAw
-Date:   Fri, 16 Nov 2018 12:37:00 +0000
-Message-ID: <ab363e80d45e4c3d91770c1b1010d1ce@AcuMS.aculab.com>
-References: <20181115231605.24352-1-mr.nuke.me@gmail.com>
-In-Reply-To: <20181115231605.24352-1-mr.nuke.me@gmail.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.202.205.107]
+        Fri, 16 Nov 2018 17:51:17 -0500
+Received: from mga18.intel.com ([134.134.136.126]:42893 "EHLO mga18.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727965AbeKPWvQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 17:51:16 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 04:39:03 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
+   d="scan'208";a="96821100"
+Received: from unknown (HELO localhost) ([10.249.254.90])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Nov 2018 04:38:59 -0800
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     linux-integrity@vger.kernel.org
+Cc:     linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>,
+        Jason Gunthorpe <jgg@ziepe.ca>,
+        linux-arm-kernel@lists.infradead.org (moderated list:ARM/Microchip
+        (AT91) SoC support), linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v8 00/17] Removed nested TPM operations
+Date:   Fri, 16 Nov 2018 14:38:24 +0200
+Message-Id: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-X-MC-Unique: sHBmeO1DNEmY3fg_B1RTqw-1
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Alexandru Gagniuc
-> Sent: 15 November 2018 23:16
-...
-> I've asked around a few people at Dell and they unanimously agree that
-> _OSC is the correct way to determine ownership of AER.
+[was Detach TPM space code out of the tpm_transmit() flow but the scope
+ expanded a bit.]
 
-This is all very well, but we have systems (they might be Dell ones)
-where failure of a PCIe link (even when all the drivers are removed)
-causes an NMI - and crashes the kernel.
+Make the changes necessary to detach TPM space code and TPM activation
+code out of the tpm_transmit() flow because of both of these can cause
+nested tpm_transmit() calls. The nesteds calls make the whole flow hard
+to maintain, and thus, it is better to just fix things now before this
+turns into a bigger mess.
 
-There are other systems which have AER registers available for
-some of the PCIe devices, but the BIOS ignores them and _OSC
-doesn't let the kernel take control.
-In this case the AER registers can contain useful information
-after a read returns ~0u.
-It would be useful to be able to get this information without
-having to grovel through all the PCIe config space.
+v8:
+* Re-add the check for ret < 0 after calling tpm_try_transmit() that
+  was dropped by mistake while moving code.
+* Fix error fallback for tpm_try_get_ops() when tpm_chip_start()
+  fails.
 
-	David
+v7:
+*  Reorganize series so that more trivial and self-contained changes are
+   in the head.
 
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1PT, UK
-Registration No: 1397386 (Wales)
+v6:
+* When tpm_validate_commmand() was moved to tpm2-space.c, the struct for
+  the TPM header was incorrectly declared as struct tpm_input_header.
+* Fix return value in tpm_validate_command().
+
+v5:
+* Add the missing rev's from Stefan Berger.
+
+v4:
+* Return 0 from pcrs_show() when tpm1_pcr_read() fails.
+* Fix error handling flow in tpm_try_transmit().
+* Replace struct tpm_input_header and struct tpm_output_header with
+  struct tpm_header.
+
+v3:
+* Encapsulate power gating code to tpm_chip_start() and tpm_chip_stop().
+* Move TPM power gating code and locking to tpm_try_get_ops() and
+  tpm_put_ops().
+* Call power gating code directly in tpm_chip_register() and
+  tpm2_del_space().
+
+v2:
+* Print tpm2_commit_space() error inside tpm2_commit_space()
+* Error code was not printed when recv() callback failed. It is
+  fixed in this version.
+* Added a patch that removes @space from tpm_transmit().
+* Fixed a regression in earlier series. Forgot to amend the change
+  from the staging area that renames NESTED to UNLOCKED in tpm2-space.c.
+
+
+Jarkko Sakkinen (17):
+  tpm: use tpm_buf in tpm_transmit_cmd() as the IO parameter
+  tpm: fix invalid return value in pubek_show()
+  tpm: return 0 from pcrs_show() when tpm1_pcr_read() fails
+  tpm: print tpm2_commit_space() error inside tpm2_commit_space()
+  tpm: declare struct tpm_header
+  tpm: access command header through struct in tpm_try_transmit()
+  tpm: encapsulate tpm_dev_transmit()
+  tpm: call tpm2_flush_space() on error in tpm_try_transmit()
+  tpm: clean up tpm_try_transmit() error handling flow
+  tpm: move tpm_validate_commmand() to tpm2-space.c
+  tpm: move TPM space code out of tpm_transmit()
+  tpm: remove @space from tpm_transmit()
+  tpm: use tpm_try_get_ops() in tpm-sysfs.c.
+  tpm: remove TPM_TRANSMIT_UNLOCKED flag
+  tpm: introduce tpm_chip_start() and tpm_chip_stop()
+  tpm: take TPM chip power gating out of tpm_transmit()
+  tpm: remove @flags from tpm_transmit()
+
+ drivers/char/tpm/tpm-chip.c       | 107 +++++++++++-
+ drivers/char/tpm/tpm-dev-common.c |  45 ++++-
+ drivers/char/tpm/tpm-interface.c  | 264 ++++++------------------------
+ drivers/char/tpm/tpm-sysfs.c      | 138 ++++++++++------
+ drivers/char/tpm/tpm.h            |  64 +++-----
+ drivers/char/tpm/tpm1-cmd.c       |  28 +---
+ drivers/char/tpm/tpm2-cmd.c       |  72 +++-----
+ drivers/char/tpm/tpm2-space.c     |  93 ++++++++---
+ drivers/char/tpm/tpm_i2c_atmel.c  |   5 +-
+ drivers/char/tpm/tpm_vtpm_proxy.c |  12 +-
+ drivers/char/tpm/xen-tpmfront.c   |   2 +-
+ 11 files changed, 407 insertions(+), 423 deletions(-)
+
+-- 
+2.19.1
 
