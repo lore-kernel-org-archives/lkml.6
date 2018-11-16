@@ -2,199 +2,108 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2BFF3C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:40:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 28BA7C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E434E2145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:40:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B763B2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:42:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="zSFi0Wg4"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E434E2145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="QRyCQAUB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B763B2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389160AbeKPKug (ORCPT
+        id S2389003AbeKPKxE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 05:50:36 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:34683 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389006AbeKPKug (ORCPT
+        Fri, 16 Nov 2018 05:53:04 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:35193 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726718AbeKPKxE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 05:50:36 -0500
-Received: by mail-pg1-f196.google.com with SMTP id 17so9515915pgg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 16:40:24 -0800 (PST)
+        Fri, 16 Nov 2018 05:53:04 -0500
+Received: by mail-pf1-f194.google.com with SMTP id v9-v6so10518415pff.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 16:42:52 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=X1GEoJJK+UNhOkjdC245liGBUbvTxQSkakHM6BRG+ms=;
-        b=zSFi0Wg4E0kmg2hsWmVmNdlKdNmmvFXhUdB9J+8ub66TpY6GsbxYznDAGWV47L10zN
-         l0r+GbT81og7X+4tHTefy4jcCZC7J9QzhSLudEJcmV7nd/qVezLue4AZE5CLvp3dKFmc
-         0OTNBb7fC76mCt8W/LTX7BWbPCOI9ReagZVcMkrjHQlJdeVp0DOnOK2YeZ7QNsOcIv7x
-         yB/4vYgPiS+KUgk6sDn/F9DIPkyPcdeMDMTYF4Om8gU41KwW3EH8a29SBCPPhL0sKw+Z
-         a+oKwP/EsTLTJgfqqazY46cOIcvrEBEpClt4e/oyjn3fQD/2RoN0jr4iHE9CNiKxEGH8
-         wTCA==
+        d=chromium.org; s=google;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0XcTIPEPcy/kt5NEIDiSbTDj0WEZaK94xvCDei0fo8w=;
+        b=QRyCQAUBkWd4jMcP2rAe+mg/iCCiiDKcdvgSiduCXZM/6Jy6tnHn1WpabNWaYvOSwH
+         GP5MDqE6XtR1oGHNt/B+UTpb1dWjD3SPtDX9/GxWfS7ThwVTZUmTIJYZ84Ow93aq+1Sj
+         WZOemveCgrPElxbbxIjNxyllj+W8Lzn/2LkYw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=X1GEoJJK+UNhOkjdC245liGBUbvTxQSkakHM6BRG+ms=;
-        b=Tk8d7qPEi4K/XNza7kmoWvjldKtVgcIr7QrkoFEK1dtLZYM6OeOzZmAXHj3QxlbdQz
-         EO77KPyONnlOl+qQocBc6k5w8EVKygSOQXvxY+5+HismOP0DWpaV/uheP99oVWAnN49y
-         Ys8p3blBZAXJCG7RdkRZdaM3dDB1jWZPBnjpI/qG5LDQr0faJSEYMXE3Y6cU9qZD5GEU
-         wfmKzVfBP52KMB3dE+2NWWN3IMDVmMazdg/yybXCDaQ6Ytpdj0QieFQRewLagrjBfjTH
-         fAlcGsOJ88f7iiFUDp4kRJ4tUKUXcejg6rCz8uHYoWBPTn7i1fIBFdnK6CWqc+0ysdfr
-         nPbA==
-X-Gm-Message-State: AGRZ1gKuaBXfirMfj7EiZgdihLcIaeK/C2RaLgTjNOpaa2Qm8yeGIpAB
-        lt2pu3q7LkyEc9gBmpFpgAfOnA==
-X-Google-Smtp-Source: AJdET5cnzukDvAzvCEuOsZlVueOAE5LwQxO6M2EEVLTu0Ii6FYx/UJMF0RjEsO5hujQKgpl6f/PMcQ==
-X-Received: by 2002:a62:f54f:: with SMTP id n76mr8747535pfh.59.1542328824202;
-        Thu, 15 Nov 2018 16:40:24 -0800 (PST)
-Received: from vader ([64.114.255.97])
-        by smtp.gmail.com with ESMTPSA id a73sm13988092pfa.7.2018.11.15.16.40.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 16:40:23 -0800 (PST)
-Date:   Thu, 15 Nov 2018 16:40:22 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 10/19] block: loop: pass multi-page bvec to iov_iter
-Message-ID: <20181116004022.GE23828@vader>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-11-ming.lei@redhat.com>
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=0XcTIPEPcy/kt5NEIDiSbTDj0WEZaK94xvCDei0fo8w=;
+        b=VzusB0vR2JQ8gIHSD+4Y+s+nbrOi3WnB5Q1uJB0rpAKz17ZqzGKmXE2XVXBtgrr9bm
+         oNSaf6TiyPdo74phut/HUq+nlYuaTjd+rhvbaIYhLfgDRaXAA3K0gOh1qDM3RmSmr41P
+         sKOlDpVpazImlow6l/iKptdYWnuEB2kL4vipK4/DWOjbFMS4YdUbrIZcC1URA5FJ2P4+
+         eZHHXaAs5kjBwJOYJZW/CbRx4YL53rS2S+tmiwyVlD+9stFOXDOSfTt94iyLtHbSVJz6
+         CXXJ3OjqXc8tKYO/vGckoXrUByDb+eDSkPJdymus/SA4tf0XFL2/yQ97eafNYpOlYjDd
+         8b7g==
+X-Gm-Message-State: AGRZ1gJidzYqNCTE7UbxzxAWG0d45xw+5WkEDge7y9GXnYsk3pXVlWh4
+        mVZQCed7h8OLOTArQc8+lRaAV4nX9Kk=
+X-Google-Smtp-Source: AJdET5cWU4ZqKVXBAMPnnzn/+2fW3UF1TllL+sdfxgmP1Dq3um6CgTn+9aCukJmqLNVFXwN/bsr+SA==
+X-Received: by 2002:a63:e615:: with SMTP id g21mr8054129pgh.290.1542328972402;
+        Thu, 15 Nov 2018 16:42:52 -0800 (PST)
+Received: from exogeni.mtv.corp.google.com ([2620:15c:202:1:db8d:8e3f:2514:5db8])
+        by smtp.gmail.com with ESMTPSA id a10sm11902945pfi.138.2018.11.15.16.42.50
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 16:42:51 -0800 (PST)
+From:   Derek Basehore <dbasehore@chromium.org>
+To:     linux-kernel@vger.kernel.org
+Cc:     linux-rockchip@lists.infradead.org,
+        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+        tony.xie@rock-chips.com, zyw@rock-chips.com, ayaka@soulik.info,
+        nickey.yang@rock-chips.com, zhengsq@rock-chips.com,
+        klaus.goger@theobroma-systems.com, dianders@chromium.org,
+        briannorris@chromium.org, enric.balletbo@collabora.com,
+        heiko@sntech.de, mark.rutland@arm.com, robh+dt@kernel.org,
+        Derek Basehore <dbasehore@chromium.org>
+Subject: [PATCH] arm64: dts: rockchip: rk3399: Add xin32k clk
+Date:   Thu, 15 Nov 2018 16:42:47 -0800
+Message-Id: <20181116004247.172977-1-dbasehore@chromium.org>
+X-Mailer: git-send-email 2.19.1.1215.g8438c0b245-goog
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115085306.9910-11-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 04:52:57PM +0800, Ming Lei wrote:
-> iov_iter is implemented with bvec itererator, so it is safe to pass
-> multipage bvec to it, and this way is much more efficient than
-> passing one page in each bvec.
-> 
-> Cc: Dave Chinner <dchinner@redhat.com>
-> Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> Cc: Mike Snitzer <snitzer@redhat.com>
-> Cc: dm-devel@redhat.com
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Shaohua Li <shli@kernel.org>
-> Cc: linux-raid@vger.kernel.org
-> Cc: linux-erofs@lists.ozlabs.org
-> Cc: David Sterba <dsterba@suse.com>
-> Cc: linux-btrfs@vger.kernel.org
-> Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> Cc: linux-xfs@vger.kernel.org
-> Cc: Gao Xiang <gaoxiang25@huawei.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Theodore Ts'o <tytso@mit.edu>
-> Cc: linux-ext4@vger.kernel.org
-> Cc: Coly Li <colyli@suse.de>
-> Cc: linux-bcache@vger.kernel.org
-> Cc: Boaz Harrosh <ooo@electrozaur.com>
-> Cc: Bob Peterson <rpeterso@redhat.com>
-> Cc: cluster-devel@redhat.com
+This adds the xin32k clock to the RK3399 CPU. Even though it's not
+directly used, muxes will end up traversing the entire clk tree on
+calls to determine_rate if it doesn't exist.
 
-Reviewed-by: Omar Sandoval <osandov@fb.com>
+Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+---
+ arch/arm64/boot/dts/rockchip/rk3399.dtsi | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-Comments below.
+diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+index 99e7f65c1779..6a32293982d0 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+@@ -191,6 +191,13 @@
+ 		#clock-cells = <0>;
+ 	};
+ 
++	xin32k: xin32k {
++		compatible = "fixed-clock";
++		clock-frequency = <32000>;
++		clock-output-names = "xin32k";
++		#clock-cells = <0>;
++	};
++
+ 	amba {
+ 		compatible = "simple-bus";
+ 		#address-cells = <2>;
+-- 
+2.19.1.1215.g8438c0b245-goog
 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  drivers/block/loop.c | 23 ++++++++++++-----------
->  1 file changed, 12 insertions(+), 11 deletions(-)
-> 
-> diff --git a/drivers/block/loop.c b/drivers/block/loop.c
-> index bf6bc35aaf88..a3fd418ec637 100644
-> --- a/drivers/block/loop.c
-> +++ b/drivers/block/loop.c
-> @@ -515,16 +515,16 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
->  	struct bio *bio = rq->bio;
->  	struct file *file = lo->lo_backing_file;
->  	unsigned int offset;
-> -	int segments = 0;
-> +	int nr_bvec = 0;
->  	int ret;
->  
->  	if (rq->bio != rq->biotail) {
-> -		struct req_iterator iter;
-> +		struct bvec_iter iter;
->  		struct bio_vec tmp;
->  
->  		__rq_for_each_bio(bio, rq)
-> -			segments += bio_segments(bio);
-> -		bvec = kmalloc_array(segments, sizeof(struct bio_vec),
-> +			nr_bvec += bio_bvecs(bio);
-> +		bvec = kmalloc_array(nr_bvec, sizeof(struct bio_vec),
->  				     GFP_NOIO);
->  		if (!bvec)
->  			return -EIO;
-> @@ -533,13 +533,14 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
->  		/*
->  		 * The bios of the request may be started from the middle of
->  		 * the 'bvec' because of bio splitting, so we can't directly
-> -		 * copy bio->bi_iov_vec to new bvec. The rq_for_each_segment
-> +		 * copy bio->bi_iov_vec to new bvec. The bio_for_each_bvec
->  		 * API will take care of all details for us.
->  		 */
-> -		rq_for_each_segment(tmp, rq, iter) {
-> -			*bvec = tmp;
-> -			bvec++;
-> -		}
-> +		__rq_for_each_bio(bio, rq)
-> +			bio_for_each_bvec(tmp, bio, iter) {
-> +				*bvec = tmp;
-> +				bvec++;
-> +			}
-
-Even if they're not strictly necessary, could you please include the
-curly braces for __rq_for_each_bio() here?
-
->  		bvec = cmd->bvec;
->  		offset = 0;
->  	} else {
-> @@ -550,11 +551,11 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
->  		 */
->  		offset = bio->bi_iter.bi_bvec_done;
->  		bvec = __bvec_iter_bvec(bio->bi_io_vec, bio->bi_iter);
-> -		segments = bio_segments(bio);
-> +		nr_bvec = bio_bvecs(bio);
-
-This scared me for a second, but it's fine to do here because we haven't
-actually enabled multipage bvecs yet, right?
-
->  	}
->  	atomic_set(&cmd->ref, 2);
->  
-> -	iov_iter_bvec(&iter, rw, bvec, segments, blk_rq_bytes(rq));
-> +	iov_iter_bvec(&iter, rw, bvec, nr_bvec, blk_rq_bytes(rq));
->  	iter.iov_offset = offset;
->  
->  	cmd->iocb.ki_pos = pos;
-> -- 
-> 2.9.5
-> 
