@@ -2,190 +2,124 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B97C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:05:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 168A4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:05:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DF7D22145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:05:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF7D22145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asix.com.tw
+	by mail.kernel.org (Postfix) with ESMTP id D67232145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:05:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67232145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389356AbeKPRQK (ORCPT
+        id S2389397AbeKPRQU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 12:16:10 -0500
-Received: from asix.com.tw ([210.243.224.51]:18195 "EHLO freebsd2.asix.com.tw"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727438AbeKPRQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 12:16:10 -0500
-X-Greylist: delayed 1680 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Nov 2018 12:16:09 EST
-Received: from JACKYCHOU ([10.1.2.56])
-        by freebsd2.asix.com.tw (8.15.2/8.15.2) with ESMTPS id wAG6ZLDd068327
-        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NO);
-        Fri, 16 Nov 2018 14:35:21 +0800 (CST)
-        (envelope-from jackychou@asix.com.tw)
-Authentication-Results: freebsd2.asix.com.tw; sender-id=permerror header.from=jackychou@asix.com.tw; spf=permerror smtp.mfrom=jackychou@asix.com.tw
-X-Authentication-Warning: freebsd2.asix.com.tw: Host [10.1.2.56] claimed to be JACKYCHOU
-From:   "JackyChou" <jackychou@asix.com.tw>
-To:     <johan@kernel.org>
-Cc:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <louis@asix.com.tw>,
-        <jackychou@asix.com.tw>
-References: <20181116063016.10360-1-jackychou@asix.com.tw>
-In-Reply-To: <20181116063016.10360-1-jackychou@asix.com.tw>
-Subject: [PATCH] USB: serial: mos7840: Add a product ID for the new product
-Date:   Fri, 16 Nov 2018 14:36:56 +0800
-Message-ID: <002201d47d76$c5a45080$50ecf180$@asix.com.tw>
+        Fri, 16 Nov 2018 12:16:20 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44416 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727438AbeKPRQU (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 12:16:20 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAG74DUf020372
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:05:11 -0500
+Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nsrassyv9-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:05:11 -0500
+Received: from localhost
+        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
+        Fri, 16 Nov 2018 07:05:09 -0000
+Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
+        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 16 Nov 2018 07:05:02 -0000
+Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
+        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAG751VW29425862
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 16 Nov 2018 07:05:01 GMT
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 26F04B2066;
+        Fri, 16 Nov 2018 07:05:01 +0000 (GMT)
+Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id CE3CDB2064;
+        Fri, 16 Nov 2018 07:05:00 +0000 (GMT)
+Received: from paulmck-ThinkPad-W541 (unknown [9.85.196.200])
+        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
+        Fri, 16 Nov 2018 07:05:00 +0000 (GMT)
+Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
+        id 2E75416C36E0; Thu, 15 Nov 2018 23:05:00 -0800 (PST)
+Date:   Thu, 15 Nov 2018 23:05:00 -0800
+From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
+To:     linux-kernel@vger.kernel.org, mingo@kernel.org,
+        jiangshanlai@gmail.com, dipankar@in.ibm.com,
+        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
+        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
+        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
+        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
+        Lance Roy <ldr709@gmail.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Yang Shi <yang.shi@linux.alibaba.com>,
+        Matthew Wilcox <mawilcox@microsoft.com>,
+        Mel Gorman <mgorman@techsingularity.net>,
+        Jan Kara <jack@suse.cz>, Shakeel Butt <shakeelb@google.com>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH tip/core/rcu 6/7] mm: Replace spin_is_locked() with
+ lockdep
+Reply-To: paulmck@linux.ibm.com
+References: <20181111200421.GA10551@linux.ibm.com>
+ <20181111200443.10772-6-paulmck@linux.ibm.com>
+ <20181115184917.6goqg67hpojfhk42@linux-r8p5>
 MIME-Version: 1.0
-Content-Type: text/plain;
-        charset="us-ascii"
-Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 15.0
-Thread-Index: AQI1Bgq9TKrJ8B3Xn2OH4bCWb0FHsqSQ38Rw
-Content-Language: zh-tw
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115184917.6goqg67hpojfhk42@linux-r8p5>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-TM-AS-GCONF: 00
+x-cbid: 18111607-0072-0000-0000-000003C9DAD4
+X-IBM-SpamModules-Scores: 
+X-IBM-SpamModules-Versions: BY=3.00010059; HX=3.00000242; KW=3.00000007;
+ PH=3.00000004; SC=3.00000270; SDB=6.01118156; UDB=6.00577118; IPR=6.00898264;
+ MB=3.00024188; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-16 07:05:07
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111607-0073-0000-0000-00004A2002AD
+Message-Id: <20181116070500.GV4170@linux.ibm.com>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-16_04:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811160063
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: JackyChou <jackychou@asix.com.tw>
+On Thu, Nov 15, 2018 at 10:49:17AM -0800, Davidlohr Bueso wrote:
+> On Sun, 11 Nov 2018, Paul E. McKenney wrote:
+> 
+> >From: Lance Roy <ldr709@gmail.com>
+> >
+> >lockdep_assert_held() is better suited to checking locking requirements,
+> >since it only checks if the current thread holds the lock regardless of
+> >whether someone else does. This is also a step towards possibly removing
+> >spin_is_locked().
+> 
+> So fyi I'm not crazy about these kind of patches simply because lockdep
+> is a lot less used out of anything that's not a lab, and we can be missing
+> potential offenders. There's obviously nothing wrong about what you describe
+> above perse, just my two cents.
 
-Add a new PID 0x7843 to the driver.
-Let the new products be able to set up 3 serial ports with the driver.
+Fair point!
 
-Because the development of new product is based on 4 serial ports, 
-but some users only need 3 serial ports. There is no way to set it from 
-the hardware, so let the driver set 3 serial ports with PID 0x7843.
+One countervailing advantage of lockdep is that it is not subject to the
+false negatives that can happen if someone else happens to be currently
+holding the lock.  But what would you suggest instead?
 
-Signed-off-by: JackyChou <jackychou@asix.com.tw>
----
- drivers/usb/serial/mos7840.c | 45 ++++++++++++++++++------------------
- 1 file changed, 22 insertions(+), 23 deletions(-)
-
-diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
-index b42bad85097a..57ef25a2f7bb 100644
---- a/drivers/usb/serial/mos7840.c
-+++ b/drivers/usb/serial/mos7840.c
-@@ -94,6 +94,7 @@
- /* The native mos7840/7820 component */
- #define USB_VENDOR_ID_MOSCHIP           0x9710
- #define MOSCHIP_DEVICE_ID_7840          0x7840
-+#define MOSCHIP_DEVICE_ID_7843          0x7843
- #define MOSCHIP_DEVICE_ID_7820          0x7820
- #define MOSCHIP_DEVICE_ID_7810          0x7810
- /* The native component can have its vendor/device id's overridden 
-@@ -176,6 +177,7 @@ enum mos7840_flag {
- 
- static const struct usb_device_id id_table[] = {
- 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7840)},
-+	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7843)},
- 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7820)},
- 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7810)},
- 	{USB_DEVICE(USB_VENDOR_ID_BANDB, BANDB_DEVICE_ID_USO9ML2_2)}, 
-@@ -298,15 +300,10 @@ static int mos7840_set_uart_reg(struct usb_serial_port
-*port, __u16 reg,
- 	val = val & 0x00ff;
- 	/* For the UART control registers, the application number need
- 	   to be Or'ed */
--	if (port->serial->num_ports == 4) {
-+	if (port->serial->num_ports == 2 && port->port_number != 0)
-+		val |= ((__u16)port->port_number + 2) << 8;
-+	else
- 		val |= ((__u16)port->port_number + 1) << 8;
--	} else {
--		if (port->port_number == 0) {
--			val |= ((__u16)port->port_number + 1) << 8;
--		} else {
--			val |= ((__u16)port->port_number + 2) << 8;
--		}
--	}
- 	dev_dbg(&port->dev, "%s application number is %x\n", __func__, val);
- 	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0), MCS_WRREQ,
- 			       MCS_WR_RTYPE, val, reg, NULL, 0, 
-@@ -332,15 +329,10 @@ static int mos7840_get_uart_reg(struct usb_serial_port
-*port, __u16 reg,
- 		return -ENOMEM;
- 
- 	/* Wval  is same as application number */
--	if (port->serial->num_ports == 4) {
-+	if (port->serial->num_ports == 2 && port->port_number != 0)
-+		Wval = ((__u16)port->port_number + 2) << 8;
-+	else
- 		Wval = ((__u16)port->port_number + 1) << 8;
--	} else {
--		if (port->port_number == 0) {
--			Wval = ((__u16)port->port_number + 1) << 8;
--		} else {
--			Wval = ((__u16)port->port_number + 2) << 8;
--		}
--	}
- 	dev_dbg(&port->dev, "%s application number is %x\n", __func__,
-Wval);
- 	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0), MCS_RDREQ,
- 			      MCS_RD_RTYPE, Wval, reg, buf,
-VENDOR_READ_LENGTH, 
-@@ -2071,12 +2063,16 @@ static int mos7840_probe(struct usb_serial *serial,
- 			VENDOR_READ_LENGTH, MOS_WDR_TIMEOUT);
- 
- 	/* For a MCS7840 device GPIO0 must be set to 1 */
--	if (buf[0] & 0x01)
--		device_type = MOSCHIP_DEVICE_ID_7840;
--	else if (mos7810_check(serial))
-+	if (buf[0] & 0x01) {
-+		if (product == MOSCHIP_DEVICE_ID_7843)
-+			device_type = MOSCHIP_DEVICE_ID_7843;
-+		else
-+			device_type = MOSCHIP_DEVICE_ID_7840;
-+	} else if (mos7810_check(serial)) {
- 		device_type = MOSCHIP_DEVICE_ID_7810;
--	else
-+	} else {
- 		device_type = MOSCHIP_DEVICE_ID_7820;
-+	}
- 
- 	kfree(buf);
- out:
-@@ -2091,7 +2087,10 @@ static int mos7840_calc_num_ports(struct usb_serial
-*serial,
- 	int device_type = (unsigned long)usb_get_serial_data(serial);
- 	int num_ports;
- 
--	num_ports = (device_type >> 4) & 0x000F;
-+	if (device_type == MOSCHIP_DEVICE_ID_7843)
-+		num_ports = 3;
-+	else
-+		num_ports = (device_type >> 4) & 0x000F;
- 
- 	/*
- 	 * num_ports is currently never zero as device_type is one of 
-@@ -2146,7 +2145,7 @@ static int mos7840_port_probe(struct usb_serial_port
-*port)
- 		mos7840_port->SpRegOffset = 0x0;
- 		mos7840_port->ControlRegOffset = 0x1;
- 		mos7840_port->DcrRegOffset = 0x4;
--	} else if ((mos7840_port->port_num == 2) && (serial->num_ports ==
-4)) {
-+	} else if ((mos7840_port->port_num == 2) && (serial->num_ports > 2))
-{
- 		mos7840_port->SpRegOffset = 0x8;
- 		mos7840_port->ControlRegOffset = 0x9;
- 		mos7840_port->DcrRegOffset = 0x16;
-@@ -2154,7 +2153,7 @@ static int mos7840_port_probe(struct usb_serial_port
-*port)
- 		mos7840_port->SpRegOffset = 0xa;
- 		mos7840_port->ControlRegOffset = 0xb;
- 		mos7840_port->DcrRegOffset = 0x19;
--	} else if ((mos7840_port->port_num == 3) && (serial->num_ports ==
-4)) {
-+	} else if ((mos7840_port->port_num == 3) && (serial->num_ports > 2))
-{
- 		mos7840_port->SpRegOffset = 0xa;
- 		mos7840_port->ControlRegOffset = 0xb;
- 		mos7840_port->DcrRegOffset = 0x19;
---
-2.17.1
+							Thanx, Paul
 
