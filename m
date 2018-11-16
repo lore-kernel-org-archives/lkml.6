@@ -2,119 +2,79 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.3 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED,URIBL_SBL,URIBL_SBL_A autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 59262C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:18:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 18DEEC43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:18:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6B362087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:18:51 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="s9qPdIAh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6B362087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	by mail.kernel.org (Postfix) with ESMTP id DC4CA208A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:18:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DC4CA208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390026AbeKQBbh (ORCPT
+        id S2390060AbeKQBbo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 20:31:37 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:49305 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728169AbeKQBbh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 20:31:37 -0500
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com [209.85.217.54]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id wAGFIMtt001261
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 00:18:22 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wAGFIMtt001261
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542381502;
-        bh=QgRVSbdNlpAhM3GhMg4oLHwLIoQd9IgUYkTYc/KwbC4=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=s9qPdIAhS9Ewq8zuIQG8/98QXNGpYPlgKLRzooxx17q1Rs1gTVNJtj8KZ8XGd1aKG
-         q4gdm7rt8mIAINXTY/AVJop9+GgVB4VPsy1rUnlgPpJm9+0ECtoJ0w51kBkR1XFlRD
-         Vqh/4w64VsORAk+3D58j23jXwmD7+BMX5/eO3T7mHpql9A0zTIWSWCpft33ACXE+u2
-         K1/SEdTBcMA4osR1naz+nLA9YAw2ZtHBf83hccu3OTfmSFQaLwF8nld/wk320tvkOI
-         yoY5IXgWdELy2TJgCeQcaK8uhKhKW9RomLwRLDFmt4NUpMekAuQvbND6qrODF3H8wq
-         qwCMoOp1SPp+w==
-X-Nifty-SrcIP: [209.85.217.54]
-Received: by mail-vs1-f54.google.com with SMTP id h78so13925518vsi.6
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 07:18:22 -0800 (PST)
-X-Gm-Message-State: AGRZ1gKkXKMCQOLSl73jsXZxECgi+Cz3sfapC29iiL2A1lj669inN2Ju
-        63+YmPRWPJ571hw7PJ3K9uf/kHmgwHl3ylW5Agc=
-X-Google-Smtp-Source: AJdET5eHzhyRVzCgzsk4BCCoDGVpGywY9zpom3X3QWfGmM7bMppRxR+ww0eQ/gujcdv1jWCpkfCuromcs4NOfL6ONMI=
-X-Received: by 2002:a67:f1d6:: with SMTP id v22mr4574957vsm.181.1542381501222;
- Fri, 16 Nov 2018 07:18:21 -0800 (PST)
+        Fri, 16 Nov 2018 20:31:44 -0500
+Received: from mga07.intel.com ([134.134.136.100]:60541 "EHLO mga07.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728169AbeKQBbo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 20:31:44 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 07:18:56 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
+   d="scan'208";a="250283526"
+Received: from sfhansen-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.82])
+  by orsmga004.jf.intel.com with ESMTP; 16 Nov 2018 07:18:46 -0800
+Date:   Fri, 16 Nov 2018 17:18:45 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Borislav Petkov <bp@alien8.de>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 02/23] x86/cpufeatures: Add Intel-defined SGX feature
+ bit
+Message-ID: <20181116151845.GC4244@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-3-jarkko.sakkinen@linux.intel.com>
+ <20181116142840.GI20313@zn.tnic>
+ <20181116151351.GB4244@linux.intel.com>
 MIME-Version: 1.0
-References: <CAJ1xhMXDFAdiWMV6ODcJM8bfjs-ddyv8utf6N+Yh7+-Ne-KaHw@mail.gmail.com>
- <20181111.174140.002789201@genki.is> <CAJ1xhMUA4GUzeDANqR1WafELmEpE+-V569t7e0xCotTG2Lvbyw@mail.gmail.com>
- <CAJ1xhMWw8Mi2dubTFNOxhoP6hk+__Qjo-0+9sQbpqP5K-n4mVw@mail.gmail.com>
- <20181113000938.GA16783@google.com> <CAJ1xhMVFt6bYgwY+N5VoFXNpm5kS1j_HV8-ZS8SkavNgZx1HOg@mail.gmail.com>
- <CA+ASDXPcYp_joFeyGQ7TXFBSK-7i6bNFzaA1z=YYSDEjyMABdg@mail.gmail.com>
- <20181113190335.GA50985@google.com> <878t1w7hzi.fsf@igel.home>
- <CA+ASDXMuovgar22Z=sTcY=EV4KFtpwpjgdFOqvqAUYZEykzcWw@mail.gmail.com> <20181115021116.GA195691@google.com>
-In-Reply-To: <20181115021116.GA195691@google.com>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Sat, 17 Nov 2018 00:17:45 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATWu=LdYgdAX4S6WG3OjN928r-6nFB2HWQRAdAfFS_DeQ@mail.gmail.com>
-Message-ID: <CAK7LNATWu=LdYgdAX4S6WG3OjN928r-6nFB2HWQRAdAfFS_DeQ@mail.gmail.com>
-Subject: Re: [PATCH v3] scripts/setlocalversion: Improve -dirty check with
- git-status --no-optional-locks
-To:     Brian Norris <briannorris@chromium.org>
-Cc:     alexander.kapshuk@gmail.com, Genki Sky <sky@genki.is>,
-        Douglas Anderson <dianders@chromium.org>,
-        Guenter Roeck <linux@roeck-us.net>,
-        Christian Kujau <lists@nerdbynature.de>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        schwab@linux-m68k.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116151351.GB4244@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 11:12 AM Brian Norris <briannorris@chromium.org> wrote:
->
-> git-diff-index does not refresh the index for you, so using it for a
-> "-dirty" check can give misleading results. Commit 6147b1cf19651
-> ("scripts/setlocalversion: git: Make -dirty check more robust") tried to
-> fix this by switching to git-status, but it overlooked the fact that
-> git-status also writes to the .git directory of the source tree, which
-> is definitely not kosher for an out-of-tree (O=) build. That is getting
-> reverted.
->
-> Fortunately, git-status now supports avoiding writing to the index via
-> the --no-optional-locks flag, as of git 2.14. It still calculates an
-> up-to-date index, but it avoids writing it out to the .git directory.
->
-> So, let's retry the solution from commit 6147b1cf19651 using this new
-> flag first, and if it fails, we assume this is an older version of git
-> and just use the old git-diff-index method.
->
-> It's hairy to get the 'grep -vq' (inverted matching) correct by stashing
-> the output of git-status (you have to be careful about the difference
-> betwen "empty stdin" and "blank line on stdin"), so just pipe the output
-> directly to grep and use a regex that's good enough for both the
-> git-status and git-diff-index version.
->
-> Cc: Genki Sky <sky@genki.is>
-> Cc: Christian Kujau <lists@nerdbynature.de>
-> Cc: Guenter Roeck <linux@roeck-us.net>
-> Suggested-by: Alexander Kapshuk <alexander.kapshuk@gmail.com>
-> Signed-off-by: Brian Norris <briannorris@chromium.org>
+On Fri, Nov 16, 2018 at 05:13:51PM +0200, Jarkko Sakkinen wrote:
+> On Fri, Nov 16, 2018 at 03:28:40PM +0100, Borislav Petkov wrote:
+> > Reviewed-by: Borislav Petkov <bp@suse.de>
+> 
+> Thank you, the very first reviewed-by 8-)
 
+I will also add Sean as co-maintainer as he has the KVM angle and is
+needed to ack patches in the future. This functionality really needs
+two eyes. Has shown to have value in many occasions.
 
-Worked for me, and clean implementation. Nice!
-
-I will wait a few days before I pick it up
-in case some people may give comments, Reviewed-by, Tested-by, etc.
-
-
-
-
--- 
-Best Regards
-Masahiro Yamada
+/Jarkko
