@@ -2,511 +2,184 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D18C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:24:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4EE10C04EBC
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:25:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A858214F1
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:24:53 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhn/jI8m"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A858214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 221B42146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:25:50 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 221B42146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389571AbeKPWhB (ORCPT
+        id S2389619AbeKPWh6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 17:37:01 -0500
-Received: from mail-ed1-f46.google.com ([209.85.208.46]:45109 "EHLO
-        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727772AbeKPWhB (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 17:37:01 -0500
-Received: by mail-ed1-f46.google.com with SMTP id d39so16209877edb.12;
-        Fri, 16 Nov 2018 04:24:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=EDw/0ln+3QeH+Buos6DnD/OFu2J0LtZPWUG74ulI0dU=;
-        b=bhn/jI8m2agDfRQQiOCYOqsjJHOSJB8j1vCKR4VRAhigsdbSFvPaCfdatRBhPCKY/o
-         Y/qoZ4mrBlCEdxamo1iY619o8chQ5lVMAfSrzaYhsXBH6y4EEHwX00rOOS+ZL3dHfTtv
-         il4NzscbWXVR/Vqu5JtIujsSIBmcyk9zR+AI7xBkVEsuc1+Mvmd1vGqpUzfnZqn7qOXN
-         xI139iTbh1Nkz7g93WwxVLXuC1G9MhltuazM+QIeTDv91trIEZEd/v1bLoRNAoDdfB7C
-         O7/O21J72pKq1tZZaaVXOQZdngtYHTzDqaNfPgglGPgnBaL/p2Tna8MrjTicYG8Y7AWN
-         c/Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=EDw/0ln+3QeH+Buos6DnD/OFu2J0LtZPWUG74ulI0dU=;
-        b=phIRehYJARu8goMj0rACM8PZSQmG9P4aPOqGr9TQxpbHXo0wi58Oxbd7/Qt42+1v+x
-         n6x/J391B8+meyYAzO1qhjfJy57yt0OXOXFafVfLS8P3WXCJSJ3dhpyAT0jSW35qnqup
-         cuaeaSgAWTZxt7bNIzQ3vrDQXBvxyAYTf4LnFuuX4HFgbq6uyapt2xYLqYxT6g8EPH6v
-         F48VVpIAAqqbdhLY3m4K1sO3V3aAzxEMcpTQlYfKjV2HlQZZM8arLnZnBggtNMkGczgw
-         t8vdKyGixAP1C0YEfACnyLjB9burqT+OzYVQmQPjaCHWP+OXDpuC2t9DVAq7yFJL+d3t
-         wprw==
-X-Gm-Message-State: AGRZ1gLoM/8Kk2QVHJtV7stoB0YBZmKZd731M4G/cjPYLTTmlYB2S8Im
-        UsuFzTv87QAg8TmOpY+Q9Ndfe+Rh
-X-Google-Smtp-Source: AJdET5cNtKWKwhx6g3CZSkcN7jXR4c5iRZwTtAnQ6LH68aCi5pozUXHuACdPVgSAO/VL9nlh8NqaNw==
-X-Received: by 2002:a50:8bb5:: with SMTP id m50mr9336091edm.211.1542371088033;
-        Fri, 16 Nov 2018 04:24:48 -0800 (PST)
-Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
-        by smtp.gmail.com with ESMTPSA id e35sm1974481eda.13.2018.11.16.04.24.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Nov 2018 04:24:46 -0800 (PST)
-Date:   Fri, 16 Nov 2018 13:24:45 +0100
-From:   Thierry Reding <thierry.reding@gmail.com>
-To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
-Cc:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fri, 16 Nov 2018 17:37:58 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:50668 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727772AbeKPWh5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 17:37:57 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 622B980D;
+        Fri, 16 Nov 2018 04:25:47 -0800 (PST)
+Received: from e107981-ln.cambridge.arm.com (e107981-ln.cambridge.arm.com [10.1.197.40])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 91D313F718;
+        Fri, 16 Nov 2018 04:25:44 -0800 (PST)
+Date:   Fri, 16 Nov 2018 12:25:41 +0000
+From:   Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
+To:     Leonard Crestez <leonard.crestez@nxp.com>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        Lucas Stach <l.stach@pengutronix.de>,
+        Richard Zhu <hongxing.zhu@nxp.com>,
         Fabio Estevam <fabio.estevam@nxp.com>,
-        Lothar =?utf-8?Q?Wa=C3=9Fmann?= <LW@karo-electronics.de>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: =?utf-8?B?W1JDRsKgUEFUQ0gsdjIsMi8y?= =?utf-8?Q?=5D?= pwm: imx:
- Configure output to GPIO in disabled state
-Message-ID: <20181116122445.GA25386@ulmo>
-References: <4fbb7307-df01-d7bd-f2e2-e05e6d17807d@ysoft.com>
- <20181108191855.zuon3ecv4yjfbs7g@pengutronix.de>
- <283cfef3-16d0-8bd4-e306-6e34d44c3a86@ysoft.com>
- <20181109165555.vqbiwh4hlcnozdna@pengutronix.de>
- <20181114113449.GB2620@ulmo>
- <20181114215120.vddykljqyavm64wj@pengutronix.de>
- <20181115152545.GA8611@ulmo>
- <20181115203733.qvonika6yhn2bsnb@pengutronix.de>
- <20181116095124.GA28631@ulmo>
- <20181116103929.cxfvuc2te7cadhp2@pengutronix.de>
+        Stefan Agner <stefan@agner.ch>, Marek Vasut <marex@denx.de>,
+        Ulf Hansson <ulf.hansson@linaro.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+        "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+        dl-linux-imx <linux-imx@nxp.com>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/4] PCI: imx: Add multi-pd support
+Message-ID: <20181116122541.GD3228@e107981-ln.cambridge.arm.com>
+References: <cover.1539020938.git.leonard.crestez@nxp.com>
+ <ee0c4ecb4b6bd26f548096e7be90a07d181d50ee.1539020938.git.leonard.crestez@nxp.com>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181116103929.cxfvuc2te7cadhp2@pengutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <ee0c4ecb4b6bd26f548096e7be90a07d181d50ee.1539020938.git.leonard.crestez@nxp.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On Mon, Oct 08, 2018 at 06:06:21PM +0000, Leonard Crestez wrote:
+> On some chips the PCIE and PCIE_PHY blocks are in separate power domains
+> which can be power-gated independently. The pci driver needs to handle
+> this by keeping both domain active.
+> 
+> This is intended for imx6sx where PCIE is in DISPLAY and PCIE_PHY in
+> it's own domain. Defining the DISPLAY domain requires a way for pcie to
+> keep it active or it will break when displays are off.
+> 
+> The power-domains on imx6sx are meant to look like this:
+> 	power-domains = <&pd_disp>, <&pd_pci>;
+> 	power-domain-names = "pcie", "pcie_phy";
+> 
+> Signed-off-by: Leonard Crestez <leonard.crestez@nxp.com>
+> Reviewed-by: Ulf Hansson <ulf.hansson@linaro.org>
+> ---
+>  drivers/pci/controller/dwc/pci-imx6.c | 48 +++++++++++++++++++++++++++
+>  1 file changed, 48 insertions(+)
 
---CE+1k2dSO48ffgeK
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+I expect Shawn to pick the whole series up and therefore I am dropping
+this series from the PCI tree.
 
-On Fri, Nov 16, 2018 at 11:39:29AM +0100, Uwe Kleine-K=C3=B6nig wrote:
-> Hello Thierry,
->=20
-> On Fri, Nov 16, 2018 at 10:51:24AM +0100, Thierry Reding wrote:
-> > On Thu, Nov 15, 2018 at 09:37:33PM +0100, Uwe Kleine-K=C3=B6nig wrote:
-> > > On Thu, Nov 15, 2018 at 04:25:45PM +0100, Thierry Reding wrote:
-> > > > On Wed, Nov 14, 2018 at 10:51:20PM +0100, Uwe Kleine-K=C3=B6nig wro=
-te:
-> > > > > On Wed, Nov 14, 2018 at 12:34:49PM +0100, Thierry Reding wrote:
-> > > > > > On Fri, Nov 09, 2018 at 05:55:55PM +0100, Uwe Kleine-K=C3=B6nig=
- wrote:
-> > > > > > > On Fri, Nov 09, 2018 at 02:24:42PM +0000, Vok=C3=A1=C4=8D Mic=
-hal wrote:
-> > > > > > > > On 8.11.2018 20:18, Uwe Kleine-K=C3=B6nig wrote:
-> > > > > > > > > Taking your example with the backlight device you specify=
- an "init" and
-> > > > > > > > > a "default" pinctrl and only "default" contains the muxin=
-g for the PWM
-> > > > > > > > > pin everything should be as smooth as necessary: The pwm =
-is only muxed
-> > > > > > > > > when the backlight device is successfully bound.
-> > > > > > > >=20
-> > > > > > > > Have you tried that Uwe? The bad news is I tested that befo=
-re and now
-> > > > > > > > again and it does not work like that. We already discussed =
-that earlier.
-> > > > > > >=20
-> > > > > > > The key is that the pinmux setting for the PWM pin should be =
-part of the
-> > > > > > > bl pinctrl, not the pwm pinctrl. Then "default" is only setup=
- when the
-> > > > > > > bl device is successfully bound which is after the bl's .prob=
-e callback
-> > > > > > > called pwm_apply().
-> > > > > >=20
-> > > > > > No, that's not at all correct. Pinmux settings should reside wi=
-th the
-> > > > > > consumer of the pin. In this case, the PWM is the consumer of t=
-he pin,
-> > > > > > whereas the backlight is the consumer of the *PWM*.
-> > > > >=20
-> > > > > This is news to me. Adding Linus W. to Cc, maybe he can comment?!
-> > > > >=20
-> > > > > Grepping through the arm device trees it really seems common to p=
-ut the
-> > > > > pinctrl for the pwm pin into the pwm device. I didn't search in d=
-epth,
-> > > > > but I didn't find a counter example.
-> > > > >=20
-> > > > > For GPIOs it is common that the pinmuxing is included in the GPIO=
-'s
-> > > > > consumer pinctrl. Ditto for mdio busses whose pinctrl is included=
- in the
-> > > > > ethernet pinctrl.
-> > > >=20
-> > > > GPIO is different from PWM in that the GPIO is already the pin itse=
-lf
-> > > > and is otherwise generic. So typically you put the pinmuxing options
-> > > > into the device tree node for the consumer of the GPIO, because it =
-is
-> > > > only when the consumer uses the GPIO that you need to configure that
-> > > > pin as GPIO.
-> > > >=20
-> > > > For PWM, however, the PWM consumer is only the consumer of the PWM,=
- but
-> > > > the PWM device itself is the real consumer of the pin that outputs =
-the
-> > > > PWM signal. So the PWM determines when the pinmux states need to be
-> > > > applied, whereas the consumer of the PWM only deals with the PWM.
-> > > >=20
-> > > > For MDIO busses, I think they are usually part of, and driven by, t=
-he
-> > > > ethernet controller, so again it makes sense to put the pinmux into=
- the
-> > > > node of the ethernet controller, because the ethernet controller is=
- the
-> > > > user of the pins.
-> > >=20
-> > > Maybe it was a bad idea to broaden the discussion to talk about gpios
-> > > and ethernet stuff here. I'd still consider it a valid construct to p=
-ut
-> > > the pwm pin into the backlight's pinctrl unless Linux W. disagrees.
-> >=20
-> > But why? The backlight doesn't care about the specific pinmuxing of the
-> > PWM pin. All it cares about is the PWM signal. That's the level of
-> > abstraction that the PWM consumer expects, anything lower level belongs
-> > in the PWM driver.
->=20
-> The backlight driver cares about the PWM pin muxing because if it's
-> wrongly muxed the backlight doesn't work as intended.
+Acked-by: Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>
 
-It shouldn't care about that. It should only care about the PWM and the
-PWM should make sure that the pin is correctly muxed because otherwise
-it can't work as expected.
-
-> > > > > > The problem with making the PWM mode the "default" pinctrl stat=
-e is that
-> > > > > > the default state will be applied before the driver is even pro=
-bed. That
-> > > > > > makes it unsuitable for this case. I think what we really want =
-here is
-> > > > > > explicitly "active" and "inactive" states for pinctrl where the=
- PWM
-> > > > > > driver controls when exactly each state is applied.
-> > > > >=20
-> > > > > Note that this problem goes away nicely if the pwm pin is attache=
-d to
-> > > > > the backlight. Because it's the backlight's driver that "knows" w=
-hen the
-> > > > > pwm is configured correctly and so the already existing mechanism=
-s that
-> > > > > setup the mux when the bl is correctly probed do the right thing =
-at the
-> > > > > right time.
-> > > >=20
-> > > > Actually that's not exactly true. The default pinctrl state will be
-> > > > applied before the driver's ->probe() implementation, so the pinctrl
-> > > > state will be active some time before even the backlight driver gets
-> > > > around to setting up the PWM. If you look at drivers/base/dd.c you'=
-ll
-> > > > see that really_probe() calls pinctrl_bind_pins() before calling the
-> > > > driver's ->probe() and will select the default state (unless there's
-> > > > also an "init" state defined, in which case that will get applied a=
-nd
-> > > > only after successful probe will the default state be selected).
-> > > >=20
-> > > > So if you use only a default state, then you could even get into a
-> > > > situation where ->probe() return -EPROBE_DEFER and it would potenti=
-ally
-> > > > take several seconds before the driver is reprobed, during which ti=
-me
-> > > > the pinmux will already be set up but the PWM not configured proper=
-ly
-> > > > and potentially outputting the wrong level.
-> > >=20
-> > > If you reread my suggestion to Michal completely you will notice I got
-> > > that right.
-> > >=20
-> > > > > > This solves the problem quite nicely because by default the pin=
-ctrl
-> > > > > > state isn't touched. For the case where the bootloader didn't i=
-nitialize
-> > > > > > the PWM pin at all, the driver core won't do anything and keep =
-it at the
-> > > > > > 100k pull-up default.
-> > > > >=20
-> > > > > Ditto if the pwm pinctrl is attached to the consumer without havi=
-ng to
-> > > > > introduce new pwm-specific stuff.
-> > > >=20
-> > > > Well yes, but you'd obviously also have to avoid using the "default"
-> > > > state, otherwise you'd run into the issues that I described above.
-> > >=20
-> > > I'd need "default" and "init", right.
-> > >=20
-> > > > > > > > > No I meant the pwm. Well, it's as easy as that: Whenever =
-with your
-> > > > > > > > > approach you configure the pin as GPIO with the output se=
-t to low,
-> > > > > > > > > instead configure the pwm with duty_cycle to zero (or dis=
-able it).
-> > > > > > > > > Whenever with your approach you configure the pin as GPIO=
- with the
-> > > > > > > > > output set to high, configure the pwm with duty_cycle to =
-100%. (Keeping
-> > > > > > > > > out inverted PWMs for the ease of discussion, but the pro=
-cedure can be
-> > > > > > > > > adapted accordingly.) The only difference then is that wi=
-th your
-> > > > > > > > > approach you already "know" in pwm-imx's .probe the idle =
-level and can
-> > > > > > > > > configure the GPIO accordingly. With my approach you just=
- have to wait
-> > > > > > > > > until the first pwm_apply which (as described above) work=
-s just as well.
-> > > > > > > >=20
-> > > > > > > > While here I am quite confident you are talking about kerne=
-l code, right?
-> > > > > > > > If yes, then your approach is clear to me.
-> > > > > > > >=20
-> > > > > > > > The problem is I am quite sure your approach does not solve=
- the cases
-> > > > > > > > the pinctrl solution does. And according to my tests so far=
- it does not
-> > > > > > > > work at all because the "init" and "default" states does no=
-t work as you
-> > > > > > > > are saying.
-> > > > > > >=20
-> > > > > > > That's as pointed out above, because you're looking at the pw=
-m's pinctrl
-> > > > > > > and I at the pwm-consumer's pinctrl.
-> > > > > > >=20
-> > > > > > > Note that a sysfs consumer cannot be operated smoothly here, =
-because
-> > > > > > > there is no pinctrl node to add the PWM mode to that only get=
-s active
-> > > > > > > after the first configuration. This however is something that=
- should not
-> > > > > > > be addressed in the imx driver but in the pwm core (if at all=
-).
-> > > > > >=20
-> > > > > > With the pinctrl-based solution outlined above you can even ope=
-rate a
-> > > > > > sysfs consumer properly. The pinctrl states are where they belo=
-ng, with
-> > > > > > the PWM device and therefore they can be properly set when the =
-PWM is
-> > > > > > used, rather than waiting for a PWM consumer to muck with the p=
-inmux.
-> > > > > >=20
-> > > > > > Note how all the pieces are suddenly falling into place. In my
-> > > > > > experience that's usually a good indication that you're on the =
-right
-> > > > > > track.
-> > > > >=20
-> > > > > OK, sysfs is the only point where the "put pinctrl stuff into the=
- pwm
-> > > > > core (or driver)" is superior to the already existing and otherwi=
-se
-> > > > > completely working status quo. (Apart from bugs that need fixing =
-in
-> > > > > your scenario, too.)
-> > > >=20
-> > > > Nope, sorry. It's superior in all of the other cases as well. You've
-> > > > said elsewhere already that the prerequisite for the current soluti=
-on to
-> > > > support inverse polarity with the i.MX driver is to keep the driver
-> > > > running, even after the PWM is no longer used. Sorry but that's jus=
-t not
-> > > > an option for me.
-> > >=20
-> > > You want that after pwm_disable() the pin still keeps the idle level.=
- As
-> > > the hardware doesn't provide this feature "as is" something has to be
-> > > done about it. This can be reached either by operating the pin as PWM
-> > > with 0% duty cycle or by switching to GPIO that is configured to the
-> > > desired level. From the PWM driver's POV the first is the more natura=
-l,
-> > > as this can be accomplished with the registers this driver cares about
-> > > anyhow.
-> >=20
-> > We've been over this before. Yes, as long as you operate the pin as PWM
-> > it's okay to just actively drive it. But once you no longer use the pin,
-> > why would you want to still actively drive it?
->=20
-> This is because you say the pin should keep its level as inactive even
-> though that's not what the hardware does without keeping care.
->=20
-> I say this is strange: The consumer specifies if the pwm should be
-> inverted or not because the pwm alone doesn't know that. Then with the
-> consumer gone *you* want the pwm to "remember" its last user requested
-> inversion and so the pin should stay at 1.
->=20
-> To answer your question: I don't want to actively drive the pin when the
-> user is gone. That's a requirement comming from you.
-
-That's not actually what I'm suggesting. What I'm saying is that the PWM
-should not actively drive the pin at all. That's my entire point here.
-If the device gets out of boot, nobody is actively driving the pin
-either, so it has that 100k pull-up to make sure it is high by default,
-which in turn causes the backlight to remain off. I'm saying that that
-is exactly the state that the pin should be put back into when nobody is
-using the PWM.
-
-So in other words I'm saying that that pin should be passively driven by
-that 100k pull-up if it is not actively used by the PWM.
-
-What you are saying is that either we actively drive irrespective of
-whether there are any users, or that we leave it undefined what we do
-with a pin when it is no longer used. I think those are both wrong
-because the former doesn't allow you to properly shut down the system
-and the latter gives you undefined results, which is pretty useless
-because it is completely non-deterministic.
-
-> If it was my decision, I'd say: If the backlight driver calls
->=20
-> 	pwm_config(pwm, 0, 100);
-> 	pwm_disable(pwm);
->=20
-> I'd interpret that as: The consumer doesn't use the pin any more, so I'm
-> not bound to keep the pin at a certain level. If however after
-> pwm_disable the consumer is still considered to use the pin, then
-> implementing it the same way as pwm_config(pwm, 0, 100) is the right
-> thing to do. This applies then to all pwm implementations and so should
-> be solved in the pwm core, not in the imx driver. In this case the
-> concept of "disabling a PWM" can go away completely.
-
-But again, why should PWMs be special? You turn off all other resources
-when you no longer need them, right? If you power your panel with a
-regulator, then when the panel is disabled you want to disable the
-regulator, right? Similarily if you don't use your I2C controller you
-want to turn off the clock that drives it, right? This is the same for
-any resource in your system: if you no longer need it, disable it. The
-fact that "disabling" the PWM is not straightforward on i.MX doesn't
-mean that we should simply ignore it.
-
-> In another mail you wrote:
-> > Your example of keeping an LED in the current state is actually an
-> > example of where the consumer still needs it. As long as you want to use
-> > the LED you need to keep the LED driver around, and as long as the LED
-> > driver is around you have a consumer for the PWM.
->=20
-> With an analog reasoning I'd say: As long as the backlight driver cares
-> about the backlight being off, it should not disable (or put) the PWM.
-
-It shouldn't put the PWM because it still needs it. But it should be
-totally fine to disable it. Disabling a PWM should result in the PWM not
-outputting any power.
-
-> > > Also note this is similar in the pwm-bcm-kona driver that doesn't seem
-> > > to have the concept of "disable" at all. kona_pwmc_disable() just sets
-> > > up 0% duty cycle. In my eyes this is an argument that is good enough =
-to
-> > > at least nack the imx-specific implementation of that pinctrl stuff.
-> >=20
-> > It's not a good enough argument for me. It's certainly possible that not
-> > all PWM driver can be made to behave exactly as needed. pwm-bcm-kona
-> > might be one of those, but that doesn't mean that everybody else should
-> > be restricted to the same behaviour. If we can make i.MX behave exactly
-> > right, then we should do that.
->=20
-> And if we can make the imx-specific implementation right in a generic
-> way in the pwm core that might help the bcm-kona driver for free.
-
-It may, but we don't know that. Look, I'm not generally opposed to do
-this in the core, but I'm not going to implement it in the core until
-I'm convinced that it is useful in a large number of cases. One or two
-are not large numbers.
-
-> > > If the pinctrl idea is implemented in the pwm core, I won't object.
-> >=20
-> > Let me see if I get this straight: you're not objecting to the idea of
-> > implementing the pinctrl solution, your only objection is to put it in
-> > the i.MX driver?
->=20
-> Given that the pinctrl solution is a generic solution that might help
-> other drivers, too, I think it should not go into the imx specific
-> driver just because for now this is the only driver that might benefit
-> from it.
->=20
-> I still don't think it's the best solution for the imx problem but as I
-> care more for imx in general than for pwm in general I'm interested in
-> keeping the imx driver focused to the imx specific parts. I won't repeat
-> the advantages of putting generic stuff into a generic location instead
-> of its first user.
-
-We can debate this for another few weeks, but I don't think you're going
-to be able to convince me, so let's cut this short: pinctrl support goes
-in the i.MX driver for now. Let's move on.
-
-> > > > > Also dts writes don't need to lookup the needed GPIO numbers and =
-pinctrl.
-> > > >=20
-> > > > Just to clarify: I don't think that we need to get the GPIO number
-> > > > involved in this case, because we don't have to reconfigure the pin=
- as
-> > > > GPIO to make this work. The only reason that Michal's proposal did =
-that
-> > > > is because that was believed to be necessary. But if the pin can ju=
-st be
-> > > > configured with a 100k pull-up, that's enough to pull the pin high =
-when
-> > > > we need it.
-> > >=20
-> > > Unless the gpio happens to be configured as output at the wrong value.
-> > > Further I'm not sure if the pwm in disabled state actively pulls to 0
-> > > and if in this state the PU of the pin is good enough to ensure a one
-> > > here. That would need verification first.
-> >=20
-> > The idea is to *not* configure the GPIO as output and output the wrong
-> > value. The idea is to not use the GPIO at all and instead use whatever
-> > the hardware default is that makes it such that the backlight is off by
-> > default at boot.
->=20
-> Which might be possible with Lothar's idea for some machines, but not
-> for all users of the pwm-imx driver.
->=20
-> Also note that you don't include the poor souls where there is no
-> hardware pullup into the right direction.
-
-The poor souls should speak up and then we can look into finding a good
-solution for them. I'm pretty sure there must be some equivalent that
-can be used for other users.
-
-Thierry
-
---CE+1k2dSO48ffgeK
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvutwsACgkQ3SOs138+
-s6FarA//UwBbRsNm6yLJ7QimbUUZCDQPIJ0D5FIFn/to7nff3DKOYlfwlKyhk+pF
-n/N3kxteGt+7sfZle+jsqP5tXi8hL8+dDReqACWqo6z3Rv7+wWNHHvSKTjdBE6l/
-TKVyuVAra8y7ZLUnSM+zBuOJ27Vt1cBzLm+APaZw8FPsDc02GIhPtWh9hlhb8vuS
-UD+DSxv32A2wU2MqY4bmERZNtn1FOl8gktL+MN9V4TFDYigTV6YpQKbSRI9VUaiC
-N43V/KWAK5KwMG/2fjUbTSAkIdyqXqt+i/a9IlOeyw2t9XaS9f2zn7qrVDinbJ4i
-REMLmOS8C5v7ds398I2zDVan2sRu9tXsgXttTCJPRxTBf7jJwcmQA9tftRrEJG78
-E0DZsNPmkq44su1mM+2HV73aUmRma2fx1WShwYNbOomStpAw4n9ZqFo4ieWcUMk1
-TR6hQ/+ze/gamyTWS50nSBLgxAFN9VSr+Tg4ul/HXjPzXZuQdIE9N3oLLn02dYR8
-rDg88QqkWEsgabzsdV5tlXMFBaFP0EOafd928VqO5NAiyg+OnL5oa0V8FVFGGysJ
-TB0u+WwdYpoIUbdxGHgdBfbxh/zCBKiU6HCMuePaIIC1ilXtmwT9NBJLKXefSccJ
-L5qbl0+RKL6kqZWtEEmvhBGDGlAi05bJWZWAlTflRh7dDKKkWqk=
-=Xa6K
------END PGP SIGNATURE-----
-
---CE+1k2dSO48ffgeK--
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 6171171db1fc..a482f86b02e6 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -25,10 +25,12 @@
+>  #include <linux/resource.h>
+>  #include <linux/signal.h>
+>  #include <linux/types.h>
+>  #include <linux/interrupt.h>
+>  #include <linux/reset.h>
+> +#include <linux/pm_domain.h>
+> +#include <linux/pm_runtime.h>
+>  
+>  #include "pcie-designware.h"
+>  
+>  #define to_imx6_pcie(x)	dev_get_drvdata((x)->dev)
+>  
+> @@ -57,10 +59,15 @@ struct imx6_pcie {
+>  	u32			tx_deemph_gen2_6db;
+>  	u32			tx_swing_full;
+>  	u32			tx_swing_low;
+>  	int			link_gen;
+>  	struct regulator	*vpcie;
+> +
+> +	/* power domain for pcie */
+> +	struct device		*pd_pcie;
+> +	/* power domain for pcie phy */
+> +	struct device		*pd_pcie_phy;
+>  };
+>  
+>  /* Parameters for the waiting for PCIe PHY PLL to lock on i.MX7 */
+>  #define PHY_PLL_LOCK_WAIT_MAX_RETRIES	2000
+>  #define PHY_PLL_LOCK_WAIT_USLEEP_MIN	50
+> @@ -290,10 +297,47 @@ static int imx6q_pcie_abort_handler(unsigned long addr,
+>  	}
+>  
+>  	return 1;
+>  }
+>  
+> +static int imx6_pcie_attach_pd(struct device *dev)
+> +{
+> +	struct imx6_pcie *imx6_pcie = dev_get_drvdata(dev);
+> +	struct device_link *link;
+> +
+> +	/* Do nothing when in a single power domain */
+> +	if (dev->pm_domain)
+> +		return 0;
+> +
+> +	imx6_pcie->pd_pcie = dev_pm_domain_attach_by_name(dev, "pcie");
+> +	if (IS_ERR(imx6_pcie->pd_pcie))
+> +		return PTR_ERR(imx6_pcie->pd_pcie);
+> +	link = device_link_add(dev, imx6_pcie->pd_pcie,
+> +			DL_FLAG_STATELESS |
+> +			DL_FLAG_PM_RUNTIME |
+> +			DL_FLAG_RPM_ACTIVE);
+> +	if (IS_ERR(link)) {
+> +		dev_err(dev, "Failed to add device_link to pcie pd: %ld\n", PTR_ERR(link));
+> +		return PTR_ERR(link);
+> +	}
+> +
+> +	imx6_pcie->pd_pcie_phy = dev_pm_domain_attach_by_name(dev, "pcie_phy");
+> +	if (IS_ERR(imx6_pcie->pd_pcie_phy))
+> +		return PTR_ERR(imx6_pcie->pd_pcie_phy);
+> +
+> +	device_link_add(dev, imx6_pcie->pd_pcie_phy,
+> +			DL_FLAG_STATELESS |
+> +			DL_FLAG_PM_RUNTIME |
+> +			DL_FLAG_RPM_ACTIVE);
+> +	if (IS_ERR(link)) {
+> +		dev_err(dev, "Failed to add device_link to pcie_phy pd: %ld\n", PTR_ERR(link));
+> +		return PTR_ERR(link);
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static void imx6_pcie_assert_core_reset(struct imx6_pcie *imx6_pcie)
+>  {
+>  	struct device *dev = imx6_pcie->pci->dev;
+>  
+>  	switch (imx6_pcie->variant) {
+> @@ -1013,10 +1057,14 @@ static int imx6_pcie_probe(struct platform_device *pdev)
+>  		imx6_pcie->vpcie = NULL;
+>  	}
+>  
+>  	platform_set_drvdata(pdev, imx6_pcie);
+>  
+> +	ret = imx6_pcie_attach_pd(dev);
+> +	if (ret)
+> +		return ret;
+> +
+>  	ret = imx6_add_pcie_port(imx6_pcie, pdev);
+>  	if (ret < 0)
+>  		return ret;
+>  
+>  	return 0;
+> -- 
+> 2.17.1
+> 
