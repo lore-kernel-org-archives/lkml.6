@@ -2,167 +2,218 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 01355C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:10:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BE3C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:12:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BBA48206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:10:13 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="UGS74/I4";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="NUTEy3DY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BBA48206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 9841B206BA
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:12:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9841B206BA
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389509AbeKPVWE (ORCPT
+        id S2389538AbeKPVYH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 16:22:04 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:33030 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727454AbeKPVWE (ORCPT
+        Fri, 16 Nov 2018 16:24:07 -0500
+Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:46816 "EHLO
+        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727454AbeKPVYH (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 16:22:04 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 1C0FB607EF; Fri, 16 Nov 2018 11:10:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542366611;
-        bh=L+sI64zN6g9GU48P34+iV6wA6/j591jkPrcmQVA3mQE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=UGS74/I414Le2FeO7+XuGHpbYk9V2zskeJXYj4WvtCNA4P34VqgmrEpODF9/yDcgy
-         HFqrbt6m8CMQuDgcdD1axbSlHtXdyLt20Ihbv1A+YxBC0XWgZKjUWP/u4edhustvXq
-         Dz3ccCfHzzevobnqKzd0RSJY8ebKO3+aNmqhM1fA=
-Received: from [10.79.195.129] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 38152601D4;
-        Fri, 16 Nov 2018 11:09:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542366603;
-        bh=L+sI64zN6g9GU48P34+iV6wA6/j591jkPrcmQVA3mQE=;
-        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
-        b=NUTEy3DYwt7jK1pxn622/jbPhovr7AVtQpVVI6G6mZGLv36Qnv6VuJ+QhLxMpN44D
-         JVwJfdcoaLbBtyRar7d9dtJZ5o8AxBkHXQhJ9IiSXVnnUzRY4Eq3skQyk4oGzZYeAj
-         u0JW0VCBKy5Fab+k+kVSllqsR8LgNRfiL+Mg9uOA=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 38152601D4
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
-Subject: Re: [PATCH] boot_constraint: Add constraints for earlycon on
- dragonboard 410c
-To:     Viresh Kumar <viresh.kumar@linaro.org>
-Cc:     Viresh Kumar <vireshk@kernel.org>, srinivas.kandagatla@linaro.org,
-        Stephen Boyd <sboyd@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Joel Fernandes <joel@joelfernandes.org>,
-        Rajendra Nayak <rnayak@codeaurora.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Vivek Gautam <vivek.gautam@codeaurora.org>,
-        Sibi Sankar <sibis@codeaurora.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org
-References: <20181116104607.26671-1-saiprakash.ranjan@codeaurora.org>
- <20181116105317.5zpbzhgt5cnssuki@vireshk-i7>
-From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
-Message-ID: <83416a56-df25-caad-29be-a722f93c3008@codeaurora.org>
-Date:   Fri, 16 Nov 2018 16:39:56 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.1
+        Fri, 16 Nov 2018 16:24:07 -0500
+Received: from [IPv6:2001:983:e9a7:1:e533:d3d4:7e75:f169] ([IPv6:2001:983:e9a7:1:e533:d3d4:7e75:f169])
+        by smtp-cloud9.xs4all.net with ESMTPA
+        id Nc2hgd39yQPpyNc2igrcxr; Fri, 16 Nov 2018 12:12:12 +0100
+Subject: Re: [PATCH v5 0/2] media: platform: Add Aspeed Video Engine Driver
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+To:     Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
+Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
+        robh+dt@kernel.org, andrew@aj.id.au, linux-aspeed@lists.ozlabs.org,
+        devicetree@vger.kernel.org, mark.rutland@arm.com,
+        Eddie James <eajames@linux.vnet.ibm.com>
+References: <1542056431-18146-1-git-send-email-eajames@linux.ibm.com>
+ <9b21fb44-2248-7921-2205-4a3f43d22d4b@xs4all.nl>
+Message-ID: <e4244292-e051-7f9e-ae11-6d995700aa39@xs4all.nl>
+Date:   Fri, 16 Nov 2018 12:12:07 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-In-Reply-To: <20181116105317.5zpbzhgt5cnssuki@vireshk-i7>
-Content-Type: text/plain; charset=utf-8; format=flowed
+In-Reply-To: <9b21fb44-2248-7921-2205-4a3f43d22d4b@xs4all.nl>
+Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfGuKYZe50RCoHRD/HjrMHjkW1FvtrrnN0nxQAp4/Lyhf4T6HxI70m5YJDhZLWp7KUUmm8WcwAT9cd+PUSJMO5ckmF7GKSZV6+gXDgOJgY+or5nUX+0Lb
+ /2MopWL37AarGXLNq0cN50OZpzhdRaUHJ5S842mf4EtQCzBoEIGC8JjibshLZzVN2reMyb4avkgn39uk7j9gbQc4bD80wIypN/ShrrKTE4zRNGauY+Llr3yi
+ s3Ntc8BR6dekSuNlA8kKoGXdnTxUXXaJswuo9vGkCFdNja62RaipAH7Jx4Q40v/jogID5iKTXXse68pI9Y2pB4QN+lMZL/LWBvGDHYrF1MDDdgjQVuTahurn
+ oSecH8EWedm8TrQfF4wg2r2AeeUyRspIMWsNK5YdT5vFTyNBQH/Zq3vXrIPnTUsL9Pqp8oLlLrea+QN8BjJkYgV9W4ToA/T32cvqViuqdi/i/eMeFqGVQq5d
+ Ndokop2XoS6eeqC/qrtpFJqLfQ8edrRq7LeA90sJIkL/Kqb7AtbS+w3Gwg1zXhcdfrAqyrwpApYIcgbREGDmcB2XZUZlqSmEzWDW81D5OMC6pb04d1DWwl3Z
+ ZOU=
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/16/2018 4:23 PM, Viresh Kumar wrote:
-> Hi,
+On 11/15/2018 10:20 AM, Hans Verkuil wrote:
+> On 11/12/2018 10:00 PM, Eddie James wrote:
+>> From: Eddie James <eajames@linux.vnet.ibm.com>
+>>
+>> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
+>> can capture and compress video data from digital or analog sources. With
+>> the Aspeed chip acting as a service processor, the Video Engine can
+>> capture the host processor graphics output.
+>>
+>> This series adds a V4L2 driver for the VE, providing the usual V4L2 streaming
+>> interface by way of videobuf2. Each frame, the driver triggers the hardware to
+>> capture the host graphics output and compress it to JPEG format.
 > 
-> On 16-11-18, 16:16, Sai Prakash Ranjan wrote:
->> iface clock is shared with other drivers, which may reconfigure
->> this before the serial driver comes up. This may lead to
->> crashes like the one below where GCC_BLSP1_AHB_CLK is same across
->> multiple drivers like bam dma.
->>
->> <0>[    3.164471] Internal error: synchronous external abort: 96000010 [#1] PREEMPT SMP
->> <4>[    3.164479] Modules linked in:
->> <4>[    3.164495] CPU: 2 PID: 1 Comm: swapper/0 Not tainted 4.19.0-rc8-00008-ge033b9909fff-dirty #175
->> <4>[    3.164501] Hardware name: Qualcomm Technologies, Inc. APQ 8016 SBC (DT)
->> <4>[    3.164508] pstate: 40000085 (nZcv daIf -PAN -UAO)
->> <4>[    3.164514] pc : msm_read.isra.2+0x20/0x50
->> <4>[    3.164520] lr : msm_read.isra.2+0x1c/0x50
->> <4>[    3.164526] sp : ffff000008033a50
->> <4>[    3.164531] x29: ffff000008033a50 x28: ffff000009486018
->> <4>[    3.164548] x27: 0000000000000001 x26: ffff7dfffe7ff070
->> <4>[    3.164565] x25: 0000000000000034 x24: ffff000009486000
->> <4>[    3.164582] x23: 0000000000000000 x22: ffff00000978e190
->> <4>[    3.164599] x21: ffff0000095e8228 x20: 0000000000000034
->> <4>[    3.164616] x19: ffff7dfffe7ff008 x18: ffffffffffffffff
->> <4>[    3.164632] x17: 0000000000000000 x16: 0000000000000000
->> <4>[    3.164649] x15: ffff0000094a96c8 x14: ffff00008978e6bf
->> <4>[    3.164666] x13: ffff00000978e6cd x12: 0000000000000038
->> <4>[    3.164683] x11: ffff0000094c6000 x10: 0000000000000c24
->> <4>[    3.164699] x9 : ffff80003c89b400 x8 : ffff000008033970
->> <4>[    3.164716] x7 : ffff80000eb04100 x6 : 00000000000af304
->> <4>[    3.164732] x5 : 0000000000000c40 x4 : ffff80003c06f000
->> <4>[    3.164750] x3 : ffff80003c89b498 x2 : 0000000000000000
->> <4>[    3.164766] x1 : ffff80003ca68000 x0 : 0000000000000800
->> <0>[    3.164785] Process swapper/0 (pid: 1, stack limit = 0x(____ptrval____))
->> <4>[    3.164791] Call trace:
->> <4>[    3.164797]  msm_read.isra.2+0x20/0x50
->> <4>[    3.164804]  msm_reset_dm_count+0x44/0x80
->> <4>[    3.164810]  __msm_console_write+0x1c8/0x1d0
->> <4>[    3.164816]  msm_serial_early_write_dm+0x3c/0x50
->> <4>[    3.164823]  console_unlock.part.6+0x468/0x528
->> <4>[    3.164829]  vprintk_emit+0x210/0x218
->> <4>[    3.164835]  vprintk_default+0x48/0x58
->> <4>[    3.164841]  vprintk_func+0xf0/0x1c0
->> <4>[    3.164847]  printk+0x74/0x94
->> <4>[    3.164853]  sci_init+0x24/0x3c
->> <4>[    3.164859]  do_one_initcall+0x54/0x248
->> <4>[    3.164866]  kernel_init_freeable+0x210/0x378
->> <4>[    3.164872]  kernel_init+0x18/0x118
->> <4>[    3.164878]  ret_from_fork+0x10/0x1c
->> <0>[    3.164884] Code: aa1e03e0 8b214273 97e616f7 d503201f (b9400260)
->>
->> Link: https://lore.kernel.org/lkml/1cae8f10-55f5-20ce-9105-30af6f88bd6e@codeaurora.org/
->> Signed-off-by: Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
->>
->> ---
->>
->> This is purely dependent on boot constraint subsystem by Viresh.
->>
->> Link: https://lore.kernel.org/lkml/cover.1519380923.git.viresh.kumar@linaro.org/
->> ---
->>   drivers/soc/qcom/boot_constraint.c | 15 +++++++++++++++
->>   1 file changed, 15 insertions(+)
+> I reviewed the driver, and there is still confusion about active timings and
+> detected timings. You are really close, but it is still not right.
 > 
-> Nice to see that the new subsystem has fixed your issue as well and
-> thanks for the patch. I am afraid though that this patch isn't going
-> to get merged anywhere as the subsystem isn't merged yet as Greg
-> wasn't too confident [1] about it. We are looking for more use-cases
-> apart from earlycon and clcd.
+> The timings returned by G_DV_TIMINGS should never change, unless by calling
+> S_DV_TIMINGS. The format returned by G_FMT should never change, unless by
+> calling S_DV_TIMINGS (which implicitly changes the format) or S_FMT.
 > 
+> Timings changes from the video or calling QUERY_DV_TIMINGS should have NO
+> effect on the timings/format returned by G_DV_TIMINGS/G_FMT.
+> 
+> Obviously, if the video timings change, then streaming will halt and an event
+> is issued so userspace can take action.
+> 
+>>
+>> v4l-utils HEAD dd3ff81f58c4e1e6f33765dc61ad33c48ae6bb07
+>>
+>> v4l2-compliance SHA: not available, 32 bits
+> 
+> <snip>
+> 
+>> Control ioctls (Input 0):
+>> 	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
+>> 	test VIDIOC_QUERYCTRL: OK
+>> 	test VIDIOC_G/S_CTRL: OK
+>> 	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
+>> 		fail: v4l2-test-controls.cpp(823): failed to find event for control 'Chroma Subsampling'
+> 
+> That's weird. It's not clear to me why this fails.
+
+Ah, this is caused by a bug in our tree. It's fixed by this patch:
+
+https://patchwork.linuxtv.org/patch/52790/
+
+Regards,
+
+	Hans
+
+> 
+>> 	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
+>> 	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
+>> 	Standard Controls: 3 Private Controls: 0
+>>
+>> Format ioctls (Input 0):
+>> 	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
+>> 	test VIDIOC_G/S_PARM: OK
+>> 	test VIDIOC_G_FBUF: OK (Not Supported)
+>> 	test VIDIOC_G_FMT: OK
+>> 	test VIDIOC_TRY_FMT: OK
+>> 	test VIDIOC_S_FMT: OK
+>> 	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
+>> 	test Cropping: OK (Not Supported)
+>> 	test Composing: OK (Not Supported)
+>> 	test Scaling: OK (Not Supported)
+>>
+>> Codec ioctls (Input 0):
+>> 	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
+>> 	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
+>> 	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
+>>
+>> Buffer ioctls (Input 0):
+>> 		fail: v4l2-test-buffers.cpp(422): dmabuf_valid ^ !!(caps & V4L2_BUF_CAP_SUPPORTS_DMABUF)
+> 
+> I updated v4l2-compliance, as this test was a bit too strict.
+> 
+>> 	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: FAIL
+>> 	test VIDIOC_EXPBUF: OK (Not Supported)
+>>
+>> Test input 0:
+>>
+>> Streaming ioctls:
+>> 	test read/write: OK
+>> 	test blocking wait: OK
+>> 	test MMAP: OK                                     
+>> 	test USERPTR: OK (Not Supported)
+>> 		fail: v4l2-test-buffers.cpp(1102): exp_q.reqbufs(expbuf_node, q.g_buffers())
+>> 		fail: v4l2-test-buffers.cpp(1192): setupDmaBuf(expbuf_node, node, q, exp_q)
+> 
+> You need to add:
+> 
+> 	.vidioc_expbuf = vb2_ioctl_expbuf,
+> 
+> to aspeed_video_ioctl_ops.
+> 
+>> 	test DMABUF: FAIL
+>>
+>> Total: 48, Succeeded: 45, Failed: 3, Warnings: 0
+>>
+>> The apparent rate of change to the v4l2/vb2 API makes it difficult to pass
+>> these tests. None of the failing tests even ran last time I submitted my
+>> series. And V4L2_BUF_CAP_SUPPORTS_DMABUF is undefined in 4.19.
+> 
+> When developing new drivers you should use the master branch of
+> https://git.linuxtv.org/media_tree.git/
+> 
+> The v4l-utils repo is kept in sync with the latest code from that master branch.
+> 
+> Regards,
+> 
+> 	Hans
+> 
+>>
+>> Changes since v4:
+>>  - Set real min and max resolution in enum_dv_timings
+>>  - Add check for vb2_is_busy before settings the timings
+>>  - Set max frame rate to the actual max rather than max + 1
+>>  - Correct the input status to 0.
+>>  - Rework resolution change to only set the relevant h/w regs during startup or
+>>    when set_timings is called.
+>>
+>> Changes since v3:
+>>  - Switch update reg function to use u32 clear rather than unsigned long mask
+>>  - Add timing information from host VGA signal
+>>  - Fix binding documentation mispelling
+>>  - Fix upper case hex values
+>>  - Add wait_prepare and wait_finish
+>>  - Set buffer state to queued (rather than error) if streaming fails to start
+>>  - Switch engine busy print statement to error
+>>  - Removed a couple unecessary type assignments in v4l2 ioctls
+>>  - Added query_dv_timings, fixed get_dv_timings
+>>  - Corrected source change event to fire if and only if size actually changes
+>>  - Locked open and release
+>>
+>> Changes since v2:
+>>  - Switch to streaming interface. This involved a lot of changes.
+>>  - Rework memory allocation due to using videobuf2 buffers, but also only
+>>    allocate the necessary size of source buffer rather than the max size
+>>
+>> Changes since v1:
+>>  - Removed le32_to_cpu calls for JPEG header data
+>>  - Reworked v4l2 ioctls to be compliant.
+>>  - Added JPEG controls
+>>  - Updated devicetree docs according to Rob's suggestions.
+>>  - Added myself to MAINTAINERS
+>>
+>> Eddie James (2):
+>>   dt-bindings: media: Add Aspeed Video Engine binding documentation
+>>   media: platform: Add Aspeed Video Engine driver
+>>
+>>  .../devicetree/bindings/media/aspeed-video.txt     |   26 +
+>>  MAINTAINERS                                        |    8 +
+>>  drivers/media/platform/Kconfig                     |    9 +
+>>  drivers/media/platform/Makefile                    |    1 +
+>>  drivers/media/platform/aspeed-video.c              | 1711 ++++++++++++++++++++
+>>  5 files changed, 1755 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
+>>  create mode 100644 drivers/media/platform/aspeed-video.c
+>>
 > 
 
-Hi Viresh,
-
-Thanks for your time.
-
-I wanted to get this patch out so that once we have enough use cases,
-maybe we can add this as well.
-
-Thanks,
-Sai
-
--- 
-QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
-of Code Aurora Forum, hosted by The Linux Foundation
