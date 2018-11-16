@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05417C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:49:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7A33FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:49:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C31E22089D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:49:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C31E22089D
+	by mail.kernel.org (Postfix) with ESMTP id 4E1252089D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:49:17 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E1252089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389780AbeKPXBZ (ORCPT
+        id S2389762AbeKPXBZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 16 Nov 2018 18:01:25 -0500
-Received: from mx07-00178001.pphosted.com ([62.209.51.94]:44962 "EHLO
+Received: from mx07-00178001.pphosted.com ([62.209.51.94]:65510 "EHLO
         mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1728182AbeKPXBX (ORCPT
+        by vger.kernel.org with ESMTP id S1727997AbeKPXBW (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 18:01:23 -0500
-Received: from pps.filterd (m0046037.ppops.net [127.0.0.1])
-        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAGCiLW7018051;
-        Fri, 16 Nov 2018 13:48:52 +0100
+        Fri, 16 Nov 2018 18:01:22 -0500
+Received: from pps.filterd (m0046668.ppops.net [127.0.0.1])
+        by mx07-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAGCiVdQ011987;
+        Fri, 16 Nov 2018 13:48:53 +0100
 Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
-        by mx07-00178001.pphosted.com with ESMTP id 2nr7cyqn5p-1
+        by mx07-00178001.pphosted.com with ESMTP id 2nsx068280-1
         (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
-        Fri, 16 Nov 2018 13:48:52 +0100
+        Fri, 16 Nov 2018 13:48:53 +0100
 Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
-        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 8880431;
-        Fri, 16 Nov 2018 12:48:51 +0000 (GMT)
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 5BA9E38;
+        Fri, 16 Nov 2018 12:48:52 +0000 (GMT)
 Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
-        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 7055B2B44;
-        Fri, 16 Nov 2018 12:48:51 +0000 (GMT)
-Received: from localhost (10.75.127.45) by SFHDAG5NODE2.st.com (10.75.127.14)
- with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 16 Nov 2018 13:48:50
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 4142E2B44;
+        Fri, 16 Nov 2018 12:48:52 +0000 (GMT)
+Received: from localhost (10.75.127.44) by SFHDAG5NODE2.st.com (10.75.127.14)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 16 Nov 2018 13:48:51
  +0100
 From:   Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 To:     Dan Williams <dan.j.williams@intel.com>,
@@ -49,15 +49,15 @@ To:     Dan Williams <dan.j.williams@intel.com>,
         <linux-arm-kernel@lists.infradead.org>,
         <linux-kernel@vger.kernel.org>
 CC:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
-Subject: [PATCH v1 2/3] dmaengine: stm32-dmamux: Add PM Runtime support
-Date:   Fri, 16 Nov 2018 13:48:40 +0100
-Message-ID: <1542372521-18073-3-git-send-email-pierre-yves.mordret@st.com>
+Subject: [PATCH v1 3/3] dmaengine: stm32-mdma: Add PM Runtime support
+Date:   Fri, 16 Nov 2018 13:48:41 +0100
+Message-ID: <1542372521-18073-4-git-send-email-pierre-yves.mordret@st.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542372521-18073-1-git-send-email-pierre-yves.mordret@st.com>
 References: <1542372521-18073-1-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-Originating-IP: [10.75.127.45]
+X-Originating-IP: [10.75.127.44]
 X-ClientProxiedBy: SFHDAG6NODE2.st.com (10.75.127.17) To SFHDAG5NODE2.st.com
  (10.75.127.14)
 X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-16_06:,,
@@ -67,7 +67,7 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use pm_runtime engine for clock management purpose.
+Use pm_runtime engine for clock management purpose
 
 Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 ---
@@ -76,106 +76,95 @@ Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
        * Initial
 ---
 ---
- drivers/dma/stm32-dmamux.c | 58 +++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 47 insertions(+), 11 deletions(-)
+ drivers/dma/stm32-mdma.c | 52 ++++++++++++++++++++++++++++++++++++++++++------
+ 1 file changed, 46 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/dma/stm32-dmamux.c b/drivers/dma/stm32-dmamux.c
-index b922db9..a671191 100644
---- a/drivers/dma/stm32-dmamux.c
-+++ b/drivers/dma/stm32-dmamux.c
-@@ -28,6 +28,7 @@
- #include <linux/module.h>
+diff --git a/drivers/dma/stm32-mdma.c b/drivers/dma/stm32-mdma.c
+index 390e4ca..ac0301b 100644
+--- a/drivers/dma/stm32-mdma.c
++++ b/drivers/dma/stm32-mdma.c
+@@ -37,6 +37,7 @@
  #include <linux/of_device.h>
  #include <linux/of_dma.h>
+ #include <linux/platform_device.h>
 +#include <linux/pm_runtime.h>
  #include <linux/reset.h>
  #include <linux/slab.h>
- #include <linux/spinlock.h>
-@@ -79,8 +80,7 @@ static void stm32_dmamux_free(struct device *dev, void *route_data)
- 	stm32_dmamux_write(dmamux->iomem, STM32_DMAMUX_CCR(mux->chan_id), 0);
- 	clear_bit(mux->chan_id, dmamux->dma_inuse);
  
--	if (!IS_ERR(dmamux->clk))
--		clk_disable(dmamux->clk);
-+	pm_runtime_put_sync(dev);
+@@ -1456,15 +1457,13 @@ static int stm32_mdma_alloc_chan_resources(struct dma_chan *c)
+ 		return -ENOMEM;
+ 	}
  
- 	spin_unlock_irqrestore(&dmamux->lock, flags);
+-	ret = clk_prepare_enable(dmadev->clk);
+-	if (ret < 0) {
+-		dev_err(chan2dev(chan), "clk_prepare_enable failed: %d\n", ret);
++	ret = pm_runtime_get_sync(dmadev->ddev.dev);
++	if (ret < 0)
+ 		return ret;
+-	}
  
-@@ -146,13 +146,10 @@ static void *stm32_dmamux_route_allocate(struct of_phandle_args *dma_spec,
+ 	ret = stm32_mdma_disable_chan(chan);
+ 	if (ret < 0)
+-		clk_disable_unprepare(dmadev->clk);
++		pm_runtime_put(dmadev->ddev.dev);
  
- 	/* Set dma request */
- 	spin_lock_irqsave(&dmamux->lock, flags);
--	if (!IS_ERR(dmamux->clk)) {
--		ret = clk_enable(dmamux->clk);
--		if (ret < 0) {
--			spin_unlock_irqrestore(&dmamux->lock, flags);
--			dev_err(&pdev->dev, "clk_prep_enable issue: %d\n", ret);
--			goto error;
--		}
-+	ret = pm_runtime_get_sync(&pdev->dev);
+ 	return ret;
+ }
+@@ -1484,7 +1483,7 @@ static void stm32_mdma_free_chan_resources(struct dma_chan *c)
+ 		spin_unlock_irqrestore(&chan->vchan.lock, flags);
+ 	}
+ 
+-	clk_disable_unprepare(dmadev->clk);
++	pm_runtime_put(dmadev->ddev.dev);
+ 	vchan_free_chan_resources(to_virt_chan(c));
+ 	dmam_pool_destroy(chan->desc_pool);
+ 	chan->desc_pool = NULL;
+@@ -1597,6 +1596,12 @@ static int stm32_mdma_probe(struct platform_device *pdev)
+ 		return ret;
+ 	}
+ 
++	ret = clk_prepare_enable(dmadev->clk);
 +	if (ret < 0) {
-+		spin_unlock_irqrestore(&dmamux->lock, flags);
-+		goto error;
++		dev_err(&pdev->dev, "clk_prep_enable error: %d\n", ret);
++		return ret;
++	}
++
+ 	dmadev->rst = devm_reset_control_get(&pdev->dev, NULL);
+ 	if (!IS_ERR(dmadev->rst)) {
+ 		reset_control_assert(dmadev->rst);
+@@ -1668,6 +1673,10 @@ static int stm32_mdma_probe(struct platform_device *pdev)
  	}
- 	spin_unlock_irqrestore(&dmamux->lock, flags);
  
-@@ -254,6 +251,7 @@ static int stm32_dmamux_probe(struct platform_device *pdev)
- 		dev_warn(&pdev->dev, "DMAMUX defaulting on %u requests\n",
- 			 stm32_dmamux->dmamux_requests);
- 	}
-+	pm_runtime_get_noresume(&pdev->dev);
- 
- 	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
- 	iomem = devm_ioremap_resource(&pdev->dev, res);
-@@ -282,6 +280,8 @@ static int stm32_dmamux_probe(struct platform_device *pdev)
- 	stm32_dmamux->dmarouter.route_free = stm32_dmamux_free;
- 
- 	platform_set_drvdata(pdev, stm32_dmamux);
+ 	platform_set_drvdata(pdev, dmadev);
 +	pm_runtime_set_active(&pdev->dev);
 +	pm_runtime_enable(&pdev->dev);
- 
- 	if (!IS_ERR(stm32_dmamux->clk)) {
- 		ret = clk_prepare_enable(stm32_dmamux->clk);
-@@ -291,17 +291,52 @@ static int stm32_dmamux_probe(struct platform_device *pdev)
- 		}
- 	}
- 
 +	pm_runtime_get_noresume(&pdev->dev);
-+
- 	/* Reset the dmamux */
- 	for (i = 0; i < stm32_dmamux->dma_requests; i++)
- 		stm32_dmamux_write(stm32_dmamux->iomem, STM32_DMAMUX_CCR(i), 0);
- 
--	if (!IS_ERR(stm32_dmamux->clk))
--		clk_disable(stm32_dmamux->clk);
 +	pm_runtime_put(&pdev->dev);
  
- 	return of_dma_router_register(node, stm32_dmamux_route_allocate,
- 				     &stm32_dmamux->dmarouter);
+ 	dev_info(&pdev->dev, "STM32 MDMA driver registered\n");
+ 
+@@ -1677,11 +1686,42 @@ static int stm32_mdma_probe(struct platform_device *pdev)
+ 	return ret;
  }
  
 +#ifdef CONFIG_PM
-+static int stm32_dmamux_runtime_suspend(struct device *dev)
++static int stm32_mdma_runtime_suspend(struct device *dev)
 +{
-+	struct platform_device *pdev =
-+		container_of(dev, struct platform_device, dev);
-+	struct stm32_dmamux_data *stm32_dmamux = platform_get_drvdata(pdev);
++	struct stm32_mdma_device *dmadev = dev_get_drvdata(dev);
 +
-+	clk_disable_unprepare(stm32_dmamux->clk);
++	clk_disable_unprepare(dmadev->clk);
 +
 +	return 0;
 +}
 +
-+static int stm32_dmamux_runtime_resume(struct device *dev)
++static int stm32_mdma_runtime_resume(struct device *dev)
 +{
-+	struct platform_device *pdev =
-+		container_of(dev, struct platform_device, dev);
-+	struct stm32_dmamux_data *stm32_dmamux = platform_get_drvdata(pdev);
++	struct stm32_mdma_device *dmadev = dev_get_drvdata(dev);
 +	int ret;
 +
-+	ret = clk_prepare_enable(stm32_dmamux->clk);
++	ret = clk_prepare_enable(dmadev->clk);
 +	if (ret) {
-+		dev_err(&pdev->dev, "failed to prepare_enable clock\n");
++		dev_err(dev, "failed to prepare_enable clock\n");
 +		return ret;
 +	}
 +
@@ -183,19 +172,17 @@ index b922db9..a671191 100644
 +}
 +#endif
 +
-+static const struct dev_pm_ops stm32_dmamux_pm_ops = {
-+	SET_RUNTIME_PM_OPS(stm32_dmamux_runtime_suspend,
-+			   stm32_dmamux_runtime_resume, NULL)
++static const struct dev_pm_ops stm32_mdma_pm_ops = {
++	SET_RUNTIME_PM_OPS(stm32_mdma_runtime_suspend,
++			   stm32_mdma_runtime_resume, NULL)
 +};
 +
- static const struct of_device_id stm32_dmamux_match[] = {
- 	{ .compatible = "st,stm32h7-dmamux" },
- 	{},
-@@ -312,6 +347,7 @@ static struct platform_driver stm32_dmamux_driver = {
+ static struct platform_driver stm32_mdma_driver = {
+ 	.probe = stm32_mdma_probe,
  	.driver = {
- 		.name = "stm32-dmamux",
- 		.of_match_table = stm32_dmamux_match,
-+		.pm = &stm32_dmamux_pm_ops,
+ 		.name = "stm32-mdma",
+ 		.of_match_table = stm32_mdma_of_match,
++		.pm = &stm32_mdma_pm_ops,
  	},
  };
  
