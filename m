@@ -2,218 +2,103 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 05F95C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:14:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 44E9EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:18:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AFECC208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:14:22 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0475C208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:18:49 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="il4+Fhki"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AFECC208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QeVE8NIZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0475C208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389363AbeKPRZa (ORCPT
+        id S2389139AbeKPR35 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 12:25:30 -0500
-Received: from conssluserg-01.nifty.com ([210.131.2.80]:24450 "EHLO
-        conssluserg-01.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbeKPRZ3 (ORCPT
+        Fri, 16 Nov 2018 12:29:57 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:35337 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727380AbeKPR34 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 12:25:29 -0500
-Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com [209.85.217.52]) (authenticated)
-        by conssluserg-01.nifty.com with ESMTP id wAG7E9MA025107;
-        Fri, 16 Nov 2018 16:14:10 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-01.nifty.com wAG7E9MA025107
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542352450;
-        bh=VwAIx3Eo70JuM1DePhqDSXkBGEkG28c2bnoZdHYjPng=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=il4+Fhki/Ny6Y2kEvKB4T7WQIBHEQ5GAChASHid4ELRP68uEW0tnEVegmfNLVuE33
-         TbiUOGOJZaINu4Dqa0TNgVJfP1kGNDKR0l//CElICazrF2VD7BdTplW4qb0yJYd4BI
-         LfdZ3CMNwzHDR3jb64I39P7DQJwsdwVDQM6bMA5/cQVqW+OmNuo61UmCIFXhknfUtL
-         Kjv5vNeDjVB2CHUajzWyA5htGPmZMKDfcX+MlvOKA50KmcXLOf2tl7NqOCgJhyPjg9
-         Dl8+XiYnOUximc2zTtsOesi/x4n2GzQ/UARHwGPhCJCC9Na+DBquuB5+y8SkYIZNki
-         Fkz1mX59RCWMA==
-X-Nifty-SrcIP: [209.85.217.52]
-Received: by mail-vs1-f52.google.com with SMTP id p74so13227762vsc.0;
-        Thu, 15 Nov 2018 23:14:10 -0800 (PST)
-X-Gm-Message-State: AGRZ1gLQAha5jCZ57TzJzgI985JbOdRrdPuNirrj/vvBML7Evn0G43lj
-        jj3AomVKIxrcNA0tceZvxLD99aHIYPJSlBPGW/c=
-X-Google-Smtp-Source: AJdET5evuWJ7Ew50nh965V6UMiSxOOwvoOENawpCbUPrwDvIUTlGYJPNaAUhrzvfaoh0rTKZBZUZVzE7bZWP2xsuL3Q=
-X-Received: by 2002:a67:385a:: with SMTP id f87mr4064061vsa.179.1542352449248;
- Thu, 15 Nov 2018 23:14:09 -0800 (PST)
+        Fri, 16 Nov 2018 12:29:56 -0500
+Received: by mail-ed1-f68.google.com with SMTP id x30so14058689edx.2;
+        Thu, 15 Nov 2018 23:18:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=PynQtPsQitcPlrcDRkdValWohZuUwASdVdmRFgVW5lU=;
+        b=QeVE8NIZWCa7eI+rCTllC+iH7kin36hXlmxzYlgFS7CvMQFmY+rgtBEufOT0BWXnoG
+         RwKU7mKI4aZsbJ7ijuNxC05Eh3QbSs2+cS3Pi4qR2bKZZwFZqIuSZrnAfLDkrmKe4KG9
+         5jIvnPPOCLmwSeEbyN/A+BlZVSwSCbgNHQm89n9z0qN21C9nRRLuMwgiIjps4A/l54Kz
+         GFTnzbHXD5DQkZ/q9ypTaGail4GeZJiQ02840TOdw6vgTL9F+Q3RLtFXCyk8DJHyWp4+
+         CPRCrrSN7NeY7DUP1qOzRcKnpjDjpY4nw5gHs8rGRx5+CKiUGiiGTzS1T7YPd+zIyC8C
+         +9ww==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=PynQtPsQitcPlrcDRkdValWohZuUwASdVdmRFgVW5lU=;
+        b=uUEicWIk1CIurLsBH66YhyjhXYiLnPCUAlU8g+jwVddjYoOfgoVYqHfTQfJc2WNwP1
+         /47xH7JKy2WWPXGOoi9dbHovvmOwQ27273FImsJ9jrAXHqvrqUClLy77sKaYhlFJ9Di8
+         9VmSI5xLDpZQDHPA4citH+ZsHNXVhsRjPrHl1d3x3W0OelzFNAPJP3FiPYOparlqubfV
+         pHNXnkQV5d/vH4pAwlSxYd8zioEGVm2ogLPCC1EyRbKkMq1KkIilxWURbgS2gSjUMptG
+         kKslYKTENKZPTdMJXnzqlumyhSmyP3dfNNb3c39+RC7Q96rN4QbQEGCWhfzcJuSdfzbt
+         hkRw==
+X-Gm-Message-State: AGRZ1gLJWZEaSO6VyTH5zDfwsEVJ0jhJJFp5cqThG77cUl5anAly8yuy
+        n4h31DjSWWjBZg1PwG3cxVT40E+38FQsORdcWhs=
+X-Google-Smtp-Source: AJdET5cK1j1VohuO7/EIt3xz87BH7Tp6nhDJ63ctbhNGhvXKjisJ/RWY0YsQq26R3Zjei4lmNRjP67/IUMh9+PPYBcQ=
+X-Received: by 2002:a17:906:2da9:: with SMTP id g9-v6mr7717103eji.67.1542352725649;
+ Thu, 15 Nov 2018 23:18:45 -0800 (PST)
 MIME-Version: 1.0
-References: <1542270435-11181-1-git-send-email-yamada.masahiro@socionext.com>
- <1542270435-11181-5-git-send-email-yamada.masahiro@socionext.com> <nycvar.YSQ.7.76.1811152346510.1993@knanqh.ubzr>
-In-Reply-To: <nycvar.YSQ.7.76.1811152346510.1993@knanqh.ubzr>
-From:   Masahiro Yamada <yamada.masahiro@socionext.com>
-Date:   Fri, 16 Nov 2018 16:13:33 +0900
-X-Gmail-Original-Message-ID: <CAK7LNATT7PYvH-z572MGSjXbCybAW0TcNebz9CgGM4J07aMOvw@mail.gmail.com>
-Message-ID: <CAK7LNATT7PYvH-z572MGSjXbCybAW0TcNebz9CgGM4J07aMOvw@mail.gmail.com>
-Subject: Re: [PATCH 4/8] kbuild: simplify dependency generation for CONFIG_TRIM_UNUSED_KSYMS
-To:     Nicolas Pitre <nicolas.pitre@linaro.org>
-Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
-        Sam Ravnborg <sam@ravnborg.org>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Michael Ellerman <mpe@ellerman.id.au>,
+References: <20181115181324.26784-1-srinivas.kandagatla@linaro.org> <20181115181324.26784-2-srinivas.kandagatla@linaro.org>
+In-Reply-To: <20181115181324.26784-2-srinivas.kandagatla@linaro.org>
+From:   Daniel Baluta <daniel.baluta@gmail.com>
+Date:   Fri, 16 Nov 2018 09:18:34 +0200
+Message-ID: <CAEnQRZBGQX7C2=fUr-6et6Wh=fOgX3nB=eFYG959XiuDMqbaKg@mail.gmail.com>
+Subject: Re: [alsa-devel] [PATCH v3 1/5] ALSA: soc-compress: add support to snd_compr_set_runtime_buffer()
+To:     srinivas.kandagatla@linaro.org
+Cc:     Mark Brown <broonie@kernel.org>, vkoul@kernel.org,
+        Devicetree List <devicetree@vger.kernel.org>,
+        Linux-ALSA <alsa-devel@alsa-project.org>,
+        bgoswami@codeaurora.org, Takashi Iwai <tiwai@suse.com>,
         Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Michal Marek <michal.lkml@markovi.net>,
-        Will Deacon <will.deacon@arm.com>,
-        Ingo Molnar <mingo@kernel.org>,
-        Ard Biesheuvel <ard.biesheuvel@linaro.org>
+        Liam Girdwood <lgirdwood@gmail.com>,
+        Rob Herring <robh+dt@kernel.org>, rohitkr@codeaurora.org,
+        srini@kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 2:13 PM Nicolas Pitre <nicolas.pitre@linaro.org> wrote:
->
-> On Thu, 15 Nov 2018, Masahiro Yamada wrote:
->
-> > My main motivation of this commit is to clean up scripts/Kbuild.include
-> > and scripts/Makefile.build.
-> >
-> > Currently, CONFIG_TRIM_UNUSED_KSYMS works with a tricky gimmick;
-> > possibly exported symbols are detected by letting $(CPP) replace
-> > EXPORT_SYMBOL* with a special string '=== __KSYM_*===', which is
-> > post-processed by sed, and passed to fixdep. The extra preprocessing
-> > is costly, and hacking cmd_and_fixdep is ugly.
-> >
-> > I came up with a new way to find exported symbols; insert a dummy
-> > symbol __ksym_marker_* to each potentially exported symbol. Those
-> > dummy symbols are picked up by $(NM), post-processed by sed, then
-> > appended to .*.cmd files. I collected the post-process part to a
-> > new shell script scripts/gen_ksymdeps.sh for readability. The dummy
-> > symbols are put into the .discard.* section so that the linker
-> > script rips them off the final vmlinux or modules.
->
-> Brilliant!  I really like it.
->
-> Minor comments below.
->
-> > diff --git a/include/asm-generic/export.h b/include/asm-generic/export.h
-> > index 4d73e6e..294d6ae 100644
-> > --- a/include/asm-generic/export.h
-> > +++ b/include/asm-generic/export.h
-> > @@ -59,16 +59,19 @@ __kcrctab_\name:
-> >  .endm
-> >  #undef __put
-> >
-> > -#if defined(__KSYM_DEPS__)
-> > -
-> > -#define __EXPORT_SYMBOL(sym, val, sec)       === __KSYM_##sym ===
-> > -
-> > -#elif defined(CONFIG_TRIM_UNUSED_KSYMS)
-> > +#if defined(CONFIG_TRIM_UNUSED_KSYMS)
-> >
-> >  #include <linux/kconfig.h>
-> >  #include <generated/autoksyms.h>
-> >
-> > +.macro __ksym_marker sym
-> > +     .section ".discard.ksym","a"
-> > +__ksym_marker_\sym:
-> > +      .previous
->
-> Does this work as intended? I have vague memories about having problems
-> with sections being discarded when they don't allocate any space.
+Hi Srinivas,
 
-What I can tell is, this patch produces the same size kernel
-(after dropping debug info by 'strip' command).
+One minor comment:
 
+<snip>
 
-> > +.endm
-> > +
-> >  #define __EXPORT_SYMBOL(sym, val, sec)                               \
-> > +     __ksym_marker sym;                                      \
-> >       __cond_export_sym(sym, val, sec, __is_defined(__KSYM_##sym))
-> >  #define __cond_export_sym(sym, val, sec, conf)                       \
-> >       ___cond_export_sym(sym, val, sec, conf)
-> > diff --git a/include/linux/export.h b/include/linux/export.h
-> > index ce764a5..0413a3d 100644
-> > --- a/include/linux/export.h
-> > +++ b/include/linux/export.h
-> > @@ -92,22 +92,22 @@ struct kernel_symbol {
-> >   */
-> >  #define __EXPORT_SYMBOL(sym, sec)
-> >
-> > -#elif defined(__KSYM_DEPS__)
-> > +#elif defined(CONFIG_TRIM_UNUSED_KSYMS)
-> > +
-> > +#include <generated/autoksyms.h>
-> >
-> >  /*
-> >   * For fine grained build dependencies, we want to tell the build system
-> >   * about each possible exported symbol even if they're not actually exported.
-> > - * We use a string pattern that is unlikely to be valid code that the build
-> > - * system filters out from the preprocessor output (see ksym_dep_filter
-> > - * in scripts/Kbuild.include).
-> > + * We use a symbol pattern __ksym_marker_<symbol> that the build system filters
-> > + * from the $(NM) output (see scripts/gen_ksymdep.sh). These symbols are
-> > + * discarded in the final link stage.
-> >   */
-> > -#define __EXPORT_SYMBOL(sym, sec)    === __KSYM_##sym ===
-> > -
-> > -#elif defined(CONFIG_TRIM_UNUSED_KSYMS)
-> > -
-> > -#include <generated/autoksyms.h>
-> > +#define __ksym_marker(sym)   \
-> > +     static int __ksym_marker_##sym[0] __section(".discard.ksym") __used
->
-> Even if this is discarded during the final link, maybe this could save
-> a tiny amount of disk space by using a char instead?
+>         struct snd_compr_ops *ops;
+> +       struct snd_dma_buffer *dma_buffer_p;
 
+I don't think it is necessary to encode the type inside the name variable
+So, dma_buffer would sounds better to me then dma_buffer_p;
 
-I am afraid you missed '[0]' after the symbol name.
-This is actually zero-length array.
+>         void *buffer;
 
-No memory allocated for this dummy section.
+It is also consistent with this ^
 
-As far as I tested, this is working.
+<snip>
+> +static inline void snd_compr_set_runtime_buffer(
+> +                                       struct snd_compr_stream *substream,
+> +                                       struct snd_dma_buffer *bufp)
 
+Also buf instead of bufp here.
 
-
-
-
-> > diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> > index 7f3ca6e..e5ba9b1 100644
-> > --- a/scripts/Makefile.build
-> > +++ b/scripts/Makefile.build
-> > @@ -254,9 +254,18 @@ objtool_dep = $(objtool_obj)                                     \
-> >             $(wildcard include/config/orc/unwinder.h          \
-> >                        include/config/stack/validation.h)
-> >
-> > +ifdef CONFIG_TRIM_UNUSED_KSYMS
-> > +cmd_gen_ksymdeps = \
-> > +     $(CONFIG_SHELL) $(srctree)/scripts/gen_ksymdeps.sh $@ > $(dot-target).tmp; \
-> > +     cat $(dot-target).tmp >> $(dot-target).cmd; \
-> > +     rm -f $(dot-target).tmp;
->
-> Why don't you append to $(dot-target).cmd directly?
-
-
-If scripts/gen_ksymdeps.sh fails for some reasons,
-it will error out immediately thanks to 'set -e' flag.
-
-Appending incomplete portion might end up with a corrupted .*.cmd file.
-
-Probably, that would not happen, but I just wanted to ensure it.
-
-
-
-
->
-> Nicolas
-
-
-
---
-Best Regards
-Masahiro Yamada
+thanks,
+Daniel.
