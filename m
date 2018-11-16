@@ -2,180 +2,121 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F0307C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:26:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9ACF1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:26:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A423821019
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:26:29 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="Jcb61BmO"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A423821019
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 65F6421019
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:26:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 65F6421019
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726409AbeKPKgg (ORCPT
+        id S2389138AbeKPKgn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 05:36:36 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:36631 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726687AbeKPKgf (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 05:36:35 -0500
-Received: by mail-pg1-f196.google.com with SMTP id n2so2585965pgm.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 16:26:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=rc7fjUApD7flLlTVqa/RhgazHXBYzBAhEuXeNhvwmBU=;
-        b=Jcb61BmOL2Jy+hgyO2/CuDgpSAkWFinbUNWCgcSEX11fUG/4NFpcyuoqKnENa/1Ua5
-         PQrnGT5h+ai+Fxp9DOzzy2Ve6wq1+3E6wccymzQ8rvqQL8QGLxt0rHSw7RIo54m5hnVx
-         y6zabFjieEYHME8kJ3pIbuVSPB2uBmQ97htfzqKHtrlfytrO87IkKmWJLD11K8qeEblY
-         LVUbI4hmYiHPS0Fz4xAIDJJfVrpqbRyBVM+yYPGAWyWvD0Bj04dMWG2Cu8chIoQYZ+jI
-         lDlID/Orlb6eoayXMROJjxhsz7k6qTeyfXxPlRijju/mdxG6gNA7VSOUPUMMLlkqX/qO
-         07fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=rc7fjUApD7flLlTVqa/RhgazHXBYzBAhEuXeNhvwmBU=;
-        b=dAW5W1FxmRWYNaqICh2UOw6TOHb79zI8qG1KBZYpi7fZizazejeskiEWPV1k1oT/yU
-         FJ6338SMgKs/BsGm+Rcja976Ya6uG+wSzHZjmgW2R6yGdvkW4eQ63NVG0TWeDix6ZEeR
-         75Bw6xS4YdxUmoZiVW6jbkQJAf3AULZhJ5J0MjbWVYmMY15UfGWNim99FkkKYL5eq9a/
-         p3Gw1/PeZhO2gKMtYiU6V9zuxpz6pE7UsEYrRGU+S0o5M/cgTk+L4zpcS8DRnX4kypCT
-         tnrQfq1FM96p9m38tcuVeK0KaPVdmtk3yMaX3CJVztvEVIQDaekAOoVPmxn04zqILF/4
-         ztLQ==
-X-Gm-Message-State: AGRZ1gJTei2Mk6E8r6e2S+HM1IOvnrtJY4q+94/XUyIxJjnWGCttfih9
-        /HMOKrS7CUpcfZXDrmdSEaPztQ==
-X-Google-Smtp-Source: AJdET5cOkeCunf0nsmycfXndFMzt5cULp9SAC4eTUiTiSYBG0YlOeorlCbZYURqg38qZwtCXn8+Jiw==
-X-Received: by 2002:a63:5518:: with SMTP id j24mr2179612pgb.208.1542327987036;
-        Thu, 15 Nov 2018 16:26:27 -0800 (PST)
-Received: from vader ([64.114.255.97])
-        by smtp.gmail.com with ESMTPSA id t64-v6sm32749985pfd.127.2018.11.15.16.26.26
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 16:26:26 -0800 (PST)
-Date:   Thu, 15 Nov 2018 16:26:25 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
-Message-ID: <20181116002625.GD23828@vader>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-10-ming.lei@redhat.com>
+        Fri, 16 Nov 2018 05:36:43 -0500
+Received: from mga04.intel.com ([192.55.52.120]:17668 "EHLO mga04.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726687AbeKPKgm (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 05:36:42 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga004.jf.intel.com ([10.7.209.38])
+  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 16:26:34 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,238,1539673200"; 
+   d="scan'208";a="250111739"
+Received: from tstruk-mobl1.jf.intel.com ([10.7.196.53])
+  by orsmga004.jf.intel.com with ESMTP; 15 Nov 2018 16:26:33 -0800
+Subject: Re: [PATCH v3] tpm: add support for partial reads
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <154231454280.17567.455994477207265338.stgit@tstruk-mobl1.jf.intel.com>
+ <20181115233158.GA30018@linux.intel.com>
+From:   Tadeusz Struk <tadeusz.struk@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=tadeusz.struk@intel.com; prefer-encrypt=mutual; keydata=
+ xsDiBEiLICMRBADteQacQxypsuFvAw6IwYzbD8pgQi+kLYBcqfGgVAUN/cO+sLl6u1lVdaDB
+ fhAArdbV9lpoqcWnmhQFTb4A+W569EpydBr6nuatWkEB+fmmx8YoUtuZfXt7v+1l1rc09kaW
+ LY+TkwQkvFCeuvdasgmBLnmRWymEGWi1E12hUgTw/wCgtK24geC7XkiuANMv0gpr+raOgQMD
+ /2yJZ0SeXQApWyTRaeIYN8GgYHZTWuBp/ofN+viEkhrDxahcaGPP5B/Nv6VS1+M0e5m8OzHj
+ qPUbgfyOeJcslC5aoZdqqqzVWVLaA/+Jy+O+6T3k3R/IryVVATldBlwnGFDhET0mKQsd15zt
+ cIdQBBbfSFR5VlugZuWV5q442IpPA/4g7nen9FFPxh45Te8D54hAsOCywjm6xUE0UJGYHeJ/
+ MXCPtuXfVCbYcOxZVH7kUS2Vtk5d3bF40IE2WnVq1ZScNANF4ZjikxYhYGfNWX3HXak1gSoj
+ UrY87rMSjPIAry4L0BoIx2qgL/k4iV/3QcXL4t5wosU0iw++suf1zGGcKM0gVGFkZXVzeiBT
+ dHJ1ayA8dHN0cnVrQGdtYWlsLmNvbT7CYwQTEQIAIwIbAwYLCQgHAwIEFQIIAwQWAgMBAh4B
+ AheABQJQTjJTAhkBAAoJEDFswfskq9xyqvcAoI2nsaUCX8ZGbu+Jhq+++qlBFJ2rAJ983RoO
+ R2ofHhn3g3Qi4K34tw0l087BTQRauzUlARAAqkWRL/InEPnoGMg/gw/CRaDBaIBgMsvIcghI
+ 7xevIzpleXt6jKHghSBooH+zaT7qi4u2gkgPn4odsER3Rm94XgrZJgoqls6EpKMWpJNGP4HT
+ eYgykhfsZOLX8ijUbjTM/Sm/dZVo6aYoBL2+ciJwyl+Zt3Mp6un3/GWu6cA9005V50pRqO7j
+ PTlVCHi2bedcEEf5DDsYJv/3Oz8/4LpSf6BL6BltjeZVa2y03dTMmD031JTH+OuyJm1yh72Z
+ HWxhlYNXOv6uFJJVr+paQjrAsBVIYKhK24bD+uGJxLm8AN9i7/Si+2YeSsXvKUhk9mIoFBnU
+ VFo63cziRTcpRu/kXgDAbujwN88qytEcvhEZHS6B9vdws+lhTpolEjkLCkz0Y59z4Fs9srKy
+ QkRN+wtdiLgrwyDW3ryAKxcDmOumGWebDxpaOI/pBhrlS93HmDlvj7JmgTUU4a/NhwI3dXh5
+ pn8FZzZyVXe3Kc3bu5T3UAC7uztinsAvCJQS6jGZWrXmXkqYkaLXQOw61eInWjr01zE/zDbE
+ mdJPM0+va/gtZx9TtGxr4PpjbqswqCiubLDZXZHh5uqArPv/i+E8aXIsNSTN6Rrqs1j9YgDN
+ ALksibv6+tXH3sOlCUgjuZgJH3+s/mnaAtiV2rZ/WlH15d6nd0uiDSZrKhlR+g4NHMh1ztEA
+ EQEAAcJPBBgRAgAPBQJauzUlAhsMBQkJZgGAAAoJEDFswfskq9xyfv8AoI8aPrJCoM0h5WOP
+ kKxMmPEPHzUNAJ9jBBYXhX1CWg+IhI7i/fLlI0vwCA==
+Message-ID: <825f4c01-efb1-5034-ea90-9ea5ea8f5b45@intel.com>
+Date:   Thu, 15 Nov 2018 16:26:33 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115085306.9910-10-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181115233158.GA30018@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 04:52:56PM +0800, Ming Lei wrote:
-> There are still cases in which we need to use bio_bvecs() for get the
-> number of multi-page segment, so introduce it.
+On 11/15/18 3:31 PM, Jarkko Sakkinen wrote:
+> You could drop these memset() calls and also one from
+> tpm_timeout_work(). The call could be done once in the beginning of
+> tpm_common_write() instead of having three different call sites.
 > 
-> Cc: Dave Chinner <dchinner@redhat.com>
-> Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> Cc: Mike Snitzer <snitzer@redhat.com>
-> Cc: dm-devel@redhat.com
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Shaohua Li <shli@kernel.org>
-> Cc: linux-raid@vger.kernel.org
-> Cc: linux-erofs@lists.ozlabs.org
-> Cc: David Sterba <dsterba@suse.com>
-> Cc: linux-btrfs@vger.kernel.org
-> Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> Cc: linux-xfs@vger.kernel.org
-> Cc: Gao Xiang <gaoxiang25@huawei.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Theodore Ts'o <tytso@mit.edu>
-> Cc: linux-ext4@vger.kernel.org
-> Cc: Coly Li <colyli@suse.de>
-> Cc: linux-bcache@vger.kernel.org
-> Cc: Boaz Harrosh <ooo@electrozaur.com>
-> Cc: Bob Peterson <rpeterso@redhat.com>
-> Cc: cluster-devel@redhat.com
 
-Reviewed-by: Omar Sandoval <osandov@fb.com>
+Don't we want to clean the buffer as the response is read?
+When we will only memset it in write and if one would send
+just one command there will only be one response.
+The data will sit in the buffer until the next command.
+There will be a quite bit time window when the data can leak.
 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  include/linux/bio.h | 30 +++++++++++++++++++++++++-----
->  1 file changed, 25 insertions(+), 5 deletions(-)
 > 
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 1f0dcf109841..3496c816946e 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -196,7 +196,6 @@ static inline unsigned bio_segments(struct bio *bio)
->  	 * We special case discard/write same/write zeroes, because they
->  	 * interpret bi_size differently:
->  	 */
-> -
->  	switch (bio_op(bio)) {
->  	case REQ_OP_DISCARD:
->  	case REQ_OP_SECURE_ERASE:
-> @@ -205,13 +204,34 @@ static inline unsigned bio_segments(struct bio *bio)
->  	case REQ_OP_WRITE_SAME:
->  		return 1;
->  	default:
-> -		break;
-> +		bio_for_each_segment(bv, bio, iter)
-> +			segs++;
-> +		return segs;
->  	}
-> +}
->  
-> -	bio_for_each_segment(bv, bio, iter)
-> -		segs++;
-> +static inline unsigned bio_bvecs(struct bio *bio)
-> +{
-> +	unsigned bvecs = 0;
-> +	struct bio_vec bv;
-> +	struct bvec_iter iter;
->  
-> -	return segs;
-> +	/*
-> +	 * We special case discard/write same/write zeroes, because they
-> +	 * interpret bi_size differently:
-> +	 */
-> +	switch (bio_op(bio)) {
-> +	case REQ_OP_DISCARD:
-> +	case REQ_OP_SECURE_ERASE:
-> +	case REQ_OP_WRITE_ZEROES:
-> +		return 0;
-> +	case REQ_OP_WRITE_SAME:
-> +		return 1;
-> +	default:
-> +		bio_for_each_bvec(bv, bio, iter)
-> +			bvecs++;
-> +		return bvecs;
-> +	}
->  }
->  
->  /*
-> -- 
-> 2.9.5
+> Naming becomes a mess and the comment for data_pending variable is
+> incorrect as it is also used for synchronous operation.
 > 
+> Maybe add a prepending commit to rename it as
+> 
+> 	/* Holds the resul of the tpm_transmit() last call. */
+> 	ssize_t transmit_result;
+
+Agree, will do that.
+
+> 
+> That is at least clear and obvious on what it contains.
+> 
+> The comment for partial_data is incorrect as the variable does not
+> contain any data.
+
+Yes, I will change it.
+
+> 
+> We could use declare:
+> 
+> 	/* Holds the count how much of the response is still unread. */
+> 	size_t response_pending;
+> 
+> Observe another remark from your commit: there is no reaso to ssize_t as
+> the type as the value should never be a negative number.
+
+Yes, in fact now the priv->data_pending can also be only positive.
+I'll change it and send a new version soon.
+Thanks,
+-- 
+Tadeusz
