@@ -3,70 +3,143 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3B9FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:42:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3ACF9C04EBC
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:45:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8262E2089D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:42:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8262E2089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 0EDC22087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:45:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EDC22087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389792AbeKPXyZ (ORCPT
+        id S2389707AbeKPX6M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 18:54:25 -0500
-Received: from mga02.intel.com ([134.134.136.20]:62476 "EHLO mga02.intel.com"
+        Fri, 16 Nov 2018 18:58:12 -0500
+Received: from verein.lst.de ([213.95.11.211]:49948 "EHLO newverein.lst.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727711AbeKPXyZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 18:54:25 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga101.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 05:41:57 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="250265950"
-Received: from unknown (HELO localhost) ([10.249.254.86])
-  by orsmga004.jf.intel.com with ESMTP; 16 Nov 2018 05:41:54 -0800
-Date:   Fri, 16 Nov 2018 15:41:53 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Roberto Sassu <roberto.sassu@huawei.com>
-Cc:     zohar@linux.ibm.com, david.safford@ge.com, monty.wiseman@ge.com,
-        linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, silviu.vlasceanu@huawei.com,
-        stable@vger.kernel.org
-Subject: Re: [PATCH v5 6/7] tpm: ensure that the output of PCR read contains
- the correct digest size
-Message-ID: <20181116134153.GD4163@linux.intel.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-7-roberto.sassu@huawei.com>
+        id S1727997AbeKPX6L (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 18:58:11 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id ACCE668D60; Fri, 16 Nov 2018 14:45:41 +0100 (CET)
+Date:   Fri, 16 Nov 2018 14:45:41 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 09/19] block: introduce bio_bvecs()
+Message-ID: <20181116134541.GH3165@lst.de>
+References: <20181115085306.9910-1-ming.lei@redhat.com> <20181115085306.9910-10-ming.lei@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181114153108.12907-7-roberto.sassu@huawei.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181115085306.9910-10-ming.lei@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 04:31:07PM +0100, Roberto Sassu wrote:
-> This patch protects against data corruption that could happen in the bus,
-> by checking that that the digest size returned by the TPM during a PCR read
-> matches the size of the algorithm passed to tpm2_pcr_read().
-> 
-> This check is performed after information about the PCR banks has been
-> retrieved.
-> 
-> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> Reviewed-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Cc: stable@vger.kernel.org
+On Thu, Nov 15, 2018 at 04:52:56PM +0800, Ming Lei wrote:
+> There are still cases in which we need to use bio_bvecs() for get the
+> number of multi-page segment, so introduce it.
 
-Missing fixes tag.
+The only user in your final tree seems to be the loop driver, and
+even that one only uses the helper for read/write bios.
 
-/Jarkko
+I think something like this would be much simpler in the end:
+
+diff --git a/drivers/block/loop.c b/drivers/block/loop.c
+index d509902a8046..712511815ac6 100644
+--- a/drivers/block/loop.c
++++ b/drivers/block/loop.c
+@@ -514,16 +514,18 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+ 	struct request *rq = blk_mq_rq_from_pdu(cmd);
+ 	struct bio *bio = rq->bio;
+ 	struct file *file = lo->lo_backing_file;
++	struct bvec_iter bvec_iter;
++	struct bio_vec tmp;
+ 	unsigned int offset;
+ 	int nr_bvec = 0;
+ 	int ret;
+ 
++	__rq_for_each_bio(bio, rq)
++		bio_for_each_bvec(tmp, bio, bvec_iter)
++			nr_bvec++;
++
+ 	if (rq->bio != rq->biotail) {
+-		struct bvec_iter iter;
+-		struct bio_vec tmp;
+ 
+-		__rq_for_each_bio(bio, rq)
+-			nr_bvec += bio_bvecs(bio);
+ 		bvec = kmalloc_array(nr_bvec, sizeof(struct bio_vec),
+ 				     GFP_NOIO);
+ 		if (!bvec)
+@@ -537,7 +539,7 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+ 		 * API will take care of all details for us.
+ 		 */
+ 		__rq_for_each_bio(bio, rq)
+-			bio_for_each_bvec(tmp, bio, iter) {
++			bio_for_each_bvec(tmp, bio, bvec_iter) {
+ 				*bvec = tmp;
+ 				bvec++;
+ 			}
+@@ -551,7 +553,6 @@ static int lo_rw_aio(struct loop_device *lo, struct loop_cmd *cmd,
+ 		 */
+ 		offset = bio->bi_iter.bi_bvec_done;
+ 		bvec = __bvec_iter_bvec(bio->bi_io_vec, bio->bi_iter);
+-		nr_bvec = bio_bvecs(bio);
+ 	}
+ 	atomic_set(&cmd->ref, 2);
+ 
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index dcad0b69f57a..379440d1ced0 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -200,30 +200,6 @@ static inline unsigned bio_segments(struct bio *bio)
+ 	}
+ }
+ 
+-static inline unsigned bio_bvecs(struct bio *bio)
+-{
+-	unsigned bvecs = 0;
+-	struct bio_vec bv;
+-	struct bvec_iter iter;
+-
+-	/*
+-	 * We special case discard/write same/write zeroes, because they
+-	 * interpret bi_size differently:
+-	 */
+-	switch (bio_op(bio)) {
+-	case REQ_OP_DISCARD:
+-	case REQ_OP_SECURE_ERASE:
+-	case REQ_OP_WRITE_ZEROES:
+-		return 0;
+-	case REQ_OP_WRITE_SAME:
+-		return 1;
+-	default:
+-		bio_for_each_bvec(bv, bio, iter)
+-			bvecs++;
+-		return bvecs;
+-	}
+-}
+-
+ /*
+  * get a reference to a bio, so it won't disappear. the intended use is
+  * something like:
