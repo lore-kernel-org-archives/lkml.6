@@ -2,89 +2,136 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F26DC43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:19:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C16C04EBC
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:21:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E45602087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:19:26 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E45602087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 8FC522086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:21:18 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC522086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729898AbeKQJdq (ORCPT
+        id S1730199AbeKQJfi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:33:46 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:44682 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbeKQJdp (ORCPT
+        Sat, 17 Nov 2018 04:35:38 -0500
+Received: from mail-qk1-f196.google.com ([209.85.222.196]:43491 "EHLO
+        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726222AbeKQJfh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:33:45 -0500
-Received: by mail-oi1-f195.google.com with SMTP id p82-v6so20985107oih.11;
-        Fri, 16 Nov 2018 15:19:25 -0800 (PST)
+        Sat, 17 Nov 2018 04:35:37 -0500
+Received: by mail-qk1-f196.google.com with SMTP id r71so40153732qkr.10;
+        Fri, 16 Nov 2018 15:21:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=m/Ewd+i9E4r+yJpjtKbq5KdVSi7EUUy0zOQB+rnH0Mo=;
-        b=ZiM3k/wNWhmWDHnqBqGekgYfCzLWhQudL5D2aenw0HZ4sEcFHN0AXpmFGy7jhCUC6z
-         d2yep1ABdruCGkG+dIYAa1gGUd0ex3/pmB1vAVA0GnAjSVhLbxItz1INGm3i6GalQ54/
-         El0ZCL2Jv26QPn2qo3FTOgnlWT0PXKyobiXYmw2kt6nC+GGpFffM2RJ3Tgc/IrmONKUW
-         O4eprK9FK7xjd4ZLVn1B+ZGLrWVkl4ADaz+7khM49wg7ASEhSN4W6u5s7EldwDpi4gx0
-         TnAA26q9ghdE6/6epxhm5/Vy9QEmpcevK4infao1ZR/Yg5sylihwq42lLfXKudaw/OvW
-         4phA==
-X-Gm-Message-State: AGRZ1gJ+Vq/U8MWXPT23ueCr6A/moSHXYR59kHXVMAFgvmYF0m9kURFy
-        /M79dVJjOAM+v7c90YMOLQ==
-X-Google-Smtp-Source: AJdET5czTvEVKQfxASXjwz9y39BthD0phD7qY1oGiiHVom5fsewdt3Lw+sEgZnYbEZnCQLFe4Yq/iQ==
-X-Received: by 2002:a54:478f:: with SMTP id o15mr2194485oic.42.1542410364848;
-        Fri, 16 Nov 2018 15:19:24 -0800 (PST)
-Received: from localhost (mobile-166-173-57-127.mycingular.net. [166.173.57.127])
-        by smtp.gmail.com with ESMTPSA id o28sm11796482otd.5.2018.11.16.15.19.23
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Nov 2018 15:19:24 -0800 (PST)
-Date:   Fri, 16 Nov 2018 17:19:16 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jagan Teki <jagan@amarulasolutions.com>
-Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>, Icenowy Zheng <icenowy@aosc.io>,
-        Jernej Skrabec <jernej.skrabec@siol.net>,
-        Vasily Khoruzhick <anarsoul@gmail.com>,
-        linux-clk@vger.kernel.org,
-        Michael Trimarchi <michael@amarulasolutions.com>,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-sunxi@googlegroups.com,
-        linux-amarula@amarulasolutions.com,
-        Jagan Teki <jagan@amarulasolutions.com>
-Subject: Re: [PATCH v4 17/26] dt-bindings: sun6i-dsi: Add VCC-DSI supply
- property
-Message-ID: <20181116231916.GA1222@bogus>
-References: <20181113111633.20189-1-jagan@amarulasolutions.com>
- <20181113111633.20189-18-jagan@amarulasolutions.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=M5JQlFR6BO6RYI54fXE5W/jmMguUs5fceI1+3QHSGVU=;
+        b=grKbqiBAh7iC52XOPEdR2L07ZmFZF2rcbm8IsT4TrviUNxXe4atNvjP4t0b22wwWuf
+         mkzMUcKZx/u3jD/Fq337LmSYkEBVcDekjiT3QN2I//t0IdLmq/ThKCFiOOBKGJiW3pFK
+         6whKMT+1TDkCtZNnnm/5RZcl9qsLL22CW6Y8bYdny3g2I7+GSJR33MxWGaaRNKKGiWUZ
+         Z4zB7E1TGB2l4R9XEOe+2brcCcMqN4HihmzUa9g1GzsDu56hK5ZZFc11D4IVk6l8B8O2
+         vPodbRW+pEsX0LFqEFF62X4HQ+a3YPVobD16np8avo7csAAANwowhkSk1AVijqPVy518
+         53DA==
+X-Gm-Message-State: AGRZ1gLuj8aOGPi28JWqRaniNYLQTR60T5TX0eGI1lqvX9ZQ0bBApj/w
+        pHdMrP4mJOhvTK+GsKxVrDdZmVij0xx+9+N+j5g=
+X-Google-Smtp-Source: AJdET5dbPeAPI2XgLwLBp9glE7wPHtsARPJZeWZmFveOODyQY24sqFsUb+I9SVWJDHub2K9OWZsWc97ZRkm5VQ2QbGw=
+X-Received: by 2002:ac8:2c34:: with SMTP id d49mr12303947qta.152.1542410475690;
+ Fri, 16 Nov 2018 15:21:15 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181113111633.20189-18-jagan@amarulasolutions.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <1542177301-25844-1-git-send-email-firoz.khan@linaro.org>
+ <58c3c4a4-7f55-bf08-1c96-ef1aa7f97072@gmx.de> <CALxhOngc1cSSDVznnX+iLg-Ne9+k0ct0wT-z0MXKSeKxJE3Vsg@mail.gmail.com>
+ <20181116215502.GA6585@ls3530.dellerweb.de>
+In-Reply-To: <20181116215502.GA6585@ls3530.dellerweb.de>
+From:   Arnd Bergmann <arnd@arndb.de>
+Date:   Fri, 16 Nov 2018 15:20:57 -0800
+Message-ID: <CAK8P3a2g-7iR594Fs_goYCYPqgO6FRML5oi9vodDC_wKHF64bA@mail.gmail.com>
+Subject: Re: [PATCH v7 0/5] parisc: system call table generation support
+To:     Helge Deller <deller@gmx.de>
+Cc:     Firoz Khan <firoz.khan@linaro.org>,
+        Parisc List <linux-parisc@vger.kernel.org>,
+        James.Bottomley@hansenpartnership.com,
+        John David Anglin <dave.anglin@bell.net>,
+        "James E.J. Bottomley" <jejb@parisc-linux.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        gregkh <gregkh@linuxfoundation.org>,
+        Philippe Ombredanne <pombredanne@nexb.com>,
+        Kate Stewart <kstewart@linuxfoundation.org>,
+        y2038 Mailman List <y2038@lists.linaro.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-arch <linux-arch@vger.kernel.org>,
+        Deepa Dinamani <deepa.kernel@gmail.com>,
+        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Nov 2018 16:46:24 +0530, Jagan Teki wrote:
-> Most of the Allwinner MIPI DSI controllers are supply with
-> VCC-DSI pin. which need to supply for some of the boards to
-> trigger the power.
-> 
-> So, document the supply property so-that the required board
-> can eable it via device tree.
-> 
-> Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
-> ---
->  Documentation/devicetree/bindings/display/sunxi/sun6i-dsi.txt | 3 +++
->  1 file changed, 3 insertions(+)
-> 
+On Fri, Nov 16, 2018 at 1:55 PM Helge Deller <deller@gmx.de> wrote:
+> > On Fri, 16 Nov 2018 at 01:01, Helge Deller <deller@gmx.de> wrote:
+> > >
+> > > On 14.11.2018 07:34, Firoz Khan wrote:
+> > > > The purpose of this patch series is, we can easily
+> > > > add/modify/delete system call table support by cha-
+> > > > nging entry in syscall.tbl file instead of manually
+> > > > changing many files. The other goal is to unify the
+> > > > system call table generation support implementation
+> > > > across all the architectures.
+> > > >
+> > > > The system call tables are in different format in
+> > > > all architecture. It will be difficult to manually
+> > > > add, modify or delete the system calls in the resp-
+> > > > ective files manually. To make it easy by keeping a
+> > > > script and which'll generate uapi header file and
+> > > > syscall table file.
+> > > >
+> > > > syscall.tbl contains the list of available system
+> > > > calls along with system call number and correspond-
+> > > > ing entry point. Add a new system call in this arch-
+> > > > itecture will be possible by adding new entry in the
+> > > > syscall.tbl file.
+> > > >
+> > > > Adding a new table entry consisting of:
+> > > >         - System call number.
+> > > >         - ABI.
+> > > >         - System call name.
+> > > >         - Entry point name.
+> > > >
+> > > > ....
+> > > > Firoz Khan (5):
+> > > >   parisc: move __IGNORE* entries to non uapi header
+> > > >   parisc: add __NR_syscalls along with __NR_Linux_syscalls
+> > > >   parisc: add system call table generation support
+> > > >   parisc: generate uapi header and system call table files
+> > > >   parisc: syscalls: ignore nfsservctl for other architectures
+> > >
+> > > Firoz, you may add
+> > > Acked-by: Helge Deller <deller@gmx.de>
+> > > to the whole parisc series.
+> >
+> > Sure, will do.
+> > I'm on a vacation right now. will send mid next week.
+>
+> That's ok, there is no urgency.
+>
+> Actually, I noticed that the generated files unistd_32.h
+> and unistd_64.h do have the same contents, since on parisc
+> we keep the syscall numbers the same for 32- and 64-bit.
+> With that in mind, we can simply generate on unistd.h
+> file for both variants.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+It depends on what we want to do in the future. When we add
+around 20 new system calls fro y2038, my plan was to
+only add them for 32-bit architectures, leaving holes on
+64-bit ones. We can also assign the new numbers on parisc64
+but they would have the same entry point as existing calls.
+
+If you prefer doing it like that, your patch seems fine for that,
+it's just slightly inconsistent with the other 64-bit architectures
+then.
+
+          Arnd
