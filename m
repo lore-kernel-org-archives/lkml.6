@@ -2,159 +2,161 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DA6BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:14:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3073C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:17:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2DB372086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:14:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 964FA2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:17:13 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ULBGunRh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2DB372086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dell.com header.i=@dell.com header.b="lNNhsuzu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 964FA2087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=Dell.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727111AbeKQG2V (ORCPT
+        id S1727126AbeKQGbC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 01:28:21 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:32990 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725932AbeKQG2U (ORCPT
+        Sat, 17 Nov 2018 01:31:02 -0500
+Received: from esa3.dell-outbound.iphmx.com ([68.232.153.94]:49506 "EHLO
+        esa3.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1725819AbeKQGbC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 01:28:20 -0500
-Received: by mail-pg1-f195.google.com with SMTP id z11so8428117pgu.0
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 12:14:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=/6W9X6SshvtP4mTEt321Jdsofs/SrUqZbXZWUI6/oCA=;
-        b=ULBGunRhyk1iFMO109+7/m6ajmhPujWiIXc7surc7ooLp6EWZ0La8BIHSwE2izIznk
-         V3c7tlu9DW6IpkanQ9/36HX0kHsy3PE8a+A4ywozvEYkWkmOaERuaopgEgazqgat1fIe
-         XtpOmxPH9ZcMRXT5Cb6n3gkbZu1AZPExJlH6k=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=/6W9X6SshvtP4mTEt321Jdsofs/SrUqZbXZWUI6/oCA=;
-        b=s4j/JNWkid3rDhEeOt7zpthdqR4jO9vPahKUldt1gcpucaQ7W3JJyrg9M3gMxR4S21
-         IP7d9cRryuyH2qg7RGgZZHej5xQhLICwqh0kS5CUuZaPSSvezieES5RNitblinJX0JrF
-         6vEA7aRw0w6s2AWENQDRFVspj9Vm2e0UqWaCECwSBwjFT61d3qtlyWOwDf9yFzqbw6Kd
-         jL05rPSC6PkZyr3vPKL7Brmga0GmupNjLhuaN7zlITWlgShcZAsfoSk8LR2IqpogdNjH
-         3aaVoUuF0YCKOMQ2GOGq3Xzm2UZkPegf4UJ3cYyF/ZVNLtUEnfuMBvOTQ9LmL4/nV8+o
-         cmnw==
-X-Gm-Message-State: AGRZ1gJY7vmZ3o+kl6nvBZbSF0X7g5Nq5mMpeonK7S3m6GP7o/hbMqik
-        7oDM+snhoB1JbGcb5WUyLQVI8g==
-X-Google-Smtp-Source: AJdET5dzDRPUTTdnZ7Mi8JOzklYyxjjIuFoMySM94GnqR2ROFcdzcg1AvWwIoDF7YCTWox2+YlTs+Q==
-X-Received: by 2002:a63:907:: with SMTP id 7-v6mr11157574pgj.121.1542399270131;
-        Fri, 16 Nov 2018 12:14:30 -0800 (PST)
-Received: from tuxbook-pro (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 4sm31918100pfq.10.2018.11.16.12.14.28
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Nov 2018 12:14:29 -0800 (PST)
-Date:   Fri, 16 Nov 2018 12:14:24 -0800
-From:   Bjorn Andersson <bjorn.andersson@linaro.org>
-To:     Evan Green <evgreen@chromium.org>
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        Stephen Boyd <swboyd@chromium.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v2] pinctrl: msm: Add sleep pinctrl state transitions
-Message-ID: <20181116201424.GQ10915@tuxbook-pro>
-References: <20181116185853.128207-1-evgreen@chromium.org>
+        Sat, 17 Nov 2018 01:31:02 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=dell.com; i=@dell.com; q=dns/txt; s=smtpout;
+  t=1542399399; x=1573935399;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=q9rr5wDASznNv+VIvUkbahSjY7vRiRq+kazY61dM4eQ=;
+  b=lNNhsuzu3pKJGLGnhNlm+M9JtmylImlqvJ1RsNYZBVYVoGKzPXZw8Bj3
+   FPPCiWGKYCLOL3GSJ0hXK306M8OhdfAjxPThZWMtOrrCtXFer9q+s2xA8
+   259ciYD+r7904iAG8y/5mOf36+DE/ecEAjEuLlfs3KnBHHiWxzRvIdIEy
+   s=;
+X-IronPort-Anti-Spam-Filtered: true
+X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EYAAC7JO9bhiWd50NlHQEBBQEHBQG?=
+ =?us-ascii?q?BUQgBCwGBVYIWJwqMBl+LH4INlzYUgWYLAQGEbAKDVSI0CQ0BAwEBAgEBAgE?=
+ =?us-ascii?q?BAhABAQEKCQsIKS+CNiKCZQEBAQMBEig/BQsCAQg2EFcCBAENBQgagn+Begi?=
+ =?us-ascii?q?dPAKBEIlYAQEBgh2KIowFghaBEYMShGeFcgKBKgGHTCAElk8GAQKRHyCBWIU?=
+ =?us-ascii?q?HihuXaQIEAgQFAhSBRoIOcIFugU6CNRuOCkABMYsYKYEFgR8BAQ?=
+X-IPAS-Result: =?us-ascii?q?A2EYAAC7JO9bhiWd50NlHQEBBQEHBQGBUQgBCwGBVYIWJ?=
+ =?us-ascii?q?wqMBl+LH4INlzYUgWYLAQGEbAKDVSI0CQ0BAwEBAgEBAgEBAhABAQEKCQsIK?=
+ =?us-ascii?q?S+CNiKCZQEBAQMBEig/BQsCAQg2EFcCBAENBQgagn+BegidPAKBEIlYAQEBg?=
+ =?us-ascii?q?h2KIowFghaBEYMShGeFcgKBKgGHTCAElk8GAQKRHyCBWIUHihuXaQIEAgQFA?=
+ =?us-ascii?q?hSBRoIOcIFugU6CNRuOCkABMYsYKYEFgR8BAQ?=
+Received: from mx0b-00154901.pphosted.com ([67.231.157.37])
+  by esa3.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 16 Nov 2018 14:16:38 -0600
+Received: from pps.filterd (m0089483.ppops.net [127.0.0.1])
+        by mx0b-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAGK7udk003828;
+        Fri, 16 Nov 2018 15:17:10 -0500
+Received: from esa2.dell-outbound2.iphmx.com (esa2.dell-outbound2.iphmx.com [68.232.153.202])
+        by mx0b-00154901.pphosted.com with ESMTP id 2nsv69jxpv-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 16 Nov 2018 15:17:09 -0500
+From:   <Justin.Lee1@Dell.com>
+Received: from ausxippc101.us.dell.com ([143.166.85.207])
+  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 17 Nov 2018 02:16:48 +0600
+X-LoopCount0: from 10.166.135.94
+X-IronPort-AV: E=Sophos;i="5.56,241,1539666000"; 
+   d="scan'208";a="1162006700"
+To:     <sam@mendozajonas.com>, <netdev@vger.kernel.org>
+CC:     <davem@davemloft.net>, <linux-kernel@vger.kernel.org>,
+        <openbmc@lists.ozlabs.org>
+Subject: RE: [PATCH net-next v4 0/6] net/ncsi: Allow enabling multiple
+ packages & channels
+Thread-Topic: [PATCH net-next v4 0/6] net/ncsi: Allow enabling multiple
+ packages & channels
+Thread-Index: AQHUfWg1dcgy1q1MWUOagrTe9pjUGqVS0K7Q
+Date:   Fri, 16 Nov 2018 20:17:06 +0000
+Message-ID: <f41bcc1c06da4f0ead13cc97fc13d68e@AUSX13MPS302.AMER.DELL.COM>
+References: <20181116045159.4980-1-sam@mendozajonas.com>
+In-Reply-To: <20181116045159.4980-1-sam@mendozajonas.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-ms-exchange-transport-fromentityheader: Hosted
+x-originating-ip: [10.143.242.75]
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116185853.128207-1-evgreen@chromium.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-16_11:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=808 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811160179
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 16 Nov 10:58 PST 2018, Evan Green wrote:
+Hi Samuel,
 
-> Add PM suspend callbacks to the msm core driver that select the
-> sleep and default pinctrl states. Then wire those callbacks up
-> in the sdm845 driver, for those boards that may have GPIO hogs
-> that need to change state during suspend.
-> 
-> Signed-off-by: Evan Green <evgreen@chromium.org>
-> Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+I have reviewed/tested it. It works well. Thanks for supporting these featu=
+res!
 
-Reviewed-by: Bjorn Andersson <bjorn.andersson@linaro.org>
+Justin
 
-Regards,
-Bjorn
 
-> ---
-> 
+Reviewed-by: Justin Lee <justin.lee1@dell.com>
+Tested-by: Justin Lee <justin.lee1@dell.com>
+
+
+> This series extends the NCSI driver to configure multiple packages and/or=
+ channels simultaneously. Since the RFC series this includes a few extra ch=
+anges to fix areas in the driver that either made this harder or were roadb=
+locks due to deviations from the NCSI specification.
+>=20
+> Patches 1 & 2 fix two issues where the driver made assumptions about the =
+capabilities of the NCSI topology.
+> Patches 3 & 4 change some internal semantics slightly to make multi-mode =
+easier.
+> Patch 5 introduces a cleaner way of reconfiguring the NCSI configuration =
+and keeping track of channel states.
+> Patch 6 implements the main multi-package/multi-channel configuration, co=
+nfigured via the Netlink interface.
+>=20
+> Readers who have an interesting NCSI setup - especially multi-package wit=
+h HWA - please test! I think I've covered all permutations but I don't have=
+ infinite hardware to test on.
+>=20
 > Changes in v2:
->  - Moved dev_pm_ops structure to pinctrl-msm [Bjorn]
-> 
->  drivers/pinctrl/qcom/pinctrl-msm.c    | 19 +++++++++++++++++++
->  drivers/pinctrl/qcom/pinctrl-msm.h    |  2 ++
->  drivers/pinctrl/qcom/pinctrl-sdm845.c |  1 +
->  3 files changed, 22 insertions(+)
-> 
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-> index 7c7d083e2c0dc..87cbebe217fd2 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-> @@ -1072,6 +1072,25 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
->  		}
->  }
->  
-> +static int msm_pinctrl_suspend(struct device *dev)
-> +{
-> +	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
-> +
-> +	return pinctrl_force_sleep(pctrl->pctrl);
-> +}
-> +
-> +static int msm_pinctrl_resume(struct device *dev)
-> +{
-> +	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
-> +
-> +	return pinctrl_force_default(pctrl->pctrl);
-> +}
-> +
-> +SIMPLE_DEV_PM_OPS(msm_pinctrl_dev_pm_ops, msm_pinctrl_suspend,
-> +		  msm_pinctrl_resume);
-> +
-> +EXPORT_SYMBOL(msm_pinctrl_dev_pm_ops);
-> +
->  int msm_pinctrl_probe(struct platform_device *pdev,
->  		      const struct msm_pinctrl_soc_data *soc_data)
->  {
-> diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
-> index 29172fdf5882c..c12048e54a6f0 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-msm.h
-> +++ b/drivers/pinctrl/qcom/pinctrl-msm.h
-> @@ -123,6 +123,8 @@ struct msm_pinctrl_soc_data {
->  	unsigned int ntiles;
->  };
->  
-> +extern const struct dev_pm_ops msm_pinctrl_dev_pm_ops;
-> +
->  int msm_pinctrl_probe(struct platform_device *pdev,
->  		      const struct msm_pinctrl_soc_data *soc_data);
->  int msm_pinctrl_remove(struct platform_device *pdev);
-> diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> index 2ab7a88857579..c97f20fca5fd3 100644
-> --- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> +++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-> @@ -1300,6 +1300,7 @@ static const struct of_device_id sdm845_pinctrl_of_match[] = {
->  static struct platform_driver sdm845_pinctrl_driver = {
->  	.driver = {
->  		.name = "sdm845-pinctrl",
-> +		.pm = &msm_pinctrl_dev_pm_ops,
->  		.of_match_table = sdm845_pinctrl_of_match,
->  	},
->  	.probe = sdm845_pinctrl_probe,
-> -- 
-> 2.16.4
-> 
+> - Updated use of the channel lock in ncsi_reset_dev(), making the channel=
+ invisible and leaving the monitor check to ncsi_stop_channel_monitor().
+> - Fixed ncsi_channel_is_tx() to consider the state of channels in other p=
+ackages.
+> Changes in v3:
+> - Fixed bisectability bug in patch 1
+> - Consider channels on all packages in a few places when multi-package is=
+ enabled.
+> - Avoid doubling up reset operations, and check the current driver state =
+before reset to let any running operations complete.
+> - Reorganise the LSC handler slightly to avoid enabling Tx twice.
+> Changes in v4:
+> - Fix failover in the single-channel case
+> - Better handle ncsi_reset_dev() entry during a current config/suspend op=
+eration.
+>=20
+> Samuel Mendoza-Jonas (6):
+>   net/ncsi: Don't enable all channels when HWA available
+>   net/ncsi: Probe single packages to avoid conflict
+>   net/ncsi: Don't deselect package in suspend if active
+>   net/ncsi: Don't mark configured channels inactive
+>   net/ncsi: Reset channel state in ncsi_start_dev()
+>   net/ncsi: Configure multi-package, multi-channel modes with failover
+>=20
+>  include/uapi/linux/ncsi.h |  15 ++
+>  net/ncsi/internal.h       |  19 +-
+>  net/ncsi/ncsi-aen.c       |  75 ++++--
+>  net/ncsi/ncsi-manage.c    | 522 +++++++++++++++++++++++++++-----------
+>  net/ncsi/ncsi-netlink.c   | 233 ++++++++++++++---
+>  net/ncsi/ncsi-rsp.c       |   2 +-
+>  6 files changed, 660 insertions(+), 206 deletions(-)
+>=20
+> --
+> 2.19.1
+
