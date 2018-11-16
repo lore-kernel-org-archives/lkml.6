@@ -2,161 +2,109 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 83216C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5BCAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:22:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BDE82087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:22:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BDE82087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=keep-it-simple.com
+	by mail.kernel.org (Postfix) with ESMTP id 715C72087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:22:58 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="DlPkagec"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 715C72087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728402AbeKQAfX convert rfc822-to-8bit (ORCPT
+        id S2389630AbeKQAfc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 19:35:23 -0500
-Received: from martinlund.org ([173.255.130.145]:51037 "EHLO
-        slmp-550-86.slc.westdc.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727999AbeKQAfX (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 19:35:23 -0500
-Received: from mail-ot1-f45.google.com ([209.85.210.45]:36607)
-        by slmp-550-86.slc.westdc.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <martin.lund@keep-it-simple.com>)
-        id 1gNf1D-00ECRf-NV
-        for linux-kernel@vger.kernel.org; Fri, 16 Nov 2018 07:22:47 -0700
-Received: by mail-ot1-f45.google.com with SMTP id k98so21454399otk.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 06:22:47 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJxxJmJTQfJJr2Hx/RQFBEwDGhpy/PrE0vh+9CfyvCucuSsvGjC
-        A+gfGDOLyOAWDYH6u31eNXVR8jdhqKRf8B1j4JI=
-X-Google-Smtp-Source: AJdET5e8pa88IjE92X3SGicSUF8VSKByqpHlLCVpHqFD7GdwGfiWMJof8Nj34UmPyqfH6VbpNt/qmsLZe34ibyEMuyg=
-X-Received: by 2002:a9d:599a:: with SMTP id u26mr6778004oth.11.1542378167289;
- Fri, 16 Nov 2018 06:22:47 -0800 (PST)
+        Fri, 16 Nov 2018 19:35:32 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:42714 "EHLO mail.skyhub.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727999AbeKQAfc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 19:35:32 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542378175; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=VSZltSZO1vLhFBI68E8EzhZKIw88eqIpQ6DKSMmPb0U=;
+        b=DlPkagecS8Kufgnn6/v0t/dM4pUd8qFbwcA1LkZ/PNtgRAO7PeInHGurf1evguy8ILFf9E
+        qwkCWyuKdIrzuOU6jfo4Id3L6WfrqmXfYBkAj7plxEKoOI8CFu8DyWGMUfDhJCbei7JAT+
+        TNF8UC7T2dceAS05ny3fS4jJGen0h4I=
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id y7Gd51o6UDD7; Fri, 16 Nov 2018 15:22:55 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD0FE004D130AD2F34E6DE4.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:fe00:4d13:ad2:f34e:6de4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id A2DC61EC072C;
+        Fri, 16 Nov 2018 15:22:54 +0100 (CET)
+Date:   Fri, 16 Nov 2018 15:22:48 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "David S. Miller" <davem@davemloft.net>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Arnd Bergmann <arnd@arndb.de>,
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 01/23] x86/sgx: Update MAINTAINERS
+Message-ID: <20181116142248.GH20313@zn.tnic>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-2-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
- <1541739641-17789-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
- <CAB7pii3kx75ajF=8TsU7mWrmrzoHLiy7uAb+PirGw04BH65bZg@mail.gmail.com>
- <6ce1726a-f24d-17b8-d839-0a51c424a850@xilinx.com> <MWHPR02MB26231009A82C0372F62B5292AFDD0@MWHPR02MB2623.namprd02.prod.outlook.com>
-In-Reply-To: <MWHPR02MB26231009A82C0372F62B5292AFDD0@MWHPR02MB2623.namprd02.prod.outlook.com>
-From:   Martin Lund <martin.lund@keep-it-simple.com>
-Date:   Fri, 16 Nov 2018 15:22:35 +0100
-X-Gmail-Original-Message-ID: <CAB7pii2XYoP8bejamD2Rp0gtu6u07De+io0Yh3p1b=B-wE1_Fw@mail.gmail.com>
-Message-ID: <CAB7pii2XYoP8bejamD2Rp0gtu6u07De+io0Yh3p1b=B-wE1_Fw@mail.gmail.com>
-Subject: Re: [LINUX PATCH v12 1/3] dt-bindings: mtd: arasan: Add device tree
- binding documentation
-To:     nagasure@xilinx.com
-Cc:     michals@xilinx.com, Martin Lund <martin.lund@keep-it-simple.com>,
-        naga sureshkumar <nagasuresh12@gmail.com>,
-        boris.brezillon@bootlin.com, richard@nod.at,
-        linux-kernel@vger.kernel.org,
-        =?UTF-8?B?TWFyZWsgVmHFoXV0?= <marek.vasut@gmail.com>,
-        linux-mtd@lists.infradead.org, miquel.raynal@bootlin.com,
-        Brian Norris <computersforpeace@gmail.com>,
-        David Woodhouse <dwmw2@infradead.org>, robh@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8BIT
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - slmp-550-86.slc.westdc.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - keep-it-simple.com
-X-Get-Message-Sender-Via: slmp-550-86.slc.westdc.net: authenticated_id: martin.lund+keep-it-simple.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: slmp-550-86.slc.westdc.net: martin.lund@keep-it-simple.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181116010412.23967-2-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Yes, the clk_ prefix is kind of unnecessary. Though, all the
-clock-names in zynqmp.dtsi are still using the prefix - hopefully that
-will eventually be cleaned out.
+On Fri, Nov 16, 2018 at 03:01:08AM +0200, Jarkko Sakkinen wrote:
+> Add the maintainer information for the SGX subsystem.
+> 
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  MAINTAINERS | 7 +++++++
+>  1 file changed, 7 insertions(+)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 0abecc528dac..aaf56b544858 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -7676,6 +7676,13 @@ L:	linux-gpio@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/gpio/gpio-intel-mid.c
+>  
+> +INTEL SGX
+> +M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> +L:	linux-sgx@vger.kernel.org
+> +Q:	https://patchwork.kernel.org/project/intel-sgx/list/
+> +F:	drivers/platform/x86/intel_sgx/
 
-Either way, we just need to make sure the device tree doc clock-names
-are consistent with whatever is used by the driver.
+Looking at your diffstat, this doesn't cover it all.
 
-Br, Martin
-On Fri, Nov 16, 2018 at 2:50 PM Naga Sureshkumar Relli
-<nagasure@xilinx.com> wrote:
->
-> Hi,
->
-> > -----Original Message-----
-> > From: Michal Simek [mailto:michal.simek@xilinx.com]
-> > Sent: Friday, November 16, 2018 6:04 PM
-> > To: Martin Lund <martin.lund@keep-it-simple.com>; Naga Sureshkumar Relli
-> > <nagasure@xilinx.com>
-> > Cc: boris.brezillon@bootlin.com; miquel.raynal@bootlin.com; richard@nod.at; David
-> > Woodhouse <dwmw2@infradead.org>; Brian Norris <computersforpeace@gmail.com>; Marek
-> > Vašut <marek.vasut@gmail.com>; naga sureshkumar <nagasuresh12@gmail.com>; linux-
-> > mtd@lists.infradead.org; linux-kernel@vger.kernel.org; robh@kernel.org
-> > Subject: Re: [LINUX PATCH v12 1/3] dt-bindings: mtd: arasan: Add device tree binding
-> > documentation
-> >
-> > On 16. 11. 18 12:50, Martin Lund wrote:
-> > > Hi Naga,
-> > >
-> > > I've been working on running up the latest kernel (v4.20-rc2) on our
-> > > custom Xilinx hw board so that I can test the v12 version of your
-> > > Arasan nand driver.
-> > >
-> > > I've managed to get the driver successfully up and running and ready
-> > > for testing with a Micron MT29F64G08AFAAAWP device. However, setting
-> > > it up I've found a few inaccuracies in the documentation of the device
-> > > tree bindings.
-> > >
-> > > This is the device configuration that ended up working for me with
-> > > linux v4.20-rc2:
-> > >
-> > >        nfc: nand@ff100000 {
-> > >             compatible = "xlnx,zynqmp-nand", "arasan,nfc-v3p10";
-> > >             reg = <0x0 0xff100000 0x0 0x1000>;
-> > >             clock-names = "clk_sys", "clk_flash";
-> > >             clocks = <&clk200>, <&clk100>;
-> > >             interrupt-parent = <&gic>;
-> > >             interrupts = <0 14 4>;
-> > >             #address-cells = <1>;
-> > >             #size-cells = <0>;
-> > >
-> > >             nand@0 {
-> > >                 reg = <0>;
-> > >                 nand-ecc-mode = "hw";
-> > >             };
-> > >         };
-> > >
-> > > Compared with the example you will notice that "clock-name" should be
-> > > "clock-names". reg was missing a "0x0".
-> >
-> > clock-names and even that names - you are right it is not correct and should be fixed.
-> Clock-names I will change from "clock-name" to "clock-names".
-> But I got some review comments previously, to use "sys" instead of  "clk_sys" and "flash" instead of "clk_flash".
-> And I have to change this in driver.
-> I will update that.
->
-> Thanks,
-> Naga Sureshkumar Relli
->
-> >
-> > Missing 0x0 in reg doesn't matter because it depends on address/size cells.
-> >
-> > > I think it is helpful to provide a real-world working example, so you
-> > > might also consider changing the example "clocks" configuration to
-> > > clk200/clk100 since there is no clk_misc among the clock sources of
-> > > any of the xilinx zynqmp board device tree configurations.
-> >
-> > Real example is the best normally just c&p from existing dts is the way to go.
-> > But in connection to clocks it doesn't matter what exactly should be there and I don't think
-> > there is any consistency in that. Hopefully this will be removed by yaml conversion.
-> >
-> > Thanks,
-> > Michal
->
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
+One example: arch/x86/kernel/cpu/intel_sgx.c
+
+Also, was there any particular reasoning for calling the file
+intel_sgx.c instead of simply sgx.c ?
+
+-- 
+Regards/Gruss,
+    Boris.
+
+Good mailing practices for 400: avoid top-posting and trim the reply.
