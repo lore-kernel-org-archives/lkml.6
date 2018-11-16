@@ -2,248 +2,140 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0688CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:50:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4BAF6C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:50:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C3A282087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:50:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3A282087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 05CF82087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:50:08 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="SXRypt7s";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="FOyz0AEL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 05CF82087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389590AbeKPVBw (ORCPT
+        id S2389635AbeKPVBz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 16:01:52 -0500
-Received: from mx2.suse.de ([195.135.220.15]:51900 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727454AbeKPVBv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 16:01:51 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 120EAAE24;
-        Fri, 16 Nov 2018 10:50:01 +0000 (UTC)
-Message-ID: <7f7ab25e6e1c9ff37edd46adfe12653d5c300778.camel@suse.de>
-Subject: Re: [PATCH] usb: hub: add I/O error retry & reset routine
-From:   Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
-To:     Alan Stern <stern@rowland.harvard.edu>
-Cc:     linux-kernel@vger.kernel.org,
+        Fri, 16 Nov 2018 16:01:55 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:52046 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727454AbeKPVBy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 16:01:54 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2416D607EF; Fri, 16 Nov 2018 10:50:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542365405;
+        bh=/b3bIGLEtyTMrzfu6pwutm+dxr+uFIi4lqCBRJbRC4A=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=SXRypt7sV+XUeULqfo0qXyH2dihvAbvW3fb4FWhYdABDu7q2DkiiXa+Mng4GOyTsQ
+         E/GKvhHbeVit3E9brTL9DHFIGysDvqE2dozuXA6vY7UiTi6OWKu1TC6NdJMa4qGCM2
+         70OpuYHzYZiVjjMUcZT0H5jEIV4/ddR+jyOdybSc=
+Received: from [10.79.128.250] (blr-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.18.19])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: saiprakash.ranjan@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 676EB6024C;
+        Fri, 16 Nov 2018 10:49:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542365397;
+        bh=/b3bIGLEtyTMrzfu6pwutm+dxr+uFIi4lqCBRJbRC4A=;
+        h=Subject:To:Cc:References:From:Date:In-Reply-To:From;
+        b=FOyz0AELA6Mr+A6aasjudVPPNM0zldyApK7pE9nhuIeMzCIbyDd81BdrgoEN8ZOm5
+         tLvrh5xq92OVDx+82TArPp8Ox9qSfmfJSGnLYIWjPwSdSfgcL41idRDTXuf/E0VT5D
+         +QCsNQOBT6HYH61Ri66drQkU6JRSAGBNbaZus54s=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 676EB6024C
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=saiprakash.ranjan@codeaurora.org
+Subject: Re: Crash in msm serial on dragonboard with ftrace bootargs
+To:     Viresh Kumar <viresh.kumar@linaro.org>,
+        srinivas.kandagatla@linaro.org
+Cc:     Steven Rostedt <rostedt@goodmis.org>, sboyd@kernel.org,
+        joel@joelfernandes.org, bjorn.andersson@linaro.org,
+        Andy Gross <andy.gross@linaro.org>,
+        David Brown <david.brown@linaro.org>,
+        Jiri Slaby <jslaby@suse.com>,
+        Kees Cook <keescook@chromium.org>, geliangtang@gmail.com,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-usb@vger.kernel.org
-Date:   Fri, 16 Nov 2018 11:49:59 +0100
-In-Reply-To: <Pine.LNX.4.44L0.1811151420300.1308-100000@iolanthe.rowland.org>
-References: <Pine.LNX.4.44L0.1811151420300.1308-100000@iolanthe.rowland.org>
-Content-Type: multipart/signed; micalg="pgp-sha256";
-        protocol="application/pgp-signature"; boundary="=-QV0Oq8W2xjybfRG6V8pW"
-User-Agent: Evolution 3.30.2 
-Mime-Version: 1.0
+        gpramod@codeaurora.org,
+        linux-arm-msm <linux-arm-msm@vger.kernel.org>,
+        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
+        linux-serial@vger.kernel.org,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Rajendra Nayak <rnayak@codeaurora.org>,
+        vivek.gautam@codeaurora.org, sibis@codeaurora.org
+References: <472db11e-49a6-a1ee-e298-791ee1bbb10b@codeaurora.org>
+ <accdce6d-8fd2-9f15-d4cd-704cbf0b32eb@codeaurora.org>
+ <20181016144123.24c47b38@gandalf.local.home>
+ <7781815e-cba2-9e36-db6d-268298747876@codeaurora.org>
+ <20181016150328.3450d718@gandalf.local.home>
+ <c94103d2-ed5d-bf43-fc71-c60e108f303e@codeaurora.org>
+ <20181017223334.29ca2837@vmware.local.home>
+ <58d2474c-53cd-e6cb-2d25-db38d1a88da6@codeaurora.org>
+ <20181018091706.62310b38@gandalf.local.home>
+ <20181019041740.GB141835@joelaf.mtv.corp.google.com>
+ <8a75f2d5-f1bd-504e-b545-ae2e2f61ca8f@codeaurora.org>
+ <20181019095122.0f1c0946@gandalf.local.home>
+ <9cafe321-87f6-98a3-3bda-c2f7a3d7fc67@codeaurora.org>
+ <20181019111205.5c8e98e8@gandalf.local.home>
+ <1e6cc1fa5263b9edfcf7567d3f9f65fd@codeaurora.org>
+ <38099043-f5ed-6d81-bf94-13f61cfa8507@linaro.org>
+ <8f65f83b-8cd9-5e35-c324-30b86390906e@codeaurora.org>
+ <ed648cc5-0748-8bcc-5ebb-ce6dbc7d4fee@linaro.org>
+ <CAOh2x=kHQ_PfZqcoDE1+jx-ArMOh4hAFqXxiiKJ9=3JZUySQEw@mail.gmail.com>
+From:   Sai Prakash Ranjan <saiprakash.ranjan@codeaurora.org>
+Message-ID: <6ba6073e-c2ff-193c-3038-8329c06e325c@codeaurora.org>
+Date:   Fri, 16 Nov 2018 16:19:48 +0530
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.1
+MIME-Version: 1.0
+In-Reply-To: <CAOh2x=kHQ_PfZqcoDE1+jx-ArMOh4hAFqXxiiKJ9=3JZUySQEw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 11/16/2018 9:09 AM, Viresh Kumar wrote:
+> On Thu, Nov 15, 2018 at 4:23 PM Srinivas Kandagatla
+> <srinivas.kandagatla@linaro.org> wrote:
+> 
+>> Yes, this is not the solution, but it proves that the hand-off between
+>> booloaders and kernel is the issue.
+>>
+>> In general there is wider issue with resources hand-off between
+>> bootloader and kernel.
+>>
+>> There has been some proposal in the past by Viresh for a new framework
+>> called boot-constriants (https://lkml.org/lkml/2017/12/14/440) which am
+>> not sure if its still actively looked at. But something similar should
+>> be the way to address such issues.
+> 
+> It isn't dead code yet and I am waiting to gain few more use-cases
+> before I attempt
+> to convince Greg again :)
+> 
+> Here is the code..
+> 
+> git://git.kernel.org/pub/scm/linux/kernel/git/vireshk/linux.git boot-constraint
+> 
+> --
+> viresh
+> 
 
---=-QV0Oq8W2xjybfRG6V8pW
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Maybe you can take this earlycon issue as a usecase.
+I have added a boot constraint for earlycon on db410c and have sent a 
+patch. Whenever you repitch boot-constraint, you can add that as well :)
 
-Hi Alan,
-thanks for the review.
+Thanks,
+Sai
 
-On Thu, 2018-11-15 at 14:24 -0500, Alan Stern wrote:
-> On Thu, 15 Nov 2018, Nicolas Saenz Julienne wrote:
->=20
-> > An URB submission error in the HUB's endpoint completion function
-> > renders the whole HUB device unresponsive. This patch introduces a
-> > routine that retries the submission for 1s to then, as a last
-> resort,
-> > reset the whole device.
-> >=20
-> > The implementation is based on usbhid/hid_core.c's, which
-> implements the
-> > same functionality. It was tested with the help of BCC's error
-> injection
-> > tool (inject.py).
-> >=20
-> > Signed-off-by: Nicolas Saenz Julienne <nsaenzjulienne@suse.de>
->=20
-> Why do you think this is needed?  Are you experiencing these=20
-> sorts of URB submission errors?
-
-Sorry, I should have been more explicit on where I come from. I've been
-playing around injecting atomic allocation errors on the USB stack. For
-example any URB submission marked with GFP_ATOMIC that ends up into
-xhci will allocate some memory with that flag.
-
-Most subsystems, after facing a burst of memory allocation failures,
-seem to recover well (usbnet/hid/uas/alsa/serial). But I found out that
-it's not the case for USB hubs: In the event of detecting a new device
-the hub will complete an int URB which was previously sent to it. The
-event data is saved by the host and the URB is resubmitted for further
-event passing. In the case that URB submission failed, we lose all
-further events.
-
-It is indeed pretty hard to find this issue in the wild, since you have
-to time plugging or unplugging an USB device with the system running
-out of memory. But I don't think it's unrealistic to think it might
-happen.
-
-As I comment in the patch description, I'm injecting the errors using
-BCC and eBPF's function override capabilities. =20
-
->=20
-> Why do you handle only errors during submission but not during
-> completion?  And if you keep on getting errors during submission, why
-> would resetting the hub make any difference?
-
-Well, as far as I know, errors during completion are handled. The error
-is marked in hub->error, which later-on, in hub-event(), triggers a
-device reset.=20
-
-While implementing the solution I took into account the hub's
-completion error processing behavior and HID's implementation of the
-submission error handling (see hid_irq_in() in usbhid/hid-core.c). My
-rationale was that since both HID and hub are USB devices with a
-similar behavior there was no point in reinventing a mechanism. That
-said I have no spec data to back the "1s retry window to then reset the
-device".
-
-One could argue that in the event of an error having a timer running
-forever is not the best design. It has to stop sometime. If that's the
-case, the HUB will be in a unknown state, i.e. a device might have
-disappeared. Resetting the hub will at least unbind all the USB devices
-attached to it and retry the enumeration. Regardless of the
-enumeration's success we'll at least be in a "safe" state.
-
->=20
-> The patch doesn't delete the io_retry timer when the hub is removed.
-
-Right, that was silly of me...
-
-Kind Regards,
-Nicolas
-
->=20
-> Alan Stern
->=20
->=20
-> > ---
-> >  drivers/usb/core/hub.c | 43
-> +++++++++++++++++++++++++++++++++++++++++-
-> >  drivers/usb/core/hub.h |  3 +++
-> >  2 files changed, 45 insertions(+), 1 deletion(-)
-> >=20
-> > diff --git a/drivers/usb/core/hub.c b/drivers/usb/core/hub.c
-> > index d9bd7576786a..1447bdba59ec 100644
-> > --- a/drivers/usb/core/hub.c
-> > +++ b/drivers/usb/core/hub.c
-> > @@ -607,6 +607,44 @@ static int hub_port_status(struct usb_hub
-> *hub, int port1,
-> >                                  status, change, NULL);
-> >  }
-> > =20
-> > +static void hub_io_error(struct usb_hub *hub)
-> > +{
-> > +     /*
-> > +      * If it has been a while since the last error, we'll assume
-> > +      * this a brand new error and reset the retry timeout.
-> > +      */
-> > +     if (time_after(jiffies, hub->stop_retry + HZ/2))
-> > +             hub->retry_delay =3D 0;
-> > +
-> > +     /* When an error occurs, retry at increasing intervals */
-> > +     if (hub->retry_delay =3D=3D 0) {
-> > +             hub->retry_delay =3D 13;  /* Then 26, 52, 104, 104, ...
-> */
-> > +             hub->stop_retry =3D jiffies + msecs_to_jiffies(1000);
-> > +     } else if (hub->retry_delay < 100)
-> > +             hub->retry_delay *=3D 2;
-> > +
-> > +     if (time_after(jiffies, hub->stop_retry)) {
-> > +             /* Retries failed, so do a port reset */
-> > +             usb_queue_reset_device(to_usb_interface(hub-
-> >intfdev));
-> > +             return;
-> > +     }
-> > +
-> > +     mod_timer(&hub->io_retry,
-> > +                     jiffies + msecs_to_jiffies(hub-
-> >retry_delay));
-> > +}
-> > +
-> > +static void hub_retry_timeout(struct timer_list *t)
-> > +{
-> > +     struct usb_hub *hub =3D from_timer(hub, t, io_retry);
-> > +
-> > +     if (hub->disconnected || hub->quiescing)
-> > +             return;
-> > +
-> > +     dev_err(hub->intfdev, "retrying int urb\n");
-> > +     if (usb_submit_urb(hub->urb, GFP_ATOMIC))
-> > +             hub_io_error(hub);
-> > +}
-> > +
-> >  static void kick_hub_wq(struct usb_hub *hub)
-> >  {
-> >       struct usb_interface *intf;
-> > @@ -713,8 +751,10 @@ static void hub_irq(struct urb *urb)
-> >               return;
-> > =20
-> >       status =3D usb_submit_urb(hub->urb, GFP_ATOMIC);
-> > -     if (status !=3D 0 && status !=3D -ENODEV && status !=3D -EPERM)
-> > +     if (status !=3D 0 && status !=3D -ENODEV && status !=3D -EPERM) {
-> >               dev_err(hub->intfdev, "resubmit --> %d\n", status);
-> > +             hub_io_error(hub);
-> > +     }
-> >  }
-> > =20
-> >  /* USB 2.0 spec Section 11.24.2.3 */
-> > @@ -1800,6 +1840,7 @@ static int hub_probe(struct usb_interface
-> *intf, const struct usb_device_id *id)
-> >       INIT_DELAYED_WORK(&hub->leds, led_work);
-> >       INIT_DELAYED_WORK(&hub->init_work, NULL);
-> >       INIT_WORK(&hub->events, hub_event);
-> > +     timer_setup(&hub->io_retry, hub_retry_timeout, 0);
-> >       usb_get_intf(intf);
-> >       usb_get_dev(hdev);
-> > =20
-> > diff --git a/drivers/usb/core/hub.h b/drivers/usb/core/hub.h
-> > index 4accfb63f7dc..7dbd19c2c8d9 100644
-> > --- a/drivers/usb/core/hub.h
-> > +++ b/drivers/usb/core/hub.h
-> > @@ -69,6 +69,9 @@ struct usb_hub {
-> >       struct delayed_work     leds;
-> >       struct delayed_work     init_work;
-> >       struct work_struct      events;
-> > +     struct timer_list       io_retry;
-> > +     unsigned long           stop_retry;
-> > +     unsigned int            retry_delay;
-> >       struct usb_port         **ports;
-> >  };
-> > =20
-> >=20
->=20
-
-
---=-QV0Oq8W2xjybfRG6V8pW
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part
-Content-Transfer-Encoding: 7bit
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCAAdFiEErOkkGDHCg2EbPcGjlfZmHno8x/4FAlvuoNcACgkQlfZmHno8
-x/41VggAoO3ULeHPOJ8uA2ALySh+0cRpBfcOBOsNXiiU1xREkg8XwGqS0clhWVvy
-n8fqhnTD4rYLQ0UPEtozdtVCQtWGBRFYvq/s6F43f1GHEOAb++G3pwLgjVF72q6X
-VE/ju8+J9MzntoLz1JSJ5wAZ4oY4DZQpkXaXkEch/ulmHCPnmmc8uOUBcbVz9fS1
-9svqaXF4ImSPJEH/YGNP3GZIR+pGcW0xouxxzd4xGU/2ABfwBqSDt4TGQ4yJ+IFh
-KrtIGKxkzzctj0LtnMWPQSqOFhJtlfuWngZwQ+JdreaQgskj+eazZbpveGfQhtZ/
-+HkA1K98/q5NtbwKY5BY+/vhQcP+Hg==
-=bQzl
------END PGP SIGNATURE-----
-
---=-QV0Oq8W2xjybfRG6V8pW--
-
+-- 
+QUALCOMM INDIA, on behalf of Qualcomm Innovation Center, Inc. is a member
+of Code Aurora Forum, hosted by The Linux Foundation
