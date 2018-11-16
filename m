@@ -2,240 +2,190 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08E4DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:04:57 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21B97C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:05:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B4AFE20818
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:04:56 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eTDWKygW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B4AFE20818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id DF7D22145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:05:04 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DF7D22145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=asix.com.tw
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389304AbeKPRQC (ORCPT
+        id S2389356AbeKPRQK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 12:16:02 -0500
-Received: from mail-yb1-f194.google.com ([209.85.219.194]:33597 "EHLO
-        mail-yb1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727438AbeKPRQC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 12:16:02 -0500
-Received: by mail-yb1-f194.google.com with SMTP id i78-v6so9433081ybg.0
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 23:04:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=i+Ih6Ri/+jXKKVokCbFAuvWy/PMufQ654zCv+wUiWos=;
-        b=eTDWKygWMbS7agH9eoxXkYoeGq9L7lZDP4pW6cDeWzLKOl9blArL0dWBxPAi8H/7hl
-         Mr4hir4aclPvMq/Cvb7zHeaBNggGbNuX5fnRV8bca8NwKcoISkkCN7lM11Iy5EVrqNjF
-         h10Esk5WEmks5tGPIuYMBeSC9aKRc24fiKGJA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=i+Ih6Ri/+jXKKVokCbFAuvWy/PMufQ654zCv+wUiWos=;
-        b=fSOZfkh8h7P8lInsxSbm7zO8NmHNqF4q34KqYVz4fbYqIGgeTpHgikp60oxDLpblkc
-         4O5R1HXl4efOOVWRSUDU0MsipQfnh8pzMrVrHlyBbUnuYC/ljSAkVJashP5G0TOumXyd
-         AKogorQvjNl5j4iRkPSSo9s4XwCZ7drF/K3oN8gDgSqHzcB98WkQrtmkq51w2bDuW/tV
-         ql0QE64OqXbGEk9jbrd9I9TtJ019vUA4hpoaPdc4Tngy8HYD1D1p/ub/7KE7zRnLUW6m
-         F1GOSmrenClSxSyYW7/uyVNHULeU8ka2ipVMM2D4pJy2uSZkjNsFMu4W+qwqLgu0qSgV
-         lzsw==
-X-Gm-Message-State: AGRZ1gLWB6u0Bl2G3YAcwZ3lTlO+1wGzusfaSvYRG/NS+ABAz9UmGfKE
-        uq0wmnDCAGL/ZN3bsjxJ0iYj09pD0rA=
-X-Google-Smtp-Source: AJdET5edrnk1JSPmHrhhgY7FXH/vw+6dAh+pnmx+D6KEIbrbd5DmmG5YgzN8puAXAKuj78NWhUYudQ==
-X-Received: by 2002:a25:9d0d:: with SMTP id i13-v6mr8789004ybp.266.1542351893170;
-        Thu, 15 Nov 2018 23:04:53 -0800 (PST)
-Received: from mail-yw1-f43.google.com (mail-yw1-f43.google.com. [209.85.161.43])
-        by smtp.gmail.com with ESMTPSA id f203-v6sm8058509ywa.45.2018.11.15.23.04.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 23:04:52 -0800 (PST)
-Received: by mail-yw1-f43.google.com with SMTP id h21-v6so9760278ywa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 23:04:52 -0800 (PST)
-X-Received: by 2002:a81:350c:: with SMTP id c12-v6mr9299539ywa.342.1542351891748;
- Thu, 15 Nov 2018 23:04:51 -0800 (PST)
+        Fri, 16 Nov 2018 12:16:10 -0500
+Received: from asix.com.tw ([210.243.224.51]:18195 "EHLO freebsd2.asix.com.tw"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727438AbeKPRQK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 12:16:10 -0500
+X-Greylist: delayed 1680 seconds by postgrey-1.27 at vger.kernel.org; Fri, 16 Nov 2018 12:16:09 EST
+Received: from JACKYCHOU ([10.1.2.56])
+        by freebsd2.asix.com.tw (8.15.2/8.15.2) with ESMTPS id wAG6ZLDd068327
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NO);
+        Fri, 16 Nov 2018 14:35:21 +0800 (CST)
+        (envelope-from jackychou@asix.com.tw)
+Authentication-Results: freebsd2.asix.com.tw; sender-id=permerror header.from=jackychou@asix.com.tw; spf=permerror smtp.mfrom=jackychou@asix.com.tw
+X-Authentication-Warning: freebsd2.asix.com.tw: Host [10.1.2.56] claimed to be JACKYCHOU
+From:   "JackyChou" <jackychou@asix.com.tw>
+To:     <johan@kernel.org>
+Cc:     <gregkh@linuxfoundation.org>, <linux-usb@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <louis@asix.com.tw>,
+        <jackychou@asix.com.tw>
+References: <20181116063016.10360-1-jackychou@asix.com.tw>
+In-Reply-To: <20181116063016.10360-1-jackychou@asix.com.tw>
+Subject: [PATCH] USB: serial: mos7840: Add a product ID for the new product
+Date:   Fri, 16 Nov 2018 14:36:56 +0800
+Message-ID: <002201d47d76$c5a45080$50ecf180$@asix.com.tw>
 MIME-Version: 1.0
-References: <20181115145650.9827-1-maxime.ripard@bootlin.com>
-In-Reply-To: <20181115145650.9827-1-maxime.ripard@bootlin.com>
-From:   Tomasz Figa <tfiga@chromium.org>
-Date:   Fri, 16 Nov 2018 16:04:40 +0900
-X-Gmail-Original-Message-ID: <CAAFQd5DmcC23ZSktBXo=Sz-6G76oaJywha9mXtaPFSx08eV_nA@mail.gmail.com>
-Message-ID: <CAAFQd5DmcC23ZSktBXo=Sz-6G76oaJywha9mXtaPFSx08eV_nA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] media: cedrus: Add H264 decoding support
-To:     Maxime Ripard <maxime.ripard@bootlin.com>,
-        Pawel Osciak <posciak@chromium.org>
-Cc:     Hans Verkuil <hans.verkuil@cisco.com>,
-        Alexandre Courbot <acourbot@chromium.org>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        "list@263.net:IOMMU DRIVERS <iommu@lists.linux-foundation.org>, Joerg
-        Roedel <joro@8bytes.org>," <linux-arm-kernel@lists.infradead.org>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-        jenskuske@gmail.com, linux-sunxi@googlegroups.com,
-        thomas.petazzoni@bootlin.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain;
+        charset="us-ascii"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 15.0
+Thread-Index: AQI1Bgq9TKrJ8B3Xn2OH4bCWb0FHsqSQ38Rw
+Content-Language: zh-tw
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Maxime,
+From: JackyChou <jackychou@asix.com.tw>
 
-On Thu, Nov 15, 2018 at 11:56 PM Maxime Ripard
-<maxime.ripard@bootlin.com> wrote:
->
->
-> Hi,
->
-> Here is a new version of the H264 decoding support in the cedrus
-> driver.
->
-> As you might already know, the cedrus driver relies on the Request
-> API, and is a reverse engineered driver for the video decoding engine
-> found on the Allwinner SoCs.
->
-> This work has been possible thanks to the work done by the people
-> behind libvdpau-sunxi found here:
-> https://github.com/linux-sunxi/libvdpau-sunxi/
->
-> It's based on v4.20-rc1, plus the tag patches sent this week by Hans
-> Verkuil.
+Add a new PID 0x7843 to the driver.
+Let the new products be able to set up 3 serial ports with the driver.
 
-Thanks for looking into this. Please see my comments below.
+Because the development of new product is based on 4 serial ports, 
+but some users only need 3 serial ports. There is no way to set it from 
+the hardware, so let the driver set 3 serial ports with PID 0x7843.
 
->
-> I've been using the controls currently integrated into ChromeOS that
-> have a working version of this particular setup. However, these
-> controls have a number of shortcomings and inconsistencies with other
-> decoding API. I've worked with libva so far, but I've noticed already
-> that:
->   - The kernel UAPI expects to have the nal_ref_idc variable, while
->     libva only exposes whether that frame is a reference frame or
->     not. I've looked at the rockchip driver in the ChromeOS tree, and
->     our own driver, and they both need only the information about
->     whether the frame is a reference one or not, so maybe we should
->     change this?
+Signed-off-by: JackyChou <jackychou@asix.com.tw>
+---
+ drivers/usb/serial/mos7840.c | 45 ++++++++++++++++++------------------
+ 1 file changed, 22 insertions(+), 23 deletions(-)
 
-Since this is something that is actually present in the stream and the
-problem is that libva doesn't convey the information properly, I
-believe you can workaround it in the libva backend using this API by
-just setting it to 0 and some arbitrary non-zero value in a binary
-fashion.
+diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
+index b42bad85097a..57ef25a2f7bb 100644
+--- a/drivers/usb/serial/mos7840.c
++++ b/drivers/usb/serial/mos7840.c
+@@ -94,6 +94,7 @@
+ /* The native mos7840/7820 component */
+ #define USB_VENDOR_ID_MOSCHIP           0x9710
+ #define MOSCHIP_DEVICE_ID_7840          0x7840
++#define MOSCHIP_DEVICE_ID_7843          0x7843
+ #define MOSCHIP_DEVICE_ID_7820          0x7820
+ #define MOSCHIP_DEVICE_ID_7810          0x7810
+ /* The native component can have its vendor/device id's overridden 
+@@ -176,6 +177,7 @@ enum mos7840_flag {
+ 
+ static const struct usb_device_id id_table[] = {
+ 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7840)},
++	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7843)},
+ 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7820)},
+ 	{USB_DEVICE(USB_VENDOR_ID_MOSCHIP, MOSCHIP_DEVICE_ID_7810)},
+ 	{USB_DEVICE(USB_VENDOR_ID_BANDB, BANDB_DEVICE_ID_USO9ML2_2)}, 
+@@ -298,15 +300,10 @@ static int mos7840_set_uart_reg(struct usb_serial_port
+*port, __u16 reg,
+ 	val = val & 0x00ff;
+ 	/* For the UART control registers, the application number need
+ 	   to be Or'ed */
+-	if (port->serial->num_ports == 4) {
++	if (port->serial->num_ports == 2 && port->port_number != 0)
++		val |= ((__u16)port->port_number + 2) << 8;
++	else
+ 		val |= ((__u16)port->port_number + 1) << 8;
+-	} else {
+-		if (port->port_number == 0) {
+-			val |= ((__u16)port->port_number + 1) << 8;
+-		} else {
+-			val |= ((__u16)port->port_number + 2) << 8;
+-		}
+-	}
+ 	dev_dbg(&port->dev, "%s application number is %x\n", __func__, val);
+ 	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0), MCS_WRREQ,
+ 			       MCS_WR_RTYPE, val, reg, NULL, 0, 
+@@ -332,15 +329,10 @@ static int mos7840_get_uart_reg(struct usb_serial_port
+*port, __u16 reg,
+ 		return -ENOMEM;
+ 
+ 	/* Wval  is same as application number */
+-	if (port->serial->num_ports == 4) {
++	if (port->serial->num_ports == 2 && port->port_number != 0)
++		Wval = ((__u16)port->port_number + 2) << 8;
++	else
+ 		Wval = ((__u16)port->port_number + 1) << 8;
+-	} else {
+-		if (port->port_number == 0) {
+-			Wval = ((__u16)port->port_number + 1) << 8;
+-		} else {
+-			Wval = ((__u16)port->port_number + 2) << 8;
+-		}
+-	}
+ 	dev_dbg(&port->dev, "%s application number is %x\n", __func__,
+Wval);
+ 	ret = usb_control_msg(dev, usb_rcvctrlpipe(dev, 0), MCS_RDREQ,
+ 			      MCS_RD_RTYPE, Wval, reg, buf,
+VENDOR_READ_LENGTH, 
+@@ -2071,12 +2063,16 @@ static int mos7840_probe(struct usb_serial *serial,
+ 			VENDOR_READ_LENGTH, MOS_WDR_TIMEOUT);
+ 
+ 	/* For a MCS7840 device GPIO0 must be set to 1 */
+-	if (buf[0] & 0x01)
+-		device_type = MOSCHIP_DEVICE_ID_7840;
+-	else if (mos7810_check(serial))
++	if (buf[0] & 0x01) {
++		if (product == MOSCHIP_DEVICE_ID_7843)
++			device_type = MOSCHIP_DEVICE_ID_7843;
++		else
++			device_type = MOSCHIP_DEVICE_ID_7840;
++	} else if (mos7810_check(serial)) {
+ 		device_type = MOSCHIP_DEVICE_ID_7810;
+-	else
++	} else {
+ 		device_type = MOSCHIP_DEVICE_ID_7820;
++	}
+ 
+ 	kfree(buf);
+ out:
+@@ -2091,7 +2087,10 @@ static int mos7840_calc_num_ports(struct usb_serial
+*serial,
+ 	int device_type = (unsigned long)usb_get_serial_data(serial);
+ 	int num_ports;
+ 
+-	num_ports = (device_type >> 4) & 0x000F;
++	if (device_type == MOSCHIP_DEVICE_ID_7843)
++		num_ports = 3;
++	else
++		num_ports = (device_type >> 4) & 0x000F;
+ 
+ 	/*
+ 	 * num_ports is currently never zero as device_type is one of 
+@@ -2146,7 +2145,7 @@ static int mos7840_port_probe(struct usb_serial_port
+*port)
+ 		mos7840_port->SpRegOffset = 0x0;
+ 		mos7840_port->ControlRegOffset = 0x1;
+ 		mos7840_port->DcrRegOffset = 0x4;
+-	} else if ((mos7840_port->port_num == 2) && (serial->num_ports ==
+4)) {
++	} else if ((mos7840_port->port_num == 2) && (serial->num_ports > 2))
+{
+ 		mos7840_port->SpRegOffset = 0x8;
+ 		mos7840_port->ControlRegOffset = 0x9;
+ 		mos7840_port->DcrRegOffset = 0x16;
+@@ -2154,7 +2153,7 @@ static int mos7840_port_probe(struct usb_serial_port
+*port)
+ 		mos7840_port->SpRegOffset = 0xa;
+ 		mos7840_port->ControlRegOffset = 0xb;
+ 		mos7840_port->DcrRegOffset = 0x19;
+-	} else if ((mos7840_port->port_num == 3) && (serial->num_ports ==
+4)) {
++	} else if ((mos7840_port->port_num == 3) && (serial->num_ports > 2))
+{
+ 		mos7840_port->SpRegOffset = 0xa;
+ 		mos7840_port->ControlRegOffset = 0xb;
+ 		mos7840_port->DcrRegOffset = 0x19;
+--
+2.17.1
 
->   - The H264 bitstream exposes the picture default reference list (for
->     both list 0 and list 1), the slice reference list and an override
->     flag. The libva will only pass the reference list to be used (so
->     either the picture default's or the slice's) depending on the
->     override flag. The kernel UAPI wants the picture default reference
->     list and the slice reference list, but doesn't expose the override
->     flag, which prevents us from configuring properly the
->     hardware. Our video decoding engine needs the three information,
->     but we can easily adapt to having only one. However, having two
->     doesn't really work for us.
->
-
-From what I can see in the H.264 Slice header, there are 3 related data:
- - num_ref_idx_active_override_flag - affects the number of reference
-indices for the slice,
- - ref_list_l{0,1}_modifications - modifications for the reference lists,
- - ref_pic_list_modification_flag_l{0,1} - selects whether the
-modifications are applied.
-
-The reference lists inside the v4l2_ctrl_h264_slice_param are expected
-to already take all the above into account and be the final reference
-lists to be used for the slice. For reference, the H.264 specification
-refers to those final reference lists as RefPicList0 and RefPicList1
-and so the names of the fields in the struct.
-
-There is some interesting background here, though. The Rockchip VPU
-parses the slice headers itself and handles the above data on its own.
-This means that it needs to be programmed with the unmodified
-reference lists, as in v4l2_ctrl_h264_decode_param.
-
-Given that, it sounds like we need to have both. Your driver would
-always use the lists in v4l2_ctrl_h264_slice_param, while the Rockchip
-VPU would ignore them, use the ones in v4l2_ctrl_h264_decode_param and
-perform the per-slice modifications on its own.
-
-Best regards,
-Tomasz
-
-> It's pretty much the only one I've noticed so far, but we should
-> probably fix them already. And there's probably other, feel free to
-> step in.
->
-> I've tested the various ABI using this gdb script:
-> http://code.bulix.org/jl4se4-505620?raw
->
-> And this test script:
-> http://code.bulix.org/8zle4s-505623?raw
->
-> The application compiled is quite trivial:
-> http://code.bulix.org/e34zp8-505624?raw
->
-> The output is:
-> arm:    builds/arm-test-v4l2-h264-structures
->         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
-> x86:    builds/x86-test-v4l2-h264-structures
->         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
-> x64:    builds/x64-test-v4l2-h264-structures
->         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
-> arm64:  builds/arm64-test-v4l2-h264-structures
->         SHA1: 88cbf7485ba81831fc3b93772b215599b3b38318
->
-> Let me know if there's any flaw using that test setup, or if you have
-> any comments on the patches.
->
-> Maxime
->
-> Changes from v1:
->   - Rebased on 4.20
->   - Did the documentation for the userspace API
->   - Used the tags instead of buffer IDs
->   - Added a comment to explain why we still needed the swdec trigger
->   - Reworked the MV col buffer in order to have one slot per frame
->   - Removed the unused neighbor info buffer
->   - Made sure to have the same structure offset and alignments across
->     32 bits and 64 bits architecture
->
-> Maxime Ripard (1):
->   media: cedrus: Add H264 decoding support
->
-> Pawel Osciak (1):
->   media: uapi: Add H264 low-level decoder API compound controls.
->
->  Documentation/media/uapi/v4l/biblio.rst       |   9 +
->  .../media/uapi/v4l/extended-controls.rst      | 364 ++++++++++++++
->  .../media/uapi/v4l/pixfmt-compressed.rst      |  20 +
->  .../media/uapi/v4l/vidioc-queryctrl.rst       |  30 ++
->  .../media/videodev2.h.rst.exceptions          |   5 +
->  drivers/media/v4l2-core/v4l2-ctrls.c          |  42 ++
->  drivers/media/v4l2-core/v4l2-ioctl.c          |   1 +
->  drivers/staging/media/sunxi/cedrus/Makefile   |   3 +-
->  drivers/staging/media/sunxi/cedrus/cedrus.c   |  25 +
->  drivers/staging/media/sunxi/cedrus/cedrus.h   |  35 +-
->  .../staging/media/sunxi/cedrus/cedrus_dec.c   |  11 +
->  .../staging/media/sunxi/cedrus/cedrus_h264.c  | 470 ++++++++++++++++++
->  .../staging/media/sunxi/cedrus/cedrus_hw.c    |   4 +
->  .../staging/media/sunxi/cedrus/cedrus_regs.h  |  63 +++
->  .../staging/media/sunxi/cedrus/cedrus_video.c |   9 +
->  include/media/v4l2-ctrls.h                    |  10 +
->  include/uapi/linux/v4l2-controls.h            | 166 +++++++
->  include/uapi/linux/videodev2.h                |  11 +
->  18 files changed, 1276 insertions(+), 2 deletions(-)
->  create mode 100644 drivers/staging/media/sunxi/cedrus/cedrus_h264.c
->
-> --
-> 2.19.1
->
