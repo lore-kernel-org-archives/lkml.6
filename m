@@ -7,55 +7,55 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE7DEC04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:40:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D5D24C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:40:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7634F20684
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:40:40 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 99E562087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:40:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="JqGzCIoF"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7634F20684
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="S2T6BdWe"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 99E562087C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amarulasolutions.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390102AbeKQCxo (ORCPT
+        id S2390312AbeKQCxw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 21:53:44 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:45233 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729136AbeKQCxo (ORCPT
+        Fri, 16 Nov 2018 21:53:52 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:44537 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2390166AbeKQCxv (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 21:53:44 -0500
-Received: by mail-pl1-f194.google.com with SMTP id a14so6809817plm.12
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 08:40:38 -0800 (PST)
+        Fri, 16 Nov 2018 21:53:51 -0500
+Received: by mail-pf1-f196.google.com with SMTP id b81-v6so11157946pfe.11
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 08:40:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=amarulasolutions.com; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=xQWYOyjdRmGs9UhZs6bBgbQ0IL6akLwNeZEkqRrFzQQ=;
-        b=JqGzCIoFyPGvPhj/7yVhIdSIJM9/6pIgB2WfsDcwm0YEUsFfpQ2o0uL5x1pLewAvoD
-         AQry88+ddoeIdHts+ZsCdpOR7T1ax6UfJS9bZau8xCb6D/Ho1KlxmaAkWnKPj1X+sY6/
-         WPHgI8U4FwSjx5KUDn2pvhExjgQ+XRwT3fKKU=
+        bh=MRo42Xf+FQpuD9HBlP4kHgZ6kHSlZrL0EE25YHygWMY=;
+        b=S2T6BdWe4saNqr8iZpsCHP/vmNp1zYBDZeUNmr44SF6J0TY+di02NvuGEMk3OMnRqd
+         uodzP5KSJsAw856X8sbpZ1+C7XmfY652LOfU1ARhg4s78dhnVad0Gz5/h8XmY1SEGuBp
+         DFbaA1ROMKE1CPSDJAPai98J4NwIkPl1derII=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=xQWYOyjdRmGs9UhZs6bBgbQ0IL6akLwNeZEkqRrFzQQ=;
-        b=fxEexa/u/9BbiggCJ/xAds8srRtQNVA2tbT9g4ReB3G3GrbbUX8Lptc+VI8ATInmat
-         bWn1jhXjgxso11MtfN1QO2ioaY/vcA5u7/g//XajKKoo4dUbKTVAgEhryyWnnZB2HwWe
-         sYnTR3e4qMD07E+0ySEdaNUl5acr8K3kcyDKgI9oG6c9ce2PyF123VZNk1EwVnJ9r1Cs
-         6Nu4c8OzTgi2ZZH+L7iLWp43+spQ+Zuyw4a6LQqYXvnrv2zINMoxR5CGEdZCHX+suRyE
-         OKytnE2uTg7SHJ8RgSEAPwN9/ggOlFZYv5O40oRcbcQfQxhtfgeQTjeq8qUPyvzAWnzN
-         1Kgg==
-X-Gm-Message-State: AGRZ1gKCYdOKgLmOba6XKD1q717ApOnGt13SxBV7yh06X3n45u6/LJsy
-        23S2WPQzRRCTnoPSu9lR7XKOYw==
-X-Google-Smtp-Source: AJdET5cJl6/+xSmjk5mp7v3sI+9nYFc1w0XeY5fZhf9YNXpRVnC38Q2TJoyWRsAPtM3SsC+RGhl3Cg==
-X-Received: by 2002:a17:902:4025:: with SMTP id b34-v6mr11739165pld.318.1542386437932;
-        Fri, 16 Nov 2018 08:40:37 -0800 (PST)
+        bh=MRo42Xf+FQpuD9HBlP4kHgZ6kHSlZrL0EE25YHygWMY=;
+        b=lNCFgsvDzkjwMXC07jyE4Ocg3ByWwIDmC7Fidekn7dvVUaD+2G2bmbVpqlcY54pJrz
+         YHiSZFckvV99sj5i1sCMPlTikj3D7uV4Ky7gjdeGIvJOoj0jRapgUQ3Jr1+zyo9RHzS9
+         +dPz6IS2cq2Gm8oy8PWDMBT8Z5eZBnqEZIJZOGKxvCqvxtUzPPv9MCoh5hwcD9OocwTZ
+         SZCsenSpnkbyOotxQ3qGwcKOBQw59Q42KOipZTSchqopjbc1U7ZezJUQ7PMMDDbbtD12
+         B6HJhwXNadAYqwDfjd4tRwOSC5yUtRbYTdb1EPYfKltCcVqnVltH4iF6OcF8b6bHePb7
+         A0cQ==
+X-Gm-Message-State: AGRZ1gJzQtKedLMy7G/+2XofMkhaBHWuHvA4g3XWt/T9B/Byjj4hsDPO
+        9iEccG/1+lY7fxMH2zD17Etgrg==
+X-Google-Smtp-Source: AJdET5dZ5SU50zmOjkRJkoJuTE+S0902DCIO0+YdWzY+sLBUXEOUSOcfG/pI+yUb0aZoOL90/n2p9Q==
+X-Received: by 2002:a62:528e:: with SMTP id g136mr7747262pfb.111.1542386445340;
+        Fri, 16 Nov 2018 08:40:45 -0800 (PST)
 Received: from localhost.localdomain ([115.97.190.86])
-        by smtp.gmail.com with ESMTPSA id p5-v6sm34622213pfb.109.2018.11.16.08.40.30
+        by smtp.gmail.com with ESMTPSA id p5-v6sm34622213pfb.109.2018.11.16.08.40.38
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 08:40:37 -0800 (PST)
+        Fri, 16 Nov 2018 08:40:44 -0800 (PST)
 From:   Jagan Teki <jagan@amarulasolutions.com>
 To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         Maxime Ripard <maxime.ripard@bootlin.com>,
@@ -72,9 +72,9 @@ To:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
         TL Lim <tllim@pine64.org>, linux-sunxi@googlegroups.com,
         linux-amarula@amarulasolutions.com
 Cc:     Jagan Teki <jagan@amarulasolutions.com>
-Subject: [PATCH v2 08/12] drm/sun4i: sun6i_mipi_dsi: Enable 2byte trail for 4-lane burst mode
-Date:   Fri, 16 Nov 2018 22:09:12 +0530
-Message-Id: <20181116163916.29621-9-jagan@amarulasolutions.com>
+Subject: [PATCH v2 09/12] drm/sun4i: sun6i_mipi_dsi: Enable burst mode HBP, HSA_HSE
+Date:   Fri, 16 Nov 2018 22:09:13 +0530
+Message-Id: <20181116163916.29621-10-jagan@amarulasolutions.com>
 X-Mailer: git-send-email 2.18.0.321.gffc6fa0e3
 In-Reply-To: <20181116163916.29621-1-jagan@amarulasolutions.com>
 References: <20181116163916.29621-1-jagan@amarulasolutions.com>
@@ -85,47 +85,53 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-For 4-lane, burst mode panels would need to enable 2byte trail_fill
-along with filling trail_env in dsi base control register.
+Horizontal back porch, sync active and sync end bits are
+needed to disable for burst mode panel operations.
 
-Similar reference code avialable in BSP (from linux-sunxi/
-drivers/video/sunxi/disp2/disp/de/lowlevel_sun50iw1/de_dsi.c)
-
-if (panel->lcd_dsi_lane == 4)
-{
-   dsi_dev[sel]->dsi_basic_ctl.bits.trail_inv = 0xc;
-   dsi_dev[sel]->dsi_basic_ctl.bits.trail_fill     = 1;
-}
+So, disable them via dsi base control register.
 
 Signed-off-by: Jagan Teki <jagan@amarulasolutions.com>
 ---
- drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c | 12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-index 0182408f8932..22d2987c3298 100644
+index 22d2987c3298..20a1de8493e0 100644
 --- a/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
 +++ b/drivers/gpu/drm/sun4i/sun6i_mipi_dsi.c
-@@ -34,6 +34,8 @@
- #define SUN6I_DSI_CTL_EN			BIT(0)
+@@ -644,15 +644,21 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+ 	struct sun6i_dsi_timings timings;
+ 	size_t bytes;
+ 	u8 *buffer;
++	u32 val = 0;
  
- #define SUN6I_DSI_BASIC_CTL_REG		0x00c
-+#define SUN6I_DSI_BASIC_CTL_TRAIL_INV(n)	(((n) & 0xf) << 4)
-+#define SUN6I_DSI_BASIC_CTL_TRAIL_FILL		BIT(3)
- #define SUN6I_DSI_BASIC_CTL_HBP_DIS		BIT(2)
- #define SUN6I_DSI_BASIC_CTL_HSA_HSE_DIS		BIT(1)
- #define SUN6I_DSI_BASIC_CTL_VIDEO_BURST		BIT(0)
-@@ -559,6 +561,10 @@ static void sun6i_dsi_setup_burst(struct sun6i_dsi *dsi,
- 	/* enable burst mode */
- 	regmap_read(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, &val);
- 	val |= SUN6I_DSI_BASIC_CTL_VIDEO_BURST;
-+	if (device->lanes == 4) {
-+		val |= SUN6I_DSI_BASIC_CTL_TRAIL_INV(0xc);
-+		val |= SUN6I_DSI_BASIC_CTL_TRAIL_FILL;
+ 	/* Do all timing calculations up front to allocate buffer space */
+ 
+ 	memset(&timings, 0, sizeof(timings));
+ 
+-	if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST)
++	if (device->mode_flags & MIPI_DSI_MODE_VIDEO_BURST) {
+ 		timings.hblk = (mode->hdisplay * Bpp);
+-	else
++
++		regmap_read(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, &val);
++		val |= SUN6I_DSI_BASIC_CTL_HBP_DIS;
++		val |= SUN6I_DSI_BASIC_CTL_HSA_HSE_DIS;
++	} else {
+ 		sun6i_dsi_get_timings(dsi, mode, &timings);
 +	}
- 	regmap_write(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, val);
- }
  
+ 	/* How many bytes do we need to send all payloads? */
+ 	bytes = max_t(size_t, max(max(timings.hfp, timings.hblk),
+@@ -661,7 +667,7 @@ static void sun6i_dsi_setup_timings(struct sun6i_dsi *dsi,
+ 	if (WARN_ON(!buffer))
+ 		return;
+ 
+-	regmap_write(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, 0);
++	regmap_write(dsi->regs, SUN6I_DSI_BASIC_CTL_REG, val);
+ 
+ 	regmap_write(dsi->regs, SUN6I_DSI_SYNC_HSS_REG,
+ 		     sun6i_dsi_build_sync_pkt(MIPI_DSI_H_SYNC_START,
 -- 
 2.18.0.321.gffc6fa0e3
 
