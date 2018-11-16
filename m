@@ -2,195 +2,134 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1104BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:50:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B72A4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:51:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CD1EB2087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:50:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD1EB2087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=keep-it-simple.com
+	by mail.kernel.org (Postfix) with ESMTP id 7F2482087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:51:23 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="JMxd+RnV"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7F2482087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mena.vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389557AbeKPWCY (ORCPT
+        id S2389584AbeKPWDX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 17:02:24 -0500
-Received: from martinlund.org ([173.255.130.145]:34299 "EHLO
-        slmp-550-86.slc.westdc.net" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1727767AbeKPWCY (ORCPT
+        Fri, 16 Nov 2018 17:03:23 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:54062 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727767AbeKPWDX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 17:02:24 -0500
-Received: from mail-oi1-f169.google.com ([209.85.167.169]:41806)
-        by slmp-550-86.slc.westdc.net with esmtpsa (TLSv1.2:ECDHE-RSA-AES128-GCM-SHA256:128)
-        (Exim 4.91)
-        (envelope-from <martin.lund@keep-it-simple.com>)
-        id 1gNcdh-00DguJ-K2
-        for linux-kernel@vger.kernel.org; Fri, 16 Nov 2018 04:50:21 -0700
-Received: by mail-oi1-f169.google.com with SMTP id g188-v6so19405232oif.8
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 03:50:21 -0800 (PST)
-X-Gm-Message-State: AA+aEWZJipkGeBPhD50/4dPhyGMOXUZyQIwgbINzpPkQCGtjemb/EIcD
-        53czyQtw3jRjsMLjt1vFlVsg6bbLhVEPL2StpDc=
-X-Google-Smtp-Source: AJdET5cfXOJ38Hmw/r0IWW8PDZUdZkU08pv0m9lauCDKkb9EUkcjXni7hv2u0Kk9e4at4a3AmRsHArBq+48DtSv931s=
-X-Received: by 2002:aca:be45:: with SMTP id o66-v6mr748362oif.164.1542369021146;
- Fri, 16 Nov 2018 03:50:21 -0800 (PST)
-MIME-Version: 1.0
-References: <1541739641-17789-1-git-send-email-naga.sureshkumar.relli@xilinx.com>
- <1541739641-17789-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
-In-Reply-To: <1541739641-17789-2-git-send-email-naga.sureshkumar.relli@xilinx.com>
-From:   Martin Lund <martin.lund@keep-it-simple.com>
-Date:   Fri, 16 Nov 2018 12:50:10 +0100
-X-Gmail-Original-Message-ID: <CAB7pii3kx75ajF=8TsU7mWrmrzoHLiy7uAb+PirGw04BH65bZg@mail.gmail.com>
-Message-ID: <CAB7pii3kx75ajF=8TsU7mWrmrzoHLiy7uAb+PirGw04BH65bZg@mail.gmail.com>
-Subject: Re: [LINUX PATCH v12 1/3] dt-bindings: mtd: arasan: Add device tree
- binding documentation
-To:     naga.sureshkumar.relli@xilinx.com
-Cc:     boris.brezillon@bootlin.com, miquel.raynal@bootlin.com,
-        richard@nod.at, David Woodhouse <dwmw2@infradead.org>,
-        Brian Norris <computersforpeace@gmail.com>,
-        =?UTF-8?B?TWFyZWsgVmHFoXV0?= <marek.vasut@gmail.com>,
-        michals@xilinx.com, naga sureshkumar <nagasuresh12@gmail.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        robh@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - slmp-550-86.slc.westdc.net
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - keep-it-simple.com
-X-Get-Message-Sender-Via: slmp-550-86.slc.westdc.net: authenticated_id: martin.lund+keep-it-simple.com/only user confirmed/virtual account not confirmed
-X-Authenticated-Sender: slmp-550-86.slc.westdc.net: martin.lund@keep-it-simple.com
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
+        Fri, 16 Nov 2018 17:03:23 -0500
+Received: by mail-wm1-f68.google.com with SMTP id f10-v6so21754468wme.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 03:51:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id;
+        bh=9/Jpoirvo+JBapSNqbcEaqpfZUw6b7iOGbbgwDtFxZQ=;
+        b=JMxd+RnVG+AodKMinfHmpQZ+hq/rvlED2bVglPNzIBV6G26ASIQ4YQaGEnwuyjuaJ9
+         MYhvkD6Bjumi/YpR/aHuXYcg6/b4+k0fU3z/sXNF+H44i7f4XHuN+ffcxe/nuozT1DBD
+         saeLiT3KFqGrm9Bp2XorPBEMYvQg+5Ud1kpxn8hKjaDY0XaIqzqvyZ/BbQDdLjAc924U
+         6g9qqKP6dm0/2DOLXyvkzl7GajJOizmD70N9RP8phHv3+Oqh7aPjGN8wdllz08BKy/FX
+         4yBzuAhtGv9ipocX6kHAbmOTErSSbBk4cpk8dp6norjFoLD/31Ku5XT95ec+5SndiuhD
+         Wc/A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=9/Jpoirvo+JBapSNqbcEaqpfZUw6b7iOGbbgwDtFxZQ=;
+        b=kePpwys8S+6sqtmjcbhJzPMO1YAHVuIFN3uOp2rTW+bW1oDKbyOkkcTKFXO7cvnWbq
+         o+hCD1iwTZwf2wvUlGYBS/dNkAu0IKU6U4YWbxcFCnc1/2Nvsy4e5anrFErbIGP7rFF7
+         tqeAbZ//hzeO+gpJj23+EitEOWv6Ty0OheNGO95lT28Sqerm71JPdWqcc2lGpDx3ddkU
+         JCy1F0z/9YFm1VCRSm548EA/B5CFHw6zkjsJlJt8hsNG4KJKr8eNuiEFOfsYDKTlO8j4
+         kat68Oy4bfYDpId329+KBV0S/gn4KtVYdU90klP8/kEcdR5u/RQd0c2EW/CcQ6FbkhPb
+         CQrg==
+X-Gm-Message-State: AGRZ1gLedr3pqqWmrJaoM53KV13KNS8L/8uWe2bWrLS0q3FCM8XP2XRy
+        Q6yf42R+rmmJPrkIdDpYHmegog==
+X-Google-Smtp-Source: AJdET5enwGsKs7ldkV10V1B5kekm7cLExtPGsWsIOBbkVFUwlBFK8cqqFjQZ+crjBT3RYDRusWtaaw==
+X-Received: by 2002:a1c:bc82:: with SMTP id m124-v6mr8606182wmf.47.1542369080093;
+        Fri, 16 Nov 2018 03:51:20 -0800 (PST)
+Received: from localhost.localdomain ([41.35.235.41])
+        by smtp.gmail.com with ESMTPSA id e66-v6sm44686207wmf.40.2018.11.16.03.51.17
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Nov 2018 03:51:19 -0800 (PST)
+From:   Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+X-Google-Original-From: Ahmed Abd El Mawgood <ahmedsoliman0x666@gmail.com>
+To:     Shuah Khan <shuah@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        Andrew Jones <drjones@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hossam Hassan <7ossam9063@gmail.com>,
+        Ahmed Lotfy <A7med.lotfey@gmail.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>
+Cc:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+Subject: [PATCH V2] SelfTest: KVM: Drop Asserts for madvise MADV_NOHUGEPAGE failure
+Date:   Fri, 16 Nov 2018 13:50:55 +0200
+Message-Id: <20181116115055.7415-1-ahmedsoliman0x666@gmail.com>
+X-Mailer: git-send-email 2.18.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Naga,
+From: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
 
-I've been working on running up the latest kernel (v4.20-rc2) on our
-custom Xilinx hw board so that I can test the v12 version of your
-Arasan nand driver.
+madvise() returns -1 without CONFIG_TRANSPARENT_HUGEPAGE=y. That would
+trigger asserts when checking for return value of madvice. Following
+similar decision to [1]. I thought it is ok to assume that madvise()
+MADV_NOHUGEPAGE failures implies that THP is not supported by host kernel.
 
-I've managed to get the driver successfully up and running and ready
-for testing with a Micron MT29F64G08AFAAAWP device. However, setting
-it up I've found a few inaccuracies in the documentation of the device
-tree bindings.
+Other options was to check for Transparent Huge Page support in
+/sys/kernel/mm/transparent_hugepage/enabled.
 
-This is the device configuration that ended up working for me with
-linux v4.20-rc2:
+-- links --
+[1] https://lists.gnu.org/archive/html/qemu-devel/2015-11/msg04514.html
 
-       nfc: nand@ff100000 {
-            compatible = "xlnx,zynqmp-nand", "arasan,nfc-v3p10";
-            reg = <0x0 0xff100000 0x0 0x1000>;
-            clock-names = "clk_sys", "clk_flash";
-            clocks = <&clk200>, <&clk100>;
-            interrupt-parent = <&gic>;
-            interrupts = <0 14 4>;
-            #address-cells = <1>;
-            #size-cells = <0>;
+Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+---
+ tools/testing/selftests/kvm/lib/kvm_util.c | 21 +++++++++++++++------
+ 1 file changed, 15 insertions(+), 6 deletions(-)
 
-            nand@0 {
-                reg = <0>;
-                nand-ecc-mode = "hw";
-            };
-        };
+diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+index 1b41e71283d5..437c5bb48061 100644
+--- a/tools/testing/selftests/kvm/lib/kvm_util.c
++++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+@@ -586,14 +586,23 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
+ 				 src_type == VM_MEM_SRC_ANONYMOUS_THP ?  huge_page_size : 1);
+ 
+ 	/* As needed perform madvise */
+-	if (src_type == VM_MEM_SRC_ANONYMOUS || src_type == VM_MEM_SRC_ANONYMOUS_THP) {
++	if (src_type == VM_MEM_SRC_ANONYMOUS) {
++		/*
++		 * Neglect madvise error because it is ok to not have THP
++		 * support in this case.
++		 */
++		madvise(region->host_mem, npages * vm->page_size,
++			MADV_NOHUGEPAGE);
++	} else if (src_type == VM_MEM_SRC_ANONYMOUS_THP) {
+ 		ret = madvise(region->host_mem, npages * vm->page_size,
+-			     src_type == VM_MEM_SRC_ANONYMOUS ? MADV_NOHUGEPAGE : MADV_HUGEPAGE);
++			MADV_HUGEPAGE);
+ 		TEST_ASSERT(ret == 0, "madvise failed,\n"
+-			    "  addr: %p\n"
+-			    "  length: 0x%lx\n"
+-			    "  src_type: %x",
+-			    region->host_mem, npages * vm->page_size, src_type);
++			"Does the kernel have CONFIG_TRANSPARENT_HUGEPAGE=y\n"
++			"  addr: %p\n"
++			"  length: 0x%lx\n"
++			"  src_type: %x\n",
++			region->host_mem, npages * vm->page_size,
++			src_type);
+ 	}
+ 
+ 	region->unused_phy_pages = sparsebit_alloc();
+-- 
+2.18.1
 
-Compared with the example you will notice that "clock-name" should be
-"clock-names". reg was missing a "0x0".
-
-I think it is helpful to provide a real-world working example, so you
-might also consider changing the example "clocks" configuration to
-clk200/clk100 since there is no clk_misc among the clock sources of
-any of the xilinx zynqmp board device tree configurations.
-
-Br, Martin
-
-On Fri, Nov 9, 2018 at 6:00 AM Naga Sureshkumar Relli
-<naga.sureshkumar.relli@xilinx.com> wrote:
->
-> This patch adds the dts binding document for arasan nand flash controller
->
-> Signed-off-by: Naga Sureshkumar Relli <naga.sureshkumar.relli@xilinx.com>
-> ---
-> Changes in v12:
->  - Removed interrupt-parent description as it is implied as suggested by
->    Rob Herring
->  - Added missing ';' as required
-> Changes in v11:
->  - Updated compatible description as suggested by Boris
->  - Removed arasan-has-dma property
-> Changes in v10:
->  - None
-> Changes in v9:
->  - None
-> Changes in v8:
->  - Updated compatible and clock-names as per Boris comments
-> Changes in v7:
->  - Corrected the acronyms those should be in caps
-> Changes in v6:
->  - Removed num-cs property
->  - Separated nandchip from nand controller
-> Changes in v5:
->  - None
-> Changes in v4:
->  - Added num-cs property
->  - Added clock support
-> Changes in v3:
->  - None
-> Changes in v2:
->  - None
-> ---
->  .../devicetree/bindings/mtd/arasan_nand.txt        | 32 ++++++++++++++++++++++
->  1 file changed, 32 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mtd/arasan_nand.txt
->
-> diff --git a/Documentation/devicetree/bindings/mtd/arasan_nand.txt b/Documentation/devicetree/bindings/mtd/arasan_nand.txt
-> new file mode 100644
-> index 0000000..b522daf
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mtd/arasan_nand.txt
-> @@ -0,0 +1,32 @@
-> +Arasan NAND Flash Controller with ONFI 3.1 support
-> +
-> +Required properties:
-> +- compatible:          Should be "xlnx,zynqmp-nand", "arasan,nfc-v3p10"
-> +- reg:                 Memory map for module access
-> +- interrupts:          Should contain the interrupt for the device
-> +- clock-name:          List of input clocks - "sys", "flash"
-> +                       (See clock bindings for details)
-> +- clocks:              Clock phandles (see clock bindings for details)
-> +
-> +Required properties for child node:
-> +- nand-ecc-mode: see nand.txt
-> +
-> +For NAND partition information please refer the below file
-> +Documentation/devicetree/bindings/mtd/partition.txt
-> +
-> +Example:
-> +       nfc: nand@ff100000 {
-> +               compatible = "xlnx,zynqmp-nand", "arasan,nfc-v3p10";
-> +               reg = <0x0 0xff100000 0x1000>;
-> +               clock-name = "sys", "flash";
-> +               clocks = <&misc_clk &misc_clk>;
-> +               interrupt-parent = <&gic>;
-> +               interrupts = <0 14 4>;
-> +               #address-cells = <1>;
-> +               #size-cells = <0>;
-> +
-> +               nand@0 {
-> +                       reg = <0>;
-> +                       nand-ecc-mode = "hw";
-> +               };
-> +       };
-> --
-> 2.7.4
->
->
-> ______________________________________________________
-> Linux MTD discussion mailing list
-> http://lists.infradead.org/mailman/listinfo/linux-mtd/
