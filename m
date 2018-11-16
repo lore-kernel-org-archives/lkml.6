@@ -7,66 +7,66 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AB0EFC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5E64C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 761E220892
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:02 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 714DA20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ATnBdGjg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 761E220892
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EYgZ6R/G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 714DA20892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389545AbeKPUQi (ORCPT
+        id S2389569AbeKPUQo (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 15:16:38 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40334 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727543AbeKPUQh (ORCPT
+        Fri, 16 Nov 2018 15:16:44 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:46473 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389547AbeKPUQn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 15:16:37 -0500
-Received: by mail-pf1-f193.google.com with SMTP id x2-v6so11173015pfm.7
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:05:00 -0800 (PST)
+        Fri, 16 Nov 2018 15:16:43 -0500
+Received: by mail-pg1-f193.google.com with SMTP id w7so10386910pgp.13
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:05:05 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=oskLWY4mMeTJJ9TYoYBq3J1qg+P8pf5LnWRqIcwKGK8=;
-        b=ATnBdGjgO7zh0Orx+cQY5HgoRJ4l9UbThujztH+bBaMJGHsFpCw1g+uMRsgziODVZb
-         rbecT9tokiUQH9Sxkd6bI6PKhqIioXGKtsSJ80pXMCVb7cLjyKGLCWsapQGglk8SjHYz
-         3j+FQd43roFL2giLKateOQSrXnm4Je8L7ScME=
+        bh=HClVvGiwOuWgQ6TjJ14HNKIrS62CNCv2+c1OlYODQLQ=;
+        b=EYgZ6R/GukaNgdoqsL+uxEcbK4u50GApx9Jrvrdq5PtjcvbOzdKihSLY8qHyk4JUah
+         JmTUeiVCXXf0NaYEjIQgSxfEqzMrhj2guSYLHqQs7ijcz+wlMZZbhmO5xNnUky32xYNo
+         fr7LO3IgRE/Gm4kOImnuv0ghPrZqulGfKR3WI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=oskLWY4mMeTJJ9TYoYBq3J1qg+P8pf5LnWRqIcwKGK8=;
-        b=P7i5oihBJqiMvZwzlWpRJGMYKPocnFB8cg88Fqks9Qxw2jGTh6eZ7x5HB9YUEhTrw5
-         tSqL2jwyS05O2asc3RRTDjbmTLZe8/N1flqTmbdL813M+1zfbVUaY9fyjhh+7y8CxGKb
-         SCRVFtICd18cjR++Wfs2F7CzEpRJ03kQ7codCrLcYAG6Y3ZrwRZ5Hq9GJo3EtC7KfWBk
-         yio8UoOU1EwYapCzP7JEuIN3AfTxo6VGSUC7YEvm+QAtyHHl7+e8khpacmM4iOM/2DhM
-         w8J8+EiUXndE3Y/KC0BipvvLAPgjN75zfjM4+a2S9sbGlsiRfOD9a3m/GwtP9XYosKL1
-         RR9Q==
-X-Gm-Message-State: AGRZ1gIU5J1ShnCV9t+Q1x2eP/xFu0s62WBRn+p+ZxGBUN4OBjy2TLBp
-        +QjRpNBjuAfoKgVHYp8jx+nff+ggD3U=
-X-Google-Smtp-Source: AJdET5dREXH8/pgZpQdplTK2PixR+p4HIWciuMrOJU2yRz/F5loN/y1ujUTc6zD5ASZeKRCw1RV7yg==
-X-Received: by 2002:a63:7a5b:: with SMTP id j27mr9396597pgn.112.1542362699588;
-        Fri, 16 Nov 2018 02:04:59 -0800 (PST)
+        bh=HClVvGiwOuWgQ6TjJ14HNKIrS62CNCv2+c1OlYODQLQ=;
+        b=X/9JP9Q6PdzILX9P/uOIZBqkL+aq9nfZfzBrWcqQHOwqZMW4gd4CA2smbIv2gM/UY5
+         3WHtYTFTMuxUfECy3lD1ZagW45govbl0cqLJEJX+8vFGtDmrPWdRFqIxx+bW9AjYxSIv
+         HVSe4a7i342gP4FEl52i8Ixa7Aap5RX8TgVpvkXNm/RzwNhURe5rtIrfphB9w9mKUOBA
+         w9maKwJiSRXKiKgNB2ZIyj5rI+oFHHBxrkf2+AQAqAN0+wW9ZP7keCac148+J3cxU7M3
+         mWeb3+bUCcInR8jvJjxTfTxk/tzSjp36Ubuz8b4HVbDDsIfly40+reWzI6PsVKw3mL1o
+         ZrvA==
+X-Gm-Message-State: AGRZ1gK2pEPpgRFSodPk6BPFCVRR/Gu0+OH38YoyXzJCbuJqhnhv1jI+
+        qghvd5fLGttATFrZykpmhtaU9A==
+X-Google-Smtp-Source: AJdET5cORx44UTQ4adNwvGIigFS0ZpcMALU2BSxZXv3g94Lib06777UYHkmWoxoxwF6PydFVvWvZIw==
+X-Received: by 2002:a63:9a52:: with SMTP id e18mr9300065pgo.14.1542362705320;
+        Fri, 16 Nov 2018 02:05:05 -0800 (PST)
 Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id r2sm10042207pfh.57.2018.11.16.02.04.58
+        by smtp.gmail.com with ESMTPSA id y9-v6sm32421519pfe.152.2018.11.16.02.05.04
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 02:04:59 -0800 (PST)
+        Fri, 16 Nov 2018 02:05:04 -0800 (PST)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>, arm@kernel.org,
-        Shawn Guo <shawnguo@kernel.org>, Li Yang <leoyang.li@nxp.com>
+        Wei Xu <xuwei5@hisilicon.com>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 03/10] ARM64: dts: fsl: Add all CPUs in cooling maps
-Date:   Fri, 16 Nov 2018 15:34:26 +0530
-Message-Id: <c92e66ea7e0692b13c8088d0a554acfeacf74cf4.1542362530.git.viresh.kumar@linaro.org>
+Subject: [PATCH 04/10] arm64: dts: hi3660: Add missing cooling device properties for CPUs
+Date:   Fri, 16 Nov 2018 15:34:27 +0530
+Message-Id: <042e5e647a7b54f4322024f1b3e286b6b6d69175.1542362530.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
 In-Reply-To: <cover.1542362530.git.viresh.kumar@linaro.org>
 References: <cover.1542362530.git.viresh.kumar@linaro.org>
@@ -77,129 +77,73 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Each CPU can (and does) participate in cooling down the system but the
-DT only captures a handful of them, normally CPU0, in the cooling maps.
-Things work by chance currently as under normal circumstances its the
-first CPU of each cluster which is used by the operating systems to
-probe the cooling devices. But as soon as this CPU ordering changes and
-any other CPU is used to bring up the cooling device, we will start
-seeing failures.
+The cooling device properties, like "#cooling-cells" and
+"dynamic-power-coefficient", should either be present for all the CPUs
+of a cluster or none. If these are present only for a subset of CPUs of
+a cluster then things will start falling apart as soon as the CPUs are
+brought online in a different order. For example, this will happen
+because the operating system looks for such properties in the CPU node
+it is trying to bring up, so that it can register a cooling device.
 
-Also the DT is rather incomplete when we list only one CPU in the
-cooling maps, as the hardware doesn't have any such limitations.
-
-Update cooling maps to include all devices affected by individual trip
-points.
+Add such missing properties.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- .../arm64/boot/dts/freescale/fsl-ls1043a.dtsi |  6 ++--
- .../arm64/boot/dts/freescale/fsl-ls1046a.dtsi |  6 ++--
- .../arm64/boot/dts/freescale/fsl-ls1088a.dtsi | 17 ++++++-----
- .../arm64/boot/dts/freescale/fsl-ls208xa.dtsi | 28 ++++++-------------
- 4 files changed, 24 insertions(+), 33 deletions(-)
+ arch/arm64/boot/dts/hisilicon/hi3660.dtsi | 6 ++++++
+ 1 file changed, 6 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-index 3fed504b5381..c7224c5bb6cc 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1043a.dtsi
-@@ -171,8 +171,10 @@
- 				map0 {
- 					trip = <&cpu_alert>;
- 					cooling-device =
--						<&cpu0 THERMAL_NO_LIMIT
--						THERMAL_NO_LIMIT>;
-+						<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 			};
+diff --git a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+index f432b0a88c65..d943a96eedee 100644
+--- a/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
++++ b/arch/arm64/boot/dts/hisilicon/hi3660.dtsi
+@@ -79,6 +79,7 @@
+ 			capacity-dmips-mhz = <592>;
+ 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
  		};
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-index 51cbd50012d6..8c94d8279b5e 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1046a.dtsi
-@@ -140,8 +140,10 @@
- 				map0 {
- 					trip = <&cpu_alert>;
- 					cooling-device =
--						<&cpu0 THERMAL_NO_LIMIT
--						THERMAL_NO_LIMIT>;
-+						<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 			};
+ 
+ 		cpu2: cpu@2 {
+@@ -91,6 +92,7 @@
+ 			capacity-dmips-mhz = <592>;
+ 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
  		};
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-index a07f612ab56b..7faee0d270d2 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls1088a.dtsi
-@@ -152,15 +152,14 @@
- 				map0 {
- 					trip = <&cpu_alert>;
- 					cooling-device =
--						<&cpu0 THERMAL_NO_LIMIT
--						THERMAL_NO_LIMIT>;
--				};
--
--				map1 {
--					trip = <&cpu_alert>;
--					cooling-device =
--						<&cpu4 THERMAL_NO_LIMIT
--						THERMAL_NO_LIMIT>;
-+						<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 			};
+ 
+ 		cpu3: cpu@3 {
+@@ -103,6 +105,7 @@
+ 			capacity-dmips-mhz = <592>;
+ 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER0>;
+ 			operating-points-v2 = <&cluster0_opp>;
++			#cooling-cells = <2>;
  		};
-diff --git a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-index d188774a36e8..f11187f7465c 100644
---- a/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-+++ b/arch/arm64/boot/dts/freescale/fsl-ls208xa.dtsi
-@@ -101,26 +101,14 @@
- 				map0 {
- 					trip = <&cpu_alert>;
- 					cooling-device =
--						<&cpu0 THERMAL_NO_LIMIT
--						THERMAL_NO_LIMIT>;
--				};
--				map1 {
--					trip = <&cpu_alert>;
--					cooling-device =
--						<&cpu2 THERMAL_NO_LIMIT
--						THERMAL_NO_LIMIT>;
--				};
--				map2 {
--					trip = <&cpu_alert>;
--					cooling-device =
--						<&cpu4 THERMAL_NO_LIMIT
--						THERMAL_NO_LIMIT>;
--				};
--				map3 {
--					trip = <&cpu_alert>;
--					cooling-device =
--						<&cpu6 THERMAL_NO_LIMIT
--						THERMAL_NO_LIMIT>;
-+						<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 			};
+ 
+ 		cpu4: cpu@100 {
+@@ -129,6 +132,7 @@
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
  		};
+ 
+ 		cpu6: cpu@102 {
+@@ -141,6 +145,7 @@
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		cpu7: cpu@103 {
+@@ -153,6 +158,7 @@
+ 			capacity-dmips-mhz = <1024>;
+ 			clocks = <&stub_clock HI3660_CLK_STUB_CLUSTER1>;
+ 			operating-points-v2 = <&cluster1_opp>;
++			#cooling-cells = <2>;
+ 		};
+ 
+ 		idle-states {
 -- 
 2.19.1.568.g152ad8e3369a
 
