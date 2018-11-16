@@ -2,111 +2,149 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 39CD0C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:24:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04582C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:27:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 082172087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:24:02 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 082172087A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sntech.de
+	by mail.kernel.org (Postfix) with ESMTP id B67382087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:27:41 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dn1Y5kIx"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B67382087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729442AbeKQEh1 (ORCPT
+        id S1729424AbeKQElI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 23:37:27 -0500
-Received: from gloria.sntech.de ([185.11.138.130]:51128 "EHLO gloria.sntech.de"
+        Fri, 16 Nov 2018 23:41:08 -0500
+Received: from mail.kernel.org ([198.145.29.99]:50060 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727462AbeKQEh1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 23:37:27 -0500
-Received: from ip5f5a905a.dynamic.kabel-deutschland.de ([95.90.144.90] helo=diego.localnet)
-        by gloria.sntech.de with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <heiko@sntech.de>)
-        id 1gNimY-0003DQ-7r; Fri, 16 Nov 2018 19:23:54 +0100
-From:   Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To:     "dbasehore ." <dbasehore@chromium.org>
-Cc:     Doug Anderson <dianders@chromium.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        =?utf-8?B?6LCi5L+u6ZGr?= <tony.xie@rock-chips.com>,
-        Chris Zhong <zyw@rock-chips.com>, ayaka@soulik.info,
-        "nickey.yang" <nickey.yang@rock-chips.com>,
-        Shunqian Zheng <zhengsq@rock-chips.com>,
-        klaus.goger@theobroma-systems.com,
-        Brian Norris <briannorris@chromium.org>,
-        enric.balletbo@collabora.com, Mark Rutland <mark.rutland@arm.com>,
-        robh+dt@kernel.org
-Subject: Re: [PATCH] arm64: dts: rockchip: rk3399: Add xin32k clk
-Date:   Fri, 16 Nov 2018 19:23:53 +0100
-Message-ID: <1698950.cgYuLubFel@diego>
-In-Reply-To: <CAGAzgsq7uF=E3dzhyCjK4gq09_UV_aZhQbyaTnz7yDY_ErQYKQ@mail.gmail.com>
-References: <20181116051719.23376-1-dbasehore@chromium.org> <CAD=FV=W7sYY5n609erPpTxux+0Efad_0YpPkoVZB14Kqm=baXA@mail.gmail.com> <CAGAzgsq7uF=E3dzhyCjK4gq09_UV_aZhQbyaTnz7yDY_ErQYKQ@mail.gmail.com>
+        id S1727462AbeKQElI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 23:41:08 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DFE9F2086C;
+        Fri, 16 Nov 2018 18:27:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542392859;
+        bh=iIT9Nzuv36sYtC+k4hukhx0eBZLByZbKHW0ur4Tvoqs=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=Dn1Y5kIxkXTj9Fd3inadUTbWqivT5ipgod8xJ3RulD8axQkDf2ZLPxA1BQDV+06V0
+         EHDexBR3Di9gcgp8j8wyjMSstb+PfKLo8GxVOkYoymevNbyitPwjOvJ4FpaWpsA3Ku
+         SwuGfsOHChnJTkkfyO16BS8ttwauDDxHUsd4wj8I=
+Date:   Fri, 16 Nov 2018 18:27:33 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+Cc:     "kernel-usp@googlegroups.com" <kernel-usp@googlegroups.com>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "renatogeh@gmail.com" <renatogeh@gmail.com>,
+        "giuliano.belinassi@usp.br" <giuliano.belinassi@usp.br>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v4 1/2] staging: iio: ad7780: update voltage on read
+Message-ID: <20181116182733.080fe566@archlinux>
+In-Reply-To: <77b195ff53f05d3a7d98098810c5d2d4af3b2e7a.camel@analog.com>
+References: <cover.1541444377.git.renatogeh@gmail.com>
+        <4b47bd8f4bac2575b72529b37e5ac90bebae2446.1541444377.git.renatogeh@gmail.com>
+        <30c1ff317baefde88a0f4d0a002b19010290d16b.camel@analog.com>
+        <20181111142939.316cdd47@archlinux>
+        <77b195ff53f05d3a7d98098810c5d2d4af3b2e7a.camel@analog.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Derek,
+On Mon, 12 Nov 2018 07:57:24 +0000
+"Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
 
-Am Freitag, 16. November 2018, 18:39:09 CET schrieb dbasehore .:
-> On Fri, Nov 16, 2018 at 8:01 AM Doug Anderson <dianders@chromium.org> wrote:
-> > Hi,
+> On Sun, 2018-11-11 at 14:30 +0000, Jonathan Cameron wrote:
+> > On Tue, 6 Nov 2018 09:24:44 +0000
+> > "Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
+> >   
+> > > On Mon, 2018-11-05 at 17:14 -0200, Renato Lui Geh wrote:  
+> > > > The ad7780 driver previously did not read the correct device output,
+> > > > as
+> > > > it read an outdated value set at initialization. It now updates its
+> > > > voltage on read.
+> > > >     
 > > 
-> > On Thu, Nov 15, 2018 at 9:17 PM Derek Basehore <dbasehore@chromium.org> wrote:
-> > > This adds the xin32k clock to the RK3399 CPU. Even though it's not
-> > > directly used, muxes will end up traversing the entire clk tree on
-> > > calls to determine_rate if it doesn't exist.
-> > > 
-> > > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> > > ---
-> > > 
-> > >  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
+> > Applied to the togreg branch of iio.git and pushed out as testing for
+> > the autobuilders to check it.  I'm not that fussed about pushing this
+> > one as a fix, as most of the time these things are on fixed regulators
+> > anyway, but it is nice to do it right.
+> >   
+> > > Looks good from my side.  
 > > 
-> > nit: I would have expected ${SUBJECT} to have v2 in it somewhere.
-> > 
-> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > > b/arch/arm64/boot/dts/rockchip/rk3399.dtsi index
-> > > 99e7f65c1779..3d09472978f8 100644
-> > > --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > > +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > 
-> > Aww crud.  I was at the airport yesterday and so I didn't notice that
-> > you were touching rk3399, not rk3399-gru.  This belongs in the gru
-> > device tree file, not in the top level rk3399.  As you have written
+> > Ack?  
 > 
-> > this it will break rk3399 boards that have an rk808 on them, AKA:
-> Should this be moved to the rk3399.dtsi file? The RK3399 assumes that
-> this clk exists (same as the 24MHz clk which is in rk3399.dtsi). While
-> it can function without it defined, it really shouldn't. We can just
-> assign the existing labels in the dts files you pointed out.
+> Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+Added to both in this series.
 
-Right now this patch puts your clock into the rk3399.dtsi, which is the
-wrong place. On most Rockchip systems, the xin32k clock is created
-by the pmic (rk808 in a lot of cases) and the clock-tree gets amended
-once the pmic has probed. See for example [0].
+Thanks,
 
-While I don't know where your xin32k really comes from (cros-ec maybe)
-it is definitly a board-specific source for the clock and should thus
-live in the rk3399-gru.dtsi.
+Jonathan
 
-And we really expect each board to actually make sure its xin32k is
-properly defined as for example on the rk808 and act8846 pmics it could
-also very well be turned off at boot and also does support multiple rates,
-thus needing proper clock handling.
-
-
-Heiko
-
-[0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arch/arm64/boot/dts/rockchip/rk3399-rock960.dtsi#n159
-
+> 
+> > 
+> > Much preferred if you are willing to give a formal acknowledgement.
+> > 
+> > Thanks,
+> > 
+> > Jonathan
+> > 
+> >   
+> > > 
+> > > Alex
+> > >   
+> > > > Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
+> > > > ---
+> > > > Changes in v3:
+> > > > 	- removed initialization (int voltage_uv = 0)
+> > > > 	- returns error when voltage_uv is null
+> > > > Changes in v4:
+> > > > 	- returns error when voltage_uv is negative
+> > > > 
+> > > >  drivers/staging/iio/adc/ad7780.c | 6 +++++-
+> > > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > > > 
+> > > > diff --git a/drivers/staging/iio/adc/ad7780.c
+> > > > b/drivers/staging/iio/adc/ad7780.c
+> > > > index b67412db0318..c7cb05cedbbc 100644
+> > > > --- a/drivers/staging/iio/adc/ad7780.c
+> > > > +++ b/drivers/staging/iio/adc/ad7780.c
+> > > > @@ -87,12 +87,16 @@ static int ad7780_read_raw(struct iio_dev
+> > > > *indio_dev,
+> > > >  			   long m)
+> > > >  {
+> > > >  	struct ad7780_state *st = iio_priv(indio_dev);
+> > > > +	int voltage_uv;
+> > > >  
+> > > >  	switch (m) {
+> > > >  	case IIO_CHAN_INFO_RAW:
+> > > >  		return ad_sigma_delta_single_conversion(indio_dev, chan,
+> > > > val);
+> > > >  	case IIO_CHAN_INFO_SCALE:
+> > > > -		*val = st->int_vref_mv * st->gain;
+> > > > +		voltage_uv = regulator_get_voltage(st->reg);
+> > > > +		if (voltage_uv < 0)
+> > > > +			return voltage_uv;
+> > > > +		*val = (voltage_uv / 1000) * st->gain;
+> > > >  		*val2 = chan->scan_type.realbits - 1;
+> > > >  		return IIO_VAL_FRACTIONAL_LOG2;
+> > > >  	case IIO_CHAN_INFO_OFFSET:    
+> > 
+> >   
 
