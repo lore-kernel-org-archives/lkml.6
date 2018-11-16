@@ -2,110 +2,165 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1821DC04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:28:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4CB6C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:30:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D77232087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:28:44 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="T8zhy3J5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D77232087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 7D3162087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:30:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7D3162087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728444AbeKQAlU (ORCPT
+        id S2389595AbeKQAnK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 19:41:20 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:43390 "EHLO mail.skyhub.de"
+        Fri, 16 Nov 2018 19:43:10 -0500
+Received: from mga14.intel.com ([192.55.52.115]:61058 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727999AbeKQAlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 19:41:20 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1542378521; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=Y/ZsTYYgTR7z+rjDTIL5fbnfBtww9nFT2+I8OKnWWMs=;
-        b=T8zhy3J5TJI8dd889hiyc9SIzChk4/szfCweWFOcYh2IUk7qYzZxnsgZpnNeBVcsBQ9ndj
-        X4eQGU0x7vc0epfqO3ghQ1GlHmnL2EAXAc/7DmA9L2lBVAnNKP9cHaIvsBaEXP/8oAm7Jc
-        JLIpbK65kphVkMJS7pZh0xJ/paAPJi8=
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id qT7-gvoAl1-u; Fri, 16 Nov 2018 15:28:41 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD0FE004D130AD2F34E6DE4.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:fe00:4d13:ad2:f34e:6de4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 01CFE1EC072C;
-        Fri, 16 Nov 2018 15:28:41 +0100 (CET)
-Date:   Fri, 16 Nov 2018 15:28:40 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 02/23] x86/cpufeatures: Add Intel-defined SGX feature
- bit
-Message-ID: <20181116142840.GI20313@zn.tnic>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-3-jarkko.sakkinen@linux.intel.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181116010412.23967-3-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        id S1728079AbeKQAnK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 19:43:10 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga001.fm.intel.com ([10.253.24.23])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 06:30:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
+   d="scan'208";a="108706240"
+Received: from unknown (HELO localhost.jf.intel.com) ([10.54.55.47])
+  by fmsmga001.fm.intel.com with ESMTP; 16 Nov 2018 06:30:29 -0800
+From:   kan.liang@linux.intel.com
+To:     tglx@linutronix.de, peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc:     ak@linux.intel.com, yao.jin@linux.intel.com,
+        stable@vger.kernel.org, Kan Liang <kan.liang@linux.intel.com>
+Subject: [PATCH] perf/x86/intel/uncore: Fix client IMC events return huge result
+Date:   Fri, 16 Nov 2018 05:19:45 -0800
+Message-Id: <20181116131945.5480-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 03:01:09AM +0200, Jarkko Sakkinen wrote:
-> From: Kai Huang <kai.huang@linux.intel.com>
-> 
-> X86_FEATURE_SGX reflects whether or not the CPU supports Intel's
-> Software Guard eXtensions (SGX).
-> 
-> Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/include/asm/cpufeatures.h | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index 28c4a502b419..da7fed4939a3 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -236,6 +236,7 @@
->  /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
->  #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
->  #define X86_FEATURE_TSC_ADJUST		( 9*32+ 1) /* TSC adjustment MSR 0x3B */
-> +#define X86_FEATURE_SGX			( 9*32+ 2) /* Software Guard Extensions */
->  #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
->  #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
->  #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
-> -- 
+From: Kan Liang <kan.liang@linux.intel.com>
 
-Reviewed-by: Borislav Petkov <bp@suse.de>
+The client IMC bandwidth events return very huge result.
+  perf stat -e uncore_imc/data_reads/ -e uncore_imc/data_writes/ -I
+10000 -a
+  10.000117222 34,788.76 MiB uncore_imc/data_reads/
+  10.000117222 8.26 MiB uncore_imc/data_writes/
+  20.000374584 34,842.89 MiB uncore_imc/data_reads/
+  20.000374584 10.45 MiB uncore_imc/data_writes/
+  30.000633299 37,965.29 MiB uncore_imc/data_reads/
+  30.000633299 323.62 MiB uncore_imc/data_writes/
+  40.000891548 41,012.88 MiB uncore_imc/data_reads/
+  40.000891548 6.98 MiB uncore_imc/data_writes/
+  50.001142480 1,125,899,906,621,494.75 MiB uncore_imc/data_reads/
+  50.001142480 6.97 MiB uncore_imc/data_writes/
 
+The client IMC events are freerunning counters. They still use the
+old event encoding format (0x1 for data_read and 0x2 for data write).
+The counter bit width is calculated by common code, which assume that
+the standard encoding format is used for the freerunning counters.
+Error bit width information is calculated.
+
+The event->attr.config, which directly from user space, should not be
+used by the functions of freerunning counters.
+For client IMC events, the attr.config needs to be converted to the
+standard encoding format. The modified event config will be stored in
+event->hw.config.
+For other freerunning counters, the attr.config has the correct format.
+Just save it in event->hw.config.
+Using event->hw.config to replace event->attr.config for the functions
+of freerunning counters.
+
+Fix: commit 9aae1780e7e8 ("perf/x86/intel/uncore: Clean up client IMC
+uncore")
+Reported-by: Jin Yao <yao.jin@linux.intel.com>
+Tested-by: Jin Yao <yao.jin@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+---
+ arch/x86/events/intel/uncore.c     |  1 +
+ arch/x86/events/intel/uncore.h     | 12 ++++++------
+ arch/x86/events/intel/uncore_snb.c |  4 +++-
+ 3 files changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 27a461414b30..2690135bf83f 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -740,6 +740,7 @@ static int uncore_pmu_event_init(struct perf_event *event)
+ 		/* fixed counters have event field hardcoded to zero */
+ 		hwc->config = 0ULL;
+ 	} else if (is_freerunning_event(event)) {
++		hwc->config = event->attr.config;
+ 		if (!check_valid_freerunning_event(box, event))
+ 			return -EINVAL;
+ 		event->hw.idx = UNCORE_PMC_IDX_FREERUNNING;
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index e17ab885b1e9..cc6dd4f78158 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -285,8 +285,8 @@ static inline
+ unsigned int uncore_freerunning_counter(struct intel_uncore_box *box,
+ 					struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
+-	unsigned int idx = uncore_freerunning_idx(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
++	unsigned int idx = uncore_freerunning_idx(event->hw.config);
+ 	struct intel_uncore_pmu *pmu = box->pmu;
+ 
+ 	return pmu->type->freerunning[type].counter_base +
+@@ -360,7 +360,7 @@ static inline
+ unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
+ 				     struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
+ 
+ 	return box->pmu->type->freerunning[type].bits;
+ }
+@@ -368,7 +368,7 @@ unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
+ static inline int uncore_num_freerunning(struct intel_uncore_box *box,
+ 					 struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
+ 
+ 	return box->pmu->type->freerunning[type].num_counters;
+ }
+@@ -382,8 +382,8 @@ static inline int uncore_num_freerunning_types(struct intel_uncore_box *box,
+ static inline bool check_valid_freerunning_event(struct intel_uncore_box *box,
+ 						 struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
+-	unsigned int idx = uncore_freerunning_idx(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
++	unsigned int idx = uncore_freerunning_idx(event->hw.config);
+ 
+ 	return (type < uncore_num_freerunning_types(box, event)) &&
+ 	       (idx < uncore_num_freerunning(box, event));
+diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
+index 8527c3e1038b..48d7121f71c7 100644
+--- a/arch/x86/events/intel/uncore_snb.c
++++ b/arch/x86/events/intel/uncore_snb.c
+@@ -425,9 +425,11 @@ static int snb_uncore_imc_event_init(struct perf_event *event)
+ 
+ 	/* must be done before validate_group */
+ 	event->hw.event_base = base;
+-	event->hw.config = cfg;
+ 	event->hw.idx = idx;
+ 
++	/* Convert to standard encoding format for free running counters */
++	event->hw.config = ((cfg - 1) << 8) | 0x10ff;
++
+ 	/* no group validation needed, we have free running counters */
+ 
+ 	return 0;
 -- 
-Regards/Gruss,
-    Boris.
+2.14.3
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
