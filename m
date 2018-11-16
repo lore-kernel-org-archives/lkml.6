@@ -2,269 +2,511 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B386C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:24:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D2D18C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:24:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C76942087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:24:31 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 5A858214F1
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:24:53 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="r2suuCWw"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C76942087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bhn/jI8m"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A858214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1728029AbeKPWgj (ORCPT
+        id S2389571AbeKPWhB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 17:36:39 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50700 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727772AbeKPWgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 17:36:39 -0500
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 7DD792146D;
-        Fri, 16 Nov 2018 12:24:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542371068;
-        bh=uN35ZmfuXaUuSIrBjEs9+MMyAITz3GjT5IYAyy8aSIQ=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=r2suuCWwCPF2d6+EUfZpBsAKKFNqlN2nCMcyPnrNnxdb8dg63r7FzD0iBLDYytGjQ
-         KvQFcYssUgXlFh7kW653FymPn5vI3ni6GH3KQ4aAubGiEIoAdMqvnR4a2jFMJCFtu+
-         2bP7sApLYI3M7uGYkWEnsfKQJPQOpL9DMpcHRAIQ=
-Received: by mail-lj1-f182.google.com with SMTP id e5-v6so20160072lja.4;
-        Fri, 16 Nov 2018 04:24:28 -0800 (PST)
-X-Gm-Message-State: AGRZ1gK6WoWhn/o2czqh7FRhNZDXFQPNr1ZPTYLD+7TYFN8KfgFH+8L5
-        4LpQr4+wDvPY5XHocRlDy+jzJkLoM3zL1sZWh1Y=
-X-Google-Smtp-Source: AJdET5ftAsyr1d7WTCAgh5G5Q9ll2K2Ze9YwqqfMMBM3136QkgmUak96Vhj3zaYA1jzbodYRSGOl4geMWOqA0UKOGA0=
-X-Received: by 2002:a2e:990e:: with SMTP id v14-v6mr6600037lji.60.1542371066582;
- Fri, 16 Nov 2018 04:24:26 -0800 (PST)
+        Fri, 16 Nov 2018 17:37:01 -0500
+Received: from mail-ed1-f46.google.com ([209.85.208.46]:45109 "EHLO
+        mail-ed1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727772AbeKPWhB (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 17:37:01 -0500
+Received: by mail-ed1-f46.google.com with SMTP id d39so16209877edb.12;
+        Fri, 16 Nov 2018 04:24:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=EDw/0ln+3QeH+Buos6DnD/OFu2J0LtZPWUG74ulI0dU=;
+        b=bhn/jI8m2agDfRQQiOCYOqsjJHOSJB8j1vCKR4VRAhigsdbSFvPaCfdatRBhPCKY/o
+         Y/qoZ4mrBlCEdxamo1iY619o8chQ5lVMAfSrzaYhsXBH6y4EEHwX00rOOS+ZL3dHfTtv
+         il4NzscbWXVR/Vqu5JtIujsSIBmcyk9zR+AI7xBkVEsuc1+Mvmd1vGqpUzfnZqn7qOXN
+         xI139iTbh1Nkz7g93WwxVLXuC1G9MhltuazM+QIeTDv91trIEZEd/v1bLoRNAoDdfB7C
+         O7/O21J72pKq1tZZaaVXOQZdngtYHTzDqaNfPgglGPgnBaL/p2Tna8MrjTicYG8Y7AWN
+         c/Sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=EDw/0ln+3QeH+Buos6DnD/OFu2J0LtZPWUG74ulI0dU=;
+        b=phIRehYJARu8goMj0rACM8PZSQmG9P4aPOqGr9TQxpbHXo0wi58Oxbd7/Qt42+1v+x
+         n6x/J391B8+meyYAzO1qhjfJy57yt0OXOXFafVfLS8P3WXCJSJ3dhpyAT0jSW35qnqup
+         cuaeaSgAWTZxt7bNIzQ3vrDQXBvxyAYTf4LnFuuX4HFgbq6uyapt2xYLqYxT6g8EPH6v
+         F48VVpIAAqqbdhLY3m4K1sO3V3aAzxEMcpTQlYfKjV2HlQZZM8arLnZnBggtNMkGczgw
+         t8vdKyGixAP1C0YEfACnyLjB9burqT+OzYVQmQPjaCHWP+OXDpuC2t9DVAq7yFJL+d3t
+         wprw==
+X-Gm-Message-State: AGRZ1gLoM/8Kk2QVHJtV7stoB0YBZmKZd731M4G/cjPYLTTmlYB2S8Im
+        UsuFzTv87QAg8TmOpY+Q9Ndfe+Rh
+X-Google-Smtp-Source: AJdET5cNtKWKwhx6g3CZSkcN7jXR4c5iRZwTtAnQ6LH68aCi5pozUXHuACdPVgSAO/VL9nlh8NqaNw==
+X-Received: by 2002:a50:8bb5:: with SMTP id m50mr9336091edm.211.1542371088033;
+        Fri, 16 Nov 2018 04:24:48 -0800 (PST)
+Received: from localhost (pD9E511F8.dip0.t-ipconnect.de. [217.229.17.248])
+        by smtp.gmail.com with ESMTPSA id e35sm1974481eda.13.2018.11.16.04.24.46
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Nov 2018 04:24:46 -0800 (PST)
+Date:   Fri, 16 Nov 2018 13:24:45 +0100
+From:   Thierry Reding <thierry.reding@gmail.com>
+To:     Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>
+Cc:     =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
+        Lukasz Majewski <l.majewski@majess.pl>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Lothar =?utf-8?Q?Wa=C3=9Fmann?= <LW@karo-electronics.de>,
+        Linus Walleij <linus.walleij@linaro.org>
+Subject: Re: =?utf-8?B?W1JDRsKgUEFUQ0gsdjIsMi8y?= =?utf-8?Q?=5D?= pwm: imx:
+ Configure output to GPIO in disabled state
+Message-ID: <20181116122445.GA25386@ulmo>
+References: <4fbb7307-df01-d7bd-f2e2-e05e6d17807d@ysoft.com>
+ <20181108191855.zuon3ecv4yjfbs7g@pengutronix.de>
+ <283cfef3-16d0-8bd4-e306-6e34d44c3a86@ysoft.com>
+ <20181109165555.vqbiwh4hlcnozdna@pengutronix.de>
+ <20181114113449.GB2620@ulmo>
+ <20181114215120.vddykljqyavm64wj@pengutronix.de>
+ <20181115152545.GA8611@ulmo>
+ <20181115203733.qvonika6yhn2bsnb@pengutronix.de>
+ <20181116095124.GA28631@ulmo>
+ <20181116103929.cxfvuc2te7cadhp2@pengutronix.de>
 MIME-Version: 1.0
-References: <CGME20181115151230epcas1p35afa7ac09774a6e6256523b3a77453c3@epcas1p3.samsung.com>
- <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com> <1542294698-17470-6-git-send-email-b.zolnierkie@samsung.com>
-In-Reply-To: <1542294698-17470-6-git-send-email-b.zolnierkie@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 16 Nov 2018 13:24:15 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPe_neF+nsvMC7owWufGKAbdCo9AicxE3BkNaj5ZtPUKDA@mail.gmail.com>
-Message-ID: <CAJKOXPe_neF+nsvMC7owWufGKAbdCo9AicxE3BkNaj5ZtPUKDA@mail.gmail.com>
-Subject: Re: [PATCH 5/9] ARM: EXYNOS: use chipid driver
-To:     =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>
-Cc:     arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>,
-        kgene@kernel.org, m.reichl@fivetechno.de,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, javierm@redhat.com,
-        pankaj.dubey@samsung.com,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="CE+1k2dSO48ffgeK"
+Content-Disposition: inline
+In-Reply-To: <20181116103929.cxfvuc2te7cadhp2@pengutronix.de>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Nov 2018 at 16:12, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
->
-> Add soc_dev_is_exynos*() helpers and use them instead of
-> soc_is_exynos*() ones.
->
-> Signed-off-by: Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>
-> ---
->  arch/arm/mach-exynos/common.h   |  6 ++++++
->  arch/arm/mach-exynos/exynos.c   | 39 +++++++++++++++++++++++++++++++++++++++
->  arch/arm/mach-exynos/firmware.c |  8 ++++----
->  arch/arm/mach-exynos/platsmp.c  | 12 ++++++------
->  arch/arm/mach-exynos/pm.c       | 17 +++++++++--------
->  5 files changed, 64 insertions(+), 18 deletions(-)
->
-> diff --git a/arch/arm/mach-exynos/common.h b/arch/arm/mach-exynos/common.h
-> index 1b8699e..20d205e 100644
-> --- a/arch/arm/mach-exynos/common.h
-> +++ b/arch/arm/mach-exynos/common.h
-> @@ -9,8 +9,14 @@
->  #ifndef __ARCH_ARM_MACH_EXYNOS_COMMON_H
->  #define __ARCH_ARM_MACH_EXYNOS_COMMON_H
->
-> +#include <linux/sys_soc.h>
->  #include <linux/platform_data/cpuidle-exynos.h>
->
-> +extern bool soc_dev_is_exynos3250(void);
-> +extern bool soc_dev_is_exynos4210_rev11(void);
-> +extern bool soc_dev_is_exynos4412(void);
-> +extern bool soc_dev_is_exynos542x(void);
-> +
->  #define EXYNOS3250_SOC_ID      0xE3472000
->  #define EXYNOS3_SOC_MASK       0xFFFFF000
->
-> diff --git a/arch/arm/mach-exynos/exynos.c b/arch/arm/mach-exynos/exynos.c
-> index 865dcc4..463e457 100644
-> --- a/arch/arm/mach-exynos/exynos.c
-> +++ b/arch/arm/mach-exynos/exynos.c
-> @@ -24,6 +24,45 @@
->
->  #include "common.h"
->
-> +static const struct soc_device_attribute exynos3250_soc_id[] = {
-> +       { .soc_id = "EXYNOS3250" },
-> +       { /* sentinel */ }
-> +};
-> +
-> +static const struct soc_device_attribute exynos4210_rev11_soc_id[] = {
-> +       { .soc_id = "EXYNOS4210", .revision = "11" },
-> +       { /* sentinel */ }
-> +};
-> +
-> +static const struct soc_device_attribute exynos4412_soc_id[] = {
-> +       { .soc_id = "EXYNOS4412" },
-> +       { /* sentinel */ }
-> +};
-> +
-> +static const struct soc_device_attribute exynos542x_soc_id[] = {
-> +       { .soc_id = "EXYNOS5420" },
-> +       { .soc_id = "EXYNOS5800" },
-> +       { /* sentinel */ }
-> +};
-> +
-> +#define SOC_DEV_IS_EXYNOS(ver)                                         \
-> +bool soc_dev_is_exynos##ver(void)                                      \
-> +{                                                                      \
-> +       static bool init_done, is_exynos##ver;                          \
-> +                                                                       \
-> +       if (!init_done) {                                               \
-> +               is_exynos##ver = !!soc_device_match(exynos##ver##_soc_id); \
-> +               init_done = true;                                       \
-> +       }                                                               \
-> +                                                                       \
-> +       return is_exynos##ver;                                          \
-> +}
-> +
-> +SOC_DEV_IS_EXYNOS(3250);
-> +SOC_DEV_IS_EXYNOS(4210_rev11);
-> +SOC_DEV_IS_EXYNOS(4412);
-> +SOC_DEV_IS_EXYNOS(542x);
 
-Nicely compacted definition but:
-1. You blow real code (4 functions doing exactly the same),
-2. You break jumping to definitions in IDE (searching/indexing symbols).
+--CE+1k2dSO48ffgeK
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Currently this can be executed on only one, specific Exynos chip. This
-means that you can have only one static variable holding current soc
-revision and compare against it. This might require adding some enums
-and code would look like:
-enum soc_exynos {
-SOC_EXYNOS_3250,
-SOC_EXYNOS_542X,
-...
-};
+On Fri, Nov 16, 2018 at 11:39:29AM +0100, Uwe Kleine-K=C3=B6nig wrote:
+> Hello Thierry,
+>=20
+> On Fri, Nov 16, 2018 at 10:51:24AM +0100, Thierry Reding wrote:
+> > On Thu, Nov 15, 2018 at 09:37:33PM +0100, Uwe Kleine-K=C3=B6nig wrote:
+> > > On Thu, Nov 15, 2018 at 04:25:45PM +0100, Thierry Reding wrote:
+> > > > On Wed, Nov 14, 2018 at 10:51:20PM +0100, Uwe Kleine-K=C3=B6nig wro=
+te:
+> > > > > On Wed, Nov 14, 2018 at 12:34:49PM +0100, Thierry Reding wrote:
+> > > > > > On Fri, Nov 09, 2018 at 05:55:55PM +0100, Uwe Kleine-K=C3=B6nig=
+ wrote:
+> > > > > > > On Fri, Nov 09, 2018 at 02:24:42PM +0000, Vok=C3=A1=C4=8D Mic=
+hal wrote:
+> > > > > > > > On 8.11.2018 20:18, Uwe Kleine-K=C3=B6nig wrote:
+> > > > > > > > > Taking your example with the backlight device you specify=
+ an "init" and
+> > > > > > > > > a "default" pinctrl and only "default" contains the muxin=
+g for the PWM
+> > > > > > > > > pin everything should be as smooth as necessary: The pwm =
+is only muxed
+> > > > > > > > > when the backlight device is successfully bound.
+> > > > > > > >=20
+> > > > > > > > Have you tried that Uwe? The bad news is I tested that befo=
+re and now
+> > > > > > > > again and it does not work like that. We already discussed =
+that earlier.
+> > > > > > >=20
+> > > > > > > The key is that the pinmux setting for the PWM pin should be =
+part of the
+> > > > > > > bl pinctrl, not the pwm pinctrl. Then "default" is only setup=
+ when the
+> > > > > > > bl device is successfully bound which is after the bl's .prob=
+e callback
+> > > > > > > called pwm_apply().
+> > > > > >=20
+> > > > > > No, that's not at all correct. Pinmux settings should reside wi=
+th the
+> > > > > > consumer of the pin. In this case, the PWM is the consumer of t=
+he pin,
+> > > > > > whereas the backlight is the consumer of the *PWM*.
+> > > > >=20
+> > > > > This is news to me. Adding Linus W. to Cc, maybe he can comment?!
+> > > > >=20
+> > > > > Grepping through the arm device trees it really seems common to p=
+ut the
+> > > > > pinctrl for the pwm pin into the pwm device. I didn't search in d=
+epth,
+> > > > > but I didn't find a counter example.
+> > > > >=20
+> > > > > For GPIOs it is common that the pinmuxing is included in the GPIO=
+'s
+> > > > > consumer pinctrl. Ditto for mdio busses whose pinctrl is included=
+ in the
+> > > > > ethernet pinctrl.
+> > > >=20
+> > > > GPIO is different from PWM in that the GPIO is already the pin itse=
+lf
+> > > > and is otherwise generic. So typically you put the pinmuxing options
+> > > > into the device tree node for the consumer of the GPIO, because it =
+is
+> > > > only when the consumer uses the GPIO that you need to configure that
+> > > > pin as GPIO.
+> > > >=20
+> > > > For PWM, however, the PWM consumer is only the consumer of the PWM,=
+ but
+> > > > the PWM device itself is the real consumer of the pin that outputs =
+the
+> > > > PWM signal. So the PWM determines when the pinmux states need to be
+> > > > applied, whereas the consumer of the PWM only deals with the PWM.
+> > > >=20
+> > > > For MDIO busses, I think they are usually part of, and driven by, t=
+he
+> > > > ethernet controller, so again it makes sense to put the pinmux into=
+ the
+> > > > node of the ethernet controller, because the ethernet controller is=
+ the
+> > > > user of the pins.
+> > >=20
+> > > Maybe it was a bad idea to broaden the discussion to talk about gpios
+> > > and ethernet stuff here. I'd still consider it a valid construct to p=
+ut
+> > > the pwm pin into the backlight's pinctrl unless Linux W. disagrees.
+> >=20
+> > But why? The backlight doesn't care about the specific pinmuxing of the
+> > PWM pin. All it cares about is the PWM signal. That's the level of
+> > abstraction that the PWM consumer expects, anything lower level belongs
+> > in the PWM driver.
+>=20
+> The backlight driver cares about the PWM pin muxing because if it's
+> wrongly muxed the backlight doesn't work as intended.
 
-bool soc_dev_is_exynos(soc) {
-  static bool init_done;
-  enum soc_exynos exynos_type;
+It shouldn't care about that. It should only care about the PWM and the
+PWM should make sure that the pin is correctly muxed because otherwise
+it can't work as expected.
 
-  if (!init_done) {
-    match = soc_device_match(exynos_soc_id);
-    exynos_type = match.data;
-  }
-  return soc == exynos_type;
-}
+> > > > > > The problem with making the PWM mode the "default" pinctrl stat=
+e is that
+> > > > > > the default state will be applied before the driver is even pro=
+bed. That
+> > > > > > makes it unsuitable for this case. I think what we really want =
+here is
+> > > > > > explicitly "active" and "inactive" states for pinctrl where the=
+ PWM
+> > > > > > driver controls when exactly each state is applied.
+> > > > >=20
+> > > > > Note that this problem goes away nicely if the pwm pin is attache=
+d to
+> > > > > the backlight. Because it's the backlight's driver that "knows" w=
+hen the
+> > > > > pwm is configured correctly and so the already existing mechanism=
+s that
+> > > > > setup the mux when the bl is correctly probed do the right thing =
+at the
+> > > > > right time.
+> > > >=20
+> > > > Actually that's not exactly true. The default pinctrl state will be
+> > > > applied before the driver's ->probe() implementation, so the pinctrl
+> > > > state will be active some time before even the backlight driver gets
+> > > > around to setting up the PWM. If you look at drivers/base/dd.c you'=
+ll
+> > > > see that really_probe() calls pinctrl_bind_pins() before calling the
+> > > > driver's ->probe() and will select the default state (unless there's
+> > > > also an "init" state defined, in which case that will get applied a=
+nd
+> > > > only after successful probe will the default state be selected).
+> > > >=20
+> > > > So if you use only a default state, then you could even get into a
+> > > > situation where ->probe() return -EPROBE_DEFER and it would potenti=
+ally
+> > > > take several seconds before the driver is reprobed, during which ti=
+me
+> > > > the pinmux will already be set up but the PWM not configured proper=
+ly
+> > > > and potentially outputting the wrong level.
+> > >=20
+> > > If you reread my suggestion to Michal completely you will notice I got
+> > > that right.
+> > >=20
+> > > > > > This solves the problem quite nicely because by default the pin=
+ctrl
+> > > > > > state isn't touched. For the case where the bootloader didn't i=
+nitialize
+> > > > > > the PWM pin at all, the driver core won't do anything and keep =
+it at the
+> > > > > > 100k pull-up default.
+> > > > >=20
+> > > > > Ditto if the pwm pinctrl is attached to the consumer without havi=
+ng to
+> > > > > introduce new pwm-specific stuff.
+> > > >=20
+> > > > Well yes, but you'd obviously also have to avoid using the "default"
+> > > > state, otherwise you'd run into the issues that I described above.
+> > >=20
+> > > I'd need "default" and "init", right.
+> > >=20
+> > > > > > > > > No I meant the pwm. Well, it's as easy as that: Whenever =
+with your
+> > > > > > > > > approach you configure the pin as GPIO with the output se=
+t to low,
+> > > > > > > > > instead configure the pwm with duty_cycle to zero (or dis=
+able it).
+> > > > > > > > > Whenever with your approach you configure the pin as GPIO=
+ with the
+> > > > > > > > > output set to high, configure the pwm with duty_cycle to =
+100%. (Keeping
+> > > > > > > > > out inverted PWMs for the ease of discussion, but the pro=
+cedure can be
+> > > > > > > > > adapted accordingly.) The only difference then is that wi=
+th your
+> > > > > > > > > approach you already "know" in pwm-imx's .probe the idle =
+level and can
+> > > > > > > > > configure the GPIO accordingly. With my approach you just=
+ have to wait
+> > > > > > > > > until the first pwm_apply which (as described above) work=
+s just as well.
+> > > > > > > >=20
+> > > > > > > > While here I am quite confident you are talking about kerne=
+l code, right?
+> > > > > > > > If yes, then your approach is clear to me.
+> > > > > > > >=20
+> > > > > > > > The problem is I am quite sure your approach does not solve=
+ the cases
+> > > > > > > > the pinctrl solution does. And according to my tests so far=
+ it does not
+> > > > > > > > work at all because the "init" and "default" states does no=
+t work as you
+> > > > > > > > are saying.
+> > > > > > >=20
+> > > > > > > That's as pointed out above, because you're looking at the pw=
+m's pinctrl
+> > > > > > > and I at the pwm-consumer's pinctrl.
+> > > > > > >=20
+> > > > > > > Note that a sysfs consumer cannot be operated smoothly here, =
+because
+> > > > > > > there is no pinctrl node to add the PWM mode to that only get=
+s active
+> > > > > > > after the first configuration. This however is something that=
+ should not
+> > > > > > > be addressed in the imx driver but in the pwm core (if at all=
+).
+> > > > > >=20
+> > > > > > With the pinctrl-based solution outlined above you can even ope=
+rate a
+> > > > > > sysfs consumer properly. The pinctrl states are where they belo=
+ng, with
+> > > > > > the PWM device and therefore they can be properly set when the =
+PWM is
+> > > > > > used, rather than waiting for a PWM consumer to muck with the p=
+inmux.
+> > > > > >=20
+> > > > > > Note how all the pieces are suddenly falling into place. In my
+> > > > > > experience that's usually a good indication that you're on the =
+right
+> > > > > > track.
+> > > > >=20
+> > > > > OK, sysfs is the only point where the "put pinctrl stuff into the=
+ pwm
+> > > > > core (or driver)" is superior to the already existing and otherwi=
+se
+> > > > > completely working status quo. (Apart from bugs that need fixing =
+in
+> > > > > your scenario, too.)
+> > > >=20
+> > > > Nope, sorry. It's superior in all of the other cases as well. You've
+> > > > said elsewhere already that the prerequisite for the current soluti=
+on to
+> > > > support inverse polarity with the i.MX driver is to keep the driver
+> > > > running, even after the PWM is no longer used. Sorry but that's jus=
+t not
+> > > > an option for me.
+> > >=20
+> > > You want that after pwm_disable() the pin still keeps the idle level.=
+ As
+> > > the hardware doesn't provide this feature "as is" something has to be
+> > > done about it. This can be reached either by operating the pin as PWM
+> > > with 0% duty cycle or by switching to GPIO that is configured to the
+> > > desired level. From the PWM driver's POV the first is the more natura=
+l,
+> > > as this can be accomplished with the registers this driver cares about
+> > > anyhow.
+> >=20
+> > We've been over this before. Yes, as long as you operate the pin as PWM
+> > it's okay to just actively drive it. But once you no longer use the pin,
+> > why would you want to still actively drive it?
+>=20
+> This is because you say the pin should keep its level as inactive even
+> though that's not what the hardware does without keeping care.
+>=20
+> I say this is strange: The consumer specifies if the pwm should be
+> inverted or not because the pwm alone doesn't know that. Then with the
+> consumer gone *you* want the pwm to "remember" its last user requested
+> inversion and so the pin should stay at 1.
+>=20
+> To answer your question: I don't want to actively drive the pin when the
+> user is gone. That's a requirement comming from you.
 
-and the callers would be:
-if (soc_dev_is_exynos(EXYNOS_542x))
+That's not actually what I'm suggesting. What I'm saying is that the PWM
+should not actively drive the pin at all. That's my entire point here.
+If the device gets out of boot, nobody is actively driving the pin
+either, so it has that 100k pull-up to make sure it is high by default,
+which in turn causes the backlight to remain off. I'm saying that that
+is exactly the state that the pin should be put back into when nobody is
+using the PWM.
 
-Other point is comment in soc_device_match():
-"This function is meant as a helper in place of of_match_node() in
-cases where either no device tree is available or the information in a
-device node is insufficient..."
-and
-"For new devices, the DT binding .. that allow the use of
-of_match_node() instead."
+So in other words I'm saying that that pin should be passively driven by
+that 100k pull-up if it is not actively used by the PWM.
 
-so of_match_node() is preferred instead.
+What you are saying is that either we actively drive irrespective of
+whether there are any users, or that we leave it undefined what we do
+with a pin when it is no longer used. I think those are both wrong
+because the former doesn't allow you to properly shut down the system
+and the latter gives you undefined results, which is pretty useless
+because it is completely non-deterministic.
 
-> +
->  static struct platform_device exynos_cpuidle = {
->         .name              = "exynos_cpuidle",
->  #ifdef CONFIG_ARM_EXYNOS_CPUIDLE
-> diff --git a/arch/arm/mach-exynos/firmware.c b/arch/arm/mach-exynos/firmware.c
-> index d602e3b..d526d5e 100644
-> --- a/arch/arm/mach-exynos/firmware.c
-> +++ b/arch/arm/mach-exynos/firmware.c
-> @@ -40,7 +40,7 @@ static int exynos_do_idle(unsigned long mode)
->                 writel_relaxed(__pa_symbol(exynos_cpu_resume_ns),
->                                sysram_ns_base_addr + 0x24);
->                 writel_relaxed(EXYNOS_AFTR_MAGIC, sysram_ns_base_addr + 0x20);
-> -               if (soc_is_exynos3250()) {
-> +               if (soc_dev_is_exynos3250()) {
->                         flush_cache_all();
->                         exynos_smc(SMC_CMD_SAVE, OP_TYPE_CORE,
->                                    SMC_POWERSTATE_IDLE, 0);
-> @@ -61,7 +61,7 @@ static int exynos_cpu_boot(int cpu)
->          * Exynos3250 doesn't need to send smc command for secondary CPU boot
->          * because Exynos3250 removes WFE in secure mode.
->          */
-> -       if (soc_is_exynos3250())
-> +       if (soc_dev_is_exynos3250())
->                 return 0;
->
->         /*
-> @@ -85,7 +85,7 @@ static int exynos_set_cpu_boot_addr(int cpu, unsigned long boot_addr)
->          * additional offset for every CPU, with Exynos4412 being the only
->          * exception.
->          */
-> -       if (soc_is_exynos4412())
-> +       if (soc_dev_is_exynos4412())
->                 boot_reg += 4 * cpu;
->
->         writel_relaxed(boot_addr, boot_reg);
-> @@ -101,7 +101,7 @@ static int exynos_get_cpu_boot_addr(int cpu, unsigned long *boot_addr)
->
->         boot_reg = sysram_ns_base_addr + 0x1c;
->
-> -       if (soc_is_exynos4412())
-> +       if (soc_dev_is_exynos4412())
->                 boot_reg += 4 * cpu;
->
->         *boot_addr = readl_relaxed(boot_reg);
-> diff --git a/arch/arm/mach-exynos/platsmp.c b/arch/arm/mach-exynos/platsmp.c
-> index c39ffd2..e2ba70f 100644
-> --- a/arch/arm/mach-exynos/platsmp.c
-> +++ b/arch/arm/mach-exynos/platsmp.c
-> @@ -88,7 +88,7 @@ void exynos_cpu_power_down(int cpu)
->  {
->         u32 core_conf;
->
-> -       if (cpu == 0 && (soc_is_exynos5420() || soc_is_exynos5800())) {
-> +       if (cpu == 0 && soc_dev_is_exynos542x()) {
+> If it was my decision, I'd say: If the backlight driver calls
+>=20
+> 	pwm_config(pwm, 0, 100);
+> 	pwm_disable(pwm);
+>=20
+> I'd interpret that as: The consumer doesn't use the pin any more, so I'm
+> not bound to keep the pin at a certain level. If however after
+> pwm_disable the consumer is still considered to use the pin, then
+> implementing it the same way as pwm_config(pwm, 0, 100) is the right
+> thing to do. This applies then to all pwm implementations and so should
+> be solved in the pwm core, not in the imx driver. In this case the
+> concept of "disabling a PWM" can go away completely.
 
-With new implementation you might hit again LDREX and STREX here (see
-commit ca489c58ef0b ("ARM: EXYNOS: Don't use LDREX and STREX after
-disabling cache coherency")) because:
-soc_device_match -> bus_for_each_dev -> klist_iter_init_node ->
-kref_get_unless_zero -> refcount_inc_not_zero_checked
-According to previous comments and
-http://infocenter.arm.com/help/index.jsp?topic=/com.arm.doc.dht0008a/CJABEHDA.html
-this is not allowed with cache coherency disabled.
+But again, why should PWMs be special? You turn off all other resources
+when you no longer need them, right? If you power your panel with a
+regulator, then when the panel is disabled you want to disable the
+regulator, right? Similarily if you don't use your I2C controller you
+want to turn off the clock that drives it, right? This is the same for
+any resource in your system: if you no longer need it, disable it. The
+fact that "disabling" the PWM is not straightforward on i.MX doesn't
+mean that we should simply ignore it.
 
-I think calling here soc_device_match() is unlikely because it should
-be initialized before. However please check if this is really the case
-and comment it in the code in both places:
-1. the first place which effectively initializes
-soc_dev_is_exynos542x():init_done (to be sure that no one removes this
-first call)
-2. here that it depends on previous call of soc_dev_is_exynos542x().
+> In another mail you wrote:
+> > Your example of keeping an LED in the current state is actually an
+> > example of where the consumer still needs it. As long as you want to use
+> > the LED you need to keep the LED driver around, and as long as the LED
+> > driver is around you have a consumer for the PWM.
+>=20
+> With an analog reasoning I'd say: As long as the backlight driver cares
+> about the backlight being off, it should not disable (or put) the PWM.
 
-It is getting slightly error prone - usage of one function is safe
-here only if it was called somewhere else before... so I am not sure
-if it is worth to remove soc_is_exynos() here.
+It shouldn't put the PWM because it still needs it. But it should be
+totally fine to disable it. Disabling a PWM should result in the PWM not
+outputting any power.
 
-Please also check other places without cache coherency where
-soc_is_exynos() is being replaced to new method.
+> > > Also note this is similar in the pwm-bcm-kona driver that doesn't seem
+> > > to have the concept of "disable" at all. kona_pwmc_disable() just sets
+> > > up 0% duty cycle. In my eyes this is an argument that is good enough =
+to
+> > > at least nack the imx-specific implementation of that pinctrl stuff.
+> >=20
+> > It's not a good enough argument for me. It's certainly possible that not
+> > all PWM driver can be made to behave exactly as needed. pwm-bcm-kona
+> > might be one of those, but that doesn't mean that everybody else should
+> > be restricted to the same behaviour. If we can make i.MX behave exactly
+> > right, then we should do that.
+>=20
+> And if we can make the imx-specific implementation right in a generic
+> way in the pwm core that might help the bcm-kona driver for free.
 
-Best regards,
-Krzysztof
+It may, but we don't know that. Look, I'm not generally opposed to do
+this in the core, but I'm not going to implement it in the core until
+I'm convinced that it is useful in a large number of cases. One or two
+are not large numbers.
+
+> > > If the pinctrl idea is implemented in the pwm core, I won't object.
+> >=20
+> > Let me see if I get this straight: you're not objecting to the idea of
+> > implementing the pinctrl solution, your only objection is to put it in
+> > the i.MX driver?
+>=20
+> Given that the pinctrl solution is a generic solution that might help
+> other drivers, too, I think it should not go into the imx specific
+> driver just because for now this is the only driver that might benefit
+> from it.
+>=20
+> I still don't think it's the best solution for the imx problem but as I
+> care more for imx in general than for pwm in general I'm interested in
+> keeping the imx driver focused to the imx specific parts. I won't repeat
+> the advantages of putting generic stuff into a generic location instead
+> of its first user.
+
+We can debate this for another few weeks, but I don't think you're going
+to be able to convince me, so let's cut this short: pinctrl support goes
+in the i.MX driver for now. Let's move on.
+
+> > > > > Also dts writes don't need to lookup the needed GPIO numbers and =
+pinctrl.
+> > > >=20
+> > > > Just to clarify: I don't think that we need to get the GPIO number
+> > > > involved in this case, because we don't have to reconfigure the pin=
+ as
+> > > > GPIO to make this work. The only reason that Michal's proposal did =
+that
+> > > > is because that was believed to be necessary. But if the pin can ju=
+st be
+> > > > configured with a 100k pull-up, that's enough to pull the pin high =
+when
+> > > > we need it.
+> > >=20
+> > > Unless the gpio happens to be configured as output at the wrong value.
+> > > Further I'm not sure if the pwm in disabled state actively pulls to 0
+> > > and if in this state the PU of the pin is good enough to ensure a one
+> > > here. That would need verification first.
+> >=20
+> > The idea is to *not* configure the GPIO as output and output the wrong
+> > value. The idea is to not use the GPIO at all and instead use whatever
+> > the hardware default is that makes it such that the backlight is off by
+> > default at boot.
+>=20
+> Which might be possible with Lothar's idea for some machines, but not
+> for all users of the pwm-imx driver.
+>=20
+> Also note that you don't include the poor souls where there is no
+> hardware pullup into the right direction.
+
+The poor souls should speak up and then we can look into finding a good
+solution for them. I'm pretty sure there must be some equivalent that
+can be used for other users.
+
+Thierry
+
+--CE+1k2dSO48ffgeK
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAlvutwsACgkQ3SOs138+
+s6FarA//UwBbRsNm6yLJ7QimbUUZCDQPIJ0D5FIFn/to7nff3DKOYlfwlKyhk+pF
+n/N3kxteGt+7sfZle+jsqP5tXi8hL8+dDReqACWqo6z3Rv7+wWNHHvSKTjdBE6l/
+TKVyuVAra8y7ZLUnSM+zBuOJ27Vt1cBzLm+APaZw8FPsDc02GIhPtWh9hlhb8vuS
+UD+DSxv32A2wU2MqY4bmERZNtn1FOl8gktL+MN9V4TFDYigTV6YpQKbSRI9VUaiC
+N43V/KWAK5KwMG/2fjUbTSAkIdyqXqt+i/a9IlOeyw2t9XaS9f2zn7qrVDinbJ4i
+REMLmOS8C5v7ds398I2zDVan2sRu9tXsgXttTCJPRxTBf7jJwcmQA9tftRrEJG78
+E0DZsNPmkq44su1mM+2HV73aUmRma2fx1WShwYNbOomStpAw4n9ZqFo4ieWcUMk1
+TR6hQ/+ze/gamyTWS50nSBLgxAFN9VSr+Tg4ul/HXjPzXZuQdIE9N3oLLn02dYR8
+rDg88QqkWEsgabzsdV5tlXMFBaFP0EOafd928VqO5NAiyg+OnL5oa0V8FVFGGysJ
+TB0u+WwdYpoIUbdxGHgdBfbxh/zCBKiU6HCMuePaIIC1ilXtmwT9NBJLKXefSccJ
+L5qbl0+RKL6kqZWtEEmvhBGDGlAi05bJWZWAlTflRh7dDKKkWqk=
+=Xa6K
+-----END PGP SIGNATURE-----
+
+--CE+1k2dSO48ffgeK--
