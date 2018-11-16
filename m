@@ -2,109 +2,255 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D686BC43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:12:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A152C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:13:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA43E2087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:12:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA43E2087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 258382087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:13:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 258382087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389769AbeKQAZI (ORCPT
+        id S2389826AbeKQAZc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 19:25:08 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:39284 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728079AbeKQAZI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 19:25:08 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4E3ED169739;
-        Fri, 16 Nov 2018 14:12:34 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id AD075611C3;
-        Fri, 16 Nov 2018 14:12:30 +0000 (UTC)
-Date:   Fri, 16 Nov 2018 09:12:29 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     linux-nvme@lists.infradead.org, Hannes Reinecke <hare@suse.de>,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, axboe@kernel.dk,
-        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
-        xose.vazquez@gmail.com, chengjike.cheng@huawei.com,
-        shenhong09@huawei.com, dm-devel@redhat.com,
-        wangzhoumengjian@huawei.com, christophe.varoqui@opensvc.com,
-        bmarzins@redhat.com, sschremm@netapp.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: nvme: allow ANA support to be independent of native multipathing
-Message-ID: <20181116141229.GC28870@redhat.com>
-References: <2691abf6733f791fb16b86d96446440e4aaff99f.camel@suse.com>
- <20181112215323.GA7983@redhat.com>
- <20181113161838.GC9827@localhost.localdomain>
- <20181113180008.GA12513@redhat.com>
- <20181114053837.GA15086@redhat.com>
- <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
- <20181114174746.GA18526@redhat.com>
- <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
- <20181115174605.GA19782@redhat.com>
- <20181116091458.GA17267@lst.de>
+        Fri, 16 Nov 2018 19:25:32 -0500
+Received: from lb1-smtp-cloud8.xs4all.net ([194.109.24.21]:39549 "EHLO
+        lb1-smtp-cloud8.xs4all.net" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1728024AbeKQAZc (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 19:25:32 -0500
+Received: from [IPv6:2001:983:e9a7:1:b167:1e29:5b51:e4fb] ([IPv6:2001:983:e9a7:1:b167:1e29:5b51:e4fb])
+        by smtp-cloud8.xs4all.net with ESMTPA
+        id NeregC7X9cvkSNerfgRIDj; Fri, 16 Nov 2018 15:12:55 +0100
+Subject: Re: [PATCH v3] media: vivid: Improve timestamping
+To:     Gabriel Francisco Mandaji <gfmandaji@gmail.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc:     lkcamp@lists.libreplanetbr.org
+References: <20181111223937.GA24963@gfm-note>
+From:   Hans Verkuil <hverkuil@xs4all.nl>
+Message-ID: <2623431d-fa96-30f9-2d1c-e5c8470d31ff@xs4all.nl>
+Date:   Fri, 16 Nov 2018 15:12:54 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116091458.GA17267@lst.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.30]); Fri, 16 Nov 2018 14:12:34 +0000 (UTC)
+In-Reply-To: <20181111223937.GA24963@gfm-note>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-CMAE-Envelope: MS4wfLlFjzgkOqdMms5UJltKVRkM60VignrrURqRwNBJLuuHxvYXoNCdHPZUKz8STjghUdZ6+jSiHTtT/UmbP1g39SOCrpJK/yCmFFa2Wl1QQM09NDW/uf64
+ CoMDYUpW7Vca87QTsazYLBa8mipVAJ5ZJC9KO56iHDUvn+3KIVJIy3yHnaabDu9b5IS8ca/cf520LE+mihZ+P2ptkgDNBtBo4QN8FGtJbX0WXbEmbHMNwFBf
+ VhiAVTkQcdMLIPsE8iF1KgI2gKILk7ws8XUkV+ZVdYnS62iqOnUoyO5aWhHSa0zFlLUCU4Q+ZvFvOvsecEQb0lMfvE1YFOl9HkxxJ7Ith2CgDxGd+oyKZpZk
+ qtNZomRqt3tkxZ0pj+kWdw0FTndZqdwJGrBKRnqc7S7myLKGJMk1/zJ8qnDMQzuttVG8jpQi
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16 2018 at  4:14am -0500,
-Christoph Hellwig <hch@lst.de> wrote:
-
-> On Thu, Nov 15, 2018 at 12:46:05PM -0500, Mike Snitzer wrote:
-> > Whether or not ANA is present is a choice of the target implementation;
-> > the host (and whether it supports multipathing) has _zero_ influence on
-> > this.  If the target declares a path as 'inaccessible' the path _is_
-> > inaccessible to the host.  As such, ANA support should be functional
-> > even if native multipathing is not.
-> > 
-> > Introduce ability to always re-read ANA log page as required due to ANA
-> > error and make current ANA state available via sysfs -- even if native
-> > multipathing is disabled on the host (e.g. nvme_core.multipath=N).
+On 11/11/2018 11:39 PM, Gabriel Francisco Mandaji wrote:
+> Simulate a more precise timestamp by calculating it based on the
+> current framerate.
 > 
-> The first part I could see, but I still want to make it conditional
-> in some way as nvme is going into deeply embedded setups, and I don't
-> want to carry the weight of the ANA code around for everyone.
+> Signed-off-by: Gabriel Francisco Mandaji <gfmandaji@gmail.com>
 
-So disabling CONFIG_NVME_MULTIPATH isn't adequate?  You see a need for
-enabling CONFIG_NVME_MULTIPATH but disallowing consideration of ANA
-state management for these embedded cases?  That doesn't make much sense
-in that ANA won't be enabled on the target, and if it is then shouldn't
-the NVMe host enable ANA support?
- 
-> The second I fundamentally disagree with.  And even if you found agreement
-> it would have to be in a separate patch as it is a separate feature.
+Something is still wrong: the frame period calculation is fine for
+input 0 (webcam), but if I switch to another input (S-Video/TV/HDMI),
+then it is totally wrong: for input 3 (HDMI) the fps seems to be off
+by a factor of 10000 (i.e. I see a framerate of over 60000 where I
+expected to see 60 Hz), and for inputs 2 and 3 I get 7000 fps for
+PAL and 110000 for NTSC.
 
-In a later mail you clarified that by "second" you meant the sysfs
-export.
+v4l2-ctl -P (== VIDIOC_G_PARM) returns the right thing here.
 
-nvme_ns_id_attrs_are_visible() calls nvme_ctrl_use_ana() to know whether
-to export the ana state via sysfs.  Makes no sense to enable ANA to
-work, independent of native multipathing, and then even though ANA is
-active disallow exporting the associated ANA state.  We need
-consistency.. if the sysfs file exists it means ANA state is being
-managed.
+This calculation is the problem:
 
-All I can figure is that what you're suggesting is born out of
-disallowing uses you fundamentally disagree with (e.g. multipath-tools
-reading the ANA state from this sysfs file).
+	u64 f_period = dev->timeperframe_vid_cap.numerator * 1000000000 /
+		       dev->timeperframe_vid_cap.denominator;
 
-Mike
+You need to cast dev->timeperframe_vid_cap.numerator to a u64
+first otherwise the multiplication overflows the u32 if numerator is > 4.
+
+Also note that you cannot divide 64 bit values: not all architectures
+support that. Use do_div instead.
+
+With that change it should work.
+
+Regards,
+
+	Hans
+
+> ---
+> Changes in v2:
+>     - fix spelling
+>     - end of exposure is offset by 90% of the frame period
+>     - fix timestamp calculation for FIELD_ALTERNATE (untested)
+>     - timestamp is now calculated and set from vivid_thread_cap_tick()
+>     - capture vbi uses the same timestamp as non-vbi, but offset by 5%
+>     - timestamp stays consistent even if the FPS changes
+>     - tested with dropped frames
+> Changes in v3:
+>     - fix calculating offset for 'End of Frame'
+>     - fix changing 'Timestamp Source' mid-capture
+>     - change order of operation when calculating the VBI's offset
+> ---
+>  drivers/media/platform/vivid/vivid-core.h        |  3 ++
+>  drivers/media/platform/vivid/vivid-kthread-cap.c | 47 +++++++++++++++++-------
+>  drivers/media/platform/vivid/vivid-vbi-cap.c     |  4 --
+>  3 files changed, 36 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/media/platform/vivid/vivid-core.h b/drivers/media/platform/vivid/vivid-core.h
+> index 1891254..f7b2a0b 100644
+> --- a/drivers/media/platform/vivid/vivid-core.h
+> +++ b/drivers/media/platform/vivid/vivid-core.h
+> @@ -392,6 +392,9 @@ struct vivid_dev {
+>  	/* thread for generating video capture stream */
+>  	struct task_struct		*kthread_vid_cap;
+>  	unsigned long			jiffies_vid_cap;
+> +	u64				cap_stream_start;
+> +	u64				cap_frame_period;
+> +	u64				cap_frame_eof_offset;
+>  	u32				cap_seq_offset;
+>  	u32				cap_seq_count;
+>  	bool				cap_seq_resync;
+> diff --git a/drivers/media/platform/vivid/vivid-kthread-cap.c b/drivers/media/platform/vivid/vivid-kthread-cap.c
+> index eebfff2..f97cb6a 100644
+> --- a/drivers/media/platform/vivid/vivid-kthread-cap.c
+> +++ b/drivers/media/platform/vivid/vivid-kthread-cap.c
+> @@ -425,12 +425,6 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
+>  		is_loop = true;
+>  
+>  	buf->vb.sequence = dev->vid_cap_seq_count;
+> -	/*
+> -	 * Take the timestamp now if the timestamp source is set to
+> -	 * "Start of Exposure".
+> -	 */
+> -	if (dev->tstamp_src_is_soe)
+> -		buf->vb.vb2_buf.timestamp = ktime_get_ns();
+>  	if (dev->field_cap == V4L2_FIELD_ALTERNATE) {
+>  		/*
+>  		 * 60 Hz standards start with the bottom field, 50 Hz standards
+> @@ -554,14 +548,6 @@ static void vivid_fillbuff(struct vivid_dev *dev, struct vivid_buffer *buf)
+>  			}
+>  		}
+>  	}
+> -
+> -	/*
+> -	 * If "End of Frame" is specified at the timestamp source, then take
+> -	 * the timestamp now.
+> -	 */
+> -	if (!dev->tstamp_src_is_soe)
+> -		buf->vb.vb2_buf.timestamp = ktime_get_ns();
+> -	buf->vb.vb2_buf.timestamp += dev->time_wrap_offset;
+>  }
+>  
+>  /*
+> @@ -667,10 +653,25 @@ static void vivid_overlay(struct vivid_dev *dev, struct vivid_buffer *buf)
+>  	}
+>  }
+>  
+> +static void vivid_cap_update_frame_period(struct vivid_dev *dev)
+> +{
+> +	u64 f_period = dev->timeperframe_vid_cap.numerator * 1000000000 /
+> +		       dev->timeperframe_vid_cap.denominator;
+> +	if (dev->field_cap == V4L2_FIELD_ALTERNATE)
+> +		f_period /= 2;
+> +	/*
+> +	 * If "End of Frame", then offset the exposure time by 0.9
+> +	 * of the frame period.
+> +	 */
+> +	dev->cap_frame_eof_offset = f_period * 9 / 10;
+> +	dev->cap_frame_period = f_period;
+> +}
+> +
+>  static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
+>  {
+>  	struct vivid_buffer *vid_cap_buf = NULL;
+>  	struct vivid_buffer *vbi_cap_buf = NULL;
+> +	u64 f_time = 0;
+>  
+>  	dprintk(dev, 1, "Video Capture Thread Tick\n");
+>  
+> @@ -702,6 +703,11 @@ static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
+>  	if (!vid_cap_buf && !vbi_cap_buf)
+>  		goto update_mv;
+>  
+> +	f_time = dev->cap_frame_period * dev->vid_cap_seq_count +
+> +		 dev->cap_stream_start + dev->time_wrap_offset;
+> +	if (!dev->tstamp_src_is_soe)
+> +		f_time += dev->cap_frame_eof_offset;
+> +
+>  	if (vid_cap_buf) {
+>  		v4l2_ctrl_request_setup(vid_cap_buf->vb.vb2_buf.req_obj.req,
+>  					&dev->ctrl_hdl_vid_cap);
+> @@ -721,9 +727,13 @@ static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
+>  				VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE);
+>  		dprintk(dev, 2, "vid_cap buffer %d done\n",
+>  				vid_cap_buf->vb.vb2_buf.index);
+> +
+> +		vid_cap_buf->vb.vb2_buf.timestamp = f_time;
+>  	}
+>  
+>  	if (vbi_cap_buf) {
+> +		u64 vbi_period;
+> +
+>  		v4l2_ctrl_request_setup(vbi_cap_buf->vb.vb2_buf.req_obj.req,
+>  					&dev->ctrl_hdl_vbi_cap);
+>  		if (dev->stream_sliced_vbi_cap)
+> @@ -736,6 +746,10 @@ static void vivid_thread_vid_cap_tick(struct vivid_dev *dev, int dropped_bufs)
+>  				VB2_BUF_STATE_ERROR : VB2_BUF_STATE_DONE);
+>  		dprintk(dev, 2, "vbi_cap %d done\n",
+>  				vbi_cap_buf->vb.vb2_buf.index);
+> +
+> +		/* If capturing a VBI, offset by 0.05 */
+> +		vbi_period = dev->cap_frame_period * 5 / 100;
+> +		vbi_cap_buf->vb.vb2_buf.timestamp = f_time + vbi_period;
+>  	}
+>  	dev->dqbuf_error = false;
+>  
+> @@ -767,6 +781,8 @@ static int vivid_thread_vid_cap(void *data)
+>  	dev->cap_seq_count = 0;
+>  	dev->cap_seq_resync = false;
+>  	dev->jiffies_vid_cap = jiffies;
+> +	dev->cap_stream_start = ktime_get_ns();
+> +	vivid_cap_update_frame_period(dev);
+>  
+>  	for (;;) {
+>  		try_to_freeze();
+> @@ -779,6 +795,9 @@ static int vivid_thread_vid_cap(void *data)
+>  			dev->jiffies_vid_cap = cur_jiffies;
+>  			dev->cap_seq_offset = dev->cap_seq_count + 1;
+>  			dev->cap_seq_count = 0;
+> +			dev->cap_stream_start += dev->cap_frame_period *
+> +						 dev->cap_seq_offset;
+> +			vivid_cap_update_frame_period(dev);
+>  			dev->cap_seq_resync = false;
+>  		}
+>  		numerator = dev->timeperframe_vid_cap.numerator;
+> diff --git a/drivers/media/platform/vivid/vivid-vbi-cap.c b/drivers/media/platform/vivid/vivid-vbi-cap.c
+> index 903cebe..17aa4b0 100644
+> --- a/drivers/media/platform/vivid/vivid-vbi-cap.c
+> +++ b/drivers/media/platform/vivid/vivid-vbi-cap.c
+> @@ -95,8 +95,6 @@ void vivid_raw_vbi_cap_process(struct vivid_dev *dev, struct vivid_buffer *buf)
+>  
+>  	if (!VIVID_INVALID_SIGNAL(dev->std_signal_mode))
+>  		vivid_vbi_gen_raw(&dev->vbi_gen, &vbi, vbuf);
+> -
+> -	buf->vb.vb2_buf.timestamp = ktime_get_ns() + dev->time_wrap_offset;
+>  }
+>  
+>  
+> @@ -119,8 +117,6 @@ void vivid_sliced_vbi_cap_process(struct vivid_dev *dev,
+>  		for (i = 0; i < 25; i++)
+>  			vbuf[i] = dev->vbi_gen.data[i];
+>  	}
+> -
+> -	buf->vb.vb2_buf.timestamp = ktime_get_ns() + dev->time_wrap_offset;
+>  }
+>  
+>  static int vbi_cap_queue_setup(struct vb2_queue *vq,
+> 
+
