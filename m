@@ -2,179 +2,240 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 549FCC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:05:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E3414C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:07:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 12FBE208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:05:38 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="NOOIr37k"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 12FBE208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 9EBD6214F1
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:07:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EBD6214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389265AbeKPMQD (ORCPT
+        id S2389297AbeKPMSN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 07:16:03 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:40165 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389006AbeKPMQD (ORCPT
+        Fri, 16 Nov 2018 07:18:13 -0500
+Received: from fllv0016.ext.ti.com ([198.47.19.142]:49364 "EHLO
+        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727061AbeKPMSN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 07:16:03 -0500
-Received: by mail-pf1-f193.google.com with SMTP id x2-v6so10601858pfm.7
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 18:05:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=Tk4zNnRl3iveRzr8VK3BRLGltG68AkALc7dg+BBUT20=;
-        b=NOOIr37kMhSPPEh4ThKn2PW78U00DXit+OJMUDU7rUlCiAhyxflrXohn8zcOMK/7l/
-         +bXGEUYbes0UROImsRGND5Ic3+0Nhs/AG4lN0QOqPdYHBtSPT+1IcYhF451qs0ZmVbVt
-         6b7S8Mws9hiUZnwp7VtXrFf2hU9EOMEmuKqB6HnH4uKITJXBgOmEpI98UIvplxof/tir
-         x/Zl/Ux/OOxBlGrw7Dw1qev30vwfLfIpBdD8iIXnG6mIMaWLTcQXf6ldDaPt3MUANg7p
-         tInPs235BNbt8zBzJhK8YXR2GzFm0zWZqRbh21MzJ83LVmDqgffBY982ZbRoz41vql2p
-         Ko/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Tk4zNnRl3iveRzr8VK3BRLGltG68AkALc7dg+BBUT20=;
-        b=dbjLLgP/h86gNNZEU9vxqVpiB1jFgHBFxdD1fHaXOl66Iu6stX8A/zREVvHNKUZbdH
-         jVmGTH+srpCdl/VFHoncAglA+UKYMdabNxNCJv97xw0a1d9Y7M8uGdSDw0UiWbS0va8/
-         jEmH6h28xXtNOvP3p17GFGa3AmAIymm0TAvzzRmUz8wxqB66/0rGebrLB5RY8W6Pz01W
-         WGkFaYxYc7ExsqKeO4MJw7zXWPw9ZgJ7umgLsAsAWVz3ioncaobxeg6rs6GkECPVQdB1
-         8zIVRQCF0mExm74Y6azz32u9mZK0uLLvavBZWPcQ5k+aXAAZdsiXlHB8AjkK/nBEE2Wc
-         sQeA==
-X-Gm-Message-State: AGRZ1gKMn3lOekzDuKuiz7MuDCvs3DyBLadNxFcexaW8tvn7ecwX2sNW
-        IykjPdVD/ecUnkp2dIF4hI3efw==
-X-Google-Smtp-Source: AJdET5cDAqhOHxXhbkbViZgbSd2eSNDO4RE/M2++M50J4g8uUr6objVxBuN27R5l99W82ZePM0EHvw==
-X-Received: by 2002:a63:101:: with SMTP id 1mr8156529pgb.152.1542333935862;
-        Thu, 15 Nov 2018 18:05:35 -0800 (PST)
-Received: from vader ([64.114.255.97])
-        by smtp.gmail.com with ESMTPSA id s37sm25513907pgm.19.2018.11.15.18.05.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 18:05:35 -0800 (PST)
-Date:   Thu, 15 Nov 2018 18:05:33 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 16/19] block: document usage of bio iterator helpers
-Message-ID: <20181116020533.GK23828@vader>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-17-ming.lei@redhat.com>
+        Fri, 16 Nov 2018 07:18:13 -0500
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAG26n6Y067536;
+        Thu, 15 Nov 2018 20:06:49 -0600
+Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
+        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAG26nrq028669
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Thu, 15 Nov 2018 20:06:49 -0600
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 15
+ Nov 2018 20:06:49 -0600
+Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
+ cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
+ Thu, 15 Nov 2018 20:06:49 -0600
+Received: from [172.22.217.238] (ileax41-snat.itg.ti.com [10.172.224.153])
+        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAG26iAN009828;
+        Thu, 15 Nov 2018 20:06:44 -0600
+Subject: Re: [PATCH v3 06/13] dt-bindings: irqchip: Introduce TISCI Interrupt
+ router bindings
+From:   Lokesh Vutla <lokeshvutla@ti.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     Nishanth Menon <nm@ti.com>,
+        Santosh Shilimkar <ssantosh@kernel.org>, <tglx@linutronix.de>,
+        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
+        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
+        Sekhar Nori <nsekhar@ti.com>,
+        Device Tree Mailing List <devicetree@vger.kernel.org>,
+        Grygorii Strashko <grygorii.strashko@ti.com>,
+        Peter Ujfalusi <peter.ujfalusi@ti.com>
+References: <20181106084105.32483-1-lokeshvutla@ti.com>
+ <20181106084105.32483-7-lokeshvutla@ti.com>
+ <5bea0eb4.1c69fb81.843ed.0186@mx.google.com>
+ <569674da-07a1-107b-020a-4a11534a06b6@ti.com>
+Message-ID: <8adf30b7-07a2-fdc3-5993-3de0210638a6@ti.com>
+Date:   Fri, 16 Nov 2018 07:36:45 +0530
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115085306.9910-17-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <569674da-07a1-107b-020a-4a11534a06b6@ti.com>
+Content-Type: text/plain; charset="windows-1252"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 04:53:03PM +0800, Ming Lei wrote:
-> Now multi-page bvec is supported, some helpers may return page by
-> page, meantime some may return segment by segment, this patch
-> documents the usage.
+Hi Rob,
+
+On 11/13/2018 11:43 AM, Lokesh Vutla wrote:
+> Hi Rob,
 > 
-> Cc: Dave Chinner <dchinner@redhat.com>
-> Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> Cc: Mike Snitzer <snitzer@redhat.com>
-> Cc: dm-devel@redhat.com
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Shaohua Li <shli@kernel.org>
-> Cc: linux-raid@vger.kernel.org
-> Cc: linux-erofs@lists.ozlabs.org
-> Cc: David Sterba <dsterba@suse.com>
-> Cc: linux-btrfs@vger.kernel.org
-> Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> Cc: linux-xfs@vger.kernel.org
-> Cc: Gao Xiang <gaoxiang25@huawei.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Theodore Ts'o <tytso@mit.edu>
-> Cc: linux-ext4@vger.kernel.org
-> Cc: Coly Li <colyli@suse.de>
-> Cc: linux-bcache@vger.kernel.org
-> Cc: Boaz Harrosh <ooo@electrozaur.com>
-> Cc: Bob Peterson <rpeterso@redhat.com>
-> Cc: cluster-devel@redhat.com
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  Documentation/block/biovecs.txt | 26 ++++++++++++++++++++++++++
->  1 file changed, 26 insertions(+)
+> On 12/11/18 11:30 PM, Rob Herring wrote:
+>> On Tue, Nov 06, 2018 at 02:10:58PM +0530, Lokesh Vutla wrote:
+>>> Add the DT binding documentation for Interrupt router driver.
+>>>
+>>> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
+>>> ---
+>>> Changes since v2:
+>>> - Dropped interrupt-parent from reqired properties description
+>>> - Updated the interrupt cells to 4.
+>>>
+>>>   .../interrupt-controller/ti,sci-intr.txt      | 84 +++++++++++++++++++
+>>>   MAINTAINERS                                   |  1 +
+>>>   2 files changed, 85 insertions(+)
+>>>   create mode 100644
+>>> Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+>>>
+>>> diff --git
+>>> a/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+>>> b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+>>> new file mode 100644
+>>> index 000000000000..06e69f8c812c
+>>> --- /dev/null
+>>> +++
+>>> b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+>>> @@ -0,0 +1,84 @@
+>>> +Texas Instruments K3 Interrupt Router
+>>> +=====================================
+>>> +
+>>> +The Interrupt Router (INTR) module provides a mechanism to mux M
+>>> +interrupt inputs to N interrupt outputs, where all M inputs are
+>>> selectable
+>>> +to be driven per N output. There is one register per output
+>>> (MUXCNTL_N) that
+>>> +controls the selection.
+>>> +
+>>> +
+>>> +                                 Interrupt Router
+>>> +                             +----------------------+
+>>> +                             |  Inputs     Outputs  |
+>>> +        +-------+            | +------+             |
+>>> +        | GPIO  |----------->| | irq0 |             |       Host IRQ
+>>> +        +-------+            | +------+             |      controller
+>>> +                             |    .        +-----+  |      +-------+
+>>> +        +-------+            |    .        |  0  |  |----->|  IRQ  |
+>>> +        | INTA  |----------->|    .        +-----+  |      +-------+
+>>> +        +-------+            |    .          .      |
+>>> +                             | +------+      .      |
+>>> +                             | | irqM |    +-----+  |
+>>> +                             | +------+    |  N  |  |
+>>> +                             |             +-----+  |
+>>> +                             +----------------------+
+>>> +
+>>> +Configuration of these MUXCNTL_N registers is done by a system
+>>> controller
+>>> +(like the Device Memory and Security Controller on K3 AM654 SoC).
+>>> System
+>>> +controller will keep track of the used and unused registers within
+>>> the Router.
+>>> +Driver should request the system controller to get the range of GIC
+>>> IRQs
+>>> +assigned to the requesting hosts. It is the drivers responsibility
+>>> to keep
+>>> +track of Host IRQs.
+>>> +
+>>> +Communication between the host processor running an OS and the system
+>>> +controller happens through a protocol called TI System Control
+>>> Interface
+>>> +(TISCI protocol). For more details refer:
+>>> +Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
+>>> +
+>>> +TISCI Interrupt Router Node:
+>>> +----------------------------
+>>> +- compatible:        Must be "ti,sci-intr".
+>>> +- interrupt-controller:    Identifies the node as an interrupt
+>>> controller
+>>> +- #interrupt-cells:    Specifies the number of cells needed to
+>>> encode an
+>>> +            interrupt source. The value should be 4.
+>>> +            First cell should contain the TISCI device ID of source
+>>> +            Second cell should contain the interrupt source offset
+>>> +            within the device
+>>> +            Third cell specifies the trigger type as defined
+>>> +            in interrupts.txt in this directory.
+>>> +            Fourth cell should be 1 if the irq is coming from
+>>> +            interrupt aggregator else 0.
+>>> +- ti,sci:        Phandle to TI-SCI compatible System controller node.
+>>> +- ti,sci-dst-id:    TISCI device ID of the destination IRQ controller.
+>>> +- ti,sci-rm-range-girq:    TISCI subtype id representing the host
+>>> irqs assigned
+>>> +            to this interrupt router.
+>>
+>> u32 or array?
 > 
-> diff --git a/Documentation/block/biovecs.txt b/Documentation/block/biovecs.txt
-> index 25689584e6e0..bfafb70d0d9e 100644
-> --- a/Documentation/block/biovecs.txt
-> +++ b/Documentation/block/biovecs.txt
-> @@ -117,3 +117,29 @@ Other implications:
->     size limitations and the limitations of the underlying devices. Thus
->     there's no need to define ->merge_bvec_fn() callbacks for individual block
->     drivers.
-> +
-> +Usage of helpers:
-> +=================
-> +
-> +* The following helpers whose names have the suffix of "_all" can only be used
-> +on non-BIO_CLONED bio, and usually they are used by filesystem code, and driver
-> +shouldn't use them because bio may have been split before they got to the driver:
+> it is u32.
 
-Putting an english teacher hat on, this is quite the run-on sentence.
-How about:
+Sorry, I am wrong here. There is one instance where there are more than
+one set of gic irq ranges associated with this IP. Will fix it as an
+array in next version.
 
-* The following helpers whose names have the suffix of "_all" can only be used
-on non-BIO_CLONED bio. They are usually used by filesystem code. Drivers
-shouldn't use them because the bio may have been split before it reached the
-driver.
+Thanks and regards,
+Lokesh
 
-Maybe also an explanation of why the filesystem would want to use these?
-
-> +	bio_for_each_segment_all()
-> +	bio_first_bvec_all()
-> +	bio_first_page_all()
-> +	bio_last_bvec_all()
-> +
-> +* The following helpers iterate over single-page bvec, and the local
-> +variable of 'struct bio_vec' or the reference records single-page IO
-> +vector during the itearation:
-
-
-* The following helpers iterate over single-page bvecs. The passed 'struct
-bio_vec' will contain a single-page IO vector during the iteration.
-
-> +	bio_for_each_segment()
-> +	bio_for_each_segment_all()
-> +
-> +* The following helper iterates over multi-page bvec, and each bvec may
-> +include multiple physically contiguous pages, and the local variable of
-> +'struct bio_vec' or the reference records multi-page IO vector during the
-> +itearation:
-
-* The following helper iterates over multi-page bvecs. Each bvec may
-include multiple physically contiguous pages. The passed 'struct bio_vec' will
-contain a multi-page IO vector during the iteration.
-
-> +	bio_for_each_bvec()
-> -- 
-> 2.9.5
 > 
+>>
+>>> +
+>>> +For more details on TISCI IRQ resource management refer:
+>>> +http://downloads.ti.com/tisci/esd/latest/2_tisci_msgs/rm/rm_irq.html
+>>> +
+>>> +Example:
+>>> +--------
+>>> +The following example demonstrates both interrupt router node and
+>>> the consumer
+>>> +node(main gpio) on the AM654 SoC:
+>>> +
+>>> +main_intr: interrupt-controller@1 {
+>>
+>> Unit-address is not valid here without a reg property.
+> 
+> Sure will fix it in next version.
+> 
+> Thanks and regards,
+> Lokesh
+> 
+>>
+>>> +    compatible = "ti,sci-intr";
+>>> +    interrupt-controller;
+>>> +    interrupt-parent = <&gic>;
+>>> +    #interrupt-cells = <4>;
+>>> +    ti,sci = <&dmsc>;
+>>> +    ti,sci-dst-id = <56>;
+>>> +    ti,sci-rm-range-girq = <0x1>;
+>>> +};
+>>> +
+>>> +main_gpio0: gpio@600000 {
+>>> +    ...
+>>> +    interrupt-parent = <&main_intr>;
+>>> +    interrupts = <57 256 IRQ_TYPE_EDGE_RISING 0>,
+>>> +            <57 257 IRQ_TYPE_EDGE_RISING 0>,
+>>> +            <57 258 IRQ_TYPE_EDGE_RISING 0>,
+>>> +            <57 259 IRQ_TYPE_EDGE_RISING 0>,
+>>> +            <57 260 IRQ_TYPE_EDGE_RISING 0>,
+>>> +            <57 261 IRQ_TYPE_EDGE_RISING 0>;
+>>> +    ...
+>>> +};
+>>> diff --git a/MAINTAINERS b/MAINTAINERS
+>>> index 88b28f6dec45..0e3aa3386287 100644
+>>> --- a/MAINTAINERS
+>>> +++ b/MAINTAINERS
+>>> @@ -14739,6 +14739,7 @@ F:   
+>>> Documentation/devicetree/bindings/reset/ti,sci-reset.txt
+>>>   F:    Documentation/devicetree/bindings/clock/ti,sci-clk.txt
+>>>   F:    drivers/clk/keystone/sci-clk.c
+>>>   F:    drivers/reset/reset-ti-sci.c
+>>> +F:   
+>>> Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
+>>>     THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
+>>>   M:    Hans Verkuil <hverkuil@xs4all.nl>
+>>> -- 
+>>> 2.19.1
+>>>
+>>
