@@ -2,97 +2,117 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4289C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:49:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B4344C43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:49:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8BF462086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:49:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pWhO7j8l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF462086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 806472086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:49:24 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 806472086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729528AbeKQJD3 (ORCPT
+        id S1729660AbeKQJDh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:03:29 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:41644 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeKQJD2 (ORCPT
+        Sat, 17 Nov 2018 04:03:37 -0500
+Received: from mail-ot1-f65.google.com ([209.85.210.65]:34036 "EHLO
+        mail-ot1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbeKQJDh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:03:28 -0500
-Received: by mail-pl1-f194.google.com with SMTP id u6so908219plm.8;
-        Fri, 16 Nov 2018 14:49:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id;
-        bh=xa7mMwilfARzNlzgBshZrLuLhTmZAU6FLzH06agvJF0=;
-        b=pWhO7j8lshrUTTsoIXqfiRcfWRcVjYemY6CB23DWYNUKul6JwjHPxhhzYxOFZHWvDq
-         UWBKEC+EW5Bo8gtX7UCzxrhJz5G2TUaslN1GcXjJ1XlxQK6NcdZvtJoJ6uNpb+bA1yFq
-         M1QgnN6QV35bz8unapINX//xRiq8w2KytXjlpaxG7/fjt64yNuDtMXqlPdOBja5naxGA
-         j3Dt+0rty+GRUgb/x4k6AQosJTAuyLTW98G2XIOdpq7Dk8DhYdr+fdo9oDUCceWjkqLJ
-         KUg+hHdyjlTcjKJwHCMXMrL1mX7rIvkCWENNrZ03foY1oxztbMbPu9Ki25D+7ho3wN90
-         366g==
+        Sat, 17 Nov 2018 04:03:37 -0500
+Received: by mail-ot1-f65.google.com with SMTP id t5so22853689otk.1;
+        Fri, 16 Nov 2018 14:49:22 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=xa7mMwilfARzNlzgBshZrLuLhTmZAU6FLzH06agvJF0=;
-        b=NQYtpSoYcVL+5KLezL56qGu/3NkGmifBcuIbaeaTpXNeO0cRz/pXfZNflNVOVX//pZ
-         l4J3Ve7yZY9WODEFpOAyhM3lRIdnUpZ8lJHAiLseNDt9aOXKnsyiKVmwWIeGwIkxuCfl
-         Qb3cg9pxDlKD94E8VvPA7+oYe8gJOs3kG6LZiBcoBdrFNuc2nX8qoqMPBorHcIpJQgfQ
-         XwzRWY/UkZ0cEXvLerO25kPuQGbVufU/j5uSWtBPh0NqPDHFyDo51ZBounD8/CHqhi4+
-         Dib776OKwF1Opb+q9Fs97pMwrB/R+yxH0AxhmmCmGKselwcj2V8ONZ1Pqgiuj8QaD/+8
-         iDXg==
-X-Gm-Message-State: AGRZ1gK0bU7dWqzmsNvkaS+jKC/yxOdhZhBz3di86/vNf1GHiNW+pRE5
-        pVn8DFUK6TdWXlmkl7BQAhY=
-X-Google-Smtp-Source: AJdET5eRT/xt0lA0riteQjBPIZFI9UpvfR1OOE3qpm4zOVqrJ9rSAgI/j+HihLKsaybwpIahHc/dsw==
-X-Received: by 2002:a17:902:aa8d:: with SMTP id d13-v6mr12936705plr.74.1542408553213;
-        Fri, 16 Nov 2018 14:49:13 -0800 (PST)
-Received: from localhost.localdomain ([103.212.140.154])
-        by smtp.gmail.com with ESMTPSA id 27-v6sm45417607pfm.36.2018.11.16.14.49.10
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 14:49:12 -0800 (PST)
-From:   Shreeya Patel <shreeya.patel23498@gmail.com>
-To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
-        knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 1/7] Staging: iio: adt7316: Set the data field
-Date:   Sat, 17 Nov 2018 04:19:07 +0530
-Message-Id: <20181116224907.24376-1-shreeya.patel23498@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=0KOeGkpGNfS6oeikwKcfAcUhvyaJkR2+cwZuLdV0hXs=;
+        b=Pn13B0nITeh7MqYGHahMDrc6WI5COb+qiBgRyQaEWT0xC5mfyTDVgB7pxIEIAuxvgU
+         WyFqompMniZtPeeKVgsq/xZbzMWR31Apg89szefpuR53pbHLpS8NcqMohua5/Gd9iTqu
+         2+GTB+0iwx8QAPygmG5XQNsm5pLmujAylm98Jtk27UlLWIvavkpbG1FZZ4DQ13X4BcTI
+         tnqoCCcr/lSzBaC14wYdMlpuq9OcyShO3Dk3rthpakYbFudbLIAxqEAjkflUMNpCHMgr
+         W+m2q3GNmR0i5m8PYnZxn3ykg/3/2EOd8kiGZyloXcCydKpheMWkv5QWBkzokhkeC5lu
+         hL8g==
+X-Gm-Message-State: AGRZ1gIxsX0spJyVMiSCPYFkFZvUsEz98+nKYVGkUg1JW5QoWsa9zxnk
+        bovJwkYB+LXvmFHtl6Ep0ikRSaYiKw==
+X-Google-Smtp-Source: AJdET5fkejdgU08GdiMB1ICk1+mvXMhno/HYtJplN5pX1tJCxd/U6wuA2zci+h37EWPOchsFRIzqvQ==
+X-Received: by 2002:a9d:3d0b:: with SMTP id a11mr8116658otc.43.1542408561974;
+        Fri, 16 Nov 2018 14:49:21 -0800 (PST)
+Received: from localhost (mobile-166-173-57-127.mycingular.net. [166.173.57.127])
+        by smtp.gmail.com with ESMTPSA id h53sm11974168otd.41.2018.11.16.14.49.21
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Nov 2018 14:49:21 -0800 (PST)
+Date:   Fri, 16 Nov 2018 16:49:19 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Tom Burkart <tom@aussec.com>
+Cc:     Linux kernel mailing list <linux-kernel@vger.kernel.org>,
+        devicetree@vger.kernel.org
+Subject: Re: [PATCH v7 1/4] dt-bindings: pps: descriptor-based gpio,
+ capture-clear addition
+Message-ID: <20181116224919.GA18008@bogus>
+References: <20181114125432.16044-1-tom@aussec.com>
+ <20181114125432.16044-2-tom@aussec.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181114125432.16044-2-tom@aussec.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-adt7316_i2c_read function nowhere sets the data field.
-It is necessary to have an appropriate value for it.
-Hence, assign the value stored in 'ret' variable to data field.
+On Wed, Nov 14, 2018 at 11:54:29PM +1100, Tom Burkart wrote:
+> This patch changes the devicetree bindings for the pps-gpio driver
+> from the integer based ABI to the descriptor based ABI.
 
-Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
----
- drivers/staging/iio/addac/adt7316-i2c.c | 2 ++
- 1 file changed, 2 insertions(+)
+? That has nothing to do with DT.
 
-diff --git a/drivers/staging/iio/addac/adt7316-i2c.c b/drivers/staging/iio/addac/adt7316-i2c.c
-index f66dd3ebbab1..856bcfa60c6c 100644
---- a/drivers/staging/iio/addac/adt7316-i2c.c
-+++ b/drivers/staging/iio/addac/adt7316-i2c.c
-@@ -35,6 +35,8 @@ static int adt7316_i2c_read(void *client, u8 reg, u8 *data)
- 		return ret;
- 	}
- 
-+	*data = ret;
-+
- 	return 0;
- }
- 
--- 
-2.17.1
+>  It also adds
+> documentation for the device tree capture-clear option.  The legacy
+> device tree entry for the GPIO pin is supported.
+> 
+> Signed-off-by: Tom Burkart <tom@aussec.com>
+> ---
+>  Documentation/devicetree/bindings/pps/pps-gpio.txt | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.txt b/Documentation/devicetree/bindings/pps/pps-gpio.txt
+> index 3683874832ae..6c9fc0998d94 100644
+> --- a/Documentation/devicetree/bindings/pps/pps-gpio.txt
+> +++ b/Documentation/devicetree/bindings/pps/pps-gpio.txt
+> @@ -5,19 +5,23 @@ a GPIO pin.
+>  
+>  Required properties:
+>  - compatible: should be "pps-gpio"
+> -- gpios: one PPS GPIO in the format described by ../gpio/gpio.txt
+> +- pps-gpios: one PPS GPIO in the format described by ../gpio/gpio.txt
+> +Alternatively (DEPRECATED), instead of pps-gpios above, it may have:
+> +- gpios: one PPS GPIO as above
+>  
+>  Optional properties:
+>  - assert-falling-edge: when present, assert is indicated by a falling edge
+>                         (instead of by a rising edge)
+> +- capture-clear: when present, also capture the PPS clear event
 
+Is this a h/w thing? or driver configuration?
+
+>  
+>  Example:
+>  	pps {
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&pinctrl_pps>;
+>  
+> -		gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
+> +		pps-gpios = <&gpio1 26 GPIO_ACTIVE_HIGH>;
+>  		assert-falling-edge;
+> +		capture-clear;
+>  
+>  		compatible = "pps-gpio";
+>  	};
+> -- 
+> 2.12.3
+> 
