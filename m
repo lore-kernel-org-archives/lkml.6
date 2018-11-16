@@ -6,66 +6,66 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0346CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:20:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 09B23C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:20:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AA9C0223C8
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:20:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BCDFC208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:20:54 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O2H/2mqB"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AA9C0223C8
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Gu9tjyjA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BCDFC208E7
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389412AbeKPRcB (ORCPT
+        id S2389426AbeKPRcC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 12:32:01 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:46598 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbeKPRcA (ORCPT
+        Fri, 16 Nov 2018 12:32:02 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:40180 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389319AbeKPRcB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 12:32:00 -0500
-Received: by mail-pf1-f193.google.com with SMTP id s9-v6so10953593pfm.13
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 23:20:48 -0800 (PST)
+        Fri, 16 Nov 2018 12:32:01 -0500
+Received: by mail-pf1-f196.google.com with SMTP id x2-v6so10965911pfm.7
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 23:20:51 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=sender:from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=KEJhNU83vzrdLqiqiakB9mWmCMsYQKVWHLjRLYVJA54=;
-        b=O2H/2mqBHmFBu/nyRHwG6+vs0kL/sWAXk0itLscSqBlqL98QBbrVh024ECteTO2uUA
-         7A7heZL3eQGAU4S55raC0KIUm8kYOzXfhINxQFoSqrt4e50Umyak0siBRetD1K8rhZQV
-         btzy3iMrTPOuxrAV4Iiw29BFFBDKhTejXssg1+DPxPbtCxk8RFCqzuUc/FGpYeKjmpYS
-         6oUpZG+5jovl2XscCHV4R0lIZu5BX5l260oz7Rhp3NmX75VTQaR5zvVGwaXOFvEptMli
-         tEFPrl8lyOPCda3WEE54v4yqimFKXTflTTvQwdqxk+CUeYvAKarCEEU4PjJA1RE367MU
-         2/ng==
+        bh=2SgFFfCW14B0ZBBYcCf+kXAx7IpfThxhmLkgDogoCXA=;
+        b=Gu9tjyjAmx7cxK56GxEC8dG8avPP6DNiNPmEY4DbxtIPmNDbfjcMTB6CJR1liDtM1k
+         +0NPQes17MHYPZwOfzsYRRLnZdqBZy56NZM411Sw15jn09hOOF/aKCW5HgrwW6fkXMzQ
+         m4KWruvKzijg9PWV9ABXdVMHIAiUszAoCDU9ki8+3qyuptZA9ym7aLwt/epbH7sOny7U
+         SIo+3EsArzZ814ODqs7jwMI3Yx+aoNBaJKOb7KRYefZ3sz92aTnn0Zbct1dk70BNl5gL
+         WAj7xuKqZPxIJOuE/zGZvozEf1ZofYQ5hniZLbZctsGq8pGopLyiOADwYlj5AUFExwpk
+         kTJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:sender:from:to:cc:subject:date:message-id
          :in-reply-to:references:mime-version:content-transfer-encoding;
-        bh=KEJhNU83vzrdLqiqiakB9mWmCMsYQKVWHLjRLYVJA54=;
-        b=MnmztF3Rb40gCg1ZVl6pynxcEwTUGmvVY9/nqJgFLbJRtx0tz16pyWr5Pg0wwHrCFI
-         Jec2F6TBXv62rUggQTgvR2s/l4k8RQVbiF1B0SibaFvXPa3uN9rGzVZKQdP310DZo7bd
-         /CA4TEKfA/uLdPS9DPu3mZbDcJXqu5iiQRRbPskziGN5YhhOs4DIqRkjCkuP6k151JZg
-         I4TT9h6kPQ5r6N6xp7sNQB/DVeX/Cvm63HQCvEJskdpllHR26KU5bzIvsUrWfYz4QyyJ
-         VOk8NbnmuWhsizsGxLOuWCys2sv86imJFhoMI47H23+YRemD9QWWrFR3CZRb0u3yKZ7f
-         F5Ug==
-X-Gm-Message-State: AGRZ1gJdKUrpu3HmTBER8Hm40ylYDuuX+sra2WG8bFgJxxjJYnXGNZrx
-        kUS5M2+uB30ItwIbKEObkHMQycRoWOo=
-X-Google-Smtp-Source: AJdET5c4FCxFVn1aOzPaHAziQMjltyikI9nV80Nwy91kXxRcy6z+NoXFsCuD4yoMw7eh8nRja5t+Gw==
-X-Received: by 2002:a62:65c3:: with SMTP id z186-v6mr10089836pfb.206.1542352848317;
-        Thu, 15 Nov 2018 23:20:48 -0800 (PST)
+        bh=2SgFFfCW14B0ZBBYcCf+kXAx7IpfThxhmLkgDogoCXA=;
+        b=Srr2bqDSES4EUXz1TNbfr78TY3mRkOBgjC8fCnEBVgB6HkC5y13MvD+8nulsFx8jrc
+         iZ38QY6OpvZdcw43qqx0gcdXLSAU0qhK/ah6laelPN2atPFO1xwnYb1gBxk/MR7ojyqz
+         ECzGEyGdEE7feaMmL044lx/A1AdEeFfJzh1rkzpsrSwjB16jdPjrhdSvT+vlcQrKUos7
+         D0RgL1jEODl+LB4cgv18nUFsNtnxZZm8pWCipEf7Z5JS5puldkahH8eAbAIaE5cTXIXa
+         hg+FgSL9JoYqi3hzuPSdCkfYLzX5vLkPlVclZojytBH9+O/5Wn+1MMAlyOn0pmqzrTW+
+         vPhw==
+X-Gm-Message-State: AGRZ1gKIr8zhROKmf8JvysdApko/MpYbKLtq6E9iG+OOCUmiL+BsWMNS
+        IMwnyPqULrS6T6ELwTwebGQ=
+X-Google-Smtp-Source: AJdET5f1Y26Srh5qgGymClmh9ltrhu7ellsvWZ0FDocO1Kcy0BNloV4djpzmlDJ+biK35y8eNIAVhw==
+X-Received: by 2002:a62:198c:: with SMTP id 134-v6mr9912896pfz.33.1542352850831;
+        Thu, 15 Nov 2018 23:20:50 -0800 (PST)
 Received: from bbox-2.seo.corp.google.com ([2401:fa00:d:0:7630:de9:f6f2:276f])
-        by smtp.gmail.com with ESMTPSA id e9sm13974637pff.5.2018.11.15.23.20.45
+        by smtp.gmail.com with ESMTPSA id e9sm13974637pff.5.2018.11.15.23.20.48
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 23:20:47 -0800 (PST)
+        Thu, 15 Nov 2018 23:20:49 -0800 (PST)
 From:   Minchan Kim <minchan@kernel.org>
 To:     Andrew Morton <akpm@linux-foundation.org>
 Cc:     LKML <linux-kernel@vger.kernel.org>,
         Sergey Senozhatsky <sergey.senozhatsky.work@gmail.com>,
         Minchan Kim <minchan@kernel.org>
-Subject: [PATCH 2/6] zram: refactoring flags and writeback stuff
-Date:   Fri, 16 Nov 2018 16:20:31 +0900
-Message-Id: <20181116072035.155108-3-minchan@kernel.org>
+Subject: [PATCH 3/6] zram: introduce ZRAM_IDLE flag
+Date:   Fri, 16 Nov 2018 16:20:32 +0900
+Message-Id: <20181116072035.155108-4-minchan@kernel.org>
 X-Mailer: git-send-email 2.19.1.1215.g8438c0b245-goog
 In-Reply-To: <20181116072035.155108-1-minchan@kernel.org>
 References: <20181116072035.155108-1-minchan@kernel.org>
@@ -76,345 +76,198 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch does renaming some variables and restructuring
-some codes for better redability in writeback and zs_free_page.
+To support idle page writeback with upcoming patches, this patch
+introduces a new ZRAM_IDLE flag.
+
+Userspace can mark zram slots as "idle" via
+	"echo 1 > /sys/block/zramX/idle"
+which marks every allocated zram slot as ZRAM_IDLE.
+User could see it by /sys/kernel/debug/zram/zram0/block_state.
+
+          300    75.033841 ...i
+          301    63.806904 s..i
+          302    63.806919 ..hi
+
+Once there is IO for the slot, the mark will be disappeared.
+
+	  300    75.033841 ...
+          301    63.806904 s..i
+          302    63.806919 ..hi
+
+Therefore, 300th block is idle zpage. With this feature,
+user can how many zram has idle pages which are waste of memory.
 
 Signed-off-by: Minchan Kim <minchan@kernel.org>
 ---
- drivers/block/zram/zram_drv.c | 105 +++++++++++++---------------------
- drivers/block/zram/zram_drv.h |   8 +--
- 2 files changed, 44 insertions(+), 69 deletions(-)
+ Documentation/ABI/testing/sysfs-block-zram |  8 ++++
+ Documentation/blockdev/zram.txt            | 10 +++--
+ drivers/block/zram/zram_drv.c              | 44 ++++++++++++++++++++--
+ drivers/block/zram/zram_drv.h              |  1 +
+ 4 files changed, 56 insertions(+), 7 deletions(-)
 
+diff --git a/Documentation/ABI/testing/sysfs-block-zram b/Documentation/ABI/testing/sysfs-block-zram
+index c1513c756af1..04c9a5980bc7 100644
+--- a/Documentation/ABI/testing/sysfs-block-zram
++++ b/Documentation/ABI/testing/sysfs-block-zram
+@@ -98,3 +98,11 @@ Contact:	Minchan Kim <minchan@kernel.org>
+ 		The backing_dev file is read-write and set up backing
+ 		device for zram to write incompressible pages.
+ 		For using, user should enable CONFIG_ZRAM_WRITEBACK.
++
++What:		/sys/block/zram<id>/idle
++Date:		November 2018
++Contact:	Minchan Kim <minchan@kernel.org>
++Description:
++		idle file is write-only and mark zram slot as idle.
++		If system has mounted debugfs, user can see which slots
++		are idle via /sys/kernel/debug/zram/zram<id>/block_state
+diff --git a/Documentation/blockdev/zram.txt b/Documentation/blockdev/zram.txt
+index 3c1b5ab54bc0..f3bcd716d8a9 100644
+--- a/Documentation/blockdev/zram.txt
++++ b/Documentation/blockdev/zram.txt
+@@ -169,6 +169,7 @@ comp_algorithm    RW    show and change the compression algorithm
+ compact           WO    trigger memory compaction
+ debug_stat        RO    this file is used for zram debugging purposes
+ backing_dev	  RW	set up backend storage for zram to write out
++idle		  WO	mark allocated slot as idle
+ 
+ 
+ User space is advised to use the following files to read the device statistics.
+@@ -251,16 +252,17 @@ pages of the process with*pagemap.
+ If you enable the feature, you could see block state via
+ /sys/kernel/debug/zram/zram0/block_state". The output is as follows,
+ 
+-	  300    75.033841 .wh
+-	  301    63.806904 s..
+-	  302    63.806919 ..h
++	  300    75.033841 .wh.
++	  301    63.806904 s...
++	  302    63.806919 ..hi
+ 
+ First column is zram's block index.
+ Second column is access time since the system was booted
+ Third column is state of the block.
+ (s: same page
+ w: written page to backing store
+-h: huge page)
++h: huge page
++i: idle page)
+ 
+ First line of above example says 300th block is accessed at 75.033841sec
+ and the block's state is huge so it is written back to the backing
 diff --git a/drivers/block/zram/zram_drv.c b/drivers/block/zram/zram_drv.c
-index 472027eaed60..bc59db2b1036 100644
+index bc59db2b1036..f956179076ce 100644
 --- a/drivers/block/zram/zram_drv.c
 +++ b/drivers/block/zram/zram_drv.c
-@@ -55,17 +55,17 @@ static void zram_free_page(struct zram *zram, size_t index);
- 
- static int zram_slot_trylock(struct zram *zram, u32 index)
- {
--	return bit_spin_trylock(ZRAM_LOCK, &zram->table[index].value);
-+	return bit_spin_trylock(ZRAM_LOCK, &zram->table[index].flags);
+@@ -281,6 +281,34 @@ static ssize_t mem_used_max_store(struct device *dev,
+ 	return len;
  }
  
- static void zram_slot_lock(struct zram *zram, u32 index)
- {
--	bit_spin_lock(ZRAM_LOCK, &zram->table[index].value);
-+	bit_spin_lock(ZRAM_LOCK, &zram->table[index].flags);
- }
- 
- static void zram_slot_unlock(struct zram *zram, u32 index)
- {
--	bit_spin_unlock(ZRAM_LOCK, &zram->table[index].value);
-+	bit_spin_unlock(ZRAM_LOCK, &zram->table[index].flags);
- }
- 
- static inline bool init_done(struct zram *zram)
-@@ -76,7 +76,7 @@ static inline bool init_done(struct zram *zram)
- static inline bool zram_allocated(struct zram *zram, u32 index)
- {
- 
--	return (zram->table[index].value >> (ZRAM_FLAG_SHIFT + 1)) ||
-+	return (zram->table[index].flags >> (ZRAM_FLAG_SHIFT + 1)) ||
- 					zram->table[index].handle;
- }
- 
-@@ -99,19 +99,19 @@ static void zram_set_handle(struct zram *zram, u32 index, unsigned long handle)
- static bool zram_test_flag(struct zram *zram, u32 index,
- 			enum zram_pageflags flag)
- {
--	return zram->table[index].value & BIT(flag);
-+	return zram->table[index].flags & BIT(flag);
- }
- 
- static void zram_set_flag(struct zram *zram, u32 index,
- 			enum zram_pageflags flag)
- {
--	zram->table[index].value |= BIT(flag);
-+	zram->table[index].flags |= BIT(flag);
- }
- 
- static void zram_clear_flag(struct zram *zram, u32 index,
- 			enum zram_pageflags flag)
- {
--	zram->table[index].value &= ~BIT(flag);
-+	zram->table[index].flags &= ~BIT(flag);
- }
- 
- static inline void zram_set_element(struct zram *zram, u32 index,
-@@ -127,15 +127,15 @@ static unsigned long zram_get_element(struct zram *zram, u32 index)
- 
- static size_t zram_get_obj_size(struct zram *zram, u32 index)
- {
--	return zram->table[index].value & (BIT(ZRAM_FLAG_SHIFT) - 1);
-+	return zram->table[index].flags & (BIT(ZRAM_FLAG_SHIFT) - 1);
- }
- 
- static void zram_set_obj_size(struct zram *zram,
- 					u32 index, size_t size)
- {
--	unsigned long flags = zram->table[index].value >> ZRAM_FLAG_SHIFT;
-+	unsigned long flags = zram->table[index].flags >> ZRAM_FLAG_SHIFT;
- 
--	zram->table[index].value = (flags << ZRAM_FLAG_SHIFT) | size;
-+	zram->table[index].flags = (flags << ZRAM_FLAG_SHIFT) | size;
- }
- 
- #if PAGE_SIZE != 4096
-@@ -282,16 +282,11 @@ static ssize_t mem_used_max_store(struct device *dev,
- }
- 
++static ssize_t idle_store(struct device *dev,
++		struct device_attribute *attr, const char *buf, size_t len)
++{
++	struct zram *zram = dev_to_zram(dev);
++	unsigned long nr_pages = zram->disksize >> PAGE_SHIFT;
++	int index;
++
++	down_read(&zram->init_lock);
++	if (!init_done(zram)) {
++		up_read(&zram->init_lock);
++		return -EINVAL;
++	}
++
++	for (index = 0; index < nr_pages; index++) {
++		zram_slot_lock(zram, index);
++		if (!zram_allocated(zram, index))
++			goto next;
++
++		zram_set_flag(zram, index, ZRAM_IDLE);
++next:
++		zram_slot_unlock(zram, index);
++	}
++
++	up_read(&zram->init_lock);
++
++	return len;
++}
++
  #ifdef CONFIG_ZRAM_WRITEBACK
--static bool zram_wb_enabled(struct zram *zram)
--{
--	return zram->backing_dev;
--}
--
  static void reset_bdev(struct zram *zram)
  {
- 	struct block_device *bdev;
+@@ -658,6 +686,7 @@ static void zram_debugfs_destroy(void)
  
--	if (!zram_wb_enabled(zram))
-+	if (!zram->backing_dev)
- 		return;
- 
- 	bdev = zram->bdev;
-@@ -318,7 +313,7 @@ static ssize_t backing_dev_show(struct device *dev,
- 	ssize_t ret;
- 
- 	down_read(&zram->init_lock);
--	if (!zram_wb_enabled(zram)) {
-+	if (!zram->backing_dev) {
- 		memcpy(buf, "none\n", 5);
- 		up_read(&zram->init_lock);
- 		return 5;
-@@ -446,7 +441,7 @@ static ssize_t backing_dev_store(struct device *dev,
- 	return err;
- }
- 
--static unsigned long get_entry_bdev(struct zram *zram)
-+static unsigned long alloc_block_bdev(struct zram *zram)
+ static void zram_accessed(struct zram *zram, u32 index)
  {
- 	unsigned long blk_idx;
- 	unsigned long ret = 0;
-@@ -479,13 +474,13 @@ static unsigned long get_entry_bdev(struct zram *zram)
- 	return ret;
- }
- 
--static void put_entry_bdev(struct zram *zram, unsigned long entry)
-+static void free_block_bdev(struct zram *zram, unsigned long blk_idx)
- {
- 	int was_set;
- 	unsigned long flags;
- 
- 	spin_lock_irqsave(&zram->bitmap_lock, flags);
--	was_set = test_and_clear_bit(entry, zram->bitmap);
-+	was_set = test_and_clear_bit(blk_idx, zram->bitmap);
- 	spin_unlock_irqrestore(&zram->bitmap_lock, flags);
- 	WARN_ON_ONCE(!was_set);
- }
-@@ -599,7 +594,7 @@ static int write_to_bdev(struct zram *zram, struct bio_vec *bvec,
- 	if (!bio)
- 		return -ENOMEM;
- 
--	entry = get_entry_bdev(zram);
-+	entry = alloc_block_bdev(zram);
- 	if (!entry) {
- 		bio_put(bio);
- 		return -ENOSPC;
-@@ -610,7 +605,7 @@ static int write_to_bdev(struct zram *zram, struct bio_vec *bvec,
- 	if (!bio_add_page(bio, bvec->bv_page, bvec->bv_len,
- 					bvec->bv_offset)) {
- 		bio_put(bio);
--		put_entry_bdev(zram, entry);
-+		free_block_bdev(zram, entry);
- 		return -EIO;
- 	}
- 
-@@ -628,18 +623,7 @@ static int write_to_bdev(struct zram *zram, struct bio_vec *bvec,
- 	return 0;
- }
- 
--static void zram_wb_clear(struct zram *zram, u32 index)
--{
--	unsigned long entry;
--
--	zram_clear_flag(zram, index, ZRAM_WB);
--	entry = zram_get_element(zram, index);
--	zram_set_element(zram, index, 0);
--	put_entry_bdev(zram, entry);
--}
--
- #else
--static bool zram_wb_enabled(struct zram *zram) { return false; }
- static inline void reset_bdev(struct zram *zram) {};
- static int write_to_bdev(struct zram *zram, struct bio_vec *bvec,
- 					u32 index, struct bio *parent,
-@@ -654,7 +638,8 @@ static int read_from_bdev(struct zram *zram, struct bio_vec *bvec,
- {
- 	return -EIO;
- }
--static void zram_wb_clear(struct zram *zram, u32 index) {}
-+
-+static void free_block_bdev(struct zram *zram, unsigned long blk_idx) {};
- #endif
- 
- #ifdef CONFIG_ZRAM_MEMORY_TRACKING
-@@ -676,11 +661,6 @@ static void zram_accessed(struct zram *zram, u32 index)
++	zram_clear_flag(zram, index, ZRAM_IDLE);
  	zram->table[index].ac_time = ktime_get_boottime();
  }
  
--static void zram_reset_access(struct zram *zram, u32 index)
--{
--	zram->table[index].ac_time = 0;
--}
--
- static ssize_t read_block_state(struct file *file, char __user *buf,
- 				size_t count, loff_t *ppos)
- {
-@@ -761,7 +741,6 @@ static void zram_debugfs_unregister(struct zram *zram)
+@@ -690,12 +719,13 @@ static ssize_t read_block_state(struct file *file, char __user *buf,
+ 
+ 		ts = ktime_to_timespec64(zram->table[index].ac_time);
+ 		copied = snprintf(kbuf + written, count,
+-			"%12zd %12lld.%06lu %c%c%c\n",
++			"%12zd %12lld.%06lu %c%c%c%c\n",
+ 			index, (s64)ts.tv_sec,
+ 			ts.tv_nsec / NSEC_PER_USEC,
+ 			zram_test_flag(zram, index, ZRAM_SAME) ? 's' : '.',
+ 			zram_test_flag(zram, index, ZRAM_WB) ? 'w' : '.',
+-			zram_test_flag(zram, index, ZRAM_HUGE) ? 'h' : '.');
++			zram_test_flag(zram, index, ZRAM_HUGE) ? 'h' : '.',
++			zram_test_flag(zram, index, ZRAM_IDLE) ? 'i' : '.');
+ 
+ 		if (count < copied) {
+ 			zram_slot_unlock(zram, index);
+@@ -740,7 +770,10 @@ static void zram_debugfs_unregister(struct zram *zram)
+ #else
  static void zram_debugfs_create(void) {};
  static void zram_debugfs_destroy(void) {};
- static void zram_accessed(struct zram *zram, u32 index) {};
--static void zram_reset_access(struct zram *zram, u32 index) {};
+-static void zram_accessed(struct zram *zram, u32 index) {};
++static void zram_accessed(struct zram *zram, u32 index)
++{
++	zram_clear_flag(zram, index, ZRAM_IDLE);
++};
  static void zram_debugfs_register(struct zram *zram) {};
  static void zram_debugfs_unregister(struct zram *zram) {};
  #endif
-@@ -962,17 +941,18 @@ static void zram_free_page(struct zram *zram, size_t index)
- {
- 	unsigned long handle;
- 
--	zram_reset_access(zram, index);
--
-+#ifdef CONFIG_ZRAM_MEMORY_TRACKING
-+	zram->table[index].ac_time = 0;
-+#endif
+@@ -944,6 +977,9 @@ static void zram_free_page(struct zram *zram, size_t index)
+ #ifdef CONFIG_ZRAM_MEMORY_TRACKING
+ 	zram->table[index].ac_time = 0;
+ #endif
++	if (zram_test_flag(zram, index, ZRAM_IDLE))
++		zram_clear_flag(zram, index, ZRAM_IDLE);
++
  	if (zram_test_flag(zram, index, ZRAM_HUGE)) {
  		zram_clear_flag(zram, index, ZRAM_HUGE);
  		atomic64_dec(&zram->stats.huge_pages);
- 	}
- 
--	if (zram_wb_enabled(zram) && zram_test_flag(zram, index, ZRAM_WB)) {
--		zram_wb_clear(zram, index);
--		atomic64_dec(&zram->stats.pages_stored);
--		return;
-+	if (zram_test_flag(zram, index, ZRAM_WB)) {
-+		zram_clear_flag(zram, index, ZRAM_WB);
-+		free_block_bdev(zram, zram_get_element(zram, index));
-+		goto out;
- 	}
- 
- 	/*
-@@ -981,10 +961,8 @@ static void zram_free_page(struct zram *zram, size_t index)
- 	 */
- 	if (zram_test_flag(zram, index, ZRAM_SAME)) {
- 		zram_clear_flag(zram, index, ZRAM_SAME);
--		zram_set_element(zram, index, 0);
- 		atomic64_dec(&zram->stats.same_pages);
--		atomic64_dec(&zram->stats.pages_stored);
--		return;
-+		goto out;
- 	}
- 
- 	handle = zram_get_handle(zram, index);
-@@ -995,10 +973,11 @@ static void zram_free_page(struct zram *zram, size_t index)
- 
- 	atomic64_sub(zram_get_obj_size(zram, index),
- 			&zram->stats.compr_data_size);
-+out:
- 	atomic64_dec(&zram->stats.pages_stored);
--
- 	zram_set_handle(zram, index, 0);
- 	zram_set_obj_size(zram, index, 0);
-+	WARN_ON_ONCE(zram->table[index].flags & ~(1UL << ZRAM_LOCK));
- }
- 
- static int __zram_bvec_read(struct zram *zram, struct page *page, u32 index,
-@@ -1009,24 +988,20 @@ static int __zram_bvec_read(struct zram *zram, struct page *page, u32 index,
- 	unsigned int size;
- 	void *src, *dst;
- 
--	if (zram_wb_enabled(zram)) {
--		zram_slot_lock(zram, index);
--		if (zram_test_flag(zram, index, ZRAM_WB)) {
--			struct bio_vec bvec;
--
--			zram_slot_unlock(zram, index);
-+	zram_slot_lock(zram, index);
-+	if (zram_test_flag(zram, index, ZRAM_WB)) {
-+		struct bio_vec bvec;
- 
--			bvec.bv_page = page;
--			bvec.bv_len = PAGE_SIZE;
--			bvec.bv_offset = 0;
--			return read_from_bdev(zram, &bvec,
--					zram_get_element(zram, index),
--					bio, partial_io);
--		}
- 		zram_slot_unlock(zram, index);
-+
-+		bvec.bv_page = page;
-+		bvec.bv_len = PAGE_SIZE;
-+		bvec.bv_offset = 0;
-+		return read_from_bdev(zram, &bvec,
-+				zram_get_element(zram, index),
-+				bio, partial_io);
- 	}
- 
--	zram_slot_lock(zram, index);
- 	handle = zram_get_handle(zram, index);
- 	if (!handle || zram_test_flag(zram, index, ZRAM_SAME)) {
- 		unsigned long value;
-@@ -1138,7 +1113,7 @@ static int __zram_bvec_write(struct zram *zram, struct bio_vec *bvec,
- 
- 	if (unlikely(comp_len >= huge_class_size)) {
- 		comp_len = PAGE_SIZE;
--		if (zram_wb_enabled(zram) && allow_wb) {
-+		if (zram->backing_dev && allow_wb) {
- 			zcomp_stream_put(zram->comp);
- 			ret = write_to_bdev(zram, bvec, index, bio, &element);
- 			if (!ret) {
+@@ -1609,6 +1645,7 @@ static DEVICE_ATTR_RO(initstate);
+ static DEVICE_ATTR_WO(reset);
+ static DEVICE_ATTR_WO(mem_limit);
+ static DEVICE_ATTR_WO(mem_used_max);
++static DEVICE_ATTR_WO(idle);
+ static DEVICE_ATTR_RW(max_comp_streams);
+ static DEVICE_ATTR_RW(comp_algorithm);
+ #ifdef CONFIG_ZRAM_WRITEBACK
+@@ -1622,6 +1659,7 @@ static struct attribute *zram_disk_attrs[] = {
+ 	&dev_attr_compact.attr,
+ 	&dev_attr_mem_limit.attr,
+ 	&dev_attr_mem_used_max.attr,
++	&dev_attr_idle.attr,
+ 	&dev_attr_max_comp_streams.attr,
+ 	&dev_attr_comp_algorithm.attr,
+ #ifdef CONFIG_ZRAM_WRITEBACK
 diff --git a/drivers/block/zram/zram_drv.h b/drivers/block/zram/zram_drv.h
-index 89da501292ff..d75bf190f262 100644
+index d75bf190f262..214fa4bb46b9 100644
 --- a/drivers/block/zram/zram_drv.h
 +++ b/drivers/block/zram/zram_drv.h
-@@ -30,7 +30,7 @@
+@@ -48,6 +48,7 @@ enum zram_pageflags {
+ 	ZRAM_SAME,	/* Page consists the same element */
+ 	ZRAM_WB,	/* page is stored on backing_device */
+ 	ZRAM_HUGE,	/* Incompressible page */
++	ZRAM_IDLE,	/* not accessed page since last idle marking */
  
- 
- /*
-- * The lower ZRAM_FLAG_SHIFT bits of table.value is for
-+ * The lower ZRAM_FLAG_SHIFT bits of table.flags is for
-  * object size (excluding header), the higher bits is for
-  * zram_pageflags.
-  *
-@@ -41,7 +41,7 @@
-  */
- #define ZRAM_FLAG_SHIFT 24
- 
--/* Flags for zram pages (table[page_no].value) */
-+/* Flags for zram pages (table[page_no].flags) */
- enum zram_pageflags {
- 	/* zram slot is locked */
- 	ZRAM_LOCK = ZRAM_FLAG_SHIFT,
-@@ -60,7 +60,7 @@ struct zram_table_entry {
- 		unsigned long handle;
- 		unsigned long element;
- 	};
--	unsigned long value;
-+	unsigned long flags;
- #ifdef CONFIG_ZRAM_MEMORY_TRACKING
- 	ktime_t ac_time;
- #endif
-@@ -105,8 +105,8 @@ struct zram {
- 	 * zram is claimed so open request will be failed
- 	 */
- 	bool claim; /* Protected by bdev->bd_mutex */
--#ifdef CONFIG_ZRAM_WRITEBACK
- 	struct file *backing_dev;
-+#ifdef CONFIG_ZRAM_WRITEBACK
- 	struct block_device *bdev;
- 	unsigned int old_block_size;
- 	unsigned long *bitmap;
+ 	__NR_ZRAM_PAGEFLAGS,
+ };
 -- 
 2.19.1.1215.g8438c0b245-goog
 
