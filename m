@@ -4,67 +4,66 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-10.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS,URIBL_BLOCKED,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no
-	version=3.4.0
+	SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CCFF8C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:41:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DED6AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:42:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8F5DB2087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:41:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 960AA20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:42:23 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Nl8+HJRg"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F5DB2087C
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AU9Zfpum"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 960AA20854
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726797AbeKQGzP (ORCPT
+        id S1727089AbeKQG4Q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 01:55:15 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52370 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbeKQGzO (ORCPT
+        Sat, 17 Nov 2018 01:56:16 -0500
+Received: from mail-it1-f194.google.com ([209.85.166.194]:50601 "EHLO
+        mail-it1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725840AbeKQG4Q (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 01:55:14 -0500
-Received: by mail-it1-f193.google.com with SMTP id t190-v6so36770536itb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 12:41:19 -0800 (PST)
+        Sat, 17 Nov 2018 01:56:16 -0500
+Received: by mail-it1-f194.google.com with SMTP id k206-v6so36767500ite.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 12:42:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=mime-version:in-reply-to:references:from:date:message-id:subject:to
          :cc;
-        bh=tRsJsiCJc6GHz0rUwaofZuLWJHyfeu8YwRwz9cISpoo=;
-        b=Nl8+HJRgtYhQVTdqwJt4JPtGoFUXhkfdLqF/xZobQHrqnUgrkJyHFT2iZ9bBTx9DU9
-         tlOdtSIsYzLprlpneS+Y5+zpJ09+JpAFX89mOjQPLKH/r+OfN6M7xRMoPQX2f+o9nRCV
-         FMmnhzkrWgFz3ZJaR5+gvoLiRbsKBLBH/7Gk1LiFl4PXNg2WXZ55zztTjVf05Qi+geJ/
-         p1h5OMLdHbGolcLqjhu2zcLF1bWUZZV6wExYWgu5SNgHKtziPzkz6ouOnli26whaR7GB
-         5iRRrux8DQRcPNl2rtciW1IyLIlkvjr0DdjnFPs/7U2YvglaYRDdbeAyfWfyM5LkpKhq
-         TjCw==
+        bh=XAC4GLR+Z4cfhnA9E8k1k/qKUWi6ab+RW2hDopgQw+Q=;
+        b=AU9Zfpumm+iP9NVx8Q+CAiHdwojdCudA+X4MXrXK6bZZw6IGLkbOgm5a9ishVdgsN5
+         1LOikSD6NX2MqlS592tYfNFi83+IO+xWY+oBtKtF0FeGsELiOHyQdltXPeFTO1WUPXAl
+         y8WS57GG4oc+/SSqUTGzcO2AfG3EwyvZA9F5iA/A0sZaEd6y27JVfE+aoPhKdelZcA2I
+         gl0w8JDn2UzsNNjGwmy90kpYLfqsrBCdJyl7h7BHlJJNLPIxLf2BXE9Rb3WZDhg2tvnq
+         +O6VAuF9usxjb846nlKFDrdTcz35Pp3/p0LN/LOlVqEFZZEdczSmT6mY9ZUz8ZjJo7Ie
+         2cAQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:in-reply-to:references:from:date
          :message-id:subject:to:cc;
-        bh=tRsJsiCJc6GHz0rUwaofZuLWJHyfeu8YwRwz9cISpoo=;
-        b=q12wcVq84VBiCp3XlUQ/5HX1wk0osmxubZxSYEyQeKo4IAwDKehrUmZDO/nYDfQ5eS
-         Qu6L1pI8CVAzvFTMCkfum9njgGILYcOW5VroAu8zo8A8Wv15u6A8kjPnhrkjwLWIGD3g
-         YK5qy8hUk74Qz+yb+7yYqlmv9PCiURXb53XJNHIWKJssp0UqD4JQpSRDFUv9EFYvhorh
-         5gs+pCtD1fN3LgzoEi5EVKYk6Vc6LbrOA5BqDT3IMT8mLSvNXjlqL09DnRC1oILZ2M85
-         VhF/pIc4WUtS+Atbi80HzPbI2U2ez2VmbJ8HglRVNpuUsmZjd95kJaUzvypddJkO9y9V
-         zG4w==
-X-Gm-Message-State: AGRZ1gJ+xfX9fBara6oHLTO0I8YvDdEo6sH/no428oZHyeLbEErJ3Eqj
-        7VfqL6VSD3QcGU+5mZOTjM8RSJJtGbEYQnMmDeKwow==
-X-Google-Smtp-Source: AJdET5fG4CH1M3SeoZo2VtgCqSau+B3vnZfC/TJMtsdXs9lFah0Nd2Bjxe7i0aW5x032/3iYKbob5o7H21nRu/15mq0=
-X-Received: by 2002:a24:940f:: with SMTP id j15-v6mr11384154ite.12.1542400878519;
- Fri, 16 Nov 2018 12:41:18 -0800 (PST)
+        bh=XAC4GLR+Z4cfhnA9E8k1k/qKUWi6ab+RW2hDopgQw+Q=;
+        b=FsHoqjzcDRd1QbjcnRiH2YNr7VKAvQhVearYd84kllGvXL4xHJ3Cz5bs3jOheFU1ze
+         8G2uOubMtBtXbs+iucR2TjrnmUshycnpDXK4Ou1ENoVdwCwtCHQgy187TGEUbIviZoKt
+         hNwvIlMbgvmDSWCklJfXFNfKbS4ff/RMqUEuKGXuPMpwKRafRP+s7TsUElEty5xHGMhm
+         Ccn1BhCyDr5VQ5soFO4XzUeOYBteSo4RZqKfN5BLnhJVQfIkx+jlH4Vc7RkciYET+Gs9
+         CtTvfzPqSDL0QrrPeYunSTaJFq+vlfFkX0FNRLtVvnWLM9W/A0HP25lep2mMJ6KJE8lA
+         IFAQ==
+X-Gm-Message-State: AGRZ1gKu3kPcMGam+U8NyVZmM3YyaX4XsCcSnRDPvUMBtyNFDAwpaq6g
+        6JMZivELdGs+D7QDo6bTujI5S+W7GvgCT4xdTYHJxA==
+X-Google-Smtp-Source: AJdET5dGMEMu4wuP2ezvawjR/YCpHD2bKryf7XdyqN4nxXOsgihnyJsVuets2B9TyJmWKSNQuZ5GHEMJGdYh6uZa9G4=
+X-Received: by 2002:a02:6004:: with SMTP id i4-v6mr10536953jac.72.1542400939705;
+ Fri, 16 Nov 2018 12:42:19 -0800 (PST)
 MIME-Version: 1.0
-Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Fri, 16 Nov 2018 12:40:58
+Received: by 2002:a02:b003:0:0:0:0:0 with HTTP; Fri, 16 Nov 2018 12:41:59
  -0800 (PST)
-In-Reply-To: <00000000000082cc8d057a0c0877@google.com>
-References: <00000000000082cc8d057a0c0877@google.com>
+In-Reply-To: <0000000000008628be057a0c089f@google.com>
+References: <0000000000008628be057a0c089f@google.com>
 From:   Dmitry Vyukov <dvyukov@google.com>
-Date:   Fri, 16 Nov 2018 12:40:58 -0800
-Message-ID: <CACT4Y+Zh4GmqecF0ftBjGUg0Zvi2Gto7QLzFcDe_+LGASxX5BQ@mail.gmail.com>
-Subject: Re: KASAN: stack-out-of-bounds Read in locks_remove_flock
-To:     syzbot <syzbot+1818cd833edc063452c6@syzkaller.appspotmail.com>
+Date:   Fri, 16 Nov 2018 12:41:59 -0800
+Message-ID: <CACT4Y+bFQmrE_R2BWRd46sSW=L_aJOYxDcj95B6RgNqdXu8Z7g@mail.gmail.com>
+Subject: Re: KASAN: use-after-free Read in locks_remove_flock
+To:     syzbot <syzbot+34a98afb89842107f03f@syzkaller.appspotmail.com>
 Cc:     Bruce Fields <bfields@fieldses.org>,
         Jeff Layton <jlayton@kernel.org>,
         linux-fsdevel <linux-fsdevel@vger.kernel.org>,
@@ -78,33 +77,32 @@ List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Tue, Nov 6, 2018 at 9:03 PM, syzbot
-<syzbot+1818cd833edc063452c6@syzkaller.appspotmail.com> wrote:
+<syzbot+34a98afb89842107f03f@syzkaller.appspotmail.com> wrote:
 > Hello,
 >
 > syzbot found the following crash on:
 >
 > HEAD commit:    d881de30d29e Add linux-next specific files for 20181107
 > git tree:       linux-next
-> console output: https://syzkaller.appspot.com/x/log.txt?x=14aa485d400000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=16e42f5b400000
 > kernel config:  https://syzkaller.appspot.com/x/.config?x=caa433e1c8778437
-> dashboard link: https://syzkaller.appspot.com/bug?extid=1818cd833edc063452c6
+> dashboard link: https://syzkaller.appspot.com/bug?extid=34a98afb89842107f03f
 > compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 >
 > Unfortunately, I don't have any reproducer for this crash yet.
 >
 > IMPORTANT: if you fix the bug, please add the following tag to the commit:
-> Reported-by: syzbot+1818cd833edc063452c6@syzkaller.appspotmail.com
+> Reported-by: syzbot+34a98afb89842107f03f@syzkaller.appspotmail.com
 
 This is another manifestation of the following report, right?
 
 #syz dup: KASAN: use-after-free Read in locks_delete_block
 
 > ==================================================================
-> BUG: KASAN: stack-out-of-bounds in locks_remove_flock+0x33c/0x350
-> fs/locks.c:2567
-> Read of size 8 at addr ffff8801c71c7a08 by task syz-executor5/20562
+> BUG: KASAN: use-after-free in locks_remove_flock+0x33c/0x350 fs/locks.c:2567
+> Read of size 8 at addr ffff8801c92fc040 by task syz-executor1/15515
 >
-> CPU: 0 PID: 20562 Comm: syz-executor5 Not tainted 4.20.0-rc1-next-20181107+
+> CPU: 1 PID: 15515 Comm: syz-executor1 Not tainted 4.20.0-rc1-next-20181107+
 > #107
 > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS
 > Google 01/01/2011
@@ -126,34 +124,73 @@ This is another manifestation of the following report, right?
 >  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
 >  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
 >  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-> RIP: 0033:0x411021
-> Code: 75 14 b8 03 00 00 00 0f 05 48 3d 01 f0 ff ff 0f 83 34 19 00 00 c3 48
-> 83 ec 08 e8 0a fc ff ff 48 89 04 24 b8 03 00 00 00 0f 05 <48> 8b 3c 24 48 89
-> c2 e8 53 fc ff ff 48 89 d0 48 83 c4 08 48 3d 01
-> RSP: 002b:00007ffdb42509a0 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-> RAX: 0000000000000000 RBX: 0000000000000005 RCX: 0000000000411021
-> RDX: 0000000000000000 RSI: 0000000000732ea0 RDI: 0000000000000004
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 00007ffdb42508c0 R11: 0000000000000293 R12: 0000000000000000
-> R13: 0000000000000001 R14: 0000000000000201 R15: 0000000000000005
+> RIP: 0033:0x457569
+> Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7
+> 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff
+> 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+> RSP: 002b:00007fc1e8ed4c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000049
+> RAX: 0000000000000000 RBX: 0000000000000002 RCX: 0000000000457569
+> RDX: 0000000000000000 RSI: 0000000000000002 RDI: 0000000000000003
+> RBP: 000000000072bf00 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 00007fc1e8ed56d4
+> R13: 00000000004bdd9e R14: 00000000004ccdb8 R15: 00000000ffffffff
 >
+> Allocated by task 15515:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+>  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+>  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
+>  kmem_cache_zalloc include/linux/slab.h:731 [inline]
+>  locks_alloc_lock+0x9e/0x300 fs/locks.c:304
+>  flock_make_lock+0x22c/0x2a0 fs/locks.c:438
+>  __do_sys_flock fs/locks.c:2057 [inline]
+>  __se_sys_flock fs/locks.c:2038 [inline]
+>  __x64_sys_flock+0x12b/0x350 fs/locks.c:2038
+>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> Freed by task 15515:
+>  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+>  set_track mm/kasan/kasan.c:460 [inline]
+>  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+>  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+>  __cache_free mm/slab.c:3498 [inline]
+>  kmem_cache_free+0x83/0x290 mm/slab.c:3760
+>  locks_free_lock+0x295/0x420 fs/locks.c:341
+>  __do_sys_flock fs/locks.c:2078 [inline]
+>  __se_sys_flock fs/locks.c:2038 [inline]
+>  __x64_sys_flock+0x289/0x350 fs/locks.c:2038
+>  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+>  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+>
+> The buggy address belongs to the object at ffff8801c92fc000
+>  which belongs to the cache file_lock_cache of size 264
+> The buggy address is located 64 bytes inside of
+>  264-byte region [ffff8801c92fc000, ffff8801c92fc108)
 > The buggy address belongs to the page:
-> page:ffffea00071c71c0 count:0 mapcount:0 mapping:0000000000000000 index:0x0
-> flags: 0x2fffc0000000000()
-> raw: 02fffc0000000000 0000000000000000 ffffffff071c0101 0000000000000000
-> raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+> page:ffffea000724bf00 count:1 mapcount:0 mapping:ffff8801d9a1c3c0 index:0x0
+> flags: 0x2fffc0000000200(slab)
+> raw: 02fffc0000000200 ffff8801d9a82e48 ffffea00075e1608 ffff8801d9a1c3c0
+> raw: 0000000000000000 ffff8801c92fc000 000000010000000c 0000000000000000
 > page dumped because: kasan: bad access detected
 >
 > Memory state around the buggy address:
->  ffff8801c71c7900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->  ffff8801c71c7980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+>  ffff8801c92fbf00: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
+>  ffff8801c92fbf80: fb fb fb fb fb fb fb fb fb fb fb fb fc fc fc fc
 >>
->> ffff8801c71c7a00: f2 f2 f2 00 00 00 00 00 00 00 00 00 00 00 00 00
+>> ffff8801c92fc000: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
 >
->                       ^
->  ffff8801c71c7a80: 00 f1 f1 f1 f1 00 00 f2 f2 f2 f2 f2 f2 f8 f2 f2
->  ffff8801c71c7b00: f2 f2 f2 f2 f2 00 f2 f2 f2 00 00 00 00 00 00 00
+>                                            ^
+>  ffff8801c92fc080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>  ffff8801c92fc100: fb fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb
 > ==================================================================
+> ------------[ cut here ]------------
+> downgrading a read lock
+> WARNING: CPU: 0 PID: 15521 at kernel/locking/lockdep.c:3556 __lock_downgrade
+> kernel/locking/lockdep.c:3556 [inline]
+> WARNING: CPU: 0 PID: 15521 at kernel/locking/lockdep.c:3556
+> lock_downgrade+0x4d7/0x900 kernel/locking/lockdep.c:3819
 >
 >
 > ---
@@ -171,5 +208,5 @@ This is another manifestation of the following report, right?
 > To unsubscribe from this group and stop receiving emails from it, send an
 > email to syzkaller-bugs+unsubscribe@googlegroups.com.
 > To view this discussion on the web visit
-> https://groups.google.com/d/msgid/syzkaller-bugs/00000000000082cc8d057a0c0877%40google.com.
+> https://groups.google.com/d/msgid/syzkaller-bugs/0000000000008628be057a0c089f%40google.com.
 > For more options, visit https://groups.google.com/d/optout.
