@@ -2,89 +2,250 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2375AC04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:53:24 +0000 (UTC)
-Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E36F52089D
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1F831C43441
 	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:53:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E36F52089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
+	by mail.kernel.org (Postfix) with ESMTP id CA1332086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:53:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CA1332086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730113AbeKQJHi (ORCPT
+        id S1729984AbeKQJHg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:07:38 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:38048 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeKQJHh (ORCPT
+        Sat, 17 Nov 2018 04:07:36 -0500
+Received: from mail.linuxfoundation.org ([140.211.169.12]:56078 "EHLO
+        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbeKQJHg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:07:37 -0500
-Received: by mail-oi1-f194.google.com with SMTP id a77so15042793oii.5;
-        Fri, 16 Nov 2018 14:53:21 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=T5VDYbaxaqH7laNVv1LZmk8yutXa0Ico8lW66bwv+NQ=;
-        b=Pj/DlGMep5g9A5Swf9mRIFBMHbagGmLcxGG8FS52NDVl7DBBZsYW70nEMtk1ySPn91
-         234/gbSaGhE0+mYvllmClG+5kJufXd2w9tsgiEXJuKSRODV1T5mPrFxgFo2T5aV5dNNC
-         xmZbmDd9OzTMDqYDazY6aI23qNrDJn1SUYij950kEzrlSa+eGdsnhQqrJWI2ScB6rz26
-         EFOvJairHAr5sYz3ze48hT5Fhq+oO2yoD5Trqs37riPZyzgaJUuIjs4azHTtjiOBNZxB
-         mKHaGAeBbkbQT25gVUl/yOM2EGCQ7LsSixR52YdU2NMyY2phRHGXgCncVxKE8gZ7v+3u
-         zWwg==
-X-Gm-Message-State: AGRZ1gIEXqHWAXj8hI/W9t0+bduYi2kqlWtmVBv/IBbo0uKFcjsbBNQI
-        /2G/+h+aee/+7E7o9DBseA==
-X-Google-Smtp-Source: AJdET5e2nGBP3DtzhA+9LXUg0valsNROKMR0+3fHLzYzHSQknuCaOYB78CLwA9CjCxHMPKp29F4vbA==
-X-Received: by 2002:aca:ed92:: with SMTP id l140mr1967724oih.112.1542408801126;
-        Fri, 16 Nov 2018 14:53:21 -0800 (PST)
-Received: from localhost (mobile-166-173-57-127.mycingular.net. [166.173.57.127])
-        by smtp.gmail.com with ESMTPSA id p204-v6sm12174857oib.25.2018.11.16.14.53.20
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Nov 2018 14:53:20 -0800 (PST)
-Date:   Fri, 16 Nov 2018 16:53:19 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     jic23@kernel.org, robh+dt@kernel.org, mark.rutland@arm.com,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        Michael.Hennerich@analog.com, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stefan.popa@analog.com
-Subject: Re: [PATCH v5 2/4] dt-bindings: iio: adc: Add common ADCs properties
- to a separate file
-Message-ID: <20181116225319.GA26554@bogus>
-References: <1542108061-3471-1-git-send-email-stefan.popa@analog.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1542108061-3471-1-git-send-email-stefan.popa@analog.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Sat, 17 Nov 2018 04:07:36 -0500
+Received: from localhost.localdomain (c-24-6-170-16.hsd1.ca.comcast.net [24.6.170.16])
+        by mail.linuxfoundation.org (Postfix) with ESMTPSA id 90336941;
+        Fri, 16 Nov 2018 22:53:19 +0000 (UTC)
+Date:   Fri, 16 Nov 2018 14:53:17 -0800
+From:   akpm@linux-foundation.org
+To:     broonie@kernel.org, linux-fsdevel@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-next@vger.kernel.org, mhocko@suse.cz,
+        mm-commits@vger.kernel.org, sfr@canb.auug.org.au
+Subject:  mmotm 2018-11-16-14-52 uploaded
+Message-ID: <20181116225317.CcsXrZ5MG%akpm@linux-foundation.org>
+User-Agent: s-nail v14.8.16
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Nov 2018 13:21:01 +0200, Stefan Popa wrote:
-> There are several ADC drivers that depend on the same device tree
-> bindings. Rather than continue to duplicate the properties, this patch
-> adds a common adc binding document that can be referenced. For beginning,
-> only two properties are documented.
-> 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-> ---
-> Changes in v2, v3:
-> 	- N/A.
-> Changes in v4:
-> 	- Added this commit.
-> Changes in v5:
-> 	- Nothing changed.
-> 
->  Documentation/devicetree/bindings/iio/adc/adc.txt | 23 +++++++++++++++++++++++
->  1 file changed, 23 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adc.txt
-> 
+The mm-of-the-moment snapshot 2018-11-16-14-52 has been uploaded to
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+   http://www.ozlabs.org/~akpm/mmotm/
+
+mmotm-readme.txt says
+
+README for mm-of-the-moment:
+
+http://www.ozlabs.org/~akpm/mmotm/
+
+This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
+more than once a week.
+
+You will need quilt to apply these patches to the latest Linus release (4.x
+or 4.x-rcY).  The series file is in broken-out.tar.gz and is duplicated in
+http://ozlabs.org/~akpm/mmotm/series
+
+The file broken-out.tar.gz contains two datestamp files: .DATE and
+.DATE-yyyy-mm-dd-hh-mm-ss.  Both contain the string yyyy-mm-dd-hh-mm-ss,
+followed by the base kernel version against which this patch series is to
+be applied.
+
+This tree is partially included in linux-next.  To see which patches are
+included in linux-next, consult the `series' file.  Only the patches
+within the #NEXT_PATCHES_START/#NEXT_PATCHES_END markers are included in
+linux-next.
+
+A git tree which contains the memory management portion of this tree is
+maintained at git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+by Michal Hocko.  It contains the patches which are between the
+"#NEXT_PATCHES_START mm" and "#NEXT_PATCHES_END" markers, from the series
+file, http://www.ozlabs.org/~akpm/mmotm/series.
+
+
+A full copy of the full kernel tree with the linux-next and mmotm patches
+already applied is available through git within an hour of the mmotm
+release.  Individual mmotm releases are tagged.  The master branch always
+points to the latest release, so it's constantly rebasing.
+
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/
+
+To develop on top of mmotm git:
+
+  $ git remote add mmotm git://git.kernel.org/pub/scm/linux/kernel/git/mhocko/mm.git
+  $ git remote update mmotm
+  $ git checkout -b topic mmotm/master
+  <make changes, commit>
+  $ git send-email mmotm/master.. [...]
+
+To rebase a branch with older patches to a new mmotm release:
+
+  $ git remote update mmotm
+  $ git rebase --onto mmotm/master <topic base> topic
+
+
+
+
+The directory http://www.ozlabs.org/~akpm/mmots/ (mm-of-the-second)
+contains daily snapshots of the -mm tree.  It is updated more frequently
+than mmotm, and is untested.
+
+A git copy of this tree is available at
+
+	http://git.cmpxchg.org/cgit.cgi/linux-mmots.git/
+
+and use of this tree is similar to
+http://git.cmpxchg.org/cgit.cgi/linux-mmotm.git/, described above.
+
+
+This mmotm tree contains the following patches against 4.20-rc2:
+(patches marked "*" will be included in linux-next)
+
+  origin.patch
+* z3fold-fix-possible-reclaim-races.patch
+* psi-simplify-cgroup_move_task.patch
+* hugetlbfs-fix-kernel-bug-at-fs-hugetlbfs-inodec-444.patch
+* maintainers-update-omap-mmc-entry.patch
+* mm-use-kvzalloc-for-swap_info_struct-allocation.patch
+* sh-provide-prototypes-for-pci-i-o-mapping-in-asm-ioh.patch
+* mm-memory_hotplug-check-zone_movable-in-has_unmovable_pages.patch
+* mm-dont-reclaim-inodes-with-many-attached-pages.patch
+* scripts-faddr2line-fix-location-of-start_kernel-in-comment.patch
+* mm-thp-always-specify-disabled-vmas-as-nh-in-smaps.patch
+* ocfs2-free-up-write-context-when-direct-io-failed.patch
+* ocfs2-fix-dead-lock-caused-by-ocfs2_defrag_extent.patch
+* mm-gup-fix-follow_page_mask-kernel-doc-comment.patch
+* mm-fix-numa-statistics-updates.patch
+* ubsan-dont-mark-__ubsan_handle_builtin_unreachable-as-noreturn.patch
+* mm-fix-a-typo-in-__next_mem_pfn_range-comments.patch
+* tmpfs-let-lseek-return-enxio-with-a-negative-offset.patch
+* scripts-spdxcheck-make-python3-compliant.patch
+* compiler-gcc-hide-compiler_has_generic_builtin_overflow-from-sparse.patch
+* kernelh-hide-__is_constexpr-from-sparse.patch
+* mm-page_alloc-check-for-max-order-in-hot-path.patch
+* mm-cleancache-fix-corruption-on-missed-inode-invalidation.patch
+* mm-cleancache-fix-corruption-on-missed-inode-invalidation-fix.patch
+* arm-arch-arm-include-asm-pageh-needs-personalityh.patch
+* bloat-o-meter-ignore-__addressable_-symbols.patch
+* arch-sh-mach-kfr2r09-fix-struct-mtd_oob_ops-build-warning.patch
+* ocfs2-optimize-the-reading-of-heartbeat-data.patch
+* ocfs2-dlmfs-remove-set-but-not-used-variable-status.patch
+* ocfs2-remove-set-but-not-used-variable-lastzero.patch
+* ocfs2-improve-ocfs2-makefile.patch
+* block-restore-proc-partitions-to-not-display-non-partitionable-removable-devices.patch
+  mm.patch
+* mm-slab-remove-unnecessary-unlikely.patch
+* mm-slab-remove-unnecessary-unlikely-fix.patch
+* mm-slub-remove-validation-on-cpu_slab-in-__flush_cpu_slab.patch
+* mm-slub-page-is-always-non-null-for-node_match.patch
+* mm-slub-record-final-state-of-slub-action-in-deactivate_slab.patch
+* mm-slub-record-final-state-of-slub-action-in-deactivate_slab-fix.patch
+* mm-page_owner-clamp-read-count-to-page_size.patch
+* mm-page_owner-clamp-read-count-to-page_size-fix.patch
+* mm-hotplug-optimize-clear_hwpoisoned_pages.patch
+* mm-hotplug-optimize-clear_hwpoisoned_pages-fix.patch
+* mm-mmu_notifier-remove-mmu_notifier_synchronize.patch
+* mm-use-mm_zero_struct_page-from-sparc-on-all-64b-architectures.patch
+* mm-drop-meminit_pfn_in_nid-as-it-is-redundant.patch
+* mm-implement-new-zone-specific-memblock-iterator.patch
+* mm-initialize-max_order_nr_pages-at-a-time-instead-of-doing-larger-sections.patch
+* mm-move-hot-plug-specific-memory-init-into-separate-functions-and-optimize.patch
+* mm-add-reserved-flag-setting-to-set_page_links.patch
+* mm-use-common-iterator-for-deferred_init_pages-and-deferred_free_pages.patch
+* writeback-dont-decrement-wb-refcnt-if-wb-bdi.patch
+* mm-simplify-get_next_ra_size.patch
+* mm-vmscan-skip-ksm-page-in-direct-reclaim-if-priority-is-low.patch
+* mm-ksm-do-not-block-on-page-lock-when-searching-stable-tree.patch
+* mm-ksm-do-not-block-on-page-lock-when-searching-stable-tree-fix.patch
+* mm-print-more-information-about-mapping-in-__dump_page.patch
+* mm-lower-the-printk-loglevel-for-__dump_page-messages.patch
+* mm-memory_hotplug-drop-pointless-block-alignment-checks-from-__offline_pages.patch
+* mm-memory_hotplug-print-reason-for-the-offlining-failure.patch
+* mm-memory_hotplug-print-reason-for-the-offlining-failure-fix.patch
+* mm-memory_hotplug-be-more-verbose-for-memory-offline-failures.patch
+* mm-memory_hotplug-be-more-verbose-for-memory-offline-failures-fix.patch
+* xxhash-create-arch-dependent-32-64-bit-xxhash.patch
+* ksm-replace-jhash2-with-xxhash.patch
+* mm-treewide-remove-unused-address-argument-from-pte_alloc-functions-v2.patch
+* mm-speed-up-mremap-by-20x-on-large-regions-v5.patch
+* mm-speed-up-mremap-by-20x-on-large-regions-v5-fix.patch
+* mm-select-have_move_pmd-in-x86-for-faster-mremap.patch
+* mm-mmap-remove-verify_mm_writelocked.patch
+* mm-memory_hotplug-do-not-clear-numa_node-association-after-hot_remove.patch
+* mm-add-an-f_seal_future_write-seal-to-memfd.patch
+* selftests-memfd-add-tests-for-f_seal_future_write-seal.patch
+* mm-remove-reset-of-pcp-counter-in-pageset_init.patch
+* ksm-assist-buddy-allocator-to-assemble-1-order-pages.patch
+* mm-reference-totalram_pages-and-managed_pages-once-per-function.patch
+* mm-convert-zone-managed_pages-to-atomic-variable.patch
+* mm-convert-totalram_pages-and-totalhigh_pages-variables-to-atomic.patch
+* mm-convert-totalram_pages-and-totalhigh_pages-variables-to-atomic-checkpatch-fixes.patch
+* mm-remove-managed_page_count-spinlock.patch
+* vmscan-return-node_reclaim_noscan-in-node_reclaim-when-config_numa-is-n.patch
+* mm-swap-use-nr_node_ids-for-avail_lists-in-swap_info_struct.patch
+* userfaultfd-convert-userfaultfd_ctx-refcount-to-refcount_t.patch
+* memory_hotplug-free-pages-as-higher-order.patch
+* memory_hotplug-free-pages-as-higher-order-fix.patch
+* memory_hotplug-free-pages-as-higher-order-fix-fix.patch
+* mm-page_alloc-remove-software-prefetching-in-__free_pages_core.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations.patch
+* mm-swap-fix-race-between-swapoff-and-some-swap-operations-v6.patch
+* mm-fix-race-between-swapoff-and-mincore.patch
+* mm-dont-expose-page-to-fast-gup-before-its-ready.patch
+* mm-page_owner-align-with-pageblock_nr_pages.patch
+* mm-page_owner-align-with-pageblock_nr-pages.patch
+* info-task-hung-in-generic_file_write_iter.patch
+* proc-use-ns_capable-instead-of-capable-for-timerslack_ns.patch
+* fs-proc-utilc-include-fs-proc-internalh-for-name_to_int.patch
+* coding-style-dont-use-extern-with-function-prototypes.patch
+* udmabuf-convert-to-use-vm_fault_t.patch
+* fls-change-parameter-to-unsigned-int.patch
+* lib-genaloc-fix-allocation-of-aligned-buffer-from-non-aligned-chunk.patch
+* checkpatch-warn-on-const-char-foo-=-bar-declarations.patch
+* fs-epoll-remove-max_nests-argument-from-ep_call_nested.patch
+* fs-epoll-simplify-ep_send_events_proc-ready-list-loop.patch
+* fs-epoll-drop-ovflist-branch-prediction.patch
+* fs-epoll-robustify-ep-mtx-held-checks.patch
+* fs-epoll-reduce-the-scope-of-wq-lock-in-epoll_wait.patch
+* fs-epoll-reduce-the-scope-of-wq-lock-in-epoll_wait-fix.patch
+* fs-epoll-avoid-barrier-after-an-epoll_wait2-timeout.patch
+* fs-epoll-avoid-barrier-after-an-epoll_wait2-timeout-fix.patch
+* fs-epoll-rename-check_events-label-to-send_events.patch
+* fs-epoll-deal-with-wait_queue-only-once.patch
+* fs-epoll-deal-with-wait_queue-only-once-fix.patch
+* hfsplus-return-file-attributes-on-statx.patch
+* fork-fix-some-wmissing-prototypes-warnings.patch
+* exec-load_script-dont-blindly-truncate-shebang-string.patch
+* exec-increase-binprm_buf_size-to-256.patch
+* exec-separate-mm_anonpages-and-rlimit_stack-accounting.patch
+* exec-separate-mm_anonpages-and-rlimit_stack-accounting-checkpatch-fixes.patch
+* bfs-extra-sanity-checking-and-static-inode-bitmap.patch
+* initramfs-cleanup-incomplete-rootfs.patch
+* ipc-allow-boot-time-extension-of-ipcmni-from-32k-to-8m.patch
+* ipc-allow-boot-time-extension-of-ipcmni-from-32k-to-8m-checkpatch-fixes.patch
+* ipc-conserve-sequence-numbers-in-extended-ipcmni-mode.patch
+  linux-next.patch
+  linux-next-git-rejects.patch
+* scripts-atomic-check-atomicssh-dont-assume-that-scripts-are-executable.patch
+* drivers-net-ethernet-qlogic-qed-qed_rdmah-fix-typo.patch
+* mm-introduce-common-struct_page_max_shift-define.patch
+* mm-sparse-add-common-helper-to-mark-all-memblocks-present.patch
+* vfs-replace-current_kernel_time64-with-ktime-equivalent.patch
+* fix-read-buffer-overflow-in-delta-ipc.patch
+  make-sure-nobodys-leaking-resources.patch
+  releasing-resources-with-children.patch
+  mutex-subsystem-synchro-test-module.patch
+  kernel-forkc-export-kernel_thread-to-modules.patch
+  slab-leaks3-default-y.patch
+  workaround-for-a-pci-restoring-bug.patch
