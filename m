@@ -2,235 +2,264 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D615C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:18:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 56D38C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:20:49 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0629220811
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:18:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FMewaJuu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0629220811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
+	by mail.kernel.org (Postfix) with ESMTP id 13EFE20858
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:20:48 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13EFE20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390168AbeKQDbq (ORCPT
+        id S2390173AbeKQDeB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 22:31:46 -0500
-Received: from userp2130.oracle.com ([156.151.31.86]:33052 "EHLO
-        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729036AbeKQDbq (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 22:31:46 -0500
-Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
-        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAGHE10a021480;
-        Fri, 16 Nov 2018 17:17:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
- references : from : message-id : date : mime-version : in-reply-to :
- content-type : content-transfer-encoding; s=corp-2018-07-02;
- bh=3U1bYNGqhawLSrOj7zZRGxZdoq1JJhJWNWfpqUIYAyA=;
- b=FMewaJuu3WQV2DXmHbMHFNXgddgz5pMczPCncgQaqJuathNhIKW803AFPbr54mlHaOdV
- scvpnUsy1p5LGGtkJ2UZjmhAXsCLP12dvIcS/YwE/ZIhFtDQjdteFK9Tr6gbf0rGFKS+
- GEsPsw3yxlDYB7XUt098TzZWNQA2my4/Z1NrE6+J64+B443k7YQxmITiVpbG3EhFcMsH
- LFhlcU2Y2PAX3o4QhRABvUfOyeg9+UtXZUo6k/AzP0uI+tm+SGT4oFSPYqv5ronjnewC
- F+/mkMTx3rmJewdvKhXug139pl0Jz+4zpJY8P9BXGMI3t39THU84cySFG/Jwl4k1kSgw DQ== 
-Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
-        by userp2130.oracle.com with ESMTP id 2nr7csge9p-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Nov 2018 17:17:39 +0000
-Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
-        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAGHHYKw007033
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-        Fri, 16 Nov 2018 17:17:34 GMT
-Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
-        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAGHHUo3019023;
-        Fri, 16 Nov 2018 17:17:31 GMT
-Received: from [10.159.250.128] (/10.159.250.128)
-        by default (Oracle Beehive Gateway v4.0)
-        with ESMTP ; Fri, 16 Nov 2018 09:17:30 -0800
-Subject: Re: [PATCH v7 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
-To:     Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
-        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, jgross@suse.com
-Cc:     boris.ostrovsky@oracle.com, bp@suse.de,
-        dave.hansen@linux.intel.com, davem@davemloft.net,
-        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
-        kirill.shutemov@linux.intel.com, linus.walleij@linaro.org,
-        luto@kernel.org, mchehab@kernel.org, mingo@redhat.com,
-        rdunlap@infradead.org, tglx@linutronix.de, thomas.lendacky@amd.com,
-        hch@infradead.org, roger.pau@citrix.com, rkrcmar@redhat.com,
-        Stefan Hajnoczi <stefanha@redhat.com>,
-        Stefano Garzarella <sgarzare@redhat.com>,
-        Liam Merwick <liam.merwick@oracle.com>,
-        George Kennedy <george.kennedy@oracle.com>,
-        Maran Wilson <maran.wilson@oracle.com>
-References: <1523920175-27287-1-git-send-email-maran.wilson@oracle.com>
- <9aeeaf85-6ecf-c1e2-640a-657f5bb0f8ef@redhat.com>
-From:   Maran Wilson <maran.wilson@oracle.com>
-Organization: Oracle Corporation
-Message-ID: <bf0112de-8ceb-d1e4-d787-bf6bde7a1f14@oracle.com>
-Date:   Fri, 16 Nov 2018 09:17:27 -0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <9aeeaf85-6ecf-c1e2-640a-657f5bb0f8ef@redhat.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9079 signatures=668683
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
- phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.0.1-1810050000 definitions=main-1811160153
+        Fri, 16 Nov 2018 22:34:01 -0500
+Received: from pegase1.c-s.fr ([93.17.236.30]:13118 "EHLO pegase1.c-s.fr"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728175AbeKQDeB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 22:34:01 -0500
+Received: from localhost (mailhub1-int [192.168.12.234])
+        by localhost (Postfix) with ESMTP id 42xQ3v4bMSz9twtY;
+        Fri, 16 Nov 2018 18:20:43 +0100 (CET)
+X-Virus-Scanned: Debian amavisd-new at c-s.fr
+Received: from pegase1.c-s.fr ([192.168.12.234])
+        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
+        with ESMTP id ablOopUT2LV1; Fri, 16 Nov 2018 18:20:43 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+        by pegase1.c-s.fr (Postfix) with ESMTP id 42xQ3v3qCWz9twtX;
+        Fri, 16 Nov 2018 18:20:43 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 630088B91D;
+        Fri, 16 Nov 2018 18:20:45 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+        with ESMTP id s62eh-P4nBan; Fri, 16 Nov 2018 18:20:45 +0100 (CET)
+Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
+        by messagerie.si.c-s.fr (Postfix) with ESMTP id 39F9D8B8C0;
+        Fri, 16 Nov 2018 18:20:45 +0100 (CET)
+Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
+        id 3339969A5E; Fri, 16 Nov 2018 17:20:45 +0000 (UTC)
+Message-Id: <c8231561dfd73a18cc0fe7db94405ee71a886136.1542388741.git.christophe.leroy@c-s.fr>
+From:   Christophe Leroy <christophe.leroy@c-s.fr>
+Subject: [PATCH] powerpc/mm: add exec protection on powerpc 603
+To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        "Aneesh Kumar K.V" <aneesh.kumar@linux.ibm.com>
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Date:   Fri, 16 Nov 2018 17:20:45 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/16/2018 2:46 AM, Paolo Bonzini wrote:
-> On 17/04/18 01:09, Maran Wilson wrote:
->> For certain applications it is desirable to rapidly boot a KVM virtual
->> machine. In cases where legacy hardware and software support within the
->> guest is not needed, Qemu should be able to boot directly into the
->> uncompressed Linux kernel binary without the need to run firmware.
->>
->> There already exists an ABI to allow this for Xen PVH guests and the ABI
->> is supported by Linux and FreeBSD:
->>
->>     https://xenbits.xen.org/docs/unstable/misc/pvh.html
->>
->> This patch series would enable Qemu to use that same entry point for
->> booting KVM guests.
-> Hi Maran, what happened to this series (and to the QEMU work)?
+The 603 doesn't have a HASH table, TLB misses are handled by
+software. It is then possible to generate page fault when
+_PAGE_EXEC is not set like in nohash/32.
 
-Hi Paolo,
+In order to support it, set_pte_filter() and
+set_access_flags_filter() are made common, and the handling
+is made dependent on MMU_FTR_HPTE_TABLE
 
-Thank you for the reminder. Sorry, I have been wanting to continue this 
-work for a while now, but our team has been pulled in other directions 
-and this one ended up getting temporarily pushed down the priority stack.
+Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
+---
+ arch/powerpc/include/asm/book3s/32/hash.h    |  1 +
+ arch/powerpc/include/asm/book3s/32/pgtable.h | 18 +++++++++---------
+ arch/powerpc/include/asm/cputable.h          |  8 ++++----
+ arch/powerpc/kernel/head_32.S                |  2 ++
+ arch/powerpc/mm/pgtable.c                    | 20 +++++++++++---------
+ 5 files changed, 27 insertions(+), 22 deletions(-)
 
-Let me discuss with my management and get back to you. I do want (and 
-intend) to support and push this over the finish line.
-
-In the meantime, if there are any folks out there with a specific 
-business need for getting this done sooner rather than later and are 
-able to invest a bit of time to collaborate on the remaining Qemu work, 
-please feel free to ping me offline. We have some preliminary Qemu 
-patches, but there is some additional work needed before they are ready 
-wider review.
-
-Thanks,
--Maran
-
->
-> Paolo
->
->> Changes from v6:
->>
->>   * Addressed issues caught by the kbuild test robot:
->>      - Restored an #include line that had been dropped by mistake (patch 4)
->>      - Removed a pair of #include lines that were no longer needed in a
->>        common code file and causing problems for certain 32-bit configs
->>        (patchs 4 and 7)
->>
->> Changes from v5:
->>
->>   * The interface changes to the x86/HVM start info layout have
->>     now been accepted into the Xen tree.
->>   * Rebase and merge upstream PVH file changes.
->>   * (Patch 6) Synced up to the final version of the header file that was
->>               acked and pulled into the Xen tree.
->>   * (Patch 1) Fixed typo and removed redundant "def_bool n" line.
->>
->> Changes from v4:
->>
->> Note: I've withheld Juergen's earlier "Reviewed-by" tags from patches
->> 1 and 7 since there were minor changes (mostly just addition of
->> CONFIG_KVM_GUEST_PVH as requested) that came afterwards.
->>
->>   * Changed subject prefix from RFC to PATCH
->>   * Added CONFIG_KVM_GUEST_PVH as suggested
->>   * Relocated the PVH common files to
->>     arch/x86/platform/pvh/{enlighten.c,head.S}
->>   * Realized I also needed to move the objtool override for those files
->>   * Updated a few code comments per reviewer feedback
->>   * Sent out a patch of the hvm_start_info struct changes against the Xen
->>     tree since that is the canonical copy of the header. Discussions on
->>     that thread have resulted in some (non-functional) updates to
->>     start_info.h (patch 6/7) and those changes are reflected here as well
->>     in order to keep the files in sync. The header file has since been
->>     ack'ed for the Xen tree by Jan Beulich.
->>
->> Changes from v3:
->>
->>   * Implemented Juergen's suggestion for refactoring and moving the PVH
->>     code so that CONFIG_XEN is no longer required for booting KVM guests
->>     via the PVH entry point.
->>     Functionally, nothing has changed from V3 really, but the patches
->>     look completely different now because of all the code movement and
->>     refactoring. Some of these patches can be combined, but I've left
->>     them very small in some cases to make the refactoring and code
->>     movement easier to review.
->>     My approach for refactoring has been to create a PVH entry layer that
->>     still has understanding and knowledge about Xen vs non-Xen guest types
->>     so that it can make run time decisions to handle either case, as
->>     opposed to going all the way and re-writing it to be a completely
->>     hypervisor agnostic and architecturally pure layer that is separate
->>     from guest type details. The latter seemed a bit overkill in this
->>     situation. And I've handled the complexity of having to support
->>     Qemu/KVM boot of kernels compiled with or without CONFIG_XEN via a
->>     pair of xen specific __weak routines that can be overridden in kernels
->>     that support Xen guests. Importantly, the __weak routines are for
->>     xen specific code only (not generic "guest type" specific code) so
->>     there is no clashing between xen version of the strong routine and,
->>     say, a KVM version of the same routine. But I'm sure there are many
->>     ways to skin this cat, so I'm open to alternate suggestions if there
->>     is a compelling reason for not using __weak in this situation.
->>
->> Changes from v2:
->>
->>   * All structures (including memory map table entries) are padded and
->>     aligned to an 8 byte boundary.
->>
->>   * Removed the "packed" attributes and made changes to comments as
->>     suggested by Jan.
->>
->> Changes from v1:
->>
->>   * Adopted Paolo's suggestion for defining a v2 PVH ABI that includes the
->>     e820 map instead of using the second module entry to pass the table.
->>
->>   * Cleaned things up a bit to reduce the number of xen vs non-xen special
->>     cases.
->>
->>
->> Maran Wilson (7):
->>    xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and CONFIG_XEN_PVH
->>    xen/pvh: Move PVH entry code out of Xen specific tree
->>    xen/pvh: Create a new file for Xen specific PVH code
->>    xen/pvh: Move Xen specific PVH VM initialization out of common file
->>    xen/pvh: Move Xen code for getting mem map via hcall out of common
->>      file
->>    xen/pvh: Add memory map pointer to hvm_start_info struct
->>    KVM: x86: Allow Qemu/KVM to use PVH entry point
->>
->>   MAINTAINERS                                     |   1 +
->>   arch/x86/Kbuild                                 |   2 +
->>   arch/x86/Kconfig                                |  14 +++
->>   arch/x86/kernel/head_64.S                       |   2 +-
->>   arch/x86/platform/pvh/Makefile                  |   5 +
->>   arch/x86/platform/pvh/enlighten.c               | 136 ++++++++++++++++++++++++
->>   arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} |   0
->>   arch/x86/xen/Kconfig                            |   3 +-
->>   arch/x86/xen/Makefile                           |   2 -
->>   arch/x86/xen/enlighten_pvh.c                    |  93 +++-------------
->>   include/xen/interface/hvm/start_info.h          |  63 ++++++++++-
->>   11 files changed, 240 insertions(+), 81 deletions(-)
->>   create mode 100644 arch/x86/platform/pvh/Makefile
->>   create mode 100644 arch/x86/platform/pvh/enlighten.c
->>   rename arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} (100%)
->>
+diff --git a/arch/powerpc/include/asm/book3s/32/hash.h b/arch/powerpc/include/asm/book3s/32/hash.h
+index f2892c7ab73e..2a0a467d2985 100644
+--- a/arch/powerpc/include/asm/book3s/32/hash.h
++++ b/arch/powerpc/include/asm/book3s/32/hash.h
+@@ -26,6 +26,7 @@
+ #define _PAGE_WRITETHRU	0x040	/* W: cache write-through */
+ #define _PAGE_DIRTY	0x080	/* C: page changed */
+ #define _PAGE_ACCESSED	0x100	/* R: page referenced */
++#define _PAGE_EXEC	0x200	/* software: exec allowed */
+ #define _PAGE_RW	0x400	/* software: user write access allowed */
+ #define _PAGE_SPECIAL	0x800	/* software: Special page */
+ 
+diff --git a/arch/powerpc/include/asm/book3s/32/pgtable.h b/arch/powerpc/include/asm/book3s/32/pgtable.h
+index c21d33704633..cf844fed4527 100644
+--- a/arch/powerpc/include/asm/book3s/32/pgtable.h
++++ b/arch/powerpc/include/asm/book3s/32/pgtable.h
+@@ -10,9 +10,9 @@
+ /* And here we include common definitions */
+ 
+ #define _PAGE_KERNEL_RO		0
+-#define _PAGE_KERNEL_ROX	0
++#define _PAGE_KERNEL_ROX	(_PAGE_EXEC)
+ #define _PAGE_KERNEL_RW		(_PAGE_DIRTY | _PAGE_RW)
+-#define _PAGE_KERNEL_RWX	(_PAGE_DIRTY | _PAGE_RW)
++#define _PAGE_KERNEL_RWX	(_PAGE_DIRTY | _PAGE_RW | _PAGE_EXEC)
+ 
+ #define _PAGE_HPTEFLAGS _PAGE_HASHPTE
+ 
+@@ -66,11 +66,11 @@ static inline bool pte_user(pte_t pte)
+  */
+ #define PAGE_NONE	__pgprot(_PAGE_BASE)
+ #define PAGE_SHARED	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
+-#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW)
++#define PAGE_SHARED_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_RW | _PAGE_EXEC)
+ #define PAGE_COPY	__pgprot(_PAGE_BASE | _PAGE_USER)
+-#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_COPY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
+ #define PAGE_READONLY	__pgprot(_PAGE_BASE | _PAGE_USER)
+-#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER)
++#define PAGE_READONLY_X	__pgprot(_PAGE_BASE | _PAGE_USER | _PAGE_EXEC)
+ 
+ /* Permission masks used for kernel mappings */
+ #define PAGE_KERNEL	__pgprot(_PAGE_BASE | _PAGE_KERNEL_RW)
+@@ -318,7 +318,7 @@ static inline void __ptep_set_access_flags(struct vm_area_struct *vma,
+ 					   int psize)
+ {
+ 	unsigned long set = pte_val(entry) &
+-		(_PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_RW);
++		(_PAGE_DIRTY | _PAGE_ACCESSED | _PAGE_RW | _PAGE_EXEC);
+ 
+ 	pte_update(ptep, 0, set);
+ 
+@@ -384,7 +384,7 @@ static inline int pte_dirty(pte_t pte)		{ return !!(pte_val(pte) & _PAGE_DIRTY);
+ static inline int pte_young(pte_t pte)		{ return !!(pte_val(pte) & _PAGE_ACCESSED); }
+ static inline int pte_special(pte_t pte)	{ return !!(pte_val(pte) & _PAGE_SPECIAL); }
+ static inline int pte_none(pte_t pte)		{ return (pte_val(pte) & ~_PTE_NONE_MASK) == 0; }
+-static inline bool pte_exec(pte_t pte)		{ return true; }
++static inline bool pte_exec(pte_t pte)		{ return pte_val(pte) & _PAGE_EXEC; }
+ 
+ static inline int pte_present(pte_t pte)
+ {
+@@ -451,7 +451,7 @@ static inline pte_t pte_wrprotect(pte_t pte)
+ 
+ static inline pte_t pte_exprotect(pte_t pte)
+ {
+-	return pte;
++	return __pte(pte_val(pte) & ~_PAGE_EXEC);
+ }
+ 
+ static inline pte_t pte_mkclean(pte_t pte)
+@@ -466,7 +466,7 @@ static inline pte_t pte_mkold(pte_t pte)
+ 
+ static inline pte_t pte_mkexec(pte_t pte)
+ {
+-	return pte;
++	return __pte(pte_val(pte) | _PAGE_EXEC);
+ }
+ 
+ static inline pte_t pte_mkpte(pte_t pte)
+diff --git a/arch/powerpc/include/asm/cputable.h b/arch/powerpc/include/asm/cputable.h
+index 29f49a35d6ee..a0395ccbbe9e 100644
+--- a/arch/powerpc/include/asm/cputable.h
++++ b/arch/powerpc/include/asm/cputable.h
+@@ -296,7 +296,7 @@ static inline void cpu_feature_keys_init(void) { }
+ #define CPU_FTRS_PPC601	(CPU_FTR_COMMON | CPU_FTR_601 | \
+ 	CPU_FTR_COHERENT_ICACHE | CPU_FTR_UNIFIED_ID_CACHE | CPU_FTR_USE_RTC)
+ #define CPU_FTRS_603	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE | \
+-	    CPU_FTR_MAYBE_CAN_NAP | CPU_FTR_PPC_LE)
++	    CPU_FTR_MAYBE_CAN_NAP | CPU_FTR_PPC_LE | CPU_FTR_NOEXECUTE)
+ #define CPU_FTRS_604	(CPU_FTR_COMMON | CPU_FTR_PPC_LE)
+ #define CPU_FTRS_740_NOTAU	(CPU_FTR_COMMON | \
+ 	    CPU_FTR_MAYBE_CAN_DOZE | CPU_FTR_L2CR | \
+@@ -367,15 +367,15 @@ static inline void cpu_feature_keys_init(void) { }
+ 	    CPU_FTR_MAYBE_CAN_NAP | CPU_FTR_L2CR | CPU_FTR_ALTIVEC_COMP | \
+ 	    CPU_FTR_SPEC7450 | CPU_FTR_NAP_DISABLE_L2_PR | \
+ 	    CPU_FTR_PPC_LE | CPU_FTR_NEED_PAIRED_STWCX)
+-#define CPU_FTRS_82XX	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE)
++#define CPU_FTRS_82XX	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE | CPU_FTR_NOEXECUTE)
+ #define CPU_FTRS_G2_LE	(CPU_FTR_COMMON | CPU_FTR_MAYBE_CAN_DOZE | \
+ 	    CPU_FTR_MAYBE_CAN_NAP)
+ #define CPU_FTRS_E300	(CPU_FTR_MAYBE_CAN_DOZE | \
+ 	    CPU_FTR_MAYBE_CAN_NAP | \
+-	    CPU_FTR_COMMON)
++	    CPU_FTR_COMMON  | CPU_FTR_NOEXECUTE)
+ #define CPU_FTRS_E300C2	(CPU_FTR_MAYBE_CAN_DOZE | \
+ 	    CPU_FTR_MAYBE_CAN_NAP | \
+-	    CPU_FTR_COMMON | CPU_FTR_FPU_UNAVAILABLE)
++	    CPU_FTR_COMMON | CPU_FTR_FPU_UNAVAILABLE  | CPU_FTR_NOEXECUTE)
+ #define CPU_FTRS_CLASSIC32	(CPU_FTR_COMMON)
+ #define CPU_FTRS_8XX	(CPU_FTR_NOEXECUTE)
+ #define CPU_FTRS_40X	(CPU_FTR_NODSISRALIGN | CPU_FTR_NOEXECUTE)
+diff --git a/arch/powerpc/kernel/head_32.S b/arch/powerpc/kernel/head_32.S
+index 61ca27929355..50e892763dbb 100644
+--- a/arch/powerpc/kernel/head_32.S
++++ b/arch/powerpc/kernel/head_32.S
+@@ -515,6 +515,8 @@ InstructionTLBMiss:
+ 	lwz	r0,0(r2)		/* get linux-style pte */
+ 	andc.	r1,r1,r0		/* check access & ~permission */
+ 	bne-	InstructionAddressInvalid /* return if access not permitted */
++	andi.	r1,r0,_PAGE_EXEC
++	beq-	InstructionAddressInvalid /* return if not _PAGE_EXEC */
+ 	ori	r0,r0,_PAGE_ACCESSED	/* set _PAGE_ACCESSED in pte */
+ 	/*
+ 	 * NOTE! We are assuming this is not an SMP system, otherwise
+diff --git a/arch/powerpc/mm/pgtable.c b/arch/powerpc/mm/pgtable.c
+index 010e1c616cb2..3d86fe9d2ff4 100644
+--- a/arch/powerpc/mm/pgtable.c
++++ b/arch/powerpc/mm/pgtable.c
+@@ -74,7 +74,7 @@ static struct page *maybe_pte_to_page(pte_t pte)
+  * support falls into the same category.
+  */
+ 
+-static pte_t set_pte_filter(pte_t pte)
++static pte_t set_pte_filter_hash(pte_t pte)
+ {
+ 	if (radix_enabled())
+ 		return pte;
+@@ -93,14 +93,12 @@ static pte_t set_pte_filter(pte_t pte)
+ 	return pte;
+ }
+ 
+-static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
+-				     int dirty)
+-{
+-	return pte;
+-}
+-
+ #else /* CONFIG_PPC_BOOK3S */
+ 
++static pte_t set_pte_filter_hash(pte_t pte) { return pte; }
++
++#endif /* CONFIG_PPC_BOOK3S */
++
+ /* Embedded type MMU with HW exec support. This is a bit more complicated
+  * as we don't have two bits to spare for _PAGE_EXEC and _PAGE_HWEXEC so
+  * instead we "filter out" the exec permission for non clean pages.
+@@ -109,6 +107,9 @@ static pte_t set_pte_filter(pte_t pte)
+ {
+ 	struct page *pg;
+ 
++	if (mmu_has_feature(MMU_FTR_HPTE_TABLE))
++		return set_pte_filter_hash(pte);
++
+ 	/* No exec permission in the first place, move on */
+ 	if (!pte_exec(pte) || !pte_looks_normal(pte))
+ 		return pte;
+@@ -138,6 +139,9 @@ static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
+ {
+ 	struct page *pg;
+ 
++	if (mmu_has_feature(MMU_FTR_HPTE_TABLE))
++		return pte;
++
+ 	/* So here, we only care about exec faults, as we use them
+ 	 * to recover lost _PAGE_EXEC and perform I$/D$ coherency
+ 	 * if necessary. Also if _PAGE_EXEC is already set, same deal,
+@@ -172,8 +176,6 @@ static pte_t set_access_flags_filter(pte_t pte, struct vm_area_struct *vma,
+ 	return pte_mkexec(pte);
+ }
+ 
+-#endif /* CONFIG_PPC_BOOK3S */
+-
+ /*
+  * set_pte stores a linux PTE into the linux page table.
+  */
+-- 
+2.13.3
 
