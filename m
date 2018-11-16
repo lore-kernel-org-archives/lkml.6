@@ -4,70 +4,69 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E673EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:01:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 76E15C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:01:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A647D208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:01:51 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 424A920892
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:01:55 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="khGGSh6g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A647D208E7
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="AmzM6Ijy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 424A920892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389549AbeKPUN0 (ORCPT
+        id S2389564AbeKPUNa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 15:13:26 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:41435 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389532AbeKPUNZ (ORCPT
+        Fri, 16 Nov 2018 15:13:30 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:43484 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389532AbeKPUN3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 15:13:25 -0500
-Received: by mail-pf1-f196.google.com with SMTP id e22-v6so11167619pfn.8
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:01:49 -0800 (PST)
+        Fri, 16 Nov 2018 15:13:29 -0500
+Received: by mail-pl1-f194.google.com with SMTP id g59-v6so10929396plb.10
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:01:53 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=mKdk4u9uuV3/V2n+XEiMfTYkJhxf8c+bfGxxkDgZOEY=;
-        b=khGGSh6gI7N4doAVpcL7uHa6DTmcuayGAhPPhSeVUzm8qrVeFuR73wyRDo5XnVxV7k
-         606J6cOTrAoNwuoRQ32KZAyKgm1z9ROrNviT9yHvnAr9mrAuL9x6tOisotVK/xmk0OHB
-         RG+dFDEKQDjLc7z9NBsfn3lYTgPzUxC+YeJGs=
+        bh=E163C4a21s93kfgzU/fG9cKlenfPzM5SxGYZubHyS8Q=;
+        b=AmzM6Ijyw6T6dd8GJlLZC+rWVmROCPYvspgH88Vq9493kNczdSqTXDemYbdJ1PoPzp
+         LWcF4bsRzX9049AeZmzF/cGVX9R3ppozpMeVyHvu3CCaqTOsR7e26mTuaLul9jBXb3cV
+         RVeWj0ZfErRql1Nl/j44rcR4Bp1EW3Tu18kmQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=mKdk4u9uuV3/V2n+XEiMfTYkJhxf8c+bfGxxkDgZOEY=;
-        b=gRXx/pariwSR0CjNrn2YqEpF7H7J5x9ZCWY6tH66oKtIGq3Y2MxpGAMfh+jZcWBf67
-         FneJjG9Kw/XFbkxQ6kaxUe1RH45w0DMiKNlmwXJcCGO4RpYAlONpr/2N3LjKFfDTjqvp
-         iak4gX5d+3owQt5LJoQ3Gjn8COruV1ik2Gcx83SlNaIK0xq7Yn+V8PvbiEoyDjG5Hr6B
-         TEj1lY3HL+ViUFKeQmn/41WXg1qkqCOZBZvtgcr4bHO98jADaO7WAILOGmLVdimdeHFI
-         NIpvAO4CRlDR7pjJNFTjv/Vm+7M6kb6LkD4fUILO9wQ01VkbQ6pNYoG2wuVFKbdDzppD
-         uodA==
-X-Gm-Message-State: AGRZ1gK+Qxc/ZcndZ7cMQXmUjK9PPFiSGiqqNJTnuBMg1+XHVsgowWRU
-        VMaU2qKVbMpwtpMf7CaVh9YDEw==
-X-Google-Smtp-Source: AJdET5eXq6l7stfr9qN5pRZ5Cb2+y06vwTIGaWCuynlUfu8fYZthALuyZNzGWJK0NGX5SUJXn21vwQ==
-X-Received: by 2002:a62:798f:: with SMTP id u137mr7491081pfc.168.1542362508571;
-        Fri, 16 Nov 2018 02:01:48 -0800 (PST)
+        bh=E163C4a21s93kfgzU/fG9cKlenfPzM5SxGYZubHyS8Q=;
+        b=ZMH4BJsKSwvGJuHLwBfrWkxuad+TGpV6QQOqBY7H+9HT8R6fianYkRsV6HbrhDgks5
+         dFLDwnTBICPNb10I2tgfMv05ssjj9uZ8ZYlpkefP2ff2A73fWhiIColfpPeMGfxcX6nV
+         ATWXTeItIk8bNSVNmqJj4ayWOqNpb+bPspP9yRNyBZfRtSQVkToMw4DE9FB6Q2wuFyZ3
+         676daauMxOKzUOlbv+pVR+p44PyPIB/iSiPNJS8UGh/S18vgImJJ/oXjZ2MszqsROgmP
+         O15CTpqnPKrJMPa3mdCcOifn4qHAzlXoFzyonOFHSW8TFOSMT8sPxlZCL6sF2QNdV8hW
+         pzNw==
+X-Gm-Message-State: AGRZ1gIAx39IzdRiw5TJW/dNZmNhlF6QyCM7ShwSx72eSgCmk5i+YHky
+        IPH2wkCkzjXSYOJN9UQgKvc1GQ==
+X-Google-Smtp-Source: AJdET5fZDDOfhpLM5mpHdj20S3iWEbJorDhWZNiRNtGafcOuhLAEI7YhvoXeZmk3/fzjEq/kJF840A==
+X-Received: by 2002:a17:902:8a89:: with SMTP id p9-v6mr10290565plo.183.1542362512599;
+        Fri, 16 Nov 2018 02:01:52 -0800 (PST)
 Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id y71-v6sm37238045pfk.70.2018.11.16.02.01.46
+        by smtp.gmail.com with ESMTPSA id 124-v6sm75274216pfb.132.2018.11.16.02.01.51
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 02:01:48 -0800 (PST)
+        Fri, 16 Nov 2018 02:01:52 -0800 (PST)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Chen-Yu Tsai <wens@csie.org>
+        Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 5/6] ARM: dts: sunxi: Add all CPUs in cooling maps
-Date:   Fri, 16 Nov 2018 15:31:14 +0530
-Message-Id: <b2524a2db87c97c038990af405bd1cca25e579f8.1542362000.git.viresh.kumar@linaro.org>
+Subject: [PATCH 6/6] ARM: dts: uniphier: Add all CPUs in cooling maps
+Date:   Fri, 16 Nov 2018 15:31:15 +0530
+Message-Id: <b522f13dfffcec1e2b78e126513114428ec9a4b4.1542362000.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
 In-Reply-To: <cover.1542362000.git.viresh.kumar@linaro.org>
 References: <cover.1542362000.git.viresh.kumar@linaro.org>
@@ -94,127 +93,26 @@ points.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/arm/boot/dts/sun6i-a31.dtsi | 11 +++++++----
- arch/arm/boot/dts/sun7i-a20.dtsi |  5 +++--
- arch/arm/boot/dts/sun8i-a33.dtsi | 16 +++++++++++-----
- 3 files changed, 21 insertions(+), 11 deletions(-)
+ arch/arm/boot/dts/uniphier-pxs2.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm/boot/dts/sun6i-a31.dtsi b/arch/arm/boot/dts/sun6i-a31.dtsi
-index debc0bf22ea3..1eaa60cd3218 100644
---- a/arch/arm/boot/dts/sun6i-a31.dtsi
-+++ b/arch/arm/boot/dts/sun6i-a31.dtsi
-@@ -115,7 +115,7 @@
- 			#cooling-cells = <2>;
- 		};
- 
--		cpu@1 {
-+		cpu1: cpu@1 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <1>;
-@@ -131,7 +131,7 @@
- 			#cooling-cells = <2>;
- 		};
- 
--		cpu@2 {
-+		cpu2: cpu@2 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <2>;
-@@ -147,7 +147,7 @@
- 			#cooling-cells = <2>;
- 		};
- 
--		cpu@3 {
-+		cpu3: cpu@3 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <3>;
-@@ -174,7 +174,10 @@
+diff --git a/arch/arm/boot/dts/uniphier-pxs2.dtsi b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+index 8d20e9548e39..06a049f6edf8 100644
+--- a/arch/arm/boot/dts/uniphier-pxs2.dtsi
++++ b/arch/arm/boot/dts/uniphier-pxs2.dtsi
+@@ -141,8 +141,10 @@
  			cooling-maps {
- 				map0 {
- 					trip = <&cpu_alert0>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+ 				map {
+ 					trip = <&cpu_alert>;
+-					cooling-device = <&cpu0
+-					    THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
 +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
 +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
 +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
 +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
  				};
  			};
- 
-diff --git a/arch/arm/boot/dts/sun7i-a20.dtsi b/arch/arm/boot/dts/sun7i-a20.dtsi
-index 02e40da9f028..b4fd4f5ca66b 100644
---- a/arch/arm/boot/dts/sun7i-a20.dtsi
-+++ b/arch/arm/boot/dts/sun7i-a20.dtsi
-@@ -118,7 +118,7 @@
- 			#cooling-cells = <2>;
  		};
- 
--		cpu@1 {
-+		cpu1: cpu@1 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <1>;
-@@ -148,7 +148,8 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&cpu_alert0>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 			};
- 
-diff --git a/arch/arm/boot/dts/sun8i-a33.dtsi b/arch/arm/boot/dts/sun8i-a33.dtsi
-index c1cc8f09dd9a..502de6f44a9a 100644
---- a/arch/arm/boot/dts/sun8i-a33.dtsi
-+++ b/arch/arm/boot/dts/sun8i-a33.dtsi
-@@ -131,14 +131,14 @@
- 			#cooling-cells = <2>;
- 		};
- 
--		cpu@1 {
-+		cpu1: cpu@1 {
- 			clocks = <&ccu CLK_CPUX>;
- 			clock-names = "cpu";
- 			operating-points-v2 = <&cpu0_opp_table>;
- 			#cooling-cells = <2>;
- 		};
- 
--		cpu@2 {
-+		cpu2: cpu@2 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <2>;
-@@ -148,7 +148,7 @@
- 			#cooling-cells = <2>;
- 		};
- 
--		cpu@3 {
-+		cpu3: cpu@3 {
- 			compatible = "arm,cortex-a7";
- 			device_type = "cpu";
- 			reg = <3>;
-@@ -479,11 +479,17 @@
- 			cooling-maps {
- 				map0 {
- 					trip = <&cpu_alert0>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 				map1 {
- 					trip = <&cpu_alert1>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 
- 				map2 {
 -- 
 2.19.1.568.g152ad8e3369a
 
