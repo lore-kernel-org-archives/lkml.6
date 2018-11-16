@@ -2,77 +2,166 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F7CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:22:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A5A03C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:22:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E24422146F
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:22:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E24422146F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 6AD672089D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:22:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="t5kdpi0Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6AD672089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388831AbeKPKcF (ORCPT
+        id S2389159AbeKPKcJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 05:32:05 -0500
-Received: from mga07.intel.com ([134.134.136.100]:5035 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726449AbeKPKcF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 05:32:05 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga006.jf.intel.com ([10.7.209.51])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 16:21:58 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,238,1539673200"; 
-   d="scan'208";a="91546085"
-Received: from cli6-desk1.ccr.corp.intel.com (HELO [10.239.161.118]) ([10.239.161.118])
-  by orsmga006.jf.intel.com with ESMTP; 15 Nov 2018 16:21:56 -0800
-Subject: Re: [PATCH v3 1/2] x86/fpu: track AVX-512 usage of tasks
-To:     Dave Hansen <dave.hansen@intel.com>,
-        Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
-        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
-Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
-        arjan@linux.intel.com, linux-kernel@vger.kernel.org
-References: <1542236407-4323-1-git-send-email-aubrey.li@intel.com>
- <6f8a7b97-d889-ce77-b5ad-d03dbf4986b0@intel.com>
-From:   "Li, Aubrey" <aubrey.li@linux.intel.com>
-Message-ID: <88a5d6df-0005-db3e-f3be-83e2a8b63a27@linux.intel.com>
-Date:   Fri, 16 Nov 2018 08:21:55 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.1.1
+        Fri, 16 Nov 2018 05:32:09 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:35695 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2388964AbeKPKcI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 05:32:08 -0500
+Received: by mail-pl1-f195.google.com with SMTP id v1-v6so3119395plo.2
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 16:22:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=T39mcugS1aLkzngTcT53twIshIQ6bootoTES/sa00Ow=;
+        b=t5kdpi0ZafvIr/HkP7X6avzLpb2P/ZGm1njaCYT/nrsABPy1EW3Ki4D7N5qtFFPmzK
+         uXlinCSIMzWIBAoAw0/FQURIb+XNMWDerNYBxwWUa4TYDaN41YRUfXxQzk3QB41saa0C
+         dBIZOpgg1pxz+f+9TM71ZrxLRpTRmXrPiarK7Z0yJn1GdDJT+YPpxp6MqCk6JndcPt0d
+         C0EdMprRidCaWMiliNq8GgIztRj92hvrpre4v2zzMp73tq366+43v1ms65UANAuQSmQ7
+         lELRH++GmUMwo5AgnhTxGDIpyz9HbdhQs5uVqYoDrwibVMI3ieVnkf5O+ESfFpO80mbG
+         R80w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=T39mcugS1aLkzngTcT53twIshIQ6bootoTES/sa00Ow=;
+        b=UyUayICJafraMxTM5o4fGXb+IWUnTFWPI7qDuRl9IHZIYMIimdO74m4zgOpXR4uTnK
+         tuVl17RXB6A1konNovZlvi3B/3Q5vcRrMHba9MUUq0D0pOluG6eIYfYKZwiMP2Gu5ge6
+         j83wa5iKiL1y3rCvHuY4mpvByWqAZaxZQKyClvWLeCgLVk9gbRkKTAfkAw67CCZGVjp1
+         rpdcPEVR0IttKCaHgupzgrTMfNDnxU9/mwQh1R7diInO+b5d4zOW7s6AyFpJ/jN+8PG4
+         0mNHmJhuMDWF0/ZehslCYFB/sA0bRDFIBzwIc2ssX2CkHyCBur2A97k+yAq5AFMBduOP
+         WCIA==
+X-Gm-Message-State: AGRZ1gKiOWGXcP59d8cTtxxT3wUSKzY/j2+9T62AuJoghqng4BA7YylO
+        +v4gBJPOdF/f0sOWQ8lpojj3JQ==
+X-Google-Smtp-Source: AJdET5c5gYec42aFbvjnF+656sHtt9JGXk44h33X2zFJRGjjNKUSF5rjgiWMHUKJJJzN1cjZ4Se8rA==
+X-Received: by 2002:a17:902:744a:: with SMTP id e10mr6788269plt.304.1542327720721;
+        Thu, 15 Nov 2018 16:22:00 -0800 (PST)
+Received: from vader ([64.114.255.97])
+        by smtp.gmail.com with ESMTPSA id t3sm8676672pgv.31.2018.11.15.16.21.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 16:22:00 -0800 (PST)
+Date:   Thu, 15 Nov 2018 16:21:57 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 07/19] btrfs: use bvec_last_segment to get bio's last
+ page
+Message-ID: <20181116002157.GB23828@vader>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-8-ming.lei@redhat.com>
 MIME-Version: 1.0
-In-Reply-To: <6f8a7b97-d889-ce77-b5ad-d03dbf4986b0@intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115085306.9910-8-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 2018/11/15 23:40, Dave Hansen wrote:
-> On 11/14/18 3:00 PM, Aubrey Li wrote:
->> AVX-512 component has 3 states, only Hi16_ZMM state causes notable
->> frequency drop. Add per task Hi16_ZMM state tracking to context switch.
+On Thu, Nov 15, 2018 at 04:52:54PM +0800, Ming Lei wrote:
+> Preparing for supporting multi-page bvec.
 > 
-> Just curious, but is there any public documentation of this?  It seems
-> really odd to me that something using the same AVX-512 instructions on
-> some low-numbered registers would behave differently than the same
-> instructions on some high-numbered registers.  I'm not saying this is
-> wrong, but it's certainly counter-intuitive and I think that begs for
-> some more explanation.
+> Cc: Dave Chinner <dchinner@redhat.com>
+> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> Cc: Mike Snitzer <snitzer@redhat.com>
+> Cc: dm-devel@redhat.com
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Shaohua Li <shli@kernel.org>
+> Cc: linux-raid@vger.kernel.org
+> Cc: linux-erofs@lists.ozlabs.org
+> Cc: David Sterba <dsterba@suse.com>
+> Cc: linux-btrfs@vger.kernel.org
+> Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> Cc: linux-xfs@vger.kernel.org
+> Cc: Gao Xiang <gaoxiang25@huawei.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Theodore Ts'o <tytso@mit.edu>
+> Cc: linux-ext4@vger.kernel.org
+> Cc: Coly Li <colyli@suse.de>
+> Cc: linux-bcache@vger.kernel.org
+> Cc: Boaz Harrosh <ooo@electrozaur.com>
+> Cc: Bob Peterson <rpeterso@redhat.com>
+> Cc: cluster-devel@redhat.com
 
-Yes, Intel 64 and IA-32 Architectures software developer's Manual mentioned
-this in performance event CORE_POWER.LVL2_TURBO_LICENSE.
+Reviewed-by: Omar Sandoval <osandov@fb.com>
 
-"Core cycles where the core was running with power delivery for license
-level 2 (introduced in Skylake Server microarchitecture). This includes
-high current AVX 512-bit instructions."
-
-I translated license level 2 to frequency drop.
-
-Thanks,
--Aubrey
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  fs/btrfs/compression.c | 5 ++++-
+>  fs/btrfs/extent_io.c   | 5 +++--
+>  2 files changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+> index 2955a4ea2fa8..161e14b8b180 100644
+> --- a/fs/btrfs/compression.c
+> +++ b/fs/btrfs/compression.c
+> @@ -400,8 +400,11 @@ blk_status_t btrfs_submit_compressed_write(struct inode *inode, u64 start,
+>  static u64 bio_end_offset(struct bio *bio)
+>  {
+>  	struct bio_vec *last = bio_last_bvec_all(bio);
+> +	struct bio_vec bv;
+>  
+> -	return page_offset(last->bv_page) + last->bv_len + last->bv_offset;
+> +	bvec_last_segment(last, &bv);
+> +
+> +	return page_offset(bv.bv_page) + bv.bv_len + bv.bv_offset;
+>  }
+>  
+>  static noinline int add_ra_bio_pages(struct inode *inode,
+> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
+> index d228f706ff3e..5d5965297e7e 100644
+> --- a/fs/btrfs/extent_io.c
+> +++ b/fs/btrfs/extent_io.c
+> @@ -2720,11 +2720,12 @@ static int __must_check submit_one_bio(struct bio *bio, int mirror_num,
+>  {
+>  	blk_status_t ret = 0;
+>  	struct bio_vec *bvec = bio_last_bvec_all(bio);
+> -	struct page *page = bvec->bv_page;
+> +	struct bio_vec bv;
+>  	struct extent_io_tree *tree = bio->bi_private;
+>  	u64 start;
+>  
+> -	start = page_offset(page) + bvec->bv_offset;
+> +	bvec_last_segment(bvec, &bv);
+> +	start = page_offset(bv.bv_page) + bv.bv_offset;
+>  
+>  	bio->bi_private = NULL;
+>  
+> -- 
+> 2.9.5
+> 
