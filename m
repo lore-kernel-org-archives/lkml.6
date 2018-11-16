@@ -2,124 +2,107 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D771C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:34:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 951A3C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:36:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4BD462086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:34:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4BD462086A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 4E3042086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:36:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=thunk.org header.i=@thunk.org header.b="ybb4rWfw"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E3042086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mit.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390199AbeKQDrg (ORCPT
+        id S2390083AbeKQDtd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 22:47:36 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34864 "EHLO mx1.redhat.com"
+        Fri, 16 Nov 2018 22:49:33 -0500
+Received: from imap.thunk.org ([74.207.234.97]:39976 "EHLO imap.thunk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729140AbeKQDrf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 22:47:35 -0500
-Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id AD50458E27;
-        Fri, 16 Nov 2018 17:34:18 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 9A04960E1C;
-        Fri, 16 Nov 2018 17:34:12 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     linux-fsdevel@vger.kernel.org, viro@ZenIV.linux.org.uk,
-        LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [RFC PATCH ghak100 V1 2/2] audit: moar filter PATH records keyed on filesystem magic
-Date:   Fri, 16 Nov 2018 12:33:14 -0500
-Message-Id: <208a86c97cd93181ffd7db2e5f95da012ab41a48.1542149969.git.rgb@redhat.com>
-In-Reply-To: <cover.1542149969.git.rgb@redhat.com>
-References: <cover.1542149969.git.rgb@redhat.com>
-In-Reply-To: <cover.1542149969.git.rgb@redhat.com>
-References: <cover.1542149969.git.rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 16 Nov 2018 17:34:18 +0000 (UTC)
+        id S1729036AbeKQDtd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 22:49:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=thunk.org;
+         s=ef5046eb; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+        Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+        Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+        :Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+        List-Post:List-Owner:List-Archive;
+        bh=a3wvockeyFdBCdANJ0FWpvxXKlsz8M9B+g9hKXIk5ik=; b=ybb4rWfwKs+x0CtNS/ANm6jcZm
+        HlkLi9pgSmluEAPnzeRE6ZNBgZPMyKUPI7VRGf7yd66lt7peGGZpbOqvNIJz7YMTDMb/hun1XkgqT
+        kDj2F+7o9A7dLUhdvNwXGvmoo4xKJG7HbEVGKSaxHdcoBCqoFMDRSfHvX+rE8myiKCkU=;
+Received: from root (helo=callcc.thunk.org)
+        by imap.thunk.org with local-esmtp (Exim 4.89)
+        (envelope-from <tytso@thunk.org>)
+        id 1gNi24-0004sq-KD; Fri, 16 Nov 2018 17:35:52 +0000
+Received: by callcc.thunk.org (Postfix, from userid 15806)
+        id 3A5C47A47B5; Fri, 16 Nov 2018 12:35:51 -0500 (EST)
+Date:   Fri, 16 Nov 2018 12:35:51 -0500
+From:   "Theodore Y. Ts'o" <tytso@mit.edu>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Bart Van Assche <bvanassche@acm.org>, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Christoph Hellwig <hch@infradead.org>
+Subject: Re: [PATCH 0/3] SG_IO command filtering via sysfs
+Message-ID: <20181116173551.GG20617@thunk.org>
+Mail-Followup-To: "Theodore Y. Ts'o" <tytso@mit.edu>,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Bart Van Assche <bvanassche@acm.org>, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>,
+        Christoph Hellwig <hch@infradead.org>
+References: <1541867733-7836-1-git-send-email-pbonzini@redhat.com>
+ <20181110190521.GA2627@thunk.org>
+ <566bc821-f12a-f7c1-e7c7-99092807ee27@redhat.com>
+ <20181111141426.GA7377@thunk.org>
+ <98fe5cf7-722a-37d6-156d-842e8812e430@redhat.com>
+ <1542328654.100259.18.camel@acm.org>
+ <c819493c-2a45-4911-8879-310c910ee42a@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c819493c-2a45-4911-8879-310c910ee42a@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-SA-Exim-Connect-IP: <locally generated>
+X-SA-Exim-Mail-From: tytso@thunk.org
+X-SA-Exim-Scanned: No (on imap.thunk.org); SAEximRunCond expanded to false
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Like 42d5e37654e4 ("audit: filter PATH records keyed on filesystem magic")
+On Fri, Nov 16, 2018 at 08:01:29AM +0100, Paolo Bonzini wrote:
+> On 16/11/18 01:37, Bart Van Assche wrote:
+> > All user space interfaces in the Linux kernel for storage that I'm familiar
+> > with not only allow configuration of parameters but also make it easy to
+> > query which parameters have been configured. The existing sysfs and configfs
+> > interfaces demonstrate this. Using BPF to configure SG/IO access has a
+> > significant disadvantage, namely that it is very hard to figure out what has
+> > been configured. Figuring out what has been configured namely requires
+> > disassembling BPF. I'm not sure anyone will be enthusiast about this.
+> 
+> Well, that's a problem with BPF in general.  With great power comes
+> great obscurability.
 
-Any user or remote filesystem could become unavailable and effectively
-block on a forced unmount.
+You can also make the same complaint about kernel modules; that it's
+impossible to figure exactly what a kernel modules does without
+disassembling them.  However, you can a one-line description of what
+it does using modinfo:
 
-    -a always,exit -S umount2 -F key=umount2
+% modinfo async_pq
+filename:       /lib/modules/4.19.0-00022-g831156939ae8/kernel/crypto/async_tx/async_pq.ko
+license:        GPL
+description:    asynchronous raid6 syndrome generation/validation
+srcversion:     529102C736C4FED181C15A8
+depends:        raid6_pq,async_tx,async_xor
+retpoline:      Y
+intree:         Y
+name:           async_pq
+vermagic:       4.19.0-00022-g831156939ae8 SMP mod_unload modversions 
 
-Provide a method to ignore these user and remote filesystems to prevent
-them from being impossible to unmount.
-
-Extend the "AUDIT_FILTER_FS" filter that uses the field type
-AUDIT_FSTYPE keying off the filesystem 4-octet hexadecimal magic
-identifier to filter specific filesystems to cover audit_inode() to address
-this blockage.
-
-An example rule would look like:
-    -a never,filesystem -F fstype=0x517B -F key=ignore_smb
-    -a never,filesystem -F fstype=0x6969 -F key=ignore_nfs
-
-Arguably the better way to address this issue is to disable auditing
-processes that touch removable filesystems.
-
-Please see the github issue tracker
-https://github.com/linux-audit/audit-kernel/issues/100
-
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- kernel/auditsc.c | 23 +++++++++++++++++++++++
- 1 file changed, 23 insertions(+)
-
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index d39a7fbaf944..59d6d3fbc00e 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -1777,10 +1777,33 @@ void __audit_inode(struct filename *name, const struct dentry *dentry,
- 	struct inode *inode = d_backing_inode(dentry);
- 	struct audit_names *n;
- 	bool parent = flags & AUDIT_INODE_PARENT;
-+	struct audit_entry *e;
-+	struct list_head *list = &audit_filter_list[AUDIT_FILTER_FS];
-+	int i;
- 
- 	if (!context->in_syscall)
- 		return;
- 
-+	rcu_read_lock();
-+	if (!list_empty(list)) {
-+		list_for_each_entry_rcu(e, list, list) {
-+			for (i = 0; i < e->rule.field_count; i++) {
-+				struct audit_field *f = &e->rule.fields[i];
-+
-+				if (f->type == AUDIT_FSTYPE) {
-+					if (audit_comparator(inode->i_sb->s_magic,
-+					    f->op, f->val)) {
-+						if (e->rule.action == AUDIT_NEVER) {
-+							rcu_read_unlock();
-+							return;
-+						}
-+					}
-+				}
-+			}
-+		}
-+	}
-+	rcu_read_unlock();
-+
- 	if (!name)
- 		goto out_alloc;
- 
--- 
-1.8.3.1
-
+					       - Ted
