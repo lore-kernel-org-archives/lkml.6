@@ -2,73 +2,101 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9D518C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:14:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E64A2C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:15:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 59F402089D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:14:04 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 59F402089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id A95752087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:15:27 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2PscZ+O"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A95752087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389959AbeKQB0t (ORCPT
+        id S2389977AbeKQB2M (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 20:26:49 -0500
-Received: from mga06.intel.com ([134.134.136.31]:48029 "EHLO mga06.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728079AbeKQB0t (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 20:26:49 -0500
-X-Amp-Result: UNSCANNABLE
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 07:14:02 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="250282462"
-Received: from sfhansen-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.82])
-  by orsmga004.jf.intel.com with ESMTP; 16 Nov 2018 07:13:52 -0800
-Date:   Fri, 16 Nov 2018 17:13:51 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
-        Kai Huang <kai.huang@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 02/23] x86/cpufeatures: Add Intel-defined SGX feature
- bit
-Message-ID: <20181116151351.GB4244@linux.intel.com>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-3-jarkko.sakkinen@linux.intel.com>
- <20181116142840.GI20313@zn.tnic>
+        Fri, 16 Nov 2018 20:28:12 -0500
+Received: from mail-io1-f67.google.com ([209.85.166.67]:42452 "EHLO
+        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728079AbeKQB2M (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 20:28:12 -0500
+Received: by mail-io1-f67.google.com with SMTP id h19-v6so17292653iog.9
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 07:15:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=TJClaqXsMztzzxkvSYNmcX25WE9GvTF2Z0MgqIFayfg=;
+        b=B2PscZ+O4/Mn2zxlhAd1ths139lX50IVCepLyhB0B8/2JiYf/FC22hWM8h4WQlJsHr
+         7yVGukgH1Qi2WNrn5WToLj6FoEvlZVZ5q9xenbt80FGr1YJiDgRiqD6ESizR0to0OsxY
+         JYk5V4ol5Z5iQyxoW6+dboV5PMKsg6ZbMy5sg9GzlTsRZKVHQWsIK0hEChB4Q7OV6EeT
+         4Gv9GMnbEuwW91sj/dN2wTMROc6h64j9ah1G9/Tqor3UpT6zzOSNbXO3dhSoe8V0xVYl
+         kkObKnLQoxqjWVaXTe95DCghQ16cE0u0UyGL1g4Xna6Gwl7qNIEb1EclLZO+LHuvLf5e
+         xo+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=TJClaqXsMztzzxkvSYNmcX25WE9GvTF2Z0MgqIFayfg=;
+        b=RuCb8nAE4tE5xuxeznX/QUpYXb4EFzn2XQWKoU4i5cebIeDd7LYF2GrpK/EqfYnS4f
+         S8Wxjp8Y8yyrlxhc3j+4LfVz7hjSc3empUtsNtgySBLZE1VTIehi/YfRnCBmYCMZHm1c
+         CzSa2P+Y+auVGDRF77gQXNmSC4nF9U8o1SbiuY09hXvOTQt7F8JGfycnvi0sY2S9uoU3
+         DqlXjfO14L/uo3p7QPuOfx7/MAF+bN9ikdQEzFrBgiFN8GSLyXUUADkevj+ffFxX688D
+         D4oJakSGIbkkNpk51/vhL2qCinsIP96NlXdWZ8QYQnZGt7yOnbVllLcIUIP86Jb3MAGV
+         Qljw==
+X-Gm-Message-State: AA+aEWYmy0EuEOiJV36j+QpBzmDwKWeAM3XbSBjcgNsUplDgrAHN8c9c
+        CJ1wFku1bgkD+bEZWsB5aSMCovFWAq0NpxrZTzM=
+X-Google-Smtp-Source: AFSGD/VKz1l7PNHNhwQPh7qfuo9nrSTfT8yoQWSVrhhBo3X4J+TeDKCAHwrZL1rUvCI3V1bxhw59ziB/xasOz6mZZc4=
+X-Received: by 2002:a5e:db48:: with SMTP id r8-v6mr5489259iop.165.1542381325057;
+ Fri, 16 Nov 2018 07:15:25 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116142840.GI20313@zn.tnic>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181108144454.GA3797@hp-pavilion-15-notebook-pc-brajeswar>
+In-Reply-To: <20181108144454.GA3797@hp-pavilion-15-notebook-pc-brajeswar>
+From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Date:   Fri, 16 Nov 2018 20:45:11 +0530
+Message-ID: <CAFqtX7kba2UBiNoMhG79joLL2N1_Hup7y+xrKrYsesXwj6-grA@mail.gmail.com>
+Subject: Re: [PATCH] arm/mach-sa1100/hackkit.c: Remove duplicate header
+To:     linux@armlinux.org.uk
+Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 03:28:40PM +0100, Borislav Petkov wrote:
-> Reviewed-by: Borislav Petkov <bp@suse.de>
+On Thu, Nov 8, 2018 at 8:14 PM Brajeswar Ghosh
+<brajeswar.linux@gmail.com> wrote:
+>
+> Remove linux/tty.h which is included more than once
+>
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
 
-Thank you, the very first reviewed-by 8-)
+Any comment on this patch?
 
-/Jarkko
+> ---
+>  arch/arm/mach-sa1100/hackkit.c | 1 -
+>  1 file changed, 1 deletion(-)
+>
+> diff --git a/arch/arm/mach-sa1100/hackkit.c b/arch/arm/mach-sa1100/hackkit.c
+> index 643d5f2d9af9..0016d25e7deb 100644
+> --- a/arch/arm/mach-sa1100/hackkit.c
+> +++ b/arch/arm/mach-sa1100/hackkit.c
+> @@ -22,7 +22,6 @@
+>  #include <linux/serial_core.h>
+>  #include <linux/mtd/mtd.h>
+>  #include <linux/mtd/partitions.h>
+> -#include <linux/tty.h>
+>  #include <linux/gpio.h>
+>  #include <linux/leds.h>
+>  #include <linux/platform_device.h>
+> --
+> 2.17.1
+>
