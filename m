@@ -2,116 +2,152 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AC8A3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:56:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 83A8DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:58:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6617F2086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:56:58 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Yd9FH5Gl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6617F2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 5656B2086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:58:08 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5656B2086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389723AbeKQAJ2 (ORCPT
+        id S2389829AbeKQAKh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 19:09:28 -0500
-Received: from mail-wm1-f67.google.com ([209.85.128.67]:38333 "EHLO
-        mail-wm1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727727AbeKQAJ1 (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 19:09:27 -0500
-Received: by mail-wm1-f67.google.com with SMTP id f2-v6so21123344wme.3;
-        Fri, 16 Nov 2018 05:56:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id;
-        bh=8jGYlVSxPueClcYXJTbQ0gvKhk4i7gRBArO/gO+N3lc=;
-        b=Yd9FH5GlOIaU37tAKUN9VLAuwMHMLyiIz2XEm0ZnViyXj7Hnd/OHuBB6opNpdASOU7
-         6NvBz1DWQebBpGmDPTeJClfejyEhvSs3drkFTouv9UFKUfUN8dMxU18hS+I+FZrt+KiF
-         6AdSYfen6yjykcevlgaUhmTbNT1HWiGTP28JloCiiq3wgglUyU+DuEXg/w9UHyvV1WW6
-         GJB7LSOzPqCJ+8hqJDdtX5lmnoS9wtnAkJu1VJcUZkAxQIFXxYVYRS3gOojhJFRGzAQR
-         qpLASDFu9M53AEz83Af1Xuc4ker5WbVjqhY6H7l6cZr0c9tZXDmvuGU4ErbfSYNHH139
-         Ev0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=8jGYlVSxPueClcYXJTbQ0gvKhk4i7gRBArO/gO+N3lc=;
-        b=QyCN/0SkWPwazjqHYc1x0CMo1zjmBKUp2BLp89UJY0pXePpvfnk3vXAOvCrc1rH8pB
-         RoZR62DKbf7z6Y8eAMnHSrRh7xCedmxKek5aig+7YulIdSOIb7sCT8vFhQZtZY0fA1o6
-         mO9cmtreEvFvOD8agUhsIWAPLtYLfMG0xVYXmDs5NA1z/nzy4yfV0vN0pKzULP0mHzyY
-         9+mk9PsIDLo0dMmECsuCaV6bGvRwCk+8Xe4IvY6WRezXzvTiQYW0RNDk1SLZL0gDiRQm
-         +0XdBUPM6dMujaA2aLWzo3Zm6sp3RtQk7qe1PECHWudSgfurot5DQWa/yaoGCyC7yqgv
-         JJlA==
-X-Gm-Message-State: AGRZ1gKhTqU2LIHfZ6BrlsvAV97fAjE+0povKHafDpSDqhYH/U5q0wXC
-        Lle5rKC/JjXRr8u1/5uZnOk=
-X-Google-Smtp-Source: AJdET5cIbpJ0vIyWl9KqGJ7WHxruZwdPiuPcSd913nmJIx3GXaJuIpttdfm3tBfqKwqsmpC8hZaKkA==
-X-Received: by 2002:a1c:9c4:: with SMTP id 187-v6mr8868564wmj.119.1542376615404;
-        Fri, 16 Nov 2018 05:56:55 -0800 (PST)
-Received: from NewMoon.iit.local ([90.147.180.254])
-        by smtp.gmail.com with ESMTPSA id j40-v6sm22673692wre.48.2018.11.16.05.56.54
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 05:56:54 -0800 (PST)
-From:   Andrea Merello <andrea.merello@gmail.com>
-To:     vkoul@kernel.org, dan.j.williams@intel.com,
-        dmaengine@vger.kernel.org
-Cc:     linux-kernel@vger.kernel.org, radhey.shyam.pandey@xilinx.com,
-        Andrea Merello <andrea.merello@gmail.com>
-Subject: [PATCH] dmaengine: fix dmaengine_desc_callback_valid() doesn't check for callback_result
-Date:   Fri, 16 Nov 2018 14:56:28 +0100
-Message-Id: <20181116135628.19388-1-andrea.merello@gmail.com>
-X-Mailer: git-send-email 2.17.1
+        Fri, 16 Nov 2018 19:10:37 -0500
+Received: from verein.lst.de ([213.95.11.211]:50112 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727854AbeKQAKh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 19:10:37 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id EF8E968D60; Fri, 16 Nov 2018 14:58:03 +0100 (CET)
+Date:   Fri, 16 Nov 2018 14:58:03 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 18/19] block: kill QUEUE_FLAG_NO_SG_MERGE
+Message-ID: <20181116135803.GN3165@lst.de>
+References: <20181115085306.9910-1-ming.lei@redhat.com> <20181115085306.9910-19-ming.lei@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115085306.9910-19-ming.lei@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are two flavors of DMA completion callbacks: callback() and
-callback_result(); the latter takes an additional parameter that carries
-result information.
+On Thu, Nov 15, 2018 at 04:53:05PM +0800, Ming Lei wrote:
+> Since bdced438acd83ad83a6c ("block: setup bi_phys_segments after splitting"),
+> physical segment number is mainly figured out in blk_queue_split() for
+> fast path, and the flag of BIO_SEG_VALID is set there too.
+> 
+> Now only blk_recount_segments() and blk_recalc_rq_segments() use this
+> flag.
+> 
+> Basically blk_recount_segments() is bypassed in fast path given BIO_SEG_VALID
+> is set in blk_queue_split().
+> 
+> For another user of blk_recalc_rq_segments():
+> 
+> - run in partial completion branch of blk_update_request, which is an unusual case
+> 
+> - run in blk_cloned_rq_check_limits(), still not a big problem if the flag is killed
+> since dm-rq is the only user.
+> 
+> Multi-page bvec is enabled now, QUEUE_FLAG_NO_SG_MERGE doesn't make sense any more.
+> 
+> Cc: Dave Chinner <dchinner@redhat.com>
+> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> Cc: Mike Snitzer <snitzer@redhat.com>
+> Cc: dm-devel@redhat.com
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Shaohua Li <shli@kernel.org>
+> Cc: linux-raid@vger.kernel.org
+> Cc: linux-erofs@lists.ozlabs.org
+> Cc: David Sterba <dsterba@suse.com>
+> Cc: linux-btrfs@vger.kernel.org
+> Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> Cc: linux-xfs@vger.kernel.org
+> Cc: Gao Xiang <gaoxiang25@huawei.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Theodore Ts'o <tytso@mit.edu>
+> Cc: linux-ext4@vger.kernel.org
+> Cc: Coly Li <colyli@suse.de>
+> Cc: linux-bcache@vger.kernel.org
+> Cc: Boaz Harrosh <ooo@electrozaur.com>
+> Cc: Bob Peterson <rpeterso@redhat.com>
+> Cc: cluster-devel@redhat.com
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  block/blk-merge.c      | 31 ++++++-------------------------
+>  block/blk-mq-debugfs.c |  1 -
+>  block/blk-mq.c         |  3 ---
+>  drivers/md/dm-table.c  | 13 -------------
+>  include/linux/blkdev.h |  1 -
+>  5 files changed, 6 insertions(+), 43 deletions(-)
+> 
+> diff --git a/block/blk-merge.c b/block/blk-merge.c
+> index 153a659fde74..06be298be332 100644
+> --- a/block/blk-merge.c
+> +++ b/block/blk-merge.c
+> @@ -351,8 +351,7 @@ void blk_queue_split(struct request_queue *q, struct bio **bio)
+>  EXPORT_SYMBOL(blk_queue_split);
+>  
+>  static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+> -					     struct bio *bio,
+> -					     bool no_sg_merge)
+> +					     struct bio *bio)
+>  {
+>  	struct bio_vec bv, bvprv = { NULL };
+>  	int cluster, prev = 0;
+> @@ -379,13 +378,6 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+>  	nr_phys_segs = 0;
+>  	for_each_bio(bio) {
+>  		bio_for_each_bvec(bv, bio, iter) {
+> -			/*
+> -			 * If SG merging is disabled, each bio vector is
+> -			 * a segment
+> -			 */
+> -			if (no_sg_merge)
+> -				goto new_segment;
+> -
+>  			if (prev && cluster) {
+>  				if (seg_size + bv.bv_len
+>  				    > queue_max_segment_size(q))
+> @@ -420,27 +412,16 @@ static unsigned int __blk_recalc_rq_segments(struct request_queue *q,
+>  
+>  void blk_recalc_rq_segments(struct request *rq)
+>  {
+> -	bool no_sg_merge = !!test_bit(QUEUE_FLAG_NO_SG_MERGE,
+> -			&rq->q->queue_flags);
+> -
+> -	rq->nr_phys_segments = __blk_recalc_rq_segments(rq->q, rq->bio,
+> -			no_sg_merge);
+> +	rq->nr_phys_segments = __blk_recalc_rq_segments(rq->q, rq->bio);
 
-Most dmaengine helper functions that work with callbacks take care of both
-flavors i.e. dmaengine_desc_get_callback_invoke() first checks for
-callback_result() to be not NULL, and eventually it calls this one;
-otherwise it goes on checking for callback().
+Can we rename __blk_recalc_rq_segments to blk_recalc_rq_segments
+can kill the old blk_recalc_rq_segments now?
 
-It seems however that dmaengine_desc_callback_valid() does not care about
-callback_result(), and it returns false in case callback() is NULL but
-callback_result() is not; unless there is a (hidden to me) reason for doing
-so then I'd say this is wrong.
+Otherwise looks fine:
 
-I've hit this by using a DMA controller driver (xilinx_dma) that doesn't
-trigger any callback invocation unless dmaengine_desc_callback_valid()
-returns true, while I had only callback_result() implemented in my client
-driver (which AFAICT is always fine since dmaengine documentation says that
-callback() will be deprecated).
-
-This patch fixes this by making dmaengine_desc_callback_valid() to return
-true in the said scenario.
-
-Signed-off-by: Andrea Merello <andrea.merello@gmail.com>
----
- drivers/dma/dmaengine.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/dma/dmaengine.h b/drivers/dma/dmaengine.h
-index 501c0b063f85..0ba2c1f3c55d 100644
---- a/drivers/dma/dmaengine.h
-+++ b/drivers/dma/dmaengine.h
-@@ -168,7 +168,7 @@ dmaengine_desc_get_callback_invoke(struct dma_async_tx_descriptor *tx,
- static inline bool
- dmaengine_desc_callback_valid(struct dmaengine_desc_callback *cb)
- {
--	return (cb->callback) ? true : false;
-+	return (cb->callback || cb->callback_result);
- }
- 
- #endif
--- 
-2.17.1
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
