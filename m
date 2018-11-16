@@ -2,112 +2,113 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7D38BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 08:26:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C1110C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 08:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4567A2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 08:26:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4567A2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+	by mail.kernel.org (Postfix) with ESMTP id 87AA0208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 08:29:10 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87AA0208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amlogic.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727634AbeKPSh0 (ORCPT
+        id S1727851AbeKPSk2 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 13:37:26 -0500
-Received: from metis.ext.pengutronix.de ([85.220.165.71]:49723 "EHLO
-        metis.ext.pengutronix.de" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727410AbeKPSh0 (ORCPT
+        Fri, 16 Nov 2018 13:40:28 -0500
+Received: from mail-sz2.amlogic.com ([211.162.65.114]:56017 "EHLO
+        mail-sz2.amlogic.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727405AbeKPSk1 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 13:37:26 -0500
-Received: from ptx.hi.pengutronix.de ([2001:67c:670:100:1d::c0])
-        by metis.ext.pengutronix.de with esmtps (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
-        (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gNZRu-0003yf-U0; Fri, 16 Nov 2018 09:25:58 +0100
-Received: from ukl by ptx.hi.pengutronix.de with local (Exim 4.89)
-        (envelope-from <ukl@pengutronix.de>)
-        id 1gNZRt-0000WN-4u; Fri, 16 Nov 2018 09:25:57 +0100
-Date:   Fri, 16 Nov 2018 09:25:57 +0100
-From:   Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= 
-        <u.kleine-koenig@pengutronix.de>
-To:     Lothar =?iso-8859-1?Q?Wa=DFmann?= <LW@KARO-electronics.de>
-Cc:     Thierry Reding <thierry.reding@gmail.com>,
-        =?utf-8?B?Vm9rw6HEjQ==?= Michal <Michal.Vokac@ysoft.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-        "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>,
-        Lukasz Majewski <l.majewski@majess.pl>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        "kernel@pengutronix.de" <kernel@pengutronix.de>,
-        Fabio Estevam <fabio.estevam@nxp.com>,
-        Linus Walleij <linus.walleij@linaro.org>
-Subject: Re: [RCF PATCH,v2,2/2] pwm: imx: Configure output to GPIO in
- disabled state
-Message-ID: <20181116082557.l2ljgu3hsu7tvdci@pengutronix.de>
-References: <20181107150125.7cpd4v5t7yi2254c@pengutronix.de>
- <4fbb7307-df01-d7bd-f2e2-e05e6d17807d@ysoft.com>
- <20181108191855.zuon3ecv4yjfbs7g@pengutronix.de>
- <283cfef3-16d0-8bd4-e306-6e34d44c3a86@ysoft.com>
- <20181109165555.vqbiwh4hlcnozdna@pengutronix.de>
- <20181114113449.GB2620@ulmo>
- <20181114215120.vddykljqyavm64wj@pengutronix.de>
- <20181115152545.GA8611@ulmo>
- <20181115203733.qvonika6yhn2bsnb@pengutronix.de>
- <20181116083430.7f1d8452@ipc1.ka-ro>
+        Fri, 16 Nov 2018 13:40:27 -0500
+Received: from [10.28.18.44] (10.28.18.44) by mail-sz2.amlogic.com
+ (10.28.11.6) with Microsoft SMTP Server (TLS) id 15.0.1320.4; Fri, 16 Nov
+ 2018 16:29:07 +0800
+Subject: Re: [PATCH v6 2/2] mtd: rawnand: meson: add support for Amlogic NAND
+ flash controller
+To:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        Miquel Raynal <miquel.raynal@bootlin.com>
+CC:     Rob Herring <robh@kernel.org>, Hanjie Lin <hanjie.lin@amlogic.com>,
+        Victor Wan <victor.wan@amlogic.com>,
+        Jianxin Pan <jianxin.pan@amlogic.com>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+        Richard Weinberger <richard@nod.at>,
+        Yixun Lan <yixun.lan@amlogic.com>,
+        <linux-kernel@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Jian Hu <jian.hu@amlogic.com>, <linux-mtd@lists.infradead.org>,
+        Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        <linux-amlogic@lists.infradead.org>,
+        Brian Norris <computersforpeace@gmail.com>,
+        David Woodhouse <dwmw2@infradead.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Jerome Brunet <jbrunet@baylibre.com>,
+        Wolfram Sang <wsa@the-dreams.de>
+References: <1541090542-19618-1-git-send-email-jianxin.pan@amlogic.com>
+ <1541090542-19618-3-git-send-email-jianxin.pan@amlogic.com>
+ <20181105165321.7ea2b45f@bbrezillon>
+ <a571904e-6296-bf62-e1fe-e25bf90040bb@amlogic.com>
+ <20181106102851.61deb97a@bbrezillon>
+ <ff02373e-c97b-182d-5b43-83d1e8f6d51a@amlogic.com>
+ <20181106112206.65a70a81@bbrezillon> <20181112171351.4ac3506b@xps13>
+ <20181112175416.247e3203@bbrezillon> <20181112184518.6c02ac6d@bbrezillon>
+ <27769252-ac5e-e787-6792-d6a06e7af0e4@amlogic.com>
+ <20181115140400.3934effe@xps13> <20181115140905.40011b4b@bbrezillon>
+From:   Liang Yang <liang.yang@amlogic.com>
+Message-ID: <7e36bf4c-69a1-a570-f086-75f8ad53d518@amlogic.com>
+Date:   Fri, 16 Nov 2018 16:29:07 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181116083430.7f1d8452@ipc1.ka-ro>
-User-Agent: NeoMutt/20170113 (1.7.2)
-X-SA-Exim-Connect-IP: 2001:67c:670:100:1d::c0
-X-SA-Exim-Mail-From: ukl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.ext.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <20181115140905.40011b4b@bbrezillon>
+Content-Type: text/plain; charset="windows-1252"; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.28.18.44]
+X-ClientProxiedBy: mail-sz2.amlogic.com (10.28.11.6) To mail-sz2.amlogic.com
+ (10.28.11.6)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 08:34:30AM +0100, Lothar Waßmann wrote:
-> Uwe Kleine-König <u.kleine-koenig@pengutronix.de> wrote:
+Hi Boris and Miquel,
+
+understand. i will move helpers into nfc driver to avoid some errors 
+when sending the patch.
+
+On 2018/11/15 21:09, Boris Brezillon wrote:
+> On Thu, 15 Nov 2018 14:04:00 +0100
+> Miquel Raynal <miquel.raynal@bootlin.com> wrote:
 > 
-> > Hello Thierry,
-> > 
-> > On Thu, Nov 15, 2018 at 04:25:45PM +0100, Thierry Reding wrote:
-> > > On Wed, Nov 14, 2018 at 10:51:20PM +0100, Uwe Kleine-König wrote:  
-> > > > On Wed, Nov 14, 2018 at 12:34:49PM +0100, Thierry Reding wrote:  
-> [...]
-> > > > Also dts writes don't need to lookup the needed GPIO numbers and pinctrl.  
-> > > 
-> > > Just to clarify: I don't think that we need to get the GPIO number
-> > > involved in this case, because we don't have to reconfigure the pin as
-> > > GPIO to make this work. The only reason that Michal's proposal did that
-> > > is because that was believed to be necessary. But if the pin can just be
-> > > configured with a 100k pull-up, that's enough to pull the pin high when
-> > > we need it.  
-> > 
-> > Unless the gpio happens to be configured as output at the wrong value.
-> > Further I'm not sure if the pwm in disabled state actively pulls to 0
-> > and if in this state the PU of the pin is good enough to ensure a one
-> > here. That would need verification first.
->
-> No. You can disable the output driver via pinctrl, so that only the
-> selected pull-up/down is relevant. The pin function and GPIO register
-> settings don't matter at all in this case.
-
-Is this about DSE=HI-Z in the pad control register? I didn't know about
-this. I see this exists on i.MX6 but not on i.MX25. Also i.MX51 doesn't
-seem to have this feature.
-
-Best regards
-Uwe
-
--- 
-Pengutronix e.K.                           | Uwe Kleine-König            |
-Industrial Linux Solutions                 | http://www.pengutronix.de/  |
+>> Hi Liang,
+>>
+>> Liang Yang <liang.yang@amlogic.com> wrote on Thu, 15 Nov 2018 19:25:07
+>> +0800:
+>>
+>>> Hi Boris,
+>>>
+>>> I have implemented dma access base on these helpers you provided below.
+>>> we prepare to send v7 version now, so when will these helpers be pushed?
+>>
+>> Thanks for your work. You can send the v7 so we will have a look at the
+>> overall driver; but since we raised the DMA buffers issue we had a
+>> discussion with Boris about how to handle them and I think we are going
+>> to adopt the same solution as Wolfram in the I2C subsystem: manual
+>> flagging. Sadly, this is probably the best we can do to ensure proper
+>> DMA support.
+>>
+>> There is nothing set is stone yet but I started a small rework to
+>> handle MTD operations differently (and add a DMA_SAFE flag), you can
+>> have a look there [1]. Don't base your work on it for now as it is just
+>> a preliminary version, subject to big changes.
+> 
+> In order to not block the driver, I'd suggest that you move the helper
+> I proposed directly into your driver and prefix them with 'meson_'.
+> 
+> .
+> 
