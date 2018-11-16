@@ -7,67 +7,66 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 948F4C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E1CAEC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 50ABB20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:32 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A95F020892
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:35 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="auctwtug"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 50ABB20892
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="jW92B1Vz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A95F020892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389633AbeKPURI (ORCPT
+        id S2389648AbeKPURL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 15:17:08 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:37164 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389504AbeKPURH (ORCPT
+        Fri, 16 Nov 2018 15:17:11 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:45659 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389504AbeKPURL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 15:17:07 -0500
-Received: by mail-pg1-f194.google.com with SMTP id 80so10406363pge.4
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:05:28 -0800 (PST)
+        Fri, 16 Nov 2018 15:17:11 -0500
+Received: by mail-pg1-f195.google.com with SMTP id y4so10393171pgc.12
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:05:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=om0H71tufNAx0r7YflYDpC1gYfbPSxJIkzk36iVdtAw=;
-        b=auctwtugckjHOD5UYwG5YZKu9lugfvTLsmETpIWATYFmmRKSoMz8hKoNZJg1vRIqcc
-         /SVMWzBdcg7V3+I8AUw8f2GHCNQ+v7i9aAXAF4QWrcOQyLan24bCiBP7wKBz7+Ufx6h2
-         wgVPCk/H/6x9eUb2oDprX/qc/SAKcd8l7q3i0=
+        bh=KuQ2y36Xrogh3AFeo+w7wq6zdpbFBC/erJbwrEPtLJs=;
+        b=jW92B1VzqoIqDzqfecPcu+sFg3tYWXLZGvNmhlicA/IAPUk2KrDwq6Cd/dXpVmP/Ch
+         tc8tdaerC+mPnSf3WEy6lguWwJvNA8r2ShnOFqXsyYp0ajfqyXaQMmd3DuZxDcpGVjul
+         t/MXnPBObHOJLawXqGPkrM4efmpv8szog/bXc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=om0H71tufNAx0r7YflYDpC1gYfbPSxJIkzk36iVdtAw=;
-        b=WwNYKexsG6fCEbvFhD6NL6W+ejGUySBBbgICHvme9JasmBAGkPx8ZtLJJknDLwdzDP
-         di01jlS/m/0ZZJS0uHgR1OEm+5Plr4akEHhgGHcWb7kuSnshlFrTqVzKV5KLP4A8h7cI
-         lGMzJDQB5bCp8xqIbll92TT6vtwIREAOxnSx7Ck7DcHMwkb+nlIywDs2BD/bvqFu8VD4
-         1ot1d4kauWrXXSTLyastOozyq5SQPSf/u4Byee8IgW00vhX+B2MIaeUNdzPXbdvARRtd
-         iRZYNbHw1F0bb1pIkpQtR+dZKLkZP3FBaN6+8ttUBGNVI90p8lgCTgk1i8w3nFW3/wXZ
-         rMyg==
-X-Gm-Message-State: AGRZ1gLMNlTlrTe9GPQLHgAvfrdeq2WN3tuSyhvmsQBhiiKc6zMAuxNi
-        fMzTKsrwGaQZnNUUIGKIPtKHoA==
-X-Google-Smtp-Source: AJdET5cb467S8Az2pHGP9fdJoTx6K+t306shHiBHqvOLREarsw3+f0vbG0GrtEiBuTosP1V5I0zlhw==
-X-Received: by 2002:a62:178c:: with SMTP id 134-v6mr10578182pfx.29.1542362728307;
-        Fri, 16 Nov 2018 02:05:28 -0800 (PST)
+        bh=KuQ2y36Xrogh3AFeo+w7wq6zdpbFBC/erJbwrEPtLJs=;
+        b=E19ppKjgRZW2NZMD0fgCUM33MtUXWRGmC4kqCFw7d/CzNTxI6vDDwuBemvizVyuIL3
+         MIpVFgEMb6F7ssDkgnqu2LRF0CrGNxFnO4c4hz4LdBvKMngC3sQ7XxRAbndmEl3L3tyi
+         RSCyA5zY7Z+IQNP32jlrHJK64O6OH0Jbi/m7c9VUETHWKTUr9WZpYjjG6zHbd0kEVUov
+         ySHiNwwyx6bR5f6CyJENIKnS7wxqpqp2B5sXCNNml+r3RedYJTNl9WfxG0tPeIBXWIr4
+         U0Xg1NSbtVvTNDnRtRMMp/W8juo/Fq4snOit04qm0sJkYE2FPvaLakPReNHS3CMhwSmw
+         ARYg==
+X-Gm-Message-State: AGRZ1gIYerG+WpWYR5QR5QxtieudL4a/VE8OrBhpldAXEH0iuINPZ5oI
+        nijVupvrASMLkjX9IOvxyyxTeg==
+X-Google-Smtp-Source: AJdET5cQ/pFNqQDeGVqoVWAXo3OsGpLnmRROYg1543bE0SKQ5rAbtrwuV09x3/9tqL5x2ckwMAUTtA==
+X-Received: by 2002:a63:5153:: with SMTP id r19mr9270294pgl.281.1542362733085;
+        Fri, 16 Nov 2018 02:05:33 -0800 (PST)
 Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id c7-v6sm37915148pfh.25.2018.11.16.02.05.27
+        by smtp.gmail.com with ESMTPSA id 79sm29801208pge.66.2018.11.16.02.05.31
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 02:05:27 -0800 (PST)
+        Fri, 16 Nov 2018 02:05:32 -0800 (PST)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>, arm@kernel.org,
-        Heiko Stuebner <heiko@sntech.de>
+        Masahiro Yamada <yamada.masahiro@socionext.com>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/10] ARM64: dts: rockchip: Add all CPUs in cooling maps
-Date:   Fri, 16 Nov 2018 15:34:32 +0530
-Message-Id: <ee0bd5fb56652141e5ce23927b258b1779844af6.1542362530.git.viresh.kumar@linaro.org>
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 10/10] ARM64: dts: uniphier: Add all CPUs in cooling maps
+Date:   Fri, 16 Nov 2018 15:34:33 +0530
+Message-Id: <c759699a44189aed078186fd19089d2f44d988e3.1542362530.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
 In-Reply-To: <cover.1542362530.git.viresh.kumar@linaro.org>
 References: <cover.1542362530.git.viresh.kumar@linaro.org>
@@ -94,121 +93,28 @@ points.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/arm64/boot/dts/rockchip/rk3328.dtsi          |  5 ++++-
- arch/arm64/boot/dts/rockchip/rk3368.dtsi          | 15 ++++++++++++---
- arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts |  8 ++++++--
- arch/arm64/boot/dts/rockchip/rk3399.dtsi          | 12 +++++++++---
- 4 files changed, 31 insertions(+), 9 deletions(-)
+ arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3328.dtsi b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-index e1a33dd981e0..ecd7f19c3542 100644
---- a/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3328.dtsi
-@@ -479,7 +479,10 @@
+diff --git a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
+index d7e2d8969601..4a0c46cb11cd 100644
+--- a/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
++++ b/arch/arm64/boot/dts/socionext/uniphier-ld20.dtsi
+@@ -206,13 +206,10 @@
  			cooling-maps {
  				map0 {
- 					trip = <&target>;
--					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+ 					trip = <&cpu_alert>;
+-					cooling-device = <&cpu0
+-					    THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+-				};
+-				map1 {
+-					trip = <&cpu_alert>;
+-					cooling-device = <&cpu2
+-					    THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
 +					cooling-device = <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
 +							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
 +							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
 +							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 					contribution = <4096>;
- 				};
- 			};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3368.dtsi b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-index 9c24de1ba43c..7014d10b954c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3368.dtsi
-@@ -426,12 +426,18 @@
- 				map0 {
- 					trip = <&cpu_alert0>;
- 					cooling-device =
--					<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_b1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_b2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_b3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 				map1 {
- 					trip = <&cpu_alert1>;
- 					cooling-device =
--					<&cpu_l0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					<&cpu_l0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_l1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_l2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_l3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 			};
- 		};
-@@ -459,7 +465,10 @@
- 				map0 {
- 					trip = <&gpu_alert0>;
- 					cooling-device =
--					<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_b1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_b2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_b3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 			};
- 		};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-index 2cc7c47d6a85..81e73103fa78 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-gru-kevin.dts
-@@ -118,13 +118,17 @@
- 			map0 {
- 				trip = <&ppvar_bigcpu_alert>;
- 				cooling-device =
--					<&cpu_l0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					<&cpu_l0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_l1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_l2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_l3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				contribution = <4096>;
- 			};
- 			map1 {
- 				trip = <&ppvar_bigcpu_alert>;
- 				cooling-device =
--					<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+					<&cpu_b1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				contribution = <1024>;
- 			};
- 		};
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-index 99e7f65c1779..d4ebffc28953 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-@@ -770,13 +770,18 @@
- 				map0 {
- 					trip = <&cpu_alert0>;
- 					cooling-device =
--						<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+						<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu_b1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 				map1 {
- 					trip = <&cpu_alert1>;
- 					cooling-device =
- 						<&cpu_l0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
--						<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+						<&cpu_l1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu_l2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu_l3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu_b1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
- 			};
- 		};
-@@ -804,7 +809,8 @@
- 				map0 {
- 					trip = <&gpu_alert0>;
- 					cooling-device =
--						<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+						<&cpu_b0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+						<&cpu_b1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
  				};
  			};
  		};
