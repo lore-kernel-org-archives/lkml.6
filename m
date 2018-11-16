@@ -2,81 +2,78 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3DBD7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:31:11 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 60CB4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:34:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0A2802086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:31:11 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0A2802086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=c-s.fr
+	by mail.kernel.org (Postfix) with ESMTP id 3202B2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:34:11 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3202B2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389906AbeKQDoZ (ORCPT
+        id S2390108AbeKQDr0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 22:44:25 -0500
-Received: from pegase1.c-s.fr ([93.17.236.30]:48154 "EHLO pegase1.c-s.fr"
+        Fri, 16 Nov 2018 22:47:26 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:59416 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729036AbeKQDoZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 22:44:25 -0500
-Received: from localhost (mailhub1-int [192.168.12.234])
-        by localhost (Postfix) with ESMTP id 42xQHt5FC9z9vGlC;
-        Fri, 16 Nov 2018 18:31:06 +0100 (CET)
-X-Virus-Scanned: Debian amavisd-new at c-s.fr
-Received: from pegase1.c-s.fr ([192.168.12.234])
-        by localhost (pegase1.c-s.fr [192.168.12.234]) (amavisd-new, port 10024)
-        with ESMTP id YR8AwZ7gqPNH; Fri, 16 Nov 2018 18:31:06 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-        by pegase1.c-s.fr (Postfix) with ESMTP id 42xQHt4dk8z9vGl5;
-        Fri, 16 Nov 2018 18:31:06 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 873998B91D;
-        Fri, 16 Nov 2018 18:31:08 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-        by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-        with ESMTP id 0VYfJiC49_Kx; Fri, 16 Nov 2018 18:31:08 +0100 (CET)
-Received: from po14163vm.idsi0.si.c-s.fr (po15451.idsi0.si.c-s.fr [172.25.231.2])
-        by messagerie.si.c-s.fr (Postfix) with ESMTP id 62B0C8B8C0;
-        Fri, 16 Nov 2018 18:31:08 +0100 (CET)
-Received: by po14163vm.idsi0.si.c-s.fr (Postfix, from userid 0)
-        id 5437B69A60; Fri, 16 Nov 2018 17:31:08 +0000 (UTC)
-Message-Id: <f43ca1b7b458d78efc798bf50c335bcab2de4c22.1542389457.git.christophe.leroy@c-s.fr>
-From:   Christophe Leroy <christophe.leroy@c-s.fr>
-Subject: [PATCH] powerpc/xmon: fix dump_segments()
-To:     Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Paul Mackerras <paulus@samba.org>,
-        Michael Ellerman <mpe@ellerman.id.au>
-Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Date:   Fri, 16 Nov 2018 17:31:08 +0000 (UTC)
+        id S1729140AbeKQDr0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 22:47:26 -0500
+Received: from smtp.corp.redhat.com (int-mx02.intmail.prod.int.phx2.redhat.com [10.5.11.12])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 7019C3097065;
+        Fri, 16 Nov 2018 17:34:09 +0000 (UTC)
+Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 53A9360CBA;
+        Fri, 16 Nov 2018 17:34:01 +0000 (UTC)
+From:   Richard Guy Briggs <rgb@redhat.com>
+To:     linux-fsdevel@vger.kernel.org, viro@ZenIV.linux.org.uk,
+        LKML <linux-kernel@vger.kernel.org>,
+        Linux-Audit Mailing List <linux-audit@redhat.com>
+Cc:     Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
+        Steve Grubb <sgrubb@redhat.com>,
+        Richard Guy Briggs <rgb@redhat.com>
+Subject: [RFC PATCH ghak100 V1 0/2] audit: avoid umount hangs on missing mount
+Date:   Fri, 16 Nov 2018 12:33:12 -0500
+Message-Id: <cover.1542149969.git.rgb@redhat.com>
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.12
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.43]); Fri, 16 Nov 2018 17:34:09 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-mfsrin() takes segment num from bits 0-3
+On user and remote filesystems, a forced umount can still hang due to
+attemting to fetch the fcaps of a mounted filesystem that is no longer
+available.
 
-Signed-off-by: Christophe Leroy <christophe.leroy@c-s.fr>
----
- arch/powerpc/xmon/xmon.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+These two patches take different approaches to address this, one by
+avoiding the lookup when the MNT_FORCE flag is included, the other by
+providing a method to filter out auditing specified types of filesystems.
 
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index 36b8dc47a3c3..b2fe422ffffc 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -3502,7 +3502,7 @@ void dump_segments(void)
- 
- 	printf("sr0-15 =");
- 	for (i = 0; i < 16; ++i)
--		printf(" %x", mfsrin(i));
-+		printf(" %x", mfsrin(i << 28));
- 	printf("\n");
- }
- #endif
+This can happen on ceph, cifs, 9p, lustre, fuse (gluster) or NFS.
+
+Arguably the better way to address this issue is to disable auditing
+processes that touch removable filesystems.
+Please see the github issue tracker
+https://github.com/linux-audit/audit-kernel/issues/100
+
+Richard Guy Briggs (2):
+  audit: avoid fcaps on MNT_FORCE
+  audit: moar filter PATH records keyed on filesystem magic
+
+ fs/namei.c            |  2 +-
+ fs/namespace.c        |  3 +++
+ include/linux/audit.h |  8 ++++++--
+ kernel/audit.c        |  5 +++--
+ kernel/audit.h        |  2 +-
+ kernel/auditsc.c      | 29 ++++++++++++++++++++++++++---
+ 6 files changed, 40 insertions(+), 9 deletions(-)
+
 -- 
-2.13.3
+1.8.3.1
 
