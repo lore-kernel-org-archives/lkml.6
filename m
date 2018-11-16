@@ -7,39 +7,39 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 450D1C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:20:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7181AC43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:20:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0C2BC2089D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:20:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 38D99223C8
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:20:50 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="WMmNUH9l"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C2BC2089D
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="XDJqom5z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 38D99223C8
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389249AbeKPQbs (ORCPT
+        id S2389336AbeKPQbt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 11:31:48 -0500
-Received: from conuserg-10.nifty.com ([210.131.2.77]:50717 "EHLO
+        Fri, 16 Nov 2018 11:31:49 -0500
+Received: from conuserg-10.nifty.com ([210.131.2.77]:50718 "EHLO
         conuserg-10.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727377AbeKPQbs (ORCPT
+        with ESMTP id S1727370AbeKPQbs (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 16 Nov 2018 11:31:48 -0500
 Received: from pug.e01.socionext.com (p14092-ipngnfx01kyoto.kyoto.ocn.ne.jp [153.142.97.92]) (authenticated)
-        by conuserg-10.nifty.com with ESMTP id wAG6Jp5F005743;
-        Fri, 16 Nov 2018 15:19:51 +0900
-DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com wAG6Jp5F005743
+        by conuserg-10.nifty.com with ESMTP id wAG6Jp5G005743;
+        Fri, 16 Nov 2018 15:19:52 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conuserg-10.nifty.com wAG6Jp5G005743
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
-        s=dec2015msa; t=1542349191;
-        bh=b7bIis8GuYOhefMZ1/UmXoVBCnD/P6pVfgD6PBk3yw8=;
-        h=From:To:Cc:Subject:Date:From;
-        b=WMmNUH9lCidfCyu0kwH4Mq1kZy4FuXg44vJ+39ktGCQz/SLOWVvj9qxru7lJN7+QY
-         lBOJc8GBriuZdv27UPMFxiGObkQD+IrEVZAk/hOnOaQqcQVmVpqKMrWBpxHkb3Nsvv
-         ds45N//wDh88Q9VgECNAqaTVq5759rasfsHXhvV06+w6HMHpyLsgk/VbC7Hn6VLH1v
-         1d9ah9W/znywOm0q6ZwPZK40lSPI1ePRBq3FOVMui47K8yzvilvmFjwrMcRMv0jYbB
-         hBaPnn9ozQrZsLZgKXUW0HRxHHWKQ5KLCMLNbcXI5wkrVDjUaZZPd78BvdKMy/YRSt
-         9oemg5Lh7j5/w==
+        s=dec2015msa; t=1542349192;
+        bh=WR2halLsHQdGN9ZbpibG6kScGLBXaoZnZSO1D3qzw/o=;
+        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+        b=XDJqom5zKTaf2CG18WGGQ2LcpgcBlSSIJLlVwR4pngzqyoq3Ljlz+/7OFckbhYi8S
+         pN5JQg1Lqwdxt1Um/+loQnaIetbNfcyoeDXMXdbAb3YapaMj0StcoQ/ByJJnxvrE3g
+         GRWpPaJRICdhad7MlcnRwoM8RU3axoSfMjwpeULPxFuY1dKzXdBSV+J0DBzNRgsrIX
+         Mn+UOeKapRIWBIjK/5yzPtzzggeELJ6RYXV8EmXQ/7FGf7mHU9qG/6LTxmeP1kedaM
+         JSa9mT4O7noU4khtb2LAiv250KttCdn/O2ARSU6an5O1ZsVyvqPlccko3SFwz4a6fJ
+         kOy2iqtSiOODQ==
 X-Nifty-SrcIP: [153.142.97.92]
 From:   Masahiro Yamada <yamada.masahiro@socionext.com>
 To:     Andrew Morton <akpm@linux-foundation.org>
@@ -50,57 +50,68 @@ Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
         Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
         Masahiro Yamada <yamada.masahiro@socionext.com>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] build_bug.h: remove negative-array fallback for BUILD_BUG_ON()
-Date:   Fri, 16 Nov 2018 15:19:00 +0900
-Message-Id: <1542349141-7229-1-git-send-email-yamada.masahiro@socionext.com>
+Subject: [PATCH 2/2] build_bug.h: remove all dummy BUILD_BUG_ON stubs for sparse
+Date:   Fri, 16 Nov 2018 15:19:01 +0900
+Message-Id: <1542349141-7229-2-git-send-email-yamada.masahiro@socionext.com>
 X-Mailer: git-send-email 2.7.4
+In-Reply-To: <1542349141-7229-1-git-send-email-yamada.masahiro@socionext.com>
+References: <1542349141-7229-1-git-send-email-yamada.masahiro@socionext.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The kernel can only be compiled with an optimization option (-O2, -Os,
-or the currently proposed -Og). Hence, __OPTIMIZE__ is always defined
-in the kernel source.
+The introduction of these dummy BUILD_BUG_ON stubs dates back to
+commit 903c0c7cdc21 ("sparse: define dummy BUILD_BUG_ON definition
+for sparse"). At that time, BUILD_BUG_ON() was implemented with the
+negative array trick, which Sparse complains about even if the
+condition can be optimized and evaluated to 0 at compile-time.
 
-A fallback for -O0 case is just hypothetical and pointless. Moreover,
-commit 0bb95f80a38f ("Makefile: Globally enable VLA warning") enabled
--Wvla warning. The use of variable length arrays is banned.
+With the previous commit, the leftover negative array trick is gone.
+Sparse is happy with the current BUILD_BUG_ON(), which is implemented
+by using the 'error' attribute.
+
+There might be a little room for argument about BUILD_BUG_ON_ZERO().
+Sparse reports 'invalid bitfield width, -1' for non-zero value,
+and 'bad integer constant expression' for non-constant value.
+This is the same criteria as GCC uses. So, if those Sparse errors
+occurred, they would cause errors for GCC as well. (Hence, such
+errors would have been detected by the normal compile test process.)
 
 Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
 ---
 
- include/linux/build_bug.h | 14 --------------
- 1 file changed, 14 deletions(-)
+ include/linux/build_bug.h | 11 -----------
+ 1 file changed, 11 deletions(-)
 
 diff --git a/include/linux/build_bug.h b/include/linux/build_bug.h
-index 43d1fd5..d415c64 100644
+index d415c64..b0828f7 100644
 --- a/include/linux/build_bug.h
 +++ b/include/linux/build_bug.h
-@@ -51,23 +51,9 @@
-  * If you have some code which relies on certain constants being equal, or
-  * some other compile-time-evaluated condition, you should use BUILD_BUG_ON to
-  * detect if someone changes it.
-- *
-- * The implementation uses gcc's reluctance to create a negative array, but gcc
-- * (as of 4.4) only emits that error for obvious cases (e.g. not arguments to
-- * inline functions).  Luckily, in 4.3 they added the "error" function
-- * attribute just for this type of case.  Thus, we use a negative sized array
-- * (should always create an error on gcc versions older than 4.4) and then call
-- * an undefined function with the error attribute (should always create an
-- * error on gcc 4.3 and later).  If for some reason, neither creates a
-- * compile-time error, we'll still have a link-time error, which is harder to
-- * track down.
-  */
--#ifndef __OPTIMIZE__
--#define BUILD_BUG_ON(condition) ((void)sizeof(char[1 - 2*!!(condition)]))
--#else
- #define BUILD_BUG_ON(condition) \
- 	BUILD_BUG_ON_MSG(condition, "BUILD_BUG_ON failed: " #condition)
--#endif
+@@ -4,16 +4,6 @@
  
- /**
-  * BUILD_BUG - break compile if used.
+ #include <linux/compiler.h>
+ 
+-#ifdef __CHECKER__
+-#define __BUILD_BUG_ON_NOT_POWER_OF_2(n) (0)
+-#define BUILD_BUG_ON_NOT_POWER_OF_2(n) (0)
+-#define BUILD_BUG_ON_ZERO(e) (0)
+-#define BUILD_BUG_ON_INVALID(e) (0)
+-#define BUILD_BUG_ON_MSG(cond, msg) (0)
+-#define BUILD_BUG_ON(condition) (0)
+-#define BUILD_BUG() (0)
+-#else /* __CHECKER__ */
+-
+ /* Force a compilation error if a constant expression is not a power of 2 */
+ #define __BUILD_BUG_ON_NOT_POWER_OF_2(n)	\
+ 	BUILD_BUG_ON(((n) & ((n) - 1)) != 0)
+@@ -64,6 +54,5 @@
+  */
+ #define BUILD_BUG() BUILD_BUG_ON_MSG(1, "BUILD_BUG failed")
+ 
+-#endif	/* __CHECKER__ */
+ 
+ #endif	/* _LINUX_BUILD_BUG_H */
 -- 
 2.7.4
 
