@@ -2,378 +2,135 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E9EE6C04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:56:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3C739C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 21:01:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D7C20883
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:56:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DD0CE2086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 21:01:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="B4Z6rjvK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D7C20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="Al69Sj+a"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DD0CE2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729491AbeKQHKC (ORCPT
+        id S1726537AbeKQHPu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 02:10:02 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33275 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725964AbeKQHKC (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 02:10:02 -0500
-Received: by mail-oi1-f194.google.com with SMTP id c206so15212059oib.0;
-        Fri, 16 Nov 2018 12:56:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=iJaDY7bho0mtzTpBEkaK76jCU4w8wyT1x8uGBFWl6cQ=;
-        b=B4Z6rjvK8XP+OQhB2n62SDU49+d6MfGke5C0Awo+Qi0dVqEJJq0k0jbd6slvTa5OdK
-         HLQre+h1u+keD3Tjk7PPeE/Vm4rI78S5qaojK7ychwlEfe7YqTBxzprnF0nSfIEM0MKw
-         +GxXdK99xVD6nWUETyXgFYxrvcsmVRhDPYC9Fd9eizWEgXSVbcGijonQo2/l33AVLHSY
-         RkmWuxM6Rt/CGrH6VEv6Ie0JlKcbUTuxQ/pdfCG31fdJVTQszrR0vIAxz/uMEX6hpOc2
-         SfiJEp5sWnNpt6W1v2NIOQBsPVwKWIkwLaNRYXr5nvVN/lLlVNKCetwFeu06SrD4Vkkh
-         NsgQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=iJaDY7bho0mtzTpBEkaK76jCU4w8wyT1x8uGBFWl6cQ=;
-        b=QTnBKHRo+Yhkgk6TD/xhxW+8Rlz+VZREJUKjbT/8PD4ZyDJhlKh6ODv2I/5y40RZSX
-         UtTnyZLfyO1LPdCSJMxbg5axZdvgJs2+eUsU8vKVuHz3hH081TNPPPwz8trn5cBx5wGR
-         mL3lT743CjKhQIqztNvCGVesmIahDXAzYbAP9tzZa4JfhO8v4+xVHEbWUvum7t9pfcHx
-         Y844/fxn5Fyg51Hl/tfI71J0nkInjp8umI+uXE13lx6s42sgVtMCObTjXLY5PW/npmbx
-         ckv8+M4jcLAtRT9gRtPVzhFOft+o8pkmLBya56uyvAaNtGxs4GID1sH+BN39d58MzbsT
-         X/Zw==
-X-Gm-Message-State: AGRZ1gL2Zty5in+4sIMbvLZiPzahBJGQIm0UsP7yw12hAhz2OTKl3lPp
-        gUnnsdqWxJSEtxYINOrUSXomrJ2EhfdAYHqAP/o=
-X-Google-Smtp-Source: AJdET5cEsIbzbYm08nezqsE4SCEH9E4LiAsLl2w1JSfzbKjWG/Z+hHg0WtfL3zEzkqJRhRcBJQY6NzZD2QR+k+y8Z3Y=
-X-Received: by 2002:aca:6c87:: with SMTP id h129-v6mr1948456oic.140.1542401762323;
- Fri, 16 Nov 2018 12:56:02 -0800 (PST)
+        Sat, 17 Nov 2018 02:15:50 -0500
+Received: from mail-eopbgr770087.outbound.protection.outlook.com ([40.107.77.87]:35232
+        "EHLO NAM02-SN1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725819AbeKQHPu (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 02:15:50 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=4wx8dwSoP+ROiLN0tVr8pkoRBfvBPH+tjIwV2OdjO5g=;
+ b=Al69Sj+aUqpDxH2pigXRAwDNUAbtVmGLp46ZmRKgs+kgXIGpmCNIlPXX+3lMJpio/1HdnUbesMumCLi3d+l+/ZHhZe+MD6BLukMaItaMr233XjwUox4fPAoydw7y0Y6ij+8cOTL2QWlL5hpdP+C8I0ftEjji6pQu/9LZVR9y3+k=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4248.namprd05.prod.outlook.com (20.176.252.29) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1361.7; Fri, 16 Nov 2018 21:01:34 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::a1b8:a948:4c8c:747d]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::a1b8:a948:4c8c:747d%4]) with mapi id 15.20.1339.023; Fri, 16 Nov 2018
+ 21:01:34 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+CC:     Ingo Molnar <mingo@redhat.com>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 1/2] Makefile: Fix distcc compilation with x86 macros
+Thread-Topic: [PATCH v2 1/2] Makefile: Fix distcc compilation with x86 macros
+Thread-Index: AQHUfJfvmtKbIIZ6B0mJO/gQ5HjNB6VSB5OAgADeVwA=
+Date:   Fri, 16 Nov 2018 21:01:34 +0000
+Message-ID: <1C316B94-8F27-439C-B049-9947DC329780@vmware.com>
+References: <20181114204309.18645-1-namit@vmware.com>
+ <20181114204309.18645-2-namit@vmware.com>
+ <CAK7LNAREF_Pcejq1LJ=3K7h0M4o4oSRLfbeJc73O+8HV420Ziw@mail.gmail.com>
+In-Reply-To: <CAK7LNAREF_Pcejq1LJ=3K7h0M4o4oSRLfbeJc73O+8HV420Ziw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-originating-ip: [208.91.2.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4248;20:KxzXJKK+aQHRSk7uzjV6rIe1ydxrepMW7tP9UMfad9QhRjatuHcZqwsHAsYKXebwFt910IPSAVWLkZA1tlbHDaKUdu/nK/bjkg1+8CRPWaRqFvFoxUPA8vbXu8r3ms6Gqsob+y31qkezsKscbPrDAgETEhkkkSm16/ArIFt6oRE=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 973f1afb-9ca8-4510-655b-08d64c06b165
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4248;
+x-ms-traffictypediagnostic: BYAPR05MB4248:
+x-microsoft-antispam-prvs: <BYAPR05MB42486165F0D7155CBED6A155D0DD0@BYAPR05MB4248.namprd05.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3231415)(944501410)(52105112)(10201501046)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123560045)(20161123558120)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4248;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4248;
+x-forefront-prvs: 0858FF8026
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(39860400002)(376002)(396003)(346002)(136003)(366004)(199004)(189003)(6246003)(99286004)(2900100001)(2616005)(229853002)(6116002)(86362001)(6512007)(6486002)(71200400001)(71190400001)(3846002)(2906002)(83716004)(486006)(26005)(476003)(305945005)(82746002)(106356001)(6436002)(66066001)(105586002)(6506007)(478600001)(53546011)(446003)(8936002)(8676002)(6916009)(81166006)(81156014)(316002)(33656002)(14454004)(53936002)(76176011)(186003)(5660300001)(36756003)(7736002)(256004)(54906003)(97736004)(11346002)(68736007)(25786009)(4326008)(102836004);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4248;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: tTv6Ktckxj+lc8pO6mZlu+E9vQbCF/lSF46Pt9z9YCLTffb8lukacdT4TjXNyAx5TqtyTKrbAdzAhiybsXM8XaTgJVKxZDRPhAvGXNQ/jV2bEKaABwp6OtR2fK0Q71NEedQgpZvYsAlTpmCnVdil5QYPQsGoFvIMZOrPt5vCXxKtCuxoYnERI77hErMPF89EUFPkQp7uPaZtoYOhncFdivCOmdrXXhU1q0Ztz3B9jbi+c+ewEBz70p+W1luyJw+dPnsg9YetILQvY+GLdQzgXMyLcIQpl4iMrEp8SBco8RwEf5i1gojyR7kTUNXg4v8IabkAnfqx5f9+AiZUjfJ7JIkE7NSfEFMAAXoIWPh6QSU=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5A20752D87B6F749848D09EE097DD717@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-References: <20181116205303.6354-1-martin.blumenstingl@googlemail.com>
-In-Reply-To: <20181116205303.6354-1-martin.blumenstingl@googlemail.com>
-From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date:   Fri, 16 Nov 2018 21:55:51 +0100
-Message-ID: <CAFBinCB7i9QdCchqx1sV+cpD6b8Bp9rgK9Z+yv1UovdX3kasUA@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Meson8b: add the CPU clock post-dividers
-To:     linux-amlogic@lists.infradead.org,
-        Neil Armstrong <narmstrong@baylibre.com>, jbrunet@baylibre.com
-Cc:     mturquette@baylibre.com, sboyd@kernel.org,
-        linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 973f1afb-9ca8-4510-655b-08d64c06b165
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Nov 2018 21:01:34.7355
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4248
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 9:53 PM Martin Blumenstingl
-<martin.blumenstingl@googlemail.com> wrote:
->
-> This is the successor to my previous series "meson8b: add the CPU_DIV16
-> clock for the ARM TWD" from [0]. I decided to not send this as v2 of
-> the original series because the PERIPH clock is not the CPU_DIV16 clock.
-> It's not clear whether a CPU_DIV16 clock exists.
->
-> With this series we get all the CPU_CLK post-dividers as listed in the
-> public S805 datasheet [1] on pages 31 and 32:
-> - ABP
-> - PERIPH (used as input for the ARM global timer and ARM TWD timer)
-> - AXI
-> - L2 DRAM
->
-> Each of these clocks has a register called "..._CLK_DIS" which is
-> documented as a "just in case" bit:
-> "Set to 1 to manually disable the [...] clock when changing the mux
-> selection. Typically this bit is set to 0 since the clock muxes can
-> switch without glitches."
-> Since we're not supposed to touch that register we're setting
-> CLK_IS_CRITICAL for these clocks in the driver.
->
-> The result of this is that we can use the PERIPH clock which clocks
-> the ARM TWD timer. I will send a separate series to add the TWD timer.
->
->
-> [0] http://lists.infradead.org/pipermail/linux-amlogic/2018-July/007890.html
-> [1] https://dn.odroid.com/S805/Datasheet/S805_Datasheet%20V0.8%2020150126.pdf
->
-> Martin Blumenstingl (3):
->   dt-bindings: clock: meson8b: export the CPU post dividers
->   clk: meson: meson8b: rename cpu_div2/cpu_div3 to
->     cpu_in_div2/cpu_in_div3
->   clk: meson: meson8b: add the CPU clock post divider clocks
-I ran various tests for the PERIPH clock by enabling the TWD timer
-without specifying a clock. In that case the TWD driver will try to
-auto-detect the PERIPH clock rate. my results confirm that this
-implementation is correct:
-
-case #1: EC-100 with it's default boot settings:
-
-[    0.000252] smp_twd: clock not found -2
-[    0.000736] Calibrating local timer... 197.86MHz.
-
-# cat /sys/kernel/debug/clk/clk_summary
-                                 enable  prepare  protect
-                  duty
-   clock                          count    count    count        rate
- accuracy phase  cycle
----------------------------------------------------------------------------------------------
-...
-    sys_pll_dco                       1        1        0  1584000000
-        0     0  50000
-       sys_pll                        1        1        0   792000000
-        0     0  50000
-          cpu_in_sel                  1        1        0   792000000
-        0     0  50000
-             cpu_scale_out_sel        1        1        0   792000000
-        0     0  50000
-                cpu_clk               4        4        0   792000000
-        0     0  50000
-...
-                   cpu_clk_div4       2        2        0   198000000
-        0     0  50000
-                      axi_clk_sel       1        1        0
-198000000          0     0  50000
-                         axi_clk_dis       1        1        0
-198000000          0     0  50000
-                      periph_clk_sel       1        1        0
-198000000          0     0  50000
-                         periph_clk_dis       1        1        0
-198000000          0     0  50000
-...
-
-
-case #2: switch the parent of the cpu_in_sel clock to xtal:
-
-m8b_m201_1G#md.l 0xC110419C 1
-c110419c: 000000b1    ....
-m8b_m201_1G#mw.l 0xC110419C 0xb0 1
-m8b_m201_1G#md.l 0xC110419C
-c110419c: 000000b0    ....
-
-[    0.007005] smp_twd: clock not found -2
-[    0.022680] Calibrating local timer... 5.98MHz.
-
-# cat /sys/kernel/debug/clk/clk_summary
-                                 enable  prepare  protect
-                  duty
-   clock                          count    count    count        rate
- accuracy phase  cycle
----------------------------------------------------------------------------------------------
- xtal                                 4        4        0    24000000
-        0     0  50000
-...
-    cpu_in_sel                        1        1        0    24000000
-        0     0  50000
-       cpu_scale_out_sel              1        1        0    24000000
-        0     0  50000
-          cpu_clk                     4        4        0    24000000
-        0     0  50000
-...
-             cpu_clk_div4             2        2        0     6000000
-        0     0  50000
-                axi_clk_sel           1        1        0     6000000
-        0     0  50000
-                   axi_clk_dis        1        1        0     6000000
-        0     0  50000
-                periph_clk_sel        1        1        0     6000000
-        0     0  50000
-                   periph_clk_dis       1        1        0
-6000000          0     0  50000
-...
-
-
-case #3: set cpu_scale_div to cpu_in_sel/6 and use cpu_scale_div as
-parent of cpu_scale_out_sel
-
-m8b_m201_1G#mw.l 0xC110419C 0x30 1
-m8b_m201_1G#md.l 0xC110415C 1
-c110415c: 800016a2    ....
-m8b_m201_1G#mw.l 0xC110415C 0x802016A2 1
-m8b_m201_1G#mw.l 0xC110419C 0xbd 1
-
-[    0.001317] smp_twd: clock not found -2
-[    0.003907] Calibrating local timer... 32.93MHz.
-
-
-# cat /sys/kernel/debug/clk/clk_summary
-                                 enable  prepare  protect
-                  duty
-   clock                          count    count    count        rate
- accuracy phase  cycle
----------------------------------------------------------------------------------------------
-...
-    sys_pll_dco                       1        1        0  1584000000
-        0     0  50000
-       sys_pll                        1        1        0   792000000
-        0     0  50000
-          cpu_in_sel                  1        1        0   792000000
-        0     0  50000
-             cpu_scale_div            1        1        0   132000000
-        0     0  50000
-                cpu_scale_out_sel       1        1        0
-132000000          0     0  50000
-                   cpu_clk            4        4        0   132000000
-        0     0  50000
-...
-                      cpu_clk_div4       2        2        0
-33000000          0     0  50000
-                         axi_clk_sel       1        1        0
-33000000          0     0  50000
-                            axi_clk_dis       1        1        0
-33000000          0     0  50000
-                         periph_clk_sel       1        1        0
-33000000          0     0  50000
-                            periph_clk_dis       1        1        0
- 33000000          0     0  50000
-...
-
-
-case #4: set cpu_scale_div to cpu_in_sel/4 and use cpu_scale_div as
-parent of cpu_scale_out_sel
-
-m8b_m201_1G#mw.l 0xC110419C 0x30 1
-m8b_m201_1G#md.l 0xC110415C 1
-c110415c: 800016a2    ....
-m8b_m201_1G#mw.l 0xC110415C 0x801016A2 1
-m8b_m201_1G#mw.l 0xC110419C 0xbd 1
-
-[    0.001317] smp_twd: clock not found -2
-[    0.002636] Calibrating local timer... 49.42MHz.
-
-# cat /sys/kernel/debug/clk/clk_summary
-                                 enable  prepare  protect
-                  duty
-   clock                          count    count    count        rate
- accuracy phase  cycle
----------------------------------------------------------------------------------------------
-...
-    sys_pll_dco                       1        1        0  1584000000
-        0     0  50000
-       sys_pll                        1        1        0   792000000
-        0     0  50000
-          cpu_in_sel                  1        1        0   792000000
-        0     0  50000
-             cpu_scale_div            1        1        0   198000000
-        0     0  50000
-                cpu_scale_out_sel       1        1        0
-198000000          0     0  50000
-                   cpu_clk            4        4        0   198000000
-        0     0  50000
-...
-                      cpu_clk_div4       2        2        0
-49500000          0     0  50000
-                         axi_clk_sel       1        1        0
-49500000          0     0  50000
-                            axi_clk_dis       1        1        0
-49500000          0     0  50000
-                         periph_clk_sel       1        1        0
-49500000          0     0  50000
-                            periph_clk_dis       1        1        0
- 49500000          0     0  50000
-...
-
-
-case #5: set cpu_scale_div to cpu_in_sel/12 and use cpu_scale_div as
-parent of cpu_scale_out_sel
-
-m8b_m201_1G#mw.l 0xC110419C 0x30 1
-m8b_m201_1G#md.l 0xC110415C 1
-c110415c: 800016a2    ....
-m8b_m201_1G#mw.l 0xC110415C 0x805016A2 1
-m8b_m201_1G#mw.l 0xC110419C 0xbd 1
-
-[    0.001317] smp_twd: clock not found -2
-[    0.007728] Calibrating local timer... 16.44MHz.
-
-
-# cat /sys/kernel/debug/clk/clk_summary
-                                 enable  prepare  protect
-                  duty
-   clock                          count    count    count        rate
- accuracy phase  cycle
----------------------------------------------------------------------------------------------
-...
-    sys_pll_dco                       1        1        0  1584000000
-        0     0  50000
-       sys_pll                        1        1        0   792000000
-        0     0  50000
-          cpu_in_sel                  1        1        0   792000000
-        0     0  50000
-             cpu_scale_div            1        1        0    66000000
-        0     0  50000
-                cpu_scale_out_sel       1        1        0
-66000000          0     0  50000
-                   cpu_clk            4        4        0    66000000
-        0     0  50000
-...
-                      cpu_clk_div4       2        2        0
-16500000          0     0  50000
-                         axi_clk_sel       1        1        0
-16500000          0     0  50000
-                            axi_clk_dis       1        1        0
-16500000          0     0  50000
-                         periph_clk_sel       1        1        0
-16500000          0     0  50000
-                            periph_clk_dis       1        1        0
- 16500000          0     0  50000
-...
-
-
-case #6: use cpu_div2 as parent of cpu_scale_out_sel
-
-m8b_m201_1G#mw.l 0xC110419C 0x30 1
-m8b_m201_1G#mw.l 0xC110419C 0x34 1
-m8b_m201_1G#mw.l 0xC110419C 0xb5 1
-
-[    0.000534] smp_twd: clock not found -2
-[    0.001487] Calibrating local timer... 98.91MHz.
-
-
-# cat /sys/kernel/debug/clk/clk_summary
-                                 enable  prepare  protect
-                  duty
-   clock                          count    count    count        rate
- accuracy phase  cycle
----------------------------------------------------------------------------------------------
-...
-    sys_pll_dco                       1        1        0  1584000000
-        0     0  50000
-       sys_pll                        1        1        0   792000000
-        0     0  50000
-          cpu_in_sel                  1        1        0   792000000
-        0     0  50000
-...
-             cpu_div2                 1        1        0   396000000
-        0     0  50000
-                cpu_scale_out_sel       1        1        0
-396000000          0     0  50000
-                   cpu_clk            4        4        0   396000000
-        0     0  50000
-...
-                      cpu_clk_div4       2        2        0
-99000000          0     0  50000
-                         axi_clk_sel       1        1        0
-99000000          0     0  50000
-                            axi_clk_dis       1        1        0
-99000000          0     0  50000
-                         periph_clk_sel       1        1        0
-99000000          0     0  50000
-                            periph_clk_dis       1        1        0
- 99000000          0     0  50000
-...
-
-
-case #7: use cpu_div3 as parent of cpu_scale_out_sel
-
-m8b_m201_1G#mw.l 0xC110419C 0x30 1
-m8b_m201_1G#mw.l 0xC110419C 0x38 1
-m8b_m201_1G#mw.l 0xC110419C 0xb9 1
-
-test skipped, the system is not stable with this clock as parent
+RnJvbTogTWFzYWhpcm8gWWFtYWRhDQpTZW50OiBOb3ZlbWJlciAxNiwgMjAxOCBhdCA3OjQ1OjQ1
+IEFNIEdNVA0KPiBUbzogTmFkYXYgQW1pdCA8bmFtaXRAdm13YXJlLmNvbT4NCj4gQ2M6IEluZ28g
+TW9sbmFyIDxtaW5nb0ByZWRoYXQuY29tPiwgTWljaGFsIE1hcmVrIDxtaWNoYWwubGttbEBtYXJr
+b3ZpLm5ldD4sIFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPiwgQm9yaXNsYXYg
+UGV0a292IDxicEBhbGllbjguZGU+LCBILiBQZXRlciBBbnZpbiA8aHBhQHp5dG9yLmNvbT4sIFg4
+NiBNTCA8eDg2QGtlcm5lbC5vcmc+LCBMaW51eCBLYnVpbGQgbWFpbGluZyBsaXN0IDxsaW51eC1r
+YnVpbGRAdmdlci5rZXJuZWwub3JnPiwgTGludXggS2VybmVsIE1haWxpbmcgTGlzdCA8bGludXgt
+a2VybmVsQHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAxLzJdIE1h
+a2VmaWxlOiBGaXggZGlzdGNjIGNvbXBpbGF0aW9uIHdpdGggeDg2IG1hY3Jvcw0KPiANCj4gDQo+
+IE9uIFRodSwgTm92IDE1LCAyMDE4IGF0IDE6MDEgUE0gTmFkYXYgQW1pdCA8bmFtaXRAdm13YXJl
+LmNvbT4gd3JvdGU6DQo+PiBJbnRyb2R1Y2luZyB0aGUgdXNlIG9mIGFzbSBtYWNyb3MgaW4gYy1j
+b2RlIGJyb2tlIGRpc3RjYywgc2luY2UgaXQgb25seQ0KPj4gc2VuZHMgdGhlIHByZXByb2Nlc3Nl
+ZCBzb3VyY2UgZmlsZS4gVGhlIHNvbHV0aW9uIGlzIHRvIGJyZWFrIHRoZQ0KPj4gY29tcGlsYXRp
+b24gaW50byB0d28gc2VwYXJhdGUgcGhhc2VzIG9mIGNvbXBpbGF0aW9uIGFuZCBhc3NlbWJseSwg
+YW5kDQo+PiBiZXR3ZWVuIHRoZSB0d28gY29uY2F0ZW5hdGUgdGhlIGFzc2VtYmx5IG1hY3JvcyBh
+bmQgdGhlIGNvbXBpbGVkICh5ZXQNCj4+IG5vdCBhc3NlbWJsZWQpIHNvdXJjZSBmaWxlLiBTaW5j
+ZSB0aGlzIGlzIGxlc3MgZWZmaWNpZW50LCB0aGlzDQo+PiBjb21waWxhdGlvbiBtb2RlIGlzIG9u
+bHkgdXNlZCB3aGVuIGRpc3RjYyBvciBpY2VjYyBhcmUgdXNlZC4NCj4+IA0KPj4gTm90ZSB0aGF0
+IHRoZSBhc3NlbWJseSBzdGFnZSBzaG91bGQgYWxzbyBiZSBkaXN0cmlidXRlZCwgaWYgZGlzdGNj
+IGlzDQo+PiBjb25maWd1cmVkIHVzaW5nICJDRkxBR1M9LURFTkFCTEVfUkVNT1RFX0FTU0VNQkxF
+Ii4NCj4+IA0KPj4gUmVwb3J0ZWQtYnk6IExvZ2FuIEd1bnRob3JwZSA8bG9nYW5nQGRlbHRhdGVl
+LmNvbT4NCj4+IFNpZ25lZC1vZmYtYnk6IE5hZGF2IEFtaXQgPG5hbWl0QHZtd2FyZS5jb20+DQo+
+IA0KPiANCj4gV293LCB0aGlzIGlzIHNvIHVnbHkuDQoNCkluZGVlZCwgaXQgaXMgbm90IHByZXR0
+eSBmcm9tIHRoZSBNYWtlZmlsZSBzeXN0ZW0gcG9pbnQgb2Ygdmlldy4NCg0KQnV0IGl0IGRvZXMg
+aGF2ZSBtZXJpdHMgd2hlbiBpdCBjb21lcyB0byB0aGUgYWN0dWFsIHVzZSAoYnkgZGV2ZWxvcGVy
+cykuIElmDQp5b3UgbG9vayBvbiB4ODYsIHRoZXJlIGFyZSBhIGxvdCBvZiBkdXBsaWNhdGVkIGlt
+cGxlbWVudGF0aW9uIGZvciBDIGFuZCBBc20NCmFuZCBjcmF6eSBDIG1hY3JvcywgZm9yIGV4YW1w
+bGUgZm9yIFBWIGZ1bmN0aW9uIGNhbGwgb3IgdGhlIGFsdGVybmF0aXZlDQptZWNoYW5pc20uIFRo
+ZSBjb2RlIGlzIGFsc28gbGVzcyByZWFkYWJsZSBpbiBpdHMgY3VycmVudCBmb3JtLg0KDQo+IEkg
+cmVhbGl6ZWQgaG93IG11Y2ggSSBoYXRlZCB0aGlzIGJ5IG5vdy4NCj4gDQo+IE15IHF1ZXN0aW9u
+IGlzLCBob3cgbG9uZyBkbyB3ZSBuZWVkIHRvIGNhcnJ5IHRoaXM/DQoNCklmIGl0IGlzIHB1cmVs
+eSBhYm91dCBwZXJmb3JtYW5jZSwgSSBhbSBub3Qgc3VyZSBpdCB3b3VsZCBtYWtlIHNlbnNlIHRv
+DQpwdXQgaXQgaW4sIGFzIGl0IHdpbGwgaW5kZWVkIGJlIChldmVudHVhbGx5KSBzb2x2ZWQgYnkg
+dGhlIGNvbXBpbGVyLCBhbmQNCnRoZSBwZW5hbHR5IGlzIG5vdCB0b28gZ3JlYXQuDQoNClRoZXJl
+IGlzIGFsc28gYW4gYWR2YW50YWdlIGZvciBoYXZpbmcgYXNzZW1ibHkgbWFjcm9zIHRoYXQgY2Fu
+IG92ZXJyaWRlIHRoZQ0KZ2VuZXJhdGVkIGFzc2VtYmx5IHRoYXQgd2FzIGdlbmVyYXRlZCBieSB0
+aGUgY29tcGlsZXIuIEkgdGhpbmsgSFBBIChjY+KAmWQpDQpsb29rcyBpbiB0aGlzIGRpcmVjdGlv
+biAoYW5kIHNvIGRvIEkpLg0KDQpSZWdhcmRzLA0KTmFkYXY=
