@@ -2,107 +2,248 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E5739C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:46:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0FF1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:47:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9BD752146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:46:47 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 89FCD2146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:47:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jfOza/y1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9BD752146D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="tlCSCYlS"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 89FCD2146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727412AbeKPL5I (ORCPT
+        id S2389238AbeKPL5Z (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 06:57:08 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:41464 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726714AbeKPL5H (ORCPT
+        Fri, 16 Nov 2018 06:57:25 -0500
+Received: from mail-pf1-f194.google.com ([209.85.210.194]:34359 "EHLO
+        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727348AbeKPL5Z (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 06:57:07 -0500
-Received: by mail-ed1-f68.google.com with SMTP id 14so9173622eds.8
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 17:46:43 -0800 (PST)
+        Fri, 16 Nov 2018 06:57:25 -0500
+Received: by mail-pf1-f194.google.com with SMTP id h3so4041268pfg.1
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 17:47:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=1d/Ov0KgkCUrjBDPPbvOaMNElyatVG7XFcjcuFOBZIs=;
-        b=jfOza/y1D5gfvP15XyxUAx+CawgByFEb7YLMT20Q7WcHwaJ1myxAChfNA11JN+3AKS
-         iouyQqnYi5CaMUtNnp0Gm9SF3vJ3yu/n0R/ncXhvOcGwfuprEGoMBucyxJZEHNWCvZz5
-         GoIBea/eHINZQUgUjnnAV/2KZNHoIbuKwGnWo=
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=eZ7HbQIRxvEcUa8+6JyijRuyQka1DIWraav67RGQvQ8=;
+        b=tlCSCYlSuNpOsZ9EAIWkxk1cOrAxhKZsygh3SHH1cKivG3QGJsktihGTN8ZMhLHTTx
+         PegZpHgHvuv1l7Y0LSp6qHZU0e1RCGeSajz02HzsZ/ccaMVR3Qo4Pj+qS2oQYQ4LP3Uu
+         RF/tvX8GlY/TL46LEXjDThmBzTGWw6hOEUdLZmJ0pu1q6bLzOzSxXIBH1NDfnDySSP56
+         MH2ejdgdMiL3sS1v82bChpC89XXTrty1BQ0BmOQNw+yJNeBwHiCVLITGeLFwzQoMvVnV
+         R3cUMkf76n9pe/6RS9O5fZsRaxlsNRZOREfIwNVajES+nU+43CE5l0hcLCMvY2an6ik3
+         n54A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=1d/Ov0KgkCUrjBDPPbvOaMNElyatVG7XFcjcuFOBZIs=;
-        b=sp62GUJKgspq4S0l26TmlwzK9ANxL6mNhd4nF/Ne9lnW4rR/eFdPj0UGmriSuhN+yu
-         nWhhPIXLPQqdQhsEDzUkcwruVY0gSw5BkFVKb15yZfiHh6q8VSrl0Mgza4a3YQPnGdvI
-         BQXpckA49KZxslivdWP4MY+au1HKLzXOU23TK8zqckuDl+cZD84ysBJ1GNVYe/VSRTBe
-         SYnSGwVoLt960S31GLDP8weEswBAK7zhJxaHdTxDksAbIFnrdMrPjkJlLuwST9ZB0pDx
-         pSTqT+mSphzbXrFgrmyTi/EgHm7+k54KNL0MNR50aec3pJ+G7c8QOWSncOzUewBN8qaY
-         AwZw==
-X-Gm-Message-State: AGRZ1gLnTiCLsgOqF992BfOM9j1Qz93qmyt2AIa5aLKqlutmIBcJwfBH
-        IMCXhtIVi/lm/UEjhL7SvkjS/d5MsUI=
-X-Google-Smtp-Source: AJdET5cAHLaJqVAKhF6BFSFQ/9cG71Hi9ElzRLs9kJQihjNgwfJZfMxorJxBrb5OJw949ogfiXQtqQ==
-X-Received: by 2002:a17:906:5a0a:: with SMTP id p10-v6mr7262246ejq.43.1542332803048;
-        Thu, 15 Nov 2018 17:46:43 -0800 (PST)
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com. [209.85.208.43])
-        by smtp.gmail.com with ESMTPSA id z44-v6sm7480462ede.11.2018.11.15.17.46.42
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 17:46:42 -0800 (PST)
-Received: by mail-ed1-f43.google.com with SMTP id b14so15809661edt.6
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 17:46:42 -0800 (PST)
-X-Received: by 2002:a17:906:6011:: with SMTP id o17-v6mr7151641ejj.237.1542332801870;
- Thu, 15 Nov 2018 17:46:41 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=eZ7HbQIRxvEcUa8+6JyijRuyQka1DIWraav67RGQvQ8=;
+        b=Do3jOItDo8A3Az5ZRhkXniezJ6m2TyqGM4aGieTopTURa8XhYtOfe1hW0UWrpEl6/F
+         vBnBE2SLlIX1Nwi7oahEZlh4JS9ILdbZ8m9C6iwBTxvOVzkysUE0AuZR+iI5hvOOOFhy
+         mIc56seow85KFa4epfoiHR0hcKsFtVcxBL5UfDFv7gjqwDLaglVALgncm3y/LR19wEiV
+         UFD5Z/lwtyfnPlh6jSuabZxnXbeXNeoI+DhTvLOxEizGZ8f1EfEgwY555ghn8Tsf3OFS
+         ReYA8FSA59GWE4m0jtwEJSiABnkxGrE8etWCB6SQqCqAzBUNgqr+O7UoXBWznn+PT+vF
+         xD7A==
+X-Gm-Message-State: AGRZ1gLCWsBSeIejnkgicCF/tLQn7HBXOojyZ3Glaesu6k/jwxwLry0r
+        K0DcdQLROxJTD1RSu8Rh3mNfig==
+X-Google-Smtp-Source: AJdET5df+nafMezpXytHyYR6EhpgofZ0jZv3s9mjgnJ9QMQju1kdxhr6LHxseO9OJ0UrD0T1nx5yRw==
+X-Received: by 2002:a63:3e05:: with SMTP id l5mr7546695pga.96.1542332820805;
+        Thu, 15 Nov 2018 17:47:00 -0800 (PST)
+Received: from vader ([64.114.255.97])
+        by smtp.gmail.com with ESMTPSA id i2-v6sm24936887pgq.35.2018.11.15.17.46.59
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 17:47:00 -0800 (PST)
+Date:   Thu, 15 Nov 2018 17:46:58 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 13/19] iomap & xfs: only account for new added page
+Message-ID: <20181116014658.GH23828@vader>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-14-ming.lei@redhat.com>
 MIME-Version: 1.0
-References: <20181114122029.16766-1-kraxel@redhat.com>
-In-Reply-To: <20181114122029.16766-1-kraxel@redhat.com>
-From:   Gurchetan Singh <gurchetansingh@chromium.org>
-Date:   Thu, 15 Nov 2018 17:46:30 -0800
-X-Gmail-Original-Message-ID: <CAAfnVBmhpMDi8EVUNZxWTU38ZWoO61eyG1-=bRqoe3hoQ08E0A@mail.gmail.com>
-Message-ID: <CAAfnVBmhpMDi8EVUNZxWTU38ZWoO61eyG1-=bRqoe3hoQ08E0A@mail.gmail.com>
-Subject: Re: [PATCH] udmabuf: set read/write flag when exporting
-To:     Gerd Hoffmann <kraxel@redhat.com>
-Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
-        sumit.semwal@linaro.org, linux-media@vger.kernel.org,
-        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115085306.9910-14-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Reviewed-by: Gurchetan Singh <gurchetansingh@chromium.org>
-Tested-by: Gurchetan Singh <gurchetansingh@chromium.org>
-On Wed, Nov 14, 2018 at 4:20 AM Gerd Hoffmann <kraxel@redhat.com> wrote:
->
-> Otherwise, mmap fails when done with PROT_WRITE.
->
-> Suggested-by: Gurchetan Singh <gurchetansingh@chromium.org>
-> Signed-off-by: Gerd Hoffmann <kraxel@redhat.com>
+On Thu, Nov 15, 2018 at 04:53:00PM +0800, Ming Lei wrote:
+> After multi-page is enabled, one new page may be merged to a segment
+> even though it is a new added page.
+> 
+> This patch deals with this issue by post-check in case of merge, and
+> only a freshly new added page need to be dealt with for iomap & xfs.
+> 
+> Cc: Dave Chinner <dchinner@redhat.com>
+> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> Cc: Mike Snitzer <snitzer@redhat.com>
+> Cc: dm-devel@redhat.com
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Shaohua Li <shli@kernel.org>
+> Cc: linux-raid@vger.kernel.org
+> Cc: linux-erofs@lists.ozlabs.org
+> Cc: David Sterba <dsterba@suse.com>
+> Cc: linux-btrfs@vger.kernel.org
+> Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> Cc: linux-xfs@vger.kernel.org
+> Cc: Gao Xiang <gaoxiang25@huawei.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Theodore Ts'o <tytso@mit.edu>
+> Cc: linux-ext4@vger.kernel.org
+> Cc: Coly Li <colyli@suse.de>
+> Cc: linux-bcache@vger.kernel.org
+> Cc: Boaz Harrosh <ooo@electrozaur.com>
+> Cc: Bob Peterson <rpeterso@redhat.com>
+> Cc: cluster-devel@redhat.com
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
 > ---
->  drivers/dma-buf/udmabuf.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/dma-buf/udmabuf.c b/drivers/dma-buf/udmabuf.c
-> index e70328ab7e..d9ff246093 100644
-> --- a/drivers/dma-buf/udmabuf.c
-> +++ b/drivers/dma-buf/udmabuf.c
-> @@ -189,6 +189,7 @@ static long udmabuf_create(const struct udmabuf_create_list *head,
->         exp_info.ops  = &udmabuf_ops;
->         exp_info.size = ubuf->pagecount << PAGE_SHIFT;
->         exp_info.priv = ubuf;
-> +       exp_info.flags = O_RDWR;
->
->         buf = dma_buf_export(&exp_info);
->         if (IS_ERR(buf)) {
-> --
-> 2.9.3
->
+>  fs/iomap.c          | 22 ++++++++++++++--------
+>  fs/xfs/xfs_aops.c   | 10 ++++++++--
+>  include/linux/bio.h | 11 +++++++++++
+>  3 files changed, 33 insertions(+), 10 deletions(-)
+> 
+> diff --git a/fs/iomap.c b/fs/iomap.c
+> index df0212560b36..a1b97a5c726a 100644
+> --- a/fs/iomap.c
+> +++ b/fs/iomap.c
+> @@ -288,6 +288,7 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  	loff_t orig_pos = pos;
+>  	unsigned poff, plen;
+>  	sector_t sector;
+> +	bool need_account = false;
+>  
+>  	if (iomap->type == IOMAP_INLINE) {
+>  		WARN_ON_ONCE(pos);
+> @@ -313,18 +314,15 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  	 */
+>  	sector = iomap_sector(iomap, pos);
+>  	if (ctx->bio && bio_end_sector(ctx->bio) == sector) {
+> -		if (__bio_try_merge_page(ctx->bio, page, plen, poff))
+> +		if (__bio_try_merge_page(ctx->bio, page, plen, poff)) {
+> +			need_account = iop && bio_is_last_segment(ctx->bio,
+> +					page, plen, poff);
+
+It's redundant to make this iop && ... since you already check
+iop && need_account below. Maybe rename it to added_page? Also, this
+indentation is wack.
+
+>  			goto done;
+> +		}
+>  		is_contig = true;
+>  	}
+>  
+> -	/*
+> -	 * If we start a new segment we need to increase the read count, and we
+> -	 * need to do so before submitting any previous full bio to make sure
+> -	 * that we don't prematurely unlock the page.
+> -	 */
+> -	if (iop)
+> -		atomic_inc(&iop->read_count);
+> +	need_account = true;
+>  
+>  	if (!ctx->bio || !is_contig || bio_full(ctx->bio)) {
+>  		gfp_t gfp = mapping_gfp_constraint(page->mapping, GFP_KERNEL);
+> @@ -347,6 +345,14 @@ iomap_readpage_actor(struct inode *inode, loff_t pos, loff_t length, void *data,
+>  	__bio_add_page(ctx->bio, page, plen, poff);
+>  done:
+>  	/*
+> +	 * If we add a new page we need to increase the read count, and we
+> +	 * need to do so before submitting any previous full bio to make sure
+> +	 * that we don't prematurely unlock the page.
+> +	 */
+> +	if (iop && need_account)
+> +		atomic_inc(&iop->read_count);
+> +
+> +	/*
+>  	 * Move the caller beyond our range so that it keeps making progress.
+>  	 * For that we have to include any leading non-uptodate ranges, but
+>  	 * we can skip trailing ones as they will be handled in the next
+> diff --git a/fs/xfs/xfs_aops.c b/fs/xfs/xfs_aops.c
+> index 1f1829e506e8..d8e9cc9f751a 100644
+> --- a/fs/xfs/xfs_aops.c
+> +++ b/fs/xfs/xfs_aops.c
+> @@ -603,6 +603,7 @@ xfs_add_to_ioend(
+>  	unsigned		len = i_blocksize(inode);
+>  	unsigned		poff = offset & (PAGE_SIZE - 1);
+>  	sector_t		sector;
+> +	bool			need_account;
+>  
+>  	sector = xfs_fsb_to_db(ip, wpc->imap.br_startblock) +
+>  		((offset - XFS_FSB_TO_B(mp, wpc->imap.br_startoff)) >> 9);
+> @@ -617,13 +618,18 @@ xfs_add_to_ioend(
+>  	}
+>  
+>  	if (!__bio_try_merge_page(wpc->ioend->io_bio, page, len, poff)) {
+> -		if (iop)
+> -			atomic_inc(&iop->write_count);
+> +		need_account = true;
+>  		if (bio_full(wpc->ioend->io_bio))
+>  			xfs_chain_bio(wpc->ioend, wbc, bdev, sector);
+>  		__bio_add_page(wpc->ioend->io_bio, page, len, poff);
+> +	} else {
+> +		need_account = iop && bio_is_last_segment(wpc->ioend->io_bio,
+> +				page, len, poff);
+
+Same here, no need for iop &&, rename it added_page, indentation is off.
+
+>  	}
+>  
+> +	if (iop && need_account)
+> +		atomic_inc(&iop->write_count);
+> +
+>  	wpc->ioend->io_size += len;
+>  }
+>  
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index 1a2430a8b89d..5040e9a2eb09 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -341,6 +341,17 @@ static inline struct bio_vec *bio_last_bvec_all(struct bio *bio)
+>  	return &bio->bi_io_vec[bio->bi_vcnt - 1];
+>  }
+>  
+> +/* iomap needs this helper to deal with sub-pagesize bvec */
+> +static inline bool bio_is_last_segment(struct bio *bio, struct page *page,
+> +		unsigned int len, unsigned int off)
+
+Indentation.
+
+> +{
+> +	struct bio_vec bv;
+> +
+> +	bvec_last_segment(bio_last_bvec_all(bio), &bv);
+> +
+> +	return bv.bv_page == page && bv.bv_len == len && bv.bv_offset == off;
+> +}
+> +
+>  enum bip_flags {
+>  	BIP_BLOCK_INTEGRITY	= 1 << 0, /* block layer owns integrity data */
+>  	BIP_MAPPED_INTEGRITY	= 1 << 1, /* ref tag has been remapped */
+> -- 
+> 2.9.5
+> 
