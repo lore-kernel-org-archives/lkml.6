@@ -2,118 +2,70 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BF673C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:52:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F1AE1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:58:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 91C4B2086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:52:10 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 91C4B2086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ravnborg.org
+	by mail.kernel.org (Postfix) with ESMTP id B99EA2087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:58:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B99EA2087A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=holtmann.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbeKQGFx (ORCPT
+        id S1726302AbeKQGMN convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 01:05:53 -0500
-Received: from asavdk4.altibox.net ([109.247.116.15]:60773 "EHLO
-        asavdk4.altibox.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725804AbeKQGFx (ORCPT
+        Sat, 17 Nov 2018 01:12:13 -0500
+Received: from coyote.holtmann.net ([212.227.132.17]:49387 "EHLO
+        mail.holtmann.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725753AbeKQGMN (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 01:05:53 -0500
-Received: from ravnborg.org (unknown [158.248.194.18])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by asavdk4.altibox.net (Postfix) with ESMTPS id CE33C8048C;
-        Fri, 16 Nov 2018 20:52:04 +0100 (CET)
-Date:   Fri, 16 Nov 2018 20:52:03 +0100
-From:   Sam Ravnborg <sam@ravnborg.org>
-To:     Paul Walmsley <paul.walmsley@sifive.com>
-Cc:     linux-kernel@vger.kernel.org, Russell King <linux@armlinux.org.uk>,
-        Jim Wilson <jimw@sifive.com>,
-        Masahiro Yamada <yamada.masahiro@socionext.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kbuild@vger.kernel.org, Paul Walmsley <paul@pwsan.com>
-Subject: Re: [PATCH v2 2/2] modpost: skip ELF local symbols by default during
- section mismatch check
-Message-ID: <20181116195203.GB15240@ravnborg.org>
-References: <20181115005602.30746-1-paul.walmsley@sifive.com>
- <20181115005602.30746-3-paul.walmsley@sifive.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115005602.30746-3-paul.walmsley@sifive.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-CMAE-Score: 0
-X-CMAE-Analysis: v=2.3 cv=UpRNyd4B c=1 sm=1 tr=0
-        a=UWs3HLbX/2nnQ3s7vZ42gw==:117 a=UWs3HLbX/2nnQ3s7vZ42gw==:17
-        a=kj9zAlcOel0A:10 a=mDV3o1hIAAAA:8 a=VwQbUJbxAAAA:8 a=7gkXJVJtAAAA:8
-        a=PHq6YzTAAAAA:8 a=pFyQfRViAAAA:8 a=c-n4J4-pAAAA:8 a=NZ-89VFvAAAA:8
-        a=XZFr5bKXAAAA:8 a=_NzsIkUFZ0e4lOZAoVAA:9 a=CjuIK1q_8ugA:10
-        a=-O0LoMC9EyoA:10 a=_FVE-zBwftR9WsbkzFJk:22 a=AjGcO6oz07-iQ99wixmX:22
-        a=E9Po1WZjFZOl8hwRPBS3:22 a=ZKzU8r6zoKMcqsNulkmm:22
-        a=oJz5jJLG1JtSoe7EL652:22 a=L0NDqeB7ZLmQzAogN4cw:22
-        a=pm31WBKQz9GEXVZSZ1ft:22 a=XjNn1HFNghan22KSQb5W:22
+        Sat, 17 Nov 2018 01:12:13 -0500
+Received: from marcel-macbook.fritz.box (p4FEFC1D6.dip0.t-ipconnect.de [79.239.193.214])
+        by mail.holtmann.org (Postfix) with ESMTPSA id 1097FCF167;
+        Fri, 16 Nov 2018 21:05:56 +0100 (CET)
+Content-Type: text/plain;
+        charset=us-ascii
+Mime-Version: 1.0 (Mac OS X Mail 12.1 \(3445.101.1\))
+Subject: Re: [Letux-kernel] [PATCH RFC] bluetooth: add uart h4 devices via
+ serdev/devicetree
+From:   Marcel Holtmann <marcel@holtmann.org>
+In-Reply-To: <20181116204601.4e1aa0de@kemnade.info>
+Date:   Fri, 16 Nov 2018 20:58:24 +0100
+Cc:     Rob Herring <robh@kernel.org>, sebastian.reichel@collabora.com,
+        hns@goldelico.com, devicetree@vger.kernel.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, letux-kernel@openphoenux.org
+Content-Transfer-Encoding: 8BIT
+Message-Id: <09AFE47C-D188-4397-A2CD-C70FFAC3B677@holtmann.org>
+References: <20181110232034.17277-1-andreas@kemnade.info>
+ <20181111024648.7rt7rlhaqihtqecv@earth.universe>
+ <20181112215812.18ebca35@aktux>
+ <2C74C837-A6D3-47C9-BE59-CCA594289B94@goldelico.com>
+ <20181112222726.73m2oca7hankvcjs@earth.universe>
+ <CABGGisxsdv+BTd5-HMzF8asEcWtL5F4CMzmkrBCwK=NibvqjLQ@mail.gmail.com>
+ <20181113170128.0f59ef0e@kemnade.info>
+ <86A3A2E6-FC89-42FE-8410-9C8273EC9CF7@holtmann.org>
+ <20181116204601.4e1aa0de@kemnade.info>
+To:     Andreas Kemnade <andreas@kemnade.info>
+X-Mailer: Apple Mail (2.3445.101.1)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 04:56:02PM -0800, Paul Walmsley wrote:
-> During development of a serial console driver with a gcc 8.2.0
-> toolchain for RISC-V, the following modpost warning appeared:
-> 
-> ----
-> WARNING: vmlinux.o(.data+0x19b10): Section mismatch in reference from the variable .LANCHOR1 to the function .init.text:sifive_serial_console_setup()
-> The variable .LANCHOR1 references
-> the function __init sifive_serial_console_setup()
-> If the reference is valid then annotate the
-> variable with __init* or __refdata (see linux/init.h) or name the variable:
-> *_template, *_timer, *_sht, *_ops, *_probe, *_probe_one, *_console
-> ----
-> 
-> ".LANCHOR1" is an ELF local symbol, automatically created by gcc's section
-> anchor generation code:
-> 
-> https://gcc.gnu.org/onlinedocs/gccint/Anchored-Addresses.html
-> 
-> https://gcc.gnu.org/git/?p=gcc.git;a=blob;f=gcc/varasm.c;h=cd9591a45617464946dcf9a126dde277d9de9804;hb=9fb89fa845c1b2e0a18d85ada0b077c84508ab78#l7473
-> 
-> This was verified by compiling the kernel with -fno-section-anchors.
-> The serial driver code idiom triggering the warning is standard serial
-> driver practice, and one that has a specific whitelist inclusion in
-> modpost.c.
-> 
-> I'm neither a modpost nor an ELF expert, but naively, it doesn't seem
-> useful for modpost to report section mismatch warnings caused by ELF
-> local symbols by default.  Local symbols have compiler-generated
-> names, and thus bypass modpost's whitelisting algorithm, which relies
-> on the presence of a non-autogenerated symbol name.  This increases
-> the likelihood that false positive warnings will be generated (as in
-> the above case).
-> 
-> Thus, disable section mismatch reporting on ELF local symbols.  The
-> rationale here is similar to that of commit 2e3a10a1551d ("ARM: avoid
-> ARM binutils leaking ELF local symbols") and of similar code already
-> present in modpost.c:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/scripts/mod/modpost.c?h=v4.19-rc4&id=7876320f88802b22d4e2daf7eb027dd14175a0f8#n1256
-> 
-> This second version of the patch drops the option to keep section
-> mismatch warnings for local sections, based on feedback from Sam
-> Ravnborg <sam@ravnborg.org>; and clarifies that these warnings
-> appear with gcc 8.2.0.
-> 
-> Cc: Russell King <linux@armlinux.org.uk>
-> Cc: Jim Wilson <jimw@sifive.com>
-> Cc: Masahiro Yamada <yamada.masahiro@socionext.com>
-> Cc: Michal Marek <michal.lkml@markovi.net>
-> Cc: Sam Ravnborg <sam@ravnborg.org>
-> Cc: linux-kbuild@vger.kernel.org
-> Cc: linux-kernel@vger.kernel.org
-> Signed-off-by: Paul Walmsley <paul.walmsley@sifive.com>
-> Signed-off-by: Paul Walmsley <paul@pwsan.com>
-Acked-by: Sam Ravnborg <sam@ravnborg.org>
+Hi Andreas,
+
+>> Btw. I see nothing standing in the way of merging btuart.c driver and then go from there. Either I dig this out and submit or someone else does.
+>> 
+> Do you mean this?
+> https://patchwork.kernel.org/patch/10490651/
+
+yes, that one.
+
+Regards
+
+Marcel
+
