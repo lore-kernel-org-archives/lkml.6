@@ -2,81 +2,78 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ED0E2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:59:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89516C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:01:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AE2192086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:59:58 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4FCA62086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:01:39 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ecbPQJXT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AE2192086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="aPw9Uhu1"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4FCA62086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390140AbeKQDNG (ORCPT
+        id S2390150AbeKQDOs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 22:13:06 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:50464 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728684AbeKQDNG (ORCPT
+        Fri, 16 Nov 2018 22:14:48 -0500
+Received: from mail-wr1-f65.google.com ([209.85.221.65]:37314 "EHLO
+        mail-wr1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728684AbeKQDOr (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 22:13:06 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
-        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=upP0x0LsDyDsUPrJpguytuw1H/Vm0SYnikujVZ3lBiw=; b=ecbPQJXT4EBOWg5gxAuoq+2hIZ
-        YwLYo4BCQ1cgUTRTdm/nn0v8a2sieEkpyTXP0SmATtZkWOOUfd0UlgTMx0ixFyNe4zwq9nLfX7pvN
-        HIHIfP6Sd60Cj+OQizBHpqK0u4V8u6dlKoa47Dt4XN06RwbPH5V4RBXno0Iua1568nvYeP9NgEwJ0
-        kol0F1jY8rMrNz9S1m3rdzU6YgvQJsDMmxXhPSbTdrPbD5UwMe3CfusaSarU4+6Yy1Ij5p9uRrw20
-        eTqM7AhqPvs88nd7Tf9EVd9Xf5GzXu7O1zcfjLdlunQZJsdDxVDgsMFeJ/eNJYo6R719f5DRj7m8e
-        ISGS9rmg==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNhSy-0002yZ-BC; Fri, 16 Nov 2018 16:59:36 +0000
-Subject: Re: [PATCH 1/9] mm: Introduce new vm_insert_range API
-To:     Souptick Joarder <jrdr.linux@gmail.com>,
-        Matthew Wilcox <willy@infradead.org>
-Cc:     Andrew Morton <akpm@linux-foundation.org>,
-        Michal Hocko <mhocko@suse.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        vbabka@suse.cz, Rik van Riel <riel@surriel.com>,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        rppt@linux.vnet.ibm.com, Peter Zijlstra <peterz@infradead.org>,
-        Russell King - ARM Linux <linux@armlinux.org.uk>,
-        robin.murphy@arm.com, iamjoonsoo.kim@lge.com, treding@nvidia.com,
-        Kees Cook <keescook@chromium.org>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        stefanr@s5r6.in-berlin.de, hjc@rock-chips.com,
-        Heiko Stuebner <heiko@sntech.de>, airlied@linux.ie,
-        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
-        pawel@osciak.com, Kyungmin Park <kyungmin.park@samsung.com>,
-        mchehab@kernel.org, Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-        Juergen Gross <jgross@suse.com>, linux-kernel@vger.kernel.org,
-        Linux-MM <linux-mm@kvack.org>,
-        linux-arm-kernel@lists.infradead.org,
-        linux1394-devel@lists.sourceforge.net,
-        dri-devel@lists.freedesktop.org,
-        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
-        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
-References: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
- <9655a12e-bd3d-aca2-6155-38924028eb5d@infradead.org>
- <CAFqt6zbLjtDab3Bz67trbnQRQdutvgA=YvAFhoW4bxsg657mGQ@mail.gmail.com>
- <20181116064049.GA5320@bombadil.infradead.org>
- <CAFqt6zbL1tu4VWtZ5Wz-BgbOS+M2GJziMj958_h_ri4Th3n9bQ@mail.gmail.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <b54491c4-c119-6e83-93ae-d0df7fc165a1@infradead.org>
-Date:   Fri, 16 Nov 2018 08:59:28 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 16 Nov 2018 22:14:47 -0500
+Received: by mail-wr1-f65.google.com with SMTP id j10so11374590wru.4
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 09:01:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ONQVY+T1AaVdTBtZy6BR2S+m2uvJLC8/vjef3UkuJsc=;
+        b=aPw9Uhu19dujwnvoqAbNvT4mrjD44VB/DOWFzo9asAT4MI2gLuPQCVzH4vdQxb6ytK
+         aAme99sxH4twoaneKnxT9VISLjsx6EQBz4rC9uHVt6eA5CRwzuP9MkvxbFKKzMxTQm6z
+         7EJziP/TzvZdZFuO4808K4sopJXwqvdoj/dng=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ONQVY+T1AaVdTBtZy6BR2S+m2uvJLC8/vjef3UkuJsc=;
+        b=XT+OPHa4TgzqtCVtqfF8Y7u9PgAsN82vqkPXA1U+mrHqILlbgNIbOcF0Y3i394yQad
+         8vryJ8iGHZEGmAzzcwSbhSWrU+iRuyHK7PujBVHFvdGo4eFDHQQygibElwBDPNxJ0OiS
+         TTrGH/ZUysh+IQJJf2XfJ0WE26DzpvG5zrukEvj7nor5p6ANap7D4hsP4nlBlUPz6Pm8
+         Vj3qMZMJfNzIo3F+KJ2LqfdzITkJcG2ypyGrDFfoeM3yofRL2YbPyTjh3x7ZcFFsU6AI
+         GtTtPuiVNPm8S8ZTTlGfg1+pnQLMMaP062SZw8ZxUidluyikC5QzERc2p24zRrkPt+fW
+         8nrA==
+X-Gm-Message-State: AA+aEWayMcUWtrpmV0hkNLQtbGkNn8yG/f89m0VpT4mywqLsqs0p0rlE
+        A8Tp3Ta2EB/SAfe9aWMKyuExyg==
+X-Google-Smtp-Source: AFSGD/UdheeIonrlityn0dgo+//1XWoRYdXB0jlXQeggi3lrNS27WJ/29qsX/NGx9ad9VJPFtlhHgQ==
+X-Received: by 2002:a5d:5089:: with SMTP id a9mr8385670wrt.327.1542387695882;
+        Fri, 16 Nov 2018 09:01:35 -0800 (PST)
+Received: from [192.168.27.197] ([37.157.136.206])
+        by smtp.gmail.com with ESMTPSA id o15-v6sm24138673wrw.47.2018.11.16.09.01.34
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Nov 2018 09:01:35 -0800 (PST)
+Subject: Re: [PATCH v2 RESEND] usb: dwc3: core: Fix ULPI PHYs and prevent
+ phy_get/ulpi_init during suspend/resume
+To:     Felipe Balbi <balbi@kernel.org>, Roger Quadros <rogerq@ti.com>,
+        linux-usb@vger.kernel.org
+Cc:     vigneshr@ti.com, gregkh@linuxfoundation.org,
+        linux-kernel@vger.kernel.org,
+        "linux-stable # = v4 . 13" <stable@vger.kernel.org>
+References: <1515667087-4110-1-git-send-email-rogerq@ti.com>
+ <ee73347b-e996-4052-6a9d-dd94edd4a61a@ti.com>
+ <606dbc68-2014-8590-ce47-83c175d4cd41@linaro.org>
+ <87efbm92zi.fsf@linux.intel.com>
+From:   Todor Tomov <todor.tomov@linaro.org>
+Message-ID: <027608c0-8d2d-42ab-5125-76b86f286d2b@linaro.org>
+Date:   Fri, 16 Nov 2018 19:01:32 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.6.0
 MIME-Version: 1.0
-In-Reply-To: <CAFqt6zbL1tu4VWtZ5Wz-BgbOS+M2GJziMj958_h_ri4Th3n9bQ@mail.gmail.com>
+In-Reply-To: <87efbm92zi.fsf@linux.intel.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
@@ -85,62 +82,45 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/16/18 12:15 AM, Souptick Joarder wrote:
-> On Fri, Nov 16, 2018 at 12:11 PM Matthew Wilcox <willy@infradead.org> wrote:
->>
->> On Fri, Nov 16, 2018 at 11:00:30AM +0530, Souptick Joarder wrote:
->>> On Thu, Nov 15, 2018 at 11:44 PM Randy Dunlap <rdunlap@infradead.org> wrote:
->>>> On 11/15/18 7:45 AM, Souptick Joarder wrote:
->>>> What is the opposite of vm_insert_range() or even of vm_insert_page()?
->>>> or is there no need for that?
->>>
->>> There is no opposite function of vm_insert_range() / vm_insert_page().
->>> My understanding is, in case of any error, mmap handlers will return the
->>> err to user process and user space will decide the next action. So next
->>> time when mmap handler is getting invoked it will map from the beginning.
->>> Correct me if I am wrong.
->>
->> The opposite function, I suppose, is unmap_region().
->>
->>>> s/no./number/
->>>
->>> I didn't get it ??
->>
->> This is a 'sed' expression.  's' is the 'substitute' command; the /
->> is a separator, 'no.' is what you wrote, and 'number' is what Randy
->> is recommending instead.
+Hi,
+
+On 15.11.2018 10:09, Felipe Balbi wrote:
 > 
-> Ok. Will change it in v2.
-
-Thanks.
-
->>>>> +     for (i = 0; i < page_count; i++) {
->>>>> +             ret = vm_insert_page(vma, uaddr, pages[i]);
->>>>> +             if (ret < 0)
->>>>> +                     return ret;
->>>>
->>>> For a non-trivial value of page_count:
->>>> Is it a problem if vm_insert_page() succeeds for several pages
->>>> and then fails?
->>>
->>> No, it will be considered as total failure and mmap handler will return
->>> the err to user space.
+> Hi,
+> 
+> Todor Tomov <todor.tomov@linaro.org> writes:
+> 
+>> Hello,
 >>
->> I think what Randy means is "What happens to the inserted pages?" and
->> the answer is that mmap_region() jumps to the 'unmap_and_free_vma'
->> label, which is an accurate name.
+>> After I apply this patch on 4.14 (or receive it with 4.14.70) I see a regression with
+>> the Qualcomm QUSB2 phy driver. I'm testing on a Dragonboard 820c.
+>> In boot log I get:
+>>
+>> [    4.525502] phy phy-7412000.phy.6: QUSB2PHY pll lock failed: status reg = 0
+>> [    4.529232] phy phy-7412000.phy.6: phy init failed --> -16
+>> [    4.536170] dwc3 7600000.dwc3: failed to initialize core
+>> [    4.541743] dwc3: probe of 7600000.dwc3 failed with error -16
+>> [    4.549979] phy phy-7411000.phy.5: QUSB2PHY pll lock failed: status reg = 0
+>> [    4.552843] phy phy-7411000.phy.5: phy init failed --> -16
+>> [    4.559606] dwc3 6a00000.dwc3: failed to initialize core
+>> [    4.565181] dwc3: probe of 6a00000.dwc3 failed with error -16
+>>
+>> I can provide a full log if needed.
+> 
+> please do. Also, try mainline and let us know if the problem
 
-which says:
+This is the full log on 4.14.69 + this patch: https://paste.ubuntu.com/p/N5WdHw47QC/
+I also managed to get a log from 4.20.0-rc2 and I see the same error: https://paste.ubuntu.com/p/jz6fvYyZh6/
 
-	/* Undo any partial mapping done by a device driver. */
-	unmap_region(mm, vma, prev, vma->vm_start, vma->vm_end);
+> persists. Why do you get -EBUSY from the PHY driver?
 
-and that is what I was missing.  Thanks.
+Maybe I could have proposed a fix if I knew but I don't know.
 
-> Sorry for incorrect understanding of the question.
+Best regards,
+Todor
 
-No problem.
+> 
+> - 
+> balbi
+> 
 
-
--- 
-~Randy
