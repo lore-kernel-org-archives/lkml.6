@@ -2,119 +2,114 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 67366C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:39:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 520EFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:44:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 24D0020858
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:39:25 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 15B1D2086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:44:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="DOW2X040"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 24D0020858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mMTx/d8G"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15B1D2086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390087AbeKQDwl (ORCPT
+        id S1729332AbeKQD5U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 22:52:41 -0500
-Received: from mail-io1-f68.google.com ([209.85.166.68]:42379 "EHLO
-        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729140AbeKQDwl (ORCPT
+        Fri, 16 Nov 2018 22:57:20 -0500
+Received: from mail-vk1-f194.google.com ([209.85.221.194]:45084 "EHLO
+        mail-vk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729140AbeKQD5U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 22:52:41 -0500
-Received: by mail-io1-f68.google.com with SMTP id h19-v6so17649625iog.9
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 09:39:22 -0800 (PST)
+        Fri, 16 Nov 2018 22:57:20 -0500
+Received: by mail-vk1-f194.google.com with SMTP id n126so5424166vke.12
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 09:44:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
+        d=gmail.com; s=20161025;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=CmPpK2D6N8MQ/pvjFtCGTT0PeJ0h32hFzTtesZGJZmM=;
-        b=DOW2X040UHBUVDo/EtUB9HLM6pwacy0muJ2npQkEw4SQNAVCoGN0L9i1vkKw0r0cTo
-         ryfQ0bnmj0DGNf02lqWjhotfj//AmFZpfb9A/2l0HpQx/rehafGi8I0P3Ewm8dLfIbtU
-         Rjcaz9kGJJLRnC398ogrdQ1z9/5Iq38Rzv6sk=
+        bh=1d5YZpaaiU29VzqjlaqygfUagMt9MbEcWEj4MwojAa4=;
+        b=mMTx/d8GWJecC48aO1aaGvhtLb9jl2hTLkpvOzSd7jTiUZPTrEleYNETQiQcnavN/a
+         aB1o3mOEkn2Uc1D1G1TDA1C+u5OxvxwLgdpFeEAneEOv4o7Z+CCeeEiGhm2zGq4ai19o
+         frQsE8vW63s9ukNYVEYfqeYr/MnIawYrGZaX9sPVd9nMMIUmp535HbVy1zj9U6hxLDoN
+         OhrvX2ufshqYZj7Py3w+pql+dCw3+5MkEz5UteaQBzHSA+C25YZBfXVLwngvPPYNpwSy
+         WBZN+kLU/sYdT0jv6SyTmeDg1as3iVE+c93cAsiCf/Ne+ZQD1/yRj/brkGjxdBJbuJfH
+         GjdA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=CmPpK2D6N8MQ/pvjFtCGTT0PeJ0h32hFzTtesZGJZmM=;
-        b=bj6ARCAG8MzSp4hJY2EH/fGuYMsqtHZ1KUi9XcgqpuDxsGIN93firrVDq9uEy6CXhi
-         qnbzBtHr3nKc4QRemlTI16x8hKWMImsEZ/LS4U2z9ccD9iPDGoUHuMZUmawprYdehHU3
-         43bwVeNPqPqOTYMehdTHBPYoavIexSLB8o3dJhF/BCifzo/2BOdBPzRce5xugDPexYrB
-         NmME3F7o9N/ptLndKjTwBfYuZbqSZIh7xpe5yhE3k0ZkQdmO7GzfBU72mj7COGyo5OXF
-         izdM5kqsChkH1j0J31vlRFhn7n2Uel/muAc6o0PRGS4mFjCQMFIUIi8bgTM1tcuni975
-         4lSQ==
-X-Gm-Message-State: AA+aEWYFdMOolkMllLN+sATG0iaAKkDSOOPUlHD2TQqp27aGRqCN0Sta
-        cgM0PDODru3lPjXc4ZagPQVJljrl5sIzpkNvEUkMTg==
-X-Google-Smtp-Source: AFSGD/WwRCXot27xdi3zTHh7O/FBRKWRFPGL3DubX+8tp4kRMurY/jqQ2tubyTOm4NlVs0nkt0/XaoU1pJpzHXKJ3Vw=
-X-Received: by 2002:a6b:be02:: with SMTP id o2-v6mr8702994iof.41.1542389961863;
- Fri, 16 Nov 2018 09:39:21 -0800 (PST)
+        bh=1d5YZpaaiU29VzqjlaqygfUagMt9MbEcWEj4MwojAa4=;
+        b=KBN68Dqjo+/tvE/DwrlJ3nAyEODrMnzFw2muecI8XgCzvwaa5A565AGe0mK/cundhf
+         3b2LP5jUILy6ciBHgsv4ZaUrPZ5X6Rxr2Y919OujL+t/zuMAAW8odLsmfNOPG0Zaw02D
+         Wmxeg/p3zvQ6aOywyojxAW36tbtZaka7SSwbyaF+Sf2CPWqsJrL9WcYdzYRr8jid0ihG
+         koUMLNlUH10vYTi9cxsZHsfYrSLTzMmfaGqemGyCTi2OsrqGFhG95cJFkG/YYTdXbPsw
+         S9VZVAGPOlxC6DvEEL52RyjSCekGXtSktNgPPtRPdxqYUf/KIWLr4dfgWd0NTHP7EKge
+         7Gaw==
+X-Gm-Message-State: AGRZ1gLtq/8QXQlEi5CzVjM/RphsLT6FhEwY9GFS0U9DT9tjPITZEMOH
+        k68EIfKmFiGtGpgVn0rY4+98gUDfk9mJG6y3jHs=
+X-Google-Smtp-Source: AJdET5e8M5Lt54roHu4riHu14D6PRjZN3RbpIqbNhtAKclrNM7vYa4rQtn57U7ZjYuQAVzFC+iwhXUKxnCWnLpiKUtQ=
+X-Received: by 2002:a1f:6184:: with SMTP id v126mr4849566vkb.69.1542390239546;
+ Fri, 16 Nov 2018 09:43:59 -0800 (PST)
 MIME-Version: 1.0
-References: <20181116051719.23376-1-dbasehore@chromium.org> <CAD=FV=W7sYY5n609erPpTxux+0Efad_0YpPkoVZB14Kqm=baXA@mail.gmail.com>
-In-Reply-To: <CAD=FV=W7sYY5n609erPpTxux+0Efad_0YpPkoVZB14Kqm=baXA@mail.gmail.com>
-From:   "dbasehore ." <dbasehore@chromium.org>
-Date:   Fri, 16 Nov 2018 09:39:09 -0800
-Message-ID: <CAGAzgsq7uF=E3dzhyCjK4gq09_UV_aZhQbyaTnz7yDY_ErQYKQ@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: rk3399: Add xin32k clk
-To:     Doug Anderson <dianders@chromium.org>
-Cc:     linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-rockchip@lists.infradead.org,
-        linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-        =?UTF-8?B?6LCi5L+u6ZGr?= <tony.xie@rock-chips.com>,
-        Chris Zhong <zyw@rock-chips.com>, ayaka@soulik.info,
-        "nickey.yang" <nickey.yang@rock-chips.com>,
-        Shunqian Zheng <zhengsq@rock-chips.com>,
-        klaus.goger@theobroma-systems.com,
-        Brian Norris <briannorris@chromium.org>,
-        enric.balletbo@collabora.com,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Mark Rutland <mark.rutland@arm.com>, robh+dt@kernel.org
+References: <CAOuPNLiLj9be5iUdpUiLqiTge-xYY_v4_VLs-ah2_PygG7vxdg@mail.gmail.com>
+ <28496.1542300549@turing-police.cc.vt.edu> <CAOuPNLj8wj=tPJo8L3oS7o8iTQcyhZ0W-GH6xmP_GsG4r7YdAQ@mail.gmail.com>
+ <49219.1542367988@turing-police.cc.vt.edu> <CAOuPNLg4tM6Cw8Yf9rdpkBOU=+Fh654yFQeAhJf1y88Gb3MAew@mail.gmail.com>
+ <5997.1542386778@turing-police.cc.vt.edu>
+In-Reply-To: <5997.1542386778@turing-police.cc.vt.edu>
+From:   Pintu Agarwal <pintu.ping@gmail.com>
+Date:   Fri, 16 Nov 2018 23:13:48 +0530
+Message-ID: <CAOuPNLiX0zhxiRAx03YjVU6cocwWbgY9naxeYPRKmT+3PoGhRw@mail.gmail.com>
+Subject: Re: [ARM64] Printing IRQ stack usage information
+To:     Valdis Kletnieks <valdis.kletnieks@vt.edu>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        kernelnewbies@kernelnewbies.org,
+        Jungseok Lee <jungseoklee85@gmail.com>,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        Takahiro Akashi <takahiro.akashi@linaro.org>,
+        mark.rutland@arm.com, Sungjinn Chung <barami97@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 8:01 AM Doug Anderson <dianders@chromium.org> wrote:
+On Fri, Nov 16, 2018 at 10:16 PM <valdis.kletnieks@vt.edu> wrote:
 >
-> Hi,
+> On Fri, 16 Nov 2018 20:10:28 +0530, Pintu Agarwal said:
 >
-> On Thu, Nov 15, 2018 at 9:17 PM Derek Basehore <dbasehore@chromium.org> wrote:
-> >
-> > This adds the xin32k clock to the RK3399 CPU. Even though it's not
-> > directly used, muxes will end up traversing the entire clk tree on
-> > calls to determine_rate if it doesn't exist.
-> >
-> > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> > ---
-> >  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 7 +++++++
-> >  1 file changed, 7 insertions(+)
+> > > Look at the code controlled by '#ifdef CONFIG_DEBUG_STACK_USAGE'
 >
-> nit: I would have expected ${SUBJECT} to have v2 in it somewhere.
+> > For example: is it possible to keep storing the irq_stack_usage (for
+> > each cpu in a variable) information from boot time, and then use this
+> > variable to dump the irq_stack information, after the system booted,
+> > may be from proc entry ?
 >
->
-> > diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > index 99e7f65c1779..3d09472978f8 100644
-> > --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
->
-> Aww crud.  I was at the airport yesterday and so I didn't notice that
-> you were touching rk3399, not rk3399-gru.  This belongs in the gru
-> device tree file, not in the top level rk3399.  As you have written
-> this it will break rk3399 boards that have an rk808 on them, AKA:
+> Congrats. You just re-invented DEBUG_STACK_USAGE, which just keeps a high-water mark
+> for stack usage.
 
-Should this be moved to the rk3399.dtsi file? The RK3399 assumes that
-this clk exists (same as the 24MHz clk which is in rk3399.dtsi). While
-it can function without it defined, it really shouldn't. We can just
-assign the existing labels in the dts files you pointed out.
+So, you mean to say, my implementation is good enough to get the
+irq_stack usage, from the interrupt handler ?
+But my concern is that if I dump it from irq handler, I will get
+information only for the current cpu.
+How do I store and get the information for all the cpu from the boot time ?
+From where do I call my dump_irq_stack_info() [some where during the
+entry/exit part of the irq handler], so that I could dump information
+for all the handler at boot time itself ?
+Like I would to capture these information:
+- What was the name of the handler ?
+- Which cpu was executing it ?
+- How much irq stack (max value, same like high water mark) were used
+at that time ?
 
->
-> arch/arm64/boot/dts/rockchip/rk3399-ficus.dts:
-> arch/arm64/boot/dts/rockchip/rk3399-firefly.dts:
-> arch/arm64/boot/dts/rockchip/rk3399-puma.dtsi:
-> arch/arm64/boot/dts/rockchip/rk3399-sapphire.dtsi:
->
-> -Doug
+Where can I collect these information from the boot time ?
+
+
+Thanks,
+Pintu
