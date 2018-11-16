@@ -2,184 +2,141 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-14.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 85CBBC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:31:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 760EDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:32:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D9BA20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:31:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ti7hVYrV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D9BA20892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 268FD2086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:32:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 268FD2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390276AbeKQEpN (ORCPT
+        id S2390303AbeKQEp3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 23:45:13 -0500
-Received: from mail.kernel.org ([198.145.29.99]:51250 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727462AbeKQEpN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 23:45:13 -0500
-Received: from jouet.infradead.org (d66-183-243-195.bchsia.telus.net [66.183.243.195])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 845D82086C;
-        Fri, 16 Nov 2018 18:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542393103;
-        bh=8EvBx+rCxWyU2EVULaNJQqPVX5W8kw4V33+o9cyYomg=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=Ti7hVYrVCXIhqIxLJjruatILeONHeBOiaPx4bkd60yrKHYu6uxBPWeQKCzcL6ZVhq
-         lGGblOMt0bnXo+qDGszmj7RP0Kya4KCLrUmvM3zDTTTUgPUDwDxKOXrpzSESy+hhVP
-         DYPPXYBRoT9Hw0MdpMRsAd7kK6n8FWa9P24w7CAU=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 4F76A1443D0; Fri, 16 Nov 2018 10:31:43 -0800 (PST)
-Date:   Fri, 16 Nov 2018 10:31:43 -0800
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     Jiri Olsa <jolsa@kernel.org>
-Cc:     Krister Johansen <kjlx@templeofstupid.com>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Ingo Molnar <mingo@kernel.org>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>
-Subject: Re: [PATCH] perf tools: Restore proper cwd on return from mnt ns
-Message-ID: <20181116183143.GD18319@kernel.org>
-References: <20181101170001.30019-1-jolsa@kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181101170001.30019-1-jolsa@kernel.org>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+        Fri, 16 Nov 2018 23:45:29 -0500
+Received: from outbound.smtp.vt.edu ([198.82.183.121]:42458 "EHLO
+        omr2.cc.vt.edu" rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727462AbeKQEp3 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 23:45:29 -0500
+Received: from mr4.cc.vt.edu (mr4.cc.vt.edu [IPv6:2607:b400:92:8300:0:7b:e2b1:6a29])
+        by omr2.cc.vt.edu (8.14.4/8.14.4) with ESMTP id wAGIVx0k030465
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 13:31:59 -0500
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+        by mr4.cc.vt.edu (8.14.7/8.14.7) with ESMTP id wAGIVsXu021743
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 13:31:59 -0500
+Received: by mail-qk1-f198.google.com with SMTP id d196so53187684qkb.6
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 10:31:59 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:sender:from:to:cc:subject:in-reply-to:references
+         :mime-version:content-transfer-encoding:date:message-id;
+        bh=VycXzBO5NzrhP+5JdsiIbB3sP7KmxZuBqwxvpwLENMk=;
+        b=ZsTxLIhVjivtWsLcqAGWCU657Gq38rRkEprX/2wKGNm8tTLUS3s+2XKNeUJimWdc9b
+         TSd1+9QiUVJNyAt0nOsBvpQ5xOW3KRp83nUasMq13rzDm+kCHGpzEgWttccbdTDY4dQf
+         hzf9KFMIHU1Mo2NIn3qVjWylKANWyEo0MR95CkFdGy9yQwDyD/a2GdILOkq3Yb2eYd+J
+         vFANgQAHhPrVRTu7ryA7kCzlVY145HO+r9LyxiL0pZ69lV1eKJzv3YgwLnn8Yj+60RB7
+         ZC6naafoYsbUQad0vJxPzwywP1bUlDFrEfO50jzf6ZCzgpYTdfQ6hXibo53QuHp/A9Jx
+         AFLA==
+X-Gm-Message-State: AGRZ1gJNWWHb1aNOv5h5v4Tr4NAXiarSjR/aXt+dWlDPAfwDDIlYkD/X
+        kpyxnNkyqUnw63jnbIA45nBv9QWFjS7Txx/XBlQfnam8S7Ep5wcjRWCQVYp+DBNvOZa/Xva1OAC
+        d5lu4751VmGBDbvtnGofdgS4f4x05+hHsx+I=
+X-Received: by 2002:a37:324a:: with SMTP id y71mr11297249qky.291.1542393113713;
+        Fri, 16 Nov 2018 10:31:53 -0800 (PST)
+X-Google-Smtp-Source: AJdET5ffyQB5ptJVeH8J8dSDt6TqN7mHTIApKupTGspNcaR86uKRBAyJsucso/tXG1x4/al2qhFRRQ==
+X-Received: by 2002:a37:324a:: with SMTP id y71mr11297226qky.291.1542393113405;
+        Fri, 16 Nov 2018 10:31:53 -0800 (PST)
+Received: from turing-police.cc.vt.edu (turing-police.cc.ipv6.vt.edu. [2001:468:c80:2103:f21f:afff:fe0c:8ada])
+        by smtp.gmail.com with ESMTPSA id v2sm12952073qte.75.2018.11.16.10.31.51
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Nov 2018 10:31:52 -0800 (PST)
+From:   valdis.kletnieks@vt.edu
+X-Google-Original-From: Valdis.Kletnieks@vt.edu
+X-Mailer: exmh version 2.9.0 11/07/2018 with nmh-1.7+dev
+To:     Pintu Agarwal <pintu.ping@gmail.com>
+Cc:     open list <linux-kernel@vger.kernel.org>,
+        linux-arm-kernel@lists.infradead.org,
+        Russell King - ARM Linux <linux@armlinux.org.uk>,
+        kernelnewbies@kernelnewbies.org,
+        Jungseok Lee <jungseoklee85@gmail.com>,
+        catalin.marinas@arm.com, will.deacon@arm.com,
+        Takahiro Akashi <takahiro.akashi@linaro.org>,
+        mark.rutland@arm.com, Sungjinn Chung <barami97@gmail.com>
+Subject: Re: [ARM64] Printing IRQ stack usage information
+In-Reply-To: <CAOuPNLiX0zhxiRAx03YjVU6cocwWbgY9naxeYPRKmT+3PoGhRw@mail.gmail.com>
+References: <CAOuPNLiLj9be5iUdpUiLqiTge-xYY_v4_VLs-ah2_PygG7vxdg@mail.gmail.com> <28496.1542300549@turing-police.cc.vt.edu> <CAOuPNLj8wj=tPJo8L3oS7o8iTQcyhZ0W-GH6xmP_GsG4r7YdAQ@mail.gmail.com> <49219.1542367988@turing-police.cc.vt.edu> <CAOuPNLg4tM6Cw8Yf9rdpkBOU=+Fh654yFQeAhJf1y88Gb3MAew@mail.gmail.com> <5997.1542386778@turing-police.cc.vt.edu>
+ <CAOuPNLiX0zhxiRAx03YjVU6cocwWbgY9naxeYPRKmT+3PoGhRw@mail.gmail.com>
+Mime-Version: 1.0
+Content-Type: multipart/signed; boundary="==_Exmh_1542393111_2640P";
+         micalg=pgp-sha1; protocol="application/pgp-signature"
+Content-Transfer-Encoding: 7bit
+Date:   Fri, 16 Nov 2018 13:31:51 -0500
+Message-ID: <15703.1542393111@turing-police.cc.vt.edu>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Nov 01, 2018 at 06:00:01PM +0100, Jiri Olsa escreveu:
-> When reporting on 'record' server we try to retrieve/use
-> the mnt namespace of the profiled tasks. We use following
-> API with cookie to hold the return namespace, roughly:
-> 
->   nsinfo__mountns_enter(struct nsinfo *nsi, struct nscookie *nc)
->     setns(newns, 0);
->   ...
->   new ns related open..
->   ...
->   nsinfo__mountns_exit(struct nscookie *nc)
->     setns(nc->oldns)
-> 
-> Once finished we setns to old namespace, which also sets the
-> current working directory (cwd) to "/", trashing the cwd we had.
-> 
-> This is mostly fine, because we use absolute paths almost everywhere,
-> but it screws up perf diff:
-> 
->   # perf diff
->   failed to open perf.data: No such file or directory  (try 'perf record' first)
->   ...
-> 
-> Adding the current working directory to be part of the cookie
-> and restoring it in the nsinfo__mountns_exit call.
- 
-> Cc: Krister Johansen <kjlx@templeofstupid.com>
-> Fixes: 843ff37bb59e ("perf symbols: Find symbols in different mount namespace")
-> Link: http://lkml.kernel.org/n/tip-zg3vz7kjr86cco7lo91v8yhj@git.kernel.org
-> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> ---
->  tools/perf/util/namespaces.c | 18 ++++++++++++++++--
->  tools/perf/util/namespaces.h |  1 +
->  2 files changed, 17 insertions(+), 2 deletions(-)
-> 
-> diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
-> index cf8bd123cf73..fb0458b7e6aa 100644
-> --- a/tools/perf/util/namespaces.c
-> +++ b/tools/perf/util/namespaces.c
-> @@ -18,6 +18,7 @@
->  #include <stdio.h>
->  #include <string.h>
->  #include <unistd.h>
-> +#include <asm/bug.h>
->  
->  struct namespaces *namespaces__new(struct namespaces_event *event)
->  {
-> @@ -186,6 +187,7 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
->  	char curpath[PATH_MAX];
->  	int oldns = -1;
->  	int newns = -1;
-> +	char *oldcwd = NULL;
->  
->  	if (nc == NULL)
->  		return;
-> @@ -199,9 +201,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
->  	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
->  		return;
->  
-> +	oldcwd = get_current_dir_name();
-> +	if (!oldcwd)
-> +		return;
-> +
->  	oldns = open(curpath, O_RDONLY);
->  	if (oldns < 0)
-> -		return;
-> +		goto errout;
->  
->  	newns = open(nsi->mntns_path, O_RDONLY);
->  	if (newns < 0)
-> @@ -210,11 +216,14 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
->  	if (setns(newns, CLONE_NEWNS) < 0)
->  		goto errout;
->  
-> +	nc->oldcwd = oldcwd;
->  	nc->oldns = oldns;
->  	nc->newns = newns;
->  	return;
->  
->  errout:
-> +	if (oldcwd)
-> +		free(oldcwd);
+--==_Exmh_1542393111_2640P
+Content-Type: text/plain; charset=us-ascii
 
-Applied, and while at it I removed the needless if in the above two
-lines.
+On Fri, 16 Nov 2018 23:13:48 +0530, Pintu Agarwal said:
+> On Fri, Nov 16, 2018 at 10:16 PM <valdis.kletnieks@vt.edu> wrote:
 
->  	if (oldns > -1)
->  		close(oldns);
->  	if (newns > -1)
-> @@ -223,11 +232,16 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
->  
->  void nsinfo__mountns_exit(struct nscookie *nc)
->  {
-> -	if (nc == NULL || nc->oldns == -1 || nc->newns == -1)
-> +	if (nc == NULL || nc->oldns == -1 || nc->newns == -1 || !nc->oldcwd)
->  		return;
->  
->  	setns(nc->oldns, CLONE_NEWNS);
->  
-> +	if (nc->oldcwd) {
-> +		WARN_ON_ONCE(chdir(nc->oldcwd));
-> +		free(nc->oldcwd);
-> +	}
-> +
->  	if (nc->oldns > -1) {
->  		close(nc->oldns);
->  		nc->oldns = -1;
-> diff --git a/tools/perf/util/namespaces.h b/tools/perf/util/namespaces.h
-> index cae1a9a39722..d5f46c09ea31 100644
-> --- a/tools/perf/util/namespaces.h
-> +++ b/tools/perf/util/namespaces.h
-> @@ -38,6 +38,7 @@ struct nsinfo {
->  struct nscookie {
->  	int			oldns;
->  	int			newns;
-> +	char			*oldcwd;
->  };
->  
->  int nsinfo__init(struct nsinfo *nsi);
-> -- 
-> 2.17.2
+> > Congrats. You just re-invented DEBUG_STACK_USAGE, which just keeps a high-water mark
+> > for stack usage.
+>
+> So, you mean to say, my implementation is good enough to get the
+> irq_stack usage, from the interrupt handler ?
+
+No - your code doesn't keep a high-water mark (which should probably be
+hooked into the IRQ exit code.
+
+> But my concern is that if I dump it from irq handler, I will get
+> information only for the current cpu.
+> How do I store and get the information for all the cpu from the boot time ?
+
+Make the high-water mark a per-cpu variable.
+
+> From where do I call my dump_irq_stack_info() [some where during the
+> entry/exit part of the irq handler], so that I could dump information
+> for all the handler at boot time itself ?
+
+No, you don't do a dump-stack during entry/exit.  You just maintain a high-water
+value in the exit, and then you create a /proc/something or similar that when
+read does a 'foreach CPU do print_high_water_irq'.
+
+> Like I would to capture these information:
+> - What was the name of the handler ?
+> - Which cpu was executing it ?
+> - How much irq stack (max value, same like high water mark) were used
+> at that time ?
+
+First, do the easy part and find out if you even *care* once you see actual
+numbers.  If your IRQ stack is 8K but you never use more than 2500 bytes,
+do you *really* care about the name of the handler anymore?
+
+Also, see the code for /proc/interrupts to see how it keeps track of the
+interrupts per CPU - maybe all you need to do is change each entry from
+a 'count' to 'count, highwater'.
+
+--==_Exmh_1542393111_2640P
+Content-Type: application/pgp-signature
+
+-----BEGIN PGP SIGNATURE-----
+Comment: Exmh version 2.9.0 11/07/2018
+
+iQEVAwUBW+8NF40DS38y7CIcAQLYigf6AquROVf8D2XZsVziGWixUOH/mFLhro6x
+Ez3kExhZze5EHeWXkLumwNtbwnb8hPVaBM49eRfd9ZUnCJ9jDGaJ5pF+BghOfn92
+232Lth60sLZlGiibXhiEiXX0Ok1/l5WtyzbKw8EOqcJnCPBxvCAziADeXenUciU0
+UwWN/PHOnoRTHUacEXrMJUlAL9bZhJeOWukkYbmfo1ve2cHb3zWlWoUN209yZZ24
+p7FGN5O3l2aJhwtmjOnd1QRb6/et1Fkbr5UEEnfsGcp28a8SFBKGwZDM39PPhB49
+q4eazqIaoZrEPgDdGG8f9tgsh5wJ8mzsJXpamgRMy2Ye/DBaKCN36g==
+=jztX
+-----END PGP SIGNATURE-----
+
+--==_Exmh_1542393111_2640P--
