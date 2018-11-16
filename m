@@ -2,119 +2,119 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DEF97C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:18:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D22DBC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:19:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A5D922087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:18:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5D922087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 7E8E22086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:19:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=vmware.com header.i=@vmware.com header.b="MdsL6DKX"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7E8E22086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=vmware.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727278AbeKQGcO (ORCPT
+        id S1727432AbeKQGcy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 01:32:14 -0500
-Received: from mail-oi1-f196.google.com ([209.85.167.196]:46187 "EHLO
-        mail-oi1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbeKQGcO (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 01:32:14 -0500
-Received: by mail-oi1-f196.google.com with SMTP id x202so9264479oif.13;
-        Fri, 16 Nov 2018 12:18:23 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=ckIGt+t31hqc36+/zUIB6Q7DzmOj5anOWtQImTp00WU=;
-        b=IBG2FwaOWy37ctVgOwdh5buBtrX/tqmgdXmIij4VE57VIzIVAuuBXyCZySd3h96pzh
-         5aMSEYOB2gQPfv1/7OijlZi8dPO2LGjdPpxQ1Ps6AQwoPiaypffkElHEDGHPejPdwUdn
-         KYoQwg/GU0jtavR/6iISVcZCT+WixF6ECsDlNfpXcGFseafyZdtz7VgQy3GioMIT3pdk
-         Sb4/DLmQb9Ee1QTJAY8zaLYpZFHoFKf7uXYYQfP/c1NsOBCEK7AVTu+5Ejw6n9JtJ0sy
-         eQLT0K/O56H8nZhpvkDMCoMXieDVl/nh71H3DQNeeVBqN+ZU+rFgWNmg2Vk2SL6I3Hwk
-         di4g==
-X-Gm-Message-State: AGRZ1gI51nXywH4514yZ/lSHbDkvyDWjV+yd4wHKKaLyUyLCypwb2L94
-        sMIyDFAxaddBKbCok+606w==
-X-Google-Smtp-Source: AJdET5dSNOMOsVXy22zuy3q9PaIlMm+nrQk2E8eEuP3c2H3i2dDP3FnWxSrOlP5gJj1yRTwpFnwqcA==
-X-Received: by 2002:aca:f1d6:: with SMTP id p205-v6mr1887737oih.332.1542399503021;
-        Fri, 16 Nov 2018 12:18:23 -0800 (PST)
-Received: from localhost.localdomain (mobile-166-173-62-28.mycingular.net. [166.173.62.28])
-        by smtp.googlemail.com with ESMTPSA id l18sm27348235otb.68.2018.11.16.12.18.21
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 12:18:22 -0800 (PST)
-From:   Rob Herring <robh@kernel.org>
-To:     x86@kernel.org
-Cc:     linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-        Lubomir Rintel <lkundrak@v3.sk>,
+        Sat, 17 Nov 2018 01:32:54 -0500
+Received: from mail-eopbgr680070.outbound.protection.outlook.com ([40.107.68.70]:62997
+        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725763AbeKQGcx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 01:32:53 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vmware.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=97+WkQW8mRQMhBRZlz1JDQczkxApoTbxefePtlfGgp8=;
+ b=MdsL6DKXlODMGw9BRwNTqemHXpcMNuDNyjwJlX/LMxCqGOSITCUqVtiz9qsBTGuedhZH440S7AJsvRW03pEKiyYa542r3EDS2+PFcPPqcVUI2IxTVIhOcyuHBWKVpz3qv/VLyySnS+Ry3+EASVi/nJfUkdRTYrW+w247Fn52A1k=
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com (52.135.233.146) by
+ BYAPR05MB4392.namprd05.prod.outlook.com (52.135.202.153) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1339.11; Fri, 16 Nov 2018 20:18:58 +0000
+Received: from BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::a1b8:a948:4c8c:747d]) by BYAPR05MB4776.namprd05.prod.outlook.com
+ ([fe80::a1b8:a948:4c8c:747d%4]) with mapi id 15.20.1339.023; Fri, 16 Nov 2018
+ 20:18:58 +0000
+From:   Nadav Amit <namit@vmware.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+CC:     Ingo Molnar <mingo@redhat.com>,
+        Michal Marek <michal.lkml@markovi.net>,
         Thomas Gleixner <tglx@linutronix.de>,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH] x86: olpc: Remove calling of_platform_bus_probe
-Date:   Fri, 16 Nov 2018 14:18:20 -0600
-Message-Id: <20181116201820.10065-1-robh@kernel.org>
-X-Mailer: git-send-email 2.19.1
+        Borislav Petkov <bp@alien8.de>,
+        "H. Peter Anvin" <hpa@zytor.com>, X86 ML <x86@kernel.org>,
+        Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 2/2] x86: set a dependency on macros.S
+Thread-Topic: [PATCH v2 2/2] x86: set a dependency on macros.S
+Thread-Index: AQHUfJfhME2VCVedbU2G/6lCfEvm4qVSBVgAgADUqwA=
+Date:   Fri, 16 Nov 2018 20:18:58 +0000
+Message-ID: <C359F0E6-2920-428F-B93E-7C76E564C1BA@vmware.com>
+References: <20181114204309.18645-1-namit@vmware.com>
+ <20181114204309.18645-3-namit@vmware.com>
+ <CAK7LNAR30CVQHBTXzY-cFcpa-mw2QSpqUZHEAs7n0Jn64dLBFw@mail.gmail.com>
+In-Reply-To: <CAK7LNAR30CVQHBTXzY-cFcpa-mw2QSpqUZHEAs7n0Jn64dLBFw@mail.gmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-originating-ip: [208.91.2.1]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;BYAPR05MB4392;20:iW2V1ij18hUPEl1DbIhbxpVbmmuYu2QSpzjoVk2nd6UZihF6z7A3qbMUyIWmx1FTTcwgkeu1p2gdkOB8ajeS3bn6ZUKHHNRz/8gdkTFMeigpVVLQzm4X1pClkYUN1m/GVUV7aQ5/VytIjfLV/G1ZtJgHPoanYr0gh9auSkSWKwk=
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 12d153dc-269a-4114-94ab-08d64c00bdb8
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(5600074)(711020)(2017052603328)(7153060)(7193020);SRVR:BYAPR05MB4392;
+x-ms-traffictypediagnostic: BYAPR05MB4392:
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=namit@vmware.com; 
+x-microsoft-antispam-prvs: <BYAPR05MB439272698E4CF14F86CD3A57D0DD0@BYAPR05MB4392.namprd05.prod.outlook.com>
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231415)(944501410)(52105112)(3002001)(93006095)(93001095)(148016)(149066)(150057)(6041310)(20161123562045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BYAPR05MB4392;BCL:0;PCL:0;RULEID:;SRVR:BYAPR05MB4392;
+x-forefront-prvs: 0858FF8026
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(376002)(346002)(366004)(136003)(396003)(39860400002)(199004)(189003)(6512007)(14454004)(71190400001)(83716004)(478600001)(33656002)(97736004)(71200400001)(26005)(66066001)(105586002)(76176011)(106356001)(36756003)(102836004)(82746002)(54906003)(6506007)(99286004)(53546011)(316002)(486006)(6486002)(2900100001)(256004)(5660300001)(3846002)(6116002)(305945005)(446003)(2616005)(4326008)(11346002)(25786009)(6246003)(186003)(476003)(8936002)(86362001)(81166006)(81156014)(8676002)(53936002)(6436002)(229853002)(7736002)(68736007)(6916009)(2906002);DIR:OUT;SFP:1101;SCL:1;SRVR:BYAPR05MB4392;H:BYAPR05MB4776.namprd05.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: vmware.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: tsxC+jaa0hKO/cyPQdfr4eDBGIWaTZEstPW2bkNFQ/1XSTW3J/eiT2J+HS8DSsk9pDMzPXtvw+waBQUdzHNaoHALHW6nU7KEJX+qHyU4as42lGAOhLvfIN38VQRRCtROjHKWku4bQ/uEHHQseZFtnnUIgYBOHk7IHHhcnHuiN7wpnHyDn2+b8cMI37nw0MxB9lbnbxf3nAD9fJIG4FDrMaFK/JwVoOA8ncvIebSoKTgN2m2Lx2JslokIzO5s9SkmLGsJdQjj9Orm02TB4+nTyUDAoWOBewzfBBlo560ho4p15stnMnhIKmjH6ZAJ27jQWgDrjhEbM1YlNrFC/FxGPwAxJLr+m27uiTCgwwmFUDs=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <EB0AF2066A1B464A8FF40E7ACA58E272@namprd05.prod.outlook.com>
+Content-Transfer-Encoding: base64
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-OriginatorOrg: vmware.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 12d153dc-269a-4114-94ab-08d64c00bdb8
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Nov 2018 20:18:58.3861
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: b39138ca-3cee-4b4a-a4d6-cd83d9dd62f0
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BYAPR05MB4392
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The DT core will probe the DT by default now, so the OLPC platform code
-calling of_platform_bus_probe is not necessary. The algorithm for what
-nodes are probed is a little different in how compatible is handled, but
-since OLPC uses compatible strings for matching it is not affected by
-this difference.
-
-Also, only the battery node located at the root level gets a device
-created as the dcon is a PCI device and the RTC device is created in
-olpc-xo1-rtc.c.
-
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
-Cc: x86@kernel.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- arch/x86/platform/olpc/olpc_dt.c | 18 ------------------
- 1 file changed, 18 deletions(-)
-
-diff --git a/arch/x86/platform/olpc/olpc_dt.c b/arch/x86/platform/olpc/olpc_dt.c
-index 24d2175a9480..b4ab779f1d47 100644
---- a/arch/x86/platform/olpc/olpc_dt.c
-+++ b/arch/x86/platform/olpc/olpc_dt.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/memblock.h>
- #include <linux/of.h>
--#include <linux/of_platform.h>
- #include <linux/of_pdt.h>
- #include <asm/olpc.h>
- #include <asm/olpc_ofw.h>
-@@ -285,20 +284,3 @@ void __init olpc_dt_build_devicetree(void)
- 	pr_info("PROM DT: Built device tree with %u bytes of memory.\n",
- 			prom_early_allocated);
- }
--
--/* A list of DT node/bus matches that we want to expose as platform devices */
--static struct of_device_id __initdata of_ids[] = {
--	{ .compatible = "olpc,xo1-battery" },
--	{ .compatible = "olpc,xo1-dcon" },
--	{ .compatible = "olpc,xo1-rtc" },
--	{},
--};
--
--static int __init olpc_create_platform_devices(void)
--{
--	if (machine_is_olpc())
--		return of_platform_bus_probe(NULL, of_ids, NULL);
--	else
--		return 0;
--}
--device_initcall(olpc_create_platform_devices);
--- 
-2.19.1
-
+RnJvbTogTWFzYWhpcm8gWWFtYWRhDQpTZW50OiBOb3ZlbWJlciAxNiwgMjAxOCBhdCA3OjM3OjQ2
+IEFNIEdNVA0KPiBUbzogTmFkYXYgQW1pdCA8bmFtaXRAdm13YXJlLmNvbT4NCj4gQ2M6IEluZ28g
+TW9sbmFyIDxtaW5nb0ByZWRoYXQuY29tPiwgTWljaGFsIE1hcmVrIDxtaWNoYWwubGttbEBtYXJr
+b3ZpLm5ldD4sIFRob21hcyBHbGVpeG5lciA8dGdseEBsaW51dHJvbml4LmRlPiwgQm9yaXNsYXYg
+UGV0a292IDxicEBhbGllbjguZGU+LCBILiBQZXRlciBBbnZpbiA8aHBhQHp5dG9yLmNvbT4sIFg4
+NiBNTCA8eDg2QGtlcm5lbC5vcmc+LCBMaW51eCBLYnVpbGQgbWFpbGluZyBsaXN0IDxsaW51eC1r
+YnVpbGRAdmdlci5rZXJuZWwub3JnPiwgTGludXggS2VybmVsIE1haWxpbmcgTGlzdCA8bGludXgt
+a2VybmVsQHZnZXIua2VybmVsLm9yZz4NCj4gU3ViamVjdDogUmU6IFtQQVRDSCB2MiAyLzJdIHg4
+Njogc2V0IGEgZGVwZW5kZW5jeSBvbiBtYWNyb3MuUw0KPiANCj4gDQo+IE9uIFRodSwgTm92IDE1
+LCAyMDE4IGF0IDE6MDEgUE0gTmFkYXYgQW1pdCA8bmFtaXRAdm13YXJlLmNvbT4gd3JvdGU6DQo+
+PiBDaGFuZ2VzIGluIG1hY3Jvcy5TIHNob3VsZCB0cmlnZ2VyIHRoZSByZWNvbXBpbGF0aW9uIG9m
+IGFsbCBDIGZpbGVzLCBhcw0KPj4gdGhlIG1hY3JvcyBtaWdodCBuZWVkIHRvIGFmZmVjdCB0aGVp
+ciBjb21waWxhdGlvbi4NCj4+IA0KPj4gQWNrZWQtYnk6IEluZ28gTW9sbmFyIDxtaW5nb0BrZXJu
+ZWwub3JnPg0KPj4gU2lnbmVkLW9mZi1ieTogTmFkYXYgQW1pdCA8bmFtaXRAdm13YXJlLmNvbT4N
+Cj4+IC0tLQ0KPiANCj4gV2hlbiB3ZSB0YWxrZWQgYWJvdXQgdGhpcyBsYXN0IHRpbWUsDQo+IHdl
+IGFncmVlZCB0byBub3QgZG8gdGhpcw0KPiBiZWNhdXNlIGEgc2luZ2xlIGxpbmUgY2hhbmdlIGlu
+IGFzbSBoZWFkZXJzDQo+IHdvdWxkIGNhdXNlIGdsb2JhbCByZWJ1aWxkaW5nLg0KPiANCj4gRGlk
+IHlvdSBjaGFuZ2UgeW91ciBtaW5kPw0KDQpJIHdhcyB3cm9uZyAoYW5kIHlvdSB3ZXJlIHJpZ2h0
+PyBJIGRvbuKAmXQgcXVpdGUgcmVtZW1iZXIpLiBBbnlob3csIGFub3RoZXINCnBhdGNoIEkgd29y
+ayBvbiBtYWRlIG1lIHJlYWxpemUgaG93IHdyb25nIEkgd2FzLg0KDQpJZiByZXF1aXJlZCwgd2Ug
+Y2FuIGV4dHJhY3QgdGhlIG1hY3JvcyBmcm9tIHNvbWUgb2YgdGhlIGhlYWRlciBmaWxlcyBpbnRv
+DQpzZXBhcmF0ZSBoZWFkZXIgZmlsZXMgdG8gcHJldmVudCB1bm5lY2Vzc2FyeSByZWJ1aWxkcy4N
+Cg0KVGhhbmtzLA0KTmFkYXY=
