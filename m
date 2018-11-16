@@ -2,144 +2,126 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B98ABC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:24:09 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B5EFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:24:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7FCA32086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:24:09 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7FCA32086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id E10732086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:24:25 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E10732086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389420AbeKPUft (ORCPT
+        id S2389478AbeKPUgG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 15:35:49 -0500
-Received: from mx2.suse.de ([195.135.220.15]:46422 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727446AbeKPUft (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 15:35:49 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 39DBDAF3A;
-        Fri, 16 Nov 2018 10:24:06 +0000 (UTC)
-Date:   Fri, 16 Nov 2018 11:24:05 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Wei Yang <richard.weiyang@gmail.com>
-Cc:     akpm@linux-foundation.org, linux-mm@kvack.org,
-        linux-kernel@vger.kernel.org,
-        "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Subject: Re: [PATCH] mm: use managed_zone() for more exact check in zone
- iteration
-Message-ID: <20181116102405.GF14706@dhcp22.suse.cz>
-References: <20181114235040.36180-1-richard.weiyang@gmail.com>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181114235040.36180-1-richard.weiyang@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 16 Nov 2018 15:36:06 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48644 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727446AbeKPUgG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 15:36:06 -0500
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8758BEBD;
+        Fri, 16 Nov 2018 02:24:23 -0800 (PST)
+Received: from e119886-lin.cambridge.arm.com (unknown [10.37.6.11])
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7F2143F5BD;
+        Fri, 16 Nov 2018 02:24:20 -0800 (PST)
+From:   Andrew Murray <andrew.murray@arm.com>
+To:     Peter Zijlstra <peterz@infradead.org>,
+        Ingo Molnar <mingo@redhat.com>,
+        Arnaldo Carvalho de Melo <acme@kernel.org>,
+        Shawn Guo <shawnguo@kernel.org>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Will Deacon <will.deacon@arm.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Borislav Petkov <bp@alien8.de>, x86@kernel.org
+Cc:     linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 00/10] perf/core: Generalise event exclusion checking
+Date:   Fri, 16 Nov 2018 10:24:03 +0000
+Message-Id: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
+X-Mailer: git-send-email 2.7.4
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 15-11-18 07:50:40, Wei Yang wrote:
-[...]
-> @@ -1193,8 +1196,8 @@ static unsigned int count_free_highmem_pages(void)
->  	struct zone *zone;
->  	unsigned int cnt = 0;
->  
-> -	for_each_populated_zone(zone)
-> -		if (is_highmem(zone))
-> +	for_each_zone(zone)
-> +		if (populated_zone(zone) && is_highmem(zone))
->  			cnt += zone_page_state(zone, NR_FREE_PAGES);
+Many PMU drivers do not have the capability to exclude counting events
+that occur in specific contexts such as idle, kernel, guest, etc. These
+drivers indicate this by returning an error in their event_init upon
+testing the events attribute flags.
 
-this should be for_each_managed_zone because we only care about highmem
-zones which have pages in the allocator (NR_FREE_PAGES).
+However this approach requires that each time a new event modifier is
+added to perf, all the perf drivers need to be modified to indicate that
+they don't support the attribute. This results in additional boiler-plate
+code common to many drivers that needs to be maintained. An example of
+this is the addition of exclude_host and exclude_guest in 2011 yet many
+PMU drivers do not support this or indicate an error on events that make
+use of it.
 
->  
->  	return cnt;
-> @@ -1239,10 +1242,10 @@ static unsigned int count_highmem_pages(void)
->  	struct zone *zone;
->  	unsigned int n = 0;
->  
-> -	for_each_populated_zone(zone) {
-> +	for_each_zone(zone) {
->  		unsigned long pfn, max_zone_pfn;
->  
-> -		if (!is_highmem(zone))
-> +		if (!populated_zone(zone) || !is_highmem(zone))
->  			continue;
->  
->  		mark_free_pages(zone);
+This patch generalises the test for exclusion and updates PMU drivers to
+use it. This is a functional change as some PMU drivers will now correctly
+report that they don't support certain events whereas they previously did.
 
-I am not familiar with this code much but I strongly suspect that we do
-want for_each_managed_zone here because saveable_highmem_page skips over
-all reserved pages which rules out the bootmem. But this should be
-double checked with Rafael (Cc-ed).
+An alternative approach might have been to provide a static perf_event_attr
+with exclusion events set such that each PMU driver could compare against
+(see ref [1]) - however this is less readable. A longer term approach may
+instead be for PMU's to advertise their capabilities on registration.
 
-Rafael, does this loop care about pages which are not managed by the
-page allocator?
+All drivers touched by this patchset have been compile tested.
 
-> @@ -1305,8 +1308,8 @@ static unsigned int count_data_pages(void)
->  	unsigned long pfn, max_zone_pfn;
->  	unsigned int n = 0;
->  
-> -	for_each_populated_zone(zone) {
-> -		if (is_highmem(zone))
-> +	for_each_zone(zone) {
-> +		if (!populated_zone(zone) || is_highmem(zone))
->  			continue;
->  
->  		mark_free_pages(zone);
-> @@ -1399,9 +1402,12 @@ static void copy_data_pages(struct memory_bitmap *copy_bm,
->  	struct zone *zone;
->  	unsigned long pfn;
->  
-> -	for_each_populated_zone(zone) {
-> +	for_each_zone(zone) {
->  		unsigned long max_zone_pfn;
->  
-> +		if (!populated_zone(zone))
-> +			continue;
-> +
->  		mark_free_pages(zone);
->  		max_zone_pfn = zone_end_pfn(zone);
->  		for (pfn = zone->zone_start_pfn; pfn < max_zone_pfn; pfn++)
-> @@ -1717,7 +1723,10 @@ int hibernate_preallocate_memory(void)
->  	saveable += save_highmem;
->  	highmem = save_highmem;
->  	size = 0;
-> -	for_each_populated_zone(zone) {
-> +	for_each_zone(zone) {
-> +		if (!populated_zone(zone))
-> +			continue;
-> +
->  		size += snapshot_additional_pages(zone);
->  		if (is_highmem(zone))
->  			highmem += zone_page_state(zone, NR_FREE_PAGES);
+[1] https://lore.kernel.org/patchwork/patch/325116/
+~                                                               
 
-ditto for the above.
+Andrew Murray (10):
+  perf/core: Add macro to test for event exclusion flags
+  arm: perf/core: generalise event exclusion checking with perf macro
+  arm: perf: add additional validation to set_event_filter
+  powerpc: perf/core: generalise event exclusion checking with perf
+    macro
+  powerpc/pmu/fsl: add additional validation to event_init
+  alpha: perf/core: generalise event exclusion checking with perf macro
+  x86: perf/core: generalise event exclusion checking with perf macro
+  perf/core: Remove unused perf_flags
+  drivers/perf: perf/core: generalise event exclusion checking with perf
+    macro
+  perf/doc: update design.txt for exclude_{host|guest} flags
 
+ arch/alpha/kernel/perf_event.c           |  4 +---
+ arch/arm/kernel/perf_event_v7.c          |  2 ++
+ arch/arm/mach-imx/mmdc.c                 |  8 +-------
+ arch/arm/mm/cache-l2x0-pmu.c             |  7 +------
+ arch/powerpc/perf/core-fsl-emb.c         |  2 ++
+ arch/powerpc/perf/hv-24x7.c              |  7 +------
+ arch/powerpc/perf/hv-gpci.c              |  7 +------
+ arch/powerpc/perf/imc-pmu.c              | 14 ++------------
+ arch/x86/events/amd/ibs.c                | 11 +----------
+ arch/x86/events/amd/iommu.c              |  3 +--
+ arch/x86/events/amd/power.c              |  8 +-------
+ arch/x86/events/amd/uncore.c             |  3 +--
+ arch/x86/events/intel/cstate.c           |  7 +------
+ arch/x86/events/intel/rapl.c             |  7 +------
+ arch/x86/events/intel/uncore.c           |  3 +--
+ arch/x86/events/intel/uncore_snb.c       |  7 +------
+ arch/x86/events/msr.c                    |  7 +------
+ drivers/perf/arm-cci.c                   |  7 +------
+ drivers/perf/arm-ccn.c                   |  5 +----
+ drivers/perf/arm_dsu_pmu.c               |  7 +------
+ drivers/perf/arm_pmu.c                   |  9 +--------
+ drivers/perf/hisilicon/hisi_uncore_pmu.c |  7 +------
+ drivers/perf/qcom_l2_pmu.c               |  3 +--
+ drivers/perf/qcom_l3_pmu.c               |  3 +--
+ drivers/perf/xgene_pmu.c                 |  3 +--
+ include/linux/perf_event.h               |  9 +++++++++
+ include/uapi/linux/perf_event.h          |  2 --
+ tools/include/uapi/linux/perf_event.h    |  2 --
+ tools/perf/design.txt                    |  4 ++++
+ 29 files changed, 41 insertions(+), 127 deletions(-)
 
-> @@ -1863,8 +1872,8 @@ static int enough_free_mem(unsigned int nr_pages, unsigned int nr_highmem)
->  	struct zone *zone;
->  	unsigned int free = alloc_normal;
->  
-> -	for_each_populated_zone(zone)
-> -		if (!is_highmem(zone))
-> +	for_each_zone(zone)
-> +		if (populated_zone(zone) && !is_highmem(zone))
->  			free += zone_page_state(zone, NR_FREE_PAGES);
->  
->  	nr_pages += count_pages_for_highmem(nr_highmem);
-
-This one should be for_each_managed_zone (NR_FREE_PAGES)
-
-The rest looks good to me.
 -- 
-Michal Hocko
-SUSE Labs
+2.7.4
+
