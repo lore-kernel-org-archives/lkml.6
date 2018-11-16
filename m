@@ -2,105 +2,163 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6DEDEC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:36:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4543BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:37:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4079D2087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:36:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4079D2087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 01B5220892
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:37:21 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCV/gauI"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 01B5220892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390279AbeKQEtx (ORCPT
+        id S2390315AbeKQEuu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 23:49:53 -0500
-Received: from mga04.intel.com ([192.55.52.120]:24601 "EHLO mga04.intel.com"
+        Fri, 16 Nov 2018 23:50:50 -0500
+Received: from mail.kernel.org ([198.145.29.99]:53202 "EHLO mail.kernel.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727710AbeKQEtx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 23:49:53 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 10:36:18 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,241,1539673200"; 
-   d="scan'208";a="274608130"
-Received: from unknown (HELO localhost.localdomain) ([10.232.112.69])
-  by orsmga005.jf.intel.com with ESMTP; 16 Nov 2018 10:36:17 -0800
-Date:   Fri, 16 Nov 2018 11:32:54 -0700
-From:   Keith Busch <keith.busch@intel.com>
-To:     Matthew Wilcox <willy@infradead.org>
-Cc:     linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org,
+        id S1727710AbeKQEut (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 23:50:49 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id DC77D20869;
+        Fri, 16 Nov 2018 18:37:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542393438;
+        bh=JcrlBNUO72btyGtxIyCTDliysKzrE7blkCS9QJwDFdo=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=LCV/gauIvzwrgfRRwKzNhPc2twAgVI+vBTfV12KoPGZvKjgxrRGxOCCukjI8yqVJc
+         ffrf5/cFwcT59U78mnHdS7/c9/9dmxCeeaM0nbeU/3Lgf7jpZo54qGEnQTOciixLRb
+         Z/fshtknhMSIrWaNJVIG+RaW3rQsM77a/Dy35xH8=
+Date:   Fri, 16 Nov 2018 18:37:11 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     Matheus Tavares Bernardino <matheus.bernardino@usp.br>
+Cc:     Lars-Peter Clausen <lars@metafoo.de>,
+        Michael Hennerich <Michael.Hennerich@analog.com>,
+        Hartmut Knaack <knaack.h@gmx.de>,
+        Peter Meerwald-Stadler <pmeerw@pmeerw.net>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [PATCH 1/7] node: Link memory nodes to their compute nodes
-Message-ID: <20181116183254.GD14630@localhost.localdomain>
-References: <20181114224921.12123-2-keith.busch@intel.com>
- <20181115135710.GD19286@bombadil.infradead.org>
- <20181115145920.GG11416@localhost.localdomain>
- <20181115203654.GA28246@bombadil.infradead.org>
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>, linux-iio@vger.kernel.org,
+        devel@driverdev.osuosl.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Alexandru Ardelean <alexandru.ardelean@analog.com>,
+        kernel-usp@googlegroups.com,
+        Victor Colombo <victorcolombo@gmail.com>, broonie@kernel.org
+Subject: Re: [PATCH 2/6] staging:iio:ad2s90: Remove spi setup that should be
+ done via dt
+Message-ID: <20181116183711.5ac7f200@archlinux>
+In-Reply-To: <CAHd-oW5ax5uj=xtpOD3HYHT+TM8eAZ6kJ91mHpFVf+VFX6NoeQ@mail.gmail.com>
+References: <20181109220044.24843-1-matheus.bernardino@usp.br>
+        <20181109220044.24843-3-matheus.bernardino@usp.br>
+        <20181111114224.1d8cfaec@archlinux>
+        <CAHd-oW5ax5uj=xtpOD3HYHT+TM8eAZ6kJ91mHpFVf+VFX6NoeQ@mail.gmail.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115203654.GA28246@bombadil.infradead.org>
-User-Agent: Mutt/1.9.1 (2017-09-22)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 12:36:54PM -0800, Matthew Wilcox wrote:
-> On Thu, Nov 15, 2018 at 07:59:20AM -0700, Keith Busch wrote:
-> > On Thu, Nov 15, 2018 at 05:57:10AM -0800, Matthew Wilcox wrote:
-> > > On Wed, Nov 14, 2018 at 03:49:14PM -0700, Keith Busch wrote:
-> > > > Memory-only nodes will often have affinity to a compute node, and
-> > > > platforms have ways to express that locality relationship.
-> > > > 
-> > > > A node containing CPUs or other DMA devices that can initiate memory
-> > > > access are referred to as "memory iniators". A "memory target" is a
-> > > > node that provides at least one phyiscal address range accessible to a
-> > > > memory initiator.
-> > > 
-> > > I think I may be confused here.  If there is _no_ link from node X to
-> > > node Y, does that mean that node X's CPUs cannot access the memory on
-> > > node Y?  In my mind, all nodes can access all memory in the system,
-> > > just not with uniform bandwidth/latency.
-> > 
-> > The link is just about which nodes are "local". It's like how nodes have
-> > a cpulist. Other CPUs not in the node's list can acces that node's memory,
-> > but the ones in the mask are local, and provide useful optimization hints.
+On Thu, 15 Nov 2018 12:44:39 -0200
+Matheus Tavares Bernardino <matheus.bernardino@usp.br> wrote:
+
+> On Sun, Nov 11, 2018 at 9:42 AM Jonathan Cameron <jic23@kernel.org> wrote:
+> >
+> > On Fri,  9 Nov 2018 20:00:40 -0200
+> > Matheus Tavares <matheus.bernardino@usp.br> wrote:
+> >  
+> > > The ad2s90 driver currently sets some spi settings (max_speed_hz and
+> > > mode) at ad2s90_probe. This should, instead, be handled via device tree.
+> > > This patch removes these configurations from the probe function.
+> > >
+> > > Note: The way in which the mentioned spi settings need to be specified
+> > > on the ad2s90's node of a device tree will be documented in the future
+> > > patch "dt-bindings:iio:resolver: Add docs for ad2s90".
+> > >
+> > > Signed-off-by: Matheus Tavares <matheus.bernardino@usp.br>  
+> > I'd actually like to get Rob and Mark's views on this one.  Previously
+> > I would just have applied it without thinking on the basis these can
+> > be easily specified from devicetree.
+> >
+> > Recent discussions with Rob have suggested that the settings in devicetree
+> > should perhaps be concerned with specifying constraints about the device
+> > that are not visible to the driver.  The driver itself should apply
+> > the device constraints, but there are others such as wiring that
+> > might reduce the maximum frequency for example...
+> >
+> > So should a driver be clamping an over specified value from DT for
+> > example?  Or given that is optional in DT, should it be making sure
+> > that a controller max frequency isn't too high for the sensor?
+> >  
 > 
-> So ... let's imagine a hypothetical system (I've never seen one built like
-> this, but it doesn't seem too implausible).  Connect four CPU sockets in
-> a square, each of which has some regular DIMMs attached to it.  CPU A is
-> 0 hops to Memory A, one hop to Memory B and Memory C, and two hops from
-> Memory D (each CPU only has two "QPI" links).  Then maybe there's some
-> special memory extender device attached on the PCIe bus.  Now there's
-> Memory B1 and B2 that's attached to CPU B and it's local to CPU B, but
-> not as local as Memory B is ... and we'd probably _prefer_ to allocate
-> memory for CPU A from Memory B1 than from Memory D.  But ... *mumble*,
-> this seems hard.
+> First of all, thanks for the review and comments.
+> 
+> By what you've said here and in the reviews for patches 3 and 4 of
+> this patch-set, it seems to me that the most reasonable thing would be
+> to keep the SPI mode 3 settings at the driver but the max frequency
+> setting at DT and check if it exceeds the maximum at the driver (as
+> patch 3 does). This makes sense to me, based on what you've said,
+> because mode 3 is a device constraint visible to the driver (as it
+> won't change) but max frequency is not (because of things such as
+> wiring, as you said).
+> 
+> What do you think, Jonathan, Rob, and Mark?
+Sounds good to me. I just checked the DT bindings for spi-bus
+and max-frequency is indeed a required binding element for slave
+devices, hence has to be there.  Best to confirm it is sane in
+the driver however as you suggest.  I think we'll standardise
+on that bit of paranoia in IIO unless Rob or Mark shouts otherwise.
 
-Indeed, that particular example is out of scope for this series. The
-first objective is to aid a process running in node B's CPUs to allocate
-memory in B1. Anything that crosses QPI are their own.
+Jonathan
 
-> I understand you're trying to reflect what the HMAT table is telling you,
-> I'm just really fuzzy on who's ultimately consuming this information
-> and what decisions they're trying to drive from it.
+> 
+> Matheus
+> 
+> > It seems to be unusual to do this, but to my mind it would make
+> > sense and might be worth pushing out into more drivers.
+> >
+> > Jonathan  
+> > > ---
+> > >  drivers/staging/iio/resolver/ad2s90.c | 11 -----------
+> > >  1 file changed, 11 deletions(-)
+> > >
+> > > diff --git a/drivers/staging/iio/resolver/ad2s90.c b/drivers/staging/iio/resolver/ad2s90.c
+> > > index ff32ca76ca00..95c118c48400 100644
+> > > --- a/drivers/staging/iio/resolver/ad2s90.c
+> > > +++ b/drivers/staging/iio/resolver/ad2s90.c
+> > > @@ -77,7 +77,6 @@ static int ad2s90_probe(struct spi_device *spi)
+> > >  {
+> > >       struct iio_dev *indio_dev;
+> > >       struct ad2s90_state *st;
+> > > -     int ret;
+> > >
+> > >       indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
+> > >       if (!indio_dev)
+> > > @@ -94,16 +93,6 @@ static int ad2s90_probe(struct spi_device *spi)
+> > >       indio_dev->num_channels = 1;
+> > >       indio_dev->name = spi_get_device_id(spi)->name;
+> > >
+> > > -     /* need 600ns between CS and the first falling edge of SCLK */
+> > > -     spi->max_speed_hz = 830000;
+> > > -     spi->mode = SPI_MODE_3;
+> > > -     ret = spi_setup(spi);
+> > > -
+> > > -     if (ret < 0) {
+> > > -             dev_err(&spi->dev, "spi_setup failed!\n");
+> > > -             return ret;
+> > > -     }
+> > > -
+> > >       return devm_iio_device_register(indio_dev->dev.parent, indio_dev);
+> > >  }
+> > >  
+> >  
 
-Intended consumers include processes using numa_alloc_onnode() and mbind().
-
-Consider a system with faster DRAM and slower persistent memory. Such
-a system may group the DRAM in a different proximity domain than the
-persistent memory, and both are local to yet another proximity domain
-that contains the CPUs. HMAT provides a way to express that relationship,
-and this patch provides a user facing abstraction for that information.
