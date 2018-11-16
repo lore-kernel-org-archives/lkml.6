@@ -2,218 +2,171 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D7BE3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:12:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 895BAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:13:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9841B206BA
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:12:16 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9841B206BA
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id 2F4DF2084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:13:53 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="KX8gD48S"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F4DF2084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389538AbeKPVYH (ORCPT
+        id S2389485AbeKPVZp (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 16:24:07 -0500
-Received: from lb2-smtp-cloud9.xs4all.net ([194.109.24.26]:46816 "EHLO
-        lb2-smtp-cloud9.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727454AbeKPVYH (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 16:24:07 -0500
-Received: from [IPv6:2001:983:e9a7:1:e533:d3d4:7e75:f169] ([IPv6:2001:983:e9a7:1:e533:d3d4:7e75:f169])
-        by smtp-cloud9.xs4all.net with ESMTPA
-        id Nc2hgd39yQPpyNc2igrcxr; Fri, 16 Nov 2018 12:12:12 +0100
-Subject: Re: [PATCH v5 0/2] media: platform: Add Aspeed Video Engine Driver
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-To:     Eddie James <eajames@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc:     mchehab@kernel.org, linux-media@vger.kernel.org,
-        robh+dt@kernel.org, andrew@aj.id.au, linux-aspeed@lists.ozlabs.org,
-        devicetree@vger.kernel.org, mark.rutland@arm.com,
-        Eddie James <eajames@linux.vnet.ibm.com>
-References: <1542056431-18146-1-git-send-email-eajames@linux.ibm.com>
- <9b21fb44-2248-7921-2205-4a3f43d22d4b@xs4all.nl>
-Message-ID: <e4244292-e051-7f9e-ae11-6d995700aa39@xs4all.nl>
-Date:   Fri, 16 Nov 2018 12:12:07 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <9b21fb44-2248-7921-2205-4a3f43d22d4b@xs4all.nl>
-Content-Type: text/plain; charset=utf-8
+        Fri, 16 Nov 2018 16:25:45 -0500
+Received: from mail-eopbgr50051.outbound.protection.outlook.com ([40.107.5.51]:28291
+        "EHLO EUR03-VE1-obe.outbound.protection.outlook.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727734AbeKPVZp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 16:25:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=OdosYpVI5MatABVZCdWKX1YyOB3vtNQjJIALKwGVCJ4=;
+ b=KX8gD48SrriZ/UVYVNNy0JX68BOkpAieQ4dLbV8gMx0U9Kd36yT6yxaBob7Rjy4r746Tigi89cFIAdnLLBVGGaFTztNz77IC0MZlu4D4c86J/QiCYbZz7jBpmHs7N2Waya+N5gjnJ7kXfQO7rjEdbWCCNp6HzZx9x4Y6Smw0Py4=
+Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
+ VI1PR04MB3294.eurprd04.prod.outlook.com (10.170.231.149) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.27; Fri, 16 Nov 2018 11:13:46 +0000
+Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
+ ([fe80::297b:bb50:9b83:48e1]) by VI1PR04MB5726.eurprd04.prod.outlook.com
+ ([fe80::297b:bb50:9b83:48e1%4]) with mapi id 15.20.1294.045; Fri, 16 Nov 2018
+ 11:13:46 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "boris.brezillon@bootlin.com" <boris.brezillon@bootlin.com>,
+        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
+        "broonie@kernel.org" <broonie@kernel.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>
+CC:     "robh@kernel.org" <robh@kernel.org>,
+        "mark.rutland@arm.com" <mark.rutland@arm.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-arm-kernel@lists.infradead.org" 
+        <linux-arm-kernel@lists.infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "frieder.schrempf@kontron.de" <frieder.schrempf@kontron.de>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+Subject: [PATCH v5 0/5] spi: spi-mem: Add driver for NXP FlexSPI controller
+Thread-Topic: [PATCH v5 0/5] spi: spi-mem: Add driver for NXP FlexSPI
+ controller
+Thread-Index: AQHUfZ1xHR0z7dER2Ee8gogEfLBWnw==
+Date:   Fri, 16 Nov 2018 11:13:46 +0000
+Message-ID: <1542366701-16065-1-git-send-email-yogeshnarayan.gaur@nxp.com>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfGuKYZe50RCoHRD/HjrMHjkW1FvtrrnN0nxQAp4/Lyhf4T6HxI70m5YJDhZLWp7KUUmm8WcwAT9cd+PUSJMO5ckmF7GKSZV6+gXDgOJgY+or5nUX+0Lb
- /2MopWL37AarGXLNq0cN50OZpzhdRaUHJ5S842mf4EtQCzBoEIGC8JjibshLZzVN2reMyb4avkgn39uk7j9gbQc4bD80wIypN/ShrrKTE4zRNGauY+Llr3yi
- s3Ntc8BR6dekSuNlA8kKoGXdnTxUXXaJswuo9vGkCFdNja62RaipAH7Jx4Q40v/jogID5iKTXXse68pI9Y2pB4QN+lMZL/LWBvGDHYrF1MDDdgjQVuTahurn
- oSecH8EWedm8TrQfF4wg2r2AeeUyRspIMWsNK5YdT5vFTyNBQH/Zq3vXrIPnTUsL9Pqp8oLlLrea+QN8BjJkYgV9W4ToA/T32cvqViuqdi/i/eMeFqGVQq5d
- Ndokop2XoS6eeqC/qrtpFJqLfQ8edrRq7LeA90sJIkL/Kqb7AtbS+w3Gwg1zXhcdfrAqyrwpApYIcgbREGDmcB2XZUZlqSmEzWDW81D5OMC6pb04d1DWwl3Z
- ZOU=
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+x-clientproxiedby: SG2PR04CA0149.apcprd04.prod.outlook.com
+ (2603:1096:3:16::33) To VI1PR04MB5726.eurprd04.prod.outlook.com
+ (2603:10a6:803:e4::24)
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-ms-exchange-messagesentrepresentingtype: 1
+x-originating-ip: [14.143.30.134]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB3294;6:ypZgXv/BTn/BJITtZR6VKclIBt9YfULqPa/64CSPyWTQ17s3IUrkeHLCZFpnlEpAhhmuLy32+WRl7UjJg2lOCCWWoyXf3h9Dfme74yj6k9lyvX68gDBtvPHHf0zN9gYW103LrM48qMfQ5K9JSbMgAd0jW7x/PnZezsLSxrTWwOIaayryClxJZofOZdpuyigL4DXXyDrmk2HxjQCxK69PsjBW6ep35Mco9CptOmo11pWJR2BChrLQQYp+9yz/qjK5I/tywmRXG39Fa4jctwSSnh4DbxQtUuIHwM11Kh+4FCutMg7gCUyATmF/XSy6crNFBJ5hUR+4dHXpzU1aogWLi++15OXokEf4bcahp7k75tW2T2fR4N8VtrpRxbxYogTkZsNXHvcZsR7L9Q4OUGcCP2NWgAfKsGn4sB/UmCWXdG7/jbeQZaA7z5+IjuHsPe60ii+D3DGWuee+/9V0ekWL2Q==;5:XBCZ7W8iakeMYgwKT3sHUxKmDukwMaXXzRkhnU/p0zNazNqT6JTRDrKVk8ieXlqDFRhrzDblwDPchETiAk1Kav/mocg9mnAjD2o5SXLg4u3BmMg161c1Suo01N0suYI5Ga2lL//hTSstDmoYY1yLewXDWKQIIyJZDWRYvmrlTuY=;7:7AwiSzVbiOXdgy13joTHEobLQr1T1BgJ9Rka7idvVB0vhDG8ar7RtCvmcW8+VH4NFbvvRJJjFzY0n4I9/VGHRVvf9lUdmpTkjaGP3QszLsvVB66+RHMjmoN/T5+GQx/p/8CxypQmN7NQxA3cbN4Wcw==
+x-ms-office365-filtering-correlation-id: 13231c66-53b0-4e0c-ba25-08d64bb49368
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3294;
+x-ms-traffictypediagnostic: VI1PR04MB3294:
+x-microsoft-antispam-prvs: <VI1PR04MB3294A2BCC01A90DAC41CFB0899DD0@VI1PR04MB3294.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(264314650089876)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3231415)(944501410)(52105112)(93006095)(93001095)(3002001)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123560045)(20161123564045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB3294;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3294;
+x-forefront-prvs: 0858FF8026
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(346002)(136003)(366004)(396003)(39860400002)(376002)(199004)(189003)(2906002)(81166006)(8676002)(6436002)(106356001)(81156014)(6486002)(102836004)(25786009)(53936002)(4326008)(316002)(478600001)(8936002)(7416002)(6506007)(55236004)(6306002)(6512007)(386003)(26005)(966005)(105586002)(186003)(54906003)(110136005)(68736007)(14454004)(99286004)(52116002)(2501003)(2900100001)(2201001)(3846002)(6116002)(97736004)(476003)(2616005)(36756003)(78486014)(305945005)(486006)(7736002)(66066001)(256004)(71190400001)(86362001)(71200400001)(39060400002)(5660300001);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3294;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: uuU9F35lkaWmruuJvCtdPqf2zbsGNS2PoD9fphx0I31CeIqc4GDB8sDbMOujyvnpLNWRp/8wHgfv1R9BmMM/ps8FvL/sY+GO3c9rvtXBZCFXq1HSYElwAPSQ8n5OiPGmpNUqda4FeJ/fOiAKUAG2WbHWtB2tCZiB72TPk1+IzlN0ojsikhIUNlR9nhkAX4fpIkj3VJp0c4PdO52LkdVhztXSM+tT2PCKQfxQcCn82i4R8iq6zTQZnvdf2dqByczI8AVvxSNiIVoHVXY475PFXi69hpx7jWgzh/zAQOK8ZC9+eNfaCnkU3lGeiIvc+6RcH1adRyHrKD90RU38kB2LJotH4P8nS9Tk7LADrzzPmyY=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 13231c66-53b0-4e0c-ba25-08d64bb49368
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Nov 2018 11:13:46.5369
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3294
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/15/2018 10:20 AM, Hans Verkuil wrote:
-> On 11/12/2018 10:00 PM, Eddie James wrote:
->> From: Eddie James <eajames@linux.vnet.ibm.com>
->>
->> The Video Engine (VE) embedded in the Aspeed AST2400 and AST2500 SOCs
->> can capture and compress video data from digital or analog sources. With
->> the Aspeed chip acting as a service processor, the Video Engine can
->> capture the host processor graphics output.
->>
->> This series adds a V4L2 driver for the VE, providing the usual V4L2 streaming
->> interface by way of videobuf2. Each frame, the driver triggers the hardware to
->> capture the host graphics output and compress it to JPEG format.
-> 
-> I reviewed the driver, and there is still confusion about active timings and
-> detected timings. You are really close, but it is still not right.
-> 
-> The timings returned by G_DV_TIMINGS should never change, unless by calling
-> S_DV_TIMINGS. The format returned by G_FMT should never change, unless by
-> calling S_DV_TIMINGS (which implicitly changes the format) or S_FMT.
-> 
-> Timings changes from the video or calling QUERY_DV_TIMINGS should have NO
-> effect on the timings/format returned by G_DV_TIMINGS/G_FMT.
-> 
-> Obviously, if the video timings change, then streaming will halt and an event
-> is issued so userspace can take action.
-> 
->>
->> v4l-utils HEAD dd3ff81f58c4e1e6f33765dc61ad33c48ae6bb07
->>
->> v4l2-compliance SHA: not available, 32 bits
-> 
-> <snip>
-> 
->> Control ioctls (Input 0):
->> 	test VIDIOC_QUERY_EXT_CTRL/QUERYMENU: OK
->> 	test VIDIOC_QUERYCTRL: OK
->> 	test VIDIOC_G/S_CTRL: OK
->> 	test VIDIOC_G/S/TRY_EXT_CTRLS: OK
->> 		fail: v4l2-test-controls.cpp(823): failed to find event for control 'Chroma Subsampling'
-> 
-> That's weird. It's not clear to me why this fails.
+- Add driver for NXP FlexSPI host controller
 
-Ah, this is caused by a bug in our tree. It's fixed by this patch:
+ FlexSPI is a flexsible SPI host controller [1], Chapter 30 page 1475,
+ which supports two SPI channels and up to 4 external devices.
+ Each channel supports Single/Dual/Quad/Octal mode data transfer (1/2/4/8 b=
+idirectional data lines)
+ i.e. FlexSPI acts as an interface to external devices, maximum 4, each wit=
+h up to 8
+ bidirectional data lines.
 
-https://patchwork.linuxtv.org/patch/52790/
+- Tested this driver with mtd_debug(Erase/Write/Read) utility and JFFS2
+ filesystem mounting and booting on NXP LX2160ARDB[2] and LX2160AQDS target=
+s.
+ LX2160ARDB is having two NOR slave device connected on single bus A
+ i.e. A0 and A1 (CS0 and CS1).
+ LX2160AQDS is having two NOR slave device connected on separate buses
+ one flash on A0 and second on B1 i.e. (CS0 and CS3).
+ Verified this driver on following SPI NOR flashes:
+   Micron, mt35xu512aba[3], [Read - 1 bit mode]
+   Cypress, s25fl512s, [Read - 1/2/4 bit mode]
 
-Regards,
+[1] https://www.nxp.com/docs/en/reference-manual/IMXRT1050RM.pdf
+[2] https://patchwork.kernel.org/project/linux-arm-kernel/list/?submitter=
+=3D182097
+[3] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D70384
 
-	Hans
+Yogesh Gaur (5):
+  spi: spi-mem: Add driver for NXP FlexSPI controller
+  dt-bindings: spi: add binding file for NXP FlexSPI controller
+  arm64: dts: lx2160a: add FlexSPI node property
+  arm64: defconfig: enable NXP FlexSPI driver
+  MAINTAINERS: add maintainers for the NXP FlexSPI driver
 
-> 
->> 	test VIDIOC_(UN)SUBSCRIBE_EVENT/DQEVENT: FAIL
->> 	test VIDIOC_G/S_JPEGCOMP: OK (Not Supported)
->> 	Standard Controls: 3 Private Controls: 0
->>
->> Format ioctls (Input 0):
->> 	test VIDIOC_ENUM_FMT/FRAMESIZES/FRAMEINTERVALS: OK
->> 	test VIDIOC_G/S_PARM: OK
->> 	test VIDIOC_G_FBUF: OK (Not Supported)
->> 	test VIDIOC_G_FMT: OK
->> 	test VIDIOC_TRY_FMT: OK
->> 	test VIDIOC_S_FMT: OK
->> 	test VIDIOC_G_SLICED_VBI_CAP: OK (Not Supported)
->> 	test Cropping: OK (Not Supported)
->> 	test Composing: OK (Not Supported)
->> 	test Scaling: OK (Not Supported)
->>
->> Codec ioctls (Input 0):
->> 	test VIDIOC_(TRY_)ENCODER_CMD: OK (Not Supported)
->> 	test VIDIOC_G_ENC_INDEX: OK (Not Supported)
->> 	test VIDIOC_(TRY_)DECODER_CMD: OK (Not Supported)
->>
->> Buffer ioctls (Input 0):
->> 		fail: v4l2-test-buffers.cpp(422): dmabuf_valid ^ !!(caps & V4L2_BUF_CAP_SUPPORTS_DMABUF)
-> 
-> I updated v4l2-compliance, as this test was a bit too strict.
-> 
->> 	test VIDIOC_REQBUFS/CREATE_BUFS/QUERYBUF: FAIL
->> 	test VIDIOC_EXPBUF: OK (Not Supported)
->>
->> Test input 0:
->>
->> Streaming ioctls:
->> 	test read/write: OK
->> 	test blocking wait: OK
->> 	test MMAP: OK                                     
->> 	test USERPTR: OK (Not Supported)
->> 		fail: v4l2-test-buffers.cpp(1102): exp_q.reqbufs(expbuf_node, q.g_buffers())
->> 		fail: v4l2-test-buffers.cpp(1192): setupDmaBuf(expbuf_node, node, q, exp_q)
-> 
-> You need to add:
-> 
-> 	.vidioc_expbuf = vb2_ioctl_expbuf,
-> 
-> to aspeed_video_ioctl_ops.
-> 
->> 	test DMABUF: FAIL
->>
->> Total: 48, Succeeded: 45, Failed: 3, Warnings: 0
->>
->> The apparent rate of change to the v4l2/vb2 API makes it difficult to pass
->> these tests. None of the failing tests even ran last time I submitted my
->> series. And V4L2_BUF_CAP_SUPPORTS_DMABUF is undefined in 4.19.
-> 
-> When developing new drivers you should use the master branch of
-> https://git.linuxtv.org/media_tree.git/
-> 
-> The v4l-utils repo is kept in sync with the latest code from that master branch.
-> 
-> Regards,
-> 
-> 	Hans
-> 
->>
->> Changes since v4:
->>  - Set real min and max resolution in enum_dv_timings
->>  - Add check for vb2_is_busy before settings the timings
->>  - Set max frame rate to the actual max rather than max + 1
->>  - Correct the input status to 0.
->>  - Rework resolution change to only set the relevant h/w regs during startup or
->>    when set_timings is called.
->>
->> Changes since v3:
->>  - Switch update reg function to use u32 clear rather than unsigned long mask
->>  - Add timing information from host VGA signal
->>  - Fix binding documentation mispelling
->>  - Fix upper case hex values
->>  - Add wait_prepare and wait_finish
->>  - Set buffer state to queued (rather than error) if streaming fails to start
->>  - Switch engine busy print statement to error
->>  - Removed a couple unecessary type assignments in v4l2 ioctls
->>  - Added query_dv_timings, fixed get_dv_timings
->>  - Corrected source change event to fire if and only if size actually changes
->>  - Locked open and release
->>
->> Changes since v2:
->>  - Switch to streaming interface. This involved a lot of changes.
->>  - Rework memory allocation due to using videobuf2 buffers, but also only
->>    allocate the necessary size of source buffer rather than the max size
->>
->> Changes since v1:
->>  - Removed le32_to_cpu calls for JPEG header data
->>  - Reworked v4l2 ioctls to be compliant.
->>  - Added JPEG controls
->>  - Updated devicetree docs according to Rob's suggestions.
->>  - Added myself to MAINTAINERS
->>
->> Eddie James (2):
->>   dt-bindings: media: Add Aspeed Video Engine binding documentation
->>   media: platform: Add Aspeed Video Engine driver
->>
->>  .../devicetree/bindings/media/aspeed-video.txt     |   26 +
->>  MAINTAINERS                                        |    8 +
->>  drivers/media/platform/Kconfig                     |    9 +
->>  drivers/media/platform/Makefile                    |    1 +
->>  drivers/media/platform/aspeed-video.c              | 1711 ++++++++++++++++++++
->>  5 files changed, 1755 insertions(+)
->>  create mode 100644 Documentation/devicetree/bindings/media/aspeed-video.txt
->>  create mode 100644 drivers/media/platform/aspeed-video.c
->>
-> 
+Changes for v5:
+- Rebase on top of v4.20-rc2
+- Incorporated review comments for
+  patch 'spi: spi-mem: Add driver for NXP FlexSPI controller'.
+Changes for v4:
+- Incorporated review comments for
+  patch 'spi: spi-mem: Add driver for NXP FlexSPI controller'.
+- Incorporated binding file review comments.
+Changes for v3:
+- Incorporated review comments for
+  patch 'spi: spi-mem: Add driver for NXP FlexSPI controller'.
+Changes for v2:
+- Incorporated Boris review comments and drop below patches as per the comm=
+ents.
+ - Patch 'spi: add slave device size in spi_device struct'
+ - Patch 'spi: add flags for octal I/O data transfer'
+- Incorporated DTS and Binding file review comments of Shawn Guo and Rob He=
+rring.
+
+ .../devicetree/bindings/spi/spi-nxp-fspi.txt       |   39 +
+ MAINTAINERS                                        |    7 +
+ arch/arm64/boot/dts/freescale/fsl-lx2160a-rdb.dts  |   22 +
+ arch/arm64/boot/dts/freescale/fsl-lx2160a.dtsi     |   13 +
+ arch/arm64/configs/defconfig                       |    1 +
+ drivers/spi/Kconfig                                |   10 +
+ drivers/spi/Makefile                               |    1 +
+ drivers/spi/spi-nxp-fspi.c                         | 1145 ++++++++++++++++=
+++++
+ 8 files changed, 1238 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/spi/spi-nxp-fspi.txt
+ create mode 100644 drivers/spi/spi-nxp-fspi.c
+
+--=20
+2.7.4
 
