@@ -2,86 +2,77 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4B3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:48:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8CD5AC04EBC
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:49:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3BEF4208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:48:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jzwp6Ain"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BEF4208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 62EC52086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:49:52 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 62EC52086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389521AbeKPT7q (ORCPT
+        id S2389424AbeKPUBY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 14:59:46 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:36770 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727543AbeKPT7p (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 14:59:45 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
-        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=FCzFxK9vog88Lm15soontLLK/k/+aS7WRTtxaf0OzZE=; b=Jzwp6AinINy6996LVllszl3ZO
-        oCSMPYg7o0DIeNe5nbNYZ/WG51pAaIY2ZkpG0eFSgVtHxBVY2R+0ydSG2+JpaRcGXwdMcrvAr27ao
-        Whln3/Q4quyXVOGISY2eOpEpayOLTZldY9Vb0J9JHwT9WWNRwhtDAF4KfzuBLC8We4YGQH5qsf3qo
-        4iXbf2JqCpLQ2fQOMdr/taUyIPjzZmc3tOg0ZkvJHoR356fTq2yOJ5BaB+pc3lQHj8r9EMyDF1i45
-        v72kTQeQxjNH6OpSBFI2L5CSWCYQJYJWX/U6nE22RLFQ0bTqhOy5tqFyjfrp8c/RfmCTNt+vDwdTS
-        qa7oVf+Lg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNajS-0006GO-AT; Fri, 16 Nov 2018 09:48:10 +0000
-Date:   Fri, 16 Nov 2018 01:48:10 -0800
-From:   Christoph Hellwig <hch@infradead.org>
-To:     Paolo Bonzini <pbonzini@redhat.com>
-Cc:     Christoph Hellwig <hch@infradead.org>,
-        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
-        linux-scsi@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
-        "Martin K. Petersen" <martin.petersen@oracle.com>,
-        James Bottomley <James.Bottomley@hansenpartnership.com>
-Subject: Re: [PATCH 0/3] SG_IO command filtering via sysfs
-Message-ID: <20181116094810.GA23053@infradead.org>
-References: <1541867733-7836-1-git-send-email-pbonzini@redhat.com>
- <20181111131445.GB25441@infradead.org>
- <20181111134241.GA2447@thunk.org>
- <20181112082013.GA9307@infradead.org>
- <79d7d4b2-e9b3-00b4-2ad0-789888f7ee36@redhat.com>
- <20181116093225.GA17033@infradead.org>
- <fa3ed175-13a3-bedf-ebf9-ddf46a2decd5@redhat.com>
+        Fri, 16 Nov 2018 15:01:24 -0500
+Received: from verein.lst.de ([213.95.11.211]:48408 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727442AbeKPUBY (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 15:01:24 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id E3C6B68D60; Fri, 16 Nov 2018 10:49:47 +0100 (CET)
+Date:   Fri, 16 Nov 2018 10:49:47 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Hannes Reinecke <hare@suse.de>
+Cc:     Christoph Hellwig <hch@lst.de>, Mike Snitzer <snitzer@redhat.com>,
+        linux-nvme@lists.infradead.org,
+        Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, axboe@kernel.dk,
+        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
+        xose.vazquez@gmail.com, chengjike.cheng@huawei.com,
+        shenhong09@huawei.com, dm-devel@redhat.com,
+        wangzhoumengjian@huawei.com, christophe.varoqui@opensvc.com,
+        bmarzins@redhat.com, sschremm@netapp.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme: allow ANA support to be independent of native
+ multipathing
+Message-ID: <20181116094947.GA19296@lst.de>
+References: <20181112215323.GA7983@redhat.com> <20181113161838.GC9827@localhost.localdomain> <20181113180008.GA12513@redhat.com> <20181114053837.GA15086@redhat.com> <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de> <20181114174746.GA18526@redhat.com> <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de> <20181115174605.GA19782@redhat.com> <20181116091458.GA17267@lst.de> <37098edd-4dea-b58f-bca6-3be9af8ec4ee@suse.de>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fa3ed175-13a3-bedf-ebf9-ddf46a2decd5@redhat.com>
-User-Agent: Mutt/1.9.2 (2017-12-15)
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <37098edd-4dea-b58f-bca6-3be9af8ec4ee@suse.de>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 10:45:11AM +0100, Paolo Bonzini wrote:
-> Yeah, but looking at the command is what Ted wants.  The thing that we
-> did in RHEL was a single sysfs bool that allows unfiltered access,
-> because it was sort of enough and made the delta very small.  But for
-> upstream I want to do it right, even if that means learning all that
-> new-fangled BPF stuff. :)
+On Fri, Nov 16, 2018 at 10:40:40AM +0100, Hannes Reinecke wrote:
+>>> Introduce ability to always re-read ANA log page as required due to ANA
+>>> error and make current ANA state available via sysfs -- even if native
+>>> multipathing is disabled on the host (e.g. nvme_core.multipath=N).
+>>
+>> The first part I could see, but I still want to make it conditional
+>> in some way as nvme is going into deeply embedded setups, and I don't
+>> want to carry the weight of the ANA code around for everyone.
+>>
+> Can you clarify this a bit?
+> We _do_ have the NVME multipath config option to deconfigure the whole 
+> thing during compile time; that isn't influenced with this patch.
+> So are you worried about the size of the ANA implementation itself?
+> Or are you worried about the size of the ANA structures?
 
-So what is this magic command?
+I just see the next step of wanting to move ANA code into the core
+which is implied above.
+>
+>> The second I fundamentally disagree with.  And even if you found agreement
+>> it would have to be in a separate patch as it is a separate feature.
+>>
+> Why? Where's the problem with re-reading the ANA log pages if we get an 
+> event indicating that we should?
 
-> I would even agree, however it's allowed right now and I would be
-> surprised if no one was relying on it in good faith ("I'm just doing an
-> INQUIRY, why do I need to open O_RDWR").  And indeed:
-> 
-> $ sudo chmod a+r /dev/sda
-> $ strace -e openat sg_inq /dev/sda
-> openat(AT_FDCWD, "/dev/sda", O_RDONLY|O_NONBLOCK) = 3
-
-Well, not if we only did that for unprivileged opens.
+"second" here means the sysfs file.
