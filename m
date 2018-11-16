@@ -7,38 +7,38 @@ X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DB7FDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:55:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78DF9C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:55:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 85FBC2086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:55:14 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2FE4720883
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 20:55:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="pz7Dq0k/"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 85FBC2086B
+	dkim=pass (1024-bit key) header.d=amdcloud.onmicrosoft.com header.i=@amdcloud.onmicrosoft.com header.b="xrXcowfr"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FE4720883
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=amd.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730487AbeKQHJL (ORCPT
+        id S1730504AbeKQHJR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 02:09:11 -0500
-Received: from mail-eopbgr680051.outbound.protection.outlook.com ([40.107.68.51]:9744
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
+        Sat, 17 Nov 2018 02:09:17 -0500
+Received: from mail-eopbgr820085.outbound.protection.outlook.com ([40.107.82.85]:21933
+        "EHLO NAM01-SN1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1725824AbeKQHJK (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 02:09:10 -0500
+        id S1729502AbeKQHJG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 02:09:06 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
  d=amdcloud.onmicrosoft.com; s=selector1-amd-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sXagI1L++l0psjyDFttQU8Hm7t2K0n0JmeLF0op/EuQ=;
- b=pz7Dq0k/3+0O3fYbwE+Juixaui4GEM3Pd6cDwmwS7ghIPDgCVbCSF/LfEjBh2MJd3eyzt7blIiZfb9KDAqttorq4EWqjjuibB2/SzXTk8EtYxCSZk89O+xM/kIWfQ0fAodkgfKIqzaXzateL/Jw6nTgIppThPbHhFEOXMJgemn0=
+ bh=zUBVFugSU70KiKB6AIPYggQbteBXZS/cYsIpp5Vd0/Q=;
+ b=xrXcowfrx266LhNV5erMTSqay/KFhlqFAXDj5rucZIggsR4xXW9x2mzlQ1JmgDiSUpArsN/SmC6DmtRBnAR+BUK5S/s/vKSHE03c54kGoMO+dJCNn+Pdy3Q887CPFnITDQxcGzFuRFsSUyFj/lYv5QYpPlwcL9OqPjKWuxxwqHQ=
 Received: from DM5PR12MB2471.namprd12.prod.outlook.com (52.132.141.138) by
- DM5PR12MB1788.namprd12.prod.outlook.com (10.175.91.141) with Microsoft SMTP
+ DM5PR12MB1577.namprd12.prod.outlook.com (10.172.39.150) with Microsoft SMTP
  Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.30; Fri, 16 Nov 2018 20:54:26 +0000
+ 15.20.1294.27; Fri, 16 Nov 2018 20:54:46 +0000
 Received: from DM5PR12MB2471.namprd12.prod.outlook.com
  ([fe80::4c23:f551:bc6a:554e]) by DM5PR12MB2471.namprd12.prod.outlook.com
  ([fe80::4c23:f551:bc6a:554e%4]) with mapi id 15.20.1294.045; Fri, 16 Nov 2018
- 20:54:26 +0000
+ 20:54:46 +0000
 From:   "Moger, Babu" <Babu.Moger@amd.com>
 To:     "tglx@linutronix.de" <tglx@linutronix.de>,
         "mingo@redhat.com" <mingo@redhat.com>,
@@ -73,11 +73,13 @@ CC:     "hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
         "Moger, Babu" <Babu.Moger@amd.com>,
         "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
         "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>
-Subject: [PATCH v8 03/13] arch/resctrl: Re-arrange RDT init code
-Thread-Topic: [PATCH v8 03/13] arch/resctrl: Re-arrange RDT init code
-Thread-Index: AQHUfe6PY68KWCX7TUy3HUgk7ikpIA==
-Date:   Fri, 16 Nov 2018 20:54:26 +0000
-Message-ID: <20181116205407.10457-4-babu.moger@amd.com>
+Subject: [PATCH v8 12/13] Documentation: Rename and update intel_rdt_ui.txt to
+ resctrl_ui.txt
+Thread-Topic: [PATCH v8 12/13] Documentation: Rename and update
+ intel_rdt_ui.txt to resctrl_ui.txt
+Thread-Index: AQHUfe6bzJyPz8lIhkmZroN2eUSTPw==
+Date:   Fri, 16 Nov 2018 20:54:45 +0000
+Message-ID: <20181116205407.10457-13-babu.moger@amd.com>
 References: <20181116205407.10457-1-babu.moger@amd.com>
 In-Reply-To: <20181116205407.10457-1-babu.moger@amd.com>
 Accept-Language: en-US
@@ -92,114 +94,76 @@ authentication-results: spf=none (sender IP is )
 x-ms-exchange-messagesentrepresentingtype: 1
 x-originating-ip: [165.204.78.1]
 x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;DM5PR12MB1788;20:QhFQ9c6C9+yC3D06JDMjEHXEZlr1eTMxZnwxgTZ8yJb7ielT91iWheH4fXYyhqggPQBl9NLcHsl1PbbkoaALP1xrmROefpJZQBzBoevvXrxydgXWgbgDyir9n1Cxx3AL1DYqq4z2oHf3HbH2CiBk4fgGKNBrGDywpJ7UexuEcFEE5biiB74MONGfXzHnTg4KRYL1dJnRJ0RF8GDMCdEK9EJUjkzyly30TU+uSkCIZDzDPCCMdKn9N4HUKGNtqOZL
-x-ms-office365-filtering-correlation-id: 566922dc-9305-4c3e-4117-08d64c05b209
+x-microsoft-exchange-diagnostics: 1;DM5PR12MB1577;20:xpMdI/PczxYwHFF51C6rB659XxaWmQLgyfOs+lOtVqpjpaYspEBT0KA3mmXl5JJcCZ5cDk0kx/pEJ4JQEU5dH5TF9D7sbFkobMUB9L576PuX38Sp5kmedETxyXyloVDvRus69nWJC21FTkqxqNeVJwoLzSBRLEuR3ALliyW1SKgVuHTCpWib97djXZ3J+C4KAx6AF/72eS8enlSLCBrqvJKO7XJ2cweYMwrC9vAcb7F2YFZrhZt+jPt1sFS3HAL2
+x-ms-office365-filtering-correlation-id: 9a32f73d-213b-4278-d79f-08d64c05bd71
 x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1788;
-x-ms-traffictypediagnostic: DM5PR12MB1788:
-x-microsoft-antispam-prvs: <DM5PR12MB1788243AFADF62833EA566E295DD0@DM5PR12MB1788.namprd12.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(767451399110);
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:DM5PR12MB1577;
+x-ms-traffictypediagnostic: DM5PR12MB1577:
+x-microsoft-antispam-prvs: <DM5PR12MB157779BEA7668C62C9AD071A95DD0@DM5PR12MB1577.namprd12.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(767451399110)(228905959029699);
 x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823302103)(3231415)(944501410)(52105112)(93006095)(93001095)(3002001)(10201501046)(6055026)(148016)(149066)(150057)(6041310)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1788;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1788;
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(823302103)(3231415)(944501410)(52105112)(10201501046)(3002001)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123562045)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:DM5PR12MB1577;BCL:0;PCL:0;RULEID:;SRVR:DM5PR12MB1577;
 x-forefront-prvs: 0858FF8026
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(136003)(346002)(39860400002)(366004)(376002)(199004)(189003)(6486002)(7406005)(478600001)(316002)(7416002)(7736002)(53936002)(25786009)(3846002)(97736004)(6116002)(68736007)(6512007)(54906003)(14454004)(110136005)(71190400001)(6436002)(2201001)(106356001)(1076002)(4326008)(72206003)(105586002)(71200400001)(66066001)(36756003)(305945005)(256004)(5660300001)(86362001)(81156014)(6506007)(52116002)(2906002)(11346002)(476003)(2616005)(486006)(76176011)(102836004)(26005)(386003)(99286004)(8676002)(186003)(2501003)(2900100001)(446003)(8936002)(81166006)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1788;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;A:1;MX:1;
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(396003)(39860400002)(136003)(376002)(366004)(346002)(189003)(199004)(36756003)(316002)(66066001)(81156014)(6506007)(68736007)(2906002)(26005)(7736002)(102836004)(110136005)(72206003)(8676002)(8936002)(305945005)(478600001)(6486002)(386003)(2900100001)(97736004)(2501003)(54906003)(5660300001)(81166006)(52116002)(99286004)(1076002)(3846002)(6116002)(186003)(76176011)(486006)(7416002)(7406005)(6436002)(476003)(2201001)(2616005)(11346002)(4326008)(25786009)(446003)(106356001)(71190400001)(71200400001)(14444005)(256004)(15650500001)(105586002)(14454004)(6512007)(53936002)(86362001)(921003)(1121003);DIR:OUT;SFP:1101;SCL:1;SRVR:DM5PR12MB1577;H:DM5PR12MB2471.namprd12.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
 received-spf: None (protection.outlook.com: amd.com does not designate
  permitted sender hosts)
-x-microsoft-antispam-message-info: muhgCIdAwCqc8j+/UwCOJBuurz86SbLwYZojwIjWIwudZdhokUMHgRNG8AeettF4AC09OIrvKyMUb/Is7CzhAhx3TXgYY3JAMS6D+oOUUgSPlTJCUXwOOPDxiAz55LQMzhuogd6H8CE0uHcF5rSIljxmQDqoXBaC+Ao9k3RzfEK2AZnqQDjfMo0AXn/v0josszdEFdu/COL69+jt1uND2Y96ylps5bgvduYMKwqC7rKelAn3wF+QQ91/WolOxvlmtoPMcAiOt3ymdg75fxyHUHC1muGetbdnQso+1JGcPP8Uic9kTDOz1X3GGAt+KzbCemELWsND9KSp7l0J45gQ9LiuR2hhuZPJEWEYkHtjrCk=
+x-microsoft-antispam-message-info: 2mUa6cZwMZA6GtMYsWW7LwrepvXVaHiTUzPZ8b+55PrzxOXv3jCBp0v7vRyzCIzO0MFb8jwu/Ykcv9hjcgq2YUPWOoL2nzDRJNPTQ2pocFIb4Ysj2lHsGdIX+f02Wovd2lpWw1uoRze90TnFtC+w+3ILzvfaVpH3tAT1M52kfwDMDumbyNrSSYE9+xsUrvoh7nFdx8jF7h5NtntECqh7Qc+JcBXoCILRJCHy3LOTxajPUwUBfesdOLC4OMHd8Bo0eg8JkrT/jn4WLIJm06c3rzJIQWFLNOP9yIAHdX+WJuQ4oYJJY+ksgzxnBrTp4yiLlADxXqboqTF1GJxD4FzjaW4+ESc3XrWGLGsL2binhfI=
 spamdiagnosticoutput: 1:99
 spamdiagnosticmetadata: NSPM
 Content-Type: text/plain; charset="iso-8859-1"
 Content-Transfer-Encoding: quoted-printable
 MIME-Version: 1.0
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 566922dc-9305-4c3e-4117-08d64c05b209
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Nov 2018 20:54:26.7223
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9a32f73d-213b-4278-d79f-08d64c05bd71
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Nov 2018 20:54:45.9818
  (UTC)
 X-MS-Exchange-CrossTenant-fromentityheader: Hosted
 X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1788
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM5PR12MB1577
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Separate the call sequence for rdt_quirks and MBA feature.
-This is in preparation to handle vendor differences in these
-call sequences.
+Rename intel_rdt_ui.txt to generic resctrl_ui.txt and update the
+documentation for AMD.
 
 Signed-off-by: Babu Moger <babu.moger@amd.com>
 ---
- arch/x86/kernel/cpu/resctrl.c | 27 +++++++++++++++++++++------
- 1 file changed, 21 insertions(+), 6 deletions(-)
+ Documentation/x86/{intel_rdt_ui.txt =3D> resctrl_ui.txt} | 9 ++++++---
+ 1 file changed, 6 insertions(+), 3 deletions(-)
+ rename Documentation/x86/{intel_rdt_ui.txt =3D> resctrl_ui.txt} (99%)
 
-diff --git a/arch/x86/kernel/cpu/resctrl.c b/arch/x86/kernel/cpu/resctrl.c
-index 5d526dc45751..4cea275c7c57 100644
---- a/arch/x86/kernel/cpu/resctrl.c
-+++ b/arch/x86/kernel/cpu/resctrl.c
-@@ -794,6 +794,14 @@ static bool __init rdt_cpu_has(int flag)
- 	return ret;
- }
-=20
-+static __init bool rdt_mba_config(void)
-+{
-+	if (rdt_cpu_has(X86_FEATURE_MBA))
-+		return rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]);
+diff --git a/Documentation/x86/intel_rdt_ui.txt b/Documentation/x86/resctrl=
+_ui.txt
+similarity index 99%
+rename from Documentation/x86/intel_rdt_ui.txt
+rename to Documentation/x86/resctrl_ui.txt
+index 52b10945ff75..d9aed8303984 100644
+--- a/Documentation/x86/intel_rdt_ui.txt
++++ b/Documentation/x86/resctrl_ui.txt
+@@ -1,4 +1,7 @@
+-User Interface for Resource Allocation in Intel Resource Director Technolo=
+gy
++User Interface for Resource Control feature
 +
-+	return false;
-+}
-+
- static __init bool get_rdt_alloc_resources(void)
- {
- 	bool ret =3D false;
-@@ -818,10 +826,9 @@ static __init bool get_rdt_alloc_resources(void)
- 		ret =3D true;
- 	}
++Intel refers to this feature as Intel Resource Director Technology(Intel(R=
+) RDT).
++AMD refers to this feature as AMD Platform Quality of Service(AMD QoS).
 =20
--	if (rdt_cpu_has(X86_FEATURE_MBA)) {
--		if (rdt_get_mem_config(&rdt_resources_all[RDT_RESOURCE_MBA]))
--			ret =3D true;
--	}
-+	if (rdt_mba_config())
-+		ret =3D true;
-+
- 	return ret;
- }
+ Copyright (C) 2016 Intel Corporation
 =20
-@@ -840,7 +847,7 @@ static __init bool get_rdt_mon_resources(void)
- 	return !rdt_get_mon_l3_config(&rdt_resources_all[RDT_RESOURCE_L3]);
- }
+@@ -6,8 +9,8 @@ Fenghua Yu <fenghua.yu@intel.com>
+ Tony Luck <tony.luck@intel.com>
+ Vikas Shivappa <vikas.shivappa@intel.com>
 =20
--static __init void rdt_quirks(void)
-+static __init void rdt_quirks_intel(void)
- {
- 	switch (boot_cpu_data.x86_model) {
- 	case INTEL_FAM6_HASWELL_X:
-@@ -855,9 +862,14 @@ static __init void rdt_quirks(void)
- 	}
- }
-=20
-+static __init void rdt_quirks(void)
-+{
-+	if (boot_cpu_data.x86_vendor =3D=3D X86_VENDOR_INTEL)
-+		rdt_quirks_intel();
-+}
-+
- static __init bool get_rdt_resources(void)
- {
--	rdt_quirks();
- 	rdt_alloc_capable =3D get_rdt_alloc_resources();
- 	rdt_mon_capable =3D get_rdt_mon_resources();
-=20
-@@ -871,6 +883,9 @@ static int __init resctrl_late_init(void)
- 	struct rdt_resource *r;
- 	int state, ret;
-=20
-+	/* Run quirks first */
-+	rdt_quirks();
-+
- 	if (!get_rdt_resources())
- 		return -ENODEV;
-=20
+-This feature is enabled by the CONFIG_INTEL_RDT Kconfig and the
+-X86 /proc/cpuinfo flag bits:
++This feature is enabled by the CONFIG_RESCTRL and the X86 /proc/cpuinfo
++flag bits:
+ RDT (Resource Director Technology) Allocation - "rdt_a"
+ CAT (Cache Allocation Technology) - "cat_l3", "cat_l2"
+ CDP (Code and Data Prioritization ) - "cdp_l3", "cdp_l2"
 --=20
 2.17.1
 
