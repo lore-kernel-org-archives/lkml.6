@@ -3,60 +3,62 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A61C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:18:44 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 814DEC43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:19:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 669AF2089D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:18:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669AF2089D
+	by mail.kernel.org (Postfix) with ESMTP id 5339C2089D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:19:02 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5339C2089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389348AbeKPQ3o (ORCPT
+        id S2388882AbeKPQaB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 11:29:44 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:37616 "EHLO
+        Fri, 16 Nov 2018 11:30:01 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:37624 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727353AbeKPQ3n (ORCPT
+        with ESMTP id S1727353AbeKPQaB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 11:29:43 -0500
+        Fri, 16 Nov 2018 11:30:01 -0500
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gNXSU-0004yk-3C; Fri, 16 Nov 2018 14:18:26 +0800
+        id 1gNXSy-00050d-8v; Fri, 16 Nov 2018 14:18:56 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gNXSS-0001zU-Ph; Fri, 16 Nov 2018 14:18:24 +0800
-Date:   Fri, 16 Nov 2018 14:18:24 +0800
+        id 1gNXSw-00020G-65; Fri, 16 Nov 2018 14:18:54 +0800
+Date:   Fri, 16 Nov 2018 14:18:54 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Cc:     davem@davemloft.net, linux@armlinux.org.uk, jrdr.linux@gmail.com,
-        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org, sabyasachi.linux@gmail.com
-Subject: Re: [PATCH] arm/crypto/aes-ce-glue.c: Remove duplicate header
-Message-ID: <20181116061824.ztwvpgaa7renupz3@gondor.apana.org.au>
-References: <20181106121614.GA1985@hp-pavilion-15-notebook-pc-brajeswar>
+To:     Ryder Lee <ryder.lee@mediatek.com>
+Cc:     Rob Herring <robh+dt@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-crypto@vger.kernel.org, Weijie Gao <weijie.gao@mediatek.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: rng: update bindings for MT7629 SoC
+Message-ID: <20181116061854.ahs6jz7bmztoi3w7@gondor.apana.org.au>
+References: <0f5fe0d5b6a9c81b3f4395a1007ed0ba2239ae45.1541574485.git.ryder.lee@mediatek.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181106121614.GA1985@hp-pavilion-15-notebook-pc-brajeswar>
+In-Reply-To: <0f5fe0d5b6a9c81b3f4395a1007ed0ba2239ae45.1541574485.git.ryder.lee@mediatek.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, Nov 06, 2018 at 05:46:14PM +0530, Brajeswar Ghosh wrote:
-> Remove asm/hwcap.h which is included more than once
+On Wed, Nov 07, 2018 at 03:10:16PM +0800, Ryder Lee wrote:
+> This updates bindings for MT7629 RNG driver.
 > 
-> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
-> ---
->  arch/arm/crypto/aes-ce-glue.c | 1 -
->  1 file changed, 1 deletion(-)
+> Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
 
-Patch applied.  Thanks.
+Who is meant to take this patch?
+
+Thanks,
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
