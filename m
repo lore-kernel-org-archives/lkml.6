@@ -2,250 +2,146 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 26937C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:19:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 114C2C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:20:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D50EC208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:19:57 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C3704208A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:20:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=dellteam.com header.i=@dellteam.com header.b="VN9Or/2I"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D50EC208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=Dellteam.com
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="wiTESMyL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C3704208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388916AbeKPK35 (ORCPT
+        id S2389128AbeKPKab (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 05:29:57 -0500
-Received: from esa1.dell-outbound.iphmx.com ([68.232.153.90]:62048 "EHLO
-        esa1.dell-outbound.iphmx.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1726271AbeKPK34 (ORCPT
+        Fri, 16 Nov 2018 05:30:31 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:44674 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbeKPKaa (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 05:29:56 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=dellteam.com; i=@dellteam.com; q=dns/txt; s=smtpout;
-  t=1542327569; x=1573863569;
-  h=cc:from:to:subject:date:message-id:references:
-   content-transfer-encoding:mime-version;
-  bh=MvjbAK62sxqNV5+o1lwvIv5ucRTJ4VMmMbmHn/VJPzg=;
-  b=VN9Or/2IIZzRqxg7qgxduyFfRUWr2FUSU5BjcWtVzoL6mg747uW6qrEw
-   dulgp16c3gVTk4gB6JxjIM0nEToUeNHj5VgVw91rtr8EC1920MLFJq7XI
-   +Q8dB6cTtgH5Zb5Leb4y97ylg+XJufTzXjQE28qwNbtEHcVJVRA9rBs/C
-   A=;
-X-IronPort-Anti-Spam-Filtered: true
-X-IronPort-Anti-Spam-Result: =?us-ascii?q?A2EUAACXDO5bhyeV50NjHQEBBQEHBQG?=
- =?us-ascii?q?BUQgBCwGCaYECJwqMBl+LHIINlzaBegsBAR8PhD6DUyI0CQ0BAwEBAgEBAgE?=
- =?us-ascii?q?BAhABAQEKCwkIKSMMgjYiEk1rAQEBAQEBIwINYwEBAQECARIoPwULAgEIGB4?=
- =?us-ascii?q?QVwIEEwgagn8BgXkID5wAAoEQiVgBAQGCHYQtAYV0BYwFghaBEYMSgwIZAYF?=
- =?us-ascii?q?ihVsCiRSBcJQLVQkFhnSKIyCBWIgohnaCdYo6ijECBAIEBQIUgUaCDnCDPB+?=
- =?us-ascii?q?CCA4JEohMhT5AATGMQIEfAQE?=
-X-IPAS-Result: =?us-ascii?q?A2EUAACXDO5bhyeV50NjHQEBBQEHBQGBUQgBCwGCaYECJ?=
- =?us-ascii?q?wqMBl+LHIINlzaBegsBAR8PhD6DUyI0CQ0BAwEBAgEBAgEBAhABAQEKCwkIK?=
- =?us-ascii?q?SMMgjYiEk1rAQEBAQEBIwINYwEBAQECARIoPwULAgEIGB4QVwIEEwgagn8Bg?=
- =?us-ascii?q?XkID5wAAoEQiVgBAQGCHYQtAYV0BYwFghaBEYMSgwIZAYFihVsCiRSBcJQLV?=
- =?us-ascii?q?QkFhnSKIyCBWIgohnaCdYo6ijECBAIEBQIUgUaCDnCDPB+CCA4JEohMhT5AA?=
- =?us-ascii?q?TGMQIEfAQE?=
-Received: from mx0a-00154901.pphosted.com ([67.231.149.39])
-  by esa1.dell-outbound.iphmx.com with ESMTP/TLS/AES256-SHA256; 15 Nov 2018 18:19:28 -0600
-Received: from pps.filterd (m0133268.ppops.net [127.0.0.1])
-        by mx0a-00154901.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAG0Hl4b038321;
-        Thu, 15 Nov 2018 19:19:49 -0500
-Received: from esa2.dell-outbound2.iphmx.com (esa2.dell-outbound2.iphmx.com [68.232.153.202])
-        by mx0a-00154901.pphosted.com with ESMTP id 2nr7c4p0g0-1
-        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 15 Nov 2018 19:19:49 -0500
-Cc:     <oohall@gmail.com>, <gregkh@linuxfoundation.org>,
-        <keith.busch@intel.com>, <mr.nuke.me@gmail.com>,
-        <linux-pci@vger.kernel.org>, <Austin.Bolen@dell.com>,
-        <Shyam.Iyer@dell.com>, <linux-kernel@vger.kernel.org>,
-        <jonathan.derrick@intel.com>, <lukas@wunner.de>,
-        <ruscur@russell.cc>, <sbobroff@linux.ibm.com>,
-        <linuxppc-dev@lists.ozlabs.org>, <bp@alien8.de>
-Received: from ausxipps306.us.dell.com ([143.166.148.156])
-  by esa2.dell-outbound2.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA256; 16 Nov 2018 06:19:26 +0600
-X-LoopCount0: from 10.166.134.89
-X-IronPort-AV: E=Sophos;i="5.56,238,1539666000"; 
-   d="scan'208";a="238996346"
-From:   <Alex_Gagniuc@Dellteam.com>
-To:     <helgaas@kernel.org>
-Subject: Re: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
- disconnected
-Thread-Topic: [PATCH v2] PCI/MSI: Don't touch MSI bits when the PCI device is
- disconnected
-Thread-Index: AQHUT50UQ290XPGvJEGnaSTTjbCF+g==
-Date:   Fri, 16 Nov 2018 00:19:46 +0000
-Message-ID: <8775f80440fd437da083fb188718f5e0@ausx13mps321.AMER.DELL.COM>
-References: <20181108224255.GA20619@kroah.com>
- <20d68e586fff4dcca5616d5056f6fc21@ausx13mps321.AMER.DELL.COM>
- <20181108225109.GA3023@kroah.com>
- <16bf9d14bc5f4a90b2b88dd2eb165186@ausx13mps321.AMER.DELL.COM>
- <5da8d8aa9f3818af649b1ac547bc4e6062626ddf.camel@gmail.com>
- <df85813c9860463d85f6c302dfe07b12@ausx13mps321.AMER.DELL.COM>
- <20181113050240.GA182139@google.com>
- <19136f44cd5c45e79bbef7e78a6bf332@ausx13mps321.AMER.DELL.COM>
- <20181114055956.GA144931@google.com>
- <1eb0fa27924f426992715684f5e63346@ausx13mps321.AMER.DELL.COM>
- <20181115062423.GA94998@google.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
-x-originating-ip: [10.178.128.193]
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 16 Nov 2018 05:30:30 -0500
+Received: by mail-pl1-f195.google.com with SMTP id s5-v6so10241599plq.11
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 16:20:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=k6RVFd+Vc0pfdcIaqX824O1heqiP0xSaSAehffCttMk=;
+        b=wiTESMyL5dqVRjbKaF3lqQafRzn4fD2CmMEEuGXYoy9BucJn1wjfdUQGcgIGszIxzw
+         aSGoiV4BuM2mWpRoVdyMsKio4h1LfrHxwpAwDjfWqTiiooDZy4SiypGgXNwNHTSNEtNT
+         AwhAoTqgxU+lWBiroMHUOFlupCBe6hrqs2rPDAIutpb+1jtSJG/4qNW1Vt2JMbj+34Hk
+         fa3W8d3iXCJU7mXvImDoeUiGQY17fIuEU/rNtweFVtkjIKPeJ/0+bxRVWvDzSmngffLs
+         MUQZm98vGL/G5DhQ1Xdg2XlfQRHxpEwftnHlu65FKAr0Ou5hT/0Hg4vfaJj9tG9USJR9
+         YmYA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=k6RVFd+Vc0pfdcIaqX824O1heqiP0xSaSAehffCttMk=;
+        b=Kz/MWTeAREmEKN2/9KL4DVo8hWsUBdRzu+Jtk2d+jx3Lc6u+j0nV0lX6olxV3jsTAD
+         iNZnp2iW0gKdgrAtDDA6gWngWLvBYjocWFkraMJacrjVFwqDHFUsfP9CLUtHxMXY2QxE
+         Rtgrq64GZHJ8EpFjvjVdH8i5gaYQgjlhb9NPRbBWGBZSg9+w8rwbYMB15RMJ+Jfe+pKl
+         Du9/mvUkYjdVUBR/Z66/T2+lEM6AtF2Oa+S1u3kNn7osYuGyMX/oRIJCMBFXLfmtFtCh
+         zlbfcS33rHoUYA4K6aaMkre8aN6OxvlmrTYYRNd/AELECE+hw0sytMdXc6rpOgScNyaW
+         XLWA==
+X-Gm-Message-State: AGRZ1gIiTrS5cDGUJyZSju90WHF/N6j7216YITsjCe4jUWKo43xUJgh9
+        jZj9yFwsfDGOB4G+KgGmQr3A1Q==
+X-Google-Smtp-Source: AJdET5fKVPn+iIW61iLWhEosSg5589LR6m3lIxuiM05g3Y/tYl5Es6VZhvHdcmSItsJ1rZb8Jg+C6A==
+X-Received: by 2002:a17:902:e01:: with SMTP id 1-v6mr8205945plw.251.1542327623756;
+        Thu, 15 Nov 2018 16:20:23 -0800 (PST)
+Received: from vader ([64.114.255.97])
+        by smtp.gmail.com with ESMTPSA id m20sm4874872pgv.93.2018.11.15.16.20.22
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 16:20:23 -0800 (PST)
+Date:   Thu, 15 Nov 2018 16:20:20 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 06/19] fs/buffer.c: use bvec iterator to truncate the
+ bio
+Message-ID: <20181116002020.GA23828@vader>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-7-ming.lei@redhat.com>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-15_17:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811160000
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115085306.9910-7-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-+ Borislav (ACPI guy, maybe he can answer more about HEST)=0A=
-=0A=
-On 11/15/2018 12:24 AM, Bjorn Helgaas wrote:=0A=
-> On Wed, Nov 14, 2018 at 07:22:04PM +0000, Alex_Gagniuc@Dellteam.com wrote=
-:=0A=
->> On 11/14/2018 12:00 AM, Bjorn Helgaas wrote:=0A=
->>> On Tue, Nov 13, 2018 at 10:39:15PM +0000, Alex_Gagniuc@Dellteam.com wro=
-te:=0A=
->> ACPI 6.2 - 6.2.11.3, Table 6-197:=0A=
->>=0A=
->> PCI Express Advanced Error Reporting control:=0A=
->>    * The firmware sets this bit to 1 to grant control over PCI Express=
-=0A=
->> Advanced Error Reporting. If firmware allows the OS control of this=0A=
->> feature, then in the context of the _OSC method it must ensure that=0A=
->> error messages are routed to device interrupts as described in the PCI=
-=0A=
->> Express Base Specification[...]=0A=
-> =0A=
-> The PCIe Base Spec is pretty big, so I wish this reference were a=0A=
-> little more explicit.  I *guess* maybe it's referring to PCIe r4.0,=0A=
-> figure 6-3 in sec 6.2.6, where PCIe ERR_* Messages can be routed to=0A=
-> "INTx or MSI Error Interrupts" and/or "platform-specific System Error"=0A=
-> interrupts.=0A=
-=0A=
-It's engineering slang for "I don't know what the spec says, but do what =
-=0A=
-the spec says." What it means is that FW should set up HW in such a way, =
-=0A=
-that PCIe-compliant OS which enables interrupts will get interrupts the =0A=
-way it expects. For example, some FW might set the root port to trigger =0A=
-an SMI instead of firing up the proper MSI vector. In this case FW must =0A=
-ensure that AER interrupts fire up the MSI vector instead of triggering SMI=
-.=0A=
-=0A=
-> "Device interrupts" seems like it refers to the "INTx or MSI"=0A=
-> interrupts, not the platform-specific System Errors, so I would read=0A=
-> that as saying "if firmware grants OS control of AER via _OSC,=0A=
-> firmware must set the AER Reporting Enables in the AER Root Error=0A=
-> Command register."  But that seems a little silly because the OS now=0A=
-> *owns* the AER capability and it can set the AER Root Error Command=0A=
-> register itself if it wants to.=0A=
-=0A=
-When OS takes control of AER, it is responsible for setting things up, =0A=
-at least as far as standard PCIe registers are concerned. So setting up =0A=
-the the root command register would still be the OS's responsibility. =0A=
-Proprietary registers, like routing to SMI/SCI/MSI would have to be done =
-=0A=
-by FW.=0A=
-=0A=
-=0A=
-> And I still don't see the connection here with Firmware-First.  I'm=0A=
-> pretty sure firmware could not be notified via INTx or MSI interrupts=0A=
-> because those are totally managed by OSPM.=0A=
-=0A=
-The connection with FFS is that FFS needs to be notified by some other =0A=
-method. FW can't commandeer interrupt vectors willie-nillie. FW gets =0A=
-notified by platform-specific mechanisms. In my case, it happens to be =0A=
-SMM, but it could be a number of other proprietary mechanisms.=0A=
-=0A=
-=0A=
->>> The closest I can find is the "Enabled" field in the HEST PCIe=0A=
->>> AER structures (ACPI v6.2, sec 18.3.2.4, .5, .6), where it says:=0A=
->>>[...] =0A=
->>> AFAICT, Linux completely ignores the Enabled field in these=0A=
->>> structures.=0A=
->>=0A=
->> I don't think ignoring the field is a problem:=0A=
->>    * With FFS, OS should ignore it.=0A=
->>    * Without FFS, we have control, and we get to make the decisions anyw=
-ay.=0A=
->> In the latter case we decide whether to use AER, independent of the crap=
-=0A=
->> in ACPI. I'm not even sure why "Enabled" matters in native AER handling.=
-=0A=
-> =0A=
-> It seems like these HEST structures are "here's how firmware thinks=0A=
-> you should set up AER on this device".  But I agree, I have no idea=0A=
-> how to interpret "Enabled".  The rest of the HEST fields cover all the=0A=
-> useful AER registers, including the Reporting Enables in the AER Root=0A=
-> Error Command register *and* the Error Reporting Enables in the Device=0A=
-> Control register.  So I don't know what the "Enabled" field adds to=0A=
-> all that.  =0A=
-=0A=
-"This table contains information platform firmware supplies to OSPM for =0A=
-configuring AER support on a given PCI Express device."=0A=
-=0A=
-I don't fully get the point of the HEST structures for PCIe. I'm hoping =0A=
-Borislav can shed enlightment on this. I think we can ignore them in PCI =
-=0A=
-core, with a note to revisit them if something ever goes horribly wrong. =
-=0A=
-I've patched some changes to reduce reliance on HEST [1].=0A=
-=0A=
-> What a mess.=0A=
-=0A=
-It's ACPI. What else did you expect?=0A=
-=0A=
->>> For firmware-first to work, firmware has to get control.  How does=0A=
->>> it get control?  How does OSPM know to either set up that=0A=
->>> mechanism or keep its mitts off something firmware set up before=0A=
->>> handoff?=0A=
->>=0A=
->> My understanding is that, if FW keeps control of AER in _OSC, then=0A=
->> it will have set things up to get notified instead of the OS. OSPM=0A=
->> not touching AER bits is to make sure it doesn't mess up FW's setup.=0A=
->> I think there are some proprietary bits in the root port to route=0A=
->> interrupts to SMIs instead of the AER vectors.=0A=
-> =0A=
-> It makes good sense that if OSPM doesn't have AER control, firmware=0A=
-> does all AER handling, including any setup for firmware-first=0A=
-> notification.  If we can assume that firmware-first notification is=0A=
-> done in some way the OS doesn't know about and can't mess up, that=0A=
-> would be awesome.=0A=
-=0A=
-I think that's a reasonable assumption as long as OS respects AER ownership=
-.=0A=
-=0A=
-> But I think the VMD model really has nothing to do with the APEI=0A=
-> firmware-first model.  With VMD, it sounds like OSPM owns the AER=0A=
-> capability and doesn't know firmware exists *except* that it has to be=0A=
-> careful not to step on firmware's interrupt.  So maybe we can handle it=
-=0A=
-> separately.=0A=
-=0A=
-<sarcasm_alert>=0A=
-Sounds like VMD is qualified to become part of ACPI spec.=0A=
-<\sarcasm_alert>=0A=
-=0A=
-I'll have to look into VMD in more detail, but this sounds like a design =
-=0A=
-flaw. It's possible to use the values in HEST to set up AER, but that =0A=
-might conflict with the OS's wish on how to set up AER.=0A=
-=0A=
-Alex=0A=
-=0A=
-=0A=
-[1] https://lkml.org/lkml/2018/11/16/202=0A=
-=0A=
+On Thu, Nov 15, 2018 at 04:52:53PM +0800, Ming Lei wrote:
+> Once multi-page bvec is enabled, the last bvec may include more than one
+> page, this patch use bvec_last_segment() to truncate the bio.
+> 
+> Cc: Dave Chinner <dchinner@redhat.com>
+> Cc: Kent Overstreet <kent.overstreet@gmail.com>
+> Cc: Mike Snitzer <snitzer@redhat.com>
+> Cc: dm-devel@redhat.com
+> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
+> Cc: linux-fsdevel@vger.kernel.org
+> Cc: Shaohua Li <shli@kernel.org>
+> Cc: linux-raid@vger.kernel.org
+> Cc: linux-erofs@lists.ozlabs.org
+> Cc: David Sterba <dsterba@suse.com>
+> Cc: linux-btrfs@vger.kernel.org
+> Cc: Darrick J. Wong <darrick.wong@oracle.com>
+> Cc: linux-xfs@vger.kernel.org
+> Cc: Gao Xiang <gaoxiang25@huawei.com>
+> Cc: Christoph Hellwig <hch@lst.de>
+> Cc: Theodore Ts'o <tytso@mit.edu>
+> Cc: linux-ext4@vger.kernel.org
+> Cc: Coly Li <colyli@suse.de>
+> Cc: linux-bcache@vger.kernel.org
+> Cc: Boaz Harrosh <ooo@electrozaur.com>
+> Cc: Bob Peterson <rpeterso@redhat.com>
+> Cc: cluster-devel@redhat.com
+
+Reviewed-by: Omar Sandoval <osandov@fb.com>
+
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> ---
+>  fs/buffer.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/buffer.c b/fs/buffer.c
+> index 1286c2b95498..fa37ad52e962 100644
+> --- a/fs/buffer.c
+> +++ b/fs/buffer.c
+> @@ -3032,7 +3032,10 @@ void guard_bio_eod(int op, struct bio *bio)
+>  
+>  	/* ..and clear the end of the buffer for reads */
+>  	if (op == REQ_OP_READ) {
+> -		zero_user(bvec->bv_page, bvec->bv_offset + bvec->bv_len,
+> +		struct bio_vec bv;
+> +
+> +		bvec_last_segment(bvec, &bv);
+> +		zero_user(bv.bv_page, bv.bv_offset + bv.bv_len,
+>  				truncated_bytes);
+>  	}
+>  }
+> -- 
+> 2.9.5
+> 
