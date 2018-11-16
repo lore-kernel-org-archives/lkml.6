@@ -2,67 +2,64 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0896AC04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:49:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 04DC8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:52:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CDCEA20868
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:49:13 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CDCEA20868
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id C2F70208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:52:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C2F70208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389334AbeKPSAZ (ORCPT
+        id S1727724AbeKPSDf (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 13:00:25 -0500
-Received: from verein.lst.de ([213.95.11.211]:47678 "EHLO newverein.lst.de"
+        Fri, 16 Nov 2018 13:03:35 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:32914 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727380AbeKPSAZ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 13:00:25 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id 9623968D60; Fri, 16 Nov 2018 08:49:10 +0100 (CET)
-Date:   Fri, 16 Nov 2018 08:49:10 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Bjorn Helgaas <helgaas@kernel.org>
-Cc:     Kai Heng Feng <kai.heng.feng@canonical.com>,
-        AceLan Kao <acelan.kao@canonical.com>,
-        Keith Busch <keith.busch@intel.com>, Jens Axboe <axboe@fb.com>,
-        Christoph Hellwig <hch@lst.de>,
-        Sagi Grimberg <sagi@grimberg.me>,
-        linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-        linux-pci@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] pci: prevent sk hynix nvme from entering D3
-Message-ID: <20181116074910.GA13556@lst.de>
-References: <20181106071214.12745-1-acelan.kao@canonical.com> <20181109002157.GK41183@google.com> <B21C5A96-AB21-4405-BBF1-9AD343425CA9@canonical.com> <20181115145809.GA207836@google.com> <20181115173015.GB229449@google.com>
+        id S1727380AbeKPSDf (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 13:03:35 -0500
+Received: from smtp.corp.redhat.com (int-mx07.intmail.prod.int.phx2.redhat.com [10.5.11.22])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id 0AC3E3084244;
+        Fri, 16 Nov 2018 07:52:21 +0000 (UTC)
+Received: from sirius.home.kraxel.org (unknown [10.36.118.1])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id AFDED103BAB6;
+        Fri, 16 Nov 2018 07:52:20 +0000 (UTC)
+Received: by sirius.home.kraxel.org (Postfix, from userid 1000)
+        id DAABE76FA; Fri, 16 Nov 2018 08:52:19 +0100 (CET)
+Date:   Fri, 16 Nov 2018 08:52:19 +0100
+From:   Gerd Hoffmann <kraxel@redhat.com>
+To:     Gurchetan Singh <gurchetansingh@chromium.org>
+Cc:     ML dri-devel <dri-devel@lists.freedesktop.org>,
+        sumit.semwal@linaro.org, linux-media@vger.kernel.org,
+        linaro-mm-sig@lists.linaro.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] udmabuf: set read/write flag when exporting
+Message-ID: <20181116075219.4asi7ficl5itnu6o@sirius.home.kraxel.org>
+References: <20181114122029.16766-1-kraxel@redhat.com>
+ <CAAfnVBmhpMDi8EVUNZxWTU38ZWoO61eyG1-=bRqoe3hoQ08E0A@mail.gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181115173015.GB229449@google.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <CAAfnVBmhpMDi8EVUNZxWTU38ZWoO61eyG1-=bRqoe3hoQ08E0A@mail.gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.22
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.40]); Fri, 16 Nov 2018 07:52:21 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 11:30:15AM -0600, Bjorn Helgaas wrote:
-> 
-> But I guess you have to do this anyway just to add the vendor/device
-> ID to the driver, so maybe this isn't a big deal to you.  If you can
-> do a quirk like this in the driver, it would be invisible to me and I
-> wouldn't care.  I just don't want to deal with ongoing tweaks like
-> this in the PCI core :)
+On Thu, Nov 15, 2018 at 05:46:30PM -0800, Gurchetan Singh wrote:
+> Reviewed-by: Gurchetan Singh <gurchetansingh@chromium.org>
+> Tested-by: Gurchetan Singh <gurchetansingh@chromium.org>
 
-No, NVMe is a spec with a class code, and a specification that is
-vendor independent.  NVMe devices declare invididual features based
-on common fields.
+Thanks.  Pushed to drm-misc-fixes.
 
-APST is an optional feature with all kinds of parameters, but there
-is absolutely no language that a host should not put the device into
-D3 mode if APST is supported anywhere in the NVMe spec, and such
-behavior is also rather counter intuitive.  If SK Hynix thinks this
-is sensible behavior they should bring it up in the NVMe technical
-working group.  I've pinged a contact there to see what this whole
-story is about.
+cheers,
+  Gerd
+
