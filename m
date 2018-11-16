@@ -2,245 +2,282 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 397CDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:22:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA3CAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:23:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DE2252145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:22:50 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="rUdgOAW6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DE2252145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 6DF6D2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:23:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6DF6D2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389105AbeKPLdG (ORCPT
+        id S2389194AbeKPLdw (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 06:33:06 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:35738 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726980AbeKPLdG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 06:33:06 -0500
-Received: by mail-pl1-f193.google.com with SMTP id v1-v6so3183878plo.2
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 17:22:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=++YP5hB9hKOFTY9FyOygO4kny3j/4AWi7Xqs+ptUFOc=;
-        b=rUdgOAW6730Y6L8qEFYTU8q/Jt5JNki5S7YVhpSCExYA9kcDfcx5P/GH2Py46jiFjd
-         1YfueXgp9PZuDh9EnuVZZhcVzLKwNUP4rXxEQGteaQvVgYB0YBNYulpd+7R9DErTK7AU
-         lYawijmUMVfwfGUSQ4kmbtEY4J1C0BNqBCBxSgRDLqJYY+TKoZO3v454Yrmzh5bzUwby
-         4DOIsYJlmBYg/X0/OKFIUDfljLYk5d9pXY7rfeWIKLzbrtTPLF7veR2mi/2x+IvxKHBN
-         zpEBnGp8mSBQs1fNs4AjStW0GrB3qO8Ys6VMqXFclvSHUdyx+t5tUo5CBytmmxj5W4Yw
-         /yAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=++YP5hB9hKOFTY9FyOygO4kny3j/4AWi7Xqs+ptUFOc=;
-        b=ECqD3TlihhU1c8hK6AWMoEmr/5OfDeJS0EyAZ0+NNmirODpk6Q/Ny4ojxsQfAv5/mX
-         bbWfHfCi5vwcsD5NuBtv3S7bH9R8IH6oYvgNrh0Nd4YfQvgIyEUJgZ3krrSd3pI4aCwt
-         h8G1MGLGBA2HAUf5hSSy3i03k0JMkIb3FozufKPedNAKSwoy1VVTkU8B+riIoAppiuX0
-         wNwkGG76D4BZbP7tag1CZFdWkYZS9Xv/lb3mVieScrIduqCHWZS6ZhgcPv+vksEGYWkj
-         1Y8GxaBoQFs6YU/aN6FAu88ttVq4RezZfNL1CzHlrYAxRJpbivTmI4kQDdLOeTtN+9Pe
-         5SOw==
-X-Gm-Message-State: AGRZ1gJb7WMVjehHHtl9+hKUqe0TSNoP3w2KQznoeGdXZYmrCSsqWzLL
-        2CxhvunpAVaF1BNQxhjDhD751Q==
-X-Google-Smtp-Source: AJdET5dLP/fngXV1WHPaaGCkDjNbtQikkXbXVv4iJZNS8RJKS+i1B5tAuclV8L0PDt2Df/uTbueNxQ==
-X-Received: by 2002:a17:902:3283:: with SMTP id z3-v6mr8763583plb.308.1542331367373;
-        Thu, 15 Nov 2018 17:22:47 -0800 (PST)
-Received: from vader ([64.114.255.97])
-        by smtp.gmail.com with ESMTPSA id t62sm32081185pgb.39.2018.11.15.17.22.46
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 17:22:46 -0800 (PST)
-Date:   Thu, 15 Nov 2018 17:22:45 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        linux-fsdevel@vger.kernel.org,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        Shaohua Li <shli@kernel.org>, linux-raid@vger.kernel.org,
-        linux-erofs@lists.ozlabs.org, linux-btrfs@vger.kernel.org,
-        David Sterba <dsterba@suse.com>,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 12/19] block: allow bio_for_each_segment_all() to
- iterate over multi-page bvec
-Message-ID: <20181116012245.GG23828@vader>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-13-ming.lei@redhat.com>
+        Fri, 16 Nov 2018 06:33:52 -0500
+Received: from mga17.intel.com ([192.55.52.151]:56665 "EHLO mga17.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S2389117AbeKPLdv (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 06:33:51 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by fmsmga107.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 17:23:33 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,238,1539673200"; 
+   d="scan'208";a="96702593"
+Received: from allen-box.sh.intel.com (HELO [10.239.161.122]) ([10.239.161.122])
+  by FMSMGA003.fm.intel.com with ESMTP; 15 Nov 2018 17:23:30 -0800
+Cc:     baolu.lu@linux.intel.com, Joerg Roedel <joro@8bytes.org>,
+        David Woodhouse <dwmw2@infradead.org>, ashok.raj@intel.com,
+        sanjay.k.kumar@intel.com, jacob.jun.pan@intel.com,
+        kevin.tian@intel.com,
+        Jean-Philippe Brucker <jean-philippe.brucker@arm.com>,
+        yi.l.liu@intel.com, yi.y.sun@intel.com, peterx@redhat.com,
+        tiwei.bie@intel.com, Zeng Xin <xin.zeng@intel.com>,
+        iommu@lists.linux-foundation.org, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org,
+        Jacob Pan <jacob.jun.pan@linux.intel.com>
+Subject: Re: [PATCH v4 6/8] vfio/mdev: Add iommu place holders in mdev_device
+To:     Kirti Wankhede <kwankhede@nvidia.com>,
+        Alex Williamson <alex.williamson@redhat.com>
+References: <20181105073408.21815-1-baolu.lu@linux.intel.com>
+ <20181105073408.21815-7-baolu.lu@linux.intel.com>
+ <20181106165356.44b59ec3@w520.home>
+ <edadb198-e4ab-ac23-4520-28bfcac252c3@linux.intel.com>
+ <7bfc2f2b-10e6-b53c-51f3-c6494b686aa3@nvidia.com>
+From:   Lu Baolu <baolu.lu@linux.intel.com>
+Message-ID: <25b9a20f-06b5-57ac-81f1-fd933845c77f@linux.intel.com>
+Date:   Fri, 16 Nov 2018 09:20:48 +0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115085306.9910-13-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <7bfc2f2b-10e6-b53c-51f3-c6494b686aa3@nvidia.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 04:52:59PM +0800, Ming Lei wrote:
-> This patch introduces one extra iterator variable to bio_for_each_segment_all(),
-> then we can allow bio_for_each_segment_all() to iterate over multi-page bvec.
+Hi,
+
+On 11/16/18 5:31 AM, Kirti Wankhede wrote:
 > 
-> Given it is just one mechannical & simple change on all bio_for_each_segment_all()
-> users, this patch does tree-wide change in one single patch, so that we can
-> avoid to use a temporary helper for this conversion.
 > 
-> Cc: Dave Chinner <dchinner@redhat.com>
-> Cc: Kent Overstreet <kent.overstreet@gmail.com>
-> Cc: linux-fsdevel@vger.kernel.org
-> Cc: Alexander Viro <viro@zeniv.linux.org.uk>
-> Cc: Shaohua Li <shli@kernel.org>
-> Cc: linux-raid@vger.kernel.org
-> Cc: linux-erofs@lists.ozlabs.org
-> Cc: linux-btrfs@vger.kernel.org
-> Cc: David Sterba <dsterba@suse.com>
-> Cc: Darrick J. Wong <darrick.wong@oracle.com>
-> Cc: Gao Xiang <gaoxiang25@huawei.com>
-> Cc: Christoph Hellwig <hch@lst.de>
-> Cc: Theodore Ts'o <tytso@mit.edu>
-> Cc: linux-ext4@vger.kernel.org
-> Cc: Coly Li <colyli@suse.de>
-> Cc: linux-bcache@vger.kernel.org
-> Cc: Boaz Harrosh <ooo@electrozaur.com>
-> Cc: Bob Peterson <rpeterso@redhat.com>
-> Cc: cluster-devel@redhat.com
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> ---
->  block/bio.c                       | 27 ++++++++++++++++++---------
->  block/blk-zoned.c                 |  1 +
->  block/bounce.c                    |  6 ++++--
->  drivers/md/bcache/btree.c         |  3 ++-
->  drivers/md/dm-crypt.c             |  3 ++-
->  drivers/md/raid1.c                |  3 ++-
->  drivers/staging/erofs/data.c      |  3 ++-
->  drivers/staging/erofs/unzip_vle.c |  3 ++-
->  fs/block_dev.c                    |  6 ++++--
->  fs/btrfs/compression.c            |  3 ++-
->  fs/btrfs/disk-io.c                |  3 ++-
->  fs/btrfs/extent_io.c              | 12 ++++++++----
->  fs/btrfs/inode.c                  |  6 ++++--
->  fs/btrfs/raid56.c                 |  3 ++-
->  fs/crypto/bio.c                   |  3 ++-
->  fs/direct-io.c                    |  4 +++-
->  fs/exofs/ore.c                    |  3 ++-
->  fs/exofs/ore_raid.c               |  3 ++-
->  fs/ext4/page-io.c                 |  3 ++-
->  fs/ext4/readpage.c                |  3 ++-
->  fs/f2fs/data.c                    |  9 ++++++---
->  fs/gfs2/lops.c                    |  6 ++++--
->  fs/gfs2/meta_io.c                 |  3 ++-
->  fs/iomap.c                        |  6 ++++--
->  fs/mpage.c                        |  3 ++-
->  fs/xfs/xfs_aops.c                 |  5 +++--
->  include/linux/bio.h               | 11 +++++++++--
->  include/linux/bvec.h              | 31 +++++++++++++++++++++++++++++++
->  28 files changed, 129 insertions(+), 46 deletions(-)
+> On 11/7/2018 7:18 AM, Lu Baolu wrote:
+>> Hi Alex,
+>>
+>> On 11/7/18 7:53 AM, Alex Williamson wrote:
+>>> On Mon,  5 Nov 2018 15:34:06 +0800
+>>> Lu Baolu <baolu.lu@linux.intel.com> wrote:
+>>>
+>>>> A parent device might create different types of mediated
+>>>> devices. For example, a mediated device could be created
+>>>> by the parent device with full isolation and protection
+>>>> provided by the IOMMU. One usage case could be found on
+>>>> Intel platforms where a mediated device is an assignable
+>>>> subset of a PCI, the DMA requests on behalf of it are all
+>>>> tagged with a PASID. Since IOMMU supports PASID-granular
+>>>> translations (scalable mode in vt-d 3.0), this mediated
+>>>> device could be individually protected and isolated by an
+>>>> IOMMU.
+>>>>
+>>>> This patch adds two new members in struct mdev_device:
+>>>> * iommu_device
+>>>>     - This, if set, indicates that the mediated device could
+>>>>       be fully isolated and protected by IOMMU via attaching
+>>>>       an iommu domain to this device. If empty, it indicates
+>>>>       using vendor defined isolation.
+>>>>
+>>>> * iommu_domain
+>>>>     - This is a place holder for an iommu domain. A domain
+>>>>       could be store here for later use once it has been
+>>>>       attached to the iommu_device of this mdev.
+>>>>
+>>>> Below helpers are added to set and get above iommu device
+>>>> and iommu domain pointers.
+>>>>
+>>>> * mdev_set/get_iommu_device(dev, iommu_device)
+>>>>     - Set or get the iommu device which represents this mdev
+>>>>       in IOMMU's device scope. Drivers don't need to set the
+>>>>       iommu device if it uses vendor defined isolation.
+>>>>
+>>>> * mdev_set/get_iommu_domain(domain)
+>>>>     - A iommu domain which has been attached to the iommu
+>>>>       device in order to protect and isolate the mediated
+>>>>       device will be kept in the mdev data structure and
+>>>>       could be retrieved later.
+>>>>
+>>>> Cc: Ashok Raj <ashok.raj@intel.com>
+>>>> Cc: Jacob Pan <jacob.jun.pan@linux.intel.com>
+>>>> Cc: Kevin Tian <kevin.tian@intel.com>
+>>>> Cc: Liu Yi L <yi.l.liu@intel.com>
+>>>> Suggested-by: Kevin Tian <kevin.tian@intel.com>
+>>>> Suggested-by: Alex Williamson <alex.williamson@redhat.com>
+>>>> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
+>>>> ---
+>>>>    drivers/vfio/mdev/mdev_core.c    | 36 ++++++++++++++++++++++++++++++++
+>>>>    drivers/vfio/mdev/mdev_private.h |  2 ++
+>>>>    include/linux/mdev.h             | 23 ++++++++++++++++++++
+>>>>    3 files changed, 61 insertions(+)
+>>>>
+>>>> diff --git a/drivers/vfio/mdev/mdev_core.c
+>>>> b/drivers/vfio/mdev/mdev_core.c
+>>>> index 0212f0ee8aea..5119809225c5 100644
+>>>> --- a/drivers/vfio/mdev/mdev_core.c
+>>>> +++ b/drivers/vfio/mdev/mdev_core.c
+>>>> @@ -390,6 +390,42 @@ int mdev_device_remove(struct device *dev, bool
+>>>> force_remove)
+>>>>        return 0;
+>>>>    }
+>>>>    +int mdev_set_iommu_device(struct device *dev, struct device
+>>>> *iommu_device)
+>>>> +{
+>>>> +    struct mdev_device *mdev = to_mdev_device(dev);
+>>>> +
+>>>> +    mdev->iommu_device = iommu_device;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +EXPORT_SYMBOL(mdev_set_iommu_device);
+>>>> +
+>>>> +struct device *mdev_get_iommu_device(struct device *dev)
+>>>> +{
+>>>> +    struct mdev_device *mdev = to_mdev_device(dev);
+>>>> +
+>>>> +    return mdev->iommu_device;
+>>>> +}
+>>>> +EXPORT_SYMBOL(mdev_get_iommu_device);
+>>>> +
+>>>> +int mdev_set_iommu_domain(struct device *dev, void *domain)
+>>>> +{
+>>>> +    struct mdev_device *mdev = to_mdev_device(dev);
+>>>> +
+>>>> +    mdev->iommu_domain = domain;
+>>>> +
+>>>> +    return 0;
+>>>> +}
+>>>> +EXPORT_SYMBOL(mdev_set_iommu_domain);
+>>>> +
+>>>> +void *mdev_get_iommu_domain(struct device *dev)
+>>>> +{
+>>>> +    struct mdev_device *mdev = to_mdev_device(dev);
+>>>> +
+>>>> +    return mdev->iommu_domain;
+>>>> +}
+>>>> +EXPORT_SYMBOL(mdev_get_iommu_domain);
+>>>> +
+>>>>    static int __init mdev_init(void)
+>>>>    {
+>>>>        return mdev_bus_register();
+>>>> diff --git a/drivers/vfio/mdev/mdev_private.h
+>>>> b/drivers/vfio/mdev/mdev_private.h
+>>>> index b5819b7d7ef7..c01518068e84 100644
+>>>> --- a/drivers/vfio/mdev/mdev_private.h
+>>>> +++ b/drivers/vfio/mdev/mdev_private.h
+>>>> @@ -34,6 +34,8 @@ struct mdev_device {
+>>>>        struct list_head next;
+>>>>        struct kobject *type_kobj;
+>>>>        bool active;
+>>>> +    struct device *iommu_device;
+>>>> +    void *iommu_domain;
+>>>>    };
+>>>>      #define to_mdev_device(dev)    container_of(dev, struct
+>>>> mdev_device, dev)
+>>>> diff --git a/include/linux/mdev.h b/include/linux/mdev.h
+>>>> index b6e048e1045f..c46777d3e568 100644
+>>>> --- a/include/linux/mdev.h
+>>>> +++ b/include/linux/mdev.h
+>>>> @@ -14,6 +14,29 @@
+>>>>    #define MDEV_H
+>>>>      struct mdev_device;
+>>>> +struct iommu_domain;
+>>>> +
+>>>> +/*
+>>>> + * Called by the parent device driver to set the PCI device which
+>>>> represents
+>>>
+>>> s/PCI //
+>>>
+>>> There is no requirement or expectation that the device is PCI.
+>>>
+>>
+>> Fair enough.
+>>
+>>>> + * this mdev in iommu protection scope. By default, the iommu device
+>>>> is NULL,
+>>>> + * that indicates using vendor defined isolation.
+>>>> + *
+>>>> + * @dev: the mediated device that iommu will isolate.
+>>>> + * @iommu_device: a pci device which represents the iommu for @dev.
+>>>> + *
+>>>> + * Return 0 for success, otherwise negative error value.
+>>>> + */
+>>>> +int mdev_set_iommu_device(struct device *dev, struct device
+>>>> *iommu_device);
+>>>> +
+>>>> +struct device *mdev_get_iommu_device(struct device *dev);
+>>>> +
+>>>> +/*
+>>>> + * Called by vfio iommu modules to save the iommu domain after a
+>>>> domain being
+>>>> + * attached to the mediated device.
+>>>> + */
+>>>> +int mdev_set_iommu_domain(struct device *dev, void *domain);
+>>>> +
+>>>> +void *mdev_get_iommu_domain(struct device *dev);
+>>>
+>>> I can't say I really understand the purpose of this, the cover letter
+>>> indicates this is a placeholder, should we add it separately when we
+>>> have a requirement for it?
+>>
+>> Oh, I am sorry that I used a wrong word. It's not a placeholder for
+>> something designed for future, but adding two members that will be used
+>> in the following patches. Since they will be used in anther modules
+>> (like vfio_iommu), we need function interfaces to get and set them.
+>>
+>> mdev->iommu_device:
+>>   -  This, if set, indicates that the mediated device could
+>>      be fully isolated and protected by IOMMU via attaching
+>>      an iommu domain to this device. If empty, it indicates
+>>      using vendor defined isolation.
+>>
+>> mdev->iommu_domain:
+>>    - This is used to save the pointer of an iommu domain. Once
+>>      a domain has been attached to the iommu_device, it should
+>>      be stored here.
+>>
+> 
+> I don't see mdev->iommu_domain is used anywhere in this series of patch.
+> If this is not being used, then no need to save it. With that symbols
+> mdev_set/get_iommu_domain(domain) are not required.
+
+Yes. We won't use mdev->iommu_domain in this patch series. It should be
+used by mdev parent driver to retrieve the default pasid of the domain.
+Something like:
+
+domain = mdev_get_iommu_domain(dev)
+pasid = iommu_domain_get_attr(domain, DOMAIN_ATTR_AUXD_ID);
+reg_write(pasid_reg, pasid);
+
+I am okay if we remove mdev_set/get_iommu_domain from this patch series
+and add it later when the parent driver comes.
+
+> 
+> Please keep symbols mdev_set/get_iommu_device(dev, iommu_device) non-GPL
+> same as other exported symbols from mdev_core module.
+
+Yes. It will be fixed in the next version.
+
+> 
+> Thanks,
+> Kirti
 > 
 
-[snip]
-
-> diff --git a/include/linux/bio.h b/include/linux/bio.h
-> index 3496c816946e..1a2430a8b89d 100644
-> --- a/include/linux/bio.h
-> +++ b/include/linux/bio.h
-> @@ -131,12 +131,19 @@ static inline bool bio_full(struct bio *bio)
->  	return bio->bi_vcnt >= bio->bi_max_vecs;
->  }
->  
-> +#define bvec_for_each_segment(bv, bvl, i, iter_all)			\
-> +	for (bv = bvec_init_iter_all(&iter_all);			\
-> +		(iter_all.done < (bvl)->bv_len) &&			\
-> +		((bvec_next_segment((bvl), &iter_all)), 1);		\
-
-The parentheses around (bvec_next_segment((bvl), &iter_all)) are
-unnecessary.
-
-> +		iter_all.done += bv->bv_len, i += 1)
-> +
->  /*
->   * drivers should _never_ use the all version - the bio may have been split
->   * before it got to the driver and the driver won't own all of it
->   */
-> -#define bio_for_each_segment_all(bvl, bio, i)				\
-> -	for (i = 0, bvl = (bio)->bi_io_vec; i < (bio)->bi_vcnt; i++, bvl++)
-> +#define bio_for_each_segment_all(bvl, bio, i, iter_all)		\
-> +	for (i = 0, iter_all.idx = 0; iter_all.idx < (bio)->bi_vcnt; iter_all.idx++)	\
-> +		bvec_for_each_segment(bvl, &((bio)->bi_io_vec[iter_all.idx]), i, iter_all)
-
-Would it be possible to move i into iter_all to streamline this a bit?
-
->  static inline void __bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
->  				      unsigned bytes, bool mp)
-> diff --git a/include/linux/bvec.h b/include/linux/bvec.h
-> index 01616a0b6220..02f26d2b59ad 100644
-> --- a/include/linux/bvec.h
-> +++ b/include/linux/bvec.h
-> @@ -82,6 +82,12 @@ struct bvec_iter {
->  						   current bvec */
->  };
->  
-> +struct bvec_iter_all {
-> +	struct bio_vec	bv;
-> +	int		idx;
-> +	unsigned	done;
-> +};
-> +
->  /*
->   * various member access, note that bio_data should of course not be used
->   * on highmem page vectors
-> @@ -216,6 +222,31 @@ static inline bool mp_bvec_iter_advance(const struct bio_vec *bv,
->  	.bi_bvec_done	= 0,						\
->  }
->  
-> +static inline struct bio_vec *bvec_init_iter_all(struct bvec_iter_all *iter_all)
-> +{
-> +	iter_all->bv.bv_page = NULL;
-> +	iter_all->done = 0;
-> +
-> +	return &iter_all->bv;
-> +}
-> +
-> +/* used for chunk_for_each_segment */
-> +static inline void bvec_next_segment(const struct bio_vec *bvec,
-> +		struct bvec_iter_all *iter_all)
-
-Indentation.
-
-> +{
-> +	struct bio_vec *bv = &iter_all->bv;
-> +
-> +	if (bv->bv_page) {
-> +		bv->bv_page += 1;
-> +		bv->bv_offset = 0;
-> +	} else {
-> +		bv->bv_page = bvec->bv_page;
-> +		bv->bv_offset = bvec->bv_offset;
-> +	}
-> +	bv->bv_len = min_t(unsigned int, PAGE_SIZE - bv->bv_offset,
-> +			bvec->bv_len - iter_all->done);
-
-Indentation.
-
-> +}
-> +
->  /*
->   * Get the last singlepage segment from the multipage bvec and store it
->   * in @seg
-> -- 
-> 2.9.5
-> 
+Best regards,
+Lu Baolu
