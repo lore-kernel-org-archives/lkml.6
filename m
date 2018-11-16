@@ -2,124 +2,102 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 168A4C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:05:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5363AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:12:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D67232145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:05:14 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D67232145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
+	by mail.kernel.org (Postfix) with ESMTP id 13A60208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:12:42 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13A60208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389397AbeKPRQU (ORCPT
+        id S2389346AbeKPRXt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 12:16:20 -0500
-Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:44416 "EHLO
-        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1727438AbeKPRQU (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 12:16:20 -0500
-Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
-        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAG74DUf020372
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:05:11 -0500
-Received: from e16.ny.us.ibm.com (e16.ny.us.ibm.com [129.33.205.206])
-        by mx0a-001b2d01.pphosted.com with ESMTP id 2nsrassyv9-1
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:05:11 -0500
-Received: from localhost
-        by e16.ny.us.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
-        for <linux-kernel@vger.kernel.org> from <paulmck@linux.vnet.ibm.com>;
-        Fri, 16 Nov 2018 07:05:09 -0000
-Received: from b01cxnp23032.gho.pok.ibm.com (9.57.198.27)
-        by e16.ny.us.ibm.com (146.89.104.203) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
-        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
-        Fri, 16 Nov 2018 07:05:02 -0000
-Received: from b01ledav003.gho.pok.ibm.com (b01ledav003.gho.pok.ibm.com [9.57.199.108])
-        by b01cxnp23032.gho.pok.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAG751VW29425862
-        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Fri, 16 Nov 2018 07:05:01 GMT
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id 26F04B2066;
-        Fri, 16 Nov 2018 07:05:01 +0000 (GMT)
-Received: from b01ledav003.gho.pok.ibm.com (unknown [127.0.0.1])
-        by IMSVA (Postfix) with ESMTP id CE3CDB2064;
-        Fri, 16 Nov 2018 07:05:00 +0000 (GMT)
-Received: from paulmck-ThinkPad-W541 (unknown [9.85.196.200])
-        by b01ledav003.gho.pok.ibm.com (Postfix) with ESMTP;
-        Fri, 16 Nov 2018 07:05:00 +0000 (GMT)
-Received: by paulmck-ThinkPad-W541 (Postfix, from userid 1000)
-        id 2E75416C36E0; Thu, 15 Nov 2018 23:05:00 -0800 (PST)
-Date:   Thu, 15 Nov 2018 23:05:00 -0800
-From:   "Paul E. McKenney" <paulmck@linux.ibm.com>
-To:     linux-kernel@vger.kernel.org, mingo@kernel.org,
-        jiangshanlai@gmail.com, dipankar@in.ibm.com,
-        akpm@linux-foundation.org, mathieu.desnoyers@efficios.com,
-        josh@joshtriplett.org, tglx@linutronix.de, peterz@infradead.org,
-        rostedt@goodmis.org, dhowells@redhat.com, edumazet@google.com,
-        fweisbec@gmail.com, oleg@redhat.com, joel@joelfernandes.org,
-        Lance Roy <ldr709@gmail.com>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Yang Shi <yang.shi@linux.alibaba.com>,
-        Matthew Wilcox <mawilcox@microsoft.com>,
-        Mel Gorman <mgorman@techsingularity.net>,
-        Jan Kara <jack@suse.cz>, Shakeel Butt <shakeelb@google.com>,
-        linux-mm@kvack.org
-Subject: Re: [PATCH tip/core/rcu 6/7] mm: Replace spin_is_locked() with
- lockdep
-Reply-To: paulmck@linux.ibm.com
-References: <20181111200421.GA10551@linux.ibm.com>
- <20181111200443.10772-6-paulmck@linux.ibm.com>
- <20181115184917.6goqg67hpojfhk42@linux-r8p5>
+        Fri, 16 Nov 2018 12:23:49 -0500
+Received: from mga03.intel.com ([134.134.136.65]:37359 "EHLO mga03.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727410AbeKPRXt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 12:23:49 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from fmsmga004.fm.intel.com ([10.253.24.48])
+  by orsmga103.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 15 Nov 2018 23:12:40 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,239,1539673200"; 
+   d="scan'208";a="106755661"
+Received: from ahunter-desktop.fi.intel.com (HELO [10.237.72.130]) ([10.237.72.130])
+  by fmsmga004.fm.intel.com with ESMTP; 15 Nov 2018 23:12:36 -0800
+Subject: Re: [PATCH V3 1/3] mmc: sdhci: Allow platform controlled voltage
+ switching
+To:     Evan Green <evgreen@chromium.org>, vbadigan@codeaurora.org
+Cc:     Ulf Hansson <ulf.hansson@linaro.org>, robh+dt@kernel.org,
+        Doug Anderson <dianders@google.com>, asutoshd@codeaurora.org,
+        riteshh@codeaurora.org, stummala@codeaurora.org,
+        sayali <sayalil@codeaurora.org>, linux-mmc@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, vviswana@codeaurora.org,
+        linux-kernel@vger.kernel.org
+References: <1539004739-32060-1-git-send-email-vbadigan@codeaurora.org>
+ <1539004739-32060-2-git-send-email-vbadigan@codeaurora.org>
+ <CAE=gft631u+ie3PRFkc5t1f3iYwuhbxDbxKUqvdZS5cFJaJbsA@mail.gmail.com>
+ <dcb4a579-b308-76c0-7cc3-22bb95147470@codeaurora.org>
+ <9a4708c8-cc43-a690-7ef7-da351eb1f967@codeaurora.org>
+ <CAE=gft7VCzVDS+hDQUiXh=76ytkg4Djf8kZXtESsQsxoPJrwXA@mail.gmail.com>
+From:   Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+Message-ID: <b559d156-3c59-ba1a-1a09-7406f979abb1@intel.com>
+Date:   Fri, 16 Nov 2018 09:10:46 +0200
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115184917.6goqg67hpojfhk42@linux-r8p5>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-TM-AS-GCONF: 00
-x-cbid: 18111607-0072-0000-0000-000003C9DAD4
-X-IBM-SpamModules-Scores: 
-X-IBM-SpamModules-Versions: BY=3.00010059; HX=3.00000242; KW=3.00000007;
- PH=3.00000004; SC=3.00000270; SDB=6.01118156; UDB=6.00577118; IPR=6.00898264;
- MB=3.00024188; MTD=3.00000008; XFM=3.00000015; UTC=2018-11-16 07:05:07
-X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
-x-cbparentid: 18111607-0073-0000-0000-00004A2002AD
-Message-Id: <20181116070500.GV4170@linux.ibm.com>
-X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-16_04:,,
- signatures=0
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
- clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
- mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.0.1-1810050000 definitions=main-1811160063
+In-Reply-To: <CAE=gft7VCzVDS+hDQUiXh=76ytkg4Djf8kZXtESsQsxoPJrwXA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 10:49:17AM -0800, Davidlohr Bueso wrote:
-> On Sun, 11 Nov 2018, Paul E. McKenney wrote:
+On 16/11/18 1:17 AM, Evan Green wrote:
+> On Wed, Nov 14, 2018 at 6:36 AM Veerabhadrarao Badiganti
+> <vbadigan@codeaurora.org> wrote:
+>>
+>>>>> diff --git a/drivers/mmc/host/sdhci.h b/drivers/mmc/host/sdhci.h
+>>>>> index b001cf4..3c28152 100644
+>>>>> --- a/drivers/mmc/host/sdhci.h
+>>>>> +++ b/drivers/mmc/host/sdhci.h
+>>>>> @@ -524,6 +524,7 @@ struct sdhci_host {
+>>>>>          bool pending_reset;     /* Cmd/data reset is pending */
+>>>>>          bool irq_wake_enabled;  /* IRQ wakeup is enabled */
+>>>>>          bool v4_mode;           /* Host Version 4 Enable */
+>>>>> +       bool vqmmc_enabled;     /* Vqmmc is enabled */
+>>>> I still don't love this, since it doesn't mean what it says. Everyone
+>>>> else that has a vqmmc_enabled member uses it to actually mean "vqmmc
+>>>> is enabled", but this doesn't mean that. For example, you don't clear
+>>>> this when you disable the regulator in patch 3, so this would be set
+>>>> even if the regulator is disabled, and you don't set it when sdhci
+>>>> enables the regulator, so the regulator is on when this flag is not
+>>>> set.
+>>>>
+>> Hi Evan
+>>
+>> This flag is meant to say "disable vqmmc *only* if it is enabled by host
+>> driver (sdhci_host)".
+>> If host driver doesn't enable vqmmc (enabled by platfrm driver) or if it
+>> fails to enable it, then don't call disable vqmmc.
+>>
+>> Agree with you, the present name is not conveying its purpose.
+>> It must be something like "vqmmc_enabled_by_host".
+>>
+>> Please let me know if you have any suggestions on this name.
 > 
-> >From: Lance Roy <ldr709@gmail.com>
-> >
-> >lockdep_assert_held() is better suited to checking locking requirements,
-> >since it only checks if the current thread holds the lock regardless of
-> >whether someone else does. This is also a step towards possibly removing
-> >spin_is_locked().
-> 
-> So fyi I'm not crazy about these kind of patches simply because lockdep
-> is a lot less used out of anything that's not a lab, and we can be missing
-> potential offenders. There's obviously nothing wrong about what you describe
-> above perse, just my two cents.
+> Yeah. Maybe vqmmc_pltfrm_controlled? Or vqmmc_enabled_by_platfrm as
+> you suggested?
 
-Fair point!
-
-One countervailing advantage of lockdep is that it is not subject to the
-false negatives that can happen if someone else happens to be currently
-holding the lock.  But what would you suggest instead?
-
-							Thanx, Paul
-
+"pltfrm" doesn't mean anything here.  Just change the comment "vqmmc enabled
+in sdhci.c"
