@@ -2,240 +2,111 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E3414C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:07:48 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8FB76C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:11:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9EBD6214F1
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:07:48 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9EBD6214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 4B40D2145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:11:24 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CY9PtnYA"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B40D2145D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389297AbeKPMSN (ORCPT
+        id S2389179AbeKPMVt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 07:18:13 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:49364 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727061AbeKPMSN (ORCPT
+        Fri, 16 Nov 2018 07:21:49 -0500
+Received: from mail-io1-f68.google.com ([209.85.166.68]:45932 "EHLO
+        mail-io1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbeKPMVt (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 07:18:13 -0500
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAG26n6Y067536;
-        Thu, 15 Nov 2018 20:06:49 -0600
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-        by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAG26nrq028669
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Thu, 15 Nov 2018 20:06:49 -0600
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1466.3; Thu, 15
- Nov 2018 20:06:49 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1466.3 via Frontend Transport;
- Thu, 15 Nov 2018 20:06:49 -0600
-Received: from [172.22.217.238] (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAG26iAN009828;
-        Thu, 15 Nov 2018 20:06:44 -0600
-Subject: Re: [PATCH v3 06/13] dt-bindings: irqchip: Introduce TISCI Interrupt
- router bindings
-From:   Lokesh Vutla <lokeshvutla@ti.com>
-To:     Rob Herring <robh@kernel.org>
-CC:     Nishanth Menon <nm@ti.com>,
-        Santosh Shilimkar <ssantosh@kernel.org>, <tglx@linutronix.de>,
-        <jason@lakedaemon.net>, <marc.zyngier@arm.com>,
-        Linux ARM Mailing List <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, Tero Kristo <t-kristo@ti.com>,
-        Sekhar Nori <nsekhar@ti.com>,
-        Device Tree Mailing List <devicetree@vger.kernel.org>,
-        Grygorii Strashko <grygorii.strashko@ti.com>,
-        Peter Ujfalusi <peter.ujfalusi@ti.com>
-References: <20181106084105.32483-1-lokeshvutla@ti.com>
- <20181106084105.32483-7-lokeshvutla@ti.com>
- <5bea0eb4.1c69fb81.843ed.0186@mx.google.com>
- <569674da-07a1-107b-020a-4a11534a06b6@ti.com>
-Message-ID: <8adf30b7-07a2-fdc3-5993-3de0210638a6@ti.com>
-Date:   Fri, 16 Nov 2018 07:36:45 +0530
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <569674da-07a1-107b-020a-4a11534a06b6@ti.com>
-Content-Type: text/plain; charset="windows-1252"
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+        Fri, 16 Nov 2018 07:21:49 -0500
+Received: by mail-io1-f68.google.com with SMTP id w7so8313182iom.12
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 18:11:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=5tkpjJdA9N+kMxntJ8PhwEc8W6dF1+rjmgnt+9Dz1xA=;
+        b=CY9PtnYAITbE4qM5LPc8Bn32WcyqXzbqvNV1f00zKn3m9E7ftZJUSAyS8EleBizHhz
+         3UL8I6RIJ3OrcLdFfMvPCmbXysmmiSmtXdyW7zL31fKYcreQxYC5cd847WoXchfCtOT/
+         zrBimBFoAFDsvo02zEfcG7F0Ve7E/t181vg5srScIb4I62wg6pNIW72xylzof0nHLFv0
+         H2ce3C90x8A2/dhDbDraoQxBMOHcAYlelhxQZFZQ7bHhtcEeBvzzILBoe2AHnzP3Yf57
+         H5fJRGUXQsfmLIzuWf5JItgv20GuhoG5uxboPWCuZTySRLEySRB5jubG769kS79h0sI/
+         +tmg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=5tkpjJdA9N+kMxntJ8PhwEc8W6dF1+rjmgnt+9Dz1xA=;
+        b=SurnHc62tQbyTIQTn1bMK1JiGWqa6Fwr5SLvCqk3wlvAcwMWDCkf2F8dKgF6ddVyS/
+         3bhkT4g3MadBDbGnRbOZN/KPX8UrjPVA++uk3dm1tKamIpXDYeIktOWZDN8xubILoJHh
+         rpFLlfkia1oRleeTIwrMAWrZcoieS7w1ycTUPF9QpLPo9DYTgA8fjlo07Pd46IlZq0fR
+         q19gIG2rPwMXXfbJ9N2D8rfvrrROu7fx7X802ozbqQoJZRKiB7v6OecrbVaPoNVHJpR5
+         fLiuYuD+XJymO6WAIWjLnpz2V4wjAFeQlBBFKCHAl/rAc+Kg46DQKHvY0m3KhK/2PKOf
+         GISQ==
+X-Gm-Message-State: AA+aEWaYOEcoozISg9CVQFZ+MvhdIZNayA2bACHIvrdQZ/zrzaCkQtqH
+        yxz0ik1ssXEDUqFgy72WIfNGEn0qbEx4jw==
+X-Google-Smtp-Source: AFSGD/XzSthq1ljJaJSeFEk5Z/h5puyZ6E7vzuJiOFPQ8rmWIcoyClpm6GE27XfCJ4QqwgWGxLNe3g==
+X-Received: by 2002:a5e:de0c:: with SMTP id e12mr1076194iok.191.1542334281077;
+        Thu, 15 Nov 2018 18:11:21 -0800 (PST)
+Received: from bat.mindbit.ro (CPE00fc8d79db03-CM00fc8d79db00.cpe.net.fido.ca. [72.140.67.131])
+        by smtp.gmail.com with ESMTPSA id t2sm4401029iob.7.2018.11.15.18.11.20
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 18:11:20 -0800 (PST)
+From:   Radu Rendec <radu.rendec@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Tejun Heo <tj@kernel.org>, Radu Rendec <radu.rendec@gmail.com>
+Subject: [PATCH 0/1] kernfs_notify() poll latency
+Date:   Thu, 15 Nov 2018 21:09:53 -0500
+Message-Id: <20181116020954.24924-1-radu.rendec@gmail.com>
+X-Mailer: git-send-email 2.17.2
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Rob,
+Hi everyone,
 
-On 11/13/2018 11:43 AM, Lokesh Vutla wrote:
-> Hi Rob,
-> 
-> On 12/11/18 11:30 PM, Rob Herring wrote:
->> On Tue, Nov 06, 2018 at 02:10:58PM +0530, Lokesh Vutla wrote:
->>> Add the DT binding documentation for Interrupt router driver.
->>>
->>> Signed-off-by: Lokesh Vutla <lokeshvutla@ti.com>
->>> ---
->>> Changes since v2:
->>> - Dropped interrupt-parent from reqired properties description
->>> - Updated the interrupt cells to 4.
->>>
->>>   .../interrupt-controller/ti,sci-intr.txt      | 84 +++++++++++++++++++
->>>   MAINTAINERS                                   |  1 +
->>>   2 files changed, 85 insertions(+)
->>>   create mode 100644
->>> Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
->>>
->>> diff --git
->>> a/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
->>> b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
->>> new file mode 100644
->>> index 000000000000..06e69f8c812c
->>> --- /dev/null
->>> +++
->>> b/Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
->>> @@ -0,0 +1,84 @@
->>> +Texas Instruments K3 Interrupt Router
->>> +=====================================
->>> +
->>> +The Interrupt Router (INTR) module provides a mechanism to mux M
->>> +interrupt inputs to N interrupt outputs, where all M inputs are
->>> selectable
->>> +to be driven per N output. There is one register per output
->>> (MUXCNTL_N) that
->>> +controls the selection.
->>> +
->>> +
->>> +                                 Interrupt Router
->>> +                             +----------------------+
->>> +                             |  Inputs     Outputs  |
->>> +        +-------+            | +------+             |
->>> +        | GPIO  |----------->| | irq0 |             |       Host IRQ
->>> +        +-------+            | +------+             |      controller
->>> +                             |    .        +-----+  |      +-------+
->>> +        +-------+            |    .        |  0  |  |----->|  IRQ  |
->>> +        | INTA  |----------->|    .        +-----+  |      +-------+
->>> +        +-------+            |    .          .      |
->>> +                             | +------+      .      |
->>> +                             | | irqM |    +-----+  |
->>> +                             | +------+    |  N  |  |
->>> +                             |             +-----+  |
->>> +                             +----------------------+
->>> +
->>> +Configuration of these MUXCNTL_N registers is done by a system
->>> controller
->>> +(like the Device Memory and Security Controller on K3 AM654 SoC).
->>> System
->>> +controller will keep track of the used and unused registers within
->>> the Router.
->>> +Driver should request the system controller to get the range of GIC
->>> IRQs
->>> +assigned to the requesting hosts. It is the drivers responsibility
->>> to keep
->>> +track of Host IRQs.
->>> +
->>> +Communication between the host processor running an OS and the system
->>> +controller happens through a protocol called TI System Control
->>> Interface
->>> +(TISCI protocol). For more details refer:
->>> +Documentation/devicetree/bindings/arm/keystone/ti,sci.txt
->>> +
->>> +TISCI Interrupt Router Node:
->>> +----------------------------
->>> +- compatible:        Must be "ti,sci-intr".
->>> +- interrupt-controller:    Identifies the node as an interrupt
->>> controller
->>> +- #interrupt-cells:    Specifies the number of cells needed to
->>> encode an
->>> +            interrupt source. The value should be 4.
->>> +            First cell should contain the TISCI device ID of source
->>> +            Second cell should contain the interrupt source offset
->>> +            within the device
->>> +            Third cell specifies the trigger type as defined
->>> +            in interrupts.txt in this directory.
->>> +            Fourth cell should be 1 if the irq is coming from
->>> +            interrupt aggregator else 0.
->>> +- ti,sci:        Phandle to TI-SCI compatible System controller node.
->>> +- ti,sci-dst-id:    TISCI device ID of the destination IRQ controller.
->>> +- ti,sci-rm-range-girq:    TISCI subtype id representing the host
->>> irqs assigned
->>> +            to this interrupt router.
->>
->> u32 or array?
-> 
-> it is u32.
+I believe kernfs_notify() poll latency can be improved if the poll
+notification is done from kernfs_notify() directly rather than scheduled
+work context.
 
-Sorry, I am wrong here. There is one instance where there are more than
-one set of gic irq ranges associated with this IP. Will fix it as an
-array in next version.
+I am sure there are good reasons why the fsnotify notification must be
+done from scheduled work context (an obvious one is that it needs to be
+able to sleep). But I don't see any reason why the poll notification
+could not be done from kernfs_notify(). If there is any, please point it
+out - I would highly appreciate it.
 
-Thanks and regards,
-Lokesh
+I came across this while working on a project that uses the sysfs GPIO
+interface to wake a (real time) user space project on GPIO interrupts. I
+know that interface is deprecated, but I still believe it's a valid
+scenario and may occur with other drivers as well (current or future).
 
-> 
->>
->>> +
->>> +For more details on TISCI IRQ resource management refer:
->>> +http://downloads.ti.com/tisci/esd/latest/2_tisci_msgs/rm/rm_irq.html
->>> +
->>> +Example:
->>> +--------
->>> +The following example demonstrates both interrupt router node and
->>> the consumer
->>> +node(main gpio) on the AM654 SoC:
->>> +
->>> +main_intr: interrupt-controller@1 {
->>
->> Unit-address is not valid here without a reg property.
-> 
-> Sure will fix it in next version.
-> 
-> Thanks and regards,
-> Lokesh
-> 
->>
->>> +    compatible = "ti,sci-intr";
->>> +    interrupt-controller;
->>> +    interrupt-parent = <&gic>;
->>> +    #interrupt-cells = <4>;
->>> +    ti,sci = <&dmsc>;
->>> +    ti,sci-dst-id = <56>;
->>> +    ti,sci-rm-range-girq = <0x1>;
->>> +};
->>> +
->>> +main_gpio0: gpio@600000 {
->>> +    ...
->>> +    interrupt-parent = <&main_intr>;
->>> +    interrupts = <57 256 IRQ_TYPE_EDGE_RISING 0>,
->>> +            <57 257 IRQ_TYPE_EDGE_RISING 0>,
->>> +            <57 258 IRQ_TYPE_EDGE_RISING 0>,
->>> +            <57 259 IRQ_TYPE_EDGE_RISING 0>,
->>> +            <57 260 IRQ_TYPE_EDGE_RISING 0>,
->>> +            <57 261 IRQ_TYPE_EDGE_RISING 0>;
->>> +    ...
->>> +};
->>> diff --git a/MAINTAINERS b/MAINTAINERS
->>> index 88b28f6dec45..0e3aa3386287 100644
->>> --- a/MAINTAINERS
->>> +++ b/MAINTAINERS
->>> @@ -14739,6 +14739,7 @@ F:   
->>> Documentation/devicetree/bindings/reset/ti,sci-reset.txt
->>>   F:    Documentation/devicetree/bindings/clock/ti,sci-clk.txt
->>>   F:    drivers/clk/keystone/sci-clk.c
->>>   F:    drivers/reset/reset-ti-sci.c
->>> +F:   
->>> Documentation/devicetree/bindings/interrupt-controller/ti,sci-intr.txt
->>>     THANKO'S RAREMONO AM/FM/SW RADIO RECEIVER USB DRIVER
->>>   M:    Hans Verkuil <hverkuil@xs4all.nl>
->>> -- 
->>> 2.19.1
->>>
->>
+The sysfs GPIO interface (drivers/gpio/gpiolib-sysfs.c) interrupt
+handler relies on kernfs_notify() (actually sysfs_notify_dirent(), but
+that's just an alias) to wake any thread that may be poll()ing on the
+interrupt. It is important to wake the thread as quickly as possible and
+going through the kernel worker to handle the scheduled work is much
+slower. Since the kernel worker runs with normal priority, this can even
+become a case of priority inversion. If a higher priority thread hogs
+the CPU, it may delay the kernel worker and in turn the thread that
+needs to be notified (which could be a real time thread).
+
+Best regards,
+Radu Rendec
+
+
+Radu Rendec (1):
+  Improve kernfs_notify() poll notification latency
+
+ fs/kernfs/file.c | 23 +++++++++++------------
+ 1 file changed, 11 insertions(+), 12 deletions(-)
+
+-- 
+2.17.2
+
