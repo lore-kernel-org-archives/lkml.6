@@ -2,85 +2,124 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 4E603C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 03:22:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 767E4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 03:24:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D27E820818
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 03:22:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 13F5E20818
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 03:24:46 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="1o+w5DEP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D27E820818
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="XceORhZO"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 13F5E20818
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388265AbeKPNdM (ORCPT
+        id S2389135AbeKPNfW (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 08:33:12 -0500
-Received: from mail.kernel.org ([198.145.29.99]:44170 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727061AbeKPNdM (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 08:33:12 -0500
-Received: from localhost (unknown [106.223.241.29])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id B7F2020818;
-        Fri, 16 Nov 2018 03:22:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542338554;
-        bh=XTM3GZ9ukFARIDN9PB1r+9ZbIOUNWKn09f/iM/FTAPM=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=1o+w5DEPjOB2tcZiUyrc4hlMA+7l5/HAvoMLkZXd+DmHuOGEWVQz8EteHatcA9AfW
-         vbR1fFiTlm6WnlMZnZT+/g1aw8JoLmXOXNwCC6+U97SFZn8T/qkl4P83GtFd2elRwe
-         qUlaGP45ghDX46Se48dierED4zFXww+kLqeG+lP4=
-Date:   Fri, 16 Nov 2018 08:52:26 +0530
-From:   Vinod Koul <vkoul@kernel.org>
-To:     Andy Gross <andy.gross@linaro.org>
-Cc:     Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        David Brown <david.brown@linaro.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-arm-msm@vger.kernel.org>,
-        "open list:ARM/QUALCOMM SUPPORT" <linux-soc@vger.kernel.org>,
-        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
-        <devicetree@vger.kernel.org>,
-        open list <linux-kernel@vger.kernel.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        Stanimir Varbanov <stanimir.varbanov@linaro.org>
-Subject: Re: [PATCH v6 0/2] arm64: dts: add prng-ee nodes
-Message-ID: <20181116032226.GJ3060@vkoul-mobl>
-References: <20181001062151.27607-1-vkoul@kernel.org>
- <20181115034518.GG3060@vkoul-mobl>
- <20181115192009.GB17484@hector>
+        Fri, 16 Nov 2018 08:35:22 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:45168 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727061AbeKPNfW (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 08:35:22 -0500
+Received: by mail-lf1-f65.google.com with SMTP id b20so15598460lfa.12
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 19:24:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:in-reply-to:references:from:date:message-id:subject:to
+         :cc;
+        bh=Fa0yXKxosJHyr5fKZzlj1BRx9gJOyGWfdXPzrBU52DM=;
+        b=XceORhZOCr1m76Da2/72Ix/ariKkng/GG5GcoiyBhyLASXdIFZIHu4vTgQIkvr+yJ6
+         3o7gzGuSD8yQPo5B8WUML1Ko1lFvQAqKMckINR+S+mOKAi/UaOkhsF2tzW8gWJr3JyQs
+         b/8gygzqWIVVYQnJwR3AuNZyfv/z3J6oc1cvg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:in-reply-to:references:from:date
+         :message-id:subject:to:cc;
+        bh=Fa0yXKxosJHyr5fKZzlj1BRx9gJOyGWfdXPzrBU52DM=;
+        b=OLnDyzwuC4qvqIoZKwqcSeqoGBVLF+FETr+DK/7EOCaSgk7uXamwCRSVvDqPNchS7g
+         X6ozWgGvE83SlOuWI1oGY3bNPiqOlCjg1+rbZ/Q34K7H45OTilD2MRU684+dbXRnzKPE
+         23T+ai+c9tDYioB7kLE6ZR8SbC+9q5sNxMo6gf9sWU9JkStOxK48d4djA02sD782IvMl
+         YKVDgAf0Rf187Ya8EjJoGKsjiTyudMwE/NN4u1A8XqnEItcdkyvcKDINVqUdTJEn5Hb1
+         6bi1JY8YART2N4Z1J0+Iqe3FSJdZtopcsoHQmy+HAkEU6Y6t//P02gIs/zwDT7VD71YF
+         bx8Q==
+X-Gm-Message-State: AGRZ1gLfnfZDFgCfUBIkNA/ki0355ANGsG3qKKERVQHO6ys4fsd6LOwL
+        fvIfJE6c2cCS5PcqQDOvcZb7M/t8N3qYD4ASwmbdkw==
+X-Google-Smtp-Source: AJdET5d6QvB0EHQZx9uCQT0+gCRTa06PmFcm5lkTSR+WWvFvWIvpML8PgcXWC1yDcjmysRCaXdRcofSptBo31RKwQy0=
+X-Received: by 2002:a19:2203:: with SMTP id i3mr5043106lfi.2.1542338682454;
+ Thu, 15 Nov 2018 19:24:42 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115192009.GB17484@hector>
-User-Agent: Mutt/1.9.2 (2017-12-15)
+Received: by 2002:a2e:95ca:0:0:0:0:0 with HTTP; Thu, 15 Nov 2018 19:24:42
+ -0800 (PST)
+In-Reply-To: <20181115133203.28567-1-linus.walleij@linaro.org>
+References: <20181115133203.28567-1-linus.walleij@linaro.org>
+From:   Baolin Wang <baolin.wang@linaro.org>
+Date:   Fri, 16 Nov 2018 11:24:42 +0800
+Message-ID: <CAMz4kuKvqX7B1tundeLTHvttTvE7kv3unLiu-G5z9w5zpQpf8g@mail.gmail.com>
+Subject: Re: [PATCH 1/2] clocksource: Demote dbx500 PRCMU clocksource
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        Daniel Lezcano <daniel.lezcano@linaro.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 15-11-18, 11:20, Andy Gross wrote:
-> On Thu, Nov 15, 2018 at 09:15:18AM +0530, Vinod Koul wrote:
-> > On 01-10-18, 11:51, Vinod Koul wrote:
-> > > This adds prng-ee nodes for msm8996 and sdm845
-> > 
-> > Ping Andy, would appreciate if you can pick these up.
-> 
-> Done.  I did have to massage the location in dts for both of these patches to
-> keep the address order correct.
+On 15 November 2018 at 21:32, Linus Walleij <linus.walleij@linaro.org> wrote:
+> Demote the DBx500 PRCMU clocksource to quality 100 and
+> mark it as NONSTOP so it will still be used for
+> timekeeping across suspend/resume.
+>
+> The Nomadik MTU timer which has higher precision will
+> be used when the system is up and running, thanks to
+> the recent changes properly utilizing the suspend
+> clocksources.
+>
+> This was discussed back in 2011 when the driver was
+> written, but the infrastructure was not available
+> upstream to use this timer properly. Now the
+> infrastructure is there, so let's finalize the work.
+>
+> Cc: Baolin Wang <baolin.wang@linaro.org>
+> Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
+> ---
 
-Thank you Andy, appreciate it.
+Glad to see new driver uses the suspend clocksource.
+Reviewed-by: Baolin Wang <baolin.wang@linaro.org>
 
-I have two more series in queue, QCS404 DTS series https://patchwork.kernel.org/project/linux-arm-msm/list/?series=40841
-and QCS404 defconfigs https://patchwork.kernel.org/project/linux-arm-msm/list/?series=40853
+>  drivers/clocksource/clksrc-dbx500-prcmu.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/drivers/clocksource/clksrc-dbx500-prcmu.c b/drivers/clocksource/clksrc-dbx500-prcmu.c
+> index c1b96dc5f444..4054539fe066 100644
+> --- a/drivers/clocksource/clksrc-dbx500-prcmu.c
+> +++ b/drivers/clocksource/clksrc-dbx500-prcmu.c
+> @@ -46,10 +46,10 @@ static u64 notrace clksrc_dbx500_prcmu_read(struct clocksource *cs)
+>
+>  static struct clocksource clocksource_dbx500_prcmu = {
+>         .name           = "dbx500-prcmu-timer",
+> -       .rating         = 300,
+> +       .rating         = 100,
+>         .read           = clksrc_dbx500_prcmu_read,
+>         .mask           = CLOCKSOURCE_MASK(32),
+> -       .flags          = CLOCK_SOURCE_IS_CONTINUOUS,
+> +       .flags          = CLOCK_SOURCE_IS_CONTINUOUS | CLOCK_SOURCE_SUSPEND_NONSTOP,
+>  };
+>
+>  #ifdef CONFIG_CLKSRC_DBX500_PRCMU_SCHED_CLOCK
+> --
+> 2.17.2
+>
 
-Would be great if you can review these as well
 
-Regards
+
 -- 
-~Vinod
+Baolin Wang
+Best Regards
