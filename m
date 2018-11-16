@@ -3,141 +3,175 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
-	version=3.4.0
+	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 68282C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:32:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E78AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 315082086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:32:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 417982087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:32:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LJaYCu5X"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 315082086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcZHh3bC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 417982087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390322AbeKQEpe (ORCPT
+        id S2390340AbeKQEq0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 23:45:34 -0500
-Received: from mail-ua1-f68.google.com ([209.85.222.68]:34339 "EHLO
-        mail-ua1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727462AbeKQEpd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 23:45:33 -0500
-Received: by mail-ua1-f68.google.com with SMTP id z23so8392123uam.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 10:32:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=+BbP7AiyuH+uKDIwhg8JP7/ZbJYA8eASAq4y+bl9W/A=;
-        b=LJaYCu5XSH5yf6pWi8Ea/Ci0mJ5AX2Y8Y8qSp50fjyBczz2KtQdED70To/xg2/SNvR
-         GIkWS1OHQtnptqNPlbIHdG+ZwdPJTNvqAvNYe8CoWuRzZofD2TynuKIzUBdeOenM1izl
-         PvY2Zx1VhVFHWUJtTiYYej8Xeg1zcNPDzYlng=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=+BbP7AiyuH+uKDIwhg8JP7/ZbJYA8eASAq4y+bl9W/A=;
-        b=eLhc7dG7Rcg8BL5/u3tq97WXTvasZaSsYfGC6o3sBWPSFwB5hUheKed/SmVN6U3tRS
-         CwNygQKBmSHHL1BoOLPxNeLrz8rqK6GCaPx4zVPEqVoRhDouUZPdDMczcmnzW/m8cE0g
-         cYtKliy1lcqqiufOL0NxSV2euq17OM6dGi7B7kmvBH62Lls6CT3Vnyh4008vCRFexCU+
-         U8xXUcMKowqyQ/ajui4Z/P9Sj1h4wciZJ9+IEW2tcqoXcN9FGLW6q8GnHjRxCBGiucE6
-         EX3yp7nld2UZgXgCoJnEPklkORfDxx8ub9RGbi43nCCMXsjjp+lFCKfjCR5BTZnRqjmo
-         MEZQ==
-X-Gm-Message-State: AGRZ1gJhPCNeVS8+egJP1H2HkHr5I1a0TQPFitIpyyQnxy9F1MKsW40R
-        2/rPVdP+0uEMX2rDUYfg99ltC4gZYXk=
-X-Google-Smtp-Source: AJdET5e1IKVAB8KsGCX8Gb/46HvVroKco30cKJEC+akLOUzwIBVcvJrERK8rO5zT5QCw7+y8cRDnhw==
-X-Received: by 2002:a9f:2709:: with SMTP id a9mr3025578uaa.10.1542393122972;
-        Fri, 16 Nov 2018 10:32:02 -0800 (PST)
-Received: from mail-vs1-f54.google.com (mail-vs1-f54.google.com. [209.85.217.54])
-        by smtp.gmail.com with ESMTPSA id j95sm5332391uad.6.2018.11.16.10.32.02
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 10:32:02 -0800 (PST)
-Received: by mail-vs1-f54.google.com with SMTP id y27so14325787vsi.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 10:32:02 -0800 (PST)
-X-Received: by 2002:a67:1505:: with SMTP id 5mr4490119vsv.20.1542392650750;
- Fri, 16 Nov 2018 10:24:10 -0800 (PST)
+        Fri, 16 Nov 2018 23:46:26 -0500
+Received: from mail.kernel.org ([198.145.29.99]:51946 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1729407AbeKQEq0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 23:46:26 -0500
+Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 804492086C;
+        Fri, 16 Nov 2018 18:32:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542393176;
+        bh=dPRvjwaeHP61H3arObHD4o9cl7cFAkuPr2TxSJPkpUE=;
+        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+        b=XcZHh3bCIxF2TlOFq+9gW5x4MH29zzHY67Hh0Rk5rsHug12m2cko6cz8ZwApvbnQs
+         70HogcfKbwTQcbrrplKIFq/VTugQA/rHytwWo/toyNPIr1n+0w9YpY24NuB0Buajia
+         hr7iFiBE3/UuZGQAsfRPLLrPSkouTL+8E1TNvmuE=
+Date:   Fri, 16 Nov 2018 18:32:50 +0000
+From:   Jonathan Cameron <jic23@kernel.org>
+To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
+Cc:     "kernel-usp@googlegroups.com" <kernel-usp@googlegroups.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "lars@metafoo.de" <lars@metafoo.de>,
+        "knaack.h@gmx.de" <knaack.h@gmx.de>,
+        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
+        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
+        "renatogeh@gmail.com" <renatogeh@gmail.com>,
+        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
+        "giuliano.belinassi@gmail.com" <giuliano.belinassi@gmail.com>,
+        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH v2 1/2] staging: iio: ad7780: check if ad778x before
+ gain update
+Message-ID: <20181116183250.3263bf66@archlinux>
+In-Reply-To: <d606520397eaf3b57372fa2fffc6f17b567eee61.camel@analog.com>
+References: <cover.1541681371.git.giuliano.belinassi@usp.br>
+        <762e851dd819f27e3955cb695cd8422d84a19438.1541681371.git.giuliano.belinassi@usp.br>
+        <77c3b6ee484b077152138cb8e1b7e03295114e54.camel@analog.com>
+        <20181111125859.7263bc15@archlinux>
+        <d606520397eaf3b57372fa2fffc6f17b567eee61.camel@analog.com>
+X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-References: <20181116051719.23376-1-dbasehore@chromium.org>
- <CAD=FV=W7sYY5n609erPpTxux+0Efad_0YpPkoVZB14Kqm=baXA@mail.gmail.com> <CAGAzgsq7uF=E3dzhyCjK4gq09_UV_aZhQbyaTnz7yDY_ErQYKQ@mail.gmail.com>
-In-Reply-To: <CAGAzgsq7uF=E3dzhyCjK4gq09_UV_aZhQbyaTnz7yDY_ErQYKQ@mail.gmail.com>
-From:   Doug Anderson <dianders@chromium.org>
-Date:   Fri, 16 Nov 2018 10:23:59 -0800
-X-Gmail-Original-Message-ID: <CAD=FV=XVDAjLt+VtxedHEma1FRrG0LuFZ2c7L5-MsdCZkgEcsw@mail.gmail.com>
-Message-ID: <CAD=FV=XVDAjLt+VtxedHEma1FRrG0LuFZ2c7L5-MsdCZkgEcsw@mail.gmail.com>
-Subject: Re: [PATCH] arm64: dts: rockchip: rk3399: Add xin32k clk
-To:     Derek Basehore <dbasehore@chromium.org>
-Cc:     LKML <linux-kernel@vger.kernel.org>,
-        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        devicetree@vger.kernel.org, Tony Xie <tony.xie@rock-chips.com>,
-        Chris <zyw@rock-chips.com>, ayaka@soulik.info,
-        "nickey.yang" <nickey.yang@rock-chips.com>,
-        =?UTF-8?B?6YOR6Iic5Lm+?= <zhengsq@rock-chips.com>,
-        Klaus Goger <klaus.goger@theobroma-systems.com>,
-        Brian Norris <briannorris@chromium.org>,
-        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
-        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Rob Herring <robh+dt@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi,
+On Mon, 12 Nov 2018 07:57:58 +0000
+"Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
 
-On Fri, Nov 16, 2018 at 9:39 AM dbasehore . <dbasehore@chromium.org> wrote:
->
-> On Fri, Nov 16, 2018 at 8:01 AM Doug Anderson <dianders@chromium.org> wrote:
-> >
-> > Hi,
-> >
-> > On Thu, Nov 15, 2018 at 9:17 PM Derek Basehore <dbasehore@chromium.org> wrote:
-> > >
-> > > This adds the xin32k clock to the RK3399 CPU. Even though it's not
-> > > directly used, muxes will end up traversing the entire clk tree on
-> > > calls to determine_rate if it doesn't exist.
-> > >
-> > > Signed-off-by: Derek Basehore <dbasehore@chromium.org>
-> > > ---
-> > >  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 7 +++++++
-> > >  1 file changed, 7 insertions(+)
-> >
-> > nit: I would have expected ${SUBJECT} to have v2 in it somewhere.
-> >
-> >
-> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > > index 99e7f65c1779..3d09472978f8 100644
-> > > --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> > > +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
-> >
-> > Aww crud.  I was at the airport yesterday and so I didn't notice that
-> > you were touching rk3399, not rk3399-gru.  This belongs in the gru
-> > device tree file, not in the top level rk3399.  As you have written
-> > this it will break rk3399 boards that have an rk808 on them, AKA:
->
-> Should this be moved to the rk3399.dtsi file? The RK3399 assumes that
-> this clk exists (same as the 24MHz clk which is in rk3399.dtsi). While
-> it can function without it defined, it really shouldn't. We can just
-> assign the existing labels in the dts files you pointed out.
+> On Sun, 2018-11-11 at 12:58 +0000, Jonathan Cameron wrote:
+> > On Thu, 8 Nov 2018 13:44:17 +0000
+> > "Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
+> >   
+> > > On Thu, 2018-11-08 at 11:03 -0200, Giuliano Belinassi wrote:  
+> > > > Only the ad778x have the 'gain' status bit. Check it before updating
+> > > > through a new variable is_ad778x in chip_info.
+> > > >     
+> > > 
+> > > Looks good.  
+> > 
+> > Alex, formal tags definitely preferred!  It's not as though a
+> > looks good is any less of a review than an Ack, it's just better
+> > hidden as people need to look at mailing list archives...
+> > 
+> > Jonathan
+> >   
+> 
+> Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
+I haven't pushed out togreg yet so can still rebase.
 
-No, it should be in the board files.  Each board may produce the 32k
-clock through a different component.  On gru-based devices we produce
-the 32k clock through a silego part.  On some other ones we produce it
-from rk808.
+Added. Thanks,
 
-Technically you could say that we don't _truly_ need to model this
-clock and we could have just inserted a dummy/fixed 32k clock in the
-clk-rk3399.c file.  ...but we did model it so that means we should
-probably model it semi-properly.
+Jonathan
 
-If a given board forgets to provide a 32k clock then that's a bug for
-them like it was for us.
+> 
+> // Will remember that next time :)
+> 
+> Thanks
+> Alex
+> 
+> > > 
+> > > Alex
+> > >   
+> > > > Signed-off-by: Giuliano Belinassi <giuliano.belinassi@usp.br>
+> > > > ---
+> > > > Changes in v2:
+> > > > 	- Squashed is_ad778x declaration commit with the ad778x checkage
+> > > > 	- Changed is_ad778x type to bool
+> > > >  
+> > > >  drivers/staging/iio/adc/ad7780.c | 15 +++++++++++----
+> > > >  1 file changed, 11 insertions(+), 4 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/staging/iio/adc/ad7780.c
+> > > > b/drivers/staging/iio/adc/ad7780.c
+> > > > index 91e016d534ed..9ec2b002539e 100644
+> > > > --- a/drivers/staging/iio/adc/ad7780.c
+> > > > +++ b/drivers/staging/iio/adc/ad7780.c
+> > > > @@ -35,6 +35,7 @@ struct ad7780_chip_info {
+> > > >  	struct iio_chan_spec	channel;
+> > > >  	unsigned int		pattern_mask;
+> > > >  	unsigned int		pattern;
+> > > > +	bool			is_ad778x;
+> > > >  };
+> > > >  
+> > > >  struct ad7780_state {
+> > > > @@ -113,10 +114,12 @@ static int ad7780_postprocess_sample(struct
+> > > > ad_sigma_delta *sigma_delta,
+> > > >  	    ((raw_sample & chip_info->pattern_mask) != chip_info->pattern))
+> > > >  		return -EIO;
+> > > >  
+> > > > -	if (raw_sample & AD7780_GAIN)
+> > > > -		st->gain = 1;
+> > > > -	else
+> > > > -		st->gain = 128;
+> > > > +	if (chip_info->is_ad778x) {
+> > > > +		if (raw_sample & AD7780_GAIN)
+> > > > +			st->gain = 1;
+> > > > +		else
+> > > > +			st->gain = 128;
+> > > > +	}
+> > > >  
+> > > >  	return 0;
+> > > >  }
+> > > > @@ -135,21 +138,25 @@ static const struct ad7780_chip_info
+> > > > ad7780_chip_info_tbl[] = {
+> > > >  		.channel = AD7780_CHANNEL(12, 24),
+> > > >  		.pattern = 0x5,
+> > > >  		.pattern_mask = 0x7,
+> > > > +		.is_ad778x = false,
+> > > >  	},
+> > > >  	[ID_AD7171] = {
+> > > >  		.channel = AD7780_CHANNEL(16, 24),
+> > > >  		.pattern = 0x5,
+> > > >  		.pattern_mask = 0x7,
+> > > > +		.is_ad778x = false,
+> > > >  	},
+> > > >  	[ID_AD7780] = {
+> > > >  		.channel = AD7780_CHANNEL(24, 32),
+> > > >  		.pattern = 0x1,
+> > > >  		.pattern_mask = 0x3,
+> > > > +		.is_ad778x = true,
+> > > >  	},
+> > > >  	[ID_AD7781] = {
+> > > >  		.channel = AD7780_CHANNEL(20, 32),
+> > > >  		.pattern = 0x1,
+> > > >  		.pattern_mask = 0x3,
+> > > > +		.is_ad778x = true,
+> > > >  	},
+> > > >  };
+> > > >      
+> > 
+> >   
 
--Doug
