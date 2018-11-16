@@ -2,176 +2,155 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 63ACDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:55:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4C8CAC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:58:23 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 15D2A208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:55:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="BgM2yPK1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 15D2A208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
+	by mail.kernel.org (Postfix) with ESMTP id B7A842145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:58:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7A842145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727980AbeKPRGJ (ORCPT
+        id S2389229AbeKPRJ1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 12:06:09 -0500
-Received: from mail-eopbgr150079.outbound.protection.outlook.com ([40.107.15.79]:16256
-        "EHLO EUR01-DB5-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727370AbeKPRGI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 12:06:08 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=RNM8vFS9mmA2R7230bemkPNXT8UKvUTojnVzzg4PSOw=;
- b=BgM2yPK1WqsnAIukvnE1bPd/djZ5DUFLs9bK3f5ypuX6N2/EykwGXrYgHqacRf71brE3BxgdW1kRAdxMFNFFREzT7yARNEdr5TLkjEn4/OeKM6AmAaPCWlK/4A+M3QEFbvibiUNSUsvFzjCG7OZxU6CXVSaQ7z84s+RlMyGBkg8=
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
- VI1PR04MB5517.eurprd04.prod.outlook.com (20.178.122.139) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1339.23; Fri, 16 Nov 2018 06:54:58 +0000
-Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::297b:bb50:9b83:48e1]) by VI1PR04MB5726.eurprd04.prod.outlook.com
- ([fe80::297b:bb50:9b83:48e1%4]) with mapi id 15.20.1294.045; Fri, 16 Nov 2018
- 06:54:58 +0000
-From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-To:     Boris Brezillon <boris.brezillon@bootlin.com>
-CC:     Mark Brown <broonie@kernel.org>,
-        Tudor Ambarus <tudor.ambarus@microchip.com>,
-        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
-        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
-        "marek.vasut@gmail.com" <marek.vasut@gmail.com>,
-        "cyrille.pitchen@wedev4u.fr" <cyrille.pitchen@wedev4u.fr>,
-        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
-        "frieder.schrempf@exceet.de" <frieder.schrempf@exceet.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v3 1/2] mtd: spi-nor: add macros related to MICRON flash
-Thread-Topic: [PATCH v3 1/2] mtd: spi-nor: add macros related to MICRON flash
-Thread-Index: AQHUYdKDjlmkWwN6/UiXD412Qj9EqaUbIC2AgAAAseCAEXYtAIAAEqwAgAAAajCAJYR3sA==
-Date:   Fri, 16 Nov 2018 06:54:57 +0000
-Message-ID: <VI1PR04MB5726042CF049FD7D90183AFC99DD0@VI1PR04MB5726.eurprd04.prod.outlook.com>
-References: <1539310881-17438-1-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <1539310881-17438-2-git-send-email-yogeshnarayan.gaur@nxp.com>
-        <20181012080753.2a59b75c@bbrezillon>
-        <VI1PR04MB1038A3680E02FC107367E5FF99E20@VI1PR04MB1038.eurprd04.prod.outlook.com>
-        <VI1PR04MB1038969FFFCC16DD6094031599F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
- <20181023115634.00dd6d23@bbrezillon>
- <VI1PR04MB1038EB05135EF88B10FA1D3B99F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-In-Reply-To: <VI1PR04MB1038EB05135EF88B10FA1D3B99F50@VI1PR04MB1038.eurprd04.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
-x-originating-ip: [92.121.36.197]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;VI1PR04MB5517;6:JrLg8+DTlhxKKaKQnaq9yf4kihZyXkS82AoQPxo3jEIhdWc8+HAGvDDwZoYIRf+ZXJmN5zNctysqlJ3pO0GdzboyPdN4cGRIe/6AlwPL7X+mDhg+9lgsmZXum7JwHLwNxL3zKEvQz2rkaPKNLyHCVgcYx2Fx8dbLqA7T+ZaXzrBAZzfxDtVuCXilZCSJFfOdbbb0hK1YBAJrIS9HqlOSALMzm5DgeeW8f0I8OPScUeoJY+aPpyR+an/HbTk1baI0mg+bjyuseCE80FPB4bqcPkltLIUaLX4NWUbFqu/ihFKghcPFLJrMm28gC0AJOrdy6B/Z542h9gIKEc0j180OGV05E/s3WV//NmP5+JaF3R5iM99KY76bGPrtj2iVrkBWzqI5kMedycZYLfqiBfdhEzAyhouRAmxBrogATOhHQ14cS573ICuGERCg+Bz6CsybdiHcNTLXBTk+jLLCAjFA3Q==;5:ZTMP0nIRcPCCYbUy93+qOCnmISdLCZujstWo8otOQR8rplVIu9VPzKFTyfqGlETyrjlx4K3pFAgtY52jv+rVc65NqEEcY4lVAGJxP4fx0NSTD0bcp/gtDRe6q2Amsqz3KIl4kS8PlETqTjaLA0EkhIu5Lc5iL7rwlCIQCoPw7z8=;7:Ffp8UVHyrK9Hu9Ag9G4UKIsBZoUGDsQ3lZ5G5yFafwSDy9XQShP1qOWDDfPXqV5HARQ7yi4jgZD52d8yngJPWrn41NKOPtTs4816zuuxHWr6MlCjYDQ7J7BxYLRKh8kCgCbjfLDHgv/2DW5j4ou1lg==
-x-ms-exchange-antispam-srfa-diagnostics: SOS;
-x-ms-office365-filtering-correlation-id: abb0f0c3-5fab-4ce9-dc1b-08d64b906c1b
-x-ms-office365-filtering-ht: Tenant
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB5517;
-x-ms-traffictypediagnostic: VI1PR04MB5517:
-x-microsoft-antispam-prvs: <VI1PR04MB5517656F1579D8E0C81D283B99DD0@VI1PR04MB5517.eurprd04.prod.outlook.com>
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(3002001)(10201501046)(3231415)(944501410)(52105112)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123560045)(20161123558120)(20161123562045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB5517;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB5517;
-x-forefront-prvs: 0858FF8026
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(136003)(396003)(39860400002)(346002)(376002)(366004)(13464003)(189003)(199004)(7416002)(55016002)(2900100001)(8676002)(14454004)(256004)(5660300001)(68736007)(7736002)(8936002)(26005)(966005)(6916009)(478600001)(9686003)(97736004)(6306002)(33656002)(71190400001)(3846002)(6116002)(2906002)(6436002)(71200400001)(7696005)(53936002)(6246003)(86362001)(106356001)(39060400002)(105586002)(486006)(74316002)(229853002)(11346002)(476003)(446003)(186003)(66066001)(305945005)(4326008)(53546011)(316002)(102836004)(6506007)(25786009)(99286004)(81166006)(76176011)(54906003)(81156014)(93886005);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB5517;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: nxp.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: kcYfqPsRTHL50ppT+R3VPqnWQpI67/836k9fJgver+JQL78Qp41tcRY1pUr8DuzMnC3+iZ6tzMUEmP0IssNJQXfUz5qbZxpwIzowcGseq3jNygePfT8xdIcf8ShPMkd4pv9qUw9xfpODLcWzEqINBXTcSL6eBkzcmyuWWLNdjjb0ZfVmPjDirPtGCelMP9gDZ990+MtbrvOPSMWi3cOPjoBBuFEeWHfc1jypJod1S6a+WgD0tPKlBaZVvSk0+yTFeqTaHCiuk1d5FbY8SofoVFrjdUvWRHarrN4qqOLzH7ODsJpuiAMATW6/ANXBIwzLNyCbz6cXt3pJVDAQOsiQUA86GeE3nF9c2LcINv3flU8=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 16 Nov 2018 12:09:27 -0500
+Received: from Mailgw01.mediatek.com ([1.203.163.78]:9295 "EHLO
+        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1727370AbeKPRJ1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 12:09:27 -0500
+X-UUID: ea1c98a43e1a4c62b12c0876858d8edc-20181116
+X-UUID: ea1c98a43e1a4c62b12c0876858d8edc-20181116
+Received: from mtkcas32.mediatek.inc [(172.27.4.250)] by mailgw01.mediatek.com
+        (envelope-from <biao.huang@mediatek.com>)
+        (mailgw01.mediatek.com ESMTP with TLS)
+        with ESMTP id 177332613; Fri, 16 Nov 2018 14:58:10 +0800
+Received: from MTKCAS32.mediatek.inc (172.27.4.184) by MTKMBS31DR.mediatek.inc
+ (172.27.6.102) with Microsoft SMTP Server (TLS) id 15.0.1395.4; Fri, 16 Nov
+ 2018 14:58:08 +0800
+Received: from [10.17.3.153] (10.17.3.153) by MTKCAS32.mediatek.inc
+ (172.27.4.170) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
+ Transport; Fri, 16 Nov 2018 14:58:07 +0800
+Message-ID: <1542351487.26982.28.camel@mhfsdcap03>
+Subject: Re: [PATCH 2/2] dt-binding: mediatek-dwmac: add binding document
+ for MediaTek MT2712 DWMAC
+From:   biao huang <biao.huang@mediatek.com>
+To:     Rob Herring <robh@kernel.org>
+CC:     <davem@davemloft.net>, <honghui.zhang@mediatek.com>,
+        <yt.shen@mediatek.com>, <liguo.zhang@mediatek.com>,
+        <mark.rutland@arm.com>, <sean.wang@mediatek.com>,
+        <nelson.chang@mediatek.com>, <matthias.bgg@gmail.com>,
+        <netdev@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>, <joabreu@synopsys.com>,
+        <andrew@lunn.ch>
+Date:   Fri, 16 Nov 2018 14:58:07 +0800
+In-Reply-To: <20181112162204.GA8910@bogus>
+References: <1540782294-27721-1-git-send-email-biao.huang@mediatek.com>
+         <1540782294-27721-3-git-send-email-biao.huang@mediatek.com>
+         <20181112162204.GA8910@bogus>
+Content-Type: text/plain; charset="UTF-8"
+X-Mailer: Evolution 3.2.3-0ubuntu6 
+Content-Transfer-Encoding: 7bit
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: abb0f0c3-5fab-4ce9-dc1b-08d64b906c1b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Nov 2018 06:54:57.9411
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB5517
+X-MTK:  N
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+Dear Rob,
 
-Please apply this patch series [1] in the coming release.
+Thanks for your comments.
 
---
-Regards
-Yogesh Gaur
-[1] https://patchwork.ozlabs.org/project/linux-mtd/list/?series=3D70384
+On Mon, 2018-11-12 at 10:22 -0600, Rob Herring wrote:
+> On Mon, Oct 29, 2018 at 11:04:54AM +0800, Biao Huang wrote:
+> > The commit adds the device tree binding documentation for the MediaTek DWMAC
+> > found on MediaTek MT2712.
+> > 
+> > Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+> > ---
+> >  .../devicetree/bindings/net/mediatek-dwmac.txt     |   49 ++++++++++++++++++++
+> >  1 file changed, 49 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+> > 
+> > diff --git a/Documentation/devicetree/bindings/net/mediatek-dwmac.txt b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+> > new file mode 100644
+> > index 0000000..8baf0e4
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+> > @@ -0,0 +1,49 @@
+> > +MediaTek DWMAC glue layer controller
+> > +
+> > +This file documents platform glue layer for stmmac.
+> > +Please see stmmac.txt for the other unchanged properties.
+> > +
+> > +The device node has following properties.
+> > +
+> > +Required properties:
+> > +- compatible:  Should be "mediatek,mt2712-gmac" for MT2712 SoC
+> > +- reg:  Address and length of the register set for the device
+> > +- interrupts:  Should contain the MAC interrupts
+> > +- interrupt-names: Should contain a list of interrupt names corresponding to
+> > +	the interrupts in the interrupts property, if available.
+> > +	Should be "macirq" for the main MAC IRQ
+> > +- clocks: Must contain a phandle for each entry in clock-names.
+> > +- clock-names: the name of the clock listed in the clocks property. These are
+> > +	"axi", "apb", "mac_ext", "mac_parent", "ptp_ref", "ptp_parent", "ptp_top"
+> > +	for MT2712 SoC
+> 
+> Clocks should represent the physical clocks connected to a block. Parent 
+> clocks are not in that category.
+There are two categories of physical clocks related to MAC.
+1. axi/apb/ptp_top, these clks are from clk gates, so only on/off is
+needed.
+2. mac_ext/ptp_ref, these clks are from mux. If different source is
+selected, the clk frequecy will be different. So it's necessary to set a
+proper parent for them, i.e. mac_parent/ptp_parent.
 
+How should I handle parent clocks if not defined here? Any examples I
+can refer to?
+> 
+> > +- mac-address: See ethernet.txt in the same directory
+> > +- phy-mode: See ethernet.txt in the same directory
+> > +
+> > +Example:
+> > +
+> > +	eth: ethernet@1101c000 {
+> > +		compatible = "mediatek,mt2712-gmac";
+> > +		reg = <0 0x1101c000 0 0x1300>;
+> > +		interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_LOW>;
+> > +		interrupt-names = "macirq";
+> > +		phy-mode ="rgmii-id";
+> > +		mac-address = [00 55 7b b5 7d f7];
+> > +		clock-names = "axi",
+> > +			      "apb",
+> > +			      "mac_ext",
+> > +			      "mac_parent",
+> > +			      "ptp_ref",
+> > +			      "ptp_parent",
+> > +			      "ptp_top";
+> > +		clocks = <&pericfg CLK_PERI_GMAC>,
+> > +			 <&pericfg CLK_PERI_GMAC_PCLK>,
+> > +			 <&topckgen CLK_TOP_ETHER_125M_SEL>,
+> > +			 <&topckgen CLK_TOP_ETHERPLL_125M>,
+> > +			 <&topckgen CLK_TOP_ETHER_50M_SEL>,
+> > +			 <&topckgen CLK_TOP_APLL1_D3>,
+> > +			 <&topckgen CLK_TOP_APLL1>;
+> > +		snps,txpbl = <32>;
+> > +		snps,rxpbl = <32>;
+> > +		snps,reset-gpio = <&pio 87 GPIO_ACTIVE_LOW>;
+> > +		snps,reset-active-low;
+> > +	};
+> > -- 
+> > 1.7.9.5
+> > 
+> 
+Best Regards!
+Biao
 
-> -----Original Message-----
-> From: Yogesh Narayan Gaur
-> Sent: Tuesday, October 23, 2018 3:31 PM
-> To: 'Boris Brezillon' <boris.brezillon@bootlin.com>
-> Cc: Mark Brown <broonie@kernel.org>; Tudor Ambarus
-> <tudor.ambarus@microchip.com>; linux-mtd@lists.infradead.org; linux-
-> spi@vger.kernel.org; marek.vasut@gmail.com; cyrille.pitchen@wedev4u.fr;
-> computersforpeace@gmail.com; frieder.schrempf@exceet.de; linux-
-> kernel@vger.kernel.org
-> Subject: RE: [PATCH v3 1/2] mtd: spi-nor: add macros related to MICRON fl=
-ash
->=20
-> Hi Boris,
->=20
-> > -----Original Message-----
-> > From: Boris Brezillon [mailto:boris.brezillon@bootlin.com]
-> > Sent: Tuesday, October 23, 2018 3:27 PM
-> > To: Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
-> > Cc: Mark Brown <broonie@kernel.org>; Tudor Ambarus
-> > <tudor.ambarus@microchip.com>; linux-mtd@lists.infradead.org; linux-
-> > spi@vger.kernel.org; marek.vasut@gmail.com;
-> > cyrille.pitchen@wedev4u.fr; computersforpeace@gmail.com;
-> > frieder.schrempf@exceet.de; linux- kernel@vger.kernel.org
-> > Subject: Re: [PATCH v3 1/2] mtd: spi-nor: add macros related to MICRON
-> > flash
-> >
-> > Hi Yogesh,
-> >
-> > On Tue, 23 Oct 2018 09:39:25 +0000
-> > Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com> wrote:
-> >
-> > > Hi,
-> > >
-> > > Did we have have any comments or remarks about this patch-series,
-> > > if not
-> > please apply.
-> >
-> > Sorry, but it was already too late for this release, and the merge
-> > window just started, so it will have to wait at least 2 more weeks.
-> Ok.
->=20
-> >
-> > We've been lagging with SPI NOR patches for the last couple releases
-> > because I clearly don't have time to review those contributions, and
-> > it seems Marek does not have time either.
-> >
-> > >
-> > > Both patches in the series been reviewed by Tudor.
-> >
-> > Things are improving a bit thanks to Tudor's involvement in the review
-> > process, but I'd like to remember you that you, as a regular
-> > contributor to the spi-nor subsystem, can help us with that too. That
-> > is, help review patches coming from others instead of only focusing on =
-your
-> own contributions.
-> >
-> Sure, I would start doing the review of other contributor patches.
->=20
-> --
-> Regards
-> Yogesh Gaur.
->=20
-> > Regards,
-> >
-> > Boris
