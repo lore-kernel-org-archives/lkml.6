@@ -2,125 +2,98 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E8FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:42:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 931CFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:46:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id BD97420818
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:42:26 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ENN1QLls";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="e2XN8asc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD97420818
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id 5875D20866
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:46:37 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5875D20866
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389415AbeKPRxh (ORCPT
+        id S2389302AbeKPR5t (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 12:53:37 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:36938 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbeKPRxh (ORCPT
+        Fri, 16 Nov 2018 12:57:49 -0500
+Received: from mail-qk1-f193.google.com ([209.85.222.193]:45468 "EHLO
+        mail-qk1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727451AbeKPR5s (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 12:53:37 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 2A72260C1C; Fri, 16 Nov 2018 07:42:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542354144;
-        bh=fqp4AT1uIem7ySYLI609JUEky7lrVM8VWGL4thGluHY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=ENN1QLlstWs2rcjqmRqW3BuwnbgJ/b5Kx46RfUFI5qPIA2Spfapl+tkPbnqnaPSM3
-         qBi1WRXMKhDV/eB2FLZ5KXIzIH/CN+IeAbj6hDPDIAhp+1k5PhonMpyKo6rBVN3dg9
-         JvM5b5bHWtJpv05iesJNPdt8gH9RH19Ic4xWL674=
-Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: rohitkr@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9128D6086B;
-        Fri, 16 Nov 2018 07:42:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542354143;
-        bh=fqp4AT1uIem7ySYLI609JUEky7lrVM8VWGL4thGluHY=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=e2XN8asc6Zq4UMwA9mQ+gALVdb0ZLPHqsMHqxSFyN/ZxHhUqBjWm4RhBheP8q/mH2
-         TInw+hB2gNh3mKoSMiEeuTVbuSSsHrbxrbb3Usseakkq0LG2sGkTI/wiGEAAQljrne
-         iSXzfAHmEsBd5Fz1xbtnhyrsquby+8NLROZyids4=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9128D6086B
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
-From:   Rohit kumar <rohitkr@codeaurora.org>
-To:     plai@codeaurora.org, bgoswami@codeaurora.org, lgirdwood@gmail.com,
-        broonie@kernel.org, perex@perex.cz, tiwai@suse.com,
-        alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
-        rohkumar@qti.qualcomm.com, srinivas.kandagatla@linaro.org
-Cc:     Rohit kumar <rohitkr@codeaurora.org>
-Subject: [PATCH 2/2] ASoC: sdm845: Add support for Secondary MI2S interface
-Date:   Fri, 16 Nov 2018 13:11:58 +0530
-Message-Id: <1542354118-23360-3-git-send-email-rohitkr@codeaurora.org>
-X-Mailer: git-send-email 1.9.1
-In-Reply-To: <1542354118-23360-1-git-send-email-rohitkr@codeaurora.org>
-References: <1542354118-23360-1-git-send-email-rohitkr@codeaurora.org>
+        Fri, 16 Nov 2018 12:57:48 -0500
+Received: by mail-qk1-f193.google.com with SMTP id d135so36006291qkc.12
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 23:46:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=vJEr8Jtp8swWj5XEne85o45PByDl88zVt3vzUIE/pbM=;
+        b=KmnYgKDbpN3Wy6VV4n7yxE38qCIdSPv6/Qjl9KKbtleReuMqFmIq6OxwolA8okmM0j
+         jPYQIBDvi2P1jUXX8vfrkIr0HGOVRGWrWwzyim1Q1XoY2iatQRTI6Cj9xITHsKnHi+oS
+         EXmmhDkAwXNGZENb2j5UHm7onTpMzGsKccZJ9AldDCYsfQsfjAEVe/A3iAEyezy2+IZ5
+         vABmsxFcpidhBkpQuOzINaN8MDIax3l//RYtoo34nHCSSDPBasf3xQ63xe5rOBa6xXkn
+         wfeRIgVNyXMsNhCjgjA2ktDS6pA4zVD4S5Dj0WihL2khcWTLyEws0MiKbou6Uc2znugB
+         ENsw==
+X-Gm-Message-State: AGRZ1gID2Sf/I0IrUNQvTNh90/pdwy2BQYXBR3jOFGKvDlshH75jJBk3
+        WLqP38y0xrW1lot13dlTCofjd5XoQHjNQe3GJ3iBTQ==
+X-Google-Smtp-Source: AJdET5e/oXDN3YBeNxLfB4C5bLUVg4eIeG25xWkC59aDYyYGc2P/u4DA+15rUvGBewpP2Q/Q/K3GUg+M4PbQMjbejrA=
+X-Received: by 2002:ae9:e102:: with SMTP id g2mr8668982qkm.343.1542354394588;
+ Thu, 15 Nov 2018 23:46:34 -0800 (PST)
+MIME-Version: 1.0
+References: <20181116.130459.1796034910024118091.teika@gmx.com>
+In-Reply-To: <20181116.130459.1796034910024118091.teika@gmx.com>
+From:   Benjamin Tissoires <benjamin.tissoires@redhat.com>
+Date:   Fri, 16 Nov 2018 08:46:22 +0100
+Message-ID: <CAO-hwJJrCvoCxBrS7H4+JRnfpHjfpPobwTzwsy8_aiFX=AD40w@mail.gmail.com>
+Subject: Re: [PATCH 1/1] Input: synaptics - enable SMBus for HP 15-ay000 (SYN3221).
+To:     Teika Kazura <teika@gmx.com>
+Cc:     Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+        "open list:HID CORE LAYER" <linux-input@vger.kernel.org>,
+        lkml <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add support to configure bit clock for secondary MI2S
-TX interface.
+On Fri, Nov 16, 2018 at 6:00 AM Teika Kazura <teika@gmx.com> wrote:
+>
+> SMBus works fine for the touchpad with id SYN3221, used in the HP 15-ay000 series,
 
-Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
----
- sound/soc/qcom/sdm845.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Nice.
 
-diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-index 84e6ee7..58593db 100644
---- a/sound/soc/qcom/sdm845.c
-+++ b/sound/soc/qcom/sdm845.c
-@@ -19,6 +19,7 @@
- struct sdm845_snd_data {
- 	struct snd_soc_card *card;
- 	uint32_t pri_mi2s_clk_count;
-+	uint32_t sec_mi2s_clk_count;
- 	uint32_t quat_tdm_clk_count;
- };
- 
-@@ -121,6 +122,15 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
- 		snd_soc_dai_set_fmt(cpu_dai, fmt);
- 		break;
- 
-+	case SECONDARY_MI2S_TX:
-+		if (++(data->sec_mi2s_clk_count) == 1) {
-+			snd_soc_dai_set_sysclk(cpu_dai,
-+				Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT,
-+				MI2S_BCLK_RATE,	SNDRV_PCM_STREAM_CAPTURE);
-+		}
-+		snd_soc_dai_set_fmt(cpu_dai, fmt);
-+		break;
-+
- 	case QUATERNARY_TDM_RX_0:
- 	case QUATERNARY_TDM_TX_0:
- 		if (++(data->quat_tdm_clk_count) == 1) {
-@@ -157,6 +167,14 @@ static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
- 		};
- 		break;
- 
-+	case SECONDARY_MI2S_TX:
-+		if (--(data->sec_mi2s_clk_count) == 0) {
-+			snd_soc_dai_set_sysclk(cpu_dai,
-+				Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT,
-+				0, SNDRV_PCM_STREAM_CAPTURE);
-+		}
-+		break;
-+
- 	case QUATERNARY_TDM_RX_0:
- 	case QUATERNARY_TDM_TX_0:
- 		if (--(data->quat_tdm_clk_count) == 0) {
--- 
-Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
-is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
+Thanks for the patch.
 
+Reviewed-by: Benjamin Tissoires <benjamin.tissoires@redhat.com>
+
+Cheers,
+Benjamin
+
+>
+> This device has been reported in these messages in the "linux-input" mailing list:
+> * https://marc.info/?l=linux-input&m=152016683003369&w=2
+> * https://www.spinics.net/lists/linux-input/msg52525.html
+>
+> Reported-by: Nitesh Debnath <niteshkd1999@gmail.com>
+> Reported-by: Teika Kazura <teika@gmx.com>
+> Signed-off-by: Teika Kazura <teika@gmx.com>
+> ---
+>  drivers/input/mouse/synaptics.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
+> index 55d33500d5..591b776f22 100644
+> --- a/drivers/input/mouse/synaptics.c
+> +++ b/drivers/input/mouse/synaptics.c
+> @@ -179,6 +179,7 @@ static const char * const smbus_pnp_ids[] = {
+>         "LEN0096", /* X280 */
+>         "LEN0097", /* X280 -> ALPS trackpoint */
+>         "LEN200f", /* T450s */
+> +       "SYN3221", /* HP 15-ay000 */
+>         NULL
+>  };
+>
+> --
+> 2.18.1
