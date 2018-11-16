@@ -2,112 +2,126 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DC9FFC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:55:23 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D0AB8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:57:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id ACFAF2086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:55:23 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ACFAF2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 94A152086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:57:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="TBvD2Ijk"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 94A152086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390130AbeKQDIa (ORCPT
+        id S1729306AbeKQDK1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 22:08:30 -0500
-Received: from mga01.intel.com ([192.55.52.88]:54050 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728175AbeKQDIa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 22:08:30 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga008.jf.intel.com ([10.7.209.65])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 08:55:20 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="92629747"
-Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga008.jf.intel.com with ESMTP; 16 Nov 2018 08:55:20 -0800
-Subject: Re: [PATCH 0/7] ACPI HMAT memory sysfs representation
-To:     Anshuman Khandual <anshuman.khandual@arm.com>,
-        Keith Busch <keith.busch@intel.com>,
-        linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-        linux-mm@kvack.org
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Rafael Wysocki <rafael@kernel.org>,
-        Dan Williams <dan.j.williams@intel.com>
-References: <20181114224902.12082-1-keith.busch@intel.com>
- <1ed406b2-b85f-8e02-1df0-7c39aa21eca9@arm.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <4ea6e80f-80ba-6992-8aa0-5c2d88996af7@intel.com>
-Date:   Fri, 16 Nov 2018 08:55:20 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Fri, 16 Nov 2018 22:10:27 -0500
+Received: from mail-lf1-f67.google.com ([209.85.167.67]:41821 "EHLO
+        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728175AbeKQDK1 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 22:10:27 -0500
+Received: by mail-lf1-f67.google.com with SMTP id c16so17006603lfj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 08:57:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=GLX8uRLZb0A3oBBx4L2FX6gakeyT9+leIOHPXjQr9lE=;
+        b=TBvD2IjkemsKaSr16QfwzdiBYUsZ0MdY9EaS8oXPIs95wKy5bm6D7b3HWMppAutHd8
+         9y9zCdGkF+Q+STrok8Thq9whUQnySlh8oFnpsqSNzfl7iHdlcbiL1uDDBG2mUC0pl31O
+         H8YxR0lmt57XHrpW2xezT3gha/cgxQZiZNUVg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=GLX8uRLZb0A3oBBx4L2FX6gakeyT9+leIOHPXjQr9lE=;
+        b=tb9pUFFRPXd/SY9nsN3NB3Ga9flLhaXAJzWccvcT64PiNyUf2PqtldSzReuXnA96VY
+         MH/dWyCztV4dZ5SMSk38FsaAnxZH5S6vO4b/VKnXMAstrjwFEhDAUJ1Oxk+wmm2dlyai
+         rKWpdDOg8C/QxD+Ws2FYUWF8+ZYzeq0NUbp/th68TNyj27g5pQaT+hosXWnPtlek1Hy7
+         kCpgXj/FVlg7EjP7WkJSkfaepqqqcBgUmbJZC5gVPDF+GJs5H+jMgmLpFQv4ieV2dH78
+         XpNZ8wRS0CdUY15/PBPSBxffYWvWl+hJjj/uG/SLa2+flEJrNn5Y6bnN0tsv9M/WCTsA
+         SljQ==
+X-Gm-Message-State: AGRZ1gJhuACsm5KZAKsDuyDlxYhA0tHUiOok43V9YCYuczRFVH0W0J5X
+        rAkFb1RMtEWoiDnztJHTnCkG470SJkw=
+X-Google-Smtp-Source: AJdET5c6L2wOKwf/IJGfLMLiyBYbeYSq5CczePQmJo978evc5yXIw8L1qe3/19YfTdN+Vocn34F+BQ==
+X-Received: by 2002:a19:c203:: with SMTP id l3mr5758399lfc.113.1542387435213;
+        Fri, 16 Nov 2018 08:57:15 -0800 (PST)
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com. [209.85.208.182])
+        by smtp.gmail.com with ESMTPSA id e14-v6sm4783371ljl.43.2018.11.16.08.57.14
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Nov 2018 08:57:14 -0800 (PST)
+Received: by mail-lj1-f182.google.com with SMTP id t22-v6so20900935lji.7
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 08:57:14 -0800 (PST)
+X-Received: by 2002:a2e:9983:: with SMTP id w3-v6mr7116901lji.133.1542387433572;
+ Fri, 16 Nov 2018 08:57:13 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <1ed406b2-b85f-8e02-1df0-7c39aa21eca9@arm.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+References: <CACsaVZ+vw7X12dimJ20SCgv2Bryt8hBSc736tHqAHXVNUi4o6Q@mail.gmail.com>
+In-Reply-To: <CACsaVZ+vw7X12dimJ20SCgv2Bryt8hBSc736tHqAHXVNUi4o6Q@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 16 Nov 2018 10:56:56 -0600
+X-Gmail-Original-Message-ID: <CAHk-=wj2NoonnH=H3VpfqkPk7t-UyEG8ij5WG0sLOyDdy59dnQ@mail.gmail.com>
+Message-ID: <CAHk-=wj2NoonnH=H3VpfqkPk7t-UyEG8ij5WG0sLOyDdy59dnQ@mail.gmail.com>
+Subject: Re: Oops: 0003 [#1] PREEMPT SMP NOPTI
+To:     kyle.leet@gmail.com
+Cc:     Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/15/18 10:27 PM, Anshuman Khandual wrote:
-> Not able to see the patches from this series either on the list or on the
-> archive (https://lkml.org/lkml/2018/11/15/331). IIRC last time we discussed
-> about this and the concern which I raised was in absence of a broader NUMA
-> rework for multi attribute memory it might not a good idea to settle down
-> and freeze sysfs interface for the user space. 
+On Thu, Nov 15, 2018 at 8:29 PM Kyle Sanderson <kyle.leet@gmail.com> wrote:
+>
+> 2008(!) dual-core Atom box.
+> [1027541.963573] BUG: unable to handle kernel paging request at ffffffffb0428a44
+> [1027541.963647] IP: format_decode+0x20/0x3d0
 
-This *is* the broader NUMA rework.  I think it's just a bit more
-incremental that what you originally had in mind.
+The code decodes to:
 
-Did you have an alternative for how you wanted this to look?
+   0: 55                    push   %rbp
+   1: 48 8d 2e              lea    (%rsi),%rbp
+   4: 53                    push   %rbx
+   5: 48 8d 1f              lea    (%rdi),%rbx
+   8: 48 8d 64 24 f8        lea    -0x8(%rsp),%rsp
+   d: 0f b6 06              movzbl (%rsi),%eax
+  10: 48 89 3c 24          mov    %rdi,(%rsp)
+  14: 3c 01                cmp    $0x1,%al
+  16: 74 4c                je     0x64
+  18: 3c 02                cmp    $0x2,%al
+  1a: 0f 84 a2 01 00 00    je     0x1c2
+  20:* c6 06 00              movb   $0x0,(%rsi) <-- trapping instruction
+  23: 0f b6 07              movzbl (%rdi),%eax
+  26: 84 c0                test   %al,%al
+  28: 0f 84 db 02 00 00    je     0x309
+
+and that trapping instruction is, as far as I can tell, this one:
+
+        /* By default */
+        spec->type = FORMAT_TYPE_NONE;
+
+and the fault seems to be a protection fault due to a write to a
+read-only area (and yes, we *have* read from that 'spec' pointer
+before that write.
+
+> [1027541.965114] RIP: 0010:format_decode+0x20/0x3d0
+> [1027541.965463] Call Trace:
+> [1027541.965501]  vsnprintf+0x56/0x4d0
+
+This is all very odd, because that "spec" pointer points to an
+automatic variable on the stack of the vsnprintf() function, but we
+have:
+
+    RSP: ffff9e8c02267ba0
+    RSI: ffffffffb0428a44
+
+so it looks like some completely crazy register state corruption.
+
+Is this repeatable at all? Do you see other random faults?
+
+               Linus
