@@ -2,88 +2,129 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=FREEMAIL_FORGED_FROMDOMAIN,
-	FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A226C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:00:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E41C4C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:03:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 207892086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:00:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 207892086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gmx.com
+	by mail.kernel.org (Postfix) with ESMTP id ABAC0208A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:03:42 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="S9fe7+0R"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ABAC0208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727613AbeKPPKw (ORCPT
+        id S2389117AbeKPPOc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 10:10:52 -0500
-Received: from mout.gmx.net ([212.227.15.18]:51665 "EHLO mout.gmx.net"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727124AbeKPPKw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 10:10:52 -0500
-Received: from localhost ([125.172.82.9]) by mail.gmx.com (mrgmx001
- [212.227.17.184]) with ESMTPSA (Nemesis) id 0M8NBi-1faefz2MZG-00vuQZ; Fri, 16
- Nov 2018 05:59:54 +0100
-Date:   Fri, 16 Nov 2018 13:04:59 +0900 (JST)
-Message-Id: <20181116.130459.1796034910024118091.teika@gmx.com>
-To:     Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc:     linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Tissoires <benjamin.tissoires@redhat.com>
-Subject: [PATCH 1/1] Input: synaptics - enable SMBus for HP 15-ay000
- (SYN3221).
-From:   Teika Kazura <teika@gmx.com>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:yh2f8Yu8M/fUqGdLMBHGaJX9oK3yV+O+yVQLOEv+Zg4XWuvTSen
- YdDk556NK8pnZlBs5yGMaEVZBc2L2GqXE6Fhc1Qrsb1aZay5PlAOMZ4AMfJKCMAxq8OQ2Bp
- hXrHDaVWf9+UxyrlLRJZ0KiqGbmqoROZi02nFZeZsILQcE9svj+eBb8/JiFlkEnk4YWH92t
- dxTDrRwsMKNpj4dM6idjQ==
-X-UI-Out-Filterresults: notjunk:1;V01:K0:5ZXuai/i1us=:EZS/FPXso41DSwUVTJXZ9i
- +NFEo1WSfyXzi9xpcRE3BK8FUgFdOJh8Oht0LZgqE+yXOLHmIe6bXuoLAOc+JZ6HHTLbFupSS
- ByO3Uq5gH8IXT0XkX17TF6A9yNF3YFiaFCB2GxiVyYVDGLc0RLwxT9/IFrv9GZlFyfQvt9S9N
- KEmxh/zyuGFa50ekWR3xug73T74mPJ+KhZPNJD/p6tK+yRpawF/qFo5tIDBkg+bZUfU+NGvU3
- sEcsBccl2p7LmUan+h1MmU+3OFhcLzIOYuopgQQTjs0DwLZ2v6nm5tgpae/qzKpEywucYIvCJ
- QXf32FzKy/iBgQ+VOaDA+I7Pl1uJcc3Ox/jpZRyS2B7EMuprmCp9dmQNvU5j1vo8/yaZfY98x
- dp9hxRWhxrOupEGdkpZ1vsL0tC68ClozWUauIYYFsQgDu1u3tttYNaRZSqoHTABoPrxQEceLv
- vT+ZjedChMLI6N1VV8uVhEnKk2MbxcfxbPp0+VdV7Bh6UdkDWTxlTEvC11Ik3MHk/6FHpmoQp
- ebnOrj34/8rjNwC2IFnVtLRvH4z+18meqhdt3VT4s2+yDiJ+PKlBdZYIHC9aomMdVUPsUi2ES
- 97fas+GfLIopYejimuBVcjLsXkflTft80CBsdGXgKRvHrkg5zaloRR4QfStxPqLGvamRYsw4u
- wC8R6bKtNf/VNdBqqWHeSrAK64Wd/LBncBY0wTsXOpu/h9wict+JlG20zV680JRl42Vov3jAm
- E06Q85+6xxXZIpAeDZE6M7RvONGoUqjhuzYeh8eav6rSZL4B8LxoqjbQh03EJB2SLKMVVpRlK
- PyED5yRZmZl4Xqq2JG+kph2ZDUBGfesBdvu+MnlmY5q19ik+cCfUiyAoE6J/miWkt1Rt+eSyC
- yJzjDEuzquvAuVCBtJElv1qb54rYXhnEZOHaN9185jBBeM1r4qF4+0llgPAfT7
+        Fri, 16 Nov 2018 10:14:32 -0500
+Received: from mail-vs1-f66.google.com ([209.85.217.66]:45939 "EHLO
+        mail-vs1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727328AbeKPPOb (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 10:14:31 -0500
+Received: by mail-vs1-f66.google.com with SMTP id v10so5671838vsv.12
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 21:03:40 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=bbTGX7jTjM3mFVlhKI5w1XE1KgMp5DkMTJobe/defSk=;
+        b=S9fe7+0RqXdy6DikKQCtD3Vmfru5/KrtCa1qI7Zorm5WRL7JS066k2ZJMqaWefvqnU
+         +qb674p/PP4wcpI1vEQnKcqSkEC5hJebr4/oP5mD3lmVRSTZFpHZ1ZeDkwndH1mrroWP
+         lX6eK8FyBy6kw8pWty9vHrGUeSuZ5MxFEzIgY=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=bbTGX7jTjM3mFVlhKI5w1XE1KgMp5DkMTJobe/defSk=;
+        b=N/fsSqmuYJZa/DocuhwbcEZ+2zCeqcDqj9LhqyG7LQB4992M/OX8/2QsPic96uSw2j
+         HjPItr5I+UwBavKUEtZy0COxR+28VFt0y0B5TgU+0xJjira/9rOyK+oaLv2LMrsZ3N+w
+         mMu99T/IGmgZcdj43ao1KCzapa2EJh63vfvjVtUsJfkPiVezMKMLGgMquKCvak5Cx60s
+         1EWxaypOcGf1R19D+rprfA6EH7dPVPHqKGz+5fP3n1S93mQrDsGlhkNqADF2+XtoBU5g
+         rMx+9t5OaryXW1S8Pj01NoEph557DO2dTeBwdlrW/xBSPJHoZIq1A6Kye0xb8EEd9O80
+         REgw==
+X-Gm-Message-State: AGRZ1gJLoy1qX8R2VzUMo3UaEPgIwWL84Qhur/SOJEXPydPw8ysH+hRw
+        YHPziiHPIGWrtiecI6eu22Gib3v5yJU=
+X-Google-Smtp-Source: AJdET5eL80f+EYEpwgWDeQcuWHUS6hvxa5QLmsgqk2uccup/pdRtgCxbPwzaokB26Gfa2fC0sPPIcQ==
+X-Received: by 2002:a67:ca0c:: with SMTP id z12mr3463838vsk.83.1542344619598;
+        Thu, 15 Nov 2018 21:03:39 -0800 (PST)
+Received: from mail-vs1-f41.google.com (mail-vs1-f41.google.com. [209.85.217.41])
+        by smtp.gmail.com with ESMTPSA id d195sm7286880vka.29.2018.11.15.21.03.38
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Thu, 15 Nov 2018 21:03:38 -0800 (PST)
+Received: by mail-vs1-f41.google.com with SMTP id p193so12727720vsd.7
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 21:03:38 -0800 (PST)
+X-Received: by 2002:a67:f598:: with SMTP id i24mr3932394vso.87.1542344617863;
+ Thu, 15 Nov 2018 21:03:37 -0800 (PST)
+MIME-Version: 1.0
+References: <20181116004247.172977-1-dbasehore@chromium.org>
+In-Reply-To: <20181116004247.172977-1-dbasehore@chromium.org>
+From:   Doug Anderson <dianders@chromium.org>
+Date:   Thu, 15 Nov 2018 21:03:24 -0800
+X-Gmail-Original-Message-ID: <CAD=FV=VjN3J66wv2LGhQYD+-_W1q+KCzvo3V_1F9ktAb-T-i4A@mail.gmail.com>
+Message-ID: <CAD=FV=VjN3J66wv2LGhQYD+-_W1q+KCzvo3V_1F9ktAb-T-i4A@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: rockchip: rk3399: Add xin32k clk
+To:     Derek Basehore <dbasehore@chromium.org>
+Cc:     LKML <linux-kernel@vger.kernel.org>,
+        "open list:ARM/Rockchip SoC..." <linux-rockchip@lists.infradead.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        devicetree@vger.kernel.org, Tony Xie <tony.xie@rock-chips.com>,
+        Chris <zyw@rock-chips.com>, ayaka@soulik.info,
+        "nickey.yang" <nickey.yang@rock-chips.com>,
+        =?UTF-8?B?6YOR6Iic5Lm+?= <zhengsq@rock-chips.com>,
+        Klaus Goger <klaus.goger@theobroma-systems.com>,
+        Brian Norris <briannorris@chromium.org>,
+        Enric Balletbo i Serra <enric.balletbo@collabora.com>,
+        =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Rob Herring <robh+dt@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-SMBus works fine for the touchpad with id SYN3221, used in the HP 15-ay000 series,
+Hi,
 
-This device has been reported in these messages in the "linux-input" mailing list:
-* https://marc.info/?l=linux-input&m=152016683003369&w=2
-* https://www.spinics.net/lists/linux-input/msg52525.html
+On Thu, Nov 15, 2018 at 4:42 PM Derek Basehore <dbasehore@chromium.org> wrote:
+>
+> This adds the xin32k clock to the RK3399 CPU. Even though it's not
+> directly used, muxes will end up traversing the entire clk tree on
+> calls to determine_rate if it doesn't exist.
+>
+> Signed-off-by: Derek Basehore <dbasehore@chromium.org>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3399.dtsi | 7 +++++++
+>  1 file changed, 7 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3399.dtsi b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> index 99e7f65c1779..6a32293982d0 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3399.dtsi
+> @@ -191,6 +191,13 @@
+>                 #clock-cells = <0>;
+>         };
+>
+> +       xin32k: xin32k {
 
-Reported-by: Nitesh Debnath <niteshkd1999@gmail.com>
-Reported-by: Teika Kazura <teika@gmx.com>
-Signed-off-by: Teika Kazura <teika@gmx.com>
----
- drivers/input/mouse/synaptics.c | 1 +
- 1 file changed, 1 insertion(+)
+nit: xin32k is the name of the clock that rk3399 consumes.  It seems a
+little weird to name this node with that name.  Can you call this:
 
-diff --git a/drivers/input/mouse/synaptics.c b/drivers/input/mouse/synaptics.c
-index 55d33500d5..591b776f22 100644
---- a/drivers/input/mouse/synaptics.c
-+++ b/drivers/input/mouse/synaptics.c
-@@ -179,6 +179,7 @@ static const char * const smbus_pnp_ids[] = {
- 	"LEN0096", /* X280 */
- 	"LEN0097", /* X280 -> ALPS trackpoint */
- 	"LEN200f", /* T450s */
-+	"SYN3221", /* HP 15-ay000 */
- 	NULL
- };
+ap_rtc_clk: ap-rtc-clk
 
---
-2.18.1
+...after the gru schematic?  You wouldn't change the
+clock-output-names, just the node name / label.
+
+
+> +               compatible = "fixed-clock";
+> +               clock-frequency = <32000>;
+
+I checked the datasheet for the 32K clock and it shows that this is a
+32768 Hz clock, not a 32000 Hz one.  I also checked the rk808 clock
+driver (which is supposed to be compatible with rk3399) and it
+produces a 32768 clock.
