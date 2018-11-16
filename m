@@ -2,122 +2,110 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2D333C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:31:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 84E0EC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:31:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E604B20858
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:31:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E604B20858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 46BD420858
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:31:39 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vd+tJgDC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 46BD420858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730680AbeKQJpx (ORCPT
+        id S1730821AbeKQJqA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:45:53 -0500
-Received: from mga01.intel.com ([192.55.52.88]:18947 "EHLO mga01.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbeKQJpw (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:45:52 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 15:31:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,242,1539673200"; 
-   d="scan'208";a="108968228"
-Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga001.jf.intel.com with ESMTP; 16 Nov 2018 15:31:29 -0800
-Subject: Re: [PATCH v17 03/23] x86/cpufeatures: Add SGX sub-features (as
- Linux-defined bits)
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org
-Cc:     sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-4-jarkko.sakkinen@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <1b326c2a-eec9-3a8b-1dff-81c596b2ac44@intel.com>
-Date:   Fri, 16 Nov 2018 15:31:28 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        Sat, 17 Nov 2018 04:46:00 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:34261 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbeKQJqA (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 04:46:00 -0500
+Received: by mail-qk1-f194.google.com with SMTP id a132so40256733qkg.1;
+        Fri, 16 Nov 2018 15:31:36 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=/S3A4Ev/wT6z58zpQ4zDoDKGnmF8EFdc13KDqMrbU/w=;
+        b=Vd+tJgDCNNoWZhlCW9hcN1FAjGtOhWq4crez1mfM/UPMjVx+vwmTA/HKAvleFv+c5i
+         8b61d3du8v+p1Dy3LM0zP03nICX8oEeeGU5tinyfKVy8nPDLOu0OGsJKkPEMyZbzz/zj
+         jAO45I9QWoLh7cwdEOcNAyZitrvoKxi80TgxL794qH+mJiVpQEBfJpEkX91qy+ZUxx/F
+         a1Lx893SwDy+GpHyTez9cjaGkEmqtUDIqYbYOzPVazbpTdlu0izl8O04qg9EB3dco6rD
+         kxegyJYwIo6E0MQODeDhxMTu3hbiSN/Zi/IWCpHn9xyswy1L0Npkvqf8hwapwgosgmPd
+         PbaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=/S3A4Ev/wT6z58zpQ4zDoDKGnmF8EFdc13KDqMrbU/w=;
+        b=tmTSus6bmcnpZw+skP6OcWCBSrLoxGwcqFsUcGsq14lJJhFvfdraM1f6AFEuTRMmVN
+         zK6YpCc5iwTjSEhlx6TU0eXAjs5H2SB1BDLz4UuEIHiGlG9YHf5JI578u0diqC0CfPk1
+         I6w7URQY8ShNTOyMFtCWtnzHdK59mp9upJaB0x1puUyCa3hO1G0DltONjxCLbq15NL8P
+         CU1RJecawgYlaBYYpOZNdl8UFddkv40nA2rZHT+U5vtf2OKZaQqMlVtg67JSwIzUAZUB
+         Y2fAVQspjgkD59OLzHOb+9XUqbbnkNO0pDmktyR9tcZ/J02TcFZc+n84itKCJKd65yZe
+         CcxQ==
+X-Gm-Message-State: AGRZ1gIB4+5M+S3Rkb+glb85DwVL5ctlERBZ86CErNrxuNinP31kMf8/
+        H96KO+/cdLnN0r8ooeDdFqkMhlKpDC46zkexHos=
+X-Google-Smtp-Source: AJdET5fEnqbIAJGEj1pOB1Jo9I3Ofnw04v/B2iWjD9Dd1UGEfQNWR5LiW9rg0c5sg1y9LXL2vk50x5xRMkY4VP/55ZI=
+X-Received: by 2002:ac8:266c:: with SMTP id v41mr11876249qtv.159.1542411096312;
+ Fri, 16 Nov 2018 15:31:36 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181116010412.23967-4-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <20181114180034.25558-1-guro@fb.com>
+In-Reply-To: <20181114180034.25558-1-guro@fb.com>
+From:   Y Song <ys114321@gmail.com>
+Date:   Fri, 16 Nov 2018 23:30:59 +0000
+Message-ID: <CAH3MdRUxuoe98m-ui9JQOhUT+xZxW-yVM1Wkpa4fkxvkMgt_BA@mail.gmail.com>
+Subject: Re: [PATCH bpf] bpf: allocate local storage buffers using GFP_ATOMIC
+To:     guroan@gmail.com
+Cc:     netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>, kernel-team@fb.com,
+        guro@fb.com, Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/15/18 5:01 PM, Jarkko Sakkinen wrote:
-> +#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
-> +#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
+On Wed, Nov 14, 2018 at 6:01 PM Roman Gushchin <guroan@gmail.com> wrote:
+>
+> Naresh reported an issue with the non-atomic memory allocation of
+> cgroup local storage buffers:
+>
+> [   73.047526] BUG: sleeping function called from invalid context at
+> /srv/oe/build/tmp-rpb-glibc/work-shared/intel-corei7-64/kernel-source/mm/slab.h:421
+> [   73.060915] in_atomic(): 1, irqs_disabled(): 0, pid: 3157, name: test_cgroup_sto
+> [   73.068342] INFO: lockdep is turned off.
+> [   73.072293] CPU: 2 PID: 3157 Comm: test_cgroup_sto Not tainted
+> 4.20.0-rc2-next-20181113 #1
+> [   73.080548] Hardware name: Supermicro SYS-5019S-ML/X11SSH-F, BIOS
+> 2.0b 07/27/2017
+> [   73.088018] Call Trace:
+> [   73.090463]  dump_stack+0x70/0xa5
+> [   73.093783]  ___might_sleep+0x152/0x240
+> [   73.097619]  __might_sleep+0x4a/0x80
+> [   73.101191]  __kmalloc_node+0x1cf/0x2f0
+> [   73.105031]  ? cgroup_storage_update_elem+0x46/0x90
+> [   73.109909]  cgroup_storage_update_elem+0x46/0x90
+>
+> cgroup_storage_update_elem() (as well as other update map update
+> callbacks) is called with disabled preemption, so GFP_ATOMIC
+> allocation should be used: e.g. alloc_htab_elem() in hashtab.c.
+>
+> Reported-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Tested-by: Naresh Kamboju <naresh.kamboju@linaro.org>
+> Signed-off-by: Roman Gushchin <guro@fb.com>
+> Cc: Alexei Starovoitov <ast@kernel.org>
+> Cc: Daniel Borkmann <daniel@iogearbox.net>
 
-Is there a reason these are not (all) tied to CONFIG_INTEL_SGX via:
+Acked-by: Yonghong Song <yhs@fb.com>
 
-arch/x86/include/asm/disabled-features.h
-
-?
+> ---
+>  kernel/bpf/local_storage.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
