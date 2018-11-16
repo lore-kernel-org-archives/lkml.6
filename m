@@ -6,28 +6,28 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9563FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:24:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 363CEC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:25:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5E2682086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:24:56 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5E2682086C
+	by mail.kernel.org (Postfix) with ESMTP id 04D202086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:25:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 04D202086C
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389675AbeKPUgh (ORCPT
+        id S2389693AbeKPUgk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 15:36:37 -0500
-Received: from foss.arm.com ([217.140.101.70]:48892 "EHLO foss.arm.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727681AbeKPUgg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 15:36:36 -0500
+        Fri, 16 Nov 2018 15:36:40 -0500
+Received: from usa-sjc-mx-foss1.foss.arm.com ([217.140.101.70]:48918 "EHLO
+        foss.arm.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727681AbeKPUgj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 15:36:39 -0500
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3355EBD;
-        Fri, 16 Nov 2018 02:24:53 -0800 (PST)
+        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23B9415AD;
+        Fri, 16 Nov 2018 02:24:57 -0800 (PST)
 Received: from e119886-lin.cambridge.arm.com (unknown [10.37.6.11])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BCCD93F5BD;
-        Fri, 16 Nov 2018 02:24:50 -0800 (PST)
+        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1BCF43F5BD;
+        Fri, 16 Nov 2018 02:24:53 -0800 (PST)
 From:   Andrew Murray <andrew.murray@arm.com>
 To:     Peter Zijlstra <peterz@infradead.org>,
         Ingo Molnar <mingo@redhat.com>,
@@ -41,9 +41,9 @@ To:     Peter Zijlstra <peterz@infradead.org>,
         Borislav Petkov <bp@alien8.de>, x86@kernel.org
 Cc:     linux-alpha@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 09/10] drivers/perf: perf/core: generalise event exclusion checking with perf macro
-Date:   Fri, 16 Nov 2018 10:24:12 +0000
-Message-Id: <1542363853-13849-10-git-send-email-andrew.murray@arm.com>
+Subject: [PATCH 10/10] perf/doc: update design.txt for exclude_{host|guest} flags
+Date:   Fri, 16 Nov 2018 10:24:13 +0000
+Message-Id: <1542363853-13849-11-git-send-email-andrew.murray@arm.com>
 X-Mailer: git-send-email 2.7.4
 In-Reply-To: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
 References: <1542363853-13849-1-git-send-email-andrew.murray@arm.com>
@@ -52,170 +52,29 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Replace checking of perf event exclusion flags with perf macro.
-
-This is a functional change as exclude_host and exclude_guest are added
-in the following files:
-
- - drivers/perf/qcom_l2_pmu.c
- - drivers/perf/qcom_l3_pmu.c
- - drivers/perf/arm_pmu.c
-
-And exclude_idle and exclude_hv are added in these files:
-
- - drivers/perf/xgene_pmu.c
+Update design.txt to reflect the presence of the exclude_host
+and exclude_guest perf flags.
 
 Signed-off-by: Andrew Murray <andrew.murray@arm.com>
 ---
- drivers/perf/arm-cci.c                   | 7 +------
- drivers/perf/arm-ccn.c                   | 5 +----
- drivers/perf/arm_dsu_pmu.c               | 7 +------
- drivers/perf/arm_pmu.c                   | 9 +--------
- drivers/perf/hisilicon/hisi_uncore_pmu.c | 7 +------
- drivers/perf/qcom_l2_pmu.c               | 3 +--
- drivers/perf/qcom_l3_pmu.c               | 3 +--
- drivers/perf/xgene_pmu.c                 | 3 +--
- 8 files changed, 8 insertions(+), 36 deletions(-)
+ tools/perf/design.txt | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-diff --git a/drivers/perf/arm-cci.c b/drivers/perf/arm-cci.c
-index 1bfeb16..d749f19 100644
---- a/drivers/perf/arm-cci.c
-+++ b/drivers/perf/arm-cci.c
-@@ -1328,12 +1328,7 @@ static int cci_pmu_event_init(struct perf_event *event)
- 		return -EOPNOTSUPP;
+diff --git a/tools/perf/design.txt b/tools/perf/design.txt
+index a28dca2..7de7d83 100644
+--- a/tools/perf/design.txt
++++ b/tools/perf/design.txt
+@@ -222,6 +222,10 @@ The 'exclude_user', 'exclude_kernel' and 'exclude_hv' bits provide a
+ way to request that counting of events be restricted to times when the
+ CPU is in user, kernel and/or hypervisor mode.
  
- 	/* We have no filtering of any kind */
--	if (event->attr.exclude_user	||
--	    event->attr.exclude_kernel	||
--	    event->attr.exclude_hv	||
--	    event->attr.exclude_idle	||
--	    event->attr.exclude_host	||
--	    event->attr.exclude_guest)
-+	if (event_has_exclude_flags(event))
- 		return -EINVAL;
- 
- 	/*
-diff --git a/drivers/perf/arm-ccn.c b/drivers/perf/arm-ccn.c
-index 7dd850e..9a22a95 100644
---- a/drivers/perf/arm-ccn.c
-+++ b/drivers/perf/arm-ccn.c
-@@ -741,10 +741,7 @@ static int arm_ccn_pmu_event_init(struct perf_event *event)
- 		return -EOPNOTSUPP;
- 	}
- 
--	if (has_branch_stack(event) || event->attr.exclude_user ||
--			event->attr.exclude_kernel || event->attr.exclude_hv ||
--			event->attr.exclude_idle || event->attr.exclude_host ||
--			event->attr.exclude_guest) {
-+	if (has_branch_stack(event) || event_has_exclude_flags(event)) {
- 		dev_dbg(ccn->dev, "Can't exclude execution levels!\n");
- 		return -EINVAL;
- 	}
-diff --git a/drivers/perf/arm_dsu_pmu.c b/drivers/perf/arm_dsu_pmu.c
-index 660cb8a..300ff3d 100644
---- a/drivers/perf/arm_dsu_pmu.c
-+++ b/drivers/perf/arm_dsu_pmu.c
-@@ -563,12 +563,7 @@ static int dsu_pmu_event_init(struct perf_event *event)
- 	}
- 
- 	if (has_branch_stack(event) ||
--	    event->attr.exclude_user ||
--	    event->attr.exclude_kernel ||
--	    event->attr.exclude_hv ||
--	    event->attr.exclude_idle ||
--	    event->attr.exclude_host ||
--	    event->attr.exclude_guest) {
-+	    event_has_exclude_flags(event)) {
- 		dev_dbg(dsu_pmu->pmu.dev, "Can't support filtering\n");
- 		return -EINVAL;
- 	}
-diff --git a/drivers/perf/arm_pmu.c b/drivers/perf/arm_pmu.c
-index 7f01f6f..a03634f 100644
---- a/drivers/perf/arm_pmu.c
-+++ b/drivers/perf/arm_pmu.c
-@@ -357,13 +357,6 @@ static irqreturn_t armpmu_dispatch_irq(int irq, void *dev)
- }
- 
- static int
--event_requires_mode_exclusion(struct perf_event_attr *attr)
--{
--	return attr->exclude_idle || attr->exclude_user ||
--	       attr->exclude_kernel || attr->exclude_hv;
--}
--
--static int
- __hw_perf_event_init(struct perf_event *event)
- {
- 	struct arm_pmu *armpmu = to_arm_pmu(event->pmu);
-@@ -395,7 +388,7 @@ __hw_perf_event_init(struct perf_event *event)
- 	 */
- 	if ((!armpmu->set_event_filter ||
- 	     armpmu->set_event_filter(hwc, &event->attr)) &&
--	     event_requires_mode_exclusion(&event->attr)) {
-+	     event_has_exclude_flags(event)) {
- 		pr_debug("ARM performance counters do not support "
- 			 "mode exclusion\n");
- 		return -EOPNOTSUPP;
-diff --git a/drivers/perf/hisilicon/hisi_uncore_pmu.c b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-index 9efd241..d3edff9 100644
---- a/drivers/perf/hisilicon/hisi_uncore_pmu.c
-+++ b/drivers/perf/hisilicon/hisi_uncore_pmu.c
-@@ -143,12 +143,7 @@ int hisi_uncore_pmu_event_init(struct perf_event *event)
- 		return -EOPNOTSUPP;
- 
- 	/* counters do not have these bits */
--	if (event->attr.exclude_user	||
--	    event->attr.exclude_kernel	||
--	    event->attr.exclude_host	||
--	    event->attr.exclude_guest	||
--	    event->attr.exclude_hv	||
--	    event->attr.exclude_idle)
-+	if (event_has_exclude_flags(event))
- 		return -EINVAL;
- 
- 	/*
-diff --git a/drivers/perf/qcom_l2_pmu.c b/drivers/perf/qcom_l2_pmu.c
-index 842135c..d7d85a2 100644
---- a/drivers/perf/qcom_l2_pmu.c
-+++ b/drivers/perf/qcom_l2_pmu.c
-@@ -510,8 +510,7 @@ static int l2_cache_event_init(struct perf_event *event)
- 	}
- 
- 	/* We cannot filter accurately so we just don't allow it. */
--	if (event->attr.exclude_user || event->attr.exclude_kernel ||
--	    event->attr.exclude_hv || event->attr.exclude_idle) {
-+	if (event_has_exclude_flags(event)) {
- 		dev_dbg_ratelimited(&l2cache_pmu->pdev->dev,
- 				    "Can't exclude execution levels\n");
- 		return -EOPNOTSUPP;
-diff --git a/drivers/perf/qcom_l3_pmu.c b/drivers/perf/qcom_l3_pmu.c
-index 2dc63d6..f27af67 100644
---- a/drivers/perf/qcom_l3_pmu.c
-+++ b/drivers/perf/qcom_l3_pmu.c
-@@ -497,8 +497,7 @@ static int qcom_l3_cache__event_init(struct perf_event *event)
- 	/*
- 	 * There are no per-counter mode filters in the PMU.
- 	 */
--	if (event->attr.exclude_user || event->attr.exclude_kernel ||
--	    event->attr.exclude_hv || event->attr.exclude_idle)
-+	if (event_has_exclude_flags(event))
- 		return -EINVAL;
- 
- 	/*
-diff --git a/drivers/perf/xgene_pmu.c b/drivers/perf/xgene_pmu.c
-index 0e31f13..1fcd5a0 100644
---- a/drivers/perf/xgene_pmu.c
-+++ b/drivers/perf/xgene_pmu.c
-@@ -915,8 +915,7 @@ static int xgene_perf_event_init(struct perf_event *event)
- 		return -EINVAL;
- 
- 	/* SOC counters do not have usr/os/guest/host bits */
--	if (event->attr.exclude_user || event->attr.exclude_kernel ||
--	    event->attr.exclude_host || event->attr.exclude_guest)
-+	if (event_has_exclude_flags(event))
- 		return -EINVAL;
- 
- 	if (event->cpu < 0)
++Furthermore the 'exclude_host' and 'exclude_guest' bits provide a way
++to request counting of events restricted to guest and host contexts when
++using virtualisation.
++
+ The 'mmap' and 'munmap' bits allow recording of PROT_EXEC mmap/munmap
+ operations, these can be used to relate userspace IP addresses to actual
+ code, even after the mapping (or even the whole process) is gone,
 -- 
 2.7.4
 
