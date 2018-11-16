@@ -7,68 +7,68 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 02DD3C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:04:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C3CFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:04:59 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C18CA208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:04:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id C13F920892
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:04:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="b1U75Cq6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C18CA208E3
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="hgww5nzd"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C13F920892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389500AbeKPUQ3 (ORCPT
+        id S2389526AbeKPUQe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 15:16:29 -0500
-Received: from mail-pg1-f194.google.com ([209.85.215.194]:36682 "EHLO
-        mail-pg1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727543AbeKPUQ3 (ORCPT
+        Fri, 16 Nov 2018 15:16:34 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:41392 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727543AbeKPUQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 15:16:29 -0500
-Received: by mail-pg1-f194.google.com with SMTP id n2so3226632pgm.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:04:51 -0800 (PST)
+        Fri, 16 Nov 2018 15:16:33 -0500
+Received: by mail-pl1-f196.google.com with SMTP id u6so57998plm.8
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:04:55 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=6jGnK7p9DNH1VSecCKTpjJESfpN6DrO/lgZIFx1WzcQ=;
-        b=b1U75Cq6PiWwsh0z0qHVgT8KLwnvoLvx19itx4tR0J7yUo4r7wTyFJrjq1gAnh3+a/
-         DflgwvN3jgsXHSjLZDgoryYD+QBV8BMllSbKnzhPJK5kO2SY3Qta71boyGvWMduiBi+S
-         W0xdwbuvTG67CAHgbzPvoKWe3XXQUnYY4xs8U=
+        bh=ZJ2Y9BTKWZeThRTPqw9iFrF+TUyLNKnmOqI9tUW0Q7o=;
+        b=hgww5nzdpOv5drIV5f/VTRQQbmLzNZ42o9EZrxtK2aBGiTp7aDszcflfrQ2NbuA8HG
+         qFZydP1nEg7ZXwPLSLpCsBt0e+pT8A36sKcHw/+PghrrI85hpzt4DZ+sI6lOWREXpMii
+         o6ZnWGXimOUqXJf2kmQdgW0rgh5KcTXiMRpl8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=6jGnK7p9DNH1VSecCKTpjJESfpN6DrO/lgZIFx1WzcQ=;
-        b=VLmwVZjQVJJiLeyX7gp3csT0JlLFdbQzQ0J21fCP8YZCuFuuyBRWm1VcVrHm4oKoQG
-         z2wg+qUlSLg6DHN+r8G9Qg3w8UVEk4yKrTl3aKZ5HdLSqWiKbEPOaR8zSNw5lJlRSb2L
-         Hmjd059dhMG2BHhjQnBmffc75olD9wQgVHUHliiT1oKkCifeohSsDSmgeJ9OnQ7cT2r3
-         q9+xoXuOoA1JqiD6SA4qBbTlHBhTUWFLmtDAOzGmFJex2mBGEnJC5eWf5H0pOK8a9sag
-         UnFYRcs5QWmOhVIym4bnDQNAX/IagHtNOGkl/H0r0JFUpl0tvFfWhG+FYcznwc8DQk8S
-         t9IA==
-X-Gm-Message-State: AGRZ1gLGCnW9mLOM8NlnXgDSr3/MLOg75RWsMR2+T5NI5Aq30q9wwtXC
-        TSQduk5LvBaUAvMG8GYgSgK2zQ==
-X-Google-Smtp-Source: AJdET5eiv3nkhyQJtwSUP/6O1OgfLcn/0KROeaB2kUteVHDIeEdepgLTnigyMH524uMy4UFdhn/3yA==
-X-Received: by 2002:a62:c501:: with SMTP id j1-v6mr5208284pfg.205.1542362691168;
-        Fri, 16 Nov 2018 02:04:51 -0800 (PST)
+        bh=ZJ2Y9BTKWZeThRTPqw9iFrF+TUyLNKnmOqI9tUW0Q7o=;
+        b=OeHJJXglqql24fdQTjd0uMJ3y0YGlcQlSA1HiIRnvacvpkUpTHQoQv5CnFTzwGivrc
+         QJ8a34TSamMxTRmEvD1hC9DCkD9loBBMgPaBwjjb/31cQB7XRdW8qEVQu7BbF+pvSGmX
+         9x30QZ4sRJLiOXirpM2ZhCPTIQw8nHMgsDq0LHU1lPNlJi43GgT9Gz8id+4G2j2lr2vK
+         ElkCn/To9s840YP2V+5JkUPMWZVXrLYDjRQVcQOcu2s+FM8p0rjoLVy8CaWPVGFmB2ss
+         SMv0vEHU2AzXIMdyi7id0TnTWQM4J4vSyDLLdl9KbDaROss2lxJyPy6VBPRiwA9D/PUf
+         IL8g==
+X-Gm-Message-State: AGRZ1gJ9FICIcbhPFd599NhXO+gvTcxo28NbAkDyUJgIjOjR7JiPVODN
+        zjFwJZx8PKPAsDtOfBGjnpBRbPdtuuQ=
+X-Google-Smtp-Source: AJdET5fL6OQJKJK0wmhEbl7lT9wsvedSDRZEI4E9Rl5pNHw4TWVRcqikk1hmYVqe0yu59lGvxg23vQ==
+X-Received: by 2002:a17:902:6a3:: with SMTP id 32-v6mr10371947plh.337.1542362695231;
+        Fri, 16 Nov 2018 02:04:55 -0800 (PST)
 Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id h7-v6sm51224721pfd.35.2018.11.16.02.04.50
+        by smtp.gmail.com with ESMTPSA id h7sm25746283pfa.105.2018.11.16.02.04.54
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 02:04:50 -0800 (PST)
+        Fri, 16 Nov 2018 02:04:54 -0800 (PST)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>, arm@kernel.org,
-        Carlo Caione <carlo@caione.org>,
-        Kevin Hilman <khilman@baylibre.com>
+        Kukjin Kim <kgene@kernel.org>,
+        Krzysztof Kozlowski <krzk@kernel.org>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 01/10] ARM64: dts: amlogic: Add all CPUs in cooling maps
-Date:   Fri, 16 Nov 2018 15:34:24 +0530
-Message-Id: <2778d0d4813cc56be851719846afecbab5f2e657.1542362530.git.viresh.kumar@linaro.org>
+        linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 02/10] ARM64: dts: exynos: Add all CPUs in cooling maps
+Date:   Fri, 16 Nov 2018 15:34:25 +0530
+Message-Id: <74e23257aece9ceef48b1c1cf6c9bafcce3c6fbd.1542362530.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
 In-Reply-To: <cover.1542362530.git.viresh.kumar@linaro.org>
 References: <cover.1542362530.git.viresh.kumar@linaro.org>
@@ -95,42 +95,103 @@ points.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- .../dts/amlogic/meson-gxm-khadas-vim2.dts     | 22 ++++++++-----------
- 1 file changed, 9 insertions(+), 13 deletions(-)
+ .../arm64/boot/dts/exynos/exynos5433-tmu.dtsi | 36 ++++++++++++-------
+ 1 file changed, 24 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-index 313f88f8759e..cfc92d06a28f 100644
---- a/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-+++ b/arch/arm64/boot/dts/amlogic/meson-gxm-khadas-vim2.dts
-@@ -132,19 +132,15 @@
- 
- 				map1 {
- 					trip = <&cpu_alert1>;
--					cooling-device = <&gpio_fan 2 THERMAL_NO_LIMIT>;
--				};
--
--				map2 {
--					trip = <&cpu_alert1>;
--					cooling-device =
--						<&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
--				};
--
--				map3 {
--					trip = <&cpu_alert1>;
--					cooling-device =
--						<&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					cooling-device = <&gpio_fan 2 THERMAL_NO_LIMIT>,
-+							 <&cpu0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu4 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu5 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu6 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&cpu7 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
- 				};
+diff --git a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+index fe3a0b14bee6..81b72393dd0d 100644
+--- a/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
++++ b/arch/arm64/boot/dts/exynos/exynos5433-tmu.dtsi
+@@ -55,37 +55,44 @@ thermal-zones {
+ 			map0 {
+ 				/* Set maximum frequency as 1800MHz  */
+ 				trip = <&atlas0_alert_0>;
+-				cooling-device = <&cpu4 1 2>;
++				cooling-device = <&cpu4 1 2>, <&cpu5 1 2>,
++						 <&cpu6 1 2>, <&cpu7 1 2>;
+ 			};
+ 			map1 {
+ 				/* Set maximum frequency as 1700MHz  */
+ 				trip = <&atlas0_alert_1>;
+-				cooling-device = <&cpu4 2 3>;
++				cooling-device = <&cpu4 2 3>, <&cpu5 2 3>,
++						 <&cpu6 2 3>, <&cpu7 2 3>;
+ 			};
+ 			map2 {
+ 				/* Set maximum frequency as 1600MHz  */
+ 				trip = <&atlas0_alert_2>;
+-				cooling-device = <&cpu4 3 4>;
++				cooling-device = <&cpu4 3 4>, <&cpu5 3 4>,
++						 <&cpu6 3 4>, <&cpu7 3 4>;
+ 			};
+ 			map3 {
+ 				/* Set maximum frequency as 1500MHz  */
+ 				trip = <&atlas0_alert_3>;
+-				cooling-device = <&cpu4 4 5>;
++				cooling-device = <&cpu4 4 5>, <&cpu5 4 5>,
++						 <&cpu6 4 5>, <&cpu7 4 5>;
+ 			};
+ 			map4 {
+ 				/* Set maximum frequency as 1400MHz  */
+ 				trip = <&atlas0_alert_4>;
+-				cooling-device = <&cpu4 5 7>;
++				cooling-device = <&cpu4 5 7>, <&cpu5 5 7>,
++						 <&cpu6 5 7>, <&cpu7 5 7>;
+ 			};
+ 			map5 {
+ 				/* Set maximum frequencyas 1200MHz  */
+ 				trip = <&atlas0_alert_5>;
+-				cooling-device = <&cpu4 7 9>;
++				cooling-device = <&cpu4 7 9>, <&cpu5 7 9>,
++						 <&cpu6 7 9>, <&cpu7 7 9>;
+ 			};
+ 			map6 {
+ 				/* Set maximum frequency as 1000MHz  */
+ 				trip = <&atlas0_alert_6>;
+-				cooling-device = <&cpu4 9 14>;
++				cooling-device = <&cpu4 9 14>, <&cpu5 9 14>,
++						 <&cpu6 9 14>, <&cpu7 9 14>;
  			};
  		};
+ 	};
+@@ -222,27 +229,32 @@ thermal-zones {
+ 			map0 {
+ 				/* Set maximum frequency as 1200MHz  */
+ 				trip = <&apollo_alert_2>;
+-				cooling-device = <&cpu0 1 2>;
++				cooling-device = <&cpu0 1 2>, <&cpu1 1 2>,
++						 <&cpu2 1 2>, <&cpu3 1 2>;
+ 			};
+ 			map1 {
+ 				/* Set maximum frequency as 1100MHz  */
+ 				trip = <&apollo_alert_3>;
+-				cooling-device = <&cpu0 2 3>;
++				cooling-device = <&cpu0 2 3>, <&cpu1 2 3>,
++						 <&cpu2 2 3>, <&cpu3 2 3>;
+ 			};
+ 			map2 {
+ 				/* Set maximum frequency as 1000MHz  */
+ 				trip = <&apollo_alert_4>;
+-				cooling-device = <&cpu0 3 4>;
++				cooling-device = <&cpu0 3 4>, <&cpu1 3 4>,
++						 <&cpu2 3 4>, <&cpu3 3 4>;
+ 			};
+ 			map3 {
+ 				/* Set maximum frequency as 900MHz  */
+ 				trip = <&apollo_alert_5>;
+-				cooling-device = <&cpu0 4 5>;
++				cooling-device = <&cpu0 4 5>, <&cpu1 4 5>,
++						 <&cpu2 4 5>, <&cpu3 4 5>;
+ 			};
+ 			map4 {
+ 				/* Set maximum frequency as 800MHz  */
+ 				trip = <&apollo_alert_6>;
+-				cooling-device = <&cpu0 5 9>;
++				cooling-device = <&cpu0 5 9>, <&cpu1 5 9>,
++						 <&cpu2 5 9>, <&cpu3 5 9>;
+ 			};
+ 		};
+ 	};
 -- 
 2.19.1.568.g152ad8e3369a
 
