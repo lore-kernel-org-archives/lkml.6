@@ -2,869 +2,437 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,TVD_SUBJ_WIPE_DEBT,URIBL_BLOCKED,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B991CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:43:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A31CC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:43:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5F2B820892
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:43:06 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0EA4C20858
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:43:27 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="S8KkYWt9"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5F2B820892
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=poorly.run header.i=@poorly.run header.b="NlPYdkgQ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0EA4C20858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=poorly.run
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390463AbeKQE4g (ORCPT
+        id S2390486AbeKQE44 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 23:56:36 -0500
-Received: from mail.kernel.org ([198.145.29.99]:54968 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728039AbeKQE4g (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 23:56:36 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 47EE22087A;
-        Fri, 16 Nov 2018 18:43:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542393783;
-        bh=mNSL1CFlePpIhV+ue1PG5NZxO3xOI3LZEQ8lNmXEoH8=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=S8KkYWt9C20lNViAXkJEfnrmvy09GYj7miPJ9M2FDLM9sMmcElmoPOKtJkuJCpysx
-         5xrAX5kkep6XwF36KQ4rqt1SyWCvu4dKsbWp2rgL7g1pNIes3TCkoRwFG3cs2tP+gc
-         sHRFklgHHaoIH2SwrwpLJ1vqjIRVKdRf87MC2XZc=
-Date:   Fri, 16 Nov 2018 18:42:58 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     <Michael.Hennerich@analog.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <gregkh@linuxfoundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>
-Subject: Re: [PATCH v5 3/4] iio: adc: Add ad7124 support
-Message-ID: <20181116184258.472496c1@archlinux>
-In-Reply-To: <1542108092-3593-1-git-send-email-stefan.popa@analog.com>
-References: <1542108092-3593-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 16 Nov 2018 23:56:56 -0500
+Received: from mail-yw1-f66.google.com ([209.85.161.66]:39379 "EHLO
+        mail-yw1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728039AbeKQE4z (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 23:56:55 -0500
+Received: by mail-yw1-f66.google.com with SMTP id v8-v6so10488116ywh.6
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 10:43:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=poorly.run; s=google;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references
+         :mime-version:content-transfer-encoding;
+        bh=otr9k4GoKwfQv9Joa8yyBiv7uFW72krl5ma+HCu/7M8=;
+        b=NlPYdkgQsyEKnQHpl2iqUbpYaWp1ORNfGM94BpJb86TjnDhYLoQpOFFvLV8qxXET9T
+         cMX6vHQr/1aVEwLFUYmW8XWGwdwPCkYlTHTmIy/kCPvUiEUClMUq4XIkAITtz8nP/0Kv
+         8xFCzbdwcK5afnH3y1taa2nODU0N+UqdjGcvEiBVGU2LKjndi71LxHp3mWB9pzrMEJiM
+         HIa/tYyc4CC2hOeNrYbk9EymXiUjQ+PA/mudF7OckAXxlf4DFkqFxe04QWvUfgGdt5/o
+         /NtRpxyf4BDNq+pp0ZbAgQ6vQskkfhsXciIW7wwzPPJj4Hb7Gqa8KqykVM/csxrv5nNd
+         WwjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references:mime-version:content-transfer-encoding;
+        bh=otr9k4GoKwfQv9Joa8yyBiv7uFW72krl5ma+HCu/7M8=;
+        b=Lu9pWEKYWy6y50M9POHVsWtEDQ0DhLqfmNudKPlhO2wlu31fIGiGLq10/JFsae4uaT
+         clUsJrpH0TPMxmhLfDTvRd2yctRzFmdyqa8jXvnDObT0EwtOeTswzGhJs3bQ0sctoSUm
+         ZFQeSQBflQyZkgSPR2uVBgmmhH17uUsN1rI8uz104GbYmioZhDCaIxdowGXUP0+4WnNT
+         TQQs1zcccMHm9FGf15NJVxc95mbxLGSxEbn20Mq5ZZcg5iS3c9wx4ZiLTi8n7LNcuffO
+         60nsGw/ls1E/NG9lxrPGIwfZzYzMgl+/vHGWvK/mVJVrpSJtLkQLz9fhKtbwJokF84aV
+         QasA==
+X-Gm-Message-State: AGRZ1gLwLNn+BOFL7Ihnt/zW+HYBQHXRCdyEtvXGXP62dRhP32CQBnrY
+        Xmy6lbOw9KdiuOg7cGnaVUT9Yg==
+X-Google-Smtp-Source: AJdET5eoZ6I2IgDBDyboNA1LLiI6Ou6NzKjulvj7XEjv/VqAcIsAiFo6n56jjnZOyMDAMRkgiE6W5g==
+X-Received: by 2002:a81:58c4:: with SMTP id m187mr9910762ywb.300.1542393803559;
+        Fri, 16 Nov 2018 10:43:23 -0800 (PST)
+Received: from rosewood.cam.corp.google.com ([2620:0:1013:11:ad55:b1db:adfe:3b9f])
+        by smtp.gmail.com with ESMTPSA id b144sm5359134ywa.33.2018.11.16.10.43.22
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Nov 2018 10:43:22 -0800 (PST)
+From:   Sean Paul <sean@poorly.run>
+To:     dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org,
+        linux-arm-msm@vger.kernel.org
+Cc:     robdclark@gmail.com, jsanka@codeaurora.org,
+        Sean Paul <seanpaul@chromium.org>, linux-kernel@vger.kernel.org
+Subject: [PATCH v2 09/24] drm/msm: dpu: Remove dpu_power_handle
+Date:   Fri, 16 Nov 2018 13:42:19 -0500
+Message-Id: <20181116184238.170034-10-sean@poorly.run>
+X-Mailer: git-send-email 2.19.1.1215.g8438c0b245-goog
+In-Reply-To: <20181116184238.170034-1-sean@poorly.run>
+References: <20181116184238.170034-1-sean@poorly.run>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Nov 2018 13:21:32 +0200
-Stefan Popa <stefan.popa@analog.com> wrote:
+From: Sean Paul <seanpaul@chromium.org>
 
-> The ad7124-4 and ad7124-8 are a family of 4 and 8 channel sigma-delta ADCs
-> with 24-bit precision and reference.
-> 
-> Three power modes are available which in turn affect the output data rate:
->  * Full power: 9.38 SPS to 19,200 SPS
->  * Mid power: 2.34 SPS to 4800 SPS
->  * Low power: 1.17 SPS to 2400 SPS
-> 
-> The ad7124-4 can be configured to have four differential inputs, while
-> ad7124-8 can have 8. Moreover, ad7124 also supports per channel
-> configuration. Each configuration consists of gain, reference source,
-> output data rate and bipolar/unipolar configuration.
-> 
-> Datasheets:
-> Link: http://www.analog.com/media/en/technical-documentation/data-sheets/AD7124-4.pdf
-> Link: http://www.analog.com/media/en/technical-documentation/data-sheets/ad7124-8.pdf
-> 
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-Nice driver.  One totally trivial thing I noted inline, but I'll just
-fix that up when applying once we have the binding acked.
+Now that we don't have any event handlers, remove dpu_power_handle!
 
-Give me a poke if I seem to have forgotten this (it's been known to happen :(
+Changes in v2:
+- None
 
-Thanks,
+Reviewed-by: Jeykumar Sankaran <jsanka@codeaurora.org>
+Signed-off-by: Sean Paul <seanpaul@chromium.org>
+---
+ drivers/gpu/drm/msm/Makefile                  |   1 -
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c       |  11 --
+ drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h       |   3 -
+ .../gpu/drm/msm/disp/dpu1/dpu_power_handle.c  | 136 ------------------
+ .../gpu/drm/msm/disp/dpu1/dpu_power_handle.h  | 113 ---------------
+ 5 files changed, 264 deletions(-)
+ delete mode 100644 drivers/gpu/drm/msm/disp/dpu1/dpu_power_handle.c
+ delete mode 100644 drivers/gpu/drm/msm/disp/dpu1/dpu_power_handle.h
 
-Jonathan
-
-> ---
-> Changes in v2:
-> 	- Nothing changed.
-> Changes in v3:
-> 	- Removed channel, address, scan_index and shift fields from
-> 	  ad7124_channel_template.
-> 	- Added a sanity check for val2 in ad7124_write_raw().
-> 	- Used the "reg" property to get the channel address and "adi,diff-channels"
-> 	  for the differential pins. The "adi,channel-number" property was removed.
-> 	- When calling regulator_get_optional, the probe is given up in case of error,
-> 	  but continues in case of -ENODEV.
-> 	- clk_disable_unprepare() is called before ad_sd_cleanup_buffer_and_trigger
-> 	  in ad7124_remove().
-> Changes in v4:
-> 	- Added the .shift and .endianness fields as part of the ad7124_channel_template.
-> 	- Made the gain configurable from the user space.
-> 	- Removed the odr_hz and gain properties from the DT.
-> 	- Used the bipolar and diff-channels properties defined in the new adc.txt doc.
-> 	- Misc style fixes.
-> Changes in v5:
-> 	- Fixed the way the offset is determined.
-> 	- Dropped the hardware gain.
-> 	- Added a scale_available attribute.
-> 	- The scale can be set from user space.
-> 	- In ad7124_read_raw(), the gain in applied to *val2.
->   
->  MAINTAINERS              |   7 +
->  drivers/iio/adc/Kconfig  |  11 +
->  drivers/iio/adc/Makefile |   1 +
->  drivers/iio/adc/ad7124.c | 686 +++++++++++++++++++++++++++++++++++++++++++++++
->  4 files changed, 705 insertions(+)
->  create mode 100644 drivers/iio/adc/ad7124.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index f642044..3a1bfcb 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -839,6 +839,13 @@ S:	Supported
->  F:	drivers/iio/dac/ad5758.c
->  F:	Documentation/devicetree/bindings/iio/dac/ad5758.txt
->  
-> +ANALOG DEVICES INC AD7124 DRIVER
-> +M:	Stefan Popa <stefan.popa@analog.com>
-> +L:	linux-iio@vger.kernel.org
-> +W:	http://ez.analog.com/community/linux-device-drivers
-> +S:	Supported
-> +F:	drivers/iio/adc/ad7124.c
-> +
->  ANALOG DEVICES INC AD9389B DRIVER
->  M:	Hans Verkuil <hans.verkuil@cisco.com>
->  L:	linux-media@vger.kernel.org
-> diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-> index a52fea8..148a10f 100644
-> --- a/drivers/iio/adc/Kconfig
-> +++ b/drivers/iio/adc/Kconfig
-> @@ -10,6 +10,17 @@ config AD_SIGMA_DELTA
->  	select IIO_BUFFER
->  	select IIO_TRIGGERED_BUFFER
->  
-> +config AD7124
-> +	tristate "Analog Devices AD7124 and similar sigma-delta ADCs driver"
-> +	depends on SPI_MASTER
-> +	select AD_SIGMA_DELTA
-> +	help
-> +	  Say yes here to build support for Analog Devices AD7124-4 and AD7124-8
-> +	  SPI analog to digital converters (ADC).
-> +
-> +	  To compile this driver as a module, choose M here: the module will be
-> +	  called ad7124.
-> +
->  config AD7266
->  	tristate "Analog Devices AD7265/AD7266 ADC driver"
->  	depends on SPI_MASTER
-> diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-> index a6e6a0b..76168b2 100644
-> --- a/drivers/iio/adc/Makefile
-> +++ b/drivers/iio/adc/Makefile
-> @@ -5,6 +5,7 @@
->  
->  # When adding new entries keep the list in alphabetical order
->  obj-$(CONFIG_AD_SIGMA_DELTA) += ad_sigma_delta.o
-> +obj-$(CONFIG_AD7124) += ad7124.o
->  obj-$(CONFIG_AD7266) += ad7266.o
->  obj-$(CONFIG_AD7291) += ad7291.o
->  obj-$(CONFIG_AD7298) += ad7298.o
-> diff --git a/drivers/iio/adc/ad7124.c b/drivers/iio/adc/ad7124.c
-> new file mode 100644
-> index 0000000..187675e
-> --- /dev/null
-> +++ b/drivers/iio/adc/ad7124.c
-> @@ -0,0 +1,686 @@
-> +// SPDX-License-Identifier: GPL-2.0+
-> +/*
-> + * AD7124 SPI ADC driver
-> + *
-> + * Copyright 2018 Analog Devices Inc.
-> + */
-> +#include <linux/bitfield.h>
-> +#include <linux/clk.h>
-> +#include <linux/delay.h>
-> +#include <linux/device.h>
-> +#include <linux/err.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/regulator/consumer.h>
-> +#include <linux/spi/spi.h>
-> +
-> +#include <linux/iio/iio.h>
-> +#include <linux/iio/adc/ad_sigma_delta.h>
-> +#include <linux/iio/sysfs.h>
-> +
-> +/* AD7124 registers */
-> +#define AD7124_COMMS			0x00
-> +#define AD7124_STATUS			0x00
-> +#define AD7124_ADC_CONTROL		0x01
-> +#define AD7124_DATA			0x02
-> +#define AD7124_IO_CONTROL_1		0x03
-> +#define AD7124_IO_CONTROL_2		0x04
-> +#define AD7124_ID			0x05
-> +#define AD7124_ERROR			0x06
-> +#define AD7124_ERROR_EN		0x07
-> +#define AD7124_MCLK_COUNT		0x08
-> +#define AD7124_CHANNEL(x)		(0x09 + (x))
-> +#define AD7124_CONFIG(x)		(0x19 + (x))
-> +#define AD7124_FILTER(x)		(0x21 + (x))
-> +#define AD7124_OFFSET(x)		(0x29 + (x))
-> +#define AD7124_GAIN(x)			(0x31 + (x))
-> +
-> +/* AD7124_STATUS */
-> +#define AD7124_STATUS_POR_FLAG_MSK	BIT(4)
-> +
-> +/* AD7124_ADC_CONTROL */
-> +#define AD7124_ADC_CTRL_PWR_MSK	GENMASK(7, 6)
-> +#define AD7124_ADC_CTRL_PWR(x)		FIELD_PREP(AD7124_ADC_CTRL_PWR_MSK, x)
-> +#define AD7124_ADC_CTRL_MODE_MSK	GENMASK(5, 2)
-> +#define AD7124_ADC_CTRL_MODE(x)	FIELD_PREP(AD7124_ADC_CTRL_MODE_MSK, x)
-> +
-> +/* AD7124_CHANNEL_X */
-> +#define AD7124_CHANNEL_EN_MSK		BIT(15)
-> +#define AD7124_CHANNEL_EN(x)		FIELD_PREP(AD7124_CHANNEL_EN_MSK, x)
-> +#define AD7124_CHANNEL_SETUP_MSK	GENMASK(14, 12)
-> +#define AD7124_CHANNEL_SETUP(x)	FIELD_PREP(AD7124_CHANNEL_SETUP_MSK, x)
-> +#define AD7124_CHANNEL_AINP_MSK	GENMASK(9, 5)
-> +#define AD7124_CHANNEL_AINP(x)		FIELD_PREP(AD7124_CHANNEL_AINP_MSK, x)
-> +#define AD7124_CHANNEL_AINM_MSK	GENMASK(4, 0)
-> +#define AD7124_CHANNEL_AINM(x)		FIELD_PREP(AD7124_CHANNEL_AINM_MSK, x)
-> +
-> +/* AD7124_CONFIG_X */
-> +#define AD7124_CONFIG_BIPOLAR_MSK	BIT(11)
-> +#define AD7124_CONFIG_BIPOLAR(x)	FIELD_PREP(AD7124_CONFIG_BIPOLAR_MSK, x)
-> +#define AD7124_CONFIG_REF_SEL_MSK	GENMASK(4, 3)
-> +#define AD7124_CONFIG_REF_SEL(x)	FIELD_PREP(AD7124_CONFIG_REF_SEL_MSK, x)
-> +#define AD7124_CONFIG_PGA_MSK		GENMASK(2, 0)
-> +#define AD7124_CONFIG_PGA(x)		FIELD_PREP(AD7124_CONFIG_PGA_MSK, x)
-> +
-> +/* AD7124_FILTER_X */
-> +#define AD7124_FILTER_FS_MSK		GENMASK(10, 0)
-> +#define AD7124_FILTER_FS(x)		FIELD_PREP(AD7124_FILTER_FS_MSK, x)
-> +
-> +enum ad7124_ids {
-> +	ID_AD7124_4,
-> +	ID_AD7124_8,
-> +};
-> +
-> +enum ad7124_ref_sel {
-> +	AD7124_REFIN1,
-> +	AD7124_REFIN2,
-> +	AD7124_INT_REF,
-> +	AD7124_AVDD_REF,
-> +};
-> +
-> +enum ad7124_power_mode {
-> +	AD7124_LOW_POWER,
-> +	AD7124_MID_POWER,
-> +	AD7124_FULL_POWER,
-> +};
-> +
-> +static const unsigned int ad7124_gain[8] = {
-> +	1, 2, 4, 8, 16, 32, 64, 128
-> +};
-> +
-> +static const int ad7124_master_clk_freq_hz[3] = {
-> +	[AD7124_LOW_POWER] = 76800,
-> +	[AD7124_MID_POWER] = 153600,
-> +	[AD7124_FULL_POWER] = 614400,
-> +};
-> +
-> +static const char * const ad7124_ref_names[] = {
-> +	[AD7124_REFIN1] = "refin1",
-> +	[AD7124_REFIN2] = "refin2",
-> +	[AD7124_INT_REF] = "int",
-> +	[AD7124_AVDD_REF] = "avdd",
-> +};
-> +
-> +struct ad7124_chip_info {
-> +	unsigned int num_inputs;
-> +};
-> +
-> +struct ad7124_channel_config {
-> +	enum ad7124_ref_sel refsel;
-> +	bool bipolar;
-> +	unsigned int ain;
-> +	unsigned int vref_mv;
-> +	unsigned int pga_bits;
-> +	unsigned int odr;
-> +};
-> +
-> +struct ad7124_state {
-> +	const struct ad7124_chip_info *chip_info;
-> +	struct ad_sigma_delta sd;
-> +	struct ad7124_channel_config channel_config[4];
-> +	struct regulator *vref[4];
-> +	struct clk *mclk;
-> +	unsigned int adc_control;
-> +	unsigned int num_channels;
-> +};
-> +
-> +static const struct iio_chan_spec ad7124_channel_template = {
-> +	.type = IIO_VOLTAGE,
-> +	.indexed = 1,
-> +	.differential = 1,
-> +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) |
-> +		BIT(IIO_CHAN_INFO_SCALE) |
-> +		BIT(IIO_CHAN_INFO_OFFSET) |
-> +		BIT(IIO_CHAN_INFO_SAMP_FREQ),
-> +	.scan_type = {
-> +		.sign = 'u',
-> +		.realbits = 24,
-> +		.storagebits = 32,
-> +		.shift = 8,
-> +		.endianness = IIO_BE,
-> +	},
-> +};
-> +
-> +static struct ad7124_chip_info ad7124_chip_info_tbl[] = {
-> +	[ID_AD7124_4] = {
-> +		.num_inputs = 8,
-> +	},
-> +	[ID_AD7124_8] = {
-> +		.num_inputs = 16,
-> +	},
-> +};
-> +
-> +static int ad7124_find_closest_match(const int *array,
-> +				     unsigned int size, int val)
-> +{
-> +	int i, idx;
-> +	unsigned int diff_new, diff_old;
-> +
-> +	diff_old = U32_MAX;
-> +	idx = 0;
-> +
-> +	for (i = 0; i < size; i++) {
-> +		diff_new = abs(val - array[i]);
-> +		if (diff_new < diff_old) {
-> +			diff_old = diff_new;
-> +			idx = i;
-> +		}
-> +	}
-> +
-> +	return idx;
-> +}
-> +
-> +static int ad7124_spi_write_mask(struct ad7124_state *st,
-> +				 unsigned int addr,
-> +				 unsigned long mask,
-> +				 unsigned int val,
-> +				 unsigned int bytes)
-> +{
-> +	unsigned int readval;
-> +	int ret;
-> +
-> +	ret = ad_sd_read_reg(&st->sd, addr, bytes, &readval);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	readval &= ~mask;
-> +	readval |= val;
-> +
-> +	return ad_sd_write_reg(&st->sd, addr, bytes, readval);
-> +}
-> +
-> +static int ad7124_set_mode(struct ad_sigma_delta *sd,
-> +			   enum ad_sigma_delta_mode mode)
-> +{
-> +	struct ad7124_state *st = container_of(sd, struct ad7124_state, sd);
-> +
-> +	st->adc_control &= ~AD7124_ADC_CTRL_MODE_MSK;
-> +	st->adc_control |= AD7124_ADC_CTRL_MODE(mode);
-> +
-> +	return ad_sd_write_reg(&st->sd, AD7124_ADC_CONTROL, 2, st->adc_control);
-> +}
-> +
-> +static int ad7124_set_channel(struct ad_sigma_delta *sd, unsigned int channel)
-> +{
-> +	struct ad7124_state *st = container_of(sd, struct ad7124_state, sd);
-> +	unsigned int val;
-> +
-> +	val = st->channel_config[channel].ain | AD7124_CHANNEL_EN(1) |
-> +	      AD7124_CHANNEL_SETUP(channel);
-> +
-> +	return ad_sd_write_reg(&st->sd, AD7124_CHANNEL(channel), 2, val);
-> +}
-> +
-> +static const struct ad_sigma_delta_info ad7124_sigma_delta_info = {
-> +	.set_channel = ad7124_set_channel,
-> +	.set_mode = ad7124_set_mode,
-> +	.has_registers = true,
-> +	.addr_shift = 0,
-> +	.read_mask = BIT(6),
-> +	.data_reg = AD7124_DATA,
-> +};
-> +
-> +static int ad7124_set_channel_odr(struct ad7124_state *st,
-> +				  unsigned int channel,
-> +				  unsigned int odr)
-> +{
-> +	unsigned int fclk, odr_sel_bits;
-> +	int ret;
-> +
-> +	fclk = clk_get_rate(st->mclk);
-> +	/*
-> +	 * FS[10:0] = fCLK / (fADC x 32) where:
-> +	 * fADC is the output data rate
-> +	 * fCLK is the master clock frequency
-> +	 * FS[10:0] are the bits in the filter register
-> +	 * FS[10:0] can have a value from 1 to 2047
-> +	 */
-> +	odr_sel_bits = DIV_ROUND_CLOSEST(fclk, odr * 32);
-> +	if (odr_sel_bits < 1)
-> +		odr_sel_bits = 1;
-> +	else if (odr_sel_bits > 2047)
-> +		odr_sel_bits = 2047;
-> +
-> +	ret = ad7124_spi_write_mask(st, AD7124_FILTER(channel),
-> +				    AD7124_FILTER_FS_MSK,
-> +				    AD7124_FILTER_FS(odr_sel_bits), 3);
-> +	if (ret < 0)
-> +		return ret;
-> +	/* fADC = fCLK / (FS[10:0] x 32) */
-> +	st->channel_config[channel].odr =
-> +		DIV_ROUND_CLOSEST(fclk, odr_sel_bits * 32);
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad7124_set_channel_gain(struct ad7124_state *st,
-> +				   unsigned int channel,
-> +				   unsigned int gain)
-> +{
-> +	unsigned int res;
-> +	int ret;
-> +
-> +	res = ad7124_find_closest_match(ad7124_gain,
-> +					ARRAY_SIZE(ad7124_gain), gain);
-> +	ret = ad7124_spi_write_mask(st, AD7124_CONFIG(channel),
-> +				    AD7124_CONFIG_PGA_MSK,
-> +				    AD7124_CONFIG_PGA(res), 2);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	st->channel_config[channel].pga_bits = res;
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad7124_read_raw(struct iio_dev *indio_dev,
-> +			   struct iio_chan_spec const *chan,
-> +			   int *val, int *val2, long info)
-> +{
-> +	struct ad7124_state *st = iio_priv(indio_dev);
-> +	int idx, ret;
-> +
-> +	switch (info) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		ret = ad_sigma_delta_single_conversion(indio_dev, chan, val);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		/* After the conversion is performed, disable the channel */
-> +		ret = ad_sd_write_reg(&st->sd,
-> +				      AD7124_CHANNEL(chan->address), 2,
-> +				      st->channel_config[chan->address].ain |
-> +				      AD7124_CHANNEL_EN(0));
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SCALE:
-> +		idx = st->channel_config[chan->address].pga_bits;
-> +		*val = st->channel_config[chan->address].vref_mv;
-> +		if (st->channel_config[chan->address].bipolar)
-> +			*val2 = chan->scan_type.realbits - 1 + idx;
-> +		else
-> +			*val2 = chan->scan_type.realbits + idx;
-> +
-> +		return IIO_VAL_FRACTIONAL_LOG2;
-> +	case IIO_CHAN_INFO_OFFSET:
-> +		if (st->channel_config[chan->address].bipolar)
-> +			*val = -(1 << (chan->scan_type.realbits - 1));
-> +		else
-> +			*val = 0;
-> +
-> +		return IIO_VAL_INT;
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		*val = st->channel_config[chan->address].odr;
-> +
-> +		return IIO_VAL_INT;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static int ad7124_write_raw(struct iio_dev *indio_dev,
-> +			    struct iio_chan_spec const *chan,
-> +			    int val, int val2, long info)
-> +{
-> +	struct ad7124_state *st = iio_priv(indio_dev);
-> +	unsigned int res, gain, full_scale, vref;
-> +
-> +	switch (info) {
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		if (val2 != 0)
-> +			return -EINVAL;
-> +
-> +		return ad7124_set_channel_odr(st, chan->address, val);
-> +	case IIO_CHAN_INFO_SCALE:
-> +		if (val != 0)
-> +			return -EINVAL;
-> +
-> +		if (st->channel_config[chan->address].bipolar)
-> +			full_scale = 1 << (chan->scan_type.realbits - 1);
-> +		else
-> +			full_scale = 1 << chan->scan_type.realbits;
-> +
-> +		vref = st->channel_config[chan->address].vref_mv * 1000000LL;
-> +		res = DIV_ROUND_CLOSEST(vref, full_scale);
-> +		gain = DIV_ROUND_CLOSEST(res, val2);
-> +
-> +		return ad7124_set_channel_gain(st, chan->address, gain);
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +}
-> +
-> +static IIO_CONST_ATTR(in_voltage_scale_available,
-> +	"0.000001164 0.000002328 0.000004656 0.000009313 0.000018626 0.000037252 0.000074505 0.000149011 0.000298023");
-> +
-> +static struct attribute *ad7124_attributes[] = {
-> +	&iio_const_attr_in_voltage_scale_available.dev_attr.attr,
-> +	NULL,
-> +};
-> +
-> +static const struct attribute_group ad7124_attrs_group = {
-> +	.attrs = ad7124_attributes,
-> +};
-> +
-> +static const struct iio_info ad7124_info = {
-> +	.read_raw = ad7124_read_raw,
-> +	.write_raw = ad7124_write_raw,
-> +	.validate_trigger = ad_sd_validate_trigger,
-> +	.attrs = &ad7124_attrs_group,
-> +};
-> +
-> +static int ad7124_soft_reset(struct ad7124_state *st)
-> +{
-> +	unsigned int readval, timeout;
-> +	int ret;
-> +
-> +	ret = ad_sd_reset(&st->sd, 64);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	timeout = 100;
-> +	do {
-> +		ret = ad_sd_read_reg(&st->sd, AD7124_STATUS, 1, &readval);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		if (!(readval & AD7124_STATUS_POR_FLAG_MSK))
-> +			return 0;
-> +
-> +		/* The AD7124 requires typically 2ms to power up and settle */
-> +		usleep_range(100, 2000);
-> +	} while (--timeout);
-> +
-> +	dev_err(&st->sd.spi->dev, "Soft reset failed\n");
-> +
-> +	return -EIO;
-> +}
-> +
-> +static int ad7124_init_channel_vref(struct ad7124_state *st,
-> +				    unsigned int channel_number)
-> +{
-> +	unsigned int refsel = st->channel_config[channel_number].refsel;
-> +
-> +	switch (refsel) {
-> +	case AD7124_REFIN1:
-> +	case AD7124_REFIN2:
-> +	case AD7124_AVDD_REF:
-> +		if (IS_ERR(st->vref[refsel])) {
-> +			dev_err(&st->sd.spi->dev,
-> +				"Error, trying to use external voltage reference without a %s regulator.\n",
-> +				ad7124_ref_names[refsel]);
-> +				return PTR_ERR(st->vref[refsel]);
-> +		}
-> +		st->channel_config[channel_number].vref_mv =
-> +			regulator_get_voltage(st->vref[refsel]);
-> +		/* Conversion from uV to mV */
-> +		st->channel_config[channel_number].vref_mv /= 1000;
-> +		break;
-> +	case AD7124_INT_REF:
-> +		st->channel_config[channel_number].vref_mv = 2500;
-> +		break;
-> +	default:
-> +		dev_err(&st->sd.spi->dev, "Invalid reference %d\n", refsel);
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int ad7124_of_parse_channel_config(struct iio_dev *indio_dev,
-> +					  struct device_node *np)
-> +{
-> +	struct ad7124_state *st = iio_priv(indio_dev);
-> +	struct device_node *child;
-> +	struct iio_chan_spec *chan;
-> +	unsigned int ain[2], channel = 0, tmp;
-> +	int ret;
-> +
-> +	st->num_channels = of_get_available_child_count(np);
-> +	if (!st->num_channels) {
-> +		dev_err(indio_dev->dev.parent, "no channel children\n");
-> +		return -ENODEV;
-> +	}
-> +
-> +	chan = devm_kcalloc(indio_dev->dev.parent, st->num_channels,
-> +			    sizeof(*chan), GFP_KERNEL);
-> +	if (!chan)
-> +		return -ENOMEM;
-> +
-> +	indio_dev->channels = chan;
-> +	indio_dev->num_channels = st->num_channels;
-> +
-> +	for_each_available_child_of_node(np, child) {
-> +		ret = of_property_read_u32(child, "reg", &channel);
-> +		if (ret)
-> +			goto err;
-> +
-> +		ret = of_property_read_u32_array(child, "diff-channels",
-> +						 ain, 2);
-> +		if (ret)
-> +			goto err;
-> +
-> +		if (ain[0] >= st->chip_info->num_inputs ||
-> +		    ain[1] >= st->chip_info->num_inputs) {
-> +			dev_err(indio_dev->dev.parent,
-> +				"Input pin number out of range.\n");
-> +			ret = -EINVAL;
-> +			goto err;
-> +		}
-> +		st->channel_config[channel].ain = AD7124_CHANNEL_AINP(ain[0]) |
-> +						  AD7124_CHANNEL_AINM(ain[1]);
-> +		st->channel_config[channel].bipolar =
-> +			of_property_read_bool(child, "bipolar");
-> +
-> +		ret = of_property_read_u32(child, "adi,reference-select", &tmp);
-> +		if (ret)
-> +			st->channel_config[channel].refsel = AD7124_INT_REF;
-> +		else
-> +			st->channel_config[channel].refsel = tmp;
-> +
-> +		*chan = ad7124_channel_template;
-> +		chan->address = channel;
-> +		chan->scan_index = channel;
-> +		chan->channel = ain[0];
-> +		chan->channel2 = ain[1];
-> +
-> +		chan++;
-> +	}
-> +
-> +	return 0;
-> +err:
-> +	of_node_put(child);
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad7124_setup(struct ad7124_state *st)
-> +{
-> +	unsigned int val, fclk, power_mode;
-> +	int i, ret;
-> +
-> +	fclk = clk_get_rate(st->mclk);
-> +	if (!fclk)
-> +		return -EINVAL;
-> +
-> +	/* The power mode changes the master clock frequency */
-> +	power_mode = ad7124_find_closest_match(ad7124_master_clk_freq_hz,
-> +					ARRAY_SIZE(ad7124_master_clk_freq_hz),
-> +					fclk);
-> +	if (fclk != ad7124_master_clk_freq_hz[power_mode]) {
-> +		ret = clk_set_rate(st->mclk, fclk);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	/* Set the power mode */
-> +	st->adc_control &= ~AD7124_ADC_CTRL_PWR_MSK;
-> +	st->adc_control |= AD7124_ADC_CTRL_PWR(power_mode);
-> +	ret = ad_sd_write_reg(&st->sd, AD7124_ADC_CONTROL, 2, st->adc_control);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	for (i = 0; i < st->num_channels; i++) {
-> +		val = st->channel_config[i].ain | AD7124_CHANNEL_SETUP(i);
-> +		ret = ad_sd_write_reg(&st->sd, AD7124_CHANNEL(i), 2, val);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		ret = ad7124_init_channel_vref(st, i);
-> +		if (ret < 0)
-> +			return ret;
-> +
-> +		val = AD7124_CONFIG_BIPOLAR(st->channel_config[i].bipolar) |
-> +		      AD7124_CONFIG_REF_SEL(st->channel_config[i].refsel);
-> +		ret = ad_sd_write_reg(&st->sd, AD7124_CONFIG(i), 2, val);
-> +		if (ret < 0)
-> +			return ret;
-> +		/*
-> +		 * 9.38 SPS is the minimum output data rate supported
-> +		 * regardless of the selected power mode. Round it up to 10 and
-> +		 * set all the enabled channels to this default value.
-> +		 */
-> +		ret = ad7124_set_channel_odr(st, i, 10);
-> +		if (ret < 0)
-> +			return ret;
-
-It's really trivial and I'll just clean it up, but clearly this return ret
-doesn't actually do anything useful given we'll return ret anyway ;)
-
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad7124_probe(struct spi_device *spi)
-> +{
-> +	const struct spi_device_id *id;
-> +	struct ad7124_state *st;
-> +	struct iio_dev *indio_dev;
-> +	int i, ret;
-> +
-> +	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	st = iio_priv(indio_dev);
-> +
-> +	id = spi_get_device_id(spi);
-> +	st->chip_info = &ad7124_chip_info_tbl[id->driver_data];
-> +
-> +	ad_sd_init(&st->sd, indio_dev, spi, &ad7124_sigma_delta_info);
-> +
-> +	spi_set_drvdata(spi, indio_dev);
-> +
-> +	indio_dev->dev.parent = &spi->dev;
-> +	indio_dev->name = spi_get_device_id(spi)->name;
-> +	indio_dev->modes = INDIO_DIRECT_MODE;
-> +	indio_dev->info = &ad7124_info;
-> +
-> +	ret = ad7124_of_parse_channel_config(indio_dev, spi->dev.of_node);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(st->vref); i++) {
-> +		if (i == AD7124_INT_REF)
-> +			continue;
-> +
-> +		st->vref[i] = devm_regulator_get_optional(&spi->dev,
-> +						ad7124_ref_names[i]);
-> +		if (PTR_ERR(st->vref[i]) == -ENODEV)
-> +			continue;
-> +		else if (IS_ERR(st->vref[i]))
-> +			return PTR_ERR(st->vref[i]);
-> +
-> +		ret = regulator_enable(st->vref[i]);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	st->mclk = devm_clk_get(&spi->dev, "mclk");
-> +	if (IS_ERR(st->mclk)) {
-> +		ret = PTR_ERR(st->mclk);
-> +		goto error_regulator_disable;
-> +	}
-> +
-> +	ret = clk_prepare_enable(st->mclk);
-> +	if (ret < 0)
-> +		goto error_regulator_disable;
-> +
-> +	ret = ad7124_soft_reset(st);
-> +	if (ret < 0)
-> +		goto error_clk_disable_unprepare;
-> +
-> +	ret = ad7124_setup(st);
-> +	if (ret < 0)
-> +		goto error_clk_disable_unprepare;
-> +
-> +	ret = ad_sd_setup_buffer_and_trigger(indio_dev);
-> +	if (ret < 0)
-> +		goto error_clk_disable_unprepare;
-> +
-> +	ret = iio_device_register(indio_dev);
-> +	if (ret < 0) {
-> +		dev_err(&spi->dev, "Failed to register iio device\n");
-> +		goto error_remove_trigger;
-> +	}
-> +
-> +	return 0;
-> +
-> +error_remove_trigger:
-> +	ad_sd_cleanup_buffer_and_trigger(indio_dev);
-> +error_clk_disable_unprepare:
-> +	clk_disable_unprepare(st->mclk);
-> +error_regulator_disable:
-> +	for (i = ARRAY_SIZE(st->vref) - 1; i >= 0; i--) {
-> +		if (!IS_ERR_OR_NULL(st->vref[i]))
-> +			regulator_disable(st->vref[i]);
-> +	}
-> +
-> +	return ret;
-> +}
-> +
-> +static int ad7124_remove(struct spi_device *spi)
-> +{
-> +	struct iio_dev *indio_dev = spi_get_drvdata(spi);
-> +	struct ad7124_state *st = iio_priv(indio_dev);
-> +	int i;
-> +
-> +	iio_device_unregister(indio_dev);
-> +	ad_sd_cleanup_buffer_and_trigger(indio_dev);
-> +	clk_disable_unprepare(st->mclk);
-> +
-> +	for (i = ARRAY_SIZE(st->vref) - 1; i >= 0; i--) {
-> +		if (!IS_ERR_OR_NULL(st->vref[i]))
-> +			regulator_disable(st->vref[i]);
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static const struct spi_device_id ad7124_id_table[] = {
-> +	{ "ad7124-4", ID_AD7124_4 },
-> +	{ "ad7124-8", ID_AD7124_8 },
-> +	{}
-> +};
-> +MODULE_DEVICE_TABLE(spi, ad7124_id_table);
-> +
-> +static const struct of_device_id ad7124_of_match[] = {
-> +	{ .compatible = "adi,ad7124-4" },
-> +	{ .compatible = "adi,ad7124-8" },
-> +	{ },
-> +};
-> +MODULE_DEVICE_TABLE(of, ad7124_of_match);
-> +
-> +static struct spi_driver ad71124_driver = {
-> +	.driver = {
-> +		.name = "ad7124",
-> +		.of_match_table = ad7124_of_match,
-> +	},
-> +	.probe = ad7124_probe,
-> +	.remove	= ad7124_remove,
-> +	.id_table = ad7124_id_table,
-> +};
-> +module_spi_driver(ad71124_driver);
-> +
-> +MODULE_AUTHOR("Stefan Popa <stefan.popa@analog.com>");
-> +MODULE_DESCRIPTION("Analog Devices AD7124 SPI driver");
-> +MODULE_LICENSE("GPL");
+diff --git a/drivers/gpu/drm/msm/Makefile b/drivers/gpu/drm/msm/Makefile
+index 19ab521d4c3a..7d02ef3655b5 100644
+--- a/drivers/gpu/drm/msm/Makefile
++++ b/drivers/gpu/drm/msm/Makefile
+@@ -72,7 +72,6 @@ msm-y := \
+ 	disp/dpu1/dpu_kms.o \
+ 	disp/dpu1/dpu_mdss.o \
+ 	disp/dpu1/dpu_plane.o \
+-	disp/dpu1/dpu_power_handle.o \
+ 	disp/dpu1/dpu_rm.o \
+ 	disp/dpu1/dpu_vbif.o \
+ 	msm_atomic.o \
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+index af666d917a0b..9f7da56bb453 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.c
+@@ -1060,8 +1060,6 @@ static int dpu_bind(struct device *dev, struct device *master, void *data)
+ 		return ret;
+ 	}
+ 
+-	dpu_power_resource_init(pdev, &dpu_kms->phandle);
+-
+ 	platform_set_drvdata(pdev, dpu_kms);
+ 
+ 	msm_kms_init(&dpu_kms->base, &kms_funcs);
+@@ -1081,7 +1079,6 @@ static void dpu_unbind(struct device *dev, struct device *master, void *data)
+ 	struct dpu_kms *dpu_kms = platform_get_drvdata(pdev);
+ 	struct dss_module_power *mp = &dpu_kms->mp;
+ 
+-	dpu_power_resource_deinit(pdev, &dpu_kms->phandle);
+ 	msm_dss_put_clk(mp->clk_config, mp->num_clk);
+ 	devm_kfree(&pdev->dev, mp->clk_config);
+ 	mp->num_clk = 0;
+@@ -1120,10 +1117,6 @@ static int __maybe_unused dpu_runtime_suspend(struct device *dev)
+ 		return rc;
+ 	}
+ 
+-	rc = dpu_power_resource_enable(&dpu_kms->phandle, false);
+-	if (rc)
+-		DPU_ERROR("resource disable failed: %d\n", rc);
+-
+ 	rc = msm_dss_enable_clk(mp->clk_config, mp->num_clk, false);
+ 	if (rc)
+ 		DPU_ERROR("clock disable failed rc:%d\n", rc);
+@@ -1157,10 +1150,6 @@ static int __maybe_unused dpu_runtime_resume(struct device *dev)
+ 	drm_for_each_crtc(crtc, ddev)
+ 		dpu_crtc_runtime_resume(crtc);
+ 
+-	rc = dpu_power_resource_enable(&dpu_kms->phandle, true);
+-	if (rc)
+-		DPU_ERROR("resource enable failed: %d\n", rc);
+-
+ 	return rc;
+ }
+ 
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+index 4e5acacb3065..59e18e2d3c59 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_kms.h
+@@ -31,7 +31,6 @@
+ #include "dpu_hw_top.h"
+ #include "dpu_io_util.h"
+ #include "dpu_rm.h"
+-#include "dpu_power_handle.h"
+ #include "dpu_irq.h"
+ #include "dpu_core_perf.h"
+ 
+@@ -114,8 +113,6 @@ struct dpu_kms {
+ 	int core_rev;
+ 	struct dpu_mdss_cfg *catalog;
+ 
+-	struct dpu_power_handle phandle;
+-
+ 	/* directory entry for debugfs */
+ 	struct dentry *debugfs_root;
+ 	struct dentry *debugfs_danger;
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_power_handle.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_power_handle.c
+deleted file mode 100644
+index 8e64f0a52147..000000000000
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_power_handle.c
++++ /dev/null
+@@ -1,136 +0,0 @@
+-/* Copyright (c) 2014-2018, The Linux Foundation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-#define pr_fmt(fmt)	"[drm:%s:%d]: " fmt, __func__, __LINE__
+-
+-#include <linux/kernel.h>
+-#include <linux/of.h>
+-#include <linux/string.h>
+-#include <linux/of_address.h>
+-#include <linux/slab.h>
+-#include <linux/mutex.h>
+-#include <linux/of_platform.h>
+-
+-#include "dpu_power_handle.h"
+-#include "dpu_trace.h"
+-
+-static void dpu_power_event_trigger_locked(struct dpu_power_handle *phandle,
+-		u32 event_type)
+-{
+-	struct dpu_power_event *event;
+-
+-	list_for_each_entry(event, &phandle->event_list, list) {
+-		if (event->event_type & event_type)
+-			event->cb_fnc(event_type, event->usr);
+-	}
+-}
+-
+-void dpu_power_resource_init(struct platform_device *pdev,
+-	struct dpu_power_handle *phandle)
+-{
+-	phandle->dev = &pdev->dev;
+-
+-	INIT_LIST_HEAD(&phandle->event_list);
+-
+-	mutex_init(&phandle->phandle_lock);
+-}
+-
+-void dpu_power_resource_deinit(struct platform_device *pdev,
+-	struct dpu_power_handle *phandle)
+-{
+-	struct dpu_power_event *curr_event, *next_event;
+-
+-	if (!phandle || !pdev) {
+-		pr_err("invalid input param\n");
+-		return;
+-	}
+-
+-	mutex_lock(&phandle->phandle_lock);
+-	list_for_each_entry_safe(curr_event, next_event,
+-			&phandle->event_list, list) {
+-		pr_err("event:%d, client:%s still registered\n",
+-				curr_event->event_type,
+-				curr_event->client_name);
+-		curr_event->active = false;
+-		list_del(&curr_event->list);
+-	}
+-	mutex_unlock(&phandle->phandle_lock);
+-}
+-
+-int dpu_power_resource_enable(struct dpu_power_handle *phandle, bool enable)
+-{
+-	u32 event_type;
+-
+-	if (!phandle) {
+-		pr_err("invalid input argument\n");
+-		return -EINVAL;
+-	}
+-
+-	mutex_lock(&phandle->phandle_lock);
+-
+-	event_type = enable ? DPU_POWER_EVENT_ENABLE : DPU_POWER_EVENT_DISABLE;
+-
+-	dpu_power_event_trigger_locked(phandle,	event_type);
+-
+-	mutex_unlock(&phandle->phandle_lock);
+-	return 0;
+-}
+-
+-struct dpu_power_event *dpu_power_handle_register_event(
+-		struct dpu_power_handle *phandle,
+-		u32 event_type, void (*cb_fnc)(u32 event_type, void *usr),
+-		void *usr, char *client_name)
+-{
+-	struct dpu_power_event *event;
+-
+-	if (!phandle) {
+-		pr_err("invalid power handle\n");
+-		return ERR_PTR(-EINVAL);
+-	} else if (!cb_fnc || !event_type) {
+-		pr_err("no callback fnc or event type\n");
+-		return ERR_PTR(-EINVAL);
+-	}
+-
+-	event = kzalloc(sizeof(struct dpu_power_event), GFP_KERNEL);
+-	if (!event)
+-		return ERR_PTR(-ENOMEM);
+-
+-	event->event_type = event_type;
+-	event->cb_fnc = cb_fnc;
+-	event->usr = usr;
+-	strlcpy(event->client_name, client_name, MAX_CLIENT_NAME_LEN);
+-	event->active = true;
+-
+-	mutex_lock(&phandle->phandle_lock);
+-	list_add(&event->list, &phandle->event_list);
+-	mutex_unlock(&phandle->phandle_lock);
+-
+-	return event;
+-}
+-
+-void dpu_power_handle_unregister_event(
+-		struct dpu_power_handle *phandle,
+-		struct dpu_power_event *event)
+-{
+-	if (!phandle || !event) {
+-		pr_err("invalid phandle or event\n");
+-	} else if (!event->active) {
+-		pr_err("power handle deinit already done\n");
+-		kfree(event);
+-	} else {
+-		mutex_lock(&phandle->phandle_lock);
+-		list_del_init(&event->list);
+-		mutex_unlock(&phandle->phandle_lock);
+-		kfree(event);
+-	}
+-}
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_power_handle.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_power_handle.h
+deleted file mode 100644
+index 7536624c8b20..000000000000
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_power_handle.h
++++ /dev/null
+@@ -1,113 +0,0 @@
+-/* Copyright (c) 2016-2018, The Linux Foundation. All rights reserved.
+- *
+- * This program is free software; you can redistribute it and/or modify
+- * it under the terms of the GNU General Public License version 2 and
+- * only version 2 as published by the Free Software Foundation.
+- *
+- * This program is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+- * GNU General Public License for more details.
+- *
+- */
+-
+-#ifndef _DPU_POWER_HANDLE_H_
+-#define _DPU_POWER_HANDLE_H_
+-
+-#define MAX_CLIENT_NAME_LEN 128
+-
+-#define DPU_POWER_HANDLE_ENABLE_BUS_AB_QUOTA	0
+-#define DPU_POWER_HANDLE_DISABLE_BUS_AB_QUOTA	0
+-#define DPU_POWER_HANDLE_ENABLE_BUS_IB_QUOTA	1600000000
+-#define DPU_POWER_HANDLE_DISABLE_BUS_IB_QUOTA	0
+-
+-#include "dpu_io_util.h"
+-
+-/* events will be triggered on power handler enable/disable */
+-#define DPU_POWER_EVENT_DISABLE	BIT(0)
+-#define DPU_POWER_EVENT_ENABLE	BIT(1)
+-
+-/*
+- * struct dpu_power_event - local event registration structure
+- * @client_name: name of the client registering
+- * @cb_fnc: pointer to desired callback function
+- * @usr: user pointer to pass to callback event trigger
+- * @event: refer to DPU_POWER_HANDLE_EVENT_*
+- * @list: list to attach event master list
+- * @active: indicates the state of dpu power handle
+- */
+-struct dpu_power_event {
+-	char client_name[MAX_CLIENT_NAME_LEN];
+-	void (*cb_fnc)(u32 event_type, void *usr);
+-	void *usr;
+-	u32 event_type;
+-	struct list_head list;
+-	bool active;
+-};
+-
+-/**
+- * struct dpu_power_handle: power handle main struct
+- * @phandle_lock: lock to synchronize the enable/disable
+- * @dev: pointer to device structure
+- * @usecase_ndx: current usecase index
+- * @event_list: current power handle event list
+- */
+-struct dpu_power_handle {
+-	struct mutex phandle_lock;
+-	struct device *dev;
+-	u32 current_usecase_ndx;
+-	struct list_head event_list;
+-};
+-
+-/**
+- * dpu_power_resource_init() - initializes the dpu power handle
+- * @pdev:   platform device to search the power resources
+- * @pdata:  power handle to store the power resources
+- */
+-void dpu_power_resource_init(struct platform_device *pdev,
+-	struct dpu_power_handle *pdata);
+-
+-/**
+- * dpu_power_resource_deinit() - release the dpu power handle
+- * @pdev:   platform device for power resources
+- * @pdata:  power handle containing the resources
+- *
+- * Return: error code.
+- */
+-void dpu_power_resource_deinit(struct platform_device *pdev,
+-	struct dpu_power_handle *pdata);
+-
+-/**
+- * dpu_power_resource_enable() - enable/disable the power resources
+- * @pdata:  power handle containing the resources
+- * @enable: boolean request for enable/disable
+- *
+- * Return: error code.
+- */
+-int dpu_power_resource_enable(struct dpu_power_handle *pdata, bool enable);
+-
+-/**
+- * dpu_power_handle_register_event - register a callback function for an event.
+- *	Clients can register for multiple events with a single register.
+- *	Any block with access to phandle can register for the event
+- *	notification.
+- * @phandle:	power handle containing the resources
+- * @event_type:	event type to register; refer DPU_POWER_HANDLE_EVENT_*
+- * @cb_fnc:	pointer to desired callback function
+- * @usr:	user pointer to pass to callback on event trigger
+- *
+- * Return:	event pointer if success, or error code otherwise
+- */
+-struct dpu_power_event *dpu_power_handle_register_event(
+-		struct dpu_power_handle *phandle,
+-		u32 event_type, void (*cb_fnc)(u32 event_type, void *usr),
+-		void *usr, char *client_name);
+-/**
+- * dpu_power_handle_unregister_event - unregister callback for event(s)
+- * @phandle:	power handle containing the resources
+- * @event:	event pointer returned after power handle register
+- */
+-void dpu_power_handle_unregister_event(struct dpu_power_handle *phandle,
+-		struct dpu_power_event *event);
+-
+-#endif /* _DPU_POWER_HANDLE_H_ */
+-- 
+Sean Paul, Software Engineer, Google / Chromium OS
 
