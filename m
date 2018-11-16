@@ -2,432 +2,352 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.2 required=3.0 tests=DATE_IN_PAST_12_24,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A30D7C04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:49:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EED1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:52:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DD322086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:49:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DD322086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 9103C2086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:52:18 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="fkmkF+eq"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9103C2086B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390094AbeKQDC0 (ORCPT
+        id S2390073AbeKQDFZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 22:02:26 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:55764 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728175AbeKQDC0 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 22:02:26 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id 9CDD120791; Fri, 16 Nov 2018 17:49:15 +0100 (CET)
-Received: from localhost (242.171.71.37.rev.sfr.net [37.71.171.242])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 6745E207A8;
-        Fri, 16 Nov 2018 17:49:05 +0100 (CET)
-From:   Gregory CLEMENT <gregory.clement@bootlin.com>
-To:     Stephen Boyd <sboyd@kernel.org>
-Cc:     Mike Turquette <mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@codeaurora.org>, linux-clk@vger.kernel.org,
-        linux-kernel@vger.kernel.org,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        linux-arm-kernel@lists.infradead.org,
-        Jason Cooper <jason@lakedaemon.net>,
-        Andrew Lunn <andrew@lunn.ch>,
-        Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Antoine Tenart <antoine.tenart@bootlin.com>,
-        =?utf-8?Q?Miqu=C3=A8l?= Raynal <miquel.raynal@bootlin.com>,
-        Maxime Chevallier <maxime.chevallier@bootlin.com>
-Subject: Re: [PATCH 3/6] clk: mvebu: add CPU clock driver for Armada 7K/8K
-Date:   Fri, 16 Nov 2018 00:22:59 +0100
-References: <20180922181709.13007-1-gregory.clement@bootlin.com>
-        <20180922181709.13007-4-gregory.clement@bootlin.com>
-        <153980089252.5275.819540708953283855@swboyd.mtv.corp.google.com>
-Message-ID: <87y39tufwe.fsf@bootlin.com>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/25.2 (gnu/linux)
-MIME-Version: 1.0
-Content-Type: text/plain
+        Fri, 16 Nov 2018 22:05:25 -0500
+Received: from mail-pl1-f195.google.com ([209.85.214.195]:42032 "EHLO
+        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728684AbeKQDFZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 22:05:25 -0500
+Received: by mail-pl1-f195.google.com with SMTP id x21-v6so8694210pln.9
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 08:52:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google;
+        h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
+         :content-transfer-encoding;
+        bh=43V/UmEAQKp4Tbq2gp9MdT4gnH2Hf5/imzDJ84gH0wM=;
+        b=fkmkF+equsQbuuA6aHeNiWXWnauIgSKmVRcQtnjaldalHDGHZ9Esp6Me92aIcQcxvp
+         7NKvK3wQtQE3LkIMwT+lKE3OLdhPejj4Brh4+1DvMwSOYED5uoxzRZLRguj1AhuMqmfA
+         dGPK4LRIFSCVPJ8zCHM0sNmx+KIuUJ+6g1LxkGZSdM/gmLRIxvB48RTCEzIQ0OuuK8Ou
+         NTPq8VOwqMzfxNg8MVu51I8ALhIlPq4dkm6rI0qfXNR3DDM/ywukmin+LGYu5zNgwyWW
+         4b6I+fezshPJ1vxcJbF40Qfus1nLGPN4EUwDmisApqzAI1o2c/pKk/tDHkG3ENEWgjhq
+         n1uQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
+         :mime-version:content-transfer-encoding;
+        bh=43V/UmEAQKp4Tbq2gp9MdT4gnH2Hf5/imzDJ84gH0wM=;
+        b=MCIfHYTOT4LhTqAmkQwjl49yTbq0LZnquPW6lDIFs4wROmdtJ4YUB+QTyaqbYf1Upx
+         omljIND78L5czDieTTAmxEU0MJqEdS8jazMI3jsOqZpX/6YHZfC604x5ehDZwVMWUzXG
+         EOodltOaJRH22qEVJ/u/5503EBqUk0ovP7+CjhignZYlFogYxSXjL97w6cQAcqlCk5Qh
+         S+HKUz5vbCIva6/hVn7UxBsqo1TUlKxG0Goc1cQKsWHrjPD7xx4Z6ya58OsYxqi/1AB2
+         3sddrwnzB10EvO5Rj1BWoiCY41jLyPhmrg3d9bLmDmc+qw2z3CMTSIRn6ghJjjbHRd8U
+         It+g==
+X-Gm-Message-State: AGRZ1gIEdePvQ141BCfEOex4gjkt56NFkGNwYCBz9OU2RdDlTmuWwof8
+        tsI/ikdSE+FJT0b7QcAd0oVMCw==
+X-Google-Smtp-Source: AJdET5eJ2dpAa9xPsPIqew8crVFjrXS3+Bp+QvwfWw7csCHTRy7oUtbgAi1bMOo8O47YVJt5OuteAA==
+X-Received: by 2002:a17:902:1122:: with SMTP id d31-v6mr11735125pla.259.1542387135536;
+        Fri, 16 Nov 2018 08:52:15 -0800 (PST)
+Received: from localhost ([12.206.222.5])
+        by smtp.gmail.com with ESMTPSA id h8sm13886075pgv.27.2018.11.16.08.52.14
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Nov 2018 08:52:14 -0800 (PST)
+Date:   Fri, 16 Nov 2018 08:52:14 -0800 (PST)
+X-Google-Original-Date: Fri, 16 Nov 2018 06:59:36 PST (-0800)
+Subject:     Re: [PATCH 2/2] arch: switch the default on ARCH_HAS_SG_CHAIN
+In-Reply-To: <20181109090008.24150-3-hch@lst.de>
+CC:     iommu@lists.linux-foundation.org, linux-arch@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+From:   Palmer Dabbelt <palmer@sifive.com>
+To:     Christoph Hellwig <hch@lst.de>
+Message-ID: <mhng-9c1955e1-d7cf-4ee4-8bf8-6bef720c9b98@palmer-si-x1c4>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Stephen,
- 
- On mer., oct. 17 2018, Stephen Boyd <sboyd@kernel.org> wrote:
-
-> Quoting Gregory CLEMENT (2018-09-22 11:17:06)
->> diff --git a/drivers/clk/mvebu/ap-cpu-clk.c b/drivers/clk/mvebu/ap-cpu-clk.c
->> new file mode 100644
->> index 000000000000..1b498cfe9191
->> --- /dev/null
->> +++ b/drivers/clk/mvebu/ap-cpu-clk.c
->> @@ -0,0 +1,265 @@
->> +// SPDX-License-Identifier: GPL-2.0+
->> +/*
->> + * Marvell Armada AP CPU Clock Controller
->> + *
->> + * Copyright (C) 2018 Marvell
->> + *
->> + * Omri Itach <omrii@marvell.com>
->> + * Gregory Clement <gregory.clement@bootlin.com>
->> + */
->> +
->> +#define pr_fmt(fmt) "ap-cpu-clk: " fmt
->> +
->> +#include "armada_ap_cp_helper.h"
+On Fri, 09 Nov 2018 01:00:08 PST (-0800), Christoph Hellwig wrote:
+> These days architectures are mostly out of the business of dealing with
+> struct scatterlist at all, unless they have architecture specific iommu
+> drivers.  Replace the ARCH_HAS_SG_CHAIN symbol with a ARCH_NO_SG_CHAIN
+> one only enabled for architectures with horrible legacy iommu drivers
+> like alpha and parisc, and conditionally for arm which wants to keep it
+> disable for legacy platforms.
 >
-> Does this include need to come first? Preferably local includes come
-> after any <linux> ones.
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+>  .../features/io/sg-chain/arch-support.txt     | 33 -------------------
+>  arch/alpha/Kconfig                            |  1 +
+>  arch/arc/Kconfig                              |  1 -
+>  arch/arm/Kconfig                              |  2 +-
+>  arch/arm64/Kconfig                            |  1 -
+>  arch/ia64/Kconfig                             |  1 -
+>  arch/parisc/Kconfig                           |  1 +
+>  arch/powerpc/Kconfig                          |  1 -
+>  arch/s390/Kconfig                             |  1 -
+>  arch/sparc/Kconfig                            |  1 -
+>  arch/x86/Kconfig                              |  1 -
+>  arch/xtensa/Kconfig                           |  1 -
+>  include/linux/scatterlist.h                   |  6 ++--
+>  lib/Kconfig                                   |  2 +-
+>  lib/scatterlist.c                             |  2 +-
+>  15 files changed, 8 insertions(+), 47 deletions(-)
+>  delete mode 100644 Documentation/features/io/sg-chain/arch-support.txt
 
-OK
+As far as I can tell, it looks like m68k, mips, and powerpc mention an IOMMU in 
+their ports, don't set ARCH_HAS_SG_CHAIN, and with this patch set won't set 
+ARCH_NO_SG_CHAIN.  The issue is that I'm not sure how to determine what 
+constitutes a horrible legacy IOMMU, at least with respect to not being able to 
+use scatterlist chaining.
 
+I poked through the 68k stuff (sun3 and sun3x) and the only thing I see that's 
+odd is that DVMA_PAGE_SHIFT is 13.  That matches PAGE_SHIFT for the subarch, 
+though, so I don't think it's an issue.  It looks like the mention in MIPS is 
+trivial, so that should be fine.  There's a lot in the PC port so I just 
+glanced at it.  I assume it's OK, but I did see an explicit mention of SG in 
+their generic IOMMU.  There's a lot of flavors here so I'm not sure how well 
+they all work.
+
+I don't really think that's enough for my reviewed-by tag, so feel free to give 
+me some pointers if you're looking for one -- I'd be happy to lean about 
+IOMMUs (particularly broken ones, as that might help prevent us from designing 
+a broken one), I'm just not sure what I'm looking for.
+
+I'm going to assume you're going to merge this and I'll drop the RISC-V patch 
+that turns on ARCH_HAS_SG_CHAIN.
+
+Thanks!
+
+> diff --git a/Documentation/features/io/sg-chain/arch-support.txt b/Documentation/features/io/sg-chain/arch-support.txt
+> deleted file mode 100644
+> index 6554f0372c3f..000000000000
+> --- a/Documentation/features/io/sg-chain/arch-support.txt
+> +++ /dev/null
+> @@ -1,33 +0,0 @@
+> -#
+> -# Feature name:          sg-chain
+> -#         Kconfig:       ARCH_HAS_SG_CHAIN
+> -#         description:   arch supports chained scatter-gather lists
+> -#
+> -    -----------------------
+> -    |         arch |status|
+> -    -----------------------
+> -    |       alpha: | TODO |
+> -    |         arc: |  ok  |
+> -    |         arm: |  ok  |
+> -    |       arm64: |  ok  |
+> -    |         c6x: | TODO |
+> -    |       h8300: | TODO |
+> -    |     hexagon: | TODO |
+> -    |        ia64: |  ok  |
+> -    |        m68k: | TODO |
+> -    |  microblaze: | TODO |
+> -    |        mips: | TODO |
+> -    |       nds32: | TODO |
+> -    |       nios2: | TODO |
+> -    |    openrisc: | TODO |
+> -    |      parisc: | TODO |
+> -    |     powerpc: |  ok  |
+> -    |       riscv: | TODO |
+> -    |        s390: |  ok  |
+> -    |          sh: | TODO |
+> -    |       sparc: |  ok  |
+> -    |          um: | TODO |
+> -    |   unicore32: | TODO |
+> -    |         x86: |  ok  |
+> -    |      xtensa: | TODO |
+> -    -----------------------
+> diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
+> index 5b4f88363453..a7e748a46c18 100644
+> --- a/arch/alpha/Kconfig
+> +++ b/arch/alpha/Kconfig
+> @@ -5,6 +5,7 @@ config ALPHA
+>  	select ARCH_MIGHT_HAVE_PC_PARPORT
+>  	select ARCH_MIGHT_HAVE_PC_SERIO
+>  	select ARCH_NO_PREEMPT
+> +	select ARCH_NO_SG_CHAIN
+>  	select ARCH_USE_CMPXCHG_LOCKREF
+>  	select HAVE_AOUT
+>  	select HAVE_IDE
+> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
+> index c9e2a1323536..fd48d698da29 100644
+> --- a/arch/arc/Kconfig
+> +++ b/arch/arc/Kconfig
+> @@ -13,7 +13,6 @@ config ARC
+>  	select ARCH_HAS_PTE_SPECIAL
+>  	select ARCH_HAS_SYNC_DMA_FOR_CPU
+>  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+> -	select ARCH_HAS_SG_CHAIN
+>  	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
+>  	select BUILDTIME_EXTABLE_SORT
+>  	select CLONE_BACKWARDS
+> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
+> index 91be74d8df65..199eb62230b0 100644
+> --- a/arch/arm/Kconfig
+> +++ b/arch/arm/Kconfig
+> @@ -19,6 +19,7 @@ config ARM
+>  	select ARCH_HAVE_CUSTOM_GPIO_H
+>  	select ARCH_HAS_GCOV_PROFILE_ALL
+>  	select ARCH_MIGHT_HAVE_PC_PARPORT
+> +	select ARCH_NO_SG_CHAIN if !ARM_HAS_SG_CHAIN
+>  	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
+>  	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT if CPU_V7
+>  	select ARCH_SUPPORTS_ATOMIC_RMW
+> @@ -118,7 +119,6 @@ config ARM
+>  	  <http://www.arm.linux.org.uk/>.
 >
->> +#include <linux/clk-provider.h>
->> +#include <linux/clk.h>
->> +#include <linux/init.h>
+>  config ARM_HAS_SG_CHAIN
+> -	select ARCH_HAS_SG_CHAIN
+>  	bool
 >
-> Is this used?
-
-During development but no more now, I remove it.
-
+>  config ARM_DMA_USE_IOMMU
+> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
+> index 787d7850e064..4c851b3a7b7c 100644
+> --- a/arch/arm64/Kconfig
+> +++ b/arch/arm64/Kconfig
+> @@ -23,7 +23,6 @@ config ARM64
+>  	select ARCH_HAS_MEMBARRIER_SYNC_CORE
+>  	select ARCH_HAS_PTE_SPECIAL
+>  	select ARCH_HAS_SET_MEMORY
+> -	select ARCH_HAS_SG_CHAIN
+>  	select ARCH_HAS_STRICT_KERNEL_RWX
+>  	select ARCH_HAS_STRICT_MODULE_RWX
+>  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+> diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
+> index 36773def6920..d6f203658994 100644
+> --- a/arch/ia64/Kconfig
+> +++ b/arch/ia64/Kconfig
+> @@ -29,7 +29,6 @@ config IA64
+>  	select HAVE_MEMBLOCK_NODE_MAP
+>  	select HAVE_VIRT_CPU_ACCOUNTING
+>  	select ARCH_HAS_DMA_MARK_CLEAN
+> -	select ARCH_HAS_SG_CHAIN
+>  	select VIRT_TO_BUS
+>  	select ARCH_DISCARD_MEMBLOCK
+>  	select GENERIC_IRQ_PROBE
+> diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
+> index 92a339ee28b3..428ee50fc3db 100644
+> --- a/arch/parisc/Kconfig
+> +++ b/arch/parisc/Kconfig
+> @@ -11,6 +11,7 @@ config PARISC
+>  	select ARCH_HAS_ELF_RANDOMIZE
+>  	select ARCH_HAS_STRICT_KERNEL_RWX
+>  	select ARCH_HAS_UBSAN_SANITIZE_ALL
+> +	select ARCH_NO_SG_CHAIN
+>  	select ARCH_SUPPORTS_MEMORY_FAILURE
+>  	select RTC_CLASS
+>  	select RTC_DRV_GENERIC
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 8be31261aec8..4bc8edd83cee 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -138,7 +138,6 @@ config PPC
+>  	select ARCH_HAS_PTE_SPECIAL
+>  	select ARCH_HAS_MEMBARRIER_CALLBACKS
+>  	select ARCH_HAS_SCALED_CPUTIME		if VIRT_CPU_ACCOUNTING_NATIVE && PPC64
+> -	select ARCH_HAS_SG_CHAIN
+>  	select ARCH_HAS_STRICT_KERNEL_RWX	if ((PPC_BOOK3S_64 || PPC32) && !RELOCATABLE && !HIBERNATION)
+>  	select ARCH_HAS_TICK_BROADCAST		if GENERIC_CLOCKEVENTS_BROADCAST
+>  	select ARCH_HAS_UACCESS_FLUSHCACHE	if PPC64
+> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
+> index 5173366af8f3..5624e8607054 100644
+> --- a/arch/s390/Kconfig
+> +++ b/arch/s390/Kconfig
+> @@ -73,7 +73,6 @@ config S390
+>  	select ARCH_HAS_KCOV
+>  	select ARCH_HAS_PTE_SPECIAL
+>  	select ARCH_HAS_SET_MEMORY
+> -	select ARCH_HAS_SG_CHAIN
+>  	select ARCH_HAS_STRICT_KERNEL_RWX
+>  	select ARCH_HAS_STRICT_MODULE_RWX
+>  	select ARCH_HAS_UBSAN_SANITIZE_ALL
+> diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
+> index 490b2c95c212..8853b6ceae17 100644
+> --- a/arch/sparc/Kconfig
+> +++ b/arch/sparc/Kconfig
+> @@ -40,7 +40,6 @@ config SPARC
+>  	select MODULES_USE_ELF_RELA
+>  	select ODD_RT_SIGACTION
+>  	select OLD_SIGSUSPEND
+> -	select ARCH_HAS_SG_CHAIN
+>  	select CPU_NO_EFFICIENT_FFS
+>  	select LOCKDEP_SMALL if LOCKDEP
+>  	select NEED_DMA_MAP_STATE
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index ba7e3464ee92..6faab6f9b57e 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -66,7 +66,6 @@ config X86
+>  	select ARCH_HAS_UACCESS_FLUSHCACHE	if X86_64
+>  	select ARCH_HAS_UACCESS_MCSAFE		if X86_64 && X86_MCE
+>  	select ARCH_HAS_SET_MEMORY
+> -	select ARCH_HAS_SG_CHAIN
+>  	select ARCH_HAS_STRICT_KERNEL_RWX
+>  	select ARCH_HAS_STRICT_MODULE_RWX
+>  	select ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
+> diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
+> index d29b7365da8d..e3387919eb22 100644
+> --- a/arch/xtensa/Kconfig
+> +++ b/arch/xtensa/Kconfig
+> @@ -1,7 +1,6 @@
+>  # SPDX-License-Identifier: GPL-2.0
+>  config XTENSA
+>  	def_bool y
+> -	select ARCH_HAS_SG_CHAIN
+>  	select ARCH_HAS_SYNC_DMA_FOR_CPU
+>  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
+>  	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
+> diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
+> index 093aa57120b0..b96f0d0b5b8f 100644
+> --- a/include/linux/scatterlist.h
+> +++ b/include/linux/scatterlist.h
+> @@ -324,10 +324,10 @@ size_t sg_zero_buffer(struct scatterlist *sgl, unsigned int nents,
+>   * Like SG_CHUNK_SIZE, but for archs that have sg chaining. This limit
+>   * is totally arbitrary, a setting of 2048 will get you at least 8mb ios.
+>   */
+> -#ifdef CONFIG_ARCH_HAS_SG_CHAIN
+> -#define SG_MAX_SEGMENTS	2048
+> -#else
+> +#ifdef CONFIG_ARCH_NO_SG_CHAIN
+>  #define SG_MAX_SEGMENTS	SG_CHUNK_SIZE
+> +#else
+> +#define SG_MAX_SEGMENTS	2048
+>  #endif
 >
->> +#include <linux/mfd/syscon.h>
->> +#include <linux/of.h>
->> +#include <linux/of_address.h>
->> +#include <linux/platform_device.h>
->> +#include <linux/regmap.h>
->> +
->> +#define AP806_CPU_CLUSTER0             0
->> +#define AP806_CPU_CLUSTER1             1
->> +#define AP806_CPUS_PER_CLUSTER         2
->> +#define APN806_CPU1_MASK               0x1
->> +
->> +#define APN806_CLUSTER_NUM_OFFSET      8
->> +#define APN806_CLUSTER_NUM_MASK                (1 << APN806_CLUSTER_NUM_OFFSET)
->> +
->> +#define APN806_MAX_DIVIDER             32
->> +
->> +/* AP806 CPU DFS register mapping*/
->> +#define AP806_CA72MP2_0_PLL_CR_0_REG_OFFSET            0x278
->> +#define AP806_CA72MP2_0_PLL_CR_1_REG_OFFSET            0x280
->> +#define AP806_CA72MP2_0_PLL_CR_2_REG_OFFSET            0x284
->> +#define AP806_CA72MP2_0_PLL_SR_REG_OFFSET              0xC94
->> +
->> +#define AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET          0x14
->> +#define AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_OFFSET                0
->> +#define AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_MASK \
->> +                       (0x3f << AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_OFFSET)
->> +#define AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_OFFSET     24
->> +#define AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_MASK \
->> +                       (0x1 << AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_OFFSET)
->> +#define AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET     16
->> +#define AP806_CA72MP2_0_PLL_RATIO_STATE                        11
->> +
->> +#define to_clk(hw) container_of(hw, struct ap_cpu_clk, hw)
->> +
->> +/*
->> + * struct ap806_clk: CPU cluster clock controller instance
->> + * @cluster: Cluster clock controller index
->> + * @clk_name: Cluster clock controller name
->> + * @dev : Cluster clock device
->> + * @hw: HW specific structure of Cluster clock controller
->> + * @pll_cr_base: CA72MP2 Register base (Device Sample at Reset register)
->> + */
->> +struct ap_cpu_clk {
->> +       int cluster;
+>  #ifdef CONFIG_SG_POOL
+> diff --git a/lib/Kconfig b/lib/Kconfig
+> index a9965f4af4dd..d5a5e2ebf286 100644
+> --- a/lib/Kconfig
+> +++ b/lib/Kconfig
+> @@ -577,7 +577,7 @@ config SG_POOL
+>  # sg chaining option
+>  #
 >
-> unsigned?
-
-I don't expect to have so many clusters that a signed int would be too
-short :)
-
-Actually I used int to let the compiler choose what ever he wants.
-
-But if you really want I can use a unsigned int
-
+> -config ARCH_HAS_SG_CHAIN
+> +config ARCH_NO_SG_CHAIN
+>  	def_bool n
 >
->> +       const char *clk_name;
->> +       struct device *dev;
->> +       struct clk_hw hw;
->> +       struct regmap *pll_cr_base;
->> +};
->> +
->> +static struct clk **cluster_clks;
->> +static struct clk_onecell_data clk_data;
+>  config ARCH_HAS_PMEM_API
+> diff --git a/lib/scatterlist.c b/lib/scatterlist.c
+> index 7c6096a71704..9ba349e775ef 100644
+> --- a/lib/scatterlist.c
+> +++ b/lib/scatterlist.c
+> @@ -271,7 +271,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
 >
-> Can you give these some better names that are ap_cpu specific? Grepping
-> for clk_data will make lots of hits otherwise because they're so
-> generic.
-
-OK I will try to be more creative ;)
-
->
->> +
->> +static unsigned long ap_cpu_clk_recalc_rate(struct clk_hw *hw,
->> +                                           unsigned long parent_rate)
->> +{
->> +       struct ap_cpu_clk *clk = to_clk(hw);
->> +       unsigned int cpu_clkdiv_reg = AP806_CA72MP2_0_PLL_CR_0_REG_OFFSET +
->> +               (clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
->
-> Nitpick: This is pretty unreadable. Can you just declare the variables
-> up here and then do the assignment later on in the function and avoid
-> splitting across many lines?
-
-OK
-
->
->> +       int cpu_clkdiv_ratio;
->> +
->> +       regmap_read(clk->pll_cr_base, cpu_clkdiv_reg, &cpu_clkdiv_ratio);
->> +       cpu_clkdiv_ratio &= AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_MASK;
->> +       cpu_clkdiv_ratio >>= AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_OFFSET;
->> +
->> +       return parent_rate / cpu_clkdiv_ratio;
->> +}
->> +
->> +static int ap_cpu_clk_set_rate(struct clk_hw *hw, unsigned long rate,
->> +                             unsigned long parent_rate)
->> +{
->> +       struct ap_cpu_clk *clk = to_clk(hw);
->> +       int reg, divider = parent_rate / rate;
->> +       unsigned int cpu_clkdiv_reg, cpu_force_reg, cpu_ratio_reg;
->> +
->> +       cpu_clkdiv_reg = AP806_CA72MP2_0_PLL_CR_0_REG_OFFSET +
->> +               (clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
->> +       cpu_force_reg = AP806_CA72MP2_0_PLL_CR_1_REG_OFFSET +
->> +               (clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
->> +       cpu_ratio_reg = AP806_CA72MP2_0_PLL_CR_2_REG_OFFSET +
->> +               (clk->cluster * AP806_CA72MP2_0_PLL_CR_CLUSTER_OFFSET);
->> +
->> +       /* 1. Set CPU divider */
->> +       regmap_update_bits(clk->pll_cr_base, cpu_clkdiv_reg,
->> +                          AP806_PLL_CR_0_CPU_CLK_DIV_RATIO_MASK, divider);
->> +
->> +       /* 2. Set Reload force */
->> +       regmap_update_bits(clk->pll_cr_base, cpu_force_reg,
->> +                          AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_MASK,
->> +                          AP806_PLL_CR_0_CPU_CLK_RELOAD_FORCE_MASK);
->> +
->> +       /* 3. Set Reload ratio */
->> +       regmap_update_bits(clk->pll_cr_base, cpu_ratio_reg,
->> +                          BIT(AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET),
->> +                          BIT(AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET));
->> +
->> +
->> +       /* 4. Wait for stabilizing CPU Clock */
->> +       do {
->> +               regmap_read(clk->pll_cr_base,
->> +                           AP806_CA72MP2_0_PLL_SR_REG_OFFSET,
->> +                           &reg);
->> +       } while (!(reg & BIT(clk->cluster * AP806_CA72MP2_0_PLL_RATIO_STATE)));
->
-> Use regmap_read_poll_timeout() API here and give some large timeout
-> value so that we don't get stuck waiting here forever?
-
-Indeed regmap_read_poll_timeout() seems a nice improvement
-
->
->> +
->> +       /* 5. Clear Reload ratio */
->
-> I'm not sure we really need these comments. They're just saying what the
-> code is doing, so they don't add much value.
-
-Actually, these 5 steps directly come from the datasheet.
-
->
->> +       regmap_update_bits(clk->pll_cr_base, cpu_ratio_reg,
->> +                          BIT(AP806_PLL_CR_0_CPU_CLK_RELOAD_RATIO_OFFSET), 0);
->> +
->> +       return 0;
->> +}
->> +
->> +
->> +static long ap_cpu_clk_round_rate(struct clk_hw *hw, unsigned long rate,
->> +                                unsigned long *parent_rate)
->> +{
->> +       int divider = *parent_rate / rate;
->> +
->> +       if (divider > APN806_MAX_DIVIDER)
->> +               divider = APN806_MAX_DIVIDER;
->
-> 	divider = min(divider, APN806_MAX_DIVIDER);
-
-OK
->
->> +
->> +       return *parent_rate / divider;
->> +}
->> +
->> +static const struct clk_ops ap_cpu_clk_ops = {
->> +       .recalc_rate    = ap_cpu_clk_recalc_rate,
->> +       .round_rate     = ap_cpu_clk_round_rate,
->> +       .set_rate       = ap_cpu_clk_set_rate,
->> +};
->> +
->> +static int ap_cpu_clock_probe(struct platform_device *pdev)
->> +{
->> +       int ret, nclusters = 0, cluster_index = 0;
->> +       struct device *dev = &pdev->dev;
->> +       struct device_node *dn, *np = dev->of_node;
->> +       struct ap_cpu_clk *ap_cpu_clk;
->> +       struct regmap *regmap;
->> +
->> +       regmap = syscon_node_to_regmap(np->parent);
->
-> Can we just call dev_get_remap() on pdev->dev.parent?
-
-we could do regmap = dev_get_regmap(pdev->dev.parent, NULL); instead of
-this line. But is it really better?
-
->
->> +       if (IS_ERR(regmap)) {
->> +               pr_err("cannot get pll_cr_base regmap\n");
->> +               return PTR_ERR(regmap);
->> +       }
->> +
->> +       /*
->> +        * AP806 has 4 cpus and DFS for AP806 is controlled per
->> +        * cluster (2 CPUs per cluster), cpu0 and cpu1 are fixed to
->> +        * cluster0 while cpu2 and cpu3 are fixed to cluster1 whether
->> +        * they are enabled or not.  Since cpu0 is the boot cpu, then
->> +        * cluster0 must exist.  If cpu2 or cpu3 is enabled, cluster1
->> +        * will exist and the cluster number is 2; otherwise the
->> +        * cluster number is 1.
->> +        */
->> +       nclusters = 1;
->> +       for_each_node_by_type(dn, "cpu") {
->
-> Isn't there some sort of for_each_cpu_node() API that can be used
-> here?
-
-Not when I wrote the code but since v4.20-rc1 we have
-for_each_of_cpu_node(). So I am going to use it now.
-
->
->> +               int cpu, err;
->> +
->> +               err = of_property_read_u32(dn, "reg", &cpu);
->> +               if (WARN_ON(err))
->> +                       return err;
->> +
->> +               /* If cpu2 or cpu3 is enabled */
->> +               if ((cpu & APN806_CLUSTER_NUM_MASK)) {
->> +                       nclusters = 2;
->> +                       break;
->> +               }
->> +       }
->> +       /*
->> +        * DFS for AP806 is controlled per cluster (2 CPUs per cluster),
->> +        * so allocate structs per cluster
->> +        */
->> +       ap_cpu_clk = devm_kcalloc(dev, nclusters, sizeof(*ap_cpu_clk),
->> +                                 GFP_KERNEL);
->> +       if (WARN_ON(!ap_cpu_clk))
->> +               return -ENOMEM;
->> +
->> +       cluster_clks = devm_kcalloc(dev, nclusters, sizeof(*cluster_clks),
->> +                                   GFP_KERNEL);
->> +       if (WARN_ON(!cluster_clks))
->
-> Drop the WARN_ON please. If allocation fails we'll already get a large
-> stack trace and messages.
-
-OK
-
->
->> +               return -ENOMEM;
->> +
->> +       for_each_node_by_type(dn, "cpu") {
->> +               char *clk_name = "cpu-cluster-0";
->> +               struct clk_init_data init;
->> +               const char *parent_name;
->> +               struct clk *clk, *parent;
->> +               int cpu, err;
->> +
->> +               err = of_property_read_u32(dn, "reg", &cpu);
->> +               if (WARN_ON(err))
->> +                       return err;
->> +
->> +               cluster_index = (cpu & APN806_CLUSTER_NUM_MASK);
->
-> Nitpick: Drop useless parenthesis please.
-
-OK
->
->> +               cluster_index >>= APN806_CLUSTER_NUM_OFFSET;
->> +
->> +               /* Initialize once for one cluster */
->> +               if (cluster_clks[cluster_index])
->> +                       continue;
->> +
->> +               parent = of_clk_get(np, cluster_index);
->> +               if (IS_ERR(parent)) {
->> +                       dev_err(dev, "Could not get the clock parent\n");
->> +                       return -EINVAL;
->> +               }
->> +               parent_name =  __clk_get_name(parent);
->> +               clk_name[12] += cluster_index;
->> +               ap_cpu_clk[cluster_index].clk_name =
->> +                       ap_cp_unique_name(dev, np->parent, clk_name);
->> +               ap_cpu_clk[cluster_index].cluster = cluster_index;
->> +               ap_cpu_clk[cluster_index].pll_cr_base = regmap;
->> +               ap_cpu_clk[cluster_index].hw.init = &init;
->> +               ap_cpu_clk[cluster_index].dev = dev;
->> +
->> +               init.name = ap_cpu_clk[cluster_index].clk_name;
->> +               init.ops = &ap_cpu_clk_ops;
->> +               init.num_parents = 1;
->> +               init.parent_names = &parent_name;
->> +               init.flags = CLK_GET_RATE_NOCACHE;
->
-> Can you add a comment why we need NOCACHE here? It isn't clear why this
-> is important.
-
-I think there was the idea that the clock rate could be modified by
-something else that the clk driver, but now I am not sure it is the
-case. I will check it and either add a comment or just remove it.
-
->
->> +
->> +               clk = devm_clk_register(dev, &ap_cpu_clk[cluster_index].hw);
->
-> Please use the clk_hw based registration APIs.
-
-OK
-
->
->> +               if (IS_ERR(clk))
->> +                       return PTR_ERR(clk);
->> +
->> +               cluster_clks[cluster_index] = clk;
->> +       }
->> +
->> +       clk_data.clk_num = cluster_index + 1;
->> +       clk_data.clks = cluster_clks;
->> +
->> +       ret = of_clk_add_provider(np, of_clk_src_onecell_get, &clk_data);
->
-> And the clk_hw based provider APIs.
-
-OK
->
->> +       if (ret)
->> +               dev_err(dev, "failed to register OF clock provider\n");
->> +
->> +       return ret;
->> +}
->> +
-
-Thanks,
-
-Gregory
-
--- 
-Gregory Clement, Bootlin
-Embedded Linux and Kernel engineering
-http://bootlin.com
+>  	if (nents == 0)
+>  		return -EINVAL;
+> -#ifndef CONFIG_ARCH_HAS_SG_CHAIN
+> +#ifdef CONFIG_ARCH_NO_SG_CHAIN
+>  	if (WARN_ON_ONCE(nents > max_ents))
+>  		return -EINVAL;
+>  #endif
