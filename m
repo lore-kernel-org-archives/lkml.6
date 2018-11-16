@@ -2,103 +2,108 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79E5DC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:07:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F249AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:12:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4F65A2087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:07:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4F65A2087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 8F2602087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:12:14 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="Ix8D+Ak5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8F2602087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390086AbeKQBUO (ORCPT
+        id S1728585AbeKQBY6 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 20:20:14 -0500
-Received: from mga05.intel.com ([192.55.52.43]:50044 "EHLO mga05.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728528AbeKQBUO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 20:20:14 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga105.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 07:07:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="250281233"
-Received: from sfhansen-mobl2.ger.corp.intel.com (HELO localhost) ([10.249.254.82])
-  by orsmga004.jf.intel.com with ESMTP; 16 Nov 2018 07:07:15 -0800
-Date:   Fri, 16 Nov 2018 17:07:14 +0200
-From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-To:     Borislav Petkov <bp@alien8.de>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
-        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S. Miller" <davem@davemloft.net>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>,
-        open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 01/23] x86/sgx: Update MAINTAINERS
-Message-ID: <20181116150714.GA4244@linux.intel.com>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-2-jarkko.sakkinen@linux.intel.com>
- <20181116142248.GH20313@zn.tnic>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116142248.GH20313@zn.tnic>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-User-Agent: Mutt/1.10.1 (2018-07-13)
+        Fri, 16 Nov 2018 20:24:58 -0500
+Received: from mail-wm1-f68.google.com ([209.85.128.68]:36957 "EHLO
+        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728079AbeKQBY5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 20:24:57 -0500
+Received: by mail-wm1-f68.google.com with SMTP id p2-v6so21317737wmc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 07:12:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=message-id:subject:from:to:cc:date:in-reply-to:references
+         :user-agent:mime-version:content-transfer-encoding;
+        bh=0OWoHitRNTeGzn98FbVAZGW1OZq5PdXmttk2TdRXjqk=;
+        b=Ix8D+Ak5eKS7LXk9h43a4xJTyv4Q9r3Wd3ZBPel/31mqWBRaEH1W2S/DxBeSSPV3IE
+         VQCFhbTx2QGvP756c+l+CvxfQoTPq5Rc6W0RQCioL40L1zvUUJQl9wDSTYNT72ALlV3R
+         dVe3gJQybZas4YN4HQpAdL9PJrCzanKXCB3NXEkhkegdipTjg9urUsAPKOt7Odcrng4a
+         GReVAGrwsMDs80ZWC2Erj3gfJSIkxHa2UJSKf6HvpYIS1dZY5RuWky+LJzJ/1io4Y+LH
+         Y7z/gZH7SNib9GPBN/f6AmB/uq7P+Bntpa3oZRUAKsUEe0uR/HJD8VQbHzCVnX6eyepz
+         uigA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
+         :references:user-agent:mime-version:content-transfer-encoding;
+        bh=0OWoHitRNTeGzn98FbVAZGW1OZq5PdXmttk2TdRXjqk=;
+        b=ugYeCkaxG6gG6T2xh3ww4ywtRp84qcCvHKggWhB/+qNVVTyvd4+N1zaSfcZuqkuh45
+         FXo/ogmq6BKGZf+BeS0ObL9gWbWYtkouvJO8iZJ98PQfcT+QO3KwqTyXunTONchsG84T
+         QDERbcVb1Lba46qWBiPhr9t/AQUsdVOBcRlXkndI+maNI8pIYcfOIkV/C7JkblKLQeuf
+         GDgTOYuWLBzJFQzRy1CtdAeYC7pLdphCbLiVGtnFcBx+cAaCSLM1romxGlBiI/4ghWFG
+         j9TcjL5tWUywNcfeu9/F7jp6Q6681T/iWDQ1fwx5Wjtxmix6BkVV60Eg0k5W0WpTLlrm
+         aT9Q==
+X-Gm-Message-State: AGRZ1gIqsg5YH+5+xThy/wT3YPIF7EoYGfvOkrsVMPRFu0ciFE+JlOzo
+        WMN1gSPqHWD3mT/JNn3ctpthdg==
+X-Google-Smtp-Source: AJdET5dNDSOKwLbO2s71nh75Uf3DMd/Jq+3IPLW5t2rFw3r/UxH6YgrGlXntlNVORYqNQHFR4nRUvQ==
+X-Received: by 2002:a7b:ca44:: with SMTP id m4mr1429090wml.76.1542381130945;
+        Fri, 16 Nov 2018 07:12:10 -0800 (PST)
+Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.gmail.com with ESMTPSA id 4-v6sm15606860wmd.18.2018.11.16.07.12.09
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Nov 2018 07:12:10 -0800 (PST)
+Message-ID: <4d7628466f0128a34778d5eff164578812272711.camel@baylibre.com>
+Subject: Re: [PATCH v2 2/2] arm64: dts: meson: add libretech aml-s805x-ac
+ board
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Peter Korsgaard <peter@korsgaard.com>
+Cc:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Neil Armstrong <narmstrong@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Date:   Fri, 16 Nov 2018 16:12:08 +0100
+In-Reply-To: <8736s1t94r.fsf@dell.be.48ers.dk>
+References: <20181116093938.26373-1-jbrunet@baylibre.com>
+         <20181116093938.26373-3-jbrunet@baylibre.com>
+         <8736s1t94r.fsf@dell.be.48ers.dk>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.30.2 (3.30.2-2.fc29) 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 03:22:48PM +0100, Borislav Petkov wrote:
-> On Fri, Nov 16, 2018 at 03:01:08AM +0200, Jarkko Sakkinen wrote:
-> > Add the maintainer information for the SGX subsystem.
-> > 
-> > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > ---
-> >  MAINTAINERS | 7 +++++++
-> >  1 file changed, 7 insertions(+)
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index 0abecc528dac..aaf56b544858 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -7676,6 +7676,13 @@ L:	linux-gpio@vger.kernel.org
-> >  S:	Maintained
-> >  F:	drivers/gpio/gpio-intel-mid.c
-> >  
-> > +INTEL SGX
-> > +M:	Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> > +L:	linux-sgx@vger.kernel.org
-> > +Q:	https://patchwork.kernel.org/project/intel-sgx/list/
-> > +F:	drivers/platform/x86/intel_sgx/
+On Fri, 2018-11-16 at 15:00 +0100, Peter Korsgaard wrote:
+> > > > > > "Jerome" == Jerome Brunet <jbrunet@baylibre.com> writes:
 > 
-> Looking at your diffstat, this doesn't cover it all.
+>  > From: Neil Armstrong <narmstrong@baylibre.com>
+>  > Add Libretech aml-s805x-ac board (aka 'La Frite') support
 > 
-> One example: arch/x86/kernel/cpu/intel_sgx.c
+>  > Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+>  > Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
 > 
-> Also, was there any particular reasoning for calling the file
-> intel_sgx.c instead of simply sgx.c ?
+>  > +	vcck: regulator-vcck {
+>  > +		compatible = "regulator-fixed";
+>  > +		regulator-name = "VCCK";
+>  > +		regulator-min-microvolt = <3300000>;
+>  > +		regulator-max-microvolt = <3300000>;
+>  > +		vin-supply = <&dc_5v>;
+>  > +
+>  > +		/*
+>  > +		 * This is controlled by GPIOAO_9 we reserve this but
+>  > +		 * claiming it as done bellow reset the board anyway
+> 
+> The 'bellow' typo is still here?
+> 
 
-Ouch. There has been so much work in other patches that I've forgot
-to update it :-( Sorry.
+Damn ! I messed up while formating the patch. Sorry for the noise, will resend
 
-Yes, I think it could be renamed as sgx.c. Should the driver part be
-also called as sgx.ko?
-
-/Jarkko
