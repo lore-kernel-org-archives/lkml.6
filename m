@@ -2,249 +2,454 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 95678C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:17:20 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 364F0C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:17:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 33A882084A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:17:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=microchiptechnology.onmicrosoft.com header.i=@microchiptechnology.onmicrosoft.com header.b="vPxCb8uq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33A882084A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=microchip.com
+	by mail.kernel.org (Postfix) with ESMTP id DA5852084A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 11:17:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA5852084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389646AbeKPV3N (ORCPT
+        id S2389657AbeKPV3k (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 16:29:13 -0500
-Received: from esa5.microchip.iphmx.com ([216.71.150.166]:63384 "EHLO
-        esa5.microchip.iphmx.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727874AbeKPV3M (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 16:29:12 -0500
+        Fri, 16 Nov 2018 16:29:40 -0500
+Received: from mga06.intel.com ([134.134.136.31]:34031 "EHLO mga06.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727454AbeKPV3j (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 16:29:39 -0500
+X-Amp-Result: UNSCANNABLE
+X-Amp-File-Uploaded: False
+Received: from fmsmga003.fm.intel.com ([10.253.24.29])
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 03:17:44 -0800
+X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="21230989"
-Received: from smtpout.microchip.com (HELO email.microchip.com) ([198.175.253.82])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/DHE-RSA-AES256-SHA; 16 Nov 2018 04:17:18 -0700
-Received: from NAM01-BN3-obe.outbound.protection.outlook.com (10.10.215.89) by
- email.microchip.com (10.10.76.107) with Microsoft SMTP Server (TLS) id
- 14.3.352.0; Fri, 16 Nov 2018 04:17:17 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=microchiptechnology.onmicrosoft.com;
- s=selector1-microchiptechnology-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=DUn3Iy2yeia2SlG6rgGKrOG9EUK6s/cTQc6qMRaEjwA=;
- b=vPxCb8uqOxd7HRv+JSul3FncTb68MHvVoGM3Mecd0pGLHlFwfJJ25QyFPbFLarL73nScM16LUhpl3EF18ORieN2WWJc2no3rJ3rU/cf3d/+RP0rUDnbUxyON62Cez4hi3WBo+yQdHlASuVPxG07mvAI2eFK1RmiGbQYA8a06cew=
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com (10.175.99.146) by
- BN6PR11MB1540.namprd11.prod.outlook.com (10.172.22.143) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.30; Fri, 16 Nov 2018 11:17:15 +0000
-Received: from BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa]) by BN6PR11MB1842.namprd11.prod.outlook.com
- ([fe80::11b7:21db:803a:7cfa%5]) with mapi id 15.20.1294.045; Fri, 16 Nov 2018
- 11:17:15 +0000
-From:   <Tudor.Ambarus@microchip.com>
-To:     <marek.vasut@gmail.com>, <dwmw2@infradead.org>,
-        <computersforpeace@gmail.com>, <boris.brezillon@bootlin.com>,
-        <richard@nod.at>, <linux-mtd@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-CC:     <Tudor.Ambarus@microchip.com>
-Subject: [PATCH] mtd: spi-nor: fix selection of uniform erase type in flexible
- conf
-Thread-Topic: [PATCH] mtd: spi-nor: fix selection of uniform erase type in
- flexible conf
-Thread-Index: AQHUfZ3tA+dcLeFrOEOuQb9SrChWeA==
-Date:   Fri, 16 Nov 2018 11:17:14 +0000
-Message-ID: <20181116111708.30259-1-tudor.ambarus@microchip.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: VI1PR08CA0147.eurprd08.prod.outlook.com
- (2603:10a6:800:d5::25) To BN6PR11MB1842.namprd11.prod.outlook.com
- (2603:10b6:404:103::18)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=Tudor.Ambarus@microchip.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [94.177.32.154]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;BN6PR11MB1540;6:f41k6ieRO/a0wNwctEfOdw0ffVQqUZuCPozpL72O1LcaRNbQOYSyCCvSgv09itwJIaxn5Co3yZBKndI/VIX8QvUc+K1L1V1FFH5mLUBCxfYKr+tu2A3xHsLbloxAlFCaKOZKn9ts1idY8GeR/7pMkVt5h62q1peN+ayEDHLlKK23bZKO4JVXzaMzq1oA+DSfxljfN6LoSqk3MdQ32c+VVxxJASuEhIPSuunfKMF8EKsgjkTz4Tfu2bQ/MQeIrzQAqJBBcLq0Ka67zfjYV92+jrdaokgm/RkdX1s/LHU65enjYc6JYHpVn39dgT2LD4ulXysAIIl9tJEklOCD9ESSHXlUtxXj71n/mdS8FYab9QbQ6FkOW1/yo6Sgfmxai/RKiW9ughrw/nvW4FqNYz0+l8Z+fXgtP5/XzJgJ67VRGHbwVPIR3w6G/Jpf4NH8xfFnOMs4R5PtXOtLYWfJlyTYgA==;5:OxvCrGy1O512Yn4E6bYYYhtAlIxzA4fGh2Q6kV7dLayf/qp/5P+2dE61QPwZwLQTq141JTSx7Z5nr+2mMSVnLz/4XSJWZExHALMjghpwDjC7x0PzE05Od/LJcJoQy2hLnzCrAnUxoxQIsa7zmG9OehPYhB5im2OxNOWwgFUIqpE=;7:Zyl14Bmwb305B0E/dbHTU0AdbJ+Oky5fRpASGPyAZOkecyvjCGGAsM7HjTF6KaZp683AlCltyjH+i1z+7Yee+iOLze5g1+OHGAIyFRkJFxzGLDai4Qd6XeCtdQYyPpd6HhneLseWGnRphC0+qECujQ==
-x-ms-office365-filtering-correlation-id: ba4f4241-39d2-44f2-c413-08d64bb50fcc
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:BN6PR11MB1540;
-x-ms-traffictypediagnostic: BN6PR11MB1540:
-x-microsoft-antispam-prvs: <BN6PR11MB154064A39C3174E2117CCC3AF0DD0@BN6PR11MB1540.namprd11.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:;
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(6040522)(2401047)(5005006)(8121501046)(3231415)(944501410)(52105112)(10201501046)(93006095)(93001095)(3002001)(148016)(149066)(150057)(6041310)(20161123562045)(20161123560045)(20161123564045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(201708071742011)(7699051)(76991095);SRVR:BN6PR11MB1540;BCL:0;PCL:0;RULEID:;SRVR:BN6PR11MB1540;
-x-forefront-prvs: 0858FF8026
-x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(136003)(346002)(39860400002)(376002)(396003)(189003)(199004)(107886003)(72206003)(68736007)(478600001)(25786009)(97736004)(36756003)(4326008)(110136005)(316002)(39060400002)(2906002)(52116002)(99286004)(386003)(2201001)(14454004)(6116002)(2501003)(26005)(1076002)(186003)(102836004)(86362001)(6506007)(5660300001)(1857600001)(3846002)(2900100001)(14444005)(2616005)(66066001)(106356001)(476003)(105586002)(71190400001)(71200400001)(256004)(8676002)(486006)(81166006)(53936002)(305945005)(6512007)(7736002)(81156014)(6486002)(6436002)(8936002);DIR:OUT;SFP:1101;SCL:1;SRVR:BN6PR11MB1540;H:BN6PR11MB1842.namprd11.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: microchip.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: hZHY0GZ+vZrSvsJYHVKh9/d/oHbtk7I5GHoizcZ58PnetDBSO4kr/ovuWHaysCeZEAvO6LZEnVYJZBOBw5LjDSOcSgLCPBXtqzwhhBXwifeD0c19PVHzG8+VxWHuZuHe03hh4U4AHpL550o6M7/6918VE78yE+hT3iR1x1xxAEriLpUCfKv9ypyJyrGUlSAxYG/xhHQKzjy7EQT1faGGGIcmEzOhIUN/qOC99fw0I+oz5SjiAZMbM05y8R/vGJM4KcLK+Zd7ea96oaV8dnY99YPhtDOUxArByVS46C+hz9HGBQHnsO/R9LUOkM+ImPlBEQWFA1kUiY6VxekyKzCHvhbhmRanjcAR9uqecBbJN/4=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+   d="scan'208";a="96808773"
+Received: from unknown (HELO localhost) ([10.249.254.90])
+  by FMSMGA003.fm.intel.com with ESMTP; 16 Nov 2018 03:17:29 -0800
+Date:   Fri, 16 Nov 2018 13:17:29 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org
+Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
+        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Andy Lutomirski <luto@kernel.org>,
+        Arnaldo Carvalho de Melo <acme@redhat.com>,
+        Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+        Borislav Petkov <bp@suse.de>,
+        Brijesh Singh <brijesh.singh@amd.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        David Wang <davidwang@zhaoxin.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Dmitry Safonov <dima@arista.com>,
+        Dominik Brodowski <linux@dominikbrodowski.net>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        Florian Weimer <fweimer@redhat.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        "H. Peter Anvin" <hpa@zytor.com>, Ingo Molnar <mingo@kernel.org>,
+        Janakarajan Natarajan <Janakarajan.Natarajan@amd.com>,
+        Jia Zhang <qianyue.zj@alibaba-inc.com>,
+        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        "Levin, Alexander (Sasha Levin)" <alexander.levin@verizon.com>,
+        "open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "open list:KERNEL SELFTEST FRAMEWORK" 
+        <linux-kselftest@vger.kernel.org>,
+        Matt Turner <mattst88@gmail.com>,
+        Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
+        Nicolas Ferre <nicolas.ferre@microchip.com>,
+        Paolo Bonzini <pbonzini@redhat.com>, Pu Wen <puwen@hygon.cn>,
+        Reinette Chatre <reinette.chatre@intel.com>,
+        "Shuah Khan (Samsung OSG)" <shuah@kernel.org>,
+        Suresh Siddha <suresh.b.siddha@intel.com>,
+        Tom Lendacky <thomas.lendacky@amd.com>
+Subject: Re: [PATCH v17 00/23] Intel SGX1 support
+Message-ID: <20181116111729.GA5480@linux.intel.com>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba4f4241-39d2-44f2-c413-08d64bb50fcc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Nov 2018 11:17:14.8267
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BN6PR11MB1540
-X-OriginatorOrg: microchip.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-There are uniform, non-uniform and flexible erase flash configurations.
+For unknown reason this never reached any MLs (used the same command
+line for git send-email as usual).
 
-The non-uniform erase types, are the erase types that can _not_ erase
-the entire flash by their own.
+/Jarkko
 
-As the code was, in case flashes had flexible erase capabilities
-(support both uniform and non-uniform erase types in the same flash
-configuration) and supported multiple uniform erase type sizes, the
-code did not sort the uniform erase types, and could select the wrong
-erase type size.
-
-Sort the uniform erase mask in case of flexible erase flash
-configurations, in order to select the best uniform erase type size.
-
-Uniform, non-uniform, and flexible configurations with just a valid
-uniform erase type, are not affected by this change.
-
-Uniform erase tested on mx25l3273fm2i-08g and sst26vf064B-104i/sn.
-Non uniform erase tested on sst26vf064B-104i/sn.
-
-Fixes: 5390a8df769e ("mtd: spi-nor: add support to non-uniform SFDP SPI NOR=
- flash memories")
-Signed-off-by: Tudor Ambarus <tudor.ambarus@microchip.com>
----
- drivers/mtd/spi-nor/spi-nor.c | 52 +++++++++++++++++++++++++++++++--------=
-----
- 1 file changed, 38 insertions(+), 14 deletions(-)
-
-diff --git a/drivers/mtd/spi-nor/spi-nor.c b/drivers/mtd/spi-nor/spi-nor.c
-index 69784b3b8ca1..4c595cf686e2 100644
---- a/drivers/mtd/spi-nor/spi-nor.c
-+++ b/drivers/mtd/spi-nor/spi-nor.c
-@@ -2529,6 +2529,34 @@ static int spi_nor_map_cmp_erase_type(const void *l,=
- const void *r)
- }
-=20
- /**
-+ * spi_nor_sort_erase_mask() - sort erase mask
-+ * @map:	the erase map of the SPI NOR
-+ * @erase_mask:	the erase type mask to be sorted
-+ *
-+ * Replicate the sort done for the map's erase types in BFPT: sort the era=
-se
-+ * mask in ascending order with the smallest erase type size starting from
-+ * BIT(0) in the sorted erase mask.
-+ *
-+ * Return: sorted erase mask.
-+ */
-+static u8 spi_nor_sort_erase_mask(struct spi_nor_erase_map *map, u8 erase_=
-mask)
-+{
-+	struct spi_nor_erase_type *erase_type =3D map->erase_type;
-+	int i;
-+	u8 sorted_erase_mask =3D 0;
-+
-+	if (!erase_mask)
-+		return 0;
-+
-+	/* Replicate the sort done for the map's erase types. */
-+	for (i =3D 0; i < SNOR_ERASE_TYPE_MAX; i++)
-+		if (erase_type[i].size && erase_mask & BIT(erase_type[i].idx))
-+			sorted_erase_mask |=3D BIT(i);
-+
-+	return sorted_erase_mask;
-+}
-+
-+/**
-  * spi_nor_regions_sort_erase_types() - sort erase types in each region
-  * @map:	the erase map of the SPI NOR
-  *
-@@ -2543,19 +2571,13 @@ static int spi_nor_map_cmp_erase_type(const void *l=
-, const void *r)
- static void spi_nor_regions_sort_erase_types(struct spi_nor_erase_map *map=
-)
- {
- 	struct spi_nor_erase_region *region =3D map->regions;
--	struct spi_nor_erase_type *erase_type =3D map->erase_type;
--	int i;
- 	u8 region_erase_mask, sorted_erase_mask;
-=20
- 	while (region) {
- 		region_erase_mask =3D region->offset & SNOR_ERASE_TYPE_MASK;
-=20
--		/* Replicate the sort done for the map's erase types. */
--		sorted_erase_mask =3D 0;
--		for (i =3D 0; i < SNOR_ERASE_TYPE_MAX; i++)
--			if (erase_type[i].size &&
--			    region_erase_mask & BIT(erase_type[i].idx))
--				sorted_erase_mask |=3D BIT(i);
-+		sorted_erase_mask =3D spi_nor_sort_erase_mask(map,
-+							    region_erase_mask);
-=20
- 		/* Overwrite erase mask. */
- 		region->offset =3D (region->offset & ~SNOR_ERASE_TYPE_MASK) |
-@@ -2729,9 +2751,8 @@ static int spi_nor_parse_bfpt(struct spi_nor *nor,
- 	 * uniform_erase_type bitmask. The bitmask will be used later on when
- 	 * selecting the uniform erase.
- 	 */
--	spi_nor_regions_sort_erase_types(map);
--	map->uniform_erase_type =3D map->uniform_region.offset &
--				  SNOR_ERASE_TYPE_MASK;
-+	map->uniform_erase_type =3D spi_nor_sort_erase_mask(map,
-+						map->uniform_erase_type);
-=20
- 	/* Stop here if not JESD216 rev A or later. */
- 	if (bfpt_header->length < BFPT_DWORD_MAX)
-@@ -2985,7 +3006,7 @@ static int spi_nor_init_non_uniform_erase_map(struct =
-spi_nor *nor,
- 	u64 offset;
- 	u32 region_count;
- 	int i, j;
--	u8 erase_type;
-+	u8 erase_type, uniform_erase_type;
-=20
- 	region_count =3D SMPT_MAP_REGION_COUNT(*smpt);
- 	/*
-@@ -2998,7 +3019,7 @@ static int spi_nor_init_non_uniform_erase_map(struct =
-spi_nor *nor,
- 		return -ENOMEM;
- 	map->regions =3D region;
-=20
--	map->uniform_erase_type =3D 0xff;
-+	uniform_erase_type =3D 0xff;
- 	offset =3D 0;
- 	/* Populate regions. */
- 	for (i =3D 0; i < region_count; i++) {
-@@ -3013,12 +3034,15 @@ static int spi_nor_init_non_uniform_erase_map(struc=
-t spi_nor *nor,
- 		 * Save the erase types that are supported in all regions and
- 		 * can erase the entire flash memory.
- 		 */
--		map->uniform_erase_type &=3D erase_type;
-+		uniform_erase_type &=3D erase_type;
-=20
- 		offset =3D (region[i].offset & ~SNOR_ERASE_FLAGS_MASK) +
- 			 region[i].size;
- 	}
-=20
-+	map->uniform_erase_type =3D spi_nor_sort_erase_mask(map,
-+							  uniform_erase_type);
-+
- 	spi_nor_region_mark_end(&region[i - 1]);
-=20
- 	return 0;
---=20
-2.9.4
-
+On Fri, Nov 16, 2018 at 03:38:08AM +0200, Jarkko Sakkinen wrote:
+> Intel(R) SGX is a set of CPU instructions that can be used by applications
+> to set aside private regions of code and data. The code outside the enclave
+> is disallowed to access the memory inside the enclave by the CPU access
+> control.  In a way you can think that SGX provides inverted sandbox. It
+> protects the application from a malicious host.
+> 
+> There is a new hardware unit in the processor called Memory Encryption
+> Engine (MEE) starting from the Skylake microacrhitecture. BIOS can define
+> one or many MEE regions that can hold enclave data by configuring them with
+> PRMRR registers.
+> 
+> The MEE automatically encrypts the data leaving the processor package to
+> the MEE regions. The data is encrypted using a random key whose life-time
+> is exactly one power cycle.
+> 
+> The current implementation requires that the firmware sets
+> IA32_SGXLEPUBKEYHASH* MSRs as writable so that ultimately the kernel can
+> decide what enclaves it wants run. The implementation does not create
+> any bottlenecks to support read-only MSRs later on.
+> 
+> You can tell if your CPU supports SGX by looking into /proc/cpuinfo:
+> 
+> 	cat /proc/cpuinfo  | grep sgx
+> 
+> v17:
+> * Add a simple selftest.
+> * Fix a null pointer dereference to section->pages when its
+>   allocation fails.
+> * Add Sean's description of the exception handling to the documentation.
+> 
+> v16:
+> * Fixed SOB's in the commits that were a bit corrupted in v15.
+> * Implemented exceptio handling properly to detect_sgx().
+> * Use GENMASK() to define SGX_CPUID_SUB_LEAF_TYPE_MASK.
+> * Updated the documentation to use rst definition lists.
+> * Added the missing Documentation/x86/index.rst, which has a link to
+>   intel_sgx.rst. Now the SGX and uapi documentation is properly generated
+>   with 'make htmldocs'.
+> * While enumerating EPC sections, if an undefined section is found, fail
+>   the driver initialization instead of continuing the initialization.
+> * Issue a warning if there are more than %SGX_MAX_EPC_SECTIONS.
+> * Remove copyright notice from arch/x86/include/asm/sgx.h.
+> * Migrated from ioremap_cache() to memremap().
+> 
+> v15:
+> * Split into more digestable size patches.
+> * Lots of small fixes and clean ups.
+> * Signal a "plain" SIGSEGV on an EPCM violation.
+> 
+> v14:
+> * Change the comment about X86_FEATURE_SGX_LC from “SGX launch
+>   configuration” to “SGX launch control”.
+> * Move the SGX-related CPU feature flags as part of the Linux defined
+>   virtual leaf 8.
+> * Add SGX_ prefix to the constants defining the ENCLS leaf functions.
+> * Use GENMASK*() and BIT*() in sgx_arch.h instead of raw hex numbers.
+> * Refine the long description for CONFIG_INTEL_SGX_CORE.
+> * Do not use pr_*_ratelimited()  in the driver. The use of the rate limited
+>   versions is legacy cruft from the prototyping phase.
+> * Detect sleep with SGX_INVALID_EINIT_TOKEN instead of counting power
+>   cycles.
+> * Manually prefix with “sgx:” in the core SGX code instead of redefining
+>   pr_fmt.
+> * Report if IA32_SGXLEPUBKEYHASHx MSRs are not writable in the driver
+>   instead of core because it is a driver requirement.
+> * Change prompt to bool in the entry for CONFIG_INTEL_SGX_CORE because the
+>   default is ‘n’.
+> * Rename struct sgx_epc_bank as struct sgx_epc_section in order to match
+>   the SDM.
+> * Allocate struct sgx_epc_page instances one at a time.
+> * Use “__iomem void *” pointers for the mapped EPC memory consistently.
+> * Retry once on SGX_INVALID_TOKEN in sgx_einit() instead of counting power
+>   cycles.
+> * Call enclave swapping operations directly from the driver instead of
+>   calling them .indirectly through struct sgx_epc_page_ops because indirect
+>   calls are not required yet as the patch set does not contain the KVM
+>   support.
+> * Added special signal SEGV_SGXERR to notify about SGX EPCM violation
+>   errors.
+> 
+> v13:
+> * Always use SGX_CPUID constant instead of a hardcoded value.
+> * Simplified and documented the macros and functions for ENCLS leaves.
+> * Enable sgx_free_page() to free active enclave pages on demand
+>   in order to allow sgx_invalidate() to delete enclave pages.
+>   It no longer performs EREMOVE if a page is in the process of
+>   being reclaimed.
+> * Use PM notifier per enclave so that we don't have to traverse
+>   the global list of active EPC pages to find enclaves.
+> * Removed unused SGX_LE_ROLLBACK constant from uapi/asm/sgx.h
+> * Always use ioremap() to map EPC banks as we only support 64-bit kernel.
+> * Invalidate IA32_SGXLEPUBKEYHASH cache used by sgx_einit() when going
+>   to sleep.
+> 
+> v12:
+> * Split to more narrow scoped commits in order to ease the review process and
+>   use co-developed-by tag for co-authors of commits instead of listing them in
+>   the source files.
+> * Removed cruft EXPORT_SYMBOL() declarations and converted to static variables.
+> * Removed in-kernel LE i.e. this version of the SGX software stack only
+>   supports unlocked IA32_SGXLEPUBKEYHASHx MSRs.
+> * Refined documentation on launching enclaves, swapping and enclave
+>   construction.
+> * Refined sgx_arch.h to include alignment information for every struct that
+>   requires it and removed structs that are not needed without an LE.
+> * Got rid of SGX_CPUID.
+> * SGX detection now prints log messages about firmware configuration issues.
+> 
+> v11:
+> * Polished ENCLS wrappers with refined exception handling.
+> * ksgxswapd was not stopped (regression in v5) in
+>   sgx_page_cache_teardown(), which causes a leaked kthread after driver
+>   deinitialization.
+> * Shutdown sgx_le_proxy when going to suspend because its EPC pages will be
+>   invalidated when resuming, which will cause it not function properly
+>   anymore.
+> * Set EINITTOKEN.VALID to zero for a token that is passed when
+>   SGXLEPUBKEYHASH matches MRSIGNER as alloc_page() does not give a zero
+>   page.
+> * Fixed the check in sgx_edbgrd() for a TCS page. Allowed to read offsets
+>   around the flags field, which causes a #GP. Only flags read is readable.
+> * On read access memcpy() call inside sgx_vma_access() had src and dest
+>   parameters in wrong order.
+> * The build issue with CONFIG_KASAN is now fixed. Added undefined symbols
+>   to LE even if “KASAN_SANITIZE := false” was set in the makefile. 
+> * Fixed a regression in the #PF handler. If a page has
+>   SGX_ENCL_PAGE_RESERVED flag the #PF handler should unconditionally fail.
+>   It did not, which caused weird races when trying to change other parts of
+>   swapping code.
+> * EPC management has been refactored to a flat LRU cache and moved to
+>   arch/x86. The swapper thread reads a cluster of EPC pages and swaps all
+>   of them. It can now swap from multiple enclaves in the same round.
+> * For the sake of consistency with SGX_IOC_ENCLAVE_ADD_PAGE, return -EINVAL
+>   when an enclave is already initialized or dead instead of zero.
+> 
+> v10:
+> * Cleaned up anon inode based IPC between the ring-0 and ring-3 parts
+>   of the driver.
+> * Unset the reserved flag from an enclave page if EDBGRD/WR fails
+>   (regression in v6).
+> * Close the anon inode when LE is stopped (regression in v9).
+> * Update the documentation with a more detailed description of SGX.
+> 
+> v9:
+> * Replaced kernel-LE IPC based on pipes with an anonymous inode.
+>   The driver does not require anymore new exports.
+> 
+> v8:
+> * Check that public key MSRs match the LE public key hash in the
+>   driver initialization when the MSRs are read-only.
+> * Fix the race in VA slot allocation by checking the fullness
+>   immediately after succeesful allocation.
+> * Fix the race in hash mrsigner calculation between the launch
+>   enclave and user enclaves by having a separate lock for hash
+>   calculation.
+> 
+> v7:
+> * Fixed offset calculation in sgx_edbgr/wr(). Address was masked with PAGE_MASK
+>   when it should have been masked with ~PAGE_MASK.
+> * Fixed a memory leak in sgx_ioc_enclave_create().
+> * Simplified swapping code by using a pointer array for a cluster
+>   instead of a linked list.
+> * Squeezed struct sgx_encl_page to 32 bytes.
+> * Fixed deferencing of an RSA key on OpenSSL 1.1.0.
+> * Modified TC's CMAC to use kernel AES-NI. Restructured the code
+>   a bit in order to better align with kernel conventions.
+> 
+> v6:
+> * Fixed semaphore underrun when accessing /dev/sgx from the launch enclave.
+> * In sgx_encl_create() s/IS_ERR(secs)/IS_ERR(encl)/.
+> * Removed virtualization chapter from the documentation.
+> * Changed the default filename for the signing key as signing_key.pem.
+> * Reworked EPC management in a way that instead of a linked list of
+>   struct sgx_epc_page instances there is an array of integers that
+>   encodes address and bank of an EPC page (the same data as 'pa' field
+>   earlier). The locking has been moved to the EPC bank level instead
+>   of a global lock.
+> * Relaxed locking requirements for EPC management. EPC pages can be
+>   released back to the EPC bank concurrently.
+> * Cleaned up ptrace() code.
+> * Refined commit messages for new architectural constants.
+> * Sorted includes in every source file.
+> * Sorted local variable declarations according to the line length in
+>   every function.
+> * Style fixes based on Darren's comments to sgx_le.c.
+> 
+> v5:
+> * Described IPC between the Launch Enclave and kernel in the commit messages.
+> * Fixed all relevant checkpatch.pl issues that I have forgot fix in earlier
+>   versions except those that exist in the imported TinyCrypt code.
+> * Fixed spelling mistakes in the documentation.
+> * Forgot to check the return value of sgx_drv_subsys_init().
+> * Encapsulated properly page cache init and teardown.
+> * Collect epc pages to a temp list in sgx_add_epc_bank
+> * Removed SGX_ENCLAVE_INIT_ARCH constant.
+> 
+> v4:
+> * Tied life-cycle of the sgx_le_proxy process to /dev/sgx.
+> * Removed __exit annotation from sgx_drv_subsys_exit().
+> * Fixed a leak of a backing page in sgx_process_add_page_req() in the
+>   case when vm_insert_pfn() fails.
+> * Removed unused symbol exports for sgx_page_cache.c.
+> * Updated sgx_alloc_page() to require encl parameter and documented the
+>   behavior (Sean Christopherson).
+> * Refactored a more lean API for sgx_encl_find() and documented the behavior.
+> * Moved #PF handler to sgx_fault.c.
+> * Replaced subsys_system_register() with plain bus_register().
+> * Retry EINIT 2nd time only if MSRs are not locked.
+> 
+> v3:
+> * Check that FEATURE_CONTROL_LOCKED and FEATURE_CONTROL_SGX_ENABLE are set.
+> * Return -ERESTARTSYS in __sgx_encl_add_page() when sgx_alloc_page() fails.
+> * Use unused bits in epc_page->pa to store the bank number.
+> * Removed #ifdef for WQ_NONREENTRANT.
+> * If mmu_notifier_register() fails with -EINTR, return -ERESTARTSYS.
+> * Added --remove-section=.got.plt to objcopy flags in order to prevent a
+>   dummy .got.plt, which will cause an inconsistent size for the LE.
+> * Documented sgx_encl_* functions.
+> * Added remark about AES implementation used inside the LE.
+> * Removed redundant sgx_sys_exit() from le/main.c.
+> * Fixed struct sgx_secinfo alignment from 128 to 64 bytes.
+> * Validate miscselect in sgx_encl_create().
+> * Fixed SSA frame size calculation to take the misc region into account.
+> * Implemented consistent exception handling to __encls() and __encls_ret().
+> * Implemented a proper device model in order to allow sysfs attributes
+>   and in-kernel API.
+> * Cleaned up various "find enclave" implementations to the unified
+>   sgx_encl_find().
+> * Validate that vm_pgoff is zero.
+> * Discard backing pages with shmem_truncate_range() after EADD.
+> * Added missing EEXTEND operations to LE signing and launch.
+> * Fixed SSA size for GPRS region from 168 to 184 bytes.
+> * Fixed the checks for TCS flags. Now DBGOPTIN is allowed.
+> * Check that TCS addresses are in ELRANGE and not just page aligned.
+> * Require kernel to be compiled with X64_64 and CPU_SUP_INTEL.
+> * Fixed an incorrect value for SGX_ATTR_DEBUG from 0x01 to 0x02.
+> 
+> v2:
+> * get_rand_uint32() changed the value of the pointer instead of value
+>   where it is pointing at.
+> * Launch enclave incorrectly used sigstruct attributes-field instead of
+>   enclave attributes-field.
+> * Removed unused struct sgx_add_page_req from sgx_ioctl.c
+> * Removed unused sgx_has_sgx2.
+> * Updated arch/x86/include/asm/sgx.h so that it provides stub
+>   implementations when sgx in not enabled.
+> * Removed cruft rdmsr-calls from sgx_set_pubkeyhash_msrs().
+> * return -ENOMEM in sgx_alloc_page() when VA pages consume too much space
+> * removed unused global sgx_nr_pids
+> * moved sgx_encl_release to sgx_encl.c
+> * return -ERESTARTSYS instead of -EINTR in sgx_encl_init()
+> 
+> 
+> Jarkko Sakkinen (13):
+>   x86/sgx: Update MAINTAINERS
+>   x86/sgx: Define SGX1 and SGX2 ENCLS leafs
+>   x86/sgx: Add ENCLS architectural error codes
+>   x86/sgx: Add SGX1 and SGX2 architectural data structures
+>   x86/sgx: Add definitions for SGX's CPUID leaf and variable sub-leafs
+>   x86/sgx: Add wrappers for ENCLS leaf functions
+>   x86/sgx: Add functions to allocate and free EPC pages
+>   platform/x86: Intel SGX driver
+>   platform/x86: sgx: Add swapping functionality to the Intel SGX driver
+>   x86/sgx: Add a simple swapper for the EPC memory manager
+>   platform/x86: ptrace() support for the SGX driver
+>   x86/sgx: SGX documentation
+>   selftests/x86: Add a selftest for SGX
+> 
+> Kai Huang (2):
+>   x86/cpufeatures: Add Intel-defined SGX feature bit
+>   x86/cpufeatures: Add Intel-defined SGX_LC feature bit
+> 
+> Sean Christopherson (8):
+>   x86/cpufeatures: Add SGX sub-features (as Linux-defined bits)
+>   x86/msr: Add IA32_FEATURE_CONTROL.SGX_ENABLE definition
+>   x86/cpu/intel: Detect SGX support and update caps appropriately
+>   x86/mm: x86/sgx: Add new 'PF_SGX' page fault error code bit
+>   x86/mm: x86/sgx: Signal SIGSEGV for userspace #PFs w/ PF_SGX
+>   x86/msr: Add SGX Launch Control MSR definitions
+>   x86/sgx: Enumerate and track EPC sections
+>   x86/sgx: Add sgx_einit() for initializing enclaves
+> 
+>  Documentation/index.rst                       |   1 +
+>  Documentation/x86/index.rst                   |   8 +
+>  Documentation/x86/intel_sgx.rst               | 233 +++++
+>  MAINTAINERS                                   |   7 +
+>  arch/x86/Kconfig                              |  18 +
+>  arch/x86/include/asm/cpufeatures.h            |  23 +-
+>  arch/x86/include/asm/msr-index.h              |   8 +
+>  arch/x86/include/asm/sgx.h                    | 324 ++++++
+>  arch/x86/include/asm/sgx_arch.h               | 400 +++++++
+>  arch/x86/include/asm/traps.h                  |   1 +
+>  arch/x86/include/uapi/asm/sgx.h               |  59 ++
+>  arch/x86/include/uapi/asm/sgx_errno.h         |  91 ++
+>  arch/x86/kernel/cpu/Makefile                  |   1 +
+>  arch/x86/kernel/cpu/intel.c                   |  37 +
+>  arch/x86/kernel/cpu/intel_sgx.c               | 488 +++++++++
+>  arch/x86/kernel/cpu/scattered.c               |   2 +
+>  arch/x86/mm/fault.c                           |  13 +
+>  drivers/platform/x86/Kconfig                  |   2 +
+>  drivers/platform/x86/Makefile                 |   1 +
+>  drivers/platform/x86/intel_sgx/Kconfig        |  20 +
+>  drivers/platform/x86/intel_sgx/Makefile       |  14 +
+>  drivers/platform/x86/intel_sgx/sgx.h          | 212 ++++
+>  drivers/platform/x86/intel_sgx/sgx_encl.c     | 977 ++++++++++++++++++
+>  .../platform/x86/intel_sgx/sgx_encl_page.c    | 178 ++++
+>  drivers/platform/x86/intel_sgx/sgx_fault.c    | 109 ++
+>  drivers/platform/x86/intel_sgx/sgx_ioctl.c    | 234 +++++
+>  drivers/platform/x86/intel_sgx/sgx_main.c     | 267 +++++
+>  drivers/platform/x86/intel_sgx/sgx_util.c     | 156 +++
+>  drivers/platform/x86/intel_sgx/sgx_vma.c      | 167 +++
+>  tools/arch/x86/include/asm/cpufeatures.h      |  21 +-
+>  tools/testing/selftests/x86/Makefile          |  10 +
+>  tools/testing/selftests/x86/sgx/Makefile      |  47 +
+>  tools/testing/selftests/x86/sgx/encl.c        |  20 +
+>  tools/testing/selftests/x86/sgx/encl.lds      |  33 +
+>  .../selftests/x86/sgx/encl_bootstrap.S        |  94 ++
+>  tools/testing/selftests/x86/sgx/encl_piggy.S  |  16 +
+>  tools/testing/selftests/x86/sgx/encl_piggy.h  |  13 +
+>  .../testing/selftests/x86/sgx/sgx-selftest.c  | 149 +++
+>  tools/testing/selftests/x86/sgx/sgx_arch.h    | 109 ++
+>  tools/testing/selftests/x86/sgx/sgx_call.S    |  20 +
+>  tools/testing/selftests/x86/sgx/sgx_uapi.h    | 100 ++
+>  tools/testing/selftests/x86/sgx/sgxsign.c     | 503 +++++++++
+>  .../testing/selftests/x86/sgx/signing_key.pem |  39 +
+>  43 files changed, 5213 insertions(+), 12 deletions(-)
+>  create mode 100644 Documentation/x86/index.rst
+>  create mode 100644 Documentation/x86/intel_sgx.rst
+>  create mode 100644 arch/x86/include/asm/sgx.h
+>  create mode 100644 arch/x86/include/asm/sgx_arch.h
+>  create mode 100644 arch/x86/include/uapi/asm/sgx.h
+>  create mode 100644 arch/x86/include/uapi/asm/sgx_errno.h
+>  create mode 100644 arch/x86/kernel/cpu/intel_sgx.c
+>  create mode 100644 drivers/platform/x86/intel_sgx/Kconfig
+>  create mode 100644 drivers/platform/x86/intel_sgx/Makefile
+>  create mode 100644 drivers/platform/x86/intel_sgx/sgx.h
+>  create mode 100644 drivers/platform/x86/intel_sgx/sgx_encl.c
+>  create mode 100644 drivers/platform/x86/intel_sgx/sgx_encl_page.c
+>  create mode 100644 drivers/platform/x86/intel_sgx/sgx_fault.c
+>  create mode 100644 drivers/platform/x86/intel_sgx/sgx_ioctl.c
+>  create mode 100644 drivers/platform/x86/intel_sgx/sgx_main.c
+>  create mode 100644 drivers/platform/x86/intel_sgx/sgx_util.c
+>  create mode 100644 drivers/platform/x86/intel_sgx/sgx_vma.c
+>  create mode 100644 tools/testing/selftests/x86/sgx/Makefile
+>  create mode 100644 tools/testing/selftests/x86/sgx/encl.c
+>  create mode 100644 tools/testing/selftests/x86/sgx/encl.lds
+>  create mode 100644 tools/testing/selftests/x86/sgx/encl_bootstrap.S
+>  create mode 100644 tools/testing/selftests/x86/sgx/encl_piggy.S
+>  create mode 100644 tools/testing/selftests/x86/sgx/encl_piggy.h
+>  create mode 100644 tools/testing/selftests/x86/sgx/sgx-selftest.c
+>  create mode 100644 tools/testing/selftests/x86/sgx/sgx_arch.h
+>  create mode 100644 tools/testing/selftests/x86/sgx/sgx_call.S
+>  create mode 100644 tools/testing/selftests/x86/sgx/sgx_uapi.h
+>  create mode 100644 tools/testing/selftests/x86/sgx/sgxsign.c
+>  create mode 100644 tools/testing/selftests/x86/sgx/signing_key.pem
+> 
+> -- 
+> 2.19.1
+> 
+> 
