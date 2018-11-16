@@ -2,109 +2,86 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A971C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 21:55:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EE82C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 21:56:37 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AF0E20883
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 21:55:32 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AF0E20883
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 2F07320883
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 21:56:37 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="MSblK4le"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2F07320883
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729541AbeKQIJi (ORCPT
+        id S1729589AbeKQIKn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 03:09:38 -0500
-Received: from mga04.intel.com ([192.55.52.120]:38466 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725819AbeKQIJh (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 03:09:37 -0500
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-X-Amp-File-Uploaded: False
-Received: from orsmga004.jf.intel.com ([10.7.209.38])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 13:55:29 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,241,1539673200"; 
-   d="scan'208";a="250366881"
-Received: from lkp-server01.sh.intel.com (HELO lkp-server01) ([10.239.97.150])
-  by orsmga004.jf.intel.com with ESMTP; 16 Nov 2018 13:55:27 -0800
-Received: from kbuild by lkp-server01 with local (Exim 4.89)
-        (envelope-from <lkp@intel.com>)
-        id 1gNm5H-000E38-02; Sat, 17 Nov 2018 05:55:27 +0800
-Date:   Sat, 17 Nov 2018 05:55:00 +0800
-From:   kbuild test robot <lkp@intel.com>
-To:     Matt Mullins <mmullins@fb.com>
-Cc:     kbuild-all@01.org, ast@kernel.org, daniel@iogearbox.net,
-        netdev@vger.kernel.org, kernel-team@fb.com,
-        Matt Mullins <mmullins@fb.com>, Jessica Yu <jeyu@kernel.org>,
-        Steven Rostedt <rostedt@goodmis.org>,
-        Ingo Molnar <mingo@redhat.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH bpf-next] bpf: support raw tracepoints in modules
-Message-ID: <201811170557.4EtvwhsA%fengguang.wu@intel.com>
-References: <20181109220632.3944136-1-mmullins@fb.com>
+        Sat, 17 Nov 2018 03:10:43 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:36881 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727368AbeKQIKn (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 03:10:43 -0500
+Received: by mail-lf1-f66.google.com with SMTP id p17so17528753lfh.4
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 13:56:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=Kpl1QNOwDw+EaFS3A0s2bTT1ac23DrKPiZncwt46yBI=;
+        b=MSblK4leRzHIZOu8JXankqc4ao3qQTqXLNrDwFn8twPwHEmArbM3WaUGF4mCNq40Cj
+         QDeODz/lV7W2wg141UTuT3nQVF9bL8vK07r0SGtPhBdREWPnlRoQM0oH4tFmxGS+bLBX
+         F+7SvLDaWhD+qAIfo11xCaR3l34HXxWyeNlPU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=Kpl1QNOwDw+EaFS3A0s2bTT1ac23DrKPiZncwt46yBI=;
+        b=msvPmsrkFfXvbvfQtk+SROkQ6mjYn0xxMboiFRKQkG6vd9kS/rDA2G7MtZZmiNcDVI
+         hU2EZzXwqfAZ75cS5Y6K8IVHioCI6LijBFFMqwgQW3iTcUmIqPEk0wpjiBjQp5IYAeKh
+         6lh6RRY2LyvJ5LCcv1NMwcNDY+gUYxVDvb/Kgx0C+cNBnsKZPthaS7aoeOhh7KfaYzJ0
+         0QEP3RnMfJ+56fcFcGzGydgB7Twf+zukrK0IND85huD1K8PNv8JLLQ1essN4G9+nVKv9
+         X0i+4Xi0sex1hXRekRT1CawniBOrnv9HgoU/8Gu31kmwpl9vErDchVoSGucEcZhavITE
+         SXjA==
+X-Gm-Message-State: AGRZ1gLSj+sW9ob9bQ+wUU+lrU7WrN/KJX/YyzdA9Bj/1QbCTUEPrJD7
+        LmP8Sria7Xlmv2JXw/vtUDrtQWyYOoOAy/+MKTLqLg==
+X-Google-Smtp-Source: AJdET5d42t1mDw+TP8Q8PqN0muPo81oFoboa21akz/N9JpE/eIf34WNHHw36668siqTWkrP/W21+lBs1iuPemAX2a34=
+X-Received: by 2002:a19:c801:: with SMTP id y1mr6172018lff.53.1542405393838;
+ Fri, 16 Nov 2018 13:56:33 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181109220632.3944136-1-mmullins@fb.com>
-User-Agent: Mutt/1.5.23 (2014-03-12)
+References: <1541739112-383-1-git-send-email-Anson.Huang@nxp.com>
+In-Reply-To: <1541739112-383-1-git-send-email-Anson.Huang@nxp.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 16 Nov 2018 22:56:22 +0100
+Message-ID: <CACRpkdY8j0kohUxRAtcfvK865EVDQXGXrB7d5+crXM4AMK1Dxg@mail.gmail.com>
+Subject: Re: [PATCH] gpio: mxc: move gpio noirq suspend/resume to syscore phase
+To:     Anson Huang <anson.huang@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>
+Cc:     Bartosz Golaszewski <bgolaszewski@baylibre.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Matt,
+On Fri, Nov 9, 2018 at 5:56 AM Anson Huang <anson.huang@nxp.com> wrote:
 
-Thank you for the patch! Perhaps something to improve:
+> During noirq suspend/resume phase, GPIO irq could arrive
+> and its registers like IMR will be changed by irq handle
+> process, to make the GPIO registers exactly when it is
+> powered ON after resume, move the GPIO noirq suspend/resume
+> callback to syscore suspend/resume phase, local irq is
+> disabled at this phase so GPIO registers are atomic.
+>
+> Signed-off-by: Anson Huang <Anson.Huang@nxp.com>
 
-[auto build test WARNING on bpf-next/master]
+Patch applied. Cc Fabio so he knows it happens.
 
-url:    https://github.com/0day-ci/linux/commits/Matt-Mullins/bpf-support-raw-tracepoints-in-modules/20181110-144839
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git master
-
-smatch warnings:
-kernel/trace/bpf_trace.c:1284 bpf_event_notify() error: potential null dereference 'btm'.  (kzalloc returns null)
-
-vim +/btm +1284 kernel/trace/bpf_trace.c
-
-  1269	
-  1270	#ifdef CONFIG_MODULES
-  1271	int bpf_event_notify(struct notifier_block *nb, unsigned long op, void *module)
-  1272	{
-  1273		struct bpf_trace_module *btm, *tmp;
-  1274		struct module *mod = module;
-  1275	
-  1276		if (mod->num_bpf_raw_events == 0)
-  1277			return 0;
-  1278	
-  1279		mutex_lock(&bpf_module_mutex);
-  1280	
-  1281		switch (op) {
-  1282		case MODULE_STATE_COMING:
-  1283			btm = kzalloc(sizeof(*btm), GFP_KERNEL);
-> 1284			btm->module = module;
-  1285			list_add(&btm->list, &bpf_trace_modules);
-  1286			break;
-  1287		case MODULE_STATE_GOING:
-  1288			list_for_each_entry_safe(btm, tmp, &bpf_trace_modules, list) {
-  1289				if (btm->module == module) {
-  1290					list_del(&btm->list);
-  1291					kfree(btm);
-  1292					break;
-  1293				}
-  1294			}
-  1295			break;
-  1296		}
-  1297	
-  1298		mutex_unlock(&bpf_module_mutex);
-  1299	
-  1300		return 0;
-  1301	}
-  1302	
-
----
-0-DAY kernel test infrastructure                Open Source Technology Center
-https://lists.01.org/pipermail/kbuild-all                   Intel Corporation
+Yours,
+Linus Walleij
