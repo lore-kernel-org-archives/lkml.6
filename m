@@ -2,113 +2,147 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B227C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:18:17 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 493A1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:19:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5AA42145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:18:16 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 0C4282145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:19:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="mxj5a+9W"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5AA42145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Ue5GkmLo"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0C4282145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389342AbeKPM2n (ORCPT
+        id S2389393AbeKPM3y (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 07:28:43 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:36035 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbeKPM2n (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 07:28:43 -0500
-Received: by mail-pg1-f195.google.com with SMTP id n2so2703700pgm.3
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 18:18:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uWxOI7EW+B6BaLJ4pF1Ucb4JKvaIuWDE5mYJ2nvblqE=;
-        b=mxj5a+9WhaUzzn6ENIPyyJMDBjBRDUGhUl2p38GDhnPH+yLz97xJGMlhaOjc+x0c96
-         SZP6XEZfRQZo5jsFCwlLfiDojuqLbpzRHVh52QfLDd9K55bag+4IyroxO1cq3SrkGVbp
-         wpNoT55+M98lKeG/wuihGyrjfR1RhTKeyN+f8S/X2Ktx1Q0eqUJz5rqTgM/A4Pbv7duR
-         LB28WnNvGsapqmb77uTNrgtK4BqM45hHGbHpDKezmNiNdQB2AJf/s09zpqWwyhfB/ShX
-         C70fPi4L089v3cKjZaCZGf6oYE4VzreeOOSc997WA0dDu7InSYJwxQSzz1KHpuUeoL4Q
-         F6Jw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uWxOI7EW+B6BaLJ4pF1Ucb4JKvaIuWDE5mYJ2nvblqE=;
-        b=Jo09sz9w5676J+/bweLQfPX1rOKcKZCBIQktyu0Zewwxc7KFqVWw+czkBZqz7RoudF
-         V5gPeOTKG6zljrJAZ3jTlglfw/z1Y6rJDd/A0juj7qBL4NV9u8530dv4dZpF5/IfOFGR
-         af/fvY6tybsReeEJN1Ref8PrE6KlLmZsLqvy2bINWr8Gzm8Mrj0rJw/jE7ZpFhp9Q8Uc
-         AyHDLBzfTTDDxi6C/5+i56es8SGsj/jI0Zoi+oqfO2bEM4H45kS3+PR8BK/L4gwYSzPd
-         /yaEK6Or39EtpPR7KtmeiqZNo+p2f2Sa/u1WDB2Qvx+Df8NSyDkqgEG+PcTebB8eILxJ
-         hsYg==
-X-Gm-Message-State: AGRZ1gLglO3isufpU9F+y3PhMVvJqC/f0zIe3zXwToNaB3eRGkfxdr0s
-        ojuWisH4j7Dp89QGVCMjRIY6XQ==
-X-Google-Smtp-Source: AJdET5cfhaHk05TqW2Jq6nTxtIdo0ficfDaKFmLY+f8LDNaSqXZd501bp6MC6dyRxNdzTO6b9nJlNw==
-X-Received: by 2002:a63:101d:: with SMTP id f29mr8219269pgl.38.1542334693471;
-        Thu, 15 Nov 2018 18:18:13 -0800 (PST)
-Received: from vader ([64.114.255.97])
-        by smtp.gmail.com with ESMTPSA id v15sm8249986pfn.94.2018.11.15.18.18.12
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 18:18:12 -0800 (PST)
-Date:   Thu, 15 Nov 2018 18:18:11 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Ming Lei <ming.lei@redhat.com>
-Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
-        Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
-        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
-        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 18/19] block: kill QUEUE_FLAG_NO_SG_MERGE
-Message-ID: <20181116021811.GM23828@vader>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-19-ming.lei@redhat.com>
+        Fri, 16 Nov 2018 07:29:54 -0500
+Received: from ozlabs.org ([203.11.71.1]:54957 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726718AbeKPM3y (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 07:29:54 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42x23s4729z9sBN;
+        Fri, 16 Nov 2018 13:19:20 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=canb.auug.org.au;
+        s=201702; t=1542334761;
+        bh=zQZ3uYxMn1IQe/5Ycmzngm/FJa04co02sIwIh8akbRM=;
+        h=Date:From:To:Cc:Subject:From;
+        b=Ue5GkmLoZWV41gJKUCInUcnU+h7LOH+JkwZXkp0bCaEaEEqN22yD0okGqbKBl2vW4
+         WyjO3//yA3pyUAt0177CPB9PEVXyA7z4ZkqCytGQlTr6Fl6kl1bgHhHtLtRl02bXFu
+         rPVmhOPopijxWjs4FHu/VofuTs78yHuy1VSRuB4Pf2nu3cgDwv2BUeGId05GpO35r3
+         dCjU/IFpJmEH9bYL7IatqpgsqBqs0N1jYX7PLJqRHip1eJscol4lgGLiJDJIUiuiw1
+         upgeY0rkseWtODXoijAoGtxclE91gXECxdBlYriRfbLj6ZKjUq8CWmSojJw+LewJRr
+         Hie6m689JfGNA==
+Date:   Fri, 16 Nov 2018 13:19:19 +1100
+From:   Stephen Rothwell <sfr@canb.auug.org.au>
+To:     Jens Axboe <axboe@kernel.dk>
+Cc:     Linux-Next Mailing List <linux-next@vger.kernel.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Ming Lei <ming.lei@redhat.com>, Christoph Hellwig <hch@lst.de>
+Subject: linux-next: manual merge of the block tree with Linus' tree
+Message-ID: <20181116131919.781539f7@canb.auug.org.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181115085306.9910-19-ming.lei@redhat.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/P0jZk+bujMBoCzwAog_dq=1"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 04:53:05PM +0800, Ming Lei wrote:
-> Since bdced438acd83ad83a6c ("block: setup bi_phys_segments after splitting"),
-> physical segment number is mainly figured out in blk_queue_split() for
-> fast path, and the flag of BIO_SEG_VALID is set there too.
-> 
-> Now only blk_recount_segments() and blk_recalc_rq_segments() use this
-> flag.
-> 
-> Basically blk_recount_segments() is bypassed in fast path given BIO_SEG_VALID
-> is set in blk_queue_split().
-> 
-> For another user of blk_recalc_rq_segments():
-> 
-> - run in partial completion branch of blk_update_request, which is an unusual case
-> 
-> - run in blk_cloned_rq_check_limits(), still not a big problem if the flag is killed
-> since dm-rq is the only user.
-> 
-> Multi-page bvec is enabled now, QUEUE_FLAG_NO_SG_MERGE doesn't make sense any more.
+--Sig_/P0jZk+bujMBoCzwAog_dq=1
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This commit message wasn't very clear. Is it the case that
-QUEUE_FLAG_NO_SG_MERGE is no longer set by any drivers?
+Hi all,
+
+Today's linux-next merge of the block tree got a conflict in:
+
+  block/blk.h
+
+between commit:
+
+  1adfc5e4136f ("block: make sure discard bio is aligned with logical block=
+ size")
+
+from Linus' tree (precedes v4.20-rc2) and commit:
+
+  079076b3416e ("block: remove deadline __deadline manipulation helpers")
+
+from the block tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc block/blk.h
+index 0089fefdf771,027a0ccc175e..000000000000
+--- a/block/blk.h
++++ b/block/blk.h
+@@@ -380,31 -233,6 +233,16 @@@ static inline void req_set_nomerge(stru
+  		q->last_merge =3D NULL;
+  }
+ =20
+- /*
+-  * Steal a bit from this field for legacy IO path atomic IO marking. Note=
+ that
+-  * setting the deadline clears the bottom bit, potentially clearing the
+-  * completed bit. The user has to be OK with this (current ones are fine).
+-  */
+- static inline void blk_rq_set_deadline(struct request *rq, unsigned long =
+time)
+- {
+- 	rq->__deadline =3D time & ~0x1UL;
+- }
+-=20
+- static inline unsigned long blk_rq_deadline(struct request *rq)
+- {
+- 	return rq->__deadline & ~0x1UL;
+- }
+-=20
+ +/*
+ + * The max size one bio can handle is UINT_MAX becasue bvec_iter.bi_size
+ + * is defined as 'unsigned int', meantime it has to aligned to with logic=
+al
+ + * block size which is the minimum accepted unit by hardware.
+ + */
+ +static inline unsigned int bio_allowed_max_sectors(struct request_queue *=
+q)
+ +{
+ +	return round_down(UINT_MAX, queue_logical_block_size(q)) >> 9;
+ +}
+ +
+  /*
+   * Internal io_context interface
+   */
+
+--Sig_/P0jZk+bujMBoCzwAog_dq=1
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAlvuKScACgkQAVBC80lX
+0GxPlgf/RSEU1vJNGDBzP8W+mpeAWfiVVw16Ff30KnIKVhn/lFviqB2Xfy90fJKy
+mdkQ2fL5SdH0k/VJ62D+hHEzuXBH6hsbp0+aKZ9vIh9kdp0JmQ/gflMP4w3wygEp
+MtkCGCTJIwLpgJ4rt9lMDFbwHsyYzwGWEf8qws2hqA/7doJnJSB7Nmm8XA571alp
+e0tOeyEAsVIoVtae2ACcgrQoC1dvdxZ2xtGD1lIaMTz3OIafOw/14QXiG3+zUNLs
+OqrF4DJpTCuMLet6i1pccgxz96bHsor74KMwwmyVaR7YUyT+CGv5BS5CV+18d1ea
+VHrybvPjBxp6Hpazanbq+RAL0eWzCg==
+=OyZ0
+-----END PGP SIGNATURE-----
+
+--Sig_/P0jZk+bujMBoCzwAog_dq=1--
