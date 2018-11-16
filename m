@@ -2,386 +2,130 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B4429C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:55:52 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4F2DEC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:58:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 80BE72089D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:55:52 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 80BE72089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id EF3402087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:58:32 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OpMXnv+f"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF3402087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390009AbeKQCIp (ORCPT
+        id S2389942AbeKQCL0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 21:08:45 -0500
-Received: from lhrrgout.huawei.com ([185.176.76.210]:32773 "EHLO huawei.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1728124AbeKQCIp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 21:08:45 -0500
-Received: from LHREML711-CAH.china.huawei.com (unknown [172.18.7.108])
-        by Forcepoint Email with ESMTP id BBE50C3F0CB3F;
-        Fri, 16 Nov 2018 15:55:46 +0000 (GMT)
-Received: from [10.204.65.144] (10.204.65.144) by smtpsuk.huawei.com
- (10.201.108.34) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 16 Nov
- 2018 15:55:41 +0000
-Subject: Re: [PATCH v5 7/7] tpm: pass an array of tpm_bank_list structures to
- tpm_pcr_extend()
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-CC:     <zohar@linux.ibm.com>, <david.safford@ge.com>,
-        <monty.wiseman@ge.com>, <linux-integrity@vger.kernel.org>,
-        <linux-security-module@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <silviu.vlasceanu@huawei.com>
-References: <20181114153108.12907-1-roberto.sassu@huawei.com>
- <20181114153108.12907-8-roberto.sassu@huawei.com>
- <20181116150352.GA3612@linux.intel.com>
-From:   Roberto Sassu <roberto.sassu@huawei.com>
-Message-ID: <9c534ed1-7832-7a3b-3e69-5fcc25c565cc@huawei.com>
-Date:   Fri, 16 Nov 2018 16:55:36 +0100
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 16 Nov 2018 21:11:26 -0500
+Received: from mail-ed1-f65.google.com ([209.85.208.65]:37380 "EHLO
+        mail-ed1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728124AbeKQCLZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 21:11:25 -0500
+Received: by mail-ed1-f65.google.com with SMTP id h15so15277215edb.4
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 07:58:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=9QfZ/Yw+4fN5/J9kjVur5sXg3qsFZ+oxUY0Pe4KXb5c=;
+        b=OpMXnv+f91+CL2lCDjDXvamspzWkG4nwleucSuR0PvpFP3dCsWHR5vJgyjxDlwRQ00
+         0HzbbuunwVc4YCVP0uYosygZ8yNqwrK6OZIZ+4NR/o/9f5bPIWrqWW08U0MM9RTm+N6x
+         TlBZKB0RoVr53gFNiBC3d38AVnoI/ir6XcAaDOGZT3kknxXI9Gp7HTuIi3emOB0czVk0
+         pUV6D2yNPI0w18cwlXkQnR77IEtybmjwkEUf0gbhJnoU9EVkDEIK0SQRK1l3j1Lu595B
+         eRw0uBkShNK6XSIKxZ/YP2uaL8ZU0wZnDxKVObMj/g/QNUMSh11GEI1J8sPSuFXT5ID6
+         AAuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=9QfZ/Yw+4fN5/J9kjVur5sXg3qsFZ+oxUY0Pe4KXb5c=;
+        b=OFAGuXqYd9sRft38ifNVSYOJ9VdQF4etcFYIrKnTSSklBd/xvMVs9036XqNpGSmDfU
+         VQBXRh5RO9zXdttxYxlqlFJd73++taUnEehIn/0lPHYs6JmxcaLThudlYcYg/VPDFVx1
+         JJSc0UdZzG0RbDGePF0o5/KhnXRA/SqkmUMclL+e68kf16+W9u4r5EDhVGTx1FfwmniZ
+         ilc/faT7wtvrJqhmkgEeLj+JBnLDz5ju/2KKbdQUUKwNxpq5k6pGN/Ce7qXq0dTNI05Z
+         5Q8Yn+VyAGygSz9XGwkr2pu2hm9ZGlLVIBgVgFrCRb40CIM2Rr2HPYcRf3qQ+v3bcv3Y
+         2I+Q==
+X-Gm-Message-State: AGRZ1gK/9SYs7LQYZHoOufZL/7woTW0Z9ilKAvcE7oYi4sOR+TiM/MHQ
+        Hvvm01zGhEZuAQrTJkpKZy6q8L1Q
+X-Google-Smtp-Source: AJdET5f7OXZNBUKu+bLlYoKQyCAj3xbsjz19MR5CGAEvgHmtHybtuDj97t8vPQYqMrtpzPgslIpdcQ==
+X-Received: by 2002:a17:906:bb02:: with SMTP id jz2-v6mr8862879ejb.59.1542383909279;
+        Fri, 16 Nov 2018 07:58:29 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id x47sm2399100eda.91.2018.11.16.07.58.28
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Nov 2018 07:58:28 -0800 (PST)
+Date:   Fri, 16 Nov 2018 15:58:28 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Michal Hocko <mhocko@kernel.org>
+Cc:     osalvador <osalvador@suse.de>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Wei Yang <richard.weiyang@gmail.com>, linux-mm@kvack.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: use managed_zone() for more exact check in zone
+ iteration
+Message-ID: <20181116155828.strdglxqgqe4jqkr@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20181114235040.36180-1-richard.weiyang@gmail.com>
+ <20181115133735.bb0313ec9293c415d08be550@linux-foundation.org>
+ <20181116095720.GE14706@dhcp22.suse.cz>
+ <1542366304.3020.15.camel@suse.de>
+ <20181116112603.GI14706@dhcp22.suse.cz>
 MIME-Version: 1.0
-In-Reply-To: <20181116150352.GA3612@linux.intel.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.204.65.144]
-X-CFilter-Loop: Reflected
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116112603.GI14706@dhcp22.suse.cz>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/16/2018 4:03 PM, Jarkko Sakkinen wrote:
-> On Wed, Nov 14, 2018 at 04:31:08PM +0100, Roberto Sassu wrote:
->> Currently, tpm_pcr_extend() accepts as an input only a SHA1 digest.
->>
->> This patch modifies the definition of tpm_pcr_extend() to allow other
->> kernel subsystems to pass a digest for each algorithm supported by the TPM.
->> All digests are processed by the TPM in one operation.
->>
->> If a tpm_pcr_extend() caller provides a subset of the supported algorithms,
->> the TPM driver extends the remaining PCR banks with the first digest
->> passed as an argument to the function.
-> 
-> What is the legit use case for this?
+On Fri, Nov 16, 2018 at 12:26:03PM +0100, Michal Hocko wrote:
+>On Fri 16-11-18 12:05:04, osalvador wrote:
+>> On Fri, 2018-11-16 at 10:57 +0100, Michal Hocko wrote:
+>[...]
+>> > E.g. memory hotplug decreases both managed and present counters. I
+>> > am actually not sure that is 100% correct (put on my TODO list to
+>> > check). There is no consistency in that regards.
+>> 
+>> We can only offline non-reserved pages (so, managed pages).
+>
+>Yes
+>
+>> Since present pages holds reserved_pages + managed_pages, decreasing
+>> both should be fine unless I am mistaken.
+>
+>Well, present_pages is defined as "physical pages existing within the zone"
+>and those pages are still existing but they are offline. But as I've
+>said I have to think about it some more
 
-A subset could be chosen for better performance, or when a TPM algorithm
-is not supported by the crypto subsystem.
+I may not catch up with your discussions, while I'd like to share what I
+learnt.
 
+online_pages()
+    online_pages_range()
+    zone->present_pages += onlined_pages;
 
->> The new tpm_bank_list structure has been preferred to the tpm_digest
->> structure, to let the caller specify the size of the digest (which may be
->> unknown to the TPM driver).
->>
->> Due to the API change, ima_pcr_extend() and pcrlock() have been modified.
->>
->> Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> 
-> Should be dropped from the patch set as it is not taken advatange of
-> but I can still try to give some feedback.
+__offline_pages()
+    adjust_managed_page_count()
+    zone->present_pages -= offlined_pages;
 
-I understood from a previous email that you want to include all API
-changes for crypto agility in the same patch set.
+The two counters: present_pages & managed_pages would be adjusted during
+online/offline.
 
-Roberto
+While I am not sure when *reserved_pages* would be adjusted. Will we add
+this hot-added memory into memblock.reserved? and allocate memory by
+memblock_alloc() after system bootup?
 
-
->> ---
->>   drivers/char/tpm/tpm-interface.c   | 24 +++++---------------
->>   drivers/char/tpm/tpm.h             |  6 ++---
->>   drivers/char/tpm/tpm1-cmd.c        | 14 ++++++++----
->>   drivers/char/tpm/tpm2-cmd.c        | 36 +++++++++++++++++++++---------
->>   include/linux/tpm.h                | 13 ++++++++---
->>   security/integrity/ima/ima_queue.c |  5 ++++-
->>   security/keys/trusted.c            |  5 ++++-
->>   7 files changed, 63 insertions(+), 40 deletions(-)
->>
->> diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
->> index f0e1456440d7..5495223d3f7b 100644
->> --- a/drivers/char/tpm/tpm-interface.c
->> +++ b/drivers/char/tpm/tpm-interface.c
->> @@ -478,42 +478,30 @@ EXPORT_SYMBOL_GPL(tpm_pcr_read);
->>    * tpm_pcr_extend - extend a PCR value in SHA1 bank.
->>    * @chip:	a &struct tpm_chip instance, %NULL for the default chip
->>    * @pcr_idx:	the PCR to be retrieved
->> - * @hash:	the hash value used to extend the PCR value
->> + * @count:	number of tpm_bank_list structures
->> + * @bank_list:	array of tpm_bank_list structures used to extend the PCR value
->>    *
->>    * Note: with TPM 2.0 extends also those banks for which no digest was
->>    * specified in order to prevent malicious use of those PCR banks.
->>    *
->>    * Return: same as with tpm_transmit_cmd()
->>    */
->> -int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash)
->> +int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->> +		   const struct tpm_bank_list *bank_list)
->>   {
->>   	int rc;
->> -	struct tpm_digest *digest_list;
->> -	int i;
->>   
->>   	chip = tpm_find_get_ops(chip);
->>   	if (!chip)
->>   		return -ENODEV;
->>   
->>   	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
->> -		digest_list = kcalloc(chip->nr_allocated_banks,
->> -				      sizeof(*digest_list), GFP_KERNEL);
->> -		if (!digest_list)
->> -			return -ENOMEM;
->> -
->> -		for (i = 0; i < chip->nr_allocated_banks; i++) {
->> -			digest_list[i].alg_id = chip->allocated_banks[i].alg_id;
->> -			memcpy(digest_list[i].digest, hash, TPM_DIGEST_SIZE);
->> -		}
->> -
->> -		rc = tpm2_pcr_extend(chip, pcr_idx, chip->nr_allocated_banks,
->> -				     digest_list);
->> -		kfree(digest_list);
->> +		rc = tpm2_pcr_extend(chip, pcr_idx, count, bank_list);
->>   		tpm_put_ops(chip);
->>   		return rc;
->>   	}
->>   
->> -	rc = tpm1_pcr_extend(chip, pcr_idx, hash,
->> +	rc = tpm1_pcr_extend(chip, pcr_idx, count, bank_list,
->>   			     "attempting extend a PCR value");
->>   	tpm_put_ops(chip);
->>   	return rc;
->> diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
->> index 023ddf42038b..4296c720ebb4 100644
->> --- a/drivers/char/tpm/tpm.h
->> +++ b/drivers/char/tpm/tpm.h
->> @@ -504,8 +504,8 @@ int tpm1_auto_startup(struct tpm_chip *chip);
->>   int tpm1_do_selftest(struct tpm_chip *chip);
->>   int tpm1_get_timeouts(struct tpm_chip *chip);
->>   unsigned long tpm1_calc_ordinal_duration(struct tpm_chip *chip, u32 ordinal);
->> -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
->> -		    const char *log_msg);
->> +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->> +		    const struct tpm_bank_list *bank_list, const char *log_msg);
->>   int tpm1_pcr_read(struct tpm_chip *chip, u32 pcr_idx, u8 *res_buf);
->>   ssize_t tpm1_getcap(struct tpm_chip *chip, u32 subcap_id, cap_t *cap,
->>   		    const char *desc, size_t min_cap_length);
->> @@ -551,7 +551,7 @@ int tpm2_get_timeouts(struct tpm_chip *chip);
->>   int tpm2_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
->>   		  struct tpm_digest *digest_struct, u16 *digest_size_ptr);
->>   int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->> -		    struct tpm_digest *digests);
->> +		    const struct tpm_bank_list *bank_list);
->>   int tpm2_get_random(struct tpm_chip *chip, u8 *dest, size_t max);
->>   void tpm2_flush_context_cmd(struct tpm_chip *chip, u32 handle,
->>   			    unsigned int flags);
->> diff --git a/drivers/char/tpm/tpm1-cmd.c b/drivers/char/tpm/tpm1-cmd.c
->> index 8b70a7f884a7..439ac749517c 100644
->> --- a/drivers/char/tpm/tpm1-cmd.c
->> +++ b/drivers/char/tpm/tpm1-cmd.c
->> @@ -449,12 +449,19 @@ int tpm1_get_timeouts(struct tpm_chip *chip)
->>   }
->>   
->>   #define TPM_ORD_PCR_EXTEND 20
->> -int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash,
->> -		    const char *log_msg)
->> +int tpm1_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->> +		    const struct tpm_bank_list *bank_list, const char *log_msg)
->>   {
->>   	struct tpm_buf buf;
->> +	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
->> +	const u8 *hash;
->>   	int rc;
->>   
->> +	hash = dummy_hash;
->> +	if (count)
->> +		memcpy(dummy_hash, bank_list[0].extend_array,
->> +		       min(bank_list[0].digest_size, (u16)sizeof(dummy_hash)));
->> +
->>   	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_PCR_EXTEND);
-> 
-> This is probably mistake? I mean dummy_hash is not used.
-> 
->>   	if (rc)
->>   		return rc;
->> @@ -743,7 +750,6 @@ int tpm1_auto_startup(struct tpm_chip *chip)
->>    */
->>   int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
->>   {
->> -	u8 dummy_hash[TPM_DIGEST_SIZE] = { 0 };
->>   	struct tpm_buf buf;
->>   	unsigned int try;
->>   	int rc;
->> @@ -751,7 +757,7 @@ int tpm1_pm_suspend(struct tpm_chip *chip, u32 tpm_suspend_pcr)
->>   
->>   	/* for buggy tpm, flush pcrs with extend to selected dummy */
->>   	if (tpm_suspend_pcr)
->> -		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, dummy_hash,
->> +		rc = tpm1_pcr_extend(chip, tpm_suspend_pcr, 0, NULL,
->>   				     "extending dummy pcr before suspend");
->>   
->>   	rc = tpm_buf_init(&buf, TPM_TAG_RQU_COMMAND, TPM_ORD_SAVESTATE);
->> diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
->> index 974465f04b78..40eb1a044451 100644
->> --- a/drivers/char/tpm/tpm2-cmd.c
->> +++ b/drivers/char/tpm/tpm2-cmd.c
->> @@ -248,21 +248,22 @@ struct tpm2_null_auth_area {
->>    *
->>    * @chip:	TPM chip to use.
->>    * @pcr_idx:	index of the PCR.
->> - * @count:	number of digests passed.
->> - * @digests:	list of pcr banks and corresponding digest values to extend.
->> + * @count:	number of tpm_bank_list passed.
->> + * @bank_list:	array of tpm_bank_list with digest values to extend.
->>    *
->>    * Return: Same as with tpm_transmit_cmd.
->>    */
->>   int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->> -		    struct tpm_digest *digests)
->> +		    const struct tpm_bank_list *bank_list)
->>   {
->>   	struct tpm_buf buf;
->>   	struct tpm2_null_auth_area auth_area;
->> +	const struct tpm_bank_list *item;
->> +	u8 dummy_hash[SHA512_DIGEST_SIZE] = { 0 };
->> +	const u8 *hash;
->>   	int rc;
->>   	int i;
->> -
->> -	if (count > chip->nr_allocated_banks)
->> -		return -EINVAL;
->> +	int j;
->>   
->>   	rc = tpm_buf_init(&buf, TPM2_ST_SESSIONS, TPM2_CC_PCR_EXTEND);
->>   	if (rc)
->> @@ -278,11 +279,26 @@ int tpm2_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->>   	tpm_buf_append_u32(&buf, sizeof(struct tpm2_null_auth_area));
->>   	tpm_buf_append(&buf, (const unsigned char *)&auth_area,
->>   		       sizeof(auth_area));
->> -	tpm_buf_append_u32(&buf, count);
->> +	tpm_buf_append_u32(&buf, chip->nr_allocated_banks);
->> +
->> +	if (count)
->> +		memcpy(dummy_hash, bank_list[0].extend_array,
->> +		       bank_list[0].digest_size);
->> +
->> +	for (i = 0; i < chip->nr_allocated_banks; i++) {
->> +		tpm_buf_append_u16(&buf, chip->allocated_banks[i].alg_id);
->> +
->> +		hash = dummy_hash;
->> +		for (j = 0; j < count; j++) {
->> +			item = bank_list + j;
->> +
->> +			if (item->alg_id == chip->allocated_banks[i].alg_id) {
->> +				hash = item->extend_array;
->> +				break;
->> +			}
->> +		}
->>   
->> -	for (i = 0; i < count; i++) {
->> -		tpm_buf_append_u16(&buf, digests[i].alg_id);
->> -		tpm_buf_append(&buf, (const unsigned char *)&digests[i].digest,
->> +		tpm_buf_append(&buf, hash,
->>   			       chip->allocated_banks[i].digest_size);
->>   	}
->>   
->> diff --git a/include/linux/tpm.h b/include/linux/tpm.h
->> index fcdd33ae9969..16e5ff1f0294 100644
->> --- a/include/linux/tpm.h
->> +++ b/include/linux/tpm.h
->> @@ -52,6 +52,12 @@ struct tpm_bank_info {
->>   	u16 crypto_id;
->>   };
->>   
->> +struct tpm_bank_list {
->> +	u8 alg_id;
->> +	u16 digest_size;
->> +	const u8 *extend_array;
->> +};
-> 
-> You should document this structure.
-> 
->> +
->>   enum TPM_OPS_FLAGS {
->>   	TPM_OPS_AUTO_STARTUP = BIT(0),
->>   };
->> @@ -79,7 +85,8 @@ struct tpm_class_ops {
->>   extern int tpm_is_tpm2(struct tpm_chip *chip);
->>   extern int tpm_pcr_read(struct tpm_chip *chip, u32 pcr_idx,
->>   			struct tpm_digest *digest_struct);
->> -extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, const u8 *hash);
->> +extern int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->> +			  const struct tpm_bank_list *bank_list);
->>   extern int tpm_send(struct tpm_chip *chip, void *cmd, size_t buflen);
->>   extern int tpm_get_random(struct tpm_chip *chip, u8 *data, size_t max);
->>   extern int tpm_seal_trusted(struct tpm_chip *chip,
->> @@ -101,8 +108,8 @@ static inline int tpm_pcr_read(struct tpm_chip *chip, int pcr_idx,
->>   	return -ENODEV;
->>   }
->>   
->> -static inline int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx,
->> -				 const u8 *hash)
->> +static inline int tpm_pcr_extend(struct tpm_chip *chip, u32 pcr_idx, u32 count,
->> +				 const struct tpm_bank_list *bank_list)
->>   {
->>   	return -ENODEV;
->>   }
->> diff --git a/security/integrity/ima/ima_queue.c b/security/integrity/ima/ima_queue.c
->> index b186819bd5aa..24024edef316 100644
->> --- a/security/integrity/ima/ima_queue.c
->> +++ b/security/integrity/ima/ima_queue.c
->> @@ -140,12 +140,15 @@ unsigned long ima_get_binary_runtime_size(void)
->>   
->>   static int ima_pcr_extend(const u8 *hash, int pcr)
->>   {
->> +	struct tpm_bank_list bank_item = { .alg_id = TPM_ALG_SHA1,
->> +					   .digest_size = TPM_DIGEST_SIZE,
->> +					   .extend_array = hash };
-> 
-> Item is a list?
-> 
->>   	int result = 0;
->>   
->>   	if (!ima_tpm_chip)
->>   		return result;
->>   
->> -	result = tpm_pcr_extend(ima_tpm_chip, pcr, hash);
->> +	result = tpm_pcr_extend(ima_tpm_chip, pcr, 1, &bank_item);
->>   	if (result != 0)
->>   		pr_err("Error Communicating to TPM chip, result: %d\n", result);
->>   	return result;
->> diff --git a/security/keys/trusted.c b/security/keys/trusted.c
->> index ff6789365a12..d2a3129a95f9 100644
->> --- a/security/keys/trusted.c
->> +++ b/security/keys/trusted.c
->> @@ -380,6 +380,9 @@ EXPORT_SYMBOL_GPL(trusted_tpm_send);
->>   static int pcrlock(const int pcrnum)
->>   {
->>   	unsigned char hash[SHA1_DIGEST_SIZE];
->> +	struct tpm_bank_list bank_item = { .alg_id = TPM_ALG_SHA1,
->> +					   .digest_size = sizeof(hash),
->> +					   .extend_array = hash }
->>   	int ret;
->>   
->>   	if (!capable(CAP_SYS_ADMIN))
->> @@ -387,7 +390,7 @@ static int pcrlock(const int pcrnum)
->>   	ret = tpm_get_random(NULL, hash, SHA1_DIGEST_SIZE);
->>   	if (ret != SHA1_DIGEST_SIZE)
->>   		return ret;
->> -	return tpm_pcr_extend(NULL, pcrnum, hash) ? -EINVAL : 0;
->> +	return tpm_pcr_extend(NULL, pcrnum, 1, &bank_item) ? -EINVAL : 0;
->>   }
->>   
->>   /*
->> -- 
->> 2.17.1
->>
-> 
-> /Jarkko
-> 
+>-- 
+>Michal Hocko
+>SUSE Labs
 
 -- 
-HUAWEI TECHNOLOGIES Duesseldorf GmbH, HRB 56063
-Managing Director: Bo PENG, Jian LI, Yanli SHI
+Wei Yang
+Help you, Help me
