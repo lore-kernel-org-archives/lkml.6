@@ -2,237 +2,116 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6969EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:56:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 40711C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:59:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2617C2089D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:56:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2617C2089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 0B6E62087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:59:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B6E62087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390031AbeKPXIz (ORCPT
+        id S2389585AbeKPXLY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 18:08:55 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34170 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727814AbeKPXIy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 18:08:54 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id D172CAF15;
-        Fri, 16 Nov 2018 12:56:34 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id C8B341E09B3; Fri, 16 Nov 2018 13:56:33 +0100 (CET)
-Date:   Fri, 16 Nov 2018 13:56:33 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Cc:     Jan Kara <jack@suse.com>, linux-kernel@vger.kernel.org,
-        Andrew Gabbasov <andrew_gabbasov@mentor.com>
-Subject: Re: [PATCH] udf: fix dvd mounting error
-Message-ID: <20181116125633.GG24157@quack2.suse.cz>
-References: <20181115122600.15821-1-sudipm.mukherjee@gmail.com>
+        Fri, 16 Nov 2018 18:11:24 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53642 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727814AbeKPXLX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 18:11:23 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F263B5F73A;
+        Fri, 16 Nov 2018 12:59:05 +0000 (UTC)
+Received: from kamzik.brq.redhat.com (unknown [10.43.2.160])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4B7345D739;
+        Fri, 16 Nov 2018 12:59:01 +0000 (UTC)
+Date:   Fri, 16 Nov 2018 13:58:58 +0100
+From:   Andrew Jones <drjones@redhat.com>
+To:     Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
+Cc:     Shuah Khan <shuah@kernel.org>, Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Xu <peterx@redhat.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Hossam Hassan <7ossam9063@gmail.com>,
+        Ahmed Lotfy <A7med.lotfey@gmail.com>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>,
+        Anders Roxell <anders.roxell@linaro.org>
+Subject: Re: [PATCH V2] SelfTest: KVM: Drop Asserts for madvise
+ MADV_NOHUGEPAGE failure
+Message-ID: <20181116125858.yujwx5xkpg2kgyxe@kamzik.brq.redhat.com>
+References: <20181116115055.7415-1-ahmedsoliman0x666@gmail.com>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="4Ckj6UjgE2iN1+kY"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181115122600.15821-1-sudipm.mukherjee@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181116115055.7415-1-ahmedsoliman0x666@gmail.com>
+User-Agent: NeoMutt/20180716
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Fri, 16 Nov 2018 12:59:06 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-
---4Ckj6UjgE2iN1+kY
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-
-On Thu 15-11-18 12:26:00, Sudip Mukherjee wrote:
-> Some DVDs are failing to mount with the error:
+On Fri, Nov 16, 2018 at 01:50:55PM +0200, Ahmed Abd El Mawgood wrote:
+> From: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
 > 
-> [  632.305370] UDF-fs: warning (device loop0): udf_load_vrs: No anchor found
-> [  632.305372] UDF-fs: Scanning with blocksize 512 failed
-> [  632.307837] UDF-fs: warning (device loop0): udf_load_vrs: No anchor found
-> [  632.307839] UDF-fs: Scanning with blocksize 1024 failed
-> [  632.309320] UDF-fs: incorrect dstring lengths (32/32)
-> [  632.309361] UDF-fs: Scanning with blocksize 2048 failed
-> [  632.309530] UDF-fs: warning (device loop0): udf_load_vrs: No VRS found
-> [  632.309531] UDF-fs: Scanning with blocksize 4096 failed
+> madvise() returns -1 without CONFIG_TRANSPARENT_HUGEPAGE=y. That would
+> trigger asserts when checking for return value of madvice. Following
+> similar decision to [1]. I thought it is ok to assume that madvise()
+> MADV_NOHUGEPAGE failures implies that THP is not supported by host kernel.
 > 
-> This particular DVD used to work with v4.4 kernels, and has stopped
-> working after updating the kernel to v4.14. Did a git bisect and that
-> pointed to:
-> c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
+> Other options was to check for Transparent Huge Page support in
+> /sys/kernel/mm/transparent_hugepage/enabled.
 > 
-> This patch effectively reverts c26f6c615788 and removes the length
-> check that it introduced. And after this patch:
+> -- links --
+> [1] https://lists.gnu.org/archive/html/qemu-devel/2015-11/msg04514.html
 > 
-> [   61.767204] UDF-fs: warning (device loop0): udf_load_vrs: No anchor found
-> [   61.767206] UDF-fs: Scanning with blocksize 512 failed
-> [   61.770011] UDF-fs: warning (device loop0): udf_load_vrs: No anchor found
-> [   61.770026] UDF-fs: Scanning with blocksize 1024 failed
-> [   61.773006] UDF-fs: warning (device loop0): udf_load_vrs: No anchor found
-> [   61.773007] UDF-fs: Scanning with blocksize 512 failed
-> [   61.774401] UDF-fs: warning (device loop0): udf_load_vrs: No anchor found
-> [   61.774402] UDF-fs: Scanning with blocksize 1024 failed
-> [   61.775045] UDF-fs: INFO Mounting volume 'TOUR_2017_THANKSGIVING_25_DISC ',
-> 			timestamp 2018/01/30 05:57 (1000)
-> 
-> The DVD is available at:
-> https://www.amazon.co.jp/Live-%E3%80%8CMr-Children-DOME-STADIUM-Thanksgiving/dp/B079B5W6KC
-> 
-> Cc: Andrew Gabbasov <andrew_gabbasov@mentor.com>
-> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-
-Thanks for report and the analysis! Looking at the UDF specification and
-your report, the media is simply incorrect. However I do agree that it is
-lame to just refuse to mount the media when we don't need the problematic
-string for anything important. However I don't agree with just stopping the
-checking of string length. That opens potential security issues with
-corrupted media. Attached patch should fix your problem in a safe way. Can
-you please test it with your media?
-
-								Honza
-
+> Signed-off-by: Ahmed Abd El Mawgood <ahmedsoliman@mena.vt.edu>
 > ---
+>  tools/testing/selftests/kvm/lib/kvm_util.c | 21 +++++++++++++++------
+>  1 file changed, 15 insertions(+), 6 deletions(-)
 > 
-> I dont't think this is the correct fix but has solved the problem for
-> now. I have the iso image of the DVD for testing, and if there is a better
-> solution I can test.
-> 
->  fs/udf/unicode.c | 8 +-------
->  1 file changed, 1 insertion(+), 7 deletions(-)
-> 
-> diff --git a/fs/udf/unicode.c b/fs/udf/unicode.c
-> index 45234791fec2..9f80c56178a5 100644
-> --- a/fs/udf/unicode.c
-> +++ b/fs/udf/unicode.c
-> @@ -356,14 +356,8 @@ int udf_dstrCS0toChar(struct super_block *sb, uint8_t *utf_o, int o_len,
->  {
->  	int s_len = 0;
+> diff --git a/tools/testing/selftests/kvm/lib/kvm_util.c b/tools/testing/selftests/kvm/lib/kvm_util.c
+> index 1b41e71283d5..437c5bb48061 100644
+> --- a/tools/testing/selftests/kvm/lib/kvm_util.c
+> +++ b/tools/testing/selftests/kvm/lib/kvm_util.c
+> @@ -586,14 +586,23 @@ void vm_userspace_mem_region_add(struct kvm_vm *vm,
+>  				 src_type == VM_MEM_SRC_ANONYMOUS_THP ?  huge_page_size : 1);
 >  
-> -	if (i_len > 0) {
-> +	if (i_len > 0)
->  		s_len = ocu_i[i_len - 1];
-> -		if (s_len >= i_len) {
-> -			pr_err("incorrect dstring lengths (%d/%d)\n",
-> -			       s_len, i_len);
-> -			return -EINVAL;
-> -		}
-> -	}
+>  	/* As needed perform madvise */
+> -	if (src_type == VM_MEM_SRC_ANONYMOUS || src_type == VM_MEM_SRC_ANONYMOUS_THP) {
+> +	if (src_type == VM_MEM_SRC_ANONYMOUS) {
+> +		/*
+> +		 * Neglect madvise error because it is ok to not have THP
+> +		 * support in this case.
+> +		 */
+> +		madvise(region->host_mem, npages * vm->page_size,
+> +			MADV_NOHUGEPAGE);
+> +	} else if (src_type == VM_MEM_SRC_ANONYMOUS_THP) {
+>  		ret = madvise(region->host_mem, npages * vm->page_size,
+> -			     src_type == VM_MEM_SRC_ANONYMOUS ? MADV_NOHUGEPAGE : MADV_HUGEPAGE);
+> +			MADV_HUGEPAGE);
+>  		TEST_ASSERT(ret == 0, "madvise failed,\n"
+> -			    "  addr: %p\n"
+> -			    "  length: 0x%lx\n"
+> -			    "  src_type: %x",
+> -			    region->host_mem, npages * vm->page_size, src_type);
+> +			"Does the kernel have CONFIG_TRANSPARENT_HUGEPAGE=y\n"
+> +			"  addr: %p\n"
+> +			"  length: 0x%lx\n"
+> +			"  src_type: %x\n",
+> +			region->host_mem, npages * vm->page_size,
+> +			src_type);
+>  	}
 >  
->  	return udf_name_from_CS0(sb, utf_o, o_len, ocu_i, s_len, 0);
->  }
+>  	region->unused_phy_pages = sparsebit_alloc();
 > -- 
-> 2.11.0
-> 
-> 
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+> 2.18.1
+>
 
---4Ckj6UjgE2iN1+kY
-Content-Type: text/x-patch; charset=us-ascii
-Content-Disposition: attachment; filename="0001-udf-Allow-mounting-volumes-with-incorrect-identifica.patch"
-
-From e1a7680b960fe25821f2419b4c0b1215f8ab2f9b Mon Sep 17 00:00:00 2001
-From: Jan Kara <jack@suse.cz>
-Date: Fri, 16 Nov 2018 13:43:17 +0100
-Subject: [PATCH] udf: Allow mounting volumes with incorrect identification
- strings
-
-Commit c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
-started to be more strict when checking whether converted strings are
-properly formatted. Sudip reports that there are DVDs where the volume
-identification string is actually too long - UDF reports:
-
-[  632.309320] UDF-fs: incorrect dstring lengths (32/32)
-
-during mount and fails the mount. This is mostly harmless failure as we
-don't need volume identification (and even less volume set
-identification) for anything. So just truncate the volume identification
-string if it is too long and replace it with 'Invalid' if we just cannot
-convert it for other reasons. This keeps slightly incorrect media still
-mountable.
-
-CC: stable@vger.kernel.org
-Fixes: c26f6c615788 ("udf: Fix conversion of 'dstring' fields to UTF8")
-Reported-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-Signed-off-by: Jan Kara <jack@suse.cz>
----
- fs/udf/super.c   | 16 ++++++++++------
- fs/udf/unicode.c | 14 +++++++++++---
- 2 files changed, 21 insertions(+), 9 deletions(-)
-
-diff --git a/fs/udf/super.c b/fs/udf/super.c
-index 8f2f56d9a1bb..0672382b79e3 100644
---- a/fs/udf/super.c
-+++ b/fs/udf/super.c
-@@ -827,16 +827,20 @@ static int udf_load_pvoldesc(struct super_block *sb, sector_t block)
- 
- 
- 	ret = udf_dstrCS0toChar(sb, outstr, 31, pvoldesc->volIdent, 32);
--	if (ret < 0)
--		goto out_bh;
--
--	strncpy(UDF_SB(sb)->s_volume_ident, outstr, ret);
-+	if (ret < 0) {
-+		strcpy(UDF_SB(sb)->s_volume_ident, "Invalid");
-+		pr_warn("incorrect volume identification, setting to "
-+			"'Invalid'\n");
-+	} else {
-+		strncpy(UDF_SB(sb)->s_volume_ident, outstr, ret);
-+	}
- 	udf_debug("volIdent[] = '%s'\n", UDF_SB(sb)->s_volume_ident);
- 
- 	ret = udf_dstrCS0toChar(sb, outstr, 127, pvoldesc->volSetIdent, 128);
--	if (ret < 0)
-+	if (ret < 0) {
-+		ret = 0;
- 		goto out_bh;
--
-+	}
- 	outstr[ret] = 0;
- 	udf_debug("volSetIdent[] = '%s'\n", outstr);
- 
-diff --git a/fs/udf/unicode.c b/fs/udf/unicode.c
-index 45234791fec2..5fcfa96463eb 100644
---- a/fs/udf/unicode.c
-+++ b/fs/udf/unicode.c
-@@ -351,6 +351,11 @@ static int udf_name_to_CS0(struct super_block *sb,
- 	return u_len;
- }
- 
-+/*
-+ * Convert CS0 dstring to output charset. Warning: This function may truncate
-+ * input string if it is too long as it is used for informational strings only
-+ * and it is better to truncate the string than to refuse mounting a media.
-+ */
- int udf_dstrCS0toChar(struct super_block *sb, uint8_t *utf_o, int o_len,
- 		      const uint8_t *ocu_i, int i_len)
- {
-@@ -359,9 +364,12 @@ int udf_dstrCS0toChar(struct super_block *sb, uint8_t *utf_o, int o_len,
- 	if (i_len > 0) {
- 		s_len = ocu_i[i_len - 1];
- 		if (s_len >= i_len) {
--			pr_err("incorrect dstring lengths (%d/%d)\n",
--			       s_len, i_len);
--			return -EINVAL;
-+			pr_warn("incorrect dstring lengths (%d/%d),"
-+				" truncating\n", s_len, i_len);
-+			s_len = i_len - 1;
-+			/* 2-byte encoding? Need to round properly... */
-+			if (ocu_i[0] == 16)
-+				s_len -= (s_len - 1) & 2;
- 		}
- 	}
- 
--- 
-2.16.4
-
-
---4Ckj6UjgE2iN1+kY--
+Reviewed-by: Andrew Jones <drjones@redhat.com>
