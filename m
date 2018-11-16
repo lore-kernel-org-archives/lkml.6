@@ -2,181 +2,502 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C86E9C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:32:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 454BBC43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:32:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82DA02087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:32:04 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=synopsys.com header.i=@synopsys.com header.b="BtQx1Fvo"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82DA02087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=synopsys.com
+	by mail.kernel.org (Postfix) with ESMTP id EED782086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:32:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EED782086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389624AbeKPWoN (ORCPT
+        id S2389660AbeKPWoa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 17:44:13 -0500
-Received: from smtprelay.synopsys.com ([198.182.60.111]:53474 "EHLO
-        smtprelay.synopsys.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727868AbeKPWoN (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 17:44:13 -0500
-Received: from mailhost.synopsys.com (mailhost3.synopsys.com [10.12.238.238])
-        by smtprelay.synopsys.com (Postfix) with ESMTP id 2414F10C1161;
-        Fri, 16 Nov 2018 04:32:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=synopsys.com; s=mail;
-        t=1542371521; bh=lgN+W5FsFOfywQMYqQOvqKg4x6bdlWn7Y/mFzGvN75g=;
-        h=Subject:To:CC:References:From:Date:In-Reply-To:From;
-        b=BtQx1FvoFSwEgqWEGBHzBEa+q7lxK2jPLLaR5a/h1uNJD1Dr7RspIUaKyUnbFMVF+
-         5y5HwRwgPD+dECnJveu/1Md09S6ShsP2Mxv7GbVa07yXEHiNF3HBkIz3W5aVJiXY9Z
-         jp1+tSexy6llQKJrvDsAhGbKoCBgBg5/HYlGCfbgW5jq9G7xXgCv0FfVvRyp49JkWb
-         PXykeK81O7hthZlxqo67YqPcXndnQ09FFsZ4XNSpeSvAZuilWwZYky73rrd9wdV2MC
-         uojZciJVhmXTLt3DVthfKtT9HD0YSOVXx68l8AcqGL1KxdnptQB9K4MJncVH4E02+o
-         tBkFjZOA/oVXg==
-Received: from US01WXQAHTC1.internal.synopsys.com (us01wxqahtc1.internal.synopsys.com [10.12.238.230])
-        by mailhost.synopsys.com (Postfix) with ESMTP id B00A238D9;
-        Fri, 16 Nov 2018 04:31:58 -0800 (PST)
-Received: from DE02WEHTCB.internal.synopsys.com (10.225.19.94) by
- US01WXQAHTC1.internal.synopsys.com (10.12.238.230) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 16 Nov 2018 04:31:58 -0800
-Received: from DE02WEHTCA.internal.synopsys.com (10.225.19.92) by
- DE02WEHTCB.internal.synopsys.com (10.225.19.94) with Microsoft SMTP Server
- (TLS) id 14.3.408.0; Fri, 16 Nov 2018 13:31:56 +0100
-Received: from [10.0.2.15] (10.107.19.125) by DE02WEHTCA.internal.synopsys.com
- (10.225.19.80) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 16 Nov
- 2018 13:31:56 +0100
-Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
-To:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        vitor <vitor.soares@synopsys.com>
-CC:     Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
-        "Jonathan Corbet" <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
+        Fri, 16 Nov 2018 17:44:30 -0500
+Received: from mga14.intel.com ([192.55.52.115]:53886 "EHLO mga14.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727868AbeKPWoa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 17:44:30 -0500
+X-Amp-Result: UNKNOWN
+X-Amp-Original-Verdict: FILE UNKNOWN
+X-Amp-File-Uploaded: False
+Received: from orsmga007.jf.intel.com ([10.7.209.58])
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 04:32:16 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
+   d="scan'208";a="89834013"
+Received: from unknown (HELO localhost) ([10.249.254.90])
+  by orsmga007.jf.intel.com with ESMTP; 16 Nov 2018 04:32:11 -0800
+Date:   Fri, 16 Nov 2018 14:32:09 +0200
+From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+To:     Stefan Berger <stefanb@linux.ibm.com>
+Cc:     linux-integrity@vger.kernel.org,
+        linux-security-module@vger.kernel.org,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Tomas Winkler <tomas.winkler@intel.com>,
+        Tadeusz Struk <tadeusz.struk@intel.com>,
+        Stefan Berger <stefanb@linux.vnet.ibm.com>,
+        Nayna Jain <nayna@linux.ibm.com>,
+        Peter Huewe <peterhuewe@gmx.de>,
+        Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        "Cyprian Wronka" <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "Rafal Ciepiela" <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        "Kumar Gala" <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Mark Brown <broonie@kernel.org>
-References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
- <76b1d15d-232c-d8ba-5eba-8394e71be725@synopsys.com>
- <20181115135731.25f60990@bbrezillon> <20181115150137.GB4169@kunai>
- <20181115162826.42b54776@bbrezillon>
- <1d64f21a-ad24-94e0-2c17-25729ef59a31@synopsys.com>
- <20181115200058.1869afdb@bbrezillon>
-From:   vitor <vitor.soares@synopsys.com>
-Message-ID: <5f946406-a205-3802-aefd-ebd8b5a72b0b@synopsys.com>
-Date:   Fri, 16 Nov 2018 12:31:42 +0000
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
+        open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v7 15/17] tpm: introduce tpm_chip_start() and
+ tpm_chip_stop()
+Message-ID: <20181116123130.GB6445@linux.intel.com>
+References: <20181113183620.27447-1-jarkko.sakkinen@linux.intel.com>
+ <20181113183620.27447-16-jarkko.sakkinen@linux.intel.com>
+ <f13401b7-e683-6b61-b0cf-7c4be87903cb@linux.ibm.com>
+ <f4d13062-9094-7afd-24d6-4daf781d20d4@linux.ibm.com>
 MIME-Version: 1.0
-In-Reply-To: <20181115200058.1869afdb@bbrezillon>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-Content-Language: en-US
-X-Originating-IP: [10.107.19.125]
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f4d13062-9094-7afd-24d6-4daf781d20d4@linux.ibm.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Boris,
+On Tue, Nov 13, 2018 at 08:56:51PM -0500, Stefan Berger wrote:
+> On 11/13/18 5:34 PM, Stefan Berger wrote:
+> > On 11/13/18 1:36 PM, Jarkko Sakkinen wrote:
+> > > Encapsulate power gating and locality functionality to tpm_chip_start()
+> > > and tpm_chip_stop() in order to clean up the branching mess in
+> > > tpm_transmit().
+> > 
+> > 
+> > I ran the vtpm proxy test suite on this series and got this error when
+> > running it with 'make check-j5'
+> > (https://github.com/stefanberger/linux-vtpm-tests).
+> > 
+> > It's was actually difficult to hit this bug since I ran it with -j1 ,
+> > -j2 and so on before.
+> 
+> This is the diff against your nested branch that fixes this bug and the
+> other issue I found:
+> 
+> diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> index 46aa68756bac..42bce9bc41b1 100644
+> --- a/drivers/char/tpm/tpm-chip.c
+> +++ b/drivers/char/tpm/tpm-chip.c
+> @@ -155,7 +155,13 @@ int tpm_try_get_ops(struct tpm_chip *chip)
+>          goto out_lock;
+> 
+>      mutex_lock(&chip->tpm_mutex);
+> -    return tpm_chip_start(chip);
+> +    rc = tpm_chip_start(chip);
+> +    if (rc)
+> +        goto out_unlock;
+> +    return 0;
+> +
+> +out_unlock:
+> +    mutex_unlock(&chip->tpm_mutex);
+>  out_lock:
+>      up_read(&chip->ops_sem);
+>      put_device(&chip->dev);
+> diff --git a/drivers/char/tpm/tpm-interface.c
+> b/drivers/char/tpm/tpm-interface.c
+> index 5e3d5e95ea46..c3260ae8aca3 100644
+> --- a/drivers/char/tpm/tpm-interface.c
+> +++ b/drivers/char/tpm/tpm-interface.c
+> @@ -167,6 +167,8 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8 *buf,
+> size_t bufsiz)
+>      for (;;) {
+>          ret = tpm_try_transmit(chip, buf, bufsiz);
+> 
+> +        if (ret < 0)
+> +            break;
+>          rc = be32_to_cpu(header->return_code);
+>          if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
+>              break;
+> 
+> 
+> 
+> 
+> 
+> > 
+> > 
+> > [ 3003.838138] BUG: unable to handle kernel NULL pointer dereference at
+> > 0000000000000000
+> > [ 3003.838806] PGD 0 P4D 0
+> > [ 3003.838806] Oops: 0010 [#1] SMP PTI
+> > [ 3003.840394] CPU: 3 PID: 111 Comm: kworker/3:1 Not tainted 4.20.0-rc2+
+> > #6
+> > [ 3003.840394] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> > BIOS rel-1.11.0-50-g14221cd-dirty-20181018_164544-sbct-4.pok.ibm.com
+> > 04/01/2014
+> > [ 3003.840394] Workqueue: tpm-vtpm vtpm_proxy_work
+> > [ 3003.840394] RIP: 0010:          (null)
+> > [ 3003.840394] Code: Bad RIP value.
+> > [ 3003.840394] RSP: 0018:ffffa6e6816d7e10 EFLAGS: 00010246
+> > [ 3003.840394] RAX: 00000000ffffffe0 RBX: ffff9698077ad000 RCX:
+> > 0000000000000006
+> > [ 3003.840394] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
+> > ffff9698077ad000
+> > [ 3003.840394] RBP: ffff9698077ad000 R08: fffff59bc6172d08 R09:
+> > 0000000000000000
+> > [ 3003.840394] R10: 0000000000000000 R11: 0000000000000000 R12:
+> > ffff9698b78f0700
+> > [ 3003.840394] R13: ffff9698b78fbc00 R14: 0000000000000000 R15:
+> > ffff9697f8ea10f8
+> > [ 3003.840394] FS:  0000000000000000(0000) GS:ffff9698b78c0000(0000)
+> > knlGS:0000000000000000
+> > [ 3003.840394] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [ 3003.840394] CR2: ffffffffffffffd6 CR3: 0000000190606000 CR4:
+> > 00000000000006e0
+> > [ 3003.840394] Call Trace:
+> > [ 3003.840394]  ? tpm_chip_start+0xb8/0xe0
+> > [ 3003.840394]  ? tpm_chip_register+0x15/0x240
+> > [ 3003.840394]  ? vtpm_proxy_work+0x15/0x30
+> > [ 3003.840394]  ? process_one_work+0x237/0x5c0
+> > [ 3003.840394]  ? worker_thread+0x1d5/0x390
+> > [ 3003.840394]  ? process_one_work+0x5c0/0x5c0
+> > [ 3003.840394]  ? kthread+0x11e/0x140
+> > [ 3003.840394]  ? kthread_park+0x90/0x90
+> > [ 3003.840394]  ? ret_from_fork+0x3a/0x50
+> > [ 3003.840394] Modules linked in: xt_CHECKSUM ipt_MASQUERADE tun
+> > nf_conntrack_netbios_ns nf_conntrack_broadcast xt_CT ip6t_rpfilter
+> > ip6t_REJECT nf_reject_ipv6 xt_conntrack ip_set nfnetlink ebtable_nat
+> > ebtable_broute bridge stp llc ip6table_nat nf_nat_ipv6 ip6table_mangle
+> > ip6table_raw ip6table_security iptable_nat nf_nat_ipv4 nf_nat
+> > nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 libcrc32c iptable_mangle
+> > iptable_raw iptable_security ebtable_filter ebtables ip6table_filter
+> > ip6_tables sunrpc virtio_gpu ttm drm_kms_helper drm joydev syscopyarea
+> > sysfillrect sysimgblt pcspkr virtio_balloon i2c_piix4 fb_sys_fops
+> > virtio_net net_failover virtio_console failover virtio_blk crc32c_intel
+> > virtio_pci serio_raw ata_generic virtio_ring virtio pata_acpi floppy
+> > qemu_fw_cfg
+> > [ 3003.840394] CR2: 0000000000000000
+> > [ 3003.840394] ---[ end trace 29e5990b605a7ccb ]---
+> > [ 3003.840394] RIP: 0010:          (null)
+> > [ 3003.840394] Code: Bad RIP value.
+> > [ 3003.840394] RSP: 0018:ffffa6e6816d7e10 EFLAGS: 00010246
+> > [ 3003.840394] RAX: 00000000ffffffe0 RBX: ffff9698077ad000 RCX:
+> > 0000000000000006
+> > [ 3003.840394] RDX: 0000000000000000 RSI: 0000000000000000 RDI:
+> > ffff9698077ad000
+> > [ 3003.840394] RBP: ffff9698077ad000 R08: fffff59bc6172d08 R09:
+> > 0000000000000000
+> > [ 3003.840394] R10: 0000000000000000 R11: 0000000000000000 R12:
+> > ffff9698b78f0700
+> > [ 3003.840394] R13: ffff9698b78fbc00 R14: 0000000000000000 R15:
+> > ffff9697f8ea10f8
+> > [ 3003.840394] FS:  0000000000000000(0000) GS:ffff9698b78c0000(0000)
+> > knlGS:0000000000000000
+> > [ 3003.840394] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> > [ 3003.840394] CR2: ffffffffffffffd6 CR3: 0000000190606000 CR4:
+> > 00000000000006e0
+> > [ 3003.840394] BUG: sleeping function called from invalid context at
+> > ./include/linux/percpu-rwsem.h:34
+> > [ 3003.840394] in_atomic(): 0, irqs_disabled(): 1, pid: 111, name:
+> > kworker/3:1
+> > [ 3003.840394] INFO: lockdep is turned off.
+> > [ 3003.840394] irq event stamp: 165206
+> > [ 3003.840394] hardirqs last  enabled at (165205): [<ffffffff8b220113>]
+> > free_unref_page+0xf3/0x1f0
+> > [ 3003.840394] hardirqs last disabled at (165206): [<ffffffff8b0019ee>]
+> > trace_hardirqs_off_thunk+0x1a/0x1c
+> > [ 3003.840394] softirqs last  enabled at (165182): [<ffffffff8b785e01>]
+> > peernet2id+0x41/0x50
+> > [ 3003.840394] softirqs last disabled at (165180): [<ffffffff8b785de2>]
+> > peernet2id+0x22/0x50
+> > [ 3003.840394] CPU: 3 PID: 111 Comm: kworker/3:1 Tainted: G D          
+> > 4.20.0-rc2+ #6
+> > [ 3003.840394] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996),
+> > BIOS rel-1.11.0-50-g14221cd-dirty-20181018_164544-sbct-4.pok.ibm.com
+> > 04/01/2014
+> > [ 3003.840394] Workqueue: tpm-vtpm vtpm_proxy_work
+> > [ 3003.840394] Call Trace:
+> > [ 3003.840394]  dump_stack+0x67/0x9b
+> > [ 3003.840394]  ___might_sleep+0x149/0x230
+> > [ 3003.840394]  exit_signals+0x20/0x210
+> > [ 3003.840394]  ? worker_thread+0x1d5/0x390
+> > [ 3003.840394]  do_exit+0xa0/0xc70
+> > [ 3003.840394]  ? process_one_work+0x5c0/0x5c0
+> > [ 3003.840394]  ? kthread+0x11e/0x140
+> > [ 3003.840394]  rewind_stack_do_exit+0x17/0x20
+> > [ 3004.389582] tpm tpm1803: tpm_try_transmit: tpm_send: error -14
+> > 
+> > 
+> > > 
+> > > Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> > > ---
+> > >   drivers/char/tpm/tpm-chip.c      | 110 +++++++++++++++++++++++++++++++
+> > >   drivers/char/tpm/tpm-interface.c |  87 +-----------------------
+> > >   drivers/char/tpm/tpm.h           |   2 +
+> > >   3 files changed, 115 insertions(+), 84 deletions(-)
+> > > 
+> > > diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> > > index 157505b0f755..65f1561eba81 100644
+> > > --- a/drivers/char/tpm/tpm-chip.c
+> > > +++ b/drivers/char/tpm/tpm-chip.c
+> > > @@ -37,6 +37,116 @@ struct class *tpm_class;
+> > >   struct class *tpmrm_class;
+> > >   dev_t tpm_devt;
+> > > 
+> > > +static int tpm_request_locality(struct tpm_chip *chip, unsigned int
+> > > flags)
+> > > +{
+> > > +    int rc;
+> > > +
+> > > +    if (flags & TPM_TRANSMIT_NESTED)
+> > > +        return 0;
+> > > +
+> > > +    if (!chip->ops->request_locality)
+> > > +        return 0;
+> > > +
+> > > +    rc = chip->ops->request_locality(chip, 0);
+> > > +    if (rc < 0)
+> > > +        return rc;
+> > > +
+> > > +    chip->locality = rc;
+> > > +    return 0;
+> > > +}
+> > > +
+> > > +static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned
+> > > int flags)
+> > > +{
+> > > +    int rc;
+> > > +
+> > > +    if (flags & TPM_TRANSMIT_NESTED)
+> > > +        return;
+> > > +
+> > > +    if (!chip->ops->relinquish_locality)
+> > > +        return;
+> > > +
+> > > +    rc = chip->ops->relinquish_locality(chip, chip->locality);
+> > > +    if (rc)
+> > > +        dev_err(&chip->dev, "%s: : error %d\n", __func__, rc);
+> > > +
+> > > +    chip->locality = -1;
+> > > +}
+> > > +
+> > > +static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
+> > > +{
+> > > +    if (flags & TPM_TRANSMIT_NESTED)
+> > > +        return 0;
+> > > +
+> > > +    if (!chip->ops->cmd_ready)
+> > > +        return 0;
+> > > +
+> > > +    return chip->ops->cmd_ready(chip);
+> > > +}
+> > > +
+> > > +static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
+> > > +{
+> > > +    if (flags & TPM_TRANSMIT_NESTED)
+> > > +        return 0;
+> > > +
+> > > +    if (!chip->ops->go_idle)
+> > > +        return 0;
+> > > +
+> > > +    return chip->ops->go_idle(chip);
+> > > +}
+> > > +
+> > > +/**
+> > > + * tpm_chip_start() - power on the TPM
+> > > + * @chip:    a TPM chip to use
+> > > + * @flags:    TPM transmit flags
+> > > + *
+> > > + * Return:
+> > > + * * The response length    - OK
+> > > + * * -errno            - A system error
+> > > + */
+> > > +int tpm_chip_start(struct tpm_chip *chip, unsigned int flags)
+> > > +{
+> > > +    int ret;
+> > > +
+> > > +    if (chip->ops->clk_enable)
+> > > +        chip->ops->clk_enable(chip, true);
+> > > +
+> > > +    if (chip->locality == -1) {
+> > > +        ret = tpm_request_locality(chip, flags);
+> > > +        if (ret) {
+> > > +            chip->ops->clk_enable(chip, false);
+> > > +            return ret;
+> > > +        }
+> > > +    }
+> > > +
+> > > +    ret = tpm_cmd_ready(chip, flags);
+> > > +    if (ret) {
+> > > +        tpm_relinquish_locality(chip, flags);
+> > > +        if (chip->ops->clk_enable)
+> > > +            chip->ops->clk_enable(chip, false);
+> > > +        return ret;
+> > > +    }
+> > > +
+> > > +    return 0;
+> > > +}
+> > > +
+> > > +/**
+> > > + * tpm_chip_stop() - power off the TPM
+> > > + * @chip:    a TPM chip to use
+> > > + * @flags:    TPM transmit flags
+> > > + *
+> > > + * Return:
+> > > + * * The response length    - OK
+> > > + * * -errno            - A system error
+> > > + */
+> > > +void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags)
+> > > +{
+> > > +    tpm_go_idle(chip, flags);
+> > > +    tpm_relinquish_locality(chip, flags);
+> > > +    if (chip->ops->clk_enable)
+> > > +        chip->ops->clk_enable(chip, false);
+> > > +}
+> > > +
+> > > +
+> > >   /**
+> > >    * tpm_try_get_ops() - Get a ref to the tpm_chip
+> > >    * @chip: Chip to ref
+> > > diff --git a/drivers/char/tpm/tpm-interface.c
+> > > b/drivers/char/tpm/tpm-interface.c
+> > > index 5865b9671d20..888c9923fca1 100644
+> > > --- a/drivers/char/tpm/tpm-interface.c
+> > > +++ b/drivers/char/tpm/tpm-interface.c
+> > > @@ -62,64 +62,6 @@ unsigned long tpm_calc_ordinal_duration(struct
+> > > tpm_chip *chip, u32 ordinal)
+> > >   }
+> > >   EXPORT_SYMBOL_GPL(tpm_calc_ordinal_duration);
+> > > 
+> > > -static int tpm_request_locality(struct tpm_chip *chip, unsigned int
+> > > flags)
+> > > -{
+> > > -    int rc;
+> > > -
+> > > -    if (flags & TPM_TRANSMIT_NESTED)
+> > > -        return 0;
+> > > -
+> > > -    if (!chip->ops->request_locality)
+> > > -        return 0;
+> > > -
+> > > -    rc = chip->ops->request_locality(chip, 0);
+> > > -    if (rc < 0)
+> > > -        return rc;
+> > > -
+> > > -    chip->locality = rc;
+> > > -
+> > > -    return 0;
+> > > -}
+> > > -
+> > > -static void tpm_relinquish_locality(struct tpm_chip *chip, unsigned
+> > > int flags)
+> > > -{
+> > > -    int rc;
+> > > -
+> > > -    if (flags & TPM_TRANSMIT_NESTED)
+> > > -        return;
+> > > -
+> > > -    if (!chip->ops->relinquish_locality)
+> > > -        return;
+> > > -
+> > > -    rc = chip->ops->relinquish_locality(chip, chip->locality);
+> > > -    if (rc)
+> > > -        dev_err(&chip->dev, "%s: : error %d\n", __func__, rc);
+> > > -
+> > > -    chip->locality = -1;
+> > > -}
+> > > -
+> > > -static int tpm_cmd_ready(struct tpm_chip *chip, unsigned int flags)
+> > > -{
+> > > -    if (flags & TPM_TRANSMIT_NESTED)
+> > > -        return 0;
+> > > -
+> > > -    if (!chip->ops->cmd_ready)
+> > > -        return 0;
+> > > -
+> > > -    return chip->ops->cmd_ready(chip);
+> > > -}
+> > > -
+> > > -static int tpm_go_idle(struct tpm_chip *chip, unsigned int flags)
+> > > -{
+> > > -    if (flags & TPM_TRANSMIT_NESTED)
+> > > -        return 0;
+> > > -
+> > > -    if (!chip->ops->go_idle)
+> > > -        return 0;
+> > > -
+> > > -    return chip->ops->go_idle(chip);
+> > > -}
+> > > -
+> > >   static ssize_t tpm_try_transmit(struct tpm_chip *chip, u8 *buf,
+> > > size_t bufsiz,
+> > >                   unsigned int flags)
+> > >   {
+> > > @@ -212,7 +154,6 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8
+> > > *buf, size_t bufsiz,
+> > >       /* space for header and handles */
+> > >       u8 save[TPM_HEADER_SIZE + 3*sizeof(u32)];
+> > >       unsigned int delay_msec = TPM2_DURATION_SHORT;
+> > > -    bool has_locality = false;
+> > >       u32 rc = 0;
+> > >       ssize_t ret;
+> > >       const size_t save_size = min(sizeof(save), bufsiz);
+> > > @@ -227,34 +168,12 @@ ssize_t tpm_transmit(struct tpm_chip *chip, u8
+> > > *buf, size_t bufsiz,
+> > >       memcpy(save, buf, save_size);
+> > > 
+> > >       for (;;) {
+> > > -        if (chip->ops->clk_enable != NULL)
+> > > -            chip->ops->clk_enable(chip, true);
+> > > -
+> > > -        if (chip->locality == -1) {
+> > > -            ret = tpm_request_locality(chip, flags);
+> > > -            if (ret)
+> > > -                goto out_locality;
+> > > -            has_locality = true;
+> > > -        }
+> > > -
+> > > -        ret = tpm_cmd_ready(chip, flags);
+> > > +        ret = tpm_chip_start(chip, flags);
+> > >           if (ret)
+> > > -            goto out_locality;
+> > > -
+> > > +            return ret;
+> > >           ret = tpm_try_transmit(chip, buf, bufsiz, flags);
+> > > +        tpm_chip_stop(chip, flags);
+> > > 
+> > > -        /* This may fail but do not override ret. */
+> > > -        tpm_go_idle(chip, flags);
+> > > -
+> > > -out_locality:
+> > > -        if (has_locality)
+> > > -            tpm_relinquish_locality(chip, flags);
+> > > -
+> > > -        if (chip->ops->clk_enable != NULL)
+> > > -            chip->ops->clk_enable(chip, false);
+> > > -
+> > > -        if (ret < 0)
+> > > -            break;
+> > >           rc = be32_to_cpu(header->return_code);
+> > >           if (rc != TPM2_RC_RETRY && rc != TPM2_RC_TESTING)
+> > >               break;
+> > > diff --git a/drivers/char/tpm/tpm.h b/drivers/char/tpm/tpm.h
+> > > index c7c06de651a0..c42a75710b70 100644
+> > > --- a/drivers/char/tpm/tpm.h
+> > > +++ b/drivers/char/tpm/tpm.h
+> > > @@ -523,6 +523,8 @@ static inline void tpm_msleep(unsigned int
+> > > delay_msec)
+> > >                delay_msec * 1000);
+> > >   };
+> > > 
+> > > +int tpm_chip_start(struct tpm_chip *chip, unsigned int flags);
+> > > +void tpm_chip_stop(struct tpm_chip *chip, unsigned int flags);
+> > >   struct tpm_chip *tpm_find_get_ops(struct tpm_chip *chip);
+> > >   __must_check int tpm_try_get_ops(struct tpm_chip *chip);
+> > >   void tpm_put_ops(struct tpm_chip *chip);
+> > 
+> > 
+> 
 
+Thank you!
 
-On 15/11/18 19:00, Boris Brezillon wrote:
-> On Thu, 15 Nov 2018 18:03:47 +0000
-> vitor <vitor.soares@synopsys.com> wrote:
->
->> Hi Boris,
->>
->>
->> On 15/11/18 15:28, Boris Brezillon wrote:
->>> On Thu, 15 Nov 2018 16:01:37 +0100
->>> Wolfram Sang <wsa@the-dreams.de> wrote:
->>>   
->>>> Hi Boris,
->>>>   
->>>>> What we could do though, is expose I3C devices that do not have a
->>>>> driver in kernel space, like spidev does.
->>>> ...
->>>>   
->>>>> Mark, Wolfram, Arnd, Greg, any opinion?
->>>> Is there a benefit for having drivers in userspace? My gut feeling is to
->>>> encourage people to write kernel drivers. If this is, for some reason,
->>>> not possible for some driver, then we have a use case at hand to test
->>>> the then-to-be-developed userspace interface against. Until then, I
->>>> personally wouldn't waste effort on designing it without a user in
->>>> sight.
->>> I kind of agree with that. Vitor, do you have a use case in mind for
->>> such userspace drivers? I don't think it's worth designing an API for
->>> something we don't need (yet).
->> My use case is a tool for tests, lets say like the i2c tools.
-> What would you like to test exactly?
->
->> There is
->> other subsystems, some of them mentioned on this thread, that have and
->> ioctl system call or other method to change parameters or send data.
-> I don't think they added the /dev interface before having a real use
-> case for it.
->
->>
->> I rise this topic because I really think it worth to define now how this
->> should be design (and for me how to do the things right) to avoid future
->> issues.
-> Actually it should be done the other way around: you should have a real
-> need and the /dev interface should be designed to fulfill this need.
-> Based on this real use case we can discuss other potential usage that
-> might appear in the future and try to design something more
-> future-proof, but clearly, this userspace interface should be driven by
-> a real/well-defined use case.
->
-> Also, exposing things to userspace is way more risky than adding a new
-> in-kernel subsystem/framework, because it then becomes part of the
-> stable ABI.
->
-> To make things clearer, I'm not against the idea of exposing I3C
-> devices (or I3C buses) to userspace, but I'd like to understand what you
-> plan to do with that. If this is about testing, what kind of tests
-> you'd like to run. If this is about developing drivers in userspace,
-> why can't these be done in kernel space (license issues?), and what
-> would those drivers be allowed to do?
-
-
-Basically I need a tool that help me during the development and to avoid 
-me to write a dummy driver for each device that I test.
-
-For instances do some read/write, get/set ccc commands, if something 
-goes wrong during the bus initialization have a to debug etc...
-
-
-For me this is a valid use case and I imagine when people start to 
-develop in i3c this interface will help everyone.
-
-
-Best regards,
-
-Vitor Soares
-
+/Jarkko
