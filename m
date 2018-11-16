@@ -2,108 +2,109 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 735E7C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CFCC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:14:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 332C02145D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:13:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 02B18214F1
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:14:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fozUjd/w"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 332C02145D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gR0DxmVa"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02B18214F1
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389253AbeKPMXd (ORCPT
+        id S2389361AbeKPMYr (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 07:23:33 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:33793 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbeKPMXd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 07:23:33 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 17so9612938pgg.1
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 18:13:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=P7KMfBGq1zleDXk2tIXwLz1VcjicjRlXzvKzqntLxKA=;
-        b=fozUjd/wqKo2gI9UE3oy0U1Kp15FoToznX3ds/OJIiv+1Q2Gl/BBhLwm3yQujE5YEC
-         z0f+0LwFYS7CtDNO39FB+WY9v4ObQfDqoYuNikNv2pQ2PX9sI30wNCttxXvoU3uQtg4s
-         sClLTdKbEFKQ7brzlqi/Zbz1r4xDpV0Iih4Kg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=P7KMfBGq1zleDXk2tIXwLz1VcjicjRlXzvKzqntLxKA=;
-        b=lqYKY7+cTrJUE7B96+tTXjcq8cdwrBlBHksZy74x6MElXWkqPzZ+sGNwCLTiNIYbIQ
-         WckC/C98n+9GR8ZH7SE/xnS/uUkaNiP+tlour+igZFkp29HAlsSf45wpy59HJZ0Xdfew
-         ljeBVZDfiNSForh/ubaHqmLwVTfDZY7omPyF4uX09ITcgSyB3BVURAcysH35oebA7q4S
-         EbD5LQNktceC3x7j4dYPp/iHFanpnOFkSQkvNGOl4NS0eVY+L5LGjRowlINImURP9LZN
-         Yt/NuWOk3p5Ezw0K0wToVFXqsN980WzQYWL8uQj9CDjwwlrQVwvdWx1xbdGnLMMYa+Ai
-         kgLA==
-X-Gm-Message-State: AGRZ1gKrnPeJk2/aIXYM2spBNC4PVydb9L8vEhuhjFTpy5o/uan3pA1N
-        KvXMuPXtbaOzfRTQaHqVUP8Gpu328RM=
-X-Google-Smtp-Source: AJdET5dHFLsVfeS5YLjiQRb+huzDbocKza37UVlBgk0Jr5dhvGRn0MrWGGRED1tDr8hO3kfPGIh82g==
-X-Received: by 2002:a62:8a0d:: with SMTP id y13-v6mr9115425pfd.142.1542334384485;
-        Thu, 15 Nov 2018 18:13:04 -0800 (PST)
-Received: from cychiang-z840.tpe.corp.google.com ([2401:fa00:1:b:e688:dfd2:a1a7:2956])
-        by smtp.gmail.com with ESMTPSA id b27sm19576389pfh.113.2018.11.15.18.13.01
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Thu, 15 Nov 2018 18:13:03 -0800 (PST)
-From:   Cheng-Yi Chiang <cychiang@chromium.org>
-To:     linux-kernel@vger.kernel.org
-Cc:     Mark Brown <broonie@kernel.org>, oder_chiou@realtek.com,
-        alsa-devel@alsa-project.org, dgreid@chromium.org,
-        tzungbi@chromium.org, Cheng-Yi Chiang <cychiang@chromium.org>
-Subject: [PATCH v2] ASoC: rt5663: Add documentation for power supply support
-Date:   Fri, 16 Nov 2018 10:12:43 +0800
-Message-Id: <20181116021243.179183-1-cychiang@chromium.org>
-X-Mailer: git-send-email 2.19.1.1215.g8438c0b245-goog
+        Fri, 16 Nov 2018 07:24:47 -0500
+Received: from mail.kernel.org ([198.145.29.99]:60402 "EHLO mail.kernel.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726518AbeKPMYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 07:24:47 -0500
+Received: from jouet.infradead.org (unknown [64.114.255.97])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.kernel.org (Postfix) with ESMTPSA id 991422145D;
+        Fri, 16 Nov 2018 02:14:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+        s=default; t=1542334458;
+        bh=BAdmk5RSlioy8LNJ5ZsSqwhBBaQCPKSsb5ew9cuELu8=;
+        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+        b=gR0DxmVajjt77bv94NCWYP8FC+uIMbJBXgg/4kyHvsKy5W41sk3sMEMZdRfz0vHbE
+         bgUO4s8sew3EEAU6QX1fcjjDhWsMqrqrImj77HLjP+2ib0vJZyhEaNT3yLeI96RUeA
+         wBrIMSRDeF26bwnGPMskqbSOkYkqQItC3nA1nvh0=
+Received: by jouet.infradead.org (Postfix, from userid 1000)
+        id 7418D1443D0; Thu, 15 Nov 2018 18:14:18 -0800 (PST)
+Date:   Thu, 15 Nov 2018 18:14:18 -0800
+From:   Arnaldo Carvalho de Melo <acme@kernel.org>
+To:     "Liang, Kan" <kan.liang@linux.intel.com>
+Cc:     Jiri Olsa <jolsa@redhat.com>, mingo@redhat.com,
+        peterz@infradead.org, linux-kernel@vger.kernel.org,
+        namhyung@kernel.org, ak@linux.intel.com
+Subject: Re: [PATCH 1/2] perf vendor events: Add stepping in CPUID string for
+ x86
+Message-ID: <20181116021418.GB18319@kernel.org>
+References: <20181114212416.15665-1-kan.liang@linux.intel.com>
+ <20181115204411.GO9600@krava>
+ <cc982c1b-0774-6f3e-a24a-3c3fba5c900b@linux.intel.com>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <cc982c1b-0774-6f3e-a24a-3c3fba5c900b@linux.intel.com>
+X-Url:  http://acmel.wordpress.com
+User-Agent: Mutt/1.9.2 (2017-12-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-rt5663 codec driver will support setting CPVDD and AVDD power supply
-from device tree.
+Em Thu, Nov 15, 2018 at 04:01:46PM -0500, Liang, Kan escreveu:
+> 
+> 
+> On 11/15/2018 3:44 PM, Jiri Olsa wrote:
+> > On Wed, Nov 14, 2018 at 01:24:15PM -0800, kan.liang@linux.intel.com wrote:
+> > > From: Kan Liang <kan.liang@linux.intel.com>
+> > > 
+> > > Perf tools cannot find the proper event list for Cascadelake server.
+> > > Because Cascadelake server and Skylake server have the same CPU model
+> > > number, which are used by perf tools to find the event list.
+> > > 
+> > > The stepping for Skylake server is up to 4.
+> > > The stepping for Cascadelake server starts from 5.
+> > > The stepping can be used to distinguish between them.
+> > > 
+> > > The stepping is added in get_cpuid_str().
+> > > The stepping information for Skylake server is updated in mapfile.csv.
+> > > A x86 specific strcmp_cpuid_cmp() function is added to handle two CPUID
+> > > formats in mapfile.csv, "vendor-family-model-stepping" and
+> > > "vendor-family-model".
+> > > - If a cpuid-regular-expression from the mapfile.csv using the new
+> > >    stepping format, a cpuid-string generated on the machine must include
+> > >    stepping. Otherwise, it is a mismatch.
+> > > - If the cpuid-regular-expression using the old non-stepping format,
+> > >    the stepping in the cpuid-string will be ignored.
+> > > 
+> > > The script, which using environment string "PERF_CPUID" without stepping
+> > > on Skylake server, will be broken. If so, users must fix their scripts.
+> > > 
+> > > Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+> > 
+> > Reviewed-by: Jiri Olsa <jolsa@kernel.org>
+> > 
+> 
+> Thanks Jirka,
+> 
+> Hi Arnaldo,
+> 
+> Are you OK with the patch?
+> If yes, I will go ahead to cleanup the *_cpuid_str() by moving them to
+> header.c as promised. https://lkml.org/lkml/2018/11/15/929
+> The new patch will be on top of this patch.
 
-Signed-off-by: Cheng-Yi Chiang <cychiang@chromium.org>
----
- Moved power supply properties to required properties.
+I'm travelling, will look at it soon, can't now, battery almost deead
+:-\
 
- Documentation/devicetree/bindings/sound/rt5663.txt | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/sound/rt5663.txt b/Documentation/devicetree/bindings/sound/rt5663.txt
-index 23386446c63d6..2a55e91334082 100644
---- a/Documentation/devicetree/bindings/sound/rt5663.txt
-+++ b/Documentation/devicetree/bindings/sound/rt5663.txt
-@@ -10,6 +10,10 @@ Required properties:
- 
- - interrupts : The CODEC's interrupt output.
- 
-+- avdd-supply: Power supply for AVDD, providing 1.8V.
-+
-+- cpvdd-supply: Power supply for CPVDD, providing 3.5V.
-+
- Optional properties:
- 
- - "realtek,dc_offset_l_manual"
-@@ -51,4 +55,6 @@ rt5663: codec@12 {
- 	compatible = "realtek,rt5663";
- 	reg = <0x12>;
- 	interrupts = <7 IRQ_TYPE_EDGE_FALLING>;
-+	avdd-supply = <&pp1800_a_alc5662>;
-+	cpvdd-supply = <&pp3500_a_alc5662>;
- };
--- 
-2.19.1.1215.g8438c0b245-goog
-
+- Arnaldo
