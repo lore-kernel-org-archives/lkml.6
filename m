@@ -2,197 +2,80 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D8F09C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:51:15 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9CD60C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:56:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8DAD8208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:51:15 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="Syjj3YNZ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8DAD8208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id 4E1D32145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 05:56:07 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4E1D32145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727503AbeKPQCL (ORCPT
+        id S2389094AbeKPQHC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 11:02:11 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:39412 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727273AbeKPQCK (ORCPT
+        Fri, 16 Nov 2018 11:07:02 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:37510 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727326AbeKPQHC (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 11:02:10 -0500
-Received: by mail-it1-f193.google.com with SMTP id m15so32782312itl.4
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 21:51:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=nW3EhWjl3nwKPx5jiD+DbPlgA784/tSg49/9z9NhN8c=;
-        b=Syjj3YNZF1vIoTt46N/37amlhJjWn8LO6zVMa4sxMy+aYkTrI4NAC4QmjaiyZiLwIX
-         67ry3md62p9bMIkdcPJXeF+pHZ/UL1HH7yfVm5Izkl7fLFAnDJ3fynJ180Sx00oJU1nh
-         rINi3TBLHUL0JaW96m3cEk2R2il3g/JrxII1w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=nW3EhWjl3nwKPx5jiD+DbPlgA784/tSg49/9z9NhN8c=;
-        b=jljjU569bpYs6d7ZutwMg7JUBDPBxD6969lcxPKzUD+pzCpeCOLCo3ww+kMCQ4gg0e
-         +IGzUYYOjxSfhDq/oHJhlulIUTAf2Lx5fMyuLjRVT+85Kwzlu2AM8LDfvESpvJCJUmV6
-         1jzZytEYIAG/X98DNchtFFoRU9c27B30mj6irANYjziK9cK7tMpe9Utu8JPww6mPbGdc
-         MkTozvZs6eykw6fF2k6Hg1L9v61JkSNtRgrWSwsdF66n09MWhJiBiOO79llpV8a2jg/V
-         1/gBen3CkxTDb4+enAxNSREEYmoKFYipDp7/FhhfckLyFm3Jyis0cv0uSaYMtgcHCIxE
-         pCcQ==
-X-Gm-Message-State: AGRZ1gJdGS4mUFkOfZqP92CxCwxVvv45J/Ttn83FFY5VKHL7uWKRW/T6
-        aXIWhhIsweB1y7blapEPnONasNMJAqX7zgw8NZSdhA==
-X-Google-Smtp-Source: AJdET5fMEMnorR9DJxN4hpea7g/umb/zqADdnBB4uR6Ev9RqQUjXKPV/yGQYFojurb3amtrXPIPdeiBJ4fEfZH9QK30=
-X-Received: by 2002:a02:788:: with SMTP id f130-v6mr4990426jaf.58.1542347472739;
- Thu, 15 Nov 2018 21:51:12 -0800 (PST)
+        Fri, 16 Nov 2018 11:07:02 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gNX6j-0004ib-LK; Fri, 16 Nov 2018 13:55:57 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gNX6d-0007FF-KE; Fri, 16 Nov 2018 13:55:51 +0800
+Date:   Fri, 16 Nov 2018 13:55:51 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     NeilBrown <neilb@suse.com>
+Cc:     David Miller <davem@davemloft.net>, tgraf@suug.ch,
+        netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        eric.dumazet@gmail.com
+Subject: Re: [PATCH] rhashtable: detect when object movement between tables
+ might have invalidated a lookup
+Message-ID: <20181116055551.zxfydbpoicslsfkg@gondor.apana.org.au>
+References: <87muqbtev6.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-References: <1542177301-25844-1-git-send-email-firoz.khan@linaro.org> <58c3c4a4-7f55-bf08-1c96-ef1aa7f97072@gmx.de>
-In-Reply-To: <58c3c4a4-7f55-bf08-1c96-ef1aa7f97072@gmx.de>
-From:   Firoz Khan <firoz.khan@linaro.org>
-Date:   Fri, 16 Nov 2018 11:21:01 +0530
-Message-ID: <CALxhOngc1cSSDVznnX+iLg-Ne9+k0ct0wT-z0MXKSeKxJE3Vsg@mail.gmail.com>
-Subject: Re: [PATCH v7 0/5] parisc: system call table generation support
-To:     Helge Deller <deller@gmx.de>
-Cc:     linux-parisc@vger.kernel.org,
-        "James E . J . Bottomley" <jejb@parisc-linux.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Linux-Arch <linux-arch@vger.kernel.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87muqbtev6.fsf@notabene.neil.brown.name>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Helge,
+On Thu, Nov 15, 2018 at 10:32:13AM +1100, NeilBrown wrote:
+>
+> +#define	RHT_NULLS_MARKER(ptr)	\
+> +	((void *)NULLS_MARKER(((unsigned long) (ptr)) >> 1))
+>  #define INIT_RHT_NULLS_HEAD(ptr)	\
+> -	((ptr) = (typeof(ptr)) NULLS_MARKER(0))
+> +	((ptr) = RHT_NULLS_MARKER(&(ptr)))
 
-On Fri, 16 Nov 2018 at 01:01, Helge Deller <deller@gmx.de> wrote:
->
-> On 14.11.2018 07:34, Firoz Khan wrote:
-> > The purpose of this patch series is, we can easily
-> > add/modify/delete system call table support by cha-
-> > nging entry in syscall.tbl file instead of manually
-> > changing many files. The other goal is to unify the
-> > system call table generation support implementation
-> > across all the architectures.
-> >
-> > The system call tables are in different format in
-> > all architecture. It will be difficult to manually
-> > add, modify or delete the system calls in the resp-
-> > ective files manually. To make it easy by keeping a
-> > script and which'll generate uapi header file and
-> > syscall table file.
-> >
-> > syscall.tbl contains the list of available system
-> > calls along with system call number and correspond-
-> > ing entry point. Add a new system call in this arch-
-> > itecture will be possible by adding new entry in the
-> > syscall.tbl file.
-> >
-> > Adding a new table entry consisting of:
-> >         - System call number.
-> >         - ABI.
-> >         - System call name.
-> >         - Entry point name.
-> >
-> > ARM, s390 and x86 architecuture does exist the sim-
-> > ilar support. I leverage their implementation to
-> > come up with a generic solution.
-> >
-> > I have done the same support for work for alpha, ia64,
-> > m68k, microblaze, mips, powerpc, sh, sparc and xtensa.
-> > Below mentioned git repository contains more details
-> > about the workflow.
-> >
-> > https://github.com/frzkhn/system_call_table_generator/
-> >
-> > Finally, this is the ground work to solve the Y2038
-> > issue. We need to add two dozen of system calls to
-> > solve Y2038 issue. So this patch series will help to
-> > add new system calls easily by adding new entry in
-> > the syscall.tbl.
-> >
-> > changes since v6:
-> >  - changed from generic-y to generated-y in Kbuild.
-> >
-> > changes since v5:
-> >  - optimized/updated the syscall table generation
-> >    scripts.
-> >  - fixed all mixed indentation issues in syscall.tbl.
-> >  - added "comments" in syscall_*.tbl.
-> >
-> > changes since v4:
-> >  - optimized/updated the syscall table generation
-> >    scripts.
-> >  - removed __IGNORE entries which was added in v2
-> >    to suppress the warning.
-> >
-> > changes since v3:
-> >  - optimized/updated the syscall table generation
-> >    scripts.
-> >  - added missing new line.
-> >
-> > changes since v2:
-> >  - updated the syscall.tbl file by including missed
-> >    entries.
-> >
-> > changes since v1:
-> >  - enclosed __NR_sycalls macro with __KERNEL__.
-> >
-> > Firoz Khan (5):
-> >   parisc: move __IGNORE* entries to non uapi header
-> >   parisc: add __NR_syscalls along with __NR_Linux_syscalls
-> >   parisc: add system call table generation support
-> >   parisc: generate uapi header and system call table files
-> >   parisc: syscalls: ignore nfsservctl for other architectures
->
-> Firoz, you may add
-> Acked-by: Helge Deller <deller@gmx.de>
-> to the whole parisc series.
+Why are you shifting this by one?
 
-Sure, will do.
-I'm on a vacation right now. will send mid next week.
+> diff --git a/lib/rhashtable.c b/lib/rhashtable.c
+> index 30526afa8343..852ffa5160f1 100644
+> --- a/lib/rhashtable.c
+> +++ b/lib/rhashtable.c
+> @@ -1179,8 +1179,7 @@ struct rhash_head __rcu **rht_bucket_nested(const struct bucket_table *tbl,
+>  					    unsigned int hash)
+>  {
+>  	const unsigned int shift = PAGE_SHIFT - ilog2(sizeof(void *));
+> -	static struct rhash_head __rcu *rhnull =
+> -		(struct rhash_head __rcu *)NULLS_MARKER(0);
+> +	static struct rhash_head __rcu *rhnull;
 
-Thanks
-Firoz
+I don't understand why you can't continue to do NULLS_MARKER(0) or
+RHT_NULLS_MARKER(0).
 
->
-> Thanks!
-> Helge
->
->
->
-> >  arch/parisc/Makefile                      |   3 +
-> >  arch/parisc/include/asm/Kbuild            |   3 +
-> >  arch/parisc/include/asm/unistd.h          |   8 +
-> >  arch/parisc/include/uapi/asm/Kbuild       |   2 +
-> >  arch/parisc/include/uapi/asm/unistd.h     | 382 +------------------------
-> >  arch/parisc/kernel/syscall.S              |  11 +-
-> >  arch/parisc/kernel/syscall_table.S        | 459 ------------------------------
-> >  arch/parisc/kernel/syscalls/Makefile      |  57 ++++
-> >  arch/parisc/kernel/syscalls/syscall.tbl   | 369 ++++++++++++++++++++++++
-> >  arch/parisc/kernel/syscalls/syscallhdr.sh |  36 +++
-> >  arch/parisc/kernel/syscalls/syscalltbl.sh |  36 +++
-> >  scripts/checksyscalls.sh                  |   1 +
-> >  12 files changed, 531 insertions(+), 836 deletions(-)
-> >  delete mode 100644 arch/parisc/kernel/syscall_table.S
-> >  create mode 100644 arch/parisc/kernel/syscalls/Makefile
-> >  create mode 100644 arch/parisc/kernel/syscalls/syscall.tbl
-> >  create mode 100644 arch/parisc/kernel/syscalls/syscallhdr.sh
-> >  create mode 100644 arch/parisc/kernel/syscalls/syscalltbl.sh
-> >
->
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
