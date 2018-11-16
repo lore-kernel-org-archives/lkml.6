@@ -2,186 +2,120 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-12.0 required=3.0
-	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9441BC04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:51:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 777D3C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:52:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 61DD320811
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:51:53 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 61DD320811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 329E920811
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:52:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KY5/fwTZ"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 329E920811
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390258AbeKQEFN (ORCPT
+        id S2390271AbeKQEF0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 23:05:13 -0500
-Received: from mga04.intel.com ([192.55.52.120]:20990 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729198AbeKQEFN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 23:05:13 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga005.jf.intel.com ([10.7.209.41])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 09:51:51 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="274595966"
-Received: from tstruk-mobl1.jf.intel.com ([10.7.196.53])
-  by orsmga005.jf.intel.com with ESMTP; 16 Nov 2018 09:51:51 -0800
-Subject: [PATCH v4 2/2] tpm: add support for partial reads
-From:   Tadeusz Struk <tadeusz.struk@intel.com>
-To:     jarkko.sakkinen@linux.intel.com
-Cc:     jgg@ziepe.ca, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org,
-        linux-kernel@vger.kernel.org, tadeusz.struk@intel.com
-Date:   Fri, 16 Nov 2018 09:51:51 -0800
-Message-ID: <154239071144.2924.17574189056250189697.stgit@tstruk-mobl1.jf.intel.com>
-In-Reply-To: <154239067364.2880.13752725056462237016.stgit@tstruk-mobl1.jf.intel.com>
-References: <154239067364.2880.13752725056462237016.stgit@tstruk-mobl1.jf.intel.com>
-User-Agent: StGit/unknown-version
+        Fri, 16 Nov 2018 23:05:26 -0500
+Received: from mail-lf1-f46.google.com ([209.85.167.46]:36434 "EHLO
+        mail-lf1-f46.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729198AbeKQEFZ (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 23:05:25 -0500
+Received: by mail-lf1-f46.google.com with SMTP id h192so17130705lfg.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 09:52:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=p7PxJuNxu0qDyYVPQvn0asw+7sVZBrhzRh4wOx2MTZo=;
+        b=KY5/fwTZJcFg8XrBYQiEEu4M2rk/CcqcEUzk4fVhAUMeq/AWTGpUA9+sUr7iaz2HfR
+         M9eZSUhS29bXVNnQMVP7Rpd4Ti4Lu8Mu0frck3fIeBEzFjRjDj7S/re9PpJv74oSWK2R
+         K+gehY3GzB+DHZdN0wm/660ZfNzp1P3PXeRq4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=p7PxJuNxu0qDyYVPQvn0asw+7sVZBrhzRh4wOx2MTZo=;
+        b=aTsSQUOPsFytAj/v/sy5cIkaI76H4TWlFa9e4ugtwtU4LyDhusKqi48iUewBL7bQ93
+         Nk+RP4eGmK2Z6/e+imm0VRBJTW8dpuDDTG5GqsvMbG12clYEjAV2SA8v6e98H60MoL2L
+         OtTpntS/sCj6ro8HVgamDFUI5E55HzqXfMHCJSPLdimHsKvvnHPGE68GYae4BeYqIpES
+         bZyZeirTBBP/dwpWUHWKtbTsvyMlvbhhJ75EwEYSNiruuS4prpjYv3L0MsLbpSPDhe4r
+         /XabLJfe1qGy8kHERzf1Ntk9NPIoDvn2fl0oQntcUOGUxhC3p8acoL1N8IjaAzRQt9Bf
+         zhWg==
+X-Gm-Message-State: AGRZ1gJk8YGfhbFw421RrlKaYh288G6qsORjzVbgoXJNOgfjM+BOdJqd
+        OVuAdpr2pMkCvZMLuNDA9RJD0rLuUaU=
+X-Google-Smtp-Source: AJdET5etcR6AoaqDphBjHlQqsQHVF4sNuHEOqk1ncnRb602XC4Q/bwKWvPlF51+X2qMQy6Ta6aAeNA==
+X-Received: by 2002:a19:c7c2:: with SMTP id x185mr6426993lff.123.1542390721623;
+        Fri, 16 Nov 2018 09:52:01 -0800 (PST)
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com. [209.85.167.43])
+        by smtp.gmail.com with ESMTPSA id y24sm4468337lfj.17.2018.11.16.09.52.00
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Nov 2018 09:52:00 -0800 (PST)
+Received: by mail-lf1-f43.google.com with SMTP id e26so15324659lfc.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 09:52:00 -0800 (PST)
+X-Received: by 2002:a19:c014:: with SMTP id q20mr5708643lff.16.1542390720099;
+ Fri, 16 Nov 2018 09:52:00 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+References: <CAHc6FU6P0HdDWGMmsjyArQ746N7RBE3qMVq3aZgkfGjb153yJw@mail.gmail.com>
+ <CAHk-=wi1f2tTnHe_DoMBsoj7v38G746Kk=tpouGg0_Y3fUFqKA@mail.gmail.com>
+ <CAHc6FU5vaPLF8kcTAnHGHPkJQMf7GwMOX3YOg=DC=XFHrYPmdg@mail.gmail.com>
+ <CAHk-=wgxioabke99QwPvMJ0YJ8of0vyAT4Rxw3zoNvgjn0Y_kg@mail.gmail.com> <CAHc6FU7oZnb+-gwiAp5KRz1y1FEF-P6rMkSEhb9jC5eJ1_+U9Q@mail.gmail.com>
+In-Reply-To: <CAHc6FU7oZnb+-gwiAp5KRz1y1FEF-P6rMkSEhb9jC5eJ1_+U9Q@mail.gmail.com>
+From:   Linus Torvalds <torvalds@linux-foundation.org>
+Date:   Fri, 16 Nov 2018 11:51:43 -0600
+X-Gmail-Original-Message-ID: <CAHk-=wgNS==_EbLtWQe5xWQ4Q1QP4UTwd4f33QVg4WLzR+y46Q@mail.gmail.com>
+Message-ID: <CAHk-=wgNS==_EbLtWQe5xWQ4Q1QP4UTwd4f33QVg4WLzR+y46Q@mail.gmail.com>
+Subject: Re: [GIT PULL] gfs2: 4.20 fixes
+To:     agruenba@redhat.com
+Cc:     cluster-devel@redhat.com,
+        Linux List Kernel Mailing <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Currently to read a response from the TPM device an application needs
-provide big enough buffer for the whole response and read it in one go.
-The application doesn't know how big the response it beforehand so it
-always needs to maintain a 4K buffer and read the max (4K).
-In case if the user of the TSS library doesn't provide big enough
-buffer the TCTI spec says that the library should set the required
-size and return TSS2_TCTI_RC_INSUFFICIENT_BUFFER error code so that the
-application could allocate a bigger buffer and call receive again.
-To make it possible in the TSS library, this requires being able to do
-partial reads from the driver.
-The library would read the 10 bytes header first to get the actual size
-of the response from the header, and then read the rest of the response.
+On Thu, Nov 15, 2018 at 2:44 PM Andreas Gruenbacher <agruenba@redhat.com> wrote:
+>
+> Ok, I've changed the merge commit as follows now:
+>
+>     Merge tag 'v4.20-rc1'
+>
+>     Pull in the gfs2 fixes that went into v4.19-rc8:
+>
+>       gfs2: Fix iomap buffered write support for journaled files
+>       gfs2: Fix iomap buffered write support for journaled files (2)
+>
+>     Without these two commits, the following fix would cause conflicts.
+>
+> So merging v4.19-rc8 would have been sufficient. v4.20-rc1 is what I
+> ended up testing, though.
+>
+> Are you okay with that now?
 
-This patch adds support for partial reads, i.e. the user can read the
-response in one or multiple reads, until the whole response is consumed.
-The user can also read only part of the response and ignore
-the rest by issuing a new write to send a new command.
+If the only reason for this was the trivial one-liner conflict, the
+real fix is to just not do the merge at all, and not worry about
+conflicts.
 
-Signed-off-by: Tadeusz Struk <tadeusz.struk@intel.com>
----
-The usecase is implemented in this TSS commit:
-https://github.com/tpm2-software/tpm2-tss/commit/ce982f67a67dc08e24683d30b05800648d8a264c
+I handle simple conflicts like this in my sleep. It's actually much
+better and clearer if the development trees just do their own
+development, and not worry about "Oh, Linus will get a small conflict
+due to other changes he has pulled".
 
-Changes in v4:
- - Use unsigned type for response_pending as it will never be negative.
- - Rebased on top of name change data_pending to transmit_result patch.
+So what I did was to actually try to generate the tree I think it
+*should* have been, and just merge that with the simple conflict
+resolution.
 
-Changes in v3:
- - Remove link to usecase implemented in TSS out of the commit message.
- - Update the conddition in tpm_common_poll() to take into account
-   the partial_data also.
+You might want to double-check it - not only because I rewrote your
+pull to not have the merge at all, and in the process modified things,
+but just to see what I think the right approach would have been.
 
-Changes in v2:
- - Allow writes after only partial response is consumed to maintain
-   backwords compatibility.
----
- drivers/char/tpm/tpm-dev-common.c |   41 ++++++++++++++++++++++++++++---------
- drivers/char/tpm/tpm-dev.h        |    2 ++
- 2 files changed, 33 insertions(+), 10 deletions(-)
+Now, there *are* reasons to do back-merges, but no, "Oh, there's a
+trivial conflict" is not one of them.
 
-diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
-index 67a70e2fde7f..0544733e1b6d 100644
---- a/drivers/char/tpm/tpm-dev-common.c
-+++ b/drivers/char/tpm/tpm-dev-common.c
-@@ -64,6 +64,7 @@ static void tpm_timeout_work(struct work_struct *work)
- 
- 	mutex_lock(&priv->buffer_mutex);
- 	priv->transmit_result = 0;
-+	priv->partial_data = 0;
- 	memset(priv->data_buffer, 0, sizeof(priv->data_buffer));
- 	mutex_unlock(&priv->buffer_mutex);
- 	wake_up_interruptible(&priv->async_wait);
-@@ -90,22 +91,39 @@ ssize_t tpm_common_read(struct file *file, char __user *buf,
- 	ssize_t ret_size = 0;
- 	int rc;
- 
--	del_singleshot_timer_sync(&priv->user_read_timer);
--	flush_work(&priv->timeout_work);
- 	mutex_lock(&priv->buffer_mutex);
-+	if (priv->transmit_result || priv->partial_data) {
-+		if (*off == 0)
-+			priv->partial_data = priv->transmit_result;
-+
-+		ret_size = min_t(ssize_t, size, priv->partial_data);
-+		if (ret_size <= 0) {
-+			ret_size = 0;
-+			priv->transmit_result = 0;
-+			priv->partial_data = 0;
-+			goto out;
-+		}
- 
--	if (priv->transmit_result) {
--		ret_size = min_t(ssize_t, size, priv->transmit_result);
--		if (ret_size > 0) {
--			rc = copy_to_user(buf, priv->data_buffer, ret_size);
--			memset(priv->data_buffer, 0, priv->transmit_result);
--			if (rc)
--				ret_size = -EFAULT;
-+		rc = copy_to_user(buf, priv->data_buffer + *off, ret_size);
-+		if (rc) {
-+			memset(priv->data_buffer, 0, TPM_BUFSIZE);
-+			priv->partial_data = 0;
-+			ret_size = -EFAULT;
-+		} else {
-+			memset(priv->data_buffer + *off, 0, ret_size);
-+			priv->partial_data -= ret_size;
-+			*off += ret_size;
- 		}
- 
- 		priv->transmit_result = 0;
- 	}
- 
-+out:
-+	if (!priv->partial_data) {
-+		*off = 0;
-+		del_singleshot_timer_sync(&priv->user_read_timer);
-+		flush_work(&priv->timeout_work);
-+	}
- 	mutex_unlock(&priv->buffer_mutex);
- 	return ret_size;
- }
-@@ -150,6 +168,9 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
- 		goto out;
- 	}
- 
-+	priv->partial_data = 0;
-+	*off = 0;
-+
- 	/*
- 	 * If in nonblocking mode schedule an async job to send
- 	 * the command return the size.
-@@ -184,7 +205,7 @@ __poll_t tpm_common_poll(struct file *file, poll_table *wait)
- 
- 	poll_wait(file, &priv->async_wait, wait);
- 
--	if (priv->transmit_result)
-+	if (priv->transmit_result || priv->partial_data)
- 		mask = EPOLLIN | EPOLLRDNORM;
- 	else
- 		mask = EPOLLOUT | EPOLLWRNORM;
-diff --git a/drivers/char/tpm/tpm-dev.h b/drivers/char/tpm/tpm-dev.h
-index 3ff1dc9f3d75..714a4419d392 100644
---- a/drivers/char/tpm/tpm-dev.h
-+++ b/drivers/char/tpm/tpm-dev.h
-@@ -11,6 +11,8 @@ struct file_priv {
- 
- 	/* Holds the resul of the last successful call to tpm_transmit() */
- 	size_t transmit_result;
-+	/* Holds the count how much of the response is still unread */
-+	size_t partial_data;
- 	struct mutex buffer_mutex;
- 
- 	struct timer_list user_read_timer;      /* user needs to claim result */
-
+                  Linus
