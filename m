@@ -6,53 +6,55 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2843DC04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:06:01 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D0DFC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:06:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E5B9F2089D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:06:00 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5B9F2089D
+	by mail.kernel.org (Postfix) with ESMTP id 1D82020883
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:06:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1D82020883
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729643AbeKQIUH (ORCPT
+        id S1729716AbeKQIUK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 03:20:07 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:37047 "EHLO
+        Sat, 17 Nov 2018 03:20:10 -0500
+Received: from mail-oi1-f194.google.com ([209.85.167.194]:40738 "EHLO
         mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbeKQIUH (ORCPT
+        with ESMTP id S1725819AbeKQIUJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 03:20:07 -0500
-Received: by mail-oi1-f194.google.com with SMTP id y23so11771535oia.4;
-        Fri, 16 Nov 2018 14:05:58 -0800 (PST)
+        Sat, 17 Nov 2018 03:20:09 -0500
+Received: by mail-oi1-f194.google.com with SMTP id t3-v6so3043126oie.7;
+        Fri, 16 Nov 2018 14:06:00 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=ix8cP0wCHZeC/8dXIYOuLIsYXZGQ5ByO8TLiKaNRW6A=;
-        b=F9jeuVVMR2GAzVHVOTrj1eKT3eYDjzgnBDjasl3+sA8ESqRggt8USYme4vOWfQqt+t
-         4GYMRhMFcMPb5EYIQRWb02aethDpFYYO+iqT5l6E9fZU9zzVnkzUkHgeUDWlxMUUUb2v
-         dLbnq/MIX/Q3wc5Rhp4DlxZ+kmsa8y/jDwc9Ab882NZrfHF9RZsD+Hei/rk2ZIiOK1PU
-         +itxNMEWGUDaSEpMobgvtjoK6qCEzmVJZwywFQeVbIg26r+9sIEupyAGWARJcqhMNhu7
-         wgHFHXRoGN9gQPU9tIHTOJpa1tTbcljW8gZZMnhymPhtqW1LQ2fFzQoFf8iKnNoW9IOn
-         MtOw==
-X-Gm-Message-State: AGRZ1gKuKIplTJdxNpaT6KYmIPC+QzTNoIMLnbkPFgFHsBwDyb5Fn3/3
-        iGRw8/n4dyhnPqRxsPcC+hfspwFs2A==
-X-Google-Smtp-Source: AJdET5dWAlyw9dQNJ01NmZEVcGJb1ngmkYFLUKKBDVDguZVokV56SJD0WI0696LJyEdJzyun0JaKcg==
-X-Received: by 2002:aca:4202:: with SMTP id p2-v6mr1888048oia.41.1542405957801;
-        Fri, 16 Nov 2018 14:05:57 -0800 (PST)
+        bh=9NvbhSpo0zQeyuL+LUNt8x1V7zepvjibuZy5WzTCHqQ=;
+        b=I3Ps4f8uMYsUkb0zF2ipgdkt3ADE9RQl1J363oMOq8vRyxhIJ9Zex7erCW/e+ZC/43
+         X/0AMAY5zzqOIQtA2oaD/GVIV5oFnmyggXGix8luh5whrHhs1ox04mlFGVDrzEkCjVol
+         kTJ5L5Iw6fN674Yoj4WoPgwpxMfvHmWPqHsdfVanll7aqQRkl4HOX1BjyrO6XvwV33OG
+         TUko4va4UWZNEv6nEybHhz8vH1YTrEVH9/aVeuqN9V1yO5w6TWDRIePOAdhvxb7+HvcV
+         p60NIYpTO3MWToqqPsfZCRjdwV7ZqLpP7iaYvNwol3gVhjyX07BTAnizEY39Ku0TJM/c
+         3k3g==
+X-Gm-Message-State: AGRZ1gJw9D8UQXsckrjQWDKLYdoetTpJvXDpNzCQ4xztAxHFDKRCHrly
+        5zzRHsKuIP1EEKkj9aCQtQ==
+X-Google-Smtp-Source: AJdET5e5DOQMKdTTe1/yMJfAdHb5U2JfXm/uQdrWavCfxSRwskq2cLvBhhtcYmKSBS8mLQgPdB7VfA==
+X-Received: by 2002:aca:c108:: with SMTP id r8-v6mr2059706oif.258.1542405959485;
+        Fri, 16 Nov 2018 14:05:59 -0800 (PST)
 Received: from localhost.localdomain (mobile-166-173-57-127.mycingular.net. [166.173.57.127])
-        by smtp.googlemail.com with ESMTPSA id w5sm2316587oif.48.2018.11.16.14.05.54
+        by smtp.googlemail.com with ESMTPSA id w5sm2316587oif.48.2018.11.16.14.05.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 14:05:57 -0800 (PST)
+        Fri, 16 Nov 2018 14:05:58 -0800 (PST)
 From:   Rob Herring <robh@kernel.org>
-To:     Michael Ellerman <patch-notifications@ellerman.id.au>
+To:     Linus Walleij <linus.walleij@linaro.org>
 Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH] macintosh: windfarm: Another convert to using %pOFn instead of device_node.name
-Date:   Fri, 16 Nov 2018 16:05:39 -0600
-Message-Id: <20181116220540.17222-3-robh@kernel.org>
+        Sean Wang <sean.wang@kernel.org>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] pinctrl: mediatek: Convert to using %pOFn instead of device_node.name
+Date:   Fri, 16 Nov 2018 16:05:40 -0600
+Message-Id: <20181116220540.17222-4-robh@kernel.org>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181116220540.17222-1-robh@kernel.org>
 References: <20181116220540.17222-1-robh@kernel.org>
@@ -66,42 +68,32 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 In preparation to remove the node name pointer from struct device_node,
 convert printf users to use the %pOFn format specifier.
 
-Convert the open coded iterating thru child nodes to
-for_each_child_of_node() while we're here.
-
-Cc: Benjamin Herrenschmidt <benh@kernel.crashing.org>
-Cc: linuxppc-dev@lists.ozlabs.org
+Cc: Sean Wang <sean.wang@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-mediatek@lists.infradead.org
+Cc: linux-gpio@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org
 Signed-off-by: Rob Herring <robh@kernel.org>
 ---
- drivers/macintosh/windfarm_fcu_controls.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/pinctrl/mediatek/pinctrl-paris.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/macintosh/windfarm_fcu_controls.c b/drivers/macintosh/windfarm_fcu_controls.c
-index fab7a21e9577..2b3ca628a650 100644
---- a/drivers/macintosh/windfarm_fcu_controls.c
-+++ b/drivers/macintosh/windfarm_fcu_controls.c
-@@ -425,18 +425,18 @@ static void wf_fcu_lookup_fans(struct wf_fcu_priv *pv)
- 		{ "CPU B 2",		"cpu-fan-b-1",		},
- 		{ "CPU B 3",		"cpu-fan-c-1",		},
- 	};
--	struct device_node *np = NULL, *fcu = pv->i2c->dev.of_node;
-+	struct device_node *np, *fcu = pv->i2c->dev.of_node;
- 	int i;
+diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/pinctrl-paris.c
+index d2179028f134..7ff5ffa88198 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-paris.c
++++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
+@@ -419,8 +419,8 @@ static int mtk_pctrl_dt_subnode_to_map(struct pinctrl_dev *pctldev,
  
- 	DBG("Looking up FCU controls in device-tree...\n");
+ 	pins = of_find_property(node, "pinmux", NULL);
+ 	if (!pins) {
+-		dev_err(hw->dev, "missing pins property in node %s .\n",
+-			node->name);
++		dev_err(hw->dev, "missing pins property in node %pOFn .\n",
++			node);
+ 		return -EINVAL;
+ 	}
  
--	while ((np = of_get_next_child(fcu, np)) != NULL) {
-+	for_each_child_of_node(fcu, np) {
- 		int id, type = -1;
- 		const char *loc;
- 		const char *name;
- 		const u32 *reg;
- 
--		DBG(" control: %s, type: %s\n", np->name, np->type);
-+		DBG(" control: %pOFn, type: %s\n", np, of_node_get_device_type(np));
- 
- 		/* Detect control type */
- 		if (!strcmp(np->type, "fan-rpm-control") ||
 -- 
 2.19.1
 
