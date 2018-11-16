@@ -2,131 +2,177 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AA873C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:37:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70E86C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:38:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 68CBB2146D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:37:35 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id DA6982146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:38:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oKTECSGL"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 68CBB2146D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	dkim=pass (2048-bit key) header.d=nifty.com header.i=@nifty.com header.b="Y1cj+kmu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DA6982146D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=socionext.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727347AbeKPLry (ORCPT
+        id S2389180AbeKPLsZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 06:47:54 -0500
-Received: from bombadil.infradead.org ([198.137.202.133]:42606 "EHLO
-        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726518AbeKPLry (ORCPT
+        Fri, 16 Nov 2018 06:48:25 -0500
+Received: from conssluserg-02.nifty.com ([210.131.2.81]:37599 "EHLO
+        conssluserg-02.nifty.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbeKPLsZ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 06:47:54 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=bombadil.20170209; h=Content-Transfer-Encoding:
-        Content-Type:In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:
-        Subject:Sender:Reply-To:Content-ID:Content-Description:Resent-Date:
-        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-         bh=PZ07iX1JWwuAxjhE7PxBrOGPytwl1A9OMwnDiGIXgCI=; b=oKTECSGLs7abiPe3mb9QWvcEu
-        LkObuxVm2F5vjn5njgatxs6mDuw5RwkisqFxm/xrCGEN0wflQd/tRswUpRZaS9dA6RpPpFsKSaYsp
-        Z7NJUqi0kJeEcfav+l/t4z1+Ds+fv6oMWMxnMiysCxu8IyEwNB4Lx5Ap1LVdi4TkidNsZdwQ6CjR4
-        SodTa4Af4eunBqgii3J9CyRkDwoUTE/pXmUuwy7a6FGdU+7KVT7u84N/zdCNaywtAAQwOW00ghvtv
-        UvciZ+/nt4iayLBIH0PzCOmzko1HiUpb5Ewk1lgbOwX8CSTp66KjFCpbDXDCcJ9aSauYlZSd3wGl0
-        wAzYO8SKQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by bombadil.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNT4d-00031j-MA; Fri, 16 Nov 2018 01:37:31 +0000
-Subject: Re: [PATCH v17 18/23] platform/x86: Intel SGX driver
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org
-Cc:     dave.hansen@intel.com, sean.j.christopherson@intel.com,
-        nhorman@redhat.com, npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
-        Suresh Siddha <suresh.b.siddha@intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Darren Hart <dvhart@infradead.org>,
-        Andy Shevchenko <andy@infradead.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <6fe0687b-70c9-9e7d-6f05-8963f18f0636@infradead.org>
-Date:   Thu, 15 Nov 2018 17:37:27 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 16 Nov 2018 06:48:25 -0500
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48]) (authenticated)
+        by conssluserg-02.nifty.com with ESMTP id wAG1btOZ010604;
+        Fri, 16 Nov 2018 10:37:55 +0900
+DKIM-Filter: OpenDKIM Filter v2.10.3 conssluserg-02.nifty.com wAG1btOZ010604
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nifty.com;
+        s=dec2015msa; t=1542332276;
+        bh=1NdtcIOUsWj7ZpMaN0l2aGw6fT/KcTkkQjgoB2Ug0Sw=;
+        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+        b=Y1cj+kmuZHaG7NQq186NRb/WiWtXgNePv3okSNu0y4hJAdDBhFwwHLocFdqxwnglb
+         jrnQY6PGu5+q4pv+76ZDxuizX9svyz5pl5Q66+9W20sfPikiBpQ58YtqmQC2xtmAhv
+         4d1CxU8tTpf5gqGT38M6M7BxG6nn7M0CyAYU9qPiPkGxURE7afSOp3474zJMU5kMpe
+         gAxeywS6OuwTndEflFmHaGJy8e35aJ4nD1VLKI1ZU42yRKxwf8CScgQim1DgL4Dlu6
+         XszoWJt9UAPalSnFZxhViSjl72SzkFjT6EDA2OCHZ8B6VTHgUhU2+NNeVTKROUPXo8
+         LmWjLcBCcWlvw==
+X-Nifty-SrcIP: [209.85.217.48]
+Received: by mail-vs1-f48.google.com with SMTP id y27so12903389vsi.1;
+        Thu, 15 Nov 2018 17:37:55 -0800 (PST)
+X-Gm-Message-State: AGRZ1gKIdc1w9pzUo5Ud2Zmt7Nb1bBZPWcyBTqXs9i7b3/bNgQluKdYZ
+        AUH8Su7u9Ku8aH1t/NTfiIVYf3On8s9GY86lV0Q=
+X-Google-Smtp-Source: AJdET5eMIDEfe8Ku0qWG+W8jngaKVTfg/gB652s6wYqUDoBRjIl+DSB3120XxA2pB0XqYJQzP1g/u8udFjhwJoQM6kk=
+X-Received: by 2002:a67:f1d6:: with SMTP id v22mr3631240vsm.181.1542332274614;
+ Thu, 15 Nov 2018 17:37:54 -0800 (PST)
 MIME-Version: 1.0
-In-Reply-To: <20181116010412.23967-19-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+References: <1542270435-11181-1-git-send-email-yamada.masahiro@socionext.com>
+ <1542270435-11181-6-git-send-email-yamada.masahiro@socionext.com> <6ee62b52-5d6d-c540-5f01-f522b6986c4d@rasmusvillemoes.dk>
+In-Reply-To: <6ee62b52-5d6d-c540-5f01-f522b6986c4d@rasmusvillemoes.dk>
+From:   Masahiro Yamada <yamada.masahiro@socionext.com>
+Date:   Fri, 16 Nov 2018 10:37:18 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS5CKoT_4jk6BB5zs_EtXtj2HNjZ76FeOFBRA01nrQhUQ@mail.gmail.com>
+Message-ID: <CAK7LNAS5CKoT_4jk6BB5zs_EtXtj2HNjZ76FeOFBRA01nrQhUQ@mail.gmail.com>
+Subject: Re: [PATCH 5/8] kbuild: change if_changed_rule to accept multi-line recipe
+To:     Rasmus Villemoes <linux@rasmusvillemoes.dk>
+Cc:     Linux Kbuild mailing list <linux-kbuild@vger.kernel.org>,
+        Sam Ravnborg <sam@ravnborg.org>,
+        Nicolas Pitre <nicolas.pitre@linaro.org>,
+        Michal Marek <michal.lkml@markovi.net>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/15/18 5:01 PM, Jarkko Sakkinen wrote:
-> Intel Software Guard eXtensions (SGX) is a set of CPU instructions that
-> can be used by applications to set aside private regions of code and
-> data. The code outside the enclave is disallowed to access the memory
-> inside the enclave by the CPU access control.
-> 
-> SGX driver provides a ioctl API for loading and initializing enclaves.
-> Address range for enclaves is reserved with mmap() and they are
-> destroyed with munmap(). Enclave construction, measurement and
-> initialization is done with the provided the ioctl API.
-> 
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> Co-developed-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Co-developed-by: Serge Ayoun <serge.ayoun@intel.com>
-> Signed-off-by: Serge Ayoun <serge.ayoun@intel.com>
-> Co-developed-by: Shay Katz-zamir <shay.katz-zamir@intel.com>
-> Signed-off-by: Shay Katz-zamir <shay.katz-zamir@intel.com>
-> Co-developed-by: Suresh Siddha <suresh.b.siddha@intel.com>
-> Signed-off-by: Suresh Siddha <suresh.b.siddha@intel.com>
-> ---
-
-> diff --git a/arch/x86/include/uapi/asm/sgx.h b/arch/x86/include/uapi/asm/sgx.h
-> new file mode 100644
-> index 000000000000..aadf9c76e360
-> --- /dev/null
-> +++ b/arch/x86/include/uapi/asm/sgx.h
-> @@ -0,0 +1,59 @@
-> +/* SPDX-License-Identifier: (GPL-2.0 OR BSD-3-Clause) */
-> +/**
-> + * Copyright(c) 2016-18 Intel Corporation.
-> + */
-> +#ifndef _UAPI_ASM_X86_SGX_H
-> +#define _UAPI_ASM_X86_SGX_H
-> +
-> +#include <linux/types.h>
-> +#include <linux/ioctl.h>
-> +
-> +#define SGX_MAGIC 0xA4
-> +
-> +#define SGX_IOC_ENCLAVE_CREATE \
-> +	_IOW(SGX_MAGIC, 0x00, struct sgx_enclave_create)
-> +#define SGX_IOC_ENCLAVE_ADD_PAGE \
-> +	_IOW(SGX_MAGIC, 0x01, struct sgx_enclave_add_page)
-> +#define SGX_IOC_ENCLAVE_INIT \
-> +	_IOW(SGX_MAGIC, 0x02, struct sgx_enclave_init)
-> +
-> +/* IOCTL return values */
-> +#define SGX_POWER_LOST_ENCLAVE		0x40000000
+On Thu, Nov 15, 2018 at 6:12 PM Rasmus Villemoes
+<linux@rasmusvillemoes.dk> wrote:
+>
+> On 15/11/2018 09.27, Masahiro Yamada wrote:
+> > GNU Make supports 'define' ... 'endef' directive, which can describe
+> > a recipe that consists of multiple lines.
+> >
+> >   endef
+> >
+> > This does not actually exploit the benefits of 'define' ... 'endef'
+> > form. All shell commands must be concatenated with '; \' so that it
+> > looks like a single command from the Makefile point of view. '@' can
+> > only appear before the first action.
+> >
+> > The root cause of this misfortune is the '@set -e;' in if_changed_rule.
+> > It is easily solvable by moving '@set -e' to the 'cmd' macro.
+> >
+> > The combo of $(call echo-cmd,*) $(cmd_*) in rule_cc_o_c and rule_as_o_S
+> > were replaced with $(call cmd,*). The tailing back-slashes went away.
+> >
+> > Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
+> > ---
+> >
+> >  define rule_cc_o_c
+> > -     $(call echo-cmd,checksrc) $(cmd_checksrc)                         \
+> > -     $(call cmd_and_fixdep,cc_o_c)                                     \
+> > -     $(cmd_gen_ksymdeps)                                               \
+> > -     $(cmd_checkdoc)                                                   \
+> > -     $(call echo-cmd,objtool) $(cmd_objtool)                           \
+> > -     $(cmd_modversions_c)                                              \
+> > -     $(call echo-cmd,record_mcount) $(cmd_record_mcount)
+> > +     $(call cmd,checksrc)
+> > +     @$(call cmd_and_fixdep,cc_o_c)
+> > +     $(call cmd,gen_ksymdeps)
+> > +     $(call cmd,checkdoc)
+> > +     $(call cmd,objtool)
+> > +     $(call cmd,modversions_c)
+> > +     $(call cmd,record_mcount)
+> >  endef
+>
+> Does this mean that Make now spawns a new shell for each of these
+> commands,
 
 
-Hi,
-The ioctl magic number should be documented in
-Documentation/ioctl/ioctl-number.txt.
+Yes and No.
 
-ta.
+Basically, each line is run in an independent sub-shell,
+but things are a little bit complex.
+
+GNU Make, if possible, runs the command directly
+instead of forking a shell process.
+
+That is what I understood according to the following document:
+
+
+http://wanderinghorse.net/computing/make/book/ManagingProjectsWithGNUMake-3.1.3.pdf
+
+See "chapter 7: commands"
+  ---------->8----------
+  Commands are essentially one-line shell scripts.
+  In effect, make grabs each line and passes it to a subshell for execution.
+  In fact, make can optimize this (relatively) expensive fork/exec algorithm
+  if it can guarantee that omitting the shell will not change the behavior of
+  the program. It checks this by scanning each command line for shell special
+  characters, such as wildcard characters and i/o redirection. If none are
+  found, make directly executes the command without passing it to a subshell.
+  ---------->8----------
+
+
+
+
+
+> and if so, what's the performance impact? Or am I just
+> misreading things? If this does change the semantics (one shell instance
+> versus many), I think that's worth mentioning explicitly in the
+> changelog, regardless of whether there's no measuarable performance impact.
+
+
+Last night, I checked 'perf stat' of x86 defconfig build,
+which enables cmd_objtool.
+
+
+
+Without this commit:
+
+
+ Performance counter stats for 'make -j8' (10 runs):
+
+     125.499068713 seconds time elapsed
+          ( +-  0.10% )
+
+
+With this commit:
+
+ Performance counter stats for 'make -j8' (10 runs):
+
+     125.618321667 seconds time elapsed
+          ( +-  0.24% )
+
+
+
+I did not get noticeable performance regression.
+
+
+
 -- 
-~Randy
+Best Regards
+Masahiro Yamada
