@@ -6,58 +6,67 @@ X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3BF6AC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:16:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 586DDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:18:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 0AFE42089D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:16:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0AFE42089D
+	by mail.kernel.org (Postfix) with ESMTP id 2261E2089D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:18:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2261E2089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389321AbeKPQ1V (ORCPT
+        id S2389269AbeKPQ3U (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 11:27:21 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:37582 "EHLO
+        Fri, 16 Nov 2018 11:29:20 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:37590 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727353AbeKPQ1V (ORCPT
+        with ESMTP id S1727353AbeKPQ3U (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 11:27:21 -0500
+        Fri, 16 Nov 2018 11:29:20 -0500
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gNXQM-0004vl-Oa; Fri, 16 Nov 2018 14:16:14 +0800
+        id 1gNXSJ-0004xo-IK; Fri, 16 Nov 2018 14:18:15 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gNXQK-0001xm-8E; Fri, 16 Nov 2018 14:16:12 +0800
-Date:   Fri, 16 Nov 2018 14:16:12 +0800
+        id 1gNXSG-0001zC-Nz; Fri, 16 Nov 2018 14:18:12 +0800
+Date:   Fri, 16 Nov 2018 14:18:12 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Gilad Ben-Yossef <gilad@benyossef.com>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Ofir Drang <Ofir.Drang@arm.com>,
-        Yael Chemla <Yael.Chemla@arm.com>,
-        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] crypto: cts: document NIST standard status
-Message-ID: <20181116061612.vegrut7op4vpowoe@gondor.apana.org.au>
-References: <1541419502-7286-1-git-send-email-gilad@benyossef.com>
+To:     Florian Fainelli <f.fainelli@gmail.com>
+Cc:     Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>,
+        "David S. Miller" <davem@davemloft.net>,
+        Eric Biggers <ebiggers@google.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Stefan Agner <stefan@agner.ch>,
+        bcm-kernel-feedback-list@broadcom.com
+Subject: Re: [PATCH] crypto: bcm: fix normal/non key hash algorithm failure
+Message-ID: <20181116061812.5lhfyriycqz2sc3v@gondor.apana.org.au>
+References: <1541492938-29261-1-git-send-email-raveendra.padasalagi@broadcom.com>
+ <dbac8a57-a1dd-1926-624f-cdbb2e4f6dff@gmail.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1541419502-7286-1-git-send-email-gilad@benyossef.com>
+In-Reply-To: <dbac8a57-a1dd-1926-624f-cdbb2e4f6dff@gmail.com>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 05, 2018 at 12:05:01PM +0000, Gilad Ben-Yossef wrote:
-> cts(cbc(aes)) as used in the kernel has been added to NIST
-> standard as CBC-CS3. Document it as such.
+On Tue, Nov 06, 2018 at 10:02:47AM -0800, Florian Fainelli wrote:
+> On 11/6/18 12:28 AM, Raveendra Padasalagi wrote:
+> > Remove setkey() callback handler for normal/non key
+> > hash algorithms and keep it for AES-CBC/CMAC which needs key.
+> > 
+> > Signed-off-by: Raveendra Padasalagi <raveendra.padasalagi@broadcom.com>
 > 
-> Signed-off-by: Gilad Ben-Yossef <gilad@benyossef.com>
-> Suggested-by: Stephan Mueller <smueller@chronox.de>
-> ---
->  crypto/Kconfig | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
+> Should this have the following Fixes tag?
+> 
+> Fixes: 9d12ba86f818 ("crypto: brcm - Add Broadcom SPU driver")
+
+I added it when applying.
+
+> >  drivers/crypto/bcm/cipher.c | 6 +++++-
+> >  1 file changed, 5 insertions(+), 1 deletion(-)
 
 Patch applied.  Thanks.
 -- 
