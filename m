@@ -2,109 +2,113 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.2 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 43CFCC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:14:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 2B227C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:18:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 02B18214F1
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:14:20 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id E5AA42145D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 02:18:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="gR0DxmVa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 02B18214F1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="mxj5a+9W"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E5AA42145D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389361AbeKPMYr (ORCPT
+        id S2389342AbeKPM2n (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 07:24:47 -0500
-Received: from mail.kernel.org ([198.145.29.99]:60402 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726518AbeKPMYr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 07:24:47 -0500
-Received: from jouet.infradead.org (unknown [64.114.255.97])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 991422145D;
-        Fri, 16 Nov 2018 02:14:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542334458;
-        bh=BAdmk5RSlioy8LNJ5ZsSqwhBBaQCPKSsb5ew9cuELu8=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=gR0DxmVajjt77bv94NCWYP8FC+uIMbJBXgg/4kyHvsKy5W41sk3sMEMZdRfz0vHbE
-         bgUO4s8sew3EEAU6QX1fcjjDhWsMqrqrImj77HLjP+2ib0vJZyhEaNT3yLeI96RUeA
-         wBrIMSRDeF26bwnGPMskqbSOkYkqQItC3nA1nvh0=
-Received: by jouet.infradead.org (Postfix, from userid 1000)
-        id 7418D1443D0; Thu, 15 Nov 2018 18:14:18 -0800 (PST)
-Date:   Thu, 15 Nov 2018 18:14:18 -0800
-From:   Arnaldo Carvalho de Melo <acme@kernel.org>
-To:     "Liang, Kan" <kan.liang@linux.intel.com>
-Cc:     Jiri Olsa <jolsa@redhat.com>, mingo@redhat.com,
-        peterz@infradead.org, linux-kernel@vger.kernel.org,
-        namhyung@kernel.org, ak@linux.intel.com
-Subject: Re: [PATCH 1/2] perf vendor events: Add stepping in CPUID string for
- x86
-Message-ID: <20181116021418.GB18319@kernel.org>
-References: <20181114212416.15665-1-kan.liang@linux.intel.com>
- <20181115204411.GO9600@krava>
- <cc982c1b-0774-6f3e-a24a-3c3fba5c900b@linux.intel.com>
+        Fri, 16 Nov 2018 07:28:43 -0500
+Received: from mail-pg1-f195.google.com ([209.85.215.195]:36035 "EHLO
+        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726518AbeKPM2n (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 07:28:43 -0500
+Received: by mail-pg1-f195.google.com with SMTP id n2so2703700pgm.3
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 18:18:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=osandov-com.20150623.gappssmtp.com; s=20150623;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=uWxOI7EW+B6BaLJ4pF1Ucb4JKvaIuWDE5mYJ2nvblqE=;
+        b=mxj5a+9WhaUzzn6ENIPyyJMDBjBRDUGhUl2p38GDhnPH+yLz97xJGMlhaOjc+x0c96
+         SZP6XEZfRQZo5jsFCwlLfiDojuqLbpzRHVh52QfLDd9K55bag+4IyroxO1cq3SrkGVbp
+         wpNoT55+M98lKeG/wuihGyrjfR1RhTKeyN+f8S/X2Ktx1Q0eqUJz5rqTgM/A4Pbv7duR
+         LB28WnNvGsapqmb77uTNrgtK4BqM45hHGbHpDKezmNiNdQB2AJf/s09zpqWwyhfB/ShX
+         C70fPi4L089v3cKjZaCZGf6oYE4VzreeOOSc997WA0dDu7InSYJwxQSzz1KHpuUeoL4Q
+         F6Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=uWxOI7EW+B6BaLJ4pF1Ucb4JKvaIuWDE5mYJ2nvblqE=;
+        b=Jo09sz9w5676J+/bweLQfPX1rOKcKZCBIQktyu0Zewwxc7KFqVWw+czkBZqz7RoudF
+         V5gPeOTKG6zljrJAZ3jTlglfw/z1Y6rJDd/A0juj7qBL4NV9u8530dv4dZpF5/IfOFGR
+         af/fvY6tybsReeEJN1Ref8PrE6KlLmZsLqvy2bINWr8Gzm8Mrj0rJw/jE7ZpFhp9Q8Uc
+         AyHDLBzfTTDDxi6C/5+i56es8SGsj/jI0Zoi+oqfO2bEM4H45kS3+PR8BK/L4gwYSzPd
+         /yaEK6Or39EtpPR7KtmeiqZNo+p2f2Sa/u1WDB2Qvx+Df8NSyDkqgEG+PcTebB8eILxJ
+         hsYg==
+X-Gm-Message-State: AGRZ1gLglO3isufpU9F+y3PhMVvJqC/f0zIe3zXwToNaB3eRGkfxdr0s
+        ojuWisH4j7Dp89QGVCMjRIY6XQ==
+X-Google-Smtp-Source: AJdET5cfhaHk05TqW2Jq6nTxtIdo0ficfDaKFmLY+f8LDNaSqXZd501bp6MC6dyRxNdzTO6b9nJlNw==
+X-Received: by 2002:a63:101d:: with SMTP id f29mr8219269pgl.38.1542334693471;
+        Thu, 15 Nov 2018 18:18:13 -0800 (PST)
+Received: from vader ([64.114.255.97])
+        by smtp.gmail.com with ESMTPSA id v15sm8249986pfn.94.2018.11.15.18.18.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 15 Nov 2018 18:18:12 -0800 (PST)
+Date:   Thu, 15 Nov 2018 18:18:11 -0800
+From:   Omar Sandoval <osandov@osandov.com>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 18/19] block: kill QUEUE_FLAG_NO_SG_MERGE
+Message-ID: <20181116021811.GM23828@vader>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-19-ming.lei@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <cc982c1b-0774-6f3e-a24a-3c3fba5c900b@linux.intel.com>
-X-Url:  http://acmel.wordpress.com
-User-Agent: Mutt/1.9.2 (2017-12-15)
+In-Reply-To: <20181115085306.9910-19-ming.lei@redhat.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Em Thu, Nov 15, 2018 at 04:01:46PM -0500, Liang, Kan escreveu:
+On Thu, Nov 15, 2018 at 04:53:05PM +0800, Ming Lei wrote:
+> Since bdced438acd83ad83a6c ("block: setup bi_phys_segments after splitting"),
+> physical segment number is mainly figured out in blk_queue_split() for
+> fast path, and the flag of BIO_SEG_VALID is set there too.
 > 
+> Now only blk_recount_segments() and blk_recalc_rq_segments() use this
+> flag.
 > 
-> On 11/15/2018 3:44 PM, Jiri Olsa wrote:
-> > On Wed, Nov 14, 2018 at 01:24:15PM -0800, kan.liang@linux.intel.com wrote:
-> > > From: Kan Liang <kan.liang@linux.intel.com>
-> > > 
-> > > Perf tools cannot find the proper event list for Cascadelake server.
-> > > Because Cascadelake server and Skylake server have the same CPU model
-> > > number, which are used by perf tools to find the event list.
-> > > 
-> > > The stepping for Skylake server is up to 4.
-> > > The stepping for Cascadelake server starts from 5.
-> > > The stepping can be used to distinguish between them.
-> > > 
-> > > The stepping is added in get_cpuid_str().
-> > > The stepping information for Skylake server is updated in mapfile.csv.
-> > > A x86 specific strcmp_cpuid_cmp() function is added to handle two CPUID
-> > > formats in mapfile.csv, "vendor-family-model-stepping" and
-> > > "vendor-family-model".
-> > > - If a cpuid-regular-expression from the mapfile.csv using the new
-> > >    stepping format, a cpuid-string generated on the machine must include
-> > >    stepping. Otherwise, it is a mismatch.
-> > > - If the cpuid-regular-expression using the old non-stepping format,
-> > >    the stepping in the cpuid-string will be ignored.
-> > > 
-> > > The script, which using environment string "PERF_CPUID" without stepping
-> > > on Skylake server, will be broken. If so, users must fix their scripts.
-> > > 
-> > > Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
-> > 
-> > Reviewed-by: Jiri Olsa <jolsa@kernel.org>
-> > 
+> Basically blk_recount_segments() is bypassed in fast path given BIO_SEG_VALID
+> is set in blk_queue_split().
 > 
-> Thanks Jirka,
+> For another user of blk_recalc_rq_segments():
 > 
-> Hi Arnaldo,
+> - run in partial completion branch of blk_update_request, which is an unusual case
 > 
-> Are you OK with the patch?
-> If yes, I will go ahead to cleanup the *_cpuid_str() by moving them to
-> header.c as promised. https://lkml.org/lkml/2018/11/15/929
-> The new patch will be on top of this patch.
+> - run in blk_cloned_rq_check_limits(), still not a big problem if the flag is killed
+> since dm-rq is the only user.
+> 
+> Multi-page bvec is enabled now, QUEUE_FLAG_NO_SG_MERGE doesn't make sense any more.
 
-I'm travelling, will look at it soon, can't now, battery almost deead
-:-\
-
-- Arnaldo
+This commit message wasn't very clear. Is it the case that
+QUEUE_FLAG_NO_SG_MERGE is no longer set by any drivers?
