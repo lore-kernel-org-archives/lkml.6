@@ -2,118 +2,110 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D3E15C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:23:24 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1821DC04EBC
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:28:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A68E32087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:23:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A68E32087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id D77232087A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:28:44 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="T8zhy3J5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D77232087A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=alien8.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389800AbeKQAf6 (ORCPT
+        id S1728444AbeKQAlU (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 19:35:58 -0500
-Received: from mga04.intel.com ([192.55.52.120]:4865 "EHLO mga04.intel.com"
+        Fri, 16 Nov 2018 19:41:20 -0500
+Received: from mail.skyhub.de ([5.9.137.197]:43390 "EHLO mail.skyhub.de"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727999AbeKQAf6 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 19:35:58 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga005.fm.intel.com ([10.253.24.32])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 06:23:22 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="280539912"
-Received: from tthayer-hp-z620.an.intel.com ([10.122.105.146])
-  by fmsmga005.fm.intel.com with ESMTP; 16 Nov 2018 06:23:22 -0800
-From:   thor.thayer@linux.intel.com
-To:     marek.vasut@gmail.com, dwmw2@infradead.org,
-        computersforpeace@gmail.com, boris.brezillon@bootlin.com,
-        richard@nod.at
-Cc:     linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Thor Thayer <thor.thayer@linux.intel.com>
-Subject: [PATCHv2] mtd: spi-nor: Fix Cadence QSPI page fault kernel panic
-Date:   Fri, 16 Nov 2018 08:25:49 -0600
-Message-Id: <1542378349-29929-1-git-send-email-thor.thayer@linux.intel.com>
-X-Mailer: git-send-email 2.7.4
+        id S1727999AbeKQAlU (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 19:41:20 -0500
+X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
+        t=1542378521; h=from:from:sender:reply-to:subject:subject:date:date:
+         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+         content-type:content-type:content-transfer-encoding:
+         in-reply-to:in-reply-to:references:references;
+        bh=Y/ZsTYYgTR7z+rjDTIL5fbnfBtww9nFT2+I8OKnWWMs=;
+        b=T8zhy3J5TJI8dd889hiyc9SIzChk4/szfCweWFOcYh2IUk7qYzZxnsgZpnNeBVcsBQ9ndj
+        X4eQGU0x7vc0epfqO3ghQ1GlHmnL2EAXAc/7DmA9L2lBVAnNKP9cHaIvsBaEXP/8oAm7Jc
+        JLIpbK65kphVkMJS7pZh0xJ/paAPJi8=
+Received: from mail.skyhub.de ([127.0.0.1])
+        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+        with ESMTP id qT7-gvoAl1-u; Fri, 16 Nov 2018 15:28:41 +0100 (CET)
+Received: from zn.tnic (p200300EC2BD0FE004D130AD2F34E6DE4.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:fe00:4d13:ad2:f34e:6de4])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 01CFE1EC072C;
+        Fri, 16 Nov 2018 15:28:41 +0100 (CET)
+Date:   Fri, 16 Nov 2018 15:28:40 +0100
+From:   Borislav Petkov <bp@alien8.de>
+To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
+        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
+        sean.j.christopherson@intel.com, nhorman@redhat.com,
+        npmccallum@redhat.com, serge.ayoun@intel.com,
+        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
+        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
+        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
+        Kai Huang <kai.huang@linux.intel.com>,
+        Ingo Molnar <mingo@redhat.com>,
+        "H. Peter Anvin" <hpa@zytor.com>,
+        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
+        David Woodhouse <dwmw@amazon.co.uk>,
+        Fenghua Yu <fenghua.yu@intel.com>,
+        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
+        <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v17 02/23] x86/cpufeatures: Add Intel-defined SGX feature
+ bit
+Message-ID: <20181116142840.GI20313@zn.tnic>
+References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
+ <20181116010412.23967-3-jarkko.sakkinen@linux.intel.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20181116010412.23967-3-jarkko.sakkinen@linux.intel.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Thor Thayer <thor.thayer@linux.intel.com>
+On Fri, Nov 16, 2018 at 03:01:09AM +0200, Jarkko Sakkinen wrote:
+> From: Kai Huang <kai.huang@linux.intel.com>
+> 
+> X86_FEATURE_SGX reflects whether or not the CPU supports Intel's
+> Software Guard eXtensions (SGX).
+> 
+> Signed-off-by: Kai Huang <kai.huang@linux.intel.com>
+> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
+> ---
+>  arch/x86/include/asm/cpufeatures.h | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+> index 28c4a502b419..da7fed4939a3 100644
+> --- a/arch/x86/include/asm/cpufeatures.h
+> +++ b/arch/x86/include/asm/cpufeatures.h
+> @@ -236,6 +236,7 @@
+>  /* Intel-defined CPU features, CPUID level 0x00000007:0 (EBX), word 9 */
+>  #define X86_FEATURE_FSGSBASE		( 9*32+ 0) /* RDFSBASE, WRFSBASE, RDGSBASE, WRGSBASE instructions*/
+>  #define X86_FEATURE_TSC_ADJUST		( 9*32+ 1) /* TSC adjustment MSR 0x3B */
+> +#define X86_FEATURE_SGX			( 9*32+ 2) /* Software Guard Extensions */
+>  #define X86_FEATURE_BMI1		( 9*32+ 3) /* 1st group bit manipulation extensions */
+>  #define X86_FEATURE_HLE			( 9*32+ 4) /* Hardware Lock Elision */
+>  #define X86_FEATURE_AVX2		( 9*32+ 5) /* AVX2 instructions */
+> -- 
 
-The current Cadence QSPI driver caused a kernel panic sporadically
-when writing to QSPI. The problem was caused by writing more bytes
-than needed because the QSPI operated on 4 bytes at a time.
-<snip>
-[   11.202044] Unable to handle kernel paging request at virtual address bffd3000
-[   11.209254] pgd = e463054d
-[   11.211948] [bffd3000] *pgd=2fffb811, *pte=00000000, *ppte=00000000
-[   11.218202] Internal error: Oops: 7 [#1] SMP ARM
-[   11.222797] Modules linked in:
-[   11.225844] CPU: 1 PID: 1317 Comm: systemd-hwdb Not tainted 4.17.7-d0c45cd44a8f
-[   11.235796] Hardware name: Altera SOCFPGA Arria10
-[   11.240487] PC is at __raw_writesl+0x70/0xd4
-[   11.244741] LR is at cqspi_write+0x1a0/0x2cc
-</snip>
-On a page boundary limit the number of bytes copied from the tx buffer
-to remain within the page.
+Reviewed-by: Borislav Petkov <bp@suse.de>
 
-This patch uses a temporary buffer to hold the 4 bytes to write and then
-copies only the bytes required from the tx buffer.
-
-Reported-by: Adrian Amborzewicz <adrian.ambrozewicz@intel.com>
-Signed-off-by: Thor Thayer <thor.thayer@linux.intel.com>
----
-v2 Remove min() function as suggested by community
----
- drivers/mtd/spi-nor/cadence-quadspi.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/mtd/spi-nor/cadence-quadspi.c b/drivers/mtd/spi-nor/cadence-quadspi.c
-index d846428ef038..04cedd3a2bf6 100644
---- a/drivers/mtd/spi-nor/cadence-quadspi.c
-+++ b/drivers/mtd/spi-nor/cadence-quadspi.c
-@@ -644,9 +644,23 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
- 		ndelay(cqspi->wr_delay);
- 
- 	while (remaining > 0) {
-+		size_t write_words, mod_bytes;
-+
- 		write_bytes = remaining > page_size ? page_size : remaining;
--		iowrite32_rep(cqspi->ahb_base, txbuf,
--			      DIV_ROUND_UP(write_bytes, 4));
-+		write_words = write_bytes / 4;
-+		mod_bytes = write_bytes % 4;
-+		/* Write 4 bytes at a time then single bytes. */
-+		if (write_words) {
-+			iowrite32_rep(cqspi->ahb_base, txbuf, write_words);
-+			txbuf += (write_words * 4);
-+		}
-+		if (mod_bytes) {
-+			unsigned int temp = 0xFFFFFFFF;
-+
-+			memcpy(&temp, txbuf, mod_bytes);
-+			iowrite32(temp, cqspi->ahb_base);
-+			txbuf += mod_bytes;
-+		}
- 
- 		if (!wait_for_completion_timeout(&cqspi->transfer_complete,
- 					msecs_to_jiffies(CQSPI_TIMEOUT_MS))) {
-@@ -655,7 +669,6 @@ static int cqspi_indirect_write_execute(struct spi_nor *nor, loff_t to_addr,
- 			goto failwr;
- 		}
- 
--		txbuf += write_bytes;
- 		remaining -= write_bytes;
- 
- 		if (remaining > 0)
 -- 
-2.7.4
+Regards/Gruss,
+    Boris.
 
+Good mailing practices for 400: avoid top-posting and trim the reply.
