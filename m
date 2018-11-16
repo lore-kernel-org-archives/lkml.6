@@ -2,121 +2,89 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C30C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:41:36 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AEB42C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:42:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4C321208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:41:36 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C321208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 7781F208A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:42:00 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7781F208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389443AbeKPTxG (ORCPT
+        id S2389496AbeKPTxa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 14:53:06 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:40228 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727405AbeKPTxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 14:53:06 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id C7A9620756; Fri, 16 Nov 2018 10:41:32 +0100 (CET)
-Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4CAAE20877;
-        Fri, 16 Nov 2018 10:41:02 +0100 (CET)
-Date:   Fri, 16 Nov 2018 10:41:02 +0100
-From:   Maxime Ripard <maxime.ripard@bootlin.com>
-To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Chen-Yu Tsai <wens@csie.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-sunxi@googlegroups.com, Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Subject: Re: [PATCH 15/15] arm64: dts: allwinner: a64: Add Video Engine and
- reserved memory node
-Message-ID: <20181116094102.6j5xhpptvelxtr6h@flea>
-References: <20181115145013.3378-1-paul.kocialkowski@bootlin.com>
- <20181115145013.3378-16-paul.kocialkowski@bootlin.com>
+        Fri, 16 Nov 2018 14:53:30 -0500
+Received: from szxga06-in.huawei.com ([45.249.212.32]:42901 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727405AbeKPTxa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 14:53:30 -0500
+Received: from DGGEMS413-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id 6105A91790A54;
+        Fri, 16 Nov 2018 17:41:54 +0800 (CST)
+Received: from [10.151.23.176] (10.151.23.176) by smtp.huawei.com
+ (10.3.19.213) with Microsoft SMTP Server (TLS) id 14.3.408.0; Fri, 16 Nov
+ 2018 17:41:50 +0800
+Subject: Re: [PATCH V10 03/19] block: use bio_for_each_bvec() to compute
+ multi-page bvec count
+To:     Christoph Hellwig <hch@lst.de>
+CC:     Omar Sandoval <osandov@osandov.com>,
+        Mike Snitzer <snitzer@redhat.com>,
+        Ming Lei <ming.lei@redhat.com>, Jens Axboe <axboe@kernel.dk>,
+        <linux-block@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux-mm@kvack.org>, Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        <dm-devel@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>,
+        <linux-fsdevel@vger.kernel.org>, Shaohua Li <shli@kernel.org>,
+        <linux-raid@vger.kernel.org>, <linux-erofs@lists.ozlabs.org>,
+        David Sterba <dsterba@suse.com>, <linux-btrfs@vger.kernel.org>,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        <linux-xfs@vger.kernel.org>, Theodore Ts'o <tytso@mit.edu>,
+        <linux-ext4@vger.kernel.org>, Coly Li <colyli@suse.de>,
+        <linux-bcache@vger.kernel.org>, Boaz Harrosh <ooo@electrozaur.com>,
+        "Bob Peterson" <rpeterso@redhat.com>, <cluster-devel@redhat.com>
+References: <20181115085306.9910-1-ming.lei@redhat.com>
+ <20181115085306.9910-4-ming.lei@redhat.com> <20181115202028.GC9348@vader>
+ <20181115210510.GA24908@redhat.com> <20181115221847.GD9348@vader>
+ <20181116091956.GA17604@lst.de>
+From:   Gao Xiang <gaoxiang25@huawei.com>
+Message-ID: <a0105f7a-95b2-3a42-1543-3e8b999edb30@huawei.com>
+Date:   Fri, 16 Nov 2018 17:41:47 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.3.0
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-        protocol="application/pgp-signature"; boundary="zta4mcirelbyep65"
-Content-Disposition: inline
-In-Reply-To: <20181115145013.3378-16-paul.kocialkowski@bootlin.com>
-User-Agent: NeoMutt/20180716
+In-Reply-To: <20181116091956.GA17604@lst.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Originating-IP: [10.151.23.176]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
 
---zta4mcirelbyep65
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On 2018/11/16 17:19, Christoph Hellwig wrote:
+> On Thu, Nov 15, 2018 at 02:18:47PM -0800, Omar Sandoval wrote:
+>> My only reason to prefer unsigned int is consistency. unsigned int is
+>> much more common in the kernel:
+>>
+>> $ ag --cc -s 'unsigned\s+int' | wc -l
+>> 129632
+>> $ ag --cc -s 'unsigned\s+(?!char|short|int|long)' | wc -l
+>> 22435
+>>
+>> checkpatch also warns on plain unsigned.
+> 
+> Talk about chicken and egg.  unsigned is perfectly valid C, and being
+> shorter often helps being more readable.  checkpath is as so often
+> wrongly opinionated..
+> 
 
-On Thu, Nov 15, 2018 at 03:50:13PM +0100, Paul Kocialkowski wrote:
-> This adds nodes for the Video Engine and the associated reserved memory
-> for the A64. Up to 96 MiB of memory are dedicated to the CMA pool.
->=20
-> The pool is located at the end of the first 256 MiB of RAM so that the
-> VPU can access it. It is unclear whether this is still a hard
-> requirement for this platform, but it seems safer that way.
->=20
-> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> ---
->  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 25 +++++++++++++++++++
->  1 file changed, 25 insertions(+)
->=20
-> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
-oot/dts/allwinner/sun50i-a64.dtsi
-> index 88b3e9110833..a35a5c9ffbbe 100644
-> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
-> @@ -185,6 +185,20 @@
->  			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
->  	};
-> =20
-> +	reserved-memory {
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <1>;
-> +		ranges;
-> +
-> +		cma_pool: cma@4a000000 {
-> +			compatible =3D "shared-dma-pool";
-> +			size =3D <0x6000000>;
-> +			alloc-ranges =3D <0x4a000000 0x6000000>;
+sigh...I personally tend to use "unsigned" instead of "unsigned int" as well,
+but checkpatch.pl also suggests erofs to use "unsigned int" :-(
 
-This introduces a DTC warning, since you're using a unit-address, but
-don't have a reg register.
-
-I've fixed it in the other DT by renaming that node to
-default-pool. You can also drop the label, it's not used anywhere.
-
-Maxime
-
---=20
-Maxime Ripard, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
---zta4mcirelbyep65
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+6QrgAKCRDj7w1vZxhR
-xYhCAP9lH8ybHUmO+OKiYNiJnFP+NpRwzjLmReIqAREptX7ITAD+KhT6BKpJ/6k/
-sgi9vKvs4YOjlwkJM+1Ib0hMwgRQUQc=
-=bLkz
------END PGP SIGNATURE-----
-
---zta4mcirelbyep65--
+Thanks,
+Gao Xiang
