@@ -3,135 +3,70 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
 X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C1C16C04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:21:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0C29CC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:24:54 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8FC522086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:21:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8FC522086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arndb.de
+	by mail.kernel.org (Postfix) with ESMTP id C52682086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:24:53 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C52682086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730199AbeKQJfi (ORCPT
+        id S1729767AbeKQJjN (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:35:38 -0500
-Received: from mail-qk1-f196.google.com ([209.85.222.196]:43491 "EHLO
-        mail-qk1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726222AbeKQJfh (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:35:37 -0500
-Received: by mail-qk1-f196.google.com with SMTP id r71so40153732qkr.10;
-        Fri, 16 Nov 2018 15:21:16 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=M5JQlFR6BO6RYI54fXE5W/jmMguUs5fceI1+3QHSGVU=;
-        b=grKbqiBAh7iC52XOPEdR2L07ZmFZF2rcbm8IsT4TrviUNxXe4atNvjP4t0b22wwWuf
-         mkzMUcKZx/u3jD/Fq337LmSYkEBVcDekjiT3QN2I//t0IdLmq/ThKCFiOOBKGJiW3pFK
-         6whKMT+1TDkCtZNnnm/5RZcl9qsLL22CW6Y8bYdny3g2I7+GSJR33MxWGaaRNKKGiWUZ
-         Z4zB7E1TGB2l4R9XEOe+2brcCcMqN4HihmzUa9g1GzsDu56hK5ZZFc11D4IVk6l8B8O2
-         vPodbRW+pEsX0LFqEFF62X4HQ+a3YPVobD16np8avo7csAAANwowhkSk1AVijqPVy518
-         53DA==
-X-Gm-Message-State: AGRZ1gLuj8aOGPi28JWqRaniNYLQTR60T5TX0eGI1lqvX9ZQ0bBApj/w
-        pHdMrP4mJOhvTK+GsKxVrDdZmVij0xx+9+N+j5g=
-X-Google-Smtp-Source: AJdET5dbPeAPI2XgLwLBp9glE7wPHtsARPJZeWZmFveOODyQY24sqFsUb+I9SVWJDHub2K9OWZsWc97ZRkm5VQ2QbGw=
-X-Received: by 2002:ac8:2c34:: with SMTP id d49mr12303947qta.152.1542410475690;
- Fri, 16 Nov 2018 15:21:15 -0800 (PST)
+        Sat, 17 Nov 2018 04:39:13 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:46712 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726222AbeKQJjN (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 04:39:13 -0500
+Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id B4F3931256C4;
+        Fri, 16 Nov 2018 23:24:51 +0000 (UTC)
+Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 08C7B5D6B3;
+        Fri, 16 Nov 2018 23:24:47 +0000 (UTC)
+From:   Lyude Paul <lyude@redhat.com>
+To:     amd-gfx@lists.freedesktop.org
+Cc:     Jerry Zuo <Jerry.Zuo@amd.com>,
+        "Alex Deucher" <alexander.deucher@amd.com>,
+        "Leo Li" <sunpeng.li@amd.com>, "David Airlie" <airlied@linux.ie>,
+        =?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+        "Daniel Vetter" <daniel.vetter@ffwll.ch>,
+        linux-kernel@vger.kernel.org, "Roman Li" <roman.li@amd.com>,
+        dri-devel@lists.freedesktop.org,
+        "David (ChunMing) Zhou" <david1.zhou@amd.com>,
+        "Shirish S" <shirish.s@amd.com>,
+        "Jerry (Fangzhi) Zuo" <jerry.zuo@amd.com>,
+        "Harry Wentland" <harry.wentland@amd.com>,
+        "Lyude Paul" <lyude@redhat.com>, "Tony Cheng" <tony.cheng@amd.com>
+Subject: [PATCH 0/2] drm/amd/dm: Misc MST connector fixes
+Date:   Fri, 16 Nov 2018 18:24:37 -0500
+Message-Id: <20181116232443.1709-1-lyude@redhat.com>
 MIME-Version: 1.0
-References: <1542177301-25844-1-git-send-email-firoz.khan@linaro.org>
- <58c3c4a4-7f55-bf08-1c96-ef1aa7f97072@gmx.de> <CALxhOngc1cSSDVznnX+iLg-Ne9+k0ct0wT-z0MXKSeKxJE3Vsg@mail.gmail.com>
- <20181116215502.GA6585@ls3530.dellerweb.de>
-In-Reply-To: <20181116215502.GA6585@ls3530.dellerweb.de>
-From:   Arnd Bergmann <arnd@arndb.de>
-Date:   Fri, 16 Nov 2018 15:20:57 -0800
-Message-ID: <CAK8P3a2g-7iR594Fs_goYCYPqgO6FRML5oi9vodDC_wKHF64bA@mail.gmail.com>
-Subject: Re: [PATCH v7 0/5] parisc: system call table generation support
-To:     Helge Deller <deller@gmx.de>
-Cc:     Firoz Khan <firoz.khan@linaro.org>,
-        Parisc List <linux-parisc@vger.kernel.org>,
-        James.Bottomley@hansenpartnership.com,
-        John David Anglin <dave.anglin@bell.net>,
-        "James E.J. Bottomley" <jejb@parisc-linux.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        gregkh <gregkh@linuxfoundation.org>,
-        Philippe Ombredanne <pombredanne@nexb.com>,
-        Kate Stewart <kstewart@linuxfoundation.org>,
-        y2038 Mailman List <y2038@lists.linaro.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        linux-arch <linux-arch@vger.kernel.org>,
-        Deepa Dinamani <deepa.kernel@gmail.com>,
-        Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.46]); Fri, 16 Nov 2018 23:24:51 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 1:55 PM Helge Deller <deller@gmx.de> wrote:
-> > On Fri, 16 Nov 2018 at 01:01, Helge Deller <deller@gmx.de> wrote:
-> > >
-> > > On 14.11.2018 07:34, Firoz Khan wrote:
-> > > > The purpose of this patch series is, we can easily
-> > > > add/modify/delete system call table support by cha-
-> > > > nging entry in syscall.tbl file instead of manually
-> > > > changing many files. The other goal is to unify the
-> > > > system call table generation support implementation
-> > > > across all the architectures.
-> > > >
-> > > > The system call tables are in different format in
-> > > > all architecture. It will be difficult to manually
-> > > > add, modify or delete the system calls in the resp-
-> > > > ective files manually. To make it easy by keeping a
-> > > > script and which'll generate uapi header file and
-> > > > syscall table file.
-> > > >
-> > > > syscall.tbl contains the list of available system
-> > > > calls along with system call number and correspond-
-> > > > ing entry point. Add a new system call in this arch-
-> > > > itecture will be possible by adding new entry in the
-> > > > syscall.tbl file.
-> > > >
-> > > > Adding a new table entry consisting of:
-> > > >         - System call number.
-> > > >         - ABI.
-> > > >         - System call name.
-> > > >         - Entry point name.
-> > > >
-> > > > ....
-> > > > Firoz Khan (5):
-> > > >   parisc: move __IGNORE* entries to non uapi header
-> > > >   parisc: add __NR_syscalls along with __NR_Linux_syscalls
-> > > >   parisc: add system call table generation support
-> > > >   parisc: generate uapi header and system call table files
-> > > >   parisc: syscalls: ignore nfsservctl for other architectures
-> > >
-> > > Firoz, you may add
-> > > Acked-by: Helge Deller <deller@gmx.de>
-> > > to the whole parisc series.
-> >
-> > Sure, will do.
-> > I'm on a vacation right now. will send mid next week.
->
-> That's ok, there is no urgency.
->
-> Actually, I noticed that the generated files unistd_32.h
-> and unistd_64.h do have the same contents, since on parisc
-> we keep the syscall numbers the same for 32- and 64-bit.
-> With that in mind, we can simply generate on unistd.h
-> file for both variants.
+Some fixes for things I spotted after trying to look at a bug Jerry Zuo
+mentioned to me. Didn't manage to reproduce the bug! But I found these.
 
-It depends on what we want to do in the future. When we add
-around 20 new system calls fro y2038, my plan was to
-only add them for 32-bit architectures, leaving holes on
-64-bit ones. We can also assign the new numbers on parisc64
-but they would have the same entry point as existing calls.
+Cc: Jerry Zuo <Jerry.Zuo@amd.com>
 
-If you prefer doing it like that, your patch seems fine for that,
-it's just slightly inconsistent with the other 64-bit architectures
-then.
+Lyude Paul (2):
+  drm/amd/dm: Don't forget to attach MST encoders
+  drm/amd/dm: Understand why attaching path/tile properties are needed
 
-          Arnd
+ drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_mst_types.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+-- 
+2.19.1
+
