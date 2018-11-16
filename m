@@ -2,149 +2,197 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 04582C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:27:42 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B45FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:29:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B67382087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:27:41 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dn1Y5kIx"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B67382087A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id D2E9E20892
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:29:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D2E9E20892
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.ibm.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729424AbeKQElI (ORCPT
+        id S2389664AbeKQEmg (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 23:41:08 -0500
-Received: from mail.kernel.org ([198.145.29.99]:50060 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727462AbeKQElI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 23:41:08 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id DFE9F2086C;
-        Fri, 16 Nov 2018 18:27:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542392859;
-        bh=iIT9Nzuv36sYtC+k4hukhx0eBZLByZbKHW0ur4Tvoqs=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Dn1Y5kIxkXTj9Fd3inadUTbWqivT5ipgod8xJ3RulD8axQkDf2ZLPxA1BQDV+06V0
-         EHDexBR3Di9gcgp8j8wyjMSstb+PfKLo8GxVOkYoymevNbyitPwjOvJ4FpaWpsA3Ku
-         SwuGfsOHChnJTkkfyO16BS8ttwauDDxHUsd4wj8I=
-Date:   Fri, 16 Nov 2018 18:27:33 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     "Ardelean, Alexandru" <alexandru.Ardelean@analog.com>
-Cc:     "kernel-usp@googlegroups.com" <kernel-usp@googlegroups.com>,
-        "lars@metafoo.de" <lars@metafoo.de>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "knaack.h@gmx.de" <knaack.h@gmx.de>,
-        "Hennerich, Michael" <Michael.Hennerich@analog.com>,
-        "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
-        "devel@driverdev.osuosl.org" <devel@driverdev.osuosl.org>,
-        "renatogeh@gmail.com" <renatogeh@gmail.com>,
-        "giuliano.belinassi@usp.br" <giuliano.belinassi@usp.br>,
-        "pmeerw@pmeerw.net" <pmeerw@pmeerw.net>,
-        "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH v4 1/2] staging: iio: ad7780: update voltage on read
-Message-ID: <20181116182733.080fe566@archlinux>
-In-Reply-To: <77b195ff53f05d3a7d98098810c5d2d4af3b2e7a.camel@analog.com>
-References: <cover.1541444377.git.renatogeh@gmail.com>
-        <4b47bd8f4bac2575b72529b37e5ac90bebae2446.1541444377.git.renatogeh@gmail.com>
-        <30c1ff317baefde88a0f4d0a002b19010290d16b.camel@analog.com>
-        <20181111142939.316cdd47@archlinux>
-        <77b195ff53f05d3a7d98098810c5d2d4af3b2e7a.camel@analog.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 16 Nov 2018 23:42:36 -0500
+Received: from mx0a-001b2d01.pphosted.com ([148.163.156.1]:39828 "EHLO
+        mx0a-001b2d01.pphosted.com" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1727462AbeKQEmg (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 23:42:36 -0500
+Received: from pps.filterd (m0098409.ppops.net [127.0.0.1])
+        by mx0a-001b2d01.pphosted.com (8.16.0.22/8.16.0.22) with SMTP id wAGISqo5136171
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 13:29:06 -0500
+Received: from e06smtp01.uk.ibm.com (e06smtp01.uk.ibm.com [195.75.94.97])
+        by mx0a-001b2d01.pphosted.com with ESMTP id 2nt0ejygge-1
+        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NOT)
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 13:29:06 -0500
+Received: from localhost
+        by e06smtp01.uk.ibm.com with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted
+        for <linux-kernel@vger.kernel.org> from <rppt@linux.ibm.com>;
+        Fri, 16 Nov 2018 18:29:03 -0000
+Received: from b06cxnps4075.portsmouth.uk.ibm.com (9.149.109.197)
+        by e06smtp01.uk.ibm.com (192.168.101.131) with IBM ESMTP SMTP Gateway: Authorized Use Only! Violators will be prosecuted;
+        (version=TLSv1/SSLv3 cipher=AES256-GCM-SHA384 bits=256/256)
+        Fri, 16 Nov 2018 18:28:54 -0000
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (b06wcsmtp001.portsmouth.uk.ibm.com [9.149.105.160])
+        by b06cxnps4075.portsmouth.uk.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id wAGISrw87078182
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+        Fri, 16 Nov 2018 18:28:53 GMT
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 6C8FAA405C;
+        Fri, 16 Nov 2018 18:28:53 +0000 (GMT)
+Received: from b06wcsmtp001.portsmouth.uk.ibm.com (unknown [127.0.0.1])
+        by IMSVA (Postfix) with ESMTP id 56735A4062;
+        Fri, 16 Nov 2018 18:28:41 +0000 (GMT)
+Received: from rapoport-lnx (unknown [9.148.207.26])
+        by b06wcsmtp001.portsmouth.uk.ibm.com (Postfix) with ESMTPS;
+        Fri, 16 Nov 2018 18:28:41 +0000 (GMT)
+Date:   Fri, 16 Nov 2018 10:28:37 -0800
+From:   Mike Rapoport <rppt@linux.ibm.com>
+To:     Souptick Joarder <jrdr.linux@gmail.com>
+Cc:     akpm@linux-foundation.org, willy@infradead.org, mhocko@suse.com,
+        kirill.shutemov@linux.intel.com, vbabka@suse.cz, riel@surriel.com,
+        sfr@canb.auug.org.au, rppt@linux.vnet.ibm.com,
+        peterz@infradead.org, linux@armlinux.org.uk, robin.murphy@arm.com,
+        iamjoonsoo.kim@lge.com, treding@nvidia.com, keescook@chromium.org,
+        m.szyprowski@samsung.com, stefanr@s5r6.in-berlin.de,
+        hjc@rock-chips.com, heiko@sntech.de, airlied@linux.ie,
+        oleksandr_andrushchenko@epam.com, joro@8bytes.org,
+        pawel@osciak.com, kyungmin.park@samsung.com, mchehab@kernel.org,
+        boris.ostrovsky@oracle.com, jgross@suse.com,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux1394-devel@lists.sourceforge.net,
+        dri-devel@lists.freedesktop.org,
+        linux-rockchip@lists.infradead.org, xen-devel@lists.xen.org,
+        iommu@lists.linux-foundation.org, linux-media@vger.kernel.org
+Subject: Re: [PATCH 1/9] mm: Introduce new vm_insert_range API
+References: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115154530.GA27872@jordon-HP-15-Notebook-PC>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-TM-AS-GCONF: 00
+x-cbid: 18111618-4275-0000-0000-000002E21C6A
+X-IBM-AV-DETECTION: SAVI=unused REMOTE=unused XFE=unused
+x-cbparentid: 18111618-4276-0000-0000-000037EF3A0B
+Message-Id: <20181116182836.GB17088@rapoport-lnx>
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-16_10:,,
+ signatures=0
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ malwarescore=0 suspectscore=0 phishscore=0 bulkscore=0 spamscore=0
+ clxscore=1015 lowpriorityscore=0 mlxscore=0 impostorscore=0
+ mlxlogscore=999 adultscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.0.1-1810050000 definitions=main-1811160163
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, 12 Nov 2018 07:57:24 +0000
-"Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
-
-> On Sun, 2018-11-11 at 14:30 +0000, Jonathan Cameron wrote:
-> > On Tue, 6 Nov 2018 09:24:44 +0000
-> > "Ardelean, Alexandru" <alexandru.Ardelean@analog.com> wrote:
-> >   
-> > > On Mon, 2018-11-05 at 17:14 -0200, Renato Lui Geh wrote:  
-> > > > The ad7780 driver previously did not read the correct device output,
-> > > > as
-> > > > it read an outdated value set at initialization. It now updates its
-> > > > voltage on read.
-> > > >     
-> > 
-> > Applied to the togreg branch of iio.git and pushed out as testing for
-> > the autobuilders to check it.  I'm not that fussed about pushing this
-> > one as a fix, as most of the time these things are on fixed regulators
-> > anyway, but it is nice to do it right.
-> >   
-> > > Looks good from my side.  
-> > 
-> > Ack?  
+On Thu, Nov 15, 2018 at 09:15:30PM +0530, Souptick Joarder wrote:
+> Previouly drivers have their own way of mapping range of
+> kernel pages/memory into user vma and this was done by
+> invoking vm_insert_page() within a loop.
 > 
-> Acked-by: Alexandru Ardelean <alexandru.ardelean@analog.com>
-Added to both in this series.
-
-Thanks,
-
-Jonathan
-
+> As this pattern is common across different drivers, it can
+> be generalized by creating a new function and use it across
+> the drivers.
 > 
-> > 
-> > Much preferred if you are willing to give a formal acknowledgement.
-> > 
-> > Thanks,
-> > 
-> > Jonathan
-> > 
-> >   
-> > > 
-> > > Alex
-> > >   
-> > > > Signed-off-by: Renato Lui Geh <renatogeh@gmail.com>
-> > > > ---
-> > > > Changes in v3:
-> > > > 	- removed initialization (int voltage_uv = 0)
-> > > > 	- returns error when voltage_uv is null
-> > > > Changes in v4:
-> > > > 	- returns error when voltage_uv is negative
-> > > > 
-> > > >  drivers/staging/iio/adc/ad7780.c | 6 +++++-
-> > > >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > > > 
-> > > > diff --git a/drivers/staging/iio/adc/ad7780.c
-> > > > b/drivers/staging/iio/adc/ad7780.c
-> > > > index b67412db0318..c7cb05cedbbc 100644
-> > > > --- a/drivers/staging/iio/adc/ad7780.c
-> > > > +++ b/drivers/staging/iio/adc/ad7780.c
-> > > > @@ -87,12 +87,16 @@ static int ad7780_read_raw(struct iio_dev
-> > > > *indio_dev,
-> > > >  			   long m)
-> > > >  {
-> > > >  	struct ad7780_state *st = iio_priv(indio_dev);
-> > > > +	int voltage_uv;
-> > > >  
-> > > >  	switch (m) {
-> > > >  	case IIO_CHAN_INFO_RAW:
-> > > >  		return ad_sigma_delta_single_conversion(indio_dev, chan,
-> > > > val);
-> > > >  	case IIO_CHAN_INFO_SCALE:
-> > > > -		*val = st->int_vref_mv * st->gain;
-> > > > +		voltage_uv = regulator_get_voltage(st->reg);
-> > > > +		if (voltage_uv < 0)
-> > > > +			return voltage_uv;
-> > > > +		*val = (voltage_uv / 1000) * st->gain;
-> > > >  		*val2 = chan->scan_type.realbits - 1;
-> > > >  		return IIO_VAL_FRACTIONAL_LOG2;
-> > > >  	case IIO_CHAN_INFO_OFFSET:    
-> > 
-> >   
+> vm_insert_range is the new API which will be used to map a
+> range of kernel memory/pages to user vma.
+> 
+> Signed-off-by: Souptick Joarder <jrdr.linux@gmail.com>
+> Reviewed-by: Matthew Wilcox <willy@infradead.org>
+> ---
+>  include/linux/mm_types.h |  3 +++
+>  mm/memory.c              | 28 ++++++++++++++++++++++++++++
+>  mm/nommu.c               |  7 +++++++
+>  3 files changed, 38 insertions(+)
+> 
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 5ed8f62..15ae24f 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -523,6 +523,9 @@ extern void tlb_gather_mmu(struct mmu_gather *tlb, struct mm_struct *mm,
+>  extern void tlb_finish_mmu(struct mmu_gather *tlb,
+>  				unsigned long start, unsigned long end);
+> 
+> +int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
+> +			struct page **pages, unsigned long page_count);
+> +
+>  static inline void init_tlb_flush_pending(struct mm_struct *mm)
+>  {
+>  	atomic_set(&mm->tlb_flush_pending, 0);
+> diff --git a/mm/memory.c b/mm/memory.c
+> index 15c417e..da904ed 100644
+> --- a/mm/memory.c
+> +++ b/mm/memory.c
+> @@ -1478,6 +1478,34 @@ static int insert_page(struct vm_area_struct *vma, unsigned long addr,
+>  }
+> 
+>  /**
+> + * vm_insert_range - insert range of kernel pages into user vma
+> + * @vma: user vma to map to
+> + * @addr: target user address of this page
+> + * @pages: pointer to array of source kernel pages
+> + * @page_count: no. of pages need to insert into user vma
+> + *
+> + * This allows drivers to insert range of kernel pages they've allocated
+> + * into a user vma. This is a generic function which drivers can use
+> + * rather than using their own way of mapping range of kernel pages into
+> + * user vma.
+
+Please add the return value and context descriptions.
+
+> + */
+> +int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
+> +			struct page **pages, unsigned long page_count)
+> +{
+> +	unsigned long uaddr = addr;
+> +	int ret = 0, i;
+> +
+> +	for (i = 0; i < page_count; i++) {
+> +		ret = vm_insert_page(vma, uaddr, pages[i]);
+> +		if (ret < 0)
+> +			return ret;
+> +		uaddr += PAGE_SIZE;
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+> +/**
+>   * vm_insert_page - insert single page into user vma
+>   * @vma: user vma to map to
+>   * @addr: target user address of this page
+> diff --git a/mm/nommu.c b/mm/nommu.c
+> index 749276b..d6ef5c7 100644
+> --- a/mm/nommu.c
+> +++ b/mm/nommu.c
+> @@ -473,6 +473,13 @@ int vm_insert_page(struct vm_area_struct *vma, unsigned long addr,
+>  }
+>  EXPORT_SYMBOL(vm_insert_page);
+> 
+> +int vm_insert_range(struct vm_area_struct *vma, unsigned long addr,
+> +			struct page **pages, unsigned long page_count)
+> +{
+> +	return -EINVAL;
+> +}
+> +EXPORT_SYMBOL(vm_insert_range);
+> +
+>  /*
+>   *  sys_brk() for the most part doesn't need the global kernel
+>   *  lock, except when an application is doing something nasty
+> -- 
+> 1.9.1
+> 
+
+-- 
+Sincerely yours,
+Mike.
 
