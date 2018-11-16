@@ -2,117 +2,142 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS autolearn=unavailable autolearn_force=no
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B15EC04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:33:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DD76DC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:42:55 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D984020858
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:33:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D984020858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 93F972086B
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:42:55 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Lkdm5skY"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93F972086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730832AbeKQJsA (ORCPT
+        id S1730613AbeKQJ5B (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:48:00 -0500
-Received: from mga07.intel.com ([134.134.136.100]:30084 "EHLO mga07.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbeKQJr7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:47:59 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from orsmga001.jf.intel.com ([10.7.209.18])
-  by orsmga105.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 15:33:35 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,242,1539673200"; 
-   d="scan'208";a="108968744"
-Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
-  by orsmga001.jf.intel.com with ESMTP; 16 Nov 2018 15:33:35 -0800
-Subject: Re: [PATCH v17 07/23] x86/mm: x86/sgx: Add new 'PF_SGX' page fault
- error code bit
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>, x86@kernel.org,
-        platform-driver-x86@vger.kernel.org, linux-sgx@vger.kernel.org
-Cc:     sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Andy Lutomirski <luto@kernel.org>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-8-jarkko.sakkinen@linux.intel.com>
-From:   Dave Hansen <dave.hansen@intel.com>
-Openpgp: preference=signencrypt
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
- z5cecg==
-Message-ID: <38993cf5-039a-d582-1759-876cb948c582@intel.com>
-Date:   Fri, 16 Nov 2018 15:33:35 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.2.1
-MIME-Version: 1.0
-In-Reply-To: <20181116010412.23967-8-jarkko.sakkinen@linux.intel.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+        Sat, 17 Nov 2018 04:57:01 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:36760 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbeKQJ5A (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 04:57:00 -0500
+Received: by mail-wm1-f66.google.com with SMTP id s11so169292wmh.1;
+        Fri, 16 Nov 2018 15:42:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id;
+        bh=NvqT/01OOAqA5rJCBzjcbMJKeTqiYCSeqQEQv+tJTRg=;
+        b=Lkdm5skYJ3OFwZzL8pyT1xpLqNb5x2IlwfmqE5WjknfNfA0uj74NJ+o1JXFo3XvVaO
+         IXDcpnp2UjKH+BtgmwtvF4pOF0mQvNgbfXLCJuoEVhGUCP27uycnT5sKQ+ahhabD9hwN
+         pQmaLaHV2zjJZX/pNxw9+nnvw/aSG0S3gnl2GVQja5v4k9wjZOjj8bEsYIPZhnuT7Bfa
+         XWz/JFzfvs33PH6QAIUqUvbg0SdMsrWFdL8AuyQzGkIEIrcWhWHAmBJ9vhNNvewCIwPz
+         /MdMK79tIm/HMMsjexOH/ex1gpbmXT/+fJsLuwfnJQyGyUPJYP4T6f+M2cPdaL9zyBX6
+         6AMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id;
+        bh=NvqT/01OOAqA5rJCBzjcbMJKeTqiYCSeqQEQv+tJTRg=;
+        b=HlVzA/zhEe/mQOqpN/zhVNKffYBTaNY+6VgJEUDV65IpibuoWjWp2XUN/mX3yChflc
+         5ol8TMcTsFDcgv4sKeiiJrroXkA3ARJsfobx0xSt/LRGBpvwXmAZPaH9w6kIoPUj+n1t
+         uby+lfNzrdwcybNt5obbV1tyRAJVyg7mBw8q488RyP4Ss+5/XAdV6QvBrGJ1yfCcqU4+
+         eEbu3cLi5hRzNwbUQ9ZnUQGTEhpb7f99VvdJul0LMbUfim7XEgNYrar3lXb6vMEdKNjq
+         nhsvyTLUtSUGrDUzaXfC0s7H7vL+lfVPK/rKoUC9I6lxPH9SO5sIs0BqQtcCfJeTQXXX
+         jObg==
+X-Gm-Message-State: AGRZ1gIDjaIrXtU64ap3LcwhulWCjOy9N5if8+Byq0+utOe4gUPEy694
+        ebXOiJX1a7DgfVw+gdbGxUY=
+X-Google-Smtp-Source: AFSGD/Vs+CMxl+Yw6vtiU/LDlikKEjzHFpWMvdG0baseivU7Wa+oOIZ7WsgcyWDYsLverWIJWF2WNw==
+X-Received: by 2002:a1c:568b:: with SMTP id k133-v6mr182898wmb.4.1542411753842;
+        Fri, 16 Nov 2018 15:42:33 -0800 (PST)
+Received: from localhost.localdomain (cpc101300-bagu16-2-0-cust362.1-3.cable.virginm.net. [86.21.41.107])
+        by smtp.gmail.com with ESMTPSA id 73-v6sm8485330wmj.4.2018.11.16.15.42.32
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Nov 2018 15:42:33 -0800 (PST)
+From:   Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+To:     Pawel Osciak <pawel@osciak.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>,
+        Kyungmin Park <kyungmin.park@samsung.com>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
+        syzkaller-bugs@googlegroups.com,
+        Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+Subject: [PATCH] media: videobuf2-core: fix use after free in vb2_mmap
+Date:   Fri, 16 Nov 2018 23:42:27 +0000
+Message-Id: <20181116234227.27255-1-sudipm.mukherjee@gmail.com>
+X-Mailer: git-send-email 2.11.0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/15/18 5:01 PM, Jarkko Sakkinen wrote:
-> The SGX bit is set in the #PF error code if and only if the fault is
-> detected by the Enclave Page Cache Map (EPCM), a hardware-managed
-> table that enforces the paging permissions defined by the enclave,
-> e.g. to prevent the kernel from changing the permissions of an
-> enclave's page(s).
+When we are using __find_plane_by_offset() to find the matching plane
+number and the buffer, the queue is not locked. So, after we have
+calculated the buffer number and assigned the pointer to vb, it can get
+freed. And if that happens then we get a use-after-free when we try to
+use this for the mmap and get the following calltrace:
 
-This should probably also mention that, despite being a page fault,
-X86_PF_SGX has nothing to do with paging itself.
+[   30.623259] Call Trace:
+[   30.623531]  dump_stack+0x244/0x39d
+[   30.623914]  ? dump_stack_print_info.cold.1+0x20/0x20
+[   30.624439]  ? printk+0xa7/0xcf
+[   30.624777]  ? kmsg_dump_rewind_nolock+0xe4/0xe4
+[   30.625265]  print_address_description.cold.7+0x9/0x1ff
+[   30.625809]  kasan_report.cold.8+0x242/0x309
+[   30.626263]  ? vb2_mmap+0x712/0x790
+[   30.626637]  __asan_report_load8_noabort+0x14/0x20
+[   30.627201]  vb2_mmap+0x712/0x790
+[   30.627642]  ? vb2_poll+0x1d0/0x1d0
+[   30.628060]  vb2_fop_mmap+0x4b/0x70
+[   30.628458]  v4l2_mmap+0x153/0x200
+[   30.628929]  mmap_region+0xe85/0x1cd0
+
+Lock the queue before we start finding the matching plane and buffer so
+that there is no chance of the memory being freed while we are about
+to use it.
+
+Reported-by: syzbot+be93025dd45dccd8923c@syzkaller.appspotmail.com
+Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
+---
+ drivers/media/common/videobuf2/videobuf2-core.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
+index 975ff5669f72..a81320566e02 100644
+--- a/drivers/media/common/videobuf2/videobuf2-core.c
++++ b/drivers/media/common/videobuf2/videobuf2-core.c
+@@ -2125,9 +2125,12 @@ int vb2_mmap(struct vb2_queue *q, struct vm_area_struct *vma)
+ 	/*
+ 	 * Find the plane corresponding to the offset passed by userspace.
+ 	 */
++	mutex_lock(&q->mmap_lock);
+ 	ret = __find_plane_by_offset(q, off, &buffer, &plane);
+-	if (ret)
++	if (ret) {
++		mutex_unlock(&q->mmap_lock);
+ 		return ret;
++	}
+ 
+ 	vb = q->bufs[buffer];
+ 
+@@ -2138,12 +2141,12 @@ int vb2_mmap(struct vb2_queue *q, struct vm_area_struct *vma)
+ 	 */
+ 	length = PAGE_ALIGN(vb->planes[plane].length);
+ 	if (length < (vma->vm_end - vma->vm_start)) {
++		mutex_unlock(&q->mmap_lock);
+ 		dprintk(1,
+ 			"MMAP invalid, as it would overflow buffer length\n");
+ 		return -EINVAL;
+ 	}
+ 
+-	mutex_lock(&q->mmap_lock);
+ 	ret = call_memop(vb, mmap, vb->planes[plane].mem_priv, vma);
+ 	mutex_unlock(&q->mmap_lock);
+ 	if (ret)
+-- 
+2.11.0
+
