@@ -2,100 +2,121 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 958E6C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:40:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78C30C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:41:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67C9F208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:40:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67C9F208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
+	by mail.kernel.org (Postfix) with ESMTP id 4C321208A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:41:36 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4C321208A3
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389464AbeKPTwQ (ORCPT
+        id S2389443AbeKPTxG (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 14:52:16 -0500
-Received: from mx2.suse.de ([195.135.220.15]:34652 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727442AbeKPTwQ (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 14:52:16 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 626E2AEDB;
-        Fri, 16 Nov 2018 09:40:42 +0000 (UTC)
-Subject: Re: [PATCH] nvme: allow ANA support to be independent of native
- multipathing
-To:     Christoph Hellwig <hch@lst.de>, Mike Snitzer <snitzer@redhat.com>
-Cc:     linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, axboe@kernel.dk,
-        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
-        xose.vazquez@gmail.com, chengjike.cheng@huawei.com,
-        shenhong09@huawei.com, dm-devel@redhat.com,
-        wangzhoumengjian@huawei.com, christophe.varoqui@opensvc.com,
-        bmarzins@redhat.com, sschremm@netapp.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <1541657381-7452-1-git-send-email-lijie34@huawei.com>
- <2691abf6733f791fb16b86d96446440e4aaff99f.camel@suse.com>
- <20181112215323.GA7983@redhat.com>
- <20181113161838.GC9827@localhost.localdomain>
- <20181113180008.GA12513@redhat.com> <20181114053837.GA15086@redhat.com>
- <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
- <20181114174746.GA18526@redhat.com>
- <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
- <20181115174605.GA19782@redhat.com> <20181116091458.GA17267@lst.de>
-From:   Hannes Reinecke <hare@suse.de>
-Message-ID: <37098edd-4dea-b58f-bca6-3be9af8ec4ee@suse.de>
-Date:   Fri, 16 Nov 2018 10:40:40 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Fri, 16 Nov 2018 14:53:06 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:40228 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727405AbeKPTxG (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 14:53:06 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id C7A9620756; Fri, 16 Nov 2018 10:41:32 +0100 (CET)
+Received: from localhost (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 4CAAE20877;
+        Fri, 16 Nov 2018 10:41:02 +0100 (CET)
+Date:   Fri, 16 Nov 2018 10:41:02 +0100
+From:   Maxime Ripard <maxime.ripard@bootlin.com>
+To:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+Cc:     linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devel@driverdev.osuosl.org,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        Chen-Yu Tsai <wens@csie.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-sunxi@googlegroups.com, Hans Verkuil <hverkuil@xs4all.nl>,
+        Sakari Ailus <sakari.ailus@linux.intel.com>,
+        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Subject: Re: [PATCH 15/15] arm64: dts: allwinner: a64: Add Video Engine and
+ reserved memory node
+Message-ID: <20181116094102.6j5xhpptvelxtr6h@flea>
+References: <20181115145013.3378-1-paul.kocialkowski@bootlin.com>
+ <20181115145013.3378-16-paul.kocialkowski@bootlin.com>
 MIME-Version: 1.0
-In-Reply-To: <20181116091458.GA17267@lst.de>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha256;
+        protocol="application/pgp-signature"; boundary="zta4mcirelbyep65"
+Content-Disposition: inline
+In-Reply-To: <20181115145013.3378-16-paul.kocialkowski@bootlin.com>
+User-Agent: NeoMutt/20180716
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/16/18 10:14 AM, Christoph Hellwig wrote:
-> On Thu, Nov 15, 2018 at 12:46:05PM -0500, Mike Snitzer wrote:
->> Whether or not ANA is present is a choice of the target implementation;
->> the host (and whether it supports multipathing) has _zero_ influence on
->> this.  If the target declares a path as 'inaccessible' the path _is_
->> inaccessible to the host.  As such, ANA support should be functional
->> even if native multipathing is not.
->>
->> Introduce ability to always re-read ANA log page as required due to ANA
->> error and make current ANA state available via sysfs -- even if native
->> multipathing is disabled on the host (e.g. nvme_core.multipath=N).
-> 
-> The first part I could see, but I still want to make it conditional
-> in some way as nvme is going into deeply embedded setups, and I don't
-> want to carry the weight of the ANA code around for everyone.
-> 
-Can you clarify this a bit?
-We _do_ have the NVME multipath config option to deconfigure the whole 
-thing during compile time; that isn't influenced with this patch.
-So are you worried about the size of the ANA implementation itself?
-Or are you worried about the size of the ANA structures?
 
-> The second I fundamentally disagree with.  And even if you found agreement
-> it would have to be in a separate patch as it is a separate feature.
-> 
-Why? Where's the problem with re-reading the ANA log pages if we get an 
-event indicating that we should?
+--zta4mcirelbyep65
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Cheers,
+On Thu, Nov 15, 2018 at 03:50:13PM +0100, Paul Kocialkowski wrote:
+> This adds nodes for the Video Engine and the associated reserved memory
+> for the A64. Up to 96 MiB of memory are dedicated to the CMA pool.
+>=20
+> The pool is located at the end of the first 256 MiB of RAM so that the
+> VPU can access it. It is unclear whether this is still a hard
+> requirement for this platform, but it seems safer that way.
+>=20
+> Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
+> ---
+>  arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi | 25 +++++++++++++++++++
+>  1 file changed, 25 insertions(+)
+>=20
+> diff --git a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi b/arch/arm64/b=
+oot/dts/allwinner/sun50i-a64.dtsi
+> index 88b3e9110833..a35a5c9ffbbe 100644
+> --- a/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> +++ b/arch/arm64/boot/dts/allwinner/sun50i-a64.dtsi
+> @@ -185,6 +185,20 @@
+>  			(GIC_CPU_MASK_SIMPLE(4) | IRQ_TYPE_LEVEL_HIGH)>;
+>  	};
+> =20
+> +	reserved-memory {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <1>;
+> +		ranges;
+> +
+> +		cma_pool: cma@4a000000 {
+> +			compatible =3D "shared-dma-pool";
+> +			size =3D <0x6000000>;
+> +			alloc-ranges =3D <0x4a000000 0x6000000>;
 
-Hannes
--- 
-Dr. Hannes Reinecke		   Teamlead Storage & Networking
-hare@suse.de			               +49 911 74053 688
-SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
-GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
-HRB 21284 (AG Nürnberg)
+This introduces a DTC warning, since you're using a unit-address, but
+don't have a reg register.
+
+I've fixed it in the other DT by renaming that node to
+default-pool. You can also drop the label, it's not used anywhere.
+
+Maxime
+
+--=20
+Maxime Ripard, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
+--zta4mcirelbyep65
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRcEzekXsqa64kGDp7j7w1vZxhRxQUCW+6QrgAKCRDj7w1vZxhR
+xYhCAP9lH8ybHUmO+OKiYNiJnFP+NpRwzjLmReIqAREptX7ITAD+KhT6BKpJ/6k/
+sgi9vKvs4YOjlwkJM+1Ib0hMwgRQUQc=
+=bLkz
+-----END PGP SIGNATURE-----
+
+--zta4mcirelbyep65--
