@@ -2,127 +2,109 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 08660C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:07:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AAAF8C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:08:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B9B6D208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:07:20 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B9B6D208A3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+	by mail.kernel.org (Postfix) with ESMTP id 690F8208A3
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:08:22 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="BW7P+qy2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 690F8208A3
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388993AbeKPKRW (ORCPT
+        id S2388977AbeKPKSY (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 05:17:22 -0500
-Received: from mail.linuxfoundation.org ([140.211.169.12]:51754 "EHLO
-        mail.linuxfoundation.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbeKPKRW (ORCPT
+        Fri, 16 Nov 2018 05:18:24 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:44546 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726271AbeKPKSY (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 05:17:22 -0500
-Received: from akpm3.svl.corp.google.com (unknown [104.133.8.65])
-        by mail.linuxfoundation.org (Postfix) with ESMTPSA id DAD84AD2;
-        Fri, 16 Nov 2018 00:07:17 +0000 (UTC)
-Date:   Thu, 15 Nov 2018 16:07:16 -0800
-From:   Andrew Morton <akpm@linux-foundation.org>
-To:     Michal Hocko <mhocko@kernel.org>
-Cc:     <linux-mm@kvack.org>, Oscar Salvador <OSalvador@suse.com>,
-        Baoquan He <bhe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-Subject: Re: [RFC PATCH 5/5] mm, memory_hotplug: be more verbose for memory
- offline failures
-Message-Id: <20181115160716.18b9956ee64932abe9428ef1@linux-foundation.org>
-In-Reply-To: <20181107101830.17405-6-mhocko@kernel.org>
-References: <20181107101830.17405-1-mhocko@kernel.org>
-        <20181107101830.17405-6-mhocko@kernel.org>
-X-Mailer: Sylpheed 3.6.0 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+        Fri, 16 Nov 2018 05:18:24 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=7nWsDoGzuEXV7z6gQ3C7dgu/UsKI/mlpxJTeDTqRvaE=; b=BW7P+qy2/pK3YiDKNb3bmoR1W
+        uOvRIfQMC0xHtZZeDx6PX742NBouyrapzhLMEN/RV3NdRiITyyK/G6X0XxDW7++0V/k5kZ/yp6mB3
+        OsN/AFc7+a+bw64UbwtLbqE6Na4zfBi5iP8iLCs2A4TxxwRHk9sy/8zbCz2EfjfDkWrho=;
+Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gNRfm-0006cE-Fv; Fri, 16 Nov 2018 00:07:46 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 6CA19440078; Fri, 16 Nov 2018 00:07:40 +0000 (GMT)
+Date:   Thu, 15 Nov 2018 16:07:40 -0800
+From:   Mark Brown <broonie@kernel.org>
+To:     Linus Walleij <linus.walleij@linaro.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>, linux-kernel@vger.kernel.org,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        Tony Lindgren <tony@atomide.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Petr Cvek <petr.cvek@tul.cz>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Daniel Mack <zonque@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Subject: Re: [PATCH 5/9 v7] regulator: fixed/gpio: Pull inversion/OD into
+ gpiolib
+Message-ID: <20181116000740.GT2089@sirena.org.uk>
+References: <20181115232747.23566-1-linus.walleij@linaro.org>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="oiTwr10F0DlNHtiD"
+Content-Disposition: inline
+In-Reply-To: <20181115232747.23566-1-linus.walleij@linaro.org>
+X-Cookie: No Canadian coins.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed,  7 Nov 2018 11:18:30 +0100 Michal Hocko <mhocko@kernel.org> wrote:
 
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> There is only very limited information printed when the memory offlining
-> fails:
-> [ 1984.506184] rac1 kernel: memory offlining [mem 0x82600000000-0x8267fffffff] failed due to signal backoff
-> 
-> This tells us that the failure is triggered by the userspace
-> intervention but it doesn't tell us much more about the underlying
-> reason. It might be that the page migration failes repeatedly and the
-> userspace timeout expires and send a signal or it might be some of the
-> earlier steps (isolation, memory notifier) takes too long.
-> 
-> If the migration failes then it would be really helpful to see which
-> page that and its state. The same applies to the isolation phase. If we
-> fail to isolate a page from the allocator then knowing the state of the
-> page would be helpful as well.
-> 
-> Dump the page state that fails to get isolated or migrated. This will
-> tell us more about the failure and what to focus on during debugging.
-> 
-> ...
->
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1388,10 +1388,8 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
->  						    page_is_file_cache(page));
->  
->  		} else {
-> -#ifdef CONFIG_DEBUG_VM
-> -			pr_alert("failed to isolate pfn %lx\n", pfn);
-> +			pr_warn("failed to isolate pfn %lx\n", pfn);
->  			dump_page(page, "isolation failed");
-> -#endif
->  			put_page(page);
->  			/* Because we don't have big zone->lock. we should
->  			   check this again here. */
-> @@ -1411,8 +1409,14 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
->  		/* Allocate a new page from the nearest neighbor node */
->  		ret = migrate_pages(&source, new_node_page, NULL, 0,
->  					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
-> -		if (ret)
-> +		if (ret) {
-> +			list_for_each_entry(page, &source, lru) {
-> +				pr_warn("migrating pfn %lx failed ",
-> +				       page_to_pfn(page), ret);
-> +				dump_page(page, NULL);
-> +			}
+--oiTwr10F0DlNHtiD
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-./include/linux/kern_levels.h:5:18: warning: too many arguments for format [-Wformat-extra-args]
- #define KERN_SOH "\001"  /* ASCII Start Of Header */
-                  ^
-./include/linux/kern_levels.h:12:22: note: in expansion of macro ‘KERN_SOH’
- #define KERN_WARNING KERN_SOH "4" /* warning conditions */
-                      ^~~~~~~~
-./include/linux/printk.h:310:9: note: in expansion of macro ‘KERN_WARNING’
-  printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
-         ^~~~~~~~~~~~
-./include/linux/printk.h:311:17: note: in expansion of macro ‘pr_warning’
- #define pr_warn pr_warning
-                 ^~~~~~~~~~
-mm/memory_hotplug.c:1414:5: note: in expansion of macro ‘pr_warn’
-     pr_warn("migrating pfn %lx failed ",
-     ^~~~~~~
+On Fri, Nov 16, 2018 at 12:27:47AM +0100, Linus Walleij wrote:
 
---- a/mm/memory_hotplug.c~mm-memory_hotplug-be-more-verbose-for-memory-offline-failures-fix
-+++ a/mm/memory_hotplug.c
-@@ -1411,7 +1411,7 @@ do_migrate_range(unsigned long start_pfn
- 					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
- 		if (ret) {
- 			list_for_each_entry(page, &source, lru) {
--				pr_warn("migrating pfn %lx failed ",
-+				pr_warn("migrating pfn %lx failed: %d",
- 				       page_to_pfn(page), ret);
- 				dump_page(page, NULL);
- 			}
+> ChangeLog v6->v7:
+> - Fix a missed .enable_high on OMAP1.
+> - Resending just this patch.
 
+It's much easier if you can resend the entire series (or at least the
+bits that aren't applied) - having just one patch isolated makes it
+harder to keep track of what the current version of the series is, which
+versions of which patches need to get included.  Could you resend
+please?
+
+--oiTwr10F0DlNHtiD
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvuCksACgkQJNaLcl1U
+h9AE5Qf7BhSg6Rbif7IjBndaE3GHpA79OJf4CWw3BW2wnQslYS3PJYUfs88lOLp1
+jpeI9sCSbhiamOEjuRngCfqEPeY1ysJQNwfz/ussod6ZsgHqXD9F+HLFrPFd50rM
+AoPkuUIDEx2r0y/qntFA6W0R31/DokuZInpReaH78U3GeDlUFuan+c9gaixuOG8o
+arddimpkTQkd8nIh/Ssgj27EeAxBn9MwuV9drpYKnu3TZ/VJ+i61wkm8eRgV7B5m
+5T53qx+MPJUsAfEYZwbwra7TyKv55bfvheJFIYmUgvIhKMYVEjON8bVocpYBYb2Q
+0S7Ov3dWqaD4fuGPM2q295AF+sOZAQ==
+=P/UK
+-----END PGP SIGNATURE-----
+
+--oiTwr10F0DlNHtiD--
