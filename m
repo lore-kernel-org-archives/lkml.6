@@ -2,271 +2,317 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 664B2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21C4FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:29:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2BA4820858
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:27:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2BA4820858
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
+	by mail.kernel.org (Postfix) with ESMTP id C357420858
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:29:06 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MFu0vMq3"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C357420858
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730750AbeKQJl5 (ORCPT
+        id S1730726AbeKQJn1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:41:57 -0500
-Received: from mga04.intel.com ([192.55.52.120]:44214 "EHLO mga04.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726222AbeKQJl5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:41:57 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga001.fm.intel.com ([10.253.24.23])
-  by fmsmga104.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 15:27:31 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,242,1539673200"; 
-   d="scan'208";a="108829745"
-Received: from chang-linux-2.sc.intel.com ([10.3.52.165])
-  by fmsmga001.fm.intel.com with ESMTP; 16 Nov 2018 15:27:31 -0800
-From:   "Chang S. Bae" <chang.seok.bae@intel.com>
-To:     Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@kernel.org>
-Cc:     Thomas Gleixner <tglx@linutronix.de>,
-        "H . Peter Anvin" <hpa@zytor.com>, Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Ravi Shankar <ravi.v.shankar@intel.com>,
-        "Chang S . Bae" <chang.seok.bae@intel.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH v5] x86/fsgsbase/64: Fix the base write helper functions
-Date:   Fri, 16 Nov 2018 15:27:28 -0800
-Message-Id: <20181116232728.23538-1-chang.seok.bae@intel.com>
-X-Mailer: git-send-email 2.19.1
+        Sat, 17 Nov 2018 04:43:27 -0500
+Received: from merlin.infradead.org ([205.233.59.134]:54786 "EHLO
+        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbeKQJn0 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 04:43:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
+        In-Reply-To:MIME-Version:Date:Message-ID:From:References:Cc:To:Subject:Sender
+        :Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+        bh=E/8E9CMR12qmYsD7ysSdymruaJFXONmS1/hgtsrhxTo=; b=MFu0vMq3ZDq6qcipu5YhzrIpLH
+        RIHJ59T0IlQz1gRoycU0df3XVrW3+Z3AgaEzRjoe+rSUIHr4+ypkvYoc436CA/N3c0Bdg90zBQ5nz
+        l8oulDwD/K/GiYxUl23NDyvRt4GAYYblZFyBbYfk0v1eNyklefyylVuJcb2r9oe6G2deJ6k7bgPPF
+        8yZEJYFV8reotKYZD8vgr7MuRBiHOU610wTrumuxAVR43ot5xDP6aAfAnqY7VTme3OWOHM0mGZLoT
+        p8PCnxL9O5580M51lInLnNjlEQ961o/JPVZ9I9MIlphQItDoj1BvEImz9J2EGXkBop1v9qziA1Egb
+        u6tA+NjA==;
+Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
+        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gNnXn-0006DW-4H; Fri, 16 Nov 2018 23:28:59 +0000
+Subject: Re: [Ksummit-discuss] [RFC PATCH 2/3] MAINTAINERS, Handbook:
+ Subsystem Profile
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>,
+        Dan Williams <dan.j.williams@intel.com>
+Cc:     linux-kernel@vger.kernel.org, vishal.l.verma@intel.com,
+        ksummit-discuss@lists.linuxfoundation.org,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        linux-nvdimm@lists.01.org, Dmitry Vyukov <dvyukov@google.com>,
+        Steve French <stfrench@microsoft.com>,
+        "Tobin C. Harding" <me@tobin.cc>, linux-media@vger.kernel.org
+References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com>
+ <20181115074403.45d9a16a@silica.lan>
+From:   Randy Dunlap <rdunlap@infradead.org>
+Message-ID: <487ebe2d-1feb-298e-ef88-bf4443311cab@infradead.org>
+Date:   Fri, 16 Nov 2018 15:28:56 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+In-Reply-To: <20181115074403.45d9a16a@silica.lan>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The helper functions that purport to write the base should just write it
-only. It shouldn't have magic optimizations to change the index.
+On 11/15/18 7:44 AM, Mauro Carvalho Chehab wrote:
+> 
+> Anyway, RFC patch follows.
+> 
+> -
+> 
+> [PATCH] [RFC] Add a system profile description for media subsystem
+> 
+> This RFC aligns with current Dan's proposal for having subsystem
+> specific ruleset stored at the Kernel tree.
+> 
+> On this initial RFC, I opted to not add the reviewers e-mail
+> (adding just a "<>") as a boilerplate. If we decide keeping emails
+> there, I'll add them.
 
-Make the index explicitly changed from the caller, instead of including
-the code in the helpers.
+Hi-
+Here are my comments.
 
-Subsequently, the task write helpers do not handle for the current task
-anymore. The range check for a base value is also factored out, to
-minimize code redundancy from the caller.
+Hopefully the email addresses will be added.  Just having names is a
+half-answer for contact info.
 
-v2: Fix further on the task write functions. Revert the changes on the
-task read helpers.
+> 
+> Signed-off-by: Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
+> 
+> diff --git a/Documentation/media/subsystem-profile.rst b/Documentation/media/subsystem-profile.rst
+> new file mode 100644
+> index 000000000000..7a5d6f691d05
+> --- /dev/null
+> +++ b/Documentation/media/subsystem-profile.rst
+> @@ -0,0 +1,186 @@
+> +Media Subsystem Profile
+> +=======================
+> +
+> +Overview
+> +--------
+> +
+> +The media subsystem cover support for a variety of devices: stream
 
-v3: Fix putreg(). Edit the changelog.
+                       covers
 
-v4: Update the task write helper functions and do_arch_prctl_64(). Fix
-the comment in putreg().
+> +capture, analog and digital TV, cameras, remote controllers, HDMI CEC
+> +and media pipeline control.
+> +
+> +Both our userspace and Kernel APIs are documented and should be kept in
+> +sync with the API changes. It means that all patches that add new
+> +features to the subsystem should also bring changes to the corresponding
+> +API files.
+> +
+> +Also, patches for device drivers that changes the Open Firmware/Device
+> +Tree bindings should be reviewed by the Device Tree maintainers.
+> +
+> +Due to the size and wide scope of the media subsystem, our
+> +maintainership model is to have sub-maintainers that have a broad
+> +knowledge of an specific aspect of the subsystem. It is a
 
-v5: Fix preempt_disable() calls in do_arch_prctl_64()
+             of a specific
 
-Suggested-by: Andy Lutomirski <luto@kernel.org>
-Signed-off-by: Chang S. Bae <chang.seok.bae@intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: H. Peter Anvin <hpa@zytor.com>
-Cc: Andi Kleen <ak@linux.intel.com>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
----
- arch/x86/include/asm/fsgsbase.h | 15 ++++--
- arch/x86/kernel/process_64.c    | 86 ++++++++++++++++-----------------
- arch/x86/kernel/ptrace.c        |  9 ++--
- 3 files changed, 58 insertions(+), 52 deletions(-)
+> +sub-maintainers task to review the patches, providing feedback to users
+> +if the patches are following the subsystem rules and are properly using
+> +the media internal and external APIs.
+> +
+> +We have a set of compliance tools at https://git.linuxtv.org/v4l-utils.git/
+> +that should be used in order to check if the drivers are properly
+> +implementing the media APIs.
+> +
+> +Patches for the media subsystem should be sent to the media mailing list
+> +at linux-media@vger.kernel.org as plain text only e-mail. emails with
 
-diff --git a/arch/x86/include/asm/fsgsbase.h b/arch/x86/include/asm/fsgsbase.h
-index eb377b6e9eed..bca4c743de77 100644
---- a/arch/x86/include/asm/fsgsbase.h
-+++ b/arch/x86/include/asm/fsgsbase.h
-@@ -16,8 +16,8 @@
-  */
- extern unsigned long x86_fsbase_read_task(struct task_struct *task);
- extern unsigned long x86_gsbase_read_task(struct task_struct *task);
--extern int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
--extern int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
-+extern void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase);
-+extern void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase);
- 
- /* Helper functions for reading/writing FS/GS base */
- 
-@@ -39,8 +39,15 @@ static inline unsigned long x86_gsbase_read_cpu_inactive(void)
- 	return gsbase;
- }
- 
--extern void x86_fsbase_write_cpu(unsigned long fsbase);
--extern void x86_gsbase_write_cpu_inactive(unsigned long gsbase);
-+static inline void x86_fsbase_write_cpu(unsigned long fsbase)
-+{
-+	wrmsrl(MSR_FS_BASE, fsbase);
-+}
-+
-+static inline void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
-+{
-+	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
-+}
- 
- #endif /* CONFIG_X86_64 */
- 
-diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-index 31b4755369f0..e2c3dbe68d69 100644
---- a/arch/x86/kernel/process_64.c
-+++ b/arch/x86/kernel/process_64.c
-@@ -337,24 +337,6 @@ static unsigned long x86_fsgsbase_read_task(struct task_struct *task,
- 	return base;
- }
- 
--void x86_fsbase_write_cpu(unsigned long fsbase)
--{
--	/*
--	 * Set the selector to 0 as a notion, that the segment base is
--	 * overwritten, which will be checked for skipping the segment load
--	 * during context switch.
--	 */
--	loadseg(FS, 0);
--	wrmsrl(MSR_FS_BASE, fsbase);
--}
--
--void x86_gsbase_write_cpu_inactive(unsigned long gsbase)
--{
--	/* Set the selector to 0 for the same reason as %fs above. */
--	loadseg(GS, 0);
--	wrmsrl(MSR_KERNEL_GS_BASE, gsbase);
--}
--
- unsigned long x86_fsbase_read_task(struct task_struct *task)
- {
- 	unsigned long fsbase;
-@@ -383,38 +365,18 @@ unsigned long x86_gsbase_read_task(struct task_struct *task)
- 	return gsbase;
- }
- 
--int x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
-+void x86_fsbase_write_task(struct task_struct *task, unsigned long fsbase)
- {
--	/*
--	 * Not strictly needed for %fs, but do it for symmetry
--	 * with %gs
--	 */
--	if (unlikely(fsbase >= TASK_SIZE_MAX))
--		return -EPERM;
-+	WARN_ON_ONCE(task == current);
- 
--	preempt_disable();
- 	task->thread.fsbase = fsbase;
--	if (task == current)
--		x86_fsbase_write_cpu(fsbase);
--	task->thread.fsindex = 0;
--	preempt_enable();
--
--	return 0;
- }
- 
--int x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
-+void x86_gsbase_write_task(struct task_struct *task, unsigned long gsbase)
- {
--	if (unlikely(gsbase >= TASK_SIZE_MAX))
--		return -EPERM;
-+	WARN_ON_ONCE(task == current);
- 
--	preempt_disable();
- 	task->thread.gsbase = gsbase;
--	if (task == current)
--		x86_gsbase_write_cpu_inactive(gsbase);
--	task->thread.gsindex = 0;
--	preempt_enable();
--
--	return 0;
- }
- 
- int copy_thread_tls(unsigned long clone_flags, unsigned long sp,
-@@ -758,11 +720,47 @@ long do_arch_prctl_64(struct task_struct *task, int option, unsigned long arg2)
- 
- 	switch (option) {
- 	case ARCH_SET_GS: {
--		ret = x86_gsbase_write_task(task, arg2);
-+		if (unlikely(arg2 >= TASK_SIZE_MAX))
-+			return -EPERM;
-+
-+		preempt_disable();
-+		/*
-+		 * ARCH_SET_GS has always overwritten the index
-+		 * and the base. Zero is the most sensible value
-+		 * to put in the index, and is the only value that
-+		 * makes any sense if FSGSBASE is unavailable.
-+		 */
-+		if (task == current) {
-+			loadseg(GS, 0);
-+			x86_gsbase_write_cpu_inactive(arg2);
-+		} else {
-+			task->thread.gsindex = 0;
-+			x86_gsbase_write_task(task, arg2);
-+		}
-+		preempt_enable();
- 		break;
- 	}
- 	case ARCH_SET_FS: {
--		ret = x86_fsbase_write_task(task, arg2);
-+		/*
-+		 * Not strictly needed for %fs, but do it for symmetry
-+		 * with %gs
-+		 */
-+		if (unlikely(arg2 >= TASK_SIZE_MAX))
-+			return -EPERM;
-+
-+		preempt_disable();
-+		/*
-+		 * Set the selector to 0 for the same reason
-+		 * as %gs above.
-+		 */
-+		if (task == current) {
-+			loadseg(FS, 0);
-+			x86_fsbase_write_cpu(arg2);
-+		} else {
-+			task->thread.fsindex = 0;
-+			x86_fsbase_write_task(task, arg2);
-+		}
-+		preempt_enable();
- 		break;
- 	}
- 	case ARCH_GET_FS: {
-diff --git a/arch/x86/kernel/ptrace.c b/arch/x86/kernel/ptrace.c
-index ffae9b9740fd..4b8ee05dd6ad 100644
---- a/arch/x86/kernel/ptrace.c
-+++ b/arch/x86/kernel/ptrace.c
-@@ -397,11 +397,12 @@ static int putreg(struct task_struct *child,
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
- 		/*
--		 * When changing the FS base, use the same
--		 * mechanism as for do_arch_prctl_64().
-+		 * When changing the FS base, use do_arch_prctl_64()
-+		 * to set the index to zero and to set the base
-+		 * as requested.
- 		 */
- 		if (child->thread.fsbase != value)
--			return x86_fsbase_write_task(child, value);
-+			return do_arch_prctl_64(child, ARCH_SET_FS, value);
- 		return 0;
- 	case offsetof(struct user_regs_struct,gs_base):
- 		/*
-@@ -410,7 +411,7 @@ static int putreg(struct task_struct *child,
- 		if (value >= TASK_SIZE_MAX)
- 			return -EIO;
- 		if (child->thread.gsbase != value)
--			return x86_gsbase_write_task(child, value);
-+			return do_arch_prctl_64(child, ARCH_SET_GS, value);
- 		return 0;
- #endif
- 	}
--- 
-2.19.1
+                               e-mail or email?  Be consistent. (more below)
 
+> +HTML will be automacially rejected by the mail server.
+
+                automatically
+
+> +
+> +Our workflow is heavily based on Patchwork, meaning that, once a patch
+> +is submitted, it should appear at:
+> +
+> +   - https://patchwork.linuxtv.org/project/linux-media/list/
+> +
+> +If it doesn't automatically appear there after a few minutes, then
+> +probably something got wrong on your submission. Please check if the
+> +email is in plain text only and if your emailer is not mangling with
+
+email
+
+> +whitespaces before complaining or submit it again.
+> +
+> +Core
+> +----
+> +
+> +Documentation
+> ++++++++++++++
+> +
+> +F: Documentation/media
+> +
+> +Kernelspace API headers
+> ++++++++++++++++++++++++
+> +
+> +F: include/media/*.h
+> +
+> +Digital TV Core
+> ++++++++++++++++
+> +
+> +F: drivers/media/dvb-core
+> +
+> +HDMI CEC Core
+> ++++++++++++++
+> +
+> +F: drivers/media/cec
+> +
+> +Media Controller Core
+> ++++++++++++++++++++++
+> +
+> +F: drivers/media/media-\*.[ch]
+> +
+> +Remote Controller Core
+> +++++++++++++++++++++++
+> +
+> +F: drivers/media/rc/rc-core-priv.h
+> +F: drivers/media/rc/rc-ir-raw.c
+> +F: drivers/media/rc/rc-main.c
+> +F: drivers/media/rc/ir\*-decoder.c
+> +F: drivers/media/rc/lirc_dev.c
+> +
+> +Video4linux Core
+> +++++++++++++++++
+> +
+> +F: drivers/media/v4l2-core
+> +
+> +Patches or Pull requests
+> +------------------------
+> +
+> +All patches should be submitted via e-mail for review. We use
+
+and e-mail
+
+> +pull requests on our workflow between sub-maintainers and the
+> +maintainer.
+> +
+> +
+> +Last day for new feature submissions
+> +------------------------------------
+> +
+> +Before -rc5
+> +
+> +
+> +Last day to merge features
+> +--------------------------
+> +
+> +Before -rc7
+> +
+> +
+> +Non-author Ack / Review Tags Required
+> +-------------------------------------
+> +
+> +Not required, but desirable
+> +
+> +
+> +Test Suite
+> +----------
+> +
+> +Use the several *-compliance tools that are part of the v4l-utils
+> +package.
+> +
+> +
+> +Trusted Reviewers
+> +-----------------
+> +
+> +Sub-maintainers
+> ++++++++++++++++
+> +
+> +At the media subsystem, we have a group of senior developers that are
+> +responsible for doing the code reviews at the drivers (called
+> +sub-maintainers), and another senior developer responsible for the
+> +subsystem as a hole. For core changes, whenever possible, multiple
+
+             as a whole.
+
+> +media (sub-)maintainers do the review.
+> +
+> +The sub-maintainers work on specific areas of the subsystem, as
+> +described below:
+> +
+> +- Sensor drivers
+> +
+> +  R: Sakari Ailus <>
+> +
+> +- V4L2 drivers
+> +
+> +  R: Hans Verkuil <>
+> +
+> +- Media controller drivers
+> +
+> +  R: Laurent Pinchart <>
+> +
+> +- HDMI CEC
+> +
+> +- Remote Controllers
+> +
+> +  R: Sean Young <>
+> +
+> +- Digital TV
+> +
+> +  R: Michael Krufky <>
+> +  R: Sean Young <>
+> +
+> +
+> +Resubmit Cadence
+> +----------------
+> +
+> +Provided that your patch is at https://patchwork.linuxtv.org, it should
+> +be sooner or later handled, so you don't need to re-submit a patch.
+
+Resubmit or re-submit?  Be consistent.
+
+> +
+> +Please notice that the media subsystem is a high traffic one, so it
+> +could take a while for us to be able to review your patches. Feel free
+> +to ping if you don't get a feedback on a couple of weeks.
+
+                                       in a
+
+> +
+> +Time Zone / Office Hours
+> +------------------------
+> +
+> +Media developers are distributed all around the globe. So, don't assume
+> +that we're on your time zone. We usually don't work on local holidays or
+> +at weekends. Please also notice that, during the Kernel merge window,
+> +we're usually busy ensuring that everything goes smoothly, meaning that
+> +we usually have a lot of patches waiting for review just after that. So
+> +you should expect a higher delay during the merge window and one week
+> +before/after it.
+> +
+> +
+> +Checkpatch / Style cleanups
+> +---------------------------
+> +
+> +Standalone style-cleanups are welcome, but they should be grouped per
+> +directory. So, for example, if you're doing a cleanup at drivers
+> +under drivers/media, please send a single patch for all drivers under
+> +drivers/media/pci, another one for drivers/media/usb and so on.
+
+
+> Cheers.- 
+~Randy
