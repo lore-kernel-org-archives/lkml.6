@@ -7,69 +7,68 @@ X-Spam-Status: No, score=-9.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17E61C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EA16C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D6D6C20892
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BA5E520892
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:05:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HqdsL4I1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6D6C20892
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="PnpCbbhT"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BA5E520892
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389608AbeKPUQ5 (ORCPT
+        id S2389621AbeKPURC (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 15:16:57 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33971 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S2389436AbeKPUQ5 (ORCPT
+        Fri, 16 Nov 2018 15:17:02 -0500
+Received: from mail-pl1-f193.google.com ([209.85.214.193]:36770 "EHLO
+        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S2389436AbeKPURB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 15:16:57 -0500
-Received: by mail-pf1-f195.google.com with SMTP id h3so4635881pfg.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:05:19 -0800 (PST)
+        Fri, 16 Nov 2018 15:17:01 -0500
+Received: by mail-pl1-f193.google.com with SMTP id y6-v6so3374821plt.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 02:05:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=HuDFUrU28J59C1sp5glUdfijZEsUqR6FAQUgWuELHt4=;
-        b=HqdsL4I1tJ9nEYhjZeVAExIPh2XFK7J0bCcMgpeAYiWvOIi27WouWHqsYtCaJ6z1hc
-         wqGYfgkJxX3PX1+58Oxj5bzXZw9PFuBmVpMxJ7dM1H9AOyc/KI9HoqAQM5e9bc3xWZOz
-         TodNwflfBk/2lqobqd23l3p6RBUKVucHrA3ho=
+        bh=SF62PrzKsc3DFSelUulAf5/CE9NMeGCTdyY77HTuy1c=;
+        b=PnpCbbhTW06C0H0dmVz2PQDq+LdWEyZzDI+ZgwXXfb6wI7dbqTUiEw94Mwr/E4LoMc
+         V+U3PTjh02eBJW5jd+RWoMOA9XgiSQarp7dTK9y7zpBDVwlGDMm/VLI7DZvtG+RwhvsR
+         VLw1jZupl3w/fHsQbTjVOr0fNbgzu92fqrp3o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=HuDFUrU28J59C1sp5glUdfijZEsUqR6FAQUgWuELHt4=;
-        b=qYccK/ExyaYAGJcA8vxkXMdxKe4mPmg2jhsqKztHs4B598K/V3+SNdErRrQzVCrJtK
-         5o6Zm3fwqYh06aBu3zRpq760hhNvR8OVezxkAM/nKEZf6MvR8Fg5sRTyhF6Ow7wWk8I3
-         KCRUuFxI3M+/SoFxXs/dv3eul4dPB8LoG2ozJmUmHyRLUf1AtszwM70fmeUPhK1gO1xs
-         9TKUUFh4T937gfDPOUnetj4zHtZ3QSK7RO2z1xJbiMyknp3s4cczcisoVC6bGBLdyIXD
-         LJepGXt1I0lot/EJxrE2FYilgIFops3Z0r7BdE+g8N5DYR7QFyd1riUmzgG+Tfafj/iS
-         suug==
-X-Gm-Message-State: AGRZ1gL8dXTEMiNL3vQd3yewg9wGVoA+Z28c10mxmnmPnV48RdSFxfsm
-        lfjOldljiZlBst1ttRUTYrHr6A==
-X-Google-Smtp-Source: AJdET5dHny/jRZrI6uDp+du0UONoToFOu6s5PNBwV124fVGbL1L8ifCBwYWM3j+/tzlD0VXOvCxDkA==
-X-Received: by 2002:a63:82c6:: with SMTP id w189mr9454796pgd.344.1542362719182;
-        Fri, 16 Nov 2018 02:05:19 -0800 (PST)
+        bh=SF62PrzKsc3DFSelUulAf5/CE9NMeGCTdyY77HTuy1c=;
+        b=HiL17cQE6oPEyfoT8zPWv1fekFjyW9++vZcKZFOkQ6jb0XwyblRHbp4uIb/OPwkBOR
+         zv/IziWKfNlUHm4kUMMSTkG3VlCZACzh8Gw/lqsX9IN13W/imaaVby8hQFEDb/v+9yxi
+         vqXh04wVW8fcXIpLMMyrKjTdNcM9rZsEhZnCi/SGnC5XgqJS8S6arW2z2nvYEQsFjPCl
+         bPN32V3HQ+Qm0sz3HkGpMtZitqSXZxQ0b+j5cBRGDbJcWlhwkjZClxdXLEoH/Ii2VRLo
+         RUrlxqCFbd86/JrpGHlhxyMJKQ/PPa+ZCedF4Ts1z+XJECNawM1fNstUdv5udTD8TGj3
+         pX1Q==
+X-Gm-Message-State: AGRZ1gKff+0uH53rx86RW0bHHedBepnZjygAlqYzY8BKdIHXkd6yI0vC
+        pG6m8nD34GYwYJEvZ7JfJewHfQ==
+X-Google-Smtp-Source: AJdET5egE/u+vdbiW4gAR2BSipj0p0ZhT8QMmGfDO7ULuxLK8+VBXWs3TPmG96Hqf//6NrpzTKb7Dg==
+X-Received: by 2002:a17:902:3143:: with SMTP id w61-v6mr10080122plb.58.1542362723769;
+        Fri, 16 Nov 2018 02:05:23 -0800 (PST)
 Received: from localhost ([122.172.88.116])
-        by smtp.gmail.com with ESMTPSA id t26-v6sm48373412pfa.158.2018.11.16.02.05.18
+        by smtp.gmail.com with ESMTPSA id q145-v6sm97195004pfq.143.2018.11.16.02.05.22
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 02:05:18 -0800 (PST)
+        Fri, 16 Nov 2018 02:05:23 -0800 (PST)
 From:   Viresh Kumar <viresh.kumar@linaro.org>
 To:     Mark Rutland <mark.rutland@arm.com>,
         Rob Herring <robh+dt@kernel.org>, arm@kernel.org,
-        Andy Gross <andy.gross@linaro.org>,
-        David Brown <david.brown@linaro.org>
+        Simon Horman <horms@verge.net.au>,
+        Magnus Damm <magnus.damm@gmail.com>
 Cc:     Viresh Kumar <viresh.kumar@linaro.org>, devicetree@vger.kernel.org,
         Vincent Guittot <vincent.guittot@linaro.org>,
         Daniel Lezcano <daniel.lezcano@linaro.org>,
         linux-arm-kernel@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 07/10] ARM64: dts: msm8916: Add all CPUs in cooling maps
-Date:   Fri, 16 Nov 2018 15:34:30 +0530
-Message-Id: <01bb903b2febf4b006f28fad33308cc8084ccbaf.1542362530.git.viresh.kumar@linaro.org>
+        linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 08/10] ARM64: dts: renesas: Add all CPUs in cooling maps
+Date:   Fri, 16 Nov 2018 15:34:31 +0530
+Message-Id: <f2116377ab65e4b3ece39c32f54ac3eec2fb7d8c.1542362530.git.viresh.kumar@linaro.org>
 X-Mailer: git-send-email 2.19.1.568.g152ad8e3369a
 In-Reply-To: <cover.1542362530.git.viresh.kumar@linaro.org>
 References: <cover.1542362530.git.viresh.kumar@linaro.org>
@@ -96,34 +95,78 @@ points.
 
 Signed-off-by: Viresh Kumar <viresh.kumar@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/msm8916.dtsi | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/r8a7795.dtsi | 15 ++++++++++++---
+ arch/arm64/boot/dts/renesas/r8a7796.dtsi |  6 +++---
+ 2 files changed, 15 insertions(+), 6 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/msm8916.dtsi b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-index d302d8d639a1..482e275f0a03 100644
---- a/arch/arm64/boot/dts/qcom/msm8916.dtsi
-+++ b/arch/arm64/boot/dts/qcom/msm8916.dtsi
-@@ -202,7 +202,10 @@
+diff --git a/arch/arm64/boot/dts/renesas/r8a7795.dtsi b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+index a79c8d369e0b..3a662df32143 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7795.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7795.dtsi
+@@ -2878,7 +2878,10 @@
  			cooling-maps {
  				map0 {
- 					trip = <&cpu_alert0>;
--					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+ 					trip = <&sensor1_passive>;
+-					cooling-device = <&a57_0 4 4>;
++					cooling-device = <&a57_0 4 4>,
++							 <&a57_1 4 4>,
++							 <&a57_2 4 4>,
++							 <&a57_3 4 4>;
  				};
  			};
  		};
-@@ -229,7 +232,10 @@
+@@ -2904,7 +2907,10 @@
  			cooling-maps {
  				map0 {
- 					trip = <&cpu_alert1>;
--					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
-+					cooling-device = <&CPU0 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU1 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU2 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>,
-+							 <&CPU3 THERMAL_NO_LIMIT THERMAL_NO_LIMIT>;
+ 					trip = <&sensor2_passive>;
+-					cooling-device = <&a57_0 4 4>;
++					cooling-device = <&a57_0 4 4>,
++							 <&a57_1 4 4>,
++							 <&a57_2 4 4>,
++							 <&a57_3 4 4>;
+ 				};
+ 			};
+ 		};
+@@ -2930,7 +2936,10 @@
+ 			cooling-maps {
+ 				map0 {
+ 					trip = <&sensor3_passive>;
+-					cooling-device = <&a57_0 4 4>;
++					cooling-device = <&a57_0 4 4>,
++							 <&a57_1 4 4>,
++							 <&a57_2 4 4>,
++							 <&a57_3 4 4>;
+ 				};
+ 			};
+ 		};
+diff --git a/arch/arm64/boot/dts/renesas/r8a7796.dtsi b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+index 1ec6aaa520c1..dd95e937f87a 100644
+--- a/arch/arm64/boot/dts/renesas/r8a7796.dtsi
++++ b/arch/arm64/boot/dts/renesas/r8a7796.dtsi
+@@ -2526,7 +2526,7 @@
+ 			cooling-maps {
+ 				map0 {
+ 					trip = <&sensor1_passive>;
+-					cooling-device = <&a57_0 5 5>;
++					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
+ 				};
+ 			};
+ 		};
+@@ -2552,7 +2552,7 @@
+ 			cooling-maps {
+ 				map0 {
+ 					trip = <&sensor2_passive>;
+-					cooling-device = <&a57_0 5 5>;
++					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
+ 				};
+ 			};
+ 		};
+@@ -2578,7 +2578,7 @@
+ 			cooling-maps {
+ 				map0 {
+ 					trip = <&sensor3_passive>;
+-					cooling-device = <&a57_0 5 5>;
++					cooling-device = <&a57_0 5 5>, <&a57_1 5 5>;
  				};
  			};
  		};
