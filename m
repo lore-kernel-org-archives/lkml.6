@@ -2,108 +2,61 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 91E4BC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:18:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 93A61C43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:18:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5A1902089D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:18:41 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5A1902089D
+	by mail.kernel.org (Postfix) with ESMTP id 669AF2089D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 06:18:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 669AF2089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389325AbeKPQ3k (ORCPT
+        id S2389348AbeKPQ3o (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 11:29:40 -0500
-Received: from orcrist.hmeau.com ([104.223.48.154]:37612 "EHLO
+        Fri, 16 Nov 2018 11:29:44 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:37616 "EHLO
         deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727353AbeKPQ3k (ORCPT
+        with ESMTP id S1727353AbeKPQ3n (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 11:29:40 -0500
+        Fri, 16 Nov 2018 11:29:43 -0500
 Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
         by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
-        id 1gNXSd-0004ys-F4; Fri, 16 Nov 2018 14:18:35 +0800
+        id 1gNXSU-0004yk-3C; Fri, 16 Nov 2018 14:18:26 +0800
 Received: from herbert by gondobar with local (Exim 4.89)
         (envelope-from <herbert@gondor.apana.org.au>)
-        id 1gNXSd-0001zm-Av; Fri, 16 Nov 2018 14:18:35 +0800
-Date:   Fri, 16 Nov 2018 14:18:35 +0800
+        id 1gNXSS-0001zU-Ph; Fri, 16 Nov 2018 14:18:24 +0800
+Date:   Fri, 16 Nov 2018 14:18:24 +0800
 From:   Herbert Xu <herbert@gondor.apana.org.au>
-To:     Vitaly Chikunov <vt@altlinux.org>
-Cc:     "David S. Miller" <davem@davemloft.net>,
-        Mimi Zohar <zohar@linux.ibm.com>, linux-crypto@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-integrity@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] crypto: streebog - add Streebog hash function
-Message-ID: <20181116061835.cxrsjiktoawt3nof@gondor.apana.org.au>
-References: <20181106210008.11241-1-vt@altlinux.org>
+To:     Brajeswar Ghosh <brajeswar.linux@gmail.com>
+Cc:     davem@davemloft.net, linux@armlinux.org.uk, jrdr.linux@gmail.com,
+        linux-crypto@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-kernel@vger.kernel.org, sabyasachi.linux@gmail.com
+Subject: Re: [PATCH] arm/crypto/aes-ce-glue.c: Remove duplicate header
+Message-ID: <20181116061824.ztwvpgaa7renupz3@gondor.apana.org.au>
+References: <20181106121614.GA1985@hp-pavilion-15-notebook-pc-brajeswar>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181106210008.11241-1-vt@altlinux.org>
+In-Reply-To: <20181106121614.GA1985@hp-pavilion-15-notebook-pc-brajeswar>
 User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 07, 2018 at 12:00:00AM +0300, Vitaly Chikunov wrote:
-> Add GOST/IETF Streebog hash function (GOST R 34.11-2012, RFC 6986)
-> generic hash transformation with appropriate testmgr and tcrypt
-> tests and vectors.
+On Tue, Nov 06, 2018 at 05:46:14PM +0530, Brajeswar Ghosh wrote:
+> Remove asm/hwcap.h which is included more than once
 > 
-> Streebog Hash Function (GOST R 34.11-2012, RFC 6986) is one of the Russian
-> cryptographic standard algorithms (called GOST algorithms).
-> 
-> Intended user is the IMA subsystem, which does not need any particular
-> patching besides adding the hash names into Hash Info arrays, this is also
-> done in this patchset.
-> 
-> References:
->   https://tc26.ru/upload/iblock/fed/feddbb4d26b685903faa2ba11aea43f6.pdf
->   https://tools.ietf.org/html/rfc6986
-> 
-> Tested using testmgr and tcrypt on (LE) x86_64, arm, arm64, and (BE) s390x
-> in qemu.
-> 
-> Changes from v1:
-> - Fix of big-endian problem in add512.
-> - More architectures are tested, including big-endian and 32-bit.
-> 
-> Changes from v2:
-> - Register hash in Hash Info for use by IMA.
-> - Add hmac() tests.
-> 
-> Changes from v3:
-> - Remove not needed includes, and register, inline, const, ULL, and
->   __aligned specifiers.
-> - Covert define macros into functions.
-> - Use block size define instead of a number.
-> - Rename algorithm names sb256, sb512 to streebog256, streebog512.
-> - Rename bufsize to a more meaningful name (fillsize).
-> - Prefix all static functions names with streebog_.
-> 
-> Vitaly Chikunov (3):
->   crypto: streebog - add Streebog hash function
->   crypto: streebog - register Streebog in hash info for IMA
->   crypto: streebog - add Streebog test vectors
-> 
->  crypto/Kconfig                 |   12 +
->  crypto/Makefile                |    1 +
->  crypto/hash_info.c             |    4 +
->  crypto/streebog_generic.c      | 1140 ++++++++++++++++++++++++++++++++++++++++
->  crypto/tcrypt.c                |   37 ++
->  crypto/testmgr.c               |   24 +
->  crypto/testmgr.h               |  116 ++++
->  include/crypto/hash_info.h     |    1 +
->  include/crypto/streebog.h      |   34 ++
->  include/uapi/linux/hash_info.h |    2 +
->  10 files changed, 1371 insertions(+)
->  create mode 100644 crypto/streebog_generic.c
->  create mode 100644 include/crypto/streebog.h
+> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+> ---
+>  arch/arm/crypto/aes-ce-glue.c | 1 -
+>  1 file changed, 1 deletion(-)
 
-All applied.  Thanks.
+Patch applied.  Thanks.
 -- 
 Email: Herbert Xu <herbert@gondor.apana.org.au>
 Home Page: http://gondor.apana.org.au/~herbert/
