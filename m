@@ -2,138 +2,113 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 15956C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:34:32 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E070C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:46:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DAE6E2080D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:34:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DAE6E2080D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id EF08A20869
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:46:19 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="iaFJoj8w"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EF08A20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=kemnade.info
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726587AbeKQFsM (ORCPT
+        id S1726297AbeKQGAB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 00:48:12 -0500
-Received: from mail-qk1-f181.google.com ([209.85.222.181]:43002 "EHLO
-        mail-qk1-f181.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725763AbeKQFsL (ORCPT
+        Sat, 17 Nov 2018 01:00:01 -0500
+Received: from mail.andi.de1.cc ([85.214.239.24]:46738 "EHLO
+        h2641619.stratoserver.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbeKQGAB (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 00:48:11 -0500
-Received: by mail-qk1-f181.google.com with SMTP id m5so39271163qka.9
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 11:34:29 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:message-id:subject:from:to:cc:date:in-reply-to
-         :references:mime-version:content-transfer-encoding;
-        bh=IOtEFpEdjKwaEXSmXcxt+p6fCgeSQ1hDVb3Y84k1obg=;
-        b=hMcf+ZQHvtllY+4TSkvMLmizwAy9xkH3fsygV9gFD+/Wt4uUIH9MXqs/sL5t9zkp3r
-         wx0b3BlIJ50g2q/hZLs0jDnyuuqsZzhJvWSbGyw4jWfo9pdb+Pyk6YTy464ghnRCUJ4O
-         Phiu+IpJjPS86CukRzCvtQ+f9BhUMdrbUS+tu+MiPR2xpKvQ3rMXvo0c3fP/gQ3CpTV0
-         ++z+05NK33+E0++mOkFpegi4QNNTSA7onF4No4OwCBOxUveFSjaRt4wgy3Ag8wCBp7Ts
-         xsH5Cw4Asnz80Vn5+1+8WCvbBFfbTPsuQsHPtx2LQ5hKHXZgH2CyVPugjjiCtFYw7l0L
-         6Ndw==
-X-Gm-Message-State: AGRZ1gKf5NNIELMM+MO+UBA3oVwiaYDwEwUNuCgMtzCjlFa2+iDU08PS
-        VWQWyMIHEMuhT0jSbdRAB5m84Q==
-X-Google-Smtp-Source: AJdET5dJtDeApfV03OsHI+qp9uFEyVTh0pYBBogB05cDGcsteyjl5La6VfRg5cgV5B1cuqszVW2pLg==
-X-Received: by 2002:a0c:8a54:: with SMTP id 20mr11612884qvu.94.1542396869066;
-        Fri, 16 Nov 2018 11:34:29 -0800 (PST)
-Received: from loberhel74 (174-083-000-020.dhcp.chtrptr.net. [174.83.0.20])
-        by smtp.gmail.com with ESMTPSA id b6sm14324474qtq.29.2018.11.16.11.34.27
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 11:34:28 -0800 (PST)
-Message-ID: <1542396866.13202.0.camel@redhat.com>
-Subject: Re: nvme: allow ANA support to be independent of native multipathing
-From:   Laurence Oberman <loberman@redhat.com>
-To:     Mike Snitzer <snitzer@redhat.com>, Christoph Hellwig <hch@lst.de>
-Cc:     Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, axboe@kernel.dk,
-        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
-        xose.vazquez@gmail.com, chengjike.cheng@huawei.com,
-        shenhong09@huawei.com, dm-devel@redhat.com,
-        wangzhoumengjian@huawei.com, christophe.varoqui@opensvc.com,
-        bmarzins@redhat.com, sschremm@netapp.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Date:   Fri, 16 Nov 2018 14:34:26 -0500
-In-Reply-To: <20181116192802.GA30057@redhat.com>
-References: <20181114053837.GA15086@redhat.com>
-         <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
-         <20181114174746.GA18526@redhat.com>
-         <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
-         <20181115174605.GA19782@redhat.com> <20181116091458.GA17267@lst.de>
-         <37098edd-4dea-b58f-bca6-3be9af8ec4ee@suse.de>
-         <20181116094947.GA19296@lst.de>
-         <bbaf4637-209c-5cfe-2749-3fcc54f7a35f@suse.de>
-         <20181116101752.GA21531@lst.de> <20181116192802.GA30057@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-X-Mailer: Evolution 3.22.6 (3.22.6-10.el7) 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 8bit
+        Sat, 17 Nov 2018 01:00:01 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=kemnade.info; s=20180802; h=Content-Type:MIME-Version:References:
+        In-Reply-To:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=BFXFaEKcscgkScbVPZKLnvJdnbdJOocvRoWbJZ3kMgY=; b=iaFJoj8wDDaFgPUsN/PdvilPA
+        ZDBqP47E7DUO1rJfoWRNIVNR9XvQveWbwdqhAzN5tP6j4Q3obG6XdjzgRyKbiV+PeynYsVsLHR7NU
+        1GaZ6yuvsyQx6wZUUk2UYP1+TDjI8qZD5XJulHlk7j6Syu7nIvKeCUIBfL9rsT3UTXX/U=;
+Received: from x590fed94.dyn.telefonica.de ([89.15.237.148] helo=localhost)
+        by h2641619.stratoserver.net with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gNk4C-0000V0-6U; Fri, 16 Nov 2018 20:46:12 +0100
+Received: from [::1] (helo=localhost)
+        by localhost with esmtp (Exim 4.89)
+        (envelope-from <andreas@kemnade.info>)
+        id 1gNk48-0007dE-LQ; Fri, 16 Nov 2018 20:46:08 +0100
+Date:   Fri, 16 Nov 2018 20:46:01 +0100
+From:   Andreas Kemnade <andreas@kemnade.info>
+To:     Marcel Holtmann <marcel@holtmann.org>
+Cc:     Rob Herring <robh@kernel.org>, sebastian.reichel@collabora.com,
+        hns@goldelico.com, devicetree@vger.kernel.org,
+        Johan Hedberg <johan.hedberg@gmail.com>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        linux-bluetooth@vger.kernel.org, letux-kernel@openphoenux.org
+Subject: Re: [Letux-kernel] [PATCH RFC] bluetooth: add uart h4 devices via
+ serdev/devicetree
+Message-ID: <20181116204601.4e1aa0de@kemnade.info>
+In-Reply-To: <86A3A2E6-FC89-42FE-8410-9C8273EC9CF7@holtmann.org>
+References: <20181110232034.17277-1-andreas@kemnade.info>
+        <20181111024648.7rt7rlhaqihtqecv@earth.universe>
+        <20181112215812.18ebca35@aktux>
+        <2C74C837-A6D3-47C9-BE59-CCA594289B94@goldelico.com>
+        <20181112222726.73m2oca7hankvcjs@earth.universe>
+        <CABGGisxsdv+BTd5-HMzF8asEcWtL5F4CMzmkrBCwK=NibvqjLQ@mail.gmail.com>
+        <20181113170128.0f59ef0e@kemnade.info>
+        <86A3A2E6-FC89-42FE-8410-9C8273EC9CF7@holtmann.org>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; i686-pc-linux-gnu)
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ boundary="Sig_/mDijiKpFyv=Lgc7SNi0J1bT"; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 2018-11-16 at 14:28 -0500, Mike Snitzer wrote:
-> On Fri, Nov 16 2018 at  5:17am -0500,
-> Christoph Hellwig <hch@lst.de> wrote:
-> 
-> > On Fri, Nov 16, 2018 at 11:06:32AM +0100, Hannes Reinecke wrote:
-> > > Ok, so would you be happy with making ANA support configurable?
-> > 
-> > I've looked a bit over the whole situation, and what I think we
-> > need
-> > to do is:
-> > 
-> >  a) warn if we see a ANA capable device without multipath support
-> >     so people know it is not going to work properly.
-> 
-> I disagree with your cynicism but v2 of this patch now emits a
-> warning
-> accordingly.
-> 
-> >  b) deprecate the multipath module option.  It was only intended as
-> >     a migration for any pre-existing PCIe multipath user if there
-> >     were any, not to support any new functionality.  So for 4.20
-> >     put in a patch that prints a clear warning when it is used,
-> >     including a link to the nvme list, and then for 4.25 or so
-> >     remove it entirely unless something unexpected come up.
-> 
-> You rejected the idea of allowing fine-grained control over whether
-> native NVMe multipathing is enabled or not on a per-namespace basis.
-> All we have is the coarse-grained nvme_core.multipath=N knob.  Now
-> you're forecasting removing even that.  Please don't do that.
-> 
-> > This whole drama of optional multipath use has wasted way too much
-> > of everyones time already.
-> 
-> It has wasted _way_ too much time.
-> 
-> But the drama is born out of you rejecting that we need to preserve
-> multipath-tools and dm-multipath's ability to work across any
-> transport.  You don't need to do that work: Hannes, myself and others
-> have always been willing and able -- if you'd let us.
-> 
-> IIRC it was at 2016's LSF in Boston where Ewan Milne and I had a
-> face-to-face conversation with you in the hallway track where you
-> agreed
-> that ANA support would be activated if the capability was advertised
-> by
-> the target.  The model we discussed is that it would be comparable to
-> how ALUA gets enabled during SCSI LUN discovery.
-> 
-> I hope you can see your way forward to be more accommodating now.
-> Especially given the proposed changes are backed by NVMe standards.
-> 
-> Please, PLEASE take v2 of this patch.. please? ;)
-> 
-> Thanks,
-> Mike
+--Sig_/mDijiKpFyv=Lgc7SNi0J1bT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-I am begging you take it too please 
-Thanks
-Laurence
+Hi Marcel,
+
+On Wed, 14 Nov 2018 08:51:17 +0100
+Marcel Holtmann <marcel@holtmann.org> wrote:
+[...[
+> Btw. I see nothing standing in the way of merging btuart.c driver and the=
+n go from there. Either I dig this out and submit or someone else does.
+>=20
+Do you mean this?
+https://patchwork.kernel.org/patch/10490651/
+
+Regards,
+Andreas
+
+--Sig_/mDijiKpFyv=Lgc7SNi0J1bT
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEE7sDbhY5mwNpwYgrAfb1qx03ikyQFAlvvHnkACgkQfb1qx03i
+kyR9qQ/+K2Abq9GwLl4Jt232U9wItKWwkfDgv1TeqM4yNPupS994y4/CXOIz/58v
+SWitIU1xIL88pIc7OpZXVNF4SZagQWn4m3krfmb9mN9TD8XeeT6bQmsB4p2/CsaA
+PMzFZR6p3Lqa+ai81Emy6L/eaKYHmn1gOARrqamw8izO4ZL0LsOk8X3zf/tuv3/V
+S9Dcsfym88tvjPTqzCESk4A+AXhH5G04otd0546zaugxu+snH9H+21rxxT+WRcEQ
+0c5gok6G6ohwOlB+1i4SNO6qcgDH26OYoO5u/gn5TFQvbk1riXQunTwnfoaikLGk
+rH6yBtuov3ZlHD0d3zl8H6I/cONeQKnBCKL7n5Z+x/buuSLr9//z99vX7ezxkJqm
+nY3Ym2pZLZ1rOEgA+iRJ5f+IuOCmfGj0bhCtJrqPzwQ5SGIdIGcR57yuXbDBHHBM
+MpPMLaZPyyVbLhnCRe3biRPU6kTASc2ENMHdru6WgtmEI5S5/8JDeS+1EqImCdyc
+oYbuEqhC2RpypskKR2/bPcTlIILul1jF0Mt+kZ8GJbvKT8taUCUQ695W1zbzyyMz
+IANeudeJZ2AGKG/zcDoNC8ynm8n0LdR4DNqvqobJ9SRSSokZq9jooBlW5Gn78wDa
+fD60AggnsCuXdg38xlYt412IrzcCuZUoJcYMoDct/xKRB5d951o=
+=++Bb
+-----END PGP SIGNATURE-----
+
+--Sig_/mDijiKpFyv=Lgc7SNi0J1bT--
