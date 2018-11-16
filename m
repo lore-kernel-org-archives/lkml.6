@@ -2,88 +2,138 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id ACDD7C04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:07:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8DE0AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:10:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 713192087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:07:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 713192087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 453502086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:10:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 453502086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730488AbeKQJVy (ORCPT
+        id S1730590AbeKQJYd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:21:54 -0500
-Received: from mail-oi1-f194.google.com ([209.85.167.194]:33049 "EHLO
-        mail-oi1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbeKQJVy (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:21:54 -0500
-Received: by mail-oi1-f194.google.com with SMTP id c206so15454939oib.0;
-        Fri, 16 Nov 2018 15:07:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=yA90HrzucEsXYbHaLwROgoEpClkp/PLx7/OAhqHHN8M=;
-        b=cKdJTcn5qJK5qa5Sdc9CRva3+5QqLLQj7YW7CLskzOKqDPoC+3CnsjJq03aubh9YUH
-         lw/Mr61fqZ56YG+ufzSrP84YUY6r2840HcgfsE6c5s8HaxfI3lCOuEGdZIkpmuoNNsmV
-         0U0do7X/MkBGiVUkBFQNjoQ+MpAnIuRvdTJ7UHx1v7AQBQVl1zOSrAhyT8HKDUsuFH4F
-         6Oj5HVh/Kr88p2kVrX0UDHZ50901KsElrCeWY4K4g6CZu5lJFCfeUtqsZjkxti4OCNR0
-         c1WORoz7Fm9ti+mXmxUoKjqLLlJ5zdEFbqsS1ZcjDSpn89BPNzYuvGJHB8cbm7nKYzG2
-         VTBg==
-X-Gm-Message-State: AGRZ1gKamknmpOZ4WAbwSkelDUsQZaZ+JeIdGpg3qSi2RF48DXlG05NB
-        VTnXNtgQXtn1L2Td5LbsaA==
-X-Google-Smtp-Source: AJdET5egmCIYCQCHsIiA1mY51EDqQ8zWY7eVFBqV/Zn5rW2jJMTV/BCvGSFUT4NFXHXjd46gIg7f4A==
-X-Received: by 2002:aca:390b:: with SMTP id g11-v6mr2165627oia.201.1542409655558;
-        Fri, 16 Nov 2018 15:07:35 -0800 (PST)
-Received: from localhost (mobile-166-173-57-127.mycingular.net. [166.173.57.127])
-        by smtp.gmail.com with ESMTPSA id e42sm37102095oth.36.2018.11.16.15.07.34
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Nov 2018 15:07:34 -0800 (PST)
-Date:   Fri, 16 Nov 2018 17:07:33 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     matthias.bgg@kernel.org
-Cc:     robh+dt@kernel.org, mark.rutland@arm.com, ck.hu@mediatek.com,
-        p.zabel@pengutronix.de, airlied@linux.ie, mturquette@baylibre.com,
-        sboyd@codeaurora.org, ulrich.hecht+renesas@gmail.com,
-        laurent.pinchart@ideasonboard.com, matthias.bgg@gmail.com,
-        sean.wang@mediatek.com, sean.wang@kernel.org,
-        rdunlap@infradead.org, wens@csie.org,
-        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org,
-        linux-mediatek@lists.infradead.org, linux-clk@vger.kernel.org,
-        devicetree@vger.kernel.org, Matthias Brugger <mbrugger@suse.com>
-Subject: Re: [PATCH v5 07/12] dt-bindings: clock: mediatek: delete mmsys
- clocks
-Message-ID: <20181116230733.GA17794@bogus>
-References: <20181116125449.23581-1-matthias.bgg@kernel.org>
- <20181116125449.23581-8-matthias.bgg@kernel.org>
+        Sat, 17 Nov 2018 04:24:33 -0500
+Received: from mga01.intel.com ([192.55.52.88]:17571 "EHLO mga01.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727505AbeKQJYc (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 04:24:32 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga001.jf.intel.com ([10.7.209.18])
+  by fmsmga101.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 15:10:14 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,242,1539673200"; 
+   d="scan'208";a="108963591"
+Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
+  by orsmga001.jf.intel.com with ESMTP; 16 Nov 2018 15:10:13 -0800
+Subject: Re: [PATCH v3 1/2] x86/fpu: track AVX-512 usage of tasks
+To:     "Li, Aubrey" <aubrey.li@linux.intel.com>,
+        Aubrey Li <aubrey.li@intel.com>, tglx@linutronix.de,
+        mingo@redhat.com, peterz@infradead.org, hpa@zytor.com
+Cc:     ak@linux.intel.com, tim.c.chen@linux.intel.com,
+        arjan@linux.intel.com, linux-kernel@vger.kernel.org
+References: <1542236407-4323-1-git-send-email-aubrey.li@intel.com>
+ <6f8a7b97-d889-ce77-b5ad-d03dbf4986b0@intel.com>
+ <88a5d6df-0005-db3e-f3be-83e2a8b63a27@linux.intel.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzShEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gPGRhdmVAc3I3MS5uZXQ+wsF7BBMBAgAlAhsDBgsJCAcDAgYVCAIJ
+ CgsEFgIDAQIeAQIXgAUCTo3k0QIZAQAKCRBoNZUwcMmSsMO2D/421Xg8pimb9mPzM5N7khT0
+ 2MCnaGssU1T59YPE25kYdx2HntwdO0JA27Wn9xx5zYijOe6B21ufrvsyv42auCO85+oFJWfE
+ K2R/IpLle09GDx5tcEmMAHX6KSxpHmGuJmUPibHVbfep2aCh9lKaDqQR07gXXWK5/yU1Dx0r
+ VVFRaHTasp9fZ9AmY4K9/BSA3VkQ8v3OrxNty3OdsrmTTzO91YszpdbjjEFZK53zXy6tUD2d
+ e1i0kBBS6NLAAsqEtneplz88T/v7MpLmpY30N9gQU3QyRC50jJ7LU9RazMjUQY1WohVsR56d
+ ORqFxS8ChhyJs7BI34vQusYHDTp6PnZHUppb9WIzjeWlC7Jc8lSBDlEWodmqQQgp5+6AfhTD
+ kDv1a+W5+ncq+Uo63WHRiCPuyt4di4/0zo28RVcjtzlGBZtmz2EIC3vUfmoZbO/Gn6EKbYAn
+ rzz3iU/JWV8DwQ+sZSGu0HmvYMt6t5SmqWQo/hyHtA7uF5Wxtu1lCgolSQw4t49ZuOyOnQi5
+ f8R3nE7lpVCSF1TT+h8kMvFPv3VG7KunyjHr3sEptYxQs4VRxqeirSuyBv1TyxT+LdTm6j4a
+ mulOWf+YtFRAgIYyyN5YOepDEBv4LUM8Tz98lZiNMlFyRMNrsLV6Pv6SxhrMxbT6TNVS5D+6
+ UorTLotDZKp5+M7BTQRUY85qARAAsgMW71BIXRgxjYNCYQ3Xs8k3TfAvQRbHccky50h99TUY
+ sqdULbsb3KhmY29raw1bgmyM0a4DGS1YKN7qazCDsdQlxIJp9t2YYdBKXVRzPCCsfWe1dK/q
+ 66UVhRPP8EGZ4CmFYuPTxqGY+dGRInxCeap/xzbKdvmPm01Iw3YFjAE4PQ4hTMr/H76KoDbD
+ cq62U50oKC83ca/PRRh2QqEqACvIH4BR7jueAZSPEDnzwxvVgzyeuhwqHY05QRK/wsKuhq7s
+ UuYtmN92Fasbxbw2tbVLZfoidklikvZAmotg0dwcFTjSRGEg0Gr3p/xBzJWNavFZZ95Rj7Et
+ db0lCt0HDSY5q4GMR+SrFbH+jzUY/ZqfGdZCBqo0cdPPp58krVgtIGR+ja2Mkva6ah94/oQN
+ lnCOw3udS+Eb/aRcM6detZr7XOngvxsWolBrhwTQFT9D2NH6ryAuvKd6yyAFt3/e7r+HHtkU
+ kOy27D7IpjngqP+b4EumELI/NxPgIqT69PQmo9IZaI/oRaKorYnDaZrMXViqDrFdD37XELwQ
+ gmLoSm2VfbOYY7fap/AhPOgOYOSqg3/Nxcapv71yoBzRRxOc4FxmZ65mn+q3rEM27yRztBW9
+ AnCKIc66T2i92HqXCw6AgoBJRjBkI3QnEkPgohQkZdAb8o9WGVKpfmZKbYBo4pEAEQEAAcLB
+ XwQYAQIACQUCVGPOagIbDAAKCRBoNZUwcMmSsJeCEACCh7P/aaOLKWQxcnw47p4phIVR6pVL
+ e4IEdR7Jf7ZL00s3vKSNT+nRqdl1ugJx9Ymsp8kXKMk9GSfmZpuMQB9c6io1qZc6nW/3TtvK
+ pNGz7KPPtaDzvKA4S5tfrWPnDr7n15AU5vsIZvgMjU42gkbemkjJwP0B1RkifIK60yQqAAlT
+ YZ14P0dIPdIPIlfEPiAWcg5BtLQU4Wg3cNQdpWrCJ1E3m/RIlXy/2Y3YOVVohfSy+4kvvYU3
+ lXUdPb04UPw4VWwjcVZPg7cgR7Izion61bGHqVqURgSALt2yvHl7cr68NYoFkzbNsGsye9ft
+ M9ozM23JSgMkRylPSXTeh5JIK9pz2+etco3AfLCKtaRVysjvpysukmWMTrx8QnI5Nn5MOlJj
+ 1Ov4/50JY9pXzgIDVSrgy6LYSMc4vKZ3QfCY7ipLRORyalFDF3j5AGCMRENJjHPD6O7bl3Xo
+ 4DzMID+8eucbXxKiNEbs21IqBZbbKdY1GkcEGTE7AnkA3Y6YB7I/j9mQ3hCgm5muJuhM/2Fr
+ OPsw5tV/LmQ5GXH0JQ/TZXWygyRFyyI2FqNTx4WHqUn3yFj8rwTAU1tluRUYyeLy0ayUlKBH
+ ybj0N71vWO936MqP6haFERzuPAIpxj2ezwu0xb1GjTk4ynna6h5GjnKgdfOWoRtoWndMZxbA
+ z5cecg==
+Message-ID: <b67c995e-3883-ce17-0396-b1621ec5d58f@intel.com>
+Date:   Fri, 16 Nov 2018 15:10:13 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116125449.23581-8-matthias.bgg@kernel.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <88a5d6df-0005-db3e-f3be-83e2a8b63a27@linux.intel.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Nov 2018 13:54:44 +0100, matthias.bgg@kernel.org wrote:
-> From: Matthias Brugger <mbrugger@suse.com>
+On 11/15/18 4:21 PM, Li, Aubrey wrote:
+> "Core cycles where the core was running with power delivery for license
+> level 2 (introduced in Skylake Server microarchitecture). This includes
+> high current AVX 512-bit instructions."
 > 
-> Some SoCs will now load the clock part of mmsys via
-> a platform device from the dsiplay driver.
-> Remove the compatible from the clock bindings description.
-> 
-> Signed-off-by: Matthias Brugger <mbrugger@suse.com>
-> ---
->  .../devicetree/bindings/arm/mediatek/mediatek,mmsys.txt        | 3 ---
->  1 file changed, 3 deletions(-)
-> 
+> I translated license level 2 to frequency drop.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+BTW, the "high" in that text: "high-current AVX 512-bit instructions" is
+talking about high-current, not "high ... instructions" or high-numbered
+registers.  I think that might be the source of some of the confusion
+about which XSAVE state needs to be examined.
+
+Just to be clear: there are 3 AVX-512 XSAVE states:
+
+        XFEATURE_OPMASK,
+        XFEATURE_ZMM_Hi256,
+        XFEATURE_Hi16_ZMM,
+
+I honestly don't know what XFEATURE_OPMASK does.  It does not appear to
+be affected by VZEROUPPER (although VZEROUPPER's SDM documentation isn't
+looking too great).
+
+But, XFEATURE_ZMM_Hi256 is used for the upper 256 bits of the
+registers ZMM0-ZMM15.  Those are AVX-512-only registers.  The only way
+to get data into XFEATURE_ZMM_Hi256 state is by using AVX512 instructions.
+
+XFEATURE_Hi16_ZMM is the same.  The only way to get state in there is
+with AVX512 instructions.
+
+So, first of all, I think you *MUST* check XFEATURE_ZMM_Hi256 and
+XFEATURE_Hi16_ZMM.  That's without question.
+
+It's probably *possible* to run AVX512 instructions by loading state
+into the YMM register and then executing AVX512 instructions that only
+write to memory and never to register state.  That *might* allow
+XFEATURE_Hi16_ZMM and XFEATURE_ZMM_Hi256 to stay in the init state, but
+for the frequency to be affected since AVX512 instructions _are_
+executing.  But, there's no way to detect this situation from XSAVE
+states themselves.
