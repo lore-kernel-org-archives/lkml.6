@@ -7,114 +7,120 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 00341C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:02:50 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 27280C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:05:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A3093214C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:02:50 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D38252086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:05:03 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eTX7PtUr"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A3093214C1
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XdXxrj99"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D38252086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729915AbeKQJRG (ORCPT
+        id S1730161AbeKQJTT (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:17:06 -0500
-Received: from mail-pf1-f194.google.com ([209.85.210.194]:38796 "EHLO
-        mail-pf1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725819AbeKQJRF (ORCPT
+        Sat, 17 Nov 2018 04:19:19 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:42899 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725819AbeKQJTT (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:17:05 -0500
-Received: by mail-pf1-f194.google.com with SMTP id q1so4070770pfi.5;
-        Fri, 16 Nov 2018 15:02:48 -0800 (PST)
+        Sat, 17 Nov 2018 04:19:19 -0500
+Received: by mail-pl1-f196.google.com with SMTP id x21-v6so9081032pln.9;
+        Fri, 16 Nov 2018 15:05:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
         h=from:to:subject:date:message-id;
-        bh=+6XVtq4oJHjTw6cvWsMsqPWuyqZ5zrnnSTv1YyHvuZo=;
-        b=eTX7PtUr6Q7zkF+X5PRrXV48Zpfxuf4qKpn1IOAx0xC1C6lSMlL/wxSFvWXFmg3SrX
-         ZveZ8ZKvxZzh1R8CRjOATCinMdkIwaNQqmnVA1+pUGoTaE0NvIk8ps9mNcCy+JZx+Sof
-         X5TWS4qO7IMNjLQ09Fp227CNz6Twrmgsp8iq3Uo57+U52sjwxHEdZsZM0QJh9AHUXT8g
-         6APhMAehtDiywKqd53cYkx/rBx20SKsU2T93vWtP/yFQp7fPhaXPOhuFTYTBAfUblRSV
-         Oe4NYD5YUjn8sixq5tLbM7A4OdxqebL9itoUikgpa5nGZgsQPfyxrvO7vPMwW0qbQM0Y
-         u6kg==
+        bh=+/WUkaayRJ8LV3dIb3j9FE2qSHbPHPjvZWttEtLlGIc=;
+        b=XdXxrj994D7OXruPigzaHdUJ8WfDYHtQE7mmV5nWT+DXuLGaVTEk5IQ0qGYx7/DPjD
+         toVzSqEyPcpxxODrqe3IOfiWhr6pYUgOcfh1bLbo3io5PqPQf9MZR69cU2luxg5lytg0
+         9BVY0xx7vJqIVNdVPL66Y1PpHFnlhgjopfIGOvrW9xV2wQCpBbW7RYeqmtESsq9eFUzt
+         OX0G2xTysTPa9nVfShIcJkHJ1HSbR1HOjXmnzt2oOFleqGeF8ErYkjiceax8APGTuGP4
+         D/HuR/Y1cHqzg1CRBFzYEpAuqEjmBS/42kMOmq+Ohh+BcNy4SDeXJf/ANsvMAsc8HZup
+         b1Xg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:subject:date:message-id;
-        bh=+6XVtq4oJHjTw6cvWsMsqPWuyqZ5zrnnSTv1YyHvuZo=;
-        b=YEImEWD5yVSwph33i5QaYtkRQkVHZ14xvQG7CSubL0muwf037/2o/+g+RCOFb6Q9ae
-         6/zZeBvRkjxYGWJuPtI/EqlMnaRcNBMNjs/wwOcI9LyQn1K+nQ+tBz7hF0xtfsP8fih2
-         O2oK0mkYFV5YFpzZlAAKgQclw6NPsP2+w6s5iYIGO0Su9Y/enL4LKbWGouRysLDJ2v/U
-         FlOoSRaqiCDpm4RMIogNhhyLzxDlgo51Z0cEkJQ3cIPIBAuZxSlBh/aSNvdxtr2gF13J
-         rdhAPF9anEZ92mtNijuXLt8eGdyBuIofAUBOggoDHaxSVRQ7O38D8ACi5OQuJrVaebEU
-         qWqg==
-X-Gm-Message-State: AGRZ1gLYXbjTpXQr9ayYtK7i/9RnGRuVcB2PHSjPqeZd6+8y6k+cIK3u
-        jBk9DKBHUTfw7e/SsvZcqYs=
-X-Google-Smtp-Source: AJdET5dI7UQJil4xr1fsCJyQTAMYEi7rUK5gXJEOsWOyg+EhmaWfXpuPjVnhmis0z1bPHxVvWCaJTg==
-X-Received: by 2002:a63:f34b:: with SMTP id t11mr11740169pgj.341.1542409368558;
-        Fri, 16 Nov 2018 15:02:48 -0800 (PST)
+        bh=+/WUkaayRJ8LV3dIb3j9FE2qSHbPHPjvZWttEtLlGIc=;
+        b=OBsr3tO49PUmQWjyEAcBnx8yph7TycpE9yHO/aTfhip42AWwLpf3mDDbqeE4Pf84ET
+         trbMegE1Go5W66o+XDzU06PneSJhhkamlEtx73misycJpNYk/LZ3BEPm6yoFru7L7F2I
+         vjQrHgbqxijPbXwb0C8iF+PPyIsZYxgTsj25TkcLDAPpY2MU9YtiH8TB8mungTekSGKq
+         +PRAPJXD9a7LtCkNF0GxRNrkLeCuaqVq4zV11figSgYnlf+4qUIY+tHpUaHOh3xoO0a1
+         KwYqxebdrA2P44BhnR6XfoiOJ/OlPIBe50DhheKrC8aRCZWvERikRJ4h7EKmSPTfTKcl
+         SeaA==
+X-Gm-Message-State: AGRZ1gJfOxROMaW1qKSM1aV8n/6J6XHUyGqXNCsD9K6llY2HicGjOwsS
+        57tvyd+trRQYFZrKMmzDc92us1yk
+X-Google-Smtp-Source: AJdET5e2SCRXbpBRhjzsuLc7kXwBj/2KUHTbHUIbPuWkEcQzPAa6gHrOxsDcPgdmYgGj7T4dro/xiw==
+X-Received: by 2002:a17:902:d890:: with SMTP id b16-v6mr12522921plz.207.1542409501394;
+        Fri, 16 Nov 2018 15:05:01 -0800 (PST)
 Received: from localhost.localdomain ([103.212.140.154])
-        by smtp.gmail.com with ESMTPSA id 18sm31043413pgl.50.2018.11.16.15.02.45
+        by smtp.gmail.com with ESMTPSA id w80-v6sm55326522pfk.11.2018.11.16.15.04.58
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 15:02:48 -0800 (PST)
+        Fri, 16 Nov 2018 15:05:00 -0800 (PST)
 From:   Shreeya Patel <shreeya.patel23498@gmail.com>
 To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
         knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
         linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 6/7] Staging: iio: adt7316: Change the name from irq_flags to irq_type
-Date:   Sat, 17 Nov 2018 04:32:43 +0530
-Message-Id: <20181116230243.24985-1-shreeya.patel23498@gmail.com>
+Subject: [PATCH 7/7] Staging: iio: adt7316: Use device tree data to assign irq_type
+Date:   Sat, 17 Nov 2018 04:34:55 +0530
+Message-Id: <20181116230455.25073-1-shreeya.patel23498@gmail.com>
 X-Mailer: git-send-email 2.17.1
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Most of the drivers in IIO uses irq_type as the name for
-storing the interrupt type and hence change the name from
-irq_flags to irq_type for maintaining the consistency.
+ADT7316 driver no more uses platform data and hence use device tree
+data instead of platform data for assigning irq_type field.
+Switch case figures out the type of irq and if it's the default case
+then assign the default value to the irq_type i.e.
+irq_type = IRQF_TRIGGER_LOW
 
 Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
 ---
- drivers/staging/iio/addac/adt7316.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+ drivers/staging/iio/addac/adt7316.c | 21 +++++++++++++++++----
+ 1 file changed, 17 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/staging/iio/addac/adt7316.c b/drivers/staging/iio/addac/adt7316.c
-index dfae22619287..9c72538baf9e 100644
+index 9c72538baf9e..c647875a64f5 100644
 --- a/drivers/staging/iio/addac/adt7316.c
 +++ b/drivers/staging/iio/addac/adt7316.c
-@@ -2102,7 +2102,7 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
+@@ -2101,8 +2101,7 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
+ {
  	struct adt7316_chip_info *chip;
  	struct iio_dev *indio_dev;
- 	unsigned short *adt7316_platform_data = dev->platform_data;
--	int irq_flags = IRQF_TRIGGER_LOW;
-+	int irq_type = IRQF_TRIGGER_LOW;
+-	unsigned short *adt7316_platform_data = dev->platform_data;
+-	int irq_type = IRQF_TRIGGER_LOW;
++	int irq_type;
  	int ret = 0;
  
  	indio_dev = devm_iio_device_alloc(dev, sizeof(*chip));
-@@ -2147,18 +2147,18 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
+@@ -2146,8 +2145,22 @@ int adt7316_probe(struct device *dev, struct adt7316_bus *bus,
+ 	indio_dev->modes = INDIO_DIRECT_MODE;
  
  	if (chip->bus.irq > 0) {
- 		if (adt7316_platform_data[0])
--			irq_flags = adt7316_platform_data[0];
-+			irq_type = adt7316_platform_data[0];
+-		if (adt7316_platform_data[0])
+-			irq_type = adt7316_platform_data[0];
++		irq_type =
++			irqd_get_trigger_type(irq_get_irq_data(chip->bus.irq));
++
++		switch (irq_type) {
++		case IRQF_TRIGGER_HIGH:
++		case IRQF_TRIGGER_RISING:
++			break;
++		case IRQF_TRIGGER_LOW:
++		case IRQF_TRIGGER_FALLING:
++			break;
++		default:
++			dev_info(dev, "mode %d unsupported, using IRQF_TRIGGER_LOW\n",
++				 irq_type);
++			irq_type = IRQF_TRIGGER_LOW;
++			break;
++		}
  
  		ret = devm_request_threaded_irq(dev, chip->bus.irq,
  						NULL,
- 						adt7316_event_handler,
--						irq_flags | IRQF_ONESHOT,
-+						irq_type | IRQF_ONESHOT,
- 						indio_dev->name,
- 						indio_dev);
- 		if (ret)
- 			return ret;
- 
--		if (irq_flags & IRQF_TRIGGER_HIGH)
-+		if (irq_type & IRQF_TRIGGER_HIGH)
- 			chip->config1 |= ADT7316_INT_POLARITY;
- 	}
- 
 -- 
 2.17.1
 
