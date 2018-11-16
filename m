@@ -2,89 +2,115 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8773FC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 21:39:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 06253C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 21:39:30 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 477192086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 21:39:03 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="fM/QUXjY"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 477192086C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	by mail.kernel.org (Postfix) with ESMTP id C44AC2086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 21:39:29 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C44AC2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729291AbeKQHxG (ORCPT
+        id S1729436AbeKQHxd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 02:53:06 -0500
-Received: from mail-lj1-f196.google.com ([209.85.208.196]:38233 "EHLO
-        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725885AbeKQHxG (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 02:53:06 -0500
-Received: by mail-lj1-f196.google.com with SMTP id c19-v6so8774849lja.5
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 13:39:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=mOlbw16AD1pP557NigRO1K3EOe6O+16JSf4qRZZE6KQ=;
-        b=fM/QUXjYy2O82G/IJRaPUZaj4EV3mBYoZgRQY4de1fsRGgNV+5IVIbgMjYnspFiyid
-         H1NzK3ebocRApVwJRUkwQizEJXR+r2+N52lOaltc9qHG+y9Gt63TOjO2oDMgMuul9Jue
-         OSas+D8RQ4waCS/o5IGWBizdyLlRPFpeoj9L0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=mOlbw16AD1pP557NigRO1K3EOe6O+16JSf4qRZZE6KQ=;
-        b=JpahWn8jLvBb2w4RntJ+XUbQm9tNqNeDJ6LnZtdArRN9Ytl3qL97xJ6PrAR2lMzTQN
-         M5gImKMCHVE9yl9oXfn66jU21ruQJxsYyOu1BG6/Mf6hpEPhgCo3/BKPYgJOkT42Znq0
-         qjrZKBmBGy+nAFm4X7B3c/JHdZmKGZSpCVTV62zLMAaeChl/uQjOwgdyclBQpI4oNcJu
-         ee2T5Dg46O06JIdIdO18t8pkBmTjiLIVtZt1jpY1B7MA+Fdq3wlJvuYUOb3vYlfO8ptx
-         +oLwAly7gZbC4+VTXEeUzTd2SlseQMtvNWCTwVJKjr3PQvNBOluQJotxoFnfGCV+nFb/
-         ITqg==
-X-Gm-Message-State: AA+aEWbbgqh6RdUymndASodozglO91dYFQPLa9fscbuGCQ0twrAmjdFx
-        aC8LV3odqB5vdvVLlacE+z7lRRE2YFKkpiVlluMDkg==
-X-Google-Smtp-Source: AFSGD/VQwB5IGFQOMIzKj8ATUDyDrbnTXJQI8hUi6kxhr0zpkLQn8Up1N97Fw/1+/0c4J53QKMBfybVf/XOAzy2AEtM=
-X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr2468224ljk.4.1542404339389;
- Fri, 16 Nov 2018 13:38:59 -0800 (PST)
+        Sat, 17 Nov 2018 02:53:33 -0500
+Received: from mga11.intel.com ([192.55.52.93]:48537 "EHLO mga11.intel.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725911AbeKQHxd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 02:53:33 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga008.jf.intel.com ([10.7.209.65])
+  by fmsmga102.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 13:39:27 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,241,1539673200"; 
+   d="scan'208";a="92697930"
+Received: from ray.jf.intel.com (HELO [10.7.201.15]) ([10.7.201.15])
+  by orsmga008.jf.intel.com with ESMTP; 16 Nov 2018 13:39:26 -0800
+Subject: Re: [RFC PATCH 2/4] mm, memory_hotplug: provide a more generic
+ restrictions for memory hotplug
+To:     Oscar Salvador <osalvador@suse.com>, linux-mm@kvack.org
+Cc:     mhocko@suse.com, david@redhat.com, rppt@linux.vnet.ibm.com,
+        akpm@linux-foundation.org, arunks@codeaurora.org, bhe@redhat.com,
+        dan.j.williams@intel.com, Pavel.Tatashin@microsoft.com,
+        Jonathan.Cameron@huawei.com, jglisse@redhat.com,
+        linux-kernel@vger.kernel.org, Oscar Salvador <osalvador@suse.de>
+References: <20181116101222.16581-1-osalvador@suse.com>
+ <20181116101222.16581-3-osalvador@suse.com>
+From:   Dave Hansen <dave.hansen@intel.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+ z5cecg==
+Message-ID: <4063e22f-bc33-076d-5300-7bd6e61e3170@intel.com>
+Date:   Fri, 16 Nov 2018 13:39:26 -0800
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.2.1
 MIME-Version: 1.0
-References: <20181108165255.9940-1-brgl@bgdev.pl> <20181108165255.9940-2-brgl@bgdev.pl>
-In-Reply-To: <20181108165255.9940-2-brgl@bgdev.pl>
-From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 16 Nov 2018 22:38:47 +0100
-Message-ID: <CACRpkdYNW7BsZO71WBAz9FCP=zOuP6oVf8pbj5rsAV7izkreUw@mail.gmail.com>
-Subject: Re: [PATCH 1/3] gpio: mockup: fix indicated direction
-To:     Bartosz Golaszewski <brgl@bgdev.pl>
-Cc:     Bamvor Jian Zhang <bamv2005@gmail.com>,
-        =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= 
-        <u.kleine-koenig@pengutronix.de>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <20181116101222.16581-3-osalvador@suse.com>
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 5:53 PM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+On 11/16/18 2:12 AM, Oscar Salvador wrote:
+> +/*
+> + * Do we want sysfs memblock files created. This will allow userspace to online
+> + * and offline memory explicitly. Lack of this bit means that the caller has to
+> + * call move_pfn_range_to_zone to finish the initialization.
+> + */
+> +
+> +#define MHP_MEMBLOCK_API               1<<0
+> +
+> +/* Restrictions for the memory hotplug */
+> +struct mhp_restrictions {
+> +	unsigned long flags;    /* MHP_ flags */
+> +	struct vmem_altmap *altmap; /* use this alternative allocatro for memmaps */
 
-> Commit 3edfb7bd76bd ("gpiolib: Show correct direction from the
-> beginning") fixed an existing issue but broke libgpiod tests by
-> changing the default direction of dummy lines to output.
->
-> We don't break user-space so make gpio-mockup behave as before.
->
-> Signed-off-by: Bartosz Golaszewski <brgl@bgdev.pl>
-
-Patch applied for fixes.
-
-I browsed the debate here. I think this should be applied for
-fixes, then if the test should be changed, we can do that for
-devel in that case.
-
-Yours,
-Linus Walleij
+"allocatro" -> "allocator"
