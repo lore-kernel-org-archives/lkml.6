@@ -2,79 +2,119 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A8D2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:49:41 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E25BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:49:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C84E12087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:49:40 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jb6PHeQu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C84E12087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 0E5762087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:49:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E5762087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=st.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389820AbeKPXBy (ORCPT
+        id S2389799AbeKPXBy (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
         Fri, 16 Nov 2018 18:01:54 -0500
-Received: from mail.kernel.org ([198.145.29.99]:59940 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389687AbeKPXBy (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+Received: from mx08-00178001.pphosted.com ([91.207.212.93]:54191 "EHLO
+        mx07-00178001.pphosted.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1728035AbeKPXBy (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
         Fri, 16 Nov 2018 18:01:54 -0500
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 75FC520989;
-        Fri, 16 Nov 2018 12:49:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542372578;
-        bh=DD3QyMq52595KAjINwRhwj+EcOqJGT/cVTgI44xPUX0=;
-        h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-        b=Jb6PHeQuVqd7g23Y5uOyOqTJplf1Zov/YmyvxMy9g8PA6U5NXjTKBbbpXu347cMOz
-         XkkmPvSThm63Tr4dHVve+NJQB2lVOBeKeW997rLUzXEJ7I6c4PQXtUcPFP4jChRleF
-         dWgjttywC25FL2YyjatBoUdRl7LnM+8tMZjLe6jY=
-Received: by mail-lf1-f45.google.com with SMTP id l10so12882987lfh.9;
-        Fri, 16 Nov 2018 04:49:38 -0800 (PST)
-X-Gm-Message-State: AGRZ1gJFTcEZml3Bjm6WJiZBM7Rb/x5kB49e5DjYjCjclungjuOLzl1S
-        Wu/tdXXR1wu+GWA7VFLwCR7ALVrV7onSiTpNLjM=
-X-Google-Smtp-Source: AJdET5dEoiNKB3y7nG6ApYI8mif3NpLgzPxhv/hvj7PivIYMUWbyfQY7PBzefQ1O+L7uP8yuZRISJ3Z9dS56whsAfpU=
-X-Received: by 2002:a19:a28e:: with SMTP id l136mr5972385lfe.87.1542372576603;
- Fri, 16 Nov 2018 04:49:36 -0800 (PST)
+Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
+        by mx08-.pphosted.com (8.16.0.21/8.16.0.21) with SMTP id wAGCmdE3029115;
+        Fri, 16 Nov 2018 13:49:19 +0100
+Received: from beta.dmz-eu.st.com (beta.dmz-eu.st.com [164.129.1.35])
+        by mx08-00178001.pphosted.com with ESMTP id 2nr7cwyw1h-1
+        (version=TLSv1 cipher=ECDHE-RSA-AES256-SHA bits=256 verify=NOT);
+        Fri, 16 Nov 2018 13:49:19 +0100
+Received: from zeta.dmz-eu.st.com (zeta.dmz-eu.st.com [164.129.230.9])
+        by beta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 3B29F31;
+        Fri, 16 Nov 2018 12:49:19 +0000 (GMT)
+Received: from Webmail-eu.st.com (sfhdag5node2.st.com [10.75.127.14])
+        by zeta.dmz-eu.st.com (STMicroelectronics) with ESMTP id 1EDF22B44;
+        Fri, 16 Nov 2018 12:49:19 +0000 (GMT)
+Received: from localhost (10.75.127.46) by SFHDAG5NODE2.st.com (10.75.127.14)
+ with Microsoft SMTP Server (TLS) id 15.0.1347.2; Fri, 16 Nov 2018 13:49:18
+ +0100
+From:   Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+To:     Dan Williams <dan.j.williams@intel.com>,
+        Vinod Koul <vkoul@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        <dmaengine@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+CC:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Subject: [PATCH v1] dmaengine: stm32-dma: check FIFO error interrupt enable
+Date:   Fri, 16 Nov 2018 13:49:15 +0100
+Message-ID: <1542372555-18283-1-git-send-email-pierre-yves.mordret@st.com>
+X-Mailer: git-send-email 2.7.4
 MIME-Version: 1.0
-References: <CGME20181115151247epcas2p4053da2cb28b2414156d2fd0530059c0d@epcas2p4.samsung.com>
- <1542294698-17470-1-git-send-email-b.zolnierkie@samsung.com> <1542294698-17470-10-git-send-email-b.zolnierkie@samsung.com>
-In-Reply-To: <1542294698-17470-10-git-send-email-b.zolnierkie@samsung.com>
-From:   Krzysztof Kozlowski <krzk@kernel.org>
-Date:   Fri, 16 Nov 2018 13:49:24 +0100
-X-Gmail-Original-Message-ID: <CAJKOXPco4yCmCH=RC3Kdoo-x1UPFj2GeGDp6Eb0zZ-DkNg013w@mail.gmail.com>
-Message-ID: <CAJKOXPco4yCmCH=RC3Kdoo-x1UPFj2GeGDp6Eb0zZ-DkNg013w@mail.gmail.com>
-Subject: Re: [PATCH 9/9] ARM: EXYNOS: remove <mach/map.h> include
-To:     =?UTF-8?B?QmFydMWCb21pZWogxbtvxYJuaWVya2lld2ljeg==?= 
-        <b.zolnierkie@samsung.com>
-Cc:     arnd@arndb.de, Marek Szyprowski <m.szyprowski@samsung.com>,
-        kgene@kernel.org, m.reichl@fivetechno.de,
-        Andrzej Hajda <a.hajda@samsung.com>,
-        Chanwoo Choi <cw00.choi@samsung.com>, javierm@redhat.com,
-        pankaj.dubey@samsung.com,
-        "linux-samsung-soc@vger.kernel.org" 
-        <linux-samsung-soc@vger.kernel.org>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain
+X-Originating-IP: [10.75.127.46]
+X-ClientProxiedBy: SFHDAG7NODE3.st.com (10.75.127.21) To SFHDAG5NODE2.st.com
+ (10.75.127.14)
+X-Proofpoint-Virus-Version: vendor=fsecure engine=2.50.10434:,, definitions=2018-11-16_06:,,
+ signatures=0
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, 15 Nov 2018 at 16:12, Bartlomiej Zolnierkiewicz
-<b.zolnierkie@samsung.com> wrote:
->
-> Remove no longer needed <mach/map.h> include.
+For avoiding false FIFO detection, check FIFO Error interrupt is
+enabled prior raising any errors.
+This will prevent having spurious FIFO error where it shouldn't.
 
-If I understand correctly, header is not needed because of previous
-commit so it should be squashed there.
+Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+---
+  Version history:
+    v1:
+       * Initial
+---
+---
+ drivers/dma/stm32-dma.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-Best regards,
-Krzysztof
+diff --git a/drivers/dma/stm32-dma.c b/drivers/dma/stm32-dma.c
+index 4903a40..48f7c0f 100644
+--- a/drivers/dma/stm32-dma.c
++++ b/drivers/dma/stm32-dma.c
+@@ -641,12 +641,13 @@ static irqreturn_t stm32_dma_chan_irq(int irq, void *devid)
+ {
+ 	struct stm32_dma_chan *chan = devid;
+ 	struct stm32_dma_device *dmadev = stm32_dma_get_dev(chan);
+-	u32 status, scr;
++	u32 status, scr, sfcr;
+ 
+ 	spin_lock(&chan->vchan.lock);
+ 
+ 	status = stm32_dma_irq_status(chan);
+ 	scr = stm32_dma_read(dmadev, STM32_DMA_SCR(chan->id));
++	sfcr = stm32_dma_read(dmadev, STM32_DMA_SFCR(chan->id));
+ 
+ 	if (status & STM32_DMA_TCI) {
+ 		stm32_dma_irq_clear(chan, STM32_DMA_TCI);
+@@ -661,10 +662,12 @@ static irqreturn_t stm32_dma_chan_irq(int irq, void *devid)
+ 	if (status & STM32_DMA_FEI) {
+ 		stm32_dma_irq_clear(chan, STM32_DMA_FEI);
+ 		status &= ~STM32_DMA_FEI;
+-		if (!(scr & STM32_DMA_SCR_EN))
+-			dev_err(chan2dev(chan), "FIFO Error\n");
+-		else
+-			dev_dbg(chan2dev(chan), "FIFO over/underrun\n");
++		if (sfcr & STM32_DMA_SFCR_FEIE) {
++			if (!(scr & STM32_DMA_SCR_EN))
++				dev_err(chan2dev(chan), "FIFO Error\n");
++			else
++				dev_dbg(chan2dev(chan), "FIFO over/underrun\n");
++		}
+ 	}
+ 	if (status) {
+ 		stm32_dma_irq_clear(chan, status);
+-- 
+2.7.4
+
