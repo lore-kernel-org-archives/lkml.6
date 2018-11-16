@@ -2,129 +2,102 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=unavailable autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 6F2EBC04EBF
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:08:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CA4F3C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:11:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 2FC81208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:08:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 600D92146F
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:11:56 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=impinj.com header.i=@impinj.com header.b="JTkJ/J8b"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2FC81208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=impinj.com
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZCfOzI2F"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 600D92146F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389036AbeKPKSl (ORCPT
+        id S1727002AbeKPKV7 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 05:18:41 -0500
-Received: from mail-eopbgr680136.outbound.protection.outlook.com ([40.107.68.136]:53504
-        "EHLO NAM04-BN3-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1726271AbeKPKSl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 05:18:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=impinj.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fFzZQbGqBzsew26mtXhiDXjVuxf7XB/oh2BJE3lBf6I=;
- b=JTkJ/J8b+oTMH1eMqX56bO3ekKdo3y6T6A3xhQlNz5/81ON8NlZPeSch93iZEZX1C3onAIb1+xlixRj9LsGwTOyXO4Qu1id3WEuAOXB2mWxjA1RVSx1G1QB5XSFhmkHSQb9tSWf7SZQHOHaWf0VegNcK3RRjsALYqy77XJdtzFY=
-Received: from MWHPR0601MB3708.namprd06.prod.outlook.com (10.167.236.38) by
- MWHPR0601MB3642.namprd06.prod.outlook.com (10.167.236.20) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.1294.20; Fri, 16 Nov 2018 00:08:34 +0000
-Received: from MWHPR0601MB3708.namprd06.prod.outlook.com
- ([fe80::f51a:d8dd:1aad:3bf9]) by MWHPR0601MB3708.namprd06.prod.outlook.com
- ([fe80::f51a:d8dd:1aad:3bf9%3]) with mapi id 15.20.1294.045; Fri, 16 Nov 2018
- 00:08:34 +0000
-From:   Trent Piepho <tpiepho@impinj.com>
-To:     "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-CC:     Bjorn Helgaas <bhelgaas@google.com>,
-        Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-        Trent Piepho <tpiepho@impinj.com>,
-        Andrey Smirnov <andrew.smirnov@gmail.com>
-Subject: [PATCH v2] PCI: dwc: Adjust Kconfig to allow IMX6 PCIe host on IMX7
-Thread-Topic: [PATCH v2] PCI: dwc: Adjust Kconfig to allow IMX6 PCIe host on
- IMX7
-Thread-Index: AQHUfUCDRa6/ov2/w0OqBXIeNHRK4Q==
-Date:   Fri, 16 Nov 2018 00:08:33 +0000
-Message-ID: <20181116000803.5880-1-tpiepho@impinj.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-clientproxiedby: CO2PR04CA0176.namprd04.prod.outlook.com
- (2603:10b6:104:4::30) To MWHPR0601MB3708.namprd06.prod.outlook.com
- (2603:10b6:301:7c::38)
-authentication-results: spf=none (sender IP is )
- smtp.mailfrom=tpiepho@impinj.com; 
-x-ms-exchange-messagesentrepresentingtype: 1
-x-originating-ip: [216.207.205.253]
-x-ms-publictraffictype: Email
-x-microsoft-exchange-diagnostics: 1;MWHPR0601MB3642;6:SCACotLrhMwYz9C4lPERKnip/LFYcuUnkBqq0DUpcjLlf/xvWGQfRdscfwdrjMzTBqHotu0tYrhFpgkQ56ri3fnRGVARThNBE1QTdxuNEbRYlKEN6LsUizPK6o4tp2BCs0L5CJ9Oh92YXoYjSPani8gkG9teQB7QlHQFPD+Xo1onruv4+V4b/FPNO3NqqY5YrxyKeyzPzorwMY21VxU+2KXQyTqCUuQdI0bBs1qZ5V4djctsj0UuGRnpOODL5JgHvyLoTCGEIrDgqChIlc9SU9oeE56EcxbJqYqbyurVB4mFiTxOQDBLpJcgmY5ZUQBlqoaj5CKZLhdwXhdRw2pUqvHAK5cTHKBuIlSOBDZ94wlyB7X9XnNnhrhK/Boxa/t0LwC4qzH3W3CmxoIjcJ5OA8J8wceRlW612XFd28FBD9w94d5ANzNDB3ZkUGicLoV3gaMebI0wNwULPBbRThYz1g==;5:7jaCUnXZP+HlfJljtNyHxWtnltwrwEICmsC+Y7j//i628ihBnCJ7+AtE7DV8V/83Rv5LUOBCy+mtvxwHyQFq/0fQqn6N+ztnmgZ+Ug9fOtQfOdbQVX8MDVuJbEDOylvZlJZjt0Sgud8Kgxvzmj+FXKeevfbeFbToh4Zj49ZJKZQ=;7:6YY3Z4DrYyJ6aIXPMvSVS8UF76ud5EZBXSw6eTHBEvol9xaTACQpKjR0CHJn5XLGw7AYGJkcJ+s6EFsDrZcZIKaiZx2Cz+8xStjJzX5QaiSoN5ur/awhbhMaQttbdy/SeHDRuypNNxgkiEAzpJypEQ==
-x-ms-office365-filtering-correlation-id: 34bb0b46-816f-48f2-2634-08d64b57a5c5
-x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:MWHPR0601MB3642;
-x-ms-traffictypediagnostic: MWHPR0601MB3642:
-x-microsoft-antispam-prvs: <MWHPR0601MB36422FA990033B7DAE2AED57D3DD0@MWHPR0601MB3642.namprd06.prod.outlook.com>
-x-exchange-antispam-report-test: UriScan:(85827821059158);
-x-ms-exchange-senderadcheck: 1
-x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(93006095)(93001095)(3231415)(944501410)(52105112)(10201501046)(3002001)(148016)(149066)(150057)(6041310)(20161123558120)(20161123562045)(20161123560045)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:MWHPR0601MB3642;BCL:0;PCL:0;RULEID:;SRVR:MWHPR0601MB3642;
-x-forefront-prvs: 0858FF8026
-x-forefront-antispam-report: SFV:NSPM;SFS:(10019020)(136003)(39850400004)(366004)(346002)(396003)(376002)(189003)(199004)(36756003)(2501003)(99286004)(6436002)(52116002)(53936002)(102836004)(6512007)(186003)(1076002)(7736002)(6116002)(3846002)(305945005)(5660300001)(66066001)(71190400001)(476003)(105586002)(6486002)(97736004)(478600001)(2906002)(8936002)(4326008)(26005)(256004)(25786009)(68736007)(110136005)(6506007)(54906003)(39060400002)(71200400001)(486006)(14454004)(2900100001)(386003)(2616005)(8676002)(86362001)(81166006)(81156014)(316002)(106356001);DIR:OUT;SFP:1102;SCL:1;SRVR:MWHPR0601MB3642;H:MWHPR0601MB3708.namprd06.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
-received-spf: None (protection.outlook.com: impinj.com does not designate
- permitted sender hosts)
-x-microsoft-antispam-message-info: 7aF6JGbdSVs95GGt1KthnkKVvOgoWPh/3PDL+mQ6kKYIpDa7+bpjKNNczPSM1u7Pp2+aJpKBi2LAzAo2ZIpheHkdKnBhwFkxjjOfpv1zDTA8gl/cOgCuLZ0KkEBMHfKcUf1xdASBGpYVS0DF6lM/MOmTgYl+1vpithK+4VIVZTwOJluX3mMnUmsZ0a7zlh49ral9cllpE7W6z7AmOulc8pI6mmpSnLAllpQeGnkFCzELJxEH7SzQY5UEbVylRUNPf8B5NBp7ss9DP/T8yyuvYsNlwgYgYb5GgKLKHuAG66MxY5cdU0iNm2qZc6sioWiFaz6gzUHbN1L4ZB2awrleA+FdpoTxbuYcAnemaqgo1Tc=
-spamdiagnosticoutput: 1:99
-spamdiagnosticmetadata: NSPM
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+        Fri, 16 Nov 2018 05:21:59 -0500
+Received: from mail-lj1-f196.google.com ([209.85.208.196]:41650 "EHLO
+        mail-lj1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725985AbeKPKV7 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 05:21:59 -0500
+Received: by mail-lj1-f196.google.com with SMTP id z80-v6so18795726ljb.8
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 16:11:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=qqNdbPQk8fZa8U2kCLK3D+S52jGbzSuJA0n5LZYX6C0=;
+        b=ZCfOzI2Fn6YoN4LOPWLy1AuVgjwz2NTCyz6As5Vi3XbftcmwrD6zJ2ECozR/g9U/np
+         1bCUvCyvrJX4KHovvX4T9M4zGE03x7prWPyrrz62RsCQrOm5Io/6SdzxC20Sli8mFmc5
+         ihOGtDjlsCVmWduKR0bscrnEWD3laMKkn4He4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=qqNdbPQk8fZa8U2kCLK3D+S52jGbzSuJA0n5LZYX6C0=;
+        b=TCnE2sfkTeKCYdSUhK2qb7my8uKTd0FFFOWafFw2qWV2SO2t+YRxZPVarH2uTubE+z
+         tA3y3buTOlsvq3wzR6jFjWNXj9NesQPOuMS5PHbTQ9BULQFLQeQbCM4Ul+cCotPJ8OtZ
+         mXD1VjORV++8k/sKtfTgeIgUTrSi5SKV1kA3XuQyNk7UWtkB1r1Uz72J9npFlk5LihAl
+         o0JiroqtL80lvvrqikl1Yob0/SDTpgORPPxHDluFuKFq5nWLnYCjmAYhX/7DnFEN+GYa
+         YXSjd78mIsxpk80MLCIpsCLQlw+bQ8ppy2hrqKm1SWHx7nw16kfyp9Fj/BHmBsvMny8n
+         w0ZA==
+X-Gm-Message-State: AA+aEWbXB2+I4MundNJBJ3rA3m/djMil/R9wsWZl/ldi1s38wFvMYVbG
+        w1ZbZpl98xSdxPdOxrER4AiFKhiDcyy2HMlJZJbvxQ==
+X-Google-Smtp-Source: AFSGD/VivQocTB18yTiYAsyFDN6uifU+J3nTmpXM4DHGnUMvlgjku6aYO+U6hGS/Ees1ZxyZoRwL4T40osJgoBNll2U=
+X-Received: by 2002:a2e:9e03:: with SMTP id e3-v6mr262432ljk.4.1542327112586;
+ Thu, 15 Nov 2018 16:11:52 -0800 (PST)
 MIME-Version: 1.0
-X-OriginatorOrg: impinj.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 34bb0b46-816f-48f2-2634-08d64b57a5c5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Nov 2018 00:08:33.9496
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 6de70f0f-7357-4529-a415-d8cbb7e93e5e
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MWHPR0601MB3642
+References: <20181115232747.23566-1-linus.walleij@linaro.org> <20181116000740.GT2089@sirena.org.uk>
+In-Reply-To: <20181116000740.GT2089@sirena.org.uk>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 16 Nov 2018 01:11:40 +0100
+Message-ID: <CACRpkdZ4wVu+1bSXJQJGpUrf0LFndRGV9oKexjv80cNAb+YGaw@mail.gmail.com>
+Subject: Re: [PATCH 5/9 v7] regulator: fixed/gpio: Pull inversion/OD into gpiolib
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Liam Girdwood <lgirdwood@gmail.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Janusz Krzysztofik <jmkrzyszt@gmail.com>,
+        Alexander Shiyan <shc_work@mail.ru>,
+        Haojian Zhuang <haojian.zhuang@gmail.com>,
+        Aaro Koskinen <aaro.koskinen@iki.fi>,
+        ext Tony Lindgren <tony@atomide.com>,
+        Mike Rapoport <rppt@linux.vnet.ibm.com>,
+        Robert Jarzmik <robert.jarzmik@free.fr>,
+        Philipp Zabel <philipp.zabel@gmail.com>,
+        Petr Cvek <petr.cvek@tul.cz>,
+        Paul Parsons <lost.distance@yahoo.com>,
+        Daniel Mack <zonque@gmail.com>,
+        Marc Zyngier <marc.zyngier@arm.com>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Russell King <rmk+kernel@armlinux.org.uk>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IMX6 PCI-e host drier also supports the IMX7d.  However, the
-Kconfig dependencies of the driver prevented it from being enabled
-unless the kernel was built with both IMX6 and IMX7 support.  It works
-fine to build with only IMX7 support enabled.
+On Fri, Nov 16, 2018 at 1:08 AM Mark Brown <broonie@kernel.org> wrote:
+> On Fri, Nov 16, 2018 at 12:27:47AM +0100, Linus Walleij wrote:
+>
+> > ChangeLog v6->v7:
+> > - Fix a missed .enable_high on OMAP1.
+> > - Resending just this patch.
+>
+> It's much easier if you can resend the entire series (or at least the
+> bits that aren't applied) - having just one patch isolated makes it
+> harder to keep track of what the current version of the series is, which
+> versions of which patches need to get included.  Could you resend
+> please?
 
-Cc: Andrey Smirnov <andrew.smirnov@gmail.com>
-Reviewed-by: Lucas Stach <l.stach@pengutronix.de>
-Signed-off-by: Trent Piepho <tpiepho@impinj.com>
----
-Changes from v1:
-  Ported to current kernel
+No problem, I'll fix!
 
- drivers/pci/controller/dwc/Kconfig | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I just wait a bit more and see if the build robot find even more
+secondary build nits.
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dw=
-c/Kconfig
-index 91b0194240a5..6aafec3fad00 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -89,8 +89,8 @@ config PCI_EXYNOS
- 	select PCIE_DW_HOST
-=20
- config PCI_IMX6
--	bool "Freescale i.MX6 PCIe controller"
--	depends on SOC_IMX6Q || (ARM && COMPILE_TEST)
-+	bool "Freescale i.MX6/7 PCIe controller"
-+	depends on SOC_IMX6Q || SOC_IMX7D || (ARM && COMPILE_TEST)
- 	depends on PCI_MSI_IRQ_DOMAIN
- 	select PCIE_DW_HOST
-=20
---=20
-2.14.4
-
+Yours,
+Linus Walleij
