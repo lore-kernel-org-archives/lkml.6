@@ -2,114 +2,82 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	USER_AGENT_MUTT autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A10DBC04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:04:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6E889C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:05:35 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 67DF1208E3
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:04:39 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="h8jjfQvC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 67DF1208E3
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
+	by mail.kernel.org (Postfix) with ESMTP id 1B8A82087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:05:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B8A82087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390047AbeKQCRe (ORCPT
+        id S2390076AbeKQCSa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 21:17:34 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:34988 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728970AbeKQCRd (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 21:17:33 -0500
-Received: by mail-pf1-f193.google.com with SMTP id v9-v6so11611814pff.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 08:04:37 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=osandov-com.20150623.gappssmtp.com; s=20150623;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=anPsNRx0uZfFKnyoFFFtlbsGc9ac2h1lk5UPV1Hc0z4=;
-        b=h8jjfQvCViz/fLw5xy+8P4+tQZ4Vw11AmPvROiA9QddEBPFl+EG6DdWDUM8Oww3wEL
-         pfvL8qk/JnDe/76MbW6hLKRhgbY5U8B/RjpmmlMV26EtDzj2zlbtKUf5FZKFHFnc20DT
-         4v7Di7rPjVA5po7eckmpcfla148FIQdz7Z92DQ9b8gCXEZtX7a/xvOapmfytOMR9GUFT
-         cjFNj3noQXOoLxSltoJvbzfiurOyiyAPRdOBdaCCBCnjtJfsL+Ni2o5P1iEvsE7l2bYH
-         kmO373EhPVMD+JWhUfBk+aPThn8IeUYfjoJ/wdA+MCxDdOWbnToe5Yeg1eXY7Dz722iI
-         sNTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=anPsNRx0uZfFKnyoFFFtlbsGc9ac2h1lk5UPV1Hc0z4=;
-        b=GJROQgWtVr6r+Kjl0vRyFHCX0CxSDI1z/5RwWx6RJiDX0jB3/+VkXPUH+CGnfvU74J
-         enE+muQpElme3tW0gR2/qy2s0WV8OasmV5NLI1SyMy/qrj97pvyqQi3oFI6sLfUoXRaL
-         aqIl7h2B2Zu2rAsp2CXxmpf/4fA9lfT2Z3Sb8Pw88avldHvyCmuJ2KEB1QCk7x7IjVVN
-         IfyY+M7qbBZvxa6XmMPT6txHWjLO9LD5WtP/VYUyqFaPIttzhyqCK3FGcFIsDpYut0bR
-         wk+GHmOqj9yiVJNnsngqvCCRrDh7Pat5RyQaMA4yqPEfzewoJ2Yk3/zj7guXyJykmgxV
-         lDcQ==
-X-Gm-Message-State: AGRZ1gIgCzSPu2aPSpTIODASUN4aIsyCE0SKHMuwbV32s4A6U5yjdN2/
-        zDYls7Tfqdj2h2xdp8xrS2wMOQ==
-X-Google-Smtp-Source: AJdET5dCSmENmtth+4RvDrhTLZOKB8z/G4vAqSrTrSpiBniMbshmuyCEL+8XmCwl5rLQCRLdrzcxSg==
-X-Received: by 2002:aa7:8254:: with SMTP id e20-v6mr11831931pfn.164.1542384276490;
-        Fri, 16 Nov 2018 08:04:36 -0800 (PST)
-Received: from vader ([64.114.255.114])
-        by smtp.gmail.com with ESMTPSA id d21sm23998333pgv.37.2018.11.16.08.04.35
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Nov 2018 08:04:35 -0800 (PST)
-Date:   Fri, 16 Nov 2018 08:04:33 -0800
-From:   Omar Sandoval <osandov@osandov.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Mike Snitzer <snitzer@redhat.com>, Ming Lei <ming.lei@redhat.com>,
-        Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Dave Chinner <dchinner@redhat.com>,
-        Kent Overstreet <kent.overstreet@gmail.com>,
-        dm-devel@redhat.com, Alexander Viro <viro@zeniv.linux.org.uk>,
-        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
-        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
-        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-        "Darrick J . Wong" <darrick.wong@oracle.com>,
-        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
-        Theodore Ts'o <tytso@mit.edu>, linux-ext4@vger.kernel.org,
-        Coly Li <colyli@suse.de>, linux-bcache@vger.kernel.org,
-        Boaz Harrosh <ooo@electrozaur.com>,
-        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 03/19] block: use bio_for_each_bvec() to compute
- multi-page bvec count
-Message-ID: <20181116160433.GV23828@vader>
-References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-4-ming.lei@redhat.com>
- <20181115202028.GC9348@vader>
- <20181115210510.GA24908@redhat.com>
- <20181115221847.GD9348@vader>
- <20181116091956.GA17604@lst.de>
+        Fri, 16 Nov 2018 21:18:30 -0500
+Received: from mail.bootlin.com ([62.4.15.54]:52447 "EHLO mail.bootlin.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1728481AbeKQCSa (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 21:18:30 -0500
+Received: by mail.bootlin.com (Postfix, from userid 110)
+        id 04A72207A8; Fri, 16 Nov 2018 17:05:32 +0100 (CET)
+Received: from bootlin.com (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
+        by mail.bootlin.com (Postfix) with ESMTPSA id 8F032206A7;
+        Fri, 16 Nov 2018 17:05:21 +0100 (CET)
+Date:   Fri, 16 Nov 2018 17:05:21 +0100
+From:   Maxime Chevallier <maxime.chevallier@bootlin.com>
+To:     Grygorii Strashko <grygorii.strashko@ti.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Kishon Vijay Abraham I <kishon@ti.com>,
+        <netdev@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
+        <linux-kernel@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>,
+        Tony Lindgren <tony@atomide.com>,
+        <linux-amlogic@lists.infradead.org>,
+        <linux-mediatek@lists.infradead.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        Antoine Tenart <antoine.tenart@free-electrons.com>,
+        Quentin Schulz <quentin.schulz@bootlin.com>,
+        Vivek Gautam <vivek.gautam@codeaurora.org>,
+        Maxime Ripard <maxime.ripard@bootlin.com>,
+        Chen-Yu Tsai <wens@csie.org>, Carlo Caione <carlo@caione.org>,
+        Chunfeng Yun <chunfeng.yun@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        Manu Gautam <mgautam@codeaurora.org>
+Subject: Re: [PATCH 4/5] phy: mvebu-cp110-comphy: convert to use eth phy
+ mode and submode
+Message-ID: <20181116170521.11ee68e9@bootlin.com>
+In-Reply-To: <20181108003617.10334-5-grygorii.strashko@ti.com>
+References: <20181108003617.10334-1-grygorii.strashko@ti.com>
+        <20181108003617.10334-5-grygorii.strashko@ti.com>
+X-Mailer: Claws Mail 3.14.1 (GTK+ 2.24.31; x86_64-pc-linux-gnu)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116091956.GA17604@lst.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 10:19:56AM +0100, Christoph Hellwig wrote:
-> On Thu, Nov 15, 2018 at 02:18:47PM -0800, Omar Sandoval wrote:
-> > My only reason to prefer unsigned int is consistency. unsigned int is
-> > much more common in the kernel:
-> > 
-> > $ ag --cc -s 'unsigned\s+int' | wc -l
-> > 129632
-> > $ ag --cc -s 'unsigned\s+(?!char|short|int|long)' | wc -l
-> > 22435
-> > 
-> > checkpatch also warns on plain unsigned.
-> 
-> Talk about chicken and egg.  unsigned is perfectly valid C, and being
-> shorter often helps being more readable.  checkpath is as so often
-> wrongly opinionated..
+Hello Grygorii,
 
-Fair enough. Since enough people don't mind bare unsigned in the block
-code, I retract my comment :)
+On Wed, 7 Nov 2018 18:36:16 -0600
+Grygorii Strashko <grygorii.strashko@ti.com> wrote:
+
+>Convert mvebu-cp110-comphy PHY driver to use recently introduced
+>PHY_MODE_ETHERNET and phy_set_mode_ext().
+
+I gave it a quick test on MacchiatoBin, it works fine and the automatic
+mode switching in the comphy happens as expected, so :
+
+Tested-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
+
+>Signed-off-by: Grygorii Strashko <grygorii.strashko@ti.com>
+
+-- 
+Maxime Chevallier, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
