@@ -2,192 +2,148 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 55272C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:44:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5DD09C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:45:03 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1A6B82087A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:44:25 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wcy6dAI1"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1A6B82087A
+	by mail.kernel.org (Postfix) with ESMTP id 289B52087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:45:03 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 289B52087C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390326AbeKQE5z (ORCPT
+        id S2390365AbeKQE6d (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 23:57:55 -0500
-Received: from mail.kernel.org ([198.145.29.99]:55774 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2389436AbeKQE5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 23:57:55 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 07C6720858;
-        Fri, 16 Nov 2018 18:44:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542393862;
-        bh=S/S+nK3zfubVY3+YYJ1D6olf+B/H5fgRPL9yZhwX32Y=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=Wcy6dAI1Dlf8Dkmfpzb4g8a781z/PXmqL+hdhgsoT2LsO+KLHIfDbAlnu/ijWpQgC
-         sU/RIGNrSjsr3frSzdTXb9knvQkYwUyXhxkjNvYPbzzLR/YsEktR8DCSeEZL43PEDu
-         4E8H7JJo5nAD5oEHazLSFf/aLSLtIwn7xC/yXZ2I=
-Date:   Fri, 16 Nov 2018 18:44:17 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Stefan Popa <stefan.popa@analog.com>
-Cc:     <robh+dt@kernel.org>, <mark.rutland@arm.com>, <knaack.h@gmx.de>,
-        <lars@metafoo.de>, <pmeerw@pmeerw.net>,
-        <Michael.Hennerich@analog.com>, <gregkh@linuxfoundation.org>,
-        <linux-iio@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 4/4] dt-bindings: iio: adc: Add docs for ad7124
-Message-ID: <20181116184417.1259889b@archlinux>
-In-Reply-To: <1542108138-3711-1-git-send-email-stefan.popa@analog.com>
-References: <1542108138-3711-1-git-send-email-stefan.popa@analog.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Fri, 16 Nov 2018 23:58:33 -0500
+Received: from mx2.suse.de ([195.135.220.15]:48174 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727490AbeKQE6d (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 23:58:33 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 3FFB6AEC6;
+        Fri, 16 Nov 2018 18:44:59 +0000 (UTC)
+Date:   Fri, 16 Nov 2018 19:44:57 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Christoph Lameter <clameter@sgi.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH AUTOSEL 3.18 8/9] mm/vmstat.c: assert that vmstat_text is
+ in sync with stat_items_size
+Message-ID: <20181116184457.GA11906@dhcp22.suse.cz>
+References: <20181113055252.79406-1-sashal@kernel.org>
+ <20181113055252.79406-8-sashal@kernel.org>
+ <20181115140810.e3292c83467544f6a1d82686@linux-foundation.org>
+ <20181115223718.GB1706@sasha-vm>
+ <20181115144719.d26dc7a2d47fade8d41a83d5@linux-foundation.org>
+ <20181115230118.GC1706@sasha-vm>
+ <20181116085525.GC14706@dhcp22.suse.cz>
+ <20181116181904.GH1706@sasha-vm>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116181904.GH1706@sasha-vm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Tue, 13 Nov 2018 13:22:18 +0200
-Stefan Popa <stefan.popa@analog.com> wrote:
+On Fri 16-11-18 13:19:04, Sasha Levin wrote:
+> On Fri, Nov 16, 2018 at 09:55:25AM +0100, Michal Hocko wrote:
+[...]
+> > > Race condition with memory hotplug due to missing locks:
+> > > 
+> > > 	https://marc.info/?l=linux-mm&m=154211934011188&w=2
+> > 
+> > Memory hotplug locking is dubious at best and this patch doesn't really
+> > fix it. It fixes a theoretical problem. I am not aware anybody would be
+> > hitting in practice. We need to rework the locking quite extensively.
+> 
+> The word "theoretical" used in the stable rules file does not mean
+> that we need to have actual reports of users hitting bugs before we
+> start backporting the relevant patch, it simply suggests that there
+> needs to be a reasonable explanation of how this issue can be hit.
+> 
+> For this memory hotplug patch in particular, I use the hv_balloon driver
+> at this very moment (running a linux guest on windows, with "dynamic
+> memory" enabled). Should I wait for it to crash before I can fix it?
+> 
+> Is the upstream code perfect? No, but that doesn't mean that it's not
+> working at all, and if there are users they expect to see fixes going in
+> and not just sitting idly waiting for a big rewrite that will come in a
+> few years.
+> 
+> Memory hotplug fixes are not something you think should go to stable?
+> Andrew sent a few of them to stable, so that can't be the case.
 
-> Add support for Analog Devices AD7124 4-channels and 8-channels ADC.
->=20
-> Signed-off-by: Stefan Popa <stefan.popa@analog.com>
-Looks good to me.  Will wait on that DT review of patch 2 (and perhaps
-this one as well)
+I am not arguing about hotplug fixes in general. I was arguing that this
+particular one is a theoretical one and hotplug locking is quite subtle.
+E.g. 381eab4a6ee mm/memory_hotplug: fix online/offline_pages called w.o. mem_hotplug_lock
+http://lkml.kernel.org/r/20181114070909.GB2653@MiWiFi-R3L-srv
+So in general unless the issue is really triggered easily I am rather
+conservative.
 
-Thanks,
+> > > Raising an OOM event that causes issues in userspace when no OOM has
+> > > actually occured:
+> > > 
+> > > 	https://marc.info/?l=linux-mm&m=154211939811582&w=2
+> > 
+> > The patch makes sense I just do not think this is a stable material. The
+> > semantic of the event was and still is suboptimal.
+> 
+> I really fail to understand your reasoning about -stable here. This
+> patch is something people actually hit in the field, spent time on
+> triaging and analysing it, and submitting a fix which looks reasonably
+> straightforward.
+> 
+> That fix was acked by quite a few folks (including yourself) and merged
+> in. And as far as we can tell, it actually fixed the problem.
+> 
+> Why is it not stable material?
 
-Jonathan
+Because the semantic of the OOM event is quite tricky itself. We have
+discussed this patch and concluded that the updated one is more
+sensible. But it is not yet clear whether this is actually what other
+users expect as well. That to me does sound quite risky for a stable
+kernel.
 
-> ---
-> Changes in v2:
-> 	- Nothing changed.
-> Changes in v3:
-> 	- Removed the "adi,channels" property.
-> 	- Used the "reg" property to get the channel number and "adi,diff-channe=
-ls"
-> 	  for the differential pins. The "adi,channel-number" property was remov=
-ed.
-> 	- adi,bipolar is of boolean type.
-> Changes in v4:
-> 	- Used the bipolar and diff-channels properties defined in the new adc.t=
-xt doc.
-> Changes in v5:
-> 	- Removed the gain and odr properties from the example.
->=20
->  .../devicetree/bindings/iio/adc/adi,ad7124.txt     | 75 ++++++++++++++++=
-++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 76 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7124.=
-txt
->=20
-> diff --git a/Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt b/D=
-ocumentation/devicetree/bindings/iio/adc/adi,ad7124.txt
-> new file mode 100644
-> index 0000000..416273d
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
-> @@ -0,0 +1,75 @@
-> +Analog Devices AD7124 ADC device driver
-> +
-> +Required properties for the AD7124:
-> +	- compatible: Must be one of "adi,ad7124-4" or "adi,ad7124-8"
-> +	- reg: SPI chip select number for the device
-> +	- spi-max-frequency: Max SPI frequency to use
-> +		see: Documentation/devicetree/bindings/spi/spi-bus.txt
-> +	- clocks: phandle to the master clock (mclk)
-> +		see: Documentation/devicetree/bindings/clock/clock-bindings.txt
-> +	- clock-names: Must be "mclk".
-> +	- interrupts: IRQ line for the ADC
-> +		see: Documentation/devicetree/bindings/interrupt-controller/interrupts=
-.txt
-> +
-> +	  Required properties:
-> +		* #address-cells: Must be 1.
-> +		* #size-cells: Must be 0.
-> +
-> +	  Subnode(s) represent the external channels which are connected to the=
- ADC.
-> +	  Each subnode represents one channel and has the following properties:
-> +		Required properties:
-> +			* reg: The channel number. It can have up to 4 channels on ad7124-4
-> +			  and 8 channels on ad7124-8, numbered from 0 to 15.
-> +			* diff-channels: see: Documentation/devicetree/bindings/iio/adc/adc.t=
-xt
-> +
-> +		Optional properties:
-> +			* bipolar: see: Documentation/devicetree/bindings/iio/adc/adc.txt
-> +			* adi,reference-select: Select the reference source to use when
-> +			  converting on the the specific channel. Valid values are:
-> +			  0: REFIN1(+)/REFIN1(=E2=88=92).
-> +			  1: REFIN2(+)/REFIN2(=E2=88=92).
-> +			  3: AVDD
-> +			  If this field is left empty, internal reference is selected.
-> +
-> +Optional properties:
-> +	- refin1-supply: refin1 supply can be used as reference for conversion.
-> +	- refin2-supply: refin2 supply can be used as reference for conversion.
-> +	- avdd-supply: avdd supply can be used as reference for conversion.
-> +
-> +Example:
-> +	adc@0 {
-> +		compatible =3D "adi,ad7124-4";
-> +		reg =3D <0>;
-> +		spi-max-frequency =3D <5000000>;
-> +		interrupts =3D <25 2>;
-> +		interrupt-parent =3D <&gpio>;
-> +		refin1-supply =3D <&adc_vref>;
-> +		clocks =3D <&ad7124_mclk>;
-> +		clock-names =3D "mclk";
-> +
-> +		#address-cells =3D <1>;
-> +		#size-cells =3D <0>;
-> +
-> +		channel@0 {
-> +			reg =3D <0>;
-> +			diff-channels =3D <0 1>;
-> +			adi,reference-select =3D <0>;
-> +		};
-> +
-> +		channel@1 {
-> +			reg =3D <1>;
-> +			bipolar;
-> +			diff-channels =3D <2 3>;
-> +			adi,reference-select =3D <0>;
-> +		};
-> +
-> +		channel@2 {
-> +			reg =3D <2>;
-> +			diff-channels =3D <4 5>;
-> +		};
-> +
-> +		channel@3 {
-> +			reg =3D <3>;
-> +			diff-channels =3D <6 7>;
-> +		};
-> +	};
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 3a1bfcb..f2fa508 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -845,6 +845,7 @@ L:	linux-iio@vger.kernel.org
->  W:	http://ez.analog.com/community/linux-device-drivers
->  S:	Supported
->  F:	drivers/iio/adc/ad7124.c
-> +F:	Documentation/devicetree/bindings/iio/adc/adi,ad7124.txt
-> =20
->  ANALOG DEVICES INC AD9389B DRIVER
->  M:	Hans Verkuil <hans.verkuil@cisco.com>
+> My understanding is that you're concerned with the patch itself being
+> "suboptimal", but in that case - why did you ack it?
+> 
+> > > I think that all 3 cases represent a "real" bug users can hit, and I
+> > > honestly don't know why they were not tagged for stable.
+> > 
+> > It would be much better to ask in the respective email thread rather
+> > than spamming mailing with AUTOSEL patches which rarely get any
+> > attention.
+> 
+> I actually tried it, but the comments I got is that it gets in the way
+> and people preferred something they can filter.
 
+which means that AUTOSEL just goes to /dev/null...
+
+> > We have been through this discussion several times already and I thought
+> > we have agreed that those subsystems which are seriously considering stable
+> > are opted out from the AUTOSEL automagic. Has anything changed in that
+> > regards.
+> 
+> I checked in with Andrew to get his input on this, he suggested that
+> these patches should be sent to linux-mm and he'll give it a close look.
+
+If Andrew is happy to get AUTOSEL patches then I will not object of
+course but let's not merge these patches without and expclicit OK.
+
+-- 
+Michal Hocko
+SUSE Labs
