@@ -2,111 +2,85 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C069C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:11:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E70C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:13:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4AEBC2086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:11:25 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4AEBC2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 11F7F2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:13:07 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TXZVvdY5"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11F7F2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730347AbeKQIZd (ORCPT
+        id S1729471AbeKQI1P (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 03:25:33 -0500
-Received: from mail-ot1-f66.google.com ([209.85.210.66]:37278 "EHLO
-        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeKQIZc (ORCPT
+        Sat, 17 Nov 2018 03:27:15 -0500
+Received: from mail-lf1-f65.google.com ([209.85.167.65]:41902 "EHLO
+        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbeKQI1P (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 03:25:32 -0500
-Received: by mail-ot1-f66.google.com with SMTP id 40so22737419oth.4;
-        Fri, 16 Nov 2018 14:11:22 -0800 (PST)
+        Sat, 17 Nov 2018 03:27:15 -0500
+Received: by mail-lf1-f65.google.com with SMTP id c16so17550555lfj.8
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 14:13:04 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=ER7Q/ICr6bvtN+/2y2BJD4kd/upPnZviF5egk0fDVRY=;
+        b=TXZVvdY587s8Lge6es5R/hRfFKupHOuZFA9IvmWJI7zqY5S81td3mwF/CFcQIeT0JS
+         Uigxb+aWZ0o+anzM4Bd16KuqgJYolEKlOVZ7wPQywkx30Plz1rHMNjLvKBVyqf2BXywz
+         gf5TuFeS1lBPMuGxegPvrZJW7uMFCsp8Cbucc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=LaouoqkD3ttluPI7bXedx27zbuxr7w/ViN2uhOKU2JI=;
-        b=ni1kn6iv8c0+pzoDpszOuIt5+wBxTSuwNoOINPjf6W1pavuKiqZ0YiYe3exYY+w0NE
-         L2f6MpVbtakMu8lnT3qZDLLAQOpS+zRK2GcbXlYJPJXaKPsVeH03CrigJvqnJmV9BGNj
-         pYjuoQ4cGLhXq76H2/M7j56tbhXHnOs3HSiD1/MzkZW47+vAdJO5lnxnJc3c83IrQQ25
-         V2sCZnz0hWGCQhsTx04reLOQeiYzK704vB/8Js+syrRv0fGQZJQgtDHtsKCd43PWnOjB
-         Evv532zuMutsO2kL+pI96zecRgTXn+eOa+gitUormvoEbNqwhIniDjYha+/Rk360eE/D
-         D8HQ==
-X-Gm-Message-State: AGRZ1gLScCWQmjj7r7Sqs+4GzvXiPO1Ul8zQwPtAY/VNxPZaIOBVulu2
-        quzxF62XJTGFBfpsK6w7weTX2mh9vQ==
-X-Google-Smtp-Source: AJdET5fPipeCIPit29eBQPrgdNSohEJJIo1/QR3fNnAra6GS7aOMTtVm5gZ08+xFYAVVwLgHU9kJ9A==
-X-Received: by 2002:a9d:738a:: with SMTP id j10mr7731660otk.188.1542406281963;
-        Fri, 16 Nov 2018 14:11:21 -0800 (PST)
-Received: from localhost.localdomain (mobile-166-173-57-127.mycingular.net. [166.173.57.127])
-        by smtp.googlemail.com with ESMTPSA id p204-v6sm12142631oib.25.2018.11.16.14.11.19
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 14:11:21 -0800 (PST)
-From:   Rob Herring <robh@kernel.org>
-To:     Takashi Iwai <tiwai@suse.com>
-Cc:     devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Johannes Berg <johannes@sipsolutions.net>,
-        Jaroslav Kysela <perex@perex.cz>,
-        linuxppc-dev@lists.ozlabs.org, alsa-devel@alsa-project.org
-Subject: [PATCH] ALSA: aoa: Use device_type helpers to access the node type
-Date:   Fri, 16 Nov 2018 16:11:04 -0600
-Message-Id: <20181116221104.23024-8-robh@kernel.org>
-X-Mailer: git-send-email 2.19.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=ER7Q/ICr6bvtN+/2y2BJD4kd/upPnZviF5egk0fDVRY=;
+        b=sU+eHTWtIk3KcI3UfisKTVdqbo2beCKDvg0fQrjHcepeMS9aWQgPlmTGU+Ct3kid0b
+         NXWNc+aYRueFGRJiHFeKdd0qr2ZvRPorMbp1cwhrRJh+P/53su/qZuIjdflAM+fSlDMR
+         3dxSjTxGU6SO4BrpV2bpLLDGqBSm74HLGv71vGUbuN6/VFRy0zqPz6pAIPii8ZPsBhUr
+         B505TNow0QvpK5tO8fJQEmoknkl4E2lboVHuhhL6oIJNEhYbsuQqY+SsTRMcSMPyRWoc
+         Ju06ecK0jscrDVmyVL+AQtGoaIfl1uoLlfUC4aD5p3QEB5NZfQei/T7V1lIC+PgjsgfQ
+         dWlA==
+X-Gm-Message-State: AGRZ1gLsh7W6Zl1sciPCMprZFnAjc07/tQ6Cloz8Cz/uB/Rq09ZKssW+
+        1dP8Q4yzTn0vUnB6CbERH70wHrpjxbd1L5Sq2CKnkA==
+X-Google-Smtp-Source: AJdET5eci0QcEOHx//QMPLnKCryRPP4LmfutZhJVkvfPJKVB31dgl7ndWoUD8jdX6qpqQnAx7XoD64DgyX1Dfz8UtW8=
+X-Received: by 2002:a19:4849:: with SMTP id v70mr4419603lfa.62.1542406383403;
+ Fri, 16 Nov 2018 14:13:03 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <1541866511-7856-1-git-send-email-stefan.wahren@i2se.com>
+In-Reply-To: <1541866511-7856-1-git-send-email-stefan.wahren@i2se.com>
+From:   Linus Walleij <linus.walleij@linaro.org>
+Date:   Fri, 16 Nov 2018 23:12:51 +0100
+Message-ID: <CACRpkdaXekcvO4ANtgn9iFLvgrxnY=KvcPzK9r-srWZZwhGVDA@mail.gmail.com>
+Subject: Re: [PATCH 12/17] pinctrl: bcm2835: Switch to SPDX identifier
+To:     Stefan Wahren <stefan.wahren@i2se.com>
+Cc:     Eric Anholt <eric@anholt.net>, Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
+        simon@arlott.org, Stephen Warren <swarren@wwwdotorg.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove directly accessing device_node.type pointer and use the accessors
-instead. This will eventually allow removing the type pointer.
+On Sat, Nov 10, 2018 at 5:16 PM Stefan Wahren <stefan.wahren@i2se.com> wrote:
 
-Replace the open coded iterating over child nodes with
-for_each_child_of_node() while we're here.
+> Adopt the SPDX license identifier headers to ease license compliance
+> management.
+>
+> Cc: Simon Arlott <simon@arlott.org>
+> Cc: Stephen Warren <swarren@wwwdotorg.org>
+> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
 
-Cc: Johannes Berg <johannes@sipsolutions.net>
-Cc: Jaroslav Kysela <perex@perex.cz>
-Cc: Takashi Iwai <tiwai@suse.com>
-Cc: linuxppc-dev@lists.ozlabs.org
-Cc: alsa-devel@alsa-project.org
-Signed-off-by: Rob Herring <robh@kernel.org>
----
- sound/aoa/fabrics/layout.c | 4 ++--
- sound/aoa/soundbus/core.c  | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Patch applied with Eric's review tag.
 
-diff --git a/sound/aoa/fabrics/layout.c b/sound/aoa/fabrics/layout.c
-index 1eddf8fa188f..3a23fd032611 100644
---- a/sound/aoa/fabrics/layout.c
-+++ b/sound/aoa/fabrics/layout.c
-@@ -1008,8 +1008,8 @@ static int aoa_fabric_layout_probe(struct soundbus_dev *sdev)
- 		return -ENODEV;
- 
- 	/* by breaking out we keep a reference */
--	while ((sound = of_get_next_child(sdev->ofdev.dev.of_node, sound))) {
--		if (sound->type && strcasecmp(sound->type, "soundchip") == 0)
-+	for_each_child_of_node(sdev->ofdev.dev.of_node, sound) {
-+		if (of_node_is_type(sound, "soundchip"))
- 			break;
- 	}
- 	if (!sound)
-diff --git a/sound/aoa/soundbus/core.c b/sound/aoa/soundbus/core.c
-index 70bcaa7f93dd..f3076a3f7f2f 100644
---- a/sound/aoa/soundbus/core.c
-+++ b/sound/aoa/soundbus/core.c
-@@ -78,7 +78,7 @@ static int soundbus_uevent(struct device *dev, struct kobj_uevent_env *env)
- 	if (retval)
- 		return retval;
- 
--	retval = add_uevent_var(env, "OF_TYPE=%s", of->dev.of_node->type);
-+	retval = add_uevent_var(env, "OF_TYPE=%s", of_node_get_device_type(of->dev.of_node));
- 	if (retval)
- 		return retval;
- 
--- 
-2.19.1
-
+Yours,
+Linus Walleij
