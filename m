@@ -2,108 +2,170 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 49912C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:29:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 21F76C04EBC
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:30:33 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 143072087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:29:49 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VWyR9pHV";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="VWyR9pHV"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 143072087C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+	by mail.kernel.org (Postfix) with ESMTP id E438C2087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:30:32 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E438C2087C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389689AbeKPXmK (ORCPT
+        id S2389806AbeKPXmz (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 18:42:10 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:57760 "EHLO
-        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727727AbeKPXmK (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 18:42:10 -0500
-Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id BC37E60767; Fri, 16 Nov 2018 13:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542374985;
-        bh=IYlBJtfAhRlCgAFp8COONKtzn0dT5GhGCwO/kKQDTog=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=VWyR9pHVJH6H4aeI4+oCtAanduLfAVWJsu3Jz5mySgl2yeNF2p9/CDzEUi0cKsp7F
-         iAwGETac5gch9DWXdLRp5HvqtILVCVIirwnIiPJElUEFOT0rK4L5XQjTY7/O1n7Ve4
-         rPM4zVYlcTjcsnjtA9pv507xGY1MAi7qJ6Z4au6M=
-Received: from x230.qca.qualcomm.com (87-95-226-75.bb.dnainternet.fi [87.95.226.75])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-        (No client certificate requested)
-        (Authenticated sender: kvalo@smtp.codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 4376A60452;
-        Fri, 16 Nov 2018 13:29:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542374985;
-        bh=IYlBJtfAhRlCgAFp8COONKtzn0dT5GhGCwO/kKQDTog=;
-        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
-        b=VWyR9pHVJH6H4aeI4+oCtAanduLfAVWJsu3Jz5mySgl2yeNF2p9/CDzEUi0cKsp7F
-         iAwGETac5gch9DWXdLRp5HvqtILVCVIirwnIiPJElUEFOT0rK4L5XQjTY7/O1n7Ve4
-         rPM4zVYlcTjcsnjtA9pv507xGY1MAi7qJ6Z4au6M=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 4376A60452
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
-Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
-From:   Kalle Valo <kvalo@codeaurora.org>
-To:     Govind Singh <govinds@codeaurora.org>
-Cc:     briannorris@chromium.org, andy.gross@linaro.org,
-        ath10k@lists.infradead.org, devicetree@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, linux-soc@vger.kernel.org,
-        linux-wireless@vger.kernel.org, robh+dt@kernel.org,
-        sboyd@kernel.org, dianders@chromium.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 0/3] Enable ath10k wcn3990 wifi driver support on sdm845
-References: <1541423318-19312-1-git-send-email-govinds@codeaurora.org>
-Date:   Fri, 16 Nov 2018 15:29:39 +0200
-In-Reply-To: <1541423318-19312-1-git-send-email-govinds@codeaurora.org>
-        (Govind Singh's message of "Mon, 5 Nov 2018 18:38:35 +0530")
-Message-ID: <87d0r55ews.fsf@codeaurora.org>
-User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
+        Fri, 16 Nov 2018 18:42:55 -0500
+Received: from verein.lst.de ([213.95.11.211]:49787 "EHLO newverein.lst.de"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727727AbeKPXmz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 18:42:55 -0500
+Received: by newverein.lst.de (Postfix, from userid 2407)
+        id C99CB68D60; Fri, 16 Nov 2018 14:30:28 +0100 (CET)
+Date:   Fri, 16 Nov 2018 14:30:28 +0100
+From:   Christoph Hellwig <hch@lst.de>
+To:     Ming Lei <ming.lei@redhat.com>
+Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        Dave Chinner <dchinner@redhat.com>,
+        Kent Overstreet <kent.overstreet@gmail.com>,
+        Mike Snitzer <snitzer@redhat.com>, dm-devel@redhat.com,
+        Alexander Viro <viro@zeniv.linux.org.uk>,
+        linux-fsdevel@vger.kernel.org, Shaohua Li <shli@kernel.org>,
+        linux-raid@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+        David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+        "Darrick J . Wong" <darrick.wong@oracle.com>,
+        linux-xfs@vger.kernel.org, Gao Xiang <gaoxiang25@huawei.com>,
+        Christoph Hellwig <hch@lst.de>, Theodore Ts'o <tytso@mit.edu>,
+        linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
+        linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
+        Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
+Subject: Re: [PATCH V10 02/19] block: introduce bio_for_each_bvec()
+Message-ID: <20181116133028.GB3165@lst.de>
+References: <20181115085306.9910-1-ming.lei@redhat.com> <20181115085306.9910-3-ming.lei@redhat.com>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115085306.9910-3-ming.lei@redhat.com>
+User-Agent: Mutt/1.5.17 (2007-11-01)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Govind Singh <govinds@codeaurora.org> writes:
+> +static inline void __bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
+> +				      unsigned bytes, bool mp)
 
-> This series enables ath10k wifi driver support for WCN3990 target
-> on sdm845 SOC. This series also updates the missing dt binding documentation
-> and adds optional iommu property.
->
-> Changes since v3:
->     Moved interrupt/reg/reg-name to required property.
->     Removed unused clocks.
->     Corrected interrupt no's.
->
-> Changes since v2:
->     dropped [v2,4/4] dts: arm64/sdm845: Enable iommu for WCN3990 wifi module
->     device node patch from the series as dependent patch is not yet merged.
->     Enabled status flag from sdm845-mtp.dts.
->
-> Changes since v1:
->     Listed no of interrupts/clocks for each set of compatible.
->     Added missing 'wifi' label to sdm845.dtsi.
->
-> Govind Singh (3):
->   dt: bindings: add missing dt properties for WCN3990 wifi node
->   dts: arm64/sdm845: Add WCN3990 WLAN module device node
->   dt: bindings: add bindings for wifi iommu node
->
->  .../bindings/net/wireless/qcom,ath10k.txt          | 62 ++++++++++++++--------
->  arch/arm64/boot/dts/qcom/sdm845-mtp.dts            |  8 +++
->  arch/arm64/boot/dts/qcom/sdm845.dtsi               | 26 +++++++++
->  3 files changed, 74 insertions(+), 22 deletions(-)
+I think these magic 'bool np' arguments and wrappers over wrapper
+don't help anyone to actually understand the code.  I'd vote for
+removing as many wrappers as we really don't need, and passing the
+actual segment limit instead of the magic bool flag.  Something like
+this untested patch:
 
-Via which tree are these patches going? That's not clear for me.
-
--- 
-Kalle Valo
+diff --git a/include/linux/bio.h b/include/linux/bio.h
+index 277921ad42e7..dcad0b69f57a 100644
+--- a/include/linux/bio.h
++++ b/include/linux/bio.h
+@@ -138,30 +138,21 @@ static inline bool bio_full(struct bio *bio)
+ 		bvec_for_each_segment(bvl, &((bio)->bi_io_vec[iter_all.idx]), i, iter_all)
+ 
+ static inline void __bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
+-				      unsigned bytes, bool mp)
++				      unsigned bytes, unsigned max_segment)
+ {
+ 	iter->bi_sector += bytes >> 9;
+ 
+ 	if (bio_no_advance_iter(bio))
+ 		iter->bi_size -= bytes;
+ 	else
+-		if (!mp)
+-			bvec_iter_advance(bio->bi_io_vec, iter, bytes);
+-		else
+-			mp_bvec_iter_advance(bio->bi_io_vec, iter, bytes);
++		__bvec_iter_advance(bio->bi_io_vec, iter, bytes, max_segment);
+ 		/* TODO: It is reasonable to complete bio with error here. */
+ }
+ 
+ static inline void bio_advance_iter(struct bio *bio, struct bvec_iter *iter,
+ 				    unsigned bytes)
+ {
+-	__bio_advance_iter(bio, iter, bytes, false);
+-}
+-
+-static inline void bio_advance_mp_iter(struct bio *bio, struct bvec_iter *iter,
+-				       unsigned bytes)
+-{
+-	__bio_advance_iter(bio, iter, bytes, true);
++	__bio_advance_iter(bio, iter, bytes, PAGE_SIZE);
+ }
+ 
+ #define __bio_for_each_segment(bvl, bio, iter, start)			\
+@@ -177,7 +168,7 @@ static inline void bio_advance_mp_iter(struct bio *bio, struct bvec_iter *iter,
+ 	for (iter = (start);						\
+ 	     (iter).bi_size &&						\
+ 		((bvl = bio_iter_mp_iovec((bio), (iter))), 1);	\
+-	     bio_advance_mp_iter((bio), &(iter), (bvl).bv_len))
++	     __bio_advance_iter((bio), &(iter), (bvl).bv_len, 0))
+ 
+ /* returns one real segment(multipage bvec) each time */
+ #define bio_for_each_bvec(bvl, bio, iter)			\
+diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+index 02f26d2b59ad..5e2ed46c1c88 100644
+--- a/include/linux/bvec.h
++++ b/include/linux/bvec.h
+@@ -138,8 +138,7 @@ struct bvec_iter_all {
+ })
+ 
+ static inline bool __bvec_iter_advance(const struct bio_vec *bv,
+-				       struct bvec_iter *iter,
+-				       unsigned bytes, bool mp)
++		struct bvec_iter *iter, unsigned bytes, unsigned max_segment)
+ {
+ 	if (WARN_ONCE(bytes > iter->bi_size,
+ 		     "Attempted to advance past end of bvec iter\n")) {
+@@ -148,18 +147,18 @@ static inline bool __bvec_iter_advance(const struct bio_vec *bv,
+ 	}
+ 
+ 	while (bytes) {
+-		unsigned len;
++		unsigned segment_len = mp_bvec_iter_len(bv, *iter);
+ 
+-		if (mp)
+-			len = mp_bvec_iter_len(bv, *iter);
+-		else
+-			len = bvec_iter_len(bv, *iter);
++		if (max_segment) {
++			max_segment -= bvec_iter_offset(bv, *iter);
++			segment_len = min(segment_len, max_segment);
++		}
+ 
+-		len = min(bytes, len);
++		segment_len = min(bytes, segment_len);
+ 
+-		bytes -= len;
+-		iter->bi_size -= len;
+-		iter->bi_bvec_done += len;
++		bytes -= segment_len;
++		iter->bi_size -= segment_len;
++		iter->bi_bvec_done += segment_len;
+ 
+ 		if (iter->bi_bvec_done == __bvec_iter_bvec(bv, *iter)->bv_len) {
+ 			iter->bi_bvec_done = 0;
+@@ -197,14 +196,7 @@ static inline bool bvec_iter_advance(const struct bio_vec *bv,
+ 				     struct bvec_iter *iter,
+ 				     unsigned bytes)
+ {
+-	return __bvec_iter_advance(bv, iter, bytes, false);
+-}
+-
+-static inline bool mp_bvec_iter_advance(const struct bio_vec *bv,
+-					struct bvec_iter *iter,
+-					unsigned bytes)
+-{
+-	return __bvec_iter_advance(bv, iter, bytes, true);
++	return __bvec_iter_advance(bv, iter, bytes, PAGE_SIZE);
+ }
+ 
+ #define for_each_bvec(bvl, bio_vec, iter, start)			\
