@@ -2,100 +2,97 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E473CC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:47:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D4289C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:49:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9C1772086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:47:12 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 8BF462086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:49:15 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="tXKd/0Xu"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9C1772086C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pWhO7j8l"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8BF462086C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729472AbeKQJBZ (ORCPT
+        id S1729528AbeKQJD3 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 04:01:25 -0500
-Received: from mail-pf1-f195.google.com ([209.85.210.195]:33264 "EHLO
-        mail-pf1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeKQJBZ (ORCPT
+        Sat, 17 Nov 2018 04:03:29 -0500
+Received: from mail-pl1-f194.google.com ([209.85.214.194]:41644 "EHLO
+        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725995AbeKQJD2 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 04:01:25 -0500
-Received: by mail-pf1-f195.google.com with SMTP id v68-v6so12065668pfk.0;
-        Fri, 16 Nov 2018 14:47:10 -0800 (PST)
+        Sat, 17 Nov 2018 04:03:28 -0500
+Received: by mail-pl1-f194.google.com with SMTP id u6so908219plm.8;
+        Fri, 16 Nov 2018 14:49:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AsXz0h6YmLD89vE09fzjRHMErhEC2L65Q2l0CMr+qu4=;
-        b=tXKd/0XusdWXGWNu3ZmXrOHoEXseNMmbXrUxaonTH8VCbubkxvJzNL56jCg8KTwJlv
-         kXS7zXHbwPqrKdpR+zwZ5R0QE/z/wWvMQi7ub+/sgT7i0kEFRDic9B15u7XzA/BMbpny
-         CAIbRah9AtLZ4mgrBTDnTzmeH4EtHNW1frIO6CJsyFi2rX7w+KE+wmI3r1Uu+rer4Peg
-         F1pA9Vn1DD/AMh4LxUNDdTw2MdtJrRhihc8KYi6HWJ9aZZvHBGKzOFYPt1tXAU/KHCZP
-         /g/tqhCYTI1oMxBKgNJf4u36hc3wJIgQu0LGsXk5RDucAMar0zDATCBRK8zBmdoPNmJg
-         yPMA==
+        h=from:to:subject:date:message-id;
+        bh=xa7mMwilfARzNlzgBshZrLuLhTmZAU6FLzH06agvJF0=;
+        b=pWhO7j8lshrUTTsoIXqfiRcfWRcVjYemY6CB23DWYNUKul6JwjHPxhhzYxOFZHWvDq
+         UWBKEC+EW5Bo8gtX7UCzxrhJz5G2TUaslN1GcXjJ1XlxQK6NcdZvtJoJ6uNpb+bA1yFq
+         M1QgnN6QV35bz8unapINX//xRiq8w2KytXjlpaxG7/fjt64yNuDtMXqlPdOBja5naxGA
+         j3Dt+0rty+GRUgb/x4k6AQosJTAuyLTW98G2XIOdpq7Dk8DhYdr+fdo9oDUCceWjkqLJ
+         KUg+hHdyjlTcjKJwHCMXMrL1mX7rIvkCWENNrZ03foY1oxztbMbPu9Ki25D+7ho3wN90
+         366g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=AsXz0h6YmLD89vE09fzjRHMErhEC2L65Q2l0CMr+qu4=;
-        b=ZJOmCdXanCOa2Kx4ROqTPZQT7K9JRy0KFhry+iuiYj5aOrGq6YHmvbW2M9hgIblkce
-         moA5JNEksqaVa/RiXErQ/eYf6nC8YYfiYTV4MlRK75ieC8wY+1qLeBKgGLsi5QLq/E+Q
-         /rQZYSbHc95eRxJfZNfLZODUkeGUKZ2QGMKtTEhQ9o2FSj9xkiCYo7mJ9oJnoKRzwVTO
-         bBBdLptX8naiPjvzTswhtTjSqjYDX60xovqG3i4HlN/sFfnrb8nWd474YpSNNhit96Q5
-         uV8HQ12II0St9gJ1v3H8oR7KjReZ6laLBvfz8/5LIudq4x194lSC3kQ74WcVhiUttaDm
-         P2RQ==
-X-Gm-Message-State: AGRZ1gIRBrZxbnH2K0pq3SWGuRdl0mqYGHuGMAGze01zRdl2skLZPzbX
-        K3oZlb3c3e+Gr5uQYOdseo8=
-X-Google-Smtp-Source: AJdET5djmhbYhAm6ZK/8yiy754bwQCiANNzAvuYUpDc8yBGPn/FuRPqpg1gYLB7IM4DCk6mn7S27RQ==
-X-Received: by 2002:a63:b34f:: with SMTP id x15mr11821804pgt.243.1542408429964;
-        Fri, 16 Nov 2018 14:47:09 -0800 (PST)
+        h=x-gm-message-state:from:to:subject:date:message-id;
+        bh=xa7mMwilfARzNlzgBshZrLuLhTmZAU6FLzH06agvJF0=;
+        b=NQYtpSoYcVL+5KLezL56qGu/3NkGmifBcuIbaeaTpXNeO0cRz/pXfZNflNVOVX//pZ
+         l4J3Ve7yZY9WODEFpOAyhM3lRIdnUpZ8lJHAiLseNDt9aOXKnsyiKVmwWIeGwIkxuCfl
+         Qb3cg9pxDlKD94E8VvPA7+oYe8gJOs3kG6LZiBcoBdrFNuc2nX8qoqMPBorHcIpJQgfQ
+         XwzRWY/UkZ0cEXvLerO25kPuQGbVufU/j5uSWtBPh0NqPDHFyDo51ZBounD8/CHqhi4+
+         Dib776OKwF1Opb+q9Fs97pMwrB/R+yxH0AxhmmCmGKselwcj2V8ONZ1Pqgiuj8QaD/+8
+         iDXg==
+X-Gm-Message-State: AGRZ1gK0bU7dWqzmsNvkaS+jKC/yxOdhZhBz3di86/vNf1GHiNW+pRE5
+        pVn8DFUK6TdWXlmkl7BQAhY=
+X-Google-Smtp-Source: AJdET5eRT/xt0lA0riteQjBPIZFI9UpvfR1OOE3qpm4zOVqrJ9rSAgI/j+HihLKsaybwpIahHc/dsw==
+X-Received: by 2002:a17:902:aa8d:: with SMTP id d13-v6mr12936705plr.74.1542408553213;
+        Fri, 16 Nov 2018 14:49:13 -0800 (PST)
 Received: from localhost.localdomain ([103.212.140.154])
-        by smtp.gmail.com with ESMTPSA id p11sm26282018pgn.60.2018.11.16.14.47.06
+        by smtp.gmail.com with ESMTPSA id 27-v6sm45417607pfm.36.2018.11.16.14.49.10
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 14:47:09 -0800 (PST)
+        Fri, 16 Nov 2018 14:49:12 -0800 (PST)
 From:   Shreeya Patel <shreeya.patel23498@gmail.com>
 To:     lars@metafoo.de, Michael.Hennerich@analog.com, jic23@kernel.org,
         knaack.h@gmx.de, pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
         linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7] Remove platform data and introduce DT bindings
-Date:   Sat, 17 Nov 2018 04:17:04 +0530
-Message-Id: <20181116224704.24294-1-shreeya.patel23498@gmail.com>
+Subject: [PATCH 1/7] Staging: iio: adt7316: Set the data field
+Date:   Sat, 17 Nov 2018 04:19:07 +0530
+Message-Id: <20181116224907.24376-1-shreeya.patel23498@gmail.com>
 X-Mailer: git-send-email 2.17.1
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patchset introduces device tree bindings for adt7316
-driver and removes the usage of platform data from it.
-Also, it sets the data field to it's appropriate value in 
-the i2c read function which was nowhere being set before.
+adt7316_i2c_read function nowhere sets the data field.
+It is necessary to have an appropriate value for it.
+Hence, assign the value stored in 'ret' variable to data field.
 
-Shreeya Patel (7):
-  Staging: iio: adt7316: Set the data field
-  Staging: iio: adt7316: Add an extra check for 'ret' equals to 0
-  Staging: iio: adt7316: Add of_device_id table
-  Staging: iio: adt7316: Use device tree data to set ldac_pin
-  Staging: iio: adt7316: Switch irq_flags to a local variable
-  Staging: iio: adt7316: Change the name from irq_flags to irq_type
-  Staging: iio: adt7316: Use device tree data to assign irq_type
+Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
+---
+ drivers/staging/iio/addac/adt7316-i2c.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
- drivers/staging/iio/addac/adt7316-i2c.c | 19 +++++++++++-
- drivers/staging/iio/addac/adt7316-spi.c |  1 -
- drivers/staging/iio/addac/adt7316.c     | 39 ++++++++++++++++++-------
- drivers/staging/iio/addac/adt7316.h     |  1 -
- 4 files changed, 47 insertions(+), 13 deletions(-)
-
+diff --git a/drivers/staging/iio/addac/adt7316-i2c.c b/drivers/staging/iio/addac/adt7316-i2c.c
+index f66dd3ebbab1..856bcfa60c6c 100644
+--- a/drivers/staging/iio/addac/adt7316-i2c.c
++++ b/drivers/staging/iio/addac/adt7316-i2c.c
+@@ -35,6 +35,8 @@ static int adt7316_i2c_read(void *client, u8 reg, u8 *data)
+ 		return ret;
+ 	}
+ 
++	*data = ret;
++
+ 	return 0;
+ }
+ 
 -- 
 2.17.1
 
