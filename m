@@ -2,124 +2,144 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-5.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-11.0 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PULL_REQUEST,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 17EDAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:00:58 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5934FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:01:13 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DBB4120869
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:00:57 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DBB4120869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+	by mail.kernel.org (Postfix) with ESMTP id 60C2F20869
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:01:12 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 60C2F20869
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389632AbeKPWNA (ORCPT
+        id S2389651AbeKPWNO (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 17:13:00 -0500
-Received: from mx2.suse.de ([195.135.220.15]:44550 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727727AbeKPWM7 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 17:12:59 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay1.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id EC4D9AF43;
-        Fri, 16 Nov 2018 12:00:53 +0000 (UTC)
-Received: by quack2.suse.cz (Postfix, from userid 1000)
-        id 23A001E09B3; Fri, 16 Nov 2018 13:00:53 +0100 (CET)
-Date:   Fri, 16 Nov 2018 13:00:53 +0100
-From:   Jan Kara <jack@suse.cz>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        Dave Jiang <dave.jiang@intel.com>,
-        ksummit-discuss@lists.linuxfoundation.org,
-        "linux-nvdimm@lists.01.org" <linux-nvdimm@lists.01.org>,
-        vishal.l.verma@intel.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        zwisler@kernel.org
-Subject: Re: [Ksummit-discuss] [RFC PATCH 3/3] libnvdimm, MAINTAINERS:
- Subsystem Profile
-Message-ID: <20181116120053.GD24157@quack2.suse.cz>
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com>
- <154225761038.2499188.1270468803677883744.stgit@dwillia2-desk3.amr.corp.intel.com>
- <CAMuHMdVOJsM=66RrnbOzVthsT9=dFRQtL2rv99tCPC02M=hiXw@mail.gmail.com>
- <20181115061036.1575223d@silica.lan>
- <20181115162008.GO3759@mtr-leonro.mtl.com>
- <20181115110919.46978343@silica.lan>
- <20181115193520.GA24359@mtr-leonro.mtl.com>
- <20181116033258.23992cde@silica.lan>
+        Fri, 16 Nov 2018 17:13:14 -0500
+Received: from ozlabs.org ([203.11.71.1]:43831 "EHLO ozlabs.org"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1727727AbeKPWNO (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 17:13:14 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42xGz70vT8z9sBn;
+        Fri, 16 Nov 2018 23:01:07 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Linus Torvalds <torvalds@linux-foundation.org>
+Cc:     alistair@popple.id.au, gromero@linux.vnet.ibm.com,
+        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+        npiggin@gmail.com, oss@buserror.net, sathnaga@linux.vnet.ibm.com
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-4.20-3 tag
+Date:   Fri, 16 Nov 2018 23:01:02 +1100
+Message-ID: <87in0x2pvl.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116033258.23992cde@silica.lan>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Type: text/plain
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri 16-11-18 03:33:17, Mauro Carvalho Chehab wrote:
-> Em Thu, 15 Nov 2018 21:35:20 +0200
-> Leon Romanovsky <leon@kernel.org> escreveu:
-> 
-> > On Thu, Nov 15, 2018 at 11:09:34AM -0800, Mauro Carvalho Chehab wrote:
-> > > Em Thu, 15 Nov 2018 18:20:08 +0200
-> > > Leon Romanovsky <leon@kernel.org> escreveu:
-> > >  
-> > > > On Thu, Nov 15, 2018 at 06:10:36AM -0800, Mauro Carvalho Chehab wrote:  
-> > > > > Em Thu, 15 Nov 2018 09:03:11 +0100
-> > > > > Geert Uytterhoeven <geert@linux-m68k.org> escreveu:
-> > > > >  
-> > > > > > Hi Dan,
-> > > > > >
-> > > > > > On Thu, Nov 15, 2018 at 6:06 AM Dan Williams <dan.j.williams@intel.com> wrote:  
-> > > > > > > Document the basic policies of the libnvdimm subsystem and provide a
-> > > > > > > first example of a Subsystem Profile for others to duplicate and edit.
-> > > > > > >
-> > > > > > > Cc: Ross Zwisler <zwisler@kernel.org>
-> > > > > > > Cc: Vishal Verma <vishal.l.verma@intel.com>
-> > > > > > > Cc: Dave Jiang <dave.jiang@intel.com>
-> > > > > > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>  
-> > > > > >
-> > > > > > Thanks for your patch!
-> > > > > >  
-> > > > > > > --- /dev/null
-> > > > > > > +++ b/Documentation/nvdimm/subsystem-profile.rst  
-> > > > > >  
-> > > > > > > +Trusted Reviewers
-> > > > > > > +-----------------
-> > > > > > > +Johannes Thumshirn
-> > > > > > > +Toshi Kani
-> > > > > > > +Jeff Moyer
-> > > > > > > +Robert Elliott  
-> > > > > >
-> > > > > > Don't you want to add email addresses?
-> > > > > > Only the first one is listed in MAINTAINERS.  
-> > > > >
-> > > > > IMO, it makes sense to have their e-mails here, in a way that it could
-> > > > > easily be parsed by get_maintainers.pl.  
-> > > >
-> > > > I personally think that list of "trusted reviewers" makes more harm than
-> > > > good. It creates unneeded negative feelings to those who wanted to be in
-> > > > this list, but for any reason they don't. Those reviewers will feel
-> > > > "untrusted".  
-> > >
-> > > Yeah, perhaps something like "most active reviewers" would sound
-> > > better.  
-> > 
-> > I would recommend to remove this section at all.
-> > New maintainers won't come out of blue, but will be come
-> > from existing community and such individuals for sure will see
-> > and judge by themselves to whom they trust and to whom not.
-> 
-> I see your point, but, on the other hand, having a list with the ones
-> that are actively doing reviews helps newcomers.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA1
 
-How exactly? Do you expect people to CC patches to these directly? And if
-yes, why is not picking patches from the mailing list good enough?
+Hi Linus,
 
-								Honza
--- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+Please pull some more powerpc fixes for 4.20:
+
+The following changes since commit 651022382c7f8da46cb4872a545ee1da6d097d2a:
+
+  Linux 4.20-rc1 (2018-11-04 15:37:52 -0800)
+
+are available in the git repository at:
+
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.20-3
+
+for you to fetch changes up to b2fed34a628df6118b5d4e13f49a33e15f704fa9:
+
+  selftests/powerpc: Adjust wild_bctr to build with old binutils (2018-11-15 23:05:17 +1100)
+
+- ------------------------------------------------------------------
+powerpc fixes for 4.20 #3
+
+Two weeks worth of fixes since rc1.
+
+ - I broke 16-byte alignment of the stack when we moved PPR into pt_regs.
+   Despite being required by the ABI this broke almost nothing, we eventually
+   hit it in code where GCC does arithmetic on the stack pointer assuming the
+   bottom 4 bits are clear. Fix it by padding the in-kernel pt_regs by 8 bytes.
+
+ - A couple of commits fixing minor bugs in the recent SLB rewrite.
+
+ - A build fix related to tracepoints in KVM in some configurations.
+
+ - Our old "IO workarounds" code written for Cell couldn't coexist in a kernel
+   that runs on Power9 with the Radix MMU, fix that.
+
+ - Remove the NPU DMA ops, these just printed a warning and should never have
+   been called.
+
+ - Suppress an overly chatty message triggered by CPU hotplug in some configs.
+
+ - Two small selftest fixes.
+
+Thanks to:
+  Alistair Popple, Gustavo Romero, Nicholas Piggin, Satheesh Rajendran, Scott Wood.
+
+- ------------------------------------------------------------------
+Alistair Popple (1):
+      powerpc/powernv/npu: Remove NPU DMA ops
+
+Gustavo Romero (1):
+      selftests/powerpc: Adjust wild_bctr to build with old binutils
+
+Michael Ellerman (6):
+      powerpc/mm/64s: Consolidate SLB assertions
+      powerpc/mm/64s: Use PPC_SLBFEE macro
+      powerpc/mm/64s: Only use slbfee on CPUs that support it
+      powerpc/mm/64s: Fix preempt warning in slb_allocate_kernel()
+      powerpc/io: Fix the IO workarounds code to work with Radix
+      selftests/powerpc: Fix wild_bctr test to work on ppc64
+
+Nicholas Piggin (1):
+      powerpc/64: Fix kernel stack 16-byte alignment
+
+Satheesh Rajendran (1):
+      powerpc/numa: Suppress "VPHN is not supported" messages
+
+Scott Wood (1):
+      KVM: PPC: Move and undef TRACE_INCLUDE_PATH/FILE
+
+
+ arch/powerpc/include/asm/io.h                  | 20 +++-----
+ arch/powerpc/include/asm/ppc-opcode.h          |  2 +
+ arch/powerpc/include/asm/ptrace.h              |  1 +
+ arch/powerpc/kernel/setup_64.c                 |  2 +
+ arch/powerpc/kvm/trace.h                       |  8 +++-
+ arch/powerpc/kvm/trace_booke.h                 |  9 +++-
+ arch/powerpc/kvm/trace_hv.h                    |  9 +++-
+ arch/powerpc/kvm/trace_pr.h                    |  9 +++-
+ arch/powerpc/mm/numa.c                         |  2 +-
+ arch/powerpc/mm/slb.c                          | 35 ++++++--------
+ arch/powerpc/platforms/powernv/npu-dma.c       | 64 ++------------------------
+ tools/testing/selftests/powerpc/mm/wild_bctr.c | 21 +++++++--
+ 12 files changed, 76 insertions(+), 106 deletions(-)
+-----BEGIN PGP SIGNATURE-----
+
+iQIcBAEBAgAGBQJb7rB9AAoJEFHr6jzI4aWA7uYP/2bbEUaIpGw2OP5AxedSWtIh
+7RBX5rtzC8sA+ifpI7utcz8woOH+8HmzXf3f0BsjLlDZO61dCBzPM8yEkgiHmEMH
+t1ApMKCUkwTI1R+1somVhyV2fYct+Eb9Qa929IIKqgC5r8nElYqaE7jr56U7jFQE
+TZwMoeThTGxfXMa+IuSWLGtvbUeC6LtKoWjoynnZQC4RMQqKRc8xaRpN5W//ZQyq
+dtQ8kc9UWrSl5xj5ah/evn/0oWl1cSX95juO00rGsTL5iuUQNcUVZcJAmwoiPAN/
+GCNYDLqEX8SwzKidnAmTR6AUBSLP48kGKrUwjMZVfvT0SMNyIL9lq9u6N5ucyq+u
+b0HLMrlqZiYasL3fsKHo+dbJ1emzZdjMIYNe/x+6GAgfBTvRePkqVwLgB1uSOjdr
+k41aDRaoagOUbIs6y6tXHyp/mFbP3VswBA9n1ZGjr/KsgrlBQftCTOeSuPKSdAf+
+WKrzakoj4SIvOZdUGbttb0HJHFHE5xCGIzGH7NaO/AyfFzkIZjq86TU4skqN0nQw
+lgHNA9QgXlpBMwRvEBM28FW058bsVw7Dgez/vJijlEQNC7fi6TDJTzYiroBEdmF4
+82FEUU9ZECw+zb6OI7E3VntTqWdM8E3qCGI9tLoCrFpoagERHfayTTsW7iQJ/Scj
+dTL6b40yqw88T+myURIZ
+=lNgM
+-----END PGP SIGNATURE-----
