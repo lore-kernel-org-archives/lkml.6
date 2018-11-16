@@ -2,177 +2,135 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-6.6 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E1B6EC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:17:03 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 89232C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:26:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AB4FC2086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:17:03 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AB4FC2086B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id 33D622087C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 13:26:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=126.com header.i=@126.com header.b="HDhenEiC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 33D622087C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=126.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389718AbeKPX3X (ORCPT
+        id S1728414AbeKPXhl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 18:29:23 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48093 "EHLO mail.bootlin.com"
+        Fri, 16 Nov 2018 18:37:41 -0500
+Received: from m15-41.126.com ([220.181.15.41]:33999 "EHLO m15-41.126.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727727AbeKPX3X (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 18:29:23 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id B7B8D20742; Fri, 16 Nov 2018 14:16:59 +0100 (CET)
-Received: from bbrezillon (aaubervilliers-681-1-13-146.w90-88.abo.wanadoo.fr [90.88.134.146])
-        by mail.bootlin.com (Postfix) with ESMTPSA id B78B120D72;
-        Fri, 16 Nov 2018 14:16:39 +0100 (CET)
-Date:   Fri, 16 Nov 2018 14:16:39 +0100
-From:   Boris Brezillon <boris.brezillon@bootlin.com>
-To:     vitor <vitor.soares@synopsys.com>
-Cc:     Wolfram Sang <wsa@the-dreams.de>, <linux-i2c@vger.kernel.org>,
-        "Jonathan Corbet" <corbet@lwn.net>, <linux-doc@vger.kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Arnd Bergmann <arnd@arndb.de>,
-        Przemyslaw Sroka <psroka@cadence.com>,
-        Arkadiusz Golec <agolec@cadence.com>,
-        Alan Douglas <adouglas@cadence.com>,
-        Bartosz Folta <bfolta@cadence.com>,
-        Damian Kos <dkos@cadence.com>,
-        Alicja Jurasik-Urbaniak <alicja@cadence.com>,
-        "Cyprian Wronka" <cwronka@cadence.com>,
-        Suresh Punnoose <sureshp@cadence.com>,
-        "Rafal Ciepiela" <rafalc@cadence.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-        Nishanth Menon <nm@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Pawel Moll <pawel.moll@arm.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Ian Campbell <ijc+devicetree@hellion.org.uk>,
-        "Kumar Gala" <galak@codeaurora.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Geert Uytterhoeven <geert@linux-m68k.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Xiang Lin <Xiang.Lin@synaptics.com>,
-        <linux-gpio@vger.kernel.org>, Sekhar Nori <nsekhar@ti.com>,
-        Przemyslaw Gaj <pgaj@cadence.com>,
-        Peter Rosin <peda@axentia.se>,
-        Mike Shettel <mshettel@codeaurora.org>,
-        Stephen Boyd <swboyd@chromium.org>,
-        Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v10 0/9] Add the I3C subsystem
-Message-ID: <20181116141639.31074113@bbrezillon>
-In-Reply-To: <5f946406-a205-3802-aefd-ebd8b5a72b0b@synopsys.com>
-References: <20181026144333.12276-1-boris.brezillon@bootlin.com>
-        <76b1d15d-232c-d8ba-5eba-8394e71be725@synopsys.com>
-        <20181115135731.25f60990@bbrezillon>
-        <20181115150137.GB4169@kunai>
-        <20181115162826.42b54776@bbrezillon>
-        <1d64f21a-ad24-94e0-2c17-25729ef59a31@synopsys.com>
-        <20181115200058.1869afdb@bbrezillon>
-        <5f946406-a205-3802-aefd-ebd8b5a72b0b@synopsys.com>
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        id S1727772AbeKPXhl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 18:37:41 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
+        s=s110527; h=Date:From:Subject:MIME-Version:Message-ID; bh=gWTc9
+        8paPWlnLOtE6mVk0Ef68WlXtYlVMgv0OrCf63Q=; b=HDhenEiCFCpErcr3KmDDR
+        A1a46hA69S6mK3ljY12vwSNwAJ4e0arBLm2Ed/1FmHy4pNZD8vCPttRN7eZ3XR6m
+        XHWlNRqBSH7ioallCi6f4kPkbnpnwX+CA5t1dchxmByo8d9tjaDC/YPLgwKJn3nF
+        jUwrByws4geP8Mt1ngBzD4=
+Received: from liuxiang_1999$126.com ( [222.209.16.97] ) by
+ ajax-webmail-wmsvr41 (Coremail) ; Fri, 16 Nov 2018 21:24:10 +0800 (CST)
+X-Originating-IP: [222.209.16.97]
+Date:   Fri, 16 Nov 2018 21:24:10 +0800 (CST)
+From:   "Liu Xiang" <liuxiang_1999@126.com>
+To:     "Boris Brezillon" <boris.brezillon@bootlin.com>
+Cc:     Tudor.Ambarus@microchip.com, liu.xiang6@zte.com.cn,
+        cyrille.pitchen@wedev4u.fr, linux-mtd@lists.infradead.org,
+        linux-kernel@vger.kernel.org, marek.vasut@gmail.com,
+        dwmw2@infradead.org, computersforpeace@gmail.com, richard@nod.at
+Subject: Re:Re: [PATCH] mtd: spi-nor: Return error when nor->addr_width not
+ match the device size
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version SP_ntes V3.5 build
+ 20160729(86883.8884) Copyright (c) 2002-2018 www.mailtech.cn 126com
+In-Reply-To: <20181115120256.4e1a86b2@bbrezillon>
+References: <1542200165-3073-1-git-send-email-liu.xiang6@zte.com.cn>
+ <20181114145129.568e4bb3@bbrezillon>
+ <96397ec0-14de-f09a-a18d-c67396e33fba@microchip.com>
+ <20181115120256.4e1a86b2@bbrezillon>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Message-ID: <55597875.b295.1671cb170cb.Coremail.liuxiang_1999@126.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID: KcqowABnVfn7xO5bAeKTAQ--.23688W
+X-CM-SenderInfo: xolx5x5dqjsiqzzzqiyswou0bp/1tbiqBsBsFpD6YjDzwAAs2
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Nov 2018 12:31:42 +0000
-vitor <vitor.soares@synopsys.com> wrote:
-
-> Hi Boris,
-> 
-> 
-> On 15/11/18 19:00, Boris Brezillon wrote:
-> > On Thu, 15 Nov 2018 18:03:47 +0000
-> > vitor <vitor.soares@synopsys.com> wrote:
-> >  
-> >> Hi Boris,
-> >>
-> >>
-> >> On 15/11/18 15:28, Boris Brezillon wrote:  
-> >>> On Thu, 15 Nov 2018 16:01:37 +0100
-> >>> Wolfram Sang <wsa@the-dreams.de> wrote:
-> >>>     
-> >>>> Hi Boris,
-> >>>>     
-> >>>>> What we could do though, is expose I3C devices that do not have a
-> >>>>> driver in kernel space, like spidev does.  
-> >>>> ...
-> >>>>     
-> >>>>> Mark, Wolfram, Arnd, Greg, any opinion?  
-> >>>> Is there a benefit for having drivers in userspace? My gut feeling is to
-> >>>> encourage people to write kernel drivers. If this is, for some reason,
-> >>>> not possible for some driver, then we have a use case at hand to test
-> >>>> the then-to-be-developed userspace interface against. Until then, I
-> >>>> personally wouldn't waste effort on designing it without a user in
-> >>>> sight.  
-> >>> I kind of agree with that. Vitor, do you have a use case in mind for
-> >>> such userspace drivers? I don't think it's worth designing an API for
-> >>> something we don't need (yet).  
-> >> My use case is a tool for tests, lets say like the i2c tools.  
-> > What would you like to test exactly?
-> >  
-> >> There is
-> >> other subsystems, some of them mentioned on this thread, that have and
-> >> ioctl system call or other method to change parameters or send data.  
-> > I don't think they added the /dev interface before having a real use
-> > case for it.
-> >  
-> >>
-> >> I rise this topic because I really think it worth to define now how this
-> >> should be design (and for me how to do the things right) to avoid future
-> >> issues.  
-> > Actually it should be done the other way around: you should have a real
-> > need and the /dev interface should be designed to fulfill this need.
-> > Based on this real use case we can discuss other potential usage that
-> > might appear in the future and try to design something more
-> > future-proof, but clearly, this userspace interface should be driven by
-> > a real/well-defined use case.
-> >
-> > Also, exposing things to userspace is way more risky than adding a new
-> > in-kernel subsystem/framework, because it then becomes part of the
-> > stable ABI.
-> >
-> > To make things clearer, I'm not against the idea of exposing I3C
-> > devices (or I3C buses) to userspace, but I'd like to understand what you
-> > plan to do with that. If this is about testing, what kind of tests
-> > you'd like to run. If this is about developing drivers in userspace,
-> > why can't these be done in kernel space (license issues?), and what
-> > would those drivers be allowed to do?  
-> 
-> 
-> Basically I need a tool that help me during the development and to avoid 
-> me to write a dummy driver for each device that I test.
-
-But we want I3C device drivers to be upstreamed, so why not developing a
-real driver everytime you test a new device and submitting it upstream?
-
-> 
-> For instances do some read/write,
-
-Doing SDR/DDR transfers is probably acceptable, but I still think we
-should push hard to have kernel drivers when that's possible.
-
-> get/set ccc commands,
-
-Exposing CCC commands is definitely not a good idea, since they're not
-even exposed to kernel drivers.
-
-> if something 
-> goes wrong during the bus initialization have a to debug etc...
-
-Can't we add such a debug infrastructure in the kernel. Maybe we can
-expose debugfs files too if that helps, though if those debugfs files
-are actually used by userspace libs/tools, it's not any better than
-ioctls or sysfs files, since they will anyway become a stable ABI.
-
-> 
-> 
-> For me this is a valid use case and I imagine when people start to 
-> develop in i3c this interface will help everyone.
-
-How about you propose an i3cdev driver that allow users to do SDR
-transfers throuh an ioctl?
+CkhpIFR1ZG9yLCBCb3JpcywgQ3lyaWxsZSwKVGhlcmUgaXMgbm8gSkVERUMgQkZQVCB0YWJsZXMg
+aW4gdGhlIGRhdGFzaGVldC4gCkluIG15IHRlc3QgcGxhdGZvcm0sIEkgc2VudCBSRFNGRFAgY29t
+bWFuZCB0byB0aGUgZmxhc2ggYW5kIGdvdCB0aGUKcGFyYW1ldGVycyBiYWNrLgpNeSBkZXZpY2Ug
+dHlwZSBpcyBJUzI1TFAyNTZELUpNTEEsIHdoaWNoIGlzIG5vdCBpbiBIL0UvRy9GIHNlcmllcyBv
+ZiBmbGFzaAp0aGF0IGlzIGRlc2NyaWJlZCBpbiBjaGFwdGVyIDExIG9mIHRoZSBkYXRhc2hlZXQu
+IFRoZSByZXBseSBmcm9tIElTU0kgIHN1Z2dlc3RzCm9ubHkgdGhlc2UgY2VydGFpbiBkZXZpY2Vz
+IGNhbiBzdXBwb3J0IFNGRFAgdGFibGUuCkkgYW0gY29uZnVzZWQgd2h5IG15IGRldmljZSBjYW4g
+c3VwcG9ydCBSRFNGRFAgY29tbWFuZCBhbmQgZ2l2ZSAKcGFyYW1ldGVycyBiYWNrLiBJIHdpbGwg
+YXNrIElTU0kgZm9yIG1vcmUgZGV0YWlscy4KCgoKQXQgMjAxOC0xMS0xNSAxOTowMjo1NiwgIkJv
+cmlzIEJyZXppbGxvbiIgPGJvcmlzLmJyZXppbGxvbkBib290bGluLmNvbT4gd3JvdGU6Cj5PbiBU
+aHUsIDE1IE5vdiAyMDE4IDEwOjU0OjM5ICswMDAwCj48VHVkb3IuQW1iYXJ1c0BtaWNyb2NoaXAu
+Y29tPiB3cm90ZToKPgo+PiBIaSwgTGl1LCBCb3JpcywgQ3lyaWxsZSwKPj4gCj4+IE9uIDExLzE0
+LzIwMTggMDM6NTEgUE0sIEJvcmlzIEJyZXppbGxvbiB3cm90ZToKPj4gPiBPbiBXZWQsIDE0IE5v
+diAyMDE4IDIwOjU2OjA1ICswODAwCj4+ID4gTGl1IFhpYW5nIDxsaXUueGlhbmc2QHp0ZS5jb20u
+Y24+IHdyb3RlOgo+PiA+ICAgCj4+ID4+IEluIGlzMjVscDI1NiwgdGhlIERXT1JEMSBvZiBKRURF
+QyBCYXNpYyBGbGFzaCBQYXJhbWV0ZXIgSGVhZGVyCj4+ID4+IGlzIDB4ZmZmOTIwZTUuIFNvIHRo
+ZSBEV09SRDFbMTg6MTddIEFkZHJlc3MgQnl0ZXMgYml0cyBhcmUgMGIwMCwgIAo+PiAKPj4gTGl1
+LCBjYW4geW91IHBvaW50IHVzIHRvIGEgZGF0YXNoZWV0IHRoYXQgaGFzIHRoZSBKRURFQyBCRlBU
+IHRhYmxlcyBkZXNjcmliZWQ/IEkKPj4gY291bGRuJ3QgZmluZCBvbmUgLi4uCj4+IAo+PiA+PiBt
+ZWFucyB0aGF0IDMtQnl0ZSBvbmx5IGFkZHJlc3NpbmcuICAKPj4gPiAKPj4gPiBBY2NvcmRpbmcg
+dG8geW91ciBvdGhlciBwYXRjaCB0aGlzIE5PUiBzdXBwb3J0cyA0QiBvcGNvZGUsIHdoaWNoIG1l
+YW5zCj4+ID4gdGhlIFNGRFAgdGFibGUgaXMgd3JvbmcuCj4+ID4gICAKPj4gPj4gQnV0IHRoZSBk
+ZXZpY2Ugc2l6ZSBpcyBsYXJnZXIKPj4gPj4gdGhhbiAxNk1CLCBub3ItPmFkZHJfd2lkdGggbXVz
+dCBiZSA0IHRvIGFjY2VzcyB0aGUgd2hvbGUgYWRkcmVzcy4KPj4gPj4gQW4gZXJyb3Igc2hvdWxk
+IGJlIHJldHVybmVkIHdoZW4gbm9yLT5hZGRyX3dpZHRoIG5vdCBtYXRjaCAgCj4+ID4gCj4+ID4g
+CQkJCQkJICAgXmRvZXMgbm90Cj4+ID4gICAKPj4gPj4gdGhlIGRldmljZSBzaXplIGluIHNwaV9u
+b3JfcGFyc2Vfc2ZkcCgpLgo+PiA+Pgo+PiA+PiBTdWdnZXN0ZWQtYnk6IEJvcmlzIEJyZXppbGxv
+biA8Ym9yaXMuYnJlemlsbG9uQGJvb3RsaW4uY29tPgo+PiA+PiBTaWduZWQtb2ZmLWJ5OiBMaXUg
+WGlhbmcgPGxpdS54aWFuZzZAenRlLmNvbS5jbj4KPj4gPj4gLS0tCj4+ID4+ICBkcml2ZXJzL210
+ZC9zcGktbm9yL3NwaS1ub3IuYyB8IDQgKysrKwo+PiA+PiAgMSBmaWxlIGNoYW5nZWQsIDQgaW5z
+ZXJ0aW9ucygrKQo+PiA+Pgo+PiA+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy9tdGQvc3BpLW5vci9z
+cGktbm9yLmMgYi9kcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYwo+PiA+PiBpbmRleCAzZWJh
+MTNhLi43N2VhZjIyIDEwMDY0NAo+PiA+PiAtLS0gYS9kcml2ZXJzL210ZC9zcGktbm9yL3NwaS1u
+b3IuYwo+PiA+PiArKysgYi9kcml2ZXJzL210ZC9zcGktbm9yL3NwaS1ub3IuYwo+PiA+PiBAQCAt
+MjY2OSw2ICsyNjY5LDEwIEBAIHN0YXRpYyBpbnQgc3BpX25vcl9wYXJzZV9iZnB0KHN0cnVjdCBz
+cGlfbm9yICpub3IsCj4+ID4+ICAJfQo+PiA+PiAgCXBhcmFtcy0+c2l6ZSA+Pj0gMzsgLyogQ29u
+dmVydCB0byBieXRlcy4gKi8KPj4gPj4gIAo+PiA+PiArCS8qaWYgdGhlIGRldmljZSBleGNlZWRz
+IDE2TWlCLCBhZGRyX3dpZHRoIG11c3QgYmUgNCovICAKPj4gPiAKPj4gPiBQbGVhc2UgYWRkIGEg
+d2hpdGUgc3BhY2UgYWZ0ZXIgJy8qJyBhbmQgYmVmb3JlICcqLyc6Cj4+ID4gCj4+ID4gCS8qIElm
+IHRoZSBkZXZpY2UgZXhjZWVkcyAxNk1pQiwgLT5hZGRyX3dpZHRoIG11c3QgYmUgNC4gKi8KPj4g
+PiAgIAo+PiA+PiArCWlmICgocGFyYW1zLT5zaXplID4gMHgxMDAwMDAwKSAmJiAobm9yLT5hZGRy
+X3dpZHRoID09IDMpKSAgCj4+ID4gCj4+ID4gUGFyZW5zIGFyZSBub3QgbmVlZGVkIGFyb3VuZCBz
+dWItY29uZGl0aW9uczoKPj4gPiAKPj4gPiAJaWYgKHBhcmFtcy0+c2l6ZSA+IDB4MTAwMDAwMCAm
+JiBub3ItPmFkZHJfd2lkdGggPT0gMykKPj4gPiAgIAo+PiA+PiArCQlyZXR1cm4gLUVJTlZBTDsK
+Pj4gPj4gKyAgCj4+ID4gCj4+ID4gSSdtIG5vdCBzdXJlIHRoaXMgaXMgY29ycmVjdC4gTG9va3Mg
+bGlrZSBzb21lIE5PUnMgb25seSBzdXBwb3J0IDNCCj4+ID4gb3Bjb2RlcyBidXQgaGF2ZSBhICI0
+LWJ5dGUgYWRkcmVzc2luZyIgbW9kZSAoc2VlIHNldF80Ynl0ZSgpIFsxXSkuCj4+ID4gRG9uJ3Qg
+a25vdyB3aGF0J3MgcmVwb3J0ZWQgYnkgdGhlIEJGUFQgc2VjdGlvbiBpbiB0aGlzIGNhc2UgdGhv
+dWdoCj4+ID4gKEJGUFRfRFdPUkQxX0FERFJFU1NfQllURVNfM19PTkxZIG9yIEJGUFRfRFdPUkQx
+X0FERFJFU1NfQllURVNfM19PUl80KS4gIAo+PiAKPj4gQm9yaXMsIHRoaXMgaXMgaW4gY2xvc2Ug
+cmVsYXRpb24gd2l0aCB5b3VyIHNlY29uZCBwYXRjaDogW1BBVENIIHYzIDIvMl0gbXRkOgo+PiBz
+cGktbm9yOiBVc2UgNEIgb3Bjb2RlcyB3aGVuIHRoZSBOT1IgYWR2ZXJ0aXNlcyBib3RoIDNCIGFu
+ZCA0Qi4KPj4gCj4+IFdoZW4gbG9va2luZyBhZ2FpbiBhdCB0aGlzLCBJIHdvdWxkIHNheSB0aGF0
+IGZvciB0aGUgZmxhc2hlcyB0aGF0IGhhdmUgYSAiNC1ieXRlCj4+IGFkZHJlc3NpbmciIG1vZGUs
+IGJ1dCBqdXN0IDNCIG9wY29kZXMsIEkgd291bGQgZXhwZWN0IHRoZSBEV09SRDFbMTg6MTddIHRv
+IGJlIG9mCj4+IHZhbHVlIEJGUFRfRFdPUkQxX0FERFJFU1NfQllURVNfM19PUl80IChlbnRlcnMg
+NC1CeXRlIG1vZGUgb24gY29tbWFuZCAtIHVzZXMgM0IKPj4gb3Bjb2RlcykuCj4KPlRoZSBOT1Ig
+d2UgaGF2ZSBhbmQgd2hpY2ggaXMgZXhwb3NpbmcgQkZQVF9EV09SRDFfQUREUkVTU19CWVRFU18z
+X09SXzQKPmFjdHVhbGx5IHN1cHBvcnRzIGJvdGggM0IgYW5kIDRCIGNvbW1hbmRzLCBzbywgaW4g
+dGhpcyBwYXJ0aWN1bGFyIGNhc2UsCj5CRlBUX0RXT1JEMV9BRERSRVNTX0JZVEVTXzNfT1JfNCBk
+b2VzIG5vdCBtZWFuICIzQiBvcGNvZGUrNC1ieXRlCj5hZGRyZXNzaW5nIG1vZGUiCj4KPj4gCj4+
+IElmIEJGUFRfRFdPUkQxX0FERFJFU1NfQllURVNfM19PUl80IGFuZCA0QiBvcGNvZGVzLCB0aGVu
+IHdlIGNhbiBxdWVyeSBCRlBUCj4+IERXT1JEMTZbMzE6MjRdOiBpdCBzaG91bGQgaGF2ZSB2YWx1
+ZSB4eDF4X3h4eHhiIHRvIGluZGljYXRlIHRoYXQgNEIgb3Bjb2RlcyBhcmUKPj4gc3VwcG9ydGVk
+LiBCdXQgd2hpY2ggNEIgb3Bjb2RlcyBhcmUgc3VwcG9ydGVkPwo+Cj5JIGhvcGUgYWxsIG9mIHRo
+ZW0uIFdvdWxkbid0IG1ha2Ugc2Vuc2UgdG8gaGF2ZSBvbmx5IHNvbWUgb2YgdGhlbQo+c3VwcG9y
+dGVkLgo+Cj4+IERvIGFsbCAzQiBvcGNvZGVzIGhhdmUgYSA0Qgo+PiBvcGNvZGUgY29ycmVzcG9u
+ZGVudCBpZiBTRkRQIDQtYnl0ZSB0YWJsZSBpcyBub3QgYXZhaWxhYmxlPyBUaGlzIG1pZ2h0IGJl
+IGEgZ29vZAo+PiBhc3N1bXB0aW9uLCBidXQgSSBjYW4ndCBzZWUgaXQgYW55d2hlcmUgaW4gamVz
+ZDIxNmMuCj4KPkkgaG9wZSBzby4uLgo=
