@@ -2,35 +2,36 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E55D4C04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:39:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3E508C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:39:57 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AF2632087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:39:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF2632087C
+	by mail.kernel.org (Postfix) with ESMTP id 1272C2089D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:39:57 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1272C2089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389797AbeKPWwD (ORCPT
+        id S2389815AbeKPWwI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 17:52:03 -0500
+        Fri, 16 Nov 2018 17:52:08 -0500
 Received: from mga06.intel.com ([134.134.136.31]:38676 "EHLO mga06.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727965AbeKPWwC (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 17:52:02 -0500
+        id S1727965AbeKPWwI (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 17:52:08 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga008.fm.intel.com ([10.253.24.58])
-  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 04:39:49 -0800
+  by orsmga104.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 04:39:53 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
-   d="scan'208";a="86983995"
+   d="scan'208";a="86984004"
 Received: from unknown (HELO localhost) ([10.249.254.90])
-  by fmsmga008.fm.intel.com with ESMTP; 16 Nov 2018 04:39:43 -0800
+  by fmsmga008.fm.intel.com with ESMTP; 16 Nov 2018 04:39:49 -0800
 From:   Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 To:     linux-integrity@vger.kernel.org
 Cc:     linux-security-module@vger.kernel.org,
@@ -44,9 +45,9 @@ Cc:     linux-security-module@vger.kernel.org,
         Jason Gunthorpe <jgg@ziepe.ca>, Arnd Bergmann <arnd@arndb.de>,
         Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v8 06/17] tpm: access command header through struct in tpm_try_transmit()
-Date:   Fri, 16 Nov 2018 14:38:30 +0200
-Message-Id: <20181116123845.15705-7-jarkko.sakkinen@linux.intel.com>
+Subject: [PATCH v8 07/17] tpm: encapsulate tpm_dev_transmit()
+Date:   Fri, 16 Nov 2018 14:38:31 +0200
+Message-Id: <20181116123845.15705-8-jarkko.sakkinen@linux.intel.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
 References: <20181116123845.15705-1-jarkko.sakkinen@linux.intel.com>
@@ -57,31 +58,75 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Instead of accessing fields of the command header through offsets to
-the raw buffer, it is a better idea to use the header struct pointer
-that is already used elsewhere in the function.
+Encapsulate tpm_transmit() call pattern to tpm_dev_transmit() because it
+is identically used from two places. Use unlocked version of
+tpm_transmit() so that we are able to move the calls to
+tpm2_prepare_space() and tpm2_commit_space() later on to this new
+function.
 
 Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
 Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 ---
- drivers/char/tpm/tpm-interface.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/char/tpm/tpm-dev-common.c | 25 ++++++++++++++++++-------
+ 1 file changed, 18 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-interface.c
-index cb0d44c158ae..11af50646ed1 100644
---- a/drivers/char/tpm/tpm-interface.c
-+++ b/drivers/char/tpm/tpm-interface.c
-@@ -191,8 +191,8 @@ static ssize_t tpm_try_transmit(struct tpm_chip *chip,
- 	if (bufsiz > TPM_BUFSIZE)
- 		bufsiz = TPM_BUFSIZE;
+diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-dev-common.c
+index 99b5133a9d05..cbb0ee30b511 100644
+--- a/drivers/char/tpm/tpm-dev-common.c
++++ b/drivers/char/tpm/tpm-dev-common.c
+@@ -27,7 +27,19 @@
+ static struct workqueue_struct *tpm_dev_wq;
+ static DEFINE_MUTEX(tpm_dev_wq_lock);
  
--	count = be32_to_cpu(*((__be32 *) (buf + 2)));
--	ordinal = be32_to_cpu(*((__be32 *) (buf + 6)));
-+	count = be32_to_cpu(header->length);
-+	ordinal = be32_to_cpu(header->ordinal);
- 	if (count == 0)
- 		return -ENODATA;
- 	if (count > bufsiz) {
+-static void tpm_async_work(struct work_struct *work)
++static ssize_t tpm_dev_transmit(struct tpm_chip *chip, struct tpm_space *space,
++				u8 *buf, size_t bufsiz)
++{
++	ssize_t ret;
++
++	mutex_lock(&chip->tpm_mutex);
++	ret = tpm_transmit(chip, space, buf, bufsiz, TPM_TRANSMIT_UNLOCKED);
++	mutex_unlock(&chip->tpm_mutex);
++
++	return ret;
++}
++
++static void tpm_dev_async_work(struct work_struct *work)
+ {
+ 	struct file_priv *priv =
+ 			container_of(work, struct file_priv, async_work);
+@@ -35,9 +47,8 @@ static void tpm_async_work(struct work_struct *work)
+ 
+ 	mutex_lock(&priv->buffer_mutex);
+ 	priv->command_enqueued = false;
+-	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
+-			   sizeof(priv->data_buffer), 0);
+-
++	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
++			       sizeof(priv->data_buffer));
+ 	tpm_put_ops(priv->chip);
+ 	if (ret > 0) {
+ 		priv->data_pending = ret;
+@@ -78,7 +89,7 @@ void tpm_common_open(struct file *file, struct tpm_chip *chip,
+ 	mutex_init(&priv->buffer_mutex);
+ 	timer_setup(&priv->user_read_timer, user_reader_timeout, 0);
+ 	INIT_WORK(&priv->timeout_work, tpm_timeout_work);
+-	INIT_WORK(&priv->async_work, tpm_async_work);
++	INIT_WORK(&priv->async_work, tpm_dev_async_work);
+ 	init_waitqueue_head(&priv->async_wait);
+ 	file->private_data = priv;
+ }
+@@ -163,8 +174,8 @@ ssize_t tpm_common_write(struct file *file, const char __user *buf,
+ 		return size;
+ 	}
+ 
+-	ret = tpm_transmit(priv->chip, priv->space, priv->data_buffer,
+-			   sizeof(priv->data_buffer), 0);
++	ret = tpm_dev_transmit(priv->chip, priv->space, priv->data_buffer,
++			       sizeof(priv->data_buffer));
+ 	tpm_put_ops(priv->chip);
+ 
+ 	if (ret > 0) {
 -- 
 2.19.1
 
