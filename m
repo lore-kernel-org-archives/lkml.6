@@ -2,200 +2,235 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
+	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
+	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 98CBDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:18:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 4D615C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:18:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 465DE20811
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:18:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 465DE20811
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 0629220811
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 17:18:33 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="FMewaJuu"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0629220811
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=oracle.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729327AbeKQDbS (ORCPT
+        id S2390168AbeKQDbq (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 22:31:18 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53640 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729036AbeKQDbS (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 22:31:18 -0500
-Received: from smtp.corp.redhat.com (int-mx05.intmail.prod.int.phx2.redhat.com [10.5.11.15])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 26ADB3082AFA;
-        Fri, 16 Nov 2018 17:18:04 +0000 (UTC)
-Received: from madcap2.tricolour.ca (ovpn-112-24.phx2.redhat.com [10.3.112.24])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8A58F5D759;
-        Fri, 16 Nov 2018 17:17:59 +0000 (UTC)
-From:   Richard Guy Briggs <rgb@redhat.com>
-To:     LKML <linux-kernel@vger.kernel.org>,
-        Linux-Audit Mailing List <linux-audit@redhat.com>
-Cc:     Paul Moore <paul@paul-moore.com>, Eric Paris <eparis@redhat.com>,
-        Steve Grubb <sgrubb@redhat.com>,
-        Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH] audit: remove WATCH and TREE config options
-Date:   Fri, 16 Nov 2018 12:17:35 -0500
-Message-Id: <a00bbc558e81d18cb9d36211fa2e2aee033aa191.1542218518.git.rgb@redhat.com>
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.15
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.45]); Fri, 16 Nov 2018 17:18:04 +0000 (UTC)
+        Fri, 16 Nov 2018 22:31:46 -0500
+Received: from userp2130.oracle.com ([156.151.31.86]:33052 "EHLO
+        userp2130.oracle.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729036AbeKQDbq (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 22:31:46 -0500
+Received: from pps.filterd (userp2130.oracle.com [127.0.0.1])
+        by userp2130.oracle.com (8.16.0.22/8.16.0.22) with SMTP id wAGHE10a021480;
+        Fri, 16 Nov 2018 17:17:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=subject : to : cc :
+ references : from : message-id : date : mime-version : in-reply-to :
+ content-type : content-transfer-encoding; s=corp-2018-07-02;
+ bh=3U1bYNGqhawLSrOj7zZRGxZdoq1JJhJWNWfpqUIYAyA=;
+ b=FMewaJuu3WQV2DXmHbMHFNXgddgz5pMczPCncgQaqJuathNhIKW803AFPbr54mlHaOdV
+ scvpnUsy1p5LGGtkJ2UZjmhAXsCLP12dvIcS/YwE/ZIhFtDQjdteFK9Tr6gbf0rGFKS+
+ GEsPsw3yxlDYB7XUt098TzZWNQA2my4/Z1NrE6+J64+B443k7YQxmITiVpbG3EhFcMsH
+ LFhlcU2Y2PAX3o4QhRABvUfOyeg9+UtXZUo6k/AzP0uI+tm+SGT4oFSPYqv5ronjnewC
+ F+/mkMTx3rmJewdvKhXug139pl0Jz+4zpJY8P9BXGMI3t39THU84cySFG/Jwl4k1kSgw DQ== 
+Received: from userv0021.oracle.com (userv0021.oracle.com [156.151.31.71])
+        by userp2130.oracle.com with ESMTP id 2nr7csge9p-1
+        (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Nov 2018 17:17:39 +0000
+Received: from userv0122.oracle.com (userv0122.oracle.com [156.151.31.75])
+        by userv0021.oracle.com (8.14.4/8.14.4) with ESMTP id wAGHHYKw007033
+        (version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+        Fri, 16 Nov 2018 17:17:34 GMT
+Received: from abhmp0009.oracle.com (abhmp0009.oracle.com [141.146.116.15])
+        by userv0122.oracle.com (8.14.4/8.14.4) with ESMTP id wAGHHUo3019023;
+        Fri, 16 Nov 2018 17:17:31 GMT
+Received: from [10.159.250.128] (/10.159.250.128)
+        by default (Oracle Beehive Gateway v4.0)
+        with ESMTP ; Fri, 16 Nov 2018 09:17:30 -0800
+Subject: Re: [PATCH v7 0/7] KVM: x86: Allow Qemu/KVM to use PVH entry point
+To:     Paolo Bonzini <pbonzini@redhat.com>, x86@kernel.org,
+        xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+        kvm@vger.kernel.org, jgross@suse.com
+Cc:     boris.ostrovsky@oracle.com, bp@suse.de,
+        dave.hansen@linux.intel.com, davem@davemloft.net,
+        gregkh@linuxfoundation.org, hpa@zytor.com, jpoimboe@redhat.com,
+        kirill.shutemov@linux.intel.com, linus.walleij@linaro.org,
+        luto@kernel.org, mchehab@kernel.org, mingo@redhat.com,
+        rdunlap@infradead.org, tglx@linutronix.de, thomas.lendacky@amd.com,
+        hch@infradead.org, roger.pau@citrix.com, rkrcmar@redhat.com,
+        Stefan Hajnoczi <stefanha@redhat.com>,
+        Stefano Garzarella <sgarzare@redhat.com>,
+        Liam Merwick <liam.merwick@oracle.com>,
+        George Kennedy <george.kennedy@oracle.com>,
+        Maran Wilson <maran.wilson@oracle.com>
+References: <1523920175-27287-1-git-send-email-maran.wilson@oracle.com>
+ <9aeeaf85-6ecf-c1e2-640a-657f5bb0f8ef@redhat.com>
+From:   Maran Wilson <maran.wilson@oracle.com>
+Organization: Oracle Corporation
+Message-ID: <bf0112de-8ceb-d1e4-d787-bf6bde7a1f14@oracle.com>
+Date:   Fri, 16 Nov 2018 09:17:27 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
+MIME-Version: 1.0
+In-Reply-To: <9aeeaf85-6ecf-c1e2-640a-657f5bb0f8ef@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Content-Language: en-US
+X-Proofpoint-Virus-Version: vendor=nai engine=5900 definitions=9079 signatures=668683
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 suspectscore=0 malwarescore=0
+ phishscore=0 bulkscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.0.1-1810050000 definitions=main-1811160153
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove the CONFIG_AUDIT_WATCH and CONFIG_AUDIT_TREE config options since
-they are both dependent on CONFIG_AUDITSYSCALL and force
-CONFIG_FSNOTIFY.
+On 11/16/2018 2:46 AM, Paolo Bonzini wrote:
+> On 17/04/18 01:09, Maran Wilson wrote:
+>> For certain applications it is desirable to rapidly boot a KVM virtual
+>> machine. In cases where legacy hardware and software support within the
+>> guest is not needed, Qemu should be able to boot directly into the
+>> uncompressed Linux kernel binary without the need to run firmware.
+>>
+>> There already exists an ABI to allow this for Xen PVH guests and the ABI
+>> is supported by Linux and FreeBSD:
+>>
+>>     https://xenbits.xen.org/docs/unstable/misc/pvh.html
+>>
+>> This patch series would enable Qemu to use that same entry point for
+>> booting KVM guests.
+> Hi Maran, what happened to this series (and to the QEMU work)?
 
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- init/Kconfig     |  9 ---------
- kernel/Makefile  |  4 +---
- kernel/audit.h   |  6 +++---
- kernel/auditsc.c | 10 ----------
- 4 files changed, 4 insertions(+), 25 deletions(-)
+Hi Paolo,
 
-diff --git a/init/Kconfig b/init/Kconfig
-index a4112e95724a..7eb2538e6ca0 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -335,15 +335,6 @@ config HAVE_ARCH_AUDITSYSCALL
- config AUDITSYSCALL
- 	def_bool y
- 	depends on AUDIT && HAVE_ARCH_AUDITSYSCALL
--
--config AUDIT_WATCH
--	def_bool y
--	depends on AUDITSYSCALL
--	select FSNOTIFY
--
--config AUDIT_TREE
--	def_bool y
--	depends on AUDITSYSCALL
- 	select FSNOTIFY
- 
- source "kernel/irq/Kconfig"
-diff --git a/kernel/Makefile b/kernel/Makefile
-index 7343b3a9bff0..9dc7f519129d 100644
---- a/kernel/Makefile
-+++ b/kernel/Makefile
-@@ -76,9 +76,7 @@ obj-$(CONFIG_IKCONFIG) += configs.o
- obj-$(CONFIG_SMP) += stop_machine.o
- obj-$(CONFIG_KPROBES_SANITY_TEST) += test_kprobes.o
- obj-$(CONFIG_AUDIT) += audit.o auditfilter.o
--obj-$(CONFIG_AUDITSYSCALL) += auditsc.o
--obj-$(CONFIG_AUDIT_WATCH) += audit_watch.o audit_fsnotify.o
--obj-$(CONFIG_AUDIT_TREE) += audit_tree.o
-+obj-$(CONFIG_AUDITSYSCALL) += auditsc.o audit_watch.o audit_fsnotify.o audit_tree.o
- obj-$(CONFIG_GCOV_KERNEL) += gcov/
- obj-$(CONFIG_KCOV) += kcov.o
- obj-$(CONFIG_KPROBES) += kprobes.o
-diff --git a/kernel/audit.h b/kernel/audit.h
-index 9a3828bd387b..0b5295aeaebb 100644
---- a/kernel/audit.h
-+++ b/kernel/audit.h
-@@ -268,7 +268,7 @@ extern void audit_log_d_path_exe(struct audit_buffer *ab,
- extern void audit_put_tty(struct tty_struct *tty);
- 
- /* audit watch functions */
--#ifdef CONFIG_AUDIT_WATCH
-+#ifdef CONFIG_AUDITSYSCALL
- extern void audit_put_watch(struct audit_watch *watch);
- extern void audit_get_watch(struct audit_watch *watch);
- extern int audit_to_watch(struct audit_krule *krule, char *path, int len, u32 op);
-@@ -301,9 +301,9 @@ extern void audit_log_d_path_exe(struct audit_buffer *ab,
- #define audit_mark_compare(m, i, d) 0
- #define audit_exe_compare(t, m) (-EINVAL)
- #define audit_dupe_exe(n, o) (-EINVAL)
--#endif /* CONFIG_AUDIT_WATCH */
-+#endif /* CONFIG_AUDITSYSCALL */
- 
--#ifdef CONFIG_AUDIT_TREE
-+#ifdef CONFIG_AUDITSYSCALL
- extern struct audit_chunk *audit_tree_lookup(const struct inode *inode);
- extern void audit_put_chunk(struct audit_chunk *chunk);
- extern bool audit_tree_match(struct audit_chunk *chunk, struct audit_tree *tree);
-diff --git a/kernel/auditsc.c b/kernel/auditsc.c
-index 1513873e23bd..605f2d825204 100644
---- a/kernel/auditsc.c
-+++ b/kernel/auditsc.c
-@@ -200,7 +200,6 @@ static int audit_match_filetype(struct audit_context *ctx, int val)
-  * References in it _are_ dropped - at the same time we free/drop aux stuff.
-  */
- 
--#ifdef CONFIG_AUDIT_TREE
- static void audit_set_auditable(struct audit_context *ctx)
- {
- 	if (!ctx->prio) {
-@@ -245,12 +244,10 @@ static int grow_tree_refs(struct audit_context *ctx)
- 	ctx->tree_count = 31;
- 	return 1;
- }
--#endif
- 
- static void unroll_tree_refs(struct audit_context *ctx,
- 		      struct audit_tree_refs *p, int count)
- {
--#ifdef CONFIG_AUDIT_TREE
- 	struct audit_tree_refs *q;
- 	int n;
- 	if (!p) {
-@@ -274,7 +271,6 @@ static void unroll_tree_refs(struct audit_context *ctx,
- 	}
- 	ctx->trees = p;
- 	ctx->tree_count = count;
--#endif
- }
- 
- static void free_tree_refs(struct audit_context *ctx)
-@@ -288,7 +284,6 @@ static void free_tree_refs(struct audit_context *ctx)
- 
- static int match_tree_refs(struct audit_context *ctx, struct audit_tree *tree)
- {
--#ifdef CONFIG_AUDIT_TREE
- 	struct audit_tree_refs *p;
- 	int n;
- 	if (!tree)
-@@ -305,7 +300,6 @@ static int match_tree_refs(struct audit_context *ctx, struct audit_tree *tree)
- 			if (audit_tree_match(p->c[n], tree))
- 				return 1;
- 	}
--#endif
- 	return 0;
- }
- 
-@@ -1602,7 +1596,6 @@ void __audit_syscall_exit(int success, long return_code)
- 
- static inline void handle_one(const struct inode *inode)
- {
--#ifdef CONFIG_AUDIT_TREE
- 	struct audit_context *context;
- 	struct audit_tree_refs *p;
- 	struct audit_chunk *chunk;
-@@ -1627,12 +1620,10 @@ static inline void handle_one(const struct inode *inode)
- 		return;
- 	}
- 	put_tree_ref(context, chunk);
--#endif
- }
- 
- static void handle_path(const struct dentry *dentry)
- {
--#ifdef CONFIG_AUDIT_TREE
- 	struct audit_context *context;
- 	struct audit_tree_refs *p;
- 	const struct dentry *d, *parent;
-@@ -1685,7 +1676,6 @@ static void handle_path(const struct dentry *dentry)
- 		return;
- 	}
- 	rcu_read_unlock();
--#endif
- }
- 
- static struct audit_names *audit_alloc_name(struct audit_context *context,
--- 
-1.8.3.1
+Thank you for the reminder. Sorry, I have been wanting to continue this 
+work for a while now, but our team has been pulled in other directions 
+and this one ended up getting temporarily pushed down the priority stack.
+
+Let me discuss with my management and get back to you. I do want (and 
+intend) to support and push this over the finish line.
+
+In the meantime, if there are any folks out there with a specific 
+business need for getting this done sooner rather than later and are 
+able to invest a bit of time to collaborate on the remaining Qemu work, 
+please feel free to ping me offline. We have some preliminary Qemu 
+patches, but there is some additional work needed before they are ready 
+wider review.
+
+Thanks,
+-Maran
+
+>
+> Paolo
+>
+>> Changes from v6:
+>>
+>>   * Addressed issues caught by the kbuild test robot:
+>>      - Restored an #include line that had been dropped by mistake (patch 4)
+>>      - Removed a pair of #include lines that were no longer needed in a
+>>        common code file and causing problems for certain 32-bit configs
+>>        (patchs 4 and 7)
+>>
+>> Changes from v5:
+>>
+>>   * The interface changes to the x86/HVM start info layout have
+>>     now been accepted into the Xen tree.
+>>   * Rebase and merge upstream PVH file changes.
+>>   * (Patch 6) Synced up to the final version of the header file that was
+>>               acked and pulled into the Xen tree.
+>>   * (Patch 1) Fixed typo and removed redundant "def_bool n" line.
+>>
+>> Changes from v4:
+>>
+>> Note: I've withheld Juergen's earlier "Reviewed-by" tags from patches
+>> 1 and 7 since there were minor changes (mostly just addition of
+>> CONFIG_KVM_GUEST_PVH as requested) that came afterwards.
+>>
+>>   * Changed subject prefix from RFC to PATCH
+>>   * Added CONFIG_KVM_GUEST_PVH as suggested
+>>   * Relocated the PVH common files to
+>>     arch/x86/platform/pvh/{enlighten.c,head.S}
+>>   * Realized I also needed to move the objtool override for those files
+>>   * Updated a few code comments per reviewer feedback
+>>   * Sent out a patch of the hvm_start_info struct changes against the Xen
+>>     tree since that is the canonical copy of the header. Discussions on
+>>     that thread have resulted in some (non-functional) updates to
+>>     start_info.h (patch 6/7) and those changes are reflected here as well
+>>     in order to keep the files in sync. The header file has since been
+>>     ack'ed for the Xen tree by Jan Beulich.
+>>
+>> Changes from v3:
+>>
+>>   * Implemented Juergen's suggestion for refactoring and moving the PVH
+>>     code so that CONFIG_XEN is no longer required for booting KVM guests
+>>     via the PVH entry point.
+>>     Functionally, nothing has changed from V3 really, but the patches
+>>     look completely different now because of all the code movement and
+>>     refactoring. Some of these patches can be combined, but I've left
+>>     them very small in some cases to make the refactoring and code
+>>     movement easier to review.
+>>     My approach for refactoring has been to create a PVH entry layer that
+>>     still has understanding and knowledge about Xen vs non-Xen guest types
+>>     so that it can make run time decisions to handle either case, as
+>>     opposed to going all the way and re-writing it to be a completely
+>>     hypervisor agnostic and architecturally pure layer that is separate
+>>     from guest type details. The latter seemed a bit overkill in this
+>>     situation. And I've handled the complexity of having to support
+>>     Qemu/KVM boot of kernels compiled with or without CONFIG_XEN via a
+>>     pair of xen specific __weak routines that can be overridden in kernels
+>>     that support Xen guests. Importantly, the __weak routines are for
+>>     xen specific code only (not generic "guest type" specific code) so
+>>     there is no clashing between xen version of the strong routine and,
+>>     say, a KVM version of the same routine. But I'm sure there are many
+>>     ways to skin this cat, so I'm open to alternate suggestions if there
+>>     is a compelling reason for not using __weak in this situation.
+>>
+>> Changes from v2:
+>>
+>>   * All structures (including memory map table entries) are padded and
+>>     aligned to an 8 byte boundary.
+>>
+>>   * Removed the "packed" attributes and made changes to comments as
+>>     suggested by Jan.
+>>
+>> Changes from v1:
+>>
+>>   * Adopted Paolo's suggestion for defining a v2 PVH ABI that includes the
+>>     e820 map instead of using the second module entry to pass the table.
+>>
+>>   * Cleaned things up a bit to reduce the number of xen vs non-xen special
+>>     cases.
+>>
+>>
+>> Maran Wilson (7):
+>>    xen/pvh: Split CONFIG_XEN_PVH into CONFIG_PVH and CONFIG_XEN_PVH
+>>    xen/pvh: Move PVH entry code out of Xen specific tree
+>>    xen/pvh: Create a new file for Xen specific PVH code
+>>    xen/pvh: Move Xen specific PVH VM initialization out of common file
+>>    xen/pvh: Move Xen code for getting mem map via hcall out of common
+>>      file
+>>    xen/pvh: Add memory map pointer to hvm_start_info struct
+>>    KVM: x86: Allow Qemu/KVM to use PVH entry point
+>>
+>>   MAINTAINERS                                     |   1 +
+>>   arch/x86/Kbuild                                 |   2 +
+>>   arch/x86/Kconfig                                |  14 +++
+>>   arch/x86/kernel/head_64.S                       |   2 +-
+>>   arch/x86/platform/pvh/Makefile                  |   5 +
+>>   arch/x86/platform/pvh/enlighten.c               | 136 ++++++++++++++++++++++++
+>>   arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} |   0
+>>   arch/x86/xen/Kconfig                            |   3 +-
+>>   arch/x86/xen/Makefile                           |   2 -
+>>   arch/x86/xen/enlighten_pvh.c                    |  93 +++-------------
+>>   include/xen/interface/hvm/start_info.h          |  63 ++++++++++-
+>>   11 files changed, 240 insertions(+), 81 deletions(-)
+>>   create mode 100644 arch/x86/platform/pvh/Makefile
+>>   create mode 100644 arch/x86/platform/pvh/enlighten.c
+>>   rename arch/x86/{xen/xen-pvh.S => platform/pvh/head.S} (100%)
+>>
 
