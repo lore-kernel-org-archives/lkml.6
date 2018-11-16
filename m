@@ -7,59 +7,59 @@ X-Spam-Status: No, score=-10.0 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A98B2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:56:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D27EDC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:59:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 6E03121780
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:56:33 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 965462146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 01:59:41 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="A+0KDo5V"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6E03121780
+	dkim=pass (2048-bit key) header.d=osandov-com.20150623.gappssmtp.com header.i=@osandov-com.20150623.gappssmtp.com header.b="YAA64tUv"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 965462146D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=osandov.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389217AbeKPMGz (ORCPT
+        id S2389279AbeKPMKF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 07:06:55 -0500
-Received: from mail-pg1-f196.google.com ([209.85.215.196]:44490 "EHLO
-        mail-pg1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726978AbeKPMGy (ORCPT
+        Fri, 16 Nov 2018 07:10:05 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:46220 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726714AbeKPMKE (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 07:06:54 -0500
-Received: by mail-pg1-f196.google.com with SMTP id t13so1198008pgr.11
-        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 17:56:29 -0800 (PST)
+        Fri, 16 Nov 2018 07:10:04 -0500
+Received: by mail-pf1-f193.google.com with SMTP id s9-v6so10582686pfm.13
+        for <linux-kernel@vger.kernel.org>; Thu, 15 Nov 2018 17:59:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=osandov-com.20150623.gappssmtp.com; s=20150623;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=kbBAKpmGBxukNa0l1dZA6Uj0uFhYexx1su4ZT10Uq1E=;
-        b=A+0KDo5VgDUkHnbdktqOhaI7gEKEX1v8CWAGlgCVNki/lIAYIsuprJJriZG8tjNgg0
-         cHCuA8FPLxzUHQ17Ki4r3/zN5lVAeBXS6hNlTQV6K+Lq4wC0BMaqDSJaNmfUR5UieKP0
-         XVYZMCK4p5itPBqs1jb2JHTeIgJTDUfKvCAeplYpogMb4+C8DN/Gz4EdxgH3oVccEGFH
-         grPfok5qizO8Z+04faGPjKHlj9C6lyZ58rUgIrF7lnpHBficyMkdeisTL4bDPLPfyYsN
-         gmF7E19w6wtvlOQ6yosd9gQso4Mlq6MYjgYOCW/4f0UjgsiHMD3HgDYgOMyGRaq0Ha5/
-         G8Eg==
+        bh=L0tQ8ikizxQAgBWBpIiO7+X7FmVylN8wyOGQDrGUknE=;
+        b=YAA64tUvsxftqPcARSFvNfvC4gEp9ESF8e9jlJElleZLA4PX+vdfZ9/2UEXqAt5wzz
+         K0WNBrLAA5gMWcUz5j5NrwVG/zy8LWrHEpAIPe0ov54g6JE7sJWhvUq9VV+DWfda2sVT
+         QIW3ylMmDw+fAVg3Cpj0qhrGf0tbFiro3jvK9gz82rTyxNMJz5P5avgE1B3jOyBJR+Gx
+         x6JAGACHMZcG7E0iemqhvKMsu8dl/+VWO7x8FcuVk+Gl8jlZx+IZpODIDigJn62+SKzE
+         fvxAL1JOd0T6j/BZg+xie4clkW1ocHVcnBk/Dy5Lbilc/Is67FHaSlDAZir14aDmLpC5
+         1HxA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=kbBAKpmGBxukNa0l1dZA6Uj0uFhYexx1su4ZT10Uq1E=;
-        b=toBznC7AAIO/WXVs9ubXST54BiGee2LUNU/Qbj8RAreZrbaSUNnxIryfHj0BtU8Mis
-         VIUD0oRQiGI0rQOdZxHAOnjoB18VXe4zlqrMDv5UM19TI2TkHGlIfDEP7IXVO4rspwBn
-         DJ4RjY6e5iI15PBzx46gZ80A6XNLbH7TuS+XcXeAq3scc3bamkVKEaxEQxZ3iuzSx/Ej
-         OL6gki780CX5VIBG4JJXSFjkwuF0mcR3gZ/K6KSULK+5miCMBERuV+MWOa6sRfGfc/F9
-         hCFhs67pYnzJ4nz+mMjm5YwQ0peKTxI6CUTpK47GM/7mL0caxgDTbfnKy8/VfMXsXCii
-         ex9A==
-X-Gm-Message-State: AGRZ1gKp4PGrNajzu8Ej3saOw877ajcsW0pYxudj8rQf4exsule/A+Gi
-        kE51eW0uIThD4EAifAP0zQyupA==
-X-Google-Smtp-Source: AJdET5fQ3+kGoJjP6IFjKiErSySgoB0CrwKcUhikiXMn5zzu+lWYZR6BmamiaXZybmvjRkQS2p6tTw==
-X-Received: by 2002:a63:194f:: with SMTP id 15mr8188847pgz.192.1542333389183;
-        Thu, 15 Nov 2018 17:56:29 -0800 (PST)
+        bh=L0tQ8ikizxQAgBWBpIiO7+X7FmVylN8wyOGQDrGUknE=;
+        b=WmmAbYzWmD3JdiaMvpenlqgtlm5v4w6cDXbdj87XDiX08hRVNGm3KI+RV2TeMKIDru
+         teq/pwHYtTi6q/fViKILWTXKTuAmZw4WV6KO0ahKt2cVxHyk7/E/q5j9ER41HZxcjkeX
+         JDFRTqf7IqhA4dcPxnnRT3OpxdThNPOXO/xyz3RMCDTPhUM1bzSZq+btKWstUsCN64q2
+         zmwn+mPkSx+vNRCrkI/YSa4+qlr9+HIaj0HsR5dVcWvBOop9npdVLhNW8g8kuckesRjU
+         V3zdjm5dgkCt463Ad7TDJRmpMRCrQUF4KOoDjEA94NxRP4dCS2k/KqvJpwExQtCkXu9g
+         ehkQ==
+X-Gm-Message-State: AGRZ1gLww63OMRHnI1vbtYeQfZnwe6rMkq+9TLpS71tZYobbEyeL84f9
+        7yyR10wYy1UzLeiLiNnRT371kA==
+X-Google-Smtp-Source: AJdET5eUyw+8KU8Asz6AsSE46jRbu3E7Mpd3Eo3LRaHPzwQJZ7wsjMF2vOsptoFTJn6ARLeTnbzNkQ==
+X-Received: by 2002:a63:4d0e:: with SMTP id a14mr1277785pgb.408.1542333578366;
+        Thu, 15 Nov 2018 17:59:38 -0800 (PST)
 Received: from vader ([64.114.255.97])
-        by smtp.gmail.com with ESMTPSA id o12-v6sm37704689pfh.20.2018.11.15.17.56.28
+        by smtp.gmail.com with ESMTPSA id i72sm5797049pfe.181.2018.11.15.17.59.37
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 15 Nov 2018 17:56:28 -0800 (PST)
-Date:   Thu, 15 Nov 2018 17:56:27 -0800
+        Thu, 15 Nov 2018 17:59:37 -0800 (PST)
+Date:   Thu, 15 Nov 2018 17:59:36 -0800
 From:   Omar Sandoval <osandov@osandov.com>
 To:     Ming Lei <ming.lei@redhat.com>
 Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
@@ -77,26 +77,28 @@ Cc:     Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
         linux-ext4@vger.kernel.org, Coly Li <colyli@suse.de>,
         linux-bcache@vger.kernel.org, Boaz Harrosh <ooo@electrozaur.com>,
         Bob Peterson <rpeterso@redhat.com>, cluster-devel@redhat.com
-Subject: Re: [PATCH V10 14/19] block: enable multipage bvecs
-Message-ID: <20181116015627.GI23828@vader>
+Subject: Re: [PATCH V10 15/19] block: always define BIO_MAX_PAGES as 256
+Message-ID: <20181116015936.GJ23828@vader>
 References: <20181115085306.9910-1-ming.lei@redhat.com>
- <20181115085306.9910-15-ming.lei@redhat.com>
+ <20181115085306.9910-16-ming.lei@redhat.com>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181115085306.9910-15-ming.lei@redhat.com>
+In-Reply-To: <20181115085306.9910-16-ming.lei@redhat.com>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 15, 2018 at 04:53:01PM +0800, Ming Lei wrote:
-> This patch pulls the trigger for multi-page bvecs.
-> 
-> Now any request queue which supports queue cluster will see multi-page
-> bvecs.
-> 
+On Thu, Nov 15, 2018 at 04:53:02PM +0800, Ming Lei wrote:
+> Now multi-page bvec can cover CONFIG_THP_SWAP, so we don't need to
+> increase BIO_MAX_PAGES for it.
+
+You mentioned to it in the cover letter, but this needs more explanation
+in the commit message. Why did CONFIG_THP_SWAP require > 256? Why does
+multipage bvecs remove that requirement?
+
 > Cc: Dave Chinner <dchinner@redhat.com>
 > Cc: Kent Overstreet <kent.overstreet@gmail.com>
 > Cc: Mike Snitzer <snitzer@redhat.com>
@@ -121,63 +123,29 @@ On Thu, Nov 15, 2018 at 04:53:01PM +0800, Ming Lei wrote:
 > Cc: cluster-devel@redhat.com
 > Signed-off-by: Ming Lei <ming.lei@redhat.com>
 > ---
->  block/bio.c | 24 ++++++++++++++++++------
->  1 file changed, 18 insertions(+), 6 deletions(-)
+>  include/linux/bio.h | 8 --------
+>  1 file changed, 8 deletions(-)
 > 
-> diff --git a/block/bio.c b/block/bio.c
-> index 6486722d4d4b..ed6df6f8e63d 100644
-> --- a/block/bio.c
-> +++ b/block/bio.c
-
-This comment above __bio_try_merge_page() doesn't make sense after this
-change:
-
- This is a
- a useful optimisation for file systems with a block size smaller than the
- page size.
-
-Can you please get rid of it in this patch?
-
-> @@ -767,12 +767,24 @@ bool __bio_try_merge_page(struct bio *bio, struct page *page,
+> diff --git a/include/linux/bio.h b/include/linux/bio.h
+> index 5040e9a2eb09..277921ad42e7 100644
+> --- a/include/linux/bio.h
+> +++ b/include/linux/bio.h
+> @@ -34,15 +34,7 @@
+>  #define BIO_BUG_ON
+>  #endif
 >  
->  	if (bio->bi_vcnt > 0) {
->  		struct bio_vec *bv = &bio->bi_io_vec[bio->bi_vcnt - 1];
-> -
-> -		if (page == bv->bv_page && off == bv->bv_offset + bv->bv_len) {
-> -			bv->bv_len += len;
-> -			bio->bi_iter.bi_size += len;
-> -			return true;
-> -		}
-> +		struct request_queue *q = NULL;
-> +
-> +		if (page == bv->bv_page && off == (bv->bv_offset + bv->bv_len)
-> +				&& (off + len) <= PAGE_SIZE)
-> +			goto merge;
-
-The parentheses around (bv->bv_offset + bv->bv_len) and (off + len) are
-unnecessary noise.
-
-What's the point of the new (off + len) <= PAGE_SIZE check?
-
-> +
-> +		if (bio->bi_disk)
-> +			q = bio->bi_disk->queue;
-> +
-> +		/* disable multi-page bvec too if cluster isn't enabled */
-> +		if (!q || !blk_queue_cluster(q) ||
-> +		    ((page_to_phys(bv->bv_page) + bv->bv_offset + bv->bv_len) !=
-> +		     (page_to_phys(page) + off)))
-
-More unnecessary parentheses here.
-
-> +			return false;
-> + merge:
-> +		bv->bv_len += len;
-> +		bio->bi_iter.bi_size += len;
-> +		return true;
->  	}
->  	return false;
->  }
+> -#ifdef CONFIG_THP_SWAP
+> -#if HPAGE_PMD_NR > 256
+> -#define BIO_MAX_PAGES		HPAGE_PMD_NR
+> -#else
+>  #define BIO_MAX_PAGES		256
+> -#endif
+> -#else
+> -#define BIO_MAX_PAGES		256
+> -#endif
+>  
+>  #define bio_prio(bio)			(bio)->bi_ioprio
+>  #define bio_set_prio(bio, prio)		((bio)->bi_ioprio = prio)
 > -- 
 > 2.9.5
 > 
