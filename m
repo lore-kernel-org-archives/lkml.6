@@ -2,117 +2,150 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=unavailable autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E4715C04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:28:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CF36C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:34:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B6C762080D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:28:08 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B6C762080D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id D6E682080D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 19:34:13 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6E682080D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727183AbeKQFls (ORCPT
+        id S1726183AbeKQFry (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 00:41:48 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:34466 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725763AbeKQFlr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 00:41:47 -0500
-Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 7FCD2306B58C;
-        Fri, 16 Nov 2018 19:28:06 +0000 (UTC)
-Received: from localhost (unknown [10.18.25.149])
-        by smtp.corp.redhat.com (Postfix) with ESMTPS id 4131219C7D;
-        Fri, 16 Nov 2018 19:28:03 +0000 (UTC)
-Date:   Fri, 16 Nov 2018 14:28:02 -0500
-From:   Mike Snitzer <snitzer@redhat.com>
-To:     Christoph Hellwig <hch@lst.de>
-Cc:     Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, axboe@kernel.dk,
-        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
-        xose.vazquez@gmail.com, chengjike.cheng@huawei.com,
-        shenhong09@huawei.com, dm-devel@redhat.com,
-        wangzhoumengjian@huawei.com, christophe.varoqui@opensvc.com,
-        bmarzins@redhat.com, sschremm@netapp.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: nvme: allow ANA support to be independent of native multipathing
-Message-ID: <20181116192802.GA30057@redhat.com>
-References: <20181114053837.GA15086@redhat.com>
- <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
- <20181114174746.GA18526@redhat.com>
- <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
- <20181115174605.GA19782@redhat.com>
- <20181116091458.GA17267@lst.de>
- <37098edd-4dea-b58f-bca6-3be9af8ec4ee@suse.de>
- <20181116094947.GA19296@lst.de>
- <bbaf4637-209c-5cfe-2749-3fcc54f7a35f@suse.de>
- <20181116101752.GA21531@lst.de>
+        Sat, 17 Nov 2018 00:47:54 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38798 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725763AbeKQFrx (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 00:47:53 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 810DFACCC;
+        Fri, 16 Nov 2018 19:34:09 +0000 (UTC)
+Date:   Fri, 16 Nov 2018 20:34:08 +0100
+From:   Michal Hocko <mhocko@kernel.org>
+To:     Sasha Levin <sashal@kernel.org>
+Cc:     Andrew Morton <akpm@linux-foundation.org>, stable@vger.kernel.org,
+        linux-kernel@vger.kernel.org, Jann Horn <jannh@google.com>,
+        Davidlohr Bueso <dave@stgolabs.net>,
+        Oleg Nesterov <oleg@redhat.com>,
+        Christoph Lameter <clameter@sgi.com>,
+        Kemi Wang <kemi.wang@intel.com>,
+        Andy Lutomirski <luto@kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        linux-mm@kvack.org
+Subject: Re: [PATCH AUTOSEL 3.18 8/9] mm/vmstat.c: assert that vmstat_text is
+ in sync with stat_items_size
+Message-ID: <20181116193408.GO14706@dhcp22.suse.cz>
+References: <20181113055252.79406-1-sashal@kernel.org>
+ <20181113055252.79406-8-sashal@kernel.org>
+ <20181115140810.e3292c83467544f6a1d82686@linux-foundation.org>
+ <20181115223718.GB1706@sasha-vm>
+ <20181115144719.d26dc7a2d47fade8d41a83d5@linux-foundation.org>
+ <20181115230118.GC1706@sasha-vm>
+ <20181116085525.GC14706@dhcp22.suse.cz>
+ <20181116181904.GH1706@sasha-vm>
+ <20181116184457.GA11906@dhcp22.suse.cz>
+ <20181116191910.GJ1706@sasha-vm>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181116101752.GA21531@lst.de>
-User-Agent: Mutt/1.5.21 (2010-09-15)
-X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.41]); Fri, 16 Nov 2018 19:28:07 +0000 (UTC)
+In-Reply-To: <20181116191910.GJ1706@sasha-vm>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16 2018 at  5:17am -0500,
-Christoph Hellwig <hch@lst.de> wrote:
-
-> On Fri, Nov 16, 2018 at 11:06:32AM +0100, Hannes Reinecke wrote:
-> > Ok, so would you be happy with making ANA support configurable?
+On Fri 16-11-18 14:19:10, Sasha Levin wrote:
+> On Fri, Nov 16, 2018 at 07:44:57PM +0100, Michal Hocko wrote:
+> > On Fri 16-11-18 13:19:04, Sasha Levin wrote:
+> > > On Fri, Nov 16, 2018 at 09:55:25AM +0100, Michal Hocko wrote:
+> > [...]
+> > > > > Race condition with memory hotplug due to missing locks:
+> > > > >
+> > > > > 	https://marc.info/?l=linux-mm&m=154211934011188&w=2
+> > > >
+> > > > Memory hotplug locking is dubious at best and this patch doesn't really
+> > > > fix it. It fixes a theoretical problem. I am not aware anybody would be
+> > > > hitting in practice. We need to rework the locking quite extensively.
+> > > 
+> > > The word "theoretical" used in the stable rules file does not mean
+> > > that we need to have actual reports of users hitting bugs before we
+> > > start backporting the relevant patch, it simply suggests that there
+> > > needs to be a reasonable explanation of how this issue can be hit.
+> > > 
+> > > For this memory hotplug patch in particular, I use the hv_balloon driver
+> > > at this very moment (running a linux guest on windows, with "dynamic
+> > > memory" enabled). Should I wait for it to crash before I can fix it?
+> > > 
+> > > Is the upstream code perfect? No, but that doesn't mean that it's not
+> > > working at all, and if there are users they expect to see fixes going in
+> > > and not just sitting idly waiting for a big rewrite that will come in a
+> > > few years.
+> > > 
+> > > Memory hotplug fixes are not something you think should go to stable?
+> > > Andrew sent a few of them to stable, so that can't be the case.
+> > 
+> > I am not arguing about hotplug fixes in general. I was arguing that this
+> > particular one is a theoretical one and hotplug locking is quite subtle.
+> > E.g. 381eab4a6ee mm/memory_hotplug: fix online/offline_pages called w.o. mem_hotplug_lock
+> > http://lkml.kernel.org/r/20181114070909.GB2653@MiWiFi-R3L-srv
+> > So in general unless the issue is really triggered easily I am rather
+> > conservative.
 > 
-> I've looked a bit over the whole situation, and what I think we need
-> to do is:
+> We have millions of machines running linux, everything is triggered
+> "easily" at that scale.
+
+yet a zero report...
+
+> > > > > Raising an OOM event that causes issues in userspace when no OOM has
+> > > > > actually occured:
+> > > > >
+> > > > > 	https://marc.info/?l=linux-mm&m=154211939811582&w=2
+> > > >
+> > > > The patch makes sense I just do not think this is a stable material. The
+> > > > semantic of the event was and still is suboptimal.
+> > > 
+> > > I really fail to understand your reasoning about -stable here. This
+> > > patch is something people actually hit in the field, spent time on
+> > > triaging and analysing it, and submitting a fix which looks reasonably
+> > > straightforward.
+> > > 
+> > > That fix was acked by quite a few folks (including yourself) and merged
+> > > in. And as far as we can tell, it actually fixed the problem.
+> > > 
+> > > Why is it not stable material?
+> > 
+> > Because the semantic of the OOM event is quite tricky itself. We have
+> > discussed this patch and concluded that the updated one is more
+> > sensible. But it is not yet clear whether this is actually what other
+> > users expect as well. That to me does sound quite risky for a stable
+> > kernel.
 > 
->  a) warn if we see a ANA capable device without multipath support
->     so people know it is not going to work properly.
+> So there's another patch following this one that fixes it? Sure - can I
+> take both?
 
-I disagree with your cynicism but v2 of this patch now emits a warning
-accordingly.
+No. There is no known bug. I am arguing that such a change needs some
+time to settle. I am quite skeptical that this will actually trigger
+any bug.
 
->  b) deprecate the multipath module option.  It was only intended as
->     a migration for any pre-existing PCIe multipath user if there
->     were any, not to support any new functionality.  So for 4.20
->     put in a patch that prints a clear warning when it is used,
->     including a link to the nvme list, and then for 4.25 or so
->     remove it entirely unless something unexpected come up.
+I will not _object_ if this was merged if somebody explicitly asks for
+it. I am saying that I am not convinced it is a stable material.
 
-You rejected the idea of allowing fine-grained control over whether
-native NVMe multipathing is enabled or not on a per-namespace basis.
-All we have is the coarse-grained nvme_core.multipath=N knob.  Now
-you're forecasting removing even that.  Please don't do that.
+So I guess our views on what is stable material differ. As I have said
+several times already, I think the volume of patches flowing to the
+stable tree is really high. To the point that taking stable trees for
+our SLES kernels become problematic. I have heard the similar from
+others. More is not always better. But let's not repeat this discussion
+again. If Andrew doesn't mind then keep sending AUTOSEL emails but
+please let's not apply those patches automatically.
 
-> This whole drama of optional multipath use has wasted way too much
-> of everyones time already.
-
-It has wasted _way_ too much time.
-
-But the drama is born out of you rejecting that we need to preserve
-multipath-tools and dm-multipath's ability to work across any
-transport.  You don't need to do that work: Hannes, myself and others
-have always been willing and able -- if you'd let us.
-
-IIRC it was at 2016's LSF in Boston where Ewan Milne and I had a
-face-to-face conversation with you in the hallway track where you agreed
-that ANA support would be activated if the capability was advertised by
-the target.  The model we discussed is that it would be comparable to
-how ALUA gets enabled during SCSI LUN discovery.
-
-I hope you can see your way forward to be more accommodating now.
-Especially given the proposed changes are backed by NVMe standards.
-
-Please, PLEASE take v2 of this patch.. please? ;)
-
-Thanks,
-Mike
+Thanks!
+-- 
+Michal Hocko
+SUSE Labs
