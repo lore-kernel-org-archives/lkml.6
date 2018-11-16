@@ -2,61 +2,169 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 45C89C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:26:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3B897C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:31:00 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 16F2D214C1
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:26:21 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 16F2D214C1
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id F3A6F20858
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:30:59 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org F3A6F20858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390159AbeKQCjV (ORCPT
+        id S2389774AbeKQCoB (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 21:39:21 -0500
-Received: from mail.kernel.org ([198.145.29.99]:46252 "EHLO mail.kernel.org"
+        Fri, 16 Nov 2018 21:44:01 -0500
+Received: from mga18.intel.com ([134.134.136.126]:58803 "EHLO mga18.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S2390089AbeKQCiE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 21:38:04 -0500
-Subject: Re: [GIT PULL] Please pull powerpc/linux.git powerpc-4.20-3 tag
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFD892089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
-Authentication-Results: mail.kernel.org; spf=fail smtp.mailfrom=pr-tracker-bot@kernel.org
-From:   pr-tracker-bot@kernel.org
-In-Reply-To: <87in0x2pvl.fsf@concordia.ellerman.id.au>
-References: <87in0x2pvl.fsf@concordia.ellerman.id.au>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <87in0x2pvl.fsf@concordia.ellerman.id.au>
-X-PR-Tracked-Remote: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git
- tags/powerpc-4.20-3
-X-PR-Tracked-Commit-Id: b2fed34a628df6118b5d4e13f49a33e15f704fa9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: ef268de19756e6bc78cd3e6d9b15545f7df97ef2
-Message-Id: <20181116162502.28259.86891.pr-tracker-bot@pdx-korg-gitolite-1.ci.codeaurora.org>
-Date:   Fri, 16 Nov 2018 16:25:02 +0000
-To:     Michael Ellerman <mpe@ellerman.id.au>
-Cc:     Linus Torvalds <torvalds@linux-foundation.org>,
-        alistair@popple.id.au, gromero@linux.vnet.ibm.com,
-        linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        npiggin@gmail.com, oss@buserror.net, sathnaga@linux.vnet.ibm.com
+        id S1728175AbeKQCoB (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 21:44:01 -0500
+X-Amp-Result: SKIPPED(no attachment in message)
+X-Amp-File-Uploaded: False
+Received: from orsmga002.jf.intel.com ([10.7.209.21])
+  by orsmga106.jf.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 08:30:44 -0800
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="5.56,240,1539673200"; 
+   d="scan'208";a="109153766"
+Received: from unknown (HELO localhost.jf.intel.com) ([10.54.55.47])
+  by orsmga002.jf.intel.com with ESMTP; 16 Nov 2018 08:30:44 -0800
+From:   kan.liang@linux.intel.com
+To:     tglx@linutronix.de, peterz@infradead.org, mingo@redhat.com,
+        linux-kernel@vger.kernel.org
+Cc:     ak@linux.intel.com, yao.jin@linux.intel.com, sashal@kernel.org,
+        Kan Liang <kan.liang@linux.intel.com>, stable@kernel.org
+Subject: [PATCH V2] perf/x86/intel/uncore: Fix client IMC events return huge result
+Date:   Fri, 16 Nov 2018 07:20:55 -0800
+Message-Id: <20181116152055.5806-1-kan.liang@linux.intel.com>
+X-Mailer: git-send-email 2.14.5
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The pull request you sent on Fri, 16 Nov 2018 23:01:02 +1100:
+From: Kan Liang <kan.liang@linux.intel.com>
 
-> https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-4.20-3
+The client IMC bandwidth events return very huge result.
+  perf stat -e uncore_imc/data_reads/ -e uncore_imc/data_writes/ -I
+  10000 -a
+  10.000117222 34,788.76 MiB uncore_imc/data_reads/
+  10.000117222 8.26 MiB uncore_imc/data_writes/
+  20.000374584 34,842.89 MiB uncore_imc/data_reads/
+  20.000374584 10.45 MiB uncore_imc/data_writes/
+  30.000633299 37,965.29 MiB uncore_imc/data_reads/
+  30.000633299 323.62 MiB uncore_imc/data_writes/
+  40.000891548 41,012.88 MiB uncore_imc/data_reads/
+  40.000891548 6.98 MiB uncore_imc/data_writes/
+  50.001142480 1,125,899,906,621,494.75 MiB uncore_imc/data_reads/
+  50.001142480 6.97 MiB uncore_imc/data_writes/
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/ef268de19756e6bc78cd3e6d9b15545f7df97ef2
+The client IMC events are freerunning counters. They still use the
+old event encoding format (0x1 for data_read and 0x2 for data write).
+The counter bit width is calculated by common code, which assume that
+the standard encoding format is used for the freerunning counters.
+Error bit width information is calculated.
 
-Thank you!
+The event->attr.config, which directly from user space, should not be
+used by the functions of freerunning counters.
+For client IMC events, the attr.config needs to be converted to the
+standard encoding format. The modified event config will be stored in
+event->hw.config.
+For other freerunning counters, the attr.config has the correct format.
+Just save it in event->hw.config.
+Using event->hw.config to replace event->attr.config for the functions
+of freerunning counters.
 
+Fixes: commit 9aae1780e7e8 ("perf/x86/intel/uncore: Clean up client IMC uncore")
+Reported-by: Jin Yao <yao.jin@linux.intel.com>
+Tested-by: Jin Yao <yao.jin@linux.intel.com>
+Signed-off-by: Kan Liang <kan.liang@linux.intel.com>
+Cc: stable@kernel.org
+---
+V2:
+- Fix the "Fixes" tag.
+- Add Cc: stable@kernel.org
+
+ arch/x86/events/intel/uncore.c     |  1 +
+ arch/x86/events/intel/uncore.h     | 12 ++++++------
+ arch/x86/events/intel/uncore_snb.c |  4 +++-
+ 3 files changed, 10 insertions(+), 7 deletions(-)
+
+diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
+index 27a461414b30..2690135bf83f 100644
+--- a/arch/x86/events/intel/uncore.c
++++ b/arch/x86/events/intel/uncore.c
+@@ -740,6 +740,7 @@ static int uncore_pmu_event_init(struct perf_event *event)
+ 		/* fixed counters have event field hardcoded to zero */
+ 		hwc->config = 0ULL;
+ 	} else if (is_freerunning_event(event)) {
++		hwc->config = event->attr.config;
+ 		if (!check_valid_freerunning_event(box, event))
+ 			return -EINVAL;
+ 		event->hw.idx = UNCORE_PMC_IDX_FREERUNNING;
+diff --git a/arch/x86/events/intel/uncore.h b/arch/x86/events/intel/uncore.h
+index e17ab885b1e9..cc6dd4f78158 100644
+--- a/arch/x86/events/intel/uncore.h
++++ b/arch/x86/events/intel/uncore.h
+@@ -285,8 +285,8 @@ static inline
+ unsigned int uncore_freerunning_counter(struct intel_uncore_box *box,
+ 					struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
+-	unsigned int idx = uncore_freerunning_idx(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
++	unsigned int idx = uncore_freerunning_idx(event->hw.config);
+ 	struct intel_uncore_pmu *pmu = box->pmu;
+ 
+ 	return pmu->type->freerunning[type].counter_base +
+@@ -360,7 +360,7 @@ static inline
+ unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
+ 				     struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
+ 
+ 	return box->pmu->type->freerunning[type].bits;
+ }
+@@ -368,7 +368,7 @@ unsigned int uncore_freerunning_bits(struct intel_uncore_box *box,
+ static inline int uncore_num_freerunning(struct intel_uncore_box *box,
+ 					 struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
+ 
+ 	return box->pmu->type->freerunning[type].num_counters;
+ }
+@@ -382,8 +382,8 @@ static inline int uncore_num_freerunning_types(struct intel_uncore_box *box,
+ static inline bool check_valid_freerunning_event(struct intel_uncore_box *box,
+ 						 struct perf_event *event)
+ {
+-	unsigned int type = uncore_freerunning_type(event->attr.config);
+-	unsigned int idx = uncore_freerunning_idx(event->attr.config);
++	unsigned int type = uncore_freerunning_type(event->hw.config);
++	unsigned int idx = uncore_freerunning_idx(event->hw.config);
+ 
+ 	return (type < uncore_num_freerunning_types(box, event)) &&
+ 	       (idx < uncore_num_freerunning(box, event));
+diff --git a/arch/x86/events/intel/uncore_snb.c b/arch/x86/events/intel/uncore_snb.c
+index 8527c3e1038b..48d7121f71c7 100644
+--- a/arch/x86/events/intel/uncore_snb.c
++++ b/arch/x86/events/intel/uncore_snb.c
+@@ -425,9 +425,11 @@ static int snb_uncore_imc_event_init(struct perf_event *event)
+ 
+ 	/* must be done before validate_group */
+ 	event->hw.event_base = base;
+-	event->hw.config = cfg;
+ 	event->hw.idx = idx;
+ 
++	/* Convert to standard encoding format for free running counters */
++	event->hw.config = ((cfg - 1) << 8) | 0x10ff;
++
+ 	/* no group validation needed, we have free running counters */
+ 
+ 	return 0;
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.wiki.kernel.org/userdoc/prtracker
+2.14.3
+
