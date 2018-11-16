@@ -2,293 +2,291 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.2 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	UNWANTED_LANGUAGE_BODY autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19A82C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:46:25 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6903AC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:46:47 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C05B22086C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:46:24 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C05B22086C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
+	by mail.kernel.org (Postfix) with ESMTP id 0894C2086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:46:47 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=nxp.com header.i=@nxp.com header.b="qc3hpbX+"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0894C2086C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=nxp.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389401AbeKPT54 (ORCPT
+        id S2389434AbeKPT6T (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 14:57:56 -0500
-Received: from szxga05-in.huawei.com ([45.249.212.191]:14679 "EHLO huawei.com"
+        Fri, 16 Nov 2018 14:58:19 -0500
+Received: from mail-eopbgr70075.outbound.protection.outlook.com ([40.107.7.75]:1312
+        "EHLO EUR04-HE1-obe.outbound.protection.outlook.com"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727398AbeKPT5z (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 14:57:55 -0500
-Received: from DGGEMS406-HUB.china.huawei.com (unknown [172.30.72.58])
-        by Forcepoint Email with ESMTP id D4B5F48A5FC82;
-        Fri, 16 Nov 2018 17:46:18 +0800 (CST)
-Received: from [127.0.0.1] (10.134.22.195) by DGGEMS406-HUB.china.huawei.com
- (10.3.19.206) with Microsoft SMTP Server id 14.3.408.0; Fri, 16 Nov 2018
- 17:46:20 +0800
-Subject: Re: [f2fs-dev] [PATCH] f2fs: add bio cache for IPU
-From:   Chao Yu <yuchao0@huawei.com>
-To:     Jaegeuk Kim <jaegeuk@kernel.org>
-CC:     <linux-kernel@vger.kernel.org>,
-        <linux-f2fs-devel@lists.sourceforge.net>
-References: <20181023083817.3466-1-yuchao0@huawei.com>
- <20181115075226.GA83610@jaegeuk-macbookpro.roam.corp.google.com>
- <944355f6-49d8-f579-aad6-53c54258e90b@huawei.com>
-Message-ID: <0fcfcec5-7b09-603e-f8b7-1c6346dc17b3@huawei.com>
-Date:   Fri, 16 Nov 2018 17:46:19 +0800
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
-MIME-Version: 1.0
-In-Reply-To: <944355f6-49d8-f579-aad6-53c54258e90b@huawei.com>
-Content-Type: text/plain; charset="windows-1252"
+        id S1727398AbeKPT6S (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 14:58:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=J4C/GWEyYM6MBESaqfWaE6nHwohyYLSg5UPMU5riamQ=;
+ b=qc3hpbX+t6c3PmdDbhgjjoNZXdaNmBNGx9TSbP43XUThLwRluWuP3rkwAAjvhoOzqeobRzESL8BXeDrx3BmrkxboZDrd63/BLXtuovlB4Zv3pTK2SvBta+NhGKc0+Gu7HQnubjR4m0V5R6ole1Tvotuh9nArtWrC5E11QJdrjxk=
+Received: from VI1PR04MB5726.eurprd04.prod.outlook.com (20.178.127.24) by
+ VI1PR04MB3022.eurprd04.prod.outlook.com (10.170.228.144) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.1294.26; Fri, 16 Nov 2018 09:46:33 +0000
+Received: from VI1PR04MB5726.eurprd04.prod.outlook.com
+ ([fe80::297b:bb50:9b83:48e1]) by VI1PR04MB5726.eurprd04.prod.outlook.com
+ ([fe80::297b:bb50:9b83:48e1%4]) with mapi id 15.20.1294.045; Fri, 16 Nov 2018
+ 09:46:33 +0000
+From:   Yogesh Narayan Gaur <yogeshnarayan.gaur@nxp.com>
+To:     Schrempf Frieder <frieder.schrempf@kontron.De>
+CC:     Boris Brezillon <boris.brezillon@bootlin.com>,
+        "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+        "linux-spi@vger.kernel.org" <linux-spi@vger.kernel.org>,
+        Marek Vasut <marek.vasut@gmail.com>,
+        Mark Brown <broonie@kernel.org>, Han Xu <han.xu@nxp.com>,
+        "dwmw2@infradead.org" <dwmw2@infradead.org>,
+        "computersforpeace@gmail.com" <computersforpeace@gmail.com>,
+        "richard@nod.at" <richard@nod.at>,
+        "miquel.raynal@bootlin.com" <miquel.raynal@bootlin.com>,
+        David Wolfe <david.wolfe@nxp.com>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Prabhakar Kushwaha <prabhakar.kushwaha@nxp.com>,
+        "shawnguo@kernel.org" <shawnguo@kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH v5 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Topic: [PATCH v5 3/9] spi: Add a driver for the Freescale/NXP QuadSPI
+ controller
+Thread-Index: AQHUe1duroFEkzCsFkCoS8/TUWpV/KVO8aOggAAF6ACAAAOAgIAAGyKggAAHfQCAATWVMIAAZtCAgAAZFgCAAA2kAIABBZBwgABEPQCAAAB+AA==
+Date:   Fri, 16 Nov 2018 09:46:33 +0000
+Message-ID: <VI1PR04MB572687F21D67F3910DD3CF9F99DD0@VI1PR04MB5726.eurprd04.prod.outlook.com>
+References: <1542116782-13118-1-git-send-email-frieder.schrempf@kontron.de>
+ <1542116782-13118-4-git-send-email-frieder.schrempf@kontron.de>
+ <VI1PR04MB572679944542ED6A438FD2FB99C30@VI1PR04MB5726.eurprd04.prod.outlook.com>
+ <ce9cbfc0-3257-f117-aa21-cdee068579ce@kontron.de>
+ <65577d13-b17d-8f69-313c-01d23240d1d9@kontron.de>
+ <VI1PR04MB572664063A0E237D2EB7203A99C30@VI1PR04MB5726.eurprd04.prod.outlook.com>
+ <eb4b79be-c12b-16e7-e1dd-86a157cfdc7d@kontron.de>
+ <VI1PR04MB57265222E26C013D5D9C009B99DC0@VI1PR04MB5726.eurprd04.prod.outlook.com>
+ <3e9aa917-cf3a-cf0e-8516-4e73d30eb2a1@kontron.de>
+ <20181115141252.52a5b32d@bbrezillon>
+ <11f45245-efc4-f1cf-3ead-578a5ca4bf29@kontron.de>
+ <VI1PR04MB572631414249F5941C1646D999DD0@VI1PR04MB5726.eurprd04.prod.outlook.com>
+ <2aa180a6-c369-0e84-b6a2-085b0a539695@kontron.de>
+In-Reply-To: <2aa180a6-c369-0e84-b6a2-085b0a539695@kontron.de>
+Accept-Language: en-US
 Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-Originating-IP: [10.134.22.195]
-X-CFilter-Loop: Reflected
+X-MS-Has-Attach: 
+X-MS-TNEF-Correlator: 
+authentication-results: spf=none (sender IP is )
+ smtp.mailfrom=yogeshnarayan.gaur@nxp.com; 
+x-originating-ip: [14.142.187.166]
+x-ms-publictraffictype: Email
+x-microsoft-exchange-diagnostics: 1;VI1PR04MB3022;6:3l4BROPJIdF2UvB0R5pMAqT9GU1lBaQZqXgUO33VzxPu56oiVImvTnW7eF57+AmOqik6rQGLQuDq6B6sZzwqd90tpk/XbvaIVvSRFUGyPsxvbqyqWPmHxpPQt8iMwOxBYD9RYBmx/Os5aouldgUUxQ1GhugjEgMoiDgM3TGgPKUO0aLiao5SbqNPJNM+bGu+5v4553B0XK7MGQM1nLqwiJvbeQRYOQX4I6Xrgq8MX0c4TjlNm2whOQy1Wm9dpe+OVdno27NoiO7J4bTs3AIhqJFjOrtyKWTMTjkwKm2iG060QA1DJSh1yQAoXY8S0uKWSlsFHdr9kUGzbU/mubi0KoQl6s8pZRhB6URT5FnSJdgk5bPgGmhzfB1fG7svrQCijc3Eelhd3oxC314b4mt7rOb8RZoHtdRkuGIuOMvCczz0wxo0koSIPBwEZ57hU2jYFoGqCTXdbW/xolMJXPymNQ==;5:Q1Xj8IijRNxjrDfopQ73Ntv7YZXz46TRbiA0h+ktA4E+eQIVvt23B/lD0UEuymNyzlAToUgFy6bt4+YVEzNiE1LiPNK8rzJpPZ4BaEog0F4AH39/nlSiqmbcibzZTIQXRccFYjUER8nc/nifXYrARA/iigFdDC9WRKaUBXzPle8=;7:u9fFGE0tsk7FDEX452JaolOvjz/l07ONxrUbaY1RepbkGKJ9vol3DMydE3tQsohOPW7xmk4aepmKxMjA15UBBWV0cuOREMoGtXibmOg+8tPzTPajp5RLa1Esyzfot2m7nuVOlSfpvse7rLvrTnLTlQ==
+x-ms-exchange-antispam-srfa-diagnostics: SOS;
+x-ms-office365-filtering-correlation-id: 33a9cb78-ba1d-402d-8429-08d64ba864aa
+x-ms-office365-filtering-ht: Tenant
+x-microsoft-antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4618075)(4534185)(7168020)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060)(7193020);SRVR:VI1PR04MB3022;
+x-ms-traffictypediagnostic: VI1PR04MB3022:
+x-microsoft-antispam-prvs: <VI1PR04MB30228C4AC8F507AFB978BCE299DD0@VI1PR04MB3022.eurprd04.prod.outlook.com>
+x-exchange-antispam-report-test: UriScan:(258649278758335)(9452136761055)(85827821059158)(185117386973197);
+x-ms-exchange-senderadcheck: 1
+x-exchange-antispam-report-cfa-test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(5005006)(8121501046)(3002001)(3231415)(944501410)(52105112)(10201501046)(93006095)(93001095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123558120)(20161123564045)(20161123560045)(20161123562045)(201708071742011)(7699051)(76991095);SRVR:VI1PR04MB3022;BCL:0;PCL:0;RULEID:;SRVR:VI1PR04MB3022;
+x-forefront-prvs: 0858FF8026
+x-forefront-antispam-report: SFV:NSPM;SFS:(10009020)(366004)(39860400002)(136003)(396003)(376002)(346002)(13464003)(189003)(199004)(7736002)(53546011)(99286004)(4326008)(6116002)(7696005)(76176011)(66066001)(102836004)(55236004)(86362001)(71200400001)(256004)(81166006)(25786009)(186003)(26005)(6506007)(2906002)(71190400001)(14444005)(229853002)(93886005)(6916009)(68736007)(316002)(3846002)(97736004)(78486014)(446003)(54906003)(39060400002)(6436002)(2900100001)(53936002)(11346002)(106356001)(7416002)(478600001)(105586002)(74316002)(8936002)(476003)(8676002)(81156014)(5660300001)(486006)(6246003)(55016002)(33656002)(9686003)(305945005)(14454004);DIR:OUT;SFP:1101;SCL:1;SRVR:VI1PR04MB3022;H:VI1PR04MB5726.eurprd04.prod.outlook.com;FPR:;SPF:None;LANG:en;PTR:InfoNoRecords;MX:1;A:1;
+received-spf: None (protection.outlook.com: nxp.com does not designate
+ permitted sender hosts)
+x-microsoft-antispam-message-info: cdTz5ps3T0uVeABFOJF9lZcAj3oOilVJf57ixI7EnH5X1fxcH61nBYY1VwxpB1q+j3Rc3/jJHJG4ZVO27iVYjDQ72/LvUrwUCEvxr5Uiz+WnMx2Mve6pUmXiA4E4cAloqfPLinl2AZpBpzDFCPNptnF+oee8OV7SvPgo//iam2WboiRTQQLdJcPw+mccToW/FfJKFmtTrtPs6UqUxdv4+Y1ITXU6qjhaD1oKbnDEiF78fpf+ckd7/GgJKftSTY6t7K2RI80XKpK3mzTduIY02ClfHHqIuLmzt3b2murGA1y/ogCGCEAP73Du55ox3CXrjumplg25/7f4tPpc8+G6NTbMsFL8UqDPCvDoYohhQP0=
+spamdiagnosticoutput: 1:99
+spamdiagnosticmetadata: NSPM
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
+MIME-Version: 1.0
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 33a9cb78-ba1d-402d-8429-08d64ba864aa
+X-MS-Exchange-CrossTenant-originalarrivaltime: 16 Nov 2018 09:46:33.3498
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB3022
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Jaegeuk,
-
-On 2018/11/15 16:32, Chao Yu wrote:
-> Hi Jaeguek,
-> 
-> On 2018/11/15 15:52, Jaegeuk Kim wrote:
->> Hi Chao,
->>
->> I suspect this brings a system stuck by missing bio being flushed. Please check
->> the changes.
-> 
-> Oh, let me check this patch.
-
-I found one corner case below, but not very sure it can avoid system stuck.
-
-	if (unlikely(f2fs_cp_error(sbi))) {
-		if (bio && *bio) {
-			__submit_bio(sbi, *bio, DATA);
-			*bio = NULL;
-		}
-		f2fs_submit_merged_write(sbi, DATA);
-		submitted = NULL;
-	}
-
-Anyway, let me send v2, could you please test this?
-
-Thanks,
-
-> 
-> Thanks,
-> 
->>
->> Thanks,
->>
->> On 10/23, Chao Yu wrote:
->>> SQLite in Wal mode may trigger sequential IPU write in db-wal file, after
->>> commit d1b3e72d5490 ("f2fs: submit bio of in-place-update pages"), we
->>> lost the chance of merging page in inner managed bio cache, result in
->>> submitting more small-sized IO.
->>>
->>> So let's add temporary bio in writepages() to cache mergeable write IO as
->>> much as possible.
->>>
->>> Test case:
->>> 1. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
->>> 2. xfs_io -f /mnt/f2fs/file -c "pwrite 0 65536" -c "fsync"
->>>
->>> Before:
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65552, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65560, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65568, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65576, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65584, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65592, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65600, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65608, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65616, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65624, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65632, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65640, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65648, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65656, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65664, size = 4096
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57352, size = 4096
->>>
->>> After:
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), DATA, sector = 65544, size = 65536
->>> f2fs_submit_write_bio: dev = (251,0)/(251,0), rw = WRITE(S), NODE, sector = 57368, size = 4096
->>>
->>> Signed-off-by: Chao Yu <yuchao0@huawei.com>
->>> ---
->>>  fs/f2fs/data.c    | 57 +++++++++++++++++++++++++++++++++++++++++++++--
->>>  fs/f2fs/f2fs.h    |  3 +++
->>>  fs/f2fs/segment.c |  5 ++++-
->>>  3 files changed, 62 insertions(+), 3 deletions(-)
->>>
->>> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
->>> index 01b7f59523dc..0c8f18dc140d 100644
->>> --- a/fs/f2fs/data.c
->>> +++ b/fs/f2fs/data.c
->>> @@ -491,6 +491,49 @@ int f2fs_submit_page_bio(struct f2fs_io_info *fio)
->>>  	return 0;
->>>  }
->>>  
->>> +int f2fs_merge_page_bio(struct f2fs_io_info *fio)
->>> +{
->>> +	struct bio *bio = *fio->bio;
->>> +	struct page *page = fio->encrypted_page ?
->>> +			fio->encrypted_page : fio->page;
->>> +
->>> +	if (!f2fs_is_valid_blkaddr(fio->sbi, fio->new_blkaddr,
->>> +			__is_meta_io(fio) ? META_GENERIC : DATA_GENERIC))
->>> +		return -EFAULT;
->>> +
->>> +	trace_f2fs_submit_page_bio(page, fio);
->>> +	f2fs_trace_ios(fio, 0);
->>> +
->>> +	if (bio && (*fio->last_block + 1 != fio->new_blkaddr ||
->>> +			!__same_bdev(fio->sbi, fio->new_blkaddr, bio))) {
->>> +		__submit_bio(fio->sbi, bio, fio->type);
->>> +		bio = NULL;
->>> +	}
->>> +alloc_new:
->>> +	if (!bio) {
->>> +		bio = __bio_alloc(fio->sbi, fio->new_blkaddr, fio->io_wbc,
->>> +				BIO_MAX_PAGES, false, fio->type, fio->temp);
->>> +		*fio->last_block = fio->new_blkaddr;
->>> +		bio_set_op_attrs(bio, fio->op, fio->op_flags);
->>> +	}
->>> +
->>> +	if (bio_add_page(bio, page, PAGE_SIZE, 0) < PAGE_SIZE) {
->>> +		__submit_bio(fio->sbi, bio, fio->type);
->>> +		bio = NULL;
->>> +		goto alloc_new;
->>> +	}
->>> +
->>> +	if (fio->io_wbc)
->>> +		wbc_account_io(fio->io_wbc, page, PAGE_SIZE);
->>> +
->>> +	*fio->last_block = fio->new_blkaddr;
->>> +
->>> +	inc_page_count(fio->sbi, WB_DATA_TYPE(fio->page));
->>> +
->>> +	*fio->bio = bio;
->>> +	return 0;
->>> +}
->>> +
->>>  void f2fs_submit_page_write(struct f2fs_io_info *fio)
->>>  {
->>>  	struct f2fs_sb_info *sbi = fio->sbi;
->>> @@ -1899,6 +1942,8 @@ int f2fs_do_write_data_page(struct f2fs_io_info *fio)
->>>  }
->>>  
->>>  static int __write_data_page(struct page *page, bool *submitted,
->>> +				struct bio **bio,
->>> +				sector_t *last_block,
->>>  				struct writeback_control *wbc,
->>>  				enum iostat_type io_type)
->>>  {
->>> @@ -1924,6 +1969,8 @@ static int __write_data_page(struct page *page, bool *submitted,
->>>  		.need_lock = LOCK_RETRY,
->>>  		.io_type = io_type,
->>>  		.io_wbc = wbc,
->>> +		.bio = bio,
->>> +		.last_block = last_block,
->>>  	};
->>>  
->>>  	trace_f2fs_writepage(page, DATA);
->>> @@ -2051,7 +2098,7 @@ static int __write_data_page(struct page *page, bool *submitted,
->>>  static int f2fs_write_data_page(struct page *page,
->>>  					struct writeback_control *wbc)
->>>  {
->>> -	return __write_data_page(page, NULL, wbc, FS_DATA_IO);
->>> +	return __write_data_page(page, NULL, NULL, NULL, wbc, FS_DATA_IO);
->>>  }
->>>  
->>>  /*
->>> @@ -2067,6 +2114,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>>  	int done = 0;
->>>  	struct pagevec pvec;
->>>  	struct f2fs_sb_info *sbi = F2FS_M_SB(mapping);
->>> +	struct bio *bio = NULL;
->>> +	sector_t last_block;
->>>  	int nr_pages;
->>>  	pgoff_t uninitialized_var(writeback_index);
->>>  	pgoff_t index;
->>> @@ -2154,7 +2203,8 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>>  			if (!clear_page_dirty_for_io(page))
->>>  				goto continue_unlock;
->>>  
->>> -			ret = __write_data_page(page, &submitted, wbc, io_type);
->>> +			ret = __write_data_page(page, &submitted, &bio,
->>> +						&last_block, wbc, io_type);
->>>  			if (unlikely(ret)) {
->>>  				/*
->>>  				 * keep nr_to_write, since vfs uses this to
->>> @@ -2201,6 +2251,9 @@ static int f2fs_write_cache_pages(struct address_space *mapping,
->>>  	if (nwritten)
->>>  		f2fs_submit_merged_write_cond(F2FS_M_SB(mapping), mapping->host,
->>>  								NULL, 0, DATA);
->>> +	/* submit cached bio of IPU write */
->>> +	if (bio)
->>> +		__submit_bio(sbi, bio, DATA);
->>>  
->>>  	return ret;
->>>  }
->>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
->>> index 8932276015f9..6af2a105529d 100644
->>> --- a/fs/f2fs/f2fs.h
->>> +++ b/fs/f2fs/f2fs.h
->>> @@ -1042,6 +1042,8 @@ struct f2fs_io_info {
->>>  	bool retry;		/* need to reallocate block address */
->>>  	enum iostat_type io_type;	/* io type */
->>>  	struct writeback_control *io_wbc; /* writeback control */
->>> +	struct bio **bio;		/* bio for ipu */
->>> +	sector_t *last_block;		/* last block number in bio */
->>>  	unsigned char version;		/* version of the node */
->>>  };
->>>  
->>> @@ -3085,6 +3087,7 @@ void f2fs_submit_merged_write_cond(struct f2fs_sb_info *sbi,
->>>  				nid_t ino, enum page_type type);
->>>  void f2fs_flush_merged_writes(struct f2fs_sb_info *sbi);
->>>  int f2fs_submit_page_bio(struct f2fs_io_info *fio);
->>> +int f2fs_merge_page_bio(struct f2fs_io_info *fio);
->>>  void f2fs_submit_page_write(struct f2fs_io_info *fio);
->>>  struct block_device *f2fs_target_device(struct f2fs_sb_info *sbi,
->>>  			block_t blk_addr, struct bio *bio);
->>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
->>> index 3aa2f00262b3..b51b182dd7f4 100644
->>> --- a/fs/f2fs/segment.c
->>> +++ b/fs/f2fs/segment.c
->>> @@ -3194,7 +3194,10 @@ int f2fs_inplace_write_data(struct f2fs_io_info *fio)
->>>  
->>>  	stat_inc_inplace_blocks(fio->sbi);
->>>  
->>> -	err = f2fs_submit_page_bio(fio);
->>> +	if (fio->bio)
->>> +		err = f2fs_merge_page_bio(fio);
->>> +	else
->>> +		err = f2fs_submit_page_bio(fio);
->>>  	if (!err)
->>>  		update_device_state(fio);
->>>  
->>> -- 
->>> 2.18.0.rc1
->>
->> .
->>
-> 
-> 
-> 
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
-> 
-> .
-> 
-
+SGkgRnJpZWRlciwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPiBGcm9tOiBTY2hy
+ZW1wZiBGcmllZGVyIFttYWlsdG86ZnJpZWRlci5zY2hyZW1wZkBrb250cm9uLkRlXQ0KPiBTZW50
+OiBGcmlkYXksIE5vdmVtYmVyIDE2LCAyMDE4IDM6MTIgUE0NCj4gVG86IFlvZ2VzaCBOYXJheWFu
+IEdhdXIgPHlvZ2VzaG5hcmF5YW4uZ2F1ckBueHAuY29tPg0KPiBDYzogQm9yaXMgQnJlemlsbG9u
+IDxib3Jpcy5icmV6aWxsb25AYm9vdGxpbi5jb20+OyBsaW51eC1tdGRAbGlzdHMuaW5mcmFkZWFk
+Lm9yZzsNCj4gbGludXgtc3BpQHZnZXIua2VybmVsLm9yZzsgTWFyZWsgVmFzdXQgPG1hcmVrLnZh
+c3V0QGdtYWlsLmNvbT47IE1hcmsNCj4gQnJvd24gPGJyb29uaWVAa2VybmVsLm9yZz47IEhhbiBY
+dSA8aGFuLnh1QG54cC5jb20+Ow0KPiBkd213MkBpbmZyYWRlYWQub3JnOyBjb21wdXRlcnNmb3Jw
+ZWFjZUBnbWFpbC5jb207IHJpY2hhcmRAbm9kLmF0Ow0KPiBtaXF1ZWwucmF5bmFsQGJvb3RsaW4u
+Y29tOyBEYXZpZCBXb2xmZSA8ZGF2aWQud29sZmVAbnhwLmNvbT47IEZhYmlvDQo+IEVzdGV2YW0g
+PGZhYmlvLmVzdGV2YW1AbnhwLmNvbT47IFByYWJoYWthciBLdXNod2FoYQ0KPiA8cHJhYmhha2Fy
+Lmt1c2h3YWhhQG54cC5jb20+OyBzaGF3bmd1b0BrZXJuZWwub3JnOyBsaW51eC0NCj4ga2VybmVs
+QHZnZXIua2VybmVsLm9yZw0KPiBTdWJqZWN0OiBSZTogW1BBVENIIHY1IDMvOV0gc3BpOiBBZGQg
+YSBkcml2ZXIgZm9yIHRoZSBGcmVlc2NhbGUvTlhQIFF1YWRTUEkNCj4gY29udHJvbGxlcg0KPiAN
+Cj4gSGkgWW9nZXNoLA0KPiANCj4gT24gMTYuMTEuMTggMDY6NDEsIFlvZ2VzaCBOYXJheWFuIEdh
+dXIgd3JvdGU6DQo+ID4gSGkgRnJpZWRlciwNCj4gPg0KPiA+PiAtLS0tLU9yaWdpbmFsIE1lc3Nh
+Z2UtLS0tLQ0KPiA+PiBGcm9tOiBTY2hyZW1wZiBGcmllZGVyIFttYWlsdG86ZnJpZWRlci5zY2hy
+ZW1wZkBrb250cm9uLkRlXQ0KPiA+PiBTZW50OiBUaHVyc2RheSwgTm92ZW1iZXIgMTUsIDIwMTgg
+NzozMiBQTQ0KPiA+PiBUbzogWW9nZXNoIE5hcmF5YW4gR2F1ciA8eW9nZXNobmFyYXlhbi5nYXVy
+QG54cC5jb20+DQo+ID4+IENjOiBCb3JpcyBCcmV6aWxsb24gPGJvcmlzLmJyZXppbGxvbkBib290
+bGluLmNvbT47DQo+ID4+IGxpbnV4LW10ZEBsaXN0cy5pbmZyYWRlYWQub3JnOyBsaW51eC1zcGlA
+dmdlci5rZXJuZWwub3JnOyBNYXJlayBWYXN1dA0KPiA+PiA8bWFyZWsudmFzdXRAZ21haWwuY29t
+PjsgTWFyayBCcm93biA8YnJvb25pZUBrZXJuZWwub3JnPjsgSGFuIFh1DQo+ID4+IDxoYW4ueHVA
+bnhwLmNvbT47IGR3bXcyQGluZnJhZGVhZC5vcmc7DQo+IGNvbXB1dGVyc2ZvcnBlYWNlQGdtYWls
+LmNvbTsNCj4gPj4gcmljaGFyZEBub2QuYXQ7IG1pcXVlbC5yYXluYWxAYm9vdGxpbi5jb207IERh
+dmlkIFdvbGZlDQo+ID4+IDxkYXZpZC53b2xmZUBueHAuY29tPjsgRmFiaW8gRXN0ZXZhbSA8ZmFi
+aW8uZXN0ZXZhbUBueHAuY29tPjsNCj4gPj4gUHJhYmhha2FyIEt1c2h3YWhhIDxwcmFiaGFrYXIu
+a3VzaHdhaGFAbnhwLmNvbT47DQo+IHNoYXduZ3VvQGtlcm5lbC5vcmc7DQo+ID4+IGxpbnV4LSBr
+ZXJuZWxAdmdlci5rZXJuZWwub3JnDQo+ID4+IFN1YmplY3Q6IFJlOiBbUEFUQ0ggdjUgMy85XSBz
+cGk6IEFkZCBhIGRyaXZlciBmb3IgdGhlIEZyZWVzY2FsZS9OWFANCj4gPj4gUXVhZFNQSSBjb250
+cm9sbGVyDQo+ID4+DQo+ID4+IEhpIFlvZ2VzaCwNCj4gPj4NCj4gPj4gT24gMTUuMTEuMTggMTQ6
+MTIsIEJvcmlzIEJyZXppbGxvbiB3cm90ZToNCj4gPj4+IE9uIFRodSwgMTUgTm92IDIwMTggMTE6
+NDM6MDUgKzAwMDANCj4gPj4+IFNjaHJlbXBmIEZyaWVkZXIgPGZyaWVkZXIuc2NocmVtcGZAa29u
+dHJvbi5EZT4gd3JvdGU6DQo+ID4+Pg0KPiA+Pj4+IE9uIDE1LjExLjE4IDA3OjIyLCBZb2dlc2gg
+TmFyYXlhbiBHYXVyIHdyb3RlOg0KPiA+Pj4+PiBIaSBGcmllZGVyLA0KPiA+Pj4+Pg0KPiA+Pj4+
+PiBXaXRoIGJlbG93IHBhdGNoIG9uIHRvcCBvZiB5b3VyIHY1LCBSZWFkL1dyaXRlL0VyYXNlIG9u
+IENTMSBpcw0KPiA+Pj4+PiB3b3JraW5nDQo+ID4+IGZpbmUgZm9yIG1lLg0KPiA+Pj4+DQo+ID4+
+Pj4gT2ssIGFyZSB5b3Ugc3VyZSwgdGhhdCBBSEIgcmVhZCBpcyB3b3JraW5nIHRvbyB3aXRoIHRo
+aXMgcGF0Y2g/DQo+ID4+Pj4gWW91IGFyZSByZW1vdmluZyB0aGUgbWVtbWFwX3BoeSBvZmZzZXQg
+ZnJvbSBTRkFSIGFuZCB0aGUgU0ZYWEFEDQo+ID4+Pj4gcmVnaXN0ZXIgdmFsdWVzLg0KPiA+Pj4+
+DQo+ID4+Pj4gSSBjYW4gdW5kZXJzdGFuZCB0aGF0IHNlbGVjdGlvbiBvZiB0aGUgQ1MgYW5kIElQ
+IGNvbW1hbmRzIHdpbGwgd29yaw0KPiA+Pj4+IGxpa2UgdGhpcywgYnV0IEkgY2FuJ3QgdW5kZXJz
+dGFuZCBob3cgQUhCIHJlYWQgc2hvdWxkIHdvcmsgd2l0aG91dA0KPiA+Pj4+IHRoZSBiYXNlIGFk
+ZHJlc3Mgb2YgdGhlIG1hcHBlZCBtZW1vcnkuDQo+ID4+Pj4NCj4gPj4+PiBJJ20gYWZyYWlkIEkg
+c3RpbGwgZG9uJ3QgZnVsbHkgdW5kZXJzdGFuZCB0aGUgYmFja2dyb3VuZCBvZiB0aGVzZQ0KPiA+
+Pj4+IHRoaW5ncywNCj4gPj4+DQo+ID4+PiBTYW1lIGhlcmUuIFlvZ2VzaCwgY2FuIHlvdSBnaXZl
+IHVzIG1vcmUgZGV0YWlsIG9uIHdoeSB5b3UgZGVjaWRlZCB0bw0KPiA+Pj4gZHJvcCB0aGUgbWVt
+bWFwX3BoeSBvZmZzZXQ/DQo+ID4+DQo+ID4+IFlvdXIgY2hhbmdlcyBkbyBub3Qgd29yayBvbiBt
+eSBzZXR1cCAoaS5NWDZVTCkuIEl0IGxvb2tzIGxpa2UgeW91cg0KPiA+PiBoYXJkd2FyZSBpcyBk
+aWZmZXJlbnQuDQo+ID4+DQo+ID4+IEkgZm91bmQgdGhpcyBwYXRjaCBmb3IgTFMyMDgwQTogWzFd
+LiBUaGlzIHdvdWxkIGV4cGxhaW4gd2h5IHlvdSBuZWVkDQo+ID4+IHRvIHJlbW92ZSB0aGUgb2Zm
+c2V0IHRvIG1ha2UgaXQgd29yay4NCj4gPj4NCj4gPj4gVG8gdmVyaWZ5IHRoaXMsIGNvdWxkIHlv
+dSBwbGVhc2UgdGVzdCB5b3VyIHNldHVwIHdpdGggdGhlIGN1cnJlbnQNCj4gPj4gc3BpLW5vciBk
+cml2ZXIgKGZzbF9xdWFkc3BpLmMpLiBJZiBvdXIgYXNzdW1wdGlvbnMgYXJlIHJpZ2h0LCBpdA0K
+PiA+PiBzaG91bGQgb25seSB3b3JrIG9uIENTMCBhbmQgQ1MxIHdpdGggWzFdIGFwcGxpZWQuDQo+
+ID4+DQo+ID4NCj4gPiBZZXMsIEkgbmVlZCB0byByZW1vdmUgdGhlIG9mZnNldCB0byBtYWtlIGl0
+IHdvcmsgYW5kIHRoaXMgaXMgcmVxdWlyZWQgZm9yIHRoZQ0KPiBOWFAgTGF5ZXJzY2FwZS0yLngg
+U29DcyBsaWtlIExTMjA4eC9MczEwOHggZXRjLg0KPiA+DQo+ID4gSSBoYXZlIG1vZGlmaWVkIHRo
+ZSBwYXRjaCBhbmQgaGF2ZSBpbnRyb2R1Y2VkIGVudHJ5IGluIHF1aXJrcyBmb3IgbHMyMDgwYS4g
+V2l0aA0KPiB0aGlzIFJlYWQvV3JpdGUvRXJhc2UgYXJlIHdvcmtpbmcgZm9yIG1lIGZvciBib3Ro
+IENTLg0KPiANCj4gT2ssIHdoYXQgSSB3YXMgYXNraW5nIGZvciBpcyBhIHRlc3Qgd2l0aCB0aGUg
+b3JpZ2luYWwsIHVubW9kaWZpZWQgU1BJIE5PUiBkcml2ZXIgaW4NCj4gbXRkL3NwaS1ub3IvZnNs
+LXF1YWRzcGkuYy4gV2UgbmVlZCB0aGlzIHRvIGNvbmZpcm0gdGhhdCB0aGUgcHJvYmxlbSBpcyBy
+ZWFsbHkNCj4gd2hhdCB3ZSB0aGluaywgb3IgdG8gZmluZCBvdXQgaWYgd2UgbWlzc2VkIHNvbWV0
+aGluZy4NCj4gDQo+IENhbiB5b3UgcGxlYXNlIGRvIGEgcXVpY2sgdGVzdD8gSWYgaXQgY29uZmly
+bXMgb3VyIGFzc3VtcHRpb25zLCBJIHdpbGwgc2VuZCBhIG5ldw0KPiB2ZXJzaW9uIHdpdGggdGhl
+IHF1aXJrIGFuZCBob3BlZnVsbHkgd2UgY2FuIHRoZW4gbW92ZSBvbi4NCj4gDQoNClllcywgcHJv
+YmxlbSBleGlzdCB3aXRoIG9yaWdpbmFsIHVuLW1vZGlmaWVkIHVwc3RyZWFkIFNQSS1OT1IgZHJp
+dmVyIGFsc28uDQpBY3R1YWxseSwgaW50ZXJuYWxseSB3ZSBhcmUgbWFpbnRhaW5pbmcgZHJpdmVy
+IHdpdGggc29tZSBsb2NhbCBjaGFuZ2UgYW5kIG9uZSBvZiB0aGUgY2hhbmdlIGlzIHJlbGF0ZWQg
+dG8gc2FtZSBpLmUuIG1ha2luZyBoYXZpbmcgbWFwX2FkZHIgYXMgMCBmb3IgbGF5ZXJzY2FwZSBj
+aGlwcy4NCg0KSSBoYXZlIHRlc3RlZCwgdGhhdCBieSByZW1vdmluZyB0aGF0IENTMSBhY2Nlc3Mg
+c2hvd3MgZXJyb3IuDQoNClBsZWFzZSBpbnRlZ3JhdGUgdGhlc2UgY2hhbmdlcyBpbiB5b3VyIG5l
+eHQgdmVyc2lvbi4NCg0KLS0NClJlZ2FyZHMNCllvZ2VzaCBHYXVyDQoNCj4gVGhhbmtzLA0KPiBG
+cmllZGVyDQo+IA0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvc3BpL3NwaS1mc2wtcXNw
+aS5jIGIvZHJpdmVycy9zcGkvc3BpLWZzbC1xc3BpLmMNCj4gPiBpbmRleCBjZTQ1ZThlLi41ZDI2
+ZjczIDEwMDY0NA0KPiA+IC0tLSBhL2RyaXZlcnMvc3BpL3NwaS1mc2wtcXNwaS5jDQo+ID4gKysr
+IGIvZHJpdmVycy9zcGkvc3BpLWZzbC1xc3BpLmMNCj4gPiBAQCAtMTc1LDYgKzE3NSw5IEBADQo+
+ID4gICAvKiBUS1QyNDU2MTgsIHRoZSBjb250cm9sbGVyIGNhbm5vdCB3YWtlIHVwIGZyb20gd2Fp
+dCBtb2RlICovDQo+ID4gICAjZGVmaW5lIFFVQURTUElfUVVJUktfVEtUMjQ1NjE4ICAgICAgICAg
+ICAgICAgIEJJVCgzKQ0KPiA+DQo+ID4gKy8qIFFTUElfQU1CQV9CQVNFIGlzIGludGVybmFsbHkg
+YWRkZWQgYnkgU09DIGRlc2lnbiBmb3IgTFMtMi54IGFyY2hpdGVjdHVyZQ0KPiAqLw0KPiA+ICsj
+ZGVmaW5lIFFVQURTUElfQU1CQV9CQVNFX0lOVEVSTkFMICAgICBCSVQoNCkNCj4gPiArDQo+ID4g
+ICBzdHJ1Y3QgZnNsX3FzcGlfZGV2dHlwZV9kYXRhIHsNCj4gPiAgICAgICAgICB1bnNpZ25lZCBp
+bnQgcnhmaWZvOw0KPiA+ICAgICAgICAgIHVuc2lnbmVkIGludCB0eGZpZm87DQo+ID4gQEAgLTIy
+Nyw3ICsyMzAsNyBAQCBzdGF0aWMgY29uc3Qgc3RydWN0IGZzbF9xc3BpX2RldnR5cGVfZGF0YQ0K
+PiBsczIwODBhX2RhdGEgPSB7DQo+ID4gICAgICAgICAgLnJ4ZmlmbyA9IFNaXzEyOCwNCj4gPiAg
+ICAgICAgICAudHhmaWZvID0gU1pfNjQsDQo+ID4gICAgICAgICAgLmFoYl9idWZfc2l6ZSA9IFNa
+XzFLLA0KPiA+IC0gICAgICAgLnF1aXJrcyA9IFFVQURTUElfUVVJUktfVEtUMjUzODkwLA0KPiA+
+ICsgICAgICAgLnF1aXJrcyA9IFFVQURTUElfUVVJUktfVEtUMjUzODkwIHwNCj4gPiArIFFVQURT
+UElfQU1CQV9CQVNFX0lOVEVSTkFMLA0KPiA+ICAgICAgICAgIC5saXR0bGVfZW5kaWFuID0gdHJ1
+ZSwNCj4gPiAgIH07DQo+ID4NCj4gPiBAQCAtMjM1LDYgKzIzOCw3IEBAIHN0cnVjdCBmc2xfcXNw
+aSB7DQo+ID4gICAgICAgICAgdm9pZCBfX2lvbWVtICppb2Jhc2U7DQo+ID4gICAgICAgICAgdm9p
+ZCBfX2lvbWVtICphaGJfYWRkcjsNCj4gPiAgICAgICAgICB1MzIgbWVtbWFwX3BoeTsNCj4gPiAr
+ICAgICAgIHUzMiBhbWJhX2Jhc2VfYWRkcjsNCj4gPiAgICAgICAgICBzdHJ1Y3QgY2xrICpjbGss
+ICpjbGtfZW47DQo+ID4gICAgICAgICAgc3RydWN0IGRldmljZSAqZGV2Ow0KPiA+ICAgICAgICAg
+IHN0cnVjdCBjb21wbGV0aW9uIGM7DQo+ID4gQEAgLTI2NCw2ICsyNjgsMTEgQEAgc3RhdGljIGlu
+bGluZSBpbnQgbmVlZHNfd2FrZXVwX3dhaXRfbW9kZShzdHJ1Y3QNCj4gZnNsX3FzcGkgKnEpDQo+
+ID4gICAgICAgICAgcmV0dXJuIHEtPmRldnR5cGVfZGF0YS0+cXVpcmtzICYgUVVBRFNQSV9RVUlS
+S19US1QyNDU2MTg7DQo+ID4gICB9DQo+ID4NCj4gPiArc3RhdGljIGlubGluZSBpbnQgaGFzX2Fk
+ZGVkX2FtYmFfYmFzZV9pbnRlcm5hbChzdHJ1Y3QgZnNsX3FzcGkgKnEpIHsNCj4gPiArICAgICAg
+IHJldHVybiBxLT5kZXZ0eXBlX2RhdGEtPnF1aXJrcyAmIFFVQURTUElfQU1CQV9CQVNFX0lOVEVS
+TkFMOyB9DQo+ID4gKw0KPiA+ICAgLyoNCj4gPiAgICAqIEFuIElDIGJ1ZyBtYWtlcyBpdCBuZWNl
+c3NhcnkgdG8gcmVhcnJhbmdlIHRoZSAzMi1iaXQgZGF0YS4NCj4gPiAgICAqIExhdGVyIGNoaXBz
+LCBzdWNoIGFzIElNWDZTTFgsIGhhdmUgZml4ZWQgdGhpcyBidWcuDQo+ID4gQEAgLTQ4OSwyOSAr
+NDk4LDExIEBAIHN0YXRpYyB2b2lkIGZzbF9xc3BpX2ludmFsaWRhdGUoc3RydWN0IGZzbF9xc3Bp
+ICpxKQ0KPiA+ICAgc3RhdGljIHZvaWQgZnNsX3FzcGlfc2VsZWN0X21lbShzdHJ1Y3QgZnNsX3Fz
+cGkgKnEsIHN0cnVjdCBzcGlfZGV2aWNlICpzcGkpDQo+ID4gICB7DQo+ID4gICAgICAgICAgdW5z
+aWduZWQgbG9uZyByYXRlID0gc3BpLT5tYXhfc3BlZWRfaHo7DQo+ID4gLSAgICAgICBpbnQgcmV0
+LCBpOw0KPiA+IC0gICAgICAgdTMyIG1hcF9hZGRyOw0KPiA+ICsgICAgICAgaW50IHJldDsNCj4g
+Pg0KPiA+ICAgICAgICAgIGlmIChxLT5zZWxlY3RlZCA9PSBzcGktPmNoaXBfc2VsZWN0KQ0KPiA+
+ICAgICAgICAgICAgICAgICAgcmV0dXJuOw0KPiA+DQo+ID4gLSAgICAgICAvKg0KPiA+IC0gICAg
+ICAgICogSW4gSFcgdGhlcmUgY2FuIGJlIGEgbWF4aW11bSBvZiBmb3VyIGNoaXBzIG9uIHR3byBi
+dXNlcyB3aXRoDQo+ID4gLSAgICAgICAgKiB0d28gY2hpcCBzZWxlY3RzIG9uIGVhY2ggYnVzLiBX
+ZSB1c2UgZm91ciBjaGlwIHNlbGVjdHMgaW4gU1cNCj4gPiAtICAgICAgICAqIHRvIGRpZmZlcmVu
+dGlhdGUgYmV0d2VlbiB0aGUgZm91ciBjaGlwcy4NCj4gPiAtICAgICAgICAqIFdlIHVzZSB0aGUg
+U0ZBMUFELCBTRkEyQUQsIFNGQjFBRCwgU0ZCMkFEIHJlZ2lzdGVycyB0byBzZWxlY3QNCj4gPiAt
+ICAgICAgICAqIHRoZSBjaGlwIHdlIHdhbnQgdG8gYWNjZXNzLg0KPiA+IC0gICAgICAgICovDQo+
+ID4gLSAgICAgICBmb3IgKGkgPSAwOyBpIDwgNDsgaSsrKSB7DQo+ID4gLSAgICAgICAgICAgICAg
+IGlmIChpIDwgc3BpLT5jaGlwX3NlbGVjdCkNCj4gPiAtICAgICAgICAgICAgICAgICAgICAgICBt
+YXBfYWRkciA9IHEtPm1lbW1hcF9waHk7DQo+ID4gLSAgICAgICAgICAgICAgIGVsc2UNCj4gPiAt
+ICAgICAgICAgICAgICAgICAgICAgICBtYXBfYWRkciA9IHEtPm1lbW1hcF9waHkgKw0KPiA+IC0g
+ICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgICAgMiAqIHEtPmRldnR5cGVfZGF0YS0+YWhi
+X2J1Zl9zaXplOw0KPiA+IC0NCj4gPiAtICAgICAgICAgICAgICAgcXNwaV93cml0ZWwocSwgbWFw
+X2FkZHIsIHEtPmlvYmFzZSArIFFVQURTUElfU0ZBMUFEICsgKGkgKiA0KSk7DQo+ID4gLSAgICAg
+ICB9DQo+ID4gLQ0KPiA+ICAgICAgICAgIGlmIChuZWVkc180eF9jbG9jayhxKSkNCj4gPiAgICAg
+ICAgICAgICAgICAgIHJhdGUgKj0gNDsNCj4gPg0KPiA+IEBAIC01MzQsNyArNTI1LDkgQEAgc3Rh
+dGljIHZvaWQgZnNsX3FzcGlfc2VsZWN0X21lbShzdHJ1Y3QgZnNsX3FzcGkNCj4gPiAqcSwgc3Ry
+dWN0IHNwaV9kZXZpY2UgKnNwaSkNCj4gPg0KPiA+ICAgc3RhdGljIHZvaWQgZnNsX3FzcGlfcmVh
+ZF9haGIoc3RydWN0IGZzbF9xc3BpICpxLCBjb25zdCBzdHJ1Y3Qgc3BpX21lbV9vcCAqb3ApDQo+
+ID4gICB7DQo+ID4gLSAgICAgICBtZW1jcHlfZnJvbWlvKG9wLT5kYXRhLmJ1Zi5pbiwgcS0+YWhi
+X2FkZHIsIG9wLT5kYXRhLm5ieXRlcyk7DQo+ID4gKyAgICAgICBtZW1jcHlfZnJvbWlvKG9wLT5k
+YXRhLmJ1Zi5pbiwNCj4gPiArICAgICAgICAgICAgICAgICAgICAgcS0+YWhiX2FkZHIgKyBxLT5z
+ZWxlY3RlZCAqIHEtPmRldnR5cGVfZGF0YS0+YWhiX2J1Zl9zaXplLA0KPiA+ICsgICAgICAgICAg
+ICAgICAgICAgICBvcC0+ZGF0YS5uYnl0ZXMpOw0KPiA+ICAgfQ0KPiA+DQo+ID4gICBzdGF0aWMg
+dm9pZCBmc2xfcXNwaV9maWxsX3R4ZmlmbyhzdHJ1Y3QgZnNsX3FzcGkgKnEsIEBAIC02MzQsNw0K
+PiA+ICs2MjcsOSBAQCBzdGF0aWMgaW50IGZzbF9xc3BpX2V4ZWNfb3Aoc3RydWN0IHNwaV9tZW0g
+Km1lbSwgY29uc3QNCj4gPiBzdHJ1Y3Qgc3BpX21lbV9vcCAqb3ApDQo+ID4NCj4gPiAgICAgICAg
+ICBmc2xfcXNwaV9zZWxlY3RfbWVtKHEsIG1lbS0+c3BpKTsNCj4gPg0KPiA+IC0gICAgICAgcXNw
+aV93cml0ZWwocSwgcS0+bWVtbWFwX3BoeSwgYmFzZSArIFFVQURTUElfU0ZBUik7DQo+ID4gKyAg
+ICAgICBxc3BpX3dyaXRlbChxLCBxLT5hbWJhX2Jhc2VfYWRkciArDQo+ID4gKyAgICAgICAgICAg
+ICAgICAgICBxLT5zZWxlY3RlZCAqIHEtPmRldnR5cGVfZGF0YS0+YWhiX2J1Zl9zaXplLA0KPiA+
+ICsgICAgICAgICAgICAgICAgICAgYmFzZSArIFFVQURTUElfU0ZBUik7DQo+ID4NCj4gPiAgICAg
+ICAgICBxc3BpX3dyaXRlbChxLCBxc3BpX3JlYWRsKHEsIGJhc2UgKyBRVUFEU1BJX01DUikgfA0K
+PiA+ICAgICAgICAgICAgICAgICAgICAgIFFVQURTUElfTUNSX0NMUl9SWEZfTUFTSyB8DQo+ID4g
+UVVBRFNQSV9NQ1JfQ0xSX1RYRl9NQVNLLCBAQCAtNzMzLDYgKzcyOCwyMyBAQCBzdGF0aWMgaW50
+DQo+IGZzbF9xc3BpX2RlZmF1bHRfc2V0dXAoc3RydWN0IGZzbF9xc3BpICpxKQ0KPiA+ICAgICAg
+ICAgICAgICAgICAgICAgIFFVQURTUElfQlVGM0NSX0FEQVRTWihxLT5kZXZ0eXBlX2RhdGEtPmFo
+Yl9idWZfc2l6ZSAvIDgpLA0KPiA+ICAgICAgICAgICAgICAgICAgICAgIGJhc2UgKyBRVUFEU1BJ
+X0JVRjNDUik7DQo+ID4NCj4gPiArICAgICAgIC8qDQo+ID4gKyAgICAgICAgKiBJbiBIVyB0aGVy
+ZSBjYW4gYmUgYSBtYXhpbXVtIG9mIGZvdXIgY2hpcHMgb24gdHdvIGJ1c2VzIHdpdGgNCj4gPiAr
+ICAgICAgICAqIHR3byBjaGlwIHNlbGVjdHMgb24gZWFjaCBidXMuIFdlIHVzZSBmb3VyIGNoaXAg
+c2VsZWN0cyBpbiBTVw0KPiA+ICsgICAgICAgICogdG8gZGlmZmVyZW50aWF0ZSBiZXR3ZWVuIHRo
+ZSBmb3VyIGNoaXBzLg0KPiA+ICsgICAgICAgICogV2UgdXNlIHRoZSBTRkExQUQsIFNGQTJBRCwg
+U0ZCMUFELCBTRkIyQUQgcmVnaXN0ZXJzIHRvIHNlbGVjdA0KPiA+ICsgICAgICAgICogdGhlIGNo
+aXAgd2Ugd2FudCB0byBhY2Nlc3MuDQo+ID4gKyAgICAgICAgKi8NCj4gPiArDQo+ID4gKyAgICAg
+ICBxc3BpX3dyaXRlbChxLCBxLT5hbWJhX2Jhc2VfYWRkciArIHEtPmRldnR5cGVfZGF0YS0+YWhi
+X2J1Zl9zaXplLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgYmFzZSArIFFVQURTUElfU0ZBMUFE
+KTsNCj4gPiArICAgICAgIHFzcGlfd3JpdGVsKHEsIHEtPmFtYmFfYmFzZV9hZGRyICsgcS0+ZGV2
+dHlwZV9kYXRhLT5haGJfYnVmX3NpemUgKiAyLA0KPiA+ICsgICAgICAgICAgICAgICAgICAgYmFz
+ZSArIFFVQURTUElfU0ZBMkFEKTsNCj4gPiArICAgICAgIHFzcGlfd3JpdGVsKHEsIHEtPmFtYmFf
+YmFzZV9hZGRyICsgcS0+ZGV2dHlwZV9kYXRhLT5haGJfYnVmX3NpemUgKiAzLA0KPiA+ICsgICAg
+ICAgICAgICAgICAgICAgYmFzZSArIFFVQURTUElfU0ZCMUFEKTsNCj4gPiArICAgICAgIHFzcGlf
+d3JpdGVsKHEsIHEtPmFtYmFfYmFzZV9hZGRyICsgcS0+ZGV2dHlwZV9kYXRhLT5haGJfYnVmX3Np
+emUgKiA0LA0KPiA+ICsgICAgICAgICAgICAgICAgICAgYmFzZSArIFFVQURTUElfU0ZCMkFEKTsN
+Cj4gPiArDQo+ID4gICAgICAgICAgcS0+c2VsZWN0ZWQgPSAtMTsNCj4gPg0KPiA+ICAgICAgICAg
+IC8qIEVuYWJsZSB0aGUgbW9kdWxlICovDQo+ID4gQEAgLTgyNSw2ICs4MzcsMTEgQEAgc3RhdGlj
+IGludCBmc2xfcXNwaV9wcm9iZShzdHJ1Y3QgcGxhdGZvcm1fZGV2aWNlDQo+ID4gKnBkZXYpDQo+
+ID4NCj4gPiAgICAgICAgICBxLT5tZW1tYXBfcGh5ID0gcmVzLT5zdGFydDsNCj4gPg0KPiA+ICsg
+ICAgICAgaWYgKGhhc19hZGRlZF9hbWJhX2Jhc2VfaW50ZXJuYWwocSkpDQo+ID4gKyAgICAgICAg
+ICAgICAgIHEtPmFtYmFfYmFzZV9hZGRyID0gMDsNCj4gPiArICAgICAgIGVsc2UNCj4gPiArICAg
+ICAgICAgICAgICAgcS0+YW1iYV9iYXNlX2FkZHIgPSBxLT5tZW1tYXBfcGh5Ow0KPiA+ICsNCj4g
+PiAgICAgICAgICAvKiBmaW5kIHRoZSBjbG9ja3MgKi8NCj4gPiAgICAgICAgICBxLT5jbGtfZW4g
+PSBkZXZtX2Nsa19nZXQoZGV2LCAicXNwaV9lbiIpOw0KPiA+ICAgICAgICAgIGlmIChJU19FUlIo
+cS0+Y2xrX2VuKSkgew0KPiA+DQo+ID4gLS0NCj4gPiBSZWdhcmRzDQo+ID4gWW9nZXNoIEdhdXIN
+Cj4gPiBbLi4uXQ0KPiA+DQo=
