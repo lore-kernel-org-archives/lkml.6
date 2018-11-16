@@ -7,49 +7,49 @@ X-Spam-Status: No, score=-8.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80729C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:42:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 03E8FC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:42:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4914220818
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:42:21 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id BD97420818
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:42:26 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="HJz7YfDQ";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="oBN0+otP"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4914220818
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="ENN1QLls";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="e2XN8asc"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BD97420818
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389377AbeKPRxc (ORCPT
+        id S2389415AbeKPRxh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 12:53:32 -0500
-Received: from smtp.codeaurora.org ([198.145.29.96]:36742 "EHLO
+        Fri, 16 Nov 2018 12:53:37 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:36938 "EHLO
         smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727380AbeKPRxb (ORCPT
+        with ESMTP id S1727380AbeKPRxh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 12:53:31 -0500
+        Fri, 16 Nov 2018 12:53:37 -0500
 Received: by smtp.codeaurora.org (Postfix, from userid 1000)
-        id 970D6607EF; Fri, 16 Nov 2018 07:42:18 +0000 (UTC)
+        id 2A72260C1C; Fri, 16 Nov 2018 07:42:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542354138;
-        bh=PKwOCpyVUgf2gi0v1K1HRwsQEfeFoBHrjB1CxZPLmSA=;
+        s=default; t=1542354144;
+        bh=fqp4AT1uIem7ySYLI609JUEky7lrVM8VWGL4thGluHY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=HJz7YfDQViB0/7UZgZfDhQijcFMfqYstDLgk1xAAdPG6tcRGVIG8R8dcx4nrE5zr3
-         NaWm1YW9jOhzfO3XxGzcOVfLx3wtxfCe26ePRZhiXgo87FM8OK8C7YyM2oxHR1Z/5w
-         Ps7l7OHmzF2TSM7AU6a9NLYGgW8odr3b0IgqFHvU=
+        b=ENN1QLlstWs2rcjqmRqW3BuwnbgJ/b5Kx46RfUFI5qPIA2Spfapl+tkPbnqnaPSM3
+         qBi1WRXMKhDV/eB2FLZ5KXIzIH/CN+IeAbj6hDPDIAhp+1k5PhonMpyKo6rBVN3dg9
+         JvM5b5bHWtJpv05iesJNPdt8gH9RH19Ic4xWL674=
 Received: from rohkumar-linux.qualcomm.com (blr-c-bdr-fw-01_globalnat_allzones-outside.qualcomm.com [103.229.19.19])
         (using TLSv1.2 with cipher ECDHE-RSA-AES128-SHA256 (128/128 bits))
         (No client certificate requested)
         (Authenticated sender: rohitkr@codeaurora.org)
-        by smtp.codeaurora.org (Postfix) with ESMTPSA id 3C202607DC;
-        Fri, 16 Nov 2018 07:42:13 +0000 (UTC)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 9128D6086B;
+        Fri, 16 Nov 2018 07:42:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
-        s=default; t=1542354137;
-        bh=PKwOCpyVUgf2gi0v1K1HRwsQEfeFoBHrjB1CxZPLmSA=;
+        s=default; t=1542354143;
+        bh=fqp4AT1uIem7ySYLI609JUEky7lrVM8VWGL4thGluHY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=oBN0+otPebVEY1xxIXKDrw4qzDPCy4PG5t2oZdwFfHAMdX9JXc+ykevH09Og034J7
-         TgoRmpJ+84qbTZEN/c19fIeXnzi2EtXche8q88NBETtR7ZZZBDZhrF47lzNBpmYmT2
-         RUB9MvISrECHho4naTK7+F6AshE72livm2L/KbtI=
-DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 3C202607DC
+        b=e2XN8asc6Zq4UMwA9mQ+gALVdb0ZLPHqsMHqxSFyN/ZxHhUqBjWm4RhBheP8q/mH2
+         TInw+hB2gNh3mKoSMiEeuTVbuSSsHrbxrbb3Usseakkq0LG2sGkTI/wiGEAAQljrne
+         iSXzfAHmEsBd5Fz1xbtnhyrsquby+8NLROZyids4=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 9128D6086B
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=rohitkr@codeaurora.org
 From:   Rohit kumar <rohitkr@codeaurora.org>
@@ -58,9 +58,9 @@ To:     plai@codeaurora.org, bgoswami@codeaurora.org, lgirdwood@gmail.com,
         alsa-devel@alsa-project.org, linux-kernel@vger.kernel.org,
         rohkumar@qti.qualcomm.com, srinivas.kandagatla@linaro.org
 Cc:     Rohit kumar <rohitkr@codeaurora.org>
-Subject: [PATCH 1/2] ASoC: sdm845: Update slot_width for Quaternary TDM port
-Date:   Fri, 16 Nov 2018 13:11:57 +0530
-Message-Id: <1542354118-23360-2-git-send-email-rohitkr@codeaurora.org>
+Subject: [PATCH 2/2] ASoC: sdm845: Add support for Secondary MI2S interface
+Date:   Fri, 16 Nov 2018 13:11:58 +0530
+Message-Id: <1542354118-23360-3-git-send-email-rohitkr@codeaurora.org>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1542354118-23360-1-git-send-email-rohitkr@codeaurora.org>
 References: <1542354118-23360-1-git-send-email-rohitkr@codeaurora.org>
@@ -69,56 +69,57 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Change slot_width for quaternary TDM port to 16 and
-update bclk rate for TDM and MI2S interfaces
-accordingly.
+Add support to configure bit clock for secondary MI2S
+TX interface.
 
 Signed-off-by: Rohit kumar <rohitkr@codeaurora.org>
 ---
- sound/soc/qcom/sdm845.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+ sound/soc/qcom/sdm845.c | 18 ++++++++++++++++++
+ 1 file changed, 18 insertions(+)
 
 diff --git a/sound/soc/qcom/sdm845.c b/sound/soc/qcom/sdm845.c
-index 8d0cdff..84e6ee7 100644
+index 84e6ee7..58593db 100644
 --- a/sound/soc/qcom/sdm845.c
 +++ b/sound/soc/qcom/sdm845.c
-@@ -13,7 +13,8 @@
- 
- #define DEFAULT_SAMPLE_RATE_48K		48000
- #define DEFAULT_MCLK_RATE		24576000
--#define DEFAULT_BCLK_RATE		12288000
-+#define TDM_BCLK_RATE		6144000
-+#define MI2S_BCLK_RATE		1536000
- 
+@@ -19,6 +19,7 @@
  struct sdm845_snd_data {
  	struct snd_soc_card *card;
-@@ -33,7 +34,7 @@ static int sdm845_tdm_snd_hw_params(struct snd_pcm_substream *substream,
+ 	uint32_t pri_mi2s_clk_count;
++	uint32_t sec_mi2s_clk_count;
+ 	uint32_t quat_tdm_clk_count;
+ };
  
- 	switch (params_format(params)) {
- 	case SNDRV_PCM_FORMAT_S16_LE:
--		slot_width = 32;
-+		slot_width = 16;
- 		break;
- 	default:
- 		dev_err(rtd->dev, "%s: invalid param format 0x%x\n",
-@@ -115,7 +116,7 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
- 				DEFAULT_MCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
- 			snd_soc_dai_set_sysclk(cpu_dai,
- 				Q6AFE_LPASS_CLK_ID_PRI_MI2S_IBIT,
--				DEFAULT_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
-+				MI2S_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
- 		}
+@@ -121,6 +122,15 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
  		snd_soc_dai_set_fmt(cpu_dai, fmt);
  		break;
-@@ -125,7 +126,7 @@ static int sdm845_snd_startup(struct snd_pcm_substream *substream)
+ 
++	case SECONDARY_MI2S_TX:
++		if (++(data->sec_mi2s_clk_count) == 1) {
++			snd_soc_dai_set_sysclk(cpu_dai,
++				Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT,
++				MI2S_BCLK_RATE,	SNDRV_PCM_STREAM_CAPTURE);
++		}
++		snd_soc_dai_set_fmt(cpu_dai, fmt);
++		break;
++
+ 	case QUATERNARY_TDM_RX_0:
+ 	case QUATERNARY_TDM_TX_0:
  		if (++(data->quat_tdm_clk_count) == 1) {
- 			snd_soc_dai_set_sysclk(cpu_dai,
- 				Q6AFE_LPASS_CLK_ID_QUAD_TDM_IBIT,
--				DEFAULT_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
-+				TDM_BCLK_RATE, SNDRV_PCM_STREAM_PLAYBACK);
- 		}
+@@ -157,6 +167,14 @@ static void  sdm845_snd_shutdown(struct snd_pcm_substream *substream)
+ 		};
  		break;
  
++	case SECONDARY_MI2S_TX:
++		if (--(data->sec_mi2s_clk_count) == 0) {
++			snd_soc_dai_set_sysclk(cpu_dai,
++				Q6AFE_LPASS_CLK_ID_SEC_MI2S_IBIT,
++				0, SNDRV_PCM_STREAM_CAPTURE);
++		}
++		break;
++
+ 	case QUATERNARY_TDM_RX_0:
+ 	case QUATERNARY_TDM_TX_0:
+ 		if (--(data->quat_tdm_clk_count) == 0) {
 -- 
 Qualcomm India Private Limited, on behalf of Qualcomm Innovation Center, Inc.,
 is a member of Code Aurora Forum, a Linux Foundation Collaborative Project.
