@@ -7,67 +7,68 @@ X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0EED1C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:52:19 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 552B5C43610
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:52:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9103C2086B
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:52:18 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F9D720825
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:52:21 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="fkmkF+eq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9103C2086B
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="G9WNBz1V"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F9D720825
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=sifive.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390073AbeKQDFZ (ORCPT
+        id S2390115AbeKQDF1 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 22:05:25 -0500
-Received: from mail-pl1-f195.google.com ([209.85.214.195]:42032 "EHLO
-        mail-pl1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728684AbeKQDFZ (ORCPT
+        Fri, 16 Nov 2018 22:05:27 -0500
+Received: from mail-pf1-f196.google.com ([209.85.210.196]:39048 "EHLO
+        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728684AbeKQDF0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 22:05:25 -0500
-Received: by mail-pl1-f195.google.com with SMTP id x21-v6so8694210pln.9
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 08:52:16 -0800 (PST)
+        Fri, 16 Nov 2018 22:05:26 -0500
+Received: by mail-pf1-f196.google.com with SMTP id c72so6984835pfc.6
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 08:52:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=sifive.com; s=google;
         h=date:subject:in-reply-to:cc:from:to:message-id:mime-version
          :content-transfer-encoding;
-        bh=43V/UmEAQKp4Tbq2gp9MdT4gnH2Hf5/imzDJ84gH0wM=;
-        b=fkmkF+equsQbuuA6aHeNiWXWnauIgSKmVRcQtnjaldalHDGHZ9Esp6Me92aIcQcxvp
-         7NKvK3wQtQE3LkIMwT+lKE3OLdhPejj4Brh4+1DvMwSOYED5uoxzRZLRguj1AhuMqmfA
-         dGPK4LRIFSCVPJ8zCHM0sNmx+KIuUJ+6g1LxkGZSdM/gmLRIxvB48RTCEzIQ0OuuK8Ou
-         NTPq8VOwqMzfxNg8MVu51I8ALhIlPq4dkm6rI0qfXNR3DDM/ywukmin+LGYu5zNgwyWW
-         4b6I+fezshPJ1vxcJbF40Qfus1nLGPN4EUwDmisApqzAI1o2c/pKk/tDHkG3ENEWgjhq
-         n1uQ==
+        bh=kpBoHgmOhN3LkMqkGpPGOvm/Fnxa3FRWSSY+xh/aFy4=;
+        b=G9WNBz1VWb2+bpSH7A2MRusy3Khc031pTt2+5QbO+SInYhQfcM7XusBbXbdQF57Kep
+         jUiSCn71t6bBhRX9kLvmJbMLmGoY0XJ04XngwZbkEG6zD58HDnp6PTAixynyknWKz9Pz
+         zYAGq3AoNxs90CJAvTV1t7Z5qFa7FQnXfgHkTSumk5aJ0wH+r8oWHkl7myu8RrdM2M0U
+         26vTp1RMqTo7J4HiHijGD0BjPA9r9rFvzEJziYxoGeP5NJJDB9vM+Guq3Iasw6GN7xxV
+         +XgaUcd09IIPfz8lwevJ8JLaFA8BypVIkxUof3itA0EtslFfh79wH+0vdwNGhYPg8pHS
+         vnpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:subject:in-reply-to:cc:from:to:message-id
          :mime-version:content-transfer-encoding;
-        bh=43V/UmEAQKp4Tbq2gp9MdT4gnH2Hf5/imzDJ84gH0wM=;
-        b=MCIfHYTOT4LhTqAmkQwjl49yTbq0LZnquPW6lDIFs4wROmdtJ4YUB+QTyaqbYf1Upx
-         omljIND78L5czDieTTAmxEU0MJqEdS8jazMI3jsOqZpX/6YHZfC604x5ehDZwVMWUzXG
-         EOodltOaJRH22qEVJ/u/5503EBqUk0ovP7+CjhignZYlFogYxSXjL97w6cQAcqlCk5Qh
-         S+HKUz5vbCIva6/hVn7UxBsqo1TUlKxG0Goc1cQKsWHrjPD7xx4Z6ya58OsYxqi/1AB2
-         3sddrwnzB10EvO5Rj1BWoiCY41jLyPhmrg3d9bLmDmc+qw2z3CMTSIRn6ghJjjbHRd8U
-         It+g==
-X-Gm-Message-State: AGRZ1gIEdePvQ141BCfEOex4gjkt56NFkGNwYCBz9OU2RdDlTmuWwof8
-        tsI/ikdSE+FJT0b7QcAd0oVMCw==
-X-Google-Smtp-Source: AJdET5eJ2dpAa9xPsPIqew8crVFjrXS3+Bp+QvwfWw7csCHTRy7oUtbgAi1bMOo8O47YVJt5OuteAA==
-X-Received: by 2002:a17:902:1122:: with SMTP id d31-v6mr11735125pla.259.1542387135536;
-        Fri, 16 Nov 2018 08:52:15 -0800 (PST)
+        bh=kpBoHgmOhN3LkMqkGpPGOvm/Fnxa3FRWSSY+xh/aFy4=;
+        b=iBTwTLiy9+TxrRzuuN4gRDuPOpLUQlpTmGSTRVH+hWFZXPyrehyGaIKNdFW41G3/Z0
+         gcq//0gJGQVSsoGcswa4MFiDIa4Qj3Cgr4of2HTUYS2o8Qkg5/G6BnEN1tKXRkKrSD+M
+         09jVkpbM3Qc6Tj5MlWPoWmjbQa5Ey1ycHk3KcGBJ3WSOKOdZPV4t+K07hrxwoAOTPMq2
+         xEBonLrOeiKbDIa+P0RIvrTQ5rh9vS9pUUqD6trigD3HDCOyIGDZD4VfTBfbLgk3Tmx0
+         fmA++ncnTUTrsYZXr2eAqthFVcrSAiFHXr/aAzWXk3cOxs5n5KPgFqerypYqJinWQljz
+         KJgA==
+X-Gm-Message-State: AGRZ1gKGfdwx+yarqjtEcYN5g87ZtbqtbYNRWl5uIeMGAxGgb8NJl6nj
+        l0tziN3dmLKnGIggoXEDjoiCxg==
+X-Google-Smtp-Source: AJdET5dUt6eKgbrD04wNFfmJgzRAcUchuJFFblOU/G4XJkm6D34n//w+0lNyCYgfHM2dqnkV47+pLw==
+X-Received: by 2002:a63:e615:: with SMTP id g21mr10841155pgh.290.1542387137227;
+        Fri, 16 Nov 2018 08:52:17 -0800 (PST)
 Received: from localhost ([12.206.222.5])
-        by smtp.gmail.com with ESMTPSA id h8sm13886075pgv.27.2018.11.16.08.52.14
+        by smtp.gmail.com with ESMTPSA id z83-v6sm37608428pfi.4.2018.11.16.08.52.16
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 08:52:14 -0800 (PST)
-Date:   Fri, 16 Nov 2018 08:52:14 -0800 (PST)
-X-Google-Original-Date: Fri, 16 Nov 2018 06:59:36 PST (-0800)
-Subject:     Re: [PATCH 2/2] arch: switch the default on ARCH_HAS_SG_CHAIN
-In-Reply-To: <20181109090008.24150-3-hch@lst.de>
-CC:     iommu@lists.linux-foundation.org, linux-arch@vger.kernel.org,
+        Fri, 16 Nov 2018 08:52:16 -0800 (PST)
+Date:   Fri, 16 Nov 2018 08:52:16 -0800 (PST)
+X-Google-Original-Date: Fri, 16 Nov 2018 07:01:12 PST (-0800)
+Subject:     Re: [PATCH v2] RISC-V: recognize S/U mode bits in print_isa
+In-Reply-To: <20181109214217.27494-1-me@packi.ch>
+CC:     linux-riscv@lists.infradead.org, me@packi.ch,
+        aou@eecs.berkeley.edu, atish.patra@wdc.com, anup@brainfault.org,
         linux-kernel@vger.kernel.org
 From:   Palmer Dabbelt <palmer@sifive.com>
-To:     Christoph Hellwig <hch@lst.de>
-Message-ID: <mhng-9c1955e1-d7cf-4ee4-8bf8-6bef720c9b98@palmer-si-x1c4>
+To:     me@packi.ch
+Message-ID: <mhng-e9ecd06a-7b9c-4b0f-af31-2c4c3b64c1a5@palmer-si-x1c4>
 Mime-Version: 1.0 (MHng)
 Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
@@ -76,278 +77,48 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 09 Nov 2018 01:00:08 PST (-0800), Christoph Hellwig wrote:
-> These days architectures are mostly out of the business of dealing with
-> struct scatterlist at all, unless they have architecture specific iommu
-> drivers.  Replace the ARCH_HAS_SG_CHAIN symbol with a ARCH_NO_SG_CHAIN
-> one only enabled for architectures with horrible legacy iommu drivers
-> like alpha and parisc, and conditionally for arm which wants to keep it
-> disable for legacy platforms.
+On Fri, 09 Nov 2018 13:42:16 PST (-0800), me@packi.ch wrote:
+> Removes the warning about an unsupported ISA when reading /proc/cpuinfo
+> on QEMU. The "S" extension is not being returned as it is not accessible
+> from userspace.
 >
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Patrick Stählin <me@packi.ch>
 > ---
->  .../features/io/sg-chain/arch-support.txt     | 33 -------------------
->  arch/alpha/Kconfig                            |  1 +
->  arch/arc/Kconfig                              |  1 -
->  arch/arm/Kconfig                              |  2 +-
->  arch/arm64/Kconfig                            |  1 -
->  arch/ia64/Kconfig                             |  1 -
->  arch/parisc/Kconfig                           |  1 +
->  arch/powerpc/Kconfig                          |  1 -
->  arch/s390/Kconfig                             |  1 -
->  arch/sparc/Kconfig                            |  1 -
->  arch/x86/Kconfig                              |  1 -
->  arch/xtensa/Kconfig                           |  1 -
->  include/linux/scatterlist.h                   |  6 ++--
->  lib/Kconfig                                   |  2 +-
->  lib/scatterlist.c                             |  2 +-
->  15 files changed, 8 insertions(+), 47 deletions(-)
->  delete mode 100644 Documentation/features/io/sg-chain/arch-support.txt
+>  arch/riscv/kernel/cpu.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+>
+> diff --git a/arch/riscv/kernel/cpu.c b/arch/riscv/kernel/cpu.c
+> index 3a5a2ee31547..b4a7d4427fbb 100644
+> --- a/arch/riscv/kernel/cpu.c
+> +++ b/arch/riscv/kernel/cpu.c
+> @@ -64,7 +64,7 @@ int riscv_of_processor_hartid(struct device_node *node)
+>
+>  static void print_isa(struct seq_file *f, const char *orig_isa)
+>  {
+> -	static const char *ext = "mafdc";
+> +	static const char *ext = "mafdcsu";
+>  	const char *isa = orig_isa;
+>  	const char *e;
+>
+> @@ -88,11 +88,14 @@ static void print_isa(struct seq_file *f, const char *orig_isa)
+>  	/*
+>  	 * Check the rest of the ISA string for valid extensions, printing those
+>  	 * we find.  RISC-V ISA strings define an order, so we only print the
+> -	 * extension bits when they're in order.
+> +	 * extension bits when they're in order. Hide the supervisor (S)
+> +	 * extension from userspace as it's not accessible from there.
+>  	 */
+>  	for (e = ext; *e != '\0'; ++e) {
+>  		if (isa[0] == e[0]) {
+> -			seq_write(f, isa, 1);
+> +			if (isa[0] != 's')
+> +				seq_write(f, isa, 1);
+> +
+>  			isa++;
+>  		}
+>  	}
 
-As far as I can tell, it looks like m68k, mips, and powerpc mention an IOMMU in 
-their ports, don't set ARCH_HAS_SG_CHAIN, and with this patch set won't set 
-ARCH_NO_SG_CHAIN.  The issue is that I'm not sure how to determine what 
-constitutes a horrible legacy IOMMU, at least with respect to not being able to 
-use scatterlist chaining.
-
-I poked through the 68k stuff (sun3 and sun3x) and the only thing I see that's 
-odd is that DVMA_PAGE_SHIFT is 13.  That matches PAGE_SHIFT for the subarch, 
-though, so I don't think it's an issue.  It looks like the mention in MIPS is 
-trivial, so that should be fine.  There's a lot in the PC port so I just 
-glanced at it.  I assume it's OK, but I did see an explicit mention of SG in 
-their generic IOMMU.  There's a lot of flavors here so I'm not sure how well 
-they all work.
-
-I don't really think that's enough for my reviewed-by tag, so feel free to give 
-me some pointers if you're looking for one -- I'd be happy to lean about 
-IOMMUs (particularly broken ones, as that might help prevent us from designing 
-a broken one), I'm just not sure what I'm looking for.
-
-I'm going to assume you're going to merge this and I'll drop the RISC-V patch 
-that turns on ARCH_HAS_SG_CHAIN.
+This looks good to me.  I'll target it for the RCs, as it's fairly small and 
+that warning fires too often.
 
 Thanks!
-
-> diff --git a/Documentation/features/io/sg-chain/arch-support.txt b/Documentation/features/io/sg-chain/arch-support.txt
-> deleted file mode 100644
-> index 6554f0372c3f..000000000000
-> --- a/Documentation/features/io/sg-chain/arch-support.txt
-> +++ /dev/null
-> @@ -1,33 +0,0 @@
-> -#
-> -# Feature name:          sg-chain
-> -#         Kconfig:       ARCH_HAS_SG_CHAIN
-> -#         description:   arch supports chained scatter-gather lists
-> -#
-> -    -----------------------
-> -    |         arch |status|
-> -    -----------------------
-> -    |       alpha: | TODO |
-> -    |         arc: |  ok  |
-> -    |         arm: |  ok  |
-> -    |       arm64: |  ok  |
-> -    |         c6x: | TODO |
-> -    |       h8300: | TODO |
-> -    |     hexagon: | TODO |
-> -    |        ia64: |  ok  |
-> -    |        m68k: | TODO |
-> -    |  microblaze: | TODO |
-> -    |        mips: | TODO |
-> -    |       nds32: | TODO |
-> -    |       nios2: | TODO |
-> -    |    openrisc: | TODO |
-> -    |      parisc: | TODO |
-> -    |     powerpc: |  ok  |
-> -    |       riscv: | TODO |
-> -    |        s390: |  ok  |
-> -    |          sh: | TODO |
-> -    |       sparc: |  ok  |
-> -    |          um: | TODO |
-> -    |   unicore32: | TODO |
-> -    |         x86: |  ok  |
-> -    |      xtensa: | TODO |
-> -    -----------------------
-> diff --git a/arch/alpha/Kconfig b/arch/alpha/Kconfig
-> index 5b4f88363453..a7e748a46c18 100644
-> --- a/arch/alpha/Kconfig
-> +++ b/arch/alpha/Kconfig
-> @@ -5,6 +5,7 @@ config ALPHA
->  	select ARCH_MIGHT_HAVE_PC_PARPORT
->  	select ARCH_MIGHT_HAVE_PC_SERIO
->  	select ARCH_NO_PREEMPT
-> +	select ARCH_NO_SG_CHAIN
->  	select ARCH_USE_CMPXCHG_LOCKREF
->  	select HAVE_AOUT
->  	select HAVE_IDE
-> diff --git a/arch/arc/Kconfig b/arch/arc/Kconfig
-> index c9e2a1323536..fd48d698da29 100644
-> --- a/arch/arc/Kconfig
-> +++ b/arch/arc/Kconfig
-> @@ -13,7 +13,6 @@ config ARC
->  	select ARCH_HAS_PTE_SPECIAL
->  	select ARCH_HAS_SYNC_DMA_FOR_CPU
->  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
-> -	select ARCH_HAS_SG_CHAIN
->  	select ARCH_SUPPORTS_ATOMIC_RMW if ARC_HAS_LLSC
->  	select BUILDTIME_EXTABLE_SORT
->  	select CLONE_BACKWARDS
-> diff --git a/arch/arm/Kconfig b/arch/arm/Kconfig
-> index 91be74d8df65..199eb62230b0 100644
-> --- a/arch/arm/Kconfig
-> +++ b/arch/arm/Kconfig
-> @@ -19,6 +19,7 @@ config ARM
->  	select ARCH_HAVE_CUSTOM_GPIO_H
->  	select ARCH_HAS_GCOV_PROFILE_ALL
->  	select ARCH_MIGHT_HAVE_PC_PARPORT
-> +	select ARCH_NO_SG_CHAIN if !ARM_HAS_SG_CHAIN
->  	select ARCH_OPTIONAL_KERNEL_RWX if ARCH_HAS_STRICT_KERNEL_RWX
->  	select ARCH_OPTIONAL_KERNEL_RWX_DEFAULT if CPU_V7
->  	select ARCH_SUPPORTS_ATOMIC_RMW
-> @@ -118,7 +119,6 @@ config ARM
->  	  <http://www.arm.linux.org.uk/>.
->
->  config ARM_HAS_SG_CHAIN
-> -	select ARCH_HAS_SG_CHAIN
->  	bool
->
->  config ARM_DMA_USE_IOMMU
-> diff --git a/arch/arm64/Kconfig b/arch/arm64/Kconfig
-> index 787d7850e064..4c851b3a7b7c 100644
-> --- a/arch/arm64/Kconfig
-> +++ b/arch/arm64/Kconfig
-> @@ -23,7 +23,6 @@ config ARM64
->  	select ARCH_HAS_MEMBARRIER_SYNC_CORE
->  	select ARCH_HAS_PTE_SPECIAL
->  	select ARCH_HAS_SET_MEMORY
-> -	select ARCH_HAS_SG_CHAIN
->  	select ARCH_HAS_STRICT_KERNEL_RWX
->  	select ARCH_HAS_STRICT_MODULE_RWX
->  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
-> diff --git a/arch/ia64/Kconfig b/arch/ia64/Kconfig
-> index 36773def6920..d6f203658994 100644
-> --- a/arch/ia64/Kconfig
-> +++ b/arch/ia64/Kconfig
-> @@ -29,7 +29,6 @@ config IA64
->  	select HAVE_MEMBLOCK_NODE_MAP
->  	select HAVE_VIRT_CPU_ACCOUNTING
->  	select ARCH_HAS_DMA_MARK_CLEAN
-> -	select ARCH_HAS_SG_CHAIN
->  	select VIRT_TO_BUS
->  	select ARCH_DISCARD_MEMBLOCK
->  	select GENERIC_IRQ_PROBE
-> diff --git a/arch/parisc/Kconfig b/arch/parisc/Kconfig
-> index 92a339ee28b3..428ee50fc3db 100644
-> --- a/arch/parisc/Kconfig
-> +++ b/arch/parisc/Kconfig
-> @@ -11,6 +11,7 @@ config PARISC
->  	select ARCH_HAS_ELF_RANDOMIZE
->  	select ARCH_HAS_STRICT_KERNEL_RWX
->  	select ARCH_HAS_UBSAN_SANITIZE_ALL
-> +	select ARCH_NO_SG_CHAIN
->  	select ARCH_SUPPORTS_MEMORY_FAILURE
->  	select RTC_CLASS
->  	select RTC_DRV_GENERIC
-> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-> index 8be31261aec8..4bc8edd83cee 100644
-> --- a/arch/powerpc/Kconfig
-> +++ b/arch/powerpc/Kconfig
-> @@ -138,7 +138,6 @@ config PPC
->  	select ARCH_HAS_PTE_SPECIAL
->  	select ARCH_HAS_MEMBARRIER_CALLBACKS
->  	select ARCH_HAS_SCALED_CPUTIME		if VIRT_CPU_ACCOUNTING_NATIVE && PPC64
-> -	select ARCH_HAS_SG_CHAIN
->  	select ARCH_HAS_STRICT_KERNEL_RWX	if ((PPC_BOOK3S_64 || PPC32) && !RELOCATABLE && !HIBERNATION)
->  	select ARCH_HAS_TICK_BROADCAST		if GENERIC_CLOCKEVENTS_BROADCAST
->  	select ARCH_HAS_UACCESS_FLUSHCACHE	if PPC64
-> diff --git a/arch/s390/Kconfig b/arch/s390/Kconfig
-> index 5173366af8f3..5624e8607054 100644
-> --- a/arch/s390/Kconfig
-> +++ b/arch/s390/Kconfig
-> @@ -73,7 +73,6 @@ config S390
->  	select ARCH_HAS_KCOV
->  	select ARCH_HAS_PTE_SPECIAL
->  	select ARCH_HAS_SET_MEMORY
-> -	select ARCH_HAS_SG_CHAIN
->  	select ARCH_HAS_STRICT_KERNEL_RWX
->  	select ARCH_HAS_STRICT_MODULE_RWX
->  	select ARCH_HAS_UBSAN_SANITIZE_ALL
-> diff --git a/arch/sparc/Kconfig b/arch/sparc/Kconfig
-> index 490b2c95c212..8853b6ceae17 100644
-> --- a/arch/sparc/Kconfig
-> +++ b/arch/sparc/Kconfig
-> @@ -40,7 +40,6 @@ config SPARC
->  	select MODULES_USE_ELF_RELA
->  	select ODD_RT_SIGACTION
->  	select OLD_SIGSUSPEND
-> -	select ARCH_HAS_SG_CHAIN
->  	select CPU_NO_EFFICIENT_FFS
->  	select LOCKDEP_SMALL if LOCKDEP
->  	select NEED_DMA_MAP_STATE
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index ba7e3464ee92..6faab6f9b57e 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -66,7 +66,6 @@ config X86
->  	select ARCH_HAS_UACCESS_FLUSHCACHE	if X86_64
->  	select ARCH_HAS_UACCESS_MCSAFE		if X86_64 && X86_MCE
->  	select ARCH_HAS_SET_MEMORY
-> -	select ARCH_HAS_SG_CHAIN
->  	select ARCH_HAS_STRICT_KERNEL_RWX
->  	select ARCH_HAS_STRICT_MODULE_RWX
->  	select ARCH_HAS_SYNC_CORE_BEFORE_USERMODE
-> diff --git a/arch/xtensa/Kconfig b/arch/xtensa/Kconfig
-> index d29b7365da8d..e3387919eb22 100644
-> --- a/arch/xtensa/Kconfig
-> +++ b/arch/xtensa/Kconfig
-> @@ -1,7 +1,6 @@
->  # SPDX-License-Identifier: GPL-2.0
->  config XTENSA
->  	def_bool y
-> -	select ARCH_HAS_SG_CHAIN
->  	select ARCH_HAS_SYNC_DMA_FOR_CPU
->  	select ARCH_HAS_SYNC_DMA_FOR_DEVICE
->  	select ARCH_NO_COHERENT_DMA_MMAP if !MMU
-> diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
-> index 093aa57120b0..b96f0d0b5b8f 100644
-> --- a/include/linux/scatterlist.h
-> +++ b/include/linux/scatterlist.h
-> @@ -324,10 +324,10 @@ size_t sg_zero_buffer(struct scatterlist *sgl, unsigned int nents,
->   * Like SG_CHUNK_SIZE, but for archs that have sg chaining. This limit
->   * is totally arbitrary, a setting of 2048 will get you at least 8mb ios.
->   */
-> -#ifdef CONFIG_ARCH_HAS_SG_CHAIN
-> -#define SG_MAX_SEGMENTS	2048
-> -#else
-> +#ifdef CONFIG_ARCH_NO_SG_CHAIN
->  #define SG_MAX_SEGMENTS	SG_CHUNK_SIZE
-> +#else
-> +#define SG_MAX_SEGMENTS	2048
->  #endif
->
->  #ifdef CONFIG_SG_POOL
-> diff --git a/lib/Kconfig b/lib/Kconfig
-> index a9965f4af4dd..d5a5e2ebf286 100644
-> --- a/lib/Kconfig
-> +++ b/lib/Kconfig
-> @@ -577,7 +577,7 @@ config SG_POOL
->  # sg chaining option
->  #
->
-> -config ARCH_HAS_SG_CHAIN
-> +config ARCH_NO_SG_CHAIN
->  	def_bool n
->
->  config ARCH_HAS_PMEM_API
-> diff --git a/lib/scatterlist.c b/lib/scatterlist.c
-> index 7c6096a71704..9ba349e775ef 100644
-> --- a/lib/scatterlist.c
-> +++ b/lib/scatterlist.c
-> @@ -271,7 +271,7 @@ int __sg_alloc_table(struct sg_table *table, unsigned int nents,
->
->  	if (nents == 0)
->  		return -EINVAL;
-> -#ifndef CONFIG_ARCH_HAS_SG_CHAIN
-> +#ifdef CONFIG_ARCH_NO_SG_CHAIN
->  	if (WARN_ON_ONCE(nents > max_ents))
->  		return -EINVAL;
->  #endif
