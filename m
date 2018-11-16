@@ -1,203 +1,123 @@
-Return-Path: <SRS0=7coz=N2=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5278AC43441
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1AD1BC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:02:26 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 033062145D
-	for <linux-kernel@archiver.kernel.org>; Thu, 15 Nov 2018 23:58:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 033062145D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=linux-mips.org
+	by mail.kernel.org (Postfix) with ESMTP id BFA7B2146D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 00:02:25 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="SWhv0OAG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BFA7B2146D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2388970AbeKPKII (ORCPT
+        id S1726975AbeKPKM0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 05:08:08 -0500
-Received: from eddie.linux-mips.org ([148.251.95.138]:60626 "EHLO
-        cvs.linux-mips.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725985AbeKPKIH (ORCPT
+        Fri, 16 Nov 2018 05:12:26 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:34544 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726352AbeKPKM0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 05:08:07 -0500
-Received: (from localhost user: 'macro', uid#1010) by eddie.linux-mips.org
-        with ESMTP id S23990411AbeKOX4QsRHLR (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 00:56:16 +0100
-Date:   Thu, 15 Nov 2018 23:56:16 +0000 (GMT)
-From:   "Maciej W. Rozycki" <macro@linux-mips.org>
-To:     Ralf Baechle <ralf@linux-mips.org>,
-        Paul Burton <paul.burton@mips.com>
-cc:     Christoph Hellwig <hch@lst.de>, linux-mips@linux-mips.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v4 3/3] MIPS: SiByte: Enable swiotlb for SWARM, LittleSur
- and BigSur
-In-Reply-To: <alpine.LFD.2.21.1811131653160.9637@eddie.linux-mips.org>
-Message-ID: <alpine.LFD.2.21.1811152351250.21654@eddie.linux-mips.org>
-References: <alpine.LFD.2.21.1811131653160.9637@eddie.linux-mips.org>
-User-Agent: Alpine 2.21 (LFD 202 2017-01-01)
+        Fri, 16 Nov 2018 05:12:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=vVjFV7tDdfy/Pb/8jAO2slSvX5UUeDfok0dkGuBly4w=; b=SWhv0OAGquntlARJryJKFjYdt
+        XHQUT/02qZt1+VXJr9qQWdFhKBdXIekgLWkfkmhQcr8OcVxXdcU3Ks6abtXu5fGs1bb6zkeie1s9A
+        0OekhXN49kFC0DZj/cHo6aGgO85z2Skeu7Aa0zj7rRHpSCcAxL4AFk3oG6Dw4HB7VIsjY=;
+Received: from [64.114.255.97] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gNRaC-0006bc-BC; Fri, 16 Nov 2018 00:02:00 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id 59E11440078; Fri, 16 Nov 2018 00:01:54 +0000 (GMT)
+Date:   Thu, 15 Nov 2018 16:01:54 -0800
+From:   Mark Brown <broonie@kernel.org>
+To:     Tony Lindgren <tony@atomide.com>
+Cc:     Lubomir Rintel <lkundrak@v3.sk>,
+        Geert Uytterhoeven <geert+renesas@glider.be>,
+        Pavel Machek <pavel@ucw.cz>, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, linux-omap@vger.kernel.org
+Subject: Re: Regression in next with spi return from transfer_one()
+Message-ID: <20181116000154.GS2089@sirena.org.uk>
+References: <20181115211451.GH53235@atomide.com>
+ <20181115221241.GQ2089@sirena.org.uk>
+ <20181115234359.GJ53235@atomide.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="+sObS8/rhx1YpqEF"
+Content-Disposition: inline
+In-Reply-To: <20181115234359.GJ53235@atomide.com>
+X-Cookie: No Canadian coins.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Broadcom SiByte BCM1250, BCM1125, and BCM1125H SOCs have an onchip 
-DRAM controller that supports memory amounts of up to 16GiB, and due to 
-how the address decoder has been wired in the SOC any memory beyond 1GiB 
-is actually mapped starting from 4GiB physical up, that is beyond the 
-32-bit addressable limit[1].  Consequently if the maximum amount of 
-memory has been installed, then it will span up to 19GiB.
 
-Many of the evaluation boards we support that are based on one of these 
-SOCs have their memory soldered and the amount present fits in the 
-32-bit address range.  The BCM91250A SWARM board however has actual DIMM 
-slots and accepts, depending on the peripherals revision of the SOC, up 
-to 4GiB or 8GiB of memory in commercially available JEDEC modules[2].  
-I believe this is also the case with the BCM91250C2 LittleSur board. 
-This means that up to either 3GiB or 7GiB of memory requires 64-bit 
-addressing to access.
+--+sObS8/rhx1YpqEF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-I believe the BCM91480B BigSur board, which has the BCM1480 SOC instead, 
-accepts at least as much memory, although I have no documentation or 
-actual hardware available to verify that.
+On Thu, Nov 15, 2018 at 03:44:00PM -0800, Tony Lindgren wrote:
 
-Both systems have PCI slots installed for use by any PCI option boards, 
-including ones that only support 32-bit addressing (additionally the 
-32-bit PCI host bridge of the BCM1250, BCM1125, and BCM1125H SOCs limits 
-addressing to 32-bits), and there is no IOMMU available.  Therefore for 
-PCI DMA to work in the presence of memory beyond enable swiotlb for the
-affected systems.
+> It seems to be caused because of the now missing "if (ret > 0) {"
+> line somehow that was there earlier. New code sets ms to 200 it
+> seems, then dmesg shows:
 
-All the other SOC onchip DMA devices use 40-bit addressing and therefore 
-can address the whole memory, so only enable swiotlb if PCI support and 
-support for DMA beyond 4GiB have been both enabled in the configuration 
-of the kernel.
+Doh, of course :(  Sorry I missed that.
 
-This shows up as follows:
+> The old code is not updating ms and it's set to 1.
 
-Broadcom SiByte BCM1250 B2 @ 800 MHz (SB1 rev 2)
-Board type: SiByte BCM91250A (SWARM)
-Determined physical RAM map:
- memory: 000000000fe7fe00 @ 0000000000000000 (usable)
- memory: 000000001ffffe00 @ 0000000080000000 (usable)
- memory: 000000000ffffe00 @ 00000000c0000000 (usable)
- memory: 0000000087fffe00 @ 0000000100000000 (usable)
-software IO TLB: mapped [mem 0xcbffc000-0xcfffc000] (64MB)
+Right, and not waiting either which should be the issue.  Does the
+following work:
 
-in the bootstrap log and removes failures like these:
+diff --git a/drivers/spi/spi.c b/drivers/spi/spi.c
+index 498d3b9bf3ae..430ad637c643 100644
+--- a/drivers/spi/spi.c
++++ b/drivers/spi/spi.c
+@@ -1114,9 +1114,11 @@ static int spi_transfer_one_message(struct spi_contr=
+oller *ctlr,
+ 				goto out;
+ 			}
+=20
+-			ret =3D spi_transfer_wait(ctlr, msg, xfer);
+-			if (ret < 0)
+-				msg->status =3D ret;
++			if (ret > 0) {
++				ret =3D spi_transfer_wait(ctlr, msg, xfer);
++				if (ret < 0)
++					msg->status =3D ret;
++			}
+ 		} else {
+ 			if (xfer->len)
+ 				dev_err(&msg->spi->dev,
 
-defxx 0000:02:00.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-fddi0: Receive buffer allocation failed
-fddi0: Adapter open failed!
-IP-Config: Failed to open fddi0
-defxx 0000:09:08.0: dma_direct_map_page: overflow 0x0000000185bc6080+4608 of device mask ffffffff bus mask 0
-fddi1: Receive buffer allocation failed
-fddi1: Adapter open failed!
-IP-Config: Failed to open fddi1
+--+sObS8/rhx1YpqEF
+Content-Type: application/pgp-signature; name="signature.asc"
 
-when memory beyond 4GiB is handed out to devices that can only do 32-bit 
-addressing.
+-----BEGIN PGP SIGNATURE-----
 
-This updates commit cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need 
-DMA32.").
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvuCO4ACgkQJNaLcl1U
+h9ANuwf+IHvPFE5q4uHvxIDsrFdb+JSKUCjFjCUr7uL3Cn9T86CHbD8b+j3xP6U6
+bryD7L9gRVH6nnV5UZN7LSlnVWZjGMwRoPkbMWUAtQCunhEP+PDCoBSGPeBRqBw2
+1gLGHRmr8mtJ/As4TX9MVr14ybwaIPca7uQOvvtZx7Fx6MxNT4rFE3XOIlrpxXCq
+qX/3DqTKmTCpxaughsuIbdg806hBYo4Bot2wR5qITuOOV3kOaDm5mzKefKUBtpH6
+7L08S6chbvqST/XAfILHwui7OCw290DTRQyN+Dp76/W2ysSUNdJ4K+FuIbxPgQyM
+vTCfyGeuYVGDZ7vPJE5YIeoBS5BM1A==
+=KFSj
+-----END PGP SIGNATURE-----
 
-References:
-
-[1] "BCM1250/BCM1125/BCM1125H User Manual", Revision 1250_1125-UM100-R, 
-    Broadcom Corporation, 21 Oct 2002, Section 3: "System Overview", 
-    "Memory Map", pp. 34-38
-
-[2] "BCM91250A User Manual", Revision 91250A-UM100-R, Broadcom 
-    Corporation, 18 May 2004, Section 3: "Physical Description", 
-    "Supported DRAM", p. 23
-
-Signed-off-by: Maciej W. Rozycki <macro@linux-mips.org>
-References: cce335ae47e2 ("[MIPS] 64-bit Sibyte kernels need DMA32.")
----
-Hi,
-
- Sending v4 of 3/3 only with the update requested, due to the minor scope 
-of the change.  Hopefully patchwork gets it right.
-
-  Maciej
-
-Changes from v3:
-
-- removed inline licence text.
-
-Changes from v2:
-
-- missing reference to [1] added.
-
-Changes from v1:
-
-- title updated to include LittleSur.
----
- arch/mips/Kconfig                |    3 +++
- arch/mips/sibyte/common/Makefile |    1 +
- arch/mips/sibyte/common/dma.c    |   14 ++++++++++++++
- 3 files changed, 18 insertions(+)
-
-linux-mips-sibyte-swiotlb.diff
-Index: linux-20181104-swarm64-eb/arch/mips/Kconfig
-===================================================================
---- linux-20181104-swarm64-eb.orig/arch/mips/Kconfig
-+++ linux-20181104-swarm64-eb/arch/mips/Kconfig
-@@ -794,6 +794,7 @@ config SIBYTE_SWARM
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
- config SIBYTE_LITTLESUR
- 	bool "Sibyte BCM91250C2-LittleSur"
-@@ -806,6 +807,7 @@ config SIBYTE_LITTLESUR
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
- config SIBYTE_SENTOSA
- 	bool "Sibyte BCM91250E-Sentosa"
-@@ -827,6 +829,7 @@ config SIBYTE_BIGSUR
- 	select SYS_SUPPORTS_HIGHMEM
- 	select SYS_SUPPORTS_LITTLE_ENDIAN
- 	select ZONE_DMA32 if 64BIT
-+	select SWIOTLB if ARCH_DMA_ADDR_T_64BIT && PCI
- 
- config SNI_RM
- 	bool "SNI RM200/300/400"
-Index: linux-20181104-swarm64-eb/arch/mips/sibyte/common/Makefile
-===================================================================
---- linux-20181104-swarm64-eb.orig/arch/mips/sibyte/common/Makefile
-+++ linux-20181104-swarm64-eb/arch/mips/sibyte/common/Makefile
-@@ -1,4 +1,5 @@
- obj-y := cfe.o
-+obj-$(CONFIG_SWIOTLB)			+= dma.o
- obj-$(CONFIG_SIBYTE_BUS_WATCHER)	+= bus_watcher.o
- obj-$(CONFIG_SIBYTE_CFE_CONSOLE)	+= cfe_console.o
- obj-$(CONFIG_SIBYTE_TBPROF)		+= sb_tbprof.o
-Index: linux-20181104-swarm64-eb/arch/mips/sibyte/common/dma.c
-===================================================================
---- /dev/null
-+++ linux-20181104-swarm64-eb/arch/mips/sibyte/common/dma.c
-@@ -0,0 +1,14 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ *	DMA support for Broadcom SiByte platforms.
-+ *
-+ *	Copyright (c) 2018  Maciej W. Rozycki
-+ */
-+
-+#include <linux/swiotlb.h>
-+#include <asm/bootinfo.h>
-+
-+void __init plat_swiotlb_setup(void)
-+{
-+	swiotlb_init(1);
-+}
+--+sObS8/rhx1YpqEF--
