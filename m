@@ -2,139 +2,217 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE748C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:21:28 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70B38C04EBC
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:25:41 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D07208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:21:28 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D07208E7
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 3DBDF223C8
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 07:25:41 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3DBDF223C8
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389492AbeKPRcg (ORCPT
+        id S2389255AbeKPRgu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 12:32:36 -0500
-Received: from mx2.suse.de ([195.135.220.15]:42190 "EHLO mx1.suse.de"
+        Fri, 16 Nov 2018 12:36:50 -0500
+Received: from mx2.suse.de ([195.135.220.15]:42764 "EHLO mx1.suse.de"
         rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1727451AbeKPRcg (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 12:32:36 -0500
+        id S1727370AbeKPRgt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 12:36:49 -0500
 X-Virus-Scanned: by amavisd-new at test-mx.suse.de
 Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 31FB4ADF4;
-        Fri, 16 Nov 2018 07:21:24 +0000 (UTC)
-Date:   Fri, 16 Nov 2018 08:21:23 +0100
-From:   Michal Hocko <mhocko@kernel.org>
-To:     Andrew Morton <akpm@linux-foundation.org>
-Cc:     linux-mm@kvack.org, Oscar Salvador <OSalvador@suse.com>,
-        Baoquan He <bhe@redhat.com>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 5/5] mm, memory_hotplug: be more verbose for memory
- offline failures
-Message-ID: <20181116072123.GA14706@dhcp22.suse.cz>
-References: <20181107101830.17405-1-mhocko@kernel.org>
- <20181107101830.17405-6-mhocko@kernel.org>
- <20181115160716.18b9956ee64932abe9428ef1@linux-foundation.org>
+        by mx1.suse.de (Postfix) with ESMTP id 74B1FADF4;
+        Fri, 16 Nov 2018 07:25:36 +0000 (UTC)
+Subject: Re: [PATCH] nvme: allow ANA support to be independent of native
+ multipathing
+To:     Mike Snitzer <snitzer@redhat.com>, linux-nvme@lists.infradead.org
+Cc:     Keith Busch <keith.busch@intel.com>,
+        Sagi Grimberg <sagi@grimberg.me>, hch@lst.de, axboe@kernel.dk,
+        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
+        xose.vazquez@gmail.com, chengjike.cheng@huawei.com,
+        shenhong09@huawei.com, dm-devel@redhat.com,
+        wangzhoumengjian@huawei.com, christophe.varoqui@opensvc.com,
+        bmarzins@redhat.com, sschremm@netapp.com,
+        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <1541657381-7452-1-git-send-email-lijie34@huawei.com>
+ <2691abf6733f791fb16b86d96446440e4aaff99f.camel@suse.com>
+ <20181112215323.GA7983@redhat.com>
+ <20181113161838.GC9827@localhost.localdomain>
+ <20181113180008.GA12513@redhat.com> <20181114053837.GA15086@redhat.com>
+ <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
+ <20181114174746.GA18526@redhat.com>
+ <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
+ <20181115174605.GA19782@redhat.com>
+From:   Hannes Reinecke <hare@suse.de>
+Message-ID: <f7fe5b65-d030-bc5d-233f-e5bc2f995efc@suse.de>
+Date:   Fri, 16 Nov 2018 08:25:35 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+In-Reply-To: <20181115174605.GA19782@redhat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181115160716.18b9956ee64932abe9428ef1@linux-foundation.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu 15-11-18 16:07:16, Andrew Morton wrote:
-> On Wed,  7 Nov 2018 11:18:30 +0100 Michal Hocko <mhocko@kernel.org> wrote:
+On 11/15/18 6:46 PM, Mike Snitzer wrote:
+> Whether or not ANA is present is a choice of the target implementation;
+> the host (and whether it supports multipathing) has _zero_ influence on
+> this.  If the target declares a path as 'inaccessible' the path _is_
+> inaccessible to the host.  As such, ANA support should be functional
+> even if native multipathing is not.
 > 
-> > From: Michal Hocko <mhocko@suse.com>
-> > 
-> > There is only very limited information printed when the memory offlining
-> > fails:
-> > [ 1984.506184] rac1 kernel: memory offlining [mem 0x82600000000-0x8267fffffff] failed due to signal backoff
-> > 
-> > This tells us that the failure is triggered by the userspace
-> > intervention but it doesn't tell us much more about the underlying
-> > reason. It might be that the page migration failes repeatedly and the
-> > userspace timeout expires and send a signal or it might be some of the
-> > earlier steps (isolation, memory notifier) takes too long.
-> > 
-> > If the migration failes then it would be really helpful to see which
-> > page that and its state. The same applies to the isolation phase. If we
-> > fail to isolate a page from the allocator then knowing the state of the
-> > page would be helpful as well.
-> > 
-> > Dump the page state that fails to get isolated or migrated. This will
-> > tell us more about the failure and what to focus on during debugging.
-> > 
-> > ...
-> >
-> > --- a/mm/memory_hotplug.c
-> > +++ b/mm/memory_hotplug.c
-> > @@ -1388,10 +1388,8 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
-> >  						    page_is_file_cache(page));
-> >  
-> >  		} else {
-> > -#ifdef CONFIG_DEBUG_VM
-> > -			pr_alert("failed to isolate pfn %lx\n", pfn);
-> > +			pr_warn("failed to isolate pfn %lx\n", pfn);
-> >  			dump_page(page, "isolation failed");
-> > -#endif
-> >  			put_page(page);
-> >  			/* Because we don't have big zone->lock. we should
-> >  			   check this again here. */
-> > @@ -1411,8 +1409,14 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
-> >  		/* Allocate a new page from the nearest neighbor node */
-> >  		ret = migrate_pages(&source, new_node_page, NULL, 0,
-> >  					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
-> > -		if (ret)
-> > +		if (ret) {
-> > +			list_for_each_entry(page, &source, lru) {
-> > +				pr_warn("migrating pfn %lx failed ",
-> > +				       page_to_pfn(page), ret);
-> > +				dump_page(page, NULL);
-> > +			}
+> Introduce ability to always re-read ANA log page as required due to ANA
+> error and make current ANA state available via sysfs -- even if native
+> multipathing is disabled on the host (e.g. nvme_core.multipath=N).
 > 
-> ./include/linux/kern_levels.h:5:18: warning: too many arguments for format [-Wformat-extra-args]
->  #define KERN_SOH "\001"  /* ASCII Start Of Header */
->                   ^
-> ./include/linux/kern_levels.h:12:22: note: in expansion of macro ‘KERN_SOH’
->  #define KERN_WARNING KERN_SOH "4" /* warning conditions */
->                       ^~~~~~~~
-> ./include/linux/printk.h:310:9: note: in expansion of macro ‘KERN_WARNING’
->   printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
->          ^~~~~~~~~~~~
-> ./include/linux/printk.h:311:17: note: in expansion of macro ‘pr_warning’
->  #define pr_warn pr_warning
->                  ^~~~~~~~~~
-> mm/memory_hotplug.c:1414:5: note: in expansion of macro ‘pr_warn’
->      pr_warn("migrating pfn %lx failed ",
->      ^~~~~~~
-
-yeah, 0day already complained and I've posted a follow up fix
-http://lkml.kernel.org/r/20181108081231.GN27423@dhcp22.suse.cz
-
-Let me post a version 2 with all the fixups.
- 
-Thanks!
-
-> --- a/mm/memory_hotplug.c~mm-memory_hotplug-be-more-verbose-for-memory-offline-failures-fix
-> +++ a/mm/memory_hotplug.c
-> @@ -1411,7 +1411,7 @@ do_migrate_range(unsigned long start_pfn
->  					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
->  		if (ret) {
->  			list_for_each_entry(page, &source, lru) {
-> -				pr_warn("migrating pfn %lx failed ",
-> +				pr_warn("migrating pfn %lx failed: %d",
->  				       page_to_pfn(page), ret);
->  				dump_page(page, NULL);
->  			}
+> This affords userspace access to the current ANA state independent of
+> which layer might be doing multipathing.  It also allows multipath-tools
+> to rely on the NVMe driver for ANA support while dm-multipath takes care
+> of multipathing.
 > 
+> While implementing these changes care was taken to preserve the exact
+> ANA functionality and code sequence native multipathing has provided.
+> This manifests as native multipathing's nvme_failover_req() being
+> tweaked to call __nvme_update_ana() which was factored out to allow
+> nvme_update_ana() to be called independent of nvme_failover_req().
+> 
+> And as always, if embedded NVMe users do not want any performance
+> overhead associated with ANA or native NVMe multipathing they can
+> disable CONFIG_NVME_MULTIPATH.
+> 
+> Signed-off-by: Mike Snitzer <snitzer@redhat.com>
+> ---
+>   drivers/nvme/host/core.c      | 10 +++++----
+>   drivers/nvme/host/multipath.c | 49 +++++++++++++++++++++++++++++++++----------
+>   drivers/nvme/host/nvme.h      |  4 ++++
+>   3 files changed, 48 insertions(+), 15 deletions(-)
+> 
+> diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+> index fe957166c4a9..3df607905628 100644
+> --- a/drivers/nvme/host/core.c
+> +++ b/drivers/nvme/host/core.c
+> @@ -255,10 +255,12 @@ void nvme_complete_rq(struct request *req)
+>   		nvme_req(req)->ctrl->comp_seen = true;
+>   
+>   	if (unlikely(status != BLK_STS_OK && nvme_req_needs_retry(req))) {
+> -		if ((req->cmd_flags & REQ_NVME_MPATH) &&
+> -		    blk_path_error(status)) {
+> -			nvme_failover_req(req);
+> -			return;
+> +		if (blk_path_error(status)) {
+> +			if (req->cmd_flags & REQ_NVME_MPATH) {
+> +				nvme_failover_req(req);
+> +				return;
+> +			}
+> +			nvme_update_ana(req);
+>   		}
+>   
+>   		if (!blk_queue_dying(req->q)) {
+> diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+> index 8e03cda770c5..0adbcff5fba2 100644
+> --- a/drivers/nvme/host/multipath.c
+> +++ b/drivers/nvme/host/multipath.c
+> @@ -22,7 +22,7 @@ MODULE_PARM_DESC(multipath,
+>   
+>   inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+>   {
+> -	return multipath && ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
+> +	return ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
+>   }
+>   
+>   /*
+> @@ -47,6 +47,35 @@ void nvme_set_disk_name(char *disk_name, struct nvme_ns *ns,
+>   	}
+>   }
+>   
+> +static bool nvme_ana_error(u16 status)
+> +{
+> +	switch (status & 0x7ff) {
+> +	case NVME_SC_ANA_TRANSITION:
+> +	case NVME_SC_ANA_INACCESSIBLE:
+> +	case NVME_SC_ANA_PERSISTENT_LOSS:
+> +		return true;
+> +	}
+> +	return false;
+> +}
+> +
+> +static void __nvme_update_ana(struct nvme_ns *ns)
+> +{
+> +	if (!ns->ctrl->ana_log_buf)
+> +		return;
+> +
+> +	set_bit(NVME_NS_ANA_PENDING, &ns->flags);
+> +	queue_work(nvme_wq, &ns->ctrl->ana_work);
+> +}
+> +
+> +void nvme_update_ana(struct request *req)
+> +{
+> +	struct nvme_ns *ns = req->q->queuedata;
+> +	u16 status = nvme_req(req)->status;
+> +
+> +	if (nvme_ana_error(status))
+> +		__nvme_update_ana(ns);
+> +}
+> +
+>   void nvme_failover_req(struct request *req)
+>   {
+>   	struct nvme_ns *ns = req->q->queuedata;
+> @@ -58,25 +87,22 @@ void nvme_failover_req(struct request *req)
+>   	spin_unlock_irqrestore(&ns->head->requeue_lock, flags);
+>   	blk_mq_end_request(req, 0);
+>   
+> -	switch (status & 0x7ff) {
+> -	case NVME_SC_ANA_TRANSITION:
+> -	case NVME_SC_ANA_INACCESSIBLE:
+> -	case NVME_SC_ANA_PERSISTENT_LOSS:
+> +	if (nvme_ana_error(status)) {
+>   		/*
+>   		 * If we got back an ANA error we know the controller is alive,
+>   		 * but not ready to serve this namespaces.  The spec suggests
+>   		 * we should update our general state here, but due to the fact
+>   		 * that the admin and I/O queues are not serialized that is
+>   		 * fundamentally racy.  So instead just clear the current path,
+> -		 * mark the the path as pending and kick of a re-read of the ANA
+> +		 * mark the path as pending and kick off a re-read of the ANA
+>   		 * log page ASAP.
+>   		 */
+>   		nvme_mpath_clear_current_path(ns);
+> -		if (ns->ctrl->ana_log_buf) {
+> -			set_bit(NVME_NS_ANA_PENDING, &ns->flags);
+> -			queue_work(nvme_wq, &ns->ctrl->ana_work);
+> -		}
+> -		break;
+> +		__nvme_update_ana(ns);
+> +		goto kick_requeue;
+> +	}
+> +
+> +	switch (status & 0x7ff) {
+>   	case NVME_SC_HOST_PATH_ERROR:
+>   		/*
+>   		 * Temporary transport disruption in talking to the controller.
+> @@ -93,6 +119,7 @@ void nvme_failover_req(struct request *req)
+>   		break;
+>   	}
+>   
+> +kick_requeue:
+>   	kblockd_schedule_work(&ns->head->requeue_work);
+>   }
+>   
+Doesn't the need to be protected by 'if (ns->head->disk)' or somesuch?
 
+Cheers,
+
+Hannes
 -- 
-Michal Hocko
-SUSE Labs
+Dr. Hannes Reinecke		   Teamlead Storage & Networking
+hare@suse.de			               +49 911 74053 688
+SUSE LINUX GmbH, Maxfeldstr. 5, 90409 Nürnberg
+GF: F. Imendörffer, J. Smithard, J. Guild, D. Upmanyu, G. Norton
+HRB 21284 (AG Nürnberg)
