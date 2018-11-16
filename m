@@ -2,69 +2,98 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 237D0C43610
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:17:56 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 153ADC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:21:02 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id EBFD42089D
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:17:55 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EBFD42089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+	by mail.kernel.org (Postfix) with ESMTP id CF6702089D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 10:21:01 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF6702089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389345AbeKPU3f (ORCPT
+        id S1727742AbeKPUcl convert rfc822-to-8bit (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 15:29:35 -0500
-Received: from verein.lst.de ([213.95.11.211]:48611 "EHLO newverein.lst.de"
+        Fri, 16 Nov 2018 15:32:41 -0500
+Received: from ozlabs.org ([203.11.71.1]:49779 "EHLO ozlabs.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727454AbeKPU3f (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 15:29:35 -0500
-Received: by newverein.lst.de (Postfix, from userid 2407)
-        id F3A1668D60; Fri, 16 Nov 2018 11:17:52 +0100 (CET)
-Date:   Fri, 16 Nov 2018 11:17:52 +0100
-From:   Christoph Hellwig <hch@lst.de>
-To:     Hannes Reinecke <hare@suse.de>
-Cc:     Christoph Hellwig <hch@lst.de>, Mike Snitzer <snitzer@redhat.com>,
-        linux-nvme@lists.infradead.org,
-        Keith Busch <keith.busch@intel.com>,
-        Sagi Grimberg <sagi@grimberg.me>, axboe@kernel.dk,
-        Martin Wilck <mwilck@suse.com>, lijie <lijie34@huawei.com>,
-        xose.vazquez@gmail.com, chengjike.cheng@huawei.com,
-        shenhong09@huawei.com, dm-devel@redhat.com,
-        wangzhoumengjian@huawei.com, christophe.varoqui@opensvc.com,
-        bmarzins@redhat.com, sschremm@netapp.com,
-        linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] nvme: allow ANA support to be independent of native
- multipathing
-Message-ID: <20181116101752.GA21531@lst.de>
-References: <20181113180008.GA12513@redhat.com> <20181114053837.GA15086@redhat.com> <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de> <20181114174746.GA18526@redhat.com> <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de> <20181115174605.GA19782@redhat.com> <20181116091458.GA17267@lst.de> <37098edd-4dea-b58f-bca6-3be9af8ec4ee@suse.de> <20181116094947.GA19296@lst.de> <bbaf4637-209c-5cfe-2749-3fcc54f7a35f@suse.de>
+        id S1727446AbeKPUcl (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 15:32:41 -0500
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        (No client certificate requested)
+        by ozlabs.org (Postfix) with ESMTPSA id 42xDlY43MJz9sBQ;
+        Fri, 16 Nov 2018 21:20:57 +1100 (AEDT)
+Authentication-Results: ozlabs.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+From:   Michael Ellerman <mpe@ellerman.id.au>
+To:     Christophe LEROY <christophe.leroy@c-s.fr>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Paul Mackerras <paulus@samba.org>, npiggin@gmail.com,
+        rashmicy@gmail.com
+Cc:     linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH] powerpc/mm: dump block address translation on book3s/32
+In-Reply-To: <9cb14c1f-02ce-a2a5-94e6-95afb4d3e168@c-s.fr>
+References: <26cc609706833f78e3195e3d35c0372b2f40cae3.1542181167.git.christophe.leroy@c-s.fr> <878t1uva0q.fsf@concordia.ellerman.id.au> <9cb14c1f-02ce-a2a5-94e6-95afb4d3e168@c-s.fr>
+Date:   Fri, 16 Nov 2018 21:20:56 +1100
+Message-ID: <87o9ap2uif.fsf@concordia.ellerman.id.au>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <bbaf4637-209c-5cfe-2749-3fcc54f7a35f@suse.de>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 8BIT
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 11:06:32AM +0100, Hannes Reinecke wrote:
-> Ok, so would you be happy with making ANA support configurable?
+Christophe LEROY <christophe.leroy@c-s.fr> writes:
 
-I've looked a bit over the whole situation, and what I think we need
-to do is:
+> Le 15/11/2018 à 12:46, Michael Ellerman a écrit :
+>> Christophe Leroy <christophe.leroy@c-s.fr> writes:
+>> 
+>>> This patch adds a debugfs file to dump block address translation:
+>>>
+>>> ~# cat /sys/kernel/debug/block_address_translation
+>> 
+>> My instinct is it should be in /sys/kernel/debug/powerpc. But I guess
+>> the other page table dump files are not.
+>
+> Lol.
+>
+> Looks like we have the same instinct ...
+>
+> But you rejected my patch https://patchwork.ozlabs.org/patch/750426/ :)
 
- a) warn if we see a ANA capable device without multipath support
-    so people know it is not going to work properly.
- b) deprecate the multipath module option.  It was only intended as
-    a migration for any pre-existing PCIe multipath user if there
-    were any, not to support any new functionality.  So for 4.20
-    put in a patch that prints a clear warning when it is used,
-    including a link to the nvme list, and then for 4.25 or so
-    remove it entirely unless something unexpected come up.
+Haha. My argument was that the kernel page table dump is not powerpc
+specific, but this file *is* powerpc specific. Though I guess it's in
+the same are as the page table / hash table dump, so it may as well live
+next to them.
 
-This whole drama of optional multipath use has wasted way too much
-of everyones time already.
+>>> diff --git a/arch/powerpc/mm/Makefile b/arch/powerpc/mm/Makefile
+>>> index ca96e7be4d0e..2adad10b5856 100644
+>>> --- a/arch/powerpc/mm/Makefile
+>>> +++ b/arch/powerpc/mm/Makefile
+>>> @@ -47,7 +47,7 @@ ifdef CONFIG_PPC_PTDUMP
+>>>   obj-$(CONFIG_4xx)		+= dump_linuxpagetables-generic.o
+>>>   obj-$(CONFIG_PPC_8xx)		+= dump_linuxpagetables-8xx.o
+>>>   obj-$(CONFIG_PPC_BOOK3E_MMU)	+= dump_linuxpagetables-generic.o
+>>> -obj-$(CONFIG_PPC_BOOK3S_32)	+= dump_linuxpagetables-generic.o
+>>> +obj-$(CONFIG_PPC_BOOK3S_32)	+= dump_linuxpagetables-generic.o dump_bats.o
+>> 
+>> BOOK3S_32 covers quite a lot of CPUs.
+>> 
+>> But below the only check is that you're on 601 or 603.
+>> 
+>> So is the 603 code going to work on all other BOOK3S_32 CPUs?
+>
+> If I understand function setbat() correctly, it should.
+>
+> See 
+> https://elixir.bootlin.com/linux/v4.20-rc1/source/arch/powerpc/mm/ppc_mmu_32.c#L115 
+> Tell me if you see something I missed.
+
+I don't know those 32-bit CPUs at all, so as long as you've thought
+about it that's good enough for me. We can catch bugs in testing anyway.
+
+cheers
