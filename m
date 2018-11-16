@@ -2,130 +2,130 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B71D8C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:07:51 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D98F1C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:08:43 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 87CAD2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:07:51 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 87CAD2086A
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=arm.com
+	by mail.kernel.org (Postfix) with ESMTP id A9FBC2086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 12:08:43 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9FBC2086A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389552AbeKPWTz (ORCPT
+        id S2389587AbeKPWUs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 17:19:55 -0500
-Received: from foss.arm.com ([217.140.101.70]:50416 "EHLO foss.arm.com"
+        Fri, 16 Nov 2018 17:20:48 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:33902 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727727AbeKPWTz (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 17:19:55 -0500
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.72.51.249])
-        by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98E1380D;
-        Fri, 16 Nov 2018 04:07:49 -0800 (PST)
-Received: from [10.163.1.125] (unknown [10.163.1.125])
-        by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 94AFC3F718;
-        Fri, 16 Nov 2018 04:07:47 -0800 (PST)
-Subject: Re: [PATCH 5/5] mm, memory_hotplug: be more verbose for memory
- offline failures
-To:     Michal Hocko <mhocko@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>
-Cc:     Oscar Salvador <OSalvador@suse.com>, Baoquan He <bhe@redhat.com>,
-        linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>,
-        Michal Hocko <mhocko@suse.com>
-References: <20181116083020.20260-1-mhocko@kernel.org>
- <20181116083020.20260-6-mhocko@kernel.org>
-From:   Anshuman Khandual <anshuman.khandual@arm.com>
-Message-ID: <68bb826c-104f-3c53-28fe-5e9a55df1d1e@arm.com>
-Date:   Fri, 16 Nov 2018 17:37:45 +0530
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        id S1727727AbeKPWUr (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 17:20:47 -0500
+Received: from smtp.corp.redhat.com (int-mx04.intmail.prod.int.phx2.redhat.com [10.5.11.14])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id F3B8E300440A;
+        Fri, 16 Nov 2018 12:08:41 +0000 (UTC)
+Received: from [10.36.112.49] (ovpn-112-49.ams2.redhat.com [10.36.112.49])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id 68A2B5DA63;
+        Fri, 16 Nov 2018 12:08:35 +0000 (UTC)
+Subject: Re: KVM selftests are failing
+To:     Ahmed Soliman <ahmedsoliman@mena.vt.edu>,
+        Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+        Andrew Jones <drjones@redhat.com>
+References: <CANBxJ=EQOt1t=PkLsMvtfB2SbiLMPeGvFxB7SJXf7m3OkcionQ@mail.gmail.com>
+ <20181114180807.6crs7awhvo26ldbr@hawk.localdomain>
+ <CADYN=9Jh10guVNFfhS8XH+RwZAouLJQu7Svg4+Tz3rQDexzDkg@mail.gmail.com>
+ <CANBxJ=G4xdF8ZOR4zyoX1edNa=jYxk1xrzoi+7Xgcqt9qDoM2w@mail.gmail.com>
+ <CANBxJ=EB8izWM8iLd49Uvd1z1O-gLvkGmiKNHjfHifFohj2xbg@mail.gmail.com>
+ <20181115090203.5z25gwa2yznj6mmu@kamzik.brq.redhat.com>
+ <CANBxJ=EHkuxKFoQw=K21o=9_FMhi_=on=Poq+ZF37eieoKV4zg@mail.gmail.com>
+ <20181115145028.qijg7hjswcuabrt2@kamzik.brq.redhat.com>
+ <CANBxJ=EGR=7RrO8ZtJFUwpNZRy_adjCObNtWtcMA=y4rLgeWaQ@mail.gmail.com>
+ <87efbmqore.fsf@vitty.brq.redhat.com>
+ <CANBxJ=FDOpySC7w1fVbWCOy+ASO=A7WcsFiDJEcGtzWbYM6NqQ@mail.gmail.com>
+From:   Paolo Bonzini <pbonzini@redhat.com>
+Openpgp: preference=signencrypt
+Autocrypt: addr=pbonzini@redhat.com; prefer-encrypt=mutual; keydata=
+ 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
+Message-ID: <b8246d8c-a50d-2b7b-bea8-b01e945c8f30@redhat.com>
+Date:   Fri, 16 Nov 2018 13:08:12 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
+ Thunderbird/60.3.0
 MIME-Version: 1.0
-In-Reply-To: <20181116083020.20260-6-mhocko@kernel.org>
+In-Reply-To: <CANBxJ=FDOpySC7w1fVbWCOy+ASO=A7WcsFiDJEcGtzWbYM6NqQ@mail.gmail.com>
 Content-Type: text/plain; charset=utf-8
 Content-Language: en-US
 Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.14
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.47]); Fri, 16 Nov 2018 12:08:42 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
+On 16/11/18 13:00, Ahmed Soliman wrote:
+> Hello once again,
+> 
+> I noticed that there is still more problems with kvmself test (at
+> least on my machine)
+> 
+> Any test that would successfully reach the guest's code immediately
+> VMexit by a shutdown.
+> 
+> $ ./vmx_tsc_adjust_test
+> ==== Test Assertion Failure ====
+>  x86_64/vmx_tsc_adjust_test.c:156: run->exit_reason == KVM_EXIT_IO
+>  pid=8499 tid=8499 - Success
+>     1  0x00005604f07bd36c: ?? ??:0
+>     2  0x00007f5c0dc53ae6: ?? ??:0
+>     3  0x00005604f07bd4b9: ?? ??:0
+>  Got exit_reason other than KVM_EXIT_IO: 8 (SHUTDOWN)
+> 
+> Also I have got a question I noticed 2 kvm test suites, kvm selftests
+> in tools/testing/selftests/kvm/
+> and this kvm unit test at [1] I am curious if I should put my tests in
+> the kvm unit test intead of kvm selftest
 
+If you are testing the API, or some corner cases and race conditions
+that are hard to synthesize with a "real-world" guest, put it here.  If
+you are testing the emulated hardware, you probably want to put it in
+kvm-unit-tests instead.
 
-On 11/16/2018 02:00 PM, Michal Hocko wrote:
-> From: Michal Hocko <mhocko@suse.com>
-> 
-> There is only very limited information printed when the memory offlining
-> fails:
-> [ 1984.506184] rac1 kernel: memory offlining [mem 0x82600000000-0x8267fffffff] failed due to signal backoff
-> 
-> This tells us that the failure is triggered by the userspace
-> intervention but it doesn't tell us much more about the underlying
-> reason. It might be that the page migration failes repeatedly and the
-> userspace timeout expires and send a signal or it might be some of the
-> earlier steps (isolation, memory notifier) takes too long.
-> 
-> If the migration failes then it would be really helpful to see which
-> page that and its state. The same applies to the isolation phase. If we
-> fail to isolate a page from the allocator then knowing the state of the
-> page would be helpful as well.
-> 
-> Dump the page state that fails to get isolated or migrated. This will
-> tell us more about the failure and what to focus on during debugging.
-> 
-> Signed-off-by: Michal Hocko <mhocko@suse.com>
-> ---
->  mm/memory_hotplug.c | 12 ++++++++----
->  mm/page_alloc.c     |  1 +
->  2 files changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
-> index 88d50e74e3fe..c82193db4be6 100644
-> --- a/mm/memory_hotplug.c
-> +++ b/mm/memory_hotplug.c
-> @@ -1388,10 +1388,8 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
->  						    page_is_file_cache(page));
->  
->  		} else {
-> -#ifdef CONFIG_DEBUG_VM
-> -			pr_alert("failed to isolate pfn %lx\n", pfn);
-> +			pr_warn("failed to isolate pfn %lx\n", pfn);
->  			dump_page(page, "isolation failed");
-> -#endif
->  			put_page(page);
->  			/* Because we don't have big zone->lock. we should
->  			   check this again here. */
-> @@ -1411,8 +1409,14 @@ do_migrate_range(unsigned long start_pfn, unsigned long end_pfn)
->  		/* Allocate a new page from the nearest neighbor node */
->  		ret = migrate_pages(&source, new_node_page, NULL, 0,
->  					MIGRATE_SYNC, MR_MEMORY_HOTPLUG);
-> -		if (ret)
-> +		if (ret) {
-> +			list_for_each_entry(page, &source, lru) {
-> +				pr_warn("migrating pfn %lx failed ret:%d ",
-> +				       page_to_pfn(page), ret);
-> +				dump_page(page, "migration failure");
-> +			}
->  			putback_movable_pages(&source);
-> +		}
->  	}
->  out:
->  	return ret;
-> diff --git a/mm/page_alloc.c b/mm/page_alloc.c
-> index a919ba5cb3c8..ec2c7916dc2d 100644
-> --- a/mm/page_alloc.c
-> +++ b/mm/page_alloc.c
-> @@ -7845,6 +7845,7 @@ bool has_unmovable_pages(struct zone *zone, struct page *page, int count,
->  	return false;
->  unmovable:
->  	WARN_ON_ONCE(zone_idx(zone) == ZONE_MOVABLE);
-> +	dump_page(pfn_to_page(pfn+iter), "unmovable page");
->  	return true;
->  }
-
-This seems to have fixed the previous build problem because of the migrate_pages()
-return code. Otherwise looks good.
-
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Paolo
