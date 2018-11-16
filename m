@@ -2,145 +2,277 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=unavailable
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1405FC04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:37:21 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id CC467C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:39:27 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id C42BB208A3
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:37:20 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=alien8.de header.i=@alien8.de header.b="Yc4IPEMh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C42BB208A3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=alien8.de
+	by mail.kernel.org (Postfix) with ESMTP id 77E282086C
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 14:39:27 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 77E282086C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389711AbeKQAt6 (ORCPT
+        id S2389807AbeKQAwE (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 19:49:58 -0500
-Received: from mail.skyhub.de ([5.9.137.197]:44364 "EHLO mail.skyhub.de"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1728079AbeKQAt5 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 19:49:57 -0500
-X-Virus-Scanned: Nedap ESD1 at mail.skyhub.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=dkim;
-        t=1542379037; h=from:from:sender:reply-to:subject:subject:date:date:
-         message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-         content-type:content-type:content-transfer-encoding:
-         in-reply-to:in-reply-to:references:references;
-        bh=SFf5ykLr71pjcsM419kMkIcPambg9F1IeKlldI9ntVw=;
-        b=Yc4IPEMhmPB+8y3eDXj1S+Q2tlhoDP2UOVS49EjZcWX/CtfMoFz1U8Hs0VAIdjdAwXX4rJ
-        UoHG6IGcJU0v3sBW2efKEeetGkuVhhWrChPKRD/kdnitCQMX2YKBxacirhrNX7MPg9vM4T
-        q5hP9NZwQL+FUe5bsDL7QHx84ZVxS8s=
-Received: from mail.skyhub.de ([127.0.0.1])
-        by localhost (blast.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id XGuUpSrINTZ5; Fri, 16 Nov 2018 15:37:16 +0100 (CET)
-Received: from zn.tnic (p200300EC2BD0FE004D130AD2F34E6DE4.dip0.t-ipconnect.de [IPv6:2003:ec:2bd0:fe00:4d13:ad2:f34e:6de4])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+        Fri, 16 Nov 2018 19:52:04 -0500
+Received: from mx3.molgen.mpg.de ([141.14.17.11]:53271 "EHLO mx1.molgen.mpg.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1728114AbeKQAwE (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 19:52:04 -0500
+Received: from keineahnung.molgen.mpg.de (keineahnung.molgen.mpg.de [141.14.17.193])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
         (No client certificate requested)
-        by mail.skyhub.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 9633D1EC0198;
-        Fri, 16 Nov 2018 15:37:16 +0100 (CET)
-Date:   Fri, 16 Nov 2018 15:37:15 +0100
-From:   Borislav Petkov <bp@alien8.de>
-To:     Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-Cc:     x86@kernel.org, platform-driver-x86@vger.kernel.org,
-        linux-sgx@vger.kernel.org, dave.hansen@intel.com,
-        sean.j.christopherson@intel.com, nhorman@redhat.com,
-        npmccallum@redhat.com, serge.ayoun@intel.com,
-        shay.katz-zamir@intel.com, haitao.huang@linux.intel.com,
-        andriy.shevchenko@linux.intel.com, tglx@linutronix.de,
-        kai.svahn@intel.com, mark.shanahan@intel.com, luto@amacapital.net,
-        Ingo Molnar <mingo@redhat.com>,
-        "H. Peter Anvin" <hpa@zytor.com>,
-        Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Fenghua Yu <fenghua.yu@intel.com>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>,
-        "open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" 
-        <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v17 03/23] x86/cpufeatures: Add SGX sub-features (as
- Linux-defined bits)
-Message-ID: <20181116143715.GJ20313@zn.tnic>
-References: <20181116010412.23967-1-jarkko.sakkinen@linux.intel.com>
- <20181116010412.23967-4-jarkko.sakkinen@linux.intel.com>
+        (Authenticated sender: pmenzel)
+        by mx.molgen.mpg.de (Postfix) with ESMTPSA id 2F7E32012BAC06;
+        Fri, 16 Nov 2018 15:39:22 +0100 (CET)
+Subject: Re: Logitech QuickCam USB detected by Linux, but not user space
+ applications
+To:     Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc:     Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <b9140bbf-1537-1431-1250-da0a21208992@molgen.mpg.de>
+ <20181115033813.6ff626d5@silica.lan>
+From:   Paul Menzel <pmenzel@molgen.mpg.de>
+Message-ID: <53bce637-985e-2c74-1d6b-151ba81550db@molgen.mpg.de>
+Date:   Fri, 16 Nov 2018 15:39:21 +0100
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20181116010412.23967-4-jarkko.sakkinen@linux.intel.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20181115033813.6ff626d5@silica.lan>
+Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256; boundary="------------ms050009070403000002040308"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 03:01:10AM +0200, Jarkko Sakkinen wrote:
-> From: Sean Christopherson <sean.j.christopherson@intel.com>
-> 
-> CPUID_12_EAX is an Intel-defined feature bits leaf dedicated for SGX
-> that enumerates the SGX instruction sets that are supported by the
-> CPU, e.g. SGX1, SGX2, etc...  Because Linux currently only cares about
-> two bits (SGX1 and SGX2) and there are currently only four documented
-> bits in total, relocate the bits to Linux-defined word 8 to conserve
-> space.
-> 
-> But, keep the bit positions identical between the Intel-defined value
-> and the Linux-defined value, e.g. keep SGX1 at bit 0.  This allows KVM
-> to use its existing code for probing guest CPUID bits using Linux's
-> X86_FEATURE_* definitions.  To do so, shift around some existing bits
-> to effectively reserve bits 0-7 of word 8 for SGX sub-features.
-> 
-> Signed-off-by: Sean Christopherson <sean.j.christopherson@intel.com>
-> Signed-off-by: Jarkko Sakkinen <jarkko.sakkinen@linux.intel.com>
-> ---
->  arch/x86/include/asm/cpufeatures.h       | 21 +++++++++++++++------
->  arch/x86/kernel/cpu/scattered.c          |  2 ++
->  tools/arch/x86/include/asm/cpufeatures.h | 21 +++++++++++++++------
->  3 files changed, 32 insertions(+), 12 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
-> index da7fed4939a3..afdf5f2e13b5 100644
-> --- a/arch/x86/include/asm/cpufeatures.h
-> +++ b/arch/x86/include/asm/cpufeatures.h
-> @@ -222,12 +222,21 @@
->  #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
->  #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
->  
-> -/* Virtualization flags: Linux defined, word 8 */
-> -#define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
-> -#define X86_FEATURE_VNMI		( 8*32+ 1) /* Intel Virtual NMI */
-> -#define X86_FEATURE_FLEXPRIORITY	( 8*32+ 2) /* Intel FlexPriority */
-> -#define X86_FEATURE_EPT			( 8*32+ 3) /* Intel Extended Page Table */
-> -#define X86_FEATURE_VPID		( 8*32+ 4) /* Intel Virtual Processor ID */
-> +/*
-> + * Scattered Intel features: Linux defined, word 8.
-> + *
-> + * Note that the bit location of the SGX features is meaningful as KVM expects
-> + * the Linux defined bit to match the Intel defined bit, e.g. X86_FEATURE_SGX1
-> + * must remain at bit 0, SGX2 at bit 1, etc...
-> + */
-> +#define X86_FEATURE_SGX1		( 8*32+ 0) /* SGX1 leaf functions */
-> +#define X86_FEATURE_SGX2		( 8*32+ 1) /* SGX2 leaf functions */
-> +
+This is a cryptographically signed message in MIME format.
 
-Yeah, add here	^^^^
+--------------ms050009070403000002040308
+Content-Type: text/plain; charset=utf-8
+Content-Language: en-US
+Content-Transfer-Encoding: quoted-printable
 
-/* Bits [0:7] are reserved for SGX */
+Dear Mauro,
 
-or so, so that people don't use those. Once CPUID(12) gets more bits
-added to it, I don't see anything wrong with allocating a separate leaf
-for that.
 
-BUT(!), the question then is whether kvm would still be ok with that?
-I'm thinking yes, as it will simply use the new definitions, or?
+Thank you very much for the quick reply.
 
--- 
-Regards/Gruss,
-    Boris.
 
-Good mailing practices for 400: avoid top-posting and trim the reply.
+On 11/15/18 12:38, Mauro Carvalho Chehab wrote:
+> Em Thu, 15 Nov 2018 11:42:32 +0100 Paul Menzel escreveu:
+
+>> I tried to get a Logitech QuickCam USB camera working, but unfortunate=
+ly, it is=20
+>> not detected by user space (Cheese, MPlayer).
+>=20
+> Could you please try it with Camorama?
+>=20
+> 	https://github.com/alessio/camorama
+
+Thank you for the suggestion. At first, I only saw a black image, but cha=
+nging the
+resolution made it work. See the status below.
+
+1.  does *not* work
+
+    a)  160x120
+    b)  176x144
+
+2.  works
+
+    a)  320x240
+    b)  352x288
+
+>> It=E2=80=99s an old device, so it could be broken, but as it=E2=80=99s=
+ detected by the Linux
+>> kernel, I wanted to check with you first.
+>>
+>> Linux 4.18.10 from Debian Sid/unstable is used.
+>>
+>> ```
+>> $ dmesg
+>> [=E2=80=A6]
+>> [ 2891.404361] usb 3-3: new full-speed USB device number 4 using ohci-=
+pci
+>> [ 2891.626934] usb 3-3: New USB device found, idVendor=3D046d, idProdu=
+ct=3D092e, bcdDevice=3D 0.00
+>> [ 2891.626945] usb 3-3: New USB device strings: Mfr=3D1, Product=3D2, =
+SerialNumber=3D0
+>> [ 2891.626951] usb 3-3: Product: Camera
+>> [ 2891.626957] usb 3-3: Manufacturer:
+>> [ 2893.110249] calling  media_devnode_init+0x0/0x1000 [media] @ 11704
+>> [ 2893.110256] media: Linux media interface: v0.10
+>> [ 2893.110329] initcall media_devnode_init+0x0/0x1000 [media] returned=
+ 0 after 56 usecs
+>> [ 2893.210078] calling  videodev_init+0x0/0x79 [videodev] @ 11704
+>> [ 2893.210084] videodev: Linux video capture interface: v2.00
+>> [ 2893.210123] initcall videodev_init+0x0/0x79 [videodev] returned 0 a=
+fter 21 usecs
+>> [ 2893.333140] calling  gspca_init+0x0/0x1000 [gspca_main] @ 11704
+>> [ 2893.333148] gspca_main: v2.14.0 registered
+>> [ 2893.333161] initcall gspca_init+0x0/0x1000 [gspca_main] returned 0 =
+after 3 usecs
+>> [ 2893.370672] calling  sd_driver_init+0x0/0x1000 [gspca_spca561] @ 11=
+704
+>> [ 2893.370751] gspca_main: spca561-2.14.0 probing 046d:092e
+>> [ 2893.482675] input: spca561 as /devices/pci0000:00/0000:00:12.0/usb3=
+/3-3/input/input17
+>> [ 2893.485415] usbcore: registered new interface driver spca561
+>> [ 2893.485434] initcall sd_driver_init+0x0/0x1000 [gspca_spca561] retu=
+rned 0 after 112054 usecs
+>> [=E2=80=A6]
+>> $ ls -l /dev/video*
+>> crw-rw----+ 1 root video 81, 0 Nov 15 09:26 /dev/video0
+>>
+>> $ mplayer tv:// -tv driver=3Dv4l2:device=3D/dev/video0
+>> MPlayer 1.3.0 (Debian), built with gcc-8 (C) 2000-2016 MPlayer Team
+>> do_connect: could not connect to socket
+>> connect: No such file or directory
+>> Failed to open LIRC support. You will not be able to use your remote c=
+ontrol.
+>>
+>> Playing tv://.
+>> TV file format detected.
+>> Selected driver: v4l2
+>>  name: Video 4 Linux 2 input
+>>  author: Martin Olschewski <olschewski@zpr.uni-koeln.de>
+>>  comment: first try, more to come ;-)
+>> v4l2: your device driver does not support VIDIOC_G_STD ioctl, VIDIOC_G=
+_PARM was used instead.
+>> Selected device: Camera
+>>  Capabilities:  video capture  read/write  streaming
+>>  supported norms:
+>>  inputs: 0 =3D spca561;
+>>  Current input: 0
+>>  Current format: unknown (0x31363553)
+>=20
+> The problem is likely here: mplayer is probably not using libv4l2. With=
+out
+> that, it can't decode the spca561 specific output format. It is probabl=
+y
+> due to some option used when mplayer was built.
+
+I=E2=80=99ll try to look more into that in the next weeks.
+
+> In the case of Cheese, it uses Gstreamer, with defaults to not use libv=
+4l2
+> either. On newest versions of it, there is an environment var that woul=
+d
+> allow enabling it (I don't remember what var).
+
+Thank you for the details. I=E2=80=99ll test that next week.
+
+[=E2=80=A6]
+
+
+Kind regards,
+
+Paul
+
+
+--------------ms050009070403000002040308
+Content-Type: application/pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+Content-Description: S/MIME Cryptographic Signature
+
+MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCC
+EFowggUSMIID+qADAgECAgkA4wvV+K8l2YEwDQYJKoZIhvcNAQELBQAwgYIxCzAJBgNVBAYT
+AkRFMSswKQYDVQQKDCJULVN5c3RlbXMgRW50ZXJwcmlzZSBTZXJ2aWNlcyBHbWJIMR8wHQYD
+VQQLDBZULVN5c3RlbXMgVHJ1c3QgQ2VudGVyMSUwIwYDVQQDDBxULVRlbGVTZWMgR2xvYmFs
+Um9vdCBDbGFzcyAyMB4XDTE2MDIyMjEzMzgyMloXDTMxMDIyMjIzNTk1OVowgZUxCzAJBgNV
+BAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1dHNjaGVu
+IEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNVBAMTJERG
+Ti1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjCCASIwDQYJKoZIhvcNAQEBBQAD
+ggEPADCCAQoCggEBAMtg1/9moUHN0vqHl4pzq5lN6mc5WqFggEcVToyVsuXPztNXS43O+FZs
+FVV2B+pG/cgDRWM+cNSrVICxI5y+NyipCf8FXRgPxJiZN7Mg9mZ4F4fCnQ7MSjLnFp2uDo0p
+eQcAIFTcFV9Kltd4tjTTwXS1nem/wHdN6r1ZB+BaL2w8pQDcNb1lDY9/Mm3yWmpLYgHurDg0
+WUU2SQXaeMpqbVvAgWsRzNI8qIv4cRrKO+KA3Ra0Z3qLNupOkSk9s1FcragMvp0049ENF4N1
+xDkesJQLEvHVaY4l9Lg9K7/AjsMeO6W/VRCrKq4Xl14zzsjz9AkH4wKGMUZrAcUQDBHHWekC
+AwEAAaOCAXQwggFwMA4GA1UdDwEB/wQEAwIBBjAdBgNVHQ4EFgQUk+PYMiba1fFKpZFK4OpL
+4qIMz+EwHwYDVR0jBBgwFoAUv1kgNgB5oKAia4zV8mHSuCzLgkowEgYDVR0TAQH/BAgwBgEB
+/wIBAjAzBgNVHSAELDAqMA8GDSsGAQQBga0hgiwBAQQwDQYLKwYBBAGBrSGCLB4wCAYGZ4EM
+AQICMEwGA1UdHwRFMEMwQaA/oD2GO2h0dHA6Ly9wa2kwMzM2LnRlbGVzZWMuZGUvcmwvVGVs
+ZVNlY19HbG9iYWxSb290X0NsYXNzXzIuY3JsMIGGBggrBgEFBQcBAQR6MHgwLAYIKwYBBQUH
+MAGGIGh0dHA6Ly9vY3NwMDMzNi50ZWxlc2VjLmRlL29jc3ByMEgGCCsGAQUFBzAChjxodHRw
+Oi8vcGtpMDMzNi50ZWxlc2VjLmRlL2NydC9UZWxlU2VjX0dsb2JhbFJvb3RfQ2xhc3NfMi5j
+ZXIwDQYJKoZIhvcNAQELBQADggEBAIcL/z4Cm2XIVi3WO5qYi3FP2ropqiH5Ri71sqQPrhE4
+eTizDnS6dl2e6BiClmLbTDPo3flq3zK9LExHYFV/53RrtCyD2HlrtrdNUAtmB7Xts5et6u5/
+MOaZ/SLick0+hFvu+c+Z6n/XUjkurJgARH5pO7917tALOxrN5fcPImxHhPalR6D90Bo0fa3S
+PXez7vTXTf/D6OWST1k+kEcQSrCFWMBvf/iu7QhCnh7U3xQuTY+8npTD5+32GPg8SecmqKc2
+2CzeIs2LgtjZeOJVEqM7h0S2EQvVDFKvaYwPBt/QolOLV5h7z/0HJPT8vcP9SpIClxvyt7bP
+ZYoaorVyGTkwggWNMIIEdaADAgECAgwcOtRQhH7u81j4jncwDQYJKoZIhvcNAQELBQAwgZUx
+CzAJBgNVBAYTAkRFMUUwQwYDVQQKEzxWZXJlaW4genVyIEZvZXJkZXJ1bmcgZWluZXMgRGV1
+dHNjaGVuIEZvcnNjaHVuZ3NuZXR6ZXMgZS4gVi4xEDAOBgNVBAsTB0RGTi1QS0kxLTArBgNV
+BAMTJERGTi1WZXJlaW4gQ2VydGlmaWNhdGlvbiBBdXRob3JpdHkgMjAeFw0xNjExMDMxNTI0
+NDhaFw0zMTAyMjIyMzU5NTlaMGoxCzAJBgNVBAYTAkRFMQ8wDQYDVQQIDAZCYXllcm4xETAP
+BgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxhbmNrLUdlc2VsbHNjaGFmdDEVMBMG
+A1UEAwwMTVBHIENBIC0gRzAyMIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAnhx4
+59Lh4WqgOs/Md04XxU2yFtfM15ZuJV0PZP7BmqSJKLLPyqmOrADfNdJ5PIGBto2JBhtRRBHd
+G0GROOvTRHjzOga95WOTeura79T21FWwwAwa29OFnD3ZplQs6HgdwQrZWNi1WHNJxn/4mA19
+rNEBUc5urSIpZPvZi5XmlF3v3JHOlx3KWV7mUteB4pwEEfGTg4npPAJbp2o7arxQdoIq+Pu2
+OsvqhD7Rk4QeaX+EM1QS4lqd1otW4hE70h/ODPy1xffgbZiuotWQLC6nIwa65Qv6byqlIX0q
+Zuu99Vsu+r3sWYsL5SBkgecNI7fMJ5tfHrjoxfrKl/ErTAt8GQIDAQABo4ICBTCCAgEwEgYD
+VR0TAQH/BAgwBgEB/wIBATAOBgNVHQ8BAf8EBAMCAQYwKQYDVR0gBCIwIDANBgsrBgEEAYGt
+IYIsHjAPBg0rBgEEAYGtIYIsAQEEMB0GA1UdDgQWBBTEiKUH7rh7qgwTv9opdGNSG0lwFjAf
+BgNVHSMEGDAWgBST49gyJtrV8UqlkUrg6kviogzP4TCBjwYDVR0fBIGHMIGEMECgPqA8hjpo
+dHRwOi8vY2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jcmwvY2Fjcmwu
+Y3JsMECgPqA8hjpodHRwOi8vY2RwMi5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1
+Yi9jcmwvY2FjcmwuY3JsMIHdBggrBgEFBQcBAQSB0DCBzTAzBggrBgEFBQcwAYYnaHR0cDov
+L29jc3AucGNhLmRmbi5kZS9PQ1NQLVNlcnZlci9PQ1NQMEoGCCsGAQUFBzAChj5odHRwOi8v
+Y2RwMS5wY2EuZGZuLmRlL2dsb2JhbC1yb290LWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNy
+dDBKBggrBgEFBQcwAoY+aHR0cDovL2NkcDIucGNhLmRmbi5kZS9nbG9iYWwtcm9vdC1nMi1j
+YS9wdWIvY2FjZXJ0L2NhY2VydC5jcnQwDQYJKoZIhvcNAQELBQADggEBABLpeD5FygzqOjj+
+/lAOy20UQOGWlx0RMuPcI4nuyFT8SGmK9lD7QCg/HoaJlfU/r78ex+SEide326evlFAoJXIF
+jVyzNltDhpMKrPIDuh2N12zyn1EtagqPL6hu4pVRzcBpl/F2HCvtmMx5K4WN1L1fmHWLcSap
+dhXLvAZ9RG/B3rqyULLSNN8xHXYXpmtvG0VGJAndZ+lj+BH7uvd3nHWnXEHC2q7iQlDUqg0a
+wIqWJgdLlx1Q8Dg/sodv0m+LN0kOzGvVDRCmowBdWGhhusD+duKV66pBl+qhC+4LipariWaM
+qK5ppMQROATjYeNRvwI+nDcEXr2vDaKmdbxgDVwwggWvMIIEl6ADAgECAgweKlJIhfynPMVG
+/KIwDQYJKoZIhvcNAQELBQAwajELMAkGA1UEBhMCREUxDzANBgNVBAgMBkJheWVybjERMA8G
+A1UEBwwITXVlbmNoZW4xIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MRUwEwYD
+VQQDDAxNUEcgQ0EgLSBHMDIwHhcNMTcxMTE0MTEzNDE2WhcNMjAxMTEzMTEzNDE2WjCBizEL
+MAkGA1UEBhMCREUxIDAeBgNVBAoMF01heC1QbGFuY2stR2VzZWxsc2NoYWZ0MTQwMgYDVQQL
+DCtNYXgtUGxhbmNrLUluc3RpdHV0IGZ1ZXIgbW9sZWt1bGFyZSBHZW5ldGlrMQ4wDAYDVQQL
+DAVNUElNRzEUMBIGA1UEAwwLUGF1bCBNZW56ZWwwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAw
+ggEKAoIBAQDIh/UR/AX/YQ48VWWDMLTYtXjYJyhRHMc81ZHMMoaoG66lWB9MtKRTnB5lovLZ
+enTIUyPsCrMhTqV9CWzDf6v9gOTWVxHEYqrUwK5H1gx4XoK81nfV8oGV4EKuVmmikTXiztGz
+peyDmOY8o/EFNWP7YuRkY/lPQJQBeBHYq9AYIgX4StuXu83nusq4MDydygVOeZC15ts0tv3/
+6WmibmZd1OZRqxDOkoBbY3Djx6lERohs3IKS6RKiI7e90rCSy9rtidJBOvaQS9wvtOSKPx0a
++2pAgJEVzZFjOAfBcXydXtqXhcpOi2VCyl+7+LnnTz016JJLsCBuWEcB3kP9nJYNAgMBAAGj
+ggIxMIICLTAJBgNVHRMEAjAAMA4GA1UdDwEB/wQEAwIF4DAdBgNVHSUEFjAUBggrBgEFBQcD
+AgYIKwYBBQUHAwQwHQYDVR0OBBYEFHM0Mc3XjMLlhWpp4JufRELL4A/qMB8GA1UdIwQYMBaA
+FMSIpQfuuHuqDBO/2il0Y1IbSXAWMCAGA1UdEQQZMBeBFXBtZW56ZWxAbW9sZ2VuLm1wZy5k
+ZTB9BgNVHR8EdjB0MDigNqA0hjJodHRwOi8vY2RwMS5wY2EuZGZuLmRlL21wZy1nMi1jYS9w
+dWIvY3JsL2NhY3JsLmNybDA4oDagNIYyaHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzIt
+Y2EvcHViL2NybC9jYWNybC5jcmwwgc0GCCsGAQUFBwEBBIHAMIG9MDMGCCsGAQUFBzABhido
+dHRwOi8vb2NzcC5wY2EuZGZuLmRlL09DU1AtU2VydmVyL09DU1AwQgYIKwYBBQUHMAKGNmh0
+dHA6Ly9jZHAxLnBjYS5kZm4uZGUvbXBnLWcyLWNhL3B1Yi9jYWNlcnQvY2FjZXJ0LmNydDBC
+BggrBgEFBQcwAoY2aHR0cDovL2NkcDIucGNhLmRmbi5kZS9tcGctZzItY2EvcHViL2NhY2Vy
+dC9jYWNlcnQuY3J0MEAGA1UdIAQ5MDcwDwYNKwYBBAGBrSGCLAEBBDARBg8rBgEEAYGtIYIs
+AQEEAwYwEQYPKwYBBAGBrSGCLAIBBAMGMA0GCSqGSIb3DQEBCwUAA4IBAQCQs6bUDROpFO2F
+Qz2FMgrdb39VEo8P3DhmpqkaIMC5ZurGbbAL/tAR6lpe4af682nEOJ7VW86ilsIJgm1j0ueY
+aOuL8jrN4X7IF/8KdZnnNnImW3QVni6TCcc+7+ggci9JHtt0IDCj5vPJBpP/dKXLCN4M+exl
+GXYpfHgxh8gclJPY1rquhQrihCzHfKB01w9h9tWZDVMtSoy9EUJFhCXw7mYUsvBeJwZesN2B
+fndPkrXx6XWDdU3S1LyKgHlLIFtarLFm2Hb5zAUR33h+26cN6ohcGqGEEzgIG8tXS8gztEaj
+1s2RyzmKd4SXTkKR3GhkZNVWy+gM68J7jP6zzN+cMYIDmjCCA5YCAQEwejBqMQswCQYDVQQG
+EwJERTEPMA0GA1UECAwGQmF5ZXJuMREwDwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4
+LVBsYW5jay1HZXNlbGxzY2hhZnQxFTATBgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzF
+RvyiMA0GCWCGSAFlAwQCAQUAoIIB8TAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqG
+SIb3DQEJBTEPFw0xODExMTYxNDM5MjFaMC8GCSqGSIb3DQEJBDEiBCBdi6U4SoM8LKfeibD7
+m95x3guVJHhnrDZ36DpppEmJWzBsBgkqhkiG9w0BCQ8xXzBdMAsGCWCGSAFlAwQBKjALBglg
+hkgBZQMEAQIwCgYIKoZIhvcNAwcwDgYIKoZIhvcNAwICAgCAMA0GCCqGSIb3DQMCAgFAMAcG
+BSsOAwIHMA0GCCqGSIb3DQMCAgEoMIGJBgkrBgEEAYI3EAQxfDB6MGoxCzAJBgNVBAYTAkRF
+MQ8wDQYDVQQIDAZCYXllcm4xETAPBgNVBAcMCE11ZW5jaGVuMSAwHgYDVQQKDBdNYXgtUGxh
+bmNrLUdlc2VsbHNjaGFmdDEVMBMGA1UEAwwMTVBHIENBIC0gRzAyAgweKlJIhfynPMVG/KIw
+gYsGCyqGSIb3DQEJEAILMXygejBqMQswCQYDVQQGEwJERTEPMA0GA1UECAwGQmF5ZXJuMREw
+DwYDVQQHDAhNdWVuY2hlbjEgMB4GA1UECgwXTWF4LVBsYW5jay1HZXNlbGxzY2hhZnQxFTAT
+BgNVBAMMDE1QRyBDQSAtIEcwMgIMHipSSIX8pzzFRvyiMA0GCSqGSIb3DQEBAQUABIIBAA3T
+WGZOCkxyFW/MIH9C5Ch76b74gzmhH2DdHCtIHirDGtQZi9XaNGbkR22KCtiZPbCVH3GaoEOz
+u/9FzURwPPWibfs5dcgh/lJn+WX6JEdSZ9Sm1uyjcTQiu+TcB/pdS8juxlELCsxIstpcsDBC
+MgIMWBVJMe8W7k8tRDxuleovXqcVymszSoREitaIhVkX3FEeIlGSplNXc5T9JJjVIAW5cnGX
+Jme03MsftgNFLf2NAkqLMAHpQxrztfOsqa6RyiTGAarecl7k2viZaYGEUykkqhl51mfNdRgL
+5yDoJ90o7ha7NF/NY3Wes+0lJRGJv9GZD3EfaEQ6V7tiziYaHlEAAAAAAAA=
+--------------ms050009070403000002040308--
