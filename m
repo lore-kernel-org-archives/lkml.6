@@ -2,138 +2,86 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C7BDC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:48:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7B4B3C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:48:15 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E2BE8208E7
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:48:07 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E2BE8208E7
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
+	by mail.kernel.org (Postfix) with ESMTP id 3BEF4208E7
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 09:48:15 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Jzwp6Ain"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3BEF4208E7
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389502AbeKPT7j (ORCPT
+        id S2389521AbeKPT7q (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 14:59:39 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:43143 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727698AbeKPT7j (ORCPT
+        Fri, 16 Nov 2018 14:59:46 -0500
+Received: from bombadil.infradead.org ([198.137.202.133]:36770 "EHLO
+        bombadil.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727543AbeKPT7p (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 14:59:39 -0500
-Received: by mail-ed1-f68.google.com with SMTP id f4so6401777edq.10;
-        Fri, 16 Nov 2018 01:48:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=o7HiIiWdxsWPxERnpuvVbyz65eavanXjc4m6f6LOeMc=;
-        b=MzB3w8w589EBMDFllK0pWrWrrSXEnx+AAOWLbSmeHMaq/cr34b4n6VVSskOK9MU6Zc
-         pcy/h/avTubXZ7f64j0XqyPbiJDKl8F0fm8dInVCJZV1JuZkstLBC9sbAR36gCz3VhHs
-         kwe90vDYG6kRQjVxzB15ygDajYzp+HkVKvPoJXCwJeHiO3dCtVPfYRRZGqI0591TKpKS
-         B2z9yx1P+RPR9TBDI9kip1bd8b8kj3WxbGIJ28mt56z2cppx5LfAQLz9flZYc5riXPoo
-         /DPlvSatu1Y80SF5oFU3WVsWdshhTJSmZ2XpaXMlnjYnx7GQIhaBzA1RmrBNq/mu8ftt
-         Jkbg==
-X-Gm-Message-State: AGRZ1gIv0XcU9jXIEpbAsmLTYCAKgq9UpjUIIoOvKtxuvEs3SBMSYE/M
-        /vc8Qe/u4riQyJ5zpdPqAWcaThJzvVE=
-X-Google-Smtp-Source: AJdET5cAP1MZehLyV2mvDvMB82GdcKNCukKSqoMsip+1DDjn6/9wkfmPkz8QjI2NaLn3epnnwZU/PA==
-X-Received: by 2002:a05:6402:184b:: with SMTP id v11mr8990708edy.147.1542361683218;
-        Fri, 16 Nov 2018 01:48:03 -0800 (PST)
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com. [209.85.221.51])
-        by smtp.gmail.com with ESMTPSA id y53sm2973701edd.84.2018.11.16.01.48.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 01:48:03 -0800 (PST)
-Received: by mail-wr1-f51.google.com with SMTP id z13-v6so24190929wrs.3;
-        Fri, 16 Nov 2018 01:48:02 -0800 (PST)
-X-Received: by 2002:adf:a599:: with SMTP id g25-v6mr9231939wrc.188.1542361682331;
- Fri, 16 Nov 2018 01:48:02 -0800 (PST)
+        Fri, 16 Nov 2018 14:59:45 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=infradead.org; s=bombadil.20170209; h=In-Reply-To:Content-Type:MIME-Version
+        :References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=FCzFxK9vog88Lm15soontLLK/k/+aS7WRTtxaf0OzZE=; b=Jzwp6AinINy6996LVllszl3ZO
+        oCSMPYg7o0DIeNe5nbNYZ/WG51pAaIY2ZkpG0eFSgVtHxBVY2R+0ydSG2+JpaRcGXwdMcrvAr27ao
+        Whln3/Q4quyXVOGISY2eOpEpayOLTZldY9Vb0J9JHwT9WWNRwhtDAF4KfzuBLC8We4YGQH5qsf3qo
+        4iXbf2JqCpLQ2fQOMdr/taUyIPjzZmc3tOg0ZkvJHoR356fTq2yOJ5BaB+pc3lQHj8r9EMyDF1i45
+        v72kTQeQxjNH6OpSBFI2L5CSWCYQJYJWX/U6nE22RLFQ0bTqhOy5tqFyjfrp8c/RfmCTNt+vDwdTS
+        qa7oVf+Lg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.90_1 #2 (Red Hat Linux))
+        id 1gNajS-0006GO-AT; Fri, 16 Nov 2018 09:48:10 +0000
+Date:   Fri, 16 Nov 2018 01:48:10 -0800
+From:   Christoph Hellwig <hch@infradead.org>
+To:     Paolo Bonzini <pbonzini@redhat.com>
+Cc:     Christoph Hellwig <hch@infradead.org>,
+        "Theodore Y. Ts'o" <tytso@mit.edu>, linux-kernel@vger.kernel.org,
+        linux-scsi@vger.kernel.org, Hannes Reinecke <hare@suse.com>,
+        "Martin K. Petersen" <martin.petersen@oracle.com>,
+        James Bottomley <James.Bottomley@hansenpartnership.com>
+Subject: Re: [PATCH 0/3] SG_IO command filtering via sysfs
+Message-ID: <20181116094810.GA23053@infradead.org>
+References: <1541867733-7836-1-git-send-email-pbonzini@redhat.com>
+ <20181111131445.GB25441@infradead.org>
+ <20181111134241.GA2447@thunk.org>
+ <20181112082013.GA9307@infradead.org>
+ <79d7d4b2-e9b3-00b4-2ad0-789888f7ee36@redhat.com>
+ <20181116093225.GA17033@infradead.org>
+ <fa3ed175-13a3-bedf-ebf9-ddf46a2decd5@redhat.com>
 MIME-Version: 1.0
-References: <20181115145013.3378-1-paul.kocialkowski@bootlin.com>
- <20181115145013.3378-9-paul.kocialkowski@bootlin.com> <20181116093904.4ikn7ldksrm3mp5d@flea>
-In-Reply-To: <20181116093904.4ikn7ldksrm3mp5d@flea>
-From:   Chen-Yu Tsai <wens@csie.org>
-Date:   Fri, 16 Nov 2018 17:47:50 +0800
-X-Gmail-Original-Message-ID: <CAGb2v65EckX0CDbZ5K9VmmayOe3eisOYgUxmPomPgp2_jE5Vww@mail.gmail.com>
-Message-ID: <CAGb2v65EckX0CDbZ5K9VmmayOe3eisOYgUxmPomPgp2_jE5Vww@mail.gmail.com>
-Subject: Re: [PATCH 08/15] ARM/arm64: sunxi: Move H3/H5 syscon label over to
- soc-specific nodes
-To:     Maxime Ripard <maxime.ripard@bootlin.com>
-Cc:     Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
-        Linux Media Mailing List <linux-media@vger.kernel.org>,
-        devicetree <devicetree@vger.kernel.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        devel@driverdev.osuosl.org,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        linux-sunxi@googlegroups.com, Hans Verkuil <hverkuil@xs4all.nl>,
-        Sakari Ailus <sakari.ailus@linux.intel.com>,
-        Thomas Petazzoni <thomas.petazzoni@bootlin.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fa3ed175-13a3-bedf-ebf9-ddf46a2decd5@redhat.com>
+User-Agent: Mutt/1.9.2 (2017-12-15)
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 5:39 PM Maxime Ripard <maxime.ripard@bootlin.com> wrote:
->
-> On Thu, Nov 15, 2018 at 03:50:06PM +0100, Paul Kocialkowski wrote:
-> > Now that we have specific nodes for the H3 and H5 system-controller
-> > that allow proper access to the EMAC clock configuration register,
-> > we no longer need a common dummy syscon node.
-> >
-> > Switch the syscon label over to each platform's dtsi file.
-> >
-> > Signed-off-by: Paul Kocialkowski <paul.kocialkowski@bootlin.com>
-> > ---
-> >  arch/arm/boot/dts/sun8i-h3.dtsi              | 2 +-
-> >  arch/arm/boot/dts/sunxi-h3-h5.dtsi           | 6 ------
-> >  arch/arm64/boot/dts/allwinner/sun50i-h5.dtsi | 2 +-
-> >  3 files changed, 2 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/arch/arm/boot/dts/sun8i-h3.dtsi b/arch/arm/boot/dts/sun8i-h3.dtsi
-> > index 7157d954fb8c..b337a9282783 100644
-> > --- a/arch/arm/boot/dts/sun8i-h3.dtsi
-> > +++ b/arch/arm/boot/dts/sun8i-h3.dtsi
-> > @@ -134,7 +134,7 @@
-> >       };
-> >
-> >       soc {
-> > -             system-control@1c00000 {
-> > +             syscon: system-control@1c00000 {
-> >                       compatible = "allwinner,sun8i-h3-system-control";
-> >                       reg = <0x01c00000 0x1000>;
-> >                       #address-cells = <1>;
-> > diff --git a/arch/arm/boot/dts/sunxi-h3-h5.dtsi b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-> > index 4b1530ebe427..9175ff0fb59a 100644
-> > --- a/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-> > +++ b/arch/arm/boot/dts/sunxi-h3-h5.dtsi
-> > @@ -152,12 +152,6 @@
-> >                       };
-> >               };
-> >
-> > -             syscon: syscon@1c00000 {
-> > -                     compatible = "allwinner,sun8i-h3-system-controller",
-> > -                             "syscon";
-> > -                     reg = <0x01c00000 0x1000>;
-> > -             };
-> > -
->
-> You're also dropping the syscon compatible there. But I'm not sure how
-> it could work with the H3 EMAC driver that would overwrite the
-> compatible already.
+On Fri, Nov 16, 2018 at 10:45:11AM +0100, Paolo Bonzini wrote:
+> Yeah, but looking at the command is what Ted wants.  The thing that we
+> did in RHEL was a single sysfs bool that allows unfiltered access,
+> because it was sort of enough and made the delta very small.  But for
+> upstream I want to do it right, even if that means learning all that
+> new-fangled BPF stuff. :)
 
-I assume you are referring to the previous patch? The node names are not
-the same, hence the previous patch is adding another node for the system
-controller, and this patch removes the old one with the "syscon" compatible.
+So what is this magic command?
 
-We already patched the EMAC driver to support the new SRAM controller based
-regmap, so other than making people unhappy about having to update their
-DT, I don't think there would be any problems. This also means H3 in -next
-currently has _two_ syscon nodes.
+> I would even agree, however it's allowed right now and I would be
+> surprised if no one was relying on it in good faith ("I'm just doing an
+> INQUIRY, why do I need to open O_RDWR").  And indeed:
+> 
+> $ sudo chmod a+r /dev/sda
+> $ strace -e openat sg_inq /dev/sda
+> openat(AT_FDCWD, "/dev/sda", O_RDONLY|O_NONBLOCK) = 3
 
-ChenYu
+Well, not if we only did that for unprivileged opens.
