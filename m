@@ -2,145 +2,254 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT
+	autolearn=unavailable autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AADA9C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DC5C7C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:59:19 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 734F720854
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:59:06 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="KLZWzsJh"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 734F720854
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=chromium.org
+	by mail.kernel.org (Postfix) with ESMTP id A5F2E20854
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 18:59:19 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5F2E20854
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726108AbeKQFMj (ORCPT
+        id S1726205AbeKQFMt (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 00:12:39 -0500
-Received: from mail-pf1-f193.google.com ([209.85.210.193]:39261 "EHLO
-        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726011AbeKQFMi (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 00:12:38 -0500
-Received: by mail-pf1-f193.google.com with SMTP id c72so7134611pfc.6
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 10:59:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google;
-        h=from:to:cc:subject:date:message-id;
-        bh=O/I1k539tqwRKsWEthqNKRxgRw6UGeJxi9txfRXZzPs=;
-        b=KLZWzsJhlfTV/XtDJEEamvmNiM8nLyXeEta/AJD2tDgdv+WurGGNVZuvZe18Jho4KC
-         v6Q3QOBZhO8bzJGTqkFzQ0NYhuB7nNqPDjDwcLg2rCP90f8FzF6V4hqz2BgpFijfuvlU
-         oN4NsVm4d9FqcOK72WlLquPVnxjX2t5/VYnGg=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=O/I1k539tqwRKsWEthqNKRxgRw6UGeJxi9txfRXZzPs=;
-        b=KBTiXGQWO7uU10MCV1x/t5bB+gx1+ZjaVnz024paMs7C6uBRTAUq9gfrMZCeVAJciU
-         +kWqkNOG02cjPamPOMyw1mEsTUS8vmjK8dJNgYpzY5R2xZrf7a6OHAhCoPWe8W1fJbM2
-         GxeBbTzIFckFPnLn0XLej0NVmtl6ZRIZYleIjYuSR2rJ91ffCpdvs40KSofZ3EJoLMJS
-         2QvfPBMsuniQMAjBxaRkxrV9VABIkRf0T9tptoG0RCqOOqDDCtnfvSSleTQrc8yxe85w
-         A7FKlcdF+6cwNiyA+zLKPpKy1FqzDGiK9E7FJKmSGvjaIt5K7bBFIE+8ifjTbWuJmxoZ
-         yOsQ==
-X-Gm-Message-State: AGRZ1gLOkkZcpdhStrntpngSNUOFckNB/t1HL11NDcBdxtWJzI8+y9jF
-        wjBeo6Vsr++Kjdr71dKuroHX5w==
-X-Google-Smtp-Source: AJdET5c5jsenlqjOYFDIn7rMKqqrkp8pjbYQ5O05azogL1kYAUz70A/3ueQ5e7DYLQP49vZMyEREOA==
-X-Received: by 2002:a63:2f07:: with SMTP id v7mr10351558pgv.368.1542394743165;
-        Fri, 16 Nov 2018 10:59:03 -0800 (PST)
-Received: from evgreen2.mtv.corp.google.com ([2620:15c:202:201:e418:c825:76cf:5f64])
-        by smtp.gmail.com with ESMTPSA id n13-v6sm44514473pfk.19.2018.11.16.10.59.02
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-SHA bits=128/128);
-        Fri, 16 Nov 2018 10:59:02 -0800 (PST)
-From:   Evan Green <evgreen@chromium.org>
-To:     Linus Walleij <linus.walleij@linaro.org>,
-        Bjorn Andersson <bjorn.andersson@linaro.org>
-Cc:     Stephen Boyd <swboyd@chromium.org>,
-        Evan Green <evgreen@chromium.org>, linux-gpio@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-Subject: [PATCH v2] pinctrl: msm: Add sleep pinctrl state transitions
-Date:   Fri, 16 Nov 2018 10:58:53 -0800
-Message-Id: <20181116185853.128207-1-evgreen@chromium.org>
-X-Mailer: git-send-email 2.16.4
+        Sat, 17 Nov 2018 00:12:49 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:43926 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1726011AbeKQFMt (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 00:12:49 -0500
+Received: from smtp.corp.redhat.com (int-mx08.intmail.prod.int.phx2.redhat.com [10.5.11.23])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id D8F99C02943A;
+        Fri, 16 Nov 2018 18:59:13 +0000 (UTC)
+Received: from localhost (unknown [10.18.25.149])
+        by smtp.corp.redhat.com (Postfix) with ESMTPS id A8D8519C7D;
+        Fri, 16 Nov 2018 18:59:10 +0000 (UTC)
+Date:   Fri, 16 Nov 2018 13:59:09 -0500
+From:   Mike Snitzer <snitzer@redhat.com>
+To:     linux-nvme@lists.infradead.org
+Cc:     axboe@kernel.dk, linux-block@vger.kernel.org,
+        lijie <lijie34@huawei.com>, xose.vazquez@gmail.com,
+        Sagi Grimberg <sagi@grimberg.me>, chengjike.cheng@huawei.com,
+        linux-kernel@vger.kernel.org, shenhong09@huawei.com,
+        Martin Wilck <mwilck@suse.com>,
+        Keith Busch <keith.busch@intel.com>, dm-devel@redhat.com,
+        wangzhoumengjian@huawei.com, hch@lst.de, sschremm@netapp.com
+Subject: [PATCH v2] nvme: allow ANA support to be independent of native
+ multipathing
+Message-ID: <20181116185909.GA30049@redhat.com>
+References: <1541657381-7452-1-git-send-email-lijie34@huawei.com>
+ <2691abf6733f791fb16b86d96446440e4aaff99f.camel@suse.com>
+ <20181112215323.GA7983@redhat.com>
+ <20181113161838.GC9827@localhost.localdomain>
+ <20181113180008.GA12513@redhat.com>
+ <20181114053837.GA15086@redhat.com>
+ <30cf7af7-8826-55bd-e39a-4f81ed032f6d@suse.de>
+ <20181114174746.GA18526@redhat.com>
+ <87c931e5-4ac9-1795-8d40-cc5541d3ebcf@suse.de>
+ <20181115174605.GA19782@redhat.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181115174605.GA19782@redhat.com>
+User-Agent: Mutt/1.5.21 (2010-09-15)
+X-Scanned-By: MIMEDefang 2.84 on 10.5.11.23
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.32]); Fri, 16 Nov 2018 18:59:14 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Add PM suspend callbacks to the msm core driver that select the
-sleep and default pinctrl states. Then wire those callbacks up
-in the sdm845 driver, for those boards that may have GPIO hogs
-that need to change state during suspend.
+Whether or not ANA is present is a choice of the target implementation;
+the host (and whether it supports multipathing) has _zero_ influence on
+this.  If the target declares a path as 'inaccessible' the path _is_
+inaccessible to the host.  As such, ANA support should be functional
+even if native multipathing is not.
 
-Signed-off-by: Evan Green <evgreen@chromium.org>
-Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+Introduce ability to always re-read ANA log page as required due to ANA
+error and make current ANA state available via sysfs -- even if native
+multipathing is disabled on the host (via nvme_core.multipath=N).
+
+While implementing these changes care was taken to preserve the exact
+ANA functionality and code sequence native multipathing has provided.
+This manifests as native multipathing's nvme_failover_req() being
+tweaked to call __nvme_update_ana() which was factored out to allow
+nvme_update_ana() to be called independent of nvme_failover_req().
+
+Add new module param to allow ANA to be disabled via nvme_core.ana=N.
+Also, emit warning if ANA is enabled but native multipathing isn't.
+
+And as always, if embedded NVMe users do not want any performance
+overhead associated with ANA or native NVMe multipathing they can
+disable CONFIG_NVME_MULTIPATH.
+
+Signed-off-by: Mike Snitzer <snitzer@redhat.com>
 ---
+ drivers/nvme/host/core.c      | 10 +++++---
+ drivers/nvme/host/multipath.c | 59 ++++++++++++++++++++++++++++++++++---------
+ drivers/nvme/host/nvme.h      |  4 +++
+ 3 files changed, 57 insertions(+), 16 deletions(-)
 
-Changes in v2:
- - Moved dev_pm_ops structure to pinctrl-msm [Bjorn]
+v2: add nvme_core.ana modparam and emit warning if ana but !multipath
 
- drivers/pinctrl/qcom/pinctrl-msm.c    | 19 +++++++++++++++++++
- drivers/pinctrl/qcom/pinctrl-msm.h    |  2 ++
- drivers/pinctrl/qcom/pinctrl-sdm845.c |  1 +
- 3 files changed, 22 insertions(+)
-
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.c b/drivers/pinctrl/qcom/pinctrl-msm.c
-index 7c7d083e2c0dc..87cbebe217fd2 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.c
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.c
-@@ -1072,6 +1072,25 @@ static void msm_pinctrl_setup_pm_reset(struct msm_pinctrl *pctrl)
+diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
+index fe957166c4a9..3df607905628 100644
+--- a/drivers/nvme/host/core.c
++++ b/drivers/nvme/host/core.c
+@@ -255,10 +255,12 @@ void nvme_complete_rq(struct request *req)
+ 		nvme_req(req)->ctrl->comp_seen = true;
+ 
+ 	if (unlikely(status != BLK_STS_OK && nvme_req_needs_retry(req))) {
+-		if ((req->cmd_flags & REQ_NVME_MPATH) &&
+-		    blk_path_error(status)) {
+-			nvme_failover_req(req);
+-			return;
++		if (blk_path_error(status)) {
++			if (req->cmd_flags & REQ_NVME_MPATH) {
++				nvme_failover_req(req);
++				return;
++			}
++			nvme_update_ana(req);
  		}
+ 
+ 		if (!blk_queue_dying(req->q)) {
+diff --git a/drivers/nvme/host/multipath.c b/drivers/nvme/host/multipath.c
+index 8e03cda770c5..8b45cad2734d 100644
+--- a/drivers/nvme/host/multipath.c
++++ b/drivers/nvme/host/multipath.c
+@@ -18,11 +18,16 @@
+ static bool multipath = true;
+ module_param(multipath, bool, 0444);
+ MODULE_PARM_DESC(multipath,
+-	"turn on native support for multiple controllers per subsystem");
++	"toggle native support for multiple controllers per subsystem");
++
++static bool ana = true;
++module_param(ana, bool, 0444);
++MODULE_PARM_DESC(ana,
++	"toggle support for Asynchronous Namespace Access");
+ 
+ inline bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl)
+ {
+-	return multipath && ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
++	return ana && ctrl->subsys && (ctrl->subsys->cmic & (1 << 3));
  }
  
-+static int msm_pinctrl_suspend(struct device *dev)
-+{
-+	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
-+
-+	return pinctrl_force_sleep(pctrl->pctrl);
-+}
-+
-+static int msm_pinctrl_resume(struct device *dev)
-+{
-+	struct msm_pinctrl *pctrl = dev_get_drvdata(dev);
-+
-+	return pinctrl_force_default(pctrl->pctrl);
-+}
-+
-+SIMPLE_DEV_PM_OPS(msm_pinctrl_dev_pm_ops, msm_pinctrl_suspend,
-+		  msm_pinctrl_resume);
-+
-+EXPORT_SYMBOL(msm_pinctrl_dev_pm_ops);
-+
- int msm_pinctrl_probe(struct platform_device *pdev,
- 		      const struct msm_pinctrl_soc_data *soc_data)
- {
-diff --git a/drivers/pinctrl/qcom/pinctrl-msm.h b/drivers/pinctrl/qcom/pinctrl-msm.h
-index 29172fdf5882c..c12048e54a6f0 100644
---- a/drivers/pinctrl/qcom/pinctrl-msm.h
-+++ b/drivers/pinctrl/qcom/pinctrl-msm.h
-@@ -123,6 +123,8 @@ struct msm_pinctrl_soc_data {
- 	unsigned int ntiles;
- };
+ /*
+@@ -47,6 +52,35 @@ void nvme_set_disk_name(char *disk_name, struct nvme_ns *ns,
+ 	}
+ }
  
-+extern const struct dev_pm_ops msm_pinctrl_dev_pm_ops;
++static bool nvme_ana_error(u16 status)
++{
++	switch (status & 0x7ff) {
++	case NVME_SC_ANA_TRANSITION:
++	case NVME_SC_ANA_INACCESSIBLE:
++	case NVME_SC_ANA_PERSISTENT_LOSS:
++		return true;
++	}
++	return false;
++}
 +
- int msm_pinctrl_probe(struct platform_device *pdev,
- 		      const struct msm_pinctrl_soc_data *soc_data);
- int msm_pinctrl_remove(struct platform_device *pdev);
-diff --git a/drivers/pinctrl/qcom/pinctrl-sdm845.c b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-index 2ab7a88857579..c97f20fca5fd3 100644
---- a/drivers/pinctrl/qcom/pinctrl-sdm845.c
-+++ b/drivers/pinctrl/qcom/pinctrl-sdm845.c
-@@ -1300,6 +1300,7 @@ static const struct of_device_id sdm845_pinctrl_of_match[] = {
- static struct platform_driver sdm845_pinctrl_driver = {
- 	.driver = {
- 		.name = "sdm845-pinctrl",
-+		.pm = &msm_pinctrl_dev_pm_ops,
- 		.of_match_table = sdm845_pinctrl_of_match,
- 	},
- 	.probe = sdm845_pinctrl_probe,
++static void __nvme_update_ana(struct nvme_ns *ns)
++{
++	if (!ns->ctrl->ana_log_buf)
++		return;
++
++	set_bit(NVME_NS_ANA_PENDING, &ns->flags);
++	queue_work(nvme_wq, &ns->ctrl->ana_work);
++}
++
++void nvme_update_ana(struct request *req)
++{
++	struct nvme_ns *ns = req->q->queuedata;
++	u16 status = nvme_req(req)->status;
++
++	if (nvme_ana_error(status))
++		__nvme_update_ana(ns);
++}
++
+ void nvme_failover_req(struct request *req)
+ {
+ 	struct nvme_ns *ns = req->q->queuedata;
+@@ -58,25 +92,22 @@ void nvme_failover_req(struct request *req)
+ 	spin_unlock_irqrestore(&ns->head->requeue_lock, flags);
+ 	blk_mq_end_request(req, 0);
+ 
+-	switch (status & 0x7ff) {
+-	case NVME_SC_ANA_TRANSITION:
+-	case NVME_SC_ANA_INACCESSIBLE:
+-	case NVME_SC_ANA_PERSISTENT_LOSS:
++	if (nvme_ana_error(status)) {
+ 		/*
+ 		 * If we got back an ANA error we know the controller is alive,
+ 		 * but not ready to serve this namespaces.  The spec suggests
+ 		 * we should update our general state here, but due to the fact
+ 		 * that the admin and I/O queues are not serialized that is
+ 		 * fundamentally racy.  So instead just clear the current path,
+-		 * mark the the path as pending and kick of a re-read of the ANA
++		 * mark the path as pending and kick off a re-read of the ANA
+ 		 * log page ASAP.
+ 		 */
+ 		nvme_mpath_clear_current_path(ns);
+-		if (ns->ctrl->ana_log_buf) {
+-			set_bit(NVME_NS_ANA_PENDING, &ns->flags);
+-			queue_work(nvme_wq, &ns->ctrl->ana_work);
+-		}
+-		break;
++		__nvme_update_ana(ns);
++		goto kick_requeue;
++	}
++
++	switch (status & 0x7ff) {
+ 	case NVME_SC_HOST_PATH_ERROR:
+ 		/*
+ 		 * Temporary transport disruption in talking to the controller.
+@@ -93,6 +124,7 @@ void nvme_failover_req(struct request *req)
+ 		break;
+ 	}
+ 
++kick_requeue:
+ 	kblockd_schedule_work(&ns->head->requeue_work);
+ }
+ 
+@@ -551,6 +583,9 @@ int nvme_mpath_init(struct nvme_ctrl *ctrl, struct nvme_id_ctrl *id)
+ 	if (!nvme_ctrl_use_ana(ctrl))
+ 		return 0;
+ 
++	if (!multipath)
++		dev_warn(ctrl->device, "allowing ANA without native multipathing due to nvme_core.multipath=N\n");
++
+ 	ctrl->anacap = id->anacap;
+ 	ctrl->anatt = id->anatt;
+ 	ctrl->nanagrpid = le32_to_cpu(id->nanagrpid);
+diff --git a/drivers/nvme/host/nvme.h b/drivers/nvme/host/nvme.h
+index 27663ce3044e..cbe4253f2d02 100644
+--- a/drivers/nvme/host/nvme.h
++++ b/drivers/nvme/host/nvme.h
+@@ -471,6 +471,7 @@ bool nvme_ctrl_use_ana(struct nvme_ctrl *ctrl);
+ void nvme_set_disk_name(char *disk_name, struct nvme_ns *ns,
+ 			struct nvme_ctrl *ctrl, int *flags);
+ void nvme_failover_req(struct request *req);
++void nvme_update_ana(struct request *req);
+ void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl);
+ int nvme_mpath_alloc_disk(struct nvme_ctrl *ctrl,struct nvme_ns_head *head);
+ void nvme_mpath_add_disk(struct nvme_ns *ns, struct nvme_id_ns *id);
+@@ -510,6 +511,9 @@ static inline void nvme_set_disk_name(char *disk_name, struct nvme_ns *ns,
+ static inline void nvme_failover_req(struct request *req)
+ {
+ }
++static inline void nvme_update_ana(struct request *req)
++{
++}
+ static inline void nvme_kick_requeue_lists(struct nvme_ctrl *ctrl)
+ {
+ }
 -- 
-2.16.4
+2.15.0
 
