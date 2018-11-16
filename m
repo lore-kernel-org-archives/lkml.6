@@ -6,38 +6,38 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E237C04EBC
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:24:46 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 073CBC070C3
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:24:50 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 505A520858
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:24:46 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 505A520858
+	by mail.kernel.org (Postfix) with ESMTP id C8CAC20858
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 16:24:49 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C8CAC20858
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=v3.sk
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2390143AbeKQChq (ORCPT
+        id S2390163AbeKQCht (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 21:37:46 -0500
+        Fri, 16 Nov 2018 21:37:49 -0500
 Received: from shell.v3.sk ([90.176.6.54]:57013 "EHLO shell.v3.sk"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1729055AbeKQChp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 21:37:45 -0500
+        id S1729055AbeKQCht (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Fri, 16 Nov 2018 21:37:49 -0500
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 1B2AB52F1E;
-        Fri, 16 Nov 2018 17:24:40 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id BCB3D52C25;
+        Fri, 16 Nov 2018 17:24:43 +0100 (CET)
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10032)
-        with ESMTP id 71z4c1BhsQGI; Fri, 16 Nov 2018 17:24:24 +0100 (CET)
+        with ESMTP id uHg12MCDu4YE; Fri, 16 Nov 2018 17:24:31 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-        by zimbra.v3.sk (Postfix) with ESMTP id 59D7852E6B;
-        Fri, 16 Nov 2018 17:24:18 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTP id 63FCD53196;
+        Fri, 16 Nov 2018 17:24:21 +0100 (CET)
 X-Virus-Scanned: amavisd-new at zimbra.v3.sk
 Received: from shell.v3.sk ([127.0.0.1])
         by localhost (zimbra.v3.sk [127.0.0.1]) (amavisd-new, port 10026)
-        with ESMTP id EqIlQWUklik9; Fri, 16 Nov 2018 17:24:14 +0100 (CET)
+        with ESMTP id yYgHHKL_y3m5; Fri, 16 Nov 2018 17:24:16 +0100 (CET)
 Received: from belphegor.brq.redhat.com (nat-pool-brq-t.redhat.com [213.175.37.10])
-        by zimbra.v3.sk (Postfix) with ESMTPSA id D8C6152AE0;
-        Fri, 16 Nov 2018 17:24:13 +0100 (CET)
+        by zimbra.v3.sk (Postfix) with ESMTPSA id 215D452C13;
+        Fri, 16 Nov 2018 17:24:15 +0100 (CET)
 From:   Lubomir Rintel <lkundrak@v3.sk>
 To:     Mark Brown <broonie@kernel.org>,
         Geert Uytterhoeven <geert+renesas@glider.be>,
@@ -55,11 +55,10 @@ Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
         linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
         linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
         platform-driver-x86@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-pm@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>,
-        stable@vger.kernel.org
-Subject: [PATCH v2 01/17] power: supply: olpc_battery: correct the temperature units
-Date:   Fri, 16 Nov 2018 17:23:47 +0100
-Message-Id: <20181116162403.49854-2-lkundrak@v3.sk>
+        linux-pm@vger.kernel.org, Lubomir Rintel <lkundrak@v3.sk>
+Subject: [PATCH v2 04/17] Revert "platform/olpc: Make ec explicitly non-modular"
+Date:   Fri, 16 Nov 2018 17:23:50 +0100
+Message-Id: <20181116162403.49854-5-lkundrak@v3.sk>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181116162403.49854-1-lkundrak@v3.sk>
 References: <20181116162403.49854-1-lkundrak@v3.sk>
@@ -70,54 +69,55 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-According to [1] and [2], the temperature values are in tenths of degree
-Celsius. Exposing the Celsius value makes the battery appear on fire:
+It doesn't make sense to always have this built-in, e.g. on ARM
+multiplatform kernels.
 
-  $ upower -i /org/freedesktop/UPower/devices/battery_olpc_battery
-  ...
-      temperature:         236.9 degrees C
+A better way to address the problem the original commit aimed to solve is
+to fix Kconfig. That is what the next commit in the series does.
 
-Tested on OLPC XO-1 and OLPC XO-1.75 laptops.
+This reverts commit f48d1496b8537d75776478c6942dd87f34d7f270.
 
-[1] include/linux/power_supply.h
-[2] Documentation/power/power_supply_class.txt
-
-Fixes: fb972873a767 ("[BATTERY] One Laptop Per Child power/battery driver=
-")
-Cc: stable@vger.kernel.org
 Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-Acked-by: Pavel Machek <pavel@ucw.cz>
 
 ---
 Changes since v1:
-- Add Fixes tag and an Ack
+- Sort it later in the patch set
 
- drivers/power/supply/olpc_battery.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/platform/olpc/olpc-ec.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/power/supply/olpc_battery.c b/drivers/power/supply/o=
-lpc_battery.c
-index 6da79ae14860..5a97e42a3547 100644
---- a/drivers/power/supply/olpc_battery.c
-+++ b/drivers/power/supply/olpc_battery.c
-@@ -428,14 +428,14 @@ static int olpc_bat_get_property(struct power_suppl=
-y *psy,
- 		if (ret)
- 			return ret;
+diff --git a/drivers/platform/olpc/olpc-ec.c b/drivers/platform/olpc/olpc=
+-ec.c
+index 981955dce926..35a21c66cd0d 100644
+--- a/drivers/platform/olpc/olpc-ec.c
++++ b/drivers/platform/olpc/olpc-ec.c
+@@ -1,8 +1,6 @@
+ /*
+  * Generic driver for the OLPC Embedded Controller.
+  *
+- * Author: Andres Salomon <dilinger@queued.net>
+- *
+  * Copyright (C) 2011-2012 One Laptop per Child Foundation.
+  *
+  * Licensed under the GPL v2 or later.
+@@ -14,7 +12,7 @@
+ #include <linux/platform_device.h>
+ #include <linux/slab.h>
+ #include <linux/workqueue.h>
+-#include <linux/init.h>
++#include <linux/module.h>
+ #include <linux/list.h>
+ #include <linux/olpc-ec.h>
 =20
--		val->intval =3D (s16)be16_to_cpu(ec_word) * 100 / 256;
-+		val->intval =3D (s16)be16_to_cpu(ec_word) * 10 / 256;
- 		break;
- 	case POWER_SUPPLY_PROP_TEMP_AMBIENT:
- 		ret =3D olpc_ec_cmd(EC_AMB_TEMP, NULL, 0, (void *)&ec_word, 2);
- 		if (ret)
- 			return ret;
-=20
--		val->intval =3D (int)be16_to_cpu(ec_word) * 100 / 256;
-+		val->intval =3D (int)be16_to_cpu(ec_word) * 10 / 256;
- 		break;
- 	case POWER_SUPPLY_PROP_CHARGE_COUNTER:
- 		ret =3D olpc_ec_cmd(EC_BAT_ACR, NULL, 0, (void *)&ec_word, 2);
+@@ -327,4 +325,8 @@ static int __init olpc_ec_init_module(void)
+ {
+ 	return platform_driver_register(&olpc_ec_plat_driver);
+ }
++
+ arch_initcall(olpc_ec_init_module);
++
++MODULE_AUTHOR("Andres Salomon <dilinger@queued.net>");
++MODULE_LICENSE("GPL");
 --=20
 2.19.1
 
