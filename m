@@ -2,101 +2,101 @@ Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E64A2C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:15:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 61FD9C43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:15:48 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A95752087C
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:15:27 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 2B3432089D
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 15:15:48 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B2PscZ+O"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A95752087C
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	dkim=pass (2048-bit key) header.d=baylibre-com.20150623.gappssmtp.com header.i=@baylibre-com.20150623.gappssmtp.com header.b="FOI802+Y"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 2B3432089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S2389977AbeKQB2M (ORCPT
+        id S2390005AbeKQB2c (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Fri, 16 Nov 2018 20:28:12 -0500
-Received: from mail-io1-f67.google.com ([209.85.166.67]:42452 "EHLO
-        mail-io1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1728079AbeKQB2M (ORCPT
+        Fri, 16 Nov 2018 20:28:32 -0500
+Received: from mail-wr1-f67.google.com ([209.85.221.67]:34414 "EHLO
+        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1728354AbeKQB2c (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Fri, 16 Nov 2018 20:28:12 -0500
-Received: by mail-io1-f67.google.com with SMTP id h19-v6so17292653iog.9
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 07:15:25 -0800 (PST)
+        Fri, 16 Nov 2018 20:28:32 -0500
+Received: by mail-wr1-f67.google.com with SMTP id j26-v6so25251434wre.1
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 07:15:45 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=TJClaqXsMztzzxkvSYNmcX25WE9GvTF2Z0MgqIFayfg=;
-        b=B2PscZ+O4/Mn2zxlhAd1ths139lX50IVCepLyhB0B8/2JiYf/FC22hWM8h4WQlJsHr
-         7yVGukgH1Qi2WNrn5WToLj6FoEvlZVZ5q9xenbt80FGr1YJiDgRiqD6ESizR0to0OsxY
-         JYk5V4ol5Z5iQyxoW6+dboV5PMKsg6ZbMy5sg9GzlTsRZKVHQWsIK0hEChB4Q7OV6EeT
-         4Gv9GMnbEuwW91sj/dN2wTMROc6h64j9ah1G9/Tqor3UpT6zzOSNbXO3dhSoe8V0xVYl
-         kkObKnLQoxqjWVaXTe95DCghQ16cE0u0UyGL1g4Xna6Gwl7qNIEb1EclLZO+LHuvLf5e
-         xo+w==
+        d=baylibre-com.20150623.gappssmtp.com; s=20150623;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jLJ1ADnzINm5MjG5ShisqkYqeXmeVPABmXgx3B/VbiI=;
+        b=FOI802+Y6dZjqvmOdnVFLUBQX6PH04QZDojl3snG5sHJAOaZrHJBMRXp1g5ba3qHbp
+         PfpFM31uSedDXT57ZhZQxY5dm+EYUzqTh1EKBEax5oS+SUoUsxyrh2RCcHd4aWogg3uQ
+         /DodwHjdBwDEFRAVehu0WWJ9wWxqQgTcR1iu9BZba00TZdT8UT9enfVkhM64CkrY6QXM
+         +zYyqP24axgEL8WwpkKFbrrqkL9YQWEccmBO2+ELUqfDkiHs0Y1BH3rwUoaQeDqu0P4E
+         7glGIIdSiOkm/eaVYkkVdEt270HtQHby+LvnOrt34lPdJZfMZVihxX8MqZsuOiPXjWhr
+         mtRg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=TJClaqXsMztzzxkvSYNmcX25WE9GvTF2Z0MgqIFayfg=;
-        b=RuCb8nAE4tE5xuxeznX/QUpYXb4EFzn2XQWKoU4i5cebIeDd7LYF2GrpK/EqfYnS4f
-         S8Wxjp8Y8yyrlxhc3j+4LfVz7hjSc3empUtsNtgySBLZE1VTIehi/YfRnCBmYCMZHm1c
-         CzSa2P+Y+auVGDRF77gQXNmSC4nF9U8o1SbiuY09hXvOTQt7F8JGfycnvi0sY2S9uoU3
-         DqlXjfO14L/uo3p7QPuOfx7/MAF+bN9ikdQEzFrBgiFN8GSLyXUUADkevj+ffFxX688D
-         D4oJakSGIbkkNpk51/vhL2qCinsIP96NlXdWZ8QYQnZGt7yOnbVllLcIUIP86Jb3MAGV
-         Qljw==
-X-Gm-Message-State: AA+aEWYmy0EuEOiJV36j+QpBzmDwKWeAM3XbSBjcgNsUplDgrAHN8c9c
-        CJ1wFku1bgkD+bEZWsB5aSMCovFWAq0NpxrZTzM=
-X-Google-Smtp-Source: AFSGD/VKz1l7PNHNhwQPh7qfuo9nrSTfT8yoQWSVrhhBo3X4J+TeDKCAHwrZL1rUvCI3V1bxhw59ziB/xasOz6mZZc4=
-X-Received: by 2002:a5e:db48:: with SMTP id r8-v6mr5489259iop.165.1542381325057;
- Fri, 16 Nov 2018 07:15:25 -0800 (PST)
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=jLJ1ADnzINm5MjG5ShisqkYqeXmeVPABmXgx3B/VbiI=;
+        b=bcmB9SwzJkyvjQ81YPgT3/QZm8lUzrVahkIj2Qis8yRz/b+UqEXc8/C1vk1MFh7o2e
+         OLk/F91ho4EAi6Rh0315+BVL9X/YLJ2To5csKbn0u7QI9pYcflgm/NxgcpZMiWXQfY3R
+         1ObUSCTq93WE9abTg4CwKE7jkKMM6amXaxkdRJdpWEIwrCSFGzeaAcOhzNwtYh++Y7/e
+         V+rhwqhXNV17jQGi4qJnQ1lM2qAUjKQe5CCK/SEv91AHvqy/kvmLxm2QStvRCGzu+UDd
+         Q7sJh08f/rSlG2v0IUbJCeDoIPVscm+CRvhXqwMr+W90dy3GMhxrbX9nf8KVGPseTxSp
+         QlWA==
+X-Gm-Message-State: AGRZ1gJs/mARSSGDyyzakrfnnPoFmlwok7X+nEMelOT8Zl0ict2JvqI+
+        qBB44pbmzd/ZzopN0CEUWOyaEg==
+X-Google-Smtp-Source: AJdET5cQW4YjRFRYOfKV0lmFz9oA7klCjub2+bSS6xdy89nf9VaneLPIeRpESKYrm+JU/3HlpeDvdQ==
+X-Received: by 2002:adf:9022:: with SMTP id h31-v6mr9742649wrh.297.1542381344560;
+        Fri, 16 Nov 2018 07:15:44 -0800 (PST)
+Received: from boomer.lan (cag06-3-82-243-161-21.fbx.proxad.net. [82.243.161.21])
+        by smtp.googlemail.com with ESMTPSA id h125-v6sm13937816wmf.48.2018.11.16.07.15.43
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Nov 2018 07:15:43 -0800 (PST)
+From:   Jerome Brunet <jbrunet@baylibre.com>
+To:     Kevin Hilman <khilman@baylibre.com>,
+        Carlo Caione <carlo@caione.org>,
+        Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Jerome Brunet <jbrunet@baylibre.com>,
+        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
+        devicetree@vger.kernel.org
+Subject: [PATCH RESEND v2 0/2] arm64: dts: meson: add Libretech aml-s805x-ac support
+Date:   Fri, 16 Nov 2018 16:15:37 +0100
+Message-Id: <20181116151539.18501-1-jbrunet@baylibre.com>
+X-Mailer: git-send-email 2.19.1
 MIME-Version: 1.0
-References: <20181108144454.GA3797@hp-pavilion-15-notebook-pc-brajeswar>
-In-Reply-To: <20181108144454.GA3797@hp-pavilion-15-notebook-pc-brajeswar>
-From:   Brajeswar Ghosh <brajeswar.linux@gmail.com>
-Date:   Fri, 16 Nov 2018 20:45:11 +0530
-Message-ID: <CAFqtX7kba2UBiNoMhG79joLL2N1_Hup7y+xrKrYsesXwj6-grA@mail.gmail.com>
-Subject: Re: [PATCH] arm/mach-sa1100/hackkit.c: Remove duplicate header
-To:     linux@armlinux.org.uk
-Cc:     Souptick Joarder <jrdr.linux@gmail.com>,
-        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-        Sabyasachi Gupta <sabyasachi.linux@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 8:14 PM Brajeswar Ghosh
-<brajeswar.linux@gmail.com> wrote:
->
-> Remove linux/tty.h which is included more than once
->
-> Signed-off-by: Brajeswar Ghosh <brajeswar.linux@gmail.com>
+This patchset adds support for the libretech aml-s805x-ac, aka 'La Frite'
 
-Any comment on this patch?
+Changes since v1: [0]
+ * Update gpio line names to align on Neil's recent series [1]
+ * (really) fix typo in comment
 
-> ---
->  arch/arm/mach-sa1100/hackkit.c | 1 -
->  1 file changed, 1 deletion(-)
->
-> diff --git a/arch/arm/mach-sa1100/hackkit.c b/arch/arm/mach-sa1100/hackkit.c
-> index 643d5f2d9af9..0016d25e7deb 100644
-> --- a/arch/arm/mach-sa1100/hackkit.c
-> +++ b/arch/arm/mach-sa1100/hackkit.c
-> @@ -22,7 +22,6 @@
->  #include <linux/serial_core.h>
->  #include <linux/mtd/mtd.h>
->  #include <linux/mtd/partitions.h>
-> -#include <linux/tty.h>
->  #include <linux/gpio.h>
->  #include <linux/leds.h>
->  #include <linux/platform_device.h>
-> --
-> 2.17.1
->
+[0]: https://lkml.kernel.org/r/20181114101925.10526-1-jbrunet@baylibre.com
+[1]: https://lkml.kernel.org/r/1541587550-17842-1-git-send-email-narmstrong@baylibre.com
+
+Jerome Brunet (1):
+  dt-bindings: arm: amlogic: add libretech aml-s805x-ac bindings
+
+Neil Armstrong (1):
+  arm64: dts: meson: add libretech aml-s805x-ac board
+
+ .../devicetree/bindings/arm/amlogic.txt       |   1 +
+ arch/arm64/boot/dts/amlogic/Makefile          |   1 +
+ .../amlogic/meson-gxl-s805x-libretech-ac.dts  | 248 ++++++++++++++++++
+ 3 files changed, 250 insertions(+)
+ create mode 100644 arch/arm64/boot/dts/amlogic/meson-gxl-s805x-libretech-ac.dts
+
+-- 
+2.19.1
+
