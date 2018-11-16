@@ -4,83 +4,91 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57E70C43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:13:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 606DCC43441
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:15:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 11F7F2086A
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:13:07 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1F5862086A
+	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 22:15:05 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="TXZVvdY5"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 11F7F2086A
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="EcFC4Kse"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1F5862086A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729471AbeKQI1P (ORCPT
+        id S1727734AbeKQI3N (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 03:27:15 -0500
-Received: from mail-lf1-f65.google.com ([209.85.167.65]:41902 "EHLO
-        mail-lf1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725995AbeKQI1P (ORCPT
+        Sat, 17 Nov 2018 03:29:13 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:36843 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726040AbeKQI3N (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 03:27:15 -0500
-Received: by mail-lf1-f65.google.com with SMTP id c16so17550555lfj.8
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 14:13:04 -0800 (PST)
+        Sat, 17 Nov 2018 03:29:13 -0500
+Received: by mail-lf1-f68.google.com with SMTP id h192so17568807lfg.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 14:15:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=ER7Q/ICr6bvtN+/2y2BJD4kd/upPnZviF5egk0fDVRY=;
-        b=TXZVvdY587s8Lge6es5R/hRfFKupHOuZFA9IvmWJI7zqY5S81td3mwF/CFcQIeT0JS
-         Uigxb+aWZ0o+anzM4Bd16KuqgJYolEKlOVZ7wPQywkx30Plz1rHMNjLvKBVyqf2BXywz
-         gf5TuFeS1lBPMuGxegPvrZJW7uMFCsp8Cbucc=
+        bh=zDGTliiTeNUWqk9ilnkUQ34m5eKTjEV95kgvWFV8vu0=;
+        b=EcFC4KseWIsIXJdtUmyBS8OOU5m5xKz9I3ggARhba1SYZPV2W1keo9XjiuF8/Fvg62
+         TvtmIJses2PwdNeiHeY09x6MG04rK92kKUsZ+yAey6i7FRsusj9SxvPXM8q5L6N/JM/T
+         uXuxHBr9o7cZrmupv4mtXvsDwW54QXl432UwI=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=ER7Q/ICr6bvtN+/2y2BJD4kd/upPnZviF5egk0fDVRY=;
-        b=sU+eHTWtIk3KcI3UfisKTVdqbo2beCKDvg0fQrjHcepeMS9aWQgPlmTGU+Ct3kid0b
-         NXWNc+aYRueFGRJiHFeKdd0qr2ZvRPorMbp1cwhrRJh+P/53su/qZuIjdflAM+fSlDMR
-         3dxSjTxGU6SO4BrpV2bpLLDGqBSm74HLGv71vGUbuN6/VFRy0zqPz6pAIPii8ZPsBhUr
-         B505TNow0QvpK5tO8fJQEmoknkl4E2lboVHuhhL6oIJNEhYbsuQqY+SsTRMcSMPyRWoc
-         Ju06ecK0jscrDVmyVL+AQtGoaIfl1uoLlfUC4aD5p3QEB5NZfQei/T7V1lIC+PgjsgfQ
-         dWlA==
-X-Gm-Message-State: AGRZ1gLsh7W6Zl1sciPCMprZFnAjc07/tQ6Cloz8Cz/uB/Rq09ZKssW+
-        1dP8Q4yzTn0vUnB6CbERH70wHrpjxbd1L5Sq2CKnkA==
-X-Google-Smtp-Source: AJdET5eci0QcEOHx//QMPLnKCryRPP4LmfutZhJVkvfPJKVB31dgl7ndWoUD8jdX6qpqQnAx7XoD64DgyX1Dfz8UtW8=
-X-Received: by 2002:a19:4849:: with SMTP id v70mr4419603lfa.62.1542406383403;
- Fri, 16 Nov 2018 14:13:03 -0800 (PST)
+        bh=zDGTliiTeNUWqk9ilnkUQ34m5eKTjEV95kgvWFV8vu0=;
+        b=UC7VRJSGPqWDQ8XF2OcTz4Jib+8WJY/ZI4NPpnBr7lTfAgh1PS8OiLsUEiKXzWcdyh
+         ocTFWeH6PPTnplH5+r8qgmlzGPTISCZcVNB6N0MiR5+lle7vpYAGb6TENtoC7Gm6ZEJY
+         PHC/DgwYd1Dm5N4jAEped5CdndRdlIOdKQrXV3D+YLCNXDg6mj2CpOToy74Ce6XmG2uI
+         E1SpsAGYWjIyNsu920iHu0vIWb/lfIWvPc2XgHXhDw824SV483ka3L8zKHBloCNyHvaM
+         4spL6Baof6v5rMAG+Rb8y2LvkU+iI+mdRrvREkP9SIw3vLJzgvR6naRt7dGM4c6/X/DE
+         9KBQ==
+X-Gm-Message-State: AGRZ1gLtDZrSFS7qrJHI/h5COZoanUFZMHrQ8W8R5f/LCZQKNHzZUYMA
+        L4Xvl6F3MNnyKBbrIuU9BQDFdOFhO52CtDpPCe3tcw==
+X-Google-Smtp-Source: AJdET5drXYLLa6ImoMIrC1TJiHq8m1olmETscOLDqhfsm7QNh4xQOcCyJxCWs1NhtXdfygN77CumtQYQljtj2EqA+M4=
+X-Received: by 2002:a19:f813:: with SMTP id a19mr6236987lff.67.1542406501297;
+ Fri, 16 Nov 2018 14:15:01 -0800 (PST)
 MIME-Version: 1.0
-References: <1541866511-7856-1-git-send-email-stefan.wahren@i2se.com>
-In-Reply-To: <1541866511-7856-1-git-send-email-stefan.wahren@i2se.com>
+References: <20181111013411.14153-1-masneyb@onstation.org>
+In-Reply-To: <20181111013411.14153-1-masneyb@onstation.org>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Fri, 16 Nov 2018 23:12:51 +0100
-Message-ID: <CACRpkdaXekcvO4ANtgn9iFLvgrxnY=KvcPzK9r-srWZZwhGVDA@mail.gmail.com>
-Subject: Re: [PATCH 12/17] pinctrl: bcm2835: Switch to SPDX identifier
-To:     Stefan Wahren <stefan.wahren@i2se.com>
-Cc:     Eric Anholt <eric@anholt.net>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
+Date:   Fri, 16 Nov 2018 23:14:49 +0100
+Message-ID: <CACRpkdbdEkegcMMmwAQdAc=_n7vcu5M1KGx9KfgvFKbk4ZQ12Q@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: qcom: ssbi-gpio: fix gpio-hog related boot issues
+To:     masneyb@onstation.org
+Cc:     Bjorn Andersson <bjorn.andersson@linaro.org>,
+        linux-arm-msm@vger.kernel.org,
         "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        linux-rpi-kernel <linux-rpi-kernel@lists.infradead.org>,
-        simon@arlott.org, Stephen Warren <swarren@wwwdotorg.org>
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, Nov 10, 2018 at 5:16 PM Stefan Wahren <stefan.wahren@i2se.com> wrote:
+On Sun, Nov 11, 2018 at 2:34 AM Brian Masney <masneyb@onstation.org> wrote:
 
-> Adopt the SPDX license identifier headers to ease license compliance
-> management.
+> When attempting to setup up a gpio hog, device probing will repeatedly
+> fail with -EPROBE_DEFERED errors. It is caused by a circular dependency
+> between the gpio and pinctrl frameworks. If the gpio-ranges property is
+> present in device tree, then the gpio framework will handle the gpio pin
+> registration and eliminate the circular dependency.
 >
-> Cc: Simon Arlott <simon@arlott.org>
-> Cc: Stephen Warren <swarren@wwwdotorg.org>
-> Signed-off-by: Stefan Wahren <stefan.wahren@i2se.com>
+> See Christian Lamparter's commit a86caa9ba5d7 ("pinctrl: msm: fix
+> gpio-hog related boot issues") for a detailed commit message that
+> explains the issue in much more detail. The code comment in this commit
+> came from Christian's commit.
+>
+> I did not test this change against any hardware supported by this
+> particular driver, however I was able to validate this same fix works
+> for pinctrl-spmi-gpio.c using a LG Nexus 5 (hammerhead) phone.
+>
+> Signed-off-by: Brian Masney <masneyb@onstation.org>
 
-Patch applied with Eric's review tag.
+Patch applied.
 
 Yours,
 Linus Walleij
