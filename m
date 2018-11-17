@@ -6,59 +6,59 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 92FE9C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:18:39 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 204D6C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:19:32 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 535D62080D
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:18:39 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D33372080D
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:19:31 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="G6sCiHeW"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 535D62080D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="JfuMS7v0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D33372080D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726311AbeKQWfI (ORCPT
+        id S1726371AbeKQWgA (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 17:35:08 -0500
-Received: from mail-lf1-f68.google.com ([209.85.167.68]:44817 "EHLO
-        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725980AbeKQWfH (ORCPT
+        Sat, 17 Nov 2018 17:36:00 -0500
+Received: from mail-lf1-f66.google.com ([209.85.167.66]:42290 "EHLO
+        mail-lf1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726003AbeKQWgA (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 17:35:07 -0500
-Received: by mail-lf1-f68.google.com with SMTP id z13so18266509lfe.11
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 04:18:36 -0800 (PST)
+        Sat, 17 Nov 2018 17:36:00 -0500
+Received: by mail-lf1-f66.google.com with SMTP id l10so14670049lfh.9
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 04:19:28 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
          :cc;
-        bh=CwcZgS6Si8t6pVK8iLN8oUsF9P5jKc1FkAFCju2jRJg=;
-        b=G6sCiHeWI0jperDcoeGMpNnvCQK5Vpj5BiA9QM+LbgCxL2NezLMkVWFMB/TDS5c6N5
-         GwbtWfMBi+4g4p4F45l7HMmR1qz78QOQvzSZ6ujBb2pyXEl/F04j0OcLl/rVIwPGT7WJ
-         vGiQN6Vgvjnjvjgtk8Nl/9fvMsSuCSto6u81c=
+        bh=0PTkO9LJ0aELwDkLk9tV4qAHt+lw5jWOf9ELwtZ8LmU=;
+        b=JfuMS7v0Vzgr9I8mtQT6Q2IiZJZZeNv7xuycMNRvGRRH+OlY4DxAF09O30XldFT6EU
+         mFSMEHthGI6GHgcg0iapagvZXzmaRPzvS8AJNH6353cP4BFUEe6qnxipRJXOm2bk8XiS
+         GUHJg0E6CZ/SALGn0e5E++i5Jw+8ODhf2Uc/c=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
          :message-id:subject:to:cc;
-        bh=CwcZgS6Si8t6pVK8iLN8oUsF9P5jKc1FkAFCju2jRJg=;
-        b=ZJ9vHGe0JnIf3ZCmom2rlpyozEYSaRAv6zQyTg50JHj1kKNHzQcy4wlPoiC1mjldAQ
-         HVKjZXc9NNLQCyUhUbiFTsABA/B2wCaObdbZFI138cykzmoLgL6J4+eqz4p74MAYHfG2
-         H6OAn5qQbYNyzYPU0fn8RC9XiAVV0vY8Hq14nbPb0aXkcJ8a2GQgbhUlGpGsfA9gkA+n
-         jHADgCnRoCgBBE9cPrHNHkJNnfHsw4jgOSPasuZf6T15icSUo9pVanEQpzCX83EOvhlS
-         fg3hYrelXC4UUfF7CbuBUWjlJSo4E4ScLfdAD8EpB0ZzbTVzfMVMFWb4g/bergh3SvaE
-         zh5w==
-X-Gm-Message-State: AGRZ1gKQbbIF3nhe+c34wwJnMYd/wR3ZnK9cus2ZeRPFXHuZJClDvkhw
-        rwU0iF97DYcSwkRIG+WfSHE9TP8iOS+7ZVF2uwdYKQ==
-X-Google-Smtp-Source: AJdET5e94Wk9IUd2910KPJLzpLY7dSkOCxyKCGQ5uvwsPy7gFtWfpNv/6IsK2oTR7Suiz1mhoiDxifocErDruYUWifU=
-X-Received: by 2002:a19:5154:: with SMTP id f81mr7757418lfb.96.1542457115612;
- Sat, 17 Nov 2018 04:18:35 -0800 (PST)
+        bh=0PTkO9LJ0aELwDkLk9tV4qAHt+lw5jWOf9ELwtZ8LmU=;
+        b=P8X7OiEZGBH0RrKBW+Lu0D5mECGDBL31e5S73xdMUVN+9TmKeDAQqO1mLSvqqjMIUr
+         hoB9fRoSr4PGd5S42XYH6m8GfKAtJWePbpsRXJU7eOEKcJ2ce3+Pr56rjn7VbmPFERRd
+         AZlVSS1j9/lT1+EVcpyMZ2HHbmqISsx4lypA34IKzLUsix7d8miwAM5Ckfu49BheP820
+         S8Ohi+i5Sv2yMN2wzDE//QAYMIm5nIsVYmC/oIYYxX2Ag/EyL6Qq1t+Iwmc55oudatcz
+         iOwfX0R6qZjs8eL3pOZsqlpa6FtpDkJl1FfIUEGVZq/sVn5zcYQrPueL3PT+ezQXGz+3
+         uneA==
+X-Gm-Message-State: AGRZ1gIil7YuTILCfj9lCu5ZWiSgztWo3tBUqOsjABIUCZ+H4jFrRZVL
+        WyL9DFdQ1X/G2me0GAH+hkYl1ucVUrseadDOyj0p1nBFn2k=
+X-Google-Smtp-Source: AJdET5dV5hUfdQ3Ji8JOXre1GZvf+INbNYSZ9kNbchRfIsVpb1oEla8BqE1RM2lWUICvQcnelrdW8Lcdh7bur/8XCPs=
+X-Received: by 2002:a19:f813:: with SMTP id a19mr7060880lff.67.1542457167661;
+ Sat, 17 Nov 2018 04:19:27 -0800 (PST)
 MIME-Version: 1.0
-References: <20181111210047.30375-1-heiko@sntech.de>
-In-Reply-To: <20181111210047.30375-1-heiko@sntech.de>
+References: <20181111210047.30375-1-heiko@sntech.de> <20181111210047.30375-2-heiko@sntech.de>
+In-Reply-To: <20181111210047.30375-2-heiko@sntech.de>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 17 Nov 2018 13:18:23 +0100
-Message-ID: <CACRpkdbakPGfHap+WcuJ_TVn861zqQDxW-on4q9Wx+-QQb0ESw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] pinctrl: rockchip: allow specifying the regmap
- location for pin-routes
+Date:   Sat, 17 Nov 2018 13:19:16 +0100
+Message-ID: <CACRpkdZO852hScSgCGQVspcLSCK99B5ofM9mNkGUj-uQHwfS+g@mail.gmail.com>
+Subject: Re: [PATCH 2/2] pinctrl: rockchip: add rk3188 routes to switch
+ between nand and emmc
 To:     =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
 Cc:     "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
         Linux ARM <linux-arm-kernel@lists.infradead.org>,
@@ -76,23 +76,15 @@ On Sun, Nov 11, 2018 at 10:01 PM Heiko Stuebner <heiko@sntech.de> wrote:
 
 > From: Heiko Stuebner <heiko.stuebner@bq.com>
 >
-> Right now we expect the pin-rounting settings to be in the same area
-> as the iomux setting itself. And while that seems to be true for all
-> newer Rockchip socs, back in the wild west days of old this wasn't true.
->
-> Nowadays pin settings in the GRF normally stay in the GRF and the same
-> is true for pins configured from PMU registers. But old socs like the
-> rk3188 really sprinkle pin settings somewhat randomly through both
-> for its bank0.
->
-> Therefore add the option to specify a location for the route setting,
-> so that we can map older socs correctly. We'll keep "same" as the
-> default, so that we only need to specify a location in the corner-cases
-> described above.
+> The rk3188 has pins that are not handled through the regular iomuxing
+> for handling either nand-flash or an emmc and are set through only one
+> specifal setting. So utilize the routing function to simply do that
+> setting depending on one of the core nand/emmc signals that are actually
+> regular pins handled through pinctrl.
 >
 > Signed-off-by: Heiko Stuebner <heiko.stuebner@bq.com>
 
-Patch applied with David's review tag.
+Patch applied.
 
 Yours,
 Linus Walleij
