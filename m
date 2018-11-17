@@ -2,154 +2,181 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-16.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_IN_DEF_DKIM_WL autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,USER_AGENT_NEOMUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 989C8C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:46:26 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5A57EC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:51:39 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4D84C20868
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:46:26 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id EFBC620868
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:51:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mC1w84XJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D84C20868
-Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OyEA0jnG"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org EFBC620868
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729996AbeKQNBZ (ORCPT
+        id S1730125AbeKQNGi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 08:01:25 -0500
-Received: from mail-wr1-f67.google.com ([209.85.221.67]:43843 "EHLO
-        mail-wr1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727116AbeKQNBY (ORCPT
+        Sat, 17 Nov 2018 08:06:38 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:32917 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729793AbeKQNGh (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 08:01:24 -0500
-Received: by mail-wr1-f67.google.com with SMTP id r10so9158593wrs.10
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 18:46:23 -0800 (PST)
+        Sat, 17 Nov 2018 08:06:37 -0500
+Received: by mail-ed1-f68.google.com with SMTP id r27so18208525eda.0
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 18:51:35 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20161025;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=m/1yZsYeuQnTiY6Q1XHTf0zV25iE9ci4eniauG/Lbh8=;
-        b=mC1w84XJGzvAUX1BdEomofZA2AWsY2831t0md13Fu7x7SA4y7d8SEGQlfoc2pMaarR
-         jnCrUL7wpo6iWLNgc70ERCnQqgOtWJB7ZKdo3lE5eqqgmbFjtxfm3p/XXxSoRAMINrI/
-         An5QVaiY9qAu7M4jYIIZ1l9BYjkTqp32RPl9KlqxZQgZ0/K3Af2GwmTOPFShvjm/8/Tu
-         HFIfJZLocgGr6N0rzB0nJ12VdMwJ/xgm1mBR/phrdw3keuGdLu6Fi5BrOxdIxrdVdzGs
-         b8bCMQhm+yZ7dApMWQkAV47/B79a+TwZ5inobt6U6xEtovpF1Q2Z0MAxPCkZ4/GmjGgz
-         O5ig==
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:reply-to:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=5TLIYNEVARxGwK/XJnA4BtoZJzochE2UFBxQ2gakYF0=;
+        b=OyEA0jnGEcKUVNK2PM7cSXVTRRQtMZJQx17O2OOEZ2WuX1rKb4eoUvNIkokLysrc49
+         iC3N1mJyxT1kddRPiw0GVD8d6fC1bGHDZQn02Y8lHav02s4Mv6oILyUI93dS6/Qpz9Ve
+         Qe/Bnv3pa9hVJgYPe4i03+g5tPEd1Lt8wnRqxOyln0CTSDuQvmUWGpW9zBWgX2SZFywo
+         9Jr8WvDTlRBEf8G2GBjOnrhiyTs9lQyVE94Ko0T9wnLksa6JnColnZU9uKhUyI2ip2kt
+         FmFZx10T8eFkEYJwtf11crVFQpa1CLqKBA7zWphIEd/OG1meGUpikjqdVkLeQVCiuOWr
+         sRSw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=m/1yZsYeuQnTiY6Q1XHTf0zV25iE9ci4eniauG/Lbh8=;
-        b=cGLBjvfzhe7XcQi4lpfEyXHmtLCkPQL5uIjB5O8o3TnFgOtIEMpPjxVd09bvbkX3Cg
-         cPjkfmAxAEt7OC4F2Lr4QNphXhIWTl9QXWIqFi8hY7UNQIYTBzVhinkTVlwHuE2TXSqr
-         LU789cGyGBCUL+JativRaeBW8uLh16Etc0qr8VCgb9fIhk6jGygFKmEDzfu07uR9NaZs
-         azaPw7LtDpnlETacUqwwQuDXDYV7jQvK4cLuBMd6wChjh4ZBN3u9ZLf44Lel8MHryqiW
-         njpustLlFba9NdoDXymmYH+/FOeZTAOMGoP2IvjEt0FR9jiiGwTVQF6llQEVy4YGK2Zz
-         J+7w==
-X-Gm-Message-State: AGRZ1gJqzAfn5h2jgWR6h0bNS9fZDmE1KMKtMwRMtR5WtfhYYXRsl3s6
-        0+6lNId3v8HgjK/CryXINWNMHmQXenbWNBBv0PjYXw==
-X-Google-Smtp-Source: AJdET5e0IDttORQsK6sA5h8d64nudNgTHNOJVvYKn8BJhOw6OEZMSZAt0TDw0EHT/IHMXABP9lsvmNN8r3ppYt2i53A=
-X-Received: by 2002:adf:a2cc:: with SMTP id t12-v6mr11914905wra.100.1542422782428;
- Fri, 16 Nov 2018 18:46:22 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:reply-to
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=5TLIYNEVARxGwK/XJnA4BtoZJzochE2UFBxQ2gakYF0=;
+        b=mRsRmo4Rf21bZU6tHSZQXNeDAKJcBcOhXyk/S5AhaFRF1k/B/A0Xe/9JvOe0UZ+tln
+         nYHvyazA5gU7mdXQdqbVsx7mN40daoaX6MetjQzAjRHiXa+WQ/KbwOTbHe+aH4wvkKkL
+         f080j0/GwhtuZxgQpAuVLdITmoxl2g9c61Hf851aUJSTwJCNFqBQCXOLV71hP2OyQwXB
+         jaCH7jyFVq6l1h2FJWTcGeIghYq6gAnvdMwbp9p/3oy/h0XcrT3vWNLsSW31c1kFBWkS
+         potwPS2lbWq/lZJkFB4gufrEp/kRHao0YuKm6e/iAJBd4TQTlxO9JpL3wZh2PBI2Uz9s
+         nz+w==
+X-Gm-Message-State: AGRZ1gLRbWUbvOMF1C6ybwgI6AS7RobuIBko618yA9viVoP4QoB3qyJQ
+        /F9CEKZJ42qn27ZMOHF/+D4=
+X-Google-Smtp-Source: AJdET5ePg2hKOLsKIcQfl9qR7/ReKefZHLXQOVHdax7Ox2jEuaxsyulNu/mEZ2dQ9JklBRbN8Js/WA==
+X-Received: by 2002:aa7:ca0d:: with SMTP id y13mr11563537eds.285.1542423094323;
+        Fri, 16 Nov 2018 18:51:34 -0800 (PST)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id gp22-v6sm5222265ejb.4.2018.11.16.18.51.33
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Nov 2018 18:51:33 -0800 (PST)
+Date:   Sat, 17 Nov 2018 02:51:33 +0000
+From:   Wei Yang <richard.weiyang@gmail.com>
+To:     Wengang Wang <wen.gang.wang@oracle.com>
+Cc:     cl@linux.com, penberg@kernel.org, rientjes@google.com,
+        iamjoonsoo.kim@lge.com, akpm@linux-foundation.org,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: use this_cpu_cmpxchg_double in put_cpu_partial
+Message-ID: <20181117025133.czjubpjqm4b6kqin@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20181117013335.32220-1-wen.gang.wang@oracle.com>
 MIME-Version: 1.0
-References: <20181110050434.GA18281@rdeal-VirtualBox>
-In-Reply-To: <20181110050434.GA18281@rdeal-VirtualBox>
-From:   Todd Poynor <toddpoynor@google.com>
-Date:   Fri, 16 Nov 2018 18:46:10 -0800
-Message-ID: <CAAW3YpZV_9orrAdkXCuZ_ciab-P14EfsCajdm1M7n3y45NCWQQ@mail.gmail.com>
-Subject: Re: [PATCH] staging: gasket: formatting fixes
-To:     robert.edward.deal@gmail.com
-Cc:     Rob Springer <rspringer@google.com>, benchan@chromium.org,
-        Greg KH <gregkh@linuxfoundation.org>,
-        devel@driverdev.osuosl.org, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181117013335.32220-1-wen.gang.wang@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 1:27 PM Robert Deal
-<robert.edward.deal@gmail.com> wrote:
->
-> Reformat arguments in a few functions in gasket_page_table.c to better
-> follow linux kernel formatting standards.
->
-> Signed-off-by: Robert Deal <robert.edward.deal@gmail.com>
-> ---
->  drivers/staging/gasket/gasket_page_table.c | 24 ++++++++++------------
->  1 file changed, 11 insertions(+), 13 deletions(-)
->
-> diff --git a/drivers/staging/gasket/gasket_page_table.c b/drivers/staging/gasket/gasket_page_table.c
-> index f5253ba9a430..26755d9ca41d 100644
-> --- a/drivers/staging/gasket/gasket_page_table.c
-> +++ b/drivers/staging/gasket/gasket_page_table.c
-> @@ -1088,9 +1088,9 @@ void gasket_page_table_reset(struct gasket_page_table *pg_tbl)
->  }
->
->  /* See gasket_page_table.h for description. */
-> -int gasket_page_table_lookup_page(
-> -       struct gasket_page_table *pg_tbl, ulong dev_addr, struct page **ppage,
-> -       ulong *poffset)
-> +int gasket_page_table_lookup_page(struct gasket_page_table *pg_tbl,
-> +                                 ulong dev_addr, struct page **ppage,
-> +                                 ulong *poffset)
->  {
->         uint page_num;
->         struct gasket_page_table_entry *pte;
-> @@ -1134,9 +1134,9 @@ int gasket_page_table_lookup_page(
->  }
->
->  /* See gasket_page_table.h for description. */
-> -bool gasket_page_table_are_addrs_bad(
-> -       struct gasket_page_table *pg_tbl, ulong host_addr, ulong dev_addr,
-> -       ulong bytes)
-> +bool gasket_page_table_are_addrs_bad(struct gasket_page_table *pg_tbl,
-> +                                    ulong host_addr, ulong dev_addr,
-> +                                    ulong bytes)
->  {
->         if (host_addr & (PAGE_SIZE - 1)) {
->                 dev_err(pg_tbl->device,
-> @@ -1150,8 +1150,8 @@ bool gasket_page_table_are_addrs_bad(
->  EXPORT_SYMBOL(gasket_page_table_are_addrs_bad);
->
->  /* See gasket_page_table.h for description. */
-> -bool gasket_page_table_is_dev_addr_bad(
-> -       struct gasket_page_table *pg_tbl, ulong dev_addr, ulong bytes)
-> +bool gasket_page_table_is_dev_addr_bad(struct gasket_page_table *pg_tbl,
-> +                                      ulong dev_addr, ulong bytes)
->  {
->         uint num_pages = bytes / PAGE_SIZE;
->
-> @@ -1226,9 +1226,8 @@ int gasket_page_table_system_status(struct gasket_page_table *page_table)
->  }
->
->  /* Record the host_addr to coherent dma memory mapping. */
-> -int gasket_set_user_virt(
-> -       struct gasket_dev *gasket_dev, u64 size, dma_addr_t dma_address,
-> -       ulong vma)
-> +int gasket_set_user_virt(struct gasket_dev *gasket_dev, u64 size,
-> +                        dma_addr_t dma_address, ulong vma)
->  {
->         int j;
->         struct gasket_page_table *pg_tbl;
-> @@ -1346,8 +1345,7 @@ int gasket_free_coherent_memory(struct gasket_dev *gasket_dev, u64 size,
->  }
->
->  /* Release all coherent memory. */
-> -void gasket_free_coherent_memory_all(
-> -       struct gasket_dev *gasket_dev, u64 index)
-> +void gasket_free_coherent_memory_all(struct gasket_dev *gasket_dev, u64 index)
->  {
->         if (!gasket_dev->page_table[index])
->                 return;
-> --
-> 2.17.1
->
+On Fri, Nov 16, 2018 at 05:33:35PM -0800, Wengang Wang wrote:
+>The this_cpu_cmpxchg makes the do-while loop pass as long as the
+>s->cpu_slab->partial as the same value. It doesn't care what happened to
+>that slab. Interrupt is not disabled, and new alloc/free can happen in the
+>interrupt handlers. Theoretically, after we have a reference to the it,
+>stored in _oldpage_, the first slab on the partial list on this CPU can be
+>moved to kmem_cache_node and then moved to different kmem_cache_cpu and
+>then somehow can be added back as head to partial list of current
+>kmem_cache_cpu, though that is a very rare case. If that rare case really
 
-Acked-by: Todd Poynor <toddpoynor@google.com>
+I didn't fully catch up with this case.
 
-Thanks!
+When put_cpu_partial() is called, this means we are trying to freeze an
+frozen page and this pages is fully occupied. Since page->freelist is
+NULL.
+
+A full page is supposed to be on no where when has_cpu_partial() is
+true.
+
+So I don't understand when it will be moved to different kmem_cache_cpu.
+
+>happened, the reading of oldpage->pobjects may get a 0xdead0000
+>unexpectedly, stored in _pobjects_, if the reading happens just after
+>another CPU removed the slab from kmem_cache_node, setting lru.prev to
+>LIST_POISON2 (0xdead000000000200). The wrong _pobjects_(negative) then
+>prevents slabs from being moved to kmem_cache_node and being finally freed.
+
+Looks this page is removed from some list. This happens in which case? I
+mean the page is previouly on which list?
+
+>
+>We see in a vmcore, there are 375210 slabs kept in the partial list of one
+>kmem_cache_cpu, but only 305 in-use objects in the same list for
+>kmalloc-2048 cache. We see negative values for page.pobjects, the last page
+>with negative _pobjects_ has the value of 0xdead0004, the next page looks
+>good (_pobjects is 1).
+>
+>For the fix, I wanted to call this_cpu_cmpxchg_double with
+>oldpage->pobjects, but failed due to size difference between
+>oldpage->pobjects and cpu_slab->partial. So I changed to call
+>this_cpu_cmpxchg_double with _tid_. I don't really want no alloc/free
+>happen in between, but just want to make sure the first slab did expereince
+>a remove and re-add. This patch is more to call for ideas.
+>
+>Signed-off-by: Wengang Wang <wen.gang.wang@oracle.com>
+>---
+> mm/slub.c | 20 +++++++++++++++++---
+> 1 file changed, 17 insertions(+), 3 deletions(-)
+>
+>diff --git a/mm/slub.c b/mm/slub.c
+>index e3629cd..26539e6 100644
+>--- a/mm/slub.c
+>+++ b/mm/slub.c
+>@@ -2248,6 +2248,7 @@ static void put_cpu_partial(struct kmem_cache *s, struct page *page, int drain)
+> {
+> #ifdef CONFIG_SLUB_CPU_PARTIAL
+> 	struct page *oldpage;
+>+	unsigned long tid;
+> 	int pages;
+> 	int pobjects;
+> 
+>@@ -2255,8 +2256,12 @@ static void put_cpu_partial(struct kmem_cache *s, struct page *page, int drain)
+> 	do {
+> 		pages = 0;
+> 		pobjects = 0;
+>-		oldpage = this_cpu_read(s->cpu_slab->partial);
+> 
+>+		tid = this_cpu_read(s->cpu_slab->tid);
+>+		/* read tid before reading oldpage */
+>+		barrier();
+>+
+>+		oldpage = this_cpu_read(s->cpu_slab->partial);
+> 		if (oldpage) {
+> 			pobjects = oldpage->pobjects;
+> 			pages = oldpage->pages;
+>@@ -2283,8 +2288,17 @@ static void put_cpu_partial(struct kmem_cache *s, struct page *page, int drain)
+> 		page->pobjects = pobjects;
+> 		page->next = oldpage;
+> 
+>-	} while (this_cpu_cmpxchg(s->cpu_slab->partial, oldpage, page)
+>-								!= oldpage);
+>+		/* we dont' change tid, but want to make sure it didn't change
+>+		 * in between. We don't really hope alloc/free not happen on
+>+		 * this CPU, but don't want the first slab be removed from and
+>+		 * then re-added as head to this partial list. If that case
+>+		 * happened, pobjects may read 0xdead0000 when this slab is just
+>+		 * removed from kmem_cache_node by other CPU setting lru.prev
+>+		 * to LIST_POISON2.
+>+		 */
+>+	} while (this_cpu_cmpxchg_double(s->cpu_slab->partial, s->cpu_slab->tid,
+>+					 oldpage, tid, page, tid) == 0);
+>+
+> 	if (unlikely(!s->cpu_partial)) {
+> 		unsigned long flags;
+> 
+>-- 
+>2.9.5
+
+-- 
+Wei Yang
+Help you, Help me
