@@ -2,110 +2,104 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,FROM_EXCESS_BASE64,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A0691C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:15:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7DA3CC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:16:11 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5C3A320868
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:15:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 27B382080D
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:16:10 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GZGPjinC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5C3A320868
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y81JlI6j"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 27B382080D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726414AbeKQWbd (ORCPT
+        id S1726441AbeKQWci (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 17:31:33 -0500
-Received: from mail-wm1-f66.google.com ([209.85.128.66]:39924 "EHLO
-        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725964AbeKQWbc (ORCPT
+        Sat, 17 Nov 2018 17:32:38 -0500
+Received: from mail-yb1-f195.google.com ([209.85.219.195]:38343 "EHLO
+        mail-yb1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725964AbeKQWch (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 17:31:32 -0500
-Received: by mail-wm1-f66.google.com with SMTP id u13-v6so1024178wmc.4;
-        Sat, 17 Nov 2018 04:15:02 -0800 (PST)
+        Sat, 17 Nov 2018 17:32:37 -0500
+Received: by mail-yb1-f195.google.com with SMTP id u103-v6so10838877ybi.5;
+        Sat, 17 Nov 2018 04:16:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f7+ys9CKOlgM83dy+2cdL8YJYjTGsxzQ/7CZyEvAiMU=;
-        b=GZGPjinCwCDF/y5J5sIXv6zsxBijG18PkOOs+keGvdnSWiUiLQTHdqtLk4VcTrOoI6
-         1Hsf3TRRPiVflbtLQThI5jZqbC9GvgfrTWBfCxKc32QNSo5GWgEwKeDc75IUB1wPA3Ao
-         VbaWiqoGLmnf3ZoM04YotiOmzTBIuiqU8dXDOlcFqzg+qHjJ/7Ucx4/zxqeIfV3DbdUr
-         SIi6lQeE6k8eXDkwTm42rPwD4LHwOSsMXZdqLog3wzRjaTdwp6qoAhU4mp7/vnCFOvoN
-         vOqtF/2k8ZjZKvyQp4NFQxV1VeOlQPp0hYv+c9R20HZnBl7b72CFiCt4A+3X4hR4UONj
-         jiOg==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=sm1uhpx0p5QSG2eCHz2i+ElYJBmnc3zaH89bkZJAWzQ=;
+        b=Y81JlI6jkeWI0BaMf1HHkj8o3bb/VkueClljYvfDF/6Ok2T7nOySRqtcyatdTxx17X
+         Jk8zK0a9mUXY/KoOaFnaIXRDR1WcQGRfmkEL7TngyI/qKwZxnyFvifib0KqNo4ATRox3
+         tPKgkfdV8AjtahngfyUy1w1+y3qofmB+ATiI1Ee6bibR+XQOYjr8zjbSwC8XMfJ9dXPA
+         aILguiPINzjevCOaStpX475K+7Zs6CoViPKGN4Tf9vVAN3mMYkqH3gU9+phJfIQ0eYdV
+         uVx4cWxbEy6mtaBV4gO/XHkrL261xW6/iR4v6bglmmRiSyGDYLSwZbHdU1mwuSPMKnyq
+         X/hA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
-         :content-transfer-encoding;
-        bh=f7+ys9CKOlgM83dy+2cdL8YJYjTGsxzQ/7CZyEvAiMU=;
-        b=VO9CMV9CtOUaiDGUm13c4KB/ES9nC+s1X/oTqWQefEX9CkGG5OudhAg9geI/xHmj7+
-         +EDBt3hy3fMgg2dKkPAl8HGDn6/Li79fyh1NigvOggv5tcz0R+rSna7joql+wCQDONNV
-         a5QL/tGi++E1Sdx2g1zT4on5FmcDXZdSdnZEbceYaVbAHkFDcKaBWHomie4bmvIAhK1N
-         gF4BwMf1RDYUw3+QOteOgrtyFKWiUetCJF2M+FN+CZoUfWxYXkwpyoNTH0un/f3x9r0q
-         8FdPLC6W7S6uznhBCdzWGpmIYKSiK+/0RrwPSxbfYSYtZPXIup0mmT+5q+gHSsZ3x1+p
-         FQ9w==
-X-Gm-Message-State: AA+aEWZCK3geEySUhiZjceAeLQKpZJIbB4XvygUcl/O6TmFWvWsbV+6K
-        VvhRwjltJHQniFJ45end97E=
-X-Google-Smtp-Source: AFSGD/W+cSfVQmntFV9jEub0gpKem11LGjn8YCqYnNrHkNUkzzElntq4N/DnMPvbBtKBt2LENeaRyA==
-X-Received: by 2002:a1c:84cb:: with SMTP id g194-v6mr1454499wmd.24.1542456901411;
-        Sat, 17 Nov 2018 04:15:01 -0800 (PST)
-Received: from localhost.localdomain (cha92-1-81-57-17-130.fbx.proxad.net. [81.57.17.130])
-        by smtp.gmail.com with ESMTPSA id u14-v6sm42132213wrs.27.2018.11.17.04.14.58
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 17 Nov 2018 04:15:00 -0800 (PST)
-From:   =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-To:     Mauro Carvalho Chehab <mchehab+samsung@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        "David S . Miller" <davem@davemloft.net>,
-        Nicolas Ferre <nicolas.ferre@microchip.com>,
-        Arnd Bergmann <arnd@arndb.de>, Shawn Guo <shawnguo@kernel.org>,
-        Mark Brown <broonie@kernel.org>,
-        Liam Girdwood <lgirdwood@gmail.com>,
-        Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>
-Cc:     linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-        devicetree@vger.kernel.org,
-        =?UTF-8?q?Cl=C3=A9ment=20P=C3=A9ron?= <peron.clem@gmail.com>
-Subject: [PATCH] MAINTAINERS: add ASoC maintainers for sound dt-bindings
-Date:   Sat, 17 Nov 2018 13:14:52 +0100
-Message-Id: <20181117121452.6101-1-peron.clem@gmail.com>
-X-Mailer: git-send-email 2.19.1
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=sm1uhpx0p5QSG2eCHz2i+ElYJBmnc3zaH89bkZJAWzQ=;
+        b=QHd6GNYVXcoP6wtwk1qj+/pPfM8dwp1+ZtejJgK31xAFE+IoH5u1+B4ytRQ5JchzHX
+         A6DB12HtKenTyiywbTzhThvgukD1MatEEhWZAAJTw/bCGXBBHVu5XKELXpcYp87uS1Oo
+         ONGsLFw8Irf5oIainBMF8yioRGImVQaHrREXloC4RXd33wv/Fz/JTbY2kPywnSwxawL2
+         Pex362mJ3dizDByZsON5hSXoYNT/Pf99KbNT8pCd+MZACRBpzwkykCPxQ9DdOrpPvS/n
+         8Zgx5UUK4nynrmS/IQB4oaZPnqp/wMH8sebdQlL7d5G7I5hnjX3JJ96aJsCWsPMNevXZ
+         ELRw==
+X-Gm-Message-State: AGRZ1gL+ZJMLdUttPzJLHZ87zNbiHD6WHaYMzJdXyB+T7NTg2HSoOAw9
+        QoZetsub4OSy+2m+mKRUOiYcnqssVkj64Uc7nBU=
+X-Google-Smtp-Source: AJdET5cVFjkVaI7fG4JGp6ZcFjXG3DSdH7qoqCz7Dftvgcsa2uFT+Wv0vFODvJJ5hCRW7w90v4D0PBmTg+R3C1KDe5g=
+X-Received: by 2002:a5b:d06:: with SMTP id y6-v6mr13720292ybp.147.1542456967102;
+ Sat, 17 Nov 2018 04:16:07 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20181105135802.30486-1-peron.clem@gmail.com> <20181116025938.GH5829@dragon>
+ <CAJiuCcerEanEobbi8zPb1-eb=zCJsDAbM=p6T64+wtuXjtaMTA@mail.gmail.com>
+ <20181116144520.GO5829@dragon> <20181117030947.GX2089@sirena.org.uk>
+In-Reply-To: <20181117030947.GX2089@sirena.org.uk>
+From:   =?UTF-8?B?Q2zDqW1lbnQgUMOpcm9u?= <peron.clem@gmail.com>
+Date:   Sat, 17 Nov 2018 13:15:55 +0100
+Message-ID: <CAJiuCccLyd0wBdCyOfjW41i1EQ7Uuj2ZpdR0cSz3Oirdd8n3Ug@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: imx-audmux: complete dt-bindings for imx6
+To:     Mark Brown <broonie@kernel.org>
+Cc:     Shawn Guo <shawnguo@kernel.org>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Colin Didier <colin.didier@devialet.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Sound dt-bindings are applied by ASoC maintainers and should be
-submit to ASoC list in addition to the devicetree list.
+Hi Mark,
 
-Hence, add this information into the MAINTAINERS file.
+On Sat, 17 Nov 2018 at 04:09, Mark Brown <broonie@kernel.org> wrote:
+>
+> On Fri, Nov 16, 2018 at 10:45:22PM +0800, Shawn Guo wrote:
+> > On Fri, Nov 16, 2018 at 11:25:07AM +0100, Cl=C3=A9ment P=C3=A9ron wrote=
+:
+>
+> > > It's still quite new for me to submit patch, but if this patch should
+> > > be sent to ASoC maintainer maybe there is a line missing in the
+> > > MAINTAINERS file no ?
+>
+> > @Mark, comment?
+>
+> Adding a file pattern for this seems sensible, yes.
+OK,
 
-Signed-off-by: Clément Péron <peron.clem@gmail.com>
----
- MAINTAINERS | 1 +
- 1 file changed, 1 insertion(+)
+I will send a v2 for the IMX6 Audmux bindings with ASoC List and Maintainer=
+s.
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 0abecc528dac..62701e0135af 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -13930,6 +13930,7 @@ S:	Supported
- F:	Documentation/devicetree/bindings/sound/
- F:	Documentation/sound/soc/
- F:	sound/soc/
-+F:	include/dt-bindings/sound/
- F:	include/sound/soc*
- 
- SOUNDWIRE SUBSYSTEM
--- 
-2.19.1
-
+Thanks,
+Clement
