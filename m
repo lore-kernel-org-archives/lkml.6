@@ -2,75 +2,70 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1541FC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 21:39:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id F318CC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 23:08:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CAC7A2080D
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 21:39:44 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC7A2080D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=bootlin.com
+	by mail.kernel.org (Postfix) with ESMTP id BF3FB2080D
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 23:08:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org BF3FB2080D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=gondor.apana.org.au
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726720AbeKRH5o convert rfc822-to-8bit (ORCPT
+        id S1726952AbeKRJ0O (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 02:57:44 -0500
-Received: from mail.bootlin.com ([62.4.15.54]:48575 "EHLO mail.bootlin.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725765AbeKRH5o (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 02:57:44 -0500
-Received: by mail.bootlin.com (Postfix, from userid 110)
-        id A0F77207AB; Sat, 17 Nov 2018 22:39:40 +0100 (CET)
-Received: from xps13 (unknown [91.224.148.103])
-        by mail.bootlin.com (Postfix) with ESMTPSA id 4AAB9206A7;
-        Sat, 17 Nov 2018 22:39:30 +0100 (CET)
-Date:   Sat, 17 Nov 2018 22:39:29 +0100
-From:   Miquel Raynal <miquel.raynal@bootlin.com>
-To:     Olof Johansson <olof@lixom.net>
-Cc:     Boris Brezillon <boris.brezillon@bootlin.com>,
-        linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mtd: rawnand: qcom: Namespace prefix some commands
-Message-ID: <20181117223929.20f6852f@xps13>
-In-Reply-To: <20181117034327.72638-1-olof@lixom.net>
-References: <20181117034327.72638-1-olof@lixom.net>
-Organization: Bootlin
-X-Mailer: Claws Mail 3.16.0 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sun, 18 Nov 2018 04:26:14 -0500
+Received: from orcrist.hmeau.com ([104.223.48.154]:41466 "EHLO
+        deadmen.hmeau.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726804AbeKRJ0O (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 04:26:14 -0500
+Received: from gondobar.mordor.me.apana.org.au ([192.168.128.4] helo=gondobar)
+        by deadmen.hmeau.com with esmtps (Exim 4.89 #2 (Debian))
+        id 1gO9gt-00031r-AH; Sun, 18 Nov 2018 07:07:51 +0800
+Received: from herbert by gondobar with local (Exim 4.89)
+        (envelope-from <herbert@gondor.apana.org.au>)
+        id 1gO9go-00044L-30; Sun, 18 Nov 2018 07:07:46 +0800
+Date:   Sun, 18 Nov 2018 07:07:46 +0800
+From:   Herbert Xu <herbert@gondor.apana.org.au>
+To:     Rob Herring <robh@kernel.org>
+Cc:     Ryder Lee <ryder.lee@mediatek.com>,
+        Matthias Brugger <matthias.bgg@gmail.com>,
+        linux-crypto@vger.kernel.org, Weijie Gao <weijie.gao@mediatek.com>,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org
+Subject: Re: [PATCH] dt-bindings: rng: update bindings for MT7629 SoC
+Message-ID: <20181117230746.r6xsnqqo5nd6fxts@gondor.apana.org.au>
+References: <0f5fe0d5b6a9c81b3f4395a1007ed0ba2239ae45.1541574485.git.ryder.lee@mediatek.com>
+ <20181116061854.ahs6jz7bmztoi3w7@gondor.apana.org.au>
+ <20181116223110.GA19271@bogus>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8BIT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116223110.GA19271@bogus>
+User-Agent: NeoMutt/20170113 (1.7.2)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Olof,
-
-Olof Johansson <olof@lixom.net> wrote on Fri, 16 Nov 2018 19:43:27
--0800:
-
-> PAGE_READ is used by RISC-V arch code included through mm headers,
-> and it makes sense to bring in a prefix on these in the driver.
+On Fri, Nov 16, 2018 at 04:31:10PM -0600, Rob Herring wrote:
+> On Fri, Nov 16, 2018 at 02:18:54PM +0800, Herbert Xu wrote:
+> > On Wed, Nov 07, 2018 at 03:10:16PM +0800, Ryder Lee wrote:
+> > > This updates bindings for MT7629 RNG driver.
+> > > 
+> > > Signed-off-by: Ryder Lee <ryder.lee@mediatek.com>
+> > 
+> > Who is meant to take this patch?
 > 
-> drivers/mtd/nand/raw/qcom_nandc.c:153: warning: "PAGE_READ" redefined
->  #define PAGE_READ   0x2
-> In file included from include/linux/memremap.h:7,
->                  from include/linux/mm.h:27,
->                  from include/linux/scatterlist.h:8,
->                  from include/linux/dma-mapping.h:11,
->                  from drivers/mtd/nand/raw/qcom_nandc.c:17:
-> arch/riscv/include/asm/pgtable.h:48: note: this is the location of the previous definition
-> 
-> Caught by riscv allmodconfig.
-> 
-> Signed-off-by: Olof Johansson <olof@lixom.net>
-> ---
+> I've applied it.
 
-Reviewed-by: Miquel Raynal <miquel.raynal@bootlin.com>
-
-Boris, do you want to queue this as a fix?
-
-Thanks,
-Miquèl
+Thanks Rob!
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
