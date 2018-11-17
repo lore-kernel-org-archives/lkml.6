@@ -2,146 +2,163 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 0A14DC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:28:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6B4A7C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:29:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CB2902077B
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:28:33 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CB2902077B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+	by mail.kernel.org (Postfix) with ESMTP id 173F42077B
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:29:45 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 173F42077B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=huawei.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731579AbeKQMn1 (ORCPT
+        id S1731615AbeKQMok (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 07:43:27 -0500
-Received: from mga14.intel.com ([192.55.52.115]:45898 "EHLO mga14.intel.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1731093AbeKQMmj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 07:42:39 -0500
-X-Amp-Result: SKIPPED(no attachment in message)
-X-Amp-File-Uploaded: False
-Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 18:27:43 -0800
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="5.56,242,1539673200"; 
-   d="scan'208";a="281852610"
-Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Nov 2018 18:27:42 -0800
-From:   Tim Chen <tim.c.chen@linux.intel.com>
-To:     Jiri Kosina <jikos@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>
-Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
-        Tom Lendacky <thomas.lendacky@amd.com>,
-        Ingo Molnar <mingo@redhat.com>,
-        Peter Zijlstra <peterz@infradead.org>,
-        Josh Poimboeuf <jpoimboe@redhat.com>,
-        Andrea Arcangeli <aarcange@redhat.com>,
-        David Woodhouse <dwmw@amazon.co.uk>,
-        Andi Kleen <ak@linux.intel.com>,
-        Dave Hansen <dave.hansen@intel.com>,
-        Casey Schaufler <casey.schaufler@intel.com>,
-        Asit Mallick <asit.k.mallick@intel.com>,
-        Arjan van de Ven <arjan@linux.intel.com>,
-        Jon Masters <jcm@redhat.com>,
-        Waiman Long <longman9394@gmail.com>,
-        linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [Patch v5 08/16] smt: Create cpu_smt_enabled static key for SMT specific code
-Date:   Fri, 16 Nov 2018 17:53:51 -0800
-Message-Id: <91b719e53640f60666b40a3516da2b80703b2f76.1542418937.git.tim.c.chen@linux.intel.com>
-X-Mailer: git-send-email 2.9.4
-In-Reply-To: <cover.1542418936.git.tim.c.chen@linux.intel.com>
-References: <cover.1542418936.git.tim.c.chen@linux.intel.com>
-In-Reply-To: <cover.1542418936.git.tim.c.chen@linux.intel.com>
-References: <cover.1542418936.git.tim.c.chen@linux.intel.com>
+        Sat, 17 Nov 2018 07:44:40 -0500
+Received: from szxga05-in.huawei.com ([45.249.212.191]:14681 "EHLO huawei.com"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1727961AbeKQMoj (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 07:44:39 -0500
+Received: from DGGEMS403-HUB.china.huawei.com (unknown [172.30.72.60])
+        by Forcepoint Email with ESMTP id AC5A754EFEC45;
+        Sat, 17 Nov 2018 10:29:40 +0800 (CST)
+Received: from [127.0.0.1] (10.142.63.192) by DGGEMS403-HUB.china.huawei.com
+ (10.3.19.203) with Microsoft SMTP Server id 14.3.408.0; Sat, 17 Nov 2018
+ 10:29:34 +0800
+CC:     <wangbinghui@hisilicon.com>, <linux-usb@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <suzhuangluan@hisilicon.com>, <kongfei@hisilicon.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "John Stultz" <john.stultz@linaro.org>
+Subject: Re: [PATCH 01/10] dt-bindings: usb: add support for dwc3 controller
+ on HiSilicon SoCs
+To:     Rob Herring <robh@kernel.org>
+References: <20181027095820.40056-1-chenyu56@huawei.com>
+ <20181027095820.40056-2-chenyu56@huawei.com> <20181112160241.GA14074@bogus>
+From:   Chen Yu <chenyu56@huawei.com>
+Message-ID: <9fce6a58-d986-25e4-1791-ba375e4f075e@huawei.com>
+Date:   Sat, 17 Nov 2018 10:29:32 +0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.5.2
+MIME-Version: 1.0
+In-Reply-To: <20181112160241.GA14074@bogus>
+Content-Type: text/plain; charset="utf-8"
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-Originating-IP: [10.142.63.192]
+X-CFilter-Loop: Reflected
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-In later code, STIBP will be turned on/off in the context switch code
-path when SMT is enabled.  Checks for SMT is best
-avoided on such hot paths.
+Hi,
 
-Create cpu_smt_enabled static key to turn on such SMT specific code
-statically.
+On 2018/11/13 0:02, Rob Herring wrote:
+> On Sat, Oct 27, 2018 at 05:58:11PM +0800, Yu Chen wrote:
+>> This patch adds binding descriptions to support the dwc3 controller
+>> on HiSilicon SoCs and boards like the HiKey960.
+>>
+>> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+>> Cc: Rob Herring <robh+dt@kernel.org>
+>> Cc: Mark Rutland <mark.rutland@arm.com>
+>> Cc: John Stultz <john.stultz@linaro.org>
+>> Signed-off-by: Yu Chen <chenyu56@huawei.com>
+>> ---
+>>  .../devicetree/bindings/usb/dwc3-hisi.txt          | 53 ++++++++++++++++++++++
+>>  1 file changed, 53 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/usb/dwc3-hisi.txt
+>>
+>> diff --git a/Documentation/devicetree/bindings/usb/dwc3-hisi.txt b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
+>> new file mode 100644
+>> index 000000000000..e715e7b1c324
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/usb/dwc3-hisi.txt
+>> @@ -0,0 +1,53 @@
+>> +HiSilicon DWC3 USB SoC controller
+>> +
+>> +This file documents the parameters for the dwc3-hisi driver.
+>> +
+>> +Required properties:
+>> +- compatible:	should be "hisilicon,hi3660-dwc3"
+>> +- clocks:	A list of phandle + clock-specifier pairs for the
+>> +		clocks listed in clock-names
+>> +- clock-names:	Specify clock names
+>> +- resets:	list of phandle and reset specifier pairs.
+>> +
+>> +Sub-nodes:
+>> +The dwc3 core should be added as subnode to HiSilicon DWC3 as shown in the
+>> +example below. The DT binding details of dwc3 can be found in:
+>> +Documentation/devicetree/bindings/usb/dwc3.txt
+> 
+> If you only have clocks and resets and no glue registers, then you 
+> don't need a sub-node. Just make the controller one node.
+> 
 
-This key is set in code under hot plug, so it is limited in
-scope to architecture supporting CPU hotplug, like x86.
+In dwc3 glue driver，the controller driver usually probed by call of_platform_populate
+which will search the child node of glue driver.
+The code of function of_platform_populate is as below:
 
-Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
----
- include/linux/cpu.h |  1 +
- kernel/cpu.c        | 12 ++++++++++--
- 2 files changed, 11 insertions(+), 2 deletions(-)
+	for_each_child_of_node(root, child) {
+                 rc = of_platform_bus_create(child, matches, lookup, parent, true);
+                 if (rc) {
+                         of_node_put(child);
+                         break;
+                 }
+         }
 
-diff --git a/include/linux/cpu.h b/include/linux/cpu.h
-index 218df7f..b54f085 100644
---- a/include/linux/cpu.h
-+++ b/include/linux/cpu.h
-@@ -188,5 +188,6 @@ static inline void cpu_smt_disable(bool force) { }
- static inline void cpu_smt_check_topology_early(void) { }
- static inline void cpu_smt_check_topology(void) { }
- #endif
-+DECLARE_STATIC_KEY_TRUE(cpu_smt_enabled);
- 
- #endif /* _LINUX_CPU_H_ */
-diff --git a/kernel/cpu.c b/kernel/cpu.c
-index 3c7f3b4..e216154 100644
---- a/kernel/cpu.c
-+++ b/kernel/cpu.c
-@@ -370,6 +370,8 @@ static void lockdep_release_cpus_lock(void)
- #ifdef CONFIG_HOTPLUG_SMT
- enum cpuhp_smt_control cpu_smt_control __read_mostly = CPU_SMT_ENABLED;
- EXPORT_SYMBOL_GPL(cpu_smt_control);
-+DEFINE_STATIC_KEY_TRUE(cpu_smt_enabled);
-+EXPORT_SYMBOL_GPL(cpu_smt_enabled);
- 
- static bool cpu_smt_available __read_mostly;
- 
-@@ -386,6 +388,7 @@ void __init cpu_smt_disable(bool force)
- 		pr_info("SMT: disabled\n");
- 		cpu_smt_control = CPU_SMT_DISABLED;
- 	}
-+	static_branch_disable(&cpu_smt_enabled);
- }
- 
- /*
-@@ -395,8 +398,10 @@ void __init cpu_smt_disable(bool force)
-  */
- void __init cpu_smt_check_topology_early(void)
- {
--	if (!topology_smt_supported())
-+	if (!topology_smt_supported()) {
- 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+		static_branch_disable(&cpu_smt_enabled);
-+	}
- }
- 
- /*
-@@ -408,8 +413,10 @@ void __init cpu_smt_check_topology_early(void)
-  */
- void __init cpu_smt_check_topology(void)
- {
--	if (!cpu_smt_available)
-+	if (!cpu_smt_available) {
- 		cpu_smt_control = CPU_SMT_NOT_SUPPORTED;
-+		static_branch_disable(&cpu_smt_enabled);
-+	}
- }
- 
- static int __init smt_cmdline_disable(char *str)
-@@ -2101,6 +2108,7 @@ static int cpuhp_smt_enable(void)
- 
- 	cpu_maps_update_begin();
- 	cpu_smt_control = CPU_SMT_ENABLED;
-+	static_branch_enable(&cpu_smt_enabled);
- 	arch_smt_update();
- 	for_each_present_cpu(cpu) {
- 		/* Skip online CPUs and CPUs on offline nodes */
--- 
-2.9.4
+So I think the controller node should be a sub-node.
+
+>> +
+>> +Example:
+>> +	usb3: hisi_dwc3 {
+>> +		compatible = "hisilicon,hi3660-dwc3";
+>> +		#address-cells = <2>;
+>> +		#size-cells = <2>;
+>> +		ranges;
+>> +
+>> +		clocks = <&crg_ctrl HI3660_CLK_ABB_USB>,
+>> +			 <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
+>> +		clock-names = "clk_usb3phy_ref", "aclk_usb3otg";
+>> +		assigned-clocks = <&crg_ctrl HI3660_ACLK_GATE_USB3OTG>;
+>> +		assigned-clock-rates = <229000000>;
+>> +		resets = <&crg_rst 0x90 8>,
+>> +			 <&crg_rst 0x90 7>,
+>> +			 <&crg_rst 0x90 6>,
+>> +			 <&crg_rst 0x90 5>;
+>> +
+>> +		dwc3: dwc3@ff100000 {
+> 
+> usb@...
+> 
+>> +			compatible = "snps,dwc3";
+>> +			reg = <0x0 0xff100000 0x0 0x100000>;
+>> +			interrupts = <0 159 4>, <0 161 4>;
+>> +			phys = <&usb_phy>;
+>> +			phy-names = "usb3-phy";
+>> +			dr_mode = "otg";
+>> +			maximum-speed = "super-speed";
+>> +			phy_type = "utmi";
+>> +			snps,dis-del-phy-power-chg-quirk;
+>> +			snps,lfps_filter_quirk;
+>> +			snps,dis_u2_susphy_quirk;
+>> +			snps,dis_u3_susphy_quirk;
+>> +			snps,tx_de_emphasis_quirk;
+>> +			snps,tx_de_emphasis = <1>;
+>> +			snps,dis_enblslpm_quirk;
+>> +			snps,gctl-reset-quirk;
+>> +			extcon = <&hisi_hikey_usb>;
+>> +		};
+>> +	};
+>> -- 
+>> 2.15.0-rc2
+>>
+> 
+> 
+> .
+> 
 
