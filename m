@@ -6,58 +6,77 @@ X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id E169AC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 03:35:45 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D8534C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 03:37:28 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9622B2089D
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 03:35:45 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9622B2089D
+	by mail.kernel.org (Postfix) with ESMTP id 8E4492089D
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 03:37:28 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8E4492089D
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730393AbeKQNux (ORCPT
+        id S1730455AbeKQNwh (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 08:50:53 -0500
-Received: from shards.monkeyblade.net ([23.128.96.9]:48034 "EHLO
+        Sat, 17 Nov 2018 08:52:37 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:48068 "EHLO
         shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729714AbeKQNux (ORCPT
+        with ESMTP id S1729714AbeKQNwg (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 08:50:53 -0500
+        Sat, 17 Nov 2018 08:52:36 -0500
 Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
         (using TLSv1 with cipher AES256-SHA (256/256 bits))
         (Client did not present a certificate)
         (Authenticated sender: davem-davemloft)
-        by shards.monkeyblade.net (Postfix) with ESMTPSA id 4C62F13F531FE;
-        Fri, 16 Nov 2018 19:35:43 -0800 (PST)
-Date:   Fri, 16 Nov 2018 19:35:42 -0800 (PST)
-Message-Id: <20181116.193542.1497489467781293687.davem@davemloft.net>
-To:     colin.king@canonical.com
-Cc:     yisen.zhuang@huawei.com, salil.mehta@huawei.com,
-        lipeng321@huawei.com, netdev@vger.kernel.org,
-        kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][net-next] net: hns3: fix spelling mistake "failded" ->
- "failed"
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id 6DDF313F587EA;
+        Fri, 16 Nov 2018 19:37:26 -0800 (PST)
+Date:   Fri, 16 Nov 2018 19:37:25 -0800 (PST)
+Message-Id: <20181116.193725.1381952801953862286.davem@davemloft.net>
+To:     thesven73@gmail.com
+Cc:     svendev@arcx.com, siva.kallam@broadcom.com, prashant@broadcom.com,
+        mchan@broadcom.com, linux-kernel@vger.kernel.org,
+        netdev@vger.kernel.org, arnd@arndb.de
+Subject: Re: [PATCH v1] tg3: optionally get mac address from devicetree
 From:   David Miller <davem@davemloft.net>
-In-Reply-To: <20181113115057.13237-1-colin.king@canonical.com>
-References: <20181113115057.13237-1-colin.king@canonical.com>
+In-Reply-To: <20181113161508.7427-1-TheSven73@googlemail.com>
+References: <20181113161508.7427-1-TheSven73@googlemail.com>
 X-Mailer: Mew version 6.8 on Emacs 26.1
 Mime-Version: 1.0
 Content-Type: Text/Plain; charset=us-ascii
 Content-Transfer-Encoding: 7bit
-X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 16 Nov 2018 19:35:43 -0800 (PST)
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 16 Nov 2018 19:37:26 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Colin King <colin.king@canonical.com>
-Date: Tue, 13 Nov 2018 11:50:57 +0000
+From: thesven73@gmail.com
+Date: Tue, 13 Nov 2018 11:15:08 -0500
 
-> From: Colin Ian King <colin.king@canonical.com>
+> If the tg3 has a device node, and that node contains a valid
+> mac address property, use that as the tg3's mac address.
 > 
-> Trivial fix, the spelling of "failded" is incorrect in dev_err and
-> dev_warn messages. Fix this.
+> This behaviour was previously only present on SPARC, using a
+> conditional compile (#ifdef CONFIG_SPARC), presumably because
+> at the time, devicetree nodes for pci devices only worked on
+> SPARC. However, this has recently been made universal, see
+> commit 98d9f30c820d ("pci/of: Match PCI devices to OF nodes dynamically")
 > 
-> Signed-off-by: Colin Ian King <colin.king@canonical.com>
+> Devicetree example:
+> (see Documentation/devicetree/bindings/pci/pci.txt)
+> 
+> &pcie {
+> 	host@0 {
+> 		#address-cells = <3>;
+> 		#size-cells = <2>;
+> 		reg = <0 0 0 0 0>;
+> 		bcm5778: bcm5778@0 {
+> 			reg = <0 0 0 0 0>;
+> 			mac-address = [CA 11 AB 1E 10 01];
+> 		};
+> 	};
+> };
+> 
+> Signed-off-by: Sven Van Asbroeck <svendev@arcx.com>
 
-Applied.
+Please use eth_platform_get_mac_address() and you can delete all of the
+SPARC specific code altogether.
