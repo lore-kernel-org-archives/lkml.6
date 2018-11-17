@@ -2,108 +2,105 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+X-Spam-Status: No, score=-2.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80ABFC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 03:09:49 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 138ACC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 03:10:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3AE5F20869
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 03:09:49 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id CD39F20869
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 03:10:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="UC8/H4si"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3AE5F20869
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=sirena.org.uk header.i=@sirena.org.uk header.b="nD9CyWWz"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CD39F20869
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730066AbeKQNYw (ORCPT
+        id S1730259AbeKQNZJ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 08:24:52 -0500
-Received: from mail-it1-f195.google.com ([209.85.166.195]:40658 "EHLO
-        mail-it1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729714AbeKQNYv (ORCPT
+        Sat, 17 Nov 2018 08:25:09 -0500
+Received: from heliosphere.sirena.org.uk ([172.104.155.198]:54956 "EHLO
+        heliosphere.sirena.org.uk" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729714AbeKQNZJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 08:24:51 -0500
-Received: by mail-it1-f195.google.com with SMTP id h193so162317ita.5
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 19:09:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=GdXTma+heCG1NQmiQLpbKj/0h295HXhNL04xMwtD4/c=;
-        b=UC8/H4si50DBfyCs4w0RGJGkRQl6Le9lijQ/wVvOHmGtV3/nBrKrlwKWPO5GNaGClO
-         snFE9Dcqcy3Hj1HsmWd/gsGSiM3IJvmvgwz8ur+GQ4gGS9g9PC3zNSrR3+dzzNRN6q0V
-         AZ/NL1beNAqFom/oeCzh7eNBS7DIX0XrqpfKaNcDlOQtCfsst3Oet+SyL0DC0VL+YXV4
-         X73R8b6+QHzj6kYpFoJC2ELmdLl1Rn7KazVd0ysigqK0pAoFSB5rDCi65C/i5ty3NggY
-         5OAXXq2rnY4UlmT5n+sDR8ryRsOOiONoB7X/idKXofo3bJhkEw/FlEXxRa+HICN1KIuz
-         grUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=GdXTma+heCG1NQmiQLpbKj/0h295HXhNL04xMwtD4/c=;
-        b=HgSIj/usfXVOjjHzouQD3PSAmOJ1puqnH1vms6YiBOq/aQPXyU96wWDqzW0RdW5eO3
-         YQIeJFw8dOkEnd4tEN7o0d1INZGs1uHDsetW7sbnnjfmxHI4IUvcQal4cHJf9zX+7Iz7
-         TiEJ6uYlum2aUSHflu87BuRXYI+n7IyyNZhpzDKZIGA2PkFVxFW49SjZ9/i/dBsfyjnf
-         lG2FI0GouoS2+tBbXDdEyFt0oVABY0hMfWqrSkz+Y+5YAqGAm5PJpHXRlhKQknvatgpY
-         tNVhqkdil8I6a5TvzATLvrKA5KkDc7e7pWuo6+DJYKjWp5+DeiW6rJkqdYVYre+C2Iir
-         KfxQ==
-X-Gm-Message-State: AA+aEWai3M1VD6Z2E46gKg71UA3UNQ8jbZnTLkKMRL4nqgj8qyzR2h5u
-        17nLsT8KazhQQU3PgVPQlCicfzzSAh4g0aycjBYQLJLI8y8=
-X-Google-Smtp-Source: AFSGD/Xq0iwm/01B4NFxTy4/HI6+AgjJf1B0cgGQlsE4dxnx3ujDZwrNl1JmsaC3hdQAoQu6ewxB1+OJr4wajvhWnGg=
-X-Received: by 2002:a24:70ca:: with SMTP id f193-v6mr732552itc.59.1542424186888;
- Fri, 16 Nov 2018 19:09:46 -0800 (PST)
+        Sat, 17 Nov 2018 08:25:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+        d=sirena.org.uk; s=20170815-heliosphere; h=In-Reply-To:Content-Type:
+        MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+        Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+        Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+        List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+         bh=Ck6ocEZj8V4jZ51zH5HazNtGOhSAVHkW/STcIt/EOho=; b=nD9CyWWzQA4xwfDi0hg6j6oaV
+        p+OTSB4rziIPxfLnO8KFgdT1t52pQb9wDi+Qgov0Dy2NrxCvDIc+5iFcjPaqvnkh/eH/iuMbesqLl
+        ItoL8Pgtg3w7xsdcRaY0W1gjG36O/3GuC2JZ0SAOVttwHeG64X8rcf9zzN6M4xPRBSSYg=;
+Received: from [204.239.253.216] (helo=finisterre.ee.mobilebroadband)
+        by heliosphere.sirena.org.uk with esmtpsa (TLS1.2:ECDHE_RSA_AES_256_GCM_SHA384:256)
+        (Exim 4.89)
+        (envelope-from <broonie@sirena.org.uk>)
+        id 1gNqza-0008Jb-VY; Sat, 17 Nov 2018 03:09:55 +0000
+Received: by finisterre.ee.mobilebroadband (Postfix, from userid 1000)
+        id D64B9440078; Sat, 17 Nov 2018 03:09:47 +0000 (GMT)
+Date:   Fri, 16 Nov 2018 19:09:47 -0800
+From:   Mark Brown <broonie@kernel.org>
+To:     Shawn Guo <shawnguo@kernel.org>
+Cc:     =?iso-8859-1?Q?Cl=E9ment_P=E9ron?= <peron.clem@gmail.com>,
+        NXP Linux Team <linux-imx@nxp.com>,
+        Vladimir Zapolskiy <vladimir_zapolskiy@mentor.com>,
+        Sascha Hauer <s.hauer@pengutronix.de>,
+        Pengutronix Kernel Team <kernel@pengutronix.de>,
+        Fabio Estevam <fabio.estevam@nxp.com>,
+        Rob Herring <robh+dt@kernel.org>, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        Colin Didier <colin.didier@devialet.com>
+Subject: Re: [PATCH] ASoC: imx-audmux: complete dt-bindings for imx6
+Message-ID: <20181117030947.GX2089@sirena.org.uk>
+References: <20181105135802.30486-1-peron.clem@gmail.com>
+ <20181116025938.GH5829@dragon>
+ <CAJiuCcerEanEobbi8zPb1-eb=zCJsDAbM=p6T64+wtuXjtaMTA@mail.gmail.com>
+ <20181116144520.GO5829@dragon>
 MIME-Version: 1.0
-References: <20181108190700.30825-1-david.abdurachmanov@gmail.com> <mhng-1888c072-5274-457c-aa26-b9fa9cb246dd@palmer-si-x1c4>
-In-Reply-To: <mhng-1888c072-5274-457c-aa26-b9fa9cb246dd@palmer-si-x1c4>
-From:   Olof Johansson <olof@lixom.net>
-Date:   Fri, 16 Nov 2018 19:09:36 -0800
-Message-ID: <CAOesGMjzOkPNv7v_uMMsCw=20NuebPvkLBS5b5eaS9Z6=p1qKg@mail.gmail.com>
-Subject: Re: [PATCH] riscv: fix warning in arch/riscv/include/asm/module.h
-To:     Palmer Dabbelt <palmer@sifive.com>
-Cc:     David Abdurachmanov <david.abdurachmanov@gmail.com>,
-        Albert Ou <aou@eecs.berkeley.edu>,
-        linux-riscv@lists.infradead.org,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+        protocol="application/pgp-signature"; boundary="t54s24TTWYm6oOX+"
+Content-Disposition: inline
+In-Reply-To: <20181116144520.GO5829@dragon>
+X-Cookie: No Canadian coins.
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Thu, Nov 8, 2018 at 11:32 AM Palmer Dabbelt <palmer@sifive.com> wrote:
->
-> On Thu, 08 Nov 2018 11:07:00 PST (-0800), david.abdurachmanov@gmail.com wrote:
-> > Fixes warning: 'struct module' declared inside parameter list will not be
-> > visible outside of this definition or declaration
-> >
-> > Signed-off-by: David Abdurachmanov <david.abdurachmanov@gmail.com>
-> > ---
-> >  arch/riscv/include/asm/module.h | 1 +
-> >  1 file changed, 1 insertion(+)
-> >
-> > diff --git a/arch/riscv/include/asm/module.h b/arch/riscv/include/asm/module.h
-> > index 349df33808c4..cd2af4b013e3 100644
-> > --- a/arch/riscv/include/asm/module.h
-> > +++ b/arch/riscv/include/asm/module.h
-> > @@ -8,6 +8,7 @@
-> >
-> >  #define MODULE_ARCH_VERMAGIC    "riscv"
-> >
-> > +struct module;
-> >  u64 module_emit_got_entry(struct module *mod, u64 val);
-> >  u64 module_emit_plt_entry(struct module *mod, u64 val);
->
-> Works for me.  Looks like arm64 might have exactly the same issue.  I'll roll
-> it up into the next RC.
 
-Looks like it's still here in -next. So, patch:
+--t54s24TTWYm6oOX+
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Acked-by: Olof Johansson <olof@lixom.net>
+On Fri, Nov 16, 2018 at 10:45:22PM +0800, Shawn Guo wrote:
+> On Fri, Nov 16, 2018 at 11:25:07AM +0100, Cl=E9ment P=E9ron wrote:
 
-(and it'd be great to pickup together with the 32-bit build fix).
+> > It's still quite new for me to submit patch, but if this patch should
+> > be sent to ASoC maintainer maybe there is a line missing in the
+> > MAINTAINERS file no ?
 
+> @Mark, comment?
 
--Olof
+Adding a file pattern for this seems sensible, yes.
+
+--t54s24TTWYm6oOX+
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAlvvhnsACgkQJNaLcl1U
+h9DP2Qf+NCg2qakRTqm4Nl59V4nGhjYib4S6ak3q8O0zJk+HbUyC0KJ+Ep9OuR95
+aPN0hl9YXWLhiLBf3LYBZCSBC+76gzwCAGRphNomR8f6dLRg/NfPSJwZz7wEttSn
+XmueW9QjoSdFtrYwZy9GVoJW43vKDK7F545GqLWOK4kvUzap8y/ovtHCBRz5WWT2
+jAun20s7p2TxB7ubJmMCtBhO1kK9lUtn4eolsnGUgDGaErwBq+bf94dbqsrJSj5e
+Vy4AWIta6/kALjBlcpAsvoYxy1yxGoq1o8LYU7T0o5quwtLCLYtfj0RGPKGnWGP7
+9LvH54nwxub/n0gfzGf66cwOZmBr7g==
+=/Vez
+-----END PGP SIGNATURE-----
+
+--t54s24TTWYm6oOX+--
