@@ -7,69 +7,70 @@ X-Spam-Status: No, score=-8.6 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 203C4C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 23:10:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A32ADC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 23:11:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id CF2DF2080D
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 23:10:53 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 656E92080D
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 23:11:34 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="NQvwL4dc"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CF2DF2080D
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="FZaXUsK9"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 656E92080D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1727002AbeKRJ3K (ORCPT
+        id S1727045AbeKRJ3v (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 04:29:10 -0500
-Received: from mail-pl1-f193.google.com ([209.85.214.193]:41845 "EHLO
-        mail-pl1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726804AbeKRJ3K (ORCPT
+        Sun, 18 Nov 2018 04:29:51 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:40246 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726790AbeKRJ3u (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 04:29:10 -0500
-Received: by mail-pl1-f193.google.com with SMTP id u6so1932827plm.8
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 15:10:51 -0800 (PST)
+        Sun, 18 Nov 2018 04:29:50 -0500
+Received: by mail-pf1-f193.google.com with SMTP id x2-v6so13067366pfm.7
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 15:11:31 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=date:from:to:cc:subject:message-id:references:mime-version
          :content-disposition:in-reply-to:user-agent;
-        bh=RhDUrBKIKL67W3Kulv3NZ8twu2irptkhsB4jIfRYTac=;
-        b=NQvwL4dcvvDz6K3S9TxZqFD8XU04leAngJOH15QNKV2EVTul/G1qf0STVlNuN/HxcX
-         7OL+3gyS0Z5yc5BBH2JMNzCYnyYRC6BNDKywa8WIGrinjoHflzgytWeZ4kKf+3qMO9TZ
-         /NtRZefYn6Oz/yHs4jFfw38Hqw9G73dVGXvJA=
+        bh=LrJV5F3NN6K/YcoJwQ11P4Md/S4+jBJE3I81yUaWHiE=;
+        b=FZaXUsK99u7gUBHN4bMPQLQWrjjlm7waX+ZSIbx6UnU8AqJYMew+Z3I4iS+26dQLec
+         Qu0ZsUTEVDWl1DI+J3uQar0Ye8KKfZRrKhdNNmoxvOXM5FebUXp4m97EWl7zSMYa2uFT
+         fNP1VMY4+UaSKv/849Hhr7MTJ1NMykEVjFvs0=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:from:to:cc:subject:message-id:references
          :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=RhDUrBKIKL67W3Kulv3NZ8twu2irptkhsB4jIfRYTac=;
-        b=pE7xyaYSJO6ZNWaW5I5dGWGKO9BCtX1ToAd5yKHuSfi49ZphFbqYmJkRY8s2JCP7jI
-         h9dCcUAH+zkKmhMSFzGoJA3QXFFXNCiKvYB7MNBcnACPtpH3lCEfOBWqPS9yKmMI8YXY
-         yFfRwHGk/1WAlAftuxeszsvpgjPQo9FMQCi60MPb7SZVK90Nq/jcwviZ+wm5z4zJri/G
-         74/FAXjCuSWQCT4u6idWseXNfP2kyQLYkNh8LOciwMLxDNtSpaE2XkUYCj7BKyvqQXYC
-         D33HynJWB4Hgs9MwaiWyy+UnBclgc5iVEowbordezWRZSgr+xV8kG9ImKldbGJDtMlsJ
-         GtyA==
-X-Gm-Message-State: AGRZ1gIKfQkoaioAiqnYEgggOR01L+i/60ocVKlZwQeCEgwo/1nYF96J
-        i8pApeRT1oACfAQ0yX59AKhgzg==
-X-Google-Smtp-Source: AJdET5dXy2y4Hixb4VMkV3c4Ixuw+Sw0JRjCh95ac4+kMUvi/l4H+TlD37Y3K+NhSM0OIiv7qvrMgQ==
-X-Received: by 2002:a17:902:a81:: with SMTP id 1-v6mr16672333plp.20.1542496250774;
-        Sat, 17 Nov 2018 15:10:50 -0800 (PST)
+        bh=LrJV5F3NN6K/YcoJwQ11P4Md/S4+jBJE3I81yUaWHiE=;
+        b=E1+XX1bL1YnVKAkDEnyqERmvn2rJ8SQv9AS6Vq+PUsQ3IK74PuMIjHvFJQYYWEjA1r
+         f3+2hl/Shn6KO/R7BFZLb2Wn7vNjCW7/qOJocwA9BAdNu8tMHCb+OgBPVgSyuyeH/6Dv
+         YsL9wLZc4fZMxISH8NgCSjm/+bxEqOlhzpR9lhtCle2mlK3rwnCcolohfXWcZwu1RAsT
+         aJ/mmZ0RyTUMNPrZONZYDT3NtfFEMy6c/Sl/liBWnL3migeiMqeWISEGTVcmo04PCYtP
+         eJXZbj13mDWOeNSK7KVnazJ/Jxk6FR2RFVIK1BCT30KFrbucNu+55Mmeu0t7+2GNJxqN
+         FHUA==
+X-Gm-Message-State: AGRZ1gLHj5wKH/m1QNwZ4u3v2KJYgzZYiHtCyjHkSc69NZREHSS3WYqS
+        I4kZT5E+sGjiIa8cgmANDV8ilA==
+X-Google-Smtp-Source: AJdET5fCmBddXufZChce7hmNoGZf4ii7uvYWxM6slLCA75vN2KE+HHWVpGaQFisoSMFShnXFSa39Hw==
+X-Received: by 2002:a63:cd4c:: with SMTP id a12mr15256679pgj.252.1542496291295;
+        Sat, 17 Nov 2018 15:11:31 -0800 (PST)
 Received: from minitux (104-188-17-28.lightspeed.sndgca.sbcglobal.net. [104.188.17.28])
-        by smtp.gmail.com with ESMTPSA id 64sm503850pff.101.2018.11.17.15.10.49
+        by smtp.gmail.com with ESMTPSA id v191sm42370092pgb.77.2018.11.17.15.11.30
         (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 17 Nov 2018 15:10:49 -0800 (PST)
-Date:   Sat, 17 Nov 2018 15:10:47 -0800
+        Sat, 17 Nov 2018 15:11:30 -0800 (PST)
+Date:   Sat, 17 Nov 2018 15:11:28 -0800
 From:   Bjorn Andersson <bjorn.andersson@linaro.org>
 To:     Vinod Koul <vkoul@kernel.org>
 Cc:     Andy Gross <andy.gross@linaro.org>,
         linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
         linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH v5 01/18] arm64: dts: qcom: qcs404: add base dts files
-Message-ID: <20181117231047.GA2225@minitux>
+Subject: Re: [PATCH v5 02/18] arm64: dts: qcom: qcs404-evb: add dts files for
+ EVBs
+Message-ID: <20181117231128.GB2225@minitux>
 References: <20181109094417.12109-1-vkoul@kernel.org>
- <20181109094417.12109-2-vkoul@kernel.org>
+ <20181109094417.12109-3-vkoul@kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181109094417.12109-2-vkoul@kernel.org>
+In-Reply-To: <20181109094417.12109-3-vkoul@kernel.org>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
@@ -78,8 +79,11 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 On Fri 09 Nov 01:44 PST 2018, Vinod Koul wrote:
 
-> Add base dts files for QCS404 chipset along with cpu, timer,
-> gcc and uart2 nodes.
+> QCS404 has two EVBs, EVB-1000 and EVB-4000. These boards are mostly
+> similar with few differences in the peripherals used.
+> 
+> So use a common qcs404-evb.dtsi which contains the common parts and use
+> qcs404-evb-1000.dts and qcs404-evb-4000.dts for diffs
 > 
 > Signed-off-by: Vinod Koul <vkoul@kernel.org>
 
@@ -89,189 +93,77 @@ Regards,
 Bjorn
 
 > ---
->  arch/arm64/boot/dts/qcom/qcs404.dtsi | 175 +++++++++++++++++++++++++++++++++++
->  1 file changed, 175 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/qcs404.dtsi
+>  arch/arm64/boot/dts/qcom/Makefile            |  2 ++
+>  arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts | 11 +++++++++++
+>  arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts | 11 +++++++++++
+>  arch/arm64/boot/dts/qcom/qcs404-evb.dtsi     | 14 ++++++++++++++
+>  4 files changed, 38 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
 > 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs404.dtsi b/arch/arm64/boot/dts/qcom/qcs404.dtsi
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index a658c07652a7..21d548f02d39 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -8,3 +8,5 @@ dtb-$(CONFIG_ARCH_QCOM)	+= msm8994-angler-rev-101.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8996-mtp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8998-mtp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= sdm845-mtp.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts b/arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts
 > new file mode 100644
-> index 000000000000..91abcdc78505
+> index 000000000000..2c14903d808e
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/qcom/qcs404.dtsi
-> @@ -0,0 +1,175 @@
+> +++ b/arch/arm64/boot/dts/qcom/qcs404-evb-1000.dts
+> @@ -0,0 +1,11 @@
 > +// SPDX-License-Identifier: GPL-2.0
 > +// Copyright (c) 2018, Linaro Limited
 > +
-> +#include <dt-bindings/interrupt-controller/arm-gic.h>
-> +#include <dt-bindings/clock/qcom,gcc-qcs404.h>
+> +/dts-v1/;
+> +
+> +#include "qcs404-evb.dtsi"
 > +
 > +/ {
-> +	interrupt-parent = <&intc>;
+> +	model = "Qualcomm Technologies, Inc. QCS404 EVB 1000";
+> +	compatible = "qcom,qcs404-evb";
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts b/arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts
+> new file mode 100644
+> index 000000000000..11269ad3de0d
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/qcs404-evb-4000.dts
+> @@ -0,0 +1,11 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, Linaro Limited
 > +
-> +	#address-cells = <2>;
-> +	#size-cells = <2>;
+> +/dts-v1/;
 > +
-> +	chosen { };
+> +#include "qcs404-evb.dtsi"
 > +
-> +	clocks {
-> +		xo_board: xo-board {
-> +			compatible = "fixed-clock";
-> +			#clock-cells = <0>;
-> +			clock-frequency = <19200000>;
-> +		};
+> +/ {
+> +	model = "Qualcomm Technologies, Inc. QCS404 EVB 4000";
+> +	compatible = "qcom,qcs404-evb";
+> +};
+> diff --git a/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+> new file mode 100644
+> index 000000000000..91ecbdf0ecda
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/qcs404-evb.dtsi
+> @@ -0,0 +1,14 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// Copyright (c) 2018, Linaro Limited
+> +
+> +#include "qcs404.dtsi"
+> +
+> +/ {
+> +	aliases {
+> +		serial0 = &blsp1_uart2;
 > +	};
 > +
-> +	cpus {
-> +		#address-cells = <1>;
-> +		#size-cells = <0>;
-> +
-> +		CPU0: cpu@100 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x100>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +
-> +		CPU1: cpu@101 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x101>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +
-> +		CPU2: cpu@102 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x102>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +
-> +		CPU3: cpu@103 {
-> +			device_type = "cpu";
-> +			compatible = "arm,cortex-a53";
-> +			reg = <0x103>;
-> +			enable-method = "psci";
-> +			next-level-cache = <&L2_0>;
-> +		};
-> +
-> +		L2_0: l2-cache {
-> +			compatible = "cache";
-> +			cache-level = <2>;
-> +		};
-> +	};
-> +
-> +	memory@80000000 {
-> +		device_type = "memory";
-> +		/* We expect the bootloader to fill in the size */
-> +		reg = <0 0x80000000 0 0>;
-> +	};
-> +
-> +	psci {
-> +		compatible = "arm,psci-1.0";
-> +		method = "smc";
-> +	};
-> +
-> +	soc: soc@0 {
-> +		#address-cells = <1>;
-> +		#size-cells = <1>;
-> +		ranges = <0 0 0 0xffffffff>;
-> +		compatible = "simple-bus";
-> +
-> +		gcc: clock-controller@1800000 {
-> +			compatible = "qcom,gcc-qcs404";
-> +			reg = <0x01800000 0x80000>;
-> +			#clock-cells = <1>;
-> +
-> +			assigned-clocks = <&gcc GCC_APSS_AHB_CLK_SRC>;
-> +			assigned-clock-rates = <19200000>;
-> +		};
-> +
-> +		blsp1_uart2: serial@78b1000 {
-> +			compatible = "qcom,msm-uartdm-v1.4", "qcom,msm-uartdm";
-> +			reg = <0x078b1000 0x200>;
-> +			interrupts = <GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>;
-> +			clocks = <&gcc GCC_BLSP1_UART2_APPS_CLK>, <&gcc GCC_BLSP1_AHB_CLK>;
-> +			clock-names = "core", "iface";
-> +			status = "okay";
-> +		};
-> +
-> +		intc: interrupt-controller@b000000 {
-> +			compatible = "qcom,msm-qgic2";
-> +			interrupt-controller;
-> +			#interrupt-cells = <3>;
-> +			reg = <0x0b000000 0x1000>,
-> +			      <0x0b002000 0x1000>;
-> +		};
-> +
-> +		timer@b120000 {
-> +			#address-cells = <1>;
-> +			#size-cells = <1>;
-> +			ranges;
-> +			compatible = "arm,armv7-timer-mem";
-> +			reg = <0x0b120000 0x1000>;
-> +			clock-frequency = <19200000>;
-> +
-> +			frame@b121000 {
-> +				frame-number = <0>;
-> +				interrupts = <GIC_SPI 8 IRQ_TYPE_LEVEL_HIGH>,
-> +					     <GIC_SPI 7 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b121000 0x1000>,
-> +				      <0x0b122000 0x1000>;
-> +			};
-> +
-> +			frame@b123000 {
-> +				frame-number = <1>;
-> +				interrupts = <GIC_SPI 9 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b123000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b124000 {
-> +				frame-number = <2>;
-> +				interrupts = <GIC_SPI 10 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b124000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b125000 {
-> +				frame-number = <3>;
-> +				interrupts = <GIC_SPI 11 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b125000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b126000 {
-> +				frame-number = <4>;
-> +				interrupts = <GIC_SPI 12 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b126000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b127000 {
-> +				frame-number = <5>;
-> +				interrupts = <GIC_SPI 13 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0xb127000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +
-> +			frame@b128000 {
-> +				frame-number = <6>;
-> +				interrupts = <GIC_SPI 14 IRQ_TYPE_LEVEL_HIGH>;
-> +				reg = <0x0b128000 0x1000>;
-> +				status = "disabled";
-> +			};
-> +		};
-> +	};
-> +
-> +	timer {
-> +		compatible = "arm,armv8-timer";
-> +		interrupts = <GIC_PPI 2 0xff08>,
-> +			     <GIC_PPI 3 0xff08>,
-> +			     <GIC_PPI 4 0xff08>,
-> +			     <GIC_PPI 1 0xff08>;
+> +	chosen {
+> +		stdout-path = "serial0";
 > +	};
 > +};
 > -- 
