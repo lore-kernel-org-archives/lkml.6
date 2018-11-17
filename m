@@ -2,104 +2,94 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
-	DKIM_SIGNED,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,
-	MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EB2EFC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 08:36:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5BBC5C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 08:47:14 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 9A55720817
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 08:36:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=plaes.org header.i=@plaes.org header.b="MSYAwE4H"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9A55720817
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=plaes.org
+	by mail.kernel.org (Postfix) with ESMTP id 0E1AB2081C
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 08:47:14 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0E1AB2081C
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codewreck.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725984AbeKQSw1 (ORCPT
+        id S1726020AbeKQTDF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 13:52:27 -0500
-Received: from plaes.org ([188.166.43.21]:38308 "EHLO plaes.org"
+        Sat, 17 Nov 2018 14:03:05 -0500
+Received: from nautica.notk.org ([91.121.71.147]:38578 "EHLO nautica.notk.org"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1725849AbeKQSw1 (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 13:52:27 -0500
-Received: from plaes.org (localhost [127.0.0.1])
-        by plaes.org (Postfix) with ESMTPSA id 2378140227;
-        Sat, 17 Nov 2018 08:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=plaes.org; s=mail;
-        t=1542443789; bh=HzJVQx+Bg2X6T+cbuSuJAaQCs82gjYrYYb2Rq7ojpoA=;
-        h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-        b=MSYAwE4HHQMnQdXcs+TMWwHznIWMyLuG0N2X4gM/39vDaX7EqJWQk5pqEb98UOOyp
-         TY1Eg/d/HRtQgz+iOlVL7n/3Q8P64xvQhWwKVHn0A2yJBNjxwDTZuYEG14laZJq5wH
-         5YaY4uC8/DZd1entEjRBygCmeL/NGV3ZAt6JpAmW0kINPFmr7Or3/hvvqigyCDeJkI
-         XawqzQYQ5lVOR1abt0SLKtzOmMyFmyv8aFUTkoiOjjMoB/wgdgOJ68EPLDS5KoZVMD
-         oGl/EMZhYk8f7sK/I+6hcpDtfHAOWyVX1bcJyWYtyXFP7LhHYm/GNernLL8iAmRHIG
-         vKsWHj/4PpwhQ==
-Date:   Sat, 17 Nov 2018 08:36:28 +0000
-From:   Priit Laes <plaes@plaes.org>
-To:     Michael =?iso-8859-1?Q?B=FCsch?= <m@bues.ch>
-Cc:     Kees Cook <keescook@chromium.org>,
-        Jia-Ju Bai <baijiaju1990@gmail.com>,
-        Kalle Valo <kvalo@codeaurora.org>,
-        Larry Finger <Larry.Finger@lwfinger.net>,
-        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
-        Colin Ian King <colin.king@canonical.com>,
-        Arend van Spriel <arend.vanspriel@broadcom.com>,
-        Varsha Rao <rvarsha016@gmail.com>,
-        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 3/3] b43: Use cordic algorithm from kernel library
-Message-ID: <20181117083628.sm6juvz75kiargz4@plaes.org>
-References: <cover.c0b1738f3f06bbf87f4ad3200ece93322a5f135f.1542219596.git-series.plaes@plaes.org>
- <d93962cdc5a32fe99e6e5a25172920d28583aa6a.1542219596.git-series.plaes@plaes.org>
- <20181114194628.0f485637@wiggum>
+        id S1725849AbeKQTDF (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 14:03:05 -0500
+Received: by nautica.notk.org (Postfix, from userid 1001)
+        id E4CC2C009; Sat, 17 Nov 2018 09:47:04 +0100 (CET)
+Date:   Sat, 17 Nov 2018 09:46:49 +0100
+From:   Dominique Martinet <asmadeus@codewreck.org>
+To:     Dmitry Vyukov <dvyukov@google.com>
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        David Miller <davem@davemloft.net>,
+        Eric Van Hensbergen <ericvh@gmail.com>,
+        LKML <linux-kernel@vger.kernel.org>,
+        Latchesar Ionkov <lucho@ionkov.net>,
+        netdev <netdev@vger.kernel.org>,
+        Ron Minnich <rminnich@sandia.gov>,
+        syzkaller-bugs <syzkaller-bugs@googlegroups.com>,
+        v9fs-developer@lists.sourceforge.net
+Subject: Re: 9p/RDMA for syzkaller (Was: BUG: corrupted list in p9_read_work)
+Message-ID: <20181117084649.GA24182@nautica>
+References: <CACT4Y+bv5dWx0JwCzTPD3mWJRaMHOtRVcvpV5fdQ5KS7zAF_fA@mail.gmail.com>
+ <20181010144059.GA20918@nautica>
+ <CACT4Y+Zx5nDN-H8WfC4WtgK7YeAWZig9WsDr1J4DXZBZb+vgWQ@mail.gmail.com>
+ <20181010155814.GC20918@nautica>
+ <CACT4Y+bJvxXeJxbAKCPTm0X608t302Kcq+F7Ccot3_-wx7sdog@mail.gmail.com>
+ <20181011131045.GA32030@nautica>
+ <CACT4Y+YvJ-KT4UxtOXpou1xpT3wBASDkt135zr2BwrRi0gv4Tw@mail.gmail.com>
+ <20181011141928.GB32030@nautica>
+ <CACT4Y+byESz-LuzM07ik6-VVHoD7OhO_BB0qOLNUZ4j-ao9CFA@mail.gmail.com>
+ <20181012150855.GA22149@nautica>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20181114194628.0f485637@wiggum>
-User-Agent: NeoMutt/20170113 (1.7.2)
+In-Reply-To: <20181012150855.GA22149@nautica>
+User-Agent: Mutt/1.5.21 (2010-09-15)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Wed, Nov 14, 2018 at 07:46:28PM +0100, Michael Büsch wrote:
-> On Wed, 14 Nov 2018 20:27:52 +0200
-> Priit Laes <plaes@plaes.org> wrote:
+Dominique Martinet wrote on Fri, Oct 12, 2018:
+> Hmm, good point; I hadn't looked at the network level how this is
+> emulated.
+> When I use a single VM I do not see anything with tcpdump on any
+> interface, so I assume the kernel short-cuts the interface in this case.
+> When communicating between two machines there obviously is traffic; it
+> appears to be transported over udp - I see the messages I sent in plain
+> text in the dump and there is only a handful of packets for the whole
+> connecting and teardown so it's definitely much simpler.
 > 
-> > Kernel library has a common cordic algorithm which is identical
-> > to internally implementatd one, so use it and drop the duplicate
-> > implementation.
-> 
-> 
-> In v2 of the series it has been said that:
-> 
-> Arend van Spriel <arend.vanspriel@broadcom.com> wrote:
-> > I recall doing a comparison between the algorithms and thought I put 
-> > that in the original commit message. However, it is not there. It is not 
-> > exactly the same as in b43 so there are difference for certain angles, 
-> > most results are the same however. This implementation is slightly more 
-> > accurate on the full scale.
-> 
-> 
-> That's not my definition of "identical".
-> 
-> Please do not apply this patch without doing a thorough regression test
-> on actual b43 LP hardware.
+> This might have some knob I am not aware of to force the driver to send
+> udp in the local setup, if we can it's going to be much easier to
+> reimplement the rxe emulation protocol with raw syscalls than what I was
+> describing earlier...
 
-Indeed, there's a big discrepancy in the results of both algorithms.
+I've taken a little bit of time to look at this.
+Unfortunately, I haven't been able to find any knob to make a
+single-machine setup send UDP over an interface; would have hoped that
+playing with multiple interfaces might be a way around this (e.g. use
+the rxe driver on one interface and listen on the udp port on the other
+one), but I couldn't get this to work and don't see anything in the code
+that hints it might be configurable.
+It seems to realize that the remote IP is assigned locally anyway and
+while I cannot "bind" to an address that wasn't added to the rxe driver
+at the rdma_cm level, trying to connect to it never sends any packet to
+a ncat listening on 4791/udp on that interface...
+If anyone has an idea, it'd be great!
 
-Here's the test script:
-https://gist.github.com/plaes/284993a4fc65e0926d0628a11f0cf874
-
-So at current state, this is self-NAK from me too and this patch should
-be dropped.
-
-> 
-> -- 
-> Michael
+Protocole-wise, once we get that to work it doesn't look very difficult
+to implement some basic "accept connection and send acks/replies" small
+server, but we need the first part to work...
 
 
+-- 
+Dominique
