@@ -6,204 +6,211 @@ X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3D75C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:50:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id BB682C43610
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:50:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A3B32089D
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:50:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A3B32089D
+	by mail.kernel.org (Postfix) with ESMTP id 82D332089D
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:50:38 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D332089D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730112AbeKQMFX (ORCPT
+        id S1730277AbeKQMFZ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 07:05:23 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:44362 "EHLO mx1.redhat.com"
+        Sat, 17 Nov 2018 07:05:25 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:53950 "EHLO mx1.redhat.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbeKQMFW (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 07:05:22 -0500
+        id S1730045AbeKQMFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 07:05:23 -0500
 Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
         (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
         (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 361B258E35;
-        Sat, 17 Nov 2018 01:50:33 +0000 (UTC)
+        by mx1.redhat.com (Postfix) with ESMTPS id 4A7C9A0A39;
+        Sat, 17 Nov 2018 01:50:34 +0000 (UTC)
 Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 4DF98614C6;
-        Sat, 17 Nov 2018 01:50:32 +0000 (UTC)
+        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C70E6A043;
+        Sat, 17 Nov 2018 01:50:33 +0000 (UTC)
 From:   Lyude Paul <lyude@redhat.com>
 To:     nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <maxime.ripard@bootlin.com>,
-        Sean Paul <sean@poorly.run>, David Airlie <airlied@linux.ie>,
+Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
         linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] drm/dp: Add ->pre/post_transfer() hooks for drm_dp_aux
-Date:   Fri, 16 Nov 2018 20:50:22 -0500
-Message-Id: <20181117015024.5771-2-lyude@redhat.com>
+Subject: [PATCH 2/2] drm/nouveau: Grab an rpm reference before/after DP AUX transactions
+Date:   Fri, 16 Nov 2018 20:50:23 -0500
+Message-Id: <20181117015024.5771-3-lyude@redhat.com>
 In-Reply-To: <20181117015024.5771-1-lyude@redhat.com>
 References: <20181117015024.5771-1-lyude@redhat.com>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.39]); Sat, 17 Nov 2018 01:50:33 +0000 (UTC)
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Sat, 17 Nov 2018 01:50:34 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Many DRM drivers unfortunately need to be able to access the DP AUX
-channel during their suspend/resume callbacks. This leads to an annoying
-catch-22: drivers which try to ensure that the DP AUX channel is
-initialized and ready may need to runtime-resume the device housing the
-channel, which would lead to a deadlock between runtime power management
-and drm_dp_aux->hw_mutex.
+Now that we have ->pre_transfer() and ->post_transfer() for DP AUX
+channel devices, we can implement these hooks in order to ensure that
+the GPU is actually woken up before AUX transactions happen. This fixes
+/dev/drm_dp_aux* not working while the GPU is suspended, along with some
+more rare issues where the GPU might runtime-suspend if the time between
+two DP AUX channel transactions ends up being longer then the runtime
+suspend delay (sometimes observed on KASAN kernels where everything is
+slow).
 
-So: add a simple set of optional hooks that drivers can implement in
-order to perform such setup before hw_mutex is locked, then clean up
-afterwards. We additionally add the drm_dp_aux_get() and
-drm_dp_aux_put() functions so that users of the AUX channel that need to
-prepare the AUX channel ahead of time to avoid other kinds of locking
-version can do so. We'll need this if we ever want to have a universal
-dp_mst_status debugfs node, since dumping the MST topology without
-having the AUX channel prepared beforehand would lead to lock inversion.
+Additionally, we add tracking for the current task that's running our
+runtime suspend/resume callbacks. We need this in order to avoid trying
+to grab a runtime power reference when nouveau uses the DP AUX channel
+for MST suspend/resume in it's runtime susped/resume callbacks.
 
 Signed-off-by: Lyude Paul <lyude@redhat.com>
 ---
- drivers/gpu/drm/drm_dp_helper.c |  5 ++
- include/drm/drm_dp_helper.h     | 91 +++++++++++++++++++++++++++++++++
- 2 files changed, 96 insertions(+)
+ drivers/gpu/drm/nouveau/nouveau_connector.c | 36 +++++++++++++++++++++
+ drivers/gpu/drm/nouveau/nouveau_drm.c       | 12 ++++++-
+ drivers/gpu/drm/nouveau/nouveau_drv.h       |  8 +++++
+ 3 files changed, 55 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/drm_dp_helper.c b/drivers/gpu/drm/drm_dp_helper.c
-index 6d483487f2b4..fb1912a2f246 100644
---- a/drivers/gpu/drm/drm_dp_helper.c
-+++ b/drivers/gpu/drm/drm_dp_helper.c
-@@ -224,6 +224,10 @@ static int drm_dp_dpcd_access(struct drm_dp_aux *aux, u8 request,
- 	msg.buffer = buffer;
- 	msg.size = size;
+diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
+index fd80661dff92..d2e9752f2f91 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_connector.c
++++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
+@@ -1171,6 +1171,38 @@ nouveau_connector_hotplug(struct nvif_notify *notify)
+ 	return NVIF_NOTIFY_KEEP;
+ }
  
-+	ret = drm_dp_aux_get(aux);
-+	if (ret)
++static int
++nouveau_connector_aux_pre_xfer(struct drm_dp_aux *obj)
++{
++	struct nouveau_connector *nv_connector =
++		container_of(obj, typeof(*nv_connector), aux);
++	struct nouveau_drm *drm = nouveau_drm(nv_connector->base.dev);
++	int ret;
++
++	if (nouveau_is_rpm_worker(drm))
++		return 0;
++
++	ret = pm_runtime_get_sync(drm->dev->dev);
++	if (ret < 0 && ret != -EAGAIN)
 +		return ret;
 +
- 	mutex_lock(&aux->hw_mutex);
++	return 0;
++}
++
++static void
++nouveau_connector_aux_post_xfer(struct drm_dp_aux *obj)
++{
++	struct nouveau_connector *nv_connector =
++		container_of(obj, typeof(*nv_connector), aux);
++	struct nouveau_drm *drm = nouveau_drm(nv_connector->base.dev);
++
++	if (nouveau_is_rpm_worker(drm))
++		return;
++
++	pm_runtime_mark_last_busy(drm->dev->dev);
++	pm_runtime_put_autosuspend(drm->dev->dev);
++}
++
+ static ssize_t
+ nouveau_connector_aux_xfer(struct drm_dp_aux *obj, struct drm_dp_aux_msg *msg)
+ {
+@@ -1341,6 +1373,10 @@ nouveau_connector_create(struct drm_device *dev, int index)
+ 	case DRM_MODE_CONNECTOR_DisplayPort:
+ 	case DRM_MODE_CONNECTOR_eDP:
+ 		nv_connector->aux.dev = dev->dev;
++		nv_connector->aux.pre_transfer =
++			nouveau_connector_aux_pre_xfer;
++		nv_connector->aux.post_transfer =
++			nouveau_connector_aux_post_xfer;
+ 		nv_connector->aux.transfer = nouveau_connector_aux_xfer;
+ 		ret = drm_dp_aux_register(&nv_connector->aux);
+ 		if (ret) {
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
+index 2b2baf6e0e0d..4323e9e61c2e 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drm.c
++++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
+@@ -859,6 +859,7 @@ nouveau_pmops_runtime_suspend(struct device *dev)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev);
+ 	struct drm_device *drm_dev = pci_get_drvdata(pdev);
++	struct nouveau_drm *drm = nouveau_drm(drm_dev);
+ 	int ret;
  
- 	/*
-@@ -265,6 +269,7 @@ static int drm_dp_dpcd_access(struct drm_dp_aux *aux, u8 request,
+ 	if (!nouveau_pmops_runtime()) {
+@@ -866,6 +867,8 @@ nouveau_pmops_runtime_suspend(struct device *dev)
+ 		return -EBUSY;
+ 	}
  
- unlock:
- 	mutex_unlock(&aux->hw_mutex);
-+	drm_dp_aux_put(aux);
++	drm->rpm_task = current;
++
+ 	nouveau_switcheroo_optimus_dsm();
+ 	ret = nouveau_do_suspend(drm_dev, true);
+ 	pci_save_state(pdev);
+@@ -873,6 +876,8 @@ nouveau_pmops_runtime_suspend(struct device *dev)
+ 	pci_ignore_hotplug(pdev);
+ 	pci_set_power_state(pdev, PCI_D3cold);
+ 	drm_dev->switch_power_state = DRM_SWITCH_POWER_DYNAMIC_OFF;
++
++	drm->rpm_task = NULL;
  	return ret;
  }
  
-diff --git a/include/drm/drm_dp_helper.h b/include/drm/drm_dp_helper.h
-index 3314e91f6eb3..b0208bc666d1 100644
---- a/include/drm/drm_dp_helper.h
-+++ b/include/drm/drm_dp_helper.h
-@@ -1243,6 +1243,46 @@ struct drm_dp_aux {
- 	struct mutex hw_mutex;
- 	struct work_struct crc_work;
- 	u8 crc_count;
-+	/**
-+	 * @pre_transfer:
-+	 *
-+	 * An optional callback for drivers that if implemented, will be
-+	 * called before locking @hw_mutex and beginning a DP AUX transaction.
-+	 *
-+	 * Drivers can use this to perform any initialization that might be
-+	 * required before the DP AUX channel is ready to be used, such as
-+	 * waking up the device housing the AUX channel.
-+	 *
-+	 * This callback may be called more then once for a single
-+	 * transaction.
-+	 *
-+	 * See also:
-+	 * drm_dp_aux_get()
-+	 * drm_dp_aux_put()
-+	 *
-+	 * Returns:
-+	 *
-+	 * 0 on success, negative error code on failure.
-+	 */
-+	int (*pre_transfer)(struct drm_dp_aux *aux);
-+	/**
-+	 * @post_transfer:
-+	 *
-+	 * An optional callback for drivers that if implemented, will be
-+	 * called after having performed a DP AUX transaction.
-+	 *
-+	 * Drivers can use this to undo any initialization that was performed
-+	 * by @pre_transfer, such as putting the device housing the DP AUX
-+	 * channel back to sleep.
-+	 *
-+	 * This callback may be called more then once for a single
-+	 * transaction.
-+	 *
-+	 * See also:
-+	 * drm_dp_aux_get()
-+	 * drm_dp_aux_put()
-+	 */
-+	void (*post_transfer)(struct drm_dp_aux *aux);
- 	ssize_t (*transfer)(struct drm_dp_aux *aux,
- 			    struct drm_dp_aux_msg *msg);
- 	/**
-@@ -1259,6 +1299,57 @@ struct drm_dp_aux {
- 	struct drm_dp_aux_cec cec;
+@@ -881,6 +886,7 @@ nouveau_pmops_runtime_resume(struct device *dev)
+ {
+ 	struct pci_dev *pdev = to_pci_dev(dev);
+ 	struct drm_device *drm_dev = pci_get_drvdata(pdev);
++	struct nouveau_drm *drm = nouveau_drm(drm_dev);
+ 	struct nvif_device *device = &nouveau_drm(drm_dev)->client.device;
+ 	int ret;
+ 
+@@ -889,11 +895,13 @@ nouveau_pmops_runtime_resume(struct device *dev)
+ 		return -EBUSY;
+ 	}
+ 
++	drm->rpm_task = current;
++
+ 	pci_set_power_state(pdev, PCI_D0);
+ 	pci_restore_state(pdev);
+ 	ret = pci_enable_device(pdev);
+ 	if (ret)
+-		return ret;
++		goto out;
+ 	pci_set_master(pdev);
+ 
+ 	ret = nouveau_do_resume(drm_dev, true);
+@@ -905,6 +913,8 @@ nouveau_pmops_runtime_resume(struct device *dev)
+ 	/* Monitors may have been connected / disconnected during suspend */
+ 	schedule_work(&nouveau_drm(drm_dev)->hpd_work);
+ 
++out:
++	drm->rpm_task = NULL;
+ 	return ret;
+ }
+ 
+diff --git a/drivers/gpu/drm/nouveau/nouveau_drv.h b/drivers/gpu/drm/nouveau/nouveau_drv.h
+index 0b2191fa96f7..e8d4203ddfb4 100644
+--- a/drivers/gpu/drm/nouveau/nouveau_drv.h
++++ b/drivers/gpu/drm/nouveau/nouveau_drv.h
+@@ -212,6 +212,8 @@ struct nouveau_drm {
+ 	bool have_disp_power_ref;
+ 
+ 	struct dev_pm_domain vga_pm_domain;
++
++	struct task_struct *rpm_task;
  };
  
-+/**
-+ * drm_dp_aux_get() - Prepare a DP AUX channel for a transaction
-+ * @aux: DisplayPort AUX channel to initialize
-+ *
-+ * If implemented by the driver, this function will invoke the
-+ * &drm_dp_aux.pre_transfer callback for the given @aux device. This function
-+ * can be used to setup the DP AUX channel before going under lock, in order
-+ * to avoid lock inversion between the DP AUX channel setup and
-+ * &drm_dp_aux.hw_mutex. This function is implicitly called by
-+ * drm_dp_dpcd_read(), drm_dp_dpcd_readb(), drm_dp_dpcd_write(), and
-+ * drm_dp_dpcd_writeb().
-+ *
-+ * Each call to drm_dp_aux_get() must have a matching drm_dp_aux_put() call to
-+ * cleanup any resources that were required for the DP AUX transaction.
-+ *
-+ * See also:
-+ * drm_dp_aux_put()
-+ *
-+ * Returns:
-+ * 0 on success, negative error code on failure
-+ */
-+static inline int drm_dp_aux_get(struct drm_dp_aux *aux)
+ static inline struct nouveau_drm *
+@@ -231,6 +233,12 @@ int nouveau_pmops_suspend(struct device *);
+ int nouveau_pmops_resume(struct device *);
+ bool nouveau_pmops_runtime(void);
+ 
++static inline bool
++nouveau_is_rpm_worker(struct nouveau_drm *drm)
 +{
-+	if (aux->pre_transfer)
-+		return aux->pre_transfer(aux);
-+	else
-+		return 0;
++	return drm->rpm_task == current;
 +}
 +
-+/**
-+ * drm_dp_aux_put() - Cleanup after performing a transaction on a DP AUX
-+ * channel
-+ * @aux: DisplayPort AUX channel to cleanup
-+ *
-+ * If implemented by the driver, this function will invoke the
-+ * &drm_dp_aux.post_transfer callback for the given @aux device. This function
-+ * is implicitly called by drm_dp_dpcd_read(), drm_dp_dpcd_readb(),
-+ * drm_dp_dpcd_write(), and drm_dp_dpcd_writeb().
-+ *
-+ * Each call to drm_dp_aux_get() must have a matching drm_dp_aux_put() call to
-+ * cleanup any resources that were required for the DP AUX transaction.
-+ *
-+ * See also:
-+ * drm_dp_aux_get()
-+ */
-+static inline void drm_dp_aux_put(struct drm_dp_aux *aux)
-+{
-+	if (aux->post_transfer)
-+		aux->post_transfer(aux);
-+}
-+
- ssize_t drm_dp_dpcd_read(struct drm_dp_aux *aux, unsigned int offset,
- 			 void *buffer, size_t size);
- ssize_t drm_dp_dpcd_write(struct drm_dp_aux *aux, unsigned int offset,
+ #include <nvkm/core/tegra.h>
+ 
+ struct drm_device *
 -- 
 2.19.1
 
