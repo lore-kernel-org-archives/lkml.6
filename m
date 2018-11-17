@@ -2,419 +2,192 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
-	SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97DFCC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:57:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBE9C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:59:06 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3CFAB208E3
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:57:00 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gge7vm75"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3CFAB208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id B05B62086B
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:59:06 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B05B62086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730058AbeKQMLs (ORCPT
+        id S1730116AbeKQMN4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 07:11:48 -0500
-Received: from mail-wm1-f65.google.com ([209.85.128.65]:56100 "EHLO
-        mail-wm1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1727116AbeKQMLs (ORCPT
+        Sat, 17 Nov 2018 07:13:56 -0500
+Received: from mail-it1-f199.google.com ([209.85.166.199]:54114 "EHLO
+        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729714AbeKQMNz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 07:11:48 -0500
-Received: by mail-wm1-f65.google.com with SMTP id y139so299581wmc.5;
-        Fri, 16 Nov 2018 17:56:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=uWpQtf82s0PB0ThQG0O44RcARRP03jabPosqnDBtD3c=;
-        b=gge7vm75xcxBJNNlUNfmvesrRcG0KEZOSvxCbsGytam21iIV+OE6L1lUrbBCdNllvZ
-         rFJJxCs6uK1/aY+B2oGNwsg23dbo9FdCjmY9ll0uQ5hlvYuYAn3EplWRqOIXe8EXt1JD
-         gmaQyAwebWASlCQSBhI6VO34oPxUXCD0aLnLLgq7KPqU3r4nPjxSm4beTSwyYa7Lc4Pv
-         xUNDmtK18hK3Q44HEovars5q+DBAPTSebg+N4VO3oOAZo/o5drfUqytMD4g82DUzydQK
-         Sjssd7EgFkUCHv1CIij6LFgtDrjkAltI3HbbsRlJISbzRIBLO1MeIXS56K/nEuPIXcFY
-         SPlw==
+        Sat, 17 Nov 2018 07:13:55 -0500
+Received: by mail-it1-f199.google.com with SMTP id i12so587560ita.3
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 17:59:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=uWpQtf82s0PB0ThQG0O44RcARRP03jabPosqnDBtD3c=;
-        b=j78yBuwDJo47tzZEUYBCExyzL1XNaAgToCGD26TzArNRG0FhqEB7GJZf1dT6IoKs+8
-         geGxNgYZmg5byZRH+n8l0y10A27I1MUFkayzg9jkVqJ0s3vIUPlCw0aguO/imvySoInF
-         vRQ9nu+40d34H+eEeFkJ8SSoeSMN6saexBSCEx0fri3lrWOxrkffK2WpAPTpVdiCJtmq
-         MurWe8h7SIT2vDgUdoPLDbp9XyRxfERAxhYz1uYPU69WiBlRuug7QYAyW8y2tU9tHRCx
-         CNJ4sAf7swdzDwjq3lIW6F/StsB8Jm7HyevLLC39kDfyzNRuc8ym+yEl4CY134QJCPRv
-         n/tQ==
-X-Gm-Message-State: AGRZ1gIshukUubM9hsXT0z2X55TyjXguh8gVDZ1SrOaAO9LklbPuqMdn
-        vaoSH4RuqK67DDZ1bqbuXb8=
-X-Google-Smtp-Source: AJdET5eO6n9PEgAXn8zxKoKsTeF4omrX4oCjL1X7et2sxcK5BBiuvHpjkWrxe8+/TBN+vQdJ+cJOdw==
-X-Received: by 2002:a7b:c0d2:: with SMTP id s18mr395009wmh.66.1542419814213;
-        Fri, 16 Nov 2018 17:56:54 -0800 (PST)
-Received: from flashbox ([2a01:4f8:10b:24a5::2])
-        by smtp.gmail.com with ESMTPSA id d4sm21806712wrp.89.2018.11.16.17.56.53
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Nov 2018 17:56:53 -0800 (PST)
-Date:   Fri, 16 Nov 2018 18:56:51 -0700
-From:   Nathan Chancellor <natechancellor@gmail.com>
-To:     Michal Simek <michal.simek@xilinx.com>
-Cc:     Nick Desaulniers <ndesaulniers@google.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        linux-gpio@vger.kernel.org,
-        Linux ARM <linux-arm-kernel@lists.infradead.org>,
-        LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] pinctrl: zynq: Use define directive for
- PIN_CONFIG_IO_STANDARD
-Message-ID: <20181117015651.GA28503@flashbox>
-References: <20181101005724.9622-1-natechancellor@gmail.com>
- <68ae935a-aec3-915c-bfe6-d69bfb93d702@xilinx.com>
- <20181107085503.GA31517@flashbox>
- <9d52cd84-440f-9a40-d0ec-1397abb24c98@xilinx.com>
- <CAKwvOdmkC1LqMokhQUebpEZRoWWWwtQnbm8xGwiwdBy9UOMT5Q@mail.gmail.com>
- <af717713-9e51-139d-1206-1682b83ae434@xilinx.com>
- <20181108150116.GA2830@flashbox>
- <40a17c3e-6c81-6f59-cff6-003a91e10b29@xilinx.com>
- <20181109153626.GA6494@flashbox>
- <fd608da5-c1fb-ed55-bf74-7ed476d58c12@xilinx.com>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=CKN80Le++Xdl4rcxucG8qgsVXVJYO7dxqPvIQjJYI+E=;
+        b=YPmd/re+tkrNWlb7tAo6T+KZk7McatzYCsBvvxl0Swcobh8cNFNj+erEVCxrLQQI5e
+         hFg81+O7BzPmgVEqnUrG3bSkZztGXvi6IigOqHV8lm7fsYoKxhbvvR4y2iMN5yXGUY5E
+         QbOUUH4OgN2EUAeguSBmrnS7rsB6zq8clWR/JEfpaxIF388wBhIft//2bhocEHl9+qpC
+         r2OMYVH18IeqcFrJwVEOTsJdHEz6NaVBuMlGW8o1PRQqVsHvHQjsuD4Hxh3bn7ybJ04x
+         HgeFj/LoDVVlVpT8kjpjj7XZUboWifGc8V/20UMtzj6lLQSkC0XOz+lJy4Pa7BxXE2hE
+         hCog==
+X-Gm-Message-State: AA+aEWZJ6Eek/b5eLOPrWJhDF8aDMgoDjq9/xx7EdBW2/51la0IZf+BZ
+        6vQToUYghMW4coEz14me8DG+Ib7EjWsXCZ0nU7aINcZnYu4x
+X-Google-Smtp-Source: AJdET5fi0Mpih58sNZ0CyK8gV4SDBKIPFR1AVnpl0/OTlLj+fItM67Impn+dYfRpZmqcCzODPtGxyY2VYhejB9qcJ6WEuhleYoAk
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <fd608da5-c1fb-ed55-bf74-7ed476d58c12@xilinx.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Received: by 2002:a24:5fc6:: with SMTP id r189-v6mr508230itb.28.1542419943160;
+ Fri, 16 Nov 2018 17:59:03 -0800 (PST)
+Date:   Fri, 16 Nov 2018 17:59:03 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000ce83ad057ad2a0f4@google.com>
+Subject: KASAN: use-after-free Read in sctp_epaddr_lookup_transport
+From:   syzbot <syzbot+aad231d51b1923158444@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
+        netdev@vger.kernel.org, nhorman@tuxdriver.com,
+        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 09:40:45AM +0100, Michal Simek wrote:
-> On 09. 11. 18 16:36, Nathan Chancellor wrote:
-> > On Fri, Nov 09, 2018 at 10:33:00AM +0100, Michal Simek wrote:
-> >> On 08. 11. 18 16:01, Nathan Chancellor wrote:
-> >>> On Thu, Nov 08, 2018 at 07:45:42AM +0100, Michal Simek wrote:
-> >>>> On 07. 11. 18 18:48, Nick Desaulniers wrote:
-> >>>>> On Wed, Nov 7, 2018 at 1:01 AM Michal Simek <michal.simek@xilinx.com> wrote:
-> >>>>>>
-> >>>>>> On 07. 11. 18 9:55, Nathan Chancellor wrote:
-> >>>>>>> On Wed, Nov 07, 2018 at 09:46:12AM +0100, Michal Simek wrote:
-> >>>>>>>> On 01. 11. 18 1:57, Nathan Chancellor wrote:
-> >>>>>>>>> Clang warns when one enumerated type is implicitly converted to another:
-> >>>>>>>>>
-> >>>>>>>>> drivers/pinctrl/pinctrl-zynq.c:985:18: warning: implicit conversion from
-> >>>>>>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
-> >>>>>>>>> type 'enum pin_config_param' [-Wenum-conversion]
-> >>>>>>>>>         {"io-standard", PIN_CONFIG_IOSTANDARD, zynq_iostd_lvcmos18},
-> >>>>>>>>>         ~               ^~~~~~~~~~~~~~~~~~~~~
-> >>>>>>>>> drivers/pinctrl/pinctrl-zynq.c:990:16: warning: implicit conversion from
-> >>>>>>>>> enumeration type 'enum zynq_pin_config_param' to different enumeration
-> >>>>>>>>> type 'enum pin_config_param' [-Wenum-conversion]
-> >>>>>>>>>         = { PCONFDUMP(PIN_CONFIG_IOSTANDARD, "IO-standard", NULL, true),
-> >>>>>>>>>             ~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> >>>>>>>>> ./include/linux/pinctrl/pinconf-generic.h:163:11: note: expanded from
-> >>>>>>>>> macro 'PCONFDUMP'
-> >>>>>>>>>         .param = a, .display = b, .format = c, .has_arg = d     \
-> >>>>>>>>>                  ^
-> >>>>>>>>> 2 warnings generated.
-> >>>>>>>>
-> >>>>>>>> This is interesting. I have never tried to use llvm for building the
-> >>>>>>>> kernel. Do you have any description how this can be done?
-> >>>>>>>>
-> >>>>>>>
-> >>>>>>> Depending on what version of Clang you have access to, it is usually just as
-> >>>>>>> simple as running 'make ARCH=arm CC=clang CROSS_COMPILE=arm-linux-gnueabi-'.
-> >>>>>>>
-> >>>>>>> Clang 7.0+ is recommended but 6.0 might work too.
-> >>>>>>
-> >>>>>> TBH I would expect to download container and run this there to make sure
-> >>>>>> that I don't break anything else.
-> >>>>>
-> >>>>> This is the first request we've had for a container in order to test a
-> >>>>> patch.  If it comes up again from other folks, I think it makes sense
-> >>>>> to create one.  Until then, its nice to have.  It's definitely
-> >>>>> overkill for this patch.
-> >>>>
-> >>>> I have played with it to see that error and here are some steps I did.
-> >>>>
-> >>>> docker run --name test-clang -it --rm debian:latest bash
-> >>>> apt-get update
-> >>>> apt-get install gcc-arm-linux-gnueabi gcc-aarch64-linux-gnu clang git bc
-> >>>> build-essential bison flex make llvm vim libssl-dev sparse
-> >>>>
-> >>>> git clone
-> >>>> git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git --depth 1
-> >>>> cd linux
-> >>>>
-> >>>> export ARCH=arm64
-> >>>> export CROSS_COMPILE=aarch64-linux-gnu-
-> >>>>
-> >>>> make defconfig
-> >>>
-> >>> This should also have 'CC=clang' because compiler detection happens in
-> >>> Kconfig now so compiler flags get properly set. Other than that, looks
-> >>> good and I was able to build pinctrl-zynq.o without any issues with
-> >>> those commands.
-> >>
-> >> For arm32 I am still getting compilation issue (arm64 is fine)
-> >> Below are my steps and version I use. Do you know what could be the
-> >> problem?
-> >>
-> >> Thanks,
-> >> Michal
-> >>
-> >> root@1e15921e6d15:~/linux# arm-linux-gnueabi-gcc --version
-> >> arm-linux-gnueabi-gcc (Debian 6.3.0-18) 6.3.0 20170516
-> >> Copyright (C) 2016 Free Software Foundation, Inc.
-> >> This is free software; see the source for copying conditions.  There is NO
-> >> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-> >>
-> >> root@1e15921e6d15:~/linux# clang --version
-> >> clang version 3.8.1-24 (tags/RELEASE_381/final)
-> >> Target: x86_64-pc-linux-gnu
-> >> Thread model: posix
-> >> InstalledDir: /usr/bin
-> >>
-> >>
-> >> export ARCH=arm
-> >> export CROSS_COMPILE=arm-linux-gnuaebi-
-> >> make CC=clang defconfig
-> >> make CC=clang drivers/pinctrl/pinctrl-zynq.o
-> >>
-> >> and I get
-> >> clang: error: unsupported argument '-W' to option 'Wa,'
-> >> scripts/Makefile.build:305: recipe for target 'scripts/mod/empty.o' failed
-> >> make[2]: *** [scripts/mod/empty.o] Error 1
-> >> scripts/Makefile.build:546: recipe for target 'scripts/mod' failed
-> >>
-> > 
-> > Ah because Debian's regular Clang is ancient.
-> > 
-> > For testing, we use the builds from apt.llvm.org. Commands assuming
-> > you're using the normal Debian image:
-> > 
-> > curl https://apt.llvm.org/llvm-snapshot.gpg.key | apt-key add -
-> > echo "deb http://apt.llvm.org/stretch/ llvm-toolchain-stretch main" | tee -a /etc/apt/sources.list
-> > apt-get update -qq && apt-get install -y clang-8
-> > 
-> > Then use `CC=clang-8' instead of 'CC=clang' for all make invocations.
-> > 
-> 
-> Still I see some issues. Log below.
-> 
-> Thanks,
-> Michal
-> 
-> root@1e15921e6d15:~/linux# git reset --hard v4.20-rc2
-> HEAD is now at ccda4af0f4b9 Linux 4.20-rc2
-> root@1e15921e6d15:~/linux#
-> root@1e15921e6d15:~/linux#
-> root@1e15921e6d15:~/linux# export ARCH=arm
-> root@1e15921e6d15:~/linux# export CROSS_COMPILE=arm-linux-gnuaebi-
-> root@1e15921e6d15:~/linux# export CC=clang-8
-> root@1e15921e6d15:~/linux# make CC=clang-8 defconfig
->   HOSTCC  scripts/kconfig/conf.o
->   HOSTLD  scripts/kconfig/conf
-> *** Default configuration is based on 'multi_v7_defconfig'
-> #
-> # configuration written to .config
-> #
-> root@1e15921e6d15:~/linux# make CC=clang-8
-> scripts/kconfig/conf  --syncconfig Kconfig
->   SYSHDR  arch/arm/include/generated/uapi/asm/unistd-common.h
->   SYSHDR  arch/arm/include/generated/uapi/asm/unistd-oabi.h
->   SYSHDR  arch/arm/include/generated/uapi/asm/unistd-eabi.h
->   UPD     include/config/kernel.release
->   UPD     include/generated/uapi/linux/version.h
->   UPD     include/generated/utsrelease.h
->   SYSNR   arch/arm/include/generated/asm/unistd-nr.h
->   SYSTBL  arch/arm/include/generated/calls-oabi.S
->   SYSTBL  arch/arm/include/generated/calls-eabi.S
->   CC      kernel/bounds.s
-> clang: warning: argument unused during compilation: '-Wa,-W'
-> [-Wunused-command-line-argument]
-> clang: warning: argument unused during compilation: '-Wa,-march=armv7-a'
-> [-Wunused-command-line-argument]
->   UPD     include/generated/bounds.h
->   CC      arch/arm/kernel/asm-offsets.s
-> clang: warning: argument unused during compilation: '-Wa,-W'
-> [-Wunused-command-line-argument]
-> clang: warning: argument unused during compilation: '-Wa,-march=armv7-a'
-> [-Wunused-command-line-argument]
->   UPD     include/generated/asm-offsets.h
->   CALL    scripts/checksyscalls.sh
-> clang: warning: argument unused during compilation: '-Wa,-W'
-> [-Wunused-command-line-argument]
-> clang: warning: argument unused during compilation: '-Wa,-march=armv7-a'
-> [-Wunused-command-line-argument]
->   CC      scripts/mod/empty.o
-> clang: error: unsupported argument '-W' to option 'Wa,'
-> scripts/Makefile.build:293: recipe for target 'scripts/mod/empty.o' failed
-> make[2]: *** [scripts/mod/empty.o] Error 1
-> scripts/Makefile.build:518: recipe for target 'scripts/mod' failed
-> make[1]: *** [scripts/mod] Error 2
-> Makefile:1075: recipe for target 'scripts' failed
-> make: *** [scripts] Error 2
-> root@1e15921e6d15:~/linux# clang-8 --version
-> clang version 8.0.0-svn345496-1~exp1+0~20181029105533.852~1.gbpf10f36
-> (trunk)
-> Target: x86_64-pc-linux-gnu
-> Thread model: posix
-> InstalledDir: /usr/bin
-> root@1e15921e6d15:~/linux# arm-linux-gnueabi-gcc --version
-> arm-linux-gnueabi-gcc (Debian 6.3.0-18) 6.3.0 20170516
-> Copyright (C) 2016 Free Software Foundation, Inc.
-> This is free software; see the source for copying conditions.  There is NO
-> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-> 
-> 
+Hello,
 
-I think it's the 'export CC=clang-8'; without it, I can get past that
-point without any issues. Our continuous integration setup provides CC
-to make on the same line, without an export.
+syzbot found the following crash on:
 
-https://github.com/ClangBuiltLinux/continuous-integration/blob/master/driver.sh
+HEAD commit:    a97b95653383 drivers/net/ethernet/qlogic/qed/qed_rdma.h: f..
+git tree:       net
+console output: https://syzkaller.appspot.com/x/log.txt?x=1217d26d400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d86f24333880b605
+dashboard link: https://syzkaller.appspot.com/bug?extid=aad231d51b1923158444
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b5bb0b400000
 
-https://travis-ci.com/ClangBuiltLinux/continuous-integration/jobs/159007956
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+aad231d51b1923158444@syzkaller.appspotmail.com
 
-root@faf632577e0d:/# git clone --depth=1 git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git /root/linux
-Cloning into '/root/linux'...
-remote: Counting objects: 66322, done.
-remote: Compressing objects: 100% (63190/63190), done.
-remote: Total 66322 (delta 5162), reused 31233 (delta 2202)
-Receiving objects: 100% (66322/66322), 177.05 MiB | 10.66 MiB/s, done.
-Resolving deltas: 100% (5162/5162), done.
-Checking out files: 100% (62467/62467), done.
-root@faf632577e0d:/# cd /root/linux
-root@faf632577e0d:~/linux# export ARCH=arm
-root@faf632577e0d:~/linux# export CROSS_COMPILE=arm-linux-gnueabi-
-root@faf632577e0d:~/linux# make CC=clang-8 defconfig
-  HOSTCC  scripts/basic/fixdep
-  HOSTCC  scripts/kconfig/conf.o
-  YACC    scripts/kconfig/zconf.tab.c
-  LEX     scripts/kconfig/zconf.lex.c
-  HOSTCC  scripts/kconfig/zconf.tab.o
-  HOSTLD  scripts/kconfig/conf
-*** Default configuration is based on 'multi_v7_defconfig'
-#
-# configuration written to .config
-#
-root@faf632577e0d:~/linux# make CC=clang-8
-  SYSHDR  arch/arm/include/generated/uapi/asm/unistd-common.h
-  SYSHDR  arch/arm/include/generated/uapi/asm/unistd-oabi.h
-  SYSHDR  arch/arm/include/generated/uapi/asm/unistd-eabi.h
-  UPD     include/config/kernel.release
-  WRAP    arch/arm/include/generated/uapi/asm/bitsperlong.h
-  WRAP    arch/arm/include/generated/uapi/asm/bpf_perf_event.h
-  WRAP    arch/arm/include/generated/uapi/asm/errno.h
-  WRAP    arch/arm/include/generated/uapi/asm/ioctl.h
-  WRAP    arch/arm/include/generated/uapi/asm/ipcbuf.h
-  WRAP    arch/arm/include/generated/uapi/asm/msgbuf.h
-  WRAP    arch/arm/include/generated/uapi/asm/param.h
-  WRAP    arch/arm/include/generated/uapi/asm/poll.h
-  WRAP    arch/arm/include/generated/uapi/asm/resource.h
-  WRAP    arch/arm/include/generated/uapi/asm/sembuf.h
-  WRAP    arch/arm/include/generated/uapi/asm/shmbuf.h
-  WRAP    arch/arm/include/generated/uapi/asm/siginfo.h
-  WRAP    arch/arm/include/generated/uapi/asm/socket.h
-  WRAP    arch/arm/include/generated/uapi/asm/sockios.h
-  WRAP    arch/arm/include/generated/uapi/asm/termbits.h
-  WRAP    arch/arm/include/generated/uapi/asm/termios.h
-  WRAP    arch/arm/include/generated/asm/compat.h
-  WRAP    arch/arm/include/generated/asm/current.h
-  WRAP    arch/arm/include/generated/asm/early_ioremap.h
-  WRAP    arch/arm/include/generated/asm/emergency-restart.h
-  WRAP    arch/arm/include/generated/asm/exec.h
-  WRAP    arch/arm/include/generated/asm/extable.h
-  WRAP    arch/arm/include/generated/asm/irq_regs.h
-  WRAP    arch/arm/include/generated/asm/kdebug.h
-  WRAP    arch/arm/include/generated/asm/local.h
-  WRAP    arch/arm/include/generated/asm/local64.h
-  WRAP    arch/arm/include/generated/asm/mm-arch-hooks.h
-  WRAP    arch/arm/include/generated/asm/msi.h
-  WRAP    arch/arm/include/generated/asm/parport.h
-  WRAP    arch/arm/include/generated/asm/preempt.h
-  WRAP    arch/arm/include/generated/asm/rwsem.h
-  WRAP    arch/arm/include/generated/asm/seccomp.h
-  WRAP    arch/arm/include/generated/asm/segment.h
-  WRAP    arch/arm/include/generated/asm/serial.h
-  WRAP    arch/arm/include/generated/asm/simd.h
-  WRAP    arch/arm/include/generated/asm/sizes.h
-  WRAP    arch/arm/include/generated/asm/timex.h
-  WRAP    arch/arm/include/generated/asm/trace_clock.h
-  UPD     include/generated/uapi/linux/version.h
-  UPD     include/generated/utsrelease.h
-  SYSNR   arch/arm/include/generated/asm/unistd-nr.h
-  GEN     arch/arm/include/generated/asm/mach-types.h
-  SYSTBL  arch/arm/include/generated/calls-oabi.S
-  SYSTBL  arch/arm/include/generated/calls-eabi.S
-  CC      kernel/bounds.s
-  UPD     include/generated/bounds.h
-  UPD     include/generated/timeconst.h
-  CC      arch/arm/kernel/asm-offsets.s
-  UPD     include/generated/asm-offsets.h
-  CALL    scripts/checksyscalls.sh
-  HOSTCC  scripts/dtc/dtc.o
-  HOSTCC  scripts/dtc/flattree.o
-  HOSTCC  scripts/dtc/fstree.o
-  HOSTCC  scripts/dtc/data.o
-  HOSTCC  scripts/dtc/livetree.o
-  HOSTCC  scripts/dtc/treesource.o
-  HOSTCC  scripts/dtc/srcpos.o
-  HOSTCC  scripts/dtc/checks.o
-  HOSTCC  scripts/dtc/util.o
-  LEX     scripts/dtc/dtc-lexer.lex.c
-  YACC    scripts/dtc/dtc-parser.tab.h
-  HOSTCC  scripts/dtc/dtc-lexer.lex.o
-  YACC    scripts/dtc/dtc-parser.tab.c
-  HOSTCC  scripts/dtc/dtc-parser.tab.o
-  HOSTLD  scripts/dtc/dtc
-  CC      scripts/mod/empty.o
-  HOSTCC  scripts/mod/mk_elfconfig
-  MKELF   scripts/mod/elfconfig.h
-  HOSTCC  scripts/mod/modpost.o
-  CC      scripts/mod/devicetable-offsets.s
-  UPD     scripts/mod/devicetable-offsets.h
-  HOSTCC  scripts/mod/file2alias.o
-  HOSTCC  scripts/mod/sumversion.o
-  HOSTLD  scripts/mod/modpost
-  HOSTCC  scripts/kallsyms
-  HOSTCC  scripts/conmakehash
-  HOSTCC  scripts/sortextable
-  HOSTCC  scripts/asn1_compiler
-  HOSTCC  scripts/extract-cert
-  CHK     include/generated/compile.h
-  UPD     include/generated/compile.h
-  CC      init/main.o
-  CC      init/version.o
-  CC      init/do_mounts.o
-  CC      init/do_mounts_rd.o
-  CC      init/do_mounts_initrd.o
-  CC      init/initramfs.o
-  CC      init/calibrate.o
-  CC      init/init_task.o
-  AR      init/built-in.a
-  HOSTCC  usr/gen_init_cpio
-  GEN     usr/initramfs_data.cpio
-  AS      usr/initramfs_data.o
-  AR      usr/built-in.a
-  CC      arch/arm/vfp/vfpmodule.o
-  AS      arch/arm/vfp/entry.o
-  AS      arch/arm/vfp/vfphw.o
-  CC      arch/arm/vfp/vfpsingle.o
-  CC      arch/arm/vfp/vfpdouble.o
-  AR      arch/arm/vfp/built-in.a
-  LDS     arch/arm/vdso/vdso.lds
-  CC      arch/arm/vdso/vgettimeofday.o
-  AS      arch/arm/vdso/datapage.o
-  VDSO    arch/arm/vdso/vdso.so.raw
-  HOSTCC  arch/arm/vdso/vdsomunge
-  MUNGE   arch/arm/vdso/vdso.so.dbg
-  OBJCOPY arch/arm/vdso/vdso.so
-  AS      arch/arm/vdso/vdso.o
-  AR      arch/arm/vdso/built-in.a
-  CC      arch/arm/kernel/elf.o
-  AS      arch/arm/kernel/entry-common.o
-  CC      arch/arm/kernel/irq.o
+==================================================================
+BUG: KASAN: use-after-free in sctp_epaddr_lookup_transport+0xacb/0xb20  
+net/sctp/input.c:971
+Read of size 8 at addr ffff8881cde426b0 by task syz-executor3/18110
+
+CPU: 1 PID: 18110 Comm: syz-executor3 Not tainted 4.20.0-rc2+ #187
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  sctp_epaddr_lookup_transport+0xacb/0xb20 net/sctp/input.c:971
+  sctp_endpoint_lookup_assoc+0xe0/0x290 net/sctp/endpointola.c:338
+  sctp_addr_id2transport+0x1f8/0x370 net/sctp/socket.c:279
+  sctp_getsockopt_peer_addr_params+0x17c/0x1260 net/sctp/socket.c:5613
+  sctp_getsockopt+0x44f9/0x7d32 net/sctp/socket.c:7462
+  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:2937
+  __sys_getsockopt+0x1ad/0x390 net/socket.c:1939
+  __do_sys_getsockopt net/socket.c:1950 [inline]
+  __se_sys_getsockopt net/socket.c:1947 [inline]
+  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1947
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f177b561c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
+RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457569
+RDX: 0000000000000009 RSI: 0000000000000084 RDI: 0000000000000006
+RBP: 000000000072c180 R08: 000000002044fffc R09: 0000000000000000
+R10: 0000000020a68000 R11: 0000000000000246 R12: 00007f177b5626d4
+R13: 00000000004c8318 R14: 00000000004ce200 R15: 00000000ffffffff
+
+Allocated by task 18068:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
+  kmalloc include/linux/slab.h:546 [inline]
+  kzalloc include/linux/slab.h:741 [inline]
+  sctp_association_new+0x14e/0x2290 net/sctp/associola.c:311
+  sctp_sendmsg_new_asoc+0x39c/0x11f0 net/sctp/socket.c:1723
+  sctp_sendmsg+0x18a5/0x1da0 net/sctp/socket.c:2086
+  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  __sys_sendto+0x3d7/0x670 net/socket.c:1788
+  __do_sys_sendto net/socket.c:1800 [inline]
+  __se_sys_sendto net/socket.c:1796 [inline]
+  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 18110:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kfree+0xcf/0x230 mm/slab.c:3817
+  sctp_association_destroy net/sctp/associola.c:437 [inline]
+  sctp_association_put+0x264/0x350 net/sctp/associola.c:889
+  sctp_transport_destroy net/sctp/transport.c:180 [inline]
+  sctp_transport_put+0x186/0x1f0 net/sctp/transport.c:340
+  sctp_hash_cmp+0x1ef/0x260 net/sctp/input.c:825
+  __rhashtable_lookup include/linux/rhashtable.h:483 [inline]
+  rhltable_lookup include/linux/rhashtable.h:566 [inline]
+  sctp_epaddr_lookup_transport+0x4fe/0xb20 net/sctp/input.c:967
+  sctp_endpoint_lookup_assoc+0xe0/0x290 net/sctp/endpointola.c:338
+  sctp_addr_id2transport+0x1f8/0x370 net/sctp/socket.c:279
+  sctp_getsockopt_peer_addr_params+0x17c/0x1260 net/sctp/socket.c:5613
+  sctp_getsockopt+0x44f9/0x7d32 net/sctp/socket.c:7462
+  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:2937
+  __sys_getsockopt+0x1ad/0x390 net/socket.c:1939
+  __do_sys_getsockopt net/socket.c:1950 [inline]
+  __se_sys_getsockopt net/socket.c:1947 [inline]
+  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1947
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8881cde42600
+  which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 176 bytes inside of
+  4096-byte region [ffff8881cde42600, ffff8881cde43600)
+The buggy address belongs to the page:
+page:ffffea0007379080 count:1 mapcount:0 mapping:ffff8881da800dc0 index:0x0  
+compound_mapcount: 0
+flags: 0x2fffc0000010200(slab|head)
+raw: 02fffc0000010200 ffffea0007379008 ffffea0007377f08 ffff8881da800dc0
+raw: 0000000000000000 ffff8881cde42600 0000000100000001 0000000000000000
+page dumped because: kasan: bad access detected
+
+Memory state around the buggy address:
+  ffff8881cde42580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8881cde42600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+> ffff8881cde42680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                      ^
+  ffff8881cde42700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881cde42780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+kobject: 'loop5' (00000000f0e4ffac): fill_kobj_path: path  
+= '/devices/virtual/block/loop5'
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
+syzbot can test patches for this bug, for details see:
+https://goo.gl/tpsmEJ#testing-patches
