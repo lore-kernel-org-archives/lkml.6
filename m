@@ -2,124 +2,109 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 381F5C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 15:39:59 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 6EA43C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 15:40:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03F9E2080F
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 15:39:59 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03F9E2080F
+	by mail.kernel.org (Postfix) with ESMTP id 331592082A
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 15:40:29 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oLK+C4DC"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 331592082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726590AbeKRB47 (ORCPT
+        id S1726625AbeKRB53 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 20:56:59 -0500
-Received: from mail-ot1-f68.google.com ([209.85.210.68]:36964 "EHLO
-        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbeKRB47 (ORCPT
+        Sat, 17 Nov 2018 20:57:29 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:44483 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbeKRB53 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 20:56:59 -0500
-Received: by mail-ot1-f68.google.com with SMTP id 40so24051411oth.4;
-        Sat, 17 Nov 2018 07:39:57 -0800 (PST)
+        Sat, 17 Nov 2018 20:57:29 -0500
+Received: by mail-lj1-f195.google.com with SMTP id k19-v6so22811955lji.11
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 07:40:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=sender:date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=Z5YgbpJlOGlsCs/Qszrw3AKYAxTimHtgBBVeHcgnDTM=;
+        b=oLK+C4DCmWTlR6seVeJc1k52Rv9gIwuEQ7PVmvhfpxrDyVghKas4JnjBM/30zB8J56
+         t/Yt2L5/sT9fLmkAel4OU1oXUUWqdHGFa+anWaEkUfn0p5ByssjJTsj3l8fU82AJ7eLb
+         IHF4BvJ2vWZ1gpoIwo30f6iyKFK2cCWXL95wrofcG0MQDE8SlYoAaYJNwC/tsVsvPS+L
+         WHEGH9s5qzNNVCAIl10GaEi5qE1wLdAMXQ158prDxnC8rf7qV6wZrI94O+BD3CdjGOir
+         P3lA0011jBJpz5JVnI2kG5yMVcF2f0HTYf928U5581fUoJ4iZTPCyl+YDwOHVxNS1AiQ
+         jwpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=Vkxih/5I2a9Dk2orrHMlbXwUiFatKi2Hk3u6eepeUl4=;
-        b=DP88k781DED/K3fNJRZizis6Ft5ZzkC7PtEojBPRTc8ets2VB+Z1r3py1SOlCLT2u6
-         aQd9jyYulp0kfo+gspHmxSmbsK6F+DoTsIPAN4U7zNFna8n5NW6YbpoHXSYYH1qYwER8
-         HUjiTAEk4dV58yp04K9Mfksx+APzICWipIbxRWwiNFKAesdil+GsuZDaNX1riUwENxbS
-         SCrToVGScT6JYW7CpHuYO1rG/gCTmh+w41xhaW2MKxLD11v/0oNDhyju4iF8gGQdX4cC
-         q7162bQPuke1uqqmVkKA5GSSLNx2YaUz2+lryPgpdUohjsPRJwyfeWnQSYnhK3vbqqp3
-         3sdQ==
-X-Gm-Message-State: AGRZ1gJpzlbtvTXjuQ5XVIfpBy7HKw2RPKiMGnGKVmdAj6l/Mpng+MmA
-        SlNf4Ai1VOR3DcmN6l2/lA==
-X-Google-Smtp-Source: AJdET5c+5lq0BjI0IJMXpVc5Mc0AH5DK1Ca6njAtJM/45kHqvAb89CO1FsPOxRW49Guv5714vIXlYg==
-X-Received: by 2002:a9d:1715:: with SMTP id i21mr8684442ota.149.1542469196843;
-        Sat, 17 Nov 2018 07:39:56 -0800 (PST)
-Received: from localhost ([166.137.105.180])
-        by smtp.gmail.com with ESMTPSA id t43sm14866544oti.73.2018.11.17.07.39.55
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 17 Nov 2018 07:39:56 -0800 (PST)
-Date:   Sat, 17 Nov 2018 09:39:54 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Lubomir Rintel <lkundrak@v3.sk>
-Cc:     Mauro Carvalho Chehab <mchehab@kernel.org>,
-        Jonathan Corbet <corbet@lwn.net>, linux-media@vger.kernel.org,
-        Mark Rutland <mark.rutland@arm.com>,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        James Cameron <quozl@laptop.org>, Pavel Machek <pavel@ucw.cz>,
-        Libin Yang <lbyang@marvell.com>,
-        Albert Wang <twang13@marvell.com>
-Subject: Re: [PATCH v2 03/11] media: dt-bindings: marvell,mmp2-ccic: Add
- Marvell MMP2 camera
-Message-ID: <20181117153954.GA28966@bogus>
-References: <20181112003520.577592-1-lkundrak@v3.sk>
- <20181112003520.577592-4-lkundrak@v3.sk>
+        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
+         :references:mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Z5YgbpJlOGlsCs/Qszrw3AKYAxTimHtgBBVeHcgnDTM=;
+        b=D8p0dZimtZWrtzRL+UhseOZ2ojhV40Mt4zmN5pCT51fGxHM5GbV6+vAaPhcbLQv93A
+         bYpQRtFhmXUqPgr0epD5NdkATrz5M1K8PICwjr2B3zZt0Iy04+3hn8UDLRdnCZSQmBTL
+         tYTorSn6xtOSKwerexxIDm+JeFB12gQkSVN82s2VjjwpmcdGs79VRpHzLkPBiFlHfoCQ
+         xXk7UuxC+cibiteCZsvx02Bvahrldp2drZdrJppAW7FXoW/Hs/vjPVxlV2MpHGpfuXVx
+         E7e8CpJTHjbt8QIbMSlgt5H9cs7SQyWf0CUSGnm3DMZ/tx+G9pEEJqzHzO58nC6nYJ5o
+         vUVg==
+X-Gm-Message-State: AGRZ1gL9Bb+1JQXbTaBVkIuM39eJ5la/NyDJvyyq2Lwx0CWWABtM9gXu
+        63IUA5tRtNZ1NpTJsIMAuuKP5KAJ
+X-Google-Smtp-Source: AJdET5eOigZ3PqZc9w3tFrsZo2QbCkLSAmHGuviDuSqhQPCmv2OcfvWm5l4Dl7aBQCiv/fJGjX6wwg==
+X-Received: by 2002:a2e:3603:: with SMTP id d3-v6mr8105559lja.46.1542469225770;
+        Sat, 17 Nov 2018 07:40:25 -0800 (PST)
+Received: from xi.terra (c-74bee655.07-184-6d6c6d4.bbcust.telenor.se. [85.230.190.116])
+        by smtp.gmail.com with ESMTPSA id l3-v6sm5209455ljg.21.2018.11.17.07.40.24
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 17 Nov 2018 07:40:25 -0800 (PST)
+Received: from johan by xi.terra with local (Exim 4.91)
+        (envelope-from <johan@kernel.org>)
+        id 1gO2hv-0001Xl-50; Sat, 17 Nov 2018 16:40:27 +0100
+Date:   Sat, 17 Nov 2018 16:40:27 +0100
+From:   Johan Hovold <johan@kernel.org>
+To:     Nishad Kamdar <nishadkamdar@gmail.com>
+Cc:     Johan Hovold <johan@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Alex Elder <elder@kernel.org>,
+        Rui Miguel Silva <rmfrfs@gmail.com>,
+        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: greybus: arche-platform: Switch to the gpio
+ descriptor interface
+Message-ID: <20181117154027.GV19900@localhost>
+References: <20181116151740.GA12250@nishad>
+ <20181116160622.GQ19900@localhost>
+ <20181117071109.GA14187@nishad>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181112003520.577592-4-lkundrak@v3.sk>
+In-Reply-To: <20181117071109.GA14187@nishad>
 User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 01:35:12AM +0100, Lubomir Rintel wrote:
-> Add Marvell MMP2 camera host interface.
+On Sat, Nov 17, 2018 at 12:41:11PM +0530, Nishad Kamdar wrote:
+> On Fri, Nov 16, 2018 at 05:06:22PM +0100, Johan Hovold wrote:
+> > On Fri, Nov 16, 2018 at 08:47:44PM +0530, Nishad Kamdar wrote:
+> > > Use the gpiod interface instead of the deprecated
+> > > old non-descriptor interface.
+> > > 
+> > > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
+> > > ---
+> > 
+> > Always include a change log here after the cut-off line so we know what
+> > changed since previous versions.
+> > 
+> > Also include the patch revision in the Subject (e.g. "[PATCH v3]
+> > staging: greybus: ...").
+> > 
 > 
-> Signed-off-by: Lubomir Rintel <lkundrak@v3.sk>
-> ---
->  .../bindings/media/marvell,mmp2-ccic.txt      | 30 +++++++++++++++++++
->  1 file changed, 30 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
-> 
-> diff --git a/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
-> new file mode 100644
-> index 000000000000..a9c536e58dda
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/media/marvell,mmp2-ccic.txt
-> @@ -0,0 +1,30 @@
-> +Marvell MMP2 camera host interface
-> +
-> +Required properties:
-> + - compatible: Should be "marvell,mmp2-ccic"
-> + - reg: register base and size
-> + - interrupts: the interrupt number
-> + - any required generic properties defined in video-interfaces.txt
-> +
-> +Optional properties:
-> + - clocks: input clock (see clock-bindings.txt)
-> + - clock-output-names: should contain the name of the clock driving the
-> +                       sensor master clock MCLK
+> Ok, but this is the first patch version that I submitted
+> for greybus: arche-platform.
 
-Missing #clock-cells and clock-names.
+Ah, sorry. I thought this was an update of the arche-apb-ctrl patch.
 
-How many ports and endpoints also needs to be documented.
-
-> +
-> +Example:
-> +
-> +	camera0: camera@d420a000 {
-> +		compatible = "marvell,mmp2-ccic";
-> +		reg = <0xd420a000 0x800>;
-> +		interrupts = <42>;
-> +		clocks = <&soc_clocks MMP2_CLK_CCIC0>;
-> +		clock-names = "CCICAXICLK";
-> +		#clock-cells = <0>;
-> +		clock-output-names = "mclk";
-> +
-> +		port {
-> +			camera0_0: endpoint {
-> +				remote-endpoint = <&ov7670_0>;
-> +			};
-> +		};
-> +	};
-> -- 
-> 2.19.1
-> 
+Johan
