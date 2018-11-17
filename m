@@ -2,122 +2,184 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.5 required=3.0 tests=INCLUDES_PATCH,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B74F5C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 14:54:14 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FA2C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 14:56:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 78BFB2080F
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 14:54:14 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=g.ncu.edu.tw header.i=@g.ncu.edu.tw header.b="WVjj3stn"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78BFB2080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=g.ncu.edu.tw
+	by mail.kernel.org (Postfix) with ESMTP id A95A02080F
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 14:56:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A95A02080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726540AbeKRBLF (ORCPT
+        id S1726582AbeKRBNK (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 20:11:05 -0500
-Received: from mail-oi1-f193.google.com ([209.85.167.193]:44017 "EHLO
-        mail-oi1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbeKRBLE (ORCPT
+        Sat, 17 Nov 2018 20:13:10 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:41562 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbeKRBNJ (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 20:11:04 -0500
-Received: by mail-oi1-f193.google.com with SMTP id u18so3798021oie.10
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 06:54:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=g.ncu.edu.tw; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=IMpAl41uA4NZzmux89GC9Cn0TuXoGZWdv6wH9YzGp6k=;
-        b=WVjj3stnKhZttJrXFDElqeDIHJV6pPgwc8ifhmervh5+OIDnKpS1mj0YuYYvNGBTJH
-         XyJnm4xiHVUqhPo5nuu+ge1JxCQQvlnrI0B8Zahj5qim4A1iYXcOzsvU+V4JasMhmozl
-         mjSRCNJHMznQ/QGYEZb8RXSYu0doc5cZ1v1kA=
+        Sat, 17 Nov 2018 20:13:09 -0500
+Received: by mail-ot1-f68.google.com with SMTP id u16so23685647otk.8;
+        Sat, 17 Nov 2018 06:56:14 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=IMpAl41uA4NZzmux89GC9Cn0TuXoGZWdv6wH9YzGp6k=;
-        b=Eq5vrg0m0i06UL9AddvUi27kWM9QflEhyDEpCJcVmrC3ECLYKZmJnEH86Km9SGn9k4
-         hJSfjK7vEGQvpZCAx2fO72wnFeMOl/pgNJILvL/XluI7FytCAIs689EydoeCQDNu68DX
-         /PxtY5k0uxqBiLEWgBoqNw0HRrBgbeztIfqNise3O6yMJTjImXL/g/SAGKr8ZtIlFqOI
-         Z7pj6ce3ebtoAdGOD0dJYXsJmk22gJVVpFCODOj4kCZtaNjhXWpjFG3EqDkW4gb7GMy5
-         YQ08NFsHw46F7qa9wEhd3Ae5uS+h5vIMXs+iGOeqcyoUzQpkImYQaD96pXhOSbpG58h0
-         lS5Q==
-X-Gm-Message-State: AGRZ1gJXVi29Jp33iFOVJhBcEn0Dfac3PcUm9vvXkphGvEvlGJ8mKcjL
-        /nqmwZ70Q2Llw7DFn5T3gjFo2Q==
-X-Google-Smtp-Source: AJdET5fsoJOE6ehZnONA50s14YU7GQhPA5U61Z8mQP7btFVWIJOUeUzqCiEmyBPl2ZBJcBLvydAW5Q==
-X-Received: by 2002:aca:eccb:: with SMTP id k194mr3142410oih.104.1542466448799;
-        Sat, 17 Nov 2018 06:54:08 -0800 (PST)
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com. [209.85.210.53])
-        by smtp.gmail.com with ESMTPSA id i34sm1631487otd.44.2018.11.17.06.54.07
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 17 Nov 2018 06:54:08 -0800 (PST)
-Received: by mail-ot1-f53.google.com with SMTP id w25so23244748otm.13;
-        Sat, 17 Nov 2018 06:54:07 -0800 (PST)
-X-Received: by 2002:a9d:620f:: with SMTP id g15mr8403657otj.296.1542466447144;
- Sat, 17 Nov 2018 06:54:07 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=MaovVDU9suPGhRw9MjYAV8PfTX89FW9K+ma72kiSakQ=;
+        b=nml5i8q0WJsFLwmClBlCUB+TYRY3PDdTbOQOoOp1xF30HkFP8XeEqy41oMTIywnEAn
+         JZ4R9eJlF+qoM9mZMR12pMlkCxhR4XFXxQIvw2JW7NyBewj4F8ULDVxmjjsLx5hzo3H4
+         CiPdTVlviIho8ZuunRBxxR4Uvx5yA2UL5XHsEz+EkD97YcgU1uvPgrG+ZL1tjfUbiDat
+         +JkG+4n2jRw+IHbci6/cKOHhbDPL5WAk7VQ0Hb1/zQA+SBQcvLuc24rfyasGOygLv5wp
+         dUJhgflxiMnhFmaMq5ARWuvORAm0YY+ho2Wz8YEHA23fhxZuN++jqaJU+lcCnJTWhsNn
+         DN1Q==
+X-Gm-Message-State: AGRZ1gLTlecBsZgy2F/eJrZZpeVNs90S9/atSrNH0GQDUuGqXt9PHDVK
+        WrtlTMWN7ahvmWXCQBLiPg==
+X-Google-Smtp-Source: AJdET5eQEwxbTKnj1HyY1sWLtqabJOA5qufvVLBaMgBfK0lSPOSdHdq1CUYvrWBHz8bxh7BGSCFI7g==
+X-Received: by 2002:a9d:4682:: with SMTP id z2mr8825693ote.104.1542466573814;
+        Sat, 17 Nov 2018 06:56:13 -0800 (PST)
+Received: from localhost ([166.137.105.180])
+        by smtp.gmail.com with ESMTPSA id d71sm1201221oic.7.2018.11.17.06.56.12
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 17 Nov 2018 06:56:12 -0800 (PST)
+Date:   Sat, 17 Nov 2018 08:56:11 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Biao Huang <biao.huang@mediatek.com>
+Cc:     davem@davemloft.net, honghui.zhang@mediatek.com,
+        yt.shen@mediatek.com, liguo.zhang@mediatek.com,
+        mark.rutland@arm.com, nelson.chang@mediatek.com,
+        matthias.bgg@gmail.com, netdev@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org,
+        linux-mediatek@lists.infradead.org, joabreu@synopsys.com,
+        andrew@lunn.ch
+Subject: Re: [v3, PATCH 2/2] dt-binding: mediatek-dwmac: add binding document
+ for MediaTek MT2712 DWMAC
+Message-ID: <20181117145611.GA26013@bogus>
+References: <1542359926-28800-1-git-send-email-biao.huang@mediatek.com>
+ <1542359926-28800-2-git-send-email-biao.huang@mediatek.com>
 MIME-Version: 1.0
-References: <20181105.101610.1437737564548154497.davem@davemloft.net>
- <20181114160126.4445-3-starnight@g.ncu.edu.tw> <20181116.203200.1638720313402188457.davem@davemloft.net>
-In-Reply-To: <20181116.203200.1638720313402188457.davem@davemloft.net>
-From:   Jian-Hong Pan <starnight@g.ncu.edu.tw>
-Date:   Sat, 17 Nov 2018 22:54:08 +0800
-X-Gmail-Original-Message-ID: <CAC=mGzhs0smXzRxn1k9jDFsaLNAkpCd7rMs--E-SafQVTob7JQ@mail.gmail.com>
-Message-ID: <CAC=mGzhs0smXzRxn1k9jDFsaLNAkpCd7rMs--E-SafQVTob7JQ@mail.gmail.com>
-Subject: Re: [PATCH V3 2/7] net: lorawan: Add LoRaWAN socket module
-To:     "David S. Miller" <davem@davemloft.net>
-Cc:     =?UTF-8?Q?Andreas_F=C3=A4rber?= <afaerber@suse.de>,
-        netdev@vger.kernel.org,
-        "<linux-arm-kernel@lists.infradead.org\\" 
-        <linux-arm-kernel@lists.infradead.org>,
-        "linux-kernel@vger.kernel.org>," <linux-kernel@vger.kernel.org>,
-        Marcel Holtmann <marcel@holtmann.org>,
-        Dollar Chen <dollar.chen@wtmec.com>,
-        Ken Yu <ken.yu@rakwireless.com>,
-        linux-wpan - ML <linux-wpan@vger.kernel.org>,
-        Stefan Schmidt <stefan@datenfreihafen.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542359926-28800-2-git-send-email-biao.huang@mediatek.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-David Miller <davem@davemloft.net> =E6=96=BC 2018=E5=B9=B411=E6=9C=8817=E6=
-=97=A5 =E9=80=B1=E5=85=AD =E4=B8=8B=E5=8D=8812:32=E5=AF=AB=E9=81=93=EF=BC=
-=9A
->
-> From: Jian-Hong Pan <starnight@g.ncu.edu.tw>
-> Date: Thu, 15 Nov 2018 00:01:23 +0800
->
-> > +#define      lrw_get_mac_cb(skb)     ((struct lrw_mac_cb *)skb->cb)
->
-> Please make this a static inline function.  If the identifier is all lowe=
-rcase
-> programmers expect it to be real code not a CPP macro.
+On Fri, Nov 16, 2018 at 05:18:46PM +0800, Biao Huang wrote:
+> The commit adds the device tree binding documentation for the MediaTek DWMAC
+> found on MediaTek MT2712.
+> 
+> Change-Id: I3728666bf65927164bd82fa8dddb90df8270bd44
+> Signed-off-by: Biao Huang <biao.huang@mediatek.com>
+> ---
+>  .../devicetree/bindings/net/mediatek-dwmac.txt     |   77 ++++++++++++++++++++
+>  1 file changed, 77 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+> 
+> diff --git a/Documentation/devicetree/bindings/net/mediatek-dwmac.txt b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+> new file mode 100644
+> index 0000000..7fd56e0
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/net/mediatek-dwmac.txt
+> @@ -0,0 +1,77 @@
+> +MediaTek DWMAC glue layer controller
+> +
+> +This file documents platform glue layer for stmmac.
+> +Please see stmmac.txt for the other unchanged properties.
+> +
+> +The device node has following properties.
+> +
+> +Required properties:
+> +- compatible:  Should be "mediatek,mt2712-gmac" for MT2712 SoC
+> +- reg:  Address and length of the register set for the device
+> +- interrupts:  Should contain the MAC interrupts
 
-Okay!  Sure
+How many?
 
-> > +#define      LORAWAN_MODULE_NAME     "lorawan"
-> > +
-> > +#define      LRW_DBG_STR(fmt)        LORAWAN_MODULE_NAME": "fmt
-> > +#define      lrw_info(fmt, ...)      (pr_info(LRW_DBG_STR(fmt), ##__VA=
-_ARGS__))
-> > +#define      lrw_dbg(fmt, ...)       (pr_debug(LRW_DBG_STR(fmt), ##__V=
-A_ARGS__))
->
-> Just define "pr_fmt()" appropriately and you don't need to play these kin=
-ds
-> of games.
->
-> Set pr_fmt() and call pr_info() and pr_debug() directly.
+> +- interrupt-names: Should contain a list of interrupt names corresponding to
+> +	the interrupts in the interrupts property, if available.
+> +	Should be "macirq" for the main MAC IRQ
+> +- clocks: Must contain a phandle for each entry in clock-names.
+> +- clock-names: The name of the clock listed in the clocks property. These are
+> +	"axi", "apb", "mac_ext", "mac_parent", "ptp_ref", "ptp_parent", "ptp_top"
+> +	for MT2712 SoC
 
-After checking printk.h again, I get the idea of the comment.
-"pr_fmt()" is more convenient!
+Clocks should represent the physical clocks connected to a block. Parent 
+clocks are not in that category.
 
-Thanks for the reviewing.  I will make new patches.
+> +- mac-address: See ethernet.txt in the same directory
+> +- phy-mode: See ethernet.txt in the same directory
+> +
+> +Optional properties:
+> +- tx-delay: TX clock delay macro value. Range is 0~31. Default is 0.
+> +	It should be defined for rgmii/rgmii-rxid/mii interface.
+> +- rx-delay: RX clock delay macro value. Range is 0~31. Default is 0.
+> +	It should be defined for rgmii/rgmii-txid/mii/rmii interface.
+> +- fine-tune: This property will select coarse-tune delay or fine delay
+> +	for rgmii interface.
+> +	If fine-tune delay is enabled, tx-delay/rx-delay is 170+/-50ps
+> +	per stage.
+> +	Else coarse-tune delay is enabled, tx-delay/rx-delay is 0.55+/-0.2ns
+> +	per stage.
+> +	This property do not apply to non-rgmii PHYs.
+> +	Only coarse-tune delay is supported for mii/rmii PHYs.
 
-Jian-Hong Pan
+Perhaps the delays should be in ps and the driver can figure out 
+fine-tune or not based on the value.
+
+> +- rmii-rxc: Reference clock of rmii is from external PHYs,
+> +	and it can be connected to TXC or RXC pin on MT2712 SoC.
+> +	If ref_clk <--> TXC, disable it.
+> +	Else ref_clk <--> RXC, enable it.
+> +- txc-inverse: Inverse tx clock for mii/rgmii.
+> +	Inverse tx clock inside MAC relative to reference clock for rmii,
+> +	and it rarely happen.
+> +- rxc-inverse: Inverse rx clock for mii/rgmii interfaces.
+> +	Inverse reference clock for rmii.
+
+These should all have vendor prefixes. 'snps' if these are all standard 
+GMAC controls or 'mediatek' if Mediatek specific.
+
+> +
+> +Example:
+> +	eth: ethernet@1101c000 {
+> +		compatible = "mediatek,mt2712-gmac";
+> +		reg = <0 0x1101c000 0 0x1300>;
+> +		interrupts = <GIC_SPI 237 IRQ_TYPE_LEVEL_LOW>;
+> +		interrupt-names = "macirq";
+> +		phy-mode ="rgmii-id";
+> +		mac-address = [00 55 7b b5 7d f7];
+> +		clock-names = "axi",
+> +			      "apb",
+> +			      "mac_ext",
+> +			      "mac_parent",
+> +			      "ptp_ref",
+> +			      "ptp_parent",
+> +			      "ptp_top";
+> +		clocks = <&pericfg CLK_PERI_GMAC>,
+> +			 <&pericfg CLK_PERI_GMAC_PCLK>,
+> +			 <&topckgen CLK_TOP_ETHER_125M_SEL>,
+> +			 <&topckgen CLK_TOP_ETHERPLL_125M>,
+> +			 <&topckgen CLK_TOP_ETHER_50M_SEL>,
+> +			 <&topckgen CLK_TOP_APLL1_D3>,
+> +			 <&topckgen CLK_TOP_APLL1>;
+> +		snps,txpbl = <32>;
+> +		snps,rxpbl = <32>;
+> +		snps,reset-gpio = <&pio 87 GPIO_ACTIVE_LOW>;
+> +		snps,reset-active-low;
+> +		tx-delay = <9>;
+> +		rx-delay = <9>;
+> +		fine-tune;
+> +		rmii-rxc;
+> +		txc-inverse;
+> +		rxc-inverse;
+> +	};
+> -- 
+> 1.7.9.5
+> 
