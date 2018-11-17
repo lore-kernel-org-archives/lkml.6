@@ -2,333 +2,108 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-5.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 19DBAC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 07:25:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E5F31C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 08:00:45 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B0CB620854
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 07:25:46 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9CCED2084A
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 08:00:45 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QKcG1uMk"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B0CB620854
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Syen7fyi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9CCED2084A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726037AbeKQRlb (ORCPT
+        id S1725964AbeKQSQd (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 12:41:31 -0500
-Received: from mail-pg1-f193.google.com ([209.85.215.193]:37287 "EHLO
-        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725850AbeKQRla (ORCPT
+        Sat, 17 Nov 2018 13:16:33 -0500
+Received: from mail-lj1-f194.google.com ([209.85.208.194]:35626 "EHLO
+        mail-lj1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725849AbeKQSQd (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 12:41:30 -0500
-Received: by mail-pg1-f193.google.com with SMTP id 80so11585496pge.4
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 23:25:44 -0800 (PST)
+        Sat, 17 Nov 2018 13:16:33 -0500
+Received: by mail-lj1-f194.google.com with SMTP id x85-v6so22304565ljb.2;
+        Sat, 17 Nov 2018 00:00:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:mime-version:content-disposition
-         :user-agent;
-        bh=VX7QHFAOCrCD1nBdRXQOeK4YOdx1qQiZskFq14Q/6bE=;
-        b=QKcG1uMk5mguJs6ml4Ff0XzrPgi0YjToxRglB+Z30Ecg8tFpDdExWqx3ZJxIpbqJGB
-         2o0UjdpjQtwAKlrlRGouqfDIyu3cEnYZLRrFoySmZcFAnQtlt+K7EECGrwDe4sDwVyCp
-         4hjam6JbFSowqzFfzBWb/pYfpIISOqsk2sNl2/5CYDi6dX4JWZr7z2Tx6HhB6sbdbq2I
-         bHfFZrtJKeubPk+UGbbK1v5zysB1azCoGxz2hpjU8JDUxu7ECfbjwbuB5gmv3+z2+AtI
-         Gmms3LjrjhT2OscOWTpWCbf0n6svTzT3U/1u0lQz2cokgraXK6gOI71F6EyclTlJK/5K
-         1i6Q==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=NPmVE6Z//7mdbjzZgiWeE1qLH0fiwOI7p2Z/iAYJijE=;
+        b=Syen7fyiequm7d8bQcmQPVz3JWVGqMMEXGPflRrAFD9ZmkkIkFhvE254qWtGkMxUx4
+         2VKUEvsKza2J7VjAI8SdkSYAuhSUMXIA1UgfFAN9gyNn87qOVFL196vERQR1fVhmyMxT
+         7V2LQATzn2aO9gMoY7NCfn1781wY4sQrip1XKlwgaYnMCQw88GhE5newQtWMewl6aeG8
+         K+CPtHqptc1Yg8O4vUhFina/4CUZCCs7sqzWq2ZzoTw4IWY8djL21szLfxtzYxdl3VJo
+         dLhccgR/BzrcasCK5Chvk/CqK6QmeN2uSitgZw7WPg9TQpfs8wACHNfN0WswN4F0PyoK
+         J1gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=VX7QHFAOCrCD1nBdRXQOeK4YOdx1qQiZskFq14Q/6bE=;
-        b=nd1wjysQhbSNMUJinNisCbInfICrXpRe2LS6Ij6VaJvOBcEVsRGdQ7HA4BhB830lkx
-         heT9RHhGMYIkn3Ubx85gMNCdoPfyZQFFsYMnSkx2yzqd/lDVT0917ztwWdeZ77O3AB/7
-         yy9V8vab/2LepBzK/G+/IMk+0IRfIG0I4qlG3XzSfPdytmApwlsd77ZAAhN1zECAdSA8
-         K4Yov6iRHCxka6bmOadHgxBWOs+7KjMTNiI2P9noC/BW2QHPqaLOmydiDGKeE4P8QrCJ
-         2BtiTmBGxFqeEPueNpBpagF7iPyGBVLK/WWQmSv/Q5G5chmOvAvLBChldBiKNWH8rYFp
-         nnRQ==
-X-Gm-Message-State: AGRZ1gKp7zCUTPhDT112Y5FyoyCBgnV/46QuR01CYaISS7xRWQKIqcRp
-        eQDHW6PyaZtu4TztXiRQx/c=
-X-Google-Smtp-Source: AJdET5dJ/9C6nW70QNBbWniqBIfDuTxwQJ9p8vISxQ6NAt6U1spMRzy24/2swiFtAYbTWWQ7+jIdlg==
-X-Received: by 2002:a63:160d:: with SMTP id w13mr13005300pgl.43.1542439543621;
-        Fri, 16 Nov 2018 23:25:43 -0800 (PST)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id t21sm23301867pgg.24.2018.11.16.23.25.40
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Nov 2018 23:25:43 -0800 (PST)
-Date:   Sat, 17 Nov 2018 12:55:36 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Johan Hovold <johan@kernel.org>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc:     Alex Elder <elder@kernel.org>, Rui Miguel Silva <rmfrfs@gmail.com>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] staging: greybus: arche-platform: Switch to the gpio
- descriptor interface
-Message-ID: <20181117072532.GA22371@nishad>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=NPmVE6Z//7mdbjzZgiWeE1qLH0fiwOI7p2Z/iAYJijE=;
+        b=tTHgjrsNxhmivOFAPSFmWlR8FXP9EfZO9jd8oypTDIakuSSZheM9J4FB1V8tnB1BdB
+         lDkXbBDBJIaKtudFjWMn+Dbq46zVr2BXWNmCTFZCGeo9no95ZMwzZCDY1OED0w+MfFpn
+         ofpXKh2vI6z0dbeU9XIFzBnVDyUpTTHfubCeDQVcyPOvyICL+/IU4XbcQ+9bCgsq/3Hs
+         ZSnFbTaWjy8hFFJ18RW4sxlfUeGyG58pw8N6nH6w9yqrscqkkkGE9t9+k23+GYealPnI
+         vzhPn+SI6Ne1MGpzkPl88VxlIuHS7NRwoC8T5KBOqkOWjJlgXvsGZ0187a+7wR+DNArl
+         33eA==
+X-Gm-Message-State: AGRZ1gJp4x82pMCz+rWE94Fw1cAb4/2r+CDVzmyahkzIQJ64gIwOlJUq
+        KJbJfZvgRcCWu0z2LhY3dROy3uyo4DBFCm/2zBc=
+X-Google-Smtp-Source: AFSGD/XssBmWLLbPiHcyqcnseW87gPuZGDVCIcUFNENgfL3/pFMO4SFW4iO5T4p4jZlZ9ZPnc5PFecJjNB7QstH4YcI=
+X-Received: by 2002:a2e:83d7:: with SMTP id s23-v6mr3436353ljh.139.1542441640429;
+ Sat, 17 Nov 2018 00:00:40 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+References: <20181031111444.3472-1-malat@debian.org> <CANiq72mj_iHvxqAEqhGoLT61Tc04-zN6f7Gv1jyNeb6d0R2LGw@mail.gmail.com>
+ <CAK7LNARyykVuHT1YQ_UWVMFRG-K3VQwEXtjGQxQE4Fgu4wQtDg@mail.gmail.com>
+In-Reply-To: <CAK7LNARyykVuHT1YQ_UWVMFRG-K3VQwEXtjGQxQE4Fgu4wQtDg@mail.gmail.com>
+From:   Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date:   Sat, 17 Nov 2018 09:00:29 +0100
+Message-ID: <CANiq72=UbXHZNDzqOJe7MQ5vZ1tiSD_YJNESG9g6-dcQ409BdQ@mail.gmail.com>
+Subject: Re: [PATCH] remove old GCC version implementation
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     malat@debian.org, Michal Marek <michal.lkml@markovi.net>,
+        linux-kbuild@vger.kernel.org,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Use the gpiod interface instead of the deprecated
-old non-descriptor interface.
+On Wed, Oct 31, 2018 at 5:14 PM Masahiro Yamada
+<yamada.masahiro@socionext.com> wrote:
+>
+> On Wed, Oct 31, 2018 at 8:28 PM Miguel Ojeda
+> <miguel.ojeda.sandonis@gmail.com> wrote:
+> >
+> > By the way, is it possible that scripts/ and similar stuff uses
+> > directly include/linux/compiler_attributes.h (whenever it hits
+> > mainline, see https://github.com/ojeda/linux/blob/compiler-attributes/include/linux/compiler_attributes.h
+> > )? It is a header that does not depend on anything, so it could easily
+> > be shared; and would avoid having to maintain two sets of attributes.
+> > Let me know, I can take a look at it if you think it is a good idea.
 
-Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
----
-Changes in v2:
- - Move comment to the same line as to what it applies to.
----
- drivers/staging/greybus/arche-platform.c | 119 ++++++++---------------
- 1 file changed, 41 insertions(+), 78 deletions(-)
+Landed a couple of weeks ago.
 
-diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
-index 4c36e88766e7..a5cea79d8e32 100644
---- a/drivers/staging/greybus/arche-platform.c
-+++ b/drivers/staging/greybus/arche-platform.c
-@@ -8,10 +8,9 @@
- 
- #include <linux/clk.h>
- #include <linux/delay.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/init.h>
- #include <linux/module.h>
--#include <linux/of_gpio.h>
- #include <linux/of_platform.h>
- #include <linux/pinctrl/consumer.h>
- #include <linux/platform_device.h>
-@@ -45,14 +44,14 @@ enum svc_wakedetect_state {
- 
- struct arche_platform_drvdata {
- 	/* Control GPIO signals to and from AP <=> SVC */
--	int svc_reset_gpio;
-+	struct gpio_desc *svc_reset;
-+	struct gpio_desc *svc_sysboot;
- 	bool is_reset_act_hi;
--	int svc_sysboot_gpio;
--	int wake_detect_gpio; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
-+	struct gpio_desc *wake_detect; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
- 
- 	enum arche_platform_state state;
- 
--	int svc_refclk_req;
-+	struct gpio_desc *svc_refclk_req;
- 	struct clk *svc_ref_clk;
- 
- 	struct pinctrl *pinctrl;
-@@ -85,9 +84,9 @@ static void arche_platform_set_wake_detect_state(
- 	arche_pdata->wake_detect_state = state;
- }
- 
--static inline void svc_reset_onoff(unsigned int gpio, bool onoff)
-+static inline void svc_reset_onoff(struct gpio_desc *gpio, bool onoff)
- {
--	gpio_set_value(gpio, onoff);
-+	gpiod_set_value(gpio, onoff);
- }
- 
- static int apb_cold_boot(struct device *dev, void *data)
-@@ -116,7 +115,6 @@ static int apb_poweroff(struct device *dev, void *data)
- static void arche_platform_wd_irq_en(struct arche_platform_drvdata *arche_pdata)
- {
- 	/* Enable interrupt here, to read event back from SVC */
--	gpio_direction_input(arche_pdata->wake_detect_gpio);
- 	enable_irq(arche_pdata->wake_detect_irq);
- }
- 
-@@ -160,7 +158,7 @@ static irqreturn_t arche_platform_wd_irq(int irq, void *devid)
- 
- 	spin_lock_irqsave(&arche_pdata->wake_lock, flags);
- 
--	if (gpio_get_value(arche_pdata->wake_detect_gpio)) {
-+	if (gpiod_get_value(arche_pdata->wake_detect)) {
- 		/* wake/detect rising */
- 
- 		/*
-@@ -224,10 +222,10 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
- 
- 	dev_info(arche_pdata->dev, "Booting from cold boot state\n");
- 
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
-+	svc_reset_onoff(arche_pdata->svc_reset,
- 			arche_pdata->is_reset_act_hi);
- 
--	gpio_set_value(arche_pdata->svc_sysboot_gpio, 0);
-+	gpiod_set_value(arche_pdata->svc_sysboot, 0);
- 	usleep_range(100, 200);
- 
- 	ret = clk_prepare_enable(arche_pdata->svc_ref_clk);
-@@ -238,7 +236,7 @@ arche_platform_coldboot_seq(struct arche_platform_drvdata *arche_pdata)
- 	}
- 
- 	/* bring SVC out of reset */
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
-+	svc_reset_onoff(arche_pdata->svc_reset,
- 			!arche_pdata->is_reset_act_hi);
- 
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_ACTIVE);
-@@ -259,10 +257,10 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
- 
- 	dev_info(arche_pdata->dev, "Switching to FW flashing state\n");
- 
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
-+	svc_reset_onoff(arche_pdata->svc_reset,
- 			arche_pdata->is_reset_act_hi);
- 
--	gpio_set_value(arche_pdata->svc_sysboot_gpio, 1);
-+	gpiod_set_value(arche_pdata->svc_sysboot, 1);
- 
- 	usleep_range(100, 200);
- 
-@@ -273,7 +271,7 @@ arche_platform_fw_flashing_seq(struct arche_platform_drvdata *arche_pdata)
- 		return ret;
- 	}
- 
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
-+	svc_reset_onoff(arche_pdata->svc_reset,
- 			!arche_pdata->is_reset_act_hi);
- 
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_FW_FLASHING);
-@@ -305,7 +303,7 @@ arche_platform_poweroff_seq(struct arche_platform_drvdata *arche_pdata)
- 	clk_disable_unprepare(arche_pdata->svc_ref_clk);
- 
- 	/* As part of exit, put APB back in reset state */
--	svc_reset_onoff(arche_pdata->svc_reset_gpio,
-+	svc_reset_onoff(arche_pdata->svc_reset,
- 			arche_pdata->is_reset_act_hi);
- 
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_OFF);
-@@ -435,6 +433,7 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	struct device *dev = &pdev->dev;
- 	struct device_node *np = dev->of_node;
- 	int ret;
-+	unsigned int flags;
- 
- 	arche_pdata = devm_kzalloc(&pdev->dev, sizeof(*arche_pdata),
- 				   GFP_KERNEL);
-@@ -444,61 +443,33 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	/* setup svc reset gpio */
- 	arche_pdata->is_reset_act_hi = of_property_read_bool(np,
- 							     "svc,reset-active-high");
--	arche_pdata->svc_reset_gpio = of_get_named_gpio(np,
--							"svc,reset-gpio",
--							0);
--	if (!gpio_is_valid(arche_pdata->svc_reset_gpio)) {
--		dev_err(dev, "failed to get reset-gpio\n");
--		return arche_pdata->svc_reset_gpio;
--	}
--	ret = devm_gpio_request(dev, arche_pdata->svc_reset_gpio, "svc-reset");
--	if (ret) {
--		dev_err(dev, "failed to request svc-reset gpio:%d\n", ret);
--		return ret;
--	}
--	ret = gpio_direction_output(arche_pdata->svc_reset_gpio,
--				    arche_pdata->is_reset_act_hi);
--	if (ret) {
--		dev_err(dev, "failed to set svc-reset gpio dir:%d\n", ret);
-+	if (arche_pdata->is_reset_act_hi)
-+		flags = GPIOD_OUT_HIGH;
-+	else
-+		flags = GPIOD_OUT_LOW;
-+
-+	arche_pdata->svc_reset = devm_gpiod_get(dev, "svc,reset-gpio", flags);
-+	if (IS_ERR(arche_pdata->svc_reset)) {
-+		ret = PTR_ERR(arche_pdata->svc_reset);
-+		dev_err(dev, "failed to request svc-reset GPIO:%d\n", ret);
- 		return ret;
- 	}
- 	arche_platform_set_state(arche_pdata, ARCHE_PLATFORM_STATE_OFF);
- 
--	arche_pdata->svc_sysboot_gpio = of_get_named_gpio(np,
--							  "svc,sysboot-gpio",
--							  0);
--	if (!gpio_is_valid(arche_pdata->svc_sysboot_gpio)) {
--		dev_err(dev, "failed to get sysboot gpio\n");
--		return arche_pdata->svc_sysboot_gpio;
--	}
--	ret = devm_gpio_request(dev, arche_pdata->svc_sysboot_gpio, "sysboot0");
--	if (ret) {
--		dev_err(dev, "failed to request sysboot0 gpio:%d\n", ret);
--		return ret;
--	}
--	ret = gpio_direction_output(arche_pdata->svc_sysboot_gpio, 0);
--	if (ret) {
--		dev_err(dev, "failed to set svc-reset gpio dir:%d\n", ret);
-+	arche_pdata->svc_sysboot = devm_gpiod_get(dev, "svc,sysboot-gpio",
-+						  GPIOD_OUT_LOW);
-+	if (IS_ERR(arche_pdata->svc_sysboot)) {
-+		ret = PTR_ERR(arche_pdata->svc_sysboot);
-+		dev_err(dev, "failed to request sysboot0 GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
- 	/* setup the clock request gpio first */
--	arche_pdata->svc_refclk_req = of_get_named_gpio(np,
--							"svc,refclk-req-gpio",
--							0);
--	if (!gpio_is_valid(arche_pdata->svc_refclk_req)) {
--		dev_err(dev, "failed to get svc clock-req gpio\n");
--		return arche_pdata->svc_refclk_req;
--	}
--	ret = devm_gpio_request(dev, arche_pdata->svc_refclk_req,
--				"svc-clk-req");
--	if (ret) {
--		dev_err(dev, "failed to request svc-clk-req gpio: %d\n", ret);
--		return ret;
--	}
--	ret = gpio_direction_input(arche_pdata->svc_refclk_req);
--	if (ret) {
--		dev_err(dev, "failed to set svc-clk-req gpio dir :%d\n", ret);
-+	arche_pdata->svc_refclk_req = devm_gpiod_get(dev, "svc,refclk-req-gpio",
-+						     GPIOD_IN);
-+	if (IS_ERR(arche_pdata->svc_refclk_req)) {
-+		ret = PTR_ERR(arche_pdata->svc_refclk_req);
-+		dev_err(dev, "failed to request svc-clk-req GPIO: %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -515,19 +486,11 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	arche_pdata->num_apbs = of_get_child_count(np);
- 	dev_dbg(dev, "Number of APB's available - %d\n", arche_pdata->num_apbs);
- 
--	arche_pdata->wake_detect_gpio = of_get_named_gpio(np,
--							  "svc,wake-detect-gpio",
--							  0);
--	if (arche_pdata->wake_detect_gpio < 0) {
--		dev_err(dev, "failed to get wake detect gpio\n");
--		return arche_pdata->wake_detect_gpio;
--	}
--
--	ret = devm_gpio_request(dev, arche_pdata->wake_detect_gpio,
--				"wake detect");
--	if (ret) {
--		dev_err(dev, "Failed requesting wake_detect gpio %d\n",
--			arche_pdata->wake_detect_gpio);
-+	arche_pdata->wake_detect = devm_gpiod_get(dev, "svc,wake-detect-gpio",
-+						  GPIOD_IN);
-+	if (IS_ERR(arche_pdata->wake_detect)) {
-+		ret = PTR_ERR(arche_pdata->wake_detect);
-+		dev_err(dev, "Failed requesting wake_detect GPIO %d\n", ret);
- 		return ret;
- 	}
- 
-@@ -538,7 +501,7 @@ static int arche_platform_probe(struct platform_device *pdev)
- 	spin_lock_init(&arche_pdata->wake_lock);
- 	mutex_init(&arche_pdata->platform_state_mutex);
- 	arche_pdata->wake_detect_irq =
--		gpio_to_irq(arche_pdata->wake_detect_gpio);
-+		gpiod_to_irq(arche_pdata->wake_detect);
- 
- 	ret = devm_request_threaded_irq(dev, arche_pdata->wake_detect_irq,
- 					arche_platform_wd_irq,
--- 
-2.17.1
+> No.
+> I want to share a header file between kernel and host-tools
+> only when we need to do so.
+>
+> In this case, it is wrong to use the linker magic for the host tool
+> if you look at the so ugly #if defined(__MACH__) part.
 
+Do you mean this line?
+
+  #define SECTION(name)   __attribute__((section("__TEXT, " #name)))
+
+I would say having exceptions is fine, i.e. the idea was to reduce
+"duplicated" definitions. In this case, the #define has a different
+name and style, so I would say it is clear.
+
+Anyway, if the policy is not sharing headers at all, that is fine!
+
+Cheers,
+Miguel
