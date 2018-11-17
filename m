@@ -2,101 +2,78 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-3.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 79F71C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:11:27 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AA78BC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:17:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4B0AD20815
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:11:27 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4B0AD20815
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id 6840520815
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:17:16 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 6840520815
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726765AbeKRC2d (ORCPT
+        id S1726734AbeKRCeX (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 21:28:33 -0500
-Received: from fllv0016.ext.ti.com ([198.47.19.142]:33868 "EHLO
-        fllv0016.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbeKRC2d (ORCPT
+        Sat, 17 Nov 2018 21:34:23 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:46515 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726065AbeKRCeX (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 21:28:33 -0500
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-        by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAHGApF5104482;
-        Sat, 17 Nov 2018 10:10:51 -0600
-Received: from DFLE114.ent.ti.com (dfle114.ent.ti.com [10.64.6.35])
-        by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAHGApIB022209
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 17 Nov 2018 10:10:51 -0600
-Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE114.ent.ti.com
- (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sat, 17
- Nov 2018 10:10:51 -0600
-Received: from dlep32.itg.ti.com (157.170.170.100) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Sat, 17 Nov 2018 10:10:51 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep32.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAHGApd4026481;
-        Sat, 17 Nov 2018 10:10:51 -0600
-Date:   Sat, 17 Nov 2018 10:10:31 -0600
-From:   Nishanth Menon <nm@ti.com>
-To:     Vignesh R <vigneshr@ti.com>
-CC:     Tero Kristo <t-kristo@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v2 0/4] AM654: Add pinmux support
-Message-ID: <20181117161031.tedf2hvkhwd4f2kd@kahuna>
-References: <20181113060111.16374-1-vigneshr@ti.com>
+        Sat, 17 Nov 2018 21:34:23 -0500
+Received: by mail-ot1-f67.google.com with SMTP id w25so23363536otm.13;
+        Sat, 17 Nov 2018 08:17:14 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=Shxn5eM7ukNzLkrHjObBCBxsJzyLWF36lCe70+qx3+0=;
+        b=Bd5yQ8i+MU298SlCp++TKpHQ6EqxGqEQ8n76Jjn1+VoFnUyhDtSitHnh965vVp8Jk4
+         4LdV384cemjDzJIUGFqbm76PmKcjQaRJGR89h0eZovc5LIJp2PnUFoZ+08bgg1iv90VK
+         nU7mgvZkYfC5N4g4V4C2yzMEpkpSaDYGk9mVp7CeFSaDBopDcaSM1P8RZYM9eZ+ajukr
+         s17oPeStfXr/ZMFU6v4hehCrBc1H1kqbxRLFqJ8IsI+e3jJfc7WajObYgNlVlBQDGu6/
+         k2mq5Fe5g85uLaY9B5YTFBi42Cj/kx/4tx0kFBvInhttZmpAhgxDz0tiXGx6OLDFuALp
+         7uEA==
+X-Gm-Message-State: AGRZ1gJBEWVQRzsCLtm1a7kfOIXmkVAWLWzkqcIpjdcwtAQYFkI1Bsh4
+        qTCe2/45gWs6AFnGx8+Zkw==
+X-Google-Smtp-Source: AJdET5c6fINdGa7lrPYIV8qchLnKvOneqAs51hEuUsO/0IlwIbI1eiOuXDPj8SWt3ZddhvLaPzK28Q==
+X-Received: by 2002:a9d:2062:: with SMTP id n89mr8646810ota.244.1542471434002;
+        Sat, 17 Nov 2018 08:17:14 -0800 (PST)
+Received: from localhost ([166.137.105.180])
+        by smtp.gmail.com with ESMTPSA id j33sm18884386ota.32.2018.11.17.08.17.13
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 17 Nov 2018 08:17:13 -0800 (PST)
+Date:   Sat, 17 Nov 2018 10:17:11 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Neil Armstrong <narmstrong@baylibre.com>
+Cc:     Yasunari.Takiguchi@sony.com, devicetree@vger.kernel.org,
+        Neil Armstrong <narmstrong@baylibre.com>, mchehab@kernel.org,
+        linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] media: sony-cxd2880: add optional vcc regulator to
+ bindings
+Message-ID: <20181117161711.GA19169@bogus>
+References: <1541681410-8187-1-git-send-email-narmstrong@baylibre.com>
+ <1541681410-8187-3-git-send-email-narmstrong@baylibre.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181113060111.16374-1-vigneshr@ti.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1541681410-8187-3-git-send-email-narmstrong@baylibre.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11:31-20181113, Vignesh R wrote:
-> Add pinmux definitions and pinctrl regions for AM654 SoCs
-> and enable uart and i2c.
+On Thu,  8 Nov 2018 13:50:10 +0100, Neil Armstrong wrote:
+> This patchset adds an optional VCC regulator to the bindings of the Sony
+> CXD2880 DVB-T2/T tuner + demodulator adapter.
 > 
-> v2:
-> Add only minimum needed macros in dt-bindings include file
-> New patches to illustrate pinmux using uart and i2c
+> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
+> ---
+>  Documentation/devicetree/bindings/media/spi/sony-cxd2880.txt | 4 ++++
+>  1 file changed, 4 insertions(+)
 > 
-> 
-> Tero Kristo (1):
->   arm64: dts: ti: k3-am65: Add pinctrl regions
-> 
-> Vignesh R (3):
->   dt-bindings: pinctrl: k3: Introduce pinmux definitions
->   arm64: dts: ti: am654-base-board: Add pinmux for main uart0
->   arm64: dts: ti: k3-am654-base-board: Add I2C nodes
-> 
->  MAINTAINERS                                   |  1 +
->  arch/arm64/boot/dts/ti/k3-am65-main.dtsi      | 60 +++++++++++++
->  arch/arm64/boot/dts/ti/k3-am65-mcu.dtsi       | 11 +++
->  arch/arm64/boot/dts/ti/k3-am65-wakeup.dtsi    | 19 ++++
->  arch/arm64/boot/dts/ti/k3-am65.dtsi           |  7 ++
->  .../arm64/boot/dts/ti/k3-am654-base-board.dts | 86 +++++++++++++++++++
->  include/dt-bindings/pinctrl/k3.h              | 35 ++++++++
->  7 files changed, 219 insertions(+)
->  create mode 100644 include/dt-bindings/pinctrl/k3.h
 
-The last patch was a bit sneaky ;)... but there is nothing controversial
-in it..
-
-Series: Acked-by: Nishanth Menon <nm@ti.com>
-
--- 
-Regards,
-Nishanth Menon
+Reviewed-by: Rob Herring <robh@kernel.org>
