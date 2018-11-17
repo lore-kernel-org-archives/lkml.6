@@ -2,160 +2,194 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFCCC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:39:05 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 17A08C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:39:18 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 03C912089D
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:39:05 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C912089D
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
+	by mail.kernel.org (Postfix) with ESMTP id C6E6E208E7
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:39:17 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ru0kcIM4"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org C6E6E208E7
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731147AbeKQKxi (ORCPT
+        id S1730796AbeKQKxP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 05:53:38 -0500
-Received: from mx2.suse.de ([195.135.220.15]:38190 "EHLO mx1.suse.de"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729525AbeKQKxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 05:53:38 -0500
-X-Virus-Scanned: by amavisd-new at test-mx.suse.de
-Received: from relay2.suse.de (unknown [195.135.220.254])
-        by mx1.suse.de (Postfix) with ESMTP id 95F6EAFB4;
-        Sat, 17 Nov 2018 00:39:00 +0000 (UTC)
-From:   NeilBrown <neilb@suse.com>
-To:     Dan Williams <dan.j.williams@intel.com>, rodrigo.vivi@gmail.com
-Date:   Sat, 17 Nov 2018 11:38:50 +1100
-Cc:     Leon Romanovsky <leon@kernel.org>,
-        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
-        linux-nvdimm <linux-nvdimm@lists.01.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        zwisler@kernel.org, mchehab+samsung@kernel.org
-Subject: Re: [Ksummit-discuss] [RFC PATCH 3/3] libnvdimm, MAINTAINERS: Subsystem Profile
-In-Reply-To: <CAPcyv4hWK+to6vOSfSdeVMDzUutYwg9=XqshSDzaCf0c-u8jLA@mail.gmail.com>
-References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com> <154225761038.2499188.1270468803677883744.stgit@dwillia2-desk3.amr.corp.intel.com> <CAMuHMdVOJsM=66RrnbOzVthsT9=dFRQtL2rv99tCPC02M=hiXw@mail.gmail.com> <20181115061036.1575223d@silica.lan> <20181115162008.GO3759@mtr-leonro.mtl.com> <CABVU7+twSz3OZx7PTO+bS-wfLfTTjZVhRAnhgtcs6KWwntattw@mail.gmail.com> <CAPcyv4hWK+to6vOSfSdeVMDzUutYwg9=XqshSDzaCf0c-u8jLA@mail.gmail.com>
-Message-ID: <87va4wczc5.fsf@notabene.neil.brown.name>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-        micalg=pgp-sha256; protocol="application/pgp-signature"
+        Sat, 17 Nov 2018 05:53:15 -0500
+Received: from mail-pf1-f193.google.com ([209.85.210.193]:35215 "EHLO
+        mail-pf1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729714AbeKQKxO (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 05:53:14 -0500
+Received: by mail-pf1-f193.google.com with SMTP id v9-v6so12151732pff.2;
+        Fri, 16 Nov 2018 16:38:38 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:in-reply-to:references;
+        bh=g+x0Z8u1o4aOWMcidhd9IWCml4xwrNc4H7EaMb8VtdA=;
+        b=Ru0kcIM4utPcHoBGfTYmpaShtLyReVfIpaLr6Zj+WPIlxZKnKd7zIQiCVjzDexKfgs
+         IzhMurfmNkQAWAy7yZn4zAr2xbuF0CdESDr2V1/entgxH7URYTOJ3O2oguyhuIYGgJP1
+         wQsyPuEBilOFqZTCVTchgjtalPoEMIl8hhKIPJt1nGGdiKWInZiXslus0fg9OhEpBPik
+         oXdBX+2kIXfAFhbn1bLeBm7EV5FaMttE1d5Bdjykz+sfbSGuCSSium5m1hkEg0gPBpaA
+         lSMTqkmxYCv2Ma0YV/5Ix1lhSZxrpvYWfS0UMPdzDdCbk+kT2clNnMlzwR7VYHShF1lS
+         E67A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
+         :references;
+        bh=g+x0Z8u1o4aOWMcidhd9IWCml4xwrNc4H7EaMb8VtdA=;
+        b=HdlgyuLNQZPqeRy2lnRwPUhMhdP0KDPxqkTqQQdH4/lhjAYXyOHz2+TNl5rfr2GNih
+         ozx3so1Spy4sjSqZdvRslzTNHdTsN7N0G9xwvUQ8aEdUI2VSAE9lMKTalrzC+ITeFRAQ
+         hbXvIJ4eUqYIpiRRzhrxicHVgE2vSlXKZNz869TK04CRtTLa1IJ4ZCAzQpOy2uN3KTXI
+         WNoiN6VvUFDQx1XkxJKMEPGI/3uuO7a3PFMZMPD7LbukgnzWPgp6lICtOlxdvPwONEMZ
+         cSOGv39nh3VtgVsB+KQj5zg7IfSTZVzT78T1q1uF1xpojUsHPSOZi/tJesMdngQqZaIT
+         OLsg==
+X-Gm-Message-State: AGRZ1gK+ni7rLoC+lXSGiMF1XxybxOk9P891wS+hlXfSyX01tTuEBHRZ
+        tp5CNKD/Ozva1/KNW656NRelVLUNFbo=
+X-Google-Smtp-Source: AJdET5eIf/+hAiYWlrnR4HuiB3wU7YYAKWLLB3QxBl4jrpcKniC1TJq6p5uMyugwFCUlctevGagPsQ==
+X-Received: by 2002:a63:64c:: with SMTP id 73mr11809507pgg.373.1542415118072;
+        Fri, 16 Nov 2018 16:38:38 -0800 (PST)
+Received: from tower.thefacebook.com ([2620:10d:c090:200::4:2b73])
+        by smtp.gmail.com with ESMTPSA id f6sm1981177pfg.188.2018.11.16.16.38.37
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Nov 2018 16:38:37 -0800 (PST)
+From:   Roman Gushchin <guroan@gmail.com>
+X-Google-Original-From: Roman Gushchin <guro@fb.com>
+To:     Tejun Heo <tj@kernel.org>
+Cc:     Oleg Nesterov <oleg@redhat.com>, cgroups@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kernel-team@fb.com,
+        Roman Gushchin <guro@fb.com>
+Subject: [PATCH v3 3/7] cgroup: protect cgroup->nr_(dying_)descendants by css_set_lock
+Date:   Fri, 16 Nov 2018 16:38:26 -0800
+Message-Id: <20181117003830.15344-4-guro@fb.com>
+X-Mailer: git-send-email 2.17.2
+In-Reply-To: <20181117003830.15344-1-guro@fb.com>
+References: <20181117003830.15344-1-guro@fb.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
---=-=-=
-Content-Type: text/plain
+Now the number of descendant cgroups and the number of dying
+descendant cgroups are synchronized using the cgroup_mutex.
 
-On Fri, Nov 16 2018, Dan Williams wrote:
+The number of descendant cgroups will be required by the cgroup v2
+freezer, which will use it to determine if a cgroup is frozen
+(depending on total number of descendants and number of frozen
+descendants). It's not always acceptable to grab the cgroup_mutex,
+especially from quite hot paths (e.g. exit()).
 
-> On Fri, Nov 16, 2018 at 12:37 PM Rodrigo Vivi <rodrigo.vivi@gmail.com> wrote:
->>
->> On Thu, Nov 15, 2018 at 8:38 AM Leon Romanovsky <leon@kernel.org> wrote:
->> >
->> > On Thu, Nov 15, 2018 at 06:10:36AM -0800, Mauro Carvalho Chehab wrote:
->> > > Em Thu, 15 Nov 2018 09:03:11 +0100
->> > > Geert Uytterhoeven <geert@linux-m68k.org> escreveu:
->> > >
->> > > > Hi Dan,
->> > > >
->> > > > On Thu, Nov 15, 2018 at 6:06 AM Dan Williams <dan.j.williams@intel.com> wrote:
->> > > > > Document the basic policies of the libnvdimm subsystem and provide a
->> > > > > first example of a Subsystem Profile for others to duplicate and edit.
->> > > > >
->> > > > > Cc: Ross Zwisler <zwisler@kernel.org>
->> > > > > Cc: Vishal Verma <vishal.l.verma@intel.com>
->> > > > > Cc: Dave Jiang <dave.jiang@intel.com>
->> > > > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
->> > > >
->> > > > Thanks for your patch!
->> > > >
->> > > > > --- /dev/null
->> > > > > +++ b/Documentation/nvdimm/subsystem-profile.rst
->> > > >
->> > > > > +Trusted Reviewers
->> > > > > +-----------------
->> > > > > +Johannes Thumshirn
->> > > > > +Toshi Kani
->> > > > > +Jeff Moyer
->> > > > > +Robert Elliott
->> > > >
->> > > > Don't you want to add email addresses?
->> > > > Only the first one is listed in MAINTAINERS.
->> > >
->> > > IMO, it makes sense to have their e-mails here, in a way that it could
->> > > easily be parsed by get_maintainers.pl.
->> >
->> > I personally think that list of "trusted reviewers" makes more harm than
->> > good. It creates unneeded negative feelings to those who wanted to be in
->> > this list, but for any reason they don't. Those reviewers will feel
->> > "untrusted".
->>
->> I'd like to +1 on this concern here. Besides leaving all the other
->> people demotivated.
->
-> Yes, that's a valid concern, I overlooked that unfortunate interpretation.
->
->>
->> A small group of trusted reviewers doesn't scale. People will get overloaded.
->> Or you won't be able to enforce that all patches need to get Reviews.
->>
->> Reviews should be coming from everywhere and commiters and maintainers
->> deciding on what to trust or re-review.
->>
->> Also the list is hard to maintain and keep the lists updated.
->
-> I understand the concern, and as I saw feedback come in I realized
-> there were more people that I would add to that reviewer list for
-> libnvdimm.
->
-> Stepping back the end goal is to have an initial list of recommended
-> people to follow up with directly to seek a second opinion, or help in
-> cases where a contributor otherwise needs some direction / engagement
-> that they are not readily receiving from the maintainer. Typically
-> someone just lurks on the mailing list for a few weeks to get a feel
-> for who the usual suspects are in the subsystem, but for a new
-> contributor identifying those individuals may be difficult.
->
-> One of the contributing factors of lack of response to a patchset is
-> that they are sent with the implicit expectation that the maintainer
-> will get to eventually, and typically other people feel content to sit
-> back and watch. If instead a contributor sent a direct mail to a
-> "trusted reviewer" saying, "Hey, Alice, Bob seems busy can you help me
-> out?" that seems more likely to rope in additional review help.
+To avoid this, let's additionally synchronize these counters
+using the css_set_lock.
 
-In here is, I think, a real issue that listing "trusted reviewers" might
-help address.
-As you say, people don't feel the need to comment - particularly if they
-don't see anything wrong (often best to insert a bug to encourage
-responses!).
-Maybe if we list people, it will make them feel that their opinion is
-valuable (trusted!) and that will encourage them to Ack or Review a
-patch.
-I have found that being given a title of responsibility can change my
-thinking from "someone should" to "I should".
+Signed-off-by: Roman Gushchin <guro@fb.com>
+Cc: Tejun Heo <tj@kernel.org>
+Cc: kernel-team@fb.com
+---
+ include/linux/cgroup-defs.h |  3 +++
+ kernel/cgroup/cgroup.c      | 20 ++++++++++++++++----
+ 2 files changed, 19 insertions(+), 4 deletions(-)
 
-NeilBrown
+diff --git a/include/linux/cgroup-defs.h b/include/linux/cgroup-defs.h
+index 22254c1fe1c5..9e77559c7f49 100644
+--- a/include/linux/cgroup-defs.h
++++ b/include/linux/cgroup-defs.h
+@@ -346,6 +346,9 @@ struct cgroup {
+ 	 * Dying cgroups are cgroups which were deleted by a user,
+ 	 * but are still existing because someone else is holding a reference.
+ 	 * max_descendants is a maximum allowed number of descent cgroups.
++	 *
++	 * nr_descendants and nr_dying_descendants are protected
++	 * by css_set_lock.
+ 	 */
+ 	int nr_descendants;
+ 	int nr_dying_descendants;
+diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
+index ef3442555b32..2241cb1d1238 100644
+--- a/kernel/cgroup/cgroup.c
++++ b/kernel/cgroup/cgroup.c
+@@ -3409,11 +3409,15 @@ static int cgroup_events_show(struct seq_file *seq, void *v)
+ static int cgroup_stat_show(struct seq_file *seq, void *v)
+ {
+ 	struct cgroup *cgroup = seq_css(seq)->cgroup;
++	int nr_descendants, nr_dying_descendants;
+ 
+-	seq_printf(seq, "nr_descendants %d\n",
+-		   cgroup->nr_descendants);
+-	seq_printf(seq, "nr_dying_descendants %d\n",
+-		   cgroup->nr_dying_descendants);
++	spin_lock_irq(&css_set_lock);
++	nr_descendants = cgroup->nr_descendants;
++	nr_dying_descendants = cgroup->nr_dying_descendants;
++	spin_unlock_irq(&css_set_lock);
++
++	seq_printf(seq, "nr_descendants %d\n", nr_descendants);
++	seq_printf(seq, "nr_dying_descendants %d\n", nr_dying_descendants);
+ 
+ 	return 0;
+ }
+@@ -4684,9 +4688,11 @@ static void css_release_work_fn(struct work_struct *work)
+ 		if (cgroup_on_dfl(cgrp))
+ 			cgroup_rstat_flush(cgrp);
+ 
++		spin_lock_irq(&css_set_lock);
+ 		for (tcgrp = cgroup_parent(cgrp); tcgrp;
+ 		     tcgrp = cgroup_parent(tcgrp))
+ 			tcgrp->nr_dying_descendants--;
++		spin_unlock_irq(&css_set_lock);
+ 
+ 		cgroup_idr_remove(&cgrp->root->cgroup_idr, cgrp->id);
+ 		cgrp->id = -1;
+@@ -4899,12 +4905,14 @@ static struct cgroup *cgroup_create(struct cgroup *parent)
+ 	if (ret)
+ 		goto out_idr_free;
+ 
++	spin_lock_irq(&css_set_lock);
+ 	for (tcgrp = cgrp; tcgrp; tcgrp = cgroup_parent(tcgrp)) {
+ 		cgrp->ancestor_ids[tcgrp->level] = tcgrp->id;
+ 
+ 		if (tcgrp != cgrp)
+ 			tcgrp->nr_descendants++;
+ 	}
++	spin_unlock_irq(&css_set_lock);
+ 
+ 	if (notify_on_release(parent))
+ 		set_bit(CGRP_NOTIFY_ON_RELEASE, &cgrp->flags);
+@@ -4956,6 +4964,7 @@ static bool cgroup_check_hierarchy_limits(struct cgroup *parent)
+ 
+ 	lockdep_assert_held(&cgroup_mutex);
+ 
++	spin_lock_irq(&css_set_lock);
+ 	for (cgroup = parent; cgroup; cgroup = cgroup_parent(cgroup)) {
+ 		if (cgroup->nr_descendants >= cgroup->max_descendants)
+ 			goto fail;
+@@ -4968,6 +4977,7 @@ static bool cgroup_check_hierarchy_limits(struct cgroup *parent)
+ 
+ 	ret = true;
+ fail:
++	spin_unlock_irq(&css_set_lock);
+ 	return ret;
+ }
+ 
+@@ -5187,10 +5197,12 @@ static int cgroup_destroy_locked(struct cgroup *cgrp)
+ 	if (parent && cgroup_is_threaded(cgrp))
+ 		parent->nr_threaded_children--;
+ 
++	spin_lock_irq(&css_set_lock);
+ 	for (tcgrp = cgroup_parent(cgrp); tcgrp; tcgrp = cgroup_parent(tcgrp)) {
+ 		tcgrp->nr_descendants--;
+ 		tcgrp->nr_dying_descendants++;
+ 	}
++	spin_unlock_irq(&css_set_lock);
+ 
+ 	cgroup1_check_for_release(parent);
+ 
+-- 
+2.17.2
 
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvvYxsACgkQOeye3VZi
-gblgmRAAsPOY774odqpS67uPN9Nu4n6RUqay1rldkX7Uu1GQ4x5lAtfuw4rf+zkO
-8983uWS0vqJw2goVnvdNJaTpTGuxC4YlSsZ5Md3KojVqYc02SgSAlpDEEHPQ1VSu
-aFmS3XGS2xEJRvamJNLEK0EWB88bogXWccUhXJf9HrsCjKwZsEBLSINRDaCqKebR
-0asmvTLutpRjvLahFki1uvQUSzjkvN69fn+kf/DP0fpiUL9A814OLep49W0jaN4w
-+Q5Pyh11p/AYdPlVSWUML8SVq0z1HlK6WVSrWd0WMHTk2VNmQepyruvMeboHOUbw
-Lp72k4Iw1QzWYJXkfel4z8Xj24Ws3jDxEF8CPjOWa+P7aTke4joU+YMaFJK8FOWY
-7P0rem9wBeAQeIQ+DHrQtwoz0IFgnxTRxu3eeaVn5uf6qmZKGUtXDPiFBTw2zYlv
-ttx7INQB3h7lea1n4P02PNJlwo9jpKLPKFddEyw/2cylUyJTWn1qvOzvOwHR/oRn
-AYlYQtJ8mlOMqNGybh/dcSMLIymmPIKF12adNQr1VGMML7VRwFAflybKId8EygKb
-122/k51mG3+0cxtIGgeYZVPa/RYpFn167ZzXC45yRuQi0xvwkvtTl5ok94DDJFSo
-uzcy7HeYyQWCh6UqVSODqnFDNruQTsEAnNFVjW+r3xSjK0Wjw5Q=
-=hoyK
------END PGP SIGNATURE-----
---=-=-=--
