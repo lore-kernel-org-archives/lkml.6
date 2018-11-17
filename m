@@ -7,229 +7,101 @@ X-Spam-Status: No, score=-7.7 required=3.0 tests=DKIM_ADSP_ALL,DKIM_INVALID,
 	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id F04A2C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 13:06:54 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1E697C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 13:07:07 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id AD7BF20818
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 13:06:54 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id D5A012077C
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 13:07:06 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aussec.com header.i=@aussec.com header.b="Y5WGFVpX"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AD7BF20818
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=aussec.com header.i=@aussec.com header.b="UYG1B+BL"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D5A012077C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=aussec.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726548AbeKQXXa (ORCPT
+        id S1726612AbeKQXXn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 18:23:30 -0500
-Received: from csm1.csm-office.com.au ([165.228.118.109]:36474 "EHLO
+        Sat, 17 Nov 2018 18:23:43 -0500
+Received: from csm1.csm-office.com.au ([165.228.118.109]:36498 "EHLO
         sleepy.aussec.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726020AbeKQXXa (ORCPT
+        with ESMTP id S1726003AbeKQXXn (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 18:23:30 -0500
+        Sat, 17 Nov 2018 18:23:43 -0500
 X-Virus-Scanned: amavisd-new at aussec.com
 Received: from hpdv6.aussec.com.com (c110-21-61-29.farfl4.nsw.optusnet.com.au [110.21.61.29])
         (authenticated bits=0)
-        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTPSA id wAHD5ubo015913
+        by sleepy.aussec.com (8.15.2/8.15.2) with ESMTPSA id wAHD5ubp015913
         (version=TLSv1.2 cipher=DHE-RSA-AES128-SHA bits=128 verify=NO);
-        Sun, 18 Nov 2018 00:06:42 +1100
+        Sun, 18 Nov 2018 00:06:50 +1100
 DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=aussec.com; s=2016;
-        t=1542460004; bh=fgLGcidoKj4KpkQHdhPi7Dm0b4yBsxfkO0iYRa/odNA=;
+        t=1542460012; bh=GvoLStNdmblN/ljgTUrGrsbTu19DmjLOwDoKUmH3bqY=;
         h=From:To:Cc:Subject:Date:In-Reply-To:References;
-        b=Y5WGFVpXj745ByUlW2NUqUs0o9s6n/lV/b5t2/qcqC3WpuWvKi+wOxraJXPYjuCBG
-         Eilc45oW+rksIgR82wBoRrs3BYbl8hrKavSSJ8h8N+rjaJuPe1Ezi/pgPgVIy/9a7S
-         nb+TlqJi0wQgBll8rSyK210F0FvMpEwHaZgkmTOifYKhDCl7uvl+bfQtIYWTC3Ey3o
-         PXWiY4d0grOMMpelAfAkH47vYWaAl1gpz+N0JhoCWQjqNjNtuPUor2Zub0W+nfppXm
-         AW89P3oBtXrUfNcLLZJ4/2G0FahBYU+/Q1MhPqljDm/z3vbjJSWSvVn9zovy+jgHWv
-         nGVvleDkQ1PdA==
+        b=UYG1B+BLXelNV0YgUACtdk5gd6H2Oqzlqtr0JGbPaWIhAohb6nb5RmiHPuIIE9tlx
+         8Z1QQf2umeqkBsTEsIgcWe8YZg1H8Z7s6oHAycFIUKwmeRGFkS/C9axA6XsRAAaOiC
+         /IDoV8stMAu1Yjcyh7Da/hKRR2iHGwnSY3EU7THZadzncYr4PclVYXYZ1+31rk5+Ep
+         CqORsauYHEQd2idR6QIKwRzw189wzY0w9keTjfqMyKq6LKzoCXM4TBN8tpYKR/rxOi
+         34/eNsO7BiBo9A0uAON1ODCOis0LsnIiAdfLVuxdcdidJONPA3oiqrVPYWP71+93Km
+         I8LouhnYzGvvw==
 From:   Tom Burkart <tom@aussec.com>
 To:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
-Cc:     Tom Burkart <tom@aussec.com>
-Subject: [PATCH v8 2/4] pps: descriptor-based gpio, capture-clear addition
-Date:   Sun, 18 Nov 2018 00:03:35 +1100
-Message-Id: <20181117130337.5856-3-tom@aussec.com>
+Cc:     Tom Burkart <tom@aussec.com>, devicetree@vger.kernel.org,
+        Lukas Senger <lukas@fridolin.com>
+Subject: [PATCH v8 3/4] dt-bindings: pps: pps-gpio PPS ECHO implementation
+Date:   Sun, 18 Nov 2018 00:03:36 +1100
+Message-Id: <20181117130337.5856-4-tom@aussec.com>
 X-Mailer: git-send-email 2.12.3
-In-Reply-To: <20181117130337.5856-2-tom@aussec.com>
+In-Reply-To: <20181117130337.5856-3-tom@aussec.com>
 References: <20181117130337.5856-1-tom@aussec.com>
  <20181117130337.5856-2-tom@aussec.com>
+ <20181117130337.5856-3-tom@aussec.com>
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch changes the GPIO access for the pps-gpio driver from the
-integer based ABI to the descriptor based ABI.  It also adds the
-extraction of the device tree capture-clear option.
+This patch implements the device tree changes required for the pps
+echo functionality for pps-gpio, that sysfs claims is available
+already.
 
+This patch was originally written by Lukas Senger as part of a masters
+thesis project and modified for inclusion into the linux kernel by Tom
+Burkart.
+
+Signed-off-by: Lukas Senger <lukas@fridolin.com>
 Signed-off-by: Tom Burkart <tom@aussec.com>
 ---
- drivers/pps/clients/pps-gpio.c | 80 +++++++++++++++++++++---------------------
- include/linux/pps-gpio.h       |  3 +-
- 2 files changed, 41 insertions(+), 42 deletions(-)
+ Documentation/devicetree/bindings/pps/pps-gpio.txt | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/drivers/pps/clients/pps-gpio.c b/drivers/pps/clients/pps-gpio.c
-index 333ad7d5b45b..d2fbc91dc8fc 100644
---- a/drivers/pps/clients/pps-gpio.c
-+++ b/drivers/pps/clients/pps-gpio.c
-@@ -31,7 +31,7 @@
- #include <linux/slab.h>
- #include <linux/pps_kernel.h>
- #include <linux/pps-gpio.h>
--#include <linux/gpio.h>
-+#include <linux/gpio/consumer.h>
- #include <linux/list.h>
- #include <linux/of_device.h>
- #include <linux/of_gpio.h>
-@@ -41,9 +41,9 @@ struct pps_gpio_device_data {
- 	int irq;			/* IRQ used as PPS source */
- 	struct pps_device *pps;		/* PPS source device */
- 	struct pps_source_info info;	/* PPS source information */
-+	struct gpio_desc *gpio_pin;	/* GPIO port descriptors */
- 	bool assert_falling_edge;
- 	bool capture_clear;
--	unsigned int gpio_pin;
- };
+diff --git a/Documentation/devicetree/bindings/pps/pps-gpio.txt b/Documentation/devicetree/bindings/pps/pps-gpio.txt
+index 1155d49c2699..e09f6f2405c5 100644
+--- a/Documentation/devicetree/bindings/pps/pps-gpio.txt
++++ b/Documentation/devicetree/bindings/pps/pps-gpio.txt
+@@ -7,10 +7,15 @@ Required properties:
+ - compatible: should be "pps-gpio"
+ - gpios: one PPS GPIO in the format described by ../gpio/gpio.txt
  
- /*
-@@ -61,18 +61,49 @@ static irqreturn_t pps_gpio_irq_handler(int irq, void *data)
- 
- 	info = data;
- 
--	rising_edge = gpio_get_value(info->gpio_pin);
-+	rising_edge = gpiod_get_value(info->gpio_pin);
- 	if ((rising_edge && !info->assert_falling_edge) ||
- 			(!rising_edge && info->assert_falling_edge))
- 		pps_event(info->pps, &ts, PPS_CAPTUREASSERT, NULL);
- 	else if (info->capture_clear &&
- 			((rising_edge && info->assert_falling_edge) ||
--			 (!rising_edge && !info->assert_falling_edge)))
-+			(!rising_edge && !info->assert_falling_edge)))
- 		pps_event(info->pps, &ts, PPS_CAPTURECLEAR, NULL);
- 
- 	return IRQ_HANDLED;
- }
- 
-+static int pps_gpio_setup(struct platform_device *pdev)
-+{
-+	struct pps_gpio_device_data *data = platform_get_drvdata(pdev);
-+	const struct pps_gpio_platform_data *pdata = pdev->dev.platform_data;
-+	struct device_node *np = pdev->dev.of_node;
-+	int ret;
++Additional required properties for the PPS ECHO functionality:
++- echo-gpios: one PPS ECHO GPIO in the format described by ../gpio/gpio.txt
++- echo-active-ms: duration in ms of the active portion of the echo pulse
 +
-+	if (pdata) {
-+		data->gpio_pin = pdata->gpio_pin;
+ Optional properties:
+ - assert-falling-edge: when present, assert is indicated by a falling edge
+                        (instead of by a rising edge)
+ - capture-clear: when present, also capture the PPS clear event
++- invert-pps-echo: when present, invert the PPS ECHO pulse
+ 
+ Example:
+ 	pps {
+@@ -21,5 +26,9 @@ Example:
+ 		assert-falling-edge;
+ 		capture-clear;
+ 
++		echo-gpios = <&gpio1 27 GPIO_ACTIVE_HIGH>;
++		echo-active-ms = <100>;
++		invert-pps-echo;
 +
-+		data->assert_falling_edge = pdata->assert_falling_edge;
-+		data->capture_clear = pdata->capture_clear;
-+	} else {
-+		data->gpio_pin = devm_gpiod_get(&pdev->dev,
-+			NULL,	/* request "gpios" */
-+			GPIOD_IN);
-+		if (IS_ERR(data->gpio_pin)) {
-+			dev_err(&pdev->dev,
-+				"failed to request PPS GPIO\n");
-+			return PTR_ERR(data->gpio_pin);
-+		}
-+
-+		if (of_get_property(np, "assert-falling-edge", NULL))
-+			data->assert_falling_edge = true;
-+
-+		if (of_get_property(np, "capture-clear", NULL))
-+			data->capture_clear = true;
-+	}
-+	return 0;
-+}
-+
- static unsigned long
- get_irqf_trigger_flags(const struct pps_gpio_device_data *data)
- {
-@@ -90,53 +121,23 @@ get_irqf_trigger_flags(const struct pps_gpio_device_data *data)
- static int pps_gpio_probe(struct platform_device *pdev)
- {
- 	struct pps_gpio_device_data *data;
--	const char *gpio_label;
- 	int ret;
- 	int pps_default_params;
--	const struct pps_gpio_platform_data *pdata = pdev->dev.platform_data;
--	struct device_node *np = pdev->dev.of_node;
- 
- 	/* allocate space for device info */
- 	data = devm_kzalloc(&pdev->dev, sizeof(struct pps_gpio_device_data),
- 			GFP_KERNEL);
- 	if (!data)
- 		return -ENOMEM;
--
--	if (pdata) {
--		data->gpio_pin = pdata->gpio_pin;
--		gpio_label = pdata->gpio_label;
--
--		data->assert_falling_edge = pdata->assert_falling_edge;
--		data->capture_clear = pdata->capture_clear;
--	} else {
--		ret = of_get_gpio(np, 0);
--		if (ret < 0) {
--			dev_err(&pdev->dev, "failed to get GPIO from device tree\n");
--			return ret;
--		}
--		data->gpio_pin = ret;
--		gpio_label = PPS_GPIO_NAME;
--
--		if (of_get_property(np, "assert-falling-edge", NULL))
--			data->assert_falling_edge = true;
--	}
-+	platform_set_drvdata(pdev, data);
- 
- 	/* GPIO setup */
--	ret = devm_gpio_request(&pdev->dev, data->gpio_pin, gpio_label);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to request GPIO %u\n",
--			data->gpio_pin);
--		return ret;
--	}
--
--	ret = gpio_direction_input(data->gpio_pin);
--	if (ret) {
--		dev_err(&pdev->dev, "failed to set pin direction\n");
-+	ret = pps_gpio_setup(pdev);
-+	if (ret)
- 		return -EINVAL;
--	}
- 
- 	/* IRQ setup */
--	ret = gpio_to_irq(data->gpio_pin);
-+	ret = gpiod_to_irq(data->gpio_pin);
- 	if (ret < 0) {
- 		dev_err(&pdev->dev, "failed to map GPIO to IRQ: %d\n", ret);
- 		return -EINVAL;
-@@ -173,7 +174,6 @@ static int pps_gpio_probe(struct platform_device *pdev)
- 		return -EINVAL;
- 	}
- 
--	platform_set_drvdata(pdev, data);
- 	dev_info(data->pps->dev, "Registered IRQ %d as PPS source\n",
- 		 data->irq);
- 
-@@ -209,4 +209,4 @@ MODULE_AUTHOR("Ricardo Martins <rasm@fe.up.pt>");
- MODULE_AUTHOR("James Nuss <jamesnuss@nanometrics.ca>");
- MODULE_DESCRIPTION("Use GPIO pin as PPS source");
- MODULE_LICENSE("GPL");
--MODULE_VERSION("1.0.0");
-+MODULE_VERSION("1.1.0");
-diff --git a/include/linux/pps-gpio.h b/include/linux/pps-gpio.h
-index 56f35dd3d01d..f028d2cda6f5 100644
---- a/include/linux/pps-gpio.h
-+++ b/include/linux/pps-gpio.h
-@@ -23,10 +23,9 @@
- #define _PPS_GPIO_H
- 
- struct pps_gpio_platform_data {
-+	struct gpio_desc *gpio_pin;
- 	bool assert_falling_edge;
- 	bool capture_clear;
--	unsigned int gpio_pin;
--	const char *gpio_label;
- };
- 
- #endif /* _PPS_GPIO_H */
+ 		compatible = "pps-gpio";
+ 	};
 -- 
 2.12.3
 
