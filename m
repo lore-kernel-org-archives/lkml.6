@@ -6,35 +6,35 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,UNPARSEABLE_RELAY,
 	URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id CE6C4C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:38:18 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1CA9AC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:38:36 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 8ECD420817
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:38:18 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 8ECD420817
+	by mail.kernel.org (Postfix) with ESMTP id DB2C120817
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:38:35 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DB2C120817
 Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=mediatek.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1731182AbeKQMxO (ORCPT
+        id S1731209AbeKQMxc (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 07:53:14 -0500
-Received: from mailgw01.mediatek.com ([210.61.82.183]:50593 "EHLO
-        mailgw01.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
-        with ESMTP id S1729745AbeKQMxO (ORCPT
+        Sat, 17 Nov 2018 07:53:32 -0500
+Received: from mailgw02.mediatek.com ([210.61.82.184]:43354 "EHLO
+        mailgw02.mediatek.com" rhost-flags-OK-FAIL-OK-FAIL) by vger.kernel.org
+        with ESMTP id S1729745AbeKQMxb (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 07:53:14 -0500
-X-UUID: 0fa74934a8b34836942b29181bf83edd-20181117
-X-UUID: 0fa74934a8b34836942b29181bf83edd-20181117
-Received: from mtkcas06.mediatek.inc [(172.21.101.30)] by mailgw01.mediatek.com
+        Sat, 17 Nov 2018 07:53:31 -0500
+X-UUID: 9a32579ffc5f4c0d96031d6dee4e57b2-20181117
+X-UUID: 9a32579ffc5f4c0d96031d6dee4e57b2-20181117
+Received: from mtkmrs01.mediatek.inc [(172.21.131.159)] by mailgw02.mediatek.com
         (envelope-from <yong.wu@mediatek.com>)
         (mhqrelay.mediatek.com ESMTP with TLS)
-        with ESMTP id 1327966420; Sat, 17 Nov 2018 10:38:11 +0800
+        with ESMTP id 1403743666; Sat, 17 Nov 2018 10:38:28 +0800
 Received: from mtkcas09.mediatek.inc (172.21.101.178) by
  mtkmbs01n1.mediatek.inc (172.21.101.68) with Microsoft SMTP Server (TLS) id
- 15.0.1395.4; Sat, 17 Nov 2018 10:38:10 +0800
+ 15.0.1395.4; Sat, 17 Nov 2018 10:38:27 +0800
 Received: from localhost.localdomain (10.17.3.153) by mtkcas09.mediatek.inc
  (172.21.101.73) with Microsoft SMTP Server id 15.0.1395.4 via Frontend
- Transport; Sat, 17 Nov 2018 10:38:09 +0800
+ Transport; Sat, 17 Nov 2018 10:38:26 +0800
 From:   Yong Wu <yong.wu@mediatek.com>
 To:     Joerg Roedel <joro@8bytes.org>,
         Matthias Brugger <matthias.bgg@gmail.com>,
@@ -49,9 +49,9 @@ CC:     Tomasz Figa <tfiga@google.com>, Will Deacon <will.deacon@arm.com>,
         <yingjoe.chen@mediatek.com>, <yong.wu@mediatek.com>,
         <youlin.pei@mediatek.com>, Nicolas Boichat <drinkcat@chromium.org>,
         Arvind Yadav <arvind.yadav.cs@gmail.com>
-Subject: [PATCH v3 08/15] memory: mtk-smi: Invoke pm runtime_callback to enable clocks
-Date:   Sat, 17 Nov 2018 10:35:35 +0800
-Message-ID: <1542422142-30688-9-git-send-email-yong.wu@mediatek.com>
+Subject: [PATCH v3 09/15] memory: mtk-smi: Use a struct for the platform data for smi-common
+Date:   Sat, 17 Nov 2018 10:35:36 +0800
+Message-ID: <1542422142-30688-10-git-send-email-yong.wu@mediatek.com>
 X-Mailer: git-send-email 1.9.1
 In-Reply-To: <1542422142-30688-1-git-send-email-yong.wu@mediatek.com>
 References: <1542422142-30688-1-git-send-email-yong.wu@mediatek.com>
@@ -63,200 +63,120 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch only move the clk_prepare_enable and config_port into the
-runtime suspend/resume callback. It doesn't change the code content
-and sequence.
+Use a struct as the platform special data instead of the enumeration.
 
-This is a prepare patch for adjusting SMI_BUS_SEL for mt8183.
-(SMI_BUS_SEL need to be restored after smi-common resume every time.)
-Also it gives a chance to get rid of mtk_smi_larb_get/put which could
-be a next topic.
+Also there is a minor change that moving the position of
+"enum mtk_smi_gen" definition, this is because we expect define
+"struct mtk_smi_common_plat" before it is referred.
+
+This is a prepare patch for adding bus_sel for mt8183.
 
 Signed-off-by: Yong Wu <yong.wu@mediatek.com>
 ---
- drivers/memory/mtk-smi.c | 113 ++++++++++++++++++++++++++++++-----------------
- 1 file changed, 72 insertions(+), 41 deletions(-)
+ drivers/memory/mtk-smi.c | 37 +++++++++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 12 deletions(-)
 
 diff --git a/drivers/memory/mtk-smi.c b/drivers/memory/mtk-smi.c
-index 979153b..7cf4573 100644
+index 7cf4573..3e6e0a8 100644
 --- a/drivers/memory/mtk-smi.c
 +++ b/drivers/memory/mtk-smi.c
-@@ -78,17 +78,13 @@ enum mtk_smi_gen {
- 	MTK_SMI_GEN2
+@@ -49,6 +49,15 @@
+ #define SMI_LARB_NONSEC_CON(id)	(0x380 + ((id) * 4))
+ #define F_MMU_EN		BIT(0)
+ 
++enum mtk_smi_gen {
++	MTK_SMI_GEN1,
++	MTK_SMI_GEN2
++};
++
++struct mtk_smi_common_plat {
++	enum mtk_smi_gen gen;
++};
++
+ struct mtk_smi_larb_gen {
+ 	bool need_larbid;
+ 	int port_in_larb[MTK_LARB_NR_MAX + 1];
+@@ -62,6 +71,8 @@ struct mtk_smi {
+ 	struct clk			*clk_gals0, *clk_gals1;
+ 	struct clk			*clk_async; /*only needed by mt2701*/
+ 	void __iomem			*smi_ao_base;
++
++	const struct mtk_smi_common_plat *plat;
  };
  
--static int mtk_smi_enable(const struct mtk_smi *smi)
-+static int mtk_smi_clk_enable(const struct mtk_smi *smi)
+ struct mtk_smi_larb { /* larb: local arbiter */
+@@ -73,11 +84,6 @@ struct mtk_smi_larb { /* larb: local arbiter */
+ 	u32				*mmu;
+ };
+ 
+-enum mtk_smi_gen {
+-	MTK_SMI_GEN1,
+-	MTK_SMI_GEN2
+-};
+-
+ static int mtk_smi_clk_enable(const struct mtk_smi *smi)
  {
  	int ret;
- 
--	ret = pm_runtime_get_sync(smi->dev);
--	if (ret < 0)
--		return ret;
--
- 	ret = clk_prepare_enable(smi->clk_apb);
- 	if (ret)
--		goto err_put_pm;
-+		return ret;
- 
- 	ret = clk_prepare_enable(smi->clk_smi);
- 	if (ret)
-@@ -110,59 +106,28 @@ static int mtk_smi_enable(const struct mtk_smi *smi)
- 	clk_disable_unprepare(smi->clk_smi);
- err_disable_apb:
- 	clk_disable_unprepare(smi->clk_apb);
--err_put_pm:
--	pm_runtime_put_sync(smi->dev);
- 	return ret;
- }
- 
--static void mtk_smi_disable(const struct mtk_smi *smi)
-+static void mtk_smi_clk_disable(const struct mtk_smi *smi)
- {
- 	clk_disable_unprepare(smi->clk_gals1);
- 	clk_disable_unprepare(smi->clk_gals0);
- 	clk_disable_unprepare(smi->clk_smi);
- 	clk_disable_unprepare(smi->clk_apb);
--	pm_runtime_put_sync(smi->dev);
- }
- 
- int mtk_smi_larb_get(struct device *larbdev)
- {
--	struct mtk_smi_larb *larb = dev_get_drvdata(larbdev);
--	const struct mtk_smi_larb_gen *larb_gen = larb->larb_gen;
--	struct mtk_smi *common = dev_get_drvdata(larb->smi_common_dev);
--	int ret;
-+	int ret = pm_runtime_get_sync(larbdev);
- 
--	/* Enable the smi-common's power and clocks */
--	ret = mtk_smi_enable(common);
--	if (ret)
--		return ret;
--
--	/* Enable the larb's power and clocks */
--	ret = mtk_smi_enable(&larb->smi);
--	if (ret) {
--		mtk_smi_disable(common);
--		return ret;
--	}
--
--	/* Configure the iommu info for this larb */
--	larb_gen->config_port(larbdev);
--
--	return 0;
-+	return (ret < 0) ? ret : 0;
- }
- EXPORT_SYMBOL_GPL(mtk_smi_larb_get);
- 
- void mtk_smi_larb_put(struct device *larbdev)
- {
--	struct mtk_smi_larb *larb = dev_get_drvdata(larbdev);
--	struct mtk_smi *common = dev_get_drvdata(larb->smi_common_dev);
--
--	/*
--	 * Don't de-configure the iommu info for this larb since there may be
--	 * several modules in this larb.
--	 * The iommu info will be reset after power off.
--	 */
--
--	mtk_smi_disable(&larb->smi);
--	mtk_smi_disable(common);
-+	pm_runtime_put_sync(larbdev);
- }
- EXPORT_SYMBOL_GPL(mtk_smi_larb_put);
- 
-@@ -373,12 +338,52 @@ static int mtk_smi_larb_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int __maybe_unused mtk_smi_larb_resume(struct device *dev)
-+{
-+	struct mtk_smi_larb *larb = dev_get_drvdata(dev);
-+	const struct mtk_smi_larb_gen *larb_gen = larb->larb_gen;
-+	int ret;
-+
-+	/* Power on smi-common. */
-+	ret = pm_runtime_get_sync(larb->smi_common_dev);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to pm get for smi-common(%d).\n", ret);
-+		return ret;
-+	}
-+
-+	ret = mtk_smi_clk_enable(&larb->smi);
-+	if (ret < 0) {
-+		dev_err(dev, "Failed to enable clock(%d).\n", ret);
-+		pm_runtime_put_sync(larb->smi_common_dev);
-+		return ret;
-+	}
-+
-+	/* Configure the basic setting for this larb */
-+	larb_gen->config_port(dev);
-+
-+	return 0;
-+}
-+
-+static int __maybe_unused mtk_smi_larb_suspend(struct device *dev)
-+{
-+	struct mtk_smi_larb *larb = dev_get_drvdata(dev);
-+
-+	mtk_smi_clk_disable(&larb->smi);
-+	pm_runtime_put_sync(larb->smi_common_dev);
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops smi_larb_pm_ops = {
-+	SET_RUNTIME_PM_OPS(mtk_smi_larb_suspend, mtk_smi_larb_resume, NULL)
-+};
-+
- static struct platform_driver mtk_smi_larb_driver = {
- 	.probe	= mtk_smi_larb_probe,
- 	.remove	= mtk_smi_larb_remove,
- 	.driver	= {
- 		.name = "mtk-smi-larb",
- 		.of_match_table = mtk_smi_larb_of_ids,
-+		.pm             = &smi_larb_pm_ops,
+@@ -387,22 +393,30 @@ static int __maybe_unused mtk_smi_larb_suspend(struct device *dev)
  	}
  };
  
-@@ -467,12 +472,38 @@ static int mtk_smi_common_remove(struct platform_device *pdev)
- 	return 0;
- }
- 
-+static int __maybe_unused mtk_smi_common_resume(struct device *dev)
-+{
-+	struct mtk_smi *common = dev_get_drvdata(dev);
-+	int ret;
-+
-+	ret = mtk_smi_clk_enable(common);
-+	if (ret) {
-+		dev_err(common->dev, "Failed to enable clock(%d).\n", ret);
-+		return ret;
-+	}
-+	return 0;
-+}
-+
-+static int __maybe_unused mtk_smi_common_suspend(struct device *dev)
-+{
-+	struct mtk_smi *common = dev_get_drvdata(dev);
-+
-+	mtk_smi_clk_disable(common);
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops smi_common_pm_ops = {
-+	SET_RUNTIME_PM_OPS(mtk_smi_common_suspend, mtk_smi_common_resume, NULL)
++static const struct mtk_smi_common_plat mtk_smi_common_gen1 = {
++	.gen = MTK_SMI_GEN1,
 +};
 +
- static struct platform_driver mtk_smi_common_driver = {
- 	.probe	= mtk_smi_common_probe,
- 	.remove = mtk_smi_common_remove,
- 	.driver	= {
- 		.name = "mtk-smi-common",
- 		.of_match_table = mtk_smi_common_of_ids,
-+		.pm             = &smi_common_pm_ops,
- 	}
++static const struct mtk_smi_common_plat mtk_smi_common_gen2 = {
++	.gen = MTK_SMI_GEN2,
++};
++
+ static const struct of_device_id mtk_smi_common_of_ids[] = {
+ 	{
+ 		.compatible = "mediatek,mt8173-smi-common",
+-		.data = (void *)MTK_SMI_GEN2
++		.data = &mtk_smi_common_gen2,
+ 	},
+ 	{
+ 		.compatible = "mediatek,mt2701-smi-common",
+-		.data = (void *)MTK_SMI_GEN1
++		.data = &mtk_smi_common_gen1,
+ 	},
+ 	{
+ 		.compatible = "mediatek,mt2712-smi-common",
+-		.data = (void *)MTK_SMI_GEN2
++		.data = &mtk_smi_common_gen2,
+ 	},
+ 	{
+ 		.compatible = "mediatek,mt8183-smi-common",
+-		.data = (void *)MTK_SMI_GEN2
++		.data = &mtk_smi_common_gen2,
+ 	},
+ 	{}
  };
+@@ -412,13 +426,13 @@ static int mtk_smi_common_probe(struct platform_device *pdev)
+ 	struct device *dev = &pdev->dev;
+ 	struct mtk_smi *common;
+ 	struct resource *res;
+-	enum mtk_smi_gen smi_gen;
+ 	int ret;
  
+ 	common = devm_kzalloc(dev, sizeof(*common), GFP_KERNEL);
+ 	if (!common)
+ 		return -ENOMEM;
+ 	common->dev = dev;
++	common->plat = of_device_get_match_data(dev);
+ 
+ 	common->clk_apb = devm_clk_get(dev, "apb");
+ 	if (IS_ERR(common->clk_apb))
+@@ -446,8 +460,7 @@ static int mtk_smi_common_probe(struct platform_device *pdev)
+ 	 * clock into emi clock domain, but for mtk smi gen2, there's no smi ao
+ 	 * base.
+ 	 */
+-	smi_gen = (enum mtk_smi_gen)of_device_get_match_data(dev);
+-	if (smi_gen == MTK_SMI_GEN1) {
++	if (common->plat->gen == MTK_SMI_GEN1) {
+ 		res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
+ 		common->smi_ao_base = devm_ioremap_resource(dev, res);
+ 		if (IS_ERR(common->smi_ao_base))
 -- 
 1.9.1
 
