@@ -2,225 +2,127 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.3 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	FSL_HELO_FAKE,INCLUDES_PATCH,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,
-	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 3A08BC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 10:58:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id C9B45C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 11:06:24 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id D615E20817
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 10:58:05 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 802E320825
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 11:06:24 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MHtzQs2c"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D615E20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="PQ72fau8";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=codeaurora.org header.i=@codeaurora.org header.b="XspddyFy"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 802E320825
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726243AbeKQVOW (ORCPT
+        id S1726233AbeKQVWn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 16:14:22 -0500
-Received: from mail-wr1-f66.google.com ([209.85.221.66]:33110 "EHLO
-        mail-wr1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725927AbeKQVOV (ORCPT
+        Sat, 17 Nov 2018 16:22:43 -0500
+Received: from smtp.codeaurora.org ([198.145.29.96]:33992 "EHLO
+        smtp.codeaurora.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725930AbeKQVWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 16:14:21 -0500
-Received: by mail-wr1-f66.google.com with SMTP id u9-v6so27325434wrr.0
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 02:58:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=sender:date:from:to:cc:subject:message-id:mime-version
-         :content-disposition:user-agent;
-        bh=pKbvBWfHFvjJKzeOPV5U0u8y+E58jxx3hZqtIY2M0s0=;
-        b=MHtzQs2cyOuOF7GbmQ5olbpX1b9n0Qi28mUhCNkTgGxivT+cyv3i4L86bnhhl9KpkL
-         tJepAXuH64J0P9pHLNP16FtAAK90SiHjqQ1Zig8oaENEi3YzbyCvXjmOy0tfFigEcxIW
-         G8yPoEToOJjYEVLiFhMMItfd8aKXzgUu1qkJsv3TnrMeqA5CrUxj1wAHScc/tDvkjuE/
-         7p/lqhXK3Zt0n4aAEZ+8aiH4y223IsJMRJnW8YcVZSnn0Pow77V4L/WCNIhBF8k+Dkp6
-         zzT3mSlx9XhiTU5hhxNaTMVHnAHZHjHLwuut8AH4DxUjRkKRS2Hb5GI+enY9nZoiFudO
-         2VxA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:sender:date:from:to:cc:subject:message-id
-         :mime-version:content-disposition:user-agent;
-        bh=pKbvBWfHFvjJKzeOPV5U0u8y+E58jxx3hZqtIY2M0s0=;
-        b=d92+kuEO96tUOkIJG3exvmcwHFy/2iSqcuyD+/Y/2FZwiDkoDAM8vyzhkOGf/CJXl8
-         tHO5qcw9QTUysj3clxCcxvpPHhaQbBsLxAXGEN+fnuBBeSWQaaoIDQJlEe8voaBTsiSj
-         s7ZMz1jYBE4ZFaq1Tp0FJDGOsEyZWX2gIuu+rpIkFQQahRn1KRnH5pKB8FsvdT0hoLAN
-         qKq/KMrIgBanaq7ub5vTVpF0R0wsx6Belfk8sT5lsIGIijMvo6nxoE7J+oCZ7j6LBsWt
-         EP+nsyTp7TF6G+yonzipyptCdEepDIY2H8VdkHNxv7KUKaWerwUJtZHTEGMDNfubOhlP
-         yNPA==
-X-Gm-Message-State: AGRZ1gK3Yi5kR4daqcCieOTrJqJbTtzconar1/+YwsRoBqgtHmVxVkQZ
-        rXsOTgiJmvsCtqQjz3Xma5w=
-X-Google-Smtp-Source: AJdET5cJgl+vpxsK/ujl2TT+wmxPX60yjzujuArLJqtnPpuZJnm3Vw+G9sDgelyUuDQEn4I2FIS+tg==
-X-Received: by 2002:adf:ce86:: with SMTP id r6mr12648941wrn.257.1542452280770;
-        Sat, 17 Nov 2018 02:58:00 -0800 (PST)
-Received: from gmail.com (2E8B0CD5.catv.pool.telekom.hu. [46.139.12.213])
-        by smtp.gmail.com with ESMTPSA id 78-v6sm13905638wma.30.2018.11.17.02.57.59
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 17 Nov 2018 02:58:00 -0800 (PST)
-Date:   Sat, 17 Nov 2018 11:57:57 +0100
-From:   Ingo Molnar <mingo@kernel.org>
-To:     Linus Torvalds <torvalds@linux-foundation.org>
-Cc:     linux-kernel@vger.kernel.org,
-        Peter Zijlstra <a.p.zijlstra@chello.nl>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] scheduler fix
-Message-ID: <20181117105757.GA40115@gmail.com>
+        Sat, 17 Nov 2018 16:22:42 -0500
+Received: by smtp.codeaurora.org (Postfix, from userid 1000)
+        id 2602C607DC; Sat, 17 Nov 2018 11:06:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542452782;
+        bh=HJYSzAR5PDW6emOvHsBxjhD6NTEv8DcmatNhOa7NPJ8=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=PQ72fau8lY6Xbp63Mig+0ixwfXiUf4MOisE4/UDFNNhuAqEAEYS0GuqLtCnS19iD9
+         8e/5e4a6EbWRlij8oXmjPpVNam5DhEt2CZzYObflAuC5sAIi0DtuI0FT5Hh+syOkT7
+         nO3VXKEK2OdXyIoZigsxODyqz4gyIUwnoLMkE+AU=
+Received: from x230.qca.qualcomm.com (88-114-240-156.elisa-laajakaista.fi [88.114.240.156])
+        (using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+        (No client certificate requested)
+        (Authenticated sender: kvalo@smtp.codeaurora.org)
+        by smtp.codeaurora.org (Postfix) with ESMTPSA id 8F2A0601D1;
+        Sat, 17 Nov 2018 11:06:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=codeaurora.org;
+        s=default; t=1542452781;
+        bh=HJYSzAR5PDW6emOvHsBxjhD6NTEv8DcmatNhOa7NPJ8=;
+        h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+        b=XspddyFyUFi2lHHU/CLIzYfgMbTEDRODHmoSbAxGdm9SrhCqUWjHQa6BxzzkIbX5M
+         7v+y92sQSmKEFz4tlsGtXmr1R/i2OMakyuwYhq37upRfS+FSd/ID8ypVaIcdnzGggv
+         2c0OkrWg07Wl/ro6X82eWA6+OMCTOAF6CtA3KyoM=
+DMARC-Filter: OpenDMARC Filter v1.3.2 smtp.codeaurora.org 8F2A0601D1
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; dmarc=none (p=none dis=none) header.from=codeaurora.org
+Authentication-Results: pdx-caf-mail.web.codeaurora.org; spf=none smtp.mailfrom=kvalo@codeaurora.org
+From:   Kalle Valo <kvalo@codeaurora.org>
+To:     Priit Laes <plaes@plaes.org>
+Cc:     Michael =?utf-8?Q?B=C3=BCsch?= <m@bues.ch>,
+        Kees Cook <keescook@chromium.org>,
+        Jia-Ju Bai <baijiaju1990@gmail.com>,
+        Larry Finger <Larry.Finger@lwfinger.net>,
+        "Gustavo A. R. Silva" <gustavo@embeddedor.com>,
+        Colin Ian King <colin.king@canonical.com>,
+        Arend van Spriel <arend.vanspriel@broadcom.com>,
+        Varsha Rao <rvarsha016@gmail.com>,
+        linux-wireless@vger.kernel.org, b43-dev@lists.infradead.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 3/3] b43: Use cordic algorithm from kernel library
+References: <cover.c0b1738f3f06bbf87f4ad3200ece93322a5f135f.1542219596.git-series.plaes@plaes.org>
+        <d93962cdc5a32fe99e6e5a25172920d28583aa6a.1542219596.git-series.plaes@plaes.org>
+        <20181114194628.0f485637@wiggum>
+        <20181117083628.sm6juvz75kiargz4@plaes.org>
+Date:   Sat, 17 Nov 2018 13:06:15 +0200
+In-Reply-To: <20181117083628.sm6juvz75kiargz4@plaes.org> (Priit Laes's message
+        of "Sat, 17 Nov 2018 08:36:28 +0000")
+Message-ID: <878t1s55g8.fsf@codeaurora.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/24.5 (gnu/linux)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-User-Agent: Mutt/1.9.4 (2018-02-28)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Linus,
+Priit Laes <plaes@plaes.org> writes:
 
-Please pull the latest sched-urgent-for-linus git tree from:
+> On Wed, Nov 14, 2018 at 07:46:28PM +0100, Michael B=C3=BCsch wrote:
+>> On Wed, 14 Nov 2018 20:27:52 +0200
+>> Priit Laes <plaes@plaes.org> wrote:
+>>=20
+>> > Kernel library has a common cordic algorithm which is identical
+>> > to internally implementatd one, so use it and drop the duplicate
+>> > implementation.
+>>=20
+>>=20
+>> In v2 of the series it has been said that:
+>>=20
+>> Arend van Spriel <arend.vanspriel@broadcom.com> wrote:
+>> > I recall doing a comparison between the algorithms and thought I put=20
+>> > that in the original commit message. However, it is not there. It is n=
+ot=20
+>> > exactly the same as in b43 so there are difference for certain angles,=
+=20
+>> > most results are the same however. This implementation is slightly mor=
+e=20
+>> > accurate on the full scale.
+>>=20
+>>=20
+>> That's not my definition of "identical".
+>>=20
+>> Please do not apply this patch without doing a thorough regression test
+>> on actual b43 LP hardware.
+>
+> Indeed, there's a big discrepancy in the results of both algorithms.
+>
+> Here's the test script:
+> https://gist.github.com/plaes/284993a4fc65e0926d0628a11f0cf874
+>
+> So at current state, this is self-NAK from me too and this patch should
+> be dropped.
 
-   git://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git sched-urgent-for-linus
+Ok, I'll drop patch 3 but keep patches 1-2 still in review. Thanks for
+verifying this!
 
-   # HEAD: c469933e772132aad040bd6a2adc8edf9ad6f825 sched/fair: Fix cpu_util_wake() for 'execl' type workloads
+But of course it would be better if somebody could test this properly on
+a real device. When that happens, please resubmit patch 3.
 
-Fix an exec() related scalability/performance regression, which was 
-caused by incorrectly calculating load and migrating tasks on exec() when 
-they shouldn't be.
-
- Thanks,
-
-	Ingo
-
------------------->
-Patrick Bellasi (1):
-      sched/fair: Fix cpu_util_wake() for 'execl' type workloads
-
-
- kernel/sched/fair.c | 62 +++++++++++++++++++++++++++++++++++++++++------------
- 1 file changed, 48 insertions(+), 14 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 3648d0300fdf..ac855b2f4774 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5674,11 +5674,11 @@ static int wake_affine(struct sched_domain *sd, struct task_struct *p,
- 	return target;
- }
- 
--static unsigned long cpu_util_wake(int cpu, struct task_struct *p);
-+static unsigned long cpu_util_without(int cpu, struct task_struct *p);
- 
--static unsigned long capacity_spare_wake(int cpu, struct task_struct *p)
-+static unsigned long capacity_spare_without(int cpu, struct task_struct *p)
- {
--	return max_t(long, capacity_of(cpu) - cpu_util_wake(cpu, p), 0);
-+	return max_t(long, capacity_of(cpu) - cpu_util_without(cpu, p), 0);
- }
- 
- /*
-@@ -5738,7 +5738,7 @@ find_idlest_group(struct sched_domain *sd, struct task_struct *p,
- 
- 			avg_load += cfs_rq_load_avg(&cpu_rq(i)->cfs);
- 
--			spare_cap = capacity_spare_wake(i, p);
-+			spare_cap = capacity_spare_without(i, p);
- 
- 			if (spare_cap > max_spare_cap)
- 				max_spare_cap = spare_cap;
-@@ -5889,8 +5889,8 @@ static inline int find_idlest_cpu(struct sched_domain *sd, struct task_struct *p
- 		return prev_cpu;
- 
- 	/*
--	 * We need task's util for capacity_spare_wake, sync it up to prev_cpu's
--	 * last_update_time.
-+	 * We need task's util for capacity_spare_without, sync it up to
-+	 * prev_cpu's last_update_time.
- 	 */
- 	if (!(sd_flag & SD_BALANCE_FORK))
- 		sync_entity_load_avg(&p->se);
-@@ -6216,10 +6216,19 @@ static inline unsigned long cpu_util(int cpu)
- }
- 
- /*
-- * cpu_util_wake: Compute CPU utilization with any contributions from
-- * the waking task p removed.
-+ * cpu_util_without: compute cpu utilization without any contributions from *p
-+ * @cpu: the CPU which utilization is requested
-+ * @p: the task which utilization should be discounted
-+ *
-+ * The utilization of a CPU is defined by the utilization of tasks currently
-+ * enqueued on that CPU as well as tasks which are currently sleeping after an
-+ * execution on that CPU.
-+ *
-+ * This method returns the utilization of the specified CPU by discounting the
-+ * utilization of the specified task, whenever the task is currently
-+ * contributing to the CPU utilization.
-  */
--static unsigned long cpu_util_wake(int cpu, struct task_struct *p)
-+static unsigned long cpu_util_without(int cpu, struct task_struct *p)
- {
- 	struct cfs_rq *cfs_rq;
- 	unsigned int util;
-@@ -6231,7 +6240,7 @@ static unsigned long cpu_util_wake(int cpu, struct task_struct *p)
- 	cfs_rq = &cpu_rq(cpu)->cfs;
- 	util = READ_ONCE(cfs_rq->avg.util_avg);
- 
--	/* Discount task's blocked util from CPU's util */
-+	/* Discount task's util from CPU's util */
- 	util -= min_t(unsigned int, util, task_util(p));
- 
- 	/*
-@@ -6240,14 +6249,14 @@ static unsigned long cpu_util_wake(int cpu, struct task_struct *p)
- 	 * a) if *p is the only task sleeping on this CPU, then:
- 	 *      cpu_util (== task_util) > util_est (== 0)
- 	 *    and thus we return:
--	 *      cpu_util_wake = (cpu_util - task_util) = 0
-+	 *      cpu_util_without = (cpu_util - task_util) = 0
- 	 *
- 	 * b) if other tasks are SLEEPING on this CPU, which is now exiting
- 	 *    IDLE, then:
- 	 *      cpu_util >= task_util
- 	 *      cpu_util > util_est (== 0)
- 	 *    and thus we discount *p's blocked utilization to return:
--	 *      cpu_util_wake = (cpu_util - task_util) >= 0
-+	 *      cpu_util_without = (cpu_util - task_util) >= 0
- 	 *
- 	 * c) if other tasks are RUNNABLE on that CPU and
- 	 *      util_est > cpu_util
-@@ -6260,8 +6269,33 @@ static unsigned long cpu_util_wake(int cpu, struct task_struct *p)
- 	 * covered by the following code when estimated utilization is
- 	 * enabled.
- 	 */
--	if (sched_feat(UTIL_EST))
--		util = max(util, READ_ONCE(cfs_rq->avg.util_est.enqueued));
-+	if (sched_feat(UTIL_EST)) {
-+		unsigned int estimated =
-+			READ_ONCE(cfs_rq->avg.util_est.enqueued);
-+
-+		/*
-+		 * Despite the following checks we still have a small window
-+		 * for a possible race, when an execl's select_task_rq_fair()
-+		 * races with LB's detach_task():
-+		 *
-+		 *   detach_task()
-+		 *     p->on_rq = TASK_ON_RQ_MIGRATING;
-+		 *     ---------------------------------- A
-+		 *     deactivate_task()                   \
-+		 *       dequeue_task()                     + RaceTime
-+		 *         util_est_dequeue()              /
-+		 *     ---------------------------------- B
-+		 *
-+		 * The additional check on "current == p" it's required to
-+		 * properly fix the execl regression and it helps in further
-+		 * reducing the chances for the above race.
-+		 */
-+		if (unlikely(task_on_rq_queued(p) || current == p)) {
-+			estimated -= min_t(unsigned int, estimated,
-+					   (_task_util_est(p) | UTIL_AVG_UNCHANGED));
-+		}
-+		util = max(util, estimated);
-+	}
- 
- 	/*
- 	 * Utilization (estimated) can exceed the CPU capacity, thus let's
+--=20
+Kalle Valo
