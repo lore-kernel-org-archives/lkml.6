@@ -8,67 +8,67 @@ X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham autolearn_force=no
 	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AF65CC04EBF
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E8FAEC43610
 	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:20:29 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 75E1520815
+	by mail.kernel.org (Postfix) with ESMTP id AF15F2082A
 	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:20:29 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Z4WYq5UC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 75E1520815
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="hF2ENepf"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AF15F2082A
 Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=googlemail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726988AbeKREhy (ORCPT
+        id S1727105AbeKREh4 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 23:37:54 -0500
-Received: from mail-wm1-f68.google.com ([209.85.128.68]:38720 "EHLO
-        mail-wm1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726071AbeKREhx (ORCPT
+        Sat, 17 Nov 2018 23:37:56 -0500
+Received: from mail-wm1-f66.google.com ([209.85.128.66]:34465 "EHLO
+        mail-wm1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeKREhz (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 23:37:53 -0500
-Received: by mail-wm1-f68.google.com with SMTP id k198so1121892wmd.3;
-        Sat, 17 Nov 2018 10:20:23 -0800 (PST)
+        Sat, 17 Nov 2018 23:37:55 -0500
+Received: by mail-wm1-f66.google.com with SMTP id f1-v6so3135694wmg.1;
+        Sat, 17 Nov 2018 10:20:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=googlemail.com; s=20161025;
         h=from:to:cc:subject:date:message-id:in-reply-to:references
          :mime-version:content-transfer-encoding;
-        bh=hUfrNq8LnI3h9vSQVIMRntpzREcOJn1MkvWLXibLYQg=;
-        b=Z4WYq5UCtz/35i+mvRgtl1UPG5lzvWc7bWMTiL1Qtcha9xo8IPPe6IkMMo0jOAGznz
-         uCE0eBrSHFlFLCXRl4GzXsbeo85OS/VXjTn8m811O8MJRHAgTmWIkMHesTGPkfTJTbx+
-         ZvUYeNdWu/VdgmkZzYza6U3rhZrOwftH9Fp9IxTsjqv/oD9FuB7yNZgw/MovKGfRGw7D
-         nO3nB1n9Uq4dTJZNQ8iSxSYhDH7K8aXt2l2eILVqCF8w7reYA6kUVi1XuIXHVGxaG+4t
-         x2xT6aL3MSYWQ1UplmDtsMYtBc2s77vexYCjZWUVwfd3QwdQ7b2KXsD3+ZYZYWkLG+UK
-         SXRw==
+        bh=OOD1awuZF6odOFBkPMJ1CPZMTQu3oKzS+1l0zEYgy6Y=;
+        b=hF2ENepfw22mZc3RuVtHsaqohTX+AF01BQDj23s1kUiE5/FNiLdqa7QdRrf7n6lkra
+         JHm8gnDk/TAol5LAb/JOuptgetkh7JEWUXRl5c73WeDD5Jy9bbCuAUJa41MDbbpti1Tj
+         WHN5r2Ox0BI9+fCXeFS2LyjZ/pLSkHCVa/7jyYRl4kUQz8LUxxsYK9F9YNQI9K3htFNf
+         0Xm0ynT8oYxWbPozBOmt2YEqF/o/Z1g6h4QbINtNM0MUh7MmiRBJsMIxjatke4xASjFH
+         4t6e7w8sYBs9IyVy4yeexeKYwvyo9ujOYnQ97QMacqwDFA6JWHw7Pm/0NM2YQANPiiah
+         UkZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
          :references:mime-version:content-transfer-encoding;
-        bh=hUfrNq8LnI3h9vSQVIMRntpzREcOJn1MkvWLXibLYQg=;
-        b=SodDnPBuyXl8zUwTmRzZoQi7IboJfLiNIqTGkYIwpMlsykZA1zXeQwFWdTtYI3bQqT
-         aYfUC3ye0gm6KcCtig6gmrBiNf9O8nohPtR51t10DnZKeO9mJiLzzM0faMSETeGsuCIm
-         m0LKpbNmqR0gGwcSab6epi2px7nNF1k7JUVHeGSbyXRfHKCeA3ItkUP6QF+6a77NCuNb
-         j4RWVVJvDfKtJkWy035SbjXl3epgoAYwRmFNA6hYcBZ9u3y55YgyV+jukIC92Mm3gzOn
-         0LJDHgAcpZySwyDIB6zXmhU6deNdCKkSSLgQzBLGnkrioDAk3IDu12uFcFOQaxX9281o
-         Xfmw==
-X-Gm-Message-State: AGRZ1gJ/7y6GM1VwSieIhhDzXceA07f1hpFpAwAYPK94CRK4tdHbNUb3
-        7d4lMWlpt/C5pyk2CT6FdOyUXw7hjpI=
-X-Google-Smtp-Source: AJdET5e2n18tYtVlSpMKvcsInVpgMEUNifUnd532EI/3DhUByFp0tOLRljm/4zbFcrIfyfx8E+15gA==
-X-Received: by 2002:a1c:a6cd:: with SMTP id p196mr2237332wme.142.1542478822150;
-        Sat, 17 Nov 2018 10:20:22 -0800 (PST)
+        bh=OOD1awuZF6odOFBkPMJ1CPZMTQu3oKzS+1l0zEYgy6Y=;
+        b=jn29uWcUGqE5kgR5wG5WCb5IQTnYf7Hu9rRE5TI3pG/fKHO0sNBGqsKlXQ1AT5wxEA
+         Xnt8xcm92Ihurf8ARrhsqw3VhPP2G81vbN6g/QAqyRir6rL575lC0DPZcgIL+wTr4c5+
+         snkE1zcVxowZeXZ1xvHZWxQEcPn0epBxGY63OHxuOAWNl9lIVFUPV9+GCl7v38h3/n9t
+         75+yy7yKBqYBH8SX67UWQ88+w1Ie2RXEw4vdQ/ZRZQHTN/UIQbFIQQtAalorUG1Pw3iX
+         OUUObOJHDyTGlmiOuDHD+vUMIEC5jZqy6OXULAbxFokMrG5FhDMygaUy7X+spSem9ita
+         JYCw==
+X-Gm-Message-State: AGRZ1gJ/rCNKXpeVnonbFVxZ/nbnZQ87YfIFpg/GQ2/Lqo+dAuE2nrAh
+        0y6YBza8aoYSwo/fCncgbaGOsVKsSqw=
+X-Google-Smtp-Source: AJdET5cU3UEw8BLuZxmnAO1thjMwfSeOCtPliAlpUQBeDoTiAHaBvrEfaRS+slxwNsRhWXrvmyQNpA==
+X-Received: by 2002:a1c:6a08:: with SMTP id f8mr2127529wmc.4.1542478824461;
+        Sat, 17 Nov 2018 10:20:24 -0800 (PST)
 Received: from blackbox.darklights.net (p200300DCD717A100C991D5C7C405D3EC.dip0.t-ipconnect.de. [2003:dc:d717:a100:c991:d5c7:c405:d3ec])
-        by smtp.googlemail.com with ESMTPSA id e8-v6sm63631232wmf.22.2018.11.17.10.20.21
+        by smtp.googlemail.com with ESMTPSA id e8-v6sm63631232wmf.22.2018.11.17.10.20.23
         (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Sat, 17 Nov 2018 10:20:21 -0800 (PST)
+        Sat, 17 Nov 2018 10:20:23 -0800 (PST)
 From:   Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 To:     netdev@vger.kernel.org, devicetree@vger.kernel.org,
         f.fainelli@gmail.com, andrew@lunn.ch, mark.rutland@arm.com,
         robh+dt@kernel.org, davem@davemloft.net
 Cc:     linux-kernel@vger.kernel.org,
         Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: [PATCH 2/7] dt-bindings: net: phy: add bindings for the IC Plus Corp. IP101A/G PHYs
-Date:   Sat, 17 Nov 2018 19:20:02 +0100
-Message-Id: <20181117182007.14791-3-martin.blumenstingl@googlemail.com>
+Subject: [PATCH 4/7] net: phy: icplus: use the BIT macro where possible
+Date:   Sat, 17 Nov 2018 19:20:04 +0100
+Message-Id: <20181117182007.14791-5-martin.blumenstingl@googlemail.com>
 X-Mailer: git-send-email 2.19.1
 In-Reply-To: <20181117182007.14791-1-martin.blumenstingl@googlemail.com>
 References: <20181117182007.14791-1-martin.blumenstingl@googlemail.com>
@@ -79,54 +79,33 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The IP101A and IP101G series both have various models. Depending on the
-board implementation we need a special property for the IP101GR (32-pin
-LQFP package) PHY:
-pin 21 ("RXER/INTR_32") outputs the "receive error" signal by default
-(LOW means "normal operation", HIGH means that there's either a decoding
-error of the received signal or that the PHY is receiving LPI). This pin
-can also be switched to INTR32 mode, where the interrupt signal is
-routed to this pin. The other PHYs don't need this special handling
-because they have more pins available so the interrupt function gets a
-dedicated pin.
-
-This adds two properties to either select the "receive error" or
-"interrupt" function of pin 21. Not specifying any function means that
-the default set by the bootloader is used. This is required because the
-IP101GR cannot be differentiated between other IP101 PHYs as the PHY
-identification registers on all of these is 0x02430c54.
+This makes the code consistent by using the BIT() macro instead of
+manual bit-shifting for some of the fields. No functional changes.
 
 Signed-off-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 ---
- .../bindings/net/icplus-ip101ag.txt           | 19 +++++++++++++++++++
- 1 file changed, 19 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/net/icplus-ip101ag.txt
+ drivers/net/phy/icplus.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/net/icplus-ip101ag.txt b/Documentation/devicetree/bindings/net/icplus-ip101ag.txt
-new file mode 100644
-index 000000000000..a784592bbb15
---- /dev/null
-+++ b/Documentation/devicetree/bindings/net/icplus-ip101ag.txt
-@@ -0,0 +1,19 @@
-+IC Plus Corp. IP101A / IP101G Ethernet PHYs
-+
-+There are different models of the IP101G Ethernet PHY:
-+- IP101GR (32-pin QFN package)
-+- IP101G (die only, no package)
-+- IP101GA (48-pin LQFP package)
-+
-+There are different models of the IP101A Ethernet PHY (which is the
-+predecessor of the IP101G):
-+- IP101A (48-pin LQFP package)
-+- IP101AH (48-pin LQFP package)
-+
-+Optional properties for the IP101GR (32-pin QFN package):
-+
-+- icplus,select-rx-error:
-+  pin 21 ("RXER/INTR_32") will output the receive error status.
-+  interrupts are not routed outside the PHY in this mode.
-+- icplus,select-interrupt:
-+  pin 21 ("RXER/INTR_32") will output the interrupt signal.
+diff --git a/drivers/net/phy/icplus.c b/drivers/net/phy/icplus.c
+index 3d3e9134c762..3ec470adde3d 100644
+--- a/drivers/net/phy/icplus.c
++++ b/drivers/net/phy/icplus.c
+@@ -36,11 +36,11 @@ MODULE_LICENSE("GPL");
+ 
+ /* IP101A/G - IP1001 */
+ #define IP10XX_SPEC_CTRL_STATUS		16	/* Spec. Control Register */
+-#define IP1001_RXPHASE_SEL		(1<<0)	/* Add delay on RX_CLK */
+-#define IP1001_TXPHASE_SEL		(1<<1)	/* Add delay on TX_CLK */
++#define IP1001_RXPHASE_SEL		BIT(0)	/* Add delay on RX_CLK */
++#define IP1001_TXPHASE_SEL		BIT(1)	/* Add delay on TX_CLK */
+ #define IP1001_SPEC_CTRL_STATUS_2	20	/* IP1001 Spec. Control Reg 2 */
+ #define IP1001_APS_ON			11	/* IP1001 APS Mode  bit */
+-#define IP101A_G_APS_ON			2	/* IP101A/G APS Mode bit */
++#define IP101A_G_APS_ON			BIT(1)	/* IP101A/G APS Mode bit */
+ #define IP101A_G_IRQ_CONF_STATUS	0x11	/* Conf Info IRQ & Status Reg */
+ #define	IP101A_G_IRQ_PIN_USED		BIT(15) /* INTR pin used */
+ #define	IP101A_G_NO_IRQ			BIT(11) /* IRQ's inactive */
 -- 
 2.19.1
 
