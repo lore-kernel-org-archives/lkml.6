@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A8889C43441
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D913CC43610
 	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7A6662087C
+	by mail.kernel.org (Postfix) with ESMTP id A8A512145D
 	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:27:40 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6662087C
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A8A512145D
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730581AbeKQMmb (ORCPT
+        id S1730863AbeKQMme (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 07:42:31 -0500
+        Sat, 17 Nov 2018 07:42:34 -0500
 Received: from mga14.intel.com ([192.55.52.115]:45898 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbeKQMmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 07:42:31 -0500
+        id S1727116AbeKQMmd (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 07:42:33 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 18:27:36 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 18:27:37 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,242,1539673200"; 
-   d="scan'208";a="281852578"
+   d="scan'208";a="281852584"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Nov 2018 18:27:35 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 16 Nov 2018 18:27:36 -0800
 From:   Tim Chen <tim.c.chen@linux.intel.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -49,9 +49,9 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Jon Masters <jcm@redhat.com>,
         Waiman Long <longman9394@gmail.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [Patch v5 03/16] x86/speculation: Reorganize cpu_show_common()
-Date:   Fri, 16 Nov 2018 17:53:46 -0800
-Message-Id: <d6171c8cd0f55bb6fcffc29d9700959071b6a762.1542418937.git.tim.c.chen@linux.intel.com>
+Subject: [Patch v5 04/16] x86/speculation: Add X86_FEATURE_USE_IBRS_ENHANCED
+Date:   Fri, 16 Nov 2018 17:53:47 -0800
+Message-Id: <40733266e3484cbd576d84b67dd98f9f8769d2e3.1542418937.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1542418936.git.tim.c.chen@linux.intel.com>
 References: <cover.1542418936.git.tim.c.chen@linux.intel.com>
@@ -62,58 +62,43 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Spectre V2 printout in cpu_show_common() handles conditionals for the
-various mitigation methods directly in the sprintf() argument list. That's
-hard to read and will become unreadable if more complex decisions need to
-be made for a particular method.
+STIBP is not needed when enhanced IBRS is used for Spectre V2 mitigation.
+A CPU feature flag to indicate that enhanced IBRS is used will be handy
+for skipping STIBP for this case.
 
-Move the conditionals for STIBP and IBPB string selection into helper
-functions, so they can be extended later on.
+Add X86_FEATURE_USE_IBRS_ENHANCED feature bit to indicate
+enhanced IBRS is used for Spectre V2 mitigation.
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/bugs.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+ arch/x86/include/asm/cpufeatures.h | 1 +
+ arch/x86/kernel/cpu/bugs.c         | 1 +
+ 2 files changed, 2 insertions(+)
 
+diff --git a/arch/x86/include/asm/cpufeatures.h b/arch/x86/include/asm/cpufeatures.h
+index 28c4a50..fe8e064 100644
+--- a/arch/x86/include/asm/cpufeatures.h
++++ b/arch/x86/include/asm/cpufeatures.h
+@@ -221,6 +221,7 @@
+ #define X86_FEATURE_ZEN			( 7*32+28) /* "" CPU is AMD family 0x17 (Zen) */
+ #define X86_FEATURE_L1TF_PTEINV		( 7*32+29) /* "" L1TF workaround PTE inversion */
+ #define X86_FEATURE_IBRS_ENHANCED	( 7*32+30) /* Enhanced IBRS */
++#define X86_FEATURE_USE_IBRS_ENHANCED	( 7*32+31) /* "" Enhanced IBRS enabled */
+ 
+ /* Virtualization flags: Linux defined, word 8 */
+ #define X86_FEATURE_TPR_SHADOW		( 8*32+ 0) /* Intel TPR Shadow */
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 84e3579..91a754a 100644
+index 91a754a..3a6f13b 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -853,6 +853,22 @@ static ssize_t l1tf_show_state(char *buf)
- }
- #endif
- 
-+static char *stibp_state(void)
-+{
-+	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
-+		return ", STIBP";
-+	else
-+		return "";
-+}
-+
-+static char *ibpb_state(void)
-+{
-+	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
-+		return ", IBPB";
-+	else
-+		return "";
-+}
-+
- static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
- 			       char *buf, unsigned int bug)
- {
-@@ -874,9 +890,9 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 
- 	case X86_BUG_SPECTRE_V2:
- 		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
--			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
-+			       ibpb_state(),
- 			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
--			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
-+			       stibp_state(),
- 			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
- 			       spectre_v2_module_string());
- 
+@@ -387,6 +387,7 @@ static void __init spectre_v2_select_mitigation(void)
+ 			/* Force it so VMEXIT will restore correctly */
+ 			x86_spec_ctrl_base |= SPEC_CTRL_IBRS;
+ 			wrmsrl(MSR_IA32_SPEC_CTRL, x86_spec_ctrl_base);
++			setup_force_cpu_cap(X86_FEATURE_USE_IBRS_ENHANCED);
+ 			goto specv2_set_mode;
+ 		}
+ 		if (IS_ENABLED(CONFIG_RETPOLINE))
 -- 
 2.9.4
 
