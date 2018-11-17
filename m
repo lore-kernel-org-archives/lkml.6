@@ -2,92 +2,90 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.8 required=3.0 tests=DKIM_INVALID,DKIM_SIGNED,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1B75CC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:32:47 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 70EF5C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:33:46 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A9CC92077B
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:32:46 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="03TUpuz6"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A9CC92077B
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+	by mail.kernel.org (Postfix) with ESMTP id 0B7BB2075B
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:33:46 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 0B7BB2075B
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729938AbeKQMrl (ORCPT
+        id S1730088AbeKQMsl (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 07:47:41 -0500
-Received: from merlin.infradead.org ([205.233.59.134]:57800 "EHLO
-        merlin.infradead.org" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729714AbeKQMrl (ORCPT
+        Sat, 17 Nov 2018 07:48:41 -0500
+Received: from smtprelay0012.hostedemail.com ([216.40.44.12]:50084 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1729714AbeKQMsk (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 07:47:41 -0500
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-        d=infradead.org; s=merlin.20170209; h=Content-Transfer-Encoding:Content-Type:
-        In-Reply-To:MIME-Version:Date:Message-ID:From:References:To:Subject:Sender:
-        Reply-To:Cc:Content-ID:Content-Description:Resent-Date:Resent-From:
-        Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-        List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-        bh=L6ciXQIeEmCRiMtAZkn9rIYkHk+4/GflDUAdtYCKTTw=; b=03TUpuz6SNRxh6HUHUUF+XQUCJ
-        jqCm0Mc2K9IOumTChLy7sXYcmgHQppVSLWAC4ToSoePoab4ErpOVSk80N/LMfphnQOv5O7bTMbaXv
-        oZXCyGd17pSMasyKgMdWHSM0gV16S17yckIOhlL0FmdDOIoSPVhfeixqJ1KbNrBHHyUJZU2TEt9hQ
-        X6iajKIgZpXm7Vd4xHptYmmc+Tcg17ZH6l/y+R4zOULH5IaMS/2yeXwkHpbY6dcboXWbNOTdWl7uw
-        A73jpQm6QIuT/zzSNllFv2HJzjNZ43CRECPN5eGRDm+/VJZfO3WjYLusPXUTAkuTFBE6SUYSlXkbV
-        gJLvbtjQ==;
-Received: from static-50-53-52-16.bvtn.or.frontiernet.net ([50.53.52.16] helo=midway.dunlab)
-        by merlin.infradead.org with esmtpsa (Exim 4.90_1 #2 (Red Hat Linux))
-        id 1gNqPT-0001GE-Cg; Sat, 17 Nov 2018 02:32:35 +0000
-Subject: Re: mmotm 2018-11-16-14-52 uploaded (gpu/drm/bridge/sii902x)
-To:     akpm@linux-foundation.org, broonie@kernel.org,
-        linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
-        mhocko@suse.cz, sfr@canb.auug.org.au,
-        Boris Brezillon <boris.brezillon@free-electrons.com>,
-        dri-devel <dri-devel@lists.freedesktop.org>
-References: <20181116225317.CcsXrZ5MG%akpm@linux-foundation.org>
-From:   Randy Dunlap <rdunlap@infradead.org>
-Message-ID: <78134da5-34dc-357e-dd92-8879281349ab@infradead.org>
-Date:   Fri, 16 Nov 2018 18:32:33 -0800
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
-MIME-Version: 1.0
-In-Reply-To: <20181116225317.CcsXrZ5MG%akpm@linux-foundation.org>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
+        Sat, 17 Nov 2018 07:48:40 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay01.hostedemail.com (Postfix) with ESMTP id 323A5100E806B;
+        Sat, 17 Nov 2018 02:33:43 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: toes79_329f9f93b808
+X-Filterd-Recvd-Size: 2399
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf04.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 17 Nov 2018 02:33:41 +0000 (UTC)
+Message-ID: <138f1c15387c47fe65f4a0448f35afdd9db81933.camel@perches.com>
+Subject: Re: [PATCH net-next v2] geneve: Use empty braces for addr6
+ initializer
+From:   Joe Perches <joe@perches.com>
+To:     Nathan Chancellor <natechancellor@gmail.com>,
+        Stefano Brivio <sbrivio@redhat.com>
+Cc:     "David S. Miller" <davem@davemloft.net>,
+        Sabrina Dubroca <sd@queasysnail.net>, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Date:   Fri, 16 Nov 2018 18:33:40 -0800
+In-Reply-To: <20181116153701.GA16184@flashbox>
+References: <20181112221248.11477-1-natechancellor@gmail.com>
+         <20181113061146.12182-1-natechancellor@gmail.com>
+         <20181116150432.2408a075@redhat.com> <20181116153701.GA16184@flashbox>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
 Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11/16/18 2:53 PM, akpm@linux-foundation.org wrote:
-> The mm-of-the-moment snapshot 2018-11-16-14-52 has been uploaded to
-> 
->    http://www.ozlabs.org/~akpm/mmotm/
-> 
-> mmotm-readme.txt says
-> 
-> README for mm-of-the-moment:
-> 
-> http://www.ozlabs.org/~akpm/mmotm/
-> 
-> This is a snapshot of my -mm patch queue.  Uploaded at random hopefully
-> more than once a week.
+On Fri, 2018-11-16 at 08:37 -0700, Nathan Chancellor wrote:
+> On Fri, Nov 16, 2018 at 03:04:32PM +0100, Stefano Brivio wrote:
+> > On Mon, 12 Nov 2018 23:11:47 -0700
+> > Nathan Chancellor <natechancellor@gmail.com> wrote:
+> > 
+> > > Clang warns:
+> > > 
+> > > drivers/net/geneve.c:428:29: error: suggest braces around initialization
+> > > of subobject [-Werror,-Wmissing-braces]
+> > >                 struct in6_addr addr6 = { 0 };
+> > >                                           ^
+> > >                                           {}
+> > > 
+> > > Most initializations of structs in the kernel seem to use this format.
+[]
+> > So { { { 0 } } } seems to be the safest option. We could go with static
+> > but it looks even uglier to me.
+> > 
+> > Joe, suggestions?
 
-(not caused by mmotm, just found here by make randconfig)
+If this is really an issue, I don't know why the other uses
+haven't been reported.  Perhaps change the rest of them too?
 
-on x86_64:
-when CONFIG_I2C_MUX is not enabled:
+$ git grep -P "struct\s+in6_addr\s+\w+\s*=\s*{\s*}"
+include/net/ip6_fib.h:          struct in6_addr in6_zero = {};
+include/trace/events/fib6.h:                    struct in6_addr in6_zero = {};
+net/6lowpan/iphc.c:     struct in6_addr network_pfx = {};
+net/6lowpan/iphc.c:     struct in6_addr tmp = {};
+net/6lowpan/iphc.c:     struct in6_addr tmp = {};
+net/6lowpan/iphc.c:     struct in6_addr tmp = {};
+net/6lowpan/iphc.c:     struct in6_addr tmp = {};
 
-ld: drivers/gpu/drm/bridge/sii902x.o: in function `sii902x_remove':
-sii902x.c:(.text+0x1f): undefined reference to `i2c_mux_del_adapters'
-ld: drivers/gpu/drm/bridge/sii902x.o: in function `sii902x_probe':
-sii902x.c:(.text+0x793): undefined reference to `i2c_mux_alloc'
-ld: sii902x.c:(.text+0x7be): undefined reference to `i2c_mux_add_adapter'
 
 
-
--- 
-~Randy
