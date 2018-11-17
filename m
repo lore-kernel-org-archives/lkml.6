@@ -2,147 +2,215 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A7655C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 07:11:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8E2A7C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 07:18:44 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 633542084A
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 07:11:22 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OCiJU9Ui"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 633542084A
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 4D7D52084A
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 07:18:44 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4D7D52084A
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1725929AbeKQR1E (ORCPT
+        id S1725984AbeKQRdu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 12:27:04 -0500
-Received: from mail-pg1-f195.google.com ([209.85.215.195]:37311 "EHLO
-        mail-pg1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725810AbeKQR1D (ORCPT
+        Sat, 17 Nov 2018 12:33:50 -0500
+Received: from mail-io1-f71.google.com ([209.85.166.71]:47987 "EHLO
+        mail-io1-f71.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725837AbeKQRdu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 12:27:03 -0500
-Received: by mail-pg1-f195.google.com with SMTP id 80so11574604pge.4
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 23:11:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=j5px/syCsxxZ+Kvyqc38VU9LHx7gEwoYxbQJsTuCjMA=;
-        b=OCiJU9Ui8NNIGrcXTfqBe0Bt9U0ZEAShE0ICg3cgVcSltIHofXNwKcL3O4KV1TIjXC
-         UDKdPi4wAghm7mQDF6JL/77CRbg+D33tws4OgjWqTw0WgC6pVyz8FkiN4p1vAl4bE/z+
-         7aSWHpkwrkMnm7j9wGwfwevHIzdc+aLeorqhZlqoMvh+FPIMuvekBCACr5SxYv06yj+T
-         kZoqpal40/YPd6R+G8mmspg8TYYQZ+fUM++5phMlFuRxIbcyO1u/J6JNtJ9LxIS9oNNa
-         REq/Py1bx5b/R2tCRTiSwHwf/eqN41IuHK8wvfNBrNH40JecVqztaIXUdAqBdhgrutD5
-         xLfg==
+        Sat, 17 Nov 2018 12:33:50 -0500
+Received: by mail-io1-f71.google.com with SMTP id y8-v6so25072180ioc.14
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 23:18:04 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=j5px/syCsxxZ+Kvyqc38VU9LHx7gEwoYxbQJsTuCjMA=;
-        b=TAd1UhgiW1/ipvs5E1w7mb9LjDsM4rl1eZNgi1ncQljZ2dhbs33PCRWZ+Mx8cv1jrA
-         NAd+aQ7MYGDizpOu0LRpiGPKdvht/z35J+dn0kylCWcBkcMxy2MGU0WQiekJWsqacRU+
-         Gzkl1X5u+BOA54eIO2YxRnYXsUT1jyr2BUh0ZIMWq4g01npYHZE3I2O5HXj4y9RHQ89F
-         OFdrmQ0UHs2h1VKVU41VRq7V4lWQx1ZTbLWFqqmYfe2uNjADy9gBk18q0AP9IXoeMInk
-         x+Suv1AHlzy58SfX2ouC8gi5ajs3Zjyx5gvc9m5547mLLGITJOftBoO8I0Crv0CbFFnk
-         fnNQ==
-X-Gm-Message-State: AGRZ1gLZcP4fZvWZocu8m5coW6hIG0S08HVfbvUsSfCX3gB7071hnHR6
-        +XPt5FiC1HcjrkGwnxzL6oc=
-X-Google-Smtp-Source: AJdET5cdI81Mc4HdSIzsOXU88uFx4pOyHDFSrw/8MoFoGMcUlh8vglDlTUtRpR9np1zQyH00MUOz/Q==
-X-Received: by 2002:a63:990a:: with SMTP id d10mr12780367pge.279.1542438679263;
-        Fri, 16 Nov 2018 23:11:19 -0800 (PST)
-Received: from nishad ([106.51.27.228])
-        by smtp.gmail.com with ESMTPSA id g65sm72855310pfa.63.2018.11.16.23.11.15
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Nov 2018 23:11:18 -0800 (PST)
-Date:   Sat, 17 Nov 2018 12:41:11 +0530
-From:   Nishad Kamdar <nishadkamdar@gmail.com>
-To:     Johan Hovold <johan@kernel.org>
-Cc:     Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Alex Elder <elder@kernel.org>,
-        Rui Miguel Silva <rmfrfs@gmail.com>,
-        greybus-dev@lists.linaro.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: greybus: arche-platform: Switch to the gpio
- descriptor interface
-Message-ID: <20181117071109.GA14187@nishad>
-References: <20181116151740.GA12250@nishad>
- <20181116160622.GQ19900@localhost>
+        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
+        bh=r99SkjSYnZ6axjqlld/mWg4+zxXsVz41bOFrmON26E8=;
+        b=XUZ+OdFEVdcPwa2hKcs8nZaAP75XJKUr1A2N1FbI1Kp/CKv0P76Do2R2MaZHf1OpyS
+         lZEDbfv/L6YGGNSZDzfIiJ4OIF5BQ/sj5pOsU4hHC2obA3B2exQQfkw4sqHlyZUrm7nf
+         LMXECKdBoNdM1sbPxDvGky0+SlpWOAOkMXXD8xT4URKwTdw3zGXy5k8HBIp+65jP3a+v
+         kAHNwTmKSGU6UHy7vR56660H5Fskw+2j6RNREj2qSlWxI8GID5VDAH+LFWm5zz/yAcRX
+         wq96FxNgjdI7ySJK8QIcw2L1GrJJC3BXfHxr7jJ0+t62mQpdHUM2/3ulTFGbdszE42H2
+         i4hQ==
+X-Gm-Message-State: AGRZ1gLixK4+Oc4VSkYNCaHlTWbUExSS5jpoDOuRWXO+NlsJKpOdiFLQ
+        5cS8Hanw/8qQ1GfPDnj9TBEF+iCMIucKSlhzMJVwXw5AtoJt
+X-Google-Smtp-Source: AFSGD/WaIVHI5FaFYtQtUf9SnjtdnMl/vI6bT5kqSC4MR9mbXzzGrgBmo0WUwRboRBtx9iOntp7T6bbEUoINTA19kxw02JX02LP6
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116160622.GQ19900@localhost>
-User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Received: by 2002:a24:2212:: with SMTP id o18-v6mr955061ito.24.1542439084588;
+ Fri, 16 Nov 2018 23:18:04 -0800 (PST)
+Date:   Fri, 16 Nov 2018 23:18:04 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <000000000000b98a67057ad7158a@google.com>
+Subject: KASAN: use-after-free Read in __lock_sock
+From:   syzbot <syzbot+9276d76e83e3bcde6c99@syzkaller.appspotmail.com>
+To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
+        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
+        netdev@vger.kernel.org, nhorman@tuxdriver.com,
+        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
+Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 05:06:22PM +0100, Johan Hovold wrote:
-> On Fri, Nov 16, 2018 at 08:47:44PM +0530, Nishad Kamdar wrote:
-> > Use the gpiod interface instead of the deprecated
-> > old non-descriptor interface.
-> > 
-> > Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
-> > ---
-> 
-> Always include a change log here after the cut-off line so we know what
-> changed since previous versions.
-> 
-> Also include the patch revision in the Subject (e.g. "[PATCH v3]
-> staging: greybus: ...").
-> 
+Hello,
 
-Ok, but this is the first patch version that I submitted
-for greybus: arche-platform.
+syzbot found the following crash on:
 
-> >  drivers/staging/greybus/arche-platform.c | 120 ++++++++---------------
-> >  1 file changed, 42 insertions(+), 78 deletions(-)
-> > 
-> > diff --git a/drivers/staging/greybus/arche-platform.c b/drivers/staging/greybus/arche-platform.c
-> > index 4c36e88766e7..a826a1835628 100644
-> > --- a/drivers/staging/greybus/arche-platform.c
-> > +++ b/drivers/staging/greybus/arche-platform.c
-> > @@ -8,10 +8,9 @@
-> >  
-> >  #include <linux/clk.h>
-> >  #include <linux/delay.h>
-> > -#include <linux/gpio.h>
-> > +#include <linux/gpio/consumer.h>
-> >  #include <linux/init.h>
-> >  #include <linux/module.h>
-> > -#include <linux/of_gpio.h>
-> >  #include <linux/of_platform.h>
-> >  #include <linux/pinctrl/consumer.h>
-> >  #include <linux/platform_device.h>
-> > @@ -45,14 +44,15 @@ enum svc_wakedetect_state {
-> >  
-> >  struct arche_platform_drvdata {
-> >  	/* Control GPIO signals to and from AP <=> SVC */
-> > -	int svc_reset_gpio;
-> > +	struct gpio_desc *svc_reset;
-> > +	struct gpio_desc *svc_sysboot;
-> >  	bool is_reset_act_hi;
-> > -	int svc_sysboot_gpio;
-> > -	int wake_detect_gpio; /* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
-> > +	struct gpio_desc *wake_detect;
-> > +	/* bi-dir,maps to WAKE_MOD & WAKE_FRAME signals */
-> 
-> I'm not commenting on the rest, but comments never go underneath what
-> they apply to.
-> 
-> Just keep the current comment here, even if it's placement is a bit odd
-> and makes the line be longer than 80 cols.
-> 
-> Johan
+HEAD commit:    ccda4af0f4b9 Linux 4.20-rc2
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=156cd533400000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4a0a89f12ca9b0f5
+dashboard link: https://syzkaller.appspot.com/bug?extid=9276d76e83e3bcde6c99
+compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
 
-Ok, I'll keep that in mind.
+Unfortunately, I don't have any reproducer for this crash yet.
 
-Thanks for the review.
+IMPORTANT: if you fix the bug, please add the following tag to the commit:
+Reported-by: syzbot+9276d76e83e3bcde6c99@syzkaller.appspotmail.com
 
-thanks and regards,
-Nishad
+netlink: 5 bytes leftover after parsing attributes in process  
+`syz-executor5'.
+==================================================================
+BUG: KASAN: use-after-free in __lock_acquire+0x36d9/0x4c20  
+kernel/locking/lockdep.c:3218
+Read of size 8 at addr ffff8881d26d60e0 by task syz-executor1/13725
+
+CPU: 0 PID: 13725 Comm: syz-executor1 Not tainted 4.20.0-rc2+ #333
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
+Google 01/01/2011
+Call Trace:
+  __dump_stack lib/dump_stack.c:77 [inline]
+  dump_stack+0x244/0x39d lib/dump_stack.c:113
+  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
+  kasan_report_error mm/kasan/report.c:354 [inline]
+  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
+  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
+  __lock_acquire+0x36d9/0x4c20 kernel/locking/lockdep.c:3218
+  lock_acquire+0x1ed/0x520 kernel/locking/lockdep.c:3844
+  __raw_spin_lock_bh include/linux/spinlock_api_smp.h:135 [inline]
+  _raw_spin_lock_bh+0x31/0x40 kernel/locking/spinlock.c:168
+  spin_lock_bh include/linux/spinlock.h:334 [inline]
+  __lock_sock+0x203/0x350 net/core/sock.c:2253
+  lock_sock_nested+0xfe/0x120 net/core/sock.c:2774
+  lock_sock include/net/sock.h:1492 [inline]
+  sctp_sock_dump+0x122/0xb20 net/sctp/diag.c:324
+  sctp_for_each_transport+0x2b5/0x370 net/sctp/socket.c:5091
+  sctp_diag_dump+0x3ac/0x660 net/sctp/diag.c:527
+  __inet_diag_dump+0xa8/0x140 net/ipv4/inet_diag.c:1049
+  inet_diag_dump+0x9b/0x110 net/ipv4/inet_diag.c:1065
+  netlink_dump+0x606/0x1080 net/netlink/af_netlink.c:2244
+  __netlink_dump_start+0x59a/0x7c0 net/netlink/af_netlink.c:2352
+  netlink_dump_start include/linux/netlink.h:216 [inline]
+  inet_diag_handler_cmd+0x2ce/0x3f0 net/ipv4/inet_diag.c:1170
+  __sock_diag_cmd net/core/sock_diag.c:232 [inline]
+  sock_diag_rcv_msg+0x31d/0x410 net/core/sock_diag.c:263
+  netlink_rcv_skb+0x172/0x440 net/netlink/af_netlink.c:2477
+  sock_diag_rcv+0x2a/0x40 net/core/sock_diag.c:274
+  netlink_unicast_kernel net/netlink/af_netlink.c:1310 [inline]
+  netlink_unicast+0x5a5/0x760 net/netlink/af_netlink.c:1336
+  netlink_sendmsg+0xa18/0xfc0 net/netlink/af_netlink.c:1917
+  sock_sendmsg_nosec net/socket.c:621 [inline]
+  sock_sendmsg+0xd5/0x120 net/socket.c:631
+  sock_write_iter+0x35e/0x5c0 net/socket.c:900
+  call_write_iter include/linux/fs.h:1857 [inline]
+  do_iter_readv_writev+0x8b0/0xa80 fs/read_write.c:680
+  do_iter_write+0x185/0x5f0 fs/read_write.c:959
+  vfs_writev+0x1f1/0x360 fs/read_write.c:1004
+  do_writev+0x11a/0x310 fs/read_write.c:1039
+  __do_sys_writev fs/read_write.c:1112 [inline]
+  __se_sys_writev fs/read_write.c:1109 [inline]
+  __x64_sys_writev+0x75/0xb0 fs/read_write.c:1109
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+RIP: 0033:0x457569
+Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
+48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
+ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
+RSP: 002b:00007f2cdabbac78 EFLAGS: 00000246 ORIG_RAX: 0000000000000014
+RAX: ffffffffffffffda RBX: 0000000000000003 RCX: 0000000000457569
+RDX: 0000000000000001 RSI: 000000002051c000 RDI: 000000000000000e
+RBP: 000000000072c0e0 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007f2cdabbb6d4
+R13: 00000000004c33b1 R14: 00000000004d97c8 R15: 00000000ffffffff
+
+Allocated by task 13672:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
+  kasan_slab_alloc+0x12/0x20 mm/kasan/kasan.c:490
+  kmem_cache_alloc+0x12e/0x730 mm/slab.c:3554
+  sk_prot_alloc+0x69/0x2e0 net/core/sock.c:1463
+  sk_alloc+0x10d/0x1690 net/core/sock.c:1523
+  inet_create+0x509/0x1070 net/ipv4/af_inet.c:321
+  __sock_create+0x536/0x930 net/socket.c:1277
+  sock_create net/socket.c:1317 [inline]
+  __sys_socket+0x106/0x260 net/socket.c:1347
+  __do_sys_socket net/socket.c:1356 [inline]
+  __se_sys_socket net/socket.c:1354 [inline]
+  __x64_sys_socket+0x73/0xb0 net/socket.c:1354
+  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+Freed by task 13680:
+  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
+  set_track mm/kasan/kasan.c:460 [inline]
+  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
+  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
+  __cache_free mm/slab.c:3498 [inline]
+  kmem_cache_free+0x83/0x290 mm/slab.c:3760
+  sk_prot_free net/core/sock.c:1504 [inline]
+  __sk_destruct+0x728/0xa80 net/core/sock.c:1588
+  sk_destruct+0x78/0x90 net/core/sock.c:1596
+  __sk_free+0xcf/0x300 net/core/sock.c:1607
+  sk_free+0x42/0x50 net/core/sock.c:1618
+  sock_put include/net/sock.h:1693 [inline]
+  sctp_close+0x8d4/0xad0 net/sctp/socket.c:1569
+  inet_release+0x104/0x1f0 net/ipv4/af_inet.c:428
+  __sock_release+0xd7/0x250 net/socket.c:579
+  sock_close+0x19/0x20 net/socket.c:1141
+  __fput+0x385/0xa30 fs/file_table.c:278
+  ____fput+0x15/0x20 fs/file_table.c:309
+  task_work_run+0x1e8/0x2a0 kernel/task_work.c:113
+  get_signal+0x1558/0x1980 kernel/signal.c:2347
+  do_signal+0x9c/0x21c0 arch/x86/kernel/signal.c:816
+  exit_to_usermode_loop+0x2e5/0x380 arch/x86/entry/common.c:162
+  prepare_exit_to_usermode arch/x86/entry/common.c:197 [inline]
+  syscall_return_slowpath arch/x86/entry/common.c:268 [inline]
+  do_syscall_64+0x6be/0x820 arch/x86/entry/common.c:293
+  entry_SYSCALL_64_after_hwframe+0x49/0xbe
+
+The buggy address belongs to the object at ffff8881d26d6040
+  which belongs to the cache SCTP(33:syz1) of size 1776
+The buggy address is located 160 bytes inside of
+  1776-byte region [ffff8881d26d6040, ffff8881d26d6730)
+The buggy address belongs to the page:
+page:ffffea000749b580 count:1 mapcount:0 mapping:ffff8881b517f200 index:0x0
+flags: 0x2fffc0000000200(slab)
+raw: 02fffc0000000200 ffff8881c6685748 ffffea0007538388 ffff8881b517f200
+raw: 0000000000000000 ffff8881d26d6040 0000000100000002 ffff8881b6b4e7c0
+page dumped because: kasan: bad access detected
+page->mem_cgroup:ffff8881b6b4e7c0
+
+Memory state around the buggy address:
+  ffff8881d26d5f80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+  ffff8881d26d6000: fc fc fc fc fc fc fc fc fb fb fb fb fb fb fb fb
+> ffff8881d26d6080: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                        ^
+  ffff8881d26d6100: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+  ffff8881d26d6180: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+---
+This bug is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this bug report. See:
+https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
+syzbot.
