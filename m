@@ -2,122 +2,62 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 2920BC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 03:55:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 9778BC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 04:16:56 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DFE90214F1
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 03:55:11 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=lixom-net.20150623.gappssmtp.com header.i=@lixom-net.20150623.gappssmtp.com header.b="xHFkwVu+"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DFE90214F1
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lixom.net
+	by mail.kernel.org (Postfix) with ESMTP id 521832086A
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 04:16:56 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 521832086A
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=davemloft.net
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730573AbeKQOKY (ORCPT
+        id S1730485AbeKQOcL (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 09:10:24 -0500
-Received: from mail-pl1-f194.google.com ([209.85.214.194]:34402 "EHLO
-        mail-pl1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729714AbeKQOKY (ORCPT
+        Sat, 17 Nov 2018 09:32:11 -0500
+Received: from shards.monkeyblade.net ([23.128.96.9]:48758 "EHLO
+        shards.monkeyblade.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729820AbeKQOcL (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 09:10:24 -0500
-Received: by mail-pl1-f194.google.com with SMTP id f12-v6so12046117plo.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 19:55:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=lixom-net.20150623.gappssmtp.com; s=20150623;
-        h=from:to:cc:subject:date:message-id;
-        bh=rk0sxhdj9KtpA38fFQRAocxRA5sbD33dk1fpH2uJ4Iw=;
-        b=xHFkwVu+h1S8JYb2sFrbz5D40GTXA9qdcJsLpODc+IrlFCkdmpphDv8FRUONbXFMse
-         kb52TOPFGkvuMuV8ZNuM8vvpCdSsE2O3w+7b/kXXihXswf0LdahNz5IyKTleo+Pkkkqa
-         /6QW4KA8JyG1TIJUD0chHJ4PGiuAi27SPiRj5s+FnmK4YwcBw33cf+1ztIZHAg1KlNrc
-         ttlG0ZaMt5F9B03xzX98dmGiB2yMq6/8TkXznvFUfQcWG3RmRI0f3Y0lS2r2olfzE8R/
-         KrmBLs6P4+IJdYYXE3aPocEdiubCswnyTzbOvD5r/PTfbFbD13q5HuZecmXphcbCd9pG
-         dojg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id;
-        bh=rk0sxhdj9KtpA38fFQRAocxRA5sbD33dk1fpH2uJ4Iw=;
-        b=g4gmjAtRvr5neXvBpIs/Ji4khVwdxlssDcu+pZ0pLGKP6f0tB7CvLkrrYXdOmBN6Ca
-         AC/wD/H4bCkYk0Hh2lroU9/xP+P85OGb1A3XbWwCSBvJK35isPr3mLw0yUe78bblwHmN
-         OywLKY9ErDshSbf40k46Sjs5+TAzEG9PSIW0ofdFXzsC4Y5ariF/egVB24C+K0WNbC84
-         nkko70QPqRaLArk9n7fmC6ya6yGf53go5zVVAnaR58keo5uPJC9N3RjR96YuLnaWOukW
-         +q4zGP8gnPHUuKCsqYtHXLc+WQqSXDE4ognKSj38pc2523dMdLNbfZ6Z1UGnEbvnr5VO
-         TgPQ==
-X-Gm-Message-State: AGRZ1gJNtuqZ8QUPCaSAAsFbQmEWRyV9+DcRXLgVHRA+3PoIZZVSVjOQ
-        jiCXGPjeJwWsyErpEF7Y7VeeoA==
-X-Google-Smtp-Source: AJdET5cJFa4W0A9c5OSQUqb85iHl0SzSWcFAtDdM+JCrXODdFoAY8FBscx1AyI6N12mZzIhYGvxdrw==
-X-Received: by 2002:a17:902:70cb:: with SMTP id l11-v6mr13961702plt.30.1542426909701;
-        Fri, 16 Nov 2018 19:55:09 -0800 (PST)
-Received: from rip.lixom.net (99-152-116-91.lightspeed.sntcca.sbcglobal.net. [99.152.116.91])
-        by smtp.gmail.com with ESMTPSA id p5-v6sm36112904pfb.109.2018.11.16.19.55.08
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 19:55:08 -0800 (PST)
-From:   Olof Johansson <olof@lixom.net>
-To:     broonie@kernel.org
-Cc:     linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        opembmc@lists.ozlabs.org, Tomer Maimon <tmaimon77@gmail.com>,
-        Olof Johansson <olof@lixom.net>
-Subject: [PATCH] spi: npcm: Fix uninitialized variable warning
-Date:   Fri, 16 Nov 2018 19:55:04 -0800
-Message-Id: <20181117035504.95804-1-olof@lixom.net>
-X-Mailer: git-send-email 2.11.0
+        Sat, 17 Nov 2018 09:32:11 -0500
+Received: from localhost (unknown [IPv6:2601:601:9f80:35cd::bf5])
+        (using TLSv1 with cipher AES256-SHA (256/256 bits))
+        (Client did not present a certificate)
+        (Authenticated sender: davem-davemloft)
+        by shards.monkeyblade.net (Postfix) with ESMTPSA id DC11A13F186F9;
+        Fri, 16 Nov 2018 20:16:53 -0800 (PST)
+Date:   Fri, 16 Nov 2018 20:16:53 -0800 (PST)
+Message-Id: <20181116.201653.643709639983122056.davem@davemloft.net>
+To:     ben.dooks@codethink.co.uk
+Cc:     netdev@vger.kernel.org, oneukum@suse.com,
+        linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+        steve.glendinning@shawell.net, linux-kernel@lists.codethink.co.uk
+Subject: Re: SMSC95xx driver updates (round 1)
+From:   David Miller <davem@davemloft.net>
+In-Reply-To: <20181114115022.9584-1-ben.dooks@codethink.co.uk>
+References: <20181114115022.9584-1-ben.dooks@codethink.co.uk>
+X-Mailer: Mew version 6.8 on Emacs 26.1
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
+X-Greylist: Sender succeeded SMTP AUTH, not delayed by milter-greylist-4.5.12 (shards.monkeyblade.net [149.20.54.216]); Fri, 16 Nov 2018 20:16:54 -0800 (PST)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The compiler has no way to know that rsize 1 or 2 are the only valid
-values. Also simplify the code a bit with early return.
+From: Ben Dooks <ben.dooks@codethink.co.uk>
+Date: Wed, 14 Nov 2018 11:50:18 +0000
 
-The warning was:
+> This is a series of a few driver cleanups and some fixups of the code
+> for the SMSC95XX driver. There have been a few reviews, and the issues
+> have been fixed so this should be ready for merging.
+> 
+> I will work on the tx-alignment and the other bits of usbnet changes
+> and produce at least two more patch series for this later.
 
-drivers/spi/spi-npcm-pspi.c:215:6: warning: 'val' may be used uninitialized in this function [-Wmaybe-uninitialized]
+Series applied with the missing space in the comment of patch #4 fixed.
 
-Signed-off-by: Olof Johansson <olof@lixom.net>
----
- drivers/spi/spi-npcm-pspi.c | 22 +++++++++++++++-------
- 1 file changed, 15 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/spi/spi-npcm-pspi.c b/drivers/spi/spi-npcm-pspi.c
-index 342178e282bcd..be0539cb19e49 100644
---- a/drivers/spi/spi-npcm-pspi.c
-+++ b/drivers/spi/spi-npcm-pspi.c
-@@ -217,15 +217,23 @@ static void npcm_pspi_recv(struct npcm_pspi *priv)
- 	rsize = min(bytes_per_word(priv->bits_per_word), priv->rx_bytes);
- 	priv->rx_bytes -= rsize;
- 
--	if (priv->rx_buf) {
--		if (rsize == 1)
--			val = ioread8(priv->base + NPCM_PSPI_DATA);
--		if (rsize == 2)
--			val = ioread16(priv->base + NPCM_PSPI_DATA);
-+	if (!priv->rx_buf)
-+		return;
- 
--		*priv->rx_buf = val;
--		priv->rx_buf += rsize;
-+	switch (rsize) {
-+	case 1:
-+		val = ioread8(priv->base + NPCM_PSPI_DATA);
-+		break;
-+	case 2:
-+		val = ioread16(priv->base + NPCM_PSPI_DATA);
-+		break;
-+	default:
-+		WARN_ON_ONCE(1);
-+		return;
- 	}
-+
-+	*priv->rx_buf = val;
-+	priv->rx_buf += rsize;
- }
- 
- static int npcm_pspi_transfer_one(struct spi_master *master,
--- 
-2.11.0
-
+Thanks.
