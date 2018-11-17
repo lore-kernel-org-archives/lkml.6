@@ -6,79 +6,85 @@ X-Spam-Status: No, score=-4.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,
 	SPF_PASS autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 048F0C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:25:53 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B200FC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:27:20 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B605C20825
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:25:52 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 7619620825
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 12:27:20 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iO0ylXDA"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B605C20825
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="iR8pZO9E"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7619620825
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726256AbeKQWmW (ORCPT
+        id S1726371AbeKQWnu (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 17:42:22 -0500
-Received: from mail-lf1-f67.google.com ([209.85.167.67]:35983 "EHLO
-        mail-lf1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbeKQWmW (ORCPT
+        Sat, 17 Nov 2018 17:43:50 -0500
+Received: from mail-lf1-f68.google.com ([209.85.167.68]:37849 "EHLO
+        mail-lf1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725964AbeKQWnu (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 17:42:22 -0500
-Received: by mail-lf1-f67.google.com with SMTP id h192so18295825lfg.3
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 04:25:49 -0800 (PST)
+        Sat, 17 Nov 2018 17:43:50 -0500
+Received: by mail-lf1-f68.google.com with SMTP id p17so18280294lfh.4
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 04:27:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=linaro.org; s=google;
         h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=Jj3foZTWOCTNIjxGEAxqGPTyZF/kyaPvnHcUB6q+YSQ=;
-        b=iO0ylXDATNdBJQMXTcYdoQqIwCXAP9tYoJ4OxwMjrUPE8cofvO19zt26iMd8U3fKS2
-         OZBBoNhA0vJxPk8vMPYX0nqGWzH+K+KhjF/PK+VLVOlrs/1ZLB7956QohU21UplP0YmR
-         wKUMVeAKty7lo2RNFkmRIAVtQ0pk32ax1KWTE=
+         :cc;
+        bh=IeigedvkfxgJMUouO/J4sx8QqEmVqmvwLkSWXRc6mqM=;
+        b=iR8pZO9EI1bupGmvQyArzrb4qW/SsCoX+/Um/fH7lMXDjscqWfyxDVyBdPXexdmfWK
+         wfSVrZhrwrHJCDjKwA8TEMfIypHpsRTHQMrAeinymh271KK1Nk5dEh6QX6aBoRZebGnQ
+         SX2XH9roYDEXIqfe2fgXVl1cmrmv2WHKcPn+Q=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=Jj3foZTWOCTNIjxGEAxqGPTyZF/kyaPvnHcUB6q+YSQ=;
-        b=eidH6E12jjD98WAJtapvtag6n68YJWPx3V3pZ1TEocgEwfy9VV/t5GZyIjM1E7bpr8
-         Le+3KQl5SzBqoJPgh9wSlISAG7OFys6436bTOoLIahffpXb+fzDTMFlLIp65ehEL/aBQ
-         loCT6doQvnB95w138Ow8c9N/z0OPkskgGuFxjoLfmlnFK9swx7xEZVmrVSgnJ8sf0A5J
-         XUwa6lkMKRGQLJ4SGidMSVfzTwnAfnETfLNCXJAakmgCdWKciJ+FUIWxyTr8r/FYsBdN
-         HsaAfXwDeNyrFf0ce27Up5QRaXKZZmmzvieMT3imqjFDoVUxkr6wyOPmvhR2tPX2FFQ+
-         2/WQ==
-X-Gm-Message-State: AGRZ1gKjDgVBb9CtIHBZ4SxxJ1mLqMFxT2FuR0WoKpGs5UxtjcQlUW5w
-        NnbFAt4c3+dGRPDCDMs6d1PP8BZXDHDvjjzVIWmxDQ==
-X-Google-Smtp-Source: AJdET5c2hxJXh8scL8iU8LMQzZiSSUqtFmXpjsBWjqA4TduyoSqfP4rgsUmNGVnZBXvKMs0vdOZ0pC6XU+UVFnUJrP4=
-X-Received: by 2002:a19:5154:: with SMTP id f81mr7767243lfb.96.1542457548834;
- Sat, 17 Nov 2018 04:25:48 -0800 (PST)
+         :message-id:subject:to:cc;
+        bh=IeigedvkfxgJMUouO/J4sx8QqEmVqmvwLkSWXRc6mqM=;
+        b=jIA1taVJZytd99Ji2d3sbxZbdSGDMnj86jGtX+E8vIL6S/hy5QDm9GZktFgUdzTIPj
+         wVQjPfHfivWN4xBuh3PPMwlRcVt3SKA/qEa+LFSyT+e4V0vKq5S1k3ElnhVFykhTPWw1
+         VZzTCHZtvi3qJu2CUCG9iPxNmjNDvgy7I8vHd56hWmNnaEiQzJTuQE2G59HsMhO0CefX
+         SJ/Ho+mKSO/LYVyRrI2hEEqjlG+66VoojCv8LhUj+jUK39bN04faD4lyedJqHkyX8FBS
+         vzKnStHG5Rv/GLvZF4yP240X344sBUapLX5oj+KOTxPqK1Y+IKy7SM4CoIsMyIHlAfFd
+         ullw==
+X-Gm-Message-State: AGRZ1gKnGKF5Tr0CziwPEKsut8Xo42YANy/u7+i2oDktZPay92Y4EOQ7
+        7xwciLWMJVNx/Oiv1Im9jmVbm/Cb41pNUoCBilkw05Yd3Nc=
+X-Google-Smtp-Source: AJdET5dSuujMoTJCZsrKfS8TVb2pgeIZsUKCC4tqdDxUvLcny5yVPf+AKu+oAH4W7GGimMDLM3ceCm3sdqJUgNRZ/GM=
+X-Received: by 2002:a19:2752:: with SMTP id n79mr7930064lfn.11.1542457636795;
+ Sat, 17 Nov 2018 04:27:16 -0800 (PST)
 MIME-Version: 1.0
-References: <20181112202553.1410-1-ctatlor97@gmail.com>
-In-Reply-To: <20181112202553.1410-1-ctatlor97@gmail.com>
+References: <20181113060111.16374-1-vigneshr@ti.com> <20181113060111.16374-2-vigneshr@ti.com>
+In-Reply-To: <20181113060111.16374-2-vigneshr@ti.com>
 From:   Linus Walleij <linus.walleij@linaro.org>
-Date:   Sat, 17 Nov 2018 13:25:37 +0100
-Message-ID: <CACRpkdZMnjuJocK0VjXD7WsP2VtnF3-0=Mu_4ENiVAx9nZ+F3g@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: sdm660: Set tile property for pingroups
-To:     Craig Tatlor <ctatlor97@gmail.com>
-Cc:     linux-arm-msm@vger.kernel.org,
-        Bjorn Andersson <bjorn.andersson@linaro.org>,
-        "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Date:   Sat, 17 Nov 2018 13:27:05 +0100
+Message-ID: <CACRpkdYtvD+unm9sCRxJ1DYWM1viC8Pc6ge2TpRHYko4u0Ah3g@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: pinctrl: k3: Introduce pinmux definitions
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Tero Kristo <t-kristo@ti.com>, Rob Herring <robh+dt@kernel.org>,
+        ext Nishanth Menon <nm@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Linux ARM <linux-arm-kernel@lists.infradead.org>,
+        "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" 
+        <devicetree@vger.kernel.org>,
+        Linux-OMAP <linux-omap@vger.kernel.org>,
+        ext Tony Lindgren <tony@atomide.com>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Mon, Nov 12, 2018 at 9:26 PM Craig Tatlor <ctatlor97@gmail.com> wrote:
+On Tue, Nov 13, 2018 at 7:00 AM Vignesh R <vigneshr@ti.com> wrote:
 
-> This was missed when tiles support was added in a revison and
-> causes the driver to fail to load.
+> The dt-bindings header for TI K3 AM6 SoCs define a set of macros for
+> defining pinmux configs in human readable form, instead of raw-coded
+> hex values.
 >
-> Fixes: 9cf0c526bc58 ("pinctrl: qcom: Add sdm660 pinctrl driver")
-> Signed-off-by: Craig Tatlor <ctatlor97@gmail.com>
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
 
-Patch applied for fixes with Bj=C3=B6rn's tag!
+I guess you want to merge this through ARM SoC along witg the other
+patches so:
+Acked-by: Linus Walleij <linus.walleij@linaro.org>
 
 Yours,
 Linus Walleij
