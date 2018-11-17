@@ -2,109 +2,160 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-8.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
-	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 791D7C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:39:02 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3CFCCC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:39:05 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37AA2208E3
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:39:02 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m5fAvgNT"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37AA2208E3
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 03C912089D
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:39:05 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 03C912089D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=suse.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730959AbeKQKxR (ORCPT
+        id S1731147AbeKQKxi (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 05:53:17 -0500
-Received: from mail-pf1-f196.google.com ([209.85.210.196]:33033 "EHLO
-        mail-pf1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730838AbeKQKxQ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 05:53:16 -0500
-Received: by mail-pf1-f196.google.com with SMTP id v68-v6so12161839pfk.0;
-        Fri, 16 Nov 2018 16:38:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=from:to:cc:subject:date:message-id:in-reply-to:references;
-        bh=oiVWgL/WHUTd0gentorRc6DDTrlDET1vasHz44Fkvas=;
-        b=m5fAvgNT0ALbznjtvQDpaZKTEG8H7cKwcf7NZSMkS7GDc3wwPXOT9aJhJG1yuOphcy
-         Ype74/TsezjxgQ+Lyae2iX6zHipWQGMFHQfw0cpdoj9sM8zO2WQnWbksMaOHqPLv6QLQ
-         Iq74qlz3SF/U31I6Oubkse6RKmaXQ+PzYgo2OcAwJouAEZCTj9imtUWLkLPkPw0FoL5H
-         ADjavVl+7kUX5V9BfBQcTWjfiMqekvMYKJ3iCIW30WDAWdD4VbNKf0oLbnVyHmMq9qvZ
-         bqDqJzB0n7yLtOWq7hGxoVwDpXban2gdBcN2eWeF+MyHgw7J7MIVPE4diChQIztmI7vB
-         l3qQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20161025;
-        h=x-gm-message-state:from:to:cc:subject:date:message-id:in-reply-to
-         :references;
-        bh=oiVWgL/WHUTd0gentorRc6DDTrlDET1vasHz44Fkvas=;
-        b=Td8DKBPAMTzTS4RDfe8XTtCAUYW5dxnf3sBkVb/DvuM5aiDDMPnlcASJdoBET8uggx
-         HcFD8wvo043MTt9Fv75ZB0N++vCG8YS5rOtjX67lFCKuojZ+YP4MDpPRSatx1MsiDW0W
-         A+ukp6koLC6Qv6OKHr0abbg+yYOXBMzytdrat5TUNLJtKNarc418bKVoF/5s/wKKEc+j
-         dysBJ+vqedacmR9VQmhbcGkLKD4bNkVVTQGJFzQx976tw+CaR2HjMZsnxWUT/CUJW8Eg
-         /aYFsiQnoqGRlA5bu9dKOCeBH3U/l32HZm1yY+aWdCG5ngRbAl4F2g2hTNjZNmJjULgn
-         7oew==
-X-Gm-Message-State: AGRZ1gKrNj81KI2VFtJIQzK42axPDDjBgoXlWm75MwZebBIwLBQi23S5
-        uNlBSTjrL7vULFnHupPaFGBz9OMhbSQ=
-X-Google-Smtp-Source: AJdET5cpAPXq4Y70fKGau612iG6NLr9GvNy2E1VVqkJUYvP8zYw37YuUkrD67+HHH7LqTfjQ9q1Q6g==
-X-Received: by 2002:a62:fb14:: with SMTP id x20-v6mr13281173pfm.71.1542415120194;
-        Fri, 16 Nov 2018 16:38:40 -0800 (PST)
-Received: from tower.thefacebook.com ([2620:10d:c090:200::4:2b73])
-        by smtp.gmail.com with ESMTPSA id f6sm1981177pfg.188.2018.11.16.16.38.39
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Fri, 16 Nov 2018 16:38:39 -0800 (PST)
-From:   Roman Gushchin <guroan@gmail.com>
-X-Google-Original-From: Roman Gushchin <guro@fb.com>
-To:     Tejun Heo <tj@kernel.org>
-Cc:     Oleg Nesterov <oleg@redhat.com>, cgroups@vger.kernel.org,
-        linux-kernel@vger.kernel.org, kernel-team@fb.com,
-        Roman Gushchin <guro@fb.com>, Shuah Khan <shuah@kernel.org>,
-        linux-kselftest@vger.kernel.org
-Subject: [PATCH v3 5/7] kselftests: cgroup: don't fail on cg_kill_all() error in cg_destroy()
-Date:   Fri, 16 Nov 2018 16:38:28 -0800
-Message-Id: <20181117003830.15344-6-guro@fb.com>
-X-Mailer: git-send-email 2.17.2
-In-Reply-To: <20181117003830.15344-1-guro@fb.com>
-References: <20181117003830.15344-1-guro@fb.com>
+        Sat, 17 Nov 2018 05:53:38 -0500
+Received: from mx2.suse.de ([195.135.220.15]:38190 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1729525AbeKQKxi (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 05:53:38 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id 95F6EAFB4;
+        Sat, 17 Nov 2018 00:39:00 +0000 (UTC)
+From:   NeilBrown <neilb@suse.com>
+To:     Dan Williams <dan.j.williams@intel.com>, rodrigo.vivi@gmail.com
+Date:   Sat, 17 Nov 2018 11:38:50 +1100
+Cc:     Leon Romanovsky <leon@kernel.org>,
+        ksummit <ksummit-discuss@lists.linuxfoundation.org>,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        zwisler@kernel.org, mchehab+samsung@kernel.org
+Subject: Re: [Ksummit-discuss] [RFC PATCH 3/3] libnvdimm, MAINTAINERS: Subsystem Profile
+In-Reply-To: <CAPcyv4hWK+to6vOSfSdeVMDzUutYwg9=XqshSDzaCf0c-u8jLA@mail.gmail.com>
+References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com> <154225761038.2499188.1270468803677883744.stgit@dwillia2-desk3.amr.corp.intel.com> <CAMuHMdVOJsM=66RrnbOzVthsT9=dFRQtL2rv99tCPC02M=hiXw@mail.gmail.com> <20181115061036.1575223d@silica.lan> <20181115162008.GO3759@mtr-leonro.mtl.com> <CABVU7+twSz3OZx7PTO+bS-wfLfTTjZVhRAnhgtcs6KWwntattw@mail.gmail.com> <CAPcyv4hWK+to6vOSfSdeVMDzUutYwg9=XqshSDzaCf0c-u8jLA@mail.gmail.com>
+Message-ID: <87va4wczc5.fsf@notabene.neil.brown.name>
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-If the cgroup destruction races with an exit() of a belonging
-process(es), cg_kill_all() may fail. It's not a good reason to make
-cg_destroy() fail and leave the cgroup in place, potentially causing
-next test runs to fail.
+--=-=-=
+Content-Type: text/plain
 
-Signed-off-by: Roman Gushchin <guro@fb.com>
-Cc: Shuah Khan <shuah@kernel.org>
-Cc: Tejun Heo <tj@kernel.org>
-Cc: kernel-team@fb.com
-Cc: linux-kselftest@vger.kernel.org
----
- tools/testing/selftests/cgroup/cgroup_util.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+On Fri, Nov 16 2018, Dan Williams wrote:
 
-diff --git a/tools/testing/selftests/cgroup/cgroup_util.c b/tools/testing/selftests/cgroup/cgroup_util.c
-index 14c9fe284806..eba06f94433b 100644
---- a/tools/testing/selftests/cgroup/cgroup_util.c
-+++ b/tools/testing/selftests/cgroup/cgroup_util.c
-@@ -227,9 +227,7 @@ int cg_destroy(const char *cgroup)
- retry:
- 	ret = rmdir(cgroup);
- 	if (ret && errno == EBUSY) {
--		ret = cg_killall(cgroup);
--		if (ret)
--			return ret;
-+		cg_killall(cgroup);
- 		usleep(100);
- 		goto retry;
- 	}
--- 
-2.17.2
+> On Fri, Nov 16, 2018 at 12:37 PM Rodrigo Vivi <rodrigo.vivi@gmail.com> wrote:
+>>
+>> On Thu, Nov 15, 2018 at 8:38 AM Leon Romanovsky <leon@kernel.org> wrote:
+>> >
+>> > On Thu, Nov 15, 2018 at 06:10:36AM -0800, Mauro Carvalho Chehab wrote:
+>> > > Em Thu, 15 Nov 2018 09:03:11 +0100
+>> > > Geert Uytterhoeven <geert@linux-m68k.org> escreveu:
+>> > >
+>> > > > Hi Dan,
+>> > > >
+>> > > > On Thu, Nov 15, 2018 at 6:06 AM Dan Williams <dan.j.williams@intel.com> wrote:
+>> > > > > Document the basic policies of the libnvdimm subsystem and provide a
+>> > > > > first example of a Subsystem Profile for others to duplicate and edit.
+>> > > > >
+>> > > > > Cc: Ross Zwisler <zwisler@kernel.org>
+>> > > > > Cc: Vishal Verma <vishal.l.verma@intel.com>
+>> > > > > Cc: Dave Jiang <dave.jiang@intel.com>
+>> > > > > Signed-off-by: Dan Williams <dan.j.williams@intel.com>
+>> > > >
+>> > > > Thanks for your patch!
+>> > > >
+>> > > > > --- /dev/null
+>> > > > > +++ b/Documentation/nvdimm/subsystem-profile.rst
+>> > > >
+>> > > > > +Trusted Reviewers
+>> > > > > +-----------------
+>> > > > > +Johannes Thumshirn
+>> > > > > +Toshi Kani
+>> > > > > +Jeff Moyer
+>> > > > > +Robert Elliott
+>> > > >
+>> > > > Don't you want to add email addresses?
+>> > > > Only the first one is listed in MAINTAINERS.
+>> > >
+>> > > IMO, it makes sense to have their e-mails here, in a way that it could
+>> > > easily be parsed by get_maintainers.pl.
+>> >
+>> > I personally think that list of "trusted reviewers" makes more harm than
+>> > good. It creates unneeded negative feelings to those who wanted to be in
+>> > this list, but for any reason they don't. Those reviewers will feel
+>> > "untrusted".
+>>
+>> I'd like to +1 on this concern here. Besides leaving all the other
+>> people demotivated.
+>
+> Yes, that's a valid concern, I overlooked that unfortunate interpretation.
+>
+>>
+>> A small group of trusted reviewers doesn't scale. People will get overloaded.
+>> Or you won't be able to enforce that all patches need to get Reviews.
+>>
+>> Reviews should be coming from everywhere and commiters and maintainers
+>> deciding on what to trust or re-review.
+>>
+>> Also the list is hard to maintain and keep the lists updated.
+>
+> I understand the concern, and as I saw feedback come in I realized
+> there were more people that I would add to that reviewer list for
+> libnvdimm.
+>
+> Stepping back the end goal is to have an initial list of recommended
+> people to follow up with directly to seek a second opinion, or help in
+> cases where a contributor otherwise needs some direction / engagement
+> that they are not readily receiving from the maintainer. Typically
+> someone just lurks on the mailing list for a few weeks to get a feel
+> for who the usual suspects are in the subsystem, but for a new
+> contributor identifying those individuals may be difficult.
+>
+> One of the contributing factors of lack of response to a patchset is
+> that they are sent with the implicit expectation that the maintainer
+> will get to eventually, and typically other people feel content to sit
+> back and watch. If instead a contributor sent a direct mail to a
+> "trusted reviewer" saying, "Hey, Alice, Bob seems busy can you help me
+> out?" that seems more likely to rope in additional review help.
 
+In here is, I think, a real issue that listing "trusted reviewers" might
+help address.
+As you say, people don't feel the need to comment - particularly if they
+don't see anything wrong (often best to insert a bug to encourage
+responses!).
+Maybe if we list people, it will make them feel that their opinion is
+valuable (trusted!) and that will encourage them to Ack or Review a
+patch.
+I have found that being given a title of responsibility can change my
+thinking from "someone should" to "I should".
+
+NeilBrown
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvvYxsACgkQOeye3VZi
+gblgmRAAsPOY774odqpS67uPN9Nu4n6RUqay1rldkX7Uu1GQ4x5lAtfuw4rf+zkO
+8983uWS0vqJw2goVnvdNJaTpTGuxC4YlSsZ5Md3KojVqYc02SgSAlpDEEHPQ1VSu
+aFmS3XGS2xEJRvamJNLEK0EWB88bogXWccUhXJf9HrsCjKwZsEBLSINRDaCqKebR
+0asmvTLutpRjvLahFki1uvQUSzjkvN69fn+kf/DP0fpiUL9A814OLep49W0jaN4w
++Q5Pyh11p/AYdPlVSWUML8SVq0z1HlK6WVSrWd0WMHTk2VNmQepyruvMeboHOUbw
+Lp72k4Iw1QzWYJXkfel4z8Xj24Ws3jDxEF8CPjOWa+P7aTke4joU+YMaFJK8FOWY
+7P0rem9wBeAQeIQ+DHrQtwoz0IFgnxTRxu3eeaVn5uf6qmZKGUtXDPiFBTw2zYlv
+ttx7INQB3h7lea1n4P02PNJlwo9jpKLPKFddEyw/2cylUyJTWn1qvOzvOwHR/oRn
+AYlYQtJ8mlOMqNGybh/dcSMLIymmPIKF12adNQr1VGMML7VRwFAflybKId8EygKb
+122/k51mG3+0cxtIGgeYZVPa/RYpFn167ZzXC45yRuQi0xvwkvtTl5ok94DDJFSo
+uzcy7HeYyQWCh6UqVSODqnFDNruQTsEAnNFVjW+r3xSjK0Wjw5Q=
+=hoyK
+-----END PGP SIGNATURE-----
+--=-=-=--
