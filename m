@@ -2,192 +2,356 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.7 required=3.0 tests=FROM_LOCAL_HEX,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id EEBE9C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:59:06 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C3EEC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:01:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id B05B62086B
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:59:06 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B05B62086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+	by mail.kernel.org (Postfix) with ESMTP id 35AC02086B
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:01:04 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZtciWDRn"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 35AC02086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730116AbeKQMN4 (ORCPT
+        id S1730083AbeKQMPx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 07:13:56 -0500
-Received: from mail-it1-f199.google.com ([209.85.166.199]:54114 "EHLO
-        mail-it1-f199.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729714AbeKQMNz (ORCPT
+        Sat, 17 Nov 2018 07:15:53 -0500
+Received: from mail-it1-f196.google.com ([209.85.166.196]:55824 "EHLO
+        mail-it1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbeKQMPx (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 07:13:55 -0500
-Received: by mail-it1-f199.google.com with SMTP id i12so587560ita.3
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 17:59:03 -0800 (PST)
+        Sat, 17 Nov 2018 07:15:53 -0500
+Received: by mail-it1-f196.google.com with SMTP id o19so659247itg.5
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 18:01:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=n6h0g/OCAOkraLVmsoOXh7wZeywX4llmGcOd4QSpl20=;
+        b=ZtciWDRnKhObQEj67xP5oexksLu1+iEKQd8ISI5XBC3z1XhgFUrCDaVHjp2KKT8jnH
+         /Z0CPyMOKiBwoFlmalwQy06f1FxI82oEzD998BSkKiW+XIlF1u1hs+vzxYnfnmCdXbFH
+         wPhNqaFjrUg6z4i8DB9XT4SdiQEs3VLcER9Ng=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:date:message-id:subject:from:to;
-        bh=CKN80Le++Xdl4rcxucG8qgsVXVJYO7dxqPvIQjJYI+E=;
-        b=YPmd/re+tkrNWlb7tAo6T+KZk7McatzYCsBvvxl0Swcobh8cNFNj+erEVCxrLQQI5e
-         hFg81+O7BzPmgVEqnUrG3bSkZztGXvi6IigOqHV8lm7fsYoKxhbvvR4y2iMN5yXGUY5E
-         QbOUUH4OgN2EUAeguSBmrnS7rsB6zq8clWR/JEfpaxIF388wBhIft//2bhocEHl9+qpC
-         r2OMYVH18IeqcFrJwVEOTsJdHEz6NaVBuMlGW8o1PRQqVsHvHQjsuD4Hxh3bn7ybJ04x
-         HgeFj/LoDVVlVpT8kjpjj7XZUboWifGc8V/20UMtzj6lLQSkC0XOz+lJy4Pa7BxXE2hE
-         hCog==
-X-Gm-Message-State: AA+aEWZJ6Eek/b5eLOPrWJhDF8aDMgoDjq9/xx7EdBW2/51la0IZf+BZ
-        6vQToUYghMW4coEz14me8DG+Ib7EjWsXCZ0nU7aINcZnYu4x
-X-Google-Smtp-Source: AJdET5fi0Mpih58sNZ0CyK8gV4SDBKIPFR1AVnpl0/OTlLj+fItM67Impn+dYfRpZmqcCzODPtGxyY2VYhejB9qcJ6WEuhleYoAk
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=n6h0g/OCAOkraLVmsoOXh7wZeywX4llmGcOd4QSpl20=;
+        b=RcOaxDgf9xgQCIVgJcnPADS47Y+IOCcngDefKuT90OMfEmCq/N+CYkER/Y8A9K9wfJ
+         mD+6hSLEmLGb1fhJ6P/Q/wHAXwEvS1PhyWUw9YT1TJxjz49usK51u9X4AFNgr+9g8oJa
+         0xR4tLSjqm/kfIzLrorL2byzfkTnbGBPXDqv5aGZ3Y7GPOEIbEin23wJyd37DJAtZKfR
+         0iXNmwv8FFo77n6ad7T4+BoOzqD7BVtncI4t2FY7xecgQp3JupL9klcCLNvLKRRNjZm2
+         hM13UaGhXYu8IPHAOQZnvhtiEhXJrpjKbyZ3CQBxTIBn6++LBw1LFP/sFP2rbgPlim1i
+         W6iw==
+X-Gm-Message-State: AA+aEWYIBn32+sn77AcmSD3r1qiRL46IsLrk+BO5ULs/3yiAOB6k85nS
+        ObMtVPrk16YSbSjB2dUHtNtBTkgF01MNx31u9KuPhA==
+X-Google-Smtp-Source: AFSGD/XvuY4Ix6Wu1tgVxPpGDzg2KiQa4l/gqyG2KlrGTh43CzQvUvrFqxmbpq9Afom49/XXtYJsMjmwcKKUGpsgx/c=
+X-Received: by 2002:a24:7d8d:: with SMTP id b135-v6mr542866itc.121.1542420060424;
+ Fri, 16 Nov 2018 18:01:00 -0800 (PST)
 MIME-Version: 1.0
-X-Received: by 2002:a24:5fc6:: with SMTP id r189-v6mr508230itb.28.1542419943160;
- Fri, 16 Nov 2018 17:59:03 -0800 (PST)
-Date:   Fri, 16 Nov 2018 17:59:03 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <000000000000ce83ad057ad2a0f4@google.com>
-Subject: KASAN: use-after-free Read in sctp_epaddr_lookup_transport
-From:   syzbot <syzbot+aad231d51b1923158444@syzkaller.appspotmail.com>
-To:     davem@davemloft.net, linux-kernel@vger.kernel.org,
-        linux-sctp@vger.kernel.org, marcelo.leitner@gmail.com,
-        netdev@vger.kernel.org, nhorman@tuxdriver.com,
-        syzkaller-bugs@googlegroups.com, vyasevich@gmail.com
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
+References: <20181117012631.23528-1-ebiggers@kernel.org> <20181117012631.23528-14-ebiggers@kernel.org>
+In-Reply-To: <20181117012631.23528-14-ebiggers@kernel.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 16 Nov 2018 18:00:49 -0800
+Message-ID: <CAKv+Gu92imD=X-4ExxQH-KOkitUr04GGenYb59yDwBPRhLf3dw@mail.gmail.com>
+Subject: Re: [PATCH v4 13/14] crypto: arm/nhpoly1305 - add NEON-accelerated NHPoly1305
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
+        Eric Biggers <ebiggers@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hello,
+On Fri, 16 Nov 2018 at 17:29, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Add an ARM NEON implementation of NHPoly1305, an =CE=B5-almost-=E2=88=86-=
+universal
+> hash function used in the Adiantum encryption mode.  For now, only the
+> NH portion is actually NEON-accelerated; the Poly1305 part is less
+> performance-critical so is just implemented in C.
+>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-syzbot found the following crash on:
+Reviewed-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-HEAD commit:    a97b95653383 drivers/net/ethernet/qlogic/qed/qed_rdma.h: f..
-git tree:       net
-console output: https://syzkaller.appspot.com/x/log.txt?x=1217d26d400000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=d86f24333880b605
-dashboard link: https://syzkaller.appspot.com/bug?extid=aad231d51b1923158444
-compiler:       gcc (GCC) 8.0.1 20180413 (experimental)
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13b5bb0b400000
-
-IMPORTANT: if you fix the bug, please add the following tag to the commit:
-Reported-by: syzbot+aad231d51b1923158444@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KASAN: use-after-free in sctp_epaddr_lookup_transport+0xacb/0xb20  
-net/sctp/input.c:971
-Read of size 8 at addr ffff8881cde426b0 by task syz-executor3/18110
-
-CPU: 1 PID: 18110 Comm: syz-executor3 Not tainted 4.20.0-rc2+ #187
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS  
-Google 01/01/2011
-Call Trace:
-  __dump_stack lib/dump_stack.c:77 [inline]
-  dump_stack+0x244/0x39d lib/dump_stack.c:113
-  print_address_description.cold.7+0x9/0x1ff mm/kasan/report.c:256
-  kasan_report_error mm/kasan/report.c:354 [inline]
-  kasan_report.cold.8+0x242/0x309 mm/kasan/report.c:412
-  __asan_report_load8_noabort+0x14/0x20 mm/kasan/report.c:433
-  sctp_epaddr_lookup_transport+0xacb/0xb20 net/sctp/input.c:971
-  sctp_endpoint_lookup_assoc+0xe0/0x290 net/sctp/endpointola.c:338
-  sctp_addr_id2transport+0x1f8/0x370 net/sctp/socket.c:279
-  sctp_getsockopt_peer_addr_params+0x17c/0x1260 net/sctp/socket.c:5613
-  sctp_getsockopt+0x44f9/0x7d32 net/sctp/socket.c:7462
-  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:2937
-  __sys_getsockopt+0x1ad/0x390 net/socket.c:1939
-  __do_sys_getsockopt net/socket.c:1950 [inline]
-  __se_sys_getsockopt net/socket.c:1947 [inline]
-  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1947
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-RIP: 0033:0x457569
-Code: fd b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00 00 66 90 48 89 f8 48 89 f7  
-48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff  
-ff 0f 83 cb b3 fb ff c3 66 2e 0f 1f 84 00 00 00 00
-RSP: 002b:00007f177b561c78 EFLAGS: 00000246 ORIG_RAX: 0000000000000037
-RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 0000000000457569
-RDX: 0000000000000009 RSI: 0000000000000084 RDI: 0000000000000006
-RBP: 000000000072c180 R08: 000000002044fffc R09: 0000000000000000
-R10: 0000000020a68000 R11: 0000000000000246 R12: 00007f177b5626d4
-R13: 00000000004c8318 R14: 00000000004ce200 R15: 00000000ffffffff
-
-Allocated by task 18068:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  kasan_kmalloc+0xc7/0xe0 mm/kasan/kasan.c:553
-  kmem_cache_alloc_trace+0x152/0x750 mm/slab.c:3620
-  kmalloc include/linux/slab.h:546 [inline]
-  kzalloc include/linux/slab.h:741 [inline]
-  sctp_association_new+0x14e/0x2290 net/sctp/associola.c:311
-  sctp_sendmsg_new_asoc+0x39c/0x11f0 net/sctp/socket.c:1723
-  sctp_sendmsg+0x18a5/0x1da0 net/sctp/socket.c:2086
-  inet_sendmsg+0x1a1/0x690 net/ipv4/af_inet.c:798
-  sock_sendmsg_nosec net/socket.c:621 [inline]
-  sock_sendmsg+0xd5/0x120 net/socket.c:631
-  __sys_sendto+0x3d7/0x670 net/socket.c:1788
-  __do_sys_sendto net/socket.c:1800 [inline]
-  __se_sys_sendto net/socket.c:1796 [inline]
-  __x64_sys_sendto+0xe1/0x1a0 net/socket.c:1796
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-Freed by task 18110:
-  save_stack+0x43/0xd0 mm/kasan/kasan.c:448
-  set_track mm/kasan/kasan.c:460 [inline]
-  __kasan_slab_free+0x102/0x150 mm/kasan/kasan.c:521
-  kasan_slab_free+0xe/0x10 mm/kasan/kasan.c:528
-  __cache_free mm/slab.c:3498 [inline]
-  kfree+0xcf/0x230 mm/slab.c:3817
-  sctp_association_destroy net/sctp/associola.c:437 [inline]
-  sctp_association_put+0x264/0x350 net/sctp/associola.c:889
-  sctp_transport_destroy net/sctp/transport.c:180 [inline]
-  sctp_transport_put+0x186/0x1f0 net/sctp/transport.c:340
-  sctp_hash_cmp+0x1ef/0x260 net/sctp/input.c:825
-  __rhashtable_lookup include/linux/rhashtable.h:483 [inline]
-  rhltable_lookup include/linux/rhashtable.h:566 [inline]
-  sctp_epaddr_lookup_transport+0x4fe/0xb20 net/sctp/input.c:967
-  sctp_endpoint_lookup_assoc+0xe0/0x290 net/sctp/endpointola.c:338
-  sctp_addr_id2transport+0x1f8/0x370 net/sctp/socket.c:279
-  sctp_getsockopt_peer_addr_params+0x17c/0x1260 net/sctp/socket.c:5613
-  sctp_getsockopt+0x44f9/0x7d32 net/sctp/socket.c:7462
-  sock_common_getsockopt+0x9a/0xe0 net/core/sock.c:2937
-  __sys_getsockopt+0x1ad/0x390 net/socket.c:1939
-  __do_sys_getsockopt net/socket.c:1950 [inline]
-  __se_sys_getsockopt net/socket.c:1947 [inline]
-  __x64_sys_getsockopt+0xbe/0x150 net/socket.c:1947
-  do_syscall_64+0x1b9/0x820 arch/x86/entry/common.c:290
-  entry_SYSCALL_64_after_hwframe+0x49/0xbe
-
-The buggy address belongs to the object at ffff8881cde42600
-  which belongs to the cache kmalloc-4k of size 4096
-The buggy address is located 176 bytes inside of
-  4096-byte region [ffff8881cde42600, ffff8881cde43600)
-The buggy address belongs to the page:
-page:ffffea0007379080 count:1 mapcount:0 mapping:ffff8881da800dc0 index:0x0  
-compound_mapcount: 0
-flags: 0x2fffc0000010200(slab|head)
-raw: 02fffc0000010200 ffffea0007379008 ffffea0007377f08 ffff8881da800dc0
-raw: 0000000000000000 ffff8881cde42600 0000000100000001 0000000000000000
-page dumped because: kasan: bad access detected
-
-Memory state around the buggy address:
-  ffff8881cde42580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  ffff8881cde42600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-> ffff8881cde42680: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-                                      ^
-  ffff8881cde42700: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-  ffff8881cde42780: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-kobject: 'loop5' (00000000f0e4ffac): fill_kobj_path: path  
-= '/devices/virtual/block/loop5'
-
-
----
-This bug is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this bug report. See:
-https://goo.gl/tpsmEJ#bug-status-tracking for how to communicate with  
-syzbot.
-syzbot can test patches for this bug, for details see:
-https://goo.gl/tpsmEJ#testing-patches
+> ---
+>  arch/arm/crypto/Kconfig                |   5 ++
+>  arch/arm/crypto/Makefile               |   2 +
+>  arch/arm/crypto/nh-neon-core.S         | 116 +++++++++++++++++++++++++
+>  arch/arm/crypto/nhpoly1305-neon-glue.c |  77 ++++++++++++++++
+>  4 files changed, 200 insertions(+)
+>  create mode 100644 arch/arm/crypto/nh-neon-core.S
+>  create mode 100644 arch/arm/crypto/nhpoly1305-neon-glue.c
+>
+> diff --git a/arch/arm/crypto/Kconfig b/arch/arm/crypto/Kconfig
+> index 59c674cf08ef..a95322b59799 100644
+> --- a/arch/arm/crypto/Kconfig
+> +++ b/arch/arm/crypto/Kconfig
+> @@ -131,4 +131,9 @@ config CRYPTO_CHACHA20_NEON
+>         select CRYPTO_BLKCIPHER
+>         select CRYPTO_CHACHA20
+>
+> +config CRYPTO_NHPOLY1305_NEON
+> +       tristate "NEON accelerated NHPoly1305 hash function (for Adiantum=
+)"
+> +       depends on KERNEL_MODE_NEON
+> +       select CRYPTO_NHPOLY1305
+> +
+>  endif
+> diff --git a/arch/arm/crypto/Makefile b/arch/arm/crypto/Makefile
+> index 005482ff9504..b65d6bfab8e6 100644
+> --- a/arch/arm/crypto/Makefile
+> +++ b/arch/arm/crypto/Makefile
+> @@ -10,6 +10,7 @@ obj-$(CONFIG_CRYPTO_SHA1_ARM_NEON) +=3D sha1-arm-neon.o
+>  obj-$(CONFIG_CRYPTO_SHA256_ARM) +=3D sha256-arm.o
+>  obj-$(CONFIG_CRYPTO_SHA512_ARM) +=3D sha512-arm.o
+>  obj-$(CONFIG_CRYPTO_CHACHA20_NEON) +=3D chacha-neon.o
+> +obj-$(CONFIG_CRYPTO_NHPOLY1305_NEON) +=3D nhpoly1305-neon.o
+>
+>  ce-obj-$(CONFIG_CRYPTO_AES_ARM_CE) +=3D aes-arm-ce.o
+>  ce-obj-$(CONFIG_CRYPTO_SHA1_ARM_CE) +=3D sha1-arm-ce.o
+> @@ -53,6 +54,7 @@ ghash-arm-ce-y        :=3D ghash-ce-core.o ghash-ce-glu=
+e.o
+>  crct10dif-arm-ce-y     :=3D crct10dif-ce-core.o crct10dif-ce-glue.o
+>  crc32-arm-ce-y:=3D crc32-ce-core.o crc32-ce-glue.o
+>  chacha-neon-y :=3D chacha-neon-core.o chacha-neon-glue.o
+> +nhpoly1305-neon-y :=3D nh-neon-core.o nhpoly1305-neon-glue.o
+>
+>  ifdef REGENERATE_ARM_CRYPTO
+>  quiet_cmd_perl =3D PERL    $@
+> diff --git a/arch/arm/crypto/nh-neon-core.S b/arch/arm/crypto/nh-neon-cor=
+e.S
+> new file mode 100644
+> index 000000000000..434d80ab531c
+> --- /dev/null
+> +++ b/arch/arm/crypto/nh-neon-core.S
+> @@ -0,0 +1,116 @@
+> +/* SPDX-License-Identifier: GPL-2.0 */
+> +/*
+> + * NH - =CE=B5-almost-universal hash function, NEON accelerated version
+> + *
+> + * Copyright 2018 Google LLC
+> + *
+> + * Author: Eric Biggers <ebiggers@google.com>
+> + */
+> +
+> +#include <linux/linkage.h>
+> +
+> +       .text
+> +       .fpu            neon
+> +
+> +       KEY             .req    r0
+> +       MESSAGE         .req    r1
+> +       MESSAGE_LEN     .req    r2
+> +       HASH            .req    r3
+> +
+> +       PASS0_SUMS      .req    q0
+> +       PASS0_SUM_A     .req    d0
+> +       PASS0_SUM_B     .req    d1
+> +       PASS1_SUMS      .req    q1
+> +       PASS1_SUM_A     .req    d2
+> +       PASS1_SUM_B     .req    d3
+> +       PASS2_SUMS      .req    q2
+> +       PASS2_SUM_A     .req    d4
+> +       PASS2_SUM_B     .req    d5
+> +       PASS3_SUMS      .req    q3
+> +       PASS3_SUM_A     .req    d6
+> +       PASS3_SUM_B     .req    d7
+> +       K0              .req    q4
+> +       K1              .req    q5
+> +       K2              .req    q6
+> +       K3              .req    q7
+> +       T0              .req    q8
+> +       T0_L            .req    d16
+> +       T0_H            .req    d17
+> +       T1              .req    q9
+> +       T1_L            .req    d18
+> +       T1_H            .req    d19
+> +       T2              .req    q10
+> +       T2_L            .req    d20
+> +       T2_H            .req    d21
+> +       T3              .req    q11
+> +       T3_L            .req    d22
+> +       T3_H            .req    d23
+> +
+> +.macro _nh_stride      k0, k1, k2, k3
+> +
+> +       // Load next message stride
+> +       vld1.8          {T3}, [MESSAGE]!
+> +
+> +       // Load next key stride
+> +       vld1.32         {\k3}, [KEY]!
+> +
+> +       // Add message words to key words
+> +       vadd.u32        T0, T3, \k0
+> +       vadd.u32        T1, T3, \k1
+> +       vadd.u32        T2, T3, \k2
+> +       vadd.u32        T3, T3, \k3
+> +
+> +       // Multiply 32x32 =3D> 64 and accumulate
+> +       vmlal.u32       PASS0_SUMS, T0_L, T0_H
+> +       vmlal.u32       PASS1_SUMS, T1_L, T1_H
+> +       vmlal.u32       PASS2_SUMS, T2_L, T2_H
+> +       vmlal.u32       PASS3_SUMS, T3_L, T3_H
+> +.endm
+> +
+> +/*
+> + * void nh_neon(const u32 *key, const u8 *message, size_t message_len,
+> + *             u8 hash[NH_HASH_BYTES])
+> + *
+> + * It's guaranteed that message_len % 16 =3D=3D 0.
+> + */
+> +ENTRY(nh_neon)
+> +
+> +       vld1.32         {K0,K1}, [KEY]!
+> +         vmov.u64      PASS0_SUMS, #0
+> +         vmov.u64      PASS1_SUMS, #0
+> +       vld1.32         {K2}, [KEY]!
+> +         vmov.u64      PASS2_SUMS, #0
+> +         vmov.u64      PASS3_SUMS, #0
+> +
+> +       subs            MESSAGE_LEN, MESSAGE_LEN, #64
+> +       blt             .Lloop4_done
+> +.Lloop4:
+> +       _nh_stride      K0, K1, K2, K3
+> +       _nh_stride      K1, K2, K3, K0
+> +       _nh_stride      K2, K3, K0, K1
+> +       _nh_stride      K3, K0, K1, K2
+> +       subs            MESSAGE_LEN, MESSAGE_LEN, #64
+> +       bge             .Lloop4
+> +
+> +.Lloop4_done:
+> +       ands            MESSAGE_LEN, MESSAGE_LEN, #63
+> +       beq             .Ldone
+> +       _nh_stride      K0, K1, K2, K3
+> +
+> +       subs            MESSAGE_LEN, MESSAGE_LEN, #16
+> +       beq             .Ldone
+> +       _nh_stride      K1, K2, K3, K0
+> +
+> +       subs            MESSAGE_LEN, MESSAGE_LEN, #16
+> +       beq             .Ldone
+> +       _nh_stride      K2, K3, K0, K1
+> +
+> +.Ldone:
+> +       // Sum the accumulators for each pass, then store the sums to 'ha=
+sh'
+> +       vadd.u64        T0_L, PASS0_SUM_A, PASS0_SUM_B
+> +       vadd.u64        T0_H, PASS1_SUM_A, PASS1_SUM_B
+> +       vadd.u64        T1_L, PASS2_SUM_A, PASS2_SUM_B
+> +       vadd.u64        T1_H, PASS3_SUM_A, PASS3_SUM_B
+> +       vst1.8          {T0-T1}, [HASH]
+> +       bx              lr
+> +ENDPROC(nh_neon)
+> diff --git a/arch/arm/crypto/nhpoly1305-neon-glue.c b/arch/arm/crypto/nhp=
+oly1305-neon-glue.c
+> new file mode 100644
+> index 000000000000..49aae87cb2bc
+> --- /dev/null
+> +++ b/arch/arm/crypto/nhpoly1305-neon-glue.c
+> @@ -0,0 +1,77 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * NHPoly1305 - =CE=B5-almost-=E2=88=86-universal hash function for Adia=
+ntum
+> + * (NEON accelerated version)
+> + *
+> + * Copyright 2018 Google LLC
+> + */
+> +
+> +#include <asm/neon.h>
+> +#include <asm/simd.h>
+> +#include <crypto/internal/hash.h>
+> +#include <crypto/nhpoly1305.h>
+> +#include <linux/module.h>
+> +
+> +asmlinkage void nh_neon(const u32 *key, const u8 *message, size_t messag=
+e_len,
+> +                       u8 hash[NH_HASH_BYTES]);
+> +
+> +/* wrapper to avoid indirect call to assembly, which doesn't work with C=
+FI */
+> +static void _nh_neon(const u32 *key, const u8 *message, size_t message_l=
+en,
+> +                    __le64 hash[NH_NUM_PASSES])
+> +{
+> +       nh_neon(key, message, message_len, (u8 *)hash);
+> +}
+> +
+> +static int nhpoly1305_neon_update(struct shash_desc *desc,
+> +                                 const u8 *src, unsigned int srclen)
+> +{
+> +       if (srclen < 64 || !may_use_simd())
+> +               return crypto_nhpoly1305_update(desc, src, srclen);
+> +
+> +       do {
+> +               unsigned int n =3D min_t(unsigned int, srclen, PAGE_SIZE)=
+;
+> +
+> +               kernel_neon_begin();
+> +               crypto_nhpoly1305_update_helper(desc, src, n, _nh_neon);
+> +               kernel_neon_end();
+> +               src +=3D n;
+> +               srclen -=3D n;
+> +       } while (srclen);
+> +       return 0;
+> +}
+> +
+> +static struct shash_alg nhpoly1305_alg =3D {
+> +       .base.cra_name          =3D "nhpoly1305",
+> +       .base.cra_driver_name   =3D "nhpoly1305-neon",
+> +       .base.cra_priority      =3D 200,
+> +       .base.cra_ctxsize       =3D sizeof(struct nhpoly1305_key),
+> +       .base.cra_module        =3D THIS_MODULE,
+> +       .digestsize             =3D POLY1305_DIGEST_SIZE,
+> +       .init                   =3D crypto_nhpoly1305_init,
+> +       .update                 =3D nhpoly1305_neon_update,
+> +       .final                  =3D crypto_nhpoly1305_final,
+> +       .setkey                 =3D crypto_nhpoly1305_setkey,
+> +       .descsize               =3D sizeof(struct nhpoly1305_state),
+> +};
+> +
+> +static int __init nhpoly1305_mod_init(void)
+> +{
+> +       if (!(elf_hwcap & HWCAP_NEON))
+> +               return -ENODEV;
+> +
+> +       return crypto_register_shash(&nhpoly1305_alg);
+> +}
+> +
+> +static void __exit nhpoly1305_mod_exit(void)
+> +{
+> +       crypto_unregister_shash(&nhpoly1305_alg);
+> +}
+> +
+> +module_init(nhpoly1305_mod_init);
+> +module_exit(nhpoly1305_mod_exit);
+> +
+> +MODULE_DESCRIPTION("NHPoly1305 =CE=B5-almost-=E2=88=86-universal hash fu=
+nction (NEON-accelerated)");
+> +MODULE_LICENSE("GPL v2");
+> +MODULE_AUTHOR("Eric Biggers <ebiggers@google.com>");
+> +MODULE_ALIAS_CRYPTO("nhpoly1305");
+> +MODULE_ALIAS_CRYPTO("nhpoly1305-neon");
+> --
+> 2.19.1.1215.g8438c0b245-goog
+>
