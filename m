@@ -2,183 +2,211 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
-	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 80810C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 17:27:22 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 30176C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:07:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 43C1020815
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 17:27:22 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 43C1020815
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=soulik.info
+	by mail.kernel.org (Postfix) with ESMTP id DCB4320815
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:07:39 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCB4320815
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726770AbeKRDol (ORCPT
+        id S1726760AbeKREZF (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 22:44:41 -0500
-Received: from kozue.soulik.info ([108.61.200.231]:45160 "EHLO
-        kozue.soulik.info" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726338AbeKRDol (ORCPT
+        Sat, 17 Nov 2018 23:25:05 -0500
+Received: from smtprelay0145.hostedemail.com ([216.40.44.145]:48491 "EHLO
+        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
+        by vger.kernel.org with ESMTP id S1726442AbeKREZF (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 22:44:41 -0500
-Received: from misaki.sumomo.pri (unknown [192.168.0.134])
-        by kozue.soulik.info (Postfix) with ESMTPA id 22749100F77;
-        Sun, 18 Nov 2018 02:27:40 +0900 (JST)
-From:   Randy Li <ayaka@soulik.info>
-To:     dri-devel@lists.freedesktop.org
-Cc:     linux-kernel@vger.kernel.org, hjc@rock-chips.com, heiko@sntech.de,
-        airlied@linux.ie, linux-rockchip@lists.infradead.org,
-        Randy Li <ayaka@soulik.info>
-Subject: [PATCH v2] drm/rockchip: support hwc layer
-Date:   Sun, 18 Nov 2018 01:27:02 +0800
-Message-Id: <20181117172702.16926-1-ayaka@soulik.info>
-X-Mailer: git-send-email 2.14.5
+        Sat, 17 Nov 2018 23:25:05 -0500
+Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
+        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 9E38A182CED5B;
+        Sat, 17 Nov 2018 18:07:36 +0000 (UTC)
+X-Session-Marker: 6A6F6540706572636865732E636F6D
+X-HE-Tag: train75_805a7e24805b
+X-Filterd-Recvd-Size: 6341
+Received: from XPS-9350.home (unknown [47.151.153.53])
+        (Authenticated sender: joe@perches.com)
+        by omf19.hostedemail.com (Postfix) with ESMTPA;
+        Sat, 17 Nov 2018 18:07:34 +0000 (UTC)
+Message-ID: <7ed4782b8872b5bf2788d4ce440149112f7e3c4b.camel@perches.com>
+Subject: Re: [PATCH 1/2] staging: emxx_udc: Split line and fix eol
+ parenthesis
+From:   Joe Perches <joe@perches.com>
+To:     Cristian Sicilia <sicilia.cristian@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Carmeli Tamir <carmeli.tamir@gmail.com>,
+        Christopher Diaz Riveros <chrisadr@gentoo.org>,
+        Arkadiusz Lis <areklis909@gmail.com>,
+        Nathan Chancellor <natechancellor@gmail.com>
+Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
+Date:   Sat, 17 Nov 2018 10:07:33 -0800
+In-Reply-To: <1542411969-26570-2-git-send-email-sicilia.cristian@gmail.com>
+References: <1542411969-26570-1-git-send-email-sicilia.cristian@gmail.com>
+         <1542411969-26570-2-git-send-email-sicilia.cristian@gmail.com>
+Content-Type: text/plain; charset="ISO-8859-1"
+User-Agent: Evolution 3.30.1-1build1 
+Mime-Version: 1.0
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-The Windows 2/3 or a RGB UI layer is a high performance flexibly
-plane. It is too waste to use it as a cursor plane.
+On Sat, 2018-11-17 at 00:46 +0100, Cristian Sicilia wrote:
+> Fix some parenthesis opened at end of line.
 
-I have verified this patch with weston git version, I am not
-sure whether X would meet with this patch. As the previous
-author is gone, I can't confirm this problem with him.
+It looks like this is all guarded by #ifdef UDC_DEBUG_DUMP
+which is not ever set and this probably would not compile
+if it was.
 
-Also the weston only use the only two achors with a same
-size and pixel format, I need more users to verify this
-patch.
+It's probably better to remove all the blocks guarded by
+that flag and the flag itself.
 
-Signed-off-by: Randy Li <ayaka@soulik.info>
----
- drivers/gpu/drm/rockchip/rockchip_drm_vop.c | 20 +++++++++++++
- drivers/gpu/drm/rockchip/rockchip_vop_reg.c | 44 ++++++++++++++++++++++++++---
- 2 files changed, 60 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-index 51bdc55b4b9c..1fa88000fab7 100644
---- a/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_drm_vop.c
-@@ -765,6 +765,26 @@ static void vop_plane_atomic_update(struct drm_plane *plane,
- 
- 	dsp_info = (drm_rect_height(dest) - 1) << 16;
- 	dsp_info |= (drm_rect_width(dest) - 1) & 0xffff;
-+	/* HWC layer only supports various of square icon */
-+	if (plane->type == DRM_PLANE_TYPE_CURSOR) {
-+		switch (actual_w) {
-+		case 32:
-+			dsp_info = 0;
-+			break;
-+		case 64:
-+			dsp_info = 0x1;
-+			break;
-+		case 94:
-+			dsp_info = 0x10;
-+			break;
-+		case 128:
-+			dsp_info = 0x11;
-+			break;
-+		/* Unsupported pixel resolution */
-+		default:
-+			return;
-+		}
-+	}
- 
- 	dsp_stx = dest->x1 + crtc->mode.htotal - crtc->mode.hsync_start;
- 	dsp_sty = dest->y1 + crtc->mode.vtotal - crtc->mode.vsync_start;
-diff --git a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-index 6370f7d33273..6eba9ef78865 100644
---- a/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-+++ b/drivers/gpu/drm/rockchip/rockchip_vop_reg.c
-@@ -64,6 +64,15 @@ static const uint32_t formats_win_lite[] = {
- 	DRM_FORMAT_BGR565,
- };
- 
-+static const uint32_t formats_win_hwc[] = {
-+	DRM_FORMAT_ARGB8888,
-+	DRM_FORMAT_ABGR8888,
-+	DRM_FORMAT_RGB888,
-+	DRM_FORMAT_BGR888,
-+	DRM_FORMAT_RGB565,
-+	DRM_FORMAT_BGR565,
-+};
-+
- static const struct vop_scl_regs rk3036_win_scl = {
- 	.scale_yrgb_x = VOP_REG(RK3036_WIN0_SCL_FACTOR_YRGB, 0xffff, 0x0),
- 	.scale_yrgb_y = VOP_REG(RK3036_WIN0_SCL_FACTOR_YRGB, 0xffff, 16),
-@@ -458,6 +467,19 @@ static const struct vop_win_phy rk3288_win23_data = {
- 	.dst_alpha_ctl = VOP_REG(RK3288_WIN2_DST_ALPHA_CTRL, 0xff, 0),
- };
- 
-+static const struct vop_win_phy rk3288_winhwc_data = {
-+	.data_formats = formats_win_hwc,
-+	.nformats = ARRAY_SIZE(formats_win_hwc),
-+	.enable = VOP_REG(RK3288_HWC_CTRL0, 0x1, 0),
-+	.format = VOP_REG(RK3288_HWC_CTRL0, 0x7, 1),
-+	.rb_swap = VOP_REG(RK3288_HWC_CTRL0, 0x1, 12),
-+	.dsp_info = VOP_REG(RK3288_HWC_CTRL0, 0x3, 5),
-+	.dsp_st = VOP_REG(RK3288_HWC_DSP_ST, 0x1fff1fff, 0),
-+	.yrgb_mst = VOP_REG(RK3288_HWC_MST, 0xffffffff, 0),
-+	.src_alpha_ctl = VOP_REG(RK3288_HWC_SRC_ALPHA_CTRL, 0xffff, 0),
-+	.dst_alpha_ctl = VOP_REG(RK3288_HWC_DST_ALPHA_CTRL, 0xffffffff, 0),
-+};
-+
- static const struct vop_modeset rk3288_modeset = {
- 	.htotal_pw = VOP_REG(RK3288_DSP_HTOTAL_HS_END, 0x1fff1fff, 0),
- 	.hact_st_end = VOP_REG(RK3288_DSP_HACT_ST_END, 0x1fff1fff, 0),
-@@ -502,7 +524,10 @@ static const struct vop_win_data rk3288_vop_win_data[] = {
- 	{ .base = 0x00, .phy = &rk3288_win23_data,
- 	  .type = DRM_PLANE_TYPE_OVERLAY },
- 	{ .base = 0x50, .phy = &rk3288_win23_data,
--	  .type = DRM_PLANE_TYPE_CURSOR },
-+	  .type = DRM_PLANE_TYPE_OVERLAY },
-+	{ .base = 0x00, .phy = &rk3288_winhwc_data,
-+	  .type = DRM_PLANE_TYPE_CURSOR,
-+	},
- };
- 
- static const int rk3288_vop_intrs[] = {
-@@ -575,7 +600,10 @@ static const struct vop_win_data rk3368_vop_win_data[] = {
- 	{ .base = 0x00, .phy = &rk3368_win23_data,
- 	  .type = DRM_PLANE_TYPE_OVERLAY },
- 	{ .base = 0x50, .phy = &rk3368_win23_data,
--	  .type = DRM_PLANE_TYPE_CURSOR },
-+	  .type = DRM_PLANE_TYPE_OVERLAY },
-+	{ .base = 0x00, .phy = &rk3288_winhwc_data,
-+	  .type = DRM_PLANE_TYPE_CURSOR,
-+	},
- };
- 
- static const struct vop_output rk3368_output = {
-@@ -654,8 +682,13 @@ static const struct vop_data rk3399_vop_big = {
- static const struct vop_win_data rk3399_vop_lit_win_data[] = {
- 	{ .base = 0x00, .phy = &rk3288_win01_data,
- 	  .type = DRM_PLANE_TYPE_PRIMARY },
-+	{ .phy = NULL},
- 	{ .base = 0x00, .phy = &rk3368_win23_data,
--	  .type = DRM_PLANE_TYPE_CURSOR},
-+	  .type = DRM_PLANE_TYPE_OVERLAY},
-+	{ .phy = NULL},
-+	{ .base = 0x00, .phy = &rk3288_winhwc_data,
-+	  .type = DRM_PLANE_TYPE_CURSOR,
-+	},
- };
- 
- static const struct vop_data rk3399_vop_lit = {
-@@ -737,7 +770,10 @@ static const struct vop_win_data rk3328_vop_win_data[] = {
- 	{ .base = 0x1d0, .phy = &rk3288_win01_data,
- 	  .type = DRM_PLANE_TYPE_OVERLAY },
- 	{ .base = 0x2d0, .phy = &rk3288_win01_data,
--	  .type = DRM_PLANE_TYPE_CURSOR },
-+	  .type = DRM_PLANE_TYPE_OVERLAY },
-+	{ .base = 0x3d0, .phy = &rk3288_winhwc_data,
-+	  .type = DRM_PLANE_TYPE_CURSOR,
-+	},
- };
- 
- static const struct vop_data rk3328_vop = {
--- 
-2.14.5
+> Signed-off-by: Cristian Sicilia <sicilia.cristian@gmail.com>
+> ---
+>  drivers/staging/emxx_udc/emxx_udc.c | 73 ++++++++++++++++++-------------------
+>  1 file changed, 36 insertions(+), 37 deletions(-)
+> 
+> diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
+> index bf7c5da..26bd77c 100644
+> --- a/drivers/staging/emxx_udc/emxx_udc.c
+> +++ b/drivers/staging/emxx_udc/emxx_udc.c
+> @@ -108,20 +108,20 @@ static void _nbu2ss_dump_register(struct nbu2ss_udc *udc)
+>  
+>  	dev_dbg(&udc->dev, "\n-USB REG-\n");
+>  	for (i = 0x0 ; i < USB_BASE_SIZE ; i += 16) {
+> -		reg_data =   _nbu2ss_readl(
+> -			(u32 *)IO_ADDRESS(USB_BASE_ADDRESS + i));
+> +		reg_data = _nbu2ss_readl((u32 *)IO_ADDRESS(USB_BASE_ADDRESS +
+> +					i));
+>  		dev_dbg(&udc->dev, "USB%04x =%08x", i, (int)reg_data);
+>  
+> -		reg_data =  _nbu2ss_readl(
+> -			(u32 *)IO_ADDRESS(USB_BASE_ADDRESS + i + 4));
+> +		reg_data = _nbu2ss_readl((u32 *)IO_ADDRESS(USB_BASE_ADDRESS +
+> +					i + 4));
+>  		dev_dbg(&udc->dev, " %08x", (int)reg_data);
+>  
+> -		reg_data =  _nbu2ss_readl(
+> -			(u32 *)IO_ADDRESS(USB_BASE_ADDRESS + i + 8));
+> +		reg_data = _nbu2ss_readl((u32 *)IO_ADDRESS(USB_BASE_ADDRESS +
+> +					i + 8));
+>  		dev_dbg(&udc->dev, " %08x", (int)reg_data);
+>  
+> -		reg_data =  _nbu2ss_readl(
+> -			(u32 *)IO_ADDRESS(USB_BASE_ADDRESS + i + 12));
+> +		reg_data = _nbu2ss_readl((u32 *)IO_ADDRESS(USB_BASE_ADDRESS +
+> +					i + 12));
+>  		dev_dbg(&udc->dev, " %08x\n", (int)reg_data);
+>  	}
+>  
+> @@ -473,22 +473,23 @@ static void _nbu2ss_dma_map_single(
+>  		if (req->unaligned) {
+>  			req->req.dma = ep->phys_buf;
+>  		} else {
+> -			req->req.dma = dma_map_single(
+> -				udc->gadget.dev.parent,
+> -				req->req.buf,
+> -				req->req.length,
+> -				(direct == USB_DIR_IN)
+> -				? DMA_TO_DEVICE : DMA_FROM_DEVICE);
+> +			req->req.dma =
+> +				dma_map_single(udc->gadget.dev.parent,
+> +					       req->req.buf,
+> +					       req->req.length,
+> +					       (direct == USB_DIR_IN) ?
+> +						DMA_TO_DEVICE :
+> +						DMA_FROM_DEVICE);
+>  		}
+>  		req->mapped = 1;
+>  	} else {
+>  		if (!req->unaligned)
+> -			dma_sync_single_for_device(
+> -				udc->gadget.dev.parent,
+> -				req->req.dma,
+> -				req->req.length,
+> -				(direct == USB_DIR_IN)
+> -				? DMA_TO_DEVICE : DMA_FROM_DEVICE);
+> +			dma_sync_single_for_device(udc->gadget.dev.parent,
+> +						   req->req.dma,
+> +						   req->req.length,
+> +						   (direct == USB_DIR_IN)
+> +						    ? DMA_TO_DEVICE :
+> +						    DMA_FROM_DEVICE);
+>  
+>  		req->mapped = 0;
+>  	}
+> @@ -975,8 +976,8 @@ static int _nbu2ss_epn_out_transfer(
+>  
+>  	/*-------------------------------------------------------------*/
+>  	/* Receive Length */
+> -	i_recv_length
+> -		= _nbu2ss_readl(&preg->EP_REGS[num].EP_LEN_DCNT) & EPN_LDATA;
+> +	i_recv_length =
+> +		_nbu2ss_readl(&preg->EP_REGS[num].EP_LEN_DCNT) & EPN_LDATA;
+>  
+>  	if (i_recv_length != 0) {
+>  		result = _nbu2ss_epn_out_data(udc, ep, req, i_recv_length);
+> @@ -1115,10 +1116,9 @@ static int _nbu2ss_epn_in_pio(
+>  		i_word_length = length / sizeof(u32);
+>  		if (i_word_length > 0) {
+>  			for (i = 0; i < i_word_length; i++) {
+> -				_nbu2ss_writel(
+> -					&preg->EP_REGS[ep->epnum - 1].EP_WRITE
+> -					, p_buf_32->dw
+> -				);
+> +				_nbu2ss_writel(&preg->EP_REGS[ep->epnum -
+> +							      1].EP_WRITE,
+> +					       p_buf_32->dw);
+>  
+>  				p_buf_32++;
+>  			}
+> @@ -1472,13 +1472,11 @@ static inline int _nbu2ss_req_feature(struct nbu2ss_udc *udc, bool bset)
+>  		if (0x0000 == (wIndex & 0xFF70)) {
+>  			if (selector == USB_ENDPOINT_HALT) {
+>  				ep_adrs = wIndex & 0xFF;
+> -				if (!bset) {
+> -					_nbu2ss_endpoint_toggle_reset(
+> -						udc, ep_adrs);
+> -				}
+> +				if (!bset)
+> +					_nbu2ss_endpoint_toggle_reset(udc,
+> +								      ep_adrs);
+>  
+> -				_nbu2ss_set_endpoint_stall(
+> -					udc, ep_adrs, bset);
+> +				_nbu2ss_set_endpoint_stall(udc, ep_adrs, bset);
+>  
+>  				result = 0;
+>  			}
+> @@ -1524,8 +1522,8 @@ static void _nbu2ss_epn_set_stall(
+>  		for (limit_cnt = 0
+>  			; limit_cnt < IN_DATA_EMPTY_COUNT
+>  			; limit_cnt++) {
+> -			regdata = _nbu2ss_readl(
+> -				&preg->EP_REGS[ep->epnum - 1].EP_STATUS);
+> +			regdata = _nbu2ss_readl(&preg->EP_REGS[ep->epnum -
+> +							       1].EP_STATUS);
+>  
+>  			if ((regdata & EPN_IN_DATA) == 0)
+>  				break;
+> @@ -2666,9 +2664,10 @@ static int nbu2ss_ep_queue(
+>  
+>  	if (req->unaligned) {
+>  		if (!ep->virt_buf)
+> -			ep->virt_buf = dma_alloc_coherent(
+> -				NULL, PAGE_SIZE,
+> -				&ep->phys_buf, GFP_ATOMIC | GFP_DMA);
+> +			ep->virt_buf = dma_alloc_coherent(NULL,
+> +							  PAGE_SIZE,
+> +							  &ep->phys_buf,
+> +							  GFP_ATOMIC | GFP_DMA);
+>  		if (ep->epnum > 0)  {
+>  			if (ep->direct == USB_DIR_IN)
+>  				memcpy(ep->virt_buf, req->req.buf,
 
