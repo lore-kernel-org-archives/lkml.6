@@ -2,81 +2,109 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.7 required=3.0 tests=MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,UNWANTED_LANGUAGE_BODY,URIBL_BLOCKED,USER_AGENT_MUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 71067C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:01:31 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 55201C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:02:22 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3241B20817
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:01:31 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3241B20817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id 25C1D20817
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:02:22 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 25C1D20817
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=csie.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726461AbeKRCSf (ORCPT
+        id S1726612AbeKRCT0 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 21:18:35 -0500
-Received: from mail-oi1-f195.google.com ([209.85.167.195]:41964 "EHLO
-        mail-oi1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726065AbeKRCSf (ORCPT
+        Sat, 17 Nov 2018 21:19:26 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:38716 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726113AbeKRCT0 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 21:18:35 -0500
-Received: by mail-oi1-f195.google.com with SMTP id j21so537138oii.8;
-        Sat, 17 Nov 2018 08:01:29 -0800 (PST)
+        Sat, 17 Nov 2018 21:19:26 -0500
+Received: by mail-ed1-f68.google.com with SMTP id a2-v6so22034053edi.5;
+        Sat, 17 Nov 2018 08:02:19 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=99IukoexswF128/k24Y6AlJQEQIjGiMkTJn1umMEO8Y=;
-        b=rGO+mV83C0MZSDvOOZWSj9brnHjsADsd5xoXcgNQG7GiVZvt9i6P5GPxXlG+gtJPvj
-         1duV5TVt88Rw2GT8R4sgja9ejYGs7Va6gpGs1r8VYr97cCH5IpUe7QcCCkqNcLXYbkpp
-         LiYD734MKDZEvlhHOwusFmFuJ1kR6AnJ82xTDcpzYgIwhns3pbr3hzGm1JNArafaBjO7
-         CNnqlX3BuyEGmiTQ7ybzmMDmrq65lXQJo/enpD66dD/1G5fNaJuhSox8Rf8lxAXpZrWF
-         dxW4CHoXvEtabn9I3r3BZuKTtNM7SDXyEdUKbm7P5IPWOn9rp926ahtYZEBa3E6yOr4d
-         8AXg==
-X-Gm-Message-State: AGRZ1gIlRo8coJPj++fceAfnYNxjebhqUZm/KP/X08cHO+ybA9+TEMGN
-        514lWxOI2c9ptQSDUDMaf0eHOCI=
-X-Google-Smtp-Source: AJdET5ddmdpKirEJxd6AXZM28UWm9D/aFKe4gVBb/M6KunclVYq/cDq/EJ9mnQmze5/nomIDtcTzLw==
-X-Received: by 2002:aca:f341:: with SMTP id r62-v6mr3669099oih.230.1542470488616;
-        Sat, 17 Nov 2018 08:01:28 -0800 (PST)
-Received: from localhost ([166.137.105.180])
-        by smtp.gmail.com with ESMTPSA id i35sm1142737ote.69.2018.11.17.08.01.27
-        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
-        Sat, 17 Nov 2018 08:01:27 -0800 (PST)
-Date:   Sat, 17 Nov 2018 10:01:23 -0600
-From:   Rob Herring <robh@kernel.org>
-To:     Jerome Brunet <jbrunet@baylibre.com>
-Cc:     Kevin Hilman <khilman@baylibre.com>,
-        Carlo Caione <carlo@caione.org>,
-        Neil Armstrong <narmstrong@baylibre.com>,
-        Jerome Brunet <jbrunet@baylibre.com>,
-        linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org,
-        devicetree@vger.kernel.org
-Subject: Re: [PATCH RESEND v2 1/2] dt-bindings: arm: amlogic: add libretech
- aml-s805x-ac bindings
-Message-ID: <20181117160123.GA29221@bogus>
-References: <20181116151539.18501-1-jbrunet@baylibre.com>
- <20181116151539.18501-2-jbrunet@baylibre.com>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=VpIkRnRmiocIkpvMFLv5HAS8OytT+QmzXxlV+eAuMyw=;
+        b=QtHoxR9R5WrDR6InLdhPZPY1OsnlLd+b4ydPXb6P/Btmi2EPdJMjxHLX2CotBFylZD
+         iGPYMQ5LVyAzz4UCa93JPpEIFoRDTQSl8MxqyPKQJXtrPlZtR+Yz7d93wsgbVViZotf9
+         Yos9fAbeA+NzXf9ybXl0y/FUJaxEC96wAVw4Va29h8/e7qevRkkOCiluXQVLP5/KFBcH
+         LWWXPr0ledOsCckoVLMfcvHzTV7y7qA4FBUSJ1VkLpzKxZtrm+2FUPq1R5UuGvjT6+eJ
+         b5e8GOKrwrF8kPy7iRpKX6mZAdw14EIFg/5uF6QoInHDwqRMMqzdAGSWmiebFnHyLl7v
+         BMpA==
+X-Gm-Message-State: AGRZ1gKl9agCB7uRrIXScc1ajtuzdSYSpYjzqhJTVRVaBJz7GJttLyyb
+        oFo2nPV4t+7kj8d3ELKNUCM0bjR2
+X-Google-Smtp-Source: AJdET5eevGsb3Yqy6lgxpEqJovrWXpQ3++dxGPGl5XKuMNvGuJ30Ntg+z4HC4s3AMQ3zauEdxR2zeA==
+X-Received: by 2002:a50:b284:: with SMTP id p4-v6mr6662811edd.60.1542470538347;
+        Sat, 17 Nov 2018 08:02:18 -0800 (PST)
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com. [209.85.128.45])
+        by smtp.gmail.com with ESMTPSA id i14-v6sm4827168ejy.40.2018.11.17.08.02.18
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 17 Nov 2018 08:02:18 -0800 (PST)
+Received: by mail-wm1-f45.google.com with SMTP id 124-v6so1373209wmw.0;
+        Sat, 17 Nov 2018 08:02:18 -0800 (PST)
+X-Received: by 2002:a1c:2304:: with SMTP id j4mr1902419wmj.14.1542470537597;
+ Sat, 17 Nov 2018 08:02:17 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181116151539.18501-2-jbrunet@baylibre.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20181108063929.29720-1-anarsoul@gmail.com> <20181108063929.29720-4-anarsoul@gmail.com>
+ <CAGb2v65zb4rXJJv018AfDC-YQgAAmahmQ=-Bb5CyU3kA6wBAqg@mail.gmail.com> <CA+E=qVegv61NgF4peK=Bz2RDvjCUX+M_njrpC4Ph+Jv+r2KFgg@mail.gmail.com>
+In-Reply-To: <CA+E=qVegv61NgF4peK=Bz2RDvjCUX+M_njrpC4Ph+Jv+r2KFgg@mail.gmail.com>
+From:   Chen-Yu Tsai <wens@csie.org>
+Date:   Sun, 18 Nov 2018 00:02:04 +0800
+X-Gmail-Original-Message-ID: <CAGb2v65vDRTUDo894nXvOi8xEkMzeymbU=OQjdyY-Eh38T7F+A@mail.gmail.com>
+Message-ID: <CAGb2v65vDRTUDo894nXvOi8xEkMzeymbU=OQjdyY-Eh38T7F+A@mail.gmail.com>
+Subject: Re: [PATCH v6 3/3] arm64: dts: allwinner: a64: enable sound on Pinebook
+To:     Vasily Khoruzhick <anarsoul@gmail.com>
+Cc:     Maxime Ripard <maxime.ripard@bootlin.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        devicetree <devicetree@vger.kernel.org>,
+        linux-kernel <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Nov 2018 16:15:38 +0100, Jerome Brunet wrote:
-> Add bindings for the Libretech aml-s805x-ac board, aka 'La Frite'.
-> 
-> Signed-off-by: Neil Armstrong <narmstrong@baylibre.com>
-> Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
-> ---
->  Documentation/devicetree/bindings/arm/amlogic.txt | 1 +
->  1 file changed, 1 insertion(+)
-> 
+On Thu, Nov 15, 2018 at 1:48 PM Vasily Khoruzhick <anarsoul@gmail.com> wrote:
+>
+> On Wed, Nov 7, 2018 at 11:30 PM Chen-Yu Tsai <wens@csie.org> wrote:
+> > > +
+> > > +       speaker_amp: speaker_amp {
+> > > +               compatible = "simple-audio-amplifier";
+> > > +               enable-gpios = <&pio 7 7 GPIO_ACTIVE_HIGH>; /* PH7 */
+> >
+> > You might want to add a sound-name-prefix property. See
+> >
+> >     Documentation/devicetree/bindings/sound/name-prefix.txt
+> >
+> > Also this should have a reference to its power supply regulator.
+>
+> You're right, it should reference its power supply which should be a
+> fixed regulator controlled via GPIO from AXP803.
+>
+> Unfortunately there's no AXP803 GPIO support yet and
+> simple-audio-amplifier doesn't have regulator property.
+>
+> I have no time (and interest) to work on it in near future, so if
+> anyone wants to pick it up - feel free to do so.
 
-Reviewed-by: Rob Herring <robh@kernel.org>
+Understood. I can try to pick it up when I have some extra time.
+
+On the other hand, I tried this series on my Pine64 and (with
+the necessary device tree changes) on my Bananapi M64. While
+audio played (did not stall), no audio was actually coming out
+of the headphones I had plugged in. I made sure that all needed
+mixer controls were enabled, and the DAPM graph read all green
+from the DAI to the Headphone jack.
+
+Any ideas?
+
+
+Regards
+ChenYu
