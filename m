@@ -2,150 +2,88 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-9.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5F5DEC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:06:07 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E50BEC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:06:09 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CC5120825
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:06:07 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LiD65H8g"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC5120825
-Authentication-Results: mail.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=ti.com
+	by mail.kernel.org (Postfix) with ESMTP id AC2B420817
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:06:09 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org AC2B420817
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726733AbeKRCXM (ORCPT
+        id S1726760AbeKRCXP (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 21:23:12 -0500
-Received: from fllv0015.ext.ti.com ([198.47.19.141]:39594 "EHLO
-        fllv0015.ext.ti.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726128AbeKRCXM (ORCPT
+        Sat, 17 Nov 2018 21:23:15 -0500
+Received: from mail-ot1-f67.google.com ([209.85.210.67]:40651 "EHLO
+        mail-ot1-f67.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726128AbeKRCXO (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 21:23:12 -0500
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-        by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id wAHG5Mv1041550;
-        Sat, 17 Nov 2018 10:05:22 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-        s=ti-com-17Q1; t=1542470722;
-        bh=qqWYE5Xu3Fd1BGSiTO266lzPduTFEGf/75030QRoWZ0=;
-        h=Date:From:To:CC:Subject:References:In-Reply-To;
-        b=LiD65H8gU9PEojqvP7GWKEyCQgAjev6dhcGrK1zMqThlw6X15xdJ6UayX0IVgSOVv
-         MbBm9gr3p398o2zjxE0WUSR4wm61SUIyyuuBoWsCBOKaLciLo3K+phxVEE7bpkVKYz
-         5ixq5gs+T2A9YmhtRIVvdQY8qwMLmGn/9UNlxNHw=
-Received: from DFLE106.ent.ti.com (dfle106.ent.ti.com [10.64.6.27])
-        by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id wAHG5MJR117856
-        (version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-        Sat, 17 Nov 2018 10:05:22 -0600
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.1591.10; Sat, 17
- Nov 2018 10:05:22 -0600
-Received: from dlep33.itg.ti.com (157.170.170.75) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_0,
- cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.1.1591.10 via Frontend Transport;
- Sat, 17 Nov 2018 10:05:22 -0600
-Received: from localhost (ileax41-snat.itg.ti.com [10.172.224.153])
-        by dlep33.itg.ti.com (8.14.3/8.13.8) with ESMTP id wAHG5Mg9019321;
-        Sat, 17 Nov 2018 10:05:22 -0600
-Date:   Sat, 17 Nov 2018 10:05:02 -0600
-From:   Nishanth Menon <nm@ti.com>
-To:     Vignesh R <vigneshr@ti.com>
-CC:     Tero Kristo <t-kristo@ti.com>, Rob Herring <robh+dt@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>,
-        <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        <devicetree@vger.kernel.org>, <linux-omap@vger.kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Tony Lindgren <tony@atomide.com>
-Subject: Re: [PATCH v2 1/4] dt-bindings: pinctrl: k3: Introduce pinmux
- definitions
-Message-ID: <20181117160502.dhlqbx5qnmdp5iog@kahuna>
-References: <20181113060111.16374-1-vigneshr@ti.com>
- <20181113060111.16374-2-vigneshr@ti.com>
+        Sat, 17 Nov 2018 21:23:14 -0500
+Received: by mail-ot1-f67.google.com with SMTP id s5so24070978oth.7;
+        Sat, 17 Nov 2018 08:06:07 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=qrAa2U5TeFgyIl7tss4iXY05dCHcH17adlPuqnOQI68=;
+        b=Ac3LrJ65tMLx7Kf19NaNOK2ZV8tStxNSgzzQUbuKcgASXa80t8UInB+uL1HFU/B0ys
+         FhYynw+/f1ZghFnHpxg3y2jH1P8OSQtzuHeSWiYSj+Jmg9nRkT0pRsGPgkaZZUzb4OZa
+         KI1eKkSV4Ay/MNIEFN0VmD869TCv8CPjHO0NBLYJuXu+LKsNMrZO30Mc0vWUilwHj8YX
+         6HavwfA2dmeLCWJKnt1NtZyovbhFEqPIh3t9ZlJVL5UAgoyenRwsl57WDKKnHyqUfQNC
+         bogoRvWEErmYU4MFhgx5wjzgZr1wf2uu1GF90wqSqyaPT2A6xw69S7vaZ5bV+lPjkeDe
+         wURA==
+X-Gm-Message-State: AGRZ1gJHaEh0uagKL78dYrEXWejuodNfSNqhZWE5jPhDnq2RBgAvZd9l
+        1k6HhnA8RnAxsQFICtRFY9qPOn0=
+X-Google-Smtp-Source: AJdET5d/gfxWYBtF9K4dzVIoO7dS97CL6y2sT6IKAhopxJaZ7KLShG17xpqJM2WhZjirNEix/sLgcA==
+X-Received: by 2002:a9d:3b65:: with SMTP id z92mr9260579otb.275.1542470766523;
+        Sat, 17 Nov 2018 08:06:06 -0800 (PST)
+Received: from localhost ([166.137.105.180])
+        by smtp.gmail.com with ESMTPSA id i35sm1166028ote.69.2018.11.17.08.06.04
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 17 Nov 2018 08:06:05 -0800 (PST)
+Date:   Sat, 17 Nov 2018 10:06:03 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
+Cc:     Mark Rutland <mark.rutland@arm.com>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@st.com>,
+        Wolfram Sang <wsa@the-dreams.de>,
+        Pierre-Yves MORDRET <pierre-yves.mordret@st.com>,
+        linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-stm32@st-md-mailman.stormreply.com,
+        linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 1/2] dt-bindings: i2c-stm32: SYSCFG Fast Mode Plus
+ support for I2C STM32F7
+Message-ID: <20181117160603.GA3681@bogus>
+References: <1542370822-14721-1-git-send-email-pierre-yves.mordret@st.com>
+ <1542370822-14721-2-git-send-email-pierre-yves.mordret@st.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20181113060111.16374-2-vigneshr@ti.com>
-User-Agent: NeoMutt/20171215
-X-EXCLAIMER-MD-CONFIG: e1e8a2fd-e40a-4ac6-ac9b-f7e9cc9ee180
+In-Reply-To: <1542370822-14721-2-git-send-email-pierre-yves.mordret@st.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On 11:31-20181113, Vignesh R wrote:
-> The dt-bindings header for TI K3 AM6 SoCs define a set of macros for
-> defining pinmux configs in human readable form, instead of raw-coded
-> hex values.
+On Fri, 16 Nov 2018 13:20:21 +0100, Pierre-Yves MORDRET wrote:
+> Append optional bindings to update SYSCFG Fast Mode Plus bits if
+> Fast Mode Plus speed is selected.
 > 
-> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> Signed-off-by: Pierre-Yves MORDRET <pierre-yves.mordret@st.com>
 > ---
->  MAINTAINERS                      |  1 +
->  include/dt-bindings/pinctrl/k3.h | 35 ++++++++++++++++++++++++++++++++
->  2 files changed, 36 insertions(+)
->  create mode 100644 include/dt-bindings/pinctrl/k3.h
+>   Version history:
+>     v1:
+>        * Initial
+> ---
+> ---
+>  Documentation/devicetree/bindings/i2c/i2c-stm32.txt | 6 ++++++
+>  1 file changed, 6 insertions(+)
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index fa45ff36fde9..1574ad6d7ead 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2204,6 +2204,7 @@ S:	Supported
->  F:	Documentation/devicetree/bindings/arm/ti/k3.txt
->  F:	arch/arm64/boot/dts/ti/Makefile
->  F:	arch/arm64/boot/dts/ti/k3-*
-> +F:	include/dt-bindings/pinctrl/k3.h
->  
->  ARM/TEXAS INSTRUMENT KEYSTONE ARCHITECTURE
->  M:	Santosh Shilimkar <ssantosh@kernel.org>
-> diff --git a/include/dt-bindings/pinctrl/k3.h b/include/dt-bindings/pinctrl/k3.h
-> new file mode 100644
-> index 000000000000..463d845a9b36
-> --- /dev/null
-> +++ b/include/dt-bindings/pinctrl/k3.h
-> @@ -0,0 +1,35 @@
-> +/* SPDX-License-Identifier: GPL-2.0 */
-> +/*
-> + * This header provides constants for pinctrl bindings for TI's K3 SoC
-> + * family.
-> + *
-> + * Copyright (C) 2018 Texas Instruments Incorporated - http://www.ti.com/
-> + */
-> +#ifndef _DT_BINDINGS_PINCTRL_TI_K3_H
-> +#define _DT_BINDINGS_PINCTRL_TI_K3_H
-> +
-> +#define PULLUDEN_SHIFT		(16)
-> +#define PULLTYPESEL_SHIFT	(17)
-> +#define RXACTIVE_SHIFT		(18)
-> +
-> +#define PULL_DISABLE		(1 << PULLUDEN_SHIFT)
-> +#define PULL_ENABLE		(0 << PULLUDEN_SHIFT)
-> +
-> +#define PULL_UP			(1 << PULLTYPESEL_SHIFT | PULL_ENABLE)
-> +#define PULL_DOWN		(0 << PULLTYPESEL_SHIFT | PULL_ENABLE)
-> +
-> +#define INPUT_EN		(1 << RXACTIVE_SHIFT)
-> +#define INPUT_DISABLE		(0 << RXACTIVE_SHIFT)
-> +
-> +/* Only these macros are expected be used directly in device tree files */
-> +#define PIN_OUTPUT		(INPUT_DISABLE | PULL_DISABLE)
-> +#define PIN_OUTPUT_PULLUP	(INPUT_DISABLE | PULL_UP)
-> +#define PIN_OUTPUT_PULLDOWN	(INPUT_DISABLE | PULL_DOWN)
-> +#define PIN_INPUT		(INPUT_EN | PULL_DISABLE)
-> +#define PIN_INPUT_PULLUP	(INPUT_EN | PULL_UP)
-> +#define PIN_INPUT_PULLDOWN	(INPUT_EN | PULL_DOWN)
 
-
-Thanks for reducing the combinations down to the minimum needed. We can
-worry about the DS and isolation bits when we have a real user for them.
-
-Acked-by: Nishanth Menon <nm@ti.com>
-
-Tero: v4.21-rc1 perhaps ?
-
--- 
-Regards,
-Nishanth Menon
+Reviewed-by: Rob Herring <robh@kernel.org>
