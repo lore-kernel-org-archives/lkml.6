@@ -2,215 +2,432 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id BB682C43610
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:50:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D9171C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:51:10 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 82D332089D
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:50:38 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 82D332089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
+	by mail.kernel.org (Postfix) with ESMTP id 86F532089D
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:51:10 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P5j8CB8Z"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86F532089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730277AbeKQMFZ (ORCPT
+        id S1730903AbeKQMF5 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 07:05:25 -0500
-Received: from mx1.redhat.com ([209.132.183.28]:53950 "EHLO mx1.redhat.com"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1730045AbeKQMFX (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 07:05:23 -0500
-Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
-        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-        (No client certificate requested)
-        by mx1.redhat.com (Postfix) with ESMTPS id 4A7C9A0A39;
-        Sat, 17 Nov 2018 01:50:34 +0000 (UTC)
-Received: from malachite.bss.redhat.com (dhcp-10-20-1-11.bss.redhat.com [10.20.1.11])
-        by smtp.corp.redhat.com (Postfix) with ESMTP id 8C70E6A043;
-        Sat, 17 Nov 2018 01:50:33 +0000 (UTC)
-From:   Lyude Paul <lyude@redhat.com>
-To:     nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org
-Cc:     Ben Skeggs <bskeggs@redhat.com>, David Airlie <airlied@linux.ie>,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] drm/nouveau: Grab an rpm reference before/after DP AUX transactions
-Date:   Fri, 16 Nov 2018 20:50:23 -0500
-Message-Id: <20181117015024.5771-3-lyude@redhat.com>
-In-Reply-To: <20181117015024.5771-1-lyude@redhat.com>
-References: <20181117015024.5771-1-lyude@redhat.com>
+        Sat, 17 Nov 2018 07:05:57 -0500
+Received: from mail-it1-f193.google.com ([209.85.166.193]:52994 "EHLO
+        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730388AbeKQMF5 (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 07:05:57 -0500
+Received: by mail-it1-f193.google.com with SMTP id t190-v6so657715itb.2
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 17:51:07 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=ycuo47DcdIyVxcWRHg64i/Y1sXk5HFv3kYE+fCxWqNw=;
+        b=P5j8CB8ZqvaV+jsaLIlI/z5HCbjt+LfqB1/HG1MEeDWJBYIoj072dBxT4MJFZ7okGi
+         x+cbRlJBYKFyOQmH+ly3WeqIQrym9jvM9WaYaRFIcJyYs32yTgQ6oQK6CaXuhx0Y0ZCF
+         6OjvKMx1a/J+ogCcNHl3NLpcyd6obCaaIAV2k=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=ycuo47DcdIyVxcWRHg64i/Y1sXk5HFv3kYE+fCxWqNw=;
+        b=giVXOMkFdX7bMg3Ctt1lvjLGKuPIbi9BbMdrrPpaUhGTuNLuwNbU1pzL3ifLL0HbZN
+         /cbjMObgT8jjfEt7n8OEvmyXeNxofWZ+xGR1GgWpmxbg3R+a7eG5JomO4joFBQoFw0tQ
+         mgHX8YqiSyNMmsYmP+NQCFQPJRULz3Bj8JJOS4g8C8AJ0vML/+uvjYrT+Fs1Z646LNfb
+         vDRCmAKcYJ5abno0bpdUdgPjpEiUZu5+1y6znvTv6e6277YHG47E020NqqqPe3AACI1N
+         aPXb2af19r7srd+GOvEFTrDLUxd1uZPXvNlxzb5UgI/jbc/R1OsKf7Z0YSshdDceczr7
+         e7JA==
+X-Gm-Message-State: AGRZ1gIjyRbcxWoVd+wJ3zVaZUIh9OBhSqCmXjY/wQBuniWMjZNXxrjn
+        JqkQp8sf0UcJ5+hPSPsc2R3OCvfylRQlJRhPIcSaLQ==
+X-Google-Smtp-Source: AFSGD/WYYALv4WLPEz/VZE9GqTgWQrz9G+7hT99UvERdelmjQF6iKsVQWnw2PQ3UV3Mhh+FpMORl6bhxRyEfTRNo8Jg=
+X-Received: by 2002:a24:2190:: with SMTP id e138-v6mr610664ita.71.1542419466986;
+ Fri, 16 Nov 2018 17:51:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
-X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.28]); Sat, 17 Nov 2018 01:50:34 +0000 (UTC)
+References: <20181117012631.23528-1-ebiggers@kernel.org> <20181117012631.23528-12-ebiggers@kernel.org>
+In-Reply-To: <20181117012631.23528-12-ebiggers@kernel.org>
+From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
+Date:   Fri, 16 Nov 2018 17:50:55 -0800
+Message-ID: <CAKv+Gu-VicDdZqa=4nbo4EY5r2qTNngYuGyO-MymyoJ0NQP8tA@mail.gmail.com>
+Subject: Re: [PATCH v4 11/14] crypto: poly1305 - add Poly1305 core API
+To:     Eric Biggers <ebiggers@kernel.org>
+Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
+        <linux-crypto@vger.kernel.org>,
+        Herbert Xu <herbert@gondor.apana.org.au>,
+        linux-fscrypt@vger.kernel.org,
+        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
+        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+        Paul Crowley <paulcrowley@google.com>,
+        Greg Kaiser <gkaiser@google.com>,
+        "Jason A. Donenfeld" <Jason@zx2c4.com>,
+        Samuel Neves <samuel.c.p.neves@gmail.com>,
+        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
+        Eric Biggers <ebiggers@google.com>,
+        Martin Willi <martin@strongswan.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Now that we have ->pre_transfer() and ->post_transfer() for DP AUX
-channel devices, we can implement these hooks in order to ensure that
-the GPU is actually woken up before AUX transactions happen. This fixes
-/dev/drm_dp_aux* not working while the GPU is suspended, along with some
-more rare issues where the GPU might runtime-suspend if the time between
-two DP AUX channel transactions ends up being longer then the runtime
-suspend delay (sometimes observed on KASAN kernels where everything is
-slow).
+On Fri, 16 Nov 2018 at 17:29, Eric Biggers <ebiggers@kernel.org> wrote:
+>
+> From: Eric Biggers <ebiggers@google.com>
+>
+> Expose a low-level Poly1305 API which implements the
+> =CE=B5-almost-=E2=88=86-universal (=CE=B5A=E2=88=86U) hash function under=
+lying the Poly1305 MAC
+> and supports block-aligned inputs only.
+>
+> This is needed for Adiantum hashing, which builds an =CE=B5A=E2=88=86U ha=
+sh function
+> from NH and a polynomial evaluation in GF(2^{130}-5); this polynomial
+> evaluation is identical to the one the Poly1305 MAC does.  However, the
+> crypto_shash Poly1305 API isn't very appropriate for this because its
+> calling convention assumes it is used as a MAC, with a 32-byte "one-time
+> key" provided for every digest.
+>
+> But by design, in Adiantum hashing the performance of the polynomial
+> evaluation isn't nearly as critical as NH.  So it suffices to just have
+> some C helper functions.  Thus, this patch adds such functions.
+>
+> Acked-by: Martin Willi <martin@strongswan.org>
+> Signed-off-by: Eric Biggers <ebiggers@google.com>
 
-Additionally, we add tracking for the current task that's running our
-runtime suspend/resume callbacks. We need this in order to avoid trying
-to grab a runtime power reference when nouveau uses the DP AUX channel
-for MST suspend/resume in it's runtime susped/resume callbacks.
+Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- drivers/gpu/drm/nouveau/nouveau_connector.c | 36 +++++++++++++++++++++
- drivers/gpu/drm/nouveau/nouveau_drm.c       | 12 ++++++-
- drivers/gpu/drm/nouveau/nouveau_drv.h       |  8 +++++
- 3 files changed, 55 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/nouveau/nouveau_connector.c b/drivers/gpu/drm/nouveau/nouveau_connector.c
-index fd80661dff92..d2e9752f2f91 100644
---- a/drivers/gpu/drm/nouveau/nouveau_connector.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_connector.c
-@@ -1171,6 +1171,38 @@ nouveau_connector_hotplug(struct nvif_notify *notify)
- 	return NVIF_NOTIFY_KEEP;
- }
- 
-+static int
-+nouveau_connector_aux_pre_xfer(struct drm_dp_aux *obj)
-+{
-+	struct nouveau_connector *nv_connector =
-+		container_of(obj, typeof(*nv_connector), aux);
-+	struct nouveau_drm *drm = nouveau_drm(nv_connector->base.dev);
-+	int ret;
-+
-+	if (nouveau_is_rpm_worker(drm))
-+		return 0;
-+
-+	ret = pm_runtime_get_sync(drm->dev->dev);
-+	if (ret < 0 && ret != -EAGAIN)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static void
-+nouveau_connector_aux_post_xfer(struct drm_dp_aux *obj)
-+{
-+	struct nouveau_connector *nv_connector =
-+		container_of(obj, typeof(*nv_connector), aux);
-+	struct nouveau_drm *drm = nouveau_drm(nv_connector->base.dev);
-+
-+	if (nouveau_is_rpm_worker(drm))
-+		return;
-+
-+	pm_runtime_mark_last_busy(drm->dev->dev);
-+	pm_runtime_put_autosuspend(drm->dev->dev);
-+}
-+
- static ssize_t
- nouveau_connector_aux_xfer(struct drm_dp_aux *obj, struct drm_dp_aux_msg *msg)
- {
-@@ -1341,6 +1373,10 @@ nouveau_connector_create(struct drm_device *dev, int index)
- 	case DRM_MODE_CONNECTOR_DisplayPort:
- 	case DRM_MODE_CONNECTOR_eDP:
- 		nv_connector->aux.dev = dev->dev;
-+		nv_connector->aux.pre_transfer =
-+			nouveau_connector_aux_pre_xfer;
-+		nv_connector->aux.post_transfer =
-+			nouveau_connector_aux_post_xfer;
- 		nv_connector->aux.transfer = nouveau_connector_aux_xfer;
- 		ret = drm_dp_aux_register(&nv_connector->aux);
- 		if (ret) {
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drm.c b/drivers/gpu/drm/nouveau/nouveau_drm.c
-index 2b2baf6e0e0d..4323e9e61c2e 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drm.c
-+++ b/drivers/gpu/drm/nouveau/nouveau_drm.c
-@@ -859,6 +859,7 @@ nouveau_pmops_runtime_suspend(struct device *dev)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 	struct drm_device *drm_dev = pci_get_drvdata(pdev);
-+	struct nouveau_drm *drm = nouveau_drm(drm_dev);
- 	int ret;
- 
- 	if (!nouveau_pmops_runtime()) {
-@@ -866,6 +867,8 @@ nouveau_pmops_runtime_suspend(struct device *dev)
- 		return -EBUSY;
- 	}
- 
-+	drm->rpm_task = current;
-+
- 	nouveau_switcheroo_optimus_dsm();
- 	ret = nouveau_do_suspend(drm_dev, true);
- 	pci_save_state(pdev);
-@@ -873,6 +876,8 @@ nouveau_pmops_runtime_suspend(struct device *dev)
- 	pci_ignore_hotplug(pdev);
- 	pci_set_power_state(pdev, PCI_D3cold);
- 	drm_dev->switch_power_state = DRM_SWITCH_POWER_DYNAMIC_OFF;
-+
-+	drm->rpm_task = NULL;
- 	return ret;
- }
- 
-@@ -881,6 +886,7 @@ nouveau_pmops_runtime_resume(struct device *dev)
- {
- 	struct pci_dev *pdev = to_pci_dev(dev);
- 	struct drm_device *drm_dev = pci_get_drvdata(pdev);
-+	struct nouveau_drm *drm = nouveau_drm(drm_dev);
- 	struct nvif_device *device = &nouveau_drm(drm_dev)->client.device;
- 	int ret;
- 
-@@ -889,11 +895,13 @@ nouveau_pmops_runtime_resume(struct device *dev)
- 		return -EBUSY;
- 	}
- 
-+	drm->rpm_task = current;
-+
- 	pci_set_power_state(pdev, PCI_D0);
- 	pci_restore_state(pdev);
- 	ret = pci_enable_device(pdev);
- 	if (ret)
--		return ret;
-+		goto out;
- 	pci_set_master(pdev);
- 
- 	ret = nouveau_do_resume(drm_dev, true);
-@@ -905,6 +913,8 @@ nouveau_pmops_runtime_resume(struct device *dev)
- 	/* Monitors may have been connected / disconnected during suspend */
- 	schedule_work(&nouveau_drm(drm_dev)->hpd_work);
- 
-+out:
-+	drm->rpm_task = NULL;
- 	return ret;
- }
- 
-diff --git a/drivers/gpu/drm/nouveau/nouveau_drv.h b/drivers/gpu/drm/nouveau/nouveau_drv.h
-index 0b2191fa96f7..e8d4203ddfb4 100644
---- a/drivers/gpu/drm/nouveau/nouveau_drv.h
-+++ b/drivers/gpu/drm/nouveau/nouveau_drv.h
-@@ -212,6 +212,8 @@ struct nouveau_drm {
- 	bool have_disp_power_ref;
- 
- 	struct dev_pm_domain vga_pm_domain;
-+
-+	struct task_struct *rpm_task;
- };
- 
- static inline struct nouveau_drm *
-@@ -231,6 +233,12 @@ int nouveau_pmops_suspend(struct device *);
- int nouveau_pmops_resume(struct device *);
- bool nouveau_pmops_runtime(void);
- 
-+static inline bool
-+nouveau_is_rpm_worker(struct nouveau_drm *drm)
-+{
-+	return drm->rpm_task == current;
-+}
-+
- #include <nvkm/core/tegra.h>
- 
- struct drm_device *
--- 
-2.19.1
-
+> ---
+>  crypto/poly1305_generic.c | 174 ++++++++++++++++++++++----------------
+>  include/crypto/poly1305.h |  16 ++++
+>  2 files changed, 115 insertions(+), 75 deletions(-)
+>
+> diff --git a/crypto/poly1305_generic.c b/crypto/poly1305_generic.c
+> index a23173f351b7..2a06874204e8 100644
+> --- a/crypto/poly1305_generic.c
+> +++ b/crypto/poly1305_generic.c
+> @@ -38,7 +38,7 @@ int crypto_poly1305_init(struct shash_desc *desc)
+>  {
+>         struct poly1305_desc_ctx *dctx =3D shash_desc_ctx(desc);
+>
+> -       memset(dctx->h.h, 0, sizeof(dctx->h.h));
+> +       poly1305_core_init(&dctx->h);
+>         dctx->buflen =3D 0;
+>         dctx->rset =3D false;
+>         dctx->sset =3D false;
+> @@ -47,23 +47,16 @@ int crypto_poly1305_init(struct shash_desc *desc)
+>  }
+>  EXPORT_SYMBOL_GPL(crypto_poly1305_init);
+>
+> -static void poly1305_setrkey(struct poly1305_desc_ctx *dctx, const u8 *k=
+ey)
+> +void poly1305_core_setkey(struct poly1305_key *key, const u8 *raw_key)
+>  {
+>         /* r &=3D 0xffffffc0ffffffc0ffffffc0fffffff */
+> -       dctx->r.r[0] =3D (get_unaligned_le32(key +  0) >> 0) & 0x3ffffff;
+> -       dctx->r.r[1] =3D (get_unaligned_le32(key +  3) >> 2) & 0x3ffff03;
+> -       dctx->r.r[2] =3D (get_unaligned_le32(key +  6) >> 4) & 0x3ffc0ff;
+> -       dctx->r.r[3] =3D (get_unaligned_le32(key +  9) >> 6) & 0x3f03fff;
+> -       dctx->r.r[4] =3D (get_unaligned_le32(key + 12) >> 8) & 0x00fffff;
+> -}
+> -
+> -static void poly1305_setskey(struct poly1305_desc_ctx *dctx, const u8 *k=
+ey)
+> -{
+> -       dctx->s[0] =3D get_unaligned_le32(key +  0);
+> -       dctx->s[1] =3D get_unaligned_le32(key +  4);
+> -       dctx->s[2] =3D get_unaligned_le32(key +  8);
+> -       dctx->s[3] =3D get_unaligned_le32(key + 12);
+> +       key->r[0] =3D (get_unaligned_le32(raw_key +  0) >> 0) & 0x3ffffff=
+;
+> +       key->r[1] =3D (get_unaligned_le32(raw_key +  3) >> 2) & 0x3ffff03=
+;
+> +       key->r[2] =3D (get_unaligned_le32(raw_key +  6) >> 4) & 0x3ffc0ff=
+;
+> +       key->r[3] =3D (get_unaligned_le32(raw_key +  9) >> 6) & 0x3f03fff=
+;
+> +       key->r[4] =3D (get_unaligned_le32(raw_key + 12) >> 8) & 0x00fffff=
+;
+>  }
+> +EXPORT_SYMBOL_GPL(poly1305_core_setkey);
+>
+>  /*
+>   * Poly1305 requires a unique key for each tag, which implies that we ca=
+n't set
+> @@ -75,13 +68,16 @@ unsigned int crypto_poly1305_setdesckey(struct poly13=
+05_desc_ctx *dctx,
+>  {
+>         if (!dctx->sset) {
+>                 if (!dctx->rset && srclen >=3D POLY1305_BLOCK_SIZE) {
+> -                       poly1305_setrkey(dctx, src);
+> +                       poly1305_core_setkey(&dctx->r, src);
+>                         src +=3D POLY1305_BLOCK_SIZE;
+>                         srclen -=3D POLY1305_BLOCK_SIZE;
+>                         dctx->rset =3D true;
+>                 }
+>                 if (srclen >=3D POLY1305_BLOCK_SIZE) {
+> -                       poly1305_setskey(dctx, src);
+> +                       dctx->s[0] =3D get_unaligned_le32(src +  0);
+> +                       dctx->s[1] =3D get_unaligned_le32(src +  4);
+> +                       dctx->s[2] =3D get_unaligned_le32(src +  8);
+> +                       dctx->s[3] =3D get_unaligned_le32(src + 12);
+>                         src +=3D POLY1305_BLOCK_SIZE;
+>                         srclen -=3D POLY1305_BLOCK_SIZE;
+>                         dctx->sset =3D true;
+> @@ -91,41 +87,37 @@ unsigned int crypto_poly1305_setdesckey(struct poly13=
+05_desc_ctx *dctx,
+>  }
+>  EXPORT_SYMBOL_GPL(crypto_poly1305_setdesckey);
+>
+> -static unsigned int poly1305_blocks(struct poly1305_desc_ctx *dctx,
+> -                                   const u8 *src, unsigned int srclen,
+> -                                   u32 hibit)
+> +static void poly1305_blocks_internal(struct poly1305_state *state,
+> +                                    const struct poly1305_key *key,
+> +                                    const void *src, unsigned int nblock=
+s,
+> +                                    u32 hibit)
+>  {
+>         u32 r0, r1, r2, r3, r4;
+>         u32 s1, s2, s3, s4;
+>         u32 h0, h1, h2, h3, h4;
+>         u64 d0, d1, d2, d3, d4;
+> -       unsigned int datalen;
+>
+> -       if (unlikely(!dctx->sset)) {
+> -               datalen =3D crypto_poly1305_setdesckey(dctx, src, srclen)=
+;
+> -               src +=3D srclen - datalen;
+> -               srclen =3D datalen;
+> -       }
+> +       if (!nblocks)
+> +               return;
+>
+> -       r0 =3D dctx->r.r[0];
+> -       r1 =3D dctx->r.r[1];
+> -       r2 =3D dctx->r.r[2];
+> -       r3 =3D dctx->r.r[3];
+> -       r4 =3D dctx->r.r[4];
+> +       r0 =3D key->r[0];
+> +       r1 =3D key->r[1];
+> +       r2 =3D key->r[2];
+> +       r3 =3D key->r[3];
+> +       r4 =3D key->r[4];
+>
+>         s1 =3D r1 * 5;
+>         s2 =3D r2 * 5;
+>         s3 =3D r3 * 5;
+>         s4 =3D r4 * 5;
+>
+> -       h0 =3D dctx->h.h[0];
+> -       h1 =3D dctx->h.h[1];
+> -       h2 =3D dctx->h.h[2];
+> -       h3 =3D dctx->h.h[3];
+> -       h4 =3D dctx->h.h[4];
+> -
+> -       while (likely(srclen >=3D POLY1305_BLOCK_SIZE)) {
+> +       h0 =3D state->h[0];
+> +       h1 =3D state->h[1];
+> +       h2 =3D state->h[2];
+> +       h3 =3D state->h[3];
+> +       h4 =3D state->h[4];
+>
+> +       do {
+>                 /* h +=3D m[i] */
+>                 h0 +=3D (get_unaligned_le32(src +  0) >> 0) & 0x3ffffff;
+>                 h1 +=3D (get_unaligned_le32(src +  3) >> 2) & 0x3ffffff;
+> @@ -154,16 +146,36 @@ static unsigned int poly1305_blocks(struct poly1305=
+_desc_ctx *dctx,
+>                 h1 +=3D h0 >> 26;       h0 =3D h0 & 0x3ffffff;
+>
+>                 src +=3D POLY1305_BLOCK_SIZE;
+> -               srclen -=3D POLY1305_BLOCK_SIZE;
+> -       }
+> +       } while (--nblocks);
+>
+> -       dctx->h.h[0] =3D h0;
+> -       dctx->h.h[1] =3D h1;
+> -       dctx->h.h[2] =3D h2;
+> -       dctx->h.h[3] =3D h3;
+> -       dctx->h.h[4] =3D h4;
+> +       state->h[0] =3D h0;
+> +       state->h[1] =3D h1;
+> +       state->h[2] =3D h2;
+> +       state->h[3] =3D h3;
+> +       state->h[4] =3D h4;
+> +}
+>
+> -       return srclen;
+> +void poly1305_core_blocks(struct poly1305_state *state,
+> +                         const struct poly1305_key *key,
+> +                         const void *src, unsigned int nblocks)
+> +{
+> +       poly1305_blocks_internal(state, key, src, nblocks, 1 << 24);
+> +}
+> +EXPORT_SYMBOL_GPL(poly1305_core_blocks);
+> +
+> +static void poly1305_blocks(struct poly1305_desc_ctx *dctx,
+> +                           const u8 *src, unsigned int srclen, u32 hibit=
+)
+> +{
+> +       unsigned int datalen;
+> +
+> +       if (unlikely(!dctx->sset)) {
+> +               datalen =3D crypto_poly1305_setdesckey(dctx, src, srclen)=
+;
+> +               src +=3D srclen - datalen;
+> +               srclen =3D datalen;
+> +       }
+> +
+> +       poly1305_blocks_internal(&dctx->h, &dctx->r,
+> +                                src, srclen / POLY1305_BLOCK_SIZE, hibit=
+);
+>  }
+>
+>  int crypto_poly1305_update(struct shash_desc *desc,
+> @@ -187,9 +199,9 @@ int crypto_poly1305_update(struct shash_desc *desc,
+>         }
+>
+>         if (likely(srclen >=3D POLY1305_BLOCK_SIZE)) {
+> -               bytes =3D poly1305_blocks(dctx, src, srclen, 1 << 24);
+> -               src +=3D srclen - bytes;
+> -               srclen =3D bytes;
+> +               poly1305_blocks(dctx, src, srclen, 1 << 24);
+> +               src +=3D srclen - (srclen % POLY1305_BLOCK_SIZE);
+> +               srclen %=3D POLY1305_BLOCK_SIZE;
+>         }
+>
+>         if (unlikely(srclen)) {
+> @@ -201,30 +213,18 @@ int crypto_poly1305_update(struct shash_desc *desc,
+>  }
+>  EXPORT_SYMBOL_GPL(crypto_poly1305_update);
+>
+> -int crypto_poly1305_final(struct shash_desc *desc, u8 *dst)
+> +void poly1305_core_emit(const struct poly1305_state *state, void *dst)
+>  {
+> -       struct poly1305_desc_ctx *dctx =3D shash_desc_ctx(desc);
+>         u32 h0, h1, h2, h3, h4;
+>         u32 g0, g1, g2, g3, g4;
+>         u32 mask;
+> -       u64 f =3D 0;
+> -
+> -       if (unlikely(!dctx->sset))
+> -               return -ENOKEY;
+> -
+> -       if (unlikely(dctx->buflen)) {
+> -               dctx->buf[dctx->buflen++] =3D 1;
+> -               memset(dctx->buf + dctx->buflen, 0,
+> -                      POLY1305_BLOCK_SIZE - dctx->buflen);
+> -               poly1305_blocks(dctx, dctx->buf, POLY1305_BLOCK_SIZE, 0);
+> -       }
+>
+>         /* fully carry h */
+> -       h0 =3D dctx->h.h[0];
+> -       h1 =3D dctx->h.h[1];
+> -       h2 =3D dctx->h.h[2];
+> -       h3 =3D dctx->h.h[3];
+> -       h4 =3D dctx->h.h[4];
+> +       h0 =3D state->h[0];
+> +       h1 =3D state->h[1];
+> +       h2 =3D state->h[2];
+> +       h3 =3D state->h[3];
+> +       h4 =3D state->h[4];
+>
+>         h2 +=3D (h1 >> 26);     h1 =3D h1 & 0x3ffffff;
+>         h3 +=3D (h2 >> 26);     h2 =3D h2 & 0x3ffffff;
+> @@ -254,16 +254,40 @@ int crypto_poly1305_final(struct shash_desc *desc, =
+u8 *dst)
+>         h4 =3D (h4 & mask) | g4;
+>
+>         /* h =3D h % (2^128) */
+> -       h0 =3D (h0 >>  0) | (h1 << 26);
+> -       h1 =3D (h1 >>  6) | (h2 << 20);
+> -       h2 =3D (h2 >> 12) | (h3 << 14);
+> -       h3 =3D (h3 >> 18) | (h4 <<  8);
+> +       put_unaligned_le32((h0 >>  0) | (h1 << 26), dst +  0);
+> +       put_unaligned_le32((h1 >>  6) | (h2 << 20), dst +  4);
+> +       put_unaligned_le32((h2 >> 12) | (h3 << 14), dst +  8);
+> +       put_unaligned_le32((h3 >> 18) | (h4 <<  8), dst + 12);
+> +}
+> +EXPORT_SYMBOL_GPL(poly1305_core_emit);
+> +
+> +int crypto_poly1305_final(struct shash_desc *desc, u8 *dst)
+> +{
+> +       struct poly1305_desc_ctx *dctx =3D shash_desc_ctx(desc);
+> +       __le32 digest[4];
+> +       u64 f =3D 0;
+> +
+> +       if (unlikely(!dctx->sset))
+> +               return -ENOKEY;
+> +
+> +       if (unlikely(dctx->buflen)) {
+> +               dctx->buf[dctx->buflen++] =3D 1;
+> +               memset(dctx->buf + dctx->buflen, 0,
+> +                      POLY1305_BLOCK_SIZE - dctx->buflen);
+> +               poly1305_blocks(dctx, dctx->buf, POLY1305_BLOCK_SIZE, 0);
+> +       }
+> +
+> +       poly1305_core_emit(&dctx->h, digest);
+>
+>         /* mac =3D (h + s) % (2^128) */
+> -       f =3D (f >> 32) + h0 + dctx->s[0]; put_unaligned_le32(f, dst +  0=
+);
+> -       f =3D (f >> 32) + h1 + dctx->s[1]; put_unaligned_le32(f, dst +  4=
+);
+> -       f =3D (f >> 32) + h2 + dctx->s[2]; put_unaligned_le32(f, dst +  8=
+);
+> -       f =3D (f >> 32) + h3 + dctx->s[3]; put_unaligned_le32(f, dst + 12=
+);
+> +       f =3D (f >> 32) + le32_to_cpu(digest[0]) + dctx->s[0];
+> +       put_unaligned_le32(f, dst + 0);
+> +       f =3D (f >> 32) + le32_to_cpu(digest[1]) + dctx->s[1];
+> +       put_unaligned_le32(f, dst + 4);
+> +       f =3D (f >> 32) + le32_to_cpu(digest[2]) + dctx->s[2];
+> +       put_unaligned_le32(f, dst + 8);
+> +       f =3D (f >> 32) + le32_to_cpu(digest[3]) + dctx->s[3];
+> +       put_unaligned_le32(f, dst + 12);
+>
+>         return 0;
+>  }
+> diff --git a/include/crypto/poly1305.h b/include/crypto/poly1305.h
+> index 493244c46664..34317ed2071e 100644
+> --- a/include/crypto/poly1305.h
+> +++ b/include/crypto/poly1305.h
+> @@ -38,6 +38,22 @@ struct poly1305_desc_ctx {
+>         bool sset;
+>  };
+>
+> +/*
+> + * Poly1305 core functions.  These implement the =CE=B5-almost-=E2=88=86=
+-universal hash
+> + * function underlying the Poly1305 MAC, i.e. they don't add an encrypte=
+d nonce
+> + * ("s key") at the end.  They also only support block-aligned inputs.
+> + */
+> +void poly1305_core_setkey(struct poly1305_key *key, const u8 *raw_key);
+> +static inline void poly1305_core_init(struct poly1305_state *state)
+> +{
+> +       memset(state->h, 0, sizeof(state->h));
+> +}
+> +void poly1305_core_blocks(struct poly1305_state *state,
+> +                         const struct poly1305_key *key,
+> +                         const void *src, unsigned int nblocks);
+> +void poly1305_core_emit(const struct poly1305_state *state, void *dst);
+> +
+> +/* Crypto API helper functions for the Poly1305 MAC */
+>  int crypto_poly1305_init(struct shash_desc *desc);
+>  unsigned int crypto_poly1305_setdesckey(struct poly1305_desc_ctx *dctx,
+>                                         const u8 *src, unsigned int srcle=
+n);
+> --
+> 2.19.1.1215.g8438c0b245-goog
+>
