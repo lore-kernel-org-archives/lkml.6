@@ -2,128 +2,103 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-1.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS
+X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
 	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DE594C43610
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:30:34 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 8D80CC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:31:16 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A461F2086B
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:30:34 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 4A4B72086B
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:31:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="HvaNbR20"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A461F2086B
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bqsgdUcR"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4A4B72086B
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730413AbeKQKpH (ORCPT
+        id S1730659AbeKQKps (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 05:45:07 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:34583 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730007AbeKQKpH (ORCPT
+        Sat, 17 Nov 2018 05:45:48 -0500
+Received: from mail-ed1-f68.google.com ([209.85.208.68]:42105 "EHLO
+        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbeKQKps (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 05:45:07 -0500
-Received: by mail-it1-f193.google.com with SMTP id x124so2385172itd.1
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 16:30:32 -0800 (PST)
+        Sat, 17 Nov 2018 05:45:48 -0500
+Received: by mail-ed1-f68.google.com with SMTP id j6so16038100edp.9
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 16:31:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=7u/+cJXD0UoTG9d8nnFd74lsjEzPiwghOEk4XnxTyUs=;
-        b=HvaNbR2076S4ij6ERJSss+iQzNftyGNTuh6niQnnNM0nIoABLcPWbwHOveYpqc8vVP
-         Qe21ALl9jjTMk6G1XOwxhYIxexMdgvq/JHLog91KP1jxXvBlzPyC5jr6aBjLrKxW/O+C
-         lLNSpFtefnqo60kIKFwsp5O0PZyHKo0GgywLw=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=r/X0XeoI274Z/zosRGl+eQruxl7JOPwAwYBeIBeKIbE=;
+        b=bqsgdUcR76FNtzSuPkF1u5edS+Jk+4de2xj1PefoWOL2k2XsfGiVjKGl+qLV3nC6qR
+         EDy9xdQfnX6HfrSrH1MljEDgafttQbiwdq6T/ZGXIVv8MrmVGV7nWiDPpmymtWBbM5gl
+         PiDQnZwFUl+Ovo/cOFCuoUKFRupOEp9KIT1a/Mwg+9j9AvFPpviRoLx3DYgGNz/B0gOY
+         kex/i9m7C9/Bb2YFYNVl/GnEhvPI5WYmBXml81P9b35/m03+G0SBQ5zvGD/F7FdPif/E
+         uOsW4IzWj1SKswGPOObsAixZ7DGHWnnYzmIytHPaKFV/BmL9OLbYsOzpkbGb4QXJ2ykU
+         02Bg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=7u/+cJXD0UoTG9d8nnFd74lsjEzPiwghOEk4XnxTyUs=;
-        b=XyzevlL9bEuLq8UpTZ2OPxqSr5TF2z/PY/MkESF6b/ySGfnEOucis2/Y67Lvt+PkNm
-         OFiVM7ERcEK6HF47xgFNlrJVL+z0V2l4vTmXCBWz1F/ZjUhjEwdV1GSFySKLlAeqvJic
-         bgLVU9UZZK0f9OdM+hKlOGnWB68NCuN/8L2oowJgRVUA+DkwC2qVrYBlESHcH0rtVUFb
-         B22sfu6ewK4v8Vod59M6Okv98H3oMtgVGBAl7DccQMIqRh/isRWL6xy6BkzngttVUgtC
-         9F8O11IIIwA+TTkGyCZy2gczUZsTw0k++ObNGHtrPyXPijsJDGnluDLE5dbA8lQmdZyh
-         R2aA==
-X-Gm-Message-State: AA+aEWYzfEoPxSqKzTFIudtZM8FxI9wOQXA3HZk1ON9EFDoVVRQ4q7ZU
-        /5JRDQ6t0TPu0+zTaSJAOwHzylcjbvahjwX1YPhSFQ==
-X-Google-Smtp-Source: AFSGD/Xyo007+YIFpyDCZ2Mt0l/xBFEtr+Nx88hO6ZvURd5I9TuQLH/5YQ6A+cg2BHioatKqlpYgAbPgrNeUqL5TE+8=
-X-Received: by 2002:a24:7d8d:: with SMTP id b135-v6mr369977itc.121.1542414632094;
- Fri, 16 Nov 2018 16:30:32 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=r/X0XeoI274Z/zosRGl+eQruxl7JOPwAwYBeIBeKIbE=;
+        b=l4tYpc5fY22oSmODorrmAKc1LvGmedSuiKl3yf9rSbrXr/5y65f4Pu4KwwOqgUoFQq
+         nwk1vITLwXZ5E3YiU5y9ZoK+AHU/YTxY0urqO1BGh3QmqfruSDKheryTAy1pftpmZ4dH
+         ysUmhSwkBTHL86JMMVH3ITjTHp5ijhGmnYgxIsAWhNIukREurxY0RMsUFwUhRZ0Pfcjs
+         Ky+/x7v4TiHKZfLoDMZB/6Ec0SR4LIEoMadO2HAVSEEhlchqigSJLQugW9/tlfDXxL3O
+         2MN4yzZ+OZCzy5Ng3hOIHLNYSVyHfImES0dOpSY4MSdBWJw5DfcRPvYgA7BqsiijSV+I
+         lwRg==
+X-Gm-Message-State: AGRZ1gKfwzKymu+ZbaZ6nuNkMTs4+frE4KfAFjGAA6S9+hjqzjXmgUco
+        kQf5ngBYYEuDpAjr4KTrcQM=
+X-Google-Smtp-Source: AJdET5eRVw5G7wNpbULTyjYMY9dqkO+5Vux2QCjlO60wpRtsxRQM7sXaFlZEegosZnq4PXmoOyXvhQ==
+X-Received: by 2002:aa7:d30a:: with SMTP id p10mr9805704edq.137.1542414673034;
+        Fri, 16 Nov 2018 16:31:13 -0800 (PST)
+Received: from ltop.local ([2a02:a03f:40bc:4d00:787e:f271:ff1d:82b])
+        by smtp.gmail.com with ESMTPSA id gp22-v6sm5174446ejb.4.2018.11.16.16.31.11
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Fri, 16 Nov 2018 16:31:12 -0800 (PST)
+Date:   Sat, 17 Nov 2018 01:31:10 +0100
+From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
+To:     Masahiro Yamada <yamada.masahiro@socionext.com>
+Cc:     Andrew Morton <akpm@linux-foundation.org>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Arnd Bergmann <arnd@arndb.de>,
+        Kees Cook <keescook@chromium.org>,
+        Nick Desaulniers <ndesaulniers@google.com>,
+        Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] build_bug.h: remove all dummy BUILD_BUG_ON stubs
+ for sparse
+Message-ID: <20181117003109.jdac5rmjdmpmino7@ltop.local>
+References: <1542349645-8852-1-git-send-email-yamada.masahiro@socionext.com>
+ <1542349645-8852-2-git-send-email-yamada.masahiro@socionext.com>
 MIME-Version: 1.0
-References: <20181105232526.173947-1-ebiggers@kernel.org> <20181105232526.173947-11-ebiggers@kernel.org>
- <CAKv+Gu-o0khD5=0EOkv2PiczMs5uZ=XP9V=G2ogBNMK8Kb93sw@mail.gmail.com>
- <20181112185816.GA8663@gmail.com> <20181116060227.hwu4igi6bp26ddpi@gondor.apana.org.au>
- <20181117001718.GA175522@gmail.com>
-In-Reply-To: <20181117001718.GA175522@gmail.com>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 16 Nov 2018 16:30:20 -0800
-Message-ID: <CAKv+Gu9KU9pviBsmAJUoSdBDK6Sk-7TdM0avgFdz-0AaOwaD9Q@mail.gmail.com>
-Subject: Re: [RFC PATCH v3 10/15] crypto: poly1305 - use structures for key
- and accumulator
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     Herbert Xu <herbert@gondor.apana.org.au>,
-        "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>, linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1542349645-8852-2-git-send-email-yamada.masahiro@socionext.com>
+User-Agent: NeoMutt/20180622
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Nov 2018 at 16:17, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> Hi Herbert,
->
-> On Fri, Nov 16, 2018 at 02:02:27PM +0800, Herbert Xu wrote:
-> > Hi Eric:
-> >
-> > On Mon, Nov 12, 2018 at 10:58:17AM -0800, Eric Biggers wrote:
-> > >
-> > > I prefer separate types so that the type system enforces that a key is never
-> > > accidentally used as an accumulator, and vice versa.  Then the poly1305_core_*
-> > > functions will be harder to misuse, and the Poly1305 MAC implementations harder
-> > > to get wrong.
-> > >
-> > > The key also has certain bits clear whereas the accumulator does not.  In the
-> > > future, the Poly1305 C implementation might use base 2^32 and take advantage of
-> > > this.  In that case, the two inputs to each multiplication won't be
-> > > interchangeable, so using the same type for both would be extra confusing.
-> > >
-> > > Having a poly1305_val nested inside poly1305_key and poly1305_state would work,
-> > > but seemed excessive.
-> >
-> > So it looks like there are no more unresolved issues with this
-> > patch series.  Please let me know when you want it to go in.
-> >
->
-> I believe it's ready to go in.  I'll need to rebase it onto cryptodev, to
-> resolve some small conflicts with the recent ChaCha20-related changes.  Also
-> I'll probably omit the fscrypt patch (patch 15/15) so that that patch can be
-> taken through the fscrypt tree instead.
->
-> Do you prefer that this be merged before or after Zinc?  It seems it may still
-> be a while before the community is satisfied with Zinc (and Wireguard which is
-> in the same patchset), and I don't want this blocked unnecessarily...  So on my
-> part I'd prefer to just have this merged as-is.
->
-> Of course, it's always possible to change the xchacha12 and xchacha20
-> implementations later, whether that's to use "Zinc" or otherwise.  And
-> NHPoly1305 and Adiantum itself will be the same either way, except that the
-> Poly1305 helpers may change slightly.
->
-> What do you think?
->
+On Fri, Nov 16, 2018 at 03:27:25PM +0900, Masahiro Yamada wrote:
+> The introduction of these dummy BUILD_BUG_ON stubs dates back to
+> commit 903c0c7cdc21 ("sparse: define dummy BUILD_BUG_ON definition
+> for sparse"). At that time, BUILD_BUG_ON() was implemented with the
+> negative array trick, which Sparse complains about even if the
+> condition can be optimized and evaluated to 0 at compile-time.
 
-I think this is ready to go in. Most of Zinc itself will not be
-blocked by this, only the changes to the crypto API ChaCha20
-implementation will have to wait until the Zinc version gains support
-for the reduced round variant, but that will not block WireGuard.
+OK, but from what I understand, the motivation for commit 903c0c7cdc21
+was not to avoid false warnings but to avoid having twice the same
+warnings: "... So it causes sparse to detect an error too. This
+reduces sparse's usefulness.").
+
+I'm not opposed to this patch (on the contrary, I think it's better
+to have exactly the same code for GCC than for sparse) but I think
+that your commit message need to be adjusted.
+
+Kind regards,
+-- Luc
