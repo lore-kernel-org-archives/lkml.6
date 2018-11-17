@@ -7,61 +7,61 @@ X-Spam-Status: No, score=-18.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
 	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7E0E1C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:08:00 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E18BC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:08:04 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 37315206B2
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:08:00 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 1B920206B2
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:08:04 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fBEXgzgl"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 37315206B2
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VoTZcDlK"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B920206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730254AbeKQLWj (ORCPT
+        id S1730866AbeKQLWn (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 06:22:39 -0500
-Received: from mail-pf1-f201.google.com ([209.85.210.201]:51590 "EHLO
-        mail-pf1-f201.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730012AbeKQLWi (ORCPT
+        Sat, 17 Nov 2018 06:22:43 -0500
+Received: from mail-pl1-f202.google.com ([209.85.214.202]:50946 "EHLO
+        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730286AbeKQLWm (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 06:22:38 -0500
-Received: by mail-pf1-f201.google.com with SMTP id g21-v6so20427050pfg.18
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 17:07:57 -0800 (PST)
+        Sat, 17 Nov 2018 06:22:42 -0500
+Received: by mail-pl1-f202.google.com with SMTP id d11-v6so18377892plo.17
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 17:08:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=3+V0B5HfCmIbS1CGOR3HioePk534q44RYhZtw60V2so=;
-        b=fBEXgzgljW3FCHJH2l0voeT5o3hZ/ZaRfqNSYdcAW0B1SuDjvpNbkT5ZXAO+sIEik3
-         u71feX4aANzbI/T6FPerx8/tZ3nVYm1NSeGhNOVAUmiuf/D8foByvRyvyz9JDNjeMM74
-         loSg9aQRCrjTiyZQ6p1Af4D7T8pbu14tlaqnO/BY4UR7pb1jq3K74BqzuCanoZ1sHFIe
-         AVoPSpVDML1GKT2cK1m2txAI14asWc6bxZwSo2O1dCUg7208DUU0V89Bz8o2tV/AiqkI
-         4iSyTe/31Yy58qLUSnkjFJFU7H9swtknd4Bcv/no5I7npndfnm98j8GuFvys+M9SgGxH
-         F31Q==
+        bh=s3V1He2Zj5wng/11t7K3HEWj/4wZGpXZr3vO1JV3B7s=;
+        b=VoTZcDlK+vJS5EdgLM8TokoaYkl1BgjquuNWLN560DpIJoU8cTccEOBZb0dyCqJwzN
+         39fteUJOWxdSIDetnAJYERMadSBBhZRFD3fSExO4UQrlWBf8YisCo1zT+5/xtA7GQHLW
+         JefAYZ9XiCf2CIa3Ypzngk4KgvISSKXfv2gtPkCDcIZp9Pumw4a/PziS47Tx5tP0jaiN
+         PPeLBOr0U6oFM6HqQwrdnRkqHFYC1xFqPVGGMZNf+xeKeWtP4JZryYmD2Ka9QR6EOJLL
+         HTyTWHh6QpqmQiO0TaqcKxYDSAWJV4hWgoPuN9YX8oSCjXG1lLCt3RaQD+vHGrYfOeP8
+         hvsQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=3+V0B5HfCmIbS1CGOR3HioePk534q44RYhZtw60V2so=;
-        b=Z4hluagTjdleJEJfI5J+r/KU425C2Sb9jkKqRMPPvOJuwYrsdtGJjB3ee3dXB6H1wc
-         nEpE8lzlD9wAwaPsozccp3zeqNmhjxpInyDwsy5Q0TzW6JCGEb+5VZnzCK7dODSpyQte
-         m7Ems0o77EsMGHeluq5KzJ+0hrlww8c1TSWJAG9kISIwSfJxv5DtZyj5hulH/fq0Qpx8
-         2hWjXmvZAgMfT9NE0Z6YmCautdjl6fwlIuw/YdBRUzp4bepHCBTgKLJPMRsdNJ6aHwTt
-         XpGYvgCwp2uPW/L0nkwUE+Cfdj1WHiQPvkRxH1j01pJiYmVknLd7O0qROyY8P0fxim30
-         TY7A==
-X-Gm-Message-State: AGRZ1gIpKP1aACE+ziwuwwFzZVJHwEl64EKnXqr4/gZJldeGoWH2fYoA
-        BbY6JxLDkjZ4U5tBHqFMUAcIIGxGoU9y
-X-Google-Smtp-Source: AJdET5dYgDB3ETVvI2sBtTEt31uhe4FlVl2dDpgGlyHkdTKyPft8YWW3ui3Cyh+L3Wj076+23u9sP0mO6vxn
-X-Received: by 2002:a62:ac0b:: with SMTP id v11mr425852pfe.104.1542416877428;
- Fri, 16 Nov 2018 17:07:57 -0800 (PST)
-Date:   Fri, 16 Nov 2018 17:07:44 -0800
+        bh=s3V1He2Zj5wng/11t7K3HEWj/4wZGpXZr3vO1JV3B7s=;
+        b=oakqG33zKAIH1ec4zHLhjaHKNDCkdWPjsajhCFcQ0NqWT6BZhpx9tLv3kQ6s/Kxhyp
+         vNuNz944hbvCf4MNF+hw13Aa7YhcNp29UMojvZKRhuZ1Rp+5fwZ5h5bJr/mzZd1ODmZz
+         HY9kindp38vr7lxRPd8rj9tet1Umvv0NuRUaiK4bSUBmIO1zZos/CtUKfEQ2SF2t5DnK
+         yPxwUqj18lwo55qNfYlno7sWn8DwqCQ6Zm1aSXh3pobXM9KyFYTEWau+hZeWALET6vP+
+         5BZSgYZ5Z+9Yj8CiUbil/AmQ9mBEiBcdu7I1ajWcxTOrRs9IOuV5O20a9twLaHRuv82j
+         q11w==
+X-Gm-Message-State: AGRZ1gKn3tAQmlmoD3nxjTDKSTTpTy2LrK0ClKTezA7+l1g/lM0ff49g
+        n0ie/gcqP5GPjUAovM/V7caYDoY4vYz5
+X-Google-Smtp-Source: AJdET5fT21G7Mst65AWLTtqZDKa2Kxm5bUKbPAIVj2Mk2Av80SRcUeA7bJ33k04/S8D3kGmbtP06CQBXFq36
+X-Received: by 2002:aa7:8157:: with SMTP id d23-v6mr186165pfn.136.1542416881178;
+ Fri, 16 Nov 2018 17:08:01 -0800 (PST)
+Date:   Fri, 16 Nov 2018 17:07:45 -0800
 In-Reply-To: <20181117010748.24347-1-rajatja@google.com>
-Message-Id: <20181117010748.24347-2-rajatja@google.com>
+Message-Id: <20181117010748.24347-3-rajatja@google.com>
 Mime-Version: 1.0
 References: <20181117010748.24347-1-rajatja@google.com>
 X-Mailer: git-send-email 2.19.1.1215.g8438c0b245-goog
-Subject: [PATCH 1/5] usb: split code locating ACPI companion into port and device
+Subject: [PATCH 2/5] usb: assign ACPI companions for embedded USB devices
 From:   Rajat Jain <rajatja@google.com>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
@@ -82,172 +82,91 @@ X-Mailing-List: linux-kernel@vger.kernel.org
 
 From: Dmitry Torokhov <dtor@chromium.org>
 
-In preparation for handling embedded USB devices let's split
-usb_acpi_find_companion() into usb_acpi_find_companion_for_device() and
-usb_acpi_find_companion_for_port().
+USB devices permanently connected to USB ports may be described in ACPI
+tables and share ACPI devices with ports they are connected to. See [1]
+for details.
+
+This will allow us to describe sideband resources for devices, such as,
+for example, hard reset line for BT USB controllers.
+
+[1] https://docs.microsoft.com/en-us/windows-hardware/drivers/bringup/other-acpi-namespace-objects#acpi-namespace-hierarchy-and-adr-for-embedded-usb-devices
 
 Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-Signed-off-by: Rajat Jain <rajatja@google.com>
+Signed-off-by: Rajat Jain <rajatja@google.com> (changed how we get the usb_port)
 ---
- drivers/usb/core/usb-acpi.c | 133 +++++++++++++++++++-----------------
- 1 file changed, 72 insertions(+), 61 deletions(-)
+ drivers/usb/core/usb-acpi.c | 44 +++++++++++++++++++++++++++++--------
+ 1 file changed, 35 insertions(+), 9 deletions(-)
 
 diff --git a/drivers/usb/core/usb-acpi.c b/drivers/usb/core/usb-acpi.c
-index e221861b3187..8ff73c83e8e8 100644
+index 8ff73c83e8e8..9043d7242d67 100644
 --- a/drivers/usb/core/usb-acpi.c
 +++ b/drivers/usb/core/usb-acpi.c
-@@ -139,12 +139,79 @@ static struct acpi_device *usb_acpi_find_port(struct acpi_device *parent,
- 	return acpi_find_child_device(parent, raw, false);
- }
- 
--static struct acpi_device *usb_acpi_find_companion(struct device *dev)
-+static struct acpi_device *
-+usb_acpi_get_companion_for_port(struct usb_port *port_dev)
+@@ -200,30 +200,56 @@ static struct acpi_device *
+ usb_acpi_find_companion_for_device(struct usb_device *udev)
  {
- 	struct usb_device *udev;
  	struct acpi_device *adev;
- 	acpi_handle *parent_handle;
-+	int port1;
++	struct usb_port *port_dev;
++	struct usb_hub *hub;
 +
-+	/* Get the struct usb_device point of port's hub */
-+	udev = to_usb_device(port_dev->dev.parent->parent);
-+
-+	/*
-+	 * The root hub ports' parent is the root hub. The non-root-hub
-+	 * ports' parent is the parent hub port which the hub is
-+	 * connected to.
-+	 */
 +	if (!udev->parent) {
-+		adev = ACPI_COMPANION(&udev->dev);
-+		port1 = usb_hcd_find_raw_port_number(bus_to_hcd(udev->bus),
-+						     port_dev->portnum);
-+	} else {
-+		parent_handle = usb_get_hub_port_acpi_handle(udev->parent,
-+							     udev->portnum);
-+		if (!parent_handle)
-+			return NULL;
-+
-+		acpi_bus_get_device(parent_handle, &adev);
-+		port1 = port_dev->portnum;
-+	}
-+
-+	return usb_acpi_find_port(adev, port1);
-+}
-+
-+static struct acpi_device *
-+usb_acpi_find_companion_for_port(struct usb_port *port_dev)
-+{
-+	struct acpi_device *adev;
-+	struct acpi_pld_info *pld;
-+	acpi_handle *handle;
-+	acpi_status status;
-+
-+	adev = usb_acpi_get_companion_for_port(port_dev);
-+	if (!adev)
-+		return NULL;
-+
-+	handle = adev->handle;
-+	status = acpi_get_physical_device_location(handle, &pld);
-+	if (!ACPI_FAILURE(status) && pld) {
-+		port_dev->location = USB_ACPI_LOCATION_VALID
-+			| pld->group_token << 8 | pld->group_position;
-+		port_dev->connect_type = usb_acpi_get_connect_type(handle, pld);
-+		ACPI_FREE(pld);
++		/* root hub is only child (_ADR=0) under its parent, the HC */
++		adev = ACPI_COMPANION(udev->dev.parent);
++		return acpi_find_child_device(adev, 0, false);
 +	}
  
-+	return adev;
-+}
-+
-+static struct acpi_device *
-+usb_acpi_find_companion_for_device(struct usb_device *udev)
-+{
-+	struct acpi_device *adev;
-+
-+	if (!udev->parent)
-+		return NULL;
-+
-+	/* root hub is only child (_ADR=0) under its parent, the HC */
-+	adev = ACPI_COMPANION(udev->dev.parent);
-+	return acpi_find_child_device(adev, 0, false);
-+}
-+
-+
-+static struct acpi_device *usb_acpi_find_companion(struct device *dev)
-+{
- 	/*
- 	 * In the ACPI DSDT table, only usb root hub and usb ports are
- 	 * acpi device nodes. The hierarchy like following.
-@@ -158,66 +225,10 @@ static struct acpi_device *usb_acpi_find_companion(struct device *dev)
- 	 * So all binding process is divided into two parts. binding
- 	 * root hub and usb ports.
- 	 */
--	if (is_usb_device(dev)) {
--		udev = to_usb_device(dev);
--		if (udev->parent)
--			return NULL;
--
--		/* root hub is only child (_ADR=0) under its parent, the HC */
--		adev = ACPI_COMPANION(dev->parent);
--		return acpi_find_child_device(adev, 0, false);
--	} else if (is_usb_port(dev)) {
--		struct usb_port *port_dev = to_usb_port(dev);
--		int port1 = port_dev->portnum;
--		struct acpi_pld_info *pld;
--		acpi_handle *handle;
--		acpi_status status;
--
--		/* Get the struct usb_device point of port's hub */
--		udev = to_usb_device(dev->parent->parent);
--
--		/*
--		 * The root hub ports' parent is the root hub. The non-root-hub
--		 * ports' parent is the parent hub port which the hub is
--		 * connected to.
--		 */
--		if (!udev->parent) {
--			struct usb_hcd *hcd = bus_to_hcd(udev->bus);
--			int raw;
--
--			raw = usb_hcd_find_raw_port_number(hcd, port1);
--
--			adev = usb_acpi_find_port(ACPI_COMPANION(&udev->dev),
--						  raw);
--
--			if (!adev)
--				return NULL;
--		} else {
--			parent_handle =
--				usb_get_hub_port_acpi_handle(udev->parent,
--				udev->portnum);
--			if (!parent_handle)
--				return NULL;
--
--			acpi_bus_get_device(parent_handle, &adev);
--
--			adev = usb_acpi_find_port(adev, port1);
--
--			if (!adev)
--				return NULL;
--		}
--		handle = adev->handle;
--		status = acpi_get_physical_device_location(handle, &pld);
--		if (ACPI_FAILURE(status) || !pld)
--			return adev;
--
--		port_dev->location = USB_ACPI_LOCATION_VALID
--			| pld->group_token << 8 | pld->group_position;
--		port_dev->connect_type = usb_acpi_get_connect_type(handle, pld);
--		ACPI_FREE(pld);
--
--		return adev;
--	}
-+	if (is_usb_device(dev))
-+		return usb_acpi_find_companion_for_device(to_usb_device(dev));
-+	else if (is_usb_port(dev))
-+		return usb_acpi_find_companion_for_port(to_usb_port(dev));
+-	if (!udev->parent)
++	hub = usb_hub_to_struct_hub(udev->parent);
++	if (!hub)
+ 		return NULL;
  
- 	return NULL;
+-	/* root hub is only child (_ADR=0) under its parent, the HC */
+-	adev = ACPI_COMPANION(udev->dev.parent);
+-	return acpi_find_child_device(adev, 0, false);
++	/*
++	 * This is an embedded USB device connected to a port and such
++	 * devices share port's ACPI companion.
++	 */
++	port_dev = hub->ports[udev->portnum - 1];
++	return usb_acpi_get_companion_for_port(port_dev);
  }
+ 
+-
+ static struct acpi_device *usb_acpi_find_companion(struct device *dev)
+ {
+ 	/*
+-	 * In the ACPI DSDT table, only usb root hub and usb ports are
+-	 * acpi device nodes. The hierarchy like following.
++	 * The USB hierarchy like following:
++	 *
+ 	 * Device (EHC1)
+ 	 *	Device (HUBN)
+ 	 *		Device (PR01)
+ 	 *			Device (PR11)
+ 	 *			Device (PR12)
++	 *				Device (FN12)
++	 *				Device (FN13)
+ 	 *			Device (PR13)
+ 	 *			...
+-	 * So all binding process is divided into two parts. binding
+-	 * root hub and usb ports.
++	 * where HUBN is root hub, and PRNN are USB ports and devices
++	 * connected to them, and FNNN are individualk functions for
++	 * connected composite USB devices. PRNN and FNNN may contain
++	 * _CRS and other methods describing sideband resources for
++	 * the connected device.
++	 *
++	 * On the kernel side both root hub and embedded USB devices are
++	 * represented as instances of usb_device structure, and ports
++	 * are represented as usb_port structures, so the whole process
++	 * is split into 2 parts: finding companions for devices and
++	 * finding companions for ports.
++	 *
++	 * Note that we do not handle individual functions of composite
++	 * devices yet, for that we would need to assign companions to
++	 * devices corresponding to USB interfaces.
+ 	 */
+ 	if (is_usb_device(dev))
+ 		return usb_acpi_find_companion_for_device(to_usb_device(dev));
 -- 
 2.19.1.1215.g8438c0b245-goog
 
