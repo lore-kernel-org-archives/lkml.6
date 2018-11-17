@@ -2,130 +2,179 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-13.5 required=3.0
+	tests=HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
+	MENTIONS_GIT_HOSTING,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B3150C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 09:00:12 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 22FB7C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 09:00:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 7910C2077C
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 09:00:12 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7910C2077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xs4all.nl
+	by mail.kernel.org (Postfix) with ESMTP id E866C2077C
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 09:00:20 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E866C2077C
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726065AbeKQTQK (ORCPT
+        id S1726153AbeKQTQR (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 14:16:10 -0500
-Received: from lb2-smtp-cloud7.xs4all.net ([194.109.24.28]:49957 "EHLO
-        lb2-smtp-cloud7.xs4all.net" rhost-flags-OK-OK-OK-OK)
-        by vger.kernel.org with ESMTP id S1725850AbeKQTQJ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 14:16:09 -0500
-Received: from [IPv6:2001:983:e9a7:1:b167:1e29:5b51:e4fb] ([IPv6:2001:983:e9a7:1:b167:1e29:5b51:e4fb])
-        by smtp-cloud7.xs4all.net with ESMTPA
-        id NwSTgvJQjg8oMNwSUg7Sy8; Sat, 17 Nov 2018 10:00:08 +0100
-Subject: Re: [PATCH] media: videobuf2-core: fix use after free in vb2_mmap
-To:     Sudip Mukherjee <sudipm.mukherjee@gmail.com>,
-        Pawel Osciak <pawel@osciak.com>,
-        Marek Szyprowski <m.szyprowski@samsung.com>,
-        Kyungmin Park <kyungmin.park@samsung.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc:     linux-kernel@vger.kernel.org, linux-media@vger.kernel.org,
-        syzkaller-bugs@googlegroups.com
-References: <20181116234227.27255-1-sudipm.mukherjee@gmail.com>
-From:   Hans Verkuil <hverkuil@xs4all.nl>
-Message-ID: <d2057e4d-d011-c73a-f615-f853db6b3e67@xs4all.nl>
-Date:   Sat, 17 Nov 2018 10:00:05 +0100
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:52.0) Gecko/20100101
- Thunderbird/52.9.1
+        Sat, 17 Nov 2018 14:16:17 -0500
+Received: from mx1.redhat.com ([209.132.183.28]:54734 "EHLO mx1.redhat.com"
+        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
+        id S1725850AbeKQTQR (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 14:16:17 -0500
+Received: from smtp.corp.redhat.com (int-mx03.intmail.prod.int.phx2.redhat.com [10.5.11.13])
+        (using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
+        (No client certificate requested)
+        by mx1.redhat.com (Postfix) with ESMTPS id E567083F3F;
+        Sat, 17 Nov 2018 09:00:16 +0000 (UTC)
+Received: from krava (ovpn-204-61.brq.redhat.com [10.40.204.61])
+        by smtp.corp.redhat.com (Postfix) with SMTP id B4E8C17AD2;
+        Sat, 17 Nov 2018 09:00:14 +0000 (UTC)
+Date:   Sat, 17 Nov 2018 10:00:10 +0100
+From:   Jiri Olsa <jolsa@redhat.com>
+To:     Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc:     Jiri Olsa <jolsa@kernel.org>,
+        Krister Johansen <kjlx@templeofstupid.com>,
+        lkml <linux-kernel@vger.kernel.org>,
+        Ingo Molnar <mingo@kernel.org>,
+        Namhyung Kim <namhyung@kernel.org>,
+        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+        Peter Zijlstra <a.p.zijlstra@chello.nl>
+Subject: Re: [PATCH] perf tools: Restore proper cwd on return from mnt ns
+Message-ID: <20181117090010.GP9600@krava>
+References: <20181101170001.30019-1-jolsa@kernel.org>
+ <20181116183143.GD18319@kernel.org>
+ <20181116184245.GE18319@kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20181116234227.27255-1-sudipm.mukherjee@gmail.com>
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-CMAE-Envelope: MS4wfNOCurMU55xuff+5Uck6JV8+eoOFfox4+32u/KmiLfehNtyhMGsIhbTw6UFNc/5SFJHfb3dHA00/MNLIiRtiMiLxfPaa3giWPmdtRCM5YGPuRNhgWZ3x
- yNeCPYZurzeZsKQNoBmBuYwxEi+M6/2muW89aSfRQ5JEyjjAq3fxgvPm/cAQwlvYdRrddtfyO4JcgKj2eXTd4OlAFFXmeST0EiRL/p88fh6t3rjZNBxNzHiQ
- p3HNPwhQZO0xa8LKPfGc7XJkYG2FzJV7Pu/at9x/EAL3f9NrIMIZX2izqbnlCLxQVRuxif9UKieOE11gagc7uytPUouNvHkzgizBIUzav6W3M/Cm/AiUq1hA
- hm8bMaq8Kti/Wa9ngGJoziltLEuryQISBkzxsAX/NgCLhI1Ba8JwA3dFfQXD4A4cgikOL2KN5nVkpcn7Rm0BpPwIdOpxlpwG/bSxFgAvYLKUshyMPO4fQvsP
- y7Grz03z2uHE8L8ArsxQ87oqQqoDuR9vFCxiEo93PPfwdr4idc+yjDusz8I6BiGkTnx/ccvLzfYYW6Np
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181116184245.GE18319@kernel.org>
+User-Agent: Mutt/1.10.1 (2018-07-13)
+X-Scanned-By: MIMEDefang 2.79 on 10.5.11.13
+X-Greylist: Sender IP whitelisted, not delayed by milter-greylist-4.5.16 (mx1.redhat.com [10.5.110.27]); Sat, 17 Nov 2018 09:00:17 +0000 (UTC)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Same patch was already posted and is waiting to be merged:
+On Fri, Nov 16, 2018 at 10:42:45AM -0800, Arnaldo Carvalho de Melo wrote:
+> Em Fri, Nov 16, 2018 at 10:31:43AM -0800, Arnaldo Carvalho de Melo escreveu:
+> > Em Thu, Nov 01, 2018 at 06:00:01PM +0100, Jiri Olsa escreveu:
+> > > When reporting on 'record' server we try to retrieve/use
+> > > the mnt namespace of the profiled tasks. We use following
+> > > API with cookie to hold the return namespace, roughly:
+> > > 
+> > >   nsinfo__mountns_enter(struct nsinfo *nsi, struct nscookie *nc)
+> > >     setns(newns, 0);
+> > >   ...
+> > >   new ns related open..
+> > >   ...
+> > >   nsinfo__mountns_exit(struct nscookie *nc)
+> > >     setns(nc->oldns)
+> > > 
+> > > Once finished we setns to old namespace, which also sets the
+> > > current working directory (cwd) to "/", trashing the cwd we had.
+> > > 
+> > > This is mostly fine, because we use absolute paths almost everywhere,
+> > > but it screws up perf diff:
+> > > 
+> > >   # perf diff
+> > >   failed to open perf.data: No such file or directory  (try 'perf record' first)
+> > >   ...
+> > > 
+> > > Adding the current working directory to be part of the cookie
+> > > and restoring it in the nsinfo__mountns_exit call.
+> >  
+> > > Cc: Krister Johansen <kjlx@templeofstupid.com>
+> > > Fixes: 843ff37bb59e ("perf symbols: Find symbols in different mount namespace")
+> > > Link: http://lkml.kernel.org/n/tip-zg3vz7kjr86cco7lo91v8yhj@git.kernel.org
+> > > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> > > ---
+> > >  tools/perf/util/namespaces.c | 18 ++++++++++++++++--
+> > >  tools/perf/util/namespaces.h |  1 +
+> > >  2 files changed, 17 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/tools/perf/util/namespaces.c b/tools/perf/util/namespaces.c
+> > > index cf8bd123cf73..fb0458b7e6aa 100644
+> > > --- a/tools/perf/util/namespaces.c
+> > > +++ b/tools/perf/util/namespaces.c
+> > > @@ -18,6 +18,7 @@
+> > >  #include <stdio.h>
+> > >  #include <string.h>
+> > >  #include <unistd.h>
+> > > +#include <asm/bug.h>
+> > >  
+> > >  struct namespaces *namespaces__new(struct namespaces_event *event)
+> > >  {
+> > > @@ -186,6 +187,7 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+> > >  	char curpath[PATH_MAX];
+> > >  	int oldns = -1;
+> > >  	int newns = -1;
+> > > +	char *oldcwd = NULL;
+> > >  
+> > >  	if (nc == NULL)
+> > >  		return;
+> > > @@ -199,9 +201,13 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+> > >  	if (snprintf(curpath, PATH_MAX, "/proc/self/ns/mnt") >= PATH_MAX)
+> > >  		return;
+> > >  
+> > > +	oldcwd = get_current_dir_name();
+> > > +	if (!oldcwd)
+> > > +		return;
+> > > +
+> > >  	oldns = open(curpath, O_RDONLY);
+> > >  	if (oldns < 0)
+> > > -		return;
+> > > +		goto errout;
+> > >  
+> > >  	newns = open(nsi->mntns_path, O_RDONLY);
+> > >  	if (newns < 0)
+> > > @@ -210,11 +216,14 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+> > >  	if (setns(newns, CLONE_NEWNS) < 0)
+> > >  		goto errout;
+> > >  
+> > > +	nc->oldcwd = oldcwd;
+> > >  	nc->oldns = oldns;
+> > >  	nc->newns = newns;
+> > >  	return;
+> > >  
+> > >  errout:
+> > > +	if (oldcwd)
+> > > +		free(oldcwd);
 
-https://patchwork.linuxtv.org/patch/52944/
+right, ok
 
-Regards,
+> > 
+> > Applied, and while at it I removed the needless if in the above two
+> > lines.
+> > 
+> > >  	if (oldns > -1)
+> > >  		close(oldns);
+> > >  	if (newns > -1)
+> > > @@ -223,11 +232,16 @@ void nsinfo__mountns_enter(struct nsinfo *nsi,
+> > >  
+> > >  void nsinfo__mountns_exit(struct nscookie *nc)
+> > >  {
+> > > -	if (nc == NULL || nc->oldns == -1 || nc->newns == -1)
+> > > +	if (nc == NULL || nc->oldns == -1 || nc->newns == -1 || !nc->oldcwd)
+> > >  		return;
+> > >  
+> > >  	setns(nc->oldns, CLONE_NEWNS);
+> > >  
+> > > +	if (nc->oldcwd) {
+> > > +		WARN_ON_ONCE(chdir(nc->oldcwd));
+> > > +		free(nc->oldcwd);
+> > > +	}
+> > > +
+> 
+> Also changed the above to zfree(&nc->oldcwd) as this is in a struct
+> member, that is not freed by the freeing caller
+> (nsinfo__mountns_exit()), to avoid later possible use-after-free (I
+> haven't checked if it _actually_ happens with the current codebase, but
+> it could) also to match the following block, where the resource is
+> released and then the handler is invalidated.
 
-	Hans
+great, thanks
 
-On 11/17/2018 12:42 AM, Sudip Mukherjee wrote:
-> When we are using __find_plane_by_offset() to find the matching plane
-> number and the buffer, the queue is not locked. So, after we have
-> calculated the buffer number and assigned the pointer to vb, it can get
-> freed. And if that happens then we get a use-after-free when we try to
-> use this for the mmap and get the following calltrace:
-> 
-> [   30.623259] Call Trace:
-> [   30.623531]  dump_stack+0x244/0x39d
-> [   30.623914]  ? dump_stack_print_info.cold.1+0x20/0x20
-> [   30.624439]  ? printk+0xa7/0xcf
-> [   30.624777]  ? kmsg_dump_rewind_nolock+0xe4/0xe4
-> [   30.625265]  print_address_description.cold.7+0x9/0x1ff
-> [   30.625809]  kasan_report.cold.8+0x242/0x309
-> [   30.626263]  ? vb2_mmap+0x712/0x790
-> [   30.626637]  __asan_report_load8_noabort+0x14/0x20
-> [   30.627201]  vb2_mmap+0x712/0x790
-> [   30.627642]  ? vb2_poll+0x1d0/0x1d0
-> [   30.628060]  vb2_fop_mmap+0x4b/0x70
-> [   30.628458]  v4l2_mmap+0x153/0x200
-> [   30.628929]  mmap_region+0xe85/0x1cd0
-> 
-> Lock the queue before we start finding the matching plane and buffer so
-> that there is no chance of the memory being freed while we are about
-> to use it.
-> 
-> Reported-by: syzbot+be93025dd45dccd8923c@syzkaller.appspotmail.com
-> Signed-off-by: Sudip Mukherjee <sudipm.mukherjee@gmail.com>
-> ---
->  drivers/media/common/videobuf2/videobuf2-core.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/media/common/videobuf2/videobuf2-core.c b/drivers/media/common/videobuf2/videobuf2-core.c
-> index 975ff5669f72..a81320566e02 100644
-> --- a/drivers/media/common/videobuf2/videobuf2-core.c
-> +++ b/drivers/media/common/videobuf2/videobuf2-core.c
-> @@ -2125,9 +2125,12 @@ int vb2_mmap(struct vb2_queue *q, struct vm_area_struct *vma)
->  	/*
->  	 * Find the plane corresponding to the offset passed by userspace.
->  	 */
-> +	mutex_lock(&q->mmap_lock);
->  	ret = __find_plane_by_offset(q, off, &buffer, &plane);
-> -	if (ret)
-> +	if (ret) {
-> +		mutex_unlock(&q->mmap_lock);
->  		return ret;
-> +	}
->  
->  	vb = q->bufs[buffer];
->  
-> @@ -2138,12 +2141,12 @@ int vb2_mmap(struct vb2_queue *q, struct vm_area_struct *vma)
->  	 */
->  	length = PAGE_ALIGN(vb->planes[plane].length);
->  	if (length < (vma->vm_end - vma->vm_start)) {
-> +		mutex_unlock(&q->mmap_lock);
->  		dprintk(1,
->  			"MMAP invalid, as it would overflow buffer length\n");
->  		return -EINVAL;
->  	}
->  
-> -	mutex_lock(&q->mmap_lock);
->  	ret = call_memop(vb, mmap, vb->planes[plane].mem_priv, vma);
->  	mutex_unlock(&q->mmap_lock);
->  	if (ret)
-> 
-
+jirka
