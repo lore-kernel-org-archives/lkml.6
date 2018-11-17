@@ -2,167 +2,107 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-6.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,SPF_PASS,URIBL_BLOCKED autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-4.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id A2364C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 21:24:29 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B6F9FC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 21:33:21 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 640F72080F
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 21:24:29 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 640F72080F
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=robertabel.eu
+	by mail.kernel.org (Postfix) with ESMTP id 78C542080F
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 21:33:21 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 78C542080F
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726964AbeKRHm0 (ORCPT
+        id S1726643AbeKRHvQ (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 02:42:26 -0500
-Received: from mxf98a.netcup.net ([46.38.249.138]:50062 "EHLO
-        mxf98a.netcup.net" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726034AbeKRHmZ (ORCPT
-        <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 02:42:25 -0500
-X-Greylist: delayed 519 seconds by postgrey-1.27 at vger.kernel.org; Sun, 18 Nov 2018 02:42:23 EST
-Received: from [192.168.178.21] (unknown [5.63.45.188])
-        by mxf98a.netcup.net (Postfix) with ESMTPSA id AD71B14116E;
-        Sat, 17 Nov 2018 22:15:44 +0100 (CET)
-Authentication-Results: mxf98a;
-        spf=pass (sender IP is 5.63.45.188) smtp.mailfrom=rabel@robertabel.eu smtp.helo=[192.168.178.21]
-Received-SPF: pass (mxf98a: connection is authenticated)
-From:   Robert Abel <rabel@robertabel.eu>
-Subject: [of] deadlock b/c of gpiochip and pinctrl dependency
-Openpgp: preference=signencrypt
-Autocrypt: addr=rabel@robertabel.eu; prefer-encrypt=mutual; keydata=
- xsBNBFuld24BCACo/2iGEWd0080a1KqLfB2AYsRzA/86Yx64XNOynZWKk+ToSzDxmEtgUq3u
- By7wZNpIRVeijJ/DvV2Bk2PVAyUMQrQx85rOX+uLW9+WmXgyiO5o+KN6GZDamJu2nDTnvn4z
- Nqowt/tlXMzt+QSL5ypa76AIh8o7QmoV0JpfnxD9NlLX/ysiYXZD1mFi0B8Ef9i22XIE+kuj
- hx03vmNvmKKjr6ajAN3lX3o6ftC2J3BMXl6BiISeO+FkKKbHfMwP4fz70ezrNhD5EdKJZFHe
- FyVQSThR5D1Yxhw4xWy/bQFqlJ96ulfXx5wYNdVck1Vftf5LnvRzrZgKNZU0zzIhMfvBABEB
- AAHNIVJvYmVydCBBYmVsIDxyYWJlbEByb2JlcnRhYmVsLmV1PsLAlAQTAQgAPhYhBAPU/UOS
- MYeSZeDf9jncurJ4JrbIBQJbpXduAhsDBQkDwmcABQsJCAcCBhUICQoLAgQWAgMBAh4BAheA
- AAoJEDncurJ4JrbI2oIIAIpEXpKW3L3lfZ71QxRp4XiXh+s3QqnMIYlXMNbd/A/ZU+70ulDs
- MnnNUeyzjbx4glUDIfAQ/x3tAJyl3Gr6GJcfCumJG/cVu5XYv48CO52qGLVtJsuc75D+Qu41
- pt6r6jdD0y2bVmTRT2bUtZR1kh0gKy/dL+4INiG38JDkLl/JemErLt9GOTfgJGFSdxjMjsuP
- wZmSPVoc8o+xOUBmUxrEICanaK5Hh2imctpAPkqCCWQKOGF9wW/DfdKdQWER4BT4Y/afq1rC
- Z74g/BN3sKnPSoemfvxP6I+PHJn+nXVm9RX7qcHv2Yg3x2MO5Fz1dZ18Rg0w51pVmjBwaCtx
- R5nOwE0EW6V3bgEIAKgY410eN1ERCBNf3j6Kzpm+OiZCELJf8pXGMxe+hJWZjDZd9gsk5PgX
- H4CTk3fBM+Q3ke1XbqhXvf08ynM/hIvl4mkvSHT0G6tHbKcm1jSantj4gloZd5sjcnire2Gs
- bFt6u9BJdh+qJki981O3YqppYGPuXx770NkP6AL9buAxRqMtPv55dHii4LOKUIrOLn6Z427c
- 9lzZAVtG6a5HREtDg+M35QwkGkubB1onn9mRBB2Dr/2sr73htU8cRQCQ6kZPILuV3nHMmlUr
- XaEdHyvufv1YEAWQdg08+Pig1ZK57zlGO4WwWUAUuT/9iQm1qzMLP2683OoWbCihbjtYGskA
- EQEAAcLAfAQYAQgAJhYhBAPU/UOSMYeSZeDf9jncurJ4JrbIBQJbpXduAhsMBQkDwmcAAAoJ
- EDncurJ4JrbI/boH/2AzoE6EfGEwkMHMTjH5lmarhDTkg9EQNwi3orH2836RYPlO1geOrItm
- rM9b/lX5OXrE/K24lvxviVV8EaMN9EhEuCyoo6tnv+pUni3U2qWu3WUfAIMtkKlZspa4sO4Z
- slCvBwZtNTb2Al6Rs/knPXnV8mcQ/gMnd99feaIRL7FvsDvlCqIh+B0785igWYQ9VsGUuDXr
- Dmhm/j1LMoAQS4+31+lARM4sX7pdBnlSp0OGHj7vzTMirAjGAAr/Kh7BgcfRtin7n9rAMenu
- 9h1RQsQoayamC18CP2SQIZHbbiquUttmrvj7tkJAI2Y7bWqgfmBHHhNsVslYkpd4wYV62uc=
-Cc:     Linus Walleij <linus.walleij@linaro.org>,
-        linux-kernel <linux-kernel@vger.kernel.org>
-To:     "linux-gpio@vger.kernel.org" <linux-gpio@vger.kernel.org>
-Message-ID: <6409e5aa-4129-0706-2704-f5f609bb54a8@robertabel.eu>
-Date:   Sat, 17 Nov 2018 22:15:43 +0100
-User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.3.0
+        Sun, 18 Nov 2018 02:51:16 -0500
+Received: from mx2.suse.de ([195.135.220.15]:51578 "EHLO mx1.suse.de"
+        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
+        id S1725765AbeKRHvP (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sun, 18 Nov 2018 02:51:15 -0500
+X-Virus-Scanned: by amavisd-new at test-mx.suse.de
+Received: from relay2.suse.de (unknown [195.135.220.254])
+        by mx1.suse.de (Postfix) with ESMTP id C3803AD0A;
+        Sat, 17 Nov 2018 21:33:12 +0000 (UTC)
+From:   NeilBrown <neil@brown.name>
+To:     Nishad Kamdar <nishadkamdar@gmail.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Joe Perches <joe@perches.com>
+Date:   Sun, 18 Nov 2018 08:33:03 +1100
+Cc:     devel@driverdev.osuosl.org,
+        Christian =?utf-8?Q?L=C3=BCtke-Stetzkamp?= <christian@lkamp.de>,
+        linux-kernel@vger.kernel.org, John Crispin <blogic@openwrt.org>,
+        Dan Carpenter <dan.carpenter@oracle.com>
+Subject: Re: [PATCH v6 1/3] staging: mt7621-mmc: Remove #if 0 blocks in sd.c
+In-Reply-To: <d24db4fd34fc2347ba0512aaae04b937b942ac0e.1538670306.git.nishadkamdar@gmail.com>
+References: <cover.1538670306.git.nishadkamdar@gmail.com> <d24db4fd34fc2347ba0512aaae04b937b942ac0e.1538670306.git.nishadkamdar@gmail.com>
+Message-ID: <87sgzzcru8.fsf@notabene.neil.brown.name>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <20181117211544.23253.72671@mxf98a.netcup.net>
-X-PPP-Vhost: robertabel.eu
+Content-Type: multipart/signed; boundary="=-=-=";
+        micalg=pgp-sha256; protocol="application/pgp-signature"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi!
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-I found a dependency issue with gpiochip and pinctrl while using the gpio-hog feature that was implemented by Benoit
-Parrot in f625d4601759f. Relevant device-tree overlay shown below [3].
+On Thu, Oct 04 2018, Nishad Kamdar wrote:
 
-I ran into a deadlock situation, because adding a gpiochip requires a registered pinctrl with registered ranges, because
-the function to add the gpiochip will check for hogged pins and request gpio pin functionality for them.
-This works in situations when gpiochip and pinctrl functionality don't depend on each other. However, consider the
-following code, which is from the bcm2835 driver for Raspberry Pi found here [1]:
+> This patch removes #if 0 code blocks and usages of
+> functions defined in the #if 0 blocks in sd.c.
+>
+> Signed-off-by: Nishad Kamdar <nishadkamdar@gmail.com>
 
-pinctrl-bcm2835.c:
-    err = gpiochip_add_data(&pc->gpio_chip, pc);
-    if (err) {
-            dev_err(dev, "could not add GPIO chip    n");
-            return err;
-    }
+Hi Nishad,
+ thanks for this patch (and others) and apologies for not
+ reviewing/testing it earlier.
+ Unfortunately there is a problem - see below.
+=20
+>=20=20
+> -#if 0 /* --- by chhung */
+> -/* For E2 only */
+> -static u8 clk_src_bit[4] =3D {
+> -	0, 3, 5, 7
+> -};
+> -
+>  static void msdc_select_clksrc(struct msdc_host *host, unsigned char clk=
+src)
+>  {
+>  	u32 val;
 
-    ...
+Above you removed the first few lines of a "#if 0" block, but not all of
+it.  Previously the function msdc_select_clksrc() was not compiled at
+all.  Now it is, and that causes an error - MSDC_CLKSRC_REG is not
+defined.
 
-    pc->pctl_dev = devm_pinctrl_register(dev, &bcm2835_pinctrl_desc, pc);
-    if (IS_ERR(pc->pctl_dev)) {
-        gpiochip_remove(&pc->gpio_chip);
-        return PTR_ERR(pc->pctl_dev);
-    }
+Would you be able to send a follow-patch patch which removes this
+function and the "#endif /* end of --- */" at the end?
 
-    ...
+Thanks,
+NeilBrown
 
-    pinctrl_add_gpio_range(pc->pctl_dev, &pc->gpio_range);
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-It's not very obvious, that calling gpiochip_add_data should only be done after adding the required ranges to pinctrl,
-because the following happens:
-
-gpiochip_add_data(_with_key):
-  of_gpiochip_add:
-    of_gpiochip_scan_gpios:
-      for_each_available_child_of_node(chip->of_node, np) with "gpio-hog":
-        gpiod_hog
-          gpiochip_request_own_desc:
-            gpiod_request_commit:
-              status = chip->request(chip, gpio_chip_hwgpio(desc)):
-                gpiochip_generic_request(...):
-                  pinctrl_gpio_request:
-                    pinctrl_get_device_gpio_range:
-                      /* GPIO range not found, because it wasn't registered yet */
-                      return -EPROBE_DEFER;
-
-This of course deadlocks my system, because everything ends up waiting on the gpiochip, which cannot ever be
-instantiated. I couldn't find any documentation explicitly mentioning this dependency between gpiochip and pinctrl.
-My workaround for the moment is to re-order the gpiochip_add_data call after the devm_pinctrl_register and
-pinctrl_add_gpio_range calls. I haven't observed any ill effect, but I'm not sure what other components may already act
-on pinctrl while gpiochip is dangling or if any of the other functions that are called by add require it as well.
-
-Obviously, this approach won't work for SoCs where setting certain pinctrl settings need to touch gpio settings to e.g.
-activate pull-ups.
-
-In general, I sought the same functionality that Markus Pargmann was trying to implement in 2015 [2].
-That is, to name and possibly export gpios through device tree.
-
-It seems disadvantageous that one cannot currently specify pinctrl settings while hogging or export by name.
-Dynamic device tree overlays also don't work. Perhaps an actual driver instead of the hogging mechanism would solve all
-dependency issues better?
-
-Regards,
-
-Robert
-
-Please CC, as I'm off-list.
-
-
-  [1]: https://github.com/raspberrypi/linux/blob/83ea2e93/drivers/pinctrl/bcm/pinctrl-bcm2835.c#L1027
-  [2]: http://lists.infradead.org/pipermail/linux-arm-kernel/2015-July/357418.html
-  [3]: gpio-hog.dtso
-       /dts-v1/;
-       /plugin/;
-
-       #include <dt-bindings/gpio/gpio.h>
-
-       / {
-           compatible = "brcm,bcm2708";
-           fragment@0 {
-               target = <&gpio>;
-               __overlay__ {
-                   myLed {
-                       gpios = <18 GPIO_ACTIVE_HIGH>;
-                       gpio-hog;
-                       output-low;
-                   };
-               };
-           };
-       };
+iQIzBAEBCAAdFiEEG8Yp69OQ2HB7X0l6Oeye3VZigbkFAlvwiQ8ACgkQOeye3VZi
+gbkkhhAAvlqAYwnHB+Gap8yhZTj9NN7d8hgmVH9R3G1CcBtRIXMTVnO5wpc1YTF1
+vN5S8Ga0uL7t3Aa17I/nITgzbvhlqV4elEb5vwmh0DzOscYjcLPN2pQc+Qgr0B4/
+XywSZ83FQr2M8z0AD1MOzXmf5n1SRgcJVpYlJnReEt0S2cqotmWhTdQHNmgqDVk+
+SyVHEtPC26/+1zfxVKfOumTbgz557OfkuYtLgDEgSHSGm0EaAYL425+Jkve85Xf2
+WUeumLUtw0CsnT1pgpp7d5lP3neq/b/v7C9VLH4zqhtPIrRgaxchnSClTOQZo6GJ
+gz+J8d3JEbf4b6hXvZLLGYJPZpqPYh9BFy0nNlys1u+4SEX3oXLNEcs1y5RmxZ7B
+OzkGOxmVJyygYUsx7Q1OMJaXWqk6HsZU1xOwfNekrzFJPafo3j6h5pesPgAa1tZb
+gh4t2ZBIrJMKtVtkXqDzrxPpRbT5S5znk4rRkoNDK/L7udbzpllQMdrXun/Mfb9Q
+eTRnLWdIooJnjeWydsRG9CQBQnRCUZDnoLg2GoV4OckSria4krA/48JUNsxuCUyy
+hantbitz7wG2Wth3/naouVJBoHLsQH5wyClWVBptkBQY2L3zXERNgmYXeZtgIeRQ
+wzpkR9dSkRF2yCVHlHT4HM2DXzSphyivJZCD58FmvCqEx1t3AEY=
+=8boA
+-----END PGP SIGNATURE-----
+--=-=-=--
