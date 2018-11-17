@@ -2,91 +2,89 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-4.7 required=3.0 tests=DKIMWL_WL_HIGH,DKIM_SIGNED,
-	DKIM_VALID,DKIM_VALID_AU,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
+	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id DDD2BC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:32:35 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id AB211C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:32:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id A37952082A
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:32:35 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZGCBzrCC"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A37952082A
+	by mail.kernel.org (Postfix) with ESMTP id 768E2206BA
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 16:32:58 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 768E2206BA
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726824AbeKRCtp (ORCPT
+        id S1726869AbeKRCuI (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 21:49:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:37144 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726311AbeKRCtp (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 21:49:45 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 353E5206BA;
-        Sat, 17 Nov 2018 16:32:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542472353;
-        bh=PATnfR50dbISo0BUQLH0QiElfmfTjO9cootVI/7X1Ts=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ZGCBzrCC5dphLIYjWKpcWHjKSq/bM25LmKeQRpjnB3aTGOOwPARLuu4HdM0HiQ7rm
-         6rNXcOTjFg4AhEtf668PE3QazsfDCZ7ThaKL6N+Qbgak0+iZr7lv82E9SJg3xZ++GV
-         fSTAEZWHhkukutMAOTua2tuNRYJDepDw6C4Z1gtY=
-Date:   Sat, 17 Nov 2018 16:32:28 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Rob Herring <robh@kernel.org>
-Cc:     Stefan Popa <stefan.popa@analog.com>, mark.rutland@arm.com,
-        knaack.h@gmx.de, lars@metafoo.de, pmeerw@pmeerw.net,
-        Michael.Hennerich@analog.com, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5 2/4] dt-bindings: iio: adc: Add common ADCs
- properties to a separate file
-Message-ID: <20181117163228.5f5b5bb8@archlinux>
-In-Reply-To: <20181116225302.GA23266@bogus>
-References: <1542108061-3471-1-git-send-email-stefan.popa@analog.com>
-        <20181116183838.6a079255@archlinux>
-        <20181116225302.GA23266@bogus>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 17 Nov 2018 21:50:08 -0500
+Received: from mail-ot1-f68.google.com ([209.85.210.68]:34247 "EHLO
+        mail-ot1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726311AbeKRCuI (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 21:50:08 -0500
+Received: by mail-ot1-f68.google.com with SMTP id t5so24177248otk.1;
+        Sat, 17 Nov 2018 08:32:56 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=gMTz2EOiWaaOWYD5m3C66XRZowoKjupcKf4X9kojdWo=;
+        b=L1PX7y4fMA2aCaoM5m1/RnDhM+xk32xzct0JIPkwBebNRyRL9+hQK8wJmuruZHZdGU
+         NU6t3OwZp0VdnHt/nNLaDQJvftiJBnfP/Izf6hM4dVcoJ6w4EhaGv52LbI+HKvjqGc8B
+         DK6IMjlFUkvEDwSrX8pWSH9dHSY/AyTVJmftM8Np2j2qG4LV1PssZIayf6JeDhHb7ox2
+         67uK194dw11i42IPGaT3UHJkSeEk5bQfnf3QyhplgS8CZVkjc7ygInLNC59msJBNI6Dd
+         ao4z3cqyRhGx3WdTP9GdYd9pbYxUobTxes2w4f6vlSw7hzUzCMMLt5MYA+xTuCKlsDYh
+         lvVw==
+X-Gm-Message-State: AGRZ1gJK1eiZOe+V/MloJMZFHEOuXzvUlHKTvty0NhQ0eKFRrWhWL+7R
+        u8l+YuhEjE8s5lcMFLT3lA==
+X-Google-Smtp-Source: AJdET5f50tIWITJCu9CME4nt+6IW49ZLepvBIXL2dKXkmvIkoLagQ71IUNZumYBa7aoXHP4B5PoYFQ==
+X-Received: by 2002:a9d:192a:: with SMTP id j42mr8709218ota.36.1542472376119;
+        Sat, 17 Nov 2018 08:32:56 -0800 (PST)
+Received: from localhost ([166.137.105.180])
+        by smtp.gmail.com with ESMTPSA id c58sm29202087otd.34.2018.11.17.08.32.55
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 17 Nov 2018 08:32:55 -0800 (PST)
+Date:   Sat, 17 Nov 2018 10:32:53 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Atish Patra <atish.patra@wdc.com>
+Cc:     linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
+        anup@brainfault.org, Damien.LeMoal@wdc.com,
+        linux-arm-kernel@lists.infradead.org, mark.rutland@arm.com,
+        sudeep.holla@arm.com, palmer@sifive.com,
+        devicetree@vger.kernel.org, juri.lelli@arm.com, mick@ics.forth.gr,
+        jeremy.linton@arm.com
+Subject: Re: [RFC 1/3] dt-binding: cpu-topology: Move cpu-map to a common
+ binding.
+Message-ID: <20181117163253.GA6713@bogus>
+References: <1541728209-3224-1-git-send-email-atish.patra@wdc.com>
+ <1541728209-3224-2-git-send-email-atish.patra@wdc.com>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1541728209-3224-2-git-send-email-atish.patra@wdc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Nov 2018 16:53:02 -0600
-Rob Herring <robh@kernel.org> wrote:
-
-> On Fri, Nov 16, 2018 at 06:38:38PM +0000, Jonathan Cameron wrote:
-> > On Tue, 13 Nov 2018 13:21:01 +0200
-> > Stefan Popa <stefan.popa@analog.com> wrote:
-> >   
-> > > There are several ADC drivers that depend on the same device tree
-> > > bindings. Rather than continue to duplicate the properties, this patch
-> > > adds a common adc binding document that can be referenced. For beginning,
-> > > only two properties are documented.
-> > > 
-> > > Signed-off-by: Stefan Popa <stefan.popa@analog.com>  
-> > Looks very sensible to me, but as we are looking at a some generalization
-> > here, I'd like an Ack from Rob if possible (as he suggested it I think :)  
+On Thu, Nov 08, 2018 at 05:50:07PM -0800, Atish Patra wrote:
+> cpu-map binding can be used to described cpu topology for both
+> RISC-V & ARM. It makes more sense to move the binding to document
+> to a common place.
 > 
-> Looks fine to me, but I don't have any clue if this will be flexible 
-> enough for various h/w.
-I think we'll need more to cover all cases, but hopefully things that
-make sense to be optional in general.  Rather hard to predict.  This is
-the obvious stuff so far.
-
-This is better than the current mess of different options!
-
-Jonathan
-
+> The relevant discussion can be found here.
+> https://lkml.org/lkml/2018/11/6/19
 > 
-> Rob
-> 
+> Signed-off-by: Atish Patra <atish.patra@wdc.com>
+> ---
+>  Documentation/devicetree/bindings/arm/topology.txt | 475 -------------------
+>  .../devicetree/bindings/cpu/cpu-topology.txt       | 526 +++++++++++++++++++++
+>  2 files changed, 526 insertions(+), 475 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/arm/topology.txt
+>  create mode 100644 Documentation/devicetree/bindings/cpu/cpu-topology.txt
 
+Please send this with '-M' option so we just get the real changes.
+
+Rob
