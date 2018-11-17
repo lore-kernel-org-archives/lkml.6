@@ -2,157 +2,95 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
-	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FC7C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 19:44:38 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D72B1C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 19:51:58 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 3335C20815
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 19:44:38 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 93E6520815
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 19:51:58 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="DZqhi2jp"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3335C20815
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mena.vt.edu
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MqhKdGhi"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 93E6520815
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726426AbeKRGBx (ORCPT
+        id S1726686AbeKRGJk (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 01:01:53 -0500
-Received: from mail-ua1-f65.google.com ([209.85.222.65]:43643 "EHLO
-        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725732AbeKRGBw (ORCPT
+        Sun, 18 Nov 2018 01:09:40 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:36672 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725732AbeKRGJj (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 01:01:52 -0500
-Received: by mail-ua1-f65.google.com with SMTP id z11so9425409uaa.10
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 11:44:10 -0800 (PST)
+        Sun, 18 Nov 2018 01:09:39 -0500
+Received: by mail-ot1-f66.google.com with SMTP id k98so24392935otk.3;
+        Sat, 17 Nov 2018 11:51:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc;
-        bh=oTrnDUNKyHpyhiGL04RKJoPYdkUOWMG77u97HirAZPs=;
-        b=DZqhi2jpx5GTAcx/nq/ntY+vk8TTxLrLV47/3Ztisc9mpglq/1WtsbmdKPECvepeRR
-         cUYdL2iPB01mvKzfleZwVv8mLfSwe6CP2dsq4VNZXXYRYpEZapHpKUmjh4xg7bozvSUp
-         1dDobxD1d/f9Prmk4yEXJTgvZ2fvcOz8Qfs2dJpNqkNzvaU+WYTUjtaPQSCn4vK9UsfT
-         k1Lgx4OE5rkAFXXgBQUPZjXn3jTLYeYIDBD4MBN6nzb0EvP5XtrM9oKxi4dOcyN0RsAp
-         pKyaDw3EDc4PerIcgW3Y9KHAB11iHkKvAIbkenu7R6LwWSfOGAab0jVV186vMpp8Ool+
-         qgAQ==
+        d=gmail.com; s=20161025;
+        h=subject:to:cc:references:from:message-id:date:user-agent
+         :mime-version:in-reply-to:content-language:content-transfer-encoding;
+        bh=ixQhn+oP2nSNDSflkp1f+ch9IdWJwhyZzpqumAzH0Vc=;
+        b=MqhKdGhiAXFHetQwooWX/E35NGhA6btLDqDeNOLG+aH4z24eddk2UIEP6SztuztoVL
+         xfw+5Tajwp8imz6Om41boO3pEPAR96KfggNHUSetCChi4Q5FXxoYIguEwgdNsssU2SCP
+         SVZUPIxgtjT7SqLxVTx9EN6SRFoVkFSpC9riwzskFtj3uJkkIzNQHLbmbh3gDIa00G0x
+         5bim4IzHDDpsOGIQjRKpqxaRP9hwtcQZX355SBYmuwEQ62j/KEdBQO2/SOjAvvp6wpQv
+         ln67u2K4ZKP2ttoz9XOTKh8Qs6SX37nkq8Ej5NvhGfWGPKZLgMRz4dKb1mSGcxDOOJtH
+         H9Fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc;
-        bh=oTrnDUNKyHpyhiGL04RKJoPYdkUOWMG77u97HirAZPs=;
-        b=nNtGgLtReov2wBdw/WKy6c+YVbe6JRKSWLKBi1kL12bqkemMv2g0NOPxSygMsqJAJ+
-         D4/Bia8JK4Yt7Y5Lrcz/uP030L5shNw1IQWqd0Gakm3/8hENyJPBtCiTmWd38131VXXt
-         C1otQnmtx0pjicddznD9+9IM8OvevNcI3/wWukdNTlOsizSGgwqjQZtlfPEvCODntV/D
-         671AqXLwN5LIEDr8yTo/D7EMqyngQvPOTRUE7S7/0CBpzV3/z0JpZXs5uglcCJeodSQM
-         Dl/CRNqm0+z1nhaZh12j+fnoX670sIsfxChd2Vka9EYeUbh5w0RXVLj9vjanitlftrYd
-         C9Jw==
-X-Gm-Message-State: AGRZ1gJKz+j6pasIhKTimOcye6jkQ1tj4vrV2XW445sQ2aQMh4/vrrDI
-        YyBSXtN910xRzPDSPeBRky26Lj1ZrWznulgOxY5SVw==
-X-Google-Smtp-Source: AJdET5ffJgsOufbPxPMzYSh/eu65cdJHz895yQ0X/AFop5Ey+4QWma89CrmjEJ+8hUjJLwvWZLatQXLgaFP3MzuV994=
-X-Received: by 2002:ab0:1393:: with SMTP id m19mr6884326uae.75.1542483849905;
- Sat, 17 Nov 2018 11:44:09 -0800 (PST)
+        h=x-gm-message-state:subject:to:cc:references:from:message-id:date
+         :user-agent:mime-version:in-reply-to:content-language
+         :content-transfer-encoding;
+        bh=ixQhn+oP2nSNDSflkp1f+ch9IdWJwhyZzpqumAzH0Vc=;
+        b=rHm/FmVLVxJnZ3xJmmoExHP+zyFM8rUvbEys8IFS1OMQmkkrwoH0C2aYvYhW4O/4hP
+         sUlaNGJ15ViATjTc7Ac+F41laHfpWklAPYGx9OxH3afQPvzvplJxV55wxKa47emjMO5g
+         a1lrdr/5l4afbOU1VcCDH0G/wQ9/DKO1YMzdJf3hSOu8G9Cv1p/h/3dEyHHExiur8+LK
+         2nUwdGs5qL0NGrGIvpynMqM1zKGxOyxoMdmgrAw+35sN3McD2X3vZF+gsMNJIE3QqZJZ
+         4q7t7uSe07iwgtfHMMlsNFvrqSUmN5iciTPdiuu6T2ZqWU+TDJ3AIY23vo534AwcW2eI
+         o8ew==
+X-Gm-Message-State: AGRZ1gJcH8ioYP3zwrHC8Qh0EXQ9kGpmYEWcBvplpK/9S/ntYK6kgxkd
+        Q12QW5aHB0FcId0FTOc348k=
+X-Google-Smtp-Source: AJdET5e2+NeWypOQQu4G2+1hr5nbj8rohTCXtvqXSN4ZWfreQlC+eIrkwHm+l7IcBiTdw7I8ypRlcQ==
+X-Received: by 2002:a9d:5a81:: with SMTP id w1mr9948600oth.317.1542484315791;
+        Sat, 17 Nov 2018 11:51:55 -0800 (PST)
+Received: from [192.168.1.2] (ip68-228-73-187.oc.oc.cox.net. [68.228.73.187])
+        by smtp.googlemail.com with ESMTPSA id 21sm1290154oie.24.2018.11.17.11.51.54
+        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
+        Sat, 17 Nov 2018 11:51:54 -0800 (PST)
+Subject: Re: [PATCH net-next 1/2] net: bcmgenet: code movement
+To:     Doug Berger <opendmb@gmail.com>,
+        "David S. Miller" <davem@davemloft.net>
+Cc:     netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+        YueHaibing <yuehaibing@huawei.com>
+References: <1542420022-30251-1-git-send-email-opendmb@gmail.com>
+ <1542420022-30251-2-git-send-email-opendmb@gmail.com>
+From:   Florian Fainelli <f.fainelli@gmail.com>
+Message-ID: <e6d154ea-2551-375b-fee8-f7aeb5a3d63d@gmail.com>
+Date:   Sat, 17 Nov 2018 11:51:53 -0800
+User-Agent: Mozilla/5.0 (Windows NT 6.1; WOW64; rv:52.0) Gecko/20100101
+ Thunderbird/52.9.1
 MIME-Version: 1.0
-References: <CANBxJ=EQOt1t=PkLsMvtfB2SbiLMPeGvFxB7SJXf7m3OkcionQ@mail.gmail.com>
- <20181114180807.6crs7awhvo26ldbr@hawk.localdomain> <CADYN=9Jh10guVNFfhS8XH+RwZAouLJQu7Svg4+Tz3rQDexzDkg@mail.gmail.com>
- <CANBxJ=G4xdF8ZOR4zyoX1edNa=jYxk1xrzoi+7Xgcqt9qDoM2w@mail.gmail.com>
- <CANBxJ=EB8izWM8iLd49Uvd1z1O-gLvkGmiKNHjfHifFohj2xbg@mail.gmail.com>
- <20181115090203.5z25gwa2yznj6mmu@kamzik.brq.redhat.com> <CANBxJ=EHkuxKFoQw=K21o=9_FMhi_=on=Poq+ZF37eieoKV4zg@mail.gmail.com>
- <20181115145028.qijg7hjswcuabrt2@kamzik.brq.redhat.com> <CANBxJ=EGR=7RrO8ZtJFUwpNZRy_adjCObNtWtcMA=y4rLgeWaQ@mail.gmail.com>
- <87efbmqore.fsf@vitty.brq.redhat.com> <CANBxJ=FDOpySC7w1fVbWCOy+ASO=A7WcsFiDJEcGtzWbYM6NqQ@mail.gmail.com>
- <8736s1qh3d.fsf@vitty.brq.redhat.com>
-In-Reply-To: <8736s1qh3d.fsf@vitty.brq.redhat.com>
-From:   Ahmed Soliman <ahmedsoliman@mena.vt.edu>
-Date:   Sat, 17 Nov 2018 21:43:43 +0200
-Message-ID: <CANBxJ=FX01h6OZt=zApu6tz_enJxg_kXN+yb8_z52TzucU7H7Q@mail.gmail.com>
-Subject: Re: KVM selftests are failing
-To:     Vitaly Kuznetsov <vkuznets@redhat.com>
-Cc:     Anders Roxell <anders.roxell@linaro.org>,
-        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
-        Paolo Bonzini <pbonzini@redhat.com>,
-        Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
-        Andrew Jones <drjones@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <1542420022-30251-2-git-send-email-opendmb@gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 16, 2018 at 3:37 PM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
->
-> Ahmed Soliman <ahmedsoliman@mena.vt.edu> writes:
->
-> > Hello once again,
-> >
-> > I noticed that there is still more problems with kvmself test (at
-> > least on my machine)
-> >
-> > Any test that would successfully reach the guest's code immediately
-> > VMexit by a shutdown.
-> >
-> > $ ./vmx_tsc_adjust_test
-> > ==== Test Assertion Failure ====
-> >  x86_64/vmx_tsc_adjust_test.c:156: run->exit_reason == KVM_EXIT_IO
-> >  pid=8499 tid=8499 - Success
-> >     1  0x00005604f07bd36c: ?? ??:0
-> >     2  0x00007f5c0dc53ae6: ?? ??:0
-> >     3  0x00005604f07bd4b9: ?? ??:0
-> >  Got exit_reason other than KVM_EXIT_IO: 8 (SHUTDOWN)
-> >
->
-> Hm, this is weird. Do other KVM users, e.g. qemu work on this host? Are
-> you sure this happens on the first VCPU_RUN invocation?
 
-Yes and I have just tested:
-   qemu-system-x86_64 -enable-kvm -cpu host,+vmx -m 2G
 
-And Linux as well as android for x86 booted up. Also I kinda have my
-kvm tests that works
-but they are not built on top of kvm selftest api.
+On 16/11/2018 18:00, Doug Berger wrote:
+> This commit switches the order of bcmgenet_suspend and bcmgenet_resume
+> in the file to prevent the need for a forward declaration in the next
+> commit and to make the review of that commit easier.
+> 
+> Signed-off-by: Doug Berger <opendmb@gmail.com>
 
-> Could you try doing
->
-> trace-cmd record -e kvm  ./x86_64/vmx_tsc_adjust_test && trace-cmd report
->
-> to see if there's anything suspicious?
-
-Yes, there is a triple fault induced shutdown probably during EPT handling:
-
- vmx_tsc_adjust_-17638 [001] 15628.729863: kvm_update_master_clock:
-masterclock 0 hostclock tsc offsetmatched 0
-vmx_tsc_adjust_-17638 [001] 15628.730820: kvm_write_tsc_offset: vcpu=5
-prev=0 next=18446733817569215369
-vmx_tsc_adjust_-17638 [001] 15628.730822: kvm_track_tsc:
-vcpu_id 5 masterclock 0 offsetmatched 0 nr_online 1 hostclock tsc
-vmx_tsc_adjust_-17638 [001] 15628.730911: kvm_fpu:              load
-vmx_tsc_adjust_-17638 [001] 15628.730913: kvm_update_master_clock:
-masterclock 1 hostclock tsc offsetmatched 1
-vmx_tsc_adjust_-17638 [001] 15628.730954: kvm_entry:            vcpu 5
-vmx_tsc_adjust_-17638 [001] 15628.730974: kvm_exit:             reason
-EPT_VIOLATION rip 0x56545f0b8760 info 83 0
-vmx_tsc_adjust_-17638 [001] 15628.730976: kvm_page_fault:
-address 180560 error_code 83
-vmx_tsc_adjust_-17638 [001] 15628.730989: kvm_entry:            vcpu 5
-vmx_tsc_adjust_-17638 [001] 15628.730992: kvm_exit:             reason
-TRIPLE_FAULT rip 0x56545f0b8760 info 0 0
-vmx_tsc_adjust_-17638 [001] 15628.730993: kvm_fpu:              unload
-vmx_tsc_adjust_-17638 [001] 15628.730996: kvm_userspace_exit:   reason
-KVM_EXIT_SHUTDOWN (8)
-vmx_tsc_adjust_-17638 [002] 15628.739237: kvm_hv_stimer_cleanup:
-vcpu_id 5 timer 0
-vmx_tsc_adjust_-17638 [002] 15628.739244: kvm_hv_stimer_cleanup:
-vcpu_id 5 timer 1
-vmx_tsc_adjust_-17638 [002] 15628.739244: kvm_hv_stimer_cleanup:
-vcpu_id 5 timer 2
-vmx_tsc_adjust_-17638 [002] 15628.739245: kvm_hv_stimer_cleanup:
-vcpu_id 5 timer 3
-
-I will try to dive into them after my midterms are over(ends tomorrow)
-but I would need to verify that someone else can
-reproduce this, I tried bisecting but it seams that this bug was there
-from kvmselftests commit one
-(rebuilt kernel, kvm and the kvm selftests each time).
-
-Thanks,
+Reviewed-by: Florian Fainelli <f.fainelli@gmail.com>
+-- 
+Florian
