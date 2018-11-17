@@ -2,211 +2,111 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
-	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-7.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,MENTIONS_GIT_HOSTING,
+	SPF_PASS,USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 30176C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:07:40 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 3D2C6C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:11:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id DCB4320815
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:07:39 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org DCB4320815
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=perches.com
+	by mail.kernel.org (Postfix) with ESMTP id ED13620815
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 18:11:52 +0000 (UTC)
+Authentication-Results: mail.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="pXViSzeB"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org ED13620815
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726760AbeKREZF (ORCPT
+        id S1726775AbeKRE3S (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 23:25:05 -0500
-Received: from smtprelay0145.hostedemail.com ([216.40.44.145]:48491 "EHLO
-        smtprelay.hostedemail.com" rhost-flags-OK-OK-OK-FAIL)
-        by vger.kernel.org with ESMTP id S1726442AbeKREZF (ORCPT
+        Sat, 17 Nov 2018 23:29:18 -0500
+Received: from mail-pg1-f193.google.com ([209.85.215.193]:41504 "EHLO
+        mail-pg1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726071AbeKRE3S (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 23:25:05 -0500
-Received: from filter.hostedemail.com (clb03-v110.bra.tucows.net [216.40.38.60])
-        by smtprelay08.hostedemail.com (Postfix) with ESMTP id 9E38A182CED5B;
-        Sat, 17 Nov 2018 18:07:36 +0000 (UTC)
-X-Session-Marker: 6A6F6540706572636865732E636F6D
-X-HE-Tag: train75_805a7e24805b
-X-Filterd-Recvd-Size: 6341
-Received: from XPS-9350.home (unknown [47.151.153.53])
-        (Authenticated sender: joe@perches.com)
-        by omf19.hostedemail.com (Postfix) with ESMTPA;
-        Sat, 17 Nov 2018 18:07:34 +0000 (UTC)
-Message-ID: <7ed4782b8872b5bf2788d4ce440149112f7e3c4b.camel@perches.com>
-Subject: Re: [PATCH 1/2] staging: emxx_udc: Split line and fix eol
- parenthesis
-From:   Joe Perches <joe@perches.com>
-To:     Cristian Sicilia <sicilia.cristian@gmail.com>,
-        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-        Carmeli Tamir <carmeli.tamir@gmail.com>,
-        Christopher Diaz Riveros <chrisadr@gentoo.org>,
-        Arkadiusz Lis <areklis909@gmail.com>,
-        Nathan Chancellor <natechancellor@gmail.com>
-Cc:     devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org
-Date:   Sat, 17 Nov 2018 10:07:33 -0800
-In-Reply-To: <1542411969-26570-2-git-send-email-sicilia.cristian@gmail.com>
-References: <1542411969-26570-1-git-send-email-sicilia.cristian@gmail.com>
-         <1542411969-26570-2-git-send-email-sicilia.cristian@gmail.com>
-Content-Type: text/plain; charset="ISO-8859-1"
-User-Agent: Evolution 3.30.1-1build1 
-Mime-Version: 1.0
-Content-Transfer-Encoding: 7bit
+        Sat, 17 Nov 2018 23:29:18 -0500
+Received: by mail-pg1-f193.google.com with SMTP id 70so12000769pgh.8
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 10:11:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20161025;
+        h=from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iIVIEsAcS+mtjbS5QZCMjtScOtNatQOaiRih4W87jh8=;
+        b=pXViSzeBjm5uNZpVbLfw+/XBnO80h+MS6chFWU7O9t43tn7VMkWSihzJIorajlUJS8
+         uaINCJD6pJWKow+moAWmhMXUqK24LznarVGa8HLDXznpF71hEDGZF6xdWqoz6ZjEf+B3
+         8YpdLasHB7xjHTf+qgbfq4NlSHi0Wnexp0x+iadAZ2tpJcAIgxAmB05xp04IEfYkwbeT
+         HUmFtVFNwIZzBt5/c8gppMVzVZ2CRSepJX+M3VuQWnQ176OMQM4wZPzkFDNecPfF1KDI
+         3/g/T/VO5aduSACKBO94EjJ/jP7psJ5neVmRaHTKxWpJ1hvETD8nTtpuPUQG/AYq3ZuW
+         u4Eg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:from:to:cc:subject:date:message-id:mime-version
+         :content-transfer-encoding;
+        bh=iIVIEsAcS+mtjbS5QZCMjtScOtNatQOaiRih4W87jh8=;
+        b=HN3J7Ue9vahSHmbmhxXx5GvnO6CUF/ikraa2Sd4ZdjDKxC2puDviM4hkCGkijU7yEE
+         goR73fik27Y60wP5g8BH5hTgLazN2TEVmXgeUcUmdvsoJ6zYbCDN9h7BMhCQINQ3Lgaj
+         sXfvryaCONY+BcvmAN/BpNInsfufs+Qk57AwbIoanQOt19YO/8JlOBgRO6h08ZqeqvmB
+         2+b1RgrmFpclB+yOptKKbq3kVkCOQ/fzF5iPfENkBXX4Y1u8+ZYByI6ackej4GONrvzr
+         eaeMn7vW8liQKT0bEvH2OB/44VfYc+GdrnIH6suCaIiSKmYyZaOA4lpGCgZkGoqYSn4n
+         HMWg==
+X-Gm-Message-State: AGRZ1gJTdIuNMa1KPg5jcoxSZuyHN9XsbZVKubli5E1MK3FX3CP3n90L
+        qxcLtbtepuwzX2P2Lid6mBwwroZ9kws=
+X-Google-Smtp-Source: AJdET5cJ5uGCvalr8J6QU6WD/u94BxcRE7CJDvQnyPKdT20pXRRbqrkMwp+e+GUmIgVDAeWqeReHwA==
+X-Received: by 2002:a63:c503:: with SMTP id f3mr13961807pgd.431.1542478309480;
+        Sat, 17 Nov 2018 10:11:49 -0800 (PST)
+Received: from squirtle.lan (c-24-22-235-96.hsd1.wa.comcast.net. [24.22.235.96])
+        by smtp.gmail.com with ESMTPSA id a73sm24816500pfa.7.2018.11.17.10.11.47
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 17 Nov 2018 10:11:48 -0800 (PST)
+From:   Andrey Smirnov <andrew.smirnov@gmail.com>
+To:     linux-kernel@vger.kernel.org
+Cc:     Andrey Smirnov <andrew.smirnov@gmail.com>, p.zabel@pengutronix.de,
+        Fabio Estevam <fabio.estevam@nxp.com>, cphealy@gmail.com,
+        l.stach@pengutronix.de, Leonard Crestez <leonard.crestez@nxp.com>,
+        "A.s. Dong" <aisheng.dong@nxp.com>,
+        Richard Zhu <hongxing.zhu@nxp.com>, linux-imx@nxp.com,
+        linux-arm-kernel@lists.infradead.org
+Subject: [PATCH 0/1] Reset controller support for i.MX8MQ
+Date:   Sat, 17 Nov 2018 10:11:30 -0800
+Message-Id: <20181117181131.9330-1-andrew.smirnov@gmail.com>
+X-Mailer: git-send-email 2.19.1
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 2018-11-17 at 00:46 +0100, Cristian Sicilia wrote:
-> Fix some parenthesis opened at end of line.
+Everyone:
 
-It looks like this is all guarded by #ifdef UDC_DEBUG_DUMP
-which is not ever set and this probably would not compile
-if it was.
+This patch contains changes I made in order to add support for i.MX8MQ
+to reset-imx7.c in order to enable support of PCIE IP block on i.MX8MQ
+SoCs (full tree can be found at [github-v0]). This patch is _very_
+preliminary and by no means is ready for inclusion (it also has some
+unmet dependencies).  However is should be in OK enough shape to get
+some early feedback on, which is the intent of this submission.
 
-It's probably better to remove all the blocks guarded by
-that flag and the flag itself.
+Specifically, I'd like to get some feedback on whether the approach of
+having a single shared reset lookup table is acceptable or not.
 
-> Signed-off-by: Cristian Sicilia <sicilia.cristian@gmail.com>
-> ---
->  drivers/staging/emxx_udc/emxx_udc.c | 73 ++++++++++++++++++-------------------
->  1 file changed, 36 insertions(+), 37 deletions(-)
-> 
-> diff --git a/drivers/staging/emxx_udc/emxx_udc.c b/drivers/staging/emxx_udc/emxx_udc.c
-> index bf7c5da..26bd77c 100644
-> --- a/drivers/staging/emxx_udc/emxx_udc.c
-> +++ b/drivers/staging/emxx_udc/emxx_udc.c
-> @@ -108,20 +108,20 @@ static void _nbu2ss_dump_register(struct nbu2ss_udc *udc)
->  
->  	dev_dbg(&udc->dev, "\n-USB REG-\n");
->  	for (i = 0x0 ; i < USB_BASE_SIZE ; i += 16) {
-> -		reg_data =   _nbu2ss_readl(
-> -			(u32 *)IO_ADDRESS(USB_BASE_ADDRESS + i));
-> +		reg_data = _nbu2ss_readl((u32 *)IO_ADDRESS(USB_BASE_ADDRESS +
-> +					i));
->  		dev_dbg(&udc->dev, "USB%04x =%08x", i, (int)reg_data);
->  
-> -		reg_data =  _nbu2ss_readl(
-> -			(u32 *)IO_ADDRESS(USB_BASE_ADDRESS + i + 4));
-> +		reg_data = _nbu2ss_readl((u32 *)IO_ADDRESS(USB_BASE_ADDRESS +
-> +					i + 4));
->  		dev_dbg(&udc->dev, " %08x", (int)reg_data);
->  
-> -		reg_data =  _nbu2ss_readl(
-> -			(u32 *)IO_ADDRESS(USB_BASE_ADDRESS + i + 8));
-> +		reg_data = _nbu2ss_readl((u32 *)IO_ADDRESS(USB_BASE_ADDRESS +
-> +					i + 8));
->  		dev_dbg(&udc->dev, " %08x", (int)reg_data);
->  
-> -		reg_data =  _nbu2ss_readl(
-> -			(u32 *)IO_ADDRESS(USB_BASE_ADDRESS + i + 12));
-> +		reg_data = _nbu2ss_readl((u32 *)IO_ADDRESS(USB_BASE_ADDRESS +
-> +					i + 12));
->  		dev_dbg(&udc->dev, " %08x\n", (int)reg_data);
->  	}
->  
-> @@ -473,22 +473,23 @@ static void _nbu2ss_dma_map_single(
->  		if (req->unaligned) {
->  			req->req.dma = ep->phys_buf;
->  		} else {
-> -			req->req.dma = dma_map_single(
-> -				udc->gadget.dev.parent,
-> -				req->req.buf,
-> -				req->req.length,
-> -				(direct == USB_DIR_IN)
-> -				? DMA_TO_DEVICE : DMA_FROM_DEVICE);
-> +			req->req.dma =
-> +				dma_map_single(udc->gadget.dev.parent,
-> +					       req->req.buf,
-> +					       req->req.length,
-> +					       (direct == USB_DIR_IN) ?
-> +						DMA_TO_DEVICE :
-> +						DMA_FROM_DEVICE);
->  		}
->  		req->mapped = 1;
->  	} else {
->  		if (!req->unaligned)
-> -			dma_sync_single_for_device(
-> -				udc->gadget.dev.parent,
-> -				req->req.dma,
-> -				req->req.length,
-> -				(direct == USB_DIR_IN)
-> -				? DMA_TO_DEVICE : DMA_FROM_DEVICE);
-> +			dma_sync_single_for_device(udc->gadget.dev.parent,
-> +						   req->req.dma,
-> +						   req->req.length,
-> +						   (direct == USB_DIR_IN)
-> +						    ? DMA_TO_DEVICE :
-> +						    DMA_FROM_DEVICE);
->  
->  		req->mapped = 0;
->  	}
-> @@ -975,8 +976,8 @@ static int _nbu2ss_epn_out_transfer(
->  
->  	/*-------------------------------------------------------------*/
->  	/* Receive Length */
-> -	i_recv_length
-> -		= _nbu2ss_readl(&preg->EP_REGS[num].EP_LEN_DCNT) & EPN_LDATA;
-> +	i_recv_length =
-> +		_nbu2ss_readl(&preg->EP_REGS[num].EP_LEN_DCNT) & EPN_LDATA;
->  
->  	if (i_recv_length != 0) {
->  		result = _nbu2ss_epn_out_data(udc, ep, req, i_recv_length);
-> @@ -1115,10 +1116,9 @@ static int _nbu2ss_epn_in_pio(
->  		i_word_length = length / sizeof(u32);
->  		if (i_word_length > 0) {
->  			for (i = 0; i < i_word_length; i++) {
-> -				_nbu2ss_writel(
-> -					&preg->EP_REGS[ep->epnum - 1].EP_WRITE
-> -					, p_buf_32->dw
-> -				);
-> +				_nbu2ss_writel(&preg->EP_REGS[ep->epnum -
-> +							      1].EP_WRITE,
-> +					       p_buf_32->dw);
->  
->  				p_buf_32++;
->  			}
-> @@ -1472,13 +1472,11 @@ static inline int _nbu2ss_req_feature(struct nbu2ss_udc *udc, bool bset)
->  		if (0x0000 == (wIndex & 0xFF70)) {
->  			if (selector == USB_ENDPOINT_HALT) {
->  				ep_adrs = wIndex & 0xFF;
-> -				if (!bset) {
-> -					_nbu2ss_endpoint_toggle_reset(
-> -						udc, ep_adrs);
-> -				}
-> +				if (!bset)
-> +					_nbu2ss_endpoint_toggle_reset(udc,
-> +								      ep_adrs);
->  
-> -				_nbu2ss_set_endpoint_stall(
-> -					udc, ep_adrs, bset);
-> +				_nbu2ss_set_endpoint_stall(udc, ep_adrs, bset);
->  
->  				result = 0;
->  			}
-> @@ -1524,8 +1522,8 @@ static void _nbu2ss_epn_set_stall(
->  		for (limit_cnt = 0
->  			; limit_cnt < IN_DATA_EMPTY_COUNT
->  			; limit_cnt++) {
-> -			regdata = _nbu2ss_readl(
-> -				&preg->EP_REGS[ep->epnum - 1].EP_STATUS);
-> +			regdata = _nbu2ss_readl(&preg->EP_REGS[ep->epnum -
-> +							       1].EP_STATUS);
->  
->  			if ((regdata & EPN_IN_DATA) == 0)
->  				break;
-> @@ -2666,9 +2664,10 @@ static int nbu2ss_ep_queue(
->  
->  	if (req->unaligned) {
->  		if (!ep->virt_buf)
-> -			ep->virt_buf = dma_alloc_coherent(
-> -				NULL, PAGE_SIZE,
-> -				&ep->phys_buf, GFP_ATOMIC | GFP_DMA);
-> +			ep->virt_buf = dma_alloc_coherent(NULL,
-> +							  PAGE_SIZE,
-> +							  &ep->phys_buf,
-> +							  GFP_ATOMIC | GFP_DMA);
->  		if (ep->epnum > 0)  {
->  			if (ep->direct == USB_DIR_IN)
->  				memcpy(ep->virt_buf, req->req.buf,
+All other feedback is appreciated as well!
+
+Thank you,
+Andrey Smirnov
+
+[github-v0] https://github.com/ndreys/linux/commits/imx8mq-pcie-v0
+
+Andrey Smirnov (1):
+  reset: imx7: Add support for i.MX8MQ
+
+ drivers/reset/Kconfig                   |  2 +-
+ drivers/reset/reset-imx7.c              | 66 ++++++++++++++++++++++++-
+ include/dt-bindings/reset/imx7-reset.h  | 15 +++++-
+ include/dt-bindings/reset/imx8m-reset.h | 47 ++++++++++++++++++
+ 4 files changed, 127 insertions(+), 3 deletions(-)
+ create mode 100644 include/dt-bindings/reset/imx8m-reset.h
+
+-- 
+2.19.1
 
