@@ -2,147 +2,157 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
+	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id AE6CDC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 19:20:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 78FC7C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 19:44:38 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 239742077C
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 19:20:36 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 3335C20815
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 19:44:38 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="FqgF+kBJ"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 239742077C
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+	dkim=pass (2048-bit key) header.d=mena-vt-edu.20150623.gappssmtp.com header.i=@mena-vt-edu.20150623.gappssmtp.com header.b="DZqhi2jp"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 3335C20815
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=mena.vt.edu
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726287AbeKRFiM (ORCPT
+        id S1726426AbeKRGBx (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sun, 18 Nov 2018 00:38:12 -0500
-Received: from perceval.ideasonboard.com ([213.167.242.64]:41694 "EHLO
-        perceval.ideasonboard.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1725731AbeKRFiM (ORCPT
+        Sun, 18 Nov 2018 01:01:53 -0500
+Received: from mail-ua1-f65.google.com ([209.85.222.65]:43643 "EHLO
+        mail-ua1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1725732AbeKRGBw (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sun, 18 Nov 2018 00:38:12 -0500
-Received: from avalon.localnet (node-1w7jr9qt31lmhljbimrwzuuvx.ipv6.telus.net [IPv6:2001:569:7bf7:d700:e720:97a7:80b9:aadd])
-        by perceval.ideasonboard.com (Postfix) with ESMTPSA id 28867DE;
-        Sat, 17 Nov 2018 20:20:29 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-        s=mail; t=1542482431;
-        bh=DMznqI9raFiIS4HLGc5TiKHajztWPRUUUKxqD5A45WA=;
-        h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-        b=FqgF+kBJoj8GDAc+9POsOz9klUnpPn5zrGy+a6UW9Md7I2OTzKWqarLE1XQLwKaOa
-         +sZYOppp0pRpyQQiW19kKMWDOyaQuk8Jow2E0EwA0hBeGZHpTJ7BdGlqKJL5HX4DDR
-         UshOAz3mpTpfqn0pdW6eklQ2dugTVU5Vs8YOGgrg=
-From:   Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To:     Masahiro Yamada <yamada.masahiro@socionext.com>
-Cc:     linux-kbuild@vger.kernel.org,
-        Zhenzhong Duan <zhenzhong.duan@oracle.com>,
-        Michal Marek <michal.lkml@markovi.net>,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] kbuild: rpm-pkg: fix binrpm-pkg breakage when O= is used
-Date:   Sat, 17 Nov 2018 21:20:43 +0200
-Message-ID: <17334806.ITFQqvuZkQ@avalon>
-Organization: Ideas on Board Oy
-In-Reply-To: <1541404309-30210-1-git-send-email-yamada.masahiro@socionext.com>
-References: <1541404309-30210-1-git-send-email-yamada.masahiro@socionext.com>
+        Sun, 18 Nov 2018 01:01:52 -0500
+Received: by mail-ua1-f65.google.com with SMTP id z11so9425409uaa.10
+        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 11:44:10 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=mena-vt-edu.20150623.gappssmtp.com; s=20150623;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=oTrnDUNKyHpyhiGL04RKJoPYdkUOWMG77u97HirAZPs=;
+        b=DZqhi2jpx5GTAcx/nq/ntY+vk8TTxLrLV47/3Ztisc9mpglq/1WtsbmdKPECvepeRR
+         cUYdL2iPB01mvKzfleZwVv8mLfSwe6CP2dsq4VNZXXYRYpEZapHpKUmjh4xg7bozvSUp
+         1dDobxD1d/f9Prmk4yEXJTgvZ2fvcOz8Qfs2dJpNqkNzvaU+WYTUjtaPQSCn4vK9UsfT
+         k1Lgx4OE5rkAFXXgBQUPZjXn3jTLYeYIDBD4MBN6nzb0EvP5XtrM9oKxi4dOcyN0RsAp
+         pKyaDw3EDc4PerIcgW3Y9KHAB11iHkKvAIbkenu7R6LwWSfOGAab0jVV186vMpp8Ool+
+         qgAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=oTrnDUNKyHpyhiGL04RKJoPYdkUOWMG77u97HirAZPs=;
+        b=nNtGgLtReov2wBdw/WKy6c+YVbe6JRKSWLKBi1kL12bqkemMv2g0NOPxSygMsqJAJ+
+         D4/Bia8JK4Yt7Y5Lrcz/uP030L5shNw1IQWqd0Gakm3/8hENyJPBtCiTmWd38131VXXt
+         C1otQnmtx0pjicddznD9+9IM8OvevNcI3/wWukdNTlOsizSGgwqjQZtlfPEvCODntV/D
+         671AqXLwN5LIEDr8yTo/D7EMqyngQvPOTRUE7S7/0CBpzV3/z0JpZXs5uglcCJeodSQM
+         Dl/CRNqm0+z1nhaZh12j+fnoX670sIsfxChd2Vka9EYeUbh5w0RXVLj9vjanitlftrYd
+         C9Jw==
+X-Gm-Message-State: AGRZ1gJKz+j6pasIhKTimOcye6jkQ1tj4vrV2XW445sQ2aQMh4/vrrDI
+        YyBSXtN910xRzPDSPeBRky26Lj1ZrWznulgOxY5SVw==
+X-Google-Smtp-Source: AJdET5ffJgsOufbPxPMzYSh/eu65cdJHz895yQ0X/AFop5Ey+4QWma89CrmjEJ+8hUjJLwvWZLatQXLgaFP3MzuV994=
+X-Received: by 2002:ab0:1393:: with SMTP id m19mr6884326uae.75.1542483849905;
+ Sat, 17 Nov 2018 11:44:09 -0800 (PST)
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+References: <CANBxJ=EQOt1t=PkLsMvtfB2SbiLMPeGvFxB7SJXf7m3OkcionQ@mail.gmail.com>
+ <20181114180807.6crs7awhvo26ldbr@hawk.localdomain> <CADYN=9Jh10guVNFfhS8XH+RwZAouLJQu7Svg4+Tz3rQDexzDkg@mail.gmail.com>
+ <CANBxJ=G4xdF8ZOR4zyoX1edNa=jYxk1xrzoi+7Xgcqt9qDoM2w@mail.gmail.com>
+ <CANBxJ=EB8izWM8iLd49Uvd1z1O-gLvkGmiKNHjfHifFohj2xbg@mail.gmail.com>
+ <20181115090203.5z25gwa2yznj6mmu@kamzik.brq.redhat.com> <CANBxJ=EHkuxKFoQw=K21o=9_FMhi_=on=Poq+ZF37eieoKV4zg@mail.gmail.com>
+ <20181115145028.qijg7hjswcuabrt2@kamzik.brq.redhat.com> <CANBxJ=EGR=7RrO8ZtJFUwpNZRy_adjCObNtWtcMA=y4rLgeWaQ@mail.gmail.com>
+ <87efbmqore.fsf@vitty.brq.redhat.com> <CANBxJ=FDOpySC7w1fVbWCOy+ASO=A7WcsFiDJEcGtzWbYM6NqQ@mail.gmail.com>
+ <8736s1qh3d.fsf@vitty.brq.redhat.com>
+In-Reply-To: <8736s1qh3d.fsf@vitty.brq.redhat.com>
+From:   Ahmed Soliman <ahmedsoliman@mena.vt.edu>
+Date:   Sat, 17 Nov 2018 21:43:43 +0200
+Message-ID: <CANBxJ=FX01h6OZt=zApu6tz_enJxg_kXN+yb8_z52TzucU7H7Q@mail.gmail.com>
+Subject: Re: KVM selftests are failing
+To:     Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc:     Anders Roxell <anders.roxell@linaro.org>,
+        Shuah Khan <shuah@kernel.org>, linux-kselftest@vger.kernel.org,
+        Paolo Bonzini <pbonzini@redhat.com>,
+        Peter Xu <peterx@redhat.com>, linux-kernel@vger.kernel.org,
+        Andrew Jones <drjones@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi Yamada-san,
+On Fri, Nov 16, 2018 at 3:37 PM Vitaly Kuznetsov <vkuznets@redhat.com> wrote:
+>
+> Ahmed Soliman <ahmedsoliman@mena.vt.edu> writes:
+>
+> > Hello once again,
+> >
+> > I noticed that there is still more problems with kvmself test (at
+> > least on my machine)
+> >
+> > Any test that would successfully reach the guest's code immediately
+> > VMexit by a shutdown.
+> >
+> > $ ./vmx_tsc_adjust_test
+> > ==== Test Assertion Failure ====
+> >  x86_64/vmx_tsc_adjust_test.c:156: run->exit_reason == KVM_EXIT_IO
+> >  pid=8499 tid=8499 - Success
+> >     1  0x00005604f07bd36c: ?? ??:0
+> >     2  0x00007f5c0dc53ae6: ?? ??:0
+> >     3  0x00005604f07bd4b9: ?? ??:0
+> >  Got exit_reason other than KVM_EXIT_IO: 8 (SHUTDOWN)
+> >
+>
+> Hm, this is weird. Do other KVM users, e.g. qemu work on this host? Are
+> you sure this happens on the first VCPU_RUN invocation?
 
-On Monday, 5 November 2018 09:51:49 EET Masahiro Yamada wrote:
-> Zhenzhong Duan reported that running 'make O=/build/kernel binrpm-pkg'
-> failed with the following errors:
-> 
->   Running 'make O=/build/kernel binrpm-pkg' failed with below two errors.
-> 
->   Makefile:600: include/config/auto.conf: No such file or directory
-> 
->   + cp make -C /mnt/root/kernel O=/build/kernel image_name make -f
->   /mnt/root/kernel/Makefile ...
->   cp: invalid option -- 'C'
->   Try 'cp --help' for more information.
-> 
-> Prior to commit 80463f1b7bf9 ("kbuild: add --include-dir flag only
-> for out-of-tree build"), both objtree and srctree were added to
-> --include-dir, and the wrong code 'make image_name' was working
-> relying on that. Now, the potential issue that had previously been
-> hidden just showed up.
-> 
-> 'make image_name' recurses to the generated $(objtree)/Makefile and
-> ends up with running in srctree, which is incorrect. It should be
-> invoked with '-f $srctree/Makefile' (or KBUILD_SRC=) to be executed
-> in objtree.
+Yes and I have just tested:
+   qemu-system-x86_64 -enable-kvm -cpu host,+vmx -m 2G
 
-I (painfully) found out that a similar problem occurs with 'make bindeb-pkg'.
+And Linux as well as android for x86 booted up. Also I kinda have my
+kvm tests that works
+but they are not built on top of kvm selftest api.
 
-After spending half a day unsuccessfully trying to debug and fix the problem I 
-ran across this patch. The naive approach of mimicking the solution and adding 
-'MAKE="$MAKE -f $srctree/Makefile"' at the top of scripts/package/builddeb 
-didn't work. Reverting commit 80463f1b7bf9 fixed the problem.
+> Could you try doing
+>
+> trace-cmd record -e kvm  ./x86_64/vmx_tsc_adjust_test && trace-cmd report
+>
+> to see if there's anything suspicious?
 
-Would you be able to give it a look ? I'm afraid my limited skills related to 
-the kernel build system don't allow me to submit a fix :-S
+Yes, there is a triple fault induced shutdown probably during EPT handling:
 
-> Fixes: 80463f1b7bf9 ("kbuild: add --include-dir flag only for out-of-tree
-> build") Reported-by: Zhenzhong Duan <zhenzhong.duan@oracle.com>
-> Signed-off-by: Masahiro Yamada <yamada.masahiro@socionext.com>
-> ---
-> 
->  scripts/package/mkspec | 11 ++++++-----
->  1 file changed, 6 insertions(+), 5 deletions(-)
-> 
-> diff --git a/scripts/package/mkspec b/scripts/package/mkspec
-> index e05646d..009147d 100755
-> --- a/scripts/package/mkspec
-> +++ b/scripts/package/mkspec
-> @@ -12,6 +12,7 @@
->  # how we were called determines which rpms we build and how we build them
->  if [ "$1" = prebuilt ]; then
->  	S=DEL
-> +	MAKE="$MAKE -f $srctree/Makefile"
->  else
->  	S=
->  fi
-> @@ -78,19 +79,19 @@ $S	%prep
->  $S	%setup -q
->  $S
->  $S	%build
-> -$S	make %{?_smp_mflags} KBUILD_BUILD_VERSION=%{release}
-> +$S	$MAKE %{?_smp_mflags} KBUILD_BUILD_VERSION=%{release}
->  $S
->  	%install
->  	mkdir -p %{buildroot}/boot
->  	%ifarch ia64
->  	mkdir -p %{buildroot}/boot/efi
-> -	cp \$(make image_name) %{buildroot}/boot/efi/vmlinuz-$KERNELRELEASE
-> +	cp \$($MAKE image_name) %{buildroot}/boot/efi/vmlinuz-$KERNELRELEASE
->  	ln -s efi/vmlinuz-$KERNELRELEASE %{buildroot}/boot/
->  	%else
-> -	cp \$(make image_name) %{buildroot}/boot/vmlinuz-$KERNELRELEASE
-> +	cp \$($MAKE image_name) %{buildroot}/boot/vmlinuz-$KERNELRELEASE
->  	%endif
-> -$M	make %{?_smp_mflags} INSTALL_MOD_PATH=%{buildroot} KBUILD_SRC=
-> modules_install -	make %{?_smp_mflags} INSTALL_HDR_PATH=%{buildroot}/usr
-> KBUILD_SRC= headers_install +$M	$MAKE %{?_smp_mflags}
-> INSTALL_MOD_PATH=%{buildroot} modules_install +	$MAKE %{?_smp_mflags}
-> INSTALL_HDR_PATH=%{buildroot}/usr headers_install cp System.map
-> %{buildroot}/boot/System.map-$KERNELRELEASE
->  	cp .config %{buildroot}/boot/config-$KERNELRELEASE
->  	bzip2 -9 --keep vmlinux
+ vmx_tsc_adjust_-17638 [001] 15628.729863: kvm_update_master_clock:
+masterclock 0 hostclock tsc offsetmatched 0
+vmx_tsc_adjust_-17638 [001] 15628.730820: kvm_write_tsc_offset: vcpu=5
+prev=0 next=18446733817569215369
+vmx_tsc_adjust_-17638 [001] 15628.730822: kvm_track_tsc:
+vcpu_id 5 masterclock 0 offsetmatched 0 nr_online 1 hostclock tsc
+vmx_tsc_adjust_-17638 [001] 15628.730911: kvm_fpu:              load
+vmx_tsc_adjust_-17638 [001] 15628.730913: kvm_update_master_clock:
+masterclock 1 hostclock tsc offsetmatched 1
+vmx_tsc_adjust_-17638 [001] 15628.730954: kvm_entry:            vcpu 5
+vmx_tsc_adjust_-17638 [001] 15628.730974: kvm_exit:             reason
+EPT_VIOLATION rip 0x56545f0b8760 info 83 0
+vmx_tsc_adjust_-17638 [001] 15628.730976: kvm_page_fault:
+address 180560 error_code 83
+vmx_tsc_adjust_-17638 [001] 15628.730989: kvm_entry:            vcpu 5
+vmx_tsc_adjust_-17638 [001] 15628.730992: kvm_exit:             reason
+TRIPLE_FAULT rip 0x56545f0b8760 info 0 0
+vmx_tsc_adjust_-17638 [001] 15628.730993: kvm_fpu:              unload
+vmx_tsc_adjust_-17638 [001] 15628.730996: kvm_userspace_exit:   reason
+KVM_EXIT_SHUTDOWN (8)
+vmx_tsc_adjust_-17638 [002] 15628.739237: kvm_hv_stimer_cleanup:
+vcpu_id 5 timer 0
+vmx_tsc_adjust_-17638 [002] 15628.739244: kvm_hv_stimer_cleanup:
+vcpu_id 5 timer 1
+vmx_tsc_adjust_-17638 [002] 15628.739244: kvm_hv_stimer_cleanup:
+vcpu_id 5 timer 2
+vmx_tsc_adjust_-17638 [002] 15628.739245: kvm_hv_stimer_cleanup:
+vcpu_id 5 timer 3
 
--- 
-Regards,
+I will try to dive into them after my midterms are over(ends tomorrow)
+but I would need to verify that someone else can
+reproduce this, I tried bisecting but it seams that this bug was there
+from kvmselftests commit one
+(rebuilt kernel, kvm and the kvm selftests each time).
 
-Laurent Pinchart
-
-
-
+Thanks,
