@@ -1,290 +1,539 @@
-Return-Path: <SRS0=A7nN=N3=vger.kernel.org=linux-kernel-owner@kernel.org>
+Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-10.5 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
-	DKIM_VALID,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT autolearn=ham
-	autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-6.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,
+	SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id C74FAC43441
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:58:08 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 08DCBC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:17:17 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5407720883
-	for <linux-kernel@archiver.kernel.org>; Fri, 16 Nov 2018 23:58:08 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 975B320858
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:17:16 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=xilinx.onmicrosoft.com header.i=@xilinx.onmicrosoft.com header.b="nWiE21jq"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5407720883
-Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=xilinx.com
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fO3FFWgE"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 975B320858
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730894AbeKQKMW (ORCPT
+        id S1729934AbeKQKbm (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 05:12:22 -0500
-Received: from mail-eopbgr790083.outbound.protection.outlook.com ([40.107.79.83]:30871
-        "EHLO NAM03-CO1-obe.outbound.protection.outlook.com"
-        rhost-flags-OK-OK-OK-FAIL) by vger.kernel.org with ESMTP
-        id S1729502AbeKQKLq (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 05:11:46 -0500
+        Sat, 17 Nov 2018 05:31:42 -0500
+Received: from mail-lj1-f195.google.com ([209.85.208.195]:46134 "EHLO
+        mail-lj1-f195.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1729703AbeKQKbl (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 05:31:41 -0500
+Received: by mail-lj1-f195.google.com with SMTP id v15-v6so21783319ljh.13;
+        Fri, 16 Nov 2018 16:17:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=xilinx.onmicrosoft.com; s=selector1-xilinx-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=h8pKI2Sgxgw6P1UOEJpvkbjw7/KuE3n2WwJEABbodG8=;
- b=nWiE21jqPAy5+fdr2u+efw5ihnW3vEHXnNCPz+upgaYoX1EH3XyYaFb1x9PeecHOBPxNQmPZnk1NPKq3ClEo7GZYGH3l+eqC64oUAHE/jwHlClw/KK8BWo1SxnYKcw40GooDTAWbve3SW/SEDycrCJcJ9NWPnnY0ds1+tFe4x5c=
-Received: from BYAPR02CA0002.namprd02.prod.outlook.com (2603:10b6:a02:ee::15)
- by CY4PR0201MB3508.namprd02.prod.outlook.com (2603:10b6:910:95::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1294.27; Fri, 16 Nov
- 2018 23:57:14 +0000
-Received: from SN1NAM02FT052.eop-nam02.prod.protection.outlook.com
- (2a01:111:f400:7e44::203) by BYAPR02CA0002.outlook.office365.com
- (2603:10b6:a02:ee::15) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.1339.20 via Frontend
- Transport; Fri, 16 Nov 2018 23:57:14 +0000
-Authentication-Results: spf=pass (sender IP is 149.199.60.83)
- smtp.mailfrom=xilinx.com; vger.kernel.org; dkim=none (message not signed)
- header.d=none;vger.kernel.org; dmarc=bestguesspass action=none
- header.from=xilinx.com;
-Received-SPF: Pass (protection.outlook.com: domain of xilinx.com designates
- 149.199.60.83 as permitted sender) receiver=protection.outlook.com;
- client-ip=149.199.60.83; helo=xsj-pvapsmtpgw01;
-Received: from xsj-pvapsmtpgw01 (149.199.60.83) by
- SN1NAM02FT052.mail.protection.outlook.com (10.152.72.146) with Microsoft SMTP
- Server (version=TLS1_0, cipher=TLS_RSA_WITH_AES_256_CBC_SHA) id 15.20.1339.15
- via Frontend Transport; Fri, 16 Nov 2018 23:57:13 +0000
-Received: from unknown-38-66.xilinx.com ([149.199.38.66] helo=xsj-pvapsmtp01)
-        by xsj-pvapsmtpgw01 with esmtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1gNnz7-0007TO-B7; Fri, 16 Nov 2018 15:57:13 -0800
-Received: from [127.0.0.1] (helo=localhost)
-        by xsj-pvapsmtp01 with smtp (Exim 4.63)
-        (envelope-from <jolly.shah@xilinx.com>)
-        id 1gNnz2-0006qO-7q; Fri, 16 Nov 2018 15:57:08 -0800
-Received: from xsj-pvapsmtp01 (maildrop.xilinx.com [149.199.38.66])
-        by xsj-smtp-dlp1.xlnx.xilinx.com (8.13.8/8.13.1) with ESMTP id wAGNv5AD015448;
-        Fri, 16 Nov 2018 15:57:05 -0800
-Received: from [172.19.2.91] (helo=xsjjollys50.xilinx.com)
-        by xsj-pvapsmtp01 with esmtp (Exim 4.63)
-        (envelope-from <jollys@xilinx.com>)
-        id 1gNnyy-0006pL-VQ; Fri, 16 Nov 2018 15:57:05 -0800
-From:   Jolly Shah <jolly.shah@xilinx.com>
-To:     <robh+dt@kernel.org>, <mark.rutland@arm.com>
-CC:     <michal.simek@xilinx.com>, <rajanv@xilinx.com>,
-        <nava.manne@xilinx.com>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        Jolly Shah <jollys@xilinx.com>,
-        Anurag Kumar Vulisha <anuragku@xilinx.com>
-Subject: [PATCH 7/9] dt-bindings: phy: Add dt bindings for ZynqMP PHY
-Date:   Fri, 16 Nov 2018 15:56:57 -0800
-Message-ID: <1542412619-387-8-git-send-email-jollys@xilinx.com>
-X-Mailer: git-send-email 2.7.4
-In-Reply-To: <1542412619-387-1-git-send-email-jollys@xilinx.com>
-References: <1542412619-387-1-git-send-email-jollys@xilinx.com>
-X-RCIS-Action: ALLOW
-X-TM-AS-Product-Ver: IMSS-7.1.0.1224-8.2.0.1013-23620.005
-X-TM-AS-User-Approved-Sender: Yes;Yes
-X-EOPAttributedMessage: 0
-X-MS-Office365-Filtering-HT: Tenant
-X-Forefront-Antispam-Report: CIP:149.199.60.83;IPV:NLI;CTRY:US;EFV:NLI;SFV:NSPM;SFS:(10009020)(136003)(39860400002)(396003)(346002)(376002)(2980300002)(438002)(189003)(199004)(47776003)(316002)(63266004)(575784001)(5660300001)(2906002)(107886003)(26005)(72206003)(106002)(4326008)(7696005)(106466001)(305945005)(51416003)(76176011)(36756003)(186003)(6666004)(50226002)(9786002)(54906003)(336012)(11346002)(426003)(478600001)(446003)(81156014)(8676002)(36386004)(81166006)(476003)(2616005)(126002)(356004)(44832011)(8936002)(486006)(110136005)(16586007)(50466002)(48376002)(77096007)(107986001);DIR:OUT;SFP:1101;SCL:1;SRVR:CY4PR0201MB3508;H:xsj-pvapsmtpgw01;FPR:;SPF:Pass;LANG:en;PTR:unknown-60-83.xilinx.com;MX:1;A:1;
-X-Microsoft-Exchange-Diagnostics: 1;SN1NAM02FT052;1:QJw48ACVzDSmbCS/EhYmF0zWPlAiL1X6DnzFzTFi7oYQFWtBhXuOPwU+oLYyEsBzvZLiYIY0qpP5eIFrKGw6wP/5o5AB/C4jCS+xK9ChCym8T6PU4Gj5jRNtGVV5Zj2Z
+        d=gmail.com; s=20161025;
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc:content-transfer-encoding;
+        bh=lDfa0mHN08T2cOPwM7SOIC9UUG+TytyKppY6Yp8IiAg=;
+        b=fO3FFWgE2hM7WQIs+N/xhmJp1k8riqmXrvrpGzjIINTsqP6wPgmARQvHOpo8UXzud8
+         YVp5Y5y+BFJFovLx2VgapAwN52sFnumobAiMpSDXcQ6KvP8VrahkggEQe44mrKmrNdMb
+         59D50D0/+1jRh19X3B+fYxpTfljoh8TFyMSw+jjp4qsJ/jZobK6HAmdl7ABGIRfbc11B
+         F3p11LX+QvgwonVP3My+Hpzdc+3jw5lfK/ywdikYakdviZPtFaHigImkG66FvTuJZq07
+         rQFlbfeEaOmWIJBviSVQBU9n4DWzN6ujjSQ0YDjvIZ0kZGuvE4S4vNqtJXDi5kOFneny
+         nL8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20161025;
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc:content-transfer-encoding;
+        bh=lDfa0mHN08T2cOPwM7SOIC9UUG+TytyKppY6Yp8IiAg=;
+        b=lmVl4W+qYKO4DD99b1jt8tFtF/ANDgync82GPmnUys7VvD54OgfISjHRdwHrXZWI1l
+         JFx/rBSr3lbzoFplciPBCEvwGDiUa1ItPXXLxGF9GSsmxY3gezRa0XIEy/Snqp/Ky2xQ
+         VsCb59eSdXuGRu36+gCiA6Vq/2sPdH5kAKsZz/C06PqQVkAlVBEZjw5v3AT5jrof8Qgk
+         pQoULcFNv+taz1t4m954V/GKOOctVq0b1Xe2zD6M1q4cj2SSM52iIHHrpAyj5Wv+GU54
+         Wdks/3HR9YlRxHeFwOjuAkXtDK4xjURXXen/zj0czI1b15PV3LN3n8e//ReMkzQJnX4g
+         qQ3g==
+X-Gm-Message-State: AGRZ1gIzvGiuE/DD+kTdEu4DA1SoiJP33Z3xL30W34/9NOywtZjNkPqv
+        T0lZZzDcCpgAyDrbjOryLJB3r+5q93HzcY+UfQ==
+X-Google-Smtp-Source: AJdET5cIRNV6B6BdTrVk0X0/x0nmEHrlv0O9VkKAbniiMp/DdZrtoTt5nX6mkAFEduv4pRfWUaj6CHqSXJDPEHeVyV0=
+X-Received: by 2002:a2e:7403:: with SMTP id p3-v6mr7158016ljc.97.1542413826999;
+ Fri, 16 Nov 2018 16:17:06 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id: 8909c2b2-713a-4ed8-9abf-08d64c1f3b39
-X-Microsoft-Antispam: BCL:0;PCL:0;RULEID:(2390098)(7020095)(4652040)(8989299)(5600074)(711020)(4608076)(4534185)(4627221)(201703031133081)(201702281549075)(8990200)(2017052603328)(7153060);SRVR:CY4PR0201MB3508;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3508;3:5jPZtnp6Q9WAGB7WKu6JXjqnzlDD4tC1KIDikbwJG5s7CH5uSsr2tPCu3mF0yv1mW1hGS5MLPhcymXAouxSqJrbTdeKCzH0Mp4aYAUzxmfkYItEUb4wAPDqhKSqJxd8P8PDwhMLfWON8yijDaSoe4Mwgp+/u3Z4FpbyYAk/uOY+vm/uLutFvy1hlpl9SUbocVK1r1wq+lNZTVdPgl6VS181ytmCphzuGo4OCv34usJbx6sLqMaVNKMrX6s/4JjruuX+TpLEtUe6oeHOUQaKnNYHRtVOjPj44vp7joEHAS+bfupcZXFcB5pQyRROvavowuGwM68pKGihySkT4rC8ul24UfdSjWhp3OVXzitIhALM=;25:ohnrjzLFy9wdoj+8PYJL9jJ+6ZygH/cYFjx5kxw/bkP5UsNJBrL+ENYmMrYQYV1ksxe8OICUiVJZKY9ipb3D+8vsCDvj6JaMUUW9mV6HenMvzztbhjbvGe1A/VJLRE3ZKkFcdzBXtAw5mgH0XcjDRVPnPoF01jTmzfuDuKkD9zZk8Bg4MR8gD6AVzlJu136k3ErMSEc8BgMABCCPYtGgztd8RUj1+No5k+U6pvcTxmSsNZ+02cTYBS/9N+Kc4zyKk55nAQiCYZdOwl2/wcmoL0mZSDi1vGjxeNbxvH8RzraknZPqTbz1hCGjTm1iXfOhHRSR47/Z8bAhCQwaIv8IfGMAw0WSflriVoO/sAdiETc=
-X-MS-TrafficTypeDiagnostic: CY4PR0201MB3508:
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3508;31:1CMGDu21tppfkwppxqrXJ4RKEe8axlfETt36UisJ4rvPMpnG9gNrU9evrKEzlF8IfLZ3aSOnhNMYKlh4jxr7eEeyR99VZN6NrsEdFuxzLVOquIP6IDmq504ejcFBkTKIiK34ysVd8mnlrzYZFNDSJmVR0W8ooXpAWzVFVGk0gEgDLjezb2dS1tM9LSRxuRSIVTJ+GEn6Yr/aWMwo655N2j/Rlo5WxF/Zrxd4kza0igs=;20:3Wmx3+1CufmZTWl1+abEVLdlHi7AqU7vf6zrIC1WL7IZGuZCQCC8PDdas2gaQDmXesjn8X1H0PyciZwneu+wptJmCs+JxWGJLpCtOUrCeCLcir9ZPLmKiIPAY43fMRk1UNzmG/RsDmHxFky2uXPwgZ+KbkvxJ7mKXy7uAdBpz90DWbj37U6RL6TlVaol/U0Ri9PdtCWfNCcFQUoM2PzXIGb8CWKFLe0FYUbgzZyByxjesAMZYW5b5dvktXSuDd6QbLlOeFYz5OPOB2R3y40E6QxQdIhml+8KFWaSr2Cnv26SNJXO3fd8t4HsKZbHxEi043gHK2Hk6E0k+shAKxG8gJdUiFs9HmZFpV+TpWcyfGtTo7wNsm7YIx3hZFvErhTJu4IJNzuTS3b2YCJx4IAFon9o0VcEiyY9dwimitZ4hSif7NREUUensWfIdeRO1yfwc+TpB+740AQjhquaWJKSk+7cWX9dJovQqLykjsLBLlbtMJXe57Wkv9kyYq2lZq2R
-X-Auto-Response-Suppress: DR, RN, NRN, OOF, AutoReply
-X-Microsoft-Antispam-PRVS: <CY4PR0201MB35085FBB5F2240C47B2AD2FCB8DD0@CY4PR0201MB3508.namprd02.prod.outlook.com>
-X-Exchange-Antispam-Report-Test: UriScan:(192813158149592)(269456686620040);
-X-MS-Exchange-SenderADCheck: 1
-X-Exchange-Antispam-Report-CFA-Test: BCL:0;PCL:0;RULEID:(8211001083)(6040522)(2401047)(8121501046)(5005006)(10201501046)(3002001)(3231415)(944501410)(52105112)(93006095)(93004095)(6055026)(148016)(149066)(150057)(6041310)(201703131423095)(201702281528075)(20161123555045)(201703061421075)(201703061406153)(20161123562045)(20161123558120)(20161123560045)(20161123564045)(201708071742011)(7699051)(76991095);SRVR:CY4PR0201MB3508;BCL:0;PCL:0;RULEID:;SRVR:CY4PR0201MB3508;
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3508;4:kl1GMtxoAeGiSseSia/RDtkx8oqIaQFVv7mEQHsUFUl63WY2XWHUm6W8+T+ZLHvcZL+yTzz2sY3bmb0cZ16rFR3kXUVBBpeZ5WGXZM8v30NIT+/PhANzd4GSMj1/UMImgJQ/M/6Hd5B5OwNoONTKg4qFGAb7LMCZxeeSxc/Cn/4QJOxovKiAJEJm/1flj9jKqRQY51xXmN7VOL0NoEHtE4zDUrQ7rEs/WjhofPtwuLA2nvYQx1Sav/wqEr32fq4d4EhRWLV8G7xK1wFMVjPXInbrfR74hXIViRvwoW+yoKvt64hqRh39boCpzJzC/w7z3YCyxYJVZmpXCia5vYdii6oZdpcK9qHGuW2Sdc3N6h8=
-X-Forefront-PRVS: 0858FF8026
-X-Microsoft-Exchange-Diagnostics: =?us-ascii?Q?1;CY4PR0201MB3508;23:PmSj0ciiGg7Z2Pzrj4pcehavy0+xQczCwswmFDv?=
- =?us-ascii?Q?uq8EOn8NPpVysaRYBHLSETfHd00O1TY+7U/UNjxB//3CE8L6oZKGQQQq8pt2?=
- =?us-ascii?Q?nZ2YxtQTJAmnnMO4AxtX4hsF5EK6XKto0O95QJuFCvv6eb0pFWwadHSYYy6e?=
- =?us-ascii?Q?DBacXY8HqonDTWMa1f+LljwVvIY11LCZLk+czudwAR85vU/PySTqDvAOJWSM?=
- =?us-ascii?Q?ZsmGAfbqzuo9UrFDm1oMx8hVxmtHHKKL+9O3jnZ4ZnnE5znU2o9fOeaFosU4?=
- =?us-ascii?Q?MaGPJzll32MBGqniaJS2AWn1r0X1KP5iFc40k9d+3mNIx/O89xz2Ol7pjNgK?=
- =?us-ascii?Q?G+v6yCkvh1+7ZUD1fuIEfMnSGO4kIvTP4sNYVef9bXm0AqbrzzmE+X0rZ8hN?=
- =?us-ascii?Q?WeUWXph41TCrI7sqDllDVKnVYZ245Rd4kpzbRlEbzGcvUfSDbQw5/wN0eqkA?=
- =?us-ascii?Q?NoM19KP7Pu00FqmvRKwq0pS12NILux/A/wzkirPQiN15z4wlVi+U4l2Fbvgk?=
- =?us-ascii?Q?tiB4QtfMui5J+YfZJO13Be2+UXPKzsC+XLA/ThwdU8GXYN4YY2viCg055C2J?=
- =?us-ascii?Q?T8R/IRKMJlAaNm3Va76ysESRbz6kdwDgmIncgPV1lMF/TKoqlHP2GTayiqKY?=
- =?us-ascii?Q?a7ZS3H0fnxC1hOsvCHIeSbrHPS8NEBGsK6Kqh41NwycpRaXNAHyGySNgwvPd?=
- =?us-ascii?Q?6+1vhKWfutwz678Q+jWZl21uTDUDNbuqYwQ8rayXAubu7URywypqpAIwxfD1?=
- =?us-ascii?Q?ZLPhIAtclyFJxhsovm7FlG8xQVbzQVV4k5+W287HOgDFtkZ8pn6YqjIAVryK?=
- =?us-ascii?Q?hy/lleVCthZXXL9Ty0cL0bFw9eAHUYJ0QEFRtO20uFNk8ZrC9jx0X7yEljVF?=
- =?us-ascii?Q?uqT8sc8ZxYI01OkV8EenaOp2xmzTTevLg8uVBvdRMVFQ+Vz7+5wGBs5Nl5gu?=
- =?us-ascii?Q?c8iIJo4n9S3stTcW+hMoaKybkL1aUZpoc2/3LI7+t4lmCjtJrHGLrVNMB00z?=
- =?us-ascii?Q?VDJHw64z5NhbR5WsglgYpKY9WaIUzr662crLbaTMp9L0rYlvaOoiSQ5oqAv2?=
- =?us-ascii?Q?EZZmFa7oF+Rv7da0b2eMatOD3xMyBfr5hE06jKR+kwtd+3SdaGMqigu9ffd/?=
- =?us-ascii?Q?j0bxoVZvoOwvvLvkHPxynJ7hjhZTOBl7G+hLEHBdL5zzVfmJk8yxMeg=3D?=
- =?us-ascii?Q?=3D?=
-X-Microsoft-Antispam-Message-Info: 47cTAds2PrzhV+KlpRutE0t33Ki/5sVUbu6H5YigITYk36m7kvxgtpw9DMkhDUZl+hQGTmIGnhNhMUlSbWAl3jhJDRa+zFqRDVcI1gtbt7g3jtzGAsQUZ6a6Q0o6dGWfrK28EKBOnOGsBKEscLgAUYxCitUlvkuyHUVav/frPGzSsV0rn7OETAgS6LY8PGWm5DiUkSPgn+E+KOQtDiuatA4d1AXt3wNzu+ll4UpmpvqGJUxDNPfldKfMvzRrCwUNApoopJUqN9oE0d4sMRpQxOE0WRFMo5my6g9KBCgs/9uPZo6JyW1yH0mQjBmoMRTavc6EhFFQvxVcMH5Txkp8QnScJ/zkNi5bxvhO+EIOuEI=
-X-Microsoft-Exchange-Diagnostics: 1;CY4PR0201MB3508;6:c1wP+9UHmR1MHYZEIUzwVENK7OBQh1o+UGkgaWuefGJyZxpMgCIPunaHverni7szPI3BXhspvHWiwvIBcQdVPCt2QflBztAiN7GA/I4qwJ5J4lsYFp7ZCtZdsE8rLhZf9spFXHWMkDeSntAH3uDbODpmi4k24O6jnQehmB9g6abhP0Z6jmkJGw3SsXzJbU7a1Hjukhu4OY/Wgs26qsCm9+wqDgdwkRi0M8LxFwuA1LdK9hM3iOauF39kV5dVh2pLsYwh7NBYDeKAWuoeFzhbN40wTN2uWK2WLillhkO/9s4GS6wDz0fb0OH5G8zMkz7z3JyyudXS5TrNeVO2uyaHZUZbl6rvSvpkWtwGM0vKAXNDma2whM0HwbA8Nc7UpcQ9iAq6IxpQxb3/ts8aIMVoTrf9cJIr+EhKrPJic4VLKHWpLDz8cEPHaFQzTevO2x1h2DczbsNC2CQ5lF+TaFEIxA==;5:BBYmvPyo/p75625zlU89iv8pazKhFWn6SzTdtThO+POLc7M8sTZ3iCjkoBFSu0G0NcKI/oq1BeejfjYgXzaGg2FxLZ+nMyQl4AUhTCkDVL5tBNvSritK7UVifKgdYvreQpY7uZesnADPiYE3ECv+3XSS0x+ZAzmfeO5bw+Z/N0Y=;7:XXi0CHNRNPWUO7I0rK7bsRP3FNckLuNENlE5NoWe6/dUlfb5PcFgPqY/dcPE8Ex8UvrOXQ0qsQj4RgE3/yt2hmPUCvoFVgopo6XrI5CdjX5enpN6LLgoNwjxyBaIcp8WpaVnH5C88OCcoIRzCNSTCg==
-SpamDiagnosticOutput: 1:99
-SpamDiagnosticMetadata: NSPM
-X-OriginatorOrg: xilinx.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 16 Nov 2018 23:57:13.7081
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 8909c2b2-713a-4ed8-9abf-08d64c1f3b39
-X-MS-Exchange-CrossTenant-Id: 657af505-d5df-48d0-8300-c31994686c5c
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=657af505-d5df-48d0-8300-c31994686c5c;Ip=[149.199.60.83];Helo=[xsj-pvapsmtpgw01]
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY4PR0201MB3508
+References: <20181031221311.2596-1-longli@linuxonhyperv.com>
+In-Reply-To: <20181031221311.2596-1-longli@linuxonhyperv.com>
+From:   Pavel Shilovsky <piastryyy@gmail.com>
+Date:   Fri, 16 Nov 2018 16:16:55 -0800
+Message-ID: <CAKywueSjVA=hwM7QCQqY_g_XNKonGWK9c+q4oHmdm0dWAdZCzg@mail.gmail.com>
+Subject: Re: [Patch v4 1/3] CIFS: Add support for direct I/O read
+To:     Long Li <longli@microsoft.com>
+Cc:     Steve French <sfrench@samba.org>,
+        linux-cifs <linux-cifs@vger.kernel.org>,
+        samba-technical <samba-technical@lists.samba.org>,
+        Kernel Mailing List <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-This patch adds the document describing dt bindings for ZynqMP
-PHY. ZynqMP SOC has a High Speed Processing System Gigabit
-Transceiver which provides PHY capabilties to USB, SATA,
-PCIE, Display Port and Ehernet SGMII controllers.
+Hi Long,
 
-Signed-off-by: Anurag Kumar Vulisha <anuragku@xilinx.com>
-Signed-off-by: Jolly Shah <jollys@xilinx.com>
-Signed-off-by: Michal Simek <michal.simek@xilinx.com>
----
- .../devicetree/bindings/phy/phy-zynqmp.txt         | 126 +++++++++++++++++++++
- 1 file changed, 126 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/phy/phy-zynqmp.txt
+Please find my comments below.
 
-diff --git a/Documentation/devicetree/bindings/phy/phy-zynqmp.txt b/Documentation/devicetree/bindings/phy/phy-zynqmp.txt
-new file mode 100644
-index 0000000..21cb722
---- /dev/null
-+++ b/Documentation/devicetree/bindings/phy/phy-zynqmp.txt
-@@ -0,0 +1,126 @@
-+Xilinx ZynqMP PHY binding
-+
-+This binding describes a ZynqMP PHY device that is used to control ZynqMP
-+High Speed Gigabit Transceiver(GT). ZynqMP PS GTR provides four lanes
-+and are used by USB, SATA, PCIE, Display port and Ethernet SGMMI controllers.
-+
-+Required properties (controller (parent) node):
-+- compatible	: Can be "xlnx,zynqmp-psgtr-v1.1" or "xlnx,zynqmp-psgtr"
-+		  "xlnx,zynqmp-psgtr-v1.1" has the lpd address mapping removed
-+
-+- reg           : Address and length of register sets for each device in
-+                  "reg-names"
-+- reg-names     : The names of the register addresses corresponding to the
-+		  registers filled in "reg":
-+			- serdes: SERDES block register set
-+			- siou: SIOU block register set
-+			- lpd: Low power domain peripherals reset control
-+
-+Required nodes	:  A sub-node is required for each lane the controller
-+		   provides.
-+
-+Required properties (port (child) nodes):
-+lane0:
-+- #phy-cells	: Should be 4
-+		  Cell after port phandle is device type from:
-+			- <PHY_TYPE_PCIE 0 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_SATA 0 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_USB3 0 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_DP 1 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_SGMII 0 LANE_NUM FREQUENCY>
-+lane1:
-+- #phy-cells	: Should be 4
-+		  Cell after port phandle is device type from:
-+			- <PHY_TYPE_PCIE 1 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_SATA 1 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_USB3 0 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_DP 0 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_SGMII 1 LANE_NUM FREQUENCY>
-+lane2:
-+- #phy-cells	: Should be 4
-+		  Cell after port phandle is device type from:
-+			- <PHY_TYPE_PCIE 2 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_SATA 0 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_USB3 0 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_DP 1 LANE_NUM FREQUENC>
-+			- <PHY_TYPE_SGMII 2 LANE_NUM FREQUENCY>
-+lane3:
-+- #phy-cells	: Should be 4
-+		  Cell after port phandle is device type from:
-+			- <PHY_TYPE_PCIE 3 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_SATA 1 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_USB3 1 LANE_NUM FREQUENCY >
-+			- <PHY_TYPE_DP 0 LANE_NUM FREQUENCY>
-+			- <PHY_TYPE_SGMII 3 LANE_NUM FREQUENCY>
-+
-+Note:	LANE_NUM : This determines which lane's reference clock is shared by controller.
-+	FREQUENCY: This the clock frequency at which controller wants to operate.
-+
-+
-+Example:
-+firmware {
-+	zynqmp_firmware: zynqmp-firmware {
-+		compatible = "xlnx,zynqmp-firmware";
-+		method = "smc";
-+
-+		serdes: zynqmp_phy@fd400000 {
-+			compatible = "xlnx,zynqmp-psgtr";
-+			status = "okay";
-+			reg = <0x0 0xfd400000 0x0 0x40000>, <0x0 0xfd3d0000 0x0 0x1000>,
-+				<0x0 0xff5e0000 0x0 0x1000>;
-+			reg-names = "serdes", "siou", "lpd";
-+
-+			lane0: lane@0 {
-+				#phy-cells = <4>;
-+			};
-+			lane1: lane@1 {
-+				#phy-cells = <4>;
-+			};
-+			lane2: lane@2 {
-+				#phy-cells = <4>;
-+			};
-+			lane3: lane@3 {
-+				#phy-cells = <4>;
-+			};
-+		};
-+	};
-+};
-+
-+Specifying phy control of devices
-+=================================
-+
-+Device nodes should specify the configuration required in their "phys"
-+property, containing a phandle to the phy port node and a device type.
-+
-+phys = <PHANDLE CONTROLLER_TYPE CONTROLLER_INSTANCE LANE_NUM LANE_FREQ>;
-+
-+PHANDLE                 = &lane0 or &lane1 or &lane2 or &lane3
-+CONTROLLER_TYPE         = PHY_TYPE_PCIE or PHY_TYPE_SATA or PHY_TYPE_USB
-+			  or PHY_TYPE_DP or PHY_TYPE_SGMII
-+CONTROLLER_INSTANCE     = Depends on controller type used, can be any of
-+				PHY_TYPE_PCIE : 0 or 1 or 2 or 3
-+				PHY_TYPE_SATA : 0 or 1
-+				PHY_TYPE_USB  : 0 or 1
-+				PHY_TYPE_DP   : 0 or 1
-+				PHY_TYPE_SGMII: 0 or 1 or 2 or 3
-+LANE_NUM                = Depends on which lane clock is used as ref clk, can be
-+			  0 or 1 or 2 or 3
-+LANE_FREQ               = Frequency that controller can operate, can be any of
-+			  19.2Mhz,20Mhz,24Mhz,26Mhz,27Mhz,28.4Mhz,40Mhz,52Mhz,
-+			  100Mhz,108Mhz,125Mhz,135Mhz,150Mhz
-+
-+Example:
-+
-+#include <dt-bindings/phy/phy.h>
-+
-+	usb@fe200000 {
-+		...
-+		phys	  = <&lane2 PHY_TYPE_USB3 0 2 2600000>;
-+		...
-+	};
-+
-+	ahci@fd0c0000 {
-+		...
-+		phys	  = <&lane3 PHY_TYPE_SATA 1 1 125000000>;
-+		...
-+	};
--- 
-2.7.4
 
+=D1=81=D1=80, 31 =D0=BE=D0=BA=D1=82. 2018 =D0=B3. =D0=B2 15:14, Long Li <lo=
+ngli@linuxonhyperv.com>:
+>
+> From: Long Li <longli@microsoft.com>
+>
+> With direct I/O read, we transfer the data directly from transport layer =
+to
+> the user data buffer.
+>
+> Change in v3: add support for kernel AIO
+>
+> Change in v4:
+> Refactor common read code to __cifs_readv for direct and non-direct I/O.
+> Retry on direct I/O failure.
+>
+> Signed-off-by: Long Li <longli@microsoft.com>
+> ---
+>  fs/cifs/cifsfs.h   |   1 +
+>  fs/cifs/cifsglob.h |   5 ++
+>  fs/cifs/file.c     | 219 +++++++++++++++++++++++++++++++++++++++++++----=
+------
+>  3 files changed, 186 insertions(+), 39 deletions(-)
+>
+> diff --git a/fs/cifs/cifsfs.h b/fs/cifs/cifsfs.h
+> index 5f02318..7fba9aa 100644
+> --- a/fs/cifs/cifsfs.h
+> +++ b/fs/cifs/cifsfs.h
+> @@ -102,6 +102,7 @@ extern int cifs_open(struct inode *inode, struct file=
+ *file);
+>  extern int cifs_close(struct inode *inode, struct file *file);
+>  extern int cifs_closedir(struct inode *inode, struct file *file);
+>  extern ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to);
+> +extern ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to=
+);
+>  extern ssize_t cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to=
+);
+>  extern ssize_t cifs_user_writev(struct kiocb *iocb, struct iov_iter *fro=
+m);
+>  extern ssize_t cifs_strict_writev(struct kiocb *iocb, struct iov_iter *f=
+rom);
+> diff --git a/fs/cifs/cifsglob.h b/fs/cifs/cifsglob.h
+> index 7f62c98..52248dd 100644
+> --- a/fs/cifs/cifsglob.h
+> +++ b/fs/cifs/cifsglob.h
+> @@ -1146,6 +1146,11 @@ struct cifs_aio_ctx {
+>         unsigned int            len;
+>         unsigned int            total_len;
+>         bool                    should_dirty;
+> +       /*
+> +        * Indicates if this aio_ctx is for direct_io,
+> +        * If yes, iter is a copy of the user passed iov_iter
+> +        */
+> +       bool                    direct_io;
+>  };
+>
+>  struct cifs_readdata;
+> diff --git a/fs/cifs/file.c b/fs/cifs/file.c
+> index 87eece6..daab878 100644
+> --- a/fs/cifs/file.c
+> +++ b/fs/cifs/file.c
+> @@ -2965,7 +2965,6 @@ cifs_uncached_readdata_release(struct kref *refcoun=
+t)
+>         kref_put(&rdata->ctx->refcount, cifs_aio_ctx_release);
+>         for (i =3D 0; i < rdata->nr_pages; i++) {
+>                 put_page(rdata->pages[i]);
+> -               rdata->pages[i] =3D NULL;
+>         }
+>         cifs_readdata_release(refcount);
+>  }
+> @@ -3092,6 +3091,63 @@ cifs_uncached_copy_into_pages(struct TCP_Server_In=
+fo *server,
+>         return uncached_fill_pages(server, rdata, iter, iter->count);
+>  }
+>
+> +static int cifs_resend_rdata(struct cifs_readdata *rdata,
+> +                     struct list_head *rdata_list,
+> +                     struct cifs_aio_ctx *ctx)
+> +{
+> +       int wait_retry =3D 0;
+> +       unsigned int rsize, credits;
+> +       int rc;
+> +       struct TCP_Server_Info *server =3D tlink_tcon(rdata->cfile->tlink=
+)->ses->server;
+> +
+> +       /*
+> +        * Try to resend this rdata, waiting for credits up to 3 seconds.
+> +        * Note: we are attempting to resend the whole rdata not in segme=
+nts
+> +        */
+> +       do {
+> +               rc =3D server->ops->wait_mtu_credits(server, rdata->bytes=
+,
+> +                                               &rsize, &credits);
+> +
+> +               if (rc)
+> +                       break;
+> +
+> +               if (rsize < rdata->bytes) {
+> +                       add_credits_and_wake_if(server, credits, 0);
+> +                       msleep(1000);
+> +                       wait_retry++;
+> +               }
+> +       } while (rsize < rdata->bytes && wait_retry < 3);
+> +
+> +       /*
+> +        * If we can't find enough credits to send this rdata
+> +        * release the rdata and return failure, this will pass
+> +        * whatever I/O amount we have finished to VFS.
+> +        */
+> +       if (rsize < rdata->bytes) {
+> +               rc =3D -EBUSY;
+
+We don't have enough credits and return EBUSY here...
+
+> +               goto out;
+> +       }
+> +
+> +       rc =3D -EAGAIN;
+> +       while (rc =3D=3D -EAGAIN)
+> +               if (!rdata->cfile->invalidHandle ||
+> +                   !(rc =3D cifs_reopen_file(rdata->cfile, true)))
+> +                       rc =3D server->ops->async_readv(rdata);
+> +
+> +       if (!rc) {
+> +               /* Add to aio pending list */
+> +               list_add_tail(&rdata->list, rdata_list);
+> +               return 0;
+> +       }
+> +
+> +       add_credits_and_wake_if(server, rdata->credits, 0);
+> +out:
+> +       kref_put(&rdata->refcount,
+> +               cifs_uncached_readdata_release);
+> +
+> +       return rc;
+> +}
+> +
+>  static int
+>  cifs_send_async_read(loff_t offset, size_t len, struct cifsFileInfo *ope=
+n_file,
+>                      struct cifs_sb_info *cifs_sb, struct list_head *rdat=
+a_list,
+> @@ -3103,6 +3159,9 @@ cifs_send_async_read(loff_t offset, size_t len, str=
+uct cifsFileInfo *open_file,
+>         int rc;
+>         pid_t pid;
+>         struct TCP_Server_Info *server;
+> +       struct page **pagevec;
+> +       size_t start;
+> +       struct iov_iter direct_iov =3D ctx->iter;
+>
+>         server =3D tlink_tcon(open_file->tlink)->ses->server;
+>
+> @@ -3111,6 +3170,9 @@ cifs_send_async_read(loff_t offset, size_t len, str=
+uct cifsFileInfo *open_file,
+>         else
+>                 pid =3D current->tgid;
+>
+> +       if (ctx->direct_io)
+> +               iov_iter_advance(&direct_iov, offset - ctx->pos);
+> +
+>         do {
+>                 rc =3D server->ops->wait_mtu_credits(server, cifs_sb->rsi=
+ze,
+>                                                    &rsize, &credits);
+> @@ -3118,20 +3180,56 @@ cifs_send_async_read(loff_t offset, size_t len, s=
+truct cifsFileInfo *open_file,
+>                         break;
+>
+>                 cur_len =3D min_t(const size_t, len, rsize);
+> -               npages =3D DIV_ROUND_UP(cur_len, PAGE_SIZE);
+>
+> -               /* allocate a readdata struct */
+> -               rdata =3D cifs_readdata_alloc(npages,
+> +               if (ctx->direct_io) {
+> +
+> +                       cur_len =3D iov_iter_get_pages_alloc(
+> +                                       &direct_iov, &pagevec,
+> +                                       cur_len, &start);
+> +                       if (cur_len < 0) {
+> +                               cifs_dbg(VFS,
+> +                                       "couldn't get user pages (cur_len=
+=3D%zd)"
+> +                                       " iter type %d"
+> +                                       " iov_offset %zd count %zd\n",
+> +                                       cur_len, direct_iov.type, direct_=
+iov.iov_offset,
+> +                                       direct_iov.count);
+> +                               dump_stack();
+> +                               break;
+> +                       }
+> +                       iov_iter_advance(&direct_iov, cur_len);
+> +
+> +                       rdata =3D cifs_readdata_direct_alloc(
+> +                                       pagevec, cifs_uncached_readv_comp=
+lete);
+> +                       if (!rdata) {
+> +                               add_credits_and_wake_if(server, credits, =
+0);
+> +                               rc =3D -ENOMEM;
+> +                               break;
+> +                       }
+> +
+> +                       npages =3D (cur_len + start + PAGE_SIZE-1) / PAGE=
+_SIZE;
+> +                       rdata->page_offset =3D start;
+> +                       rdata->tailsz =3D npages > 1 ?
+> +                               cur_len-(PAGE_SIZE-start)-(npages-2)*PAGE=
+_SIZE :
+> +                               cur_len;
+> +
+> +               } else {
+> +
+> +                       npages =3D DIV_ROUND_UP(cur_len, PAGE_SIZE);
+> +                       /* allocate a readdata struct */
+> +                       rdata =3D cifs_readdata_alloc(npages,
+>                                             cifs_uncached_readv_complete)=
+;
+> -               if (!rdata) {
+> -                       add_credits_and_wake_if(server, credits, 0);
+> -                       rc =3D -ENOMEM;
+> -                       break;
+> -               }
+> +                       if (!rdata) {
+> +                               add_credits_and_wake_if(server, credits, =
+0);
+> +                               rc =3D -ENOMEM;
+> +                               break;
+> +                       }
+>
+> -               rc =3D cifs_read_allocate_pages(rdata, npages);
+> -               if (rc)
+> -                       goto error;
+> +                       rc =3D cifs_read_allocate_pages(rdata, npages);
+> +                       if (rc)
+> +                               goto error;
+> +
+> +                       rdata->tailsz =3D PAGE_SIZE;
+> +               }
+>
+>                 rdata->cfile =3D cifsFileInfo_get(open_file);
+>                 rdata->nr_pages =3D npages;
+> @@ -3139,7 +3237,6 @@ cifs_send_async_read(loff_t offset, size_t len, str=
+uct cifsFileInfo *open_file,
+>                 rdata->bytes =3D cur_len;
+>                 rdata->pid =3D pid;
+>                 rdata->pagesz =3D PAGE_SIZE;
+> -               rdata->tailsz =3D PAGE_SIZE;
+>                 rdata->read_into_pages =3D cifs_uncached_read_into_pages;
+>                 rdata->copy_into_pages =3D cifs_uncached_copy_into_pages;
+>                 rdata->credits =3D credits;
+> @@ -3153,9 +3250,11 @@ cifs_send_async_read(loff_t offset, size_t len, st=
+ruct cifsFileInfo *open_file,
+>                 if (rc) {
+>                         add_credits_and_wake_if(server, rdata->credits, 0=
+);
+>                         kref_put(&rdata->refcount,
+> -                                cifs_uncached_readdata_release);
+> -                       if (rc =3D=3D -EAGAIN)
+> +                               cifs_uncached_readdata_release);
+> +                       if (rc =3D=3D -EAGAIN) {
+> +                               iov_iter_revert(&direct_iov, cur_len);
+>                                 continue;
+> +                       }
+>                         break;
+>                 }
+>
+> @@ -3211,45 +3310,62 @@ collect_uncached_read_data(struct cifs_aio_ctx *c=
+tx)
+>                                  * reading.
+>                                  */
+>                                 if (got_bytes && got_bytes < rdata->bytes=
+) {
+> -                                       rc =3D cifs_readdata_to_iov(rdata=
+, to);
+> +                                       rc =3D 0;
+> +                                       if (!ctx->direct_io)
+> +                                               rc =3D cifs_readdata_to_i=
+ov(rdata, to);
+>                                         if (rc) {
+>                                                 kref_put(&rdata->refcount=
+,
+> -                                               cifs_uncached_readdata_re=
+lease);
+> +                                                       cifs_uncached_rea=
+ddata_release);
+>                                                 continue;
+>                                         }
+>                                 }
+>
+> -                               rc =3D cifs_send_async_read(
+> +                               if (ctx->direct_io) {
+> +                                       /*
+> +                                        * Re-use rdata as this is a
+> +                                        * direct I/O
+> +                                        */
+> +                                       rc =3D cifs_resend_rdata(
+> +                                               rdata,
+> +                                               &tmp_list, ctx);
+
+...so we set rc to -EBUSY...
+
+
+> +                               } else {
+> +                                       rc =3D cifs_send_async_read(
+>                                                 rdata->offset + got_bytes=
+,
+>                                                 rdata->bytes - got_bytes,
+>                                                 rdata->cfile, cifs_sb,
+>                                                 &tmp_list, ctx);
+>
+> +                                       kref_put(&rdata->refcount,
+> +                                               cifs_uncached_readdata_re=
+lease);
+> +                               }
+> +
+>                                 list_splice(&tmp_list, &ctx->list);
+>
+> -                               kref_put(&rdata->refcount,
+> -                                        cifs_uncached_readdata_release);
+>                                 goto again;
+>                         } else if (rdata->result)
+>                                 rc =3D rdata->result;
+> -                       else
+> +                       else if (!ctx->direct_io)
+>                                 rc =3D cifs_readdata_to_iov(rdata, to);
+>
+>                         /* if there was a short read -- discard anything =
+left */
+>                         if (rdata->got_bytes && rdata->got_bytes < rdata-=
+>bytes)
+>                                 rc =3D -ENODATA;
+> +
+> +                       ctx->total_len +=3D rdata->got_bytes;
+>                 }
+>                 list_del_init(&rdata->list);
+>                 kref_put(&rdata->refcount, cifs_uncached_readdata_release=
+);
+>         }
+>
+> -       for (i =3D 0; i < ctx->npages; i++) {
+> -               if (ctx->should_dirty)
+> -                       set_page_dirty(ctx->bv[i].bv_page);
+> -               put_page(ctx->bv[i].bv_page);
+> -       }
+> +       if (!ctx->direct_io) {
+> +               for (i =3D 0; i < ctx->npages; i++) {
+> +                       if (ctx->should_dirty)
+> +                               set_page_dirty(ctx->bv[i].bv_page);
+> +                       put_page(ctx->bv[i].bv_page);
+> +               }
+>
+> -       ctx->total_len =3D ctx->len - iov_iter_count(to);
+> +               ctx->total_len =3D ctx->len - iov_iter_count(to);
+> +       }
+>
+>         cifs_stats_bytes_read(tcon, ctx->total_len);
+>
+> @@ -3267,18 +3383,27 @@ collect_uncached_read_data(struct cifs_aio_ctx *c=
+tx)
+>                 complete(&ctx->done);
+
+and then ctx->rc is set to -EBUSY too.
+
+>  }
+>
+> -ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to)
+> +ssize_t __cifs_readv(struct kiocb *iocb, struct iov_iter *to, bool direc=
+t)
+>  {
+> -       struct file *file =3D iocb->ki_filp;
+> -       ssize_t rc;
+>         size_t len;
+> -       ssize_t total_read =3D 0;
+> -       loff_t offset =3D iocb->ki_pos;
+> +       struct file *file =3D iocb->ki_filp;
+>         struct cifs_sb_info *cifs_sb;
+> -       struct cifs_tcon *tcon;
+>         struct cifsFileInfo *cfile;
+> +       struct cifs_tcon *tcon;
+> +       ssize_t rc, total_read =3D 0;
+> +       loff_t offset =3D iocb->ki_pos;
+>         struct cifs_aio_ctx *ctx;
+>
+> +       /*
+> +        * iov_iter_get_pages_alloc() doesn't work with ITER_KVEC,
+> +        * fall back to data copy read path
+> +        * this could be improved by getting pages directly in ITER_KVEC
+> +        */
+> +       if (direct && to->type & ITER_KVEC) {
+> +               cifs_dbg(FYI, "use non-direct cifs_user_readv for kvec I/=
+O\n");
+> +               direct =3D false;
+> +       }
+> +
+>         len =3D iov_iter_count(to);
+>         if (!len)
+>                 return 0;
+> @@ -3305,14 +3430,20 @@ ssize_t cifs_user_readv(struct kiocb *iocb, struc=
+t iov_iter *to)
+>         if (to->type =3D=3D ITER_IOVEC)
+>                 ctx->should_dirty =3D true;
+>
+> -       rc =3D setup_aio_ctx_iter(ctx, to, READ);
+> -       if (rc) {
+> -               kref_put(&ctx->refcount, cifs_aio_ctx_release);
+> -               return rc;
+> +       if (direct) {
+> +               ctx->pos =3D offset;
+> +               ctx->direct_io =3D true;
+> +               ctx->iter =3D *to;
+> +               ctx->len =3D len;
+> +       } else {
+> +               rc =3D setup_aio_ctx_iter(ctx, to, READ);
+> +               if (rc) {
+> +                       kref_put(&ctx->refcount, cifs_aio_ctx_release);
+> +                       return rc;
+> +               }
+> +               len =3D ctx->len;
+>         }
+>
+> -       len =3D ctx->len;
+> -
+>         /* grab a lock here due to read response handlers can access ctx =
+*/
+>         mutex_lock(&ctx->aio_mutex);
+>
+> @@ -3354,6 +3485,16 @@ ssize_t cifs_user_readv(struct kiocb *iocb, struct=
+ iov_iter *to)
+>         return rc;
+
+In case of a blocking read we will return -EBUSY to the caller but
+read man page doesn't say anything about a possibility to return this
+error code. Is it being mapped somehow by VFS or is there another
+consideration? The same question applies to the write patch as well.
+
+>  }
+>
+> +ssize_t cifs_direct_readv(struct kiocb *iocb, struct iov_iter *to)
+> +{
+> +       return __cifs_readv(iocb, to, true);
+> +}
+> +
+> +ssize_t cifs_user_readv(struct kiocb *iocb, struct iov_iter *to)
+> +{
+> +       return __cifs_readv(iocb, to, false);
+> +}
+> +
+>  ssize_t
+>  cifs_strict_readv(struct kiocb *iocb, struct iov_iter *to)
+>  {
+> --
+> 2.7.4
+>
+
+--
+Best regards,
+Pavel Shilovsky
