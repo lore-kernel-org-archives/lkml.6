@@ -2,93 +2,87 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-2.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+X-Spam-Status: No, score=-3.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
 	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,USER_AGENT_NEOMUTT
-	autolearn=ham autolearn_force=no version=3.4.0
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,
+	URIBL_BLOCKED autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 51B63C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:42:16 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 0441DC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:44:53 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id E63F62087C
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:42:15 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id B7AD32087C
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 00:44:52 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gTZmOUWv"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org E63F62087C
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eNfLX2X0"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org B7AD32087C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1729947AbeKQK4u (ORCPT
+        id S1730253AbeKQK72 (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 05:56:50 -0500
-Received: from mail-ed1-f68.google.com ([209.85.208.68]:46745 "EHLO
-        mail-ed1-f68.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1729525AbeKQK4u (ORCPT
+        Sat, 17 Nov 2018 05:59:28 -0500
+Received: from mail-qk1-f194.google.com ([209.85.222.194]:43127 "EHLO
+        mail-qk1-f194.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbeKQK71 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 05:56:50 -0500
-Received: by mail-ed1-f68.google.com with SMTP id b34-v6so21014054ede.13
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 16:42:12 -0800 (PST)
+        Sat, 17 Nov 2018 05:59:27 -0500
+Received: by mail-qk1-f194.google.com with SMTP id r71so40369001qkr.10;
+        Fri, 16 Nov 2018 16:44:50 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=gmail.com; s=20161025;
-        h=date:from:to:cc:subject:message-id:references:mime-version
-         :content-disposition:in-reply-to:user-agent;
-        bh=5dP4YTFuVMqXxExbZF1EVqh/F1hUjYjzPyUA7CvvirI=;
-        b=gTZmOUWvJWN1Mph+gXcuMSnV7NSoZaGFMI2CSkqjA5wXr52IpIaPL5uslqCJLgljKZ
-         a2/Wwjaidz33mPyRjejZ6vprL8Aq3ZYdeEUHprs+txmgIgGFygg+Twig2HemNw2FzGMm
-         z+qebKKlKXiNOqUtQsDG/BWuA6xhox0caecf6pfNoydMflz7Tis8TeB+RfUKFXu1AIL6
-         vUaRhAN4g6wMg1yCPcDU7EADPUbBB81zCYgdpLFqct+8ERm+xYZDvxv1jAk0V+XSPZUH
-         0Khe1pFJxD5bSLQ4f2ow1zecn/bORTdBitO8z8f/Ftt7mT1OR73ozmNJ9EsOdUaFM/g9
-         sMNw==
+        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
+         :cc;
+        bh=LWNKI5peLI4zp0T/ZWr+jjM4k4CAwflQSoLhwWF1hxI=;
+        b=eNfLX2X0sr5SRPtMS+nFmjD/7FK5O4Y3nMsHiP8cRYkf8v1SZGCXLiTVe/OpUi1Rfy
+         H155QEnyDsrG5z5/+qrQfI8MXfBxYJFzD4HDLS3zVFMYHgvnUPFw2/dWDQTizkMzydq3
+         +f/u6lkUlRftLlj9SUGsUrtX8LWuPTABp0NljjdI137dBTyMowCjm/zb/dZZPpFoZ1fM
+         +hm9BEzE+kEcESgRUyadGxEVSY1hG7fqnfd+Zraoh8seeZm7EsSl7/lVtdvMjn15URy5
+         +4bxJU+Hk6yBoE5J17Misam2rTJ55ZG1IOmDq3nidfYkQ9VE9d3nd7PCEhHt4y8d5Ccj
+         EHVw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
-         :mime-version:content-disposition:in-reply-to:user-agent;
-        bh=5dP4YTFuVMqXxExbZF1EVqh/F1hUjYjzPyUA7CvvirI=;
-        b=KRe6CbxyqkJCfNUg38j5TXhfB/050tGObmIMBhkIY2ByQ0dq1XGnFArQRQEvW6EZU5
-         dhD9cgvJiCGX5exJ3ht2hKhNCB3p6++tV7MCQKuO62vhwQR8Zo3Q1ATdCz0Tl2EB8Los
-         ifO6Bryi9gvB7GI+J3i/kVteCeTgxM2P7okPN7SndFCBJsU8tqhnN+ztQAikAo22RCMU
-         Q4BM/SGNVjdP+fvBfHT8u0H1dChyaF53scZqKMiHLwfNAZcUCtb6qgfAwQHkTQYNPAr6
-         WGEtYm7iOwBI0asidWMnM6Xq7vEaH3qOGSQvStX+WnD25mDmR3rSdtLqG6ohRnp/pTJR
-         zNnA==
-X-Gm-Message-State: AGRZ1gLnJk2j6tg1gjAHZqbC6baifJkQcGijGpLnpTz0v/M4PG9uqdWA
-        PC3MNcZ95X6fk4g1W/XdW0UMCvGW
-X-Google-Smtp-Source: AJdET5fH4IWAaGbAnoV3ZokbrIDDiDR9R700dXtfeMG3Svd8C9TDGxKMIblRKo4sJFNJ4moTYDEUMQ==
-X-Received: by 2002:aa7:d8d3:: with SMTP id k19mr4791592eds.64.1542415332162;
-        Fri, 16 Nov 2018 16:42:12 -0800 (PST)
-Received: from ltop.local ([2a02:a03f:40bc:4d00:787e:f271:ff1d:82b])
-        by smtp.gmail.com with ESMTPSA id c29sm3204368eda.75.2018.11.16.16.42.11
-        (version=TLS1_2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 16 Nov 2018 16:42:11 -0800 (PST)
-Date:   Sat, 17 Nov 2018 01:42:10 +0100
-From:   Luc Van Oostenryck <luc.vanoostenryck@gmail.com>
-To:     Johannes Berg <johannes@sipsolutions.net>
-Cc:     linux-kernel@vger.kernel.org, akpm@linux-foundation.org,
-        Johannes Berg <johannes.berg@intel.com>
-Subject: Re: [PATCH v2 1/3] compiler-gcc: hide
- COMPILER_HAS_GENERIC_BUILTIN_OVERFLOW from sparse
-Message-ID: <20181117004209.v67yalpxuswhs2vr@ltop.local>
-References: <20181109093534.15121-1-johannes@sipsolutions.net>
+        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
+         :message-id:subject:to:cc;
+        bh=LWNKI5peLI4zp0T/ZWr+jjM4k4CAwflQSoLhwWF1hxI=;
+        b=d+TjFHMaosp2XYZeuCGO9UJaRo9UAPgQhpcSTR4lCeuN2IXeMgiYXdHrgt9vQU7oui
+         0qW86JXbAVbAocVrE9HrpcVig4856dnCsv/vpNm6DmprAkCMpq23Wr9n1DE6vf4r+yi9
+         ijtRwwEOLc3vrrhZGyjC4IkB8vEAgT8OEjs0E3fFsBjAAaZkoKI34L0p+vEZqG4wTQxt
+         UKC+8Xrj2XvvjDm4lfOK69rjUEyTicV4ybGX2YvTUmSsCZbcHqklbckPXaDPB3Dkptw3
+         4UsclIfrUuWD3phSGZ4cibDCopPPMJQeJfQ17vGkejhSRT1Al/fTJG1v6CNs9QtF4VGc
+         cIhQ==
+X-Gm-Message-State: AGRZ1gK2pecB9T3bQgQnuShz8ubu+5zMmwFzZcpv5lLEymO4MiZpIv2P
+        28TJoGf30OKynb1WMTOSSuEcM4Tu8xMki8BzpqA=
+X-Google-Smtp-Source: AJdET5feMrmo58bccHVC+KK6pYPWE01sF0D7X7Vt62bA5tlFPrlcEKA4mrylGjXZfFxDGhXZpEMBmjIKTRLPC27yEIQ=
+X-Received: by 2002:a37:5f05:: with SMTP id t5mr12617088qkb.47.1542415489639;
+ Fri, 16 Nov 2018 16:44:49 -0800 (PST)
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20181109093534.15121-1-johannes@sipsolutions.net>
-User-Agent: NeoMutt/20180622
+References: <bce0322a-6392-3fd4-a6fb-562160c26198@solarflare.com>
+In-Reply-To: <bce0322a-6392-3fd4-a6fb-562160c26198@solarflare.com>
+From:   Y Song <ys114321@gmail.com>
+Date:   Sat, 17 Nov 2018 00:44:13 +0000
+Message-ID: <CAH3MdRUmaqmFWFS4xUuB3kVYZntExw3xw_nHJ+p013ZJ+bhtng@mail.gmail.com>
+Subject: Re: [PATCH bpf] bpf: fix off-by-one error in adjust_subprog_starts
+To:     Edward Cree <ecree@solarflare.com>
+Cc:     Alexei Starovoitov <ast@kernel.org>,
+        Daniel Borkmann <daniel@iogearbox.net>,
+        netdev <netdev@vger.kernel.org>,
+        LKML <linux-kernel@vger.kernel.org>,
+        syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, Nov 09, 2018 at 10:35:32AM +0100, Johannes Berg wrote:
-> From: Johannes Berg <johannes.berg@intel.com>
-> 
-> Sparse doesn't support all the overflow builtins, so just hide
-> them from it to avoid lots of warnings/errors reported by it.
+On Fri, Nov 16, 2018 at 12:00 PM Edward Cree <ecree@solarflare.com> wrote:
+>
+> When patching in a new sequence for the first insn of a subprog, the start
+>  of that subprog does not change (it's the first insn of the sequence), so
+>  adjust_subprog_starts should check start <= off (rather than < off).
+> Also added a test to test_verifier.c (it's essentially the syz reproducer).
+>
+> Fixes: cc8b0b92a169 ("bpf: introduce function calls (function boundaries)")
+> Reported-by: syzbot+4fc427c7af994b0948be@syzkaller.appspotmail.com
+> Signed-off-by: Edward Cree <ecree@solarflare.com>
 
-The development version of sparse support these builtins
-since their introduction in the kernel and sparse's main tree
-have been updated (very recently).
-
-I strongly believe this patch shouldn't be.
-
-Regards,
--- Luc
+Acked-by: Yonghong Song <yhs@fb.com>
