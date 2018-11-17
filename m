@@ -2,93 +2,119 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS
-	autolearn=ham autolearn_force=no version=3.4.0
+X-Spam-Status: No, score=-1.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
+	MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
+	version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 57B59C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 17:00:30 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 141AAC43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 17:03:52 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1CC7920817
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 17:00:30 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECbop1/v"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1CC7920817
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
+	by mail.kernel.org (Postfix) with ESMTP id CAC2C2080D
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 17:03:51 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org CAC2C2080D
+Authentication-Results: mail.kernel.org; dmarc=none (p=none dis=none) header.from=lip6.fr
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726956AbeKRDRp (ORCPT
+        id S1726745AbeKRDVH (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 22:17:45 -0500
-Received: from mail.kernel.org ([198.145.29.99]:43498 "EHLO mail.kernel.org"
-        rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1726311AbeKRDRo (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 22:17:44 -0500
-Received: from archlinux (cpc91196-cmbg18-2-0-cust659.5-4.cable.virginm.net [81.96.234.148])
-        (using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-        (No client certificate requested)
-        by mail.kernel.org (Postfix) with ESMTPSA id 0F8592080D;
-        Sat, 17 Nov 2018 17:00:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-        s=default; t=1542474028;
-        bh=Ed8mXnvnXT0Exg3EzhEK70oXPFYJtzW6suSVLIIrZ/w=;
-        h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-        b=ECbop1/voZF2/MnjTdVW/dtJ2h8Lj9vSvLlKXkk4ClwxvfEfePEz+GbnVEzyuuXdG
-         UCjbPwqR2Z9VIEg5fr6qyZ0smFxfsHW9Sl4Jh/uHaHHBfT9yyhAY/pv43/20pl6OUI
-         ow6rVZpxwBLY+aPXFv0FBJoO5w1HlINdNUMXudbI=
-Date:   Sat, 17 Nov 2018 17:00:23 +0000
-From:   Jonathan Cameron <jic23@kernel.org>
-To:     Shreeya Patel <shreeya.patel23498@gmail.com>
-Cc:     lars@metafoo.de, Michael.Hennerich@analog.com, knaack.h@gmx.de,
-        pmeerw@pmeerw.net, gregkh@linuxfoundation.org,
-        linux-iio@vger.kernel.org, devel@driverdev.osuosl.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/7] Staging: iio: adt7316: Add an extra check for 'ret'
- equals to 0
-Message-ID: <20181117170023.54892898@archlinux>
-In-Reply-To: <20181116225132.24459-1-shreeya.patel23498@gmail.com>
-References: <20181116225132.24459-1-shreeya.patel23498@gmail.com>
-X-Mailer: Claws Mail 3.17.1 (GTK+ 2.24.32; x86_64-pc-linux-gnu)
+        Sat, 17 Nov 2018 22:21:07 -0500
+Received: from mail3-relais-sop.national.inria.fr ([192.134.164.104]:23856
+        "EHLO mail3-relais-sop.national.inria.fr" rhost-flags-OK-OK-OK-OK)
+        by vger.kernel.org with ESMTP id S1726311AbeKRDVH (ORCPT
+        <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 22:21:07 -0500
+X-IronPort-AV: E=Sophos;i="5.56,245,1539640800"; 
+   d="scan'208";a="285848619"
+Received: from abo-186-120-68.mrs.modulonet.fr (HELO hadrien) ([85.68.120.186])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 17 Nov 2018 18:03:46 +0100
+Date:   Sat, 17 Nov 2018 09:03:46 -0800 (PST)
+From:   Julia Lawall <julia.lawall@lip6.fr>
+X-X-Sender: jll@hadrien
+To:     Rob Herring <robherring2@gmail.com>
+cc:     Joe Perches <joe@perches.com>, Jani Nikula <jani.nikula@intel.com>,
+        Geert Uytterhoeven <geert@linux-m68k.org>,
+        ksummit-discuss@lists.linuxfoundation.org,
+        linux-nvdimm <linux-nvdimm@lists.01.org>,
+        vishal.l.verma@intel.com,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        Dmitry Vyukov <dvyukov@google.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Mauro Carvalho Chehab <mchehab@kernel.org>,
+        stfrench@microsoft.com, "Tobin C. Harding" <me@tobin.cc>
+Subject: Re: [Ksummit-discuss] [RFC PATCH 2/3] MAINTAINERS, Handbook: Subsystem
+ Profile
+In-Reply-To: <CAL_Jsq+4FbB=wj3L67=KEPb_5e8GinMJaXoB2cW6c23yazeNiw@mail.gmail.com>
+Message-ID: <alpine.DEB.2.21.1811170902330.2558@hadrien>
+References: <154225759358.2499188.15268218778137905050.stgit@dwillia2-desk3.amr.corp.intel.com> <154225760492.2499188.14152986544451112930.stgit@dwillia2-desk3.amr.corp.intel.com> <alpine.DEB.2.21.1811142146230.9620@hadrien>
+ <CAMuHMdVmvCOX6gF0BskQ1NBUpdMZHSBQXpxkx085B9ZKGm0wiA@mail.gmail.com> <alpine.DEB.2.21.1811150544090.2354@hadrien> <878t1tgpk8.fsf@intel.com> <f08820b05467cc95cc195a2639595c0274c95d69.camel@perches.com>
+ <CAL_Jsq+4FbB=wj3L67=KEPb_5e8GinMJaXoB2cW6c23yazeNiw@mail.gmail.com>
+User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Sat, 17 Nov 2018 04:21:32 +0530
-Shreeya Patel <shreeya.patel23498@gmail.com> wrote:
 
-> ret = 0 indicates a case of no error but no data read from
-> the bus which is an invalid case. This case doesn't ever happen
-> in reality. It should perhaps be handled for correctness though.
-> 
-> Signed-off-by: Shreeya Patel <shreeya.patel23498@gmail.com>
-Applied to the togreg branch of iio.git and pushed out as testing
-for the autobuilders to play with it.
 
-Thanks,
+On Sat, 17 Nov 2018, Rob Herring wrote:
 
-Jonathan
+> On Fri, Nov 16, 2018 at 11:57 AM Joe Perches <joe@perches.com> wrote:
+> >
+> > On Fri, 2018-11-16 at 14:44 +0200, Jani Nikula wrote:
+> > > I quickly cooked up this script to produce the top-5 commit prefixes for
+> > > the given files over the arbitrary last 200 commits. It'll give you a
+> > > pretty good idea if you're even close.
+> > >
+> > > ---
+> > > #!/bin/sh
+> > > # usage: subject-prefix FILE [...]
+> > > # show top 5 subject prefixes for FILEs
+> > >
+> > > git log --format=%s -n 200 -- "$@" |\
+> > >       grep -v "^Merge " |\
+>
+> --no-merges in git log can replace this line.
+>
+> > >       sed 's/\(.*\):.*/\1/' |\
+> > >       sort | uniq -c | sort -nr | sed 's/ *[0-9]\+ //' |\
+> > >       head -n 5
+> > > ---
+> > >
+> > > Someone who knows perl could turn that into a checkpatch check: See if
+> > > the patch subject prefix is one of the top-5 for all files changed by
+> > > the patch, and ask the user to double check if it isn't. Or some
+> > > heuristics thereof.
+> >
+> > This won't work when a patch contains multiple files
+> > from different paths, or even multiple files from a
+> > single driver.
+>
+> Different paths is often, but not always a sign that patches may need
+> to be split up. Maybe that is something checkpatch should point out.
 
-> ---
->  drivers/staging/iio/addac/adt7316-i2c.c | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/drivers/staging/iio/addac/adt7316-i2c.c b/drivers/staging/iio/addac/adt7316-i2c.c
-> index 856bcfa60c6c..473e5e34ec00 100644
-> --- a/drivers/staging/iio/addac/adt7316-i2c.c
-> +++ b/drivers/staging/iio/addac/adt7316-i2c.c
-> @@ -30,6 +30,10 @@ static int adt7316_i2c_read(void *client, u8 reg, u8 *data)
->  	}
->  
->  	ret = i2c_smbus_read_byte(client);
-> +
-> +	if (!ret)
-> +		return -EIO;
-> +
->  	if (ret < 0) {
->  		dev_err(&cl->dev, "I2C read error\n");
->  		return ret;
+Between v4.0 and v4.19, 18% of commits touch multiple .c files.  35% of
+commits touch multiple files in general.
 
+julia
+
+>
+> > Perhaps it's better to use a generic mechanism like
+> >
+> >         basename $(dirname $filename):
+> >
+> > with some exceptions and add an override patch subject
+> > grammar to appropriate various sections of MAINTAINERS.
+>
+> Perhaps just use the script as a starting point to populate
+> MAINTAINERS as it may never be that accurate.
+>
+> > I also think it's better to use a separate script like
+> > scripts/spdxcheck.py and tie any necessary checkpatch
+> > use to that script.
+>
+> Yes, checkpatch is getting pretty unwieldy.
+>
+> Rob
+>
