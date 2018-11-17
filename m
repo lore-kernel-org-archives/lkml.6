@@ -2,432 +2,139 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-7.1 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,MAILING_LIST_MULTI,
-	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED autolearn=ham autolearn_force=no
-	version=3.4.0
+X-Spam-Status: No, score=-2.4 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
+	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
+	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS,URIBL_BLOCKED,
+	USER_AGENT_MUTT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D9171C43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:51:10 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E0864C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:51:42 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 86F532089D
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:51:10 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id 9DDB32089D
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:51:42 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (1024-bit key) header.d=linaro.org header.i=@linaro.org header.b="P5j8CB8Z"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 86F532089D
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="oU1E8Yp2"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 9DDB32089D
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730903AbeKQMF5 (ORCPT
+        id S1730973AbeKQMGa (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 07:05:57 -0500
-Received: from mail-it1-f193.google.com ([209.85.166.193]:52994 "EHLO
-        mail-it1-f193.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730388AbeKQMF5 (ORCPT
+        Sat, 17 Nov 2018 07:06:30 -0500
+Received: from mail-pl1-f196.google.com ([209.85.214.196]:40079 "EHLO
+        mail-pl1-f196.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1727116AbeKQMG3 (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 07:05:57 -0500
-Received: by mail-it1-f193.google.com with SMTP id t190-v6so657715itb.2
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 17:51:07 -0800 (PST)
+        Sat, 17 Nov 2018 07:06:29 -0500
+Received: by mail-pl1-f196.google.com with SMTP id b22-v6so6492994pls.7;
+        Fri, 16 Nov 2018 17:51:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google;
-        h=mime-version:references:in-reply-to:from:date:message-id:subject:to
-         :cc:content-transfer-encoding;
-        bh=ycuo47DcdIyVxcWRHg64i/Y1sXk5HFv3kYE+fCxWqNw=;
-        b=P5j8CB8ZqvaV+jsaLIlI/z5HCbjt+LfqB1/HG1MEeDWJBYIoj072dBxT4MJFZ7okGi
-         x+cbRlJBYKFyOQmH+ly3WeqIQrym9jvM9WaYaRFIcJyYs32yTgQ6oQK6CaXuhx0Y0ZCF
-         6OjvKMx1a/J+ogCcNHl3NLpcyd6obCaaIAV2k=
+        d=gmail.com; s=20161025;
+        h=date:from:to:cc:subject:message-id:references:mime-version
+         :content-disposition:in-reply-to:user-agent;
+        bh=kFrk3ZvTxnuIJmqdWeNtTuoVcmDrFGU5o+QORm1j6zU=;
+        b=oU1E8Yp2hbJ2rrUDA6X3YC6xPk69kVrvM23B8FiIzJnvKcPc7KJhkXLv9S1gpiPUGC
+         pkdglfwv09SxgdiNjJ5Lj9/vrds4iWKcNCPFYQW+F+Y0qqLXOXWjWxKQTuZiyZ62EEKm
+         EBR8iOORxYm0gsl9jNeA3TiKN98ZXYuV1ZL+N9QPb1r8jA+qpdpQSx363xyHWXDHuHw2
+         WLK3vcsJ7ABBp/XG6f28DvJB5SQ+wjjtOKOJYvP5/+fEJNhiv2FgzL9fGQ+B5588XA8Z
+         2Fv8yDWTag8SuruXLHYDocc2f07BFcYWaiP6syjQdinQnypX+Y3Tua7m3rIPulT1OOhH
+         82vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:references:in-reply-to:from:date
-         :message-id:subject:to:cc:content-transfer-encoding;
-        bh=ycuo47DcdIyVxcWRHg64i/Y1sXk5HFv3kYE+fCxWqNw=;
-        b=giVXOMkFdX7bMg3Ctt1lvjLGKuPIbi9BbMdrrPpaUhGTuNLuwNbU1pzL3ifLL0HbZN
-         /cbjMObgT8jjfEt7n8OEvmyXeNxofWZ+xGR1GgWpmxbg3R+a7eG5JomO4joFBQoFw0tQ
-         mgHX8YqiSyNMmsYmP+NQCFQPJRULz3Bj8JJOS4g8C8AJ0vML/+uvjYrT+Fs1Z646LNfb
-         vDRCmAKcYJ5abno0bpdUdgPjpEiUZu5+1y6znvTv6e6277YHG47E020NqqqPe3AACI1N
-         aPXb2af19r7srd+GOvEFTrDLUxd1uZPXvNlxzb5UgI/jbc/R1OsKf7Z0YSshdDceczr7
-         e7JA==
-X-Gm-Message-State: AGRZ1gIjyRbcxWoVd+wJ3zVaZUIh9OBhSqCmXjY/wQBuniWMjZNXxrjn
-        JqkQp8sf0UcJ5+hPSPsc2R3OCvfylRQlJRhPIcSaLQ==
-X-Google-Smtp-Source: AFSGD/WYYALv4WLPEz/VZE9GqTgWQrz9G+7hT99UvERdelmjQF6iKsVQWnw2PQ3UV3Mhh+FpMORl6bhxRyEfTRNo8Jg=
-X-Received: by 2002:a24:2190:: with SMTP id e138-v6mr610664ita.71.1542419466986;
- Fri, 16 Nov 2018 17:51:06 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=kFrk3ZvTxnuIJmqdWeNtTuoVcmDrFGU5o+QORm1j6zU=;
+        b=DJ66zrxxEuhuEJTor8X6vRxh0l6OBq+eVJbZXsl4BqUhRZhHGJy0Q1FtgGv2bsqZ/b
+         f//ylDWLxZGWsIvj1cNx0kUAibjwZFVOEtyWKXhFAopykM4HaVUFLZIALFRN4xhie1PV
+         WntTQrxKv6JSxXkO2nzgslyD1sabnciQfohgZDEF/Oy+JmZAn2ksWKTJ4iekjNrgePvN
+         gsmlTU+21F05O5MuOo7W3RUZzRXsn7DkZ8IpsA8RWmEAqNFCOuiBvpIEsZIkmlQlRcFQ
+         wGilUjmrkPbq/gQkXxY/JADlJ8DJO3LJwYrTp/j0nNZwdPbIafLQ5DWLzuuUeUXiFl4u
+         TnJA==
+X-Gm-Message-State: AGRZ1gJjD5gwx1zzC3LIO/dcEHY5giDBil7ZDUGjmVOIRuwC9WnXgbo/
+        zxHJJDKWBVWPTZYLdH9AerU=
+X-Google-Smtp-Source: AJdET5cyb5XPVOCc+yUpqDI3a0kgKTfWEhaH5W0oFafa3He4vRUEpGIsx+7Y39nJDSzxwl6Egc6/JQ==
+X-Received: by 2002:a17:902:e085:: with SMTP id cb5mr8786227plb.24.1542419499719;
+        Fri, 16 Nov 2018 17:51:39 -0800 (PST)
+Received: from Asurada-Nvidia.nvidia.com (thunderhill.nvidia.com. [216.228.112.22])
+        by smtp.gmail.com with ESMTPSA id c23-v6sm34674488pfn.95.2018.11.16.17.51.38
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 16 Nov 2018 17:51:38 -0800 (PST)
+Date:   Fri, 16 Nov 2018 17:51:34 -0800
+From:   Nicolin Chen <nicoleotsuka@gmail.com>
+To:     Guenter Roeck <linux@roeck-us.net>
+Cc:     jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+        linux-kernel@vger.kernel.org, corbet@lwn.net,
+        linux-doc@vger.kernel.org
+Subject: Re: [PATCH] hwmon (ina3221) Add single-shot mode support
+Message-ID: <20181117015131.GA10407@Asurada-Nvidia.nvidia.com>
+References: <20181113042353.1507-1-nicoleotsuka@gmail.com>
+ <20181113043248.GB11205@roeck-us.net>
+ <20181113045823.GB26327@Asurada-Nvidia.nvidia.com>
+ <20181113172102.GA21714@roeck-us.net>
+ <20181114001141.GA14925@Asurada-Nvidia.nvidia.com>
+ <20181114172330.GA25592@roeck-us.net>
 MIME-Version: 1.0
-References: <20181117012631.23528-1-ebiggers@kernel.org> <20181117012631.23528-12-ebiggers@kernel.org>
-In-Reply-To: <20181117012631.23528-12-ebiggers@kernel.org>
-From:   Ard Biesheuvel <ard.biesheuvel@linaro.org>
-Date:   Fri, 16 Nov 2018 17:50:55 -0800
-Message-ID: <CAKv+Gu-VicDdZqa=4nbo4EY5r2qTNngYuGyO-MymyoJ0NQP8tA@mail.gmail.com>
-Subject: Re: [PATCH v4 11/14] crypto: poly1305 - add Poly1305 core API
-To:     Eric Biggers <ebiggers@kernel.org>
-Cc:     "open list:HARDWARE RANDOM NUMBER GENERATOR CORE" 
-        <linux-crypto@vger.kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        linux-fscrypt@vger.kernel.org,
-        linux-arm-kernel <linux-arm-kernel@lists.infradead.org>,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        Paul Crowley <paulcrowley@google.com>,
-        Greg Kaiser <gkaiser@google.com>,
-        "Jason A. Donenfeld" <Jason@zx2c4.com>,
-        Samuel Neves <samuel.c.p.neves@gmail.com>,
-        Tomer Ashur <tomer.ashur@esat.kuleuven.be>,
-        Eric Biggers <ebiggers@google.com>,
-        Martin Willi <martin@strongswan.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181114172330.GA25592@roeck-us.net>
+User-Agent: Mutt/1.9.4 (2018-02-28)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-On Fri, 16 Nov 2018 at 17:29, Eric Biggers <ebiggers@kernel.org> wrote:
->
-> From: Eric Biggers <ebiggers@google.com>
->
-> Expose a low-level Poly1305 API which implements the
-> =CE=B5-almost-=E2=88=86-universal (=CE=B5A=E2=88=86U) hash function under=
-lying the Poly1305 MAC
-> and supports block-aligned inputs only.
->
-> This is needed for Adiantum hashing, which builds an =CE=B5A=E2=88=86U ha=
-sh function
-> from NH and a polynomial evaluation in GF(2^{130}-5); this polynomial
-> evaluation is identical to the one the Poly1305 MAC does.  However, the
-> crypto_shash Poly1305 API isn't very appropriate for this because its
-> calling convention assumes it is used as a MAC, with a 32-byte "one-time
-> key" provided for every digest.
->
-> But by design, in Adiantum hashing the performance of the polynomial
-> evaluation isn't nearly as critical as NH.  So it suffices to just have
-> some C helper functions.  Thus, this patch adds such functions.
->
-> Acked-by: Martin Willi <martin@strongswan.org>
-> Signed-off-by: Eric Biggers <ebiggers@google.com>
+Hello Guenter,
 
-Acked-by: Ard Biesheuvel <ard.biesheuvel@linaro.org>
+On Wed, Nov 14, 2018 at 09:23:30AM -0800, Guenter Roeck wrote:
+> > An alternative way (without the sysfs node), after looking at
+> > other hwmon code, could be to have a timed polling thread and
+> > read data using an update_interval value from ABI. This might
+> > turn out to be more complicated as it'll also involve settings
+> > of hardware averaging and conversion time. Above all, I cannot
+> > figure out a good threshold of update_interval to switch modes.
+> > 
+> update_interval should only be used if it can be configured
+> into hardware, not to trigger a polling thread. It should only
+> be used in the driver to determine caching intervals.
 
-> ---
->  crypto/poly1305_generic.c | 174 ++++++++++++++++++++++----------------
->  include/crypto/poly1305.h |  16 ++++
->  2 files changed, 115 insertions(+), 75 deletions(-)
->
-> diff --git a/crypto/poly1305_generic.c b/crypto/poly1305_generic.c
-> index a23173f351b7..2a06874204e8 100644
-> --- a/crypto/poly1305_generic.c
-> +++ b/crypto/poly1305_generic.c
-> @@ -38,7 +38,7 @@ int crypto_poly1305_init(struct shash_desc *desc)
->  {
->         struct poly1305_desc_ctx *dctx =3D shash_desc_ctx(desc);
->
-> -       memset(dctx->h.h, 0, sizeof(dctx->h.h));
-> +       poly1305_core_init(&dctx->h);
->         dctx->buflen =3D 0;
->         dctx->rset =3D false;
->         dctx->sset =3D false;
-> @@ -47,23 +47,16 @@ int crypto_poly1305_init(struct shash_desc *desc)
->  }
->  EXPORT_SYMBOL_GPL(crypto_poly1305_init);
->
-> -static void poly1305_setrkey(struct poly1305_desc_ctx *dctx, const u8 *k=
-ey)
-> +void poly1305_core_setkey(struct poly1305_key *key, const u8 *raw_key)
->  {
->         /* r &=3D 0xffffffc0ffffffc0ffffffc0fffffff */
-> -       dctx->r.r[0] =3D (get_unaligned_le32(key +  0) >> 0) & 0x3ffffff;
-> -       dctx->r.r[1] =3D (get_unaligned_le32(key +  3) >> 2) & 0x3ffff03;
-> -       dctx->r.r[2] =3D (get_unaligned_le32(key +  6) >> 4) & 0x3ffc0ff;
-> -       dctx->r.r[3] =3D (get_unaligned_le32(key +  9) >> 6) & 0x3f03fff;
-> -       dctx->r.r[4] =3D (get_unaligned_le32(key + 12) >> 8) & 0x00fffff;
-> -}
-> -
-> -static void poly1305_setskey(struct poly1305_desc_ctx *dctx, const u8 *k=
-ey)
-> -{
-> -       dctx->s[0] =3D get_unaligned_le32(key +  0);
-> -       dctx->s[1] =3D get_unaligned_le32(key +  4);
-> -       dctx->s[2] =3D get_unaligned_le32(key +  8);
-> -       dctx->s[3] =3D get_unaligned_le32(key + 12);
-> +       key->r[0] =3D (get_unaligned_le32(raw_key +  0) >> 0) & 0x3ffffff=
-;
-> +       key->r[1] =3D (get_unaligned_le32(raw_key +  3) >> 2) & 0x3ffff03=
-;
-> +       key->r[2] =3D (get_unaligned_le32(raw_key +  6) >> 4) & 0x3ffc0ff=
-;
-> +       key->r[3] =3D (get_unaligned_le32(raw_key +  9) >> 6) & 0x3f03fff=
-;
-> +       key->r[4] =3D (get_unaligned_le32(raw_key + 12) >> 8) & 0x00fffff=
-;
->  }
-> +EXPORT_SYMBOL_GPL(poly1305_core_setkey);
->
->  /*
->   * Poly1305 requires a unique key for each tag, which implies that we ca=
-n't set
-> @@ -75,13 +68,16 @@ unsigned int crypto_poly1305_setdesckey(struct poly13=
-05_desc_ctx *dctx,
->  {
->         if (!dctx->sset) {
->                 if (!dctx->rset && srclen >=3D POLY1305_BLOCK_SIZE) {
-> -                       poly1305_setrkey(dctx, src);
-> +                       poly1305_core_setkey(&dctx->r, src);
->                         src +=3D POLY1305_BLOCK_SIZE;
->                         srclen -=3D POLY1305_BLOCK_SIZE;
->                         dctx->rset =3D true;
->                 }
->                 if (srclen >=3D POLY1305_BLOCK_SIZE) {
-> -                       poly1305_setskey(dctx, src);
-> +                       dctx->s[0] =3D get_unaligned_le32(src +  0);
-> +                       dctx->s[1] =3D get_unaligned_le32(src +  4);
-> +                       dctx->s[2] =3D get_unaligned_le32(src +  8);
-> +                       dctx->s[3] =3D get_unaligned_le32(src + 12);
->                         src +=3D POLY1305_BLOCK_SIZE;
->                         srclen -=3D POLY1305_BLOCK_SIZE;
->                         dctx->sset =3D true;
-> @@ -91,41 +87,37 @@ unsigned int crypto_poly1305_setdesckey(struct poly13=
-05_desc_ctx *dctx,
->  }
->  EXPORT_SYMBOL_GPL(crypto_poly1305_setdesckey);
->
-> -static unsigned int poly1305_blocks(struct poly1305_desc_ctx *dctx,
-> -                                   const u8 *src, unsigned int srclen,
-> -                                   u32 hibit)
-> +static void poly1305_blocks_internal(struct poly1305_state *state,
-> +                                    const struct poly1305_key *key,
-> +                                    const void *src, unsigned int nblock=
-s,
-> +                                    u32 hibit)
->  {
->         u32 r0, r1, r2, r3, r4;
->         u32 s1, s2, s3, s4;
->         u32 h0, h1, h2, h3, h4;
->         u64 d0, d1, d2, d3, d4;
-> -       unsigned int datalen;
->
-> -       if (unlikely(!dctx->sset)) {
-> -               datalen =3D crypto_poly1305_setdesckey(dctx, src, srclen)=
-;
-> -               src +=3D srclen - datalen;
-> -               srclen =3D datalen;
-> -       }
-> +       if (!nblocks)
-> +               return;
->
-> -       r0 =3D dctx->r.r[0];
-> -       r1 =3D dctx->r.r[1];
-> -       r2 =3D dctx->r.r[2];
-> -       r3 =3D dctx->r.r[3];
-> -       r4 =3D dctx->r.r[4];
-> +       r0 =3D key->r[0];
-> +       r1 =3D key->r[1];
-> +       r2 =3D key->r[2];
-> +       r3 =3D key->r[3];
-> +       r4 =3D key->r[4];
->
->         s1 =3D r1 * 5;
->         s2 =3D r2 * 5;
->         s3 =3D r3 * 5;
->         s4 =3D r4 * 5;
->
-> -       h0 =3D dctx->h.h[0];
-> -       h1 =3D dctx->h.h[1];
-> -       h2 =3D dctx->h.h[2];
-> -       h3 =3D dctx->h.h[3];
-> -       h4 =3D dctx->h.h[4];
-> -
-> -       while (likely(srclen >=3D POLY1305_BLOCK_SIZE)) {
-> +       h0 =3D state->h[0];
-> +       h1 =3D state->h[1];
-> +       h2 =3D state->h[2];
-> +       h3 =3D state->h[3];
-> +       h4 =3D state->h[4];
->
-> +       do {
->                 /* h +=3D m[i] */
->                 h0 +=3D (get_unaligned_le32(src +  0) >> 0) & 0x3ffffff;
->                 h1 +=3D (get_unaligned_le32(src +  3) >> 2) & 0x3ffffff;
-> @@ -154,16 +146,36 @@ static unsigned int poly1305_blocks(struct poly1305=
-_desc_ctx *dctx,
->                 h1 +=3D h0 >> 26;       h0 =3D h0 & 0x3ffffff;
->
->                 src +=3D POLY1305_BLOCK_SIZE;
-> -               srclen -=3D POLY1305_BLOCK_SIZE;
-> -       }
-> +       } while (--nblocks);
->
-> -       dctx->h.h[0] =3D h0;
-> -       dctx->h.h[1] =3D h1;
-> -       dctx->h.h[2] =3D h2;
-> -       dctx->h.h[3] =3D h3;
-> -       dctx->h.h[4] =3D h4;
-> +       state->h[0] =3D h0;
-> +       state->h[1] =3D h1;
-> +       state->h[2] =3D h2;
-> +       state->h[3] =3D h3;
-> +       state->h[4] =3D h4;
-> +}
->
-> -       return srclen;
-> +void poly1305_core_blocks(struct poly1305_state *state,
-> +                         const struct poly1305_key *key,
-> +                         const void *src, unsigned int nblocks)
-> +{
-> +       poly1305_blocks_internal(state, key, src, nblocks, 1 << 24);
-> +}
-> +EXPORT_SYMBOL_GPL(poly1305_core_blocks);
-> +
-> +static void poly1305_blocks(struct poly1305_desc_ctx *dctx,
-> +                           const u8 *src, unsigned int srclen, u32 hibit=
-)
-> +{
-> +       unsigned int datalen;
-> +
-> +       if (unlikely(!dctx->sset)) {
-> +               datalen =3D crypto_poly1305_setdesckey(dctx, src, srclen)=
-;
-> +               src +=3D srclen - datalen;
-> +               srclen =3D datalen;
-> +       }
-> +
-> +       poly1305_blocks_internal(&dctx->h, &dctx->r,
-> +                                src, srclen / POLY1305_BLOCK_SIZE, hibit=
-);
->  }
->
->  int crypto_poly1305_update(struct shash_desc *desc,
-> @@ -187,9 +199,9 @@ int crypto_poly1305_update(struct shash_desc *desc,
->         }
->
->         if (likely(srclen >=3D POLY1305_BLOCK_SIZE)) {
-> -               bytes =3D poly1305_blocks(dctx, src, srclen, 1 << 24);
-> -               src +=3D srclen - bytes;
-> -               srclen =3D bytes;
-> +               poly1305_blocks(dctx, src, srclen, 1 << 24);
-> +               src +=3D srclen - (srclen % POLY1305_BLOCK_SIZE);
-> +               srclen %=3D POLY1305_BLOCK_SIZE;
->         }
->
->         if (unlikely(srclen)) {
-> @@ -201,30 +213,18 @@ int crypto_poly1305_update(struct shash_desc *desc,
->  }
->  EXPORT_SYMBOL_GPL(crypto_poly1305_update);
->
-> -int crypto_poly1305_final(struct shash_desc *desc, u8 *dst)
-> +void poly1305_core_emit(const struct poly1305_state *state, void *dst)
->  {
-> -       struct poly1305_desc_ctx *dctx =3D shash_desc_ctx(desc);
->         u32 h0, h1, h2, h3, h4;
->         u32 g0, g1, g2, g3, g4;
->         u32 mask;
-> -       u64 f =3D 0;
-> -
-> -       if (unlikely(!dctx->sset))
-> -               return -ENOKEY;
-> -
-> -       if (unlikely(dctx->buflen)) {
-> -               dctx->buf[dctx->buflen++] =3D 1;
-> -               memset(dctx->buf + dctx->buflen, 0,
-> -                      POLY1305_BLOCK_SIZE - dctx->buflen);
-> -               poly1305_blocks(dctx, dctx->buf, POLY1305_BLOCK_SIZE, 0);
-> -       }
->
->         /* fully carry h */
-> -       h0 =3D dctx->h.h[0];
-> -       h1 =3D dctx->h.h[1];
-> -       h2 =3D dctx->h.h[2];
-> -       h3 =3D dctx->h.h[3];
-> -       h4 =3D dctx->h.h[4];
-> +       h0 =3D state->h[0];
-> +       h1 =3D state->h[1];
-> +       h2 =3D state->h[2];
-> +       h3 =3D state->h[3];
-> +       h4 =3D state->h[4];
->
->         h2 +=3D (h1 >> 26);     h1 =3D h1 & 0x3ffffff;
->         h3 +=3D (h2 >> 26);     h2 =3D h2 & 0x3ffffff;
-> @@ -254,16 +254,40 @@ int crypto_poly1305_final(struct shash_desc *desc, =
-u8 *dst)
->         h4 =3D (h4 & mask) | g4;
->
->         /* h =3D h % (2^128) */
-> -       h0 =3D (h0 >>  0) | (h1 << 26);
-> -       h1 =3D (h1 >>  6) | (h2 << 20);
-> -       h2 =3D (h2 >> 12) | (h3 << 14);
-> -       h3 =3D (h3 >> 18) | (h4 <<  8);
-> +       put_unaligned_le32((h0 >>  0) | (h1 << 26), dst +  0);
-> +       put_unaligned_le32((h1 >>  6) | (h2 << 20), dst +  4);
-> +       put_unaligned_le32((h2 >> 12) | (h3 << 14), dst +  8);
-> +       put_unaligned_le32((h3 >> 18) | (h4 <<  8), dst + 12);
-> +}
-> +EXPORT_SYMBOL_GPL(poly1305_core_emit);
-> +
-> +int crypto_poly1305_final(struct shash_desc *desc, u8 *dst)
-> +{
-> +       struct poly1305_desc_ctx *dctx =3D shash_desc_ctx(desc);
-> +       __le32 digest[4];
-> +       u64 f =3D 0;
-> +
-> +       if (unlikely(!dctx->sset))
-> +               return -ENOKEY;
-> +
-> +       if (unlikely(dctx->buflen)) {
-> +               dctx->buf[dctx->buflen++] =3D 1;
-> +               memset(dctx->buf + dctx->buflen, 0,
-> +                      POLY1305_BLOCK_SIZE - dctx->buflen);
-> +               poly1305_blocks(dctx, dctx->buf, POLY1305_BLOCK_SIZE, 0);
-> +       }
-> +
-> +       poly1305_core_emit(&dctx->h, digest);
->
->         /* mac =3D (h + s) % (2^128) */
-> -       f =3D (f >> 32) + h0 + dctx->s[0]; put_unaligned_le32(f, dst +  0=
-);
-> -       f =3D (f >> 32) + h1 + dctx->s[1]; put_unaligned_le32(f, dst +  4=
-);
-> -       f =3D (f >> 32) + h2 + dctx->s[2]; put_unaligned_le32(f, dst +  8=
-);
-> -       f =3D (f >> 32) + h3 + dctx->s[3]; put_unaligned_le32(f, dst + 12=
-);
-> +       f =3D (f >> 32) + le32_to_cpu(digest[0]) + dctx->s[0];
-> +       put_unaligned_le32(f, dst + 0);
-> +       f =3D (f >> 32) + le32_to_cpu(digest[1]) + dctx->s[1];
-> +       put_unaligned_le32(f, dst + 4);
-> +       f =3D (f >> 32) + le32_to_cpu(digest[2]) + dctx->s[2];
-> +       put_unaligned_le32(f, dst + 8);
-> +       f =3D (f >> 32) + le32_to_cpu(digest[3]) + dctx->s[3];
-> +       put_unaligned_le32(f, dst + 12);
->
->         return 0;
->  }
-> diff --git a/include/crypto/poly1305.h b/include/crypto/poly1305.h
-> index 493244c46664..34317ed2071e 100644
-> --- a/include/crypto/poly1305.h
-> +++ b/include/crypto/poly1305.h
-> @@ -38,6 +38,22 @@ struct poly1305_desc_ctx {
->         bool sset;
->  };
->
-> +/*
-> + * Poly1305 core functions.  These implement the =CE=B5-almost-=E2=88=86=
--universal hash
-> + * function underlying the Poly1305 MAC, i.e. they don't add an encrypte=
-d nonce
-> + * ("s key") at the end.  They also only support block-aligned inputs.
-> + */
-> +void poly1305_core_setkey(struct poly1305_key *key, const u8 *raw_key);
-> +static inline void poly1305_core_init(struct poly1305_state *state)
-> +{
-> +       memset(state->h, 0, sizeof(state->h));
-> +}
-> +void poly1305_core_blocks(struct poly1305_state *state,
-> +                         const struct poly1305_key *key,
-> +                         const void *src, unsigned int nblocks);
-> +void poly1305_core_emit(const struct poly1305_state *state, void *dst);
-> +
-> +/* Crypto API helper functions for the Poly1305 MAC */
->  int crypto_poly1305_init(struct shash_desc *desc);
->  unsigned int crypto_poly1305_setdesckey(struct poly1305_desc_ctx *dctx,
->                                         const u8 *src, unsigned int srcle=
-n);
-> --
-> 2.19.1.1215.g8438c0b245-goog
->
+I see..so it's more like the conversion time settings instead.
+
+> > If you can give some advice of a better implementation, that'd
+> > be great.
+> > 
+> From your description, the only real feasible solution would be a
+> generic one, with a well defined interface either to userspace or
+> to the kernel. The best I can think of would be an in-kernel API
+> setting the power operational mode via callbacks. Alternative would
+> be a generic ability to set power operational mode from userspace,
+> using an ABI which applies to all drivers, not just one.
+
+Hmm. That would make the situation really complicated, I could
+understand your concern though.
+
+I searched a little and found that, while the initial ina3221
+hwmon driver was under review, Laxman submitted an IIO version
+where Jonathan had a similar comments against its "mode" node:
+https://www.spinics.net/lists/linux-hwmon/msg00219.html
+
+Quote from his comments {
+ * There is a lot of ABI in here concerned with oneshot vs continuous.
+ This seems to me to be more than it should be. We wouldn't expect to
+ see stuff changing as a result of switching between these modes other
+ than wrt to when the data shows up.  So I'd expect to not see this
+ directly exposed at all - but rather sit in oneshot unless either:
+ 1) Buffered mode is running (not currently supported)
+ 2) Alerts are on - which I think requires it to be in continuous mode.
+}
+
+Since hwmon driver doesn't support buffered mode, what do you
+think about having the chip run in single-shot mode by default
+but changing it if alerts are on? Though the driver also needs
+to support to enable warning/critical alert pins.
+
+In short, other than exposing it via a generic ABI to the user
+space, how about defining some policy to maintaining it within
+the driver?
+
+Thanks
+Nicolin
