@@ -2,98 +2,85 @@ Return-Path: <SRS0=6aQE=N4=vger.kernel.org=linux-kernel-owner@kernel.org>
 X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 	aws-us-west-2-korg-lkml-1.web.codeaurora.org
 X-Spam-Level: 
-X-Spam-Status: No, score=-0.9 required=3.0 tests=DKIM_SIGNED,DKIM_VALID,
-	DKIM_VALID_AU,FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,
-	HEADER_FROM_DIFFERENT_DOMAINS,MAILING_LIST_MULTI,SPF_PASS autolearn=ham
+X-Spam-Status: No, score=-5.5 required=3.0 tests=MAILING_LIST_MULTI,
+	SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_MUTT autolearn=ham
 	autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 9FA2DC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 15:41:33 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 1ABB3C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 15:43:34 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 5DF0F2080F
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 15:41:33 +0000 (UTC)
-Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AldZqVFa"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 5DF0F2080F
-Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+	by mail.kernel.org (Postfix) with ESMTP id D6F402080F
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 15:43:33 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org D6F402080F
+Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=kernel.org
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1726661AbeKRB6d (ORCPT
+        id S1726543AbeKRCAe (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 20:58:33 -0500
-Received: from mail-vs1-f65.google.com ([209.85.217.65]:35421 "EHLO
-        mail-vs1-f65.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1726113AbeKRB6d (ORCPT
+        Sat, 17 Nov 2018 21:00:34 -0500
+Received: from mail-ot1-f66.google.com ([209.85.210.66]:44958 "EHLO
+        mail-ot1-f66.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1726113AbeKRCAe (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 20:58:33 -0500
-Received: by mail-vs1-f65.google.com with SMTP id e7so15473238vsc.2
-        for <linux-kernel@vger.kernel.org>; Sat, 17 Nov 2018 07:41:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20161025;
-        h=mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=dhHt+/pAn8gqsUa/fUYyDgEHHH91NFoOBCQ0tbAYAkI=;
-        b=AldZqVFadKX3ltdceyDzJmpdwkSYIsWeEvxuj4z0RJgPklGttWSxgpRyE4sfuZMWnn
-         KFTVkqZ9mR6lYd/DXp5gmVvOKSzvZ3qweETcdvT3maNwNYYrFgy8hy0+U8aYxujzao3W
-         BdehdQF2F4tVnvr9lmjRhONcA8ia8Zol7yJTcOyKjT4P0cuxIwYcTMfLadZ0NRMa2ye1
-         aMhNF+j/ChjIMJ4phE1KytZOwOI+vG9CSZLlXZenfMldq/T6wtYbFZNXc9vU7QHexNg9
-         7GthLBmUbLg/pxMZVWw05Jx2AUurIYWnMqSIhDOTxARKTupCbaxSTmLVkhE3hDXUAEKb
-         ugww==
+        Sat, 17 Nov 2018 21:00:34 -0500
+Received: by mail-ot1-f66.google.com with SMTP id z33so24021610otz.11;
+        Sat, 17 Nov 2018 07:43:31 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
-        h=x-gm-message-state:mime-version:from:date:message-id:subject:to:cc
-         :content-transfer-encoding;
-        bh=dhHt+/pAn8gqsUa/fUYyDgEHHH91NFoOBCQ0tbAYAkI=;
-        b=PYmNKo4cmo9YGdNQeelhD9Ybg9jt8n0nQbyDlDDhSRHGpFaI1+SP41UeXym1ax5Yxp
-         fwjMq6QUMWGTAiTmLJKDnNw6EIx0IWwj24wFEyrbuYBvbf6nVdSreU7ze6d9u2CkgBGh
-         6F6XJeLnZYPt5gFVPrvMsCvnPGtINOR02BDwjackqya1ZvJjkL3KZN3YqK8SIErDEA/t
-         CjHnxEDwwYoG1MznmxcFkbEhuoZwf3K8ciglvQyFYu3FONlHeYJFPtiRlwLQ7pbtH942
-         DQairMqrwr7viUk8JPDGJUVnGEVCy35AEz+MBc752RRw2tJaGLwuWZeKL9ogXHtUWirp
-         +wXA==
-X-Gm-Message-State: AGRZ1gKKK8j9O3Te/GklrJl61mR56zdZeKXPuatc/xqbDLAWZT+I6UsP
-        CIXGIDuc8HjxcQ0EbDK/nxpKChGXNs9AigWLQ35png==
-X-Google-Smtp-Source: AJdET5f+TxOyt5OH+AKUpWI4L4aI22oUoKhSlo2Wk0NTObtZ5zSlhimZJcckp0AWlwtDuvjqKDsUIHPIH8bKnLFbKjo=
-X-Received: by 2002:a67:ad0b:: with SMTP id t11mr6219860vsl.170.1542469290559;
- Sat, 17 Nov 2018 07:41:30 -0800 (PST)
+        h=x-gm-message-state:date:from:to:cc:subject:message-id:references
+         :mime-version:content-disposition:in-reply-to:user-agent;
+        bh=7IMcX94rKHeT9YmtsHaP201Mnb6bIStWo5NVxVf+EgU=;
+        b=P4Wrk2H+ZTttyM6jbG2cmZXrhn/JlNJn3g2+GhOABvvlQecYTtrNdB1iRk89NTmKSZ
+         bnfWm1PG2G4jqxAea03jlKCxqiSLcrgKgtRx5PCSxE91mkNZ1fVYVwcB2Ql0Iux84OHx
+         xaO3EUUFtUBnAlPnsmN2spOLxnanXhSDnGplRl79AhuQRBfkTnjx2OueWdaTIcbkV3w8
+         CmIwjLfdIr+3LBBQYfuFDHdTLi1Zxay0L+FeJ1hWtl+6q+kxHZbu1MCPS50AS944RFgJ
+         KWliDkqO0meYIdZQaCPHjGK8QtC/AhgFw2UqAUm0VhslLwIahTAljaoyn5ofnHwFTzDQ
+         09mg==
+X-Gm-Message-State: AGRZ1gKWiw1lpkQ4ajrjLf5HWhYy2GbYlaU29oubvDlT9pHIzHZKoy3J
+        moU/kks4j0RDFscK1NyzeqGQvz4=
+X-Google-Smtp-Source: AJdET5cZgcg7/Lt0fkAVOLUqDuQc4cPBt/bhmBzhruthCWCwGtiig108KB4nlaMYiT7ny9LeiEVDbQ==
+X-Received: by 2002:a9d:26ec:: with SMTP id i41mr9266762otd.29.1542469411202;
+        Sat, 17 Nov 2018 07:43:31 -0800 (PST)
+Received: from localhost ([166.137.105.180])
+        by smtp.gmail.com with ESMTPSA id 4sm13383520otw.39.2018.11.17.07.43.29
+        (version=TLS1_2 cipher=ECDHE-RSA-CHACHA20-POLY1305 bits=256/256);
+        Sat, 17 Nov 2018 07:43:30 -0800 (PST)
+Date:   Sat, 17 Nov 2018 09:43:28 -0600
+From:   Rob Herring <robh@kernel.org>
+To:     Vignesh R <vigneshr@ti.com>
+Cc:     Tero Kristo <t-kristo@ti.com>, Nishanth Menon <nm@ti.com>,
+        Mark Rutland <mark.rutland@arm.com>,
+        linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        devicetree@vger.kernel.org, Vignesh R <vigneshr@ti.com>,
+        linux-omap@vger.kernel.org,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Tony Lindgren <tony@atomide.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: pinctrl: k3: Introduce pinmux
+ definitions
+Message-ID: <20181117154328.GA4095@bogus>
+References: <20181113060111.16374-1-vigneshr@ti.com>
+ <20181113060111.16374-2-vigneshr@ti.com>
 MIME-Version: 1.0
-Received: by 2002:a67:4401:0:0:0:0:0 with HTTP; Sat, 17 Nov 2018 07:41:29
- -0800 (PST)
-From:   gengdongjiu <gengdj.1984@gmail.com>
-Date:   Sat, 17 Nov 2018 23:41:29 +0800
-Message-ID: <CAMj-D2DY_1eZUsbnqurx8j3q04Y8JKiM2CtPv+NTsswydo0TJQ@mail.gmail.com>
-Subject: Resend: How to handle the SMMU RAS Error in the kernel
-To:     robin.murphy@arm.com, James Morse <james.morse@arm.com>,
-        arm-mail-list <linux-arm-kernel@lists.infradead.org>
-Cc:     xuqiang36@huawei.com,
-        Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-        gengdongjiu <gengdongjiu@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20181113060111.16374-2-vigneshr@ti.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 Sender: linux-kernel-owner@vger.kernel.org
 Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Hi robin/will/James
+On Tue, 13 Nov 2018 11:31:08 +0530, Vignesh R wrote:
+> The dt-bindings header for TI K3 AM6 SoCs define a set of macros for
+> defining pinmux configs in human readable form, instead of raw-coded
+> hex values.
+> 
+> Signed-off-by: Vignesh R <vigneshr@ti.com>
+> ---
+>  MAINTAINERS                      |  1 +
+>  include/dt-bindings/pinctrl/k3.h | 35 ++++++++++++++++++++++++++++++++
+>  2 files changed, 36 insertions(+)
+>  create mode 100644 include/dt-bindings/pinctrl/k3.h
+> 
 
-
-In the current kernel, it only handles three kinds of error, which is
-memory error, PCIE device and ARM process. But now the SMMU already
-support the RAS, how to handle the SMMU RAS error in the kernel?
-
-I check the UEFI_SPEC_2.7, the ACPI's CPER have the IOMMU type, but it
-seems the IOMMU type only are specific to AMD=E2=80=99s IOMMU specification=
-,
-not have the ARM=E2=80=99s IOMMU section type, can we reuse this IOMMU sect=
-ion
-type for the ARM SMMU?
-
-
-
-N.2.11.3 IOMMU specific DMAr Error Section
-
-Type: {0x036F84E1, 0x7F37, 0x428c, {0xA7, 0x9E, 0x57, 0x5F, 0xDF,
-0xAA, 0x84, 0xEC}}
-
-All fields in this error record are specific to AMD=E2=80=99s IOMMU
-specification. This error section has a fixed size.
+Reviewed-by: Rob Herring <robh@kernel.org>
