@@ -6,31 +6,31 @@ X-Spam-Status: No, score=-9.0 required=3.0 tests=HEADER_FROM_DIFFERENT_DOMAINS,
 	INCLUDES_PATCH,MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,
 	USER_AGENT_GIT autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 7F20EC04EBC
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:27:37 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id A8889C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:27:40 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 4783D2075B
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:27:37 +0000 (UTC)
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 4783D2075B
+	by mail.kernel.org (Postfix) with ESMTP id 7A6662087C
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 02:27:40 +0000 (UTC)
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 7A6662087C
 Authentication-Results: mail.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730335AbeKQMma (ORCPT
+        id S1730581AbeKQMmb (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 07:42:30 -0500
+        Sat, 17 Nov 2018 07:42:31 -0500
 Received: from mga14.intel.com ([192.55.52.115]:45898 "EHLO mga14.intel.com"
         rhost-flags-OK-OK-OK-OK) by vger.kernel.org with ESMTP
-        id S1727116AbeKQMma (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 07:42:30 -0500
+        id S1727116AbeKQMmb (ORCPT <rfc822;linux-kernel@vger.kernel.org>);
+        Sat, 17 Nov 2018 07:42:31 -0500
 X-Amp-Result: SKIPPED(no attachment in message)
 X-Amp-File-Uploaded: False
 Received: from fmsmga006.fm.intel.com ([10.253.24.20])
-  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 18:27:34 -0800
+  by fmsmga103.fm.intel.com with ESMTP/TLS/DHE-RSA-AES256-GCM-SHA384; 16 Nov 2018 18:27:36 -0800
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="5.56,242,1539673200"; 
-   d="scan'208";a="281852574"
+   d="scan'208";a="281852578"
 Received: from skl-02.jf.intel.com ([10.54.74.62])
-  by fmsmga006.fm.intel.com with ESMTP; 16 Nov 2018 18:27:34 -0800
+  by fmsmga006.fm.intel.com with ESMTP; 16 Nov 2018 18:27:35 -0800
 From:   Tim Chen <tim.c.chen@linux.intel.com>
 To:     Jiri Kosina <jikos@kernel.org>,
         Thomas Gleixner <tglx@linutronix.de>
@@ -49,9 +49,9 @@ Cc:     Tim Chen <tim.c.chen@linux.intel.com>,
         Jon Masters <jcm@redhat.com>,
         Waiman Long <longman9394@gmail.com>,
         linux-kernel@vger.kernel.org, x86@kernel.org
-Subject: [Patch v5 02/16] x86/speculation: Remove unnecessary ret variable in cpu_show_common()
-Date:   Fri, 16 Nov 2018 17:53:45 -0800
-Message-Id: <93d18fe9e3310e5988c1c3187daec6bd9c5cad69.1542418937.git.tim.c.chen@linux.intel.com>
+Subject: [Patch v5 03/16] x86/speculation: Reorganize cpu_show_common()
+Date:   Fri, 16 Nov 2018 17:53:46 -0800
+Message-Id: <d6171c8cd0f55bb6fcffc29d9700959071b6a762.1542418937.git.tim.c.chen@linux.intel.com>
 X-Mailer: git-send-email 2.9.4
 In-Reply-To: <cover.1542418936.git.tim.c.chen@linux.intel.com>
 References: <cover.1542418936.git.tim.c.chen@linux.intel.com>
@@ -62,42 +62,58 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-Remove unnecessary ret variable in cpu_show_common() to make the
-code more concise.
+The Spectre V2 printout in cpu_show_common() handles conditionals for the
+various mitigation methods directly in the sprintf() argument list. That's
+hard to read and will become unreadable if more complex decisions need to
+be made for a particular method.
+
+Move the conditionals for STIBP and IBPB string selection into helper
+functions, so they can be extended later on.
 
 Signed-off-by: Tim Chen <tim.c.chen@linux.intel.com>
 ---
- arch/x86/kernel/cpu/bugs.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+ arch/x86/kernel/cpu/bugs.c | 20 ++++++++++++++++++--
+ 1 file changed, 18 insertions(+), 2 deletions(-)
 
 diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
-index 5ac7070..84e3579 100644
+index 84e3579..91a754a 100644
 --- a/arch/x86/kernel/cpu/bugs.c
 +++ b/arch/x86/kernel/cpu/bugs.c
-@@ -856,8 +856,6 @@ static ssize_t l1tf_show_state(char *buf)
+@@ -853,6 +853,22 @@ static ssize_t l1tf_show_state(char *buf)
+ }
+ #endif
+ 
++static char *stibp_state(void)
++{
++	if (x86_spec_ctrl_base & SPEC_CTRL_STIBP)
++		return ", STIBP";
++	else
++		return "";
++}
++
++static char *ibpb_state(void)
++{
++	if (boot_cpu_has(X86_FEATURE_USE_IBPB))
++		return ", IBPB";
++	else
++		return "";
++}
++
  static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr,
  			       char *buf, unsigned int bug)
  {
--	int ret;
--
- 	if (!boot_cpu_has_bug(bug))
- 		return sprintf(buf, "Not affected\n");
- 
-@@ -875,13 +873,12 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
- 		return sprintf(buf, "Mitigation: __user pointer sanitization\n");
+@@ -874,9 +890,9 @@ static ssize_t cpu_show_common(struct device *dev, struct device_attribute *attr
  
  	case X86_BUG_SPECTRE_V2:
--		ret = sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
-+		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
- 			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
+ 		return sprintf(buf, "%s%s%s%s%s%s\n", spectre_v2_strings[spectre_v2_enabled],
+-			       boot_cpu_has(X86_FEATURE_USE_IBPB) ? ", IBPB" : "",
++			       ibpb_state(),
  			       boot_cpu_has(X86_FEATURE_USE_IBRS_FW) ? ", IBRS_FW" : "",
- 			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
+-			       (x86_spec_ctrl_base & SPEC_CTRL_STIBP) ? ", STIBP" : "",
++			       stibp_state(),
  			       boot_cpu_has(X86_FEATURE_RSB_CTXSW) ? ", RSB filling" : "",
  			       spectre_v2_module_string());
--		return ret;
  
- 	case X86_BUG_SPEC_STORE_BYPASS:
- 		return sprintf(buf, "%s\n", ssb_strings[ssb_mode]);
 -- 
 2.9.4
 
