@@ -4,64 +4,64 @@ X-Spam-Checker-Version: SpamAssassin 3.4.0 (2014-02-07) on
 X-Spam-Level: 
 X-Spam-Status: No, score=-18.1 required=3.0 tests=DKIMWL_WL_MED,DKIM_SIGNED,
 	DKIM_VALID,DKIM_VALID_AU,HEADER_FROM_DIFFERENT_DOMAINS,INCLUDES_PATCH,
-	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,URIBL_BLOCKED,USER_AGENT_GIT,
-	USER_IN_DEF_DKIM_WL autolearn=ham autolearn_force=no version=3.4.0
+	MAILING_LIST_MULTI,SIGNED_OFF_BY,SPF_PASS,USER_AGENT_GIT,USER_IN_DEF_DKIM_WL
+	autolearn=ham autolearn_force=no version=3.4.0
 Received: from mail.kernel.org (mail.kernel.org [198.145.29.99])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 5E18BC43441
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:08:04 +0000 (UTC)
+	by smtp.lore.kernel.org (Postfix) with ESMTP id DF535C43441
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:08:08 +0000 (UTC)
 Received: from vger.kernel.org (vger.kernel.org [209.132.180.67])
-	by mail.kernel.org (Postfix) with ESMTP id 1B920206B2
-	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:08:04 +0000 (UTC)
+	by mail.kernel.org (Postfix) with ESMTP id A5B78206B2
+	for <linux-kernel@archiver.kernel.org>; Sat, 17 Nov 2018 01:08:08 +0000 (UTC)
 Authentication-Results: mail.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VoTZcDlK"
-DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org 1B920206B2
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Bk0/2DMl"
+DMARC-Filter: OpenDMARC Filter v1.3.2 mail.kernel.org A5B78206B2
 Authentication-Results: mail.kernel.org; dmarc=fail (p=reject dis=none) header.from=google.com
 Authentication-Results: mail.kernel.org; spf=none smtp.mailfrom=linux-kernel-owner@vger.kernel.org
 Received: (majordomo@vger.kernel.org) by vger.kernel.org via listexpand
-        id S1730866AbeKQLWn (ORCPT
+        id S1730997AbeKQLWs (ORCPT
         <rfc822;linux-kernel@archiver.kernel.org>);
-        Sat, 17 Nov 2018 06:22:43 -0500
-Received: from mail-pl1-f202.google.com ([209.85.214.202]:50946 "EHLO
-        mail-pl1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
-        with ESMTP id S1730286AbeKQLWm (ORCPT
+        Sat, 17 Nov 2018 06:22:48 -0500
+Received: from mail-pf1-f202.google.com ([209.85.210.202]:54035 "EHLO
+        mail-pf1-f202.google.com" rhost-flags-OK-OK-OK-OK) by vger.kernel.org
+        with ESMTP id S1730286AbeKQLWq (ORCPT
         <rfc822;linux-kernel@vger.kernel.org>);
-        Sat, 17 Nov 2018 06:22:42 -0500
-Received: by mail-pl1-f202.google.com with SMTP id d11-v6so18377892plo.17
-        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 17:08:01 -0800 (PST)
+        Sat, 17 Nov 2018 06:22:46 -0500
+Received: by mail-pf1-f202.google.com with SMTP id j9-v6so20501389pfn.20
+        for <linux-kernel@vger.kernel.org>; Fri, 16 Nov 2018 17:08:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=google.com; s=20161025;
         h=date:in-reply-to:message-id:mime-version:references:subject:from:to
          :cc;
-        bh=s3V1He2Zj5wng/11t7K3HEWj/4wZGpXZr3vO1JV3B7s=;
-        b=VoTZcDlK+vJS5EdgLM8TokoaYkl1BgjquuNWLN560DpIJoU8cTccEOBZb0dyCqJwzN
-         39fteUJOWxdSIDetnAJYERMadSBBhZRFD3fSExO4UQrlWBf8YisCo1zT+5/xtA7GQHLW
-         JefAYZ9XiCf2CIa3Ypzngk4KgvISSKXfv2gtPkCDcIZp9Pumw4a/PziS47Tx5tP0jaiN
-         PPeLBOr0U6oFM6HqQwrdnRkqHFYC1xFqPVGGMZNf+xeKeWtP4JZryYmD2Ka9QR6EOJLL
-         HTyTWHh6QpqmQiO0TaqcKxYDSAWJV4hWgoPuN9YX8oSCjXG1lLCt3RaQD+vHGrYfOeP8
-         hvsQ==
+        bh=vGykdBl547WQNsa3hHIaJmF/PJ6TocftyqcyGK983ds=;
+        b=Bk0/2DMl06D/t/uR8JTQ4g1fx6IEQ5hmQQYf4mjM5WPed+7xOkh0asmfs5FCU7f+Ho
+         yOUaOt0n7bR5h0MAgFM2kvhwgDzED/W2rYgGU1cebcxSCZf/yz7o2nqXPQn22eB5g4Zh
+         uxMcpw2guzTs/xpn3Eu0fUbrWUURv9U/Xsa6DpV2rHA7POiEENo2FhRxicOozEtNRK/m
+         WejB9wgIeXQuUpDQe3Bv1GHZdrWszM0vvU9/mOR+emMLORcZlRjcfpMgbbGScBBFVgsD
+         tNCP4Y3lTnXDRj3Rxt3wFUH0gDPN+evLbRY3AW/OtjFKZ2DSgN1Sv8PWSF+W3K92i1WN
+         7VZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
         d=1e100.net; s=20161025;
         h=x-gm-message-state:date:in-reply-to:message-id:mime-version
          :references:subject:from:to:cc;
-        bh=s3V1He2Zj5wng/11t7K3HEWj/4wZGpXZr3vO1JV3B7s=;
-        b=oakqG33zKAIH1ec4zHLhjaHKNDCkdWPjsajhCFcQ0NqWT6BZhpx9tLv3kQ6s/Kxhyp
-         vNuNz944hbvCf4MNF+hw13Aa7YhcNp29UMojvZKRhuZ1Rp+5fwZ5h5bJr/mzZd1ODmZz
-         HY9kindp38vr7lxRPd8rj9tet1Umvv0NuRUaiK4bSUBmIO1zZos/CtUKfEQ2SF2t5DnK
-         yPxwUqj18lwo55qNfYlno7sWn8DwqCQ6Zm1aSXh3pobXM9KyFYTEWau+hZeWALET6vP+
-         5BZSgYZ5Z+9Yj8CiUbil/AmQ9mBEiBcdu7I1ajWcxTOrRs9IOuV5O20a9twLaHRuv82j
-         q11w==
-X-Gm-Message-State: AGRZ1gKn3tAQmlmoD3nxjTDKSTTpTy2LrK0ClKTezA7+l1g/lM0ff49g
-        n0ie/gcqP5GPjUAovM/V7caYDoY4vYz5
-X-Google-Smtp-Source: AJdET5fT21G7Mst65AWLTtqZDKa2Kxm5bUKbPAIVj2Mk2Av80SRcUeA7bJ33k04/S8D3kGmbtP06CQBXFq36
-X-Received: by 2002:aa7:8157:: with SMTP id d23-v6mr186165pfn.136.1542416881178;
- Fri, 16 Nov 2018 17:08:01 -0800 (PST)
-Date:   Fri, 16 Nov 2018 17:07:45 -0800
+        bh=vGykdBl547WQNsa3hHIaJmF/PJ6TocftyqcyGK983ds=;
+        b=UVSabqYUQCMDDdn0d/gsx6kFIc8YNgmXe53sYzV3YftC1DtkHQDnL1D5UmkI36Xvp+
+         /yVs+7//AH9YL2SB1ozgayLEokF6Ta5mZ07Pj7+rehUFiK4+pFPPozgBydI4i4qT6n95
+         bXpbYUpm6rGFSyjSzA5c7b3EijZ5sH7MRjz3xFKlk2Zwxb4DeQ2vqpDLbHq1mt4+o9qv
+         GFS+7PqMf9TGhpxZPwU8inzkeBHFuWGAw/2Nhh40JBys27jlAYnprf5VYsp25SPlyc6O
+         gqLegXRizNFOQf4Gt+41eQvRtIfDJh7FEmE70y/N9b62fy2SX82BQSflEkps+Fxf6rQw
+         /6LA==
+X-Gm-Message-State: AA+aEWbQdK4na7K/n5+wV9ZNriswW4bWAvn7rTu4w3UawZ69ktZlK9Ll
+        NuOJPMGWrNbcHRXG38FyozB2Vd/OP1fL
+X-Google-Smtp-Source: AFSGD/XNrAd5Rq1HC2xEdE2LNbI4si4DUeI/pAMxIF3yhPUtPyeWue/gqDzlLPxo3Yac8uZgNPCcsmYY1qpJ
+X-Received: by 2002:a63:5fd6:: with SMTP id t205mr51086pgb.77.1542416885652;
+ Fri, 16 Nov 2018 17:08:05 -0800 (PST)
+Date:   Fri, 16 Nov 2018 17:07:46 -0800
 In-Reply-To: <20181117010748.24347-1-rajatja@google.com>
-Message-Id: <20181117010748.24347-3-rajatja@google.com>
+Message-Id: <20181117010748.24347-4-rajatja@google.com>
 Mime-Version: 1.0
 References: <20181117010748.24347-1-rajatja@google.com>
 X-Mailer: git-send-email 2.19.1.1215.g8438c0b245-goog
-Subject: [PATCH 2/5] usb: assign ACPI companions for embedded USB devices
+Subject: [PATCH 3/5] Bluetooth: Reset Bluetooth chip after multiple command timeouts
 From:   Rajat Jain <rajatja@google.com>
 To:     Marcel Holtmann <marcel@holtmann.org>,
         Johan Hedberg <johan.hedberg@gmail.com>,
@@ -80,93 +80,90 @@ Precedence: bulk
 List-ID: <linux-kernel.vger.kernel.org>
 X-Mailing-List: linux-kernel@vger.kernel.org
 
-From: Dmitry Torokhov <dtor@chromium.org>
+Add a quirk and a hook to allow the HCI core to reset the BT chip
+if needed (after a number of timed out commands). Use that new hook to
+initiate BT chip reset if the controller fails to respond to certain
+number of commands (currently 5) including the HCI reset commands.
+This is done based on a newly introduced quirk. This is done based
+on some initial work by Intel.
 
-USB devices permanently connected to USB ports may be described in ACPI
-tables and share ACPI devices with ports they are connected to. See [1]
-for details.
-
-This will allow us to describe sideband resources for devices, such as,
-for example, hard reset line for BT USB controllers.
-
-[1] https://docs.microsoft.com/en-us/windows-hardware/drivers/bringup/other-acpi-namespace-objects#acpi-namespace-hierarchy-and-adr-for-embedded-usb-devices
-
-Signed-off-by: Dmitry Torokhov <dtor@chromium.org>
-Signed-off-by: Rajat Jain <rajatja@google.com> (changed how we get the usb_port)
+Signed-off-by: Rajat Jain <rajatja@google.com>
 ---
- drivers/usb/core/usb-acpi.c | 44 +++++++++++++++++++++++++++++--------
- 1 file changed, 35 insertions(+), 9 deletions(-)
+ include/net/bluetooth/hci.h      |  8 ++++++++
+ include/net/bluetooth/hci_core.h |  2 ++
+ net/bluetooth/hci_core.c         | 15 +++++++++++++--
+ 3 files changed, 23 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/usb/core/usb-acpi.c b/drivers/usb/core/usb-acpi.c
-index 8ff73c83e8e8..9043d7242d67 100644
---- a/drivers/usb/core/usb-acpi.c
-+++ b/drivers/usb/core/usb-acpi.c
-@@ -200,30 +200,56 @@ static struct acpi_device *
- usb_acpi_find_companion_for_device(struct usb_device *udev)
- {
- 	struct acpi_device *adev;
-+	struct usb_port *port_dev;
-+	struct usb_hub *hub;
-+
-+	if (!udev->parent) {
-+		/* root hub is only child (_ADR=0) under its parent, the HC */
-+		adev = ACPI_COMPANION(udev->dev.parent);
-+		return acpi_find_child_device(adev, 0, false);
-+	}
- 
--	if (!udev->parent)
-+	hub = usb_hub_to_struct_hub(udev->parent);
-+	if (!hub)
- 		return NULL;
- 
--	/* root hub is only child (_ADR=0) under its parent, the HC */
--	adev = ACPI_COMPANION(udev->dev.parent);
--	return acpi_find_child_device(adev, 0, false);
-+	/*
-+	 * This is an embedded USB device connected to a port and such
-+	 * devices share port's ACPI companion.
-+	 */
-+	port_dev = hub->ports[udev->portnum - 1];
-+	return usb_acpi_get_companion_for_port(port_dev);
- }
- 
--
- static struct acpi_device *usb_acpi_find_companion(struct device *dev)
- {
- 	/*
--	 * In the ACPI DSDT table, only usb root hub and usb ports are
--	 * acpi device nodes. The hierarchy like following.
-+	 * The USB hierarchy like following:
-+	 *
- 	 * Device (EHC1)
- 	 *	Device (HUBN)
- 	 *		Device (PR01)
- 	 *			Device (PR11)
- 	 *			Device (PR12)
-+	 *				Device (FN12)
-+	 *				Device (FN13)
- 	 *			Device (PR13)
- 	 *			...
--	 * So all binding process is divided into two parts. binding
--	 * root hub and usb ports.
-+	 * where HUBN is root hub, and PRNN are USB ports and devices
-+	 * connected to them, and FNNN are individualk functions for
-+	 * connected composite USB devices. PRNN and FNNN may contain
-+	 * _CRS and other methods describing sideband resources for
-+	 * the connected device.
-+	 *
-+	 * On the kernel side both root hub and embedded USB devices are
-+	 * represented as instances of usb_device structure, and ports
-+	 * are represented as usb_port structures, so the whole process
-+	 * is split into 2 parts: finding companions for devices and
-+	 * finding companions for ports.
-+	 *
-+	 * Note that we do not handle individual functions of composite
-+	 * devices yet, for that we would need to assign companions to
-+	 * devices corresponding to USB interfaces.
+diff --git a/include/net/bluetooth/hci.h b/include/net/bluetooth/hci.h
+index c36dc1e20556..af02fa5ffe54 100644
+--- a/include/net/bluetooth/hci.h
++++ b/include/net/bluetooth/hci.h
+@@ -192,6 +192,14 @@ enum {
+ 	 *
  	 */
- 	if (is_usb_device(dev))
- 		return usb_acpi_find_companion_for_device(to_usb_device(dev));
+ 	HCI_QUIRK_NON_PERSISTENT_SETUP,
++
++	/* When this quirk is set, hw_reset() would be run to reset the
++	 * hardware, after a certain number of commands (currently 5)
++	 * time out because the device fails to respond.
++	 *
++	 * This quirk should be set before hci_register_dev is called.
++	 */
++	HCI_QUIRK_HW_RESET_ON_TIMEOUT,
+ };
+ 
+ /* HCI device flags */
+diff --git a/include/net/bluetooth/hci_core.h b/include/net/bluetooth/hci_core.h
+index e5ea633ea368..b86218304b80 100644
+--- a/include/net/bluetooth/hci_core.h
++++ b/include/net/bluetooth/hci_core.h
+@@ -313,6 +313,7 @@ struct hci_dev {
+ 	unsigned int	acl_cnt;
+ 	unsigned int	sco_cnt;
+ 	unsigned int	le_cnt;
++	unsigned int	timeout_cnt;
+ 
+ 	unsigned int	acl_mtu;
+ 	unsigned int	sco_mtu;
+@@ -437,6 +438,7 @@ struct hci_dev {
+ 	int (*post_init)(struct hci_dev *hdev);
+ 	int (*set_diag)(struct hci_dev *hdev, bool enable);
+ 	int (*set_bdaddr)(struct hci_dev *hdev, const bdaddr_t *bdaddr);
++	void (*hw_reset)(struct hci_dev *hdev);
+ };
+ 
+ #define HCI_PHY_HANDLE(handle)	(handle & 0xff)
+diff --git a/net/bluetooth/hci_core.c b/net/bluetooth/hci_core.c
+index 7352fe85674b..ab3a6a8b7ba6 100644
+--- a/net/bluetooth/hci_core.c
++++ b/net/bluetooth/hci_core.c
+@@ -2569,13 +2569,24 @@ static void hci_cmd_timeout(struct work_struct *work)
+ 	struct hci_dev *hdev = container_of(work, struct hci_dev,
+ 					    cmd_timer.work);
+ 
++	hdev->timeout_cnt++;
+ 	if (hdev->sent_cmd) {
+ 		struct hci_command_hdr *sent = (void *) hdev->sent_cmd->data;
+ 		u16 opcode = __le16_to_cpu(sent->opcode);
+ 
+-		bt_dev_err(hdev, "command 0x%4.4x tx timeout", opcode);
++		bt_dev_err(hdev, "command 0x%4.4x tx timeout (cnt = %u)",
++			   opcode, hdev->timeout_cnt);
+ 	} else {
+-		bt_dev_err(hdev, "command tx timeout");
++		bt_dev_err(hdev, "command tx timeout (cnt = %u)",
++			   hdev->timeout_cnt);
++	}
++
++	if (test_bit(HCI_QUIRK_HW_RESET_ON_TIMEOUT, &hdev->quirks) &&
++	    hdev->timeout_cnt >= 5) {
++		hdev->timeout_cnt = 0;
++		if (hdev->hw_reset)
++			hdev->hw_reset(hdev);
++		return;
+ 	}
+ 
+ 	atomic_set(&hdev->cmd_cnt, 1);
 -- 
 2.19.1.1215.g8438c0b245-goog
 
